@@ -12,7 +12,7 @@ class PyMatplotlib(Package):
     variant('gui', default=False, description='Enable GUI')
     variant('ipython', default=False, description='Enable ipython support')
 
-    extends('python', ignore=r'bin/nosetests.*$')
+    extends('python', ignore=r'bin/nosetests.*$|bin/pbr$')
 
     depends_on('py-pyside', when='+gui')
     depends_on('py-ipython', when='+ipython')
@@ -22,7 +22,11 @@ class PyMatplotlib(Package):
     depends_on('py-pytz')
     depends_on('py-nose')
     depends_on('py-numpy')
+    depends_on('py-mock')
+    depends_on('py-pbr')
+    depends_on('py-funcsigs')
 
+    depends_on('freetype')
     depends_on('qt', when='+gui')
     depends_on('bzip2')
     depends_on('tcl', when='+gui')

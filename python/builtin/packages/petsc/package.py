@@ -12,6 +12,8 @@ class Petsc(Package):
     version('3.5.2', 'ad170802b3b058b5deb9cd1f968e7e13')
     version('3.5.1', 'a557e029711ebf425544e117ffa44d8f')
 
+    depends_on("python @2.6:2.9")   # requires Python for building
+
     depends_on("boost")
     depends_on("blas")
     depends_on("lapack")
@@ -23,9 +25,6 @@ class Petsc(Package):
 
     def install(self, spec, prefix):
         configure("--prefix=%s" % prefix,
-                  "CC=cc",
-                  "CXX=c++",
-                  "FC=f90",
                   "--with-blas-lib=%s/libblas.a"     % spec['blas'].prefix.lib,
                   "--with-lapack-lib=%s/liblapack.a" % spec['lapack'].prefix.lib,
                   "--with-boost-dir=%s"              % spec['boost'].prefix,
@@ -33,6 +32,7 @@ class Petsc(Package):
                   "--with-parmetis-dir=%s"           % spec['parmetis'].prefix,
                   "--with-metis-dir=%s"              % spec['metis'].prefix,
                   "--with-hdf5-dir=%s"               % spec['hdf5'].prefix,
+                  "--with-mpi-dir=%s"                % spec['mpi'].prefix,
                   "--with-shared-libraries=0")
 
         # PETSc has its own way of doing parallel make.
