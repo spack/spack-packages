@@ -1,3 +1,4 @@
+
 ##############################################################################
 # Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
@@ -24,31 +25,13 @@
 ##############################################################################
 from spack import *
 
-class Libxcb(Package):
-    """The X protocol C-language Binding (XCB) is a replacement
-    for Xlib featuring a small footprint, latency hiding, direct
-    access to the protocol, improved threading support, and
-    extensibility."""
+class Externalmodule(Package):
+    homepage = "http://somewhere.com"
+    url      = "http://somewhere.com/module-1.0.tar.gz"
 
-    homepage = "http://xcb.freedesktop.org/"
-    url      = "http://xcb.freedesktop.org/dist/libxcb-1.11.tar.gz"
+    version('1.0', '1234567890abcdef1234567890abcdef')
 
-    version('1.11', '1698dd837d7e6e94d029dbe8b3a82deb')
-    version('1.11.1', '118623c15a96b08622603a71d8789bf3')
-
-    depends_on("python")
-    depends_on("xcb-proto")
-    depends_on("pkg-config")
-    depends_on("libpthread-stubs")
-    depends_on('libxau')
-
-    def patch(self):
-        filter_file('typedef struct xcb_auth_info_t {', 'typedef struct {', 'src/xcb.h')
-
+    depends_on('externalprereq')
 
     def install(self, spec, prefix):
-        env['PKG_CONFIG_PATH'] = env['PKG_CONFIG_PATH'] + ':/usr/lib64/pkgconfig'
-        configure("--prefix=%s" % prefix)
-
-        make()
-        make("install")
+        pass
