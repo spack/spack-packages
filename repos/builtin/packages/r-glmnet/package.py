@@ -25,27 +25,24 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RGlmnet(Package):
+    """Extremely efficient procedures for fitting the entire lasso or
+    elastic-net regularization path for linear regression, logistic and
+    multinomial regression models, Poisson regression and the Cox model. Two
+    recent additions are the multiple-response Gaussian, and the grouped
+    multinomial. The algorithm uses cyclical coordinate descent in a path-wise
+    fashion, as described in the paper linked to via the URL below."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "http://www.jstatsoft.org/v33/i01/"
+    url      = "https://cran.r-project.org/src/contrib/glmnet_2.0-5.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/glmnet"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('2.0-5', '049b18caa29529614cd684db3beaec2a')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('r-matrix', type=nolink)
+    depends_on('r-foreach', type=nolink)
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),

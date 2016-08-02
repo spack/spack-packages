@@ -25,28 +25,22 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class Tree(Package):
+    """Tree is a recursive directory listing command that produces a depth
+       indented listing of files, which is colorized ala dircolors if
+       the LS_COLORS environment variable is set and output is to
+       tty. Tree has been ported and reported to work under the
+       following operating systems: Linux, FreeBSD, OS X, Solaris,
+       HP/UX, Cygwin, HP Nonstop and OS/2."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "http://mama.indstate.edu/users/ice/tree/"
+    url      = "http://mama.indstate.edu/users/ice/tree/src/tree-1.7.0.tgz"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
-
-    extends('R')
-
-    depends_on('curl')
+    version('1.7.0', 'abe3e03e469c542d8e157cdd93f4d8a6')
 
     def install(self, spec, prefix):
-        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
-          self.stage.source_path)
+        filter_file(r'^prefix =.*', 'prefix = %s' % prefix, 'Makefile')
+        filter_file(r'^CFLAGS', '# use spack settings instead... CFLAGS',
+                    'Makefile')
+        make()
+        make('install')

@@ -25,27 +25,22 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RNloptr(Package):
+    """nloptr is an R interface to NLopt. NLopt is a free/open-source library
+    for nonlinear optimization, providing a common interface for a number of
+    different free optimization routines available online as well as original
+    implementations of various other algorithms. See
+    http://ab-initio.mit.edu/wiki/index.php/NLopt_Introduction for more
+    information on the available algorithms. During installation on Unix the
+    NLopt code is downloaded and compiled from the NLopt website."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "https://cran.r-project.org/package=nloptr"
+    url      = "https://cran.r-project.org/src/contrib/nloptr_1.0.4.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/nloptr"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.0.4', '9af69a613349b236fd377d0a107f484c')
 
     extends('R')
-
-    depends_on('curl')
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
