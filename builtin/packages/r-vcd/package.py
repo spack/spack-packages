@@ -25,27 +25,25 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RVcd(Package):
+    """Visualization techniques, data sets, summary and inference procedures
+    aimed particularly at categorical data. Special emphasis is given to highly
+    extensible grid graphics. The package was package was originally inspired
+    by the book "Visualizing Categorical Data" by Michael Friendly and is now
+    the main support package for a new book, "Discrete Data Analysis with R" by
+    Michael Friendly and David Meyer (2015)."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "https://cran.r-project.org/package=vcd"
+    url      = "https://cran.r-project.org/src/contrib/vcd_1.4-1.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/vcd"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.4-1', '7db150a77f173f85b69a1f86f73f8f02')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('r-mass', type=nolink)
+    depends_on('r-colorspace', type=nolink)
+    depends_on('r-lmtest', type=nolink)
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),

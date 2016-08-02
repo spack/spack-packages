@@ -25,27 +25,23 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RTestthat(Package):
+    """A unit testing system designed to be fun, flexible and easy to set
+    up."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "https://github.com/hadley/testthat"
+    url      = "https://cran.r-project.org/src/contrib/testthat_1.0.2.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/testthat"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.0.2', '6c6a90c8db860292df5784a70e07b8dc')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('r-digest', type=nolink)
+    depends_on('r-crayon', type=nolink)
+    depends_on('r-praise', type=nolink)
+    depends_on('r-magrittr', type=nolink)
+    depends_on('r-R6', type=nolink)
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),

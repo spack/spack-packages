@@ -25,28 +25,21 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class Libhio(Package):
+    """
+    A library for writing to hierarchical data store systems.
+    """
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "https://github.com/hpc/libhio/"
+    url      = "https://github.com/hpc/libhio/releases/download/hio.1.3.0.1/libhio-1.3.0.1.tar.gz"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.3.0.1', 'c073541de8dd70aeb8878bd00d6d877f')
 
-    extends('R')
-
-    depends_on('curl')
+    depends_on("libjson-c")
+    depends_on("bzip2")
+    depends_on("pkg-config", type="build")
 
     def install(self, spec, prefix):
-        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
-          self.stage.source_path)
+        configure('--prefix=%s' % prefix)
+        make()
+        make("install")

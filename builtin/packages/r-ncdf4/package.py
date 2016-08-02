@@ -25,27 +25,31 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RNcdf4(Package):
+    """Provides a high-level R interface to data files written using Unidata's
+    netCDF library (version 4 or earlier), which are binary data files that are
+    portable across platforms and include metadata information in addition to
+    the data sets. Using this package, netCDF files (either version 4 or
+    "classic" version 3) can be opened and data sets read in easily. It is also
+    easy to create new netCDF dimensions, variables, and files, in either
+    version 3 or 4 format, and manipulate existing netCDF files. This package
+    replaces the former ncdf package, which only worked with netcdf version 3
+    files. For various reasons the names of the functions have had to be
+    changed from the names in the ncdf package. The old ncdf package is still
+    available at the URL given below, if you need to have backward
+    compatibility. It should be possible to have both the ncdf and ncdf4
+    packages installed simultaneously without a problem. However, the ncdf
+    package does not provide an interface for netcdf version 4 files."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "http://cirrus.ucsd.edu/~pierce/ncdf"
+    url      = "https://cran.r-project.org/src/contrib/ncdf4_1.15.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/ncdf4"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.15', 'cd60dadbae3be31371e1ed40ddeb420a')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('netcdf')
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
