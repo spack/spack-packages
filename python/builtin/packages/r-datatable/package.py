@@ -25,27 +25,21 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RDatatable(Package):
+    """Fast aggregation of large data (e.g. 100GB in RAM), fast ordered joins,
+    fast add/modify/delete of columns by group using no copies at all, list
+    columns and a fast file reader (fread). Offers a natural and flexible
+    syntax, for faster development."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "https://github.com/Rdatatable/data.table/wiki"
+    url      = "https://cran.r-project.org/src/contrib/data.table_1.9.6.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/data.table"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.9.6', 'b1c0c7cce490bdf42ab288541cc55372')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('r-chron')
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),

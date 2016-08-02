@@ -22,31 +22,32 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+#
+# Based on Homebrew's formula:
+# https://github.com/Homebrew/homebrew-core/blob/master/Formula/cask.rb
+#
 from spack import *
+from glob import glob
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class Cask(Package):
+    """Cask is a project management tool for Emacs Lisp to automate the package
+       development cycle; development, dependencies, testing, building,
+       packaging and more."""
+    homepage = "http://cask.readthedocs.io/en/latest/"
+    url      = "https://github.com/cask/cask/archive/v0.7.4.tar.gz"
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    version('0.7.4', 'c973a7db43bc980dd83759a5864a1260')
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
-
-    extends('R')
-
-    depends_on('curl')
+    depends_on('emacs', type=nolink)
 
     def install(self, spec, prefix):
-        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
-          self.stage.source_path)
+        mkdirp(prefix.bin)
+        install('bin/cask', prefix.bin)
+        install_tree('templates', join_path(prefix, 'templates'))
+        for el_file in glob("*.el"):
+            install(el_file, prefix)
+        for misc_file in ['COPYING', 'cask.png', 'README.md']:
+            install(misc_file, prefix)
+        # disable cask's automatic upgrading feature
+        touch(join_path(prefix, ".no-upgrade"))

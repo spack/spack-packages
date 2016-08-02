@@ -25,27 +25,26 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RMultcomp(Package):
+    """Simultaneous tests and confidence intervals for general linear
+    hypotheses in parametric models, including linear, generalized linear,
+    linear mixed effects, and survival models. The package includes demos
+    reproducing analyzes presented in the book "Multiple Comparisons Using R"
+    (Bretz, Hothorn, Westfall, 2010, CRC Press)."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "http://multcomp.r-forge.r-project.org/"
+    url      = "https://cran.r-project.org/src/contrib/multcomp_1.4-6.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/multcomp"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.4-6', 'f1353ede2ed78b23859a7f1f1f9ebe88')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('r-mvtnorm', type=nolink)
+    depends_on('r-survival', type=nolink)
+    depends_on('r-thdata', type=nolink)
+    depends_on('r-sandwich', type=nolink)
+    depends_on('r-codetools', type=nolink)
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),

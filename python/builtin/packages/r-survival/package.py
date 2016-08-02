@@ -25,27 +25,20 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RSurvival(Package):
+    """Contains the core survival analysis routines, including definition of
+    Surv objects, Kaplan-Meier and Aalen-Johansen (multi-state) curves, Cox
+    models, and parametric accelerated failure time models."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "https://cran.r-project.org/package=survival"
+    url      = "https://cran.r-project.org/src/contrib/survival_2.39-5.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/survival"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('2.39-5', 'a3cc6b5762e8c5c0bb9e64a276710be2')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('r-matrix', type=nolink)
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),

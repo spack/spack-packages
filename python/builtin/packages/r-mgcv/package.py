@@ -25,27 +25,22 @@
 from spack import *
 
 
-class RCurl(Package):
-    """The curl() and curl_download() functions provide highly configurable
-    drop-in replacements for base url() and download.file() with better
-    performance, support for encryption (https, ftps), gzip compression,
-    authentication, and other libcurl goodies. The core of the package
-    implements a framework for performing fully customized requests where data
-    can be processed either in memory, on disk, or streaming via the callback
-    or connection interfaces. Some knowledge of libcurl is recommended; for a
-    more-user-friendly web client see the 'httr' package which builds on this
-    package with http specific tools and logic."""
+class RMgcv(Package):
+    """GAMs, GAMMs and other generalized ridge regression with multiple
+    smoothing parameter estimation by GCV, REML or UBRE/AIC. Includes a gam()
+    function, a wide variety of smoothers, JAGS support and distributions
+    beyond the exponential family."""
 
-    homepage = "https://github.com/jeroenooms/curl"
-    url      = "https://cran.r-project.org/src/contrib/curl_0.9.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/curl"
+    homepage = "https://cran.r-project.org/package=mgcv"
+    url      = "https://cran.r-project.org/src/contrib/mgcv_1.8-13.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/mgcv"
 
-    version('1.0', '93d34926d6071e1fba7e728b482f0dd9')
-    version('0.9.7', 'a101f7de948cb828fef571c730f39217')
+    version('1.8-13', '30607be3aaf44b13bd8c81fc32e8c984')
 
     extends('R')
 
-    depends_on('curl')
+    depends_on('r-nlme', type=nolink)
+    depends_on('r-matrix', type=nolink)
 
     def install(self, spec, prefix):
         R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
