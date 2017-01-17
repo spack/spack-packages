@@ -25,16 +25,15 @@
 from spack import *
 
 
-class PyDocutils(PythonPackage):
-    """Docutils is an open-source text processing system for processing
-    plaintext documentation into useful formats, such as HTML, LaTeX,
-    man-pages, open-document or XML. It includes reStructuredText, the
-    easy to read, easy to use, what-you-see-is-what-you-get plaintext
-    markup language."""
+class PyBleach(PythonPackage):
+    """An easy whitelist-based HTML-sanitizing tool."""
 
-    homepage = "http://docutils.sourceforge.net/"
-    url      = "https://pypi.python.org/packages/source/d/docutils/docutils-0.12.tar.gz"
+    homepage = "http://github.com/mozilla/bleach"
+    url      = "https://pypi.python.org/packages/99/00/25a8fce4de102bf6e3cc76bc4ea60685b2fee33bde1b34830c70cacc26a7/bleach-1.5.0.tar.gz"
 
-    version('0.13.1', 'ea4a893c633c788be9b8078b6b305d53',
-            url="https://pypi.python.org/packages/05/25/7b5484aca5d46915493f1fd4ecb63c38c333bd32aa9ad6e19da8d08895ae/docutils-0.13.1.tar.gz")
-    version('0.12',   '4622263b62c5c771c03502afa3157768')
+    version('1.5.0', 'b663300efdf421b3b727b19d7be9c7e7')
+
+    depends_on('python@2.6:2.7,3.2:3.5')
+    depends_on('py-setuptools', type='build')
+    depends_on('py-six', type=('build', 'run'))
+    depends_on('py-html5lib@0.999,0.999999:0.9999999', type=('build', 'run'))
