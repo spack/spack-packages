@@ -25,16 +25,13 @@
 from spack import *
 
 
-class PyDocutils(PythonPackage):
-    """Docutils is an open-source text processing system for processing
-    plaintext documentation into useful formats, such as HTML, LaTeX,
-    man-pages, open-document or XML. It includes reStructuredText, the
-    easy to read, easy to use, what-you-see-is-what-you-get plaintext
-    markup language."""
+class PyHtml5lib(PythonPackage):
+    """HTML parser based on the WHATWG HTML specification."""
 
-    homepage = "http://docutils.sourceforge.net/"
-    url      = "https://pypi.python.org/packages/source/d/docutils/docutils-0.12.tar.gz"
+    homepage = "https://github.com/html5lib/html5lib-python"
+    url      = "https://pypi.python.org/packages/ae/ae/bcb60402c60932b32dfaf19bb53870b29eda2cd17551ba5639219fb5ebf9/html5lib-0.9999999.tar.gz"
 
-    version('0.13.1', 'ea4a893c633c788be9b8078b6b305d53',
-            url="https://pypi.python.org/packages/05/25/7b5484aca5d46915493f1fd4ecb63c38c333bd32aa9ad6e19da8d08895ae/docutils-0.13.1.tar.gz")
-    version('0.12',   '4622263b62c5c771c03502afa3157768')
+    version('0.9999999', 'ef43cb05e9e799f25d65d1135838a96f')
+
+    depends_on('python@2.6:2.7,3.2:3.4')
+    depends_on('py-six', type=('build', 'run'))
