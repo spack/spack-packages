@@ -24,5 +24,5 @@ class PyAlbumentations(PythonPackage):
     depends_on('py-scikit-image@0.16.1:1.18', type=('build', 'run'), when='@1.1.0:')
     depends_on('py-pyyaml',                   type=('build', 'run'))
     depends_on('py-qudida@0.0.4:',            type=('build', 'run'), when='@1.1.0:')
-    depends_on('opencv@4.1.1:+python2',       type=('build', 'run'), when='^python@2.0:2')
+    #depends_on('opencv@4.1.1:+python2',       type=('build', 'run'), when='^python@2.0:2')
     depends_on('opencv@4.1.1:+python3',       type=('build', 'run'), when='^python@3.0:3')
