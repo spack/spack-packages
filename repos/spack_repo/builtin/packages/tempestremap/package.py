@@ -21,6 +21,7 @@ class Tempestremap(AutotoolsPackage):
 
     maintainers("iulian787", "vijaysm", "paullric")
 
+    version("2.2.0", sha256="548b902701ec7c3b6970e0c83c6b93bfb7fb38ecc30b6ef89de8182efd948fa3")
     version("2.1.6", sha256="d2208b5d6952eba5003ee7abcf22f46a254ba03f6b76dcc4d246068573d424e2")
     version("2.1.5", sha256="1c8976b20555330294523114d18ecdd6e885df7af1887710a7a5a96e403770d3")
     version("2.1.4", sha256="94e0bb4e1be9ec7282936f4d89996e0b99d89166fff14995bb7a3d3964577ebe")
