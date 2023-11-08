@@ -97,6 +97,7 @@ class Moab(AutotoolsPackage):
     depends_on("eigen", when="+eigen")
     # FIXME it seems that zoltan needs to be built without fortran
     depends_on("zoltan~fortran", when="+zoltan")
+    depends_on("tempestremap@2.2", when="@5.5.1+tempest")
     depends_on("tempestremap@2.2", when="@5.5.0+tempest")
     depends_on("tempestremap@2.1.6", when="@5.4.1+tempest")
     depends_on("tempestremap@2.1.6", when="@5.4.0+tempest")
