@@ -13,7 +13,7 @@ class PyImutils(PythonPackage):
     displaying Matplotlib images, sorting contours, detecting edges, and much
     more easier with OpenCV and both Python 2.7 and Python 3."""
 
-    homepage = "https://www.example.com"
+    homepage = "https://github.com/jrosebr1/imutils"
     pypi = "imutils/imutils-0.5.4.tar.gz"
 
     license("MIT", checked_by="alex391")
