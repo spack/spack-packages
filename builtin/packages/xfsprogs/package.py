@@ -26,6 +26,7 @@ class Xfsprogs(AutotoolsPackage):
 
     depends_on("libinih")
     depends_on("gettext")
+    depends_on("gettext@:0.21.1", when="@:6.3")
     depends_on("uuid")
     depends_on("util-linux")
 
@@ -33,7 +34,7 @@ class Xfsprogs(AutotoolsPackage):
         if name == "cflags":
             if self.spec.satisfies("@:5.4.0 %gcc@10:"):
                 flags.append("-fcommon")
-        elif name == "ldlibs":
+        elif name == "ldlibs" or name == "ldflags":
             if "intl" in self.spec["gettext"].libs.names:
                 flags.append("-lintl")
         return build_system_flags(name, flags)
