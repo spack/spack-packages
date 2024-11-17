@@ -10,7 +10,7 @@ import sys
 import llnl.util.tty as tty
 from llnl.util.lang import classproperty
 
-import spack.util.executable
+import spack.compilers
 from spack.build_systems.cmake import get_cmake_prefix_path
 from spack.package import *
 from spack.package_base import PackageBase
@@ -687,7 +687,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             match = re.search(cls.compiler_version_regex, output)
             if match:
                 return match.group(match.lastindex)
-        except spack.util.executable.ProcessError:
+        except ProcessError:
             pass
         except Exception as e:
             tty.debug(e)
