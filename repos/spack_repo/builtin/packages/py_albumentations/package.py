@@ -13,15 +13,19 @@ class PyAlbumentations(PythonPackage):
     homepage = "https://github.com/albu/albumentations"
     pypi = "albumentations/albumentations-1.1.0.tar.gz"
 
+    version("1.3.1", sha256="a6a38388fe546c568071e8c82f414498e86c9ed03c08b58e7a88b31cf7a244c6")
     version("1.1.0", sha256="60b067b3093908bcc52adb2aa5d44f57ebdbb8ab57a47b0b42f3dc1d3b1ce824")
     version("0.4.2", sha256="93baec3ca01a61bc81fa80563cdebf35dbae3f86b573e4cbe5c141c94782737f")
 
     depends_on("python@3.6:", type=("build", "run"), when="@1.1.0:")
+    depends_on("python@3.7:", type=("build", "run"), when="@1.3.1:")
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy@1.11.1:", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
+    depends_on("py-scipy@1.1:", when="@1.3.1:", type=("build", "run"))
     depends_on("py-imgaug@0.2.5:0.2.6", type=("build", "run"), when="@0.4.2")
-    depends_on("py-scikit-image@0.16.1:1.18", type=("build", "run"), when="@1.1.0:")
+    depends_on("py-scikit-image@0.16.1:1.18", type=("build", "run"), when="@1.1.0")
+    depends_on("py-scikit-image@0.16.1:", type=("build", "run"), when="@1.3.1:")
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-qudida@0.0.4:", type=("build", "run"), when="@1.1.0:")
     # depends_on('opencv@4.1.1:+python2',       type=('build', 'run'), when='^python@2.0:2')
