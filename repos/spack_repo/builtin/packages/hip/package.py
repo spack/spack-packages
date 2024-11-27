@@ -72,7 +72,7 @@ class Hip(CMakePackage):
     depends_on("libedit", type="build")
     depends_on("perl@5.10:", type=("build", "run"))
     depends_on("gl@4.5:")
-    depends_on("glx")
+    requires("^[virtuals=gl] glx")
 
     test_requires_compiler = True
 
