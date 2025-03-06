@@ -338,6 +338,8 @@ class AnyBuilder(BaseBuilder):
 
 class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
     def cmake_args(self):
+        # In 4.9.3, all CMake options were prefixed.
+        # Ref. https://github.com/Unidata/netcdf-c/pull/2895
         nc = "NETCDF_" if self.spec.satisfies("@4.9.3:") else ""
         base_cmake_args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
