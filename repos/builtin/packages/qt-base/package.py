@@ -123,6 +123,11 @@ class QtPackage(CMakePackage):
         # so we have to point dependencies to the cmake config files.
         env.prepend_path("QT_ADDITIONAL_PACKAGES_PREFIX_PATH", self.spec.prefix)
 
+        # Qt creates SBOM files based on the used SBOM files in the prefix, and
+        # in additional paths for other components.
+        if self.spec.satisfies("@6.9:"):
+            env.prepend_path("QT_ADDITIONAL_SBOM_DOCUMENT_PATHS", self.spec.prefix)
+
 
 class QtBase(QtPackage):
     """Qt Base (Core, Gui, Widgets, Network, ...)"""
