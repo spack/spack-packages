@@ -338,29 +338,33 @@ class AnyBuilder(BaseBuilder):
 
 class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
     def cmake_args(self):
+        nc = "NETCDF_" if self.spec.satisfies("@4.9.3:") else ""
         base_cmake_args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-            self.define_from_variant("ENABLE_BYTERANGE", "byterange"),
-            self.define("BUILD_UTILITIES", True),
-            self.define("ENABLE_NETCDF_4", True),
-            self.define_from_variant("ENABLE_DAP", "dap"),
-            self.define_from_variant("ENABLE_HDF4", "hdf4"),
-            self.define("ENABLE_PARALLEL_TESTS", False),
-            self.define_from_variant("ENABLE_FSYNC", "fsync"),
-            self.define("ENABLE_LARGE_FILE_SUPPORT", True),
+            self.define_from_variant(nc + "ENABLE_BYTERANGE", "byterange"),
+            self.define(nc + "BUILD_UTILITIES", True),
+            self.define(nc + "ENABLE_NETCDF_4", True),
+            self.define_from_variant(nc + "ENABLE_DAP", "dap"),
+            self.define_from_variant(nc + "ENABLE_HDF4", "hdf4"),
+            self.define(nc + "ENABLE_PARALLEL_TESTS", False),
+            self.define_from_variant(nc + "ENABLE_FSYNC", "fsync"),
+            self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
         ]
         if "+parallel-netcdf" in self.pkg.spec:
-            base_cmake_args.append(self.define("ENABLE_PNETCDF", True))
+            base_cmake_args.append(self.define(nc + "ENABLE_PNETCDF", True))
         if self.pkg.spec.satisfies("@4.3.1:"):
-            base_cmake_args.append(self.define("ENABLE_DYNAMIC_LOADING", True))
+            base_cmake_args.append(self.define(nc + "ENABLE_DYNAMIC_LOADING", True))
         if "platform=windows" in self.pkg.spec:
             # Enforce the usage of the vendored version of bzip2 on Windows:
             base_cmake_args.append(self.define("Bz2_INCLUDE_DIRS", ""))
+
+        # FIND_SHARED_LIBS has different prefix
+        nc = "NETCDF_" if self.spec.satisfies("@4.9.3:") else "NC_"
         if "+shared" in self.pkg.spec["hdf5"]:
-            base_cmake_args.append(self.define("NC_FIND_SHARED_LIBS", True))
+            base_cmake_args.append(self.define(nc + "FIND_SHARED_LIBS", True))
         else:
-            base_cmake_args.append(self.define("NC_FIND_SHARED_LIBS", False))
+            base_cmake_args.append(self.define(nc + "FIND_SHARED_LIBS", False))
         return base_cmake_args
 
     @run_after("install")
