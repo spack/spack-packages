@@ -28,7 +28,7 @@ class Hemepure(CMakePackage):
     version('master', branch='master')
 
     depends_on('cmake@3.18:')  # Or later
-    depends_on('openmpi@4.1.7:')
+    depends_on('openmpi@4:')
     depends_on('boost@1.86:+mpi')
     depends_on('tinyxml')
     depends_on('libtirpc')
