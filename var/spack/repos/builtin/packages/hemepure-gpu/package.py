@@ -6,7 +6,7 @@
 from spack.package import *
 
 
-class Hemepure(CMakePackage):
+class Hemepuregpu(CMakePackage):
     """HemeLB is a high performance lattice-Boltzmann solver optimized for
     simulating blood flow through sparse geometries, such as those found in the
     human vasculature. It is routinely deployed on powerful supercomputers,
@@ -18,22 +18,23 @@ class Hemepure(CMakePackage):
     HemePure is a optimized verion of HemeLB with improved memory, compilation
     and scaling"""
 
-    homepage = "https://github.com/UCL-CCS/HemePure"
-    url      = "https://github.com/UCL-CCS/HemePure"
-    git      = "https://github.com/UCL-CCS/HemePure.git"
+    homepage = "https://github.com/izacharo/HemePure_GPU_BSD"
+    url      = "https://github.com/izacharo/HemePure_GPU_BSD"
+    git      = "https://github.com/izacharo/HemePure_GPU_BSD.git"
 
     maintainers("nicolin", "connoraird")
     license("BSD-3-Clause", checked_by="connoraird")
-    
-    version('master', branch='master')
+
+    version('main', branch='main')
 
     depends_on('cmake@3.18:')
-    depends_on('mpi')
-    depends_on('boost@1.86+mpi')
+    depends_on('openmpi@4.1:')
+    depends_on('boost@1.86:+mpi')
     depends_on('tinyxml')
     depends_on('libtirpc')
     depends_on('parmetis')
     depends_on('ctemplate')
+    depends_on('cuda@12.0:')
 
     # Post Processing 
     variant('gmyplus', default=False, description='Use GMY+ format')
@@ -44,9 +45,10 @@ class Hemepure(CMakePackage):
     variant('mpi_call', default=False, description='Use standard MPI functions when reading blocks')
     variant('mpi_win',  default=False, description='Use MPI Domain Split to help load large domains')
     variant('big_mpi',  default=False, description='Use Domain Split to help load large domains')
+    variant('cuda_arch', default='89', description='CUDA architecture')
 
     # Solver BC Vel or Pressure
-    variant('pressure_bc', default=False, description='Use Velocity Boundary Conditions')
+    variant('pressure_bc', default=False, description='Use Pressure Boundary Conditions')
     variant('wall_boundary', default='SIMPLEBOUNCEBACK', description='Boundary conditions at walls', values=('SIMPLEBOUNCEBACK'))
     variant('inlet_boundary', default='LADDIOLET', description='Boundary conditions at inlets', values=('NASHZEROTHORDERPRESSUREIOLET', 'LADDIOLET'))
     variant('wall_inlet_boundary', default='LADDIOLETSBB', description='Boundary conditions at wall-inlet corners', values=('NASHZEROTHORDERPRESSURESBB','LADDIOLETSBB'))
@@ -72,6 +74,10 @@ class Hemepure(CMakePackage):
         args.append("-DCMAKE_BUILD_TYPE=Release")
         args.append("-DHEMELB_COMPUTE_ARCHITECTURE=NEUTRAL")
 
+        args.append("-DHEMELB_GPU_BACKEND=CUDA")
+        args.append("-DHEMELB_CUDA_AWARE_MPI=ON")
+        args.append("-DCMAKE_CUDA_ARCHITECTURES=%s" % self.spec.variants['cuda_arch'].value)
+
         args.append("-DHEMELB_USE_MPI_PARALLEL_IO=ON")
         args.append("-DHEMELB_USE_VELOCITY_WEIGHTS_FILE=ON")
 
@@ -91,6 +97,8 @@ class Hemepure(CMakePackage):
         return args
 
     def build(self, pkg, prefix):
-        mkdirp('buildHemeCPU')
+        mkdirp('buildHemeGPU')
         cmake('src', *self.cmake_args())
         make()
+
+
