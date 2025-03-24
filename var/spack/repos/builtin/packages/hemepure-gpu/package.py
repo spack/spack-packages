@@ -6,7 +6,7 @@
 from spack.package import *
 
 
-class Hemepuregpu(CMakePackage):
+class HemepureGpu(CMakePackage):
     """HemeLB is a high performance lattice-Boltzmann solver optimized for
     simulating blood flow through sparse geometries, such as those found in the
     human vasculature. It is routinely deployed on powerful supercomputers,
