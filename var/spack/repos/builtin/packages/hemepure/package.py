@@ -34,6 +34,7 @@ class Hemepure(CMakePackage):
     depends_on('libtirpc')
     depends_on('parmetis')
     depends_on('ctemplate')
+    depends_on('zlib')
 
     # Post Processing 
     variant('gmyplus', default=False, description='Use GMY+ format')
