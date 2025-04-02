@@ -22,8 +22,9 @@ class Hemepure(CMakePackage):
     url = "https://github.com/UCL-CCS/HemePure"
     git = "https://github.com/UCL-CCS/HemePure.git"
 
-    maintainers("nicolin", "connoraird")
     license("BSD-3-Clause", checked_by="connoraird")
+    
+    maintainers("nicolin", "connoraird")
 
     version("master", branch="master")
 
