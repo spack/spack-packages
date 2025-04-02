@@ -19,56 +19,90 @@ class Hemepure(CMakePackage):
     and scaling"""
 
     homepage = "https://github.com/UCL-CCS/HemePure"
-    url      = "https://github.com/UCL-CCS/HemePure"
-    git      = "https://github.com/UCL-CCS/HemePure.git"
+    url = "https://github.com/UCL-CCS/HemePure"
+    git = "https://github.com/UCL-CCS/HemePure.git"
 
     maintainers("nicolin", "connoraird")
     license("BSD-3-Clause", checked_by="connoraird")
-    
-    version('master', branch='master')
 
-    depends_on('cmake@3.18:')
-    depends_on('mpi')
-    depends_on('boost@1.86+mpi')
-    depends_on('tinyxml')
-    depends_on('libtirpc')
-    depends_on('parmetis')
-    depends_on('ctemplate')
-    depends_on('zlib')
+    version("master", branch="master")
 
-    # Post Processing 
-    variant('gmyplus', default=False, description='Use GMY+ format')
-    variant('parmetis', default=False, description='Use ParMETIS')
+    depends_on("cmake@3.18:")
+    depends_on("mpi")
+    depends_on("boost@1.86+mpi")
+    depends_on("tinyxml")
+    depends_on("libtirpc")
+    depends_on("parmetis")
+    depends_on("ctemplate")
+    depends_on("zlib")
 
-    # Solver Compute  
-    variant('simd', default='auto', description='Use SIMD instrinsics', values=('sse3', 'avx2', 'avx512', 'auto', 'off'))
-    variant('mpi_call', default=False, description='Use standard MPI functions when reading blocks')
-    variant('mpi_win',  default=False, description='Use MPI Domain Split to help load large domains')
-    variant('big_mpi',  default=False, description='Use Domain Split to help load large domains')
+    # Post Processing
+    variant("gmyplus", default=False, description="Use GMY+ format")
+    variant("parmetis", default=False, description="Use ParMETIS")
+
+    # Solver Compute
+    variant(
+        "simd",
+        default="auto",
+        description="Use SIMD instrinsics",
+        values=("sse3", "avx2", "avx512", "auto", "off"),
+    )
+    variant(
+        "mpi_call", default=False, description="Use standard MPI functions when reading blocks"
+    )
+    variant(
+        "mpi_win", default=False, description="Use MPI Domain Split to help load large domains"
+    )
+    variant("big_mpi", default=False, description="Use Domain Split to help load large domains")
 
     # Solver BC Vel or Pressure
-    variant('pressure_bc', default=False, description='Use Velocity Boundary Conditions')
-    variant('wall_boundary', default='SIMPLEBOUNCEBACK', description='Boundary conditions at walls', values=('SIMPLEBOUNCEBACK'))
-    variant('inlet_boundary', default='LADDIOLET', description='Boundary conditions at inlets', values=('NASHZEROTHORDERPRESSUREIOLET', 'LADDIOLET'))
-    variant('wall_inlet_boundary', default='LADDIOLETSBB', description='Boundary conditions at wall-inlet corners', values=('NASHZEROTHORDERPRESSURESBB','LADDIOLETSBB'))
-    variant('outlet_boundary', default='NASHZEROTHORDERPRESSUREIOLET', description='Boundary conditions at outlets', values=('NASHZEROTHORDERPRESSUREIOLET', 'LADDIOLET'))
-    variant('wall_outlet_boundary', default='NASHZEROTHORDERPRESSURESBB', description='Boundary conditions at wall-outlet corners', values=('NASHZEROTHORDERPRESSURESBB'))
+    variant("pressure_bc", default=False, description="Use Velocity Boundary Conditions")
+    variant(
+        "wall_boundary",
+        default="SIMPLEBOUNCEBACK",
+        description="Boundary conditions at walls",
+        values=("SIMPLEBOUNCEBACK"),
+    )
+    variant(
+        "inlet_boundary",
+        default="LADDIOLET",
+        description="Boundary conditions at inlets",
+        values=("NASHZEROTHORDERPRESSUREIOLET", "LADDIOLET"),
+    )
+    variant(
+        "wall_inlet_boundary",
+        default="LADDIOLETSBB",
+        description="Boundary conditions at wall-inlet corners",
+        values=("NASHZEROTHORDERPRESSURESBB", "LADDIOLETSBB"),
+    )
+    variant(
+        "outlet_boundary",
+        default="NASHZEROTHORDERPRESSUREIOLET",
+        description="Boundary conditions at outlets",
+        values=("NASHZEROTHORDERPRESSUREIOLET", "LADDIOLET"),
+    )
+    variant(
+        "wall_outlet_boundary",
+        default="NASHZEROTHORDERPRESSURESBB",
+        description="Boundary conditions at wall-outlet corners",
+        values=("NASHZEROTHORDERPRESSURESBB"),
+    )
 
     # Lagranian Tracking
-    variant('tracer', default=True, description='Use particles as tracers')
-    variant('velocity_weight', default=False, description='Use velocity weights file')
+    variant("tracer", default=True, description="Use particles as tracers")
+    variant("velocity_weight", default=False, description="Use velocity weights file")
 
+    root_cmakelists_dir = "src"
 
-    root_cmakelists_dir = 'src'
     def setup_build_environment(self, env):
-        env.prepend_path('CPATH', self.spec['libtirpc'].prefix.include.tirpc)
-        env.append_flags('LDFLAGS', '-ltirpc')
+        env.prepend_path("CPATH", self.spec["libtirpc"].prefix.include.tirpc)
+        env.append_flags("LDFLAGS", "-ltirpc")
 
     def cmake_args(self):
         args = []
 
-        args.append("-DCMAKE_C_COMPILER=%s" % self.spec['mpi'].mpicc)
-        args.append("-DCMAKE_CXX_COMPILER=%s" % self.spec['mpi'].mpicxx)
+        args.append("-DCMAKE_C_COMPILER=%s" % self.spec["mpi"].mpicc)
+        args.append("-DCMAKE_CXX_COMPILER=%s" % self.spec["mpi"].mpicxx)
         args.append("-DCMAKE_CXX_EXTENSIONS=OFF")
         args.append("-DCMAKE_BUILD_TYPE=Release")
         args.append("-DHEMELB_COMPUTE_ARCHITECTURE=NEUTRAL")
@@ -76,13 +110,12 @@ class Hemepure(CMakePackage):
         args.append("-DHEMELB_USE_MPI_PARALLEL_IO=ON")
         args.append("-DHEMELB_USE_VELOCITY_WEIGHTS_FILE=ON")
 
-        if '+pressure_bc' in self.spec:
+        if "+pressure_bc" in self.spec:
             args.append("-DHEMELB_INLET_BOUNDARY=NASHZEROTHORDERPRESSUREIOLET")
             args.append("-DHEMELB_WALL_INLET_BOUNDARY=NASHZEROTHORDERPRESSURESBB")
         else:
-             args.append("-DHEMELB_INLET_BOUNDARY=LADDIOLET")
-             args.append("-DHEMELB_WALL_INLET_BOUNDARY=LADDIOLETSBB")
-
+            args.append("-DHEMELB_INLET_BOUNDARY=LADDIOLET")
+            args.append("-DHEMELB_WALL_INLET_BOUNDARY=LADDIOLETSBB")
 
         args.append("-DHEMELB_OUTLET_BOUNDARY=NASHZEROTHORDERPRESSUREIOLET")
         args.append("-DHEMELB_WALL_OUTLET_BOUNDARY=NASHZEROTHORDERPRESSURESBB")
@@ -92,6 +125,6 @@ class Hemepure(CMakePackage):
         return args
 
     def build(self, pkg, prefix):
-        mkdirp('buildHemeCPU')
-        cmake('src', *self.cmake_args())
+        mkdirp("buildHemeCPU")
+        cmake("src", *self.cmake_args())
         make()
