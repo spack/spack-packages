@@ -11,6 +11,7 @@ from llnl.util.link_tree import LinkTree
 
 import spack.util.path
 from spack.build_environment import dso_suffix
+from spack.compilers.libraries import CompilerPropertyDetector
 from spack.package import (
     EnvironmentModifications,
     Executable,
@@ -219,8 +220,8 @@ class IntelOneApiLibraryPackage(IntelOneApiPackage):
             )
 
         # query the compiler for the library path
-        with self.compiler.compiler_environment():
-            omp_lib_path = Executable(self.compiler.cc)(
+        with CompilerPropertyDetector(self["c"].spec).compiler_environment():
+            omp_lib_path = Executable(self["c"].cc)(
                 "--print-file-name", f"{libname}.{dso_suffix}", output=str
             ).strip()
 
