@@ -24,7 +24,6 @@ class Ctemplate(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("python@3", type="build")
 
     def autoreconf(self, spec, prefix):
         autoreconf("--install", "--verbose", "--force")
