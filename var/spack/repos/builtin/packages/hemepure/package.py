@@ -23,7 +23,7 @@ class Hemepure(CMakePackage):
     git = "https://github.com/UCL-CCS/HemePure.git"
 
     license("BSD-3-Clause", checked_by="connoraird")
-    
+
     maintainers("nicolin", "connoraird")
 
     version("master", branch="master")

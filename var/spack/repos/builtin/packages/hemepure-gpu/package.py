@@ -23,7 +23,7 @@ class HemepureGpu(CMakePackage):
     git = "https://github.com/izacharo/HemePure_GPU_BSD.git"
 
     license("BSD-3-Clause", checked_by="connoraird")
-    
+
     maintainers("nicolin", "connoraird")
 
     version("main", branch="main")
