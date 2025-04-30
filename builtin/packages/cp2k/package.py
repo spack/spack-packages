@@ -115,7 +115,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant("pytorch", default=False, description="Enable libtorch support")
     variant("quip", default=False, description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
-    variant("mpi_f08", default=False, description="Use MPI F08 module")
+    variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
     variant("smeagol", default=False, description="Enable libsmeagol support", when="@2025.2:")
     variant(
         "pw_gpu", default=True, description="Enable FFT calculations on GPU", when="@2025.2: +cuda"
@@ -159,6 +159,13 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         description="Enable TrexIO support",
         when="@2025.2: build_system=cmake",
     )
+    variant(
+        "greenx",
+        default=False,
+        description="Enable green X support",
+        when="@2025.2: build_system=cmake",
+    )
+
     variant("deepmd", default=False, description="Enable DeepMD-kit support")
     conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
@@ -208,7 +215,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("blas")
     depends_on("lapack")
     depends_on("fftw-api@3")
-
+    depends_on("greenx", when="+greenx")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
 
@@ -637,7 +644,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 )
             else:
                 libs.append(elpa.libs.ld_flags)
-
             if spec.satisfies("@:4"):
                 if elpa.satisfies("@:2014.5"):
                     cppflags.append("-D__ELPA")
@@ -1050,6 +1056,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 ]
 
         args += [
+            "-DCP2K_USE_FFTW3=ON",
+            self.define_from_variant("CP2K_USE_MPI", "mpi"),
             self.define_from_variant("CP2K_ENABLE_REGTESTS", "enable_regtests"),
             self.define_from_variant("CP2K_USE_ELPA", "elpa"),
             self.define_from_variant("CP2K_USE_DLAF", "dlaf"),
@@ -1076,7 +1084,11 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_HDF5", "hdf5"),
             self.define_from_variant("CP2K_USE_DEEPMD", "deepmd"),
             self.define_from_variant("CP2K_USE_TREXIO", "trexio"),
+            self.define_from_variant("CP2K_USE_GREENX", "greenx"),
         ]
+
+        if spec.satisfies("^[virtuals=fftw-api] fftw+openmp"):
+            args += ["-DCP2K_USE_FFTW3_WITH_OPENMP=ON"]
 
         # we force the use elpa openmp threading support. might need to be revisited though
         args += [
@@ -1089,8 +1101,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if "spla" in spec and (spec.satisfies("+cuda") or spec.satisfies("+rocm")):
             args += ["-DCP2K_USE_SPLA_GEMM_OFFLOADING=ON"]
 
-        args += ["-DCP2K_USE_FFTW3=ON"]
-
         if spec.satisfies("smm=libxsmm"):
             args += ["-DCP2K_USE_LIBXSMM=ON"]
         else:
@@ -1100,6 +1110,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
         blas = spec["blas"]
 
         if blas.name == "intel-oneapi-mkl":
+            if spec.satisfies("^[virtuals=fftw-api] intel-oneapi-mkl"):
+                args += ["-DCP2K_USE_FFTW3_WITH_MKL=ON"]
+
             args += ["-DCP2K_BLAS_VENDOR=MKL"]
             if sys.platform == "darwin":
                 args += [
