@@ -416,7 +416,6 @@ class ArmplGcc(Package):
     provides("fftw-api@3")
 
     depends_on("c", type="build")
-    depends_on("c", when="threads=openmp")
     depends_on("fortran", type="build")
     requires("^[virtuals=c,fortran] gcc", msg="armpl-gcc is only compatible with the GCC compiler")
 
@@ -476,6 +475,9 @@ class ArmplGcc(Package):
         )
 
         armpl_libs += find_system_libraries(["libm"])
+
+        if self.spec.satisfies("+threads"):
+            armpl_libs += find_system_libraries(["libgomp"])
 
         return armpl_libs
 
