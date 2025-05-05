@@ -23,6 +23,7 @@ class Enzyme(CMakePackage):
     root_cmakelists_dir = "enzyme"
 
     version("main", branch="main")
+    version("0.0.173", sha256="b8477fb5bead9e9ece76d450ebd0afee99914235c6e1a6ef8c05bf288e3c0478")
     version("0.0.172", sha256="688200164787d543641cb446cff20f6a8e8b5c92bb7032ebe7f867efa67ceafb")
     version("0.0.135", sha256="49c798534faec7ba524a3ed053dd4352d690a44d3cad5a14915c9398dc9b175b")
     version("0.0.100", sha256="fbc53ec02adc0303ff200d7699afface2d9fbc7350664e6c6d4c527ef11c2e82")
@@ -64,11 +65,16 @@ class Enzyme(CMakePackage):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        # Get the LLVMEnzyme and ClangEnzyme lib paths
-        llvm, clang = self.libs
+        # Get the LLVMEnzyme, ClangEnzyme and LLDEnzyme lib paths and set
+        # environment variables
+        ver = self.spec["llvm"].version.up_to(1)
 
-        if "LLVMEnzyme-" in clang:
-            llvm, clang = clang, llvm
-
+        llvm = find_libraries("LLVMEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
         env.set("LLVMENZYME", llvm)
+
+        clang = find_libraries("ClangEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
         env.set("CLANGENZYME", clang)
+
+        if self.version >= Version("0.0.32"):  # TODO actual lower bound
+            lld = find_libraries("LLDEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
+            env.set("LLDMENZYME", lld)
