@@ -97,7 +97,6 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")
 
     depends_on("python", type=("build", "test", "run"))
-    depends_on("pkgconfig", type="build")
     depends_on("git", type="build")
     depends_on("cmake", type="build")
 
@@ -256,6 +255,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
             self.define("HPX_WITH_BOOST_ALL_DYNAMIC_LINK", True),
             self.define("BUILD_SHARED_LIBS", True),
             self.define("HPX_DATASTRUCTURES_WITH_ADAPT_STD_TUPLE", False),
+            self.define("HPX_WITH_PKGCONFIG", False),
         ]
 
         # Enable unity builds when available
