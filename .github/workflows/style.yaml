@@ -1,0 +1,39 @@
+name: style check
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+env:
+  FORCE_COLOR: "1"
+
+jobs:
+  style:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout spack/spack-packages
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        path: packages
+    - name: Checkout spack/spack
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        repository: spack/spack
+        path: spack
+    - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+      with:
+        python-version: "3.13"
+        cache: pip
+        cache-dependency-path: packages/.github/workflows/requirements/style/requirements.txt
+    - name: Install Python Packages
+      run: pip install -r packages/.github/workflows/requirements/style/requirements.txt
+    - name: vermin
+      run: cd packages && vermin --backport importlib --backport argparse --violations --backport typing -t=3.6- -vvv python/
+    - name: black
+      run: cd packages && black .
+    - name: mypy
+      run: cd packages && MYPYPATH=../spack/lib/spack/:../spack/lib/spack/external mypy
+    - name: pylint
+      run: cd packages && pylint -j $(nproc) --disable=all --enable=unspecified-encoding python/
