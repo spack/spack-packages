@@ -1,0 +1,84 @@
+[project]
+name = "spack_repo"
+description = "The default package repository of the spack package manager"
+requires-python = ">=3.6"
+dependencies = []
+dynamic = ["version"]
+
+[project.optional-dependencies]
+dev = [
+  "black",
+  "mypy",
+  "isort",
+  "vermin",
+]
+
+[tool.ruff]
+line-length = 99
+
+[tool.ruff.format]
+skip-magic-trailing-comma = true
+
+[tool.ruff.lint]
+extend-select = ["I"]
+ignore = ["E731", "E203", "F403", "F405", "F811", "F821"]
+
+[tool.ruff.lint.isort]
+split-on-trailing-comma = false
+section-order = [
+  "future",
+  "standard-library",
+  "third-party",
+  "archspec",
+  "llnl",
+  "spack",
+  "first-party",
+  "local-folder",
+]
+
+[tool.ruff.lint.isort.sections]
+spack = ["spack"]
+archspec = ["archspec"]
+llnl = ["llnl"]
+
+[tool.black]
+line-length = 99
+skip_magic_trailing_comma = true
+
+[tool.isort]
+line_length = 99
+profile = "black"
+sections = [
+  "FUTURE",
+  "STDLIB",
+  "THIRDPARTY",
+  "ARCHSPEC",
+  "LLNL",
+  "FIRSTPARTY",
+  "LOCALFOLDER",
+]
+known_first_party = "spack"
+known_archspec = "archspec"
+known_llnl = "llnl"
+known_third_party = ["ruamel", "six"]
+src_paths = "lib"
+honor_noqa = true
+
+[tool.mypy]
+packages = ["spack_repo"]
+mypy_path = "$MYPY_CONFIG_FILE_DIR"
+explicit_package_bases = true
+namespace_packages = true
+disable_error_code = "no-redef"
+
+[[tool.mypy.overrides]]
+module = "spack.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "llnl.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "archspec.*"
+ignore_errors = true
