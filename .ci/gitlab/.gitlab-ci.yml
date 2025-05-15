@@ -172,7 +172,7 @@ default:
   interruptible: true
   timeout: 60 minutes
   retry:
-    max: 2
+    max: 1
     when:
       - always
 
