@@ -5,8 +5,15 @@ ci:
       - Write-Output "Done"
 
       before_script::
+      - - mkdir spack
+        - cd spack
+        - git init
+        - git remote add origin git@github.com/spack/spack.git
+        - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
+        - git checkout FETCH_HEAD
+        - cd ..
       - fsutil 8dot3name set C:\ 0
-      - . .\share\spack\setup-env.ps1
+      - . .\spack\share\spack\setup-env.ps1
       - If (Test-Path -path C:\\key\intermediate_ci_signing_key.gpg) { spack.ps1 gpg trust C:\\key\intermediate_ci_signing_key.gpg }
       - If (Test-Path -path C:\\key\spack_public_key.gpg) { spack.ps1 gpg trust C:\\key\spack_public_key.gpg }
 

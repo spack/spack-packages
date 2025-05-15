@@ -1,6 +1,7 @@
 stages: [ "generate", "build" ]
 
 variables:
+  SPACK_CHECKOUT_VERSION: "fcbe8c50cd5fa376192c37902edbd95170739366" # develop-2025-05-11
   SPACK_DISABLE_LOCAL_CONFIG: "1"
   SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
   # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
@@ -64,14 +65,23 @@ default:
     SPACK_TARGET_PLATFORM: "win64"
     SPACK_TARGET_ARCH: "x86_64"
 
+.clone_spack:
+  - mkdir spack
+  - cd spack
+  - git init
+  - git remote add origin git@github.com/spack/spack.git
+  - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
+  - git checkout FETCH_HEAD
+  - cd ..
+
 ########################################
 # Job templates
 ########################################
 .base-job:
   variables:
     PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
-    SPACK_CI_CONFIG_ROOT: "${CI_PROJECT_DIR}/share/spack/gitlab/cloud_pipelines/configs"
-    SPACK_CI_SCRIPTS_ROOT: "${CI_PROJECT_DIR}/share/spack/gitlab/cloud_pipelines/scripts"
+    SPACK_CI_CONFIG_ROOT: "${CI_PROJECT_DIR}/.ci/gitlab/cloud_pipelines/configs"
+    SPACK_CI_SCRIPTS_ROOT: "${CI_PROJECT_DIR}/.ci/gitlab/cloud_pipelines/scripts"
 
   rules:
     - if: $SPACK_CI_DISABLE_STACKS =~ /.+/ && $SPACK_CI_STACK_NAME =~ $SPACK_CI_DISABLE_STACKS
@@ -94,6 +104,11 @@ default:
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         PIPELINE_MIRROR_TEMPLATE: "copy-only-protected-mirrors.yaml.in"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
+    - if: $CI_COMMIT_REF_NAME =~ /^enable_ci$/
+        SPACK_PIPELINE_TYPE: "spack_pull_request"
+        SPACK_PRUNE_UNTOUCHED: "False"
+        PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
+        OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
       when: always
@@ -113,7 +128,7 @@ default:
   stage: generate
   script:
     - spack --version
-    - spack env activate --without-view share/spack/gitlab/cloud_pipelines/stacks/${SPACK_CI_STACK_NAME}
+    - spack env activate --without-view .ci/gitlab/cloud_pipelines/stacks/${SPACK_CI_STACK_NAME}
     - spack
       --config-scope "${SPACK_CI_CONFIG_ROOT}"
       --config-scope "${SPACK_CI_CONFIG_ROOT}/${SPACK_TARGET_PLATFORM}"
@@ -172,8 +187,10 @@ default:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - . "./share/spack/setup-env.sh"
+    - *.clone_spack
+    - . "./spack/share/spack/setup-env.sh"
     - spack arch
+    - spack repo add ./spack_repo/builtin
   after_script:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
@@ -202,7 +219,10 @@ default:
     - python -c"import psutil;print(psutil.getloadavg())"
     - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
     - $ErrorActionPreference=$ErrorActionOld
-    - . .\share\spack\setup-env.ps1
+    - *.clone_spack
+    - . .\spack\share\spack\setup-env.ps1
+    - spack arch
+    - spack repo add .\spack_repo\builtin
   after_script:
     - $ErrorActionOld=$ErrorActionPreference
     - $ErrorActionPreference="SilentlyContinue"
@@ -222,7 +242,7 @@ default:
 ########################################
 #
 # First add a new spack.yml defining the pipeline to run in
-# share/spack/gitlab/cloud_pipelines/stacks/my-super-cool-stack/spack.yaml
+# .ci/gitlab/cloud_pipelines/stacks/my-super-cool-stack/spack.yaml
 #
 # Then add the following entries at the bottom of this file.
 #
@@ -738,9 +758,8 @@ hep-build:
 aws-pcluster-generate-x86_64_v4:
   extends: [ ".linux_x86_64_v4", ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
   before_script:
-    - - . "./share/spack/setup-env.sh"
-      # TODO: Move this to the container next time it is rebuilt
-      - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
+    # TODO: Move this to the container next time it is rebuilt
+    - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
 aws-pcluster-build-x86_64_v4:
@@ -763,9 +782,8 @@ aws-pcluster-generate-neoverse_v1:
   # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
   extends: [ ".linux_neoverse_v1", ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
   before_script:
-    - - . "./share/spack/setup-env.sh"
-      # TODO: Move this to the container next time it is rebuilt
-      - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
+    # TODO: Move this to the container next time it is rebuilt
+    - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
 aws-pcluster-build-neoverse_v1:
@@ -795,7 +813,10 @@ aws-pcluster-build-neoverse_v1:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
+    - *.clone_spack
     - . "./share/spack/setup-env.sh"
+    - spack repo add ./spack_repo/builtin
+    - spack arch
   after_script:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
