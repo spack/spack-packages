@@ -68,11 +68,11 @@ default:
     SPACK_TARGET_PLATFORM: "win64"
     SPACK_TARGET_ARCH: "x86_64"
 
-.clone_spack:
+.clone_spack: &clone_spack
   - mkdir spack
   - cd spack
   - git init
-  - git remote add origin git@github.com/spack/spack.git
+  - git remote add origin https://github.com/spack/spack.git
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
   - cd ..
@@ -107,11 +107,6 @@ default:
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         PIPELINE_MIRROR_TEMPLATE: "copy-only-protected-mirrors.yaml.in"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
-    - if: $CI_COMMIT_REF_NAME =~ /^enable_ci$/
-        SPACK_PIPELINE_TYPE: "spack_pull_request"
-        SPACK_PRUNE_UNTOUCHED: "False"
-        PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
-        OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
       when: always
@@ -190,7 +185,7 @@ default:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *.clone_spack
+    - *clone_spack
     - . "./spack/share/spack/setup-env.sh"
     - spack arch
     - spack repo add ./spack_repo/builtin
@@ -222,7 +217,7 @@ default:
     - python -c"import psutil;print(psutil.getloadavg())"
     - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
     - $ErrorActionPreference=$ErrorActionOld
-    - *.clone_spack
+    - *clone_spack
     - . .\spack\share\spack\setup-env.ps1
     - spack arch
     - spack repo add .\spack_repo\builtin
@@ -816,7 +811,7 @@ aws-pcluster-build-neoverse_v1:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *.clone_spack
+    - *clone_spack
     - . "./share/spack/setup-env.sh"
     - spack repo add ./spack_repo/builtin
     - spack arch
