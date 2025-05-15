@@ -35,6 +35,7 @@ class Armadillo(CMakePackage):
     version("7.950.1", sha256="a32da32a0ea420b8397a53e4b40ed279c1a5fc791dd492a2ced81ffb14ad0d1b")
 
     variant("hdf5", default=False, description="Include HDF5 support", when="@:10")
+    variant("kick", default=False, description="kick the build")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
