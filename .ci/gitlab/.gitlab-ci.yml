@@ -1,7 +1,7 @@
 stages: [ "generate", "build" ]
 
 variables:
-  SPACK_CHECKOUT_VERSION: "fcbe8c50cd5fa376192c37902edbd95170739366" # develop-2025-05-11
+  SPACK_CHECKOUT_VERSION: "7f8c5bd4ca8e0f13415ef127689a61e05596003a" # commit on develop
   SPACK_DISABLE_LOCAL_CONFIG: "1"
   SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
   # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
@@ -83,8 +83,8 @@ default:
 .base-job:
   variables:
     PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
-    SPACK_CI_CONFIG_ROOT: "${CI_PROJECT_DIR}/.ci/gitlab/cloud_pipelines/configs"
-    SPACK_CI_SCRIPTS_ROOT: "${CI_PROJECT_DIR}/.ci/gitlab/cloud_pipelines/scripts"
+    SPACK_CI_CONFIG_ROOT: "${CI_PROJECT_DIR}/.ci/gitlab/configs"
+    SPACK_CI_SCRIPTS_ROOT: "${CI_PROJECT_DIR}/.ci/gitlab/scripts"
 
   rules:
     - if: $SPACK_CI_DISABLE_STACKS =~ /.+/ && $SPACK_CI_STACK_NAME =~ $SPACK_CI_DISABLE_STACKS
@@ -126,7 +126,7 @@ default:
   stage: generate
   script:
     - spack --version
-    - spack env activate --without-view .ci/gitlab/cloud_pipelines/stacks/${SPACK_CI_STACK_NAME}
+    - spack env activate --without-view .ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
     - spack
       --config-scope "${SPACK_CI_CONFIG_ROOT}"
       --config-scope "${SPACK_CI_CONFIG_ROOT}/${SPACK_TARGET_PLATFORM}"
@@ -240,7 +240,7 @@ default:
 ########################################
 #
 # First add a new spack.yml defining the pipeline to run in
-# .ci/gitlab/cloud_pipelines/stacks/my-super-cool-stack/spack.yaml
+# .ci/gitlab/stacks/my-super-cool-stack/spack.yaml
 #
 # Then add the following entries at the bottom of this file.
 #
