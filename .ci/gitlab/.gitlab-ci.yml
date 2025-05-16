@@ -188,7 +188,6 @@ default:
     - *clone_spack
     - . "./spack/share/spack/setup-env.sh"
     - spack arch
-    - spack repo add ./spack_repo/builtin
   after_script:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
@@ -220,7 +219,6 @@ default:
     - *clone_spack
     - . .\spack\share\spack\setup-env.ps1
     - spack arch
-    - spack repo add .\spack_repo\builtin
   after_script:
     - $ErrorActionOld=$ErrorActionPreference
     - $ErrorActionPreference="SilentlyContinue"
@@ -813,7 +811,6 @@ aws-pcluster-build-neoverse_v1:
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
     - . "./share/spack/setup-env.sh"
-    - spack repo add ./spack_repo/builtin
     - spack arch
   after_script:
     - cat /proc/loadavg || true
