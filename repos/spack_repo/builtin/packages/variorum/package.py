@@ -47,7 +47,7 @@ class Variorum(CMakePackage):
     )
     variant(
         "cpu",
-        default="Intel",
+        default="intel",
         description="Supported CPU architecture",
         values=("intel", "amd", "ibm", "arm"),
         multi=False,
