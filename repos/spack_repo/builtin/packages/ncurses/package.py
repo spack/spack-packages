@@ -26,6 +26,8 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
 
     license("X11")
 
+    maintainers("cosmicexplorer")
+
     version("6.5", sha256="136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6")
     version("6.4", sha256="6931283d9ac87c5073f30b6290c4c75f21632bb4fc3603ac8100812bed248159")
     version("6.3", sha256="97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059")
@@ -49,11 +51,13 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
         values=("none", "5", "6"),
         multi=False,
     )
+    variant("cxx", default=True, description="Build C++ bindings.")
+    variant("shared", default=True, description="Build shared libraries.")
 
     conflicts("abi=6", when="@:5.9", msg="6 is not compatible with this release")
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", when="+cxx", type="build")  # generated
 
     depends_on("pkgconfig", type="build")
 
@@ -111,7 +115,8 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
         if name == "cflags":
             flags.append(self["c"].pic_flag)
         elif name == "cxxflags":
-            flags.append(self["cxx"].pic_flag)
+            if "+cxx" in self.spec:
+                flags.append(self["cxx"].pic_flag)
 
         # ncurses@:6.0 fails in definition of macro 'mouse_trafo' without -P
         if self.spec.satisfies("@:6.0 %gcc@5.0:"):
@@ -121,20 +126,33 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
         # ncurses@:6.0 uses dynamic exception specifications not allowed in c++17
         if self.spec.satisfies("@:5"):
             if name == "cxxflags":
-                flags.append(self["cxx"].standard_flag(language="cxx", standard="14"))
+                if "+cxx" in self.spec:
+                    flags.append(self["cxx"].standard_flag(language="cxx", standard="14"))
 
         return (flags, None, None)
 
     def configure(self, spec, prefix):
         opts = [
             "--disable-stripping",
-            "--with-shared",
-            "--with-cxx-shared",
             "--enable-overwrite",
             "--without-ada",
             "--enable-pc-files",
             "--disable-overwrite",
         ]
+
+        if "+shared" in spec:
+            opts.append("--with-shared")
+            if "+cxx" in spec:
+                opts.append("--with-cxx-shared")
+
+        if "~cxx" in spec:
+            opts.extend(["--without-cxx", "--without-cxx-binding"])
+
+        # All versions of ncurses C++ currently fail to build against gcc 15. There is a fix
+        # upcoming apparently, but this works around it:
+        # https://gitlab.archlinux.org/archlinux/packaging/packages/ncurses/-/issues/3
+        if spec.satisfies("+cxx%gcc@15:"):
+            opts.append("CFLAGS=-std=gnu17")
 
         if spec.satisfies("@:6.2"):
             opts.append("--with-pkg-config-libdir={0}/pkgconfig".format(prefix.lib))
