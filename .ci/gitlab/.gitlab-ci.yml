@@ -217,6 +217,16 @@ default:
   extends: [ ".base-job" ]
   stage: build
 
+
+# Inject the dotenv file
+dotenv:
+  stage: .pre
+  artifacts:
+    reports:
+      dotenv: .env
+  tags: [ "spack", "service" ]
+  script: cat .env
+
 ########################################
 # TEMPLATE FOR ADDING ANOTHER PIPELINE
 ########################################
