@@ -1,2 +1,0 @@
-repos::
-  - ${CI_PROJECT_DIR}/spack_repo/builtin
