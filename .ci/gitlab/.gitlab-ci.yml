@@ -123,6 +123,9 @@ default:
   script:
     - spack --version
     - spack env activate --without-view .ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
+    # Override the builtin repo
+    - spack config add -f ./.ci/configs/repos.yaml
+    - spack repo list
     - spack
       --config-scope "${SPACK_CI_CONFIG_ROOT}"
       --config-scope "${SPACK_CI_CONFIG_ROOT}/${SPACK_TARGET_PLATFORM}"
