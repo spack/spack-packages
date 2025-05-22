@@ -835,7 +835,7 @@ aws-pcluster-build-neoverse_v1:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
-    - . "./share/spack/setup-env.sh"
+    - . "./spack/share/spack/setup-env.sh"
     - spack arch
   after_script:
     - cat /proc/loadavg || true
