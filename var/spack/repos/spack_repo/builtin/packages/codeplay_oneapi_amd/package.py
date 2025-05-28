@@ -202,7 +202,12 @@ class CodeplayOneapi:
             found_driver_versions += supported_version["supported_driver_versions"]
 
         # Remove any duplicates
-        return list(set(found_driver_versions))
+        drivers = list(set(found_driver_versions))
+
+        # Sort to ensure latest if first
+        drivers.sort(reverse=True)
+
+        return drivers
 
     @staticmethod
     def _install_file(source, target):
