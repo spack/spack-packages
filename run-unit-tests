@@ -1,0 +1,37 @@
+#!/bin/bash -e
+#
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+#
+# Description:
+#     Runs Spack unit tests.
+#
+# Usage:
+#     run-unit-tests [test ...]
+
+_print_usage() {
+    echo
+    echo "USAGE:  `basename $0` [test ...]"
+    if [[ "$1" ]]; then
+        echo
+        echo $1
+    fi
+    exit 1
+}
+
+try_again="Set it up and try again."
+if [ ! -n "SPACK_ROOT" ]; then
+    msg="You do not appear to have an active 'spack' environment. $try_again"
+   _print_usage"$msg"
+fi
+
+#eval "_pytest=`which pytest`"
+#if [ ! -n "_pytest" ]; then
+#    msg="You do not appear to have 'pytest' installed or loaded. $try_again"
+#   _print_usage"$msg"
+#fi
+
+shift
+spack python -m pytest --ignore repos/spack_repo/builtin/packages/ $@
