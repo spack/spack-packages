@@ -19,16 +19,15 @@ class CodeplayOneapiNvidia(Package):
     # Support/home
     homepage = "https://developer.codeplay.com/products/oneapi/nvidia/home/"
 
-    # Supported version list
-    supported_versions = [
-        {
-            "version": "2025.1.0",
+    # Supported version dict
+    supported_versions = {
+        "2025.1.0": {
             "oneapi_compiler_version": "2025.1",
             "sha256": "c68b5e2d18c4cb0bc4c3eb227dbc8cbadf2800e0102b61f8e8ca0d50a9f74928",
             "ur": "0.11.7",
             "supported_driver_versions": ["11.7"]
         }
-    ]
+    }
 
     # Current maintainer of the packages
     maintainers("scottstraughan")

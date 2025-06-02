@@ -12,13 +12,13 @@ from spack_repo.builtin.build_systems.generic import Package
 class CodeplayOneapi:
     """
     This is the base package for Codeplay oneAPI. Since the plugins for AMD/NVIDIA are almost identical, we want to
-    reuse as much code as possible. All shared code/functionality is stored here. Its important to not inherit from this
-    class but instead use composition to avoid class collisions.
+    reuse as much code as possible. All shared code/functionality is stored here. It's important to not inherit from
+    this class but instead use composition to avoid class collisions.
     """
 
     def __init__(self, spec, version_map, gpu_vendor):
         self.spec = spec
-        self.supported_version_list = version_map
+        self.supported_versions: dict = version_map
         self.gpu_vendor = gpu_vendor
         self.backend_name = "hip" if gpu_vendor == "amd" else "cuda"
 
@@ -111,14 +111,14 @@ class CodeplayOneapi:
 
     def _get_latest_supported_version(self) -> dict:
         """
-        Get the latest supported version reference. The list should be in order newest to latest so just return
-        the first items.
+        Get the latest supported version reference. Since we sort within the generator, the first result will also
+        be the latest available version.
         """
-        return self.supported_version_list[0]
+        return next(self.iterate_supported_versions(self.supported_versions))
 
     def _get_supported_version(self, version_):
         """
-        Get a version from the version reference list based on the user target version string. If none is provided,
+        Get a version from the version reference dict based on the user target version string. If none is provided,
         will default to the latest.
         """
         version_ = str(version_)
@@ -127,24 +127,11 @@ class CodeplayOneapi:
             tty.msg("Specific version has not been provided, using latest.")
             return self._get_latest_supported_version()
 
-        for supported_version in self.supported_version_list:
-            if supported_version["version"] == version_:
-                tty.msg(f"Found supported version for {version_}, using that.")
-                return supported_version
+        if version_ in self.supported_versions:
+            tty.msg(f"Found supported version for {version_}, using that.")
+            return self.supported_versions[version_]
 
         raise InstallError(f"Could not satisfy a version reference based on version '{version_}'.")
-
-    def _get_by_package_version(self, package_version):
-        """
-        Get a package reference by a provided package version. If nothing is found, will return None.
-        """
-        for supported_version in self.supported_version_list:
-            if supported_version["version"] == package_version:
-                tty.debug(f"Found targeted version '{package_version}' in supported version list.")
-                return supported_version
-
-        tty.debug(f"Could not find targeted version '{package_version}' in supported version list.")
-        return None
 
     def _package_version(self, version_):
         """
@@ -177,28 +164,32 @@ class CodeplayOneapi:
         return self.spec.variants['driver'].value if 'driver' in self.spec.variants else latest_driver_version
 
     @staticmethod
-    def iterate_supported_versions(supported_versions: list):
+    def iterate_supported_versions(supported_versions: dict):
         """
         Generator function that will yield values that can be used within plugin classes to set versions and also
         dependencies.
         """
-        for index, supported_version in enumerate(supported_versions):
+        latest = True
+
+        for current_version in sorted(supported_versions.keys(), reverse=True):
             yield {
-                "version": supported_version["version"],
-                "sha256": supported_version["sha256"],
-                "preferred": index == 0,
-                "oneapi_compiler_version": supported_version["oneapi_compiler_version"],
-                "supported_driver_versions": supported_version["supported_driver_versions"]
+                "version": current_version,
+                "sha256": supported_versions[current_version]["sha256"],
+                "preferred": latest,
+                "oneapi_compiler_version": supported_versions[current_version]["oneapi_compiler_version"],
+                "supported_driver_versions": supported_versions[current_version]["supported_driver_versions"]
             }
 
+            latest = False
+
     @staticmethod
-    def iterate_all_driver_versions(supported_versions: list):
+    def iterate_all_driver_versions(supported_versions: dict):
         """
         Generator function that will spew out a list of supported driver versions.
         """
         found_driver_versions = []
 
-        for supported_version in supported_versions:
+        for supported_version in supported_versions.values():
             found_driver_versions += supported_version["supported_driver_versions"]
 
         # Remove any duplicates
@@ -249,16 +240,15 @@ class CodeplayOneapiAmd(Package):
     # Support/home
     homepage = "https://developer.codeplay.com/products/oneapi/amd/home/"
 
-    # Supported versions list
-    supported_versions = [
-        {
-            "version": "2025.1.0",
+    # Supported versions dict
+    supported_versions = {
+        "2025.1.0": {
             "oneapi_compiler_version": "2025.1",
             "sha256": "2261f35f7f28c77c4adc9541c61d044f2dab430e27243b2395af0e32a1a1c701",
             "ur": "0.11.7",
             "supported_driver_versions": ["6.0", "5.7", "5.4"]
         }
-    ]
+    }
 
     # Current maintainer of the packages
     maintainers("scottstraughan")
