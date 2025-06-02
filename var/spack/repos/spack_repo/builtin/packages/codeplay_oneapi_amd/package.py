@@ -116,7 +116,7 @@ class CodeplayOneapi:
         """
         return next(self.iterate_supported_versions(self.supported_versions))
 
-    def _get_supported_version(self, version_):
+    def _get_supported_version(self, version_) -> dict:
         """
         Get a version from the version reference dict based on the user target version string. If none is provided,
         will default to the latest.
@@ -129,7 +129,9 @@ class CodeplayOneapi:
 
         if version_ in self.supported_versions:
             tty.msg(f"Found supported version for {version_}, using that.")
-            return self.supported_versions[version_]
+            version_reference = self.supported_versions[version_]
+            version_reference["version"] = version_
+            return version_reference
 
         raise InstallError(f"Could not satisfy a version reference based on version '{version_}'.")
 
