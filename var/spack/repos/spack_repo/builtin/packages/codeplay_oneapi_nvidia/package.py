@@ -21,6 +21,12 @@ class CodeplayOneapiNvidia(Package):
 
     # Supported version dict
     supported_versions = {
+        "2025.1.1": {
+            "oneapi_compiler_version": "2025.1",
+            "sha256": "45e1d7c42c1915904daf9f3291b2f01622e897c7b661aebd28d6b293ce14fb9d",
+            "ur": "0.11.7",
+            "supported_driver_versions": ["11.7"]
+        },
         "2025.1.0": {
             "oneapi_compiler_version": "2025.1",
             "sha256": "c68b5e2d18c4cb0bc4c3eb227dbc8cbadf2800e0102b61f8e8ca0d50a9f74928",

@@ -244,6 +244,12 @@ class CodeplayOneapiAmd(Package):
 
     # Supported versions dict
     supported_versions = {
+        "2025.1.1": {
+            "oneapi_compiler_version": "2025.1",
+            "sha256": "dc77100097e0c449972600c7fb2ee3c7a8d84b1709b91954003b78a8d910f3c1",
+            "ur": "0.11.7",
+            "supported_driver_versions": ["6.0", "5.7", "5.4"]
+        },
         "2025.1.0": {
             "oneapi_compiler_version": "2025.1",
             "sha256": "2261f35f7f28c77c4adc9541c61d044f2dab430e27243b2395af0e32a1a1c701",
