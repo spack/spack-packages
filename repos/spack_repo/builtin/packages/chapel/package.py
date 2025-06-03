@@ -79,6 +79,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_chpl_line_length.patch", when="@:2.3.0")  # PRs 26357, 26381, 26491
     patch("fix_checkChplInstall.patch", when="@:2.3.0")  # PR 26317
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
+    # TODO: patch in https://github.com/chapel-lang/chapel/pull/27298 for LLVM 20?
 
     launcher_names = (
         "amudprun",
