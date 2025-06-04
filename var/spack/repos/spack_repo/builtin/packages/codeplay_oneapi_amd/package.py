@@ -5,15 +5,17 @@
 import os
 import stat
 
-from spack.package import *
 from spack_repo.builtin.build_systems.generic import Package
+
+from spack.package import *
 
 
 class CodeplayOneapi:
     """
-    This is the base package for Codeplay oneAPI. Since the plugins for AMD/NVIDIA are almost identical, we want to
-    reuse as much code as possible. All shared code/functionality is stored here. It's important to not inherit from
-    this class but instead use composition to avoid class collisions.
+    This is the base package for Codeplay oneAPI. Since the plugins for AMD/NVIDIA are almost
+    identical, we want to reuse as much code as possible. All shared code/functionality is
+    stored here. It's important to not inherit from this class but instead use composition
+    to avoid class collisions.
     """
 
     def __init__(self, spec, version_map, gpu_vendor):
@@ -24,14 +26,14 @@ class CodeplayOneapi:
 
     def url_for_version(self, version_, driver_version=None):
         """
-        Generate a URL for a specific version of the plugin that can be used to download from the Codeplay
-        developer portal.
+        Generate a URL for a specific version of the plugin that can be used to download from
+        the Codeplay developer portal.
         """
         args = "?product=oneapi"
-        args += f"&via=spack"
+        args += "&via=spack"
         args += f"&variant={self.gpu_vendor}"
         args += f"&version={self._package_version(version_)}"
-        args += f"&filters[]=linux"
+        args += "&filters[]=linux"
 
         if driver_version:
             args += f"&filters[]={driver_version}"
@@ -40,31 +42,36 @@ class CodeplayOneapi:
 
     def install_plugin(self, spec, stage, prefix, version_):
         """
-        Install the plugin into the prefix directory and create symlinks into the oneapi compiler directory.
+        Install the plugin into the prefix directory and create symlinks into the oneapi
+        compiler directory.
         """
         if not spec.satisfies("%oneapi"):
             raise InstallError("Oneapi is not satisfied.")
 
         target_driver_version = self.get_target_driver_version(version_)
 
-        tty.msg(f"Installing {self.gpu_vendor} plugin targeting {self.backend_name} {target_driver_version}")
+        tty.msg(
+            f"Installing {self.gpu_vendor} plugin targeting "
+            f"{self.backend_name} {target_driver_version}"
+        )
 
         oneapi_base_path = os.path.join(
             spec["intel-oneapi-compilers"].prefix,
             "compiler",
             self._oneapi_compiler_version(version_),
-            "lib")
+            "lib",
+        )
 
         # Run the plugin installing in extract only mode
         bash = Executable("bash")
         bash(stage.archive_file, "-x", "-f", ".")
 
-        tty.debug(f"Plugin installer has successfully extracted.")
+        tty.debug("Plugin installer has successfully extracted.")
 
         # Install the plugins into all oneapi installation
         self._install_into_oneapi(prefix, version_, target_driver_version, oneapi_base_path)
 
-        tty.msg(f"oneAPI for {self.gpu_vendor} ({self.backend_name}) plugin installation complete.")
+        tty.msg(f"oneAPI for {self.gpu_vendor} ({self.backend_name}) plugin installation complete")
 
     def _install_into_oneapi(self, prefix, version_, target_driver_version, oneapi_base_path):
         """
@@ -73,9 +80,11 @@ class CodeplayOneapi:
         tty.msg(f"Installing into found oneAPI installation at {oneapi_base_path}.")
 
         # Install the plugin files
-        lib_filename = (f"{self.backend_name}"
-                        f"-{target_driver_version}"
-                        f"-libur_adapter_{self.backend_name}.so.{self._universal_runtime(version_)}")
+        lib_filename = (
+            f"{self.backend_name}"
+            f"-{target_driver_version}"
+            f"-libur_adapter_{self.backend_name}.so.{self._universal_runtime(version_)}"
+        )
 
         source_lib_path = os.path.join(os.getcwd(), lib_filename)
         target_prefix_lib_path = os.path.join(prefix, lib_filename)
@@ -85,41 +94,47 @@ class CodeplayOneapi:
 
         # Set permissions to the plugin in prefix
         current_permissions = os.stat(target_prefix_lib_path).st_mode
-        new_permissions = current_permissions | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
+        new_permissions = (
+            current_permissions | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH
+        )
+
         os.chmod(target_prefix_lib_path, new_permissions)
 
         # Create all the symlink targets inside the oneapi lib directory
-        [self._create_symlink(target_prefix_lib_path, symlink_target)
-         for symlink_target in self._get_library_symlink_targets(version_, oneapi_base_path)]
+        [
+            self._create_symlink(target_prefix_lib_path, symlink_target)
+            for symlink_target in self._get_library_symlink_targets(version_, oneapi_base_path)
+        ]
 
         tty.msg(f"Successfully installed into found oneAPI installation at {oneapi_base_path}.")
 
     def _get_library_symlink_targets(self, version_, oneapi_base_path):
         """
-        The universal runtime expects files names in a series of formats, create as many as possible to ensure success.
+        The universal runtime expects files names in a series of formats, create as many as
+        possible to ensure success.
         """
-        ur_segments = str(self._universal_runtime(version_)).split('.')
+        segments = str(self._universal_runtime(version_)).split(".")
 
         file_names = [
             f"libur_adapter_{self.backend_name}.so",
-            f"libur_adapter_{self.backend_name}.so.{ur_segments[0]}",
-            f"libur_adapter_{self.backend_name}.so.{ur_segments[0]}.{ur_segments[1]}",
-            f"libur_adapter_{self.backend_name}.so.{ur_segments[0]}.{ur_segments[1]}.{ur_segments[2]}"
+            f"libur_adapter_{self.backend_name}.so.{segments[0]}",
+            f"libur_adapter_{self.backend_name}.so.{segments[0]}.{segments[1]}",
+            f"libur_adapter_{self.backend_name}.so.{segments[0]}.{segments[1]}.{segments[2]}",
         ]
 
         return [os.path.join(oneapi_base_path, x) for x in file_names]
 
     def _get_latest_supported_version(self) -> dict:
         """
-        Get the latest supported version reference. Since we sort within the generator, the first result will also
-        be the latest available version.
+        Get the latest supported version reference. Since we sort within the generator, the first
+        result will also be the latest available version.
         """
         return next(self.iterate_supported_versions(self.supported_versions))
 
     def _get_supported_version(self, version_) -> dict:
         """
-        Get a version from the version reference dict based on the user target version string. If none is provided,
-        will default to the latest.
+        Get a version from the version reference dict based on the user target version string.
+        If none is provided, will default to the latest.
         """
         version_ = str(version_)
 
@@ -155,21 +170,27 @@ class CodeplayOneapi:
 
     def get_target_driver_version(self, version_):
         """
-        This function attempts to return a target driver version. If the user does not specify a version to install
-        then we will use the latest.
+        This function attempts to return a target driver version. If the user does not specify
+        a version to install then we will use the latest.
         """
-        latest_driver_version = self._get_supported_version(version_)["supported_driver_versions"][0]
+        latest_driver_version = (self._get_supported_version(version_))[
+            "supported_driver_versions"
+        ][0]
 
-        if 'driver' in self.spec.variants:
-            tty.debug(f"User has specified a custom driver variant.")
+        if "driver" in self.spec.variants:
+            tty.debug("User has specified a custom driver variant.")
 
-        return self.spec.variants['driver'].value if 'driver' in self.spec.variants else latest_driver_version
+        return (
+            self.spec.variants["driver"].value
+            if "driver" in self.spec.variants
+            else latest_driver_version
+        )
 
     @staticmethod
     def iterate_supported_versions(supported_versions: dict):
         """
-        Generator function that will yield values that can be used within plugin classes to set versions and also
-        dependencies.
+        Generator function that will yield values that can be used within plugin classes to set
+        versions and also dependencies.
         """
         latest = True
 
@@ -178,8 +199,12 @@ class CodeplayOneapi:
                 "version": current_version,
                 "sha256": supported_versions[current_version]["sha256"],
                 "preferred": latest,
-                "oneapi_compiler_version": supported_versions[current_version]["oneapi_compiler_version"],
-                "supported_driver_versions": supported_versions[current_version]["supported_driver_versions"]
+                "oneapi_compiler_version": supported_versions[current_version][
+                    "oneapi_compiler_version"
+                ],
+                "supported_driver_versions": supported_versions[current_version][
+                    "supported_driver_versions"
+                ],
             }
 
             latest = False
@@ -239,6 +264,7 @@ class CodeplayOneapiAmd(Package):
         - spack install codeplay-oneapi-amd@2025.1.0 driver=5.7
         - spack install codeplay-oneapi-amd
     """
+
     # Support/home
     homepage = "https://developer.codeplay.com/products/oneapi/amd/home/"
 
@@ -248,14 +274,14 @@ class CodeplayOneapiAmd(Package):
             "oneapi_compiler_version": "2025.1",
             "sha256": "dc77100097e0c449972600c7fb2ee3c7a8d84b1709b91954003b78a8d910f3c1",
             "ur": "0.11.7",
-            "supported_driver_versions": ["6.0", "5.7", "5.4"]
+            "supported_driver_versions": ["6.0", "5.7", "5.4"],
         },
         "2025.1.0": {
             "oneapi_compiler_version": "2025.1",
             "sha256": "2261f35f7f28c77c4adc9541c61d044f2dab430e27243b2395af0e32a1a1c701",
             "ur": "0.11.7",
-            "supported_driver_versions": ["6.0", "5.7", "5.4"]
-        }
+            "supported_driver_versions": ["6.0", "5.7", "5.4"],
+        },
     }
 
     # Current maintainer of the packages
@@ -264,25 +290,32 @@ class CodeplayOneapiAmd(Package):
     # Create all the versions
     for current_version in CodeplayOneapi.iterate_supported_versions(supported_versions):
         # Add version
-        version(current_version["version"],
-                current_version["sha256"],
-                extension="sh",
-                expand=False,
-                preferred=current_version["preferred"])
+        version(
+            current_version["version"],
+            current_version["sha256"],
+            extension="sh",
+            expand=False,
+            preferred=current_version["preferred"],
+        )
 
         # Pin the version to the correct intel-oneapi-compilers package
-        depends_on(f"intel-oneapi-compilers@{current_version['oneapi_compiler_version']}",
-                   when=f"@{current_version['version']}")
+        depends_on(
+            f"intel-oneapi-compilers@{current_version['oneapi_compiler_version']}",
+            when=f"@{current_version['version']}",
+        )
 
     # Use variants to change backend driver version
     drivers = CodeplayOneapi.iterate_all_driver_versions(supported_versions)
-    variant('driver', default=drivers[0], values=drivers, description=f"Change the ROCm driver version")
+
+    variant(
+        "driver", default=drivers[0], values=drivers, description="Change the ROCm driver version"
+    )
 
     def __init__(self, spec):
         super().__init__(spec)
 
-        # Note: We can't use inheritance since many of the fields are class fields and data would leak between
-        # the shared plugins. Instead, use composition.
+        # Note: We can't use inheritance since many of the fields are class fields and data
+        # would leak between the shared plugins. Instead, use composition.
         self.codeplay_oneapi = CodeplayOneapi(spec, CodeplayOneapiAmd.supported_versions, "amd")
 
     def install(self, spec, prefix):
@@ -296,4 +329,5 @@ class CodeplayOneapiAmd(Package):
         Generate a URL to download from developer portal.
         """
         return self.codeplay_oneapi.url_for_version(
-            version, self.codeplay_oneapi.get_target_driver_version(version))
+            version, self.codeplay_oneapi.get_target_driver_version(version)
+        )
