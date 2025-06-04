@@ -55,7 +55,7 @@ jobs:
     - name: Run unit tests (without coverage)
       run: |
           . ./spack-core/share/spack/setup-env.sh
-          PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest --exitfirst
+          PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
 
   # Run unit tests on MacOS
   macos:
