@@ -770,7 +770,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "CHPL_MAKE_THIRD_PARTY",
             join_path(self.prefix.lib, "chapel", self._output_version_short),
         )
-        env.set("CHPL_HOME", chpl_home)
 
     def get_chpl_version_from_cmakelists(self) -> str:
         cmake_lists = None
