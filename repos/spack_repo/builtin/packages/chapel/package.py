@@ -79,7 +79,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_chpl_line_length.patch", when="@:2.3.0")  # PRs 26357, 26381, 26491
     patch("fix_checkChplInstall.patch", when="@:2.3.0")  # PR 26317
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
-    patch("fix-chapel-py-chpl-home-2.5.patch", when="@2.5") # PR 27355
+    patch("fix-chapel-py-chpl-home-2.5.patch", when="@2.5")  # PR 27355
 
     launcher_names = (
         "amudprun",
@@ -467,7 +467,11 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
 
-    conflicts("^llvm@20", when="@:2.5 +cuda", msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see https://github.com/llvm/llvm-project/issues/141626")
+    conflicts(
+        "^llvm@20",
+        when="@:2.5 +cuda",
+        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see https://github.com/llvm/llvm-project/issues/141626",
+    )
 
     conflicts("+rocm", when="@:1", msg="ROCm support in spack requires Chapel 2.0.0 or later")
     # Chapel restricts the allowable ROCm versions
