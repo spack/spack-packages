@@ -43,7 +43,7 @@ ci:
 
   - signing-job:
       image:
-        name: ghcr.io/spack/notary@sha256:d5a183b090602dea5dc89d5023fe777d1e64d9a7ddcb6cc9ec58a79bb410c168
+        name: ghcr.io/spack/notary@sha256:8b685186de3e26bfacbdfea27cf3802c853e2f1311e833e4d857247791a636dc
         entrypoint: [""]
       tags: ["aws"]
       script:
@@ -103,17 +103,6 @@ ci:
         CI_JOB_SIZE: "medium"
         KUBERNETES_CPU_REQUEST: "4000m"
         KUBERNETES_MEMORY_REQUEST: "16G"
-      id_tokens:
-        GITLAB_OIDC_TOKEN:
-          aud: "${OIDC_TOKEN_AUDIENCE}"
-
-  # TODO: Remove this block in Spack 0.23
-  - cleanup-job:
-      tags: ["service"]
-      variables:
-        CI_JOB_SIZE: "small"
-        KUBERNETES_CPU_REQUEST: "500m"
-        KUBERNETES_MEMORY_REQUEST: "500M"
       id_tokens:
         GITLAB_OIDC_TOKEN:
           aud: "${OIDC_TOKEN_AUDIENCE}"
