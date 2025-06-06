@@ -10,6 +10,13 @@ To contribute, simply make a pull request to this repository with your package c
 We run continuous integration on this repository to test builds of a large number of
 Spack packages.
 
+If you want to test your package changes locally before submitting a pull request,
+simply change Spack's default package repo from the default cache location to your
+local git clone:
+```
+spack repo set --destination /path/to/local/spack-packages builtin
+```
+
 If you are migrating your pull requests from
 [github.com/spack/spack](https://github.com/spack/spack), it is recommended to use the [the migration tool](https://github.com/spack/migrate-package-prs).
 
