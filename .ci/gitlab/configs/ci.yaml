@@ -133,7 +133,7 @@ ci:
       - - mkdir spack
         - cd spack
         - git init
-        - git remote add origin https://github.com/spack/spack.git
+        - git remote add origin ${SPACK_CLONE_URL}
         - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
         - git checkout FETCH_HEAD
         - cd ..
