@@ -2,13 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Mgard(CMakePackage, CudaPackage):
+class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     """MGARD error bounded lossy compressor
 
     For versions up to 2023-12-09, uses a fork from https://github.com/robertu94/MGARD
@@ -101,6 +102,7 @@ class Mgard(CMakePackage, CudaPackage):
     depends_on("cmake@3.19:", type="build")
     depends_on("nvcomp@2.2.0:", when="@compat-2022-11-18:+cuda")
     depends_on("nvcomp@2.0.2", when="@:compat-2021-11-12+cuda")
+    depends_on("hipcub", when="+rocm")
     with when("+openmp"):
         depends_on("llvm-openmp", when="%apple-clang")
 
@@ -110,6 +112,7 @@ class Mgard(CMakePackage, CudaPackage):
         when="@compat-2021-11-12",
         msg="without cuda MGARD@compat-2021-11-12 has undefined symbols",
     )
+    conflicts("+openmp", when="+rocm", msg="compiling with both rocm and openmp not supported")
     conflicts(
         "%gcc@:7", when="@compat-2022-11-18:", msg="requires std::optional and other c++17 things"
     )
@@ -117,6 +120,10 @@ class Mgard(CMakePackage, CudaPackage):
     conflicts("protobuf@3.22:", when="+cuda target=aarch64:", msg="nvcc fails on ARM SIMD headers")
     # https://github.com/abseil/abseil-cpp/issues/1629
     conflicts("abseil-cpp@20240116.1", when="+cuda", msg="triggers nvcc parser bug")
+
+    patch("hip-pointer-attribute-struct-fix.patch", when="@:2023-12-09")
+    patch("hip-cub-configure.patch", when="@:2023-12-09")
+    patch("hip-abs-reduce-type.patch", when="@:2023-12-09")
 
     def flag_handler(self, name, flags):
         if name == "cxxflags":
@@ -135,11 +142,14 @@ class Mgard(CMakePackage, CudaPackage):
         spec = self.spec
         args = ["-DBUILD_TESTING=OFF"]
         args.append(self.define_from_variant("MGARD_ENABLE_CUDA", "cuda"))
+        args.append(self.define_from_variant("MGARD_ENABLE_HIP", "rocm"))
         if "+cuda" in spec:
             cuda_arch_list = spec.variants["cuda_arch"].value
             arch_str = ";".join(cuda_arch_list)
             if cuda_arch_list[0] != "none":
                 args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
+        if "+rocm" in spec:
+            args.append(CMakeBuilder.define_hip_architectures(self))
         if self.spec.satisfies("@:compat-2021-11-12"):
             if "+cuda" in self.spec:
                 if "75" in cuda_arch:
