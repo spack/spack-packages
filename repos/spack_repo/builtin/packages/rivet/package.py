@@ -49,6 +49,8 @@ class Rivet(AutotoolsPackage):
         description="HepMC version to link against",
     )
 
+    variant("analyses", default=True, description="Enable building of standard Rivet analyses")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -153,6 +155,9 @@ class Rivet(AutotoolsPackage):
         else:
             args += ["--with-hepmc3=" + self.spec["hepmc3"].prefix]
             args += ["--with-hepmc3-libpath=" + self.spec["hepmc3"].libs.directories[0]]
+
+        if not self.spec.satisfies("+analyses"):
+            args += ["--with-analyses=no"]
 
         args += ["--with-fastjet=" + self.spec["fastjet"].prefix]
         args += ["--with-yoda=" + self.spec["yoda"].prefix]
