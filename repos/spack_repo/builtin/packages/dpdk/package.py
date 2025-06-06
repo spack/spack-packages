@@ -49,7 +49,7 @@ class Dpdk(MakefilePackage, MesonPackage):
 class MesonBuilder(MesonBuilder):
     def meson_args(self):
         args = ["--warnlevel=2"]
-        if self.spec.satifies("target=aarch64:"):
+        if self.spec.satisfies("target=aarch64:"):
             args.append("-Dplatform=generic")
         return args
 
