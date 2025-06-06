@@ -80,6 +80,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_checkChplInstall.patch", when="@:2.3.0")  # PR 26317
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
     patch("fix-chapel-py-chpl-home-2.5.patch", when="@2.5")  # PR 27355
+    patch("https://github.com/chapel-lang/chapel/pull/27364.patch", when="@main",
+          sha256="a177923a268781bff10b95939964165635e5cdeaffe5aa39e0223907aa7e0a5b")
 
     launcher_names = (
         "amudprun",
