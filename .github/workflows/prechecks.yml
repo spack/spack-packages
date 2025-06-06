@@ -67,6 +67,7 @@ jobs:
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       with:
+        # Depth 2 is required for this check
         fetch-depth: 2
     - uses: ./.github/actions/checkout-spack
       with:
