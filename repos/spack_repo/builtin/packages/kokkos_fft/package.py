@@ -26,14 +26,14 @@ class KokkosFft(CMakePackage):
 
     depends_on("kokkos@4.4:4 +complex_align") # not supported in Spack 0.23.1
     requires("^kokkos +wrapper", when="^kokkos +cuda")
-    depends_on("googletest", when="+tests")
+    depends_on("googletest@1.15:1", when="+tests")
 
-    depends_on("fftw ~mpi precision=float,double", when="+fftw")
+    depends_on("fftw@3.3:3 ~mpi precision=float,double", when="+fftw")
     requires("^fftw +openmp", when="^kokkos +openmp")
     # requires("^fftw +threads", when="^kokkos +threads") # the option +threads does not exist
-    depends_on("cuda", when="+cufft")
-    depends_on("hipfft", when="+hipfft")
-    depends_on("intel-oneapi-mkl", when="+onemkl")
+    depends_on("cuda@11:12", when="+cufft")
+    depends_on("hipfft@5.3:6", when="+hipfft")
+    depends_on("intel-oneapi-mkl@2023:2025", when="+onemkl")
 
     requires("^kokkos +cuda", when="+cufft")
     requires("^kokkos +rocm", when="+hipfft")
