@@ -1,34 +1,27 @@
-name: 'Configure Spack Core'
-description: 'Configure Spack Core'
+name: Checkout Spack Core
+description: Checkout Spack Core
 inputs:
   path:
-    type: string
+    description: Path to checkout Spack repository
     required: false
     default: spack-core
   fetch-depth:
-    type: int
+    description: Number of commits to fetch
     required: false
-    default: 1
+    default: '1'
 runs:
   using: "composite"
   steps:
-    - name: Setup Base
-      if: runner.os == 'Windows'
-      shell: bash
-      run: mkdir ${{ inputs.path }}
-
-    - name: Setup Base
-      if: runner.os != 'Windows'
-      shell: bash
-      run: mkdir -p ${{ inputs.path }}
-
-    - name: Clone Spack
+    - name: Get Spack version
+      id: spack-version
       shell: bash
       run: |
         source .ci/env
-        cd ${{ inputs.path }}
-        git init
-        git remote add origin https://github.com/spack/spack.git
-        git fetch --depth ${{ inputs.fetch-depth }} origin ${SPACK_CHECKOUT_VERSION}
-        git checkout FETCH_HEAD
-        cd -
+        echo "version=${SPACK_CHECKOUT_VERSION}" >> $GITHUB_OUTPUT
+    - name: Checkout Spack
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        repository: spack/spack
+        ref: ${{ steps.spack-version.outputs.version }}
+        path: ${{ inputs.path }}
+        fetch-depth: ${{ inputs.fetch-depth }}
