@@ -94,7 +94,7 @@ class Mgard(CMakePackage, CudaPackage):
     depends_on("zstd")
     depends_on("protobuf@3.4:", when="@compat-2022-11-18:")
     # See https://github.com/CODARcode/MGARD/issues/240
-    depends_on("protobuf@:3.28", when="@:compat-2023-12-09")
+    depends_on("protobuf@:3.28", when="@:1.5.2")
     depends_on("libarchive", when="@compat-2021-11-12:")
     depends_on("tclap", when="@compat-2021-11-12")
     depends_on("yaml-cpp", when="@compat-2021-11-12:")
