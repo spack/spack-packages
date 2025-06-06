@@ -309,6 +309,7 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+strumpack")
+
     depends_on("gmake", type="build")
 
     depends_on("mpi", when="+mpi")
