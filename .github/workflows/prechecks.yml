@@ -65,7 +65,7 @@ jobs:
       !contains(github.event.head_commit.message, '[skip-verify-checksums]') }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
     - uses: ./.github/actions/checkout-spack
       with:
         # Depth 2 is required for this check
