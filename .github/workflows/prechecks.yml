@@ -70,7 +70,6 @@ jobs:
         fetch-depth: 2
     - uses: ./.github/actions/checkout-spack
       with:
-        # Depth 2 is required for this check
         fetch-depth: 1
     - name: Verify Added Checksums
       run: |
