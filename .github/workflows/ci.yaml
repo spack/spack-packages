@@ -86,10 +86,3 @@ jobs:
         else
           exit 0
         fi
-
-  gitlab-ci:
-    needs: [ all-prechecks ]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Wait for Sync (10min)
-      run: sleep 600
