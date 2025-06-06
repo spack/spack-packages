@@ -1,5 +1,9 @@
 spack:
   view: false
+
+  include:
+  - $spack/share/spack/gitlab/cloud_pipelines
+
   packages:
     all:
       target: ["aarch64"]

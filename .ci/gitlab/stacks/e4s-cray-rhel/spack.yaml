@@ -1,13 +1,11 @@
 spack:
-  include:
-  - $CI_PROJECT_DIR/.ci/gitlab/configs/linux/ci.yaml
-
   view: false
+
+  include:
+  - $CI_PROJECT_DIR/.ci/gitlab
 
   concretizer:
     static_analysis: true
-    reuse: false
-    unify: false
 
   config:
     shared_linking:

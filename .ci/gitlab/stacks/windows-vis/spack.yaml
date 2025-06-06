@@ -5,6 +5,9 @@
 
 spack:
   view: false
+  include:
+  - $spack/share/spack/gitlab/cloud_pipelines
+
   specs:
   - "vtk@9: ~mpi"
 

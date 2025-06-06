@@ -1,6 +1,9 @@
 spack:
   view: false
 
+  include:
+  - $spack/share/spack/gitlab/cloud_pipelines
+
   concretizer:
     reuse: false
     unify: false
