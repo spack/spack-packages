@@ -49,6 +49,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     maintainers("adamjstewart", "aweits")
     tags = ["e4s"]
 
+    version("2.19.0", sha256="4691b18e8c914cdf6759b80f1b3b7f3e17be41099607ed0143134f38836d058e")
     version("2.18.1", sha256="467c512b631e72ad5c9d5c16b23669bcf89675de630cfbb58f9dde746d34afa8")
     version(
         "2.18.0-rocm-enhanced",
@@ -240,13 +241,14 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             depends_on("py-grpcio@1.37.0:1", when="@2.6")
             depends_on("py-grpcio@1.34", when="@2.5")
 
-        for minor_ver in range(5, 19):
+        for minor_ver in range(5, 20):
             depends_on("py-tensorboard@2.{}".format(minor_ver), when="@2.{}".format(minor_ver))
 
         # TODO: support circular run-time dependencies
         # depends_on('py-keras')
 
-        depends_on("py-numpy@1.26:2.0", when="@2.18:")
+        depends_on("py-numpy@1.26:2.1", when="@2.19:")
+        depends_on("py-numpy@1.26:2.0", when="@2.18")
         depends_on("py-numpy@1.23.5:", when="@2.14:2.17")
         depends_on("py-numpy@1.22:1.24.3", when="@2.13")
         depends_on("py-numpy@1.22:1.23", when="@2.12")
@@ -264,6 +266,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-h5py~mpi", when="~mpi")
         depends_on("hdf5+mpi", when="+mpi")
         depends_on("hdf5~mpi", when="~mpi")
+        depends_on("py-ml-dtypes@0.5.1:0", when="@2.19:")
         depends_on("py-ml-dtypes@0.4:0", when="@2.18.1")
         depends_on("py-ml-dtypes@0.4", when="@2.18.0")
         depends_on("py-ml-dtypes@0.3.1:0.4", when="@2.17")
@@ -378,6 +381,21 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("%clang@:15", when="@2.18:")
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
+
+    # https://github.com/spack/spack/issues/49958
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/90563.patch?full_index=1",
+        sha256="78b858380521f4624fd95bfa32fd038cdd8168b783c2a13502c4169431517618",
+        when="@2.19:",
+    )
+
+    # Fix build error with GCC 13
+    # https://github.com/tensorflow/tensorflow/issues/84977
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/90558.patch?full_index=1",
+        sha256="3c93c6226bbde3a4c2aedbac42bc136eacf8da65f5623f7effad437ebf2ba4aa",
+        when="@2.19:",
+    )
 
     # https://github.com/tensorflow/tensorflow/issues/94277
     # https://github.com/tensorflow/tensorflow/pull/94289
