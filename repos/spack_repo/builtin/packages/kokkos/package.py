@@ -382,6 +382,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("shared", default=True, description="Build shared libraries")
+    conflicts("+shared", when="+cuda_relocatable_device_code")
 
     # Filter spack-generated files that may include links to the
     # spack compiler wrappers
