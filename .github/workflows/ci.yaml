@@ -57,7 +57,7 @@ jobs:
     secrets: inherit
 
   prechecks:
-    # if: ${{ needs.changes.outputs.packages == 'true' || needs.changes.outputs.core == 'true' }}
+    needs: [ changes ]
     uses: ./.github/workflows/prechecks.yml
     secrets: inherit
     with:
