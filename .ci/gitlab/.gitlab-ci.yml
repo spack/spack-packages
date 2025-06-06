@@ -85,7 +85,7 @@ default:
     - spack -v  --color=always
       ci generate --check-index-only -j ${SPACK_CONCRETIZE_JOBS}
       --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-      --output-file "cloud-ci-pipeline.yml"
+      --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
   artifacts:
     paths:
       - "${CI_PROJECT_DIR}/jobs_scratch_dir"
