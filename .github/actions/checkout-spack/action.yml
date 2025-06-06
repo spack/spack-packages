@@ -25,7 +25,7 @@ runs:
     - name: Clone Spack
       shell: bash
       run: |
-        . ./.env
+        source .ci/env
         cd ${{ inputs.path }}
         git init
         git remote add origin https://github.com/spack/spack.git

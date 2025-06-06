@@ -243,10 +243,10 @@ dotenv:
     KUBERNETES_MEMORY_REQUEST: "5M"
   artifacts:
     reports:
-      dotenv: .env
+      dotenv: .ci/env
   tags: [ "spack", "service" ]
   script:
-  - cat .env
+  - cat .ci/env
 
 ########################################
 # TEMPLATE FOR ADDING ANOTHER PIPELINE
