@@ -35,7 +35,6 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
     version("0.19.7", sha256="378fa86a091cec3acdece3c961bb8d8c0689906287809a8daa79dc0c6398d934")
 
     # Recommended variants
-    variant("curses", default=True, description="Use libncurses")
     variant("libxml2", default=True, description="Use libxml2")
     variant("git", default=True, description="Enable git support")
     variant("tar", default=True, description="Enable tar support")
@@ -47,6 +46,7 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
     variant("year2038", default=True, description="Support timestamps after 2038.")
 
     # Optional variants
+    variant("curses", default=False, description="Use libncurses")
     variant("libunistring", default=False, description="Use libunistring")
 
     depends_on("c", type="build")

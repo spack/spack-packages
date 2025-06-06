@@ -39,12 +39,13 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("c", type="build")  # generated
 
-    variant("readline", default=True, description="Build with readline support.")
+    variant("readline", default=False, description="Build with readline support.")
     variant("nls", default=True, description="Build with message translation.")
 
     depends_on("readline", when="+readline")
     with when("+nls"):
         depends_on("gettext")
+        # The configure script specifically refers to libiconv. It may work with others?
         depends_on("libiconv")
 
     patch("macOS.patch", when="@1.21 platform=darwin")
