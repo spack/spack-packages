@@ -50,13 +50,15 @@ jobs:
               cmake bison libbison-dev subversion
     - name: Install Python packages
       run: |
-          pip install --upgrade pip setuptools pytest pytest-xdist
+          pip install --upgrade pip setuptools pytest pytest-xdist clingo
     - uses: ./.github/actions/checkout-spack
     - name: Run unit tests (without coverage)
       run: |
-          . ./spack-core/share/spack/setup-env.sh
-          spack config add -f ./.ci/configs/repos.yaml
-          PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
+        . ./spack-core/share/spack/setup-env.sh
+        spack repo set --destination $GITHUB_WORKSPACE builtin
+        spack config get repos
+        spack repo list
+        PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
 
   # Run unit tests on MacOS
   macos:
@@ -73,7 +75,7 @@ jobs:
     - name: Install Python packages
       run: |
           pip install --upgrade pip setuptools
-          pip install --upgrade pytest pytest-xdist
+          pip install --upgrade pytest pytest-xdist clingo
     - name: Setup Homebrew packages
       run: |
         brew install dash fish gcc gnupg
@@ -81,7 +83,9 @@ jobs:
     - name: Run unit tests (without coverage)
       run: |
         . ./spack-core/share/spack/setup-env.sh
-        spack config add -f ./.ci/configs/repos.yaml
+        spack repo set --destination $GITHUB_WORKSPACE builtin
+        spack config get repos
+        spack repo list
         PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
 
   # Run unit tests on Windows
