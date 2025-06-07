@@ -73,6 +73,12 @@ spack:
       - "+examples"
       - "~qt ^[virtuals=gl] osmesa" # Headless
       - "target=x86_64_v3 %gcc"
+    py-jax:
+      require: %clang
+    py-tensorflow:
+      require: %clang
+    py-torch:
+      require: %gcc
 
   specs:
   # CPU
@@ -100,7 +106,7 @@ spack:
   - dxt-explorer
   - dyninst
   - e4s-cl
-  - ecp-data-vis-sdk ~cuda ~rocm +adios2 +ascent +cinema +darshan +faodel +hdf5 +paraview +pnetcdf +sz +unifyfs +veloc +visit +vtkm +zfp # 
+  - ecp-data-vis-sdk ~cuda ~rocm +adios2 +ascent +cinema +darshan +faodel +hdf5 +paraview +pnetcdf +sz +unifyfs +veloc +visit +vtkm +zfp #
   - exaworks
   - fftx
   - flecsi
