@@ -16,6 +16,7 @@ class PyGevent(PythonPackage):
 
     license("MIT")
 
+    version("25.5.1", sha256="582c948fa9a23188b890d0bc130734a506d039a2e5ad87dae276a456cc683e61")
     version("24.11.1", sha256="8bd1419114e9e4a3ed33a5bad766afff9a3cf765cb440a582a1b3a9bc80c1aca")
     version("24.10.3", sha256="aa7ee1bd5cabb2b7ef35105f863b386c8d5e332f754b60cfc354148bd70d35d1")
     version("24.2.1", sha256="432fc76f680acf7cf188c2ee0f5d3ab73b63c1f03114c7cd8a34cebbe5aa2056")
