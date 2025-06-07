@@ -421,7 +421,7 @@ class Charmpp(Package):
             "-C",
             join_path(self.stage.source_path, "tests"),
             "test",
-            "TESTOPTS=++local",
+            "TESTOPTS=++local +setcpuaffinity",
             parallel=False,
         )
 
