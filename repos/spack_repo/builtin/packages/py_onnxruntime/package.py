@@ -26,7 +26,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
 
     license("MIT")
 
-    version("1.21.0", tag="v1.21.0", commit="8f7cce3a49fdbdac96e0868b75b7d0159db7ac7f")
+    version("1.21.0", tag="v1.21.0", commit="e0b66cad282043d4377cea5269083f17771b6dfc")
     version("1.20.2", tag="v1.20.2", commit="8608bf02f21774be0388d2aa3a9f886d009d0b4c")
     version("1.19.2", tag="v1.19.2", commit="ffceed9d44f2f3efb9dd69fa75fea51163c91d91")
     version("1.19.0", tag="v1.19.0", commit="26250ae74d2c9a3c6860625ba4a147ddfb936907")
