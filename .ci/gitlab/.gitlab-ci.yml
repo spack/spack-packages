@@ -72,7 +72,7 @@ default:
   stage: generate
   script:
     - spack --version
-    - spack env activate --without-view share/spack/gitlab/cloud_pipelines/stacks/${SPACK_CI_STACK_NAME}
+    - spack env activate --without-view ${CI_PROJECT_DIR}/.ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
     - spack config add -f ./.ci/configs/repos.yaml
     - spack repo list
     - spack compiler find
