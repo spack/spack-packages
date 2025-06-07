@@ -75,6 +75,12 @@ spack:
       - "+examples"
       - "~qt ^[virtuals=gl] osmesa" # Headless
       - "target=x86_64_v3 %gcc"
+    py-jax:
+      require: %clang
+    py-tensorflow:
+      require: %clang
+    py-torch:
+      require: %gcc
 
   specs:
   # CPU

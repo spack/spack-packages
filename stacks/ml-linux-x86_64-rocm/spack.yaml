@@ -13,8 +13,14 @@ spack:
       - amdgpu_target=gfx90a
     gl:
       require: "osmesa"
+    miopen-hip:
+      require: ~ck
     mpi:
       require: openmpi
+    py-jax:
+      require: %clang
+    py-tensorflow:
+      require: %clang
     py-torch:
       require:
       - target=x86_64_v3
@@ -22,8 +28,7 @@ spack:
       - +rocm
       - amdgpu_target=gfx90a
       - ~flash_attention
-    miopen-hip:
-      require: ~ck
+      - %c,cxx=gcc
     eigen:
       require: ~rocm
 

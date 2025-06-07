@@ -13,6 +13,12 @@ spack:
       - ~rocm
     mpi:
       require: openmpi
+    py-jax:
+      require: %clang
+    py-tensorflow:
+      require: %clang
+    py-torch:
+      require: %gcc
 
   specs:
     # Horovod
