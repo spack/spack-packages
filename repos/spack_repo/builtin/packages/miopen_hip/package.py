@@ -73,6 +73,7 @@ class MiopenHip(CMakePackage):
     depends_on("sqlite")
     depends_on("half@1")
     depends_on("zlib-api")
+    depends_on("frugally-deep", when="@6.3:")
 
     patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.4.0:5.7")
     patch("0002-add-include-dir-miopen-hip-6.0.0.patch", when="@6.0")
@@ -80,7 +81,7 @@ class MiopenHip(CMakePackage):
     patch("0001-link-with-roctracer-when-building-miopendriver-6.2.0.patch", when="@6.2")
     patch(
         "https://github.com/ROCm/MIOpen/commit/f60aa1ff89f8fb596b4a6a4c70aa7d557803db87.patch?full_index=1",
-        sha256="7f382c872d89f22da1ad499e85ffe9881cc7404c8465e42877a210a09382e2ea",
+        sha256="843ebbe79c62c7d720776a6250db9f169463973fa22977e60998dfe5c44f1c45",
         when="@5.7",
     )
     patch(
@@ -161,7 +162,7 @@ class MiopenHip(CMakePackage):
         "6.4.0",
     ]:
         depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
-    for ver in ["5.4.0", "5.4.3", "5.5.0"]:
+    for ver in ["5.4.0", "5.4.3", "5.5.0", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
     for ver in [
         "6.0.0",
@@ -241,22 +242,18 @@ class MiopenHip(CMakePackage):
             args.append(self.define("MIOPEN_USE_COMPOSABLEKERNEL", "OFF"))
             args.append(self.define("MIOPEN_USE_MLIR", "ON"))
             args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
-        if self.spec.satisfies("@5.5.1:"):
-            args.append(self.define_from_variant("MIOPEN_USE_COMPOSABLEKERNEL", "ck"))
+        if self.spec.satisfies("@5.5.1:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
             args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
-        if self.spec.satisfies("@5.7.0:"):
+        if self.spec.satisfies("@5.7.0:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK", "OFF"))
-        if self.spec.satisfies("@6.0"):
+        if self.spec.satisfies("@6.0:6.2"):
             args.append(
                 "-DROCTRACER_INCLUDE_DIR={0}".format(self.spec["roctracer-dev"].prefix.include)
             )
             args.append("-DROCTRACER_LIB_DIR={0}".format(self.spec["roctracer-dev"].prefix.lib))
             args.append("-DSQLITE_INCLUDE_DIR={0}".format(self.spec["sqlite"].prefix.include))
-        if self.spec.satisfies("@6.1:"):
-            args.append(
-                "-DROCTRACER_INCLUDE_DIR={0}".format(self.spec["roctracer-dev"].prefix.include)
-            )
+        if self.spec.satisfies("@6.1:6.2"):
             args.append(self.define("MIOPEN_USE_ROCTRACER", "ON"))
             args.append(
                 self.define(
@@ -265,4 +262,6 @@ class MiopenHip(CMakePackage):
                     f"-I{self.spec['sqlite'].prefix.include} ",
                 )
             )
+        if self.spec.satisfies("@5.5.1:"):
+            args.append(self.define_from_variant("MIOPEN_USE_COMPOSABLEKERNEL", "ck"))
         return args

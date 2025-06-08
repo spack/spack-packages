@@ -26,7 +26,7 @@ ci:
       after_script:
       - - cat /proc/loadavg || true
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - - time ./bin/spack python ${CI_PROJECT_DIR}/share/spack/gitlab/cloud_pipelines/scripts/common/aggregate_package_logs.spack.py
+      - - time ./spack/bin/spack python ${CI_PROJECT_DIR}/.ci/gitlab/scripts/common/aggregate_package_logs.spack.py
           --prefix /home/software/spack:${CI_PROJECT_DIR}/opt/spack
           --log install_times.json
           ${SPACK_ARTIFACTS_ROOT}/user_data/install_times.json || true
@@ -43,7 +43,7 @@ ci:
 
   - signing-job:
       image:
-        name: ghcr.io/spack/notary@sha256:d5a183b090602dea5dc89d5023fe777d1e64d9a7ddcb6cc9ec58a79bb410c168
+        name: ghcr.io/spack/notary@sha256:8b685186de3e26bfacbdfea27cf3802c853e2f1311e833e4d857247791a636dc
         entrypoint: [""]
       tags: ["aws"]
       script:
@@ -107,20 +107,9 @@ ci:
         GITLAB_OIDC_TOKEN:
           aud: "${OIDC_TOKEN_AUDIENCE}"
 
-  # TODO: Remove this block in Spack 0.23
-  - cleanup-job:
-      tags: ["service"]
-      variables:
-        CI_JOB_SIZE: "small"
-        KUBERNETES_CPU_REQUEST: "500m"
-        KUBERNETES_MEMORY_REQUEST: "500M"
-      id_tokens:
-        GITLAB_OIDC_TOKEN:
-          aud: "${OIDC_TOKEN_AUDIENCE}"
-
   - noop-job:
       tags: ["service"]
-      image: busybox:latest
+      image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
       variables:
         CI_OIDC_REQUIRED: 0
         GIT_STRATEGY: "none"
@@ -141,6 +130,13 @@ ci:
       - - uname -a || true
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
-      - - . "./share/spack/setup-env.sh"
+      - - mkdir spack
+        - cd spack
+        - git init
+        - git remote add origin https://github.com/spack/spack.git
+        - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
+        - git checkout FETCH_HEAD
+        - cd ..
+      - - . "./spack/share/spack/setup-env.sh"
         - spack --version
         - spack arch

@@ -1,0 +1,2 @@
+repos:
+  builtin:: ${CI_PROJECT_DIR}/repos/spack_repo/builtin

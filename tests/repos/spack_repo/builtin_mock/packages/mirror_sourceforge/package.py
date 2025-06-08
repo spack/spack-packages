@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin_mock.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin_mock.build_systems.sourceforge import SourceforgePackage
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.sourceforge import SourceforgePackage
 
 from spack.package import *
 

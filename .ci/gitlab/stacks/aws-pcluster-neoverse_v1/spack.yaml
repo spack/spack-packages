@@ -20,7 +20,14 @@ spack:
         image: {name: ghcr.io/spack/pcluster-amazonlinux-2:v2024-10-07, entrypoint: ['']}
         tags: [aarch64]
         before_script:
-        - - . "./share/spack/setup-env.sh"
+        - - mkdir spack
+          - cd spack
+          - git init
+          - git remote add origin https://github.com/spack/spack.git
+          - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
+          - git checkout FETCH_HEAD
+          - cd ..
+        - - . "./spack/share/spack/setup-env.sh"
           - . /etc/profile.d/modules.sh
           - spack --version
           - spack arch

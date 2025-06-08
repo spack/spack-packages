@@ -7,7 +7,7 @@ import sys
 from typing import List
 
 import _vendoring.archspec.cpu
-from spack_repo.builtin_mock.build_systems.generic import Package
+from spack_repo.builtin.build_systems.generic import Package
 
 from llnl.util import lang
 

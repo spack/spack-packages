@@ -4,7 +4,7 @@
 
 import os
 
-from spack_repo.builtin_mock.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
