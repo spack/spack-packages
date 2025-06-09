@@ -187,6 +187,14 @@ class KokkosKernels(CMakePackage, CudaPackage):
     )
 
     depends_on("cxx", type="build")
+    # kokkos-kernels enables C & Fortran for some BLAS dependencies which requires
+    # spack to setup the corresponding compiler wrappers for cmake's compiler tests
+    # to succeed.
+    # See https://github.com/kokkos/kokkos-kernels/blob/45e68ce94ec665eb7b6b268944cd827e974902ec/cmake/kokkoskernels_tpls.cmake#L435
+    for blas_variant in ["blas", "mkl"]:
+       depends_on("c", type="build", when=f"+{blas_variant}")
+       depends_on("fortran", type="build", when=f"+{blas_variant}")
+
     depends_on("kokkos")
     depends_on("kokkos@master", when="@master")
     depends_on("kokkos@develop", when="@develop")
