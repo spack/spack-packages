@@ -15,11 +15,6 @@ concurrency:
   group: ci-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
-# Setup global configs to ensure spack points at this package repo
-env:
-  SPACK_USER_CONFIG_PATH: .ci/configs
-  SPACK_DISABLE_LOCAL_CONFIG: "true"
-
 jobs:
   # Check which files have been updated by the PR
   changes:
@@ -46,9 +41,9 @@ jobs:
           # built-in repository or documentation
           filters: |
             core:
-            - '.env'
+            - .ci/env
             packages:
-            - 'spack_repo/**'
+            - repos/spack_repo/**
 
   unit-tests:
     # if: ${{ github.repository == 'spack/spack' && needs.changes.outputs.core == 'true' }}
@@ -57,7 +52,7 @@ jobs:
     secrets: inherit
 
   prechecks:
-    # if: ${{ needs.changes.outputs.packages == 'true' || needs.changes.outputs.core == 'true' }}
+    needs: [ changes ]
     uses: ./.github/workflows/prechecks.yml
     secrets: inherit
     with:

@@ -1,6 +1,6 @@
 spack:
   include:
-  - $spack/share/spack/gitlab/cloud_pipelines/configs/linux/ci.yaml
+  - $CI_PROJECT_DIR/.ci/gitlab/configs/linux/ci.yaml
 
   view: false
 
