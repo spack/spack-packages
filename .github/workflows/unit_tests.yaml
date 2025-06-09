@@ -55,9 +55,6 @@ jobs:
     - name: Run unit tests (without coverage)
       run: |
         . ./spack-core/share/spack/setup-env.sh
-        spack repo set --destination $GITHUB_WORKSPACE builtin
-        spack config get repos
-        spack repo list
         PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
 
   # Run unit tests on MacOS
@@ -83,9 +80,6 @@ jobs:
     - name: Run unit tests (without coverage)
       run: |
         . ./spack-core/share/spack/setup-env.sh
-        spack repo set --destination $GITHUB_WORKSPACE builtin
-        spack config get repos
-        spack repo list
         PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
 
   # Run unit tests on Windows

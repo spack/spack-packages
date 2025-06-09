@@ -15,11 +15,6 @@ concurrency:
   group: ci-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
-# Setup global configs to ensure spack points at this package repo
-env:
-  SPACK_USER_CONFIG_PATH: .ci/configs
-  SPACK_DISABLE_LOCAL_CONFIG: "true"
-
 jobs:
   # Check which files have been updated by the PR
   changes:
