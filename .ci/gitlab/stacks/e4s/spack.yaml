@@ -1,6 +1,9 @@
 spack:
   view: false
 
+  include:
+  - $CI_PROJECT_DIR/.ci/gitlab/
+
   concretizer:
     reuse: false
     unify: false
