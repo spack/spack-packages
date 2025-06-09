@@ -8,11 +8,8 @@ from spack.package import *
 
 
 class Lsquic(CMakePackage):
-    """The LiteSpeed QUIC (LSQUIC) library is an open-source implementation of QUIC and HTTP/3
-    functionality for servers and clients.  The LiteSpeed software LiteSpeed Web Server, LiteSpeed
-    ADC, and OpenLiteSpeed are all powered by LSQUIC.  Currently supported QUIC versions are v1;
-    v2; Internet-Draft versions 29 and 27; and the older "Google" QUIC versions Q043, Q046 and
-    Q050."""
+    """LiteSpeed QUIC Library (LSQUIC) is an open-source implementation of QUIC and HTTP/3 for
+    servers and clients."""
 
     homepage = "https://github.com/litespeedtech/lsquic"
     git = "https://github.com/litespeedtech/lsquic.git"
