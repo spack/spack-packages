@@ -24,6 +24,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["e4s"]
 
+    version("2.4.0", tag="v2.4.0", commit="598d518b4105ec91ee42ee50420aa46a32a0f60f")
     version("2.3.2", tag="v2.3.2", commit="736fc74248777a00dbd41f1a66ae49e615c8a514")
     version(
         "2.3.1", tag="v2.3.1", commit="6c04b9b21790533e457764bd7f8f26757db1552f", deprecated=True
