@@ -460,6 +460,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         when="@2024.2:2024.3",
     )
 
+    # Follow api change of sirius
+    # https://github.com/electronic-structure/SIRIUS/pull/1048
+    patch(
+        "https://github.com/cp2k/cp2k/commit/9ae0441d1aa760e247a8a389793207ec65a35775.patch?full_index=1",
+        sha256="81a4716dbda9121c8abfb46064994c332c0bb99af3a8b4556c481743b5398da4",
+        when="@2024.2:2025.1 ^sirius@7.7.0"
+            )
+
     def patch(self):
         # Patch for an undefined constant due to incompatible changes in ELPA
         if self.spec.satisfies("@9.1:2022.2 +elpa"):
