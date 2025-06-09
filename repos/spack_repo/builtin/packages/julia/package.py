@@ -61,6 +61,19 @@ class Julia(MakefilePackage):
 
     variant("precompile", default=True, description="Improve julia startup time")
     variant("openlibm", default=True, description="Use openlibm instead of libm")
+    variant(
+        "cpu_target",
+        default="auto",
+        description=(
+            "Machine architecture(s) for which to (pre)compile system and package "
+            "images. Use the value `auto` (the default) to let Spack automatically "
+            "determine the target architecture. Use pipe (|) instead of comma (,) "
+            "in variants as Spack does not support commas. E.g.: "
+            "`cpu_target='generic;sandybridge|-xsaveopt|clone_all;haswell|-rdrnd|base(1);"
+            "znver4|-rdrnd|base(1)'`."
+        ),
+        sticky=True,
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -376,7 +389,10 @@ class Julia(MakefilePackage):
         march = get_best_target(spec.target, spec.compiler.name, spec.compiler.version)
 
         # LLVM compatible name for the JIT
-        julia_cpu_target = get_best_target(spec.target, "clang", spec["llvm"].version)
+        # Spack variants don't allow commas, so we use pipes and replace them to commas.
+        julia_cpu_target = spec.variants["cpu_target"].value.replace("|", ",")
+        if julia_cpu_target == "auto":
+            julia_cpu_target = get_best_target(spec.target, "clang", spec["llvm"].version)
 
         libuv = "libuv-julia" if "^libuv-julia" in spec else "libuv"
 
