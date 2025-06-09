@@ -1,1 +1,8 @@
 blank_issues_enabled: true
+contact_links:
+  - name: "\U0001F41E Bug report"
+    url: https://github.com/spack/spack/issues/new?template=bug_report.yml
+    about: Report a bug in the core of Spack (command not working as expected, etc.)
+  - name: "\U0001F38A Feature request"
+    url: https://github.com/spack/spack/issues/new?template=feature_request.yml
+    about: Suggest adding a feature that is not yet in Spack

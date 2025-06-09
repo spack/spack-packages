@@ -41,7 +41,6 @@ jobs:
       if: ${{ runner.os != 'Windows' }}
       run: |
           . ./spack-core/share/spack/setup-env.sh
-          spack config add -f ./.ci/configs/repos.yaml
           spack -d audit packages
           spack -d audit configs
           spack -d audit externals
@@ -49,7 +48,6 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       run: |
           ./spack-core/share/spack/setup-env.ps1
-          spack config add -f ./.ci/configs/repos.yaml
           spack -d audit packages
           ./.ci/validate_last_exit.ps1
           spack -d audit configs
