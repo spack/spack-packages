@@ -86,7 +86,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
     patch(
         "https://github.com/chapel-lang/chapel/pull/27355.patch",
-        when="@2.5",
+        when="@2.3:2.5",
         sha256="f70898877b21e678805d63b4c19b4cdf6dddb9d2fe2c14e27ef1b8e554b6dfb9",
     )
     patch(
