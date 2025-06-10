@@ -57,7 +57,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("qmp", default=False, description="Enable QMP")
-    variant("qio", default=False, description="Enable QIO")
+    variant("qio", default=False, description="Enable QIO (require QMP)", when="+qmp")
     variant("openqcd", default=False, description="Enable openQCD interface")
     variant("milc", default=False, description="Enable MILC interface")
     variant("qdp", default=False, description="Enable QDP interface")
@@ -88,6 +88,12 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
     variant("twisted_clover", default=False, description="Build twisted clover Dirac operators")
     variant("twisted_mass", default=False, description="Build twisted mass Dirac operators")
     variant("wilson", default=True, description="Build Wilson Dirac operators")
+    variant(
+        "usqcd",
+        default=False,
+        description="Download and build usqcd (optional dependency of qmp)",
+        when="+qmp",
+    )
 
     with when("+multigrid"):
         variant(
@@ -146,7 +152,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
             self.define("QUDA_GPU_ARCH", arch),
             self.define("QUDA_PRECISION", 14),
             self.define("QUDA_RECONSTRUCT", 7),
-            self.define("QUDA_DOWNLOAD_USQCD", False),
+            self.define("QUDA_DOWNLOAD_USQCD", "usqcd"),
             self.define("QUDA_DIRAC_DEFAULT_OFF", True),
             self.define_from_variant("QUDA_DIRAC_CLOVER", "clover"),
             self.define_from_variant("QUDA_DIRAC_CLOVER_HASENBUSCH", "clover_hasenbusch"),
