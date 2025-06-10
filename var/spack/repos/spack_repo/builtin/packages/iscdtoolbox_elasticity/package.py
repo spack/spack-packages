@@ -27,6 +27,8 @@ class IscdtoolboxElasticity(CMakePackage):
 
     variant("openmp", default=False, description="Enable OpenMP support")
 
+    depends_on("c", type="build")
+
     depends_on("iscdtoolbox-commons +openmp", when="+openmp")
     depends_on("iscdtoolbox-commons ~openmp", when="~openmp")
 
