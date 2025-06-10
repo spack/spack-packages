@@ -84,11 +84,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_chpl_line_length.patch", when="@:2.3.0")  # PRs 26357, 26381, 26491
     patch("fix_checkChplInstall.patch", when="@:2.3.0")  # PR 26317
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
-    patch(
-        "https://github.com/chapel-lang/chapel/pull/27355.patch",
-        when="@2.2:2.5",
-        sha256="f70898877b21e678805d63b4c19b4cdf6dddb9d2fe2c14e27ef1b8e554b6dfb9",
-    )
 
     launcher_names = (
         "amudprun",
@@ -784,6 +779,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "CHPL_MAKE_THIRD_PARTY",
             join_path(self.prefix.lib, "chapel", self._output_version_short),
         )
+        with when("@2.2:2.5"):
+            env.set("CHPL_HOME", chpl_home)
 
     def get_chpl_version_from_cmakelists(self) -> str:
         cmake_lists = None
