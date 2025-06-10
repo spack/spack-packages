@@ -26,6 +26,7 @@ class Madgraph5amc(MakefilePackage):
     timeout = {"timeout": 60}
 
     with default_args(fetch_options=timeout):
+        version("3.6.2", sha256="1dde78f865278d8b9a59ca608076f495ad82cebe75f10469faba97210ddcdb6f")
         version("3.5.6", sha256="d4f336196303df748074ac92f251db8e6592fca37b3059c2e0f2a764c7e50975")
         version(
             "2.9.20",
@@ -50,6 +51,9 @@ class Madgraph5amc(MakefilePackage):
                 sha256="400c26f9b15b07baaad9bd62091ceea785c2d3a59618fdc27cad213816bc7225",
                 url="https://launchpad.net/mg5amcnlo/lts/2.7.x/+download/MG5_aMC_v2.7.3.py3.tar.gz",
             )
+
+    depends_on("cxx", type="build", when="+pythia8")
+    depends_on("fortran", type="build")
 
     variant(
         "atlas",
@@ -90,7 +94,7 @@ class Madgraph5amc(MakefilePackage):
             "uutt_sch_4fermion",
             "uutt_tch_scalar",
         ),
-        default="None",
+        default=("None",),
         multi=True,
         description="Models that will be installed by Madgraph. These models can be used"
         "without them being installed first, then madgraph will download them"
@@ -193,10 +197,10 @@ class Madgraph5amc(MakefilePackage):
                 )
             mg5("install-pythia8-interface")
 
-        if spec.variants["models"].value != ["None"]:
+        if spec.variants["models"].value != ("None",):
             with open("install-models", "w") as f:
                 f.write(
-                    "\n".join([f"import model {model}" for model in spec.variants["models"].value])
+                    "\n".join([f"import model {model}" for model in spec.variants["models"].value if model != "None"])
                 )
             mg5("install-models")
 
