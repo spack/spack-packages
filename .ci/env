@@ -1,3 +1,3 @@
-SPACK_CHECKOUT_VERSION=refs/pull/50094/head
+SPACK_CHECKOUT_VERSION=refs/pull/50853/head
 SPACK_CHECKOUT_SERVER=https://github.com
 SPACK_CHECKOUT_REPO=spack/spack
