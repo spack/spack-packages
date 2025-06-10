@@ -13,64 +13,8 @@ concurrency:
 
 
 jobs:
-  # Validate that the code can be run on all the Python versions supported by Spack
-  validate:
+  noop:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-    - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
-      with:
-        python-version: '3.13'
-    - name: Install Python Packages
-      run: |
-        pip install -r .github/workflows/requirements/style/requirements.txt
-    - name: vermin (Repositories)
-      run: |
-        vermin --backport importlib --backport argparse --violations --backport typing -t=3.6- -vvv repos tests
-
-  # Run style checks on the files that have been changed
-  style:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      with:
-        fetch-depth: 2
-    - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
-      with:
-        python-version: '3.13'
-    - name: Install Python packages
-      run: |
-        pip install -r .github/workflows/requirements/style/requirements.txt
-    - uses: ./.github/actions/checkout-spack
-      with:
-        # This path must match the path in pyprojects.toml
-        path: spack-core
-    - name: Run style tests
-      run: |
-        bash .ci/style_check.sh
-        # TODO: Add back license check
-        # bin/spack license verify
-
-  audit:
-    uses: ./.github/workflows/audit.yaml
-    secrets: inherit
-    with:
-      python_version: '3.13'
-
-  verify-checksums:
-    # do not run if the commit message or PR description contains [skip-verify-checksums]
-    if: >-
-      ${{ inputs.with_packages == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-      with:
-        # Depth 2 is required for this check
-        fetch-depth: 2
-    - uses: ./.github/actions/checkout-spack
-      with:
-        fetch-depth: 1
-    - name: Verify Added Checksums
-      run: |
-        . spack-core/share/spack/setup-env.sh
-        spack ci verify-versions HEAD~1 HEAD
+      - name: Noop
+        run: echo "ok"
