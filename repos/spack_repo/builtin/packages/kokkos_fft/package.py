@@ -28,7 +28,7 @@ class KokkosFft(CMakePackage):
             description="Enable device backend")
     variant("tests", default=False, description="Enable tests")
 
-    depends_on("kokkos@4.4:4 +complex_align") # not supported in Spack 0.23.1
+    depends_on("kokkos@4.4:4 +complex_align")
     # kokkos-fft currently only supports compilation with the Kokkos nvcc wrapper
     requires("^kokkos +cuda +wrapper", when="device_backend=cufft")
     requires("^kokkos +rocm", when="device_backend=hipfft")
