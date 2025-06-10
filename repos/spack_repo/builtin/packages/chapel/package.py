@@ -89,11 +89,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@2.3:2.5",
         sha256="f70898877b21e678805d63b4c19b4cdf6dddb9d2fe2c14e27ef1b8e554b6dfb9",
     )
-    patch( # TODO: REMOVE THIS BEFORE PR
-        "https://github.com/chapel-lang/chapel/pull/27364.patch",
-        when="@main",
-        sha256="a177923a268781bff10b95939964165635e5cdeaffe5aa39e0223907aa7e0a5b",
-    )
 
     launcher_names = (
         "amudprun",
