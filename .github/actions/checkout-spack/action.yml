@@ -22,10 +22,11 @@ runs:
       run: |
         source .ci/env
         echo "version=${SPACK_CHECKOUT_VERSION}" >> $GITHUB_OUTPUT
+        echo "gh-repo=${SPACK_CHECKOUT_REPO}" >> $GITHUB_OUTPUT
     - name: Checkout Spack
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       with:
-        repository: spack/spack
+        repository: ${{ steps.spack-version.outputs.gh-repo}}
         ref: ${{ steps.spack-version.outputs.version }}
         path: ${{ inputs.path }}
         fetch-depth: ${{ inputs.fetch-depth }}
