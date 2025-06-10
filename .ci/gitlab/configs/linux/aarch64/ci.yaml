@@ -1,4 +1,6 @@
 ci:
   pipeline-gen:
   - build-job:
+      variables:
+        SPACK_CI_TARGET: aarch64
       tags: ["aarch64"]
