@@ -73,7 +73,4 @@ jobs:
     - name: Verify Added Checksums
       run: |
         . spack-core/share/spack/setup-env.sh
-        spack repo set --destination $GITHUB_WORKSPACE builtin
-        spack config get repos
-        spack repo list
         spack ci verify-versions HEAD~1 HEAD
