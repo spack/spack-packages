@@ -207,6 +207,8 @@ class Scorep(AutotoolsPackage):
         ]
 
         cname = self.clean_compiler(spec.compiler.name)
+        if cname == "intel-oneapi-compilers":
+            cname = "oneapi"
         config_args.extend(["--with-nocross-compiler-suite={0}".format(cname)])
 
         if self.version >= Version("4.0"):
