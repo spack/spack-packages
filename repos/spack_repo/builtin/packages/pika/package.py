@@ -69,7 +69,7 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     variant("shared", default=True, description="Build shared libraries")
     conflicts("~shared", when="@:0.25")
 
-    cxxstds = ("17", "20", "23")
+    cxxstds = ("17", "20", "23", "26")
     variant(
         "cxxstd",
         default="17",
@@ -119,15 +119,19 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.18:", type="build")
     depends_on("cmake@3.22:", when="@0.8:", type="build")
 
-    conflicts("%gcc@:6")
-    conflicts("%clang@:6")
+    conflicts("%[virtuals=cxx] gcc@:6")
+    conflicts("%[virtuals=cxx] llvm@:6")
     # Pika is requiring the std::filesystem support starting from version 0.2.0
-    conflicts("%gcc@:8", when="@0.2:")
-    conflicts("%clang@:8", when="@0.2:")
+    conflicts("%[virtuals=cxx] gcc@:8", when="@0.2:")
+    conflicts("%[virtuals=cxx] llvm@:8", when="@0.2:")
     conflicts("+stdexec", when="cxxstd=17")
-    conflicts("cxxstd=23", when="^cmake@:3.20.2")
     conflicts("cxxstd=20", when="+cuda ^cmake@:3.25.1")
+    conflicts("cxxstd=23", when="^cmake@:3.20.2")
     conflicts("cxxstd=23", when="+cuda")
+    conflicts("cxxstd=26", when="+cuda")
+    conflicts("cxxstd=26", when="^cmake@:3.24")
+    conflicts("cxxstd=26", when="%[virtuals=cxx] gcc@:13")
+    conflicts("cxxstd=26", when="%[virtuals=cxx] llvm@:16")
     # nvcc version <= 11 does not support C++20 and newer
     for cxxstd in filter(lambda x: x != "17", cxxstds):
         requires("%nvhpc", when=f"cxxstd={cxxstd} ^cuda@:11")
