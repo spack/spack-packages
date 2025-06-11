@@ -12,6 +12,7 @@ from spack.package import *
 class Pareval(Package, CudaPackage, ROCmPackage):
     """ParEval benchmark for evaluating LLMs' parallel code generation capabilities"""
 
+    homepage = "https://github.com/parallelcodefoundry/pareval"
     url = "https://github.com/parallelcodefoundry/pareval"
     git = "https://github.com/parallelcodefoundry/pareval.git"
 
