@@ -44,7 +44,3 @@ class Iotaa(PythonPackage):
         wheel_file = f"#iotaa-{self.version}-py3-none-any.whl"
         wheel_dir = join_path("iotaa")
         return join_path(wheel_dir, wheel_file)
-
-    def install(self, spec, prefix):
-        whl = self.stage.archive_file
-        python("-m", "pip", *PythonPipBuilder.std_args(self), f"--prefix={prefix}", whl)

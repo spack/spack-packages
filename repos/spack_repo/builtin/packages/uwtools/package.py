@@ -48,7 +48,3 @@ class Uwtools(PythonPackage):
     depends_on("py-requests@2.32", when="@2.6.3:")
 
     build_directory = "src"
-
-    def install(self, spec, prefix):
-        with working_dir(self.build_directory):
-            pip(*PythonPipBuilder.std_args(self), "--no-deps", f"--prefix={self.prefix}", ".")
