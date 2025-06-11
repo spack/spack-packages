@@ -52,27 +52,15 @@ class KokkosFft(CMakePackage):
             self.define("KokkosFFT_ENABLE_DOCS", False),
             self.define("KokkosFFT_ENABLE_BENCHMARK", False),
             self.define("KokkosFFT_ENABLE_EXAMPLES", False),
+            self.define(
+                "KokkosFFT_ENABLE_FFTW",
+                self.spec.satisfies("host_backend=fftw-serial")
+                or self.spec.satisfies("host_backend=fftw-openmp"),
+            ),
+            self.define("KokkosFFT_ENABLE_CUFFT", self.spec.satisfies("device_backend=cufft")),
+            self.define("KokkosFFT_ENABLE_HIPFFT", self.spec.satisfies("device_backend=hipfft")),
+            self.define("KokkosFFT_ENABLE_ONEMKL", self.spec.satisfies("device_backend=onemkl")),
         ]
-
-        if self.spec.satisfies("host_backend=fftw-serial") or self.spec.satisfies("host_backend=fftw-openmp"):
-            args.append(self.define("KokkosFFT_ENABLE_FFTW", "ON"))
-        else:
-            args.append(self.define("KokkosFFT_ENABLE_FFTW", "OFF"))
-
-        if self.spec.satisfies("device_backend=cufft"):
-            args.append(self.define("KokkosFFT_ENABLE_CUFFT", "ON"))
-        else:
-            args.append(self.define("KokkosFFT_ENABLE_CUFFT", "OFF"))
-
-        if self.spec.satisfies("device_backend=hipfft"):
-            args.append(self.define("KokkosFFT_ENABLE_HIPFFT", "ON"))
-        else:
-            args.append(self.define("KokkosFFT_ENABLE_HIPFFT", "OFF"))
-
-        if self.spec.satisfies("device_backend=onemkl"):
-            args.append(self.define("KokkosFFT_ENABLE_ONEMKL", "ON"))
-        else:
-            args.append(self.define("KokkosFFT_ENABLE_ONEMKL", "OFF"))
 
         if self.spec.satisfies("^kokkos+rocm"):
             args.append(self.define("CMAKE_CXX_COMPILER", self["hip"].hipcc))
