@@ -17,8 +17,9 @@ class Maxbin(MakefilePackage):
 
     version("2.2.7", sha256="cb6429e857280c2b75823c8cd55058ed169c93bc707a46bde0c4383f2bffe09e")
 
+    extends("perl")
     depends_on("perl@5:", type=("build", "run"))
-    depends_on("perl-libwww-perl", type=("build", "run"))
+    depends_on("perl-libwww-perl", type=("build", "run", "link"))
     depends_on("bowtie2", type=("build", "run"))
     depends_on("fraggenescan", type=("build", "run"))
     depends_on("hmmer@3", type=("build", "run"))
@@ -30,6 +31,5 @@ class Maxbin(MakefilePackage):
         mkdir(prefix.bin)
         install_tree(".", prefix.bin)
         perl = which("perl")
-        sed = which("sed")
-        sed("-i", f's;#!/usr/bin/perl;#!{perl};', f"{prefix}/bin/run_MaxBin.pl")
-        sed("-i", f's;my $tmpname =  "tmp_" . time();my $tmpname =  "/tmp/maxbin_tmp_" . time();', f"{prefix}/bin/run_MaxBin.pl")
+        filter_file(r"#!/usr/bin/perl -w", f"#!{perl} -w -I {spec['perl-libwww-perl'].prefix}/lib/perl5 -I {spec['perl-http-message'].prefix}/lib/perl5", f"{prefix}/bin/run_MaxBin.pl", string=True)
+        filter_file(r'my $tmpname =  "tmp_" . time();', 'my $tmpname =  "/tmp/maxbin_tmp_" . time();', f"{prefix}/bin/run_MaxBin.pl", string=True)
