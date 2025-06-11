@@ -940,13 +940,12 @@ class Python(Package):
 
         else:
             # Give a last try at rhel8 platform python
-            if self.spec.external and self.prefix == "/usr" and self.spec.satisfies("os=rhel8"):
-                path = os.path.join(self.prefix, "libexec", "platform-python")
-                if os.path.exists(path):
-                    return Executable(path)
+            platform_python = os.path.join(self.prefix, "libexec", "platform-python")
+            if self.spec.external and self.prefix == "/usr" and is_exe(platform_python):
+                return Executable(platform_python)
 
         raise RuntimeError(
-            f"cannot to locate the '{self.name}' command in {root} or its subdirectories"
+            f"cannot locate the '{self.name}' command in {root} or its subdirectories"
         )
 
     @property
