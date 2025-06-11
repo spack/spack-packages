@@ -39,8 +39,8 @@ class KokkosFft(CMakePackage):
     requires("^kokkos +sycl", when="device_backend=onemkl")
     depends_on("googletest@1.15:1", when="+tests")
 
-    depends_on("fftw@3.3:3 ~mpi ~openmp precision=float,double", when="host_backend==fftw-serial")
-    depends_on("fftw@3.3:3 ~mpi +openmp precision=float,double", when="host_backend=fftw-openmp")
+    depends_on("fftw@3.3:3 ~mpi precision=float,double")
+    requires("^fftw +openmp", when="host_backend=fftw-openmp")
     depends_on("cuda@11:12", when="device_backend=cufft")
     depends_on("hipfft@5.3:6", when="device_backend=hipfft")
     depends_on("intel-oneapi-mkl@2023:2025", when="device_backend=onemkl")
