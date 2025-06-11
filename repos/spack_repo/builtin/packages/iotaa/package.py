@@ -12,7 +12,8 @@ class Iotaa(PythonPackage):
     and tasks expressed as decorated Python functions"""
 
     homepage = "https://github.com/maddenp/iotaa"
-    pypi = "iotaa/iotaa-1.2.3-py3-none-any.whl"
+    url = "https://github.com/maddenp/iotaa/archive/refs/tags/v1.2.3-0.tar.gz"
+    git = "https://github.com/maddenp/iotaa.git"
 
     maintainers("maddenp")
 
@@ -38,9 +39,3 @@ class Iotaa(PythonPackage):
     )
 
     depends_on("py-setuptools@42:", type="build")
-
-    @property
-    def build_wheel_file_path(self):
-        wheel_file = f"#iotaa-{self.version}-py3-none-any.whl"
-        wheel_dir = join_path("iotaa")
-        return join_path(wheel_dir, wheel_file)
