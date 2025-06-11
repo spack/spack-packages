@@ -209,6 +209,13 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     patch("posix_stack_non_executable_0_6_0_12.patch", when="@0.6:0.12 platform=darwin")
     patch("posix_stack_non_executable_0_1_0_5.patch", when="@:0.5 platform=darwin")
 
+    # Fix +mpi +apex compilation error
+    patch(
+        "https://github.com/pika-org/pika/commit/1d7fc3e0220224a668026fcba67442bb8cd63459.patch?full_index=1",
+        sha256="3515a6df1d953b30f4d4a0c53ab50853ffdbaf99dd30b83419269deddd4345ce",
+        when="@0.32:0.33 +mpi +apex",
+    )
+
     # Fix missing template instantiation on macOS
     patch(
         "https://github.com/pika-org/pika/commit/dd1dfb85781ec2e76fa37ce7311323e69fbe42a1.patch?full_index=1",
