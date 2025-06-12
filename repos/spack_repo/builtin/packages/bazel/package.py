@@ -150,12 +150,21 @@ class Bazel(Package):
     )
 
     # https://bazel.build/install/compile-source#bootstrap-unix-prereq
+    depends_on("bash", type="build")
+    depends_on("zip", when="platform=linux", type=("build", "run"))
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("java@21", when="@7.2:", type=("build", "run"))
     depends_on("java@11", when="@5.3:7.1", type=("build", "run"))
     depends_on("java@8,11", when="@3.3:5.2", type=("build", "run"))
     depends_on("java@8", when="@0.6:3.2", type=("build", "run"))
     depends_on("python+pythoncmd", type=("build", "run"))
-    depends_on("zip", when="platform=linux", type=("build", "run"))
+
+    patch(
+        "https://github.com/bazelbuild/bazel/commit/05b1f061c9256ec0eb6fb71716ed93feb0c31b59.patch?full_index=1",
+        sha256="e695708d20fbb84d94e1d2a896330de6222f9f20bb34ef65cdfe634d3454f06c",
+        when="@7.0",
+    )
 
     # Pass Spack environment variables to the build
     patch("bazelruleclassprovider-0.25.patch")
@@ -213,7 +222,13 @@ class Bazel(Package):
     conflicts("@4.0.0", when="%gcc@11:")
 
     # https://github.com/bazelbuild/bazel/pull/23667
-    conflicts("%apple-clang@16:", when="@:7.3")
+    patch(
+        "https://github.com/bazelbuild/bazel/commit/4a32d7b98423682be9c47f571afbfbb587605895.patch?full_index=1",
+        sha256="18152e63b1d07aca11c126656175ceab92d4937bade13477f93322efdaf0fca1",
+        when="@7.1:7.3",
+    )
+    patch("01_remove_werror_7.patch", when="@7.0")
+    conflicts("%apple-clang@16:", when="@:6")
 
     executables = ["^bazel$"]
 
