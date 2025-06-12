@@ -24,7 +24,8 @@ class PyMetatensor(PythonPackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     extends("python")
-    depends_on("py-numpy", type=("run"))
+    depends_on("python@3.9:")
+    depends_on("py-numpy", type=("run", "build"))
 
     for ver, sha in VERSION_MAP.items():
         version(ver, sha256=sha)

@@ -17,23 +17,19 @@ class Libmetatensor(CMakePackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.1.14", sha256="dc6cdd9cf0113e2f012ecf68b81cc7cfc71bef3d2020b41574de8fa403dba646")
-    version("0.1.13", sha256="c735b1050357b2873e2e07ee1e263fc9d45faf07f5ea63b65e70869ca423adb5")
 
-    variant("shared", default=True, description="Build shared library version")
+    variant("both_shared_and_static", default=False, description="Build both shared and static library versions, by default only shared libraries are built")
 
     generator("ninja")
 
     depends_on("cmake", type="build")
     depends_on("ninja", type="build")
     depends_on("rust@1.74.0:", type="build")
-
-    depends_on("cxx", type="test")
-    depends_on("cmake", type="test")
-    depends_on("ninja", type="test")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     def cmake_args(self):
         args = [
-            "-DMETATENSOR_INSTALL_BOTH_STATIC_SHARED=OFF",  # For now
-            self.define("CMAKE_BUILD_TYPE", "Release"),
+            self.define_from_variant("METATENSOR_INSTALL_BOTH_STATIC_SHARED", "both_shared_and_static"),
         ]
         return args
