@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import glob
+
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
@@ -57,5 +59,6 @@ class Minimap2(PythonPackage):
         mkdirp(prefix.bin)
         install("minimap2", prefix.bin)
         if self.spec.satisfies("js_engine=node"):
-            filter_file(r"k8", "node", "./misc/*.js")
+            files = glob.glob("./misc/*.js")
+            filter_file(r"k8", "node", *files)
         install("misc/*.js", prefix.bin)
