@@ -80,6 +80,8 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
     depends_on("nalu-wind+gpu-aware-mpi", when="+gpu-aware-mpi")
     depends_on("amr-wind+gpu-aware-mpi", when="+gpu-aware-mpi")
+    depends_on("nalu-wind@2.3:", when="@2:")
+    depends_on("amr-wind@3.5:", when="@2:")
     depends_on("nalu-wind@2.0.0:", when="@1.0.0:")
     depends_on("amr-wind@0.9.0:", when="@1.0.0:")
     depends_on("tioga@1.0.0:", when="@1.0.0:")
