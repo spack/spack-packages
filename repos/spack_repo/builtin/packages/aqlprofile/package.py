@@ -303,8 +303,6 @@ class Aqlprofile(Package):
     depends_on("cpio")
 
     for ver in [
-        "5.5.0",
-        "5.5.1",
         "5.6.0",
         "5.6.1",
         "5.7.0",
