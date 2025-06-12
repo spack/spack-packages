@@ -37,6 +37,9 @@ class Seacas(CMakePackage):
     # ###################### Versions ##########################
     version("master", branch="master")
     version(
+        "2025-06-07", sha256="2974705f2859e30bca48b619fda078bb771c0e94381af9e624749afb9fd72780"
+    )
+    version(
         "2025-05-22", sha256="50e941ad2bfffa84d84465576cd118a14698b3f0cfcfc613dbb1aa3f2f4ebdda"
     )
     version(
