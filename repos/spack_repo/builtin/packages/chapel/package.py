@@ -80,9 +80,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_checkChplInstall.patch", when="@:2.3.0")  # PR 26317
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
     patch(
-        "https://github.com/chapel-lang/chapel/pull/27365.patch",
+        "https://github.com/chapel-lang/chapel/pull/27365.patch?full_index=1",
         when="@2.2:2.5",
-        sha256="72723286b9e8bb241dc54f17e54c6444a6ba8f34586ea443a1cc333063d6cbd2",
+        sha256="1e49e48eb838c38db5b81ca4859e566067a61d537269e35a6a356edb76d3c86b",
     )
 
     launcher_names = (
