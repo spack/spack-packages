@@ -24,6 +24,7 @@ class Fmi4cpp(CMakePackage):
 
     variant("shared", default=True, description="Build shared library")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("libzip")
     depends_on("pugixml")
