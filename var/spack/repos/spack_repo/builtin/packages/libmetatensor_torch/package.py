@@ -17,10 +17,8 @@ class LibmetatensorTorch(CMakePackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.7.6", sha256="8dcc07c86094034facba09ebcc6b52f41847c2413737c8f9c88ae0a2990f8d41")
-    generator("ninja")
 
-    depends_on("cmake", type="build")
-    depends_on("ninja", type="build")
+    depends_on("cmake@3.16:", type="build")
     depends_on("cxx", type="build")
     depends_on("c", type="build")
     depends_on("libmetatensor@0.1.13:", type=("build", "run"))

@@ -22,8 +22,7 @@ class Libmetatensor(CMakePackage):
 
     generator("ninja")
 
-    depends_on("cmake", type="build")
-    depends_on("ninja", type="build")
+    depends_on("cmake@3.16:", type="build")
     depends_on("rust@1.74.0:", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
