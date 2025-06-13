@@ -42,7 +42,6 @@ class Sedacs(PythonPackage, CudaPackage):
      
     # gpu/ai-hardware library
     variant("gpulib", default=False, description="Build with GPU, AI-hardware library support.")
-    variant('cuda_arch', default='none', multi=False)
     depends_on('cmake',when="+gpulib")
     depends_on('nvhpc',when="+gpulib")
     conflicts(
