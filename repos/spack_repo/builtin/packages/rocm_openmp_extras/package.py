@@ -382,6 +382,7 @@ class RocmOpenmpExtras(Package):
     patch("0001-Avoid-duplicate-registration-on-cuda-env.patch", when="@6.1")
     patch("0001-Avoid-duplicate-registration-on-cuda-env-6.2.patch", when="@6.2:6.3")
     patch("0001-Avoid-duplicate-registration-on-cuda-env-6.4.patch", when="@6.4:")
+    patch("0002-add-include-dir-omp.patch", when="@6.4:")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.external:
@@ -685,6 +686,8 @@ class RocmOpenmpExtras(Package):
         components["pgmath"] = ["../rocm-openmp-extras/flang/runtime/libpgmath"]
 
         components["pgmath"] += flang_common_args
+        components["offload"] = ["../rocm-openmp-extras/llvm-project/offload"]
+        components["offload"] += openmp_common_args
 
         flang_legacy_version = "17.0-4"
 
@@ -742,6 +745,8 @@ class RocmOpenmpExtras(Package):
         components["flang-runtime"] += flang_common_args
 
         build_order = ["aomp-extras", "openmp"]
+        if self.spec.version >= Version("6.4.0"):
+            build_order += ["offload"]
         if self.spec.version >= Version("6.1.0"):
             build_order += ["flang-legacy-llvm", "flang-legacy"]
 
