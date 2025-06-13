@@ -13,7 +13,7 @@ class Libmetatensor(CMakePackage):
     url = "https://github.com/metatensor/metatensor/releases/download/metatensor-core-v0.1.14/metatensor-core-cxx-0.1.14.tar.gz"
     git = "https://github.com/metatensor/metatensor.git"
 
-    maintainers("HaoZeke", "luthaf")
+    maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.1.14", sha256="dc6cdd9cf0113e2f012ecf68b81cc7cfc71bef3d2020b41574de8fa403dba646")

@@ -20,7 +20,7 @@ class PyMetatensor(PythonPackage):
 
     import_modules = ["metatensor"]
 
-    maintainers("HaoZeke", "luthaf")
+    maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     extends("python")

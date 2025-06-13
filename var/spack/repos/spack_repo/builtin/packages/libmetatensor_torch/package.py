@@ -13,7 +13,7 @@ class LibmetatensorTorch(CMakePackage):
     url = "https://github.com/metatensor/metatensor/releases/download/metatensor-torch-v0.7.6/metatensor-torch-cxx-0.7.6.tar.gz"
     git = "https://github.com/metatensor/metatensor.git"
 
-    maintainers("HaoZeke", "luthaf")
+    maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.7.6", sha256="8dcc07c86094034facba09ebcc6b52f41847c2413737c8f9c88ae0a2990f8d41")
