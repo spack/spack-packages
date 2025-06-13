@@ -27,6 +27,7 @@ GPU_MAP = {
     "gfx90a": "Mi250",
     "gfx90a:xnack-": "Mi250",
     "gfx90a:xnack+": "Mi250",
+    "gfx942": "Mi300",
 }
 
 
@@ -228,7 +229,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
     depends_on("libvdwxc", when="+vdwxc")
-    depends_on("tblite", when="+tblite")
+    depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
     with when("+openmp"):
         depends_on("fftw+openmp", when="^[virtuals=fftw-api] fftw")
@@ -402,7 +403,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # versions. Instead just mark all unsupported cuda archs as conflicting.
 
     supported_cuda_arch_list = ("35", "37", "60", "70", "80", "90")
-    supported_rocm_arch_list = ("gfx906", "gfx908", "gfx90a", "gfx90a:xnack-", "gfx90a:xnack+")
+    supported_rocm_arch_list = (
+        "gfx906",
+        "gfx908",
+        "gfx90a",
+        "gfx90a:xnack-",
+        "gfx90a:xnack+",
+        "gfx942",
+    )
     cuda_msg = "cp2k only supports cuda_arch {0}".format(supported_cuda_arch_list)
     rocm_msg = "cp2k only supports amdgpu_target {0}".format(supported_rocm_arch_list)
 

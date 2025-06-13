@@ -105,7 +105,14 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cuda_arch=none", msg=cuda_msg)
 
-    dbcsr_amdgpu_targets = ("gfx906", "gfx910", "gfx90a", "gfx90a:xnack-", "gfx90a:xnack+")
+    dbcsr_amdgpu_targets = (
+        "gfx906",
+        "gfx910",
+        "gfx90a",
+        "gfx90a:xnack-",
+        "gfx90a:xnack+",
+        "gfx942",
+    )
     amd_msg = f"DBCSR supports these AMD gpu targets:  {', '.join(dbcsr_amdgpu_targets)}"
 
     for arch in ROCmPackage.amdgpu_targets:
@@ -197,6 +204,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
                 "gfx90a": "Mi250",
                 "gfx90a:xnack-": "Mi250",
                 "gfx90a:xnack+": "Mi250",
+                "gfx942": "Mi250",
             }[amd_arch]
 
             args += ["-DWITH_GPU={0}".format(gpuver), "-DUSE_ACCEL=hip"]
