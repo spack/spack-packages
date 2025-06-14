@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class Boringssl(CMakePackage):
-    """BoringSSL is a fork of OpenSSL developed by Google to meet Google's needs"""
+    """BoringSSL is a fork of OpenSSL that is developed by Google to meet Google's needs and is
+    generally considered more performant and secure than OpenSSL."""
 
     homepage = "https://boringssl.googlesource.com/boringssl"
     git = "https://boringssl.googlesource.com/boringssl.git"
