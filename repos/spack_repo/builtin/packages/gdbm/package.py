@@ -39,6 +39,10 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("readline")
 
+    # GCC 15 defaults to C23, which is only supported since GDBM 1.25
+    # https://git.gnu.org.ua/gdbm.git/commit/?id=734f69451392ffb6280d8a3aef51e2673c9b8554
+    conflicts("%gcc@15:", when="@:1.24", msg="C23 requires at least GDBM 1.25")
+
     patch("macOS.patch", when="@1.21 platform=darwin")
     patch("gdbm.patch", when="@:1.18 %gcc@10:")
     patch("gdbm.patch", when="@:1.18 %clang@11:")
