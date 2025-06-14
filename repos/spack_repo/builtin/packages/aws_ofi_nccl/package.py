@@ -16,9 +16,10 @@ class AwsOfiNccl(AutotoolsPackage):
     url = "https://github.com/aws/aws-ofi-nccl/archive/v0.0.0.tar.gz"
     git = "https://github.com/aws/aws-ofi-nccl.git"
 
-    maintainers("bvanessen")
+    maintainers("bvanessen", "msimberg")
 
     version("master", branch="master")
+    version("1.15.0", sha256="0a962d8444ad8312b08a2a9784671c554ae0350600e62bb6c6652e5bd3d96b9d")
     version("1.14.2", sha256="e523ea08ce0caeff5c949b2134b4897186d793ce908904dd9d47bb08230b9bbd")
     version("1.13.0", sha256="50dd231a0a99cec29300df46b8e828139ced15322a3c3c41b1d22dcc9a62ec02")
     version("1.12.1", sha256="821f0929c016e5448785bbc6795af5096559ecfc6c9479eb3818cafa61424576")
@@ -40,7 +41,8 @@ class AwsOfiNccl(AutotoolsPackage):
     variant("trace", default=False, description="Enable printing trace messages")
     variant("tests", default=False, description="Build tests")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@1.15:")
 
     depends_on("libfabric")
     depends_on("cuda")
