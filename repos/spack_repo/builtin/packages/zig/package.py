@@ -39,6 +39,7 @@ class Zig(CMakePackage):
     depends_on("llvm@16", when="@0.11.0")
     depends_on("llvm@17", when="@0.12.0")
     depends_on("llvm@18", when="@0.13.0")
+    depends_on("llvm@19", when="@0.14.0")
 
     depends_on("git", type="build")
     depends_on("ccache")
