@@ -23,7 +23,10 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         conditional("autotools", when="@:2.9"), conditional("meson", when="@3:"), default="meson"
     )
 
-    license("MIT")
+    # HarfBuzz is licensed under the so-called "Old MIT" license,
+    # for which no SPDX identifier is listed at https://spdx.org/licenses/
+    # Ref: https://github.com/harfbuzz/harfbuzz/blob/main/COPYING
+    license("MIT-old", checked_by="wdconinc")
 
     version("11.2.1", sha256="093714c8548a285094685f0bdc999e202d666b59eeb3df2ff921ab68b8336a49")
     version("11.2.0", sha256="50f7d0a208367e606dbf6eecc5cfbecc01a47be6ee837ae7aff2787e24b09b45")
@@ -100,7 +103,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    with when("buildsystem="meson"):
+    with when("buildsystem=meson"):
         depends_on("meson@0.60:", when="@11.1:")
         depends_on("meson@0.55:", when="@3.2.1:")
         depends_on("meson@0.52:")
