@@ -103,7 +103,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    with when("buildsystem=meson"):
+    with when("build_system=meson"):
         depends_on("meson@0.60:", when="@11.1:")
         depends_on("meson@0.55:", when="@3.2.1:")
         depends_on("meson@0.52:")
