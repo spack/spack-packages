@@ -20,7 +20,6 @@ class Prrte(AutotoolsPackage):
     homepage = "https://pmix.org"
     url = "https://github.com/pmix/prrte/releases/download/v1.0.0/prrte-1.0.0.tar.bz2"
     git = "https://github.com/pmix/prrte.git"
-    maintainers("rhc54")
 
     license("BSD-3-Clause-Open-MPI")
 
