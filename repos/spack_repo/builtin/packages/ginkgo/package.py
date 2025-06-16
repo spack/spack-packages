@@ -29,6 +29,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
     version("main", branch="main")
+    version("master", branch="master", deprecated=True)
+    version("1.10.0", commit="d4e0e9f8c8eb36cc2044189834d82742b925f27e") # v1.10.0
     version("1.9.0", commit="20cfd68795f58078898da9890baa311b46845a8b")  # v1.9.0
     version("1.8.0", commit="586b1754058d7a32d4bd1b650f9603484c2a8927")  # v1.8.0
     version("1.7.0", commit="49242ff89af1e695d7794f6d50ed9933024b66fe")  # v1.7.0
@@ -57,6 +59,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "half_precision", default=True, description="Enable half-precision support", when="@1.9.0:"
     )
+    variant("bfloat16_precision", default=True, description="Enable bfloat16 support", when="@1.10.0:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -174,6 +177,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("GINKGO_WITH_PAPI_SDE", "sde"),
             from_variant("GINKGO_DEVEL_TOOLS", "develtools"),
             from_variant("GINKGO_ENABLE_HALF", "half_precision"),
+            from_variant("GINKGO_ENABLE_BFLOAT16", "bfloat16_precision"),
             # As we are not exposing benchmarks, examples, tests nor doc
             # as part of the installation, disable building them altogether.
             "-DGINKGO_BUILD_BENCHMARKS=OFF",
@@ -207,6 +211,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
             if archs != "none":
                 arch_str = ";".join(archs)
                 args.append("-DGINKGO_HIP_AMDGPU={0}".format(arch_str))
+                args.append(self.define("CMAKE_HIP_ARCHITECTURES", arch_str))
             if spec.satisfies("^hip@5.2.0:"):
                 args.append(
                     self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip)
