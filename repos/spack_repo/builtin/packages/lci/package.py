@@ -5,6 +5,7 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 
 from spack.package import *
+import warnings
 
 
 def is_positive_int(val):
@@ -26,6 +27,7 @@ class Lci(CMakePackage):
     license("MIT")
 
     version("master", branch="master")
+    version("2.0.0-beta.1", sha256="5d28b88e4a5aed67c3f1fe16eccf60c7237a9c8bba890b9c479fb21d30153b39")
     version("1.7.9", sha256="49f212d034e7d0b63af29e76b17935a3221830090af02c0e0912cea8a7a58d91")
     version("1.7.8", sha256="9d54dd669b54e715162c5184a0e5cc64fd479e9fda60b2a490197d901368afda")
     version("1.7.7", sha256="c310f699b7b4317a2f5c3557f85c240fe3c85d2d06618dd248434ef807d53779")
@@ -99,19 +101,30 @@ class Lci(CMakePackage):
     variant(
         "papi", default=False, description="Enable the PAPI plugin to collect hardware counters"
     )
+    variant("tcmalloc", default=True, description="Enable tcmalloc for memory management")
 
     variant(
-        "enable-pm",
-        description="Process management backends to enable",
-        values=disjoint_sets(("auto",), ("pmix", "pmi2", "pmi1", "mpi", "local"))
+        "bootstrap",
+        description="Bootstrap backends to enable",
+        values=disjoint_sets(("auto",), ("pmix", "pmi2", "pmi1", "mpi", "file", "local"), ("cray",))
         .prohibit_empty_set()
         .with_default("auto")
         .with_non_feature_values("auto"),
     )
+    # deprecated variant, use `bootstrap` instead
+    variant(
+        "enable-pm",
+        description="Process management backends to enable",
+        values=disjoint_sets(("auto",), ("pmix", "pmi2", "pmi1", "mpi", "file", "local"))
+        .prohibit_empty_set()
+        .with_default("auto")
+        .with_non_feature_values("auto"),
+    )
+    # deprecated variant, use `bootstrap` instead
     variant(
         "default-pm",
         description="Order of process management backends to try by default",
-        values=disjoint_sets(("auto",), ("pmix", "pmi2", "pmi1", "mpi", "local"), ("cray",))
+        values=disjoint_sets(("auto",), ("pmix", "pmi2", "pmi1", "mpi", "file", "local"), ("cray",))
         .prohibit_empty_set()
         .with_default("auto")
         .with_non_feature_values("auto"),
@@ -126,55 +139,61 @@ class Lci(CMakePackage):
     depends_on("libfabric", when="fabric=ofi")
     depends_on("rdma-core", when="fabric=ibv")
     depends_on("ucx", when="fabric=ucx")
-    depends_on("mpi", when="enable-pm=mpi")
+    depends_on("mpi", when="bootstrap=mpi")
     depends_on("papi", when="+papi")
     depends_on("doxygen", when="+docs")
-    depends_on("cray-pmi", when="default-pm=cray")
+    depends_on("cray-pmi", when="bootstrap=cray")
+    depends_on("gperftools", when="+tcmalloc")
+    depends_on("python@3.8:", type="build", when="@2:")
 
     def cmake_args(self):
+        if not self.spec.satisfies("enable-pm=auto"):
+            warnings.warn("The 'enable-pm' variant is deprecated, use 'bootstrap' instead.",
+                          DeprecationWarning, stacklevel=2)
+            self.spec.variants["bootstrap"].value = self.spec.variants["enable-pm"].value
+
+        if not self.spec.satisfies("default-pm=auto"):
+            warnings.warn("The 'default-pm' variant is deprecated, use 'bootstrap' instead.",
+                          DeprecationWarning, stacklevel=2)
+            self.spec.variants["bootstrap"].value = self.spec.variants["default-pm"].value
+
         args = [
-            self.define_from_variant("LCI_SERVER", "fabric"),
-            self.define("LCI_FORCE_SERVER", True),
             self.define_from_variant("LCI_WITH_EXAMPLES", "examples"),
             self.define_from_variant("LCI_WITH_TESTS", "tests"),
             self.define_from_variant("LCI_WITH_BENCHMARKS", "benchmarks"),
             self.define_from_variant("LCI_WITH_DOC", "docs"),
-            self.define_from_variant("LCI_ENABLE_MULTITHREAD_PROGRESS", "multithread-progress"),
             self.define_from_variant("LCI_DEBUG", "debug"),
             self.define_from_variant("LCI_USE_PERFORMANCE_COUNTER", "pcounter"),
             self.define_from_variant("LCI_USE_PAPI", "papi"),
+            self.define_from_variant("LCI_USE_TCMALLOC", "tcmalloc"),
         ]
 
-        if not self.spec.satisfies("dreg=auto"):
-            args.append(self.define_from_variant("LCI_USE_DREG_DEFAULT", "dreg"))
-
-        if not self.spec.satisfies("enable-pm=auto"):
-            args.extend(
-                [
-                    self.define(
-                        "LCT_PMI_BACKEND_ENABLE_PMI1", self.spec.satisfies("enable-pm=pmi1")
-                    ),
-                    self.define(
-                        "LCT_PMI_BACKEND_ENABLE_PMI2", self.spec.satisfies("enable-pm=pmi2")
-                    ),
-                    self.define(
-                        "LCT_PMI_BACKEND_ENABLE_MPI", self.spec.satisfies("enable-pm=mpi")
-                    ),
-                    self.define(
-                        "LCT_PMI_BACKEND_ENABLE_PMIX", self.spec.satisfies("enable-pm=pmix")
-                    ),
-                ]
-            )
-
-        if self.spec.satisfies("default-pm=cray"):
-            args.extend(
-                [
-                    self.define("LCI_PMI_BACKEND_DEFAULT", "pmi1"),
-                    self.define("LCT_PMI_BACKEND_ENABLE_PMI1", True),
-                ]
-            )
-        elif not self.spec.satisfies("default-pm=auto"):
-            args.append(self.define_from_variant("LCI_PMI_BACKEND_DEFAULT", "default-pm"))
+        if not self.spec.satisfies("bootstrap=auto"):
+            if self.spec.satisfies("bootstrap=cray"):
+                args.extend(
+                    [
+                        self.define("LCI_PMI_BACKEND_DEFAULT", "pmi1"),
+                        self.define("LCT_PMI_BACKEND_ENABLE_PMI1", True),
+                    ]
+                )
+            else:
+                args.extend(
+                    [
+                        self.define(
+                            "LCT_PMI_BACKEND_ENABLE_PMI1", self.spec.satisfies("bootstrap=pmi1")
+                        ),
+                        self.define(
+                            "LCT_PMI_BACKEND_ENABLE_PMI2", self.spec.satisfies("bootstrap=pmi2")
+                        ),
+                        self.define(
+                            "LCT_PMI_BACKEND_ENABLE_MPI", self.spec.satisfies("bootstrap=mpi")
+                        ),
+                        self.define(
+                            "LCT_PMI_BACKEND_ENABLE_PMIX", self.spec.satisfies("bootstrap=pmix")
+                        ),
+                        self.define_from_variant("LCI_PMI_BACKEND_DEFAULT", "bootstrap"),
+                    ]
+                )
 
         if not self.spec.satisfies("cache-line=auto"):
             args.append(self.define_from_variant("LCI_CACHE_LINE", "cache-line"))
@@ -199,5 +218,17 @@ class Lci(CMakePackage):
             args.append(
                 self.define_from_variant("LCI_SERVER_MAX_CQES_DEFAULT", "fabric-ncqes-max")
             )
+
+        if self.spec.satisfies("@1"):
+            args.extend(
+                [
+                    self.define_from_variant("LCI_SERVER", "fabric"),
+                    self.define("LCI_FORCE_SERVER", True),
+                ]
+            )
+            if not self.spec.satisfies("dreg=auto"):
+                args.append(self.define_from_variant("LCI_USE_DREG_DEFAULT", "dreg"))
+        else:
+            args.append(self.define_from_variant("LCI_NETWORK_BACKENDS", "fabric"))
 
         return args
