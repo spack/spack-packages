@@ -48,7 +48,6 @@ class QtTools(QtPackage):
     depends_on("qt-base +network")
     depends_on("qt-base +widgets", when="+designer")
 
-    depends_on("llvm +clang")
     depends_on("zstd@1.3:", when="+designer")
 
     for _v in QtBase.versions:
@@ -70,8 +69,9 @@ class QtTools(QtPackage):
 
         if spec.satisfies("+designer"):
             define("FEATURE_designer", True)
-            define("FEATURE_zstd", False)
+            define("FEATURE_zstd", True)
         else:
             define("FEATURE_designer", False)
+            define("FEATURE_zstd", False)
 
         return args
