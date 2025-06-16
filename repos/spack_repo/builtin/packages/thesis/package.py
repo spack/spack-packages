@@ -27,7 +27,7 @@ class Thesis(CMakePackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=False, description="Build with MPI support")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
     depends_on("cmake@3.9:", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("llvm-openmp", when="%apple-clang", type=("build", "run"))
