@@ -87,20 +87,18 @@ class Hipfort(CMakePackage):
         env.set("CXX", self.spec["hip"].hipcc)
 
     def cmake_args(self):
-        args = []
+        args = ["-DHIPFORT_COMPILER={}".format(env["SPACK_FC"])]
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
         if self.spec.satisfies("%cce"):
-            args.append("-DHIPFORT_COMPILER={}".format(spack_fc))
             args.append("-DHIPFORT_AR=" + join_path(self.spec["binutils"].prefix.bin, "ar"))
             args.append(
                 "-DHIPFORT_RANLIB=" + join_path(self.spec["binutils"].prefix.bin, "ranlib")
             )
             args.append("-DHIPFORT_COMPILER_FLAGS='-ffree -eT'")
         elif self.spec.satisfies("%gcc"):
-            args.append("-DHIPFORT_COMPILER={}".format(spack_fc))
             args.append("-DHIPFORT_COMPILER_FLAGS='-ffree-form -cpp -ffree-line-length-none'")
 
         return args
