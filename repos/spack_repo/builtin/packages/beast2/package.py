@@ -50,6 +50,15 @@ class Beast2(Package):
                     filter_file(
                         r"(beast\.pkgmgmt.*\b)|(viz.*\b)", "{0} {1} \\1".format(javafx, modules), i
                     )
+                    
+        if self.spec.satisfies("@2.7.0:"):
+            # print a message that indicates you need to create /home/${USER}/.beast/2.X/toDeleteList 
+            # to avoid a warning about the toDeleteList file
+            print(
+                "To avoid an error about the toDeleteList file, create the directory ~/.beast/2.7 "
+                "and an empty file named toDeleteList in that directory."
+                "On Linux, run mkdir -p ~/.beast/2.7 && touch ~/.beast/2.7/toDeleteList"
+            )
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("BEAST", self.prefix)
@@ -63,4 +72,8 @@ class Beast2(Package):
             template_dir = "templates"
         else:
             template_dir = "fxtemplates"
+            
+        if spec.satisfies("@2.7.0:"):
+            install_tree("jre", join_path(self.prefix, "jre"))
+
         install_tree(template_dir, join_path(self.prefix, template_dir))
