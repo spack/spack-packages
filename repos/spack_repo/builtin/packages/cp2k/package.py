@@ -503,6 +503,13 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/electronic-structure/SIRIUS/pull/1048
     patch("sirius-api-7.7.0.patch", when="@2024.2:2025.1 ^sirius@7.7.0")
 
+    # Fix missing S in data/BASIS_MOLOPT_UZH
+    patch(
+        "https://github.com/cp2k/cp2k/commit/da03128481adf8f78a8a04ebeae0490480c03b89.patch?full_index=1",
+        sha256="0d542c414216866953c95e642d2590b3d313717dfaebbf12cfafedbdd3bf54a3",
+        when="@=2025.1",
+    )
+
     def patch(self):
         # Patch for an undefined constant due to incompatible changes in ELPA
         if self.spec.satisfies("@9.1:2022.2 +elpa"):
