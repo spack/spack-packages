@@ -26,6 +26,11 @@ class Trinity(MakefilePackage):
     license("BSD-3-Clause")
 
     version(
+        "2.15.2.FULL",
+        sha256="ba37e5f696d3d54e8aaaaaaaaaaaaaaaaaaaaaaa314a5229d7a069ad7b1ee580",
+        url="https://github.com/trinityrnaseq/trinityrnaseq/releases/download/Trinity-v2.15.2/trinityrnaseq-v2.15.2.FULL.tar.gz",
+    )
+    version(
         "2.15.1.FULL",
         sha256="ba37e5f696d3d54e8749c4ba439901a3e97e14a4314a5229d7a069ad7b1ee580",
         url="https://github.com/trinityrnaseq/trinityrnaseq/releases/download/Trinity-v2.15.1/trinityrnaseq-v2.15.1.FULL.tar.gz",
