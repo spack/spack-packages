@@ -459,6 +459,10 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         sha256="37f4f1a76634ff4a5617fe0c670e6acfe2afa2b2cfc5b2875e438a54baa4525e",
         when="@2024.2:2024.3",
     )
+    # Follow api change of sirius, deleted unrelated tools part.
+    # https://github.com/cp2k/cp2k/commit/9ae0441d1aa760e247a8a389793207ec65a35775
+    # https://github.com/electronic-structure/SIRIUS/pull/1048
+    patch("sirius-api-7.7.0.patch", when="@2024.2:2025.1 ^sirius@7.7.0")
 
     def patch(self):
         # Patch for an undefined constant due to incompatible changes in ELPA
