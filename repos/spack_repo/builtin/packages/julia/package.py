@@ -446,8 +446,8 @@ class Julia(MakefilePackage):
             "USE_INTEL_JITEVENTS:=0",  # @1.9:
         ]
 
-        options.append("USEGCC:={}".format("1" if "%gcc" in spec else "0"))
-        options.append("USECLANG:={}".format("1" if "%clang" in spec else "0"))
+        options.append("USEGCC:={}".format("1" if "%c=gcc" in spec else "0"))
+        options.append("USECLANG:={}".format("1" if "%c=llvm" in spec else "0"))
 
         options.extend(
             [
