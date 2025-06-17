@@ -21,7 +21,7 @@ default:
   - echo ${SPACK_CHECKOUT_VERSION}
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
-  - ./bin/spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
+  - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
   - cd ..
 
 ########################################
@@ -73,8 +73,10 @@ default:
   stage: generate
   script:
     - spack --version
-    - spack env activate --without-view ${CI_PROJECT_DIR}/.ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
+    - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
     - spack repo list
+    - spack arch
+    - spack env activate --without-view ${CI_PROJECT_DIR}/.ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
     - spack compiler find
     - spack audit configs
     - spack python ${SPACK_CI_SCRIPTS_ROOT}/common/expand_vars.py
@@ -121,7 +123,6 @@ default:
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
     - . "./spack/share/spack/setup-env.sh"
-    - spack arch
   after_script:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
@@ -160,7 +161,6 @@ default:
     - $ErrorActionPreference=$ErrorActionOld
     - *clone_spack
     - . .\spack\share\spack\setup-env.ps1
-    - spack arch
   after_script:
     - $ErrorActionOld=$ErrorActionPreference
     - $ErrorActionPreference="SilentlyContinue"
@@ -765,7 +765,6 @@ aws-pcluster-build-neoverse_v1:
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
     - . "./spack/share/spack/setup-env.sh"
-    - spack arch
   after_script:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
