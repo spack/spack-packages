@@ -69,7 +69,7 @@ class Crtm(CMakePackage):
     version("2.3.0", commit="99760e693ce3b90a3b3b0e97d80972b4dfb61196")
 
     variant(
-        "fix", default=False, description='Download CRTM coeffecient or "fix" files (several GBs).'
+        "fix", default=False, description='Download CRTM coefficient or "fix" files (several GBs).'
     )
 
     depends_on("fortran", type="build")
