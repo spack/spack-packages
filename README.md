@@ -11,11 +11,21 @@ We run continuous integration on this repository to test builds of a large numbe
 Spack packages.
 
 If you want to test your package changes locally before submitting a pull request,
-simply change Spack's default package repo from the default cache location to the full
-path to your local git clone:
-```
+simply change Spack's default package repo from the default cache location to the full path to your local git clone:
+
+```shell
 spack repo set --destination /path/to/local/spack-packages builtin
 ```
+
+Your Spack installation will be configured to pull from your local Spack
+packages checkout in perpetuity, meaning any updates/other management of the Spack
+packages repo will now be manual. To undo this, simply remove the local modification
+done to the repos configuration or run
+
+```shell
+spack config remove repos:builtin:destination
+```
+
 `$spack` can be used to form a relative path to your Spack root directory.
 
 If you are migrating your pull requests from
