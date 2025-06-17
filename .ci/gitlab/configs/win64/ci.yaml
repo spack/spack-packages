@@ -14,6 +14,7 @@ ci:
         - cd ..
       - fsutil 8dot3name set C:\ 0
       - . .\spack\share\spack\setup-env.ps1
+      - spack.ps1 repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
       - If (Test-Path -path C:\\key\intermediate_ci_signing_key.gpg) { spack.ps1 gpg trust C:\\key\intermediate_ci_signing_key.gpg }
       - If (Test-Path -path C:\\key\spack_public_key.gpg) { spack.ps1 gpg trust C:\\key\spack_public_key.gpg }
 

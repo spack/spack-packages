@@ -136,6 +136,7 @@ ci:
         - git remote add origin https://github.com/spack/spack.git
         - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
         - git checkout FETCH_HEAD
+        - ./bin/spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
         - cd ..
       - - . "./spack/share/spack/setup-env.sh"
         - spack --version

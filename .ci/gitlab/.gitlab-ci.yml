@@ -21,6 +21,7 @@ default:
   - echo ${SPACK_CHECKOUT_VERSION}
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
+  - ./bin/spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
   - cd ..
 
 ########################################
@@ -73,7 +74,6 @@ default:
   script:
     - spack --version
     - spack env activate --without-view ${CI_PROJECT_DIR}/.ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
-    - spack config add -f ./.ci/configs/repos.yaml
     - spack repo list
     - spack compiler find
     - spack audit configs
