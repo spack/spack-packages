@@ -42,9 +42,8 @@ spack:
       - "@3.4.1"
       - target=x86_64_v3
 
-
   concretizer:
-    unify: when_possible
+    unify: false
 
   definitions:
   - paraview_specs:

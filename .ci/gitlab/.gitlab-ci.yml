@@ -488,6 +488,9 @@ radiuss-aws-aarch64-build:
 
 data-vis-sdk-generate:
   extends: [ ".data-vis-sdk", ".generate-x86_64"]
+  variables:
+    # Override concretization pool because of memory requests
+    SPACK_CONCRETIZE_JOBS: 2
   image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
 
 data-vis-sdk-build:
