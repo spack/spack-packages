@@ -22,7 +22,7 @@ spack:
   ci:
     pipeline-gen:
     - build-job:
-        image: {name: ghcr.io/spack/pcluster-amazonlinux-2:pr-62, entrypoint: ['']}
+        image: {name: ghcr.io/spack/pcluster-amazonlinux-2:pr-66, entrypoint: ['']}
         before_script:
         - - mkdir spack
           - cd spack
@@ -39,7 +39,7 @@ spack:
           - spack buildcache keys --install --trust --force
           - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
           - spack install --use-buildcache package:only gcc@12
-          - spack install intel-oneapi-compilers target=x86_64_v3
+          - spack install --use-buildcache package:only intel-oneapi-compilers@2024.1.0 target=x86_64_v3
     - signing-job:
         before_script:
             # Do not distribute Intel & ARM binaries
