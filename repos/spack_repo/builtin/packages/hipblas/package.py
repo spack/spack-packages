@@ -25,8 +25,6 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
-    version("develop", branch="develop", deprecated=True)
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="544a302bdc494af02147dc14c75d088031927e1c3a2f7a349d817497000b1c34")
     version("6.3.3", sha256="8f645a5c9298170e71354437188eeca8272ff2b98077e9f34d1ca0fd7f27b7f8")
     version("6.3.2", sha256="6e86d4f8657e13665e37fdf3174c3a30f4c7dff2c4e2431d1be110cd7d463971")
@@ -119,8 +117,6 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
-        "master",
-        "develop",
     ]:
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")

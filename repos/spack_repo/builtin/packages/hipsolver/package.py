@@ -30,8 +30,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
-    version("develop", branch="develop", deprecated=True)
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="d6cf798c5f2d1d00a442f7a3f07c6f3a9e4ce5b3be36608aac7c97175dac9eb0")
     version("6.3.3", sha256="529263f9abe5b7485bbabedc3993630abaa0d5fd547c4add0993d1cb0d71e226")
     version("6.3.2", sha256="885c999da8e4aa0b4cb9584bc0fc0d6a8c8d56f5e7ee6d211c608003eff22aa7")
@@ -105,8 +103,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
-        "master",
-        "develop",
     ]:
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")

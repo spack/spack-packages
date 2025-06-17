@@ -32,7 +32,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     license("Apache-2.0")
 
-    version("master", branch="amd-stg-open", deprecated=True)
     version("6.4.0", sha256="dca1c145a23f05229d5d646241f9d1d3c5dbf1d745b338ae020eabe33beb965c")
     version("6.3.3", sha256="4df9aba24e574edf23844c0d2d9dda112811db5c2b08c9428604a21b819eb23d")
     version("6.3.2", sha256="1f52e45660ea508d3fe717a9903fe27020cee96de95a3541434838e0193a4827")
@@ -154,13 +153,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             when=f"@{d_version} +rocm-device-libs",
         )
 
-    resource(
-        name="rocm-device-libs",
-        placement="rocm-device-libs",
-        git="https://github.com/ROCm/ROCm-Device-Libs.git",
-        branch="amd-stg-open",
-        when="@master +rocm-device-libs",
-    )
     for d_version, d_shasum in [
         ("6.4.0", "ff740e8c8f2229c6dc47577363f707b1a44ea4254f8ad74f8f0a669998829535"),
         ("6.3.3", "aa2e30d3d68707d6df4840e954bb08cc13cd312cec1a98a64d97adbe07262f50"),
@@ -187,13 +179,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             sha256=d_shasum,
             when=f"@{d_version}",
         )
-    resource(
-        name="hsa-runtime",
-        placement="hsa-runtime",
-        git="https://github.com/ROCm/ROCR-Runtime.git",
-        branch="master",
-        when="@master",
-    )
 
     for d_version, d_shasum in [
         ("6.0.2", "737b110d9402509db200ee413fb139a78369cf517453395b96bda52d0aa362b9"),
@@ -210,13 +195,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             sha256=d_shasum,
             when=f"@{d_version}",
         )
-    resource(
-        name="comgr",
-        placement="comgr",
-        git="https://github.com/ROCm/ROCm-CompilerSupport.git",
-        branch="amd-stg-open",
-        when="@master",
-    )
 
     def _standard_flag(self, *, language, standard):
         flags = {
