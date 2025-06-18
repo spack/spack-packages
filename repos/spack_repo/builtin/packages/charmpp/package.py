@@ -376,7 +376,7 @@ class Charmpp(Package):
         # been implemented in v8.0.0
         if self.spec.satisfies("@8.0.0: %aocc"):
             options.append("--disable-fortran")
-        if self.spec.satisfies("@8.0.0: %oneapi"):
+        if self.spec.satisfies("@8.0.0: ^[virtuals=fortran] intel-oneapi-compilers"):
             options.append("--disable-fortran")
 
         # Call "make" via the build script
