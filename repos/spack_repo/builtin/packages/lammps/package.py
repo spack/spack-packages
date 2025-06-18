@@ -34,13 +34,19 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
+    version("20250612", sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7")
     version("20250402", sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca")
     version("20250204", sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1")
     version("20241119", sha256="7d1a825f13eef06d82ed8ae950f4a5ca6da9f6a5979745a85a7a58781e4c6ffa")
     version(
+        "20240829.3",
+        sha256="75a9fb55d3c10f44cbc7b30313351ce9b12ab3003c1400147fa3590b6d651c73",
+        preferred=True,
+    )
+    version(
         "20240829.2",
         sha256="f8ca3f021a819ced8658055f7750e235c51b4937ddb621cf1bd7bee08e0b6266",
-        preferred=True,
+        deprecated=True,
     )
     version(
         "20240829.1",
@@ -431,6 +437,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20240829.3",
         "20240829.2",
         "20240829.1",
         "20240829",
