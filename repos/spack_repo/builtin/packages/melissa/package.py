@@ -44,6 +44,21 @@ class Melissa(CMakePackage):
     depends_on("python@3.9:3.12", type=("build", "run"))
     depends_on("mpi", type=("build", "run"))
 
+    def cmake_args(self):
+        args = []
+
+        # embed runtime library search paths
+        rpaths = [
+            self.spec["libzmq"].prefix.lib,
+            self.spec["mpi"].prefix.lib,
+        ]
+        joined_rpaths = ";".join(rpaths)
+
+        args.append(f"-DCMAKE_INSTALL_RPATH={joined_rpaths}")
+        args.append("-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON")
+
+        return args
+
     def setup_run_environment(self, env):
         python = self.spec["python"]
         python_version = python.version.up_to(2)
