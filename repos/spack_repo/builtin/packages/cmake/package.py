@@ -123,6 +123,8 @@ class Cmake(Package):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    variant("citrigger", default=False, description="Trigger CI rebuild")
+
     variant(
         "build_type",
         default="Release",
