@@ -21,7 +21,6 @@ default:
   - echo ${SPACK_CHECKOUT_VERSION}
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
-  - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
   - cd ..
 
 ########################################
@@ -123,6 +122,7 @@ default:
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
     - . "./spack/share/spack/setup-env.sh"
+    - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
   after_script:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
@@ -161,6 +161,7 @@ default:
     - $ErrorActionPreference=$ErrorActionOld
     - *clone_spack
     - . .\spack\share\spack\setup-env.ps1
+    - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
   after_script:
     - $ErrorActionOld=$ErrorActionPreference
     - $ErrorActionPreference="SilentlyContinue"
@@ -700,6 +701,7 @@ aws-pcluster-generate-x86_64_v4:
       - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
       - *clone_spack
       - . "./spack/share/spack/setup-env.sh"
+      - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
       - spack arch
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
@@ -732,6 +734,7 @@ aws-pcluster-generate-neoverse_v1:
       - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
       - *clone_spack
       - . "./spack/share/spack/setup-env.sh"
+      - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
       - spack arch
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
@@ -765,6 +768,7 @@ aws-pcluster-build-neoverse_v1:
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
     - . "./spack/share/spack/setup-env.sh"
+    - spack repo set --destination "${CI_PROJECT_DIR}" --scope site builtin
   after_script:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
