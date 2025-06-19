@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os.path
+import pathlib
 import re
 import subprocess
 
@@ -46,12 +47,11 @@ class Msvc(Package, CompilerPackage):
     compiler_version_argument = ""
     compiler_version_regex = r"([1-9][0-9]*\.[0-9]*\.[0-9]*)"
 
-    # Due to the challenges of supporting compiler wrappers
-    # in Windows, we leave these blank, and dynamically compute
-    # based on proper versions of MSVC from there
-    # pending acceptance of #28117 for full support using
-    # compiler wrappers
-    compiler_wrapper_link_paths = {"c": "", "cxx": "", "fortran": ""}
+    compiler_wrapper_link_paths = {
+        "c": "msvc\\cl.exe",
+        "cxx": "msvc\\cl.exe",
+        "fortran": "oneapi\\ifx.exe",
+    }
 
     provides("c", "cxx", "fortran")
     requires("platform=windows", msg="MSVC is only supported on Windows")
@@ -75,6 +75,17 @@ class Msvc(Package, CompilerPackage):
         # MSVC uses same executable for both languages
         spec, extras = super().determine_variants(exes, version_str)
         extras["compilers"]["c"] = extras["compilers"]["cxx"]
+
+        # Spack's msvc compiler wrapper also wraps the linker
+        # to inject rpath-analogous behavior into Windows
+        # binaries. We define the linker so we can
+        # expose it to the run environmnet of the wrapper
+        # similar to how we do CC vs SPACK_CC
+        # the linker is always in the same directory as the compiler
+        extras["compilers"]["ld"] = str(
+            pathlib.Path(extras["compilers"]["cxx"]).parent / "link.exe"
+        )
+
         # This depends on oneapi being processed before msvc
         # which is guarunteed from detection behavior.
         # Processing oneAPI tracks oneAPI installations within
@@ -124,14 +135,6 @@ class Msvc(Package, CompilerPackage):
                 env.set(env_var, int_env[env_var])
             else:
                 env.set_path(env_var, int_env[env_var].split(os.pathsep))
-
-        if self.cc:
-            env.set("CC", self.cc)
-        if self.cxx:
-            env.set("CXX", self.cxx)
-        if self.fortran:
-            env.set("FC", self.fortran)
-            env.set("F77", self.fortran)
 
     def init_msvc(self):
         # To use the MSVC compilers, VCVARS must be invoked
@@ -263,6 +266,15 @@ class Msvc(Package, CompilerPackage):
         toolset_ver = self.vc_toolset_ver
         vs22_toolset = Version(toolset_ver) > Version("142")
         return toolset_ver if not vs22_toolset else "143"
+
+    @property
+    def ld(self):
+        assert self.spec.concrete, "cannot retrieve C++ linker, spec is not concrete"
+        assert (
+            self.spec.external
+        ), "MSVC is external only, please report this bug to the Spack maintainers"
+
+        return self.spec.extra_attributes.get("compilers", {}).get("ld", None)
 
 
 class CmdCall:
