@@ -34,13 +34,19 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
+    version("20250612", sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7")
     version("20250402", sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca")
     version("20250204", sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1")
     version("20241119", sha256="7d1a825f13eef06d82ed8ae950f4a5ca6da9f6a5979745a85a7a58781e4c6ffa")
     version(
+        "20240829.3",
+        sha256="75a9fb55d3c10f44cbc7b30313351ce9b12ab3003c1400147fa3590b6d651c73",
+        preferred=True,
+    )
+    version(
         "20240829.2",
         sha256="f8ca3f021a819ced8658055f7750e235c51b4937ddb621cf1bd7bee08e0b6266",
-        preferred=True,
+        deprecated=True,
     )
     version(
         "20240829.1",
@@ -431,6 +437,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20240829.3",
         "20240829.2",
         "20240829.1",
         "20240829",
@@ -766,6 +773,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("hipcub", when="~kokkos +rocm")
     depends_on("llvm-amdgpu ", when="+rocm", type="build")
     depends_on("rocm-openmp-extras", when="+rocm +openmp", type="build")
+    depends_on("llvm-openmp", when="+openmp %apple-clang", type="build")
     depends_on("gsl@2.6:", when="+rheo")
     depends_on("tbb", when="+intel %oneapi")
 
@@ -854,6 +862,12 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "https://github.com/lammps/lammps/commit/49bdc3e26449634f150602a66d0dab34d09dbc0e.patch?full_index=1",
         sha256="b8d1f08a82329e493e040de2bde9d2291af173a0fe6c7deb24750cc22823c421",
         when="@20240829 %cce",
+    )
+    # Fixes OpenMP detection with AppleClang https://github.com/lammps/lammps/pull/4550
+    patch(
+        "https://github.com/lammps/lammps/commit/4e69046e5481f18f6d1402bca04fb3412991eec9.patch?full_index=1",
+        sha256="24f5dc45ac603486a023dc7aead5367e44a739e081b91f7da238f10fd5920d96",
+        when="@20221103:20250402 +openmp %apple-clang",
     )
 
     # Older LAMMPS does not compile with Kokkos 4.x
@@ -983,6 +997,17 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                 cxx_flags = "-O3 -mfma -fvectorize -funroll-loops"
             args.append(self.define("CMAKE_CXX_FLAGS_RELEASE", cxx_flags))
             args.append(self.define("CMAKE_CXX_FLAGS_RELWITHDEBINFO", cxx_flags))
+
+        if spec.satisfies("+openmp %apple-clang"):
+            args.extend(
+                [
+                    "-DOpenMP_CXX_LIB_NAMES=" + self.spec["llvm-openmp"].libs.names[0],
+                    "-DOpenMP_C_LIB_NAMES=" + self.spec["llvm-openmp"].libs.names[0],
+                    "-DOpenMP_CXX_LIBRARIES=" + self.spec["llvm-openmp"].libs[0],
+                    "-DOpenMP_CXX_INCLUDE_DIR=" + self.spec["llvm-openmp"].headers.directories[0],
+                    "-DOpenMP_omp_LIBRARY=" + self.spec["llvm-openmp"].libs[0],
+                ]
+            )
 
         # Overwrite generic cpu tune option
         cmake_tune_flags = optimization_flags(self.compiler, spec.target)
