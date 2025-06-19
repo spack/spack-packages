@@ -67,6 +67,11 @@ class KokkosKernels(CMakePackage, CudaPackage):
         url="https://github.com/kokkos/kokkos-kernels/archive/4.0.00.tar.gz",
     )
     version(
+        "3.7.02",
+        sha256="43b1d4f726bccd8d7d632ae8b81c8edc7d7afa347fbab0654f7ca0c664edf05c",
+        url="https://github.com/kokkos/kokkos-kernels/archive/3.7.02.tar.gz",
+    )
+    version(
         "3.7.01",
         sha256="b2060f5894bdaf7f7d4793b90444fac260460cfa80595afcbcb955518864b446",
         url="https://github.com/kokkos/kokkos-kernels/archive/3.7.01.tar.gz",
@@ -203,6 +208,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos@4.1.00", when="@4.1.00")
     depends_on("kokkos@4.0.01", when="@4.0.01")
     depends_on("kokkos@4.0.00", when="@4.0.00")
+    depends_on("kokkos@3.7.02", when="@3.7.02")
     depends_on("kokkos@3.7.01", when="@3.7.01")
     depends_on("kokkos@3.7.00", when="@3.7.00")
     depends_on("kokkos@3.6.01", when="@3.6.01")
