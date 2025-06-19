@@ -18,8 +18,9 @@ class PyCylcFlow(PythonPackage):
 
     license("GPL-3.0-only")
 
-    # Version 8.3.6 is available at PyPI, but not at the URL that is considered canonical by Spack
-    # https://github.com/spack/spack/issues/48479
+    # Versions 8.3.6 and 8.4.2 are available at PyPI, but not at the URL that is considered
+    # canonical by Spack - https://github.com/spack/spack/issues/48479
+    version("8.4.2", commit="5625b0fa594b5a422b37b0a3b85dc12e40fceb05")
     version("8.3.6", commit="7f63b43164638e27636b992b14b3fa088b692b94")
     version("8.2.3", sha256="dd5bea9e4b8dad00edd9c3459a38fb778e5a073da58ad2725bc9b84ad718e073")
     version("8.2.0", sha256="cbe35e0d72d1ca36f28a4cebe9b9040a3445a74253bc94051a3c906cf179ded0")
@@ -51,3 +52,6 @@ class PyCylcFlow(PythonPackage):
     # We want at least the pangocairo variant for
     # graphviz so that we can create output as png.
     depends_on("graphviz+pangocairo", type="run")
+
+    # Undocumented dependency, but needed for 8.4
+    depends_on("py-typing-extensions", type="run", when="@8.4")
