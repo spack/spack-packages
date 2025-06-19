@@ -17,7 +17,7 @@ default:
   - mkdir spack
   - cd spack
   - git init
-  - git remote add origin https://github.com/spack/spack.git
+  - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
   - echo ${SPACK_CHECKOUT_VERSION}
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
