@@ -35,7 +35,7 @@ class Uwtools(PythonPackage):
     version("2.5.0", sha256="246f1cb1d3b7c507eae833f5223d3be5efaea16204a71cafba820901edc0e19e")
 
     depends_on("py-pip", type="build")
-    depends_on("python@3.9")
+    depends_on("python@3.9:3.11")
     depends_on("py-setuptools", type="build")
     depends_on("py-f90nml@1.4")
     depends_on("py-jinja2@3.1")
