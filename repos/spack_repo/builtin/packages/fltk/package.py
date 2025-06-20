@@ -25,6 +25,7 @@ class Fltk(Package):
     git = "https://github.com/fltk/fltk.git"
 
     version("master", branch="master")
+    version("1.4.3", sha256="19725f687146610976a1a43ef448feeba212a7eca88ad5897d22f6adaf3af45b")
     version("1.3.7", sha256="5d2ccb7ad94e595d3d97509c7a931554e059dd970b7b29e6fd84cb70fd5491c6")
     version("1.3.3", sha256="f8398d98d7221d40e77bc7b19e761adaf2f1ef8bb0c30eceb7beb4f2273d0d97")
 
