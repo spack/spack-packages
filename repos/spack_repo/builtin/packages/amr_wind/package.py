@@ -289,7 +289,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+shared", when="+cuda")
     conflicts("@:2.0", when="+waves2amr")
     conflicts(
-        "openfast@4.0.0:4.0.1", msg="OpenFAST 4.0.0:4.0.1 contains a bug. Use OpenFAST >= 4.0.2."
+        "openfast@4.0", msg="OpenFAST 4.0 is not supported. Use OpenFAST >= 4.1."
     )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
