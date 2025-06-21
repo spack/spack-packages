@@ -25,9 +25,9 @@ class Fltk(Package):
     git = "https://github.com/fltk/fltk.git"
 
     version("master", branch="master")
-    version("release-1.4.3", sha256="6a11c0bf91b7b193a87a1928c32a953f36d7dd4b65fef3e9d0c40a51882f97a6")
-    version("release-1.3.7", sha256="019f65810fb0ea5acac14c852193e8f374e822e6a3034a3c80ed8676f6f3a090")
-    version("release-1.3.3", sha256="186bdc4234bea74bce4d47f186d41d35bdd47d48dbe5f829513a2183fbf8f3b2")
+    version("1.4.3", sha256="6a11c0bf91b7b193a87a1928c32a953f36d7dd4b65fef3e9d0c40a51882f97a6")
+    version("1.3.7", sha256="019f65810fb0ea5acac14c852193e8f374e822e6a3034a3c80ed8676f6f3a090")
+    version("1.3.3", sha256="186bdc4234bea74bce4d47f186d41d35bdd47d48dbe5f829513a2183fbf8f3b2")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
