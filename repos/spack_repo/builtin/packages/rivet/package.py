@@ -49,8 +49,9 @@ class Rivet(AutotoolsPackage):
         description="HepMC version to link against",
     )
 
-    variant("plugin-match", default="none", description="List of Rivet analyses to be included")
-    variant("plugin-unmatch", default="none", description="List of Rivet analyses to be excluded")
+    with when("@4.1:"):
+        variant("plugin-match", default="none", description="List of Rivet analyses to be included")
+        variant("plugin-unmatch", default="none", description="List of Rivet analyses to be excluded")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -159,7 +160,7 @@ class Rivet(AutotoolsPackage):
 
         val = self.spec.variants["plugin-match"].value
         if val != "none":
-            args += [f"--with-plugin-match={val}"]
+            args += [f"--with-plugin-match={' '.join(val)}"]
 
         val = self.spec.variants["plugin-unmatch"].value
         if val != "none":
