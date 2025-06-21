@@ -21,7 +21,7 @@ class Fltk(Package):
     """
 
     homepage = "https://www.fltk.org/"
-    url = "https://fltk.org/pub/fltk/1.3.3/fltk-1.3.3-source.tar.gz"
+    url = "https://github.com/fltk/fltk/archive/refs/tags/release-1.3.3.tar.gz"
     git = "https://github.com/fltk/fltk.git"
 
     version("master", branch="master")
@@ -32,6 +32,9 @@ class Fltk(Package):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("gmake", type="build")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
 
     depends_on("libx11")
 
@@ -77,6 +80,7 @@ class Fltk(Package):
             options.append("--disable-gl")
 
         # FLTK needs to be built in-source
+        sh("./autogen.sh")
         configure(*options)
         make()
         make("install")
