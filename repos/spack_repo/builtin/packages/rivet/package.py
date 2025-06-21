@@ -159,11 +159,11 @@ class Rivet(AutotoolsPackage):
             args += ["--with-hepmc3-libpath=" + self.spec["hepmc3"].libs.directories[0]]
 
         val = self.spec.variants["plugin-match"].value
-        if val != "none":
+        if val:
             args += [f"--with-plugin-match={' '.join(val)}"]
 
         val = self.spec.variants["plugin-unmatch"].value
-        if val != "none":
+        if val:
             args += [f"--with-plugin-unmatch={' '.join(val)}"]
 
         args += ["--with-fastjet=" + self.spec["fastjet"].prefix]
