@@ -37,6 +37,7 @@ class Fltk(Package):
     depends_on("libtool", type="build")
 
     depends_on("libx11")
+    depends_on("freetype2", when="@1.4.3:")
 
     patch("font.patch", when="@1.3.3")
 
