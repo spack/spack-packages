@@ -80,7 +80,8 @@ class Fltk(Package):
             options.append("--disable-gl")
 
         # FLTK needs to be built in-source
-        sh("./autogen.sh")
+        autogen = Executable("./autogen.sh")
+        autogen()
         configure(*options)
         make()
         make("install")
