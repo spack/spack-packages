@@ -50,8 +50,8 @@ class Rivet(AutotoolsPackage):
     )
 
     with when("@4.1:"):
-        variant("plugin-match", default="none", description="List of Rivet analyses to be included")
-        variant("plugin-unmatch", default="none", description="List of Rivet analyses to be excluded")
+        variant("plugin-match", default="none", multi=True, description="List of Rivet analyses to be included")
+        variant("plugin-unmatch", default="none", multi=True, description="List of Rivet analyses to be excluded")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -164,7 +164,7 @@ class Rivet(AutotoolsPackage):
 
         val = self.spec.variants["plugin-unmatch"].value
         if val != "none":
-            args += [f"--with-plugin-unmatch={val}"]
+            args += [f"--with-plugin-unmatch={' '.join(val)}"]
 
         args += ["--with-fastjet=" + self.spec["fastjet"].prefix]
         args += ["--with-yoda=" + self.spec["yoda"].prefix]
