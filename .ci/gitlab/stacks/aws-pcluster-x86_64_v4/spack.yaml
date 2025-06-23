@@ -127,6 +127,9 @@ spack:
     quantum-espresso:
       require:
       - quantum-espresso@6.6 ^intel-oneapi-mkl+cluster
+    scotch:
+      require:
+      - '%gcc'
     slurm:
       buildable: false
       externals:
