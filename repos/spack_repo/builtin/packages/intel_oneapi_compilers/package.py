@@ -20,7 +20,17 @@ from spack.package import *
 IS_WINDOWS = sys.platform == "win32"
 
 
-class UnixDebugFlags:
+class Flags:
+    @classmethod
+    def flags(cls):
+        flags = []
+        for attr in cls.__dict__:
+            if not attr.startswith("__"):
+                flags.append(getattr(cls, attr))
+        return flags
+
+
+class UnixDebugFlags(Flags):
     DEBUG = "-debug"
     G = "-g"
     G0 = "-g0"
@@ -29,7 +39,7 @@ class UnixDebugFlags:
     G3 = "-g3"
 
 
-class WindowsDebugFlags:
+class WindowsDebugFlags(Flags):
     DEBUG = "/debug"
     G = "/g"
     G0 = "/g0"
@@ -38,7 +48,7 @@ class WindowsDebugFlags:
     G3 = "/g3"
 
 
-class UnixOptFlags:
+class UnixOptFlags(Flags):
     O = "-O"
     O0 = "-O0"
     O1 = "-O1"
@@ -48,7 +58,7 @@ class UnixOptFlags:
     OS = "-Os"
 
 
-class WindowsOptFlags:
+class WindowsOptFlags(Flags):
     O = "/O"
     O0 = "/O0"
     O1 = "/O1"
@@ -86,31 +96,24 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
         else (r"Intel\(R\) .* Version (\S+) Build (\S+)")
     )
 
-    debug_flags = [
-        DebugFlags.DEBUG,
-        DebugFlags.G,
-        DebugFlags.G0,
-        DebugFlags.G1,
-        DebugFlags.G2,
-        DebugFlags.G3,
-    ]
-    opt_flags = [
-        OptFlags.O,
-        OptFlags.O0,
-        OptFlags.O1,
-        OptFlags.O2,
-        OptFlags.O3,
-        OptFlags.OFAST,
-        OptFlags.OS,
-    ]
+    debug_flags = DebugFlags.flags()
+    opt_flags = OptFlags.flags()
 
     openmp_flag = "-fiopenmp"
 
-    compiler_wrapper_link_paths = {
+
+    unix_compiler_wrapper_link_paths = {
         "c": os.path.join("oneapi", "icx"),
         "cxx": os.path.join("oneapi", "icpx"),
         "fortran": os.path.join("oneapi", "ifx"),
     }
+    win_compiler_wrapper_link_paths = {
+        "c": "",
+        "cxx": "",
+        "fortran" : ""
+    }
+
+    compiler_wrapper_link_paths = unix_compiler_wrapper_link_paths if sys.platform != "win32" else win_compiler_wrapper_link_paths
 
     implicit_rpath_libs = [
         "libirc",

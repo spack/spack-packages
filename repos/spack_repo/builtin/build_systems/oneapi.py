@@ -48,6 +48,7 @@ class IntelOneApiPackage(Package):
         conflicts(c, msg="This package in only available for x86_64 and Linux/Windows")
 
     # env mods are mandatory on Windows, no variant option
+    # and oneAPI is currently unsupported on Darwin
     for plat in ["linux", "freebsd"]:
         # Add variant to toggle environment modifications from vars.sh
         variant(

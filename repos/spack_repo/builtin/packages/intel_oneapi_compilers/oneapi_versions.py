@@ -9,12 +9,15 @@ from spack.package import *
 
 
 class oneAPIVersions:
+    """Holds a list of defined oneAPI compiler versions
+    and provides an API to define the Spack directives required
+    to model them w/ their resources."""
     versions: List["oneAPIVersion"] = []
 
     @staticmethod
     def generate_versions():
         for v in filter(
-            lambda x: x.platform == platform.system().lower(), oneAPIVersions.versions
+            lambda x: platform.system().lower() in x.platform, oneAPIVersions.versions
         ):
             version(v.version, expand=False, url=v.cxx.url, sha256=v.cxx.sha)
             if v.fortran:
@@ -47,6 +50,13 @@ class oneAPIVersions:
 
 
 class oneAPIInstaller:
+    """Represents a specific oneAPI installer component
+    modeled by a path (typically a URL) and a checksum
+    to validate installer component download.
+    
+    Provides a default resource location for the installer components
+    if the installer does not define its own absolute location
+    """
     def __init__(self, *, path: str, sha: str):
         self._url_base = "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/"
         self._path = path
@@ -60,6 +70,15 @@ class oneAPIInstaller:
 
 
 class oneAPIVersion:
+    """Defines a oneAPI installer for a oneAPI version
+    including any language or component specific installers
+    compatible and associated with a given oneAPI version
+    
+    Takes
+        * Version
+        * Platform
+        * Compatible installer components
+    """
     def __init__(
         self,
         *,
@@ -71,10 +90,7 @@ class oneAPIVersion:
         amd: Optional[oneAPIInstaller] = None,
     ):
         self.version = version
-        assert platform.lower() in (
-            "windows",
-            "linux",
-        ), "OneAPI is only compatible with Windows or Linux"
+        assert platform != "darwin", "OneAPI unsupported on Darwin"
         self.platform = platform
         self.cxx = cxx
         self.fortran = fortran
@@ -98,7 +114,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2025.1.1",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="c4d2aef3-3123-475e-800c-7d66fd8da2a5/intel-dpcpp-cpp-compiler-2025.1.1.9_offline.sh",
         sha="63ea61f54a5ea9d30059ea499697e04953915ef317c0e8fc457077b690c726df",
@@ -112,7 +128,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2025.1.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="cd63be99-88b0-4981-bea1-2034fe17f5cf/intel-dpcpp-cpp-compiler-2025.1.0.573_offline.sh",
         sha="53489afcc9534e30ad807e94b158abfccf6a7eb3658f59655122d92fbad8fa72",
@@ -125,7 +141,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2025.0.4",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="84c039b6-2b7d-4544-a745-3fcf8afd643f/intel-dpcpp-cpp-compiler-2025.0.4.20_offline.sh",
         sha="0537c6e462fe74063cb0b9209a0fd5c0ca3a29b4520d43d382ae27fb3f98b375",
@@ -138,7 +154,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2025.0.3",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="1cac4f39-2032-4aa9-86d7-e4f3e40e4277/intel-dpcpp-cpp-compiler-2025.0.3.9_offline.sh",
         sha="0ca834002b9091dc9988da6798a2eb36ebc5933d8d523ed0fa78a55744c88823",
@@ -151,7 +167,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2025.0.1",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="4fd7c6b0-853f-458a-a8ec-421ab50a80a6/intel-dpcpp-cpp-compiler-2025.0.1.46_offline.sh",
         sha="1595397566b59a5c8f81e2c235b6bedd2405dc70309b5bf00ed75827d0f12449",
@@ -164,7 +180,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2025.0.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="ac92f2bb-4818-4e53-a432-f8b34d502f23/intel-dpcpp-cpp-compiler-2025.0.0.740_offline.sh",
         sha="04fadf63789acee731895e631db63f65a98b8279db3d0f48bdf0d81e6103bdd8",
@@ -185,7 +201,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2024.2.1",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="74587994-3c83-48fd-b963-b707521a63f4/l_dpcpp-cpp-compiler_p_2024.2.1.79_offline.sh",
         sha="af0243f80640afa94c7f9c8151da91d7ab17f448f542fa76d785230dec712048",
@@ -206,7 +222,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2024.2.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="6780ac84-6256-4b59-a647-330eb65f32b6/l_dpcpp-cpp-compiler_p_2024.2.0.495_offline.sh",
         sha="9463aa979314d2acc51472d414ffcee032e9869ca85ac6ff4c71d39500e5173d",
@@ -227,7 +243,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2024.1.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="2e562b6e-5d0f-4001-8121-350a828332fb/l_dpcpp-cpp-compiler_p_2024.1.0.468_offline.sh",
         sha="534ecc6e4b690c9011d7765cbe178f520aa8f49c0eb4ea80ea1415e48e5d7cf7",
@@ -240,7 +256,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2024.0.2",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="bb99984f-370f-413d-bbec-38928d2458f2/l_dpcpp-cpp-compiler_p_2024.0.2.29_offline.sh",
         sha="0ec22d69f4207fea4b7488d1c9e62adbc14fb6daa1574d6edcadc912da007b3c",
@@ -253,7 +269,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2024.0.1",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="c68c8f0a-47f5-4f26-8e8e-fa2627271279/l_dpcpp-cpp-compiler_p_2024.0.1.29_offline.sh",
         sha="22497c46bfb916c82677489775c113141510423799b7eca35f35dffeb2a14104",
@@ -266,7 +282,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2024.0.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="5c8e686a-16a7-4866-b585-9cf09e97ef36/l_dpcpp-cpp-compiler_p_2024.0.0.49524_offline.sh",
         sha="d10bad2009c98c631fbb834aae62012548daeefc806265ea567316cd9180a684",
@@ -279,7 +295,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2023.2.4",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="b00a4b0e-bd21-41fa-ab34-19e8e2a77c5a/l_dpcpp-cpp-compiler_p_2023.2.4.24_offline.sh",
         sha="f143a764adba04a41e49ec405856ad781e5c3754812e90a7ffe06d08cd07f684",
@@ -292,7 +308,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2023.2.3",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="d85fbeee-44ec-480a-ba2f-13831bac75f7/l_dpcpp-cpp-compiler_p_2023.2.3.12_offline.sh",
         sha="b80119a3e54306b85198e907589b00b11c072f107ac39c1686a1996f76466b26",
@@ -305,7 +321,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2023.2.1",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="ebf5d9aa-17a7-46a4-b5df-ace004227c0e/l_dpcpp-cpp-compiler_p_2023.2.1.8_offline.sh",
         sha="f5656b2f5bb5d904639e6ef1f90a2d2e760d2906e82ebc0dd387709738ca714b",
@@ -318,7 +334,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2023.2.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="748687b0-5a22-467c-86c6-c312fa0206b2/l_dpcpp-cpp-compiler_p_2023.2.0.49256_offline.sh",
         sha="21497b2dd2bc874794c2321561af313082725f61e3101e05a050f98b7351e08f",
@@ -331,7 +347,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2023.1.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="89283df8-c667-47b0-b7e1-c4573e37bd3e/l_dpcpp-cpp-compiler_p_2023.1.0.46347_offline.sh",
         sha="3ac1c1179501a2646cbb052b05426554194573b4f8e2344d7699eed03fbcfa1d",
@@ -344,7 +360,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2023.0.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="19123/l_dpcpp-cpp-compiler_p_2023.0.0.25393_offline.sh",
         sha="473eb019282c2735d65c6058f6890e60b79a5698ae18d2c1e4489fed8dd18a02",
@@ -357,7 +373,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2022.2.1",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="19049/l_dpcpp-cpp-compiler_p_2022.2.1.16991_offline.sh",
         sha="3f0f02f9812a0cdf01922d2df9348910c6a4cb4f9dfe50fc7477a59bbb1f7173",
@@ -370,7 +386,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2022.2.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="18849/l_dpcpp-cpp-compiler_p_2022.2.0.8772_offline.sh",
         sha="8ca97f7ea8abf7876df6e10ce2789ea8cbc310c100ad7bf0b5ffccc4f3c7f2c9",
@@ -383,7 +399,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2022.1.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="18717/l_dpcpp-cpp-compiler_p_2022.1.0.137_offline.sh",
         sha="1027819581ba820470f351abfc2b2658ff2684ed8da9ed0e722a45774a2541d6",
@@ -396,7 +412,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2022.0.2",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="18478/l_dpcpp-cpp-compiler_p_2022.0.2.84_offline.sh",
         sha="ade5bbd203e7226ca096d7bf758dce07857252ec54e83908cac3849e6897b8f3",
@@ -409,7 +425,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2022.0.1",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="18435/l_dpcpp-cpp-compiler_p_2022.0.1.71_offline.sh",
         sha="c7cddc64c3040eece2dcaf48926ba197bb27e5a46588b1d7b3beddcdc379926a",
@@ -422,7 +438,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2021.4.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="18209/l_dpcpp-cpp-compiler_p_2021.4.0.3201_offline.sh",
         sha="9206bff1c2fdeb1ca0d5f79def90dcf3e6c7d5711b9b5adecd96a2ba06503828",
@@ -435,7 +451,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2021.3.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="17928/l_dpcpp-cpp-compiler_p_2021.3.0.3168_offline.sh",
         sha="f848d81b7cabc76c2841c9757abb2290921efd7b82491d830605f5785600e7a1",
@@ -448,7 +464,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2021.2.0",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="17749/l_dpcpp-cpp-compiler_p_2021.2.0.118_offline.sh",
         sha="5d01cbff1a574c3775510cd97ffddd27fdf56d06a6b0c89a826fb23da4336d59",
@@ -461,7 +477,7 @@ oneAPIVersion(
 
 oneAPIVersion(
     version="2021.1.2",
-    platform="linux",
+    platform="linux,freebsd,darwin",
     cxx=oneAPIInstaller(
         path="17513/l_dpcpp-cpp-compiler_p_2021.1.2.63_offline.sh",
         sha="68d6cb638091990e578e358131c859f3bbbbfbf975c581fd0b4b4d36476d6f0a",
