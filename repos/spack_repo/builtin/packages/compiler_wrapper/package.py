@@ -57,6 +57,7 @@ class CompilerWrapper(Package, NMakePackage):
 
     # available in 0.1.1
     patch("fixup11.patch", when="platform=windows")
+    patch("quote_args.patch", when="platform=windows")
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
