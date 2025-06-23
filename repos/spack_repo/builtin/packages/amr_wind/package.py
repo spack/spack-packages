@@ -268,6 +268,8 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("openfast+netcdf", when="+openfast+netcdf")
     depends_on("openfast@2.6.0:3.4.1", when="@0.9.0:1 +openfast")
     depends_on("openfast@3.5:", when="@2: +openfast")
+    depends_on('openfast@3.5:4.0', when='@2.0.0:3.5.9')
+    depends_on('openfast@3.5.0:3.5.9,4.1:', when='@3.6:')
     depends_on("helics@:3.3.2", when="+helics")
     depends_on("helics@:3.3.2+mpi", when="+helics+mpi")
     depends_on("fftw", when="@2.1: +waves2amr")
@@ -289,7 +291,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+shared", when="+cuda")
     conflicts("@:2.0", when="+waves2amr")
     conflicts(
-        "openfast@4.0", msg="OpenFAST 4.0 is not supported. Use OpenFAST >= 4.1."
+        "openfast@4.0.0:4.0.3", msg="OpenFAST 4.0.0:4.0.3 contains a bug. Use OpenFAST >= 4.0.4."
     )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
