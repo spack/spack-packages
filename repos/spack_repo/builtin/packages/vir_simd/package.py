@@ -12,7 +12,7 @@ class VirSimd(CMakePackage):
     homepage = "https://mattkretz.github.io/vir-simd/master/"
     url = "https://github.com/mattkretz/vir-simd/archive/refs/tags/v0.4.4.tar.gz"
 
-    maintainers("ax3l", "mattkretz")
+    maintainers("ax3l")
 
     license("LGPL-3.0-or-later", checked_by="ax3l")
 
