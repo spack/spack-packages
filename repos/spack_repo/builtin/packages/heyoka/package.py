@@ -64,7 +64,7 @@ class Heyoka(CMakePackage):
     # Required dependencies
     depends_on("llvm@13:17", when="@:4")
     depends_on("llvm@13:18", when="@5")
-    depends_on("llvm@15:19", when="@6")
+    depends_on("llvm@15:19", when="@6:7.2")
     depends_on("boost@1.69: +serialization")
     depends_on("fmt@9:10", when="@:5")
     depends_on("fmt@9:11", when="@6:7")
