@@ -76,7 +76,7 @@ spack:
               - /home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/gcc-12.4.0-pttzchh7o54nhmycj4wgzw5mic6rk2nb/lib64
     fortran:
       require:
-      - "intel-oneapi-compilers"
+      - one_of: ["gcc", "intel-oneapi-compilers"]
     gettext:
       # Newer gettext cannot build with gcc@12 and old AL2 glibc headers
       # Older gettext versions do not build correctly with oneapi.
