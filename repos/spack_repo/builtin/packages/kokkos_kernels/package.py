@@ -186,9 +186,9 @@ class KokkosKernels(CMakePackage, CudaPackage):
         description="Scalars",
     )
 
-    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     for tpl in ("blas", "mkl"):
-        depends_on("cxx", type="build", when=f"+{tpl}")
+        depends_on("c", type="build", when=f"+{tpl}")
         depends_on("fortran", type="build", when=f"+{tpl}")
     depends_on("kokkos")
     depends_on("kokkos@master", when="@master")
