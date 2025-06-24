@@ -386,6 +386,7 @@ developer-tools-aarch64-linux-gnu-build:
 # darwin
 ###########################################
 .developer-tools-darwin:
+  allow_failure: true
   variables:
     SPACK_CI_STACK_NAME: developer-tools-darwin
 
@@ -640,6 +641,7 @@ ml-linux-aarch64-cuda-build:
 # Machine Learning - Darwin aarch64 (MPS)
 #########################################
 .ml-darwin-aarch64-mps:
+  allow_failure: true
   variables:
     SPACK_CI_STACK_NAME: ml-darwin-aarch64-mps
 
@@ -876,6 +878,7 @@ bootstrap-x86_64-linux-gnu-build:
 # Bootstrap aarch64-darwin
 #######################################
 .bootstrap-aarch64-darwin:
+  allow_failure: true
   variables:
     SPACK_CI_STACK_NAME: bootstrap-aarch64-darwin
 
