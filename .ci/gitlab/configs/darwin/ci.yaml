@@ -8,5 +8,7 @@ ci:
       tags: [spack]
   - build-job:
       tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+      before_script:
+      - gpg-connect-agent -vvv
   - build-job-remove:
       image:: macos-run-on-metal
