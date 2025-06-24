@@ -434,8 +434,13 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         if self.spec.satisfies("+cuda"):
             args.append("-DCMAKE_CUDA_COMPILER=" + join_path(self.spec["cuda"].prefix.bin, "nvcc"))
 
-        if self.spec.satisfies("^fftw"):
-            args.append("-DCMAKE_PREFIX_PATH=" + self.spec["fftw"].prefix)
+        prefix_paths = []
+        for dep in ["fftw", "hdf5", "hypre", "petsc", "sundials"]:
+            if dep in self.spec:
+                prefix_paths.append(self.spec[dep].prefix)
+
+        if prefix_paths:
+            args.append("-DCMAKE_PREFIX_PATH=" + ";".join(prefix_paths))
 
         args.extend(self.cmake_args())
         cmake = which(self.spec["cmake"].prefix.bin.cmake)
