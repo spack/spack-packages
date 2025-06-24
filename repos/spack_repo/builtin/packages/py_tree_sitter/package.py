@@ -19,5 +19,5 @@ class PyTreeSitter(PythonPackage):
     version("0.24.0", sha256="abd95af65ca2f4f7eca356343391ed669e764f37748b5352946f00f7fc78e734")
 
     depends_on("python@3.10:", type=("build", "link", "run"))
-    depends_on("py-setuptools", type=("build"))
+    depends_on("py-setuptools", type="build")
     depends_on("c", type="build")

@@ -17,5 +17,5 @@ class PyTreeSitterC(PythonPackage):
     
     depends_on("py-tree-sitter")
     depends_on("python@3.10:", type=("build", "link", "run"))
-    depends_on("py-setuptools", type=("build"))
+    depends_on("py-setuptools", type="build")
     depends_on("c", type="build")
