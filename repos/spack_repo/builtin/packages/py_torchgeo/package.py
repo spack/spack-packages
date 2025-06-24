@@ -18,6 +18,7 @@ class PyTorchgeo(PythonPackage):
     maintainers("adamjstewart", "calebrob6")
 
     version("main", branch="main")
+    version("0.7.1", sha256="05f645868a6dff083d4d0529662bde1b502e1f33ef260ebc735065e05d84176e")
     version("0.7.0", sha256="4ba0e96ea826080f393b1bb719a3f8c364637112710b1ac38c56b9590a638e29")
     version("0.6.2", sha256="82f49f0d18d2c22cc70fc0690641e8dd60e4904a9c50d32c79ebd5020ac10fa7")
     version("0.6.1", sha256="38c930917ea341d05a7a611ff74c017f29482df7455d50e287ea79dec7d0a14b")
@@ -46,6 +47,7 @@ class PyTorchgeo(PythonPackage):
 
     # Required dependencies
     with default_args(type="build"):
+        depends_on("py-setuptools@77.0.1:", when="@0.7.1:")
         depends_on("py-setuptools@61:", when="@0.5:")
         depends_on("py-setuptools@42:")
 
