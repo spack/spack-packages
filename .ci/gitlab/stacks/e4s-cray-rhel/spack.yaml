@@ -67,7 +67,7 @@ spack:
     mgard:
       require:
         - target=x86_64_v3
-        - "@2023-01-10:"
+        - "@compat-2023-01-10:"
     mpich:
       variants: ~wrapperrpath
     paraview:
