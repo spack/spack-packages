@@ -4,7 +4,7 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, get_cmake_prefix_path
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -433,14 +433,10 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+cuda"):
             args.append("-DCMAKE_CUDA_COMPILER=" + join_path(self.spec["cuda"].prefix.bin, "nvcc"))
+            args.append("-DCMAKE_INSTALL_RPATH=" + self.spec["cuda"].prefix.lib64)
+            args.append("-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON")
 
-        prefix_paths = []
-        for dep in ["fftw", "hdf5", "hypre", "petsc", "sundials"]:
-            if dep in self.spec:
-                prefix_paths.append(self.spec[dep].prefix)
-
-        if prefix_paths:
-            args.append("-DCMAKE_PREFIX_PATH=" + ";".join(prefix_paths))
+        args.append("-DCMAKE_PREFIX_PATH=" + ";".join(get_cmake_prefix_path(self)))
 
         args.extend(self.cmake_args())
         cmake = which(self.spec["cmake"].prefix.bin.cmake)
