@@ -20,7 +20,6 @@ class HipifyClang(CMakePackage):
 
     license("MIT")
 
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="874e3ee9801f795aaae30d6ea86e5edc991d5f71a5dee0a8e8eb7ce6379a51eb")
     version("6.3.3", sha256="94d32b0e02c0c34debb9a8034cb5fcd6c2ee35b67350c64690034cf94cd38ddd")
     version("6.3.2", sha256="c0da5118be8207fab6d19803417c0b8d2db5bc766279038527cbd6fa92b25c67")
@@ -34,9 +33,9 @@ class HipifyClang(CMakePackage):
     version("6.1.0", sha256="dc61b476081750130c62c7540fce49ee3a45a2b74e185d20049382574c1842d1")
     version("6.0.2", sha256="21e46276677ec8c00e61c0cbf5fa42185517f6af0d4845ea877fd40eb35198c4")
     version("6.0.0", sha256="91bed2b72a6684a04e078e50b12b36b93f64ff96523283f4e5d9a33c11e6b967")
+    version("5.7.1", sha256="43121e62233dab010ab686d6805bc2d3163f0dc5e89cc503d50c4bcd59eeb394")
+    version("5.7.0", sha256="10e4386727e102fba166f012147120a6ec776e8d95fbcac3af93e243205d80a6")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="43121e62233dab010ab686d6805bc2d3163f0dc5e89cc503d50c4bcd59eeb394")
-        version("5.7.0", sha256="10e4386727e102fba166f012147120a6ec776e8d95fbcac3af93e243205d80a6")
         version("5.6.1", sha256="ec3a4f276556f9fd924ea3c89be11b6c6ddf999cdd4387f669e38e41ee0042e8")
         version("5.6.0", sha256="a2572037a7d3bd0813bd6819a5e6c0e911678db5fd3ab15a65370601df91891b")
 

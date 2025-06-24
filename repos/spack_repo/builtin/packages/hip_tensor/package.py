@@ -31,9 +31,8 @@ class HipTensor(CMakePackage, ROCmPackage):
     version("6.1.0", sha256="9cc43b1b3394383f22f30e194d8753ca6ff1887c83ec1de5823cb2e94976eeed")
     version("6.0.2", sha256="6e6e7530eabbd1fb28b83efa5a49c19a6642d40e1554224ebb1e0a5999045e27")
     version("6.0.0", sha256="268d7f114784b7e824f89c21c65c2efedbb5486f09a356a56dca1b89bde1ef7a")
-    with default_args(deprecated=True):
-        version("5.7.1", sha256="96743d4e695fe865aef4097ae31d9b4e42a2d5a92135a005b0d187d9c0b17645")
-        version("5.7.0", sha256="4b17f6d43b17fe2dc1d0c61e9663d4752006f7898cc94231206444a1663eb252")
+    version("5.7.1", sha256="96743d4e695fe865aef4097ae31d9b4e42a2d5a92135a005b0d187d9c0b17645")
+    version("5.7.0", sha256="4b17f6d43b17fe2dc1d0c61e9663d4752006f7898cc94231206444a1663eb252")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 

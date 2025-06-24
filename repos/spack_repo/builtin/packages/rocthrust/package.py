@@ -33,9 +33,9 @@ class Rocthrust(CMakePackage):
     version("6.1.0", sha256="8c36fb7b34758579601365a450700899133da5802e5c8370654051b190bd6e1c")
     version("6.0.2", sha256="8de9414f6b921ff549ba102239fcf65f5cc70ece5eec9753de5ec91870e6934d")
     version("6.0.0", sha256="a3fdafe4b6124118e07f23a3b0270d91740da324f61aaa3e8c034da08d9312b1")
+    version("5.7.1", sha256="b7cb9ea6c42b2c6b610c34d2c438443e0f99245bd391aff18591949bf1cd53ee")
+    version("5.7.0", sha256="64e10f071acfc5b8e3c168b9178289cf1afc7b168bf1962793fc256b25074d3a")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="b7cb9ea6c42b2c6b610c34d2c438443e0f99245bd391aff18591949bf1cd53ee")
-        version("5.7.0", sha256="64e10f071acfc5b8e3c168b9178289cf1afc7b168bf1962793fc256b25074d3a")
         version("5.6.1", sha256="63df61d5ab46d4cfda6066d748274bacecc77151692e372e6f7df5e91852bdc2")
         version("5.6.0", sha256="e52a27bcb4add38a5f0f3a5c7e409c230bf4ba9afae19bd2e06c2be00d39db59")
 

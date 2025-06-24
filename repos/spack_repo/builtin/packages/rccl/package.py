@@ -61,9 +61,9 @@ class Rccl(CMakePackage):
     version("6.1.0", sha256="c6308f6883cbd63dceadbe4ee154cc6fa9e6bdccbd2f0fda295b564b0cf01e9a")
     version("6.0.2", sha256="5c8495acba3d620b751e729d1157e7b4eea8f5e5692c50ce47c5204d3dfd443c")
     version("6.0.0", sha256="0496d5a5f2e48c92cd390ab318df31a53cf7ec590988c2574c9f3d99c38b0fa7")
+    version("5.7.1", sha256="fb4c1f0084196d1226ce8a726d0f012d3890b54508a06ca87bbda619be8b90b1")
+    version("5.7.0", sha256="4c2825a3e4323ef3c2f8855ef445c1a81cf1992fb37e3e8a07a50db354aa3954")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="fb4c1f0084196d1226ce8a726d0f012d3890b54508a06ca87bbda619be8b90b1")
-        version("5.7.0", sha256="4c2825a3e4323ef3c2f8855ef445c1a81cf1992fb37e3e8a07a50db354aa3954")
         version("5.6.1", sha256="27ec6b86a1a329684d808f728c1fce134517ac8e6e7047689f95dbf8386c077e")
         version("5.6.0", sha256="cce13c8a9e233e7ddf91a67b1626b7aaeaf818fefe61af8de6b6b6ff47cb358c")
 

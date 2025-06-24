@@ -26,7 +26,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="f16859ba3823f8b29f2aac120cef3395109babf93a0a5069c3b4c7c67ef35e96")
     version("6.3.3", sha256="c032d59a45b0eb4441539498bd4c22d8442fbc554cb08d6cb452a1d27be6c57c")
     version("6.3.2", sha256="5d9e662c7d67f4c814cad70476b57651df5ae6b65f371ca6dbb5aa51d9eeb6f5")
@@ -40,9 +39,9 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     version("6.1.0", sha256="1a9cf598a932192f7f12b8987d96477f09186f9a95c5a28742f9caeb81640c95")
     version("6.0.2", sha256="c0a4bac5fa9a757a19a4995fa9571328b6ee0a71e93c66a880069794d65d284a")
     version("6.0.0", sha256="44f328b7862c066459089dfe62833cb7d626c6ceb71c57d8c7d6bba45dad491e")
+    version("5.7.1", sha256="33452576649df479f084076c47d0b30f6f1da34864094bce767dd9bf609f04aa")
+    version("5.7.0", sha256="daa5dc44580145e85ff8ffa7eb40a3d1ef41f3217549c01281715ff696a31588")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="33452576649df479f084076c47d0b30f6f1da34864094bce767dd9bf609f04aa")
-        version("5.7.0", sha256="daa5dc44580145e85ff8ffa7eb40a3d1ef41f3217549c01281715ff696a31588")
         version("5.6.1", sha256="d2ae36b8eacd39b865e8a7972b8eb86bcea2de4ac90711bba7e29b39b01eaa74")
         version("5.6.0", sha256="c7f425b693caf9371b42226d86392335d993a117d23219b6ba1fd13523cb8261")
 
@@ -88,7 +87,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
-        "master",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"+rocm @{ver}")

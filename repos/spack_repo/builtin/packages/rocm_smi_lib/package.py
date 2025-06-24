@@ -24,7 +24,6 @@ class RocmSmiLib(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath")
     libraries = ["librocm_smi64"]
 
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="0c462520b4fa0cf9b49515b207b0ead32a5f96ddba487c5d4fa07a403690c05a")
     version("6.3.3", sha256="679dfd0cbd213d27660e546584ab013afea286eff95928d748d168503305c9c4")
     version("6.3.2", sha256="29a9190143dfcbafeac93d8064b00c9320dbca57a3344adb009ec17d9b09d036")
@@ -38,9 +37,9 @@ class RocmSmiLib(CMakePackage):
     version("6.1.0", sha256="d1a1b372489b27cb7eb8c91d74a71370ad9668dd5aaf89c0267172534e417e41")
     version("6.0.2", sha256="61e755d710ff38425df3d262d1ad4c510d52d3c64e3fe15140c2575eba316949")
     version("6.0.0", sha256="0053b42402fd007e5ca9b3186c70f2c6f1b3026558f328722adadc2838c51309")
+    version("5.7.1", sha256="4d79cb0482b2f801cc7824172743e3dd2b44b9f6784d1ca2e5067f2fbb4ef803")
+    version("5.7.0", sha256="a399db3d9fc113ce2dd1ab5608a1cf9129ec4b6a2a79ab7922b1d9f43c454640")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="4d79cb0482b2f801cc7824172743e3dd2b44b9f6784d1ca2e5067f2fbb4ef803")
-        version("5.7.0", sha256="a399db3d9fc113ce2dd1ab5608a1cf9129ec4b6a2a79ab7922b1d9f43c454640")
         version("5.6.1", sha256="9e94f9a941202c3d7ce917fd1cd78c4e0f06f48d6c929f3aa916378ccef1e02c")
         version("5.6.0", sha256="88be875948a29454b8aacced8bb8ad967502a7a074ecbc579ed673c1650a2f7e")
 

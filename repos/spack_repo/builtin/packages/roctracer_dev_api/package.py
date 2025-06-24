@@ -33,9 +33,9 @@ class RoctracerDevApi(Package):
     version("6.1.0", sha256="3f8e296c4d04123a7177d815ca166e978b085ad7c816ac298e6bb47a299fa187")
     version("6.0.2", sha256="1e0105b32fdd9c010aab304bb2ca1a5a38ba323cea610afe1135657edda8f26e")
     version("6.0.0", sha256="941166a0363c5689bfec118d54e986c43fb1ec8cbf18d95721d9a824bd52c0f8")
+    version("5.7.1", sha256="ec0453adac7e62b142eb0df1e1e2506863aac4c3f2ce9d117c3184c08c0c6b48")
+    version("5.7.0", sha256="40bb757920488466e29df90bb80a975cc340bf7f8771fb1d754dfbb6b688d78e")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="ec0453adac7e62b142eb0df1e1e2506863aac4c3f2ce9d117c3184c08c0c6b48")
-        version("5.7.0", sha256="40bb757920488466e29df90bb80a975cc340bf7f8771fb1d754dfbb6b688d78e")
         version("5.6.1", sha256="007c498be25b067ad9a7631a2b0892f9129150ee9714e471a921225875d45e69")
         version("5.6.0", sha256="cbcfe4fa2e8b627006b320a93992fb3078696d8ef2ef049b4b880b6b7d57e13e")
 

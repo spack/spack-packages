@@ -24,7 +24,6 @@ class HsaRocrDev(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhsa-runtime64"]
 
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="ff740e8c8f2229c6dc47577363f707b1a44ea4254f8ad74f8f0a669998829535")
     version("6.3.3", sha256="aa2e30d3d68707d6df4840e954bb08cc13cd312cec1a98a64d97adbe07262f50")
     version("6.3.2", sha256="aaecaa7206b6fa1d5d7b8f7c1f7c5057a944327ba4779448980d7e7c7122b074")
@@ -38,9 +37,9 @@ class HsaRocrDev(CMakePackage):
     version("6.1.0", sha256="50386ebcb7ff24449afa2a10c76a059597464f877225c582ba3e097632a43f9c")
     version("6.0.2", sha256="e7ff4d7ac35a2dd8aad1cb40b96511a77a9c23fe4d1607902328e53728e05c28")
     version("6.0.0", sha256="99e8fa1af52d0bf382f28468e1a345af1ff3452c35914a6a7b5eeaf69fc568db")
+    version("5.7.1", sha256="655e9bfef4b0b6ad3f9b89c934dc0a8377273bb0bccbda6c399ac5d5d2c1c04c")
+    version("5.7.0", sha256="2c56ec5c78a36f2b847afd4632cb25dbf6ecc58661eb2ae038c2552342e6ce23")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="655e9bfef4b0b6ad3f9b89c934dc0a8377273bb0bccbda6c399ac5d5d2c1c04c")
-        version("5.7.0", sha256="2c56ec5c78a36f2b847afd4632cb25dbf6ecc58661eb2ae038c2552342e6ce23")
         version("5.6.1", sha256="4de9a57c2092edf9398d671c8a2c60626eb7daf358caf710da70d9c105490221")
         version("5.6.0", sha256="30875d440df9d8481ffb24d87755eae20a0efc1114849a72619ea954f1e9206c")
 

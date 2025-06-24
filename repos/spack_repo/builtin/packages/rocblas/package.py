@@ -36,9 +36,9 @@ class Rocblas(CMakePackage):
     version("6.1.0", sha256="af00357909da60d82618038aa9a3cc1f9d4ce1bdfb54db20ec746b592d478edf")
     version("6.0.2", sha256="d1bf31063a2d349797b88c994c91d05f94e681bafb5550ad9b53529703d89dbb")
     version("6.0.0", sha256="befa4a75f1de0ea37f2358d4c2de5406d7bce671ca9936e2294b64d3b3bafb60")
+    version("5.7.1", sha256="2984a5ed0ea5a05d40996ee3fddecb24399cbe8ea3e4921fc254e54d8f52fe4f")
+    version("5.7.0", sha256="024edd98de9687ee5394badc4dd4c543eef4eb3f71c96ff64100705d851e1744")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="2984a5ed0ea5a05d40996ee3fddecb24399cbe8ea3e4921fc254e54d8f52fe4f")
-        version("5.7.0", sha256="024edd98de9687ee5394badc4dd4c543eef4eb3f71c96ff64100705d851e1744")
         version("5.6.1", sha256="73896ebd445162a69af97f9fd462684609b4e0cf617eab450cd4558b4a23941e")
         version("5.6.0", sha256="6a70b27eede02c45f46095a6ce8421af9a774a565e39f5e1074783ecf00c1ea7")
 

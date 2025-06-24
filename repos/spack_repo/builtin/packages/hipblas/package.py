@@ -38,9 +38,9 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     version("6.1.0", sha256="5f8193c4ef0508967e608a8adf86d63066a984c5803a4d05dd617021d6298091")
     version("6.0.2", sha256="10c1b6c1deb0f225c0fb6b2bb88398a32cd0d32d3ffce9b5c8df9db2cf88d25c")
     version("6.0.0", sha256="8fbd0c244fe82eded866e06d2399b1d91ab5d43d2ebcb73382c7ce1ae48d9cb3")
+    version("5.7.1", sha256="794e9298f48ffbe3bd1c1ab87a5c2c2b953713500155fdec9ef8cbb11f81fc8a")
+    version("5.7.0", sha256="8c6cd2ffa4ce6ab03e05feffe074685b5525610870aebe9d78f817b3037f33a4")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="794e9298f48ffbe3bd1c1ab87a5c2c2b953713500155fdec9ef8cbb11f81fc8a")
-        version("5.7.0", sha256="8c6cd2ffa4ce6ab03e05feffe074685b5525610870aebe9d78f817b3037f33a4")
         version("5.6.1", sha256="f9da82fbefc68b84081ea0ed0139b91d2a540357fcf505c7f1d57eab01eb327c")
         version("5.6.0", sha256="9453a31324e10ba528f8f4755d2c270d0ed9baa33e980d8f8383204d8e28a563")
 

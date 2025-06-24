@@ -41,9 +41,9 @@ class Rdc(CMakePackage):
     version("6.1.0", sha256="a8ad5d880645c9e95c9c90b0c9026627b22467e3e879525fff38ccd924f36c39")
     version("6.0.2", sha256="00defa3b68c340d7f46b8cb06b37ab0602a7949bfddc884b01c163a1526502f8")
     version("6.0.0", sha256="5e3847a919d5f7efe99d8d76c96e78401659eccd1fb234b1b8cb4304096d6e89")
+    version("5.7.1", sha256="5251eb3085f2019246b332e9552dfae1572cf64ddf58306b81cbe7108019ffee")
+    version("5.7.0", sha256="924e94f14f6390d7a6ff7863fb4e2085c1ff5f9c12b8bd46471eb31f001c4f14")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="5251eb3085f2019246b332e9552dfae1572cf64ddf58306b81cbe7108019ffee")
-        version("5.7.0", sha256="924e94f14f6390d7a6ff7863fb4e2085c1ff5f9c12b8bd46471eb31f001c4f14")
         version("5.6.1", sha256="9e9f57cebbc5ae386a405957ed2c17344cdb42db5e1a71285f2c9bc09eea6519")
         version("5.6.0", sha256="5213cd89215463862f6a1e9480ebe017944a6bb6b0db1722628afaa34af57991")
 

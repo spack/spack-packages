@@ -59,9 +59,9 @@ class Rocsolver(CMakePackage):
     version("6.1.0", sha256="f1d7a4edf14ed0b2e2f74aa5cbc9db0c3b0dd31e50bbada1586cb353a28fe015")
     version("6.0.2", sha256="781d5df2886ab0d5087a215a33ac390dd27653b2a9b4a620c7d51b0ae56f63d2")
     version("6.0.0", sha256="5fcaba96f3efafc2ecc3f4ec104095d96545c16e1b9f95410bd571cb0fc643ae")
+    version("5.7.1", sha256="83e0c137b8690dbeb2e85d9e25415d96bd06979f09f2b10b2aff8e4c9f833fa4")
+    version("5.7.0", sha256="bb16d360f14b34fe6e8a6b8ddc6e631672a5ffccbdcb25f0ce319edddd7f9682")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="83e0c137b8690dbeb2e85d9e25415d96bd06979f09f2b10b2aff8e4c9f833fa4")
-        version("5.7.0", sha256="bb16d360f14b34fe6e8a6b8ddc6e631672a5ffccbdcb25f0ce319edddd7f9682")
         version("5.6.1", sha256="6a8f366218aee599a0e56755030f94ee690b34f30e6d602748632226c5dc21bb")
         version("5.6.0", sha256="54baa7f35f3c53da9005054e6f7aeecece5526dafcb277af32cbcb3996b0cbbc")
 

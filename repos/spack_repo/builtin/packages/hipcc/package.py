@@ -38,9 +38,8 @@ class Hipcc(CMakePackage):
     version("6.1.0", sha256="6bd9912441de6caf6b26d1323e1c899ecd14ff2431874a2f5883d3bc5212db34")
     version("6.0.2", sha256="d6209b14fccdd00d7231dec4b4f962aa23914b9dde389ba961370e8ba918bde5")
     version("6.0.0", sha256="e9cfaaecaf0e6ed363946439197f340c115e8e1189f96dbd716cf20245c29255")
-    with default_args(deprecated=True):
-        version("5.7.1", sha256="d47d27ef2b5de7f49cdfd8547832ac9b437a32e6fc6f0e9c1646f4b704c90aee")
-        version("5.7.0", sha256="9f839bf7226e5e26f3150f8ba6eca507ab9a668e68b207736301b3bb9040c973")
+    version("5.7.1", sha256="d47d27ef2b5de7f49cdfd8547832ac9b437a32e6fc6f0e9c1646f4b704c90aee")
+    version("5.7.0", sha256="9f839bf7226e5e26f3150f8ba6eca507ab9a668e68b207736301b3bb9040c973")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

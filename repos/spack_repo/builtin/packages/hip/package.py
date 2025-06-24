@@ -26,7 +26,6 @@ class Hip(CMakePackage):
 
     license("MIT")
 
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="bec899ba67df9aa7056297e5ad104b8e36938b1bab22f1f418f69a8e0043d07f")
     version("6.3.3", sha256="aa3a5466304d1dbee0d976b50fccb710dd12e2e1d5534793396447c0ff845e2c")
     version("6.3.2", sha256="66a4eba98bd74fc7126ce7cb4d59653b22075fe95a70412fe283dc806ae366e0")
@@ -40,9 +39,9 @@ class Hip(CMakePackage):
     version("6.1.0", sha256="b5e209eff044b629c65d735ce7d92b4861bb321caa7d97e7be4054f1b943982a")
     version("6.0.2", sha256="84163ffb5d81f192f4a879f3f9722db2402d72c2a90f104c5b2b8a4212f4f9b0")
     version("6.0.0", sha256="ba8ce0d0960b260ff44ab47da58f98b8df9b659835aa62e32e018a63379bbc79")
+    version("5.7.1", sha256="ea34c75d2cff366fcdd45109c5be460a48d4fcf72b8a534368b54eae5d05db0e")
+    version("5.7.0", sha256="8974a436e7f1daf232a77e27a215bcb24a8cc132aa11b5b885a7417ad4246074")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="ea34c75d2cff366fcdd45109c5be460a48d4fcf72b8a534368b54eae5d05db0e")
-        version("5.7.0", sha256="8974a436e7f1daf232a77e27a215bcb24a8cc132aa11b5b885a7417ad4246074")
         version("5.6.1", sha256="1b0178da8e997eb0cbf2af63e1940f56aeddc8b9715d822d2c87fd60dbc01173")
         version("5.6.0", sha256="befbfb4691d4331b1fdfe1f17a862e82e962eb9fb90457b2c61a5130b3e6b85b")
 

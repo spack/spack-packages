@@ -39,9 +39,9 @@ class RocmDeviceLibs(CMakePackage):
     version("6.1.0", sha256="6bd9912441de6caf6b26d1323e1c899ecd14ff2431874a2f5883d3bc5212db34")
     version("6.0.2", sha256="c6d88b9b46e39d5d21bd5a0c1eba887ec473a370b1ed0cebd1d2e910eedc5837")
     version("6.0.0", sha256="198df4550d4560537ba60ac7af9bde31d59779c8ec5d6309627f77a43ab6ef6f")
+    version("5.7.1", sha256="703de8403c0bd0d80f37c970a698f10f148daf144d34f982e4484d04f7c7bbef")
+    version("5.7.0", sha256="0f8780b9098573f1c456bdc84358de924dcf00604330770a383983e1775bf61e")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="703de8403c0bd0d80f37c970a698f10f148daf144d34f982e4484d04f7c7bbef")
-        version("5.7.0", sha256="0f8780b9098573f1c456bdc84358de924dcf00604330770a383983e1775bf61e")
         version("5.6.1", sha256="f0dfab272ff936225bfa1e9dabeb3c5d12ce08b812bf53ffbddd2ddfac49761c")
         version("5.6.0", sha256="efb5dcdca9b3a9fbe408d494fb4a23e0b78417eb5fa8eebd4a5d226088f28921")
 

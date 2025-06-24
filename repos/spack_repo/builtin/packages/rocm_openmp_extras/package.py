@@ -170,8 +170,8 @@ class RocmOpenmpExtras(Package):
     version("6.1.0", sha256=versions_dict["6.1.0"]["aomp"])
     version("6.0.2", sha256=versions_dict["6.0.2"]["aomp"])
     version("6.0.0", sha256=versions_dict["6.0.0"]["aomp"])
-    version("5.7.1", sha256=versions_dict["5.7.1"]["aomp"], deprecated=True)
-    version("5.7.0", sha256=versions_dict["5.7.0"]["aomp"], deprecated=True)
+    version("5.7.1", sha256=versions_dict["5.7.1"]["aomp"])
+    version("5.7.0", sha256=versions_dict["5.7.0"]["aomp"])
     version("5.6.1", sha256=versions_dict["5.6.1"]["aomp"], deprecated=True)
     version("5.6.0", sha256=versions_dict["5.6.0"]["aomp"], deprecated=True)
 

@@ -36,9 +36,9 @@ class RocmValidationSuite(CMakePackage):
     version("6.1.0", sha256="712f49bfe3a62c9f9cc6f9dc1c593b57e0b45158bb270d685d1141c9a9e90387")
     version("6.0.2", sha256="8286d00ce290eeace3697138da9d7a9669f54152e5febcd9e5c5156ae79f0c0c")
     version("6.0.0", sha256="a84e36b5e50e70ba033fb6bc6fa99da2e32bf7eaef2098df3164365a77a8f14c")
+    version("5.7.1", sha256="202f2b6e014bbbeec40af5d3ec630c042f09a61087a77bd70715d81044ea4d65")
+    version("5.7.0", sha256="f049b7786a220e9b6dfe099f17727dd0d9e41be9e680fe8309eae400cc5536ea")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="202f2b6e014bbbeec40af5d3ec630c042f09a61087a77bd70715d81044ea4d65")
-        version("5.7.0", sha256="f049b7786a220e9b6dfe099f17727dd0d9e41be9e680fe8309eae400cc5536ea")
         version("5.6.1", sha256="d5e4100e2d07311dfa101563c15d026a8130442cdee8af9ef861832cd7866c0d")
         version("5.6.0", sha256="54cc5167055870570c97ee7114f48d24d5415f984e0c9d7b58b83467e0cf18fb")
 

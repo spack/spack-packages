@@ -40,9 +40,9 @@ class Mivisionx(CMakePackage):
     version("6.1.0", sha256="f18a72c4d12c36ab50f9c3a5c22fc3641feb11c99fed513540a16a65cd149fd1")
     version("6.0.2", sha256="e39521b3109aa0900f652ae95a4421df0fa29fd57e816268cc6602d243c50779")
     version("6.0.0", sha256="01324a12f21ea0e29a4d7d7c60498ba9231723569fedcdd90f28ddffb5e0570e")
+    version("5.7.1", sha256="bfc074bc32ebe84c72149ee6abb30b5b6499023d5b98269232de82e35d0505a8")
+    version("5.7.0", sha256="07e4ec8a8c06a9a8bb6394a043c9c3e7176acd3b462a16de91ef9518a64df9ba")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="bfc074bc32ebe84c72149ee6abb30b5b6499023d5b98269232de82e35d0505a8")
-        version("5.7.0", sha256="07e4ec8a8c06a9a8bb6394a043c9c3e7176acd3b462a16de91ef9518a64df9ba")
         version("5.6.1", sha256="b2ff95c1488e244f379482631dae4f9ab92d94a513d180e03607aa1e184b5b0a")
         version("5.6.0", sha256="34c184e202b1a6da2398b66e33c384d5bafd8f8291089c18539715c5cb73eb1f")
 

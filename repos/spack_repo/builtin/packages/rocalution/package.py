@@ -41,9 +41,9 @@ class Rocalution(CMakePackage):
     version("6.1.0", sha256="699a9b73844fcd4e30d0607b4042dc779f9bcdc27ad732e7a038968ff555af2b")
     version("6.0.2", sha256="453f889677728b510286d4c72952b343cac63c45e2cb8b801d8388a2ec599d2a")
     version("6.0.0", sha256="cabf37691b8db00c82bda49c7dcfaefd9b9067b7d097afa43b7a5f86c45bff99")
+    version("5.7.1", sha256="b95afa1285759843c5fea1ad6e1c1edf283922e0d448db03a3e1f42b6942bc24")
+    version("5.7.0", sha256="48232a0d1250debce89e39a233bd0b5d52324a2454c078b99c9d44965cbbc0e9")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="b95afa1285759843c5fea1ad6e1c1edf283922e0d448db03a3e1f42b6942bc24")
-        version("5.7.0", sha256="48232a0d1250debce89e39a233bd0b5d52324a2454c078b99c9d44965cbbc0e9")
         version("5.6.1", sha256="7197b3617a0c91e90adaa32003c04d247a5f585d216e77493d20984ba215addb")
         version("5.6.0", sha256="7397a2039e9615c0cf6776c33c4083c00b185b5d5c4149c89fea25a8976a3097")
 

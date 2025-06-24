@@ -18,7 +18,6 @@ class Rocminfo(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "haampie")
 
-    version("master", branch="master", deprecated=True)
     version("6.4.0", sha256="060184e70755cb267017553ec37cc5b36af2c94e6b0643cad4b9fed270199a79")
     version("6.3.3", sha256="08390b2babe6dc832887098c5d3a5253d655430a18751f3446a56c7422b26dd2")
     version("6.3.2", sha256="a98a32bae0e118397b5559b4a584c9363191bb2d1f45fe13b09f502016745e8f")
@@ -32,9 +31,9 @@ class Rocminfo(CMakePackage):
     version("6.1.0", sha256="973352210fdc65932f0125e2db68729383727eaf4ebb7f52c88a948c14bbbb73")
     version("6.0.2", sha256="e616d364a48de18eaee661bdce999d095086905f49777663ca99312f40a63da1")
     version("6.0.0", sha256="bc29f1798644b6dea73895353dffada9db7366d0058274e587ebd3291a4d3844")
+    version("5.7.1", sha256="642dc2ec4254b3c30c43064e6690861486db820b25f4906ec78bdb47e68dcd0b")
+    version("5.7.0", sha256="a5a3c19513bf26f17f163a03ba5288c5c761619ef55f0cb9e15472771748b93e")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="642dc2ec4254b3c30c43064e6690861486db820b25f4906ec78bdb47e68dcd0b")
-        version("5.7.0", sha256="a5a3c19513bf26f17f163a03ba5288c5c761619ef55f0cb9e15472771748b93e")
         version("5.6.1", sha256="780b186ac7410a503eca1060f4bbc35db1b7b4d1d714d15c7534cd26d8af7b54")
         version("5.6.0", sha256="87d98a736e4f7510d1475d35717842068d826096a0af7c15a395bcf9d36d7fa0")
 

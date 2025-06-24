@@ -38,9 +38,9 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
     version("6.1.0", sha256="f9d71af23092f8faa888d2c14713ee4d4d350454818ca9331d422c81c2587c1f")
     version("6.0.2", sha256="cb6ff8f58c024b60b3914271921f58f0ab3bdbc9889a53795b40c99c9de0bcd4")
     version("6.0.0", sha256="7e06c98f9da7c0b20b55b2106cf3a48b9ef6577a79549a455667ae97bd15b61d")
+    version("5.7.1", sha256="81a9f5f0960dce125ce1ab1c7eb58bb07c8756346f9e46a1cc65aa61d5a114f8")
+    version("5.7.0", sha256="4dee76719839503b02ce7d38e1c61bbdb2da18da7f63a7ef7012c84c71aa0a9d")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="81a9f5f0960dce125ce1ab1c7eb58bb07c8756346f9e46a1cc65aa61d5a114f8")
-        version("5.7.0", sha256="4dee76719839503b02ce7d38e1c61bbdb2da18da7f63a7ef7012c84c71aa0a9d")
         version("5.6.1", sha256="a73d5578bc7f8dff0b8960e4bff97bc4fc28f508a19ed6acd1cfd4d3e76b47ee")
         version("5.6.0", sha256="8c214e2f90337a5317a69950026bf337b1e567d43bb9ae64f2a802af2228c313")
 

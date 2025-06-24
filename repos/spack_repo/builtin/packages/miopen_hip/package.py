@@ -35,9 +35,9 @@ class MiopenHip(CMakePackage):
     version("6.1.0", sha256="3b373117eaeaf618aab9b39bb22e9950fd49bd0e264c8587b0c51fa348afe0d1")
     version("6.0.2", sha256="e6f671bd6af59f7470f42cda2ff9e77441d8f6c2105772bbf855d31da1085ffa")
     version("6.0.0", sha256="a0718a48353be30ff98118ade511f0c1b454e394d8f934aefe7dd6946562b2e9")
+    version("5.7.1", sha256="912a658fe21ce6f1982b0f2ff251c3f7bb618f2e7e9876d983bcb54e3cd7129e")
+    version("5.7.0", sha256="5cd0b62254469e1c246d5890d2b78f8aedcf42cf8a327eabc1a391b83bcd14e1")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="912a658fe21ce6f1982b0f2ff251c3f7bb618f2e7e9876d983bcb54e3cd7129e")
-        version("5.7.0", sha256="5cd0b62254469e1c246d5890d2b78f8aedcf42cf8a327eabc1a391b83bcd14e1")
         version("5.6.1", sha256="ff627d68ed9e52433a3c808b5d3ff179a398b77ce81b00cfea7b2c4da5162c6c")
         version("5.6.0", sha256="d620ddab5b488bdf81242654fefa337c6b71dc410c2ff26d30a4ee86a8d22d11")
 

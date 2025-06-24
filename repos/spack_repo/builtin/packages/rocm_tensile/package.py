@@ -33,9 +33,9 @@ class RocmTensile(CMakePackage):
     version("6.1.0", sha256="69bfdc711d3a86e6651b1dcfb2c461c7d3ae574e6d884833d4e07d3e7ad06491")
     version("6.0.2", sha256="1d8a92422560c1e908fa25fd97a4aa07a96659528a543f77618408ffcfe1f307")
     version("6.0.0", sha256="5d90add62d1439b7daf0527316e950e454e5d8beefb4f723865fe9ab26c7aa42")
+    version("5.7.1", sha256="9211a51b23c22b7a79e4e494e8ff3c31e90bf21adb8cce260acc57891fb2c917")
+    version("5.7.0", sha256="fe2ae067c1c579f33d7a1e26da3fe6b4ed44befa08f9dfce2ceae586f184b816")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="9211a51b23c22b7a79e4e494e8ff3c31e90bf21adb8cce260acc57891fb2c917")
-        version("5.7.0", sha256="fe2ae067c1c579f33d7a1e26da3fe6b4ed44befa08f9dfce2ceae586f184b816")
         version("5.6.1", sha256="3e78c933563fade8781a1dca2079bff135af2f5d2c6eb0147797d2c1f24d006c")
         version("5.6.0", sha256="383728ecf49def59ab9a7f8a1d1e2eaf8b528e36b461e27030a2aab1a1ed80cb")
 

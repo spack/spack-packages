@@ -45,9 +45,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     version("6.1.0", sha256="6bd9912441de6caf6b26d1323e1c899ecd14ff2431874a2f5883d3bc5212db34")
     version("6.0.2", sha256="7d35acc84de1adee65406f92a369a30364703f84279241c444cd93a48c7eeb76")
     version("6.0.0", sha256="c673708d413d60ca8606ee75c77e9871b6953c59029c987b92f2f6e85f683626")
+    version("5.7.1", sha256="6b54c422e45ad19c9bf5ab090ec21753e7f7d854ca78132c30eb146657b168eb")
+    version("5.7.0", sha256="4abdf00b297a77c5886cedb37e63acda2ba11cb9f4c0a64e133b05800aadfcf0")
     with default_args(deprecated=True):
-        version("5.7.1", sha256="6b54c422e45ad19c9bf5ab090ec21753e7f7d854ca78132c30eb146657b168eb")
-        version("5.7.0", sha256="4abdf00b297a77c5886cedb37e63acda2ba11cb9f4c0a64e133b05800aadfcf0")
         version("5.6.1", sha256="045e43c0c4a3f4f2f1db9fb603a4f1ea3d56e128147e19ba17909eb57d7f08e5")
         version("5.6.0", sha256="e922bd492b54d99e56ed88c81e2009ed6472059a180b10cc56ce1f9bd2d7b6ed")
 
