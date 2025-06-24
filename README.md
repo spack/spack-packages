@@ -14,16 +14,21 @@ If you want to test your package changes locally before submitting a pull reques
 simply change Spack's default package repo from the default cache location to the full path to your local git clone:
 
 ```shell
-spack repo set --destination /path/to/local/spack-packages builtin
+spack repo set --scope user --destination /path/to/local/spack-packages builtin
 ```
 
-Your Spack installation will be configured to pull from your local Spack
-packages checkout in perpetuity, meaning any updates/other management of the Spack
-packages repo will now be manual. To undo this, simply remove the local modification
-done to the repos configuration or run
+This updates `~/.spack/repos.yaml` to look like:
+
+```yaml
+repos:
+  builtin:
+    destination: /path/to/local/spack-packages
+```
+
+To undo this, you can run:
 
 ```shell
-spack config remove repos:builtin:destination
+spack config --scope user remove repos:builtin:destination
 ```
 
 `$spack` can be used to form a relative path to your Spack root directory.
