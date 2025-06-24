@@ -15,7 +15,7 @@ class PyTorchgeo(PythonPackage):
     git = "https://github.com/microsoft/torchgeo.git"
 
     license("MIT")
-    maintainers("adamjstewart", "calebrob6")
+    maintainers("adamjstewart", "calebrob6", "ashnair1")
 
     version("main", branch="main")
     version("0.7.1", sha256="05f645868a6dff083d4d0529662bde1b502e1f33ef260ebc735065e05d84176e")
