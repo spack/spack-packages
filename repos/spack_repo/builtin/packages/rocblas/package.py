@@ -69,8 +69,6 @@ class Rocblas(CMakePackage):
     for ver in ["6.2.0", "6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0"]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
-    depends_on("rocm-cmake@master", type="build", when="@master:")
-
     for ver in [
         "5.6.0",
         "5.6.1",
