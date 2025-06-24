@@ -19,6 +19,9 @@ class Geomodel(CMakePackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("6.14.0", sha256="b294f624145f922efd1da4016b79e698cabb0034cc6791841648d7845fd9fb15")
+    version("6.13.0", sha256="8f1ebfe7fb502af078ed535410160becca2eb81286b94154b43c89873a3c45ad")
+    version("6.12.0", sha256="4fa32672c6cb3d9b89ddf5e9566d0c283e5769768db6236883d72fecdd6207cd")
     version("6.10.0", sha256="968a0f7c8108b14f22041ca0c6ae8a3293175131c6f61055527ecdefe8c7839a")
     version("6.9.0", sha256="ea34dad8a0cd392e06794b8a1b7407dd6ad617fefd19fb4cccdf36b154749793")
     version("6.8.0", sha256="4dfd5a932955ee2618a880bb210aed9ce7087cfadd31f23f92e5ff009c8384eb")
@@ -107,4 +110,8 @@ class Geomodel(CMakePackage):
                 "GEOMODEL_USE_QT6", self.spec.satisfies("+visualization ^[virtuals=qmake] qt-base")
             ),
         ]
+
+        if self.spec.satisfies("@6.12:"):
+            args.append(self.define("GEOMODEL_BUILD_TESTING", "OFF"))
+
         return args
