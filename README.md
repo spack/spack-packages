@@ -17,7 +17,7 @@ simply change Spack's default package repo from the default cache location to th
 spack repo set --scope user --destination /path/to/local/spack-packages builtin
 ```
 
-This updates `~/.spack/repos.yaml` to look like:
+This updates `~/.spack/repos.yaml` config to look like:
 
 ```yaml
 repos:
