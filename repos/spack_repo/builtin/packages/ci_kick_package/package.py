@@ -13,6 +13,8 @@ class CiKickPackage(BundlePackage):
 
     maintainers("kwryankrattiger", "eugenewalker")
 
+    variant("asdf", default=True, description="asdf")
+
     def install(self):
         """Force install failure to avoid this package ever existing in the build cache"""
         exit(1)
