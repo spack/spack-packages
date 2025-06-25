@@ -131,6 +131,8 @@ class Rocalution(CMakePackage):
             self.define("SUPPORT_MPI", "OFF"),
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+            self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
@@ -140,9 +142,6 @@ class Rocalution(CMakePackage):
 
         if self.spec.satisfies("@5.6:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.6:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
-            args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
 
         return args
 

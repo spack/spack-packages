@@ -118,6 +118,7 @@ class Rocsolver(CMakePackage):
             self.define("BUILD_CLIENTS_BENCHMARKS", "OFF"),
             self.define_from_variant("OPTIMAL", "optimal"),
             self.define("ROCSOLVER_EMBED_FMT", "ON"),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         tgt = self.spec.variants["amdgpu_target"]
@@ -129,8 +130,6 @@ class Rocsolver(CMakePackage):
 
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.6.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
 
         return args
 

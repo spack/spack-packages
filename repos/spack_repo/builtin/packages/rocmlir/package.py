@@ -41,13 +41,12 @@ class Rocmlir(CMakePackage):
     )
 
     def patch(self):
-        if self.spec.satisfies("@5.6.0:"):
-            filter_file(
-                "${ROCM_PATH}/bin",
-                self.spec["rocminfo"].prefix.bin,
-                "external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt",
-                string=True,
-            )
+        filter_file(
+            "${ROCM_PATH}/bin",
+            self.spec["rocminfo"].prefix.bin,
+            "external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt",
+            string=True,
+        )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
