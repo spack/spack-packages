@@ -33,6 +33,7 @@ class PyGpaw(PythonPackage):
     variant("fftw", default=True, description="Build with FFTW support")
     variant("libvdwxc", default=True, description="Build with libvdwxc support")
     variant("elpa", default=True, description="Build with ELPA support")
+    variant("openmp", default=True, description="Build with OpenMP support")
 
     # Build dependencies
     depends_on("c", type="build")
@@ -43,7 +44,6 @@ class PyGpaw(PythonPackage):
     depends_on("lapack")
 
     # Version-specific required dependencies
-
     with when("@25.1.0:"):
         depends_on("libxc")
         depends_on("python@3.9:", type=("build", "run"))
@@ -158,7 +158,11 @@ class PyGpaw(PythonPackage):
             libs += spec["elpa"].libs
             include_dirs.append(spec["elpa"].prefix.include)
             bools += "elpa = True\n"
-            runtime_library_dirs += [spec["elpa"].libs.directories]
+            runtime_library_dirs += spec["elpa"].libs.directories
+
+        if "+openmp" in spec:
+            openmp_compile_args = ['-fopenmp']
+            openmp_link_args = ['-fopenmp']
 
         lib_dirs = list(libs.directories)
         libs = list(libs.names)
@@ -181,7 +185,8 @@ class PyGpaw(PythonPackage):
                 f.write(f"compiler='{spec["mpi"].mpicc}'\n")
                 f.write(f"mpicompiler = '{spec["mpi"].mpicc}'\n")
                 # These may not be needed for versions @23.6.0:
-                # We can add logic to only apply them for older versions, but they don't cause problems even when not needed.
+                # We can add logic to only apply them for older versions, 
+                # but they don't cause problems even when not needed.
                 f.write(f"mpi_include_dirs = {mpi_include_dirs}\n")
                 f.write(f"mpi_library_dirs = {mpi_library_dirs}\n")
             else:
@@ -190,4 +195,7 @@ class PyGpaw(PythonPackage):
             if "+scalapack" in spec:
                 f.write(f"define_macros += {scalapack_macros}\n")
             if "+elpa" in spec:
-                f.write(f"runtime_library_dirs = {repr(runtime_library_dirs)}")
+                f.write(f"runtime_library_dirs = {repr(runtime_library_dirs)}\n")
+            if "+openmp" in spec:
+                f.write(f"extra_compile_args += {openmp_compile_args}\n")
+                f.write(f"extra_link_args += {openmp_link_args}\n")
