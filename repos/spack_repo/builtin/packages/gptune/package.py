@@ -51,7 +51,7 @@ class Gptune(CMakePackage):
     depends_on("scalapack", type="link")
     depends_on("py-setuptools", type="build")
     depends_on("py-ipyparallel", type=("build", "run"))
-    depends_on("py-numpy@:1.24", type=("build", "run"), when="@:4.0.0")
+    depends_on("py-numpy@:1.23", type=("build", "run"), when="@:4.0.0")
     depends_on("py-numpy@:1.21.5", type=("build", "run"), when="@:2.1.0")
     depends_on("py-pandas", type=("build", "run"))
     depends_on("py-joblib", type=("build", "run"))
