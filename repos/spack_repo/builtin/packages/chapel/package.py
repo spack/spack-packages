@@ -601,15 +601,18 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
                     python("-m", "pip", "install", "tools/chapel-py")
 
     def install(self, spec, prefix):
-        make("install")
-        # We install CMakeLists.txt so we can later lookup the version number
-        # if working from a non-versioned release/branch (such as main)
-        if not self.is_versioned_release():
-            install("CMakeLists.txt", join_path(prefix.share, "chapel"))
-        install_tree("doc", join_path(prefix.share, "chapel", self._output_version_short, "doc"))
-        install_tree(
-            "examples", join_path(prefix.share, "chapel", self._output_version_short, "examples")
-        )
+        # Needed to prevent invalidating cache on subsequent cmake runs due to
+        # env changes, likely pertaining to spack compiler wrappers.
+        with set_env(CHPL_CMAKE_USE_CC_CXX="1"):
+            make("install")
+            # We install CMakeLists.txt so we can later lookup the version number
+            # if working from a non-versioned release/branch (such as main)
+            if not self.is_versioned_release():
+                install("CMakeLists.txt", join_path(prefix.share, "chapel"))
+            install_tree("doc", join_path(prefix.share, "chapel", self._output_version_short, "doc"))
+            install_tree(
+                "examples", join_path(prefix.share, "chapel", self._output_version_short, "examples")
+            )
 
     def setup_chpl_platform(self, env):
         if self.spec.variants["host_platform"].value == "unset":
