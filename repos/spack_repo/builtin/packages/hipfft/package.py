@@ -101,17 +101,15 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
             self.asan_on(env)
 
     def cmake_args(self):
-        args = [self.define("BUILD_CLIENTS_SAMPLES", "OFF")]
-
+        args = [
+            self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
+            self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+        ]
         if self.spec.satisfies("+rocm"):
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
         elif self.spec.satisfies("+cuda"):
             args.append(self.define("BUILD_WITH_LIB", "CUDA"))
-
-        # FindHIP.cmake is still used for both +rocm and +cuda
-        if self.spec["hip"].satisfies("@5.6:"):
-            args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

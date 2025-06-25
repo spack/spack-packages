@@ -118,6 +118,7 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
             self.define("CMAKE_CXX_STANDARD", "14"),
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("BUILD_CLIENTS_TESTS", "OFF"),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         args.append(self.define_from_variant("BUILD_CUDA", "cuda"))
@@ -127,8 +128,4 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.6.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
-
         return args

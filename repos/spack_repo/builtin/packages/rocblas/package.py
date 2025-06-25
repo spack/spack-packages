@@ -171,19 +171,20 @@ class Rocblas(CMakePackage):
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("RUN_HEADER_TESTING", "OFF"),
             self.define_from_variant("BUILD_WITH_TENSILE", "tensile"),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+            self.define("Tensile_CODE_OBJECT_VERSION", "default"),
         ]
         if self.run_tests:
             args.append(self.define("LINK_BLIS", "ON"))
-            if self.spec.satisfies("@5.6.0:"):
-                args.append(
-                    self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
-                )
-                args.append(
-                    self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
-                )
-                args.append(
-                    self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")
-                )
+            args.append(
+                 self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
+            )
+            args.append(
+                 self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
+            )
+            args.append(
+                self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")
+            )
 
         if "+tensile" in self.spec:
             tensile_path = join_path(self.stage.source_path, "Tensile")
@@ -214,10 +215,6 @@ class Rocblas(CMakePackage):
 
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.6.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
-        if self.spec.satisfies("@5.6:"):
-            args.append(self.define("Tensile_CODE_OBJECT_VERSION", "default"))
         return args
 
     @run_after("build")

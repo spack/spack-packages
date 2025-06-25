@@ -147,6 +147,7 @@ class Rocfft(CMakePackage):
         args = [
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("SQLITE_USE_SYSTEM_PACKAGE", True),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         tgt = self.spec.variants["amdgpu_target"]
@@ -160,8 +161,4 @@ class Rocfft(CMakePackage):
 
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.6.0:"):
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
-
         return args

@@ -76,9 +76,6 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     patch("remove-hipblas-clients-file-installation.patch", when="@5.5:5.7.1")
     patch("remove-hipblas-clients-file-installation-6.0.patch", when="@6.0:")
     patch("modify-hipblas-common-dependency.patch", when="@6.3:")
-
-    depends_on("rocm-cmake@5.2.0:", type="build", when="@5.2.0:5.7")
-    depends_on("rocm-cmake@4.5.0:", type="build")
     for ver in [
         "6.0.0",
         "6.0.2",
@@ -94,7 +91,6 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
     ]:
-        depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"+rocm @{ver}")
 
     depends_on("hip +cuda", when="+cuda")
@@ -118,6 +114,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
     ]:
+        depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
     for tgt in ROCmPackage.amdgpu_targets:
@@ -146,15 +143,13 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define_from_variant("USE_CUDA", "cuda"),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
-
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.6.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         if self.spec.satisfies("@6.1:") and self.run_tests:
             args.append(self.define("LINK_BLIS", "OFF"))
 

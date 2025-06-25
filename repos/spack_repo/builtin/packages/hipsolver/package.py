@@ -80,9 +80,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("suite-sparse", type="build")
-
-    depends_on("rocm-cmake@5.6.0:", type="build", when="@5.6.0:")
-
     depends_on("hip +cuda", when="+cuda")
 
     for ver in [
@@ -104,6 +101,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
     ]:
+        depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
 
@@ -143,6 +141,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("SUITE_SPARSE_PATH", self.spec["suite-sparse"].prefix),
             self.define("ROCBLAS_PATH", self.spec["rocblas"].prefix),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         args.append(self.define_from_variant("USE_CUDA", "cuda"))
@@ -151,8 +150,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.6.0:"):
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
         libloc = self.spec["suite-sparse"].prefix.lib64
         if not os.path.isdir(libloc):
             libloc = self.spec["suite-sparse"].prefix.lib

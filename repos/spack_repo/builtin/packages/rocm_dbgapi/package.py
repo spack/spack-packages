@@ -54,8 +54,8 @@ class RocmDbgapi(CMakePackage):
     depends_on("c", type="build")
 
     depends_on("cmake@3:", type="build")
-    depends_on("hwdata", when="@5.6.0:")
-    depends_on("pciutils", when="@5.6.0:")
+    depends_on("hwdata", type="build")
+    depends_on("pciutils", type="build")
 
     for ver in [
         "5.6.0",
@@ -106,8 +106,8 @@ class RocmDbgapi(CMakePackage):
             env.set("LDFLAGS", "-fuse-ld=lld")
 
     def cmake_args(self):
-        args = []
-        if self.spec.satisfies("@5.6.0:"):
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
-            args.append(self.define("PCI_IDS_PATH", self.spec["pciutils"].prefix.share))
+        args = [
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+            self.define("PCI_IDS_PATH", self.spec["pciutils"].prefix.share),
+        ]
         return args

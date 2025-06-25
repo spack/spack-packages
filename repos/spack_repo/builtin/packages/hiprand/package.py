@@ -72,11 +72,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("cmake@3.10.2:", type="build")
-
-    depends_on("rocm-cmake@5.6.0:", type="build", when="@5.6.0:")
-
     depends_on("hip +cuda", when="+cuda")
-
     depends_on("googletest@1.10.0:", type="test")
 
     for ver in [
@@ -99,8 +95,8 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
     ]:
         depends_on("rocrand@" + ver, when="+rocm @" + ver)
+        depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
 
-    depends_on("rocrand ~hiprand", when="+rocm")
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(
             "rocrand amdgpu_target={0}".format(tgt), when="+rocm amdgpu_target={0}".format(tgt)
@@ -123,8 +119,11 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         return ver
 
     def cmake_args(self):
-        args = [self.define("BUILD_BENCHMARK", "OFF"), self.define("BUILD_TEST", self.run_tests)]
-
+        args = [
+            self.define("BUILD_BENCHMARK", "OFF"),
+            self.define("BUILD_TEST", self.run_tests),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+        ]
         if self.spec.satisfies("+cuda"):
             args.append(self.define("BUILD_WITH_LIB", "CUDA"))
             # FindHIP.cmake is used for +cuda
@@ -134,8 +133,4 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.3.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
-
         return args

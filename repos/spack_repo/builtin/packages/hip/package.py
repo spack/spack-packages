@@ -69,7 +69,7 @@ class Hip(CMakePackage):
 
     with when("+rocm"):
         depends_on("gl@4.5:")
-        depends_on("py-cppheaderparser", type="build", when="@5.3.3:")
+        depends_on("py-cppheaderparser", type="build")
         depends_on("libx11", when="+asan")
         depends_on("xproto", when="+asan")
         # hipcc likes to add `-lnuma` by default :(
@@ -248,8 +248,7 @@ class Hip(CMakePackage):
 
     @property
     def root_cmakelists_dir(self):
-        if self.spec.satisfies("@5.6:"):
-            return "clr"
+        return "clr"
 
     def get_paths(self):
         if self.spec.external:
@@ -501,8 +500,7 @@ class Hip(CMakePackage):
             )
             args.append(self.define("HIP_RUNTIME", "rocclr"))
             args.append(self.define("HIP_PLATFORM", "amd"))
-            if self.spec.satisfies("@5.6.0:"):
-                args.append(self.define("HIP_LLVM_ROOT", self.spec["llvm-amdgpu"].prefix))
+            args.append(self.define("HIP_LLVM_ROOT", self.spec["llvm-amdgpu"].prefix))
             if self.spec.satisfies("@6.1.0:") and self.spec.satisfies("+asan"):
                 args.append(self.define("ADDRESS_SANITIZER", "ON"))
                 args.append(
@@ -528,13 +526,11 @@ class Hip(CMakePackage):
 
         args.append(self.define("HIP_COMMON_DIR", self.stage.source_path))
         args.append(self.define("HIP_CATCH_TEST", "OFF"))
-        if self.spec.satisfies("@5.3.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
-        if self.spec.satisfies("@5.6.0:"):
-            args.append(self.define("ROCCLR_PATH", self.stage.source_path + "/clr/rocclr"))
-            args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path + "/clr/opencl"))
-            args.append(self.define("CLR_BUILD_HIP", True))
-            args.append(self.define("CLR_BUILD_OCL", False))
+        args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
+        args.append(self.define("ROCCLR_PATH", self.stage.source_path + "/clr/rocclr"))
+        args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path + "/clr/opencl"))
+        args.append(self.define("CLR_BUILD_HIP", True))
+        args.append(self.define("CLR_BUILD_OCL", False))
         if self.spec.satisfies("@5.6:5.7"):
             args.append(self.define("HIPCC_BIN_DIR", self.stage.source_path + "/hipcc/bin"))
         if self.spec.satisfies("@6.0:"):

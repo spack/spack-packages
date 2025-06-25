@@ -273,6 +273,7 @@ class Rocsparse(CMakePackage):
             self.define_from_variant("BUILD_CLIENTS_TESTS", "test"),
             self.define("BUILD_CLIENTS_BENCHMARKS", "OFF"),
             self.define("ROCSPARSE_MTX_DIR", join_path(self.stage.source_path, "mtx")),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         if "auto" not in self.spec.variants["amdgpu_target"]:
@@ -283,7 +284,4 @@ class Rocsparse(CMakePackage):
 
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.6.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         return args

@@ -68,17 +68,15 @@ class Mivisionx(CMakePackage):
         when="@5.6",
     )
 
-    conflicts("+add_tests", when="@:5.4")
-
     def patch(self):
-        if self.spec.satisfies("@5.1.3: + hip"):
+        if self.spec.satisfies("@5.6: + hip"):
             filter_file(
                 r"${ROCM_PATH}/include/miopen/config.h",
                 "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
                 "amd_openvx_extensions/CMakeLists.txt",
                 string=True,
             )
-        if self.spec.satisfies("@5.3.0: + hip"):
+        if self.spec.satisfies("@5.6.0: + hip"):
             filter_file(
                 r"${ROCM_PATH}/llvm/bin/clang++",
                 "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
@@ -169,23 +167,21 @@ class Mivisionx(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.5:", type="build")
-    depends_on("ffmpeg@:4", type="build", when="@:5.3")
-    depends_on("ffmpeg@4.4", type="build", when="@5.4:")
+    depends_on("ffmpeg@4.4", type="build")
     depends_on("protobuf@:3", type="build")
     depends_on(
         "opencv@4.5:"
         "+calib3d+features2d+highgui+imgcodecs+imgproc"
         "+video+videoio+flann+photo+objdetect+png+jpeg",
         type="build",
-        when="@5.3:",
     )
     depends_on("openssl")
     depends_on("libjpeg-turbo@2.0.6+partial_decoder", type="build", when="@:6.2.0")
     depends_on("rpp@1.2.0", when="@5.5:5.6")
-    depends_on("lmdb", when="@5.5:")
-    depends_on("py-setuptools", when="@5.6:")
-    depends_on("py-wheel", when="@5.6:")
-    depends_on("py-pybind11", when="@5.6:")
+    depends_on("lmdb")
+    depends_on("py-setuptools")
+    depends_on("py-wheel")
+    depends_on("py-pybind11")
     depends_on("py-google-api-python-client", when="+add_tests")
     depends_on("py-protobuf@3.20.3", type=("build", "run"), when="+add_tests")
     depends_on("py-future", when="+add_tests")
@@ -249,21 +245,21 @@ class Mivisionx(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         protobuf = spec["protobuf"].prefix.include
-        args = [self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf))]
+        args = [
+            self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf)),
+            self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix),
+            self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix),
+            self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix),
+            self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
+        ]
         if self.spec.satisfies("+hip"):
             args.append(self.define("BACKEND", "HIP"))
             args.append(self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix))
             args.append(self.define("HIP_PATH", spec["hip"].prefix))
+
         if self.spec.satisfies("~hip"):
             args.append(self.define("BACKEND", "CPU"))
-        if self.spec.satisfies("@5.6:"):
-            args.append(
-                self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix))
-            )
-            args.append(
-                self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix))
-            )
-            args.append(self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix))
+
         if self.spec.satisfies("@5.6:6.2.0"):
             args.append(
                 self.define(
