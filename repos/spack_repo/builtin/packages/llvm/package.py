@@ -759,7 +759,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         if self.spec.satisfies("+z3"):
             filter_file(
                 "project(Runtimes C CXX ASM)",
-                "project(Runtimes C CXX ADM)\nfind_package(Z3)",
+                "project(Runtimes C CXX ASM)\nfind_package(Z3)",
                 "runtimes/CMakeLists.txt",
                 string=True,
             )
