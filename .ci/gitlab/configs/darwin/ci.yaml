@@ -7,6 +7,9 @@ ci:
   - build-job-remove:
       tags: [spack]
   - build-job:
+      timeout: 120 minutes
       tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+      before_script:
+      - gpg-connect-agent -vvv
   - build-job-remove:
       image:: macos-run-on-metal
