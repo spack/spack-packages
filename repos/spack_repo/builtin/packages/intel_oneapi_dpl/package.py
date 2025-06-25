@@ -24,6 +24,12 @@ class IntelOneapiDpl(IntelOneApiLibraryPackage):
     homepage = "https://github.com/oneapi-src/oneDPL"
 
     version(
+        "2022.9.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/4f06fa3c-add6-4e58-9505-36942ba90315/intel-onedpl-2022.9.0.378_offline.sh",
+        sha256="e76c50d698583d90baef78c583812352e20859cc923d3312afaa6467571796e4",
+        expand=False,
+    )
+    version(
         "2022.8.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/b8f3da7a-9df5-4c04-b831-c46e9b636c70/intel-onedpl-2022.8.0.340_offline.sh",
         sha256="0fd73d2fed182106069fe084daa74bb5369ba400a08b5cf61a932028dbaafdcf",
