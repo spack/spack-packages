@@ -150,6 +150,12 @@ class PyGpaw(PythonPackage):
         if "+libvdwxc" in spec:
             libs += spec["libvdwxc"].libs
             include_dirs.append(spec["libvdwxc"].prefix.include)
+        if "+elpa" in spec:
+            libs += spec["elpa"].libs
+            include_dirs.append(spec["elpa"].prefix.include)
+            #include_dirs.append(join_path(spec["elpa"].headers.directories[0], "modules"))
+            bools += "elpa = True\n"
+            runtime_library_dirs += [spec["elpa"].libs.directories]
 
         lib_dirs = list(libs.directories)
         libs = list(libs.names)
@@ -181,3 +187,5 @@ class PyGpaw(PythonPackage):
                 f.write("fftw = True\n")
             if "+libvdwxc" in spec:
                 f.write("libvdwxc = True\n")
+            if "+elpa" in spec:
+                f.write(f"runtime_library_dirs = {repr(runtime_library_dirs)}")
