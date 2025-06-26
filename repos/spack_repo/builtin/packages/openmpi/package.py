@@ -598,7 +598,7 @@ with '-Wl,-commons,use_dylibs' and without
 '-Wl,-flat_namespace'.""",
     )
 
-    variant("cray-xpmem", default=False, description="use cray-xpmem instead of xpmem configure flag (if fabrics=xpmem enabled)")
+    variant("cray-xpmem", default=False, when="fabrics=xpmem", description="use cray-xpmem instead of xpmem configure flag")
 
     # Patch to allow two-level namespace on a MacOS platform when building
     # openmpi. Unfortuntately, the openmpi configure command has flat namespace
