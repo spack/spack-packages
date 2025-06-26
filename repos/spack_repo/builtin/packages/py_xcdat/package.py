@@ -7,7 +7,8 @@ from spack.package import *
 
 
 class PyXcdat(PythonPackage):
-    """xCDAT is an extension of xarray for climate data analysis on structured grids. It serves as a modern successor to the Community Data Analysis Tools (CDAT) library."""
+    """xCDAT is an extension of xarray for climate data analysis on structured grids.
+     It serves as a modern successor to the Community Data Analysis Tools (CDAT) library."""
 
     homepage = "https://xcdat.readthedocs.io/en/latest"
 
