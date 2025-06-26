@@ -21,8 +21,7 @@ class PyMetatensorTorch(PythonPackage):
     depends_on("py-numpy", type=("run", "build"))
     depends_on("py-vesin", type=("run", "build"))
     depends_on("py-torch@2.6:", type=("build", "run"))
-    depends_on("libmetatensor@0.1.13:", type=("run", "build"), when="@0.1:")
-    conflicts("libmetatensor@0.2.0:", type=("run", "build"), when="@0.1:")
+    depends_on("libmetatensor@0.1.14:0.1", type=("build", "run"))
 
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")

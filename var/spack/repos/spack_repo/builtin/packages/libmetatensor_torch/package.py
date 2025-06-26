@@ -21,10 +21,8 @@ class LibmetatensorTorch(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("cxx", type="build")
     depends_on("c", type="build")
-    depends_on("libmetatensor@0.1.14:", type=("build", "run"))
-    conflicts("libmetatensor@0.2.0:")
-    depends_on("py-torch@2.1.0:")
-    conflicts("py-torch@2.7.0")
+    depends_on("libmetatensor@0.1.14:0.2.0", type=("build", "run"))
+    depends_on("py-torch@2.1.0:2.7.0")
 
     def cmake_args(self):
         args = []
