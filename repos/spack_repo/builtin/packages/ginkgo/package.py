@@ -30,7 +30,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop")
     version("main", branch="main")
     version("master", branch="master", deprecated=True)
-    version("1.10.0", commit="d4e0e9f8c8eb36cc2044189834d82742b925f27e") # v1.10.0
+    version("1.10.0", commit="d4e0e9f8c8eb36cc2044189834d82742b925f27e")  # v1.10.0
     version("1.9.0", commit="20cfd68795f58078898da9890baa311b46845a8b")  # v1.9.0
     version("1.8.0", commit="586b1754058d7a32d4bd1b650f9603484c2a8927")  # v1.8.0
     version("1.7.0", commit="49242ff89af1e695d7794f6d50ed9933024b66fe")  # v1.7.0
@@ -59,7 +59,9 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "half_precision", default=True, description="Enable half-precision support", when="@1.9.0:"
     )
-    variant("bfloat16_precision", default=True, description="Enable bfloat16 support", when="@1.10.0:")
+    variant(
+        "bfloat16_precision", default=True, description="Enable bfloat16 support", when="@1.10.0:"
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -138,6 +140,13 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/ginkgo-project/ginkgo/commit/369b12a5f4431577d60a61e67f2b0537b428abca.patch?full_index=1",
         sha256="27d6ae6c87bec15464d20a963c336e89eac92625d07e3f9548e33cd7b952a496",
         when="+rocm @1.8.0",
+    )
+
+    # Removes undefined behavior in MPI call
+    patch(
+        "https://github.com/ginkgo-project/ginkgo/pull/1875.patch?full_index=1",
+        sha256="25b3b040e0836a65ed416607bed8bc62dd56cf6f2630e2950cc840b904134891",
+        when="@1.10.0",
     )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
