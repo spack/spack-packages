@@ -689,7 +689,7 @@ ml-darwin-aarch64-mps-build:
 
 hep-generate:
   extends: [ ".hep", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
 
 hep-build:
   extends: [ ".hep", ".build" ]
