@@ -252,30 +252,12 @@ class Hip(CMakePackage):
 
     def get_paths(self):
         if self.spec.external:
-            # For external packages we only assume the `hip` prefix is known,
-            # because spack does not set prefixes of dependencies of externals.
             hip_libs_at_top = os.path.basename(self.spec.prefix) != "hip"
             # We assume self.spec.prefix is  /opt/rocm-x.y.z for rocm-5.2.0 and newer
-            # and /opt/rocm-x.y.z/hip for older versions
-            # However, depending on how an external is found it can be at either level
-            # of the installation path
-            if self.spec.satisfies("@5.2.0:"):
-                if hip_libs_at_top:
-                    rocm_prefix = Prefix(self.spec.prefix)
-                else:
-                    rocm_prefix = Prefix(os.path.dirname(self.spec.prefix))
+            if hip_libs_at_top:
+                rocm_prefix = Prefix(self.spec.prefix)
             else:
-                # We assume self.spec.prefix is /opt/rocm-x.y.z/hip and rocm has a
-                # default installation with everything installed under
-                # /opt/rocm-x.y.z
-                # Note that since the key hip library can also exist at the top of the
-                # /opt/rocm-x.y.z/lib tree, it is possible that the package is detected
-                # without the correct prefix.  Work around it.
-                if hip_libs_at_top:
-                    rocm_prefix = Prefix(self.spec.prefix)
-                else:
-                    rocm_prefix = Prefix(os.path.dirname(self.spec.prefix))
-
+                rocm_prefix = Prefix(os.path.dirname(self.spec.prefix))
             if not os.path.isdir(rocm_prefix):
                 msg = "Could not determine prefix for other rocm components\n"
                 msg += "Either report a bug at github.com/spack/spack or "
