@@ -70,8 +70,11 @@ class Geomodel(CMakePackage):
         description="Use the specified C++ standard when building",
     )
 
-    # GeoModel 6.11 drops support for C++17.
-    conflicts("cxxstd=17", when="@6.11:")
+    # GeoModel 6.11 requires std::format and C++20
+    with when("@6.11:"):
+        conflicts("cxxstd=17")
+        conflicts("%gcc@:12")
+        conflicts("%clang@:16")
 
     conflicts("+fullsimlight", when="+fsl", msg="FSL triggers the build of the FullSimLight")
 
