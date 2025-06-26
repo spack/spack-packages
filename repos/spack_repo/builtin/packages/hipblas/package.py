@@ -17,7 +17,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipBLAS"
     git = "https://github.com/ROCm/hipBLAS.git"
-    url = "https://github.com/ROCm/hipBLAS/archive/rocm-6.0.2.tar.gz"
+    url = "https://github.com/ROCm/hipBLAS/archive/rocm-6.2.4.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
@@ -25,6 +25,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
+    version("6.4.1", sha256="3fa0a690bf96104afb093d19a4f565012a59ab6df378df8aef5420914e82d91b")
     version("6.4.0", sha256="544a302bdc494af02147dc14c75d088031927e1c3a2f7a349d817497000b1c34")
     version("6.3.3", sha256="8f645a5c9298170e71354437188eeca8272ff2b98077e9f34d1ca0fd7f27b7f8")
     version("6.3.2", sha256="6e86d4f8657e13665e37fdf3174c3a30f4c7dff2c4e2431d1be110cd7d463971")
@@ -76,30 +77,15 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     patch("remove-hipblas-clients-file-installation.patch", when="@5.5:5.7.1")
     patch("remove-hipblas-clients-file-installation-6.0.patch", when="@6.0:")
     patch("modify-hipblas-common-dependency.patch", when="@6.3:")
-    for ver in [
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
-        "6.3.0",
-        "6.3.1",
-        "6.3.2",
-        "6.3.3",
-        "6.4.0",
-    ]:
-        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"+rocm @{ver}")
 
     depends_on("hip +cuda", when="+cuda")
 
+    for ver in ["5.6.0", "5.6.1", "5.7.0", "5.7.1"]:
+        depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
+        depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
+        depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
+
     for ver in [
-        "5.6.0",
-        "5.6.1",
-        "5.7.0",
-        "5.7.1",
         "6.0.0",
         "6.0.2",
         "6.1.0",
@@ -113,14 +99,17 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
+        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"+rocm @{ver}")
+
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
         depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
 
     @classmethod

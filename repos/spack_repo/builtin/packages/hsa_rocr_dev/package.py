@@ -24,6 +24,7 @@ class HsaRocrDev(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhsa-runtime64"]
 
+    version("6.4.1", sha256="f72d100a46a2dd9f4c870cef156604777f1bdb1841df039d14bf37b19814b9da")
     version("6.4.0", sha256="ff740e8c8f2229c6dc47577363f707b1a44ea4254f8ad74f8f0a669998829535")
     version("6.3.3", sha256="aa2e30d3d68707d6df4840e954bb08cc13cd312cec1a98a64d97adbe07262f50")
     version("6.3.2", sha256="aaecaa7206b6fa1d5d7b8f7c1f7c5057a944327ba4779448980d7e7c7122b074")
@@ -95,11 +96,12 @@ class HsaRocrDev(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
     patch("0002-Remove-explicit-RPATH-again.patch", when="@:5.6")
@@ -146,6 +148,8 @@ class HsaRocrDev(CMakePackage):
             self.define("LIBELF_INCLUDE_DIRS", libelf_include),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("IMAGE_SUPPORT", "image"),
+            self.define("BITCODE_DIR", bitcode_dir),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         # device libs is bundled with llvm-amdgpu (default) or standalone
@@ -154,10 +158,6 @@ class HsaRocrDev(CMakePackage):
         else:
             bitcode_dir = spec["llvm-amdgpu"].prefix.amdgcn.bitcode
 
-        args.append(self.define("BITCODE_DIR", bitcode_dir))
-
-        if self.spec.satisfies("@5.6:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         if self.spec.satisfies("@6.0"):
             args.append(self.define("ROCM_PATCH_VERSION", "60000"))
         if self.spec.satisfies("@6.1"):

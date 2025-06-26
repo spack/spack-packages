@@ -15,11 +15,12 @@ class ComposableKernel(CMakePackage):
 
     homepage = "https://github.com/ROCm/composable_kernel"
     git = "https://github.com/ROCm/composable_kernel.git"
-    url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-6.1.2.tar.gz"
+    url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-6.4.1.tar.gz"
     maintainers("srekolam", "afzpatel")
 
     license("MIT")
 
+    version("6.4.1", sha256="6db4d36673da6506ca52625b3bd40c29d3b376d31a224fd221ffe60cf97564bf")
     version("6.4.0", sha256="8dbfea0bdc4950ca60e8d1ea43edf1f515c4a34e47ead951415c49a0669a3baf")
     version("6.3.3", sha256="b7102efba044455416a6127af1951019fe8365a653ea7eb0b1d83bb4542c9309")
     version("6.3.2", sha256="875237fe493ff040f8f63b827cddf2ff30a8d3aa18864f87d0e35323c7d62a2d")
@@ -60,6 +61,7 @@ class ComposableKernel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     for ver in [
+        "6.4.1",
         "6.4.0",
         "6.3.3",
         "6.3.2",
@@ -97,18 +99,17 @@ class ComposableKernel(CMakePackage):
             ),
             self.define("CMAKE_C_COMPILER", "{0}/bin/clang".format(spec["llvm-amdgpu"].prefix)),
             self.define("CMAKE_BUILD_TYPE", "Release"),
+            self.define("CK_BUILD_JIT_LIB", "ON"),
+            self.define("CMAKE_POSITION_INDEPENDENT_CODE", "ON"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         else:
             args.append(self.define("INSTANCES_ONLY", "ON"))
-        if self.spec.satisfies("@5.6.0:"):
-            if self.run_tests:
-                args.append(self.define("BUILD_TESTING", "ON"))
-            elif self.spec.satisfies("@:6.1"):
-                args.append(self.define("INSTANCES_ONLY", "ON"))
-            args.append(self.define("CK_BUILD_JIT_LIB", "ON"))
-            args.append(self.define("CMAKE_POSITION_INDEPENDENT_CODE", "ON"))
+        if self.run_tests:
+            args.append(self.define("BUILD_TESTING", "ON"))
+        elif self.spec.satisfies("@:6.1"):
+            args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.spec.satisfies("@:5.7"):
             args.append(self.define("CMAKE_CXX_FLAGS", "-O3"))
         if self.spec.satisfies("@6.2:"):

@@ -20,6 +20,8 @@ class RocprofilerDev(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocprofiler64"]
     license("MIT")
+
+    version("6.4.1", sha256="d816f6d7bd138c15d68bceb111847a12ecff5efb50831bb4c3e02fab102ab471")
     version("6.4.0", sha256="c605bdbf5245f46267d4a422746fc941213beae494cd3f902b67fc5423979a57")
     version("6.3.3", sha256="7ca6900b4a81f9dc0d7cdfe3be39372b3bf25f3c8304256705003294772890bd")
     version("6.3.2", sha256="c440ac79fa9f3e8c1decbfd83557d5cbbc4bb720927880b33dc36e682f37ec26")
@@ -43,6 +45,10 @@ class RocprofilerDev(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3:", type="build")
+    
+    for ver in ["5.6.0", "5.6.1"]:
+        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
+        depends_on(f"comgr@{ver}", when=f"@{ver}")
 
     for ver in [
         "5.6.0",
@@ -81,9 +87,6 @@ class RocprofilerDev(CMakePackage):
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"roctracer-dev-api@{ver}", when=f"@{ver}")
-    for ver in ["5.6.0", "5.6.1"]:
-        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-        depends_on(f"comgr@{ver}", when=f"@{ver}")
     for ver in [
         "5.7.0",
         "5.7.1",
@@ -100,6 +103,7 @@ class RocprofilerDev(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
     ]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")

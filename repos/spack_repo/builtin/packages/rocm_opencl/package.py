@@ -32,7 +32,7 @@ class RocmOpencl(CMakePackage):
 
     license("MIT")
 
-    version("master", branch="main", deprecated=True)
+    version("6.4.1", sha256="18ee75a04f6fc55e72f8b3fcad1e0d58eceb2ce0e0696ca76d9b3dfaf4bfd7ff")
     version("6.4.0", sha256="76fd0ad83da0dabf7c91ca4cff6c51f2be8ab259e08ad9743af47d1b3473c2ff")
     version("6.3.3", sha256="8e5adca8f8c2d99d4a4e49605dd6b56b7881b762ee8ce15b4a7000e3cd982fec")
     version("6.3.2", sha256="ec13dc4ffe212beee22171cb2825d2b16cdce103c835adddb482b9238cf4f050")
@@ -112,6 +112,7 @@ class RocmOpencl(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
@@ -131,6 +132,7 @@ class RocmOpencl(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 

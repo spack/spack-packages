@@ -19,6 +19,8 @@ class RocmGdb(AutotoolsPackage):
     license("LGPL-2.0-or-later")
 
     maintainers("srekolam", "renjithravindrankannath")
+
+    version("6.4.1", sha256="e8f80ed022af7ce9b4f59ebb352d6b2b5af7b6a4179023b24f89215e65bc4527")
     version("6.4.0", sha256="ef32529b2e3799dd8ab15647701063fcdcadd6d043a0d376a98c3ca10813817a")
     version("6.3.3", sha256="51678b588f65f92f50c2336707322cf4973fa96d03e268ec5956ac1a9f2ebaa3")
     version("6.3.2", sha256="85b03c1fb99f55272f4732dff58e8ba0a1add454a79d2b9d471df200366d0c7e")
@@ -73,6 +75,7 @@ class RocmGdb(AutotoolsPackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
     ]:
         depends_on(f"rocm-dbgapi@{ver}", type="link", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type="link", when=f"@{ver}")
@@ -102,7 +105,6 @@ class RocmGdb(AutotoolsPackage):
             "--with-lzma",
             "--with-python",
             "--with-rocm-dbgapi={0}".format(self.spec["rocm-dbgapi"].prefix),
+            "--disable-gprofng",
         ]
-        if self.spec.satisfies("@5.6.0:"):
-            options.append("--disable-gprofng")
         return options
