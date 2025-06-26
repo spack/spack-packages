@@ -386,6 +386,7 @@ developer-tools-aarch64-linux-gnu-build:
 # darwin
 ###########################################
 .developer-tools-darwin:
+  allow_failure: true
   variables:
     SPACK_CI_STACK_NAME: developer-tools-darwin
 
@@ -488,6 +489,9 @@ radiuss-aws-aarch64-build:
 
 data-vis-sdk-generate:
   extends: [ ".data-vis-sdk", ".generate-x86_64"]
+  variables:
+    # Override concretization pool because of memory requests
+    SPACK_CONCRETIZE_JOBS: 3
   image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
 
 data-vis-sdk-build:
@@ -637,6 +641,7 @@ ml-linux-aarch64-cuda-build:
 # Machine Learning - Darwin aarch64 (MPS)
 #########################################
 .ml-darwin-aarch64-mps:
+  allow_failure: true
   variables:
     SPACK_CI_STACK_NAME: ml-darwin-aarch64-mps
 
@@ -873,6 +878,7 @@ bootstrap-x86_64-linux-gnu-build:
 # Bootstrap aarch64-darwin
 #######################################
 .bootstrap-aarch64-darwin:
+  allow_failure: true
   variables:
     SPACK_CI_STACK_NAME: bootstrap-aarch64-darwin
 

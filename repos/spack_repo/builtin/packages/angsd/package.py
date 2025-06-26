@@ -16,8 +16,9 @@ class Angsd(MakefilePackage):
     """
 
     homepage = "https://github.com/ANGSD/angsd"
-    url = "https://github.com/ANGSD/angsd/archive/0.935.tar.gz"
+    url = "https://github.com/ANGSD/angsd/archive/0.940.tar.gz"
 
+    version("0.940", sha256="73b43eb553892721c7d5db5d6d883a17074ee4e07536a32871c3b1ac5f701ad7")
     version("0.935", sha256="15000281330fa59ddf745cb84eeaa653acf6da34a4ac6c3df7c5835d1d01ba16")
     version("0.933", sha256="2f992325dc08fa25ac525d9300ef6bd61808e74c521b4cc72a2ce00d98f402bb")
     version("0.921", sha256="8892d279ce1804f9e17fe2fc65a47e5498e78fc1c1cb84d2ca2527fd5c198772")
@@ -39,6 +40,9 @@ class Angsd(MakefilePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("R_LIBS", self.prefix.R)
+
+    def setup_build_environment(self, env):
+        env.set("HTSSRC", "systemwide")
 
     def install(self, spec, prefix):
         binaries = ["angsd", "misc/realSFS", "misc/thetaStat"]
