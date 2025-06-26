@@ -18,6 +18,7 @@ class Transferbench(CMakePackage):
 
     license("MIT")
 
+    version("6.4.1", sha256="7334dc4e815e7d7e8ccc138475949618ed5dea0ccc9f6b7edac492c6f4b12762")
     version("6.4.0", sha256="3d2d5723278774a26f4889643bd9025a883982b111321106e4343c998b229298")
     version("6.3.3", sha256="b473d47ff44501d111dd13fa2e9f723967df0035219168b490a1c013a123cbf6")
     version("6.3.2", sha256="ae2210b669416f558ec9da85b67f45f31a7705de4d553e54b0eabe2fb8e8f665")
@@ -27,7 +28,7 @@ class Transferbench(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("numactl")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
 

@@ -13,14 +13,15 @@ class Melissa(CMakePackage):
     """
 
     homepage = "https://gitlab.inria.fr/melissa/melissa"
-    url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v1.0/melissa-v1.0.tar.bz2"
     git = "https://gitlab.inria.fr/melissa/melissa.git"
-
+    url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.0.0/melissa-v2.0.0.tar.gz"
     # attention: Git**Hub**.com accounts
-    maintainers("christoph-conrads", "raffino")
+    maintainers("abhishek1297", "viperML", "raffino")
 
-    version("master", branch="master", deprecated=True)
-    version("develop", branch="develop", deprecated=True)
+    version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd", preferred=True)
+    version("develop", branch="develop")
+
+    # ====================================DEPRECATED VERSIONS=========================================
     version(
         "0.7.1",
         sha256="c30584f15fecf6297712a88e4d28851bfd992f31209fd7bb8af2feebe73d539d",
@@ -31,24 +32,36 @@ class Melissa(CMakePackage):
         sha256="a801d0b512e31a0750f98cfca80f8338985e06abf9b26e96f7645a022864e41c",
         deprecated=True,
     )
-
-    variant("no_mpi_api", default=False, description="Enable the deprecated no-MPI API")
-    variant("shared", default=True, description="Build shared libraries")
+    # ================================================================================================
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("cmake@3.7.2:", type="build")
-    depends_on("libzmq@4.1.5:")
-    depends_on("mpi")
+    depends_on("cmake@3.15:", type="build")
     depends_on("pkgconfig", type="build")
-    depends_on("python@3.5.3:", type=("build", "run"))
+
+    depends_on("libzmq@4.2:4", type=("build", "run"))
+    depends_on("python@3.9:3.12", type=("build", "run"))
+    depends_on("mpi", type=("build", "run"))
 
     def cmake_args(self):
-        args = [
-            self.define("BUILD_TESTING", self.run_tests),
-            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-            self.define_from_variant("MELISSA_ENABLE_NO_MPI_API", "no_mpi_api"),
+        args = []
+
+        # embed runtime library search paths
+        rpaths = [
+            self.spec["libzmq"].prefix.lib,
+            self.spec["mpi"].prefix.lib,
         ]
+        joined_rpaths = ";".join(rpaths)
+
+        args.append(f"-DCMAKE_INSTALL_RPATH={joined_rpaths}")
+        args.append("-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON")
 
         return args
+
+    def setup_run_environment(self, env):
+        python = self.spec["python"]
+        python_version = python.version.up_to(2)
+        # This path points to the python client API scripts installed in $CMAKE_INSTALL_PREFIX/lib
+        melissa_api_site_packages = f"{self.prefix.lib}/python{python_version}/site-packages"
+        env.prepend_path("PYTHONPATH", melissa_api_site_packages)
