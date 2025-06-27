@@ -73,6 +73,7 @@ class Variorum(CMakePackage):
     # cuda@10.1.243 works, as does 12.4.1
 
     depends_on("cuda", type=("build", "link"), when="gpu=nvidia")  # required for nvml
+    depends_on("esmi", type=("build", "link"), when=gpu=amd")      # required for amd
 
     depends_on("hwloc +nvml", type=("build", "link"), when="gpu=nvidia")
     depends_on("hwloc", type=("build", "link"), when="gpu=none")
