@@ -107,7 +107,8 @@ class Geomodel(CMakePackage):
         depends_on("gl")
         depends_on("egl", when="@6.11:")
 
-    depends_on("googletest", when="@6.11:")
+    depends_on("googletest", when="@6.11", type="build")
+    depends_on("googletest", when="@6.12:", type="test")
 
     def cmake_args(self):
         args = [
