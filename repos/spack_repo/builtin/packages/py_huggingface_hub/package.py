@@ -17,6 +17,7 @@ class PyHuggingfaceHub(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("0.33.1", sha256="589b634f979da3ea4b8bdb3d79f97f547840dc83715918daf0b64209c0844c7b")
     version("0.26.2", sha256="b100d853465d965733964d123939ba287da60a547087783ddff8a323f340332b")
     version("0.24.6", sha256="cc2579e761d070713eaa9c323e3debe39d5b464ae3a7261c39a9195b27bb8000")
     version("0.23.4", sha256="35d99016433900e44ae7efe1c209164a5a81dbbcd53a52f99c281dcd7ce22431")

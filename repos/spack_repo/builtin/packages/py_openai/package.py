@@ -21,7 +21,14 @@ class PyOpenai(PythonPackage):
 
     license("MIT")
 
-    version("0.27.8", sha256="2483095c7db1eee274cebac79e315a986c4e55207bb4fa7b82d185b3a2ed9536")
+    version(
+        "1.92.2",
+        sha256="b571a79fc7e165e7d00e6963a8a95eb5f42b60ac89fd316f1dc0a2dac5c6fae1",
+    )
+    version(
+        "0.27.8",
+        sha256="2483095c7db1eee274cebac79e315a986c4e55207bb4fa7b82d185b3a2ed9536",
+    )
 
     variant("datalib", default=False, description="facilities for data loading")
     variant(
@@ -30,6 +37,18 @@ class PyOpenai(PythonPackage):
         description="keeps track of hyperparameters, system metrics, and predictions",
     )
     variant("embeddings", default=False, description="represents a text string vector")
+
+    with when("@1.92.2:"):
+        depends_on("py-hatchling", type="build")
+        depends_on("py-hatch-fancy-pypi-readme", type="build")
+        depends_on("py-httpx@0.23.0:", type=("build", "run"))
+        depends_on("py-pydantic@1.9.0:", type=("build", "run"))
+        depends_on("py-typing-extensions@4.11:", type=("build", "run"))
+        depends_on("py-anyio@3.5.0:", type=("build", "run"))
+        depends_on("py-distro@1.7.0:", type=("build", "run"))
+        depends_on("py-sniffio", type=("build", "run"))
+        depends_on("py-tqdm@4.0.0:", type=("build", "run"))
+        depends_on("py-jiter@0.4.0:", type=("build", "run"))
 
     depends_on("python@3.7.1:", type=("build", "run"))
     depends_on("py-setuptools", type="build")

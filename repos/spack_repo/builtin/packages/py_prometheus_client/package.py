@@ -15,6 +15,7 @@ class PyPrometheusClient(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.21.1", sha256="252505a722ac04b0456be05c05f75f45d760c2911ffc45f2a06bcaed9f3ae3fb")
     version("0.17.0", sha256="9c3b26f1535945e85b8934fb374678d263137b78ef85f305b1156c7c881cd11b")
     version("0.14.1", sha256="5459c427624961076277fdc6dc50540e2bacb98eebde99886e59ec55ed92093a")
     version("0.12.0", sha256="1b12ba48cee33b9b0b9de64a1047cbd3c5f2d0ab6ebcead7ddda613a750ec3c5")
