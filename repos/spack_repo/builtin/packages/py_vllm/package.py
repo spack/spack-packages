@@ -63,6 +63,6 @@ class PyVllm(PythonPackage, CudaPackage):
     variant("cuda", default=True, description="Use CUDA")
     conflicts("~cuda")
 
-    def setup_build_environment(self, env) -> None:
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # If oom error, try lowering the number of jobs with `spack install -j`
         env.set("MAX_JOBS", str(make_jobs))
