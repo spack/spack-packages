@@ -27,7 +27,7 @@ class PyXgrammar(PythonPackage):
     depends_on("py-nanobind@2.5.0", type="build")
     depends_on("ninja", type=["build"])
 
-    def setup_build_environment(self, env) -> None:
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
         python_ver = self.spec["python"].version.up_to(2)
         env.set(
             "nanobind_DIR",
