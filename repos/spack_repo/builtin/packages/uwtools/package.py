@@ -37,9 +37,9 @@ class Uwtools(PythonPackage):
     depends_on("iotaa@1.1", when="@2.6.0:2.6.9")
     depends_on("iotaa@1.2", when="@2.7.0:2.7.9")
     depends_on("iotaa@1.3:2.0", when="@2.8:")
-    depends_on("py-jsonschema@4.18:4.24")
+    depends_on("py-jsonschema@4.18:4.23")
     depends_on("py-lxml@5.3")
-    depends_on("py-python-dateutil@2.9:2.10", when="@2.8:")
+    depends_on("py-python-dateutil@2.9", when="@2.8:")
     depends_on("py-pyyaml@6.0")
     depends_on("py-requests@2.32", when="@2.6.0:")
 
