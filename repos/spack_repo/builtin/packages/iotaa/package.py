@@ -23,6 +23,7 @@ class Iotaa(PythonPackage):
     version("1.1.6", sha256="b375edafec7dc00f854f7122e0817924ce53f05e0a62e01422ea44aff25c5f8d")
     version("0.8.3", sha256="d92bf7a1a41f46987effb7aeeacc12b1fc7dbe8bbaedda8ec71dcf188e5d05bb")
 
+    depends_on("python@3.9:")
     depends_on("py-setuptools@42:", type="build")
 
     build_directory = "src"
