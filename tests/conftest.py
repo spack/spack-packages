@@ -26,10 +26,10 @@ import _vendoring.archspec.cpu.schema
 import py
 import pytest
 
-import llnl.util.lang
-import llnl.util.lock
-import llnl.util.tty as tty
-from llnl.util.filesystem import (
+import spack.util.lang
+import spack.util.lock
+import spack.util.tty as tty
+from spack.util.filesystem import (
     copy,
     copy_tree,
     join_path,

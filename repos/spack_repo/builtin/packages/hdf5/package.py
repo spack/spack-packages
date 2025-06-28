@@ -9,7 +9,7 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-import llnl.util.lang
+import spack.util.lang
 
 from spack.package import *
 
@@ -689,7 +689,7 @@ class Hdf5(CMakePackage):
                     symlink(src_lib, dst_lib)
 
     @property
-    @llnl.util.lang.memoized
+    @spack.util.lang.memoized
     def _output_version(self):
         spec_vers_str = str(self.spec.version.up_to(3))
         if "develop" in spec_vers_str:

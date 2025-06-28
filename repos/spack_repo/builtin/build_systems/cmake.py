@@ -10,7 +10,7 @@ import sys
 from itertools import chain
 from typing import Any, List, Optional, Tuple
 
-from llnl.util.lang import stable_partition
+from spack.util.lang import stable_partition
 
 import spack.deptypes as dt
 from spack import traverse

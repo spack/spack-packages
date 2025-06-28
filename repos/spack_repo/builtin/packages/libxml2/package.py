@@ -8,7 +8,7 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.nmake import NMakePackage
 
-import llnl.util.filesystem as fs
+import spack.util.filesystem as fs
 
 from spack.package import *
 

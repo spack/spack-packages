@@ -4,7 +4,7 @@
 import os
 from typing import Optional, Tuple
 
-from llnl.util.lang import ClassProperty, classproperty
+from spack.util.lang import ClassProperty, classproperty
 
 from spack.build_environment import SPACK_NO_PARALLEL_MAKE
 from spack.package import (

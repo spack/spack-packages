@@ -10,8 +10,8 @@ import shutil
 import stat
 from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
-import llnl.util.filesystem as fs
-from llnl.util.lang import ClassProperty, classproperty, match_predicate
+import spack.util.filesystem as fs
+from spack.util.lang import ClassProperty, classproperty, match_predicate
 
 from spack.package import (
     HeaderList,

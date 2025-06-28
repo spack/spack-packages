@@ -10,7 +10,7 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
-from llnl.util.symlink import readlink
+from spack.util.symlink import readlink
 
 import spack.platforms
 import spack.repo

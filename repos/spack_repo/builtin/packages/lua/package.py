@@ -7,7 +7,7 @@ import os
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from llnl.util.symlink import readlink
+from spack.util.symlink import readlink
 
 import spack.build_environment
 from spack.package import *

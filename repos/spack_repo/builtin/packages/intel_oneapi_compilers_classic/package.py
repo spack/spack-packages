@@ -8,8 +8,8 @@ from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.oneapi import IntelOneApiPackage
 
-from llnl.util.lang import classproperty
-from llnl.util.link_tree import LinkTree
+from spack.util.lang import classproperty
+from spack.util.link_tree import LinkTree
 
 from spack.package import *
 

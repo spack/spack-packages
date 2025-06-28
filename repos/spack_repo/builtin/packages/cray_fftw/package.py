@@ -4,7 +4,7 @@
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import llnl.util.lang
+import spack.util.lang
 
 from spack.package import *
 
@@ -55,7 +55,7 @@ class CrayFftw(Package):
     @property
     def libs(self):
         # Reduce repetitions of entries
-        query_parameters = list(llnl.util.lang.dedupe(self.spec.last_query.extra_parameters))
+        query_parameters = list(spack.util.lang.dedupe(self.spec.last_query.extra_parameters))
 
         # List of all the suffixes associated with float precisions
         precisions = [("float", "f"), ("double", "")]

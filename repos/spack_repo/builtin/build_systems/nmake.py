@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import List  # novm
 
-import llnl.util.filesystem as fs
+import spack.util.filesystem as fs
 
 from spack.package import (
     PackageBase,

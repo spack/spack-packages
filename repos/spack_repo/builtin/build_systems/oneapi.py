@@ -7,7 +7,7 @@ import platform
 import shutil
 from os.path import basename, isdir
 
-from llnl.util.link_tree import LinkTree
+from spack.util.link_tree import LinkTree
 
 import spack.util.path
 from spack.build_environment import dso_suffix

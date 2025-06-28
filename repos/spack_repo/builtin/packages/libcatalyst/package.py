@@ -7,7 +7,7 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-import llnl.util.filesystem as fsys
+import spack.util.filesystem as fsys
 
 from spack.package import *
 

@@ -8,7 +8,7 @@ import re
 import sys
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
-from llnl.util.lang import classproperty, memoized
+from spack.util.lang import classproperty, memoized
 
 import spack.compilers.error
 from spack.package import Executable, PackageBase, ProcessError, Spec, tty, which_string

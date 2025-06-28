@@ -63,7 +63,6 @@ section-order = [
   "future",
   "standard-library",
   "third-party",
-  "llnl",
   "spack",
   "first-party",
   "local-folder",
@@ -71,7 +70,6 @@ section-order = [
 
 [tool.ruff.lint.isort.sections]
 spack = ["spack"]
-llnl = ["llnl"]
 
 [tool.ruff.lint.per-file-ignores]
 "var/spack/*/package.py" = ["F403", "F405", "F811", "F821"]
@@ -89,12 +87,10 @@ sections = [
   "FUTURE",
   "STDLIB",
   "THIRDPARTY",
-  "LLNL",
   "FIRSTPARTY",
   "LOCALFOLDER",
 ]
 known_first_party = "spack"
-known_llnl = "llnl"
 known_third_party = ["ruamel", "six"]
 src_paths = "lib"
 honor_noqa = true
@@ -126,11 +122,6 @@ ignore_errors = false
 ignore_missing_imports = false
 # we can't do this here, not a module scope option, in spack style instead
 # disable_error_code = 'no-redef'
-
-[[tool.mypy.overrides]]
-module = "llnl.*"
-ignore_errors = false
-ignore_missing_imports = false
 
 [[tool.mypy.overrides]]
 module = "spack.test.packages"

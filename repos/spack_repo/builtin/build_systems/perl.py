@@ -4,7 +4,7 @@
 import os
 from typing import Iterable
 
-from llnl.util.lang import memoized
+from spack.util.lang import memoized
 
 from spack.package import (
     Executable,

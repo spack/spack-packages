@@ -6,7 +6,7 @@ import stat
 import subprocess
 from typing import Callable, List, Optional, Set, Tuple, Union
 
-import llnl.util.filesystem as fs
+import spack.util.filesystem as fs
 
 import spack.build_environment
 import spack.builder

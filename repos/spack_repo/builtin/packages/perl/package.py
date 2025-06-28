@@ -9,7 +9,7 @@ from contextlib import contextmanager
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util.filesystem import windows_sfn
+from spack.util.filesystem import windows_sfn
 
 from spack.operating_systems.mac_os import macos_version
 from spack.package import *

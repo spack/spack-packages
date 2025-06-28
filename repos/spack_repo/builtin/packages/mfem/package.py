@@ -1339,7 +1339,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 return FileList(f)
         return FileList(find(self.prefix, "test.mk", recursive=True))
 
-    # See also find_system_libraries in lib/spack/llnl/util/filesystem.py
+    # See also find_system_libraries in lib/spack/spack.util/filesystem.py
     # where the similar list of paths is used.
     sys_lib_paths = [
         "/lib64",
