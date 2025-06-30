@@ -11,6 +11,7 @@ spack:
     unify: true
     reuse: false
   specs:
+    - ci-kick-package
       # editors
     #- neovim~no_luajit # build fails: https://github.com/spack/spack/pull/48453#issuecomment-2624788262
     - py-pynvim
