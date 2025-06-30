@@ -125,6 +125,6 @@ class Geomodel(CMakePackage):
         ]
 
         if self.spec.satisfies("@6.12:"):
-            args.append(self.define("GEOMODEL_BUILD_TESTING", "OFF"))
+            args.append(self.define("GEOMODEL_BUILD_TESTING", self.run_tests))
 
         return args
