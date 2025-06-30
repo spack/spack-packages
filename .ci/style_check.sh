@@ -5,7 +5,7 @@ changed_files="$(git diff --name-only --diff-filter=ACMR HEAD^1 | grep ".*\.pyi\
 if [ -n "$changed_files" ]; then
   echo "Detected changed..."
   for f in "${changed_files[@]}"; do
-    echo "  $f"
+    echo "$f"
   done
   echo ""
 
