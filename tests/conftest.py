@@ -13,7 +13,6 @@ import sys
 import _vendoring.archspec.cpu
 import pytest
 
-import llnl.util.lang
 from llnl.util.filesystem import copy_tree, mkdirp, remove_linked_tree, touchp
 
 import spack.bootstrap.core

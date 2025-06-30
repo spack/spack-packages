@@ -48,7 +48,8 @@ jobs:
     - name: Run style tests
       run: |
         python_files() { git diff --name-only --diff-filter=ACMR -z HEAD^1 | grep -zE '\.pyi?$'; }
-        python_files || exit 0  # no changed Python files: relies on grep exit code
+        # NOTE: relies on grep exit code.
+        python_files > /dev/null || exit 0
         python_files | xargs -0 -n 100 flake8
         python_files | xargs -0 -n 100 isort --check --diff
         python_files | xargs -0 -n 100 black --check --diff --color
