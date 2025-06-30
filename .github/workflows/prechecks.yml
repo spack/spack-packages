@@ -46,10 +46,9 @@ jobs:
         # This path must match the path in pyprojects.toml
         path: spack-core
     - name: Run style tests
-      run: |
-        bash .ci/style_check.sh
-        # TODO: Add back license check
-        # bin/spack license verify
+      run: .ci/style_check.sh HEAD^
+    # todo: license check
+    # todo: mypy
 
   audit:
     uses: ./.github/workflows/audit.yaml
