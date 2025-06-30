@@ -29,6 +29,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     # Versions
     # ==========================================================================
     version("develop", branch="develop")
+    version("7.4.0", tag="v7.4.0", commit="c3ff4663573953facb33eb026dd5d80444ecedc8")
     version("7.3.0", tag="v7.3.0", commit="e941546af1a5b5e492dcac0a1872540e9961c556")
     version("7.2.1", tag="v7.2.1", commit="5c53be85c88f63c5201c130b8cb2c686615cfb03")
     version("7.2.0", tag="v7.2.0", commit="0eff39663606f2ff280c4059a947ed62ae38180a")
