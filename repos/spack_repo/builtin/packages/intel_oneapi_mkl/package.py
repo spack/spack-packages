@@ -191,6 +191,9 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
         msg="MKL with OpenMP threading requires GCC, clang, or Intel compilers",
     )
 
+    # Nothing is compiled, but openmp_libs in the oneapi build system queries
+    # the compiler for openmp library paths.
+    depends_on("c", when="threads=openmp")
     depends_on("tbb")
     # cluster libraries need mpi
     depends_on("mpi", when="+cluster")
