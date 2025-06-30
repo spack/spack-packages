@@ -3,7 +3,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage, depends_on
+
 from spack.package import *
+
 
 class PyTreeSitter(PythonPackage):
     """Python bindings to the tree-sitter library"""
@@ -11,7 +13,7 @@ class PyTreeSitter(PythonPackage):
     homepage = "https://tree-sitter.github.io/py-tree-sitter/"
     pypi = "tree-sitter/tree-sitter-0.24.0.tar.gz"
     git = "https://github.com/tree-sitter/py-tree-sitter.git"
-    
+
     maintainers("JohnGouwar")
 
     version("master", branch="master", submodules=True)
