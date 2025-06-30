@@ -28,7 +28,7 @@ _versions = {
             "5d07496e90fc0afb334a7e434c86c6083b1e8cf56dc65d70a01bd811e54096d7",
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.5.0.16_cuda12-archive.tar.xz",
         ),
-    }
+    },
 }
 
 
