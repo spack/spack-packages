@@ -2,10 +2,7 @@
 set -x
 set -e
 
-if [ ! changed_files = "$(git diff --name-only --diff-filter=ACMR HEAD^1 | grep ".*\.pyi\?")" ]; then
-    exit 0  # no changed files
-fi
-
+changed_files="$(git diff --name-only --diff-filter=ACMR HEAD^1 | grep ".*\.pyi\?")"
 if [ -n "$changed_files" ]; then
   echo "Detected changed..."
   for f in "${changed_files[@]}"; do
@@ -19,4 +16,6 @@ if [ -n "$changed_files" ]; then
 
   echo "Running black checks..."
   black --check "${changed_files[@]}"
+else
+  exit 0  # no changed files
 fi
