@@ -10,8 +10,15 @@ from typing import Dict, List, Optional, Sequence, Tuple, Union
 
 from llnl.util.lang import classproperty, memoized
 
-import spack.compilers.error
-from spack.package import Executable, PackageBase, ProcessError, Spec, tty, which_string
+from spack.package import (
+    CompilerError,
+    Executable,
+    PackageBase,
+    ProcessError,
+    Spec,
+    tty,
+    which_string,
+)
 
 # Local "type" for type hints
 Path = Union[str, pathlib.Path]
@@ -166,13 +173,11 @@ class CompilerPackage(PackageBase):
     def standard_flag(self, *, language: str, standard: str) -> str:
         """Returns the flag used to enforce a given standard for a language"""
         if language not in self.supported_languages:
-            raise spack.compilers.error.UnsupportedCompilerFlag(
-                f"{self.spec} does not provide the '{language}' language"
-            )
+            raise CompilerError(f"{self.spec} does not provide the '{language}' language")
         try:
             return self._standard_flag(language=language, standard=standard)
         except (KeyError, RuntimeError) as e:
-            raise spack.compilers.error.UnsupportedCompilerFlag(
+            raise CompilerError(
                 f"{self.spec} does not provide the '{language}' standard {standard}"
             ) from e
 
