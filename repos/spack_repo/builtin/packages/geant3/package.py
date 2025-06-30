@@ -27,7 +27,7 @@ class Geant3(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("root")
-    depends_on("root~vmc", when="^root@:6.25")
+    requires("^root~vmc", when="^root@:6.25")
     depends_on("vmc")
 
     variant(
