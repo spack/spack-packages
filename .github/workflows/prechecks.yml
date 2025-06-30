@@ -47,9 +47,13 @@ jobs:
         path: spack-core
     - name: Run style tests
       run: |
-        bash .ci/style_check.sh
-        # TODO: Add back license check
-        # bin/spack license verify
+        python_files() { git diff --name-only --diff-filter=ACMR -z HEAD^1 | grep -zE '\.pyi?$'; }
+        python_files || exit 0  # no changed Python files
+        python_files | xargs -0 -n 100 flake8
+        python_files | xargs -0 -n 100 isort --check --diff
+        python_files | xargs -0 -n 100 black --check --diff --color
+    # todo: license check
+    # todo: mypy
 
   audit:
     uses: ./.github/workflows/audit.yaml
