@@ -18,7 +18,11 @@ class Melissa(CMakePackage):
     # attention: Git**Hub**.com accounts
     maintainers("abhishek1297", "viperML", "raffino")
 
-    version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd", preferred=True)
+    version(
+        "2.0.0",
+        sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
+        preferred=True,
+    )
     version("develop", branch="develop")
 
     # ====================================DEPRECATED VERSIONS=========================================
@@ -48,10 +52,7 @@ class Melissa(CMakePackage):
         args = []
 
         # embed runtime library search paths
-        rpaths = [
-            self.spec["libzmq"].prefix.lib,
-            self.spec["mpi"].prefix.lib,
-        ]
+        rpaths = [self.spec["libzmq"].prefix.lib, self.spec["mpi"].prefix.lib]
         joined_rpaths = ";".join(rpaths)
 
         args.append(f"-DCMAKE_INSTALL_RPATH={joined_rpaths}")
