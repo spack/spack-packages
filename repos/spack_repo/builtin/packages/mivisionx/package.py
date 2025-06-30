@@ -58,9 +58,8 @@ class Mivisionx(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
-    patch("0001-add-half-include-path.patch", when="@5.5")
-    patch("0001-add-half-include-path-5.6.patch", when="@5.6:6.1")
-    patch("0002-add-half-include-path-for-tests.patch", when="@5.5:6.0 +add_tests")
+    patch("0001-add-half-include-path-5.6.patch", when="@:6.1")
+    patch("0002-add-half-include-path-for-tests.patch", when="@:6.0 +add_tests")
     patch("0002-add-half-include-path-for-tests-6.1.0.patch", when="@6.1 +add_tests")
     patch("0002-add-half-include-path-for-tests-6.2.0.patch", when="@6.2.0: +add_tests")
 
@@ -71,29 +70,27 @@ class Mivisionx(CMakePackage):
     )
 
     def patch(self):
-        if self.spec.satisfies("@5.6: + hip"):
-            filter_file(
-                r"${ROCM_PATH}/include/miopen/config.h",
-                "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
-                "amd_openvx_extensions/CMakeLists.txt",
-                string=True,
-            )
-        if self.spec.satisfies("@5.6.0: + hip"):
-            filter_file(
-                r"${ROCM_PATH}/llvm/bin/clang++",
-                "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
-                "amd_openvx/openvx/hipvx/CMakeLists.txt",
-                "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
-                string=True,
-            )
-        if self.spec.satisfies("@5.5.0:6.1 + hip"):
+        filter_file(
+            r"${ROCM_PATH}/include/miopen/config.h",
+            "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
+            "amd_openvx_extensions/CMakeLists.txt",
+            string=True,
+        )
+        filter_file(
+            r"${ROCM_PATH}/llvm/bin/clang++",
+            "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
+            "amd_openvx/openvx/hipvx/CMakeLists.txt",
+            "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
+            string=True,
+        )
+        if self.spec.satisfies("@:6.1 + hip"):
             filter_file(
                 r"${ROCM_PATH}/llvm/bin/clang++",
                 "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
                 "rocAL/rocAL/rocAL_hip/CMakeLists.txt",
                 string=True,
             )
-        if self.spec.satisfies("@5.5.0:6.0.0 +add_tests"):
+        if self.spec.satisfies("@:6.0.0 +add_tests"):
             filter_file(
                 r"${ROCM_PATH}/include/mivisionx",
                 "{0}/include/mivisionx".format(self.spec.prefix),
@@ -179,7 +176,7 @@ class Mivisionx(CMakePackage):
     )
     depends_on("openssl")
     depends_on("libjpeg-turbo@2.0.6+partial_decoder", type="build", when="@:6.2.0")
-    depends_on("rpp@1.2.0", when="@5.5:5.6")
+    depends_on("rpp@1.2.0", when="@:5.6")
     depends_on("lmdb")
     depends_on("py-setuptools")
     depends_on("py-wheel")
@@ -263,7 +260,7 @@ class Mivisionx(CMakePackage):
         if self.spec.satisfies("~hip"):
             args.append(self.define("BACKEND", "CPU"))
 
-        if self.spec.satisfies("@5.6:6.2.0"):
+        if self.spec.satisfies("@:6.2.0"):
             args.append(
                 self.define(
                     "TurboJpeg_LIBRARIES_DIRS", "{0}/lib64".format(spec["libjpeg-turbo"].prefix)

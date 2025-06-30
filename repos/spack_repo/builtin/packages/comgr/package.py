@@ -95,9 +95,10 @@ class Comgr(CMakePackage):
             return join_path("amd", "comgr")
 
     def cmake_args(self):
-        args = [self.define("BUILD_TESTING", self.run_tests)]
-        if self.spec.satisfies("@5.4.3:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
+        args = [
+           self.define("BUILD_TESTING", self.run_tests),
+           self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+        ]
         if self.spec.satisfies("@5.7:"):
             args.append(self.define_from_variant("ADDRESS_SANITIZER", "asan"))
         return args

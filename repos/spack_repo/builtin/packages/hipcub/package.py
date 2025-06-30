@@ -90,7 +90,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"hip +cuda@{ver}", when=f"+cuda @{ver}")
 
     # fix hardcoded search in /opt/rocm and broken config mode search
-    patch("find-hip-cuda-rocm-5.3.patch", when="@5.3: +cuda")
+    patch("find-hip-cuda-rocm-5.3.patch", when="@5.6: +cuda")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+rocm"):

@@ -74,7 +74,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         description="Link LLVM tools against the LLVM shared library",
     )
 
-    provides("libllvm@16", when="@5.5:5.6")
+    provides("libllvm@16", when="@5.6")
     provides("libllvm@17", when="@5.7:6.1")
     provides("libllvm@18", when="@6.2:6.3")
     provides("libllvm@19", when="@6.4:")

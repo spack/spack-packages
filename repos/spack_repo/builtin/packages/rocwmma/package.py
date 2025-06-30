@@ -70,7 +70,7 @@ class Rocwmma(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@3.16:", type="build", when="@5.2.0:")
+    depends_on("cmake@3.16:", type="build", when="@5.6.0:")
     depends_on("cmake@3.5:", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
@@ -119,6 +119,7 @@ class Rocwmma(CMakePackage):
             self.define("ROCWMMA_BUILD_SAMPLES", "ON"),
             self.define("ROCWMMA_BUILD_DOCS", "OFF"),
             self.define("ROCWMMA_BUILD_ASSEMBLY", "OFF"),
+            self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
         ]
         args.extend(
             [
@@ -132,7 +133,5 @@ class Rocwmma(CMakePackage):
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
-        if self.spec.satisfies("@5.6.0:"):
-            args.append(self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix))
 
         return args

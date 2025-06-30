@@ -112,8 +112,8 @@ class Rocblas(CMakePackage):
         depends_on("py-wheel", type="build")
         depends_on("py-msgpack", type="build")
         depends_on("py-pip", type="build")
-        depends_on("py-joblib", type="build", when="@5.6:")
-        depends_on("procps", type="build", when="@5.6:")
+        depends_on("py-joblib", type="build")
+        depends_on("procps", type="build")
 
     for t_version, t_commit in [
         ("@5.6.0", "7d0a9d040c3bbae893df7ecef6a19d9cd1c304aa"),

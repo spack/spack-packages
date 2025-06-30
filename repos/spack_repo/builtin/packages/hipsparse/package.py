@@ -98,8 +98,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(f"rocsparse amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
 
-    patch("0a90ddc4c33ed409a938513b9dbdca8bfad65e06.patch", when="@:5.4")
-
     @classmethod
     def determine_version(cls, lib):
         match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)

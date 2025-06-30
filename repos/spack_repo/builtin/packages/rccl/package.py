@@ -125,7 +125,7 @@ class Rccl(CMakePackage):
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
-    depends_on("googletest@1.11.0:", type="test", when="@5.3:")
+    depends_on("googletest@1.11.0:", type="test")
 
     @classmethod
     def determine_version(cls, lib):
@@ -152,15 +152,13 @@ class Rccl(CMakePackage):
             self.define("NUMACTL_DIR", self.spec["numactl"].prefix),
             self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
             self.define("ROCM_PATH", self.spec["hip"].prefix),
+            self.define("BUILD_TESTS", self.run_tests),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", True))
-
-        if self.spec.satisfies("@5.3.0:"):
-            args.append(self.define("BUILD_TESTS", self.run_tests))
         return args
 
     def test_unit(self):

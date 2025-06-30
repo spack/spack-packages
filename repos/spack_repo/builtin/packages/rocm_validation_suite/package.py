@@ -125,7 +125,7 @@ class RocmValidationSuite(CMakePackage):
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
     def patch(self):
-        if self.spec.satisfies("@5.5:5.7"):
+        if self.spec.satisfies("@:5.7"):
             filter_file(
                 r"@ROCM_PATH@/rvs", self.spec.prefix.rvs, "rvs/conf/deviceid.sh.in", string=True
             )

@@ -342,9 +342,8 @@ class RocmOpenmpExtras(Package):
         env.set("HIP_DEVICE_LIB_PATH", f"{devlibs_prefix}/amdgcn/bitcode")
         env.prepend_path("CPATH", f"{self.prefix}/include")
         env.prepend_path("LIBRARY_PATH", f"{self.prefix}/lib")
-        if self.spec.satisfies("@5.3.0:"):
-            env.prepend_path("LD_LIBRARY_PATH", f"{self.prefix}/lib")
-            env.prepend_path("LD_LIBRARY_PATH", f"{hsa_prefix}/lib")
+        env.prepend_path("LD_LIBRARY_PATH", f"{self.prefix}/lib")
+        env.prepend_path("LD_LIBRARY_PATH", f"{hsa_prefix}/lib")
         env.set("AOMP_GPU", f"`{self.prefix}/bin/mygpu`")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

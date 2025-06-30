@@ -158,6 +158,8 @@ class HsaRocrDev(CMakePackage):
         else:
             bitcode_dir = spec["llvm-amdgpu"].prefix.amdgcn.bitcode
 
+        if self.spec.satisfies("@5.7.0:"):
+            args.append(self.define_from_variant("ADDRESS_SANITIZER", "asan"))
         if self.spec.satisfies("@6.0"):
             args.append(self.define("ROCM_PATCH_VERSION", "60000"))
         if self.spec.satisfies("@6.1"):
@@ -166,8 +168,6 @@ class HsaRocrDev(CMakePackage):
             args.append(self.define("ROCM_PATCH_VERSION", "60200"))
         if self.spec.satisfies("@6.3"):
             args.append(self.define("ROCM_PATCH_VERSION", "60300"))
-        if self.spec.satisfies("@5.7.0:"):
-            args.append(self.define_from_variant("ADDRESS_SANITIZER", "asan"))
         if self.spec.satisfies("@6.3.2:"):
             args.append(self.define("SHARED_LIBS", "ON"))
             args.append(self.define("BUILD_SHARED_LIBS", "ON"))

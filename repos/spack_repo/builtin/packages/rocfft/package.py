@@ -99,8 +99,6 @@ class Rocfft(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    # Patch to add install prefix header location for sqlite for 5.4
-    patch("0004-fix-missing-sqlite-include-paths.patch", when="@5.4.0:5.5")
     # Patch to fix the build issue when --test=root is enabled
     # This adds  the include headers from the rocrand and fftw in the cmakelists.txt
     # issue is seen from 5.7.0 onwards

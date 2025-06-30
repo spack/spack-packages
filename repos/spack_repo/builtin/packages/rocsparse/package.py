@@ -92,7 +92,7 @@ class Rocsparse(CMakePackage):
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    depends_on("googletest@1.11.0:", when="@5.1.0: +test")
+    depends_on("googletest@1.11.0:", when="@5.6.0: +test")
     depends_on("googletest@1.10.0:", when="+test")
     depends_on("python@3:", type="build", when="+test")
     depends_on("py-pyyaml", type="build", when="+test")

@@ -64,13 +64,12 @@ class HsakmtRoct(CMakePackage):
         depends_on(f"llvm-amdgpu@{ver}", type="test", when=f"@{ver}")
 
     def cmake_args(self):
-        args = []
-        if self.spec.satisfies("@5.6.0:"):
-            args.append(self.define("BUILD_SHARED_LIBS", False))
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
+        args = [
+            self.define("BUILD_SHARED_LIBS", False),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+        ]
         if self.spec.satisfies("@5.7.0:"):
             args.append(self.define_from_variant("ADDRESS_SANITIZER", "asan"))
-
         return args
 
     @run_after("install")

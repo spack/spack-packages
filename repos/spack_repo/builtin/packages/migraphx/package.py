@@ -73,8 +73,8 @@ class Migraphx(CMakePackage):
     depends_on("half@2:", when="@5.6:6.2")
     depends_on("half")
     depends_on("python@3.5:", type="build")
-    depends_on("py-pybind11@2.6:", type="build", when="@4.1.0:")
-    depends_on("pkgconfig", type="build", when="@5.3.0:")
+    depends_on("py-pybind11@2.6:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("abseil-cpp")
 
     for ver in [
@@ -153,12 +153,12 @@ class Migraphx(CMakePackage):
         args = [
             self.define("CMAKE_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++"),
             self.define("NLOHMANN_JSON_INCLUDE", self.spec["nlohmann-json"].prefix.include),
+            self.define("CMAKE_CXX_FLAGS", "-I{0}".format(abspath)),
+            self.define("MIGRAPHX_ENABLE_PYTHON", "OFF"),
+            self.define("BUILD_TESTING", self.run_tests),
         ]
         if self.spec["cmake"].satisfies("@3.16.0:"):
             args += self.cmake_python_hints
-        if "@5.5.0:" in self.spec:
-            args.append(self.define("CMAKE_CXX_FLAGS", "-I{0}".format(abspath)))
-            args.append(self.define("MIGRAPHX_ENABLE_PYTHON", "OFF"))
         if "@5.7:" in self.spec:
             args.append(self.define("MIGRAPHX_USE_COMPOSABLEKERNEL", "OFF"))
             args.append(
@@ -170,7 +170,6 @@ class Migraphx(CMakePackage):
                     "CMAKE_CXX_FLAGS", "-fsanitize=address -shared-libasan -I{0}".format(abspath)
                 )
             )
-        args.append(self.define("BUILD_TESTING", self.run_tests))
         return args
 
     def test_unit_tests(self):
