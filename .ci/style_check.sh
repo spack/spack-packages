@@ -2,11 +2,9 @@
 set -x
 set -e
 
-if [ ! changed_files=$(git diff --name-only --diff-filter=ACMR HEAD^1 | grep ".*\.pyi\?") ]; then
-    exit 0  # no changed files
-fi
+changed_files=$(git diff --name-only --diff-filter=ACMR HEAD^1 | grep ".*\.pyi\?")
 
-if [ ! -z "$changed_files" ]; then
+if [ ! -z $changed_files ]; then
   echo "Detected changed..."
   for f in ${changed_files[@]}; do
     echo "  $f"
