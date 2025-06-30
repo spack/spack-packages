@@ -1,6 +1,5 @@
 #!/bin/bash
 set -x
-set -e
 
 changed_files=$(git diff --name-only --diff-filter=ACMR HEAD^1 | grep ".*\.pyi\?")
 
@@ -11,6 +10,7 @@ if [ ! -z $changed_files ]; then
   done
   echo ""
 
+  set -e
   echo "Running mypy checks..."
   mypy ${changed_files[@]}
   echo ""
