@@ -18,10 +18,9 @@ class PyXgcm(PythonPackage):
 
     version("0.8.1", sha256="fc733bf1ed5c1e286dddd182d37dabbdc1e01207dd15089f62be2021e29b0459")
 
-    depends_on("py-setuptools@61:", type="build")
-    depends_on("py-setuptools-scm@6: +toml", type="build")
+    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools-scm", type="build")
     depends_on("py-xarray@0.20.0:", type=("build", "run"))
     depends_on("py-dask", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-future", type=("build", "run"))
-
