@@ -91,11 +91,12 @@ class Detray(CMakePackage):
     depends_on("nlohmann-json@3.11.0:", when="+json")
     depends_on("dfelibs@20211029:", when="@:0.88")
     depends_on("acts-algebra-plugins@0.18.0: +vecmem")
-    depends_on("acts-algebra-plugins@0.27.0: +vecmem", when="@0.95:")
     depends_on("acts-algebra-plugins +vc", when="+vc")
     depends_on("acts-algebra-plugins +eigen", when="+eigen")
     depends_on("acts-algebra-plugins +smatrix", when="+smatrix")
-    depends_on("acts-algebra-plugins@0.26.0:", when="@0.87:")
+    # The version number of algebra plugins was not correct before v0.28.0.
+    depends_on("acts-algebra-plugins@0.28.0:", when="@0.87:")
+    depends_on("acts-algebra-plugins@0.28.0: +vecmem", when="@0.95:")
 
     # Detray imposes requirements on the C++ standard values used by Algebra
     # Plugins.
