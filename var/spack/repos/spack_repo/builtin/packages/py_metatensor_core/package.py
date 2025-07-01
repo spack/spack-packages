@@ -12,7 +12,7 @@ VERSION_MAP = {
 }
 
 
-class PyMetatensor(PythonPackage):
+class PyMetatensorCore(PythonPackage):
     """Python bindings for metatensor-core"""
 
     homepage = "https://docs.metatensor.org"
@@ -23,8 +23,7 @@ class PyMetatensor(PythonPackage):
     maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    extends("python")
-    depends_on("python@3.9:")
+    depends_on("python@3.9:", type=("run", "build"))
     depends_on("py-numpy", type=("run", "build"))
 
     for ver, sha in VERSION_MAP.items():
@@ -34,7 +33,7 @@ class PyMetatensor(PythonPackage):
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
-    depends_on("cmake", type="build")
+    depends_on("cmake@3.16", type="build")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("METATENSOR_CORE_PYTHON_USE_EXTERNAL_LIB", "ON")
