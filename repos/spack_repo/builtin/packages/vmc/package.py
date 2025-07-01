@@ -32,7 +32,7 @@ class Vmc(CMakePackage):
 
     depends_on("root@6.18.04:")
     requires("^root~vmc", when="^root@:6.25")
-    
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("platform=darwin"):
             env.unset("MACOSX_DEPLOYMENT_TARGET")
