@@ -415,6 +415,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         deprecated=True,
     )
 
+    depends_on("c", type="build", when="@20250612:")
     depends_on("cxx", type="build")
 
     # ml-quip, qmmm require C, but not available in Spack
