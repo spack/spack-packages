@@ -421,7 +421,6 @@ class ArmplGcc(Package):
     depends_on("fortran", type="build")
     requires("^[virtuals=c,fortran] gcc", msg="armpl-gcc is only compatible with the GCC compiler")
 
-
     depends_on("gmake", type="build")
 
     # Run the installer with the desired install directory
@@ -480,7 +479,12 @@ class ArmplGcc(Package):
         ## Link the same libraries as the gcc used for Arm PL
         gcc_compiler = self.compiler.cc
         gcc_path = os.path.dirname(os.path.dirname(gcc_path))
-        armpl_libs += find_libraries(["libstdc++","libgomp","libm"],root=gcc_path, shared=self.spec.satisfies("+shared"), recursive=True)
+        armpl_libs += find_libraries(
+            ["libstdc++", "libgomp", "libm"],
+            root=gcc_path,
+            shared=self.spec.satisfies("+shared"),
+            recursive=True,
+        )
 
         return armpl_libs
 
