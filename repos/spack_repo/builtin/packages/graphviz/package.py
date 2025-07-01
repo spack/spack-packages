@@ -121,7 +121,7 @@ class Graphviz(AutotoolsPackage):
     depends_on("libgd", when="+libgd")
     depends_on("fontconfig", when="+libgd")
     depends_on("freetype", when="+libgd")
-    depends_on("ghostscript", when="+ghostscript")
+    depends_on("ghostscript+gtk", when="+ghostscript")
     depends_on("gtkplus", when="+gtkplus")
     depends_on("gts", when="+gts")
     depends_on("cairo+pdf+png", when="+pangocairo")
