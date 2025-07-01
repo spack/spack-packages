@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
 
 
@@ -18,7 +19,7 @@ class Libmetatensor(CMakePackage):
 
     version("0.1.14", sha256="dc6cdd9cf0113e2f012ecf68b81cc7cfc71bef3d2020b41574de8fa403dba646")
 
-    variant("static", default=False, description="Build both shared and static library versions, by default only shared libraries are built")
+    variant("static", default=False, description="Build both shared and static library versions")
 
     generator("ninja")
 
@@ -28,7 +29,5 @@ class Libmetatensor(CMakePackage):
     depends_on("cxx", type="build")
 
     def cmake_args(self):
-        args = [
-            self.define_from_variant("METATENSOR_INSTALL_BOTH_STATIC_SHARED", "both_shared_and_static"),
-        ]
+        args = [self.define_from_variant("METATENSOR_INSTALL_BOTH_STATIC_SHARED", "static")]
         return args
