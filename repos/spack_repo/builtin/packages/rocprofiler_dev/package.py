@@ -45,7 +45,7 @@ class RocprofilerDev(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3:", type="build")
-    
+
     for ver in ["5.6.0", "5.6.1"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")

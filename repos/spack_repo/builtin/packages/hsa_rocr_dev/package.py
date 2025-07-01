@@ -148,7 +148,6 @@ class HsaRocrDev(CMakePackage):
             self.define("LIBELF_INCLUDE_DIRS", libelf_include),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("IMAGE_SUPPORT", "image"),
-            self.define("BITCODE_DIR", bitcode_dir),
             self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
@@ -157,6 +156,8 @@ class HsaRocrDev(CMakePackage):
             bitcode_dir = spec["rocm-device-libs"].prefix.amdgcn.bitcode
         else:
             bitcode_dir = spec["llvm-amdgpu"].prefix.amdgcn.bitcode
+
+        args.append(self.define("BITCODE_DIR", bitcode_dir))
 
         if self.spec.satisfies("@5.7.0:"):
             args.append(self.define_from_variant("ADDRESS_SANITIZER", "asan"))

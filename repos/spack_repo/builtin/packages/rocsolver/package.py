@@ -75,7 +75,6 @@ class Rocsolver(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
 
-
     for ver in [
         "5.6.0",
         "5.6.1",
