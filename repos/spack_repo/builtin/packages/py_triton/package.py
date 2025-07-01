@@ -6,7 +6,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 import llnl.util.filesystem as fs
 
-from spack_repo.builtin import build_systems
+from spack import build_systems
 from spack.package import *
 
 
