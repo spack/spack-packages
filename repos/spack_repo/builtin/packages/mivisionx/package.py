@@ -249,7 +249,6 @@ class Mivisionx(CMakePackage):
             self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf)),
             self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix)),
             self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix)),
-            self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix)),
             self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
         ]
         if self.spec.satisfies("+hip"):

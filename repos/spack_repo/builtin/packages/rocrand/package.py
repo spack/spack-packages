@@ -116,7 +116,7 @@ class Rocrand(CMakePackage):
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
-
-        args.append(self.define("BUILD_HIPRAND", "OFF"))
+        if self.spec.satisfies("@:5.7"):
+            args.append(self.define("BUILD_HIPRAND", "OFF"))
 
         return args
