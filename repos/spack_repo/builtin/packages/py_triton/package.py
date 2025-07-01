@@ -20,7 +20,7 @@ class PyTriton(PythonPackage):
     license("MIT")
 
     version("main", branch="main")
-    version("3.2.0", sha256="04eb07e2ff1b87bf4b26e132d696177248bfb9c71cecd4864e561a9c103de9b3")
+    version("3.3.1", sha256="9dc77d9205933bf2fc05eb054f4f1d92acd79a963826174d57fe9cfd58ba367b")
     version("2.1.0", sha256="4338ca0e80a059aec2671f02bfc9320119b051f378449cf5f56a1273597a3d99")
 
     depends_on("c", type="build")  # generated
@@ -38,14 +38,6 @@ class PyTriton(PythonPackage):
     depends_on("py-filelock", type=("build", "run"))
     depends_on("zlib-api", type="link")
     conflicts("^openssl@3.3.0")
-
-    # avoid bdist_whell.dist_info_dir problems:
-    # pypa used to contain `bdist_wheel` but it is part of setuptools as of v70.1
-    # these patches change
-    #     wheel.bdist_wheel -> setuptools.command.bdist_wheel.bdist_wheel
-    # see https://github.com/pypa/wheel/pull/631
-    # and https://github.com/pypa/setuptools/pull/4684
-    patch("setup_v3.2.0.patch", when="@3.2.0 ^py-setuptools@70.1:")
 
 
 # override pip install to use python subdirectory from parent directory
