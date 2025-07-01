@@ -19,4 +19,4 @@ class PyLlguidance(PythonPackage):
         sha256="e93bf75f2b6e48afb86a5cee23038746975e1654672bf5ba0ae75f7d4d4a2248",
     )
 
-    depends_on("py-maturin@1.0.0:", type="build")
+    depends_on("py-maturin@1.0.0: ^ rust@1.85.0", type="build")
