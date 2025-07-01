@@ -367,6 +367,8 @@ class ArmplGcc(Package):
     conflicts("target=ppc64:", msg="Only available on Aarch64")
     conflicts("target=ppc64le:", msg="Only available on Aarch64")
 
+    conflicts("%gcc@:8", when="@25.04.1")
+
     conflicts("%gcc@:11", when="@23.10_gcc-12.2")
     conflicts("%gcc@:10", when="@23.10_gcc-11.3")
     conflicts("%gcc@:9", when="@23.10_gcc-10.4")
@@ -418,6 +420,7 @@ class ArmplGcc(Package):
     depends_on("c", type="build")
     depends_on("fortran", type="build")
     requires("^[virtuals=c,fortran] gcc", msg="armpl-gcc is only compatible with the GCC compiler")
+
 
     depends_on("gmake", type="build")
 
@@ -474,10 +477,10 @@ class ArmplGcc(Package):
             recursive=True,
         )
 
-        armpl_libs += find_system_libraries(["libm", "libstdc++", "libstdc++fs"])
-
-        if self.spec.satisfies("+shared"):
-            armpl_libs += find_system_libraries(["libgomp"])
+        ## Link the same libraries as the gcc used for Arm PL
+        gcc_compiler = self.compiler.cc
+        gcc_path = os.path.dirname(os.path.dirname(gcc_path))
+        armpl_libs += find_libraries(["libstdc++","libgomp","libm"],root=gcc_path, shared=self.spec.satisfies("+shared"), recursive=True)
 
         return armpl_libs
 
