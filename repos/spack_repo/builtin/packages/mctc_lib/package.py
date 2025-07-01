@@ -38,9 +38,11 @@ class MctcLib(MesonPackage, CMakePackage):
 
     depends_on("meson@0.57.2:", type="build", when="build_system=meson")
     depends_on("json-fortran@8:", when="@:0.4.2+json")
-    depends_on("jonquil", when="@0.4.2:+json")
-    depends_on("toml-f", when="@0.4.2:+json")
     depends_on("pkgconfig", type="build")
+
+    for build_system in ["cmake", "meson"]:
+        depends_on(f"jonquil build_system={build_system}", when=f"build_system={build_system}")
+        depends_on("toml-f", when="@0.4.2:+json")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
