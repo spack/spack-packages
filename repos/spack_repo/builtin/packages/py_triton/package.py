@@ -2,11 +2,10 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin import build_systems
 from spack_repo.builtin.build_systems.python import PythonPackage
 
+from spack_repo.builtin import build_systems
 import llnl.util.filesystem as fs
-
 from spack.package import *
 
 
@@ -51,7 +50,7 @@ class PythonPipBuilder(build_systems.python.PythonPipBuilder):
         with fs.working_dir(self.build_directory):
             pip(*args)
 
-    def setup_build_environment(self, env) -> None:
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set environment variables used to control the build"""
         if self.spec.satisfies("%clang"):
             env.set("TRITON_BUILD_WITH_CLANG_LLD", "True")
