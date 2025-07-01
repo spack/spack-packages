@@ -46,7 +46,7 @@ class AwsOfiNccl(AutotoolsPackage):
 
     depends_on("libfabric")
     depends_on("cuda")
-    depends_on("nccl")
+    depends_on("nccl fabrics=auto")
     depends_on("mpi")
     depends_on("hwloc", when="@1.7:")
     depends_on("autoconf", type="build")
@@ -62,6 +62,8 @@ class AwsOfiNccl(AutotoolsPackage):
     # To enable this plug-in to work with NCCL add it to the LD_LIBRARY_PATH
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
+        # Set the this network so that NCCL doesnt pick up anything else.
+        env.set("NCCL_NET", "AWS Libfabric")
 
     # To enable this plug-in to work with NCCL add it to the LD_LIBRARY_PATH
     def setup_dependent_run_environment(
