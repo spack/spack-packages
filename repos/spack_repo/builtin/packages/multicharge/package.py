@@ -34,7 +34,8 @@ class Multicharge(CMakePackage, MesonPackage):
     depends_on("lapack")
     depends_on("mctc-lib build_system=cmake", when="build_system=cmake")
     depends_on("mctc-lib build_system=meson", when="build_system=meson")
-    depends_on("mctc-lib@0.4.1:", when="@0.4.0:")
+    depends_on("mctc-lib@0.4.0:", when="@0.4.0:")
+    depends_on("mctc-lib@0.3:0.4", when="@0.3:")
 
     def url_for_version(self, version):
         if self.spec.satisfies("@:0.3.0"):
