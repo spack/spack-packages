@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
 
 
 class VirSimd(CMakePackage):
-    """A fallback std::experimental::simd (Parallelism TS 2) implementation with additional features."""
+    """A fallback std::experimental::simd (Parallelism TS 2) implementation with additional
+    features."""
 
     homepage = "https://mattkretz.github.io/vir-simd/master/"
     url = "https://github.com/mattkretz/vir-simd/archive/refs/tags/v0.4.4.tar.gz"

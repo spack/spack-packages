@@ -366,7 +366,7 @@ class Acts(CMakePackage, CudaPackage):
             "actsvg@0.4.51:", when="@37:"
         )  # https://github.com/acts-project/actsvg/issues/94
         depends_on("actsvg@0.4.56:", when="@41.1:")
-        # TODO: This should be when-constrained when the issue is fixed in ACTS. 
+        # TODO: This should be when-constrained when the issue is fixed in ACTS.
         depends_on("actsvg@:0.4.56")
     depends_on("acts-algebra-plugins @0.24:", when="+traccc")
     depends_on("autodiff @0.6:", when="@17: +autodiff")
