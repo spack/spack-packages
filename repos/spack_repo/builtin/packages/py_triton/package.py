@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems import python
+from spack_repo.builtin import build_systems
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 import llnl.util.filesystem as fs
@@ -47,7 +47,19 @@ class PyTriton(PythonPackage):
     # and https://github.com/pypa/setuptools/pull/4684
     patch("setup_v3.2.0.patch", when="@3.2.0 ^py-setuptools@70.1:")
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+
+# override pip install to use python subdirectory from parent directory
+class PythonPipBuilder(build_systems.python.PythonPipBuilder):
+    def install(self, pkg, spec, prefix):
+        pip = spec["python"].command
+        pip.add_default_arg("-m", "pip")
+        args = build_systems.python.PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
+        # build directory specified manually as additional argument to pip install
+        args.append("./python")
+        with fs.working_dir(self.build_directory):
+            pip(*args)
+
+    def setup_build_environment(self, env) -> None:
         """Set environment variables used to control the build"""
         if self.spec.satisfies("%clang"):
             env.set("TRITON_BUILD_WITH_CLANG_LLD", "True")
@@ -70,15 +82,3 @@ class PyTriton(PythonPackage):
     # build_directory does not work since apparently one needs to call pip from
     # the parent directory
     # build_directory = "python"
-
-
-# override pip install to use python subdirectory from parent directory
-class PythonPipBuilder(python.PythonPipBuilder):
-    def install(self, pkg, spec, prefix):
-        pip = spec["python"].command
-        pip.add_default_arg("-m", "pip")
-        args = python.PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
-        # build directory specified manually as additional argument to pip install
-        args.append("./python")
-        with fs.working_dir(self.build_directory):
-            pip(*args)
