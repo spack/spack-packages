@@ -180,10 +180,10 @@ class Rocblas(CMakePackage):
         if self.run_tests:
             args.append(self.define("LINK_BLIS", "ON"))
             args.append(
-                 self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
+                self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
             )
             args.append(
-                 self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
+                self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
             )
             args.append(
                 self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")

@@ -96,8 +96,8 @@ class Comgr(CMakePackage):
 
     def cmake_args(self):
         args = [
-           self.define("BUILD_TESTING", self.run_tests),
-           self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+            self.define("BUILD_TESTING", self.run_tests),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
         if self.spec.satisfies("@5.7:"):
             args.append(self.define_from_variant("ADDRESS_SANITIZER", "asan"))
