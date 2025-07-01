@@ -7,23 +7,7 @@ import os
 from spack_repo.builtin.build_systems.generic import Package
 
 import spack.platforms
-from spack.build_environment import make
-from spack.directives import (
-    conflicts,
-    depends_on,
-    maintainers,
-    provides,
-    requires,
-    variant,
-    version,
-)
-from spack.package import Executable, run_after, when
-from spack.spec import Spec
-from spack.util.environment import EnvironmentModifications
-from spack.util.executable import which
-from spack.util.file_system import find, symlink
-from spack.util.prefix import join_path
-from spack.util.spack_json import find_all_headers, find_libraries
+from spack.package import *
 
 _os_map_before_23 = {
     "ubuntu18.04": "Ubuntu-18.04",
