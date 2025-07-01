@@ -7,7 +7,23 @@ import os
 from spack_repo.builtin.build_systems.generic import Package
 
 import spack.platforms
-from spack.package import *
+from spack.build_environment import make
+from spack.directives import (
+    conflicts,
+    depends_on,
+    maintainers,
+    provides,
+    requires,
+    variant,
+    version,
+)
+from spack.package import Executable, run_after, when
+from spack.spec import Spec
+from spack.util.environment import EnvironmentModifications
+from spack.util.executable import which
+from spack.util.file_system import find, symlink
+from spack.util.prefix import join_path
+from spack.util.spack_json import find_all_headers, find_libraries
 
 _os_map_before_23 = {
     "ubuntu18.04": "Ubuntu-18.04",
@@ -367,8 +383,6 @@ class ArmplGcc(Package):
     conflicts("target=ppc64:", msg="Only available on Aarch64")
     conflicts("target=ppc64le:", msg="Only available on Aarch64")
 
-    conflicts("%gcc@:8", when="@25.04.1")
-
     conflicts("%gcc@:11", when="@23.10_gcc-12.2")
     conflicts("%gcc@:10", when="@23.10_gcc-11.3")
     conflicts("%gcc@:9", when="@23.10_gcc-10.4")
@@ -476,9 +490,9 @@ class ArmplGcc(Package):
             recursive=True,
         )
 
-        ## Link the same libraries as the gcc used for Arm PL
+        # Link the same libraries as the gcc used for Arm PL
         gcc_compiler = self.compiler.cc
-        gcc_path = os.path.dirname(os.path.dirname(gcc_path))
+        gcc_path = os.path.dirname(os.path.dirname(gcc_compiler))
         armpl_libs += find_libraries(
             ["libstdc++", "libgomp", "libm"],
             root=gcc_path,
