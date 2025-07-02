@@ -26,7 +26,8 @@ class Ctffind(AutotoolsPackage):
         extension="tar.gz",
     )
 
-    depends_on("c", type="build")  # the code is C++ but the configure script tests the C-compiler anyway
+    # the code is C++ but the configure script tests the C-compiler anyway
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     def url_for_version(self, version):
