@@ -475,11 +475,9 @@ class ArmplGcc(Package):
         )
 
         # Link the same libraries as the gcc used for Arm PL
-        gcc_compiler = self.compiler.cc
-        gcc_path = os.path.dirname(os.path.dirname(gcc_compiler))
         armpl_libs += find_libraries(
             ["libstdc++", "libgomp", "libm"],
-            root=gcc_path,
+            root=self["gcc"].prefix,
             shared=self.spec.satisfies("+shared"),
             recursive=True,
         )
