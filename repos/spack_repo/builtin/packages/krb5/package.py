@@ -130,7 +130,7 @@ class Krb5(AutotoolsPackage):
 
         if name == "cflags":
             if self.spec.satisfies("@:1.21.3 %gcc@15:"):
-                # gcc@15: is -std=gnu23 by default and 
+                # gcc@15: is -std=gnu23 by default and
                 # up to at least 1.21.3 doesn't compile
                 flags.append("-std=gnu17")
 
