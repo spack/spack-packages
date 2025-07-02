@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os.path
 import re
-import subprocess
 
 from spack_repo.builtin.build_systems import compiler
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
@@ -99,41 +98,7 @@ class Msvc(Package, CompilerPackage):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        self.init_msvc()
-        # Set the build environment variables for spack. Just using
-        # subprocess.call() doesn't work since that operates in its own
-        # environment which is destroyed (along with the adjusted variables)
-        # once the process terminates. So go the long way around: examine
-        # output, sort into dictionary, use that to make the build
-        # environment.
 
-        # vcvars can target specific sdk versions, force it to pick up concretized sdk
-        # version, if needed by spec
-        if dependent_spec.name != "win-sdk" and "win-sdk" in dependent_spec:
-            self.vcvars_call.sdk_ver = dependent_spec["win-sdk"].version.string
-
-        out = self.msvc_compiler_environment()
-        int_env = dict(
-            (key, value)
-            for key, _, value in (line.partition("=") for line in out.splitlines())
-            if key and value
-        )
-
-        for env_var in int_env:
-            if os.pathsep not in int_env[env_var]:
-                env.set(env_var, int_env[env_var])
-            else:
-                env.set_path(env_var, int_env[env_var].split(os.pathsep))
-
-        if self.cc:
-            env.set("CC", self.cc)
-        if self.cxx:
-            env.set("CXX", self.cxx)
-        if self.fortran:
-            env.set("FC", self.fortran)
-            env.set("F77", self.fortran)
-
-    def init_msvc(self):
         # To use the MSVC compilers, VCVARS must be invoked
         # VCVARS is located at a fixed location, referencable
         # idiomatically by the following relative path from the
@@ -141,7 +106,6 @@ class Msvc(Package, CompilerPackage):
         # Spack first finds the compilers via VSWHERE
         # and stores their path, but their respective VCVARS
         # file must be invoked before useage.
-        env_cmds = []
         compiler_root = os.path.join(os.path.dirname(self.cc), "../../../../../..")
         vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvars64.bat")
         # get current platform architecture and format for vcvars argument
@@ -151,8 +115,20 @@ class Msvc(Package, CompilerPackage):
             arch = "amd64"
 
         msvc_version = Version(re.search(Msvc.compiler_version_regex, self.cc).group(1))
-        self.vcvars_call = VCVarsInvocation(vcvars_script_path, arch, msvc_version)
-        env_cmds.append(self.vcvars_call)
+        vcvars_ver = f"-vcvars_ver={msvc_version}"
+        vcvars_args = [arch]
+        # vcvars can target specific sdk versions, force it to pick up concretized sdk
+        # version, if needed by spec
+        if dependent_spec.name != "win-sdk" and "win-sdk" in dependent_spec:
+            vcvars_args.append(dependent_spec["win-sdk"].version.string + ".0")
+        vcvars_args.append(vcvars_ver)
+        if dependent_spec.satisfies("+spectre"):
+            vcvars_args.append("spectre")
+        local_env = os.environ.copy()
+        vars_mods = EnvironmentModifications.from_sourcing_file(
+            vcvars_script_path, *vcvars_args, env=local_env
+        )
+        vars_mods.apply_modifications(env=local_env)
 
         def get_oneapi_root(pth: str):
             """From within a prefix known to be a oneAPI path
@@ -183,10 +159,24 @@ class Msvc(Package, CompilerPackage):
             oneapi_version_setvars = os.path.join(
                 oneapi_root, "compiler", version_from_path, "env", "vars.bat"
             )
-            env_cmds.extend(
-                [VarsInvocation(oneapi_version_setvars), VarsInvocation(oneapi_root_setvars)]
+            version_setvar_mods = EnvironmentModifications.from_sourcing_file(
+                oneapi_version_setvars, env=local_env
             )
-        self.msvc_compiler_environment = CmdCall(*env_cmds)
+            version_setvar_mods.apply_modifications(env=local_env)
+            root_setvars_mods = EnvironmentModifications.from_sourcing_file(
+                oneapi_root_setvars, env=local_env
+            )
+            vars_mods.extend(version_setvar_mods)
+            vars_mods.extend(root_setvars_mods)
+        env.extend(vars_mods)
+
+        if self.cc:
+            env.set("CC", self.cc)
+        if self.cxx:
+            env.set("CXX", self.cxx)
+        if self.fortran:
+            env.set("FC", self.fortran)
+            env.set("F77", self.fortran)
 
     def _standard_flag(self, *, language: str, standard: str) -> str:
         flags = {
@@ -263,90 +253,6 @@ class Msvc(Package, CompilerPackage):
         toolset_ver = self.vc_toolset_ver
         vs22_toolset = Version(toolset_ver) > Version("142")
         return toolset_ver if not vs22_toolset else "143"
-
-
-class CmdCall:
-    """Compose a call to `cmd` for an ordered series of cmd commands/scripts"""
-
-    def __init__(self, *cmds):
-        if not cmds:
-            raise RuntimeError(
-                """Attempting to run commands from CMD without specifying commands.
-                Please add commands to be run."""
-            )
-        self._cmds = cmds
-
-    def __call__(self):
-        out = subprocess.check_output(self.cmd_line, stderr=subprocess.STDOUT)  # novermin
-        return out.decode("utf-16le", errors="replace")  # novermin
-
-    @property
-    def cmd_line(self):
-        base_call = "cmd /u /c "
-        commands = " && ".join([x.command_str() for x in self._cmds])
-        # If multiple commands are being invoked by a single subshell
-        # they must be encapsulated by a double quote. Always double
-        # quote to be sure of proper handling
-        # cmd will properly resolve nested double quotes as needed
-        #
-        # `set`` writes out the active env to the subshell stdout,
-        # and in this context we are always trying to obtain env
-        # state so it should always be appended
-        return base_call + f'"{commands} && set"'
-
-
-class VarsInvocation:
-    def __init__(self, script):
-        self._script = script
-
-    def command_str(self):
-        return f'"{self._script}"'
-
-    @property
-    def script(self):
-        return self._script
-
-
-class VCVarsInvocation(VarsInvocation):
-    def __init__(self, script, arch, msvc_version):
-        super(VCVarsInvocation, self).__init__(script)
-        self._arch = arch
-        self._msvc_version = msvc_version
-
-    @property
-    def sdk_ver(self):
-        """Accessor for Windows SDK version property
-
-        Note: This property may not be set by
-        the calling context and as such this property will
-        return an empty string
-
-        This property will ONLY be set if the SDK package
-        is a dependency somewhere in the Spack DAG of the package
-        for which we are constructing an MSVC compiler env.
-        Otherwise this property should be unset to allow the VCVARS
-        script to use its internal heuristics to determine appropriate
-        SDK version
-        """
-        if getattr(self, "_sdk_ver", None):
-            return self._sdk_ver + ".0"
-        return ""
-
-    @sdk_ver.setter
-    def sdk_ver(self, val):
-        self._sdk_ver = val
-
-    @property
-    def arch(self):
-        return self._arch
-
-    @property
-    def vcvars_ver(self):
-        return f"-vcvars_ver={self._msvc_version}"
-
-    def command_str(self):
-        script = super(VCVarsInvocation, self).command_str()
-        return f"{script} {self.arch} {self.sdk_ver} {self.vcvars_ver}"
 
 
 FC_PATH = {}
