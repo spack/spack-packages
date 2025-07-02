@@ -81,7 +81,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant("qt", default=False, description="Enable Qt (gui) support")
     variant("opengl2", default=True, description="Enable OpenGL2 backend")
     variant("examples", default=False, description="Build examples")
-    variant("hdf5", default=False, description="Use external HDF5")
+    variant("hdf5", default=False, description="Enable HDF5 support")
     variant("shared", default=True, description="Builds a shared version of the library")
     variant("kits", default=True, description="Use module kits")
     variant("pagosa", default=False, description="Build the pagosa adaptor")
@@ -521,6 +521,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 return "OFF"
             return "ON"
 
+        def define_vtk_module_from_variant(module, variant):
+            value = "YES" if variant in self.spec else "NO"
+            return self.define(f"VTK_MODULE_ENABLE_VTK_{module}", value)
         rendering = variant_bool("+opengl2", "OpenGL2", "OpenGL")
         includes = variant_bool("+development_files")
 
@@ -606,11 +609,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 ]
             )
 
-        if "+adios2" in spec:
-            cmake_args.extend(["-DPARAVIEW_ENABLE_ADIOS2:BOOL=ON"])
+        cmake_args.append(self.define_from_variant("PARAVIEW_ENABLE_ADIOS2", "adios2"))
+        cmake_args.append(self.define_from_variant("PARAVIEW_ENABLE_FIDES", "fides"))
 
-        if "+fides" in spec:
-            cmake_args.append("-DPARAVIEW_ENABLE_FIDES:BOOL=ON")
+        cmake_args.append(define_vtk_module_from_variant("HDF", "hdf5")
 
         # The assumed qt version changed to QT5 (as of paraview 5.2.1),
         # so explicitly specify which QT major version is actually being used
