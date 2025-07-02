@@ -68,9 +68,11 @@ class Nccl(MakefilePackage, CudaPackage):
 
     # Make verbs default but package like aws-ofi-nccl can be used instead which loads
     # another library to use instead at runtime.
-    values=disjoint_sets(("auto",), ("verbs",))  # supported transports
-        .with_default("verbs")
-        .with_non_feature_values("auto"),
+    variant(
+        "fabrics",
+        values=disjoint_sets(("auto",), ("verbs",))  # supported transports
+            .with_default("verbs")
+            .with_non_feature_values("auto"),
         description="List of fabrics that are enabled; " "'auto' lets nccl determine at runtime",
     )
 
