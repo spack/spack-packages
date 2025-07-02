@@ -459,7 +459,7 @@ class Hip(CMakePackage):
             numactl = self.spec["numactl"].prefix.lib
             if self.spec.satisfies("@5.6:5.7"):
                 with working_dir("hipcc/src"):
-                        filter_file(" -lnuma", f" -L{numactl} -lnuma", "hipBin_amd.h")
+                    filter_file(" -lnuma", f" -L{numactl} -lnuma", "hipBin_amd.h")
 
     def cmake_args(self):
         args = [
