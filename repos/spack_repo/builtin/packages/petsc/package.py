@@ -24,6 +24,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.23.4", sha256="711b2ad46b14f12fe74fcbc7f9b514444646f1e7b20ed57dc7482d34dfc4ca77")
+    version("3.23.3", sha256="bb51e8cbaa3782afce38c6f0bdd64d20ed090695992b7d49817518aa7e909139")
     version("3.23.2", sha256="030ec6c4e9ed885457a6155f20b6f914593a1cd960b28706521a19a9cdadd5e2")
     version("3.23.1", sha256="f729885710c3b42b818fdb525cbd7e1b8c95c1cc25139a44968aa0e7f9e75418")
     version("3.23.0", sha256="aeebd7094f4d583fd04700e73779caa7d9a3d54742e95eff2c3dd87768a79063")
@@ -858,7 +860,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 "+hypre": ["-pc_type", "hypre", "-pc_hypre_type", "boomeramg"],
                 "+mkl-pardiso": ["-pc_type", "lu", "-pc_factor_mat_solver_type", "mkl_pardiso"],
             }
-            make("ex50", parallel=False)
+            make("ex50")
             for feature, featureopts in testdict.items():
                 if not feature or feature in self.spec:
                     name = f"_{feature[1:]}" if feature else ""
@@ -876,7 +878,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
 
         w_dir = self.test_suite.current_test_cache_dir.src.ksp.ksp.tutorials
         with working_dir(w_dir):
-            make("ex7", parallel=False)
+            make("ex7")
             exeopts = [
                 "ex7",
                 "-mat_type",
@@ -903,7 +905,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
 
         w_dir = self.test_suite.current_test_cache_dir.src.snes.tutorials
         with working_dir(w_dir):
-            make("ex3k", parallel=False)
+            make("ex3k")
             exeopts = [
                 "ex3k",
                 "-view_initial",

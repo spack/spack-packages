@@ -21,6 +21,7 @@ class Actsvg(CMakePackage):
 
     license("MPL-2.0")
 
+    version("0.4.57", sha256="9bdfd8cc5169a6ba76bcb94cf2c551ed6b085100f141538f300aa205de953625")
     version("0.4.56", sha256="a850007036e992a2573e01bc32ee203bb3c146d124ec1135922272ba6a62008e")
     version("0.4.55", sha256="31a95bd12d685b2f87eac4b9e5872f9fb4add5a5b2e826a8bd727d60a0ba601f")
     version("0.4.54", sha256="204e4217936d0d6afb91f30c727e30b2a351d8ceddd9beca7550c40272a848fe")

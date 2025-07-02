@@ -1,0 +1,5 @@
+# .git-blame-ignore-revs
+# Formatted entire codebase with black 23
+45b292f8f26f2cf272065ff08587d5bdb39291f1
+# Formatted entire codebase with black 22
+b1457e0808d9f8da46a2f1ccc158c40d1ee1ae18
