@@ -71,8 +71,8 @@ class Nccl(MakefilePackage, CudaPackage):
     variant(
         "fabrics",
         values=disjoint_sets(("auto",), ("verbs",))  # supported transports
-            .with_default("verbs")
-            .with_non_feature_values("auto"),
+        .with_default("verbs")
+        .with_non_feature_values("auto"),
         description="List of fabrics that are enabled; " "'auto' lets nccl determine at runtime",
     )
 
