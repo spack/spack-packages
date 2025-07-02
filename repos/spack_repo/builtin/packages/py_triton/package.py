@@ -28,7 +28,11 @@ class PyTriton(PythonPackage):
     depends_on("cxx", type="build")  # generated
 
     with default_args(type="build"):
-        depends_on("py-setuptools@40.8:")
+        # avoid bdist_whell.dist_info_dir problems:
+        # pypa used to contain `bdist_wheel` but it is part of setuptools as of v70.1
+        # see https://github.com/pypa/wheel/pull/631
+        # and https://github.com/pypa/setuptools/pull/4684
+        depends_on("py-setuptools@40.8:70.0")
         depends_on("cmake@3.18:")
         depends_on("ninja")
 
