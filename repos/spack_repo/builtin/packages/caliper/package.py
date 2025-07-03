@@ -26,7 +26,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/LLNL/Caliper"
     git = "https://github.com/LLNL/Caliper.git"
-    url = "https://github.com/LLNL/Caliper/archive/v2.12.1.tar.gz"
+    url = "https://github.com/LLNL/Caliper/archive/v2.13.0.tar.gz"
     tags = ["e4s", "radiuss"]
 
     maintainers("daboehme", "adrienbernede")
@@ -36,11 +36,16 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.13.0", sha256="28c6e8fd940bdee9e80d1e8ae1ce0f76d6a690cbb6242d4eec115d6c0204e331")
     version("2.12.1", sha256="2b5a8f98382c94dc75cc3f4517c758eaf9a3f9cea0a8dbdc7b38506060d6955c")
     version("2.11.0", sha256="b86b733cbb73495d5f3fe06e6a9885ec77365c8aa9195e7654581180adc2217c")
     version("2.10.0", sha256="14c4fb5edd5e67808d581523b4f8f05ace8549698c0e90d84b53171a77f58565")
     version("2.9.1", sha256="4771d630de505eff9227e0ec498d0da33ae6f9c34df23cb201b56181b8759e9e")
-    version("2.9.0", sha256="507ea74be64a2dfd111b292c24c4f55f459257528ba51a5242313fa50978371f")
+    version(
+        "2.9.0", 
+        sha256="507ea74be64a2dfd111b292c24c4f55f459257528ba51a5242313fa50978371f",
+        deprecated=True,
+    )
     version(
         "2.8.0",
         sha256="17807b364b5ac4b05997ead41bd173e773f9a26ff573ff2fe61e0e70eab496e4",
