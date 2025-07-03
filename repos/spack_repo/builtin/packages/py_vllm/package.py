@@ -22,8 +22,7 @@ class PyVllm(PythonPackage, CudaPackage):
 
     version("main", branch="main")
     version(
-        "0.8.5.post1",
-        sha256="5e5be78ee00637de4ee29f75ce86edc6c224c05d9e58d067a511eb83c3afe32d",
+        "0.8.5.post1", sha256="5e5be78ee00637de4ee29f75ce86edc6c224c05d9e58d067a511eb83c3afe32d",
     )
 
     with default_args(when="@0.8.5.post1"):

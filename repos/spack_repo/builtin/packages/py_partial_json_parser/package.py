@@ -14,6 +14,8 @@ class PyPartialJsonParser(PythonPackage):
 
     license("MIT")
 
-    version("0.2.1.1.post6", sha256="43896b68929678224cbbe4884a6a5fe9251ded4b30b8b7d7eb569e5feea93afc")
+    version(
+        "0.2.1.1.post6", sha256="43896b68929678224cbbe4884a6a5fe9251ded4b30b8b7d7eb569e5feea93afc"
+    )
 
     depends_on("py-pdm-backend", type="build")

@@ -14,10 +14,7 @@ class PyLlguidance(PythonPackage):
 
     license("MIT")
 
-    version(
-        "0.7.30",
-        sha256="e93bf75f2b6e48afb86a5cee23038746975e1654672bf5ba0ae75f7d4d4a2248",
-    )
+    version("0.7.30", sha256="e93bf75f2b6e48afb86a5cee23038746975e1654672bf5ba0ae75f7d4d4a2248")
 
     depends_on("py-maturin@1.0.0:", type="build")
     conflicts("py-maturin ^ rust@1.85.0:")

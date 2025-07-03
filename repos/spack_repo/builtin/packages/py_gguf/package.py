@@ -14,10 +14,7 @@ class PyGguf(PythonPackage):
 
     license("MIT")
 
-    version(
-        "0.17.1",
-        sha256="36ad71aad900a3e75fc94ebe96ea6029f03a4e44be7627ef7ad3d03e8c7bcb53",
-    )
+    version("0.17.1", sha256="36ad71aad900a3e75fc94ebe96ea6029f03a4e44be7627ef7ad3d03e8c7bcb53")
 
     depends_on("py-poetry-core", type="build")
     depends_on("py-numpy@1.17:", type=["build", "run"])
