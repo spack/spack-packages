@@ -36,6 +36,10 @@ spack:
       require:
       - '@5.7.1 +rocm'
       - target=x86_64_v3
+    py-iminuit:
+      require:
+      - '@2.22:'
+      - target=x86_64_v3
     rivet:
       require:
       - hepmc=3
