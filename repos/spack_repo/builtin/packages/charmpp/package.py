@@ -114,9 +114,7 @@ class Charmpp(Package):
 
     # Applies only to versions 8.0.0 and later
     variant(
-        "fortran",
-        default=True,
-        description="Enable Fortran support (false applies only to @8:)"
+        "fortran", default=True, description="Enable Fortran support (false applies only to @8:)"
     )
 
     depends_on("c", type="build")  # generated
