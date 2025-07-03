@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class PyMsgspec(PythonPackage):
-    """A fast serialization and validation library, with builtin support for JSON, MessagePack, YAML, and TOML."""
+    """A fast serialization and validation library, with builtin support
+    for JSON, MessagePack, YAML, and TOML."""
 
     pypi = "msgspec/msgspec-0.19.0.tar.gz"
 

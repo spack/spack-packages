@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PyGguf(PythonPackage):
-    """This is a Python package for writing binary files in the GGUF (GGML Universal File) format."""
+    """Writing binary files in the GGUF (GGML Universal File) format."""
 
     pypi = "gguf/gguf-0.17.1.tar.gz"
 
