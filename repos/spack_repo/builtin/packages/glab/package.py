@@ -17,6 +17,7 @@ class Glab(GoPackage):
 
     license("MIT")
 
+    version("1.59.2", sha256="d14bdbcfc39410caa2c9011fad4929f4c123ff2a5f14f7b4b87d792b11a7cd19")
     version("1.58.0", sha256="6c41765ffbb8adbe210fe44f759db89cdafe4b98cdd692be2986b7454fc476c5")
     version("1.57.0", sha256="b0c3333c7160a9d95ec820ceadd4636fe7760b19a23bc8957337812b191c03dd")
     version("1.55.0", sha256="21f58698b92035461e8e8ba9040429f4b5a0f6d528d8333834ef522a973384c8")
