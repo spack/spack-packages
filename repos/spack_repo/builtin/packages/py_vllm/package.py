@@ -46,7 +46,7 @@ class PyVllm(PythonPackage, CudaPackage):
         depends_on("py-wheel")
         depends_on("py-jinja2")
     
-    with default_args(type=type=["build", "run"]):
+    with default_args(type=["build", "run"]):
         depends_on("py-regex")
         depends_on("py-torch+custom-protobuf")
 
