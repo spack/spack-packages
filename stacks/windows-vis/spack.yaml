@@ -13,6 +13,7 @@ spack:
   - "boost"
   - "netlib-lapack"
   - "py-beautifulsoup4"
+  - "qt"
 
   cdash:
     build-group: Windows Visualization (Kitware)
