@@ -4,6 +4,7 @@
 
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
+
 from spack.package import *
 
 
@@ -12,6 +13,7 @@ class SmokeTest(BundlePackage):
 
     Note: This package requires that the builtin repo is also in the python path
     """
+
     homepage = "https://www.spack.io"
 
     maintainers("kwryankrattiger")
@@ -21,8 +23,8 @@ class SmokeTest(BundlePackage):
 
     version("0.1.0")
 
-    def install(self):
+    def install(self, *args):
         """This install method always fails. This ensures there is never a binary cache
-            created so this package is guarenteed to rebuild in CI
+        created so this package is guarenteed to rebuild in CI
         """
-        exit(1)
+        raise InstallError("smoke-test")
