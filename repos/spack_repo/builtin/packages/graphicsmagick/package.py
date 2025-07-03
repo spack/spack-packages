@@ -33,7 +33,7 @@ class Graphicsmagick(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("bzip2")
-    depends_on("ghostscript")
+    depends_on("ghostscript+gtk")
     depends_on("ghostscript-fonts")
     depends_on("graphviz")
     depends_on("jasper")

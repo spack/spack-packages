@@ -1,4 +1,6 @@
 ci:
   pipeline-gen:
   - build-job:
+      variables:
+        SPACK_CI_TARGET: neoverse_v1
       tags: ["aarch64", "neoverse_v1"]

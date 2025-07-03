@@ -25,6 +25,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("main", branch="main")
+    version("3.23.2", sha256="3060a95692151ef0f9ba4ca11da18d5dcd86697b59f6aeee723de92d7bd465a1")
     version("3.23.1", sha256="c2fde066521bbccfbc80aa15182bca69ffaf00a7de648459fd04b81589896238")
     version("3.23.0", sha256="78252f7b2f540c5fdadadee0fd21f3e6eff810f82cb45482f327b524c8db63d0")
     version("3.22.2", sha256="b60e58b2fa5eb7db05ce5e3a585811b43b1cc7cf89c32266e37b05f0cefd8899")

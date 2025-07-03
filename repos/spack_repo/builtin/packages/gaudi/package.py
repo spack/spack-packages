@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import sys
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
@@ -139,7 +137,7 @@ class Gaudi(CMakePackage, CudaPackage):
 
     # Testing dependencies
     # Note: gaudi only builds examples when testing enabled
-    for pv in (["catch2", "@36.8:"], ["py-nose", "@35:"], ["py-pytest", "@36.2:"]):
+    for pv in (["catch2", "@36.8:"], ["py-nose", "@35:37"], ["py-pytest", "@36.2:"]):
         depends_on(pv[0], when=pv[1], type="test")
         depends_on(pv[0], when=pv[1] + " +examples")
 
@@ -147,8 +145,6 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("cppunit", when="+cppunit")
     depends_on("doxygen +graphviz", when="+docs")
     depends_on("gperftools", when="+gperftools")
-    # gdb is optional, but useful to have as gaudi adds hooks for it if present during build
-    depends_on("gdb", when=sys.platform != "darwin")
     depends_on("heppdt", when="+heppdt")
     depends_on("jemalloc", when="+jemalloc")
     depends_on("libunwind", when="+unwind")
