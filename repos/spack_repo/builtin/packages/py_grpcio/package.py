@@ -58,6 +58,10 @@ class PyGrpcio(PythonPackage):
         # Released 6ish years ago and does not install for python 3.8 with gcc11
     )
 
+    # Spack's re2 causes crashes, even pinned with the same version
+    # https://github.com/spack/spack/issues/49338
+    variant("internal-re2", default=True, description="Use internal re2")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -82,7 +86,7 @@ class PyGrpcio(PythonPackage):
     depends_on("openssl")
     depends_on("zlib-api")
     depends_on("c-ares")
-    depends_on("re2+shared")
+    depends_on("re2+shared", when="~internal-re2")
 
     patch("30522.diff", when="@1.48")  # https://github.com/grpc/grpc/issues/30372
 
@@ -91,7 +95,8 @@ class PyGrpcio(PythonPackage):
         env.set("GRPC_PYTHON_BUILD_SYSTEM_OPENSSL", "True")
         env.set("GRPC_PYTHON_BUILD_SYSTEM_ZLIB", "True")
         env.set("GRPC_PYTHON_BUILD_SYSTEM_CARES", "True")
-        env.set("GRPC_PYTHON_BUILD_SYSTEM_RE2", "True")
+        if "~internal-re2" in self.spec:
+            env.set("GRPC_PYTHON_BUILD_SYSTEM_RE2", "True")
         # https://github.com/grpc/grpc/pull/24449
         env.set("GRPC_BUILD_WITH_BORING_SSL_ASM", "")
         env.set("GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS", str(make_jobs))
@@ -122,8 +127,9 @@ class PyGrpcio(PythonPackage):
             r"\1('{0}',)".format(self.spec["c-ares"].prefix.include),
             "setup.py",
         )
-        filter_file(
-            r"(\s+RE2_INCLUDE = ).*",
-            r"\1('{0}',)".format(self.spec["re2"].prefix.include),
-            "setup.py",
-        )
+        if "~internal-re2" in self.spec:
+            filter_file(
+                r"(\s+RE2_INCLUDE = ).*",
+                r"\1('{0}',)".format(self.spec["re2"].prefix.include),
+                "setup.py",
+            )
