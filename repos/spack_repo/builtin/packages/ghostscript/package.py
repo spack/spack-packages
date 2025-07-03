@@ -62,6 +62,7 @@ class Ghostscript(AutotoolsPackage):
 
     # https://www.ghostscript.com/ocr.html
     variant("tesseract", default=False, description="Use the Tesseract library for OCR")
+    variant("gtk", default=True, description="Enable gtk+ device for screen output")
 
     depends_on("c", type="build")
 
@@ -77,7 +78,9 @@ class Ghostscript(AutotoolsPackage):
     depends_on("libx11")
     depends_on("libxt")
     depends_on("libxext")
-    depends_on("gtkplus")
+    depends_on("gtkplus", type="link", when="+gtk")
+    depends_on("dbus", type="link")
+    depends_on("libiconv", type="link")
 
     # https://www.ghostscript.com/doc/9.53.0/News.htm
     conflicts("+tesseract", when="@:9.52", msg="Tesseract OCR engine added in 9.53.0")
@@ -144,6 +147,9 @@ class Ghostscript(AutotoolsPackage):
                 args.append("--disable-hidden-visibility")
         else:
             args.append("--disable-dynamic")
+
+        args.extend(self.enable_or_disable("gtk"))
+        args.append("--with-libiconv=gnu")
 
         return args
 

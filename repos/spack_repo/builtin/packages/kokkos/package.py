@@ -82,71 +82,85 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "3.7.01",
         sha256="0481b24893d1bcc808ec68af1d56ef09b82a1138a1226d6be27c3b3c3da65ceb",
         url="https://github.com/kokkos/kokkos/archive/3.7.01.tar.gz",
+        deprecated=True,
     )
     version(
         "3.7.00",
         sha256="62e3f9f51c798998f6493ed36463f66e49723966286ef70a9dcba329b8443040",
         url="https://github.com/kokkos/kokkos/archive/3.7.00.tar.gz",
+        deprecated=True,
     )
     version(
         "3.6.01",
         sha256="1b80a70c5d641da9fefbbb652e857d7c7a76a0ebad1f477c253853e209deb8db",
         url="https://github.com/kokkos/kokkos/archive/3.6.01.tar.gz",
+        deprecated=True,
     )
     version(
         "3.6.00",
         sha256="53b11fffb53c5d48da5418893ac7bc814ca2fde9c86074bdfeaa967598c918f4",
         url="https://github.com/kokkos/kokkos/archive/3.6.00.tar.gz",
+        deprecated=True,
     )
     version(
         "3.5.00",
         sha256="748f06aed63b1e77e3653cd2f896ef0d2c64cb2e2d896d9e5a57fec3ff0244ff",
         url="https://github.com/kokkos/kokkos/archive/3.5.00.tar.gz",
+        deprecated=True,
     )
     version(
         "3.4.01",
         sha256="146d5e233228e75ef59ca497e8f5872d9b272cb93e8e9cdfe05ad34a23f483d1",
         url="https://github.com/kokkos/kokkos/archive/3.4.01.tar.gz",
+        deprecated=True,
     )
     version(
         "3.4.00",
         sha256="2e4438f9e4767442d8a55e65d000cc9cde92277d415ab4913a96cd3ad901d317",
         url="https://github.com/kokkos/kokkos/archive/3.4.00.tar.gz",
+        deprecated=True,
     )
     version(
         "3.3.01",
         sha256="4919b00bb7b6eb80f6c335a32f98ebe262229d82e72d3bae6dd91aaf3d234c37",
         url="https://github.com/kokkos/kokkos/archive/3.3.01.tar.gz",
+        deprecated=True,
     )
     version(
         "3.3.00",
         sha256="170b9deaa1943185e928f8fcb812cd4593a07ed7d220607467e8f0419e147295",
         url="https://github.com/kokkos/kokkos/archive/3.3.00.tar.gz",
+        deprecated=True,
     )
     version(
         "3.2.01",
         sha256="9e27a3d8f81559845e190d60f277d84d6f558412a3df3301d9545e91373bcaf1",
         url="https://github.com/kokkos/kokkos/archive/3.2.01.tar.gz",
+        deprecated=True,
     )
     version(
         "3.2.00",
         sha256="05e1b4dd1ef383ca56fe577913e1ff31614764e65de6d6f2a163b2bddb60b3e9",
         url="https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz",
+        deprecated=True,
     )
     version(
         "3.1.01",
         sha256="ff5024ebe8570887d00246e2793667e0d796b08c77a8227fe271127d36eec9dd",
         url="https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz",
+        deprecated=True,
     )
     version(
         "3.1.00",
         sha256="b935c9b780e7330bcb80809992caa2b66fd387e3a1c261c955d622dae857d878",
         url="https://github.com/kokkos/kokkos/archive/3.1.00.tar.gz",
+        deprecated=True,
     )
     version(
         "3.0.00",
         sha256="c00613d0194a4fbd0726719bbed8b0404ed06275f310189b3493f5739042a92b",
         url="https://github.com/kokkos/kokkos/archive/3.0.00.tar.gz",
+        deprecated=True,
     )
 
     depends_on("c", type="build")
@@ -183,23 +197,24 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     }
 
     options_variants = {
-        "aggressive_vectorization": [False, "Aggressively vectorize loops"],
-        "compiler_warnings": [False, "Print all compiler warnings"],
-        "complex_align": [True, "Align complex numbers"],
-        "cuda_constexpr": [False, "Activate experimental constexpr features"],
-        "cuda_lambda": [False, "Activate experimental lambda features"],
-        "cuda_ldg_intrinsic": [False, "Use CUDA LDG intrinsics"],
-        "cuda_relocatable_device_code": [False, "Enable RDC for CUDA"],
-        "hip_relocatable_device_code": [False, "Enable RDC for HIP"],
-        "cuda_uvm": [False, "Enable unified virtual memory (UVM) for CUDA"],
-        "debug": [False, "Activate extra debug features - may increase compiletimes"],
-        "debug_bounds_check": [False, "Use bounds checking - will increase runtime"],
-        "debug_dualview_modify_check": [False, "Debug check on dual views"],
-        "deprecated_code": [False, "Whether to enable deprecated code"],
-        "examples": [False, "Whether to build examples"],
-        "hpx_async_dispatch": [False, "Whether HPX supports asynchronous dispath"],
-        "tuning": [False, "Create bindings for tuning tools"],
-        "tests": [False, "Build for tests"],
+        "aggressive_vectorization": [False, None, "Aggressively vectorize loops"],
+        "compiler_warnings": [False, None, "Print all compiler warnings"],
+        "complex_align": [True, None, "Align complex numbers"],
+        "cuda_constexpr": [False, "+cuda", "Activate experimental constexpr features"],
+        "cuda_lambda": [False, "+cuda", "Activate experimental lambda features"],
+        "cuda_ldg_intrinsic": [False, "+cuda", "Use CUDA LDG intrinsics"],
+        "cuda_relocatable_device_code": [False, "+cuda", "Enable RDC for CUDA"],
+        "hip_relocatable_device_code": [False, None, "Enable RDC for HIP"],
+        "sycl_relocatable_device_code": [False, "@4.5: +sycl", "Enable RDC for SYCL"],
+        "cuda_uvm": [False, "+cuda", "Enable unified virtual memory (UVM) for CUDA"],
+        "debug": [False, None, "Activate extra debug features - may increase compiletimes"],
+        "debug_bounds_check": [False, None, "Use bounds checking - will increase runtime"],
+        "debug_dualview_modify_check": [False, None, "Debug check on dual views"],
+        "deprecated_code": [False, None, "Whether to enable deprecated code"],
+        "examples": [False, None, "Whether to build examples"],
+        "hpx_async_dispatch": [False, None, "Whether HPX supports asynchronous dispath"],
+        "tuning": [False, None, "Create bindings for tuning tools"],
+        "tests": [False, None, "Build for tests"],
     }
 
     spack_micro_arch_map = {
@@ -318,8 +333,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
 
-    for opt, (dflt, desc) in options_variants.items():
-        variant(opt, default=dflt, description=desc, when=("+cuda" if "cuda" in opt else None))
+    for opt, (dflt, when, desc) in options_variants.items():
+        variant(opt, default=dflt, description=desc, when=when)
 
     for tpl, (dflt, desc) in tpls_variants.items():
         variant(tpl, default=dflt, description=desc)
@@ -382,6 +397,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("shared", default=True, description="Build shared libraries")
+    for backend_name in ("cuda", "hip", "sycl"):
+        conflicts("+shared", when=f"+{backend_name}_relocatable_device_code")
 
     # Filter spack-generated files that may include links to the
     # spack compiler wrappers

@@ -1,10 +1,23 @@
 spack:
   view: false
+  include:
+  - $CI_PROJECT_DIR/.ci/gitlab/
+
   packages:
     all:
       target: ["x86_64_v3"]
       require:
       - target=x86_64_v3
+    c:
+      require:
+      - gcc@11
+    cxx:
+      require:
+      - gcc@11
+    fortran:
+      require:
+        - gcc@11
+
     cmake:
       variants: ~ownlibs
     ecp-data-vis-sdk:
@@ -39,9 +52,8 @@ spack:
       - "@3.4.1"
       - target=x86_64_v3
 
-
   concretizer:
-    unify: when_possible
+    unify: false
 
   definitions:
   - paraview_specs:
