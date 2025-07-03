@@ -1,5 +1,9 @@
 spack:
   view: false
+
+  include:
+  - $CI_PROJECT_DIR/.ci/gitlab/
+
   packages:
     all:
       target: ["aarch64"]

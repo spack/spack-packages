@@ -22,6 +22,7 @@ class Fairmq(CMakePackage):
         # depends on the git metadata, see also
         # https://github.com/spack/spack/issues/19972
         # https://github.com/spack/spack/issues/14344
+        version("1.9.2", tag="v1.9.2", commit="24e7a5b8d01aa30c51820f67c13a2cb7bc1ac7da")
         version("1.9.1", tag="v1.9.1", commit="c11506e95878a39837c5af92dc99b4a1248c13ac")
         version("1.8.1", tag="v1.8.1", commit="961eca52761a31a0200c567b44e2b2d6d6e50df3")
         version("1.7.0", tag="v1.7.0", commit="d1c99f7e150c1177dc1cab1b2adc16475cade24e")
