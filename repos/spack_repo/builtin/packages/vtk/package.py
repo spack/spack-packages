@@ -26,10 +26,12 @@ class Vtk(CMakePackage):
     license("BSD-3-Clause")
 
     version(
-        "9.4.1",
-        sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529",
+        "9.5.0",
+        sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d",
         preferred=True,
     )
+
+    version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
     version("9.3.1", sha256="8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
     version("9.2.6", sha256="06fc8d49c4e56f498c40fcb38a563ed8d4ec31358d0101e8988f0bb4d539dd12")
     version("9.2.2", sha256="1c5b0a2be71fac96ff4831af69e350f7a0ea3168981f790c000709dcf9121075")
@@ -250,14 +252,14 @@ class Vtk(CMakePackage):
     patch(
         "https://gitlab.kitware.com/vtk/vtk/-/commit/00afe3ae0def6c2d0a6f7cb497c8d55874127820.diff",
         sha256="1e5fb55b14ba6455a1891d27aa4a0506f47e3155014af06f97633ae1ef6e9cc2",
-        when="@9.4:",
+        when="@9.4",
     )
 
     # Needed to build VTK with external SEACAS.
     patch(
         "https://gitlab.kitware.com/vtk/vtk/-/commit/e98526813691e527fff7d5df6a1641ae36c0cf4f.diff",
         sha256="174930dde06828ead84c68b1a192202766f6297a60f0c54eef6cab2605a466ef",
-        when="@9.4:",
+        when="@9.4",
     )
 
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
