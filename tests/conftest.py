@@ -3,50 +3,24 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import collections
-import datetime
-import email.message
 import errno
-import functools
-import inspect
-import io
-import itertools
-import json
 import os
 import pathlib
-import re
 import shutil
 import stat
 import sys
-import tempfile
-import xml.etree.ElementTree
 
 import _vendoring.archspec.cpu
-import _vendoring.archspec.cpu.microarchitecture
-import _vendoring.archspec.cpu.schema
-import py
 import pytest
 
-import llnl.util.lang
-import llnl.util.lock
-import llnl.util.tty as tty
-from llnl.util.filesystem import (
-    copy,
-    copy_tree,
-    join_path,
-    mkdirp,
-    remove_linked_tree,
-    touchp,
-    working_dir,
-)
+from llnl.util.filesystem import copy_tree, mkdirp, remove_linked_tree, touchp
 
-import spack.binary_distribution
 import spack.bootstrap.core
 import spack.caches
 import spack.compilers.config
 import spack.compilers.libraries
 import spack.concretize
 import spack.config
-import spack.directives_meta
 import spack.environment as ev
 import spack.error
 import spack.modules.common
@@ -64,16 +38,9 @@ import spack.util.file_cache
 import spack.util.git
 import spack.util.gpg
 import spack.util.parallel
-import spack.util.spack_yaml as syaml
-import spack.util.url as url_util
 import spack.util.web
-import spack.version
 from spack.enums import ConfigScopePriority
-from spack.fetch_strategy import URLFetchStrategy
 from spack.installer import PackageInstaller
-from spack.main import SpackCommand
-from spack.util.pattern import Bunch
-from spack.util.remote_file_cache import raw_github_gitlab_url
 
 
 @pytest.fixture(autouse=True)

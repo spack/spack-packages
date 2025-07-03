@@ -22,15 +22,18 @@ class PyMelissaCore(PythonPackage, CudaPackage):
 
     license("BSD-3-Clause")
 
-    version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd", preferred=True)
+    version(
+        "2.0.0",
+        sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
+        preferred=True,
+    )
     version("develop", branch="develop")
 
-    # ====================================DEPRECATED VERSIONS=========================================
+    # DEPRECATED VERSIONS
     version(
         "joss", tag="JOSS_v2", commit="20bbe68c1a7b73aa2ea3ad35681c332c7a5fc516", deprecated=True
     )
     version("sc23", tag="SC23", commit="8bb5b6817d4abe4eaa5893552d711150e53535f3", deprecated=True)
-    # ================================================================================================
 
     # define variants for the deep learning server (torch, tf)
     variant(
