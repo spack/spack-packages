@@ -26,14 +26,14 @@ class PyVllm(PythonPackage, CudaPackage):
         sha256="5e5be78ee00637de4ee29f75ce86edc6c224c05d9e58d067a511eb83c3afe32d",
     )
 
-    with default_args(when="@0.8.5.post1", type=["run"]):
-        depends_on("py-torch@2.6.0")
-        depends_on("py-torchaudio@2.6.0")
-        depends_on("py-torchvision@0.21.0")
-        depends_on("py-triron@:3.2.0")
-        depends_on("py-xgrammar@0.1.18")
-        depends_on("py-numba@0.61.2")
-        depends_on("py-llguidance@0.7.11:0.7.30")
+    with default_args(when="@0.8.5.post1"):
+        depends_on("py-torch@2.6.0", type=["build", "run"])
+        depends_on("py-torchaudio@2.6.0", type=["run"])
+        depends_on("py-torchvision@0.21.0", type=["run"])
+        depends_on("py-triron@2.1.0:3.2.0", type=["run"])
+        depends_on("py-xgrammar@0.1.18", type=["run"])
+        depends_on("py-numba@0.61.2", type=["run"])
+        depends_on("py-llguidance@0.7.11:0.7.30", type=["run"])
 
     with default_args(type="build"):
         depends_on("c")
