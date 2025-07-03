@@ -4,6 +4,7 @@
 
 # dlaf-no-license-check
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
+
 from spack.package import *
 
 
