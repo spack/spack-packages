@@ -28,6 +28,7 @@ class Multicharge(CMakePackage, MesonPackage):
 
     variant("openmp", default=True, description="Enable OpenMP support")
 
+    depends_on("fortran", type="build")
     depends_on("lapack")
     depends_on("mctc-lib build_system=cmake", when="build_system=cmake")
     depends_on("mctc-lib build_system=meson", when="build_system=meson")

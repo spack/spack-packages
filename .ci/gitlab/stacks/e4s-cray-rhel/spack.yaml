@@ -1,13 +1,11 @@
 spack:
-  include:
-  - $spack/share/spack/gitlab/cloud_pipelines/configs/linux/ci.yaml
-
   view: false
+
+  include:
+  - $CI_PROJECT_DIR/.ci/gitlab/
 
   concretizer:
     static_analysis: true
-    reuse: false
-    unify: false
 
   config:
     shared_linking:
@@ -69,7 +67,7 @@ spack:
     mgard:
       require:
         - target=x86_64_v3
-        - "@2023-01-10:"
+        - "@compat-2023-01-10:"
     mpich:
       variants: ~wrapperrpath
     paraview:

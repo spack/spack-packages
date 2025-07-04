@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Grid(AutotoolsPackage):
+class Grid(AutotoolsPackage, CudaPackage, ROCmPackage):
     """Data parallel C++ mathematical object library."""
 
     homepage = "https://github.com/paboyle/Grid"
@@ -45,6 +47,37 @@ class Grid(AutotoolsPackage):
     )
     variant("timers", default=True, description="System dependent high-resolution timers")
     variant("chroma", default=False, description="Chroma regression tests")
+    variant("gparity", default=True, description="Build with gparity support")
+    variant(
+        "fermion-reps", default=True, description="Build non-fundamental fermion representations"
+    )
+    variant("Sp", default=True, description="Build with support for symplectic gauge groups")
+    variant(
+        "Nc",
+        default="3",
+        values=("2", "3", "4", "5", "8"),
+        description="Instantiate for this number of colours",
+    )
+    variant(
+        "alloc-align", default="2MB", values=("4k", "2MB"), description="Grid allocator alignment"
+    )
+    variant("unified-device-memory", default=False, description="Enable unified device memory")
+    variant(
+        "shared-memory",
+        default="no",
+        values=("shmopen", "shmget", "hugetlbfs", "nvlink", "no"),
+        description="Interprocess shared memory allocation technique",
+    )
+    variant("accelerator-aware-mpi", default=False, description="Build with GPU aware MPI")
+    variant(
+        "tracing",
+        default="none",
+        values=("none", "nvtx", "roctx", "timer"),
+        description="Enable tracing",
+    )
+
+    # Prefer 4 colours by default when enabling Sp.
+    requires("Nc=4", "Nc=5", "Nc=8", "Nc=2", "Nc=3", "@:", when="+Sp", policy="any_of")
 
     depends_on("cxx", type="build")  # generated
 
@@ -70,12 +103,91 @@ class Grid(AutotoolsPackage):
 
     depends_on("doxygen", type="build", when="+doxygen-doc")
 
+    conflicts(
+        "+cuda",
+        when="+rocm",
+        msg="CUDA / ROCm are mututally exclusive. At most 1 GPU platform can be configured",
+    )
+    conflicts("+cuda", when="platform=darwin", msg="There is no GPU support for macOS")
+    conflicts(
+        "cuda_arch=none",
+        when="+cuda",
+        msg="Must specify CUDA compute capabilities of your GPU, see https://developer.nvidia.com/cuda-gpus",
+    )
+    conflicts(
+        "+accelerator-aware-mpi",
+        when="-cuda -rocm",
+        msg="Cannot compile for GPU-aware MPI when not compiling for GPU",
+    )
+    conflicts(
+        "shared-memory=nvlink",
+        when="-cuda -rocm",
+        msg="Cannot compile with nvlink when not compiling for GPU",
+    )
+
     def autoreconf(self, spec, prefix):
         Executable("./bootstrap.sh")()
 
+    def setup_build_environment(self, env):
+        spec = self.spec
+        env.set("CXXFLAGS", self.compiler.cxx17_flag)
+
+        if spec.satisfies("+cuda"):
+            arch_config = ",".join(
+                f"arch=compute_{arch},code=sm_{arch}" for arch in spec.variants["cuda_arch"].value
+            )
+            if "comms=none" in spec:
+                host_compiler = ""
+            else:
+                host_compiler = f"-ccbin {spec['mpi'].mpicxx}"
+            env.set("CXX", join_path(spec["cuda"].prefix, "bin", "nvcc"))
+            env.append_flags("CXXFLAGS", f"-gencode {arch_config} -cudart shared {host_compiler}")
+            env.set("LDFLAGS", "-cudart shared -lcublas")
+        elif spec.satisfies("+rocm"):
+            archs = ",".join(self.spec.variants["amdgpu_target"].value)
+            if "comms=none" in spec:
+                mpi_include = ""
+                mpi_ldflags = ""
+            else:
+                mpi_include = spec["mpi"].headers.cpp_flags
+                mpi_ldflags = f"{spec['mpi'].libs.ld_flags} -lmpi"
+            env.set("CXX", join_path(spec["hip"].prefix, "bin", "hipcc"))
+            env.set("LDFLAGS", f"{mpi_ldflags} -lamdhip64")
+            env.append_flags(
+                "CXXFLAGS", f"--offload-arch={archs} {spec['hip'].headers.cpp_flags} {mpi_include}"
+            )
+        else:
+            if "comms=none" not in spec:
+                env.append_flags("CXXFLAGS", "-fPIC")
+                # The build system can easily get very confused about MPI support
+                # and what linker to use.  In many case it'd end up building the
+                # code with support for MPI but without using `mpicxx` or linking to
+                # `-lmpi`, wreaking havoc.  Forcing `CXX` to be mpicxx should help.
+                env.set("CC", spec["mpi"].mpicc)
+                env.set("CXX", spec["mpi"].mpicxx)
+
+        if spec.satisfies("+lapack") and not spec.satisfies("^intel-mkl"):
+            # lapack is searched only as `-llapack`, so anything else
+            # wouldn't be found, causing an error.
+            env.set("LIBS", self.spec["lapack"].libs.ld_flags)
+
     def configure_args(self):
         spec = self.spec
-        args = ["--with-gmp", "--with-mpfr"]
+        args = []
+
+        args.append(f"--with-gmp={self.spec['gmp'].prefix}")
+        args.append(f"--with-mpfr={self.spec['mpfr'].prefix}")
+
+        args.extend(self.enable_or_disable("gparity"))
+        args.extend(self.enable_or_disable("accelerator-aware-mpi"))
+        args.extend(self.enable_or_disable("fermion-reps"))
+        args.extend(self.enable_or_disable("Sp"))
+        args.extend(self.enable_or_disable("unified", variant="unified-device-memory"))
+
+        args.append(f"--enable-tracing={spec.variants['tracing'].value}")
+        args.append(f"--enable-Nc={spec.variants['Nc'].value}")
+        args.append(f"--enable-alloc-align={spec.variants['alloc-align'].value}")
+        args.append(f"--enable-shm={spec.variants['shared-memory'].value}")
 
         if spec.satisfies("^[virtuals=lapack] intel-oneapi-mkl") or spec.satisfies(
             "^[virtuals=fftw-api] intel-oneapi-mkl"
@@ -86,45 +198,47 @@ class Grid(AutotoolsPackage):
                 args.append(f"--with-fftw={self.spec['fftw-api'].prefix}")
             if spec.satisfies("+lapack"):
                 args.append(f"--enable-lapack={self.spec['lapack'].prefix}")
-                # lapack is searched only as `-llapack`, so anything else
-                # wouldn't be found, causing an error.
-                args.append(f"LIBS={self.spec['lapack'].libs.ld_flags}")
-
-        if "comms=none" not in spec:
-            # The build system can easily get very confused about MPI support
-            # and what linker to use.  In many case it'd end up building the
-            # code with support for MPI but without using `mpicxx` or linking to
-            # `-lmpi`, wreaking havoc.  Forcing `CXX` to be mpicxx should help.
-            args.extend([f"CC={spec['mpi'].mpicc}", f"CXX={spec['mpi'].mpicxx}"])
 
         args += self.enable_or_disable("timers")
         args += self.enable_or_disable("chroma")
         args += self.enable_or_disable("doxygen-doc")
 
-        if "avx512" in spec.target:
-            args.append("--enable-simd=AVX512")
-        elif "avx2" in spec.target:
-            args.append("--enable-simd=AVX2")
-        elif "avx" in spec.target:
-            if "fma4" in spec.target:
-                args.append("--enable-simd=AVXFMA4")
-            elif "fma" in spec.target:
-                args.append("--enable-simd=AVXFMA")
-            else:
-                args.append("--enable-simd=AVX")
-        elif "sse4_2" in spec.target:
-            args.append("--enable-simd=SSE4")
-        elif spec.target == "a64fx":
-            args.append("--enable-simd=A64FX")
-        elif "neon" in spec.target:
-            args.append("--enable-simd=NEONv8")
+        # TODO: Add sycl support
+        if spec.satisfies("+cuda") or spec.satisfies("+rocm"):
+            args.append("--enable-simd=GPU")
+            args.append(f"--enable-gen-simd-width={spec.variants['gen-simd-width'].value}")
+            if spec.satisfies("+cuda"):
+                args.append("--enable-accelerator=cuda")
+
+            elif spec.satisfies("+rocm"):
+                args.append("--enable-accelerator=hip")
+
         else:
-            args.extend(
-                [
-                    "--enable-simd=GEN",
-                    f"--enable-gen-simd-width={spec.variants['gen-simd-width'].value}",
-                ]
-            )
+            if "avx512" in spec.target:
+                args.extend(["--enable-simd=AVX512", "--enable-gen-simd-width=64"])
+            elif "avx2" in spec.target:
+                args.extend(["--enable-simd=AVX2", "--enable-gen-simd-width=32"])
+            elif "avx" in spec.target:
+                if "fma4" in spec.target:
+                    args.append("--enable-simd=AVXFMA4")
+                elif "fma" in spec.target:
+                    args.append("--enable-simd=AVXFMA")
+                else:
+                    args.append("--enable-simd=AVX")
+                args.append("--enable-gen-simd-width=16")
+            elif "sse4_2" in spec.target:
+                args.extend(["--enable-simd=SSE4", "--enable-gen-simd-width=16"])
+            elif spec.target == "a64fx":
+                args.extend(["--enable-simd=A64FX", "--enable-gen-simd-width=64"])
+            elif "neon" in spec.target:
+                args.extend(["--enable-simd=NEONv8", "--enable-gen-simd-width=16"])
+            else:
+                args.extend(
+                    [
+                        "--enable-simd=GEN",
+                        f"--enable-gen-simd-width={spec.variants['gen-simd-width'].value}",
+                    ]
+                )
 
         args.append(f"--enable-comms={spec.variants['comms'].value}")
         args.append(f"--enable-rng={spec.variants['rng'].value}")

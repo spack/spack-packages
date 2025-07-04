@@ -1,0 +1,44 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b9e660fbfd2..06ccb802a9b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -692,7 +692,7 @@ endif()
+
+ # SIRIUS
+ if(CP2K_USE_SIRIUS)
+-  find_package(sirius REQUIRED)
++  find_package(sirius 7.7.0 REQUIRED)
+ endif()
+
+ if(CP2K_USE_PLUMED)
+diff --git a/src/sirius_interface.F b/src/sirius_interface.F
+index f6dc257c5d4..a84223d2433 100644
+--- a/src/sirius_interface.F
++++ b/src/sirius_interface.F
+@@ -145,7 +145,7 @@ SUBROUTINE cp_sirius_create_env(pwdft_env)
+                                                             magnetization, mass, pf, rl, zeff, alpha_u, beta_u, &
+                                                             J0_u, J_u, U_u, occ_u, u_minus_J
+       REAL(KIND=dp), ALLOCATABLE, DIMENSION(:)           :: beta, corden, ef, fe, locpot, rc, rp
+-      REAL(KIND=dp), DIMENSION(3)                        :: vr, vs
++      REAL(KIND=dp), DIMENSION(3)                        :: vr, vs, j_t
+       REAL(KIND=dp), DIMENSION(:), POINTER               :: density
+       REAL(KIND=dp), DIMENSION(:, :), POINTER            :: wavefunction, wfninfo
+       TYPE(atom_gthpot_type), POINTER                    :: gth_atompot
+@@ -464,12 +464,14 @@ SUBROUTINE cp_sirius_create_env(pwdft_env)
+                CPABORT("CP2K/SIRIUS (hubbard): the occupation number can not be negative.")
+             END IF
+
++            j_t(:) = 0.0
+             IF (ABS(u_minus_j) < 1e-8) THEN
++               j_t(1) = J_u
+                CALL sirius_set_atom_type_hubbard(sctx, label, lu, nu, &
+-                                                 occ_u, U_u, J_u, alpha_u, beta_u, J0_u)
++                                                 occ_u, U_u, j_t, alpha_u, beta_u, J0_u)
+             ELSE
+                CALL sirius_set_atom_type_hubbard(sctx, label, lu, nu, &
+-                                                 occ_u, u_minus_j, 0.0_dp, alpha_u, beta_u, J0_u)
++                                                 occ_u, u_minus_j, j_t, alpha_u, beta_u, J0_u)
+             END IF
+          END IF
+
+

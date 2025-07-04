@@ -1,22 +1,12 @@
-#!/bin/bash
-set -x
-set -e
-
-if [ ! changed_files=$(git diff --name-only --diff-filter=ACMR HEAD^1 | grep ".*\.pyi\?") ]; then
-    exit 0  # no changed files
+#!/bin/sh -e
+ref="${1:-develop}"
+if [ ! -d "spack-core" ]; then
+  printf "No 'spack-core' dir found, should be a symlink or clone of 'spack/spack'\n" >&2
+  exit 1
 fi
-
-if [ ! -z "$changed_files" ]; then
-  echo "Detected changed..."
-  for f in ${changed_files[@]}; do
-    echo "  $f"
-  done
-  echo ""
-
-  echo "Running mypy checks..."
-  mypy ${changed_files[@]}
-  echo ""
-
-  echo "Running black checks..."
-  black --check ${changed_files[@]}
-fi
+python_files() { git diff --name-only --diff-filter=ACMR -z "$ref" | grep -zE '\.pyi?$'; }
+python_files > /dev/null || exit 0
+python_files | xargs -0 printf "%s\n"
+python_files | xargs -0 -n 100 flake8
+python_files | xargs -0 -n 100 isort --check --diff
+python_files | xargs -0 -n 100 black --check --diff --color
