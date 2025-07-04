@@ -58,9 +58,9 @@ class Hdfview(Package):
         filter_file(r"/lib/app", "", hdfview)
 
         # set the javabin to be spack's java
-        filter_file(r"export JAVABIN.+", 
-            f"export JAVABIN={self.spec["java"].prefix}/bin/",
-             hdfview)
+        filter_file(r"export JAVABIN.+",
+                    f"export JAVABIN={self.spec["java"].prefix}/bin/",
+                    hdfview)
 
         mkdirp(prefix.bin)
         install(hdfview, prefix.bin.hdfview)
@@ -83,4 +83,4 @@ class Hdfview(Package):
 
         url_fmt = "https://support.hdfgroup.org/ftp/HDF5/releases/HDF-JAVA/hdfview-{0}/src/hdfview-{0}.tar.gz"
         return url_fmt.format(version)
-        
+
