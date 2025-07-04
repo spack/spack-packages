@@ -50,10 +50,14 @@ class Hdfview(Package):
         path = "build/HDF_Group/HDFView/{0}/".format(dir_version)
         hdfview = "{0}/{1}".format(path, "hdfview.sh")
 
+        # set the internal dir to be the spack install prefix
         filter_file(r"\$dir", prefix, hdfview)
 
+        # the wrapper script looks for these subdirectories, however they are not
+        # in the spackk install prefix, so filter out
         filter_file(r"/lib/app", "", hdfview)
 
+        # set the javabin to be spack's java
         filter_file(r"export JAVABIN.+", 
             f"export JAVABIN={self.spec["java"].prefix}/bin/",
              hdfview)
