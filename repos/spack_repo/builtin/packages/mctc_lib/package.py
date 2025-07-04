@@ -57,5 +57,5 @@ class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         return [
             "-Djson={0}".format("enabled" if "+json" in self.spec else "disabled"),
-            "-Dopenmp={0}".format("true" if "json" in self.spec else "false"),
+            "-Dopenmp={0}".format("true" if "+openmp" in self.spec else "false"),
         ]
