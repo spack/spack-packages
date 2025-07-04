@@ -29,8 +29,8 @@ class Mstore(MesonPackage, CMakePackage):
 
     variant("openmp", default=True, description="Use OpenMP parallelisation")
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("meson@0.57.1:", type="build")  # mesonbuild/meson#8377
     depends_on("pkgconfig", type="build")
