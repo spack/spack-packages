@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
+
 class Tandem(CMakePackage, CudaPackage, ROCmPackage):
     """Tandem is a scientific software for SEAS modelling and for solving Poisson
     and linear elasticity problems. It implements the Symmetric Interior Penalty
