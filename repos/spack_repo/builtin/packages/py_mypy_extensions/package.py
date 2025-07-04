@@ -16,7 +16,9 @@ class PyMypyExtensions(PythonPackage):
 
     license("MIT")
 
+    version("1.1.0", sha256="52e68efc3284861e772bbcd66823fde5ae21fd2fdb51c62a211403730b916558")
     version("1.0.0", sha256="75dbf8955dc00442a438fc4d0666508a9a97b6bd41aa2f0ffe9d2f2725af0782")
     version("0.4.3", sha256="2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-flit-core@3.11:3", type="build", when="@1.1:")
+    depends_on("py-setuptools", type="build", when="@:1.0")
