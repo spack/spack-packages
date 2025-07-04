@@ -1,0 +1,20 @@
+--- a/kvs.conf.back     2025-06-13 10:33:01.303968874 +0900
++++ b/kvs.conf  2025-06-13 10:34:07.807018898 +0900
+@@ -4,7 +4,7 @@
+ #=============================================================================
+ KVS_ENABLE_OPENGL                = 1
+ KVS_ENABLE_GLU                   = 1
+-KVS_ENABLE_GLEW                  = 1
++KVS_ENABLE_GLEW                  = 0
+ KVS_ENABLE_OPENMP                = 0
+ KVS_ENABLE_DEPRECATED            = 0
+
+@@ -14,7 +14,7 @@
+ KVS_SUPPORT_FFMPEG               = 0
+ KVS_SUPPORT_OPENCV               = 0
+ KVS_SUPPORT_QT                   = 1
+-KVS_SUPPORT_OPENXR               = 1
++KVS_SUPPORT_OPENXR               = 0
+ KVS_SUPPORT_PYTHON               = 0
+ KVS_SUPPORT_MPI                  = 0
+ KVS_SUPPORT_EGL                  = 0
