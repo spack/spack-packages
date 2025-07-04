@@ -1,0 +1,11 @@
+--- a/cmake/FindWrapOpenGL.cmake.back   2025-06-12 17:04:26.685413399 +0900
++++ b/cmake/FindWrapOpenGL.cmake        2025-06-12 17:05:08.835087549 +0900
+@@ -41,7 +41,7 @@
+         target_link_libraries(WrapOpenGL::WrapOpenGL INTERFACE ${__opengl_fw_path})
+         target_link_libraries(WrapOpenGL::WrapOpenGL INTERFACE ${__opengl_agl_fw_path})
+     else()
+-        target_link_libraries(WrapOpenGL::WrapOpenGL INTERFACE OpenGL::GL)
++       target_link_libraries(WrapOpenGL::WrapOpenGL INTERFACE "-lGL")
+     endif()
+ endif()
+
