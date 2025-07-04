@@ -40,6 +40,7 @@ class QtSvg(QtPackage):
     version("6.4.1", sha256="be6300292a6f38d85c13bb750890af268bd979fb18ab754f88d5332935215e47")
     version("6.4.0", sha256="375eb69f320121e42d5dc107f9455008980c149646931b8ace19e6bc235dcd80")
     version("6.3.2", sha256="781055bca458be46ef69f2fff147a00226e41f3a23d02c91238b0328a7156518")
+    version("6.2.4", sha256="936fc66e440e788810ffcd51a8623d0809599c0780f7415f240da6d231fbab38")
 
     variant("widgets", default=False, description="Build SVG widgets.")
 
