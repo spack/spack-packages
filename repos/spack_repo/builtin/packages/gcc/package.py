@@ -640,7 +640,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 "20": [("@8:10", "-std=c++2a"), ("@11:", "-std=c++20")],
                 "23": [("@11:13", "-std=c++2b"), ("@14:", "-std=c++23")],
             },
-            "c": {"99": [("@4.5:", "-std=c99")], "11": [("@4.7:", "-std=c11")]},
+            "c": {
+                "99": [("@4.5:", "-std=c99")],
+                "11": [("@4.7:", "-std=c11")],
+                "17": [("@8:", "-std=c17")],
+                "23": [("@14:", "-std=c23")],
+            },
         }
         for condition, flag in flags[language][standard]:
             if self.spec.satisfies(condition):

@@ -17,6 +17,7 @@ class Odc(CMakePackage):
 
     license("Apache-2.0")
 
+    version("1.6.1", sha256="4f403e6b0ef94c880a15f3a99369d32e7a0c9d2f751b9332f1f80f300a063679")
     version("1.5.2", sha256="49575c3ef9ae8825d588357022d0ff6caf3e557849888c9d2f0677e9efe95869")
     version("1.4.6", sha256="ff99d46175e6032ddd0bdaa3f6a5e2c4729d24b698ba0191a2a4aa418f48867c")
     version("1.4.5", sha256="8532d0453531d62e1f15791d1c5c96540b842913bd211a8ef090211eaf4cccae")

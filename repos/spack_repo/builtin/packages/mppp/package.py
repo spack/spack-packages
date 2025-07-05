@@ -20,6 +20,10 @@ class Mppp(CMakePackage):
     # SPDX identifier of the project's license.
     license("MPL-2.0")
 
+    version("2.0.0", sha256="699a882b8506b2e3c555a42300ad473302bfac3d35a931898816a401ed5fc5f3")
+    version("1.0.4", sha256="eff3e39fc0ce5798d62576a669442da2b5e3ffe7cfb22bcd8e87f3df38fb1c34")
+    version("1.0.3", sha256="d5beb0002910de4ea96dc15dc0d80d759afeb2c5e68716523d519d66a7dfe423")
+    version("1.0.2", sha256="2a537bc339726388fdda39905692d3df92fceee51d264e720e0e7ab7570bcdaf")
     version("1.0.1", sha256="90e8758bad2d9ebec04305d9cc394168de7bd563acc290e273dd68467e07de07")
     version("1.0.0", sha256="e58b1a5fb8bdf095261eeb0861c3f46f96c71c4b043d19700e73ce3e4e639268")
     version("0.27", sha256="a1e04f6605b3242d4361742159cf5ab273162fd7c105c2743a9bebcf44c846c3")
@@ -86,8 +90,10 @@ class Mppp(CMakePackage):
 
     # Dependencies
     depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")  # generated
 
-    depends_on("cmake@3.8:", type="build")
+    depends_on("cmake@3.8:", type="build", when="@:1.0.4")
+    depends_on("cmake@3.12:", type="build", when="@2.0.0:")
 
     # Required dependencies
     depends_on("gmp@5:")
@@ -97,7 +103,8 @@ class Mppp(CMakePackage):
     depends_on("mpc", when="+mpc")
     depends_on("gcc", when="+quadmath")
     depends_on("boost@1.69: +serialization", when="+serialization")
-    depends_on("fmt@6.2:", when="+fmt")
+    depends_on("fmt@6.2:10", when="@:1.0.2 +fmt")
+    depends_on("fmt@6.2:", when="@1.0.3: +fmt")
 
     def cmake_args(self):
         args = [
