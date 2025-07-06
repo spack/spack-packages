@@ -21,7 +21,7 @@ class PyXcdat(PythonPackage):
     version("0.9.0", sha256="a36b46fe6317fabbac96ed2d4d1c6596a4f11d5069a88f85f683c08cd849faeb")
 
     depends_on("py-setuptools@42:", type="build")
-    depends_on("python@3.10:", type="build")
+    depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-cf-xarray@0.10.3:", type=("build", "run"))
     depends_on("py-cftime", type=("build", "run"))
     depends_on("py-dask", type=("build", "run"))
