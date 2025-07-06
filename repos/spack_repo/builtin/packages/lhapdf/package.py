@@ -24,6 +24,7 @@ class Lhapdf(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("gpu", branch="kokkos_version")
     version("6.5.5", sha256="d20d8fb71936403274caec5bd584c891592b96c6319175df51d9bb69db869bd8")
     version("6.5.4", sha256="ace8913781044ad542e378697fcd95a8535d510818bb74a6665f9fd2b132ac0f")
     version("6.5.3", sha256="90fe7254d5a48a9b2d424fcbac1bf9708b0e54690efec4c78e9ad28b9203bfcd")
