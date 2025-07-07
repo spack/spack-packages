@@ -188,6 +188,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("elpa~openmp", when="+elpa~openmp")
 
     depends_on("eigen@3.4.0:", when="@7.3.2: +tests")
+    depends_on("eigen@3.4.0:", when="@7.7: +vcsqnm")
 
     depends_on("costa+shared", when="@7.3.2:")
 
