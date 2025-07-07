@@ -102,9 +102,9 @@ class Legion(CMakePackage, ROCmPackage):
     version("cr-20210122", commit="181e63ad4187fbd9a96761ab3a52d93e157ede20", deprecated=True)
     version("cr-20191217", commit="572576b312509e666f2d72fafdbe9d968b1a6ac3", deprecated=True)
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.16:", when="@21.03.0:24.12.0", type="build")
     depends_on("cmake@3.22:", when="@25.03.0:", type="build")
