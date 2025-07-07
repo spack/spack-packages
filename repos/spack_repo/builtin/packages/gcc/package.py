@@ -958,6 +958,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # Common code for nvptx and amdgcn to link newlib source directory
     newlib_linked = False
+
     def link_newlib(self):
         pattern = join_path(self.stage.source_path, "newlibsource", "*")
         files = glob.glob(pattern)
