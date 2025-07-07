@@ -108,7 +108,6 @@ class Legion(CMakePackage, ROCmPackage):
 
     depends_on("cmake@3.16:", when="@21.03.0:24.12.0", type="build")
     depends_on("cmake@3.22:", when="@25.03.0:", type="build")
-    depends_on("cmake@3.22:", when="@stable", type="build")
     # TODO: Need to spec version of MPI v3 for use of the low-level MPI transport
     # layer. At present the MPI layer is still experimental and we discourge its
     # use for general (not legion development) use cases.
@@ -116,19 +115,14 @@ class Legion(CMakePackage, ROCmPackage):
     depends_on("mpi", when="network=gasnet")  # MPI is required to build gasnet (needs mpicc).
     depends_on("ucx", when="network=ucx")
     depends_on("ucc", when="network=ucx @25.03.0:")
-    depends_on("ucc", when="network=ucx @stable")
     depends_on("ucc+cuda+nccl", when="network=ucx +cuda @25.03.0:")
-    depends_on("ucc+cuda+nccl", when="network=ucx +cuda @stable")
     depends_on("ucc+rocm+rccl", when="network=ucx +rocm @25.03.0:")
-    depends_on("ucc+rocm+rccl", when="network=ucx +rocm @stable")
     depends_on("ucx", when="conduit=ucx")
     depends_on("mpi", when="conduit=mpi")
     depends_on("cuda@10.0:11.9", when="+cuda_unsupported_compiler @21.03.0:23.03.0")
     depends_on("cuda@10.0:11.9", when="+cuda @21.03.0:23.03.0")
     depends_on("cuda@11.7:12.8", when="+cuda_unsupported_compiler @23.06.0:")
     depends_on("cuda@11.7:12.8", when="+cuda @23.06.0:")
-    depends_on("cuda@11.7:12.8", when="+cuda_unsupported_compiler @stable")
-    depends_on("cuda@11.7:12.8", when="+cuda @stable")
     depends_on("hip@5.1:5.7", when="+rocm @23.03.0:23.12.0")
     depends_on("hip@5.1:", when="+rocm")
     depends_on("hdf5", when="+hdf5")
@@ -139,7 +133,6 @@ class Legion(CMakePackage, ROCmPackage):
     cuda_arch_list = CudaPackage.cuda_arch_values
     for arch in cuda_arch_list:
         depends_on(f"ucc cuda_arch={arch}", when=f"@25.03.0: network=ucx +cuda cuda_arch={arch}")
-        depends_on(f"ucc cuda_arch={arch}", when=f"@stable network=ucx +cuda cuda_arch={arch}")
         depends_on(
             f"kokkos@3.3.01:+cuda+cuda_lambda+wrapper cuda_arch={arch}",
             when=f"+kokkos+cuda cuda_arch={arch} %gcc",
@@ -187,9 +180,6 @@ class Legion(CMakePackage, ROCmPackage):
     for arch in ROCmPackage.amdgpu_targets:
         depends_on(
             f"ucc amdgpu_target={arch}", when=f"@25.03.0: network=ucx +rocm amdgpu_target={arch}"
-        )
-        depends_on(
-            f"ucc amdgpu_target={arch}", when=f"@stable network=ucx +rocm amdgpu_target={arch}"
         )
         depends_on(f"kokkos@3.3.01:+rocm amdgpu_target={arch}", when=f"+rocm amdgpu_target={arch}")
 
@@ -376,7 +366,6 @@ class Legion(CMakePackage, ROCmPackage):
 
     depends_on("rust@1.74:", type="build", when="@21.03.0:24.12.0 +prof")
     depends_on("rust@1.84:", type="build", when="@25.03.0: +prof")
-    depends_on("rust@1.84:", type="build", when="@stable +prof")
 
     variant("gc", default=False, description="Enable garbage collector logging")
     variant(
