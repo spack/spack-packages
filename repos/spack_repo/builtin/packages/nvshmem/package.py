@@ -51,6 +51,8 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
         when="@2.6:",
         description="Build with support for GPU initiated communication",
     )
+    variant("libfabric", default=False, description="Build with Libfabric support")
+
     conflicts("~cuda")
 
     def url_for_version(self, version):
@@ -78,12 +80,16 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     depends_on("nccl", when="+nccl")
     depends_on("nccl@2.0:", when="@3: +nccl")
 
+    depends_on("libfabric", when="+libfabric")
+    depends_on("libfabric@1.15.0.0:", when="@3: +libfabric")
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         config = [
             self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value),
             self.define_from_variant("NVSHMEM_MPI_SUPPORT", "mpi"),
+            self.define_from_variant("NVSHMEM_LIBFABRIC_SUPPORT", "libfabric"),
             self.define_from_variant("NVSHMEM_UCX_SUPPORT", "ucx"),
             self.define_from_variant("NVSHMEM_USE_NCCL", "nccl"),
             self.define_from_variant("NVSHMEM_USE_GDRCOPY", "gdrcopy"),
@@ -99,6 +105,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if "+mpi" in self.spec:
             config.append(self.define("MPI_HOME", self.spec["mpi"].prefix))
+
+        if "+libfabric" in self.spec:
+            config.append(self.define("LIBFABRIC_HOME", self.spec["libfabric"].prefix))
 
         if "+ucx" in self.spec:
             config.append(self.define("UCX_HOME", self.spec["ucx"].prefix))
