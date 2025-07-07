@@ -55,6 +55,7 @@ class Meep(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")
 
     depends_on("autoconf", type="build", when="@1.21.0:")
     depends_on("automake", type="build", when="@1.21.0:")

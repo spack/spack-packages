@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.generic import Package
+
 from spack.package import *
 
 
 class MigratePackagePrs(Package):
-    """A command-line tool to copy open package pull requests from spack/spack to spack/spack-packages."""
+    """A command-line tool to copy open package pull requests from spack/spack to
+    spack/spack-packages."""
 
     homepage = "https://github.com/spack/migrate-package-prs"
     url = "https://github.com/spack/migrate-package-prs/releases/download/v1.0.0/migrate-package-prs-1.0.0.tar.gz"
