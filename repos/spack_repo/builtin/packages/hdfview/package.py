@@ -59,7 +59,7 @@ class Hdfview(Package):
 
         # set the javabin to be spack's java
         filter_file(
-            r"export JAVABIN.+", f"export JAVABIN={self.spec["java"].prefix}/bin/", hdfview
+            r"export JAVABIN=.+", f"export JAVABIN={self.spec['java'].prefix}/bin", hdfview
         )
 
         mkdirp(prefix.bin)
