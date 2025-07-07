@@ -474,7 +474,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts(
         "^llvm@20",
         when="@:2.5 +cuda",
-        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see https://github.com/chapel-lang/chapel/issues/27273",
+        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see "
+        "https://github.com/chapel-lang/chapel/issues/27273",
     )
 
     conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.0.0 or later")
