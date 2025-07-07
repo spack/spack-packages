@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 #
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
@@ -37,6 +36,8 @@ class Parsec(CMakePackage, CudaPackage):
         sha256="d1e038713f2c1cd7db6765c891408d85648c46ee23e780fbd5e941b53c9eef85",
         url="https://github.com/ICLDisco/parsec/archive/refs/tags/v1.1.0.tar.gz",
     )
+
+    patch("apply-header.patch", when="@4.0.2411")
 
     variant(
         "build_type",
@@ -85,6 +86,7 @@ class Parsec(CMakePackage, CudaPackage):
             self.define_from_variant("PARSEC_PROF_TRACE", "profile"),
             self.define_from_variant("PARSEC_DEBUG_HISTORY", "debug_verbose"),
             self.define_from_variant("PARSEC_DEBUG_PARANOID", "debug_verbose"),
+            self.define("PARSEC_GPU_WITH_HIP", "Off"),
         ]
         return args
 
