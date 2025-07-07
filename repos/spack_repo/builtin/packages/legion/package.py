@@ -392,7 +392,25 @@ class Legion(CMakePackage, ROCmPackage):
     def cmake_args(self):
         spec = self.spec
         from_variant = self.define_from_variant
-        options = [from_variant("CMAKE_CXX_STANDARD", "cxxstd")]
+        options = [
+            from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
+            from_variant("BUILD_SHARED_LIBS", "shared"),
+            from_variant("Legion_BOUNDS_CHECKS", "bounds_checks"),
+            from_variant("Legion_PRIVILEGE_CHECKS", "privilege_checks"),
+            from_variant("Legion_SPY", "spy"),
+            from_variant("Legion_USE_Fortran", "fortran"),
+            from_variant("Legion_USE_HDF5", "hdf5"),
+            from_variant("Legion_USE_HWLOC", "hwloc"),
+            from_variant("Legion_USE_Kokkos", "kokkos"),
+            from_variant("Legion_USE_LIBDL", "libdl"),
+            from_variant("Legion_USE_OpenMP", "openmp"),
+            from_variant("Legion_USE_PAPI", "papi"),
+            from_variant("Legion_USE_Python", "python"),
+            from_variant("Legion_USE_ZLIB", "zlib"),
+            from_variant("Legion_BUILD_BINDINGS", "bindings"),
+            from_variant("Legion_REDOP_COMPLEX", "redop_complex"),
+            from_variant("Legion_REDOP_HALF", "redop_half"),
+        ]
 
         if spec.satisfies("network=gasnet"):
             options.append("-DLegion_NETWORKS=gasnetex")
@@ -422,23 +440,7 @@ class Legion(CMakePackage, ROCmPackage):
         else:
             options.append("-DLegion_EMBED_GASNet=OFF")
 
-        if spec.satisfies("+shared"):
-            options.append("-DBUILD_SHARED_LIBS=ON")
-        else:
-            options.append("-DBUILD_SHARED_LIBS=OFF")
-
-        if spec.satisfies("+bounds_checks"):
-            # default is off.
-            options.append("-DLegion_BOUNDS_CHECKS=ON")
-        if spec.satisfies("+privilege_checks"):
-            # default is off.
-            options.append("-DLegion_PRIVILEGE_CHECKS=ON")
-
         options.append(f"-DLegion_OUTPUT_LEVEL={str.upper(spec.variants['output_level'].value)}")
-
-        if spec.satisfies("+spy"):
-            # default is off.
-            options.append("-DLegion_SPY=ON")
 
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
@@ -464,63 +466,13 @@ class Legion(CMakePackage, ROCmPackage):
             else:
                 options.append(self.define("ROCM_PATH", spec["hip"].prefix))
 
-        if spec.satisfies("+fortran"):
-            # default is off.
-            options.append("-DLegion_USE_Fortran=ON")
-
-        if spec.satisfies("+hdf5"):
-            # default is off.
-            options.append("-DLegion_USE_HDF5=ON")
-
-        if spec.satisfies("+hwloc"):
-            # default is off.
-            options.append("-DLegion_USE_HWLOC=ON")
-
         if spec.satisfies("+kokkos"):
-            # default is off.
-            options.append("-DLegion_USE_Kokkos=ON")
             os.environ["KOKKOS_CXX_COMPILER"] = self["kokkos"].kokkos_cxx
             if spec.satisfies("+cuda+cuda_unsupported_compiler ^kokkos+cuda %clang"):
                 # Keep CMake CUDA compiler detection happy
                 options.append(
                     self.define("CMAKE_CUDA_FLAGS", "--allow-unsupported-compiler -std=c++17")
                 )
-
-        if spec.satisfies("+libdl"):
-            # default is on.
-            options.append("-DLegion_USE_LIBDL=ON")
-        else:
-            options.append("-DLegion_USE_LIBDL=OFF")
-
-        if spec.satisfies("+openmp"):
-            # default is off.
-            options.append("-DLegion_USE_OpenMP=ON")
-
-        if spec.satisfies("+papi"):
-            # default is off.
-            options.append("-DLegion_USE_PAPI=ON")
-
-        if spec.satisfies("+python"):
-            # default is off.
-            options.append("-DLegion_USE_Python=ON")
-
-        if spec.satisfies("+zlib"):
-            # default is on.
-            options.append("-DLegion_USE_ZLIB=ON")
-        else:
-            options.append("-DLegion_USE_ZLIB=OFF")
-
-        if spec.satisfies("+bindings"):
-            # default is off.
-            options.append("-DLegion_BUILD_BINDINGS=ON")
-
-        if spec.satisfies("+redop_complex"):
-            # default is off
-            options.append("-DLegion_REDOP_COMPLEX=ON")
-
-        if spec.satisfies("+redop_half"):
-            # default is off
-            options.append("-DLegion_REDOP_HALF=ON")
 
         maxdims = int(spec.variants["max_dims"].value)
         # TODO: sanity check if maxdims < 0 || > 9???
