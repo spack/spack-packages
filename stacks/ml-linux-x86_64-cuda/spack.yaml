@@ -19,9 +19,9 @@ spack:
     mpi:
       require: openmpi
     py-jax:
-      require: %clang
+      require: "%c,cxx=clang"
     py-tensorflow:
-      require: %clang
+      require: "%c,cxx=clang"
     py-torch:
       require:
       - target=x86_64_v3
@@ -29,7 +29,7 @@ spack:
       - +cuda
       - cuda_arch=80
       - ~flash_attention
-      - %gcc
+      - "%c,cxx=gcc"
 
   specs:
     # Horovod

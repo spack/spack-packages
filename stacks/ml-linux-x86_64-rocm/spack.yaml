@@ -18,9 +18,9 @@ spack:
     mpi:
       require: openmpi
     py-jax:
-      require: %clang
+      require: "%c,cxx=clang"
     py-tensorflow:
-      require: %clang
+      require: "%c,cxx=clang"
     py-torch:
       require:
       - target=x86_64_v3
@@ -28,7 +28,7 @@ spack:
       - +rocm
       - amdgpu_target=gfx90a
       - ~flash_attention
-      - %c,cxx=gcc
+      - "%c,cxx=gcc"
     eigen:
       require: ~rocm
 
