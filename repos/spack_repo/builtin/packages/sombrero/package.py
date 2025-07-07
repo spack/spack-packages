@@ -58,7 +58,7 @@ class Sombrero(MakefilePackage):
         make(
             f"GCC={self.compiler.cc}",
             f"CXX={self.compiler.cxx}",
-            f"MPICC={self.spec["mpi"].mpicc}",
+            f"MPICC={self.spec['mpi'].mpicc}",
         )
 
     def install(self, spec, prefix):
