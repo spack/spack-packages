@@ -42,6 +42,7 @@ default:
       when: always
       variables:
         SPACK_PIPELINE_TYPE: "spack_protected_branch"
+        SPACK_PRUNE_UNTOUCHED: "False"
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         SPACK_REQUIRE_SIGNING: "True"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
