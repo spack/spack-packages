@@ -138,7 +138,8 @@ class Legion(CMakePackage, ROCmPackage):
     # cuda-centric
     cuda_arch_list = CudaPackage.cuda_arch_values
     for arch in cuda_arch_list:
-        depends_on(f"ucc cuda_arch={arch}", when=f"network=ucx +cuda cuda_arch={arch}")
+        depends_on(f"ucc cuda_arch={arch}", when=f"@25.03.0: network=ucx +cuda cuda_arch={arch}")
+        depends_on(f"ucc cuda_arch={arch}", when=f"@stable network=ucx +cuda cuda_arch={arch}")
         depends_on(
             f"kokkos@3.3.01:+cuda+cuda_lambda+wrapper cuda_arch={arch}",
             when=f"+kokkos+cuda cuda_arch={arch} %gcc",
@@ -184,7 +185,12 @@ class Legion(CMakePackage, ROCmPackage):
     )
 
     for arch in ROCmPackage.amdgpu_targets:
-        depends_on(f"ucc amdgpu_target={arch}", when=f"network=ucx +rocm amdgpu_target={arch}")
+        depends_on(
+            f"ucc amdgpu_target={arch}", when=f"@25.03.0: network=ucx +rocm amdgpu_target={arch}"
+        )
+        depends_on(
+            f"ucc amdgpu_target={arch}", when=f"@stable network=ucx +rocm amdgpu_target={arch}"
+        )
         depends_on(f"kokkos@3.3.01:+rocm amdgpu_target={arch}", when=f"+rocm amdgpu_target={arch}")
 
     depends_on("kokkos@3.3.01:+rocm", when="+kokkos+rocm")
