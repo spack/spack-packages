@@ -1,0 +1,12 @@
+--- a/CS_server/pbvr.conf       2025-06-19 15:50:42.631507520 +0900
++++ b/CS_server/pbvr.conf       2025-06-19 15:49:10.492048847 +0900
+@@ -1,7 +1,7 @@
+ #PBVR_MACHINE=Makefile_machine_gcc_mpi_omp
+ #PBVR_MACHINE=Makefile_machine_s86_omp
+-PBVR_MACHINE=Makefile_machine_mac_gcc_omp
++PBVR_MACHINE=Makefile_machine_gcc_mpi_omp
+ PBVR_MAKE_FILTER=1
+ PBVR_MAKE_SERVER=1
+-PBVR_MAKE_KVSML_COMVERTER=0
++PBVR_MAKE_KVSML_COMVERTER=1
+ PBVR_SUPPORT_VTK=0

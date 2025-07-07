@@ -1,0 +1,13 @@
+diff --git a/CS_server/arch/Makefile_machine_gcc_omp b/CS_server/arch/Makefile_machine_gcc_omp
+index 3974aa4..337cc37 100644
+--- a/CS_server/arch/Makefile_machine_gcc_omp
++++ b/CS_server/arch/Makefile_machine_gcc_omp
+@@ -1,6 +1,6 @@
+ CXX=g++
+ CXXFLAGS=-O3 -fopenmp -march=native -std=c++17
+ CC=gcc
+-CCFLAGS=-O3 -fopenmp -march=native
++CCFLAGS=-O3 -fopenmp -march=native -fcommon
+ LD=g++
+-LDFLAGS=-fopenmp -lstdc++ -static-libgcc -static-libstdc++
++LDFLAGS=-fopenmp -L/lib64 -lstdc++ -static-libgcc -static-libstdc++
