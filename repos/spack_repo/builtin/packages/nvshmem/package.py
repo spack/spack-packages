@@ -65,8 +65,8 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
             url_fmt = "https://developer.download.nvidia.com/compute/redist/nvshmem/{0}/source/nvshmem_src_cuda12-all-all-{0}.tar.gz"
         return url_fmt.format(directory, version)
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cuda@11:", when="@3.2.5:")
 
