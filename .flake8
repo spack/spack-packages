@@ -21,4 +21,4 @@ format = spack
 report =
   spack = flake8_formatter:SpackFormatter
 paths =
-  ./spack-core/share/spack/qa/
+  ./.qa/style/
