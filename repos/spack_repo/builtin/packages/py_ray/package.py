@@ -16,93 +16,106 @@ class PyRay(PythonPackage):
 
     license("Apache-2.0")
 
-    version("2.0.1", sha256="b8b2f0a99d2ac4c001ff11c78b4521b217e2a02df95fb6270fd621412143f28b")
-    version(
-        "0.8.7",
-        sha256="2df328f1bcd3eeb4fa33119142ea0d669396f4ab2a3e78db90178757aa61534b",
-        deprecated=True,
-    )
+    version("2.47.1", sha256="a0085b00d7204cd39658b5db60a10842a0068131129f304403e55847fc9cd69c")
 
-    variant("default", default=False, description="Install default extras", when="@2.0.1")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
-    depends_on("python@3.6:3.10", when="@2.0.1", type=("build", "run"))
-    depends_on("python@3.6:3.8", when="@0.8.7", type=("build", "run"))
-    depends_on("bazel@4.2.2", when="@2.0.1", type="build")
-    depends_on("bazel@3.2.0", when="@0.8.7", type="build")
-    depends_on("npm", type="build")
+    depends_on("python@3.9:3.12", type=("build", "run"))
+    depends_on("bazel@6.5.0", type="build")
     depends_on("py-setuptools", type="build")
-    depends_on("py-cython@0.29.26:", when="@2.0.1", type="build")
-    depends_on("py-cython@0.29.14:", when="@0.8.7", type="build")
-    depends_on("py-attrs", when="@2.0.1", type=("build", "run"))
-    depends_on("py-click@7:8.0.4", when="@2.0.1", type=("build", "run"))
-    depends_on("py-click@7.0:", when="@0.8.7", type=("build", "run"))
-    depends_on("py-filelock", type=("build", "run"))
-    depends_on("py-grpcio@1.32:1.43.0", when="@2.0.1 ^python@:3.9", type=("build", "run"))
-    depends_on("py-grpcio@1.42:1.43.0", when="@2.0.1 ^python@3.10:", type=("build", "run"))
-    depends_on("py-grpcio@1.28.1:", when="@0.8.7", type=("build", "run"))
-    depends_on("py-jsonschema", type=("build", "run"))
-    depends_on("py-msgpack@1", type=("build", "run"))
-    depends_on("py-numpy@1.16:", when="^python@:3.8", type=("build", "run"))
-    depends_on("py-numpy@1.19.3:", when="^python@3.9:", type=("build", "run"))
-    depends_on("py-protobuf@3.15.3:3", when="@2.0.1", type=("build", "run"))
-    depends_on("py-protobuf@3.8.0:", when="@0.8.7", type=("build", "run"))
-    depends_on("py-pyyaml", type=("build", "run"))
-    depends_on("py-frozenlist", when="@2.0.1", type=("build", "run"))
-    depends_on("py-requests", type=("build", "run"))
-    depends_on("py-typing-extensions", when="@2.0.1 ^python@:3.7", type=("build", "run"))
-    depends_on("py-virtualenv", when="@2.0.1", type=("build", "run"))
+    depends_on("py-setuptools-scm", type="build")
+    depends_on("py-cython@3.0.12:", type="build")
+    depends_on("py-build", type=("build"))
+    depends_on("py-wheel", type=("build"))
 
-    with when("+default"):
-        depends_on("py-aiohttp@3.7:", type=("build", "run"))
-        depends_on("py-aiohttp-cors", type=("build", "run"))
-        depends_on("py-colorful", type=("build", "run"))
-        depends_on("py-py-spy@0.2:", type=("build", "run"))
-        depends_on("py-gpustat@1:", type=("build", "run"))
-        depends_on("py-opencensus", type=("build", "run"))
-        depends_on("py-pydantic", type=("build", "run"))
-        depends_on("py-prometheus-client@0.7.1:0.13", type=("build", "run"))
-        depends_on("py-smart-open", type=("build", "run"))
+    variant("data", default=True, description="Install Ray Data dependencies")
+    variant("tune", default=True, description="Install Ray Tune dependencies")
+    variant("train", default=True, description="Install Ray Train dependencies")
+    variant("serve", default=True, description="Install Ray Serve dependencies")
+    variant("default", default=True, description="Support for dashboard and cluser launcher")
+    variant("cpp", default=False, description="Install Ray C++ API")
 
-    # Historical dependencies
-    with when("@0.8.7"):
-        depends_on("py-aiohttp", type=("build", "run"))
-        depends_on("py-aioredis", type=("build", "run"))
-        depends_on("py-colorama", type=("build", "run"))
-        depends_on("py-colorful", type=("build", "run"))
-        depends_on("py-google", type=("build", "run"))
-        depends_on("py-gpustat", type=("build", "run"))
-        depends_on("py-py-spy@0.2.0:", type=("build", "run"))
-        depends_on("py-redis@3.3.2:3.4", type=("build", "run"))
-        depends_on("py-opencensus", type=("build", "run"))
-        depends_on("py-prometheus-client@0.7.1:", type=("build", "run"))
-        # If not guarded by SKIP_THIRDPARTY_INSTALL, those dependencies
-        # would be automatically installed via pip by the setup.py script.
-        depends_on("py-setproctitle", type=("build", "run"))
-        depends_on("py-psutil", type=("build", "run"))
-        # If not detected during install, the following dependency would
-        # be automatically downloaded and installed by the setup.py script.
-        depends_on("py-pickle5", when="^python@:3.8.1", type=("build", "run"))
+    depends_on("npm", type="build", when="+default")
+
+    with default_args(type=("run")):
+        depends_on("py-click@7:")
+        depends_on("py-filelock")
+        depends_on("py-jsonschema")
+        depends_on("py-msgpack@1:2")
+        depends_on("py-packaging")
+        depends_on("py-protobuf@3.15.3:")
+        depends_on("py-pyyaml")
+
+        # Used in setup.py
+        depends_on("py-psutil")
+        depends_on("py-colorama")
+        # Removed in future versions
+        depends_on("py-setproctitle@1.2.2")
+
+        py_arrow_dep = "py-pyarrow@9.0:"
+        py_pandas_dep = "py-pandas@1.3:"
+        py_pydantic_dep = "py-pydantic@:1,2.5:2"
+
+        with when("+default"):
+            depends_on("py-aiohttp@3.7:")
+            depends_on("py-aiohttp-cors")
+            depends_on("py-colorful")
+            depends_on("py-py-spy@0.4.0:")
+            depends_on("py-requests")
+            depends_on("py-grpcio@1.42.0:")
+            depends_on("py-opencensus")
+            depends_on("py-opentelemetry-sdk")
+            depends_on("py-opentelemetry-exporter-prometheus")
+            depends_on("py-opentelemetry-proto")
+            depends_on(py_pydantic_dep)
+            depends_on("py-prometheus-client")
+            depends_on("py-smart-open")
+            depends_on("py-virtualenv@20.0.24:")
+            depends_on("py-google-api-core +grpc")
+            depends_on("py-googleapis-common-protos")
+
+        with when("+data"):
+            depends_on("py-numpy@1.20:")
+            depends_on(py_pandas_dep)
+            depends_on(py_arrow_dep)
+            depends_on("py-fsspec")
+
+        with when("+tune"):
+            depends_on(py_pandas_dep)
+            depends_on(py_arrow_dep)
+            depends_on("py-tensorboardx@1.9:")
+            depends_on("py-requests")
+            depends_on("py-fsspec")
+
+        with when("+train"):
+            depends_on(py_pydantic_dep)
+
+        with when("+serve"):
+            depends_on("py-uvicorn+standard")
+            depends_on("py-requests")
+            depends_on("py-starlette")
+            depends_on("py-fastapi")
+            depends_on("py-watchfiles")
+
+    conflicts("~tune", when="+train")  # [train] requires [tune]
+    conflicts("~default", when="+serve")  # [serve] requires [default]
 
     build_directory = "python"
 
-    def patch(self):
-        filter_file(
-            'bazel_flags = ["--verbose_failures"]',
-            f'bazel_flags = ["--verbose_failures", "--jobs={make_jobs}"]',
-            join_path("python", "setup.py"),
-            string=True,
-        )
-
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("SKIP_THIRDPARTY_INSTALL", "1")
+        # Preserve PATH, otherwise build fails to find python
+        env.set("BAZEL_ARGS", f"--action_env=PATH --jobs={make_jobs}")
+        env.set("SKIP_THIRDPARTY_INSTALL_CONDA_FORGE", "1")
 
-    # Compile the dashboard npm modules included in the project
+        if "+cpp" in self.spec:
+            env.set("RAY_INSTALL_CPP", "1")
+
+    # https://docs.ray.io/en/latest/ray-contribute/development.html#building-ray
     @run_before("install")
     def build_dashboard(self):
-        with working_dir(join_path("python", "ray", "dashboard", "client")):
-            npm = which("npm")
-            npm("ci")
-            npm("run", "build")
+        if "+default" in self.spec:
+            with working_dir(join_path("python", "ray", "dashboard", "client")):
+                npm = which("npm")
+                npm("ci")
+                npm("run", "build")
