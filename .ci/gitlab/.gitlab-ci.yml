@@ -814,7 +814,6 @@ e4s-cray-rhel-build:
   extends: [ ".generate-cray-sles", ".e4s-cray-sles" ]
 
 .e4s-cray-sles-build:
-  allow_failure: true  # libsci_cray.so broken, misses DT_NEEDED for libdl.so
   extends: [ ".build", ".e4s-cray-sles" ]
   trigger:
     include:
