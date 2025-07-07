@@ -21,27 +21,43 @@ class PyTrimesh(PythonPackage):
     variant(
         "easy",
         default=False,
-        description="Install soft dependencies and unlock extra functionality",
+        description="Install all 'easy' soft dependencies",
+    )
+    variant(
+        "recommended",
+        default=False,
+        description="Install most 'recommended' (and all easy) soft dependencies",
+        when="+easy",
     )
 
     depends_on("py-setuptools@40.8:", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("py-numpy")
+        with when("+easy"):
+            depends_on("py-chardet")
+            depends_on("py-colorlog")
+            depends_on("py-jsonschema")
+            depends_on("py-lxml")
+            depends_on("py-mapbox-earcut")
+            depends_on("py-msgpack")
+            depends_on("py-networkx")
+            depends_on("pil")
+            depends_on("py-pycollada")
+            depends_on("py-requests")
+            depends_on("py-rtree")
+            depends_on("py-scipy")
+            depends_on("py-setuptools")
+            depends_on("py-shapely")
+            depends_on("py-svgpath")
+            depends_on("py-xxhash")
 
-    depends_on("py-chardet", type=("build", "run"), when="+easy")
-    depends_on("py-colorlog", type=("build", "run"), when="+easy")
-    depends_on("py-jsonschema", type=("build", "run"), when="+easy")
-    depends_on("py-lxml", type=("build", "run"), when="+easy")
-    depends_on("py-mapbox-earcut", type=("build", "run"), when="+easy")
-    depends_on("py-msgpack", type=("build", "run"), when="+easy")
-    depends_on("py-networkx", type=("build", "run"), when="+easy")
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("pil", type=("build", "run"), when="+easy")
-    depends_on("py-pycollada", type=("build", "run"), when="+easy")
-    depends_on("py-pyglet@:1", type=("build", "run"), when="+easy")
-    depends_on("py-requests", type=("build", "run"), when="+easy")
-    depends_on("py-rtree", type=("build", "run"), when="+easy")
-    depends_on("py-scipy", type=("build", "run"), when="+easy")
-    depends_on("py-setuptools", type=("build", "run"), when="+easy")
-    depends_on("py-shapely", type=("build", "run"), when="+easy")
-    depends_on("py-svgpath", type=("build", "run"), when="+easy")
-    depends_on("py-sympy", type=("build", "run"), when="+easy")
-    depends_on("py-xxhash", type=("build", "run"), when="+easy")
+        with when("+recommended"):
+            depends_on("py-sympy")
+            depends_on("py-pyglet@:1")
+            depends_on("py-glooey")
+            depends_on("py-meshio")
+            depends_on("py-scikit-image")
+            depends_on("py-psutil")
+            depends_on("py-vhacdx")
+            depends_on("manifold +python")
+
