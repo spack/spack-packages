@@ -19,6 +19,7 @@ class Geomodel(CMakePackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("6.15.0", sha256="406e0351d2d23245d82b679883b8cc54c1bf5b8cd84f30c303392fccc09e2ce5")
     version("6.14.0", sha256="b294f624145f922efd1da4016b79e698cabb0034cc6791841648d7845fd9fb15")
     version("6.13.0", sha256="8f1ebfe7fb502af078ed535410160becca2eb81286b94154b43c89873a3c45ad")
     version("6.12.0", sha256="4fa32672c6cb3d9b89ddf5e9566d0c283e5769768db6236883d72fecdd6207cd")
