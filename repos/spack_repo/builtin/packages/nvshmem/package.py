@@ -24,6 +24,7 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
 
     license("BSD-3-Clause-Open-MPI")
 
+    version("3.3.9", sha256="ba41e9ad6650cf99c1a60a3e47c19d1d97d814add7d35ea72337520ae13eeb59")
     version("3.2.5-1", sha256="eb2c8fb3b7084c2db86bd9fd905387909f1dfd483e7b45f7b3c3d5fcf5374b5a")
     version("2.7.0-6", sha256="23ed9b0187104dc87d5d2bc1394b6f5ff29e8c19138dc019d940b109ede699df")
     version("2.6.0-1", sha256="fc0e8de61b034f3a079dc231b1d0955e665a9f57b5013ee98b6743647bd60417")
@@ -58,7 +59,10 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     def url_for_version(self, version):
         ver_str = "{0}".format(version)
         directory = ver_str.split("-")[0]
-        url_fmt = "https://developer.download.nvidia.com/compute/redist/nvshmem/{0}/source/nvshmem_src_{1}.txz"
+        if version < Version("3.3.9"):
+            url_fmt = "https://developer.download.nvidia.com/compute/redist/nvshmem/{0}/source/nvshmem_src_{1}.txz"
+        else:
+            url_fmt = "https://developer.download.nvidia.com/compute/redist/nvshmem/{0}/source/nvshmem_src_cuda12-all-all-{0}.tar.gz"
         return url_fmt.format(directory, version)
 
     depends_on("c", type="build")  # generated
