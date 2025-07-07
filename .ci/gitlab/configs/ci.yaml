@@ -2,6 +2,7 @@ ci:
   target: gitlab
 
   broken-tests-packages:
+    - hipblaslt  # Timeouts
     - superlu-dist    # srun -n 4 hangs
     - papyrus
 
