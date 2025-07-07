@@ -99,7 +99,6 @@ class ComposableKernel(CMakePackage):
             ),
             self.define("CMAKE_C_COMPILER", "{0}/bin/clang".format(spec["llvm-amdgpu"].prefix)),
             self.define("CMAKE_BUILD_TYPE", "Release"),
-            self.define("CK_BUILD_JIT_LIB", "ON"),
             self.define("CMAKE_POSITION_INDEPENDENT_CODE", "ON"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
