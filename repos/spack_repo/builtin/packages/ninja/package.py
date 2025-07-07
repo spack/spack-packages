@@ -41,7 +41,7 @@ class Ninja(Package):
         "kitware",
         branch="features-for-fortran",
         git="https://github.com/Kitware/ninja.git",
-        deprecated=True
+        deprecated=True,
     )
 
     # ninja@1.12: needs googletest source, but 1.12 itself needs a patch to use it
