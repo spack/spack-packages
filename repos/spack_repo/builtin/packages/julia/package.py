@@ -107,7 +107,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.11.0:5")
         depends_on("libgit2@1.7.2:1.7")
-        depends_on("libssh2@1.11")
+        depends_on("libssh2@1.11:1")
         depends_on("llvm@16.0.6 +lld shlib_symbol_version=JL_LLVM_16.0")
         depends_on("mbedtls@2.28.2:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -121,7 +121,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.8.0:5")
         depends_on("libgit2@1.6.4:1.6")
-        depends_on("libssh2@1.11.0:1.11")
+        depends_on("libssh2@1.11.0:1")
         depends_on("llvm@15.0.7 +lld shlib_symbol_version=JL_LLVM_15.0")
         depends_on("mbedtls@2.28.2:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -135,7 +135,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.4.0:5")
         depends_on("libgit2@1.5.0:1.5")
-        depends_on("libssh2@1.10.0:1.10")
+        depends_on("libssh2@1.10.0:1")
         depends_on("llvm@14.0.6 +lld shlib_symbol_version=JL_LLVM_14.0")
         depends_on("mbedtls@2.28.0:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -148,7 +148,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.1.0:5")
         depends_on("libgit2@1.3.0:1.3")
-        depends_on("libssh2@1.10.0:1.10")
+        depends_on("libssh2@1.10.0:1")
         depends_on("llvm@13.0.1 shlib_symbol_version=JL_LLVM_13.0")
         depends_on("mbedtls@2.28.0:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -160,7 +160,7 @@ class Julia(MakefilePackage):
         # openlibm.so.3
         depends_on("libblastrampoline@3.0.0:3")
         depends_on("libgit2@1.1.0:1.1")
-        depends_on("libssh2@1.9.0:1.9")
+        depends_on("libssh2@1.9.0:1")
         depends_on("libuv@1.42.0")
         depends_on("llvm@12.0.1")
         depends_on("mbedtls@2.24.0:2.24")
@@ -171,7 +171,7 @@ class Julia(MakefilePackage):
         # libssh2.so.1, libpcre2-8.so.0, mbedtls.so.13, mbedcrypto.so.5, mbedx509.so.1
         # openlibm.so.3, (todo: complete this list for upperbounds...)
         depends_on("libgit2@1.1.0:1.1")
-        depends_on("libssh2@1.9.0:1.9")
+        depends_on("libssh2@1.9.0:1")
         depends_on("libuv@1.39.0")
         depends_on("llvm@11.0.1")
         depends_on("mbedtls@2.24.0:2.24")
