@@ -91,7 +91,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "usqcd",
         default=False,
-        description="Download and build usqcd (optional dependency of qmp)",
+        description="Download and build usqcd",
         when="+qmp",
     )
 
