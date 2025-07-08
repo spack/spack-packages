@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
 
 
@@ -18,14 +19,20 @@ class KokkosFft(CMakePackage):
 
     version("0.3.0", sha256="a13c423775afec5f9f79fa9a23dd6001d3d63bae9f4786b1e0cd3ed65b3993a3")
 
-    variant("host_backend", default="fftw-serial",
-            values=("fftw-serial", "fftw-openmp"),
-            multi=True,
-            description="Enable host backend")
-    variant("device_backend", default="none",
-            values=("none", "cufft", "hipfft", "onemkl"),
-            multi=False,
-            description="Enable device backend")
+    variant(
+        "host_backend",
+        default="fftw-serial",
+        values=("fftw-serial", "fftw-openmp"),
+        multi=True,
+        description="Enable host backend",
+    )
+    variant(
+        "device_backend",
+        default="none",
+        values=("none", "cufft", "hipfft", "onemkl"),
+        multi=False,
+        description="Enable device backend",
+    )
     variant("tests", default=False, description="Enable tests")
 
     depends_on("cxx", type="build")
