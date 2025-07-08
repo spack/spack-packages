@@ -142,7 +142,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     variant("zstd", default=True, description="Enable Zstandard compression plugin")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build", when="build_system=cmake")
+    depends_on("cxx", type="build")
 
     with when("build_system=cmake"):
         # Based on the versions required by the root CMakeLists.txt:
