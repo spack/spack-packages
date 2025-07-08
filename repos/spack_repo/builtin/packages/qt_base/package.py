@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import platform
+import re
 import shutil
 import sys
 import tempfile
-import re
-import platform
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 
