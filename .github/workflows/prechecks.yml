@@ -13,6 +13,28 @@ concurrency:
 
 
 jobs:
+  # Ensure no changes involve the old builtin repository directory
+  check-builtin-dir:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      with:
+        fetch-depth: 2
+    - name: Get changed files
+      run: |
+        commits="$(git rev-list --all)"
+        readarray -t <<< $commits
+        changed_files=$(git diff --name-only --diff-filter=d ${MAPFILE[-1]}..${MAPFILE[0]})
+        OLD_BUILTIN="var/spack/repos/spack_repo/builtin"
+        NEW_BUILTIN="repos/spack_repo/builtin"
+        if echo "$changed_files" | grep -q "$OLD_BUILTIN"; then
+          echo "Error: Packages are not allowed in '$OLD_BUILTIN'."
+          echo "       Use '$NEW_BUILTIN' instead."
+          exit 1
+        else
+          echo "Info: '$OLD_BUILTIN' is not being used"
+        fi
+
   # Validate that the code can be run on all the Python versions supported by Spack
   validate:
     runs-on: ubuntu-latest
