@@ -57,7 +57,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("qmp", default=False, description="Enable QMP")
-    variant("qio", default=False, description="Enable QIO (require QMP)", when="+qmp")
+    variant("qio", default=False, description="Enable QIO", when="+qmp")
     variant("openqcd", default=False, description="Enable openQCD interface")
     variant("milc", default=False, description="Enable MILC interface")
     variant("qdp", default=False, description="Enable QDP interface")
