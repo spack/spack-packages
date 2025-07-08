@@ -29,9 +29,7 @@ class Manifold(CMakePackage):
     homepage = "https://github.com/elalish/manifold"
     url = "https://github.com/elalish/manifold/archive/refs/tags/v3.1.1.tar.gz"
 
-    # FIXME: Add a list of GitHub accounts to
-    # notify when the package is updated.
-    # maintainers("github_user1", "github_user2")
+    maintainers("moloney")
 
     license("Apache-2.0", checked_by="moloney")
 
