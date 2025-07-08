@@ -50,7 +50,7 @@ class Kvs(Package):
                 path = os.path.join(root, fname)
 
                 try:
-                    with open(path, 'r', encoding='utf-8') as f:
+                    with open(path, "r", encoding="utf-8") as f:
                         content = f.read()
                     if "KVS_DIR" in content:
                         filter_file("KVS_DIR", "SPACK_KVS_DIR", path)
@@ -61,8 +61,8 @@ class Kvs(Package):
         if "+extended_fileformat" in spec:
             with set_env(
                 SPACK_KVS_DIR=str(prefix),
-                VTK_INCLUDE_PATH=str(spec['vtk'].prefix.include) + "/vtk-9.3",
-                VTK_LIB_PATH=str(spec['vtk'].prefix.lib)
+                VTK_INCLUDE_PATH=str(spec["vtk"].prefix.include) + "/vtk-9.3",
+                VTK_LIB_PATH=str(spec["vtk"].prefix.lib)
             ):
                 make()
                 make("install")

@@ -27,7 +27,7 @@ class Pbvr(MakefilePackage):
     in the same environment. This application is being developed at the Center
     for Computational Science and e-Systems of the Japan Atomic Energy Agency."""
 
-    phases = ['build', 'install']
+    phases = ["build", "install"]
 
     homepage = "https://github.com/CCSEPBVR/CS-IS-PBVR"
     url = "https://github.com/CCSEPBVR/CS-IS-PBVR/archive/refs/tags/v3.4.0.tar.gz"
@@ -67,7 +67,7 @@ class Pbvr(MakefilePackage):
             for fname in files:
                 path = os.path.join(root, fname)
                 try:
-                    with open(path, 'r', encoding='utf-8') as f:
+                    with open(path, "r", encoding="utf-8") as f:
                         content = f.read()
                     if "KVS_DIR" in content:
                         filter_file("KVS_DIR", "SPACK_KVS_DIR", path)
@@ -77,28 +77,28 @@ class Pbvr(MakefilePackage):
     def build(self, spec, prefix):
         # Build Client
         with set_env(
-            SPACK_KVS_DIR=str(spec['kvs'].prefix),
+            SPACK_KVS_DIR=str(spec["kvs"].prefix),
             VTK_VERSION="9.3",
-            VTK_INCLUDE_PATH=str(spec['vtk'].prefix.include) + "/vtk-9.3",
-            VTK_LIB_PATH=str(spec['vtk'].prefix.lib)
+            VTK_INCLUDE_PATH=str(spec["vtk"].prefix.include) + "/vtk-9.3",
+            VTK_LIB_PATH=str(spec["vtk"].prefix.lib)
         ):
             # Build Client
-            qmake = Executable(spec['qt-base'].prefix.bin.qmake)
-            build_dir = join_path(self.stage.source_path, 'Client/build')
+            qmake = Executable(spec["qt-base"].prefix.bin.qmake)
+            build_dir = join_path(self.stage.source_path, "Client/build")
             os.makedirs(build_dir)
             with working_dir(build_dir):
                 qmake("../pbvr_client.pro")
                 make()
             # Build Sevrer
-            make('-C', 'CS_server')
+            make("-C", "CS_server")
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
-        install('CS_server/pbvr_server', prefix.bin)
-        install('CS_server/Filter/pbvr_filter', prefix.bin)
-        install('CS_server/KVSMLConverter/Example/Release/kvsml-converter', prefix.bin)
-        install('Client/build/App/pbvr_client', prefix.bin)
+        install("CS_server/pbvr_server", prefix.bin)
+        install("CS_server/Filter/pbvr_filter", prefix.bin)
+        install("CS_server/KVSMLConverter/Example/Release/kvsml-converter", prefix.bin)
+        install("Client/build/App/pbvr_client", prefix.bin)
 
         src = self.stage.source_path
-        install_tree(os.path.join(src, 'Client/Shader'), os.path.join(prefix.bin, 'Shader'))
-        install_tree(os.path.join(src, 'Client/Font'), os.path.join(prefix.bin, 'Font'))
+        install_tree(os.path.join(src, "Client/Shader"), os.path.join(prefix.bin, "Shader"))
+        install_tree(os.path.join(src, "Client/Font"), os.path.join(prefix.bin, "Font"))

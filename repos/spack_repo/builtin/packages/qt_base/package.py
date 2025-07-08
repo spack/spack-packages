@@ -339,10 +339,10 @@ class QtBase(QtPackage):
         # the use of new process management features that rely on pidfd.
         # Note: Red Hat fixed this kernel issue in version 4.18.0-392 and later.
         release_str = platform.uname().release
-        match = re.match(r'^(\d+\.\d+\.\d+)-([\d\.]+)\.el8', release_str)
+        match = re.match(r"^(\d+\.\d+\.\d+)-([\d\.]+)\.el8", release_str)
         if match:
             base_version = match.group(1)
-            build_number = match.group(2).split('.')[0]
+            build_number = match.group(2).split(".")[0]
             full_version = f"{base_version}.{build_number}"
             if Version(full_version) < Version("4.18.0.392"):
                 define("FEATURE_forkfd_pidfd", False)
