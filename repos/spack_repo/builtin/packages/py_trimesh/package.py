@@ -60,4 +60,3 @@ class PyTrimesh(PythonPackage):
             depends_on("py-psutil")
             depends_on("py-vhacdx")
             depends_on("manifold +python")
-
