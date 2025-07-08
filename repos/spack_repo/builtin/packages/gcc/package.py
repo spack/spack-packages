@@ -15,7 +15,7 @@ from llnl.util.symlink import readlink
 import spack.platforms
 import spack.repo
 import spack.util.libc
-from spack.operating_systems.mac_os import macos_sdk_path, macos_version
+from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 
@@ -901,11 +901,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             )
 
         if sys.platform == "darwin":
+            macos_sdk_path = Executable("xcrun")("--show-sdk-path", output=str).strip()
             options.extend(
                 [
                     "--with-native-system-header-dir=/usr/include",
-                    "--with-sysroot={0}".format(macos_sdk_path()),
-                    "--with-libiconv-prefix={0}".format(spec["iconv"].prefix),
+                    f"--with-sysroot={macos_sdk_path}",
+                    f"--with-libiconv-prefix={spec['iconv'].prefix}",
                 ]
             )
 
