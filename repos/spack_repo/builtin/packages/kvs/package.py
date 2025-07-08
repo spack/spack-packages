@@ -3,52 +3,29 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-# ----------------------------------------------------------------------------
-# If you submit this package back to Spack as a pull request,
-# please first remove this boilerplate and all FIXME comments.
-#
-# This is a template package file for Spack.  We've put "FIXME"
-# next to all the things you'll want to change. Once you've handled
-# them, you can save this file and test your package like this:
-#
-#     spack install kvs
-#
-# You can edit this file again by typing:
-#
-#     spack edit kvs
-#
-# See the Spack documentation for more information on packaging.
-# ----------------------------------------------------------------------------
-
 from spack.package import *
 from spack.util.environment import set_env
 from spack_repo.builtin.build_systems.generic import Package
 
 class Kvs(Package):
-    """FIXME: Put a proper description of your package here."""
+    """Kyoto Visualization System (KVS) is a multi-platform, open-source C++ library
+    for developing scientific visualization applications. KVS provides various classes
+    and interfaces, such as isosurace extraction, streamlines and volume rendering,
+    to visualize medical data obtained by computerized tomography or magnetic resonance imaging,
+    numerical data from computational fluid dynamics and so on."""
 
-    # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://github.com/TO0603/KVS"
     url = "https://github.com/TO0603/KVS/archive/refs/tags/forDev.tar.gz"
 
-    # FIXME: Add a list of GitHub accounts to
-    # notify when the package is updated.
-    # maintainers("github_user1", "github_user2")
+    maintainers("sakamoto-naohito")
 
-    # FIXME: Add the SPDX identifier of the project's license below.
-    # See https://spdx.org/licenses/ for a list. Upon manually verifying
-    # the license, set checked_by to your Github username.
-    license("UNKNOWN", checked_by="github_user1")
+    license("BSD-3-Clause")
 
-    # FIXME: Add proper versions here.
-    # version("1.2.4")
     version("3.1", sha256="0ab932b0273f7f10972c0cb37de775a2f3923ca8ae26187d1b8c52847147ed84")
 
     variant("mpi", default=True, description="Enable MPI Support")
     variant("extended_fileformat", default=True, description="Enable extended fileformat")
 
-    # FIXME: Add dependencies if required.
-    # depends_on("foo")
     depends_on("gmake", type="build")
     depends_on("cxx", type="build")
 
@@ -79,7 +56,6 @@ class Kvs(Package):
                     pass
 
     def install(self, spec, prefix):
-        # FIXME: Unknown build system
         if "+extended_fileformat" in spec:
             with set_env(SPACK_KVS_DIR=str(prefix), VTK_INCLUDE_PATH=str(spec['vtk'].prefix.include) + "/vtk-9.3", VTK_LIB_PATH=str(spec['vtk'].prefix.lib)):
                 make()

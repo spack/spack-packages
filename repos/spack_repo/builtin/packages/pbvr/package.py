@@ -3,23 +3,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-# ----------------------------------------------------------------------------
-# If you submit this package back to Spack as a pull request,
-# please first remove this boilerplate and all FIXME comments.
-#
-# This is a template package file for Spack.  We've put "FIXME"
-# next to all the things you'll want to change. Once you've handled
-# them, you can save this file and test your package like this:
-#
-#     spack install pbvr
-#
-# You can edit this file again by typing:
-#
-#     spack edit pbvr
-#
-# See the Spack documentation for more information on packaging.
-# ----------------------------------------------------------------------------
-
 import os
 from spack.package import *
 from spack.util.environment import set_env
@@ -27,24 +10,28 @@ from llnl.util.filesystem import install_tree
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 class Pbvr(MakefilePackage):
-    """FIXME: Put a proper description of your package here."""
+    """CS/IS-PBVR is a scientific visualization application designed
+    based on Particle-Based Volume Rendering (PBVR). This application
+    is capable of multivariate visualization and three-dimensional point cloud visualization
+    in addition to standard visualization functions such as volume rendering
+    and isosurfaces for 3D volume data obtained from simulations and measuring instruments.
+    In addition, the framework for distributed processing of optimized PBVR is characterized
+    by the ability to remotely visualize large-scale time-series volume data in remote locations
+    at high speed. As a method of remote visualization, you can choose between
+    client-server (CS) visualization, which visualizes volume data stored in remote storage,
+    and in-situ (IS) visualization, which visualizes simulations simultaneously and
+    in the same environment. This application is being developed at the Center
+    for Computational Science and e-Systems of the Japan Atomic Energy Agency."""
+
     phases = ['build', 'install']
 
-    # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://github.com/CCSEPBVR/CS-IS-PBVR"
     url = "https://github.com/CCSEPBVR/CS-IS-PBVR/archive/refs/tags/v3.4.0.tar.gz"
 
-    # FIXME: Add a list of GitHub accounts to
-    # notify when the package is updated.
-    # maintainers("github_user1", "github_user2")
+    maintainers("sakamoto-naohito")
 
-    # FIXME: Add the SPDX identifier of the project's license below.
-    # See https://spdx.org/licenses/ for a list. Upon manually verifying
-    # the license, set checked_by to your Github username.
-    license("UNKNOWN", checked_by="github_user1")
+    license("LGPL-3.0-only")
 
-    # FIXME: Add proper versions here.
-    # version("1.2.4")
     version("3.4.0", sha256="4edbe420304b9436ab88829c0ff8465b27e10b26293288d5db3c84c3236e699c")
 
     variant("mpi", default=True, description="Enable MPI Support")
@@ -54,8 +41,6 @@ class Pbvr(MakefilePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    # FIXME: Add dependencies if required.
-    # depends_on("foo")
     depends_on("mpi", when="+mpi")
     depends_on("qt-base@6.2.4+opengl")
     depends_on("qt-svg@6.2.4")
@@ -84,13 +69,6 @@ class Pbvr(MakefilePackage):
                         filter_file("KVS_DIR", "SPACK_KVS_DIR", path)
                 except Exception:
                     pass
-
-    def edit(self, spec, prefix):
-        # FIXME: Edit the Makefile if necessary
-        # FIXME: If not needed delete this function
-        # makefile = FileFilter("Makefile")
-        # makefile.filter("CC = .*", "CC = cc")
-        pass
 
     def build(self, spec, prefix):
         # Build Client
