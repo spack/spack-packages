@@ -80,7 +80,7 @@ class Pbvr(MakefilePackage):
             SPACK_KVS_DIR=str(spec["kvs"].prefix),
             VTK_VERSION="9.3",
             VTK_INCLUDE_PATH=str(spec["vtk"].prefix.include) + "/vtk-9.3",
-            VTK_LIB_PATH=str(spec["vtk"].prefix.lib)
+            VTK_LIB_PATH=str(spec["vtk"].prefix.lib),
         ):
             # Build Client
             qmake = Executable(spec["qt-base"].prefix.bin.qmake)

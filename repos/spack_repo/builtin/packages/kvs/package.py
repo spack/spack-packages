@@ -62,7 +62,7 @@ class Kvs(Package):
             with set_env(
                 SPACK_KVS_DIR=str(prefix),
                 VTK_INCLUDE_PATH=str(spec["vtk"].prefix.include) + "/vtk-9.3",
-                VTK_LIB_PATH=str(spec["vtk"].prefix.lib)
+                VTK_LIB_PATH=str(spec["vtk"].prefix.lib),
             ):
                 make()
                 make("install")
