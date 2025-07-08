@@ -263,7 +263,8 @@ class QtBase(QtPackage):
     # Patch to override incorrect OpenGL linkage in FindWrapOpenGL.cmake.
     # The original CMake script links against OpenGL::GL,
     # which may resolve to `-lOpenGL -lGLX` on some systems, causing linker errors.
-    # This patch replaces it with `-lGL` to ensure proper linkage against the OpenGL library (libGL.so).
+    # This patch replaces it with `-lGL` to ensure proper linkage
+    # against the OpenGL library (libGL.so).
     patch("cmake-FindWrapOpenGL.patch", when="+opengl")
 
     @property

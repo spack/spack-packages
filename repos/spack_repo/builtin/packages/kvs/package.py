@@ -7,6 +7,7 @@ from spack.package import *
 from spack.util.environment import set_env
 from spack_repo.builtin.build_systems.generic import Package
 
+
 class Kvs(Package):
     """Kyoto Visualization System (KVS) is a multi-platform, open-source C++ library
     for developing scientific visualization applications. KVS provides various classes
@@ -57,11 +58,14 @@ class Kvs(Package):
 
     def install(self, spec, prefix):
         if "+extended_fileformat" in spec:
-            with set_env(SPACK_KVS_DIR=str(prefix), VTK_INCLUDE_PATH=str(spec['vtk'].prefix.include) + "/vtk-9.3", VTK_LIB_PATH=str(spec['vtk'].prefix.lib)):
+            with set_env(
+                SPACK_KVS_DIR=str(prefix),
+                VTK_INCLUDE_PATH=str(spec['vtk'].prefix.include) + "/vtk-9.3",
+                VTK_LIB_PATH=str(spec['vtk'].prefix.lib)
+            ):
                 make()
                 make("install")
         else:
             with set_env(SPACK_KVS_DIR=str(prefix)):
                 make()
                 make("install")
-

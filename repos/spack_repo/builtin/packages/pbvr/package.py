@@ -9,6 +9,7 @@ from spack.util.environment import set_env
 from llnl.util.filesystem import install_tree
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
+
 class Pbvr(MakefilePackage):
     """CS/IS-PBVR is a scientific visualization application designed
     based on Particle-Based Volume Rendering (PBVR). This application
@@ -72,14 +73,19 @@ class Pbvr(MakefilePackage):
 
     def build(self, spec, prefix):
         # Build Client
-        with set_env(SPACK_KVS_DIR=str(spec['kvs'].prefix), VTK_VERSION="9.3", VTK_INCLUDE_PATH=str(spec['vtk'].prefix.include) + "/vtk-9.3", VTK_LIB_PATH=str(spec['vtk'].prefix.lib)):
+        with set_env(
+            SPACK_KVS_DIR=str(spec['kvs'].prefix),
+            VTK_VERSION="9.3",
+            VTK_INCLUDE_PATH=str(spec['vtk'].prefix.include) + "/vtk-9.3",
+            VTK_LIB_PATH=str(spec['vtk'].prefix.lib)
+        ):
             # Build Client
             qmake = Executable(spec['qt-base'].prefix.bin.qmake)
             build_dir = join_path(self.stage.source_path, 'Client/build')
             os.makedirs(build_dir)
             with working_dir(build_dir):
                 qmake("../pbvr_client.pro")
-                make()                                                                                              
+                make()
             # Build Sevrer
             make('-C', 'CS_server')
 
