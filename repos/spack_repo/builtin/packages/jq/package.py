@@ -38,6 +38,13 @@ class Jq(AutotoolsPackage):
         else:
             return []
 
+    def flag_handler(self, name, flags):
+        # -std=c11 required for jq@:1.7
+        # https://github.com/jqlang/jq/issues/3206
+        if self.spec.satisfies("jq@:1.7 %gcc@15:") and name == "cflags":
+            flags.append(self.compiler.c11_flag)
+        return (flags, None, None)
+
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def install_test(self):

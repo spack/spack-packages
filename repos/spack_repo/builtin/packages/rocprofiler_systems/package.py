@@ -21,6 +21,13 @@ class RocprofilerSystems(CMakePackage):
     version("amd-mainline", branch="amd-mainline", submodules=True, deprecated=True)
     version("amd-staging", branch="amd-staging", submodules=True, deprecated=True)
     version(
+        "6.4.1",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-6.4.1",
+        commit="2e945e4a08781e13a822f568814e2c434fd8858f",
+        submodules=True,
+    )
+    version(
         "6.4.0",
         git="https://github.com/ROCm/rocprofiler-systems",
         tag="rocm-6.4.0",
@@ -109,25 +116,25 @@ class RocprofilerSystems(CMakePackage):
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
     depends_on("dyninst@:12")
+    depends_on("m4")
+    depends_on("texinfo")
     depends_on("libunwind", type=("build", "run"))
     depends_on("papi+shared", when="+papi")
     depends_on("mpi", when="+mpi")
     depends_on("tau", when="+tau")
     depends_on("caliper", when="+caliper")
     depends_on("python@3:", when="+python", type=("build", "run"))
-    depends_on("m4", when="+rocm")
-    depends_on("texinfo", when="+rocm")
     depends_on("libunwind", when="+rocm")
     depends_on("autoconf", when="+rocm")
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
     with when("+rocm"):
-        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0"]:
+        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
             depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
             depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
-        for ver in ["6.4.0"]:
+        for ver in ["6.4.0", "6.4.1"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
     def cmake_args(self):
@@ -142,14 +149,10 @@ class RocprofilerSystems(CMakePackage):
             self.define("ROCPROFSYS_BUILD_STATIC_LIBSTDCXX", False),
             self.define("ROCPROFSYS_BUILD_DYNINST", False),
             self.define_from_variant("ROCPROFSYS_BUILD_LTO", "ipo"),
-            self.define_from_variant("ROCPROFSYS_USE_HIP", "rocm"),
             self.define_from_variant("ROCPROFSYS_USE_MPI", "mpi"),
             self.define_from_variant("ROCPROFSYS_USE_OMPT", "ompt"),
             self.define_from_variant("ROCPROFSYS_USE_PAPI", "papi"),
             self.define_from_variant("ROCPROFSYS_USE_RCCL", "rocm"),
-            self.define_from_variant("ROCPROFSYS_USE_ROCM_SMI", "rocm"),
-            self.define_from_variant("ROCPROFSYS_USE_ROCTRACER", "rocm"),
-            self.define_from_variant("ROCPROFSYS_USE_ROCPROFILER", "rocm"),
             self.define_from_variant("ROCPROFSYS_USE_PYTHON", "python"),
             self.define_from_variant("ROCPROFSYS_USE_MPI_HEADERS", "mpi_headers"),
             self.define_from_variant("ROCPROFSYS_STRIP_LIBRARIES", "strip"),
@@ -159,6 +162,13 @@ class RocprofilerSystems(CMakePackage):
             self.define_from_variant("TIMEMORY_USE_TAU", "tau"),
             self.define_from_variant("TIMEMORY_USE_CALIPER", "caliper"),
         ]
+        if spec.satisfies("@:6.3"):
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCM_SMI", "rocm"))
+            args.append(self.define_from_variant("ROCPROFSYS_USE_HIP", "rocm"))
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCTRACER", "rocm"))
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCPROFILER", "rocm"))
+        else:
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCM", "rocm"))
 
         if "+tau" in spec:
             tau_root = spec["tau"].prefix

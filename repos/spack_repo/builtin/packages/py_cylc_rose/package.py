@@ -18,8 +18,9 @@ class PyCylcRose(PythonPackage):
 
     license("GPL-3.0-only")
 
-    # Version 1.4.2 is available at PyPI, but not at the URL that is considered canonical by Spack
-    # https://github.com/spack/spack/issues/48479
+    # Versions 1.4.2 and 1.5.1 are available at PyPI, but not at the URL that is considered
+    # canonical by Spack - https://github.com/spack/spack/issues/48479
+    version("1.5.1", commit="8232e48ff3a80bf04d7a0738e85a049ef4201a28")
     version("1.4.2", commit="8deda0480afed8cf92cfdf7938fc78d0aaf0c0e4")
     version("1.3.0", sha256="017072b69d7a50fa6d309a911d2428743b07c095f308529b36b1b787ebe7ab88")
 
@@ -34,4 +35,9 @@ class PyCylcRose(PythonPackage):
     with when("@1.4.2"):
         depends_on("py-metomi-rose@2.3", type=("build", "run"))
         depends_on("py-cylc-flow@8.3.5:8.3", type=("build", "run"))
+        depends_on("py-ansimarkup", type=("build", "run"))
+
+    with when("@1.5.1"):
+        depends_on("py-metomi-rose@2.4", type=("build", "run"))
+        depends_on("py-cylc-flow@8.4", type=("build", "run"))
         depends_on("py-ansimarkup", type=("build", "run"))
