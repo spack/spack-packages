@@ -145,6 +145,7 @@ class Boost(Package):
         "regex",
         "serialization",
         "signals",
+        "signals2",
         "stacktrace",
         "system",
         "test",
@@ -156,11 +157,21 @@ class Boost(Package):
     ]
 
     # Add any extra requirements for specific
-    all_libs_opts = {"charconv": {"when": "@1.85.0:"}, "cobalt": {"when": "@1.84.0:"}}
+    all_libs_opts = {
+            "charconv": {"when": "@1.85.0:"},
+            "cobalt": {"when": "@1.84.0:"},
+            "signals": {"when": "@:1.68"},
+            "signals2": {"when": "@1.4:"}
+        }
 
     for lib in all_libs:
         lib_opts = all_libs_opts.get(lib, {})
         variant(lib, default=False, description="Compile with {0} library".format(lib), **lib_opts)
+    # signals library was removed from boost in 1.69
+    # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
+    conflicts("+signals", when="@1.69:")
+    # signals 2 was added in 1.4
+    conflicts("+signals2", when="@:1.3")
 
     @property
     def libs(self):
@@ -320,7 +331,10 @@ class Boost(Package):
     # On Windows, the signals variant is required when building any of
     # the all_libs variants.
     for lib in all_libs:
-        requires("+signals", when=f"+{lib} platform=windows")
+        if lib != "signals2":
+            requires("+signals", when=f"@:1.68 +{lib} platform=windows")
+        if lib != "signals":
+            requires("+signals2", when=f"@1.69: +{lib} platform=windows")
 
     # Patch fix from https://svn.boost.org/trac/boost/ticket/11856
     patch("boost_11856.patch", when="@1.60.0%gcc@4.4.7")
@@ -716,7 +730,7 @@ class Boost(Package):
         """
         bootstrap_options = list()
         if self.spec.satisfies("%msvc"):
-            bootstrap_options.append(f"vc{self.compiler.platform_toolset_ver}")
+            bootstrap_options.append(f"vc{self["msvc"].platform_toolset_ver}")
         elif self.spec.satisfies("%gcc"):
             bootstrap_options.append("gcc")
         elif self.spec.satisfies("%clang"):
