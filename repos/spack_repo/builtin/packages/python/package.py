@@ -639,7 +639,7 @@ class Python(Package):
             filename = os.path.splitext(os.path.basename(pdb))[0]
             pdb_assoc[filename] = pdb
 
-        def install_pdb(binary:str, loc:str):
+        def install_pdb(binary: str, loc: str):
             file_name = os.path.splitext(os.path.basename(binary))[0]
             if file_name in pdb_assoc:
                 copy(pdb_assoc[file_name], loc)
@@ -649,7 +649,7 @@ class Python(Package):
         for exe in executables:
             copy(exe, prefix)
             install_pdb(exe, prefix)
-        
+
         # setup venv module correctly
         venv_binaries = ("python.exe", "pythonw.exe")
         if self.spec.satisfies("@3.13:"):
