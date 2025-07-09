@@ -100,7 +100,6 @@ class Boost(Package):
             "+random",
             "+regex",
             "+serialization",
-            "+signals",
             "+system",
             "+test",
             "+thread",
@@ -156,22 +155,19 @@ class Boost(Package):
         "wave",
     ]
 
-    # Add any extra requirements for specific
+    # Add any extra requirements for specific libraries
+    # signals library was removed from boost in 1.69
+    # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
     all_libs_opts = {
-            "charconv": {"when": "@1.85.0:"},
-            "cobalt": {"when": "@1.84.0:"},
-            "signals": {"when": "@:1.68"},
-            "signals2": {"when": "@1.4:"}
-        }
+        "charconv": {"when": "@1.85.0:"},
+        "cobalt": {"when": "@1.84.0:"},
+        "signals": {"when": "@:1.68"},
+        "signals2": {"when": "@1.4:"}
+    }
 
     for lib in all_libs:
         lib_opts = all_libs_opts.get(lib, {})
         variant(lib, default=False, description="Compile with {0} library".format(lib), **lib_opts)
-    # signals library was removed from boost in 1.69
-    # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
-    conflicts("+signals", when="@1.69:")
-    # signals 2 was added in 1.4
-    conflicts("+signals2", when="@:1.3")
 
     @property
     def libs(self):
