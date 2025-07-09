@@ -660,20 +660,21 @@ class Python(Package):
             # are created
             venv_binaries = ("venvlauncher.exe", "venvwlauncher.exe")
         for binary in venv_binaries:
-                copy(str(build_root / binary), prefix.Lib.venv.scripts.nt)
+            copy(str(build_root / binary), prefix.Lib.venv.scripts.nt)
 
         # handle shared libraries
-        shared_libraries:List[str] = []
-        shared_libraries.extend(glob.glob(f"{str(build_root)}\\*.dll"))
+        shared_libraries = glob.glob(f"{str(build_root)}\\*.dll")
         shared_libraries.extend(glob.glob(f"{str(build_root)}\\*.pyd"))
         os.makedirs(prefix.DLLs)
         for lib in shared_libraries:
+            libname = os.path.basename(lib)
             dest = prefix.DLLs
             if (
-                (lib.endswith(".dll") and "python" in lib)
-                or "vcruntime" in lib
+                "python" in libname
+                or "vcruntime" in libname
             ):
                 dest = prefix
+
             copy(lib, dest)
             install_pdb(lib, dest)
 
