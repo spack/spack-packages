@@ -25,6 +25,9 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main", submodules=True)
     version(
+        "3.6.0", tag="v3.6.0", commit="7346fd2a99e5d66ecf2ef3bafa1ebe621211d21f", submodules=True
+    )
+    version(
         "3.5.0", tag="v3.5.0", commit="412f015f2496cb0c0c802240bb9c11848b408fa0", submodules=True
     )
     version(
