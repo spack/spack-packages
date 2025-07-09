@@ -189,7 +189,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
             options.append("--with-tests=ctests")
         else:
             options.append("--with-tests=no")
-       
+
         return options
 
     @run_before("configure")
