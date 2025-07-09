@@ -1,0 +1,45 @@
+include:
+  # == Windows ===
+  - path: configs/win64/x86_64
+    when: platform == "windows"
+  - path: configs/win64
+    when: platform == "windows"
+
+  # == Darwin/Mac ===
+  - path: configs/darwin/aarch64
+    when: platform == "darwin"
+  - path: configs/darwin
+    when: platform == "darwin"
+
+  # == Linux ===
+  # ARM
+  - path: configs/linux/neoverse_v2
+    when: platform == "linux" and not env.get("CRAYPE_VERSION") and env.get("SPACK_CI_TARGET") == "neoverse_v2"
+  - path: configs/linux/neoverse_v1
+    when: platform == "linux" and not env.get("CRAYPE_VERSION") and env.get("SPACK_CI_TARGET") == "neoverse_v1"
+  - path: configs/linux/aarch64
+    when: platform == "linux" and not env.get("CRAYPE_VERSION") and env.get("SPACK_CI_TARGET") == "aarch64"
+  # x86
+  - path: configs/linux/x86_64_v4
+    when: platform == "linux" and not env.get("CRAYPE_VERSION") and env.get("SPACK_CI_TARGET") == "x86_64_v4"
+  - path: configs/linux/x86_64_v3
+    when: platform == "linux" and not env.get("CRAYPE_VERSION") and env.get("SPACK_CI_TARGET") == "x86_64_v3"
+
+  # === Cray ===
+  - path: configs/cray-slex/zen4
+    when: '"sles" in os and env.get("CRAYPE_VERSION")'
+  - path: configs/cray-sles
+    when: '"sles" in os and env.get("CRAYPE_VERSION")'
+
+  - path: configs/cray-rhel/x86_64_v3
+    when: '"rhel" in os and env.get("CRAYPE_VERSION")'
+  - path: configs/cray-rhel/
+    when: '"rhel" in os and env.get("CRAYPE_VERSION")'
+
+  # === Linux/Cray ===
+  # Configs basis for linux and cray
+  - path: configs/linux
+    when: platform == "linux"
+
+  # === Generic ===
+  - configs
