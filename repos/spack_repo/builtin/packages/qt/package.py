@@ -619,6 +619,8 @@ class Qt(Package):
             use_spack_dep("freetype")
             if spec.satisfies("platform=linux") or spec.satisfies("platform=freebsd"):
                 config_args.append("-fontconfig")
+            # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
+            config_args.append("-no-vulkan")
         else:
             config_args.append("-no-freetype")
             config_args.append("-no-gui")
