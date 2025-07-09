@@ -224,7 +224,9 @@ class Qt(Package):
             depends_on("libxext")
             depends_on("libxrender")
 
-        conflicts("+framework", msg="QT cannot be built as a framework except on macOS.")
+    for plat in ["linux", "freebsd", "windows"]:
+        with when(f"platform={plat}"):
+            conflicts("+framework", msg="QT cannot be built as a framework except on macOS.")
 
     with when("platform=windows +sql"):
         # Windows sqlite has no column_metadata variant unlike all other platforms
@@ -617,6 +619,8 @@ class Qt(Package):
             use_spack_dep("freetype")
             if spec.satisfies("platform=linux") or spec.satisfies("platform=freebsd"):
                 config_args.append("-fontconfig")
+            # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
+            config_args.append("-no-vulkan")
         else:
             config_args.append("-no-freetype")
             config_args.append("-no-gui")

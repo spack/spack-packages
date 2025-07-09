@@ -54,6 +54,7 @@ class Mariadb(CMakePackage):
     # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants)
     depends_on("cmake@2.6:", type="build")
+    depends_on("diffutils", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("bison", type="build")
     depends_on("jemalloc")

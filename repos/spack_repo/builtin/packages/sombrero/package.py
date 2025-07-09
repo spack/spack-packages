@@ -48,6 +48,18 @@ class Sombrero(MakefilePackage):
         sombrero_sh = FileFilter(join_path(self.stage.source_path, "sombrero.sh"))
         sombrero_dir = join_path(prefix.bin, "sombrero")
         sombrero_sh.filter("sombrero/", "{0}/".format(sombrero_dir))
+        # Sombrero makefile forces silent rules (`-s`), but we want them to be
+        # verbose, for easier debugging when something fails.
+        makerules = FileFilter(join_path(self.stage.source_path, "Make", "MkRules"))
+        makerules.filter("-s", "")
+
+    def build(self, spec, prefix):
+        # Pass to make the actual C/C++/MPI compilers.
+        make(
+            f"GCC={self.compiler.cc}",
+            f"CXX={self.compiler.cxx}",
+            f"MPICC={self.spec['mpi'].mpicc}",
+        )
 
     def install(self, spec, prefix):
         sombrero_dir = join_path(prefix.bin, "sombrero")
