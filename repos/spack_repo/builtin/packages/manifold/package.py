@@ -35,8 +35,8 @@ class Manifold(CMakePackage):
     variant("tbb", default=True, description="Use TBB for parallelization")
     depends_on("tbb", when="+tbb")
     # TODO: For now allow manifold to build clipper2 internally as not in spack
-    #variant("clipper2", default=True, description="")
-    #depends_on("clipper2", when="+clipper2")
+    # variant("clipper2", default=True, description="")
+    # depends_on("clipper2", when="+clipper2")
     variant("python", default=True, description="Build python bindings")
     depends_on("py-nanobind", when="+python")
     extends("python", when="+python")
