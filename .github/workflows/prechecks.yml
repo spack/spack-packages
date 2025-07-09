@@ -13,24 +13,6 @@ concurrency:
 
 
 jobs:
-  # Ensure no changes involve the old builtin repository directory
-  check-builtin-dir:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-    - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
-      id: filter
-      with:
-        filters: |
-          old:
-          - 'var/spack/repos/spack_repo/builtin/**'
-    - name: Detected old builtin repository
-      if: steps.filter.outputs.old == 'true'
-      run: |
-        echo "Error: Packages are not allowed in 'var/spack/repos/spack_repo/builtin'."
-        echo "       Use 'repos/spack_repo/builtin' instead."
-        exit 1
-
   # Validate that the code can be run on all the Python versions supported by Spack
   validate:
     runs-on: ubuntu-latest
