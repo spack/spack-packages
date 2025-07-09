@@ -90,6 +90,8 @@ class Precice(CMakePackage):
     depends_on("boost@1.65.1:", when="@1.4:")
     depends_on("boost@1.71.0:", when="@2.4:")
     depends_on("boost@1.74.0:", when="@3.2:")
+    # Boost 1.69 removed signals
+    conflicts("boost@1.69:", when="@:2.3")
 
     # Forward compatibility
     depends_on("boost@:1.72", when="@:2.0.2")
