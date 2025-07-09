@@ -19,6 +19,7 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.4.20", sha256="6ac4fc31ce440debe63987c2ebbf9d7b6634e67a7c3279257dc7361de8bdb3ef")
     version("1.4.19", sha256="3be4a26d825ffdfda52a56fc43246456989a3630093cced3fbddf4771ee58a70")
     version("1.4.18", sha256="ab2633921a5cd38e48797bf5521ad259bdc4b979078034a3b790d7fec5493fab")
     version("1.4.17", sha256="3ce725133ee552b8b4baca7837fb772940b25e81b2a9dc92537aeaf733538c9e")
