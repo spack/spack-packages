@@ -612,38 +612,63 @@ class Python(Package):
         proj_root = self.stage.source_path
         pcbuild_root = os.path.join(proj_root, "PCbuild")
         build_root = os.path.join(pcbuild_root, platform.machine().lower())
+        # install headers
         include_dir = os.path.join(proj_root, "Include")
         copy_tree(include_dir, prefix.include)
-        doc_dir = os.path.join(proj_root, "Doc")
-        copy_tree(doc_dir, prefix.Doc)
-        tools_dir = os.path.join(proj_root, "Tools")
-        copy_tree(tools_dir, prefix.Tools)
-        lib_dir = os.path.join(proj_root, "Lib")
-        copy_tree(lib_dir, prefix.Lib)
         if self.spec.satisfies("@3.13:"):
             pyconfig = os.path.join(pcbuild_root, platform.machine().lower(), "pyconfig.h")
         else:
             pyconfig = os.path.join(proj_root, "PC", "pyconfig.h")
         copy(pyconfig, prefix.include)
+        # install docs
+        doc_dir = os.path.join(proj_root, "Doc")
+        copy_tree(doc_dir, prefix.Doc)
+        # install tools
+        tools_dir = os.path.join(proj_root, "Tools")
+        copy_tree(tools_dir, prefix.Tools)
+        # install stdlib python modules
+        lib_dir = os.path.join(proj_root, "Lib")
+        copy_tree(lib_dir, prefix.Lib)
+
+        # locate and track all pdb files
+        pdbs = glob.glob(f"{build_root}\\*.pdb")
+        pdb_assoc = {}
+        for pdb in pdbs:
+            filename = os.path.splitext(os.path.basename(pdb))[0]
+            pdb_assoc[filename] = pdb
+
+        def install_pdb(binary, loc):
+            file_name = os.path.splitext(os.path.basename(binary))[0]
+            if file_name in pdb_assoc:
+                copy(pdb_assoc[file_name], loc)
+
+        # handle executables
+        executables = glob.glob(f"{build_root}\\*.exe")
+        for exe in executables:
+            copy(exe, prefix)
+            install_pdb(exe, prefix)
+            
+        # handle shared libraries
         shared_libraries = []
-        shared_libraries.extend(glob.glob("%s\\*.exe" % build_root))
-        shared_libraries.extend(glob.glob("%s\\*.dll" % build_root))
-        shared_libraries.extend(glob.glob("%s\\*.pyd" % build_root))
+        shared_libraries.extend(glob.glob(f"{build_root}\\*.dll"))
+        shared_libraries.extend(glob.glob(f"{build_root}\\*.pyd"))
         os.makedirs(prefix.DLLs)
         for lib in shared_libraries:
-            file_name = os.path.basename(lib)
+            dest = prefix.DLLs
             if (
-                file_name.endswith(".exe")
-                or (file_name.endswith(".dll") and "python" in file_name)
-                or "vcruntime" in file_name
+                (lib.endswith(".dll") and "python" in lib)
+                or "vcruntime" in lib
             ):
-                copy(lib, prefix)
-            else:
-                copy(lib, prefix.DLLs)
+                dest = prefix
+            copy(lib, dest)
+            install_pdb(lib, dest)
+
+        # handle static libraries
         static_libraries = glob.glob("%s\\*.lib" % build_root)
         os.makedirs(prefix.libs, exist_ok=True)
         for lib in static_libraries:
             copy(lib, prefix.libs)
+            install_pdb(lib, prefix.libs)
 
     def configure_args(self):
         spec = self.spec
