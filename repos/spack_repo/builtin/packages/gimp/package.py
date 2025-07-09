@@ -74,7 +74,7 @@ class Gimp(AutotoolsPackage):
     depends_on("fontconfig@2.12.4:")
     depends_on("gegl")
     depends_on("gexiv2")
-    depends_on("ghostscript", when="+ghostscript")
+    depends_on("ghostscript+gtk", when="+ghostscript")
     depends_on("glib")
     depends_on("glib-networking")
     depends_on("gtk-doc", when="+doc")

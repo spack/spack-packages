@@ -25,6 +25,7 @@ class R(AutotoolsPackage):
 
     license("GPL-2.0-or-later")
 
+    version("4.5.1", sha256="b42a7921400386645b10105b91c68728787db5c4c83c9f6c30acdce632e1bb70")
     version("4.5.0", sha256="3b33ea113e0d1ddc9793874d5949cec2c7386f66e4abfb1cef9aec22846c3ce1")
     version("4.4.3", sha256="0d93d224442dea253c2b086f088db6d0d3cfd9b592cd5496e8cb2143e90fc9e8")
     version("4.4.2", sha256="1578cd603e8d866b58743e49d8bf99c569e81079b6a60cf33cdf7bdffeb817ec")
