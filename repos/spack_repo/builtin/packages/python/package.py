@@ -10,6 +10,8 @@ import re
 import subprocess
 import sys
 
+from pathlib import Path
+
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
@@ -609,49 +611,61 @@ class Python(Package):
         Parameters:
             prefix (str): Install prefix for package
         """
-        proj_root = self.stage.source_path
-        pcbuild_root = os.path.join(proj_root, "PCbuild")
-        build_root = os.path.join(pcbuild_root, platform.machine().lower())
+        proj_root = Path(self.stage.source_path)
+        pcbuild_root = proj_root / "PCbuild"
+        build_root = pcbuild_root / platform.machine().lower()
         # install headers
-        include_dir = os.path.join(proj_root, "Include")
-        copy_tree(include_dir, prefix.include)
+        include_dir = proj_root / "Include"
+        copy_tree(str(include_dir), prefix.include)
         if self.spec.satisfies("@3.13:"):
-            pyconfig = os.path.join(pcbuild_root, platform.machine().lower(), "pyconfig.h")
+            pyconfig = pcbuild_root / platform.machine().lower() / "pyconfig.h"
         else:
-            pyconfig = os.path.join(proj_root, "PC", "pyconfig.h")
-        copy(pyconfig, prefix.include)
+            pyconfig = proj_root / "PC" / "pyconfig.h"
+        copy(str(pyconfig), prefix.include)
         # install docs
-        doc_dir = os.path.join(proj_root, "Doc")
-        copy_tree(doc_dir, prefix.Doc)
+        doc_dir = proj_root / "Doc"
+        copy_tree(str(doc_dir), prefix.Doc)
         # install tools
-        tools_dir = os.path.join(proj_root, "Tools")
-        copy_tree(tools_dir, prefix.Tools)
+        tools_dir = proj_root / "Tools"
+        copy_tree(str(tools_dir), prefix.Tools)
         # install stdlib python modules
-        lib_dir = os.path.join(proj_root, "Lib")
-        copy_tree(lib_dir, prefix.Lib)
+        lib_dir = proj_root / "Lib"
+        copy_tree(str(lib_dir), prefix.Lib)
 
         # locate and track all pdb files
-        pdbs = glob.glob(f"{build_root}\\*.pdb")
+        pdbs = glob.glob(f"{str(build_root)}\\*.pdb")
         pdb_assoc = {}
         for pdb in pdbs:
             filename = os.path.splitext(os.path.basename(pdb))[0]
             pdb_assoc[filename] = pdb
 
-        def install_pdb(binary, loc):
+        def install_pdb(binary:str, loc:str):
             file_name = os.path.splitext(os.path.basename(binary))[0]
             if file_name in pdb_assoc:
                 copy(pdb_assoc[file_name], loc)
 
         # handle executables
-        executables = glob.glob(f"{build_root}\\*.exe")
+        executables = glob.glob(f"{str(build_root)}\\*.exe")
         for exe in executables:
             copy(exe, prefix)
             install_pdb(exe, prefix)
-            
+        
+        # setup venv module correctly
+        venv_binaries = ("python.exe", "pythonw.exe")
+        if self.spec.satisfies("@3.13:"):
+            # 3.13 installs two new executables rather than copying
+            # python.exe into the venv module
+            # there are essentially just python.exe with a different name
+            # and are renamed to python.exe by the venv module when venvs
+            # are created
+            venv_binaries = ("venvlauncher.exe", "venvwlauncher.exe")
+        for binary in venv_binaries:
+                copy(str(build_root / binary), prefix.Lib.venv.scripts.nt)
+
         # handle shared libraries
-        shared_libraries = []
-        shared_libraries.extend(glob.glob(f"{build_root}\\*.dll"))
-        shared_libraries.extend(glob.glob(f"{build_root}\\*.pyd"))
+        shared_libraries:List[str] = []
+        shared_libraries.extend(glob.glob(f"{str(build_root)}\\*.dll"))
+        shared_libraries.extend(glob.glob(f"{str(build_root)}\\*.pyd"))
         os.makedirs(prefix.DLLs)
         for lib in shared_libraries:
             dest = prefix.DLLs
@@ -664,7 +678,7 @@ class Python(Package):
             install_pdb(lib, dest)
 
         # handle static libraries
-        static_libraries = glob.glob("%s\\*.lib" % build_root)
+        static_libraries = glob.glob(f"{str(build_root)}\\*.lib")
         os.makedirs(prefix.libs, exist_ok=True)
         for lib in static_libraries:
             copy(lib, prefix.libs)
