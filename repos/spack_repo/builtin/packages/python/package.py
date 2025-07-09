@@ -670,10 +670,7 @@ class Python(Package):
         for lib in shared_libraries:
             libname = os.path.basename(lib)
             dest = prefix.DLLs
-            if (
-                "python" in libname
-                or "vcruntime" in libname
-            ):
+            if "python" in libname or "vcruntime" in libname:
                 dest = prefix
 
             copy(lib, dest)
