@@ -162,7 +162,7 @@ class Boost(Package):
         "charconv": {"when": "@1.85.0:"},
         "cobalt": {"when": "@1.84.0:"},
         "signals": {"when": "@:1.68"},
-        "signals2": {"when": "@1.4:"}
+        "signals2": {"when": "@1.4:"},
     }
 
     for lib in all_libs:
