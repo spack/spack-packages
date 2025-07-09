@@ -6,6 +6,7 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder
+from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
@@ -189,7 +190,7 @@ for outer_index, item in enumerate(versions):
         ][outer_index]
 
 
-class RocmOpenmpExtras(Package):
+class RocmOpenmpExtras(Package, CompilerPackage):
     """OpenMP support for ROCm LLVM."""
 
     homepage = tools_url + "/aomp"
@@ -226,6 +227,8 @@ class RocmOpenmpExtras(Package):
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
+    provides("fortran")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -241,6 +244,8 @@ class RocmOpenmpExtras(Package):
     depends_on("libdrm", when="@5.7:6.0")
     depends_on("numactl", when="@5.7:6.0")
     depends_on("zlib", when="@6.2:")
+
+    compiler_wrapper_link_paths = {"fortran": "rocmcc/amdflang"}
 
     for ver in [
         "5.5.0",
@@ -782,3 +787,6 @@ class RocmOpenmpExtras(Package):
                     cmake(*cmake_args)
                     make()
                     make("install")
+
+    def _fortran_path(self):
+        return str(self.spec["llvm-amdgpu"].prefix.bin.amdflang)
