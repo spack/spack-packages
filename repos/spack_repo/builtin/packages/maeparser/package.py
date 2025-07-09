@@ -26,6 +26,7 @@ class Maeparser(CMakePackage):
         description="Build maeparser as a shared library (turn off for a static one)",
     )
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("boost +iostreams +filesystem +test")
