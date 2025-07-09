@@ -68,6 +68,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         variant(
             "gpu_streams", default=True, when="+cuda", description="Activates GPU streams support"
         )
+        variant(
+            "gpu_streams", default=True, when="+rocm", description="Activates GPU streams support"
+        )
 
     patch("fujitsu.patch", when="%fj")
     # wrong filename handling in elpa's custom preprocessor
@@ -89,6 +92,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     depends_on("scalapack", when="+mpi")
     depends_on("rocblas", when="+rocm")
+    # elpa 2024.05.001 enables rocsolver by default
+    # https://github.com/marekandreas/elpa/commit/de90ce3d634be468e71c2827d788de52ceb606bf#diff-49473dca262eeab3b4a43002adb08b4db31020d190caaad1594b47f1d5daa810R2635-R2638
+    depends_on("rocsolver", when="+rocm @2024.05.001:")
     depends_on("libtool", type="build")
     depends_on("python@3:", type="build")
     depends_on("scalapack", when="+autotune")
@@ -145,7 +151,26 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         return hlist
 
     build_directory = "spack-build"
-    parallel = False
+    # parallel = False
+
+    def flag_handler(self, name, flags):
+        spec = self.spec
+        if name == "cflags":
+            if spec.satisfies("^[virtuals=c] gcc") or spec.satisfies("^[virtuals=c] aocc"):
+                flags.append("-O3")
+        if name == "fflags":
+            if spec.satisfies("^[virtuals=fortran] aocc"):
+                flags.append("-O3")
+            elif spec.satisfies("^[virtuals=fortran] gcc"):
+                flags.append("-O3 -ffree-line-length-none")
+                if spec.satisfies("+autotune"):
+                    flags.append("-fallow-argument-mismatch")
+            elif spec.satisfies("^[virtuals=fortran] fj") and spec.satisfies("+openmp"):
+                flags.append("-Kparallel")
+        if name == "ldflags":
+            flags += [spec["blas"].libs.search_flags, spec["lapack"].libs.search_flags, "-lstdc++"]
+            flags += [spec["lapack"].libs.link_flags, spec["blas"].libs.link_flags]
+        return (flags, None, None)
 
     def configure_args(self):
         spec = self.spec
@@ -176,17 +201,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         if not any(f in spec.target for f in simd_features):
             options.append("--enable-generic" + kernels)
 
-        if self.compiler.name == "gcc":
-            options.extend(["CFLAGS=-O3", "FCFLAGS=-O3 -ffree-line-length-none"])
-
-        if spec.satisfies("%aocc"):
-            options.extend(["FCFLAGS=-O3", "CFLAGS=-O3"])
-
         if spec.satisfies("%fj"):
             options.append("--disable-Fortran2008-features")
             options.append("--enable-FUGAKU")
-            if spec.satisfies("+openmp"):
-                options.extend(["FCFLAGS=-Kparallel"])
 
         cuda_flag = "nvidia-gpu"
         if spec.satisfies("+cuda"):
@@ -223,12 +240,6 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         options += self.enable_or_disable("openmp")
 
-        # Additional linker search paths and link libs
-        ldflags = [spec["blas"].libs.search_flags, spec["lapack"].libs.search_flags, "-lstdc++"]
-        libs = [spec["lapack"].libs.link_flags, spec["blas"].libs.link_flags]
-
-        options += [f'LDFLAGS={" ".join(ldflags)}', f'LIBS={" ".join(libs)}']
-
         if self.spec.satisfies("+mpi"):
             options += [
                 "CC={0}".format(spec["mpi"].mpicc),
@@ -244,5 +255,8 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         options.append("--disable-silent-rules")
         options.append("--without-threading-support-check-during-build")
+        options.append("--disable-c-tests")
+        options.append("--disable-cpp-tests")
+        options.append("--disable-Fortran-tests")
 
         return options
