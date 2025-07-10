@@ -15,7 +15,7 @@ import llnl.util.lang
 import spack.platforms
 import spack.platforms.cray
 from spack.package import *
-from spack.util.environment import is_system_path, set_env
+from spack.util.environment import is_system_path
 
 
 @llnl.util.lang.memoized
@@ -584,32 +584,24 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             env.unset(var)
 
     def build(self, spec, prefix):
-        with set_env(CHPL_MAKE_THIRD_PARTY=join_path(self.build_directory, "third-party")):
-            make()
-            with set_env(CHPL_HOME=self.build_directory):
-                if spec.satisfies("+chpldoc"):
-                    make("chpldoc")
-                if spec.satisfies("+python-bindings"):
-                    make("chapel-py-venv")
-                    python("-m", "ensurepip", "--default-pip")
-                    python("-m", "pip", "install", "tools/chapel-py")
+        make()
+        if spec.satisfies("+chpldoc"):
+            make("chpldoc")
+        if spec.satisfies("+python-bindings"):
+            make("chapel-py-venv")
+            python("-m", "ensurepip", "--default-pip")
+            python("-m", "pip", "install", "tools/chapel-py")
 
     def install(self, spec, prefix):
-        # Needed to prevent invalidating cache on subsequent cmake runs due to
-        # env changes, likely pertaining to spack compiler wrappers.
-        with set_env(CHPL_CMAKE_USE_CC_CXX="1"):
-            make("install")
-            # We install CMakeLists.txt so we can later lookup the version number
-            # if working from a non-versioned release/branch (such as main)
-            if not self.is_versioned_release():
-                install("CMakeLists.txt", join_path(prefix.share, "chapel"))
-            install_tree(
-                "doc", join_path(prefix.share, "chapel", self._output_version_short, "doc")
-            )
-            install_tree(
-                "examples",
-                join_path(prefix.share, "chapel", self._output_version_short, "examples"),
-            )
+        make("install")
+        # We install CMakeLists.txt so we can later lookup the version number
+        # if working from a non-versioned release/branch (such as main)
+        if not self.is_versioned_release():
+            install("CMakeLists.txt", join_path(prefix.share, "chapel"))
+        install_tree("doc", join_path(prefix.share, "chapel", self._output_version_short, "doc"))
+        install_tree(
+            "examples", join_path(prefix.share, "chapel", self._output_version_short, "examples")
+        )
 
     def setup_chpl_platform(self, env):
         if self.spec.variants["host_platform"].value == "unset":
@@ -770,6 +762,11 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         self.unset_chpl_env_vars(env)
         self.setup_env_vars(env)
+        env.set("CHPL_HOME", self.build_directory)
+        env.set("CHPL_MAKE_THIRD_PARTY", join_path(self.build_directory, "third-party"))
+        # Needed to prevent invalidating cache on subsequent cmake runs due to
+        # env changes, likely pertaining to spack compiler wrappers.
+        env.set("CHPL_CMAKE_USE_CC_CXX", "1")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.setup_env_vars(env)
@@ -781,6 +778,11 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         )
         with when("@2.2:2.5"):
             env.set("CHPL_HOME", chpl_home)
+
+        # Needed for standalone tests
+        env.set("CHPL_CHECK_HOME", self.test_suite.current_test_cache_dir)
+        if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
+            env.set("COMP_FLAGS", "--no-checks --no-compiler-driver")
 
     def get_chpl_version_from_cmakelists(self) -> str:
         cmake_lists = None
@@ -867,17 +869,20 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     def check_chpl_install_gasnet(self):
         """Setup env to run self-test after installing the package with gasnet"""
-        with set_env(
-            GASNET_SPAWNFN="L",
-            GASNET_QUIET="yes",
-            GASNET_ROUTE_OUTPUT="0",
-            QT_AFFINITY="no",
-            CHPL_QTHREAD_ENABLE_OVERSUBSCRIPTION="1",
-            CHPL_RT_MASTERIP="127.0.0.1",
-            CHPL_RT_WORKERIP="127.0.0.0",
-            CHPL_LAUNCHER="",
-        ):
-            return subprocess.run(["util/test/checkChplInstall"])
+        env = os.environ.copy()
+        env.update(
+            {
+                "GASNET_SPAWNFN": "L",
+                "GASNET_QUIET": "yes",
+                "GASNET_ROUTE_OUTPUT": "0",
+                "QT_AFFINITY": "no",
+                "CHPL_QTHREAD_ENABLE_OVERSUBSCRIPTION": "1",
+                "CHPL_RT_MASTERIP": "127.0.0.1",
+                "CHPL_RT_WORKERIP": "127.0.0.0",
+                "CHPL_LAUNCHER": "",
+            }
+        )
+        return subprocess.run(["util/test/checkChplInstall"], env=env)
 
     def check_chpl_install(self):
         if self.spec.variants["comm"].value != "none":
@@ -888,15 +893,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     def test_hello(self):
         """Run the hello world test"""
         with working_dir(self.test_suite.current_test_cache_dir):
-            with set_env(CHPL_CHECK_HOME=self.test_suite.current_test_cache_dir):
-                with test_part(self, "test_hello_checkChplInstall", purpose="test hello world"):
-                    if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
-                        with set_env(COMP_FLAGS="--no-checks --no-compiler-driver"):
-                            res = self.check_chpl_install()
-                            assert res and res.returncode == 0
-                    else:
-                        res = self.check_chpl_install()
-                        assert res and res.returncode == 0
+            with test_part(self, "test_hello_checkChplInstall", purpose="test hello world"):
+                res = self.check_chpl_install()
+                assert res and res.returncode == 0
 
     # TODO: This is a pain because the checkChplDoc script doesn't have the same
     # support for CHPL_CHECK_HOME and chpldoc is finicky about CHPL_HOME
