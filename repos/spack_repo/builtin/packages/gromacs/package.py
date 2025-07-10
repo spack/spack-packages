@@ -232,7 +232,7 @@ class Gromacs(CMakePackage, CudaPackage):
     # Apple Clang and OpenMP that is fixed in 2025
     depends_on("llvm-openmp", when="@2025: +openmp %apple-clang@15:", type=("build", "run"))
 
-    # But we need to block +openmp for Gromacs older than 2025
+    # But we need to block +openmp %apple-clang for GROMACS older than 2025
     conflicts(
         "+openmp",
         when="@:2024 %apple-clang",
