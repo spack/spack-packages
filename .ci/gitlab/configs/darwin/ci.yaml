@@ -7,6 +7,11 @@ ci:
   - build-job-remove:
       tags: [spack]
   - build-job:
+      timeout: 120 minutes
       tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+      variables:
+        SPACK_GNUPGHOME: ${CI_PROJECT_DIR}/.gpg
+      before_script:
+      - mkdir ${SPACK_GNUPGHOME}
   - build-job-remove:
       image:: macos-run-on-metal

@@ -18,7 +18,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["hep", "lattice"]
 
-    maintainers("chaoos")
+    maintainers("chaoos", "mtaillefumier")
 
     license("MIT OR BSD-3-Clause", checked_by="chaoos")
 
@@ -55,9 +55,12 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("fortran", type="build", when="+tifr")
     depends_on("fortran", type="build", when="+bqcd")
 
+    variant(
+        "backwards", default=False, description="Enable stacktrace generation using backwards-cpp"
+    )
     variant("mpi", default=False, description="Enable MPI support")
     variant("qmp", default=False, description="Enable QMP")
-    variant("qio", default=False, description="Enable QIO")
+    variant("qio", default=False, description="Enable QIO", when="+qmp")
     variant("openqcd", default=False, description="Enable openQCD interface")
     variant("milc", default=False, description="Enable MILC interface")
     variant("qdp", default=False, description="Enable QDP interface")
@@ -67,7 +70,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
     variant("tifr", default=False, description="Enable TIFR interface")
     variant("multigrid", default=False, description="Enable multigrid")
     variant("nvshmem", default=False, description="Enable NVSHMEM", when="+cuda")
-
+    variant("openmp", default=False, description="Enable openmp support")
     variant("clover", default=False, description="Build clover Dirac operators")
     variant(
         "clover_hasenbusch", default=False, description="Build clover Hasenbusch twist operators"
@@ -88,6 +91,8 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
     variant("twisted_clover", default=False, description="Build twisted clover Dirac operators")
     variant("twisted_mass", default=False, description="Build twisted mass Dirac operators")
     variant("wilson", default=True, description="Build Wilson Dirac operators")
+    variant("usqcd", default=False, description="Download and build usqcd", when="+qmp")
+    variant("eigen", default=True, description="Enable eigen support")
 
     with when("+multigrid"):
         variant(
@@ -108,6 +113,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cuda", when="+cuda")
     depends_on("nvshmem", when="+nvshmem")
     depends_on("gdrcopy", when="+nvshmem")
+
     with when("+rocm"):
         depends_on("hip")
         depends_on("hipblas")
@@ -119,6 +125,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
     conflicts("~cuda ~rocm", msg="Either CUDA or ROCm support is required")
     conflicts("cuda_arch=none", when="+cuda", msg="Please indicate a cuda_arch value")
+    conflicts("amdgpu_target=none", when="+rocm", msg="Please indicate a amdgpu_target value")
     conflicts(
         "+nvshmem", when="~mpi ~qmp", msg="NVSHMEM requires either +mpi or +qmp to be enabled"
     )
@@ -146,7 +153,7 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
             self.define("QUDA_GPU_ARCH", arch),
             self.define("QUDA_PRECISION", 14),
             self.define("QUDA_RECONSTRUCT", 7),
-            self.define("QUDA_DOWNLOAD_USQCD", False),
+            self.define("QUDA_DOWNLOAD_USQCD", "usqcd"),
             self.define("QUDA_DIRAC_DEFAULT_OFF", True),
             self.define_from_variant("QUDA_DIRAC_CLOVER", "clover"),
             self.define_from_variant("QUDA_DIRAC_CLOVER_HASENBUSCH", "clover_hasenbusch"),
@@ -170,6 +177,9 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("QUDA_INTERFACE_TIFR", "tifr"),
             self.define_from_variant("QUDA_MULTIGRID", "multigrid"),
             self.define_from_variant("QUDA_NVSHMEM", "nvshmem"),
+            self.define_from_variant("QUDA_OPENMP", "openmp"),
+            self.define_from_variant("QUDA_BACKWARDS", "backwards"),
+            self.define_from_variant("QUDA_USE_EIGEN", "eigen"),
         ]
         if self.spec.satisfies("+multigrid"):
             args.append(
