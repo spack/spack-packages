@@ -16,24 +16,23 @@ class Libxsmm(MakefilePackage):
     and deep learning primitives."""
 
     homepage = "https://github.com/libxsmm/libxsmm"
-    url = "https://github.com/libxsmm/libxsmm/archive/1.17.tar.gz"
-    git = "https://github.com/libxsmm/libxsmm.git"
+    url = "https://github.com/hfp/libxsmm/archive/1.17.tar.gz"
+    git = "https://github.com/hfp/libxsmm.git"
 
     maintainers("hfp")
 
     license("BSD-3-Clause")
 
-    # 2.0 release is planned for Jan / Feb 2024. This commit from main is added
-    # as a stable version that supports other targets than x86. Remove this
-    # after 2.0 release.
-    version("main-2023-11", commit="0d9be905527ba575c14ca5d3b4c9673916c868b2")
+    # LIBXSMM changed to a rolling version model, i.e., future versions unlikely tag release
+    # This recipe uses "2.year.month" for versions beyond 1.17. This is necessary to provide
+    # ordered versions (to support range specifications). After 1.17, LIBXSMM started to
+    # support 64-bit targets other than x86-64.
+    # Version listed here are meant to be stable/tested with at least the CP2K application.
     version("main", branch="main")
+    version("2.2025.7", commit="fab1c53a44c19550192bb99b6314c833ca54ccd7")
+    version("2.2023.11", commit="0d9be905527ba575c14ca5d3b4c9673916c868b2")
     version("1.17-cp2k", commit="6f883620f58afdeebab28039fc9cf580e76a5ec6")
-    version(
-        "1.17",
-        sha256="8b642127880e92e8a75400125307724635ecdf4020ca4481e5efe7640451bb92",
-        preferred=True,
-    )
+    version("1.17", sha256="8b642127880e92e8a75400125307724635ecdf4020ca4481e5efe7640451bb92")
     version("1.16.3", sha256="e491ccadebc5cdcd1fc08b5b4509a0aba4e2c096f53d7880062a66b82a0baf84")
     version("1.16.2", sha256="bdc7554b56b9e0a380fc9c7b4f4394b41be863344858bc633bc9c25835c4c64e")
     version("1.16.1", sha256="93dc7a3ec40401988729ddb2c6ea2294911261f7e6cd979cf061b5c3691d729d")
@@ -68,8 +67,8 @@ class Libxsmm(MakefilePackage):
     version("1.4.1", sha256="c19be118694c9b4e9a61ef4205b1e1a7e0c400c07f9bce65ae430d2dc2be5fe1")
     version("1.4", sha256="cf483a370d802bd8800c06a12d14d2b4406a745c8a0b2c8722ccc992d0cd72dd")
 
-    variant("shared", default=False, description="With shared libraries (and static libraries).")
-    variant("debug", default=False, description="With call-trace (LIBXSMM_TRACE); unoptimized.")
+    variant("shared", default=True, description="With shared libraries (and static libraries)")
+    variant("debug", default=False, description="With symbols and assertions (unoptimized)")
     variant(
         "header-only", default=False, when="@1.6.2:", description="With header-only installation"
     )
@@ -81,12 +80,6 @@ class Libxsmm(MakefilePackage):
         description="Control behavior of BLAS calls",
         values=("default", "0", "1", "2"),
     )
-    variant(
-        "large_jit_buffer",
-        default=False,
-        when="@1.17:",
-        description="Max. JIT buffer size increased to 256 KiB",
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -94,14 +87,15 @@ class Libxsmm(MakefilePackage):
 
     depends_on("python", type="build")
 
-    # A recent `as` is needed to compile libxmss until version 1.17
+    # A recent 'as' is needed to compile libxsmm until version 1.17
     # (<https://github.com/spack/spack/issues/28404>), but not afterwards
-    # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
-    depends_on("binutils+ld+gas@2.33:", type="build")
+    # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>)
+    # Note: version specs always have inclusive bounds.
+    depends_on("binutils+ld+gas@2.33:", type="build", when="@:1.17")
 
-    # Version 2.0 supports both x86_64 and aarch64
+    # Versions after 1.17 support both x86_64 and aarch64
     requires("target=x86_64:", "target=aarch64:")
-    requires("target=x86_64:", when="@:1")
+    requires("target=x86_64:", when="@:1.17")
 
     @property
     def libs(self):
@@ -114,34 +108,24 @@ class Libxsmm(MakefilePackage):
 
     def build(self, spec, prefix):
         # include symbols by default
-        make_args = [
-            "CC={0}".format(spack_cc),
-            "CXX={0}".format(spack_cxx),
-            "FC={0}".format(spack_fc),
-            "PREFIX=%s" % prefix,
-        ]
-        if spec.target.family == "aarch64":
-            make_args += ["PLATFORM=1"]
-        else:
-            make_args += ["SYM=1"]
+        make_args = [f"CC={spack_cc}", f"CXX={spack_cxx}", f"FC={spack_fc}", "PREFIX=%s" % prefix]
 
         # JIT (AVX and later) makes MNK, M, N, or K spec. superfluous
         # make_args += ['MNK=1 4 5 6 8 9 13 16 17 22 23 24 26 32']
 
-        # include call trace as the build is already de-optimized
+        if spec.satisfies("+shared"):
+            make(*(make_args + ["STATIC=0"]))
+
         if spec.satisfies("+debug"):
             make_args += ["DBG=1"]
-            make_args += ["TRACE=1"]
 
         blas_val = spec.variants["blas"].value
         if blas_val != "default":
-            make_args += ["BLAS={0}".format(blas_val)]
+            make_args += [f"BLAS={blas_val}"]
 
-        if spec.satisfies("+large_jit_buffer"):
+        # max. JIT buffer size increased to 256 KiB
+        if spec.satisfies("@1.17"):
             make_args += ["CODE_BUF_MAXSIZE=262144"]
-
-        if spec.satisfies("+shared"):
-            make(*(make_args + ["STATIC=0"]))
 
         # builds static libraries by default
         make(*make_args)
