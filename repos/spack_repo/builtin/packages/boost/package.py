@@ -327,9 +327,9 @@ class Boost(Package):
     # On Windows, the signals variant is required when building any of
     # the all_libs variants.
     for lib in all_libs:
-        if lib != "signals2":
+        if lib not in ["signals", "signals2"]:
+            # <= 1.68 needs signals, after that needs signals2
             requires("+signals", when=f"@:1.68 +{lib} platform=windows")
-        if lib != "signals":
             requires("+signals2", when=f"@1.69: +{lib} platform=windows")
 
     # Patch fix from https://svn.boost.org/trac/boost/ticket/11856
