@@ -4,10 +4,10 @@
 
 import glob
 import os
+import shlex
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.tengine
 from spack.package import *
 
 
@@ -259,30 +259,27 @@ class Likwid(Package):
 
     # Until tty output works better from build steps, this ends up in
     # the build log.  See https://github.com/spack/spack/pull/10412.
-    @run_after("install")
+    @run_after("install", when="accessmode=accessdaemon")
     def caveats(self):
-        if self.spec.satisfies("accessmode=accessdaemon"):
-            perm_script = "spack_likwid_fix_perms.sh.j2"
-            perm_script_path = join_path(self.spec.prefix.bin, perm_script)
-            daemons = glob.glob(join_path(self.spec.prefix, "sbin", "*"))
-            with open(perm_script_path, "w") as f:
-                env = spack.tengine.make_environment(dirs=self.package_dir)
-                t = env.get_template(perm_script + ".j2")
-                f.write(
-                    t.render({"prefix": self.spec.prefix, "chowns": daemons, "chmods": daemons})
-                )
-            tty.warn(
-                """
-            For full functionality, you'll need to chown and chmod some files
-            after installing the package.  This has security implications.
+        perm_script_path = join_path(self.spec.prefix.libexec, "spack_likwid_fix_perms.sh")
+        os.makedirs(os.path.dirname(perm_script_path), exist_ok=True)
+        daemons = glob.glob(join_path(self.spec.prefix, "sbin", "*"))
+        with open(perm_script_path, "w") as f:
+            f.write("#!/bin/sh -eu\n\n")
+            for daemon in daemons:
+                f.write(f"chown root:root {shlex.quote(daemon)}\n")
+                f.write(f"chmod u+s {shlex.quote(daemon)}\n")
+        os.chmod(perm_script_path, 0o755)
+        tty.warn(
+            f"""\
+For full functionality, you'll need to chown and chmod some files
+after installing the package.  This has security implications.
 
-            We've installed a script that will make the necessary changes;
-            read through it and then execute it as root (e.g. via sudo).
+We've installed a script that will make the necessary changes;
+read through it and then execute it as root (e.g. via sudo).
 
-            The script is named:
+The script is named:
 
-            {0}
-            """.format(
-                    perm_script_path
-                )
-            )
+{perm_script_path}
+"""
+        )
