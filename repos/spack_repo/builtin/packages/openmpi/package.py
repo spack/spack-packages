@@ -674,8 +674,7 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("hwloc +cuda", when="+cuda ~internal-hwloc")
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(
-            f"hwloc +rocm amdgpu_target={tgt}",
-            when=f"+rocm ~internal-hwloc amdgpu_target={tgt}"
+            f"hwloc +rocm amdgpu_target={tgt}", when=f"+rocm ~internal-hwloc amdgpu_target={tgt}"
         )
     depends_on("java", when="+java")
     depends_on("sqlite", when="+sqlite3")
@@ -714,11 +713,7 @@ with '-Wl,-commons,use_dylibs' and without
             libfabric_requirement = "fabrics=cxi"
         if is_CrayEX() or check_FI_HMEM_ROCR():
             libfabric_requirement = "fabrics=cxi"
-        requires(
-            "fabrics=ucx ^ucx +rocm",
-            f"^libfabric {libfabric_requirement}",
-            policy="one_of",
-        )
+        requires("fabrics=ucx ^ucx +rocm", f"^libfabric {libfabric_requirement}", policy="one_of")
 
     # PMIx is unavailable for @1, and required for @2:
     # OpenMPI @2: includes a vendored version:
