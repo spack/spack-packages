@@ -1,11 +1,9 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Sbcl(MakefilePackage):
@@ -58,9 +56,7 @@ class Sbcl(MakefilePackage):
 
     def build(self, spec, prefix):
         sh = which("sh")
-
         version_str = str(spec.version)
-
         # NOTE: add any other git versions here.
         # When installing from git, the build system expects a dummy version
         # to be provided as a lisp expression.
@@ -68,15 +64,12 @@ class Sbcl(MakefilePackage):
             with open("version.lisp-expr", "w") as f:
                 f.write(f'"{version_str}"')
 
-        build_args = []
-        build_args.append("--prefix={0}".format(prefix))
-
+        build_args = ["--prefix={0}".format(prefix)]
         if "+fancy" in self.spec:
             build_args.append("--fancy")
 
         sbcl_bootstrap_prefix = self.spec["sbcl-bootstrap"].prefix.lib.sbcl
-        with set_env(SBCL_HOME=sbcl_bootstrap_prefix):
-            sh("make.sh", *build_args)
+        sh("make.sh", *build_args, extra_env={"SBCL_HOME": sbcl_bootstrap_prefix})
 
     def install(self, spec, prefix):
         sh = which("sh")
