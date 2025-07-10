@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class RShinywidgets(RPackage):
-    """This package provide custom widgets and other components to enhance your shiny applications."""
+    """This package provide custom widgets and other components to enhance your shiny
+    applications."""
 
     homepage = "https://github.com/dreamRs/shinyWidgets"
     url = "https://github.com/dreamRs/shinyWidgets/archive/refs/tags/v0.9.0.tar.gz"
