@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
-from spack.build_systems.cmake import CMakePackage
 
 class Parafeed(CMakePackage):
     """Parafeed is a C++ library to parse and interact with the commandline."""
