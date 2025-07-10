@@ -42,6 +42,7 @@ default:
       when: always
       variables:
         SPACK_PIPELINE_TYPE: "spack_protected_branch"
+        SPACK_PRUNE_UNTOUCHED: "False"
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         SPACK_REQUIRE_SIGNING: "True"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
@@ -488,6 +489,9 @@ radiuss-aws-aarch64-build:
 
 data-vis-sdk-generate:
   extends: [ ".data-vis-sdk", ".generate-x86_64"]
+  variables:
+    # Override concretization pool because of memory requests
+    SPACK_CONCRETIZE_JOBS: 3
   image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
 
 data-vis-sdk-build:
@@ -811,7 +815,6 @@ e4s-cray-rhel-build:
   extends: [ ".generate-cray-sles", ".e4s-cray-sles" ]
 
 .e4s-cray-sles-build:
-  allow_failure: true  # libsci_cray.so broken, misses DT_NEEDED for libdl.so
   extends: [ ".build", ".e4s-cray-sles" ]
   trigger:
     include:

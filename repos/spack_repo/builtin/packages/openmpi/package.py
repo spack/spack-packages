@@ -67,10 +67,13 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Current
     version(
-        "5.0.7", sha256="119f2009936a403334d0df3c0d74d5595a32d99497f9b1d41e90019fee2fc2dd"
-    )  # libmpi.so.40.40.7
+        "5.0.8", sha256="53131e1a57e7270f645707f8b0b65ba56048f5b5ac3f68faabed3eb0d710e449"
+    )  # libmpi.so.40.40.8
 
     # Still supported
+    version(
+        "5.0.7", sha256="119f2009936a403334d0df3c0d74d5595a32d99497f9b1d41e90019fee2fc2dd"
+    )  # libmpi.so.40.40.7
     version(
         "5.0.6", sha256="bd4183fcbc43477c254799b429df1a6e576c042e74a2d2f8b37d537b2ff98157"
     )  # libmpi.so.40.40.6
@@ -546,6 +549,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@:4",
         description="Enable deprecated C++ exception support",
     )
+    variant("fortran", default=True, description="Enable Fortran support")
     variant("gpfs", default=False, description="Enable GPFS support")
     variant(
         "singularity",
@@ -636,7 +640,7 @@ with '-Wl,-commons,use_dylibs' and without
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     if sys.platform != "darwin":
         depends_on("numactl")
@@ -647,6 +651,8 @@ with '-Wl,-commons,use_dylibs' and without
 
     depends_on("perl", type="build")
     depends_on("pkgconfig", type="build")
+    # Based on https://docs.open-mpi.org/en/v5.0.x/developers/prerequisites.html#flex
+    depends_on("flex@2.5.4:", type="build", when="@main")
 
     depends_on("hwloc@2:", when="@4: ~internal-hwloc")
     # ompi@:3.0.0 doesn't support newer hwloc releases:
@@ -995,6 +1001,11 @@ with '-Wl,-commons,use_dylibs' and without
     def setup_dependent_package(self, module, dependent_spec):
         self.spec.mpicc = join_path(self.prefix.bin, "mpicc")
         self.spec.mpicxx = join_path(self.prefix.bin, self.cxxname)
+        # Some derived packages define the "fortran" variant, most don't. Checking on the
+        # presence of ~fortran makes us default to add fortran wrappers if the variant is
+        # not declared.
+        if self.spec.satisfies("~fortran"):
+            return
         self.spec.mpifc = join_path(self.prefix.bin, "mpif90")
         self.spec.mpif77 = join_path(self.prefix.bin, "mpif77")
 
@@ -1258,6 +1269,8 @@ with '-Wl,-commons,use_dylibs' and without
 
         config_args.extend(self.enable_or_disable("mpi-cxx", variant="cxx"))
         config_args.extend(self.enable_or_disable("cxx-exceptions", variant="cxx_exceptions"))
+
+        config_args.extend(self.enable_or_disable("mpi-fortran", variant="fortran"))
 
         #
         # the Spack path padding feature causes issues with Open MPI's lex based parsing system
