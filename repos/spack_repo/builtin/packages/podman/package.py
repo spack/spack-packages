@@ -34,6 +34,7 @@ def write_containers_conf(pkg_obj, dep_names):
     with open(join_path(pkg_obj.prefix, "containers.conf"), "w") as f:
         f.write(config)
 
+
 class Podman(Package):
     """An optionally rootless and daemonless container engine: alias docker=podman"""
 
@@ -94,7 +95,6 @@ class Podman(Package):
         # the gvproxy constraint is listed at podman/go.mod --> gvisor-tap-vsock
         depends_on("gvproxy@0.8.6", type="run", when="@5.5.1")
         depends_on("vfkit@0.6.1", type="run", when="@5.5.1")
-
 
     @when("@5.5.1:")
     def setup_run_environment(self, env):
