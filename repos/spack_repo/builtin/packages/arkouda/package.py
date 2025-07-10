@@ -6,7 +6,6 @@
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Arkouda(MakefilePackage):
@@ -87,17 +86,13 @@ class Arkouda(MakefilePackage):
             f.write("$(eval $(call add-path,{0}))\n".format(spec["libiconv"].prefix))
             f.write("$(eval $(call add-path,{0}))\n".format(spec["libidn2"].prefix))
 
-    def build(self, spec, prefix):
+    def setup_build_environment(self, env):
         # Detect distributed builds and skip the dependency checks built into
         # the Arkouda Makefile. These checks will try to spawn multiple jobs which may
         # cause the build to fail in situations where the user is constrained
         # to a limited number of simultaneous jobs.
-        if spec.satisfies("+distributed"):
-            with set_env(ARKOUDA_SKIP_CHECK_DEPS="1"):
-                tty.warn("Distributed build detected. Skipping dependency checks")
-                make()
-        else:
-            make()
+        if self.spec.satisfies("+distributed"):
+            env.set("ARKOUDA_SKIP_CHECK_DEPS", "1")
 
     # Arkouda does not have an install target in its Makefile
     def install(self, spec, prefix):
