@@ -16,8 +16,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 import spack.compilers.config
 from spack.package import *
 
-from spack.platforms.cray import slingshot_network
-
 
 @llnl.util.lang.memoized
 def is_CrayEX():
@@ -32,6 +30,16 @@ def is_CrayEX():
                 fi_info
                 and fi_info("-l", output=str, error=str, fail_on_error=False).find("cxi") >= 0
             ):
+                return True
+    return False
+
+def check_FI_HMEM_ROCR():
+    if spack.platforms.host().name == "linux":
+        fi_info = which("fi_info")
+        if fi_info:
+            output = fi_info("--caps", "FI_HMEM_ROCR", output=str, error=str, fail_on_error=False)
+            # Check if there is any output indicating at least one provider
+            if output.strip():
                 return True
     return False
 
@@ -622,6 +630,7 @@ built with the mpicc/mpifort/etc. compiler wrappers
 with '-Wl,-commons,use_dylibs' and without
 '-Wl,-flat_namespace'.""",
     )
+    variant("slingshot", default=False, description="Enable slingshot support")
 
     # Patch to allow two-level namespace on a MacOS platform when building
     # openmpi. Unfortuntately, the openmpi configure command has flat namespace
@@ -663,7 +672,10 @@ with '-Wl,-commons,use_dylibs' and without
 
     depends_on("hwloc +cuda", when="+cuda ~internal-hwloc")
     for tgt in ROCmPackage.amdgpu_targets:
-        depends_on(f"hwloc +rocm amdgpu_target={tgt}", when=f"+rocm ~internal-hwloc amdgpu_target={tgt}")
+        depends_on(
+            f"hwloc +rocm amdgpu_target={tgt}",
+            when=f"+rocm ~internal-hwloc amdgpu_target={tgt}"
+        )
     depends_on("java", when="+java")
     depends_on("sqlite", when="+sqlite3")
     depends_on("zlib-api", when="@3:")
@@ -698,7 +710,8 @@ with '-Wl,-commons,use_dylibs' and without
     with when("+rocm"):
         requires(
             "fabrics=ucx ^ucx +rocm",
-            "^libfabric" + (" fabrics=cxi" if slingshot_network() or is_CrayEX() else ""),
+            "+slingshot ^libfabric fabrics=cxi",
+            "~slingshot ^libfabric" + (" fabrics=cxi" if is_CrayEX() or check_FI_HMEM_ROCR() else ""),
             policy="one_of",
         )
 
