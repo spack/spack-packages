@@ -726,7 +726,7 @@ class Boost(Package):
         """
         bootstrap_options = list()
         if self.spec.satisfies("%msvc"):
-            bootstrap_options.append(f"vc{self["msvc"].platform_toolset_ver}")
+            bootstrap_options.append("vc%s" % self["msvc"].platform_toolset_ver)
         elif self.spec.satisfies("%gcc"):
             bootstrap_options.append("gcc")
         elif self.spec.satisfies("%clang"):
