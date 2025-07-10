@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import glob
 import os
 import sys
@@ -9,7 +8,6 @@ import sys
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.util.environment
 from spack.package import *
 
 
@@ -224,10 +222,9 @@ class Papi(AutotoolsPackage, ROCmPackage):
         if not os.path.exists(test_dir):
             raise SkipTest("Skipping smoke tests, directory doesn't exist")
         with working_dir(test_dir, create=False):
-            with spack.util.environment.set_env(PAPIROOT=self.prefix):
-                make = self.spec["gmake"].command
-                make()
-                exe_simple = which("simple")
-                exe_simple()
-                exe_threads = which("threads")
-                exe_threads()
+            make = self.spec["gmake"].command
+            make(extra_env={"PAPI_ROOT": self.prefix})
+            exe_simple = which("simple")
+            exe_simple(extra_env={"PAPI_ROOT": self.prefix})
+            exe_threads = which("threads")
+            exe_threads(extra_env={"PAPI_ROOT": self.prefix})
