@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class Maxbin(MakefilePackage):
-    """MaxBin is software for binning assembled metagenomic sequences based on an Expectation-Maximization algorithm."""
+    """MaxBin is software for binning assembled metagenomic sequences based on an
+    Expectation-Maximization algorithm."""
 
     homepage = "https://flowcraft.readthedocs.io/en/latest/user/components/maxbin2.html"
     url = "https://sourceforge.net/projects/maxbin2/files/MaxBin-2.2.7.tar.gz/download"
@@ -30,10 +31,12 @@ class Maxbin(MakefilePackage):
     def install(self, spec, prefix):
         mkdir(prefix.bin)
         install_tree(".", prefix.bin)
-        perl = which("perl")
+        perl = join_path(spec["perl"].prefix.bin, "perl")
+        perl_libwww_perl = join_path(spec["perl-libwww-perl"].prefix.lib, "perl5")
+        perl_http_message = join_path(spec["perl-http-message"].prefix.lib, "perl5")
         filter_file(
             r"#!/usr/bin/perl -w",
-            f"#!{perl} -w -I {spec['perl-libwww-perl'].prefix}/lib/perl5 -I {spec['perl-http-message'].prefix}/lib/perl5",
+            f"#!{perl} -w -I {perl_libwww_perl} -I {perl_http_message}",
             f"{prefix}/bin/run_MaxBin.pl",
             string=True,
         )
