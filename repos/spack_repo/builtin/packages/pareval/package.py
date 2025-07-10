@@ -13,7 +13,7 @@ class Pareval(Package, CudaPackage, ROCmPackage):
     """ParEval benchmark for evaluating LLMs' parallel code generation capabilities"""
 
     homepage = "https://github.com/parallelcodefoundry/pareval"
-    url = "https://github.com/parallelcodefoundry/pareval"
+    url = "https://github.com/parallelcodefoundry/pareval/archive/refs/tags/v1.2.tar.gz"
     git = "https://github.com/parallelcodefoundry/pareval.git"
 
     maintainers("Dando18")
@@ -21,9 +21,9 @@ class Pareval(Package, CudaPackage, ROCmPackage):
     license("MIT", checked_by="Dando18")
 
     version("develop", branch="develop")
-    version("1.2", tag="v1.2")
-    version("1.1", tag="v1.1")
-    version("1.0", tag="v1.0")
+    version("1.2", sha256="8b374afc07bc177a3ba335ff1fe782b3a1943bbcd2dd7ac0a62dedfa4f44f651")
+    version("1.1", sha256="c07bf9b1027afed97281eb2fbcbe8f3d819ac12045ba9d1a7a90d5488f92cc53")
+    version("1.0", sha256="314cf62e421c9382f4344d7da57f3dcdf9ab3e1272afd6a7badabf0ffe80f294")
 
     variant("generate", default=True, description="Build support for LLM generation")
     variant("evaluate", default=True, description="Build support for running evaluation drivers")
