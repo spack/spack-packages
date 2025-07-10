@@ -935,17 +935,24 @@ class MakefileBuilder(makefile.MakefileBuilder):
             mkf.write("GPUVER = {0}\n".format(gpuver))
             mkf.write("DATA_DIR = {0}\n".format(prefix.share.data))
 
+    def setup_build_environment(
+        self, env: spack.util.environment.EnvironmentModifications
+    ) -> None:
+        # Apparently the Makefile bases its paths on PWD
+        # so we need to set PWD = self.build_directory
+        env.set("PWD", self.build_directory)
+        # CP2K < 7 still uses $PWD to detect the current working dir
+        # and Makefile is in a subdir, account for both facts here:
+        data_dir = join_path(self.pkg.stage.source_path, "data")
+        env.set("CP2K_DATA_DIR", data_dir)
+
     def build(self, pkg, spec, prefix):
         if "+cuda" in spec and len(spec.variants["cuda_arch"].value) > 1:
             raise InstallError("cp2k supports only one cuda_arch at a time")
 
-        # Apparently the Makefile bases its paths on PWD
-        # so we need to set PWD = self.build_directory
-        with spack.util.environment.set_env(PWD=self.build_directory):
-            super().build(pkg, spec, prefix)
-
-            with working_dir(self.build_directory):
-                make("libcp2k", *self.build_targets)
+        super().build(pkg, spec, prefix)
+        with working_dir(self.build_directory):
+            make("libcp2k", *self.build_targets)
 
     def install(self, pkg, spec, prefix):
         exe_dir = join_path("exe", self.makefile_architecture)
@@ -994,15 +1001,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
     @property
     def archive_files(self):
         return [join_path(self.pkg.stage.source_path, self.makefile)]
-
-    def check(self):
-        data_dir = join_path(self.pkg.stage.source_path, "data")
-
-        # CP2K < 7 still uses $PWD to detect the current working dir
-        # and Makefile is in a subdir, account for both facts here:
-        with spack.util.environment.set_env(CP2K_DATA_DIR=data_dir, PWD=self.build_directory):
-            with working_dir(self.build_directory):
-                make("test", *self.build_targets)
 
     @run_after("install", when="@9.1:")
     def fix_package_config(self):
