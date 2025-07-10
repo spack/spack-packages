@@ -11,7 +11,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.util.environment
 from spack.build_environment import dso_suffix
 from spack.package import *
 
@@ -935,9 +934,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             mkf.write("GPUVER = {0}\n".format(gpuver))
             mkf.write("DATA_DIR = {0}\n".format(prefix.share.data))
 
-    def setup_build_environment(
-        self, env: spack.util.environment.EnvironmentModifications
-    ) -> None:
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Apparently the Makefile bases its paths on PWD
         # so we need to set PWD = self.build_directory
         env.set("PWD", self.build_directory)
