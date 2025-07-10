@@ -31,5 +31,15 @@ class Maxbin(MakefilePackage):
         mkdir(prefix.bin)
         install_tree(".", prefix.bin)
         perl = which("perl")
-        filter_file(r"#!/usr/bin/perl -w", f"#!{perl} -w -I {spec['perl-libwww-perl'].prefix}/lib/perl5 -I {spec['perl-http-message'].prefix}/lib/perl5", f"{prefix}/bin/run_MaxBin.pl", string=True)
-        filter_file(r'my $tmpname =  "tmp_" . time();', 'my $tmpname =  "/tmp/maxbin_tmp_" . time();', f"{prefix}/bin/run_MaxBin.pl", string=True)
+        filter_file(
+            r"#!/usr/bin/perl -w",
+            f"#!{perl} -w -I {spec['perl-libwww-perl'].prefix}/lib/perl5 -I {spec['perl-http-message'].prefix}/lib/perl5",
+            f"{prefix}/bin/run_MaxBin.pl",
+            string=True,
+        )
+        filter_file(
+            r'my $tmpname =  "tmp_" . time();',
+            'my $tmpname =  "/tmp/maxbin_tmp_" . time();',
+            f"{prefix}/bin/run_MaxBin.pl",
+            string=True,
+        )
