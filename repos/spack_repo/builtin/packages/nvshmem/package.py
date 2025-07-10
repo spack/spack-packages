@@ -95,7 +95,7 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         config = [
-            self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value),
+            self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].values),
             self.define_from_variant("NVSHMEM_MPI_SUPPORT", "mpi"),
             self.define_from_variant("NVSHMEM_LIBFABRIC_SUPPORT", "libfabric"),
             self.define_from_variant("NVSHMEM_UCX_SUPPORT", "ucx"),
