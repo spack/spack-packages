@@ -39,6 +39,7 @@ class RocmExamples(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("glfw", type="build")
+    depends_on("mesa", type="build", when="+cuda")
 
     for ver in ["6.4.0", "6.3.3", "6.3.2", "6.3.1", "6.3.0", "6.2.4", "6.2.1", "6.2.0"]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -68,6 +69,7 @@ class RocmExamples(CMakePackage):
         when="@6.4+cuda",
     )
     patch("add_hip_include_cuda.patch", when="@6.4+cuda")
+    patch("add_mesa_include.patch", when="@6.4+cuda")
 
     def patch(self):
         filter_file(
@@ -97,6 +99,7 @@ class RocmExamples(CMakePackage):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
             args.append(self.define("ROCM_ROOT", self.spec["hip"].prefix))
             args.append(self.define("HIP_ROOT_DIR", self.spec["hip"].prefix))
+            args.append(self.define("MESA_INCLUDE_DIR", self.spec["mesa"].prefix.include))
             args.append(
                 self.define(
                     "CUDA_DRIVER_LIB",
