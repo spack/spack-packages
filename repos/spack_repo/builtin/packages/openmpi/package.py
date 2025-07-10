@@ -33,6 +33,7 @@ def is_CrayEX():
                 return True
     return False
 
+
 def check_FI_HMEM_ROCR():
     if spack.platforms.host().name == "linux":
         fi_info = which("fi_info")
@@ -708,10 +709,14 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("slurm", when="schedulers=slurm")
 
     with when("+rocm"):
+        libfabric_requirement = ""
+        with when("+slingshot"):
+            libfabric_requirement = "fabrics=cxi"
+        if is_CrayEX() or check_FI_HMEM_ROCR():
+            libfabric_requirement = "fabrics=cxi"
         requires(
             "fabrics=ucx ^ucx +rocm",
-            "+slingshot ^libfabric fabrics=cxi",
-            "~slingshot ^libfabric" + (" fabrics=cxi" if is_CrayEX() or check_FI_HMEM_ROCR() else ""),
+            f"^libfabric {libfabric_requirement}",
             policy="one_of",
         )
 
