@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems import cmake, makefile
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage, conflicts
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
@@ -54,6 +54,8 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     )
     variant("libfabric", default=False, description="Build with Libfabric support")
 
+    generator("ninja")
+
     conflicts("~cuda")
 
     def url_for_version(self, version):
@@ -70,7 +72,9 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
 
     depends_on("cuda@11:", when="@3.2.5:")
 
-    depends_on("cmake@3.19:", when="build_system=cmake")
+    with default_args(when="build_system=cmake", type="build"):
+        depends_on("cmake@3.19:")
+        depends_on("ninja")
 
     depends_on("mpi", when="+mpi")
 
