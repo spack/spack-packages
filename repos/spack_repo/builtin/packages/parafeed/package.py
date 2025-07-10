@@ -10,7 +10,7 @@ class Parafeed(CMakePackage):
     """Parafeed is a C++ library to parse and interact with the commandline."""
 
     homepage = "https://github.com/sanbee/parafeed"
-    url      = "https://github.com/sanbee/parafeed/archive/refs/tags/v1.1.41.tar.gz"
+    url      = "https://github.com/sanbee/parafeed/archive/refs/tags/v1.1.43.tar.gz"
 
     maintainers("sanbee", "sanbw", "preshanth")
 
