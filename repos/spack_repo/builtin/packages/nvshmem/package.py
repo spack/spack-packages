@@ -98,7 +98,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("NVSHMEM_USE_NCCL", "nccl"),
             self.define_from_variant("NVSHMEM_USE_GDRCOPY", "gdrcopy"),
             self.define_from_variant("NVSHMEM_SHMEM_SUPPORT", "shmem"),
-            self.define("NVSHMEM_PMIX_SUPPORT", True),
             self.define("NVSHMEM_IBRC_SUPPORT", False),
             self.define("NVSHMEM_BUILD_PYTHON_LIB", False),
             self.define("NVSHMEM_BUILD_EXAMPLES", False),
