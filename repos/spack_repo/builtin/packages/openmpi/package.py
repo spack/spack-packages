@@ -7,11 +7,11 @@ import os
 import re
 import sys
 
-import llnl.util.lang
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
+import llnl.util.lang
 
 import spack.compilers.config
 from spack.package import *
