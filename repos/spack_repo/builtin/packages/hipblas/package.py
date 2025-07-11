@@ -106,7 +106,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"+rocm @{ver}")
-        depends_on(f"rocm-openmp-extras@{ver}", when=f"%rocmcc @{ver}")
+        depends_on(f"rocm-openmp-extras@{ver}", when=f"%fortran=rocm-openmp-extras @{ver}")
 
     depends_on("hip +cuda", when="+cuda")
 
