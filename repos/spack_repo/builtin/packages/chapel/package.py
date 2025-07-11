@@ -584,16 +584,22 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             env.unset(var)
 
     def build(self, spec, prefix):
-        make()
+        make(extra_env={"CHPL_MAKE_THIRD_PARTY": join_path(self.build_directory, "third-party")})
+        extra_env = {
+            "CHPL_MAKE_THIRD_PARTY": join_path(self.build_directory, "third-party"),
+            "CHPL_HOME": self.build_directory,
+        }
         if spec.satisfies("+chpldoc"):
-            make("chpldoc")
+            make("chpldoc", extra_env=extra_env)
         if spec.satisfies("+python-bindings"):
-            make("chapel-py-venv")
-            python("-m", "ensurepip", "--default-pip")
-            python("-m", "pip", "install", "tools/chapel-py")
+            make("chapel-py-venv", extra_env=extra_env)
+            python("-m", "ensurepip", "--default-pip", extra_env=extra_env)
+            python("-m", "pip", "install", "tools/chapel-py", extra_env=extra_env)
 
     def install(self, spec, prefix):
-        make("install")
+        # Needed to prevent invalidating cache on subsequent cmake runs due to
+        # env changes, likely pertaining to spack compiler wrappers.
+        make("install", extra_env={"CHPL_CMAKE_USE_CC_CXX": "1"})
         # We install CMakeLists.txt so we can later lookup the version number
         # if working from a non-versioned release/branch (such as main)
         if not self.is_versioned_release():
@@ -762,11 +768,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         self.unset_chpl_env_vars(env)
         self.setup_env_vars(env)
-        env.set("CHPL_HOME", self.build_directory)
-        env.set("CHPL_MAKE_THIRD_PARTY", join_path(self.build_directory, "third-party"))
-        # Needed to prevent invalidating cache on subsequent cmake runs due to
-        # env changes, likely pertaining to spack compiler wrappers.
-        env.set("CHPL_CMAKE_USE_CC_CXX", "1")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.setup_env_vars(env)
@@ -778,11 +779,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         )
         with when("@2.2:2.5"):
             env.set("CHPL_HOME", chpl_home)
-
-        # Needed for standalone tests
-        env.set("CHPL_CHECK_HOME", self.test_suite.current_test_cache_dir)
-        if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
-            env.set("COMP_FLAGS", "--no-checks --no-compiler-driver")
 
     def get_chpl_version_from_cmakelists(self) -> str:
         cmake_lists = None
@@ -867,7 +863,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         #       - make test is a long running operation
         pass
 
-    def check_chpl_install_gasnet(self):
+    def check_chpl_install_gasnet(self, *, env_update):
         """Setup env to run self-test after installing the package with gasnet"""
         env = os.environ.copy()
         env.update(
@@ -882,19 +878,23 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
                 "CHPL_LAUNCHER": "",
             }
         )
+        env.update(env_update)
         return subprocess.run(["util/test/checkChplInstall"], env=env)
 
-    def check_chpl_install(self):
+    def check_chpl_install(self, env_update):
         if self.spec.variants["comm"].value != "none":
-            return self.check_chpl_install_gasnet()
+            return self.check_chpl_install_gasnet(env_update=env_update)
         else:
             return subprocess.run(["util/test/checkChplInstall"])
 
     def test_hello(self):
         """Run the hello world test"""
         with working_dir(self.test_suite.current_test_cache_dir):
+            env_update = {"CHPL_CHECK_HOME": self.test_suite.current_test_cache_dir}
             with test_part(self, "test_hello_checkChplInstall", purpose="test hello world"):
-                res = self.check_chpl_install()
+                if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
+                    env_update.update({"COMP_FLAGS": "--no-checks --no-compiler-driver"})
+                res = self.check_chpl_install(env_update=env_update)
                 assert res and res.returncode == 0
 
     # TODO: This is a pain because the checkChplDoc script doesn't have the same
