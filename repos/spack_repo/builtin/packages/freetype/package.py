@@ -66,6 +66,13 @@ class Freetype(AutotoolsPackage, CMakePackage):
 
     variant("shared", default=True, description="Build shared libraries")
     variant("pic", default=True, description="Enable position-independent code (PIC)")
+    variant(
+        "zlib",
+        default="no",
+        values=("yes", "no", "auto"),
+        multi=False,
+        description="Build against an external zlib: yes, no, or auto-detect",
+    )
 
     requires("+pic", when="+shared build_system=autotools")
 
@@ -90,13 +97,10 @@ class AutotoolsBuilder(AutotoolsBuilder):
     build_directory = "builds/unix"
 
     def configure_args(self):
-        args = [
-            "--with-brotli=no",
-            "--with-bzip2=yes",
-            "--with-harfbuzz=no",
-            "--with-png=yes",
-            "--with-zlib=no",
-        ]
+        args = ["--with-brotli=no", "--with-bzip2=yes", "--with-harfbuzz=no", "--with-png=yes"]
+        mode = self.spec.variants["zlib"].value
+        args.append(f"--with-zlib={mode}")
+
         if self.spec.satisfies("@2.9.1:"):
             args.append("--enable-freetype-config")
         args.extend(self.enable_or_disable("shared"))
