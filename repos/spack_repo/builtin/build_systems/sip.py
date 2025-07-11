@@ -127,7 +127,7 @@ class SIPBuilder(BuilderWithDefaults):
     package_methods = ("configure_args", "build_args", "install_args")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_targets",
         "install_targets",
         "build_time_test_callbacks",

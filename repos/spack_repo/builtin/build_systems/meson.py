@@ -103,7 +103,7 @@ class MesonBuilder(BuilderWithDefaults):
     package_methods = ("meson_args", "check")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_targets",
         "install_targets",
         "build_time_test_callbacks",

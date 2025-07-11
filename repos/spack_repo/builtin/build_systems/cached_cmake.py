@@ -58,7 +58,7 @@ class CachedCMakeBuilder(CMakeBuilder):
     )
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes: Tuple[str, ...] = CMakeBuilder.legacy_attributes + (
+    package_attributes: Tuple[str, ...] = CMakeBuilder.package_attributes + (
         "cache_name",
         "cache_path",
     )

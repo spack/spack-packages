@@ -62,7 +62,7 @@ class RacketBuilder(Builder):
     package_methods: Tuple[str, ...] = tuple()
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_directory", "build_time_test_callbacks", "subdirectory")
+    package_attributes = ("build_directory", "build_time_test_callbacks", "subdirectory")
 
     #: Callback names for build-time test
     build_time_test_callbacks = ["check"]

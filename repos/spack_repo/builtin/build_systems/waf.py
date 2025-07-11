@@ -73,7 +73,7 @@ class WafBuilder(BuilderWithDefaults):
     )
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_time_test_callbacks",
         "build_directory",
         "install_time_test_callbacks",

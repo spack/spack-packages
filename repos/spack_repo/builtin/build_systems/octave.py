@@ -46,7 +46,7 @@ class OctaveBuilder(BuilderWithDefaults):
     package_methods = ()
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ()
+    package_attributes = ()
 
     def install(self, pkg: OctavePackage, spec: Spec, prefix: Prefix) -> None:
         """Install the package from the archive file"""

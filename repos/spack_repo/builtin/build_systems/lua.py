@@ -60,7 +60,7 @@ class LuaBuilder(Builder):
     package_methods = ("luarocks_args",)
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ()
+    package_attributes = ()
 
     def unpack(self, pkg: LuaPackage, spec: Spec, prefix: Prefix) -> None:
         if os.path.splitext(pkg.stage.archive_file)[1] == ".rock":
