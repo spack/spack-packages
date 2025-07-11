@@ -79,17 +79,17 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
     depends_on("mpi", when="+mpi")
 
     depends_on("ucx", when="+ucx")
-    depends_on("ucx@1.10.0:", when="@3: +ucx")
+    depends_on("ucx@1.10:", when="@3: +ucx")
 
     depends_on("gdrcopy", when="+gdrcopy")
     conflicts("~gdrcopy", when="~ucx")
-    depends_on("gdrcopy@2.0:", when="@3: +gdrcopy")
+    depends_on("gdrcopy@2:", when="@3: +gdrcopy")
 
     depends_on("nccl", when="+nccl")
-    depends_on("nccl@2.0:", when="@3: +nccl")
+    depends_on("nccl@2:", when="@3: +nccl")
 
     depends_on("libfabric", when="+libfabric")
-    depends_on("libfabric@1.15.0.0:", when="@3: +libfabric")
+    depends_on("libfabric@1.15:", when="@3: +libfabric")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
