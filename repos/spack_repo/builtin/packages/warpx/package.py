@@ -280,8 +280,9 @@ class Warpx(CMakePackage, PythonExtension):
         # test openPMD output if compiled in
         if "+openpmd" in spec:
             cli_args.append("diag1.format=openpmd")
-            # RZ: thetaMode output uses different variables
-            cli_args.append("diag1.fields_to_plot=Er Et Ez Br Bt Bz jr jt jz rho")
+            if dim == "rz":
+                # RZ: thetaMode output uses different variables
+                cli_args.append("diag1.fields_to_plot=Er Et Ez Br Bt Bz jr jt jz rho")
         return cli_args
 
     def check(self):
