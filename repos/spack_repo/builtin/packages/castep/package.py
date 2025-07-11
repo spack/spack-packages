@@ -44,7 +44,11 @@ class Castep(CMakePackage, MakefilePackage):
     requires("%gcc@4.9.1:", when="@21.11:")
 
     variant("mpi", default=True, description="Enable MPI build")
-    variant("portable", default=False, description="Build a generic executable which ought to run on most CPUs")
+    variant(
+        "portable", 
+        default=False, 
+        description="Build a generic executable which ought to run on most CPUs"
+    )
 
     with when("build_system=makefile"):
         depends_on("gmake@3.82:", when="@21:21", type="build")
@@ -57,7 +61,11 @@ class Castep(CMakePackage, MakefilePackage):
         variant("dlmg", default=True, description="Use DLMG Functionality functionals")
         variant("openmp", default=True, description="Use OpenMP threading")
         variant("tools", default=True, description="Build the executable auxilliary programs")
-        variant("utilities", default=True, description="Build the third-party scripts and utilities")
+        variant(
+            "utilities", 
+            default=True, 
+            description="Build the third-party scripts and utilities"
+        )
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -77,6 +85,7 @@ class Castep(CMakePackage, MakefilePackage):
     depends_on("mpi", type=("build", "link", "run"), when="+mpi")
 
     parallel = True
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
 
@@ -101,6 +110,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         ]
         return args
 
+
 class MakefileBuilder(makefile.MakefileBuilder):
 
     def edit(self, pkg, spec, prefix):
@@ -118,7 +128,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 dlmakefile.filter(r"MPIFLAGS = -DMPI", "MPIFLAGS = -fallow-argument-mismatch -DMPI")
                 platfile.filter(r"^\s*FFLAGS_E\s*=.*", "FFLAGS_E = -fallow-argument-mismatch ")
 
-            platfile.filter(r"^LD_FLAGS\s=.*$","LD_FLAGS = $(OPT) -fopenmp")
+            platfile.filter(r"^LD_FLAGS\s=.*$", "LD_FLAGS = $(OPT) -fopenmp")
         elif spec.satisfies("%intel"):
             if self.spec.satisfies("@20:"):
                 platfile = FileFilter("obj/platforms/linux_x86_64_ifort.mk")
