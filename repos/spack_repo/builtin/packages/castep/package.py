@@ -34,9 +34,7 @@ class Castep(CMakePackage, MakefilePackage):
     )
 
     build_system(
-        conditional("cmake", when="@25:"),
-        conditional("makefile", when="@:21"),
-        default="cmake",
+        conditional("cmake", when="@25:"), conditional("makefile", when="@:21"), default="cmake"
     )
 
     # GCC 9+ for f2008 features
@@ -47,7 +45,7 @@ class Castep(CMakePackage, MakefilePackage):
     variant(
         "portable",
         default=False,
-        description="Build a generic executable which ought to run on most CPUs"
+        description="Build a generic executable which ought to run on most CPUs",
     )
 
     with when("build_system=makefile"):
@@ -62,9 +60,7 @@ class Castep(CMakePackage, MakefilePackage):
         variant("openmp", default=True, description="Use OpenMP threading")
         variant("tools", default=True, description="Build the executable auxilliary programs")
         variant(
-            "utilities",
-            default=True,
-            description="Build the third-party scripts and utilities"
+            "utilities", default=True, description="Build the third-party scripts and utilities"
         )
 
     depends_on("c", type="build")
@@ -126,8 +122,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 else:
                     platfile = FileFilter("obj/platforms/linux_x86_64_gfortran.mk")
                 dlmakefile.filter(
-                    r"MPIFLAGS = -DMPI",
-                    "MPIFLAGS = -fallow-argument-mismatch -DMPI"
+                    r"MPIFLAGS = -DMPI", "MPIFLAGS = -fallow-argument-mismatch -DMPI"
                 )
                 platfile.filter(r"^\s*FFLAGS_E\s*=.*", "FFLAGS_E = -fallow-argument-mismatch ")
 
