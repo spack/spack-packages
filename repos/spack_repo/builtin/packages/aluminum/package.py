@@ -13,7 +13,6 @@ from spack_repo.builtin.build_systems.cached_cmake import (
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.platforms.cray
 from spack.package import *
 
 
@@ -56,6 +55,7 @@ class Aluminum(CachedCMakePackage, CudaPackage, ROCmPackage):
         " communication of accelerator data",
     )
     variant("nccl", default=False, description="Builds with support for NCCL communication lib")
+    variant("slingshot", default=False, when="+nccl", description="Builds with Slingshot support")
     variant("shared", default=True, description="Build Aluminum as a shared library")
 
     # Debugging features
@@ -113,8 +113,7 @@ class Aluminum(CachedCMakePackage, CudaPackage, ROCmPackage):
                     "nccl +cuda cuda_arch={0}".format(arch),
                     when="+cuda cuda_arch={0}".format(arch),
                 )
-            if spack.platforms.cray.slingshot_network():
-                depends_on("aws-ofi-nccl")  # Note: NOT a CudaPackage
+            depends_on("aws-ofi-nccl", when="+slingshot")  # Note: NOT a CudaPackage
 
     with when("+rocm"):
         for val in ROCmPackage.amdgpu_targets:
@@ -133,8 +132,7 @@ class Aluminum(CachedCMakePackage, CudaPackage, ROCmPackage):
                 "roctracer-dev +rocm amdgpu_target={0}".format(val),
                 when="+roctracer amdgpu_target={0}".format(val),
             )
-        if spack.platforms.cray.slingshot_network():
-            depends_on("aws-ofi-rccl", when="+nccl")
+        depends_on("aws-ofi-rccl", when="+nccl +slingshot")
 
     def cmake_args(self):
         args = []
