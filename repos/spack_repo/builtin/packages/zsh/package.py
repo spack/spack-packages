@@ -47,10 +47,11 @@ class Zsh(AutotoolsPackage):
 
     # This patch addresses building with gcc@14:
     patch("boolcodes_error.patch", when="@5.3.1: %gcc@14:")
-    # The following 2 patches taken from suse linux package hub
+    # The following 3 patches taken from suse linux package hub
     # https://build.opensuse.org/package/show/shells/zsh
-    # This addresses gcc@14: build issue
+    # These address gcc@14: build issue
     patch("zsh-4c89849c98172c951a9def3690e8647dae76308f.patch", when="@5.9: %gcc@14:")
+    patch("zsh-ab4d62eb975a4c4c51dd35822665050e2ddc6918.patch", when="@5.9: %gcc@14:")
     # This addresses a segfault / subshell hang
     patch("zsh-ac1fd06d7ce073c86f00d50fd74464bcb5194e97.patch", when="@5.9: %gcc@14:")
 

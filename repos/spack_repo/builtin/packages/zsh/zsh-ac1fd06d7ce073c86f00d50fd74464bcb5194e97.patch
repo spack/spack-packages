@@ -1,12 +1,13 @@
---- Src/exec.c.orig	2022-05-08 02:18:22.000000000 -0400
-+++ Src/exec.c	2025-07-11 11:00:16.042141421 -0400
-@@ -5385,7 +5385,8 @@
+diff --color -ruN zsh-5.9-ori/Src/exec.c zsh-5.9/Src/exec.c
+--- zsh-5.9-ori/Src/exec.c	2025-03-03 14:57:54.861179812 +0100
++++ zsh-5.9/Src/exec.c	2025-03-03 15:03:31.922653112 +0100
+@@ -5389,7 +5389,8 @@
  	    if (funcstack && funcstack->tp == FS_FUNC &&
  		    !strcmp(s, funcstack->name)) {
  		Shfunc old = ((Shfunc)shfunctab->getnode(shfunctab, s));
 -		shf->node.flags |= old->node.flags & (PM_TAGGED|PM_TAGGED_LOCAL);
 +		if (old)
-+		    shf->node.flags |= old->node.flags & (PM_TAGGED|PM_TAGGED_LOCAL);
++			shf->node.flags |= old->node.flags & (PM_TAGGED|PM_TAGGED_LOCAL);
  	    }
  	    shfunctab->addnode(shfunctab, ztrdup(s), shf);
  	}
