@@ -46,7 +46,7 @@ class RubyBuilder(BuilderWithDefaults):
     package_methods = ()
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ()
+    package_attributes = ()
 
     def build(self, pkg: RubyPackage, spec: Spec, prefix: Prefix) -> None:
         """Build a Ruby gem."""

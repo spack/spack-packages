@@ -55,7 +55,7 @@ class SConsBuilder(BuilderWithDefaults):
     legacy_long_methods = ("build_args", "install_args")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_time_test_callbacks",)
+    package_attributes = ("build_time_test_callbacks",)
 
     #: Callback names for build-time test
     build_time_test_callbacks = ["build_test"]

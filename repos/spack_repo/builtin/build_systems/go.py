@@ -64,7 +64,7 @@ class GoBuilder(BuilderWithDefaults):
     package_methods = ("check", "installcheck")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_args",
         "check_args",
         "build_directory",

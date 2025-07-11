@@ -52,7 +52,7 @@ class MavenBuilder(BuilderWithDefaults):
     package_methods = ("build_args",)
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_directory",)
+    package_attributes = ("build_directory",)
 
     @property
     def build_directory(self):

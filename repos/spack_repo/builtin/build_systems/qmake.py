@@ -52,7 +52,7 @@ class QMakeBuilder(BuilderWithDefaults):
     package_methods = ("qmake_args", "check")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_directory", "build_time_test_callbacks")
+    package_attributes = ("build_directory", "build_time_test_callbacks")
 
     #: Callback names for build-time test
     build_time_test_callbacks = ["check"]
