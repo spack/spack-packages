@@ -55,6 +55,8 @@ class Opencascade(CMakePackage):
         when="@:7.7.0",
     )
 
+    patch("vtk-freetype-find-freetype.patch", when="+vtk")
+
     # Modules, per DAG at https://dev.opencascade.org/doc/refman/html/
     variant("modeling_data", default=True, description="Build Modeling Data module")
     variant(

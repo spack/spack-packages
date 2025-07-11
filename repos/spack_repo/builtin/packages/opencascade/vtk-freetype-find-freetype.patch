@@ -1,0 +1,10 @@
+--- a/adm/cmake/vtk.cmake.orig    2025-07-11 14:11:59
++++ b/adm/cmake/vtk.cmake 2025-07-11 14:12:09
+@@ -100,6 +100,7 @@
+     lzma
+     expat
+ )
++find_package(Freetype REQUIRED)
+ 
+ if (3RDPARTY_VTK_DIR AND EXISTS "${3RDPARTY_VTK_DIR}")
+   set (ENV{VTK_DIR} ${CACHED_VTK_DIR})
