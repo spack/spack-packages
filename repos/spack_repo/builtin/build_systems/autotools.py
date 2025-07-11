@@ -55,7 +55,7 @@ class AutotoolsPackage(PackageBase):
     build_system_class = "AutotoolsPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "autotools"
+    default_buildsystem = "autotools"
 
     build_system("autotools")
 

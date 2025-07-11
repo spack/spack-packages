@@ -42,7 +42,7 @@ class RacketPackage(PackageBase):
     # build-system class we are using
     build_system_class = "RacketPackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "racket"
+    default_buildsystem = "racket"
 
     build_system("racket")
 

@@ -25,7 +25,7 @@ class RubyPackage(PackageBase):
     #: system base class
     build_system_class = "RubyPackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "ruby"
+    default_buildsystem = "ruby"
 
     build_system("ruby")
 

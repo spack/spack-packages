@@ -31,7 +31,7 @@ class MakefilePackage(PackageBase):
     #: system base class
     build_system_class = "MakefilePackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "makefile"
+    default_buildsystem = "makefile"
 
     build_system("makefile")
 
