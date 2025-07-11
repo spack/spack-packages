@@ -45,7 +45,7 @@ class Zsh(AutotoolsPackage):
 
     conflicts("+lmod", when="~etcdir", msg="local etc required to setup env for lmod")
 
-    #This patch addresses building with gcc@14:
+    # This patch addresses building with gcc@14:
     patch("boolcodes_error.patch", when="@5.3.1: %gcc@14:")
     # The following 2 patches taken from suse linux package hub
     # https://build.opensuse.org/package/show/shells/zsh
