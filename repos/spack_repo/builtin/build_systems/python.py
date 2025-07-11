@@ -353,7 +353,7 @@ class PythonPipBuilder(BuilderWithDefaults):
     package_methods = ("test_imports",)
 
     #: Same as package_methods, but the signature is different
-    legacy_long_methods = ("install_options", "global_options", "config_settings")
+    package_long_methods = ("install_options", "global_options", "config_settings")
 
     #: Names associated with package attributes in the old build-system format
     package_attributes = ("archive_files", "build_directory", "install_time_test_callbacks")
