@@ -52,7 +52,7 @@ class SConsBuilder(BuilderWithDefaults):
     package_methods = ("build_test",)
 
     #: Same as package_methods, but the signature is different
-    legacy_long_methods = ("build_args", "install_args")
+    package_long_methods = ("build_args", "install_args")
 
     #: Names associated with package attributes in the old build-system format
     package_attributes = ("build_time_test_callbacks",)
