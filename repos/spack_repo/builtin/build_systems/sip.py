@@ -124,7 +124,7 @@ class SIPBuilder(BuilderWithDefaults):
     phases = ("configure", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("configure_args", "build_args", "install_args")
+    package_methods = ("configure_args", "build_args", "install_args")
 
     #: Names associated with package attributes in the old build-system format
     legacy_attributes = (

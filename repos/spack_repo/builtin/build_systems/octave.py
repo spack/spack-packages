@@ -43,7 +43,7 @@ class OctaveBuilder(BuilderWithDefaults):
     phases = ("install",)
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ()
+    package_methods = ()
 
     #: Names associated with package attributes in the old build-system format
     legacy_attributes = ()

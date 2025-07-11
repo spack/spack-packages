@@ -49,9 +49,9 @@ class SConsBuilder(BuilderWithDefaults):
     phases = ("build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("build_test",)
+    package_methods = ("build_test",)
 
-    #: Same as legacy_methods, but the signature is different
+    #: Same as package_methods, but the signature is different
     legacy_long_methods = ("build_args", "install_args")
 
     #: Names associated with package attributes in the old build-system format

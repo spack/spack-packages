@@ -59,7 +59,7 @@ class RacketBuilder(Builder):
     phases = ("install",)
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods: Tuple[str, ...] = tuple()
+    package_methods: Tuple[str, ...] = tuple()
 
     #: Names associated with package attributes in the old build-system format
     legacy_attributes = ("build_directory", "build_time_test_callbacks", "subdirectory")
