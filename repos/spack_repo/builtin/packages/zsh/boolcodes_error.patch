@@ -1,0 +1,16 @@
+ Src/Modules/termcap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Src/Modules/termcap.c b/Src/Modules/termcap.c
+index af4009a3a..78ab999ee 100644
+--- a/Src/Modules/termcap.c
++++ b/Src/Modules/termcap.c
+@@ -42,7 +42,7 @@
+ #ifdef HAVE_TGETENT
+ 
+ #ifndef HAVE_BOOLCODES
+-static char *boolcodes[] = {
++NCURSES_CONST char *const boolcodes[] = {
+     "bw", "am", "ut", "cc", "xs", "YA", "YF", "YB", "xt", "xn", "eo",
+     "gn", "hc", "HC", "km", "YC", "hs", "hl", "in", "YG", "da", "db",
+     "mi", "ms", "nx", "xb", "NP", "ND", "NR", "os", "5i", "YD", "YE",
