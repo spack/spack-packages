@@ -45,8 +45,8 @@ class Castep(CMakePackage, MakefilePackage):
 
     variant("mpi", default=True, description="Enable MPI build")
     variant(
-        "portable", 
-        default=False, 
+        "portable",
+        default=False,
         description="Build a generic executable which ought to run on most CPUs"
     )
 
@@ -62,8 +62,8 @@ class Castep(CMakePackage, MakefilePackage):
         variant("openmp", default=True, description="Use OpenMP threading")
         variant("tools", default=True, description="Build the executable auxilliary programs")
         variant(
-            "utilities", 
-            default=True, 
+            "utilities",
+            default=True,
             description="Build the third-party scripts and utilities"
         )
 
@@ -125,7 +125,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
                     platfile = FileFilter("obj/platforms/linux_x86_64_gfortran9.0.mk")
                 else:
                     platfile = FileFilter("obj/platforms/linux_x86_64_gfortran.mk")
-                dlmakefile.filter(r"MPIFLAGS = -DMPI", "MPIFLAGS = -fallow-argument-mismatch -DMPI")
+                dlmakefile.filter(
+                    r"MPIFLAGS = -DMPI",
+                    "MPIFLAGS = -fallow-argument-mismatch -DMPI"
+                )
                 platfile.filter(r"^\s*FFLAGS_E\s*=.*", "FFLAGS_E = -fallow-argument-mismatch ")
 
             platfile.filter(r"^LD_FLAGS\s=.*$", "LD_FLAGS = $(OPT) -fopenmp")
