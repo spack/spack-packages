@@ -57,7 +57,7 @@ class LuaBuilder(Builder):
     phases = ("unpack", "generate_luarocks_config", "preprocess", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("luarocks_args",)
+    package_methods = ("luarocks_args",)
 
     #: Names associated with package attributes in the old build-system format
     legacy_attributes = ()

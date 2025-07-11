@@ -49,7 +49,7 @@ class QMakeBuilder(BuilderWithDefaults):
     phases = ("qmake", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("qmake_args", "check")
+    package_methods = ("qmake_args", "check")
 
     #: Names associated with package attributes in the old build-system format
     legacy_attributes = ("build_directory", "build_time_test_callbacks")

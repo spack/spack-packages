@@ -20,10 +20,10 @@ class RBuilder(GenericBuilder):
     """
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods: Tuple[str, ...] = (
+    package_methods: Tuple[str, ...] = (
         "configure_args",
         "configure_vars",
-    ) + GenericBuilder.legacy_methods
+    ) + GenericBuilder.package_methods
 
     def configure_args(self):
         """Arguments to pass to install via ``--configure-args``."""
