@@ -15,7 +15,7 @@ import llnl.util.lang
 import spack.platforms
 import spack.platforms.cray
 from spack.package import *
-from spack.util.environment import is_system_path, set_env
+from spack.util.environment import is_system_path
 
 
 def slingshot_network():

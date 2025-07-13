@@ -11,7 +11,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.util.environment
 from spack.build_environment import dso_suffix
 from spack.package import *
 
@@ -941,7 +940,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # Apparently the Makefile bases its paths on PWD
         # so we need to set PWD = self.build_directory
-        with spack.util.environment.set_env(PWD=self.build_directory):
+        with set_env(PWD=self.build_directory):
             super().build(pkg, spec, prefix)
 
             with working_dir(self.build_directory):
@@ -1000,7 +999,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # CP2K < 7 still uses $PWD to detect the current working dir
         # and Makefile is in a subdir, account for both facts here:
-        with spack.util.environment.set_env(CP2K_DATA_DIR=data_dir, PWD=self.build_directory):
+        with set_env(CP2K_DATA_DIR=data_dir, PWD=self.build_directory):
             with working_dir(self.build_directory):
                 make("test", *self.build_targets)
 
