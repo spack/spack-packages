@@ -18,6 +18,12 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
 class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
     """LBANN: Livermore Big Artificial Neural Network Toolkit.  A distributed
     memory, HPC-optimized, model and data parallel training toolkit for deep
@@ -79,7 +85,7 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
         default=False,
         description="Builds with support for image processing data with OpenCV",
     )
-    variant("slingshot", default=False, description="Enable slingshot support")
+    variant("slingshot", default=slingshot_network(), description="Enable slingshot support")
     variant("vtune", default=False, description="Builds with support for Intel VTune")
     variant("onednn", default=False, description="Support for OneDNN")
     variant("onnx", default=False, description="Support for exporting models into ONNX format")

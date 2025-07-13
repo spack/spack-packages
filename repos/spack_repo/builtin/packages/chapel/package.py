@@ -18,6 +18,12 @@ from spack.package import *
 from spack.util.environment import is_system_path, set_env
 
 
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
 @llnl.util.lang.memoized
 def is_CrayEX():
     # Credit to upcxx package for this hpe-cray-ex detection function
@@ -326,6 +332,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         values=("bundled", "spack", "unset"),
         multi=False,
         when="comm=gasnet comm_substrate=ofi",
+    )
+
+    requires(
+        "^libfabric" + (" fabrics=cxi" if slingshot_network() else ""),
+        when="libfabric=spack",
+        msg="libfabric requires cxi fabric provider on HPE-Cray EX machines",
     )
 
     variant(

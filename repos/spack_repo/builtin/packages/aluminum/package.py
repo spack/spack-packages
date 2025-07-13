@@ -16,6 +16,12 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
 class Aluminum(CachedCMakePackage, CudaPackage, ROCmPackage):
     """Aluminum provides a generic interface to high-performance
     communication libraries, with a focus on allreduce
@@ -55,7 +61,12 @@ class Aluminum(CachedCMakePackage, CudaPackage, ROCmPackage):
         " communication of accelerator data",
     )
     variant("nccl", default=False, description="Builds with support for NCCL communication lib")
-    variant("slingshot", default=False, when="+nccl", description="Builds with Slingshot support")
+    variant(
+        "slingshot",
+        default=slingshot_network(),
+        when="+nccl",
+        description="Builds with Slingshot support",
+    )
     variant("shared", default=True, description="Build Aluminum as a shared library")
 
     # Debugging features

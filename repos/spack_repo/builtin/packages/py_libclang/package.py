@@ -17,6 +17,9 @@ class PyLibclang(PythonPackage):
 
     license("Apache-2.0")
 
+    version("18.1.1", sha256="829f1afbf6a704da2130f541279e58d719eb9b67713a0641eb723a2970de1b66")
+    version("17.0.6", sha256="dfdc19199ba3ed2169e7f9849bd1472d61fc1fdb8af699e3d083c27e53d394c3")
+    version("16.0.6", sha256="626bc239e7568354c8bc5137541732ae81c4e65221b27d9021b9f13306a7a1b2")
     version("16.0.0", sha256="a3eae57519209ed6fca4e76425f3159e54a08cbb2918d92a7a35640d4c28ec07")
     version("15.0.6.1", sha256="f8ac6e30868e9eb92bb1001920230381565f9a3cf415411d3b67bb2339640d81")
     version("14.0.6", sha256="3666679d9f23270a230a4d4dae49bc48fc2515c272ff5855b2618e23daa50100")
@@ -31,7 +34,7 @@ class PyLibclang(PythonPackage):
     depends_on("python@2.7:2.8,3.3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
-    for ver in ["9", "10", "11", "13", "14", "15", "16"]:
+    for ver in ["9", "10", "11", "13", "14", "15", "16", "17", "18"]:
         depends_on("llvm+clang@" + ver, when="@" + ver, type="build")
 
     def patch(self):
