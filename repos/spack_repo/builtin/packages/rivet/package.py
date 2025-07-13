@@ -50,8 +50,18 @@ class Rivet(AutotoolsPackage):
     )
 
     with when("@4.1:"):
-        variant("plugin-match", default="none", multi=True, description="List of Rivet analyses to be included")
-        variant("plugin-unmatch", default="none", multi=True, description="List of Rivet analyses to be excluded")
+        variant(
+            "plugin-match",
+            default="none",
+            multi=True,
+            description="List of Rivet analyses to be included",
+        )
+        variant(
+            "plugin-unmatch",
+            default="none",
+            multi=True,
+            description="List of Rivet analyses to be excluded",
+        )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
