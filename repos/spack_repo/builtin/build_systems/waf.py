@@ -24,7 +24,7 @@ class WafPackage(PackageBase):
     # build-system class we are using
     build_system_class = "WafPackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "waf"
+    default_buildsystem = "waf"
 
     build_system("waf")
     # Much like AutotoolsPackage does not require automake and autoconf

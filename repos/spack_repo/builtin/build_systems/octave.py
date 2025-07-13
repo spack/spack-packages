@@ -25,7 +25,7 @@ class OctavePackage(PackageBase):
     # build-system class we are using
     build_system_class = "OctavePackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "octave"
+    default_buildsystem = "octave"
 
     build_system("octave")
 

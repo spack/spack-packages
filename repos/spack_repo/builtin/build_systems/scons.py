@@ -25,7 +25,7 @@ class SConsPackage(PackageBase):
     build_system_class = "SConsPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "scons"
+    default_buildsystem = "scons"
 
     build_system("scons")
 

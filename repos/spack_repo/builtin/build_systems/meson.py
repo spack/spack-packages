@@ -31,7 +31,7 @@ class MesonPackage(PackageBase):
     build_system_class = "MesonPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "meson"
+    default_buildsystem = "meson"
 
     build_system("meson")
 

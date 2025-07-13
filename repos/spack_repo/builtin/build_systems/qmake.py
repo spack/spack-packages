@@ -26,7 +26,7 @@ class QMakePackage(PackageBase):
     #: system base class
     build_system_class = "QMakePackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "qmake"
+    default_buildsystem = "qmake"
 
     build_system("qmake")
 

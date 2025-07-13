@@ -28,7 +28,7 @@ class MavenPackage(PackageBase):
     build_system_class = "MavenPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "maven"
+    default_buildsystem = "maven"
 
     build_system("maven")
 

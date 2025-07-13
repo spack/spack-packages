@@ -29,7 +29,7 @@ class GoPackage(PackageBase):
     build_system_class = "GoPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "go"
+    default_buildsystem = "go"
 
     build_system("go")
 
