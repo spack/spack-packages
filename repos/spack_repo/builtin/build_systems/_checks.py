@@ -1,46 +1,14 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-import os
-from typing import Callable, List
+from typing import List
 
 import spack.relocate
-from spack.package import Builder, InstallError, Spec, run_after
+from spack.package import Builder, BuilderWithDefaults, Spec
 
-
-def sanity_check_prefix(builder: Builder):
-    """Check that specific directories and files are created after installation.
-
-    The files to be checked are in the ``sanity_check_is_file`` attribute of the
-    package object, while the directories are in the ``sanity_check_is_dir``.
-
-    Args:
-        builder: builder that installed the package
-    """
-    pkg = builder.pkg
-
-    def check_paths(path_list: List[str], filetype: str, predicate: Callable[[str], bool]) -> None:
-        if isinstance(path_list, str):
-            path_list = [path_list]
-
-        for path in path_list:
-            if not predicate(os.path.join(pkg.prefix, path)):
-                raise InstallError(
-                    f"Install failed for {pkg.name}. No such {filetype} in prefix: {path}"
-                )
-
-    check_paths(pkg.sanity_check_is_file, "file", os.path.isfile)
-    check_paths(pkg.sanity_check_is_dir, "directory", os.path.isdir)
-
-    # Check that the prefix is not empty apart from the .spack/ directory
-    with os.scandir(pkg.prefix) as entries:
-        f = next(
-            (f for f in entries if not (f.name == ".spack" and f.is_dir(follow_symlinks=False))),
-            None,
-        )
-
-    if f is None:
-        raise InstallError(f"Install failed for {pkg.name}.  Nothing was installed!")
+# Needed to appease style checks. These names need to be exported here to be compatible
+# with Package API less than v2.2
+_ = BuilderWithDefaults
 
 
 def apply_macos_rpath_fixups(builder: Builder):
@@ -121,10 +89,3 @@ def execute_install_time_tests(builder: Builder):
         return
 
     builder.pkg.tester.phase_tests(builder, "install", builder.install_time_test_callbacks)
-
-
-class BuilderWithDefaults(Builder):
-    """Base class for all specific builders with common callbacks registered."""
-
-    # Check that self.prefix is there after installation
-    run_after("install")(sanity_check_prefix)

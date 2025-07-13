@@ -4,6 +4,7 @@
 import glob
 
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -12,8 +13,6 @@ from spack.package import (
     maintainers,
     register_builder,
 )
-
-from ._checks import BuilderWithDefaults
 
 
 class RubyPackage(PackageBase):

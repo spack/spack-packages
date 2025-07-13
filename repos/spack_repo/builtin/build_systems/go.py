@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     PackageBase,
     Prefix,
@@ -18,7 +19,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_install_time_tests
+from ._checks import execute_install_time_tests
 
 
 class GoPackage(PackageBase):

@@ -4,6 +4,7 @@
 from typing import List
 
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -16,12 +17,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import (
-    BuilderWithDefaults,
-    apply_macos_rpath_fixups,
-    execute_build_time_tests,
-    execute_install_time_tests,
-)
+from ._checks import apply_macos_rpath_fixups, execute_build_time_tests, execute_install_time_tests
 
 
 class MakefilePackage(PackageBase):

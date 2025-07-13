@@ -5,6 +5,7 @@ import os
 import re
 
 from spack.package import (
+    BuilderWithDefaults,
     Executable,
     PackageBase,
     Prefix,
@@ -21,7 +22,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_install_time_tests
+from ._checks import execute_install_time_tests
 
 
 class SIPPackage(PackageBase):

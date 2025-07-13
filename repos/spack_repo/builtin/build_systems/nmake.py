@@ -6,6 +6,7 @@ from typing import List  # novm
 import llnl.util.filesystem as fs
 
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -14,8 +15,6 @@ from spack.package import (
     register_builder,
     working_dir,
 )
-
-from ._checks import BuilderWithDefaults
 
 
 class NMakePackage(PackageBase):

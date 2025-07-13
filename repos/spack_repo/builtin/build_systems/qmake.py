@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -12,7 +13,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 
 class QMakePackage(PackageBase):

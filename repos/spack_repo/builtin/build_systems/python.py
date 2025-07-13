@@ -14,6 +14,7 @@ import llnl.util.filesystem as fs
 from llnl.util.lang import ClassProperty, classproperty, match_predicate
 
 from spack.package import (
+    BuilderWithDefaults,
     HeaderList,
     LibraryList,
     NoHeadersError,
@@ -36,7 +37,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_install_time_tests
+from ._checks import execute_install_time_tests
 
 
 def _flatten_dict(dictionary: Mapping[str, object]) -> Iterable[str]:

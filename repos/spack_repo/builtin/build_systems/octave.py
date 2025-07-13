@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     PackageBase,
     Prefix,
@@ -11,8 +12,6 @@ from spack.package import (
     register_builder,
     when,
 )
-
-from ._checks import BuilderWithDefaults
 
 
 class OctavePackage(PackageBase):

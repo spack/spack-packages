@@ -7,6 +7,7 @@ from typing import Iterable
 from llnl.util.lang import memoized
 
 from spack.package import (
+    BuilderWithDefaults,
     Executable,
     PackageBase,
     Prefix,
@@ -23,7 +24,7 @@ from spack.package import (
     when,
 )
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 
 class PerlPackage(PackageBase):

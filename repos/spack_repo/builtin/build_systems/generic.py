@@ -3,9 +3,17 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import Tuple
 
-from spack.package import PackageBase, Prefix, Spec, build_system, register_builder, run_after
+from spack.package import (
+    BuilderWithDefaults,
+    PackageBase,
+    Prefix,
+    Spec,
+    build_system,
+    register_builder,
+    run_after,
+)
 
-from ._checks import BuilderWithDefaults, apply_macos_rpath_fixups, execute_install_time_tests
+from ._checks import apply_macos_rpath_fixups, execute_install_time_tests
 
 
 class Package(PackageBase):

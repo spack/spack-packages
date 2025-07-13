@@ -15,6 +15,7 @@ from llnl.util.lang import stable_partition
 import spack.deptypes as dt
 from spack import traverse
 from spack.package import (
+    BuilderWithDefaults,
     InstallError,
     PackageBase,
     Prefix,
@@ -31,7 +32,7 @@ from spack.package import (
 )
 from spack.util.environment import filter_system_paths
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 # Regex to extract the primary generator from the CMake generator
 # string.

@@ -13,6 +13,7 @@ import spack.builder
 import spack.compilers.libraries
 from spack.operating_systems.mac_os import macos_version
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     Executable,
     FileFilter,
@@ -39,7 +40,6 @@ from spack.package import (
 )
 
 from ._checks import (
-    BuilderWithDefaults,
     apply_macos_rpath_fixups,
     ensure_build_dependencies_or_raise,
     execute_build_time_tests,

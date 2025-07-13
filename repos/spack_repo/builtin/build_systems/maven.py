@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -13,8 +14,6 @@ from spack.package import (
     which,
     working_dir,
 )
-
-from ._checks import BuilderWithDefaults
 
 
 class MavenPackage(PackageBase):
