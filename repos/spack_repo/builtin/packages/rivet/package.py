@@ -160,12 +160,12 @@ class Rivet(AutotoolsPackage):
 
         if "plugin-match" in self.spec.variants:
             val = self.spec.variants["plugin-match"].value
-            if val != "none":
+            if "none" not in val:
                 args += [f"--with-plugin-match={' '.join(val)}"]
 
         if "plugin-unmatch" in self.spec.variants:
             val = self.spec.variants["plugin-unmatch"].value
-            if val != "none":
+            if "none" not in val:
                 args += [f"--with-plugin-unmatch={' '.join(val)}"]
 
         args += ["--with-fastjet=" + self.spec["fastjet"].prefix]
