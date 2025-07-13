@@ -8,16 +8,18 @@ from spack.package import (
     PackageBase,
     Prefix,
     Spec,
+    apply_macos_rpath_fixups,
     build_system,
     conflicts,
     depends_on,
+    execute_install_time_tests,
     register_builder,
     run_after,
     when,
     working_dir,
 )
 
-from ._checks import apply_macos_rpath_fixups, execute_build_time_tests, execute_install_time_tests
+from ._checks import execute_build_time_tests
 
 
 class MakefilePackage(PackageBase):

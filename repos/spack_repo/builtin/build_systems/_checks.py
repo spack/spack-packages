@@ -3,29 +3,19 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import List
 
-import spack.relocate
-from spack.package import Builder, BuilderWithDefaults, Spec
+from spack.package import (
+    Builder,
+    BuilderWithDefaults,
+    Spec,
+    apply_macos_rpath_fixups,
+    execute_install_time_tests,
+)
 
 # Needed to appease style checks. These names need to be exported here to be compatible
-# with Package API less than v2.2
+# with Package API less than v2.2, in case custom repositories import them
 _ = BuilderWithDefaults
-
-
-def apply_macos_rpath_fixups(builder: Builder):
-    """On Darwin, make installed libraries more easily relocatable.
-
-    Some build systems (handrolled, autotools, makefiles) can set their own
-    rpaths that are duplicated by spack's compiler wrapper. This fixup
-    interrogates, and postprocesses if necessary, all libraries installed
-    by the code.
-
-    It should be added as a @run_after to packaging systems (or individual
-    packages) that do not install relocatable libraries by default.
-
-    Args:
-        builder: builder that installed the package
-    """
-    spack.relocate.fixup_macos_rpaths(builder.spec)
+_ = apply_macos_rpath_fixups
+_ = execute_install_time_tests
 
 
 def ensure_build_dependencies_or_raise(spec: Spec, dependencies: List[str], error_msg: str):
@@ -76,16 +66,3 @@ def execute_build_time_tests(builder: Builder):
         return
 
     builder.pkg.tester.phase_tests(builder, "build", builder.build_time_test_callbacks)
-
-
-def execute_install_time_tests(builder: Builder):
-    """Execute the install-time tests prescribed by builder.
-
-    Args:
-        builder: builder prescribing the test callbacks. The name of the callbacks is
-            stored as a list of strings in the ``install_time_test_callbacks`` attribute.
-    """
-    if not builder.pkg.run_tests or not builder.install_time_test_callbacks:
-        return
-
-    builder.pkg.tester.phase_tests(builder, "install", builder.install_time_test_callbacks)

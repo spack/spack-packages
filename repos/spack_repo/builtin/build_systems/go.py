@@ -10,6 +10,7 @@ from spack.package import (
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     install,
     join_path,
     mkdirp,
@@ -18,8 +19,6 @@ from spack.package import (
     when,
     working_dir,
 )
-
-from ._checks import execute_install_time_tests
 
 
 class GoPackage(PackageBase):

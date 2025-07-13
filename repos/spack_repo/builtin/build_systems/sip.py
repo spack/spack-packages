@@ -12,6 +12,7 @@ from spack.package import (
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     extends,
     find,
     register_builder,
@@ -21,8 +22,6 @@ from spack.package import (
     when,
     working_dir,
 )
-
-from ._checks import execute_install_time_tests
 
 
 class SIPPackage(PackageBase):

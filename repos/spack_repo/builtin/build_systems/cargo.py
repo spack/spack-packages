@@ -10,14 +10,13 @@ from spack.package import (
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     install_tree,
     register_builder,
     run_after,
     when,
     working_dir,
 )
-
-from ._checks import execute_install_time_tests
 
 
 class CargoPackage(PackageBase):

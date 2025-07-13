@@ -22,10 +22,12 @@ from spack.package import (
     Prefix,
     Spec,
     Version,
+    apply_macos_rpath_fixups,
     build_system,
     conflicts,
     copy,
     depends_on,
+    execute_install_time_tests,
     find,
     force_remove,
     is_exe,
@@ -39,12 +41,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import (
-    apply_macos_rpath_fixups,
-    ensure_build_dependencies_or_raise,
-    execute_build_time_tests,
-    execute_install_time_tests,
-)
+from ._checks import ensure_build_dependencies_or_raise, execute_build_time_tests
 
 
 class AutotoolsPackage(PackageBase):

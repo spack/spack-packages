@@ -8,12 +8,13 @@ from spack.package import (
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     register_builder,
     run_after,
     working_dir,
 )
 
-from ._checks import execute_build_time_tests, execute_install_time_tests
+from ._checks import execute_build_time_tests
 
 
 class WafPackage(PackageBase):

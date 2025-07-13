@@ -24,6 +24,7 @@ from spack.package import (
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     extends,
     filter_file,
     find,
@@ -36,8 +37,6 @@ from spack.package import (
     when,
     working_dir,
 )
-
-from ._checks import execute_install_time_tests
 
 
 def _flatten_dict(dictionary: Mapping[str, object]) -> Iterable[str]:
