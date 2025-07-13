@@ -27,6 +27,7 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("7.2", sha256="e86de7dfef6b352aa1bf647de3a6213d1567c70129eccbf8977706d9c91919c8")
     version("7.1", sha256="dd5710b3a53ac002644677a06145748e260592a35be182dc830ebebb79c5d5a0")
     version("7.0.3", sha256="3cc5706fb086b895e1dc2b407aade9f95a3a233ff856273e2b659b089f117683")
     version("7.0", sha256="9261d4ee11cdf6b61895e213ffcd6b746a61a64fe38b9741a3aaa73125b35170")
@@ -63,12 +64,12 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
 
     patch("nvhpc.patch", when="%nvhpc")
 
-    @property
-    def build_targets(self):
-        targets = []
-        if self.spec.satisfies("@7.0:"):
-            targets.append(f"CFLAGS={self.compiler.c11_flag}")
-        return targets
+    def flag_handler(self, name, flags):
+        if self.spec.satisfies("@7.0:7.1"):
+            if name == "cflags":
+                flags.append(self.compiler.c11_flag)
+
+        return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # texinfo builds Perl XS modules internally, and by default it overrides the
