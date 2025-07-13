@@ -1,58 +1,9 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-from typing import Tuple
+from spack.package import GenericBuilder, Package
 
-from spack.package import (
-    BuilderWithDefaults,
-    PackageBase,
-    Prefix,
-    Spec,
-    apply_macos_rpath_fixups,
-    build_system,
-    execute_install_time_tests,
-    register_builder,
-    run_after,
-)
-
-
-class Package(PackageBase):
-    """General purpose class with a single ``install`` phase that needs to be
-    coded by packagers.
-    """
-
-    #: This attribute is used in UI queries that require to know which
-    #: build-system class we are using
-    build_system_class = "Package"
-    #: Legacy buildsystem attribute used to deserialize and install old specs
-    default_buildsystem = "generic"
-
-    build_system("generic")
-
-
-@register_builder("generic")
-class GenericBuilder(BuilderWithDefaults):
-    """A builder for a generic build system, that require packagers
-    to implement an "install" phase.
-    """
-
-    #: A generic package has only the "install" phase
-    phases = ("install",)
-
-    #: Names associated with package methods in the old build-system format
-    package_methods: Tuple[str, ...] = ()
-
-    #: Names associated with package attributes in the old build-system format
-    package_attributes: Tuple[str, ...] = ("archive_files", "install_time_test_callbacks")
-
-    #: Callback names for post-install phase tests
-    install_time_test_callbacks = []
-
-    # On macOS, force rpaths for shared library IDs and remove duplicate rpaths
-    run_after("install", when="platform=darwin")(apply_macos_rpath_fixups)
-
-    # unconditionally perform any post-install phase tests
-    run_after("install")(execute_install_time_tests)
-
-    def install(self, pkg: Package, spec: Spec, prefix: Prefix) -> None:
-        raise NotImplementedError
+# Needed to appease style checks. These names need to be exported here to be compatible
+# with Package API less than v2.2, in case custom repositories import them
+_ = Package
+_ = GenericBuilder
