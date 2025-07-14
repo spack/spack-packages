@@ -142,7 +142,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
             self.define("BUILD_FORTRAN_BINDINGS", "OFF"),
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("SUITE_SPARSE_PATH", self.spec["suite-sparse"].prefix),
-            self.define("ROCBLAS_PATH", self.spec["rocblas"].prefix),
             self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
@@ -150,7 +149,9 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        else:
+            args.append(self.define("ROCBLAS_PATH", self.spec["rocblas"].prefix))
+        if self.spec.satisfies("@5.2.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         libloc = self.spec["suite-sparse"].prefix.lib64
         if not os.path.isdir(libloc):
