@@ -97,7 +97,7 @@ class Texlive(AutotoolsPackage):
     depends_on("libpng")
     depends_on("libxaw")
     depends_on("libxt")
-    depends_on("mpfr")
+    depends_on("mpfr@4:")
     depends_on("perl")
     depends_on("pixman")
     depends_on("poppler@:0.83", when="@:2019")

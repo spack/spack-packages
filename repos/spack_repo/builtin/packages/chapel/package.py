@@ -18,6 +18,12 @@ from spack.package import *
 from spack.util.environment import is_system_path, set_env
 
 
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
 @llnl.util.lang.memoized
 def is_CrayEX():
     # Credit to upcxx package for this hpe-cray-ex detection function
@@ -329,7 +335,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     requires(
-        "^libfabric" + (" fabrics=cxi" if spack.platforms.cray.slingshot_network() else ""),
+        "^libfabric" + (" fabrics=cxi" if slingshot_network() else ""),
         when="libfabric=spack",
         msg="libfabric requires cxi fabric provider on HPE-Cray EX machines",
     )
@@ -609,9 +615,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             # if working from a non-versioned release/branch (such as main)
             if not self.is_versioned_release():
                 install("CMakeLists.txt", join_path(prefix.share, "chapel"))
-            install_tree("doc", join_path(prefix.share, "chapel", self._output_version_short, "doc"))
             install_tree(
-                "examples", join_path(prefix.share, "chapel", self._output_version_short, "examples")
+                "doc", join_path(prefix.share, "chapel", self._output_version_short, "doc")
+            )
+            install_tree(
+                "examples",
+                join_path(prefix.share, "chapel", self._output_version_short, "examples"),
             )
 
     def setup_chpl_platform(self, env):

@@ -23,6 +23,7 @@ class PyGeopandas(PythonPackage):
 
     version("main", branch="main")
     version("master", branch="master", deprecated=True)
+    version("1.1.1", sha256="1745713f64d095c43e72e08e753dbd271678254b24f2e01db8cdb8debe1d293d")
     version("1.1.0", sha256="d176b084170539044ce7554a1219a4433fa1bfba94035b5a519c8986330e429e")
     version("1.0.1", sha256="b8bf70a5534588205b7a56646e2082fb1de9a03599651b3d80c99ea4c2ca08ab")
     version("1.0.0", sha256="386d42c028047e2b0f09191d7859268304761c4711a247173a88891b6161f711")
