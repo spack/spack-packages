@@ -283,12 +283,6 @@ class Scorep(AutotoolsPackage):
             )
         )
 
-        # when you build with gcc, you usually want to use the gcc-plugin!
-        # see, e.g., GNU Compiler Plug-In in https://scorepci.pages.jsc.fz-juelich.de/scorep-pipelines/docs/scorep-5.0/html/installationfile.html
-        if "+gcc-plugin" in spec:
-            config_args.append("--enable-gcc-plugin")
-        else:
-            config_args.append("--disable-gcc-plugin")
 
         config_args.extend(
             [
