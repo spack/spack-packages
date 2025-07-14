@@ -116,6 +116,7 @@ class Scorep(AutotoolsPackage):
     # Putting this in as preparation. F08 support exists in 9.0 but configure does not respect
     # --enable-mpi-f08 and will not until 9.1.
     variant("mpi_f08", default=True, description="Enable MPI F08 support", when="@9.1: +mpi +fortran")
+    variant("gotcha", default=True, description="Enable library wrapping with libgotcha", when="@9.0:")
     # Dependencies for SCORE-P are quite tight. See the homepage for more
     # information. Starting with scorep 4.0 / cube 4.4, Score-P only depends on
     # two components of cube -- cubew and cubelib.
@@ -126,7 +127,7 @@ class Scorep(AutotoolsPackage):
     depends_on("fortran", type="build", when="+fortran")  # generated
 
     # SCOREP 9
-    depends_on("gotcha@1.0.8:", type="link", when="@9:")
+    depends_on("gotcha@1.0.8:", type="link", when="+gotcha")
     depends_on("otf2@3.1:", when="@9:")
     depends_on("cubew@4.9:", when="@9:")
     depends_on("cubelib@4.9:", when="@9:")
@@ -238,6 +239,11 @@ class Scorep(AutotoolsPackage):
         config_args.extend(
             self.with_or_without(
                 "rocm", activation_value=lambda _: self.spec["hip"].prefix, variant="hip"
+            )
+        )
+        config_args.extend(
+            self.with_or_without(
+                "libgotcha", activation_value="prefix", variant="gotcha"
             )
         )
         config_args.extend(self.enable_or_disable("llvm-plugin"))
