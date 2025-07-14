@@ -15,7 +15,6 @@ import llnl.util.lang
 
 import spack.compilers.config
 from spack.package import *
-
 from spack.platforms.cray import slingshot_network
 
 
