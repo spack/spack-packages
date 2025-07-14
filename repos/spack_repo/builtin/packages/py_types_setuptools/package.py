@@ -15,7 +15,7 @@ class PyTypesSetuptools(PythonPackage):
 
     version(
         "80.9.0.20250529",
-        sha256="79e088ba0cba2186c8d6499cbd3e143abb142d28a44b042c28d3148b1e353c91"
+        sha256="79e088ba0cba2186c8d6499cbd3e143abb142d28a44b042c28d3148b1e353c91",
     )
     version("68.2.0.0", sha256="a4216f1e2ef29d089877b3af3ab2acf489eb869ccaf905125c69d2dc3932fd85")
     version("65.5.0.3", sha256="17769171f5f2a2dc69b25c0d3106552a5cda767bbf6b36cb6212b26dae5aa9fc")
