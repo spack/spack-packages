@@ -243,6 +243,7 @@ class Scorep(AutotoolsPackage):
         config_args.extend(self.enable_or_disable("llvm-plugin"))
         config_args.extend(self.enable_or_disable("gcc-plugin"))
         config_args.extend(self.enable_or_disable("mpi_f08"))
+        config_args.extend(self.enable_or_disable("fortran"))
 
         if "~shmem" in spec:
             config_args.append("--without-shmem")
