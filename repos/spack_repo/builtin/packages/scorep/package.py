@@ -108,6 +108,11 @@ class Scorep(AutotoolsPackage):
         description="Enable debug info lookup via binutils",
         when="^binutils",
     )
+    variant(
+        "fortran",
+        default=True,
+        description="Enable fortran support",
+    )
     # Putting this in as preparation. F08 support exists in 9.0 but configure does not respect
     # --enable-mpi-f08 and will not until 9.1.
     variant("mpi_f08", default=True, description="Enable MPI F08 support", when="@9.1: +mpi")
@@ -116,10 +121,9 @@ class Scorep(AutotoolsPackage):
     # two components of cube -- cubew and cubelib.
 
     # Language dependencies
-    # TODO: we could allow a +fortran variant here.
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", type="build", when="+fortran")  # generated
 
     # SCOREP 9
     depends_on("gotcha@1.0.8:", type="link", when="@9:")
