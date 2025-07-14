@@ -16,6 +16,8 @@ import llnl.util.lang
 import spack.compilers.config
 from spack.package import *
 
+from spack.platforms.cray import slingshot_network
+
 
 @llnl.util.lang.memoized
 def is_CrayEX():
@@ -631,7 +633,6 @@ built with the mpicc/mpifort/etc. compiler wrappers
 with '-Wl,-commons,use_dylibs' and without
 '-Wl,-flat_namespace'.""",
     )
-    variant("slingshot", default=False, description="Enable slingshot support")
 
     # Patch to allow two-level namespace on a MacOS platform when building
     # openmpi. Unfortuntately, the openmpi configure command has flat namespace
@@ -709,9 +710,7 @@ with '-Wl,-commons,use_dylibs' and without
 
     with when("+rocm"):
         libfabric_requirement = ""
-        with when("+slingshot"):
-            libfabric_requirement = "fabrics=cxi"
-        if is_CrayEX() or check_FI_HMEM_ROCR():
+        if is_CrayEX() or check_FI_HMEM_ROCR() or slingshot_network():
             libfabric_requirement = "fabrics=cxi"
         requires("fabrics=ucx ^ucx +rocm", f"^libfabric {libfabric_requirement}", policy="one_of")
 
