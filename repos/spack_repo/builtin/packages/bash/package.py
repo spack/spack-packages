@@ -18,6 +18,7 @@ class Bash(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("5.3", sha256="62dd49c44c399ed1b3f7f731e87a782334d834f08e098a35f2c87547d5dbb269")
     version("5.2", sha256="a139c166df7ff4471c5e0733051642ee5556c1cc8a4a78f145583c5c81ab32fb")
     version("5.1", sha256="cc012bc860406dcf42f64431bcd3d2fa7560c02915a601aba9cd597a39329baa")
     version("5.0", sha256="b4a80f2ac66170b2913efbfb9f2594f1f76c7b1afd11f799e22035d63077fb4d")
@@ -31,6 +32,7 @@ class Bash(AutotoolsPackage, GNUMirrorPackage):
     depends_on("libtool", type="build")
 
     depends_on("ncurses")
+    depends_on("readline@8.3:", when="@5.3:")
     depends_on("readline@8.2:", when="@5.2:")
     depends_on("readline@5.0:")
     depends_on("iconv")
