@@ -46,6 +46,7 @@ jobs:
             - repos/spack_repo/**
             old-builtin:
             - 'var/spack/repos/spack_repo/builtin/**'
+            - 'var/spack/repos/builtin/**'
       - name: Detected old builtin repository
         if: steps.filter.outputs.old-builtin == 'true'
         run: |
