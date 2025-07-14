@@ -27,6 +27,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", deprecated=True)
     version("master", branch="master", deprecated=True)
+    version("6.4.1", sha256="6310b63c31c68e454f6498f06679843bdbd27e1eca0fd40ed1700cae9fce88e0")
     version("6.4.0", sha256="60e9153edf617e984361696aa60af3ad44c5ae01ed75ad610c617a387b0559a4")
     version("6.3.3", sha256="ea0d7638a463c06d30692205f8c591d3fe025b58a772226ca1c972e723118a2f")
     version("6.3.2", sha256="0a08ed7554c161b095c866cd5e6f0d63cdf063e5b3c1183afa6ac18bad94a575")
@@ -112,6 +113,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
         "master",
         "develop",
     ]:
@@ -124,7 +126,8 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("+rocm"):
+            env.set("CXX", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
             self.asan_on(env)
 
@@ -146,6 +149,8 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("BUILD_WITH_LIB", "CUDA"))
             # FindHIP.cmake is used for +cuda
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
+            arch_str = ";".join(self.spec.variants["cuda_arch"].value)
+            args.append(self.define("NVGPU_TARGETS", arch_str))
         else:
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
 

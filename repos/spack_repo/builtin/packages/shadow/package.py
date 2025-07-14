@@ -25,6 +25,7 @@ class Shadow(AutotoolsPackage):
     version("4.6", sha256="4668f99bd087399c4a586084dc3b046b75f560720d83e92fd23bf7a89dda4d31")
 
     depends_on("c", type="build")
+    depends_on("libxcrypt")
 
     def configure_args(self):
         # Fix build when libbsd is not installed on the host:

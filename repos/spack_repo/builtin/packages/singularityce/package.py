@@ -3,11 +3,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import shlex
 import shutil
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-import spack.tengine
 from spack.package import *
 
 
@@ -124,69 +124,47 @@ class SingularityBase(MakefilePackage):
     # key files, install it, and tty.warn() the user.
     # HEADSUP: https://github.com/spack/spack/pull/10412.
     #
-    def perm_script(self):
-        return "spack_perms_fix.sh"
 
-    def perm_script_tmpl(self):
-        return "{0}.j2".format(self.perm_script())
-
-    def perm_script_path(self):
-        return join_path(self.spec.prefix.bin, self.perm_script())
-
-    def _build_script(self, filename, variable_data):
+    def _build_script(self, filename: str, chown_files: List[str], setuid_files: List[str]):
+        # Create the dir is not exists
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:
-            env = spack.tengine.make_environment(dirs=self.package_dir)
-            t = env.get_template(self.perm_script_tmpl())
-            f.write(t.render(variable_data))
+            f.write("#!/bin/sh -eu\n")
+            for chown_file in chown_files:
+                f.write(f"chown root:root {shlex.quote(chown_file)}\n")
+            for setuid_file in setuid_files:
+                f.write(f"chmod u+s {shlex.quote(setuid_file)}\n")
+        os.chmod(filename, 0o755)
 
-    @run_after("install")
+    @run_after("install", when="+suid")
     def build_perms_script(self):
-        if self.spec.satisfies("+suid"):
-            script = self.perm_script_path()
-            chown_files = [
-                fn.format(self.singularity_name)
-                for fn in [
-                    "libexec/{0}/bin/starter-suid",
-                    "etc/{0}/{0}.conf",
-                    "etc/{0}/capability.json",
-                    "etc/{0}/ecl.toml",
-                ]
-            ]
-            setuid_files = ["libexec/{0}/bin/starter-suid".format(self.singularity_name)]
-            self._build_script(
-                script,
-                {
-                    "prefix": self.spec.prefix,
-                    "chown_files": chown_files,
-                    "setuid_files": setuid_files,
-                },
-            )
-            chmod = which("chmod")
-            chmod("555", script)
+        script = join_path(self.prefix.libexec, "spack_perms_fix.sh")
+        self._build_script(
+            script,
+            chown_files=[
+                f"{self.prefix}/libexec/{self.singularity_name}/bin/starter-suid",
+                f"{self.prefix}/etc/{self.singularity_name}/{self.singularity_name}.conf",
+                f"{self.prefix}/etc/{self.singularity_name}/capability.json",
+                f"{self.prefix}/etc/{self.singularity_name}/ecl.toml",
+            ],
+            setuid_files=[f"{self.prefix}/libexec/{self.singularity_name}/bin/starter-suid"],
+        )
+        tty.warn(
+            f"""\
+For full functionality, you'll need to chown and chmod some files
+after installing the package.  This has security implications.
+For details, see:
+{self.singularity_security_urls[0]}
+{self.singularity_security_urls[1]}
 
-    # Until tty output works better from build steps, this ends up in
-    # the build log.  See https://github.com/spack/spack/pull/10412.
-    @run_after("install")
-    def caveats(self):
-        if self.spec.satisfies("+suid"):
-            tty.warn(
-                """
-            For full functionality, you'll need to chown and chmod some files
-            after installing the package.  This has security implications.
-            For details, see:
-            {1}
-            {2}
+We've installed a script that will make the necessary changes;
+read through it and then execute it as root (e.g. via sudo).
 
-            We've installed a script that will make the necessary changes;
-            read through it and then execute it as root (e.g. via sudo).
+The script is named:
 
-            The script is named:
-
-            {0}
-            """.format(
-                    self.perm_script_path(), *self.singularity_security_urls
-                )
-            )
+{script}
+"""
+        )
 
 
 class Singularityce(SingularityBase):

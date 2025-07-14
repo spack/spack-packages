@@ -53,8 +53,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         sha256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9",
         preferred=sys.platform == "darwin",
     )
-    version("13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083")
-    version("12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175")
+    version("13.4.0", sha256="9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5")
+    version("12.5.0", sha256="71cd373d0f04615e66c5b5b14d49c1a4c1a08efa7b30625cd240b11bab4062b3")
     version("11.5.0", sha256="a6e21868ead545cf87f0c01f84276e4b5281d672098591c1c896241f09363478")
     version("10.5.0", sha256="25109543fdf46f397c347b5d8b7a2c7e5694a5a51cce4b9c6e1ea8a71ca307c1")
     version("9.5.0", sha256="27769f64ef1d4cd5e2be8682c0c93f9887983e6cfd1a927ce5a0a2915a95cf8f")
@@ -75,12 +75,18 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         )
 
         version(
+            "13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083"
+        )
+        version(
             "13.2.0", sha256="e275e76442a6067341a27f04c5c6b83d8613144004c0413528863dc6b5c743da"
         )
         version(
             "13.1.0", sha256="61d684f0aa5e76ac6585ad8898a2427aade8979ed5e7f85492286c4dfc13ee86"
         )
 
+        version(
+            "12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175"
+        )
         version(
             "12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b"
         )
@@ -640,7 +646,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 "20": [("@8:10", "-std=c++2a"), ("@11:", "-std=c++20")],
                 "23": [("@11:13", "-std=c++2b"), ("@14:", "-std=c++23")],
             },
-            "c": {"99": [("@4.5:", "-std=c99")], "11": [("@4.7:", "-std=c11")]},
+            "c": {
+                "99": [("@4.5:", "-std=c99")],
+                "11": [("@4.7:", "-std=c11")],
+                "17": [("@8:", "-std=c17")],
+                "23": [("@14:", "-std=c23")],
+            },
         }
         for condition, flag in flags[language][standard]:
             if self.spec.satisfies(condition):
