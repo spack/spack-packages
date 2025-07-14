@@ -44,14 +44,21 @@ jobs:
             - .ci/env
             packages:
             - repos/spack_repo/**
-            old-builtin:
+            old_builtin:
             - 'var/spack/repos/spack_repo/builtin/**'
             - 'var/spack/repos/builtin/**'
+          list-files: 'shell'
       - name: Detected old builtin repository
-        if: steps.filter.outputs.old-builtin == 'true'
+        if: steps.filter.outputs.old_builtin == 'true'
         run: |
-          echo "Error: Packages are not allowed in 'var/spack/repos/spack_repo/builtin'."
-          echo "       Use 'repos/spack_repo/builtin' instead."
+          files=${{ steps.filter.outputs.old_builtin_files }}
+          echo "Error: Builtin packages are no longer allowed under 'var/spack/repos/'."
+          echo "       The following files need to be moved to the appropriate"
+          echo "       subdirectory of 'repos/spack_repo/builtin':"
+          echo
+          for f in $files; do
+              echo "  $f"
+          done
           exit 1
 
   unit-tests:
