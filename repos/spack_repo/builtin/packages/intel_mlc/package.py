@@ -6,8 +6,9 @@
 import glob
 import os
 
-from spack.package import *
 from spack_repo.builtin.build_systems.generic import Package
+
+from spack.package import *
 
 
 class IntelMlc(Package):
@@ -38,18 +39,6 @@ class IntelMlc(Package):
         sha256="e34d246a52a1d2d4461dc156e073b81fa142d30fde172ca412eb77ad73376cf5",
     )
 
-    version(
-        "3.10",
-        url="https://downloadmirror.intel.com/763324/mlc_v3.10.tgz",
-        sha256="39bdc467d134ed43561e622efe664d62cdee147bf87bf3090f2a56f86313d789",
-    )
-
-    version(
-        "3.9a",
-        url="https://downloadmirror.intel.com/736634/mlc_v3.9a.tgz",
-        sha256="1036b9579eaa08f431802bb879d7588960eb93bbe4612d238ac9c6d34e0bfa34",
-    )
-
     license_url = "https://www.intel.com/content/www/us/en/download/736633/intel-memory-latency-checker-intel-mlc.html"
 
     variant(
@@ -63,7 +52,7 @@ class IntelMlc(Package):
     conflicts(
         "~license-agreed",
         msg=(
-            f"Installation of intel-mlc requires accptance of the EULA found at {license_url}. "
+            f"Installation of intel-mlc requires acceptance of the EULA found at {license_url}. "
             f"Set the +license-agreed variant to confirm acceptance of the agreement."
         ),
     )
