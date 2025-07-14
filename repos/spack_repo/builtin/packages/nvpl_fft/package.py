@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.generic import Package
 import os
+
+from spack_repo.builtin.build_systems.generic import Package
 
 from llnl.util.symlink import symlink
 
