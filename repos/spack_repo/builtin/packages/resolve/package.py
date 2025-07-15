@@ -34,7 +34,7 @@ class Resolve(CMakePackage, CudaPackage, ROCmPackage):
         when="@develop:",
         description="Build the LUSOL Library. Requires fortran",
     )
-    variant("ubsan", default=False, description="Enable/Disable undefined behavir sanitizer")
+    variant("ubsan", default=False, description="Enable/Disable undefined behavior sanitizer")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
