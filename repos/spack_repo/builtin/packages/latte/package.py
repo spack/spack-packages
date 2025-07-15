@@ -34,14 +34,12 @@ class Latte(CMakePackage):
     depends_on("lapack")
 
     variant("interface", default=False, description="Build with interfacing to use with sedacs")
-
     variant("mpi", default=True, description="Build with mpi")
-    depends_on("mpi", when="+mpi")
-
     variant("progress", default=False, description="Use progress for fast solvers")
-    depends_on("qmd-progress", when="+progress")
-
     variant("shared", default=True, description="Build shared libs")
+    
+    depends_on("mpi", when="+mpi")
+    depends_on("qmd-progress", when="+progress")
 
     root_cmakelists_dir = "cmake"
 
