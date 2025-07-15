@@ -21,6 +21,7 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     homepage = "https://cupy.dev/"
     pypi = "cupy/cupy-8.0.0.tar.gz"
 
+    version("main", branch="main")
     version("13.5.1", sha256="c14c76f7696eb0ed205b10be07cedace8970d92b195c3e4cedda6560c0982e8b")
     version("13.4.0", sha256="d4b60e5a1d3b89be40fad0845bb9fc467a653abe8660f752416fd38d24ab7fdb")
     version("13.3.0", sha256="9a2a17af2b99cce91dd1366939c3805e3f51f9de5046df64f29ccbad3bdf78ed")
