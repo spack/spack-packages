@@ -2,12 +2,10 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-import sys
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
+
 
 class Libdwarf(CMakePackage):
     """The DWARF Debugging Information Format is of interest to
@@ -38,9 +36,7 @@ class Libdwarf(CMakePackage):
     variant("dwarfdump", default=True, description="Build dwarfdump")
     variant("dwarfgen", default=False, description="Build dwarfgen")
     variant(
-        "decompression",
-        default=True,
-        description="Enables support for compressed debug sections",
+        "decompression", default=True, description="Enables support for compressed debug sections"
     )
 
     conflicts("+shared ~pic")
