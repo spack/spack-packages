@@ -11,7 +11,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import dso_suffix
 from spack.package import *
 
 GPU_MAP = {
@@ -537,6 +536,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         nvflags = ["-O3"]
         ldflags = []
         libs = []
+        dso_suffix = shared_library_suffix(spec)
 
         # CP2K Makefile doesn't set C standard
         if spec.satisfies("@2023.2:"):
@@ -635,10 +635,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
             libs += [
                 join_path(spec["pexsi"].libs.directories[0], "libpexsi.a"),
                 join_path(spec["superlu-dist"].libs.directories[0], "libsuperlu_dist.a"),
-                join_path(
-                    spec["parmetis"].libs.directories[0], "libparmetis.{0}".format(dso_suffix)
-                ),
-                join_path(spec["metis"].libs.directories[0], "libmetis.{0}".format(dso_suffix)),
+                join_path(spec["parmetis"].libs.directories[0], f"libparmetis.{dso_suffix}"),
+                join_path(spec["metis"].libs.directories[0], f"libmetis.{dso_suffix}"),
             ]
 
         if spec.satisfies("+elpa"):
@@ -682,7 +680,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if spec.satisfies("+plumed"):
             dflags.extend(["-D__PLUMED2"])
             cppflags.extend(["-D__PLUMED2"])
-            libs += [join_path(spec["plumed"].prefix.lib, "libplumed.{0}".format(dso_suffix))]
+            libs += [join_path(spec["plumed"].prefix.lib, f"libplumed.{dso_suffix}")]
 
         if spec.satisfies("+libvori"):
             cppflags += ["-D__LIBVORI"]
