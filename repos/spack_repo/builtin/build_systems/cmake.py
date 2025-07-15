@@ -7,13 +7,8 @@ import pathlib
 import platform
 import re
 import sys
-from itertools import chain
 from typing import Any, List, Optional, Tuple
 
-from llnl.util.lang import stable_partition
-
-import spack.deptypes as dt
-from spack import traverse
 from spack.package import (
     BuilderWithDefaults,
     InstallError,
@@ -23,6 +18,7 @@ from spack.package import (
     build_system,
     conflicts,
     depends_on,
+    get_cmake_prefix_path,
     register_builder,
     run_after,
     tty,
@@ -30,7 +26,6 @@ from spack.package import (
     when,
     working_dir,
 )
-from spack.util.environment import filter_system_paths
 
 from ._checks import execute_build_time_tests
 
@@ -52,7 +47,7 @@ def _maybe_set_python_hints(pkg: PackageBase, args: List[str]) -> None:
     if the package has Python as build or link dep and ``find_python_hints`` is set to True. See
     ``find_python_hints`` for context."""
     if not getattr(pkg, "find_python_hints", False) or not pkg.spec.dependencies(
-        "python", dt.BUILD | dt.LINK
+        "python", deptype=("build", "link")
     ):
         return
     python_executable = pkg.spec["python"].command.path
@@ -81,7 +76,7 @@ def _supports_compilation_databases(pkg: PackageBase) -> bool:
 
 def _conditional_cmake_defaults(pkg: PackageBase, args: List[str]) -> None:
     """Set a few default defines for CMake, depending on its version."""
-    cmakes = pkg.spec.dependencies("cmake", dt.BUILD)
+    cmakes = pkg.spec.dependencies("cmake", deptype="build")
 
     if len(cmakes) != 1:
         return
@@ -168,27 +163,6 @@ def generator(*names: str, default: Optional[str] = None) -> None:
     )
     for x in not_used:
         conflicts(f"generator={x}")
-
-
-def get_cmake_prefix_path(pkg: PackageBase) -> List[str]:
-    """Obtain the CMAKE_PREFIX_PATH entries for a package, based on the cmake_prefix_path package
-    attribute of direct build/test and transitive link dependencies."""
-    edges = traverse.traverse_topo_edges_generator(
-        traverse.with_artificial_edges([pkg.spec]),
-        visitor=traverse.MixedDepthVisitor(
-            direct=dt.BUILD | dt.TEST, transitive=dt.LINK, key=traverse.by_dag_hash
-        ),
-        key=traverse.by_dag_hash,
-        root=False,
-        all_edges=False,  # cover all nodes, not all edges
-    )
-    ordered_specs = [edge.spec for edge in edges]
-    # Separate out externals so they do not shadow Spack prefixes
-    externals, spack_built = stable_partition((s for s in ordered_specs), lambda x: x.external)
-
-    return filter_system_paths(
-        path for spec in chain(spack_built, externals) for path in spec.package.cmake_prefix_paths
-    )
 
 
 class CMakePackage(PackageBase):
@@ -406,7 +380,7 @@ class CMakeBuilder(BuilderWithDefaults):
                     pathlib.Path(pkg.prefix, "lib64").as_posix(),
                 ],
             ),
-            define("CMAKE_PREFIX_PATH", get_cmake_prefix_path(pkg)),
+            define("CMAKE_PREFIX_PATH", get_cmake_prefix_path(pkg.spec)),
             define("CMAKE_BUILD_TYPE", build_type),
         ]
 
