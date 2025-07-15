@@ -21,6 +21,7 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     homepage = "https://cupy.dev/"
     pypi = "cupy/cupy-8.0.0.tar.gz"
 
+    version("13.5.1", sha256="c14c76f7696eb0ed205b10be07cedace8970d92b195c3e4cedda6560c0982e8b")
     version("13.4.0", sha256="d4b60e5a1d3b89be40fad0845bb9fc467a653abe8660f752416fd38d24ab7fdb")
     version("13.3.0", sha256="9a2a17af2b99cce91dd1366939c3805e3f51f9de5046df64f29ccbad3bdf78ed")
     version("13.2.0", sha256="e4dbd2b2ed4159a5cc0c0f98a710a014950eb2c16eeb455e956128f3b3bd0d51")
@@ -39,7 +40,9 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")
 
     depends_on("python@3.7:", when="@:11", type=("build", "run"))
-    depends_on("python@3.8:", when="@12:", type=("build", "run"))
+    depends_on("python@3.8:3.11", when="@12", type=("build", "run"))
+    depends_on("python@3.9:3.13", when="@13", type=("build", "run"))
+    depends_on("python@3.10:", when="@14", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.29.22:2", type="build", when="@:13.3")
     depends_on(
@@ -47,13 +50,19 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     )  # 3.0.11 broken likely because of cython#6335, fixed in 3.0.12
     depends_on("py-fastrlock@0.5:", type=("build", "run"))
     depends_on("py-numpy@1.20:1.25", when="@:11", type=("build", "run"))
-    depends_on("py-numpy@1.20:1.26", when="@12:", type=("build", "run"))
-    depends_on("py-numpy@1.22:1.28", when="@13:", type=("build", "run"))
-
-    depends_on("py-scipy@1.6:1.12", when="@:12+all", type=("build", "run"))
-    depends_on("py-scipy@1.7:1.13", when="@13:+all", type=("build", "run"))
-    depends_on("py-cython@0.29.22:2", when="+all", type=("build", "run"))
+    depends_on("py-numpy@1.20:1.26", when="@12", type=("build", "run"))
+    depends_on("py-numpy@1.22:1", when="@13.1", type=("build", "run"))
+    depends_on("py-numpy@1.22:2.0", when="@13.2", type=("build", "run"))
+    depends_on("py-numpy@1.22:2.2", when="@13.4", type=("build", "run"))
+    depends_on("py-numpy@1.22:2.3", when="@13.5", type=("build", "run"))
+    depends_on("py-numpy@1.24:2", when="@14", type=("build", "run"))
+    depends_on("py-scipy@1.6:1.11", when="@:12+all", type=("build", "run"))
+    depends_on("py-scipy@1.7:1.12", when="@13+all", type=("build", "run"))
+    depends_on("py-scipy@1.10:1.17", when="@14+all", type=("build", "run"))
+    depends_on("py-cython@0.29.22:0.29", when="@:13.3 +all", type=("build", "run"))
+    depends_on("py-cython@3:", when="@13.4: +all", type=("build", "run"))
     depends_on("py-optuna@2:", when="+all", type=("build", "run"))
+    depends_on("py-optuna@3:4", when="@13+all", type=("build", "run"))
 
     # Based on https://github.com/cupy/cupy/releases
     depends_on("cuda@:11.9", when="@:11 +cuda")
@@ -61,16 +70,20 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cuda@:12.1", when="@13.0 +cuda")
     depends_on("cuda@:12.4", when="@13.1:13.2 +cuda")
     depends_on("cuda@:12.6", when="@13.3 +cuda")
-    depends_on("cuda@:12.8", when="@13.4: +cuda")
+    depends_on("cuda@:12.8", when="@13.4 +cuda")
+    depends_on("cuda@:12.9", when="@13.5 +cuda")
 
     for a in CudaPackage.cuda_arch_values:
         depends_on("nccl +cuda cuda_arch={0}".format(a), when="+cuda cuda_arch={0}".format(a))
+        depends_on("nccl@2.16:2.26 +cuda cuda_arch={0}".format(a), when="@13+cuda cuda_arch={0}".format(a))
 
     depends_on("cudnn@8.8", when="@12.0.0: +cuda")
     depends_on("cudnn@8.5", when="@11.2.0:11.6.0 +cuda")
     depends_on("cutensor", when="@:12.1.0 +cuda")
-    depends_on("cutensor@2.0.1.2", when="@13.1: +cuda")
+    depends_on("cutensor@2.0", when="@13.1: +cuda")
 
+    depends_on("hip@4:5", when="@:13.3 +rocm")
+    depends_on("hip@4:6", when="@13.4:13 +rocm")
     for _arch in ROCmPackage.amdgpu_targets:
         arch_str = "amdgpu_target={0}".format(_arch)
         rocm_str = "+rocm {0}".format(arch_str)
