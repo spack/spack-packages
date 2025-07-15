@@ -44,7 +44,7 @@ class Castep(CMakePackage, MakefilePackage):
     variant("mpi", default=True, description="Enable MPI build")
     variant(
         "portable",
-        default=False,
+        default=True,
         description="Build a generic executable which ought to run on most CPUs",
     )
 
