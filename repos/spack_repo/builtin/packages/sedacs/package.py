@@ -22,7 +22,7 @@ class Sedacs(PythonPackage, CudaPackage):
     homepage = "https://github.com/lanl/sedacs"
     git = "https://github.com/lanl/sedacs.git"
 
-    version('main', branch='main')
+    version("main", branch="main")
 
     maintainers("finkeljos", "cnegre")
 
@@ -49,9 +49,7 @@ class Sedacs(PythonPackage, CudaPackage):
     # gpu/ai-hardware library
     depends_on("cmake", when="+gpulib")
     depends_on("nvhpc", when="+gpulib")
-    conflicts(
-        "cuda_arch=none", when="+gpulib",  msg="sedacs: Please select a CUDA arch value"
-    )
+    conflicts("cuda_arch=none", when="+gpulib",  msg="sedacs: Please select a CUDA arch value")
 
     # latte dependencies
     depends_on("latte@lattepy+interface+progress", when="+latte")
