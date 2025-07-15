@@ -27,17 +27,16 @@ class Latte(CMakePackage):
     version("1.2.1", sha256="a21dda5ebdcefa56e9ff7296d74ef03f89c200d2e110a02af7a84612668bf702")
     version("1.0.1", sha256="67b2957639ad8e36b69bc6ea9a13085183a881562af9ca6d2b90b412ff073789")
 
+    variant("interface", default=False, description="Build with interfacing to use with sedacs")
+    variant("mpi", default=True, description="Build with mpi")
+    variant("progress", default=False, description="Use progress for fast solvers")
+    variant("shared", default=True, description="Build shared libs")
+
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
     depends_on("cmake@3.1:", type="build")
     depends_on("blas")
     depends_on("lapack")
-
-    variant("interface", default=False, description="Build with interfacing to use with sedacs")
-    variant("mpi", default=True, description="Build with mpi")
-    variant("progress", default=False, description="Use progress for fast solvers")
-    variant("shared", default=True, description="Build shared libs")
-    
     depends_on("mpi", when="+mpi")
     depends_on("qmd-progress", when="+progress")
 
