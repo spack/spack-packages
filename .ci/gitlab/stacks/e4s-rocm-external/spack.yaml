@@ -132,7 +132,7 @@ spack:
         prefix: /opt/rocm-6.2.1
         extra_attributes:
           compilers:
-            c: /opt/rocm-6.2.1/llvm/bin/clang++
+            c: /opt/rocm-6.2.1/llvm/bin/clang
             c++: /opt/rocm-6.2.1/llvm/bin/clang++
             hip: /opt/rocm-6.2.1/hip/bin/hipcc
     hipify-clang:
@@ -147,7 +147,7 @@ spack:
         prefix: /opt/rocm-6.2.1/llvm
         extra_attributes:
           compilers:
-            c: /opt/rocm-6.2.1/llvm/bin/clang++
+            c: /opt/rocm-6.2.1/llvm/bin/clang
             cxx: /opt/rocm-6.2.1/llvm/bin/clang++
     hsakmt-roct:
       buildable: false
@@ -161,7 +161,7 @@ spack:
         prefix: /opt/rocm-6.2.1/
         extra_atributes:
           compilers:
-            c: /opt/rocm-6.2.1/llvm/bin/clang++
+            c: /opt/rocm-6.2.1/llvm/bin/clang
             cxx: /opt/rocm-6.2.1/llvm/bin/clang++
     roctracer-dev-api:
       buildable: false
