@@ -10,8 +10,6 @@ import shutil
 import stat
 from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
-from llnl.util.lang import match_predicate
-
 from spack.package import (
     BuilderWithDefaults,
     ClassProperty,
@@ -133,23 +131,6 @@ class PythonExtension(PackageBase):
         windows = self.spec.satisfies("platform=windows")
         return join_path(self.spec.prefix, "Scripts" if windows else "bin")
 
-    def view_file_conflicts(self, view, merge_map):
-        """Report all file conflicts, excepting special cases for python.
-        Specifically, this does not report errors for duplicate
-        __init__.py files for packages in the same namespace.
-        """
-        conflicts = list(dst for src, dst in merge_map.items() if os.path.exists(dst))
-
-        if conflicts and self.py_namespace:
-            ext_map = view.extensions_layout.extension_map(self.extendee_spec)
-            namespaces = set(x.package.py_namespace for x in ext_map.values())
-            namespace_re = r"site-packages/{0}/__init__.py".format(self.py_namespace)
-            find_namespace = match_predicate(namespace_re)
-            if self.py_namespace in namespaces:
-                conflicts = list(x for x in conflicts if not find_namespace(x))
-
-        return conflicts
-
     def add_files_to_view(self, view, merge_map, skip_if_exists=True):
         # Patch up shebangs if the package extends Python and we put a Python interpreter in the
         # view.
@@ -202,33 +183,6 @@ class PythonExtension(PackageBase):
                 os.symlink(os.path.relpath(target, os.path.dirname(dst)), dst)
             else:
                 view.link(src, dst, spec=self.spec)
-
-    def remove_files_from_view(self, view, merge_map):
-        ignore_namespace = False
-        if self.py_namespace:
-            ext_map = view.extensions_layout.extension_map(self.extendee_spec)
-            remaining_namespaces = set(
-                spec.package.py_namespace for name, spec in ext_map.items() if name != self.name
-            )
-            if self.py_namespace in remaining_namespaces:
-                namespace_init = match_predicate(
-                    r"site-packages/{0}/__init__.py".format(self.py_namespace)
-                )
-                ignore_namespace = True
-
-        bin_dir = self.spec.prefix.bin
-
-        to_remove = []
-        for src, dst in merge_map.items():
-            if ignore_namespace and namespace_init(dst):
-                continue
-
-            if not path_contains_subdirectory(src, bin_dir):
-                to_remove.append(dst)
-            else:
-                os.remove(dst)
-
-        view.remove_files(to_remove)
 
     def test_imports(self) -> None:
         """Attempts to import modules of the installed package."""
@@ -291,8 +245,6 @@ class PythonPackage(PythonExtension):
         # installing a downloaded wheel, but I don't want to add wheel as a dep to every
         # package manually
         depends_on("py-wheel", type="build")
-
-    py_namespace: Optional[str] = None
 
     homepage: ClassProperty[Optional[str]] = classproperty(_homepage)
     url: ClassProperty[Optional[str]] = classproperty(_url)
