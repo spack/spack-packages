@@ -4,7 +4,6 @@
 import os
 from typing import Optional, Tuple
 
-from spack.build_environment import SPACK_NO_PARALLEL_MAKE
 from spack.package import (
     Builder,
     ClassProperty,
@@ -22,7 +21,6 @@ from spack.package import (
     tty,
     working_dir,
 )
-from spack.util.environment import env_flag
 
 
 def _homepage(cls: "RacketPackage") -> Optional[str]:
@@ -86,7 +84,9 @@ class RacketBuilder(Builder):
         """Install everything from build directory."""
         raco = Executable("raco")
         with working_dir(self.build_directory):
-            parallel = pkg.parallel and (not env_flag(SPACK_NO_PARALLEL_MAKE))
+            parallel = pkg.parallel and (
+                not os.environ.get("SPACK_NO_PARALLEL_MAKE", "false").lower() in ("true", "1")
+            )
             name = pkg.racket_name
             assert name is not None, "Racket package name is not set"
             args = [
