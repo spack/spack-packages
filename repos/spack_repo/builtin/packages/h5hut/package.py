@@ -14,7 +14,8 @@ class H5hut(AutotoolsPackage):
 
     homepage = "https://amas.psi.ch/H5hut/"
     url = "https://amas.web.psi.ch/Downloads/H5hut/H5hut-0.0.0.tar.gz"
-    git = "https://gitlab.psi.ch/H5hut/src.git"
+    git = "https://github.com/eth-cscs/h5hut.git"
+
     maintainers("biddisco")
 
     version("2.0.0rc7", sha256="bc058c4817c356b7b7acfe386c586923103b90bdfa83575db3a91754767e6fab")
