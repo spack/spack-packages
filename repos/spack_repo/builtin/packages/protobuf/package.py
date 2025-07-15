@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-import spack.url
 from spack.package import *
 
 
@@ -140,17 +139,6 @@ class Protobuf(CMakePackage):
         when="@3.22:3.24.3 ^abseil-cpp@20240116:",
         sha256="c061356db31cdce29c8cdd98a3a8219ef048ebc2318d0dec26c1f2c5e5dae29b",
     )
-
-    def fetch_remote_versions(self, *args, **kwargs):
-        """Ignore additional source artifacts uploaded with releases,
-        only keep known versions
-        fix for https://github.com/spack/spack/issues/5356"""
-        return dict(
-            map(
-                lambda u: (u, self.url_for_version(u)),
-                spack.url.find_versions_of_archive(self.all_urls, self.list_url, self.list_depth),
-            )
-        )
 
     def cmake_args(self):
         args = [

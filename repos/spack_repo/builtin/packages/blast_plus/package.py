@@ -82,6 +82,7 @@ class BlastPlus(AutotoolsPackage):
     depends_on("pcre", when="+pcre")
 
     depends_on("python@:3.11", when="+python")
+    depends_on("py-setuptools@48:", when="+python ^python@3.12:", type="build")
     depends_on("perl", when="+perl")
 
     depends_on("lmdb", when="@2.7.1:")

@@ -18,6 +18,7 @@ class Jq(AutotoolsPackage):
 
     license("MIT")
 
+    version("1.8.1", sha256="2be64e7129cecb11d5906290eba10af694fb9e3e7f9fc208a311dc33ca837eb0")
     version("1.8.0", sha256="91811577f91d9a6195ff50c2bffec9b72c8429dc05ec3ea022fd95c06d2b319c")
     with default_args(deprecated=True):
         # CVE-2025-48060

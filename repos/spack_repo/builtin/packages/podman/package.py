@@ -2,9 +2,37 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import sys
+
 from spack_repo.builtin.build_systems.generic import Package
 
+from spack.operating_systems.mac_os import macos_version
 from spack.package import *
+
+_is_macos = sys.platform == "darwin"
+
+
+def write_containers_conf(pkg_obj, dep_names):
+    """
+    writes podman runtime dependency paths to containers.conf
+    args:
+        pkg_obj: the self object during the install() phase
+        dep_names (list): strings of the dependencies to add to the config
+    """
+
+    # podman requires its runtime deps to be in a configured directory
+    # https://github.com/containers/common/blob/main/docs/containers.conf.5.md
+    # we choose the user-friendly option of CONTAINERS_CONF_OVERRIDE, which respects
+    # existing configurations set by the user
+    helper_dirs = ", ".join(f'"{x}"' for x in [pkg_obj.spec[dep].prefix.bin for dep in dep_names])
+
+    config = f"""
+    [engine]
+    helper_binaries_dir=[{helper_dirs}]
+    """
+
+    with open(join_path(pkg_obj.prefix, "containers.conf"), "w") as f:
+        f.write(config)
 
 
 class Podman(Package):
@@ -16,6 +44,7 @@ class Podman(Package):
 
     license("Apache-2.0")
 
+    version("5.5.1", sha256="00d02f85ad27a46e77456fef1be81865a43147544ed2487e6c4c8decd0e3748f")
     version("4.9.3", sha256="37afc5bba2738c68dc24400893b99226c658cc9a2b22309f4d7abe7225d8c437")
     version("4.8.3", sha256="3a99b6c82644fa52929cf4143943c63d6784c84094892bc0e14197fa38a1c7fa")
     version("4.7.2", sha256="10346c5603546427bd809b4d855d1e39b660183232309128ad17a64969a0193d")
@@ -27,24 +56,65 @@ class Podman(Package):
 
     depends_on("c", type="build")  # generated
 
+    requires(
+        "@5.5.1:",
+        when="platform=darwin",
+        msg="podman for macOS is only supported on version 5.5.1 and above.",
+    )
+
+    # see https://github.com/containers/podman/issues/22121
+    if _is_macos and macos_version() < Version("13"):
+        raise InstallError("podman for macOS requires Ventura or later")
+
     # See <https://github.com/containers/podman/issues/16996> for the
     # respective issue and the suggested patch
     # issue was fixed as of 4.4.0
     patch("markdown-utf8.diff", when="@4:4.3.1")
 
+    depends_on("go@1.23.3:", type="build", when="@5.5.1:")
     depends_on("go", type="build")
     depends_on("go-md2man", type="build")
-    depends_on("pkgconfig", type="build")
-    depends_on("cni-plugins", type="run")
-    depends_on("conmon", type="run")
-    depends_on("runc", type="run")
-    depends_on("slirp4netns", type="run")
-    depends_on("gpgme")
-    depends_on("libassuan")
-    depends_on("libgpg-error")
-    depends_on("libseccomp")
     depends_on("gmake", type="build")
 
+    with when("platform=linux"):
+        depends_on("pkgconfig", type="build")
+        depends_on("cni-plugins", type="run")
+        depends_on("conmon", type="run")
+        depends_on("runc", type="run")
+        depends_on("slirp4netns", type="run")
+        depends_on("passt", type="run", when="@5.5.1:")
+        depends_on("gpgme")
+        depends_on("libassuan")
+        depends_on("libgpg-error")
+        depends_on("libseccomp")
+
+    with when("platform=darwin"):
+        # for context on the dependencies (strictness of version constraints), see
+        # https://github.com/containers/podman/blob/#{version}/contrib/pkginstaller/Makefile
+        # via https://github.com/Homebrew/homebrew-core/blob/master/Formula/p/podman.rb
+        # the gvproxy constraint is listed at podman/go.mod --> gvisor-tap-vsock
+        depends_on("gvproxy@0.8.6", type="run", when="@5.5.1")
+        depends_on("vfkit@0.6.1", type="run", when="@5.5.1")
+
+    @when("@5.5.1:")
+    def setup_run_environment(self, env):
+        # sets configuration for runtime dependencies
+        # needs to be set any time a user loads the package
+        env.set("CONTAINERS_CONF_OVERRIDE", join_path(self.prefix, "containers.conf"))
+
+    @when("platform=darwin")
+    def install(self, spec, prefix):
+        # macos-specific installation
+        # ported from the homebrew formula
+        mkdirp(prefix.bin)
+        make("podman-remote")
+        make("podman-mac-helper")
+        install("bin/darwin/podman", prefix.bin)
+        install("bin/darwin/podman-mac-helper", prefix.bin)
+
+        write_containers_conf(self, ["gvproxy", "vfkit"])
+
+    @when("platform=linux")
     def patch(self):
         defs = FileFilter("vendor/github.com/containers/common/pkg/config/default.go")
 
@@ -75,6 +145,7 @@ class Podman(Package):
             r"/usr", self.prefix, "vendor/github.com/containers/common/pkg/config/config.go"
         )
 
+    @when("platform=linux")
     def install(self, spec, prefix):
         # Set default policy.json to be located in the install prefix (documented)
         env["EXTRA_LDFLAGS"] = (
@@ -84,7 +155,7 @@ class Podman(Package):
         )
         # Build and installation needs to be in two separate make calls
         # The devicemapper and btrfs drivers are (so far) not enabled in this recipe
-        tags = "seccomp exclude_graphdriver_devicemapper exclude_graphdriver_btrfs"
+        tags = "seccomp exclude_graphdriver_devicemapper exclude_graphdriver_btrfs cni"
         make("-e", "BUILDTAGS=" + tags)
         make("install", "PREFIX=" + prefix)
         # Install an initial etc/containers/policy.json (configured in prefix above)
@@ -93,3 +164,7 @@ class Podman(Package):
         # Cleanup directory trees which are created as part of the go build process
         remove_linked_tree(prefix.src)
         remove_linked_tree(prefix.pkg)
+
+        # passt becomes a dep on newer versions of podman
+        if spec.satisfies("@5.5.1:"):
+            write_containers_conf(self, ["passt"])
