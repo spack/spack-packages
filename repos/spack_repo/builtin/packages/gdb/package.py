@@ -23,6 +23,7 @@ class Gdb(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later AND LGPL-3.0-or-later")
 
+    version("16.2", sha256="bdc1da4a033280ac752e7d34b0418efaa45bed093235cb88e62ea961752a37f8")
     version("15.2", sha256="9d16bc2539a2a20dc3ef99b48b8414d51c51305c8577eb7a1da00996f6dea223")
     version("14.2", sha256="2de5174762e959a5e529e20c20d88a04735469d8fffd98f61664e70b341dc47c")
     version("14.1", sha256="683e63182fb72bd5d8db32ab388143796370a8e3e71c26bc264effb487db7927")

@@ -40,7 +40,6 @@ class LuaLuajit(LuaImplPackage):
 
     provides("luajit", "lua-lang@5.1", when="+lualinks")
     lua_version_override = "5.1"
-    conflicts("platform=darwin", msg="luajit not supported on MacOS, see lua-luajit-openresty")
 
     @run_after("install")
     def install_links(self):

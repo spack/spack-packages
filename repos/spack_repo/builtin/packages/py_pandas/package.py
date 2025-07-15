@@ -23,6 +23,7 @@ class PyPandas(PythonPackage):
 
     tags = ["e4s"]
 
+    version("2.3.1", sha256="0a95b9ac964fe83ce317827f80304d37388ea77616b1425f0ae41c9d2d0d7bb2")
     version("2.3.0", sha256="34600ab34ebf1131a7613a260a61dbe8b62c188ec0ea4c296da7c9a06b004133")
     version("2.2.3", sha256="4f18ba62b61d7e192368b84517265a99b4d7ee8912f8708660fb4a366cc82667")
     version("2.2.2", sha256="9e79019aba43cb4fda9e4d983f8e88ca0373adbb697ae9c6c43093218de28b54")

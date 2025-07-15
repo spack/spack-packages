@@ -17,12 +17,15 @@ class Trivy(GoPackage):
 
     license("Apache-2.0", checked_by="RobertMaaskant")
 
+    version("0.64.1", sha256="9e23c90bd1afd9c369f1582712907e8e0652c8f5825e599850183af174c65666")
+    version("0.64.0", sha256="95f958c5cf46e063660c241d022a57f99309208c9725d6031b048c9c414ecfa7")
     version("0.63.0", sha256="ac26dcb16072e674b8a3bffa6fbd817ec5baa125660b5c49d9ad8659e14d0800")
     version("0.62.1", sha256="1b8000f08876dd02203021414581275daa69db00fab731351dbcf2a008ebe82a")
     version("0.62.0", sha256="2b0b4df4bbfebde00a14a0616f5013db4cbba0f021a780a7e3b717a2c2978493")
     version("0.61.1", sha256="f6ad43e008c008d67842c9e2b4af80c2e96854db8009fba48fc37b4f9b15f59b")
     version("0.61.0", sha256="1e97b1b67a4c3aee9c567534e60355033a58ce43a3705bdf198d7449d53b6979")
 
+    depends_on("go@1.24.4:", type="build", when="@0.64:")
     depends_on("go@1.24.2:", type="build", when="@0.62:")
     depends_on("go@1.24:", type="build")
 

@@ -44,6 +44,14 @@ jobs:
             - .ci/env
             packages:
             - repos/spack_repo/**
+            old-builtin:
+            - 'var/spack/repos/spack_repo/builtin/**'
+      - name: Detected old builtin repository
+        if: steps.filter.outputs.old-builtin == 'true'
+        run: |
+          echo "Error: Packages are not allowed in 'var/spack/repos/spack_repo/builtin'."
+          echo "       Use 'repos/spack_repo/builtin' instead."
+          exit 1
 
   unit-tests:
     # if: ${{ github.repository == 'spack/spack' && needs.changes.outputs.core == 'true' }}

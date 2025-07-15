@@ -468,7 +468,7 @@ class CMakeBuilder(BuilderWithDefaults):
             primary_generator = _extract_primary_generator(self.generator)
             configure_artifact = "Makefile"
             if primary_generator == "Ninja":
-                configure_artifact = "ninja.build"
+                configure_artifact = "build.ninja"
 
             if os.path.isfile(os.path.join(self.build_directory, configure_artifact)):
                 tty.msg(
