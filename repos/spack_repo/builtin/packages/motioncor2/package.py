@@ -63,6 +63,14 @@ class Motioncor2(Package):
     def install(self, spec, prefix):
         spec_version = spec.version if spec.version not in ("1.0.5", "1.3.1") else "v{0}".format(spec.version)
         cuda_version = spec["cuda"].version.up_to(2).joined if spec.version != "1.0.5" else spec["cuda"].version.up_to(2)
+        spec_version = (
+            spec.version if spec.version not in ("1.0.5", "1.3.1") else "v{0}".format(spec.version)
+        )
+        cuda_version = (
+            spec["cuda"].version.up_to(2).joined
+            if spec.version != "1.0.5"
+            else spec["cuda"].version.up_to(2)
+        )
 
         mkdirp(prefix.bin)
 
