@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems import autotools, nmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.nmake import NMakePackage
 
-import spack.platforms
 from spack.package import *
 
 is_windows = sys.platform == "win32"
@@ -276,7 +275,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         return args
 
     def get_arch(self):
-        host_platform = spack.platforms.host()
+        host_platform = host_platform()
         return str(host_platform.target("default_target"))
 
     @run_after("install")

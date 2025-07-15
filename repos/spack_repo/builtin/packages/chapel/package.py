@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.platforms
 from spack.package import *
 
 
@@ -23,7 +22,7 @@ def slingshot_network():
 @memoized
 def is_CrayEX():
     # Credit to upcxx package for this hpe-cray-ex detection function
-    if spack.platforms.host().name == "linux":
+    if host_platform().name == "linux":
         target = os.environ.get("CRAYPE_NETWORK_TARGET")
         if target in ["ofi", "ucx"]:  # normal case
             return True

@@ -9,20 +9,17 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.platforms
 from spack.package import *
 
 
 @memoized
 def is_CrayXC():
-    return spack.platforms.host().name == "linux" and (
-        os.environ.get("CRAYPE_NETWORK_TARGET") == "aries"
-    )
+    return host_platform().name == "linux" and (os.environ.get("CRAYPE_NETWORK_TARGET") == "aries")
 
 
 @memoized
 def is_CrayEX():
-    if spack.platforms.host().name == "linux":
+    if host_platform().name == "linux":
         target = os.environ.get("CRAYPE_NETWORK_TARGET")
         if target in ["ofi", "ucx"]:  # normal case
             return True

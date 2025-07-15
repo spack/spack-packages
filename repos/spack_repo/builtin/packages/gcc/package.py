@@ -666,7 +666,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     @classmethod
     def filter_detected_exes(cls, prefix, exes_in_prefix):
         # Apple's gcc is actually apple clang, so skip it.
-        if str(spack.platforms.host()) == "darwin":
+        if str(host_platform()) == "darwin":
             not_apple_clang = []
             for exe in exes_in_prefix:
                 try:
