@@ -58,9 +58,9 @@ class Prrte(AutotoolsPackage):
     depends_on("python@3.7:", type="build", when="@develop")
 
     def url_for_version(self, version):
-        if self.spec.satisfies("@2"):
+        if version <= Version("3"):
             # tarballs have a single 'r'
-            return f"https://github.com/pmix/prrte/releases/download/v{version}/prte-${version}.tar.bz2"
+            return f"https://github.com/pmix/prrte/releases/download/v{version}/prte-{version}.tar.bz2"
         else:
             return super().url_for_version(version)
 
