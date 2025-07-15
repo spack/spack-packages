@@ -29,7 +29,6 @@ class Sedacs(PythonPackage, CudaPackage):
     # python dependencies
     depends_on('python@3.10:', type=('build', 'run'))
     depends_on('py-setuptools', type='build')
-    depends_on('py-wheel', type='build')
     depends_on('py-scikit-build-core', type='build')
     depends_on('py-numpy@1:', type=('build', 'run'))
     depends_on('py-torch@2:', type=('build', 'run'))
