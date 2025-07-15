@@ -57,6 +57,7 @@ class H5hut(AutotoolsPackage):
     def configure_args(self):
         spec = self.spec
         config_args = ["--enable-shared"]
+        config_args.append(f"--with-hdf5={spec['hdf5'].prefix}")
 
         if spec.satisfies("+fortran"):
             config_args.append("--enable-fortran")
