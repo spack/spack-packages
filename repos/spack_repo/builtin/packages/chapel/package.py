@@ -864,8 +864,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         """Run the hello world test"""
         with working_dir(self.test_suite.current_test_cache_dir):
             checkCplInstall = Executable("util/test/checkChplInstall")
-            vars = {"CHPL_CHECK_HOME": self.test_suite.current_test_cache_dir}
             with test_part(self, "test_hello_checkChplInstall", purpose="test hello world"):
+                vars = {"CHPL_CHECK_HOME": self.test_suite.current_test_cache_dir}
                 if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
                     vars["COMP_FLAGS"] = "--no-checks --no-compiler-driver"
                 if self.spec.satisfies("comm=gasnet"):
