@@ -7,8 +7,6 @@ import os
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from llnl.util.symlink import readlink
-
 from spack.package import *
 
 # This is the template for a pkgconfig file for rpm
