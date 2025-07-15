@@ -7,14 +7,13 @@ import platform
 import shutil
 from os.path import basename, isdir
 
-from llnl.util.link_tree import LinkTree
-
 from spack.package import (
     EnvironmentModifications,
     Executable,
     HeaderList,
     InstallError,
     LibraryList,
+    LinkTree,
     conflicts,
     find_libraries,
     get_user,

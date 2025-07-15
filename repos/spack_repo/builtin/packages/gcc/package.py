@@ -1083,7 +1083,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         """
         # Detect GCC package in the directory of the GCC compiler
         # or in the $PATH if self.compiler.cc is not an absolute path:
-        from spack.detection import by_path
+        from spack.detection import by_path  # TODO: remove use of private Spack API
 
         compiler_dir = os.path.dirname(self.compiler.cc)
         detected_packages = by_path(
