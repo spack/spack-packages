@@ -9,13 +9,14 @@ from spack.package import *
 
 
 class Sedacs(PythonPackage, CudaPackage):
-    """Scalable Ecosystem, Driver, and Analyzer for Complex Chemistry Simulations (SEDACS) enables massively
-    parallel atomistic simulations that can seamlessly integrate with a diverse range of available and emerging
-    quantum chemistry codes at different levels of theory.
+    """Scalable Ecosystem, Driver, and Analyzer for Complex Chemistry Simulations (SEDACS)
+    enables massively parallel atomistic simulations that can seamlessly integrate with a
+    diverse range of available and emerging quantum chemistry codes at different levels of 
+    theory.
 
-    Supporting ab initio, semiempirical quantum mechanics, and coarse-grained flexible charge equilibration
-    models, this is a unified framework to simulate and analyze the quantum molecular dynamics of complex
-    chemical systems and materials.
+    Supporting ab initio, semiempirical quantum mechanics, and coarse-grained flexible charge
+    equilibration models, this is a unified framework to simulate and analyze the quantum
+    molecular dynamics of complex chemical systems and materials.
     """
 
     homepage = "https://github.com/lanl/sedacs"
@@ -42,19 +43,19 @@ class Sedacs(PythonPackage, CudaPackage):
     depends_on('py-scipy@1:', type=('build', 'run'))
 
     # mpi dependencies
-    depends_on('mpi',when="+mpi")
-    depends_on('py-mpi4py',when="+mpi")
+    depends_on('mpi', when="+mpi")
+    depends_on('py-mpi4py', when="+mpi")
      
     # gpu/ai-hardware library
-    depends_on('cmake',when="+gpulib")
-    depends_on('nvhpc',when="+gpulib")
+    depends_on('cmake', when="+gpulib")
+    depends_on('nvhpc', when="+gpulib")
     conflicts(
         "cuda_arch=none", when="+gpulib",  msg="sedacs: Please select a CUDA arch value"
     )
 
     # latte dependencies
-    depends_on('latte@lattepy+interface+progress',when="+latte")
-    depends_on('qmd-progress@master~benchmarks',when="+latte")
+    depends_on('latte@lattepy+interface+progress', when="+latte")
+    depends_on('qmd-progress@master~benchmarks', when="+latte")
 
     # build system
     build_system = 'pyproject'
