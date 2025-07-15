@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.python import PythonPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.python import PythonPackage
+
 
 from spack.package import *
 
@@ -11,7 +12,7 @@ from spack.package import *
 class Sedacs(PythonPackage, CudaPackage):
     """Scalable Ecosystem, Driver, and Analyzer for Complex Chemistry Simulations (SEDACS)
     enables massively parallel atomistic simulations that can seamlessly integrate with a
-    diverse range of available and emerging quantum chemistry codes at different levels of 
+    diverse range of available and emerging quantum chemistry codes at different levels of
     theory.
 
     Supporting ab initio, semiempirical quantum mechanics, and coarse-grained flexible charge
@@ -45,7 +46,7 @@ class Sedacs(PythonPackage, CudaPackage):
     # mpi dependencies
     depends_on('mpi', when="+mpi")
     depends_on('py-mpi4py', when="+mpi")
-     
+
     # gpu/ai-hardware library
     depends_on('cmake', when="+gpulib")
     depends_on('nvhpc', when="+gpulib")
