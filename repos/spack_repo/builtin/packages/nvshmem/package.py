@@ -56,7 +56,7 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
 
     generator("ninja")
 
-    conflicts("~cuda")
+    conflicts("~cuda", msg="NVSHMEM requires CUDA")
 
     def url_for_version(self, version):
         ver_str = "{0}".format(version)
