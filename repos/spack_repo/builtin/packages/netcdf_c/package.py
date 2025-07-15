@@ -11,7 +11,6 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
-from spack.util.environment import filter_system_paths
 
 
 class NetcdfC(CMakePackage, AutotoolsPackage):

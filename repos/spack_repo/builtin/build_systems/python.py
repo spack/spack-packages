@@ -10,7 +10,6 @@ import shutil
 import stat
 from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
-import llnl.util.filesystem as fs
 from llnl.util.lang import match_predicate
 
 from spack.package import (
@@ -31,7 +30,10 @@ from spack.package import (
     filter_file,
     find,
     find_all_headers,
+    find_all_libraries,
+    has_shebang,
     join_path,
+    path_contains_subdirectory,
     register_builder,
     run_after,
     test_part,
@@ -168,7 +170,7 @@ class PythonExtension(PackageBase):
             if skip_if_exists and os.path.lexists(dst):
                 continue
 
-            if not fs.path_contains_subdirectory(src, bin_dir):
+            if not path_contains_subdirectory(src, bin_dir):
                 view.link(src, dst)
                 continue
 
@@ -180,7 +182,7 @@ class PythonExtension(PackageBase):
                 continue
 
             # If it's executable and has a shebang, copy and patch it.
-            if (s.st_mode & 0b111) and fs.has_shebang(src):
+            if (s.st_mode & 0b111) and has_shebang(src):
                 copied_files[(s.st_dev, s.st_ino)] = dst
                 shutil.copy2(src, dst)
                 filter_file(
@@ -221,7 +223,7 @@ class PythonExtension(PackageBase):
             if ignore_namespace and namespace_init(dst):
                 continue
 
-            if not fs.path_contains_subdirectory(src, bin_dir):
+            if not path_contains_subdirectory(src, bin_dir):
                 to_remove.append(dst)
             else:
                 os.remove(dst)
@@ -336,8 +338,7 @@ class PythonPackage(PythonExtension):
         platlib = self.prefix.join(python.package.platlib).join(name)
         purelib = self.prefix.join(python.package.purelib).join(name)
 
-        find_all_libraries = functools.partial(fs.find_all_libraries, recursive=True)
-        libs_list = map(find_all_libraries, [platlib, purelib])
+        libs_list = map(functools.partial(find_all_libraries, recursive=True), [platlib, purelib])
         libs = functools.reduce(operator.add, libs_list)
 
         if libs:

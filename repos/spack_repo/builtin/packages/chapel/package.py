@@ -12,7 +12,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 import spack.platforms
 from spack.package import *
-from spack.util.environment import is_system_path
 
 
 def slingshot_network():

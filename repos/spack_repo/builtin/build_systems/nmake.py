@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import List  # novm
 
-import llnl.util.filesystem as fs
-
 from spack.package import (
     BuilderWithDefaults,
     PackageBase,
@@ -13,6 +11,7 @@ from spack.package import (
     build_system,
     conflicts,
     register_builder,
+    windows_sfn,
     working_dir,
 )
 
@@ -80,9 +79,9 @@ class NMakeBuilder(BuilderWithDefaults):
     def build_directory(self):
         """Return the directory containing the makefile."""
         return (
-            fs.windows_sfn(self.pkg.stage.source_path)
+            windows_sfn(self.pkg.stage.source_path)
             if not self.makefile_root
-            else fs.windows_sfn(self.makefile_root)
+            else windows_sfn(self.makefile_root)
         )
 
     @property
@@ -145,6 +144,6 @@ class NMakeBuilder(BuilderWithDefaults):
         opts += self.nmake_install_args()
         if self.makefile_name:
             opts.append("/F{}".format(self.makefile_name))
-        opts.append(self.define("PREFIX", fs.windows_sfn(prefix)))
+        opts.append(self.define("PREFIX", windows_sfn(prefix)))
         with working_dir(self.build_directory):
             pkg.module.nmake(*opts, *self.install_targets, ignore_quotes=self.ignore_quotes)

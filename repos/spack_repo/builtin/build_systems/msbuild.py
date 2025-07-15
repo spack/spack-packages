@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import List  # novm
 
-import llnl.util.filesystem as fs
-
 from spack.package import (
     BuilderWithDefaults,
     PackageBase,
@@ -13,6 +11,7 @@ from spack.package import (
     build_system,
     conflicts,
     register_builder,
+    windows_sfn,
     working_dir,
 )
 
@@ -75,7 +74,7 @@ class MSBuildBuilder(BuilderWithDefaults):
     @property
     def build_directory(self):
         """Return the directory containing the MSBuild solution or vcxproj."""
-        return fs.windows_sfn(self.pkg.stage.source_path)
+        return windows_sfn(self.pkg.stage.source_path)
 
     @property
     def toolchain_version(self):

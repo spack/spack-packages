@@ -6,8 +6,6 @@ import stat
 import subprocess
 from typing import Callable, List, Optional, Set, Tuple, Union
 
-import llnl.util.filesystem as fs
-
 import spack.build_environment
 import spack.builder
 import spack.compilers.libraries
@@ -36,6 +34,7 @@ from spack.package import (
     register_builder,
     run_after,
     run_before,
+    safe_remove,
     tty,
     when,
     working_dir,
@@ -841,7 +840,7 @@ To resolve this problem, please try the following:
 
         # Remove the files and create a log of what was removed
         libtool_files = find(str(self.pkg.prefix), "*.la", recursive=True)
-        with fs.safe_remove(*libtool_files):
+        with safe_remove(*libtool_files):
             mkdirp(os.path.dirname(self._removed_la_files_log))
             with open(self._removed_la_files_log, mode="w", encoding="utf-8") as f:
                 f.write("\n".join(libtool_files))

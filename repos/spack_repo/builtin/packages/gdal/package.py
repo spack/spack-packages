@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage, g
 from spack_repo.builtin.build_systems.python import PythonExtension
 
 from spack.package import *
-from spack.util.environment import filter_system_paths
 
 
 class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
