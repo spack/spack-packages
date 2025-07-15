@@ -141,6 +141,11 @@ class CompilerWrapper(Package):
         (cray_dir / "crayCC").symlink_to(installed_script)
         (cray_dir / "CC").symlink_to(installed_script)
 
+        # Extra symlink for Fujitsu
+        fj_dir = bin_dir / "fj" / "case-insensitive"
+        fj_dir.mkdir(exist_ok=True)
+        (fj_dir / "FCC").symlink_to(installed_script)
+
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:

@@ -173,6 +173,7 @@ class Git(AutotoolsPackage):
     depends_on("openssh", type="run")
     depends_on("perl-alien-svn", type="run", when="+svn")
     depends_on("tk", type=("build", "link"), when="+tcltk")
+    depends_on("diffutils", type="build", when="@2.48:")
 
     conflicts("+svn", when="~perl")
 
