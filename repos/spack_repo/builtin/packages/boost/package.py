@@ -324,6 +324,9 @@ class Boost(Package):
     # safe to do so on affected platforms.
     conflicts("+clanglibcpp", when="@1.85: +stacktrace")
 
+    # https://github.com/boostorg/python/issues/400
+    conflicts("@:1.80.0", when="+python ^python@3.11:", msg="Boost.python.enum has a known bug for boost@:1.80.0 and python@3.11:")
+
     # On Windows, the signals variant is required when building any of
     # the all_libs variants.
     for lib in all_libs:
