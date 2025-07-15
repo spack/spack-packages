@@ -18,6 +18,12 @@ from spack.package import *
 from spack.util.environment import is_system_path, set_env
 
 
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
 @llnl.util.lang.memoized
 def is_CrayEX():
     # Credit to upcxx package for this hpe-cray-ex detection function
@@ -62,6 +68,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
 
+    version("2.5.0", sha256="020220ca9bf52b9f416e9a029bdc465bb1f635c1e274c6ca3c18d1f83e41fce1")
     version("2.4.0", sha256="a51a472488290df12d1657db2e7118ab519743094f33650f910d92b54c56f315")
     version("2.3.0", sha256="0185970388aef1f1fae2a031edf060d5eac4eb6e6b1089e7e3b15a130edd8a31")
     version("2.2.0", sha256="bb16952a87127028031fd2b56781bea01ab4de7c3466f7b6a378c4d8895754b6")
@@ -78,6 +85,11 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_chpl_line_length.patch", when="@:2.3.0")  # PRs 26357, 26381, 26491
     patch("fix_checkChplInstall.patch", when="@:2.3.0")  # PR 26317
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
+    patch(
+        "https://github.com/chapel-lang/chapel/pull/27365.patch?full_index=1",
+        when="@2.2:2.5",
+        sha256="1e49e48eb838c38db5b81ca4859e566067a61d537269e35a6a356edb76d3c86b",
+    )
 
     launcher_names = (
         "amudprun",
@@ -323,7 +335,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     requires(
-        "^libfabric" + (" fabrics=cxi" if spack.platforms.cray.slingshot_network() else ""),
+        "^libfabric" + (" fabrics=cxi" if slingshot_network() else ""),
         when="libfabric=spack",
         msg="libfabric requires cxi fabric provider on HPE-Cray EX machines",
     )
@@ -464,6 +476,13 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("cuda", default=False, sticky=True, description="Enable Nvidia CUDA GPU support")
 
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
+
+    conflicts(
+        "^llvm@20",
+        when="@:2.5 +cuda",
+        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see https://github.com/chapel-lang/chapel/issues/27273",
+    )
+
     conflicts("+rocm", when="@:1", msg="ROCm support in spack requires Chapel 2.0.0 or later")
     # Chapel restricts the allowable ROCm versions
     with when("@2:2.1 +rocm"):
@@ -530,7 +549,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     with when("llvm=spack ~rocm"):
         depends_on("llvm@11:17", when="@:2.0.1")
         depends_on("llvm@11:18", when="@2.1:2.2")
-        depends_on("llvm@11:19", when="@2.3:")
+        depends_on("llvm@11:19", when="@2.3:2.4")
+        depends_on("llvm@11:20", when="@2.5:")
 
     # Based on docs https://chapel-lang.org/docs/technotes/gpu.html#requirements
     depends_on("llvm@16:", when="llvm=spack +cuda ^cuda@12:")
@@ -587,15 +607,21 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
                     python("-m", "pip", "install", "tools/chapel-py")
 
     def install(self, spec, prefix):
-        make("install")
-        # We install CMakeLists.txt so we can later lookup the version number
-        # if working from a non-versioned release/branch (such as main)
-        if not self.is_versioned_release():
-            install("CMakeLists.txt", join_path(prefix.share, "chapel"))
-        install_tree("doc", join_path(prefix.share, "chapel", self._output_version_short, "doc"))
-        install_tree(
-            "examples", join_path(prefix.share, "chapel", self._output_version_short, "examples")
-        )
+        # Needed to prevent invalidating cache on subsequent cmake runs due to
+        # env changes, likely pertaining to spack compiler wrappers.
+        with set_env(CHPL_CMAKE_USE_CC_CXX="1"):
+            make("install")
+            # We install CMakeLists.txt so we can later lookup the version number
+            # if working from a non-versioned release/branch (such as main)
+            if not self.is_versioned_release():
+                install("CMakeLists.txt", join_path(prefix.share, "chapel"))
+            install_tree(
+                "doc", join_path(prefix.share, "chapel", self._output_version_short, "doc")
+            )
+            install_tree(
+                "examples",
+                join_path(prefix.share, "chapel", self._output_version_short, "examples"),
+            )
 
     def setup_chpl_platform(self, env):
         if self.spec.variants["host_platform"].value == "unset":
@@ -765,7 +791,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "CHPL_MAKE_THIRD_PARTY",
             join_path(self.prefix.lib, "chapel", self._output_version_short),
         )
-        env.set("CHPL_HOME", chpl_home)
+        with when("@2.2:2.5"):
+            env.set("CHPL_HOME", chpl_home)
 
     def get_chpl_version_from_cmakelists(self) -> str:
         cmake_lists = None

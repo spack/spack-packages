@@ -19,7 +19,7 @@ class Musica(CMakePackage):
     """
 
     homepage = "https://github.com/NCAR/musica"
-    url = "https://github.com/NCAR/musica/archive/refs/tags/v0.10.1.tar.gz"
+    url = "https://github.com/NCAR/musica/archive/refs/tags/v0.12.0.tar.gz"
     git = "https://github.com/NCAR/musica.git"
 
     maintainers("kshores", "mattldawson", "boulderdaze")
@@ -27,6 +27,7 @@ class Musica(CMakePackage):
     license("Apache-2.0", checked_by="kshores")
 
     # Versions
+    version("0.12.0", sha256="e81279fbdd42af8bf6540f18e72857ed34e081421a90333c77f9952a3069363b")
     version("0.10.1", sha256="edefab03a676a449761997734e6c5b654b2c4f92ce8f1cc66ef63b8ae8ccccf1")
 
     # Options from CMake

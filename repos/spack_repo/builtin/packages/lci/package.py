@@ -2,10 +2,11 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import warnings
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 
 from spack.package import *
-import warnings
 
 
 def is_positive_int(val):
@@ -27,7 +28,9 @@ class Lci(CMakePackage):
     license("MIT")
 
     version("master", branch="master")
-    version("2.0.0-beta.1", sha256="5d28b88e4a5aed67c3f1fe16eccf60c7237a9c8bba890b9c479fb21d30153b39")
+    version(
+        "2.0.0-beta.1", sha256="5d28b88e4a5aed67c3f1fe16eccf60c7237a9c8bba890b9c479fb21d30153b39"
+    )
     version("1.7.9", sha256="49f212d034e7d0b63af29e76b17935a3221830090af02c0e0912cea8a7a58d91")
     version("1.7.8", sha256="9d54dd669b54e715162c5184a0e5cc64fd479e9fda60b2a490197d901368afda")
     version("1.7.7", sha256="c310f699b7b4317a2f5c3557f85c240fe3c85d2d06618dd248434ef807d53779")
@@ -106,7 +109,9 @@ class Lci(CMakePackage):
     variant(
         "bootstrap",
         description="Bootstrap backends to enable",
-        values=disjoint_sets(("auto",), ("pmix", "pmi2", "pmi1", "mpi", "file", "local"), ("cray",))
+        values=disjoint_sets(
+            ("auto",), ("pmix", "pmi2", "pmi1", "mpi", "file", "local"), ("cray",)
+        )
         .prohibit_empty_set()
         .with_default("auto")
         .with_non_feature_values("auto"),
@@ -124,7 +129,9 @@ class Lci(CMakePackage):
     variant(
         "default-pm",
         description="Order of process management backends to try by default",
-        values=disjoint_sets(("auto",), ("pmix", "pmi2", "pmi1", "mpi", "file", "local"), ("cray",))
+        values=disjoint_sets(
+            ("auto",), ("pmix", "pmi2", "pmi1", "mpi", "file", "local"), ("cray",)
+        )
         .prohibit_empty_set()
         .with_default("auto")
         .with_non_feature_values("auto"),
@@ -148,13 +155,19 @@ class Lci(CMakePackage):
 
     def cmake_args(self):
         if not self.spec.satisfies("enable-pm=auto"):
-            warnings.warn("The 'enable-pm' variant is deprecated, use 'bootstrap' instead.",
-                          DeprecationWarning, stacklevel=2)
+            warnings.warn(
+                "The 'enable-pm' variant is deprecated, use 'bootstrap' instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             self.spec.variants["bootstrap"].value = self.spec.variants["enable-pm"].value
 
         if not self.spec.satisfies("default-pm=auto"):
-            warnings.warn("The 'default-pm' variant is deprecated, use 'bootstrap' instead.",
-                          DeprecationWarning, stacklevel=2)
+            warnings.warn(
+                "The 'default-pm' variant is deprecated, use 'bootstrap' instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
             self.spec.variants["bootstrap"].value = self.spec.variants["default-pm"].value
 
         args = [

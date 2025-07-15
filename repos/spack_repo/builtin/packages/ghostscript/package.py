@@ -21,8 +21,13 @@ class Ghostscript(AutotoolsPackage):
 
     license("AGPL-3.0-or-later", checked_by="wdconinc")
 
-    version("10.04.0", sha256="c764dfbb7b13fc71a7a05c634e014f9bb1fb83b899fe39efc0b6c3522a9998b1")
+    version("10.05.0", sha256="56e77833de683825c420d0af8cb90aa8ba7da71ea6fb5624290cbc1b53fe7942")
     with default_args(deprecated=True):
+        # 10.05.0 fixes a few vulnerabilities, see
+        # https://ghostscript.readthedocs.io/en/gs10.05.0/News.html
+        version(
+            "10.04.0", sha256="c764dfbb7b13fc71a7a05c634e014f9bb1fb83b899fe39efc0b6c3522a9998b1"
+        )
         # https://nvd.nist.gov/vuln/detail/CVE-2024-46956
         version(
             "10.03.1", sha256="31cd01682ad23a801cc3bbc222a55f07c4ea3e068bdfb447792d54db21a2e8ad"
@@ -57,6 +62,7 @@ class Ghostscript(AutotoolsPackage):
 
     # https://www.ghostscript.com/ocr.html
     variant("tesseract", default=False, description="Use the Tesseract library for OCR")
+    variant("gtk", default=True, description="Enable gtk+ device for screen output")
 
     depends_on("c", type="build")
 
@@ -69,8 +75,12 @@ class Ghostscript(AutotoolsPackage):
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("zlib-api")
+    depends_on("libx11")
+    depends_on("libxt")
     depends_on("libxext")
-    depends_on("gtkplus")
+    depends_on("gtkplus", type="link", when="+gtk")
+    depends_on("dbus", type="link")
+    depends_on("libiconv", type="link")
 
     # https://www.ghostscript.com/doc/9.53.0/News.htm
     conflicts("+tesseract", when="@:9.52", msg="Tesseract OCR engine added in 9.53.0")
@@ -121,7 +131,12 @@ class Ghostscript(AutotoolsPackage):
         )
 
     def configure_args(self):
-        args = ["--disable-compile-inits", "--with-system-libtiff"]
+        args = [
+            "--disable-compile-inits",
+            "--with-system-libtiff",
+            "--without-x",
+            "--without-libiconv",
+        ]
 
         if self.spec.satisfies("@9.53:"):
             args.extend(self.with_or_without("tesseract"))
@@ -132,6 +147,9 @@ class Ghostscript(AutotoolsPackage):
                 args.append("--disable-hidden-visibility")
         else:
             args.append("--disable-dynamic")
+
+        args.extend(self.enable_or_disable("gtk"))
+        args.append("--with-libiconv=gnu")
 
         return args
 
