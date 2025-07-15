@@ -23,6 +23,7 @@ class Coordgen(CMakePackage):
     variant("example", default=False, description="Build sample executable")
     variant("shared", default=True, description="Build as shared library")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("maeparser", when="+maeparser")

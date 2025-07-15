@@ -224,7 +224,9 @@ class Qt(Package):
             depends_on("libxext")
             depends_on("libxrender")
 
-        conflicts("+framework", msg="QT cannot be built as a framework except on macOS.")
+    for plat in ["linux", "freebsd", "windows"]:
+        with when(f"platform={plat}"):
+            conflicts("+framework", msg="QT cannot be built as a framework except on macOS.")
 
     with when("platform=windows +sql"):
         # Windows sqlite has no column_metadata variant unlike all other platforms
@@ -475,12 +477,12 @@ class Qt(Package):
             "qmake/qmake.pri",
             "src/tools/bootstrap/bootstrap.pro",
         ]
-        if "%clang" in self.spec or "%apple-clang" in self.spec:
+        if "%cxx=clang" in self.spec or "%cxx=apple-clang" in self.spec:
             files_to_filter += [
                 "mkspecs/unsupported/macx-clang-libc++/qmake.conf",
                 "mkspecs/common/clang.conf",
             ]
-        elif "%gcc" in self.spec:
+        elif "%cxx=gcc" in self.spec:
             files_to_filter += ["mkspecs/common/g++-macx.conf", "mkspecs/darwin-g++/qmake.conf"]
 
         # Filter inserted configure variables
@@ -543,7 +545,7 @@ class Qt(Package):
             with open(conf_file, "a") as f:
                 f.write("QMAKE_CXXFLAGS += -std=gnu++98\n")
 
-    @when("@4 %clang")
+    @when("@4 %cxx=clang")
     def patch(self):
         (mkspec_dir, platform) = self.get_mkspec()
         conf_file = os.path.join(mkspec_dir, platform, "qmake.conf")
@@ -617,6 +619,8 @@ class Qt(Package):
             use_spack_dep("freetype")
             if spec.satisfies("platform=linux") or spec.satisfies("platform=freebsd"):
                 config_args.append("-fontconfig")
+            # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
+            config_args.append("-no-vulkan")
         else:
             config_args.append("-no-freetype")
             config_args.append("-no-gui")

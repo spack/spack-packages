@@ -1,0 +1,12 @@
+diff --git a/rocm-openmp-extras/llvm-project/offload/DeviceRTL/CMakeLists.txt b/rocm-openmp-extras/llvm-project/offload/DeviceRTL/CMakeLists.txt
+index 46cbc65..df9cddc 100644
+--- a/rocm-openmp-extras/llvm-project/offload/DeviceRTL/CMakeLists.txt
++++ b/rocm-openmp-extras/llvm-project/offload/DeviceRTL/CMakeLists.txt
+@@ -148,6 +148,7 @@ set(bc_flags -c -foffload-lto -std=c++17 -fvisibility=hidden
+              -I${include_directory}
+              -I${devicertl_base_directory}/../include
+              ${LIBOMPTARGET_LLVM_INCLUDE_DIRS_DEVICERTL}
++            -I${LIBOMP_OMP_TOOLS_INCLUDE_DIR}
+ )
+
+ if(${LIBOMPTARGET_DEVICE_DEBUG})
