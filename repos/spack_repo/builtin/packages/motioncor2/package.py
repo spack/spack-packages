@@ -44,7 +44,7 @@ class Motioncor2(Package):
 
     depends_on("cuda@8.0,9.1", type="run", when="@1.0.5")
     depends_on("cuda@8.0,9.0:9.1", type="run", when="@1.1.0")
-    depends_on("cuda@8.0,9.1,9.2", type="run", when="@1.2.1")
+    depends_on("cuda@8.0,9.1:9.2", type="run", when="@1.2.1")
     depends_on("cuda@8.0,9.1:9.2,10.0", type="run", when="@1.2.3")
     depends_on("cuda@8.0,9.2,10.1", type="run", when="@1.2.6:1.3.0")
     depends_on("cuda@9.2,10.1:10.2", type="run", when="@1.3.1")
