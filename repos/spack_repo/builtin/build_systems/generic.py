@@ -3,7 +3,5 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import GenericBuilder, Package
 
-# Needed to appease style checks. These names need to be exported here to be compatible
-# with Package API less than v2.2, in case custom repositories import them
-_ = Package
-_ = GenericBuilder
+# These names were moved to spack.package in Package API v2.2
+__all__ = ["GenericBuilder", "Package"]
