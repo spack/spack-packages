@@ -4,7 +4,6 @@
 
 import os
 import re
-import subprocess
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -584,22 +583,18 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             env.unset(var)
 
     def build(self, spec, prefix):
-        make(extra_env={"CHPL_MAKE_THIRD_PARTY": join_path(self.build_directory, "third-party")})
-        extra_env = {
-            "CHPL_MAKE_THIRD_PARTY": join_path(self.build_directory, "third-party"),
-            "CHPL_HOME": self.build_directory,
-        }
+        make()
         if spec.satisfies("+chpldoc"):
-            make("chpldoc", extra_env=extra_env)
+            make("chpldoc")
         if spec.satisfies("+python-bindings"):
-            make("chapel-py-venv", extra_env=extra_env)
-            python("-m", "ensurepip", "--default-pip", extra_env=extra_env)
-            python("-m", "pip", "install", "tools/chapel-py", extra_env=extra_env)
+            make("chapel-py-venv")
+            python("-m", "ensurepip", "--default-pip")
+            python("-m", "pip", "install", "tools/chapel-py")
 
     def install(self, spec, prefix):
-        # Needed to prevent invalidating cache on subsequent cmake runs due to
-        # env changes, likely pertaining to spack compiler wrappers.
-        make("install", extra_env={"CHPL_CMAKE_USE_CC_CXX": "1"})
+        # CHPL_CMAKE_USE_CC_CXX needed to prevent invalidating cache on subsequent cmake runs due
+        # to env changes, likely pertaining to spack compiler wrappers.
+        make("install", "CHPL_CMAKE_USE_CC_CXX=1")
         # We install CMakeLists.txt so we can later lookup the version number
         # if working from a non-versioned release/branch (such as main)
         if not self.is_versioned_release():
@@ -768,6 +763,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         self.unset_chpl_env_vars(env)
         self.setup_env_vars(env)
+        env.set("CHPL_MAKE_THIRD_PARTY", join_path(self.build_directory, "third-party"))
+        env.set("CHPL_HOME", self.build_directory)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.setup_env_vars(env)
@@ -863,39 +860,24 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         #       - make test is a long running operation
         pass
 
-    def check_chpl_install_gasnet(self, *, env_update):
-        """Setup env to run self-test after installing the package with gasnet"""
-        env = os.environ.copy()
-        env.update(
-            {
-                "GASNET_SPAWNFN": "L",
-                "GASNET_QUIET": "yes",
-                "GASNET_ROUTE_OUTPUT": "0",
-                "QT_AFFINITY": "no",
-                "CHPL_QTHREAD_ENABLE_OVERSUBSCRIPTION": "1",
-                "CHPL_RT_MASTERIP": "127.0.0.1",
-                "CHPL_RT_WORKERIP": "127.0.0.0",
-                "CHPL_LAUNCHER": "",
-            }
-        )
-        env.update(env_update)
-        return subprocess.run(["util/test/checkChplInstall"], env=env)
-
-    def check_chpl_install(self, env_update):
-        if self.spec.variants["comm"].value != "none":
-            return self.check_chpl_install_gasnet(env_update=env_update)
-        else:
-            return subprocess.run(["util/test/checkChplInstall"])
-
     def test_hello(self):
         """Run the hello world test"""
         with working_dir(self.test_suite.current_test_cache_dir):
-            env_update = {"CHPL_CHECK_HOME": self.test_suite.current_test_cache_dir}
+            checkCplInstall = Executable("util/test/checkChplInstall")
+            vars = {"CHPL_CHECK_HOME": self.test_suite.current_test_cache_dir}
             with test_part(self, "test_hello_checkChplInstall", purpose="test hello world"):
                 if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
-                    env_update.update({"COMP_FLAGS": "--no-checks --no-compiler-driver"})
-                res = self.check_chpl_install(env_update=env_update)
-                assert res and res.returncode == 0
+                    vars["COMP_FLAGS"] = "--no-checks --no-compiler-driver"
+                if self.spec.satisfies("comm=gasnet"):
+                    vars["GASNET_SPAWNFN"] = "L"
+                    vars["GASNET_QUIET"] = "yes"
+                    vars["GASNET_ROUTE_OUTPUT"] = "0"
+                    vars["QT_AFFINITY"] = "no"
+                    vars["CHPL_QTHREAD_ENABLE_OVERSUBSCRIPTION"] = "1"
+                    vars["CHPL_RT_MASTERIP"] = "127.0.0.1"
+                    vars["CHPL_RT_WORKERIP"] = "127.0.0.0"
+                    vars["CHPL_LAUNCHER"] = ""
+                checkCplInstall(extra_env=vars)
 
     # TODO: This is a pain because the checkChplDoc script doesn't have the same
     # support for CHPL_CHECK_HOME and chpldoc is finicky about CHPL_HOME
