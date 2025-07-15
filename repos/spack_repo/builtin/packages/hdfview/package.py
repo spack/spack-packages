@@ -78,7 +78,7 @@ class Hdfview(Package):
 
         # the new versions have a complex https://objects.githubusercontent.com url so use the
         # github release
-        if version >= Version("3.3.0"):
+        if version > Version("3.3.0"):
             return super().url_for_version(version)
 
         url_fmt = "https://support.hdfgroup.org/ftp/HDF5/releases/HDF-JAVA/hdfview-{0}/src/hdfview-{0}.tar.gz"
