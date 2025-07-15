@@ -1220,12 +1220,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         if not dryrun:
             tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
             return
-        dynamic_linker = spack.util.libc.parse_dynamic_linker(dryrun)
+        dynamic_linker = parse_dynamic_linker(dryrun)
         if not dynamic_linker:
             tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
             return
 
-        libc = spack.util.libc.libc_from_dynamic_linker(dynamic_linker)
+        libc = libc_from_dynamic_linker(dynamic_linker)
         if not libc:
             tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
             return
