@@ -11,7 +11,10 @@ from spack.package import *
 
 _versions = {
     "0.5.0.898": {
-        "Linux-x86_64": {},
+        "Linux-x86_64": dict(
+            sha256="e8bc831d743bbbf5f5af8b728ab4da74acdcea37c4ee1022e63f8f537d5488a2",
+            url="https://developer.download.nvidia.com/compute/cublasmp/redist/libcublasmp/linux-x86_64/libcublasmp-linux-x86_64-0.5.0.898_cuda12-archive.tar.xz",
+        ),
         "Linux-aarch64": dict(
             sha256="6e548a11bd6ba6c4aef77c9d1c16bdc39b7ec268547f856c5dab39085fbb7fd4",
             url="https://developer.download.nvidia.com/compute/cublasmp/redist/libcublasmp/linux-sbsa/libcublasmp-linux-sbsa-0.5.0.898_cuda12-archive.tar.xz",
