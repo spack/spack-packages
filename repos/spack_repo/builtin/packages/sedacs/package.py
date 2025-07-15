@@ -5,7 +5,6 @@
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
-
 from spack.package import *
 
 
@@ -36,32 +35,32 @@ class Sedacs(PythonPackage, CudaPackage):
     variant("latte", default=False, description="Make latte available as a sedacs engine")
 
     # python dependencies
-    depends_on('python@3.10:', type=('build', 'run'))
-    depends_on('py-setuptools', type='build')
-    depends_on('py-scikit-build-core', type='build')
-    depends_on('py-numpy@1:', type=('build', 'run'))
-    depends_on('py-torch@2:', type=('build', 'run'))
-    depends_on('py-scipy@1:', type=('build', 'run'))
+    depends_on("python@3.10:", type=("build", "run"))
+    depends_on("py-setuptools", type="build")
+    depends_on("py-scikit-build-core", type="build")
+    depends_on("py-numpy@1:", type=("build", "run"))
+    depends_on("py-torch@2:", type=("build", "run"))
+    depends_on("py-scipy@1:", type=("build", "run"))
 
     # mpi dependencies
-    depends_on('mpi', when="+mpi")
-    depends_on('py-mpi4py', when="+mpi")
+    depends_on("mpi", when="+mpi")
+    depends_on("py-mpi4py", when="+mpi")
 
     # gpu/ai-hardware library
-    depends_on('cmake', when="+gpulib")
-    depends_on('nvhpc', when="+gpulib")
+    depends_on("cmake", when="+gpulib")
+    depends_on("nvhpc", when="+gpulib")
     conflicts(
         "cuda_arch=none", when="+gpulib",  msg="sedacs: Please select a CUDA arch value"
     )
 
     # latte dependencies
-    depends_on('latte@lattepy+interface+progress', when="+latte")
-    depends_on('qmd-progress@master~benchmarks', when="+latte")
+    depends_on("latte@lattepy+interface+progress", when="+latte")
+    depends_on("qmd-progress@master~benchmarks", when="+latte")
 
     # build system
-    build_system = 'pyproject'
-    build_backend = 'scikit_build_core.build'
+    build_system = "pyproject"
+    build_backend = "scikit_build_core.build"
 
 
 def setup_build_environment(self, env):
-    env.set('GPU_ARCH', self.spec.variants['cuda_arch'].value)
+    env.set("GPU_ARCH", self.spec.variants["cuda_arch"].value)
