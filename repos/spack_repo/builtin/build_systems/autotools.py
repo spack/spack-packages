@@ -6,30 +6,30 @@ import stat
 import subprocess
 from typing import Callable, List, Optional, Set, Tuple, Union
 
-import spack.build_environment
-import spack.builder
-import spack.compilers.libraries
-from spack.operating_systems.mac_os import macos_version
 from spack.package import (
     BuilderWithDefaults,
     EnvironmentModifications,
     Executable,
     FileFilter,
     InstallError,
+    ModuleChangePropagator,
     PackageBase,
     Prefix,
     Spec,
     Version,
     apply_macos_rpath_fixups,
     build_system,
+    compiler_spec,
     conflicts,
     copy,
+    create_builder,
     depends_on,
     execute_install_time_tests,
     find,
     force_remove,
     is_exe,
     keep_modification_time,
+    macos_version,
     mkdirp,
     register_builder,
     run_after,
@@ -82,10 +82,10 @@ class AutotoolsPackage(PackageBase):
     # Legacy methods (used by too many packages to change them,
     # need to forward to the builder)
     def enable_or_disable(self, *args, **kwargs):
-        return spack.builder.create(self).enable_or_disable(*args, **kwargs)
+        return create_builder(self).enable_or_disable(*args, **kwargs)
 
     def with_or_without(self, *args, **kwargs):
-        return spack.builder.create(self).with_or_without(*args, **kwargs)
+        return create_builder(self).with_or_without(*args, **kwargs)
 
 
 @register_builder("autotools")
@@ -419,9 +419,9 @@ To resolve this problem, please try the following:
                     stop_at=f"# ### END {marker}",
                 )
         else:
-            compiler_spec = spack.compilers.libraries.compiler_spec(self.spec)
-            if compiler_spec:
-                x.filter(regex='^wl=""$', repl='wl="{0}"'.format(compiler_spec.package.linker_arg))
+            c_spec = compiler_spec(self.spec)
+            if c_spec:
+                x.filter(regex='^wl=""$', repl='wl="{0}"'.format(c_spec.package.linker_arg))
 
         # Replace empty PIC flag values:
         for compiler, marker in markers.items():
@@ -578,7 +578,7 @@ To resolve this problem, please try the following:
             raise RuntimeError(msg.format(self.configure_directory))
 
         # Monkey-patch the configure script in the corresponding module
-        globals_for_pkg = spack.build_environment.ModuleChangePropagator(self.pkg)
+        globals_for_pkg = ModuleChangePropagator(self.pkg)
         globals_for_pkg.configure = Executable(self.configure_abs_path)
         globals_for_pkg.propagate_changes_to_mro()
 

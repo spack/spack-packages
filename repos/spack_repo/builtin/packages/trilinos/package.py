@@ -12,7 +12,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.kokkos.package import Kokkos
 
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 # Trilinos is complicated to build, as an inspiration a couple of links to

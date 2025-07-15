@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.compilers.config
 from spack.package import *
 
 
@@ -387,7 +386,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
     @classmethod
     def determine_variants(cls, exes, version):
         def get_spack_compiler_spec(compiler):
-            spack_compilers = spack.compilers.config.find_compilers([os.path.dirname(compiler)])
+            spack_compilers = find_compilers([os.path.dirname(compiler)])
             actual_compiler = None
             # check if the compiler actually matches the one we want
             for spack_compiler in spack_compilers:

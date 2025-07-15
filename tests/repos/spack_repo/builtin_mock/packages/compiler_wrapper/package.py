@@ -4,12 +4,9 @@
 import pathlib
 import shutil
 import sys
-from typing import List
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.compilers.libraries
-import spack.package_base
 from spack.package import *
 
 
@@ -207,7 +204,7 @@ class CompilerWrapper(Package):
             env.set(f"SPACK_{wrapper_var_name}_LINKER_ARG", compiler_pkg.linker_arg)
 
             # Check if this compiler has implicit rpaths
-            implicit_rpaths.extend(_implicit_rpaths(pkg=compiler_pkg))
+            implicit_rpaths.extend(CompilerPropertyDetector(compiler_pkg.spec).implicit_rpaths())
 
             # Add extra rpaths, if they are defined in an external spec
             extra_rpaths.extend(
@@ -266,9 +263,3 @@ class CompilerWrapper(Package):
         if self.spec.satisfies("platform=darwin"):
             return ""
         return "--enable-new-dtags"
-
-
-def _implicit_rpaths(pkg: spack.package_base.PackageBase) -> List[str]:
-    detector = spack.compilers.libraries.CompilerPropertyDetector(pkg.spec)
-    paths = detector.implicit_rpaths()
-    return paths

@@ -9,7 +9,6 @@ from os.path import basename, isdir
 
 from llnl.util.link_tree import LinkTree
 
-import spack.util.path
 from spack.package import (
     EnvironmentModifications,
     Executable,
@@ -18,6 +17,7 @@ from spack.package import (
     LibraryList,
     conflicts,
     find_libraries,
+    get_user,
     join_path,
     license,
     mkdirp,
@@ -110,7 +110,7 @@ class IntelOneApiPackage(Package):
             # with other install depends on the userid. For root, we
             # delete the installercache before and after install. For
             # non root we redefine the HOME environment variable.
-            if spack.util.path.get_user() == "root":
+            if get_user() == "root":
                 shutil.rmtree("/var/intel/installercache", ignore_errors=True)
 
             bash = Executable("bash")
@@ -133,7 +133,7 @@ class IntelOneApiPackage(Package):
                 self.prefix,
             )
 
-            if spack.util.path.get_user() == "root":
+            if get_user() == "root":
                 shutil.rmtree("/var/intel/installercache", ignore_errors=True)
 
         # Some installers have a bug and do not return an error code when failing

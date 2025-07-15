@@ -13,7 +13,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 import llnl.util.lang
 
-import spack.compilers.config
 from spack.package import *
 from spack.platforms.cray import slingshot_network
 
@@ -1451,7 +1450,7 @@ with '-Wl,-commons,use_dylibs' and without
 
 
 def get_spack_compiler_spec(compiler):
-    spack_compilers = spack.compilers.config.find_compilers([os.path.dirname(compiler)])
+    spack_compilers = find_compilers([os.path.dirname(compiler)])
     actual_compiler = None
     # check if the compiler actually matches the one we want
     for spack_compiler in spack_compilers:
