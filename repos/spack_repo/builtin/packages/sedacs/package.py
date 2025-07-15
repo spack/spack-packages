@@ -26,6 +26,10 @@ class Sedacs(PythonPackage, CudaPackage):
 
     license("BSD 3-Clause")
 
+    variant("mpi", default=True, description="Build with mpi")
+    variant("gpulib", default=False, description="Build with GPU, AI-hardware library support.")
+    variant("latte", default=False, description="Make latte available as a sedacs engine")
+    
     # python dependencies
     depends_on('python@3.10:', type=('build', 'run'))
     depends_on('py-setuptools', type='build')
@@ -34,21 +38,18 @@ class Sedacs(PythonPackage, CudaPackage):
     depends_on('py-torch@2:', type=('build', 'run'))
     depends_on('py-scipy@1:', type=('build', 'run'))
 
-    # mpi
-    variant("mpi", default=True, description="Build with mpi")
+    # mpi dependencies
     depends_on('mpi',when="+mpi")
     depends_on('py-mpi4py',when="+mpi")
      
     # gpu/ai-hardware library
-    variant("gpulib", default=False, description="Build with GPU, AI-hardware library support.")
     depends_on('cmake',when="+gpulib")
     depends_on('nvhpc',when="+gpulib")
     conflicts(
         "cuda_arch=none", when="+gpulib",  msg="sedacs: Please select a CUDA arch value"
     )
 
-    # build latte with qmd-progress and other branch/variant restrictions
-    variant("latte", default=False, description="Make latte available as a sedacs engine")
+    # latte dependencies
     depends_on('latte@lattepy+interface+progress',when="+latte") 
     depends_on('qmd-progress@master~benchmarks',when="+latte") 
 
