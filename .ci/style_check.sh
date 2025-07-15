@@ -18,11 +18,11 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
-[ -d "spack-core" ] ||  die "no 'spack-core' dir found: should be a clone of 'spack/spack'"
 if ! python_files > /dev/null; then
   info "skipping style checks: no Python files changed"
   exit 0
 fi
+[ -d "spack-core" ] ||  die "no 'spack-core' dir found: should be a clone of 'spack/spack'"
 python_files | xargs -0 printf "%s\n"
 info "running flake8"
 python_files | xargs -0 -n 100 flake8 || error=1
