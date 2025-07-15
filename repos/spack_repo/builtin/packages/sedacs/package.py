@@ -2,19 +2,22 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems.python import PythonPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
+from spack.package import *
+
 
 class Sedacs(PythonPackage, CudaPackage):
-    """Scalable Ecosystem, Driver, and Analyzer for Complex Chemistry Simulations (SEDACS) enables massively parallel atomistic simulations that can 
-    seamlessly integrate with a diverse range of available and emerging quantum chemistry codes at different levels of theory.
+    """Scalable Ecosystem, Driver, and Analyzer for Complex Chemistry Simulations (SEDACS) enables massively
+    parallel atomistic simulations that can seamlessly integrate with a diverse range of available and emerging
+    quantum chemistry codes at different levels of theory.
 
-    Supporting ab initio, semiempirical quantum mechanics, and coarse-grained flexible charge equilibration models, this is a unified 
-    framework to simulate and analyze the quantum molecular dynamics of complex chemical systems and materials.
+    Supporting ab initio, semiempirical quantum mechanics, and coarse-grained flexible charge equilibration
+    models, this is a unified framework to simulate and analyze the quantum molecular dynamics of complex
+    chemical systems and materials.
     """
-    
+
     homepage = "https://github.com/lanl/sedacs"
     git = "https://github.com/lanl/sedacs.git"
 
@@ -29,7 +32,7 @@ class Sedacs(PythonPackage, CudaPackage):
     variant("mpi", default=True, description="Build with mpi")
     variant("gpulib", default=False, description="Build with GPU, AI-hardware library support.")
     variant("latte", default=False, description="Make latte available as a sedacs engine")
-    
+
     # python dependencies
     depends_on('python@3.10:', type=('build', 'run'))
     depends_on('py-setuptools', type='build')
@@ -50,8 +53,8 @@ class Sedacs(PythonPackage, CudaPackage):
     )
 
     # latte dependencies
-    depends_on('latte@lattepy+interface+progress',when="+latte") 
-    depends_on('qmd-progress@master~benchmarks',when="+latte") 
+    depends_on('latte@lattepy+interface+progress',when="+latte")
+    depends_on('qmd-progress@master~benchmarks',when="+latte")
 
     # build system
     build_system = 'pyproject'
@@ -60,4 +63,3 @@ class Sedacs(PythonPackage, CudaPackage):
 
 def setup_build_environment(self, env):
     env.set('GPU_ARCH', self.spec.variants['cuda_arch'].value)
-
