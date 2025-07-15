@@ -354,7 +354,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("sirius+vdwxc", when="+vdwxc")
         depends_on("sirius+nlcglib", when="@2025.2:+nlcg")
         depends_on("sirius+vcsqnm", when="@2025.2:+vcsqnm")
-        depends_on("sirius@7.8.1:+pugixml+dftd3+dftd4", when="@2025.2:+dftd4")
+        depends_on("sirius@7.8.1:+dftd3+dftd4", when="@2025.2:+dftd4")
         depends_on("sirius@7.5.0:+dlaf", when="+dlaf")
     with when("+libvori"):
         depends_on("libvori@201219:", when="@8.1")
