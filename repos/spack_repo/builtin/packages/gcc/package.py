@@ -785,10 +785,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         should pick -march=znver1, since that's what gcc@7 supports."""
         microarchitectures = [spec.target] + spec.target.ancestors
         for uarch in microarchitectures:
-            try:
-                return uarch.optimization_flags("gcc", str(spec.version))
-            except ValueError:
-                pass
+            flags = microarchitecture_flags_from_target(
+                uarch, compiler=Spec(f"gcc@={spec.version}")
+            )
+            if flags:
+                return flags
         # no arch specific flags in common, unlikely to happen.
         return ""
 

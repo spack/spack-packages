@@ -6,7 +6,6 @@ import shutil
 import sys
 from typing import List
 
-import _vendoring.archspec.cpu
 from spack_repo.builtin.build_systems.generic import Package
 
 from llnl.util import lang
@@ -186,14 +185,7 @@ class CompilerWrapper(Package):
             env.set(wrapper_var_name, str(wrapper_path))
             env.set(f"SPACK_{wrapper_var_name}_RPATH_ARG", compiler_pkg.rpath_arg)
 
-            uarch = dependent_spec.architecture.target
-            version_number, _ = _vendoring.archspec.cpu.version_components(
-                compiler_pkg.spec.version.dotted_numeric_string
-            )
-            try:
-                isa_arg = uarch.optimization_flags(compiler_pkg.archspec_name(), version_number)
-            except (ValueError, _vendoring.archspec.cpu.UnsupportedMicroarchitecture):
-                isa_arg = ""
+            isa_arg = microarchitecture_flags(self.spec, language)
 
             if isa_arg:
                 env.set(f"SPACK_TARGET_ARGS_{attr_name.upper()}", isa_arg)
