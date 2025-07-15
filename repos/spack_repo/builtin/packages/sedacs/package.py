@@ -31,9 +31,9 @@ class Sedacs(PythonPackage, CudaPackage):
     depends_on('py-setuptools', type='build')
     depends_on('py-wheel', type='build')
     depends_on('py-scikit-build-core', type='build')
-    depends_on('py-numpy', type=('build', 'run'))
-    depends_on('py-torch', type=('build', 'run'))
-    depends_on('py-scipy', type=('build', 'run'))
+    depends_on('py-numpy@1:', type=('build', 'run'))
+    depends_on('py-torch@2:', type=('build', 'run'))
+    depends_on('py-scipy@1:', type=('build', 'run'))
 
     # mpi
     variant("mpi", default=True, description="Build with mpi")
