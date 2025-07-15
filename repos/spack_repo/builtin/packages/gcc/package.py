@@ -1228,10 +1228,16 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             return
 
         libc = spack.util.libc.libc_from_dynamic_linker(dynamic_linker)
+        if not libc:
+            tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
+            return
 
         # We search for crt1.o ourselves because `gcc -print-prile-name=crt1.o` can give a rather
         # convoluted relative path from a different prefix.
         startfile_prefix = _startfile_prefix(libc.external_path, dynamic_linker)
+        if not startfile_prefix:
+            tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
+            return
 
         gcc_can_locate = lambda p: os.path.isabs(
             gcc(f"-print-file-name={p}", output=str, error=os.devnull).strip()
@@ -1242,10 +1248,14 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         # libc headers may also be in a multiarch subdir.
         header_dir = _libc_include_dir_from_startfile_prefix(libc.external_path, startfile_prefix)
-        if header_dir and all(
-            os.path.exists(os.path.join(header_dir, h))
-            for h in spack.repo.PATH.get_pkg_class(libc.fullname).representative_headers
-        ):
+        if libc.name == "glibc":
+            # glibc representative header
+            header = "ieee754.h"
+        else:
+            # musl representative header
+            header = "iso646.h"
+
+        if header_dir and os.path.exists(os.path.join(header_dir, header)):
             relocation_args.append(f"-idirafter {header_dir}")
         else:
             tty.warn(
