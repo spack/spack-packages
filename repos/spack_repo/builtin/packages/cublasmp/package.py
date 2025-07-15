@@ -4,10 +4,10 @@
 
 import platform
 
-from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack.package import *
+from spack_repo.builtin.build_systems.generic import Package
 
+from spack.package import *
 
 _versions = {
     "0.5.0.898": {
