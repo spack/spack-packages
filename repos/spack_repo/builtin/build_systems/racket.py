@@ -4,17 +4,17 @@
 import os
 from typing import Optional, Tuple
 
-from llnl.util.lang import ClassProperty, classproperty
-
 from spack.build_environment import SPACK_NO_PARALLEL_MAKE
 from spack.package import (
     Builder,
+    ClassProperty,
     Executable,
     PackageBase,
     Prefix,
     ProcessError,
     Spec,
     build_system,
+    classproperty,
     determine_number_of_jobs,
     extends,
     maintainers,

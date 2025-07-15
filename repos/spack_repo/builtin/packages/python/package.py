@@ -14,8 +14,6 @@ from typing import Dict, List
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util.lang import dedupe
-
 from spack.package import *
 
 

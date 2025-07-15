@@ -8,14 +8,14 @@ import re
 import sys
 from typing import Dict, List, Optional, Sequence, Tuple, Union
 
-from llnl.util.lang import classproperty, memoized
-
 from spack.package import (
     CompilerError,
     Executable,
     PackageBase,
     ProcessError,
     Spec,
+    classproperty,
+    memoized,
     tty,
     which_string,
 )

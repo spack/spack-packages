@@ -11,10 +11,11 @@ import stat
 from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
 import llnl.util.filesystem as fs
-from llnl.util.lang import ClassProperty, classproperty, match_predicate
+from llnl.util.lang import match_predicate
 
 from spack.package import (
     BuilderWithDefaults,
+    ClassProperty,
     HeaderList,
     LibraryList,
     NoHeadersError,
@@ -23,6 +24,7 @@ from spack.package import (
     Prefix,
     Spec,
     build_system,
+    classproperty,
     depends_on,
     execute_install_time_tests,
     extends,

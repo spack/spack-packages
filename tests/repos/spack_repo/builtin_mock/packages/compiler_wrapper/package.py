@@ -8,8 +8,6 @@ from typing import List
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util import lang
-
 import spack.compilers.libraries
 import spack.package_base
 from spack.package import *
@@ -219,11 +217,11 @@ class CompilerWrapper(Package):
         if implicit_rpaths:
             # Implicit rpaths are accumulated across all compilers so, whenever they are mixed,
             # the compiler used in ccld mode will account for rpaths from other compilers too.
-            implicit_rpaths = lang.dedupe(implicit_rpaths)
+            implicit_rpaths = dedupe(implicit_rpaths)
             env.set("SPACK_COMPILER_IMPLICIT_RPATHS", ":".join(implicit_rpaths))
 
         if extra_rpaths:
-            extra_rpaths = lang.dedupe(extra_rpaths)
+            extra_rpaths = dedupe(extra_rpaths)
             env.set("SPACK_COMPILER_EXTRA_RPATHS", ":".join(extra_rpaths))
 
         env.set("SPACK_ENABLE_NEW_DTAGS", self.enable_new_dtags)

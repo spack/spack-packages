@@ -4,8 +4,6 @@
 import os
 from typing import Iterable
 
-from llnl.util.lang import memoized
-
 from spack.package import (
     BuilderWithDefaults,
     Executable,
@@ -18,6 +16,7 @@ from spack.package import (
     extends,
     filter_file,
     find,
+    memoized,
     register_builder,
     run_after,
     test_part,
