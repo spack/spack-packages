@@ -10,7 +10,7 @@ class TclTogl(AutotoolsPackage):
     """Tcl-Togl provides a platform independent Tcl/Tk widget for using OpenGL rendering contexts"""
 
     homepage = "https://togl.sourceforge.net/"
-    url = "https://kumisystems.dl.sourceforge.net/project/togl/Togl/2.0/Togl2.0-src.tar.gz"
+    url = "https://downloads.sourceforge.net/project/togl/Togl/2.0/Togl2.0-src.tar.gz"
 
     version("2.0", sha256="b7d4a90bbad3aca618d505ee99e7fd8fb04c829f63231dda2360f557ba3f7610")
 
@@ -31,6 +31,7 @@ class TclTogl(AutotoolsPackage):
 
     depends_on("tk@8.1:")
     depends_on("tcl@8.1:")
+    depends_on("libxmu")
 
     extends("tcl")
 
