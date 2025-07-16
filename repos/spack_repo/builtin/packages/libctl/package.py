@@ -27,6 +27,7 @@ class Libctl(AutotoolsPackage):
     )
 
     depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
 
     depends_on("guile")
 
