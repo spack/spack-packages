@@ -4,9 +4,9 @@
 
 import os
 
-from spack.package import *
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
+from spack.package import *
 
 
 def resource_for_ver(ver, sha256):
@@ -29,7 +29,7 @@ class LlvmOpenmp(CMakePackage):
 
     version("18.1.0", sha256="ef1cef885d463e4becf5e132a9175a540c6f4487334c0e86274a374ce7d0a092")
     resource_for_ver(
-            "18.1.0", sha256="d367bf77a3707805168b0a7a7657c8571207fcae29c5890312642ee42b76c967"
+        "18.1.0", sha256="d367bf77a3707805168b0a7a7657c8571207fcae29c5890312642ee42b76c967"
     )
     version("17.0.6", sha256="74334cbb4dc8b73a768448a7561d5a3540404940b2267b1fb9813a6464b320de")
     resource_for_ver(
