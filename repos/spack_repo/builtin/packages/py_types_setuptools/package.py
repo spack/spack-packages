@@ -13,6 +13,8 @@ class PyTypesSetuptools(PythonPackage):
     homepage = "https://github.com/python/typeshed"
     pypi = "types-setuptools/types_setuptools-80.9.0.20250529.tar.gz"
 
+    license("Apache-2.0")
+
     version(
         "80.9.0.20250529",
         sha256="79e088ba0cba2186c8d6499cbd3e143abb142d28a44b042c28d3148b1e353c91",
