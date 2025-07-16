@@ -17,11 +17,14 @@ class Scorep(AutotoolsPackage):
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-7.1/scorep-7.1.tar.gz"
     maintainers("wrwilliams")
     version("9.2", sha256="be3eaee99cdd0145e518c1aa959126df45e25b61579a007d062748b2844c499c")
+    # 9.1 has a critical bug in Pthread instrumentation fixed by 9.2
     version(
         "9.1",
         sha256="a6593716e62c751937f3be78782bf09b3737a68c46cdbeabec7cff80d2fdc7c8",
         deprecated="true",
     )
+    # 9.0 has several less-critical bugs/misfeatures revealed by public use of libgotcha-based
+    # library wrapping, but should be avoided in preference to 9.2+.
     version(
         "9.0",
         sha256="5d0a5db4cc6f31c30ae03c7e6f6245e83667b0ff38a7041ffe8b2e8e581e0997",
@@ -123,16 +126,16 @@ class Scorep(AutotoolsPackage):
         "mpi_f08", default=True, description="Enable MPI F08 support", when="@9.1: +mpi +fortran"
     )
     variant(
-        "gotcha", default=True, description="Enable library wrapping with libgotcha", when="@9.0:"
+        "gotcha", default=True, description="Enable library wrapping with libgotcha", when="@9:"
     )
     # Dependencies for SCORE-P are quite tight. See the homepage for more
     # information. Starting with scorep 4.0 / cube 4.4, Score-P only depends on
     # two components of cube -- cubew and cubelib.
 
     # Language dependencies
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build", when="+fortran")  # generated
+    depends_on("c", type="build") 
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     # SCOREP 9
     depends_on("gotcha@1.0.8:", type="link", when="+gotcha")
