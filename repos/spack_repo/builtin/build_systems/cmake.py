@@ -380,7 +380,7 @@ class CMakeBuilder(BuilderWithDefaults):
                     pathlib.Path(pkg.prefix, "lib64").as_posix(),
                 ],
             ),
-            define("CMAKE_PREFIX_PATH", get_cmake_prefix_path(pkg.spec)),
+            define("CMAKE_PREFIX_PATH", get_cmake_prefix_path(pkg)),
             define("CMAKE_BUILD_TYPE", build_type),
         ]
 
