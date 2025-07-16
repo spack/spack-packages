@@ -15,6 +15,8 @@ class PyAlabaster(PythonPackage):
     pypi = "alabaster/alabaster-0.7.10.tar.gz"
     git = "https://github.com/sphinx-doc/alabaster.git"
 
+    license("BSD-3-Clause")
+
     version("1.0.0", sha256="c00dca57bca26fa62a6d7d0a9fcce65f3e026e9bfe33e9c538fd3fbb2144fd9e")
     version("0.7.16", sha256="75a8b99c28a5dad50dd7f8ccdd447a121ddb3892da9e53d1ca5cca3106d58d65")
     version("0.7.13", sha256="a27a4a084d5e690e16e01e03ad2b2e552c61a65469419b907243193de1a84ae2")
