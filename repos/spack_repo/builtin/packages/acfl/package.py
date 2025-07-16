@@ -7,7 +7,6 @@ import os.path
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 _os_map_before_23 = {
@@ -271,7 +270,7 @@ _versions = {
 
 
 def get_os(ver):
-    spack_os = spack.platforms.host().default_os
+    spack_os = host_platform().default_os
     if ver.startswith("22"):
         return _os_map_before_23.get(spack_os, "")
     if ver.startswith("23") or ver == "24.04":

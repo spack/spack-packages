@@ -20,7 +20,6 @@ class ComposableKernel(CMakePackage):
 
     license("MIT")
 
-    version("master", branch="develop", deprecated=True)
     version("6.4.1", sha256="6db4d36673da6506ca52625b3bd40c29d3b376d31a224fd221ffe60cf97564bf")
     version("6.4.0", sha256="8dbfea0bdc4950ca60e8d1ea43edf1f515c4a34e47ead951415c49a0669a3baf")
     version("6.3.3", sha256="b7102efba044455416a6127af1951019fe8365a653ea7eb0b1d83bb4542c9309")
@@ -37,13 +36,9 @@ class ComposableKernel(CMakePackage):
     version("6.0.0", sha256="a8f736f2f2a8afa4cddd06301205be27774d85f545429049b4a2bbbe6fcd67df")
     version("5.7.1", sha256="75f66e023c2e31948e91fa26366eaeac72d871fc2e5188361d4465179f13876e")
     version("5.7.0", sha256="d9624dbaef04e0138f9f73596c49b4fe9ded69974bae7236354baa32649bf21a")
-    version("5.6.1", commit="f5ec04f091fa5c48c67d7bacec36a414d0be06a5")
-    version("5.6.0", commit="f5ec04f091fa5c48c67d7bacec36a414d0be06a5")
-    version("5.5.1", commit="ac9e01e2cc3721be24619807adc444e1f59a9d25")
-    version("5.5.0", commit="8b76b832420a3d69708401de6607a033163edcce")
     with default_args(deprecated=True):
-        version("5.4.3", commit="bb3d9546f186e39cefedc3e7f01d88924ba20168")
-        version("5.4.0", commit="236bd148b98c7f1ec61ee850fcc0c5d433576305")
+        version("5.6.1", commit="f5ec04f091fa5c48c67d7bacec36a414d0be06a5")
+        version("5.6.0", commit="f5ec04f091fa5c48c67d7bacec36a414d0be06a5")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
     variant(
@@ -66,7 +61,6 @@ class ComposableKernel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     for ver in [
-        "master",
         "6.4.1",
         "6.4.0",
         "6.3.3",
@@ -85,10 +79,6 @@ class ComposableKernel(CMakePackage):
         "5.7.0",
         "5.6.1",
         "5.6.0",
-        "5.5.1",
-        "5.5.0",
-        "5.4.3",
-        "5.4.0",
     ]:
         depends_on("hip@" + ver, when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, when="@" + ver)
@@ -109,18 +99,16 @@ class ComposableKernel(CMakePackage):
             ),
             self.define("CMAKE_C_COMPILER", "{0}/bin/clang".format(spec["llvm-amdgpu"].prefix)),
             self.define("CMAKE_BUILD_TYPE", "Release"),
+            self.define("CMAKE_POSITION_INDEPENDENT_CODE", "ON"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         else:
             args.append(self.define("INSTANCES_ONLY", "ON"))
-        if self.spec.satisfies("@5.6.0:"):
-            if self.run_tests:
-                args.append(self.define("BUILD_TESTING", "ON"))
-            elif self.spec.satisfies("@:6.1"):
-                args.append(self.define("INSTANCES_ONLY", "ON"))
-            args.append(self.define("CK_BUILD_JIT_LIB", "ON"))
-            args.append(self.define("CMAKE_POSITION_INDEPENDENT_CODE", "ON"))
+        if self.run_tests:
+            args.append(self.define("BUILD_TESTING", "ON"))
+        elif self.spec.satisfies("@:6.1"):
+            args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.spec.satisfies("@:5.7"):
             args.append(self.define("CMAKE_CXX_FLAGS", "-O3"))
         if self.spec.satisfies("@6.2:"):

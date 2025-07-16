@@ -9,7 +9,6 @@ import re
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.util.windows_registry as winreg
 from spack.package import *
 
 
@@ -139,9 +138,9 @@ class WinWdk(Package):
             try:
                 Executable("wdksetup.exe")(*install_args)
             except ProcessError as pe:
-                reg = winreg.WindowsRegistryView(
+                reg = WindowsRegistryView(
                     "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots",
-                    root_key=spack.util.windows_registry.HKEY.HKEY_LOCAL_MACHINE,
+                    root_key=HKEY.HKEY_LOCAL_MACHINE,
                 )
                 if not reg:
                     # No Kits are available, failure was genuine
