@@ -36,6 +36,7 @@ class PyGeopmpy(PythonPackage):
     depends_on("py-cffi@1.14.5:", when="@3.2:", type=("build", "run"))
     depends_on("py-natsort@8.2.0:", type="run")
     depends_on("py-numpy@1.19.5:", type="run")
+    depends_on("py-numpy@1.19.5:1", when="@3.2", type="run")
     depends_on("py-pandas@1.1.5:", type="run")
     depends_on("py-tables@3.7.0:", type="run")
     depends_on("py-psutil@5.8.0:", type="run")
