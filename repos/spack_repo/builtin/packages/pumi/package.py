@@ -141,7 +141,7 @@ class Pumi(CMakePackage):
                 assert "mesh pipe_2_.smb written" in out
                 return
             except (Exception, ProcessError) as err:
-                    tty.info(f"Skipping {mpiexe}: {str(err)}")
+                tty.info(f"Skipping {mpiexe}: {str(err)}")
         assert False, "No MPI executable was found"
 
     def test_refine(self):
