@@ -9,8 +9,8 @@ from spack.package import *
 
 class Shred(MakefilePackage):
     """Stochastic and Hybrid Representation Electronic structure by Density
-       functional theory (SHRED). SHRED is a plane-wave DFT code similar to
-       ABINIT, VASP and Quantum Espresso."""
+    functional theory (SHRED). SHRED is a plane-wave DFT code similar to
+    ABINIT, VASP and Quantum Espresso."""
 
     url = "https://github.com/alwhite-LANL/SHRED/"
     git = "git@github.com:alwhite-LANL/SHRED.git"
@@ -33,7 +33,7 @@ class Shred(MakefilePackage):
     depends_on("blas")
 
     # Need libxc version less than 6.0.0
-    conflicts('^libxc', when="@:6.0.0", msg='libxc version must be <6.0.0')
+    conflicts("^libxc", when="@:6.0.0", msg="libxc version must be <6.0.0")
 
     build_system("makefile", default="makefile")
 
@@ -44,14 +44,13 @@ class Shred(MakefilePackage):
         spec = self.spec
 
         # Set env variables which are then used by Makefile
-        env.set('MPI_DIR', "%s" % spec["mpi"].prefix)
-        env.set('FFTW_DIR', "%s" % spec["fftw"].prefix)
-        env.set('XC_DIR', "%s" % spec["libxc"].prefix)
-        env.set('LA_DIR', "%s" % spec["lapack"].prefix)
-        env.set('PLA_DIR', "%s" % spec["scalapack"].prefix)
+        env.set("MPI_DIR", "%s" % spec["mpi"].prefix)
+        env.set("FFTW_DIR", "%s" % spec["fftw"].prefix)
+        env.set("XC_DIR", "%s" % spec["libxc"].prefix)
+        env.set("LA_DIR", "%s" % spec["lapack"].prefix)
+        env.set("PLA_DIR", "%s" % spec["scalapack"].prefix)
 
     def install(self, spec, prefix):
         # install to the spack view
         mkdirp(prefix.bin)
         install("shred", prefix.bin)
-
