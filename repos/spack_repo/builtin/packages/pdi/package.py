@@ -29,8 +29,20 @@ class Pdi(CMakePackage):
     # and the last patch version of the previous 2 minors
     # all the rest is marked as deprecated
     version("develop", branch="main", no_cache=True)
-    version("1.9.1", sha256="5bb6257efb32674db69e2d89a8947015a2f1e284dbe8dcfdc601f6412640b551")
-    version("1.9.0", sha256="04fee7851c4f2a156daddf7eb2c3c3b0132d80d3f0e448cdeebda0b7c4595639")
+    version("1.9.2", sha256="0430d5898980435e5602b67188264621a27f71969ff886efaa2e6d43a45caac4")
+    version(
+        "1.9.1-fixed", sha256="13d052a7d5d53271638382f06e9da0d58b01ed9cfdf9c4fa1e82367b9e1732e1"
+    )
+    version(
+        "1.9.1",
+        sha256="5bb6257efb32674db69e2d89a8947015a2f1e284dbe8dcfdc601f6412640b551",
+        deprecated=True,
+    )
+    version(
+        "1.9.0",
+        sha256="04fee7851c4f2a156daddf7eb2c3c3b0132d80d3f0e448cdeebda0b7c4595639",
+        deprecated=True,
+    )
     version("1.8.3", sha256="df7200289a2a368ec874140039b417abdfe681b57fb1b9f4c52f924952226020")
     version(
         "1.8.2",

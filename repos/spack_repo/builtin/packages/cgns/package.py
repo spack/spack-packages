@@ -85,6 +85,8 @@ class Cgns(CMakePackage):
     patch("gcc14.patch", when="@:4.4.0 %gcc@14:")
     # "wrong" include for spack (tk-private) from the patch above made it into the official version
     patch("cgns-4.5-tk-private.patch", when="@4.5.0")
+    # patch spurious space in function name (breaks nvfortran compilation)
+    patch("cgns-4.5-nvfortran.patch", when="@4.5.0 +fortran %nvhpc")
 
     def cmake_args(self):
         spec = self.spec

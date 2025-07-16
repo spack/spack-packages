@@ -55,7 +55,9 @@ class Cutlass(CMakePackage, CudaPackage):
     version("1.0.1", sha256="2adec90497141893ca53ac945b88d5881610ed3347166b36be4f72449b5342a0")
     version("1.0.0", sha256="c7a16d349e11d85891cb91ece97d5bdbc4b140f614a0265732c2dc81a806bd98")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     variant("cuda", default=True, description="Build with CUDA")
     conflicts("~cuda", msg="Cutlass requires CUDA")
     conflicts(
