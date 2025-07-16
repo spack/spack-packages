@@ -43,7 +43,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     version(
         "2.9.1",
         sha256="4771d630de505eff9227e0ec498d0da33ae6f9c34df23cb201b56181b8759e9e",
-        deprecated=True
+        deprecated=True,
     )
     version(
         "2.9.0",
