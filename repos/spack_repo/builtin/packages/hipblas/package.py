@@ -77,7 +77,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     patch("remove-hipblas-clients-file-installation.patch", when="@5.6:5.7.1")
     patch("remove-hipblas-clients-file-installation-6.0.patch", when="@6.0:")
     patch("modify-hipblas-common-dependency.patch", when="@6.3:")
-    
+
     depends_on("hip +cuda", when="+cuda")
 
     for ver in ["5.6.0", "5.6.1", "5.7.0", "5.7.1"]:
