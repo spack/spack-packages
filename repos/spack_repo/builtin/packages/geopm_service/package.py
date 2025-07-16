@@ -101,6 +101,7 @@ class GeopmService(AutotoolsPackage):
         depends_on("py-cffi@1.14.5:", type="run")
 
     # Other dependencies
+    depends_on("py-setuptools-scm@6.4.2:", when="@develop", type="build")  # Used in autogen.sh
     depends_on("bash-completion")
     depends_on("unzip")
     depends_on("systemd", when="+systemd")

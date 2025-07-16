@@ -95,7 +95,7 @@ class GeopmRuntime(AutotoolsPackage):
     for ver in ["3.0.1", "3.1.0", "3.2.0", "develop"]:
         depends_on(f"geopm-service@{ver}", type=("build", "run"), when=f"@{ver}")
 
-    depends_on("py-setuptools-scm@7.0.3:", when="@3.1:", type="build")
+    depends_on("py-setuptools-scm@6.4.2:", when="@develop", type="build")  # Used in autogen.sh
     depends_on("bash-completion")
     depends_on("unzip")
     depends_on("mpi@2.2:", when="+mpi")

@@ -46,7 +46,7 @@ class PyGeopmdpy(PythonPackage):
     depends_on("py-pyyaml@6.0:", type="run")
     depends_on("py-setuptools@53.0.0:", when="@3.0.1", type="build")
     depends_on("py-setuptools@59.6.0:", when="@3.2:", type="build")
-    depends_on("py-setuptools-scm@7.0.3:", when="@3.1:", type="build")
+    depends_on("py-setuptools-scm@6.4.2:", when="@3.1:", type="build")
     depends_on("py-build@0.9.0:", when="@3.1:", type="build")
     depends_on("py-defusedxml@0.7.1:", when="@3.2:", type="test")
     depends_on("py-grpcio", when="+grpc", type=("build", "run"))

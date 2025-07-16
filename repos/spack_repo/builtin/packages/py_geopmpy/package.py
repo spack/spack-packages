@@ -30,7 +30,7 @@ class PyGeopmpy(PythonPackage):
     depends_on("python@3.6:3", type=("build", "run"))
     depends_on("py-setuptools@53.0.0:", when="@3.1", type="build")
     depends_on("py-setuptools@59.6.0:", when="@3.2:", type="build")
-    depends_on("py-setuptools-scm@7.0.3:", when="@3.1:", type="build")
+    depends_on("py-setuptools-scm@6.4.2:", when="@3.1:", type="build")
     depends_on("py-build@0.9.0:", when="@3.1:", type="build")
     depends_on("py-cffi@1.14.5:", when="@3.1.0", type="run")
     depends_on("py-cffi@1.14.5:", when="@3.2:", type=("build", "run"))
