@@ -41,6 +41,8 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
     version("5.1", sha256="50e8067f9758bb2bf175b69600082ac4a27c464cb4bcd48a578edd3127216600")
     version("5.0", sha256="2c579345a39a2a0bb4b8c28533f0b61356504a202da6a25d17d4d866af7f5803")
 
+    variant("xs", default=False, description="Enable Perl XS")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -64,9 +66,20 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
 
     patch("nvhpc.patch", when="%nvhpc")
 
+    def configure_args(self):
+        spec = self.spec
+        config_args = []
+
+        if spec.satisfies("+xs"):
+            config_args.append("--enable-perl-xs")
+        else:
+            config_args.append("--disable-perl-xs")
+
+        return config_args
+
     def flag_handler(self, name, flags):
-        if self.spec.satisfies("@7.0:7.1"):
-            if name == "cflags":
+        if name == "cflags":
+            if self.spec.satisfies("@7.0:7.1"):
                 flags.append(self.compiler.c11_flag)
 
         return (flags, None, None)
