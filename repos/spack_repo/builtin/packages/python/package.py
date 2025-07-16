@@ -58,6 +58,9 @@ class Python(Package):
 
     license("0BSD")
 
+    version("3.13.5", sha256="e6190f52699b534ee203d9f417bdbca05a92f23e35c19c691a50ed2942835385")
+    version("3.13.4", sha256="2666038f1521b7a8ec34bf2997b363778118d6f3979282c93723e872bcd464e0")
+    version("3.13.3", sha256="988d735a6d33568cbaff1384a65cb22a1fb18a9ecb73d43ef868000193ce23ed")
     version("3.13.2", sha256="b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
     version("3.13.1", sha256="1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
     version("3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
@@ -622,7 +625,10 @@ class Python(Package):
         copy_tree(tools_dir, prefix.Tools)
         lib_dir = os.path.join(proj_root, "Lib")
         copy_tree(lib_dir, prefix.Lib)
-        pyconfig = os.path.join(proj_root, "PC", "pyconfig.h")
+        if self.spec.satisfies("@3.13:"):
+            pyconfig = os.path.join(pcbuild_root, platform.machine().lower(), "pyconfig.h")
+        else:
+            pyconfig = os.path.join(proj_root, "PC", "pyconfig.h")
         copy(pyconfig, prefix.include)
         shared_libraries = []
         shared_libraries.extend(glob.glob("%s\\*.exe" % build_root))
@@ -930,19 +936,19 @@ class Python(Package):
         #
         # in that order if using python@3.11.0, for example.
         suffixes = [self.spec.version.up_to(2), self.spec.version.up_to(1), ""]
-        file_extension = "" if sys.platform != "win32" else ".exe"
-        patterns = [f"python{ver}{file_extension}" for ver in suffixes]
+        ext = "" if sys.platform != "win32" else ".exe"
+        filenames = [f"python{ver}{ext}" for ver in suffixes]
         root = self.prefix.bin if sys.platform != "win32" else self.prefix
-        path = find_first(root, files=patterns)
 
-        if path is not None:
-            return Executable(path)
+        for filename in filenames:
+            path = os.path.join(root, filename)
+            if is_exe(path):
+                return Executable(path)
 
-        else:
-            # Give a last try at rhel8 platform python
-            platform_python = os.path.join(self.prefix, "libexec", "platform-python")
-            if self.spec.external and self.prefix == "/usr" and is_exe(platform_python):
-                return Executable(platform_python)
+        # Give a last try at rhel8 platform python
+        platform_python = os.path.join(self.prefix, "libexec", "platform-python")
+        if self.spec.external and self.prefix == "/usr" and is_exe(platform_python):
+            return Executable(platform_python)
 
         raise RuntimeError(
             f"cannot locate the '{self.name}' command in {root} or its subdirectories"
@@ -1274,6 +1280,7 @@ print(json.dumps(config))
         # The logic below is linux specific, and used to inject the compiler wrapper to
         # compile Python extensions. Thus, it is not needed on Windows.
         if sys.platform == "win32":
+            env.prepend_path("PATH", self.prefix)
             return
 
         # We need to make sure that the extensions are compiled and linked with
@@ -1344,6 +1351,8 @@ print(json.dumps(config))
         """Set PYTHONPATH to include the site-packages directory for the
         extension and any other python extensions it depends on.
         """
+        if sys.platform == "win32":
+            env.prepend_path("PATH", self.prefix)
         if not dependent_spec.package.extends(self.spec) or dependent_spec.dependencies(
             "python-venv"
         ):

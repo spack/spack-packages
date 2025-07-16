@@ -19,7 +19,8 @@ class Cnpy(CMakePackage):
 
     version("master", branch="master")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("zlib-api", type="link")
 

@@ -20,22 +20,37 @@ class DotnetCoreSdk(Package):
 
     if platform.system() == "Linux" and platform.machine() == "x86_64":
         version(
+            "8.0.17",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.411/dotnet-sdk-8.0.411-linux-x64.tar.gz",
+            sha256="2212ace90b536bd99910baf485e925024a37fc08e31fc8c1014fe4392b8d4967",
+            preferred=True,
+        )
+
+        version(
             "8.0.4",
             url="https://download.visualstudio.microsoft.com/download/pr/0a1b3cbd-b4af-4d0d-9ed7-0054f0e200b4/4bcc533c66379caaa91770236667aacb/dotnet-sdk-8.0.204-linux-x64.tar.gz",
             sha256="0ec834dc0f11a994057cd05d84c6250db726457f2fe308091d50543a5285dd15",
-            preferred=True,
+            deprecated=True,
         )
 
         version(
             "7.0.18",
             url="https://download.visualstudio.microsoft.com/download/pr/a256265b-0ec6-4b63-b943-bc27bcfc98c0/47c8bbd54d7f6dbfe0ca4985c410282e/dotnet-sdk-7.0.408-linux-x64.tar.gz",
             sha256="e72beb77f59d5c55de46f52cce01b68f244e28058f646f1ea4ecf8a35b177e58",
+            deprecated=True,
+        )
+
+        version(
+            "6.0.36",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/6.0.428/dotnet-sdk-6.0.428-linux-x64.tar.gz",
+            sha256="9b2f9b91e28677b58e47d34a1d9e2a88f597af1f6acd44764a3abc2f1bacdc8a",
         )
 
         version(
             "6.0.25",
             url="https://download.visualstudio.microsoft.com/download/pr/1cac4d08-3025-4c00-972d-5c7ea446d1d7/a83bc5cbedf8b90495802ccfedaeb2e6/dotnet-sdk-6.0.417-linux-x64.tar.gz",
             sha256="1b7c5ea04ccb817e1a411c9e1f89d7a4e54c0842b01b457e141bbc254ce97ba2",
+            deprecated=True,
         )
 
         version(
@@ -67,22 +82,37 @@ class DotnetCoreSdk(Package):
         )
     elif platform.system() == "Linux" and platform.machine() == "aarch64":
         version(
+            "8.0.17",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.411/dotnet-sdk-8.0.411-linux-arm64.tar.gz",
+            sha256="7e28342741de05af2c4244c7384230bf51a3ffe6f314f26a25d1b57222c27751",
+            preferred=True,
+        )
+
+        version(
             "8.0.4",
             url="https://download.visualstudio.microsoft.com/download/pr/1e449990-2934-47ee-97fb-b78f0e587c98/1c92c33593932f7a86efa5aff18960ed/dotnet-sdk-8.0.204-linux-arm64.tar.gz",
             sha256="c6ecb0c1897e217e8d20153a0119276ee1091c0600aecf2aca8e674c3575942e",
-            preferred=True,
+            deprecated=True,
         )
 
         version(
             "7.0.18",
             url="https://download.visualstudio.microsoft.com/download/pr/460f951f-0944-442b-8474-555e20394ca8/5fcf6b1845d87d772f919737b3dd5f55/dotnet-sdk-7.0.408-linux-arm64.tar.gz",
             sha256="dd9a8794561a8b9c658a2ba832328449a34b0dd0cdcb79e31d6efc2d0c9a8efc",
+            deprecated=True,
+        )
+
+        version(
+            "6.0.36",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/6.0.428/dotnet-sdk-6.0.428-linux-arm64.tar.gz",
+            sha256="b5956b0d9ab3063c2886ec74adc953394e81a1aa3f5075c6b41b3e4f1d7a53f9",
         )
 
         version(
             "6.0.25",
             url="https://download.visualstudio.microsoft.com/download/pr/03972b46-ddcd-4529-b8e0-df5c1264cd98/285a1f545020e3ddc47d15cf95ca7a33/dotnet-sdk-6.0.417-linux-arm64.tar.gz",
             sha256="c071e936442b90b80a941ab177b8c7851bc5377cf842cc1e61922b3d7fefeb0e",
+            deprecated=True,
         )
 
     variant("telemetry", default=False, description="allow collection of telemetry data")

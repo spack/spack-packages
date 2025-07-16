@@ -7,7 +7,6 @@ import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
-import spack.fetch_strategy
 from spack.package import *
 from spack.util.environment import is_system_path
 
@@ -174,13 +173,14 @@ class Git(AutotoolsPackage):
     depends_on("openssh", type="run")
     depends_on("perl-alien-svn", type="run", when="+svn")
     depends_on("tk", type=("build", "link"), when="+tcltk")
+    depends_on("diffutils", type="build", when="@2.48:")
 
     conflicts("+svn", when="~perl")
 
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)
-        match = re.search(spack.fetch_strategy.GitFetchStrategy.git_version_re, output)
+        match = re.search(r"git version (\S+)", output)
         return match.group(1) if match else None
 
     @classmethod
