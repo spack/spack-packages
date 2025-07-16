@@ -9,6 +9,7 @@ spack:
     - lammps %oneapi
         # earliest oneapi version with fix does not run on AmazonLinux2, see https://github.com/spack/spack/pull/46457
         # - mpas-model %oneapi
+    # https://github.com/spack/spack-packages/pull/195
     #- openfoam %gcc
     - palace %oneapi
         # TODO: Find out how to make +ipo cmake flag work.
