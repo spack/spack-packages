@@ -43,6 +43,9 @@ class PyKorniaRs(PythonPackage):
     # dlpack-rs needs libclang
     depends_on("llvm+clang")
 
+    # Pin fast_image_resize to 5.1.0, >=5.2 requires rust >=1.87
+    patch("py-kornia-rs-pin-fast_image_resize.patch", when="@0.1.9")
+
     @property
     def build_directory(self):
         return "kornia-py" if self.spec.satisfies("@0.1.3:") else "py-kornia"
