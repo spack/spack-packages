@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems import makefile, python
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.python import PythonExtension
 
-from spack.build_environment import dso_suffix, stat_suffix
 from spack.package import *
 
 
@@ -438,10 +437,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # to use as-is. Note that since the macOS file system is
         # case-insensitive, this step is not allowed on macOS.
         if sys.platform != "darwin":
-            for prefix in [dso_suffix, stat_suffix]:
-                library_path = os.path.join(self.prefix.lib, "libesmf.%s" % prefix)
+            for suffix in [shared_library_suffix(self.spec), static_library_suffix(self.spec)]:
+                library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
-                    os.symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % prefix))
+                    os.symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
 
     def check(self):
         make("check", parallel=False)

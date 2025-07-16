@@ -7,10 +7,8 @@ import pathlib
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import get_cmake_prefix_path
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.build_environment
 from spack.package import *
 
 
@@ -32,12 +30,15 @@ class Cmake(Package):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("4.0.3", sha256="8d3537b7b7732660ea247398f166be892fe6131d63cc291944b45b91279f3ffb")
     version("4.0.0", sha256="ddc54ad63b87e153cf50be450a6580f1b17b4881de8941da963ff56991a4083b")
     version(
-        "3.31.6",
-        sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0",
+        "3.31.8",
+        sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa",
         preferred=True,
     )
+    version("3.31.6", sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0")
+    version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")
     version("3.30.8", sha256="10434223a40531b4d6bd77f8ffc471f1714029f4e6d2c83c499187a940276720")
     version("3.29.6", sha256="1391313003b83d48e2ab115a8b525a557f78d8c1544618b48d1d90184a10f0af")
     version("3.28.6", sha256="c39c733900affc4eb0e9688b4d1a45435a732105d9bf9cc1e75dd2b9b81a36bb")
@@ -140,12 +141,11 @@ class Cmake(Package):
         default=False,
         description="Enables the generation of html and man page documentation",
     )
-    variant(
-        "ncurses",
-        default=sys.platform != "win32",
-        description="Enables the build of the ncurses gui",
-    )
     variant("qtgui", default=False, description="Enables the build of the Qt GUI")
+
+    for spack_platform in ["freebsd", "linux", "darwin"]:
+        with when(f"platform={spack_platform}"):
+            variant("ncurses", default=True, description="Enables the build of the ncurses gui")
 
     # Revert the change that introduced a regression when parsing mpi link
     # flags, see: https://gitlab.kitware.com/cmake/cmake/issues/19516
@@ -308,7 +308,7 @@ class Cmake(Package):
         if not sys.platform == "win32":
             args.append("--prefix={0}".format(self.prefix))
 
-            jobs = spack.build_environment.get_effective_jobs(
+            jobs = get_effective_jobs(
                 make_jobs,
                 parallel=self.parallel,
                 supports_jobserver=self.generator.supports_jobserver,

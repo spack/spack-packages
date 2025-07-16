@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonExtension, PythonPipBuilder
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -415,22 +414,8 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         deprecated=True,
     )
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
-
-    # ml-quip, qmmm require C, but not available in Spack
-    for c_pkg in (
-        "adios",
-        "atc",
-        "awpmd",
-        "electrode",
-        "h5md",
-        "kim",
-        "ml-pod",
-        "rheo",
-        "scafacos",
-        "tools",
-    ):
-        depends_on("c", type="build", when=f"+{c_pkg}")
 
     # ml-quip require Fortran, but not available in Spack
     for fc_pkg in ("kim", "scafacos"):
@@ -1010,8 +995,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             )
 
         # Overwrite generic cpu tune option
-        cmake_tune_flags = optimization_flags(self.compiler, spec.target)
-        args.append(self.define("CMAKE_TUNE_FLAGS", cmake_tune_flags))
+        args.append(self.define("CMAKE_TUNE_FLAGS", microarchitecture_flags(self.spec, "c")))
 
         args.append(self.define_from_variant("LAMMPS_SIZES", "lammps_sizes"))
 

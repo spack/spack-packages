@@ -1,0 +1,24 @@
+# -*- conf -*-
+# This is the only flake8 rule Spack violates somewhat flagrantly
+# - E731: do not assign a lambda expression, use a def
+#
+# This is the only flake8 exception needed when using Black.
+# - E203: white space around slice operators can be required, ignore : warn
+#
+# We still allow these in packages
+# - F403: from/import * used; unable to detect undefined names
+# - F405: undefined name or from *
+# - F821: undefined name (needed with from/import *)
+#
+[flake8]
+extend-ignore = E731,E203
+max-line-length = 99
+per-file-ignores =
+  */package.py:F403,F405,F821
+format = spack
+
+[flake8:local-plugins]
+report =
+  spack = flake8_formatter:SpackFormatter
+paths =
+  ./spack-core/share/spack/qa/

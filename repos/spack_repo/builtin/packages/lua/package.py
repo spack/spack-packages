@@ -7,9 +7,6 @@ import os
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from llnl.util.symlink import readlink
-
-import spack.build_environment
 from spack.package import *
 
 # This is the template for a pkgconfig file for rpm
@@ -108,16 +105,16 @@ class LuaImplPackage(MakefilePackage):
                 symlink(luajit_include_subdirs[0], "lua")
 
         with working_dir(self.prefix.lib):
-            for ext in ("." + spack.build_environment.dso_suffix, ".a"):
+            for ext in [shared_library_suffix(self.spec), static_library_suffix(self.spec)]:
                 luajit_libnames = glob.glob(
-                    os.path.join(self.prefix.lib, "libluajit") + "*" + ext + "*"
+                    os.path.join(self.prefix.lib, "libluajit") + "*." + ext + "*"
                 )
                 real_lib = next(
                     lib
                     for lib in luajit_libnames
                     if os.path.isfile(lib) and not os.path.islink(lib)
                 )
-                symlink(real_lib, "liblua" + ext)
+                symlink(real_lib, "liblua." + ext)
 
     @run_after("install")
     def add_luarocks(self):
