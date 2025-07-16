@@ -218,6 +218,9 @@ spack:
       externals:
       - spec: rocm-openmp-extras@6.2.1
         prefix: /opt/rocm-6.2.1
+        extra_attributes:
+          compilers:
+            fortran: /opt/rocm-6.3.2/llvm/bin/amdflang
 
   specs:
   # ROCM NOARCH
