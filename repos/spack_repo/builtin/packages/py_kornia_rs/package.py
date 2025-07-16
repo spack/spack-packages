@@ -43,7 +43,7 @@ class PyKorniaRs(PythonPackage):
     # dlpack-rs needs libclang
     depends_on("llvm+clang")
 
-    # Pin fast_image_resize to 5.1.0, >=5.2 requires rust >=1.87
+    # See https://github.com/kornia/kornia-rs/commit/93f768137814709b60767f7fc24a9b0184002aee
     patch("py-kornia-rs-pin-fast_image_resize.patch", when="@0.1.9")
 
     @property
