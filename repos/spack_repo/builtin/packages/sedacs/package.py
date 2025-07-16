@@ -55,7 +55,7 @@ class Sedacs(PythonPackage, CudaPackage):
     depends_on("latte@lattepy+interface+progress", when="+latte")
     depends_on("qmd-progress@master~benchmarks", when="+latte")
 
-    # build system
+    # setting these in order to properly build gpu library
     build_system = "pyproject"
     build_backend = "scikit_build_core.build"
 
