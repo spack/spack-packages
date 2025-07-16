@@ -1,0 +1,13 @@
+diff --git a/crates/kornia-imgproc/Cargo.toml b/crates/kornia-imgproc/Cargo.toml
+index b501eb0..7950c30 100644
+--- a/crates/kornia-imgproc/Cargo.toml
++++ b/crates/kornia-imgproc/Cargo.toml
+@@ -12,7 +12,7 @@ rust-version.workspace = true
+ version.workspace = true
+ 
+ [dependencies]
+-fast_image_resize = "5.1.0"
++fast_image_resize = "=5.1"
+ kornia-tensor = { workspace = true }
+ kornia-image = { workspace = true }
+ num-traits = { workspace = true }

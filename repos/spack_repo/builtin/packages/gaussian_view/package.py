@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 # ----------------------------------------------------------------------------
 
+import glob
 import os
+import shlex
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.tengine
 from spack.package import *
 
 
@@ -69,31 +70,29 @@ class GaussianView(Package):
 
     @run_after("install")
     def caveats(self):
-        perm_script = "spack_perms_fix.sh"
-        perm_script_path = join_path(self.spec.prefix.bin, perm_script)
-        with open(perm_script_path, "w") as f:
-            env = spack.tengine.make_environment(dirs=self.package_dir)
-            t = env.get_template(perm_script + ".j2")
-            f.write(t.render({"prefix": self.spec.prefix}))
-        chmod = which("chmod")
-        chmod("0555", perm_script_path)
+        perm_script = join_path(self.prefix.libexec, "spack_perms_fix.sh")
+        os.makedirs(os.path.dirname(perm_script), exist_ok=True)
+        with open(perm_script, "w") as f:
+            f.write("#!/bin/sh -eu\n\n")
+            for p in glob.glob(os.path.join(self.prefix, "*")):
+                f.write(f"chmod o-rwx {shlex.quote(p)}\n")
+        # make it executable by everyone
+        os.chmod(perm_script, 0o755)
 
         tty.warn(
-            """
+            f"""
 For a working GaussianView installation, all executable files can only be accessible by
 the owner and the group but not the world.
 
 We've installed a script that will make the necessary changes;
 read through it and then execute it:
 
-    {0}
+    {perm_script}
 
 If you have to give others access, please customize the group membership of the package
 files as documented here:
 
-    https://spack.readthedocs.io/en/latest/packages_yaml.html#package-permissions""".format(
-                perm_script_path
-            )
+    https://spack.readthedocs.io/en/latest/packages_yaml.html#package-permissions"""
         )
 
     @when("@:6.0")
