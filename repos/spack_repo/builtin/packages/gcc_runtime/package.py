@@ -6,11 +6,9 @@ import glob
 import os
 import re
 
-from _vendoring.macholib.MachO import LC_ID_DYLIB, MachO
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
-from spack.util.elf import delete_needed_from_elf, parse_elf
 
 
 class GccRuntime(Package):

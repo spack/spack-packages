@@ -7,10 +7,8 @@ import pathlib
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import get_cmake_prefix_path
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.build_environment
 from spack.package import *
 
 
@@ -37,7 +35,7 @@ class Cmake(Package):
     version(
         "3.31.8",
         sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa",
-        preferred=True
+        preferred=True,
     )
     version("3.31.6", sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0")
     version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")
@@ -310,7 +308,7 @@ class Cmake(Package):
         if not sys.platform == "win32":
             args.append("--prefix={0}".format(self.prefix))
 
-            jobs = spack.build_environment.get_effective_jobs(
+            jobs = get_effective_jobs(
                 make_jobs,
                 parallel=self.parallel,
                 supports_jobserver=self.generator.supports_jobserver,

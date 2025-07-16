@@ -7,7 +7,6 @@ import os
 import shutil
 import socket
 import sys
-from os import environ as env
 
 from spack_repo.builtin.build_systems.cached_cmake import cmake_cache_path, cmake_cache_string
 from spack_repo.builtin.build_systems.cmake import CMakePackage

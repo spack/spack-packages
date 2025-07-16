@@ -10,12 +10,6 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
-from llnl.util.symlink import readlink
-
-import spack.platforms
-import spack.repo
-import spack.util.libc
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 
@@ -682,7 +676,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     @classmethod
     def filter_detected_exes(cls, prefix, exes_in_prefix):
         # Apple's gcc is actually apple clang, so skip it.
-        if str(spack.platforms.host()) == "darwin":
+        if str(host_platform()) == "darwin":
             not_apple_clang = []
             for exe in exes_in_prefix:
                 try:
@@ -801,10 +795,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         should pick -march=znver1, since that's what gcc@7 supports."""
         microarchitectures = [spec.target] + spec.target.ancestors
         for uarch in microarchitectures:
-            try:
-                return uarch.optimization_flags("gcc", str(spec.version))
-            except ValueError:
-                pass
+            flags = microarchitecture_flags_from_target(
+                uarch, compiler=Spec(f"gcc@={spec.version}")
+            )
+            if flags:
+                return flags
         # no arch specific flags in common, unlikely to happen.
         return ""
 
@@ -1146,7 +1141,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         """
         # Detect GCC package in the directory of the GCC compiler
         # or in the $PATH if self.compiler.cc is not an absolute path:
-        from spack.detection import by_path
+        from spack.detection import by_path  # TODO: remove use of private Spack API
 
         compiler_dir = os.path.dirname(self.compiler.cc)
         detected_packages = by_path(
@@ -1279,16 +1274,22 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         if not dryrun:
             tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
             return
-        dynamic_linker = spack.util.libc.parse_dynamic_linker(dryrun)
+        dynamic_linker = parse_dynamic_linker(dryrun)
         if not dynamic_linker:
             tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
             return
 
-        libc = spack.util.libc.libc_from_dynamic_linker(dynamic_linker)
+        libc = libc_from_dynamic_linker(dynamic_linker)
+        if not libc:
+            tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
+            return
 
         # We search for crt1.o ourselves because `gcc -print-prile-name=crt1.o` can give a rather
         # convoluted relative path from a different prefix.
-        startfile_prefix = spack.util.libc.startfile_prefix(libc.external_path, dynamic_linker)
+        startfile_prefix = _startfile_prefix(libc.external_path, dynamic_linker)
+        if not startfile_prefix:
+            tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
+            return
 
         gcc_can_locate = lambda p: os.path.isabs(
             gcc(f"-print-file-name={p}", output=str, error=os.devnull).strip()
@@ -1298,13 +1299,15 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             relocation_args.append(f"-B{startfile_prefix}")
 
         # libc headers may also be in a multiarch subdir.
-        header_dir = spack.util.libc.libc_include_dir_from_startfile_prefix(
-            libc.external_path, startfile_prefix
-        )
-        if header_dir and all(
-            os.path.exists(os.path.join(header_dir, h))
-            for h in spack.repo.PATH.get_pkg_class(libc.fullname).representative_headers
-        ):
+        header_dir = _libc_include_dir_from_startfile_prefix(libc.external_path, startfile_prefix)
+        if libc.name == "glibc":
+            # glibc representative header
+            header = "ieee754.h"
+        else:
+            # musl representative header
+            header = "iso646.h"
+
+        if header_dir and os.path.exists(os.path.join(header_dir, header)):
             relocation_args.append(f"-idirafter {header_dir}")
         else:
             tty.warn(
@@ -1324,3 +1327,45 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         if relocation_args:
             with open(specs_file, "a") as f:
                 f.write(f"*self_spec:\n+ {' '.join(relocation_args)}\n\n")
+
+
+def _libc_include_dir_from_startfile_prefix(
+    libc_prefix: str, startfile_prefix: str
+) -> Optional[str]:
+    """Heuristic to determine the glibc include directory from the startfile prefix. Replaces
+    $libc_prefix/lib*/<multiarch> with $libc_prefix/include/<multiarch>. This function does not
+    check if the include directory actually exists or is correct."""
+    parts = os.path.relpath(startfile_prefix, libc_prefix).split(os.path.sep)
+    if parts[0] not in ("lib", "lib64", "libx32", "lib32"):
+        return None
+    parts[0] = "include"
+    return os.path.join(libc_prefix, *parts)
+
+
+def _startfile_prefix(prefix: str, compatible_with: str = sys.executable) -> Optional[str]:
+    # Search for crt1.o at max depth 2 compatible with the ELF file provided in compatible_with.
+    # This is useful for finding external libc startfiles on a multiarch system.
+    try:
+        compat = get_elf_compat(compatible_with)
+        accept = lambda path: get_elf_compat(path) == compat
+    except Exception:
+        accept = lambda path: True
+
+    stack = [(0, prefix)]
+    while stack:
+        depth, path = stack.pop()
+        try:
+            iterator = os.scandir(path)
+        except OSError:
+            continue
+        with iterator:
+            for entry in iterator:
+                try:
+                    if entry.is_dir(follow_symlinks=True):
+                        if depth < 2:
+                            stack.append((depth + 1, entry.path))
+                    elif entry.name == "crt1.o" and accept(entry.path):
+                        return path
+                except Exception:
+                    continue
+    return None

@@ -84,8 +84,8 @@ class P4est(AutotoolsPackage):
 
         if "+openmp" in self.spec:
             try:
-                args.append("--enable-openmp={0}".format(self.compiler.openmp_flag))
-            except UnsupportedCompilerFlag:
+                args.append("--enable-openmp={0}".format(self["c"].openmp_flag))
+            except AttributeError:
                 args.append("--enable-openmp")
         else:
             args.append("--disable-openmp")

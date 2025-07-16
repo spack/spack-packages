@@ -5,11 +5,9 @@ import os
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, generator, get_cmake_prefix_path
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-
-from llnl.util.lang import classproperty
 
 from spack.package import *
 
