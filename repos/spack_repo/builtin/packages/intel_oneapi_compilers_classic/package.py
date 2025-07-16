@@ -162,11 +162,6 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
                 "17": "-std=c++17",
                 "18": "-std=c++18",
             },
-            "c": {
-                "99": "-std=c99",
-                "11": "-std=c11",
-                "17": "-std=c17",
-                "18": "-std=c18",
-            },
+            "c": {"99": "-std=c99", "11": "-std=c11", "17": "-std=c17", "18": "-std=c18"},
         }
         return flags[language][standard]
