@@ -247,7 +247,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
         """ensure version is expected"""
         vers_str = str(self.spec.version)
 
-        sqlite3 = which(self.prefix.bin.sqlite3)
+        sqlite3 = which(self.prefix.bin.sqlite3, required=True)
         out = sqlite3("-version", output=str.split, error=str.split)
         assert vers_str in out
 
@@ -255,9 +255,6 @@ class Sqlite(AutotoolsPackage, NMakePackage):
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def configure_args(self):
         args = []
-
-        if self.get_arch() == "ppc64le":
-            args.append("--build=powerpc64le-redhat-linux-gnu")
 
         args.extend(self.enable_or_disable("fts4", variant="fts"))
         args.extend(self.enable_or_disable("fts5", variant="fts"))
@@ -273,10 +270,6 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             args.append("CPPFLAGS=-DSQLITE_ENABLE_COLUMN_METADATA=1")
 
         return args
-
-    def get_arch(self):
-        host_platform = host_platform()
-        return str(host_platform.target("default_target"))
 
     @run_after("install")
     def build_libsqlitefunctions(self):
