@@ -14,10 +14,15 @@ class Melissa(CMakePackage):
 
     homepage = "https://gitlab.inria.fr/melissa/melissa"
     git = "https://gitlab.inria.fr/melissa/melissa.git"
-    url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.0.0/melissa-v2.0.0.tar.gz"
+    url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.0.1/melissa-v2.0.1.tar.gz"
     # attention: Git**Hub**.com accounts
     maintainers("abhishek1297", "viperML", "raffino")
 
+    version(
+        "2.0.1",
+        sha256="a7ff4df75ea09af435b0c28c3fa3cab9335c1c76e1c48757facce36786b4962c",
+        preferred=True,
+    )
     version(
         "2.0.0",
         sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
@@ -48,17 +53,17 @@ class Melissa(CMakePackage):
     depends_on("python@3.9:3.12", type=("build", "run"))
     depends_on("mpi", type=("build", "run"))
 
-    def cmake_args(self):
-        args = []
+    # def cmake_args(self):
+    #     args = []
 
-        # embed runtime library search paths
-        rpaths = [self.spec["libzmq"].prefix.lib, self.spec["mpi"].prefix.lib]
-        joined_rpaths = ";".join(rpaths)
+    #     # embed runtime library search paths
+    #     rpaths = [self.spec["libzmq"].prefix.lib, self.spec["mpi"].prefix.lib]
+    #     joined_rpaths = ";".join(rpaths)
 
-        args.append(f"-DCMAKE_INSTALL_RPATH={joined_rpaths}")
-        args.append("-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON")
+    #     args.append(f"-DCMAKE_INSTALL_RPATH={joined_rpaths}")
+    #     args.append("-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON")
 
-        return args
+    #     return args
 
     def setup_run_environment(self, env):
         python = self.spec["python"]

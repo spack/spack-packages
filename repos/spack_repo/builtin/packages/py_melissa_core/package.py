@@ -17,11 +17,16 @@ class PyMelissaCore(PythonPackage, CudaPackage):
 
     homepage = "https://gitlab.inria.fr/melissa/melissa"
     git = "https://gitlab.inria.fr/melissa/melissa.git"
-    url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.0.0/melissa-v2.0.0.tar.gz"
+    url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.0.1/melissa-v2.0.1.tar.gz"
     maintainers("abhishek1297", "viperML", "raffino")
 
     license("BSD-3-Clause")
 
+    version(
+        "2.0.1",
+        sha256="a7ff4df75ea09af435b0c28c3fa3cab9335c1c76e1c48757facce36786b4962c",
+        preferred=True,
+    )
     version(
         "2.0.0",
         sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
