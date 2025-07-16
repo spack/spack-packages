@@ -26,7 +26,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
-    version("master", branch="master", deprecated=True)
     version("6.4.1", sha256="4f29b1d5cfb31bcc7fe9357b1d0e323fff9064fd0ee503fd116665c6dc24e8a4")
     version("6.4.0", sha256="f16859ba3823f8b29f2aac120cef3395109babf93a0a5069c3b4c7c67ef35e96")
     version("6.3.3", sha256="c032d59a45b0eb4441539498bd4c22d8442fbc554cb08d6cb452a1d27be6c57c")
@@ -43,15 +42,9 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     version("6.0.0", sha256="44f328b7862c066459089dfe62833cb7d626c6ceb71c57d8c7d6bba45dad491e")
     version("5.7.1", sha256="33452576649df479f084076c47d0b30f6f1da34864094bce767dd9bf609f04aa")
     version("5.7.0", sha256="daa5dc44580145e85ff8ffa7eb40a3d1ef41f3217549c01281715ff696a31588")
-    version("5.6.1", sha256="d2ae36b8eacd39b865e8a7972b8eb86bcea2de4ac90711bba7e29b39b01eaa74")
-    version("5.6.0", sha256="c7f425b693caf9371b42226d86392335d993a117d23219b6ba1fd13523cb8261")
-    version("5.5.1", sha256="3addd15a459752ad657e84c2a7b6b6289600d1d0a5f90d6e0946ba11e8148fc0")
-    version("5.5.0", sha256="47ec6f7da7346c312b80daaa8f763e86c7bdc33ac8617cfa3344068e5b20dd9e")
     with default_args(deprecated=True):
-        version("5.4.3", sha256="ae37f40b6019a11f10646ef193716836f366d269eab3c5cc2ed09af85355b945")
-        version("5.4.0", sha256="d0a8e790182928b3d19774b8db1eece9b881a422f6a7055c051b12739fded624")
-        version("5.3.3", sha256="fd1662cd5b1e1bce9db53b320c0fe614179cd196251efc2ef3365d38922b5cdc")
-        version("5.3.0", sha256="ebbe2009b86b688809b6b4d5c3929fc589db455218d54a37790f21339147c5df")
+        version("5.6.1", sha256="d2ae36b8eacd39b865e8a7972b8eb86bcea2de4ac90711bba7e29b39b01eaa74")
+        version("5.6.0", sha256="c7f425b693caf9371b42226d86392335d993a117d23219b6ba1fd13523cb8261")
 
     # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -78,12 +71,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hip +cuda", when="+cuda")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
         "5.6.0",
         "5.6.1",
         "5.7.0",
@@ -102,7 +89,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
-        "master",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"+rocm @{ver}")
@@ -117,20 +103,15 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
             self.asan_on(env)
 
     def cmake_args(self):
-        args = [self.define("BUILD_CLIENTS_SAMPLES", "OFF")]
-
+        args = [
+            self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
+            self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+        ]
         if self.spec.satisfies("+rocm"):
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
         elif self.spec.satisfies("+cuda"):
             args.append(self.define("BUILD_WITH_LIB", "CUDA"))
-
-        # FindHIP.cmake is still used for both +rocm and +cuda
-        if self.spec["hip"].satisfies("@5.2:"):
-            args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-
-        if self.spec.satisfies("@5.2.0:6.3.1"):
+        if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.3.0:"):
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
         return args

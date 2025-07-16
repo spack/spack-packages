@@ -18,6 +18,8 @@ class PyTypingExtensions(PythonPackage):
 
     license("0BSD AND PSF-2.0")
 
+    version("4.14.1", sha256="38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36")
+    version("4.14.0", sha256="8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4")
     version("4.13.2", sha256="e6c81219bd689f51865d9e372991c540bda33a0379d5573cddb9a3a23f7caaef")
     version("4.12.2", sha256="1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8")
     version("4.8.0", sha256="df8e4339e9cb77357558cbdbceca33c303714cf861d1eef15e1070055ae8b7ef")
@@ -33,6 +35,7 @@ class PyTypingExtensions(PythonPackage):
     version("3.7.2", sha256="fb2cd053238d33a8ec939190f30cfd736c00653a85a2919415cecf7dc3d9da71")
     version("3.6.6", sha256="51e7b7f3dcabf9ad22eed61490f3b8d23d9922af400fe6656cb08e66656b701f")
 
+    depends_on("python@3.9:", when="@4.14:", type=("build", "run"))
     depends_on("python@3.8:", when="@4.8:", type=("build", "run"))
     # Needed to ensure that Spack can bootstrap with Python 3.6
     depends_on("python@3.7:", when="@4.2:", type=("build", "run"))

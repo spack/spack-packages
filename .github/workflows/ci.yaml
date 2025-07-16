@@ -44,6 +44,21 @@ jobs:
             - .ci/env
             packages:
             - repos/spack_repo/**
+            old_repos:
+            - 'var/spack/repos/**'
+          list-files: 'shell'
+      - name: Detected old package repository root directory
+        if: steps.filter.outputs.old_repos == 'true'
+        run: |
+          files=${{ steps.filter.outputs.old_repos_files }}
+          echo "Error: Packages are no longer allowed under 'var/spack/repos/'."
+          echo "       The following files need to be moved to the appropriate"
+          echo "       subdirectory of 'repos/spack_repo/builtin':"
+          echo
+          for f in $files; do
+              echo "  $f"
+          done
+          exit 1
 
   unit-tests:
     # if: ${{ github.repository == 'spack/spack' && needs.changes.outputs.core == 'true' }}
