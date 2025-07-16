@@ -23,6 +23,23 @@ class Totalview(Package):
     # As the install of Totalview is via multiple tarballs, the base install
     # will be the documentation.  The architecture-specific tarballs are added
     # as resources dependent on the specific architecture used.
+    version(
+        "2025.2-x86-64",
+        sha256="4f017ea4aad111dd118d5442c86c33e37fdd63aa368d62ba2821cbbba472b5fe",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.2/totalview_2025.2.6_linux_x86-64.tar",
+    )
+
+    version(
+        "2025.2-powerle",
+        sha256="e02d969517beb62fe33dbfa7f1e674b4601d01f64e0996ed733a063e2feab5c8",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.2/totalview_2025.2.6_linux_powerle.tar",
+    )
+
+    version(
+        "2025.2-linux-arm64",
+        sha256="4dbb1d5f3e8bd7b337f522089fd314645f7bd33fc4e7e203d4b8cc95a7879ea1",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.2/totalview_2025.2.6_linux_arm64.tar",
+    )
 
     version(
         "2025.1-x86-64",

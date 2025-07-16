@@ -15,7 +15,7 @@ from llnl.util.symlink import readlink
 import spack.platforms
 import spack.repo
 import spack.util.libc
-from spack.operating_systems.mac_os import macos_sdk_path, macos_version
+from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 
@@ -53,8 +53,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         sha256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9",
         preferred=sys.platform == "darwin",
     )
-    version("13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083")
-    version("12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175")
+    version("13.4.0", sha256="9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5")
+    version("12.5.0", sha256="71cd373d0f04615e66c5b5b14d49c1a4c1a08efa7b30625cd240b11bab4062b3")
     version("11.5.0", sha256="a6e21868ead545cf87f0c01f84276e4b5281d672098591c1c896241f09363478")
     version("10.5.0", sha256="25109543fdf46f397c347b5d8b7a2c7e5694a5a51cce4b9c6e1ea8a71ca307c1")
     version("9.5.0", sha256="27769f64ef1d4cd5e2be8682c0c93f9887983e6cfd1a927ce5a0a2915a95cf8f")
@@ -75,12 +75,18 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         )
 
         version(
+            "13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083"
+        )
+        version(
             "13.2.0", sha256="e275e76442a6067341a27f04c5c6b83d8613144004c0413528863dc6b5c743da"
         )
         version(
             "13.1.0", sha256="61d684f0aa5e76ac6585ad8898a2427aade8979ed5e7f85492286c4dfc13ee86"
         )
 
+        version(
+            "12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175"
+        )
         version(
             "12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b"
         )
@@ -354,12 +360,35 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 msg="'gcc@12: languages=d' requires '%gcc@9:' with the D language support",
             )
 
+    # GPU offload backend supported by limited languages
+    with when("+nvptx"):
+        conflicts("languages=ada")
+        conflicts("languages=brig")
+        conflicts("languages=go")
+        conflicts("languages=java")
+        conflicts("languages=jit")
+        conflicts("languages=objc")
+        conflicts("languages=obj-c++")
+        conflicts("languages=d")
+
+    # Newlib version table
+    newlib_shasum = {
+        "3.0.0.20180831": "3ad3664f227357df15ff34e954bfd9f501009a647667cd307bf0658aefd6eb5b",
+        "3.3.0": "58dd9e3eaedf519360d92d84205c3deef0b3fc286685d1c562e245914ef72c66",
+        "4.1.0": "f296e372f51324224d387cc116dc37a6bd397198756746f93a2b02e9a5d40154",
+        "4.2.0.20211231": "c3a0e8b63bc3bef1aeee4ca3906b53b3b86c8d139867607369cb2915ffc54435",
+        "4.3.0.20230120": "83a62a99af59e38eb9b0c58ed092ee24d700fff43a22c03e433955113ef35150",
+        "4.4.0.20231231": "0c166a39e1bf0951dfafcd68949fe0e4b6d3658081d6282f39aeefc6310f2f13",
+        "4.5.0.20241231": "33f12605e0054965996c25c1382b3e463b0af91799001f5bb8c0630f2ec8c852",
+    }
+
     with when("+nvptx"):
         depends_on("cuda")
+        nvptx_newlib_ver = "4.5.0.20241231"
         resource(
             name="newlib",
-            url="ftp://sourceware.org/pub/newlib/newlib-3.0.0.20180831.tar.gz",
-            sha256="3ad3664f227357df15ff34e954bfd9f501009a647667cd307bf0658aefd6eb5b",
+            url="ftp://sourceware.org/pub/newlib/newlib-{0}.tar.gz".format(nvptx_newlib_ver),
+            sha256=newlib_shasum[nvptx_newlib_ver],
             destination="newlibsource",
             fetch_options=timeout,
         )
@@ -369,14 +398,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         # NVPTX offloading supported in 7 and later by limited languages
         conflicts("@:6", msg="NVPTX only supported in gcc 7 and above")
-        conflicts("languages=ada")
-        conflicts("languages=brig")
-        conflicts("languages=go")
-        conflicts("languages=java")
-        conflicts("languages=jit")
-        conflicts("languages=objc")
-        conflicts("languages=obj-c++")
-        conflicts("languages=d")
+
         # NVPTX build disables bootstrap
         conflicts("+bootstrap")
 
@@ -885,24 +907,35 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 ]
             )
 
-        # nvptx-none offloading for host compiler
+        # GPU offload targets
+        offload_targets = []
         if spec.satisfies("+nvptx"):
+            offload_targets.append("nvptx-none")
+        if offload_targets:
             options.extend(
                 [
-                    "--enable-offload-targets=nvptx-none",
-                    "--with-cuda-driver-include={0}".format(spec["cuda"].prefix.include),
-                    "--with-cuda-driver-lib={0}".format(spec["cuda"].libs.directories[0]),
+                    "--enable-offload-targets={0}".format(",".join(offload_targets)),
                     "--disable-bootstrap",
                     "--disable-multilib",
                 ]
             )
 
+        # arguments for nvptx-none offloading
+        if spec.satisfies("+nvptx"):
+            options.extend(
+                [
+                    "--with-cuda-driver-include={0}".format(spec["cuda"].prefix.include),
+                    "--with-cuda-driver-lib={0}".format(spec["cuda"].libs.directories[0]),
+                ]
+            )
+
         if sys.platform == "darwin":
+            macos_sdk_path = Executable("xcrun")("--show-sdk-path", output=str).strip()
             options.extend(
                 [
                     "--with-native-system-header-dir=/usr/include",
-                    "--with-sysroot={0}".format(macos_sdk_path()),
-                    "--with-libiconv-prefix={0}".format(spec["iconv"].prefix),
+                    f"--with-sysroot={macos_sdk_path}",
+                    f"--with-libiconv-prefix={spec['iconv'].prefix}",
                 ]
             )
 
@@ -926,6 +959,16 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 options.append("GDC={0}".format(self.detect_gdc()))
 
         return options
+
+    # Common code for nvptx and amdgcn to link newlib source directory
+    newlib_linked = False
+
+    def link_newlib(self):
+        pattern = join_path(self.stage.source_path, "newlibsource", "*")
+        files = glob.glob(pattern)
+        if files and not self.newlib_linked:
+            symlink(join_path(files[0], "newlib"), "newlib")
+        self.newlib_linked = True
 
     # Copy nvptx-tools into the GCC install prefix
     def copy_nvptx_tools(self):
@@ -973,11 +1016,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         self.copy_nvptx_tools()
 
-        pattern = join_path(self.stage.source_path, "newlibsource", "*")
-        files = glob.glob(pattern)
-
-        if files:
-            symlink(join_path(files[0], "newlib"), "newlib")
+        self.link_newlib()
 
         # self.build_directory = 'spack-build-nvptx'
         with working_dir("spack-build-nvptx", create=True):
@@ -1058,6 +1097,32 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         set_install_permissions(specs_file)
         tty.info(f"Wrote new spec file to {specs_file}")
+
+        # Do the same thing for libgomp on offload-enabled builds
+        if self.spec.satisfies("+nvptx"):
+            for dir in ["lib64", "lib"]:
+                libdir = join_path(self.prefix, dir)
+                if glob.glob(join_path(libdir, "libgomp.*")):
+                    libgomp_dir = libdir
+                    break
+            else:
+                tty.warn("libgomp dynamic library not found in lib/lib64")
+                libgomp_dir = None
+
+            if libgomp_dir:
+                libgomp_spec_file = join_path(libgomp_dir, "libgomp.spec")
+                copy(libgomp_spec_file, libgomp_spec_file + ".orig")
+                with open(libgomp_spec_file, "r+") as f:
+                    lines = f.readlines()
+                    f.seek(0)
+                    for line in lines:
+                        if line.startswith("*link_gomp:"):
+                            f.write("\n\n# Generated by Spack\n\n")
+                            f.write(line.strip("\n") + f" -rpath {libgomp_dir}\n\n")
+                        else:
+                            f.write(line)
+                set_install_permissions(libgomp_spec_file)
+                tty.info(f"Wrote new libgomp spec file to {libgomp_spec_file}")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.cc and self.spec.satisfies("languages=c"):
