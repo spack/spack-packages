@@ -133,9 +133,9 @@ class Scorep(AutotoolsPackage):
     # two components of cube -- cubew and cubelib.
 
     # Language dependencies
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-    depends_on("fortran", type="build", when="+fortran")
+    depends_on("c", type=("build", "run"))
+    depends_on("cxx", type=("build", "run"))
+    depends_on("fortran", type=("build", "run"), when="+fortran")
 
     # SCOREP 9
     depends_on("gotcha@1.0.8:", type="link", when="+gotcha")
@@ -181,8 +181,8 @@ class Scorep(AutotoolsPackage):
     depends_on("cube@4.2.3", when="@1.3")
 
     # Conditional dependencies for variants
-    depends_on("mpi@2.2:", when="@7.0:+mpi")
-    depends_on("mpi", when="+mpi")
+    depends_on("mpi@2.2:", type=("build", "run"), when="@7.0:+mpi")
+    depends_on("mpi", type=("build", "run"), when="+mpi")
     depends_on("papi", when="+papi")
     depends_on("pdt", when="+pdt")
     depends_on("llvm", when="+unwind")
