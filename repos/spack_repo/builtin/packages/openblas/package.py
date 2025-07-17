@@ -125,7 +125,7 @@ class Openblas(CMakePackage, MakefilePackage):
     # patch(
     #     "https://github.com/OpenMathLib/OpenBLAS/commit/6d54c9476056b13fb91bf90bbc803968e0743aef.patch?full_index=1",
     #     sha256="735a51af451f5afd5d366ba88bbe2f6930a9b1f69f3b924aed2c951eee81ccae",
-    #     when="@:0.3.29"
+    #     when="@:0.3.29",
     # )
 
     # Adds proper compiler definitions to allow symbol mangling
