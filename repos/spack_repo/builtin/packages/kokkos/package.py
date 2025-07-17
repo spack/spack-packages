@@ -3,11 +3,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, get_cmake_prefix_path
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
-
-import llnl.util.lang as lang
 
 from spack.package import *
 
@@ -537,7 +535,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         )
 
         # Remove duplicate options
-        return lang.dedupe(options)
+        return dedupe(options)
 
     test_script_relative_path = join_path("scripts", "spack_test")
 

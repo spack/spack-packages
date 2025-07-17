@@ -112,9 +112,22 @@ class Charmpp(Package):
     variant("production", default=True, description="Build charm++ with all optimizations")
     variant("tracing", default=False, description="Enable tracing modules")
 
+    # Applies only to versions 8.0.0 and later
+    variant(
+        "fortran", default=True, description="Enable Fortran support (false applies only to @8:)"
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", type="build", when="+fortran")
+    # Fortran is required for version earlier than 8.0.0
+    conflicts("~fortran", when="@:7")
+    # charmpp build was failing with clang based compilers for -DNETWORK=mpi as discussed in
+    # https://github.com/charmplusplus/charm/issues/3645
+    # Fix was suggested in https://github.com/charmplusplus/charm/pull/3646 and the same has
+    # been implemented in v8.0.0
+    conflicts("%fortran=intel-oneapi-compilers", when="@8: +fortran")
+    conflicts("%fortran=aocc", when="@8: +fortran")
 
     # Versions 7.0.0+ use CMake by default when it's available. It's more
     # robust.
@@ -314,7 +327,7 @@ class Charmpp(Package):
         # here.
         options = [os.path.basename(self.compiler.cc)]
 
-        if "@:6.8.2 %aocc" not in spec:
+        if "@:6.8.2 %aocc" not in spec and spec.satisfies("+fortran"):
             options.append(os.path.basename(self.compiler.fc))
 
         options.append("-j%d" % make_jobs)
@@ -370,11 +383,7 @@ class Charmpp(Package):
         if spec.satisfies("+tracing"):
             options.append("--enable-tracing")
 
-        # charmpp build was failing with clang based compilers for -DNETWORK=mpi as discussed in
-        # https://github.com/charmplusplus/charm/issues/3645
-        # Fix was suggested in https://github.com/charmplusplus/charm/pull/3646 and the same has
-        # been implemented in v8.0.0
-        if self.spec.satisfies("@8.0.0: %aocc"):
+        if self.spec.satisfies("@8: ~fortran"):
             options.append("--disable-fortran")
 
         # Call "make" via the build script

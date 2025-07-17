@@ -4,6 +4,7 @@
 import glob
 
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -12,8 +13,6 @@ from spack.package import (
     maintainers,
     register_builder,
 )
-
-from ._checks import BuilderWithDefaults
 
 
 class RubyPackage(PackageBase):
@@ -25,7 +24,7 @@ class RubyPackage(PackageBase):
     #: system base class
     build_system_class = "RubyPackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "ruby"
+    default_buildsystem = "ruby"
 
     build_system("ruby")
 
@@ -43,10 +42,10 @@ class RubyBuilder(BuilderWithDefaults):
     phases = ("build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ()
+    package_methods = ()
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ()
+    package_attributes = ()
 
     def build(self, pkg: RubyPackage, spec: Spec, prefix: Prefix) -> None:
         """Build a Ruby gem."""

@@ -1,13 +1,10 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.util.environment
 from spack.package import *
 
 
@@ -196,7 +193,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.test_src_dir)
         with working_dir(test_dir):
             pkg_config_path = self.prefix.lib.pkgconfig
-            with spack.util.environment.set_env(PKG_CONFIG_PATH=pkg_config_path):
+            with set_env(PKG_CONFIG_PATH=pkg_config_path):
                 make = self.spec["gmake"].command
                 CC = "hipcc" if self.spec.satisfies("+rocm") else self.compiler.cc
                 make("c", f"CC={CC}")
@@ -222,7 +219,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.test_src_dir)
         with working_dir(test_dir):
             pkg_config_path = self.prefix.lib.pkgconfig
-            with spack.util.environment.set_env(PKG_CONFIG_PATH=pkg_config_path):
+            with set_env(PKG_CONFIG_PATH=pkg_config_path):
                 make = self.spec["gmake"].command
                 make("fortran")
                 example_f = which("example_f")

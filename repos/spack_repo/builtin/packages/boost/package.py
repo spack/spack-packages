@@ -100,7 +100,6 @@ class Boost(Package):
             "+random",
             "+regex",
             "+serialization",
-            "+signals",
             "+system",
             "+test",
             "+thread",
@@ -145,6 +144,7 @@ class Boost(Package):
         "regex",
         "serialization",
         "signals",
+        "signals2",
         "stacktrace",
         "system",
         "test",
@@ -155,8 +155,15 @@ class Boost(Package):
         "wave",
     ]
 
-    # Add any extra requirements for specific
-    all_libs_opts = {"charconv": {"when": "@1.85.0:"}, "cobalt": {"when": "@1.84.0:"}}
+    # Add any extra requirements for specific libraries
+    # signals library was removed from boost in 1.69
+    # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
+    all_libs_opts = {
+        "charconv": {"when": "@1.85.0:"},
+        "cobalt": {"when": "@1.84.0:"},
+        "signals": {"when": "@:1.68"},
+        "signals2": {"when": "@1.4:"},
+    }
 
     for lib in all_libs:
         lib_opts = all_libs_opts.get(lib, {})
@@ -317,10 +324,20 @@ class Boost(Package):
     # safe to do so on affected platforms.
     conflicts("+clanglibcpp", when="@1.85: +stacktrace")
 
+    # https://github.com/boostorg/python/issues/400
+    conflicts(
+        "@:1.80.0",
+        when="+python ^python@3.11:",
+        msg="Boost.python.enum has a known bug for boost@:1.80.0 and python@3.11:",
+    )
+
     # On Windows, the signals variant is required when building any of
     # the all_libs variants.
     for lib in all_libs:
-        requires("+signals", when=f"+{lib} platform=windows")
+        if lib not in ["signals", "signals2"]:
+            # <= 1.68 needs signals, after that needs signals2
+            requires("+signals", when=f"@:1.68 +{lib} platform=windows")
+            requires("+signals2", when=f"@1.69: +{lib} platform=windows")
 
     # Patch fix from https://svn.boost.org/trac/boost/ticket/11856
     patch("boost_11856.patch", when="@1.60.0%gcc@4.4.7")
@@ -716,7 +733,7 @@ class Boost(Package):
         """
         bootstrap_options = list()
         if self.spec.satisfies("%msvc"):
-            bootstrap_options.append(f"vc{self.compiler.platform_toolset_ver}")
+            bootstrap_options.append("vc%s" % self["msvc"].platform_toolset_ver)
         elif self.spec.satisfies("%gcc"):
             bootstrap_options.append("gcc")
         elif self.spec.satisfies("%clang"):

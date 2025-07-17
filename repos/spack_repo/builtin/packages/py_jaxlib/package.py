@@ -49,6 +49,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.6.2", sha256="d46cb98795f2c1ccdf2b081e02d9d74b659063679a80beb001ad17d482a60e17")
     version("0.6.1", sha256="af179a4047d473059beebc4b9d09763e80d8f7dcf4ae75670bc3dd912c92d6f5")
     version("0.6.0", sha256="07ec7a19c3a27c4cca88288f9e9477a62cd0b54bd43c4a77f497505ddadc72ed")
     version("0.5.3", sha256="1094581a30ec069965f4e3e67d60262570cc3dd016adc62073bc24347b14270c")
@@ -139,11 +140,13 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("python@:3.11", when="@:0.4.16")
 
         # jaxlib/setup.py
+        depends_on("py-scipy@1.12:", when="@0.6.2:")
         depends_on("py-scipy@1.11.1:", when="@0.5:")
         depends_on("py-scipy@1.10:", when="@0.4.31:")
         depends_on("py-scipy@1.9:", when="@0.4.19:")
         depends_on("py-scipy@1.7:", when="@0.4.7:")
         depends_on("py-scipy@1.5:")
+        depends_on("py-numpy@1.26:", when="@0.6.2:")
         depends_on("py-numpy@1.25:", when="@0.5:")
         depends_on("py-numpy@1.24:", when="@0.4.31:")
         depends_on("py-numpy@1.22:", when="@0.4.14:")
@@ -151,6 +154,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-numpy@1.20:", when="@0.3:")
         # https://github.com/google/jax/issues/19246
         depends_on("py-numpy@:1", when="@:0.4.25")
+        depends_on("py-ml-dtypes@0.5:", when="@0.6.2:")
         depends_on("py-ml-dtypes@0.4:", when="@0.4.29")
         depends_on("py-ml-dtypes@0.2:", when="@0.4.14:")
         depends_on("py-ml-dtypes@0.1:", when="@0.4.9:")
@@ -240,7 +244,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 args.append("--wheels=jaxlib")
 
         if spec.satisfies("@0.4.32:"):
-            if spec.satisfies("%clang"):
+            if spec.satisfies("%c,cxx=clang"):
                 args.append("--use_clang=true")
             else:
                 args.append("--use_clang=false")

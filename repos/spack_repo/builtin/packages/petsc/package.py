@@ -280,8 +280,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     )
 
     with when("+rocm"):
-        # https://github.com/spack/spack/issues/37416
-        conflicts("^rocprim@5.3.0:5.3.2")
         # hipsparse@5.6.0 broke hipsparseSpSV_solve() API, reverted in 5.6.1.
         patch(
             "https://gitlab.com/petsc/petsc/-/commit/ef7140cce45367033b48bbd2624dfd2b6aa4b997.diff",
