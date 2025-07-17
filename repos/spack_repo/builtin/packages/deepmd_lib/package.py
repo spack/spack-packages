@@ -41,10 +41,10 @@ class DeepmdLib(CudaPackage, ROCmPackage, CMakePackage):
     variant("cuda", default=False, description="Enable cuda support")
     variant("rocm", default=False, description="Enable rocm support")
     variant("gromacs", default=False, description="Enable gromacs plugins")
-    variant("horovod", default=True, description="Enable horovod support")
     variant("jax", default=False, description="Enable JaX support", when="@3.0:")
     variant("fp64", default=True, description="Enable double precision ops", when="+tensorflow")
     variant("fp64", default=False, description="Enable double precision ops", when="+pytorch")
+
     # deepmd library uses cmake as a build system but deepmd itself uses pip.
 
     depends_on("c")
@@ -55,43 +55,18 @@ class DeepmdLib(CudaPackage, ROCmPackage, CMakePackage):
     depends_on("py-tensorflow@2.16:", when="+tensorflow")
     depends_on("py-tensorflow+mpi", when="+tensorflow")
     depends_on("py-torch", when="+pytorch")
-    # depends_on("py-ase")
-    # depends_on("py-scipy")
-    # depends_on("py-numpy")
-    # depends_on("py-pyyaml")
-    # depends_on("py-args")
-    # depends_on("py-pyproject-metadata")
-    # depends_on("py-python-hostlist@1.21:")
-    # depends_on("py-typing-extensions", when="^python@:3.8")
-    # depends_on("py-importlib-metadata", when="^python@:3.8")
-    # depends_on("py-sphinx-argparse")
-    # depends_on("py-pygments")
-    # depends_on("py-sphinxcontrib-bibtex")
-    # depends_on("py-scikit-build-core")
-    # depends_on("py-setuptools-scm")
-    # depends_on("py-scikit-build")
-    # depends_on("py-hatch-fancy-pypi-readme")
-    # depends_on("py-pip", type="build")
-    # depends_on("python@3.10:")
-    # depends_on("py-h5py")
-    depends_on("py-jax", when="+jax")
 
-    # horovod needs some special settings
-    # depends_on("py-horovod controllers=mpi", when="+horovod")
-    # depends_on("py-horovod frameworks=tensorflow", when="+tensorflow+horovod")
-    # depends_on("py-horovod frameworks=pytorch", when="+pytorch+horovod")
+    with when("+jax"):
+        depends_on("py-jax@0.4.33:")
+        depends_on("py-flax@0.10.0:")
+        depends_on("py-orbax_checkpoint")
+        depends_on("jax-ai-stack")
 
     # we can install deepmd with tensorflow, py-torch and jax
-
     with when("+cuda"):
         depends_on("nccl")
-        #   depends_on("py-horovod+cuda tensor_ops=nccl", when="+horovod")
         for target in CudaPackage.cuda_arch_values:
             depends_on(f"nccl cuda_arch={target}", when=f"cuda_arch={target}")
-            #      depends_on(
-            #          f"py-horovod+cuda tensor_ops=nccl cuda_arch={target}",
-            #          when=f"+horovod cuda_arch={target}",
-            #      )
             depends_on(
                 f"py-tensorflow+cuda+nccl+mpi cuda_arch={target}",
                 when=f"+tensorflow cuda_arch={target}",
@@ -100,7 +75,6 @@ class DeepmdLib(CudaPackage, ROCmPackage, CMakePackage):
 
     with when("+rocm"):
         depends_on("rccl")
-        # depends_on("py-horovod+rocm", when="+horovod")
         depends_on("hipcub+rocm")
         depends_on("hip+rocm")
 
