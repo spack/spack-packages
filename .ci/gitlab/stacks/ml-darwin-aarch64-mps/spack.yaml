@@ -62,8 +62,7 @@ spack:
   - py-torchfile
   - py-torchgeo
   - py-torchmetrics
-  # fp16 mismatch between openblas and py_torch@2.3.0
-  # - py-torchtext
+  - py-torchtext
   - py-torchvision
   - py-vector-quantize-pytorch
 
