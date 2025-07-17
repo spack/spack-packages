@@ -120,6 +120,11 @@ class Openblas(CMakePackage, MakefilePackage):
 
     # https://github.com/xianyi/OpenBLAS/pull/2519/files
     patch("ifort-msvc.patch", when="%msvc")
+    # patch("https://github.com/OpenMathLib/OpenBLAS/commit/6d54c9476056b13fb91bf90bbc803968e0743aef.patch?full_index=1",
+    #       sha256="735a51af451f5afd5d366ba88bbe2f6930a9b1f69f3b924aed2c951eee81ccae",
+    #       when="@:0.3.29")
+
+    patch("blas_normalize_test_symbols.patch", when="%msvc")
 
     # https://github.com/OpenMathLib/OpenBLAS/pull/3712
     patch("cce.patch", when="@0.3.20 %cce")
