@@ -24,7 +24,7 @@ class PyGeopmdpy(PythonPackage):
         "stats",
         default=False,
         when="@3.2:",
-        description="Enable additional packages for data analysis and post-processing"
+        description="Enable additional packages for data analysis and post-processing",
     )
 
     version("develop", branch="dev", get_full_repo=True)
@@ -33,7 +33,7 @@ class PyGeopmdpy(PythonPackage):
     version(
         "3.0.1",
         sha256="32ba1948de58815ee055470dcdea64593d1113a6cad70ce00ab0286c127f8234",
-        deprecated=True
+        deprecated=True,
     )
 
     depends_on("c", type="build")  # generated

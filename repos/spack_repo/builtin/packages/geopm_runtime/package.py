@@ -28,7 +28,7 @@ class GeopmRuntime(AutotoolsPackage):
     version(
         "3.0.1",
         sha256="32ba1948de58815ee055470dcdea64593d1113a6cad70ce00ab0286c127f8234",
-        deprecated=True
+        deprecated=True,
     )
 
     variant("debug", default=False, description="Enable debug")
