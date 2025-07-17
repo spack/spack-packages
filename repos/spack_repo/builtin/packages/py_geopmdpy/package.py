@@ -20,6 +20,12 @@ class PyGeopmdpy(PythonPackage):
     tags = ["e4s"]
 
     variant("grpc", default=False, when="@3.2:", description="Enable gRPC support")
+    variant(
+        "stats",
+        default=False,
+        when="@3.2:",
+        description="Enable additional packages for data analysis and post-processing"
+    )
 
     version("develop", branch="dev", get_full_repo=True)
     version("3.2.0", sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025")
@@ -43,7 +49,8 @@ class PyGeopmdpy(PythonPackage):
     depends_on("py-psutil@5.8.0:", when="@3.2:", type=("test", "run"))
     depends_on("py-jsonschema@3.2.0:", when="@3.0.1:3.1", type="run")
     depends_on("py-jsonschema@3.2.0:", when="@3.2:", type=("test", "run"))
-    depends_on("py-pyyaml@6.0:", type="run")
+    depends_on("py-pyyaml@6.0:", when="+stats", type="run")
+    depends_on("py-seaborn@0.11.2:", when="+stats", type="run")
     depends_on("py-setuptools@53.0.0:", when="@3.0.1", type="build")
     depends_on("py-setuptools@59.6.0:", when="@3.2:", type="build")
     depends_on("py-setuptools-scm@6.4.2:", when="@3.1:", type="build")
