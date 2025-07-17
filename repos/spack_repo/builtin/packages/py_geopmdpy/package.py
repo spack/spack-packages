@@ -50,6 +50,7 @@ class PyGeopmdpy(PythonPackage):
     depends_on("py-build@0.9.0:", when="@3.1:", type="build")
     depends_on("py-defusedxml@0.7.1:", when="@3.2:", type="test")
     depends_on("py-grpcio", when="+grpc", type=("build", "run"))
+    depends_on("py-protobuf@3.12.4:", when="+grpc", type=("build", "run"))
 
     @property
     def build_directory(self):
