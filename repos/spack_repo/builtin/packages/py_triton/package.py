@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin import build_systems
-from spack_repo.builtin.build_systems.python import CudaPackage, PythonPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.python import PythonPackage
 
 import llnl.util.filesystem as fs
 
