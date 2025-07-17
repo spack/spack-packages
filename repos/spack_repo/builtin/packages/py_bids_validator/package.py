@@ -15,7 +15,9 @@ class PyBidsValidator(PythonPackage):
 
     license("MIT")
 
-    version("1.14.7.post0", sha256="e6005a500b75f8a961593fb67d46085107dadb116f59a5c3b524aa0697945b66")
+    version(
+        "1.14.7.post0", sha256="e6005a500b75f8a961593fb67d46085107dadb116f59a5c3b524aa0697945b66"
+    )
     version("1.13.1", sha256="7205ce4e68fba172215332c786f1ac1665025b702b6dff2b1e158f00a2df9890")
     version("1.11.0", sha256="408c56748b7cf98cf7c31822f33a8d89c5e6e7db5254c345107e8d527576ff53")
     version("1.9.8", sha256="ff39799bb205f92d6f2c322f0b8eff0d1c0288f4291a0b18fce61afa4dfd7f3e")
