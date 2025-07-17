@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin import build_systems
+from spack_repo.builtin.build_systems.python import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 import llnl.util.filesystem as fs
@@ -10,7 +11,7 @@ import llnl.util.filesystem as fs
 from spack.package import *
 
 
-class PyTriton(PythonPackage):
+class PyTriton(PythonPackage, CudaPackage):
     """A language and compiler for custom Deep Learning operations."""
 
     homepage = "https://github.com/triton-lang/triton"
@@ -33,12 +34,12 @@ class PyTriton(PythonPackage):
         # see https://github.com/pypa/wheel/pull/631
         # and https://github.com/pypa/setuptools/pull/4684
         depends_on("py-setuptools@40.8:70.0")
-        depends_on("cmake@3.18:")
-        depends_on("ninja")
 
-    with default_args(type=("build", "link", "run")):
-        depends_on("py-pybind11")
-        depends_on("cuda")
+        # https://github.com/triton-lang/triton/blob/v3.3.1/python/requirements.txt
+        depends_on("cmake@3.18:3")
+        depends_on("ninja@1.11.1:")
+        depends_on("py-pybind11@2.13.1:")
+        depends_on("py-lit")
 
     depends_on("py-filelock", type=("build", "run"))
     depends_on("zlib-api", type="link")
@@ -67,14 +68,15 @@ class PythonPipBuilder(build_systems.python.PythonPipBuilder):
         env.set("TRITON_HOME", triton_home)
         # use spack installed dependencies
         env.set("PYBIND11_SYSPATH", self.spec["py-pybind11"].prefix)
-        env.set("TRITON_PTXAS_PATH", self.spec["cuda"].prefix)
-        env.set("TRITON_CUOBJDUMP_PATH", self.spec["cuda"].prefix)
-        env.set("TRITON_NVDISASM_PATH", self.spec["cuda"].prefix)
-        env.set("TRITON_CUDACRT_PATH", self.spec["cuda"].prefix)
-        env.set("TRITON_CUDART_PATH", self.spec["cuda"].prefix)
-        cupti_path = self.spec["cuda"].prefix.extras.CUPTI
-        env.set("TRITON_CUPTI_INCLUDE_PATH", f"{cupti_path}/include")
-        env.set("TRITON_CUPTI_LIB_PATH", f"{cupti_path}/lib64")
+        if self.spec.satisfies("+cuda"):
+            env.set("TRITON_PTXAS_PATH", self.spec["cuda"].prefix)
+            env.set("TRITON_CUOBJDUMP_PATH", self.spec["cuda"].prefix)
+            env.set("TRITON_NVDISASM_PATH", self.spec["cuda"].prefix)
+            env.set("TRITON_CUDACRT_PATH", self.spec["cuda"].prefix)
+            env.set("TRITON_CUDART_PATH", self.spec["cuda"].prefix)
+            cupti_path = self.spec["cuda"].prefix.extras.CUPTI
+            env.set("TRITON_CUPTI_INCLUDE_PATH", f"{cupti_path}/include")
+            env.set("TRITON_CUPTI_LIB_PATH", f"{cupti_path}/lib64")
 
     # build_directory does not work since apparently one needs to call pip from
     # the parent directory
