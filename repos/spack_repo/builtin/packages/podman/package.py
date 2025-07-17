@@ -6,7 +6,6 @@ import sys
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 _is_macos = sys.platform == "darwin"

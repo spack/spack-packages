@@ -6,45 +6,41 @@ import stat
 import subprocess
 from typing import Callable, List, Optional, Set, Tuple, Union
 
-import llnl.util.filesystem as fs
-
-import spack.build_environment
-import spack.builder
-import spack.compilers.libraries
-from spack.operating_systems.mac_os import macos_version
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     Executable,
     FileFilter,
     InstallError,
+    ModuleChangePropagator,
     PackageBase,
     Prefix,
     Spec,
     Version,
+    apply_macos_rpath_fixups,
     build_system,
+    compiler_spec,
     conflicts,
     copy,
+    create_builder,
     depends_on,
+    execute_install_time_tests,
     find,
     force_remove,
     is_exe,
     keep_modification_time,
+    macos_version,
     mkdirp,
     register_builder,
     run_after,
     run_before,
+    safe_remove,
     tty,
     when,
     working_dir,
 )
 
-from ._checks import (
-    BuilderWithDefaults,
-    apply_macos_rpath_fixups,
-    ensure_build_dependencies_or_raise,
-    execute_build_time_tests,
-    execute_install_time_tests,
-)
+from ._checks import ensure_build_dependencies_or_raise, execute_build_time_tests
 
 
 class AutotoolsPackage(PackageBase):
@@ -55,7 +51,7 @@ class AutotoolsPackage(PackageBase):
     build_system_class = "AutotoolsPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "autotools"
+    default_buildsystem = "autotools"
 
     build_system("autotools")
 
@@ -86,10 +82,10 @@ class AutotoolsPackage(PackageBase):
     # Legacy methods (used by too many packages to change them,
     # need to forward to the builder)
     def enable_or_disable(self, *args, **kwargs):
-        return spack.builder.create(self).enable_or_disable(*args, **kwargs)
+        return create_builder(self).enable_or_disable(*args, **kwargs)
 
     def with_or_without(self, *args, **kwargs):
-        return spack.builder.create(self).with_or_without(*args, **kwargs)
+        return create_builder(self).with_or_without(*args, **kwargs)
 
 
 @register_builder("autotools")
@@ -129,10 +125,10 @@ class AutotoolsBuilder(BuilderWithDefaults):
     phases = ("autoreconf", "configure", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("configure_args", "check", "installcheck")
+    package_methods = ("configure_args", "check", "installcheck")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "archive_files",
         "patch_libtool",
         "build_targets",
@@ -423,9 +419,9 @@ To resolve this problem, please try the following:
                     stop_at=f"# ### END {marker}",
                 )
         else:
-            compiler_spec = spack.compilers.libraries.compiler_spec(self.spec)
-            if compiler_spec:
-                x.filter(regex='^wl=""$', repl='wl="{0}"'.format(compiler_spec.package.linker_arg))
+            c_spec = compiler_spec(self.spec)
+            if c_spec:
+                x.filter(regex='^wl=""$', repl='wl="{0}"'.format(c_spec.package.linker_arg))
 
         # Replace empty PIC flag values:
         for compiler, marker in markers.items():
@@ -582,7 +578,7 @@ To resolve this problem, please try the following:
             raise RuntimeError(msg.format(self.configure_directory))
 
         # Monkey-patch the configure script in the corresponding module
-        globals_for_pkg = spack.build_environment.ModuleChangePropagator(self.pkg)
+        globals_for_pkg = ModuleChangePropagator(self.pkg)
         globals_for_pkg.configure = Executable(self.configure_abs_path)
         globals_for_pkg.propagate_changes_to_mro()
 
@@ -844,7 +840,7 @@ To resolve this problem, please try the following:
 
         # Remove the files and create a log of what was removed
         libtool_files = find(str(self.pkg.prefix), "*.la", recursive=True)
-        with fs.safe_remove(*libtool_files):
+        with safe_remove(*libtool_files):
             mkdirp(os.path.dirname(self._removed_la_files_log))
             with open(self._removed_la_files_log, mode="w", encoding="utf-8") as f:
                 f.write("\n".join(libtool_files))

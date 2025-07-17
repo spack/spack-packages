@@ -206,6 +206,9 @@ class PyNumpy(PythonPackage):
     patch("check_executables2.patch", when="@1.19.0:1.19.5")
     patch("check_executables3.patch", when="@1.16.0:1.18.5")
 
+    # Fix atomic_load const issue
+    patch("fix-atomic-const.patch", when="@2.1.0: %fj")
+
     # Backport bug fix for f2py's define for threading when building with Mingw
     patch(
         "https://github.com/numpy/numpy/commit/932202d24c399f46161caa7464446b55e27fa947.patch?full_index=1",

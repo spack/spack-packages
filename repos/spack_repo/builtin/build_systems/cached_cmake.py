@@ -49,7 +49,7 @@ class CachedCMakeBuilder(CMakeBuilder):
     phases: Tuple[str, ...] = ("initconfig", "cmake", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods: Tuple[str, ...] = CMakeBuilder.legacy_methods + (
+    package_methods: Tuple[str, ...] = CMakeBuilder.package_methods + (
         "initconfig_compiler_entries",
         "initconfig_mpi_entries",
         "initconfig_hardware_entries",
@@ -58,7 +58,7 @@ class CachedCMakeBuilder(CMakeBuilder):
     )
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes: Tuple[str, ...] = CMakeBuilder.legacy_attributes + (
+    package_attributes: Tuple[str, ...] = CMakeBuilder.package_attributes + (
         "cache_name",
         "cache_path",
     )

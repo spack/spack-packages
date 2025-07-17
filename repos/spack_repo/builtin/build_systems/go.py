@@ -3,12 +3,14 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     PackageBase,
     Prefix,
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     install,
     join_path,
     mkdirp,
@@ -17,8 +19,6 @@ from spack.package import (
     when,
     working_dir,
 )
-
-from ._checks import BuilderWithDefaults, execute_install_time_tests
 
 
 class GoPackage(PackageBase):
@@ -29,7 +29,7 @@ class GoPackage(PackageBase):
     build_system_class = "GoPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "go"
+    default_buildsystem = "go"
 
     build_system("go")
 
@@ -61,10 +61,10 @@ class GoBuilder(BuilderWithDefaults):
     phases = ("build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("check", "installcheck")
+    package_methods = ("check", "installcheck")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_args",
         "check_args",
         "build_directory",

@@ -4,7 +4,7 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, get_cmake_prefix_path
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 

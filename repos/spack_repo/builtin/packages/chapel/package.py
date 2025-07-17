@@ -10,12 +10,7 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import llnl.util.lang
-
-import spack.platforms
-import spack.platforms.cray
 from spack.package import *
-from spack.util.environment import is_system_path, set_env
 
 
 def slingshot_network():
@@ -24,10 +19,10 @@ def slingshot_network():
     )
 
 
-@llnl.util.lang.memoized
+@memoized
 def is_CrayEX():
     # Credit to upcxx package for this hpe-cray-ex detection function
-    if spack.platforms.host().name == "linux":
+    if host_platform().name == "linux":
         target = os.environ.get("CRAYPE_NETWORK_TARGET")
         if target in ["ofi", "ucx"]:  # normal case
             return True
@@ -833,7 +828,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         return len(matches) == 0
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version_long(self) -> str:
         if not self.is_versioned_release():
             return self.get_chpl_version_from_cmakelists()
@@ -841,7 +836,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         return spec_vers_str
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version_short(self) -> str:
         if not self.is_versioned_release():
             return ".".join(self.get_chpl_version_from_cmakelists().split(".")[:-1])
