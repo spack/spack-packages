@@ -1,0 +1,62 @@
+diff --git a/src/ld.cxx b/src/ld.cxx
+index 7cbe9fb..16a17f2 100644
+--- a/src/ld.cxx
++++ b/src/ld.cxx
+@@ -43,6 +43,7 @@ int LdInvocation::InvokeToolchain()
+         this->rpath_executor = ExecuteCommand("lib.exe", this->ComposeCommandLists(
+             {
+                 {def_line, "-name:" + dll_name, "-out:"+ abs_out_imp_lib_name},
++                {link_run.get_rsp_file()},
+                 this->obj_args,
+                 this->lib_args,
+                 this->lib_dir_args,
+diff --git a/src/winrpath.cxx b/src/winrpath.cxx
+index 8821c8a..1a59fd4 100644
+--- a/src/winrpath.cxx
++++ b/src/winrpath.cxx
+@@ -190,6 +190,13 @@ void LinkerInvocation::Parse()
+             StrList defLine = split(*token, ":");
+             this->def_file = defLine[1];
+         }
++        else if (startswith(normalToken, "@") && endswith(normalToken, ".rsp")) {
++            // RSP files are used to describe object files, libraries, other CLI
++            // Switches relevant to the tool the rsp file is being passed to
++            // Primarily utilized by CMake and MSBuild projects to bypass
++            // Command line length limits
++            this->rsp_file = *token;
++        }
+     }
+     std::string ext = this->is_exe ? ".exe" : ".dll";
+     if (this->output.empty()){
+@@ -216,6 +223,11 @@ std::string LinkerInvocation::get_def_file()
+     return this->def_file;
+ }
+ 
++std::string LinkerInvocation::get_rsp_file()
++{
++    return this->rsp_file;
++}
++
+ std::string LinkerInvocation::get_out()
+ {
+     return this->output;
+diff --git a/src/winrpath.h b/src/winrpath.h
+index 9404a1f..1edb45c 100644
+--- a/src/winrpath.h
++++ b/src/winrpath.h
+@@ -215,12 +215,15 @@ public:
+     std::string get_mangled_out();
+     std::string get_implib_name();
+     std::string get_def_file();
++    std::string get_rsp_file();
++
+ private:
+     std::string line;
+     StrList tokens;
+     std::string name;
+     std::string implibname;
+     std::string def_file;
++    std::string rsp_file;
+     std::string output;
+     StrList libs;
+     StrList objs;
