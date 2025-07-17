@@ -29,28 +29,33 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("patchelf", type="build")
-    depends_on("cmake@3.26:", type="build")
-    depends_on("py-packaging", type="build")
-    depends_on("py-setuptools@61:", type="build")
-    depends_on("py-wheel", type="build")
-    depends_on("py-cython", type=["build", "run"])
-    depends_on("py-decorator", type=["build", "run"])
-    depends_on("py-numpy@1.23.5:", type=["build", "run"])
-    depends_on("py-tqdm@4.62.3:", type=["build", "run"])
-    depends_on("py-typing-extensions@4.10.0:", type=["build", "run"])
-    depends_on("py-attrs", type=["build", "run"])
-    depends_on("py-cloudpickle", type=["build", "run"])
-    depends_on("py-ml-dtypes", type=["build", "run"])
-    depends_on("py-psutil", type=["build", "run"])
-    depends_on("py-torch@2.2.0:", type=["build", "run"])
+
+    with default_args(type="build"):
+        # https://github.com/tile-ai/tilelang/blob/v0.1.5/pyproject.toml
+        depends_on("cmake@3.26:")
+        depends_on("py-packaging")
+        depends_on("py-setuptools@61:")
+        # depends_on("py-wheel") # inherited if `pip`` is the build system
+
+        # https://github.com/tile-ai/tilelang/blob/v0.1.5/requirements-build.txt
+        depends_on("py-build")
+        depends_on("py-tox")
+        depends_on("py-auditwheel")
+        depends_on("patchelf")
+
+    with default_args(type=["build", "run"]):
+        # https://github.com/tile-ai/tilelang/blob/v0.1.5/requirements.txt
+        depends_on("py-cython")
+        depends_on("py-numpy@1.23.5:")
+        depends_on("py-tqdm@4.62.3:")
+        depends_on("py-typing-extensions@4.10.0:")
+        depends_on("py-cloudpickle")
+        depends_on("py-ml-dtypes")
+        depends_on("py-psutil")
+        depends_on("py-torch")
 
     def cmake_args(self):
         return [
             self.define_from_variant("USE_CUDA", "cuda"),
             self.define_from_variant("USE_ROCM", "rocm"),
         ]
-
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("+cuda"):
-            env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix.lib64)
