@@ -175,7 +175,7 @@ class NetlibLapack(CMakePackage):
 
         # Remove duplicate header file that gets generated during CMake shared
         # builds: https://github.com/Reference-LAPACK/lapack/issues/583
-        if self.spec.satisfies("platform=windows @0:3.9.1"):
+        if self.spec.satisfies("platform=windows @:3.9.1"):
             force_remove("LAPACKE/include/lapacke_mangling.h")
 
     def xplatform_lib_name(self, lib):
