@@ -106,6 +106,9 @@ class RocprofilerSystems(CMakePackage):
             "(target application can use any MPI installation)"
         ),
     )
+    variant("internal-dyninst", default=False, description="build internal dyninst")
+    # Can't concretize dyninst@12 with gcc@13: due to restrictions in intel-tbb
+    requires("+internal-dyninst", when="%gcc@13:")
 
     extends("python", when="+python")
 
@@ -115,7 +118,9 @@ class RocprofilerSystems(CMakePackage):
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
-    depends_on("dyninst@:12")
+    depends_on("dyninst@:12", when="~internal-dyninst")
+    depends_on("boost", when="+internal-dyninst")
+    depends_on("libiberty", when="+internal-dyninst")
     depends_on("m4")
     depends_on("texinfo")
     depends_on("libunwind", type=("build", "run"))
@@ -147,7 +152,8 @@ class RocprofilerSystems(CMakePackage):
             self.define("ROCPROFSYS_BUILD_LIBUNWIND", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBGCC", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBSTDCXX", False),
-            self.define("ROCPROFSYS_BUILD_DYNINST", False),
+            self.define_from_variant("ROCPROFSYS_BUILD_DYNINST", "internal-dyninst"),
+            self.define_from_variant("DYNINST_BUILD_TBB", "internal-dyninst"),
             self.define_from_variant("ROCPROFSYS_BUILD_LTO", "ipo"),
             self.define_from_variant("ROCPROFSYS_USE_MPI", "mpi"),
             self.define_from_variant("ROCPROFSYS_USE_OMPT", "ompt"),
