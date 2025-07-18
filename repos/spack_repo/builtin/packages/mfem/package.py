@@ -1220,9 +1220,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             ]
 
         if "+enzyme" in spec:
-            options += [
-                "ENZYME_DIR=%s" % spec["enzyme"].prefix
-            ]
+            options += ["ENZYME_DIR=%s" % spec["enzyme"].prefix]
 
         return options
 
