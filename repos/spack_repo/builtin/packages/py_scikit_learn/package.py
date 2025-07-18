@@ -22,6 +22,7 @@ class PyScikitLearn(PythonPackage):
 
     version("main", branch="main")
     version("master", branch="main", deprecated=True)
+    version("1.7.1", sha256="24b3f1e976a4665aa74ee0fcaac2b8fccc6ae77c8e07ab25da3ba6d3292b9802")
     version("1.7.0", sha256="c01e869b15aec88e2cdb73d27f15bdbe03bce8e2fb43afbe77c45d399e73a5a3")
     version("1.6.1", sha256="b4fc2525eca2c69a59260f583c56a7557c6ccdf8deafdba6e060f94c1c59738e")
     version("1.6.0", sha256="9d58481f9f7499dff4196927aedd4285a0baec8caa3790efbe205f13de37dd6e")
