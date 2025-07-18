@@ -215,6 +215,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     variant("fms", default=False, when="@4.3.0:", description="Enable FMS I/O support")
     variant("ginkgo", default=False, when="@4.3.0:", description="Enable Ginkgo support")
     variant("hiop", default=False, when="@4.4.0:", description="Enable HiOp support")
+    variant("enzyme", default=False, when="@4.9.0:", description="Enable Enzyme support")
     # TODO: SIMD, ADIOS2, MKL CPardiso, Axom/Sidre
     variant(
         "timer",
@@ -236,7 +237,15 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     variant(
         "cxxstd",
         default="auto",
-        values=("auto", conditional("98", when="@:3"), "11", "14", "17"),
+        values=(
+            "auto",
+            conditional("98", when="@:3"),
+            conditional("11", when="@:4.8"),
+            conditional("14", when="@:4.8"),
+            "17",
+            "20",
+            "23",
+        ),
         multi=False,
         description="C++ language standard",
     )
@@ -490,6 +499,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         depends_on(
             "amgx~mpi cuda_arch={0}".format(sm_), when="+amgx~mpi cuda_arch={0}".format(sm_)
         )
+    depends_on("enzyme@0.0.176:", when="+enzyme")
+    requires("%cxx=llvm", when="+enzyme")
 
     for using_double_cond in ["@:4.6", "precision=double"]:
         with when(using_double_cond):
@@ -633,6 +644,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             "MFEM_USE_FMS=%s" % yes_no("+fms"),
             "MFEM_USE_GINKGO=%s" % yes_no("+ginkgo"),
             "MFEM_USE_HIOP=%s" % yes_no("+hiop"),
+            "MFEM_USE_ENZYME=%s" % yes_no("+enzyme"),
             "MFEM_MPIEXEC=%s" % mfem_mpiexec,
             "MFEM_MPIEXEC_NP=%s" % mfem_mpiexec_np,
             "MFEM_USE_EXCEPTIONS=%s" % yes_no("+exceptions"),
@@ -657,6 +669,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         if self.spec.satisfies("^ginkgo@1.4.0:1.8"):
             cxxstd = "14"
         if self.spec.satisfies("^ginkgo@1.9.0:"):
+            cxxstd = "17"
+        if self.spec.satisfies("@4.9.0:"):
             cxxstd = "17"
         cxxstd_req = spec.variants["cxxstd"].value
         if cxxstd_req != "auto":
@@ -1203,6 +1217,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             options += [
                 "MUMPS_OPT=%s" % " ".join(mumps_opt),
                 "MUMPS_LIB=%s" % ld_flags_from_library_list(mumps.libs),
+            ]
+
+        if "+enzyme" in spec:
+            options += [
+                "ENZYME_DIR=%s" % spec["enzyme"].prefix
             ]
 
         return options
