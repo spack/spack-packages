@@ -931,19 +931,18 @@ class Python(Package):
         # in that order if using python@3.11.0, for example.
         suffixes = [self.spec.version.up_to(2), self.spec.version.up_to(1), ""]
         file_extension = "" if sys.platform != "win32" else ".exe"
-        patterns = [f"python{ver}{file_extension}" for ver in suffixes]
         root = self.prefix.bin if sys.platform != "win32" else self.prefix
-        path = find_first(root, files=patterns)
+        filepaths = [os.path.join(root, f"python{ver}{file_extension}") for ver in suffixes]
 
-        if path is not None:
-            return Executable(path)
+        for candidate in filepaths:
+            if os.path.exists(candidate)
+                return Executable(candidate)
 
-        else:
-            # Give a last try at rhel8 platform python
-            if self.spec.external and self.prefix == "/usr" and self.spec.satisfies("os=rhel8"):
-                path = os.path.join(self.prefix, "libexec", "platform-python")
-                if os.path.exists(path):
-                    return Executable(path)
+        # Give a last try at rhel8 platform python
+        if self.spec.external and self.prefix == "/usr" and self.spec.satisfies("os=rhel8"):
+            path = os.path.join(self.prefix, "libexec", "platform-python")
+            if os.path.exists(path):
+                return Executable(path)
 
         raise RuntimeError(
             f"cannot to locate the '{self.name}' command in {root} or its subdirectories"
