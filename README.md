@@ -18,7 +18,7 @@
 
 # Spack Packages
 
-This is the default [Spack](https://github.com/spack/spack) packages repository, which
+This is the default [Spack](https://github.com/spack/spack) package repository, which
 contains the set of packages maintained by the Spack community. In Spack v1.0 and later,
 the repository here is automatically added to the Spack configuration.
 
