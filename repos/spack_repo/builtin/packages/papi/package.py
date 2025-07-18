@@ -57,7 +57,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
     variant("cuda", default=False, description="Enable CUDA support")
     variant("nvml", default=False, description="Enable NVML support")
     variant("rocm_smi", default=False, description="Enable ROCm SMI support")
-    variant("rocp_sdk", default=False, description="Enable ROCp support")
+    variant("rocp_sdk", default=False, when="@7.2:", description="Enable ROCp support")
     variant(
         "rdpmc",
         default=True,
@@ -87,7 +87,6 @@ class Papi(AutotoolsPackage, ROCmPackage):
     depends_on("rocm-openmp-extras", when="+rocm")
     depends_on("rocm-smi-lib", when="+rocm_smi")
 
-    conflicts("+rocp_sdk", when="@:7.1.0")
     conflicts("%gcc@8:", when="@5.3.0", msg="Requires GCC version less than 8.0")
     conflicts("+sde", when="@:5", msg="Software defined events (SDE) added in 6.0.0")
     conflicts("^cuda", when="@:5", msg="CUDA support for versions < 6.0.0 not implemented")
