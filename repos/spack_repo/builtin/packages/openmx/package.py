@@ -74,6 +74,7 @@ class Openmx(MakefilePackage):
             copy(join_path("source", "kpoint.in"), "work")
             if "%aocc" in spec or "%llvm" in spec:
                 copy("set_proexpn_patch/Set_ProExpn_VNA.c", "source/Set_ProExpn_VNA.c")
+        filter_file(r"\bgcc\b", "$(CC)", "source/makefile")
         makefile = FileFilter("./source/makefile")
         makefile.filter("^DESTDIR.*$", "DESTDIR = {0}/bin".format(prefix))
         mkdirp(prefix.bin)
