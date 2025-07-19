@@ -37,6 +37,7 @@ class PyMesonPython(PythonPackage):
     depends_on("c", type="build")
 
     with default_args(type=("build", "run")):
+        depends_on("ninja", type=("build", "run"))
         depends_on("meson@0.64:", when="@0.18:")
         depends_on("meson@0.63.3:", when="@0.11:")
         depends_on("meson@0.63:", when="@0.9:")

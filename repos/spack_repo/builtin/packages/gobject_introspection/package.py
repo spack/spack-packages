@@ -5,7 +5,6 @@ from spack_repo.builtin.build_systems import autotools
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
-import spack.hooks.sbang as sbang
 from spack.package import *
 
 
@@ -121,7 +120,7 @@ class GobjectIntrospection(MesonPackage, AutotoolsPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Only needed for sbang.patch above
         if self.spec.satisfies("@:1.60"):
-            env.set("SPACK_SBANG", sbang.sbang_install_path())
+            env.set("SPACK_SBANG", sbang_install_path())
         env.set("GI_SCANNER_DISABLE_CACHE", "1")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

@@ -22,9 +22,10 @@ class Ucx(AutotoolsPackage, CudaPackage):
     license("BSD-3-Clause")
 
     # Current
-    version("1.18.0", sha256="fa75070f5fa7442731b4ef5fc9549391e147ed3d859afeb1dad2d4513b39dc33")
+    version("1.18.1", sha256="8018dd75f11b5e8d6e57dcdb5b798d2c1f000982c353efde1f3170025c6c3b4c")
 
     # Still supported
+    version("1.18.0", sha256="fa75070f5fa7442731b4ef5fc9549391e147ed3d859afeb1dad2d4513b39dc33")
     version("1.17.0", sha256="34658e282f99f89ce7a991c542e9727552734ac6ad408c52f22b4c2653b04276")
     version("1.16.0", sha256="f73770d3b583c91aba5fb07557e655ead0786e057018bfe42f0ebe8716e9d28c")
     version("1.15.0", sha256="4b202087076bc1c98f9249144f0c277a8ea88ad4ca6f404f94baa9cb3aebda6d")
@@ -151,7 +152,7 @@ class Ucx(AutotoolsPackage, CudaPackage):
     conflicts("+rocm", when="+gdrcopy", msg="gdrcopy > 2.0 does not support rocm")
 
     # https://github.com/openucx/ucx/issues/10589
-    conflicts("%gcc@15:", when="@:1.18.0")
+    conflicts("%gcc@15:", when="@:1.18")
 
     configure_abs_path = "contrib/configure-release"
 

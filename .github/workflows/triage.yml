@@ -1,0 +1,36 @@
+#-----------------------------------------------------------------------
+# DO NOT modify unless you really know what you are doing.
+#
+# See https://stackoverflow.com/a/74959635 for more info.
+# Talk to @alecbcs if you have questions/are not sure of a change's
+# possible impact to security.
+#-----------------------------------------------------------------------
+name: triage
+on:
+  pull_request_target:
+    branches:
+      - develop
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: develop # DO NOT CHANGE
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+
+      - name: Install Python dependencies
+        run: pip install -r .github/workflows/requirements/triage/requirements.txt
+
+      - run: python3 .github/workflows/bin/spack-labeler.py
+        env:
+          GH_PR_NUMBER: ${{ github.event.number }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          LABELS_CONFIG: .github/labels.yml

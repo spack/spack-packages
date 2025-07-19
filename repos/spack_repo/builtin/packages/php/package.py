@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
-import spack.hooks.sbang as sbang
 from spack.package import *
 
 
@@ -76,7 +75,7 @@ class Php(AutotoolsPackage):
         if len(self.prefix.bin.php) + 2 <= shebang_limit:
             return
 
-        new_sbang_line = "#!/bin/bash %s" % sbang.sbang_install_path()
+        new_sbang_line = "#!/bin/bash %s" % sbang_install_path()
         original_bang = '-b "$(PHP_PHARCMD_BANG)"'
         makefile = join_path("ext", "phar", "Makefile.frag")
         filter_file(

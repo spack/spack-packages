@@ -273,19 +273,18 @@ class Vtk(CMakePackage):
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
     patch("vtk_clang19_size_t.patch", when="@9.2:9.4.2")
 
-    # Needed to build VTK with external SEACAS >= 2022-10-14
-    @when("@9.4:")
     def patch(self):
-        filter_file(
-            "^.*USE_VARIABLES SEACASIoss_INCLUDE_DIRS.*$", "", "ThirdParty/ioss/CMakeLists.txt"
-        )
+        if self.spec.satisfies("@9.2:"):
+            # provide definition for Ioss::Init::Initializer::Initializer(),
+            # required on macOS, as "-undefined error" is the default,
+            # but not on Linux, as undefined symbols are tolerated
+            filter_file("TARGETS Ioss", "TARGETS Ioss Ionit", "ThirdParty/ioss/CMakeLists.txt")
 
-    @when("@9.2:")
-    def patch(self):
-        # provide definition for Ioss::Init::Initializer::Initializer(),
-        # required on macOS, as "-undefined error" is the default,
-        # but not on Linux, as undefined symbols are tolerated
-        filter_file("TARGETS Ioss", "TARGETS Ioss Ionit", "ThirdParty/ioss/CMakeLists.txt")
+        if self.spec.satisfies("@9.4:"):
+            # Needed to build VTK with external SEACAS >= 2022-10-14
+            filter_file(
+                "^.*USE_VARIABLES SEACASIoss_INCLUDE_DIRS.*$", "", "ThirdParty/ioss/CMakeLists.txt"
+            )
 
     def url_for_version(self, version):
         url = "http://www.vtk.org/files/release/{0}/VTK-{1}.tar.gz"

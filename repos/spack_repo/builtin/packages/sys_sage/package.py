@@ -18,8 +18,16 @@ class SysSage(CMakePackage):
 
     license("Apache-2.0")
 
+    version(
+        "1.0.0-alpha2", sha256="5ca997191049f3fb4af17c66832bcae1b4023d515156ebc601dad40619255265"
+    )
+    version("0.5.2", sha256="fd574170b9022a5a133cdb7d495aabbe2707882ff5d1402fe516b492fd6e2a75")
     version("0.5.0", sha256="044e53bf0f3873325fa4dedb510849d58b23b5a2c654d41b1389a318b2cb7ee1")
-    version("0.4.3", sha256="e24313c4274576c1511a62e1b27c86a78cea7e4c123b8a53303cfc70de978faa")
+    version(
+        "0.4.3",
+        sha256="e24313c4274576c1511a62e1b27c86a78cea7e4c123b8a53303cfc70de978faa",
+        deprecated=True,
+    )
     version("master", branch="master")
     version("develop", branch="develop")
 
@@ -57,7 +65,10 @@ class SysSage(CMakePackage):
         "libraries.",
     )
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+
+    depends_on("nlohmann-json@3.11:", when="@1:")
 
     depends_on("cmake@3.22:", type="build")
     depends_on("libxml2@2.9.13:")
