@@ -23,7 +23,8 @@ class Eigen(CMakePackage, ROCmPackage):
     license("MPL-2.0")
 
     version("master", branch="master")
-    version("3.4.0", sha256="8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72")
+    version("3.4.0-44-ge7248b26a", commit="e7248b26a1ed53fa030c5c459f7ea095dfd276ac")
+    version("3.4.0", sha256="8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72", preferred=True)
     version("3.3.9", sha256="7985975b787340124786f092b3a07d594b2e9cd53bbfe5f3d9b1daee7d55f56f")
     version("3.3.8", sha256="146a480b8ed1fb6ac7cd33fec9eb5e8f8f62c3683b3f850094d9d5c35a92419a")
     version("3.3.7", sha256="d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57")
