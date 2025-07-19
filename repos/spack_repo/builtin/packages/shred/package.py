@@ -51,6 +51,5 @@ class Shred(MakefilePackage):
         env.set("PLA_DIR", spec["scalapack"].prefix)
 
     def install(self, spec, prefix):
-        # install to the spack view
         mkdirp(prefix.bin)
         install("shred", prefix.bin)
