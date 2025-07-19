@@ -1,8 +1,8 @@
 <h2>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-white-text.svg" width="250">
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-text.svg" width="250">
-  <img alt="Spack" src="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-text.svg" width="250">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-white-text.svg" width="368">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-text.svg" width="368">
+  <img alt="Spack" src="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-text.svg" width="368">
 </picture>
 
 <br>
