@@ -94,6 +94,7 @@ class PyScikitLearn(PythonPackage):
         depends_on("python@:3.8", when="@0.22:0.23")
 
     with default_args(type="build"):
+        depends_on("py-meson-python@0.17.1:", when="@1.7.1:")
         depends_on("py-meson-python@0.16:", when="@1.5.1:")
         depends_on("py-meson-python@0.15:", when="@1.5:")
         depends_on("py-cython@3.0.10:", when="@1.5:")
