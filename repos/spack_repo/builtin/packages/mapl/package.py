@@ -39,7 +39,7 @@ class Mapl(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
-    version("2.58.0", sha256="907e4d1facd82758069bf98a34015bb21188bcc838697f25bf9c5a20e1a6af6f")
+    version("2.58.1", sha256="176c7baccd0182e353184808b1048baa6100d8700ca532e0d02bea6ae5771aba")
     version("2.57.0", sha256="6991e6b7521842c9c94b549dd0fed778e8b6dad1201708aad3193c274597e36a")
     version("2.56.1", sha256="f2c1f5d9c088fee029fa8358a382544288f3081e922e164feb19e671d106eefd")
     version("2.56.0", sha256="9efdbfb87b7ca8d31f4be241a9db260612310e01930681565bfdaf869090a7e8")
