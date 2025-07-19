@@ -44,11 +44,11 @@ class Shred(MakefilePackage):
         spec = self.spec
 
         # Set env variables which are then used by Makefile
-        env.set("MPI_DIR", "%s" % spec["mpi"].prefix)
-        env.set("FFTW_DIR", "%s" % spec["fftw"].prefix)
-        env.set("XC_DIR", "%s" % spec["libxc"].prefix)
-        env.set("LA_DIR", "%s" % spec["lapack"].prefix)
-        env.set("PLA_DIR", "%s" % spec["scalapack"].prefix)
+        env.set("MPI_DIR", spec["mpi"].prefix)
+        env.set("FFTW_DIR", spec["fftw"].prefix)
+        env.set("XC_DIR", spec["libxc"].prefix)
+        env.set("LA_DIR", spec["lapack"].prefix)
+        env.set("PLA_DIR", spec["scalapack"].prefix)
 
     def install(self, spec, prefix):
         # install to the spack view
