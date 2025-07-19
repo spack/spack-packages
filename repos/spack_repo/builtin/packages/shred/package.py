@@ -26,7 +26,7 @@ class Shred(MakefilePackage):
 
     # Necessary package dependencies
     depends_on("gmake", type="build")
-    
+
     depends_on("blas")
     depends_on("fftw+mpi+openmp")
     depends_on("lapack")
