@@ -25,12 +25,14 @@ class Shred(MakefilePackage):
     depends_on("c", type="build")
 
     # Necessary package dependencies
-    depends_on("mpi")
-    depends_on("libxc")
-    depends_on("fftw+mpi+openmp")
-    depends_on("scalapack")
-    depends_on("lapack")
+    depends_on("gmake", type="build")
+    
     depends_on("blas")
+    depends_on("fftw+mpi+openmp")
+    depends_on("lapack")
+    depends_on("libxc")
+    depends_on("mpi")
+    depends_on("scalapack")
 
     # Need libxc version less than 6.0.0
     conflicts("^libxc", when="@:6.0.0", msg="libxc version must be <6.0.0")
