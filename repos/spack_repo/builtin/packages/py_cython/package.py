@@ -16,6 +16,7 @@ class PyCython(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.1.2", sha256="6bbf7a953fa6762dfecdec015e3b054ba51c0121a45ad851fa130f63f5331381")
     version("3.0.12", sha256="b988bb297ce76c671e28c97d017b95411010f7c77fa6623dd0bb47eed1aee1bc")
     version("3.0.11", sha256="7146dd2af8682b4ca61331851e6aebce9fe5158e75300343f80c07ca80b1faff")
     version("3.0.10", sha256="dcc96739331fb854dcf503f94607576cfe8488066c61ca50dfd55836f132de99")
