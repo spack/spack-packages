@@ -39,8 +39,6 @@ class Shred(MakefilePackage):
 
     build_system("makefile", default="makefile")
 
-    # Makefile uses GNU extensions
-    depends_on("gmake", type="build")
 
     def setup_build_environment(self, env):
         spec = self.spec
