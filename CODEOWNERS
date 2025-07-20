@@ -1,0 +1,62 @@
+###
+# New stacks and unmaintained stacks to ping maintainers
+# monitoring infrastructure capacity.
+/stacks/ @eugeneswalker @kwryankrattiger @zackgalbreath
+
+###
+# Stacks without maintainers will ping infrastructure maintainers
+# /stacks/aws-pcluster-neoverse_v1/
+# /stacks/aws-pcluster-x86_64_v4/
+# /stacks/radiuss/
+# /stacks/radiuss-aws/
+# /stacks/radiuss-aws-aarch64/
+
+###
+# Stacks with maintainers
+/stacks/bootstrap-aarch64-darwin/             @alalazo @haampie
+/stacks/bootstrap-x86_64-linux-gnu/           @alalazo @haampie
+/stacks/build_systems/                        @alalazo
+/stacks/data-vis-sdk/                         @kwryankrattiger
+/stacks/developer-tools-aarch64-linux-gnu/    @alalazo
+/stacks/developer-tools-x86_64_v3-linux-gnu/  @alalazo
+/stacks/developer-tools-darwin/               @eugeneswalker @trws
+/stacks/e4s*/                                 @eugeneswalker
+/stacks/hep/                                  @wdconinc
+/stacks/ml-darwin-aarch64-mps/                @adamjstewart @eugeneswalker
+/stacks/ml-linux*/                            @adamjstewart
+/stacks/tools-sdk/                            @kwryankrattiger
+/stacks/tutorial/                             @alecbcs @becker33 @tldahlgren @tgamblin
+/stacks/windows-vis/                          @johnwparent @kwryankrattiger @scheibelp
+
+###
+# CI Components maintained by Kitware
+/.ci/configs/              @kwryankrattiger @scottwittenburg @zackgalbreath
+/.ci/gitlab/configs/       @kwryankrattiger @scottwittenburg @zackgalbreath
+.ci/gitlab/.gitlab-ci.yml  @kwryankrattiger @scottwittenburg @zackgalbreath
+
+###
+# CI Components maintained by UO
+/.ci/gitlab/configs/cray*/    @eugeneswalker
+/.ci/gitlab/configs/darwin*/  @eugeneswalker
+
+###
+# GitHub Actions maintainers
+/.github/actions/*    @haampie @kwryankrattiger
+/.github/workflows/*  @alecbcs @alalazo @haampie @kwryankrattiger
+
+###
+# GitHub project maintainers
+.github/*.md              @spack/merge-to-develop
+.github/*.yml             @spack/merge-to-develop
+/.github/ISSUE_TEMPLATE/  @spack/merge-to-develop
+CODEOWNDERS               @spack/merge-to-develop
+LICENSE*                  @spack/merge-to-develop
+NOTICE                    @spack/merge-to-develop
+README.md                 @spack/merge-to-develop
+pyproject.toml            @spack/merge-to-develop
+.*                        @spack/merge-to-develop
+
+###
+# Packages tests maintainers
+/tests/      @alalazo @becker33 @haampie @johnwparent @tldahlgren
+.pytest.ini  @alalazo @becker33 @haampie @tldahlgren
