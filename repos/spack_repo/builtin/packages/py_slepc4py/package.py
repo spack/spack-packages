@@ -59,17 +59,7 @@ class PySlepc4py(PythonPackage):
 
     depends_on("py-petsc4py@main", when="@main", type=("build", "run"))
     depends_on("slepc@main", when="@main")
-    for ver in [
-        "3.23",
-        "3.22",
-        "3.21",
-        "3.20",
-        "3.19",
-        "3.18",
-        "3.17",
-        "3.16",
-        "3.15",
-    ]:
+    for ver in ["3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15"]:
         depends_on(f"py-petsc4py@{ver}", when=f"@{ver}", type=("build", "run"))
         depends_on(f"slepc@{ver}", when=f"@{ver}")
 

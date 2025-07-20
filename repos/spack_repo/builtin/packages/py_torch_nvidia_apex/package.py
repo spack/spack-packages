@@ -20,10 +20,7 @@ class PyTorchNvidiaApex(PythonPackage, CudaPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
-    version(
-        "24.04.01",
-        sha256="065bc5c0146ee579d5db2b38ca3949da4dc799b871961a2c9eb19e18892166ce",
-    )
+    version("24.04.01", sha256="065bc5c0146ee579d5db2b38ca3949da4dc799b871961a2c9eb19e18892166ce")
     version("23.08", tag="23.08")
     version("23.07", tag="23.07")
     version("23.06", tag="23.06")

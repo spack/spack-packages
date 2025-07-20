@@ -72,18 +72,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
 
     # Cannot mix release and development versions of SLEPc and PETSc:
     depends_on("petsc@main", when="@main")
-    for ver in [
-        "3.23",
-        "3.22",
-        "3.21",
-        "3.20",
-        "3.19",
-        "3.18",
-        "3.17",
-        "3.16",
-        "3.15",
-        "3.14",
-    ]:
+    for ver in ["3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15", "3.14"]:
         depends_on(f"petsc@{ver}", when=f"@{ver}")
     depends_on("petsc+cuda", when="+cuda")
     depends_on("arpack-ng~mpi", when="+arpack^petsc~mpi~int64")

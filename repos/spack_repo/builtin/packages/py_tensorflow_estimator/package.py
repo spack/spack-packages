@@ -46,17 +46,7 @@ class PyTensorflowEstimator(Package):
         depends_on("py-numpy")
         depends_on("py-pandas")
         depends_on("py-six")
-        for ver in [
-            "2.14",
-            "2.13",
-            "2.12",
-            "2.11",
-            "2.10",
-            "2.9",
-            "2.8",
-            "2.7",
-            "2.6",
-        ]:
+        for ver in ["2.14", "2.13", "2.12", "2.11", "2.10", "2.9", "2.8", "2.7", "2.6"]:
             depends_on(f"py-tensorboard@{ver}", when=f"@{ver}")
             depends_on(f"py-tensorflow@{ver}", when=f"@{ver}")
             depends_on(f"py-keras@{ver}", when=f"@{ver}")

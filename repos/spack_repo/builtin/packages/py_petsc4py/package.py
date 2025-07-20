@@ -106,17 +106,7 @@ class PyPetsc4py(PythonPackage):
     depends_on("petsc+mpi", when="+mpi")
     depends_on("petsc~mpi", when="~mpi")
     depends_on("petsc@main", when="@main")
-    for ver in [
-        "3.23",
-        "3.22",
-        "3.21",
-        "3.20",
-        "3.19",
-        "3.18",
-        "3.17",
-        "3.16",
-        "3.15",
-    ]:
+    for ver in ["3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15"]:
         depends_on(f"petsc@{ver}", when=f"@{ver}")
     depends_on("petsc@3.14.2:3.14", when="@3.14.1:3.14")
     depends_on("petsc@3.14.0:3.14.1", when="@3.14.0")
