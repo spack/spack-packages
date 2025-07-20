@@ -64,7 +64,7 @@ class Vtk(CMakePackage):
 
     # VTK7 defaults to OpenGL2 rendering backend
     variant("opengl2", default=True, description="Enable OpenGL2 backend")
-    variant("python", default=False, description="Enable Python support", when="@8:")
+    variant("python", default=False, description="Enable Python support", when="@9.0.2:")
     variant("qt", default=False, description="Build with support for Qt")
     variant("xdmf", default=False, description="Build XDMF file support")
     variant("ffmpeg", default=False, description="Build with FFMPEG support")
@@ -108,8 +108,6 @@ class Vtk(CMakePackage):
         extends("python@:3.11", when="@:9.2")
         extends("python@:3.10", when="@:9.2.2")
         extends("python@:3.9", when="@:9.1")
-        extends("python@:3.8", when="@:9.0.1")
-        extends("python@:3.7", when="@:8.2.0")
 
     # We need mpi4py if buidling python wrappers and using MPI
     depends_on("py-mpi4py", when="+python+mpi", type="run")
