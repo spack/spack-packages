@@ -987,10 +987,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 cuda_cxx = join_path(spec["cuda"].prefix, "bin", "nvcc")
             else:
                 cuda_cxx = spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]
-            options += [
-                f"CUDA_CXX={cuda_cxx}",
-                "CUDA_ARCH=sm_%s" % cuda_arch,
-            ]
+            options += [f"CUDA_CXX={cuda_cxx}", "CUDA_ARCH=sm_%s" % cuda_arch]
             # Check if we are using a CUDA installation where the math libs are
             # in a separate directory:
             culibs = ["libcusparse"]
