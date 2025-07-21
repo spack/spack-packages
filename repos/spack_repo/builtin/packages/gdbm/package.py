@@ -47,6 +47,14 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
     patch("gdbm.patch", when="@:1.18 %oneapi")
     patch("gdbm.patch", when="@:1.18 %arm@21:")
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            # See https://src.fedoraproject.org/rpms/gdbm/blob/44ea7380c69b1c139fe385bc1c5940070b36c626/f/gdbm.spec#_62
+            if self.spec.satisfies("@:1.24 %gcc@15:"):
+                flags.append("-std=gnu11")
+
+        return (flags, None, None)
+
     def configure_args(self):
         # GDBM uses some non-standard GNU extensions,
         # enabled with -D_GNU_SOURCE.  See:

@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -183,7 +182,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                 # this options are take from the default provided
                 # configuration files
                 # https://github.com/UIUC-PPL/charm/pull/2778
-                archopt = optimization_flags(self.compiler, spec.target)
+                archopt = microarchitecture_flags(self.spec, "c")
 
                 if self.spec.satisfies("^charmpp@:6.10.1"):
                     optims_opts = {

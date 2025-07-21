@@ -17,6 +17,7 @@ class PyMetomiRose(PythonPackage):
 
     license("GPL-3.0-only")
 
+    version("2.4.2", sha256="667218bb19d1cc6586a5a5e59b3c473a0d5886dca503b5f6e057d2443efc6b5d")
     version("2.3.2", sha256="5d2a1593a5bbe8362fbe5e197eaa0cde2574700c62181d9b5c1fafa1e67656cd")
     version("2.1.0", sha256="1b60135a434fe4325d364a57e8f5e81e90f39b373b9d68733458c1adc2513c05")
 
@@ -32,5 +33,5 @@ class PyMetomiRose(PythonPackage):
     depends_on("py-requests", type=("build", "run"))
     depends_on("py-sqlalchemy@1", type=("build", "run"))
 
-    depends_on("py-importlib-metadata@5:", when="@2.3.2 ^python@:3.11")
-    depends_on("py-importlib-resources@2:", when="@2.3.2 ^python@:3.8")
+    depends_on("py-importlib-metadata@5:", when="@2.3: ^python@:3.11")
+    depends_on("py-importlib-resources@2:", when="@2.3: ^python@:3.8")
