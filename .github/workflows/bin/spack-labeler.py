@@ -28,10 +28,10 @@ def import_labels_config(path: str):
 
 
 def main():
-    labels_config_path = os.environ.get("LABELS_CONFIG")
-    repository = os.environ.get("GH_REPO")
-    pr_number = os.environ.get("GH_PR_NUMBER")
-    token = os.environ.get("GH_TOKEN")
+    labels_config_path = os.environ["LABELS_CONFIG"]
+    repository = os.environ["GH_REPO"]
+    pr_number = os.environ["GH_PR_NUMBER"]
+    token = os.environ["GH_TOKEN"]
 
     headers = {"Accept": "application/vnd.github+json"}
     if token:
