@@ -24,13 +24,12 @@ class Kenlm(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.10:", type="build")
-    depends_on("boost@1.41.0:", type="build")
+    depends_on("boost@1.41.0: +program_options +thread +system +test", type="build")
     depends_on("eigen@3.1.0:", type="build")
 
     def cmake_args(self):
         args = [
-            self.define("BUILD_SHARED_LIBS", True),
-            self.define_from_variant("BUILD_PYTHON_STANDALONE", "python"),
+            self.define("BUILD_SHARED_LIBS", False),
             self.define("KENLM_MAX_ORDER", 6),
         ]
 
@@ -43,3 +42,7 @@ class Kenlm(CMakePackage):
 
     def setup_build_environment(self, env):
         env.set("CXXFLAGS", "-fPIC")
+
+    def install(self, spec, prefix):
+        # Kenlm lacks an install in its CMakeList
+        install_tree(join_path(self.build_directory, "bin"), prefix.bin)
