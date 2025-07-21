@@ -8,9 +8,7 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
-from spack.util.environment import is_system_path
 
 _is_macos = sys.platform == "darwin"
 
@@ -975,6 +973,10 @@ class Root(CMakePackage):
             ftgl_prefix = self.spec["ftgl"].prefix
             options.append(define("FTGL_ROOT_DIR", ftgl_prefix))
             options.append(define("FTGL_INCLUDE_DIR", ftgl_prefix.include))
+
+        # Fix RPath handling with gnuinstall
+        if "+rpath" in self.spec:
+            options.append(define("CMAKE_INSTALL_RPATH", self.prefix.lib.root))
 
         return options
 

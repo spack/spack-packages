@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonExtension, PythonPipBuilder
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -996,8 +995,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             )
 
         # Overwrite generic cpu tune option
-        cmake_tune_flags = optimization_flags(self.compiler, spec.target)
-        args.append(self.define("CMAKE_TUNE_FLAGS", cmake_tune_flags))
+        args.append(self.define("CMAKE_TUNE_FLAGS", microarchitecture_flags(self.spec, "c")))
 
         args.append(self.define_from_variant("LAMMPS_SIZES", "lammps_sizes"))
 

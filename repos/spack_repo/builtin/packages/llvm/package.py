@@ -5,11 +5,9 @@ import os
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, generator, get_cmake_prefix_path
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-
-from llnl.util.lang import classproperty
 
 from spack.package import *
 
@@ -214,12 +212,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         "clang", default=True, description="Build the LLVM C/C++/Objective-C compiler frontend"
     )
 
-    variant(
-        "flang",
-        default=False,
-        description="Build the LLVM Fortran compiler frontend "
-        "(experimental - parser only, needs GCC)",
-    )
+    variant("flang", default=False, description="Build the LLVM Fortran compiler frontend ")
+
     conflicts("+flang", when="@:10")
     conflicts("+flang", when="~clang")
 

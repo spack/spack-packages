@@ -8,7 +8,6 @@ from spack_repo.builtin.build_systems import meson
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
-from spack.util.environment import is_system_path
 
 
 class Glib(MesonPackage):

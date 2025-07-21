@@ -6,7 +6,6 @@ import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 _versions = {
@@ -273,7 +272,7 @@ class Aqlprofile(Package):
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
-    spack_os = spack.platforms.host().default_os
+    spack_os = host_platform().default_os
     if "rhel" in spack_os or "centos" in spack_os:
         pkg_type = "yum"
     elif "sles" in spack_os:

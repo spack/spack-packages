@@ -5,7 +5,6 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-import spack.hooks.sbang as sbang
 from spack.package import *
 
 
@@ -256,7 +255,7 @@ class Phist(CMakePackage):
         )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("SPACK_SBANG", sbang.sbang_install_path())
+        env.set("SPACK_SBANG", sbang_install_path())
 
     def cmake_args(self):
         spec = self.spec

@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from spack.error import SpackError
 from spack.package import *
 
 
