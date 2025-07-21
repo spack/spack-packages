@@ -156,6 +156,10 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("sundials", default=False, description="Enable SUNDIALS interfaces")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
+    variant("gpu_rdc", default=True, description="Enable relocatable GPU device code support",
+            when="+cuda")
+    variant("gpu_rdc", default=True, description="Enable relocatable GPU device code support",
+            when="+rocm")
 
     # Build dependencies
     depends_on("c", type="build")  # generated
@@ -361,12 +365,14 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             args.append("-DAMReX_CUDA_ERROR_CROSS_EXECUTION_SPACE_CALL=ON")
             cuda_arch = self.spec.variants["cuda_arch"].value
             args.append("-DAMReX_CUDA_ARCH=" + self.get_cuda_arch_string(cuda_arch))
+            args.append(self.define_from_variant("AMReX_GPU_RDC", "gpu_rdc"))
 
         if self.spec.satisfies("+rocm"):
             args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].hipcc))
             args.append("-DAMReX_GPU_BACKEND=HIP")
             targets = self.spec.variants["amdgpu_target"].value
             args.append("-DAMReX_AMD_ARCH=" + ";".join(str(x) for x in targets))
+            args.append(self.define_from_variant("AMReX_GPU_RDC", "gpu_rdc"))
 
         if self.spec.satisfies("+sycl"):
             args.append("-DAMReX_GPU_BACKEND=SYCL")
