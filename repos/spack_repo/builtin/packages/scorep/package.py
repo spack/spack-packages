@@ -194,7 +194,7 @@ class Scorep(AutotoolsPackage):
     # Handle any mapping of Spack compiler names to Score-P args
     # This should continue to exist for backward compatibility
     def clean_compiler(self, compiler):
-        renames = {"cce": "cray", "rocmcc": "amdclang"}
+        renames = {"cce": "cray", "rocmcc": "amdclang", "intel-oneapi-compilers": "oneapi"}
         if compiler in renames:
             return renames[compiler]
         return compiler
@@ -208,8 +208,6 @@ class Scorep(AutotoolsPackage):
         ]
 
         cname = self.clean_compiler(spec.compiler.name)
-        if cname == "intel-oneapi-compilers":
-            cname = "oneapi"
         config_args.extend(["--with-nocross-compiler-suite={0}".format(cname)])
 
         if self.version >= Version("4.0"):
