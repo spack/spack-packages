@@ -156,10 +156,18 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("sundials", default=False, description="Enable SUNDIALS interfaces")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
-    variant("gpu_rdc", default=True, description="Enable relocatable GPU device code support",
-            when="+cuda")
-    variant("gpu_rdc", default=True, description="Enable relocatable GPU device code support",
-            when="+rocm")
+    variant(
+        "gpu_rdc",
+        default=True,
+        description="Enable relocatable GPU device code support",
+        when="+cuda"
+    )
+    variant(
+        "gpu_rdc",
+        default=True,
+        description="Enable relocatable GPU device code support",
+        when="+rocm"
+    )
 
     # Build dependencies
     depends_on("c", type="build")  # generated
