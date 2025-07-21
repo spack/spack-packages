@@ -20,6 +20,7 @@ class PyPyvista(PythonPackage):
 
     license("MIT")
 
+    version("0.45.3", sha256="07e0e70e91b68628f2c2f69c5f697d96b82418828e04d57a7c80153e0e5ddcd6")
     version("0.44.1", sha256="63976f5d57d151b3f7e1616dde40dcf56a66d1f37f6db067087fa9cc9667f512")
     version("0.42.3", sha256="00159cf0dea05c1ecfd1695c8c6ccfcfff71b0744c9997fc0276e661dc052351")
     version("0.37.0", sha256="d36a2c6d5f53f473ab6a9241669693acee7a5179394dc97595da14cc1de23141")
@@ -35,7 +36,12 @@ class PyPyvista(PythonPackage):
     depends_on("py-pooch", when="@0.37:", type=("build", "run"))
     depends_on("py-scooby@0.5.1:", type=("build", "run"))
     # https://github.com/pyvista/pyvista/issues/6857
-    depends_on("vtk@:9.3+python", type=("build", "run"))
+    depends_on("vtk@:9.3+python", type=("build", "run"), when="@:0.44.1")
+
+    # 9.4.0 and 9.4.1 are not supported
+    # https://github.com/pyvista/pyvista/issues/6731
+    depends_on("vtk@:9.3,9.4.2:9.6+python", type=("build", "run"), when="@0.45.3:")
+
     depends_on("py-typing-extensions", when="^python@:3.7", type=("build", "run"))
 
     # Historical dependencies
