@@ -40,6 +40,8 @@ class JsonGlib(MesonPackage):
         deprecated=True,
     )
 
+    depends_on("c", type="build")
+
     depends_on("glib")
     depends_on("gobject-introspection")
     depends_on("pkgconfig", type="build")
