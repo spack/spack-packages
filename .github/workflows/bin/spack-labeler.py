@@ -74,6 +74,10 @@ def main():
                 labels.add(label)
 
     existing_labels = {label["name"] for label in pull_request["labels"]}
+
+    # Maintain non-managed labels (i.e. those that are not in label_patterns)
+    labels.update(existing_labels.difference(label_patterns))
+
     if existing_labels == labels:
         print(f"[PR #{pr_number}]: labels already up-to-date")
         return
