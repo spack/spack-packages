@@ -134,13 +134,22 @@ class RocprofilerSystems(CMakePackage):
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
     with when("+rocm"):
-        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
-            depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
-            depends_on(f"hip@{ver}", when=f"@{ver}")
+       for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
             depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
+       for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+            depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
+            depends_on(f"hip@{ver}", when=f"@{ver}")
         for ver in ["6.4.0", "6.4.1"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
+
+    # Fix GGC 13 build failure caused by a missing include of <array> in dyninst
+    patch(
+        "https://github.com/ROCm/dyninst/commit/09e781d414c83b4ad587083d449a3e976546937d.patch?full_index=1",
+        sha256="e64c6b75393e7fbd711c0bd0233628c176a352cd10b4057f00eec283426eaf0a",
+        when="@:6.4.0 +internal-dyninst",
+        working_dir="external/dyninst",
+    )
 
     def cmake_args(self):
         spec = self.spec
