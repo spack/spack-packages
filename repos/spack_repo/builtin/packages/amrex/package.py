@@ -160,13 +160,13 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         "gpu_rdc",
         default=True,
         description="Enable relocatable GPU device code support",
-        when="+cuda"
+        when="+cuda",
     )
     variant(
         "gpu_rdc",
         default=True,
         description="Enable relocatable GPU device code support",
-        when="+rocm"
+        when="+rocm",
     )
 
     # Build dependencies
