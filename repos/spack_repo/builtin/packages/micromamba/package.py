@@ -49,7 +49,7 @@ class Micromamba(CMakePackage):
         depends_on("openssl", type="link")
         depends_on("yaml-cpp", type="link")
         depends_on("libreproc+cxx+shared", type="link")
-        depends_on("tl-expected@2022-11-24", type="link")
+        depends_on("tl-expected@1", type="link")
         depends_on("fmt@9.1.0", type="link")
         depends_on("spdlog@1.11.0", type="link")
 
@@ -82,7 +82,7 @@ class Micromamba(CMakePackage):
         depends_on("openssl", type="link")
         depends_on("yaml-cpp", type="link")
         depends_on("libreproc+cxx", type="link")
-        depends_on("tl-expected@2022-11-24", type="link")
+        depends_on("tl-expected@1", type="link")
         depends_on("fmt@9.1.0", type="link")
         depends_on("spdlog@1.11.0", type="link")
         depends_on("nlohmann-json", type="link")
@@ -128,7 +128,7 @@ class Micromamba(CMakePackage):
             depends_on("spdlog~shared", type="link")
 
             # https://github.com/mamba-org/mamba/blob/micromamba-1.0.0/libmamba/include/mamba/core/error_handling.hpp#L9
-            depends_on("tl-expected@2022-11-24", type="link")
+            depends_on("tl-expected@1", type="link")
 
             # See linkage=dynamic for usage location
             depends_on("nlohmann-json", type="link")
