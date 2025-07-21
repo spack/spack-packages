@@ -39,6 +39,7 @@ class Micromamba(CMakePackage):
 
     patch("fix-threads.patch")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     with when("linkage=dynamic"):
