@@ -56,4 +56,4 @@ class Cli11(CMakePackage):
     def install(self, spec, prefix):
         super().install(spec, prefix)
 
-        install_tree('include/CLI/impl', join_path(prefix.include, 'CLI/impl'))
+        install_tree("include/CLI/impl", join_path(prefix.include, "CLI/impl"))
