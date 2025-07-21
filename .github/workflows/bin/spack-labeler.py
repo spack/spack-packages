@@ -10,7 +10,7 @@ import yaml
 
 
 def import_labels_config(path: str):
-    with open(path) as fd:
+    with open(path, encoding="utf-8") as fd:
         try:
             label_patterns = yaml.safe_load(fd)
         except yaml.YAMLError as exc:
