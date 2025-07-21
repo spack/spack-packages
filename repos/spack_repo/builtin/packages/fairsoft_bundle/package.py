@@ -14,8 +14,8 @@ class FairsoftBundle(BundlePackage):
     # Releases:
     version('may25')
 
-    variant('graphics', default=False)
-    variant('mt', default=False)
+    variant('graphics', default=False, description="Enable graphical support in ROOT (X11 + OpenGL)")
+    variant('mt', default=False, description="Enable multithreading for GEANT4")
 
     # Some normal packages
     depends_on('faircmakemodules')
