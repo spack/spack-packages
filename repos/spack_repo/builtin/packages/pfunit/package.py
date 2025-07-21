@@ -93,6 +93,14 @@ class Pfunit(CMakePackage):
     variant("esmf", default=False, description="Enable esmf support")
     variant("docs", default=False, description="Build docs")
 
+    # pFUnit brought in mpi_f08 support in 4.4.0
+    variant(
+        "mpi_f08",
+        default=False,
+        description="Enable MPI Fortran 2008 bindings",
+        when="@4.4.0: +mpi",
+    )
+
     # The maximum rank of an array in the Fortran 2008 standard is 15
     max_rank = 15
     allowed_array_ranks = tuple(str(i) for i in range(3, max_rank + 1))
@@ -122,7 +130,10 @@ class Pfunit(CMakePackage):
     depends_on("m4", when="@4.1.5:", type="build")
     depends_on("fargparse@1.8.0:", when="@4.10.0:")
     depends_on("fargparse", when="@4:")
-    depends_on("cmake@3.12:", type="build")
+
+    depends_on("cmake@3.12:3", type="build", when="@:4.11")
+    depends_on("cmake@3.12:", type="build", when="@4.12")
+    depends_on("cmake@3.24:", type="build", when="@4.13:")
 
     # CMake 3.25.0 has an issue with pFUnit
     # https://gitlab.kitware.com/cmake/cmake/-/issues/24203
@@ -208,6 +219,9 @@ class Pfunit(CMakePackage):
                     self.define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
                 ]
             )
+
+        if spec.satisfies("@4.4.0: +mpi"):
+            args.append(self.define_from_variant("ENABLE_MPI_F08", "mpi_f08"))
 
         return args
 

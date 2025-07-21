@@ -1,0 +1,23 @@
+From 63b206ad37da12871a49aa1391b8b9d657a1bd41 Mon Sep 17 00:00:00 2001
+From: Brad Geltz <brad.geltz@intel.com>
+Date: Thu, 17 Jul 2025 16:11:59 -0700
+Subject: [PATCH] Preserve ACLOCAL_PATH if it was already set
+
+Signed-off-by: Brad Geltz <brad.geltz@intel.com>
+---
+ libgeopmd/autogen.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libgeopmd/autogen.sh b/libgeopmd/autogen.sh
+index f56a3e730..a7df602bd 100755
+--- a/libgeopmd/autogen.sh
++++ b/libgeopmd/autogen.sh
+@@ -14,4 +14,4 @@ if [ ! -e VERSION ]; then
+ 	set -x
+     fi
+ fi
+-ACLOCAL_PATH=/usr/share/aclocal autoreconf -i -f
++ACLOCAL_PATH=${ACLOCAL_PATH:-/usr/share/aclocal} autoreconf -i -f
+-- 
+2.43.0
+

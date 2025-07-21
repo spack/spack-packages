@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
@@ -68,7 +70,14 @@ class Cpmd(MakefilePackage):
             cp.filter("-ffree-line-length-none", "")
             cp.filter("-falign-commons", "-Kalign_commons")
 
+        if spec.satisfies("%gcc@10:"):
+            cp.filter(r"FFLAGS='([^']*)'", "FFLAGS='\\1 -fallow-argument-mismatch'")
+
+        if spec.satisfies("%gcc@14:"):
+            cp.filter(r"CFLAGS='([^']*)'", "CFLAGS='\\1 -Wno-error=int-conversion'")
+
         # create Makefile
+        os.chmod("./scripts/configure.sh", 0o755)
         bash = which("bash")
         if spec.satisfies("+omp"):
             bash("./configure.sh", "-omp", cbase)

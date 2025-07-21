@@ -8,8 +8,6 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.nmake import NMakePackage
 
-import llnl.util.filesystem as fs
-
 from spack.package import *
 
 
@@ -292,28 +290,25 @@ class NMakeBuilder(AnyBuilder, nmake.NMakeBuilder):
 
     @property
     def build_directory(self):
-        return fs.windows_sfn(os.path.join(self.stage.source_path, "win32"))
+        return windows_sfn(os.path.join(self.stage.source_path, "win32"))
 
     def configure(self, pkg, spec, prefix):
         with working_dir(self.build_directory):
             opts = [
-                "prefix=%s" % fs.windows_sfn(prefix),
+                "prefix=%s" % windows_sfn(prefix),
                 "compiler=msvc",
                 "iconv=no",
                 "zlib=yes",
                 "lzma=yes",
                 "lib=%s"
                 % ";".join(
-                    (
-                        fs.windows_sfn(spec["zlib-api"].prefix.lib),
-                        fs.windows_sfn(spec["xz"].prefix.lib),
-                    )
+                    (windows_sfn(spec["zlib-api"].prefix.lib), windows_sfn(spec["xz"].prefix.lib))
                 ),
                 "include=%s"
                 % ";".join(
                     (
-                        fs.windows_sfn(spec["zlib-api"].prefix.include),
-                        fs.windows_sfn(spec["xz"].prefix.include),
+                        windows_sfn(spec["zlib-api"].prefix.include),
+                        windows_sfn(spec["xz"].prefix.include),
                     )
                 ),
             ]

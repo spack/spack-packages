@@ -47,7 +47,8 @@ class PyLlvmlite(PythonPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("py-setuptools", type="build")
-    depends_on("python@3.9:3.12", when="@0.42:", type=("build", "run"))
+    depends_on("python@3.10:3.13", when="@0.44:", type=("build", "run"))
+    depends_on("python@3.9:3.12", when="@0.42:0.43", type=("build", "run"))
     depends_on("python@3.8:3.11", when="@0.40:0.41", type=("build", "run"))
     depends_on("python@:3.10", when="@0.38:0.39", type=("build", "run"))
     depends_on("python@:3.9", when="@0.36:0.37", type=("build", "run"))
