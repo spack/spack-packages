@@ -21,7 +21,8 @@ class Nlcglib(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
-
+    version("1.3.0", sha256="d6adfe97407be2ecf41eda6f530e9724052f5298c5f884113969a9204530a745")
+    version("1.2.0", sha256="bb3676472cf7cc9effe06e416ecf4ef38e6c58c3e423dc70b8b6b32890bc89f2")
     version("1.1.0", sha256="9e7c2eea84a5ce191bd9af08f6c890717f7b6e88be7bd15cfe774eb0e0dabd8a")
     version("1.0b", sha256="086c46f06a117f267cbdf1df4ad42a8512689a9610885763f463469fb15e82dc")
     version("0.9", sha256="8d5bc6b85ee714fb3d6480f767e7f43e5e7d569116cf60e48f533a7f50a37a08")
@@ -44,7 +45,7 @@ class Nlcglib(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@3.21:", type="build")
+    depends_on("cmake@3.23:", type="build")
     depends_on("mpi")
     depends_on("lapack")
 
@@ -116,7 +117,6 @@ class Nlcglib(CMakePackage, CudaPackage, ROCmPackage):
                     self.define("MKL_MPI", mkl_mpi),
                 ]
             )
-
         else:
             options.append(self.define("LAPACK_VENDOR", "OpenBLAS"))
 

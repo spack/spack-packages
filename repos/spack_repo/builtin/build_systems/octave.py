@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     PackageBase,
     Prefix,
@@ -11,8 +12,6 @@ from spack.package import (
     register_builder,
     when,
 )
-
-from ._checks import BuilderWithDefaults
 
 
 class OctavePackage(PackageBase):
@@ -25,7 +24,7 @@ class OctavePackage(PackageBase):
     # build-system class we are using
     build_system_class = "OctavePackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "octave"
+    default_buildsystem = "octave"
 
     build_system("octave")
 
@@ -43,10 +42,10 @@ class OctaveBuilder(BuilderWithDefaults):
     phases = ("install",)
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ()
+    package_methods = ()
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ()
+    package_attributes = ()
 
     def install(self, pkg: OctavePackage, spec: Spec, prefix: Prefix) -> None:
         """Install the package from the archive file"""

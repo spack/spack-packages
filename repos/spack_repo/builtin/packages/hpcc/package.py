@@ -8,7 +8,6 @@ import re
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -160,7 +159,7 @@ class Hpcc(MakefilePackage):
 
         # Compiler flags for CPU architecture optimizations
         if spec.satisfies("%intel"):
-            arch_opt = optimization_flags(self.compiler, spec.target)
+            arch_opt = microarchitecture_flags(self.spec, "c")
             self.config["@CCFLAGS@"] = f"-O3 -restrict -ansi-alias -ip {arch_opt}"
             self.config["@CCNOOPT@"] = "-restrict"
         self._write_make_arch(spec, prefix)

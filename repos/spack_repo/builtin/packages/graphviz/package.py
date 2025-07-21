@@ -7,7 +7,6 @@ import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 MACOS_VERSION = macos_version() if sys.platform == "darwin" else None
@@ -121,7 +120,7 @@ class Graphviz(AutotoolsPackage):
     depends_on("libgd", when="+libgd")
     depends_on("fontconfig", when="+libgd")
     depends_on("freetype", when="+libgd")
-    depends_on("ghostscript", when="+ghostscript")
+    depends_on("ghostscript+gtk", when="+ghostscript")
     depends_on("gtkplus", when="+gtkplus")
     depends_on("gts", when="+gts")
     depends_on("cairo+pdf+png", when="+pangocairo")

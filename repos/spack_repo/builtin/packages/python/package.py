@@ -9,14 +9,9 @@ import platform
 import re
 import subprocess
 import sys
-from shutil import copy
-from typing import Dict, List
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util.lang import dedupe
-
-from spack.build_environment import dso_suffix, stat_suffix
 from spack.package import *
 
 
@@ -58,6 +53,9 @@ class Python(Package):
 
     license("0BSD")
 
+    version("3.13.5", sha256="e6190f52699b534ee203d9f417bdbca05a92f23e35c19c691a50ed2942835385")
+    version("3.13.4", sha256="2666038f1521b7a8ec34bf2997b363778118d6f3979282c93723e872bcd464e0")
+    version("3.13.3", sha256="988d735a6d33568cbaff1384a65cb22a1fb18a9ecb73d43ef868000193ce23ed")
     version("3.13.2", sha256="b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
     version("3.13.1", sha256="1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
     version("3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
@@ -622,7 +620,10 @@ class Python(Package):
         copy_tree(tools_dir, prefix.Tools)
         lib_dir = os.path.join(proj_root, "Lib")
         copy_tree(lib_dir, prefix.Lib)
-        pyconfig = os.path.join(proj_root, "PC", "pyconfig.h")
+        if self.spec.satisfies("@3.13:"):
+            pyconfig = os.path.join(pcbuild_root, platform.machine().lower(), "pyconfig.h")
+        else:
+            pyconfig = os.path.join(proj_root, "PC", "pyconfig.h")
         copy(pyconfig, prefix.include)
         shared_libraries = []
         shared_libraries.extend(glob.glob("%s\\*.exe" % build_root))
@@ -930,23 +931,22 @@ class Python(Package):
         #
         # in that order if using python@3.11.0, for example.
         suffixes = [self.spec.version.up_to(2), self.spec.version.up_to(1), ""]
-        file_extension = "" if sys.platform != "win32" else ".exe"
-        patterns = [f"python{ver}{file_extension}" for ver in suffixes]
+        ext = "" if sys.platform != "win32" else ".exe"
+        filenames = [f"python{ver}{ext}" for ver in suffixes]
         root = self.prefix.bin if sys.platform != "win32" else self.prefix
-        path = find_first(root, files=patterns)
 
-        if path is not None:
-            return Executable(path)
+        for filename in filenames:
+            path = os.path.join(root, filename)
+            if is_exe(path):
+                return Executable(path)
 
-        else:
-            # Give a last try at rhel8 platform python
-            if self.spec.external and self.prefix == "/usr" and self.spec.satisfies("os=rhel8"):
-                path = os.path.join(self.prefix, "libexec", "platform-python")
-                if os.path.exists(path):
-                    return Executable(path)
+        # Give a last try at rhel8 platform python
+        platform_python = os.path.join(self.prefix, "libexec", "platform-python")
+        if self.spec.external and self.prefix == "/usr" and is_exe(platform_python):
+            return Executable(platform_python)
 
         raise RuntimeError(
-            f"cannot to locate the '{self.name}' command in {root} or its subdirectories"
+            f"cannot locate the '{self.name}' command in {root} or its subdirectories"
         )
 
     @property
@@ -999,8 +999,12 @@ print(json.dumps(config))
                 "LIBPL": self.prefix.lib.join("python{0}")
                 .join("config-{0}-{1}")
                 .format(version, sys.platform),
-                "LDLIBRARY": "{}python{}.{}".format(lib_prefix, version, dso_suffix),
-                "LIBRARY": "{}python{}.{}".format(lib_prefix, version, stat_suffix),
+                "LDLIBRARY": "{}python{}.{}".format(
+                    lib_prefix, version, shared_library_suffix(self.spec)
+                ),
+                "LIBRARY": "{}python{}.{}".format(
+                    lib_prefix, version, static_library_suffix(self.spec)
+                ),
                 "LDSHARED": "cc",
                 "LDCXXSHARED": "c++",
                 "PYTHONFRAMEWORKPREFIX": "/System/Library/Frameworks",
@@ -1133,14 +1137,18 @@ print(json.dumps(config))
             shared_libs = []
         else:
             shared_libs = [self.config_vars["LDLIBRARY"]]
-        shared_libs += ["{}python{}.{}".format(lib_prefix, py_version, dso_suffix)]
+        shared_libs += [
+            "{}python{}.{}".format(lib_prefix, py_version, shared_library_suffix(self.spec))
+        ]
         # Like LDLIBRARY for Python on Mac OS, LIBRARY may refer to an un-linkable object
         file_extension_static = os.path.splitext(self.config_vars["LIBRARY"])[-1]
         if file_extension_static == "":
             static_libs = []
         else:
             static_libs = [self.config_vars["LIBRARY"]]
-        static_libs += ["{}python{}.{}".format(lib_prefix, py_version, stat_suffix)]
+        static_libs += [
+            "{}python{}.{}".format(lib_prefix, py_version, static_library_suffix(self.spec))
+        ]
 
         # The +shared variant isn't reliable, as `spack external find` currently can't
         # detect it. If +shared, prefer the shared libraries, but check for static if
@@ -1275,6 +1283,7 @@ print(json.dumps(config))
         # The logic below is linux specific, and used to inject the compiler wrapper to
         # compile Python extensions. Thus, it is not needed on Windows.
         if sys.platform == "win32":
+            env.prepend_path("PATH", self.prefix)
             return
 
         # We need to make sure that the extensions are compiled and linked with
@@ -1345,6 +1354,8 @@ print(json.dumps(config))
         """Set PYTHONPATH to include the site-packages directory for the
         extension and any other python extensions it depends on.
         """
+        if sys.platform == "win32":
+            env.prepend_path("PATH", self.prefix)
         if not dependent_spec.package.extends(self.spec) or dependent_spec.dependencies(
             "python-venv"
         ):

@@ -5,8 +5,12 @@
 
 spack:
   view: false
+  include:
+  - $CI_PROJECT_DIR/.ci/gitlab/
+
   specs:
   - "vtk@9: ~mpi"
+  - "boost"
 
   cdash:
     build-group: Windows Visualization (Kitware)

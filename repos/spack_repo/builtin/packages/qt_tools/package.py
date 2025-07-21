@@ -20,6 +20,7 @@ class QtTools(QtPackage):
     license("BSD-3-Clause")
 
     # src/assistant/qlitehtml is a submodule that is not in the git archive
+    version("6.9.1", commit="9e8f157b49c78c05abf8fa87da21e04cdf09780c", submodules=True)
     version("6.9.0", commit="087e300bf286aaee92682d828ee0bd622e00d52a", submodules=True)
     version("6.8.3", commit="2649ea1aa5cc1c23bd920ae94dd50071315ea30f", submodules=True)
     version("6.8.2", commit="8aa2456d4461516f54c98916fcd699557afb41ad", submodules=True)
@@ -47,6 +48,8 @@ class QtTools(QtPackage):
     depends_on("qt-base +network")
     depends_on("qt-base +widgets", when="+designer")
 
+    depends_on("zstd@1.3:", when="+designer")
+
     for _v in QtBase.versions:
         v = str(_v)
         depends_on("qt-base@" + v, when="@" + v)
@@ -61,8 +64,14 @@ class QtTools(QtPackage):
 
         if spec.satisfies("+assistant"):
             define("FEATURE_assistant", True)
+        else:
+            define("FEATURE_assistant", False)
 
         if spec.satisfies("+designer"):
             define("FEATURE_designer", True)
+            define("FEATURE_zstd", True)
+        else:
+            define("FEATURE_designer", False)
+            define("FEATURE_zstd", False)
 
         return args

@@ -26,6 +26,8 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
 
     license("MIT")
 
+    version("1.21.0", tag="v1.21.0", commit="e0b66cad282043d4377cea5269083f17771b6dfc")
+    version("1.20.2", tag="v1.20.2", commit="8608bf02f21774be0388d2aa3a9f886d009d0b4c")
     version("1.19.2", tag="v1.19.2", commit="ffceed9d44f2f3efb9dd69fa75fea51163c91d91")
     version("1.19.0", tag="v1.19.0", commit="26250ae74d2c9a3c6860625ba4a147ddfb936907")
     version("1.18.2", tag="v1.18.2", commit="9691af1a2a17b12af04652f4d8d2a18ce9507025")
@@ -39,12 +41,16 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("binutils@2.36:", type="build")
+
     # cmake/CMakeLists.txt
     depends_on("cmake@3.26:", when="@1.17:", type="build")
     depends_on("cmake@3.1:", type="build")
+
+    depends_on("abseil-cpp@20240722.0: cxxstd=17", when="@1.20:")
     # Needs absl/strings/has_absl_stringify.h
     # cxxstd=20 may also work, but cxxstd=14 does not
-    depends_on("abseil-cpp@20240116.0: cxxstd=17", when="@1.17:")
+    depends_on("abseil-cpp@20240116.0: cxxstd=17", when="@1.17:1.19.2")
 
     extends("python")
     depends_on("python", type=("build", "run"))
@@ -130,6 +136,15 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     # ORT is assuming all ROCm components are installed in a single path,
     # this patch finds the packages individually
     patch("0001-Find-ROCm-Packages-Individually.patch", when="@1.17: +rocm")
+    # Hashes in gitlab changed after a new compression algorithm was introduced
+    patch("eigen-hash1.patch", when="@1.18:1.20")
+    patch("eigen-hash2.patch", when="@1.21")
+    # Add compatibility with the latest protobuf: https://github.com/microsoft/onnxruntime/pull/23260
+    patch(
+        "https://github.com/microsoft/onnxruntime/pull/23260.patch?full_index=1",
+        sha256="fedcf5b0720ebad97d332f440f427a7e9f2fc96ff0a648f7832786ef1a83fe0e",
+        when="@1.17:1.20.2",
+    )
 
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
 

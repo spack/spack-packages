@@ -30,10 +30,6 @@ class Musl(MakefilePackage):
 
     license("MIT")
 
-    # This is used when the package is external and we need to find the actual default include path
-    # which may be in a multiarch subdir.
-    representative_headers = ["iso646.h"]
-
     provides("libc")
     provides("iconv")
 

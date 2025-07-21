@@ -10,7 +10,6 @@ import tempfile
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
-import spack.util.environment
 from spack.package import *
 
 
@@ -156,22 +155,21 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
 
         # We need to unset these variables since we are still within
         # Spack's build environment when running tests
-        vars_to_unset = ["CC", "CXX", "F77", "FC"]
+        mkoctfile_env = os.environ.copy()
+        mkoctfile_env.pop("CC", None)
+        mkoctfile_env.pop("CXX", None)
+        mkoctfile_env.pop("F77", None)
+        mkoctfile_env.pop("FC", None)
 
-        with spack.util.environment.preserve_environment(*vars_to_unset):
-            # Delete temporarily the environment variables that point
-            # to Spack compiler wrappers
-            for v in vars_to_unset:
-                del os.environ[v]
-            # Check that mkoctfile outputs the expected value for CC
-            cc = mkoctfile("-p", "CC", output=str)
-            msg = "mkoctfile didn't output the expected CC compiler"
-            assert self.compiler.cc in cc, msg
+        # Check that mkoctfile outputs the expected value for CC
+        cc = mkoctfile("-p", "CC", output=str, env=mkoctfile_env)
+        msg = "mkoctfile didn't output the expected CC compiler"
+        assert self.compiler.cc in cc, msg
 
-            # Try to compile an Octave extension
-            shutil.copy(helloworld_cc, tmp_dir)
-            with working_dir(tmp_dir):
-                mkoctfile("helloworld.cc")
+        # Try to compile an Octave extension
+        shutil.copy(helloworld_cc, tmp_dir)
+        with working_dir(tmp_dir):
+            mkoctfile("helloworld.cc", env=mkoctfile_env)
 
     def configure_args(self):
         # See
