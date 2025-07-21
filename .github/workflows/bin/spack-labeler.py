@@ -17,7 +17,7 @@ def import_labels_config(path: str):
             raise Exception(f"Unable to load {path}\n{exc}")
 
         # compile all the regexes above, and ensure that all pattern dict values are lists
-        for label, pattern_dict in label_patterns.items():
+        for pattern_dict in label_patterns.values():
             for attr in pattern_dict.keys():
                 patterns = pattern_dict[attr]
                 if not isinstance(patterns, list):
