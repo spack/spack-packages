@@ -88,11 +88,13 @@ class Openmx(MakefilePackage):
             fc_option.extend([self.compiler.openmp_flag, "-Ccpp"])
         else:
             common_option.append("-O3")
+            cc_option.extend(
+                ["-Wno-error=implicit-function-declaration", "-Wno-error=implicit-int", "-fcommon"]
+            )
             if "%gcc" in spec:
                 lib_option.append("-lgfortran")
                 if spec.satisfies("%gcc@10:"):
                     fc_option.append("-fallow-argument-mismatch")
-                    cc_option.append("-fcommon")
 
         return [
             "CC={0} -Dscalapack {1} ".format(" ".join(cc_option), " ".join(common_option)),
