@@ -974,6 +974,10 @@ class Root(CMakePackage):
             options.append(define("FTGL_ROOT_DIR", ftgl_prefix))
             options.append(define("FTGL_INCLUDE_DIR", ftgl_prefix.include))
 
+        # Fix RPath handling with gnuinstall
+        if "+rpath" in self.spec:
+            options.append(define("CMAKE_INSTALL_RPATH", self.prefix.lib.root))
+
         return options
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

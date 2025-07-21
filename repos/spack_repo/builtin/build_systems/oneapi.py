@@ -15,6 +15,7 @@ from spack.package import (
     LibraryList,
     LinkTree,
     conflicts,
+    depends_on,
     find_libraries,
     get_user,
     join_path,
@@ -189,8 +190,14 @@ class IntelOneApiLibraryPackage(IntelOneApiPackage):
     Contains some convenient default implementations for libraries.
     Implement the method directly in the package if something
     different is needed.
-
     """
+
+    # HFP: for the time being, this package queries
+    # - compiler for its library path
+    # - spec about C-compiler
+    # Depending on a lanaguage seem to enable above.
+    #
+    depends_on("c", type="build")
 
     def openmp_libs(self):
         """Supply LibraryList for linking OpenMP"""
@@ -286,7 +293,7 @@ class IntelOneApiLibraryPackageWithSdk(IntelOneApiLibraryPackage):
         return find_libraries("*", self.component_prefix.sdk.lib64)
 
 
-class IntelOneApiStaticLibraryList:
+class IntelOneApiStaticLibraryList(LibraryList):
     """Provides ld_flags when static linking is needed
 
     Oneapi puts static and dynamic libraries in the same directory, so
