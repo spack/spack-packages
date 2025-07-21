@@ -42,6 +42,8 @@ class Openmx(MakefilePackage):
 
     depends_on("mpi")
     depends_on("fftw-api@3")
+    depends_on("blas")
+    depends_on("lapack")
     depends_on("scalapack")
     depends_on("sse2neon", when="target=aarch64:")
 
