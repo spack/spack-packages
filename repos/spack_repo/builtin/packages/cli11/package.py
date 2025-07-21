@@ -52,3 +52,8 @@ class Cli11(CMakePackage):
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
         return args
+
+    def install(self, spec, prefix):
+        super().install(spec, prefix)
+
+        install_tree('include/CLI/impl', join_path(prefix.include, 'CLI/impl'))
