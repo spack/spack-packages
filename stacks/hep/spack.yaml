@@ -22,7 +22,7 @@ spack:
       variants: +mpi
     acts:
       require:
-      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +podio +pythia8 +python +svg +tgeo cxxstd=20
+      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
       - target=x86_64_v3
     celeritas:
       require:
