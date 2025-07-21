@@ -791,7 +791,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     def get_common_target_flags(self) -> str:
         """Get the microarchitecture flags supported by both the current spec and its gcc dep.
-        For example: gcc@7 %gcc@12 target=znver3 should pick -march=znver1, since that's what
+        For example: gcc@7 target=znver3 %gcc@12 should pick -march=znver1, since that's what
         gcc@7 supports."""
         for uarch in (self.spec.target, *self.spec.target.ancestors):
             flags = microarchitecture_flags_from_target(uarch, compiler=self.spec)
