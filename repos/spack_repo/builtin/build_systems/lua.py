@@ -27,7 +27,7 @@ class LuaPackage(PackageBase):
     build_system_class = "LuaPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "lua"
+    default_buildsystem = "lua"
 
     list_depth = 1  # LuaRocks requires at least one level of spidering to find versions
 
@@ -57,10 +57,10 @@ class LuaBuilder(Builder):
     phases = ("unpack", "generate_luarocks_config", "preprocess", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("luarocks_args",)
+    package_methods = ("luarocks_args",)
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ()
+    package_attributes = ()
 
     def unpack(self, pkg: LuaPackage, spec: Spec, prefix: Prefix) -> None:
         if os.path.splitext(pkg.stage.archive_file)[1] == ".rock":

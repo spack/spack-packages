@@ -3,5 +3,6 @@ ci:
   - any-job:
       variables:
         SPACK_TARGET_ARCH: neoverse_v2
+        SPACK_CI_TARGET: neoverse_v2
   - build-job:
       tags: ["neoverse_v2"]

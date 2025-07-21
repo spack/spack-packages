@@ -17,6 +17,7 @@ class PyRuff(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("0.12.0", sha256="4d047db3662418d4a848a3fdbfaf17488b34b62f527ed6f10cb8afd78135bc5c")
     version("0.11.1", sha256="f2e209a283c9fa423e268cad015ec4fb249178608f755fb67491ff175ecbffbf")
     version("0.9.1", sha256="fd2b25ecaf907d6458fa842675382c8597b3c746a2dde6717fe3415425df0c17")
     version("0.8.1", sha256="3583db9a6450364ed5ca3f3b4225958b24f78178908d5c4bc0f46251ccca898f")
@@ -29,10 +30,14 @@ class PyRuff(PythonPackage):
     version("0.3.0", sha256="0886184ba2618d815067cf43e005388967b67ab9c80df52b32ec1152ab49f53a")
     version("0.1.6", sha256="1b09f29b16c6ead5ea6b097ef2764b42372aebe363722f1605ecbcd2b9207184")
 
+    depends_on("c", type="build")
+
     with default_args(type="build"):
         depends_on("py-maturin@1")
 
         # Found in Cargo.toml
+        depends_on("rust@1.85:", when="@0.11.11:")
+        depends_on("rust@1.84:", when="@0.11.4:")
         depends_on("rust@1.83:", when="@0.9.8:")
         depends_on("rust@1.80:", when="@0.7.1:")
         depends_on("rust@1.76:", when="@0.5.6:")

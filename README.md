@@ -1,8 +1,35 @@
+<h2>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://cdn.rawgit.com/spack/spack/develop/share/spack/logo/spack-logo-white-text.svg" width="250">
+  <source media="(prefers-color-scheme: light)" srcset="https://cdn.rawgit.com/spack/spack/develop/share/spack/logo/spack-logo-text.svg" width="250">
+  <img alt="Spack" src="https://cdn.rawgit.com/spack/spack/develop/share/spack/logo/spack-logo-text.svg" width="250">
+</picture>
+
+<br>
+<br clear="all">
+
+<a href="https://spack.readthedocs.io"><img src="https://readthedocs.org/projects/spack/badge/?version=latest" alt="Documentation Status"></a>
+<a href="https://slack.spack.io"><img src="https://slack.spack.io/badge.svg" alt="Slack"/></a>
+<a href="https://matrix.to/#/#spack-space:matrix.org"><img src="https://img.shields.io/matrix/spack-space%3Amatrix.org?label=matrix" alt="Matrix"/></a>
+
+</h2>
+
+**[Getting Started] &nbsp; • &nbsp; [Community] &nbsp; • &nbsp; [Packaging Guide] &nbsp; • &nbsp; [Spack]**
+
 # Spack Packages
 
-This is the default [Spack](https://github.com/spack/spack) packages repository, which
+This is the default [Spack](https://github.com/spack/spack) package repository, which
 contains the set of packages maintained by the Spack community. In Spack v1.0 and later,
 the repository here is automatically added to the Spack configuration.
+
+## Community
+
+Spack is an open source project.  Questions, discussion, and contributions are welcome.
+
+* **Slack workspace**: [spackpm.slack.com](https://spackpm.slack.com).
+  To get an invitation, visit [slack.spack.io](https://slack.spack.io).
+* **Matrix space**: [#spack-space:matrix.org](https://matrix.to/#/#spack-space:matrix.org):
+  [bridged](https://github.com/matrix-org/matrix-appservice-slack#matrix-appservice-slack) to Slack.
 
 ## Contributing
 
@@ -10,13 +37,16 @@ To contribute, simply make a pull request to this repository with your package c
 We run continuous integration on this repository to test builds of a large number of
 Spack packages.
 
-If you are trying to migrate your pull requests from
-[github.com/spack/spack](https://github.com/spack/spack), there are several ways you can
-do this. You can
-[cherry-pick](https://stackoverflow.com/questions/5120038/is-it-possible-to-cherry-pick-a-commit-from-another-git-repository)
-your PR from the main repository. Alternately, we are working on a
-[migration script](https://gist.github.com/haampie/0bd28e75f91b3be6287094a1111391cf)
-that you can try out. More instructions are coming soon.
+If you want to test your package changes locally before submitting a pull request,
+simply change Spack's default package repo from the default cache location to the full
+path to your local git clone:
+```
+spack repo set --destination /path/to/local/spack-packages builtin
+```
+`$spack` can be used to form a relative path to your Spack root directory.
+
+If you are migrating your pull requests from
+[github.com/spack/spack](https://github.com/spack/spack), it is recommended to use the [the migration tool](https://github.com/spack/migrate-package-prs).
 
 ## Searching Spack packages
 
@@ -46,3 +76,8 @@ See [LICENSE-MIT](https://github.com/spack/spack-packages/blob/develop/LICENSE-M
 SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 LLNL-CODE-811652
+
+[Getting Started]: https://spack.readthedocs.io/en/latest/getting_started.html
+[Community]: #community
+[Packaging Guide]: https://spack.readthedocs.io/en/latest/packaging_guide_creation.html
+[Spack]: https://github.com/spack/spack

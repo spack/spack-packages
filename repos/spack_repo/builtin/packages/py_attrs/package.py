@@ -16,6 +16,7 @@ class PyAttrs(PythonPackage):
 
     license("MIT")
 
+    version("25.3.0", sha256="75d7cefc7fb576747b2c81b4442d4d4a1ce0900973527c011d1030fd3bf4af1b")
     version("23.1.0", sha256="6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015")
     version("22.2.0", sha256="c9227bfc2f01993c03f68db37d1d15c9690188323c067c641f1a35ca58185f99")
     version("22.1.0", sha256="29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6")
@@ -33,6 +34,7 @@ class PyAttrs(PythonPackage):
 
     depends_on("py-hatchling", when="@23.1:", type="build")
     depends_on("py-hatch-vcs", when="@23.1:", type="build")
+    depends_on("py-hatch-fancy-pypi-readme@23.2:", when="@23.2:", type="build")
     depends_on("py-hatch-fancy-pypi-readme", when="@23.1:", type="build")
 
     with when("@:22.2.0"):

@@ -6,8 +6,6 @@ import os
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
-import llnl.util.lang
-
 from spack.package import *
 
 
@@ -43,7 +41,7 @@ class FftwBase(AutotoolsPackage):
     @property
     def libs(self):
         # Reduce repetitions of entries
-        query_parameters = list(llnl.util.lang.dedupe(self.spec.last_query.extra_parameters))
+        query_parameters = list(dedupe(self.spec.last_query.extra_parameters))
 
         # List of all the suffixes associated with float precisions
         precisions = [("float", "f"), ("double", ""), ("long_double", "l"), ("quad", "q")]

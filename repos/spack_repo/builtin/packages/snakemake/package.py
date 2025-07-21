@@ -11,11 +11,12 @@ class Snakemake(PythonPackage):
     """Workflow management system to create reproducible and scalable data analyses."""
 
     homepage = "https://snakemake.readthedocs.io/en"
-    pypi = "snakemake/snakemake-8.25.2.tar.gz"
+    pypi = "snakemake/snakemake-9.6.3.tar.gz"
     maintainers("marcusboden", "w8jcik")
 
     license("MIT")
 
+    version("9.6.3", sha256="0ab3710d7782749eda5dc1af7f06b75d041172a1abdab31fc5c2ed78ec4f39cd")
     version("8.25.2", sha256="d5103ba37d9747bfea584b43ddcbe7255ab3f8e2aeb222e89bcb9a40c80ae603")
     version("8.18.2", sha256="7dc8cdc3c836444c2bc3d67a4a7f4d703557c1bf96a90da18f312f4df9daefc4")
     version("8.5.2", sha256="cc94876263182277e4a429e5d371c867400eeddc791c114dfd090d1bb3158975")

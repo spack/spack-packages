@@ -22,7 +22,6 @@ class HsakmtRoct(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath")
 
-    version("master", branch="master", deprecated=True)
     version("6.2.4", sha256="5c71655e3a1b9d1404dc8cb64b9d2fadd27e67606aaa8aec0c325768d8c483c0")
     version("6.2.1", sha256="bba5dd8cce595d94d6a8e467dbd6de9e921f81e665ca8aac1e346e0ade7620f0")
     version("6.2.0", sha256="73df98ca2be8a887cb76554c23f148ef6556bdbccfac99f34111fa1f87fd7c5d")
@@ -33,17 +32,10 @@ class HsakmtRoct(CMakePackage):
     version("6.0.0", sha256="9f4e80bd0a714ce45326941b906a62298c62025eff186dc6c48282ce84c787c7")
     version("5.7.1", sha256="38bc3732886a52ca9cd477ec6fcde3ab17a0ba5dc8e2f7ac34c4de597bd00e8b")
     version("5.7.0", sha256="52293e40c4ba0c653d796e2f6109f5fb4c79f5fb82310ecbfd9a5432acf9da43")
-    version("5.6.1", sha256="d60b355bfd21a08e0e36270fd56f98d052c3c6edca47da887fa32bf32759c29b")
-    version("5.6.0", sha256="cd009c5c09f664f046c428ba9843582ab468f7b88d560747eb949d8d7f8c5567")
-    version("5.5.1", sha256="4ffde3fc1f91f24cdbf09263fd8e012a3995ad10854f4c1d866beab7b9f36bf4")
-    version("5.5.0", sha256="2b11fd8937c2b06cd4ddea2c3699fbf3d1651892c4c5957d38553b993dd9af18")
     with default_args(deprecated=True):
-        version("5.4.3", sha256="3799abbe7177fbff3b304e2a363e2b39e8864f8650ae569b2b88b9291f9a710c")
-        version("5.4.0", sha256="690a78a6e67ae2b3f518dbc4a1e267237d6a342e1063b31eef297f4a04d780f8")
-        version("5.3.3", sha256="b5350de915997ed48072b37a21c2c44438028255f6cc147c25a196ad383c52e7")
-        version("5.3.0", sha256="c150be3958fd46e57bfc9db187819ec34b1db8f0cf9b69f8c3f8915001800ab8")
+        version("5.6.1", sha256="d60b355bfd21a08e0e36270fd56f98d052c3c6edca47da887fa32bf32759c29b")
+        version("5.6.0", sha256="cd009c5c09f664f046c428ba9843582ab468f7b88d560747eb949d8d7f8c5567")
 
-    variant("shared", default=True, description="Build shared or static library")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
     depends_on("c", type="build")  # generated
@@ -54,12 +46,7 @@ class HsakmtRoct(CMakePackage):
     depends_on("numactl")
     depends_on("libdrm")
 
-    for ver in ["5.3.0", "5.4.0", "5.4.3"]:
-        depends_on(f"llvm-amdgpu@{ver}", type="test", when=f"@{ver}")
-
     for ver in [
-        "5.5.0",
-        "5.5.1",
         "5.6.0",
         "5.6.1",
         "5.7.0",
@@ -76,21 +63,13 @@ class HsakmtRoct(CMakePackage):
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", type="test", when=f"@{ver}")
 
-    # See https://github.com/ROCm/ROCT-Thunk-Interface/issues/72
-    # and https://github.com/spack/spack/issues/28398
-    patch("0002-Remove-compiler-support-libraries-and-libudev-as-req-5.3.patch", when="@5.3.0:5.4")
-
     def cmake_args(self):
-        args = []
-        if self.spec.satisfies("@:5.4.3"):
-            args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
-        else:
-            args.append(self.define("BUILD_SHARED_LIBS", False))
-        if self.spec.satisfies("@5.4.3:"):
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
+        args = [
+            self.define("BUILD_SHARED_LIBS", False),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+        ]
         if self.spec.satisfies("@5.7.0:"):
             args.append(self.define_from_variant("ADDRESS_SANITIZER", "asan"))
-
         return args
 
     @run_after("install")

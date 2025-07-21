@@ -102,13 +102,12 @@ class Legion(CMakePackage, ROCmPackage):
     version("cr-20210122", commit="181e63ad4187fbd9a96761ab3a52d93e157ede20", deprecated=True)
     version("cr-20191217", commit="572576b312509e666f2d72fafdbe9d968b1a6ac3", deprecated=True)
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.16:", when="@21.03.0:24.12.0", type="build")
     depends_on("cmake@3.22:", when="@25.03.0:", type="build")
-    depends_on("cmake@3.22:", when="@stable", type="build")
     # TODO: Need to spec version of MPI v3 for use of the low-level MPI transport
     # layer. At present the MPI layer is still experimental and we discourge its
     # use for general (not legion development) use cases.
@@ -116,19 +115,14 @@ class Legion(CMakePackage, ROCmPackage):
     depends_on("mpi", when="network=gasnet")  # MPI is required to build gasnet (needs mpicc).
     depends_on("ucx", when="network=ucx")
     depends_on("ucc", when="network=ucx @25.03.0:")
-    depends_on("ucc", when="network=ucx @stable")
     depends_on("ucc+cuda+nccl", when="network=ucx +cuda @25.03.0:")
-    depends_on("ucc+cuda+nccl", when="network=ucx +cuda @stable")
     depends_on("ucc+rocm+rccl", when="network=ucx +rocm @25.03.0:")
-    depends_on("ucc+rocm+rccl", when="network=ucx +rocm @stable")
     depends_on("ucx", when="conduit=ucx")
     depends_on("mpi", when="conduit=mpi")
     depends_on("cuda@10.0:11.9", when="+cuda_unsupported_compiler @21.03.0:23.03.0")
     depends_on("cuda@10.0:11.9", when="+cuda @21.03.0:23.03.0")
     depends_on("cuda@11.7:12.8", when="+cuda_unsupported_compiler @23.06.0:")
     depends_on("cuda@11.7:12.8", when="+cuda @23.06.0:")
-    depends_on("cuda@11.7:12.8", when="+cuda_unsupported_compiler @stable")
-    depends_on("cuda@11.7:12.8", when="+cuda @stable")
     depends_on("hip@5.1:5.7", when="+rocm @23.03.0:23.12.0")
     depends_on("hip@5.1:", when="+rocm")
     depends_on("hdf5", when="+hdf5")
@@ -138,7 +132,7 @@ class Legion(CMakePackage, ROCmPackage):
     # cuda-centric
     cuda_arch_list = CudaPackage.cuda_arch_values
     for arch in cuda_arch_list:
-        depends_on(f"ucc cuda_arch={arch}", when=f"network=ucx +cuda cuda_arch={arch}")
+        depends_on(f"ucc cuda_arch={arch}", when=f"@25.03.0: network=ucx +cuda cuda_arch={arch}")
         depends_on(
             f"kokkos@3.3.01:+cuda+cuda_lambda+wrapper cuda_arch={arch}",
             when=f"+kokkos+cuda cuda_arch={arch} %gcc",
@@ -184,7 +178,9 @@ class Legion(CMakePackage, ROCmPackage):
     )
 
     for arch in ROCmPackage.amdgpu_targets:
-        depends_on(f"ucc amdgpu_target={arch}", when=f"network=ucx +rocm amdgpu_target={arch}")
+        depends_on(
+            f"ucc amdgpu_target={arch}", when=f"@25.03.0: network=ucx +rocm amdgpu_target={arch}"
+        )
         depends_on(f"kokkos@3.3.01:+rocm amdgpu_target={arch}", when=f"+rocm amdgpu_target={arch}")
 
     depends_on("kokkos@3.3.01:+rocm", when="+kokkos+rocm")
@@ -370,7 +366,6 @@ class Legion(CMakePackage, ROCmPackage):
 
     depends_on("rust@1.74:", type="build", when="@21.03.0:24.12.0 +prof")
     depends_on("rust@1.84:", type="build", when="@25.03.0: +prof")
-    depends_on("rust@1.84:", type="build", when="@stable +prof")
 
     variant("gc", default=False, description="Enable garbage collector logging")
     variant(
@@ -386,7 +381,25 @@ class Legion(CMakePackage, ROCmPackage):
     def cmake_args(self):
         spec = self.spec
         from_variant = self.define_from_variant
-        options = [from_variant("CMAKE_CXX_STANDARD", "cxxstd")]
+        options = [
+            from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
+            from_variant("BUILD_SHARED_LIBS", "shared"),
+            from_variant("Legion_BOUNDS_CHECKS", "bounds_checks"),
+            from_variant("Legion_PRIVILEGE_CHECKS", "privilege_checks"),
+            from_variant("Legion_SPY", "spy"),
+            from_variant("Legion_USE_Fortran", "fortran"),
+            from_variant("Legion_USE_HDF5", "hdf5"),
+            from_variant("Legion_USE_HWLOC", "hwloc"),
+            from_variant("Legion_USE_Kokkos", "kokkos"),
+            from_variant("Legion_USE_LIBDL", "libdl"),
+            from_variant("Legion_USE_OpenMP", "openmp"),
+            from_variant("Legion_USE_PAPI", "papi"),
+            from_variant("Legion_USE_Python", "python"),
+            from_variant("Legion_USE_ZLIB", "zlib"),
+            from_variant("Legion_BUILD_BINDINGS", "bindings"),
+            from_variant("Legion_REDOP_COMPLEX", "redop_complex"),
+            from_variant("Legion_REDOP_HALF", "redop_half"),
+        ]
 
         if spec.satisfies("network=gasnet"):
             options.append("-DLegion_NETWORKS=gasnetex")
@@ -416,23 +429,7 @@ class Legion(CMakePackage, ROCmPackage):
         else:
             options.append("-DLegion_EMBED_GASNet=OFF")
 
-        if spec.satisfies("+shared"):
-            options.append("-DBUILD_SHARED_LIBS=ON")
-        else:
-            options.append("-DBUILD_SHARED_LIBS=OFF")
-
-        if spec.satisfies("+bounds_checks"):
-            # default is off.
-            options.append("-DLegion_BOUNDS_CHECKS=ON")
-        if spec.satisfies("+privilege_checks"):
-            # default is off.
-            options.append("-DLegion_PRIVILEGE_CHECKS=ON")
-
         options.append(f"-DLegion_OUTPUT_LEVEL={str.upper(spec.variants['output_level'].value)}")
-
-        if spec.satisfies("+spy"):
-            # default is off.
-            options.append("-DLegion_SPY=ON")
 
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
@@ -458,63 +455,13 @@ class Legion(CMakePackage, ROCmPackage):
             else:
                 options.append(self.define("ROCM_PATH", spec["hip"].prefix))
 
-        if spec.satisfies("+fortran"):
-            # default is off.
-            options.append("-DLegion_USE_Fortran=ON")
-
-        if spec.satisfies("+hdf5"):
-            # default is off.
-            options.append("-DLegion_USE_HDF5=ON")
-
-        if spec.satisfies("+hwloc"):
-            # default is off.
-            options.append("-DLegion_USE_HWLOC=ON")
-
         if spec.satisfies("+kokkos"):
-            # default is off.
-            options.append("-DLegion_USE_Kokkos=ON")
             os.environ["KOKKOS_CXX_COMPILER"] = self["kokkos"].kokkos_cxx
             if spec.satisfies("+cuda+cuda_unsupported_compiler ^kokkos+cuda %clang"):
                 # Keep CMake CUDA compiler detection happy
                 options.append(
                     self.define("CMAKE_CUDA_FLAGS", "--allow-unsupported-compiler -std=c++17")
                 )
-
-        if spec.satisfies("+libdl"):
-            # default is on.
-            options.append("-DLegion_USE_LIBDL=ON")
-        else:
-            options.append("-DLegion_USE_LIBDL=OFF")
-
-        if spec.satisfies("+openmp"):
-            # default is off.
-            options.append("-DLegion_USE_OpenMP=ON")
-
-        if spec.satisfies("+papi"):
-            # default is off.
-            options.append("-DLegion_USE_PAPI=ON")
-
-        if spec.satisfies("+python"):
-            # default is off.
-            options.append("-DLegion_USE_Python=ON")
-
-        if spec.satisfies("+zlib"):
-            # default is on.
-            options.append("-DLegion_USE_ZLIB=ON")
-        else:
-            options.append("-DLegion_USE_ZLIB=OFF")
-
-        if spec.satisfies("+bindings"):
-            # default is off.
-            options.append("-DLegion_BUILD_BINDINGS=ON")
-
-        if spec.satisfies("+redop_complex"):
-            # default is off
-            options.append("-DLegion_REDOP_COMPLEX=ON")
-
-        if spec.satisfies("+redop_half"):
-            # default is off
-            options.append("-DLegion_REDOP_HALF=ON")
 
         maxdims = int(spec.variants["max_dims"].value)
         # TODO: sanity check if maxdims < 0 || > 9???

@@ -10,10 +10,20 @@ import warnings
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.oneapi import IntelOneApiPackage
 
-from spack.build_environment import dso_suffix
 from spack.package import *
 
 versions = [
+    {
+        "version": "2025.2.0",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/39c79383-66bf-4f44-a6dd-14366e34e255/intel-dpcpp-cpp-compiler-2025.2.0.527_offline.sh",
+            "sha256": "aea3c1ccb97728db138b4f11f771411264292ba7bbec313782229510c9b831bc",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/2c69ab6a-dfff-4d8f-ae1c-8368c79a1709/intel-fortran-compiler-2025.2.0.534_offline.sh",
+            "sha256": "3808000bbcef15f17b608156b956e0114393a1b64ee6d9fb29be06450fa40083",
+        },
+    },
     {
         "version": "2025.1.1",
         "cpp": {
@@ -640,7 +650,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             join_path("compiler", "lib"),
         ]:
             p = join_path(self.component_prefix.linux, d)
-            if find(p, "*." + dso_suffix, recursive=False):
+            if find(p, "*." + shared_library_suffix(self.spec), recursive=False):
                 yield p
 
     def archspec_name(self):

@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage, g
 from spack_repo.builtin.build_systems.python import PythonExtension
 
 from spack.package import *
-from spack.util.environment import filter_system_paths
 
 
 class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
@@ -32,6 +31,9 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.11.3", sha256="ba0807729fa681eed55bb6d5588bb9e4bde2b691c46e8d6d375ff5eaf789b16a")
+    version("3.11.2", sha256="bda41b7cf12f05995a00106ae0db1b784d9c307953d81c76d351c7dbeb121aeb")
+    version("3.11.1", sha256="21341b39a960295bd3194bcc5f119f773229b4701cd752499fbd850f3cc160fd")
     version("3.11.0", sha256="ba1a17a74428bfd5c789ce293f59b6a3d8bfabab747431c33331ac0ac579ea71")
     version("3.10.2", sha256="67b4e08acd1cc4b6bd67b97d580be5a8118b586ad6a426b09d5853898deeada5")
     version("3.10.1", sha256="9211eac72b53f5f85d23cf6d83ee20245c6d818733405024e71f2af41e5c5f91")
@@ -307,7 +309,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("armadillo", when="+armadillo")
     depends_on("blas", when="+armadillo")
     depends_on("lapack", when="+armadillo")
-    depends_on("arrow", when="+arrow")
+    depends_on("arrow+filesystem", when="+arrow")
     depends_on("libavif", when="+avif")
     # depends_on("basis-universal", when="+basisu")
     depends_on("c-blosc", when="+blosc")

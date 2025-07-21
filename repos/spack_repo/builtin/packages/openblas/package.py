@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
-from spack.package_test import compare_output_file, compile_c_and_execute
 
 
 class Openblas(CMakePackage, MakefilePackage):
@@ -120,7 +119,11 @@ class Openblas(CMakePackage, MakefilePackage):
     patch("openblas-0.3.29-darwin-aarch64.patch", when="@0.3.29 platform=darwin")
 
     # https://github.com/xianyi/OpenBLAS/pull/2519/files
-    patch("ifort-msvc.patch", when="%msvc")
+    patch("ifort-msvc.patch", when="@0.3.24:0.3.29 %msvc")
+
+    # Adds proper compiler definitions to allow symbol mangling
+    # consistent with the rest of blas when building blas tests
+    patch("blas_normalize_test_symbols.patch", when="%msvc")
 
     # https://github.com/OpenMathLib/OpenBLAS/pull/3712
     patch("cce.patch", when="@0.3.20 %cce")
