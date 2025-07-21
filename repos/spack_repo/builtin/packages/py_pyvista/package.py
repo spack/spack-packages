@@ -32,12 +32,14 @@ class PyPyvista(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
     # https://github.com/pyvista/pyvista/releases/tag/v0.44.0
     depends_on("py-numpy@:1", when="@:0.43", type=("build", "run"))
+
+    # this is a virtual that can provide py-pillow as needed
     depends_on("pil", type=("build", "run"))
     depends_on("py-pooch", when="@0.37:", type=("build", "run"))
     depends_on("py-scooby@0.5.1:", type=("build", "run"))
+
     # https://github.com/pyvista/pyvista/issues/6857
     depends_on("vtk@:9.3+python", type=("build", "run"), when="@:0.44.1")
-
     # 9.4.0 and 9.4.1 are not supported
     # https://github.com/pyvista/pyvista/issues/6731
     depends_on("vtk@:9.3,9.4.2:9.6+python", type=("build", "run"), when="@0.45.3:")
