@@ -501,6 +501,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         )
     depends_on("enzyme@0.0.176:", when="+enzyme")
     requires("%cxx=llvm", when="+enzyme")
+    depends_on("cuda+allow-unsupported-compilers", when="+enzyme+cuda")
 
     for using_double_cond in ["@:4.6", "precision=double"]:
         with when(using_double_cond):
@@ -563,7 +564,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         def yes_no(varstr):
             return "YES" if varstr in self.spec else "NO"
 
-        xcompiler = "" if "~cuda" in spec else "-Xcompiler="
+        using_nvcc = "+cuda" in spec and "+enzyme" not in spec
+        xcompiler = "" if not using_nvcc else "-Xcompiler="
 
         # We need to add rpaths explicitly to allow proper export of link flags
         # from within MFEM. We use the following two functions to do that.
@@ -679,7 +681,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             cxxstd = cxxstd_req
         cxxstd_flag = None
         if cxxstd:
-            if "+cuda" in spec:
+            if using_nvcc:
                 cxxstd_flag = "-std=c++" + cxxstd
             else:
                 cxxstd_flag = getattr(self.compiler, "cxx" + cxxstd + "_flag")
@@ -704,10 +706,23 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
             cxxflags = [(xcompiler + flag) for flag in cxxflags]
             if "+cuda" in spec:
-                cxxflags += [
-                    "-x=cu --expt-extended-lambda -arch=sm_%s" % cuda_arch,
-                    "-ccbin %s" % (spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]),
-                ]
+                if using_nvcc:
+                    nvcc_base_flags = "-x=cu --expt-extended-lambda"
+                    if spec.satisfies("@4.9.0:"):
+                        nvcc_base_flags += " --expt-relaxed-constexpr"
+                    cxxflags += [
+                        nvcc_base_flags,
+                        "-arch=sm_%s" % cuda_arch,
+                        "-ccbin %s" % (spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]),
+                    ]
+                else:
+                    # using clang cuda
+                    cxxflags += [
+                        "-xcuda",
+                        f"--cuda-path={spec['cuda'].prefix}",
+                        "--cuda-gpu-arch=sm_%s" % cuda_arch,
+                    ]
+
             if cxxstd_flag:
                 cxxflags.append(cxxstd_flag)
             # The cxxflags are set by the spack c++ compiler wrapper. We also
@@ -968,8 +983,12 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             options += ["OPENMP_OPT=%s" % (xcompiler + self.compiler.openmp_flag)]
 
         if "+cuda" in spec:
+            if using_nvcc:
+                cuda_cxx = join_path(spec["cuda"].prefix, "bin", "nvcc")
+            else:
+                cuda_cxx = spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]
             options += [
-                "CUDA_CXX=%s" % join_path(spec["cuda"].prefix, "bin", "nvcc"),
+                f"CUDA_CXX={cuda_cxx}",
                 "CUDA_ARCH=sm_%s" % cuda_arch,
             ]
             # Check if we are using a CUDA installation where the math libs are
@@ -1404,7 +1423,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
     @property
     def xlinker(self):
-        return "-Wl," if "~cuda" in self.spec else "-Xlinker="
+        using_nvcc = "+cuda" in self.spec and "+enzyme" not in self.spec
+        return "-Wl," if not using_nvcc else "-Xlinker="
 
     # Similar to spec[pkg].libs.ld_flags but prepends rpath flags too.
     # Also does not add system library paths as defined by 'sys_lib_paths'
