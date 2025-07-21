@@ -500,8 +500,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             "amgx~mpi cuda_arch={0}".format(sm_), when="+amgx~mpi cuda_arch={0}".format(sm_)
         )
     depends_on("enzyme@0.0.176:", when="+enzyme")
-    requires("%cxx=llvm", when="+enzyme")
+    requires("%cxx=llvm", when="+enzyme~rocm")
     depends_on("cuda+allow-unsupported-compilers", when="+enzyme+cuda")
+    depends_on("enzyme %libllvm=llvm-amdgpu", when="+enzyme+rocm")
+    requires("%cxx=llvm-amdgpu", when="+enzyme+rocm")
 
     for using_double_cond in ["@:4.6", "precision=double"]:
         with when(using_double_cond):
