@@ -11,7 +11,7 @@ class PyBidsValidator(PythonPackage):
     """Validator for the Brain Imaging Data Structure"""
 
     homepage = "https://github.com/bids-standard/bids-validator"
-    pypi = "bids-validator/bids_validator-1.14.6.tar.gz"
+    pypi = "bids-validator/bids_validator-1.14.7.post0.tar.gz"
 
     license("MIT")
 
