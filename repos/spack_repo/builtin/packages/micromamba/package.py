@@ -45,7 +45,7 @@ class Micromamba(CMakePackage):
     with when("linkage=dynamic"):
         # See https://github.com/mamba-org/mamba/blob/micromamba-1.0.0/libmamba/CMakeLists.txt#L423
         depends_on("libsolv+conda", type="link")
-        depends_on("curl libs=shared", type="link")
+        depends_on("curl@7.66.0: libs=shared", type="link")
         depends_on("libarchive crypto=mbedtls xar=libxml2", type="link")
         depends_on("openssl", type="link")
         depends_on("yaml-cpp", type="link")
@@ -78,7 +78,7 @@ class Micromamba(CMakePackage):
         # https://github.com/mamba-org/mamba/blob/micromamba-1.0.0/libmamba/CMakeLists.txt#L420
         # See linkage=dynamic for what that entails.
         depends_on("libsolv+conda", type="link")
-        depends_on("curl libs=shared", type="link")
+        depends_on("curl@7.66.0: libs=shared", type="link")
         depends_on("libarchive crypto=mbedtls xar=libxml2", type="link")
         depends_on("openssl", type="link")
         depends_on("yaml-cpp", type="link")
@@ -107,7 +107,7 @@ class Micromamba(CMakePackage):
 
         with when("linkage=full_static"):
             # https://github.com/mamba-org/mamba/blob/micromamba-1.0.0/libmamba/CMakeLists.txt#L276
-            depends_on("curl libs=static", type="link")
+            depends_on("curl@7.66.0: libs=static", type="link")
             depends_on("libssh2~shared", type="link")
             depends_on("krb5~shared", type="link")
             depends_on("openssl~shared", type="link")
