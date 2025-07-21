@@ -28,10 +28,7 @@ class Kenlm(CMakePackage):
     depends_on("eigen@3.1.0:", type="build")
 
     def cmake_args(self):
-        args = [
-            self.define("BUILD_SHARED_LIBS", False),
-            self.define("KENLM_MAX_ORDER", 6),
-        ]
+        args = [self.define("BUILD_SHARED_LIBS", False), self.define("KENLM_MAX_ORDER", 6)]
 
         if self.spec.variants["debug"].value:
             args.append(self.define("CMAKE_BUILD_TYPE", "Debug"))
