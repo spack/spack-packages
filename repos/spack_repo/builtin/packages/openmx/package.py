@@ -58,6 +58,11 @@ class Openmx(MakefilePackage):
     depends_on("scalapack")
     depends_on("sse2neon", when="target=aarch64:")
 
+    # Need OpenMP threaded BLAS libraries
+    requires("^openblas threads=openmp", when="^[virtuals=blas] openblas")
+    requires("^amdblis threads=openmp", when="^[virtuals=blas] amdblis")
+    requires("^intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
+
     patch("for_aarch64.patch", when="@3.8 target=aarch64:")
 
     parallel = False
@@ -88,8 +93,13 @@ class Openmx(MakefilePackage):
             self.compiler.openmp_flag,
             spec["fftw-api"].headers.include_flags,
         ]
-        fc_option = [spec["mpi"].mpifc]
-        lib_option = [spec["fftw-api"].libs.ld_flags, lapack_blas_libs.ld_flags, "-lmpi_mpifh"]
+        fc_option = [spec["mpi"].mpifc, self.compiler.openmp_flag]
+        lib_option = [
+            spec["fftw-api"].libs.ld_flags,
+            lapack_blas_libs.ld_flags,
+            "-lmpi_mpifh",
+            self.compiler.openmp_flag,
+        ]
         if spec.satisfies("@3.8"):
             cc_option.append("-I$(LIBERIDIR)")
         if spec.satisfies("@3.9"):
@@ -110,7 +120,9 @@ class Openmx(MakefilePackage):
                 if spec.satisfies("%gcc@10:"):
                     fc_option.append("-fallow-argument-mismatch")
             if "%llvm" in spec or "%aocc" in spec:
-                lib_option.extend(["-lflang", "-lpgmath"])
+                lib_option.extend(["-lflang", "-lpgmath", "-lflangrti"])
+            if "%oneapi" in spec:
+                lib_option.extend(["-lifcore"])
 
         return [
             "CC={0} -Dscalapack {1} ".format(" ".join(cc_option), " ".join(common_option)),
