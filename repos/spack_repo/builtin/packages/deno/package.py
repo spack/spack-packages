@@ -18,6 +18,8 @@ class Deno(Package):
     # installation is reproducing what the install script does:
     # https://github.com/denoland/deno_install/blob/master/install.sh
 
+    skip_version_audit = ["platform=windows"]
+
     deno_versions = {
         "2.4.2": {
             "linux": {
@@ -40,12 +42,13 @@ class Deno(Package):
                     "target": "aarch64-apple-darwin",
                 },
             },
-            "windows": {
-                "x86_64": {
-                    "sha256": "5a8c816f6e720378a74c2567679ba2a799c815b8c2ffc06b0e71da6c2a9bf189",
-                    "target": "x86_64-pc-windows-msvc",
-                }
-            },
+            # for some reason windows does not work
+            # "windows": {
+            #     "x86_64": {
+            #         "sha256": "5a8c816f6e720378a74c2567679ba2a799c815b8c2ffc06b0e71da6c2a9bf189",
+            #         "target": "x86_64-pc-windows-msvc",
+            #     }
+            # },
         }
     }
 
