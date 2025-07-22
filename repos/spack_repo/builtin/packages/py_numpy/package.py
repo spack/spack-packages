@@ -190,6 +190,13 @@ class PyNumpy(PythonPackage):
         depends_on("py-setuptools@:63", when="@:1.25")
         depends_on("py-setuptools@:59", when="@:1.22.1")
 
+    # Fix support for C++23 compilers (e.g., Apple Clang 17+)
+    patch(
+        "https://github.com/numpy/numpy/pull/27361.patch?full_index=1",
+        sha256="c7565df581e7756965f8a538bc1e50f3f86c35eb68166d05d7d50205f8b1e312",
+        when="@2.0.0:2.1.1",
+    )
+
     # https://github.com/spack/spack/issues/49983
     patch(
         "https://github.com/numpy/numpy/commit/7771624a4a4c662f936e07bbf74dd7d553225f23.patch?full_index=1",
