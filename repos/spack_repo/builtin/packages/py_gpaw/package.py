@@ -21,13 +21,9 @@ class PyGpaw(PythonPackage):
 
     version("25.1.0", sha256="80236e779784df3317e7da395dc59ea403bc0213bb3a68d02c17957162e972ea")
     version("24.6.0", sha256="fb48ef0db48c0e321ce5967126a47900bba20c7efb420d6e7b5459983bd8f6f6")
+    version("23.9.1", sha256="19a24840b876003528864b7a0b38fc0d456800b83b8666b1f724273660745b47")
+    version("23.6.1", sha256="ff56d323a499972c8991770a6ab0334a6dd18df36e9c94360e0aa1ddf8867dfd")
     with default_args(deprecated=True):
-        version(
-            "23.9.1", sha256="19a24840b876003528864b7a0b38fc0d456800b83b8666b1f724273660745b47"
-        )
-        version(
-            "23.6.1", sha256="ff56d323a499972c8991770a6ab0334a6dd18df36e9c94360e0aa1ddf8867dfd"
-        )
         version(
             "21.1.0", sha256="96843b68e04bd1c12606036c9f99b0ddfa5e6ee08ce46835e6bb347a6bd560a3"
         )
