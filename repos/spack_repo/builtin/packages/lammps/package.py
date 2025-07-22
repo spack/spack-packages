@@ -59,7 +59,12 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         deprecated=True,
     )
     version(
-        "20240829.3", sha256="75a9fb55d3c10f44cbc7b30313351ce9b12ab3003c1400147fa3590b6d651c73"
+        "20240829.4", sha256="e7d6d60b94ada5acc2e1e9966ae12547fd550d6967d4511b8655c77e24878728"
+    )
+    version(
+        "20240829.3",
+        sha256="75a9fb55d3c10f44cbc7b30313351ce9b12ab3003c1400147fa3590b6d651c73",
+        deprecated=True,
     )
     version(
         "20240829.2",
@@ -442,6 +447,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
 
     stable_versions = {
         "20250722",
+        "20240829.4",
         "20240829.3",
         "20240829.2",
         "20240829.1",
