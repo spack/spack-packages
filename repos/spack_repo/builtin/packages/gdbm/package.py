@@ -43,7 +43,7 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
     patch(
         "https://git.savannah.gnu.org/cgit/gdbm.git/rawdiff/?id=ed0a865345681982ea02c6159c0f3d7702c928a1",
         sha256="cdba23a8da0bbdf91921247d226f9ca13e2a1c9541434f7a9132ba39346762ad",
-        when="@1.25 platform=darwin"
+        when="@1.25 platform=darwin",
     )
 
     patch("macOS.patch", when="@1.21 platform=darwin")
