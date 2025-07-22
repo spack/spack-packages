@@ -121,15 +121,11 @@ class PyGpaw(PythonPackage):
 
         libs = blas.libs + lapack.libs + libxc.libs
 
-        include_dirs = [
-            blas.prefix.include,
-            lapack.prefix.include,
-            libxc.prefix.include,
-        ]
+        include_dirs = [blas.prefix.include, lapack.prefix.include, libxc.prefix.include]
 
         if spec.satisfies("@:19.8.1"):
             numpy_include = join_path(
-               self["py-numpy"].module.python_platlib, "numpy", "core", "include"
+                self["py-numpy"].module.python_platlib, "numpy", "core", "include"
             )
             include_dirs += [numpy_include]
 
