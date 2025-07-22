@@ -67,12 +67,12 @@ class Ddc(CMakePackage):
                 when=f"^kokkos +rocm amdgpu_target={target}",
             )
 
-        requires(f"^ginkgo +sycl", when=f"^kokkos +sycl")
-        requires(f"^ginkgo +openmp", when=f"^kokkos +openmp")
+        requires("^ginkgo +sycl", when="^kokkos +sycl")
+        requires("^ginkgo +openmp", when="^kokkos +openmp")
 
         # We cannot build shared libraries when relocatable device code is used
         for backend in ["cuda", "rocm", "sycl"]:
-            requires(f"^kokkos-kernels ~shared", when=f"^kokkos +{backend}")
+            requires("^kokkos-kernels ~shared", when=f"^kokkos +{backend}")
 
     depends_on("pdi@1.6:1", when="+pdi")
 
