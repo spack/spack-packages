@@ -10,14 +10,14 @@ import yaml
 
 
 def import_labels_config(path: str):
-    with open(path) as fd:
+    with open(path, encoding="utf-8") as fd:
         try:
             label_patterns = yaml.safe_load(fd)
         except yaml.YAMLError as exc:
             raise Exception(f"Unable to load {path}\n{exc}")
 
         # compile all the regexes above, and ensure that all pattern dict values are lists
-        for label, pattern_dict in label_patterns.items():
+        for pattern_dict in label_patterns.values():
             for attr in pattern_dict.keys():
                 patterns = pattern_dict[attr]
                 if not isinstance(patterns, list):
@@ -28,10 +28,10 @@ def import_labels_config(path: str):
 
 
 def main():
-    labels_config_path = os.environ.get("LABELS_CONFIG")
-    repository = os.environ.get("GH_REPO")
-    pr_number = os.environ.get("GH_PR_NUMBER")
-    token = os.environ.get("GH_TOKEN")
+    labels_config_path = os.environ["LABELS_CONFIG"]
+    repository = os.environ["GH_REPO"]
+    pr_number = os.environ["GH_PR_NUMBER"]
+    token = os.environ["GH_TOKEN"]
 
     headers = {"Accept": "application/vnd.github+json"}
     if token:
@@ -74,6 +74,10 @@ def main():
                 labels.add(label)
 
     existing_labels = {label["name"] for label in pull_request["labels"]}
+
+    # Maintain non-managed labels (i.e. those that are not in label_patterns)
+    labels.update(existing_labels.difference(label_patterns))
+
     if existing_labels == labels:
         print(f"[PR #{pr_number}]: labels already up-to-date")
         return
