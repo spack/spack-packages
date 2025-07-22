@@ -148,8 +148,7 @@ class PyGpaw(PythonPackage):
             include_dirs.append(spec["scalapack"].prefix.include)
             # Are these necessary?
             scalapack_macros = repr(
-                [("GPAW_NO_UNDERSCORE_CBLACS", "1"), 
-                 ("GPAW_NO_UNDERSCORE_CSCALAPACK", "1")]
+                [("GPAW_NO_UNDERSCORE_CBLACS", "1"), ("GPAW_NO_UNDERSCORE_CSCALAPACK", "1")]
             )
             bools += "scalapack = True\n"
 
@@ -170,8 +169,8 @@ class PyGpaw(PythonPackage):
             runtime_library_dirs += spec["elpa"].libs.directories
 
         if "+openmp" in spec:
-            openmp_compile_args = ['-fopenmp']
-            openmp_link_args = ['-fopenmp']
+            openmp_compile_args = ["-fopenmp"]
+            openmp_link_args = ["-fopenmp"]
 
         lib_dirs = list(libs.directories)
         libs = list(libs.names)
