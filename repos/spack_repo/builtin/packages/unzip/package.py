@@ -20,6 +20,9 @@ class Unzip(MakefilePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    # needed for patches to work
+    depends_on("libiconv", type="build")
+
     # clang and oneapi need this patch, likely others
     # There is no problem with it on gcc, so make it a catch all
     patch("configure-cflags.patch")
