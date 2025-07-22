@@ -23,9 +23,7 @@ class Spherepack(Package):
         spec = self.spec
 
         if name == "fflags":
-            flags.append("-O2")
-
-            if spec.satisfies("%gcc@10:"):
+            if spec.satisfies("%fortran=gcc@10:"):
                 flags.append("-fallow-argument-mismatch")
 
         return (flags, None, None)
