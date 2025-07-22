@@ -19,7 +19,6 @@ class PyVesinTorch(PythonPackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.3.7", sha256="37504d17c9850ec696d1b2c1ce65d6735a35a3e1becdf3f94f1be7de1521512e")
-    extends("python@3.9:")
 
     # pyproject.toml
     depends_on("python@3.9:", type=("build", "run"))

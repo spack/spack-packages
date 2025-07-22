@@ -18,12 +18,12 @@ class PyMetatensorTorch(PythonPackage):
     maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-vesin", type=("run", "build"))
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("libmetatensor@0.1.14:0.1", type=("build", "run"))
 
     # pyproject.toml
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
     depends_on("cmake@3.16:", type="build")

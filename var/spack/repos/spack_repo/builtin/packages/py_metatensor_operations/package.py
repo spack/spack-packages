@@ -20,10 +20,11 @@ class PyMetatensorOperations(PythonPackage):
 
     version("0.3.3", sha256="432d267ce1f3c5ee11994d5348e70bc517a3c19ef68982af7bb470463e3c1b6b")
 
-    extends("python@3.9:")
     variant("torch", default=False, description="With PyTorch")
 
     # pyproject.toml
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
+    # setup.py
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"))

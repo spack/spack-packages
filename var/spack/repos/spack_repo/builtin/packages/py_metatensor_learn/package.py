@@ -19,12 +19,8 @@ class PyMetatensorLearn(PythonPackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.3.2", sha256="987f63228888882a6189137ddb89f913b2fde1072c3caa83a39b9f5d50388b51")
-    extends("python@3.9:")
-    variant("torch", default=False, description="With PyTorch")
 
     # pyproject.toml
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
-    depends_on("py-torch@2.6:", type="run", when="+torch")
-    depends_on("py-numpy", type="run", when="+torch")
-    depends_on("py-metatensor-operations@0.3", type=("build", "run"))
