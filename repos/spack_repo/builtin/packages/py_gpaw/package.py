@@ -187,8 +187,8 @@ class PyGpaw(PythonPackage):
             f.write(f"library_dirs = {repr(lib_dirs)}\n")
             f.write(f"extra_link_args += ['-Wl,-rpath={rpath_str}']\n")
             if "+mpi" in spec:
-                # Do we need this macro for older versions? Newer versions don't seem to.
-                f.write("define_macros += [('PARALLEL', '1')]\n")
+                if spec.satisfies("@:19.8.1"):
+                    f.write("define_macros += [('PARALLEL', '1')]\n")
                 # These may not be needed for versions @23.6.0:
                 # We can add logic to only apply them for older versions, 
                 # but they don't cause problems even when not needed.
