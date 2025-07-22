@@ -6,8 +6,6 @@ import os
 
 from spack_repo.builtin.packages.clingo.package import Clingo
 
-import spack.paths
-import spack.user_environment
 from spack.package import *
 
 
@@ -108,13 +106,11 @@ class ClingoBootstrap(Clingo):
         # Run spack solve --fresh hdf5 with instrumented clingo.
         python_runtime_env = EnvironmentModifications()
         python_runtime_env.extend(
-            spack.user_environment.environment_modifications_for_specs(
-                self.spec, set_package_py_globals=False
-            )
+            environment_modifications_for_specs(self.spec, set_package_py_globals=False)
         )
         python_runtime_env.unset("SPACK_ENV")
         python_runtime_env.unset("SPACK_PYTHON")
-        python(spack.paths.spack_script, "solve", "--fresh", "hdf5", extra_env=python_runtime_env)
+        python(spack_script, "solve", "--fresh", "hdf5", extra_env=python_runtime_env)
 
         # Clean the build dir.
         rmtree(self.build_directory, ignore_errors=True)

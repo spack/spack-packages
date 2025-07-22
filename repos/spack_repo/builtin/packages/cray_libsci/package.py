@@ -4,7 +4,6 @@
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
-from spack.util.module_cmd import get_path_args_from_module_line, module
 
 
 class CrayLibsci(Package):
@@ -55,7 +54,7 @@ class CrayLibsci(Package):
 
     @property
     def external_prefix(self):
-        libsci_module = module("show", self.modname).splitlines()
+        libsci_module = module_command("show", self.modname).splitlines()
 
         for line in libsci_module:
             if "CRAY_LIBSCI_PREFIX_DIR" in line:

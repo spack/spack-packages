@@ -41,6 +41,7 @@ import spack.util.parallel
 import spack.util.web
 from spack.enums import ConfigScopePriority
 from spack.installer import PackageInstaller
+from spack.package import host_platform
 
 
 @pytest.fixture(autouse=True)
@@ -322,7 +323,7 @@ def linux_os():
     """Returns a named tuple with attributes 'name' and 'version'
     representing the OS.
     """
-    platform = spack.platforms.host()
+    platform = host_platform()
     name, version = "debian", "6"
     if platform.name == "linux":
         current_os = platform.default_operating_system()

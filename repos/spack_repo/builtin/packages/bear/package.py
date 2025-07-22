@@ -18,6 +18,9 @@ class Bear(CMakePackage):
 
     license("GPL-3.0-or-later")
 
+    version("3.1.6", sha256="99cd891eec6e89b734d7cafe0e623dd8c2f27d8cbf3ee9bc4807e69e5c8fb55c")
+    version("3.1.5", sha256="4ac7b041222dcfc7231c6570d5bd76c39eaeda7a075ee2385b84256e7d659733")
+    version("3.1.4", sha256="a1105023795b3e1b9abc29c088cdec5464cc9f3b640b5078dc90a505498da5ff")
     version("3.1.3", sha256="8314438428069ffeca15e2644eaa51284f884b7a1b2ddfdafe12152581b13398")
     version("3.1.2", sha256="5f94e98480bd8576a64cd1d59649f34b09b4e02a81f1d983c92af1113e061fc3")
     version("3.1.1", sha256="52f8ee68ee490e5f2714eebad9e1288e89c82b9fd7bf756f600cff03de63a119")

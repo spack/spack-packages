@@ -23,6 +23,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     maintainers("natshineman", "harisubramoni", "MatthewLieber")
 
+    version("7.5.1", sha256="160d0d5e3c3cb022520ecb247e9875bb0973b1d3cadccd6c17624f8407c52e22")
     version("7.5", sha256="1cf84ac5419456202757a757c5f9a4f5c6ecd05c65783c7976421cfd6020b3b3")
     version("7.4", sha256="1edd0c2efa61999409bfb28740a7f39689a5b42b1a1b4c66d1656e5637f7cefc")
     version("7.3", sha256="8fa25b8aaa34e4b07ab3a4f30b7690ab46b038b08d204a853a9b6aa7bdb02f2f")

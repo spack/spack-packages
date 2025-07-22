@@ -9,14 +9,9 @@ import platform
 import re
 import subprocess
 import sys
-from shutil import copy
-from typing import Dict, List
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util.lang import dedupe
-
-from spack.build_environment import dso_suffix, stat_suffix
 from spack.package import *
 
 
@@ -1004,8 +999,12 @@ print(json.dumps(config))
                 "LIBPL": self.prefix.lib.join("python{0}")
                 .join("config-{0}-{1}")
                 .format(version, sys.platform),
-                "LDLIBRARY": "{}python{}.{}".format(lib_prefix, version, dso_suffix),
-                "LIBRARY": "{}python{}.{}".format(lib_prefix, version, stat_suffix),
+                "LDLIBRARY": "{}python{}.{}".format(
+                    lib_prefix, version, shared_library_suffix(self.spec)
+                ),
+                "LIBRARY": "{}python{}.{}".format(
+                    lib_prefix, version, static_library_suffix(self.spec)
+                ),
                 "LDSHARED": "cc",
                 "LDCXXSHARED": "c++",
                 "PYTHONFRAMEWORKPREFIX": "/System/Library/Frameworks",
@@ -1138,14 +1137,18 @@ print(json.dumps(config))
             shared_libs = []
         else:
             shared_libs = [self.config_vars["LDLIBRARY"]]
-        shared_libs += ["{}python{}.{}".format(lib_prefix, py_version, dso_suffix)]
+        shared_libs += [
+            "{}python{}.{}".format(lib_prefix, py_version, shared_library_suffix(self.spec))
+        ]
         # Like LDLIBRARY for Python on Mac OS, LIBRARY may refer to an un-linkable object
         file_extension_static = os.path.splitext(self.config_vars["LIBRARY"])[-1]
         if file_extension_static == "":
             static_libs = []
         else:
             static_libs = [self.config_vars["LIBRARY"]]
-        static_libs += ["{}python{}.{}".format(lib_prefix, py_version, stat_suffix)]
+        static_libs += [
+            "{}python{}.{}".format(lib_prefix, py_version, static_library_suffix(self.spec))
+        ]
 
         # The +shared variant isn't reliable, as `spack external find` currently can't
         # detect it. If +shared, prefer the shared libraries, but check for static if
