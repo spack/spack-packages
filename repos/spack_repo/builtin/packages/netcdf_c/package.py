@@ -381,6 +381,18 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
     def force_autoreconf(self):
         return any(self.spec.satisfies(s) for s in self.pkg._force_autoreconf_when)
 
+    @property
+    def build_targets(self):
+        # Starting version 4.8.0, the library includes C++ source files. None of those files is
+        # compiled in any configuration that we currently support. However, Automake still chooses
+        # the C++ compiler for linking, which leads to overlinking to the standard C++ library.
+        # To avoid that, we run make with an extra argument, which overrides the linker command.
+        # This way, the C++ compiler is never called, and the linking is done with the default
+        # command that runs the C compiler.
+        if self.spec.satisfies("@4.8.0:"):
+            return ["CXXLINK=${LINK}"]
+        return []
+
     @when("@4.6.3:")
     def autoreconf(self, pkg, spec, prefix):
         if not os.path.exists(self.configure_abs_path):
