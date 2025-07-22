@@ -119,20 +119,20 @@ class PyGpaw(PythonPackage):
         blas = spec["blas"]
         lapack = spec["lapack"]
 
-        # These aren't necessary for newer versions, test if we can remove them compeletely.
-        python_include = spec["python"].headers.directories[0]
-        numpy_include = join_path(
-            self["py-numpy"].module.python_platlib, "numpy", "core", "include"
-        )
-
         libs = blas.libs + lapack.libs + libxc.libs
+
         include_dirs = [
-            python_include,
-            numpy_include,
             blas.prefix.include,
             lapack.prefix.include,
             libxc.prefix.include,
         ]
+
+        if spec.satisfies("@:19.8.1"):
+            numpy_include = join_path(
+               self["py-numpy"].module.python_platlib, "numpy", "core", "include"
+            )
+            include_dirs += [numpy_include]
+
         runtime_library_dirs = []
 
         bools = ""
