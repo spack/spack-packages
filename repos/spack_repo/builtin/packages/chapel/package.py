@@ -11,7 +11,7 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
-
+from spack.util.environment import is_system_path
 
 def slingshot_network():
     return os.path.exists("/opt/cray/pe") and (
