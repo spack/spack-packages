@@ -21,6 +21,7 @@ class PyRpy2(PythonPackage):
 
     maintainers("Chrismarsh")
 
+    version("3.6.1", sha256="9f7409f254c359618839bc937859a5078d9d94ebceb48dfd1192d442aeffb350")
     version("3.5.17", sha256="dbff08c30f3d79161922623858a5b3b68a3fba8ee1747d6af41bc4ba68f3d582")
 
     # these are from 2019 and don't cleanly work with new r (4+) and pandas versions
@@ -68,6 +69,8 @@ class PyRpy2(PythonPackage):
 
     depends_on("iconv")
 
+    depends_on("zstd")
+
     # These are from 2019 and predate the pyproject.toml config that currently exists
     with when("@3.0.0:3.0.4"):
         # Doesn't support post-distutil removal until 3.5.13
@@ -80,3 +83,8 @@ class PyRpy2(PythonPackage):
         depends_on("py-pytest", type=("build", "run"))
 
         depends_on("r@3.3:", type=("build", "run"))
+
+    def patch(self):
+        # https://github.com/rpy2/rpy2/issues/1198
+        filter_file(r"^license-files.+","","pyproject.toml")
+        filter_file(r"^license.+","","pyproject.toml")
