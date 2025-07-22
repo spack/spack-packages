@@ -109,7 +109,7 @@ class Neovim(CMakePackage):
     depends_on("gperf", type="link")
     depends_on("jemalloc", type="link", when="platform=linux")
     depends_on("lua-lpeg")
-    depends_on("lua-mpack")
+    depends_on("lua-mpack", when="@:0.10")
     depends_on("iconv", type="link")
     depends_on("libtermkey", type="link", when="@:0.9")
     depends_on("libuv", type="link")
@@ -122,11 +122,11 @@ class Neovim(CMakePackage):
     # versions
     with when("@0.4:"):
         depends_on("libuv@1.28:", type="link")
-        depends_on("libluv@1.30.0:", type="link")
-        depends_on("libtermkey@0.18:", type="link")
-        depends_on("libvterm@0.1:", type="link")
+        depends_on("libluv@1.30.0:", type="link", when="@:0.9")
+        depends_on("libtermkey@0.18:", type="link", when="@:0.9")
+        depends_on("libvterm@0.1:", type="link", when="@:0.10")
         depends_on("unibilium@2.0:", type="link")
-        depends_on("msgpack-c@1.0.0:", type="link")
+        depends_on("msgpack-c@1.0.0:", type="link", when="@:0.10")
     with when("@0.5:"):
         depends_on("libuv@1.42:", type="link")
         depends_on("tree-sitter")
@@ -134,21 +134,21 @@ class Neovim(CMakePackage):
         depends_on("cmake@3.10:", type="build")
         depends_on("gperf@3.1:", type="link")
         conflicts("^libiconv@:1.14")
-        depends_on("libtermkey@0.22:", type="link")
-        depends_on("libvterm@0.1.4:", type="link")
-        depends_on("msgpack-c@3.0.0:", type="link")
+        depends_on("libtermkey@0.22:", type="link", when="@:0.9")
+        depends_on("libvterm@0.1.4:", type="link", when="@:0.10")
+        depends_on("msgpack-c@3.0.0:", type="link", when="@:0.10")
     with when("@0.7:"):
         depends_on("gettext@0.20.1:")
-        depends_on("libluv@1.43.0:", type="link")
+        depends_on("libluv@1.43.0:", type="link", when="@:0.9")
         depends_on("libuv@1.44.1:", type="link")
         depends_on("tree-sitter@0.20.6:")
     with when("@0.8:"):
-        depends_on("libvterm@0.3:", type="link")
+        depends_on("libvterm@0.3:", type="link", when="@:0.10")
     with when("@0.9:"):
         depends_on("tree-sitter@0.20.8:")
     with when("@0.10:"):
         depends_on("cmake@3.13:", type="build")
-        depends_on("libvterm@0.3.3:")
+        depends_on("libvterm@0.3.3:", when="@:0.10")
         depends_on("tree-sitter@0.20.9:")
     with when("@0.11:"):
         depends_on("cmake@3.16:", type="build")
