@@ -53,8 +53,8 @@ class TclTogl(AutotoolsPackage):
 
         for with_dep in ("tcl", "tk"):
             args.append("--with-" + with_dep + "={0}".format(self.spec[with_dep].prefix.lib))
-#        args.append("--libdir={0}".format(join_path(self.prefix, "lib")))
-        args.append("--libdir={0}".format(self.prefix.lib))
+        args.append("--prefix={0}".format(self.prefix))
+        args.append("--exec-prefix={0}".format(self.prefix))
 
         return args
 
