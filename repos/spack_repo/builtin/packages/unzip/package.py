@@ -20,9 +20,6 @@ class Unzip(MakefilePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    # needed for patches to work
-    depends_on("libiconv", type="build")
-
     # clang and oneapi need this patch, likely others
     # There is no problem with it on gcc, so make it a catch all
     patch("configure-cflags.patch")
@@ -69,12 +66,6 @@ class Unzip(MakefilePackage):
     patch(
         "https://src.fedoraproject.org/rpms/unzip/raw/36af2c8ca922dc45b55f600ffd9d0b9fcd520fd9/f/unzip-6.0-heap-overflow-infloop.patch",
         sha256="b6f64d7b57e74ceaa794dd13a6937f063ec915343f3d5d88b0f81c919e7bf171",
-    )
-    # Add support of non-latin and non-unicode encodings for filenames
-    # https://src.fedoraproject.org/rpms/unzip/c/d599e36567d9e100851cc73e1d84d769ffc959cd
-    patch(
-        "https://src.fedoraproject.org/rpms/unzip/raw/d599e36567d9e100851cc73e1d84d769ffc959cd/f/unzip-6.0-alt-iconv-utf8.patch",
-        sha256="e64c9ddb38c2e7d08bdb80c597f32ee960e18fbe8cb982e444b1ece03ac95cec",
     )
     # CVE-2016-9844
     # https://src.fedoraproject.org/rpms/unzip/c/ee4e72f3fc47f04af21d4860cc2604cf69d37dac
