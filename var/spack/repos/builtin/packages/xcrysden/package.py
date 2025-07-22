@@ -115,3 +115,13 @@ class Xcrysden(MakefilePackage):
         makesys.filter(
             "FFTW3_INCDIR.*=.*", "FFTW3_INCDIR = -I{0}".format(spec["fftw"].prefix.include)
         )
+
+    def setup_dependent_run_environment(self, env, dependent_spec):
+        env.prepend_path(
+            "TK_LIBRARY",
+            join_path(self.spec["tk"].prefix.lib, "tk" + str(self.version.up_to(2))),
+        )
+        env.prepend_path(
+            "LD_LIBRARY_PATH",
+            join_path(self.spec["tcl"].prefix.lib, "Togl" + str(self.version.up_to(2))),
+        )
