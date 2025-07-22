@@ -86,5 +86,5 @@ class PyRpy2(PythonPackage):
 
     def patch(self):
         # https://github.com/rpy2/rpy2/issues/1198
-        filter_file(r"^license-files.+","","pyproject.toml")
-        filter_file(r"^license.+","","pyproject.toml")
+        filter_file(r"^license-files.+", "", "pyproject.toml")
+        filter_file(r"^license.+", "", "pyproject.toml")
