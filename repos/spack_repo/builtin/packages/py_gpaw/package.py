@@ -148,7 +148,8 @@ class PyGpaw(PythonPackage):
             include_dirs.append(spec["scalapack"].prefix.include)
             # Are these necessary?
             scalapack_macros = repr(
-                [("GPAW_NO_UNDERSCORE_CBLACS", "1"), ("GPAW_NO_UNDERSCORE_CSCALAPACK", "1")]
+                [("GPAW_NO_UNDERSCORE_CBLACS", "1"), 
+                 ("GPAW_NO_UNDERSCORE_CSCALAPACK", "1")]
             )
             bools += "scalapack = True\n"
 
@@ -169,8 +170,8 @@ class PyGpaw(PythonPackage):
             runtime_library_dirs += spec["elpa"].libs.directories
 
         if "+openmp" in spec:
-            openmp_compile_args = ["-fopenmp"]
-            openmp_link_args = ["-fopenmp"]
+            openmp_compile_args = ['-fopenmp']
+            openmp_link_args = ['-fopenmp']
 
         lib_dirs = list(libs.directories)
         libs = list(libs.names)
@@ -191,7 +192,7 @@ class PyGpaw(PythonPackage):
                 # Do we need this macro for older versions? Newer versions don't seem to.
                 f.write("define_macros += [('PARALLEL', '1')]\n")
                 # These may not be needed for versions @23.6.0:
-                # We can add logic to only apply them for older versions,
+                # We can add logic to only apply them for older versions, 
                 # but they don't cause problems even when not needed.
                 f.write(f"mpi_include_dirs = {mpi_include_dirs}\n")
                 f.write(f"mpi_library_dirs = {mpi_library_dirs}\n")

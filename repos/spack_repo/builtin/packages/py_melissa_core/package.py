@@ -22,11 +22,7 @@ class PyMelissaCore(PythonPackage, CudaPackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "2.0.0",
-        sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
-        preferred=True,
-    )
+    version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd", preferred=True)
     version("develop", branch="develop")
 
     # ====================================DEPRECATED VERSIONS=========================================
