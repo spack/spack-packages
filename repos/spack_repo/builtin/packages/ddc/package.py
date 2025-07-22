@@ -69,7 +69,7 @@ class Ddc(CMakePackage):
 
         requires(f"^ginkgo +sycl", when=f"^kokkos +sycl")
         requires(f"^ginkgo +openmp", when=f"^kokkos +openmp")
-        
+
         # We cannot build shared libraries when relocatable device code is used
         for backend in ["cuda", "rocm", "sycl"]:
             requires(f"^kokkos-kernels ~shared", when=f"^kokkos +{backend}")
