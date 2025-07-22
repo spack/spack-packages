@@ -39,4 +39,3 @@ class PyGeoviews(PythonPackage):
     depends_on("py-pyproj", type="run")
     depends_on("py-shapely", type="run")
     depends_on("py-xyzservices", type="run")
-
