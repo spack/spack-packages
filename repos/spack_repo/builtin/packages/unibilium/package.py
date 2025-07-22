@@ -39,4 +39,3 @@ class Unibilium(CMakePackage, AutotoolsPackage):
     with when("build_system=autotools"):
         depends_on("autoconf", when="@2.1.2:", type="build")
         depends_on("automake", when="@2.1.2:", type="build")
-
