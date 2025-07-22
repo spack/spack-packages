@@ -19,4 +19,7 @@ class TclBwidget(Package):
     extends("tcl")
 
     def install(self, spec, prefix):
+        tcl_lib_path = join_path(self.spec["tcl"].prefix.lib, "bwidget" + str(self.version.up_to(3)))
         install_tree(".", prefix)
+        copy_tree(prefix, tcl_lib_path)
+
