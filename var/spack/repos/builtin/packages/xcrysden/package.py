@@ -93,7 +93,7 @@ class Xcrysden(MakefilePackage):
         )
         makesys.filter(
             "TOGL_LIB.*=.*",
-            "TOGL_LIB = -L{0} -l{1}".format(join_path(spec["tcl"].prefix.lib, togl_lib), togl_lib),
+            "TOGL_LIB = -L{0} -l{1}".format(join_path(spec["tcl-togl"].prefix.lib, togl_lib), togl_lib),
         )
         makesys.filter(
             "TK_LIB.*=.*", "TK_LIB = -L{0} -l{1}".format(spec["tk"].prefix.lib, tk_lib)
@@ -114,14 +114,4 @@ class Xcrysden(MakefilePackage):
         makesys.filter("^GL_INCDIR.*=.*", "GL_INCDIR = -I{0}".format(spec["mesa"].prefix.include))
         makesys.filter(
             "FFTW3_INCDIR.*=.*", "FFTW3_INCDIR = -I{0}".format(spec["fftw"].prefix.include)
-        )
-
-    def setup_dependent_run_environment(self, env, dependent_spec):
-        env.prepend_path(
-            "TK_LIBRARY",
-            join_path(self.spec["tk"].prefix.lib, "tk" + str(self.version.up_to(2))),
-        )
-        env.prepend_path(
-            "LD_LIBRARY_PATH",
-            join_path(self.spec["tcl"].prefix.lib, "Togl" + str(self.version.up_to(2))),
         )
