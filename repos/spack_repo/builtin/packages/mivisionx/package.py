@@ -218,6 +218,7 @@ class Mivisionx(CMakePackage):
             depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
             depends_on(f"rpp@{ver}", when=f"@{ver}")
             depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+            depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on("python@3.5:", type="build")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
