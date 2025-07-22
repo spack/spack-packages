@@ -24,7 +24,3 @@ class LibmetatomicTorch(CMakePackage):
     depends_on("c", type="build")
     depends_on("libmetatensor-torch@0.7.6:", type=("build", "run"))
     depends_on("py-torch@2.1.0:2.7.0")
-
-    def cmake_args(self):
-        args = []
-        return args

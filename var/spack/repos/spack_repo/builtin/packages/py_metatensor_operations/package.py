@@ -26,7 +26,4 @@ class PyMetatensorOperations(PythonPackage):
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
-    depends_on("py-pip@22.1:", type="build")
-    depends_on("py-torch@2.6:", type=("build", "run"), when="+torch")
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"))
-    depends_on("py-numpy", type="run")
