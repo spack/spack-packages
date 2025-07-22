@@ -146,7 +146,6 @@ class PyGpaw(PythonPackage):
         if "+scalapack" in spec:
             libs += spec["scalapack"].libs
             include_dirs.append(spec["scalapack"].prefix.include)
-            # Are these necessary?
             scalapack_macros = repr(
                 [("GPAW_NO_UNDERSCORE_CBLACS", "1"), ("GPAW_NO_UNDERSCORE_CSCALAPACK", "1")]
             )
