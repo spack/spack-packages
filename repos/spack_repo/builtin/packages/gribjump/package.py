@@ -7,7 +7,7 @@ from spack.package import *
 
 
 class Gribjump(CMakePackage):
-    """GribJump is a C++ library for extracting subsets of data from GRIB files, 
+    """GribJump is a C++ library for extracting subsets of data from GRIB files,
     particularly data archived in the FDB
     """
 
