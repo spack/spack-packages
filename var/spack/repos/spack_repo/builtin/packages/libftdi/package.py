@@ -23,8 +23,8 @@ class Libftdi(CMakePackage):
     version("1.4", commit="d5c1622a2ff0c722c0dc59533748489b45774e55")
     version("1.3", commit="96d337a16b723d792f6ab5f40b7aa43120ac4782")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build") 
 
     depends_on("libusb")
     depends_on("libconfuse")
