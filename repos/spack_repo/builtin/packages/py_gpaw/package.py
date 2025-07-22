@@ -139,8 +139,6 @@ class PyGpaw(PythonPackage):
 
         if "+mpi" in spec:
             libs += spec["mpi"].libs
-            mpi_include_dirs = repr([spec["mpi"].prefix.include])
-            mpi_library_dirs = repr(list(spec["mpi"].libs.directories))
             include_dirs.append(spec["mpi"].prefix.include)
 
         if "+scalapack" in spec:
@@ -189,11 +187,6 @@ class PyGpaw(PythonPackage):
             if "+mpi" in spec:
                 if spec.satisfies("@:19.8.1"):
                     f.write("define_macros += [('PARALLEL', '1')]\n")
-                # These may not be needed for versions @23.6.0:
-                # We can add logic to only apply them for older versions, 
-                # but they don't cause problems even when not needed.
-                f.write(f"mpi_include_dirs = {mpi_include_dirs}\n")
-                f.write(f"mpi_library_dirs = {mpi_library_dirs}\n")
             if "+scalapack" in spec:
                 f.write(f"define_macros += {scalapack_macros}\n")
             if "+elpa" in spec:
