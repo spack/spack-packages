@@ -1,3 +1,3 @@
 repo:
-  namespace: mybuiltin
+  namespace: builtin
   api: v2.2
