@@ -29,6 +29,7 @@ class Curl(NMakePackage, AutotoolsPackage):
 
     license("curl")
 
+    version("8.15.0", sha256="699a6d2192322792c88088576cff5fe188452e6ea71e82ca74409f07ecc62563")
     version("8.14.1", sha256="5760ed3c1a6aac68793fc502114f35c3e088e8cd5c084c2d044abdf646ee48fb")
 
     # Deprecated versions due to CVEs
@@ -91,27 +92,33 @@ class Curl(NMakePackage, AutotoolsPackage):
     elif sys.platform == "win32":
         default_tls = "sspi"
 
-    # TODO: add dependencies for other possible TLS backends
-    variant(
-        "tls",
-        default=default_tls,
-        description="TLS backend",
-        values=(
-            # 'amissl',
-            # 'bearssl',
-            "gnutls",
-            conditional("mbedtls", when="@7.46:"),
-            # 'mesalink',
-            conditional("nss", when="@:7.81"),
-            "openssl",
-            # 'rustls',
-            # 'schannel',
-            "secure_transport",
-            # 'wolfssl',
-            conditional("sspi", when="platform=windows"),
-        ),
-        multi=True,
+    tls_desc = "TLS backend"
+    tls_vals = (
+        # 'amissl',
+        # 'bearssl',
+        "gnutls",
+        conditional("mbedtls", when="@7.46:"),
+        # 'mesalink',
+        conditional("nss", when="@:7.81"),
+        "openssl",
+        # 'rustls',
+        # 'schannel',
+        # secure_transport support was removed in curl 8.15.0
+        conditional("secure_transport", when="platform=darwin @:8.14"),
+        # 'wolfssl',
+        conditional("sspi", when="platform=windows"),
     )
+
+    # TODO: add dependencies for other possible TLS backends
+
+    variant("tls", default="openssl", description=tls_desc, values=tls_vals, multi=True)
+    with when("platform=windows"):
+        variant("tls", default="sspi", description=tls_desc, values=tls_vals, multi=True)
+    with when("platform=darwin @:8.14"):
+        variant(
+            "tls", default="secure_transport", description=tls_desc, values=tls_vals, multi=True
+        )
+
     variant("nghttp2", default=True, description="build nghttp2 library (requires C++11)")
     variant("libssh2", default=False, description="enable libssh2 support")
     variant("libssh", default=False, description="enable libssh support", when="@7.58:")
