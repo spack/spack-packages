@@ -1,0 +1,46 @@
+diff --git a/src/utils.cxx b/src/utils.cxx
+index b026757..764dda6 100644
+--- a/src/utils.cxx
++++ b/src/utils.cxx
+@@ -534,6 +534,14 @@ bool hasPathCharacters(const std::string &name) {
+     return false;
+ }
+ 
++bool SpackInstalledLib(const std::string &lib) {
++    const std::string prefix = GetSpackEnv("SPACK_INSTALL_PREFIX");
++    if (prefix.empty()) {
++        debug("Unable to determine Spack install prefix, SPACK_INSTALL_PREFIX unset");
++        return false;
++    }
++    return startswith(lib, prefix);
++}
+ 
+ LibraryFinder::LibraryFinder() : search_vars{"SPACK_RELOCATE_PATH"} {}
+ 
+diff --git a/src/utils.h b/src/utils.h
+index 86a9433..a0accda 100644
+--- a/src/utils.h
++++ b/src/utils.h
+@@ -147,6 +147,8 @@ void replace_path_characters(char in[], int len);
+ 
+ void replace_special_characters(char in[], int len);
+ 
++bool SpackInstalledLib(const std::string &lib);
++
+ // File and File handle helpers //
+ 
+ // Returns File offset given RVA
+diff --git a/src/winrpath.cxx b/src/winrpath.cxx
+index e19e53f..73fad30 100644
+--- a/src/winrpath.cxx
++++ b/src/winrpath.cxx
+@@ -829,6 +829,9 @@ bool LibRename::RenameDll(char* name_loc, const std::string &dll_path)
+         }
+     }
+     else {
++        if(SpackInstalledLib(dll_path)) {
++            return true;
++        }
+         std::string file_name = basename(dll_path);
+         if(file_name.empty()) {
+             std::cerr << "Unable to extract filename from dll for relocation" << "\n";
