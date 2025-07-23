@@ -508,6 +508,13 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
             # Prevent linking to szip to disable the plugin:
             config_args.append("ac_cv_lib_sz_SZ_BufftoBuffCompress=no")
 
+        if self.spec.satisfies("@4.9.3:"):
+            # If the plugin is built (i.e. when +shared), we want to ensure that the configure
+            # scripts checks for -lbz2 delivered by the bzip2 package. If the plugin is not built,
+            # we ensure that the configure script does not pick up system bzip2 (see below), but we
+            # also want to skip the checks for -lbzip2. Therefore, we pass the following option in
+            # both cases:
+            config_args.append("--enable-filter-bz2")
         if self.spec.satisfies("@4.9.0:"):
             if "+shared" in self.spec:
                 lib_search_dirs.extend(self.spec["bzip2"].libs.directories)
