@@ -38,6 +38,6 @@ class PyFastrlock(PythonPackage):
         # pip deprecated --install-option, suggests using --global-option instead
         # in https://github.com/pypa/pip/issues/11859#issuecomment-1741867145
         if self.spec.satisfies("^py-pip@23.1:"):
-            return {"--global-option":"--with-cython"}
+            return {"--global-option": "--with-cython"}
         else:
             return {}
