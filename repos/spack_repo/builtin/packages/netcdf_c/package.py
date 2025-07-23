@@ -517,7 +517,11 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
                 config_args.append("ac_cv_lib_bz2_BZ2_bzCompress=no")
 
         if "+zstd" in self.spec:
+            if self.spec.satisfies("@4.9.3:"):
+                config_args.append("--enable-filter-zstd")
             lib_search_dirs.extend(self.spec["zstd"].libs.directories)
+        elif self.spec.satisfies("@4.9.3:"):
+            config_args.append("--disable-filter-zstd")
         elif self.spec.satisfies("@4.9.0:"):
             # Prevent linking to system zstd:
             config_args.append("ac_cv_lib_zstd_ZSTD_compress=no")
