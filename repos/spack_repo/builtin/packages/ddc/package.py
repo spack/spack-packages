@@ -53,7 +53,6 @@ class Ddc(CMakePackage):
     with when("+splines"):
         depends_on("ginkgo@1.8:1")
         depends_on("kokkos-kernels@4.5.1:4")
-        depends_on("blas")
         depends_on("lapack")
 
         for arch in CudaPackage.cuda_arch_values:
@@ -69,10 +68,6 @@ class Ddc(CMakePackage):
 
         requires("^ginkgo +sycl", when="^kokkos +sycl")
         requires("^ginkgo +openmp", when="^kokkos +openmp")
-
-        # We cannot build shared libraries when relocatable device code is used
-        for backend in ["cuda", "rocm", "sycl"]:
-            requires("^kokkos-kernels ~shared", when=f"^kokkos +{backend}")
 
     depends_on("pdi@1.6:1", when="+pdi")
 
