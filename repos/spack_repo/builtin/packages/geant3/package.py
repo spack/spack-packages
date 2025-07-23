@@ -13,7 +13,7 @@ class Geant3(CMakePackage):
 
     homepage = "https://github.com/vmc-project/geant3"
     url = "https://github.com/vmc-project/geant3/archive/v3-7.tar.gz"
-    
+
     version("4-4", sha256="31ad296d856aa282a347abcb451809e110237d8a3fd7c47458777c2c29ae47f2")
     version("4-1", sha256="a1dcab7bc7a7493e4c78d7bec22cd816e79e40992bf9db0d616e2a0125fcdf50")
     version("3-8", sha256="6ff6745eef59139d791bef043b405f6d515be1d98096cf4e82ac4c1f61f737dc")
@@ -41,7 +41,7 @@ class Geant3(CMakePackage):
     def cmake_args(self):
         args = []
         if self.spec.satisfies("%gcc@10:"):
-            args.append('-DCMAKE_Fortran_FLAGS=-fallow-argument-mismatch -fallow-invalid-boz')
+            args.append("-DCMAKE_Fortran_FLAGS=-fallow-argument-mismatch -fallow-invalid-boz")
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
         return args
 
