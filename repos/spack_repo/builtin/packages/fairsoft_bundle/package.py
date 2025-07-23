@@ -14,7 +14,7 @@ class FairsoftBundle(BundlePackage):
     maintainers("dennisklein", "fuhlig1", "jezwilkinson")
 
     # Releases:
-    version("may25")
+    version("2025-05")
 
     variant("graphics", default=False, description="Enable graphical support in ROOT")
     variant("mt", default=False, description="Enable multithreading for GEANT4")
@@ -37,7 +37,7 @@ class FairsoftBundle(BundlePackage):
     # FFTW for Panda
     depends_on("root +fftw")
     depends_on("fftw~mpi")
-    depends_on("root +spectrum", when="@20.11:")
+    depends_on("root +spectrum", when="@2025-05:")
     depends_on("root ~x~opengl~aqua", when="~graphics")
     depends_on("root +x+opengl", when="+graphics")
 
@@ -47,10 +47,10 @@ class FairsoftBundle(BundlePackage):
     depends_on("root +aqua", when="+graphics")
 
     # Version-specific dependencies for FairSoft releases
-    depends_on("pythia8@8.313", when="@may25")
-    depends_on("root@6.36.00", when="@may25")
-    depends_on("vmc@2-1", when="@may25")
-    depends_on("geant3@4-4", when="@may25")
-    depends_on("vgm@5-3-1", when="@may25")
-    depends_on("geant4-vmc@6-7-p1", when="@may25")
-    depends_on("fairsoft-config@develop", when="@may25", type="run")
+    depends_on("pythia8@8.313", when="@2025-05")
+    depends_on("root@6.36.00", when="@2025-05")
+    depends_on("vmc@2-1", when="@2025-05")
+    depends_on("geant3@4-4", when="@2025-05")
+    depends_on("vgm@5-3-1", when="@2025-05")
+    depends_on("geant4-vmc@6-7-p1", when="@2025-05")
+    depends_on("fairsoft-config fairsoft_version=may25", when="@2025-05", type="run")

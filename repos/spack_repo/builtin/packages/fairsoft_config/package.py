@@ -14,8 +14,7 @@ class FairsoftConfig(CMakePackage):
     git = "https://github.com/FairRootGroup/fairsoft-config"
     maintainers("dennisklein", "fuhlig1", "jezwilkinson")
 
-    version("develop")
-    version("may25")
+    version("master")
 
     variant(
         "cxxstd",
@@ -25,11 +24,21 @@ class FairsoftConfig(CMakePackage):
         description="C++ standard reported",
     )
 
+    variant(
+        "fairsoft_version",
+        default="develop",
+        values=("develop", "may25"),
+        multi=False,
+        description="Installed version of fairsoft-bundle",
+    )
+
     depends_on("cmake@3:", type="build")
     depends_on("root", type=("build", "link", "run"))
 
     def cmake_args(self):
         args = []
-        args.append("-DFAIRSOFT_VERSION=%s" % self.version)
-        args.append("-DCMAKE_CXX_STANDARD=%s" % self.spec.variants["cxxstd"].value)
+        args += [
+            self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
+            self.define_from_variant("FAIRSOFT_VERSION", "fairsoft_version"),
+        ]
         return args

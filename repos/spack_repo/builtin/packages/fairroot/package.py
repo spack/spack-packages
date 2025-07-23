@@ -36,7 +36,7 @@ class Fairroot(CMakePackage):
 
     # Version-specific fairsoft release dependencies
     depends_on("fairsoft-bundle")
-    depends_on("fairsoft-bundle@may25", when="@18.8.2:")
+    depends_on("fairsoft-bundle@2025-05", when="@18.8.2:")
 
     depends_on("flatbuffers")
     depends_on("geant3", when="+sim")
@@ -78,14 +78,17 @@ class Fairroot(CMakePackage):
         options.append("-DBUILD_PROOF_SUPPORT=OFF")
         return options
 
+    @property
+    def root_library_path(self):
+        if self.spec.satisfies("^root@:6.25"):
+            return "LD_LIBRARY_PATH"
+        return "ROOT_LIBRARY_PATH"
+
     def common_env_setup(self, env):
         # So that root finds the shared library / rootmap
-        env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
+        env.prepend_path(self.root_library_path, self.prefix.lib)
 
     def setup_run_environment(self, env):
-        self.common_env_setup(env)
-
-    def setup_dependent_build_environment(self, env, dependent_spec):
         self.common_env_setup(env)
 
     def setup_dependent_run_environment(self, env, dependent_spec):
