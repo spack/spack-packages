@@ -19,11 +19,25 @@ class RustBootstrap(Package):
 
     skip_version_audit = ["platform=windows"]
 
+    # https://forge.rust-lang.org/infra/other-installation-methods.html#standalone-installers
+    # https://forge.rust-lang.org/infra/archive-stable-version-installers.html
+
     # List binary rust releases for multiple operating systems and architectures.
     # These binary versions are not intended to stay up-to-date. Instead we
     # should update these binary releases as bootstrapping requirements are
     # modified by new releases of Rust.
     rust_releases = {
+        "1.88.0": {
+            "darwin": {
+                "x86_64": "421d34e45b9a17a51cf32351332f5c2a9dc944aad36d23bedc526912fcbd2fec",
+                "aarch64": "9d64ea19e4051422428991b2c66bf108699f1ff11cc090466474902efad4db96",
+            },
+            "linux": {
+                "x86_64": "7b5437c1d18a174faae253a18eac22c32288dccfc09ff78d5ee99b7467e21bca",
+                "aarch64": "d5decc46123eb888f809f2ee3b118d13586a37ffad38afaefe56aa7139481d34",
+                "powerpc64le": "4e429d0c390032e556cea9a5729b8abc035aa421a1ad3ac232b63308705c14bb",
+            },
+        },
         "1.85.0": {
             "darwin": {
                 "x86_64": "69a36d239e38cc08c6366d1d85071847406645346c6f2d2e0dfaf64b58050d3d",
@@ -187,8 +201,13 @@ class RustBootstrap(Package):
             os = self.rust_os[self.os]
             target = self.target
 
-        url = "https://static.rust-lang.org/dist/rust-{0}-{1}-{2}.tar.gz"
-        return url.format(version, target, os)
+        if version >= Version("1.88"):
+            ext = "xz"
+        else:
+            ext = "gz"
+
+        url = "https://static.rust-lang.org/dist/rust-{0}-{1}-{2}.tar.{3}"
+        return url.format(version, target, os, ext)
 
     @run_before("install", when="platform=linux")
     def fixup_rpaths(self):

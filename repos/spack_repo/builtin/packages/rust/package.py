@@ -87,6 +87,7 @@ class Rust(Package):
     depends_on("rust-bootstrap@nightly", type="build", when="@nightly")
 
     # Stable version dependencies
+    depends_on("rust-bootstrap@1.87:1.88", type="build", when="@1.88")
     depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85")
     depends_on("rust-bootstrap@1.82:1.83", type="build", when="@1.83")
     depends_on("rust-bootstrap@1.80:1.81", type="build", when="@1.81")
