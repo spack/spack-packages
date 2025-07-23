@@ -38,7 +38,7 @@ class PyMemray(PythonPackage):
         depends_on("py-textual@0.34:", when="@1.11:")
 
     # https://github.com/bloomberg/memray#building-from-source
-    depends_on("elfutils", when="platform=linux @1.13:")
+    depends_on("elfutils+debuginfod", when="platform=linux @1.13:")
     depends_on("libunwind", when="platform=linux")
     depends_on("lz4")
 
