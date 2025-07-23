@@ -20,9 +20,11 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
 
     homepage = "https://cupy.dev/"
     pypi = "cupy/cupy-8.0.0.tar.gz"
+    git = "https://github.com/cupy/cupy.git"
 
     version("main", branch="main")
-    version("13.5.1", sha256="c14c76f7696eb0ed205b10be07cedace8970d92b195c3e4cedda6560c0982e8b")
+    version("14.0.0a1", sha256="12b6ba421bcd3eaf1f5bf9930cfbdcea50364aa8d5ebd1d3bd5808ea5a994ca9")
+    version("13.5.1", sha256="3dba2f30258463482d52deb420862fbbbaf2c446165a5e8d67377ac6cb5c0870")
     version("13.4.0", sha256="d4b60e5a1d3b89be40fad0845bb9fc467a653abe8660f752416fd38d24ab7fdb")
     version("13.3.0", sha256="9a2a17af2b99cce91dd1366939c3805e3f51f9de5046df64f29ccbad3bdf78ed")
     version("13.2.0", sha256="e4dbd2b2ed4159a5cc0c0f98a710a014950eb2c16eeb455e956128f3b3bd0d51")
@@ -116,8 +118,12 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
             spec = self.spec
 
             incs = {
+                "hipblas": ["include", "include/hipblas"],
+                "hipsparse": ["include", "include/hipsparse"],
+                "hipfft": ["include", "include/hipfft"],
+                "rocsolver": ["include", "include/rocsolver"],
                 "roctracer-dev": ["include/roctracer"],
-                "hiprand": ["include"],
+                "hiprand": ["include", "include/hiprand"],
                 "rocrand": ["include"],
                 "rocthrust": ["include"],
                 "rocprim": ["include"],
