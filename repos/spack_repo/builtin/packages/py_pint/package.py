@@ -12,6 +12,7 @@ class PyPint(PythonPackage):
     quantities: the product of a numerical value and a unit of measurement.
     It allows arithmetic operations between them and conversions from and
     to different units."""
+
     homepage = "https://github.com/hgrecco/pint"
     pypi = "pint/pint-0.11.tar.gz"
 
@@ -40,7 +41,7 @@ class PyPint(PythonPackage):
 
     depends_on("python@3.9:", when="@0.22:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.19:0.21", type=("build", "run"))
- 
+
     depends_on("py-setuptools@61:", when="@0.21:", type="build")
     depends_on("py-setuptools@41:", when="@0.16:0.20", type="build")
     depends_on("py-setuptools@41:", when="@0.11:0.15", type=("build", "run"))
@@ -60,10 +61,9 @@ class PyPint(PythonPackage):
 
     # variant depends
     depends_on("py-numpy@1", when="@:0.22 +numpy")
-    depends_on("py-numpy@1.23:", when="@0.24: +numpy") # numpy 2 added in 0.24
+    depends_on("py-numpy@1.23:", when="@0.24: +numpy")  # numpy 2 added in 0.24
     depends_on("py-xarray", when="+xarray")
     depends_on("py-dask", when="+dask")
-
 
     def url_for_version(self, version):
         if version > Version("0.22"):

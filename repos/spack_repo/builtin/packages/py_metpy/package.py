@@ -32,7 +32,6 @@ class PyMetpy(PythonPackage):
         description="Enable xarray lazy-loading and advanced plotting",
     )
 
-
     depends_on("python@3.9:", type=("build", "run"), when="@1.6.2:")
     depends_on("py-setuptools@61:", type="build", when="@1.6.2:")
     depends_on("py-setuptools-scm@3.4:", type="build", when="@1.6.2:")
@@ -67,8 +66,6 @@ class PyMetpy(PythonPackage):
     depends_on("py-dask@2020.12.0:", when="@1.6.2: +extras")
     depends_on("py-shapely@1.6.4:", when="@1.6.2: +extras")
     depends_on("py-boto3@1.26.45:", when="@1.7: +extras")
-
-
 
     with when("@1.0.1"):
         depends_on("python@3.6:", type=("build", "run"))
