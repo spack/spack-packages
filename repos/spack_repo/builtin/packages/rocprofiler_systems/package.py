@@ -119,8 +119,11 @@ class RocprofilerSystems(CMakePackage):
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
     depends_on("dyninst@:12", when="~internal-dyninst")
-    depends_on("boost", when="+internal-dyninst")
-    depends_on("libiberty", when="+internal-dyninst")
+    depends_on(
+        "boost+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
+        when="+internal-dyninst",
+    )
+    depends_on("libiberty+pic", when="+internal-dyninst")
     depends_on("m4")
     depends_on("texinfo")
     depends_on("libunwind", type=("build", "run"))
