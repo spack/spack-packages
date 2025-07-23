@@ -523,7 +523,11 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
             config_args.append("ac_cv_lib_zstd_ZSTD_compress=no")
 
         if "+blosc" in self.spec:
+            if self.spec.satisfies("@4.9.3:"):
+                config_args.append("--enable-filter-blosc")
             lib_search_dirs.extend(self.spec["c-blosc"].libs.directories)
+        elif self.spec.satisfies("@4.9.3:"):
+            config_args.append("--disable-filter-blosc")
         elif self.spec.satisfies("@4.9.0:"):
             # Prevent linking to system c-blosc:
             config_args.append("ac_cv_lib_blosc_blosc_init=no")
