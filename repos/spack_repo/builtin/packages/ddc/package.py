@@ -16,7 +16,7 @@ class Ddc(CMakePackage):
     git = "https://github.com/CExA-project/ddc.git"
     url = "https://github.com/CExA-project/ddc/archive/refs/tags/v0.4.2.tar.gz"
 
-    maintainers("tpadioleau")
+    maintainers("tpadioleau", "tretre91")
 
     license("MIT", checked_by="tpadioleau")
 
