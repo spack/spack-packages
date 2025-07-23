@@ -263,6 +263,9 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     # Byte-range I/O was added in version 4.7.0:
     conflicts("+byterange", when="@:4.6")
 
+    # JNA was added in 4.3.2 and removed in 4.9.3:
+    conflicts("+jna", when="@:4.3.1,4.9.3:")
+
     # NCZarr was added in version 4.8.0 as an experimental feature and became a supported one in
     # version 4.8.1:
     conflicts("+nczarr_zip", when="@:4.8.0")
@@ -435,7 +438,7 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         elif self.spec.satisfies("@4.7.0:"):
             config_args.append("--disable-byterange")
 
-        if self.spec.satisfies("@4.3.2:"):
+        if self.spec.satisfies("@4.3.2:4.9.2"):
             config_args += self.enable_or_disable("jna")
 
         config_args += self.enable_or_disable("fsync")
