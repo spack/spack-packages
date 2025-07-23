@@ -392,8 +392,12 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
             "--enable-utilities",
             "--enable-static",
             "--enable-largefile",
-            "--enable-netcdf-4",
         ]
+
+        if self.spec.satisfies("@4.8.0:"):
+            config_args.append("--enable-hdf5")
+        else:
+            config_args.append("--enable-netcdf-4")
 
         # NCZarr was added in version 4.8.0 as an experimental feature and became a supported one
         # in version 4.8.1:
