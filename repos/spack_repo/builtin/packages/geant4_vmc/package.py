@@ -42,6 +42,7 @@ class Geant4Vmc(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.3:", type="build")
+    depends_on("cmake@3.16:", type="build", when="@6-7:")
     depends_on("geant4")
     depends_on("geant4@11.2.0:", when="@6-7:")
     depends_on("vmc")
