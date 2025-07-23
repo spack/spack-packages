@@ -21,6 +21,13 @@ class PyAstropy(PythonPackage):
     license("BSD-3-Clause", checked_by="lgarrison")
 
     version("7.0.1", sha256="392feeb443b2437cd4c2e0641a65e0f15ba791e148e9b1e5ed7de7dfcb38e460")
+    version("6.1.7", sha256="a405ac186306b6cb152e6df2f7444ab8bd764e4127d7519da1b3ae4dd65357ef")
+    version("6.1.6", sha256="63e153747de7892138860925f0395de66d0bd036c69837f68bf93aeadaac6847")
+    version("6.1.5", sha256="9098dddd0946a6a39df622ecbf8704ed031cfb066381e9d960c0913c2db46b81")
+    version("6.1.4", sha256="361558e2b093a99bebe69f1fd47fac86a192607a4c16ed39ba0a800b2ab60c34")
+    version("6.1.3", sha256="9ac834cdedc1f6b5ce6f941f7bfbbfc58fca861eb172bcf72dd90aff8f750970")
+    version("6.1.2", sha256="a2103d4e24e90389a820cfcdaaf4ca2d1ab22e5fd72978d147ff5cace54f1d3a")
+    version("6.1.1", sha256="e5c6f45d911c30acb8d556c7f8ed994aec71b108e61eee5067f00af1e4e36138")
     version("6.1.0", sha256="6c3b915f10b1576190730ddce45f6245f9927dda3de6e3f692db45779708950f")
     version("5.1", sha256="1db1b2c7eddfc773ca66fa33bd07b25d5b9c3b5eee2b934e0ca277fa5b1b7b7e")
     version(
