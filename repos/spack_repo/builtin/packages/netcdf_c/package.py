@@ -263,6 +263,9 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     # Byte-range I/O was added in version 4.7.0:
     conflicts("+byterange", when="@:4.6")
 
+    # Byte-range requires DAP starting version 4.9.3:
+    requires("+dap", when="@4.9.3:+byterange")
+
     # JNA was added in 4.3.2 and removed in 4.9.3:
     conflicts("+jna", when="@:4.3.1,4.9.3:")
 
