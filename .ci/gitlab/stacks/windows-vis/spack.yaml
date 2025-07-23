@@ -11,6 +11,7 @@ spack:
   specs:
   - "vtk@9: ~mpi"
   - "boost"
+  - "netlib-lapack"
 
   cdash:
     build-group: Windows Visualization (Kitware)

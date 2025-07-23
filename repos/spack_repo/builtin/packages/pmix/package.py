@@ -39,6 +39,10 @@ class Pmix(AutotoolsPackage):
     license("BSD-3-Clause-Open-MPI")
 
     version("master", branch="master", submodules=True)
+    version("6.0.0", sha256="bfe969966d0ce82e032739cac286239bd5ad74a831d7adae013284919f125318")
+    version("5.0.8", sha256="bf5f0a341d0ec7f465627a7570f4dcda3b931bc859256428a35f6c72f13462d0")
+    version("5.0.7", sha256="b9e6ad482fcdcb58c9b9553ae56956b6d7df875d5605b6ecb96adaff16b2b07a")
+    version("5.0.6", sha256="ea51baa0fdee688d54bc9f2c11937671381f00de966233eec6fd88807fb46f83")
     version("5.0.5", sha256="a12e148c8ec4b032593a2c465a762e93c43ad715f3ceb9fbc038525613b0c70d")
     version("5.0.4", sha256="f72d50a5ae9315751684ade8a8e9ac141ae5dd64a8652d594b9bee3531a91376")
     version("5.0.3", sha256="3f779434ed59fc3d63e4f77f170605ac3a80cd40b1f324112214b0efbdc34f13")

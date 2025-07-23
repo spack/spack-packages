@@ -726,6 +726,10 @@ with '-Wl,-commons,use_dylibs' and without
         # See https://www.mail-archive.com/announce@lists.open-mpi.org//msg00158.html
         depends_on("pmix@:4.2.2", when="@:4.1.5")
 
+        # When an external PMIx is used, also an external PRRTE should be used
+        # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
+        depends_on("prrte")
+
     # Libevent is required when *vendored* PMIx is used
     depends_on("libevent@2:", when="~internal-libevent")
 
@@ -1181,11 +1185,15 @@ with '-Wl,-commons,use_dylibs' and without
         elif "^libevent" in spec:
             config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
 
-        # PMIx support
+        # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):
             config_args.append("--with-pmix=internal")
-        elif "^pmix" in spec:
-            config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            config_args.append("--with-prrte=internal")
+        else:
+            if "^pmix" in spec:
+                config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            if "^prrte" in spec:
+                config_args.append("--with-prrte={0}".format(spec["prrte"].prefix))
 
         if "^zlib-api" in spec:
             config_args.append("--with-zlib={0}".format(spec["zlib-api"].prefix))
