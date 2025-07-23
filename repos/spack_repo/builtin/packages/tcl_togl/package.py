@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class TclTogl(AutotoolsPackage):
-    """Tcl-Togl provides a platform independent Tcl/Tk widget for using OpenGL rendering contexts"""
+    """Tcl-Togl provides a platform independent Tcl/Tk widget
+    for using OpenGL rendering contexts"""
 
     homepage = "https://togl.sourceforge.net/"
     url = "https://downloads.sourceforge.net/project/togl/Togl/2.0/Togl2.0-src.tar.gz"
