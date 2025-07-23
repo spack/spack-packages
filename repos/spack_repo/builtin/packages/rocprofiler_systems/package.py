@@ -146,7 +146,7 @@ class RocprofilerSystems(CMakePackage):
         for ver in ["6.4.0", "6.4.1"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
-    # Fix GGC 13 build failure caused by a missing include of <array> in dyninst
+    # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
     patch(
         "https://github.com/ROCm/dyninst/commit/09e781d414c83b4ad587083d449a3e976546937d.patch?full_index=1",
         sha256="e64c6b75393e7fbd711c0bd0233628c176a352cd10b4057f00eec283426eaf0a",
