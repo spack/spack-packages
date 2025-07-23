@@ -40,7 +40,6 @@ class PyDeepmd(PythonPackage, CudaPackage, ROCmPackage):
     variant("cuda", default=False, description="Enable cuda support")
     variant("rocm", default=False, description="Enable rocm support")
     variant("gromacs", default=False, description="Enable gromacs plugins")
-    variant("horovod", default=True, description="Enable horovod support")
     variant("jax", default=False, description="Enable JaX support", when="@3.0:")
     variant("fp64", default=True, description="Enable double precision ops", when="+tensorflow")
     variant("fp64", default=False, description="Enable double precision ops", when="+pytorch")
@@ -64,7 +63,6 @@ class PyDeepmd(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("py-python-hostlist@1.21:")
 
     depends_on("py-dargs@0.4.1:")
-
 
     with when("^python@:3.8"):
         depends_on("py-typing-extensions")
@@ -96,24 +94,12 @@ class PyDeepmd(PythonPackage, CudaPackage, ROCmPackage):
     # pip requires cmake to build the library
     depends_on("cmake")
 
-    # horovod needs some special settings
-    with when("+horovod"):
-        depends_on("py-mpi4py")
-        depends_on("py-horovod controllers=mpi")
-        depends_on("py-horovod frameworks=tensorflow", when="+tensorflow")
-        depends_on("py-horovod frameworks=pytorch", when="+pytorch")
-
     # we can install deepmd with tensorflow, py-torch and jax
 
     with when("+cuda"):
         depends_on("nccl")
-        depends_on("py-horovod+cuda tensor_ops=nccl", when="+horovod")
         for target in CudaPackage.cuda_arch_values:
             depends_on(f"nccl cuda_arch={target}", when=f"cuda_arch={target}")
-            depends_on(
-                f"py-horovod+cuda tensor_ops=nccl cuda_arch={target}",
-                when=f"+horovod cuda_arch={target}",
-            )
             depends_on(
                 f"py-tensorflow+cuda+nccl+mpi cuda_arch={target}",
                 when=f"+tensorflow cuda_arch={target}",
@@ -122,7 +108,6 @@ class PyDeepmd(PythonPackage, CudaPackage, ROCmPackage):
 
     with when("+rocm"):
         depends_on("rccl")
-        depends_on("py-horovod+rocm", when="+horovod")
         depends_on("hipcub+rocm")
         depends_on("hip+rocm")
 

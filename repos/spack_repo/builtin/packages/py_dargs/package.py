@@ -30,7 +30,5 @@ class PyDargs(PythonPackage):
     version("0.4.2", sha256="285684743feec7d28cad31a090949c97a549fa94c9eea1c1d65fd8138f2458df")
     version("0.4.1", sha256="6f04fa6a67b2a7dcb27b36896cd8062ee19f95cc74ab3ca2a08c3985da68a495")
 
-
     depends_on("py-typeguard", type="build")
     depends_on("py-typing-extensions", when="^python@:3.8")
-
