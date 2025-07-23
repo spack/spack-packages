@@ -29,6 +29,7 @@ class TclTogl(AutotoolsPackage):
     depends_on("libtool", type="build", when="build_system=autotools")
     depends_on("mesa~llvm")
 
+    depends_on("c", type="build")
     depends_on("tk@8.1:")
     depends_on("tcl@8.1:")
     depends_on("libxmu")

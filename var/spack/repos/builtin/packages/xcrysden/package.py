@@ -3,23 +3,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-# ----------------------------------------------------------------------------
-# If you submit this package back to Spack as a pull request,
-# please first remove this boilerplate and all FIXME comments.
-#
-# This is a template package file for Spack.  We've put "FIXME"
-# next to all the things you'll want to change. Once you've handled
-# them, you can save this file and test your package like this:
-#
-#     spack install xcrysden
-#
-# You can edit this file again by typing:
-#
-#     spack edit xcrysden
-#
-# See the Spack documentation for more information on packaging.
-# ----------------------------------------------------------------------------
-
 from spack.package import *
 
 
@@ -52,12 +35,16 @@ class Xcrysden(MakefilePackage):
     depends_on("mesa~llvm", type=("link", "run"))
     depends_on("mesa-glu", type=("link", "run"))
     depends_on("tk", type=("link", "run"))
-    depends_on("tcl", type=("link", "run"))
+    depends_on("tcl", type=("build", "link", "run"))
     depends_on("tcl-togl@2:", type=("link", "run"))
     depends_on("tcl-bwidget@1.9:", type=("link", "run"))
     depends_on("fftw@3:", type=("link", "run"))
     depends_on("libx11",type=("build", "link", "run"))
     depends_on("libxmu",type=("build", "link", "run"))
+
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+
 
     parallel = False
 
