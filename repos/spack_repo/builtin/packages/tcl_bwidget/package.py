@@ -21,4 +21,3 @@ class TclBwidget(SourceforgePackage):
 
     def install(self, spec, prefix):
         install_tree(".", prefix.lib)
-
