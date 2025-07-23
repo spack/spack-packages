@@ -50,6 +50,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2025.2", sha256="c8392a4e123304644ec8d241443796277c6ed7ae977452317e779f3c387c2e19")
     version("2025.1", sha256="65c8ad5488897b0f995919b9fa77f2aba4b61677ba1e3c19bb093d5c08a8ce1d")
     version("2024.3", sha256="a6eeee773b6b1fb417def576e4049a89a08a0ed5feffcd7f0b33c7d7b48f19ba")
     version("2024.2", sha256="cc3e56c971dee9e89b705a1103765aba57bf41ad39a11c89d3de04c8b8cdf473")
@@ -128,6 +129,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
     variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
+
     variant(
         "pw_gpu",
         default=False,
@@ -356,6 +358,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("sirius+vcsqnm", when="@2025.2:+vcsqnm")
         depends_on("sirius@7.8.1:+dftd3+dftd4", when="@2025.2:+dftd4")
         depends_on("sirius@7.5.0:+dlaf", when="+dlaf")
+
     with when("+libvori"):
         depends_on("libvori@201219:", when="@8.1")
         depends_on("libvori@210412:", when="@8.2:")
@@ -376,10 +379,22 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
         # DBCSR as external dependency
         depends_on("dbcsr@2.6: ~examples")
+        depends_on("dbcsr@2.8:", when="@2025.1:")
         depends_on("dbcsr+openmp", when="+openmp")
         depends_on("dbcsr+mpi", when="+mpi")
-        depends_on("dbcsr+cuda", when="+cuda")
-        depends_on("dbcsr+rocm", when="+rocm")
+
+        # It is possible to use dbcsr cpu only even when cp2k is compiled
+        # with GPU support. Use spack infra to do this
+        if when("^dbcsr~rocm"):
+            depends_on("dbcsr~rocm")
+        else:
+            depends_on("dbcsr+rocm", when="+rocm")
+
+        if when("^dbcsr~cuda"):
+            depends_on("dbcsr~cuda")
+        else:
+            depends_on("dbcsr+cuda", when="+cuda")
+
         depends_on("dbcsr smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
 
@@ -489,6 +504,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
                 )
 
         # Patch for resolving .mod file conflicts in ROCm by implementing 'USE, INTRINSIC'
+        # This patch triggers compilation errors on some systems as rocm install these
+        # modules files in rocm/include/llvm and this directory is given to gcc
+
         if self.spec.satisfies("+rocm"):
             for directory, subdirectory, files in os.walk(os.getcwd()):
                 for i in files:
