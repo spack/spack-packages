@@ -41,7 +41,9 @@ class Geant3(CMakePackage):
     def cmake_args(self):
         args = []
         if self.spec.satisfies("%gcc@10:"):
-            args.append(self.define("CMAKE_Fortran_FLAGS", "-fallow-argument-mismatch -fallow-invalid-boz"))
+            args.append(
+                self.define("CMAKE_Fortran_FLAGS", "-fallow-argument-mismatch -fallow-invalid-boz")
+            )
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
         return args
 
