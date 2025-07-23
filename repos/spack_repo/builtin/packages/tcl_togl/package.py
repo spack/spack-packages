@@ -62,5 +62,5 @@ class TclTogl(AutotoolsPackage):
 
     def setup_dependent_run_environment(self, env, dependent_spec):
         env.prepend_path(
-            "LD_LIBRARY_PATH", join_path(self.prefix.lib, "Togl" + str(self.version.up_to(2))),
+            "LD_LIBRARY_PATH", join_path(self.prefix.lib, "Togl" + str(self.version.up_to(2)))
         )
