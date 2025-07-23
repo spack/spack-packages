@@ -73,7 +73,7 @@ class Ddc(CMakePackage):
 
     with when("+tests"):
         depends_on("googletest@1.14:1 +gmock")
-        depends_on("pdiplugin-user-code +tests", type=("build", "test"), when="+pdi")
+        depends_on("pdiplugin-user-code@1.6:1", type=("build", "test"), when="+pdi")
 
     conflicts(
         "^kokkos@4.5.0", msg="DDC is not compatible with the embedded mdspan of Kokkos 4.5.0."
