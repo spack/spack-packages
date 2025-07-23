@@ -35,7 +35,6 @@ class Xcrysden(MakefilePackage):
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
-
     parallel = False
 
     @run_before("edit")
