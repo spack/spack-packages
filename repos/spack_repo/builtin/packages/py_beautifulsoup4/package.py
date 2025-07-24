@@ -15,9 +15,12 @@ class PyBeautifulsoup4(PythonPackage):
     homepage = "https://www.crummy.com/software/BeautifulSoup"
     pypi = "beautifulsoup4/beautifulsoup4-4.8.0.tar.gz"
 
+    license("MIT")
+
     # Requires pytest
     skip_modules = ["bs4.tests"]
 
+    version("4.13.4", sha256="dbb3c4e1ceae6aefebdaf2423247260cd062430a410e38c66f2baa50a8437195")
     version("4.12.3", sha256="74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051")
     version("4.12.2", sha256="492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da")
     version("4.11.1", sha256="ad9aa55b65ef2808eb405f46cf74df7fcb7044d5cbc26487f96eb2ef2e436693")
@@ -36,6 +39,7 @@ class PyBeautifulsoup4(PythonPackage):
 
     depends_on("py-soupsieve@1.3:", when="@4.9.0:", type=("build", "run"))
     depends_on("py-soupsieve@1.2:", when="@4.7.0:", type=("build", "run"))
+    depends_on("py-typing-extensions@4:", when="@4.13:", type=("build", "run"))
 
     depends_on("py-lxml", when="+lxml", type=("build", "run"))
     depends_on("py-html5lib", when="+html5lib", type=("build", "run"))

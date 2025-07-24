@@ -54,6 +54,12 @@ class Openturbine(CMakePackage, CudaPackage, ROCmPackage):
         when="+cuda",
         description="Build with support for the cuSolverSP sparse direct solver",
     )
+    variant(
+        "cudss",
+        default=False,
+        when="+cuda",
+        description="Build with support for the cuDSS sparse direct solver",
+    )
 
     depends_on("cxx", type="build")
     depends_on("netcdf-c")
@@ -80,23 +86,23 @@ class Openturbine(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("superlu", when="+superlu")
     depends_on("superlu-mt", when="+superlu-mt")
     depends_on("mkl", when="+mkl")
+    depends_on("cudss", when="+cudss")
 
     depends_on("googletest", when="+tests")
-
-    depends_on("fortran", type="build", when="+adi")
-
-    depends_on("fortran", type="build", when="+rosco")
+    depends_on("rosco", when="+rosco")
+    depends_on("openfast", when="+adi")
 
     def cmake_args(self):
         options = [
             self.define_from_variant("OpenTurbine_ENABLE_TESTS", "tests"),
-            self.define_from_variant("OpenTurbine_BUILD_OPENFAST_ADI", "adi"),
-            self.define_from_variant("OpenTurbine_BUILD_ROSCO_CONTROLLER", "rosco"),
+            self.define_from_variant("OpenTurbine_ENABLE_OPENFAST_ADI", "adi"),
+            self.define_from_variant("OpenTurbine_ENABLE_ROSCO_CONTROLLER", "rosco"),
             self.define_from_variant("OpenTurbine_ENABLE_KLU", "klu"),
             self.define_from_variant("OpenTurbine_ENABLE_UMFPACK", "umfpack"),
             self.define_from_variant("OpenTurbine_ENABLE_SUPERLU", "superlu"),
             self.define_from_variant("OpenTurbine_ENABLE_SUPERLU_MT", "superlu-mt"),
             self.define_from_variant("OpenTurbine_ENABLE_MKL", "mkl"),
             self.define_from_variant("OpenTurbine_ENABLE_CUSOLVERSP", "cusolversp"),
+            self.define_from_variant("OpenTurbine_ENABLE_CUDSS", "cudss"),
         ]
         return options

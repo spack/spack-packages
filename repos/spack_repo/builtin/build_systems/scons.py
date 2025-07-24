@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -11,7 +12,7 @@ from spack.package import (
     run_after,
 )
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 
 class SConsPackage(PackageBase):
@@ -25,7 +26,7 @@ class SConsPackage(PackageBase):
     build_system_class = "SConsPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "scons"
+    default_buildsystem = "scons"
 
     build_system("scons")
 
@@ -49,13 +50,13 @@ class SConsBuilder(BuilderWithDefaults):
     phases = ("build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("build_test",)
+    package_methods = ("build_test",)
 
-    #: Same as legacy_methods, but the signature is different
-    legacy_long_methods = ("build_args", "install_args")
+    #: Same as package_methods, but the signature is different
+    package_long_methods = ("build_args", "install_args")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_time_test_callbacks",)
+    package_attributes = ("build_time_test_callbacks",)
 
     #: Callback names for build-time test
     build_time_test_callbacks = ["build_test"]

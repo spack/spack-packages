@@ -136,6 +136,7 @@ class PyScipy(PythonPackage):
     depends_on("lapack@3.4.1:")
     depends_on("lapack")
     depends_on("blas")
+    conflicts("^openblas +ilp64", msg="SciPy requires a blas library with lp64 symbols")
 
     # Historical dependencies
     with default_args(type="build"):
@@ -239,7 +240,12 @@ class PyScipy(PythonPackage):
 
     @when("@1.9:")
     def config_settings(self, spec, prefix):
-        blas, lapack = self["py-numpy"].blas_lapack_pkg_config()
+        blas, lapack, use_ilp64 = self["py-numpy"].blas_lapack_pkg_config()
+
+        if use_ilp64:
+            tty.warn("SciPy does not support ILP64 currently! Using LP64 libraries instead!")
+            blas = blas.replace("ilp64", "lp64")
+            lapack = lapack.replace("ilp64", "lp64")
 
         if spec.satisfies("%aocc") or spec.satisfies("%clang@18:"):
             fortran_std = "none"

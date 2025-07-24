@@ -14,10 +14,11 @@ class PyMesonPython(PythonPackage):
     pypi = "meson_python/meson_python-0.7.0.tar.gz"
     tags = ["build-tools"]
 
-    maintainers("eli-schwartz", "adamjstewart", "rgommers")
+    maintainers("eli-schwartz", "rgommers")
 
     license("MIT")
 
+    version("0.18.0", sha256="c56a99ec9df669a40662fe46960321af6e4b14106c14db228709c1628e23848d")
     version("0.16.0", sha256="9068c17e36c89d6c7ff709fffb2a8a9925e8cd0b02629728e5ceaf2ec505cb5f")
     version("0.15.0", sha256="fddb73eecd49e89c1c41c87937cd89c2d0b65a1c63ba28238681d4bd9484d26f")
     version("0.13.1", sha256="63b3170001425c42fa4cfedadb9051cbd28925ff8eed7c40d36ba0099e3c7618")
@@ -33,26 +34,30 @@ class PyMesonPython(PythonPackage):
         deprecated=True,
     )
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("py-colorama", when="platform=windows", type=("build", "run"))
-    depends_on("meson@0.63.3:", when="@0.11:", type=("build", "run"))
-    depends_on("meson@0.63:", when="@0.9:0.10", type=("build", "run"))
-    depends_on("meson@0.62:", type=("build", "run"))
-    depends_on("py-packaging@19:", when="@0.16:", type=("build", "run"))
-    depends_on("py-pyproject-metadata@0.7.1:", when="@0.13:", type=("build", "run"))
-    depends_on("py-pyproject-metadata@0.6.1:", when="@0.12:", type=("build", "run"))
-    depends_on("py-pyproject-metadata@0.5:", type=("build", "run"))
-    depends_on("py-tomli@1:", when="@0.11: ^python@:3.10", type=("build", "run"))
-    depends_on("py-tomli@1:", when="@:0.10", type=("build", "run"))
-    depends_on("py-setuptools@60:", when="@0.13 ^python@3.12:", type=("build", "run"))
-    depends_on("ninja", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("ninja", type=("build", "run"))
+        depends_on("meson@0.64:", when="@0.18:")
+        depends_on("meson@0.63.3:", when="@0.11:")
+        depends_on("meson@0.63:", when="@0.9:")
+        depends_on("meson@0.62:")
+        depends_on("py-packaging@23.2:", when="@0.18:")
+        depends_on("py-packaging@19:", when="@0.16:")
+        depends_on("py-pyproject-metadata@0.9:", when="@0.18:")
+        depends_on("py-pyproject-metadata@0.7.1:", when="@0.13:")
+        depends_on("py-pyproject-metadata@0.6.1:", when="@0.12:")
+        depends_on("py-pyproject-metadata@0.5:")
+        depends_on("py-tomli@1:", when="@0.11: ^python@:3.10")
+        depends_on("py-tomli@1:", when="@:0.10")
+
+        # Historical dependencies
+        depends_on("py-colorama", when="@:0.16 platform=windows")
+        depends_on("py-setuptools@60:", when="@0.13 ^python@3.12:")
+        depends_on("py-typing-extensions@3.7.4:", when="@0.12 ^python@:3.9")
+        depends_on("py-typing-extensions@3.7.4:", when="@:0.11 ^python@:3.7")
 
     # https://github.com/mesonbuild/meson-python/pull/111
     conflicts("platform=darwin os=ventura", when="@:0.7")
     conflicts("platform=darwin os=monterey", when="@:0.7")
     conflicts("platform=darwin os=bigsur", when="@:0.7")
-
-    # Historical dependencies
-    depends_on("py-typing-extensions@3.7.4:", when="@0.12 ^python@:3.9", type=("build", "run"))
-    depends_on("py-typing-extensions@3.7.4:", when="@:0.11 ^python@:3.7", type=("build", "run"))
