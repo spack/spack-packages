@@ -75,7 +75,7 @@ spack:
       - "+examples"
       - "~qt ^[virtuals=gl] osmesa" # Headless
       - "target=x86_64_v3 %gcc"
-    py-jax:
+    py-jaxlib:
       require: "%c,cxx=clang"
     py-tensorflow:
       require: "%c,cxx=clang"
