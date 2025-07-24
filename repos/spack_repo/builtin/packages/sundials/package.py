@@ -29,10 +29,10 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     # Versions
     # ==========================================================================
     version("develop", branch="develop")
-    version("7.4.0", tag="v7.4.0", commit="c3ff4663573953facb33eb026dd5d80444ecedc8")
-    version("7.3.0", tag="v7.3.0", commit="e941546af1a5b5e492dcac0a1872540e9961c556")
-    version("7.2.1", tag="v7.2.1", commit="5c53be85c88f63c5201c130b8cb2c686615cfb03")
-    version("7.2.0", tag="v7.2.0", commit="0eff39663606f2ff280c4059a947ed62ae38180a")
+    version("7.4.0", tag="v7.4.0", commit="8e17876d3b4d682b4098684b07a85b005a122f81")
+    version("7.3.0", tag="v7.3.0", commit="cb681a4e3a46bcad903fb966284d6f53e85bdb94")
+    version("7.2.1", tag="v7.2.1", commit="2dcb3e018b4c4cfe824bff09eb52184ed083e368")
+    version("7.2.0", tag="v7.2.0", commit="71a4cc9ad5e7bc8b4e33a1ca9795b4e96883f9a6")
     version("7.1.1", tag="v7.1.1", commit="c28eaa3764a03705d61decb6025b409360e9d53f")
     version("7.0.0", sha256="d762a7950ef4097fbe9d289f67a8fb717a0b9f90f87ed82170eb5c36c0a07989")
     version("6.7.0", sha256="5f113a1564a9d2d98ff95249f4871a4c815a05dbb9b8866a82b13ab158c37adb")
