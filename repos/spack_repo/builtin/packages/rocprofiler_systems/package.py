@@ -107,8 +107,6 @@ class RocprofilerSystems(CMakePackage):
         ),
     )
     variant("internal-dyninst", default=False, description="build internal dyninst")
-    # Can't concretize dyninst@12 with gcc@13: due to restrictions in intel-tbb
-    requires("+internal-dyninst", when="%gcc@13:")
 
     extends("python", when="+python")
 
