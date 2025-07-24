@@ -30,5 +30,7 @@ class Just(CargoPackage):
     version("1.36.0", sha256="bc2e2ff0268c2818659c524b21663564864b50ba102afb0a44fe73c08cf35ff0")
     version("1.35.0", sha256="f1ce3fe46c57cba0096227f8c9251d3b476e54e8a620eb39707d0ab3e16b8f55")
 
+    depends_on("c", type="build")
+
     depends_on("rust@1.77:", type="build", when="@1.41.0:")
     depends_on("rust@1.74:", type="build", when="@1.35.0:")
