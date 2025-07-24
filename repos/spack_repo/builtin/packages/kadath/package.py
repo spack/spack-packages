@@ -56,6 +56,7 @@ class Kadath(CMakePackage):
     )
 
     depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")  # CMakeLists.txt doesn't specify language
 
     depends_on("blas")
     depends_on("boost cxxstd=17")  # kadath uses std=C++17
