@@ -20,8 +20,8 @@ class Kadath(CMakePackage):
     mixed spin binaries.
     """
 
-    homepage = "https://kadath.obspm.fr/fuka/"
-    git = "https://gitlab.obspm.fr/grandcle/Kadath.git"
+    homepage = "https://samueltootle.github.io/fuka/index.html"
+    git = "https://bitbucket.org/fukaws/fuka.git"
 
     maintainers("eschnett")
 
