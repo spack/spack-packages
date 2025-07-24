@@ -1,4 +1,4 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+	# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -45,9 +45,9 @@ class Xcrysden(MakefilePackage):
         make("xcrysden")
 
     def edit(self, spec, prefix):
-        togl_lib = "Togl" + str(spec["tcl-togl"].version.up_to(2))
-        tcl_lib = "tcl" + str(spec["tcl"].version.up_to(2))
-        tk_lib = "tk" + str(spec["tk"].version.up_to(2))
+        togl_lib = f"Togl{spec['tcl-togl'].version.up_to(2)}"
+        tcl_lib = f"tcl{spec['tcl'].version.up_to(2)}"
+        tk_lib = f"tk{spec['tk'].version.up_to(2)}"
 
         env["prefix"] = prefix
 
@@ -60,38 +60,31 @@ class Xcrysden(MakefilePackage):
         )
         makesys.filter(
             "X_LIB.*=.*",
-            "X_LIB = -L{0} -lX11 -L{1} -lXmu".format(
-                spec["libx11"].prefix.lib, spec["libxmu"].prefix.lib
-            ),
+            f"X_LIB = -L{spec['libx11'].prefix.lib} -lX11 -L{spec['libxmu'].prefix.lib} -lXmu"
         )
         makesys.filter(
             "X_INCDIR.*=.*",
-            "X_INCDIR = -I{0} -I{1}".format(
-                spec["libx11"].prefix.include, spec["libxmu"].prefix.include
-            ),
+            f"X_INCDIR = -I{spec['libx11'].prefix.include} -I{spec['libxmu'].prefix.include}"
         )
         makesys.filter(
-            "TCL_LIB.*=.*", "TCL_LIB = -L{0} -l{1}".format(spec["tcl"].prefix.lib, tcl_lib)
+            "TCL_LIB.*=.*", f"TCL_LIB = -L{spec['tcl'].prefix.lib} -l{tcl_lib}"
         )
         makesys.filter(
             "TOGL_LIB.*=.*",
-            "TOGL_LIB = -L{0} -l{1}".format(
-                join_path(spec["tcl-togl"].prefix.lib, togl_lib), togl_lib
-            ),
+            f"TOGL_LIB = -L{join_path(spec['tcl-togl'].prefix.lib, togl_lib)} -l{togl_lib}"
         )
-        makesys.filter("TK_LIB.*=.*", "TK_LIB = -L{0} -l{1}".format(spec["tk"].prefix.lib, tk_lib))
-        makesys.filter("^GL_LIB.*=.*", "GL_LIB = -L{0} -lGL".format(spec["mesa"].prefix.lib))
-        makesys.filter("GLU_LIB.*=.*", "GLU_LIB = -L{0} -lGLU".format(spec["mesa-glu"].prefix.lib))
+        makesys.filter("TK_LIB.*=.*", f"TK_LIB = -L{spec['tk'].prefix.lib} -l{tk_lib}")
+        makesys.filter("^GL_LIB.*=.*", f"GL_LIB = -L{spec['mesa'].prefix.lib} -lGL")
+        makesys.filter("GLU_LIB.*=.*", f"GLU_LIB = -L{spec['mesa-glu'].prefix.lib} -lGLU")
         makesys.filter(
-            "FFTW3_LIB.*=.*", "FFTW3_LIB = -L{0} -lfftw3".format(spec["fftw"].prefix.lib)
+            "FFTW3_LIB.*=.*", f"FFTW3_LIB = -L{spec['fftw'].prefix.lib} -lfftw3"
         )
-
-        makesys.filter("TCL_INCDIR.*=.*", "TCL_INCDIR = -I{0}".format(spec["tcl"].prefix.include))
+        makesys.filter("TCL_INCDIR.*=.*", f"TCL_INCDIR = -I{spec['tcl'].prefix.include}")
         makesys.filter(
-            "TOGL_INCDIR.*=.*", "TOGL_INCDIR = -I{0}".format(spec["tcl-togl"].prefix.include)
+            "TOGL_INCDIR.*=.*", f"TOGL_INCDIR = -I{spec['tcl-togl'].prefix.include}"
         )
-        makesys.filter("TK_INCDIR.*=.*", "TK_INCDIR = -I{0}".format(spec["tk"].prefix.include))
-        makesys.filter("^GL_INCDIR.*=.*", "GL_INCDIR = -I{0}".format(spec["mesa"].prefix.include))
+        makesys.filter("TK_INCDIR.*=.*", f"TK_INCDIR = -I{spec['tk'].prefix.include}")
+        makesys.filter("^GL_INCDIR.*=.*", f"GL_INCDIR = -I{spec['mesa'].prefix.include}")
         makesys.filter(
-            "FFTW3_INCDIR.*=.*", "FFTW3_INCDIR = -I{0}".format(spec["fftw"].prefix.include)
+            "FFTW3_INCDIR.*=.*", "FFTW3_INCDIR = -I{spec['fftw'].prefix.include}"
         )

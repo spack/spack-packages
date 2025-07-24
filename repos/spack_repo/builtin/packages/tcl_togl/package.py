@@ -55,13 +55,13 @@ class TclTogl(AutotoolsPackage):
             args.extend(self.enable_or_disable(enable_variant))
 
         for with_dep in ("tcl", "tk"):
-            args.append("--with-" + with_dep + "={0}".format(self.spec[with_dep].prefix.lib))
-        args.append("--prefix={0}".format(self.prefix))
-        args.append("--exec-prefix={0}".format(self.prefix))
+            args.append(f"--with-{with_dep}={self.spec[with_dep].prefix.lib}")
+        args.append(f"--prefix={self.prefix}")
+        args.append(f"--exec-prefix={self.prefix}")
 
         return args
 
     def setup_dependent_run_environment(self, env, dependent_spec):
         env.prepend_path(
-            "LD_LIBRARY_PATH", join_path(self.prefix.lib, "Togl" + str(self.version.up_to(2)))
+            "LD_LIBRARY_PATH", join_path(self.prefix.lib, f"Togl{self.version.up_to(2)}"))
         )
