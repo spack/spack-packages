@@ -29,6 +29,9 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master", submodules=True)
     version(
+        "2.4.0", tag="v2.4.0", commit="85c06c5264fd8689002dc0ea32cbb74b2bff1668", submodules=True
+    )
+    version(
         "2.3.0", tag="v2.3.0", commit="94cea346455f6841c8ce28d54c6d894bbf5e9a0a", submodules=True
     )
     version(
