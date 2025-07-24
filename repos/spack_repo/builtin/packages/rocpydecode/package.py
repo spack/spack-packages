@@ -31,7 +31,18 @@ class Rocpydecode(CMakePackage):
     depends_on("ffmpeg@4.4:6")
     depends_on("dlpack")
 
-    for ver in ["6.2.0", "6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in [
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+    ]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
 
     def patch(self):

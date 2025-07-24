@@ -42,7 +42,18 @@ class RocmExamples(CMakePackage):
     depends_on("glfw", type="build")
     depends_on("mesa", type="build", when="+cuda")
 
-    for ver in ["6.4.2", "6.4.1", "6.4.0", "6.3.3", "6.3.2", "6.3.1", "6.3.0", "6.2.4", "6.2.1", "6.2.0"]:
+    for ver in [
+        "6.4.2",
+        "6.4.1",
+        "6.4.0",
+        "6.3.3",
+        "6.3.2",
+        "6.3.1",
+        "6.3.0",
+        "6.2.4",
+        "6.2.1",
+        "6.2.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
         depends_on(f"hipcub@{ver}", when=f"@{ver}")
