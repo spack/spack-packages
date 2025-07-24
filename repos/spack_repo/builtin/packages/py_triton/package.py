@@ -6,8 +6,6 @@ from spack_repo.builtin import build_systems
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
-import llnl.util.filesystem as fs
-
 from spack.package import *
 
 
@@ -54,7 +52,7 @@ class PythonPipBuilder(build_systems.python.PythonPipBuilder):
         args = build_systems.python.PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
         # build directory specified manually as additional argument to pip install
         args.append("./python")
-        with fs.working_dir(self.build_directory):
+        with working_dir(self.build_directory):
             pip(*args)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
