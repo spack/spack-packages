@@ -43,6 +43,9 @@ class PyKorniaRs(PythonPackage):
     # dlpack-rs needs libclang
     depends_on("llvm+clang")
 
+    # See https://github.com/kornia/kornia-rs/commit/93f768137814709b60767f7fc24a9b0184002aee
+    patch("py-kornia-rs-pin-fast_image_resize.patch", when="@0.1.9")
+
     @property
     def build_directory(self):
         return "kornia-py" if self.spec.satisfies("@0.1.3:") else "py-kornia"

@@ -19,8 +19,11 @@ class AwsOfiNccl(AutotoolsPackage):
     maintainers("bvanessen", "msimberg")
 
     version("master", branch="master")
+    version("1.16.0", sha256="442342eba7ac09f4a089cb4bf33d19935f59a4c7ad12109b4dca366f99a80f65")
     version("1.15.0", sha256="0a962d8444ad8312b08a2a9784671c554ae0350600e62bb6c6652e5bd3d96b9d")
     version("1.14.2", sha256="e523ea08ce0caeff5c949b2134b4897186d793ce908904dd9d47bb08230b9bbd")
+    version("1.14.1", sha256="1171acf19ebd9c320bcb5d2749518e6bf15867b3694fc6eacb156ec74a6c5cf4")
+    version("1.14.0", sha256="0420998e79a8ec0db0541bcc1f09f4a94c4c75fd1c096a4ef0507a0e8f2d540c")
     version("1.13.0", sha256="50dd231a0a99cec29300df46b8e828139ced15322a3c3c41b1d22dcc9a62ec02")
     version("1.12.1", sha256="821f0929c016e5448785bbc6795af5096559ecfc6c9479eb3818cafa61424576")
     version("1.12.0", sha256="93029207103b75f4dc15f023b3b8692851202b52b7e2824723dd5d328f0ea65b")

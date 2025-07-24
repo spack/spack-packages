@@ -29,33 +29,9 @@ class Crtm(CMakePackage):
         "climbfuji",
     )
 
-    variant(
-        "fix", default=False, description='Download CRTM coeffecient or "fix" files (several GBs).'
-    )
-
-    depends_on("cmake@3.15:", type="build")
-    depends_on("git-lfs")
-    depends_on("netcdf-fortran", when="@2.4.0:")
-    depends_on("netcdf-fortran", when="@v2.3-jedi.4")
-    depends_on("netcdf-fortran", when="@v2.4-jedi.1")
-    depends_on("netcdf-fortran", when="@v2.4-jedi.2")
-    depends_on("netcdf-fortran", when="@v2.4.1-jedi")
-    depends_on("netcdf-fortran", when="@v3")
-
-    depends_on("crtm-fix@2.3.0_emc", when="@2.3.0 +fix")
-    depends_on("crtm-fix@2.4.0_emc", when="@=2.4.0 +fix")
-    depends_on("crtm-fix@2.4.0.1_emc", when="@2.4.0.1 +fix")
-    depends_on("crtm-fix@3.1.1", when="@3.1.1 +fix")
-
-    depends_on("ecbuild", type=("build"), when="@v2.3-jedi.4")
-    depends_on("ecbuild", type=("build"), when="@v2.4-jedi.1")
-    depends_on("ecbuild", type=("build"), when="@v2.4-jedi.2")
-    depends_on("ecbuild", type=("build"), when="@v2.4.1-jedi")
-    depends_on("ecbuild", type=("build"), when="@v3.0")
-    depends_on("ecbuild", type=("build"), when="@v3.1.0-skylabv7")
-
     license("CC0-1.0")
 
+    version("3.1.2", sha256="a96598e5611c263fa80d6d6375a12d70d74389b261a8070515a6698e41563281")
     version(
         "3.1.1-build1", sha256="1ed49e594da5d3769cbaa52cc7fc19c1bb0325ee6324f6057227c31e2d95ca67"
     )
@@ -76,6 +52,12 @@ class Crtm(CMakePackage):
         sha256="4fa5dd2d65b4d4ff77d50992e8e0c02a59584b35599f424085fccdc2174d7bd2",
     )
     version(
+        "v2.4.1-jedi.2", sha256="e78c1a834dd337597b01e451c5c6e813c1b97d42b221049e8dbbbc590598f1de"
+    )
+    version(
+        "v2.4.1-jedi.1", sha256="94ff24051382d544c2e200a937bfe7d2047f6393a3e22f64284d5dc70e791ca6"
+    )
+    version(
         "v2.4.1-jedi", sha256="fd8bf4db4f2a3b420b4186de84483ba2a36660519dffcb1e0ff14bfe8c6f6a14"
     )
     version("v2.4-jedi.2", commit="62831cbb6c1ffcbb219eeec60e1b1c422526f597")
@@ -86,14 +68,45 @@ class Crtm(CMakePackage):
     # Uses the tip of REL-2.3.0_emc branch
     version("2.3.0", commit="99760e693ce3b90a3b3b0e97d80972b4dfb61196")
 
-    depends_on("fortran", type="build")  # generated
+    variant(
+        "fix", default=False, description='Download CRTM coefficient or "fix" files (several GBs).'
+    )
+
+    depends_on("fortran", type="build")
+
+    depends_on("cmake@3.15:", type="build")
+    depends_on("git-lfs")
+    depends_on("netcdf-fortran", when="@2.4.0:")
+    depends_on("netcdf-fortran", when="@v2.3")
+    depends_on("netcdf-fortran", when="@v2.4")
+    depends_on("netcdf-fortran", when="@v3")
+
+    depends_on("crtm-fix@2.3.0_emc", when="@2.3.0 +fix")
+    depends_on("crtm-fix@2.4.0_emc", when="@=2.4.0 +fix")
+    depends_on("crtm-fix@2.4.0.1_emc", when="@2.4.0.1 +fix")
+    depends_on("crtm-fix@3.1.1", when="@3.1.1 +fix")
+    depends_on("crtm-fix@3.1.2", when="@3.1.2 +fix")
+
+    depends_on("ecbuild", type=("build"), when="@v2.3")
+    depends_on("ecbuild", type=("build"), when="@v2.4")
+    depends_on("ecbuild", type=("build"), when="@v3")
+
+    conflicts("%oneapi", when="@2")
+    conflicts("%oneapi", when="@v2.3")
+    conflicts("%oneapi", when="@v2.4-jedi")
+    conflicts("%oneapi", when="@=v2.4.1-jedi")
+    conflicts("%oneapi", when="@=v2.4.1-jedi.1")
+    conflicts("%oneapi", when="@v3")
+    conflicts("%oneapi", when="@3.1.1-build1")
 
     def url_for_version(self, version):
-        if version > Version("v3") or version >= Version("3"):
+        if self.spec.satisfies("@=3.1.1-build1"):
             fmtversion = str(version).replace("-build", "+build")
-            if not fmtversion.startswith("v"):
-                fmtversion = f"v{fmtversion}"
             return f"https://github.com/JCSDA/CRTMv3/archive/refs/tags/{fmtversion}.tar.gz"
+        elif version >= Version("3"):
+            return f"https://github.com/JCSDA/CRTMv3/archive/refs/tags/v{version}.tar.gz"
+        elif version > Version("v3"):
+            return f"https://github.com/JCSDA/CRTMv3/archive/refs/tags/{version}.tar.gz"
         else:
             return f"https://github.com/JCSDA/crtm/archive/refs/tags/{version}.tar.gz"
 

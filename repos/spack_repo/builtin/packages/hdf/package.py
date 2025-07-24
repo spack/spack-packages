@@ -134,7 +134,7 @@ class Hdf(AutotoolsPackage):
 
         if not shared and "transitive" in query_parameters:
             libs += self.spec["jpeg:transitive"].libs
-            libs += self.spec["zlib:transitive"].libs
+            libs += self.spec["zlib-api:transitive"].libs
             if self.spec.satisfies("+szip"):
                 libs += self.spec["szip:transitive"].libs
             if self.spec.satisfies("+external-xdr") and self.spec["rpc"].name == "libtirpc":

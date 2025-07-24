@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
 
 from spack.package import *
-from spack.util.module_cmd import get_path_args_from_module_line, module
 
 
 class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage):
@@ -63,7 +62,7 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
     @property
     def external_prefix(self):
-        mpich_module = module("show", self.modname).splitlines()
+        mpich_module = module_command("show", self.modname).splitlines()
 
         for line in mpich_module:
             if "CRAY_MPICH_DIR" in line:

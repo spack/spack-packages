@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 
@@ -299,7 +298,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("magma+cuda", when="+magma+cuda")
     depends_on("magma+rocm", when="+magma+rocm")
     depends_on("numactl", when="+numa")
-    depends_on("llvm-openmp", when="+openmp %apple-clang")
+    depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
     with when("+rocm"):
         depends_on("hsa-rocr-dev")

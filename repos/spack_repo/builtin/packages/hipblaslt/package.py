@@ -49,7 +49,7 @@ class Hipblaslt(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.25.2:", type="build", when="@6.2.0:")
     depends_on("python@3.7:")
-    depends_on("python@3.8:", when="@6.4:")
+    depends_on("python@3.8:3.13.2", when="@6.4:")
 
     for ver in [
         "6.0.0",
