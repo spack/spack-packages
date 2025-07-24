@@ -28,6 +28,22 @@ class Kadath(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("fuka", branch="fuka")
+    version("2.3", tag="v2.3", commit="f8ee3c7795911e1363358bf155c70f649c100fb5")
+    version(
+        "ET_2025_05_v0", tag="ET_2025_05_v0", commit="f1259452c0a62eee3e37c2314691643659e02705"
+    )
+    version(
+        "ET_2024_11_v0", tag="ET_2024_11_v0", commit="848b68cb9e7cf70b1e38b8135d4def6502db5aff"
+    )
+    version(
+        "ET_2024_05_v0", tag="ET_2024_05_v0", commit="ac1b07452572a83c434a637c8171c02d0f36aafe"
+    )
+    version(
+        "ET_2023_11_v0", tag="ET_2023_11_v0", commit="f6208ce5c2a0a9cdd7cd93611037ae077bed7265"
+    )
+    version("2.2", tag="v2.2", commit="c15aa72964bcddbaae1811cbab6dc2650e59b990")
+    version("ET_2023_05v0", tag="ET_2023_05v0", commit="1e8e9c59dc0dc8746709b81c5c0c70dc73109309")
+    version("2.1", tag="v2.1", commit="1e8e9c59dc0dc8746709b81c5c0c70dc73109309")
 
     variant("mpi", default=True, description="Enable MPI support")
 
