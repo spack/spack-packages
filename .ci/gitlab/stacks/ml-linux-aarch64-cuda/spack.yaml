@@ -18,7 +18,7 @@ spack:
       - target=aarch64
     mpi:
       require: openmpi
-    py-jax:
+    py-jaxlib:
       require: "%c,cxx=clang"
     py-tensorflow:
       require: "%c,cxx=clang"

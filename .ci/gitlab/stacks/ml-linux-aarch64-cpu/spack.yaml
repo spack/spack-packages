@@ -13,7 +13,7 @@ spack:
       - ~rocm
     mpi:
       require: openmpi
-    py-jax:
+    py-jaxlib:
       require: "%c,cxx=clang"
     py-tensorflow:
       require: "%c,cxx=clang"
