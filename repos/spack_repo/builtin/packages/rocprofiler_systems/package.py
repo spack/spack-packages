@@ -106,6 +106,7 @@ class RocprofilerSystems(CMakePackage):
             "(target application can use any MPI installation)"
         ),
     )
+    variant("internal-dyninst", default=False, description="build internal dyninst")
 
     extends("python", when="+python")
 
@@ -115,7 +116,12 @@ class RocprofilerSystems(CMakePackage):
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
-    depends_on("dyninst@:12")
+    depends_on("dyninst@:12", when="~internal-dyninst")
+    depends_on(
+        "boost+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
+        when="+internal-dyninst",
+    )
+    depends_on("libiberty+pic", when="+internal-dyninst")
     depends_on("m4")
     depends_on("texinfo")
     depends_on("libunwind", type=("build", "run"))
@@ -129,13 +135,22 @@ class RocprofilerSystems(CMakePackage):
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
     with when("+rocm"):
+        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
+            depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
+            depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
             depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
-            depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
-            depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
         for ver in ["6.4.0", "6.4.1"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
+
+    # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
+    patch(
+        "https://github.com/ROCm/dyninst/commit/09e781d414c83b4ad587083d449a3e976546937d.patch?full_index=1",
+        sha256="e64c6b75393e7fbd711c0bd0233628c176a352cd10b4057f00eec283426eaf0a",
+        when="@:6.4.0 +internal-dyninst",
+        working_dir="external/dyninst",
+    )
 
     def cmake_args(self):
         spec = self.spec
@@ -147,7 +162,8 @@ class RocprofilerSystems(CMakePackage):
             self.define("ROCPROFSYS_BUILD_LIBUNWIND", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBGCC", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBSTDCXX", False),
-            self.define("ROCPROFSYS_BUILD_DYNINST", False),
+            self.define_from_variant("ROCPROFSYS_BUILD_DYNINST", "internal-dyninst"),
+            self.define_from_variant("DYNINST_BUILD_TBB", "internal-dyninst"),
             self.define_from_variant("ROCPROFSYS_BUILD_LTO", "ipo"),
             self.define_from_variant("ROCPROFSYS_USE_MPI", "mpi"),
             self.define_from_variant("ROCPROFSYS_USE_OMPT", "ompt"),
