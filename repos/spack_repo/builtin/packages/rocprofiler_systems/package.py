@@ -20,6 +20,14 @@ class RocprofilerSystems(CMakePackage):
 
     version("amd-mainline", branch="amd-mainline", submodules=True, deprecated=True)
     version("amd-staging", branch="amd-staging", submodules=True, deprecated=True)
+
+    version(
+        "6.4.2",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-6.4.2",
+        commit="ba0bfe8cf344294347cbb854084ab5b5df1b1a43",
+        submodules=True,
+    )
     version(
         "6.4.1",
         git="https://github.com/ROCm/rocprofiler-systems",
@@ -129,12 +137,12 @@ class RocprofilerSystems(CMakePackage):
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
     with when("+rocm"):
-        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
             depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
             depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
-        for ver in ["6.4.0", "6.4.1"]:
+        for ver in ["6.4.0", "6.4.1", "6.4.2"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
     def cmake_args(self):

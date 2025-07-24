@@ -16,7 +16,7 @@ class Rpp(CMakePackage):
 
     homepage = "https://github.com/ROCm/rpp"
     git = "https://github.com/ROCm/rpp.git"
-    url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-6.4.2.tar.gz"
 
     def url_for_version(self, version):
         if version >= Version("5.7.0"):
@@ -30,6 +30,7 @@ class Rpp(CMakePackage):
     maintainers("srekolam", "afzpatel")
     license("MIT")
 
+    version("6.4.2", sha256="55966e3d099748ae3fd9784ef23c8639fd84e0f602bf57a22513048cbe82c066")
     version("6.4.1", sha256="448973f167ca9aad9628acc7d06a06c6443a34dc23a4fa325eefaf37a52ce242")
     version("6.4.0", sha256="e59e5aa6b140de062430cab03c9c2b88a3b444c53ae17c6b885898e16aefd39b")
     version("6.3.3", sha256="e6b586679a3705bf6b7bb3c5852541d329bd967e110999ac59dc052b49a92cbc")
@@ -181,6 +182,7 @@ class Rpp(CMakePackage):
                 "6.3.3",
                 "6.4.0",
                 "6.4.1",
+                "6.4.2",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):
