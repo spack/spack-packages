@@ -139,6 +139,7 @@ class Libmesh(AutotoolsPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+    depends_on("m4", type="build")
 
     depends_on("boost", when="+boost")
 
@@ -157,7 +158,7 @@ class Libmesh(AutotoolsPackage):
     depends_on("slepc", when="+slepc")
     depends_on("petsc", when="+petsc")
     depends_on("tbb", when="threads=tbb")
-    depends_on("vtk", when="+vtk")
+    depends_on("vtk+mpi", when="+vtk")
 
     def configure_args(self):
         options = []
@@ -226,7 +227,7 @@ class Libmesh(AutotoolsPackage):
 
         if self.spec.satisfies("+vtk"):
             options.append("--enable-vtk-required")
-            options.append("VTK_DIR=%s" % self.spec["vtk"].prefix)
+            options.append(f"VTK_DIR={self.spec['vtk'].prefix}")
         else:
             options.append("--disable-vtk")
 
