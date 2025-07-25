@@ -37,7 +37,7 @@ class Cmake(Package):
     version(
         "3.31.8",
         sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa",
-        preferred=True
+        preferred=True,
     )
     version("3.31.6", sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0")
     version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")

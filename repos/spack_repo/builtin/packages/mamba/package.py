@@ -37,9 +37,10 @@ class Mamba(CMakePackage):
 
     # missing <cassert> header
     # https://github.com/mamba-org/mamba/pull/4021
-    patch("https://github.com/mamba-org/mamba/commit/efeac7bac7aae3e3256ea60c6dea07e3a0101344.patch?full_index=1",
+    patch(
+        "https://github.com/mamba-org/mamba/commit/efeac7bac7aae3e3256ea60c6dea07e3a0101344.patch?full_index=1",
         sha256="530a04ca8b476db5670c7aef6295684feeda4e031c6e100181179e29f3f7b921",
-        when="@2.3.0"
+        when="@2.3.0",
     )
 
     depends_on("c", type="build")
@@ -51,7 +52,7 @@ class Mamba(CMakePackage):
 
     depends_on("pkgconfig", type="build")
 
-    # deps taken from 
+    # deps taken from
     # https://github.com/mamba-org/mamba/blob/main/libmamba/CMakeLists.txt#L423
 
     depends_on("libsolv+conda")
@@ -63,11 +64,11 @@ class Mamba(CMakePackage):
     depends_on("yaml-cpp")
     depends_on("libreproc +cxx +shared")
     depends_on("tl-expected")
-    
+
     # spdlog will determine the exact version of fmt used,
     depends_on("spdlog")
     depends_on("fmt@11:", when="@2.3:")
-    
+
     depends_on("spdlog@1.11.0", when="@1")
     depends_on("fmt@9.1.0", when="@1")
 
@@ -77,9 +78,6 @@ class Mamba(CMakePackage):
 
     depends_on("zstd build_system=cmake", when="@1.4:")
     depends_on("simdjson +shared", when="@2.3:")
-
-    
-
 
     # 1.4.2 made the static build the old "full_static" build and it needs some work.
     # Only shared or full static exist now https://github.com/mamba-org/mamba/pull/2342
@@ -112,10 +110,8 @@ class Mamba(CMakePackage):
     def cmake_args(self):
         args = [
             self.define("BUILD_LIBMAMBA", True),
-
-            self.define("BUILD_MAMBA", True), 
-            self.define("BUILD_SHARED", True )
-
+            self.define("BUILD_MAMBA", True),
+            self.define("BUILD_SHARED", True),
             # self.define("BUILD_MICROMAMBA", True), #implies  BUILD_STATIC
             # self.define("BUILD_STATIC", True )
             # self.define("MICROMAMBA_LINKAGE", "STATIC"),
