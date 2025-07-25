@@ -47,7 +47,9 @@ class Xnedit(MakefilePackage):
     depends_on("cxx", type="build")
 
     depends_on("automake", type="build")
+    depends_on("fontconfig")
     depends_on("libx11")
+    depends_on("libxft")
     depends_on("libxt")
     depends_on("libxpm")
     depends_on("motif", when="+motif")
