@@ -29,7 +29,7 @@ class TclTogl(AutotoolsPackage):
     depends_on("autoconf", type="build", when="build_system=autotools")
     depends_on("automake", type="build", when="build_system=autotools")
     depends_on("libtool", type="build", when="build_system=autotools")
-    depends_on("mesa~llvm")
+    depends_on("mesa")
 
     depends_on("c", type="build")
     depends_on("tk@8.1:")

@@ -21,7 +21,7 @@ class Xcrysden(MakefilePackage):
     version("1.6.1", sha256="8a9c6d83c4a9e189dbb977a04ccf1b260871e945afdf1ca75830616a6cb442c5")
     version("1.6.0", sha256="9ee1d9a1113c72722f0c7c6e08e70a568b6ee7a2f81a25ac636f46b16741b0b6")
 
-    depends_on("mesa~llvm", type=("link", "run"))
+    depends_on("mesa", type=("link", "run"))
     depends_on("mesa-glu", type=("link", "run"))
     depends_on("tk", type=("link", "run"))
     depends_on("tcl", type=("build", "link", "run"))
