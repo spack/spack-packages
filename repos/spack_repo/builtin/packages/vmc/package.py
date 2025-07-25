@@ -25,10 +25,13 @@ class Vmc(CMakePackage):
     version("1-0-p2", sha256="46b4c82b0b7516502e88db920732fc78f06f0393ac740a17816f2eb53f80e75e")
     version("1-0-p1", sha256="4a20515f7de426797955cec4a271958b07afbaa330770eeefb5805c882ad9749")
 
+    patch("dict_fixes_101.patch", when="@1-0-p1")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
-    patch("dict_fixes_101.patch", when="@1-0-p1")
+    depends_on("cmake@3.3:", type="build")
+    depends_on("cmake@3.16:", type="build", when="@2-1:")
 
     depends_on("root@6.18.04:")
     requires("^root~vmc", when="^root@:6.25")
