@@ -85,7 +85,7 @@ class Meep(AutotoolsPackage):
         spec = self.spec
 
         config_args = ["LDFLAGS=-L{0}".format(spec["fftw"].prefix.lib)]
-        
+
         config_args.append("--enable-shared")
 
         if "+blas" in spec:
