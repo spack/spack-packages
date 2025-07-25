@@ -26,9 +26,12 @@ class TclTogl(AutotoolsPackage):
     variant("threads", default=True, description="Build with threads")
     variant("wince", default=False, description="Enable Win/CE support")
 
-    depends_on("autoconf", type="build", when="build_system=autotools")
-    depends_on("automake", type="build", when="build_system=autotools")
-    depends_on("libtool", type="build", when="build_system=autotools")
+    with when("build_system=autotools"):
+        with default_args(type="build"):
+            depends_on("autoconf")
+            depends_on("automake")
+            depends_on("libtool")
+
     depends_on("mesa")
 
     depends_on("c", type="build")
