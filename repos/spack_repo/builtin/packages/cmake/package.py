@@ -167,6 +167,8 @@ class Cmake(Package):
     # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/9623
     patch("mr-9623.patch", when="@3.22.0:3.30")
 
+    patch("1b0c92a3a1b782ff3e1c4499b6ab8db614d45bcd.patch", when="@3.11:3.31.6")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
