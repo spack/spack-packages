@@ -30,7 +30,7 @@ class PyBidskit(PythonPackage):
     depends_on("py-setuptools@72.1:", type=("build", "run"), when="@2025.1.30:")
     depends_on("py-setuptools", type="build")
 
-    depends_on("py-pydicom@2.3:", type=("build", "run"), when="@2025.1.30:")
+    depends_on("py-pydicom@2.3.1:", type=("build", "run"), when="@2025.1.30:")
     depends_on("py-pydicom@2.2:", type=("build", "run"))
     depends_on("py-numpy@1.26.3:", type=("build", "run"), when="@2025.1.30:")
     depends_on("py-numpy@1.21:", type=("build", "run"))
