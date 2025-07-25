@@ -33,8 +33,8 @@ class Cli11(CMakePackage):
     # When it is precompiled, CLI11_COMPILE gets defined
     # https://github.com/CLIUtils/CLI11/blob/bb9bd85e3b8129571b084911affc6f0e9ae6be25/src/CMakeLists.txt#L6
     # which causes cli11 to look for <imp/> which
-    # is not installed when the static lib is created. The itention seems to be to use precompiled via
-    # add_subdirectory(CLI11).
+    # is not installed when the static lib is created. The itention seems to be to use 
+    # precompiled via add_subdirectory(CLI11).
     variant("precompiled", default=False, description="Library is compiled into a static library")
 
     depends_on("cxx", type="build")
