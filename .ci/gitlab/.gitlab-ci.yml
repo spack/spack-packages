@@ -881,7 +881,7 @@ windows-vis-build:
 
 bootstrap-x86_64-linux-gnu-generate:
   extends: [ .generate-x86_64, .bootstrap-x86_64-linux-gnu ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-06-05
+  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
 
 bootstrap-x86_64-linux-gnu-build:
   extends: [ .build, .bootstrap-x86_64-linux-gnu ]
