@@ -1,4 +1,4 @@
-	# Copyright Spack Project Developers. See COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -67,7 +67,8 @@ class Xcrysden(MakefilePackage):
         )
         makesys.filter("TCL_LIB.*=.*", f"TCL_LIB = -L{spec['tcl'].prefix.lib} -l{tcl_lib}")
         makesys.filter(
-            "TOGL_LIB.*=.*", f"TOGL_LIB = -L{join_path(spec['tcl-togl'].prefix.lib, togl_lib)} -l{togl_lib}"
+            "TOGL_LIB.*=.*",
+            f"TOGL_LIB = -L{join_path(spec['tcl-togl'].prefix.lib, togl_lib)} -l{togl_lib}",
         )
         makesys.filter("TK_LIB.*=.*", f"TK_LIB = -L{spec['tk'].prefix.lib} -l{tk_lib}")
         makesys.filter("^GL_LIB.*=.*", f"GL_LIB = -L{spec['mesa'].prefix.lib} -lGL")
