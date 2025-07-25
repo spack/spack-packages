@@ -58,14 +58,14 @@ class Pandoc(Package):
         )
 
     elif platform.system() == "Darwin" and platform.machine() == "aarch64":
-        url = "https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-3.7.0.2-arm64-macOS.zip"
+        url = "https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-arm64-macOS.zip"
 
         version(
             "3.7.0.2", sha256="66a579bd8aae83de0bbeba43900953b075a6a3caaa7d1bfc19173e8f95d2ea17"
         )
 
     elif platform.system() == "Darwin":
-        url = "https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-3.7.0.2-x86_64-macOS.zip"
+        url = "https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-x86_64-macOS.zip"
 
         version(
             "3.7.0.2", sha256="5495af2c548bd49fe00c28a7f6dadaa1348e6338b92368d3d6e29fd3e16061d1"
@@ -73,7 +73,7 @@ class Pandoc(Package):
         version(
             "2.19.2",
             sha256="af0cda69e31e42f01ba6adc0aa779d3e5853e6c092beeb420a4fc22712d2110b",
-            url="https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.19.2-macOS.zip",
+            url="https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-macOS.zip",
         )
         version(
             "2.14.0.3",
@@ -83,12 +83,12 @@ class Pandoc(Package):
         version(
             "2.11.4",
             sha256="13b8597860afa6ab802993a684b340be3f31f4d2a06c50b6601f9e726cf76f71",
-            url="https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.11.4-macOS.zip",
+            url="https://github.com/jgm/pandoc/releases/download/2.11.4/pandoc-2.11.4-macOS.zip",
         )
         version(
             "2.7.3",
             sha256="fb93800c90f3fab05dbd418ee6180d086b619c9179b822ddfecb608874554ff0",
-            url="https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.7.3-macOS.zip",
+            url="https://github.com/jgm/pandoc/releases/download/2.7.3/pandoc-2.7.3-macOS.zip",
         )
 
     variant("texlive", default=False, description="Use TeX Live to enable PDF output")
