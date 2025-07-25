@@ -20,7 +20,6 @@ class Xcrysden(MakefilePackage):
     version("1.6.2", sha256="811736ee598bec1a5b427fd10e4e063a30dd7cadae96a43a50b36ce90a4f503f")
     version("1.6.1", sha256="8a9c6d83c4a9e189dbb977a04ccf1b260871e945afdf1ca75830616a6cb442c5")
     version("1.6.0", sha256="9ee1d9a1113c72722f0c7c6e08e70a568b6ee7a2f81a25ac636f46b16741b0b6")
-    version("1.5.53", sha256="9eff395b63a3490e8bbb7d8c8501d1ecf3e1157897eb066baae7fcaf7f0788be")
 
     depends_on("mesa~llvm", type=("link", "run"))
     depends_on("mesa-glu", type=("link", "run"))
