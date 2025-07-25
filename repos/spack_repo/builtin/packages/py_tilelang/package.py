@@ -23,9 +23,12 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
     import_modules = ["tilelang", "tilelang.language", "tilelang.intrinsics"]
 
     version("main", branch="main")
-    # The cached source code cannot be compiled,
-    # so it is not applicable to the specific commit.
-    version("0.1.5", tag="v0.1.5")
+    version(
+        "0.1.5",
+        tag="v0.1.5",
+        commit="a32009bf1e314b514c07389123648ba19009f3a5",
+        submodules=True
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -35,7 +38,7 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("cmake@3.26:")
         depends_on("py-packaging")
         depends_on("py-setuptools@61:")
-        # depends_on("py-wheel") # inherited if `pip`` is the build system
+        # depends_on("py-wheel") # inherited if `pip` is the build system
 
         # https://github.com/tile-ai/tilelang/blob/v0.1.5/requirements-build.txt
         depends_on("py-build")
