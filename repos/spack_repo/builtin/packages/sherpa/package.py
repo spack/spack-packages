@@ -95,8 +95,6 @@ class Sherpa(CMakePackage, AutotoolsPackage):
     depends_on("libtool", when="@:2")
     depends_on("m4", when="@:2")
     depends_on("texinfo", type="build")
-    # limit texinfo to 7.1 to avoid errors due to missing references
-    depends_on("texinfo@:7.1", type="build", when="@:2")
     depends_on("sqlite")
 
     depends_on("mpi", when="+mpi")
@@ -134,6 +132,10 @@ class Sherpa(CMakePackage, AutotoolsPackage):
             "#ifdef ARCH_DARWIN\n#include <sys/sysctl.h>\n#endif",
             "ATOOLS/Org/Run_Parameter.C",
         )
+
+        if self.spec.satisfies("@:2"):
+            # remove errant 'R' which trips up newer texinfo
+            filter_file(r"R@end", "@end", "Manual/Starting.texi", string=True)
 
         if self.spec.satisfies("^recola@2:"):
             filter_file(
