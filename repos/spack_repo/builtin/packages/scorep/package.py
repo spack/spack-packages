@@ -253,7 +253,7 @@ class Scorep(AutotoolsPackage):
             )
         )
         config_args.extend(
-            self.with_or_without("libgotcha", activation_value="prefix", variant="gotcha")
+            self.with_or_without("libgotcha", activation_value=lambda _:self.spec["gotcha"].prefix, variant="gotcha")
         )
         config_args.extend(self.enable_or_disable("llvm-plugin"))
         config_args.extend(self.enable_or_disable("gcc-plugin"))
