@@ -242,7 +242,8 @@ class Openblas(CMakePackage, MakefilePackage):
         when="@0.3.27 %oneapi",
     )
 
-    conflicts("%fortran=clang")
+    # Requires support for -mtune=generic
+    conflicts("%fortran=clang %llvm@:18")
 
     # See https://github.com/spack/spack/issues/19932#issuecomment-733452619
     # Notice: fixed on Amazon Linux GCC 7.3.1 (which is an unofficial version
