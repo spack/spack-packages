@@ -250,7 +250,7 @@ class Openblas(CMakePackage, MakefilePackage):
     )
 
     # Requires support for -mtune=generic
-    conflicts("%fortran=clang %llvm@18")
+    conflicts("%fortran=clang %llvm@:18")
 
     # See https://github.com/spack/spack/issues/19932#issuecomment-733452619
     # Notice: fixed on Amazon Linux GCC 7.3.1 (which is an unofficial version
