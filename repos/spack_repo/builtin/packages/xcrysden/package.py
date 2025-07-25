@@ -59,31 +59,22 @@ class Xcrysden(MakefilePackage):
         )
         makesys.filter(
             "X_LIB.*=.*",
-            f"X_LIB = -L{spec['libx11'].prefix.lib} -lX11 -L{spec['libxmu'].prefix.lib} -lXmu"
+            f"X_LIB = -L{spec['libx11'].prefix.lib} -lX11 -L{spec['libxmu'].prefix.lib} -lXmu",
         )
         makesys.filter(
             "X_INCDIR.*=.*",
-            f"X_INCDIR = -I{spec['libx11'].prefix.include} -I{spec['libxmu'].prefix.include}"
+            f"X_INCDIR = -I{spec['libx11'].prefix.include} -I{spec['libxmu'].prefix.include}",
         )
+        makesys.filter("TCL_LIB.*=.*", f"TCL_LIB = -L{spec['tcl'].prefix.lib} -l{tcl_lib}")
         makesys.filter(
-            "TCL_LIB.*=.*", f"TCL_LIB = -L{spec['tcl'].prefix.lib} -l{tcl_lib}"
-        )
-        makesys.filter(
-            "TOGL_LIB.*=.*",
-            f"TOGL_LIB = -L{join_path(spec['tcl-togl'].prefix.lib, togl_lib)} -l{togl_lib}"
+            "TOGL_LIB.*=.*", f"TOGL_LIB = -L{join_path(spec['tcl-togl'].prefix.lib, togl_lib)} -l{togl_lib}"
         )
         makesys.filter("TK_LIB.*=.*", f"TK_LIB = -L{spec['tk'].prefix.lib} -l{tk_lib}")
         makesys.filter("^GL_LIB.*=.*", f"GL_LIB = -L{spec['mesa'].prefix.lib} -lGL")
         makesys.filter("GLU_LIB.*=.*", f"GLU_LIB = -L{spec['mesa-glu'].prefix.lib} -lGLU")
-        makesys.filter(
-            "FFTW3_LIB.*=.*", f"FFTW3_LIB = -L{spec['fftw'].prefix.lib} -lfftw3"
-        )
+        makesys.filter("FFTW3_LIB.*=.*", f"FFTW3_LIB = -L{spec['fftw'].prefix.lib} -lfftw3")
         makesys.filter("TCL_INCDIR.*=.*", f"TCL_INCDIR = -I{spec['tcl'].prefix.include}")
-        makesys.filter(
-            "TOGL_INCDIR.*=.*", f"TOGL_INCDIR = -I{spec['tcl-togl'].prefix.include}"
-        )
+        makesys.filter("TOGL_INCDIR.*=.*", f"TOGL_INCDIR = -I{spec['tcl-togl'].prefix.include}")
         makesys.filter("TK_INCDIR.*=.*", f"TK_INCDIR = -I{spec['tk'].prefix.include}")
         makesys.filter("^GL_INCDIR.*=.*", f"GL_INCDIR = -I{spec['mesa'].prefix.include}")
-        makesys.filter(
-            "FFTW3_INCDIR.*=.*", "FFTW3_INCDIR = -I{spec['fftw'].prefix.include}"
-        )
+        makesys.filter("FFTW3_INCDIR.*=.*", "FFTW3_INCDIR = -I{spec['fftw'].prefix.include}")
