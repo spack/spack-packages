@@ -7,7 +7,7 @@ from spack_repo.builtin.build_systems.sourceforge import SourceforgePackage
 from spack.package import *
 
 
-class TclBwidget(SourceforgePackage):
+class TclBwidget(SourceforgePackage, Package):
     """BWidget is a mega-widget package."""
 
     homepage = "https://core.tcl-lang.org/bwidget/home"
