@@ -24,10 +24,7 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
     version(
-        "0.1.5",
-        tag="v0.1.5",
-        commit="a32009bf1e314b514c07389123648ba19009f3a5",
-        submodules=True
+        "0.1.5", tag="v0.1.5", commit="a32009bf1e314b514c07389123648ba19009f3a5", submodules=True
     )
 
     depends_on("c", type="build")
