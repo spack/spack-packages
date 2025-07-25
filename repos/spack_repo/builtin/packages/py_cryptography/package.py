@@ -16,6 +16,7 @@ class PyCryptography(PythonPackage):
 
     license("Apache-2.0")
 
+    version("45.0.5", sha256="72e76caa004ab63accdf26023fccd1d087f6d90ec6048ff33ad0445abf7f605a")
     version("43.0.3", sha256="315b9001266a492a6ff443b61238f956b214dbec9910a081ba5b6646a055a805")
     version("43.0.1", sha256="203e92a75716d8cfb491dc47c79e17d0d9207ccffcbcb35f598fbe463ae3444d")
     version("42.0.8", sha256="8d09d05439ce7baa8e9e95b07ec5b6c886f548deb7e0f69ef25f64b3bce842f2")
@@ -46,36 +47,49 @@ class PyCryptography(PythonPackage):
     depends_on("py-setuptools@40.6:", when="@2.7:36", type="build")
     depends_on("py-setuptools@18.5:", when="@2.2:2.6", type="build")
     depends_on("py-setuptools@11.3:", when="@:2.1", type="build")
-    with when("@43:"):
-        depends_on("py-maturin@1", type="build")
-        conflicts(
-            "^py-setuptools@74.0.0,74.1.0,74.1.1,74.1.2,74.1.3,75.0.0,75.1.0,75.2.0",
-            msg="some setuptools version are incompatible",
-        )
+    depends_on("py-maturin@1.8.6:1", when="@45:", type="build")
+    depends_on("py-maturin@1", when="@43:44", type="build")
     with when("@:42"):
         depends_on("py-setuptools-rust@1.7.0:", when="@42", type=("build", "run"))
         depends_on("py-setuptools-rust@0.11.4:", when="@3.4.2:", type="build")
         depends_on("py-setuptools-rust@0.11.4:", when="@3.4:3.4.1", type=("build", "run"))
+
+    # from https://cryptography.io/en/latest/installation/#rust
+    depends_on("rust@1.74:", when="@45:", type="build")
+    depends_on("rust@1.65:", when="@43:", type="build")
+    depends_on("rust@1.63:", when="@42:", type="build")
     depends_on("rust@1.56:", when="@41:", type="build")
     depends_on("rust@1.48:", when="@38:", type="build")
     depends_on("rust@1.41:", when="@3.4.5:", type="build")
     depends_on("rust@1.45:", when="@3.4.3:3.4.4", type="build")
     depends_on("pkgconfig", when="@40:", type="build")
 
+    depends_on("py-cffi@1.14:", when="@45:", type=("build", "run"))
     depends_on("py-cffi@1.12:", when="@3.3:", type=("build", "run"))
     depends_on("py-cffi@1.8:1.11.2,1.11.4:", when="@2.5:3.2", type=("build", "run"))
     depends_on("py-cffi@1.7:1.11.2,1.11.4:", when="@1.9:2.4.2", type=("build", "run"))
     depends_on("py-cffi@1.4.1:", type=("build", "run"))
 
+    # from https://cryptography.io/en/latest/installation/
+    depends_on("openssl@3:", when="@42:")
+    depends_on("openssl@1.1.1:", when="@39:")
+    depends_on("openssl@:1.1", when="@:3.4")
+    depends_on("openssl@:1.0", when="@:1.8.1")
+    depends_on("openssl")
+
+    conflicts("^python@3.9.0,3.9.1", when="@45:")
+    conflicts("^py-setuptools@74.0.0,74.1.0,74.1.1,74.1.2", when="@44:")
+    conflicts(
+        "^py-setuptools@74.0.0,74.1.0,74.1.1,74.1.2,74.1.3,75.0.0,75.1.0,75.2.0",
+        msg="some setuptools version are incompatible",
+        when="@43",
+    )
+
+    # Historical dependencies
     depends_on("py-asn1crypto@0.21.0:", type=("build", "run"), when="@:2.7")
     depends_on("py-six@1.4.1:", type=("build", "run"), when="@:3.3")
     depends_on("py-idna@2.1:", type=("build", "run"), when="@:2.4")  # deprecated
     depends_on("py-idna@2.1:", type=("build", "run"), when="@2.5: +idna")  # deprecated
-
-    depends_on("openssl")
-    depends_on("openssl@:1.0", when="@:1.8.1")
-    depends_on("openssl@:1.1", when="@:3.4")
-    depends_on("openssl@1.1.1:", when="@39:")
 
     # To fix https://github.com/spack/spack/issues/29669
     # https://community.home-assistant.io/t/error-failed-building-wheel-for-cryptography/352020/14
