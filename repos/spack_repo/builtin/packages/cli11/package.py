@@ -30,7 +30,14 @@ class Cli11(CMakePackage):
 
     variant("pic", default=True, description="Produce position-independent code")
 
-    depends_on("cxx", type="build")  # generated
+    # When it is precompiled, CLI11_COMPILE gets defined
+    # https://github.com/CLIUtils/CLI11/blob/bb9bd85e3b8129571b084911affc6f0e9ae6be25/src/CMakeLists.txt#L6
+    # which causes cli11 to look for <imp/> which
+    # is not installed when the static lib is created. The itention seems to be to use precompiled via
+    # add_subdirectory(CLI11).
+    variant("precompiled", default=False, description="Library is compiled into a static library")
+
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.4:", type="build")
     depends_on("cmake@3.5:", type="build", when="@2.4:")
@@ -41,7 +48,7 @@ class Cli11(CMakePackage):
             self.define("CLI11_BUILD_EXAMPLES", False),
             self.define("CLI11_BUILD_DOCS", False),
             self.define("CLI11_BUILD_TESTS", False),
-            self.define("CLI11_PRECOMPILED", True),
+            self.define_from_variant("CLI11_PRECOMPILED", "precompiled"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
         return args
