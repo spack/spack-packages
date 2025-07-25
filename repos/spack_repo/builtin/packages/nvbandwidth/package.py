@@ -52,7 +52,7 @@ class Nvbandwidth(CMakePackage, CudaPackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("boost+program_options")
+    depends_on("boost@1.66.0:+program_options")
 
     requires("+cuda")
 
