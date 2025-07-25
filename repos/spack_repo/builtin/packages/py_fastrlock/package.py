@@ -24,6 +24,9 @@ class PyFastrlock(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-cython", type="build")
+    depends_on("py-cython@3.0.11:3.0", when="@0.8.3", type="build")
+    depends_on("py-cython@3.0.0:3.0", when="@0.8.1", type="build")
+    depends_on("py-cython@0.29.13", when="@0.5", type="build")
     # in newer pip versions --install-option does not exist
     depends_on("py-pip", type="build")
     depends_on("py-pip@:23.0", when="@:0.8.1", type="build")

@@ -47,10 +47,13 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("python@3.9:3.13", when="@13", type=("build", "run"))
     depends_on("python@3.10:", when="@14", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-cython@0.29.22:2", type="build", when="@:13.3")
+    depends_on("py-setuptools@:73", when="@:13.3", type="build")
+    depends_on("py-cython@0.29.22:0.29", type="build", when="@:13.3")
     depends_on(
         "py-cython@3:3.0.10,3.0.12:", type="build", when="@13.4:"
     )  # 3.0.11 broken likely because of cython#6335, fixed in 3.0.12
+    depends_on("py-cython@0.29.22:0.29", when="@:13.3 +all", type=("build", "run"))
+    depends_on("py-cython@3:", when="@13.4: +all", type=("build", "run"))
     depends_on("py-fastrlock@0.5:", type=("build", "run"))
     depends_on("py-numpy@1.20:1.25", when="@:11", type=("build", "run"))
     depends_on("py-numpy@1.20:1.26", when="@12", type=("build", "run"))
@@ -62,8 +65,6 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("py-scipy@1.6:1.11", when="@:12+all", type=("build", "run"))
     depends_on("py-scipy@1.7:1.12", when="@13+all", type=("build", "run"))
     depends_on("py-scipy@1.10:1.17", when="@14+all", type=("build", "run"))
-    depends_on("py-cython@0.29.22:0.29", when="@:13.3 +all", type=("build", "run"))
-    depends_on("py-cython@3:", when="@13.4: +all", type=("build", "run"))
     depends_on("py-optuna@2:", when="+all", type=("build", "run"))
     depends_on("py-optuna@3:4", when="@13+all", type=("build", "run"))
 
