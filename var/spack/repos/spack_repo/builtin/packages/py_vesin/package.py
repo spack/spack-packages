@@ -25,4 +25,4 @@ class PyVesin(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-wheel@0.41:", type="build")
-    depends_on("cmake@3.16", type="build")
+    depends_on("cmake@3.16:", type="build")

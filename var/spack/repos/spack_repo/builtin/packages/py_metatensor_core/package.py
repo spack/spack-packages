@@ -34,7 +34,7 @@ class PyMetatensorCore(PythonPackage):
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
-    depends_on("cmake@3.16", type="build")
+    depends_on("cmake@3.16:", type="build")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("METATENSOR_CORE_PYTHON_USE_EXTERNAL_LIB", "ON")
