@@ -66,7 +66,7 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("py-scipy@1.7:1.16", when="@13+all", type=("build", "run"))
     depends_on("py-scipy@1.10:1.16", when="@14+all", type=("build", "run"))
     depends_on("py-optuna@2:", when="+all", type=("build", "run"))
-    depends_on("py-optuna@3:4", when="@13+all", type=("build", "run"))
+    depends_on("py-optuna@3:", when="@12:+all", type=("build", "run"))
 
     # Based on https://github.com/cupy/cupy/releases
     depends_on("cuda@:11.9", when="@:11 +cuda")
