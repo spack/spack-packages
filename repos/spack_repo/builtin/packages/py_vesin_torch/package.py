@@ -11,7 +11,7 @@ class PyVesinTorch(PythonPackage):
     """Computing neighbor lists for atomistic system."""
 
     homepage = "https://luthaf.fr/vesin/latest/index.html"
-    pypi = "vesin-torch/vesin-torch-0.3.7.tar.gz"
+    git = "https://github.com/luthaf/vesin.git"
 
     import_modules = ["vesin.torch"]
 
