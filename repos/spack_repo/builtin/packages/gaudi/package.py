@@ -102,7 +102,7 @@ class Gaudi(CMakePackage, CudaPackage):
     patch(
         "https://gitlab.cern.ch/gaudi/Gaudi/-/commit/ae53669e3845fce50719643e66dedc2569cbd834.diff",
         sha256="52499558f968ad41cde77c4e57d6ea7409f692c22af025433eaf567a70819b27",
-        when="40.0",
+        when="@40.0",
     )
     patch(
         "https://gitlab.cern.ch/gaudi/Gaudi/-/commit/31bcb0a31e1daa5b2d8969b0df0c6fbe55af7fa1.diff",
