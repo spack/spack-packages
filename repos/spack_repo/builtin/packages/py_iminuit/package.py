@@ -17,6 +17,7 @@ class PyIminuit(PythonPackage):
 
     license("MIT AND LGPL-2.0-only", checked_by="wdconinc")
 
+    version("2.31.1", sha256="d5e004f1ffd83d2a076409fbf4a79691e7a17c9d73950bb63465af32e104de18")
     version("2.30.1", sha256="2815bfdeb8e7f78185f316b75e2d4b19d0f6993bdc5ff03352ed37b70a796360")
     version("2.29.1", sha256="474d10eb2f924b9320f6f7093e4c149d0a38c124d0419c12a07a3eca942de025")
     version("2.28.0", sha256="6646ae0b66a4760e02cd73711d460a6cf2375382b78ce8344141751595596aad")
@@ -55,8 +56,7 @@ class PyIminuit(PythonPackage):
     # See https://github.com/pybind/pybind11/pull/3368
     depends_on("python@:3.10", type=("build", "run"), when="@:2.21")
     with when("@2.22:"):
-        depends_on("py-scikit-build-core@0.3:+pyproject", type="build")
-        depends_on("py-scikit-build-core@0.5:+pyproject", type="build", when="@2.26:")
+        depends_on("py-scikit-build-core@0.10:", type="build", when="@2.31:")
         depends_on("py-pybind11", type="build")
         depends_on("py-pybind11@2.12:", type="build", when="@2.26:")
     with when("@:2.21"):
@@ -71,6 +71,9 @@ class PyIminuit(PythonPackage):
     depends_on("cmake@3.15:", type="build", when="@2.22:")
 
     # Historical dependencies
+    with when("@2.22:2.30"):
+        depends_on("py-scikit-build-core@0.3:+pyproject", type="build")
+        depends_on("py-scikit-build-core@0.5:+pyproject", type="build", when="@2.26:")
     with when("@:2.27"):
         depends_on("py-typing-extensions", when="@2.21: ^python@:3.8", type=("build", "run"))
         depends_on(
