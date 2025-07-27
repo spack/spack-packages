@@ -44,7 +44,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("c", type="build")
     with when("build_system=meson"):
         depends_on("meson@0.52:", type="build")
-        depends_on("meson@1.3:", type="build", when="@0.46:")
+        depends_on("meson@1.3:", type="build", when="@0.44.2:")
     depends_on("pkgconfig", type="build")
     depends_on("flex", type="build")
     depends_on("bison@3:", type="build")
