@@ -21,6 +21,8 @@ class Pixman(AutotoolsPackage, MesonPackage):
 
     license("MIT")
 
+    version("0.46.4", sha256="d09c44ebc3bd5bee7021c79f922fe8fb2fb57f7320f55e97ff9914d2346a591c")
+    version("0.44.2", sha256="6349061ce1a338ab6952b92194d1b0377472244208d47ff25bef86fc71973466")
     version("0.44.0", sha256="89a4c1e1e45e0b23dffe708202cb2eaffde0fe3727d7692b2e1739fec78a7dac")
     version("0.42.2", sha256="ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e")
     version("0.42.0", sha256="07f74c8d95e4a43eb2b08578b37f40b7937e6c5b48597b3a0bb2c13a53f46c13")
@@ -42,6 +44,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("c", type="build")
     with when("build_system=meson"):
         depends_on("meson@0.52:", type="build")
+        depends_on("meson@1.3:", type="build", when="@0.46:")
     depends_on("pkgconfig", type="build")
     depends_on("flex", type="build")
     depends_on("bison@3:", type="build")
