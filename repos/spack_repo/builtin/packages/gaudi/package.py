@@ -185,7 +185,7 @@ class Gaudi(CMakePackage, CudaPackage):
             # todo:
             self.define("GAUDI_USE_INTELAMPLIFIER", False),
         ]
-        # Release nots for v40.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v40r0
+        # Release notes for v40.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v40r0
         # Cleanup remaining Python2 support
         if self.spec.satisfies("@:39"):
             args.append(
