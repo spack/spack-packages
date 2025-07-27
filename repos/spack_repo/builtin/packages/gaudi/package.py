@@ -96,6 +96,20 @@ class Gaudi(CMakePackage, CudaPackage):
     )
     conflicts("^root@6.36:", when="@:38.0")
 
+    # IAuditor: define static strings in implementation
+    # https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1781
+    # https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1785
+    patch(
+        "https://gitlab.cern.ch/gaudi/Gaudi/-/commit/ae53669e3845fce50719643e66dedc2569cbd834.diff",
+        sha256="52499558f968ad41cde77c4e57d6ea7409f692c22af025433eaf567a70819b27",
+        when="40.0",
+    )
+    patch(
+        "https://gitlab.cern.ch/gaudi/Gaudi/-/commit/31bcb0a31e1daa5b2d8969b0df0c6fbe55af7fa1.diff",
+        sha256="f812fae60f17a5a2e75ccd68f0e8c28a1df9e272b569e086ad756ef4fc75661a",
+        when="@40.0",
+    )
+
     # These dependencies are needed for a minimal Gaudi build
     depends_on("cxx", type="build")
     depends_on("aida")
