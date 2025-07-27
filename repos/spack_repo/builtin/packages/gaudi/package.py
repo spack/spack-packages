@@ -18,6 +18,7 @@ class Gaudi(CMakePackage, CudaPackage):
     tags = ["hep"]
 
     version("master", branch="master")
+    version("40.0", sha256="0cfe696967067b23382968a5c5ab1b4b7f38a7dd3ee2e321d1bff0dd8f99d2f9")
     version("39.4", sha256="dd698e0788811fa8325ed5f37ecf3fd9bde55720489224a517b52360819564d7")
     version("39.3", sha256="009a306a7413f3207f0d5fa19034186c0bb3c8de0c807d38f515338a41a8a0bc")
     version("39.2", sha256="9697f5092df49187e3d30256c821a4400534e77ddaa2d976ba4bb22745c904d6")
@@ -181,10 +182,15 @@ class Gaudi(CMakePackage, CudaPackage):
             self.define_from_variant("GAUDI_USE_DOXYGEN", "docs"),
             # needed to build core services like rndmsvc
             self.define("GAUDI_USE_CLHEP", True),
-            self.define("GAUDI_USE_PYTHON_MAJOR", str(self.spec["python"].version.up_to(1))),
             # todo:
             self.define("GAUDI_USE_INTELAMPLIFIER", False),
         ]
+        # Release nots for v40.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v40r0
+        # Cleanup remaining Python2 support
+        if self.spec.satisfies("@:39"):
+            args.append(
+                self.define("GAUDI_USE_PYTHON_MAJOR", str(self.spec["python"].version.up_to(1)))
+            )
         # Release notes for v39.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v39r0
         # Gaudi@39: needs C++ >= 20, and we need to force CMake to use C++ 20 with old gcc:
         if self.spec.satisfies("@39: %gcc@:13"):
