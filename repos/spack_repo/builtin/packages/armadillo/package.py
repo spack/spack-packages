@@ -18,6 +18,8 @@ class Armadillo(CMakePackage):
 
     license("Apache-2.0")
 
+    version("14.6.1", sha256="bec67f368fc61673c4c9e9429d20135a42ba80a2c7f8592b912e5f97e289bfc0")
+    version("14.4.3", sha256="c3aadd59bdb0ea4339b056f29972f92ee19fdc52f68eb78d32d2e4caf4d80c3a")
     version("14.4.1", sha256="26ce272bfdc8246c278e6f8cfa53777a1efb14ef196e88082fee05da1a463491")
     version("14.4.0", sha256="023242fd59071d98c75fb015fd3293c921132dc39bf46d221d4b059aae8d79f4")
     version("14.2.3", sha256="fc70c3089a8d2bb7f2510588597d4b35b4323f6d4be5db5c17c6dba20ab4a9cc")
@@ -46,7 +48,8 @@ class Armadillo(CMakePackage):
     depends_on("arpack-ng")  # old arpack causes undefined symbols
     depends_on("blas")
     depends_on("lapack")
-    depends_on("superlu@5.2:5")  # only superlu@5 is supported
+    depends_on("superlu@5.2:5", when="@:14.4")
+    depends_on("superlu@5.2:7", when="@14.6:")
     depends_on("hdf5", when="+hdf5")
 
     # Adds an `#undef linux` to prevent preprocessor expansion of include
