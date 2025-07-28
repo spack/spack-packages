@@ -12,6 +12,7 @@ class TclBwidget(SourceforgePackage, Package):
 
     homepage = "https://core.tcl-lang.org/bwidget/home"
     sourceforge_mirror_path = "tcllib/BWidget/1.9.13/bwidget-1.9.13.tar.gz"
+    maintainers("gjsd2")
 
     license("TCL")
 

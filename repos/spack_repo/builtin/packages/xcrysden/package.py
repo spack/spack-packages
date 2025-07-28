@@ -15,6 +15,7 @@ class Xcrysden(MakefilePackage):
 
     homepage = "http://www.xcrysden.org/XCrySDen.html"
     url = "http://www.xcrysden.org/download/xcrysden-1.6.2.tar.gz"
+    maintainers("gjsd2")
 
     license("GPL-2.0-or-later")
 

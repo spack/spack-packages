@@ -13,6 +13,7 @@ class TclTogl(AutotoolsPackage):
 
     homepage = "https://togl.sourceforge.net/"
     url = "https://downloads.sourceforge.net/project/togl/Togl/2.0/Togl2.0-src.tar.gz"
+    maintainers("gjsd2")
 
     license("BSD")
 
