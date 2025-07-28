@@ -76,6 +76,12 @@ class ZlibNg(AutotoolsPackage, CMakePackage):
     def flag_handler(self, name, flags):
         if name == "cflags" and self.spec.satisfies("+pic build_system=autotools"):
             flags.append(self["c"].pic_flag)
+
+        # require gcc@12: to have an as version that support some of the avx512 calls used 
+        # https://access.redhat.com/solutions/7049696
+        if name == "cflags" and self.spec.satisfies("%gcc@:11"):
+            flags.append("-mno-avxvnni")
+
         return (flags, None, None)
 
 
