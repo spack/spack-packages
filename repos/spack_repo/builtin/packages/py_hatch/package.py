@@ -37,7 +37,7 @@ class PyHatch(PythonPackage):
     depends_on("py-shellingham@1.4.0:", type=("build", "run"))
     depends_on("py-tomli-w@1.0:", type=("build", "run"))
     depends_on("py-tomlkit@0.11.1:", type=("build", "run"))
-    depends_on("py-userpath@1.7:1.7", type=("build", "run"))
+    depends_on("py-userpath@1.7:1", type=("build", "run"))
     depends_on("py-uv@0.1.35:", type=("build", "run"))
     depends_on("py-uv@0.5.23:", type=("build", "run"), when="@1.14:")
     depends_on("py-virtualenv@20.26.1:", type=("build", "run"))
