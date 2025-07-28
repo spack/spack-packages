@@ -25,19 +25,16 @@ class PyMelissaCore(PythonPackage, CudaPackage):
     version(
         "2.1.0",
         sha256="cf0f105ed5b1da260cc7476aec23df084470b50a61df997c0e457c38948bed93",
-        preferred=True,
     )
     version(
         "2.0.1",
         sha256="a7ff4df75ea09af435b0c28c3fa3cab9335c1c76e1c48757facce36786b4962c",
-        preferred=True,
     )
     version(
         "2.0.0",
         sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
-        preferred=True,
     )
-    version("develop", branch="develop")
+    version("develop", branch="develop", preferred=True)
 
     # DEPRECATED VERSIONS
     version(
