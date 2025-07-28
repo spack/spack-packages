@@ -38,7 +38,7 @@ class PyDocutils(PythonPackage):
     depends_on("python@3.9:", when="@0.21:", type=("build", "run"))
 
     with when("@0.21:"):
-        depends_on("py-flit-core@3.11:3", type="build")
+        depends_on("py-flit-core@3.4:3", type="build")
     with when("@:0.20"):
         depends_on("py-setuptools", type="build")
         # Uses 2to3
