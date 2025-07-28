@@ -24,7 +24,10 @@ _versions = {
 
 
 class Cublasmp(Package, CudaPackage):
-    """NVIDIA cuBLASMp is a high-performance, multi-process, GPU-accelerated library for distributed basic dense linear algebra."""
+    """
+    NVIDIA cuBLASMp is a high-performance, multi-process, GPU-accelerated library
+    for distributed basic dense linear algebra.
+    """
 
     homepage = "https://docs.nvidia.com/cuda/cublasmp/"
     url = "https://developer.download.nvidia.com/compute/cublasmp/redist/libcublasmp/"
