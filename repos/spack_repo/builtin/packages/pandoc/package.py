@@ -75,6 +75,8 @@ class Pandoc(Package):
         version(
             "3.7.0.2", sha256="5495af2c548bd49fe00c28a7f6dadaa1348e6338b92368d3d6e29fd3e16061d1"
         )
+
+    if system == "darwin":
         version(
             "2.19.2",
             sha256="af0cda69e31e42f01ba6adc0aa779d3e5853e6c092beeb420a4fc22712d2110b",
