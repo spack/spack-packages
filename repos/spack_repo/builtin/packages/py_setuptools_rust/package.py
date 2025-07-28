@@ -31,13 +31,13 @@ class PySetuptoolsRust(PythonPackage):
     depends_on("py-setuptools-scm", when="@1.7.0:", type=("build", "run"))
     depends_on("py-semantic-version@2.8.2:2", when="@1.2.0:", type=("build", "run"))
     depends_on("py-semantic-version@2.6.0:", type=("build", "run"))
-    depends_on("py-tomli@1.2.1:", when="^python@:3.10", type=("build", "run"))
     depends_on("rust", type="run")
 
     # Historical dependencies
     depends_on("py-typing-extensions@3.7.4.3:", when="@1.2.0:1.7.0", type=("build", "run"))
     depends_on("py-setuptools-scm+toml@6.3.2:", when="@1.2.0:1.4.1", type="build")
     depends_on("py-setuptools-scm+toml@3.4.3:", when="@:1.1", type="build")
+    depends_on("py-tomli@1.2.1:", when="@:1.9 ^python@:3.10", type=("build", "run"))
     depends_on("py-toml@0.9.0:", type=("build", "run"), when="@0.12.1")
 
     def url_for_version(self, version):
