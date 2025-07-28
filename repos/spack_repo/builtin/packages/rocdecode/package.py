@@ -63,6 +63,9 @@ class Rocdecode(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
 
+    for ver in ["6.4.0", "6.4.1"]:
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+
     patch("0001-add-amdgpu-drm-include.patch", when="@6.4")
 
     def patch(self):

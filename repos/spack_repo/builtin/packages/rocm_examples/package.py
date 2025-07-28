@@ -93,7 +93,7 @@ class RocmExamples(CMakePackage):
 
     def cmake_args(self):
         args = []
-        if self.spec.satisfies("+cuda"):
+        if self.spec.satisfies("+rocm"):
             args.append(
                 self.define(
                     "OFFLOAD_BUNDLER_COMMAND",

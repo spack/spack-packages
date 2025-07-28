@@ -49,6 +49,7 @@ class MiopenHip(CMakePackage):
         description="Enable MIOpen to use composable kernels for various operation",
     )
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
+    variant("hipblaslt", default=True, when="@6.3:", description="Build with hipblaslt")
 
     conflicts("+asan", when="os=rhel9")
     conflicts("+asan", when="os=centos7")
@@ -118,7 +119,7 @@ class MiopenHip(CMakePackage):
     for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
 
     depends_on("nlohmann-json", type="link")
     depends_on("googletest", when="@6.1:")
@@ -190,4 +191,6 @@ class MiopenHip(CMakePackage):
                     f"-I{self.spec['sqlite'].prefix.include} ",
                 )
             )
+        if self.spec.satisfies("@6.3:"):
+            args.append(self.define_from_variant("MIOPEN_USE_HIPBLASLT", "hipblaslt"))
         return args

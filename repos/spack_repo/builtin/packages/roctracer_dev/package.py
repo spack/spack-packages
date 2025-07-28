@@ -96,6 +96,7 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     @classmethod
     def determine_version(cls, lib):

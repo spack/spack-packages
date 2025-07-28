@@ -54,6 +54,7 @@ class Rocblas(CMakePackage):
     )
     variant("tensile", default=True, description="Use Tensile as a backend")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
+    variant("hipblaslt", default=True, when="@6.3:", description="Build with hipblaslt")
 
     conflicts("+asan", when="os=rhel9")
     conflicts("+asan", when="os=centos7")
@@ -110,7 +111,7 @@ class Rocblas(CMakePackage):
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
     for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
     for ver in ["6.4.0", "6.4.1", "6.4.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
@@ -232,6 +233,8 @@ class Rocblas(CMakePackage):
 
         if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
+        if self.spec.satisfies("@6.3:"):
+            args.append(self.define_from_variant("BUILD_WITH_HIPBLASLT", "hipblaslt"))
         return args
 
     @run_after("build")

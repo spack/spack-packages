@@ -44,6 +44,7 @@ class Rocpydecode(CMakePackage):
         "6.4.2",
     ]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     def patch(self):
         filter_file(
