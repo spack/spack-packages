@@ -31,6 +31,7 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
     version("1.0", tag="v1.0", commit="eccab10cbdf5842ed9903fac7a023be5e2779f36", submodules=True)
 
     patch("fix_v1.0_compilation.diff", when="@1.0")
+    patch("fix_v1.1_compilation.diff", when="@1.1")
 
     maintainers("dmay23", "Thomas-Ulrich")
     variant("polynomial_degree", default="2", description="Polynomial degree")
