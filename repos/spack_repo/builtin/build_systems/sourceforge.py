@@ -4,8 +4,7 @@
 
 from typing import Optional
 
-import spack.util.url
-from spack.package import PackageBase
+from spack.package import PackageBase, join_url
 
 
 class SourceforgePackage(PackageBase):
@@ -29,8 +28,7 @@ class SourceforgePackage(PackageBase):
     def urls(self):
         self._ensure_sourceforge_mirror_path_is_set_or_raise()
         return [
-            spack.util.url.join(m, self.sourceforge_mirror_path, resolve_href=True)
-            for m in self.base_mirrors
+            join_url(m, self.sourceforge_mirror_path, resolve_href=True) for m in self.base_mirrors
         ]
 
     def _ensure_sourceforge_mirror_path_is_set_or_raise(self):

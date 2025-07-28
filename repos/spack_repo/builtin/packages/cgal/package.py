@@ -74,8 +74,7 @@ class Cgal(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    # Upper bound follows CGAL's @6: CMakeLists.txt
-    depends_on("cmake@3.12:3.29", type="build", when="@6:")
+    depends_on("cmake@3.12:3", type="build", when="@6:")
     depends_on("cmake@2.8.11:", type="build", when="@:5")
 
     # Essential Third Party Libraries

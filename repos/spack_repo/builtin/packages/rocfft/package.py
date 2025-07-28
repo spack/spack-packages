@@ -22,7 +22,6 @@ class Rocfft(CMakePackage):
     libraries = ["librocfft"]
 
     license("MIT")
-    version("master", branch="master", deprecated=True)
     version("6.4.1", sha256="66e543990736bc4bf3b27fa085cca3bea0d42252f960be376371549707e35373")
     version("6.4.0", sha256="0e9f3f23d8facee65e32baaec7941119b56eb17313b8b514e1c3994c9777c320")
     version("6.3.3", sha256="b2edb5c39215b98e0abc485d2b277a0b8c6f87f06e9b0770a60f5568ef52e62e")
@@ -39,15 +38,9 @@ class Rocfft(CMakePackage):
     version("6.0.0", sha256="fb8ba56572702e77e4383d922cd1fee4ad3fa5f63a5ebdb3d9c354439a446992")
     version("5.7.1", sha256="202f11f60dc8738e29bbd1b397d419e032794f8bffb7f48f2b31f09cc5f08bc2")
     version("5.7.0", sha256="3c4a1537a6ec76dc9b622644fe3890647306bf9f28f61c5d2028259c31bb964f")
-    version("5.6.1", sha256="a65861e453587c3e6393da75b0b1976508c61f968aecda77fbec920fea48489e")
-    version("5.6.0", sha256="e3d4a6c1bdac78f9a22033f57011af783d560308103f73542f9e0e4dd133d38a")
-    version("5.5.1", sha256="57423a64f5cdb1c37ff0891b6c17b59f73198d46be42db4ae23781ef2c0cd49d")
-    version("5.5.0", sha256="9288152e66504b06082e4eed8cdb791b4f9ae2836b3defbeb4d2b54901b96485")
     with default_args(deprecated=True):
-        version("5.4.3", sha256="ed9664adc9825c237327497bc4b23f020d50be7645647f14a45f4d943dd506e7")
-        version("5.4.0", sha256="d35a67332f4425fba1824eed78cf98d5c9a17a422614ff3f4cba2461df952336")
-        version("5.3.3", sha256="678c18710578c1fb36a0009311bb79de7607c3468f9102cfba56a866ebb7ff78")
-        version("5.3.0", sha256="d655c5541c4aff4267e80e36d002fc3a55c2f84a0ae8631197c12af3bf03fa7d")
+        version("5.6.1", sha256="a65861e453587c3e6393da75b0b1976508c61f968aecda77fbec920fea48489e")
+        version("5.6.0", sha256="e3d4a6c1bdac78f9a22033f57011af783d560308103f73542f9e0e4dd133d38a")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -84,12 +77,6 @@ class Rocfft(CMakePackage):
     depends_on("rocrand", type="test")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
         "5.6.0",
         "5.6.1",
         "5.7.0",
@@ -108,13 +95,10 @@ class Rocfft(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
-        "master",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    # Patch to add install prefix header location for sqlite for 5.4
-    patch("0004-fix-missing-sqlite-include-paths.patch", when="@5.4.0:5.5")
     # Patch to fix the build issue when --test=root is enabled
     # This adds  the include headers from the rocrand and fftw in the cmakelists.txt
     # issue is seen from 5.7.0 onwards
@@ -163,6 +147,7 @@ class Rocfft(CMakePackage):
         args = [
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("SQLITE_USE_SYSTEM_PACKAGE", True),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         tgt = self.spec.variants["amdgpu_target"]
@@ -174,10 +159,6 @@ class Rocfft(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.2.0:6.3.1"):
+        if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.3.0:"):
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
-
         return args

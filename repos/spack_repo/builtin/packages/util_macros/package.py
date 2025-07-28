@@ -5,7 +5,6 @@
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.xorg import XorgPackage
 
-import spack.url
 from spack.package import *
 
 
@@ -30,7 +29,7 @@ class UtilMacros(AutotoolsPackage, XorgPackage):
     # note: url_for_version can only return a single url, no mirrors
     def url_for_version(self, version):
         if self.spec.satisfies("@:1.19"):
-            return spack.url.substitute_version(self.urls[0].replace("xz", "bz2"), version)
+            return substitute_version_in_url(self.urls[0].replace("xz", "bz2"), version)
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

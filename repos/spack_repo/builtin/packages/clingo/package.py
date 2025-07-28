@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.compilers.error import UnsupportedCompilerFlag
 from spack.package import *
 
 
@@ -109,13 +108,7 @@ class Clingo(CMakePackage):
         return self.define("CLINGO_BUILD_PY_SHARED", "ON")
 
     def cmake_args(self):
-        try:
-            self["cxx"].standard_flag(language="cxx", standard="14")
-        except UnsupportedCompilerFlag:
-            InstallError("clingo requires a C++14-compliant C++ compiler")
-
         args = [self.define("CLINGO_BUILD_WITH_LUA", False)]
-
         if self.spec.satisfies("+python"):
             suffix = python(
                 "-c", "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))", output=str
