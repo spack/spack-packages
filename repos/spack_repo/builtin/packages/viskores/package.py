@@ -94,7 +94,7 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
             when="+kokkos +rocm amdgpu_target=%s" % amdgpu_value,
         )
 
-    depends_on("hip@3.7:", when="+rocm")
+    depends_on("hip@5.2:", when="+rocm")
     # CUDA thrust is already include in the CUDA pkg
     depends_on("rocthrust", when="+kokkos+rocm ^cmake@3.24:")
 
