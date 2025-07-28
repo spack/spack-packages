@@ -34,7 +34,7 @@ class PyOpenai(PythonPackage):
 
     with when("@1.90.0:"):
         # https://github.com/openai/openai-python/blob/v1.90.0/pyproject.toml
-        depends_on("py-hatchling@1.26.3", type="build")
+        depends_on("py-hatchling", type="build")
         depends_on("py-hatch-fancy-pypi-readme", type="build")
 
         depends_on("py-httpx@0.23.0:", type=("build", "run"))
