@@ -111,7 +111,7 @@ class Rocblas(CMakePackage):
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
     for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
     for ver in ["6.4.0", "6.4.1", "6.4.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
