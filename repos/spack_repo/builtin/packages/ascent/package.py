@@ -199,8 +199,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     with when("+python"):
         depends_on("python+shared")
         extends("python")
-        depends_on("py-numpy", type=("build", "run"))
-        depends_on("py-pip", type=("build", "run"))
+        depends_on("py-numpy", type=("build", "link", "run"))
+        depends_on("py-pip")
         depends_on("py-wheel", when="@0.9.4:")
 
     #######################
