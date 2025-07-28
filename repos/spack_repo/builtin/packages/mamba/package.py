@@ -58,7 +58,7 @@ class Mamba(CMakePackage):
     depends_on("libsolv+conda")
     depends_on("libsolv@0.7.34:+conda", when="@2.3:")
 
-    depends_on("curl libs=shared")
+    depends_on("curl@7.66.0: libs=shared")
     depends_on("libarchive crypto=mbedtls xar=libxml2")
     depends_on("openssl")
     depends_on("yaml-cpp")
