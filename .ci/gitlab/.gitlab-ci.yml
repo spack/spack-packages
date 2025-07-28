@@ -1,6 +1,7 @@
 stages: [ "generate", "build" ]
 
 variables:
+  NOOP_JOB: 1
   SPACK_DISABLE_LOCAL_CONFIG: "1"
   SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
   # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
@@ -46,7 +47,11 @@ default:
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         SPACK_REQUIRE_SIGNING: "True"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
-    - if: $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/ || $CI_COMMIT_TAG =~ /^v.*/
+    - if: $CI_COMMIT_TAG =~ /^v.*/
+      when: always
+      variables:
+        NOOP_JOB: True
+    - if: $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/
       # Pipelines on tags (release or dev snapshots) only copy binaries from one mirror to another
       when: always
       variables:
@@ -115,6 +120,12 @@ default:
 .generate-base:
   extends: [ ".base-job", ".generate-common" ]
   before_script:
+    # Check if bypass for noop is set
+    - |
+      [ ! -z ${NOOP_JOB} ] && \
+      python ${SPACK_CI_SCRIPTS_ROOT}/noop_job.py \
+      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml" && \
+      exit 0
     - uname -a || true
     - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
     - nproc || true
