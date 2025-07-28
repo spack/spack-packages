@@ -16,6 +16,8 @@ class Xcrysden(MakefilePackage):
     homepage = "http://www.xcrysden.org/XCrySDen.html"
     url = "http://www.xcrysden.org/download/xcrysden-1.6.2.tar.gz"
 
+    license("GPL-2.0-or-later")
+
     version("1.6.3-rc2", sha256="0565f55dfb67c73a824569bd2f02875f1e15c7214b86736fce4cacc3f5a189fe")
     version("1.6.2", sha256="811736ee598bec1a5b427fd10e4e063a30dd7cadae96a43a50b36ce90a4f503f")
     version("1.6.1", sha256="8a9c6d83c4a9e189dbb977a04ccf1b260871e945afdf1ca75830616a6cb442c5")
