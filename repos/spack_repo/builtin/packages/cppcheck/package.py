@@ -17,6 +17,7 @@ class Cppcheck(CMakePackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.18.0", sha256="dc74e300ac59f2ef9f9c05c21d48ae4c8dd1ce17f08914dd30c738ff482e748f")
     version("2.17.1", sha256="bfd681868248ec03855ca7c2aea7bcb1f39b8b18860d76aec805a92a967b966c")
 
     with default_args(deprecated=True):
