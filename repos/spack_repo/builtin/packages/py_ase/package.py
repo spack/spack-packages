@@ -42,13 +42,6 @@ class PyAse(PythonPackage):
         depends_on("py-matplotlib@3.3.4:", type=("build", "run"))
         depends_on("py-setuptools@61.0.0:", type="build")
 
-    with when("@3.24.0"):
-        depends_on("python@3.9:", type=("build", "run"))
-        depends_on("py-numpy@1.19.5:", type=("build", "run"))
-        depends_on("py-scipy@1.6.0:", type=("build", "run"))
-        depends_on("py-matplotlib@3.3.4:", type=("build", "run"))
-        depends_on("py-setuptools@61.0.0:", type="build")
-
     with when("@3.23.0"):
         depends_on("python@3.8:", type=("build", "run"))
         depends_on("py-numpy@1.18.5:", type=("build", "run"))
