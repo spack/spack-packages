@@ -13,12 +13,13 @@ class PyGpaw(PythonPackage):
     (ASE)."""
 
     homepage = "https://gpaw.readthedocs.io/index.html"
-    pypi = "gpaw/gpaw-25.1.0.tar.gz"
+    pypi = "gpaw/gpaw-25.7.0.tar.gz"
 
     maintainers("alikhamze", "Chronum94")
 
     license("GPL-3.0-or-later", checked_by="alikhamze")
 
+    version("25.7.0", sha256="93ac829bba36be74eab0d7deef5eb798613c04edbce196837208d206cf39c431")
     version("25.1.0", sha256="80236e779784df3317e7da395dc59ea403bc0213bb3a68d02c17957162e972ea")
     version("24.6.0", sha256="fb48ef0db48c0e321ce5967126a47900bba20c7efb420d6e7b5459983bd8f6f6")
     version("23.9.1", sha256="19a24840b876003528864b7a0b38fc0d456800b83b8666b1f724273660745b47")
@@ -53,6 +54,13 @@ class PyGpaw(PythonPackage):
     depends_on("lapack")
 
     # Version-specific required dependencies
+    with when("@25.7.0:"):
+        depends_on("libxc")
+        depends_on("python@3.9:", type=("build", "run"))
+        depends_on("py-ase@3.25.0:", type=("build", "run"))
+        depends_on("py-numpy", type=("build", "run"))
+        depends_on("py-scipy@1.6.0:", type=("build", "run"))
+    
     with when("@25.1.0:"):
         depends_on("libxc")
         depends_on("python@3.9:", type=("build", "run"))
