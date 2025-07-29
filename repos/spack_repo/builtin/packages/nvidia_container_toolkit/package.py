@@ -9,6 +9,7 @@ import shutil
 from glob import glob
 
 from spack_repo.builtin.build_systems.generic import Package
+
 from spack.package import *
 
 _versions = {
@@ -23,6 +24,7 @@ _versions = {
         ),
     }
 }
+
 
 class NvidiaContainerToolkit(Package):
 
@@ -49,7 +51,5 @@ class NvidiaContainerToolkit(Package):
             rpm_params = ["-x", "-f", rpm_file]
             bsdtar(*rpm_params)
 
-        for directory in ['bin',  'include',  'lib',  'lib64',  'share']:
-            shutil.copytree(self.stage.source_path + '/usr/' + directory, prefix + '/' + directory)
-
-
+        for directory in ["bin", "include", "lib", "lib64", "share"]:
+            shutil.copytree(self.stage.source_path + "/usr/" + directory, prefix + "/" + directory)
