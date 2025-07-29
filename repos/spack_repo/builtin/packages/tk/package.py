@@ -34,6 +34,8 @@ class Tk(AutotoolsPackage, SourceforgePackage):
 
     extends("tcl", type=("build", "link", "run"))
 
+    depends_on("c", type="build")
+
     depends_on("tcl@8.6:", type=("build", "link", "run"), when="@8.6:")
     depends_on("libx11")
     depends_on("libxft", when="+xft")

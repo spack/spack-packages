@@ -22,6 +22,7 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("8.3", sha256="fe5383204467828cd495ee8d1d3c037a7eba1389c22bc6a041f627976f9061cc")
     version("8.2", sha256="3feb7171f16a84ee82ca18a36d7b9be109a52c04f492a053331d7d1095007c35")
     version("8.1", sha256="f8ceb4ee131e3232226a17f51b164afc46cd0b9e6cef344be87c65962cb82b02")
     version("8.0", sha256="e339f51971478d369f8a053a330a190781acb9864cf4c541060f12078948e461")
@@ -34,6 +35,7 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
 
     # TODO: patches below are not managed by the GNUMirrorPackage base class
     for verstr, num, checksum in [
+        ("8.3", "001", "21f0a03106dbe697337cd25c70eb0edbaa2bdb6d595b45f83285cdd35bac84de"),
         ("8.2", "001", "bbf97f1ec40a929edab5aa81998c1e2ef435436c597754916e6a5868f273aff7"),
         ("8.2", "002", "e06503822c62f7bc0d9f387d4c78c09e0ce56e53872011363c74786c7cd4c053"),
         ("8.2", "003", "24f587ba46b46ed2b1868ccaf9947504feba154bb8faabd4adaea63ef7e6acb0"),

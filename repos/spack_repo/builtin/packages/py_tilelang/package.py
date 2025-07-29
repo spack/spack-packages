@@ -1,0 +1,61 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.python import PythonPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
+from spack.package import *
+
+
+class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
+    """Domain-specific language designed to streamline
+    the development of high-performance GPU/CPU/Accelerators kernels"""
+
+    license("MIT")
+    homepage = "https://tilelang.com/"
+    git = "https://github.com/tile-ai/tilelang.git"
+    submodules = True
+
+    # Exact set of modules is version- and variant-specific, just attempt to import the
+    # core libraries to ensure that the package was successfully installed.
+    import_modules = ["tilelang", "tilelang.language", "tilelang.intrinsics"]
+
+    version("main", branch="main")
+    version(
+        "0.1.5", tag="v0.1.5", commit="a32009bf1e314b514c07389123648ba19009f3a5", submodules=True
+    )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    with default_args(type="build"):
+        # https://github.com/tile-ai/tilelang/blob/v0.1.5/pyproject.toml
+        depends_on("cmake@3.26:")
+        depends_on("py-packaging")
+        depends_on("py-setuptools@61:")
+        # depends_on("py-wheel") # inherited if `pip` is the build system
+
+        # https://github.com/tile-ai/tilelang/blob/v0.1.5/requirements-build.txt
+        depends_on("py-build")
+        depends_on("py-tox")
+        depends_on("py-auditwheel")
+        depends_on("patchelf")
+
+    with default_args(type=["build", "run"]):
+        # https://github.com/tile-ai/tilelang/blob/v0.1.5/requirements.txt
+        depends_on("py-cython")
+        depends_on("py-numpy@1.23.5:")
+        depends_on("py-tqdm@4.62.3:")
+        depends_on("py-typing-extensions@4.10.0:")
+        depends_on("py-cloudpickle")
+        depends_on("py-ml-dtypes")
+        depends_on("py-psutil")
+        depends_on("py-torch")
+
+    def cmake_args(self):
+        return [
+            self.define_from_variant("USE_CUDA", "cuda"),
+            self.define_from_variant("USE_ROCM", "rocm"),
+        ]

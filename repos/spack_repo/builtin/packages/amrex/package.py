@@ -29,6 +29,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("25.07", sha256="19b9e5271451c202610f9c6569189c28fc05bcd655d53525df9169efeb5ee66f")
     version("25.06", sha256="2f69c708ddeaba6d4be3a12ab6951f171952f6f7948e628c5148d667c4197838")
     version("25.05", sha256="d80ae0b4ccb26696fcd3c04d96838592fd0043be25fceebd82cd165f809b1a5d")
     version("25.04", sha256="71c3f01a9cfbf3aff7f0a5dd66c2ac99a606334f1910052194c2520df3f7b7be")
@@ -155,6 +156,18 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("sundials", default=False, description="Enable SUNDIALS interfaces")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
+    variant(
+        "gpu_rdc",
+        default=True,
+        description="Enable relocatable GPU device code support",
+        when="+cuda",
+    )
+    variant(
+        "gpu_rdc",
+        default=True,
+        description="Enable relocatable GPU device code support",
+        when="+rocm",
+    )
 
     # Build dependencies
     depends_on("c", type="build")  # generated
@@ -360,12 +373,14 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             args.append("-DAMReX_CUDA_ERROR_CROSS_EXECUTION_SPACE_CALL=ON")
             cuda_arch = self.spec.variants["cuda_arch"].value
             args.append("-DAMReX_CUDA_ARCH=" + self.get_cuda_arch_string(cuda_arch))
+            args.append(self.define_from_variant("AMReX_GPU_RDC", "gpu_rdc"))
 
         if self.spec.satisfies("+rocm"):
             args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].hipcc))
             args.append("-DAMReX_GPU_BACKEND=HIP")
             targets = self.spec.variants["amdgpu_target"].value
             args.append("-DAMReX_AMD_ARCH=" + ";".join(str(x) for x in targets))
+            args.append(self.define_from_variant("AMReX_GPU_RDC", "gpu_rdc"))
 
         if self.spec.satisfies("+sycl"):
             args.append("-DAMReX_GPU_BACKEND=SYCL")
@@ -433,6 +448,10 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+cuda"):
             args.append("-DCMAKE_CUDA_COMPILER=" + join_path(self.spec["cuda"].prefix.bin, "nvcc"))
+            args.append("-DCMAKE_INSTALL_RPATH=" + self.spec["cuda"].prefix.lib64)
+            args.append("-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON")
+
+        args.append("-DCMAKE_PREFIX_PATH=" + ";".join(get_cmake_prefix_path(self)))
 
         args.extend(self.cmake_args())
         cmake = which(self.spec["cmake"].prefix.bin.cmake)

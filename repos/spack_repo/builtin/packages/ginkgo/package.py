@@ -150,23 +150,6 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
             env.set("SYCL_INCLUDE_DIR_HINT", os.path.dirname(os.path.dirname(self.compiler.cxx)))
 
     def cmake_args(self):
-        # Check that the have the correct C++ standard is available
-        if self.spec.satisfies("@:1.2.0"):
-            try:
-                self.compiler.cxx11_flag
-            except UnsupportedCompilerFlag:
-                raise InstallError("Ginkgo requires a C++11-compliant C++ compiler")
-        if self.spec.satisfies("@1.3.0:1.8.0"):
-            try:
-                self.compiler.cxx14_flag
-            except UnsupportedCompilerFlag:
-                raise InstallError("Ginkgo requires a C++14-compliant C++ compiler")
-        if self.spec.satisfies("@1.9.0:"):
-            try:
-                self.compiler.cxx17_flag
-            except UnsupportedCompilerFlag:
-                raise InstallError("Ginkgo requires a C++17-compliant C++ compiler")
-
         if self.spec.satisfies("@1.4.0:1.6.0 +sycl") and not self.spec.satisfies(
             "%oneapi@2021.3.0:"
         ):

@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonExtension, PythonPipBuilder
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -34,14 +33,38 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
-    version("20250612", sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7")
-    version("20250402", sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca")
-    version("20250204", sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1")
-    version("20241119", sha256="7d1a825f13eef06d82ed8ae950f4a5ca6da9f6a5979745a85a7a58781e4c6ffa")
+    version(
+        "20250722",
+        sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26",
+        preferred=True,
+    )
+    version(
+        "20250612",
+        sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7",
+        deprecated=True,
+    )
+    version(
+        "20250402",
+        sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca",
+        deprecated=True,
+    )
+    version(
+        "20250204",
+        sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1",
+        deprecated=True,
+    )
+    version(
+        "20241119",
+        sha256="7d1a825f13eef06d82ed8ae950f4a5ca6da9f6a5979745a85a7a58781e4c6ffa",
+        deprecated=True,
+    )
+    version(
+        "20240829.4", sha256="e7d6d60b94ada5acc2e1e9966ae12547fd550d6967d4511b8655c77e24878728"
+    )
     version(
         "20240829.3",
         sha256="75a9fb55d3c10f44cbc7b30313351ce9b12ab3003c1400147fa3590b6d651c73",
-        preferred=True,
+        deprecated=True,
     )
     version(
         "20240829.2",
@@ -415,28 +438,16 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         deprecated=True,
     )
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
-
-    # ml-quip, qmmm require C, but not available in Spack
-    for c_pkg in (
-        "adios",
-        "atc",
-        "awpmd",
-        "electrode",
-        "h5md",
-        "kim",
-        "ml-pod",
-        "rheo",
-        "scafacos",
-        "tools",
-    ):
-        depends_on("c", type="build", when=f"+{c_pkg}")
 
     # ml-quip require Fortran, but not available in Spack
     for fc_pkg in ("kim", "scafacos"):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20250722",
+        "20240829.4",
         "20240829.3",
         "20240829.2",
         "20240829.1",
@@ -746,6 +757,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@4.4.01:", when="@20241119: +kokkos")
     depends_on("kokkos@4.5.01:", when="@20250204: +kokkos")
     depends_on("kokkos@4.6.00:", when="@20250402: +kokkos")
+    depends_on("kokkos@4.6.02:", when="@20250722: +kokkos")
     depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
     depends_on("plumed", when="+user-plumed")
@@ -1010,8 +1022,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             )
 
         # Overwrite generic cpu tune option
-        cmake_tune_flags = optimization_flags(self.compiler, spec.target)
-        args.append(self.define("CMAKE_TUNE_FLAGS", cmake_tune_flags))
+        args.append(self.define("CMAKE_TUNE_FLAGS", microarchitecture_flags(self.spec, "c")))
 
         args.append(self.define_from_variant("LAMMPS_SIZES", "lammps_sizes"))
 

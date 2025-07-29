@@ -46,9 +46,6 @@ class Rocsolver(CMakePackage):
 
     license("BSD-2-Clause")
 
-    version("develop", branch="develop", deprecated=True)
-    version("master", branch="master", deprecated=True)
-
     version("6.4.1", sha256="d27d3e0a59fbe1fb82172f545e38857643bb86fa1cd69ba51e9e292440a785c6")
     version("6.4.0", sha256="48930842ac441a6a5d7e25d6c5c6ac6b5fe26549a1add49a102b374e02f5b60e")
     version("6.3.3", sha256="0e8bb906513555d349b6a20cb17976402f5ea6702668efcdda595a2e2d516b46")
@@ -65,46 +62,20 @@ class Rocsolver(CMakePackage):
     version("6.0.0", sha256="5fcaba96f3efafc2ecc3f4ec104095d96545c16e1b9f95410bd571cb0fc643ae")
     version("5.7.1", sha256="83e0c137b8690dbeb2e85d9e25415d96bd06979f09f2b10b2aff8e4c9f833fa4")
     version("5.7.0", sha256="bb16d360f14b34fe6e8a6b8ddc6e631672a5ffccbdcb25f0ce319edddd7f9682")
-    version("5.6.1", sha256="6a8f366218aee599a0e56755030f94ee690b34f30e6d602748632226c5dc21bb")
-    version("5.6.0", sha256="54baa7f35f3c53da9005054e6f7aeecece5526dafcb277af32cbcb3996b0cbbc")
-    version("5.5.1", sha256="8bf843e42d2e89203ea5fdb6e6082cea90da8d02920ab4c09bcc2b6f69909760")
-    version("5.5.0", sha256="6775aa5b96731208c12c5b450cf218d4c262a80b7ea20c2c3034c448bb2ca4d2")
     with default_args(deprecated=True):
-        version("5.4.3", sha256="5308b68ea72f465239a4bb2ed1a0507f0df7c98d3df3fd1f392e6d9ed7975232")
-        version("5.4.0", sha256="69690839cb649dee43353b739d3e6b2312f3d965dfe66705c0ea910e57c6a8cb")
-        version("5.3.3", sha256="d2248b5e2e0b20e08dd1ee5408e38deb02ecd28096dc7c7f2539351df6cb6ad5")
-        version("5.3.0", sha256="4569f860d240d50e94e77d498050f5cafe5ad11daddaead3e7e9eaa1957878a7")
+        version("5.6.1", sha256="6a8f366218aee599a0e56755030f94ee690b34f30e6d602748632226c5dc21bb")
+        version("5.6.0", sha256="54baa7f35f3c53da9005054e6f7aeecece5526dafcb277af32cbcb3996b0cbbc")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.8:", type="build")
-    depends_on("fmt@7:", type="build", when="@4.5.0:")
     depends_on("fmt@7:8.0.1", type="test", when="@5.6:")
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
 
-    # Maximize compatibility with other libraries that are using fmt.
-    patch("fmt-9-compatibility.patch", when="@5.2.0:5.5")
-
-    depends_on("hip")
-    depends_on("rocm-cmake@master", type="build", when="@master:")
-    depends_on("rocm-cmake@4.5.0:", type="build", when="@4.5.0:")
-    depends_on("rocm-cmake@4.3.0:", type="build", when="@4.3.0:")
-    depends_on("rocm-cmake@3.5.0:", type="build")
-    depends_on("rocsparse@5.2:", when="@5.6:")
-
-    for ver in ["master", "develop"]:
-        depends_on(f"rocblas@{ver}", when=f"@{ver}")
-
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
         "5.6.0",
         "5.6.1",
         "5.7.0",
@@ -126,6 +97,8 @@ class Rocsolver(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+        depends_on(f"rocsparse@{ver}", when=f"@{ver}")
 
     for tgt in itertools.chain(["auto"], amdgpu_targets):
         depends_on(f"rocblas amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
@@ -146,6 +119,7 @@ class Rocsolver(CMakePackage):
             self.define("BUILD_CLIENTS_BENCHMARKS", "OFF"),
             self.define_from_variant("OPTIMAL", "optimal"),
             self.define("ROCSOLVER_EMBED_FMT", "ON"),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         tgt = self.spec.variants["amdgpu_target"]
@@ -155,10 +129,8 @@ class Rocsolver(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.2.0:6.3.1"):
+        if self.spec.satisfies("@5.6.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.3.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
 
         return args
 
