@@ -15,6 +15,7 @@ class Fairroot(CMakePackage):
     git = "https://github.com/FairRootGroup/FairRoot.git"
     maintainers("dennisklein", "fuhlig1", "jezwilkinson")
 
+    tags = ["hep"]
     version("develop", branch="dev")
     version("18.8.2", sha256="0bc9bafd9583f8a4c92977647c1eb360d66f45fbc6c81a15c5a1613640934684")
 
