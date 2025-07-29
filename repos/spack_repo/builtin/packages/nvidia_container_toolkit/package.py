@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 import platform
-import re
 import shutil
 from glob import glob
 
@@ -27,6 +25,7 @@ _versions = {
 
 
 class NvidiaContainerToolkit(Package):
+    """NVIDIA Container Toolkit is a package for enabling GPU access within containers"""
 
     maintainers("scothalverson")
     license("NVIDIA Software License Agreement")
