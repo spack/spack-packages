@@ -126,14 +126,16 @@ class Xrootd(CMakePackage):
     )
 
     conflicts("cxxstd=98", when="@4.7.0:")
-    # C++ standard is not honored without
-    # https://github.com/xrootd/xrootd/pull/1929
-    # Related: C++>14 causes compilation errors with ~client_only. See
-    # also https://github.com/xrootd/xrootd/pull/1933.
+
+    # Before 5.7, the C++ standard was not honored.
+    # See https://github.com/xrootd/xrootd/pull/1929
+    # and https://github.com/xrootd/xrootd/commit/9ef3a2a00b52105883613d2adb6d46a8409b2249
+    # Related: C++>14 causes compilation errors with ~client_only.
+    # See https://github.com/xrootd/xrootd/pull/1933.
     conflicts("cxxstd=17", when="@5.0:5.5.2")
     conflicts("cxxstd=20", when="@5.0:5.5.2")
-    conflicts("cxxstd=17", when="@5 ~client_only")
-    conflicts("cxxstd=20", when="@5 ~client_only")
+    conflicts("cxxstd=17", when="@5:5.6 ~client_only")
+    conflicts("cxxstd=20", when="@5:5.6 ~client_only")
     conflicts("^scitokens-cpp", when="@:5.5.2 +client_only")
 
     depends_on("c", type="build")  # generated
