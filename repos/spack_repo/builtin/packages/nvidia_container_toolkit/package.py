@@ -33,7 +33,7 @@ class NvidiaContainerToolkit(Package):
     # Used to unpack the source RPM archives.
     depends_on("libarchive programs='bsdtar'", type="build")
 
-    for ver, packages in _versions.items():
+    for _, packages in _versions.items():
         key = "{0}-{1}".format(platform.system(), platform.machine())
         pkg = packages.get(key)
         if pkg:
