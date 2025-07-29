@@ -35,6 +35,9 @@ class Networkdirect(msbuild.MSBuildPackage):
     # CBT is entirely deprecated, and fully incompatible with modern dotnet versions
     # so we disable the CBT system and drive the underlying MSBuild system directly
     patch("no_cbt.patch")
+    # MSBuild's native handling of OutputPath does not handle spaces in paths well
+    # add quoting to work around this
+    patch("quote_ndutil_includes.patch")
 
 
 class MSBuildBuilder(msbuild.MSBuildBuilder):
