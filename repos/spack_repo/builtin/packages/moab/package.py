@@ -21,7 +21,7 @@ class Moab(AutotoolsPackage):
     git = "https://bitbucket.org/fathomteam/moab.git"
     url = "https://web.cels.anl.gov/projects/sigma/downloads/moab/moab-5.5.1.tar.gz"
 
-    maintainers("vijaysm", "iulian787")
+    maintainers("vijaysm", "iulian787", "xylar", "andrewdnolan")
 
     license("LGPL-3.0-only")
 
