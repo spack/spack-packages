@@ -138,7 +138,6 @@ class Qt(Package):
     patch("root_configure_path.patch", when="@5.15 platform=windows")
     patch("quote_foreign_types.patch", when="@5.15 platform=windows")
 
-
     # https://bugreports.qt.io/browse/QTBUG-90395
     patch(
         "https://src.fedoraproject.org/rpms/qt5-qtbase/raw/6ae41be8260f0f5403367eb01f7cd8319779674a/f/qt5-qtbase-gcc11.patch",
