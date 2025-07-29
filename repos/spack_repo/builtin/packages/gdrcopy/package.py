@@ -49,10 +49,9 @@ class Gdrcopy(MakefilePackage, CudaPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CUDA", self.spec["cuda"].prefix)
-        env.set(
-            "NVCCFLAGS" if self.spec.satisfies("@2.4:") else "CUFLAGS",
-            "".join(self.cuda_flags(self.spec.variants["cuda_arch"].values)),
-        )
+
+        if self.spec.satisfies("@2.4:"):
+            env.set("NVCCFLAGS", "".join(self.cuda_flags(self.spec.variants["cuda_arch"].values)))
 
     def build(self, spec, prefix):
         make("lib")
