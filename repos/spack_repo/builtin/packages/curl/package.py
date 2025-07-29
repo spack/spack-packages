@@ -168,9 +168,12 @@ class Curl(NMakePackage, AutotoolsPackage):
     depends_on("krb5", when="+gssapi")
     depends_on("rtmpdump", when="+librtmp")
 
+    # Perl pops up as a build-time dependency sometimes in curl.
+    # They try to fix it quickly when it happens.
     # https://github.com/curl/curl/issues/12832
     # https://github.com/curl/curl/issues/13508
-    depends_on("perl", type="build", when="@8.6:8.7.1")
+    # https://github.com/curl/curl/issues/18088
+    depends_on("perl", type="build", when="@8.6:8.7.1,8.15.0")
 
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")
