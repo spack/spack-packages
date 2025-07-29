@@ -57,7 +57,7 @@ class Gaudi(CMakePackage, CudaPackage):
 
     maintainers("drbenmorgan", "vvolkl", "jmcarcell")
 
-    variant("cxxstd", default="20", values=(20, 23))
+    variant("cxxstd", default="20", values=(20))
     _cxxstd_values = (
         conditional("14", when="@:39"),
         conditional("17", when="@:39"),
