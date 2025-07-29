@@ -81,8 +81,8 @@ class Msmpi(msbuild.MSBuildPackage):
         self.spec.mpicc = dependent_spec["c"].package.cc
         self.spec.mpicxx = dependent_spec["cxx"].package.cxx
         if "fortran" in dependent_spec:
-            self.spec.mpifc = dependent_spec["fortran"].package.fc
-            self.spec.mpif77 = dependent_spec["fortran"].package.f77
+            self.spec.mpifc = dependent_spec["fortran"].package.fortran
+            self.spec.mpif77 = dependent_spec["fortran"].package.fortran
 
 
 class MSBuildBuilder(msbuild.MSBuildBuilder):
