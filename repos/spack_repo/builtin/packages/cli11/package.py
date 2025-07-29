@@ -53,7 +53,7 @@ class Cli11(CMakePackage):
         ]
         return args
 
+    @when("@2.3:")
     def install(self, spec, prefix):
         super().install(spec, prefix)
-
         install_tree("include/CLI/impl", join_path(prefix.include, "CLI/impl"))
