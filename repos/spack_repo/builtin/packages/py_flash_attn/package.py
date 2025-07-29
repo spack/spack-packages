@@ -21,6 +21,7 @@ class PyFlashAttn(PythonPackage):
     license("BSD")
 
     version("main", branch="main")
+    version("2.8.1", sha256="0ff003899fcb244f357905b04f622d5c9736887126dd6675f8f4bc52954e3923")
     version("2.6.3", sha256="5bfae9500ad8e7d2937ebccb4906f3bc464d1bf66eedd0e4adabd520811c7b52")
     version(
         "2.5.9.post1", sha256="a92db1683a5b141a0f4371d251ae9f73e9aef629b3a58a50d0ef430266c68782"
@@ -48,8 +49,9 @@ class PyFlashAttn(PythonPackage):
     with default_args(type=("build", "link", "run")):
         depends_on("py-pybind11")
 
-    depends_on("python@3.7:", type=("build", "run"), when="@:2.5")
+    depends_on("python@3.9:", type=("build", "run"), when="@2.8:")
     depends_on("python@3.8:", type=("build", "run"), when="@2.6:")
+    depends_on("python@3.7:", type=("build", "run"), when="@:2.5")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # If oom error, try lowering the number of jobs with `spack install -j`
