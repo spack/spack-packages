@@ -33,7 +33,8 @@ class Transferbench(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
 
-    patch("001-link-hsa-numa.patch")
+    patch("001-link-hsa-numa.patch", when="@:6.4.1")
+    patch("001-link-hsa-numa-6.4.2.patch", when="@6.4.2:")
 
     def setup_build_environment(self, env):
         env.set("CXX", self.spec["hip"].hipcc)
