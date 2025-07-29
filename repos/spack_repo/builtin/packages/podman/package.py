@@ -8,6 +8,8 @@ from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
+import shutil
+
 _is_macos = sys.platform == "darwin"
 
 
@@ -163,6 +165,8 @@ class Podman(Package):
         # Cleanup directory trees which are created as part of the go build process
         remove_linked_tree(prefix.src)
         remove_linked_tree(prefix.pkg)
+
+        shutil.copy2("bin/rootlessport", prefix+"/bin/")
 
         # passt becomes a dep on newer versions of podman
         if spec.satisfies("@5.5.1:"):
