@@ -51,7 +51,7 @@ class Melissa(CMakePackage):
 
         # embed runtime library search paths
         # performed inside cmake beyond v2.0.0
-        if self.spec.satisfies('@:2.0.0'):
+        if self.spec.satisfies("@:2.0.0"):
             rpaths = [self.spec["libzmq"].prefix.lib, self.spec["mpi"].prefix.lib]
             joined_rpaths = ";".join(rpaths)
 
