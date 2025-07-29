@@ -166,7 +166,7 @@ class Podman(Package):
         remove_linked_tree(prefix.src)
         remove_linked_tree(prefix.pkg)
 
-        shutil.copy2("bin/rootlessport", prefix+"/bin/")
+        shutil.copy2("bin/rootlessport", prefix + "/bin/")
 
         # passt becomes a dep on newer versions of podman
         if spec.satisfies("@5.5.1:"):
