@@ -20,6 +20,9 @@ class Neovim(CMakePackage):
 
     version("master", branch="master")
     version("stable", tag="stable")
+    version("0.11.3", sha256="7f1ce3cc9fe6c93337e22a4bc16bee71e041218cc9177078bd288c4a435dbef0")
+    version("0.11.2", sha256="324759a1bcd1a80b32a7eae1516ee761ec3e566d08284a24c4c7ca59079aabfa")
+    version("0.10.1", sha256="edce96e79903adfcb3c41e9a8238511946325ea9568fde177a70a614501af689")
     version("0.11.1", sha256="ffe7f9a7633ed895ff6adb1039af7516cd6453715c8889ad844b6fa39c3df443")
     version("0.11.0", sha256="6826c4812e96995d29a98586d44fbee7c9b2045485d50d174becd6d5242b3319")
     version("0.10.4", sha256="10413265a915133f8a853dc757571334ada6e4f0aa15f4c4cc8cc48341186ca2")
@@ -109,7 +112,7 @@ class Neovim(CMakePackage):
     depends_on("gperf", type="link")
     depends_on("jemalloc", type="link", when="platform=linux")
     depends_on("lua-lpeg")
-    depends_on("lua-mpack")
+    depends_on("lua-mpack", when="@:0.10")
     depends_on("iconv", type="link")
     depends_on("libtermkey", type="link", when="@:0.9")
     depends_on("libuv", type="link")
@@ -123,10 +126,10 @@ class Neovim(CMakePackage):
     with when("@0.4:"):
         depends_on("libuv@1.28:", type="link")
         depends_on("libluv@1.30.0:", type="link")
-        depends_on("libtermkey@0.18:", type="link")
-        depends_on("libvterm@0.1:", type="link")
+        depends_on("libtermkey@0.18:", type="link", when="@:0.9")
+        depends_on("libvterm@0.1:", type="link", when="@:0.10")
         depends_on("unibilium@2.0:", type="link")
-        depends_on("msgpack-c@1.0.0:", type="link")
+        depends_on("msgpack-c@1.0.0:", type="link", when="@:0.10")
     with when("@0.5:"):
         depends_on("libuv@1.42:", type="link")
         depends_on("tree-sitter")
@@ -134,21 +137,21 @@ class Neovim(CMakePackage):
         depends_on("cmake@3.10:", type="build")
         depends_on("gperf@3.1:", type="link")
         conflicts("^libiconv@:1.14")
-        depends_on("libtermkey@0.22:", type="link")
-        depends_on("libvterm@0.1.4:", type="link")
-        depends_on("msgpack-c@3.0.0:", type="link")
+        depends_on("libtermkey@0.22:", type="link", when="@:0.9")
+        depends_on("libvterm@0.1.4:", type="link", when="@:0.10")
+        depends_on("msgpack-c@3.0.0:", type="link", when="@:0.10")
     with when("@0.7:"):
         depends_on("gettext@0.20.1:")
         depends_on("libluv@1.43.0:", type="link")
         depends_on("libuv@1.44.1:", type="link")
         depends_on("tree-sitter@0.20.6:")
     with when("@0.8:"):
-        depends_on("libvterm@0.3:", type="link")
+        depends_on("libvterm@0.3:", type="link", when="@:0.10")
     with when("@0.9:"):
         depends_on("tree-sitter@0.20.8:")
     with when("@0.10:"):
         depends_on("cmake@3.13:", type="build")
-        depends_on("libvterm@0.3.3:")
+        depends_on("libvterm@0.3.3:", when="@:0.10")
         depends_on("tree-sitter@0.20.9:")
     with when("@0.11:"):
         depends_on("cmake@3.16:", type="build")

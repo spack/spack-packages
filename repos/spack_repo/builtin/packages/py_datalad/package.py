@@ -22,6 +22,7 @@ class PyDatalad(PythonPackage):
     pypi = "datalad/datalad-0.14.6.tar.gz"
     git = "https://github.com/datalad/datalad.git"
 
+    version("1.2.1", sha256="4d9f7ffe7a8a7b7eced97ba3d2d2257d527d4218c73ddf7e74eb343cf970d925")
     version("0.18.4", sha256="d832f3d70b79b7b66519ca30315791a6a265bdf8a86ddac5846489b75385cb09")
     version("0.18.3", sha256="2da57df609f62a52a6652ade802e8ce0f229d498a5b93b15df2b8c69f8875b6e")
     version("0.17.5", sha256="a221312c58b0b9b57605cc1a2288838f24932491b2e50475dd7a940151cafccd")
@@ -41,6 +42,7 @@ class PyDatalad(PythonPackage):
         "metadata-extra", when="@:0.17", default=False, description="Enable extra metadata support"
     )
 
+    depends_on("py-setuptools@59:", when="@1.1.6:", type="build")
     depends_on("py-setuptools@40.8.0:", type="build")
     # upper bound needed because otherwise the following error occurs:
     # 'extras_require' must be a dictionary whose values are strings or lists

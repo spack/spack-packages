@@ -15,6 +15,7 @@ class PyBleach(PythonPackage):
 
     license("Apache-2.0")
 
+    version("6.2.0", sha256="123e894118b8a599fd80d3ec1a6d4cc7ce4e5882b1317a7e1ba69b56e95f991f")
     version("6.0.0", sha256="1a1a85c1595e07d8db14c5f09f09e6433502c51c595970edc090551f0db99414")
     version("5.0.1", sha256="0d03255c47eb9bd2f26aa9bb7f2107732e7e8fe195ca2f64709fcf3b0a4a085c")
     version("4.1.0", sha256="0900d8b37eba61a802ee40ac0061f8c2b5dee29c1927dd1d233e075ebf5a71da")
@@ -24,6 +25,7 @@ class PyBleach(PythonPackage):
     version("1.5.0", sha256="978e758599b54cd3caa2e160d74102879b230ea8dc93871d0783721eef58bc65")
 
     depends_on("py-setuptools", type=("build", "run"))
-    depends_on("py-six@1.9.0:", type=("build", "run"))
     depends_on("py-webencodings", type=("build", "run"))
+
+    depends_on("py-six@1.9.0:", when="@:6.1", type=("build", "run"))
     depends_on("py-packaging", when="@3.1.5:4", type=("build", "run"))

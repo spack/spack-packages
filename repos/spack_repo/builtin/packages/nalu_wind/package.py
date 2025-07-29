@@ -29,6 +29,9 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master", submodules=True)
     version(
+        "2.4.0", tag="v2.4.0", commit="85c06c5264fd8689002dc0ea32cbb74b2bff1668", submodules=True
+    )
+    version(
         "2.3.0", tag="v2.3.0", commit="94cea346455f6841c8ce28d54c6d894bbf5e9a0a", submodules=True
     )
     version(
@@ -82,6 +85,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
     depends_on("yaml-cpp@0.6.0:0.7.0")
     depends_on("openfast@4.0.2:+cxx+netcdf", when="+openfast")
+    depends_on("openfast@4.1.1:", when="@2.4.0:+openfast")
     depends_on("trilinos@15.1.1", when="@=2.1.0")
     depends_on("trilinos@13.4.1", when="@=2.0.0")
     depends_on("hypre@2.29.0:", when="@2.0.0:+hypre")

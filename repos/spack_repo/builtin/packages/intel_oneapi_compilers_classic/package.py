@@ -150,3 +150,15 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
 
     def archspec_name(self):
         return "intel"
+
+    def _standard_flag(self, *, language, standard):
+        flags = {
+            "cxx": {
+                "11": "-std=c++11",
+                "14": "-std=c++14",
+                "17": "-std=c++17",
+                "18": "-std=c++18",
+            },
+            "c": {"99": "-std=c99", "11": "-std=c11", "17": "-std=c17", "18": "-std=c18"},
+        }
+        return flags[language][standard]

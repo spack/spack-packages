@@ -23,8 +23,9 @@ spack:
     - caliper
     - camp
     - chai
-    - mfem
-    - mfem +superlu-dist+petsc+sundials
+    # mfem does not work with gcc 7
+    # - mfem
+    # - mfem +superlu-dist+petsc+sundials
     - raja
     - umpire
 

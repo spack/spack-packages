@@ -31,6 +31,8 @@ class PyContourpy(PythonPackage):
 
         # Historical dependencies
         depends_on("py-setuptools@42:", when="@:1.0")
+        # not in original requirements, but pyproject.toml [project] requires py-setuptools@61:
+        depends_on("py-setuptools@61:", when="@1.0.7:1.0")
         depends_on("py-build", when="@:1.0.5")
 
     with default_args(type=("build", "link", "run")):
