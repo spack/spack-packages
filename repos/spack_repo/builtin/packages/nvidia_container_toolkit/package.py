@@ -33,7 +33,7 @@ class NvidiaContainerToolkit(Package):
     # Used to unpack the source RPM archives.
     depends_on("libarchive programs='bsdtar'", type="build")
 
-    for _, packages in _versions.items():
+    for ver, packages in _versions.items():
         key = "{0}-{1}".format(platform.system(), platform.machine())
         pkg = packages.get(key)
         if pkg:
@@ -43,7 +43,6 @@ class NvidiaContainerToolkit(Package):
         bsdtar = which("bsdtar")
         tar_file = glob(join_path(self.stage.source_path, "nvidia-container-toolkit*.tar.gz"))[0]
         tar_params = ["-x", "-f", tar_file]
-        ver = prefix.split("/")[-1].split("-")[-2]
         bsdtar(*tar_params)
         rpm_files = glob(join_path(self.stage.source_path, "release-*/packages/centos7/*/*.rpm"))
         for rpm_file in rpm_files:
