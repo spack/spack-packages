@@ -8,7 +8,7 @@ spack:
       target: [ "x86_64_v3" ]
       require:
       - target=x86_64_v3
-      - '%gcc@7.5.0'
+      - '%gcc@10'
 
       providers:
         mpi: [mvapich2]
