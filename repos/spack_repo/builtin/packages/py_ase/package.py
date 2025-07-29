@@ -12,8 +12,8 @@ class PyAse(PythonPackage):
     and Python modules for setting up, manipulating, running,
     visualizing and analyzing atomistic simulations."""
 
-    homepage = "https://wiki.fysik.dtu.dk/ase/"
-    pypi = "ase/ase-3.13.0.tar.gz"
+    homepage = "https://ase-lib.org/"
+    pypi = "ase/ase-3.25.0.tar.gz"
 
     license("LGPL-2.1-or-later")
 
