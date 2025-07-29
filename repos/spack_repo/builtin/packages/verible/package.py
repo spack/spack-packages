@@ -39,7 +39,7 @@ class Verible(Package):
 
     version(
         "0.0.4013",
-        sha256="1b282233b91fc6884708f76232dcc3b38d47a14c783c5a0b8035bb23bcb8dbc7",
+        sha256="703766302083af76eeb3e545683017643ff24e4184e3195296623992eb55e4b8.",
         url="https://github.com/chipsalliance/verible/archive/refs/tags/v0.0-4013-gba3dc371.tar.gz",
     )
     version(
