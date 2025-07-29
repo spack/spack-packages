@@ -51,6 +51,15 @@ class Msmpi(msbuild.MSBuildPackage):
     # We know its present because we have a WDK
     # patches the build system to just directly call the MC
     patch("no_mc.patch")
+    # MSBuild does not handle paths with spaces well
+    # nor does MSMPIs msbuild system introduce the proper
+    # quoting required to use paths with spaces
+    # this patch adds the required quoting to handle
+    # stages and install prefixes with spaces
+    # this patch must be the last patch applied
+    # and should be updated if other patches 
+    # add lines that require quoting
+    patch("quote_source_tree_refs.patch")
 
     requires("platform=windows")
     requires("%msvc")
