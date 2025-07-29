@@ -60,7 +60,7 @@ class PyGpaw(PythonPackage):
         depends_on("py-ase@3.25.0:", type=("build", "run"))
         depends_on("py-numpy", type=("build", "run"))
         depends_on("py-scipy@1.6.0:", type=("build", "run"))
-    
+
     with when("@25.1.0:"):
         depends_on("libxc")
         depends_on("python@3.9:", type=("build", "run"))
