@@ -22,8 +22,11 @@ import sys
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
+
+
 class PodmanCompose(PythonPackage):
     """An container composition tool for Podman"""
+
     homepage = "https://podman.io"
     url = "https://github.com/containers/podman-compose/archive/refs/tags/v1.4.0.tar.gz"
     maintainers("scothalverson")
@@ -33,4 +36,3 @@ class PodmanCompose(PythonPackage):
     depends_on("py-setuptools")
     depends_on("py-pyyaml")
     depends_on("py-python-dotenv")
-
