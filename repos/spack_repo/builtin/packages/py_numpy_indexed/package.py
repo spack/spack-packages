@@ -16,6 +16,8 @@ class PyNumpyIndexed(PythonPackage):
 
     version("0.3.7", sha256="3e9f8f5ca453e49809618b3717b8ce07551b616a4ae43069c46aaad286386a9e")
 
+    depends_on("setuptools", type="build")
+
     depends_on("python@3.5:", type=("build", "run"))
 
     depends_on("py-numpy", type=("build", "run"))
