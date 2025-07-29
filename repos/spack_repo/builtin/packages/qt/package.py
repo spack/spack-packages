@@ -135,7 +135,7 @@ class Qt(Package):
     patch("qt515-quick3d-assimp.patch", when="@5.15:5+opengl")
     # https://forum.qt.io/topic/130793/a-problem-with-python-path-when-i-try-to-build-qt-from-source-e-program-is-not-recognized-as-an-internal-or-external-command?_=1722965446110&lang=en-US
     patch("quote_qt515_masm_python.patch", when="@5.15 platform=windows")
-    patch("quote_qt515_root_configure_path.patch", when="@5.15 platform=windows")
+    patch("sfn_qt515_root_configure_path.patch", when="@5.15 platform=windows")
     patch("quote_qt515_foreign_types.patch", when="@5.15 platform=windows")
 
     # https://bugreports.qt.io/browse/QTBUG-90395
