@@ -9,7 +9,7 @@ spack:
   - $CI_PROJECT_DIR/.ci/gitlab/
 
   specs:
-  - "vtk@9: ~mpi"
+  - "vtk@9: +mpi"
   - "boost"
   - "netlib-lapack"
   - "py-beautifulsoup4"
