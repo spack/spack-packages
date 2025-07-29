@@ -17,6 +17,8 @@ class PyAse(PythonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("3.25.0", sha256="374cf8ca9fe588f05d6e856da3c9c17ef262dc968027b231d449334140c962c2")
+    version("3.24.0", sha256="9acc93d6daaf48cd27b844c56f8bf49428b9db0542faa3cc30d9d5b8e1842195")
     version("3.23.0", sha256="91a2aa31d89bd90b0efdfe4a7e84264f32828b2abfc9f38e65e041ad76fec8ae")
     version("3.21.1", sha256="78b01d88529d5f604e76bc64be102d48f058ca50faad72ac740d717545711c7b")
     version("3.21.0", sha256="2c561e9b767cf16fc8ce198ea9326d77c6b67d33a85f44b68455e23466a64608")
@@ -34,7 +36,8 @@ class PyAse(PythonPackage):
     depends_on("python@2.6:", type=("build", "run"), when="@:3.15.0")
     depends_on("python@3.5:", type=("build", "run"), when="@3.18.0:")
     depends_on("python@3.6:", type=("build", "run"), when="@3.20.0:")
-    depends_on("python@3.8:", type=("build", "run"), when="@3.23.0:")
+    depends_on("python@3.8:", type=("build", "run"), when="@3.23.0")
+    depends_on("python@3.9:", type=("build", "run"), when="@3.24.0:")
     depends_on("py-numpy@1.11.3:", type=("build", "run"))
     depends_on("py-numpy@1.18.5:", type=("build", "run"), when="@3.23.0:")
     depends_on("py-matplotlib@2.0.0:", type=("build", "run"))
