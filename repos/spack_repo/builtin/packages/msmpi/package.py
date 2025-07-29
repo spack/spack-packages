@@ -57,7 +57,7 @@ class Msmpi(msbuild.MSBuildPackage):
     # this patch adds the required quoting to handle
     # stages and install prefixes with spaces
     # this patch must be the last patch applied
-    # and should be updated if other patches 
+    # and should be updated if other patches
     # add lines that require quoting
     patch("quote_source_tree_refs.patch")
 
