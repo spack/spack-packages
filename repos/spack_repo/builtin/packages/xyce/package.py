@@ -35,6 +35,7 @@ class Xyce(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("master", branch="master")
+    version("7.9.0", sha256="36ea88736b5e2012f28755588c857c88ed5dab5f4eccd3f59c6f42e6320fee4e")
     version("7.8.0", sha256="f763b7d5ad6defd25d2c7e5cc95155958cd12510a5e22a179daab459b21fa713")
     version("7.7.0", sha256="1b95450e1905c3af3c16b42c41d5ef1f8ab0e640f48086d0cb4d52961a90a175")
     version(
@@ -102,6 +103,14 @@ class Xyce(CMakePackage):
         when="+pymi",
         description="Require static blas build for PyMi",
     )
+
+    variant("fftw", default=True, description="Depend on FFTW")
+    depends_on("fftw~mpi", type=("build", "run"), when="+fftw~mpi")
+    depends_on("fftw+mpi", type=("build", "run"), when="+fftw+mpi")
+
+    # https://github.com/Xyce/Xyce/commit/ddec31a9c42c683831937be17fd6ffc3180e77a1
+    # requirement because of use of std::filesystem
+    conflicts("@7.10:", when="%gcc@:8")
 
     depends_on("python@3:", type=("build", "link", "run"), when="+pymi")
     depends_on("py-pip", type="run", when="+pymi")
