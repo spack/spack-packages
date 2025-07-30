@@ -69,16 +69,20 @@ class PyFenicsDolfinx(PythonPackage):
     depends_on("py-numpy@1.21:", type=("build", "run"))
     depends_on("py-mpi4py", type=("build", "run"))
 
-    depends_on("py-petsc4py", type=("build", "run"), when="+petsc4py")
-    depends_on("py-petsc4py", type=("build", "run"), when="+slepc4py")
-    depends_on("py-slepc4py", type=("build", "run"), when="+slepc4py")
+    with when("+petsc4py"):
+        depends_on("fenics-dolfinx +petsc")
+        depends_on("py-petsc4py", type=("build", "run"))
+    with when("+slepc4py"):
+        depends_on("fenics-dolfinx +petsc +slepc")
+        depends_on("py-petsc4py", type=("build", "run"))
+        depends_on("py-slepc4py", type=("build", "run"))
 
     depends_on("py-cffi@:1.16", type=("build", "run"))
 
     depends_on("py-nanobind@2:", when="@0.9:", type="build")
     depends_on("py-nanobind@1.8:1.9", when="@0.8", type="build")
-    depends_on("py-scikit-build-core+pyproject@0.10:", when="@0.10:", type="build")
-    depends_on("py-scikit-build-core+pyproject@0.5:", when="@0.8:0.9", type="build")
+    depends_on("py-scikit-build-core@0.10: +pyproject", when="@0.10:", type="build")
+    depends_on("py-scikit-build-core@0.5: +pyproject", when="@0.8:0.9", type="build")
 
     depends_on("py-pybind11@2.7.0:", when="@:0.7", type=("build", "run"))
     depends_on("py-setuptools@42:", when="@:0.7", type="build")

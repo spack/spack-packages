@@ -55,8 +55,9 @@ class FenicsDolfinx(CMakePackage):
     depends_on("spdlog", when="@0.9:")
 
     depends_on("petsc+mpi+shared", when="+petsc")
-    depends_on("petsc+mpi+shared", when="+slepc")
-    depends_on("slepc", when="+slepc")
+    with when("+slepc"):
+        depends_on("petsc+mpi+shared")
+        depends_on("slepc")
 
     depends_on("adios2@2.8.1:+mpi", when="@0.9: +adios2")
     depends_on("adios2+mpi", when="+adios2")
