@@ -4,6 +4,7 @@
 import itertools
 import os
 import platform
+import re
 import sys
 
 from spack_repo.builtin.build_systems.generic import Package
@@ -577,6 +578,36 @@ class Qt(Package):
             with open(conf_file, "a") as f:
                 f.write("QMAKE_CXXFLAGS += -std=gnu++98\n")
 
+    def _quoted(self, args):
+        """Returns args with each arg in double quotes if neccesary
+        Necessity determined by:
+            - path with a space on any platform
+            - path with a reserved character on Windows
+        """
+        def quote(arg):
+            return "\""+arg+"\""
+        
+        def has_space(arg):
+            return " " in arg
+        
+        def has_reserved(arg):
+            if not IS_WINDOWS:
+                return False
+            return True if re.search(r"[ <>^:\"|?*]", arg) else False
+        return [quote(x) if has_space(x) or has_reserved(x) else x for x in args]
+
+    def _split_link_args(self, arg_str):
+        """Returns a list of the -L
+        arguments included in arg_str with proper
+        handling for paths with spaces"""
+        return ["-L" + x for x in arg_str.split("-L") if x]
+    
+    def _split_include_args(self, arg_str):
+        """Returns a list of the -I
+        arguments included in arg_str with proper
+        handling for paths with spaces"""
+        return ["-I" + x for x in arg_str.split("-I") if x]
+
     def _dep_appender_factory(self, config_args):
         spec = self.spec
 
@@ -584,8 +615,12 @@ class Qt(Package):
             pkg = spec[spack_pkg]
             config_args.append("-system-" + (qt_name or spack_pkg))
             if not pkg.external:
-                config_args.extend(pkg.libs.search_flags.split())
-                config_args.extend(pkg.headers.include_flags.split())
+                config_args.extend(self._split_link_args(
+                    pkg.libs.search_flags)
+                )
+                config_args.extend(
+                    self._split_include_args(pkg.headers.include_flags)
+                )
 
         return use_spack_dep
 
@@ -629,8 +664,12 @@ class Qt(Package):
         if "+ssl" in spec:
             pkg = spec["openssl"]
             config_args.append("-openssl-linked")
-            config_args.extend(pkg.libs.search_flags.split())
-            config_args.extend(pkg.headers.include_flags.split())
+            config_args.extend(
+                self._split_link_args(pkg.libs.search_flags)
+            )
+            config_args.extend(
+                self._split_include_args(pkg.headers.include_flags)
+            )
         else:
             config_args.append("-no-openssl")
 
@@ -734,6 +773,9 @@ class Qt(Package):
         if MACOS_VERSION:
             sdkpath = which("xcrun")("--show-sdk-path", output=str).strip()
             config_args.extend(["-cocoa", "-sdk", sdkpath])
+
+        if IS_WINDOWS:
+            config_args = self._quoted(config_args)
 
         configure(*config_args)
 
