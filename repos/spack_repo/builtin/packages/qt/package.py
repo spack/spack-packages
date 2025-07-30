@@ -586,7 +586,7 @@ class Qt(Package):
         """
 
         def quote(arg):
-            return '"'+arg+'"'
+            return '"' + arg + '"'
 
         def has_space(arg):
             return " " in arg
