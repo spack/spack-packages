@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class FenicsDolfinx(CMakePackage):
-    """Next generation FEniCS problem solving environment"""
+    """Next generation FEniCS problem solving environment."""
 
     homepage = "https://github.com/FEniCS/dolfinx"
     git = "https://github.com/FEniCS/dolfinx.git"
@@ -40,11 +40,10 @@ class FenicsDolfinx(CMakePackage):
     depends_on("parmetis", when="partitioners=parmetis")
     depends_on("scotch+mpi", when="partitioners=scotch")
 
-    variant("slepc", default=False, description="slepc support")
-    variant("adios2", default=False, description="adios2 support")
+    variant("slepc", default=False, description="SLEPc support")
+    variant("adios2", default=False, description="ADIOS2 support")
     variant("petsc", default=False, description="PETSc support")
 
-    depends_on("petsc", when="+slepc")
     depends_on("cmake@3.21:", when="@0.9:", type="build")
     depends_on("cmake@3.19:", when="@:0.8", type="build")
     depends_on("pkgconfig", type="build")
@@ -56,6 +55,7 @@ class FenicsDolfinx(CMakePackage):
     depends_on("spdlog", when="@0.9:")
 
     depends_on("petsc+mpi+shared", when="+petsc")
+    depends_on("petsc+mpi+shared", when="+slepc")
     depends_on("slepc", when="+slepc")
 
     depends_on("adios2@2.8.1:+mpi", when="@0.9: +adios2")
