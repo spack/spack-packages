@@ -27,7 +27,7 @@ class P3dfft3(AutotoolsPackage):
     variant(
         "measure",
         default=False,
-        description="Define if you want to usethe measure fftw planner flag",
+        description="Define if you want to use the measure fftw planner flag",
     )
     variant(
         "estimate",
