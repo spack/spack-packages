@@ -37,7 +37,7 @@ class P3dfft3(AutotoolsPackage):
     variant(
         "patient",
         default=False,
-        description="Define if you want touse the patient fftw planner flag",
+        description="Define if you want to use the patient fftw planner flag",
     )
 
     # TODO: Add more configure options!
