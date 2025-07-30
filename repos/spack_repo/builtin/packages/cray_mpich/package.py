@@ -4,7 +4,6 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cray import CrayExternal
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
@@ -12,7 +11,7 @@ from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModificati
 from spack.package import *
 
 
-class CrayMpich(MpichEnvironmentModifications, CrayExternal, CudaPackage, ROCmPackage):
+class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage):
     """Cray's MPICH is a high performance and widely portable implementation of
     the Message Passing Interface (MPI) standard."""
 
@@ -52,6 +51,21 @@ class CrayMpich(MpichEnvironmentModifications, CrayExternal, CudaPackage, ROCmPa
         "clang": "ALLINEA",
         "aocc": "AOCC",
     }
+
+    has_code = False  # Skip attempts to fetch a source that is not available
+
+    # Allows attaching compilers to externals in packages.yaml
+    depends_on("c", type="build")
+
+    requires("platform=linux", msg="Cray software is only available on linux")
+
+    def install(self, spec, prefix):
+        raise InstallError(
+            self.spec.format(
+                "{name} is not installable, you need to specify "
+                "it as an external package in packages.yaml"
+            )
+        )
 
     @property
     def modname(self):
