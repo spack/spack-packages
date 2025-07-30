@@ -29,6 +29,7 @@ class Valgrind(AutotoolsPackage, SourcewarePackage):
     license("GPL-2.0-or-later")
 
     version("develop", branch="master")
+    version("3.25.1", sha256="61deb8d0727b45c268efdc1b3b6c9e679cd97cbf5ee4b28d1dead7c8b7a271af")
     version("3.24.0", sha256="71aee202bdef1ae73898ccf7e9c315134fa7db6c246063afc503aef702ec03bd")
     version("3.23.0", sha256="c5c34a3380457b9b75606df890102e7df2c702b9420c2ebef9540f8b5d56264d")
     version("3.22.0", sha256="c811db5add2c5f729944caf47c4e7a65dcaabb9461e472b578765dd7bf6d2d4c")
