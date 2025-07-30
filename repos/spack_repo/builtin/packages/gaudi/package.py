@@ -67,7 +67,7 @@ class Gaudi(CMakePackage, CudaPackage):
         "multi": False,
         "description": "Use the specified C++ standard when building.",
     }
-    variant("cxxstd", default="17", when="@:39", **_cxxstd_common)
+    variant("cxxstd", default="17", when="@:38", **_cxxstd_common)
     variant("cxxstd", default="20", when="@39:", **_cxxstd_common)
 
     variant("aida", default=False, description="Build AIDA interfaces support")
@@ -218,10 +218,8 @@ class Gaudi(CMakePackage, CudaPackage):
         ]
         # Release notes for v39.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v39r0
         # Gaudi@39: needs C++ >= 20, and we need to force CMake to use C++ 20 with old gcc:
-        if self.spec.satisfies("@39: %gcc@:13"):
-            args.append(self.define("GAUDI_CXX_STANDARD", "20"))
+        args.append(self.define_from_variant("GAUDI_CXX_STANDARD", "cxxstd"))
         if self.spec.satisfies("%apple-clang"):
-            args.append(self.define("GAUDI_CXX_STANDARD", "20"))
             # fixes a build error with apple-clang
             args.append(self.define("CMAKE_CXX_FLAGS", "-fmodules"))
 
