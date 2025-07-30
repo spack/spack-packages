@@ -9,7 +9,6 @@ import sys
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
 
-import spack.compilers.config
 from spack.package import *
 
 
@@ -174,7 +173,7 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
     @classmethod
     def determine_variants(cls, exes, version):
         def get_spack_compiler_spec(path):
-            spack_compilers = spack.compilers.config.find_compilers([path])
+            spack_compilers = find_compilers([path])
             for spack_compiler in spack_compilers:
                 if os.path.dirname(spack_compiler.cc) == path:
                     return spack_compiler.spec

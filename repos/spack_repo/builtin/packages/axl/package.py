@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.error import SpackError
 from spack.package import *
 
 

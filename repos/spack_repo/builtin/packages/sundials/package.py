@@ -29,9 +29,10 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     # Versions
     # ==========================================================================
     version("develop", branch="develop")
-    version("7.3.0", tag="v7.3.0", commit="e941546af1a5b5e492dcac0a1872540e9961c556")
-    version("7.2.1", tag="v7.2.1", commit="5c53be85c88f63c5201c130b8cb2c686615cfb03")
-    version("7.2.0", tag="v7.2.0", commit="0eff39663606f2ff280c4059a947ed62ae38180a")
+    version("7.4.0", tag="v7.4.0", commit="8e17876d3b4d682b4098684b07a85b005a122f81")
+    version("7.3.0", tag="v7.3.0", commit="cb681a4e3a46bcad903fb966284d6f53e85bdb94")
+    version("7.2.1", tag="v7.2.1", commit="2dcb3e018b4c4cfe824bff09eb52184ed083e368")
+    version("7.2.0", tag="v7.2.0", commit="71a4cc9ad5e7bc8b4e33a1ca9795b4e96883f9a6")
     version("7.1.1", tag="v7.1.1", commit="c28eaa3764a03705d61decb6025b409360e9d53f")
     version("7.0.0", sha256="d762a7950ef4097fbe9d289f67a8fb717a0b9f90f87ed82170eb5c36c0a07989")
     version("6.7.0", sha256="5f113a1564a9d2d98ff95249f4871a4c815a05dbb9b8866a82b13ab158c37adb")
@@ -59,46 +60,16 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     version("5.0.0", sha256="345141ec01c641d0bdfb3476c478b7e74fd6a7192a478a27cafe75d9da2d7dd3")
 
     with default_args(deprecated=True):
-        version(
-            "4.1.0",
-            sha256="280de1c27b2360170a6f46cb3799b2aee9dff3bddbafc8b08c291a47ab258aa5"
-        )
-        version(
-            "4.0.1",
-            sha256="29e409c8620e803990edbda1ebf49e03a38c08b9187b90658d86bddae913aed4"
-        )
-        version(
-            "3.2.1",
-            sha256="47d94d977ab2382cdcdd02f72a25ebd4ba8ca2634bbb2f191fe1636e71c86808"
-        )
-        version(
-            "3.2.0",
-            sha256="d2b690afecadf8b5a048bb27ab341de591d714605b98d3518985dfc2250e93f9"
-        )
-        version(
-            "3.1.2",
-            sha256="a8985bb1e851d90e24260450667b134bc13d71f5c6effc9e1d7183bd874fe116"
-        )
-        version(
-            "3.1.1",
-            sha256="a24d643d31ed1f31a25b102a1e1759508ce84b1e4739425ad0e18106ab471a24"
-        )
-        version(
-            "3.1.0",
-            sha256="18d52f8f329626f77b99b8bf91e05b7d16b49fde2483d3a0ea55496ce4cdd43a"
-        )
-        version(
-            "3.0.0",
-            sha256="28b8e07eecfdef66e2c0d0ea0cb1b91af6e4e94d71008abfe80c27bf39f63fde"
-        )
-        version(
-            "2.7.0",
-            sha256="d39fcac7175d701398e4eb209f7e92a5b30a78358d4a0c0fcc23db23c11ba104"
-        )
-        version(
-            "2.6.2",
-            sha256="d8ed0151509dd2b0f317b318a4175f8b95a174340fc3080b8c20617da8aa4d2f"
-        )
+        version("4.1.0", sha256="280de1c27b2360170a6f46cb3799b2aee9dff3bddbafc8b08c291a47ab258aa5")
+        version("4.0.1", sha256="29e409c8620e803990edbda1ebf49e03a38c08b9187b90658d86bddae913aed4")
+        version("3.2.1", sha256="47d94d977ab2382cdcdd02f72a25ebd4ba8ca2634bbb2f191fe1636e71c86808")
+        version("3.2.0", sha256="d2b690afecadf8b5a048bb27ab341de591d714605b98d3518985dfc2250e93f9")
+        version("3.1.2", sha256="a8985bb1e851d90e24260450667b134bc13d71f5c6effc9e1d7183bd874fe116")
+        version("3.1.1", sha256="a24d643d31ed1f31a25b102a1e1759508ce84b1e4739425ad0e18106ab471a24")
+        version("3.1.0", sha256="18d52f8f329626f77b99b8bf91e05b7d16b49fde2483d3a0ea55496ce4cdd43a")
+        version("3.0.0", sha256="28b8e07eecfdef66e2c0d0ea0cb1b91af6e4e94d71008abfe80c27bf39f63fde")
+        version("2.7.0", sha256="d39fcac7175d701398e4eb209f7e92a5b30a78358d4a0c0fcc23db23c11ba104")
+        version("2.6.2", sha256="d8ed0151509dd2b0f317b318a4175f8b95a174340fc3080b8c20617da8aa4d2f")
 
     # ==========================================================================
     # Variants
@@ -441,7 +412,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
         if "+rocm" in spec:
             args.extend(
                 [
-                    define("CMAKE_C_COMPILER", spec["llvm-amdgpu"].prefix.bin.clang),
+                    define("CMAKE_C_COMPILER", spec["llvm-amdgpu"].prefix.bin.amdclang),
                     define("CMAKE_CXX_COMPILER", spec["hip"].hipcc),
                     define("HIP_PATH", spec["hip"].prefix),
                     define("HIP_CLANG_INCLUDE_PATH", spec["llvm-amdgpu"].prefix.include),

@@ -30,6 +30,13 @@ class Libpciaccess(AutotoolsPackage, XorgPackage):
 
     conflicts("platform=darwin")
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%gcc@15:"):
+                # gcc@15: is -std=gnu23 by default
+                flags.append("-std=gnu17")
+        return (flags, None, None)
+
     def configure_args(self):
         config_args = []
 

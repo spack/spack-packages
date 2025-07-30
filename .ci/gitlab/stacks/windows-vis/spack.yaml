@@ -10,6 +10,9 @@ spack:
 
   specs:
   - "vtk@9: ~mpi"
+  - "boost"
+  - "netlib-lapack"
+  - "py-beautifulsoup4"
 
   cdash:
     build-group: Windows Visualization (Kitware)

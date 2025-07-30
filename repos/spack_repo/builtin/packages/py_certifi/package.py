@@ -17,6 +17,7 @@ class PyCertifi(PythonPackage):
 
     license("MPL-2.0")
 
+    version("2025.7.14", sha256="8ea99dbdfaaf2ba2f9bac77b9249ef62ec5218e7c2b2e903378ed5fccf765995")
     version("2025.4.26", sha256="0a816057ea3cdefcef70270d2c515e4506bbc954f417fa5ade2021213bb8f0c6")
 
     with default_args(deprecated=True):
@@ -62,4 +63,5 @@ class PyCertifi(PythonPackage):
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.7:", when="@2025.06.15:")
         depends_on("python@3.6:", when="@2022.05.18.1:")

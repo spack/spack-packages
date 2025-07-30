@@ -10,8 +10,6 @@ import sys
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
 from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
-from llnl.util.filesystem import windows_sfn
-
 from spack.package import *
 
 is_windows = sys.platform == "win32"

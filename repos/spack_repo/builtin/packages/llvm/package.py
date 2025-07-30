@@ -5,13 +5,10 @@ import os
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, generator, get_cmake_prefix_path
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
-from llnl.util.lang import classproperty
-
-from spack.operating_systems.mac_os import macos_sdk_path
 from spack.package import *
 
 
@@ -57,6 +54,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("main", branch="main")
 
     # Latest stable
+    version("20.1.8", sha256="a6cbad9b2243b17e87795817cfff2107d113543a12486586f8a055a2bb044963")
+    version("20.1.7", sha256="91865189d0ca30ca81b7f7af637aca745b6eeeba97c5dfb0ab7d79a1d9659289")
     version("20.1.6", sha256="afa487c401613f5e4a35935b2abfb5d07e6ebfa20df32787e34a5c7e97c6ea4b")
     version("20.1.5", sha256="205c436f93a7e185cf9d63ae57e645f23561a4d1bf854f2c5bd78995a43a5c05")
     version("20.1.4", sha256="65e3a582c4c684fa707a56ff643427bce3633eceaceae3295d81c0e830f44b89")
@@ -215,12 +214,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         "clang", default=True, description="Build the LLVM C/C++/Objective-C compiler frontend"
     )
 
-    variant(
-        "flang",
-        default=False,
-        description="Build the LLVM Fortran compiler frontend "
-        "(experimental - parser only, needs GCC)",
-    )
+    variant("flang", default=False, description="Build the LLVM Fortran compiler frontend ")
+
     conflicts("+flang", when="@:10")
     conflicts("+flang", when="~clang")
 
@@ -381,6 +376,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         description="Enable zstd support for static analyzer / lld",
     )
 
+    provides("libllvm@20", when="@20.0.0:20")
     provides("libllvm@19", when="@19.0.0:19")
     provides("libllvm@18", when="@18.0.0:18")
     provides("libllvm@17", when="@17.0.0:17")
@@ -977,7 +973,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
         if self.spec.satisfies("platform=darwin"):
             # set the SDKROOT so the bootstrap compiler finds its C++ headers
-            env.set("SDKROOT", macos_sdk_path())
+            env.set("SDKROOT", _macos_sdk_path())
 
         if self.spec.satisfies("%intel-oneapi-compilers"):
             intel_libs = find_libraries(
@@ -1192,7 +1188,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
         if self.spec.satisfies("platform=darwin"):
             cmake_args.append(define("LLVM_ENABLE_LIBCXX", True))
-            cmake_args.append(define("DEFAULT_SYSROOT", macos_sdk_path()))
+            cmake_args.append(define("DEFAULT_SYSROOT", _macos_sdk_path()))
             # without this libc++ headers are not fond during compiler-rt build
             cmake_args.append(define("LLVM_BUILD_EXTERNAL_COMPILER_RT", True))
 
@@ -1382,3 +1378,7 @@ def get_llvm_targets_to_build(spec):
         llvm_targets.add("PowerPC")
 
     return list(llvm_targets)
+
+
+def _macos_sdk_path():
+    return Executable("xcrun")("--show-sdk-path", output=str).strip()

@@ -12,8 +12,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.kokkos.package import Kokkos
 
-from spack.build_environment import dso_suffix
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 # Trilinos is complicated to build, as an inspiration a couple of links to
@@ -607,11 +605,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             ):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
-                    "--print-file-name", "libgfortran." + dso_suffix, output=str
+                    "--print-file-name",
+                    "libgfortran." + shared_library_suffix(self.spec),
+                    output=str,
                 ).strip()
                 # if libgfortran is equal to "libgfortran.<dso_suffix>" then
                 # print-file-name failed, use static library instead
-                if libgfortran == "libgfortran." + dso_suffix:
+                if libgfortran == "libgfortran." + shared_library_suffix(self.spec):
                     libgfortran = fc("--print-file-name", "libgfortran.a", output=str).strip()
                 # -L<libdir> -lgfortran required for OSX
                 # https://github.com/spack/spack/pull/25823#issuecomment-917231118
