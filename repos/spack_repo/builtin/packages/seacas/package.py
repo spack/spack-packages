@@ -269,7 +269,10 @@ class Seacas(CMakePackage):
     depends_on("trilinos~exodus+mpi+pamgen", when="+mpi+pamgen")
     depends_on("trilinos~exodus~mpi+pamgen", when="~mpi+pamgen")
     # Always depends on netcdf-c
-    depends_on("netcdf-c@4.8.0:+mpi+parallel-netcdf", when="+mpi")
+    depends_on("netcdf-c@4.8.0:+mpi", when="+mpi")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=linux")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=darwin")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=freebsd")
     depends_on("netcdf-c@4.8.0:~mpi", when="~mpi")
     depends_on("netcdf-c@:4.9.2", when="@:2024-08-15")
     depends_on("hdf5+hl~mpi", when="~mpi")
