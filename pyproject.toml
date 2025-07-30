@@ -51,7 +51,7 @@ extend-include = ["bin/spack"]
 extend-exclude = ["lib/spack/external", "*.pyi"]
 
 [tool.ruff.format]
-skip-magic-trailing-comma = true
+skip-magic-trailing-comma = false
 
 [tool.ruff.lint]
 extend-select = ["I"]
