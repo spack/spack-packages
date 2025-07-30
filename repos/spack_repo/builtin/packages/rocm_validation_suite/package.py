@@ -141,8 +141,8 @@ class RocmValidationSuite(CMakePackage):
         ]
 
         if self.spec.satisfies("@6.2.1:6.2.4"):
-            (args.append(self.define("HIPRAND_DIR", self.spec["hiprand"].prefix)),)
-            (args.append(self.define("ROCRAND_DIR", self.spec["rocrand"].prefix)),)
+            args.append(self.define("HIPRAND_DIR", self.spec["hiprand"].prefix))
+            args.append(self.define("ROCRAND_DIR", self.spec["rocrand"].prefix))
 
         libloc = self.spec["googletest"].prefix.lib64
         if not os.path.isdir(libloc):
