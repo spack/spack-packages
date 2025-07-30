@@ -223,10 +223,8 @@ class Moab(AutotoolsPackage):
             options.append("--enable-fortran")
 
         if "+tempest" in spec:
-            options.append("--with-tempestremap={}".format(
-                spec["tempestremap"].prefix))
-            options.append("--with-eigen3={}/include/eigen3".format(
-                spec["eigen"].prefix))
+            options.append("--with-tempestremap={}".format(spec["tempestremap"].prefix))
+            options.append("--with-eigen3={}/include/eigen3".format(spec["eigen"].prefix))
         else:
             options.append("--without-tempestremap")
             options.append("--without-eigen3")
