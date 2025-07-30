@@ -83,11 +83,8 @@ class Prrte(AutotoolsPackage):
         spec = self.spec
         config_args = ["--enable-shared", "--enable-static", "--disable-sphinx"]
 
-        # libevent
-        config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
-        # hwloc
-        config_args.append("--with-hwloc={0}".format(spec["hwloc"].prefix))
-        # pmix
-        config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+        for dep in ["libevent", "hwloc", "pmix"]:
+            prefix = spec[dep].prefix
+            config_args.append(f"--with-{dep}" if is_system_path(prefix) else f"--with-{dep}={prefix}")
 
         return config_args
