@@ -17,13 +17,15 @@ class Xrootd(CMakePackage):
         "https://xrootd.web.cern.ch/download/v5.7.0/xrootd-5.7.0.tar.gz",
         "https://github.com/xrootd/xrootd/releases/download/v5.7.0/xrootd-5.7.0.tar.gz",
     ]
-    list_url = "https://xrootd.web.cern.ch/dload.html"
+    list_url = "https://xrootd.org/dload.html"
     git = "https://github.com/xrootd/xrootd.git"
 
     maintainers("gartung", "greenc-FNAL", "marcmengel", "vitodb", "wdconinc")
 
     license("LGPL-3.0-only")
 
+    version("5.8.4", sha256="d8716bf764a7e8103aab83fbf4906ea2cc157646b1a633d99f91edbf204ff632")
+    version("5.7.3", sha256="3a90fda99a53cb6005ebecf7d6125ce382cedb0a27fb453e44a2c13bade0a90f")
     version("5.7.1", sha256="c28c9dc0a2f5d0134e803981be8b1e8b1c9a6ec13b49f5fa3040889b439f4041")
     version("5.7.0", sha256="214599bba98bc69875b82ac74f2d4b9ac8a554a1024119d8a9802b3d8b9986f8")
     version("5.6.9", sha256="44196167fbcf030d113e3749dfdecab934c43ec15e38e77481e29aac191ca3a8")
