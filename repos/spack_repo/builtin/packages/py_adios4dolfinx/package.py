@@ -100,6 +100,7 @@ class PyAdios4dolfinx(PythonPackage):
     depends_on("py-fenics-dolfinx@0.7.2", when="@0.7")
     depends_on("py-fenics-dolfinx@0.6.0", when="@0.6")
 
-    depends_on("adios2+python+hdf5+mpi")
+    depends_on("adios2+python+hdf5+mpi", type="run")
 
-    build_directory = "python"
+    depends_on("py-pytest", type="test")
+    depends_on("py-ipyparallel", type="test")
