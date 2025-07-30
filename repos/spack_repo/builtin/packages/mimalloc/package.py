@@ -77,15 +77,13 @@ class Mimalloc(CMakePackage):
         ),
         "override": (
             True,
-            "Override the standard malloc interface (e.g. define entry points "
-            "for malloc() etc)",
+            "Override the standard malloc interface (e.g. define entry points for malloc() etc)",
             None,
         ),
         "xmalloc": (False, "Enable abort() call on memory allocation failure by default", None),
         "show_errors": (
             False,
-            "Show error and warning messages by default (only enabled by default "
-            "in DEBUG mode)",
+            "Show error and warning messages by default (only enabled by default in DEBUG mode)",
             None,
         ),
         "use_cxx": (

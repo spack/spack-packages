@@ -488,8 +488,7 @@ class Nvhpc(Package, CompilerPackage):
         default="single",
         values=("single", "network"),
         multi=False,
-        description="Network installs are for installations shared "
-        "by different operating systems",
+        description="Network installs are for installations shared by different operating systems",
     )
     variant("lapack", default=True, description="Enable LAPACK")
     variant("mpi", default=False, description="Enable MPI")

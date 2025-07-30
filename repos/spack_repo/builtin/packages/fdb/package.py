@@ -31,7 +31,7 @@ class Fdb(CMakePackage):
         values=any_combination_of(
             # FDB backend in indexed filesystem with table-of-contents with
             # additional support for Lustre filesystem stripping control:
-            "lustre",
+            "lustre"
             # Backends that will be added later:
             # FDB backend in persistent memory (NVRAM):
             # 'pmem',  # (requires https://github.com/ecmwf/pmem)

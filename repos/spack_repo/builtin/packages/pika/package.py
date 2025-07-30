@@ -91,8 +91,7 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "generic_coroutines",
         default=default_generic_coroutines,
-        description="Use Boost.Context as the underlying coroutines"
-        " context switch implementation",
+        description="Use Boost.Context as the underlying coroutines context switch implementation",
     )
 
     variant("examples", default=False, description="Build and install examples")

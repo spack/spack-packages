@@ -74,9 +74,7 @@ class Libunwind(AutotoolsPackage):
     variant("xz", default=False, description="Support xz (lzma) compressed symbol tables.")
 
     variant(
-        "zlib",
-        default=False,
-        description="Support zlib compressed symbol tables " "(1.5 and later).",
+        "zlib", default=False, description="Support zlib compressed symbol tables (1.5 and later)."
     )
 
     depends_on("c", type="build")  # generated

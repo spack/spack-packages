@@ -1199,8 +1199,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 return candidate_gdc
             else:
                 raise InstallError(
-                    "Cannot resolve ambiguity when detecting GDC that belongs to "
-                    "%{0}".format(self.compiler.spec),
+                    "Cannot resolve ambiguity when detecting GDC that belongs to %{0}".format(
+                        self.compiler.spec
+                    ),
                     long_msg="The candidates are:{0}{0}{1}{0}".format(
                         error_nl,
                         error_nl.join(
