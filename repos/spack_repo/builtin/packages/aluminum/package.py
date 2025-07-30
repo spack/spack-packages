@@ -51,7 +51,7 @@ class Aluminum(CachedCMakePackage, CudaPackage, ROCmPackage):
         "cuda_rma",
         default=False,
         when="+cuda",
-        description="Builds with support for CUDA intra-node  Put/Get and IPC RMA functionality",
+        description="Builds with support for CUDA intra-node Put/Get and IPC RMA functionality",
     )
     variant(
         "ht",
