@@ -59,7 +59,7 @@ class Dftbplus(CMakePackage, MakefilePackage):
         "chimes",
         default=False,
         when="@21.2:",
-        description="Whether repulsive correctionsvia the ChIMES library should be enabled.",
+        description="Whether repulsive corrections via the ChIMES library should be enabled.",
     )
     variant(
         "elsi",
