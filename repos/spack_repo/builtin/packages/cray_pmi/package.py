@@ -2,12 +2,12 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cray import CrayPackage
+from spack_repo.builtin.build_systems.cray import CrayExternal
 
 from spack.package import *
 
 
-class CrayPmi(CrayPackage):
+class CrayPmi(CrayExternal):
     """Cray's Process Management Interface library"""
 
     homepage = "https://docs.nersc.gov/development/compilers/wrappers/"

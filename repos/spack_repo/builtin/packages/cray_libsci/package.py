@@ -1,12 +1,12 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-from spack_repo.builtin.build_systems.cray import CrayPackage
+from spack_repo.builtin.build_systems.cray import CrayExternal
 
 from spack.package import *
 
 
-class CrayLibsci(CrayPackage):
+class CrayLibsci(CrayExternal):
     """The Cray Scientific Libraries package, LibSci, is a collection of
     numerical routines optimized for best performance on Cray systems."""
 

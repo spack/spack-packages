@@ -4,7 +4,7 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cray import CrayPackage
+from spack_repo.builtin.build_systems.cray import CrayExternal
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
@@ -12,7 +12,7 @@ from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModificati
 from spack.package import *
 
 
-class CrayMpich(MpichEnvironmentModifications, CrayPackage, CudaPackage, ROCmPackage):
+class CrayMpich(MpichEnvironmentModifications, CrayExternal, CudaPackage, ROCmPackage):
     """Cray's MPICH is a high performance and widely portable implementation of
     the Message Passing Interface (MPI) standard."""
 

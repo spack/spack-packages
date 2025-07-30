@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cray import CrayPackage
+from spack_repo.builtin.build_systems.cray import CrayExternal
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
 
 from spack.package import *
 
 
-class CrayMvapich2(MpichEnvironmentModifications, CrayPackage):
+class CrayMvapich2(MpichEnvironmentModifications, CrayExternal):
     """Cray/HPE packaging of MVAPICH2 for HPE Apollo systems"""
 
     homepage = "https://docs.nersc.gov/development/compilers/wrappers/"

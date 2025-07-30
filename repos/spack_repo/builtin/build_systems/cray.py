@@ -4,8 +4,10 @@
 from spack.package import InstallError, Package, depends_on, requires
 
 
-class CrayPackage(Package):
-    """Specialization of Package that takes care of setting common metadata for Cray software"""
+class CrayExternal(Package):
+    """Specialization of Package that takes care of setting common metadata for Cray software
+    that must be used only as an external package.
+    """
 
     has_code = False  # Skip attempts to fetch a source that is not available
 
