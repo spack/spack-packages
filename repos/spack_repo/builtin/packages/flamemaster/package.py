@@ -33,7 +33,7 @@ class Flamemaster(CMakePackage):
     variant(
         "bilin_omega",
         default=True,
-        description="Compile with bilinear interpolationfor collision integrals (omega)",
+        description="Compile with bilinear interpolation for collision integrals (omega)",
     )
     variant(
         "combustion",
