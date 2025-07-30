@@ -869,7 +869,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         with open(self.makefile, "w") as mkf:
             if spec.satisfies("+plumed"):
                 mkf.write(
-                    "# include Plumed.inc as recommended byPLUMED to include libraries and flags"
+                    "# include Plumed.inc as recommended by PLUMED to include libraries and flags"
                 )
                 mkf.write("include {0}\n".format(self.pkg["plumed"].plumed_inc))
 
