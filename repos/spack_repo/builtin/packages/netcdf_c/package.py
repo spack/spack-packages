@@ -186,9 +186,9 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     depends_on("curl@7.18.0:", when="+byterange")
 
     # curl is supposed to only be needed when +dap or +byterange, but the check is missing
-    # this is fixed in 4.9.3
+    # this is fixed in 4.9.3. Spack autotools already protects against this
     # https://github.com/Unidata/netcdf-c/issues/3016
-    depends_on("curl@7.18.0:", when="@:4.9.2")
+    depends_on("curl@7.18.0:", when="@:4.9.2 ^build_system=cmake")
 
     # Need to include libxml2 when using DAP in 4.9.0 and newer to build
     # https://github.com/Unidata/netcdf-c/commit/53464e89635a43b812b5fec5f7abb6ff34b9be63
