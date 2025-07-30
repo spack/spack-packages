@@ -111,7 +111,7 @@ class Flamemaster(CMakePackage):
     variant(
         "tests",
         default=False,
-        description="Install google-test framework for unit testsand enable units tests.",
+        description="Install google-test framework for unit tests and enable units tests.",
     )
     variant(
         "third_party_in_build_dir",
