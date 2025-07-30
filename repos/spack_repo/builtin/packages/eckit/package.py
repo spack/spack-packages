@@ -64,7 +64,7 @@ class Eckit(CMakePackage):
     variant(
         "unicode",
         default=True,
-        description="Enable support for Unicode characters in Yaml/JSONparsers",
+        description="Enable support for Unicode characters in Yaml/JSON parsers",
     )
     variant("aio", default=True, description="Enable asynchronous IO")
     variant("fismahigh", default=False, description="Apply patching for FISMA-high compliance")
