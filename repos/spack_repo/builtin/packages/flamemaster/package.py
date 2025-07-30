@@ -38,7 +38,7 @@ class Flamemaster(CMakePackage):
     variant(
         "combustion",
         default=False,
-        description="Integrate comustion librariesfor kinetics, thermodynamics, and transport",
+        description="Integrate comustion libraries for kinetics, thermodynamics, and transport",
     )
     variant(
         "fortran_code",
