@@ -21,6 +21,8 @@ class Meson(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.8.2", sha256="6b878fb0f6f0318cbd54e13539f89a1a8305791668e8e93ffd59d82722888dac")
+    version("1.7.2", sha256="3640ef596523393100df31ba790bc5fe732215e9711a66b673a21c4eb39bc8f1")
     version("1.7.0", sha256="a6ca46e2a11a0278bb6492ecd4e0520ff441b164ebfdef1e012b11beb848d26e")
     version("1.6.1", sha256="4889795777b536ea1a351982f3ef7c7b06a786ccb47036daba63cc5757c59edb")
     version("1.5.2", sha256="fb41882bef26ffc02647d9978cba502a4accdf2e94c0a6dc9cc498dd7463381e")
