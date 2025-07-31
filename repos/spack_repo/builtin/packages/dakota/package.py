@@ -68,6 +68,7 @@ class Dakota(CMakePackage):
     variant("shared", default=True, description="Enables the build of shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
     variant("python", default=True, description="Add Python dependency for dakota.interfacing API")
+    variant("hdf5", default=False, description="Add hdf5 support")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -80,6 +81,10 @@ class Dakota(CMakePackage):
     depends_on("blas")
     depends_on("mpi", when="+mpi")
 
+    depends_on("trilinos+rol")
+    depends_on("trilinos@13:", when="@6:13:")
+
+    depends_on("hdf5@1.10.4:1.10 +hl+cxx", when="+hdf5")
     depends_on("python", when="+python")
     depends_on("perl-data-dumper", type="build", when="@6.12:")
     depends_on("boost@:1.68.0", when="@:6.12")
@@ -104,6 +109,8 @@ class Dakota(CMakePackage):
         # from gcc@10, dakota@:6.12 need an extra flag
         if self.spec.satisfies("@:6.12 %gcc@10:") and name == "fflags":
             flags.append("-fallow-argument-mismatch")
+        if name == "cxxflags":
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="14"))
         return (flags, None, None)
 
     def cmake_args(self):
