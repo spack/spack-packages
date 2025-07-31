@@ -23,12 +23,3 @@ index 0b5df8c..95b23f4 100644
  set rc=%errorlevel%
  if not %rc%==1 exit %rce% else exit 0</Command>
      </PostBuildEvent>
-@@ -70,7 +70,7 @@ if not %rc%==1 exit %rce% else exit 0</Command>
-   <ItemGroup>
-     <MessageCompile Include="ndstatus.mc">
-       <GeneratedHeaderPath>true</GeneratedHeaderPath>
--      <HeaderFilePath>$(OutIncludePath)</HeaderFilePath>
-+      <HeaderFilePath>"$(OutIncludePath)"</HeaderFilePath>
-       <GeneratedRCAndMessagesPath>true</GeneratedRCAndMessagesPath>
-       <RCFilePath>.</RCFilePath>
-     </MessageCompile>
