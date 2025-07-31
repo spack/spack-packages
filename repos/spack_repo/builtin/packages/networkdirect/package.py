@@ -44,6 +44,7 @@ class Networkdirect(msbuild.MSBuildPackage):
     # patches the build system to just directly call the MC
     patch("no_mc.patch")
 
+
 class MSBuildBuilder(msbuild.MSBuildBuilder):
     build_targets = ["ndutil"]
 
