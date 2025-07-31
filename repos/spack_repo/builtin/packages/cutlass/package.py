@@ -17,6 +17,8 @@ class Cutlass(CMakePackage, CudaPackage):
 
     version("main", branch="main")
     version("master", branch="master")
+    version("4.1.0", sha256="8d4675b11e9e5207e3940eaac0f46db934ada371cbb3627c9fda642d912b6230")
+    version("4.0.0", sha256="44a121c5878827875856c175ebe82e955062e37cd61fcdf31ebe2e8874f2fc5c")
     version("3.9.2", sha256="4b97bd6cece9701664eec3a634a1f2f2061d85bf76d843fa5799e1a692b4db0d")
     version("3.9.1", sha256="7ffed3d7363a485c7d8ade63b3944c0a1e3e4cf2f22007f6d1cc3849c96bdc88")
     version("3.9.0", sha256="0ea98a598d1f77fade5187ff6ec6d9e6ef3acd267ee68850aae6e800dcbd69c7")
