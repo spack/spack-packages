@@ -12,9 +12,9 @@ index 0b5df8c..c915725 100644
 -      <GeneratedRCAndMessagesPath>true</GeneratedRCAndMessagesPath>
 -      <RCFilePath>.</RCFilePath>
 -    </MessageCompile>
-+    <CustomBuild Include="$(EnlistmentRoot)\ndutil\ndstatus.mc">
-+      <Command>mc.exe -um -h $(OutIncludePath) -r . $(EnlistmentRoot)\ndutil\ndstatus.mc</Command>
-+      <Outputs>$(OutIncludePath)\ndstatus.h;$(EnlistmentRoot)\ndutil\ndstatus.mc</Outputs>
++    <CustomBuild Include="$(EnlistmentRoot)\src\ndutil\ndstatus.mc">
++      <Command>mc.exe -um -h "$(OutIncludePath)" -r . "$(EnlistmentRoot)\src\ndutil\ndstatus.mc"</Command>
++      <Outputs>$(OutIncludePath)\src\ndstatus.h;$(EnlistmentRoot)\src\ndutil\ndstatus.mc</Outputs>
 +    </CustomBuild>
    </ItemGroup>
  
