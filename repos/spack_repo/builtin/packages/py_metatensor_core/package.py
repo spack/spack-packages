@@ -7,7 +7,10 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 # Necessary to pin each version to libmetatensor
-VERSION_MAP = {"0.1.14": "ee1f87bc045beadafa63cc0ccd0ebcf9c9e9fe8d619529d28775b0c22e0bbe19"}
+VERSION_MAP = {
+    "0.1.14": "ee1f87bc045beadafa63cc0ccd0ebcf9c9e9fe8d619529d28775b0c22e0bbe19",
+    "0.1.15": "8a5cfba97dcc9b7802f0ce6e7d40c7b358de0ad7d928c7c66a4da9247c216e98",
+}
 
 
 class PyMetatensorCore(PythonPackage):

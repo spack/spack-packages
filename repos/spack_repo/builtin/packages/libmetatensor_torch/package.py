@@ -18,6 +18,9 @@ class LibmetatensorTorch(CMakePackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.7.6", sha256="8dcc07c86094034facba09ebcc6b52f41847c2413737c8f9c88ae0a2990f8d41")
+    version("0.7.5", sha256="24611998e076dd0a782a9792f26b315cc57514013715e8a0aedf2a3a891ba1b4")
+    version("0.7.4", sha256="356c412d60a88dfe995976eaad3378ea0e0a858bbca8d43ed299b44c7403fefb")
+    version("0.7.3", sha256="ea46e44ba3c7379e1134960851fc6cfd0b0f9de1e7154f60c36f4dfbe59449e3")
 
     depends_on("cmake@3.16:", type="build")
     depends_on("cxx", type="build")
