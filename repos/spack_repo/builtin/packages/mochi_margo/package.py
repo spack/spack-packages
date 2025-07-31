@@ -18,6 +18,8 @@ class MochiMargo(AutotoolsPackage):
     maintainers("carns", "mdorier", "fbudin69500")
 
     version("main", branch="main")
+    version("0.19.2", sha256="cfd20117744631779f0e99a0bc0668a1ca4d6d3c89fce5e9926961f830491689")
+    version("0.19.1", sha256="77422156be5d1e24b16f6d65109ada29a2276c9d6fdd9a5392c23f1fbe370b98")
     version("0.19.0", sha256="269e3b52228fb59a8ab502b8fac4761fc15440817455bb006f311093bd4c02f3")
     version("0.18.3", sha256="4871af11d3cadc81e6f08a2112782c61324d9cdabc9e9b61c595c95da6d75127")
     version("0.18.2", sha256="a3a9fde826954be06b9123887533f91e6725faf6f6c682c080b97c2172a22057")
@@ -67,7 +69,7 @@ class MochiMargo(AutotoolsPackage):
     version("0.4.3", sha256="61a634d6983bee2ffa06e1e2da4c541cb8f56ddd9dd9f8e04e8044fb38657475")
     version("0.4.2", sha256="91085e28f50e373b9616e1ae5c3c8d40a19a7d3776259592d8f361766890bcaa")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("json-c", when="@0.9:")
     depends_on("autoconf@2.65:", type=("build"))
