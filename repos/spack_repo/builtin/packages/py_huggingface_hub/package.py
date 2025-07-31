@@ -55,13 +55,13 @@ class PyHuggingfaceHub(PythonPackage):
         depends_on("py-tqdm")
         depends_on("py-typing-extensions@3.7.4.3:", when="@0.10:")
         depends_on("py-typing-extensions", when="@0.0.10:")
+        depends_on("py-hf-xet")
 
         with when("+cli"):
             depends_on("py-inquirerpy@0.3.4")
 
         with when("+hf_transfer"):
             depends_on("py-hf-transfer@0.1.4:")
-            depends_on("py-hf-xet")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if "+hf_transfer" in self.spec:
