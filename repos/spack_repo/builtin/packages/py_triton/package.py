@@ -17,6 +17,7 @@ class PyTriton(PythonPackage):
     license("MIT")
 
     version("main", branch="main")
+    version("3.4.0", sha256="a96e87a911794c907fab30e0c7a3f96ef4e9e8fdc8812cd8bbc6f0457619072f")
     version("3.3.1", sha256="9dc77d9205933bf2fc05eb054f4f1d92acd79a963826174d57fe9cfd58ba367b")
     version("3.2.0", sha256="04eb07e2ff1b87bf4b26e132d696177248bfb9c71cecd4864e561a9c103de9b3")
     version("2.1.0", sha256="4338ca0e80a059aec2671f02bfc9320119b051f378449cf5f56a1273597a3d99")
@@ -42,4 +43,6 @@ class PyTriton(PythonPackage):
         if self.spec.satisfies("%clang"):
             env.set("TRITON_BUILD_WITH_CLANG_LLD", "True")
 
-    build_directory = "python"
+    @property
+    def build_directory(self):
+        return "." if self.spec.satisfies("@3.4.0:") else "python"
