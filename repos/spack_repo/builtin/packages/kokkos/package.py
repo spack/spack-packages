@@ -575,7 +575,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             cmake_args.append("-DCMAKE_PREFIX_PATH={0}".format(prefix_paths))
 
         if self.spec.satisfies("+wrapper"):
-            cmake_args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["kokkos-nvcc-wrapper"].kokkos_cxx))
+            cmake_args.append(
+                "-DCMAKE_CXX_COMPILER={0}".format(self.spec["kokkos-nvcc-wrapper"].kokkos_cxx)
+            )
         else:
             cmake_args.append("-DCMAKE_CXX_COMPILER={0}".format(self["cxx"].cxx))
 
