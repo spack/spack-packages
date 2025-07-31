@@ -48,6 +48,8 @@ spack:
       variants: +pic +xz
     openblas:
       variants: threads=openmp
+    rocblas:
+      require: ~hipblaslt #hangs in ci
     trilinos:
       variants: +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
         +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
@@ -361,22 +363,22 @@ spack:
   - chai +rocm amdgpu_target=gfx90a
   - ecp-data-vis-sdk ~paraview +vtkm +rocm amdgpu_target=gfx90a # +paraview: CMake Error at VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/CMakeLists.txt:272 (find_package): Could not find a package configuration file provided by "rocthrust" with any of the following names: rocthrustConfig.cmake rocthrust-config.cmake
   - gasnet +rocm amdgpu_target=gfx90a
-#   - ginkgo +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
+  - ginkgo +rocm amdgpu_target=gfx90a
   - heffte +rocm amdgpu_target=gfx90a
   - hpx +rocm amdgpu_target=gfx90a
-#   - hypre +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
+  - hypre +rocm amdgpu_target=gfx90a
   - kokkos +rocm amdgpu_target=gfx90a
   - lammps +rocm amdgpu_target=gfx90a
   - legion +rocm amdgpu_target=gfx90a
-#   - libceed +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
-#   - magma ~cuda +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
-#   - mfem +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
+  - libceed +rocm amdgpu_target=gfx90a
+  - magma ~cuda +rocm amdgpu_target=gfx90a
+  - mfem +rocm amdgpu_target=gfx90a
   - raja ~openmp +rocm amdgpu_target=gfx90a
-#   - slate +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
-#   - strumpack ~slate +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
+  - slate +rocm amdgpu_target=gfx90a
+  - strumpack ~slate +rocm amdgpu_target=gfx90a
   - sundials +rocm amdgpu_target=gfx90a
-#   - superlu-dist +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
-#   - tasmanian ~openmp +rocm amdgpu_target=gfx90a  # removed due to transitive hipblaslt dep
+  - superlu-dist +rocm amdgpu_target=gfx90a
+  - tasmanian ~openmp +rocm amdgpu_target=gfx90a
   - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack ~ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long +rocm amdgpu_target=gfx90a
   - umpire +rocm amdgpu_target=gfx90a
   - upcxx +rocm amdgpu_target=gfx90a

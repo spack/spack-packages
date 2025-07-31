@@ -47,7 +47,7 @@ class PyDatalad(PythonPackage):
     # upper bound needed because otherwise the following error occurs:
     # 'extras_require' must be a dictionary whose values are strings or lists
     # of strings containing valid project/version requirement specifiers.
-    depends_on("py-setuptools@40.8.0:66", when="@:17", type="build")
+    depends_on("py-setuptools@40.8.0:66", when="@:0.17", type="build")
 
     depends_on("git", type=("build", "run"))
     depends_on("git-annex", type=("build", "run"))
