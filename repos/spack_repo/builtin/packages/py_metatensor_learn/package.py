@@ -24,3 +24,5 @@ class PyMetatensorLearn(PythonPackage):
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
+    # setup.py
+    depends_on("py-metatensor-operations@0.3", type=("build", "run"))
