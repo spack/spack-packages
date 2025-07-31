@@ -405,6 +405,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
                 exe = which(join_path(self.prefix.bin, cmd))
                 exe(*opts)
 
+    def test_python(self):
+        """Test adios2 python"""
+        if self.spec.satisfies("+python"):
+            with test_part(self, "test_python_import", purpose="import adios2 in python"):
+                python = Executable(self.spec["python"].prefix.bin.python)
+                python(*(["-c", "import adios2; print(adios2.__version__)"]))
+
     def test_install(self):
         """Build and run an install tests"""
         srcdir = self.test_suite.current_test_cache_dir.testing.install.C
