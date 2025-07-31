@@ -86,38 +86,32 @@ class Curl(NMakePackage, AutotoolsPackage):
         deprecated=True,
     )
 
-    default_tls = "openssl"
-    if sys.platform == "darwin":
-        default_tls = "secure_transport"
-    elif sys.platform == "win32":
-        default_tls = "sspi"
-
-    tls_desc = "TLS backend"
-    tls_vals = (
-        # 'amissl',
-        # 'bearssl',
-        "gnutls",
-        conditional("mbedtls", when="@7.46:"),
-        # 'mesalink',
-        conditional("nss", when="@:7.81"),
-        "openssl",
-        # 'rustls',
-        # 'schannel',
-        # secure_transport support was removed in curl 8.15.0
-        conditional("secure_transport", when="platform=darwin @:8.14"),
-        # 'wolfssl',
-        conditional("sspi", when="platform=windows"),
-    )
-
     # TODO: add dependencies for other possible TLS backends
 
-    variant("tls", default="openssl", description=tls_desc, values=tls_vals, multi=True)
-    with when("platform=windows"):
-        variant("tls", default="sspi", description=tls_desc, values=tls_vals, multi=True)
-    with when("platform=darwin @:8.14"):
-        variant(
-            "tls", default="secure_transport", description=tls_desc, values=tls_vals, multi=True
-        )
+    # common arguments for tls variant definitions
+    tls_args = {
+        "description": "TLS backend",
+        "multi": True,
+        "values": (
+            # 'amissl',
+            # 'bearssl',
+            "gnutls",
+            conditional("mbedtls", when="@7.46:"),
+            # 'mesalink',
+            conditional("nss", when="@:7.81"),
+            "openssl",
+            # 'rustls',
+            # 'schannel',
+            # secure_transport support was removed in curl 8.15.0
+            conditional("secure_transport", when="platform=darwin @:8.14"),
+            # 'wolfssl',
+            conditional("sspi", when="platform=windows"),
+        ),
+    }
+
+    variant("tls", default="openssl", **tls_args)
+    variant("tls", default="sspi", when="platform=windows", **tls_args)
+    variant("tls", default="secure_transport", when="platform=darwin @:8.14", **tls_args)
 
     variant("nghttp2", default=True, description="build nghttp2 library (requires C++11)")
     variant("libssh2", default=False, description="enable libssh2 support")
