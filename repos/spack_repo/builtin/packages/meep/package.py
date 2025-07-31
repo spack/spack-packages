@@ -61,7 +61,7 @@ class Meep(AutotoolsPackage):
     depends_on("automake", type="build", when="@1.21.0:")
     depends_on("libtool", type="build", when="@1.21.0:")
 
-    depends_on("fftw")
+    depends_on("fftw-api")
     depends_on("blas", when="+blas")
     depends_on("lapack", when="+lapack")
     depends_on("harminv", when="+harminv")
