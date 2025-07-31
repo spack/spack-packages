@@ -34,6 +34,12 @@ class PyHuggingfaceHub(PythonPackage):
         when="@0.10:",
         description="Install dependencies for CLI-specific features",
     )
+    variant(
+        "hf_transfer",
+        default=False,
+        when="@0.21:",
+        description="Install hf_transfer to speed up downloads/uploads",
+    )
 
     with default_args(type="build"):
         depends_on("py-setuptools")
@@ -52,3 +58,10 @@ class PyHuggingfaceHub(PythonPackage):
 
         with when("+cli"):
             depends_on("py-inquirerpy@0.3.4")
+
+        with when("+hf_transfer"):
+            depends_on("py-hf-transfer@0.1.4:")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        if "+hf_transfer" in self.spec:
+            env.set("HF_HUB_ENABLE_HF_TRANSFER", "1")
