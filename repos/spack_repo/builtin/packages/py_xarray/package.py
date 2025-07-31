@@ -147,4 +147,3 @@ class PyXarray(PythonPackage):
     depends_on("py-numba@0.59:", when="@2025.7.1: +accel", type=("build", "run"))
     depends_on("py-flox@0.9:", when="@2025.7.1: +accel", type=("build", "run"))
     depends_on("py-opt-einsum", when="@2025.7.1: +accel", type=("build", "run"))
-
