@@ -1337,7 +1337,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             "miniapps/gslib/findpts.cpp",
             "miniapps/gslib/pfindpts.cpp",
         ]
-        bom = "\xef\xbb\xbf" if sys.version_info < (3,) else "\ufeff"
+        bom = "\ufeff"
         for f in files_with_bom:
             filter_file(bom, "", f)
 
