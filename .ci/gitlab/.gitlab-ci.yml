@@ -412,12 +412,9 @@ developer-tools-darwin-build:
   variables:
     SPACK_CI_STACK_NAME: radiuss
 
-# Include this AFTER .*-generate in "extends" list
-.radiuss-overrides:
-  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
-
 radiuss-generate:
   extends: [ ".radiuss", ".generate-x86_64", ".radiuss-overrides" ]
+  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
 
 radiuss-build:
   extends: [ ".radiuss", ".build" ]
