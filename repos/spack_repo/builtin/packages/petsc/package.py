@@ -275,6 +275,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # Give packagers a switch to trim them away (‘spack install petsc ~examples’)
     # while preserving current behaviour by default.
     variant("examples", default=True, description="Install test and tutorial example sources")
+    variant(
+        "fortran-bindings", default=True, when="+fortran", description="Activates fortran bindings"
+    )
 
     with when("+rocm"):
         # hipsparse@5.6.0 broke hipsparseSpSV_solve() API, reverted in 5.6.1.
@@ -508,6 +511,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ]
             if "+fortran" in self.spec:
                 compiler_opts.append("--with-fc=%s" % os.environ["FC"])
+                fb = "1" if self.spec.satisfies("+fortran-bindings") else "0"
+                compiler_opts.append(f"--with-fortran-bindings={fb}")
             else:
                 compiler_opts.append("--with-fc=0")
         else:
@@ -517,6 +522,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ]
             if "+fortran" in self.spec:
                 compiler_opts.append("--with-fc=%s" % self.spec["mpi"].mpifc)
+                fb = "1" if self.spec.satisfies("+fortran-bindings") else "0"
+                compiler_opts.append(f"--with-fortran-bindings={fb}")
             else:
                 compiler_opts.append("--with-fc=0")
             if self.spec.satisfies("%intel"):

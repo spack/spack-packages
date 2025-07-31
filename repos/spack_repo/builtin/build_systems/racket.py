@@ -85,7 +85,7 @@ class RacketBuilder(Builder):
         raco = Executable("raco")
         with working_dir(self.build_directory):
             parallel = pkg.parallel and (
-                not os.environ.get("SPACK_NO_PARALLEL_MAKE", "false").lower() in ("true", "1")
+                os.environ.get("SPACK_NO_PARALLEL_MAKE", "false").lower() not in ("true", "1")
             )
             name = pkg.racket_name
             assert name is not None, "Racket package name is not set"
