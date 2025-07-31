@@ -31,7 +31,7 @@ jobs:
         python-version: ${{inputs.python_version}}
     - name: Install Python packages
       run: |
-        pip install --upgrade pip setuptools pytest coverage[toml]
+        python -m pip install --upgrade pip setuptools pytest coverage[toml]
     - name: Setup for Windows run
       if: runner.os == 'Windows'
       run: |
@@ -54,6 +54,3 @@ jobs:
           ./.ci/validate_last_exit.ps1
           spack -d audit externals
           ./.ci/validate_last_exit.ps1
-    - name: Setup tmate session
-      if: ${{ failure() }}
-      uses: mxschmitt/action-tmate@v3
