@@ -413,7 +413,7 @@ developer-tools-darwin-build:
     SPACK_CI_STACK_NAME: radiuss
 
 radiuss-generate:
-  extends: [ ".radiuss", ".generate-x86_64", ".radiuss-overrides" ]
+  extends: [ ".radiuss", ".generate-x86_64" ]
   image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
 
 radiuss-build:
