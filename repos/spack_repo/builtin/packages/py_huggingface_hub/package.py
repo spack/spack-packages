@@ -61,6 +61,7 @@ class PyHuggingfaceHub(PythonPackage):
 
         with when("+hf_transfer"):
             depends_on("py-hf-transfer@0.1.4:")
+            depends_on("py-hf-xet")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if "+hf_transfer" in self.spec:
