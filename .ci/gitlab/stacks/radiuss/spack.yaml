@@ -3,14 +3,22 @@ spack:
 
   include:
   - $CI_PROJECT_DIR/.ci/gitlab/
+
   packages:
     all:
       target: [ "x86_64_v3" ]
       require:
       - target=x86_64_v3
-
+      - ~cuda
+      - ~rocm
+      prefer:
+        - "%gcc"
       providers:
         mpi: [mvapich2]
+  
+  concretizer:
+    unify: false
+    reuse: false
 
   specs:
   - ascent  # ^conduit@0.6.0
@@ -39,6 +47,11 @@ spack:
   # - visit   # ^mesa-glu@9.0.0
   - xbraid
   - zfp
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image: ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
 
   cdash:
     build-group: RADIUSS
