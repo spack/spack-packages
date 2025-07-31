@@ -397,6 +397,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/Kitware/VTK-m/commit/48e385af319543800398656645327243a29babfb
     patch("vtkm-fix-problems-in-class-member-names.patch", when="@5.13.2 %oneapi@2025:")
 
+    # Vtk's findpegtl's include search is wrong: https://gitlab.kitware.com/vtk/vtk/-/issues/17876
+    patch("pegtl_tao_find.patch", when="platform=windows")
+
     generator("ninja", "make", default="ninja")
     # https://gitlab.kitware.com/paraview/paraview/-/issues/21223
     conflicts("generator=ninja", when="%xl")
