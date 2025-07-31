@@ -54,3 +54,6 @@ jobs:
           ./.ci/validate_last_exit.ps1
           spack -d audit externals
           ./.ci/validate_last_exit.ps1
+    - name: Setup tmate session
+      if: ${{ failure() }}
+      uses: mxschmitt/action-tmate@v3
