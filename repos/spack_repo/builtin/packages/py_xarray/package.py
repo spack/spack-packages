@@ -149,4 +149,4 @@ class PyXarray(PythonPackage):
 
     # https://github.com/pydata/xarray/issues/10588
     def patch(self):
-        filter_file(r"^license.+","","pyproject.toml")
+        filter_file(r"^license.+", "", "pyproject.toml")
