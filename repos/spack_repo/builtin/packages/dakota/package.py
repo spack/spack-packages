@@ -82,7 +82,7 @@ class Dakota(CMakePackage):
     depends_on("mpi", when="+mpi")
 
     depends_on("trilinos+rol")
-    depends_on("trilinos@13:", when="@6:13:")
+    depends_on("trilinos@13:", when="@6.13:")
 
     depends_on("hdf5@1.10.4:1.10 +hl+cxx", when="+hdf5")
     depends_on("python", when="+python")
