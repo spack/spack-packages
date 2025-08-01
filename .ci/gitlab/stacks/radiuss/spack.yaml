@@ -11,6 +11,8 @@ spack:
       - target=x86_64_v3
       - ~cuda
       - ~rocm
+      - spec: ^mvapich2
+        when: '^mpi'
       prefer:
         - "%gcc"
       providers:
