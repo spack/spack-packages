@@ -1,8 +1,8 @@
 <h2>
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://cdn.rawgit.com/spack/spack/develop/share/spack/logo/spack-logo-white-text.svg" width="250">
-  <source media="(prefers-color-scheme: light)" srcset="https://cdn.rawgit.com/spack/spack/develop/share/spack/logo/spack-logo-text.svg" width="250">
-  <img alt="Spack" src="https://cdn.rawgit.com/spack/spack/develop/share/spack/logo/spack-logo-text.svg" width="250">
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-white-text.svg" width="368">
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-text.svg" width="368">
+  <img alt="Spack" src="https://raw.githubusercontent.com/spack/spack-packages/refs/heads/develop/logo/spack-packages-logo-text.svg" width="368">
 </picture>
 
 <br>
@@ -16,11 +16,8 @@
 
 **[Getting Started] &nbsp; • &nbsp; [Community] &nbsp; • &nbsp; [Packaging Guide] &nbsp; • &nbsp; [Spack]**
 
-# Spack Packages
-
-This is the default [Spack](https://github.com/spack/spack) package repository, which
-contains the set of packages maintained by the Spack community. In Spack v1.0 and later,
-the repository here is automatically added to the Spack configuration.
+This is the default [Spack](https://github.com/spack/spack) package repository, which contains the set of packages maintained by the Spack community.
+In Spack v1.0 and later, the repository here is automatically added to the Spack configuration.
 
 ## Community
 

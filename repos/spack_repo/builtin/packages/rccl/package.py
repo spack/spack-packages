@@ -153,6 +153,8 @@ class Rccl(CMakePackage):
             self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
             self.define("ROCM_PATH", self.spec["hip"].prefix),
             self.define("BUILD_TESTS", self.run_tests),
+            self.define("ENABLE_MSCCLPP", False),
+            self.define("ENABLE_MSCCL_KERNEL", False),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))

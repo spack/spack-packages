@@ -31,7 +31,7 @@ jobs:
         python-version: ${{inputs.python_version}}
     - name: Install Python packages
       run: |
-        pip install --upgrade pip setuptools pytest coverage[toml]
+        python -m pip install --upgrade pip setuptools pytest coverage[toml]
     - name: Setup for Windows run
       if: runner.os == 'Windows'
       run: |

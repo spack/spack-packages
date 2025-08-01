@@ -55,7 +55,7 @@ skip-magic-trailing-comma = true
 
 [tool.ruff.lint]
 extend-select = ["I"]
-ignore = ["E731", "E203"]
+ignore = ["E731", "E203", "F403", "F405", "F811"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false

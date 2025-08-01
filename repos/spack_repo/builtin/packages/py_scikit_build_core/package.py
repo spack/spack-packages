@@ -20,6 +20,7 @@ class PyScikitBuildCore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.11.5", sha256="8f0a1edb86cb087876f3c699d2a2682012efd8867b390ed37355f13949d0628e")
     version("0.11.1", sha256="4e5988df5cd33f0bdb9967b72663ca99f50383c9bc21d8b24fa40c0661ae72b7")
     version("0.10.7", sha256="04cbb59fe795202a7eeede1849112ee9dcbf3469feebd9b8b36aa541336ac4f8")
     version("0.9.5", sha256="2a4cb119cc968fe87ae05582979657cc0e7be45655798446eabbe490e61ce072")
@@ -35,6 +36,7 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    depends_on("python@3.8:", type=("build", "run"), when="@0.11:")
     depends_on("python@3.7:", type=("build", "run"))
 
     # Build system
