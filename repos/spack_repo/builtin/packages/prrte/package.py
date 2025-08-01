@@ -45,6 +45,7 @@ class Prrte(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("pmix")
+    depends_on("pmix@6:", when="@4:")
     depends_on("pmix@:5", when="@:3")
     depends_on("libevent")
     depends_on("hwloc")
