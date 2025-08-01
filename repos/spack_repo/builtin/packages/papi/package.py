@@ -72,6 +72,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    depends_on("perl", type="build")
     depends_on("lm-sensors", when="+lmsensors")
     depends_on("cuda", when="+cuda")
     depends_on("cuda", when="+nvml")
