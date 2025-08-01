@@ -9,13 +9,14 @@ import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
 from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 
 from spack.package import *
 
 is_windows = sys.platform == "win32"
 
 
-class Curl(NMakePackage, AutotoolsPackage):
+class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     """cURL is an open source command line tool and library for
     transferring data with URL syntax"""
 
@@ -137,6 +138,11 @@ class Curl(NMakePackage, AutotoolsPackage):
     depends_on("pkgconfig", type="build", when="platform=linux")
     depends_on("pkgconfig", type="build", when="platform=freebsd")
 
+    # CMake 4.0: is not compatible with CMake systems requiring
+    # 3.0, which curl@7.63 requires
+    depends_on("cmake@:3", when="build_system=cmake @:7.63")
+
+
     depends_on("gnutls", when="tls=gnutls")
 
     with when("tls=mbedtls"):
@@ -172,7 +178,7 @@ class Curl(NMakePackage, AutotoolsPackage):
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")
 
-    build_system("autotools", conditional("nmake", when="platform=windows"), default="autotools")
+    build_system("autotools", "cmake", conditional("nmake", when="platform=windows"), default="cmake")
 
     @classmethod
     def determine_version(cls, exe):
@@ -374,3 +380,13 @@ class NMakeBuilder(BuildEnvironment, NMakeBuilder):
             # safeguard against future curl releases that do this for us
             if os.path.exists(libcurl_a) and not os.path.exists(libcurl):
                 symlink(libcurl_a, libcurl)
+
+class CMakeBuilder(CMakeBuilder):
+    def cmake_args(self):
+        args = [
+            self.define("BUILD_TESTING", False),
+            self.define_from_variant("CMAKE_USE_LIBSSH2", "libssh2"),
+            self.define_from_variant("CMAKE_USE_OPENSSL", "openssl"),
+            self.define_from_variant("CMAKE_USE_OPENLDAP", "ldap"),
+            
+        ]
