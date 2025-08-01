@@ -59,9 +59,13 @@ class PyUxarray(PythonPackage):
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-shapely", type=("build", "run"))
     depends_on("py-spatialpandas", type=("build", "run"))
+    # https://github.com/holoviz/spatialpandas/issues/146
+    depends_on("py-spatialpandas@0.5:", type=("build", "run"), when="^py-dask@2025.1:")
     depends_on("py-geopandas", type=("build", "run"))
     depends_on("py-xarray", type=("build", "run"))
     depends_on("py-hvplot", type=("build", "run"))
+    # https://github.com/holoviz/hvplot/issues/1471
+    depends_on("py-hvplot@0.17:", type=("build", "run"), when="^py-dask@2025.1:")
 
     depends_on("py-healpix", type=("build", "run"), when="@2025.4.0:")
     depends_on("py-polars", type=("build", "run"), when="@2025.4.0:")
