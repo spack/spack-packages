@@ -371,8 +371,9 @@ class PyNumpy(PythonPackage):
 
         if spec["blas"].satisfies("+ilp64") != spec["lapack"].satisfies("+ilp64"):
             raise InstallError(
-                "Either both blas and lapack must use ilp64 or none:"
-                " ({0} vs. {1})".format(blas, lapack)
+                "Either both blas and lapack must use ilp64 or none: ({0} vs. {1})".format(
+                    blas, lapack
+                )
             )
         use_ilp64 = spec["blas"].satisfies("+ilp64")
 

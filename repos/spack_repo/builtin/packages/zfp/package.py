@@ -86,9 +86,7 @@ class Zfp(CMakePackage, CudaPackage):
         "daz",
         default=False,
         when="@1.0.0:",
-        description="Denormals are zero: "
-        "Treat denormal-only blocks as containing "
-        "all zeroes",
+        description="Denormals are zero: Treat denormal-only blocks as containing all zeroes",
     )
 
     variant(

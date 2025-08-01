@@ -148,7 +148,7 @@ class MakefileBuilder(makefile.MakefileBuilder, SetupEnvironment):
 
 class GenericBuilder(generic.GenericBuilder, SetupEnvironment):
     def install(self, pkg, spec, prefix):
-        nmake("-f" "win32\\Makefile.msc")
+        nmake("-fwin32\\Makefile.msc")
         build_dir = pkg.stage.source_path
         install_tree = {
             "bin": glob.glob(os.path.join(build_dir, "*.dll")),
