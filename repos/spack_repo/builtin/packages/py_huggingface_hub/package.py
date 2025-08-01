@@ -55,7 +55,8 @@ class PyHuggingfaceHub(PythonPackage):
         depends_on("py-tqdm")
         depends_on("py-typing-extensions@3.7.4.3:", when="@0.10:")
         depends_on("py-typing-extensions", when="@0.0.10:")
-        depends_on("py-hf-xet")
+        depends_on("py-hf-xet@1.1.3:1", when="@0.34:")
+        depends_on("py-hf-xet@1.1.2:1", when="@0.32:")
 
         with when("+cli"):
             depends_on("py-inquirerpy@0.3.4")
