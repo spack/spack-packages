@@ -43,7 +43,10 @@ class PyUxarray(PythonPackage):
     depends_on("py-dask@2024.7.1: +dataframe", type=("build", "run"))
     depends_on("py-dask-expr@1.1.9:", type=("build", "run"))
 
+    # https://github.com/holoviz/hvplot/issues/1471
     depends_on("py-datashader", type=("build", "run"))
+    depends_on("py-datashader@0.17:", type=("build", "run"), when="^py-dask@2025.1:")
+
     depends_on("py-geoviews", type=("build", "run"))
     depends_on("py-holoviews", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
@@ -64,10 +67,6 @@ class PyUxarray(PythonPackage):
     depends_on("py-geopandas", type=("build", "run"))
     depends_on("py-xarray", type=("build", "run"))
     depends_on("py-hvplot", type=("build", "run"))
-    # https://github.com/holoviz/hvplot/issues/1471
-    depends_on("py-hvplot@0.17:", type=("build", "run"), when="^py-dask@2025.1:")
-
     depends_on("py-healpix", type=("build", "run"), when="@2025.4.0:")
     depends_on("py-polars", type=("build", "run"), when="@2025.4.0:")
-
     depends_on("py-pytest", type=("build", "run"))
