@@ -11,9 +11,9 @@ from spack.package import *
 # https://github.com/flame/blis/issues/195
 # https://github.com/flame/blis/issues/197
 
-# If the spack target architecture matches one of these values, 
-# provide this target to the Blis build as the Blis config target 
-# instead of using automatic configuration detection. 
+# If the spack target architecture matches one of these values,
+# provide this target to the Blis build as the Blis config target
+# instead of using automatic configuration detection.
 _targets = ["x86_64", "zen", "zen2"]
 
 
