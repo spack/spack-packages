@@ -18,7 +18,7 @@ _versions = {
     },
     "25.3.1": {
         "Linux-x86_64": (
-            "2d94390e8858c72f6a28080954fd640ae4449d08d7b9d4ff8c94ad39beaf5f46",
+            "53a86109463cfd70ba7acab396d416e623012914eee004729e1ecd6fe94e8c69",
             "https://repo.anaconda.com/miniconda/Miniconda3-py313_25.3.1-1-Linux-x86_64.sh",
         )
     },
