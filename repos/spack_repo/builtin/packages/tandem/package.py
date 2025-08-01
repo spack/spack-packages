@@ -30,8 +30,16 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
     )
     version("1.0", tag="v1.0", commit="eccab10cbdf5842ed9903fac7a023be5e2779f36", submodules=True)
 
-    patch("fix_v1.0_compilation.diff", when="@1.0")
+    # Simplex.h: Added #include <limits> to ensure std::numeric_limits is available explicitly,
+    # as required by standard-compliant compilers like GCC.
+    # CMakeLists.txt: Quoted LibxsmmGeneratorExecutable in WITH_LIBXSMM to ensure correct
+    # command-line interpretation, especially when paths contain spaces or special characters.
     patch("fix_v1.1_compilation.diff", when="@1.1")
+
+    # same as the patch above and:
+    # doctest.h: Redefined SIGSTKSZ for compatibility with glibc 2.34+, where SIGSTKSZ may no
+    # longer be usable in preprocessor conditionals without explicit definition.
+    patch("fix_v1.0_compilation.diff", when="@1.0")
 
     maintainers("dmay23", "Thomas-Ulrich")
     variant("polynomial_degree", default="2", description="Polynomial degree")
@@ -77,14 +85,9 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("zlib-api")
 
-    conflicts("^petsc memalign=none")
-    conflicts("^petsc memalign=4")
-    conflicts("^petsc memalign=8")
-    conflicts("^petsc memalign=16")
-
     depends_on("petsc +int64 +mumps +scalapack memalign=32")
     depends_on("petsc@3.22", when="@1.2:")
-    depends_on("petsc@3.16:3.17", when="@:1.1")
+    depends_on("petsc@3.16:3.19", when="@:1.1")
 
     depends_on("petsc +knl", when="target=skylake:")
 
