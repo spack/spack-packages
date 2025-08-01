@@ -26,8 +26,8 @@ class PyXhistogram(PythonPackage):
     depends_on("py-numpy@1.17:", type=("build", "run"))
 
     # compatibility with python 3.12
+    # https://github.com/xgcm/xhistogram/pull/90
     patch(
-        "https://github.com/xgcm/xhistogram/commit/6eef6c697d95ea70883a5ff6ee2f3e7188eaa4c5.patch?full_index=1",
-        sha256="2a508aded3ac57dfe7c87ff3e27124400daf04391759009fea209ce5cb0067fe",
+        "patch_py312_versioneer.patch",
         when="^python@3.12:",
     )
