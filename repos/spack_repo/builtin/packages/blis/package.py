@@ -11,12 +11,10 @@ from spack.package import *
 # https://github.com/flame/blis/issues/195
 # https://github.com/flame/blis/issues/197
 
-# Define a mapping between the selected architecture and the Blis config target
-_targets = [
-    # Arch, Target
-    ["x86_64", "x86_64"],
-    ["zen", "zen"],
-]
+# If the spack target architecture matches one of these values, 
+# provide this target to the Blis build as the Blis config target 
+# instead of using automatic configuration detection. 
+_targets = ["x86_64", "zen", "zen2"]
 
 
 class BlisBase(MakefilePackage):
@@ -90,11 +88,11 @@ class BlisBase(MakefilePackage):
         return config_args
 
     def edit(self, spec, prefix):
-        # To ensure the target should always be the last argument for base and derived class
         target = "auto"
-        for _arch, _target in _targets:
+        for _target in _targets:
             if self.spec.satisfies(f"target={_target}"):
                 target = _target
+        # To ensure the target should always be the last argument for base and derived class
         config_args = self.configure_args() + [target]
         configure("--prefix={0}".format(prefix), *config_args)
 
