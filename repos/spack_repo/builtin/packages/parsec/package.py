@@ -37,8 +37,8 @@ class Parsec(CMakePackage, CudaPackage):
         url="https://github.com/ICLDisco/parsec/archive/refs/tags/v1.1.0.tar.gz",
     )
 
-    // Add data_dist/matrix/apply.h to the list of header files to install.
-    // This is required for building against this parsec installation.
+    # Add data_dist/matrix/apply.h to the list of header files to install.
+    # This is required for building against this parsec installation.
     patch("apply-header.patch", when="@4.0.2411")
 
     variant(
