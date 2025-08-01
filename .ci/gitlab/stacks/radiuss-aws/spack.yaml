@@ -26,9 +26,10 @@ spack:
     - camp +cuda
     - chai
     - chai +cuda +raja
-    - mfem
-    - mfem +superlu-dist+petsc+sundials
-    - mfem +cuda ^hypre+cuda
+    # mfem does not work with gcc 7
+    # - mfem
+    # - mfem +superlu-dist+petsc+sundials
+    # - mfem +cuda ^hypre+cuda
     - raja
     - raja +cuda
     - umpire

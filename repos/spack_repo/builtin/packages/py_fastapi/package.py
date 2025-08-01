@@ -47,7 +47,7 @@ class PyFastapi(PythonPackage):
     depends_on("py-starlette@0.27", when="@0.95.2:0.106", type=("build", "run"))
     depends_on("py-starlette@0.22.0", when="@:0.89.1", type=("build", "run"))
     depends_on("py-pydantic@1.7.4:1,2.1.1:2", when="@0.101:", type=("build", "run"))
-    depends_on("py-pydantic@1.7.4:1", when="@0.96.1:", type=("build", "run"))
+    depends_on("py-pydantic@1.7.4:1", when="@0.96.1:0.100", type=("build", "run"))
     depends_on("py-pydantic@1.6.2:1", when="@:0.96.0", type=("build", "run"))
     depends_on("py-typing-extensions@4.8.0:", when="@0.104:", type=("build", "run"))
 

@@ -239,6 +239,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos@3.2.00", when="@3.2.00")
     depends_on("kokkos@3.1.00", when="@3.1.00")
     depends_on("kokkos@3.0.00", when="@3.0.00")
+    depends_on("kokkos+pic", when="+shared")
     depends_on("kokkos+cuda", when="+execspace_cuda")
     depends_on("kokkos+openmp", when="+execspace_openmp")
     depends_on("kokkos+threads", when="+execspace_threads")

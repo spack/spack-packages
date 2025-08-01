@@ -43,6 +43,7 @@ class Verilator(AutotoolsPackage):
 
     version("master", branch="master")
 
+    version("5.038", sha256="f8c03105224fa034095ba6c8a06443f61f6f59e1d72f76b718f89060e905a0d4")
     version("5.036", sha256="4199964882d56cf6a19ce80c6a297ebe3b0c35ea81106cd4f722342594337c47")
     version("5.034", sha256="002da98e316ca6eee40407f5deb7d7c43a0788847d39c90d4d31ddbbc03020e8")
     version("5.032", sha256="5a262564b10be8bdb31ff4fb67d77bcf5f52fc1b4e6c88d5ca3264fb481f1e41")
@@ -79,7 +80,6 @@ class Verilator(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
