@@ -11,12 +11,8 @@ spack:
       - target=x86_64_v3
       - ~cuda
       - ~rocm
-      - spec: ^mvapich2
-        when: '^mpi'
-      prefer:
-        - "%gcc"
-      providers:
-        mpi: [mvapich2]
+    mpi:
+      require: openmpi
   
   concretizer:
     unify: false
@@ -53,7 +49,9 @@ spack:
   ci:
     pipeline-gen:
     - build-job:
-        image: ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
+        image:
+          name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+          entrypoint: ['']
 
   cdash:
     build-group: RADIUSS
