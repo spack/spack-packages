@@ -27,4 +27,4 @@ class PyXhistogram(PythonPackage):
 
     # compatibility with python 3.12
     # https://github.com/xgcm/xhistogram/pull/90
-    patch("patch_py312_versioneer.patch",when="^python@3.12:")
+    patch("patch_py312_versioneer.patch", when="^python@3.12:")
