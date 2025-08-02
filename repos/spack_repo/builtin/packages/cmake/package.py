@@ -20,6 +20,7 @@ class Cmake(Package):
     homepage = "https://www.cmake.org"
     url = "https://github.com/Kitware/CMake/releases/download/v3.19.0/cmake-3.19.0.tar.gz"
     git = "https://gitlab.kitware.com/cmake/cmake.git"
+    github = "https://github.com/kitware/cmake"
 
     maintainers("alalazo", "johnwparent")
 
@@ -166,6 +167,12 @@ class Cmake(Package):
     # Statically linked binaries error on install when CMAKE_INSTALL_RPATH is set
     # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/9623
     patch("mr-9623.patch", when="@3.22.0:3.30")
+
+    patch(
+        f"{github}/commit/1b0c92a3a1b782ff3e1c4499b6ab8db614d45bcd.patch?full_index=1",
+        sha256="fdea723be9713f3ed4624055bf21ef5876647d63c151b91006608ec44a912ae1",
+        when="@3.11:3.31.6",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
