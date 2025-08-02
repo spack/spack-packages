@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -19,6 +21,7 @@ class Opam(AutotoolsPackage):
 
     maintainers("scemama")
 
+    version("2.4.1", sha256="c4d053029793c714e4e7340b1157428c0f90783585fb17f35158247a640467d9")
     version("2.2.1", sha256="07ad3887f61e0bc61a0923faae16fcc141285ece5b248a9e2cd4f902523cc121")
     version("2.2.0", sha256="39334f36adbe280683487cf204b7b0642080fc5965747f7d6f7cc7b83cd7a192")
     version("2.1.6", sha256="d2af5edc85f552e0cf5ec0ddcc949d94f2dc550dc5df595174a06a4eaf8af628")
@@ -50,9 +53,22 @@ class Opam(AutotoolsPackage):
 
     sanity_check_is_file = ["bin/opam"]
 
-    @property
-    def build_directory(self):
-        return self.stage.source_path
+    def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec) -> None:
+        #userhome = os.environ.get('HOME')
+        #env.set("OPAM_SWITCH_PREFIX", userhome + '/.opam/default')
+        #env.set("OCAMLTOP_INCLUDE_PATH", userhome + '/.opam/default/lib/toplevel')
+        #
+        #env.set("CAML_LD_LIBRARY_PATH", userhome + '/.opam/default/lib/stublibs')
+        #env.append_path("CAML_LD_LIBRARY_PATH", userhome + '/.opam/default/lib/ocaml')
+        #env.set("OCAML_TOPLEVEL_PATH", userhome + '/.opam/default/lib/toplevel')
+        #env.prepend_path("PATH", userhome + '/.opam/default/bin')
+        
+        env.set("OPAM_SWITCH_PREFIX", self.spec.prefix + '/root/default')
+        env.set("OCAMLTOP_INCLUDE_PATH", self.spec.prefix + '/root/default/lib/toplevel')
+        env.set("CAML_LD_LIBRARY_PATH", self.spec.prefix + '/root/default/lib/stublibs')
+        env.append_path("CAML_LD_LIBRARY_PATH", self.spec.prefix + '/root/default/lib/ocaml')
+        env.set("OCAML_TOPLEVEL_PATH", self.spec.prefix + '/root/default/lib/toplevel')
+        env.prepend_path("PATH", self.spec.prefix + '/root/default/bin')
 
     @when("@:1.2.2")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
@@ -90,3 +106,6 @@ class Opam(AutotoolsPackage):
 
     def install(self, spec, prefix):
         make("install")
+        opam = Executable(prefix + "/bin/opam")
+        opam('init', '--root={0}/root'.format(prefix), '-n')
+        
