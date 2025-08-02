@@ -41,6 +41,9 @@ class Opam(AutotoolsPackage):
     variant('user', default=False)
 
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+    
+    depends_on("bubblewrap", type=("build", "run"), when="@2: platform=linux")
 
     # OCaml 4.10.0 has removed the -safe-string flag, which is necessary
     # for OPAM 1i (see docstring of setup_build_environment).
