@@ -246,7 +246,6 @@ class Conduit(CMakePackage):
             return "https://github.com/LLNL/conduit/releases/download/v{0}/conduit-v{1}-src-with-blt.tar.gz".format(
                 v, v
             )
-        return url
 
     ####################################################################
     # Note: cmake, build, and install stages are handled by CMakePackage
