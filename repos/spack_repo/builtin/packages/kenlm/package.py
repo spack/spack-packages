@@ -16,7 +16,6 @@ class Kenlm(CMakePackage):
     version("master", branch="master")
 
     variant("python", default=True, description="Build Python bindings")
-    variant("debug", default=False, description="Build with debug flags")
 
     extends("python", when="+python")
 
@@ -29,11 +28,6 @@ class Kenlm(CMakePackage):
 
     def cmake_args(self):
         args = [self.define("BUILD_SHARED_LIBS", False), self.define("KENLM_MAX_ORDER", 6)]
-
-        if self.spec.variants["debug"].value:
-            args.append(self.define("CMAKE_BUILD_TYPE", "Debug"))
-        else:
-            args.append(self.define("CMAKE_BUILD_TYPE", "Release"))
 
         return args
 

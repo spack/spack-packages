@@ -30,7 +30,7 @@ class PyFastapi(PythonPackage):
     depends_on("py-hatchling", when="@:0.110.2", type="build")
 
     depends_on("py-starlette@0.40.0:0.46", when="@0.115.12:", type=("build", "run"))
-    depends_on("py-starlette@0.40:0.41", when="@0.115.3:", type=("build", "run"))
+    depends_on("py-starlette@0.40:0.41", when="@0.115.3:0.115.6", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.40", when="@0.115.2", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.38", when="@0.112.1:0.115.1", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.37", when="@0.110.1:0.112.0", type=("build", "run"))
