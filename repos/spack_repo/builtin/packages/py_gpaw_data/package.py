@@ -18,7 +18,7 @@ class PyGpawData(PythonPackage):
 
     version("1.0.1", sha256="28212110aa04daae333ef1260b281d70b818ad9cf4282078624ee3fc7a8fc05c")
     with default_args(deprecated=True):
-        version("1.0.0", sha256="28212110aa04daae333ef1260b281d70b818ad9cf4282078624ee3fc7a8fc05c")
+        version("1.0.0", sha256="dabcdc4bb29450b37ed8bece6161d42da4ff609f05e0067a35c7811849e64223")
 
     # FIXME: Only add the python/pip/wheel dependencies if you need specific versions
     # or need to change the dependency type. Generic python/pip/wheel dependencies are
