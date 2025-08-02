@@ -65,7 +65,8 @@ class OpamBuilder(Builder):
     opam_name: Optional[str] = None
 
     def install(self, pkg: OpamPackage, spec: Spec, prefix: Prefix) -> None:
-                
+        if spec['opam'].satisfies('+user'):
+            return        
         opam = Executable("opam")
         name = pkg.opam_name
         assert name is not None, "Opam package name is not set"

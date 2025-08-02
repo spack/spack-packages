@@ -38,6 +38,8 @@ class Opam(AutotoolsPackage):
     version("1.2.2", sha256="15e617179251041f4bf3910257bbb8398db987d863dd3cfc288bdd958de58f00")
     version("1.2.1", sha256="f210ece7a2def34b486c9ccfb75de8febd64487b2ea4a14a7fa0358f37eacc3b")
 
+    variant('user', default=False)
+
     depends_on("c", type="build")  # generated
 
     # OCaml 4.10.0 has removed the -safe-string flag, which is necessary
@@ -54,22 +56,23 @@ class Opam(AutotoolsPackage):
     sanity_check_is_file = ["bin/opam"]
 
     def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec) -> None:
-        #userhome = os.environ.get('HOME')
-        #env.set("OPAM_SWITCH_PREFIX", userhome + '/.opam/default')
-        #env.set("OCAMLTOP_INCLUDE_PATH", userhome + '/.opam/default/lib/toplevel')
-        #
-        #env.set("CAML_LD_LIBRARY_PATH", userhome + '/.opam/default/lib/stublibs')
-        #env.append_path("CAML_LD_LIBRARY_PATH", userhome + '/.opam/default/lib/ocaml')
-        #env.set("OCAML_TOPLEVEL_PATH", userhome + '/.opam/default/lib/toplevel')
-        #env.prepend_path("PATH", userhome + '/.opam/default/bin')
-        
-        env.set("OPAM_SWITCH_PREFIX", self.spec.prefix + '/root/default')
-        env.set("OCAMLTOP_INCLUDE_PATH", self.spec.prefix + '/root/default/lib/toplevel')
-        env.set("CAML_LD_LIBRARY_PATH", self.spec.prefix + '/root/default/lib/stublibs')
-        env.append_path("CAML_LD_LIBRARY_PATH", self.spec.prefix + '/root/default/lib/ocaml')
-        env.set("OCAML_TOPLEVEL_PATH", self.spec.prefix + '/root/default/lib/toplevel')
-        env.prepend_path("PATH", self.spec.prefix + '/root/default/bin')
+        if self.spec.satisfies("+user"):
+            rootdir = os.path.join(os.environ.get('HOME'),'.opam','default')
+        else:
+            rootdir = os.path.join(self.spec.prefix, 'root', 'default')
 
+        env.set("OPAM_SWITCH_PREFIX", rootdir)
+        env.set("OCAMLTOP_INCLUDE_PATH", 
+            os.path.join(rootdir, 'lib', 'toplevel'))
+        env.set("CAML_LD_LIBRARY_PATH",
+            os.path.join(rootdir, 'lib', 'stublibs'))
+        env.append_path("CAML_LD_LIBRARY_PATH", 
+            os.path.join(rootdir, 'lib', 'ocaml'))
+        env.set("OCAML_TOPLEVEL_PATH", 
+            os.path.join(rootdir, 'lib', 'toplevel'))
+        env.prepend_path("PATH",
+            os.path.join(rootdir, 'bin'))
+        
     @when("@:1.2.2")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """In OCaml <4.06.1, the default was -safe-string=0, and this has
@@ -107,5 +110,6 @@ class Opam(AutotoolsPackage):
     def install(self, spec, prefix):
         make("install")
         opam = Executable(prefix + "/bin/opam")
-        opam('init', '--root={0}/root'.format(prefix), '-n')
+        if spec.satisfies('~user'):
+            opam('init', '--root={0}/root'.format(prefix), '-n')
         
