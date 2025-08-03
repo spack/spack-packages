@@ -66,6 +66,9 @@ class OpamBuilder(Builder):
 
     def install(self, pkg: OpamPackage, spec: Spec, prefix: Prefix) -> None:
         if spec['opam'].satisfies('+user'):
+            tty.warn(
+                f"User provided package."
+            )
             return        
         opam = Executable("opam")
         name = pkg.opam_name

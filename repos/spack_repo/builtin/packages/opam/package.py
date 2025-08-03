@@ -60,7 +60,8 @@ class Opam(AutotoolsPackage):
 
     def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec) -> None:
         if self.spec.satisfies("+user"):
-            rootdir = os.path.join(os.environ.get('HOME'),'.opam','default')
+            # User supplied environment
+            return
         else:
             rootdir = os.path.join(self.spec.prefix, 'root', 'default')
 
