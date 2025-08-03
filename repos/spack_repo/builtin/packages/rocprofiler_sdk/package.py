@@ -79,4 +79,5 @@ class RocprofilerSdk(CMakePackage):
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
 
     def setup_run_environment(self, env):
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["aqlprofile"].prefix.lib)
+        if not self.spec.external:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["aqlprofile"].prefix.lib)

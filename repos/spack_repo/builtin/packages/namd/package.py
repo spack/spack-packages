@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -183,7 +182,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                 # this options are take from the default provided
                 # configuration files
                 # https://github.com/UIUC-PPL/charm/pull/2778
-                archopt = optimization_flags(self.compiler, spec.target)
+                archopt = microarchitecture_flags(self.spec, "c")
 
                 if self.spec.satisfies("^charmpp@:6.10.1"):
                     optims_opts = {
@@ -268,7 +267,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                     tty.info("Building binaries with AVX512-tile optimization")
                     copy("Linux-AVX512-icc.arch", arch_filename)
                 elif spec.version >= Version("2.14") and os.path.exists("Linux-SKX-icc.arch"):
-                    tty.info("Building binaries with Skylake-X" "AVX512 optimization")
+                    tty.info("Building binaries with Skylake-X AVX512 optimization")
                     copy("Linux-SKX-icc.arch", arch_filename)
                 else:
                     return False

@@ -7,10 +7,8 @@ import pathlib
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import get_cmake_prefix_path
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.build_environment
 from spack.package import *
 
 
@@ -22,6 +20,7 @@ class Cmake(Package):
     homepage = "https://www.cmake.org"
     url = "https://github.com/Kitware/CMake/releases/download/v3.19.0/cmake-3.19.0.tar.gz"
     git = "https://gitlab.kitware.com/cmake/cmake.git"
+    github = "https://github.com/kitware/cmake"
 
     maintainers("alalazo", "johnwparent")
 
@@ -37,7 +36,7 @@ class Cmake(Package):
     version(
         "3.31.8",
         sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa",
-        preferred=True
+        preferred=True,
     )
     version("3.31.6", sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0")
     version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")
@@ -168,6 +167,12 @@ class Cmake(Package):
     # Statically linked binaries error on install when CMAKE_INSTALL_RPATH is set
     # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/9623
     patch("mr-9623.patch", when="@3.22.0:3.30")
+
+    patch(
+        f"{github}/commit/1b0c92a3a1b782ff3e1c4499b6ab8db614d45bcd.patch?full_index=1",
+        sha256="fdea723be9713f3ed4624055bf21ef5876647d63c151b91006608ec44a912ae1",
+        when="@3.11:3.31.6",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -310,7 +315,7 @@ class Cmake(Package):
         if not sys.platform == "win32":
             args.append("--prefix={0}".format(self.prefix))
 
-            jobs = spack.build_environment.get_effective_jobs(
+            jobs = get_effective_jobs(
                 make_jobs,
                 parallel=self.parallel,
                 supports_jobserver=self.generator.supports_jobserver,

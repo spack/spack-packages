@@ -2,17 +2,19 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     register_builder,
     run_after,
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests, execute_install_time_tests
+from ._checks import execute_build_time_tests
 
 
 class WafPackage(PackageBase):
@@ -24,7 +26,7 @@ class WafPackage(PackageBase):
     # build-system class we are using
     build_system_class = "WafPackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "waf"
+    default_buildsystem = "waf"
 
     build_system("waf")
     # Much like AutotoolsPackage does not require automake and autoconf
@@ -62,7 +64,7 @@ class WafBuilder(BuilderWithDefaults):
     phases = ("configure", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = (
+    package_methods = (
         "build_test",
         "install_test",
         "configure_args",
@@ -73,7 +75,7 @@ class WafBuilder(BuilderWithDefaults):
     )
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_time_test_callbacks",
         "build_directory",
         "install_time_test_callbacks",

@@ -1,0 +1,66 @@
+intel:
+  package: 'intel'
+
+python:
+  package:
+    - '^python$'
+    - '^py_'
+
+R:
+  package:
+    - '^r$'
+    - '^r_'
+
+new-package:
+  filename: '^repos/spack_repo/builtin/packages/[^/]+/package.py$'
+  status: 'added'
+
+update-package:
+  filename: '^repos/spack_repo/builtin/packages/[^/]+/package.py$'
+  status:
+    - 'modified'
+    - 'renamed'
+
+remove-package:
+  filename: '^repos/spack_repo/builtin/packages/[^/]+/package.py$'
+  status:
+    - 'removed'
+
+maintainers:
+  patch: '[+-] +maintainers +='
+
+new-version:
+  patch: '\+ +version\('
+
+conflicts:
+  patch: '\+ +conflicts\('
+
+dependencies:
+  patch: '\+ +depends_on\('
+
+extends:
+  patch: '\+ +extends\('
+
+virtual-dependencies:
+  patch: '\+ +provides\('
+
+patch:
+  patch: '\+ +patch\('
+
+new-variant:
+  patch: '\+ +variant\('
+
+resources:
+  patch: '\+ +resource\('
+
+external-packages:
+  patch: '[+-] +def determine_spec_details\('
+
+libraries:
+  patch: '[+-] +def libs\('
+
+headers:
+  patch: '[+-] +def headers\('
+
+stand-alone-tests:
+  patch: '[+-] +def test[_]?.*\('

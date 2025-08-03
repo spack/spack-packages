@@ -6,7 +6,6 @@ import re
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
 
-import spack.compilers.config
 from spack.package import *
 
 
@@ -52,7 +51,7 @@ class SpectrumMpi(BundlePackage):
         def get_spack_compiler_spec(compilers_found):
             # check using cc for now, as everyone should have that defined.
             path = os.path.dirname(compilers_found["cc"])
-            spack_compilers = spack.compilers.config.find_compilers([path])
+            spack_compilers = find_compilers([path])
             actual_compiler = None
             # check if the compiler actually matches the one we want
             for spack_compiler in spack_compilers:
@@ -134,10 +133,13 @@ class SpectrumMpi(BundlePackage):
             env.set("MPIF90", os.path.join(self.prefix.bin, "mpif90"))
 
         dependent_module = dependent_spec.package.module
-        env.set("OMPI_CC", dependent_module.spack_cc)
-        env.set("OMPI_CXX", dependent_module.spack_cxx)
-        env.set("OMPI_FC", dependent_module.spack_fc)
-        env.set("OMPI_F77", dependent_module.spack_f77)
+        if dependent_spec.satisfies("^c"):
+            env.set("OMPI_CC", dependent_module.spack_cc)
+        if dependent_spec.satisfies("^cxx"):
+            env.set("OMPI_CXX", dependent_module.spack_cxx)
+        if dependent_spec.satisfies("^fortran"):
+            env.set("OMPI_FC", dependent_module.spack_fc)
+            env.set("OMPI_F77", dependent_module.spack_f77)
         env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

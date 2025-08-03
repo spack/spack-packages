@@ -5,42 +5,33 @@
 import collections
 import errno
 import os
-import pathlib
 import shutil
 import stat
 import sys
+from pathlib import Path
+from typing import Tuple
 
-import _vendoring.archspec.cpu
 import pytest
-
-from llnl.util.filesystem import copy_tree, mkdirp, remove_linked_tree, touchp
 
 import spack.bootstrap.core
 import spack.caches
-import spack.compilers.config
-import spack.compilers.libraries
 import spack.concretize
 import spack.config
 import spack.environment as ev
 import spack.error
-import spack.modules.common
 import spack.package_base
 import spack.paths
 import spack.platforms
 import spack.repo
-import spack.solver.asp
 import spack.spec
 import spack.stage
 import spack.store
 import spack.subprocess_context
-import spack.util.executable
-import spack.util.file_cache
-import spack.util.git
-import spack.util.gpg
-import spack.util.parallel
-import spack.util.web
+import spack.vendor.archspec.cpu
 from spack.enums import ConfigScopePriority
 from spack.installer import PackageInstaller
+from spack.llnl.util.filesystem import copy_tree, mkdirp, remove_linked_tree, touchp
+from spack.package import host_platform
 
 
 @pytest.fixture(autouse=True)
@@ -134,31 +125,32 @@ def onerror(func, path, error_info):
 
 
 @pytest.fixture(scope="function", autouse=True)
-def mock_stage(tmpdir_factory, monkeypatch, request):
+def mock_stage(tmp_path_factory: pytest.TempPathFactory, monkeypatch, request):
     """Establish the temporary build_stage for the mock archive."""
     # The approach with this autouse fixture is to set the stage root
     # instead of using spack.config.override() to avoid configuration
     # conflicts with dozens of tests that rely on other configuration
     # fixtures, such as config.
-    if "nomockstage" not in request.keywords:
-        # Set the build stage to the requested path
-        new_stage = tmpdir_factory.mktemp("mock-stage")
-        new_stage_path = str(new_stage)
 
-        # Ensure the source directory exists within the new stage path
-        source_path = os.path.join(new_stage_path, spack.stage._source_path_subdir)
-        mkdirp(source_path)
+    if "nomockstage" in request.keywords:
+        # Tests can opt-out with @pytest.mark.nomockstage
+        yield None
+        return
 
-        monkeypatch.setattr(spack.stage, "_stage_root", new_stage_path)
+    # Set the build stage to the requested path
+    new_stage = tmp_path_factory.mktemp("mock-stage")
 
-        yield new_stage_path
+    # Ensure the source directory exists within the new stage path
+    source_path = new_stage / spack.stage._source_path_subdir
+    source_path.mkdir(parents=True, exist_ok=True)
 
-        # Clean up the test stage directory
-        if os.path.isdir(new_stage_path):
-            shutil.rmtree(new_stage_path, onerror=onerror)
-    else:
-        # Must yield a path to avoid a TypeError on test teardown
-        yield str(tmpdir_factory)
+    monkeypatch.setattr(spack.stage, "_stage_root", str(new_stage))
+
+    yield str(new_stage)
+
+    # Clean up the test stage directory
+    if new_stage.is_dir():
+        shutil.rmtree(new_stage, onerror=onerror)
 
 
 @pytest.fixture(scope="session")
@@ -294,7 +286,9 @@ def _use_test_platform(test_platform):
 #
 @pytest.fixture(scope="session")
 def mock_packages_repo():
-    yield spack.repo.from_path(spack.paths.mock_packages_path)
+    yield spack.repo.from_path(
+        os.path.join(os.path.dirname(__file__), "repos", "spack_repo", "builtin_mock")
+    )
 
 
 def _pkg_install_fn(pkg, spec, prefix):
@@ -322,7 +316,7 @@ def linux_os():
     """Returns a named tuple with attributes 'name' and 'version'
     representing the OS.
     """
-    platform = spack.platforms.host()
+    platform = host_platform()
     name, version = "debian", "6"
     if platform.name == "linux":
         current_os = platform.default_operating_system()
@@ -332,39 +326,33 @@ def linux_os():
 
 
 @pytest.fixture(scope="session")
-def configuration_dir(tmpdir_factory, linux_os):
+def configuration_dir(tmp_path_factory: pytest.TempPathFactory, linux_os):
     """Copies mock configuration files in a temporary directory. Returns the
     directory path.
     """
-    tmpdir = tmpdir_factory.mktemp("configurations")
-    install_tree_root = tmpdir_factory.mktemp("opt")
-    modules_root = tmpdir_factory.mktemp("share")
-    tcl_root = modules_root.ensure("modules", dir=True)
-    lmod_root = modules_root.ensure("lmod", dir=True)
+    tmp_path = tmp_path_factory.mktemp("configurations")
+    install_tree_root = tmp_path_factory.mktemp("opt")
 
     # <test_path>/data/config has mock config yaml files in it
     # copy these to the site config.
-    test_config = pathlib.Path(spack.paths.test_path) / "data" / "config"
-    shutil.copytree(test_config, tmpdir.join("site"))
+    test_config = Path(__file__).parent / "data" / "config"
+    shutil.copytree(test_config, tmp_path / "site")
 
     # Create temporary 'defaults', 'site' and 'user' folders
-    tmpdir.ensure("user", dir=True)
+    (tmp_path / "user").mkdir()
 
     # Fill out config.yaml, compilers.yaml and modules.yaml templates.
     locks = sys.platform != "win32"
-    config = tmpdir.join("site", "config.yaml")
+    config = tmp_path / "site" / "config.yaml"
     config_template = test_config / "config.yaml"
-    config.write(config_template.read_text().format(install_tree_root, locks))
+    config.write_text(config_template.read_text().format(install_tree_root, locks))
 
-    target = str(_vendoring.archspec.cpu.host().family)
-    compilers = tmpdir.join("site", "packages.yaml")
+    target = str(spack.vendor.archspec.cpu.host().family)
+    compilers = tmp_path / "site" / "packages.yaml"
     compilers_template = test_config / "packages.yaml"
-    compilers.write(compilers_template.read_text().format(linux_os=linux_os, target=target))
+    compilers.write_text(compilers_template.read_text().format(linux_os=linux_os, target=target))
 
-    modules = tmpdir.join("site", "modules.yaml")
-    modules_template = test_config / "modules.yaml"
-    modules.write(modules_template.read_text().format(tcl_root, lmod_root))
-    yield tmpdir
+    yield tmp_path
 
 
 def _create_mock_configuration_scopes(configuration_dir):
@@ -376,15 +364,15 @@ def _create_mock_configuration_scopes(configuration_dir):
         ),
         (
             ConfigScopePriority.CONFIG_FILES,
-            spack.config.DirectoryConfigScope("site", str(configuration_dir.join("site"))),
+            spack.config.DirectoryConfigScope("site", str(configuration_dir / "site")),
         ),
         (
             ConfigScopePriority.CONFIG_FILES,
-            spack.config.DirectoryConfigScope("system", str(configuration_dir.join("system"))),
+            spack.config.DirectoryConfigScope("system", str(configuration_dir / "system")),
         ),
         (
             ConfigScopePriority.CONFIG_FILES,
-            spack.config.DirectoryConfigScope("user", str(configuration_dir.join("user"))),
+            spack.config.DirectoryConfigScope("user", str(configuration_dir / "user")),
         ),
         (ConfigScopePriority.COMMAND_LINE, spack.config.InternalConfigScope("command_line")),
     ]
@@ -404,10 +392,10 @@ def config(mock_configuration_scopes):
 
 
 @pytest.fixture(scope="function")
-def mutable_config(tmpdir_factory, configuration_dir):
+def mutable_config(tmp_path_factory: pytest.TempPathFactory, configuration_dir):
     """Like config, but tests can modify the configuration."""
-    mutable_dir = tmpdir_factory.mktemp("mutable_config").join("tmp")
-    configuration_dir.copy(mutable_dir)
+    mutable_dir = tmp_path_factory.mktemp("mutable_config") / "tmp"
+    shutil.copytree(configuration_dir, mutable_dir)
 
     scopes = _create_mock_configuration_scopes(mutable_dir)
     with spack.config.use_configuration(*scopes) as cfg:
@@ -470,22 +458,22 @@ def _populate(mock_db):
 
 
 @pytest.fixture(scope="session")
-def _store_dir_and_cache(tmpdir_factory):
+def _store_dir_and_cache(tmp_path_factory: pytest.TempPathFactory):
     """Returns the directory where to build the mock database and
     where to cache it.
     """
-    store = tmpdir_factory.mktemp("mock_store")
-    cache = tmpdir_factory.mktemp("mock_store_cache")
+    store = tmp_path_factory.mktemp("mock_store")
+    cache = tmp_path_factory.mktemp("mock_store_cache")
     return store, cache
 
 
 @pytest.fixture(scope="session")
 def mock_store(
-    tmpdir_factory,
+    tmp_path_factory: pytest.TempPathFactory,
     mock_wsdk_externals,
     mock_packages_repo,
     mock_configuration_scopes,
-    _store_dir_and_cache,
+    _store_dir_and_cache: Tuple[Path, Path],
 ):
     """Creates a read-only mock database with some packages installed note
     that the ref count for dyninst here will be 3, as it's recycled
@@ -499,21 +487,21 @@ def mock_store(
 
     # Make the DB filesystem read-only to ensure constructors don't modify anything in it.
     # We want Spack to be able to point to a DB on a read-only filesystem easily.
-    store_path.chmod(mode=0o555, rec=1)
+    _recursive_chmod(store_path, 0o555)
 
     # If the cache does not exist populate the store and create it
-    if not os.path.exists(str(store_cache.join(".spack-db"))):
+    if not os.path.exists(str(store_cache / ".spack-db")):
         with spack.config.use_configuration(*mock_configuration_scopes):
             with spack.store.use_store(str(store_path)) as store:
                 with spack.repo.use_repositories(mock_packages_repo):
                     # make the DB filesystem writable only while we populate it
-                    store_path.chmod(mode=0o755, rec=1)
+                    _recursive_chmod(store_path, 0o755)
                     _populate(store.db)
-                    store_path.chmod(mode=0o555, rec=1)
+                    _recursive_chmod(store_path, 0o555)
 
-        store_cache.chmod(mode=0o755, rec=1)
+        _recursive_chmod(store_cache, 0o755)
         copy_tree(str(store_path), str(store_cache))
-        store_cache.chmod(mode=0o555, rec=1)
+        _recursive_chmod(store_cache, 0o555)
 
     yield store_path
 
@@ -527,21 +515,21 @@ def database_mutable_config(mock_store, mock_packages, mutable_config, monkeypat
 
 
 @pytest.fixture(scope="function")
-def mutable_database(database_mutable_config, _store_dir_and_cache):
+def mutable_database(database_mutable_config, _store_dir_and_cache: Tuple[Path, Path]):
     """Writeable version of the fixture, restored to its initial state
     after each test.
     """
     # Make the database writeable, as we are going to modify it
     store_path, store_cache = _store_dir_and_cache
-    store_path.chmod(mode=0o755, rec=1)
+    _recursive_chmod(store_path, 0o755)
 
     yield database_mutable_config
 
     # Restore the initial state by copying the content of the cache back into
     # the store and making the database read-only
-    store_path.remove(rec=1)
+    shutil.rmtree(store_path)
     copy_tree(str(store_cache), str(store_path))
-    store_path.chmod(mode=0o555, rec=1)
+    _recursive_chmod(store_path, 0o555)
 
 
 def _return_none(*args):
@@ -584,3 +572,13 @@ def pytest_runtest_setup(item):
     only_windows_marker = item.get_closest_marker(name="only_windows")
     if only_windows_marker and sys.platform != "win32":
         pytest.skip(*only_windows_marker.args)
+
+
+def _recursive_chmod(path: Path, mode: int):
+    """Recursively change permissions of a directory and all its contents."""
+    path.chmod(mode)
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            os.chmod(os.path.join(root, file), mode)
+        for dir in dirs:
+            os.chmod(os.path.join(root, dir), mode)

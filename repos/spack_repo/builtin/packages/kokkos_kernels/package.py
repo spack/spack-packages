@@ -25,6 +25,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
 
     version("develop", branch="develop")
     version("master", branch="master")
+    version("4.6.02", sha256="a953f445660ed5aaab10e18fc4a90c4c178291e9d9d97d20abd4e6027f1193ec")
     version("4.6.01", sha256="95b9357f37ab3b9c3913c00741acb2501831c28ea8664de67818ae79c69c5908")
     version("4.6.00", sha256="f2b18f3df78c3c8dd970fe8ead54e05c8c09c8ac6d1893655c2a1769d33aa364")
     version("4.5.01", sha256="c111a6561f23a85af9850d1df1e9015f37a586f1da0be4b6fb1e98001d75e074")
@@ -238,6 +239,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos@3.2.00", when="@3.2.00")
     depends_on("kokkos@3.1.00", when="@3.1.00")
     depends_on("kokkos@3.0.00", when="@3.0.00")
+    depends_on("kokkos+pic", when="+shared")
     depends_on("kokkos+cuda", when="+execspace_cuda")
     depends_on("kokkos+openmp", when="+execspace_openmp")
     depends_on("kokkos+threads", when="+execspace_threads")

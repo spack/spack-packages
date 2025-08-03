@@ -8,8 +8,6 @@ import sys
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from spack.operating_systems.linux_distro import kernel_version
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 MACOS_VERSION = macos_version() if sys.platform == "darwin" else None
@@ -32,6 +30,7 @@ class Qt(Package):
 
     license("LGPL-3.0-only")
 
+    version("5.15.17", sha256="85eb566333d6ba59be3a97c9445a6e52f2af1b52fc3c54b8a2e7f9ea040a7de4")
     version("5.15.16", sha256="efa99827027782974356aceff8a52bd3d2a8a93a54dd0db4cca41b5e35f1041c")
     version("5.15.15", sha256="b423c30fe3ace7402e5301afbb464febfb3da33d6282a37a665be1e51502335e")
     version("5.15.14", sha256="fdd3a4f197d2c800ee0085c721f4bef60951cbda9e9c46e525d1412f74264ed7")
@@ -477,12 +476,12 @@ class Qt(Package):
             "qmake/qmake.pri",
             "src/tools/bootstrap/bootstrap.pro",
         ]
-        if "%clang" in self.spec or "%apple-clang" in self.spec:
+        if "%cxx=clang" in self.spec or "%cxx=apple-clang" in self.spec:
             files_to_filter += [
                 "mkspecs/unsupported/macx-clang-libc++/qmake.conf",
                 "mkspecs/common/clang.conf",
             ]
-        elif "%gcc" in self.spec:
+        elif "%cxx=gcc" in self.spec:
             files_to_filter += ["mkspecs/common/g++-macx.conf", "mkspecs/darwin-g++/qmake.conf"]
 
         # Filter inserted configure variables
@@ -545,7 +544,7 @@ class Qt(Package):
             with open(conf_file, "a") as f:
                 f.write("QMAKE_CXXFLAGS += -std=gnu++98\n")
 
-    @when("@4 %clang")
+    @when("@4 %cxx=clang")
     def patch(self):
         (mkspec_dir, platform) = self.get_mkspec()
         conf_file = os.path.join(mkspec_dir, platform, "qmake.conf")
@@ -619,6 +618,8 @@ class Qt(Package):
             use_spack_dep("freetype")
             if spec.satisfies("platform=linux") or spec.satisfies("platform=freebsd"):
                 config_args.append("-fontconfig")
+            # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
+            config_args.append("-no-vulkan")
         else:
             config_args.append("-no-freetype")
             config_args.append("-no-gui")

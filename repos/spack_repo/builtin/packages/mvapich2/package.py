@@ -9,7 +9,6 @@ import sys
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
 
-import spack.compilers.config
 from spack.package import *
 
 
@@ -81,7 +80,7 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
         description="List of the process managers to activate",
         values=disjoint_sets(("auto",), ("slurm",), ("hydra", "gforker", "remshell"))
         .prohibit_empty_set()
-        .with_error("'slurm' or 'auto' cannot be activated along with " "other process managers")
+        .with_error("'slurm' or 'auto' cannot be activated along with other process managers")
         .with_default("auto")
         .with_non_feature_values("auto"),
     )
@@ -174,7 +173,7 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
     @classmethod
     def determine_variants(cls, exes, version):
         def get_spack_compiler_spec(path):
-            spack_compilers = spack.compilers.config.find_compilers([path])
+            spack_compilers = find_compilers([path])
             for spack_compiler in spack_compilers:
                 if os.path.dirname(spack_compiler.cc) == path:
                     return spack_compiler.spec

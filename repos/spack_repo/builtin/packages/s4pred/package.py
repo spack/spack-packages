@@ -39,7 +39,7 @@ class S4pred(Package):
         filter_file("/weights/", "/../weights/", "run_model.py")
         # add shebang and ensure +x for the main script
         sed = Executable("sed")
-        sed("-i", rf'1 i\#! {self.spec["python"].command.path}\n', "run_model.py")
+        sed("-i", rf"1 i\#! {self.spec['python'].command.path}\n", "run_model.py")
         os.chmod("run_model.py", 0o755)
         # install files and make convenience symlink
         install("*.py", prefix.bin)

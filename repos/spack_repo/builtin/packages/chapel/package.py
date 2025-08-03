@@ -10,18 +10,19 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import llnl.util.lang
-
-import spack.platforms
-import spack.platforms.cray
 from spack.package import *
-from spack.util.environment import is_system_path, set_env
 
 
-@llnl.util.lang.memoized
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
+@memoized
 def is_CrayEX():
     # Credit to upcxx package for this hpe-cray-ex detection function
-    if spack.platforms.host().name == "linux":
+    if host_platform().name == "linux":
         target = os.environ.get("CRAYPE_NETWORK_TARGET")
         if target in ["ofi", "ucx"]:  # normal case
             return True
@@ -329,7 +330,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     requires(
-        "^libfabric" + (" fabrics=cxi" if spack.platforms.cray.slingshot_network() else ""),
+        "^libfabric" + (" fabrics=cxi" if slingshot_network() else ""),
         when="libfabric=spack",
         msg="libfabric requires cxi fabric provider on HPE-Cray EX machines",
     )
@@ -474,18 +475,15 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts(
         "^llvm@20",
         when="@:2.5 +cuda",
-        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see https://github.com/chapel-lang/chapel/issues/27273",
+        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see "
+        "https://github.com/chapel-lang/chapel/issues/27273",
     )
 
-    conflicts("+rocm", when="@:1", msg="ROCm support in spack requires Chapel 2.0.0 or later")
+    conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.0.0 or later")
     # Chapel restricts the allowable ROCm versions
-    with when("@2:2.1 +rocm"):
-        depends_on("hsa-rocr-dev@4:5.4")
-        depends_on("hip@4:5.4")
     with when("@2.2: +rocm"):
-        depends_on("hsa-rocr-dev@4:5.4,6.0:6.2")
-        depends_on("hip@4:5.4,6.0:6.2")
-    depends_on("llvm-amdgpu@4:5.4", when="+rocm llvm=spack")
+        depends_on("hsa-rocr-dev@6.0:6.2")
+        depends_on("hip@6.0:6.2")
     requires("llvm=bundled", when="+rocm ^hip@6.0:6.2", msg="ROCm 6 support requires llvm=bundled")
 
     conflicts(
@@ -609,9 +607,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             # if working from a non-versioned release/branch (such as main)
             if not self.is_versioned_release():
                 install("CMakeLists.txt", join_path(prefix.share, "chapel"))
-            install_tree("doc", join_path(prefix.share, "chapel", self._output_version_short, "doc"))
             install_tree(
-                "examples", join_path(prefix.share, "chapel", self._output_version_short, "examples")
+                "doc", join_path(prefix.share, "chapel", self._output_version_short, "doc")
+            )
+            install_tree(
+                "examples",
+                join_path(prefix.share, "chapel", self._output_version_short, "examples"),
             )
 
     def setup_chpl_platform(self, env):
@@ -827,7 +828,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         return len(matches) == 0
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version_long(self) -> str:
         if not self.is_versioned_release():
             return self.get_chpl_version_from_cmakelists()
@@ -835,7 +836,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         return spec_vers_str
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version_short(self) -> str:
         if not self.is_versioned_release():
             return ".".join(self.get_chpl_version_from_cmakelists().split(".")[:-1])
