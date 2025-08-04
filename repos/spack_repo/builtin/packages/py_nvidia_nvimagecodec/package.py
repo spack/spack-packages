@@ -47,12 +47,8 @@ class PyNvidiaNvimagecodec(PythonPackage):
     variant("nvjpeg2k", default=True, description="Enable NVJPEG2K support")
     variant("nvtiff", default=True, description="Enable NVTIFF support")
 
-    cuda120_versions = (
-        "@0.5.0.13-cuda120",
-    )
-    cuda110_versions = (
-        "@0.5.0.13-cuda110",
-    )
+    cuda120_versions = ("@0.5.0.13-cuda120",)
+    cuda110_versions = ("@0.5.0.13-cuda110",)
 
     for v in cuda120_versions:
         depends_on("cuda@12", when=v, type=("build", "run"))
