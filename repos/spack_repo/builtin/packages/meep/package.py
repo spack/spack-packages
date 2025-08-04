@@ -84,7 +84,7 @@ class Meep(AutotoolsPackage):
     def configure_args(self):
         spec = self.spec
 
-        config_args = ["LDFLAGS=-L{0}".format(spec["fftw-api"].prefix.lib)]
+        config_args = ["LDFLAGS={0}".format(spec["fftw-api"].libs.ld_flags)]
 
         config_args.append("--enable-shared")
 
