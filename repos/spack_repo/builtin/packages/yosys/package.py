@@ -92,13 +92,13 @@ class Yosys(MakefilePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("PREFIX", self.prefix)
-        env.set("CXXFLAGS", f'-I{self.spec["readline"].prefix.include}')
+        env.set("CXXFLAGS", f"-I{self.spec['readline'].prefix.include}")
         env.set(
-            "LDFLAGS", f'-L{self.spec["readline"].prefix.lib} -L{self.spec["zlib"].prefix.lib}'
+            "LDFLAGS", f"-L{self.spec['readline'].prefix.lib} -L{self.spec['zlib'].prefix.lib}"
         )
         if self.spec.satisfies("+abc"):
             env.set("ENABLE_ABC", "1")
-            env.set("ABC_READLINE_INCLUDES", f'-I{self.spec["readline"].prefix.include}')
+            env.set("ABC_READLINE_INCLUDES", f"-I{self.spec['readline'].prefix.include}")
         else:
             env.set("ENABLE_ABC", "0")
         if self.spec.satisfies("+ccache"):
