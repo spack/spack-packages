@@ -148,7 +148,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
         """run ctest tests on the installed package"""
         cmake_args = [
             ".",
-            get_cmake_prefix_path(),
+            self.define("CMAKE_PREFIX_PATH", get_cmake_prefix_path()),
             f"-DCMAKE_CXX_COMPILER={os.environ['CXX']}",
             self.define(
                 "Kokkos_ROOT",
