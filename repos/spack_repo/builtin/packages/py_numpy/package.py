@@ -23,6 +23,9 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.3.2", sha256="e0486a11ec30cdecb53f184d496d1c6a20786c81e55e41640270130056f8ee48")
+    version("2.3.1", sha256="1ec9ae20a4226da374362cca3c62cd753faf2f951440b0e3b98e93c235441d2b")
+    version("2.3.0", sha256="581f87f9e9e9db2cba2141400e160e9dd644ee248788d6f90636eeb8fd9260a6")
     version("2.2.6", sha256="e29554e2bef54a90aa5cc07da6ce955accb83f21ab5de01a62c8478897b264fd")
     version("2.2.5", sha256="a9c0d994680cd991b1cb772e8b297340085466a6fe964bc9d4e80f5e2f43c291")
     version("2.2.4", sha256="9ba03692a45d3eef66559efe1d1096c4b9b75c0986b5dff5530c378fb8331d4f")
@@ -141,7 +144,9 @@ class PyNumpy(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.13", when="@2.1:")
+        depends_on("python@3.11:3.14", when="@2.3.2:")
+        depends_on("python@3.11:3.13", when="@2.3.0:2.3.1")
+        depends_on("python@3.10:3.13", when="@2.1:2.2")
         depends_on("python@3.9:3.12", when="@1.26:2.0")
         depends_on("python@3.9:3.11", when="@1.25")
         depends_on("python@3.8:3.11", when="@1.23.2:1.24")
@@ -187,6 +192,13 @@ class PyNumpy(PythonPackage):
         depends_on("py-setuptools@:63", when="@:1.25")
         depends_on("py-setuptools@:59", when="@:1.22.1")
 
+    # Fix support for C++23 compilers (e.g., Apple Clang 17+)
+    patch(
+        "https://github.com/numpy/numpy/pull/27361.patch?full_index=1",
+        sha256="c7565df581e7756965f8a538bc1e50f3f86c35eb68166d05d7d50205f8b1e312",
+        when="@2.0.0:2.1.1",
+    )
+
     # https://github.com/spack/spack/issues/49983
     patch(
         "https://github.com/numpy/numpy/commit/7771624a4a4c662f936e07bbf74dd7d553225f23.patch?full_index=1",
@@ -202,6 +214,9 @@ class PyNumpy(PythonPackage):
     patch("check_executables.patch", when="@1.20.0:")
     patch("check_executables2.patch", when="@1.19.0:1.19.5")
     patch("check_executables3.patch", when="@1.16.0:1.18.5")
+
+    # Fix atomic_load const issue
+    patch("fix-atomic-const.patch", when="@2.1.0: %fj")
 
     # Backport bug fix for f2py's define for threading when building with Mingw
     patch(
@@ -299,7 +314,25 @@ class PyNumpy(PythonPackage):
 
         return (flags, None, None)
 
-    def blas_lapack_pkg_config(self) -> Tuple[str, str]:
+    def _blas_lapack_pkg_config_mkl(self, spec) -> str:
+        """Determine pkg-config name from MKL configuration
+
+        Returns:
+            The string "mkl-dynamic-[i]lp64-[seq,tbb,iomp,gomp]"
+        """
+        lp64_or_ilp64 = "ilp64" if spec.satisfies("+ilp64") else "lp64"
+        if spec.satisfies("threads=none"):
+            threads = "seq"
+        elif spec.satisfies("threads=tbb"):
+            threads = "tbb"
+        elif spec.satisfies("threads=openmp"):
+            threads = "gomp" if spec.satisfies("%gcc") else "iomp"
+        else:
+            raise InstallError("Unknown 'threads' variant for the Intel MKL libaray")
+
+        return "mkl-dynamic-" + lp64_or_ilp64 + "-" + threads
+
+    def blas_lapack_pkg_config(self) -> Tuple[str, str, str]:
         """Convert library names to pkg-config names.
 
         Returns:
@@ -309,11 +342,11 @@ class PyNumpy(PythonPackage):
         blas = spec["blas"].libs.names[0]
         lapack = spec["lapack"].libs.names[0]
 
-        if spec["blas"].name == "intel-oneapi-mkl":
-            blas = "mkl-dynamic-lp64-seq"
+        if spec["blas"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
+            blas = self._blas_lapack_pkg_config_mkl(spec["blas"])
 
-        if spec["lapack"].name == "intel-oneapi-mkl":
-            lapack = "mkl-dynamic-lp64-seq"
+        if spec["lapack"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
+            lapack = self._blas_lapack_pkg_config_mkl(spec["lapack"])
 
         if spec["blas"].name in ["blis", "amdblis"]:
             blas = "blis"
@@ -336,11 +369,19 @@ class PyNumpy(PythonPackage):
             else:
                 lapack = "armpl-dynamic-lp64-seq"
 
-        return blas, lapack
+        if spec["blas"].satisfies("+ilp64") != spec["lapack"].satisfies("+ilp64"):
+            raise InstallError(
+                "Either both blas and lapack must use ilp64 or none: ({0} vs. {1})".format(
+                    blas, lapack
+                )
+            )
+        use_ilp64 = spec["blas"].satisfies("+ilp64")
+
+        return blas, lapack, use_ilp64
 
     @when("@1.26:")
     def config_settings(self, spec, prefix):
-        blas, lapack = self.blas_lapack_pkg_config()
+        blas, lapack, use_ilp64 = self.blas_lapack_pkg_config()
 
         settings = {
             "builddir": "build",
@@ -349,6 +390,7 @@ class PyNumpy(PythonPackage):
                 # https://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dblas": blas,
                 "-Dlapack": lapack,
+                "-Duse-ilp64": use_ilp64,
                 # https://numpy.org/doc/stable/reference/simd/build-options.html
                 # TODO: get this working in CI
                 # "-Dcpu-baseline": "native",

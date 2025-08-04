@@ -226,9 +226,19 @@ class Gromacs(CMakePackage, CudaPackage):
     )
 
     variant("openmp", default=True, description="Enables OpenMP at configure time")
+
+    # When using apple-clang version 15.x or newer, need to use the llvm-openmp library
+    # We also protect with version 2025+ as there seems to be a CMake bug with
+    # Apple Clang and OpenMP that is fixed in 2025
+    depends_on("llvm-openmp", when="@2025: +openmp %apple-clang@15:", type=("build", "run"))
+
+    # But we need to block +openmp %apple-clang for GROMACS older than 2025
     conflicts(
-        "+openmp", when="%apple-clang", msg="OpenMP not available for the Apple clang compiler"
+        "+openmp",
+        when="@:2024 %apple-clang",
+        msg="OpenMP not available for the Apple clang compiler",
     )
+
     variant("openmp_max_threads", default="none", description="Max number of OpenMP threads")
     conflicts(
         "+openmp_max_threads", when="~openmp", msg="OpenMP is off but OpenMP Max threads is set"
@@ -663,13 +673,13 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+cufftmp"):
             options.append("-DGMX_USE_CUFFTMP=ON")
             options.append(
-                f'-DcuFFTMp_ROOT={self.spec["nvhpc"].prefix}/Linux_{self.spec.target.family}'
-                + f'/{self.spec["nvhpc"].version}/math_libs'
+                f"-DcuFFTMp_ROOT={self.spec['nvhpc'].prefix}/Linux_{self.spec.target.family}"
+                + f"/{self.spec['nvhpc'].version}/math_libs"
             )
 
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
-            options.append(f'-DHeffte_ROOT={self.spec["heffte"].prefix}')
+            options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
 
         if self.spec.satisfies("+intel-data-center-gpu-max"):
             options.append("-DGMX_GPU_NB_CLUSTER_SIZE=8")

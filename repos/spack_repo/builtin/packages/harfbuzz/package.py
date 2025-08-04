@@ -23,8 +23,18 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         conditional("autotools", when="@:2.9"), conditional("meson", when="@3:"), default="meson"
     )
 
-    license("MIT")
+    # HarfBuzz is licensed under the so-called "Old MIT" license,
+    # for which no SPDX identifier is listed at https://spdx.org/licenses/
+    # Ref: https://github.com/harfbuzz/harfbuzz/blob/main/COPYING
+    license("MIT-old", checked_by="wdconinc")
 
+    version("11.2.1", sha256="093714c8548a285094685f0bdc999e202d666b59eeb3df2ff921ab68b8336a49")
+    version("11.2.0", sha256="50f7d0a208367e606dbf6eecc5cfbecc01a47be6ee837ae7aff2787e24b09b45")
+    version("11.1.0", sha256="477f0d48c34dc32093b45304178eb9733361ca1832b5159879c99e6d40227969")
+    version("11.0.1", sha256="4a7890090538136db64742073af4b4d776ab8b50e6855676a8165eb8b7f60b7a")
+    version("11.0.0", sha256="f16351bafe214725fe2c1d5b59f0d93e49905a4b247899fb90d70cff953a2b9b")
+    version("10.4.0", sha256="480b6d25014169300669aa1fc39fb356c142d5028324ea52b3a27648b9beaad8")
+    version("10.3.0", sha256="cd63fc3cbae32622588e46e0670fabf78ee6cff44a6348ca7f037dae9a32f9ea")
     version("10.2.0", sha256="620e3468faec2ea8685d32c46a58469b850ef63040b3565cde05959825b48227")
     version("10.1.0", sha256="6ce3520f2d089a33cef0fc48321334b8e0b72141f6a763719aaaecd2779ecb82")
     version("10.0.1", sha256="b2cb13bd351904cb9038f907dc0dee0ae07127061242fe3556b2795c4e9748fc")
@@ -90,8 +100,13 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         description="Enable CoreText shaper backend on macOS",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    with when("build_system=meson"):
+        depends_on("meson@0.60:", when="@11.1:")
+        depends_on("meson@0.55:", when="@3.2.1:")
+        depends_on("meson@0.52:")
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):

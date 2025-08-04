@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -9,7 +8,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Strumpack(CMakePackage, CudaPackage, ROCmPackage):

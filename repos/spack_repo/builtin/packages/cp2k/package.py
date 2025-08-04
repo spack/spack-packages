@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-import copy
 import os
 import sys
 
@@ -11,8 +10,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.util.environment
-from spack.build_environment import dso_suffix
 from spack.package import *
 
 GPU_MAP = {
@@ -570,6 +567,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         nvflags = ["-O3"]
         ldflags = []
         libs = []
+        dso_suffix = shared_library_suffix(spec)
 
         # CP2K Makefile doesn't set C standard
         if spec.satisfies("@2023.2:"):
@@ -668,10 +666,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
             libs += [
                 join_path(spec["pexsi"].libs.directories[0], "libpexsi.a"),
                 join_path(spec["superlu-dist"].libs.directories[0], "libsuperlu_dist.a"),
-                join_path(
-                    spec["parmetis"].libs.directories[0], "libparmetis.{0}".format(dso_suffix)
-                ),
-                join_path(spec["metis"].libs.directories[0], "libmetis.{0}".format(dso_suffix)),
+                join_path(spec["parmetis"].libs.directories[0], f"libparmetis.{dso_suffix}"),
+                join_path(spec["metis"].libs.directories[0], f"libmetis.{dso_suffix}"),
             ]
 
         if spec.satisfies("+elpa"):
@@ -715,7 +711,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if spec.satisfies("+plumed"):
             dflags.extend(["-D__PLUMED2"])
             cppflags.extend(["-D__PLUMED2"])
-            libs += [join_path(spec["plumed"].prefix.lib, "libplumed.{0}".format(dso_suffix))]
+            libs += [join_path(spec["plumed"].prefix.lib, f"libplumed.{dso_suffix}")]
 
         if spec.satisfies("+libvori"):
             cppflags += ["-D__LIBVORI"]
@@ -905,15 +901,12 @@ class MakefileBuilder(makefile.MakefileBuilder):
         with open(self.makefile, "w") as mkf:
             if spec.satisfies("+plumed"):
                 mkf.write(
-                    "# include Plumed.inc as recommended by"
-                    "PLUMED to include libraries and flags"
+                    "# include Plumed.inc as recommended by PLUMED to include libraries and flags"
                 )
                 mkf.write("include {0}\n".format(self.pkg["plumed"].plumed_inc))
 
             mkf.write("\n# COMPILER, LINKER, TOOLS\n\n")
-            mkf.write(
-                "FC  = {0}\n" "CC  = {1}\n" "CXX = {2}\n" "LD  = {3}\n".format(fc, cc, cxx, fc)
-            )
+            mkf.write("FC  = {0}\nCC  = {1}\nCXX = {2}\nLD  = {3}\n".format(fc, cc, cxx, fc))
 
             if spec.satisfies("%intel"):
                 intel_bin_dir = ancestor(pkg.compiler.cc)
@@ -973,7 +966,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # Apparently the Makefile bases its paths on PWD
         # so we need to set PWD = self.build_directory
-        with spack.util.environment.set_env(PWD=self.build_directory):
+        with set_env(PWD=self.build_directory):
             super().build(pkg, spec, prefix)
 
             with working_dir(self.build_directory):
@@ -1032,7 +1025,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # CP2K < 7 still uses $PWD to detect the current working dir
         # and Makefile is in a subdir, account for both facts here:
-        with spack.util.environment.set_env(CP2K_DATA_DIR=data_dir, PWD=self.build_directory):
+        with set_env(CP2K_DATA_DIR=data_dir, PWD=self.build_directory):
             with working_dir(self.build_directory):
                 make("test", *self.build_targets)
 

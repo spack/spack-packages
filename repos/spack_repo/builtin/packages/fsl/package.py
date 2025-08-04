@@ -1,14 +1,12 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import glob
 import os
 
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.util.environment
 from spack.package import *
 
 
@@ -183,14 +181,12 @@ class Fsl(Package, CudaPackage):
     def postinstall(self):
         # The PYTHON  related environment variables need to be unset here so
         # the post install script does not get confused.
-        vars_to_unset = ["PYTHONPATH", "PYTHONHOME"]
+        script_env = os.environ.copy()
+        script_env.pop("PYTHONHOME", None)
+        script_env.pop("PYTHONPATH", None)
 
-        with spack.util.environment.preserve_environment(*vars_to_unset):
-            for v in vars_to_unset:
-                del os.environ[v]
-
-            script = Executable(join_path(prefix, "etc", "fslconf", "post_install.sh"))
-            script("-f", prefix)
+        script = Executable(join_path(prefix, "etc", "fslconf", "post_install.sh"))
+        script("-f", self.prefix, env=script_env)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if not self.stage.source_path:

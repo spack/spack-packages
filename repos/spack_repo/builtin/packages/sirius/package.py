@@ -83,7 +83,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
-    depends_on("cmake@3.23:", type="build")
+    depends_on("cmake@3.25:", type="build")
     depends_on("mpi")
     depends_on("gsl")
     depends_on("blas")

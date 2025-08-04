@@ -64,6 +64,13 @@ class Iwyu(CMakePackage):
 
     patch("iwyu-013-cmake.patch", when="@0.13:0.14")
 
+    # Fix gcc.stl.headers.imp mapping
+    patch(
+        "https://github.com/include-what-you-use/include-what-you-use/commit/1597cf5ba11de81258bfea6e5fe3efad42e9b36f.patch?full_index=1",
+        sha256="ce315dd3b9a616959dbe0bf37056624d8a91776b1b4b26976e0b42adb7c06a9e",
+        when="@0.23",
+    )
+
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)

@@ -59,7 +59,7 @@ class Dftbplus(CMakePackage, MakefilePackage):
         "chimes",
         default=False,
         when="@21.2:",
-        description="Whether repulsive corrections" "via the ChIMES library should be enabled.",
+        description="Whether repulsive corrections via the ChIMES library should be enabled.",
     )
     variant(
         "elsi",
@@ -69,9 +69,7 @@ class Dftbplus(CMakePackage, MakefilePackage):
         when="+mpi",
     )
     variant(
-        "gpu",
-        default=False,
-        description="Use the MAGMA library " "for GPU accelerated computation",
+        "gpu", default=False, description="Use the MAGMA library for GPU accelerated computation"
     )
     variant(
         "mbd",
@@ -106,7 +104,7 @@ class Dftbplus(CMakePackage, MakefilePackage):
     variant(
         "sockets",
         default=False,
-        description="Whether the socket library " "(external control) should be linked",
+        description="Whether the socket library (external control) should be linked",
     )
     variant(
         "transport",
@@ -129,7 +127,7 @@ class Dftbplus(CMakePackage, MakefilePackage):
         "dftd3",
         default=False,
         when="@:19.1",
-        description="Use DftD3 dispersion library " "(if you need this dispersion model)",
+        description="Use DftD3 dispersion library (if you need this dispersion model)",
     )
 
     depends_on("c", type="build")  # generated

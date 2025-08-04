@@ -6,7 +6,6 @@ import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 _os_map_before_23 = {
@@ -265,7 +264,7 @@ _versions = {
 
 
 def get_os_or_pkg_manager(ver):
-    platform = spack.platforms.host()
+    platform = host_platform()
     if platform.name == "darwin":
         return "macOS"
     if ver.startswith("22."):
@@ -285,8 +284,7 @@ def get_package_url_before_24(version):
     if os == "macOS":
         if armpl_version.startswith("23.06"):
             return (
-                f"{base_url}/{armpl_version_dashed}/"
-                f"armpl_{armpl_version}_{compiler_version}.dmg"
+                f"{base_url}/{armpl_version_dashed}/armpl_{armpl_version}_{compiler_version}.dmg"
             )
         else:
             filename = f"arm-performance-libraries_{armpl_version}_macOS.dmg"

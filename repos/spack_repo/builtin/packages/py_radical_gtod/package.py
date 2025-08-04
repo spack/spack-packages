@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.python import PythonPackage
 
-import spack.url
 from spack.package import *
 
 
@@ -50,4 +49,4 @@ class PyRadicalGtod(PythonPackage):
         if version >= Version("1.47.1"):
             return super().url_for_version(version)
         url = self.url.replace("_", ".")
-        return spack.url.substitute_version(url, self.url_version(version))
+        return substitute_version_in_url(url, self.url_version(version))

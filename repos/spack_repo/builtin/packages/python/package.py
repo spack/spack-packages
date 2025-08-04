@@ -9,14 +9,12 @@ import platform
 import re
 import subprocess
 import sys
+from pathlib import Path
 from shutil import copy
 from typing import Dict, List
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util.lang import dedupe
-
-from spack.build_environment import dso_suffix, stat_suffix
 from spack.package import *
 
 
@@ -614,41 +612,76 @@ class Python(Package):
         Parameters:
             prefix (str): Install prefix for package
         """
-        proj_root = self.stage.source_path
-        pcbuild_root = os.path.join(proj_root, "PCbuild")
-        build_root = os.path.join(pcbuild_root, platform.machine().lower())
-        include_dir = os.path.join(proj_root, "Include")
-        copy_tree(include_dir, prefix.include)
-        doc_dir = os.path.join(proj_root, "Doc")
-        copy_tree(doc_dir, prefix.Doc)
-        tools_dir = os.path.join(proj_root, "Tools")
-        copy_tree(tools_dir, prefix.Tools)
-        lib_dir = os.path.join(proj_root, "Lib")
-        copy_tree(lib_dir, prefix.Lib)
+        proj_root = Path(self.stage.source_path)
+        pcbuild_root = proj_root / "PCbuild"
+        build_root = pcbuild_root / platform.machine().lower()
+        # install headers
+        include_dir = proj_root / "Include"
+        copy_tree(str(include_dir), prefix.include)
         if self.spec.satisfies("@3.13:"):
-            pyconfig = os.path.join(pcbuild_root, platform.machine().lower(), "pyconfig.h")
+            pyconfig = pcbuild_root / platform.machine().lower() / "pyconfig.h"
         else:
-            pyconfig = os.path.join(proj_root, "PC", "pyconfig.h")
-        copy(pyconfig, prefix.include)
-        shared_libraries = []
-        shared_libraries.extend(glob.glob("%s\\*.exe" % build_root))
-        shared_libraries.extend(glob.glob("%s\\*.dll" % build_root))
-        shared_libraries.extend(glob.glob("%s\\*.pyd" % build_root))
+            pyconfig = proj_root / "PC" / "pyconfig.h"
+        copy(str(pyconfig), prefix.include)
+        # install docs
+        doc_dir = proj_root / "Doc"
+        copy_tree(str(doc_dir), prefix.Doc)
+        # install tools
+        tools_dir = proj_root / "Tools"
+        copy_tree(str(tools_dir), prefix.Tools)
+        # install stdlib python modules
+        lib_dir = proj_root / "Lib"
+        copy_tree(str(lib_dir), prefix.Lib)
+
+        # locate and track all pdb files
+        pdbs = glob.glob(f"{str(build_root)}\\*.pdb")
+        pdb_assoc = {}
+        for pdb in pdbs:
+            filename = os.path.splitext(os.path.basename(pdb))[0]
+            pdb_assoc[filename] = pdb
+
+        def install_pdb(binary: str, loc: str):
+            file_name = os.path.splitext(os.path.basename(binary))[0]
+            if file_name in pdb_assoc:
+                copy(pdb_assoc[file_name], loc)
+
+        # handle executables
+        executables = glob.glob(f"{str(build_root)}\\*.exe")
+        for exe in executables:
+            copy(exe, prefix)
+            install_pdb(exe, prefix)
+
+        # setup venv module correctly
+        venv_binaries = ("python.exe", "pythonw.exe")
+        if self.spec.satisfies("@3.13:"):
+            # 3.13 installs two new executables rather than copying
+            # python.exe into the venv module
+            # there are essentially just python.exe with a different name
+            # and are renamed to python.exe by the venv module when venvs
+            # are created
+            venv_binaries = ("venvlauncher.exe", "venvwlauncher.exe")
+        for binary in venv_binaries:
+            copy(str(build_root / binary), prefix.Lib.venv.scripts.nt)
+
+        # handle shared libraries
+        shared_libraries = glob.glob(f"{str(build_root)}\\*.dll")
+        shared_libraries.extend(glob.glob(f"{str(build_root)}\\*.pyd"))
         os.makedirs(prefix.DLLs)
         for lib in shared_libraries:
-            file_name = os.path.basename(lib)
-            if (
-                file_name.endswith(".exe")
-                or (file_name.endswith(".dll") and "python" in file_name)
-                or "vcruntime" in file_name
-            ):
-                copy(lib, prefix)
-            else:
-                copy(lib, prefix.DLLs)
-        static_libraries = glob.glob("%s\\*.lib" % build_root)
+            libname = os.path.basename(lib)
+            dest = prefix.DLLs
+            if "python" in libname or "vcruntime" in libname:
+                dest = prefix
+
+            copy(lib, dest)
+            install_pdb(lib, dest)
+
+        # handle static libraries
+        static_libraries = glob.glob(f"{str(build_root)}\\*.lib")
         os.makedirs(prefix.libs, exist_ok=True)
         for lib in static_libraries:
             copy(lib, prefix.libs)
+            install_pdb(lib, prefix.libs)
 
     def configure_args(self):
         spec = self.spec
@@ -1004,8 +1037,12 @@ print(json.dumps(config))
                 "LIBPL": self.prefix.lib.join("python{0}")
                 .join("config-{0}-{1}")
                 .format(version, sys.platform),
-                "LDLIBRARY": "{}python{}.{}".format(lib_prefix, version, dso_suffix),
-                "LIBRARY": "{}python{}.{}".format(lib_prefix, version, stat_suffix),
+                "LDLIBRARY": "{}python{}.{}".format(
+                    lib_prefix, version, shared_library_suffix(self.spec)
+                ),
+                "LIBRARY": "{}python{}.{}".format(
+                    lib_prefix, version, static_library_suffix(self.spec)
+                ),
                 "LDSHARED": "cc",
                 "LDCXXSHARED": "c++",
                 "PYTHONFRAMEWORKPREFIX": "/System/Library/Frameworks",
@@ -1138,14 +1175,18 @@ print(json.dumps(config))
             shared_libs = []
         else:
             shared_libs = [self.config_vars["LDLIBRARY"]]
-        shared_libs += ["{}python{}.{}".format(lib_prefix, py_version, dso_suffix)]
+        shared_libs += [
+            "{}python{}.{}".format(lib_prefix, py_version, shared_library_suffix(self.spec))
+        ]
         # Like LDLIBRARY for Python on Mac OS, LIBRARY may refer to an un-linkable object
         file_extension_static = os.path.splitext(self.config_vars["LIBRARY"])[-1]
         if file_extension_static == "":
             static_libs = []
         else:
             static_libs = [self.config_vars["LIBRARY"]]
-        static_libs += ["{}python{}.{}".format(lib_prefix, py_version, stat_suffix)]
+        static_libs += [
+            "{}python{}.{}".format(lib_prefix, py_version, static_library_suffix(self.spec))
+        ]
 
         # The +shared variant isn't reliable, as `spack external find` currently can't
         # detect it. If +shared, prefer the shared libraries, but check for static if

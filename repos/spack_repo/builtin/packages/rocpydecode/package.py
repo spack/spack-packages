@@ -32,6 +32,7 @@ class Rocpydecode(CMakePackage):
 
     for ver in ["6.2.0", "6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     def patch(self):
         filter_file(
