@@ -94,7 +94,7 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
         and from setting CC/CXX/F77/FC
         """
         _link_path = pathlib.Path(os.readlink(self.prefix.bin.icc))
-        vars_path = _link_path.parent.parent.parent / "env" / "vars.sh"
+        vars_path = _link_path.parent.parent / "env" / "vars.sh"
         env.extend(EnvironmentModifications.from_sourcing_file(vars_path))
 
         env.set("CC", self.prefix.bin.icc)
