@@ -25,5 +25,5 @@ class PyDaskJobqueue(PythonPackage):
     depends_on("python@3:10", type=("build", "run"))
 
     # requirements.txt
-    depends_on("py-dask@2022.02.0:", type=("build", "run"))
-    depends_on("py-distributed@2022.02.0:", type=("build", "run"))
+    depends_on("py-dask@2022.2.0:", type=("build", "run"))
+    depends_on("py-distributed@2022.2.0:", type=("build", "run"))
