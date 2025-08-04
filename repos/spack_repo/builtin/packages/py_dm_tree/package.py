@@ -29,7 +29,8 @@ class PyDmTree(PythonPackage):
     depends_on("cxx", type="build")
 
     # Based on PyPI wheel availability
-    depends_on("python@:3.12", when="@0.1.8:", type=("build", "run"))
+    depends_on("python@3.10:3.13", when="@0.1.9:", type=("build", "run"))
+    depends_on("python@:3.11", when="@0.1.8", type=("build", "run"))
     depends_on("python@:3.10", when="@0.1.6:0.1.7", type=("build", "run"))
 
     depends_on("python@3.10:", type=("build", "run"), when="@0.1.9:")
@@ -89,3 +90,11 @@ class PyDmTree(PythonPackage):
             "'--action_env', 'PYTHONPATH={0}',\n".format(env["PYTHONPATH"]),
         ]
         filter_file("'build',", " ".join(args), "setup.py")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/d/dm-tree/dm{0}tree-{1}.tar.gz"
+        if version >= Version("0.1.9"):
+            dash = "_"
+        else:
+            dash = "-"
+        return url.format(dash, version)
