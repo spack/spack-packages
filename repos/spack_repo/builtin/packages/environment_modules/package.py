@@ -61,7 +61,7 @@ class EnvironmentModules(Package):
         url="http://prdownloads.sourceforge.net/modules/modules-3.2.10.tar.gz",
     )
 
-    variant("X", default=True, description="Build with X functionality")
+    variant("X", default=True, when="@:3.2", description="Build with X functionality")
 
     depends_on("c", type="build")  # generated
 
@@ -99,7 +99,7 @@ class EnvironmentModules(Package):
             config_args.extend(["--disable-dependency-tracking", "--disable-silent-rules"])
 
         if spec.satisfies("~X"):
-            config_args = ["--without-x"] + config_args
+            config_args.extend(["--without-x"])
 
         if self.spec.satisfies("@5.6.0:"):
             config_args.extend(["--enable-require-via"])
