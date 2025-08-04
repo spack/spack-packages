@@ -12,7 +12,9 @@ class PyNumpyIndexed(PythonPackage):
     providing efficient vectorized functionality such as grouping and set operations."""
 
     homepage = "https://github.com/EelcoHoogendoorn/Numpy_arraysetops_EP"
-    url = "https://pypi.io/packages/py2.py3/n/numpy_indexed/numpy_indexed-0.3.7-py2.py3-none-any.whl"
+    url = (
+        "https://pypi.io/packages/py2.py3/n/numpy_indexed/numpy_indexed-0.3.7-py2.py3-none-any.whl"
+    )
 
     version("0.3.7", sha256="3e9f8f5ca453e49809618b3717b8ce07551b616a4ae43069c46aaad286386a9e")
 
