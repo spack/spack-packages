@@ -66,9 +66,8 @@ class GobjectIntrospection(MesonPackage, AutotoolsPackage):
         patch(
             "https://gitlab.gnome.org/GNOME/gobject-introspection/-/merge_requests/490/commits.patch",
             sha256="8085a21385aba2370ba0859f7d0c5f0a6d6a051ab3c0ea0b8881d567d6356299",
-            when="@:1.81.0"
+            when="@:1.81.0",
         )
-
 
     # This package creates several scripts from
     # toosl/g-ir-tool-template.in.  In their original form these
