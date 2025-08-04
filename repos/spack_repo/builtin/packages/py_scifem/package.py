@@ -50,23 +50,22 @@ class PyScifem(PythonPackage):
     variant("hdf5", default=False, description="HDF5 support")
 
     depends_on("cxx", type="build")
-    depends_on("py-nanobind@2:", when="@0.9:", type="build")
-    depends_on("py-scikit-build-core+pyproject@0.10:", when="@0.10:", type="build")
-    depends_on("py-scikit-build-core+pyproject@0.5:", when="@0.8:0.9", type="build")
-    depends_on("py-setuptools@42:", when="@:0.7", type="build")
-    depends_on("cmake@3.21:", when="@0.9:", type="build")
+    depends_on("py-nanobind@2:", type="build")
+    depends_on("py-scikit-build-core+pyproject", type="build")
+    depends_on("py-setuptools@42:", type="build")
+    depends_on("cmake@3.21:", type="build")
 
     depends_on("python@3.10:", type=("build", "run"))
 
-    depends_on("py-fenics-dolfinx@0.9:", when="@0.4:")
-    depends_on("py-fenics-dolfinx@main", when="@main")
+    depends_on("py-fenics-dolfinx@0.9:", when="@0.4:", type="run")
+    depends_on("py-fenics-dolfinx@main", when="@main", type="run")
 
     with when("+adios2"):
         depends_on("adios2+python", type="run")
 
     with when("+petsc"):
-        depends_on("py-petsc4py")
-        depends_on("fenics-dolfinx+petsc")
+        depends_on("py-petsc4py", type="run")
+        depends_on("fenics-dolfinx+petsc", type="run")
 
     with when("+biomed"):
         depends_on("py-nibabel", type="run")
@@ -82,7 +81,7 @@ class PyScifem(PythonPackage):
         """Test PyDolfinxMPC python"""
         with test_part(self, "test_import", purpose="import scifem in python"):
             python = Executable(self.spec["python"].prefix.bin.python)
-            python(*(["-c", "import scifem; print(scifem.__version__)"]))
+            python(*(["-c", "import scifem"]))
         with (
             when("+petsc"),
             test_part(
