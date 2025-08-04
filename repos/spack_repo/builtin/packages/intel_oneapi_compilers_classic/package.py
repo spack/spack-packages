@@ -54,9 +54,7 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
     provides("c", "cxx")
     provides("fortran")
 
-    # Versions before 2021 are in the `intel` package
-    # intel-oneapi versions before 2022 use intel@19.0.4
-    for ver, oneapi_ver in {
+    version_map = {
         "2021.1.2": "2021.1.2",
         "2021.2.0": "2021.2.0",
         "2021.3.0": "2021.3.0",
@@ -69,7 +67,11 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
         "2021.9.0": "2023.1.0",
         "2021.10.0": "2023.2.4",
         "2021.11.1": "2024.0.2",
-    }.items():
+    }
+
+    # Versions before 2021 are in the `intel` package
+    # intel-oneapi versions before 2022 use intel@19.0.4
+    for ver, oneapi_ver in version_map.items():
         # prefer 2021.10.0 because it is the last one that has a C compiler
         version(ver, preferred=(ver == "2021.10.0"))
         depends_on("intel-oneapi-compilers@" + oneapi_ver, when="@" + ver, type="run")
@@ -90,24 +92,14 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
            $ source {prefix}/{component}/{version}/env/vars.sh
         and from setting CC/CXX/F77/FC
         """
-        if not self.spec.external:
-            oneapi_pkg = self.spec["intel-oneapi-compilers"].package
-            oneapi_pkg.setup_run_environment(env)
-            bin_prefix = oneapi_pkg.component_prefix.linux.bin.intel64
-        else:
-            bin_prefix = self.prefix.bin
-            # External intel-oneapi-compilers-classic has no intel-oneapi-compilers
-            # dependency, so currently we skip whatever environment modifications it
-            # would do and don't try to replicate them
-            # TODO: this means there is no attempt to locate or run a vars.sh script
-            # for external instances of intel-oneapi-compilers-classic. If that is
-            # necessary, this function should include additional search logic when it
-            # is external (or check extra_attributes if a user wants to supply it
-            # manually)
-        env.set("CC", bin_prefix.icc)
-        env.set("CXX", bin_prefix.icpc)
-        env.set("F77", bin_prefix.ifort)
-        env.set("FC", bin_prefix.ifort)
+        _link_path = pathlib.Path(os.readlink(self.prefix.bin.icc))
+        vars_path = _link_path.parent.parent.parent / "env" / "vars.sh"
+        env.extend(EnvironmentModifications.from_sourcing_file(vars_path))
+
+        env.set("CC", self.prefix.bin.icc)
+        env.set("CXX", self.prefix.bin.icpc)
+        env.set("F77", self.prefix.bin.ifort)
+        env.set("FC", self.prefix.bin.ifort)
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
