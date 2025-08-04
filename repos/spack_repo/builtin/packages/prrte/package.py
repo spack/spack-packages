@@ -46,6 +46,12 @@ class Prrte(AutotoolsPackage):
 
     depends_on("pmix")
     depends_on("pmix@:5", when="@:3")
+    # NOTE: prrte 3.0.1 requires pmix 4.2.4
+    # https://github.com/openpmix/prrte/compare/v3.0.0...v3.0.1
+    # https://github.com/openpmix/prrte/commit/63370ca00771a7a6004d6b638476ca794b04e4c1
+    # -pmix_min_version=4.1.2
+    # +pmix_min_version=4.2.4
+    depends_on("pmix@4.2.4:", when="@3.0.1:")
     depends_on("libevent")
     depends_on("hwloc")
     depends_on("perl", type=("build"))
