@@ -39,7 +39,7 @@ class Flann(CMakePackage):
 
     # Options available in the CMakeLists.txt
     # Language bindings
-    variant("python", default=False, description="Build the Python bindings. " "Module: pyflann.")
+    variant("python", default=False, description="Build the Python bindings. Module: pyflann.")
     extends("python", when="+python")
     variant("matlab", default=False, description="Build the Matlab bindings.")
     # default to true for C because it's a C++ library, nothing extra needed

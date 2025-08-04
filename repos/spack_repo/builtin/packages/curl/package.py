@@ -29,9 +29,15 @@ class Curl(NMakePackage, AutotoolsPackage):
 
     license("curl")
 
-    version("8.11.1", sha256="e9773ad1dfa21aedbfe8e1ef24c9478fa780b1b3d4f763c98dd04629b5e43485")
+    version("8.15.0", sha256="699a6d2192322792c88088576cff5fe188452e6ea71e82ca74409f07ecc62563")
+    version("8.14.1", sha256="5760ed3c1a6aac68793fc502114f35c3e088e8cd5c084c2d044abdf646ee48fb")
 
     # Deprecated versions due to CVEs
+    version(
+        "8.11.1",
+        sha256="e9773ad1dfa21aedbfe8e1ef24c9478fa780b1b3d4f763c98dd04629b5e43485",
+        deprecated=True,
+    )
     version(
         "8.10.1",
         sha256="3763cd97aae41dcf41950d23e87ae23b2edb2ce3a5b0cf678af058c391b6ae31",
@@ -80,18 +86,13 @@ class Curl(NMakePackage, AutotoolsPackage):
         deprecated=True,
     )
 
-    default_tls = "openssl"
-    if sys.platform == "darwin":
-        default_tls = "secure_transport"
-    elif sys.platform == "win32":
-        default_tls = "sspi"
-
     # TODO: add dependencies for other possible TLS backends
-    variant(
-        "tls",
-        default=default_tls,
-        description="TLS backend",
-        values=(
+
+    # common arguments for tls variant definitions
+    tls_args = {
+        "description": "TLS backend",
+        "multi": True,
+        "values": (
             # 'amissl',
             # 'bearssl',
             "gnutls",
@@ -101,12 +102,17 @@ class Curl(NMakePackage, AutotoolsPackage):
             "openssl",
             # 'rustls',
             # 'schannel',
-            "secure_transport",
+            # secure_transport support was removed in curl 8.15.0
+            conditional("secure_transport", when="platform=darwin @:8.14"),
             # 'wolfssl',
             conditional("sspi", when="platform=windows"),
         ),
-        multi=True,
-    )
+    }
+
+    variant("tls", default="openssl", **tls_args)
+    variant("tls", default="sspi", when="platform=windows", **tls_args)
+    variant("tls", default="secure_transport", when="platform=darwin @:8.14", **tls_args)
+
     variant("nghttp2", default=True, description="build nghttp2 library (requires C++11)")
     variant("libssh2", default=False, description="enable libssh2 support")
     variant("libssh", default=False, description="enable libssh support", when="@7.58:")
@@ -156,9 +162,12 @@ class Curl(NMakePackage, AutotoolsPackage):
     depends_on("krb5", when="+gssapi")
     depends_on("rtmpdump", when="+librtmp")
 
+    # Perl pops up as a build-time dependency sometimes in curl.
+    # They try to fix it quickly when it happens.
     # https://github.com/curl/curl/issues/12832
     # https://github.com/curl/curl/issues/13508
-    depends_on("perl", type="build", when="@8.6:8.7.1")
+    # https://github.com/curl/curl/issues/18088
+    depends_on("perl", type="build", when="@8.6:8.7.1,8.15.0")
 
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")

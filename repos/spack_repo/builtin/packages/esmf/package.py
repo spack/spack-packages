@@ -172,7 +172,6 @@ class Esmf(MakefilePackage, PythonExtension):
 
 
 class PythonPipBuilder(python.PythonPipBuilder):
-
     @property
     def build_directory(self):
         return os.path.join(self.stage.source_path, "src/addon/esmpy")
@@ -246,7 +245,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if spec["fortran"].name == "gcc" and spec["c"].name == "gcc":
             gfortran_major_version = int(spec["fortran"].version[0])
             env.set("ESMF_COMPILER", "gfortran")
-        elif self.pkg.compiler.name == "intel" or self.pkg.compiler.name == "oneapi":
+        elif spec["fortran"].name in ["intel-oneapi-compilers", "intel-oneapi-compilers-classic"]:
             env.set("ESMF_COMPILER", "intel")
         elif spec["fortran"].name == "gcc" and spec["c"].name in ["clang", "apple-clang"]:
             gfortran_major_version = int(spec["fortran"].version[0])

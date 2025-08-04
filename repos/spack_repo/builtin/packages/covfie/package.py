@@ -23,6 +23,9 @@ class Covfie(CMakePackage, CudaPackage, ROCmPackage):
     license("MPL-2.0")
 
     version("main", branch="main")
+    version("0.15.2", sha256="6eff65e05118d3007c689e3529a62bb1674348ac1b0f0f32afd953c62d1b8890")
+    version("0.15.1", sha256="809f1207ee9c96c6065fc9da796abfe9bdeab1bb987526da787f26b1d628ce7a")
+    version("0.15.0", sha256="16a0e781ae5c38585573316813f57562752734639c8c24193f37a8588e120bd7")
     version("0.14.0", sha256="b4d8afa712c6fc0e2bc6474367d65fad652864b18d0255c5f2c18fd4c6943993")
     version("0.13.0", sha256="e9cd0546c7bc9539f440273bbad303c97215ccd87403cedb4aa387a313938d57")
     version("0.12.1", sha256="c33d7707ee30ab5fa8df686a780600343760701023ac0b23355627e1f2f044de")

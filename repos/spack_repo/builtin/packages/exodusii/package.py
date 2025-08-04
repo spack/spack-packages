@@ -126,6 +126,10 @@ class Exodusii(CMakePackage):
     variant("mpi", default=True, description="Enables MPI parallelism.")
     variant("thread_safe", default=False, description="Enable thread-safe exodus library")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
+
     depends_on("cmake@3.22:", when="@2023-10-24:", type="build")
     depends_on("cmake@3.17:", when="@:2023-05-30", type="build")
     depends_on("mpi", when="+mpi")

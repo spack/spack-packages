@@ -39,6 +39,13 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("readline")
 
+    # Fix nanosleep build error: https://cgit.git.savannah.gnu.org/cgit/gdbm.git/commit/?id=ed0a865345681982ea02c6159c0f3d7702c928a1
+    patch(
+        "https://git.savannah.gnu.org/cgit/gdbm.git/rawdiff/?id=ed0a865345681982ea02c6159c0f3d7702c928a1",
+        sha256="cdba23a8da0bbdf91921247d226f9ca13e2a1c9541434f7a9132ba39346762ad",
+        when="@1.25 platform=darwin",
+    )
+
     patch("macOS.patch", when="@1.21 platform=darwin")
     patch("gdbm.patch", when="@:1.18 %gcc@10:")
     patch("gdbm.patch", when="@:1.18 %clang@11:")
@@ -46,6 +53,14 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
     patch("gdbm.patch", when="@:1.18 %aocc@2:")
     patch("gdbm.patch", when="@:1.18 %oneapi")
     patch("gdbm.patch", when="@:1.18 %arm@21:")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            # See https://src.fedoraproject.org/rpms/gdbm/blob/44ea7380c69b1c139fe385bc1c5940070b36c626/f/gdbm.spec#_62
+            if self.spec.satisfies("@:1.24 %gcc@15:"):
+                flags.append("-std=gnu11")
+
+        return (flags, None, None)
 
     def configure_args(self):
         # GDBM uses some non-standard GNU extensions,

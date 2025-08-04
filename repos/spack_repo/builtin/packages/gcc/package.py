@@ -789,15 +789,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             )
         self.build_optimization_config()
 
-    def get_common_target_flags(self, spec):
-        """Get the right (but pessimistic) architecture specific flags supported by
-        both host gcc and to-be-built gcc. For example: gcc@7 %gcc@12 target=znver3
-        should pick -march=znver1, since that's what gcc@7 supports."""
-        microarchitectures = [spec.target] + spec.target.ancestors
-        for uarch in microarchitectures:
-            flags = microarchitecture_flags_from_target(
-                uarch, compiler=Spec(f"gcc@={spec.version}")
-            )
+    def get_common_target_flags(self) -> str:
+        """Get the microarchitecture flags supported by both the current spec and its gcc dep.
+        For example: gcc@7 target=znver3 %gcc@12 should pick -march=znver1, since that's what
+        gcc@7 supports."""
+        for uarch in (self.spec.target, *self.spec.target.ancestors):
+            flags = microarchitecture_flags_from_target(uarch, compiler=self.spec)
             if flags:
                 return flags
         # no arch specific flags in common, unlikely to happen.
@@ -824,7 +821,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # Note we're not adding this for aarch64 because of
         # https://github.com/spack/spack/issues/31184
         if "+bootstrap %gcc" in self.spec and self.spec.target.family != "aarch64":
-            flags += " " + self.get_common_target_flags(self.spec)
+            flags += " " + self.get_common_target_flags()
 
         if self.spec.satisfies("+bootstrap"):
             variables = ["BOOT_CFLAGS", "CFLAGS_FOR_TARGET", "CXXFLAGS_FOR_TARGET"]
@@ -1202,8 +1199,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 return candidate_gdc
             else:
                 raise InstallError(
-                    "Cannot resolve ambiguity when detecting GDC that belongs to "
-                    "%{0}".format(self.compiler.spec),
+                    "Cannot resolve ambiguity when detecting GDC that belongs to %{0}".format(
+                        self.compiler.spec
+                    ),
                     long_msg="The candidates are:{0}{0}{1}{0}".format(
                         error_nl,
                         error_nl.join(
