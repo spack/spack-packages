@@ -411,7 +411,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             sys_type = env["SYS_TYPE"]
         compiler_str = f"{self['c'].name}-{self['c'].version}"
         host_config_path = (
-            f"{socket.gethostname()}-{sys_type}-{compiler_str}" f"-ascent-{spec.dag_hash()}.cmake"
+            f"{socket.gethostname()}-{sys_type}-{compiler_str}-ascent-{spec.dag_hash()}.cmake"
         )
         host_config_path = os.path.abspath(join_path(self.stage.path, host_config_path))
         return host_config_path

@@ -869,15 +869,12 @@ class MakefileBuilder(makefile.MakefileBuilder):
         with open(self.makefile, "w") as mkf:
             if spec.satisfies("+plumed"):
                 mkf.write(
-                    "# include Plumed.inc as recommended by"
-                    "PLUMED to include libraries and flags"
+                    "# include Plumed.inc as recommended by PLUMED to include libraries and flags"
                 )
                 mkf.write("include {0}\n".format(self.pkg["plumed"].plumed_inc))
 
             mkf.write("\n# COMPILER, LINKER, TOOLS\n\n")
-            mkf.write(
-                "FC  = {0}\n" "CC  = {1}\n" "CXX = {2}\n" "LD  = {3}\n".format(fc, cc, cxx, fc)
-            )
+            mkf.write("FC  = {0}\nCC  = {1}\nCXX = {2}\nLD  = {3}\n".format(fc, cc, cxx, fc))
 
             if spec.satisfies("%intel"):
                 intel_bin_dir = ancestor(pkg.compiler.cc)

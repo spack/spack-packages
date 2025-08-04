@@ -34,5 +34,5 @@ class XorgPackage(PackageBase):
     def _ensure_xorg_mirror_path_is_set_or_raise(self):
         if self.xorg_mirror_path is None:
             cls_name = type(self).__name__
-            msg = "{0} must define a `xorg_mirror_path` attribute" " [none defined]"
+            msg = "{0} must define a `xorg_mirror_path` attribute [none defined]"
             raise AttributeError(msg.format(cls_name))

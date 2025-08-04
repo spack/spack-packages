@@ -165,7 +165,6 @@ class Tfel(CMakePackage):
     depends_on("python", when="+python", type=("build", "link", "run"))
 
     with when("+python_bindings"):
-
         depends_on("python", type=("build", "link", "run"))
         depends_on("py-numpy", type=("build", "link", "run"))
 
@@ -228,7 +227,6 @@ class Tfel(CMakePackage):
             args.append("-DPython_ADDITIONAL_VERSIONS={0}".format(python.version.up_to(2)))
 
         if "+python_bindings" in self.spec:
-
             if "py-pybind11" in self.spec:
                 args.append("-Dpybind11_DIR={0}".format(self.spec["py-pybind11"].prefix))
 

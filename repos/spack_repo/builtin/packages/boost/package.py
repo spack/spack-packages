@@ -245,7 +245,7 @@ class Boost(Package):
         values=("global", "protected", "hidden"),
         default="hidden",
         multi=False,
-        description="Default symbol visibility in compiled libraries " "(1.69.0 or later)",
+        description="Default symbol visibility in compiled libraries (1.69.0 or later)",
     )
 
     depends_on("c", type="build")

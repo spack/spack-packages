@@ -66,7 +66,7 @@ class CmakeClient(CMakePackage):
 
         check(
             self.spec["cmake"].link_arg == "test link arg",
-            "link arg on dependency spec not readable from " "setup_build_environment.",
+            "link arg on dependency spec not readable from setup_build_environment.",
         )
 
     def setup_dependent_build_environment(
@@ -80,7 +80,7 @@ class CmakeClient(CMakePackage):
 
         check(
             self.spec["cmake"].link_arg == "test link arg",
-            "link arg on dependency spec not readable from " "setup_dependent_build_environment.",
+            "link arg on dependency spec not readable from setup_dependent_build_environment.",
         )
 
     def setup_dependent_package(self, module, dspec):
@@ -92,7 +92,7 @@ class CmakeClient(CMakePackage):
 
         check(
             self.spec["cmake"].link_arg == "test link arg",
-            "link arg on dependency spec not readable from " "setup_dependent_package.",
+            "link arg on dependency spec not readable from setup_dependent_package.",
         )
 
     def cmake(self, spec, prefix):

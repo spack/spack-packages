@@ -1,0 +1,39 @@
+From 6eef6c697d95ea70883a5ff6ee2f3e7188eaa4c5 Mon Sep 17 00:00:00 2001
+From: Chris Marsh <chrismarsh.c2@gmail.com>
+Date: Mon, 28 Jul 2025 16:51:05 -0600
+Subject: [PATCH] fix versioneer for python 3.12+
+
+---
+ setup.py      | 2 +-
+ versioneer.py | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/setup.py b/setup.py
+index 532192a6f180f064d33a4e033373aa02afd400be..fbc96ff0ef18809d4e8222a3e016314254360d9f 100644
+--- a/setup.py
++++ b/setup.py
+@@ -20,7 +20,7 @@
+     "Topic :: Scientific/Engineering",
+ ]
+ 
+-INSTALL_REQUIRES = ["xarray>=0.12.0", "dask[array]>=2.3.0", "numpy>=1.17"]
++INSTALL_REQUIRES = ["xarray>=0.12.0", "dask[array]>=2.3.0", "numpy>=1.17", "versioneer>=0.29"]
+ PYTHON_REQUIRES = ">=3.7"
+ 
+ DESCRIPTION = "Fast, flexible, label-aware histograms for numpy and xarray"
+diff --git a/versioneer.py b/versioneer.py
+index 2b5454051080d3601eefccb729816fb493768d15..8b24e239bece4aebb2c9250a207cda8d4461be12 100644
+--- a/versioneer.py
++++ b/versioneer.py
+@@ -343,9 +343,9 @@ def get_config_from_root(root):
+     # configparser.NoOptionError (if it lacks "VCS="). See the docstring at
+     # the top of versioneer.py for instructions on writing your setup.cfg .
+     setup_cfg = os.path.join(root, "setup.cfg")
+-    parser = configparser.SafeConfigParser()
++    parser = configparser.ConfigParser()
+     with open(setup_cfg, "r") as f:
+-        parser.readfp(f)
++        parser.read_file(f)
+     VCS = parser.get("versioneer", "VCS")  # mandatory
+ 
+     def get(parser, name):

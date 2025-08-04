@@ -83,8 +83,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     variant(
         "papi",
         default=True,
-        description="Use PAPI instead of perfmon for access to "
-        "the hardware performance counters.",
+        description="Use PAPI instead of perfmon for access to the hardware performance counters.",
     )
 
     # Accelerator variants: cuda, rocm, etc.
