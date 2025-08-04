@@ -83,6 +83,13 @@ class EnvironmentModules(Package):
     depends_on("tcl@8.5:8", type=("build", "link", "run"), when="@5.0.0:5.4.0")
     depends_on("tcl@8.5:", type=("build", "link", "run"), when="@5.5.0:")
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("@:3.2"):
+                flags.append("-Wno-error=implicit-function-declaration")
+                flags.append("-Wno-error=int-conversion")
+        return (flags, None, None)
+
     def install(self, spec, prefix):
         tcl = spec["tcl"]
 
