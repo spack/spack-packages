@@ -29,15 +29,30 @@ class Arrayfire(CMakePackage, CudaPackage):
 
     variant("forge", default=False, description="Enable graphics library")
     variant("opencl", default=False, description="Enable OpenCL backend")
+    variant("cuda", default=True, description="Enable CUDA backend")
+
+    conflicts("~opencl", when="@3.9:")
+    conflicts("%gcc@13:", when="@:3.8.1")
+    conflicts("%clang@14:", when="@:3.8.1")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("cmake@3.18:", type="build", when="@3.9:")
     depends_on("boost@1.70:")
+    conflicts("boost@1.86", when="@3.9", msg="arrayfire@3.9.0 fails to build with boost@1.86")
+
     depends_on("fftw-api@3:")
     depends_on("blas")
-    depends_on("cuda@7.5:", when="+cuda")
+    # https://github.com/arrayfire/arrayfire/wiki/Build-Instructions-for-Linux
+    depends_on("cuda@9.1:", when="+cuda")
     depends_on("cudnn", when="+cuda")
+
+    # arrayfire@3.8.1 fails to build with spdlog and fmt:
+    depends_on("fmt@8.1.1:", when="@3.7")
+    depends_on("fmt@8.1.1:", when="@3.9:")
+    depends_on("spdlog@1.9.2:", when="@3.7")
+    depends_on("spdlog@1.9.2:", when="@3.9:")
 
     depends_on("opencl", when="+opencl")
     depends_on("pocl+icd", when="^[virtuals=opencl] pocl")
@@ -52,6 +67,10 @@ class Arrayfire(CMakePackage, CudaPackage):
     # 3.9.0 introduced a cmake bug due to absolute paths being used.
     # add_subdirectory not given a binary directory... (referencing internal build of span-lite).
     patch("add-build-dir-to-cmake.patch", level=0, when="@3.9.0:")
+    # from Arch Linux https://gitlab.archlinux.org/archlinux/packaging/packages/arrayfire/-/raw/main/fmt-v11.patch?ref_type=heads
+    patch("fmt-v11.patch", level=1, when="@3.9.0:")
+    # https://gitlab.archlinux.org/archlinux/packaging/packages/arrayfire/-/blob/6add204c734deaed234c71f2a05c3e7bcf6f73dc/3521-fix-build-failure-with-cudnn.patch
+    patch("3521-fix-build-failure-with-cudnn.patch", level=1, when="@3.9.0:")
 
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
 
@@ -79,6 +98,8 @@ class Arrayfire(CMakePackage, CudaPackage):
                 self.define_from_variant("AF_BUILD_FORGE", "forge"),
                 self.define_from_variant("AF_BUILD_OPENCL", "opencl"),
                 self.define("BUILD_TESTING", self.run_tests),
+                self.define("AF_WITH_SPDLOG_HEADER_ONLY", not self.spec.satisfies("@3.8")),
+                self.define("AF_WITH_FMT_HEADER_ONLY", not self.spec.satisfies("@3.8")),
             ]
         )
 
