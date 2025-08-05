@@ -84,7 +84,7 @@ class Precice(CMakePackage):
     depends_on("boost+log+program_options+system+test+thread")
     depends_on("boost+filesystem", when="@:3.0.0")
     # Boost 1.69 removed signals
-    depends_on("boost@:1.68+signals", when="@:2.3")
+    depends_on("boost@:1.68+signals2", when="@:2.3")
 
     # Baseline versions
     depends_on("boost@1.60.0:")
