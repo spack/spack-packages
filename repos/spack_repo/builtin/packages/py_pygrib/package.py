@@ -19,8 +19,8 @@ class PyPygrib(PythonPackage):
     depends_on("cxx", type="build")
 
     depends_on("py-setuptools@61:", type="build")
+    depends_on("py-cython@0.29:", type="build")
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-cython@0.29:", type="build")  # pygrib requires a C compiler
 
     depends_on("py-packaging", type=("build", "run"))
     depends_on("py-pyproj", type=("build", "run"))
