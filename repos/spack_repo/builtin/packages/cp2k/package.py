@@ -379,18 +379,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("dbcsr@2.8:", when="@2025.1:")
         depends_on("dbcsr+openmp", when="+openmp")
         depends_on("dbcsr+mpi", when="+mpi")
-
-        # It is possible to use dbcsr cpu only even when cp2k is compiled
-        # with GPU support. Use spack infra to do this
-        if when("^dbcsr~rocm"):
-            depends_on("dbcsr~rocm")
-        else:
-            depends_on("dbcsr+rocm", when="+rocm")
-
-        if when("^dbcsr~cuda"):
-            depends_on("dbcsr~cuda")
-        else:
-            depends_on("dbcsr+cuda", when="+cuda")
+        depends_on("dbcsr+rocm", when="+rocm")
+        depends_on("dbcsr+cuda", when="+cuda")
 
         depends_on("dbcsr smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
