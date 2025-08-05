@@ -22,6 +22,6 @@ class PyRpdsPy(PythonPackage):
 
     depends_on("c", type="build")
 
-    depends_on("rust@1.76:", when="@0.19:")
+    depends_on("rust@1.76:", type="build", when="@0.19:")
     depends_on("py-maturin@1.0:1", type="build")
     depends_on("py-maturin@1.2:", type="build", when="@0.20:")
