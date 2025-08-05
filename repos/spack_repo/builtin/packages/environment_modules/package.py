@@ -63,6 +63,12 @@ class EnvironmentModules(Package):
 
     variant("X", default=True, when="@:3.2", description="Build with X functionality")
 
+    # Enable all new features that are disabled by default due to the substantial behavior changes
+    # see https://modules.readthedocs.io/en/latest/INSTALL.html#instopt-enable-new-features
+    variant(
+        "new-features", default=True, when="@5.0:", description="Build with new features enabled"
+    )
+
     depends_on("c", type="build")  # generated
 
     depends_on("gmake", type="build")
@@ -108,11 +114,8 @@ class EnvironmentModules(Package):
         if spec.satisfies("~X"):
             config_args.extend(["--without-x"])
 
-        if self.spec.satisfies("@5.6.0:"):
-            config_args.extend(["--enable-require-via"])
-
-        if self.spec.satisfies("@5.5.0:"):
-            config_args.extend(["--enable-conflict-unload"])
+        if spec.satisfies("+new-features"):
+            config_args.extend(["--enable-new-features"])
 
         if self.spec.satisfies("@4.4.0:4.8"):
             config_args.extend(
