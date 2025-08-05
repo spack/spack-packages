@@ -447,7 +447,7 @@ class Cmake(Package):
         """Runs and checks output of the installed binary."""
         exe_path = join_path(self.prefix.bin, bin)
         if not os.path.exists(exe_path):
-            raise SkipTest(f"{exe} is not installed")
+            raise SkipTest(f"{exe_path} is not installed")
 
         exe = which(exe_path)
         out = exe("--version", output=str.split, error=str.split)

@@ -176,7 +176,7 @@ class Dftbplus(CMakePackage, MakefilePackage):
         After that, edit the make.arch to point to the dependencies
         And the last thing we do here is to set the installdir
         """
-        dircwd = os.getcwd()
+        dircwd = pwd()
         makefile = FileFilter("makefile")
         makefile.filter("ROOT := .*", "ROOT := {0}".format(dircwd))
 
