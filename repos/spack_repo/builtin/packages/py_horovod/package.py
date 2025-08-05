@@ -76,7 +76,7 @@ class PyHorovod(PythonPackage, CudaPackage):
     )
     variant(
         "tensor_ops",
-        default="nccl",
+        default="mpi",
         description="Framework to use for GPU/CPU operations",
         values=("nccl", "mpi", "gloo", "ccl"),
         multi=False,
