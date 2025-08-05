@@ -127,6 +127,15 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         "python", default=False, description="Support unwinding Python source.", when="@2023.03:"
     )
 
+    variant(
+        "auditor_default",
+        default=True,
+        sticky=True,
+        when="@2025:",
+        description="Whether to use LD_AUDIT by default in hpcrun, can be set to "
+        "false to work around bugs in Glibc <2.35",
+    )
+
     build_system(
         conditional("meson", when="@2024.01:"),
         conditional("autotools", when="@:2024.01"),
@@ -430,6 +439,8 @@ class MesonBuilder(meson.MesonBuilder):
             "-Drocm=" + ("enabled" if spec.satisfies("+rocm") else "disabled"),
             "-Dlevel0=" + ("enabled" if spec.satisfies("+level_zero") else "disabled"),
             "-Dgtpin=" + ("enabled" if spec.satisfies("+gtpin") else "disabled"),
+            "-Dhpcrun_use_auditor_by_default="
+            + ("true" if spec.satisfies("+auditor_default") else "false"),
         ]
 
         if spec.satisfies("@2025:"):
