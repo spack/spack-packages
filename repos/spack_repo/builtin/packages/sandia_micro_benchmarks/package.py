@@ -3,7 +3,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
+
 from spack.package import *
+
 
 class SandiaMicroBenchmarks(MakefilePackage):
     """Sandia Micro Benchmarks test HPC networking, including messaging rate performance, across
@@ -18,7 +20,7 @@ class SandiaMicroBenchmarks(MakefilePackage):
     git = "https://github.com/sandialabs/SMB.git"
     version("master", branch="master")
 
-    variant(name="shmem", default=False, description="Build the SHMEM benchmark.")   
+    variant(name="shmem", default=False, description="Build the SHMEM benchmark.")
 
     depends_on("mpi")
     depends_on("sos", when="+shmem")
