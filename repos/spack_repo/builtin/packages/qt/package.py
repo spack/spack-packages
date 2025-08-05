@@ -6,6 +6,7 @@ import os
 import platform
 import re
 import sys
+from typing import List
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -599,17 +600,17 @@ class Qt(Package):
 
         return [quote(x) if has_space(x) or has_reserved(x) else x for x in args]
 
-    def _split_link_args(self, arg_str):
+    def _split_link_args(self, file_set: List):
         """Returns a list of the -L
         arguments included in arg_str with proper
         handling for paths with spaces"""
-        return ["-L" + x for x in arg_str.split("-L") if x]
+        return ["-L" + x for x in file_set]
 
-    def _split_include_args(self, arg_str):
+    def _split_include_args(self, file_set: List):
         """Returns a list of the -I
         arguments included in arg_str with proper
         handling for paths with spaces"""
-        return ["-I" + x for x in arg_str.split("-I") if x]
+        return ["-I" + x for x in file_set]
 
     def _dep_appender_factory(self, config_args):
         spec = self.spec
@@ -618,8 +619,8 @@ class Qt(Package):
             pkg = spec[spack_pkg]
             config_args.append("-system-" + (qt_name or spack_pkg))
             if not pkg.external:
-                config_args.extend(self._split_link_args(pkg.libs.search_flags))
-                config_args.extend(self._split_include_args(pkg.headers.include_flags))
+                config_args.extend(self._split_link_args(pkg.libs.directories))
+                config_args.extend(self._split_include_args(pkg.headers.directories))
 
         return use_spack_dep
 
@@ -663,8 +664,8 @@ class Qt(Package):
         if "+ssl" in spec:
             pkg = spec["openssl"]
             config_args.append("-openssl-linked")
-            config_args.extend(self._split_link_args(pkg.libs.search_flags))
-            config_args.extend(self._split_include_args(pkg.headers.include_flags))
+            config_args.extend(self._split_link_args(pkg.libs.directories))
+            config_args.extend(self._split_include_args(pkg.headers.directories))
         else:
             config_args.append("-no-openssl")
 
