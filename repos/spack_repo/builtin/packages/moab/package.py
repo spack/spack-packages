@@ -66,7 +66,9 @@ class Moab(AutotoolsPackage):
     conflicts("+parmetis", when="~mpi")
     conflicts("+coupler", when="~mpi")
     conflicts("+tempest", when="~netcdf")
-    conflicts("+tempest", when="@:5.0.2")
+    conflicts("+tempest", when="~hdf5")
+    # The 'tempest' variant is only supported starting from version 5.1.0
+    conflicts("+tempest", when="@:5.0.99")
 
     # There are many possible variants for MOAB. Here are examples for
     # two of them:
