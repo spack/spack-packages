@@ -52,7 +52,7 @@ class PyXarray(PythonPackage):
 
     # at least 2025.x is only build dep
     # https://github.com/pydata/xarray/issues/10588#issuecomment-3141106480
-    depends_on("py-setuptools@77:", when="@2025.7.1:",type="build")
+    depends_on("py-setuptools@77:", when="@2025.7.1:", type="build")
     depends_on("py-setuptools-scm", when="@0.15:", type="build")
     depends_on("py-setuptools-scm@7:", when="@2023.7.0:", type="build")
     depends_on("py-setuptools-scm@3.4:+toml", when="@0.17:2022.3.0", type="build")
