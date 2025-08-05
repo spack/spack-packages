@@ -28,7 +28,7 @@ _versions = {
         "linux-armv6hf": "8afc50b302d5feeac9381ea114d563f0150d061520042b254d6eb715797c8223",
         "linux-riscv64": "693c987777e7b524dd311d9b8c704885a39c889c9804bb1ef1fd29b48567b0b3",
         "linux-x86_64": "8c3be12b05d5c177a04c29e3c78ce89ac86f1595681cab149b65b97c4e227198",
-    }
+    },
 }
 
 
