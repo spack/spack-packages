@@ -18,14 +18,22 @@ class Libssh2(AutotoolsPackage, CMakePackage):
     license("BSD-3-Clause")
 
     version("1.11.1", sha256="d9ec76cbe34db98eec3539fe2c899d26b0c837cb3eb466a56b0f109cabf658f7")
-    version("1.11.0", sha256="3736161e41e2693324deb38c26cfdc3efe6209d634ba4258db1cecff6a5ad461")
-    version("1.10.0", sha256="2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51")
-    version("1.9.0", sha256="d5fb8bd563305fd1074dda90bd053fb2d29fc4bce048d182f96eaa466dfadafd")
-    version("1.8.0", sha256="39f34e2f6835f4b992cafe8625073a88e5a28ba78f83e8099610a7b3af4676d4")
-    version("1.7.0", sha256="e4561fd43a50539a8c2ceb37841691baf03ecb7daf043766da1b112e4280d584")
-    version(
-        "1.4.3", sha256="eac6f85f9df9db2e6386906a6227eb2cd7b3245739561cad7d6dc1d5d021b96d"
-    )  # CentOS7
+
+    with default_args(deprecated=True):
+        # https://nvd.nist.gov/vuln/detail/CVE-2023-48795
+        version(
+            "1.11.0", sha256="3736161e41e2693324deb38c26cfdc3efe6209d634ba4258db1cecff6a5ad461"
+        )
+        version(
+            "1.10.0", sha256="2d64e90f3ded394b91d3a2e774ca203a4179f69aebee03003e5a6fa621e41d51"
+        )
+        version("1.9.0", sha256="d5fb8bd563305fd1074dda90bd053fb2d29fc4bce048d182f96eaa466dfadafd")
+        # https://nvd.nist.gov/vuln/detail/CVE-2019-3863
+        version("1.8.0", sha256="39f34e2f6835f4b992cafe8625073a88e5a28ba78f83e8099610a7b3af4676d4")
+        version("1.7.0", sha256="e4561fd43a50539a8c2ceb37841691baf03ecb7daf043766da1b112e4280d584")
+        version(
+            "1.4.3", sha256="eac6f85f9df9db2e6386906a6227eb2cd7b3245739561cad7d6dc1d5d021b96d"
+        )  # CentOS7
 
     build_system("autotools", "cmake", default="autotools")
 
