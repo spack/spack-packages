@@ -29,9 +29,11 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     test_requires_compiler = True
 
-    license("BSD-3-Clause")
+    license("Apache-2.0", when="@2025:")
+    license("BSD-3-Clause", when="@:2024")
 
     version("develop", branch="develop")
+    version("2025.0.stable", branch="release/2025.0")
     version("2024.01.stable", branch="release/2024.01")
     version("2024.01.1", tag="2024.01.1", commit="0672b9a9a2a1e3846c5e2059fb73a07a129f22cd")
     version("2023.08.stable", branch="release/2023.08")
@@ -118,7 +120,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         "docs",
         default=False,
         description="Include extra documentation (user's manual)",
-        when="@develop",
+        when="@2025:",
     )
 
     variant(
@@ -140,7 +142,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         depends_on("libtool", type="build")
 
     with when("build_system=meson"):
-        depends_on("meson@1.1.0:", type="build")
+        depends_on("meson@1.3.2:", type="build")
 
         with when("@:2024.01"):
             depends_on("gmake", type="build")
@@ -181,16 +183,16 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("libunwind +pic libs=static", when="@:2023.08")
     depends_on("mbedtls+pic", when="@:2022.03")
     depends_on("xerces-c transcoder=iconv")
-    depends_on("xxhash@0.8.1:", when="@develop")
+    depends_on("xxhash@0.8.1:", when="@2025:")
     depends_on("xz", type="link")
     depends_on("xz+pic libs=static", type="link", when="@:2023.08")
     depends_on("yaml-cpp@0.7.0: +shared", when="@2022.10:")
-    depends_on("googletest@1.8.1: +gmock", type="test", when="@develop")
+    depends_on("googletest@1.8.1: +gmock", type="test", when="@2025:")
 
     depends_on("zlib-api")
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
-    depends_on("py-docutils", type="build", when="@develop")
+    depends_on("py-docutils", type="build", when="@2025:")
     depends_on("py-sphinx", type="build", when="+docs")
     depends_on("py-myst-parser@0.19:", type="build", when="+docs")
 
@@ -423,7 +425,7 @@ class MesonBuilder(meson.MesonBuilder):
             "-Dgtpin=" + ("enabled" if spec.satisfies("+gtpin") else "disabled"),
         ]
 
-        if spec.satisfies("@develop"):
+        if spec.satisfies("@2025:"):
             args.append("-Dtests=" + ("enabled" if self.pkg.run_tests else "disabled"))
 
         if spec.satisfies("@:2024.01"):
