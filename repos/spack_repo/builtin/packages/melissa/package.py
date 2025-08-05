@@ -40,13 +40,17 @@ class Melissa(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("cmake@3.15:", type="build", when="@:2.1.0")
-    depends_on("cmake@3.22:", type="build", when="@2.1.1:")
     depends_on("pkgconfig", type="build")
 
+    with when("@:2.1.0"):
+        depends_on("cmake@3.15:", type="build")
+        depends_on("python@3.9:3.12", type=("build", "run"))
+
+    with when("@2.1.1:"):
+        depends_on("cmake@3.22:", type="build")
+        depends_on("python@3.11:3.12", type=("build", "run"))
+
     depends_on("libzmq@4.2:4", type=("build", "run"))
-    depends_on("python@3.9:3.12", type=("build", "run"), "@:2.1.0")
-    depends_on("python@3.11:3.12", type=("build", "run"), "@2.1.1:")
     depends_on("mpi", type=("build", "run"))
 
     def cmake_args(self):
