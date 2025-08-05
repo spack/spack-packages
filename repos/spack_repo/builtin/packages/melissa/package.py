@@ -18,6 +18,7 @@ class Melissa(CMakePackage):
     # attention: Git**Hub**.com accounts
     maintainers("abhishek1297", "viperML", "raffino")
 
+    version("2.1.1", sha256="6b92852429f13b144860edc37c7914723addabb0ec0bd108929ff567334d3f71")
     version("2.1.0", sha256="cf0f105ed5b1da260cc7476aec23df084470b50a61df997c0e457c38948bed93")
     version("2.0.1", sha256="a7ff4df75ea09af435b0c28c3fa3cab9335c1c76e1c48757facce36786b4962c")
     version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd")
@@ -39,11 +40,13 @@ class Melissa(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("cmake@3.15:", type="build")
+    depends_on("cmake@3.15:", type="build", when="@:2.1.0")
+    depends_on("cmake@3.22:", type="build", when="@2.1.1:")
     depends_on("pkgconfig", type="build")
 
     depends_on("libzmq@4.2:4", type=("build", "run"))
-    depends_on("python@3.9:3.12", type=("build", "run"))
+    depends_on("python@3.9:3.12", type=("build", "run"), "@:2.1.0")
+    depends_on("python@3.11:3.12", type=("build", "run"), "@2.1.1:")
     depends_on("mpi", type=("build", "run"))
 
     def cmake_args(self):
