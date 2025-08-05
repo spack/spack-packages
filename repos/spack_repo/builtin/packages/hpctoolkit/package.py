@@ -237,6 +237,13 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         msg="avoid elfutils 0.191 (known critical errors in hpcstruct for CUDA binaries)",
     )
 
+    # https://gitlab.com/hpctoolkit/hpctoolkit/-/issues/897
+    conflicts(
+        "%cmake@3.30:3.31",
+        when="@2025: +cuda",
+        msg="avoid known conflict between CMake 3.30:3.31 and CUDA",
+    )
+
     conflicts("+cray", when="@2022.10.01", msg="hpcprof-mpi is not available in 2022.10.01")
     conflicts("+mpi", when="@2022.10.01", msg="hpcprof-mpi is not available in 2022.10.01")
 
