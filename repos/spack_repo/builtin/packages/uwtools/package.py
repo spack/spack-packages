@@ -42,7 +42,7 @@ class Uwtools(PythonPackage):
     depends_on("py-lxml@5.2", when="@2.7")
     depends_on("py-lxml@5.2:5.4", when="@2.8")
     depends_on("py-lxml@5.3", when="@:2.6")
-    depends_on("py-python-dateutil@2.9", when="@2.8:")
+    depends_on("py-python-dateutil@2.9:", when="@2.8:")
     depends_on("py-pyyaml@6.0")
     depends_on("py-requests@2.32", when="@2.6:")
 
