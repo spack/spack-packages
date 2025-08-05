@@ -123,6 +123,9 @@ class Verible(Package):
         url="https://github.com/chipsalliance/verible/archive/refs/tags/v0.0-3428-gcfcbb82b.tar.gz",
     )
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     depends_on("flex", type="build")
     depends_on("bison", type="build")
     depends_on("bazel", type="build")
