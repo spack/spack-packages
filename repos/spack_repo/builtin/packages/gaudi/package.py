@@ -58,9 +58,9 @@ class Gaudi(CMakePackage, CudaPackage):
     maintainers("drbenmorgan", "vvolkl", "jmcarcell")
 
     _cxxstd_values = (
-        conditional("14", when="@:39"),
-        conditional("17", when="@:39"),
-        conditional("20", when="@39:"),
+        conditional("14", when="@:38"),
+        conditional("17", when="@:38"),
+        conditional("20", when="@38:"),
     )
     _cxxstd_common = {
         "values": _cxxstd_values,
