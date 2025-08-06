@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PyFlexcache(PythonPackage):
-    """A convenience wrapper for using pint with xarray"""
+    """Flexcache is a flexible caching library for Python, providing convenient and efficient caching mechanisms."""
 
     homepage = "https://github.com/hgrecco/flexcache"
     pypi = "flexcache/flexcache-0.3.tar.gz"
