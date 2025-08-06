@@ -7,7 +7,7 @@ from spack.package import *
 
 
 class PodmanCompose(PythonPackage):
-    """An container composition tool for Podman"""
+    """A container composition tool for Podman"""
 
     homepage = "https://podman.io"
     url = "https://github.com/containers/podman-compose/archive/refs/tags/v1.4.0.tar.gz"
