@@ -70,7 +70,7 @@ class Vtk(CMakePackage):
     variant("ffmpeg", default=False, description="Build with FFMPEG support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("examples", default=False, description="Enable building & installing the VTK examples")
-    variant("versioned_install", default=False, description="Include version in library filenames")
+    variant("versioned_install", default=True, description="Include version in library filenames")
 
     patch("gcc.patch", when="@6.1.0")
 
