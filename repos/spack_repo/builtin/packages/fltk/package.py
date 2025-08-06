@@ -29,12 +29,13 @@ class Fltk(Package):
     version("1.3.7", sha256="019f65810fb0ea5acac14c852193e8f374e822e6a3034a3c80ed8676f6f3a090")
     version("1.3.3", sha256="186bdc4234bea74bce4d47f186d41d35bdd47d48dbe5f829513a2183fbf8f3b2")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("gmake", type="build")
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
+    depends_on("pkgconfig", type="build", when="@1.3.7")
 
     depends_on("libx11")
     depends_on("freetype", when="@1.4.3:")
