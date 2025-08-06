@@ -215,7 +215,7 @@ class Scorep(AutotoolsPackage):
             "cce": "cray",
             "rocmcc": "amdclang",
             "intel-oneapi-compilers": "oneapi",
-            "llvm": "clang"
+            "llvm": "clang",
         }
         if compiler in renames:
             return renames[compiler]
