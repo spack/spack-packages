@@ -42,20 +42,22 @@ class Motioncor2(Package):
 
     depends_on("patchelf", type="build")
 
-    depends_on("cuda@8.0,9.1", type="run", when="@1.0.5")
-    depends_on("cuda@8.0,9.0:9.1", type="run", when="@1.1.0")
-    depends_on("cuda@8.0,9.1:9.2", type="run", when="@1.2.1")
-    depends_on("cuda@8.0,9.1:9.2,10.0", type="run", when="@1.2.3")
-    depends_on("cuda@8.0,9.2,10.1", type="run", when="@1.2.6:1.3.0")
-    depends_on("cuda@9.2,10.1:10.2", type="run", when="@1.3.1")
-    depends_on("cuda@8.0,9.2,10.0:10.2", type="run", when="@1.3.2")
-    depends_on("cuda@9.2,10.0:10.2,11.0", type="run", when="@1.4.0")
-    depends_on("cuda@10.0:10.2,11.1", type="run", when="@1.4.2")
-    depends_on("cuda@10.0:10.2,11.1:11.3", type="run", when="@1.4.4:1.4.5")
-    depends_on("cuda@10.2,11.1:11.5", type="run", when="@1.4.7")
-    depends_on("cuda@10.1:10.2,11.1:11.6", type="run", when="@1.5.0")
-    depends_on("cuda@10.1:10.2,11.1:11.8", type="run", when="@1.6.3")
-    depends_on("cuda@9.2,10.1:10.2,11.1:11.8,12.1", type="run", when="@1.6.4")
+    with default_args(type="run"):
+        depends_on("cuda@8.0,9.1", when="@1.0.5")
+        depends_on("cuda@8.0,9.0:9.1", when="@1.1.0")
+        depends_on("cuda@8.0,9.1:9.2", when="@1.2.1")
+        depends_on("cuda@8.0,9.1:9.2,10.0", when="@1.2.3")
+        depends_on("cuda@8.0,9.2,10.1", when="@1.2.6:1.3.0")
+        depends_on("cuda@9.2,10.1:10.2", when="@1.3.1")
+        depends_on("cuda@8.0,9.2,10.0:10.2", when="@1.3.2")
+        depends_on("cuda@9.2,10.0:10.2,11.0", when="@1.4.0")
+        depends_on("cuda@10.0:10.2,11.1", when="@1.4.2")
+        depends_on("cuda@10.0:10.2,11.1:11.3", when="@1.4.4:1.4.5")
+        depends_on("cuda@10.2,11.1:11.5", when="@1.4.7")
+        depends_on("cuda@10.1:10.2,11.1:11.6", when="@1.5.0")
+        depends_on("cuda@10.1:10.2,11.1:11.8", when="@1.6.3")
+        depends_on("cuda@9.2,10.1:10.2,11.1:11.8,12.1", when="@1.6.4")
+
     depends_on("libtiff", type="run")
 
     def install(self, spec, prefix):
