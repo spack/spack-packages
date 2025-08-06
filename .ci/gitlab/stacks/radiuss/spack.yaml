@@ -13,7 +13,7 @@ spack:
       - ~rocm
     mpi:
       require: openmpi
-  
+
   concretizer:
     unify: false
     reuse: false
@@ -31,11 +31,12 @@ spack:
   - hypre
   - lbann
   - lvarray ~tests  # per Spack issue #23192  # ~examples
-  # - mfem  # does not work with gcc 7
+  - mfem  # does not work with gcc 7
   - py-hatchet
   - py-maestrowf
   - py-merlin
   - py-shroud
+  - quandary
   - raja # ~examples  # ~tests
   - raja-perf
   - samrai
