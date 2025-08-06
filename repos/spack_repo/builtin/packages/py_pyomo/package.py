@@ -13,7 +13,7 @@ class PyPyomo(PythonPackage):
     optimization models."""
 
     homepage = "https://www.pyomo.org/"
-    pypi = "Pyomo/Pyomo-5.6.6.tar.gz"
+    pypi = "pyomo/pyomo-5.6.6.tar.gz"
     git = "https://github.com/Pyomo/pyomo.git"
 
     # Maintainer accurate as of 2025-04-16
