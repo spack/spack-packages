@@ -36,7 +36,7 @@ spack:
   - py-maestrowf
   - py-merlin
   - py-shroud
-  - quandary
+  # - quandary # package needs to specify a version
   - raja # ~examples  # ~tests
   - raja-perf
   - samrai
