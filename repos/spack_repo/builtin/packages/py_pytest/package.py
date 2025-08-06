@@ -67,13 +67,13 @@ class PyPytest(PythonPackage):
         # see https://github.com/pytest-dev/pytest/releases/tag/7.3.2
         depends_on("python@:3.11", when="@:7.3.1")
 
-        depends_on("py-colorama", when="platform=windows")
         depends_on("py-colorama@0.4:", when="@8.4: platform=windows")
+        depends_on("py-colorama", when="platform=windows")
         depends_on("py-exceptiongroup@1:", when="@7:^python@:3.10")
-        depends_on("py-iniconfig", when="@6.0:")
         depends_on("py-iniconfig@1:", when="@8.4:")
-        depends_on("py-packaging", when="@4.6:")
+        depends_on("py-iniconfig", when="@6.0:")
         depends_on("py-packaging@20:", when="@8.4:")
+        depends_on("py-packaging", when="@4.6:")
         depends_on("py-pluggy@1.5:1", when="@8.2:")
         depends_on("py-pluggy@1.3:1", when="@8:")
         depends_on("py-pluggy@0.12:1", when="@6.2:7")
