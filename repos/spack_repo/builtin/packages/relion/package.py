@@ -122,7 +122,7 @@ class Relion(CMakePackage, CudaPackage):
             "-DMKLFFT=%s" % ("+mklfft" in self.spec),
             "-DALTCPU=%s" % ("+altcpu" in self.spec),
         ]
-        if spec.satisfies("+gui"):
+        if self.spec.satisfies("+gui"):
             incs = [f"-I{self.spec[lib].prefix.include}" for lib in ["libx11", "xproto"]]
             args += ["-DCMAKE_CXX_FLAGS=" + " ".join(incs)]
 
