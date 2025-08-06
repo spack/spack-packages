@@ -3,8 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import Optional
 
-import spack.util.url
-from spack.package import PackageBase
+from spack.package import PackageBase, join_url
 
 
 class SourcewarePackage(PackageBase):
@@ -25,12 +24,11 @@ class SourcewarePackage(PackageBase):
     def urls(self):
         self._ensure_sourceware_mirror_path_is_set_or_raise()
         return [
-            spack.util.url.join(m, self.sourceware_mirror_path, resolve_href=True)
-            for m in self.base_mirrors
+            join_url(m, self.sourceware_mirror_path, resolve_href=True) for m in self.base_mirrors
         ]
 
     def _ensure_sourceware_mirror_path_is_set_or_raise(self):
         if self.sourceware_mirror_path is None:
             cls_name = type(self).__name__
-            msg = "{0} must define a `sourceware_mirror_path` attribute" " [none defined]"
+            msg = "{0} must define a `sourceware_mirror_path` attribute [none defined]"
             raise AttributeError(msg.format(cls_name))

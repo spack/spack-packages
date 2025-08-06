@@ -116,7 +116,7 @@ class RocprofilerDev(CMakePackage):
     depends_on("py-pyyaml")
     depends_on("py-barectf")
     depends_on("py-setuptools")
-    depends_on("py-jsonschema")
+    depends_on("py-jsonschema@4:")
     depends_on("py-jinja2")
     depends_on("py-termcolor")
     depends_on("py-pandas", when="@6.0:")

@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems import autotools, nmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.nmake import NMakePackage
 
-import spack.platforms
 from spack.package import *
 
 is_windows = sys.platform == "win32"
@@ -163,7 +162,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
 
             # check for fts
             def query_fts(version):
-                return "CREATE VIRTUAL TABLE name " "USING fts{:d}(sender, title, body);".format(
+                return "CREATE VIRTUAL TABLE name USING fts{:d}(sender, title, body);".format(
                     version
                 )
 
@@ -248,7 +247,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
         """ensure version is expected"""
         vers_str = str(self.spec.version)
 
-        sqlite3 = which(self.prefix.bin.sqlite3)
+        sqlite3 = which(self.prefix.bin.sqlite3, required=True)
         out = sqlite3("-version", output=str.split, error=str.split)
         assert vers_str in out
 
@@ -256,9 +255,6 @@ class Sqlite(AutotoolsPackage, NMakePackage):
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def configure_args(self):
         args = []
-
-        if self.get_arch() == "ppc64le":
-            args.append("--build=powerpc64le-redhat-linux-gnu")
 
         args.extend(self.enable_or_disable("fts4", variant="fts"))
         args.extend(self.enable_or_disable("fts5", variant="fts"))
@@ -274,10 +270,6 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             args.append("CPPFLAGS=-DSQLITE_ENABLE_COLUMN_METADATA=1")
 
         return args
-
-    def get_arch(self):
-        host_platform = spack.platforms.host()
-        return str(host_platform.target("default_target"))
 
     @run_after("install")
     def build_libsqlitefunctions(self):

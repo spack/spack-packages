@@ -8,7 +8,6 @@ from spack_repo.builtin.build_systems import meson
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
-from spack.util.environment import is_system_path
 
 
 class Glib(MesonPackage):
@@ -134,7 +133,6 @@ class Glib(MesonPackage):
 
 
 class MesonBuilder(meson.MesonBuilder):
-
     @property
     def dtrace_copy_path(self):
         return join_path(self.stage.source_path, "dtrace-copy")

@@ -19,7 +19,7 @@ class Scotch(CMakePackage, MakefilePackage):
     url = "https://gitlab.inria.fr/scotch/scotch/-/archive/v7.0.1/scotch-v7.0.1.tar.gz"
     list_url = "https://gforge.inria.fr/frs/?group_id=248"
 
-    maintainers("pghysels")
+    maintainers("AlexanderRichert-NOAA", "climbfuji")
 
     version("7.0.7", sha256="02084471d2ca525f8a59b4bb8c607eb5cca452d6a38cf5c89f5f92f7edc1a5b5")
     version("7.0.6", sha256="b44acd0d2f53de4b578fa3a88944cccc45c4d2961cd8cefa9b9a1d5431de8e2b")
@@ -89,6 +89,10 @@ class Scotch(CMakePackage, MakefilePackage):
     conflicts("metis", when="+metis")
     conflicts("parmetis", when="+metis")
 
+    # https://github.com/ufs-community/ufs-weather-model/pull/2650
+    # https://github.com/spack/spack-packages/issues/161
+    conflicts("%oneapi")
+
     parallel = False
 
     # NOTE: Versions of Scotch up to version 6.0.0 don't include support for
@@ -125,7 +129,6 @@ class Scotch(CMakePackage, MakefilePackage):
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
-
     def cmake_args(self):
         args = [
             self.define_from_variant("BUILD_LIBSCOTCHMETIS", "metis"),

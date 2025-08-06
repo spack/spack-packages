@@ -12,8 +12,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.kokkos.package import Kokkos
 
-from spack.build_environment import dso_suffix
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 # Trilinos is complicated to build, as an inspiration a couple of links to
@@ -431,12 +429,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos-kernels~shared", when="+cuda_rdc")
         depends_on("kokkos-kernels~shared", when="+rocm_rdc")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=4.6.01", when="@master:")
+        depends_on("kokkos@=4.6.02", when="@master:")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=4.6.01", when="@master:")
+        depends_on("kokkos-kernels@=4.6.02", when="@master:")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
         depends_on("kokkos-kernels@=4.2.01", when="@15.1:15")
@@ -607,11 +605,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             ):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
-                    "--print-file-name", "libgfortran." + dso_suffix, output=str
+                    "--print-file-name",
+                    "libgfortran." + shared_library_suffix(self.spec),
+                    output=str,
                 ).strip()
                 # if libgfortran is equal to "libgfortran.<dso_suffix>" then
                 # print-file-name failed, use static library instead
-                if libgfortran == "libgfortran." + dso_suffix:
+                if libgfortran == "libgfortran." + shared_library_suffix(self.spec):
                     libgfortran = fc("--print-file-name", "libgfortran.a", output=str).strip()
                 # -L<libdir> -lgfortran required for OSX
                 # https://github.com/spack/spack/pull/25823#issuecomment-917231118

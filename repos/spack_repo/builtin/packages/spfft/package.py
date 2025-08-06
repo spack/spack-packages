@@ -52,6 +52,10 @@ class Spfft(CMakePackage, CudaPackage, ROCmPackage):
         description="CMake build type",
         values=("Debug", "Release", "RelWithDebInfo"),
     )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
     depends_on("fftw-api@3")
     depends_on("mpi", when="+mpi")
     depends_on("cmake@3.11:", type="build")

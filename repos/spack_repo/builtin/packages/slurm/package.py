@@ -27,8 +27,15 @@ class Slurm(AutotoolsPackage):
     homepage = "https://slurm.schedmd.com"
     url = "https://github.com/SchedMD/slurm/archive/slurm-21-08-8-2.tar.gz"
 
+    maintainers("w8jcik")
+
     license("GPL-2.0-or-later")
 
+    version("25-05-1-1", sha256="b568c761a6c9d72358addb3bb585456e73e80a02214ce375d2de8534f9ddb585")
+    version("24-11-6-1", sha256="282708483326f381eb001a14852a1a82e65e18f37b62b7a5f4936c0ed443b600")
+    version(
+        "23-11-11-1", sha256="e9234e664ce30be206f73c0ff1a5f33e0ce32be35ece812eac930fcaa9da2c2f"
+    )
     version("23-11-1-1", sha256="31506df24c6d24e0ea0329cac1395ab9b645bbde1518f5c469f7711df5e22c11")
     version("23-11-0-1", sha256="3780773a80b73ea2edb4353318b4220188f4eda92c31ab3a2bdd3a4fdec76be9")
     version("23-02-7-1", sha256="3f60ad5b5a492312d1febb9f9167caa3aee7f8438bb032590a993f5a65c5e4db")
@@ -144,6 +151,10 @@ class Slurm(AutotoolsPackage):
 
     # TODO: add variant for BG/Q and Cray support
 
+    # TODO: add variant for TLS (slurm@25-05:)
+
+    # TODO: add variant for RRD (librrd) (slurm@23-02:)
+
     # TODO: add support for checkpoint/restart (BLCR)
 
     # TODO: add support for lua
@@ -164,7 +175,11 @@ class Slurm(AutotoolsPackage):
     depends_on("hdf5", when="+hdf5")
     depends_on("hwloc", when="+hwloc")
     depends_on("mariadb", when="+mariadb")
-    depends_on("pmix", when="+pmix")
+
+    depends_on("pmix@:5", when="@22-05:+pmix")
+    depends_on("pmix@:3", when="@20-11:21-08+pmix")
+    depends_on("pmix@:2", when="@19-05:20-02+pmix")
+    depends_on("pmix@:1", when="@:18+pmix")
 
     depends_on("http-parser", when="+restd")
     depends_on("libyaml", when="+restd")

@@ -194,7 +194,6 @@ class Mivisionx(CMakePackage):
             depends_on(f"hip@{ver}", when=f"@{ver}")
             depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
-            depends_on("python@3.5:", type="build")
         for ver in [
             "5.7.0",
             "5.7.1",
@@ -217,12 +216,14 @@ class Mivisionx(CMakePackage):
             depends_on(f"hip@{ver}", when=f"@{ver}")
             depends_on(f"migraphx@{ver}", when=f"@{ver}")
             depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
-            depends_on("python@3.5:", type="build")
             depends_on(f"rpp@{ver}", when=f"@{ver}")
+            depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+            depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
+        depends_on("python@3.5:", type="build")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("MIVISIONX_MODEL_COMPILER_PATH", self.spec.prefix.libexec.mivisionx.model_compiler)
-        if self.spec.satisfies("@6.1:"):
+        if self.spec.satisfies("@6.1:") and not self.spec.external:
             env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

@@ -10,7 +10,6 @@ import warnings
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.oneapi import IntelOneApiPackage
 
-from spack.build_environment import dso_suffix
 from spack.package import *
 
 versions = [
@@ -651,7 +650,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             join_path("compiler", "lib"),
         ]:
             p = join_path(self.component_prefix.linux, d)
-            if find(p, "*." + dso_suffix, recursive=False):
+            if find(p, "*." + shared_library_suffix(self.spec), recursive=False):
                 yield p
 
     def archspec_name(self):

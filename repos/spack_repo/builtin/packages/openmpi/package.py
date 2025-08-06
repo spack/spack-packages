@@ -11,17 +11,19 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import llnl.util.lang
-
-import spack.compilers.config
 from spack.package import *
-from spack.platforms.cray import slingshot_network
 
 
-@llnl.util.lang.memoized
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
+@memoized
 def is_CrayEX():
     # Credit to upcxx and chapel packages for this hpe-cray-ex detection function
-    if spack.platforms.host().name == "linux":
+    if host_platform().name == "linux":
         target = os.environ.get("CRAYPE_NETWORK_TARGET")
         if target in ["ofi", "ucx"]:  # normal case
             return True
@@ -36,7 +38,7 @@ def is_CrayEX():
 
 
 def check_FI_HMEM_ROCR():
-    if spack.platforms.host().name == "linux":
+    if host_platform().name == "linux":
         fi_info = which("fi_info")
         if fi_info:
             output = fi_info("--caps", "FI_HMEM_ROCR", output=str, error=str, fail_on_error=False)
@@ -519,7 +521,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         values=disjoint_sets(("auto",), FABRICS).with_non_feature_values(
             "auto", "none"
         ),  # shared memory transports
-        description="List of fabrics that are enabled; " "'auto' lets openmpi determine",
+        description="List of fabrics that are enabled; 'auto' lets openmpi determine",
     )
 
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge", "loadleveler")
@@ -633,6 +635,13 @@ with '-Wl,-commons,use_dylibs' and without
 '-Wl,-flat_namespace'.""",
     )
 
+    variant(
+        "cray-xpmem",
+        default=False,
+        when="fabrics=xpmem",
+        description="use cray-xpmem instead of xpmem configure flag",
+    )
+
     # Patch to allow two-level namespace on a MacOS platform when building
     # openmpi. Unfortuntately, the openmpi configure command has flat namespace
     # hardwired in. In spack, this only works for openmpi up to versions 4,
@@ -724,6 +733,10 @@ with '-Wl,-commons,use_dylibs' and without
         # See https://www.mail-archive.com/announce@lists.open-mpi.org//msg00158.html
         depends_on("pmix@:4.2.2", when="@:4.1.5")
 
+        # When an external PMIx is used, also an external PRRTE should be used
+        # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
+        depends_on("prrte")
+
     # Libevent is required when *vendored* PMIx is used
     depends_on("libevent@2:", when="~internal-libevent")
 
@@ -762,7 +775,7 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=loadleveler",
         when="@3:",
-        msg="The loadleveler scheduler is not supported with " "openmpi(>=3).",
+        msg="The loadleveler scheduler is not supported with openmpi(>=3).",
     )
 
     # According to this comment on github:
@@ -777,6 +790,9 @@ with '-Wl,-commons,use_dylibs' and without
     # Building against an external PMIx with an internal Libevent or HWLOC is unsupported
     conflicts("~internal-pmix", "+internal-hwloc")
     conflicts("~internal-pmix", "+internal-libevent")
+
+    # May be able to get working for LLVM 18/19 using FC=flang-new
+    conflicts("%fortran=clang %llvm@:19")
 
     filter_compiler_wrappers("openmpi/*-wrapper-data*", relative_root="share")
 
@@ -1073,9 +1089,12 @@ with '-Wl,-commons,use_dylibs' and without
         return f"--with-ucc={self.spec['ucc'].prefix}"
 
     def with_or_without_xpmem(self, activated):
+        s1 = "xpmem"
+        if self.spec.satisfies("+cray-xpmem"):
+            s1 = "cray-xpmem"
         if not activated:
-            return "--without-xpmem"
-        return f"--with-xpmem={self.spec['xpmem'].prefix}"
+            return f"--without-{s1}"
+        return f"--with-{s1}={self.spec['xpmem'].prefix}"
 
     def with_or_without_knem(self, activated):
         if not activated:
@@ -1152,10 +1171,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(self.with_or_without("fabrics"))
 
         if spec.satisfies("@2.0.0:"):
-            if "fabrics=xpmem" in spec:
-                config_args.append("--with-cray-xpmem")
-            else:
-                config_args.append("--without-cray-xpmem")
+            config_args.append(self.with_or_without_xpmem("fabrics=xpmem" in spec))
 
         # Schedulers
         if "schedulers=auto" not in spec:
@@ -1179,11 +1195,15 @@ with '-Wl,-commons,use_dylibs' and without
         elif "^libevent" in spec:
             config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
 
-        # PMIx support
+        # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):
             config_args.append("--with-pmix=internal")
-        elif "^pmix" in spec:
-            config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            config_args.append("--with-prrte=internal")
+        else:
+            if "^pmix" in spec:
+                config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            if "^prrte" in spec:
+                config_args.append("--with-prrte={0}".format(spec["prrte"].prefix))
 
         if "^zlib-api" in spec:
             config_args.append("--with-zlib={0}".format(spec["zlib-api"].prefix))
@@ -1451,7 +1471,7 @@ with '-Wl,-commons,use_dylibs' and without
 
 
 def get_spack_compiler_spec(compiler):
-    spack_compilers = spack.compilers.config.find_compilers([os.path.dirname(compiler)])
+    spack_compilers = find_compilers([os.path.dirname(compiler)])
     actual_compiler = None
     # check if the compiler actually matches the one we want
     for spack_compiler in spack_compilers:

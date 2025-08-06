@@ -6,7 +6,6 @@ import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 _versions = {
@@ -273,7 +272,7 @@ class Aqlprofile(Package):
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
-    spack_os = spack.platforms.host().default_os
+    spack_os = host_platform().default_os
     if "rhel" in spack_os or "centos" in spack_os:
         pkg_type = "yum"
     elif "sles" in spack_os:
@@ -325,7 +324,8 @@ class Aqlprofile(Package):
         install_tree(f"opt/rocm-{spec.version}/lib/", prefix.lib)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
+        if not self.spec.external:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
 
     # This package is installed from binaries, and we haven't patched rpaths.
     unresolved_libraries = ["*"]

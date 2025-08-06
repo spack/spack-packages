@@ -102,6 +102,7 @@ class Pythia8(AutotoolsPackage):
     variant("mpich", default=False, description="Multi-threading support via MPICH")
     variant("hdf5", default=False, description="Support the use of HDF5 format")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("zlib-api", when="+gzip")

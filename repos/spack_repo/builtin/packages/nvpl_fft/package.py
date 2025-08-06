@@ -6,8 +6,6 @@ import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util.symlink import symlink
-
 from spack.package import *
 
 

@@ -7,8 +7,6 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-import llnl.util.filesystem as fsys
-
 from spack.package import *
 
 
@@ -79,7 +77,7 @@ class Libcatalyst(CMakePackage):
             # To run the test binary on Windows, we need to construct an rpath
             # for the current package being tested, including the package
             # itself
-            fsys.make_package_test_rpath(self, adapter0_test_path)
+            make_package_test_rpath(self, adapter0_test_path)
         cmake = which(self.spec["cmake"].prefix.bin.cmake)
 
         with working_dir(testdir, create=True):
