@@ -17,8 +17,7 @@ class Unzip(MakefilePackage):
 
     version("6.0", sha256="036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")  # See the logs: unzip's build only runs cc.
 
     # clang and oneapi need this patch, likely others
     # There is no problem with it on gcc, so make it a catch all
@@ -118,8 +117,8 @@ class Unzip(MakefilePackage):
         sha256="59c0983b53801d3080684bc616d3570ccacfe471f3a8c442916b87f2f3bfa334",
     )
     patch(
-        "https://src.fedoraproject.org/rpms/unzip/raw/rawhide/f/unzip-zipbomb-manpage.patch",
-        sha256="ec4a8e5745e37f3d2d57c594c610b71753b77c5fb4bd92edfb0fb25ef968d13e",
+        "https://src.fedoraproject.org/rpms/unzip/raw/c98fc67064eee9a7437bc3dc5bce3432c3571d5c/f/unzip-zipbomb-manpage.patch",
+        sha256="4e5a081aa8d0ad9aa5ceeda9eaeefbb6a7e7666d6b7a5b81cb0a61a3ff99a942",
     )
 
     def flag_handler(self, name, flags):
