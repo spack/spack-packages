@@ -26,6 +26,8 @@ class PyPrometheusClient(PythonPackage):
     variant("twisted", default=False, description="Expose metrics as a twisted resource")
 
     depends_on("py-setuptools", type="build")
+    # https://github.com/prometheus/client_python/blob/v0.22.1/pyproject.toml
+    depends_on("py-setuptools@77.0.0:", type="build", when="@0.22.1:")
     # Notice: prometheus_client/twisted/_exposition.py imports 'twisted.web.wsgi'
     # which was not ported to Python 3 until twisted 16.0.0
     depends_on("py-twisted@16:", when="@0.12.0: +twisted ^python@3:", type=("build", "run"))
