@@ -15,6 +15,7 @@ class PySentrySdk(PythonPackage):
 
     license("MIT")
 
+    version("2.34.1", sha256="69274eb8c5c38562a544c3e9f68b5be0a43be4b697f5fd385bf98e4fbe672687")
     version("1.5.5", sha256="98fd155fa5d5fec1dbabed32a1a4ae2705f1edaa5dae4e7f7b62a384ba30e759")
     version("0.17.6", sha256="1a086486ff9da15791f294f6e9915eb3747d161ef64dee2d038a4d0b4a369b24")
 
@@ -32,8 +33,10 @@ class PySentrySdk(PythonPackage):
     variant("chalice", default=False, description="Builts with chalice")
     variant("httpx", default=False, when="@1.5.5:", description="Builts with httpx")
 
+    depends_on("python@3.6:", type=("build", "run"), when="@2:")
     depends_on("python@2.7,3.4:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
+    depends_on("pu-urllib3@1.26.11:", type=("build", "run"), when="@2.34.1:")
     depends_on("py-urllib3@1.10.0:", type=("build", "run"))
     depends_on("py-certifi", type=("build", "run"))
 
