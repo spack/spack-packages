@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PyFlexparser(PythonPackage):
-    """A convenience wrapper for using pint with xarray"""
+    """A flexible and extensible text parsing library for Python."""
 
     homepage = "https://github.com/hgrecco/flexparser"
     pypi = "flexparser/flexparser-0.4.tar.gz"
