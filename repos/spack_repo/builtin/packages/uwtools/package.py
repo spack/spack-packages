@@ -23,10 +23,15 @@ class Uwtools(PythonPackage):
 
     license("GPL-2.0-or-later", checked_by="WeirAE")
 
-    # Latest three minor releases per depreciation policy
+    # Latest three minor releases per deprecation policy
     version("2.8.2", sha256="634f7fbc33cd9439f43df00c1d904266b9c51b3f386c2141c26c1229d4d95a34")
     version("2.7.2", sha256="56816d543664792258bfa7dfb7e4cc66f794959dc92dc3710021f40a2b8571a4")
     version("2.6.2", sha256="d0922ddd2b3bdbeb925c2e4694f929f3e966145d2929e74ab9f9c9ecd27b674a")
+    version(
+        "2.5.1",
+        sha256="f389f63195492196c8009d5843a3861ad350b5fd1cea1fdb8a6bfdc7cbfd660f",
+        deprecated = True,
+    )
 
     depends_on("py-pip", type="build")
     # Maximum Python version limited here for compatibility with the JCSDA unified environment
