@@ -11,7 +11,7 @@ We run continuous integration on this repository to test builds of a large numbe
 Spack packages.
 
 If you want to test your package changes locally before submitting a pull request,
-simply configure Spack's default package repo to the full path to your local git clone:
+simply configure Spack's default package repo to the full path of your local git clone:
 
 ```shell
 spack repo set --scope user --destination /path/to/local/spack-packages builtin
