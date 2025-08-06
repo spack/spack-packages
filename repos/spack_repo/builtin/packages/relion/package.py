@@ -110,8 +110,6 @@ class Relion(CMakePackage, CudaPackage):
 
     def cmake_args(self):
         args = [
-            "-DCMAKE_C_FLAGS=-g",
-            "-DCMAKE_CXX_FLAGS=-g",
             "-DGUI=%s" % ("+gui" in self.spec),
             "-DDoublePrec_CPU=%s" % ("+double" in self.spec),
             "-DDoublePrec_GPU=%s" % ("+double-gpu" in self.spec),
@@ -119,6 +117,9 @@ class Relion(CMakePackage, CudaPackage):
             "-DMKLFFT=%s" % ("+mklfft" in self.spec),
             "-DALTCPU=%s" % ("+altcpu" in self.spec),
         ]
+        if self.spec.satisfies("+gui"):
+            incs = [f"-I{self.spec[lib].prefix.include}" for lib in ["libx11", "xproto"]]
+            args += ["-DCMAKE_CXX_FLAGS=" + " ".join(incs)]
 
         if "+cuda" in self.spec:
             carch = self.spec.variants["cuda_arch"].value[0]
