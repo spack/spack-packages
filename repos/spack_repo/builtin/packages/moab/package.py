@@ -55,7 +55,9 @@ class Moab(AutotoolsPackage):
     variant("fbigeom", default=False, description="Enable FBiGeom interface")
     variant("coupler", default=False, description="Enable mbcoupler tool")
     variant("dagmc", default=False, description="Enable DagMC tool")
-    variant("tempest", default=False, when="@5.1: +hdf5 +netcdf", description="Enable mbtempest tool")
+    variant(
+        "tempest", default=False, when="@5.1: +hdf5 +netcdf", description="Enable mbtempest tool"
+    )
 
     variant("debug", default=False, description="Enable debug symbols in libraries")
     variant("shared", default=False, description="Enables the build of shared libraries")
