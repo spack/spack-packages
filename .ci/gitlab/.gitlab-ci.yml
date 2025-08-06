@@ -73,7 +73,7 @@ default:
   stage: generate
   script:
     - spack --version
-    - spack env activate --without-view ${CI_PROJECT_DIR}/.ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
+    - spack env activate --without-view ${CI_PROJECT_DIR}/stacks/${SPACK_CI_STACK_NAME}
     - spack config add -f ./.ci/configs/repos.yaml
     - spack repo list
     - spack compiler find
@@ -196,7 +196,7 @@ dotenv:
 ########################################
 #
 # First add a new spack.yml defining the pipeline to run in
-# .ci/gitlab/stacks/my-super-cool-stack/spack.yaml
+# stacks/my-stack/spack.yaml
 #
 # Then add the following entries at the bottom of this file.
 #
@@ -207,26 +207,25 @@ dotenv:
 # extends list.
 #
 ########################################
-# My Super Cool Pipeline
+# My Stack Pipeline
 ########################################
-# .my-super-cool-stack:
+# .my-stack:
 #   variables:
-#     SPACK_CI_STACK_NAME: my-super-cool-stack
-#     tags: [ "all", "tags", "your", "job", "needs"]
+#     SPACK_CI_STACK_NAME: my-stack
 #
-# my-super-cool-stack-generate:
-#   extends: [ ".generate", ".my-super-cool-stack" ]
+# my-stack-generate:
+#   extends: [ ".generate", ".my-stack" ]
 #
-# my-super-cool-stack-build:
-#   extends: [ ".build", ".my-super-cool-stack" ]
+# my-stack-build:
+#   extends: [ ".build", ".my-stack" ]
 #   trigger:
 #     include:
-#       - artifact: jobs_scratch_dir/my-super-cool-stack/cloud-ci-pipeline.yml
-#         job: my-super-cool-stack-generate
+#       - artifact: jobs_scratch_dir/my-stack/cloud-ci-pipeline.yml
+#         job: my-stack-generate
 #     strategy: depend
 #   needs:
 #     - artifacts: True
-#       job: my-super-cool-stack-generate
+#       job: my-stack-generate
 
 ########################################
 # E4S pipeline
