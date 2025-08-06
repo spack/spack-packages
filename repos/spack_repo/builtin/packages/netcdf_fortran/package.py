@@ -80,7 +80,7 @@ class NetcdfFortran(AutotoolsPackage):
         elif name == "fflags":
             if "+pic" in self.spec:
                 flags.append(self.compiler.f77_pic_flag)
-            if self.spec.satisfies("%gcc@10:"):
+            if self.spec.satisfies("%fortran=gcc@10:"):
                 # https://github.com/Unidata/netcdf-fortran/issues/212
                 flags.append("-fallow-argument-mismatch")
             elif self.compiler.name == "cce":
