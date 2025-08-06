@@ -30,7 +30,7 @@ class Uwtools(PythonPackage):
     version(
         "2.5.1",
         sha256="f389f63195492196c8009d5843a3861ad350b5fd1cea1fdb8a6bfdc7cbfd660f",
-        deprecated = True,
+        deprecated=True,
     )
 
     depends_on("py-pip", type="build")
