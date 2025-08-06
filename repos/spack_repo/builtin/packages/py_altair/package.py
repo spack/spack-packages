@@ -14,6 +14,7 @@ class PyAltair(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("5.5.0", sha256="d960ebe6178c56de3855a68c47b516be38640b73fb3b5111c2a9ca90546dd73d")
     version("5.4.1", sha256="0ce8c2e66546cb327e5f2d7572ec0e7c6feece816203215613962f0ec1d76a82")
     version("5.2.0", sha256="2ad7f0c8010ebbc46319cc30febfb8e59ccf84969a201541c207bc3a4fa6cf81")
     version("5.1.2", sha256="e5f52a71853a607c61ce93ad4a414b3d486cd0d46ac597a24ae8bd1ac99dd460")
@@ -30,6 +31,8 @@ class PyAltair(PythonPackage):
     conflicts("~pandas", when="@:5.3.0")
 
     depends_on("python@3.7:", type=("build", "run"))
+    depends_on("python@:3.12", type=("build", "run"), when="@:5.4.1")
+
     depends_on("py-setuptools@40.6:", type="build", when="@:4")
     depends_on("py-entrypoints", type=("build", "run"), when="@2.0.0:4")
 
