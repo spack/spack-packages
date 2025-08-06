@@ -19,6 +19,7 @@ class PyPyomo(PythonPackage):
     # Maintainer accurate as of 2025-04-16
     maintainers("mrmundt")
 
+    version("6.9.3", sha256="54ec698bb31f78460e1627cbfa90cb2741b629c1ecaca7035bd2e340351a47f7")
     version("6.9.2", sha256="81b2b14ea619244824e1c547cc12602fe9a6e19309cbf0742868c5b1ef37cb35")
     version("6.9.1", sha256="ccb85fa4b03450c32614a939c6830d073a7ce79461b12b0f1e7809db96ae86de")
     version("6.9.0", sha256="622323c9d24de09db9fb491847a9c371be24efa1cc2f38da4782e11850ec1e7d")
@@ -95,7 +96,7 @@ class PyPyomo(PythonPackage):
     depends_on("python@2.7:2.8,3.4:3.8", when="@5.6", type=("build", "run"))
 
     # universally required
-    depends_on("py-setuptools@39.2:", type="build")
+    depends_on("py-setuptools@65:", type="build")
     depends_on("py-ply", type=("build", "run"))
 
     # required for pre-6 series
@@ -110,9 +111,9 @@ class PyPyomo(PythonPackage):
     depends_on("py-coverage", when="@6.1:+tests", type=("run"))
     depends_on("py-nose", when="@6.1:6.2+tests", type=("run"))
     depends_on("py-parameterized", when="@6.1:+tests", type=("run"))
+    depends_on("py-pybind11", when="@6.1:+tests", type=("run"))
     depends_on("py-pytest", when="@6.3:+tests", type=("run"))
     depends_on("py-pytest-parallel", when="@6.3:+tests", type=("run"))
-    depends_on("py-pybind11", when="@6.1:+tests", type=("run"))
 
     # when docs is requested
     depends_on("py-sphinx@3:", when="@:6.6+docs", type=("run"))
@@ -121,8 +122,8 @@ class PyPyomo(PythonPackage):
     depends_on("py-sphinx-rtd-theme@0.6:", when="@6.1:+docs", type=("run"))
     depends_on("py-sphinxcontrib-jsmath", when="@6.1:+docs", type=("run"))
     depends_on("py-sphinxcontrib-napoleon", when="@6.1:+docs", type=("run"))
-    depends_on("py-sphinx-toolbox@2.16:", when="@6.7.1:+docs", type=("run"))
-    depends_on("py-sphinx-jinja2-compat@0.1.1:", when="@6.7.1:+docs", type=("run"))
+    depends_on("py-sphinx-toolbox@2.16:", when="@6.7.1:6.9.2+docs", type=("run"))
+    depends_on("py-sphinx-jinja2-compat@0.1.1:", when="@6.7.1:6.9.2+docs", type=("run"))
     depends_on("py-enum-tools", when="@6.7.1:6.8.0+docs", type=("run"))
     depends_on("py-numpy@1", when="@6.1:6.7+docs", type=("run"))
     depends_on("py-numpy", when="@6.8:+docs", type=("run"))
@@ -142,6 +143,7 @@ class PyPyomo(PythonPackage):
     depends_on("py-python-louvain", when="@6.1:+optional", type=("run"))
     depends_on("py-pyyaml", when="@6.1:+optional", type=("run"))
     depends_on("py-qtconsole", when="@6.7.1:+optional", type=("run"))
+    depends_on("py-scikit-learn@:1.7", when="@6.8:+optional", type=("run"))
     depends_on("py-scipy", when="@6.1:+optional", type=("run"))
     depends_on("py-sympy", when="@6.1:+optional", type=("run"))
     depends_on("py-xlrd", when="@6.1:+optional", type=("run"))
