@@ -55,12 +55,9 @@ class PyIminuit(PythonPackage):
     # Bundled pybind11@:2.92 until 2.21 fails to compile with python@3.11:
     # See https://github.com/pybind/pybind11/pull/3368
     depends_on("python@:3.10", type=("build", "run"), when="@:2.21")
-    with when("@2.22:"):
-        depends_on("py-scikit-build-core@0.10:", type="build", when="@2.31:")
-        depends_on("py-pybind11", type="build")
-        depends_on("py-pybind11@2.12:", type="build", when="@2.26:")
-    with when("@:2.21"):
-        depends_on("py-setuptools", type="build")
+    depends_on("py-scikit-build-core@0.10:", type="build", when="@2.31:")
+    depends_on("py-pybind11", type="build", when="@2.22:")
+    depends_on("py-pybind11@2.12:", type="build", when="@2.26:")
     depends_on("py-numpy", type=("build", "run"), when="@1.3:1.3.6")
     depends_on("py-numpy@1.11.3:", type=("build", "run"), when="@1.3.7:")
     # https://github.com/numpy/numpy/issues/26191#issuecomment-2179127999
@@ -71,6 +68,7 @@ class PyIminuit(PythonPackage):
     depends_on("cmake@3.15:", type="build", when="@2.22:")
 
     # Historical dependencies
+    depends_on("py-setuptools", type="build", when="@:2.21")
     with when("@2.22:2.30"):
         depends_on("py-scikit-build-core@0.3:+pyproject", type="build")
         depends_on("py-scikit-build-core@0.5:+pyproject", type="build", when="@2.26:")
