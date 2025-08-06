@@ -124,6 +124,9 @@ class Scotch(CMakePackage, MakefilePackage):
         return scotchlibs + zlibs
 
     def patch(self):
+        # Add ternary operator to set 'actgrafptr->bbalglbval' to zero to avoid div by zero
+        # in the case of fewer vertices than processing elements for PT-Scotch.
+        # Solution comes from Scotch authors, and will be included in 7.0.9.
         if self.spec.satisfies("@:7.0.8 %oneapi"):
             filter_file(
                 r"(actgrafptr->bbalglbval       =) (\(double\) actgrafptr->compglbload0dlt / \(double\) actgrafptr->compglbload0avg);",  # noqa: E501
