@@ -64,6 +64,8 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         # the changes not incorporated into that PR
         patch("netcdfc_correct_and_export_link_interface.patch")
 
+        patch("strip_csd_from_mpi_inc.patch", when="@4.7.1: platform=windows")
+
     # Some of the patches touch configure.ac and, therefore, require forcing the autoreconf stage:
     _force_autoreconf_when = []
     with when("build_system=autotools"):
