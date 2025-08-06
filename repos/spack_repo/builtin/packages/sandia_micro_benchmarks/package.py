@@ -25,17 +25,15 @@ class SandiaMicroBenchmarks(MakefilePackage):
     depends_on("mpi")
     depends_on("sos", when="+shmem")
 
-    build_targets = ["mpi_overhead", "msgrate", "rma_mt_mpi"]
-    install_targets = build_targets
-
-    def build(self, spec, prefix):
-        if "+shmem" in spec:
-            self.build_targets.append("shmem_mt")
-            self.install_targets.append("shmem_mt")
-        for target in self.build_targets:
-            make(target)
+    @property
+    def build_targets(self):
+        targets = ["mpi_overhead", "msgrate", "rma_mt_mpi"]
+        if "+shmem" in self.spec:
+            targets.append("shmem_mt")
+        return targets
 
     def install(self, spec, prefix):
         mkdir(prefix.bin)
-        for target in self.install_targets:
+        for target in self.build_targets:
+            make(target)
             install(target, prefix.bin)
