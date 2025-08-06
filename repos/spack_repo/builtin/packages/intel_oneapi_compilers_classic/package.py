@@ -90,6 +90,9 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
            $ source {prefix}/{component}/{version}/env/vars.sh
         and from setting CC/CXX/F77/FC
         """
+        if self.spec.external:
+            return
+
         oneapi_pkg = self.spec["intel-oneapi-compilers"].package
 
         oneapi_pkg.setup_run_environment(env)
