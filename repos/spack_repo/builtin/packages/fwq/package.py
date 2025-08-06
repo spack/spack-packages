@@ -8,7 +8,7 @@ from spack.package import *
 import os.path
 
 class Fwq(MakefilePackage):
-    """This is a set of benchmarks designed to test system noise on HPC systems."""
+    """FWQ is the Fixed Work Quanta benchmark designed to test system noise on HPC systems."""
 
     homepage = "https://github.com/LLNL/system-noise"
     url = "https://github.com/LLNL/system-noise.git"
