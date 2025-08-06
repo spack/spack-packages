@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class FenicsDolfinx(CMakePackage):
-    """Next generation FEniCS problem solving environment"""
+    """Next generation FEniCS problem solving environment."""
 
     homepage = "https://github.com/FEniCS/dolfinx"
     git = "https://github.com/FEniCS/dolfinx.git"
@@ -17,7 +17,7 @@ class FenicsDolfinx(CMakePackage):
 
     license("LGPL-3.0-or-later")
 
-    version("main", branch="main")
+    version("main", branch="main", no_cache=True)
     version("0.9.0", sha256="b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1")
     version("0.8.0", sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9")
     version("0.7.2", sha256="7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b")
@@ -32,31 +32,32 @@ class FenicsDolfinx(CMakePackage):
         multi=True,
     )
 
-    # HDF5 dependency requires C in CMake
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")  # HDF5 dependency requires C in CMake
+    depends_on("cxx", type="build")
 
     # Graph partitioner dependencies
     depends_on("kahip@3.12:", when="partitioners=kahip")
     depends_on("parmetis", when="partitioners=parmetis")
     depends_on("scotch+mpi", when="partitioners=scotch")
 
-    variant("slepc", default=False, description="slepc support")
-    variant("adios2", default=False, description="adios2 support")
+    variant("slepc", default=False, description="SLEPc support")
+    variant("adios2", default=False, description="ADIOS2 support")
     variant("petsc", default=False, description="PETSc support")
 
-    depends_on("petsc", when="+slepc")
     depends_on("cmake@3.21:", when="@0.9:", type="build")
     depends_on("cmake@3.19:", when="@:0.8", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("mpi")
     depends_on("hdf5+mpi")
-    depends_on("boost@1.7.0:+filesystem+program_options+timer")
+    depends_on("boost@1.70:")
+    depends_on("boost@1.70:+timer", when="@:0.9")
     depends_on("pugixml")
     depends_on("spdlog", when="@0.9:")
 
     depends_on("petsc+mpi+shared", when="+petsc")
-    depends_on("slepc", when="+slepc")
+    with when("+slepc"):
+        depends_on("petsc+mpi+shared")
+        depends_on("slepc")
 
     depends_on("adios2@2.8.1:+mpi", when="@0.9: +adios2")
     depends_on("adios2+mpi", when="+adios2")

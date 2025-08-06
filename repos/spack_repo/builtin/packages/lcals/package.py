@@ -78,14 +78,14 @@ class Lcals(MakefilePackage):
             if arch == "MIC" or (microarch == "sse" and arch == "x86"):
                 cxxflags += "-DLCALS_PLATFORM_X86_SSE -DLCALS_COMPILER_GNU "
                 cxx_compile += (
-                    "-Ofast -msse4.1 -finline-functions" " -finline-limit=10000 -std=c++11 "
+                    "-Ofast -msse4.1 -finline-functions -finline-limit=10000 -std=c++11 "
                 )
             elif microarch == "avx" and arch == "x86":
                 cxxflags += "-DLCALS_PLATFORM_X86_AVX -DLCALS_COMPILER_GNU "
-                cxx_compile += "-Ofast -mavx -finline-functions" " -finline-limit=10000 -std=c++11"
+                cxx_compile += "-Ofast -mavx -finline-functions -finline-limit=10000 -std=c++11"
             elif arch == "aarch64":
                 cxxflags += "-DLCALS_COMPILER_GNU "
-                cxx_compile += "-Ofast -finline-functions" " -finline-limit=10000 -std=c++11"
+                cxx_compile += "-Ofast -finline-functions -finline-limit=10000 -std=c++11"
             cxxflags += self.compiler.openmp_flag
 
         targets.append("LCALS_ARCH=")

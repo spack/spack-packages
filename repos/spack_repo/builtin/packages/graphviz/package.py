@@ -53,7 +53,7 @@ class Graphviz(AutotoolsPackage):
         variant(
             lang,
             default=False,
-            description="Enable for optional {0} language " "bindings".format(lang),
+            description="Enable for optional {0} language bindings".format(lang),
         )
 
     # Feature variants
@@ -148,7 +148,7 @@ class Graphviz(AutotoolsPackage):
     conflicts(
         "%gcc@:5.9",
         when="@2.40.1+qt ^qt@5:",
-        msg="graphviz-2.40.1 needs gcc-6 or greater to compile with QT5 " "suppport",
+        msg="graphviz-2.40.1 needs gcc-6 or greater to compile with QT5 suppport",
     )
 
     def autoreconf(self, spec, prefix):

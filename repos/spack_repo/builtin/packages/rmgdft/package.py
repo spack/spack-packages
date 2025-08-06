@@ -90,10 +90,6 @@ class Rmgdft(CMakePackage, CudaPackage):
         spec = self.spec
         if "+cuda" in spec:
             targets = ["rmg-gpu"]
-            cuda_arch_list = spec.variants["cuda_arch"].value
-            cuda_arch = cuda_arch_list[0]
-            if cuda_arch != "none":
-                args.append("-DCUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
             if "+local_orbitals" in spec:
                 targets.append("rmg-on-gpu")
         else:
@@ -115,6 +111,10 @@ class Rmgdft(CMakePackage, CudaPackage):
             args.append("-DUSE_INTERNAL_PSEUDOPOTENTIALS=0")
         if "+cuda" in spec:
             args.append("-DRMG_CUDA_ENABLED=1")
+            cuda_arch_list = spec.variants["cuda_arch"].value
+            cuda_arch = cuda_arch_list[0]
+            if cuda_arch != "none":
+                args.append("-DCUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
         return args
 
     def install(self, spec, prefix):

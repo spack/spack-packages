@@ -521,7 +521,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         values=disjoint_sets(("auto",), FABRICS).with_non_feature_values(
             "auto", "none"
         ),  # shared memory transports
-        description="List of fabrics that are enabled; " "'auto' lets openmpi determine",
+        description="List of fabrics that are enabled; 'auto' lets openmpi determine",
     )
 
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge", "loadleveler")
@@ -633,6 +633,13 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
 built with the mpicc/mpifort/etc. compiler wrappers
 with '-Wl,-commons,use_dylibs' and without
 '-Wl,-flat_namespace'.""",
+    )
+
+    variant(
+        "cray-xpmem",
+        default=False,
+        when="fabrics=xpmem",
+        description="use cray-xpmem instead of xpmem configure flag",
     )
 
     # Patch to allow two-level namespace on a MacOS platform when building
@@ -768,7 +775,7 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=loadleveler",
         when="@3:",
-        msg="The loadleveler scheduler is not supported with " "openmpi(>=3).",
+        msg="The loadleveler scheduler is not supported with openmpi(>=3).",
     )
 
     # According to this comment on github:
@@ -783,6 +790,9 @@ with '-Wl,-commons,use_dylibs' and without
     # Building against an external PMIx with an internal Libevent or HWLOC is unsupported
     conflicts("~internal-pmix", "+internal-hwloc")
     conflicts("~internal-pmix", "+internal-libevent")
+
+    # May be able to get working for LLVM 18/19 using FC=flang-new
+    conflicts("%fortran=clang %llvm@:19")
 
     filter_compiler_wrappers("openmpi/*-wrapper-data*", relative_root="share")
 
@@ -1079,9 +1089,12 @@ with '-Wl,-commons,use_dylibs' and without
         return f"--with-ucc={self.spec['ucc'].prefix}"
 
     def with_or_without_xpmem(self, activated):
+        s1 = "xpmem"
+        if self.spec.satisfies("+cray-xpmem"):
+            s1 = "cray-xpmem"
         if not activated:
-            return "--without-xpmem"
-        return f"--with-xpmem={self.spec['xpmem'].prefix}"
+            return f"--without-{s1}"
+        return f"--with-{s1}={self.spec['xpmem'].prefix}"
 
     def with_or_without_knem(self, activated):
         if not activated:
@@ -1158,10 +1171,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(self.with_or_without("fabrics"))
 
         if spec.satisfies("@2.0.0:"):
-            if "fabrics=xpmem" in spec:
-                config_args.append("--with-cray-xpmem")
-            else:
-                config_args.append("--without-cray-xpmem")
+            config_args.append(self.with_or_without_xpmem("fabrics=xpmem" in spec))
 
         # Schedulers
         if "schedulers=auto" not in spec:

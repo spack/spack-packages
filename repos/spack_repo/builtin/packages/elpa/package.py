@@ -227,7 +227,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         ldflags = [spec["blas"].libs.search_flags, spec["lapack"].libs.search_flags, "-lstdc++"]
         libs = [spec["lapack"].libs.link_flags, spec["blas"].libs.link_flags]
 
-        options += [f'LDFLAGS={" ".join(ldflags)}', f'LIBS={" ".join(libs)}']
+        options += [f"LDFLAGS={' '.join(ldflags)}", f"LIBS={' '.join(libs)}"]
 
         if self.spec.satisfies("+mpi"):
             options += [

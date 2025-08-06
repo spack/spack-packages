@@ -42,6 +42,11 @@ update-package:
     - 'modified'
     - 'renamed'
 
+remove-package:
+  filename: '^repos/spack_repo/builtin/packages/[^/]+/package.py$'
+  status:
+    - 'removed'
+
 #------------------------------------------------------------------------
 # Package Properties
 #------------------------------------------------------------------------
