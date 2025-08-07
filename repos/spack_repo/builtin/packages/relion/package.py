@@ -129,6 +129,10 @@ class Relion(CMakePackage, CudaPackage):
             else:
                 args += ["-DCUDA=ON", "-DCudaTexture=ON", "-DCUDA_ARCH=%s" % (carch)]
 
+        if self.spec.satisfies("@5: ~cuda"):
+            # Relion 5 defaults to CUDA=ON so it has to be explicitly disabled.
+            args.append("-DCUDA=OFF")
+
         return args
 
     def patch(self):

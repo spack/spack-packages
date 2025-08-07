@@ -37,11 +37,11 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     build_system(conditional("cmake", when="@2023.2:"), "makefile", default="cmake")
 
     homepage = "https://www.cp2k.org"
-    url = "https://github.com/cp2k/cp2k/releases/download/v3.0.0/cp2k-3.0.tar.bz2"
+    url = "https://github.com/cp2k/cp2k/releases/download/v2025.2/cp2k-2025.2.tar.bz2"
     git = "https://github.com/cp2k/cp2k.git"
     list_url = "https://github.com/cp2k/cp2k/releases"
 
-    maintainers("dev-zero", "mtaillefumier", "RMeli", "abussy")
+    maintainers("dev-zero", "mtaillefumier", "RMeli", "abussy", "hfp")
 
     tags = ["e4s"]
 
@@ -72,6 +72,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         values=("libxsmm", "libsmm", "blas"),
         description="Library for small matrix multiplications",
     )
+    variant("opencl", default=False, description="Enable OpenCL backend")
     variant("plumed", default=False, description="Enable PLUMED support")
     variant(
         "libint", default=True, description="Use libint, required for HFX (and possibly others)"
@@ -121,17 +122,25 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
     variant("smeagol", default=False, description="Enable libsmeagol support", when="@2025.2:")
+    variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
+    variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
+    variant(
+        "grid_gpu", default=False, description="Enable grid GPU backend", when="@2025.2: +opencl"
+    )
     variant(
         "pw_gpu", default=True, description="Enable FFT calculations on GPU", when="@2025.2: +cuda"
     )
-    variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
-    variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
-
     variant(
         "pw_gpu",
         default=False,
         description="Enable FFT calculations on GPU",
         when="@2025.2: +rocm",
+    )
+    variant(
+        "pw_gpu",
+        default=False,
+        description="Enable FFT calculations on GPU",
+        when="@2025.2: +opencl",
     )
     variant(
         "hip_backend_cuda",
@@ -237,20 +246,32 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cray-fftw+openmp", when="^[virtuals=fftw-api] cray-fftw")
         depends_on("armpl-gcc threads=openmp", when="^[virtuals=blas] armpl-gcc")
         depends_on("openblas threads=openmp", when="^[virtuals=blas] openblas")
+        depends_on("intel-oneapi-mkl threads=openmp", when="^[virtuals=fftw-api] intel-oneapi-mkl")
+        depends_on(
+            "intel-oneapi-mkl+gfortran threads=openmp",
+            when="^[virtuals=blas] intel-oneapi-mkl %gcc",
+        )
+        depends_on("intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
         # The Cray compiler wrappers will automatically add libsci_mp with
         # -fopenmp. Since CP2K unconditionally links blas/lapack/scalapack
         # we have to be consistent.
         depends_on("cray-libsci+openmp", when="^[virtuals=blas] cray-libsci")
 
     with when("smm=libxsmm"):
-        depends_on("libxsmm~header-only")
         # require libxsmm-1.11+ since 1.10 can leak file descriptors in Fortran
         depends_on("libxsmm@1.11:")
         depends_on("libxsmm@1.17:", when="@9.1:")
-        # build needs to be fixed for libxsmm@2 once it is released
-        depends_on("libxsmm@:1")
         # use pkg-config (support added in libxsmm-1.10) to link to libxsmm
         depends_on("pkgconfig", type="build")
+
+    # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
+    with when("+opencl"):
+        depends_on("opencl", when="+opencl")
+        opencl_loader_header_version = "2022.10.24"
+        depends_on(f"opencl-c-headers@{opencl_loader_header_version}:")
+        requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
+        # OpenCL backend implementation relies on LIBXSMM
+        requires("smm=libxsmm")
 
     with when("+libint"):
         depends_on("pkgconfig", type="build", when="@7.0:")
@@ -280,6 +301,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mpi@3:", when="@2023.1:")
         depends_on("scalapack")
         depends_on("mpich+fortran", when="^[virtuals=mpi] mpich")
+        depends_on("intel-oneapi-mkl +cluster", when="^[virtuals=scalapack] intel-oneapi-mkl")
         conflicts("~mpi_f08", when="^mpich@4.1:")
 
     with when("+cosma"):
@@ -378,6 +400,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("dbcsr@2.6: ~examples")
         depends_on("dbcsr@2.8:", when="@2025.1:")
         depends_on("dbcsr+openmp", when="+openmp")
+        depends_on("dbcsr+opencl", when="+opencl")
         depends_on("dbcsr+mpi", when="+mpi")
         depends_on("dbcsr+rocm", when="+rocm")
         depends_on("dbcsr+cuda", when="+cuda")
@@ -529,7 +552,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         optimization_flags = {
             "gcc": ["-O2", "-funroll-loops", "-ftree-vectorize"],
-            "intel": ["-O2", "-pc64", "-unroll"],
+            "intel-oneapi-compilers": ["-O2", "-fp-model precise"],
+            "intel": ["-g", "-O2", "-fp-model precise"],
             "nvhpc": ["-fast"],
             "cce": ["-O2"],
             "xl": ["-O3"],
@@ -567,10 +591,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # C99-style for-loops with inline definition of iterating variable.
             cflags.append(pkg.compiler.c99_flag)
 
-        if spec.satisfies("%intel"):
-            cflags.append("-fp-model precise")
-            cxxflags.append("-fp-model precise")
-            fcflags += ["-fp-model precise", "-heap-arrays 64", "-g", "-traceback"]
+        if spec.satisfies("%intel") or spec.satisfies("%intel-oneapi-compilers"):
+            fcflags += ["-traceback"]  # -heap-arrays 64
         elif spec.satisfies("%gcc"):
             fcflags += [
                 "-ffree-form",
@@ -733,9 +755,16 @@ class MakefileBuilder(makefile.MakefileBuilder):
         fc = spack_fc if "~mpi" in spec else spec["mpi"].mpifc
 
         # Intel
-        if spec.satisfies("%intel"):
-            cppflags.extend(["-D__INTEL", "-D__HAS_ISO_C_BINDING", "-D__USE_CP2K_TRACE"])
-            fcflags.extend(["-diag-disable 8290,8291,10010,10212,11060", "-free", "-fpp"])
+        if spec.satisfies("%intel") or spec.satisfies("%intel-oneapi-compilers"):
+            cppflags.extend(
+                [
+                    "-D__INTEL",
+                    "-D__HAS_IEEE_EXCEPTIONS",
+                    "-D__HAS_ISO_C_BINDING",
+                    "-D__USE_CP2K_TRACE",
+                ]
+            )
+            fcflags.extend(["-free", "-fpp", "-diag-disable 8290,8291,10010,10212,11060"])
 
         # FFTW, LAPACK, BLAS
         lapack = spec["lapack"].libs
@@ -908,7 +937,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 # and use `-fpp` instead
                 mkf.write("CPP = # {0} -P\n".format(spack_cc))
                 mkf.write("AR  = {0}/xiar -qs\n".format(intel_bin_dir))
-            else:
+            else:  # incl. spec.satisfies("%intel-oneapi-compilers")
                 mkf.write("CPP = # {0} -E\n".format(spack_cc))
                 mkf.write("AR  = ar -qs\n")  # r = qs is a GNU extension
 
@@ -937,7 +966,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             mkf.write(fflags("LDFLAGS", ldflags))
             mkf.write(fflags("LIBS", libs))
 
-            if spec.satisfies("%intel"):
+            if spec.satisfies("%intel") or spec.satisfies("%intel-oneapi-compilers"):
                 mkf.write(fflags("LDFLAGS_C", ldflags + ["-nofor-main"]))
 
             if spec.satisfies("%aocc@5:"):
@@ -1059,6 +1088,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
         spec = self.spec
         args = []
 
+        if spec.satisfies("+opencl"):
+            args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
+
         if spec.satisfies("+cuda"):
             if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
                 raise InstallError("CP2K supports only one cuda_arch at a time.")
@@ -1147,10 +1179,14 @@ class CMakeBuilder(cmake.CMakeBuilder):
         blas = spec["blas"]
 
         if blas.name == "intel-oneapi-mkl":
-            if spec.satisfies("^[virtuals=fftw-api] intel-oneapi-mkl"):
-                args += ["-DCP2K_USE_FFTW3_WITH_MKL=ON"]
-
             args += ["-DCP2K_BLAS_VENDOR=MKL"]
+
+            if spec.satisfies("+openmp"):
+                mkl_thread = "thread" if spec.satisfies("%gcc") else "intel-thread"
+                args += [f"-DCP2K_BLAS_THREADING={mkl_thread}"]
+            else:
+                args += ["-DCP2K_BLAS_THREADING=sequential"]
+
             if sys.platform == "darwin":
                 args += [
                     self.define("CP2K_BLAS_VENDOR", "CUSTOM"),

@@ -79,7 +79,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     variant(
         "networking",
-        values=any_combination_of("tcp", "mpi").with_default("tcp"),
+        values=any_combination_of("tcp", "mpi", "lci").with_default("tcp"),
         description="Support for networking through parcelports",
     )
 
@@ -124,6 +124,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi", when="networking=mpi")
     depends_on("mpi", when="+async_mpi")
+    depends_on("lci", when="networking=lci")
 
     depends_on("cuda", when="+async_cuda")
 
@@ -250,6 +251,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
             self.define("HPX_WITH_NETWORKING", "networking=none" not in spec),
             self.define("HPX_WITH_PARCELPORT_TCP", spec.satisfies("networking=tcp")),
             self.define("HPX_WITH_PARCELPORT_MPI", spec.satisfies("networking=mpi")),
+            self.define("HPX_WITH_PARCELPORT_LCI", spec.satisfies("networking=lci")),
             self.define(
                 "HPX_WITH_MAX_CPU_COUNT",
                 format_max_cpu_count(spec.variants["max_cpu_count"].value),
