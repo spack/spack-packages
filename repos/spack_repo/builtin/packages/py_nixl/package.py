@@ -33,7 +33,7 @@ class PyNixl(PythonPackage, CudaPackage):
         # for its subproject abseil-cpp
         depends_on("pkgconfig")
         depends_on("cmake")
-    
+
     with default_args(type=["build", "run"]):
         # https://github.com/ai-dynamo/nixl/blob/0.4.1/pyproject.toml
         depends_on("py-torch+cuda")
@@ -53,4 +53,3 @@ class PyNixl(PythonPackage, CudaPackage):
             }
         }
         return settings
-
