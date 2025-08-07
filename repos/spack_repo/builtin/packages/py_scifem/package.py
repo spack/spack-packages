@@ -9,7 +9,8 @@ from spack.package import *
 
 class PyScifem(PythonPackage):
     """A collection of tools for scientific computing with a focus on finite element methods.
-    The tools are written in Python and are intended to be used in conjunction with the py-fenics-dolfinx.
+    The tools are written in Python and are intended to be used in conjunction with
+    the py-fenics-dolfinx.
     """
 
     homepage = "https://scientificcomputing.github.io/scifem/"
