@@ -49,6 +49,7 @@ class Met(AutotoolsPackage):
         description="Enable linking to shared intel libraries (libintlc instead of libirc)",
     )
 
+    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
@@ -119,7 +120,9 @@ class Met(AutotoolsPackage):
         netcdfc = spec["netcdf-c"]
         if netcdfc.satisfies("+shared"):
             cppflags.append("-I" + netcdfc.prefix.include)
+            # This returns "/path/to/netcdf-c/lib" but we need ".../lib64"
             ldflags.append("-L" + netcdfc.prefix.lib)
+            ldflags.append("-L" + netcdfc.prefix.lib64)
             libs.append(netcdfc.libs.link_flags)
         else:
             nc_config = which(os.path.join(netcdfc.prefix.bin, "nc-config"), required=True)

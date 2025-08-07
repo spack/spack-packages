@@ -41,7 +41,6 @@ class Metplus(Package):
     depends_on("met@12:+python", when="@6:", type=("run"))
     # https://metplus.readthedocs.io/en/main_v6.0/Users_Guide/installation.html
     depends_on("netcdf-c")
-    depends_on("netcdf-c@1.5.4:", when="@6:")
     depends_on("py-python-dateutil", type=("run"))
     depends_on("py-python-dateutil@2.8:", when="@6:", type=("run"))
 
