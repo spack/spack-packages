@@ -14,7 +14,7 @@ spack:
   - "netlib-lapack"
   - "py-beautifulsoup4"
   - "qt"
-  - "paraview~mpi~qt"
+  - "paraview@:5.13.1~mpi~qt"
 
   cdash:
     build-group: Windows Visualization (Kitware)
