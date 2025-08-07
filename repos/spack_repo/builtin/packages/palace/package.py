@@ -164,12 +164,6 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("sundials+openmp", when="+openmp")
         depends_on("sundials~openmp", when="~openmp")
 
-    # -- arpack --
-    with when("+arpack"):
-        depends_on("arpack-ng+mpi+icb")
-        depends_on("arpack-ng+shared", when="+shared")
-        depends_on("arpack-ng~shared", when="~shared")
-
     # -- GPU --
     conflicts(
         "+cuda", when="@:0.12", msg="CUDA is only supported for Palace versions 0.13 and above"
@@ -188,8 +182,12 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     # -- Magma --
-    with when("+cuda") or when("+rocm"):
-        depends_on("magma")
+    with when("+cuda"):
+        depends_on("magma+shared", when="+shared")
+        depends_on("magma~shared", when="~shared")
+        depends_on("libceed+magma", when="@0.14:")
+
+    with when("+rocm"):
         depends_on("magma+shared", when="+shared")
         depends_on("magma~shared", when="~shared")
         depends_on("libceed+magma", when="@0.14:")
