@@ -11,12 +11,15 @@ class OpenclIcdLoader(CMakePackage):
     """Khronos official OpenCL ICD Loader"""
 
     homepage = "https://github.com/KhronosGroup/OpenCL-ICD-Loader"
-    url = "https://github.com/KhronosGroup/OpenCL-ICD-Loader/archive/refs/tags/v2024.05.08.tar.gz"
+    url = "https://github.com/KhronosGroup/OpenCL-ICD-Loader/archive/refs/tags/v2024.10.24.tar.gz"
 
     maintainers("uphoffc")
 
     license("Apache-2.0", checked_by="uphoffc")
 
+    version(
+        "2024.10.24", sha256="95f2f0cda375b13d2760290df044ebea9c6ff954a7d7faa0867422442c9174dc"
+    )
     version(
         "2024.05.08", sha256="eb2c9fde125ffc58f418d62ad83131ba686cccedcb390cc7e6bb81cc5ef2bd4f"
     )
@@ -50,6 +53,7 @@ class OpenclIcdLoader(CMakePackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("opencl-c-headers@2024.10.24", when="@2024.10.24")
     depends_on("opencl-c-headers@2024.05.08", when="@2024.05.08")
     depends_on("opencl-c-headers@2023.12.14", when="@2023.12.14")
     depends_on("opencl-c-headers@2023.04.17", when="@2023.04.17")
