@@ -46,15 +46,15 @@
 
 ###
 # GitHub project maintainers
-.github/*.md              @spack/merge-to-develop
-.github/*.yml             @spack/merge-to-develop
-/.github/ISSUE_TEMPLATE/  @spack/merge-to-develop
-CODEOWNDERS               @spack/merge-to-develop
-LICENSE*                  @spack/merge-to-develop
-NOTICE                    @spack/merge-to-develop
-README.md                 @spack/merge-to-develop
-pyproject.toml            @spack/merge-to-develop
-.*                        @spack/merge-to-develop
+.github/*.md              @spack/spack-releasers
+.github/*.yml             @spack/spack-releasers
+/.github/ISSUE_TEMPLATE/  @spack/spack-releasers
+CODEOWNDERS               @spack/spack-releasers
+LICENSE*                  @spack/spack-releasers
+NOTICE                    @spack/spack-releasers
+README.md                 @spack/spack-releasers
+pyproject.toml            @spack/spack-releasers
+.*                        @spack/spack-releasers
 
 ###
 # Packages tests maintainers
