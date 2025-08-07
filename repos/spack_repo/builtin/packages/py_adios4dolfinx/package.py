@@ -27,19 +27,13 @@ class PyAdios4dolfinx(PythonPackage):
 
     depends_on("py-packaging", type="run")
 
-    depends_on("python@3.9:", when="@0.8:", type=("build", "run"))
-    depends_on("python@3.8:", when="@0.7", type=("build", "run"))
-    depends_on("python@3.8:3.10", when="@0.6.0", type=("build", "run"))
+    depends_on("python@3.9:", when="@0.9:", type=("build", "run"))
 
-    depends_on("py-scikit-build-core+pyproject@0.10:", when="@0.10:", type="build")
-    depends_on("py-scikit-build-core+pyproject@0.5:", when="@0.8:0.9", type="build")
-    depends_on("py-setuptools@42:", when="@:0.7", type="build")
+    depends_on("py-scikit-build-core+pyproject@0.10:", when="@0.9:", type="build")
+    depends_on("py-setuptools@42:", type="build")
 
     depends_on("py-fenics-dolfinx@main", when="@main")
-    depends_on("py-fenics-dolfinx@0.9.0", when="@0.9")
-    depends_on("py-fenics-dolfinx@0.8.0", when="@0.8")
-    depends_on("py-fenics-dolfinx@0.7.2", when="@0.7")
-    depends_on("py-fenics-dolfinx@0.6.0", when="@0.6")
+    depends_on("py-fenics-dolfinx@0.9.0", when="@0.9.0:0.9")
 
     depends_on("adios2+python+hdf5+mpi", type="run")
 
