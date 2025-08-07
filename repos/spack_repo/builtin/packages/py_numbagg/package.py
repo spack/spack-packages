@@ -18,6 +18,7 @@ class PyNumbagg(PythonPackage):
     version("0.9.0", sha256="45ba41077b7a621e35eaa4c294d90b22e75e8513b8c211f59d2b9be840fc1175")
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools-scm", type="build")
 
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-numba", type=("build", "run"))
