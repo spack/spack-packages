@@ -11,7 +11,7 @@ from spack.package import *
 
 
 class Networkdirect(msbuild.MSBuildPackage):
-    """NetworkDirect is a user-mode programming interface specification
+    """NetworkDirect is a Windows user-mode programming interface specification
     for Remote Direct Memory Access (RDMA)"""
 
     homepage = "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/hh997033(v=ws.11)"
