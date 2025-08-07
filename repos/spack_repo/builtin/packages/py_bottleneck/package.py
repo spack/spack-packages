@@ -30,9 +30,6 @@ class PyBottleneck(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-versioneer", when="@1.3.3:", type="build")
     depends_on("py-numpy", type=("build", "run"))
-    # https://github.com/pydata/bottleneck/issues/453
-    depends_on("py-numpy@2:", type=("build", "run"), when="@1.5:")
-    depends_on("py-numpy@:1", when="@:1.3", type=("build", "run"))
 
     def url_for_version(self, version):
 
