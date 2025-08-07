@@ -75,6 +75,7 @@ class PyDask(PythonPackage):
     depends_on("py-numpy@1.16.0:", type=("build", "run"), when="@2021.3.1: +array")
     depends_on("py-numpy@1.18.0:", type=("build", "run"), when="@2022.10.2: +array")
     depends_on("py-numpy@1.21.0:", type=("build", "run"), when="@2023.4.0: +array")
+    depends_on("py-numpy@1.24.0:", type=("build", "run"), when="@2025.7.0: +array")
     # https://github.com/dask/dask/issues/11066
     depends_on("py-numpy@:1", when="@:2024.5.0+array", type=("build", "run"))
     # The dependency on py-toolz is non-optional starting version 2021.3.1
