@@ -22,6 +22,9 @@ class PyWandb(PythonPackage):
     version("0.16.6", sha256="86f491e3012d715e0d7d7421a4d6de41abef643b7403046261f962f3e512fe1c")
     version("0.13.9", sha256="0a17365ce1f18306ce7a7f16b943094fac7284bb85f4e52c0685705602f9e307")
 
+    depends_on("rust", type="build")
+    depends_on("go@1.24.4:", type="build", when="@0.21.0:")
+    depends_on("go@1.22.1:", type="build", when="@0.16.6:")
     depends_on("py-hatchling", type=("build", "run"), when="@0.17:")
     depends_on("py-setuptools@61:", type=("build", "run"), when="@0.16.6:")
     depends_on("py-setuptools", type=("build", "run"))
