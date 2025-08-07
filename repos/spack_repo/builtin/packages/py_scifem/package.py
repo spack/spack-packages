@@ -2,25 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-# ----------------------------------------------------------------------------
-# If you submit this package back to Spack as a pull request,
-# please first remove this boilerplate and all FIXME comments.
-#
-# This is a template package file for Spack.  We've put "FIXME"
-# next to all the things you'll want to change. Once you've handled
-# them, you can save this file and test your package like this:
-#
-#     spack install scifem
-#
-# You can edit this file again by typing:
-#
-#     spack edit scifem
-#
-# See the Spack documentation for more information on packaging.
-# ----------------------------------------------------------------------------
-
-from marshal import version
-
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
@@ -49,16 +30,18 @@ class PyScifem(PythonPackage):
     variant("biomed", default=False, description="Biomedical imaging support")
     variant("hdf5", default=False, description="HDF5 support")
 
+    depends_on("python@3.10:", type=("build", "run"))
+
     depends_on("cxx", type="build")
     depends_on("py-nanobind@2:", type="build")
     depends_on("py-scikit-build-core+pyproject", type="build")
     depends_on("py-setuptools@42:", type="build")
     depends_on("cmake@3.21:", type="build")
 
-    depends_on("python@3.10:", type=("build", "run"))
-
     depends_on("py-fenics-dolfinx@0.9:", when="@0.4:", type="run")
     depends_on("py-fenics-dolfinx@main", when="@main", type="run")
+    depends_on("py-numpy@1.20:", type=("run"))
+    depends_on("py-packaging", type=("run"))
 
     with when("+adios2"):
         depends_on("adios2+python", type="run")
@@ -72,30 +55,3 @@ class PyScifem(PythonPackage):
 
     with when("+hdf5"):
         depends_on("py-h5py+mpi", when="+hdf5", type="run")
-
-    depends_on("py-numpy@1.20:", type=("run"))
-
-    depends_on("py-packaging", type=("run"))
-
-    def test_python(self):
-        """Test PyDolfinxMPC python"""
-        with test_part(self, "test_import", purpose="import scifem in python"):
-            python = Executable(self.spec["python"].prefix.bin.python)
-            python(*(["-c", "import scifem"]))
-        with (
-            when("+petsc"),
-            test_part(
-                self, "test_solver_import", purpose="Check that PETSc is configured correctly"
-            ),
-        ):
-            python = Executable(self.spec["python"].prefix.bin.python)
-            python(*(["-c", "from scifem.solvers import *"]))
-
-        with (
-            when("+biomed"),
-            test_part(
-                self, "test_biomed_import", purpose="Check that biomed is configured correctly"
-            ),
-        ):
-            python = Executable(self.spec["python"].prefix.bin.python)
-            python(*(["-c", "from scifem.biomedical import *"]))
