@@ -1,6 +1,8 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import os
+
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -58,7 +60,8 @@ class NetcdfCxx4(CMakePackage):
 
     @property
     def libs(self):
-        libraries = ["libnetcdf_c++4"]
+        """Find old (autotools) and new names (cmake) of libraries"""
+        libraries = ["libnetcdf_c++4", "libnetcdf-cxx4"]
         shared = "+shared" in self.spec
 
         libs = find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
@@ -98,3 +101,22 @@ class NetcdfCxx4(CMakePackage):
     def check(self):
         with working_dir(self.build_directory):
             ctest()
+
+    @run_after("install")
+    def post_install(self):
+        """When switching to autotools, the name of the installed libraries changed.
+        But many applications are still expecting the old name (libnetcd_c++4)."""
+        libraries = ["libnetcdf-cxx4"]
+        shared = "+shared" in self.spec
+
+        libs = find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
+        if not libs:
+            msg = "Unable to recursively locate {0} {1} libraries in {2}"
+            raise NoLibrariesError(
+                msg.format("shared" if shared else "static", self.spec.name, self.spec.prefix)
+            )
+
+        for lib in libs:
+            libdir, libname = os.path.split(lib)
+            linklib = os.path.join(libdir, libname.replace("libnetcdf-cxx4", "libnetcdf_c++4"))
+            os.symlink(lib, linklib)
