@@ -9,9 +9,9 @@ from spack.package import *
 
 
 class Openfpgaloader(CMakePackage):
-    """openFPGALoader is a universal utility for programming FPGAs. Compatible 
-    with many boards, cables and FPGA from major manufacturers (Xilinx, 
-    Altera/Intel, Lattice, Gowin, Efinix, Anlogic, Cologne Chip). 
+    """openFPGALoader is a universal utility for programming FPGAs. Compatible
+    with many boards, cables and FPGA from major manufacturers (Xilinx,
+    Altera/Intel, Lattice, Gowin, Efinix, Anlogic, Cologne Chip).
     openFPGALoader works on Linux, Windows and macOS."""
 
     homepage = "https://trabucayre.github.io/openFPGALoader/"
