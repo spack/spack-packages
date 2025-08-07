@@ -42,7 +42,9 @@ class PyDask(PythonPackage):
 
     conflicts("~array", when="@2023.8: +dataframe", msg="From 2023.8, +dataframe requires +array")
 
-    depends_on("python@3.8:", type=("build", "run"), when="@2022.10.2:")
+    depends_on("python@3.8:", type=("build", "run"), when="@:2023.4.1")
+    depends_on("python@3.9:", type=("build", "run"), when="@2024.7.1")
+    depends_on("python@3.10:", type=("build", "run"), when="@2025:")
 
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@62.6:", type="build", when="@2023.4.1:")
