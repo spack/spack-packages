@@ -33,7 +33,7 @@ class PyAdios4dolfinx(PythonPackage):
     depends_on("py-setuptools@42:", type="build")
 
     depends_on("py-fenics-dolfinx@main", when="@main")
-    depends_on("py-fenics-dolfinx@0.9.0", when="@0.9.0:0.9")
+    depends_on("py-fenics-dolfinx@0.9.0", when="@0.9")
 
     depends_on("adios2+python+hdf5+mpi", type="run")
 
