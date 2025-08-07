@@ -27,9 +27,9 @@ class PyAdios4dolfinx(PythonPackage):
 
     depends_on("py-packaging", type="run")
 
-    depends_on("python@3.9:", when="@0.9:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
 
-    depends_on("py-scikit-build-core+pyproject@0.10:", when="@0.9:", type="build")
+    depends_on("py-scikit-build-core+pyproject@0.10:", type="build")
     depends_on("py-setuptools@42:", type="build")
 
     depends_on("py-fenics-dolfinx@main", when="@main")
