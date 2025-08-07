@@ -28,7 +28,7 @@ class SandiaMicroBenchmarks(MakefilePackage):
     @property
     def build_targets(self):
         targets = ["mpi_overhead", "msgrate", "rma_mt_mpi"]
-        if "+shmem" in self.spec:
+        if self.spec.satisfies("+shmem"):
             targets.append("shmem_mt")
         return targets
 
