@@ -19,7 +19,9 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     list_url = "https://github.com/electronic-structure/SIRIUS/releases"
     git = "https://github.com/electronic-structure/SIRIUS.git"
 
-    maintainers("simonpintarelli", "haampie", "dev-zero", "AdhocMan", "toxa81", "RMeli")
+    maintainers(
+        "simonpintarelli", "haampie", "dev-zero", "AdhocMan", "toxa81", "RMeli", "mtaillefumier"
+    )
 
     license("BSD-2-Clause")
 
