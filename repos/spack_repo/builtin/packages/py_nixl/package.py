@@ -50,6 +50,7 @@ class PyNixl(PythonPackage, CudaPackage):
                 "-Ducx_path": spec["ucx"].prefix,
                 "-Dcudapath_inc": spec["cuda"].prefix.include,
                 "-Dcudapath_lib": spec["cuda"].prefix.lib64,
-            },
+            }
         }
         return settings
+
