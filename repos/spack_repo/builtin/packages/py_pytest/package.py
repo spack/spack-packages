@@ -17,6 +17,9 @@ class PyPytest(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("8.4.1", sha256="7c67fd69174877359ed9371ec3af8a3d2b04741818c51e5e99cc1742251fa93c")
+    version("8.3.5", sha256="f4efe70cc14e511565ac476b57c279e12a855b11f48f212af1080ef2263d3845")
+    version("8.2.2", sha256="de4bb8104e201939ccdc688b27a89a7be2079b22e2bd2b07f806b6ba71117977")
     version("8.2.1", sha256="5046e5b46d8e4cac199c373041f26be56fdb81eb4e67dc11d4e10811fc3408fd")
     version("8.0.0", sha256="249b1b0864530ba251b7438274c4d251c58d868edaaec8762893ad4a0d71c36c")
     version("7.4.4", sha256="2cf0005922c6ace4a3e2ec8b4080eb0d9753fdc93107415332f50ce9e7994280")
@@ -54,16 +57,22 @@ class PyPytest(PythonPackage):
         depends_on("py-setuptools-scm", when="@3.1:")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@8.4:")
         depends_on("python@3.8:", when="@8:")
         depends_on("python@3.7:", when="@7.1:")
+        # see https://github.com/pytest-dev/pytest/releases/tag/8.4.0
+        depends_on("python@:3.13", when="@:8.3")
         # see https://github.com/pytest-dev/pytest/releases/tag/8.2.1
         depends_on("python@:3.12", when="@:8.2.0")
         # see https://github.com/pytest-dev/pytest/releases/tag/7.3.2
         depends_on("python@:3.11", when="@:7.3.1")
 
+        depends_on("py-colorama@0.4:", when="@8.4: platform=windows")
         depends_on("py-colorama", when="platform=windows")
         depends_on("py-exceptiongroup@1:", when="@7:^python@:3.10")
+        depends_on("py-iniconfig@1:", when="@8.4:")
         depends_on("py-iniconfig", when="@6.0:")
+        depends_on("py-packaging@20:", when="@8.4:")
         depends_on("py-packaging", when="@4.6:")
         depends_on("py-pluggy@1.5:1", when="@8.2:")
         depends_on("py-pluggy@1.3:1", when="@8:")
@@ -75,6 +84,7 @@ class PyPytest(PythonPackage):
         depends_on("py-pluggy@0.7:", when="@3.7:4.3")
         depends_on("py-pluggy@0.5:0.7", when="@3.6.4:3.6")
         depends_on("py-pluggy@0.5:0.6", when="@:3.6.3")
+        depends_on("py-pygments@2.7.2:", when="@8.4:")
         depends_on("py-tomli@1:", when="@7.1: ^python@:3.10")
         depends_on("py-tomli@1:", when="@7.0")
 

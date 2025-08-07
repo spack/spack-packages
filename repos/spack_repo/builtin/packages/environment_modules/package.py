@@ -61,7 +61,13 @@ class EnvironmentModules(Package):
         url="http://prdownloads.sourceforge.net/modules/modules-3.2.10.tar.gz",
     )
 
-    variant("X", default=True, description="Build with X functionality")
+    variant("X", default=True, when="@:3.2", description="Build with X functionality")
+
+    # Enable all new features that are disabled by default due to the substantial behavior changes
+    # see https://modules.readthedocs.io/en/latest/INSTALL.html#instopt-enable-new-features
+    variant(
+        "new-features", default=True, when="@5.0:", description="Build with new features enabled"
+    )
 
     depends_on("c", type="build")  # generated
 
@@ -83,6 +89,13 @@ class EnvironmentModules(Package):
     depends_on("tcl@8.5:8", type=("build", "link", "run"), when="@5.0.0:5.4.0")
     depends_on("tcl@8.5:", type=("build", "link", "run"), when="@5.5.0:")
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("@:3.2"):
+                flags.append("-Wno-error=implicit-function-declaration")
+                flags.append("-Wno-error=int-conversion")
+        return (flags, None, None)
+
     def install(self, spec, prefix):
         tcl = spec["tcl"]
 
@@ -99,13 +112,10 @@ class EnvironmentModules(Package):
             config_args.extend(["--disable-dependency-tracking", "--disable-silent-rules"])
 
         if spec.satisfies("~X"):
-            config_args = ["--without-x"] + config_args
+            config_args.extend(["--without-x"])
 
-        if self.spec.satisfies("@5.6.0:"):
-            config_args.extend(["--enable-require-via"])
-
-        if self.spec.satisfies("@5.5.0:"):
-            config_args.extend(["--enable-conflict-unload"])
+        if spec.satisfies("+new-features"):
+            config_args.extend(["--enable-new-features"])
 
         if self.spec.satisfies("@4.4.0:4.8"):
             config_args.extend(

@@ -64,11 +64,15 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
 
     version(
-        "0.9.3",
-        tag="v0.9.3",
-        commit="e69d6ec77938846caae8fea7ed988b1151ac9b81",
+        "0.9.4",
+        tag="v0.9.4",
+        commit="02e7f79d53db77b6af923bfa105840f574195474",
         submodules=True,
         preferred=True,
+    )
+
+    version(
+        "0.9.3", tag="v0.9.3", commit="e69d6ec77938846caae8fea7ed988b1151ac9b81", submodules=True
     )
 
     version(
@@ -173,6 +177,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     # Certain CMake versions have been found to break for our use cases
     depends_on("cmake@3.14.1:3.14,3.18.2:", type="build")
+    depends_on("cmake@3.23:", type="build", when="@0.9.4:")
 
     #######################
     # Conduit
@@ -194,8 +199,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     with when("+python"):
         depends_on("python+shared")
         extends("python")
-        depends_on("py-numpy", type=("build", "run"))
-        depends_on("py-pip", type=("build", "run"))
+        depends_on("py-numpy", type=("build", "link", "run"))
+        depends_on("py-pip")
+        depends_on("py-wheel", when="@0.9.4:")
 
     #######################
     # MPI
