@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.8.0", tag="v2.8.0", commit="ba56102387ef21a3b04b357e5b183d48f0afefc7")
     version("2.7.1", tag="v2.7.1", commit="e2d141dbde55c2a4370fac5165b0561b6af4798b")
     version("2.7.0", tag="v2.7.0", commit="134179474539648ba7dee1317959529fbd0e7f89")
     version("2.6.0", tag="v2.6.0", commit="1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340")
@@ -172,6 +173,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # CMakelists.txt
     with default_args(type="build"):
+        depends_on("cmake@3.27:", when="@2.8:")
         depends_on("cmake@3.18:", when="@2:")
         depends_on("cmake@3.13:", when="@1.11:")
         depends_on("cmake@3.10:", when="@1.10:")
@@ -184,7 +186,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-typing-extensions@4.10:", when="@2.6:")
         depends_on("py-typing-extensions@4.8:", when="@2.2:")
         depends_on("py-typing-extensions@3.6.2.1:", when="@1.7:")
-        depends_on("py-setuptools")
         depends_on("py-sympy@1.13.3:", when="@2.7:")
         depends_on("py-sympy@1.13.1", when="@2.5:2.6")
         depends_on("py-sympy", when="@2:")
@@ -193,6 +194,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-fsspec", when="@2.1:")
 
         # pyproject.toml
+        depends_on("py-setuptools@62.3:79", when="@2.8:")
+        depends_on("py-setuptools")
         depends_on("py-astunparse", when="@1.13:")
         depends_on("py-numpy")
         # https://github.com/pytorch/pytorch/issues/107302
@@ -208,9 +211,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # third_party
     depends_on("fp16@2020-05-14", when="@1.6:")
     depends_on("fxdiv@2020-04-17", when="@1.6:")
-    depends_on("nvtx@3.1.0", when="@2.6:")
+    depends_on("nvtx@3.2.1", when="@2.8:")
+    depends_on("nvtx@3.1.0", when="@2.6:2.7")
     # https://github.com/pytorch/pytorch/issues/60332
-    # depends_on("xnnpack@2024-11-08", when="@2.6:+xnnpack")
+    # depends_on("xnnpack@2024-12-03", when="@2.7:+xnnpack")
+    # depends_on("xnnpack@2024-11-08", when="@2.6+xnnpack")
     # depends_on("xnnpack@2024-02-29", when="@2.3:2.5+xnnpack")
     # depends_on("xnnpack@2022-12-21", when="@2.0:2.2+xnnpack")
     # depends_on("xnnpack@2022-02-16", when="@1.12:1+xnnpack")
@@ -218,7 +223,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # depends_on("xnnpack@2021-02-22", when="@1.8:1.9+xnnpack")
     # depends_on("xnnpack@2020-03-23", when="@1.6:1.7+xnnpack")
     depends_on("benchmark", when="@1.6:+test")
-    depends_on("cpuinfo@2024-09-26", when="@2.6:")
+    depends_on("cpuinfo@2025-03-21", when="@2.8:")
+    depends_on("cpuinfo@2024-09-26", when="@2.6:2.7")
     depends_on("cpuinfo@2024-09-06", when="@2.5.1")
     depends_on("cpuinfo@2024-08-30", when="@2.5.0")
     depends_on("cpuinfo@2023-11-04", when="@2.3:2.4")
@@ -226,8 +232,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cpuinfo@2022-08-19", when="@1.13:2.0")
     depends_on("cpuinfo@2020-12-17", when="@1.8:1.12")
     depends_on("cpuinfo@2020-06-11", when="@1.6:1.7")
-    depends_on("eigen")
-    depends_on("gloo@2023-12-03", when="@2.3:+gloo")
+    depends_on("gloo@2025-06-04", when="@2.8:+gloo")
+    depends_on("gloo@2023-12-03", when="@2.3:2.7+gloo")
     depends_on("gloo@2023-05-19", when="@2.1:2.2+gloo")
     depends_on("gloo@2023-01-17", when="@2.0+gloo")
     depends_on("gloo@2022-05-18", when="@1.13:1+gloo")
@@ -237,9 +243,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("gloo@2020-03-17", when="@1.6+gloo")
     depends_on("gloo+cuda", when="@1.6:+gloo+cuda")
     depends_on("gloo+libuv", when="@1.6: platform=darwin")
-    depends_on("nccl", when="+nccl+cuda")
     # https://github.com/pytorch/pytorch/issues/60331
-    # depends_on("onnx@1.17.0", when="@2.6:")
+    # depends_on("onnx@1.18.0", when="@2.8:")
+    # depends_on("onnx@1.17.0", when="@2.6:2.7")
     # depends_on("onnx@1.16.0", when="@2.3:2.5")
     # depends_on("onnx@1.15.0", when="@2.2")
     # depends_on("onnx@1.14.1", when="@2.1")
@@ -274,10 +280,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-pybind11@2.10.0:", when="@1.13:1")
         depends_on("py-pybind11@2.6.2:", when="@1.8:1.12")
         depends_on("py-pybind11@2.3.0:", when="@:1.7")
-    depends_on("sleef@3.7.0_2024-12-06", when="@2.7:")
+    depends_on("sleef@3.8", when="@2.8:")
+    depends_on("sleef@3.7.0_2024-12-06", when="@2.7")
     depends_on("sleef@3.6.0_2024-03-20", when="@2.4:2.6")
     depends_on("sleef@3.5.1_2020-12-22", when="@1.8:2.3")
     depends_on("sleef@3.4.0_2019-07-30", when="@1.6:1.7")
+    depends_on("eigen")
 
     # Optional dependencies
     with default_args(type=("build", "link", "run")):
@@ -295,6 +303,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cudnn@8.5:9.0", when="@2.3:+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("cudnn@7", when="@:1.5+cudnn")
+    depends_on("nccl", when="+nccl+cuda")
     depends_on("magma+cuda", when="+magma+cuda")
     depends_on("magma+rocm", when="+magma+rocm")
     depends_on("numactl", when="+numa")
@@ -357,7 +366,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch(
         "gloo_cuda.patch",
         sha256="f93aa66e2cf9c0febdbcf72f44213a213e570e5f860186e81c92c8d2af0857c0",
-        when="@2.6:",
+        when="@2.6:2.8",
     )
 
     # Fixes 'FindBLAS.cmake' error: unknown command check_function_exists
