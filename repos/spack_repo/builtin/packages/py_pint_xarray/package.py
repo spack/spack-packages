@@ -37,7 +37,6 @@ class PyPintXarray(PythonPackage):
         depends_on("py-importlib-metadata", when="@0.2.1 ^python@:3.7", type=("build", "run"))
 
     def url_for_version(self, version):
-
         if version >= Version("0.4"):
             return super().url_for_version(version)
 

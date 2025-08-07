@@ -65,7 +65,7 @@ class Gsl(AutotoolsPackage, GNUMirrorPackage):
     def configure_args(self):
         configure_args = []
         if self.spec.satisfies("+external-cblas"):
-            configure_args.append("--with-external-cblas")
+            configure_args.append("--with-cblas-external")
             configure_args.append("CBLAS_CFLAGS=%s" % self.spec["blas"].headers.include_flags)
             configure_args.append("CBLAS_LIBS=%s" % self.spec["blas"].libs.ld_flags)
 

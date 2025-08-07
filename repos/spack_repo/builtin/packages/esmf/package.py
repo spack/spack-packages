@@ -172,7 +172,6 @@ class Esmf(MakefilePackage, PythonExtension):
 
 
 class PythonPipBuilder(python.PythonPipBuilder):
-
     @property
     def build_directory(self):
         return os.path.join(self.stage.source_path, "src/addon/esmpy")

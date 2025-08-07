@@ -68,7 +68,7 @@ class Relion(CMakePackage, CudaPackage):
         "allow_ctf_in_sagd",
         default=True,
         description=(
-            "Allow CTF-modulation in SAGD, " "as specified in Claim 1 of patent US10,282,513B2"
+            "Allow CTF-modulation in SAGD, as specified in Claim 1 of patent US10,282,513B2"
         ),
     )
     variant("altcpu", default=False, description="Use CPU acceleration", when="~cuda")
@@ -76,7 +76,7 @@ class Relion(CMakePackage, CudaPackage):
     variant(
         "external_motioncor2",
         default=False,
-        description="Have external motioncor2 available in addition to " "Relion builtin",
+        description="Have external motioncor2 available in addition to Relion builtin",
     )
 
     depends_on("mpi")
@@ -128,6 +128,10 @@ class Relion(CMakePackage, CudaPackage):
                 raise ValueError("Must select a value for cuda_arch")
             else:
                 args += ["-DCUDA=ON", "-DCudaTexture=ON", "-DCUDA_ARCH=%s" % (carch)]
+
+        if self.spec.satisfies("@5: ~cuda"):
+            # Relion 5 defaults to CUDA=ON so it has to be explicitly disabled.
+            args.append("-DCUDA=OFF")
 
         return args
 

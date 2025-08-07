@@ -418,8 +418,9 @@ class Dealii(CMakePackage, CudaPackage):
         conflicts(
             "+{0}".format(_package),
             when="~mpi",
-            msg="To enable {0} it is necessary to build deal.II with "
-            "MPI support enabled.".format(_package),
+            msg="To enable {0} it is necessary to build deal.II with MPI support enabled.".format(
+                _package
+            ),
         )
 
     # Optional dependencies:
@@ -427,18 +428,16 @@ class Dealii(CMakePackage, CudaPackage):
     conflicts(
         "+adol-c",
         when="^trilinos+chaco",
-        msg="Symbol clash between the ADOL-C library and " "Trilinos SEACAS Chaco.",
+        msg="Symbol clash between the ADOL-C library and Trilinos SEACAS Chaco.",
     )
     conflicts(
         "+adol-c",
         when="^trilinos+exodus",
-        msg="Symbol clash between the ADOL-C library and " "Trilinos Netcdf.",
+        msg="Symbol clash between the ADOL-C library and Trilinos Netcdf.",
     )
 
     conflicts(
-        "+slepc",
-        when="~petsc",
-        msg="It is not possible to enable slepc interfaces " "without petsc.",
+        "+slepc", when="~petsc", msg="It is not possible to enable slepc interfaces without petsc."
     )
 
     def cmake_args(self):

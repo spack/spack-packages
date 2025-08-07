@@ -521,7 +521,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         values=disjoint_sets(("auto",), FABRICS).with_non_feature_values(
             "auto", "none"
         ),  # shared memory transports
-        description="List of fabrics that are enabled; " "'auto' lets openmpi determine",
+        description="List of fabrics that are enabled; 'auto' lets openmpi determine",
     )
 
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge", "loadleveler")
@@ -775,7 +775,7 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=loadleveler",
         when="@3:",
-        msg="The loadleveler scheduler is not supported with " "openmpi(>=3).",
+        msg="The loadleveler scheduler is not supported with openmpi(>=3).",
     )
 
     # According to this comment on github:
@@ -790,6 +790,9 @@ with '-Wl,-commons,use_dylibs' and without
     # Building against an external PMIx with an internal Libevent or HWLOC is unsupported
     conflicts("~internal-pmix", "+internal-hwloc")
     conflicts("~internal-pmix", "+internal-libevent")
+
+    # May be able to get working for LLVM 18/19 using FC=flang-new
+    conflicts("%fortran=clang %llvm@:19")
 
     filter_compiler_wrappers("openmpi/*-wrapper-data*", relative_root="share")
 

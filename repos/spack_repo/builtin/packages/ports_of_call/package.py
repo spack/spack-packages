@@ -56,7 +56,7 @@ class PortsOfCall(CMakePackage):
         when="@1.7.0: +test",
     )
 
-    depends_on("c", type="build")  # todo: disable cmake default?
+    depends_on("c", type="build", when="@:1.7.1")
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.12:", type="build")
@@ -76,5 +76,5 @@ class PortsOfCall(CMakePackage):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
         if self.spec.satisfies("test_portability_strategy=Kokkos ^kokkos+cuda"):
-            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["kokkos"].kokkos_cxx))
+            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
         return args

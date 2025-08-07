@@ -141,21 +141,19 @@ class RocmValidationSuite(CMakePackage):
         ]
 
         if self.spec.satisfies("@6.2.1:6.2.4"):
-            args.append(self.define("HIPRAND_DIR", self.spec["hiprand"].prefix)),
-            args.append(self.define("ROCRAND_DIR", self.spec["rocrand"].prefix)),
+            args.append(self.define("HIPRAND_DIR", self.spec["hiprand"].prefix))
+            args.append(self.define("ROCRAND_DIR", self.spec["rocrand"].prefix))
 
         libloc = self.spec["googletest"].prefix.lib64
         if not os.path.isdir(libloc):
             libloc = self.spec["googletest"].prefix.lib
         args.append(self.define("UT_LIB", libloc))
         if self.spec.satisfies("@:6.2"):
-            args.append(self.define("HIP_PATH", self.spec["hip"].prefix)),
-            args.append(self.define("HSA_PATH", self.spec["hsa-rocr-dev"].prefix)),
-            args.append(self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix)),
-            args.append(self.define("ROCBLAS_DIR", self.spec["rocblas"].prefix)),
-            args.append(
-                self.define("YAML_CPP_INCLUDE_DIRS", self.spec["yaml-cpp"].prefix.include)
-            ),
+            args.append(self.define("HIP_PATH", self.spec["hip"].prefix))
+            args.append(self.define("HSA_PATH", self.spec["hsa-rocr-dev"].prefix))
+            args.append(self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix))
+            args.append(self.define("ROCBLAS_DIR", self.spec["rocblas"].prefix))
+            args.append(self.define("YAML_CPP_INCLUDE_DIRS", self.spec["yaml-cpp"].prefix.include))
 
             libloc = self.spec["hsakmt-roct"].prefix.lib64
             if not os.path.isdir(libloc):
@@ -163,7 +161,7 @@ class RocmValidationSuite(CMakePackage):
             args.append(self.define("HSAKMT_LIB_DIR", libloc))
 
         if self.spec.satisfies("@6.3.0:"):
-            args.append(self.define("CMAKE_INSTALL_RPATH", self.spec.prefix.lib)),
-            args.append(self.define("CPACK_PACKAGING_INSTALL_PREFIX", self.spec.prefix)),
+            args.append(self.define("CMAKE_INSTALL_RPATH", self.spec.prefix.lib))
+            args.append(self.define("CPACK_PACKAGING_INSTALL_PREFIX", self.spec.prefix))
 
         return args

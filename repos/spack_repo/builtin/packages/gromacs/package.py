@@ -673,13 +673,13 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+cufftmp"):
             options.append("-DGMX_USE_CUFFTMP=ON")
             options.append(
-                f'-DcuFFTMp_ROOT={self.spec["nvhpc"].prefix}/Linux_{self.spec.target.family}'
-                + f'/{self.spec["nvhpc"].version}/math_libs'
+                f"-DcuFFTMp_ROOT={self.spec['nvhpc'].prefix}/Linux_{self.spec.target.family}"
+                + f"/{self.spec['nvhpc'].version}/math_libs"
             )
 
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
-            options.append(f'-DHeffte_ROOT={self.spec["heffte"].prefix}')
+            options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
 
         if self.spec.satisfies("+intel-data-center-gpu-max"):
             options.append("-DGMX_GPU_NB_CLUSTER_SIZE=8")

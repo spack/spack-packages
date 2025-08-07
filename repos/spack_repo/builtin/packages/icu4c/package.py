@@ -89,7 +89,6 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
-
     configure_directory = "source"
 
     # Need to make sure that locale is UTF-8 in order to process source files in UTF-8.
