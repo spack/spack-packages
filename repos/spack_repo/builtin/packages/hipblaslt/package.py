@@ -124,14 +124,14 @@ class Hipblaslt(CMakePackage):
             )
             filter_file(
                 "${rocm_path}/bin/amdclang++",
-                f'{self.spec["llvm-amdgpu"].prefix}/bin/amdclang++',
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++",
                 "library/src/amd_detail/rocblaslt/src/kernels/compile_code_object.sh",
                 string=True,
             )
         if self.spec.satisfies("@6.3:"):
             filter_file(
                 "${rocm_path}/bin/amdclang++",
-                f'{self.spec["llvm-amdgpu"].prefix}/bin/amdclang++',
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++",
                 "tensilelite/Tensile/Ops/gen_assembly.sh",
                 string=True,
             )

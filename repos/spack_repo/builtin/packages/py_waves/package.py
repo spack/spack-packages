@@ -123,7 +123,7 @@ class PyWaves(PythonPackage):
                     pathlib.Path(self.prefix).rglob("**/site-packages")
                 )[0]
                 python_package_documentation = python.copy()
-                python_package_documentation.add_default_env("SP_DIR", site_packages_directory),
+                python_package_documentation.add_default_env("SP_DIR", site_packages_directory)
                 python_package_documentation("package_documentation.py")
 
     @run_after("install")
