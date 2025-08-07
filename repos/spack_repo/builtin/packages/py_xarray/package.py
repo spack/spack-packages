@@ -102,7 +102,7 @@ class PyXarray(PythonPackage):
     # These are the versions that work with numpy@2:
     # https://github.com/pydata/xarray/pull/9136
     depends_on("py-netcdf4@1.7.1:", when="+io ^numpy@2:", type=("build", "run"))
-    depends_on("py-netcdf4@1.6.0:", when="@2025.7.1 +io", type=("build", "run"))
+    depends_on("py-netcdf4@1.6.0:", when="@2025.7.1: +io", type=("build", "run"))
     depends_on("py-netcdf4", when="+io", type=("build", "run"))
     depends_on("py-h5netcdf", when="+io", type=("build", "run"))
     depends_on("py-scipy", when="+io", type=("build", "run"))
