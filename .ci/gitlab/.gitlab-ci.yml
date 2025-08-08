@@ -1,7 +1,6 @@
 stages: [ "generate", "build" ]
 
 variables:
-  NOOP_JOB: 1
   SPACK_DISABLE_LOCAL_CONFIG: "1"
   SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
   # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
@@ -47,18 +46,10 @@ default:
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         SPACK_REQUIRE_SIGNING: "True"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
-    - if: $CI_COMMIT_TAG =~ /^v.*/
+    - if: $CI_COMMIT_TAG =~ /^v.*/ || $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/
       when: always
       variables:
-        NOOP_JOB: True
-    - if: $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/
-      # Pipelines on tags (release or dev snapshots) only copy binaries from one mirror to another
-      when: always
-      variables:
-        SPACK_PIPELINE_TYPE: "spack_copy_only"
-        SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
-        PIPELINE_MIRROR_TEMPLATE: "copy-only-protected-mirrors.yaml.in"
-        OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
+        NOOP_JOB: 1
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
       when: always
