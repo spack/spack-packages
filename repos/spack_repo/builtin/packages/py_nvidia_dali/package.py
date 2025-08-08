@@ -19,6 +19,10 @@ class PyNvidiaDali(PythonPackage):
 
     maintainers("thomas-bouvier")
 
+    # py-nvidia-dali is not available on these platforms, but is depended on by
+    # py-nvidia-modulus which does not have such conflict statements.
+    skip_version_audit = ["platform=darwin", "platform=windows"]
+
     conflicts("platform=darwin")
     conflicts("platform=windows")
 
