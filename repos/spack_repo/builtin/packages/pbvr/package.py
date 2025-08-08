@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import platform
+import re
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
@@ -76,6 +78,28 @@ class Pbvr(MakefilePackage):
                     pass
 
     def build(self, spec, prefix):
+        # Workaround for qmake's $$system() not capturing command output correctly.
+        # This issue is caused by a known bug in certain Linux kernel versions.
+        # To avoid it, Qt is built with the '-no-feature-forkfd_pidfd' option to disable
+        # the use of new process management features that rely on pidfd.
+        # Note: Red Hat fixed this kernel issue in version 4.18.0-392 and later.
+        is_rhel8_bug_fixed = False
+        release_str = platform.uname().release
+        match = re.match(r"^(\d+\.\d+\.\d+)-([\d\.]+)\.el8", release_str)
+        if match and not is_rhel8_bug_fixed:
+            base_version = match.group(1)
+            build_number = match.group(2).split(".")[0]
+            full_version = f"{base_version}.{build_number}"
+            if Version(full_version) < Version("4.18.0.392"):
+                raise InstallError(
+                    f"The kernel version of this system is ${full_version}.\n"
+                    "You get an error when running qmake after installing qt-base"
+                    " on Red Hat Enterprise Linux 8 versions older than 8.7.\n"
+                    "You need to fix the package.py file for qt-base,"
+                    " so please refer to the following URL.\n"
+                    "https://github.com/CCSEPBVR/CS-IS-PBVR/wiki/BuildforLinux_JP"
+                )
+
         # Build Client
         with set_env(
             SPACK_KVS_DIR=str(spec["kvs"].prefix),

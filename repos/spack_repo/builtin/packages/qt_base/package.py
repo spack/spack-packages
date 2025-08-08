@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import platform
-import re
 import shutil
 import sys
 import tempfile
@@ -325,20 +323,6 @@ class QtBase(QtPackage):
 
         if "~opengl" in spec:
             args.append(self.define("INPUT_opengl", "no"))
-
-        # Workaround for qmake's $$system() not capturing command output correctly.
-        # This issue is caused by a known bug in certain Linux kernel versions.
-        # To avoid it, Qt is built with the '-no-feature-forkfd_pidfd' option to disable
-        # the use of new process management features that rely on pidfd.
-        # Note: Red Hat fixed this kernel issue in version 4.18.0-392 and later.
-        release_str = platform.uname().release
-        match = re.match(r"^(\d+\.\d+\.\d+)-([\d\.]+)\.el8", release_str)
-        if match:
-            base_version = match.group(1)
-            build_number = match.group(2).split(".")[0]
-            full_version = f"{base_version}.{build_number}"
-            if Version(full_version) < Version("4.18.0.392"):
-                define("FEATURE_forkfd_pidfd", False)
 
         # INPUT_* arguments: undefined/no/qt/system
         sys_inputs = ["doubleconversion"]
