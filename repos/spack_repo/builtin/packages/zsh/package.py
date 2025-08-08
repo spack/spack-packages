@@ -41,7 +41,7 @@ class Zsh(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("pcre")
-    depends_on("ncurses")
+    depends_on("ncurses@:5.9")
 
     conflicts("+lmod", when="~etcdir", msg="local etc required to setup env for lmod")
 
