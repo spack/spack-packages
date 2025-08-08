@@ -30,9 +30,9 @@
 
 ###
 # CI Components maintained by Kitware
-/.ci/configs/              @kwryankrattiger @scottwittenburg @zackgalbreath
-/.ci/gitlab/configs/       @kwryankrattiger @scottwittenburg @zackgalbreath
-.ci/gitlab/.gitlab-ci.yml  @kwryankrattiger @scottwittenburg @zackgalbreath
+/.ci/configs/              @kwryankrattiger @zackgalbreath
+/.ci/gitlab/configs/       @kwryankrattiger @zackgalbreath
+.ci/gitlab/.gitlab-ci.yml  @kwryankrattiger @zackgalbreath
 
 ###
 # CI Components maintained by UO
