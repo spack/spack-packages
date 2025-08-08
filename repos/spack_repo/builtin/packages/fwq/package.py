@@ -11,17 +11,15 @@ class Fwq(MakefilePackage):
     """FWQ is the Fixed Work Quanta benchmark designed to test system noise on HPC systems."""
 
     homepage = "https://github.com/LLNL/system-noise"
-    url = "https://github.com/LLNL/system-noise.git"
+    git = "https://github.com/LLNL/system-noise.git"
 
     maintainers("eleon", "nhanford")
 
     license("MIT", checked_by="nhanford")
 
-    version("main")
+    version("main", branch="main")
 
     variant("mpi", default=False, description="Build MPI-dependent benchmarks.")
-    variant("daxpy", default=False, description="Use DAXPY work.")
-    variant("vector", default=False, description="Use hardware vectorization support.")
 
     depends_on("mpi", when="+mpi")
     depends_on("gcc")
@@ -32,14 +30,14 @@ class Fwq(MakefilePackage):
     @property
     def build_targets(self):
         targets = ["single", "thread"]
-        if "+mpi" in self.spec:
+        if self.spec.satisfies("+mpi"):
             targets.append("mpi")
         return targets
     
     @property
     def install_targets(self):
         targets = ["fwq", "fwq-th"]
-        if "+mpi" in self.spec:
+        if self.spec.satisfies("+mpi"):
             targets.append("fwq-mpi")
         return targets
 
