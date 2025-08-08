@@ -65,11 +65,11 @@ class PyVirtualenv(PythonPackage):
     depends_on(
         "py-importlib-metadata@0.12:3", when="@20.0.0:20.2.0 ^python@:3.7", type=("build", "run")
     )
-    depends_on("py-platformdirs@3.9.1:3", when="@20.24.1:", type=("build", "run"))
+    depends_on("py-platformdirs@3.9.1:4", when="@20.24.7:", type=("build", "run"))
+    depends_on("py-platformdirs@3.9.1:3", when="@20.24.1:20.24.6", type=("build", "run"))
     depends_on("py-platformdirs@3.2:3", when="@20.22:20.23.0", type=("build", "run"))
     depends_on("py-platformdirs@2.4:2", when="@20.16.3:20.21", type=("build", "run"))
     depends_on("py-platformdirs@2:2", when="@20.5:20.16.2", type=("build", "run"))
-
     # Historical dependencies
     with when("@:20.17"):
         # not just build-time, requires pkg_resources
