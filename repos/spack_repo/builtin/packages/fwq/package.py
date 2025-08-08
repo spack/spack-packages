@@ -2,10 +2,12 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os.path
+
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
+
 from spack.package import *
 
-import os.path
 
 class Fwq(MakefilePackage):
     """FWQ is the Fixed Work Quanta benchmark designed to test system noise on HPC systems."""
@@ -33,7 +35,7 @@ class Fwq(MakefilePackage):
         if self.spec.satisfies("+mpi"):
             targets.append("mpi")
         return targets
-    
+
     @property
     def install_targets(self):
         targets = ["fwq", "fwq-th"]
