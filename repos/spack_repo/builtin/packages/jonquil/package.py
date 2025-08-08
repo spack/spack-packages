@@ -30,7 +30,7 @@ class Jonquil(MesonPackage, CMakePackage):
     depends_on("fortran", type="build")
     depends_on("meson@0.57.2:", type="build", when="build_system=meson")
 
-    depends_on("toml-f")
+    depends_on("toml-f@0.4:")
     depends_on("pkgconfig", type="build")
 
 

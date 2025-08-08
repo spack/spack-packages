@@ -25,7 +25,6 @@ class Multicharge(CMakePackage, MesonPackage):
     version("main", branch="main")
     version("0.4.0", sha256="16aea6d8ba2f81ced3de1153cb3d73083aa7ca43c3b2b6ee9799127bab5d60d1")
     version("0.3.1", sha256="180541714c26804a2d66edd892c8cd4cb40a21acbaf7edb24aaf04d580368b97")
-    version("0.3.1", sha256="180541714c26804a2d66edd892c8cd4cb40a21acbaf7edb24aaf04d580368b97")
     version("0.3.0", sha256="e8f6615d445264798b12d2854e25c93938373dc149bb79e6eddd23fc4309749d")
 
     variant("openmp", default=True, description="Enable OpenMP support")
