@@ -24,6 +24,7 @@ GPU_MAP = {
     "gfx90a": "Mi250",
     "gfx90a:xnack-": "Mi250",
     "gfx90a:xnack+": "Mi250",
+    "gfx942": "Mi300",
 }
 
 
@@ -180,8 +181,11 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("vdwxc", default=False, description="Enable VDW support in SIRIUS.", when="+sirius")
-
     variant("deepmd", default=False, description="Enable DeepMD-kit support")
+    variant("tblite", default=False, description="Enable tblite support", when="@2025.2:")
+    variant("nlcg", default=False, description="Enable nlcg support in sirius", when="+sirius")
+    variant("vcsqnm", default=False, description="Enable VCSQNM support in sirius", when="+sirius")
+
     conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
     with when("+cuda"):
@@ -233,8 +237,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("greenx", when="+greenx")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
-    depends_on("libvdwxc", when="+vdwxc")
 
+    depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
     with when("+openmp"):
         depends_on("fftw+openmp", when="^[virtuals=fftw-api] fftw")
@@ -358,17 +362,21 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # like ELPA, SCALAPACK are independent and Spack will ensure that
     # a consistent/compatible combination is pulled into the dependency graph.
     with when("+sirius"):
-        depends_on("sirius+fortran+shared")
+        depends_on("sirius+fortran+shared+scalapack")
         depends_on("sirius+cuda", when="+cuda")
         depends_on("sirius+rocm", when="+rocm")
         depends_on("sirius+openmp", when="+openmp")
         depends_on("sirius~openmp", when="~openmp")
         depends_on("sirius@7.3:", when="@9.1")
-        depends_on("sirius@7.4:7.5", when="@2023.2")
+        depends_on("sirius@7.4:", when="@2023.2")
         depends_on("sirius@7.5:", when="@2024.1:")
-        depends_on("sirius@7.6:7.7 +pugixml", when="@2024.2:")
-        depends_on("sirius@7.7: +pugixml", when="@2025.2:")
+        depends_on("sirius@7.6:+pugixml", when="@2024.2:")
+        depends_on("sirius@7.7:+pugixml", when="@2025.2:")
         depends_on("sirius+vdwxc", when="+vdwxc")
+        depends_on("sirius+nlcglib", when="@2025.2:+nlcg")
+        depends_on("sirius+vcsqnm", when="@2025.2:+vcsqnm")
+        depends_on("sirius@7.8.1:+dftd3+dftd4", when="@2025.2:+dftd4")
+        depends_on("sirius@7.5.0:+dlaf", when="+dlaf")
 
     with when("+libvori"):
         depends_on("libvori@201219:", when="@8.1")
@@ -390,11 +398,13 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
         # DBCSR as external dependency
         depends_on("dbcsr@2.6: ~examples")
+        depends_on("dbcsr@2.8:", when="@2025.1:")
         depends_on("dbcsr+openmp", when="+openmp")
         depends_on("dbcsr+opencl", when="+opencl")
         depends_on("dbcsr+mpi", when="+mpi")
-        depends_on("dbcsr+cuda", when="+cuda")
         depends_on("dbcsr+rocm", when="+rocm")
+        depends_on("dbcsr+cuda", when="+cuda")
+
         depends_on("dbcsr smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
 
@@ -422,7 +432,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # versions. Instead just mark all unsupported cuda archs as conflicting.
 
     supported_cuda_arch_list = ("35", "37", "60", "70", "80", "90")
-    supported_rocm_arch_list = ("gfx906", "gfx908", "gfx90a", "gfx90a:xnack-", "gfx90a:xnack+")
+    supported_rocm_arch_list = (
+        "gfx906",
+        "gfx908",
+        "gfx90a",
+        "gfx90a:xnack-",
+        "gfx90a:xnack+",
+        "gfx942",
+    )
     cuda_msg = "cp2k only supports cuda_arch {0}".format(supported_cuda_arch_list)
     rocm_msg = "cp2k only supports amdgpu_target {0}".format(supported_rocm_arch_list)
 
@@ -497,6 +514,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
                 )
 
         # Patch for resolving .mod file conflicts in ROCm by implementing 'USE, INTRINSIC'
+        # This patch triggers compilation errors on some systems as rocm install these
+        # modules files in rocm/include/llvm and this directory is given to gcc
+
         if self.spec.satisfies("+rocm"):
             for directory, subdirectory, files in os.walk(os.getcwd()):
                 for i in files:
@@ -1127,8 +1147,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_TREXIO", "trexio"),
             self.define_from_variant("CP2K_USE_GREENX", "greenx"),
             self.define_from_variant("CP2K_USE_LIBVDWXC", "vdwxc"),
+            self.define_from_variant("CP2K_USE_TBLITE", "tblite"),
         ]
 
+        if spec.satisfies("+sirius"):
+            args += [
+                self.define_from_variant("CP2K_USE_SIRIUS_DFTD4", "dftd4"),
+                self.define_from_variant("CP2K_USE_SIRIUS_VCSQNM", "vcsqnm"),
+                self.define_from_variant("CP2K_USE_SIRIUS_NLCG", "nlcg"),
+            ]
         if spec.satisfies("^[virtuals=fftw-api] fftw+openmp"):
             args += ["-DCP2K_USE_FFTW3_WITH_OPENMP=ON"]
 
