@@ -41,15 +41,15 @@
 
 ###
 # GitHub Actions maintainers
-/.github/actions/*    @haampie @kwryankrattiger
-/.github/workflows/*  @alecbcs @alalazo @haampie @kwryankrattiger
+/.github/actions    @haampie @kwryankrattiger
+/.github/workflows  @alecbcs @alalazo @haampie @kwryankrattiger
 
 ###
 # GitHub project maintainers
 .github/*.md              @spack/spack-releasers
 .github/*.yml             @spack/spack-releasers
 /.github/ISSUE_TEMPLATE/  @spack/spack-releasers
-CODEOWNDERS               @spack/spack-releasers
+CODEOWNERS               @spack/spack-releasers
 LICENSE*                  @spack/spack-releasers
 NOTICE                    @spack/spack-releasers
 README.md                 @spack/spack-releasers
