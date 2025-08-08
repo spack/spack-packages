@@ -29,8 +29,8 @@ class Openfpgaloader(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("libusb", type="build")
-    depends_on("libftdi", type="build")
+    depends_on("libusb")
+    depends_on("libftdi")
 
     def setup_run_environment(self, env):
         env.prepend_path("OPENFPGALOADER_SOJ_DIR", f"{self.prefix}/share/openFPGALoader")
