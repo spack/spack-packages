@@ -288,6 +288,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libtheora")
     depends_on("libtiff")
     depends_on("netcdf-c")
+    depends_on("netcdf-c@:4.9.2", when="@:5.13")
     depends_on("pegtl@2.8.3")
     depends_on("protobuf@3.4:")
     # Paraview 5.10 can't build with protobuf > 3.18
