@@ -37,6 +37,6 @@ runs:
         ${{ inputs.path }}/bin/spack config blame repos
         ${{ inputs.path }}/bin/spack repo list
         if [ ! -f "$REPOSITORY_PATH/spack-repo-index.yaml" ]; then
-          echo "Error: "$REPOSITORY_PATH/spack-repo-index.yaml" file not found."
+          echo "Error: "'"'"$REPOSITORY_PATH/spack-repo-index.yaml"'"'" file not found."
           exit 1
         fi
