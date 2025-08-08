@@ -193,4 +193,5 @@ jobs:
           source spack-core/share/spack/setup-env.sh
           spack debug report
           spack -d bootstrap now --dev
-          spack -d style -t black
+          source .ci/env
+          spack -d style -b ${SPACK_CHECKOUT_VERSION} -t black
