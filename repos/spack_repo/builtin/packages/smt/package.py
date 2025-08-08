@@ -38,7 +38,3 @@ class Smt(CMakePackage):
 
     # FIXME: Add dependencies if required.
     depends_on("cmake", type=("build"))
-    def cmake_args(self):
-        # FIXME: If not needed delete this function
-        args = []
-        return args
