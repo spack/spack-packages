@@ -20,6 +20,7 @@
 # See the Spack documentation for more information on packaging.
 # ----------------------------------------------------------------------------
 
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack.package import *
 
 
@@ -28,7 +29,7 @@ class Smt(CMakePackage):
 
     homepage = "https://github.com/ekaden/smt"
     git = "https://github.com/ekaden/smt.git"
-    maintainers="richardbeare"
+    maintainers = "richardbeare"
     # See https://spdx.org/licenses/ for a list. Upon manually verifying
     # the license, set checked_by to your Github username.
     license("BSD-2-Clause", checked_by="richardbeare")
@@ -36,7 +37,7 @@ class Smt(CMakePackage):
     version("0.4", tag="v0.4")
 
     # FIXME: Add dependencies if required.
-    depends_on("cmake", type = ("build"))
+    depends_on("cmake", type=("build"))
     def cmake_args(self):
         # FIXME: If not needed delete this function
         args = []
