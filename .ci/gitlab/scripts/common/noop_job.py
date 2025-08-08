@@ -1,3 +1,4 @@
+import os
 import sys
 
 # Noop job
@@ -29,5 +30,6 @@ workflow:
 """
 
 if __name__ == "__main__":
+    os.makedirs(os.path.dirname(sys.argv[1]))
     with open(sys.argv[1], "w", encoding="utf-8") as fd:
         fd.write(NOOP_JOB)
