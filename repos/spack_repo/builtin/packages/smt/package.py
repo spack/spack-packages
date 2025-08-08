@@ -21,8 +21,8 @@
 # ----------------------------------------------------------------------------
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack.package import *
 
+from spack.package import *
 
 class Smt(CMakePackage):
     """Spherical Mean Technique - microscopic diffusion anisotropy imaging"""
