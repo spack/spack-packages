@@ -124,8 +124,9 @@ default:
     - |
       [ ! -z ${NOOP_JOB} ] && \
       python ${SPACK_CI_SCRIPTS_ROOT}/noop_job.py \
-      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml" && \
-      exit 0
+      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+    - |
+      [ ! -z ${NOOP_JOB} ] && exit 0
     - uname -a || true
     - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
     - nproc || true
