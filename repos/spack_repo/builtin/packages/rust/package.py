@@ -14,7 +14,7 @@ class Rust(Package):
     """The Rust programming language toolchain."""
 
     homepage = "https://www.rust-lang.org"
-    url = "https://static.rust-lang.org/dist/rustc-1.42.0-src.tar.gz"
+    url = "https://static.rust-lang.org/dist/rustc-1.89.0-src.tar.gz"
     git = "https://github.com/rust-lang/rust.git"
 
     maintainers("alecbcs")
@@ -36,6 +36,7 @@ class Rust(Package):
     version("nightly")
 
     # Stable versions.
+    version("1.89.0", sha256="2576f9f440dd99b0151bd28f59aa0ac6102d5c4f3ed4ef8a810c8dd05057250d")
     version("1.85.0", sha256="2f4f3142ffb7c8402139cfa0796e24baaac8b9fd3f96b2deec3b94b4045c6a8a")
     version("1.83.0", sha256="722d773bd4eab2d828d7dd35b59f0b017ddf9a97ee2b46c1b7f7fac5c8841c6e")
     version("1.81.0", sha256="872448febdff32e50c3c90a7e15f9bb2db131d13c588fe9071b0ed88837ccfa7")
@@ -84,6 +85,7 @@ class Rust(Package):
     depends_on("rust-bootstrap@nightly", type="build", when="@nightly")
 
     # Stable version dependencies
+    depends_on("rust-bootstrap@1.88:1.89", type="build", when="@1.89")
     depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85")
     depends_on("rust-bootstrap@1.82:1.83", type="build", when="@1.83")
     depends_on("rust-bootstrap@1.80:1.81", type="build", when="@1.81")
