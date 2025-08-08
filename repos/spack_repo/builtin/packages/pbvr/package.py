@@ -60,6 +60,7 @@ class Pbvr(MakefilePackage):
     patch("makefile-machine-gcc-omp.patch", when="~mpi")
     patch("makefile-machine-gcc-mpi-omp.patch", when="+mpi")
     patch("pbvr-server-main-tf-min.patch", when="@3.4.0")
+    patch("pbvr_client_app_opengl_link.patch", when="@3.4.0")
 
     def patch(self):
         source_dir = self.stage.source_path

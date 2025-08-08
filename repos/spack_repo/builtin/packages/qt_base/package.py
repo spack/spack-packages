@@ -260,13 +260,6 @@ class QtBase(QtPackage):
             sha256="e4d9f1aee0566558e77eef5609b63c1fde3f3986bea1b9d5d7930b297f916a5e",
         )
 
-    # Patch to override incorrect OpenGL linkage in FindWrapOpenGL.cmake.
-    # The original CMake script links against OpenGL::GL,
-    # which may resolve to `-lOpenGL -lGLX` on some systems, causing linker errors.
-    # This patch replaces it with `-lGL` to ensure proper linkage
-    # against the OpenGL library (libGL.so).
-    patch("cmake-FindWrapOpenGL.patch", when="+opengl")
-
     @property
     def archive_files(self):
         """Save both the CMakeCache and the config summary."""
