@@ -167,6 +167,12 @@ default:
   before_script:
     - $ErrorActionOld=$ErrorActionPreference
     - $ErrorActionPreference="SilentlyContinue"
+    - If ( $NOOP_JOB ) \
+    { \
+        python ${SPACK_CI_SCRIPTS_ROOT}/noop_job.py \
+        "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml" \
+    }
+    - If ( $NOOP_JOB ) { exit 0 }
     - python -c"import psutil;print(psutil.getloadavg())"
     - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
     - $ErrorActionPreference=$ErrorActionOld
