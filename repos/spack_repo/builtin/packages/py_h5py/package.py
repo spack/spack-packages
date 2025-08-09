@@ -53,12 +53,7 @@ class PyH5py(PythonPackage):
 
     depends_on("c", type="build")
 
-    # Python versions
-    # python@3.9+ is required in 3.12+, but 3.11 needs python@3.9+ for numpy@2
-    # as python@3.8 is deprecated in spack, harmonized on python@3.9+
-    # https://github.com/h5py/h5py/blob/3.11.0/pyproject.toml#L5
-    depends_on("python@3.9:", type=("build", "run"), when="@3.11:")
-    depends_on("python@:3.9", type=("build", "run"), when="@:2.8")
+    depends_on("python@3.9:", type=("build", "run"))
 
     # Build dependencies
     # h5py@3.11 can build with cython@3.x
