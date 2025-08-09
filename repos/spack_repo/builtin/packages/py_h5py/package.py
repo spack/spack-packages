@@ -59,7 +59,7 @@ class PyH5py(PythonPackage):
     # h5py@3.11 can build with cython@3.x
     depends_on("py-cython@0.29.31:3", type="build", when="@3.11:")
     depends_on("py-cython@0.29.31:0", type="build", when="@3.9:3.10")
-    depends_on("py-cython@0.29.15:0", type=("build"), when="@3:3.7 ^python@3.9.0:")
+    depends_on("py-cython@0.29.15:0", type=("build"), when="@3:3.7")
     depends_on("py-cython@0.29.14:0", type=("build"), when="@3:3.7 ^python@3.8.0:3.8")
     depends_on("py-cython@0.29:0", type=("build"), when="@3.0:3.10")
     depends_on("py-cython@0.23:0", type="build", when="@:2")
@@ -68,7 +68,7 @@ class PyH5py(PythonPackage):
     depends_on("py-setuptools", type="build")
 
     # Build and runtime dependencies
-    depends_on("py-numpy@2", type=("build", "run"), when="@3.11: ^python@3.9:")
+    depends_on("py-numpy@2", type=("build", "run"), when="@3.11:")
 
     # https://github.com/h5py/h5py/pull/2556
     depends_on("py-numpy@2:2.2", when="@3.11:3.12", type="build")
@@ -78,7 +78,7 @@ class PyH5py(PythonPackage):
     # pre-3.11 is numpy@1 only
     # https://github.com/h5py/h5py/issues/2353
     depends_on("py-numpy@:1", when="@:3.10", type=("build", "run"))
-    depends_on("py-numpy@1.19.3:", type=("build", "run"), when="@3:3.10 ^python@3.9:")
+    depends_on("py-numpy@1.19.3:", type=("build", "run"), when="@3:3.10")
     depends_on("py-numpy@1.7:", type=("build", "run"), when="@:2")
 
     # Link dependencies (py-h5py v2 cannot build against HDF5 1.12 regardless
