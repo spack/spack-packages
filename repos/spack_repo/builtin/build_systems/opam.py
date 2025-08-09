@@ -13,7 +13,6 @@ from spack.package import (
     Spec,
     build_system,
     classproperty,
-    determine_number_of_jobs,
     extends,
     maintainers,
     register_builder,
