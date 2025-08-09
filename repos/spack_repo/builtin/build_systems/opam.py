@@ -80,5 +80,5 @@ class OpamBuilder(Builder):
         ]
         try:
             opam(*args)
-        except ProcessError:
-            tty.warn(f"Opam package had issues!")
+        except ProcessError as e:
+            tty.warn(f"opam install failed with {e}")
