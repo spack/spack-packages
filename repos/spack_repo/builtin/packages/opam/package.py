@@ -39,7 +39,7 @@ class Opam(AutotoolsPackage):
     version("1.2.1", sha256="f210ece7a2def34b486c9ccfb75de8febd64487b2ea4a14a7fa0358f37eacc3b")
 
     variant('user', default=False, description="User-supplied environment.")
-    variant('sandbox', default=True description="Use sandbox feature.")
+    variant('sandbox', default=True, description="Use sandbox feature.")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
