@@ -67,16 +67,17 @@ class PyH5py(PythonPackage):
     depends_on("py-setuptools@61:", type="build", when="@3.8.0:")
     depends_on("py-setuptools", type="build")
 
-    # Build and runtime dependencies
-    depends_on("py-numpy@2", type=("build", "run"), when="@3.11:")
-
-    # https://github.com/h5py/h5py/pull/2556
-    depends_on("py-numpy@2:2.2", when="@3.11:3.12", type="build")
+    # From 3.11, the build notes numpy@2+ but
+    # https://github.com/h5py/h5py/blob/3.11.0/setup.py#L28
+    # notes that @1.17.3: is actually supported. This also follows the feedstock
+    # https://github.com/AnacondaRecipes/h5py-feedstock/pull/14
+    depends_on("py-numpy@1.17.3:", type=("build", "run"), when="@3.11:")
 
     # until 3.11.0, uses "oldest-supported-numpy" and doesn't support numpy2
     # https://github.com/scipy/oldest-supported-numpy/blob/main/setup.cfg
     # pre-3.11 is numpy@1 only
     # https://github.com/h5py/h5py/issues/2353
+    # https://github.com/h5py/h5py/blob/3.11.0/docs/whatsnew/3.11.rst#new-features
     depends_on("py-numpy@:1", when="@:3.10", type=("build", "run"))
     depends_on("py-numpy@1.19.3:", type=("build", "run"), when="@3:3.10")
     depends_on("py-numpy@1.7:", type=("build", "run"), when="@:2")
