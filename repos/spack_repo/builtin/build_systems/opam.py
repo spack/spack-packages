@@ -17,7 +17,6 @@ from spack.package import (
     maintainers,
     register_builder,
     tty,
-    working_dir,
 )
 
 
