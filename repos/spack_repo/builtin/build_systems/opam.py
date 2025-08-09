@@ -65,27 +65,23 @@ class OpamBuilder(Builder):
     opam_name: Optional[str] = None
 
     def install(self, pkg: OpamPackage, spec: Spec, prefix: Prefix) -> None:
-        if spec['opam'].satisfies('+user'):
-            tty.warn(
-                f"User provided package."
-            )
-            return        
+        if spec["opam"].satisfies("+user"):
+            tty.warn(f"User provided package.")
+            return
         opam = Executable("opam")
         name = pkg.opam_name
         assert name is not None, "Opam package name is not set"
         args = [
             "exec",
-            "--root={0}/root".format(spec['opam'].prefix),
+            "--root={0}/root".format(spec["opam"].prefix),
             "--set-root",
             "--",
             "opam",
             "install",
             "--skip-updates",
-            "{0}={1}".format(name, spec.version)
+            "{0}={1}".format(name, spec.version),
         ]
         try:
             opam(*args)
         except ProcessError:
-            tty.warn(
-                f"Opam package had issues!"
-            )
+            tty.warn(f"Opam package had issues!")

@@ -38,14 +38,13 @@ class Opam(AutotoolsPackage):
     version("1.2.2", sha256="15e617179251041f4bf3910257bbb8398db987d863dd3cfc288bdd958de58f00")
     version("1.2.1", sha256="f210ece7a2def34b486c9ccfb75de8febd64487b2ea4a14a7fa0358f37eacc3b")
 
-    variant('user', default=False, description="User-supplied environment.")
-    variant('sandbox', default=True, description="Use sandbox feature.")
+    variant("user", default=False, description="User-supplied environment.")
+    variant("sandbox", default=True, description="Use sandbox feature.")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    
-    depends_on("bubblewrap", type=("build", "run"),
-               when="@2: +sandbox platform=linux")
+
+    depends_on("bubblewrap", type=("build", "run"), when="@2: +sandbox platform=linux")
 
     # OCaml 4.10.0 has removed the -safe-string flag, which is necessary
     # for OPAM 1i (see docstring of setup_build_environment).
@@ -60,25 +59,22 @@ class Opam(AutotoolsPackage):
 
     sanity_check_is_file = ["bin/opam"]
 
-    def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec) -> None:
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec
+    ) -> None:
         if self.spec.satisfies("+user"):
             # User supplied environment
             return
         else:
-            rootdir = os.path.join(self.spec.prefix, 'root', 'default')
+            rootdir = os.path.join(self.spec.prefix, "root", "default")
 
         env.set("OPAM_SWITCH_PREFIX", rootdir)
-        env.set("OCAMLTOP_INCLUDE_PATH", 
-            os.path.join(rootdir, 'lib', 'toplevel'))
-        env.set("CAML_LD_LIBRARY_PATH",
-            os.path.join(rootdir, 'lib', 'stublibs'))
-        env.append_path("CAML_LD_LIBRARY_PATH", 
-            os.path.join(rootdir, 'lib', 'ocaml'))
-        env.set("OCAML_TOPLEVEL_PATH", 
-            os.path.join(rootdir, 'lib', 'toplevel'))
-        env.prepend_path("PATH",
-            os.path.join(rootdir, 'bin'))
-        
+        env.set("OCAMLTOP_INCLUDE_PATH", os.path.join(rootdir, "lib", "toplevel"))
+        env.set("CAML_LD_LIBRARY_PATH", os.path.join(rootdir, "lib", "stublibs"))
+        env.append_path("CAML_LD_LIBRARY_PATH", os.path.join(rootdir, "lib", "ocaml"))
+        env.set("OCAML_TOPLEVEL_PATH", os.path.join(rootdir, "lib", "toplevel"))
+        env.prepend_path("PATH", os.path.join(rootdir, "bin"))
+
     @when("@:1.2.2")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """In OCaml <4.06.1, the default was -safe-string=0, and this has
@@ -116,10 +112,7 @@ class Opam(AutotoolsPackage):
     def install(self, spec, prefix):
         make("install")
         opam = Executable(prefix + "/bin/opam")
-        if spec.satisfies('~user +sandbox'):
-            opam('init', '--root={0}/root'.format(prefix), '-n')
-        if spec.satisfies('~user ~sandbox'):
-            opam('init', '--root={0}/root'.format(prefix), '-n',
-                 '--disable-sandboxing', '-y')
-       
-        
+        if spec.satisfies("~user +sandbox"):
+            opam("init", "--root={0}/root".format(prefix), "-n")
+        if spec.satisfies("~user ~sandbox"):
+            opam("init", "--root={0}/root".format(prefix), "-n", "--disable-sandboxing", "-y")

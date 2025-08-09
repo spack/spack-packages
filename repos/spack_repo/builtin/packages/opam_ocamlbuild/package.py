@@ -9,10 +9,10 @@ from spack.package import *
 
 class OpamOcamlbuild(OpamPackage):
     """OCamlbuild is a build system with builtin rules to
-       easily build most OCaml projects"""
+    easily build most OCaml projects"""
 
     has_code = False
-  
+
     maintainers("green-br")
 
     version("0.16.1")

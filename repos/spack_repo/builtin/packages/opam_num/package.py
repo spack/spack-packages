@@ -8,11 +8,11 @@ from spack.package import *
 
 
 class OpamNum(OpamPackage):
-    """The legacy Num library for arbitrary-precision 
-       integer and rational arithmetic"""
+    """The legacy Num library for arbitrary-precision
+    integer and rational arithmetic"""
 
     has_code = False
-  
+
     maintainers("green-br")
 
     version("1.6")
