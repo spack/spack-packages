@@ -26,12 +26,12 @@ jobs:
         shell: ${{ matrix.system.shell }}
     steps:
     - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-    - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
       with:
         python-version: ${{inputs.python_version}}
     - name: Install Python packages
       run: |
-        pip install --upgrade pip setuptools pytest coverage[toml]
+        python -m pip install --upgrade pip setuptools pytest coverage[toml]
     - name: Setup for Windows run
       if: runner.os == 'Windows'
       run: |
@@ -41,7 +41,6 @@ jobs:
       if: ${{ runner.os != 'Windows' }}
       run: |
           . ./spack-core/share/spack/setup-env.sh
-          spack config add -f ./.ci/configs/repos.yaml
           spack -d audit packages
           spack -d audit configs
           spack -d audit externals
@@ -49,7 +48,6 @@ jobs:
       if: ${{ runner.os == 'Windows' }}
       run: |
           ./spack-core/share/spack/setup-env.ps1
-          spack config add -f ./.ci/configs/repos.yaml
           spack -d audit packages
           ./.ci/validate_last_exit.ps1
           spack -d audit configs

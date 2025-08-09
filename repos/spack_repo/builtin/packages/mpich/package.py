@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.compilers.config
 from spack.package import *
 
 
@@ -80,6 +79,7 @@ class Mpich(MpichEnvironmentModifications, AutotoolsPackage, CudaPackage, ROCmPa
     license("mpich2")
 
     version("develop", submodules=True)
+    version("4.3.1", sha256="acc11cb2bdc69678dc8bba747c24a28233c58596f81f03785bf2b7bb7a0ef7dc")
     version("4.3.0", sha256="5e04132984ad83cab9cc53f76072d2b5ef5a6d24b0a9ff9047a8ff96121bcc63")
     version("4.2.3", sha256="7a019180c51d1738ad9c5d8d452314de65e828ee240bcb2d1f80de9a65be88a8")
     version("4.2.2", sha256="883f5bb3aeabf627cb8492ca02a03b191d09836bbe0f599d8508351179781d41")
@@ -183,8 +183,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
     variant(
         "hcoll",
         default=False,
-        description="Enable support for Mellanox HCOLL accelerated "
-        "collective operations library",
+        description="Enable support for Mellanox HCOLL accelerated collective operations library",
         when="@3.3: device=ch4 netmod=ucx",
     )
 
@@ -387,7 +386,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
     @classmethod
     def determine_variants(cls, exes, version):
         def get_spack_compiler_spec(compiler):
-            spack_compilers = spack.compilers.config.find_compilers([os.path.dirname(compiler)])
+            spack_compilers = find_compilers([os.path.dirname(compiler)])
             actual_compiler = None
             # check if the compiler actually matches the one we want
             for spack_compiler in spack_compilers:

@@ -24,6 +24,7 @@ class NodeJs(Package):
     license("Unicode-TOU")
 
     # Current (latest features) - odd major number
+    version("23.11.1", sha256="75509306732090bfa99b004d097909315f7789badb4a495e82b5f17b6329247a")
     version("21.7.3", sha256="ce1f61347671ef219d9c2925313d629d3fef98fc8d7f5ef38dd4656f7d0f58e7")
     version("19.2.0", sha256="aac9d1a366fb57d68f4639f9204d1de5d6387656959a97ed929a5ba9e62c033a")
     version("17.9.1", sha256="1102f5e0aafaab8014d19c6c57142caf2ba3ef69d88d7a7f0f82798051796027")
@@ -39,16 +40,11 @@ class NodeJs(Package):
 
     # LTS (recommended for most users) - even major number
     version(
-        "22.14.0",
-        sha256="6c4e31ed5702dc45cfd8c435af56a36a474427e1bd7afe74c346136060beba8a",
+        "24.2.0",
+        sha256="da739aedc45729436587cda9f063b28c1d881a32ba149b0a2f4e8aff55a18929",
         preferred=True,
     )
-    version("22.13.1", sha256="e7d5b1e84e7f3c3cebda81e2b138469eef41ba4ecf16a87fd15fc3f7afa3f701")
-    version("22.13.0", sha256="38e15a1d0dd0e95c237bc4651d7c9930a78d3fe7954a7ee7693b403f2d879e46")
-    version("22.12.0", sha256="3157e7c002b6e964bdbefb331ec38db1e2dceb064ab11c038275155461b22ce3")
-    version("22.11.0", sha256="24e5130fa7bc1eaab218a0c9cb05e03168fa381bb9e3babddc6a11f655799222")
-    version("22.4.0", sha256="b62cd83c9a57a11349883f89b1727a16e66c02eb6255a4bf32714ff5d93165f5")
-    version("22.3.0", sha256="6326484853093ab6b8f361a267445f4a5bff469042cda11a3585497b13136b55")
+    version("22.16.0", sha256="108f250ff79cc103b464b3ef41fa60f4866e4e6c962117171adaac7325ebdab2")
     version("20.18.3", sha256="eba088fa562735140b283c7bb33f53e026ccd5febe68c52c5737ef6e577ec874")
     version("20.18.2", sha256="cf3ef49fafbfee3cdcd936a0d6031341b73bfa6b26a484ea0a4936c26d24b829")
     version("20.18.1", sha256="5bad8ced873eef3b32e7daee703156bce9224920ac6044f4232f5393df0628b8")
@@ -63,6 +59,29 @@ class NodeJs(Package):
     version("14.16.1", sha256="5f5080427abddde7f22fd2ba77cd2b8a1f86253277a1eec54bc98a202728ce80")
     version("14.15.1", sha256="a1120472bf55aea745287693a6651e16973e1008c9d6107df350126adf9716fe")
     with default_args(deprecated=True):
+        # https://github.com/nodejs/node/releases/tag/v22.15.1
+        # https://github.com/advisories/GHSA-rrjv-57mm-j6cm
+        version(
+            "22.14.0", sha256="6c4e31ed5702dc45cfd8c435af56a36a474427e1bd7afe74c346136060beba8a"
+        )
+        version(
+            "22.13.1", sha256="e7d5b1e84e7f3c3cebda81e2b138469eef41ba4ecf16a87fd15fc3f7afa3f701"
+        )
+        version(
+            "22.13.0", sha256="38e15a1d0dd0e95c237bc4651d7c9930a78d3fe7954a7ee7693b403f2d879e46"
+        )
+        version(
+            "22.12.0", sha256="3157e7c002b6e964bdbefb331ec38db1e2dceb064ab11c038275155461b22ce3"
+        )
+        version(
+            "22.11.0", sha256="24e5130fa7bc1eaab218a0c9cb05e03168fa381bb9e3babddc6a11f655799222"
+        )
+        version(
+            "22.4.0", sha256="b62cd83c9a57a11349883f89b1727a16e66c02eb6255a4bf32714ff5d93165f5"
+        )
+        version(
+            "22.3.0", sha256="6326484853093ab6b8f361a267445f4a5bff469042cda11a3585497b13136b55"
+        )
         # requires deprecated python versions
         version(
             "14.13.0", sha256="8538b2e76aa06ee0e6eb1c118426c3c5ca53b2e49d66591738eacf76e89edd61"
@@ -113,7 +132,9 @@ class NodeJs(Package):
     depends_on("python@:3.13", when="@20.16.0:20.18.3", type="build")
     depends_on("python@:3.11", when="@21.0.0:21.1.0", type="build")
     depends_on("python@:3.12", when="@21.2.0:22.2.0", type="build")
-    depends_on("python@:3.13", when="@22.3.0:22.14.0", type="build")
+    depends_on("python@:3.13", when="@22.3.0:22.16.0", type="build")
+    depends_on("python@3.8:3.13", when="@23.0.0:23", type="build")
+    depends_on("python@3.9:3.13", when="@24.3.0:24", type="build")
 
     depends_on("libtool", type="build", when=sys.platform != "darwin")
     depends_on("pkgconfig", type="build")

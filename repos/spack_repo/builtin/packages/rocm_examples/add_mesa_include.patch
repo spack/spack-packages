@@ -1,0 +1,13 @@
+diff git a/HIP-Basic/opengl_interop/CMakeLists.txt b/HIP-Basic/opengl_interop/CMakeLists.txt
+index 41a791b..80a8fed 100644
+--- a/HIP-Basic/opengl_interop/CMakeLists.txt
++++ b/HIP-Basic/opengl_interop/CMakeLists.txt
+@@ -69,6 +69,8 @@ find_package(glfw3 REQUIRED)
+ target_link_libraries(${example_name} PRIVATE glfw)
+ target_include_directories(${example_name} PRIVATE ${include_dirs})
+
++target_include_directories(${example_name} PRIVATE ${MESA_INCLUDE_DIR})
++
+ if(UNIX)
+     target_link_libraries(${example_name} PRIVATE ${CMAKE_DL_LIBS})
+ endif()

@@ -6,10 +6,37 @@ import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 _versions = {
+    "6.4.2": {
+        "apt": (
+            "b0f2cbe31aa0ac9dd3a5584f580ea91b96412fca2feaac19f23bbfc5a60fc06d",
+            "https://repo.radeon.com/rocm/apt/6.4.2/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.60402-120~22.04_amd64.deb",
+        ),
+        "yum": (
+            "87201f122f27e1d6a8caaaa44b654e39aac41b46d63c44546c2aca3dfec3b8db",
+            "https://repo.radeon.com/rocm/rhel8/6.4.2/main/hsa-amd-aqlprofile-1.0.0.60402-120.el8.x86_64.rpm",
+        ),
+        "zyp": (
+            "345c480f54435ac44f40b137d55bab05297b51d7206954afca26578ad75e6ef9",
+            "https://repo.radeon.com/rocm/zyp/6.4.2/main/hsa-amd-aqlprofile6.4.2-1.0.0.60402-sles156.120.x86_64.rpm",
+        ),
+    },
+    "6.4.1": {
+        "apt": (
+            "9e0917b47d40318f73d4323bdc0fdaa27202931544bc4e89f706c4ddd9bd9428",
+            "https://repo.radeon.com/rocm/apt/6.4.1/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.60401-83~22.04_amd64.deb",
+        ),
+        "yum": (
+            "8f64a4594ff9d4c70ed5a2d75d28283b1067dded159cd334fad9661517d72191",
+            "https://repo.radeon.com/rocm/rhel8/6.4.1/main/hsa-amd-aqlprofile-1.0.0.60401-83.el8.x86_64.rpm",
+        ),
+        "zyp": (
+            "163560727f8c22ce6591b2bd1f2957e4caf1f78952e661d3df25eb84fc3d0360",
+            "https://repo.radeon.com/rocm/zyp/6.4.1/main/hsa-amd-aqlprofile6.4.1-1.0.0.60401-sles156.83.x86_64.rpm",
+        ),
+    },
     "6.4.0": {
         "apt": (
             "5ec56bc3c227ad37227072bd513c58c9501e1ceefb06692ad4812f337853dca4",
@@ -248,34 +275,6 @@ _versions = {
             "https://repo.radeon.com/rocm/zyp/5.6/main/hsa-amd-aqlprofile-1.0.0.50600-sles154.67.x86_64.rpm",
         ),
     },
-    "5.5.1": {
-        "apt": (
-            "67b957abe5ea872abd3ec6b98eb83ef66fe07668001392e695dd77ab1b6d8890",
-            "https://repo.radeon.com/rocm/apt/5.5.1/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50501-74~20.04_amd64.deb",
-        ),
-        "yum": (
-            "2e6ae5a417d3a14a6b522b2daccbccea0a192ffe689b5e1817300ec2b65b60c2",
-            "https://repo.radeon.com/rocm/yum/5.5.1/main/hsa-amd-aqlprofile-1.0.0.50501-74.el7.x86_64.rpm",
-        ),
-        "zyp": (
-            "3ad17b1628c308396d39f61c12f7403800468f54eb3f7b3ed4b47e076ea1b821",
-            "https://repo.radeon.com/rocm/zyp/5.5.1/main/hsa-amd-aqlprofile-1.0.0.50501-sles153.74.x86_64.rpm",
-        ),
-    },
-    "5.5.0": {
-        "apt": (
-            "fbe08a39a36499959198fa7678338cf2d7888dc2aafb4694072d1f37b24e599f",
-            "https://repo.radeon.com/rocm/apt/5.5/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50500-63~20.04_amd64.deb",
-        ),
-        "yum": (
-            "fde2d38174d25af9d780ef2a1e91eb75b0de5943711f20930367b9f28f77a8bd",
-            "https://repo.radeon.com/rocm/yum/5.5/main/hsa-amd-aqlprofile-1.0.0.50500-63.el7.x86_64.rpm",
-        ),
-        "zyp": (
-            "eec9dc39ddbb0fc1f18e0b62a238252b3e0968152792c5b4948b3d001b07a53f",
-            "https://repo.radeon.com/rocm/zyp/5.5/main/hsa-amd-aqlprofile-1.0.0.50500-sles153.63.x86_64.rpm",
-        ),
-    },
 }
 
 
@@ -287,7 +286,7 @@ class Aqlprofile(Package):
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
-    spack_os = spack.platforms.host().default_os
+    spack_os = host_platform().default_os
     if "rhel" in spack_os or "centos" in spack_os:
         pkg_type = "yum"
     elif "sles" in spack_os:
@@ -303,8 +302,6 @@ class Aqlprofile(Package):
     depends_on("cpio")
 
     for ver in [
-        "5.5.0",
-        "5.5.1",
         "5.6.0",
         "5.6.1",
         "5.7.0",
@@ -322,6 +319,8 @@ class Aqlprofile(Package):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
+        "6.4.2",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
 
@@ -340,7 +339,8 @@ class Aqlprofile(Package):
         install_tree(f"opt/rocm-{spec.version}/lib/", prefix.lib)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
+        if not self.spec.external:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
 
     # This package is installed from binaries, and we haven't patched rpaths.
     unresolved_libraries = ["*"]

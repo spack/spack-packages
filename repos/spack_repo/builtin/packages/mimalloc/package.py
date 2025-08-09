@@ -20,8 +20,11 @@ class Mimalloc(CMakePackage):
     version("dev-slice", branch="dev-slice")
     version("dev", branch="dev")
     version("master", branch="master")
+    version("3.1.5", sha256="1c6949032069d5ebea438ec5cedd602d06f40a92ddf0f0d9dcff0993e5f6635c")
+    version("3.1.4", sha256="84992bca18d6f74829b884c369de2707085b8248aaf3a1368e21f3993020171f")
     version("3.0.3", sha256="baf343041420e2924e1760bbbc0c111101c44e1cecb998e7951f646a957ee05f")
     version("3.0.1", sha256="6a514ae31254b43e06e2a89fe1cbc9c447fdbf26edc6f794f3eb722f36e28261")
+    version("2.2.4", sha256="754a98de5e2912fddbeaf24830f982b4540992f1bab4a0a8796ee118e0752bda")
     version("2.1.9", sha256="dd8ff701691f19bf4e225d42ef0d3d5e6ca0e03498ee4f044a0402e4697e4a20")
     version("2.1.7", sha256="0eed39319f139afde8515010ff59baf24de9e47ea316a315398e8027d198202d")
     version("2.1.2", sha256="2b1bff6f717f9725c70bf8d79e4786da13de8a270059e4ba0bdd262ae7be46eb")
@@ -30,6 +33,7 @@ class Mimalloc(CMakePackage):
     version("2.0.9", sha256="4a29edae32a914a706715e2ac8e7e4109e25353212edeed0888f4e3e15db5850")
     version("2.0.7", sha256="f23aac6c73594e417af50cb38f1efed88ef1dc14a490f0eff07c7f7b079810a4")
     version("2.0.6", sha256="9f05c94cc2b017ed13698834ac2a3567b6339a8bde27640df5a1581d49d05ce5")
+    version("1.9.4", sha256="2fc9795fc2a6b85a1c25b2a4a4e4a42109c8433a262362ac1e60521f55cbf381")
     version("1.8.9", sha256="3aabe30485c4e908c1bf04136d5b95c08c6e73fa6fe6e1ec68b4851d3c60ee47")
     version("1.8.2", sha256="4058d53d6ceb75862f32c30a6ee686c3cbb5e965b2c324b828ca454f7fe064f9")
     version("1.8.1", sha256="7aaa54c3ed1feac90b6187eb93108e808660c6e103b0fa6a7e2fabb58c3147d5")
@@ -73,15 +77,13 @@ class Mimalloc(CMakePackage):
         ),
         "override": (
             True,
-            "Override the standard malloc interface (e.g. define entry points "
-            "for malloc() etc)",
+            "Override the standard malloc interface (e.g. define entry points for malloc() etc)",
             None,
         ),
         "xmalloc": (False, "Enable abort() call on memory allocation failure by default", None),
         "show_errors": (
             False,
-            "Show error and warning messages by default (only enabled by default "
-            "in DEBUG mode)",
+            "Show error and warning messages by default (only enabled by default in DEBUG mode)",
             None,
         ),
         "use_cxx": (
@@ -130,6 +132,6 @@ class Mimalloc(CMakePackage):
 
         # Use LTO also for non-Intel compilers please. This can be removed when they
         # bump cmake_minimum_required to VERSION 3.9.
-        if "+ipo" in self.spec:
+        if "+ipo" in self.spec and self.spec.satisfies("@:2.0.7"):
             args.append("-DCMAKE_POLICY_DEFAULT_CMP0069=NEW")
         return args

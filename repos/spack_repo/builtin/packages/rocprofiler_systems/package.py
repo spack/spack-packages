@@ -14,12 +14,34 @@ class RocprofilerSystems(CMakePackage):
     git = "https://github.com/ROCm/rocprofiler-systems.git"
     url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.3.1.tar.gz"
 
-    maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath", "jrmadsen")
+    maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath", "wilephan-amd")
 
     license("MIT")
 
     version("amd-mainline", branch="amd-mainline", submodules=True, deprecated=True)
     version("amd-staging", branch="amd-staging", submodules=True, deprecated=True)
+
+    version(
+        "6.4.2",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-6.4.2",
+        commit="ba0bfe8cf344294347cbb854084ab5b5df1b1a43",
+        submodules=True,
+    )
+    version(
+        "6.4.1",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-6.4.1",
+        commit="2e945e4a08781e13a822f568814e2c434fd8858f",
+        submodules=True,
+    )
+    version(
+        "6.4.0",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-6.4.0",
+        commit="c4cec593b6021f2b84294838f2ffe388ed8e911a",
+        submodules=True,
+    )
     version(
         "6.3.3",
         git="https://github.com/ROCm/rocprofiler-systems",
@@ -92,6 +114,7 @@ class RocprofilerSystems(CMakePackage):
             "(target application can use any MPI installation)"
         ),
     )
+    variant("internal-dyninst", default=False, description="build internal dyninst")
 
     extends("python", when="+python")
 
@@ -101,28 +124,41 @@ class RocprofilerSystems(CMakePackage):
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
-    depends_on("dyninst@11.0.1:", type=("build", "run"))
+    depends_on("dyninst@:12", when="~internal-dyninst")
+    depends_on(
+        "boost+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
+        when="+internal-dyninst",
+    )
+    depends_on("libiberty+pic", when="+internal-dyninst")
+    depends_on("m4")
+    depends_on("texinfo")
     depends_on("libunwind", type=("build", "run"))
     depends_on("papi+shared", when="+papi")
     depends_on("mpi", when="+mpi")
     depends_on("tau", when="+tau")
     depends_on("caliper", when="+caliper")
     depends_on("python@3:", when="+python", type=("build", "run"))
-    depends_on("dyninst@12:", when="+rocm")
-    depends_on("m4", when="+rocm")
-    depends_on("texinfo", when="+rocm")
     depends_on("libunwind", when="+rocm")
     depends_on("autoconf", when="+rocm")
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
     with when("+rocm"):
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
-            depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
-            depends_on(f"hip@{ver}", when=f"@{ver}")
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
             depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
+        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+            depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
+            depends_on(f"hip@{ver}", when=f"@{ver}")
+        for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+            depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
-            patch("add_cstdint.patch", when="%gcc@13:")
+    # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
+    patch(
+        "https://github.com/ROCm/dyninst/commit/09e781d414c83b4ad587083d449a3e976546937d.patch?full_index=1",
+        sha256="e64c6b75393e7fbd711c0bd0233628c176a352cd10b4057f00eec283426eaf0a",
+        when="@:6.4.0 +internal-dyninst",
+        working_dir="external/dyninst",
+    )
 
     def cmake_args(self):
         spec = self.spec
@@ -134,25 +170,29 @@ class RocprofilerSystems(CMakePackage):
             self.define("ROCPROFSYS_BUILD_LIBUNWIND", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBGCC", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBSTDCXX", False),
+            self.define_from_variant("ROCPROFSYS_BUILD_DYNINST", "internal-dyninst"),
+            self.define_from_variant("DYNINST_BUILD_TBB", "internal-dyninst"),
             self.define_from_variant("ROCPROFSYS_BUILD_LTO", "ipo"),
-            self.define_from_variant("ROCPROFSYS_USE_HIP", "rocm"),
             self.define_from_variant("ROCPROFSYS_USE_MPI", "mpi"),
             self.define_from_variant("ROCPROFSYS_USE_OMPT", "ompt"),
             self.define_from_variant("ROCPROFSYS_USE_PAPI", "papi"),
             self.define_from_variant("ROCPROFSYS_USE_RCCL", "rocm"),
-            self.define_from_variant("ROCPROFSYS_USE_ROCM_SMI", "rocm"),
-            self.define_from_variant("ROCPROFSYS_USE_ROCTRACER", "rocm"),
-            self.define_from_variant("ROCPROFSYS_USE_ROCPROFILER", "rocm"),
             self.define_from_variant("ROCPROFSYS_USE_PYTHON", "python"),
             self.define_from_variant("ROCPROFSYS_USE_MPI_HEADERS", "mpi_headers"),
             self.define_from_variant("ROCPROFSYS_STRIP_LIBRARIES", "strip"),
             self.define_from_variant("ROCPROFSYS_INSTALL_PERFETTO_TOOLS", "perfetto_tools"),
             # timemory arguments
-            self.define("TIMEMORY_UNITY_BUILD", False),
             self.define("TIMEMORY_BUILD_CALIPER", False),
             self.define_from_variant("TIMEMORY_USE_TAU", "tau"),
             self.define_from_variant("TIMEMORY_USE_CALIPER", "caliper"),
         ]
+        if spec.satisfies("@:6.3"):
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCM_SMI", "rocm"))
+            args.append(self.define_from_variant("ROCPROFSYS_USE_HIP", "rocm"))
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCTRACER", "rocm"))
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCPROFILER", "rocm"))
+        else:
+            args.append(self.define_from_variant("ROCPROFSYS_USE_ROCM", "rocm"))
 
         if "+tau" in spec:
             tau_root = spec["tau"].prefix
@@ -167,11 +207,6 @@ class RocprofilerSystems(CMakePackage):
             args.append(
                 self.define("libunwind_INCLUDE_DIR", self.spec["libunwind"].prefix.include)
             )
-        if spec.satisfies("%gcc@13:"):
-            self.define("ROCPROFSYS_BUILD_DYNINST", True),
-            self.define("DYNINST_BUILD_TBB", True),
-        else:
-            self.define("ROCPROFSYS_BUILD_DYNINST", False),
         return args
 
     def flag_handler(self, name, flags):

@@ -3,20 +3,20 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     PackageBase,
     Prefix,
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     install_tree,
     register_builder,
     run_after,
     when,
     working_dir,
 )
-
-from ._checks import BuilderWithDefaults, execute_install_time_tests
 
 
 class CargoPackage(PackageBase):
@@ -56,10 +56,10 @@ class CargoBuilder(BuilderWithDefaults):
     phases = ("build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("check", "installcheck")
+    package_methods = ("check", "installcheck")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_args",
         "check_args",
         "build_directory",

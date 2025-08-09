@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
@@ -18,3 +20,8 @@ class PyNdindex(PythonPackage):
     version("1.7", sha256="bf9bd0b76eeada1c8275e04091f8291869ed2b373b7af48e56faf7579fd2efd2")
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-versioneer@0.29: +toml", type="build")
+
+    @run_before("install")
+    def no_versioner(self):
+        os.remove("versioneer.py")

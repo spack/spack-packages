@@ -22,6 +22,7 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
 
     license("BSL-1.0")
 
+    version("0.34.0", sha256="82f0f4a4aa1da691d02fbf05882e1a2c8c3dcf113309a5a4264122c44d02ac20")
     version("0.33.0", sha256="08db88294e6eaccb80f1c4012e7ba0e197b6354b6fbc3bfdb7734cb9dce6fe08")
     version("0.32.0", sha256="19217e3eecff30a7038f5712b6e161db09f12d7077550e8f66add74b3e524d29")
     version("0.31.0", sha256="bdbd8e36afb367cc2c7172e5a819c756e4ee20e74dfdec4905f2e84bf097eb7c")
@@ -68,7 +69,7 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     variant("shared", default=True, description="Build shared libraries")
     conflicts("~shared", when="@:0.25")
 
-    cxxstds = ("17", "20", "23")
+    cxxstds = ("17", "20", "23", "26")
     variant(
         "cxxstd",
         default="17",
@@ -90,8 +91,7 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "generic_coroutines",
         default=default_generic_coroutines,
-        description="Use Boost.Context as the underlying coroutines"
-        " context switch implementation",
+        description="Use Boost.Context as the underlying coroutines context switch implementation",
     )
 
     variant("examples", default=False, description="Build and install examples")
@@ -118,15 +118,19 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.18:", type="build")
     depends_on("cmake@3.22:", when="@0.8:", type="build")
 
-    conflicts("%gcc@:6")
-    conflicts("%clang@:6")
+    conflicts("%[virtuals=cxx] gcc@:6")
+    conflicts("%[virtuals=cxx] llvm@:6")
     # Pika is requiring the std::filesystem support starting from version 0.2.0
-    conflicts("%gcc@:8", when="@0.2:")
-    conflicts("%clang@:8", when="@0.2:")
+    conflicts("%[virtuals=cxx] gcc@:8", when="@0.2:")
+    conflicts("%[virtuals=cxx] llvm@:8", when="@0.2:")
     conflicts("+stdexec", when="cxxstd=17")
-    conflicts("cxxstd=23", when="^cmake@:3.20.2")
     conflicts("cxxstd=20", when="+cuda ^cmake@:3.25.1")
+    conflicts("cxxstd=23", when="^cmake@:3.20.2")
     conflicts("cxxstd=23", when="+cuda")
+    conflicts("cxxstd=26", when="+cuda")
+    conflicts("cxxstd=26", when="^cmake@:3.24")
+    conflicts("cxxstd=26", when="%[virtuals=cxx] gcc@:13")
+    conflicts("cxxstd=26", when="%[virtuals=cxx] llvm@:16")
     # nvcc version <= 11 does not support C++20 and newer
     for cxxstd in filter(lambda x: x != "17", cxxstds):
         requires("%nvhpc", when=f"cxxstd={cxxstd} ^cuda@:11")
@@ -203,6 +207,13 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     patch("posix_stack_non_executable_0_13.patch", when="@0.13 platform=darwin")
     patch("posix_stack_non_executable_0_6_0_12.patch", when="@0.6:0.12 platform=darwin")
     patch("posix_stack_non_executable_0_1_0_5.patch", when="@:0.5 platform=darwin")
+
+    # Fix +mpi +apex compilation error
+    patch(
+        "https://github.com/pika-org/pika/commit/1d7fc3e0220224a668026fcba67442bb8cd63459.patch?full_index=1",
+        sha256="3515a6df1d953b30f4d4a0c53ab50853ffdbaf99dd30b83419269deddd4345ce",
+        when="@0.32:0.33 +mpi +apex",
+    )
 
     # Fix missing template instantiation on macOS
     patch(

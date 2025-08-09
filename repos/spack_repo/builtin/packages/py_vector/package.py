@@ -19,6 +19,8 @@ class PyVector(PythonPackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
+    version("1.6.3", sha256="a85149a62fcaa8a4d95214ca217f3910ea6800d79d65ef1cfb1005720b4f713a")
+    version("1.5.2", sha256="42a027df219011eebab8144877b6cebcddf3113a713c23fcae2a81464454009a")
     version("1.5.1", sha256="41ec731fb67ea35af2075eb3a4d6c83ef93b580dade63010821cbc00f1b98961")
     version("1.5.0", sha256="77e48bd40b7e7d30a17bf79bb6ed0f2d6985d915fcb9bf0879836276a619a0a9")
     version("1.4.2", sha256="3805848eb9e53e9c60aa24dd5be88c842a6cd3d241e22984bfe12629b08536a9")

@@ -192,8 +192,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libpng@1.6:", when="+png")
     depends_on("zfp@0.5.1:0.5", when="+zfp")
     depends_on("sz@2.0.2.0:", when="+sz")
-    depends_on("mgard@2022-11-18:", when="+mgard")
-    depends_on("mgard@2023-01-10:", when="@2.9: +mgard")
+    depends_on("mgard@compat-2022-11-18:", when="+mgard")
+    depends_on("mgard@compat-2023-01-10:", when="@2.9: +mgard")
 
     extends("python", when="+python")
     depends_on("python", when="+python", type=("build", "run"))
@@ -251,6 +251,14 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # ROCM: enable support for rocm >= 6
     # https://github.com/ornladios/ADIOS2/pull/4214
     patch("2.10-enable-rocm6.patch", when="@2.9.1:2.10.1")
+
+    # Fix issue with GCC 7
+    # https://github.com/ornladios/ADIOS2/pull/4591
+    patch(
+        "https://github.com/ornladios/adios2/commit/b7a5957.patch?full_index=1",
+        sha256="d854008ab27d6ebfa66fffb78126b17713cda3234ed19bf331f85a720e599a32",
+        when="@2.8:2.10",
+    )
 
     @when("%fj")
     def patch(self):

@@ -15,16 +15,22 @@ class PyGeemap(PythonPackage):
 
     license("MIT")
 
+    version("0.36.0", sha256="cb5da3bc6414d4b75dc97a333e46cadc2492de992741abcb09d5b875e6f65823")
     version("0.35.1", sha256="98f3f17fb1d07a6fe43b06f03fb680e10517adfd96002184015a3d4fe92435d6")
 
     with default_args(type="build"):
-        depends_on("py-setuptools@64:")
-        depends_on("py-setuptools-scm@8:")
+        depends_on("py-hatchling", when="@0.36:")
+
+        # Historical dependencies
+        depends_on("py-setuptools@64:", when="@:0.35")
+        depends_on("py-setuptools-scm@8:", when="@:0.35")
 
     with default_args(type=("build", "run")):
+        depends_on("py-anywidget", when="@0.36:")
         depends_on("py-bqplot")
         depends_on("py-colour")
         depends_on("py-earthengine-api@1:")
+        depends_on("py-eerepr@0.1:", when="@0.36:")
         depends_on("py-eerepr@0.0.4:")
         depends_on("py-folium@0.17:")
         depends_on("py-geocoder")

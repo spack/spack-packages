@@ -58,7 +58,7 @@ class Aotriton(CMakePackage):
         if self.spec.satisfies("^hip"):
             filter_file(
                 "/opt/rocm/llvm/bin/ld.lld",
-                f'{self.spec["llvm-amdgpu"].prefix}/bin/ld.lld',
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/ld.lld",
                 "third_party/triton/third_party/amd/backend/compiler.py",
                 string=True,
             )

@@ -71,7 +71,7 @@ class RCurl(RPackage):
     depends_on("curl@:7.63", when="@:4.0")
 
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=282908
-    requires("curl@:8.10", when="@:5.2.1")
+    requires("^curl@:8.10", when="@:5.2.1")
 
     # (Jan 2025) MacOS ships a very buggy libcurl 8.7.1 so we avoid this until apple updates it
     # See: https://github.com/jeroen/curl/issues/376

@@ -17,6 +17,8 @@ class PyHuggingfaceHub(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("0.34.3", sha256="d58130fd5aa7408480681475491c0abd7e835442082fbc3ef4d45b6c39f83853")
+    version("0.33.1", sha256="589b634f979da3ea4b8bdb3d79f97f547840dc83715918daf0b64209c0844c7b")
     version("0.26.2", sha256="b100d853465d965733964d123939ba287da60a547087783ddff8a323f340332b")
     version("0.24.6", sha256="cc2579e761d070713eaa9c323e3debe39d5b464ae3a7261c39a9195b27bb8000")
     version("0.23.4", sha256="35d99016433900e44ae7efe1c209164a5a81dbbcd53a52f99c281dcd7ce22431")
@@ -53,6 +55,8 @@ class PyHuggingfaceHub(PythonPackage):
         depends_on("py-tqdm")
         depends_on("py-typing-extensions@3.7.4.3:", when="@0.10:")
         depends_on("py-typing-extensions", when="@0.0.10:")
+        depends_on("py-hf-xet@1.1.3:1", when="@0.34:")
+        depends_on("py-hf-xet@1.1.2:1", when="@0.32:")
 
         with when("+cli"):
             depends_on("py-inquirerpy@0.3.4")

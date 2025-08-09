@@ -6,13 +6,13 @@ import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 _os_map_before_23 = {
     "ubuntu18.04": "Ubuntu-18.04",
     "ubuntu20.04": "Ubuntu-20.04",
     "ubuntu22.04": "Ubuntu-20.04",
+    "ubuntu24.04": "Ubuntu-20.04",
     "sles15": "SLES-15",
     "centos7": "RHEL-7",
     "centos8": "RHEL-8",
@@ -26,6 +26,7 @@ _os_map_before_23 = {
 _os_map_before_24 = {
     "ubuntu20.04": "Ubuntu-20.04",
     "ubuntu22.04": "Ubuntu-22.04",
+    "ubuntu24.04": "Ubuntu-22.04",
     "debian12": "Ubuntu-22.04",
     "sles15": "SLES-15",
     "centos7": "RHEL-7",
@@ -42,6 +43,7 @@ _os_map_before_24 = {
 _os_pkg_map = {
     "ubuntu20.04": "deb",
     "ubuntu22.04": "deb",
+    "ubuntu24.04": "deb",
     "debian12": "deb",
     "sles15": "rpm",
     "centos7": "rpm",
@@ -56,6 +58,11 @@ _os_pkg_map = {
 }
 
 _versions = {
+    "25.04.1": {
+        "deb": ("2228ba0a4093b5fc7fb0d64ad074560d30e0900e2f2f48f4431aadde5c22fa07"),
+        "rpm": ("666e6813cd54a9a75a33fe92f223f52e12371a1ac517da96695d3487ee1424d8"),
+    },
+    "25.04": {"macOS": ("6917cbccc1decb3ca8c9cbcddaec70284c6dbfa1f6d32c0780db572c3b00cc36")},
     "24.10": {
         "deb": ("2be772d41c0e8646e24c4f57e188e96f2dd8934966ae560c74fa905cbde5e1bc"),
         "macOS": ("04e794409867e6042ed0f487bbaf47cc6edd527dc6ddad67160f1dba83906969"),
@@ -257,7 +264,7 @@ _versions = {
 
 
 def get_os_or_pkg_manager(ver):
-    platform = spack.platforms.host()
+    platform = host_platform()
     if platform.name == "darwin":
         return "macOS"
     if ver.startswith("22."):
@@ -277,8 +284,7 @@ def get_package_url_before_24(version):
     if os == "macOS":
         if armpl_version.startswith("23.06"):
             return (
-                f"{base_url}/{armpl_version_dashed}/"
-                f"armpl_{armpl_version}_{compiler_version}.dmg"
+                f"{base_url}/{armpl_version_dashed}/armpl_{armpl_version}_{compiler_version}.dmg"
             )
         else:
             filename = f"arm-performance-libraries_{armpl_version}_macOS.dmg"
@@ -466,7 +472,13 @@ class ArmplGcc(Package):
             recursive=True,
         )
 
-        armpl_libs += find_system_libraries(["libm"])
+        # Link the same libraries as the gcc used for Arm PL
+        armpl_libs += find_libraries(
+            ["libstdc++", "libgomp", "libm"],
+            root=self["gcc"].prefix,
+            shared=self.spec.satisfies("+shared"),
+            recursive=True,
+        )
 
         return armpl_libs
 

@@ -19,6 +19,7 @@ class RBit(RPackage):
 
     license("GPL-2.0-only OR GPL-3.0-only")
 
+    version("4.6.0", sha256="48fe21c5d04c7b724d695eeb60074395c0c631a7fb234e2075de92471445de08")
     version("4.0.5", sha256="f0f2536a8874b6a30b80baefbc68cb21f0ffbf51f3877bda8038c3f9f354bfbc")
     version("4.0.4", sha256="e404841fbe4ebefe4ecd4392effe673a8c9fa05f97952c4ce6e2f6159bd2f168")
     version("1.1-14", sha256="5cbaace1fb643a665a6ca69b90f7a6d624270de82420ca7a44f306753fcef254")
@@ -27,3 +28,4 @@ class RBit(RPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("r@2.9.2:", type=("build", "run"))
+    depends_on("r@3.4.0:", type=("build", "run"), when="@4.6:")

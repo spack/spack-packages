@@ -19,6 +19,8 @@ class PyScipy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.16.1", sha256="44c76f9e8b6e8e488a586190ab38016e4ed2f8a038af7cd3defa903c0a2238b3")
+    version("1.16.0", sha256="b5ef54021e832869c8cfb03bc3bf20366cbcd426e02a58e8a58d7584dfbb8f62")
     version("1.15.3", sha256="eae3cf522bc7df64b42cad3925c876e1b0b6c35c1337c93e12c0f366f55b0eaf")
     version("1.15.2", sha256="cd58a314d92838f7e6f755c8a2167ead4f27e1fd5c1251fd54289569ef3495ec")
     version("1.15.1", sha256="033a75ddad1463970c96a88063a1df87ccfddd526437136b6ee81ff0312ebdf6")
@@ -66,7 +68,9 @@ class PyScipy(PythonPackage):
 
     # Based on wheel availability on PyPI
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.13", when="@1.14.1:")
+        depends_on("python@3.11:3.14", when="@1.16.1:")
+        depends_on("python@3.11:3.13", when="@1.16.0")
+        depends_on("python@3.10:3.13", when="@1.14.1:1.15")
         depends_on("python@3.10:3.12", when="@1.14.0")
         depends_on("python@3.9:3.12", when="@1.11.2:1.13")
         depends_on("python@3.8:3.11", when="@1.9.2:1.11.1")
@@ -107,7 +111,8 @@ class PyScipy(PythonPackage):
 
     # Run dependencies
     with default_args(type=("build", "link", "run")):
-        depends_on("py-numpy@1.23.5:2.4", when="@1.15:")
+        depends_on("py-numpy@1.25.2:2.5", when="@1.16:")
+        depends_on("py-numpy@1.23.5:2.4", when="@1.15")
         depends_on("py-numpy@1.23.5:2.2", when="@1.14")
         depends_on("py-numpy@1.22.4:2.2", when="@1.13")
         depends_on("py-numpy@1.22.4:1.28", when="@1.12")
@@ -133,6 +138,7 @@ class PyScipy(PythonPackage):
     depends_on("lapack@3.4.1:")
     depends_on("lapack")
     depends_on("blas")
+    conflicts("^openblas +ilp64", msg="SciPy requires a blas library with lp64 symbols")
 
     # Historical dependencies
     with default_args(type="build"):
@@ -236,7 +242,12 @@ class PyScipy(PythonPackage):
 
     @when("@1.9:")
     def config_settings(self, spec, prefix):
-        blas, lapack = self["py-numpy"].blas_lapack_pkg_config()
+        blas, lapack, use_ilp64 = self["py-numpy"].blas_lapack_pkg_config()
+
+        if use_ilp64:
+            tty.warn("SciPy does not support ILP64 currently! Using LP64 libraries instead!")
+            blas = blas.replace("ilp64", "lp64")
+            lapack = lapack.replace("ilp64", "lp64")
 
         if spec.satisfies("%aocc") or spec.satisfies("%clang@18:"):
             fortran_std = "none"
