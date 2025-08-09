@@ -352,7 +352,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     conflicts("%gcc@:9.3", when="@2.2:", msg="C++17 support required")
 
     # https://github.com/pytorch/pytorch/issues/160092
-    patch("pythonpath.patch", when="@2.8:")
+    patch(
+        "https://github.com/pytorch/pytorch/commit/231c72240d80091f099c95e326d3600cba866eee.patch?full_index=1",
+        sha256="5e56556a5698e6c43d0e7e9e3da6d7d819a4886bcd717e7b8e22ec08414a0b66",
+        when="@2.8.0",
+    )
 
     # https://github.com/pytorch/pytorch/issues/151592
     patch("macos_rpath.patch", when="@2.7:")
