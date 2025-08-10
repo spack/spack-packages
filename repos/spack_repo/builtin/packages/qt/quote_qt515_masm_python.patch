@@ -16,7 +16,7 @@ index b67ee79..b757ee5 100644
  retgen.input = retgen.script
  retgen.CONFIG += no_link
 -retgen.commands = $$QMAKE_PYTHON $$retgen.script > ${QMAKE_FILE_OUT}
-+retgen.commands = "\"$$QMAKE_PYTHON\"" $$retgen.script > ${QMAKE_FILE_OUT}
++retgen.commands = "\"$$QMAKE_PYTHON\"" "\"$$retgen.script\"" > "\"${QMAKE_FILE_OUT}\""
  QMAKE_EXTRA_COMPILERS += retgen
  
  # Taken from WebKit/Tools/qmake/mkspecs/features/unix/default_post.prf

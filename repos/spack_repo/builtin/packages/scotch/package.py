@@ -89,10 +89,6 @@ class Scotch(CMakePackage, MakefilePackage):
     conflicts("metis", when="+metis")
     conflicts("parmetis", when="+metis")
 
-    # https://github.com/ufs-community/ufs-weather-model/pull/2650
-    # https://github.com/spack/spack-packages/issues/161
-    conflicts("%oneapi")
-
     parallel = False
 
     # NOTE: Versions of Scotch up to version 6.0.0 don't include support for
@@ -126,6 +122,17 @@ class Scotch(CMakePackage, MakefilePackage):
             zlibs = self.spec["zlib-api"].libs
 
         return scotchlibs + zlibs
+
+    def patch(self):
+        # Add ternary operator to set 'actgrafptr->bbalglbval' to zero to avoid div by zero
+        # in the case of fewer vertices than processing elements for PT-Scotch.
+        # Solution comes from Scotch authors, and will be included in 7.0.9.
+        if self.spec.satisfies("@:7.0.8 %oneapi"):
+            filter_file(
+                r"(actgrafptr->bbalglbval       =) (\(double\) actgrafptr->compglbload0dlt / \(double\) actgrafptr->compglbload0avg);",  # noqa: E501
+                r"\1 (actgrafptr->compglbload0avg != 0) ? \2 : 0;",
+                "src/libscotch/bdgraph.c",
+            )
 
 
 class CMakeBuilder(cmake.CMakeBuilder):

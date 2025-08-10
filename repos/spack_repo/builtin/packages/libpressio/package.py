@@ -247,6 +247,7 @@ class Libpressio(CMakePackage, CudaPackage):
     depends_on("libstdcompat", when="@0.52.0:")
 
     depends_on("c-blosc", when="+blosc")
+    depends_on("c-blosc2", when="+blosc2")
     depends_on("fpzip", when="+fpzip")
     depends_on("hdf5", when="+hdf5")
     # this might seem excessive, but if HDF5 is external and parallel

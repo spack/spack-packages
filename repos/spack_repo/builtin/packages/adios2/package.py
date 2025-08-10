@@ -252,6 +252,14 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/ornladios/ADIOS2/pull/4214
     patch("2.10-enable-rocm6.patch", when="@2.9.1:2.10.1")
 
+    # Fix issue with GCC 7
+    # https://github.com/ornladios/ADIOS2/pull/4591
+    patch(
+        "https://github.com/ornladios/adios2/commit/b7a5957.patch?full_index=1",
+        sha256="d854008ab27d6ebfa66fffb78126b17713cda3234ed19bf331f85a720e599a32",
+        when="@2.8:2.10",
+    )
+
     @when("%fj")
     def patch(self):
         """add fujitsu mpi commands #16864"""

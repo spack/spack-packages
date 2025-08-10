@@ -30,9 +30,9 @@
 
 ###
 # CI Components maintained by Kitware
-/.ci/configs/              @kwryankrattiger @scottwittenburg @zackgalbreath
-/.ci/gitlab/configs/       @kwryankrattiger @scottwittenburg @zackgalbreath
-.ci/gitlab/.gitlab-ci.yml  @kwryankrattiger @scottwittenburg @zackgalbreath
+/.ci/configs/              @kwryankrattiger @zackgalbreath
+/.ci/gitlab/configs/       @kwryankrattiger @zackgalbreath
+.ci/gitlab/.gitlab-ci.yml  @kwryankrattiger @zackgalbreath
 
 ###
 # CI Components maintained by UO
@@ -41,20 +41,21 @@
 
 ###
 # GitHub Actions maintainers
-/.github/actions/*    @haampie @kwryankrattiger
-/.github/workflows/*  @alecbcs @alalazo @haampie @kwryankrattiger
+/.github/actions    @haampie @kwryankrattiger
+/.github/workflows  @alecbcs @alalazo @haampie @kwryankrattiger
 
 ###
 # GitHub project maintainers
-.github/*.md              @spack/merge-to-develop
-.github/*.yml             @spack/merge-to-develop
-/.github/ISSUE_TEMPLATE/  @spack/merge-to-develop
-CODEOWNDERS               @spack/merge-to-develop
-LICENSE*                  @spack/merge-to-develop
-NOTICE                    @spack/merge-to-develop
-README.md                 @spack/merge-to-develop
-pyproject.toml            @spack/merge-to-develop
-.*                        @spack/merge-to-develop
+.github/*.md              @spack/spack-releasers
+.github/*.yml             @spack/spack-releasers
+/.github/ISSUE_TEMPLATE/  @spack/spack-releasers
+CODEOWNERS               @spack/spack-releasers
+LICENSE*                  @spack/spack-releasers
+NOTICE                    @spack/spack-releasers
+README.md                 @spack/spack-releasers
+pyproject.toml            @spack/spack-releasers
+.flake8                   @spack/spack-releasers
+.gitignore                @spack/spack-releasers
 
 ###
 # Packages tests maintainers

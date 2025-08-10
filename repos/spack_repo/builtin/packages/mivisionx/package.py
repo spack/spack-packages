@@ -14,7 +14,7 @@ class Mivisionx(CMakePackage):
 
     homepage = "https://github.com/ROCm/MIVisionX"
     git = "https://github.com/ROCm/MIVisionX.git"
-    url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.2.tar.gz"
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     tags = ["rocm"]
@@ -28,6 +28,7 @@ class Mivisionx(CMakePackage):
 
     license("MIT")
 
+    version("6.4.2", sha256="efdde57dc1c48936f371c3c548f36040bfce74d835cf1f9816076dfa601ce29e")
     version("6.4.1", sha256="9f1a1a33dc2770ac014e5ea019ebde6cadcca017840753b9cb8cf1598d2d83c8")
     version("6.4.0", sha256="de3902ad2402bf29e4f53617ec10d34188b0c67547fc290390ff0c8ac4ad505a")
     version("6.3.3", sha256="6ab255305b786c6152ffe12211f329d2bc56823bb2192a945b9aa5efe6731b82")
@@ -211,6 +212,7 @@ class Mivisionx(CMakePackage):
             "6.3.3",
             "6.4.0",
             "6.4.1",
+            "6.4.2",
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
