@@ -34,19 +34,9 @@ class Ioapi(MakefilePackage):
     #    therefore not in ascending numerical order which break versioning
     #    relationships.
     # 2. The tarball VERSION.txt is not reliably updated.
-    version(
-        "3.2.20200828",
-        commit="ef5d5f4e112c249b593b19426421f25d79ae094b",
-        preferred=True,
-    )
-    version(
-        "3.2.20200714",
-        commit="6ebb47e96db3b641af63ee5f853c943b596a1268",
-    )
-    version(
-        "3.2.20200420",
-        commit="4017280cc656993a5be50f0da9287a56166da22b",
-    )
+    version("3.2.20200828", commit="ef5d5f4e112c249b593b19426421f25d79ae094b", preferred=True)
+    version("3.2.20200714", commit="6ebb47e96db3b641af63ee5f853c943b596a1268")
+    version("3.2.20200420", commit="4017280cc656993a5be50f0da9287a56166da22b")
 
     # MPI support is not yet well supported in this spack package and
     # may fail to build.
@@ -65,10 +55,7 @@ class Ioapi(MakefilePackage):
     # requires additional work and testing; the package naming scheme
     # is inconsistent perhaps because it's meant more for human
     # editing.
-    conflicts(
-        "^intel-oneapi-compilers",
-        msg="Update this spack package to support oneapi",
-    )
+    conflicts("^intel-oneapi-compilers", msg="Update this spack package to support oneapi")
     conflicts("%nvhpc", msg="Update this spack package to support pgi")
     # There is no evidence of support for LLVM even on macOS.
     conflicts("%llvm", msg="IOAPI does not support LLVM")
