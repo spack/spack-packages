@@ -26,6 +26,7 @@ class PyNbclassic(PythonPackage):
         depends_on("py-babel", when="@0.4:")
         depends_on("py-hatchling", when="@1.3:")
         depends_on("py-jupyter-server@1.17:", when="@1.3:")
+        depends_on("py-hatch-jupyter-builder@0.9.1:", when="@1.3:")
 
         # Historical dependencies
         depends_on("py-jupyter-packaging@0.9:0", when="@0.3.3:1.1")
