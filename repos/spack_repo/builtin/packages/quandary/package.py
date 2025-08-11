@@ -20,6 +20,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
     license("MIT", checked_by="tdrwenski")
 
     version("main", branch="main", preferred=True)
+    version("4.2", tag="v4.2", commit="557675fd76daf9fd0be7ebd6321bf2afcb6a6b9c")
     version("learning", branch="learning")
 
     variant("slepc", default=False, description="Build with SLEPc library")
