@@ -33,7 +33,8 @@ class Cufftmp(Package, CudaPackage):
 
     maintainers("albestro")
 
-    license("UNKNOWN")
+    # https://docs.nvidia.com/cuda/cufftmp/license.html
+    license("NVIDIA Software License Agreement")
 
     for ver, packages in _versions.items():
         package = packages.get(f"{platform.system()}-{platform.machine()}")
