@@ -53,8 +53,6 @@ class PyH5py(PythonPackage):
 
     depends_on("c", type="build")
 
-    depends_on("python@3.9:", type=("build", "run"))
-
     # Build dependencies
     # h5py@3.11 can build with cython@3.x
     depends_on("py-cython@0.29.31:3", type="build", when="@3.11:")
