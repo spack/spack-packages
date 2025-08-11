@@ -19,6 +19,7 @@ class PyNixl(PythonPackage, CudaPackage):
     depends_on("c")
     depends_on("cxx")
 
+    version("0.5.0", sha256="694cfc209b659cf235caeda1d11bc875cf4bc95a19d2028fe25abcf019ee1246")
     version("0.4.1", sha256="54672c6d4b0a303690880526c2dbff4ddc45ad7b8321ca602240a316abd86508")
 
     with default_args(type="build"):
@@ -33,7 +34,7 @@ class PyNixl(PythonPackage, CudaPackage):
         # for its subproject abseil-cpp
         depends_on("pkgconfig")
         depends_on("cmake")
-
+    
     with default_args(type=["build", "run"]):
         # https://github.com/ai-dynamo/nixl/blob/0.4.1/pyproject.toml
         depends_on("py-torch+cuda")
@@ -48,8 +49,9 @@ class PyNixl(PythonPackage, CudaPackage):
         settings = {
             "setup-args": {
                 "-Ducx_path": spec["ucx"].prefix,
+                "-Dgds_path": spec["cuda"].prefix,
                 "-Dcudapath_inc": spec["cuda"].prefix.include,
                 "-Dcudapath_lib": spec["cuda"].prefix.lib64,
-            }
+            },
         }
         return settings
