@@ -52,6 +52,7 @@ class PyNixl(PythonPackage, CudaPackage):
                 "-Dgds_path": spec["cuda"].prefix,
                 "-Dcudapath_inc": spec["cuda"].prefix.include,
                 "-Dcudapath_lib": spec["cuda"].prefix.lib64,
-            },
+                "-Dcudapath_stub": spec["cuda"].prefix.lib64.stubs,
+            }
         }
         return settings
