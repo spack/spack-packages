@@ -403,7 +403,6 @@ class CMakeBuilder(CMakeBuilder):
             self.define("ENABLE_CURL_MANUAL", False),
             self.define_from_variant("CURL_USE_LIBSSH2", "libssh2"),
             self.define_from_variant("CURL_USE_LIBSSH", "libssh"),
-            self.define_from_variant("CURL_USE_OPENSSL", "openssl"),
             self.define_from_variant("CURL_USE_OPENLDAP", "ldap"),
             self.define_from_variant("CURL_DISABLE_LDAP", "ldap"),
             self.define_from_variant("USE_NGHTTP2", "nghttp2"),
@@ -431,8 +430,8 @@ class CMakeBuilder(CMakeBuilder):
             if self.spec.satisfies("+ldap"):
                 args.append(self.define("USE_WIN32_LDAP", True))
             
-        if "shared" in self.spec["libs"]:
+        if "shared" in self.spec.variants["libs"]:
             args.append(self.define("BUILD_SHARED_LIBS", True))
-        if "static" in self.spec["libs"]:
+        if "static" in self.spec.variants["libs"]:
             args.append(self.define("BUILD_STATIC_LIBS", True))
         return args
