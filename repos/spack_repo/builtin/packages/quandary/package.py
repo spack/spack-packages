@@ -23,14 +23,19 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("learning", branch="learning")
 
     variant("slepc", default=False, description="Build with SLEPc library")
-    variant("debug", default=False, description="Debug mode")
+    variant("int64", default=False, description="Use 64 bit ints for PetscInts")
     variant("test", default=False, description="Add dependencies needed for testing")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
 
     depends_on("petsc~hypre~metis~fortran")
-    depends_on("petsc+debug", when="+debug")
+    depends_on("petsc+debug", when="build_type=Debug")
+    depends_on("petsc~debug", when="build_type=Release")
+    depends_on("petsc~debug", when="build_type=RelWithDebInfo")
+    depends_on("petsc+int64", when="+int64")
+    depends_on("petsc~int64", when="~int64")
+
     depends_on("slepc", when="+slepc")
     depends_on("mpi", type=("build", "link", "run"))
 
