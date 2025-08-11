@@ -31,12 +31,15 @@ class Mscclpp(CMakePackage, ROCmPackage, CudaPackage):
 
     depends_on("cmake@3.20:", type="build")
     depends_on("python@3:", type=("build", "run"))
-    depends_on("numactl@2:")
     depends_on("hip@6.2.0:", when="+rocm")
+    depends_on("nlohmann-json", type="link")
+    depends_on("numactl@2:")
+    depends_on("mpi")
+
+    patch("mscclpp-numa-include-dir-001.patch")
 
     def cmake_args(self):
         args = [
-            self.define("MSCCLPP_BUILD_TESTS", "OFF"),
             self.define("PYTHON_BIN_PATH", python.path),
         ]
 
