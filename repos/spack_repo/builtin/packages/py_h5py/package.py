@@ -19,6 +19,7 @@ class PyH5py(PythonPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("3.14.0", sha256="2372116b2e0d5d3e5e705b7f663f7c8d96fa79a4052d250484ef91d24d6a08f4")
     version("3.13.0", sha256="1870e46518720023da85d0895a1960ff2ce398c5671eac3b1a41ec696b7105c3")
     version("3.12.1", sha256="326d70b53d31baa61f00b8aa5f95c2fcb9621a3ee8365d770c551a13dbbcbfdf")
     # Yanked
@@ -61,8 +62,10 @@ class PyH5py(PythonPackage):
     depends_on("py-cython@0.29.14:0", type=("build"), when="@3:3.7 ^python@3.8.0:3.8")
     depends_on("py-cython@0.29:0", type=("build"), when="@3.0:3.10")
     depends_on("py-cython@0.23:0", type="build", when="@:2")
+
     depends_on("py-pkgconfig", type="build")
     depends_on("py-setuptools@61:", type="build", when="@3.8.0:")
+    depends_on("py-setuptools@77:", type="build", when="@3.14:")
     depends_on("py-setuptools", type="build")
 
     # pre-3.11 is numpy@1 only
