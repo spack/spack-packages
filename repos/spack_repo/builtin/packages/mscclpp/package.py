@@ -44,10 +44,10 @@ class Mscclpp(CMakePackage, ROCmPackage, CudaPackage):
         if self.spec.satisfies("+rocm"):
             args.append(self.define("MSCCLPP_USE_ROCM", "ON"))
             args.append(self.define("MSCCLPP_USE_CUDA", "OFF"))
-            args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].prefix.bin.hipcc))
+            args.append(f"-DCMAKE_CXX_COMPILER={self.spec['hip'].prefix.bin.hipcc}")
             rocm_arch = self.spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
-                args.append("-DCMAKE_CXX_FLAGS={0}".format(self.hip_flags(rocm_arch)))
+                args.append(f"-DCMAKE_CXX_FLAGS={self.hip_flags(rocm_arch)}")
         if self.spec.satisfies("+cuda"):
             self.define("MSCCLPP_USE_CUDA", "ON")
             self.define("MSCCLPP_USE_ROCM", "OFF")
