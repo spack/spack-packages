@@ -8,8 +8,8 @@ import re
 import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
-from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
+from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
 from spack.package import *
 
@@ -146,7 +146,6 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     # 3.0, which curl@7.63 requires
     depends_on("cmake@:3", when="build_system=cmake @:7.63")
 
-
     depends_on("gnutls", when="tls=gnutls")
 
     with when("tls=mbedtls"):
@@ -182,7 +181,9 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")
 
-    build_system("autotools", "cmake", conditional("nmake", when="@:8.11 platform=windows"), default="cmake")
+    build_system(
+        "autotools", "cmake", conditional("nmake", when="@:8.11 platform=windows"), default="cmake"
+    )
 
     @classmethod
     def determine_version(cls, exe):
@@ -385,6 +386,7 @@ class NMakeBuilder(BuildEnvironment, NMakeBuilder):
             if os.path.exists(libcurl_a) and not os.path.exists(libcurl):
                 symlink(libcurl_a, libcurl)
 
+
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
         args = [
@@ -419,17 +421,17 @@ class CMakeBuilder(CMakeBuilder):
             self.define("CURL_USE_MBEDTLS", True)
         if self.spec.satisfies("tls=openssl"):
             self.define("CURL_USE_OPENSSL", True)
-        
+
         if self.spec.satisfies("platform=windows"):
             args.extend(
                 [
                     self.define_from_variant("ENABLE_UNICODE", "unicode"),
-                    self.define_from_variant("CURL_STATIC_CRT", "static-crt")
+                    self.define_from_variant("CURL_STATIC_CRT", "static-crt"),
                 ]
             )
             if self.spec.satisfies("+ldap"):
                 args.append(self.define("USE_WIN32_LDAP", True))
-            
+
         if "shared" in self.spec.variants["libs"]:
             args.append(self.define("BUILD_SHARED_LIBS", True))
         if "static" in self.spec.variants["libs"]:
