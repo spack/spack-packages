@@ -343,9 +343,6 @@ class Seacas(CMakePackage):
         when="@:2023-10-24",
     )
 
-    patch("2022_ioss_win_defines.patch", when="@:2022-10-14")
-    patch("2023_ioss_win_defines.patch", when="@2023-05-30:")
-
     # Based on install-tpl.sh script, cereal seems to only be used when faodel enabled
     depends_on("cereal", when="@2021-04-02: +faodel")
 
