@@ -45,6 +45,9 @@ class Cufftmp(Package, CudaPackage):
 
     depends_on("cuda@12:")
     depends_on("nvshmem")
+
+    # cuFFTMp requires a specific version of NVSHMEM
+    # https://docs.nvidia.com/cuda/cufftmp/usage/nvshmem_and_cufftmp.html#compatibility
     depends_on("nvshmem@3.1.7:", when="@11.4.0")
 
     for cuda_arch in CudaPackage.cuda_arch_values:
