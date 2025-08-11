@@ -111,7 +111,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("distributed", default=True, description="Use distributed")
     variant("mpi", default=True, description="Use MPI for Caffe2", when="+distributed")
     variant("ucc", default=False, description="Use UCC", when="@1.13: +distributed")
-    variant("gloo", default=True, description="Use Gloo", when="+distributed")
+    variant("gloo", default=False, description="Use Gloo", when="+distributed")
     variant("tensorpipe", default=True, description="Use TensorPipe", when="@1.6: +distributed")
     variant(
         "breakpad",
