@@ -129,6 +129,10 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
         description="Build shared libs, static libs or both",
     )
 
+    with when("platform=windows build_system=cmake"):
+        variant("static-crt", default=False, description="Link to static CRT")
+        variant("unicode", default=False, description="Use the unicode version of Windows API")
+
     conflicts("platform=linux", when="tls=secure_transport", msg="Only supported on macOS")
 
     depends_on("c", type="build")  # generated
@@ -178,7 +182,7 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")
 
-    build_system("autotools", "cmake", conditional("nmake", when="platform=windows"), default="cmake")
+    build_system("autotools", "cmake", conditional("nmake", when="@:8.11 platform=windows"), default="cmake")
 
     @classmethod
     def determine_version(cls, exe):
@@ -385,8 +389,50 @@ class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
         args = [
             self.define("BUILD_TESTING", False),
-            self.define_from_variant("CMAKE_USE_LIBSSH2", "libssh2"),
-            self.define_from_variant("CMAKE_USE_OPENSSL", "openssl"),
-            self.define_from_variant("CMAKE_USE_OPENLDAP", "ldap"),
-            
+            self.define("CURL_USE_LIBPSL", False),
+            # Curl's CMake will turn this off if not building static libcurl
+            self.define("BUILD_STATIC_CURL", True),
+            # enables install from cmake
+            self.define("CURL_DISABLE_INSTALL", False),
+            self.define("BUILD_MISC_DOCS", False),
+            self.define("BUILD_LIBCURL_DOCS", False),
+            self.define("BUILD_EXAMPLES", False),
+            self.define("CURL_BROTLI", False),
+            self.define("CURL_USE_GSASL", False),
+            self.define("CURL_ZSTD", False),
+            self.define("ENABLE_CURL_MANUAL", False),
+            self.define_from_variant("CURL_USE_LIBSSH2", "libssh2"),
+            self.define_from_variant("CURL_USE_LIBSSH", "libssh"),
+            self.define_from_variant("CURL_USE_OPENSSL", "openssl"),
+            self.define_from_variant("CURL_USE_OPENLDAP", "ldap"),
+            self.define_from_variant("CURL_DISABLE_LDAP", "ldap"),
+            self.define_from_variant("USE_NGHTTP2", "nghttp2"),
+            self.define_from_variant("CURL_USE_GSSAPI", "gssapi"),
+            self.define_from_variant("USE_LIBRTMP", "librtmp"),
+            self.define_from_variant("USE_LIBIDN2", "libidn2"),
         ]
+
+        if self.spec.satisfies("tls=sspi"):
+            self.define("CURL_WINDOWS_SSPI", True)
+        if self.spec.satisfies("tls=gnutls"):
+            self.define("CURL_USE_GNUTLS", True)
+        if self.spec.satisfies("tls=mbedtls"):
+            self.define("CURL_USE_MBEDTLS", True)
+        if self.spec.satisfies("tls=openssl"):
+            self.define("CURL_USE_OPENSSL", True)
+        
+        if self.spec.satisfies("platform=windows"):
+            args.extend(
+                [
+                    self.define_from_variant("ENABLE_UNICODE", "unicode"),
+                    self.define_from_variant("CURL_STATIC_CRT", "static-crt")
+                ]
+            )
+            if self.spec.satisfies("+ldap"):
+                args.append(self.define("USE_WIN32_LDAP", True))
+            
+        if "shared" in self.spec["libs"]:
+            args.append(self.define("BUILD_SHARED_LIBS", True))
+        if "static" in self.spec["libs"]:
+            args.append(self.define("BUILD_STATIC_LIBS", True))
+        return args
