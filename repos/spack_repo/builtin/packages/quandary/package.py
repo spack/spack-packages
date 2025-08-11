@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage, cmake_cache_path
+from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage, cmake_cache_path, cmake_cache_option
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -61,9 +61,6 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries = []
 
         entries.append(cmake_cache_path("BLT_SOURCE_DIR", spec["blt"].prefix))
+        entries.append(cmake_cache_option("WITH_SLEPC", spec.satisfies("+slepc")))
 
         return entries
-
-    def cmake_args(self):
-        args = [self.define_from_variant("WITH_SLEPC", "slepc")]
-        return args
