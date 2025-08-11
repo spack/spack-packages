@@ -13,7 +13,7 @@ class Gribjump(CMakePackage):
 
     homepage = "https://github.com/ecmwf/gribjump"
     url = "https://github.com/ecmwf/gribjump/archive/refs/tags/0.10.0.tar.gz"
-    git = "https://github.com/ecmwf/fdb.git"
+    git = "https://github.com/ecmwf/gribjump.git"
 
     maintainers("cosunae")
 
