@@ -128,9 +128,15 @@ class MSBuildBuilder(msbuild.MSBuildBuilder):
         # glob statement matches any of the above.
         # symlink all linking related components (libs, .exp, etc)
         # to lib
+        def install_to_lib(file_type):
+            for x in glob.glob(os.path.join(prefix, "**", f"*.{file_type}")):
+                install_path = os.path.join(prefix.lib, os.path.basename(x))
+                symlink(x, install_path)
         mkdirp(prefix.lib)
-        for x in glob.glob(os.path.join(prefix, "**", "*.[lpe][idx][bp]")):
-            install_path = os.path.join(prefix.lib, os.path.basename(x))
-            symlink(x, install_path)
+        install_to_lib("lib")
+        install_to_lib("pdb")
+        install_to_lib("exp")
+
+        
         include_dir = os.path.join(os.path.join(base_build, "src"), "include")
         install_tree(include_dir, prefix.include)
