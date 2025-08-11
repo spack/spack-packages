@@ -371,8 +371,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # https://github.com/pytorch/pytorch/issues/146239
     patch(
-        "gloo_cuda.patch",
-        sha256="f93aa66e2cf9c0febdbcf72f44213a213e570e5f860186e81c92c8d2af0857c0",
+        "https://github.com/pytorch/pytorch/commit/93da9952a77f59cb29a2d599362ba9c7ba22eaec.patch?full_index=1",
+        sha256="e5a030aae1603a9b57f9e9995902544da7087502fe60261698780f0cb8e5fb7b",
         when="@2.6:2.8",
     )
 
