@@ -376,6 +376,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         description="Enable zstd support for static analyzer / lld",
     )
 
+    variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
+
     provides("libllvm@20", when="@20.0.0:20")
     provides("libllvm@19", when="@19.0.0:19")
     provides("libllvm@18", when="@18.0.0:18")
@@ -1136,6 +1138,10 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         if spec.satisfies("+polly"):
             projects.append("polly")
             cmake_args.append(define("LINK_POLLY_INTO_TOOLS", True))
+        if spec.satisfies("+utils"):
+            cmake_args.extend(
+                [define("LLVM_BUILD_UTILS", True), define("LLVM_INSTALL_UTILS", True)]
+            )
 
         cmake_args.extend(
             [
