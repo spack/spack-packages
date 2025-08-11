@@ -21,7 +21,6 @@ class Mscclpp(CMakePackage, ROCmPackage, CudaPackage):
     version("0.6.0", sha256="d88578261ece5a0aebd4e42cee2b0711d72c3e20287c3fafccda6ccb3f4fbfc3")
 
     variant("rocm", default=True, description="Enable ROCm support")
-    # CUDA variant not tested
     variant("cuda", default=False, description="Enable CUDA support")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
