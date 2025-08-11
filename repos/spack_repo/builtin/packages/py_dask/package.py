@@ -69,7 +69,10 @@ class PyDask(PythonPackage):
     depends_on("py-click@8.0:", type=("build", "run"), when="@2023.4.1:")
     depends_on("py-click@8.1:", type=("build", "run"), when="@2023.11.0:")
     depends_on(
-        "py-importlib-metadata@4.13.0:", type=("build", "run"), when="@2023.4.0: ^python@:3.11"
+        "py-importlib-metadata@4.13.0:", type=("build", "run"), when="@2023.4.0:"
+    )
+    depends_on(
+        "py-importlib-metadata@4.13.0:", type=("build", "run"), when="@2024.3.0: ^python@:3.11"
     )
 
     # Requirements for dask.array
