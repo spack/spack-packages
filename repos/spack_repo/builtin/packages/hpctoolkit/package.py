@@ -242,7 +242,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     # https://gitlab.com/hpctoolkit/hpctoolkit/-/issues/831
     conflicts(
-        "^elfutils@0.191:",
+        "^elfutils@0.191",
         msg="avoid elfutils 0.191 (known critical errors in hpcstruct for CUDA binaries)",
     )
 
