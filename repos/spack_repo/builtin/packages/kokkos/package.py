@@ -29,6 +29,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     version("master", branch="master")
     version("develop", branch="develop")
 
+    version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
     version("4.6.02", sha256="baf1ebbe67abe2bbb8bb6aed81b4247d53ae98ab8475e516d9c87e87fa2422ce")
     version("4.6.01", sha256="b9d70e4653b87a06dbb48d63291bf248058c7c7db4bd91979676ad5609bb1a3a")
     version("4.6.00", sha256="be72cf7fc6ef6b99c614f29b945960013a2aaa23859bfe1a560d8d9aa526ec9c")
@@ -222,6 +223,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "zen2": "ZEN2",
         "zen3": "ZEN3",
         "zen4": "ZEN4",
+        "zen5": "ZEN5",
         "steamroller": "KAVERI",
         "excavator": "CARIZO",
         "power7": "POWER7",
@@ -258,6 +260,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "75": "turing75",
         "80": "ampere80",
         "86": "ampere86",
+        "87": "ampere87",
         "89": "ada89",
         "90": "hopper90",
         "100": "blackwell100",
@@ -315,6 +318,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "intel_gen11",
         "intel_gen12lp",
         "intel_dg1",
+        "intel_dg2",
         "intel_xehp",
         "intel_pvc",
     )
