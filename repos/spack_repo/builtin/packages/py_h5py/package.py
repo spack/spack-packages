@@ -59,7 +59,6 @@ class PyH5py(PythonPackage):
     depends_on("py-cython@0.29.31:3", type="build", when="@3.11:")
     depends_on("py-cython@0.29.31:0", type="build", when="@3.9:3.10")
     depends_on("py-cython@0.29.15:0", type=("build"), when="@3:3.7")
-    depends_on("py-cython@0.29.14:0", type=("build"), when="@3:3.7 ^python@3.8.0:3.8")
     depends_on("py-cython@0.29:0", type=("build"), when="@3.0:3.10")
     depends_on("py-cython@0.23:0", type="build", when="@:2")
 
@@ -94,7 +93,6 @@ class PyH5py(PythonPackage):
     depends_on("py-mpi4py", when="@:2 +mpi", type=("build", "run"))
 
     # Historical dependencies
-    depends_on("py-cached-property@1.5:", type=("build", "run"), when="@:3.6 ^python@:3.7")
     depends_on("py-six", type=("build", "run"), when="@:2")
 
     def flag_handler(self, name, flags):
