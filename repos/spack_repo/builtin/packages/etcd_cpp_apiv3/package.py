@@ -26,7 +26,7 @@ class EtcdCppApiv3(CMakePackage):
     depends_on("protobuf")
     depends_on("cpprestsdk")
 
-    patch( # Latest GRPC >= 2.66 has dropped GRPC_ASSERT macro
+    patch(  # Latest GRPC >= 2.66 has dropped GRPC_ASSERT macro
         "https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3/commit/216b86f8d763acf88e4ed7265f983b57c12da2df.patch",
         sha256="9a882c50ce9105eaad6214777bf44d6302ae3c5fa6800fa7c9d58a611bb2f420",
     )

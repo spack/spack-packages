@@ -19,11 +19,7 @@ class Cpprestsdk(CMakePackage):
 
     license("MIT")
 
-    version(
-        "2.10.19",
-        commit="411a109150b270f23c8c97fa4ec9a0a4a98cdecf",
-        submodules=True,
-    )
+    version("2.10.19", commit="411a109150b270f23c8c97fa4ec9a0a4a98cdecf", submodules=True)
     version(
         "2.10.16",
         git="https://github.com/Microsoft/cpprestsdk",

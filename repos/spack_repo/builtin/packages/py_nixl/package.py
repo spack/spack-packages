@@ -23,9 +23,7 @@ class PyNixl(PythonPackage, CudaPackage):
     version("0.4.1", sha256="54672c6d4b0a303690880526c2dbff4ddc45ad7b8321ca602240a316abd86508")
 
     variant(
-        "etcd",
-        default=False,
-        description="Use ETCD for metadata distribution and coordination"
+        "etcd", default=False, description="Use ETCD for metadata distribution and coordination"
     )
 
     with default_args(type="build"):
@@ -62,6 +60,6 @@ class PyNixl(PythonPackage, CudaPackage):
             }
         }
         if self.spec.satisfies("+etcd"):
-            settings["setup-args"]["-Detcd_inc_path"]=spec["etcd"].prefix.include
-            settings["setup-args"]["-Detcd_lib_path"]=spec["etcd"].prefix.lib
+            settings["setup-args"]["-Detcd_inc_path"] = spec["etcd"].prefix.include
+            settings["setup-args"]["-Detcd_lib_path"] = spec["etcd"].prefix.lib
         return settings
