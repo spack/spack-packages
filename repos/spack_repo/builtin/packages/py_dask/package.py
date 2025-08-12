@@ -96,7 +96,8 @@ class PyDask(PythonPackage):
     depends_on("py-partd@0.3.10:", type=("build", "run"), when="@:2021.3.0 +bag")
 
     # Requirements for dask.dataframe
-    # +dataframe stopped requiring numpy from 2023.8.0:
+    # +dataframe stopped requiring numpy from 2023.8.0:, but now requires dask[array]
+    # see the conflict() at the top of package that ensures +dataframe +array
     depends_on("py-numpy@1.15.1:", type=("build", "run"), when="@2020.12.0: +dataframe")
     depends_on("py-numpy@1.16.0:", type=("build", "run"), when="@2021.3.1: +dataframe")
     depends_on("py-numpy@1.18.0:", type=("build", "run"), when="@2022.10.2: +dataframe")
