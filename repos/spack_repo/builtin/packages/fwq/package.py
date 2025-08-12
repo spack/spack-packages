@@ -46,8 +46,6 @@ class Fwq(MakefilePackage):
     def install(self, spec, prefix):
         mkdir(prefix.bin)
         with working_dir(self.build_directory):
-            for target in self.build_targets:
-                make(target)
             for target in self.install_targets:
                 install(target, prefix.bin)
         install(os.path.join("scripts", "fwq-stats.py"), prefix.bin)
