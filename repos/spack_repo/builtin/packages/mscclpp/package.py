@@ -39,9 +39,7 @@ class Mscclpp(CMakePackage, ROCmPackage, CudaPackage):
     patch("mscclpp-numa-include-dir-001.patch")
 
     def cmake_args(self):
-        args = [
-            self.define("PYTHON_BIN_PATH", python.path),
-        ]
+        args = [self.define("PYTHON_BIN_PATH", python.path)]
 
         if self.spec.satisfies("+rocm"):
             args.append(self.define("MSCCLPP_USE_ROCM", "ON"))
