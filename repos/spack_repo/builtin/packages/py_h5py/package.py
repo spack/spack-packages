@@ -70,6 +70,9 @@ class PyH5py(PythonPackage):
     # pre-3.11 is numpy@1 only
     # https://github.com/h5py/h5py/issues/2353
     depends_on("py-numpy@:1", when="@:3.10", type=("build", "run"))
+
+    # https://github.com/h5py/h5py/issues/2644
+    depends_on("py-numpy@2:", type=("build", "run"), when="@3.14:")
     depends_on("py-numpy@1.19.3:", type=("build", "run"), when="@3.12:")
     depends_on("py-numpy@1.17.3:", type=("build", "run"), when="@3.9:")
     depends_on("py-numpy@1.14.5:", type=("build", "run"), when="@3.2:")
