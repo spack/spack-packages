@@ -56,5 +56,5 @@ class PyFenicsUfl(PythonPackage):
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def check_build(self):
-        with working_dir("test"):
-            Executable("py.test")()
+        with working_dir(self.stage.source_path):
+            python("-m", "pytest")
