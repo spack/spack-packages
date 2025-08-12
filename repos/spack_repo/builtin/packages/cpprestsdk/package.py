@@ -15,9 +15,15 @@ class Cpprestsdk(CMakePackage):
 
     homepage = "https://github.com/Microsoft/cpprestsdk"
     url = "https://github.com/Microsoft/cpprestsdk/archive/v2.9.1.tar.gz"
+    git = homepage
 
     license("MIT")
 
+    version(
+        "2.10.19",
+        commit="411a109150b270f23c8c97fa4ec9a0a4a98cdecf",
+        submodules=True,
+    )
     version(
         "2.10.16",
         git="https://github.com/Microsoft/cpprestsdk",
@@ -29,8 +35,9 @@ class Cpprestsdk(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    # https://github.com/chriskohlhoff/asio/issues/1653
     depends_on(
-        "boost@1.69.0: +random+chrono+locale+filesystem+system+exception+regex+thread+date_time"
+        "boost@1.69.0:1.78+random+chrono+locale+filesystem+system+exception+regex+thread+date_time"
     )
     depends_on("openssl")
 

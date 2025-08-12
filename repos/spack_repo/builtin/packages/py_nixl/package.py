@@ -22,6 +22,8 @@ class PyNixl(PythonPackage, CudaPackage):
     version("0.5.0", sha256="694cfc209b659cf235caeda1d11bc875cf4bc95a19d2028fe25abcf019ee1246")
     version("0.4.1", sha256="54672c6d4b0a303690880526c2dbff4ddc45ad7b8321ca602240a316abd86508")
 
+    variant("etcd", description="Use ETCD for metadata distribution and coordination")
+
     with default_args(type="build"):
         # https://github.com/ai-dynamo/nixl/blob/0.4.1/pyproject.toml
         depends_on("py-meson-python")
@@ -40,8 +42,8 @@ class PyNixl(PythonPackage, CudaPackage):
         depends_on("py-torch+cuda")
         depends_on("py-numpy")
 
-    with default_args(type=["build", "link", "run"]):
-        depends_on("ucx+cuda")
+    depends_on("ucx+cuda")
+    depends_on("etcd-cpp-apiv3", wwhen="+etcd")
 
     requires("+cuda")
 
@@ -55,4 +57,7 @@ class PyNixl(PythonPackage, CudaPackage):
                 "-Dcudapath_stub": spec["cuda"].prefix.lib64.stubs,
             }
         }
+        if self.spec.satisfies("+etcd"):
+            settings["setup-args"]["-Detcd_inc_path"]=spec["etcd"].prefix.include
+            settings["setup-args"]["-Detcd_lib_path"]=spec["etcd"].prefix.lib
         return settings
