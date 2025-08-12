@@ -181,9 +181,12 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")
 
-    platform_default = "cmake" if sys.platform =="win32" else "autotools"
+    platform_default = "cmake" if sys.platform == "win32" else "autotools"
     build_system(
-        "autotools", "cmake", conditional("nmake", when="@:8.11 platform=windows"), default=platform_default
+        "autotools",
+        "cmake",
+        conditional("nmake", when="@:8.11 platform=windows"),
+        default=platform_default,
     )
 
     @classmethod
@@ -422,7 +425,7 @@ class CMakeBuilder(CMakeBuilder):
             args.append(self.define("CURL_USE_MBEDTLS", True))
         if self.spec.satisfies("tls=openssl"):
             args.append(self.define("CURL_USE_OPENSSL", True))
-        
+
         if self.spec.satisfies("platform=windows"):
             args.extend(
                 [
@@ -432,7 +435,7 @@ class CMakeBuilder(CMakeBuilder):
             )
             if self.spec.satisfies("+ldap"):
                 args.append(self.define("USE_WIN32_LDAP", True))
-            
+
         if self.spec.satisfies("libs=shared"):
             args.append(self.define("BUILD_SHARED_LIBS", True))
         if self.spec.satisfies("libs=static"):
