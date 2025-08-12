@@ -63,8 +63,8 @@ class PyH5py(PythonPackage):
     depends_on("py-cython@0.23:0", type="build", when="@:2")
 
     depends_on("py-pkgconfig", type="build")
-    depends_on("py-setuptools@61:", type="build", when="@3.8.0:")
     depends_on("py-setuptools@77:", type="build", when="@3.14:")
+    depends_on("py-setuptools@61:", type="build", when="@3.8.0:")
     depends_on("py-setuptools", type="build")
 
     # pre-3.11 is numpy@1 only
