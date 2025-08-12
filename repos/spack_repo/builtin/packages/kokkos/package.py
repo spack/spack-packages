@@ -540,7 +540,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         )
 
         if self.version == Version("4.7.00"):
-            options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", "ON"))
+            options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
 
         # Remove duplicate options
         return dedupe(options)
