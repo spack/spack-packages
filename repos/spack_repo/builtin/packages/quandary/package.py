@@ -19,7 +19,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/LLNL/quandary"
     git = "https://github.com/LLNL/quandary.git"
 
-    maintainers("steffi7574", "tdrwenski")
+    maintainers("steffi7574", "tdrwenski", "adrienbernede")
 
     license("MIT", checked_by="tdrwenski")
 
