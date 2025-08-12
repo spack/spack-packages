@@ -46,10 +46,11 @@
 
 ###
 # GitHub project maintainers
+.ci/env                   @spack/spack-releasers
 .github/*.md              @spack/spack-releasers
 .github/*.yml             @spack/spack-releasers
 /.github/ISSUE_TEMPLATE/  @spack/spack-releasers
-CODEOWNERS               @spack/spack-releasers
+CODEOWNERS                @spack/spack-releasers
 LICENSE*                  @spack/spack-releasers
 NOTICE                    @spack/spack-releasers
 README.md                 @spack/spack-releasers
