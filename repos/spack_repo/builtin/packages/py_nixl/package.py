@@ -43,7 +43,7 @@ class PyNixl(PythonPackage, CudaPackage):
         depends_on("py-numpy")
 
     depends_on("ucx+cuda")
-    depends_on("etcd-cpp-apiv3", wwhen="+etcd")
+    depends_on("etcd-cpp-apiv3", when="+etcd")
 
     requires("+cuda")
 
