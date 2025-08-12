@@ -30,4 +30,3 @@ class EtcdCppApiv3(CMakePackage):
         "https://github.com/etcd-cpp-apiv3/etcd-cpp-apiv3/commit/216b86f8d763acf88e4ed7265f983b57c12da2df.patch?full_index=1",
         sha256="4d16ab69a5dd6af4c0eb99c777dae6ffb913116b074882381cea69889789308e",
     )
-
