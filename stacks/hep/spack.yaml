@@ -113,7 +113,7 @@ spack:
   #- professor
   - py-awkward
   - py-boost-histogram
-  - py-dask-awkward +io
+  - py-dask-awkward ~io
   - py-dask-histogram
   - py-hepunits
   - py-hist +dask +fit +plot
