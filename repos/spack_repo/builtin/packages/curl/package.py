@@ -414,14 +414,14 @@ class CMakeBuilder(CMakeBuilder):
         ]
 
         if self.spec.satisfies("tls=sspi"):
-            self.define("CURL_WINDOWS_SSPI", True)
+            args.append(self.define("CURL_WINDOWS_SSPI", True))
         if self.spec.satisfies("tls=gnutls"):
-            self.define("CURL_USE_GNUTLS", True)
+            args.append(self.define("CURL_USE_GNUTLS", True))
         if self.spec.satisfies("tls=mbedtls"):
-            self.define("CURL_USE_MBEDTLS", True)
+            args.append(self.define("CURL_USE_MBEDTLS", True))
         if self.spec.satisfies("tls=openssl"):
-            self.define("CURL_USE_OPENSSL", True)
-
+            args.append(self.define("CURL_USE_OPENSSL", True))
+        
         if self.spec.satisfies("platform=windows"):
             args.extend(
                 [
