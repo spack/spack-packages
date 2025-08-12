@@ -20,6 +20,8 @@ class EtcdCppApiv3(CMakePackage):
     version("master", branch="master")
     version("0.15.4", sha256="4516ecfa420826088c187efd42dad249367ca94ea6cdfc24e3030c3cf47af7b4")
 
+    depends_on("c")
+    depends_on("cxx")
     depends_on("boost")
     depends_on("openssl")
     depends_on("grpc")

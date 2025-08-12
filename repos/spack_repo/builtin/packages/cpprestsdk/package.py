@@ -31,9 +31,12 @@ class Cpprestsdk(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    # https://github.com/chriskohlhoff/asio/issues/1653
+    # asio::io_service was deprecated in Boost 1.66
+    # but it was still available as an alias until Boost 1.86
+    # It was removed in Boost 1.87.
+    # https://www.boost.org/doc/libs/1_87_0/doc/html/boost_asio/history.html
     depends_on(
-        "boost@1.69.0:1.78+random+chrono+locale+filesystem+system+exception+regex+thread+date_time"
+        "boost@1.69.0:1.86+random+chrono+locale+filesystem+system+exception+regex+thread+date_time"
     )
     depends_on("openssl")
 
