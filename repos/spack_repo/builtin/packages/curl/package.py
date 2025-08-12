@@ -339,6 +339,8 @@ class NMakeBuilder(BuildEnvironment, NMakeBuilder):
             args.append("MBEDTLS_PATH=%s" % self.spec["mbedtls"].prefix)
         elif self.spec.satisfies("tls=sspi"):
             args.append("ENABLE_SSPI=%s" % mode)
+        if self.spec.satisfies("@8.12:"):
+            args.append("WINBUILD_ACKNOWLEDGE_DEPRECATED=yes")
 
         # The trailing path seperator is REQUIRED for cURL to install
         # otherwise cURLs build system will interpret the path as a file
