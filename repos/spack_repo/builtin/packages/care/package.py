@@ -161,10 +161,6 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         depends_on("chai+openmp")
 
     with when("+cuda"):
-        # WARNING: this package currently only supports an internal cub
-        # package. This will cause a race condition if compiled with another
-        # package that uses cub. TODO: have all packages point to the same external
-        # cub package.
         depends_on("cub")
 
         depends_on("umpire+cuda")
