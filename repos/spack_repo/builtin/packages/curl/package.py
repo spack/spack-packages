@@ -431,9 +431,9 @@ class CMakeBuilder(CMakeBuilder):
             )
             if self.spec.satisfies("+ldap"):
                 args.append(self.define("USE_WIN32_LDAP", True))
-
-        if "shared" in self.spec.variants["libs"]:
+            
+        if self.spec.satisfies("libs=shared"):
             args.append(self.define("BUILD_SHARED_LIBS", True))
-        if "static" in self.spec.variants["libs"]:
+        if self.spec.satisfies("libs=static"):
             args.append(self.define("BUILD_STATIC_LIBS", True))
         return args
