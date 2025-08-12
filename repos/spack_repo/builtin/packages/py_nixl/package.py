@@ -22,7 +22,11 @@ class PyNixl(PythonPackage, CudaPackage):
     version("0.5.0", sha256="694cfc209b659cf235caeda1d11bc875cf4bc95a19d2028fe25abcf019ee1246")
     version("0.4.1", sha256="54672c6d4b0a303690880526c2dbff4ddc45ad7b8321ca602240a316abd86508")
 
-    variant("etcd", description="Use ETCD for metadata distribution and coordination")
+    variant(
+        "etcd",
+        default=False,
+        description="Use ETCD for metadata distribution and coordination"
+    )
 
     with default_args(type="build"):
         # https://github.com/ai-dynamo/nixl/blob/0.4.1/pyproject.toml
