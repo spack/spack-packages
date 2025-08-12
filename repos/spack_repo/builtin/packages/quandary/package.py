@@ -30,6 +30,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("slepc", default=False, description="Build with SLEPc library")
     variant("int64", default=False, description="Use 64 bit ints for PetscInts")
     variant("test", default=False, description="Add dependencies needed for testing")
+    variant("werror", default=False, description="Enable warnings as errors")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
@@ -67,5 +68,6 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries.append(cmake_cache_path("BLT_SOURCE_DIR", spec["blt"].prefix))
         entries.append(cmake_cache_option("WITH_SLEPC", spec.satisfies("+slepc")))
+        entries.append(cmake_cache_option("ENABLE_WARNINGS_AS_ERRORS", spec.satisfies("+werror")))
 
         return entries
