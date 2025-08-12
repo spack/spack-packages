@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-
 from spack.package import *
 
 
@@ -16,8 +15,16 @@ class Zsh(AutotoolsPackage):
     homepage = "https://www.zsh.org"
     url = "https://downloads.sourceforge.net/project/zsh/zsh/5.4.2/zsh-5.4.2.tar.xz"
 
+    def url_for_version(self, version):
+        if version <= Version("5.9.0.0"):
+            url = "https://downloads.sourceforge.net/project/zsh/zsh/{0}/zsh-{0}.tar.xz"
+        if version > Version("5.9.0.1"):
+            url = "https://downloads.sourceforge.net/project/zsh/zsh-test/{0}-test/zsh-{0}-test.tar.xz"
+        return url.format(version, version)
+
     license("custom")
 
+    version("5.9.0.2", sha256="da045106a64022371e670f7459a05cf4c60e6237a548af14af500d1652fa877e")
     version("5.9", sha256="9b8d1ecedd5b5e81fbf1918e876752a7dd948e05c1a0dba10ab863842d45acd5")
     version("5.8.1", sha256="b6973520bace600b4779200269b1e5d79e5f505ac4952058c11ad5bbf0dd9919")
     version("5.8", sha256="dcc4b54cc5565670a65581760261c163d720991f0d06486da61f8d839b52de27")
