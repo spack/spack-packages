@@ -34,6 +34,9 @@ class PyMplhep(PythonPackage):
         depends_on("py-setuptools@42:", when="@0.3.26:", type="build")
         depends_on("py-setuptools-scm@3.4:+toml", when="@0.3.2:", type="build")
     depends_on("py-matplotlib@3.4:", type=("build", "run"))
+    # properly handle docstring -> _docstring transition in mplhep#443 and mplhep#455
+    depends_on("py-matplotlib@3.6:", type=("build", "run"), when="@0.3.29:")
+    depends_on("py-matplotlib@:3.8", type=("build", "run"), when="@:0.3.28")
     depends_on("py-mplhep-data", type=("build", "run"))
     depends_on("py-mplhep-data@0.0.4:", type=("build", "run"), when="@0.3.54:")
     depends_on("py-numpy@1.16.0:", type=("build", "run"))
