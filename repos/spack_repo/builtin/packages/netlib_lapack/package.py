@@ -206,7 +206,12 @@ class NetlibLapack(CMakePackage):
         }
         key = tuple(sorted(query_parameters))
         libraries = query2libraries[key]
-        return find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
+        # set search option for runtime libraries on win
+        # this method is used for establishing link interfaces
+        # so we want to be searching for import not runtime libs
+        # no op elsewhere
+        runtime = False
+        return find_libraries(libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True)
 
     @property
     def lapack_libs(self):
@@ -223,7 +228,10 @@ class NetlibLapack(CMakePackage):
         }
         key = tuple(sorted(query_parameters))
         libraries = query2libraries[key]
-        return find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
+        # see comment in blas_libs for explanation of 
+        # runtime
+        runtime=False
+        return find_libraries(libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True)
 
     @property
     def headers(self):
