@@ -181,8 +181,9 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")
 
+    platform_default = "cmake" if sys.platform =="win32" else "autotools"
     build_system(
-        "autotools", "cmake", conditional("nmake", when="@:8.11 platform=windows"), default="cmake"
+        "autotools", "cmake", conditional("nmake", when="@:8.11 platform=windows"), default=platform_default
     )
 
     @classmethod
