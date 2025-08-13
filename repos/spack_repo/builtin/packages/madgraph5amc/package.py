@@ -151,7 +151,7 @@ class Madgraph5amc(MakefilePackage):
         if "+pythia8" in spec:
             with open("install-pythia8-interface", "w") as f:
                 f.write(
-                    f"""set pythia8_path {spec['pythia8'].prefix}
+                    f"""set pythia8_path {spec["pythia8"].prefix}
                         install mg5amc_py8_interface
                 """
                 )

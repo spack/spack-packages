@@ -44,7 +44,6 @@ class Libepoxy(AutotoolsPackage, MesonPackage):
 
 
 class MesonBuilder(meson.MesonBuilder):
-
     def meson_args(self):
         # Disable egl, otherwise configure fails with:
         # error: Package requirements (egl) were not met
@@ -63,7 +62,6 @@ class MesonBuilder(meson.MesonBuilder):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
-
     def configure_args(self):
         # Disable egl, otherwise configure fails with:
         # error: Package requirements (egl) were not met

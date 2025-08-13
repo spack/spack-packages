@@ -271,6 +271,7 @@ class Seacas(CMakePackage):
     # Always depends on netcdf-c
     depends_on("netcdf-c@4.8.0:+mpi+parallel-netcdf", when="+mpi")
     depends_on("netcdf-c@4.8.0:~mpi", when="~mpi")
+    depends_on("netcdf-c@:4.9.2", when="@:2024-08-15")
     depends_on("hdf5+hl~mpi", when="~mpi")
     depends_on("hdf5+hl+mpi", when="+mpi")
 

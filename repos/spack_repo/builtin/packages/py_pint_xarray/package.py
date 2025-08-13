@@ -25,7 +25,7 @@ class PyPintXarray(PythonPackage):
         depends_on("python@3.9:", type=("build", "run"))
         depends_on("py-numpy@1.23:", type=("build", "run"))
         depends_on("py-xarray@2022.06.0:", type=("build", "run"))
-        depends_on("py-pint@0.21:", type=("build", "run"))
+        depends_on("py-pint@0.21: +xarray +numpy +dask", type=("build", "run"))
 
     with when("@:0.3"):
         depends_on("py-setuptools@42:", type="build")
@@ -33,11 +33,10 @@ class PyPintXarray(PythonPackage):
         depends_on("python@3.8:", type=("build", "run"))
         depends_on("py-numpy@1.17:", type=("build", "run"))
         depends_on("py-xarray@0.16.1:", type=("build", "run"))
-        depends_on("py-pint@0.16:", type=("build", "run"))
+        depends_on("py-pint@0.16: +xarray +numpy +dask", type=("build", "run"))
         depends_on("py-importlib-metadata", when="@0.2.1 ^python@:3.7", type=("build", "run"))
 
     def url_for_version(self, version):
-
         if version >= Version("0.4"):
             return super().url_for_version(version)
 

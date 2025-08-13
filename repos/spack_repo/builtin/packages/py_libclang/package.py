@@ -38,9 +38,14 @@ class PyLibclang(PythonPackage):
         depends_on("llvm+clang@" + ver, when="@" + ver, type="build")
 
     def patch(self):
+        if self.version >= Version("14"):
+            setup = "setup_ext.py"
+        else:
+            setup = "setup.py"
+
         filter_file(
             "source_dir = './native/'",
             "source_dir = '{0}'".format(self.spec["llvm"].libs.directories[0]),
-            "setup.py",
+            setup,
             string=True,
         )
