@@ -26,7 +26,10 @@ class Pciutils(MakefilePackage):
     depends_on("c", type="build")  # generated
 
     def build(self, spec, prefix):
-        make("PREFIX={0}".format(prefix), "SHARED=yes")
+        args = ["PREFIX={0}".format(prefix)]
+        if "+shared" in spec:
+            args.append("SHARED=yes")
+        make(*args)
 
     def install(self, spec, prefix):
         if "+shared" in spec:
