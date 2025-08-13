@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
@@ -30,7 +31,10 @@ class Pciutils(MakefilePackage):
     def install(self, spec, prefix):
         if "+shared" in spec:
             make("install-lib", "install", "PREFIX={0}".format(prefix))
-            os.symlink(os.path.join(self.prefix.lib, "libpci.so.{0}".format(self.version)), os.path.join(self.prefix.lib, "libpci.so"))
+            os.symlink(
+                os.path.join(self.prefix.lib, "libpci.so.{0}".format(self.version)),
+                os.path.join(self.prefix.lib, "libpci.so"),
+            )
         else:
             make("install", "PREFIX={0}".format(prefix))
 
