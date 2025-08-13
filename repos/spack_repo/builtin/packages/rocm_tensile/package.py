@@ -14,13 +14,14 @@ class RocmTensile(CMakePackage):
 
     homepage = "https://github.com/ROCm/Tensile/"
     git = "https://github.com/ROCm/Tensile.git"
-    url = "https://github.com/ROCm/Tensile/archive/rocm-6.1.1.tar.gz"
+    url = "https://github.com/ROCm/Tensile/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
+    version("6.4.3", sha256="0190bfc7050c6ea73fb20ce4d35a056644e129f792f3b016b079ee6cc237a598")
     version("6.4.2", sha256="0c30d711ed09f53af9509e264addad9be25e897a7ad490752741cb848a2f31e6")
     version("6.4.1", sha256="f96fe39fbb0d43e39b258b21d66234abf3248f8cfa6954f922618d4bb7d04c74")
     version("6.4.0", sha256="cfe32aa31aa0dd79018d0cdd36e09df3a548159cb7b8e18d0ef6513d0febce90")
@@ -90,6 +91,7 @@ class RocmTensile(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
