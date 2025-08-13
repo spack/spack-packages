@@ -1339,6 +1339,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             mkheader = Executable(script)
             mkheader(output=str).rstrip("\n")
 
+
 def _libc_include_dir_from_startfile_prefix(
     libc_prefix: str, startfile_prefix: str
 ) -> Optional[str]:
