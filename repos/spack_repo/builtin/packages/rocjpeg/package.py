@@ -21,6 +21,7 @@ class Rocjpeg(CMakePackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="28c95c30603d6a0e39632cd31e8adcbe80786f5d77e15bb88cfef341eaf4eb94")
     version("6.4.2", sha256="543d0a25b7da44885c99845041a54f391f484e0f1e051973c5993f08185d82fa")
     version("6.4.1", sha256="23eed12646409d8f931f6bbdacf68df246c762877a3c0ef723568f89f0f5b40f")
     version("6.4.0", sha256="5488f5ab9c475566716d99ad32fb4c20686ac1bcc00c9242221abdbde2b94ffe")
@@ -31,7 +32,7 @@ class Rocjpeg(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
 

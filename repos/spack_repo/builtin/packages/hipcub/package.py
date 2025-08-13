@@ -14,13 +14,14 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipCUB"
     git = "https://github.com/ROCm/hipCUB.git"
-    url = "https://github.com/ROCm/hipCUB/archive/rocm-6.1.2.tar.gz"
+    url = "https://github.com/ROCm/hipCUB/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("BSD-3-Clause")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("6.4.3", sha256="1246f2d23665e4c4ec58a923d96b35cbfa4079adeda8bac47ba8fad3f85437bf")
     version("6.4.2", sha256="31efcb029c6f5056c04a03e881704206e988dda949cd308ef8c474e5bb9bbaee")
     version("6.4.1", sha256="93a213a37142ae38518b6d912b89dc0ecb50e092ce84df4cb06447f1528fcc29")
     version("6.4.0", sha256="2c044ed9bf53b9410ef6de4ca578384569b0a89cac4e8604dfdde390b2918481")
@@ -86,6 +87,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocprim@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")

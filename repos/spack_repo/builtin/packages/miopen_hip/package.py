@@ -15,13 +15,15 @@ class MiopenHip(CMakePackage):
 
     homepage = "https://github.com/ROCm/MIOpen"
     git = "https://github.com/ROCm/MIOpen.git"
-    url = "https://github.com/ROCm/MIOpen/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/MIOpen/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libMIOpen"]
 
     license("MIT")
+
+    version("6.4.3", sha256="d78eacc4314da049cc3d39877ee5b6b64b463f900be4a84c0b0b6d7a6f56148d")
     version("6.4.2", sha256="30c475a07af5b955e40b4b5dca705d2ea5c2e51112d1b24c0216046f22f45bc1")
     version("6.4.1", sha256="3e9e8bc8d9dfb31b27e955ead3430825e88b7f1501d289ba023d34208916c724")
     version("6.4.0", sha256="5b101f9177d49654968a3f3c01c9eede561a8fe5178f2ae4d8e5acb16b0b17e6")
@@ -108,6 +110,7 @@ class MiopenHip(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -116,7 +119,7 @@ class MiopenHip(CMakePackage):
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
         depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
