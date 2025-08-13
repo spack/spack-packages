@@ -37,7 +37,19 @@ class Pciutils(MakefilePackage):
             os.symlink(
                 os.path.join(self.prefix.lib, "libpci.so.{0}".format(self.version)),
                 os.path.join(self.prefix.lib, "libpci.so"),
+            # Find the actual shared library file (libpci.so.*) and create the symlink
+            lib_dir = self.prefix.lib
+            so_candidates = sorted(
+                glob.glob(os.path.join(lib_dir, "libpci.so.*")),
+                reverse=True
             )
+            # Exclude the symlink itself if it exists
+            so_candidates = [f for f in so_candidates if not f.endswith("libpci.so")]
+            if so_candidates:
+                os.symlink(
+                    os.path.basename(so_candidates[0]),
+                    os.path.join(lib_dir, "libpci.so"),
+                )
         else:
             make("install", "PREFIX={0}".format(prefix))
 
