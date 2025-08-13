@@ -92,7 +92,7 @@ class Grads(AutotoolsPackage):
         env.set("PKG_CONFIG", self.spec["pkgconfig"].prefix.bin.join("pkg-config"))
 
         if "+hdf4" in self.spec and "~shared" in self.spec["hdf"]:
-            env.set("LIBS", self.spec["hdf:transitive"].libs)
+            env.set("LIBS", self.spec["hdf:transitive"].libs.ld_flags)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("GADDIR", self.prefix.data)

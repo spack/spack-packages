@@ -65,6 +65,8 @@ class Sw4lite(MakefilePackage, CudaPackage):
             targets.append("ckernel=yes")
 
         if "+cuda" in self.spec:
+            cuda_arch = self.spec.variants["cuda_arch"].value
+
             targets.append("NVCC = {0}".format(self.spec["cuda"].prefix.bin.nvcc))
             targets.append("HOSTCOMP = {0}".format(spack_cxx))
             targets.append("MPIPATH= {0} ".format(self.spec["mpi"].prefix))

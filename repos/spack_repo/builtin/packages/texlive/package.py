@@ -29,6 +29,12 @@ class Texlive(AutotoolsPackage):
     # Add information for new versions below.
     releases = [
         {
+            "version": "20250308",
+            "year": "2025",
+            "sha256_source": "fffdb1a3d143c177a4398a2229a40d6a88f18098e5f6dcfd57648c9f2417490f",
+            "sha256_texmf": "08dcda7430bf0d2f6ebb326f1e197e1473d3f7cc0984a2adb7236df45316c7cf",
+        },
+        {
             "version": "20240312",
             "year": "2024",
             "sha256_source": "7b6d87cf01661670fac45c93126bed97b9843139ed510f975d047ea938b6fe96",
@@ -97,7 +103,7 @@ class Texlive(AutotoolsPackage):
     depends_on("libpng")
     depends_on("libxaw")
     depends_on("libxt")
-    depends_on("mpfr")
+    depends_on("mpfr@4:")
     depends_on("perl")
     depends_on("pixman")
     depends_on("poppler@:0.83", when="@:2019")

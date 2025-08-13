@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from spack.error import SpackError
 from spack.package import *
 
 
@@ -63,7 +62,7 @@ class CcsQcd(MakefilePackage):
     def edit(self, spec, prefix):
         if spec.satisfies("%gcc") and spec.satisfies("arch=aarch64:"):
             chgopt = (
-                "FFLAGS  =-O3 -ffixed-line-length-132 -g -fopenmp" " -mcmodel=large -funderscoring"
+                "FFLAGS  =-O3 -ffixed-line-length-132 -g -fopenmp -mcmodel=large -funderscoring"
             )
             filter_file(
                 "FFLAGS  =.*",

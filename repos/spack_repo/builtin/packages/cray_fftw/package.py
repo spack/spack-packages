@@ -1,11 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
-from spack_repo.builtin.build_systems.generic import Package
-
-import llnl.util.lang
-
 from spack.package import *
 
 
@@ -22,7 +17,6 @@ class CrayFftw(Package):
     """
 
     homepage = "https://support.hpe.com/"
-    has_code = False  # Skip attempts to fetch source that is not available
 
     maintainers("haampie", "lukebroskop")
 
@@ -44,6 +38,13 @@ class CrayFftw(Package):
     variant("mpi", default=True, description="Activate MPI support")
     depends_on("mpi", when="+mpi")
 
+    has_code = False  # Skip attempts to fetch a source that is not available
+
+    # Allows attaching compilers to externals in packages.yaml
+    depends_on("c", type="build")
+
+    requires("platform=linux", msg="Cray software is only available on linux")
+
     def install(self, spec, prefix):
         raise InstallError(
             self.spec.format(
@@ -55,7 +56,7 @@ class CrayFftw(Package):
     @property
     def libs(self):
         # Reduce repetitions of entries
-        query_parameters = list(llnl.util.lang.dedupe(self.spec.last_query.extra_parameters))
+        query_parameters = list(dedupe(self.spec.last_query.extra_parameters))
 
         # List of all the suffixes associated with float precisions
         precisions = [("float", "f"), ("double", "")]

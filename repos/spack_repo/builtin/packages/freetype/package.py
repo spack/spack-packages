@@ -60,8 +60,7 @@ class Freetype(AutotoolsPackage, CMakePackage):
     conflicts(
         "%intel",
         when="@2.8:2.10.2",
-        msg="freetype-2.8 to 2.10.2 cannot be built with icc (does not "
-        "support __builtin_shuffle)",
+        msg="freetype-2.8 to 2.10.2 cannot be built with icc (does not support __builtin_shuffle)",
     )
 
     variant("shared", default=True, description="Build shared libraries")

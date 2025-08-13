@@ -11,7 +11,6 @@ from spack_repo.builtin.build_systems.nmake import NMakePackage
 from spack_repo.builtin.build_systems.sourceforge import SourceforgePackage
 
 from spack.package import *
-from spack.util.environment import is_system_path
 
 is_windows = sys.platform == "win32"
 

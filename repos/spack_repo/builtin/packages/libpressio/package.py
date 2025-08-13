@@ -247,6 +247,7 @@ class Libpressio(CMakePackage, CudaPackage):
     depends_on("libstdcompat", when="@0.52.0:")
 
     depends_on("c-blosc", when="+blosc")
+    depends_on("c-blosc2", when="+blosc2")
     depends_on("fpzip", when="+fpzip")
     depends_on("hdf5", when="+hdf5")
     # this might seem excessive, but if HDF5 is external and parallel
@@ -291,9 +292,9 @@ class Libpressio(CMakePackage, CudaPackage):
     depends_on("matio+shared@1.5.17:", when="+matio")
     depends_on("llvm@17: +clang", when="+clang")
     conflicts(
-        "^ mgard@2022-11-18",
+        "^ mgard@compat-2022-11-18",
         when="@:0.88.3+mgard",
-        msg="mgard@2022-11-18 is not supported before 0.89.0",
+        msg="mgard@compat-2022-11-18 is not supported before 0.89.0",
     )
     conflicts(
         "+mgardx", when="+szauto", msg="SZ auto and MGARDx cause symbol conflicts with each other"

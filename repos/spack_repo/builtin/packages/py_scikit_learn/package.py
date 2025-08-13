@@ -22,6 +22,8 @@ class PyScikitLearn(PythonPackage):
 
     version("main", branch="main")
     version("master", branch="main", deprecated=True)
+    version("1.7.1", sha256="24b3f1e976a4665aa74ee0fcaac2b8fccc6ae77c8e07ab25da3ba6d3292b9802")
+    version("1.7.0", sha256="c01e869b15aec88e2cdb73d27f15bdbe03bce8e2fb43afbe77c45d399e73a5a3")
     version("1.6.1", sha256="b4fc2525eca2c69a59260f583c56a7557c6ccdf8deafdba6e060f94c1c59738e")
     version("1.6.0", sha256="9d58481f9f7499dff4196927aedd4285a0baec8caa3790efbe205f13de37dd6e")
     version("1.5.2", sha256="b4237ed7b3fdd0a4882792e68ef2545d5baa50aca3bb45aa7df468138ad8f94d")
@@ -81,7 +83,8 @@ class PyScikitLearn(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.9:3.13", when="@1.5.2:")
+        depends_on("python@3.10:3.13", when="@1.7:")
+        depends_on("python@3.9:3.13", when="@1.5.2:1.6")
         depends_on("python@3.9:3.12", when="@1.4:1.5.1")
         depends_on("python@3.8:3.12", when="@1.3.1:1.3")
         depends_on("python@3.8:3.11", when="@1.1.3:1.3.0")
@@ -91,6 +94,7 @@ class PyScikitLearn(PythonPackage):
         depends_on("python@:3.8", when="@0.22:0.23")
 
     with default_args(type="build"):
+        depends_on("py-meson-python@0.17.1:", when="@1.7.1:")
         depends_on("py-meson-python@0.16:", when="@1.5.1:")
         depends_on("py-meson-python@0.15:", when="@1.5:")
         depends_on("py-cython@3.0.10:", when="@1.5:")
@@ -101,15 +105,17 @@ class PyScikitLearn(PythonPackage):
         depends_on("py-cython@0.28.5:2", when="@0.21:1.0.1")
 
     with default_args(type=("build", "link", "run")):
+        depends_on("py-numpy@1.22:", when="@1.7:")
         depends_on("py-numpy@1.19.5:", when="@1.4:")
-        depends_on("py-numpy@1.17.3:", when="@1.1:1.3")
-        depends_on("py-numpy@1.14.6:", when="@1.0")
-        depends_on("py-numpy@1.13.3:", when="@0.23:0.24")
-        depends_on("py-numpy@1.11.0:", when="@0.21:0.22")
+        depends_on("py-numpy@1.17.3:", when="@1.1:")
+        depends_on("py-numpy@1.14.6:", when="@1.0:")
+        depends_on("py-numpy@1.13.3:", when="@0.23:")
+        depends_on("py-numpy@1.11.0:", when="@0.21:")
         # https://github.com/scikit-learn/scikit-learn/issues/27075
         depends_on("py-numpy@:1", when="@:1.4.1")
 
     with default_args(type=("build", "run")):
+        depends_on("py-scipy@1.8:", when="@1.7:")
         depends_on("py-scipy@1.6:", when="@1.4:")
         depends_on("py-scipy@1.5:", when="@1.3:")
         depends_on("py-scipy@1.3.2:", when="@1.1:")

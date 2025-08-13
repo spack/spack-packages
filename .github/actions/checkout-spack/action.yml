@@ -9,6 +9,10 @@ inputs:
     description: Number of commits to fetch
     required: false
     default: '1'
+  builtin:
+    description: 'Relative path under $GITHUB_WORKSPACE where the builtin repository lives'
+    required: false
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -25,3 +29,14 @@ runs:
         ref: ${{ steps.spack-version.outputs.version }}
         path: ${{ inputs.path }}
         fetch-depth: ${{ inputs.fetch-depth }}
+    - name: Override builtin repository path
+      shell: bash
+      run: | 
+        REPOSITORY_PATH="$GITHUB_WORKSPACE/${{ inputs.builtin }}"        
+        ${{ inputs.path }}/bin/spack repo set --destination "$REPOSITORY_PATH" --scope site builtin
+        ${{ inputs.path }}/bin/spack config blame repos
+        ${{ inputs.path }}/bin/spack repo list
+        if [ ! -f "$REPOSITORY_PATH/spack-repo-index.yaml" ]; then
+          echo "Error: "'"'"$REPOSITORY_PATH/spack-repo-index.yaml"'"'" file not found."
+          exit 1
+        fi

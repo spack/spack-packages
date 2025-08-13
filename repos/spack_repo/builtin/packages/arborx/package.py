@@ -26,6 +26,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.0.1", sha256="9a831c5086a4fedf312fc88eec24e1382cac7520516aa56f743ef7769638ce37")
     version("2.0", sha256="5ea6d8f832a69aac77d66c1ae55f96c2ff227272b8a6ba694c7ebcdf3a2413d5")
     version("1.7", sha256="e3d9a57a1d7c1ad62f6bbb43fd29a366506f3a16cbbe801c04d10f5fb0dec201")
     version("1.6", sha256="c2230de185d62f1999d36c6b8b92825f19ab9fbf30bdae90595cab04e76561a4")
@@ -147,7 +148,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
         """run ctest tests on the installed package"""
         cmake_args = [
             ".",
-            cmake_prefix_path,
+            self.define("CMAKE_PREFIX_PATH", get_cmake_prefix_path()),
             f"-DCMAKE_CXX_COMPILER={os.environ['CXX']}",
             self.define(
                 "Kokkos_ROOT",

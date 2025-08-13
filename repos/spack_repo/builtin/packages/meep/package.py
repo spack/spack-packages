@@ -55,11 +55,13 @@ class Meep(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")
 
     depends_on("autoconf", type="build", when="@1.21.0:")
     depends_on("automake", type="build", when="@1.21.0:")
     depends_on("libtool", type="build", when="@1.21.0:")
 
+    depends_on("fftw-api")
     depends_on("blas", when="+blas")
     depends_on("lapack", when="+lapack")
     depends_on("harminv", when="+harminv")
@@ -82,7 +84,9 @@ class Meep(AutotoolsPackage):
     def configure_args(self):
         spec = self.spec
 
-        config_args = ["--enable-shared"]
+        config_args = ["LDFLAGS={0}".format(spec["fftw-api"].libs.ld_flags)]
+
+        config_args.append("--enable-shared")
 
         if "+blas" in spec:
             config_args.append("--with-blas={0}".format(spec["blas"].prefix.lib))

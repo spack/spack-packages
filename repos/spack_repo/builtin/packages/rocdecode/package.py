@@ -20,6 +20,8 @@ class Rocdecode(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("6.4.2", sha256="43c3bc2fe71c150bd6e646c95f834002df80d0bc6489082731c0be68fb785eac")
+    version("6.4.1", sha256="35e364cec1405c76cfbb91215e1a327efea1e60340d8c8df12c0e5b2f0e1321e")
     version("6.4.0", sha256="d82c17687cc8ccac67fe2d401edd25c9825b38777b7a7b4100f84658838a1e50")
     version("6.3.3", sha256="e72f53674527b7a6c3cba3b7555fee32117f0875107fd9e632a2ec1d5ce03489")
     version("6.3.2", sha256="39ff3c21c81a73910dcfe6a147edaddecc21575a3077f0f99971c8d2f6d0e7d5")
@@ -56,8 +58,13 @@ class Rocdecode(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
+        "6.4.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
+
+    for ver in ["6.4.0", "6.4.1"]:
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     patch("0001-add-amdgpu-drm-include.patch", when="@6.4")
 

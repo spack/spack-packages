@@ -16,13 +16,14 @@ class Rocshmem(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
-
+    version("6.4.2", sha256="ec070adb6db0622c0c86739db5cb3dcfc40149980bcc49a24b0f5aeea64a0e09")
+    version("6.4.1", sha256="35424f49b1060567a63045480eef6c9715ebf9f755f39c2cec2fbf447cce72de")
     version("6.4.0", sha256="fbc8b6a7159901fdeda0d6cc8b97f20740c6cce59ba4a28c2050658cc1eecb81")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    for ver in ["6.4.0"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
