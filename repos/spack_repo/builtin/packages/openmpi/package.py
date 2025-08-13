@@ -9,12 +9,46 @@ import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.compilers.config
 from spack.package import *
 
 
-class Openmpi(AutotoolsPackage, CudaPackage):
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
+@memoized
+def is_CrayEX():
+    # Credit to upcxx and chapel packages for this hpe-cray-ex detection function
+    if host_platform().name == "linux":
+        target = os.environ.get("CRAYPE_NETWORK_TARGET")
+        if target in ["ofi", "ucx"]:  # normal case
+            return True
+        elif target is None:  # but some systems lack Cray PrgEnv
+            fi_info = which("fi_info")
+            if (
+                fi_info
+                and fi_info("-l", output=str, error=str, fail_on_error=False).find("cxi") >= 0
+            ):
+                return True
+    return False
+
+
+def check_FI_HMEM_ROCR():
+    if host_platform().name == "linux":
+        fi_info = which("fi_info")
+        if fi_info:
+            output = fi_info("--caps", "FI_HMEM_ROCR", output=str, error=str, fail_on_error=False)
+            # Check if there is any output indicating at least one provider
+            if output.strip():
+                return True
+    return False
+
+
+class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     """An open source Message Passing Interface implementation.
 
     The Open MPI Project is an open source Message Passing Interface
@@ -487,7 +521,7 @@ class Openmpi(AutotoolsPackage, CudaPackage):
         values=disjoint_sets(("auto",), FABRICS).with_non_feature_values(
             "auto", "none"
         ),  # shared memory transports
-        description="List of fabrics that are enabled; " "'auto' lets openmpi determine",
+        description="List of fabrics that are enabled; 'auto' lets openmpi determine",
     )
 
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge", "loadleveler")
@@ -601,6 +635,13 @@ with '-Wl,-commons,use_dylibs' and without
 '-Wl,-flat_namespace'.""",
     )
 
+    variant(
+        "cray-xpmem",
+        default=False,
+        when="fabrics=xpmem",
+        description="use cray-xpmem instead of xpmem configure flag",
+    )
+
     # Patch to allow two-level namespace on a MacOS platform when building
     # openmpi. Unfortuntately, the openmpi configure command has flat namespace
     # hardwired in. In spack, this only works for openmpi up to versions 4,
@@ -640,6 +681,10 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("hwloc@:1", when="@:3 ~internal-hwloc")
 
     depends_on("hwloc +cuda", when="+cuda ~internal-hwloc")
+    for tgt in ROCmPackage.amdgpu_targets:
+        depends_on(
+            f"hwloc +rocm amdgpu_target={tgt}", when=f"+rocm ~internal-hwloc amdgpu_target={tgt}"
+        )
     depends_on("java", when="+java")
     depends_on("sqlite", when="+sqlite3")
     depends_on("zlib-api", when="@3:")
@@ -663,12 +708,19 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("fca", when="fabrics=fca")
     depends_on("hcoll", when="fabrics=hcoll")
     depends_on("ucc", when="fabrics=ucc")
+    depends_on("ucc +rocm", when="fabrics=ucc +rocm")
     depends_on("xpmem", when="fabrics=xpmem")
     depends_on("knem", when="fabrics=knem")
 
     depends_on("lsf", when="schedulers=lsf")
     depends_on("pbs", when="schedulers=tm")
     depends_on("slurm", when="schedulers=slurm")
+
+    with when("+rocm"):
+        libfabric_requirement = ""
+        if is_CrayEX() or check_FI_HMEM_ROCR() or slingshot_network():
+            libfabric_requirement = "fabrics=cxi"
+        requires("fabrics=ucx ^ucx +rocm", f"^libfabric {libfabric_requirement}", policy="one_of")
 
     # PMIx is unavailable for @1, and required for @2:
     # OpenMPI @2: includes a vendored version:
@@ -681,12 +733,17 @@ with '-Wl,-commons,use_dylibs' and without
         # See https://www.mail-archive.com/announce@lists.open-mpi.org//msg00158.html
         depends_on("pmix@:4.2.2", when="@:4.1.5")
 
+        # When an external PMIx is used, also an external PRRTE should be used
+        # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
+        depends_on("prrte")
+
     # Libevent is required when *vendored* PMIx is used
     depends_on("libevent@2:", when="~internal-libevent")
 
     depends_on("openssh", type="run", when="+rsh")
 
     depends_on("cuda", type=("build", "link", "run"), when="@5: +cuda")
+    depends_on("hip", type=("build", "link", "run"), when="@5: +rocm")
 
     conflicts("+cxx_exceptions", when="%nvhpc", msg="nvc does not ignore -fexceptions, but errors")
 
@@ -694,6 +751,8 @@ with '-Wl,-commons,use_dylibs' and without
     # parent package we must express as a conflict rather than a conditional
     # variant.
     conflicts("+cuda", when="@:1.6")
+    # Same goes with ROCm support added in 5.0
+    conflicts("+rocm", when="@:4")
     # PSM2 support was added in 1.10.0
     conflicts("fabrics=psm2", when="@:1.8")
     # MXM support was added in 1.5.4
@@ -716,7 +775,7 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=loadleveler",
         when="@3:",
-        msg="The loadleveler scheduler is not supported with " "openmpi(>=3).",
+        msg="The loadleveler scheduler is not supported with openmpi(>=3).",
     )
 
     # According to this comment on github:
@@ -727,6 +786,13 @@ with '-Wl,-commons,use_dylibs' and without
     # for versions older than 3.0.3,3.1.3,4.0.0
     # Presumably future versions after 11/2018 should support slurm+static
     conflicts("+static", when="schedulers=slurm @:3.0.2,3.1:3.1.2,4.0.0")
+
+    # Building against an external PMIx with an internal Libevent or HWLOC is unsupported
+    conflicts("~internal-pmix", "+internal-hwloc")
+    conflicts("~internal-pmix", "+internal-libevent")
+
+    # May be able to get working for LLVM 18/19 using FC=flang-new
+    conflicts("%fortran=clang %llvm@:19")
 
     filter_compiler_wrappers("openmpi/*-wrapper-data*", relative_root="share")
 
@@ -799,6 +865,15 @@ with '-Wl,-commons,use_dylibs' and without
                 variants.append("+cuda")
             else:
                 variants.append("~cuda")
+
+            # rocm
+            match = re.search(
+                r'parameter "mpi_built_with_rocm_support" ' + r'\(current value: "(\S+)"', output
+            )
+            if match and is_enabled(match.group(1)):
+                variants.append("+rocm")
+            else:
+                variants.append("~rocm")
 
             # wrapper-rpath
             if version in ver("1.7.4:"):
@@ -1014,9 +1089,12 @@ with '-Wl,-commons,use_dylibs' and without
         return f"--with-ucc={self.spec['ucc'].prefix}"
 
     def with_or_without_xpmem(self, activated):
+        s1 = "xpmem"
+        if self.spec.satisfies("+cray-xpmem"):
+            s1 = "cray-xpmem"
         if not activated:
-            return "--without-xpmem"
-        return f"--with-xpmem={self.spec['xpmem'].prefix}"
+            return f"--without-{s1}"
+        return f"--with-{s1}={self.spec['xpmem'].prefix}"
 
     def with_or_without_knem(self, activated):
         if not activated:
@@ -1093,10 +1171,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(self.with_or_without("fabrics"))
 
         if spec.satisfies("@2.0.0:"):
-            if "fabrics=xpmem" in spec:
-                config_args.append("--with-cray-xpmem")
-            else:
-                config_args.append("--without-cray-xpmem")
+            config_args.append(self.with_or_without_xpmem("fabrics=xpmem" in spec))
 
         # Schedulers
         if "schedulers=auto" not in spec:
@@ -1120,11 +1195,15 @@ with '-Wl,-commons,use_dylibs' and without
         elif "^libevent" in spec:
             config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
 
-        # PMIx support
+        # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):
             config_args.append("--with-pmix=internal")
-        elif "^pmix" in spec:
-            config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            config_args.append("--with-prrte=internal")
+        else:
+            if "^pmix" in spec:
+                config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            if "^prrte" in spec:
+                config_args.append("--with-prrte={0}".format(spec["prrte"].prefix))
 
         if "^zlib-api" in spec:
             config_args.append("--with-zlib={0}".format(spec["zlib-api"].prefix))
@@ -1191,6 +1270,13 @@ with '-Wl,-commons,use_dylibs' and without
                 config_args.append("--enable-mca-no-build=pml-bfo")
         elif spec.satisfies("@1.7:"):
             config_args.append("--without-cuda")
+
+        # ROCm support
+        # See https://docs.open-mpi.org/en/v5.0.x/tuning-apps/networking/rocm.html
+        if "+rocm" in spec:
+            config_args.append("--with-rocm={0}".format(spec["hip"].prefix))
+        elif spec.satisfies("@5:"):
+            config_args.append("--without-rocm")
 
         if spec.satisfies("%nvhpc@:20.11"):
             # Workaround compiler issues
@@ -1385,7 +1471,7 @@ with '-Wl,-commons,use_dylibs' and without
 
 
 def get_spack_compiler_spec(compiler):
-    spack_compilers = spack.compilers.config.find_compilers([os.path.dirname(compiler)])
+    spack_compilers = find_compilers([os.path.dirname(compiler)])
     actual_compiler = None
     # check if the compiler actually matches the one we want
     for spack_compiler in spack_compilers:

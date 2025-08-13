@@ -27,6 +27,7 @@ class Julia(MakefilePackage):
     maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
+    version("1.11.6", sha256="f02acdc8b9aadad568db405dfc4c82ea172f332d0c7a4a0db78ce36cd3cca9f3")
     version("1.11.5", sha256="bb6b42ff01bca3ff7118ddd360f96b4a6654ed7e658b82d50fb06504e7939755")
     version("1.11.4", sha256="28b06591df0ee40928712a88af8785eb05dc7ed08a7c9600dd7c376f90f9e53b")
     version("1.11.3", sha256="80f371ece1576fb7a38c8c930f7cad592fe314083b8a1fc9cd8bd8b165c9cb76")
@@ -448,8 +449,8 @@ class Julia(MakefilePackage):
             "USE_INTEL_JITEVENTS:=0",  # @1.9:
         ]
 
-        options.append("USEGCC:={}".format("1" if "%gcc" in spec else "0"))
-        options.append("USECLANG:={}".format("1" if "%clang" in spec else "0"))
+        options.append("USEGCC:={}".format("1" if "%c=gcc" in spec else "0"))
+        options.append("USECLANG:={}".format("1" if "%c=llvm" in spec else "0"))
 
         options.extend(
             [

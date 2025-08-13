@@ -19,6 +19,7 @@ class Meshlab(CMakePackage):
     license("GPL-3.0", checked_by="wdconinc")
 
     version("main", branch="main", submodules=True)
+    version("2025.07", commit="dc48b91ae562756a6988048c5d5c7f1d2b687256", submodules=True)
     version("2023.12", commit="2dbd2f4b12df3b47d8777b2b4a43cabd9e425735", submodules=True)
 
     variant("double_scalar", default=False, description="Type to use for scalars")
@@ -26,7 +27,7 @@ class Meshlab(CMakePackage):
     depends_on("eigen")
     depends_on("glew")
     depends_on("mpfr")
-    depends_on("qt@5.15: +opengl")
+    depends_on("qt@5.15: +opengl +ssl")
 
     def cmake_args(self):
         args = [
@@ -43,6 +44,7 @@ class Meshlab(CMakePackage):
             "LIBIGL",
             "LEVMAR",
             "LIB3DS",
+            "LIB3MF",
             "EMBREE",
             "NEXUS",
             "QHULL",

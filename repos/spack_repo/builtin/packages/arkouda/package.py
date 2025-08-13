@@ -6,7 +6,6 @@
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Arkouda(MakefilePackage):
@@ -24,7 +23,7 @@ class Arkouda(MakefilePackage):
 
     # A list of GitHub accounts to notify when the package is updated.
     # TODO: add arkouda devs github account
-    maintainers("arezaii")
+    maintainers("ajpotts", "arezaii")
 
     version("master", branch="master")
 

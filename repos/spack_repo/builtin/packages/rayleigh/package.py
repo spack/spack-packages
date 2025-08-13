@@ -68,9 +68,5 @@ class Rayleigh(MakefilePackage):
                 args.append("--INCLUDE=")
 
         args.append("--FFLAGS_DBG=-O0 -g")
-        args.append(
-            "--FFLAGS_OPT=-O3 {}".format(
-                spec.target.optimization_flags(spec.compiler.name, str(spec.compiler.version))
-            )
-        )
+        args.append(f"--FFLAGS_OPT=-O3 {microarchitecture_flags(self.spec, 'fortran')}")
         return args

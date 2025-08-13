@@ -2,27 +2,28 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 """Common utilities for managing intel oneapi packages."""
+
 import os
 import platform
 import shutil
 from os.path import basename, isdir
 
-from llnl.util.link_tree import LinkTree
-
-import spack.util.path
-from spack.build_environment import dso_suffix
 from spack.package import (
     EnvironmentModifications,
     Executable,
     HeaderList,
     InstallError,
     LibraryList,
+    LinkTree,
     conflicts,
+    depends_on,
     find_libraries,
+    get_user,
     join_path,
     license,
     mkdirp,
     redistribute,
+    shared_library_suffix,
     tty,
     variant,
 )
@@ -110,7 +111,7 @@ class IntelOneApiPackage(Package):
             # with other install depends on the userid. For root, we
             # delete the installercache before and after install. For
             # non root we redefine the HOME environment variable.
-            if spack.util.path.get_user() == "root":
+            if get_user() == "root":
                 shutil.rmtree("/var/intel/installercache", ignore_errors=True)
 
             bash = Executable("bash")
@@ -133,7 +134,7 @@ class IntelOneApiPackage(Package):
                 self.prefix,
             )
 
-            if spack.util.path.get_user() == "root":
+            if get_user() == "root":
                 shutil.rmtree("/var/intel/installercache", ignore_errors=True)
 
         # Some installers have a bug and do not return an error code when failing
@@ -190,8 +191,14 @@ class IntelOneApiLibraryPackage(IntelOneApiPackage):
     Contains some convenient default implementations for libraries.
     Implement the method directly in the package if something
     different is needed.
-
     """
+
+    # HFP: for the time being, this package queries
+    # - compiler for its library path
+    # - spec about C-compiler
+    # Depending on a lanaguage seem to enable above.
+    #
+    depends_on("c", type="build")
 
     def openmp_libs(self):
         """Supply LibraryList for linking OpenMP"""
@@ -221,7 +228,7 @@ class IntelOneApiLibraryPackage(IntelOneApiPackage):
         # query the compiler for the library path
         with self.compiler.compiler_environment():
             omp_lib_path = Executable(self.compiler.cc)(
-                "--print-file-name", f"{libname}.{dso_suffix}", output=str
+                "--print-file-name", f"{libname}.{shared_library_suffix(self.spec)}", output=str
             ).strip()
 
         # Newer versions of clang do not give the full path to libomp. If that's
@@ -229,7 +236,9 @@ class IntelOneApiLibraryPackage(IntelOneApiPackage):
         # typically found. If it's not found there, error out.
         if not os.path.exists(omp_lib_path) and self.spec.satisfies("%clang"):
             compiler_root = os.path.dirname(os.path.dirname(os.path.realpath(self.compiler.cc)))
-            omp_lib_path_compiler = os.path.join(compiler_root, "lib", f"{libname}.{dso_suffix}")
+            omp_lib_path_compiler = os.path.join(
+                compiler_root, "lib", f"{libname}.{shared_library_suffix(self.spec)}"
+            )
             if os.path.exists(omp_lib_path_compiler):
                 omp_lib_path = omp_lib_path_compiler
 
@@ -285,7 +294,7 @@ class IntelOneApiLibraryPackageWithSdk(IntelOneApiLibraryPackage):
         return find_libraries("*", self.component_prefix.sdk.lib64)
 
 
-class IntelOneApiStaticLibraryList:
+class IntelOneApiStaticLibraryList(LibraryList):
     """Provides ld_flags when static linking is needed
 
     Oneapi puts static and dynamic libraries in the same directory, so

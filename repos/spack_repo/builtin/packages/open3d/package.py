@@ -61,8 +61,8 @@ class Open3d(CMakePackage, CudaPackage):
     depends_on("cuda@10.1:", when="+cuda")
 
     # C++14 compiler required
-    conflicts("%gcc@:4")
-    conflicts("%clang@:6")
+    conflicts("%cxx=gcc@:4")
+    conflicts("%cxx=clang@:6")
 
     # LLVM must be built with the C++ library
     conflicts("^llvm libcxx=none")
@@ -128,5 +128,4 @@ class Open3d(CMakePackage, CudaPackage):
             return
 
         with working_dir("spack-test"):
-            python = which(python.path)
             python("-c", "import open3d")

@@ -46,6 +46,27 @@ class Glvis(MakefilePackage):
     version("develop", branch="master")
 
     version(
+        "4.4",
+        sha256="d726e6f8d72b80a42aa1a75a55f9c8b07173231d865fc13d24290245aaaf9af7",
+        url="https://bit.ly/glvis-4-4",
+        extension=".tar.gz",
+    )
+
+    version(
+        "4.3.2",
+        sha256="d24f0b444a3dcdb99eada90852308b657e5a0bb8c6225545ca5628445aa47ad1",
+        url="https://bit.ly/glvis-4-3-2",
+        extension=".tar.gz",
+    )
+
+    version(
+        "4.3.0",
+        sha256="6e2f8bf5182990b49099cc3e9f238e9b69ff382fc94b11b7e5cc50680a3a061e",
+        url="https://bit.ly/glvis-4-3",
+        extension=".tar.gz",
+    )
+
+    version(
         "4.2",
         sha256="314fb04040cd0a8128d6dac62ba67d7067c2c097364e5747182ee8371049b42a",
         url="https://bit.ly/glvis-4-2",
@@ -106,6 +127,7 @@ class Glvis(MakefilePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("mfem@develop", when="@develop")
+    depends_on("mfem@4.7.0:", when="@4.3:4.4")
     depends_on("mfem@4.4.0:", when="@4.2")
     depends_on("mfem@4.3.0:", when="@4.1")
     depends_on("mfem@4.0.0:", when="@4.0")

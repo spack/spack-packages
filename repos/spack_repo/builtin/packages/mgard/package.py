@@ -143,24 +143,28 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
         args = ["-DBUILD_TESTING=OFF"]
         args.append(self.define_from_variant("MGARD_ENABLE_CUDA", "cuda"))
         args.append(self.define_from_variant("MGARD_ENABLE_HIP", "rocm"))
+
         if "+cuda" in spec:
             cuda_arch_list = spec.variants["cuda_arch"].value
             arch_str = ";".join(cuda_arch_list)
             if cuda_arch_list[0] != "none":
                 args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
+
+            if self.spec.satisfies("@:compat-2021-11-12"):
+                if "75" in cuda_arch_list:
+                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_TURING=ON")
+                if "70" in cuda_arch_list:
+                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_VOLTA=ON")
+
         if "+rocm" in spec:
             args.append(CMakeBuilder.define_hip_architectures(self))
-        if self.spec.satisfies("@:compat-2021-11-12"):
-            if "+cuda" in self.spec:
-                if "75" in cuda_arch:
-                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_TURING=ON")
-                if "70" in cuda_arch:
-                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_VOLTA=ON")
-        elif self.spec.satisfies("@compat-2022-11-18:"):
+
+        if self.spec.satisfies("@compat-2022-11-18:"):
             args.append("-DMAXIMUM_DIMENSION=4")  # how do we do variants with arbitrary values
             args.append("-DMGARD_ENABLE_CLI=OFF")  # the CLI is busted
             args.append(self.define_from_variant("MGARD_ENABLE_OPENMP", "openmp"))
             args.append(self.define_from_variant("MGARD_ENABLE_TIMING", "timing"))
             args.append(self.define_from_variant("MGARD_ENABLE_SERIAL", "serial"))
             args.append(self.define_from_variant("MGARD_ENABLE_UNSTRUCTURED", "unstructured"))
+
         return args

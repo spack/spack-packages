@@ -61,7 +61,6 @@ class HpcBeeflow(PythonPackage):
 
     # Setup for when "no containers" is specified
     def setup_run_environment(self, env):
-
         neo4j_bin = join_path(self.spec["neo4j"].prefix, "packaging/standalone/target")
         redis_bin = join_path(self.spec["redis"].prefix, "bin")
 

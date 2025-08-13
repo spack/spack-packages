@@ -8,9 +8,6 @@ from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.oneapi import IntelOneApiPackage
 
-from llnl.util.lang import classproperty
-from llnl.util.link_tree import LinkTree
-
 from spack.package import *
 
 
@@ -93,11 +90,20 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
            $ source {prefix}/{component}/{version}/env/vars.sh
         and from setting CC/CXX/F77/FC
         """
-        oneapi_pkg = self.spec["intel-oneapi-compilers"].package
-
-        oneapi_pkg.setup_run_environment(env)
-
-        bin_prefix = oneapi_pkg.component_prefix.linux.bin.intel64
+        if not self.spec.external:
+            oneapi_pkg = self.spec["intel-oneapi-compilers"].package
+            oneapi_pkg.setup_run_environment(env)
+            bin_prefix = oneapi_pkg.component_prefix.linux.bin.intel64
+        else:
+            bin_prefix = self.prefix.bin
+            # External intel-oneapi-compilers-classic has no intel-oneapi-compilers
+            # dependency, so currently we skip whatever environment modifications it
+            # would do and don't try to replicate them
+            # TODO: this means there is no attempt to locate or run a vars.sh script
+            # for external instances of intel-oneapi-compilers-classic. If that is
+            # necessary, this function should include additional search logic when it
+            # is external (or check extra_attributes if a user wants to supply it
+            # manually)
         env.set("CC", bin_prefix.icc)
         env.set("CXX", bin_prefix.icpc)
         env.set("F77", bin_prefix.ifort)
@@ -153,3 +159,15 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
 
     def archspec_name(self):
         return "intel"
+
+    def _standard_flag(self, *, language, standard):
+        flags = {
+            "cxx": {
+                "11": "-std=c++11",
+                "14": "-std=c++14",
+                "17": "-std=c++17",
+                "18": "-std=c++18",
+            },
+            "c": {"99": "-std=c99", "11": "-std=c11", "17": "-std=c17", "18": "-std=c18"},
+        }
+        return flags[language][standard]

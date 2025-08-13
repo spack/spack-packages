@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
@@ -83,6 +84,7 @@ class R(AutotoolsPackage):
     depends_on("fortran", type="build")
 
     depends_on("blas")
+    requires("^openblas symbol_suffix=none", when="^openblas")
     depends_on("lapack")
 
     depends_on("bzip2")

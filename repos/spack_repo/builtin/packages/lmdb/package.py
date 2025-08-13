@@ -49,8 +49,7 @@ class Lmdb(MakefilePackage):
             f.write("\n")
             f.write("Name: LMDB\n")
             f.write(
-                "Description: Symas LMDB is an extraordinarily fast, "
-                "memory-efficient database.\n"
+                "Description: Symas LMDB is an extraordinarily fast, memory-efficient database.\n"
             )
             f.write("Version: {0}\n".format(self.spec.version))
             f.write("Cflags: -I${includedir}\n")

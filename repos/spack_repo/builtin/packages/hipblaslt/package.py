@@ -13,13 +13,14 @@ class Hipblaslt(CMakePackage):
     and extends functionalities beyond a traditional BLAS library"""
 
     homepage = "https://github.com/ROCm/hipBLASLt"
-    url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-6.4.2.tar.gz"
     git = "https://github.com/ROCm/hipBLASLt.git"
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
     tags = ["rocm"]
 
     license("MIT")
+    version("6.4.2", sha256="5e5f4a84aa4e5ef6018d0d91e97fc20394c7c17822cc8fb8307fff07b1d91823")
     version("6.4.1", sha256="929f781f86df40143c3ab98df2d746170dedb6788e368335e24c84796285a8a4")
     version("6.4.0", sha256="a4baa0c7336db9d46a0884c8ccfd0fb7e00a502b478aed9f588aa26fa8773353")
     version("6.3.3", sha256="f32d666b37bdbecbf924cc98653fa3d30a0de629039d4dad44d35a2082e39e5a")
@@ -49,7 +50,7 @@ class Hipblaslt(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.25.2:", type="build", when="@6.2.0:")
     depends_on("python@3.7:")
-    depends_on("python@3.8:", when="@6.4:")
+    depends_on("python@3.8:3.13.2", when="@6.4:")
 
     for ver in [
         "6.0.0",
@@ -66,6 +67,7 @@ class Hipblaslt(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -74,11 +76,11 @@ class Hipblaslt(CMakePackage):
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("msgpack-c")
@@ -124,14 +126,14 @@ class Hipblaslt(CMakePackage):
             )
             filter_file(
                 "${rocm_path}/bin/amdclang++",
-                f'{self.spec["llvm-amdgpu"].prefix}/bin/amdclang++',
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++",
                 "library/src/amd_detail/rocblaslt/src/kernels/compile_code_object.sh",
                 string=True,
             )
         if self.spec.satisfies("@6.3:"):
             filter_file(
                 "${rocm_path}/bin/amdclang++",
-                f'{self.spec["llvm-amdgpu"].prefix}/bin/amdclang++',
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++",
                 "tensilelite/Tensile/Ops/gen_assembly.sh",
                 string=True,
             )

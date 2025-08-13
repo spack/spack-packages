@@ -26,14 +26,8 @@ class Sccache(CargoPackage):
 
     license("Apache-2.0", checked_by="pranav-sivaraman")
 
+    version("0.10.0", sha256="2c9f82c43ce6a1b1d9b34f029ce6862bedc2f01deff45cde5dffc079deeba801")
     version("0.8.2", sha256="2b3e0ef8902fe7bcdcfccf393e29f4ccaafc0194cbb93681eaac238cdc9b94f8")
-
-    depends_on("rust@1.75:", when="@0.8.2:")
-    depends_on("rust@1.70:", when="@0.7.7:")
-    depends_on("rust@1.67.1:")  # for 0.6/0.7.1 and newer, but may work for even older versions.
-    depends_on("pkgconfig", type="build", when="platform=linux")
-
-    depends_on("openssl", when="platform=linux")
 
     variant(
         "dist-server",
@@ -41,6 +35,12 @@ class Sccache(CargoPackage):
         description="Enables the sccache-dist binary",
         when="platform=linux",
     )
+
+    depends_on("c", type="build")
+    depends_on("rust@1.75:", type="build", when="@0.8.2:")
+    depends_on("pkgconfig", type="build", when="platform=linux")
+
+    depends_on("openssl", when="platform=linux")
 
     @classmethod
     def determine_version(cls, exe):
@@ -57,7 +57,6 @@ class Sccache(CargoPackage):
 
 
 class CargoBuilder(cargo.CargoBuilder):
-
     @property
     def build_args(self):
         if self.spec.satisfies("+dist-server"):

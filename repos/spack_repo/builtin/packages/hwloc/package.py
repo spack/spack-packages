@@ -191,11 +191,11 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.append("--disable-rsmi")
 
         if self.spec.satisfies("+rocm"):
-            args.append(f'--with-rocm={self.spec["hip"].prefix}')
-            args.append(f'--with-rocm-version={self.spec["hip"].version}')
+            args.append(f"--with-rocm={self.spec['hip'].prefix}")
+            args.append(f"--with-rocm-version={self.spec['hip'].version}")
 
         if self.spec.satisfies("+cuda"):
-            args.append(f'--with-cuda={self.spec["cuda"].prefix}')
-            args.append(f'--with-cuda-version={self.spec["cuda"].version}')
+            args.append(f"--with-cuda={self.spec['cuda'].prefix}")
+            args.append(f"--with-cuda-version={self.spec['cuda'].version}")
 
         return args
