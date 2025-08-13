@@ -39,7 +39,7 @@ class Pciutils(MakefilePackage):
             lib_dir = self.prefix.lib
             so_candidates = sorted(glob.glob(os.path.join(lib_dir, "libpci.so.*")), reverse=True)
             # Exclude the symlink itself if it exists
-            so_candidates = [f for f in so_candidates if not f.endswith("libpci.so")]
+            so_candidates = [f for f in so_candidates if os.path.basename(f) != "libpci.so"]
             if so_candidates:
                 symlink_path = os.path.join(lib_dir, "libpci.so")
                 # Remove existing symlink or file if present
