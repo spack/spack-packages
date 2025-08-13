@@ -41,7 +41,11 @@ class Pciutils(MakefilePackage):
             # Exclude the symlink itself if it exists
             so_candidates = [f for f in so_candidates if not f.endswith("libpci.so")]
             if so_candidates:
-                os.symlink(os.path.basename(so_candidates[0]), os.path.join(lib_dir, "libpci.so"))
+                symlink_path = os.path.join(lib_dir, "libpci.so")
+                # Remove existing symlink or file if present
+                if os.path.islink(symlink_path) or os.path.exists(symlink_path):
+                    os.remove(symlink_path)
+                os.symlink(os.path.basename(so_candidates[0]), symlink_path)
         else:
             make("install", "PREFIX={0}".format(prefix))
 
