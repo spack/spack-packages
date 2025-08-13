@@ -16,12 +16,13 @@ class PyDmTree(PythonPackage):
     leaf preserving the overall structure."""
 
     homepage = "https://github.com/deepmind/tree"
-    pypi = "dm-tree/dm-tree-0.1.5.tar.gz"
+    pypi = "dm-tree/dm_tree-0.1.5.tar.gz"
 
     maintainers("aweits")
 
     license("Apache-2.0")
 
+    version("0.1.9", sha256="a4c7db3d3935a5a2d5e4b383fc26c6b0cd6f78c6d4605d3e7b518800ecd5342b")
     version("0.1.8", sha256="0fcaabbb14e7980377439e7140bd05552739ca5e515ecb3119f234acee4b9430")
     version("0.1.7", sha256="30fec8aca5b92823c0e796a2f33b875b4dccd470b57e91e6c542405c5f77fd2a")
     version(
@@ -42,10 +43,21 @@ class PyDmTree(PythonPackage):
     depends_on("python@:3.10", when="@0.1.6:0.1.7", type=("build", "run"))
     depends_on("python@:3.8", when="@0.1.5", type=("build", "run"))
 
+    depends_on("python@3.10:", type=("build", "run"), when="@0.1.9:")
     depends_on("py-setuptools", type="build")
+    depends_on("cmake@3.24:", when="@0.1.9:", type="build", when="@0.1.9:")
     depends_on("cmake@3.12:", when="@0.1.7:", type="build")
     depends_on("py-pybind11@2.10.1:", when="@0.1.8:")
-    depends_on("abseil-cpp", when="@0.1.8:")
+    depends_on("abseil-cpp cxxstd=14", when="@0.1.8:")
+    depends_on("py-absl-py@0.6.1:", type=("build", "run"), when="@0.1.9:")
+    depends_on("py-attrs@18.2.0:", type=("build", "run"), when="@0.1.9:")
+    with default_args(type=("build", "run"), when="@0.1.9:"):
+        depends_on("py-numpy@1.21:")
+        depends_on("py-numpy@1.21.2:", when="^python@3.10:")
+        depends_on("py-numpy@1.23.3:", when="^python@3.11:")
+        depends_on("py-numpy@1.26.0:", when="^python@3.12:")
+        depends_on("py-numpy@2.1.0:", when="^python@3.13:")
+    depends_on("py-wrapt@1.11.2:", type=("build", "run"), when="@0.1.9:")
 
     patch(
         "https://github.com/google-deepmind/tree/commit/63f25d4e05440ccbd4ba662be5f3f6eb460d29d8.patch?full_index=1",
@@ -64,6 +76,12 @@ class PyDmTree(PythonPackage):
     @run_after("install")
     def clean(self):
         remove_linked_tree(PyDmTree.tmp_path)
+
+    def url_for_version(self, version):
+        if version <= Version("0.1.8"):
+            return super().url_for_version(version).replace("_", "-")
+        else:
+            return super().url_for_version(version)
 
     def patch(self):
         PyDmTree.tmp_path = tempfile.mkdtemp(prefix="spack")
