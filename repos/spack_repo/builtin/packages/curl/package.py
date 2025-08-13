@@ -13,7 +13,7 @@ from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
 from spack.package import *
 
-is_windows = sys.platform == "win32"
+IS_WINDOWS = sys.platform == "win32"
 
 
 class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
@@ -123,9 +123,9 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     variant("libidn2", default=False, description="enable libidn2 support")
     variant(
         "libs",
-        default="shared,static" if not is_windows else "shared",
+        default="shared,static" if not IS_WINDOWS else "shared",
         values=("shared", "static"),
-        multi=not is_windows,
+        multi=not IS_WINDOWS,
         description="Build shared libs, static libs or both",
     )
 
@@ -181,12 +181,11 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     # https://github.com/curl/curl/pull/9054
     patch("easy-lock-sched-header.patch", when="@7.84.0")
 
-    platform_default = "cmake" if sys.platform == "win32" else "autotools"
     build_system(
         "autotools",
         "cmake",
         conditional("nmake", when="@:8.11 platform=windows"),
-        default=platform_default,
+        default="cmake" if IS_WINDOWS else "autotools",
     )
 
     @classmethod
