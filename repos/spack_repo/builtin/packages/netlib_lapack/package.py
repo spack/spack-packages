@@ -211,7 +211,9 @@ class NetlibLapack(CMakePackage):
         # so we want to be searching for import not runtime libs
         # no op elsewhere
         runtime = False
-        return find_libraries(libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True)
+        return find_libraries(
+            libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True
+        )
 
     @property
     def lapack_libs(self):
@@ -228,10 +230,12 @@ class NetlibLapack(CMakePackage):
         }
         key = tuple(sorted(query_parameters))
         libraries = query2libraries[key]
-        # see comment in blas_libs for explanation of 
+        # see comment in blas_libs for explanation of
         # runtime
-        runtime=False
-        return find_libraries(libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True)
+        runtime = False
+        return find_libraries(
+            libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True
+        )
 
     @property
     def headers(self):
