@@ -213,8 +213,10 @@ class Xyce(CMakePackage):
 
         if "+mpi" in spec:
             options.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))
+            options.append(self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc))
         else:
             options.append(self.define("CMAKE_CXX_COMPILER", spack_cxx))
+            options.append(self.define("CMAKE_C_COMPILER", spack_cc))
 
         options.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
         options.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
