@@ -618,7 +618,7 @@ categorize_arguments() {
                 # library. Filter it out.
                 # TODO: generalize filtering of args with an env var, so that
                 # TODO: we do not have to special case this here.
-                if { [ "$mode" = "ccld" ] || [ $mode = "ld" ]; } \
+                if { [ "$mode" = "ccld" ] || [ "$mode" = "ld" ]; } \
                     && [ "$1" != "${1#-loopopt}" ]; then
                     shift
                     continue
