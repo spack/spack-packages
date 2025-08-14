@@ -116,8 +116,7 @@ class PyDask(PythonPackage):
     # The dependency on py-fsspec is non-optional starting version 2021.3.1
     depends_on("py-fsspec@0.6.0:", type=("build", "run"), when="@:2021.3.0 +dataframe")
     # Starting with version 2024.3.0, dataframe requires a separate package py-dask-expr
-    depends_on("py-dask-expr", type=("build", "run"), when="@2024.3:2024.12.1 +dataframe")
-    depends_on("py-dask-expr@1.1.9", type=("build", "run"), when="@2024.7.1:2024.12.1 +dataframe")
+    depends_on("py-dask-expr@1.1", type=("build", "run"), when="@2024.7.1 +dataframe")
     # starting with 2025.7 needs py-arrow
     depends_on("py-pyarrow@14.0.1:", type=("build", "run"), when="@2025.7.0: +dataframe")
 
