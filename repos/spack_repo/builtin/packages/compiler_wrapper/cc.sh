@@ -64,7 +64,7 @@ SPACK_MANAGED_DIRS"
 # die MESSAGE
 # Print a message and exit with error code 1.
 die() {
-    echo "[spack cc] ERROR: $*"
+    echo "[spack cc]: Error: $*"
     exit 1
 }
 
