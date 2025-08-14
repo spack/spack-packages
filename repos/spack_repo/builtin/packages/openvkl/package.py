@@ -36,7 +36,7 @@ class Openvkl(CMakePackage):
     depends_on("embree@3.13.1:", when="@1.0.0:")
     depends_on("ispc@1.15.0:", type=("build"))
     depends_on("ispc@1.16.0:", when="@1.0.0:", type=("build"))
-    depends_on("ispc@1.18:", when="@1.3:", type=("build"))
+    depends_on("ispc@1.18:1.24", when="@1.3:", type=("build"))
     depends_on("rkcommon@1.6.1:")
     depends_on("rkcommon@1.7.0:", when="@1.0.0:")
     depends_on("rkcommon@1.8.0:", when="@1.1:")

@@ -34,7 +34,8 @@ class Ispc(CMakePackage):
     version("1.21.1", sha256="99bbb1d1f15bc4433d6a63b5bb35b321af3e3af753c3b28a61850d1748e8a89f")
     version("1.21.0", sha256="023782f721bfb5893bac24bc2153a8214c916be82c290bf63a3ec6678949b5ef")
     version("1.20.0", sha256="8bd30ded7f96859451ead1cecf6f58ac8e937288fe0e5b98c56f6eba4be370b4")
-    version("1.19.0", sha256="c1aeae4bdfb28004a6949394ea1b3daa3fdf12f646e17fcc0614861077dc8b6a")
+    # Does not compile, error related to missing stdint.h/cstdint include
+    #version("1.19.0", sha256="c1aeae4bdfb28004a6949394ea1b3daa3fdf12f646e17fcc0614861077dc8b6a")
     version("1.18.1", sha256="fee76d42fc0129f81489b7c2b9143e22a44c281940693c1c13cf1e3dd2ab207f")
     version("1.18.0", sha256="ecf1fc6ad5e39242e555b8e0ac539489939a9e475722eaa9da5caa4651cecf05")
     version("1.17.0", sha256="1d47365febd2e17c84c22501aa63b1eafbc1ef826d6f5deadafe14783b8388a5")
