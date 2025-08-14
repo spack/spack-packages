@@ -18,6 +18,7 @@ class MpasModel(MakefilePackage):
     url = "https://github.com/MPAS-Dev/MPAS-Model/archive/v7.0.tar.gz"
     maintainers("t-brown")
 
+    
     version("7.3", sha256="a6a9570911b47aa3607036c1ab5a9ae770f9f3a85cea2710f08bb3b35c08facf")
     version("7.2", sha256="3158c22e4a33ae00ce20b65f6ad189c0b7839587dee124d685b02f9df9cf27a7")
     version("7.1", sha256="9b5c181b7d0163ae33d24d7a79ede6990495134b58cf4500ba5c8c94192102bc")
