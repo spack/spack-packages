@@ -82,12 +82,18 @@ class AoclLibmem(CMakePackage):
     requires(
         "vectorization=none",
         when="+dynamic-dispatch",
-        msg="Error: +dynamic-dispatch requires vectorization=none. Please set vectorization to 'none' when enabling dynamic-dispatch.",
+        msg=(
+            "+dynamic-dispatch requires vectorization=none. Set vectorization to 'none' "
+            "when enabling dynamic-dispatch."
+        ),
     )
     requires(
         "vectorization=none",
         when="+tunables",
-        msg="Error: +tunables requires vectorization=none. Please set vectorization to 'none' when enabling tunables.",
+        msg=(
+            "+tunables requires vectorization=none. Set vectorization to 'none' when "
+            "enabling tunables."
+        ),
     )
 
     depends_on("c", type="build")  # generated
