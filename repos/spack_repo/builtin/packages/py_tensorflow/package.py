@@ -182,7 +182,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("python@3.9:3.11", when="@2.14:2.15")
         depends_on("python@3.8:3.11", when="@2.12:2.13")
         depends_on("python@:3.10", when="@2.8:2.11")
-        depends_on("python@:3.9", when="@2.5:2.7")
+        depends_on("python@:3.9", when="@:2.7")
 
         # Listed under REQUIRED_PACKAGES in tensorflow/tools/pip_package/setup.py
         depends_on("py-absl-py@1:", when="@2.9:")
