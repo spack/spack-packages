@@ -25,6 +25,18 @@ class Sqlite(AutotoolsPackage, NMakePackage):
 
     license("blessing")
 
+    version("3.50.4", sha256="a3db587a1b92ee5ddac2f66b3edb41b26f9c867275782d46c3a088977d6a5b18")
+    version("3.50.3", sha256="ec5496cdffbc2a4adb59317fd2bf0e582bf0e6acd8f4aae7e97bc723ddba7233")
+    version("3.50.2", sha256="84a616ffd31738e4590b65babb3a9e1ef9370f3638e36db220ee0e73f8ad2156")
+    version("3.50.1", sha256="00a65114d697cfaa8fe0630281d76fd1b77afcd95cd5e40ec6a02cbbadbfea71")
+    version("3.50.0", sha256="3bc776a5f243897415f3b80fb74db3236501d45194c75c7f69012e4ec0128327")
+    version("3.49.1", sha256="106642d8ccb36c5f7323b64e4152e9b719f7c0215acf5bfeac3d5e7f97b59254")
+    version("3.49.0", sha256="4d8bfa0b55e36951f6e5a9fb8c99f3b58990ab785c57b4f84f37d163a0672759")
+    version("3.48.0", sha256="ac992f7fca3989de7ed1fe99c16363f848794c8c32a158dafd4eb927a2e02fd5")
+    version("3.47.2", sha256="f1b2ee412c28d7472bc95ba996368d6f0cdcf00362affdadb27ed286c179540b")
+    version("3.47.1", sha256="416a6f45bf2cacd494b208fdee1beda509abda951d5f47bc4f2792126f01b452")
+    version("3.47.0", sha256="83eb21a6f6a649f506df8bd3aab85a08f7556ceed5dbd8dea743ea003fc3a957")
+    version("3.46.1", sha256="67d3fe6d268e6eaddcae3727fce58fcc8e9c53869bdd07a0c61e38ddf2965071")
     version("3.46.0", sha256="6f8e6a7b335273748816f9b3b62bbdc372a889de8782d7f048c653a447417a7d")
     version("3.45.3", sha256="b2809ca53124c19c60f42bf627736eae011afdcc205bb48270a5ee9a38191531")
     version("3.45.1", sha256="cd9c27841b7a5932c9897651e20b86c701dd740556989b01ca596fcfa3d49a0a")
@@ -192,7 +204,9 @@ class Sqlite(AutotoolsPackage, NMakePackage):
             raise ValueError(f"Unsupported sqlite version: {version}")
         # See https://www.sqlite.org/chronology.html for version -> year
         # correspondence.
-        if version >= Version("3.45.0"):
+        if version >= Version("3.48.0"):
+            year = "2025"
+        elif version >= Version("3.45.0"):
             year = "2024"
         elif version >= Version("3.41.0"):
             year = "2023"
