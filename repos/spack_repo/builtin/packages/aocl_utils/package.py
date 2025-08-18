@@ -50,7 +50,7 @@ class AoclUtils(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.22:", when="@:5.0", type="build")
-    depends_on("cmake@3.26:", when="@5.1:",type="build")
+    depends_on("cmake@3.26:", when="@5.1:", type="build")
     depends_on("doxygen", when="+doc")
 
     @property

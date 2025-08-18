@@ -59,7 +59,7 @@ class AoclDa(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("cmake@3.22:", when="@:5.0", type="build")
-    depends_on("cmake@3.26:", when="@5.1:",type="build")
+    depends_on("cmake@3.26:", when="@5.1:", type="build")
     depends_on("boost@1.66.0:", when="@5.1:", type="build")
     for vers in ["5.0", "5.1"]:
         with when(f"@={vers}"):
