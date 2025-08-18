@@ -25,7 +25,7 @@ class AmdAocl(BundlePackage):
 
     maintainers("amd-toolchain-support")
 
-    version("5.1", preferred=True)
+    version("5.1")
     version("5.0")
     version("4.2")
     version("4.1")

@@ -36,11 +36,7 @@ class Amdblis(BlisBase):
 
     license("BSD-3-Clause")
 
-    version(
-        "5.1",
-        sha256="4ab210cea8753f4be9646a3ad8e6b42c7d19380084a66312497c97278b8c76a4",
-        preferred=True,
-    )
+    version("5.1", sha256="4ab210cea8753f4be9646a3ad8e6b42c7d19380084a66312497c97278b8c76a4")
     version("5.0", sha256="5abb34972b88b2839709d0af8785662bc651c7806ccfa41d386d93c900169bc2")
     version("4.2", sha256="0e1baf850ba0e6f99e79f64bbb0a59fcb838ddb5028e24527f52b407c3c62963")
     version("4.1", sha256="a05c6c7d359232580d1d599696053ad0beeedf50f3b88d5d22ee7d34375ab577")

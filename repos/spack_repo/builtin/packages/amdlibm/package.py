@@ -33,11 +33,7 @@ class Amdlibm(SConsPackage, CMakePackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "5.1",
-        sha256="7acf2c98469353b60a59fad167a98e1ae689055a3faf8352a254832145c9d59e",
-        preferred=True,
-    )
+    version("5.1", sha256="7acf2c98469353b60a59fad167a98e1ae689055a3faf8352a254832145c9d59e")
     version("5.0", sha256="ba1d50c068938c9a927e37e5630f683b6149d7d5a95efffeb76e7c9a8bcb2b5e")
     version("4.2", sha256="58847b942e998b3f52eb41ae26403c7392d244fcafa707cbf23165aac24edd9e")
     version("4.1", sha256="5bbbbc6bc721d9a775822eab60fbc11eb245e77d9f105b4fcb26a54d01456122")

@@ -44,11 +44,7 @@ class AoclCompression(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
-    version(
-        "5.1",
-        sha256="9462c6898350d66a5d9ce0236c432c94b4c9393b638ddf6511628b784eb02720",
-        preferred=True,
-    )
+    version("5.1", sha256="9462c6898350d66a5d9ce0236c432c94b4c9393b638ddf6511628b784eb02720")
     version("5.0", sha256="50bfb2c4a4738b96ed6d45627062b17bb9d0e1787c7d83ead2841da520327fa4")
     version("4.2", sha256="a18b3e7f64a8105c1500dda7b4c343e974b5e26bfe3dd838a1c1acf82a969c6f")
 

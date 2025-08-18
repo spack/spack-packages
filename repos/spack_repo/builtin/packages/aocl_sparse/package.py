@@ -31,11 +31,7 @@ class AoclSparse(CMakePackage):
 
     license("MIT")
 
-    version(
-        "5.1",
-        sha256="a5fff94f9144cb5e5e0f4702cc0d48a20215ccccd06cbed915e566e5d901fa0a",
-        preferred=True,
-    )
+    version("5.1", sha256="a5fff94f9144cb5e5e0f4702cc0d48a20215ccccd06cbed915e566e5d901fa0a")
     version("5.0", sha256="7528970f41ae60563df9fe1f8cc74a435be1566c01868a603ab894e9956c3c94")
     version("4.2", sha256="03cd67adcfea4a574fece98b60b4aba0a6e5a9c8f608ff1ccc1fb324a7185538")
     version("4.1", sha256="35ef437210bc25fdd802b462eaca830bfd928f962569b91b592f2866033ef2bb")
