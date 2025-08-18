@@ -46,7 +46,7 @@ class Amdlibm(SConsPackage, CMakePackage):
     variant("verbose", default=False, description="Building with verbosity", when="@:4.1")
 
     # Build system
-    build_system(conditional("cmake", when="@5.1"), "scons", default="scons")
+    build_system(conditional("cmake", when="@5.1:"), "scons", default="scons")
     # Mandatory dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
