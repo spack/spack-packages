@@ -24,6 +24,8 @@ spack:
       - ~flash_attention
     miopen-hip:
       require: ~ck
+    eigen:
+      require: ~rocm
 
   specs:
     # Horovod
