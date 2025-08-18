@@ -24,19 +24,6 @@ class PyGpaw(PythonPackage):
     version("24.6.0", sha256="fb48ef0db48c0e321ce5967126a47900bba20c7efb420d6e7b5459983bd8f6f6")
     version("23.9.1", sha256="19a24840b876003528864b7a0b38fc0d456800b83b8666b1f724273660745b47")
     version("23.6.1", sha256="ff56d323a499972c8991770a6ab0334a6dd18df36e9c94360e0aa1ddf8867dfd")
-    with default_args(deprecated=True):
-        version(
-            "21.1.0", sha256="96843b68e04bd1c12606036c9f99b0ddfa5e6ee08ce46835e6bb347a6bd560a3"
-        )
-        version(
-            "20.10.0", sha256="77c3d3918f5cc118e448f8063af4807d163b31d502067f5cbe31fc756eb3971d"
-        )
-        version(
-            "20.1.0", sha256="c84307eb9943852d78d966c0c8856fcefdefa68621139906909908fb641b8421"
-        )
-        version(
-            "19.8.1", sha256="79dee367d695d68409c4d69edcbad5c8679137d6715da403f6c2500cb2178c2a"
-        )
 
     variant("mpi", default=True, description="Build with MPI support")
     variant("scalapack", default=True, description="Build with ScaLAPACK support")
@@ -82,34 +69,6 @@ class PyGpaw(PythonPackage):
         depends_on("py-numpy@1.17:1.26.4", type=("build", "run"))
         depends_on("py-scipy@1.6.0:", type=("build", "run"))
 
-    with when("@21.1.0"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.6:3.11", type=("build", "run"))
-        depends_on("py-ase@3.21.0:", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:", type=("build", "run"))
-
-    with when("@20.10.0"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.6:3.11", type=("build", "run"))
-        depends_on("py-ase@3.20.1:", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:1.6.3", type=("build", "run"))
-
-    with when("@20.1.0"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.6:3.11", type=("build", "run"))
-        depends_on("py-ase@3.19.0:3.20.1", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:1.6.3", type=("build", "run"))
-
-    with when("@19.8.1"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.5:3.11", type=("build", "run"))
-        depends_on("py-ase@3.18.0:3.19.0", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:1.6.3", type=("build", "run"))
-
     # Variant dependencies
     depends_on("mpi", when="+mpi", type=("build", "link", "run"))
     depends_on("fftw-api", when="+fftw")
@@ -130,12 +89,6 @@ class PyGpaw(PythonPackage):
         libs = blas.libs + lapack.libs + libxc.libs
 
         include_dirs = [blas.prefix.include, lapack.prefix.include, libxc.prefix.include]
-
-        if spec.satisfies("@:19.8.1"):
-            numpy_include = join_path(
-                self["py-numpy"].module.python_platlib, "numpy", "core", "include"
-            )
-            include_dirs += [numpy_include]
 
         runtime_library_dirs = []
 
@@ -177,12 +130,7 @@ class PyGpaw(PythonPackage):
         libs = list(libs.names)
         rpath_str = ":".join(self.rpath)
 
-        if spec.satisfies("@:19.8.1"):
-            cfgfile = "customize.py"
-        else:
-            cfgfile = "siteconfig.py"
-
-        with open(cfgfile, "w") as f:
+        with open("siteconfig.py", "w") as f:
             f.write(bools)
             f.write(f"libraries = {repr(libs)}\n")
             f.write(f"include_dirs = {repr(include_dirs)}\n")
