@@ -23,6 +23,19 @@ class WinWdk(Package):
     # The wdk has many libraries and executables. Record one for detection purposes
     libraries = ["mmos.lib"]
 
+
+    version(
+        "10.0.26100",
+        sha256="cc3c968aca86e8ef72e178e100dc5be1290449df724139ffa94eebb99f840149",
+        url="https://go.microsoft.com/fwlink/?linkid=2324617",
+        expand=False,
+    )
+    version(
+        "10.0.22621",
+        sha256="a891543c0eaf610757ee7852f515c5ce89d0202f22a15dfa31c4d49f2bafdf27",
+        url="https://download.microsoft.com/download/7/b/f/7bfc8dbe-00cb-47de-b856-70e696ef4f46/wdk/wdksetup.exe",
+        expand=False,
+    )
     version(
         "10.0.19041",
         sha256="5f4ea0c55af099f97cb569a927c3a290c211f17edcfc65009f5b9253b9827925",
@@ -73,6 +86,8 @@ class WinWdk(Package):
     # need one to one dep on SDK per https://github.com/MicrosoftDocs/windows-driver-docs/issues/1550
     # additionally, the WDK needs to be paired with a version of the Windows SDK
     # as per https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk#download-icon-step-2-install-windows-11-version-22h2-sdk
+    depends_on("win-sdk@10.0.26100", when="@10.0.26100")
+    depends_on("win-sdk@10.0.22621", when="@10.0.22621")
     depends_on("win-sdk@10.0.19041", when="@10.0.19041")
     depends_on("win-sdk@10.0.18362", when="@10.0.18362")
     depends_on("win-sdk@10.0.17763", when="@10.0.17763")
