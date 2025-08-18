@@ -71,7 +71,7 @@ class AoclSparse(CMakePackage):
     depends_on("boost", when="+benchmarks")
     depends_on("boost", when="@2.2")
     depends_on("cmake@3.22:", when="@:5.0", type="build")
-    depends_on("cmake@3.26:", when="@5.1",type="build")
+    depends_on("cmake@3.26:", when="@5.1:",type="build")
 
     @property
     def libs(self):
