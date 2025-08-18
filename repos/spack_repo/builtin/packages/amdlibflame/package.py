@@ -80,7 +80,8 @@ class Amdlibflame(CMakePackage, LibflameBase):
     # Required dependencies
     with when("build_system=cmake"):
         generator("make")
-        depends_on("cmake@3.26:", type="build")
+        depends_on("cmake@3.22:", when="@:5.0", type="build")
+        depends_on("cmake@3.26:", when="@5.1",type="build")
 
     conflicts("threads=pthreads", msg="pthread is not supported")
     conflicts("threads=openmp", when="@:3", msg="openmp is not supported by amdlibflame < 4.0")

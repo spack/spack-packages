@@ -54,7 +54,8 @@ class AoclCrypto(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("cmake@3.26:", type="build")
+    depends_on("cmake@3.22:", when="@:5.0", type="build")
+    depends_on("cmake@3.26:", when="@5.1",type="build")
     depends_on("openssl@3.1.5:")
     depends_on("intel-oneapi-ippcp@2021.12.0:", when="+ipp")
     depends_on("p7zip", type="build")
