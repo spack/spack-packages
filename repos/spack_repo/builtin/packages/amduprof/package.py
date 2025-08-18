@@ -26,7 +26,6 @@ class Amduprof(Package):
         "5.1.701",
         sha256="8fd83170170883a6617391609545dffd557d6ca4a8f8f00a7a8a2d6cdee08189",
         url="file://{0}/AMDuProf_Linux_x64_5.1.701.tar.bz2".format(os.getcwd()),
-        preferred=True,
     )
     version(
         "5.0.1479",
