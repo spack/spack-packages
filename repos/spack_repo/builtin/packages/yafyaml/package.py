@@ -69,6 +69,11 @@ class Yafyaml(CMakePackage):
 
     conflicts("%gcc@13.3:", when="@:1.3.0", msg="GCC 13.3+ only works with yafyaml 1.4.0 onwards")
 
+    # ifx (or rather fpp) 2025.2 has a bug that prevents yafyaml from compiling
+    # This bug is still in 2025.2.1
+    # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/m-p/1703735
+    conflicts("oneapi@2025.2:", msg="yaFyaml does not compile with ifx 2025.2 due to a bug in fpp")
+
     variant(
         "build_type",
         default="Release",
