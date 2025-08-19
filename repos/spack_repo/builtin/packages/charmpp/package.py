@@ -306,10 +306,7 @@ class Charmpp(Package):
                     "Note that PMIx is the preferred option."
                 )
 
-        if (
-            ("pmi=simplepmi" in self.spec)
-            or ("pmi=slurmpmi2" in self.spec)
-        ):
+        if ("pmi=simplepmi" in self.spec) or ("pmi=slurmpmi2" in self.spec):
             if self.spec.satisfies("^openmpi"):
                 raise InstallError(
                     "To use any process management interface other than PMIx, "

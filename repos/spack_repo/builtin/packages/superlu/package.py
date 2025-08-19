@@ -68,7 +68,6 @@ class Superlu(CMakePackage):
             superlu = which(test_exe)
             superlu()
 
-
     def cmake_args(self):
         args = [
             self.define("enable_internal_blaslib", False),

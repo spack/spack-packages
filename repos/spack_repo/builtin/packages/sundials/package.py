@@ -142,11 +142,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     variant("petsc", default=False, description="Enable PETSc interfaces")
     variant("magma", default=False, when="@5.7.0:", description="Enable MAGMA interface")
     variant("superlu-mt", default=False, description="Enable SuperLU_MT sparse, direct solver")
-    variant(
-        "superlu-dist",
-        default=False,
-        description="Enable SuperLU_DIST sparse, direct solver",
-    )
+    variant("superlu-dist", default=False, description="Enable SuperLU_DIST sparse, direct solver")
     variant("trilinos", default=False, description="Enable Trilinos interfaces")
 
     # Library type
@@ -480,9 +476,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
 
         # Building with SuperLU_MT
         if "+superlu-mt" in spec:
-            args.extend(
-                [define("BLAS_ENABLE", True), define("BLAS_LIBRARIES", spec["blas"].libs)]
-            )
+            args.extend([define("BLAS_ENABLE", True), define("BLAS_LIBRARIES", spec["blas"].libs)])
             args.extend(
                 [
                     define("SUPERLUMT_INCLUDE_DIR", spec["superlu-mt"].prefix.include),
