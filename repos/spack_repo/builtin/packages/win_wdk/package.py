@@ -27,7 +27,7 @@ class WinWdk(Package):
     version(
         "10.0.26100",
         sha256="cc3c968aca86e8ef72e178e100dc5be1290449df724139ffa94eebb99f840149",
-        url="https://go.microsoft.com/fwlink/?linkid=2324617",
+        url="https://download.microsoft.com/download/7e94e645-61e3-479b-811b-981b4c514d5d/KIT_BUNDLE_WDK_MEDIACREATION/wdksetup.exe",
         expand=False,
     )
     version(
@@ -39,7 +39,7 @@ class WinWdk(Package):
     version(
         "10.0.19041",
         sha256="5f4ea0c55af099f97cb569a927c3a290c211f17edcfc65009f5b9253b9827925",
-        url="https://go.microsoft.com/fwlink/?linkid=2128854",
+        url="https://download.microsoft.com/download/c/f/8/cf80b955-d578-4635-825c-2801911f9d79/wdk/wdksetup.exe",
         expand=False,
     )
     version(
