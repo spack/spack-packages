@@ -39,9 +39,6 @@ class RocmSmiLib(CMakePackage):
     version("6.0.0", sha256="0053b42402fd007e5ca9b3186c70f2c6f1b3026558f328722adadc2838c51309")
     version("5.7.1", sha256="4d79cb0482b2f801cc7824172743e3dd2b44b9f6784d1ca2e5067f2fbb4ef803")
     version("5.7.0", sha256="a399db3d9fc113ce2dd1ab5608a1cf9129ec4b6a2a79ab7922b1d9f43c454640")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="9e94f9a941202c3d7ce917fd1cd78c4e0f06f48d6c929f3aa916378ccef1e02c")
-        version("5.6.0", sha256="88be875948a29454b8aacced8bb8ad967502a7a074ecbc579ed673c1650a2f7e")
 
     variant("shared", default=True, description="Build shared or static library")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
@@ -53,8 +50,6 @@ class RocmSmiLib(CMakePackage):
     depends_on("python@3:", type=("build", "run"))
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",

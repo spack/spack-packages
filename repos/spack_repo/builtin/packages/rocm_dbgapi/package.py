@@ -42,9 +42,6 @@ class RocmDbgapi(CMakePackage):
     version("6.0.0", sha256="4e823eba255e46b93aff05fd5938ef2a51693ffd74debebffc1aabfce613805c")
     version("5.7.1", sha256="0ee9c2f083868849f2ea0cec7010e0270c27e7679ccbbadd12072cc0ef6c8a6f")
     version("5.7.0", sha256="285ddded8e7f1981d8861ffc1cd7770b78129e4955da08ad55a4779945699716")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="c7241bf94bdb97a4cf1befbf25b8c35720797710da6f6b5b9d6a4094c1bc9c8b")
-        version("5.6.0", sha256="9b66e47f4eccb3c8bbc324aade92aac6139539dda449427b7823d0c45341afc8")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -60,8 +57,6 @@ class RocmDbgapi(CMakePackage):
     depends_on("pciutils", type="build")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",

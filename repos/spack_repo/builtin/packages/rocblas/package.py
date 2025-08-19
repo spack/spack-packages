@@ -40,9 +40,6 @@ class Rocblas(CMakePackage):
     version("6.0.0", sha256="befa4a75f1de0ea37f2358d4c2de5406d7bce671ca9936e2294b64d3b3bafb60")
     version("5.7.1", sha256="2984a5ed0ea5a05d40996ee3fddecb24399cbe8ea3e4921fc254e54d8f52fe4f")
     version("5.7.0", sha256="024edd98de9687ee5394badc4dd4c543eef4eb3f71c96ff64100705d851e1744")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="73896ebd445162a69af97f9fd462684609b4e0cf617eab450cd4558b4a23941e")
-        version("5.6.0", sha256="6a70b27eede02c45f46095a6ce8421af9a774a565e39f5e1074783ecf00c1ea7")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -84,8 +81,6 @@ class Rocblas(CMakePackage):
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -130,8 +125,6 @@ class Rocblas(CMakePackage):
         depends_on("procps", type="build")
 
     for t_version, t_commit in [
-        ("@5.6.0", "7d0a9d040c3bbae893df7ecef6a19d9cd1c304aa"),
-        ("@5.6.1", "7d0a9d040c3bbae893df7ecef6a19d9cd1c304aa"),
         ("@5.7.0", "97e0cfc2c8cb87a1e38901d99c39090dc4181652"),
         ("@5.7.1", "97e0cfc2c8cb87a1e38901d99c39090dc4181652"),
         ("@6.0.0", "17df881bde80fc20f997dfb290f4bb4b0e05a7e9"),
