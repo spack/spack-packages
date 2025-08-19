@@ -116,16 +116,6 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
         if dependent_spec.satisfies("^[virtuals=fortran] intel-oneapi-compilers-classic"):
             env.append_flags("SPACK_ALWAYS_FFLAGS", "-diag-disable=10448")
 
-    @when("@:2021.10")
-    def install(self, spec, prefix):
-        # If we use symlinks, we create a run dependency on oneapi compilers
-        # preventing ifort use with a different version of icx
-        install_tree(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin)
-        install_tree(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
-        install_tree(self.oneapi_compiler_prefix.linux.include, prefix.include)
-        install_tree(self.oneapi_compiler_prefix.linux.compiler, prefix.compiler)
-        install_tree(self.oneapi_compiler_prefix.documentation.en.man, prefix.man)
-
     def install(self, spec, prefix):
         # If we use symlinks, we create a run dependency on oneapi compilers
         # preventing ifort use with a different version of icx
@@ -137,6 +127,16 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
         install_tree(self.oneapi_compiler_prefix.opt, prefix.opt)
         install_tree(self.oneapi_compiler_prefix.etc, prefix.etc)
         install_tree(self.oneapi_compiler_prefix.share, prefix.share)
+
+    @when("@:2021.10")
+    def install(self, spec, prefix):
+        # If we use symlinks, we create a run dependency on oneapi compilers
+        # preventing ifort use with a different version of icx
+        install_tree(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin)
+        install_tree(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
+        install_tree(self.oneapi_compiler_prefix.linux.include, prefix.include)
+        install_tree(self.oneapi_compiler_prefix.linux.compiler, prefix.compiler)
+        install_tree(self.oneapi_compiler_prefix.documentation.en.man, prefix.man)
 
     def _cc_path(self):
         return str(self.prefix.bin.icc)
