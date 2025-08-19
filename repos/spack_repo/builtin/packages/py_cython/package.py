@@ -16,6 +16,10 @@ class PyCython(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.1.3", sha256="10ee785e42328924b78f75a74f66a813cb956b4a9bc91c44816d089d5934c089")
+    version("3.1.2", sha256="6bbf7a953fa6762dfecdec015e3b054ba51c0121a45ad851fa130f63f5331381")
+    version("3.1.1", sha256="505ccd413669d5132a53834d792c707974248088c4f60c497deb1b416e366397")
+    version("3.1.0", sha256="1097dd60d43ad0fff614a57524bfd531b35c13a907d13bee2cc2ec152e6bf4a1")
     version("3.0.12", sha256="b988bb297ce76c671e28c97d017b95411010f7c77fa6623dd0bb47eed1aee1bc")
     version("3.0.11", sha256="7146dd2af8682b4ca61331851e6aebce9fe5158e75300343f80c07ca80b1faff")
     version("3.0.10", sha256="dcc96739331fb854dcf503f94607576cfe8488066c61ca50dfd55836f132de99")
@@ -41,7 +45,8 @@ class PyCython(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@:3.13")
+        depends_on("python@:3.14")
+        depends_on("python@:3.13", when="@:3.1.2")
         depends_on("python@:3.12", when="@:3.0.10")
         depends_on("python@:3.11", when="@:3.0.3")  # Cythonize still used distutils
         depends_on("python@:3.10", when="@:0.29.28")
