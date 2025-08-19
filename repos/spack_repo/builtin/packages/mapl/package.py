@@ -277,7 +277,6 @@ class Mapl(CMakePackage):
     # MAPL can use ifx only from MAPL 2.51 onwards and only supports
     # ifx 2025.0 and newer due to bugs in ifx.
     conflicts("%oneapi@2025:", when="@:2.50")
-    conflicts("^[virtuals=fortran] intel-oneapi-compilers")
 
     variant("flap", default=False, description="Build with FLAP support", when="@:2.39")
     variant("pflogger", default=True, description="Build with pFlogger support")
