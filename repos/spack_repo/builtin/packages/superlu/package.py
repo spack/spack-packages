@@ -10,7 +10,7 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 
-class Superlu(CMakePackage, Package):
+class Superlu(CMakePackage):
     """SuperLU is a general purpose library for the direct solution of large,
     sparse, nonsymmetric systems of linear equations on high performance
     machines. SuperLU is designed for sequential machines."""
@@ -28,24 +28,6 @@ class Superlu(CMakePackage, Package):
     version("6.0.1", sha256="6c5a3a9a224cb2658e9da15a6034eed44e45f6963f5a771a6b4562f7afb8f549")
     version("6.0.0", sha256="5c199eac2dc57092c337cfea7e422053e8f8229f24e029825b0950edd1d17e8e")
     version("5.3.0", sha256="3e464afa77335de200aeb739074a11e96d9bef6d0b519950cfa6684c4be1f350")
-
-    with default_args(deprecated=True):
-        version("5.2.2", sha256="470334a72ba637578e34057f46948495e601a5988a602604f5576367e606a28c")
-        version("5.2.1", sha256="28fb66d6107ee66248d5cf508c79de03d0621852a0ddeba7301801d3d859f463")
-        version(
-            "4.3",
-            sha256="169920322eb9b9c6a334674231479d04df72440257c17870aaa0139d74416781",
-            url="https://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_4.3.tar.gz",
-        )
-        version(
-            "4.2",
-            sha256="5a06e19bf5a597405dfeea39fe92aa8c5dd41da73c72c7187755a75f581efb28",
-            url="https://crd-legacy.lbl.gov/~xiaoye/SuperLU/superlu_4.2.tar.gz",
-        )
-
-    build_system(
-        conditional("cmake", when="@5:"), conditional("generic", when="@:4"), default="cmake"
-    )
 
     requires("build_system=cmake", when="platform=windows")
 
@@ -87,7 +69,24 @@ class Superlu(CMakePackage, Package):
             superlu()
 
 
-class AnyBuilder(BaseBuilder):
+    def cmake_args(self):
+        args = [
+            self.define("enable_internal_blaslib", False),
+            self.define("CMAKE_INSTALL_LIBDIR", self.prefix.lib),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define("enable_tests", self.pkg.run_tests),
+            self.define_from_variant("enable_fortran", "fortran"),
+        ]
+
+        if self.spec.satisfies("@6:"):
+            args.extend(
+                [
+                    self.define("TPL_ENABLE_METISLIB", True),
+                    self.define("TPL_METIS_INCLUDE_DIRS", self.spec["metis"].prefix.include),
+                    self.define("TPL_METIS_LIBRARIES", self.spec["metis"].libs),
+                ]
+            )
+
     @run_after("install")
     def setup_standalone_tests(self):
         """Set up and copy example source files after the package is installed
@@ -139,77 +138,4 @@ class AnyBuilder(BaseBuilder):
             "CFLAGS     = -O3 -DNDEBUG -DUSE_VENDOR_BLAS -DPRNTlevel=0 -DAdd_",
             "NOOPTS     = -O0",
         ]
-
-
-class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
-    def cmake_args(self):
-        if self.pkg.version > Version("5.2.1"):
-            _blaslib_key = "enable_internal_blaslib"
-        else:
-            _blaslib_key = "enable_blaslib"
-        args = [
-            self.define(_blaslib_key, False),
-            self.define("CMAKE_INSTALL_LIBDIR", self.prefix.lib),
-            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
-            self.define("enable_tests", self.pkg.run_tests),
-            self.define_from_variant("enable_fortran", "fortran"),
-        ]
-
-        if self.spec.satisfies("@6:"):
-            args.extend(
-                [
-                    self.define("TPL_ENABLE_METISLIB", True),
-                    self.define("TPL_METIS_INCLUDE_DIRS", self.spec["metis"].prefix.include),
-                    self.define("TPL_METIS_LIBRARIES", self.spec["metis"].libs),
-                ]
-            )
         return args
-
-
-class GenericBuilder(AnyBuilder, generic.GenericBuilder):
-    def install(self, pkg, spec, prefix):
-        """Use autotools before version 5"""
-        # Define make.inc file
-        config = [
-            "PLAT       = _x86_64",
-            "SuperLUroot = %s" % self.pkg.stage.source_path,
-            # 'SUPERLULIB = $(SuperLUroot)/lib/libsuperlu$(PLAT).a',
-            "SUPERLULIB = $(SuperLUroot)/lib/libsuperlu_{0}.a".format(self.pkg.spec.version),
-            "BLASDEF    = -DUSE_VENDOR_BLAS",
-            "BLASLIB    = {0}".format(spec["blas"].libs.ld_flags),
-            # or BLASLIB      = -L/usr/lib64 -lblas
-            "TMGLIB     = libtmglib.a",
-            "LIBS       = $(SUPERLULIB) $(BLASLIB)",
-            "ARCH       = ar",
-            "ARCHFLAGS  = cr",
-            "RANLIB     = {0}".format("ranlib" if which("ranlib") else "echo"),
-            "CC         = {0}".format(env["CC"]),
-            "FORTRAN    = {0}".format(env["FC"]),
-            "LOADER     = {0}".format(env["CC"]),
-            "CDEFS      = -DAdd_",
-        ]
-
-        if "+pic" in spec:
-            config.extend(
-                [
-                    # Use these lines instead when pic_flag capability arrives
-                    "CFLAGS     = -O3 {0}".format(self.pkg.compiler.cc_pic_flag),
-                    "NOOPTS     = {0}".format(self.pkg.compiler.cc_pic_flag),
-                    "FFLAGS     = -O2 {0}".format(self.pkg.compiler.f77_pic_flag),
-                    "LOADOPTS   = {0}".format(self.pkg.compiler.cc_pic_flag),
-                ]
-            )
-        else:
-            config.extend(
-                ["CFLAGS     = -O3", "NOOPTS     = ", "FFLAGS     = -O2", "LOADOPTS   = "]
-            )
-
-        with open("make.inc", "w") as inc:
-            for option in config:
-                inc.write("{0}\n".format(option))
-
-        make(parallel=False)
-
-        install_tree("lib", prefix.lib)
-        mkdir(prefix.include)
-        install(join_path("SRC", "*.h"), prefix.include)

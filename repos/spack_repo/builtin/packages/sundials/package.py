@@ -59,18 +59,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     version("5.1.0", sha256="fb22d14fad42203809dc46d046b001149ec4e901b23882bd4a80619157fd9b21")
     version("5.0.0", sha256="345141ec01c641d0bdfb3476c478b7e74fd6a7192a478a27cafe75d9da2d7dd3")
 
-    with default_args(deprecated=True):
-        version("4.1.0", sha256="280de1c27b2360170a6f46cb3799b2aee9dff3bddbafc8b08c291a47ab258aa5")
-        version("4.0.1", sha256="29e409c8620e803990edbda1ebf49e03a38c08b9187b90658d86bddae913aed4")
-        version("3.2.1", sha256="47d94d977ab2382cdcdd02f72a25ebd4ba8ca2634bbb2f191fe1636e71c86808")
-        version("3.2.0", sha256="d2b690afecadf8b5a048bb27ab341de591d714605b98d3518985dfc2250e93f9")
-        version("3.1.2", sha256="a8985bb1e851d90e24260450667b134bc13d71f5c6effc9e1d7183bd874fe116")
-        version("3.1.1", sha256="a24d643d31ed1f31a25b102a1e1759508ce84b1e4739425ad0e18106ab471a24")
-        version("3.1.0", sha256="18d52f8f329626f77b99b8bf91e05b7d16b49fde2483d3a0ea55496ce4cdd43a")
-        version("3.0.0", sha256="28b8e07eecfdef66e2c0d0ea0cb1b91af6e4e94d71008abfe80c27bf39f63fde")
-        version("2.7.0", sha256="d39fcac7175d701398e4eb209f7e92a5b30a78358d4a0c0fcc23db23c11ba104")
-        version("2.6.2", sha256="d8ed0151509dd2b0f317b318a4175f8b95a174340fc3080b8c20617da8aa4d2f")
-
     # ==========================================================================
     # Variants
     # ==========================================================================
@@ -130,7 +118,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     variant("mpi", default=True, description="Enable MPI parallel vector")
     variant("openmp", default=False, description="Enable OpenMP parallel vector")
     variant("pthread", default=False, description="Enable Pthreads parallel vector")
-    variant("raja", default=False, when="@3.0.0:", description="Enable RAJA vector")
+    variant("raja", default=False, description="Enable RAJA vector")
     variant("sycl", default=False, when="@5.7.0:", description="Enable SYCL vector")
 
     # External libraries
@@ -141,7 +129,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
         description="Enable Caliper instrumentation/profiling",
     )
     variant("ginkgo", default=False, when="@6.4.0:", description="Enable Ginkgo interfaces")
-    variant("hypre", default=False, when="@2.7.0:", description="Enable Hypre MPI parallel vector")
+    variant("hypre", default=False, description="Enable Hypre MPI parallel vector")
     variant("kokkos", default=False, when="@6.4.0:", description="Enable Kokkos vector")
     variant(
         "kokkos-kernels",
@@ -151,16 +139,15 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("klu", default=False, description="Enable KLU sparse, direct solver")
     variant("lapack", default=False, description="Enable LAPACK direct solvers")
-    variant("petsc", default=False, when="@2.7.0:", description="Enable PETSc interfaces")
+    variant("petsc", default=False, description="Enable PETSc interfaces")
     variant("magma", default=False, when="@5.7.0:", description="Enable MAGMA interface")
     variant("superlu-mt", default=False, description="Enable SuperLU_MT sparse, direct solver")
     variant(
         "superlu-dist",
         default=False,
-        when="@5.0.0:",
         description="Enable SuperLU_DIST sparse, direct solver",
     )
-    variant("trilinos", default=False, when="@5.0.0:", description="Enable Trilinos interfaces")
+    variant("trilinos", default=False, description="Enable Trilinos interfaces")
 
     # Library type
     variant("shared", default=True, description="Build shared libraries")
@@ -199,17 +186,13 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     # Conflicts
     # ==========================================================================
 
-    conflicts("+cuda", when="@:2.7.0")
     conflicts("+rocm", when="@:5.6.0")
-    conflicts("~int64", when="@:2.7.0")
-    conflicts("+f2003", when="@:4.1.0")
 
     # External libraries incompatible with 64-bit indices
-    conflicts("+lapack", when="@3.0.0: +int64")
+    conflicts("+lapack", when="+int64")
 
     # External libraries incompatible with single precision
     conflicts("+klu", when="precision=single")
-    conflicts("+hypre", when="+hypre@:2.12.0 precision=single")
     conflicts("+superlu-dist", when="precision=single")
 
     # External libraries incompatible with extended (quad) precision
@@ -217,10 +200,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+superlu-mt", when="precision=extended")
     conflicts("+superlu-dist", when="precision=extended")
     conflicts("+klu", when="precision=extended")
-    conflicts("+hypre", when="+hypre@:2.12.0 precision=extended")
-
-    # SuperLU_MT interface requires lapack for external blas (before v3.0.0)
-    conflicts("+superlu-mt", when="@:2.7.0 ~lapack")
 
     # rocm+examples and cstd do not work together in 6.0.0
     conflicts("+rocm+examples", when="@6.0.0")
@@ -306,7 +285,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     patch("Change-HIP_PLATFORM-from-HCC-to-AMD-and-NVCC-to-NVIDIA.patch", when="^hip@6.0 +rocm")
 
     # remove OpenMP header file and function from hypre vector test code
-    patch("test_nvector_parhyp.patch", when="@2.7.0:3.0.0")
     patch("FindPackageMultipass.cmake.patch", when="@5.0.0")
     patch("5.5.0-xsdk-patches.patch", when="@5.5.0")
     patch("0001-add-missing-README-to-examples-cvode-hip.patch", when="@5.6.0:5.7.0")
@@ -348,15 +326,14 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             ]
         )
 
-        # index type (v3.0.0 or later)
-        if spec.satisfies("@3:"):
-            intsize = "64" if "+int64" in spec else "32"
-            args.extend(
-                [
-                    define("SUNDIALS_INDEX_SIZE", intsize),
-                    define("SUNDIALS_INDEX_TYPE", f"int{intsize}_t"),
-                ]
-            )
+        # index type
+        intsize = "64" if "+int64" in spec else "32"
+        args.extend(
+            [
+                define("SUNDIALS_INDEX_SIZE", intsize),
+                define("SUNDIALS_INDEX_TYPE", f"int{intsize}_t"),
+            ]
+        )
 
         args.extend(
             [
@@ -492,18 +469,10 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
 
         # Building with PETSc
         if "+petsc" in spec:
-            if spec.version >= Version("5"):
-                args.append(define("PETSC_DIR", spec["petsc"].prefix))
-                if "+kokkos" in spec["petsc"]:
-                    args.append(define("Kokkos_DIR", spec["kokkos"].prefix))
-                    args.append(define("KokkosKernels_DIR", spec["kokkos-kernels"].prefix))
-            else:
-                args.extend(
-                    [
-                        define("PETSC_INCLUDE_DIR", spec["petsc"].prefix.include),
-                        define("PETSC_LIBRARY_DIR", spec["petsc"].prefix.lib),
-                    ]
-                )
+            args.append(define("PETSC_DIR", spec["petsc"].prefix))
+            if "+kokkos" in spec["petsc"]:
+                args.append(define("Kokkos_DIR", spec["kokkos"].prefix))
+                args.append(define("KokkosKernels_DIR", spec["kokkos-kernels"].prefix))
 
         # Building with RAJA
         if "+raja" in spec:
@@ -511,10 +480,9 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
 
         # Building with SuperLU_MT
         if "+superlu-mt" in spec:
-            if spec.satisfies("@3:"):
-                args.extend(
-                    [define("BLAS_ENABLE", True), define("BLAS_LIBRARIES", spec["blas"].libs)]
-                )
+            args.extend(
+                [define("BLAS_ENABLE", True), define("BLAS_LIBRARIES", spec["blas"].libs)]
+            )
             args.extend(
                 [
                     define("SUPERLUMT_INCLUDE_DIR", spec["superlu-mt"].prefix.include),
@@ -550,25 +518,16 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             args.append(define("Trilinos_DIR", spec["trilinos"].prefix))
 
         # Examples
-        if spec.satisfies("@3:"):
-            args.extend(
-                [
-                    from_variant("EXAMPLES_ENABLE_C", "examples"),
-                    from_variant("EXAMPLES_ENABLE_CXX", "examples"),
-                    define("EXAMPLES_ENABLE_CUDA", "+examples+cuda" in spec),
-                    define("EXAMPLES_ENABLE_F77", "+examples+fcmix" in spec),
-                    define("EXAMPLES_ENABLE_F90", "+examples+fcmix" in spec),
-                    define("EXAMPLES_ENABLE_F2003", "+examples+f2003" in spec),
-                ]
-            )
-        else:
-            args.extend(
-                [
-                    from_variant("EXAMPLES_ENABLE", "examples"),
-                    from_variant("CXX_ENABLE", "examples"),
-                    define("F90_ENABLE", "+examples+fcmix" in spec),
-                ]
-            )
+        args.extend(
+            [
+                from_variant("EXAMPLES_ENABLE_C", "examples"),
+                from_variant("EXAMPLES_ENABLE_CXX", "examples"),
+                define("EXAMPLES_ENABLE_CUDA", "+examples+cuda" in spec),
+                define("EXAMPLES_ENABLE_F77", "+examples+fcmix" in spec),
+                define("EXAMPLES_ENABLE_F90", "+examples+fcmix" in spec),
+                define("EXAMPLES_ENABLE_F2003", "+examples+f2003" in spec),
+            ]
+        )
 
         return args
 
@@ -585,9 +544,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
 
         if sys.platform == "darwin":
             fix_darwin_install_name(prefix.lib)
-
-        if spec.satisfies("@:3.0.0"):
-            install("LICENSE", prefix)
 
     @run_after("install")
     def filter_compilers(self):
