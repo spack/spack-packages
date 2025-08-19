@@ -45,7 +45,7 @@ class PyHist(PythonPackage):
     depends_on("py-numpy@1.14.5:", type=("build", "run"), when="@2.7.2 ^python@:3.11")
     depends_on("py-numpy@1.26:", type=("build", "run"), when="@2.7.2 ^python@3.12:")
     depends_on("py-typing-extensions@3.7:", when="@:2.6 ^python@:3.7", type=("build", "run"))
-    depends_on("py-typing-extensions@4:", when="@2.7: ^python@:3.11", type=("build", "run"))
+    depends_on("py-typing-extensions@4:", when="@2.7: ^python@:3.10", type=("build", "run"))
 
     with when("+plot"):
         depends_on("py-matplotlib@3.0:", type=("build", "run"))
