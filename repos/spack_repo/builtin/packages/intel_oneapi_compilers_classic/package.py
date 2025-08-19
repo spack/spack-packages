@@ -52,7 +52,7 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
 
     stdcxx_libs = ("-cxxlib",)
 
-    provides("c", "cxx")
+    provides("c", "cxx", when="@:2021.10")
     provides("fortran")
 
     version_map = {
@@ -67,7 +67,11 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
         "2021.8.0": "2023.0.0",
         "2021.9.0": "2023.1.0",
         "2021.10.0": "2023.2.4",
-        "2021.11.1": "2024.0.2",
+        "2021.11.0": "2024.0.0",
+        "2021.11.1": "2024.0.1:2024.0.2",
+        "2021.12.0": "2024.1.0",
+        "2021.13.0": "2024.2.0",
+        "2021.13.1": "2024.2.1",
     }
 
     # Versions before 2021 are in the `intel` package
@@ -75,15 +79,14 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
     for ver, oneapi_ver in version_map.items():
         # prefer 2021.10.0 because it is the last one that has a C compiler
         version(ver, preferred=(ver == "2021.10.0"))
-        depends_on("intel-oneapi-compilers@" + oneapi_ver, when="@" + ver, type="run")
+        depends_on("intel-oneapi-compilers@" + oneapi_ver, when="@" + ver, type="build")
 
     # icc@2021.6.0 does not support gcc@12 headers
     conflicts("%gcc@12:", when="@:2021.6.0")
 
     @property
     def oneapi_compiler_prefix(self):
-        oneapi_version = self.spec["intel-oneapi-compilers"].version
-        return self.spec["intel-oneapi-compilers"].prefix.compiler.join(str(oneapi_version))
+        return self["intel-oneapi-compilers"].component_prefix
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         """Adds environment variables to the generated module file.
@@ -114,28 +117,27 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
         if dependent_spec.satisfies("^[virtuals=fortran] intel-oneapi-compilers-classic"):
             env.append_flags("SPACK_ALWAYS_FFLAGS", "-diag-disable=10448")
 
+    @when("@:2021.10")
     def install(self, spec, prefix):
-        # If we symlink top-level directories directly, files won't show up in views
-        # Create real dirs and symlink files instead
-        self.symlink_dir(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin)
-        self.symlink_dir(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
-        self.symlink_dir(self.oneapi_compiler_prefix.linux.include, prefix.include)
-        self.symlink_dir(self.oneapi_compiler_prefix.linux.compiler, prefix.compiler)
-        self.symlink_dir(self.oneapi_compiler_prefix.documentation.en.man, prefix.man)
+        # If we use symlinks, we create a run dependency on oneapi compilers
+        # preventing ifort use with a different version of icx
+        install_tree(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin)
+        install_tree(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
+        install_tree(self.oneapi_compiler_prefix.linux.include, prefix.include)
+        install_tree(self.oneapi_compiler_prefix.linux.compiler, prefix.compiler)
+        install_tree(self.oneapi_compiler_prefix.documentation.en.man, prefix.man)
 
-    def symlink_dir(self, src, dest):
-        # Create a real directory at dest
-        mkdirp(dest)
-
-        # Symlink all files in src to dest keeping directories as dirs
-        for entry in os.listdir(src):
-            src_path = os.path.join(src, entry)
-            dest_path = os.path.join(dest, entry)
-            if os.path.isdir(src_path) and os.access(src_path, os.X_OK):
-                link_tree = LinkTree(src_path)
-                link_tree.merge(dest_path)
-            else:
-                os.symlink(src_path, dest_path)
+    def install(self, spec, prefix):
+        # If we use symlinks, we create a run dependency on oneapi compilers
+        # preventing ifort use with a different version of icx
+        mkdirp(prefix.bin)
+        install(self.oneapi_compiler_prefix.bin.ifort, prefix.bin)
+        install(self.oneapi_compiler_prefix.bin.fortcom, prefix.bin)
+        install(self.oneapi_compiler_prefix.bin.join("ifort.cfg"), prefix.bin)
+        install_tree(self.oneapi_compiler_prefix.lib, prefix.lib)
+        install_tree(self.oneapi_compiler_prefix.opt, prefix.opt)
+        install_tree(self.oneapi_compiler_prefix.etc, prefix.etc)
+        install_tree(self.oneapi_compiler_prefix.share, prefix.share)
 
     def _cc_path(self):
         return str(self.prefix.bin.icc)
