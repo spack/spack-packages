@@ -23,7 +23,6 @@ class WinWdk(Package):
     # The wdk has many libraries and executables. Record one for detection purposes
     libraries = ["mmos.lib"]
 
-
     version(
         "10.0.26100",
         sha256="cc3c968aca86e8ef72e178e100dc5be1290449df724139ffa94eebb99f840149",
