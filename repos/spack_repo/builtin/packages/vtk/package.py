@@ -74,17 +74,19 @@ class Vtk(CMakePackage):
 
     patch("gcc.patch", when="@6.1.0")
 
-    # patches to fix some missing stl includes
-    # which lead to build errors on newer compilers
+    # Fix missing standard includes that lead to build errors on newer compilers
+    # Patch for <limits>
     patch(
         "https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c.diff",
         when="@9:9.0",
         sha256="0546696bd02f3a99fccb9b7c49533377bf8179df16d901cefe5abf251173716d",
     )
+    # Patch for <cstdint>
+    # See https://gitlab.kitware.com/vtk/vtk/-/issues/18782
     patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/1233ceec268d5366c66f5e79786ec784042b591.diff",
+        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
+        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
         when="@9.1:9.2",
-        sha256="38380bd20443d94d8ce9f339b9b2fbdea03400aa9d6dbb7e3ef138a65f11c080",
     )
 
     # Patch for paraview 5.10: +hdf5 ^hdf5@1.13.2:
@@ -237,14 +239,6 @@ class Vtk(CMakePackage):
         "https://gitlab.kitware.com/vtk/vtk/-/commit/5a1c96e12e9b4a660d326be3bed115a2ceadb573.diff",
         sha256="c446a90459b108082db5b28d9aeda99d030e636325e01929beba062cafb16b76",
         when="@9.1",
-    )
-
-    # vtk@9 does not compile with gcc 13 or 14
-    # https://gitlab.kitware.com/vtk/vtk/-/issues/18782
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
-        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
-        when="@9.1:9.2 %gcc@13:",
     )
 
     # SEACAS >= 2024-06-27 needs c++17 which is already required in VTK master.
