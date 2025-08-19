@@ -70,7 +70,7 @@ class Geant4(CMakePackage):
     )
 
     variant("threads", default=True, description="Build with multithreading")
-    variant("vecgeom", default=False, description="Enable vecgeom support", when="@10.4:")
+    variant("vecgeom", default=False, description="Enable vecgeom support", when="@10.7:")
     variant("opengl", default=False, description="Optional OpenGL support")
     variant("x11", default=False, description="Optional X11 support")
     variant("motif", default=False, description="Optional motif support")
@@ -171,9 +171,6 @@ class Geant4(CMakePackage):
         depends_on("vecgeom@1.2.0:", when="@11.1")
         depends_on("vecgeom@1.1.18:1.1", when="@11.0.0:11.0")
         depends_on("vecgeom@1.1.8:1.1", when="@10.7.0:10.7")
-        depends_on("vecgeom@1.1.5", when="@10.6.0:10.6")
-        depends_on("vecgeom@1.1.0", when="@10.5.0:10.5")
-        depends_on("vecgeom@0.5.2", when="@10.4.0:10.4")
 
     with when("+hdf5"):
         depends_on("hdf5 +threadsafe")
