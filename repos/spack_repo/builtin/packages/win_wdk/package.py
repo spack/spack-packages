@@ -45,37 +45,37 @@ class WinWdk(Package):
     version(
         "10.0.18362",
         sha256="c35057cb294096c63bbea093e5024a5fb4120103b20c13fa755c92f227b644e5",
-        url="https://go.microsoft.com/fwlink/?linkid=2085767",
+        url="https://download.microsoft.com/download/2/9/3/29376990-B744-43C5-AE5C-99405068D58B/WDK/wdksetup.exe",
         expand=False,
     )
     version(
         "10.0.17763",
         sha256="e6e5a57bf0a58242363cd6ca4762f44739f19351efc06cad382cca944b097235",
-        url="https://go.microsoft.com/fwlink/?linkid=2026156",
+        url="https://download.microsoft.com/download/1/4/0/140EBDB7-F631-4191-9DC0-31C8ECB8A11F/wdk/wdksetup.exe",
         expand=False,
     )
     version(
         "10.0.17134",
         sha256="48e636117bb7bfe66b1ade793cc8e885c42c880fadaee471782d31b5c4d13e9b",
-        url="https://go.microsoft.com/fwlink/?linkid=873060",
+        url="https://download.microsoft.com/download/B/5/8/B58D625D-17D6-47A8-B3D3-668670B6D1EB/wdk/wdksetup.exe",
         expand=False,
     )
     version(
         "10.0.16299",
         sha256="14efbcc849e5977417e962f1cd68357d21abf27393110b9d95983ad03fc22ef4",
-        url="https://go.microsoft.com/fwlink/p/?linkid=859232",
+        url="https://download.microsoft.com/download/7/D/D/7DD48DE6-8BDA-47C0-854A-539A800FAA90/wdk/wdksetup.exe",
         expand=False,
     )
     version(
         "10.0.15063",
         sha256="489b497111bc791d9021b3573bfd93086a28b598c7325ab255e81c6f5d80a820",
-        url="https://go.microsoft.com/fwlink/p/?LinkID=845980",
+        url="https://download.microsoft.com/download/4/E/0/4E07EAAD-E394-4EA8-B2B8-D46E46A409C5/wdk/wdksetup.exe",
         expand=False,
     )
     version(
         "10.0.14393",
         sha256="0bfb2ac9db446e0d98c29ef7341a8c8e8e7aa24bc72b00c5704a88b13f48b3cb",
-        url="https://go.microsoft.com/fwlink/p/?LinkId=526733",
+        url="https://download.microsoft.com/download/8/1/6/816FE939-15C7-4185-9767-42ED05524A95/wdk/wdksetup.exe",
         expand=False,
     )
 
