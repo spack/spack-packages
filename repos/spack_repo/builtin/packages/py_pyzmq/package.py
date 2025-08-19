@@ -54,6 +54,9 @@ class PyPyzmq(PythonPackage):
     # Undocumented dependencies
     depends_on("py-gevent", type=("build", "run"))
 
+    # https://github.com/zeromq/pyzmq/issues/1915
+    conflicts("^py-cython@3.1:", when="@:25")
+
     @run_before("install", when="@15:19")
     def remove_cythonized_files(self):
         # Before v20.0.0 an ancient cythonize API was used, for which we cannot
