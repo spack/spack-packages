@@ -66,9 +66,7 @@ class Vasp(MakefilePackage, CudaPackage):
     # the mpi compiler wrappers in nvhpc assume nvhpc is the underlying compiler, seemingly
     conflicts("^[virtuals=mpi] nvhpc", when="%gcc", msg="nvhpc mpi requires nvhpc compiler")
     conflicts("^[virtuals=mpi] nvhpc", when="%aocc", msg="nvhpc mpi requires nvhpc compiler")
-    conflicts(
-        "cuda_arch=none", when="+cuda", msg="CUDA arch required when building openacc port"
-    )
+    conflicts("cuda_arch=none", when="+cuda", msg="CUDA arch required when building openacc port")
 
     def edit(self, spec, prefix):
         cpp_options = [
@@ -180,9 +178,7 @@ class Vasp(MakefilePackage, CudaPackage):
                 if not os.path.exists(make_include):
                     make_include = join_path("arch", f"{include_string}.gnu_omp")
             else:
-                make_include = join_path(
-                    "arch", include_string + spec.compiler.name
-                )
+                make_include = join_path("arch", include_string + spec.compiler.name)
                 if not os.path.exists(make_include):
                     make_include = join_path("arch", f"{include_string}.gnu")
             cpp_options.append('-DHOST=\\"LinuxGNU\\"')
