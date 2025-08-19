@@ -72,6 +72,8 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("gmake", type="build")
 
+    patch("fix_configure_ldflags.patch", when="@2021.9.0:master")
+
     variant("mpi", default=False, description="Enables MPI-based spawners and mpi-conduit")
 
     variant(

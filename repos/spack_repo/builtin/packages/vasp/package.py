@@ -97,7 +97,7 @@ class Vasp(MakefilePackage, CudaPackage):
             cpp_options.append("-Duse_shmem")
             objects_lib.append("getshmem.o")
 
-        include_string = f"makefile.include."
+        include_string = "makefile.include."
 
         # gcc
         if spec.satisfies("%gcc"):
