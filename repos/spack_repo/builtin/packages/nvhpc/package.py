@@ -632,10 +632,15 @@ class Nvhpc(Package, CompilerPackage):
 
             env.prepend_path("LD_LIBRARY_PATH", mpi_prefix.lib)
 
-            env.set("OMPI_CC", spack_cc)
-            env.set("OMPI_CXX", spack_cxx)
-            env.set("OMPI_FC", spack_fc)
-            env.set("OMPI_F77", spack_f77)
+            dependent_module = dependent_spec.package.module
+            for var_name, attr_name in (
+                ("OMPI_CC", "spack_cc"),
+                ("OMPI_CXX", "spack_cxx"),
+                ("OMPI_FC", "spack_fc"),
+                ("OMPI_F77", "spack_f77"),
+            ):
+                if hasattr(dependent_module, attr_name):
+                    env.set(var_name, getattr(dependent_module, attr_name))
 
     def setup_dependent_package(self, module, dependent_spec):
         if "+mpi" in self.spec or self.provides("mpi"):
