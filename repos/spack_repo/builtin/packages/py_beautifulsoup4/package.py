@@ -41,3 +41,9 @@ class PyBeautifulsoup4(PythonPackage):
     depends_on("py-html5lib", when="+html5lib", type=("build", "run"))
 
     depends_on("py-pytest", type="test")
+
+    # Not sure about the exact version requirements, but earlier
+    # versions (definitely 4.5.3 and earlier) don't work with newer
+    # py-setuptools (version 68 and later) because of a breaking
+    # change: error in beautifulsoup4 setup command: use_2to3 is invalid
+    conflicts("py-setuptools@68:", when="@:4.5.3")
