@@ -29,14 +29,6 @@ class NodeJs(Package):
     version("19.2.0", sha256="aac9d1a366fb57d68f4639f9204d1de5d6387656959a97ed929a5ba9e62c033a")
     version("17.9.1", sha256="1102f5e0aafaab8014d19c6c57142caf2ba3ef69d88d7a7f0f82798051796027")
     version("15.3.0", sha256="cadfa384a5f14591b84ce07a1afe529f28deb0d43366fb0ae4e78afba96bfaf2")
-    with default_args(deprecated=True):
-        # requires deprecated python versions
-        version(
-            "13.8.0", sha256="815b5e1b18114f35da89e4d98febeaba97555d51ef593bd5175db2b05f2e8be6"
-        )
-        version(
-            "13.5.0", sha256="4b8078d896a7550d7ed399c1b4ac9043e9f883be404d9b337185c8d8479f2db8"
-        )
 
     # LTS (recommended for most users) - even major number
     version(
@@ -58,37 +50,6 @@ class NodeJs(Package):
     version("14.21.1", sha256="76ba961536dc11e4dfd9b198c61ff3399e655eca959ae4b66d926f29bfcce9d3")
     version("14.16.1", sha256="5f5080427abddde7f22fd2ba77cd2b8a1f86253277a1eec54bc98a202728ce80")
     version("14.15.1", sha256="a1120472bf55aea745287693a6651e16973e1008c9d6107df350126adf9716fe")
-    with default_args(deprecated=True):
-        # https://github.com/nodejs/node/releases/tag/v22.15.1
-        # https://github.com/advisories/GHSA-rrjv-57mm-j6cm
-        version(
-            "22.14.0", sha256="6c4e31ed5702dc45cfd8c435af56a36a474427e1bd7afe74c346136060beba8a"
-        )
-        version(
-            "22.13.1", sha256="e7d5b1e84e7f3c3cebda81e2b138469eef41ba4ecf16a87fd15fc3f7afa3f701"
-        )
-        version(
-            "22.13.0", sha256="38e15a1d0dd0e95c237bc4651d7c9930a78d3fe7954a7ee7693b403f2d879e46"
-        )
-        version(
-            "22.12.0", sha256="3157e7c002b6e964bdbefb331ec38db1e2dceb064ab11c038275155461b22ce3"
-        )
-        version(
-            "22.11.0", sha256="24e5130fa7bc1eaab218a0c9cb05e03168fa381bb9e3babddc6a11f655799222"
-        )
-        version(
-            "22.4.0", sha256="b62cd83c9a57a11349883f89b1727a16e66c02eb6255a4bf32714ff5d93165f5"
-        )
-        version(
-            "22.3.0", sha256="6326484853093ab6b8f361a267445f4a5bff469042cda11a3585497b13136b55"
-        )
-        # requires deprecated python versions
-        version(
-            "14.13.0", sha256="8538b2e76aa06ee0e6eb1c118426c3c5ca53b2e49d66591738eacf76e89edd61"
-        )
-        version(
-            "14.10.0", sha256="7e0d7a1aa23697415e3588a1ca4f1c47496e6c88b9cf37c66be90353d3e4ac3e"
-        )
 
     variant("debug", default=False, description="Include debugger support")
     variant("doc", default=False, description="Compile with documentation")
@@ -115,8 +76,6 @@ class NodeJs(Package):
     # python requirements are based according to
     # https://github.com/spack/spack/pull/47942#discussion_r1875624177
     depends_on("python", type="build")
-    depends_on("python@:3.7", when="@13.0.0:13.0.1", type="build")
-    depends_on("python@:3.8", when="@13.1.0:14.13.1", type="build")
     depends_on("python@:3.9", when="@14.14.0:14.18.1", type="build")
     depends_on("python@:3.10", when="@14.18.2:14.21.3", type="build")
     depends_on("python@:3.9", when="@15.0.0:15.14.0", type="build")

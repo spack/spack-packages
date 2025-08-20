@@ -28,6 +28,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     version("master", branch="master")
 
     version(
+        "2025.01.002", sha256="8febe408c590ba9b44bd8bce04605fd1b7da964afcd8fd5f1ce9edecb3d0b65d"
+    )
+    version(
         "2025.01.001", sha256="3ef0c6aed9a3e05db6efafe6e14d66eb88b2a1354d61e765b7cde0d3d5f3951e"
     )
     version(
@@ -227,7 +230,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         ldflags = [spec["blas"].libs.search_flags, spec["lapack"].libs.search_flags, "-lstdc++"]
         libs = [spec["lapack"].libs.link_flags, spec["blas"].libs.link_flags]
 
-        options += [f'LDFLAGS={" ".join(ldflags)}', f'LIBS={" ".join(libs)}']
+        options += [f"LDFLAGS={' '.join(ldflags)}", f"LIBS={' '.join(libs)}"]
 
         if self.spec.satisfies("+mpi"):
             options += [
@@ -246,3 +249,10 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         options.append("--without-threading-support-check-during-build")
 
         return options
+
+    def flag_handler(self, name, flags):
+        if name == "ldflags":
+            if self.spec.satisfies("@2024.05.001,2025.01.001 %aocc"):
+                # fix an issue where main library and test suite containing duplicate symbols
+                flags.append("-Wl,--allow-multiple-definition")
+        return (flags, None, None)

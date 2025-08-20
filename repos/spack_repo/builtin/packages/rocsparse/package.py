@@ -42,6 +42,7 @@ class Rocsparse(CMakePackage):
 
     license("MIT")
 
+    version("6.4.2", sha256="30c0b6c2aaa3686a94150d69560a96697551088d1ee9595a1c5feb7c10fd9501")
     version("6.4.1", sha256="f44db33179d5f8e18f948ff3ac8bd9b59f7bfdd67c66a7972ef1ee0eb15872de")
     version("6.4.0", sha256="a0fb423b80da72f072a6d80b9837c80c671b5fae719f57c0e83d7e4e27d3d187")
     version("6.3.3", sha256="e316d46b40e99976f4acaa097d6ebf5c2caf1ff2bd3c5b1de04c93c1dac90516")
@@ -87,6 +88,7 @@ class Rocsparse(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")

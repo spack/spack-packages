@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -60,7 +59,7 @@ class Sprng(AutotoolsPackage):
                 raise RuntimeError(msg)
             if "+fortran" in self.spec:
                 if "fmpi" not in self.spec["fortran"].libs.names:
-                    msg = "SPRNG requires fortran mpi " "libraries with mpi enabled"
+                    msg = "SPRNG requires fortran mpi libraries with mpi enabled"
                     raise RuntimeError(msg)
         # raise RuntimeError("test")
 
@@ -147,4 +146,4 @@ int main() {
                 raise RuntimeError("sprng install check failed")
             else:
                 print("test passed")
-        shutil.rmtree(checkdir)
+        rmtree(checkdir)

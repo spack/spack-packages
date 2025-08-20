@@ -19,7 +19,9 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     list_url = "https://github.com/electronic-structure/SIRIUS/releases"
     git = "https://github.com/electronic-structure/SIRIUS.git"
 
-    maintainers("simonpintarelli", "haampie", "dev-zero", "AdhocMan", "toxa81", "RMeli")
+    maintainers(
+        "simonpintarelli", "haampie", "dev-zero", "AdhocMan", "toxa81", "RMeli", "mtaillefumier"
+    )
 
     license("BSD-2-Clause")
 
@@ -52,6 +54,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     variant("scalapack", default=False, description="Enable scalapack support")
     variant("magma", default=False, description="Enable MAGMA support")
     variant("nlcglib", default=False, description="Enable robust wave function optimization")
+    variant("vcsqnm", default=False, description="Enable lattice relaxation")
     variant("wannier90", default=False, description="Enable Wannier90 library")
     variant(
         "build_type",
@@ -66,6 +69,8 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
         "profiler", default=True, description="Use internal profiler to measure execution time"
     )
     variant("nvtx", default=False, description="Use NVTX profiler")
+    variant("dftd3", default=False, description="Enable dft-d3 corrections", when="@7.8.1:")
+    variant("dftd4", default=False, description="Enable dft-d4 corrections", when="@7.8.1:")
 
     with when("@7.6:"):
         variant(
@@ -93,6 +98,8 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hdf5+hl")
     depends_on("pkgconfig", type="build")
     depends_on("fmt", when="@7.8:")
+    depends_on("simple-dftd3 build_system=cmake", when="+dftd3")
+    depends_on("dftd4 build_system=cmake", when="+dftd4")
 
     # Python module
     depends_on("python", when="+python", type=("build", "run"))
@@ -183,6 +190,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("elpa~openmp", when="+elpa~openmp")
 
     depends_on("eigen@3.4.0:", when="@7.3.2: +tests")
+    depends_on("eigen@3.4.0:", when="@7.7: +vcsqnm")
 
     depends_on("costa+shared", when="@7.3.2:")
 
@@ -219,6 +227,9 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant(cm_label + "USE_NVTX", "nvtx"),
             self.define_from_variant(cm_label + "USE_WANNIER90", "wannier90"),
             self.define_from_variant(cm_label + "USE_PUGIXML", "pugixml"),
+            self.define_from_variant(cm_label + "USE_DFTD3", "dftd3"),
+            self.define_from_variant(cm_label + "USE_DFTD4", "dftd4"),
+            self.define_from_variant(cm_label + "USE_VCSQNM", "vcsqnm"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]

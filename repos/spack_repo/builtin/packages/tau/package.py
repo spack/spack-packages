@@ -77,7 +77,7 @@ class Tau(Package):
     variant("otf2", default=True, description="Activates support of Open Trace Format (OTF)")
     variant("pdt", default=True, description="Use PDT for source code instrumentation")
     variant("comm", default=False, description=" Generate profiles with MPI communicator info")
-    variant("python", default=False, description="Activates Python support")
+    variant("python", default=False, description="Activates Python support", when="@2.31.1:")
     variant("likwid", default=False, description="Activates LIKWID support", when="@2.27")
     variant("ompt", default=False, description="Activates OMPT instrumentation")
     variant("opari", default=False, description="Activates Opari2 instrumentation")
@@ -162,8 +162,6 @@ class Tau(Package):
     depends_on("binutils+libiberty+headers+plugins", when="+binutils")
     with when("+python"):
         depends_on("python@2.7:")
-        # Build errors with Python 3.9
-        depends_on("python@:3.8", when="@:2.31.0")
         # python 3.11 doesn't work in the 2.32 releases
         depends_on("python@:3.10", when="@:2.32.1")
     depends_on("libunwind", when="+libunwind")

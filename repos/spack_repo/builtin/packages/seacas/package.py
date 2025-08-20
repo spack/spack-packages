@@ -271,6 +271,7 @@ class Seacas(CMakePackage):
     # Always depends on netcdf-c
     depends_on("netcdf-c@4.8.0:+mpi+parallel-netcdf", when="+mpi")
     depends_on("netcdf-c@4.8.0:~mpi", when="~mpi")
+    depends_on("netcdf-c@:4.9.2", when="@:2024-08-15")
     depends_on("hdf5+hl~mpi", when="~mpi")
     depends_on("hdf5+hl+mpi", when="+mpi")
 
@@ -336,6 +337,12 @@ class Seacas(CMakePackage):
 
     # Based on install-tpl.sh script, cereal seems to only be used when faodel enabled
     depends_on("cereal", when="@2021-04-02: +faodel")
+
+    def flag_handler(self, name: str, flags: List[str]):
+        if name == "fflags" and self.spec.satisfies("@2022:2022-03 %fortran=gcc@10:"):
+            # Required for recent GCC compilers, flag exists since GCC 10
+            flags.append("-fallow-argument-mismatch")
+        return (flags, None, None)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib)

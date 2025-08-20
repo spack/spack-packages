@@ -83,7 +83,7 @@ class Poppler(CMakePackage):
 
     # Only needed to run `make test`
     resource(
-        name="test", git="git://git.freedesktop.org/git/poppler/test.git", placement="testdata"
+        name="test", git="https://gitlab.freedesktop.org/poppler/test.git", placement="testdata"
     )
 
     def cmake_args(self):

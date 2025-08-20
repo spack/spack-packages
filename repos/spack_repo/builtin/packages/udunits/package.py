@@ -11,7 +11,7 @@ class Udunits(AutotoolsPackage):
     """Automated units conversion"""
 
     homepage = "https://www.unidata.ucar.edu/software/udunits"
-    url = "https://artifacts.unidata.ucar.edu/repository/downloads-udunits/2.2.28/udunits-2.2.28.tar.gz"
+    url = "https://downloads.unidata.ucar.edu/udunits/2.2.28/udunits-2.2.28.tar.gz"
 
     maintainers("AlexanderRichert-NOAA")
 
