@@ -83,7 +83,7 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("gmsh@4.4.1:", when="+gmsh")
     depends_on("mpi", when="+mpi")
     depends_on("trilinos +kokkos", when="+trilinos")
-    depends_on("kokkos", when="+kokkos")
+    depends_on("kokkos@4.0.00:4.5.01", when="+kokkos")
     depends_on("zlib-api", when="+zlib")
 
     with when("+cuda"):
