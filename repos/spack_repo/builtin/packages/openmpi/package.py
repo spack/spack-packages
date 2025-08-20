@@ -737,7 +737,7 @@ with '-Wl,-commons,use_dylibs' and without
         # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
         depends_on("prrte")
 
-        for scheduler in [s for s in SCHEDULERS if s not in ("none", "auto", "loadleveler")]:
+        for scheduler in [s for s in SCHEDULERS if s not in ("loadleveler")] + ["none"]:
             depends_on(f"prrte schedulers={scheduler}", when=f"schedulers={scheduler}")
             depends_on(f"pmix schedulers={scheduler}", when=f"schedulers={scheduler}")
 
@@ -785,7 +785,7 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=auto",
         when="~internal-pmix",
-        msg="External pmix and prrte requires specifying schedulers explicitly.",
+        msg="External pmix and prrte requires specifying schedulers explicitly (including 'none').",
     )
 
     # According to this comment on github:
