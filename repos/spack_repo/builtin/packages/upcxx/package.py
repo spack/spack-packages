@@ -93,6 +93,7 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
         "level_zero",
         default=False,
         description="Enables UPC++ support for the Level Zero memory kind on Intel GPUs",
+        when="@2023.3.0:",
     )
 
     variant(
