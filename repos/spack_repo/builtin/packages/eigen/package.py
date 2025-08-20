@@ -71,16 +71,6 @@ class Eigen(CMakePackage, ROCmPackage):
     # See https://gitlab.com/libeigen/eigen/-/issues/1555
     patch("xlc-compilation-3.3.4.patch", when="@3.3.4%xl_r")
 
-    # From http://eigen.tuxfamily.org/index.php?title=Main_Page#Requirements
-    # "Eigen doesn't have any dependencies other than the C++ standard
-    # library."
-    variant(
-        "build_type",
-        default="RelWithDebInfo",
-        description="The build type to build",
-        values=("Debug", "Release", "RelWithDebInfo"),
-    )
-
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 

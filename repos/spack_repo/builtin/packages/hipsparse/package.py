@@ -103,6 +103,13 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(f"rocsparse amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
 
+    # Add c++17 to hipsparse to fix error with std::filesystem
+    patch(
+        "https://github.com/ROCm/hipSPARSE/commit/037b54ecc129edaaff59d3df149a3f071466ba29.patch?full_index=1",
+        sha256="02f44a3bac6f9983648afeb606aa43b7329547218e0f13b9d31b685acb8b198e",
+        when="@6.3",
+    )
+
     @classmethod
     def determine_version(cls, lib):
         match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)

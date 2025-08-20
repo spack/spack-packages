@@ -61,28 +61,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     version("1.8.1", tag="v1.8.1", commit="56b43f4fec1f76953f15a627694d4bba34588969")
     version("1.8.0", tag="v1.8.0", commit="37c1f4a7fef115d719104e871d0cf39434aa9d56")
     version("1.7.1", tag="v1.7.1", commit="57bffc3a8e4fee0cce31e1ff1f662ccf7b16db57")
-    version(
-        "1.7.0", tag="v1.7.0", commit="e85d494707b835c12165976b8442af54b9afcb26", deprecated=True
-    )
-    version(
-        "1.6.0", tag="v1.6.0", commit="b31f58de6fa8bbda5353b3c77d9be4914399724d", deprecated=True
-    )
-    version(
-        "1.5.1", tag="v1.5.1", commit="3c31d73c875d9a4a6ea8a843b9a0d1b19fbe36f3", deprecated=True
-    )
-    version(
-        "1.5.0", tag="v1.5.0", commit="4ff3872a2099993bf7e8c588f7182f3df777205b", deprecated=True
-    )
-    version(
-        "1.4.1", tag="v1.4.1", commit="74044638f755cd8667bedc73da4dbda4aa64c948", deprecated=True
-    )
 
     is_darwin = sys.platform == "darwin"
 
     # All options are defined in CMakeLists.txt.
     # Some are listed in setup.py, but not all.
     variant("debug", default=False, description="Build with debugging support")
-    variant("caffe2", default=False, description="Build Caffe2", when="@1.7:")
+    variant("caffe2", default=False, description="Build Caffe2")
     variant("test", default=False, description="Build C++ test binaries")
     variant("cuda", default=not is_darwin, description="Use CUDA")
     variant("rocm", default=False, description="Use ROCm")
@@ -106,13 +91,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("openmp", default=True, description="Use OpenMP for parallel code")
     variant("qnnpack", default=True, description="Use QNNPACK (quantized 8-bit operators)")
     variant("valgrind", default=True, description="Use Valgrind", when="@1.8: platform=linux")
-    variant("xnnpack", default=True, description="Use XNNPACK", when="@1.5:")
+    variant("xnnpack", default=True, description="Use XNNPACK")
     variant("mkldnn", default=True, description="Use MKLDNN")
     variant("distributed", default=True, description="Use distributed")
     variant("mpi", default=True, description="Use MPI for Caffe2", when="+distributed")
     variant("ucc", default=False, description="Use UCC", when="@1.13: +distributed")
     variant("gloo", default=False, description="Use Gloo", when="+distributed")
-    variant("tensorpipe", default=True, description="Use TensorPipe", when="@1.6: +distributed")
+    variant("tensorpipe", default=True, description="Use TensorPipe", when="+distributed")
     variant(
         "breakpad",
         default=True,
@@ -169,7 +154,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("python@3.8:3.11", when="@2.0:2.1")
         depends_on("python@:3.10", when="@1.11:1")
         depends_on("python@:3.9", when="@1.7.1:1.10")
-        depends_on("python@:3.8", when="@1.4:1.7.0")
 
     # CMakelists.txt
     with default_args(type="build"):
@@ -185,7 +169,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-filelock", when="@2:")
         depends_on("py-typing-extensions@4.10:", when="@2.6:")
         depends_on("py-typing-extensions@4.8:", when="@2.2:")
-        depends_on("py-typing-extensions@3.6.2.1:", when="@1.7:")
+        depends_on("py-typing-extensions@3.6.2.1:")
         depends_on("py-sympy@1.13.3:", when="@2.7:")
         depends_on("py-sympy@1.13.1", when="@2.5:2.6")
         depends_on("py-sympy", when="@2:")
@@ -209,8 +193,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
 
     # third_party
-    depends_on("fp16@2020-05-14", when="@1.6:")
-    depends_on("fxdiv@2020-04-17", when="@1.6:")
+    depends_on("fp16@2020-05-14")
+    depends_on("fxdiv@2020-04-17")
     depends_on("nvtx@3.2.1", when="@2.8:")
     depends_on("nvtx@3.1.0", when="@2.6:2.7")
     # https://github.com/pytorch/pytorch/issues/60332
@@ -240,9 +224,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("gloo@2021-05-21", when="@1.10:1.12+gloo")
     depends_on("gloo@2021-05-04", when="@1.9+gloo")
     depends_on("gloo@2020-09-18", when="@1.7:1.8+gloo")
-    depends_on("gloo@2020-03-17", when="@1.6+gloo")
-    depends_on("gloo+cuda", when="@1.6:+gloo+cuda")
-    depends_on("gloo+libuv", when="@1.6: platform=darwin")
+    depends_on("gloo+cuda", when="+gloo+cuda")
+    depends_on("gloo+libuv", when="platform=darwin")
     # https://github.com/pytorch/pytorch/issues/60331
     # depends_on("onnx@1.18.0", when="@2.8:")
     # depends_on("onnx@1.17.0", when="@2.6:2.7")
@@ -259,14 +242,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     with when("~custom-protobuf"):
         depends_on("protobuf@3.13.0", when="@1.10:")
         depends_on("protobuf@3.11.4", when="@1.6:1.9")
-        depends_on("protobuf@3.6.1", when="@1.1:1.5")
-        depends_on("protobuf@3.5.0", when="@1.0")
         with default_args(type=("build", "run")):
             depends_on("py-protobuf@3.13", when="@1.10:")
             depends_on("py-protobuf@3.11", when="@1.6:1.9")
-            depends_on("py-protobuf@3.6", when="@1.1:1.5")
-            depends_on("py-protobuf@3.5", when="@1.0")
-    depends_on("psimd@2020-05-17", when="@1.6:")
+    depends_on("psimd@2020-05-17")
     depends_on("pthreadpool@2023-08-29", when="@2.2:")
     depends_on("pthreadpool@2021-04-13", when="@1.9:2.1")
     depends_on("pthreadpool@2020-10-05", when="@1.8")
@@ -297,12 +276,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # https://discuss.pytorch.org/t/compiling-1-10-1-from-source-with-gcc-11-and-cuda-11-5/140971
         depends_on("cuda@10.2:11.4", when="@1.10+cuda")
         depends_on("cuda@9.2:11.4", when="@1.6:1.9+cuda")
-        depends_on("cuda@9:11.4", when="@:1.5+cuda")
     # https://github.com/pytorch/pytorch#prerequisites
     # https://github.com/pytorch/pytorch/issues/119400
     depends_on("cudnn@8.5:9.0", when="@2.3:+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
-    depends_on("cudnn@7", when="@:1.5+cudnn")
     depends_on("nccl", when="+nccl+cuda")
     depends_on("magma+cuda", when="+magma+cuda")
     depends_on("magma+rocm", when="+magma+rocm")
@@ -414,15 +391,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     )
 
     # Fixes CMake configuration error when XNNPACK is disabled
-    # https://github.com/pytorch/pytorch/pull/35607
-    # https://github.com/pytorch/pytorch/pull/37865
-    patch("xnnpack.patch", when="@1.5")
     # https://github.com/pytorch/pytorch/issues/141083
     # https://github.com/google/XNNPACK/commit/5f23827e66cca435fa400b6e221892ac95af0079
     patch("xnnpack2.patch", when="@2.6", working_dir="third_party/XNNPACK")
-
-    # Fixes build error when ROCm is enabled for pytorch-1.5 release
-    patch("rocm.patch", when="@1.5+rocm")
 
     # PR 152569 is to set ROCM_INCLUDE_DIRS the include path
     # of required rocm packages in LoadHIP.cmake.
@@ -440,13 +411,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         when="@2.6:2.7+rocm",
     )
 
-    # Fixes compilation with Clang 9.0.0 and Apple Clang 11.0.3
-    # https://github.com/pytorch/pytorch/pull/37086
-    patch(
-        "https://github.com/pytorch/pytorch/commit/e921cd222a8fbeabf5a3e74e83e0d8dfb01aa8b5.patch?full_index=1",
-        sha256="0f3ad037a95af9d34b1d085050c1e7771fd00f0b89e5b3a276097b7c9f4fabf8",
-        when="@:1.5",
-    )
     # Fixes build failure from py-torch version 1.5 to 2.2 with rocm
     patch(
         "https://github.com/ROCm/pytorch/commit/bac5378c734e74b5d58b8e82f9dbaa1454cfa5bd.patch?full_index=1",
@@ -462,7 +426,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("fj-ssl2_1.9.patch", when="@1.9^fujitsu-ssl2")
     patch("fj-ssl2_1.8.patch", when="@1.8^fujitsu-ssl2")
     patch("fj-ssl2_1.6-1.7.patch", when="@1.6:1.7^fujitsu-ssl2")
-    patch("fj-ssl2_1.3-1.5.patch", when="@:1.5^fujitsu-ssl2")
 
     # Fix compilation of +distributed~tensorpipe
     # https://github.com/pytorch/pytorch/issues/68002
@@ -580,7 +543,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         working_dir="third_party/fbgemm",
     )
 
-    @when("@1.5.0:")
     def patch(self):
         # https://github.com/pytorch/pytorch/issues/52208
         filter_file(
