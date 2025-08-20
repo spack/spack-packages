@@ -74,7 +74,8 @@ class Otf2(AutotoolsPackage):
     extends("python")
 
     # `imp` module required
-    depends_on("python@:3.11", type=("build", "run"))
+    depends_on("python@3", type=("build", "run"), when="@3.1:")
+    depends_on("python@:3.11", type=("build", "run"), when="@:3.0")
 
     with when("@2.2 %cce"):
         depends_on("autoconf", type="build")
