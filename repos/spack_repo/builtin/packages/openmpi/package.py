@@ -785,7 +785,7 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=auto",
         when="~internal-pmix",
-        msg="External pmix and prrte requires specifying schedulers explicitly (including 'none').",
+        msg="External pmix/prrte requires specifying schedulers explicitly (including 'none').",
     )
 
     # According to this comment on github:
