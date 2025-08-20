@@ -621,7 +621,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     # Variants to use internal packages
     variant("internal-hwloc", default=False, description="Use internal hwloc")
-    variant("internal-pmix", default=False, description="Use internal pmix")
+    variant("internal-pmix", default=False, description="Use internal pmix and prrte")
     variant("internal-libevent", default=False, description="Use internal libevent")
     variant("openshmem", default=False, description="Enable building OpenSHMEM")
     variant("debug", default=False, description="Make debug build", when="build_system=autotools")
@@ -737,6 +737,11 @@ with '-Wl,-commons,use_dylibs' and without
         # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
         depends_on("prrte")
 
+        for scheduler in [s for s in SCHEDULERS if s not in ("none", "auto", "loadleveler")]:
+            depends_on(f"prrte schedulers={scheduler}", when=f"schedulers={scheduler}")
+            depends_on(f"pmix schedulers={scheduler}", when=f"schedulers={scheduler}")
+
+
     # Libevent is required when *vendored* PMIx is used
     depends_on("libevent@2:", when="~internal-libevent")
 
@@ -776,6 +781,12 @@ with '-Wl,-commons,use_dylibs' and without
         "schedulers=loadleveler",
         when="@3:",
         msg="The loadleveler scheduler is not supported with openmpi(>=3).",
+    )
+
+    conflicts(
+        "schedulers=auto",
+        when="~internal-pmix",
+        msg="External pmix and prrte requires specifying schedulers explicitly.",
     )
 
     # According to this comment on github:
