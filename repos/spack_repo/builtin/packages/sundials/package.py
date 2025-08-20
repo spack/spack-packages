@@ -533,7 +533,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     def post_install(self):
         """Run after install to fix install name of dynamic libraries
         on Darwin to have full path and install the LICENSE file."""
-        spec = self.spec
         prefix = self.spec.prefix
 
         if sys.platform == "darwin":
