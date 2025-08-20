@@ -556,7 +556,6 @@ class RocmOpenmpExtras(Package):
                 f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
             ]
 
-
         # Shared cmake configuration for openmp, openmp-debug
         # Due to hsa-rocr-dev using libelf instead of elfutils
         # the build of openmp fails because the include path
@@ -668,7 +667,7 @@ class RocmOpenmpExtras(Package):
         ]
 
         components["flang-legacy"] = [
-            f"../rocm-openmp-extras/flang/flang-legacy/{flang_legacy_version}",
+            f"../rocm-openmp-extras/flang/flang-legacy/{flang_legacy_version}"
         ]
 
         if not self.spec.satisfies("%cxx=rocmcc"):
