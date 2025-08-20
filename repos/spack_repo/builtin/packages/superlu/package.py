@@ -71,7 +71,7 @@ class Superlu(CMakePackage):
             self.define("enable_internal_blaslib", False),
             self.define("CMAKE_INSTALL_LIBDIR", self.prefix.lib),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
-            self.define("enable_tests", self.pkg.run_tests),
+            self.define("enable_tests", self.run_tests),
             self.define_from_variant("enable_fortran", "fortran"),
         ]
 
