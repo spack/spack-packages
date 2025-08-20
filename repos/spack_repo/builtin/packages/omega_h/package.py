@@ -22,6 +22,11 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "10.9.0-scorec",
+        commit="c18a0f6c444fb7b5d062a5c920386cb69fb7c27b",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "10.8.6-scorec",
         commit="a730c78e516d7f6cca4f8b4e4e0a5eb8020f9ad9",
         git="https://github.com/SCOREC/omega_h.git",
