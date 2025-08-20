@@ -741,7 +741,6 @@ with '-Wl,-commons,use_dylibs' and without
             depends_on(f"prrte schedulers={scheduler}", when=f"schedulers={scheduler}")
             depends_on(f"pmix schedulers={scheduler}", when=f"schedulers={scheduler}")
 
-
     # Libevent is required when *vendored* PMIx is used
     depends_on("libevent@2:", when="~internal-libevent")
 

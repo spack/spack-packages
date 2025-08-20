@@ -70,7 +70,7 @@ class Prrte(AutotoolsPackage):
     variant(
         "schedulers",
         values=disjoint_sets(SCHEDULERS),
-        description="List of schedulers for which support is enabled"
+        description="List of schedulers for which support is enabled",
     )
     depends_on("lsf", when="schedulers=lsf")
     depends_on("pbs", when="schedulers=tm")

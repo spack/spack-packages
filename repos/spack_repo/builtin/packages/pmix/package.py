@@ -200,13 +200,12 @@ class Pmix(AutotoolsPackage):
     depends_on("py-setuptools", when="+python")
     depends_on("munge", when="+munge")
 
-
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
 
     variant(
         "schedulers",
         values=disjoint_sets(SCHEDULERS),
-        description="List of schedulers for which support is enabled"
+        description="List of schedulers for which support is enabled",
     )
     depends_on("lsf", when="schedulers=lsf")
     depends_on("pbs", when="schedulers=tm")
@@ -301,6 +300,5 @@ class Pmix(AutotoolsPackage):
 
         if spec.satisfies("schedulers=alps"):
             config_args.append("--with-alps")
-
 
         return config_args
