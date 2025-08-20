@@ -198,11 +198,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # we need a shared version of python b/c linking with static python lib
     # causes duplicate state issues when running compiled python modules.
     with when("+python"):
-        depends_on("python+shared")
+        depends_on("python+shared", type=("build", "link", "run"))
         extends("python")
         depends_on("py-numpy", type=("build", "link", "run"))
-        depends_on("py-pip")
-        depends_on("py-wheel", when="@0.9.4:")
+        depends_on("py-pip", type="build")
+        depends_on("py-wheel", when="@0.9.4:", type="build")
+        depends_on("py-setuptools", type="build")
 
     #######################
     # MPI
