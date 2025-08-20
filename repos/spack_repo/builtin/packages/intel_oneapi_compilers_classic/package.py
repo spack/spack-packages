@@ -117,12 +117,30 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
             env.append_flags("SPACK_ALWAYS_FFLAGS", "-diag-disable=10448")
 
     def install(self, spec, prefix):
-        # If we use symlinks, we create a run dependency on oneapi compilers
-        # preventing ifort use with a different version of icx
+        # List of all binaries from intel-oneapi-compilers related to ifort
+        binaries = [
+            "codecov",
+            "fortcom",
+            "fpp",
+            "ifort",
+            "ifort.cfg",
+            "map_opts",
+            "profdcg",
+            "profmerge",
+            "profmergesampling",
+            "proforder",
+            "tselect",
+            "xiar",
+            "xiar.cfg",
+            "xild",
+            "xild.cfg",
+        ]
+
+        # We do a full copy (not symlinks) to avoid a run dependency on intel-oneapi-compilers
+        # which would prevent mixing versions in a DAG
         mkdirp(prefix.bin)
-        install(self.oneapi_compiler_prefix.bin.ifort, prefix.bin)
-        install(self.oneapi_compiler_prefix.bin.fortcom, prefix.bin)
-        install(self.oneapi_compiler_prefix.bin.join("ifort.cfg"), prefix.bin)
+        for binary in binaries:
+            install(self.oneapi_compiler_prefix.bin.join(binary), prefix.bin)
         install_tree(self.oneapi_compiler_prefix.lib, prefix.lib)
         install_tree(self.oneapi_compiler_prefix.opt, prefix.opt)
         install_tree(self.oneapi_compiler_prefix.etc, prefix.etc)
@@ -130,8 +148,8 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
 
     @when("@:2021.10")
     def install(self, spec, prefix):
-        # If we use symlinks, we create a run dependency on oneapi compilers
-        # preventing ifort use with a different version of icx
+        # We do a full copy (not symlinks) to avoid a run dependency on intel-oneapi-compilers
+        # which would prevent mixing versions in a DAG
         install_tree(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin)
         install_tree(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
         install_tree(self.oneapi_compiler_prefix.linux.include, prefix.include)
