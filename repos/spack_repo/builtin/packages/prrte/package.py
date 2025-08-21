@@ -103,7 +103,8 @@ class Prrte(AutotoolsPackage):
         config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
 
         # schedulers
-        # https://github.com/openpmix/openpmix/blob/master/docs/installing-pmix/configure-cli-options/runtime.rst
+        # see prte_check_X.m4 files in
+        # https://github.com/openpmix/prrte/tree/master/config
         if spec.satisfies("schedulers=alps"):
             config_args.append("--with-alps")
 
