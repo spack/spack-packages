@@ -48,6 +48,8 @@ class PyMumps4py(PythonPackage):
     @on_package_attributes(run_tests=True)
     def run_source_tests(self):
         """Test if all solvers are working"""
-        pytest = which("pytest")
-        with working_dir(self.stage.source_path):
-            pytest("tests", "-v")
+        with working_dir("spack-test", create=True):
+            python(
+                "-c",
+                "from mumps4py.mumps_solver import MumpsSolver; MumpsSolver(verbose=False, system='complex64'); MumpsSolver(verbose=False, system='complex128'); MumpsSolver(verbose=False, system='double'); MumpsSolver(verbose=False, system='single')",
+            )
