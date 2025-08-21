@@ -215,6 +215,9 @@ class Plumed(AutotoolsPackage):
     depends_on("m4", type="build")
     depends_on("py-cython", type="build", when="@2.5:")
 
+    # https://github.com/plumed/plumed2/issues/1256
+    conflicts("^py-cython@3.1:", when="@:2.9.3")
+
     force_autoreconf = True
 
     parallel = False
