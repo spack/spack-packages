@@ -90,7 +90,7 @@ class Superlu(CMakePackage):
     def setup_standalone_tests(self):
         """Set up and copy example source files after the package is installed
         to an install test subdirectory for use during `spack test run`."""
-        makefile = join_path(self.pkg.examples_src_dir, "Makefile")
+        makefile = join_path(self.examples_src_dir, "Makefile")
 
         if self.spec.satisfies("@5.2.2:"):
             # Include dir was hardcoded in 5.2.2
@@ -109,7 +109,7 @@ class Superlu(CMakePackage):
             lib = f"libsuperlu_{self.spec.version}.a"
         config_args.extend(self._make_hdr_for_test(lib))
 
-        with open(join_path(self.pkg.examples_src_dir, filename), "w") as inc:
+        with open(join_path(self.examples_src_dir, filename), "w") as inc:
             for option in config_args:
                 inc.write(f"{option}\n")
 
@@ -117,7 +117,7 @@ class Superlu(CMakePackage):
         filter_file(r"include \.\./" + filename, "include ./" + filename, makefile)
 
         # Cache the examples directory for use by stand-alone tests
-        cache_extra_test_sources(self.pkg, self.pkg.examples_src_dir)
+        cache_extra_test_sources(self, self.examples_src_dir)
 
     def _make_hdr_for_test(self, lib):
         """Standard configure arguments for make.inc"""
