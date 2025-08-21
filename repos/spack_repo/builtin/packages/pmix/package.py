@@ -200,17 +200,6 @@ class Pmix(AutotoolsPackage):
     depends_on("py-setuptools", when="+python")
     depends_on("munge", when="+munge")
 
-    SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
-
-    variant(
-        "schedulers",
-        values=disjoint_sets(("none"), SCHEDULERS).with_non_feature_values("none"),
-        description="List of schedulers for which support is enabled",
-    )
-    depends_on("lsf", when="schedulers=lsf")
-    depends_on("pbs", when="schedulers=tm")
-    depends_on("slurm", when="schedulers=slurm")
-
     def autoreconf(self, spec, prefix):
         """Only needed when building from git checkout"""
         # If configure exists nothing needs to be done
@@ -281,24 +270,5 @@ class Pmix(AutotoolsPackage):
         # aarch64.  Work-around is to just not build the test code.
         if spec.satisfies("@:2.1.0 target=aarch64:"):
             config_args.append("--without-tests-examples")
-
-        # schedulers
-        # listed in https://github.com/openpmix/prrte/tree/master/config
-        # in the prte_check_X.m4 files
-        if spec.satisfies("schedulers=lsf"):
-            config_args.append(f"--with-lsf={self.spec['lsf'].prefix}")
-            config_args.append("--with-lsf-libdir={0}".format(spec["lsf"].libs.directories[0]))
-
-        if spec.satisfies("schedulers=tm"):
-            config_args.append(f"--with-tm={self.spec['pbs'].prefix}")
-
-        if spec.satisfies("schedulers=slurm"):
-            config_args.append("--with-slurm")
-
-        if spec.satisfies("schedulers=sge"):
-            config_args.append("--with-sge")
-
-        if spec.satisfies("schedulers=alps"):
-            config_args.append("--with-alps")
 
         return config_args
