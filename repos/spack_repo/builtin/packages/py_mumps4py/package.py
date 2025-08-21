@@ -46,7 +46,7 @@ class PyMumps4py(PythonPackage):
 
     @run_after("build")
     def run_source_tests(self):
-        """Test if all solvers are working """
+        """Test if all solvers are working"""
         if not self.run_tests:
             return
         pytest = which("pytest")
