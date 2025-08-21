@@ -174,6 +174,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         if name == "ldflags":
             flags += [spec["blas"].libs.search_flags, spec["lapack"].libs.search_flags, "-lstdc++"]
             flags += [spec["lapack"].libs.link_flags, spec["blas"].libs.link_flags]
+            if self.spec.satisfies("@2024.05.001,2025.01.001 %aocc"):
+                # fix an issue where main library and test suite containing duplicate symbols
+                flags.append("-Wl,--allow-multiple-definition")
         return (flags, None, None)
 
     def configure_args(self):
@@ -273,10 +276,3 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         options.append("--disable-Fortran-tests")
 
         return options
-
-    def flag_handler(self, name, flags):
-        if name == "ldflags":
-            if self.spec.satisfies("@2024.05.001,2025.01.001 %aocc"):
-                # fix an issue where main library and test suite containing duplicate symbols
-                flags.append("-Wl,--allow-multiple-definition")
-        return (flags, None, None)
