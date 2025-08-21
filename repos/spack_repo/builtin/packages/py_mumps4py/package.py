@@ -7,9 +7,9 @@ class PyMumps4py(PythonPackage):
     homepage = "https://github.com/imadki/mumps4py"
     url      = "https://github.com/imadki/mumps4py/archive/refs/tags/1.0.0.tar.gz"
 
-    maintainers = ["your-github-id"]
+    maintainers = ["williampiat3"]
 
-    version("1.0.0", sha256="<SHA256_CHECKSUM>")
+    version("1.0.0", sha256="634dd52a9942e88a430d6c8b519cbf6e50db77dd5f1be1cb04e5ab3f3e9da8ba")
 
     # Python requirements
     depends_on("python@3.5:", type=("build", "run"))
