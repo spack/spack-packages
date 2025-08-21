@@ -6,7 +6,7 @@ class PyMumps4py(PythonPackage):
     """Python wrapper for the MUMPS solver (MUMPS4PY)."""
 
     homepage = "https://github.com/imadki/mumps4py"
-    url      = "https://github.com/imadki/mumps4py/archive/refs/tags/1.0.0.tar.gz"
+    url = "https://github.com/imadki/mumps4py/archive/refs/tags/1.0.0.tar.gz"
 
     maintainers = ["williampiat3"]
 
@@ -39,6 +39,6 @@ class PyMumps4py(PythonPackage):
         ]
         return args
 
-    def test(self):
+    def test_all_solvers(self):
         pytest = which("pytest")
         pytest("tests", "-v")
