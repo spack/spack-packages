@@ -41,5 +41,7 @@ class PyMumps4py(PythonPackage):
         return args
 
     def test_all_solvers(self):
+        """Function to run all mumps4py tests that assess whether all solvers can be used
+        """
         pytest = which("pytest")
         pytest("tests", "-v")
