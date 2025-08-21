@@ -84,6 +84,8 @@ class Superlu(CMakePackage):
                 ]
             )
 
+        return args
+
     @run_after("install")
     def setup_standalone_tests(self):
         """Set up and copy example source files after the package is installed
@@ -135,4 +137,3 @@ class Superlu(CMakePackage):
             "CFLAGS     = -O3 -DNDEBUG -DUSE_VENDOR_BLAS -DPRNTlevel=0 -DAdd_",
             "NOOPTS     = -O0",
         ]
-        return args
