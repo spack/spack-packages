@@ -1,6 +1,6 @@
-from spack.package import *
 from spack_repo.builtin.build_systems.python import PythonPackage
 
+from spack.package import *
 
 class PyMumps4py(PythonPackage):
     """Python wrapper for the MUMPS solver (MUMPS4PY)."""
