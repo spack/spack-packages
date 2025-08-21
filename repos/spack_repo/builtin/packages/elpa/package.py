@@ -232,10 +232,13 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             # https://github.com/marekandreas/elpa/issues/55
             options.append("--enable-amd-gpu")
             if spec.satisfies("@2025.01.001"):
-                options.append("HIPCC={0} -I{1} -I{2}".format(
-                    spec["hip"].hipcc,
-                    spec["rocblas"].prefix.include,
-                    spec["rocsolver"].prefix.include))
+                options.append(
+                    "HIPCC={0} -I{1} -I{2}".format(
+                        spec["hip"].hipcc,
+                        spec["rocblas"].prefix.include,
+                        spec["rocsolver"].prefix.include,
+                    )
+                )
             else:
                 options.append("CXX={0}".format(spec["hip"].hipcc))
 
