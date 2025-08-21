@@ -44,11 +44,10 @@ class PyMumps4py(PythonPackage):
         # Required by mumps4py to specify which MUMPS solvers to use
         env.set("MUMPS_SOLVERS", "dmumps,cmumps,zmumps,smumps")
 
-    @run_after("build")
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
     def run_source_tests(self):
         """Test if all solvers are working"""
-        if not self.run_tests:
-            return
         pytest = which("pytest")
         with working_dir(self.stage.source_path):
             pytest("tests", "-v")
