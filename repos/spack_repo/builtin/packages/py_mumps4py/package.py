@@ -51,5 +51,13 @@ class PyMumps4py(PythonPackage):
         with working_dir("spack-test", create=True):
             python(
                 "-c",
-                "from mumps4py.mumps_solver import MumpsSolver; MumpsSolver(verbose=False, system='complex64'); MumpsSolver(verbose=False, system='complex128'); MumpsSolver(verbose=False, system='double'); MumpsSolver(verbose=False, system='single')",
+                ";".join(
+                    [
+                        "from mumps4py.mumps_solver import MumpsSolver",
+                        "MumpsSolver(verbose=False,system='complex64')",
+                        "MumpsSolver(verbose=False, system='complex128')",
+                        "MumpsSolver(verbose=False, system='double')",
+                        " MumpsSolver(verbose=False, system='single')",
+                    ]
+                ),
             )
