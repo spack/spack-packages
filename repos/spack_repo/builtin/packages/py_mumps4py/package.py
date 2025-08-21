@@ -40,7 +40,15 @@ class PyMumps4py(PythonPackage):
         ]
         return args
 
-    def test_all_solvers(self):
-        """Function to run all mumps4py tests that assess whether all solvers can be used"""
+    def setup_build_environment(self, env):
+        # Required by mumps4py to specify which MUMPS solvers to use
+        env.set("MUMPS_SOLVERS", "dmumps,cmumps,zmumps,smumps")
+
+    @run_after("build")
+    def run_source_tests(self):
+        """Test if all solvers are working """
+        if not self.run_tests:
+            return
         pytest = which("pytest")
-        pytest("tests", "-v")
+        with working_dir(self.stage.source_path):
+            pytest("tests", "-v")
