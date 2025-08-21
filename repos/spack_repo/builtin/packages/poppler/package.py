@@ -86,6 +86,8 @@ class Poppler(CMakePackage):
     depends_on("qt@4.0:4.8.6", when="@:0.61+qt")
     depends_on("qt@5.15:", when="@25.08.0:+qt")
 
+    conflicts("%gcc@:9", when="@25.08.0:", msg="poppler@25.08.0: requires at least gcc 10")
+
     # Splash is unconditionally disabled. Unfortunately there's
     # a small section of code in the QT5 wrappers that expects it
     # to be present.
