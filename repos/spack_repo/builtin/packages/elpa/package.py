@@ -79,6 +79,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         sha256="90f18c84e740a35d726e44078a111fac3b6278a0e750ce1f3ea154ee78e93298",
         when="@:2025.01.001",
     )
+    patch("hipcc.patch", when="+rocm @2025.01.001")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -113,7 +114,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@2021.05.001: %gcc@:7",
         msg="ELPA-2021.05.001+ requires GCC-8+ for OpenMP support",
     )
-    conflicts("+mpi", when="+rocm", msg="ROCm support and MPI are not yet compatible")
+    conflicts("+mpi", when="+rocm @:2024", msg="ROCm support and MPI are not yet compatible")
     conflicts(
         "+gpu_streams",
         when="@:2023.11.001-patched +openmp",
@@ -230,7 +231,13 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             # Can't yet be changed to the new option --enable-amd-gpu-kernels
             # https://github.com/marekandreas/elpa/issues/55
             options.append("--enable-amd-gpu")
-            options.append("CXX={0}".format(self.spec["hip"].hipcc))
+            if spec.satisfies("@2025.01.001"):
+                options.append("HIPCC={0} -I{1} -I{2}".format(
+                    spec["hip"].hipcc,
+                    spec["rocblas"].prefix.include,
+                    spec["rocsolver"].prefix.include))
+            else:
+                options.append("CXX={0}".format(spec["hip"].hipcc))
 
             if spec.satisfies("+gpu_streams"):
                 options.append("--enable-gpu-streams=amd")
