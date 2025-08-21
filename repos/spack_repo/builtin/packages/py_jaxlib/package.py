@@ -189,6 +189,13 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     # backports https://github.com/abseil/abseil-cpp/pull/1732
     patch("jaxxlatsl.patch", when="@0.4.28:0.4.32 target=aarch64:")
 
+    requires(
+        "%c,cxx=llvm",
+        "%c,cxx=apple-clang",
+        when="@0.7.1:",
+        msg="Clang is the only acceptable compiler.",
+    )
+
     conflicts(
         "cuda_arch=none",
         when="+cuda",
