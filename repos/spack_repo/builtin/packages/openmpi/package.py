@@ -563,12 +563,6 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     variant("fortran", default=True, description="Enable Fortran support")
     variant("gpfs", default=False, description="Enable GPFS support")
-    variant(
-        "singularity",
-        default=False,
-        when="@:4",
-        description="Build deprecated support for the Singularity container",
-    )
     variant("lustre", default=False, description="Lustre filesystem library support")
     variant("romio", default=True, when="@:5", description="Enable ROMIO support")
     variant("romio", default=False, when="@5:", description="Enable ROMIO support")
@@ -689,8 +683,6 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("sqlite", when="+sqlite3")
     depends_on("zlib-api", when="@3:")
     depends_on("valgrind~mpi", when="+memchecker")
-    # Singularity release 3 works better
-    depends_on("singularity@3:", when="+singularity")
     depends_on("lustre", when="+lustre")
 
     depends_on("opa-psm2", when="fabrics=psm2")
@@ -898,11 +890,6 @@ with '-Wl,-commons,use_dylibs' and without
                     variants.append("+cxx_exceptions")
                 else:
                     variants.append("~cxx_exceptions")
-
-            # singularity
-            if version in ver(":4"):
-                if re.search(r"--with-singularity", output):
-                    variants.append("+singularity")
 
             # lustre
             if re.search(r"--with-lustre", output):
@@ -1185,7 +1172,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(["--enable-debug"])
 
         # Package dependencies
-        for dep in ["lustre", "singularity", "valgrind"]:
+        for dep in ["lustre", "valgrind"]:
             if "^" + dep in spec:
                 config_args.append("--with-{0}={1}".format(dep, spec[dep].prefix))
 
