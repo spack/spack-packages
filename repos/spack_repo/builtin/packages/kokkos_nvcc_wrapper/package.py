@@ -159,10 +159,6 @@ class KokkosNvccWrapper(Package):
         deprecated=True,
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
-
     depends_on("cuda")
 
     def install(self, spec, prefix):
