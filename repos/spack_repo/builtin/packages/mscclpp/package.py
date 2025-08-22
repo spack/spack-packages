@@ -43,8 +43,7 @@ class Mscclpp(CMakePackage, ROCmPackage, CudaPackage):
             self.define("PYTHON_BIN_PATH", python.path),
             self.define_from_variant("MSCCLPP_USE_CUDA", "cuda"),
             self.define_from_variant("MSCCLPP_USE_ROCM", "rocm"),
-       ]
-
+        ]
         if self.spec.satisfies("+rocm"):
             args.append(f"-DCMAKE_CXX_COMPILER={self.spec['hip'].prefix.bin.hipcc}")
             rocm_arch = self.spec.variants["amdgpu_target"].value
