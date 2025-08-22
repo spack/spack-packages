@@ -46,9 +46,7 @@ class Hepmc3(CMakePackage):
         description="Install interfaces for some Monte-Carlo Event Gens",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("cmake@2.8.9:", type="build")
     with when("+rootio"):
