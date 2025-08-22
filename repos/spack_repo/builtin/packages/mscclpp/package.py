@@ -50,7 +50,4 @@ class Mscclpp(CMakePackage, ROCmPackage, CudaPackage):
             rocm_arch = self.spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
                 args.append(f"-DCMAKE_CXX_FLAGS={self.hip_flags(rocm_arch)}")
-        if self.spec.satisfies("+cuda"):
-            self.define("MSCCLPP_USE_CUDA", "ON")
-            self.define("MSCCLPP_USE_ROCM", "OFF")
         return args
