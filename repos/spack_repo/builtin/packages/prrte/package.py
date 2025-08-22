@@ -110,7 +110,7 @@ class Prrte(AutotoolsPackage):
 
         if spec.satisfies("schedulers=lsf"):
             config_args.append(f"--with-lsf={self.spec['lsf'].prefix}")
-            config_args.append("--with-lsf-libdir={0}".format(spec["lsf"].libs.directories[0]))
+            config_args.append(f"--with-lsf-libdir={spec['lsf'].libs.directories[0]}")
 
         if spec.satisfies("schedulers=sge"):
             config_args.append("--with-sge")
