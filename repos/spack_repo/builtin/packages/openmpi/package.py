@@ -521,7 +521,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         values=disjoint_sets(("auto",), FABRICS).with_non_feature_values(
             "auto", "none"
         ),  # shared memory transports
-        description="List of fabrics that are enabled; " "'auto' lets openmpi determine",
+        description="List of fabrics that are enabled; 'auto' lets openmpi determine",
     )
 
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge", "loadleveler")
@@ -563,12 +563,6 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     variant("fortran", default=True, description="Enable Fortran support")
     variant("gpfs", default=False, description="Enable GPFS support")
-    variant(
-        "singularity",
-        default=False,
-        when="@:4",
-        description="Build deprecated support for the Singularity container",
-    )
     variant("lustre", default=False, description="Lustre filesystem library support")
     variant("romio", default=True, when="@:5", description="Enable ROMIO support")
     variant("romio", default=False, when="@5:", description="Enable ROMIO support")
@@ -689,8 +683,6 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("sqlite", when="+sqlite3")
     depends_on("zlib-api", when="@3:")
     depends_on("valgrind~mpi", when="+memchecker")
-    # Singularity release 3 works better
-    depends_on("singularity@3:", when="+singularity")
     depends_on("lustre", when="+lustre")
 
     depends_on("opa-psm2", when="fabrics=psm2")
@@ -775,7 +767,7 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=loadleveler",
         when="@3:",
-        msg="The loadleveler scheduler is not supported with " "openmpi(>=3).",
+        msg="The loadleveler scheduler is not supported with openmpi(>=3).",
     )
 
     # According to this comment on github:
@@ -790,6 +782,9 @@ with '-Wl,-commons,use_dylibs' and without
     # Building against an external PMIx with an internal Libevent or HWLOC is unsupported
     conflicts("~internal-pmix", "+internal-hwloc")
     conflicts("~internal-pmix", "+internal-libevent")
+
+    # May be able to get working for LLVM 18/19 using FC=flang-new
+    conflicts("%fortran=clang %llvm@:19")
 
     filter_compiler_wrappers("openmpi/*-wrapper-data*", relative_root="share")
 
@@ -895,11 +890,6 @@ with '-Wl,-commons,use_dylibs' and without
                     variants.append("+cxx_exceptions")
                 else:
                     variants.append("~cxx_exceptions")
-
-            # singularity
-            if version in ver(":4"):
-                if re.search(r"--with-singularity", output):
-                    variants.append("+singularity")
 
             # lustre
             if re.search(r"--with-lustre", output):
@@ -1182,7 +1172,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(["--enable-debug"])
 
         # Package dependencies
-        for dep in ["lustre", "singularity", "valgrind"]:
+        for dep in ["lustre", "valgrind"]:
             if "^" + dep in spec:
                 config_args.append("--with-{0}={1}".format(dep, spec[dep].prefix))
 

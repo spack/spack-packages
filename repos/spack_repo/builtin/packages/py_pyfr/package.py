@@ -34,8 +34,6 @@ class PyPyfr(PythonPackage, CudaPackage, ROCmPackage):
     )
     version("2.0.2", sha256="2c6bf460ffec446a933451792c09d3cd85d6703f14636d99810d61823b8d92c7")
     version("1.15.0", sha256="6a634b9d32447f45d3c24c9de0ed620a0a0a781be7cc5e57b1c1bf44a4650d8d")
-    version("1.14.0", sha256="ebf40ce0896cce9ac802e03fd9430b5be30ea837c31224531a6d5fd68f820766")
-    version("1.13.0", sha256="ac6ecec738d4e23799ab8c50dea9bdbd7d37bc971bd33f22720c5a230b8e7b2f")
 
     variant("metis", default=False, when="@:1.15.0", description="Metis for mesh partitioning")
     variant("scotch", default=True, description="Scotch for mesh partitioning")
@@ -47,7 +45,6 @@ class PyPyfr(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("python@3.9:", when="@:1.15.0", type=("build", "run"))
     depends_on("python@3.10:", when="@2.0.2:", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
-    depends_on("py-gimmik@2.3:2", when="@:1.14.0", type=("build", "run"))
     depends_on("py-gimmik@3", when="@1.15.0", type=("build", "run"))
     depends_on("py-gimmik@3.2.1:", when="@2.0.2:", type=("build", "run"))
     depends_on("py-h5py@2.10:", type=("build", "run"))
@@ -62,7 +59,6 @@ class PyPyfr(PythonPackage, CudaPackage, ROCmPackage):
     # Optional dependencies
     depends_on("metis@5.0.0:5.1.0", when="@:1.15.0 +metis", type=("run"))
     depends_on("scotch@7.0.1: +link_error_lib", when="+scotch", type=("run"))
-    depends_on("cuda@8.0: +allow-unsupported-compilers", when="@:1.14.0 +cuda", type=("run"))
     depends_on("cuda@11.4.0: +allow-unsupported-compilers", when="@1.15.0: +cuda", type=("run"))
     depends_on("rocblas@5.2.0:", when="@:1.15.0 +hip", type=("run"))
     depends_on("rocblas@6.0.0:", when="@2.0.2: +hip", type=("run"))

@@ -298,7 +298,7 @@ class Root(CMakePackage):
     variant(
         "gminimal",
         default=True,
-        description="Ignore most of Root's feature defaults except for " "basic graphic options",
+        description="Ignore most of Root's feature defaults except for basic graphic options",
     )
     variant("geom", default=True, description="Enable support for the geometry library")
     conflicts("~geom", when="@:6.33", msg="geom is always enabled through 6.33")
@@ -325,7 +325,7 @@ class Root(CMakePackage):
     variant(
         "mlp",
         default=False,
-        description="Enable support for TMultilayerPerceptron " "classes' federation",
+        description="Enable support for TMultilayerPerceptron classes' federation",
     )
     variant(
         "mysql", when="@:6.36", default=False, description="Enable support for MySQL databases"

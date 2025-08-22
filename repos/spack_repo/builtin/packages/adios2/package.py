@@ -199,6 +199,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("python", when="+python", type=("build", "run"))
     depends_on("python@2.7:2.8,3.5:3.10", when="@:2.4.0 +python", type=("build", "run"))
     depends_on("python@3.5:3.10", when="@2.5.0:2.7 +python", type=("build", "run"))
+    depends_on("python@3.8:", when="@2.10: +python", type=("build", "run"))
 
     depends_on("python", type="test")
     depends_on("python@2.7:2.8,3.5:3.10", when="@:2.4.0", type="test")
@@ -251,6 +252,14 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # ROCM: enable support for rocm >= 6
     # https://github.com/ornladios/ADIOS2/pull/4214
     patch("2.10-enable-rocm6.patch", when="@2.9.1:2.10.1")
+
+    # Fix issue with GCC 7
+    # https://github.com/ornladios/ADIOS2/pull/4591
+    patch(
+        "https://github.com/ornladios/adios2/commit/b7a5957.patch?full_index=1",
+        sha256="d854008ab27d6ebfa66fffb78126b17713cda3234ed19bf331f85a720e599a32",
+        when="@2.8:2.10",
+    )
 
     @when("%fj")
     def patch(self):
@@ -328,6 +337,12 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm"):
             args.append(CMakeBuilder.define_hip_architectures(self))
 
+        if spec.satisfies("+python"):
+            py_libdir = join_path(
+                self.prefix.lib, f"python{spec['python'].version.up_to(2)}", "site-packages"
+            )
+            args.append(self.define("CMAKE_INSTALL_PYTHONDIR", py_libdir))
+
         return args
 
     @property
@@ -369,6 +384,12 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         except ValueError:
             pass
 
+        if "+python" in self.spec:
+            py_libdir = join_path(
+                self.prefix.lib, f"python{self.spec['python'].version.up_to(2)}", "site-packages"
+            )
+            env.prepend_path("PYTHONPATH", py_libdir)
+
     @run_after("install")
     def setup_install_tests(self):
         """
@@ -391,6 +412,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             ):
                 exe = which(join_path(self.prefix.bin, cmd))
                 exe(*opts)
+
+    def test_python(self):
+        """Test adios2 python"""
+        if self.spec.satisfies("+python"):
+            with test_part(self, "test_python_import", purpose="import adios2 in python"):
+                python = Executable(self.spec["python"].prefix.bin.python)
+                python(*(["-c", "import adios2; print(adios2.__version__)"]))
 
     def test_install(self):
         """Build and run an install tests"""

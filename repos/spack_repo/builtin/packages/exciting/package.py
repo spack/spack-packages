@@ -115,7 +115,7 @@ class Exciting(MakefilePackage):
             opts["BUILDMPI"] = "true"
             opts["MPIF90"] = spec["mpi"].mpifc
             opts["MPIF90_CPP_OPTS"] = "-DMPI -DMPIRHO -DMPISEC"
-            opts["MPIF90_OPTS"] = " ".join(["$(F90_OPTS)", "$(CPP_ON_OPTS) " "$(MPIF90_CPP_OPTS)"])
+            opts["MPIF90_OPTS"] = "$(F90_OPTS) $(CPP_ON_OPTS) $(MPIF90_CPP_OPTS)"
             opts["MPIF90MT"] = "$(MPIF90)"
 
             if spec.satisfies("+omp"):

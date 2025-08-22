@@ -18,11 +18,17 @@ class Rccl(CMakePackage):
 
     homepage = "https://github.com/ROCm/rccl"
     git = "https://github.com/ROCm/rccl.git"
-    url = "https://github.com/ROCm/rccl/archive/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rccl/archive/rocm-6.4.2.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librccl"]
+    version(
+        "6.4.2",
+        tag="rocm-6.4.2",
+        commit="2f7ac66cd64c68d4af8bb4562ce193778a7e470e",
+        submodules=True,
+    )
     version(
         "6.4.1",
         tag="rocm-6.4.1",
@@ -113,6 +119,7 @@ class Rccl(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -121,7 +128,7 @@ class Rccl(CMakePackage):
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -153,6 +160,8 @@ class Rccl(CMakePackage):
             self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
             self.define("ROCM_PATH", self.spec["hip"].prefix),
             self.define("BUILD_TESTS", self.run_tests),
+            self.define("ENABLE_MSCCLPP", False),
+            self.define("ENABLE_MSCCL_KERNEL", False),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))

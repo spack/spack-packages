@@ -68,7 +68,7 @@ class Fortrilinos(CMakePackage):
     depends_on("trilinos gotype=long_long")
     # Full trilinos dependencies
     depends_on(
-        "trilinos+amesos2+anasazi+belos+kokkos+ifpack2+muelu+nox+tpetra" "+stratimikos", when="+hl"
+        "trilinos+amesos2+anasazi+belos+kokkos+ifpack2+muelu+nox+tpetra+stratimikos", when="+hl"
     )
 
     def cmake_args(self):

@@ -34,15 +34,6 @@ class PyZopeInterface(PythonPackage):
     version("5.4.0", sha256="5dba5f530fec3f0988d83b78cc591b58c0b6eb8431a85edd1569a0539a8a5a0e")
     version("5.1.0", sha256="40e4c42bd27ed3c11b2c983fecfb03356fae1209de10686d03c02c8696a1d90e")
 
-    with default_args(deprecated=True):
-        version("4.5.0", sha256="57c38470d9f57e37afb460c399eb254e7193ac7fb8042bd09bdc001981a9c74c")
-
     with default_args(type=("build", "run")):
-        depends_on("python@3.8:", when="@7:")
-        depends_on("python@3.7:", when="@6:")
-        depends_on("python@2.7:2.8,3.5:", when="@5.1.0:")
-        depends_on("python@2.7:2.8,3.4:", when="@4.5.0")
-
         depends_on("py-setuptools@:73", when="@7.1:")
-        depends_on("py-setuptools@:45", when="@4.5.0")
         depends_on("py-setuptools")

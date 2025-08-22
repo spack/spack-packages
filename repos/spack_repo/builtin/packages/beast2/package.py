@@ -21,7 +21,11 @@ class Beast2(Package):
     maintainers("snehring")
 
     license("LGPL-2.1-or-later")
-
+    version(
+        "2.7.7",
+        sha256="a866f3e5da4ef890a042f01849e32322aa0a8e16e3e1cb2c59f823de2611781a",
+        url="https://github.com/CompEvol/beast2/releases/download/v2.7.7/BEAST.v2.7.7.Linux.x86.tgz",
+    )
     version(
         "2.7.4",
         sha256="f5086c74a0337190ae3459ef018468fc6b2eff68ae2b53fb5c96eb7b5df84004",
@@ -44,12 +48,16 @@ class Beast2(Package):
         # handle javafx stuff
         if self.spec.satisfies("@2.7.0:"):
             javafx = "--module-path {}".format(self.spec["javafx"].prefix.lib)
-            modules = "--add-modules javafx.controls"
+            modules = "--add-modules javafx.controls,javafx.fxml"
             with working_dir("bin"):
                 for i in find(".", "*"):
                     filter_file(
                         r"(beast\.pkgmgmt.*\b)|(viz.*\b)", "{0} {1} \\1".format(javafx, modules), i
                     )
+        # remove exports of JAVA_HOME
+        with working_dir("bin"):
+            for i in find(".", "*"):
+                filter_file(r"^export\s+JAVA_HOME=.*$", "", i)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("BEAST", self.prefix)

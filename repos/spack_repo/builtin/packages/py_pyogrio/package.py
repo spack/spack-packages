@@ -30,11 +30,7 @@ class PyPyogrio(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.29:", type="build")
-    # Strictly, this should be 0.28. However others in the dask ecosystem
-    # require 0.29, which makes this fail to concretize. Since Versioneer 0.29 doesn't
-    # break anything with 0.28, it should be safe to keep this aligned
-    # https://github.com/python-versioneer/python-versioneer/releases/tag/0.29
-    depends_on("py-versioneer@0.28: +toml", type="build")
+    depends_on("py-versioneer@0.28 +toml", type="build")
 
     depends_on("gdal@2.4:", type=("build", "link", "run"))
     depends_on("py-certifi", type=("build", "run"))
