@@ -2,13 +2,18 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack.package import *
 import shutil
 
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+
+from spack.package import *
+
+
 class Cimfomfa(AutotoolsPackage):
-    """This library supports both MCL, a cluster algorithm for graphs, and zoem, a macro/DSL language.
-    It supplies abstractions for memory management, I/O, associative arrays, strings, heaps, and a few other things."""
+    """This library supports both MCL, a cluster algorithm for graphs, and zoem, a macro/DSL
+    language. It supplies abstractions for memory management, I/O, associative arrays, strings,
+    heaps, and a few other things.
+    """
 
     homepage = "https://github.com/micans/cimfomfa"
     url = "https://github.com/micans/cimfomfa/archive/refs/tags/21-361.tar.gz"
@@ -28,4 +33,3 @@ class Cimfomfa(AutotoolsPackage):
         # The configure file isn't named properly
         shutil.move("configure.ac.in", "configure.ac")
         autoreconf("--install", "--verbose", "--force")
-
