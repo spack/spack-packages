@@ -12,12 +12,14 @@ class PyLightning(PythonPackage):
 
     homepage = "https://github.com/Lightning-AI/pytorch-lightning"
     pypi = "lightning/lightning-2.0.0.tar.gz"
+    git = "https://github.com/Lightning-AI/pytorch-lightning.git"
     skip_modules = ["lightning.app", "lightning.data", "lightning.store"]
 
     maintainers("adamjstewart")
 
     license("Apache-2.0")
 
+    version("master", branch="master")
     version("2.5.3", sha256="4ed3e12369a1e0f928beecf5c9f5efdabda60a9216057954851e2d89f1abecde")
     version("2.5.2", sha256="9550df613cfb22358ebf77b4a8ad45f3767cd7d26ba2d52b7f036bd3cdd701c4")
     version("2.5.1", sha256="aca88f8abf3fc38d8b40c1f82ce481f4379c2b181a6eeeb9217db0aba8e40736")
