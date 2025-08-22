@@ -43,6 +43,10 @@ class Arrayfire(CMakePackage, CudaPackage):
     conflicts("boost@1.86", when="@3.9", msg="arrayfire@3.9.0 fails to build with boost@1.86")
 
     depends_on("fftw-api@3:")
+
+    oneapi_conflict = "arrayfire does not detect intel-oneapi-mkl as providing FFTW"
+    conflicts("^[virtuals=fftw-api] intel-oneapi-mkl", msg=oneapi_conflict)
+
     depends_on("blas")
     # https://github.com/arrayfire/arrayfire/wiki/Build-Instructions-for-Linux
     depends_on("cuda@9.1:", when="+cuda")
