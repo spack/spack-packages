@@ -106,10 +106,21 @@ default:
     SPACK_BACKTRACE: 1
   interruptible: true
   timeout: 60 minutes
+  # Retry for everything but "legitimate build failures" (script_failure)
   retry:
     max: 2
     when:
-      - always
+      - unknown_failure
+      - api_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
+      - runner_unsupported
+      - stale_schedule
+      - job_execution_timeout
+      - archived_failure
+      - unmet_prerequisites
+      - scheduler_failure
+      - data_integrity_failure
 
 # Generate without tags for cases using external runners
 .generate-base:
@@ -175,21 +186,6 @@ default:
 .build:
   extends: [ ".base-job" ]
   stage: build
-  # Retry for everything but "legitimate build failures" (script_failure)
-  retry:
-    max: 2
-    when:
-      - unknown_failure
-      - api_failure
-      - stuck_or_timeout_failure
-      - runner_system_failure
-      - runner_unsupported
-      - stale_schedule
-      - job_execution_timeout
-      - archived_failure
-      - unmet_prerequisites
-      - scheduler_failure
-      - data_integrity_failure
 
 
 # Inject the dotenv file
