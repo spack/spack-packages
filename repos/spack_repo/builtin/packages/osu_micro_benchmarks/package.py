@@ -59,6 +59,22 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("gnuplot", when="+graphing")
     depends_on("imagemagick", when="+graphing")
 
+    def flag_handler(self, name, flags):
+        wrapper_flags = []
+        build_system_flags = []
+
+        if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
+            if self.spec.satisfies("^[virtuals=mpi] cray-mpich"):
+                gtl_lib = self.spec["cray-mpich"].package.gtl_lib
+                build_system_flags.extend(gtl_lib.get(name) or [])
+            # hipcc is not wrapped, we need to pass the flags via the build
+            # system.
+            build_system_flags.extend(flags)
+        else:
+            wrapper_flags.extend(flags)
+
+        return (wrapper_flags, [], build_system_flags)
+
     def configure_args(self):
         spec = self.spec
         config_args = ["CC=%s" % spec["mpi"].mpicc, "CXX=%s" % spec["mpi"].mpicxx]
