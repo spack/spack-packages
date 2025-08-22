@@ -19,9 +19,6 @@ class DolfinxMpc(CMakePackage):
     license("MIT", checked_by="jorgensd")
 
     version("0.9.3", sha256="efa312cc498e428aab44acccc9bb0c74c200eda005742de7778c8e68fa84e8df")
-    version("0.9.2", sha256="8681def964aef0101b7e35aa377cfbcc4b220a20cfc540ec9058b324031b58c2")
-    version("0.9.1", sha256="2d0c3583b8d69ad4374b0938cd157c9ca48acf50d6969e51ccce8ab14625040e")
-    version("0.9.0", sha256="9b87cd75e3b26b3f92b600e935c45677624c8e169782bf6646265d1e03a0e043")
     version("0.8.1", sha256="e0254b4a1c9c1456583c1415821946b11b0b2e48dbfee6558da2bbedfe78b461")
     version(
         "0.8.0.post1", sha256="bb4803af8bfe53366237dc27dc06085699d5e68e2ffd8098e54614ff207683a8"
