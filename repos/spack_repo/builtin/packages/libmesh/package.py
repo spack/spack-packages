@@ -44,7 +44,9 @@ class Libmesh(AutotoolsPackage):
     variant(
         "exodusii", default=False, description="Compile with the bundled ExodusII output library"
     )
-    variant("vtk", default=False, description="Compile with  VTK input/output library")
+    variant(
+        "vtk", default=False, when="+mpi", description="Compile with  VTK input/output library"
+    )
     variant(
         "fparser",
         default=False,
