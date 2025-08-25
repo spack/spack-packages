@@ -31,5 +31,9 @@ class Affinity(CMakePackage, CudaPackage, ROCmPackage):
 
     def cmake_args(self):
         args = [self.define_from_variant("AFFINITY_MPI", "mpi")]
-        args += [self.define("AFFINITY_GPU_BACKEND", v) for v in ["cuda", "rocm"] if self.spec.satisfies(f"+{v}")]
+        args += [
+            self.define("AFFINITY_GPU_BACKEND", v)
+            for v in ["cuda", "rocm"]
+            if self.spec.satisfies(f"+{v}")
+        ]
         return args
