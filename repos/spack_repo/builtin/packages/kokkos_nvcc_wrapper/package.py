@@ -159,6 +159,8 @@ class KokkosNvccWrapper(Package):
         deprecated=True,
     )
 
+    depends_on("cxx", type="build")  # needed for self.compiler.cxx
+
     depends_on("cuda")
 
     def install(self, spec, prefix):
