@@ -21,7 +21,6 @@ class Affinity(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause", checked_by="nhanford")
 
     variant("mpi", default=False, description="Build MPI support")
-    variant("rocm", default=False, description="Build ROCm Support")
 
     depends_on("cmake@3.21:", type="build")
     depends_on("mpi", when="+mpi")
