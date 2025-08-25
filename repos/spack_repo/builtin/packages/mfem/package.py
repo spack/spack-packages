@@ -186,9 +186,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         "threadsafe",
         default=False,
         description=(
-            "Enable thread safe features."
-            " Required for OpenMP."
-            " May cause minor performance issues."
+            "Enable thread safe features. Required for OpenMP. May cause minor performance issues."
         ),
     )
     variant(

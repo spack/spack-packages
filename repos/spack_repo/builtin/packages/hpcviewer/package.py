@@ -26,6 +26,11 @@ class Hpcviewer(Package):
     skip_version_audit = ["platform=windows"]
 
     darwin_sha = {
+        (
+            "2025.2.0",
+            "aarch64",
+        ): "76da2fb0d371be29ee9f4dc090021b095e23ae6851079b5a9d4161401d8c1170",
+        ("2025.2.0", "x86_64"): "7cbb01281b32c7c2b44713c3434d24f0b3c166ba9ae53434b233a150eccd19ab",
         ("2025.01", "aarch64"): "8884c60a972f864bd43fcf1933be5ec2095427de12394c96b943d2064dab044d",
         ("2025.01", "x86_64"): "2959313d5603ca9b14da04f3e5d51b19fc21c374eb3d5cc687d3f77f67bbf8b9",
         ("2024.09", "aarch64"): "f2e5b516105fe99315950ac4cc3bce120afadeca57cfaa16d58684756950d373",
@@ -54,6 +59,15 @@ class Hpcviewer(Package):
     }
 
     viewer_sha = {
+        (
+            "2025.2.0",
+            "aarch64",
+        ): "565bba471273f897c3436dd8b152720e7862a44588204171b8778a2f5b463dfc",
+        (
+            "2025.2.0",
+            "ppc64le",
+        ): "79ee51a1d0bc514571dfa7ca70b667e05b935cd0de8bc2a7603b304d2d357adc",
+        ("2025.2.0", "x86_64"): "e468637b212c03ebc121f8e2933e52885cd9133216b6b90262ab1441a9158959",
         ("2025.01", "aarch64"): "5cb9c0a9fb15fa9128da0d609554a76541d726737f4bc6b42bee87a2b9fe7e3d",
         ("2025.01", "ppc64le"): "d487d9a3752527a2ab3e754b34182c6c5878b62e9b97131237cce990f08d7dfb",
         ("2025.01", "x86_64"): "95af82b5e3b7a20f31a0b86f3ef5980f3caab7661eedba1810ebf2cf1340bd5b",
@@ -144,7 +158,8 @@ class Hpcviewer(Package):
             if arch == machine:
                 version(
                     ver,
-                    url=f"https://gitlab.com/hpctoolkit/hpcviewer/-/releases/{ver}/downloads/hpcviewer-macosx.cocoa.{arch}.zip",
+                    url=f"https://gitlab.com/hpctoolkit/hpcviewer/-/releases/{ver}/downloads/hpcviewer-macosx.cocoa.{arch}"
+                    + (".tar.gz" if ver > "2025.01" else ".zip"),
                     sha256=sha,
                     # Versions before 2022.01 are dead links
                     deprecated=(ver < "2022.01"),
@@ -156,7 +171,8 @@ class Hpcviewer(Package):
             if arch == machine:
                 version(
                     ver,
-                    url=f"https://gitlab.com/hpctoolkit/hpcviewer/-/releases/{ver}/downloads/hpcviewer-linux.gtk.{arch}.tgz",
+                    url=f"https://gitlab.com/hpctoolkit/hpcviewer/-/releases/{ver}/downloads/hpcviewer-linux.gtk.{arch}"
+                    + (".tar.gz" if ver > "2025.01" else ".tgz"),
                     sha256=sha,
                     # Versions before 2022.01 are dead links
                     deprecated=(ver < "2022.01"),

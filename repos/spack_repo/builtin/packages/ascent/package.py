@@ -64,11 +64,15 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
 
     version(
-        "0.9.3",
-        tag="v0.9.3",
-        commit="e69d6ec77938846caae8fea7ed988b1151ac9b81",
+        "0.9.4",
+        tag="v0.9.4",
+        commit="02e7f79d53db77b6af923bfa105840f574195474",
         submodules=True,
         preferred=True,
+    )
+
+    version(
+        "0.9.3", tag="v0.9.3", commit="e69d6ec77938846caae8fea7ed988b1151ac9b81", submodules=True
     )
 
     version(
@@ -173,6 +177,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     # Certain CMake versions have been found to break for our use cases
     depends_on("cmake@3.14.1:3.14,3.18.2:", type="build")
+    depends_on("cmake@3.23:", type="build", when="@0.9.4:")
 
     #######################
     # Conduit
@@ -180,7 +185,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@:0.7.2", when="@:0.7.1")
     depends_on("conduit@0.8.2:", when="@0.8:")
     depends_on("conduit@0.8.6:", when="@0.9:")
-    depends_on("conduit@0.9.1:0.9.3", when="@0.9.3:")
+    depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
+    depends_on("conduit@0.9.4", when="@0.9.4")
     depends_on("conduit+python", when="+python")
     depends_on("conduit~python", when="~python")
     depends_on("conduit+mpi", when="+mpi")
@@ -192,10 +198,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # we need a shared version of python b/c linking with static python lib
     # causes duplicate state issues when running compiled python modules.
     with when("+python"):
-        depends_on("python+shared")
+        depends_on("python+shared", type=("build", "link", "run"))
         extends("python")
-        depends_on("py-numpy", type=("build", "run"))
-        depends_on("py-pip", type=("build", "run"))
+        depends_on("py-numpy", type=("build", "link", "run"))
+        depends_on("py-pip", type="build")
+        depends_on("py-wheel", when="@0.9.4:", type="build")
+        depends_on("py-setuptools", type="build")
 
     #######################
     # MPI
@@ -411,7 +419,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             sys_type = env["SYS_TYPE"]
         compiler_str = f"{self['c'].name}-{self['c'].version}"
         host_config_path = (
-            f"{socket.gethostname()}-{sys_type}-{compiler_str}" f"-ascent-{spec.dag_hash()}.cmake"
+            f"{socket.gethostname()}-{sys_type}-{compiler_str}-ascent-{spec.dag_hash()}.cmake"
         )
         host_config_path = os.path.abspath(join_path(self.stage.path, host_config_path))
         return host_config_path

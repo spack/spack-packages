@@ -133,7 +133,6 @@ class Glib(MesonPackage):
 
 
 class MesonBuilder(meson.MesonBuilder):
-
     @property
     def dtrace_copy_path(self):
         return join_path(self.stage.source_path, "dtrace-copy")

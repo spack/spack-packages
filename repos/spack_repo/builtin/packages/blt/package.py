@@ -41,7 +41,7 @@ def llnl_link_helpers(options, spec, compiler):
                 options.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags, description))
 
     if "cxx" in spec and spec["cxx"].name == "cce":
-        description = "Adds a missing rpath for libraries " "associated with the fortran compiler"
+        description = "Adds a missing rpath for libraries associated with the fortran compiler"
         # Here is where to find libs that work for fortran
         libdir = "/opt/cray/pe/cce/{0}/cce-clang/x86_64/lib".format(compiler.version)
         linker_flags = "${{BLT_EXE_LINKER_FLAGS}} -Wl,-rpath,{0}".format(libdir)

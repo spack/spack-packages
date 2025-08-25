@@ -86,8 +86,7 @@ class Phist(CMakePackage):
         name="outlev",
         default="2",
         values=["0", "1", "2", "3", "4", "5"],
-        description="verbosity. 0: errors 1: +warnings 2: +info "
-        "3: +verbose 4: +extreme 5: +debug",
+        description="verbosity. 0: errors 1: +warnings 2: +info 3: +verbose 4: +extreme 5: +debug",
     )
 
     variant(
@@ -118,8 +117,7 @@ class Phist(CMakePackage):
     variant(
         "scamac",
         default=True,
-        description='enable/disable building the "SCAlable MAtrix '
-        'Collection" matrix generators.',
+        description='enable/disable building the "SCAlable MAtrix Collection" matrix generators.',
     )
 
     variant(
@@ -135,7 +133,7 @@ class Phist(CMakePackage):
     variant(
         "fortran",
         default=True,
-        description="generate Fortran 2003 bindings (requires Python3 and " "a Fortran compiler)",
+        description="generate Fortran 2003 bindings (requires Python3 and a Fortran compiler)",
     )
 
     # Build error with LLVM and recent Trilinos, fixed in phist-1.12.1

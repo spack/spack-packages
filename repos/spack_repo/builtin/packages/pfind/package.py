@@ -26,7 +26,6 @@ class Pfind(Package):
         env.set("CXX", self.spec["mpi"].mpicxx, force=True)
 
     def install(self, spec, prefix):
-
         for installer_path in ["./prepare.sh", "./compile.sh"]:
             set_executable(installer_path)
             installer = Executable(installer_path)

@@ -38,7 +38,6 @@ class Networkdirect(msbuild.MSBuildPackage):
 
 
 class MSBuildBuilder(msbuild.MSBuildBuilder):
-
     build_targets = ["ndutil"]
 
     # Networkdirect is a unique package where providing

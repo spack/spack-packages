@@ -1,8 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-from spack_repo.builtin.build_systems.generic import Package
-
 from spack.package import *
 
 
@@ -11,7 +9,6 @@ class CrayLibsci(Package):
     numerical routines optimized for best performance on Cray systems."""
 
     homepage = "https://docs.nersc.gov/development/libraries/libsci/"
-    has_code = False  # Skip attempts to fetch source that is not available
 
     version("23.02.1.1")
     version("22.11.1.2")
@@ -26,9 +23,6 @@ class CrayLibsci(Package):
     version("16.07.1")
     version("16.06.1")
     version("16.03.1")
-
-    conflicts("platform=windows")
-    conflicts("platform=darwin")
 
     variant("shared", default=True, description="enable shared libs")
     variant("openmp", default=False, description="link with openmp")
@@ -48,9 +42,24 @@ class CrayLibsci(Package):
         "rocmcc": "AMD",
     }
 
+    has_code = False  # Skip attempts to fetch a source that is not available
+
+    # Allows attaching compilers to externals in packages.yaml
+    depends_on("c", type="build")
+
+    requires("platform=linux", msg="Cray software is only available on linux")
+
+    def install(self, spec, prefix):
+        raise InstallError(
+            self.spec.format(
+                "{name} is not installable, you need to specify "
+                "it as an external package in packages.yaml"
+            )
+        )
+
     @property
     def modname(self):
-        return "cray-libsci/{0}".format(self.version)
+        return f"cray-libsci/{self.version}"
 
     @property
     def external_prefix(self):
@@ -95,11 +104,3 @@ class CrayLibsci(Package):
     @property
     def libs(self):
         return self.blas_libs
-
-    def install(self, spec, prefix):
-        raise InstallError(
-            self.spec.format(
-                "{name} is not installable, you need to specify "
-                "it as an external package in packages.yaml"
-            )
-        )

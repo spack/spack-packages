@@ -27,6 +27,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("4.9.3", sha256="990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff")
     version("4.9.2", sha256="bc104d101278c68b303359b3dc4192f81592ae8640f1aee486921138f7f88cb7")
     version("4.9.0", sha256="9f4cb864f3ab54adb75409984c6202323d2fc66c003e5308f3cdf224ed41c0a6")
     version("4.8.1", sha256="bc018cc30d5da402622bf76462480664c6668b55eb16ba205a0dfb8647161dd0")
@@ -337,29 +338,35 @@ class AnyBuilder(BaseBuilder):
 
 class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
     def cmake_args(self):
+        # In 4.9.3, all CMake options were prefixed.
+        # Ref. https://github.com/Unidata/netcdf-c/pull/2895
+        nc = "NETCDF_" if self.spec.satisfies("@4.9.3:") else ""
         base_cmake_args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-            self.define_from_variant("ENABLE_BYTERANGE", "byterange"),
-            self.define("BUILD_UTILITIES", True),
-            self.define("ENABLE_NETCDF_4", True),
-            self.define_from_variant("ENABLE_DAP", "dap"),
-            self.define_from_variant("ENABLE_HDF4", "hdf4"),
-            self.define("ENABLE_PARALLEL_TESTS", False),
-            self.define_from_variant("ENABLE_FSYNC", "fsync"),
-            self.define("ENABLE_LARGE_FILE_SUPPORT", True),
+            self.define_from_variant(nc + "ENABLE_BYTERANGE", "byterange"),
+            self.define(nc + "BUILD_UTILITIES", True),
+            self.define(nc + "ENABLE_NETCDF_4", True),
+            self.define_from_variant(nc + "ENABLE_DAP", "dap"),
+            self.define_from_variant(nc + "ENABLE_HDF4", "hdf4"),
+            self.define(nc + "ENABLE_PARALLEL_TESTS", False),
+            self.define_from_variant(nc + "ENABLE_FSYNC", "fsync"),
+            self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
         ]
         if "+parallel-netcdf" in self.pkg.spec:
-            base_cmake_args.append(self.define("ENABLE_PNETCDF", True))
+            base_cmake_args.append(self.define(nc + "ENABLE_PNETCDF", True))
         if self.pkg.spec.satisfies("@4.3.1:"):
-            base_cmake_args.append(self.define("ENABLE_DYNAMIC_LOADING", True))
+            base_cmake_args.append(self.define(nc + "ENABLE_DYNAMIC_LOADING", True))
         if "platform=windows" in self.pkg.spec:
             # Enforce the usage of the vendored version of bzip2 on Windows:
             base_cmake_args.append(self.define("Bz2_INCLUDE_DIRS", ""))
+
+        # FIND_SHARED_LIBS has different prefix
+        nc = "NETCDF_" if self.spec.satisfies("@4.9.3:") else "NC_"
         if "+shared" in self.pkg.spec["hdf5"]:
-            base_cmake_args.append(self.define("NC_FIND_SHARED_LIBS", True))
+            base_cmake_args.append(self.define(nc + "FIND_SHARED_LIBS", True))
         else:
-            base_cmake_args.append(self.define("NC_FIND_SHARED_LIBS", False))
+            base_cmake_args.append(self.define(nc + "FIND_SHARED_LIBS", False))
         return base_cmake_args
 
     @run_after("install")

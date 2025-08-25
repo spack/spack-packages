@@ -14,13 +14,14 @@ class RocprofilerRegister(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-register"
     git = "https://github.com/ROCm/rocprofiler-register.git"
-    url = "https://github.com/ROCm/rocprofiler-register/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rocprofiler-register/archive/refs/tags/rocm-6.4.2.tar.gz"
 
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("6.4.2", sha256="30da75f6b50fe4303c9c788ae29ed1aae79b0f653b7aa05e0f042b7313fb5de6")
     version("6.4.1", sha256="bb8a55d73049f433c039300357713e040ba5b37ed5490336fae435385d09e596")
     version("6.4.0", sha256="7439d789f722971b2dd2f8e7b5c5cbdb1522e47a6fbb428fd9bcb24234c6fd48")
     version("6.3.3", sha256="afe4b1017ca604259de8cf7d06f98680bae63180214b914fcd7bd5da116b58c3")

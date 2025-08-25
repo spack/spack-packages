@@ -21,5 +21,15 @@ class Ed(AutotoolsPackage, GNUMirrorPackage):
     version("1.4", sha256="db36da85ee1a9d8bafb4b041bd4c8c11becba0c43ec446353b67045de1634fda")
 
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")
 
     parallel = False
+
+    def configure_args(self):
+
+        args = []
+
+        args.append(f"CC={spack_cc}")
+        args.append(f"CXX={spack_cxx}")
+
+        return args
