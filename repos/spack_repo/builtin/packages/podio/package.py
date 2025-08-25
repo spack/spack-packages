@@ -31,7 +31,11 @@ class Podio(CMakePackage):
     version("1.0", sha256="491f335e148708e387e90e955a6150e1fc2e01bf6b4980b65e257ab0619559a9")
     version("0.99", sha256="c823918a6ec1365d316e0a753feb9d492e28903141dd124a1be06efac7c1877a")
 
-    _cxxstd_values = (conditional("17", when="@:1.2"), "20")
+    _cxxstd_values = (
+        conditional("17", when="@:1.2"),
+        conditional("20", when="@0.14.1:"),
+        conditional("23", when="@1.3:"),
+    )
     variant(
         "cxxstd",
         default="17",
@@ -65,8 +69,10 @@ class Podio(CMakePackage):
     depends_on("root@6.28.04: +root7", when="+rntuple")
     depends_on("root@6.28:")
     depends_on("root@6.32: +root7", when="@1.3: +rntuple")
-    for cxxstd in ("17", "20"):
-        depends_on("root cxxstd={}".format(cxxstd), when="cxxstd={}".format(cxxstd))
+    for cxxstd in _cxxstd_values:
+        depends_on(
+            "root cxxstd={}".format(cxxstd[0].value), when="cxxstd={}".format(cxxstd[0].value)
+        )
 
     depends_on("cmake@3.12:", type="build")
     depends_on("python", type=("build", "run"))
