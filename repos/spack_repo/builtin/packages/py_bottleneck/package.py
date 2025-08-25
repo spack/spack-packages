@@ -11,10 +11,12 @@ class PyBottleneck(PythonPackage):
     """A collection of fast NumPy array functions written in Cython."""
 
     homepage = "https://github.com/pydata/bottleneck"
-    pypi = "Bottleneck/Bottleneck-1.0.0.tar.gz"
+    pypi = "Bottleneck/bottleneck-1.0.0.tar.gz"
 
     license("BSD-2-Clause")
 
+    version("1.5.0", sha256="c860242cf20e69d5aab2ec3c5d6c8c2a15f19e4b25b28b8fca2c2a12cefae9d8")
+    version("1.3.8", sha256="6780d896969ba7f53c8995ba90c87c548beb3db435dc90c60b9a10ed1ab4d868")
     version("1.3.7", sha256="e1467e373ad469da340ed0ff283214d6531cc08bfdca2083361a3aa6470681f8")
     version("1.3.5", sha256="2c0d27afe45351f6f421893362621804fa7dea14fe29a78eaa52d4323f646de7")
     version("1.3.2", sha256="20179f0b66359792ea283b69aa16366419132f3b6cf3adadc0c48e2e8118e573")
@@ -28,5 +30,12 @@ class PyBottleneck(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-versioneer", when="@1.3.3:", type="build")
     depends_on("py-numpy", type=("build", "run"))
-    # https://github.com/pydata/bottleneck/issues/453
-    depends_on("py-numpy@:1", when="@:1.3", type=("build", "run"))
+
+    def url_for_version(self, version):
+
+        url = "https://files.pythonhosted.org/packages/source/b/Bottleneck/{0}-{1}.tar.gz"
+        if version > Version("1.3.8"):
+            name = "bottleneck"
+        else:
+            name = "Bottleneck"
+        return url.format(name, version)

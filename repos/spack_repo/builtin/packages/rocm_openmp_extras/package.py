@@ -191,9 +191,8 @@ class RocmOpenmpExtras(Package):
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("gmake", type="build")
 
     depends_on("cmake@3:", type="build")
@@ -366,6 +365,8 @@ class RocmOpenmpExtras(Package):
         if self.spec.version >= Version("4.3.1"):
             gfx_list = gfx_list + " gfx90a gfx1030 gfx1031"
         env.set("GFXLIST", gfx_list)
+        if self.spec.satisfies("%cxx=gcc"):
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["gcc-runtime"].prefix.lib)
 
     def patch(self):
         src = self.stage.source_path
@@ -544,13 +545,16 @@ class RocmOpenmpExtras(Package):
             "../rocm-openmp-extras/aomp-extras",
             f"-DLLVM_DIR={llvm_prefix}",
             f"-DDEVICE_LIBS_DIR={devlibs_prefix}/amdgcn/bitcode",
-            f"-DCMAKE_C_COMPILER={bin_dir}/clang",
-            f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
             "-DAOMP_STANDALONE_BUILD=0",
             f"-DDEVICELIBS_ROOT={devlibs_src}",
             "-DNEW_BC_PATH=1",
             f"-DAOMP={llvm_prefix}",
         ]
+        if not self.spec.satisfies("%cxx=rocmcc"):
+            components["aomp-extras"] += [
+                f"-DCMAKE_C_COMPILER={bin_dir}/clang",
+                f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
+            ]
 
         # Shared cmake configuration for openmp, openmp-debug
         # Due to hsa-rocr-dev using libelf instead of elfutils
@@ -565,8 +569,6 @@ class RocmOpenmpExtras(Package):
             f"-DDEVICELIBS_ROOT={devlibs_src}",
             f"-DOPENMP_TEST_C_COMPILER={bin_dir}/clang",
             f"-DOPENMP_TEST_CXX_COMPILER={bin_dir}/clang++",
-            f"-DCMAKE_C_COMPILER={bin_dir}/clang",
-            f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
             f"-DLIBOMPTARGET_AMDGCN_GFXLIST={gfx_list}",
             "-DLIBOMP_COPY_EXPORTS=OFF",
             f"-DHSA_LIB={hsa_prefix}/lib",
@@ -600,6 +602,11 @@ class RocmOpenmpExtras(Package):
                 "-DCMAKE_CXX_FLAGS=-fsanitize=address -shared-libasan",
                 "-DCMAKE_LD_FLAGS=-fuse-ld=lld",
             ]
+        if not self.spec.satisfies("%cxx=rocmcc"):
+            openmp_common_args += [
+                f"-DCMAKE_C_COMPILER={bin_dir}/clang",
+                f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
+            ]
 
         components["openmp"] = ["../rocm-openmp-extras/llvm-project/openmp"]
         components["openmp"] += openmp_common_args
@@ -626,6 +633,12 @@ class RocmOpenmpExtras(Package):
             f"-DCMAKE_CXX_FLAGS={flang_warning} -I{src}{libpgmath}",
             f"-DCMAKE_C_FLAGS={flang_warning} -I{src}{libpgmath}",
         ]
+
+        if not self.spec.satisfies("%cxx=rocmcc"):
+            flang_common_args += [
+                f"-DCMAKE_C_COMPILER={bin_dir}/clang",
+                f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
+            ]
 
         components["pgmath"] = ["../rocm-openmp-extras/flang/runtime/libpgmath"]
 
@@ -654,10 +667,14 @@ class RocmOpenmpExtras(Package):
         ]
 
         components["flang-legacy"] = [
-            f"-DCMAKE_C_COMPILER={bin_dir}/clang",
-            f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
-            f"../rocm-openmp-extras/flang/flang-legacy/{flang_legacy_version}",
+            f"../rocm-openmp-extras/flang/flang-legacy/{flang_legacy_version}"
         ]
+
+        if not self.spec.satisfies("%cxx=rocmcc"):
+            components["flang-legacy"] += [
+                f"-DCMAKE_C_COMPILER={bin_dir}/clang",
+                f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
+            ]
 
         flang_legacy_flags = []
         if (
