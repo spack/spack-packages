@@ -26,8 +26,6 @@ class Affinity(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.21:", type="build")
     depends_on("mpi", when="+mpi")
-    depends_on("hip", when="+rocm")
-    depends_on("mpi", when="+mpi")
 
     def cmake_args(self):
         args = [self.define_from_variant("AFFINITY_MPI", "mpi")]
