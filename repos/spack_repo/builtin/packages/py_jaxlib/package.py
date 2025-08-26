@@ -272,7 +272,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         if spec.satisfies("@0.7.1:"):
             args.append(f"--clang_path={spack_cc}")
         elif spec.satisfies("@0.4.32:0.7.0"):
-            if spec.satisfies("%c,cxx=clang"):
+            if spec.satisfies("%c,cxx=llvm") or spec.satisfies("%c,cxx=apple-clang"):
                 args.append("--use_clang=true")
             else:
                 args.append("--use_clang=false")
