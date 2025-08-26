@@ -21,7 +21,7 @@ class Snakemake(PythonPackage):
     version(
         "8.25.2",
         sha256="d5103ba37d9747bfea584b43ddcbe7255ab3f8e2aeb222e89bcb9a40c80ae603",
-        preferred=True
+        preferred=True,
     )
     version("8.18.2", sha256="7dc8cdc3c836444c2bc3d67a4a7f4d703557c1bf96a90da18f312f4df9daefc4")
     version("8.5.2", sha256="cc94876263182277e4a429e5d371c867400eeddc791c114dfd090d1bb3158975")
