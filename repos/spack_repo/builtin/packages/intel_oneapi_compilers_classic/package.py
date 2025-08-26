@@ -51,7 +51,7 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
 
     stdcxx_libs = ("-cxxlib",)
 
-    provides("c", "cxx")
+    provides("c", "cxx", when="@:2021.10")
     provides("fortran")
 
     # Versions before 2021 are in the `intel` package
@@ -128,6 +128,14 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
     def install(self, spec, prefix):
         # If we symlink top-level directories directly, files won't show up in views
         # Create real dirs and symlink files instead
+        oneapi_pkg = self["intel-oneapi-compilers"]
+        if oneapi_pkg.v2_layout:
+            component_dir = oneapi_pkg.component_prefix
+            self.symlink_dir(component_dir.bin, prefix.bin)
+            self.symlink_dir(component_dir.lib, prefix.lib)
+            self.symlink_dir(component_dir.include, prefix.include)
+            return
+
         self.symlink_dir(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin)
         self.symlink_dir(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
         self.symlink_dir(self.oneapi_compiler_prefix.linux.include, prefix.include)
