@@ -21,6 +21,7 @@ class JacamarCi(GoPackage):
     license("Apache-2.0 OR MIT")
 
     version("develop", branch="develop")
+    version("0.27.1", sha256="15e506eeec62de1adb4a6547135f3fef6496898d8b6773f694c53bba6269614b")
     version("0.27.0", sha256="1a530931bda840a421d361e07b4e956750c3e569c55244981bafdb8436530bf9")
     version("0.26.2", sha256="23e1c7367eb1514ee0c7802123c5fd5559182acc2f84d76cf831b06e5ab39d7f")
     version("0.26.0", sha256="da63c396726af313804da5ec3704ce3754ba3eef5ca267746b594422f542dbea")

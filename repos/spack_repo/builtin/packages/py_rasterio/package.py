@@ -22,7 +22,6 @@ class PyRasterio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
-    version("master", branch="master", deprecated=True)
     version("1.4.3", sha256="201f05dbc7c4739dacb2c78a1cf4e09c0b7265b0a4d16ccbd1753ce4f2af350a")
     version("1.4.2", sha256="1be35ccb4d998a4c48fa51bbee9e37927ecd9b9e954a2b2581b8f3e9bb165332")
     version("1.4.1", sha256="d750362bb792d2311f94803ff309baec48486ecba75c9b905ea9b1f5eb06ef9f")
@@ -41,16 +40,6 @@ class PyRasterio(PythonPackage):
     version("1.3.0", sha256="90171035e5b201cdb85a9abd60181426366040d4ca44706958db982a030f8dc4")
     version("1.2.10", sha256="6062456047ba6494fe18bd0da98a383b6fad5306b16cd52a22e76c59172a2b5f")
     version("1.2.3", sha256="d8c345e01052b70ac3bbbe100c83def813c0ab19f7412c2c98e553d03720c1c5")
-    version(
-        "1.1.8",
-        sha256="f7cac7e2ecf65b4b1eb78c994c63bd429b67dc679b0bc0ecfe487d3d5bf88fd5",
-        deprecated=True,
-    )
-    version(
-        "1.1.5",
-        sha256="ebe75c71f9257c780615caaec8ef81fa4602702cf9290a65c213e1639284acc9",
-        deprecated=True,
-    )
 
     # From pyproject.toml
     with default_args(type="build"):
@@ -64,12 +53,10 @@ class PyRasterio(PythonPackage):
         depends_on("python@3.9:", when="@1.4:")
         depends_on("python@3.8:", when="@1.3:")
         depends_on("python@3.6:3.9", when="@1.2")
-        depends_on("python@2.7:2.8,3.5:3.8", when="@1.1")
 
         depends_on("py-numpy@1.24:", when="@1.4:")
         depends_on("py-numpy@1.18:", when="@1.3:")
         depends_on("py-numpy@1.15:", when="@1.2:")
-        depends_on("py-numpy")
         # https://github.com/rasterio/rasterio/issues/3024
         depends_on("py-numpy@:1", when="@:1.3.9")
 
@@ -93,7 +80,6 @@ class PyRasterio(PythonPackage):
     depends_on("gdal@3.1:", when="@1.3:")
     depends_on("gdal@2.4:3.3", when="@1.2.7:1.2")
     depends_on("gdal@2.3:3.2", when="@1.2.0:1.2.6")
-    depends_on("gdal@1.11:3.2", when="@1.1.0:1.1")
 
     # https://github.com/rasterio/rasterio/pull/3212
     conflicts("^gdal@3.10:", when="@:1.4.1")
