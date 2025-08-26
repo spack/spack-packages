@@ -26,6 +26,6 @@ class PyBeniget(PythonPackage):
     depends_on("py-setuptools", type="build")
     # https://github.com/serge-sans-paille/beniget/issues/108
     depends_on("py-gast@0.5.4:", when="@0.4.2:", type=("build", "run"))
-    depends_on("py-gast@0.5.0:0.5", when="@0.4.0:0.4.1", type=("build", "run"))
-    depends_on("py-gast@0.4.0:0.4", when="@0.3", type=("build", "run"))
+    depends_on("py-gast@0.5", when="@0.4.0:0.4.1", type=("build", "run"))
+    depends_on("py-gast@0.4", when="@0.3", type=("build", "run"))
     depends_on("py-gast@0.3.3:0.3", when="@:0.2", type=("build", "run"))
