@@ -49,6 +49,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     maintainers("adamjstewart", "aweits")
     tags = ["e4s"]
 
+    version("2.20.0", sha256="a640d1f97be316a09301dfc9347e3d929ad4d9a2336e3ca23c32c93b0ff7e5d0")
+    version("2.19.1", sha256="fcfb3e88ab3eebdbab98a03c869a4d2616d52ea166c8d8021de1ef921b47be8d")
     version("2.19.0", sha256="4691b18e8c914cdf6759b80f1b3b7f3e17be41099607ed0143134f38836d058e")
     version("2.18.1", sha256="467c512b631e72ad5c9d5c16b23669bcf89675de630cfbb58f9dde746d34afa8")
     version(
@@ -158,7 +160,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     with default_args(type="build"):
         # See .bazelversion
-        depends_on("bazel@6.5.0", when="@2.16:")
+        depends_on("bazel@7.4.1", when="@2.20:")
+        depends_on("bazel@6.5.0", when="@2.16:2.19")
         depends_on("bazel@6.1.0", when="@2.14:2.15")
         depends_on("bazel@5.3.0", when="@2.11:2.13")
         depends_on("bazel@5.1.1", when="@2.10")
@@ -179,13 +182,14 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     with default_args(type=("build", "run")):
         # Python support based on wheel availability
-        depends_on("python@3.9:3.12", when="@2.16:")
+        depends_on("python@3.9:3.13", when="@2.20:")
+        depends_on("python@3.9:3.12", when="@2.16:2.19")
         depends_on("python@3.9:3.11", when="@2.14:2.15")
         depends_on("python@3.8:3.11", when="@2.12:2.13")
         depends_on("python@:3.10", when="@2.8:2.11")
         depends_on("python@:3.9", when="@:2.7")
 
-        # Listed under REQUIRED_PACKAGES in tensorflow/tools/pip_package/setup.py
+        # Listed under REQUIRED_PACKAGES in tensorflow/tools/pip_package/setup.py.tpl
         depends_on("py-absl-py@1:", when="@2.9:")
         depends_on("py-absl-py@0.4:", when="@2.7:2.8")
         depends_on("py-absl-py@0.10:0", when="@2.4:2.6")
@@ -211,7 +215,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-opt-einsum@2.3.2:", when="@2.7:")
         depends_on("py-opt-einsum@3.3", when="@2.4:2.6")
         depends_on("py-packaging", when="@2.9:")
-        depends_on("py-protobuf@3.20.3:4.20,4.21.6:5", when="@2.18:")
+        depends_on("py-protobuf@5.28:", when="@2.20:")
+        depends_on("py-protobuf@3.20.3:4.20,4.21.6:5", when="@2.18:2.19")
         depends_on("py-protobuf@3.20.3:4.20,4.21.6:4", when="@2.12:2.17")
         depends_on("py-protobuf@3.9.2:", when="@2.3:2.11")
         # https://github.com/protocolbuffers/protobuf/issues/10051
@@ -231,23 +236,20 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-wrapt@1.11:1.14", when="@2.12,2.14:2.15")
         depends_on("py-wrapt@1.12.1:1.12", when="@2.4:2.6")
 
-        # TODO: add packages for these dependencies
-        # depends_on('py-tensorflow-io-gcs-filesystem@0.23.1:', when='@2.8:')
-        # depends_on('py-tensorflow-io-gcs-filesystem@0.21:', when='@2.7')
-
         if sys.byteorder == "little":
             # Only builds correctly on little-endian machines
             depends_on("py-grpcio@1.24.3:1", when="@2.7:")
             depends_on("py-grpcio@1.37.0:1", when="@2.6")
             depends_on("py-grpcio@1.34", when="@2.5")
 
-        for minor_ver in range(5, 20):
+        for minor_ver in range(5, 21):
             depends_on("py-tensorboard@2.{}".format(minor_ver), when="@2.{}".format(minor_ver))
 
         # TODO: support circular run-time dependencies
         # depends_on('py-keras')
 
-        depends_on("py-numpy@1.26:2.1", when="@2.19:")
+        depends_on("py-numpy@1.26:", when="@2.20:")
+        depends_on("py-numpy@1.26:2.1", when="@2.19")
         depends_on("py-numpy@1.26:2.0", when="@2.18")
         depends_on("py-numpy@1.23.5:", when="@2.14:2.17")
         depends_on("py-numpy@1.22:1.24.3", when="@2.13")
@@ -281,6 +283,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-wheel@0.32:0", when="@2.7")
         depends_on("py-wheel@0.35:0", when="@2.4:2.6")
 
+        # TODO: add packages for these dependencies
+        # depends_on("py-tensorflow-io-gcs-filesystem@0.23.1:", when="@2.8:2.19")
+        # depends_on("py-tensorflow-io-gcs-filesystem@0.21:", when="@2.7")
+
     # TODO: add packages for some of these dependencies
     depends_on("mkl", when="+mkl")
     depends_on("curl", when="+gcp")
@@ -288,6 +294,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # depends_on('trisycl',    when='+opencl~computepp')
     with when("+cuda"):
         # https://www.tensorflow.org/install/source#gpu
+        depends_on("cuda@12.5:", when="@2.18:")
         depends_on("cuda@12.3:", when="@2.16:")
         depends_on("cuda@12.2:", when="@2.15:")
         depends_on("cuda@11.8:", when="@2.12:")
@@ -296,6 +303,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("cuda@:11.7.0", when="@:2.9")
         depends_on("cuda@:11.4", when="@2.4:2.7")
 
+        depends_on("cudnn@9.3:", when="@2.18:")
         depends_on("cudnn@8.9:8", when="@2.15:")
         depends_on("cudnn@8.7:8", when="@2.14:")
         depends_on("cudnn@8.6:8", when="@2.12:")
