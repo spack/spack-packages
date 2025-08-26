@@ -397,6 +397,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         sha256="145619e87dbf26b66ea23e76906576e2a854a3b09f2a2dd70363e61419fa6a6e",
         when="@4.2.00",
     )
+    # Remove unnecessary C and C++ languages dependency in scripts/spack_test/CMakeLists.txt
+    patch("cmake_spack_test_languages.patch", when="@3.4.0:4.7.0")
 
     variant("shared", default=True, description="Build shared libraries")
     for backend_name in ("cuda", "hip", "sycl"):
