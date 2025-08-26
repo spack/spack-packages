@@ -81,6 +81,18 @@ class Ispc(CMakePackage):
         sha256="d3ccf547d3ba59779fd375e10417a436318f2200d160febb9f830a26f0daefdc",
     )
 
+    patch(
+        "ispc-1.19-regexp.patch",
+        when="@1.19",
+        sha256="dc5e5492442df91ba17877d84f062bc364140ee5620ed55b7beef87257030b74",
+    )
+
+    patch(
+        "stdint-fix.patch",
+        when="@1.19",
+        sha256="03303b2407718e340bfc574511f736ae0f6678e60db33f68147db29bdd806a1a",
+    )
+
     # Fix build with Apple clang 15
     patch(
         "https://github.com/ispc/ispc/commit/a25cbdcdb86cb35ea40dcddeba03564128f83eca.patch?full_index=1",
