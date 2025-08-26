@@ -25,20 +25,56 @@ class Ruby(AutotoolsPackage, NMakePackage):
 
     license("Ruby AND BSD-2-Clause AND MIT", checked_by="tgamblin")
 
-    version("3.3.5", sha256="3781a3504222c2f26cb4b9eb9c1a12dbf4944d366ce24a9ff8cf99ecbce75196")
+    version(
+        "3.3.5",
+        sha256="3781a3504222c2f26cb4b9eb9c1a12dbf4944d366ce24a9ff8cf99ecbce75196",
+        preferred=True,
+    )
     version("3.3.4", sha256="fe6a30f97d54e029768f2ddf4923699c416cdbc3a6e96db3e2d5716c7db96a34")
     version("3.3.2", sha256="3be1d100ebf2a0ce60c2cd8d22cd9db4d64b3e04a1943be2c4ff7b520f2bcb5b")
     version("3.3.0", sha256="96518814d9832bece92a85415a819d4893b307db5921ae1f0f751a9a89a56b7d")
     version("3.2.5", sha256="ef0610b498f60fb5cfd77b51adb3c10f4ca8ed9a17cb87c61e5bea314ac34a16")
     version("3.1.0", sha256="50a0504c6edcb4d61ce6b8cfdbddaa95707195fab0ecd7b5e92654b2a9412854")
-    version("3.0.2", sha256="5085dee0ad9f06996a8acec7ebea4a8735e6fac22f22e2d98c3f2bc3bef7e6f1")
-    version("3.0.1", sha256="369825db2199f6aeef16b408df6a04ebaddb664fb9af0ec8c686b0ce7ab77727")
-    version("3.0.0", sha256="a13ed141a1c18eb967aac1e33f4d6ad5f21be1ac543c344e0d6feeee54af8e28")
-    version("2.7.2", sha256="6e5706d0d4ee4e1e2f883db9d768586b4d06567debea353c796ec45e8321c3d4")
-    version("2.7.1", sha256="d418483bdd0000576c1370571121a6eb24582116db0b7bb2005e90e250eae418")
-    version("2.6.2", sha256="a0405d2bf2c2d2f332033b70dff354d224a864ab0edd462b7a413420453b49ab")
-    version("2.5.3", sha256="9828d03852c37c20fa333a0264f2490f07338576734d910ee3fd538c9520846c")
-    version("2.2.0", sha256="7671e394abfb5d262fbcd3b27a71bf78737c7e9347fa21c39e58b0bb9c4840fc")
+    version(
+        "3.0.2",
+        sha256="5085dee0ad9f06996a8acec7ebea4a8735e6fac22f22e2d98c3f2bc3bef7e6f1",
+        deprecated=True,
+    )
+    version(
+        "3.0.1",
+        sha256="369825db2199f6aeef16b408df6a04ebaddb664fb9af0ec8c686b0ce7ab77727",
+        deprecated=True,
+    )
+    version(
+        "3.0.0",
+        sha256="a13ed141a1c18eb967aac1e33f4d6ad5f21be1ac543c344e0d6feeee54af8e28",
+        deprecated=True,
+    )
+    version(
+        "2.7.2",
+        sha256="6e5706d0d4ee4e1e2f883db9d768586b4d06567debea353c796ec45e8321c3d4",
+        deprecated=True,
+    )
+    version(
+        "2.7.1",
+        sha256="d418483bdd0000576c1370571121a6eb24582116db0b7bb2005e90e250eae418",
+        deprecated=True,
+    )
+    version(
+        "2.6.2",
+        sha256="a0405d2bf2c2d2f332033b70dff354d224a864ab0edd462b7a413420453b49ab",
+        deprecated=True,
+    )
+    version(
+        "2.5.3",
+        sha256="9828d03852c37c20fa333a0264f2490f07338576734d910ee3fd538c9520846c",
+        deprecated=True,
+    )
+    version(
+        "2.2.0",
+        sha256="7671e394abfb5d262fbcd3b27a71bf78737c7e9347fa21c39e58b0bb9c4840fc",
+        deprecated=True,
+    )
 
     build_system("autotools", "nmake", default="autotools")
 
@@ -59,7 +95,8 @@ class Ruby(AutotoolsPackage, NMakePackage):
             depends_on("zlib-api")
             depends_on("libyaml", when="@3:")
             with when("+openssl"):
-                depends_on("openssl@:1")
+                depends_on("openssl@3", when="@3.1:")
+                depends_on("openssl@:1", when="@:3.0")
                 depends_on("openssl@:1.0", when="@:2.3")
             with when("+yjit"):
                 depends_on("rust@1.58:")
