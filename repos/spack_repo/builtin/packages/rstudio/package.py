@@ -18,8 +18,9 @@ class Rstudio(CMakePackage):
 
     maintainers("dorton21", "kftse-ust-hk", "kftsehk")
     version("main", git=git, branch="main")
-    version("2025.05.1", git=git, tag="v2025.05.1+513", preferred=True)
-    version("2024.12.1", git=git, tag="v2024.12.1+563")
+    # TODO: need copilot deps
+    # version("2025.05.1", git=git, tag="v2025.05.1+513")
+    version("2024.12.1", git=git, tag="v2024.12.1+563", preferred=True)
     version("2024.09.1", git=git, tag="v2024.09.1+394")
     version("2024.04.2", git=git, tag="v2024.04.2+764")
     version("2023.12.1", git=git, tag="v2023.12.1+402")
