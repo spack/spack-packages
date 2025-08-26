@@ -472,8 +472,9 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
 
         # In general, we rely on the compiler wrapper to inject the required CPPFLAGS and LDFLAGS.
         # However, the injected LDFLAGS are invisible for the configure script and are added
-        # neither to the pkg-config nor to the nc-config files. Therefore, we generate CPPFLAGS and LDFLAGS
-        # based on the contents of the following list and pass them to the configure script:
+        # neither to the pkg-config nor to the nc-config files.
+        # Therefore, we generate CPPFLAGS and LDFLAGS based on the contents of the following list
+        # and pass them to the configure script:
         headers_include_flags = []
         lib_search_dirs = []
 
