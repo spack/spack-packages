@@ -210,9 +210,8 @@ class NetlibLapack(CMakePackage):
         # this method is used for establishing link interfaces
         # so we want to be searching for import not runtime libs
         # no op elsewhere
-        runtime = False
         return find_libraries(
-            libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True
+            libraries, root=self.prefix, shared=shared, runtime=False, recursive=True
         )
 
     @property
@@ -232,9 +231,8 @@ class NetlibLapack(CMakePackage):
         libraries = query2libraries[key]
         # see comment in blas_libs for explanation of
         # runtime
-        runtime = False
         return find_libraries(
-            libraries, root=self.prefix, shared=shared, runtime=runtime, recursive=True
+            libraries, root=self.prefix, shared=shared, runtime=False, recursive=True
         )
 
     @property
