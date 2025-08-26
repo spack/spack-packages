@@ -521,6 +521,14 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
                 if self.spec.satisfies(f"^intel-oneapi-{c}@2024:"):
                     warnings.warn(f"intel-oneapi-{c}@2024 SYCL APIs requires %oneapi@2024:")
 
+        # Edge cases for Intel's oneAPI compilers when using the classic Fortran compiler:
+        # Always pass flag to disable deprecation warnings, since these warnings can
+        # confuse tools that parse the output of compiler commands (e.g. version checks).
+        # The ifort compiler was released last in Intel oneAPI 2024.2.1, thus this can
+        # be removed when Intel oneAPI 2024.2.1 is removed from spack.
+        if dependent_spec.satisfies("^[virtuals=fortran] intel-oneapi-compilers"):
+            env.append_flags("SPACK_ALWAYS_FFLAGS", "-diag-disable=10448")
+
     def install(self, spec, prefix):
         # Copy instead of install to speed up debugging
         # install_tree("/opt/intel/oneapi/compiler", self.prefix)
