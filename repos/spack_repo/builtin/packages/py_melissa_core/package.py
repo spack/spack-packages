@@ -52,7 +52,7 @@ class PyMelissaCore(PythonPackage, CudaPackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("python@3.9:3.12", type=("build", "run"), when="@:2.1.0")
-    depends_on("python@3.11:3.12", type=("build", "run"), when="@2.1.1:")
+    depends_on("python@3.11:3.12", type=("build", "run"), when="@2.1.1:,develop")
     depends_on("py-setuptools@46.4:", type="build")
     depends_on("py-pyzmq@22.3.0:", type="run")
     depends_on("py-mpi4py@3.1.3:3", type="run")
