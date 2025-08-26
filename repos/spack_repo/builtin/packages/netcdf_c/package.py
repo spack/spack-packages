@@ -472,8 +472,9 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
 
         # In general, we rely on the compiler wrapper to inject the required CPPFLAGS and LDFLAGS.
         # However, the injected LDFLAGS are invisible for the configure script and are added
-        # neither to the pkg-config nor to the nc-config files. Therefore, we generate LDFLAGS
+        # neither to the pkg-config nor to the nc-config files. Therefore, we generate CPPFLAGS and LDFLAGS
         # based on the contents of the following list and pass them to the configure script:
+        headers_include_flags = []
         lib_search_dirs = []
 
         # In general, we rely on the configure script to generate the required linker flags in the
@@ -500,6 +501,7 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
                 extra_libs.append(hdf["zlib-api"].libs)
 
         hdf5 = self.spec["hdf5:hl"]
+        headers_include_flags.append(self.spec["hdf5"].headers.include_flags)
         lib_search_dirs.extend(hdf5.libs.directories)
         if "~shared" in hdf5:
             if "+szip" in hdf5:
@@ -522,6 +524,7 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
             config_args.append("ac_cv_lib_zip_zip_open=no")
 
         if "+szip" in self.spec:
+            headers_include_flags.append(self.spec["szip"].headers.include_flags)
             lib_search_dirs.extend(self.spec["szip"].libs.directories)
         elif self.spec.satisfies("@4.9.0:"):
             # Prevent linking to szip to disable the plugin:
@@ -555,6 +558,7 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         if "+blosc" in self.spec:
             if self.spec.satisfies("@4.9.3:"):
                 config_args.append("--enable-filter-blosc")
+            headers_include_flags.append(self.spec["c-blosc"].headers.include_flags)
             lib_search_dirs.extend(self.spec["c-blosc"].libs.directories)
         elif self.spec.satisfies("@4.9.3:"):
             config_args.append("--disable-filter-blosc")
@@ -579,6 +583,8 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         if not self.spec.satisfies("@:4.4,main"):
             # Suppress the redundant check for m4:
             config_args.append("ac_cv_prog_NC_M4=false")
+
+        config_args.append("CPPFLAGS={}".format(" ".join(headers_include_flags)))
 
         lib_search_dirs.extend(d for libs in extra_libs for d in libs.directories)
         # Remove duplicates and system prefixes:
