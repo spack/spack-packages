@@ -170,7 +170,7 @@ class Charliecloud(AutotoolsPackage):
         else:
             url_fmt = "https://github.com/hpc/charliecloud/releases/download/v{0}/charliecloud-{0}.tar.gz"
         return url_fmt.format(version)
-    
+
     @property
     def force_autoreconf(self):
         return self.spec.satisfies("@0.39:")
@@ -208,7 +208,6 @@ class Charliecloud(AutotoolsPackage):
             args.append(f"--with-json-lib={cjson_spec.libs.directories[0]}")
 
         return args
-
 
     # libexec/charliecloud/sotest/bin/sotest misses an rpath, but shouldn't be problematic.
     unresolved_libraries = ["libsotest.so.*"]
