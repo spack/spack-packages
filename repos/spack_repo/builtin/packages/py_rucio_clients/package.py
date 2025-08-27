@@ -17,6 +17,7 @@ class PyRucioClients(PythonPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("38.0.0",  sha256="d49f912f2f98870cab2227e0464129ba0954e99b975d0225126cca1b9d9c983c")
     version("37.3.0", sha256="b4bca8d451bc34528797ca188884a0c8b5ddfef2d32803765e6333455879f819")
     version(
         "36.0.0.post2", sha256="48ac2e3217aac9aaa70133cbfff991560bbeb162165bcf3dd3425967c8a2f816"
@@ -51,7 +52,8 @@ class PyRucioClients(PythonPackage):
     depends_on("py-packaging@24.2:", type=("build", "run"), when="@37:")
     depends_on("py-rich@13.7.1:", type=("build", "run"), when="@36:")
     depends_on("py-rich@13.9.4:", type=("build", "run"), when="@37:")
-    depends_on("py-typing-extensions@4.12.2:", type=("build", "run"))
+    depends_on("py-typing-extensions@4.12.2:", type=("build", "run"), when="@:37")
+    depends_on("py-typing-extensions@4.14.0:", type=("build", "run"), when="@38:")
     depends_on("py-click@8.1.7:", type=("build", "run"), when="@37:")
 
     with when("+ssh"):
