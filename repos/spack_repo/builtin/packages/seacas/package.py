@@ -36,6 +36,9 @@ class Seacas(CMakePackage):
     # ###################### Versions ##########################
     version("master", branch="master")
     version(
+        "2025-08-19", sha256="f745ca9a57bfd7f771632fb5f154eb38ed3260e1430d968f2db725f8d8ee8545"
+    )
+    version(
         "2025-07-07", sha256="c1700d39cef818c87335dd3789403e47dc9efc2f01c8c3fb8e7d54b2db02a54a"
     )
     version(
@@ -213,7 +216,12 @@ class Seacas(CMakePackage):
         default=False,
         description="Enable ADIOS2. See https://github.com/ornladios/ADIOS2",
     )
-    variant("cgns", default=True, description="Enable CGNS.")
+    # enabling cgns fails builds on Windows, see seacas CI default configuration
+    # https://github.com/sandialabs/seacas/blob/master/.appveyor.yml#L71
+    for plat in ["linux", "darwin", "freebsd"]:
+        with when(f"platform={plat}"):
+            variant("cgns", default=True, description="Enable CGNS.")
+
     variant(
         "faodel",
         default=False,
@@ -269,7 +277,10 @@ class Seacas(CMakePackage):
     depends_on("trilinos~exodus+mpi+pamgen", when="+mpi+pamgen")
     depends_on("trilinos~exodus~mpi+pamgen", when="~mpi+pamgen")
     # Always depends on netcdf-c
-    depends_on("netcdf-c@4.8.0:+mpi+parallel-netcdf", when="+mpi")
+    depends_on("netcdf-c@4.8.0:+mpi", when="+mpi")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=linux")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=darwin")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=freebsd")
     depends_on("netcdf-c@4.8.0:~mpi", when="~mpi")
     depends_on("netcdf-c@:4.9.2", when="@:2024-08-15")
     depends_on("hdf5+hl~mpi", when="~mpi")
@@ -337,6 +348,12 @@ class Seacas(CMakePackage):
 
     # Based on install-tpl.sh script, cereal seems to only be used when faodel enabled
     depends_on("cereal", when="@2021-04-02: +faodel")
+
+    def flag_handler(self, name: str, flags: List[str]):
+        if name == "fflags" and self.spec.satisfies("@2022:2022-03 %fortran=gcc@10:"):
+            # Required for recent GCC compilers, flag exists since GCC 10
+            flags.append("-fallow-argument-mismatch")
+        return (flags, None, None)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib)

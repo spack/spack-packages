@@ -98,7 +98,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         default=True,
         description="Install include files for Catalyst or plugins support",
     )
-    variant("python", default=False, description="Enable Python support", when="@5.6:")
+    variant("python", default=False, description="Enable Python support", when="@5.8:")
     variant("fortran", default=False, description="Enable Fortran support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("qt", default=False, description="Enable Qt (gui) support")
@@ -218,7 +218,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     # VTK < 8.2.1 can't handle Python 3.8
     # This affects Paraview <= 5.7 (VTK 8.2.0)
     # https://gitlab.kitware.com/vtk/vtk/-/issues/17670
-    depends_on("python@3:3.7", when="@:5.7 +python", type=("build", "run"))
     depends_on("python@3:", when="@5.8:+python", type=("build", "run"))
 
     depends_on("py-numpy", when="+python", type=("build", "run"))

@@ -41,9 +41,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
     version("6.0.0", sha256="718a5f03b6a579c0542a60d00f5688bec53a181b429b7ee8ce3c8b6c4a78d754")
     version("5.7.1", sha256="16c3818260611226c3576d8d55ad8f51e0890d2473503edf2c9313250ae65ca7")
     version("5.7.0", sha256="729b749b5340034639873a99e6091963374f6f0456c8f36d076c96f03fe43888")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="d636d0c5d1e38cc0c09b1e95380199ec82bd465b94bd6661f0c8d9374d9b565d")
-        version("5.6.0", sha256="3a6931b744ebaa4469a4c50d059a008403e4dc2a4f04dd69c3c6d20916b4a491")
 
     # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -74,8 +71,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("googletest", when="@6.3:")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -99,6 +94,13 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
 
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(f"rocsparse amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
+
+    # Add c++17 to hipsparse to fix error with std::filesystem
+    patch(
+        "https://github.com/ROCm/hipSPARSE/commit/037b54ecc129edaaff59d3df149a3f071466ba29.patch?full_index=1",
+        sha256="02f44a3bac6f9983648afeb606aa43b7329547218e0f13b9d31b685acb8b198e",
+        when="@6.3",
+    )
 
     @classmethod
     def determine_version(cls, lib):

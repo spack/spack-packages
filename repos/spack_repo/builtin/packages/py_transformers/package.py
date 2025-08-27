@@ -29,7 +29,6 @@ class PyTransformers(PythonPackage):
     version("4.31.0", sha256="4302fba920a1c24d3a429a29efff6a63eac03f3f3cf55b55927fc795d01cb273")
     version("4.24.0", sha256="486f353a8e594002e48be0e2aba723d96eda839e63bfe274702a4b5eda85559b")
     version("4.6.1", sha256="83dbff763b7e7dc57cbef1a6b849655d4fcab6bffdd955c5e8bea12a4f76dc10")
-    version("2.8.0", sha256="b9f29cdfd39c28f29e0806c321270dea337d6174a7aa60daf9625bf83dbb12ee")
 
     depends_on("cxx", type="build")  # generated
 
@@ -61,10 +60,7 @@ class PyTransformers(PythonPackage):
         depends_on("py-tokenizers@0.14:0.18", when="@4.35:4.39.3")
         depends_on("py-tokenizers@0.11.1:0.11.2,0.11.4:0.13", when="@4.24:4.33")
         depends_on("py-tokenizers@0.10.1:0.10", when="@4.6.1")
-        depends_on("py-tokenizers@0.5.2", when="@2.8.0")
         depends_on("py-tqdm@4.27:")
 
         # Historical requirements
         depends_on("py-sacremoses", when="@:4.6")
-        depends_on("py-boto3", when="@2.8.0")
-        depends_on("py-sentencepiece", when="@2.8.0")
