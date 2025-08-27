@@ -34,7 +34,3 @@ class PyAwscrt(PythonPackage):
         with when("platform=linux"):
             env.set("AWS_CRT_BUILD_USE_SYSTEM_LIBCRYPTO", "1")
 
-    @when("platform=linux")
-    def patch(self):
-        # Fix error that -lcrypto cannot be found when it is not needed
-        filter_file("libraries += ['crypto']", "libraries = libraries #+= ['crypto']", "setup.py", string=True)
