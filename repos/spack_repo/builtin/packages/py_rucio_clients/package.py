@@ -17,7 +17,7 @@ class PyRucioClients(PythonPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
-    version("38.0.0",  sha256="d49f912f2f98870cab2227e0464129ba0954e99b975d0225126cca1b9d9c983c")
+    version("38.0.0", sha256="d49f912f2f98870cab2227e0464129ba0954e99b975d0225126cca1b9d9c983c")
     version("37.3.0", sha256="b4bca8d451bc34528797ca188884a0c8b5ddfef2d32803765e6333455879f819")
     version(
         "36.0.0.post2", sha256="48ac2e3217aac9aaa70133cbfff991560bbeb162165bcf3dd3425967c8a2f816"
