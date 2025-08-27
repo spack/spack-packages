@@ -90,11 +90,3 @@ class PyDmTree(PythonPackage):
             "'--action_env', 'PYTHONPATH={0}',\n".format(env["PYTHONPATH"]),
         ]
         filter_file("'build',", " ".join(args), "setup.py")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/d/dm-tree/dm{0}tree-{1}.tar.gz"
-        if version >= Version("0.1.9"):
-            dash = "_"
-        else:
-            dash = "-"
-        return url.format(dash, version)
