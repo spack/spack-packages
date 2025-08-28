@@ -5,7 +5,7 @@ import pathlib
 import shutil
 import sys
 
-from spack_repo.builtin.build_systems.nmake import NMakePackage
+from spack_repo.builtin.build_systems.nmake import NMakePackage, NMakeBuilder
 
 from spack.package import *
 
@@ -206,7 +206,7 @@ class EnvironmentSetup:
             env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)
 
 
-class GenericBuilder(generic.GenericBuilder, EnvironmentSetup):
+class GenericBuilder(GenericBuilder, EnvironmentSetup):
 
     def install(self, pkg, spec, prefix):
         cc_script = pathlib.Path(self.stage.source_path) / "cc.sh"
@@ -293,7 +293,7 @@ class GenericBuilder(generic.GenericBuilder, EnvironmentSetup):
 
         
 
-class NMakeBuilder(nmake.NMakeBuilder, EnvironmentSetup):
+class NMakeBuilder(NMakeBuilder, EnvironmentSetup):
     install_targets = ["install"]
     build_targets = ["cl.exe"]
 
@@ -301,7 +301,7 @@ class NMakeBuilder(nmake.NMakeBuilder, EnvironmentSetup):
         bin_dir = pkg.bin_dir()
         opts = self.std_nmake_args
         opts.append(self.define("PREFIX", str(bin_dir)))
-        with fs.working_dir(self.build_directory):
+        with working_dir(self.build_directory):
             nmake(*opts, *self.install_targets, ignore_quotes=self.ignore_quotes)
 
         # Create links to use the script under different names
