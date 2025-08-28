@@ -159,9 +159,7 @@ class KokkosNvccWrapper(Package):
         deprecated=True,
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")  # needed for self.compiler.cxx
 
     depends_on("cuda")
 

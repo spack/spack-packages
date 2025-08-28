@@ -15,20 +15,12 @@ class RocmOpencl(CMakePackage):
     """OpenCL: Open Computing Language on ROCclr"""
 
     homepage = "https://github.com/ROCm/clr"
+    url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-{0}.tar.gz"
     git = "https://github.com/ROCm/clr.git"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libOpenCL"]
-
-    def url_for_version(self, version):
-        if version <= Version("5.6.1"):
-            url = (
-                "https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-{0}.tar.gz"
-            )
-        else:
-            url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-{0}.tar.gz"
-        return url.format(version)
 
     license("MIT")
 
@@ -50,9 +42,6 @@ class RocmOpencl(CMakePackage):
     version("6.0.0", sha256="798b55b5b5fb90dd19db54f136d8d8e1da9ae1e408d5b12b896101d635f97e50")
     version("5.7.1", sha256="c78490335233a11b4d8a5426ace7417c555f5e2325de10422df06c0f0f00f7eb")
     version("5.7.0", sha256="bc2447cb6fd86dff6a333b04e77ce85755104d9011a14a044af53caf02449573")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="ec26049f7d93c95050c27ba65472736665ec7a40f25920a868616b2970f6b845")
-        version("5.6.0", sha256="52ab260d00d279c2a86c353901ffd88ee61b934ad89e9eb480f210656705f04e")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -70,19 +59,6 @@ class RocmOpencl(CMakePackage):
     depends_on("xproto", when="+asan")
     depends_on("opencl-icd-loader@2024.05.08", when="@6.2:")
 
-    for d_version, d_shasum in [
-        ("5.6.1", "cc9a99c7e4de3d9360c0a471b27d626e84a39c9e60e0aff1e8e1500d82391819"),
-        ("5.6.0", "864f87323e793e60b16905284fba381a7182b960dd4a37fb67420c174442c03c"),
-    ]:
-        resource(
-            name="rocclr",
-            url=f"https://github.com/ROCm/ROCclr/archive/rocm-{d_version}.tar.gz",
-            sha256=d_shasum,
-            expand=True,
-            destination="",
-            placement="rocclr",
-            when=f"@{d_version}",
-        )
     # For avx build, the start address of values_ buffer in KernelParameters is not
     # correct as it is computed based on 16-byte alignment.
     patch(
@@ -97,8 +73,6 @@ class RocmOpencl(CMakePackage):
     )
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",

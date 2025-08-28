@@ -18,9 +18,6 @@ class RocprofilerSystems(CMakePackage):
 
     license("MIT")
 
-    version("amd-mainline", branch="amd-mainline", submodules=True, deprecated=True)
-    version("amd-staging", branch="amd-staging", submodules=True, deprecated=True)
-
     version(
         "6.4.3",
         git="https://github.com/ROCm/rocprofiler-systems",

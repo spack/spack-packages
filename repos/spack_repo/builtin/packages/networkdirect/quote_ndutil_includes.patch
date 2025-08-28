@@ -1,0 +1,25 @@
+diff --git a/src/ndutil/ndutil.vcxproj b/src/ndutil/ndutil.vcxproj
+index 0b5df8c..95b23f4 100644
+--- a/src/ndutil/ndutil.vcxproj
++++ b/src/ndutil/ndutil.vcxproj
+@@ -30,17 +30,17 @@
+       <PrecompiledHeader>Use</PrecompiledHeader>
+       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PrecompiledHeaderFile>precomp.h</PrecompiledHeaderFile>
+-      <AdditionalIncludeDirectories>.;$(OutIncludePath);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>.;"$(OutIncludePath)";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+     </ClCompile>
+     <Link>
+     </Link>
+     <PreBuildEvent>
+-      <Command>if not exist $(OutIncludePath) mkdir $(OutIncludePath)</Command>
++      <Command>if not exist "$(OutIncludePath)" mkdir "$(OutIncludePath)"</Command>
+       <Message>Create Include folder</Message>
+     </PreBuildEvent>
+     <PostBuildEvent>
+-      <Command>robocopy .\ $(OutIncludePath)\ nddef.h ndioctl.h ndspi.h
++      <Command>robocopy .\ "$(OutIncludePath)" nddef.h ndioctl.h ndspi.h
+ set rc=%errorlevel%
+ if not %rc%==1 exit %rce% else exit 0</Command>
+     </PostBuildEvent>

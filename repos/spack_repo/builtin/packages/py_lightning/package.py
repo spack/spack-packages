@@ -12,12 +12,15 @@ class PyLightning(PythonPackage):
 
     homepage = "https://github.com/Lightning-AI/pytorch-lightning"
     pypi = "lightning/lightning-2.0.0.tar.gz"
+    git = "https://github.com/Lightning-AI/pytorch-lightning.git"
     skip_modules = ["lightning.app", "lightning.data", "lightning.store"]
 
     maintainers("adamjstewart")
 
     license("Apache-2.0")
 
+    version("master", branch="master")
+    version("2.5.3", sha256="4ed3e12369a1e0f928beecf5c9f5efdabda60a9216057954851e2d89f1abecde")
     version("2.5.2", sha256="9550df613cfb22358ebf77b4a8ad45f3767cd7d26ba2d52b7f036bd3cdd701c4")
     version("2.5.1", sha256="aca88f8abf3fc38d8b40c1f82ce481f4379c2b181a6eeeb9217db0aba8e40736")
     version("2.5.0", sha256="3090d979acbc5a97a91906687f9530a246f357fd6b1a81a38d8a8c998ba6db5f")
@@ -52,8 +55,10 @@ class PyLightning(PythonPackage):
         depends_on("python@3.8:", when="@2:")
 
         # src/lightning.egg-info/requires.txt
-        depends_on("py-pyyaml@5.4:7")
-        depends_on("py-fsspec@2022.5:2025+http", when="@2.3:")
+        depends_on("py-pyyaml@5.4.1:7", when="@2.5.3:")
+        depends_on("py-pyyaml@5.4:7", when="@:2.5.2")
+        depends_on("py-fsspec@2022.5:2026+http", when="@2.5.3:")
+        depends_on("py-fsspec@2022.5:2025+http", when="@2.3:2.5.2")
         depends_on("py-fsspec@2022.5:2024+http", when="@2.1.3:2.2")
         depends_on("py-fsspec@2021.6.1:2024+http", when="@2.1.0:2.1.2")
         depends_on("py-fsspec@2022.5:2024+http", when="@2.0.5:2.0")
@@ -61,18 +66,21 @@ class PyLightning(PythonPackage):
         depends_on("py-lightning-utilities@0.10:1", when="@2.4:")
         depends_on("py-lightning-utilities@0.8:1", when="@2.1:2.3")
         depends_on("py-lightning-utilities@0.7:1", when="@2.0")
-        depends_on("py-packaging@20:24", when="@2.1:")
+        depends_on("py-packaging@20:26", when="@2.5.3:")
+        depends_on("py-packaging@20:24", when="@2.1:2.5.2")
         depends_on("py-packaging@17.1:24", when="@:2.0")
         depends_on("py-torch@2.1:3", when="@2.4:")
         depends_on("py-torch@2:3", when="@2.3")
         depends_on("py-torch@1.13:3", when="@2.2:")
         depends_on("py-torch@1.12:3", when="@2.1")
         depends_on("py-torch@1.11:3", when="@2.0")
-        depends_on("py-torchmetrics@0.7:2", when="@2.0.9:")
+        depends_on("py-torchmetrics@0.7.1:2", when="@2.5.3:")
+        depends_on("py-torchmetrics@0.7:2", when="@2.0.9:2.5.2")
         depends_on("py-torchmetrics@0.7:1", when="@:2.0.8")
         depends_on("py-tqdm@4.57:5")
-        depends_on("py-typing-extensions@4.4:5", when="@2.2:")
-        depends_on("py-typing-extensions@4:5")
+        depends_on("py-typing-extensions@4.5.1:5", when="@2.5.3:")
+        depends_on("py-typing-extensions@4.4:5", when="@2.2:2.5.2")
+        depends_on("py-typing-extensions@4:5", when="@:2.1")
 
         # Only an alias, not actually used by the library
         # depends_on("py-pytorch-lightning", when="@2:")

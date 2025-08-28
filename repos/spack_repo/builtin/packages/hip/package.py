@@ -43,9 +43,6 @@ class Hip(CMakePackage):
     version("6.0.0", sha256="ba8ce0d0960b260ff44ab47da58f98b8df9b659835aa62e32e018a63379bbc79")
     version("5.7.1", sha256="ea34c75d2cff366fcdd45109c5be460a48d4fcf72b8a534368b54eae5d05db0e")
     version("5.7.0", sha256="8974a436e7f1daf232a77e27a215bcb24a8cc132aa11b5b885a7417ad4246074")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="1b0178da8e997eb0cbf2af63e1940f56aeddc8b9715d822d2c87fd60dbc01173")
-        version("5.6.0", sha256="befbfb4691d4331b1fdfe1f17a862e82e962eb9fb90457b2c61a5130b3e6b85b")
 
     variant("rocm", default=True, description="Enable ROCm support")
     variant("cuda", default=False, description="Build with CUDA")
@@ -79,8 +76,6 @@ class Hip(CMakePackage):
         depends_on("numactl")
 
         for ver in [
-            "5.6.0",
-            "5.6.1",
             "5.7.0",
             "5.7.1",
             "6.0.0",
@@ -95,8 +90,6 @@ class Hip(CMakePackage):
             depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
         for ver in [
-            "5.6.0",
-            "5.6.1",
             "5.7.0",
             "5.7.1",
             "6.0.0",

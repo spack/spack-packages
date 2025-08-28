@@ -19,13 +19,6 @@ class Mivisionx(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     tags = ["rocm"]
 
-    def url_for_version(self, version):
-        if version == Version("1.7"):
-            return "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/archive/1.7.tar.gz"
-
-        url = "https://github.com/ROCm/MIVisionX/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
     license("MIT")
 
     version("6.4.3", sha256="a489623d757d8e9825eb7eef7d799f33c84810ba053ee99106bad5f97058ab15")
@@ -46,9 +39,6 @@ class Mivisionx(CMakePackage):
     version("6.0.0", sha256="01324a12f21ea0e29a4d7d7c60498ba9231723569fedcdd90f28ddffb5e0570e")
     version("5.7.1", sha256="bfc074bc32ebe84c72149ee6abb30b5b6499023d5b98269232de82e35d0505a8")
     version("5.7.0", sha256="07e4ec8a8c06a9a8bb6394a043c9c3e7176acd3b462a16de91ef9518a64df9ba")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="b2ff95c1488e244f379482631dae4f9ab92d94a513d180e03607aa1e184b5b0a")
-        version("5.6.0", sha256="34c184e202b1a6da2398b66e33c384d5bafd8f8291089c18539715c5cb73eb1f")
 
     # Adding variant HIP which HIP as default.
 
@@ -64,12 +54,6 @@ class Mivisionx(CMakePackage):
     patch("0002-add-half-include-path-for-tests.patch", when="@:6.0 +add_tests")
     patch("0002-add-half-include-path-for-tests-6.1.0.patch", when="@6.1 +add_tests")
     patch("0002-add-half-include-path-for-tests-6.2.0.patch", when="@6.2.0: +add_tests")
-
-    patch(
-        "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/commit/da24882438b91a0ae1feee23206b75c1a1256887.patch?full_index=1",
-        sha256="41caff199224f904ef5dc2cd9c5602d6cfa41eba6af0fcc782942a09dd202ab4",
-        when="@5.6",
-    )
 
     def patch(self):
         filter_file(
@@ -178,7 +162,6 @@ class Mivisionx(CMakePackage):
     )
     depends_on("openssl")
     depends_on("libjpeg-turbo@2.0.6+partial_decoder", type="build", when="@:6.2.0")
-    depends_on("rpp@1.2.0", when="@:5.6")
     depends_on("lmdb")
     depends_on("py-setuptools")
     depends_on("py-wheel")
@@ -191,11 +174,6 @@ class Mivisionx(CMakePackage):
     depends_on("rapidjson", when="@5.7:")
 
     with when("+hip"):
-        for ver in ["5.6.0", "5.6.1"]:
-            depends_on(f"migraphx@{ver}", when=f"@{ver}")
-            depends_on(f"hip@{ver}", when=f"@{ver}")
-            depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
-            depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         for ver in [
             "5.7.0",
             "5.7.1",

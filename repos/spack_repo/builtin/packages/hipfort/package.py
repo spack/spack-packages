@@ -37,9 +37,6 @@ class Hipfort(CMakePackage):
     version("6.0.0", sha256="151cf11648885db799aade0d00a7882589e7195643b02beaa251f1b2a43aceed")
     version("5.7.1", sha256="859fac509e195f3ab97c555b5f63afea325a61aae0f281cb19a970a1b533dead")
     version("5.7.0", sha256="57b04d59f61683a1b141d6d831d10c9fdecea483991ec02d14c14e441e935c05")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="a55345cc9ccaf0cd69d306b8eb9ec2a02c220a57e9c396443cc7273aa3377adc")
-        version("5.6.0", sha256="03176a099bc81e212ad1bf9d86f35561f8f2d21a2f126732d7620e1ea59888d5")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
@@ -52,8 +49,6 @@ class Hipfort(CMakePackage):
     depends_on("binutils", when="%cce")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
