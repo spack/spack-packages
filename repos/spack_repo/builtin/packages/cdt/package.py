@@ -44,7 +44,7 @@ class Cdt(CMakePackage):
 
     depends_on("cmake@3.4:", type="build")
     # https://github.com/artem-ogre/CDT/issues/197
-    conflicts("^cmake@4", when="@:1.4.1")
+    depends_on("cmake@:3", when="@:1.4.1", type="build")
 
     depends_on("boost", when="+boost")
 
