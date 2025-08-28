@@ -11,7 +11,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class Legion(CMakePackage, ROCmPackage):
+class Legion(CMakePackage, CudaPackage, ROCmPackage):
     """Legion is a data-centric parallel programming system for writing
     portable high performance programs targeted at distributed heterogeneous
     architectures. Legion presents abstractions which allow programmers to
@@ -26,12 +26,13 @@ class Legion(CMakePackage, ROCmPackage):
     tuning of Legion applications to new architectures."""
 
     homepage = "https://legion.stanford.edu/"
-    git = "https://github.com/StanfordLegion/legion.git"
+    git = "https://gitlab.com/StanfordLegion/legion.git"
 
     license("Apache-2.0")
 
-    maintainers("pmccormick", "streichler", "elliottslaughter")
+    maintainers("pmccormick", "streichler", "elliottslaughter", "rbberger")
     tags = ["e4s"]
+    version("25.06.0", tag="legion-25.06.0", commit="d8e35c48d089014b0f764181b7b90278a7558b21")
     version("25.03.0", tag="legion-25.03.0", commit="04716e3b3686d4af71e6a4398dfbe8cd869c057b")
     version("24.12.0", tag="legion-24.12.0", commit="2f087ebe433a19f9a3abd05382f951027933bad9")
     version("24.09.0", tag="legion-24.09.0", commit="4a03402467547b99530042cfe234ceec2cd31b2e")
@@ -52,17 +53,23 @@ class Legion(CMakePackage, ROCmPackage):
 
     depends_on("cmake@3.16:", when="@21.03.0:24.12.0", type="build")
     depends_on("cmake@3.22:", when="@25.03.0:", type="build")
+
+    depends_on("realm", when="@master")
+    depends_on("realm+kokkos", when="@master +kokkos")
+
     # TODO: Need to spec version of MPI v3 for use of the low-level MPI transport
     # layer. At present the MPI layer is still experimental and we discourge its
     # use for general (not legion development) use cases.
-    depends_on("mpi", when="network=mpi")
-    depends_on("mpi", when="network=gasnet")  # MPI is required to build gasnet (needs mpicc).
-    depends_on("ucx", when="network=ucx")
-    depends_on("ucc", when="network=ucx @25.03.0:")
-    depends_on("ucc+cuda+nccl", when="network=ucx +cuda @25.03.0:")
-    depends_on("ucc+rocm+rccl", when="network=ucx +rocm @25.03.0:")
-    depends_on("ucx", when="conduit=ucx")
-    depends_on("mpi", when="conduit=mpi")
+    depends_on("mpi", when="@:25.06.0,stable network=mpi")
+    depends_on(
+        "mpi", when="@:25.06.0,stable network=gasnet"
+    )  # MPI is required to build gasnet (needs mpicc).
+    depends_on("ucx", when="@:25.06.0,stable network=ucx")
+    depends_on("ucc", when="@25.03.0:25.06.0,stable network=ucx")
+    depends_on("ucc+cuda+nccl", when="network=ucx +cuda @25.03.0:25.06.0,stable")
+    depends_on("ucc+rocm+rccl", when="network=ucx +rocm @25.03.0:25.06.0,stable")
+    depends_on("ucx", when="conduit=ucx @:25.06.0,stable")
+    depends_on("mpi", when="conduit=mpi @:25.06.0,stable")
     depends_on("cuda@10.0:11.9", when="+cuda_unsupported_compiler @21.03.0:23.03.0")
     depends_on("cuda@10.0:11.9", when="+cuda @21.03.0:23.03.0")
     depends_on("cuda@11.7:12.8", when="+cuda_unsupported_compiler @23.06.0:")
@@ -71,36 +78,41 @@ class Legion(CMakePackage, ROCmPackage):
     depends_on("hip@5.1:", when="+rocm")
     depends_on("hdf5", when="+hdf5")
     depends_on("hwloc", when="+hwloc")
-    depends_on("libfabric", when="network=gasnet conduit=ofi-slingshot11")
+    depends_on("libfabric", when="@:25.06.0,stable network=gasnet conduit=ofi-slingshot11")
+
+    depends_on(
+        "gasnet+par~seq~parsync+pthreads segment=fast", when="@master ^realm network=gasnet"
+    )
 
     # Kokkos
-    depends_on("kokkos", when="+kokkos")
+    depends_on("kokkos", when="@:25.06.0,stable +kokkos")
 
     # OpenMP backend
-    depends_on("kokkos+openmp", when="+kokkos+openmp")
-    depends_on("kokkos~openmp", when="+kokkos~openmp")
+    depends_on("kokkos+openmp", when="@:25.06.0,stable +kokkos+openmp")
+    depends_on("kokkos~openmp", when="@:25.06.0,stable +kokkos~openmp")
 
     # cuda-centric
     cuda_arch_list = CudaPackage.cuda_arch_values
     for arch in cuda_arch_list:
         # UCX transport dependency when using CUDA
-        depends_on(f"ucc cuda_arch={arch}", when=f"@25.03.0: network=ucx +cuda cuda_arch={arch}")
-
-        # Kokkos CUDA + compiler-specific wrapper
+        depends_on(
+            f"ucc cuda_arch={arch}",
+            when=f"@25.03.0:25.06.0,stable network=ucx +cuda cuda_arch={arch}",
+        )
         depends_on(
             f"kokkos+cuda+cuda_lambda+wrapper cuda_arch={arch}",
-            when=f"+kokkos+cuda cuda_arch={arch} %gcc",
+            when=f"@:25.06.0,stable +kokkos+cuda cuda_arch={arch} %gcc",
         )
         depends_on(
             f"kokkos+cuda+cuda_lambda~wrapper cuda_arch={arch}",
-            when=f"+kokkos+cuda cuda_arch={arch} %clang",
+            when=f"@:25.06.0,stable +kokkos+cuda cuda_arch={arch} %clang",
         )
 
     # https://github.com/spack/spack/issues/37232#issuecomment-1553376552
     patch("hip-offload-arch.patch", when="@23.03.0 +rocm")
 
     def patch(self):
-        if self.spec.satisfies("network=gasnet conduit=ofi-slingshot11") and (
+        if self.spec.satisfies("@:25.06.0,stable network=gasnet conduit=ofi-slingshot11") and (
             self.spec.satisfies("^[virtuals=mpi] cray-mpich+wrappers")
             or self.spec.satisfies("^[virtuals=mpi] mpich netmod=ofi ^libfabric fabrics=cxi")
             or self.spec.satisfies("^[virtuals=mpi] openmpi fabrics=ofi ^libfabric fabrics=cxi")
@@ -130,11 +142,15 @@ class Legion(CMakePackage, ROCmPackage):
 
     for arch in ROCmPackage.amdgpu_targets:
         depends_on(
-            f"ucc amdgpu_target={arch}", when=f"@25.03.0: network=ucx +rocm amdgpu_target={arch}"
+            f"ucc amdgpu_target={arch}",
+            when=f"@25.03.0:25.06.0,stable network=ucx +rocm amdgpu_target={arch}",
         )
-        depends_on(f"kokkos+rocm amdgpu_target={arch}", when=f"+kokkos+rocm amdgpu_target={arch}")
+        depends_on(
+            f"kokkos+rocm amdgpu_target={arch}",
+            when=f"@:25.06.0,stable +rocm amdgpu_target={arch}",
+        )
 
-    depends_on("kokkos+rocm", when="+kokkos+rocm")
+    depends_on("kokkos+rocm", when="@:25.06.0,stable +kokkos+rocm")
 
     # https://github.com/StanfordLegion/legion/#dependencies
     depends_on("python@3.8:", when="+python")
@@ -143,7 +159,7 @@ class Legion(CMakePackage, ROCmPackage):
     depends_on("py-pip", when="+python", type="build")
     depends_on("py-setuptools", when="+python", type="build")
 
-    depends_on("papi", when="+papi")
+    depends_on("papi", when="@:25.06.0,stable +papi")
     depends_on("zlib-api", when="+zlib")
 
     # A C++ standard variant to work-around some odd behaviors with apple-clang
@@ -164,6 +180,7 @@ class Legion(CMakePackage, ROCmPackage):
         values=("gasnet", "mpi", "ucx", "none"),
         description="The network communications/transport layer to use.",
         multi=False,
+        when="@:25.06.0,stable",
     )
 
     # Add Gasnet tarball dependency in spack managed manner
@@ -173,7 +190,7 @@ class Legion(CMakePackage, ROCmPackage):
         git="https://github.com/StanfordLegion/gasnet.git",
         destination="stanfordgasnet",
         branch="master",
-        when="network=gasnet",
+        when="@:25.06.0,stable network=gasnet",
     )
 
     # We default to automatically embedding a gasnet build. To override this
@@ -191,7 +208,7 @@ class Legion(CMakePackage, ROCmPackage):
         else:
             return True
 
-    with when("network=gasnet"):
+    with when("@:25.06.0,stable network=gasnet"):
         variant(
             "gasnet_root",
             default="none",
@@ -243,13 +260,6 @@ class Legion(CMakePackage, ROCmPackage):
         description="Hijack application calls into the CUDA runtime (+cuda).",
     )
     variant(
-        "cuda_arch",
-        default="70",
-        values=cuda_arch_list,
-        description="GPU/CUDA architecture to build for.",
-        multi=False,
-    )
-    variant(
         "cuda_unsupported_compiler",
         default=False,
         description="Disable nvcc version check (--allow-unsupported-compiler).",
@@ -277,7 +287,12 @@ class Legion(CMakePackage, ROCmPackage):
 
     variant("openmp", default=False, description="Enable support for OpenMP within Legion tasks.")
 
-    variant("papi", default=False, description="Enable PAPI performance measurements.")
+    variant(
+        "papi",
+        default=False,
+        description="Enable PAPI performance measurements.",
+        when="@:25.06.0,stable",
+    )
 
     variant("python", default=False, description="Enable Python support.")
     requires("+bindings", when="+python")
