@@ -49,9 +49,7 @@ class Delly2(MakefilePackage):
         # using provided submodules, succeeds with existing spack recipes.
         env["EBROOTHTSLIB"] = self.spec["htslib"].prefix
         if self.spec.satisfies("@0.9.1"):
-            filter_file(
-                "BUILT_PROGRAMS =.*$", "BUILT_PROGRAMS = src/delly src/dpe", "Makefile"
-            )
+            filter_file("BUILT_PROGRAMS =.*$", "BUILT_PROGRAMS = src/delly src/dpe", "Makefile")
         filter_file("${SUBMODULES}", "", "Makefile", string=True)
 
     def install(self, spec, prefix):
