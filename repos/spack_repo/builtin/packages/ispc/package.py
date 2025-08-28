@@ -81,12 +81,17 @@ class Ispc(CMakePackage):
         sha256="d3ccf547d3ba59779fd375e10417a436318f2200d160febb9f830a26f0daefdc",
     )
 
+    # Turn a few regexp literals into raw strings, as otherwise some escape sequence fail
+    # to parse (shows warning). Patch based on ispc 1.22 version of bitcode2cpp.py
+    # in ispc github repo.
     patch(
         "ispc-1.19-regexp.patch",
         when="@1.19",
         sha256="dc5e5492442df91ba17877d84f062bc364140ee5620ed55b7beef87257030b74",
     )
 
+    # Adds missing <cstdint> include, as otherwise uint32_t and friends aren't found
+    # and the build fails. Patch based on 1.19 -> 1.20 diff of ispc github repo
     patch(
         "stdint-fix.patch",
         when="@1.19",
