@@ -202,10 +202,7 @@ class Cdo(AutotoolsPackage):
 
     variant("netcdf", default=True, description="Enable NetCDF support")
     variant(
-        "grib2",
-        default="eccodes",
-        values=("eccodes", "none"),
-        description="Specify GRIB2 backend",
+        "grib2", default="eccodes", values=("eccodes", "none"), description="Specify GRIB2 backend"
     )
     variant(
         "external-grib1",

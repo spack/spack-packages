@@ -35,12 +35,7 @@ class Magics(CMakePackage):
 
     conflicts("%gcc@11:", when="@:4.4", msg="missing #include <limits>")
 
-    variant(
-        "grib",
-        default="eccodes",
-        values=("eccodes",),
-        description="Specify GRIB backend",
-    )
+    variant("grib", default="eccodes", values=("eccodes",), description="Specify GRIB backend")
     variant("netcdf", default=False, description="Enable NetCDF support")
     variant("cairo", default=False, description="Enable cairo support[png/jpeg]")
     variant("fortran", default=False, description="Enable Fortran interface")

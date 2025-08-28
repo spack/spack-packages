@@ -127,9 +127,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     variant("heif", default=False, when="@3.2:", description="Required for HEIF driver")
     variant("hdf4", default=False, description="Required for HDF4 driver")
     variant("hdf5", default=False, description="Required for HDF5, BAG, and KEA drivers")
-    variant(
-        "hdfs", default=False, description="Required for Hadoop filesystem support"
-    )
+    variant("hdfs", default=False, description="Required for Hadoop filesystem support")
     variant("iconv", default=False, description="Required for text encoding conversion")
     variant("idb", default=False, description="Required for IDB driver")
     variant("ingres", default=False, when="@:3.4", description="Required for Ingres driver")
@@ -218,9 +216,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
         description="Used for linear interpolation of gdal_grid",
     )
     variant("rasdaman", default=False, when="@:3.6", description="Required for Rasdaman driver")
-    variant(
-        "rasterlite2", default=False, description="Required for RasterLite2 driver"
-    )
+    variant("rasterlite2", default=False, description="Required for RasterLite2 driver")
     variant("rdb", default=False, when="@3.1:", description="Required for RDB driver")
     variant("sde", default=False, when="@:3.1", description="Required for SDE driver")
     variant("sfcgal", default=False, description="Provides 3D geometry operations")
