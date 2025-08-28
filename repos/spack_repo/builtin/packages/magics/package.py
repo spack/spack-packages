@@ -38,7 +38,7 @@ class Magics(CMakePackage):
     variant(
         "grib",
         default="eccodes",
-        values=("eccodes", "grib-api"),
+        values=("eccodes",),
         description="Specify GRIB backend",
     )
     variant("netcdf", default=False, description="Enable NetCDF support")
@@ -88,7 +88,6 @@ class Magics(CMakePackage):
 
     # GRIB support is non-optional, regardless of what the instruction says.
     depends_on("eccodes", when="grib=eccodes")
-    depends_on("grib-api", when="grib=grib-api")
 
     # Even if netcdf is disabled and -DENABLE_NETCDF=OFF is set, building
     # magics still requires legacy netcdf-cxx
@@ -98,7 +97,6 @@ class Magics(CMakePackage):
     depends_on("netcdf-cxx", when="+netcdf")
     depends_on("pango", when="+cairo")
     depends_on("libemos grib=eccodes", when="+bufr grib=eccodes")
-    depends_on("libemos grib=grib-api", when="+bufr grib=grib-api")
     depends_on("qt", when="+metview+qt")
 
     depends_on("python", type=("build"))

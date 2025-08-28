@@ -28,7 +28,7 @@ class Libemos(CMakePackage):
     variant(
         "grib",
         default="eccodes",
-        values=("eccodes", "grib-api"),
+        values=("eccodes",),
         description="Specify GRIB backend",
     )
     variant(
@@ -39,7 +39,6 @@ class Libemos(CMakePackage):
     )
 
     depends_on("eccodes", when="grib=eccodes")
-    depends_on("grib-api", when="grib=grib-api")
     depends_on("fftw precision=float,double")
     depends_on("cmake@2.8.11:", type="build")
     depends_on("pkgconfig", type="build")
