@@ -15,7 +15,7 @@ class RocmOpencl(CMakePackage):
     """OpenCL: Open Computing Language on ROCclr"""
 
     homepage = "https://github.com/ROCm/clr"
-    url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-{0}.tar.gz"
+    url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/clr.git"
     tags = ["rocm"]
 
