@@ -708,9 +708,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     # fix detection of LLDB_PYTHON_EXE_RELATIVE_PATH
     # see https://reviews.llvm.org/D133513
-    # TODO: the patch is not applicable after https://reviews.llvm.org/D141042 but it is not clear
-    #  yet whether we need a version of it for when="@16:"
     patch("D133513.diff", level=0, when="@14:15+lldb+python")
+    patch("lldb_python_exe_relative_path.patch", when="@16:+lldb+python")
 
     # Fix hwloc@:2.3 (Conditionally disable hwloc@2.0 and hwloc@2.4 code)
     patch(
