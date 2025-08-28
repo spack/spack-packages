@@ -52,7 +52,7 @@ class PyRucioClients(PythonPackage):
     depends_on("py-packaging@24.2:", type=("build", "run"), when="@37:")
     depends_on("py-rich@13.7.1:", type=("build", "run"), when="@36:")
     depends_on("py-rich@13.9.4:", type=("build", "run"), when="@37:")
-    depends_on("py-typing-extensions@4.12.2:", type=("build", "run"), when="@:37")
+    depends_on("py-typing-extensions@4.12.2:", type=("build", "run"))
     depends_on("py-typing-extensions@4.14.0:", type=("build", "run"), when="@38:")
     depends_on("py-click@8.1.7:", type=("build", "run"), when="@37:")
 
