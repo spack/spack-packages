@@ -267,7 +267,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args.extend(self.enable_or_disable("rtree"))
 
         # Ref: https://www.sqlite.org/loadext.html
-        if self.spec.satisfies("@:3.50"):
+        if self.spec.satisfies("@:3.48"):
             args.extend(self.enable_or_disable("dynamic-extensions", variant="dynamic_extensions"))
 
         # Ref: https://www.sqlite.org/compile.html
