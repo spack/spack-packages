@@ -37,11 +37,6 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     version("1.2", sha256="ed1939110b2330b7994dcbba649b100c241a2353ed2624e627a200a398096c20")
     version("1.1", sha256="2b5f2d2d5cec57c52f470c2bf4f42621b40271f870b4f80cb57e52df1acd90ce")
     version("1.0", sha256="9b5f45c8180622c907ef0b7cc27cb18ba272ac6558725d9e460c3f3e764f1075")
-    version(
-        "0.9-beta",
-        sha256="b349b5708d1aa00e8c20c209ac75dc2d164ff9bf1b85adb5437346d194ba6c0d",
-        deprecated=True,
-    )
 
     # Allowed C++ standard
     variant(
@@ -71,8 +66,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.12:", type="build")
-    depends_on("cmake@3.16:", type="build", when="@1.0:")
+    depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@2.0:")
     depends_on("mpi", when="+mpi")
     depends_on("rocthrust", when="+rocm")

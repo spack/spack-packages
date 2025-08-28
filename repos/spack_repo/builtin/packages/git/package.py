@@ -150,7 +150,6 @@ class Git(AutotoolsPackage):
         )
 
     variant("tcltk", default=False, description="Gitk: provide Tcl/Tk in the run environment")
-    variant("svn", default=False, description="Provide SVN Perl dependency in run environment")
     variant("perl", default=True, description="Do not use Perl scripts or libraries at all")
     variant("nls", default=True, description="Enable native language support")
     variant("man", default=True, description="Install manual pages")
@@ -170,11 +169,8 @@ class Git(AutotoolsPackage):
     depends_on("perl", when="+perl")
     depends_on("zlib-api")
     depends_on("openssh", type="run")
-    depends_on("perl-alien-svn", type="run", when="+svn")
     depends_on("tk", type=("build", "link"), when="+tcltk")
     depends_on("diffutils", type="build", when="@2.48:")
-
-    conflicts("+svn", when="~perl")
 
     @classmethod
     def determine_version(cls, exe):
@@ -327,17 +323,3 @@ class Git(AutotoolsPackage):
                 install_args = ["V=1", "prefix={}".format(self.prefix.bin), "install"]
                 make(" ".join(install_args))
                 install("git-subtree", self.prefix.bin)
-
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        # Setup run environment if using SVN extension
-        # Libs from perl-alien-svn and apr-util are required in
-        # LD_LIBRARY_PATH
-        # TODO: extend to other platforms
-        if self.spec.satisfies("+svn platform=linux"):
-            perl_svn = self.spec["perl-alien-svn"]
-            env.prepend_path(
-                "LD_LIBRARY_PATH",
-                join_path(
-                    perl_svn.prefix, "lib", "perl5", "x86_64-linux-thread-multi", "Alien", "SVN"
-                ),
-            )
