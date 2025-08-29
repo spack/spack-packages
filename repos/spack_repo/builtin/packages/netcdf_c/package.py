@@ -288,6 +288,16 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
 
     build_system("cmake", "autotools", default=default_build_system)
 
+    def patch(self):
+        """Fix bad code in ncgen/CMakeLists.txt that removes
+        the rpath for dependencies like hdf5."""
+        filter_file(
+            "SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
+            "#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
+            "ncgen/CMakeLists.txt",
+            string=True
+        )
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@4.9.0:+shared"):
             # Both HDF5 and NCZarr backends honor the same environment variable:
