@@ -17,6 +17,7 @@ class PyWebdataset(PythonPackage):
 
     version("1.0.2", sha256="7f0498be827cfa46cc5430a58768a24e2c6a410676a61be1838f53d61afdaab4")
 
+    # https://nvd.nist.gov/vuln/detail/CVE-2025-23294
     with default_args(deprecated=True):
         version(
             "0.2.111", sha256="5b2835386a25601307a9ded9bcc0dbd1e81a9eee017784152528e77dd8619511"
