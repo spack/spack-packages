@@ -87,9 +87,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("graphite2", when="+graphite2")
 
-    conflicts(
-        "%intel", msg="harfbuzz-2.3.1 does not build with the Intel compiler"
-    )
+    conflicts("%intel", msg="harfbuzz-2.3.1 does not build with the Intel compiler")
 
     # Function borrowed from superlu
     def flag_handler(self, name, flags):

@@ -30,13 +30,7 @@ class Fairlogger(CMakePackage):
     variant(
         "cxxstd",
         default="default",
-        values=(
-            "default",
-            "17",
-            "20",
-            "23",
-            "26",
-        ),
+        values=("default", "17", "20", "23", "26"),
         multi=False,
         description="Use the specified C++ standard when building.",
     )

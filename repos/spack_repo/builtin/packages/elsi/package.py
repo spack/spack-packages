@@ -37,10 +37,7 @@ class Elsi(CMakePackage, CudaPackage):
     variant("use_external_elpa", default=True, description="Build ELPA using SPACK")
     variant("use_external_ntpoly", default=True, description="Build NTPoly using SPACK")
     variant(
-        "use_external_pexsi",
-        default=True,
-        description="Use external PEXSI",
-        when="+enable_pexsi",
+        "use_external_pexsi", default=True, description="Use external PEXSI", when="+enable_pexsi"
     )
     variant("use_external_omm", default=True, description="Use external libOMM")
     variant(

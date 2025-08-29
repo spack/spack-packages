@@ -30,7 +30,6 @@ class GitLfs(MakefilePackage):
     version("3.7.0", sha256="ab173702840627feb5f8a408dd5406fa322f3eadaa69938d9226b183d5be25a6")
     version("3.6.1", sha256="d682a12c0bc48d08d28834dd0d575c91d53dd6c6db63c45c2db7c3dd2fb69ea4")
 
-
     depends_on("go@1.24:", type="build", when="@3.7:")
     depends_on("go@1.23:", type="build", when="@3.6:")
     depends_on("git@2.0.0:", type="run", when="@3.7:")
