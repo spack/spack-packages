@@ -92,7 +92,7 @@ class GeopmRuntime(AutotoolsPackage):
             bash("./autogen.sh")
 
     def configure_args(self):
-        args += ["--disable-geopmd-local", f"--with-geopmd={self.spec['geopm-service'].prefix}"]
+        args = ["--disable-geopmd-local", f"--with-geopmd={self.spec['geopm-service'].prefix}"]
 
         args += self.enable_or_disable("debug")
         args += self.enable_or_disable("overhead")
