@@ -99,7 +99,6 @@ class GeopmService(AutotoolsPackage):
     def configure_args(self):
         args = [
             *self.enable_or_disable("debug"),
-            *self.enable_or_disable("docs"),
             *self.enable_or_disable("systemd"),
             *self.enable_or_disable("io-uring", variant="liburing"),
             *self.with_or_without("liburing", activation_value="prefix"),
