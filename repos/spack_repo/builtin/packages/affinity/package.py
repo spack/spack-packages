@@ -22,6 +22,9 @@ class Affinity(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("mpi", default=False, description="Build MPI support")
 
+    conflicts("+rocm", when="+cuda")
+    conflicts("+cuda", when="+rocm")
+
     depends_on("cmake@3.21:", type="build")
     depends_on("mpi", when="+mpi")
 
