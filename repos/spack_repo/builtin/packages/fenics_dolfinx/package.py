@@ -23,6 +23,14 @@ class FenicsDolfinx(CMakePackage):
     version("0.7.2", sha256="7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b")
     version("0.6.0", sha256="eb8ac2bb2f032b0d393977993e1ab6b4101a84d54023a67206e3eac1a8d79b80")
 
+    # CMake build types
+    variant(
+        "build_type",
+        default="RelWithDebInfo",
+        description="CMake build type",
+        values=("Debug", "Release", "RelWithDebInfo", "MinSizeRel", "Developer"),
+    )
+
     # Graph partitioner variants
     variant(
         "partitioners",
@@ -32,7 +40,7 @@ class FenicsDolfinx(CMakePackage):
         multi=True,
     )
 
-    depends_on("c", type="build")  # HDF5 dependency requires C in CMake
+    depends_on("c", type="build")  # HDF5 dependency requires C in CMake config
     depends_on("cxx", type="build")
 
     # Graph partitioner dependencies
@@ -61,21 +69,11 @@ class FenicsDolfinx(CMakePackage):
 
     depends_on("adios2@2.8.1:+mpi", when="@0.9: +adios2")
     depends_on("adios2+mpi", when="+adios2")
-
-    depends_on("fenics-ufcx@main", when="@main")
-    depends_on("fenics-ufcx@0.9", when="@0.9")
-    depends_on("fenics-ufcx@0.8", when="@0.8")
-    depends_on("fenics-ufcx@0.7", when="@0.7")
-    depends_on("fenics-ufcx@0.6", when="@0.6")
-
-    depends_on("fenics-basix@main", when="@main")
-    depends_on("fenics-basix@0.9", when="@0.9")
-    depends_on("fenics-basix@0.8", when="@0.8")
-    depends_on("fenics-basix@0.7", when="@0.7")
-    depends_on("fenics-basix@0.6", when="@0.6")
-
-    conflicts("%gcc@:9.10", msg="fenics-dolfinx requires GCC-10 or newer for C++20 support")
-    conflicts("%clang@:9.10", msg="fenics-dolfinx requires Clang-10 or newer for C++20 support")
+    for ver in ("main", "0.9", "0.8", "0.7", "0.6"):
+        depends_on(f"fenics-ufcx@{ver}", when=f"@{ver}")
+        depends_on(f"fenics-basix@{ver}", when=f"@{ver}")
+        depends_on(f"py-fenics-ffcx@{ver}", when=f"@{ver}", type="test")
+    depends_on("catch2", type="test")
 
     root_cmakelists_dir = "cpp"
 
