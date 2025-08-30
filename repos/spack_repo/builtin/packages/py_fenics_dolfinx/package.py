@@ -94,6 +94,7 @@ class PyFenicsDolfinx(PythonPackage):
     def config_settings(self, spec, prefix):
         return {
             "build.tool-args": f"-j{make_jobs}",
+            "build.verbose": "true",
             "cmake.build-type": spec.variants["build_type"].value,
         }
 
