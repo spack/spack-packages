@@ -185,7 +185,7 @@ class MyCMakePackage(CMakePackage):
     def cmake_args(self):
         args = []
         if self.spec.satisfies("@2.0:"):
-            args.append("-DNEW_FEATURE=ON")
+            args.append(self.define("NEW_FEATURE", True))
         return args
         
     # Use dedicated helper functions to set configuration options
