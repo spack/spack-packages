@@ -8,6 +8,7 @@ This repository contains package definitions for [Spack](https://spack.io/), a m
 - **Build systems**: Common base classes in `repos/spack_repo/builtin/build_systems/`
 - **Tests**: Package tests in `tests/`
 - **CI/CD**: GitHub Actions workflows in `.github/workflows/`
+- **Stacks**: Environment definitions in `stacks/` that are automatically built outside of GitHub Actions and must succeed before pull requests can be merged
 
 ## Package Development Guidelines
 
@@ -26,7 +27,7 @@ When working with package files, pay special attention to:
 
 - **`git` field**: Points to the source repository for inspecting diffs between versions
 - **`url` field**: Generic location from which version-specific URLs are derived
-- **`version()`**: Each version should include SHA256 checksums
+- **`version()`**: Each version should include SHA256 checksums (use `spack checksum <package-name>` to generate them; CI automatically verifies checksums for newly added versions)
 - **`depends_on()`**: Dependencies with version constraints using `when="@version:"` syntax
 - **`homepage`**: Official project website
 - **`maintainers()`**: Package maintainers (GitHub usernames)
@@ -41,11 +42,11 @@ version("1.2.1", sha256="ijkl9012...")
 
 # Good: Version-specific dependencies
 depends_on("python@3.8:", when="@1.2.3:", type=("build", "run"))
-depends_on("python@3.6:", when="@:1.2.2", type=("build", "run"))
+depends_on("python@3.7:", when="@1.2.2:", type=("build", "run"))
+depends_on("python@3.6:", type=("build", "run"))
 
 # Good: Conditional features based on version
-with when("@1.2.3:"):
-    variant("new_feature", default=False, description="Enable new feature")
+variant("new_feature", default=False, description="Enable new feature", when="@1.2.3:")
 ```
 
 ### Dependency Updates
@@ -62,9 +63,9 @@ Example of proper dependency evolution:
 ```python
 # Version-specific dependency updates
 depends_on("cmake@3.16:", when="@2.0:", type="build")
-depends_on("cmake@3.12:", when="@1.0:1.9", type="build")
+depends_on("cmake@3.12:", when="@1.0:", type="build")
 depends_on("boost@1.70:", when="@2.1:", type=("build", "link"))
-depends_on("boost@1.60:", when="@:2.0", type=("build", "link"))
+depends_on("boost@1.60:", type=("build", "link"))
 ```
 
 ## Platform Support
@@ -155,7 +156,7 @@ class MyPackage(Package):
     
     # Update dependencies for new versions
     depends_on("python@3.9:", when="@1.2.3:", type=("build", "run"))
-    depends_on("python@3.7:", when="@:1.2.2", type=("build", "run"))
+    depends_on("python@3.7:", type=("build", "run"))
 ```
 
 ### Conditional Dependencies
@@ -163,7 +164,7 @@ class MyPackage(Package):
 ```python
 # Version-based conditions
 depends_on("new-dep@1.0:", when="@2.0:")
-depends_on("old-dep", when="@:1.9")
+depends_on("old-dep")
 
 # Variant-based conditions  
 depends_on("optional-dep", when="+feature")
@@ -186,13 +187,16 @@ class MyCMakePackage(CMakePackage):
         if self.spec.satisfies("@2.0:"):
             args.append("-DNEW_FEATURE=ON")
         return args
+        
+    # Use dedicated helper functions to set configuration options
+    # as defined in the build_systems packages inherited by individual packages
 ```
 
 ## Error Prevention
 
 ### Common Mistakes to Avoid
 
-1. **Don't delete existing versions** unless absolutely necessary
+1. **Don't delete existing versions** unless absolutely necessary (when removing packages, flag in PR summary and explain justification)
 2. **Don't break existing dependency relationships** when adding new versions
 3. **Always include SHA256 checksums** for new versions
 4. **Don't ignore platform-specific issues**
@@ -216,6 +220,7 @@ spack install --verbose <package-name>@<version>
 - [Spack Documentation](https://spack.readthedocs.io/)
 - [Packaging Guide](https://spack.readthedocs.io/en/latest/packaging_guide.html)
 - [Package Repository Guidelines](https://github.com/spack/spack-packages/blob/develop/CONTRIBUTING.md)
+- [Spack Main Repository](https://github.com/spack/spack)
 - [Spack Slack Community](https://slack.spack.io)
 
 ## Summary
