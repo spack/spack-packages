@@ -45,6 +45,9 @@ class PyFenicsBasix(PythonPackage):
     depends_on("py-scikit-build-core+pyproject@0.5.0:", when="@0.8:0.9", type="build")
 
     def config_settings(self, spec, prefix):
-        return {"build.tool-args": f"-j{make_jobs}"}
+        return {
+            "build.tool-args": f"-j{make_jobs}",
+            "build.verbose": "true",
+        }
 
     build_directory = "python"
