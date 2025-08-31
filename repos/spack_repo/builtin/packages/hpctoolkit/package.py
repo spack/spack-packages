@@ -34,6 +34,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     version("develop", branch="develop")
     version("2025.0.stable", branch="release/2025.0")
+    version("2025.0.0", tag="2025.0.0", commit="9d0878a37ff3273ebebd1559780557de7a8a05cb")
     version("2024.01.stable", branch="release/2024.01")
     version("2024.01.1", tag="2024.01.1", commit="0672b9a9a2a1e3846c5e2059fb73a07a129f22cd")
     version("2023.08.stable", branch="release/2023.08")
