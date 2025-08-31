@@ -7,7 +7,7 @@ from spack_repo.builtin.build_systems.go import GoPackage
 from spack.package import *
 
 
-class Sh(GoPackage):
+class GoSh(GoPackage):
     """A shell parser, formatter, and interpreter. Supports POSIX
     Shell, Bash, and mksh. Requires Go 1.23 or later."""
 
