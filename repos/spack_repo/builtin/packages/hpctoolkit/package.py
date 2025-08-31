@@ -203,8 +203,9 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
     depends_on("py-docutils", type="build", when="@2025:")
-    depends_on("py-sphinx", type="build", when="+docs")
-    depends_on("py-myst-parser@0.19:", type="build", when="+docs")
+    depends_on("py-sphinx@6:8", type="build", when="+docs")
+    depends_on("py-myst-parser@3:4", type="build", when="+docs")
+    depends_on("py-sphinx-book-theme@1", type="build", when="+docs")
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
