@@ -1,0 +1,10 @@
+--- a/src/target_registry.h	2023-02-28 08:53:24.000000000 +0100
++++ b/src/target_registry.h.fixed	2025-08-26 17:43:23.338298000 +0200
+@@ -40,6 +40,7 @@
+ #include "bitcode_lib.h"
+ 
+ #include <bitset>
++#include <cstdint>
+ #include <map>
+ #include <vector>
+ 

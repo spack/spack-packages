@@ -63,6 +63,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
         values=_parse_float,
         description="Relative tolerance for regression tests",
     )
+    variant("openturbine", default=False, description="Compile with OpenTurbine structural solver")
     variant("openfast", default=False, description="Compile with OpenFAST support")
     variant("tioga", default=False, description="Compile with Tioga support")
     variant("hypre", default=True, description="Compile with Hypre support")
@@ -84,6 +85,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi")
     depends_on("yaml-cpp@0.6.0:0.7.0")
+    depends_on("openturbine", when="+openturbine")
     depends_on("openfast@4.0.2:+cxx+netcdf", when="+openfast")
     depends_on("openfast@4.1.1:", when="@2.4.0:+openfast")
     depends_on("trilinos@15.1.1", when="@=2.1.0")
