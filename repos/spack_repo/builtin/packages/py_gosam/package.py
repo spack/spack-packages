@@ -2,12 +2,12 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class PyGosam(Package):
+class PyGosam(PythonPackage):
     """The package GoSam allows for the automated calculation of
     one-loop amplitudes for multi-particle processes in renormalizable
     quantum field theories."""
@@ -45,7 +45,3 @@ class PyGosam(Package):
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         gosam_contrib_lib_dir = self.spec["gosam-contrib"].prefix.lib
         env.prepend_path("LD_LIBRARY_PATH", gosam_contrib_lib_dir)
-
-    def install(self, spec, prefix):
-        python("-s", "setup.py", "--no-user-cfg", "build")
-        python("-s", "setup.py", "--no-user-cfg", "install", "--prefix=" + prefix)
