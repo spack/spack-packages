@@ -37,6 +37,12 @@ class Bwa(Package):
         when="target=aarch64:",
     )
 
+    patch(
+        "https://github.com/lh3/bwa/commit/2a1ae7b6f34a96ea25be007ac9d91e57e9d32284.patch?full_index=1",
+        sha256="92191690850c131bd462816162697a79b63558094000badea87a0d5d1b669325",
+        when="@0.7.13:0.7.17",
+    )
+
     def install(self, spec, prefix):
         zlib_inc_path = spec["zlib-api"].prefix.include
         if platform.machine() == "aarch64":
@@ -51,14 +57,6 @@ class Bwa(Package):
         filter_file(r"^LIBS=", "LIBS=-L%s " % spec["zlib-api"].prefix.lib, "Makefile")
         # use spack C compiler
         filter_file("^CC=.*", "CC={0}".format(spack_cc), "Makefile")
-        # fix gcc 10+ errors
-        if self.spec.satisfies("%gcc@10:"):
-            filter_file(
-                "const uint8_t rle_auxtab[8]",
-                "extern const uint8_t rle_auxtab[8]",
-                "rle.h",
-                string=True,
-            )
         make()
 
         mkdirp(prefix.bin)
