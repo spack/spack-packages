@@ -123,7 +123,7 @@ class Boost(Package):
         "container",
         "context",
         "contract",
-        "numeric_conversion",
+        "conversion",
         "coroutine",
         "date_time",
         "exception",
