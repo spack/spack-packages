@@ -73,7 +73,7 @@ class Rdkit(CMakePackage):
         depends_on("coordgen", when="+coordgen")
         depends_on("maeparser", when="+maeparser")
         depends_on("eigen@3:", when="+descriptors3d")
-        depends_on("python@3.11:", when="+python")
+        depends_on("python@:3.11", when="+python")
         depends_on("py-numpy", when="+python")
         # https://github.com/rdkit/rdkit/issues/7477
         depends_on("py-numpy@:1", when="@:2024.03.3+python")
