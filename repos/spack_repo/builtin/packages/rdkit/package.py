@@ -82,7 +82,7 @@ class Rdkit(CMakePackage):
 
         conflicts("+xyz2mol", when="~yaehmop", msg="XY2MOL requires YAeHMOP")
 
-    depends_on("boost@1.53.0: +python +serialization +iostreams +system +numeric_conversion")
+    depends_on("boost@1.53.0: +python +serialization +iostreams +system +conversion")
     depends_on("sqlite")
     depends_on("freetype", when="@2020_09_1: +freetype")
 
