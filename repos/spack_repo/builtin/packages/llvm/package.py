@@ -132,6 +132,10 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     variant("offload", default=True, when="@19:", description="Build the Offload subproject")
     conflicts("+offload", when="~clang")
 
+    # The offload subproject requires lld:
+    # https://github.com/llvm/llvm-project/commit/346792aafb483a53fb5e3274298d85bc2dde4a35
+    conflicts("~lld", when="+offload")
+
     variant("libomptarget", default=True, description="Build the OpenMP offloading library")
     conflicts("+libomptarget", when="~clang")
     conflicts("+libomptarget", when="~offload @19:")
