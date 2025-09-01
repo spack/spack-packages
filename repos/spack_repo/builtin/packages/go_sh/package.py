@@ -25,11 +25,14 @@ class GoSh(GoPackage):
     variant("gosh", default=False, description="Build and install gosh")
     conflicts("~shfmt~gosh", msg="One of shfmt or gosh must be specified")
 
-    sanity_check_is_file = []
-    with when("+shfmt"):
-        sanity_check_is_file.append(join_path("bin", "shfmt"))
-    with when("+gosh"):
-        sanity_check_is_file.append(join_path("bin", "gosh"))
+    @property
+    def sanity_check_is_file(self):
+        files = []
+        if self.spec.satisfies("+shfmt"):
+            files.append(join_path("bin", "shfmt"))
+        if self.spec.satisfies("+gosh"):
+            files.append(join_path("bin", "gosh"))
+        return files
 
     def build(self, spec: Spec, prefix: Prefix) -> None:
         """Runs ``go build`` in the source directory for the specified
