@@ -397,10 +397,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     patch("glibc-2.31-libsanitizer-1-gcc-6.patch", when="@5:6")
     patch("glibc-2.31-libsanitizer-2-gcc-6.patch", when="@5:6")
     patch("glibc-2.31-libsanitizer-2-gcc-7.patch", when="@7")
-    patch(
-        "patch-2b40941d23b1570cdd90083b58fa0f66aa58c86e.patch",
-        when="@6:8",
-    )
+    patch("patch-2b40941d23b1570cdd90083b58fa0f66aa58c86e.patch", when="@6:8")
 
     # Backport libsanitizer patch for glibc >= 2.36
     # https://reviews.llvm.org/D129471
