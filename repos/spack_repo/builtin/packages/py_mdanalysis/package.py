@@ -15,12 +15,16 @@ class PyMdanalysis(PythonPackage):
     topology formats.)"""
 
     homepage = "https://www.mdanalysis.org"
-    pypi = "MDAnalysis/MDAnalysis-2.4.2.tar.gz"
+    pypi = "MDAnalysis/mdanalysis-2.9.0.tar.gz"
 
     maintainers("RMeli")
 
-    license("CC-BY-ND-3.0")
+    license("LGPL-3.0-or-later", when="@2.8:")
+    license("GPL-3.0-or-later", when="@2.6:2.7")
+    license("GPL-2.0-or-later", when="@:2.5")
 
+    version("2.9.0", sha256="fe7a4ac33e7a5c1001d954667d7e630aeb26cab6f8917fdbac6ffad903999497")
+    version("2.8.0", sha256="0cf8efda7cb4a1cc33a92d2cd0d69a3d9b33c06c603df3c386caf6edccf46099")
     version("2.7.0", sha256="572e82945e5d058e3749ec5f18e6b3831ef7f2119cb54672567ae9a977201e93")
     version("2.6.1", sha256="9cc69b94bddd026f26ffcaf5bdbed6d568c1c10e19a341d84f8d37a2a70222f2")
     version("2.6.0", sha256="210b198a115165004c36fbbbe5eb83a13323f52b10ccaef30dd40bfe25ba3e61")
@@ -38,6 +42,7 @@ class PyMdanalysis(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("python@3.10:", type=("build", "run"), when="@2.8.0:")
     depends_on("python@3.9:", type=("build", "run"), when="@2.5.0:")
     depends_on("python@3.8:", type=("build", "run"))
 
@@ -61,7 +66,8 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-tqdm@4.43.0:", type=("build", "run"))
     depends_on("py-threadpoolctl", type=("build", "run"))
     depends_on("py-packaging", type=("build", "run"))
-    depends_on("py-fasteners", type=("build", "run"))
+    depends_on("py-fasteners", type=("build", "run"), when="@:2.8")
+    depends_on("py-filelock", type=("build", "run"), when="@2.9:")
     depends_on("py-mda-xdrlib", when="@2.7.0:", type=("build", "run"))
 
     # extra_format (extras_require)
@@ -89,3 +95,8 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-gsd@1.9.3:", when="@:2.5.0", type=("build", "run"))
     depends_on("py-biopython@1.80:", when="@:2.6.1", type=("build", "run"))
     depends_on("py-networkx@2.0:", when="@:2.6.1", type=("build", "run"))
+
+    def url_for_version(self, version):
+        if version < Version("2.8.0"):
+            return super().url_for_version(version).replace("mdanalysis", "MDAnalysis")
+        return super().url_for_version(version)
