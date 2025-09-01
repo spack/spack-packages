@@ -142,7 +142,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # GCC 7.3 does not compile with newer releases on some platforms, see
     #   https://github.com/spack/spack/issues/6902#issuecomment-433030376
-    depends_on("mpfr@2.4.2:3.1.6", when="@:9.9")
+    depends_on("mpfr@2.4.2:3.1.6", when="@:9")
     depends_on("mpfr@3.1.0:", when="@10:")
     depends_on("mpc@1.0.1:", when="@4.5:")
     # Already released GCC versions do not support any newer version of ISL
@@ -150,10 +150,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     #   GCC 7.3 https://github.com/spack/spack/issues/6902#issuecomment-433030376
     #   GCC 9+  https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86724
     with when("+graphite"):
-        depends_on("isl@0.14", when="@5.0:5.2")
-        depends_on("isl@0.15", when="@5.3:5.9")
-        depends_on("isl@0.15:0.18", when="@6:8.9")
-        depends_on("isl@0.15:0.20", when="@9:9.9")
+        depends_on("isl@0.15", when="@5")
+        depends_on("isl@0.15:0.18", when="@6:8")
+        depends_on("isl@0.15:0.20", when="@9")
         depends_on("isl@0.15:", when="@10:")
 
     depends_on("zlib-api", when="@6:")
@@ -183,7 +182,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # See https://go.dev/doc/install/gccgo#Releases
     with when("languages=go"):
-        provides("go-or-gccgo-bootstrap@:1.0", when="@4.7.1:")
+        provides("go-or-gccgo-bootstrap@:1.0", when="@4.7:")
         provides("go-or-gccgo-bootstrap@:1.2", when="@4.9:")
         provides("go-or-gccgo-bootstrap@:1.4", when="@5:")
         provides("go-or-gccgo-bootstrap@:1.6.1", when="@6:")
@@ -193,7 +192,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         provides("go-or-gccgo-bootstrap@:1.14.6", when="@10:")
         provides("go-or-gccgo-bootstrap@1.16.3:1.16.5", when="@11:")
 
-        provides("golang@:1.0", when="@4.7.1:")
+        provides("golang@:1.0", when="@4.7:")
         provides("golang@:1.2", when="@4.9:")
         provides("golang@:1.4", when="@5:")
         provides("golang@:1.6.1", when="@6:")
@@ -322,7 +321,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     #   see https://github.com/spack/spack/issues/23296
     #   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100340
     #   on XCode 12.5
-    conflicts("+bootstrap", when="@:11.1 %apple-clang@12.0.5")
+    conflicts("+bootstrap", when="@:10 %apple-clang@12.0.5")
 
     requires(
         "@11.3:",
@@ -352,181 +351,89 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # Fix parallel build on APFS filesystem
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81797
         if macos_version() >= Version("10.13"):
-            patch("darwin/apfs.patch", when="@5.5.0,6.1:6.4,7.1:7.3")
+            patch("darwin/apfs.patch", when="@5")
             # from homebrew via macports
             # https://trac.macports.org/ticket/56502#no1
             # see also: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83531
-            patch("darwin/headers-10.13-fix.patch", when="@5.5.0")
+            patch("darwin/headers-10.13-fix.patch", when="@5")
         if macos_version() >= Version("10.14"):
             # Fix system headers for Mojave SDK:
             # https://github.com/Homebrew/homebrew-core/pull/39041
             patch(
                 "https://raw.githubusercontent.com/Homebrew/formula-patches/b8b8e65e/gcc/8.3.0-xcode-bug-_Atomic-fix.patch",
                 sha256="33ee92bf678586357ee8ab9d2faddf807e671ad37b97afdd102d5d153d03ca84",
-                when="@6:8.3",
-            )
-        if macos_version() >= Version("10.15"):
-            # Fix system headers for Catalina SDK
-            # (otherwise __OSX_AVAILABLE_STARTING ends up undefined)
-            patch(
-                "https://raw.githubusercontent.com/Homebrew/formula-patches/b8b8e65e/gcc/9.2.0-catalina.patch",
-                sha256="0b8d14a7f3c6a2f0d2498526e86e088926671b5da50a554ffa6b7f73ac4f132b",
-                when="@9.2.0",
-            )
-
-            # See https://raw.githubusercontent.com/Homebrew/homebrew-core/3b7db4457ac64a31e3bbffc54b04c4bd824a4a4a/Formula/gcc.rb
-            patch(
-                "https://github.com/iains/gcc-darwin-arm64/commit/20f61faaed3b335d792e38892d826054d2ac9f15.patch?full_index=1",
-                sha256="c0605179a856ca046d093c13cea4d2e024809ec2ad4bf3708543fc3d2e60504b",
-                when="@11.2.0",
+                when="@6:7",
             )
 
         # aarch64-darwin support from Iain Sandoe's branch
         patch(
             "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..a495b2dded281beeafec91074e4e82a5a3df8104.patch?full_index=1",
             sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
-            when="@14.2.0 target=aarch64:",
+            when="@14 target=aarch64:",
         )
-        patch(
-            "https://github.com/iains/gcc-14-branch/compare/cd0059a1976303638cea95f216de129334fc04d1..gcc-14.1-darwin-r1.patch?full_index=1",
-            sha256="159cc2a1077ad5d9a3cca87880cd977b8202d8fb464a6ec7b53804475d21a682",
-            when="@14.1.0 target=aarch64:",
-        )
-
-        patch(
-            "https://github.com/iains/gcc-13-branch/compare/b71f1de6e9cf7181a288c0f39f9b1ef6580cf5c8..7808d253bf53c6c6ce63f04a66601b595e2bae08.patch?full_index=1",
-            sha256="e7d4415e66ba09dd65b102a842e62e6f9ba6b41da878e08235e59a3fc53058eb",
-            when="@13.3.0 target=aarch64:",
-        )
-        patch(
-            "https://github.com/iains/gcc-13-branch/compare/c891d8dc23e1a46ad9f3e757d09e57b500d40044..gcc-13.2-darwin-r0.patch?full_index=1",
-            sha256="6a49d1074d7dd2e3b76e61613a0f143c668ed648fb8d9d48ed76a6b127815c88",
-            when="@13.2.0 target=aarch64:",
-        )
-        patch(
-            "https://github.com/iains/gcc-13-branch/compare/cc035c5d8672f87dc8c2756d9f8367903aa72d93..gcc-13.1-darwin-r0.patch?full_index=1",
-            sha256="36d2c04d487edb6792b48dedae6936f8b864b6f969bd3fd03763e072d471c022",
-            when="@13.1.0 target=aarch64:",
-        )
-
-        patch(
-            "https://github.com/iains/gcc-12-branch/compare/2bada4bc59bed4be34fab463bdb3c3ebfd2b41bb..99533d94172ed7a24c0e54c4ea97e6ae2260409e.patch?full_index=1",
-            sha256="4f59c671b34cc24b57eaa528592a5188f18716cd3cd63c4601fbbda92d397ce2",
-            when="@12.4.0 target=aarch64:",
-        )
-        patch(
-            "https://github.com/iains/gcc-12-branch/compare/8fc1a49c9312b05d925b7d21f1d2145d70818151..gcc-12.3-darwin-r0.patch?full_index=1",
-            sha256="1ebac2010eb9ced33cf46a8d8378193671ed6830f262219aa3428de5bc9fd668",
-            when="@12.3.0 target=aarch64:",
-        )
-        patch(
-            "https://github.com/iains/gcc-12-branch/compare/2ee5e4300186a92ad73f1a1a64cb918dc76c8d67..gcc-12.2-darwin-r0.patch?full_index=1",
-            sha256="16d5203ddb97cd43d6c1e9c34e0f681154aed1d127f2324b2a50006b92960cfd",
-            when="@12.2.0 target=aarch64:",
-        )
-        patch(
-            "https://github.com/iains/gcc-12-branch/compare/1ea978e3066ac565a1ec28a96a4d61eaf38e2726..gcc-12.1-darwin-r1.patch?full_index=1",
-            sha256="b0a811e33c3451ebd1882eac4e2b4b32ce0b60cfa0b8ccf8c5fda7b24327c820",
-            when="@12.1.0 target=aarch64:",
-        )
-
         patch(
             "https://github.com/iains/gcc-11-branch/compare/5cc4c42a0d4de08715c2eef8715ad5b2e92a23b6..gcc-11.5-darwin-r0.patch?full_index=1",
             sha256="6c92190a9acabd6be13bd42ca675f59f44be050a7121214abeaea99d898db30c",
-            when="@11.5.0 target=aarch64:",
-        )
-        patch(
-            "https://github.com/iains/gcc-11-branch/compare/ff4bf326d03e750a8d4905ea49425fe7d15a04b8..gcc-11.4-darwin-r0.patch?full_index=1",
-            sha256="05810e5cdb052c06490f7d987c66a13d47ae7bd2eb285a3a881ad4aa6dd0d13f",
-            when="@11.4.0 target=aarch64:",
-        )
-        patch(
-            "https://github.com/iains/gcc-11-branch/compare/2d280e7eafc086e9df85f50ed1a6526d6a3a204d..gcc-11.3-darwin-r2.patch?full_index=1",
-            sha256="a8097c232dfb21b0e02f3d99e3c3e47443db3982dafbb584938ac1a9a4afd33d",
-            when="@11.3.0 target=aarch64:",
+            when="@11 target=aarch64:",
         )
 
-        conflicts("+bootstrap", when="@11.3.0,13.1: target=aarch64:")
+        conflicts("+bootstrap", when="@13: target=aarch64:")
 
         # Use -headerpad_max_install_names in the build,
         # otherwise updated load commands won't fit in the Mach-O header.
         # This is needed because `gcc` avoids the superenv shim.
-        patch("darwin/gcc-7.1.0-headerpad.patch", when="@5:11.2")
+        patch("darwin/gcc-7.1.0-headerpad.patch", when="@5:10")
         patch("darwin/gcc-6.1.0-jit.patch", when="@5:7")
-        patch("darwin/gcc-4.9.patch1", when="@4.9.0:4.9.3")
-        patch("darwin/gcc-4.9.patch2", when="@4.9.0:4.9.3")
 
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92061
-        patch("darwin/clang13.patch", when="@:11.1 %apple-clang@13")
+        patch("darwin/clang13.patch", when="@:10 %apple-clang@13")
 
     patch("piclibs.patch", when="+piclibs")
-    patch("gcc-backport.patch", when="@4.7:4.9.3,5:5.3")
+    patch("gcc-backport.patch", when="@4.7:4.8")
 
     # Backport libsanitizer patch for glibc >= 2.31 and 5.3.0 <= gcc <= 9.2.0
     # https://bugs.gentoo.org/708346
-    patch("glibc-2.31-libsanitizer-1.patch", when="@7.1.0:7.5.0,8.1.0:8.3.0,9.0.0:9.2.0")
-    patch("glibc-2.31-libsanitizer-1-gcc-6.patch", when="@5.3.0:5.5.0,6.1.0:6.5.0")
-    patch("glibc-2.31-libsanitizer-2.patch", when="@8.1.0:8.3.0,9.0.0:9.2.0")
-    patch("glibc-2.31-libsanitizer-2-gcc-6.patch", when="@5.3.0:5.5.0,6.1.0:6.5.0")
-    patch("glibc-2.31-libsanitizer-2-gcc-7.patch", when="@7.1.0:7.5.0")
+    patch("glibc-2.31-libsanitizer-1.patch", when="@7")
+    patch("glibc-2.31-libsanitizer-1-gcc-6.patch", when="@5:6")
+    patch("glibc-2.31-libsanitizer-2-gcc-6.patch", when="@5:6")
+    patch("glibc-2.31-libsanitizer-2-gcc-7.patch", when="@7")
     patch(
         "patch-2b40941d23b1570cdd90083b58fa0f66aa58c86e.patch",
-        when="@6.5.0,7.4.0:7.5.0,8.2.0:9.3.0",
+        when="@6:8",
     )
-    patch("patch-745dae5923aba02982563481d75a21595df22ff8.patch", when="@10.1.0:10.3.0,11.1.0")
 
     # Backport libsanitizer patch for glibc >= 2.36
     # https://reviews.llvm.org/D129471
     patch("glibc-2.36-libsanitizer-gcc-5-9.patch", when="@5:9")
-    patch("glibc-2.36-libsanitizer-gcc-10-12.patch", when="@10:10.4,11:11.3,12.1.0")
 
     # Older versions do not compile with newer versions of glibc
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81712
-    patch("ucontext_t.patch", when="@4.9,5.1:5.4,6.1:6.4,7.1")
-    patch("ucontext_t-java.patch", when="@4.9,5.1:5.4,6.1:6.4 languages=java")
+    patch("ucontext_t.patch", when="@4.9")
+    patch("ucontext_t-java.patch", when="@4.9 languages=java")
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81066
     patch("stack_t-4.9.patch", when="@4.9")
-    patch("stack_t.patch", when="@5.1:5.4,6.1:6.4,7.1")
     # https://bugs.busybox.net/show_bug.cgi?id=10061
-    patch("signal.patch", when="@4.9,5.1:5.4")
+    patch("signal.patch", when="@4.9")
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=85835
-    patch("sys_ustat.h.patch", when="@5.0:6.4,7.0:7.3,8.1")
+    patch("sys_ustat.h.patch", when="@5")
     patch("sys_ustat-4.9.patch", when="@4.9")
 
     # this patch removes cylades support from gcc-5 and allows gcc-5 to be built
     # with newer glibc versions.
-    patch("glibc-2.31-libsanitizer-3-gcc-5.patch", when="@5.3.0:5.5.0")
+    patch("glibc-2.31-libsanitizer-3-gcc-5.patch", when="@5")
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=95005
     patch("zstd.patch", when="@10")
-
-    # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=100102
-    patch("patch-fc930b3010bd0de899a3da3209eab20664ddb703.patch", when="@10.1:10.3")
-    patch("patch-f1feb74046e0feb0596b93bbb822fae02940a90e.patch", when="@11.1")
 
     # libstdc++: Fix inconsistent noexcept-specific for valarray begin/end
     patch(
         "https://github.com/gcc-mirror/gcc/commit/423cd47cfc9640ba3d6811b780e8a0b94b704dcb.patch?full_index=1",
         sha256="0d136226eb07bc43f1b15284f48bd252e3748a0426b5d7ac9084ebc406e15490",
-        when="@9.5.0:10.4.0,11.1.0:11.2.0",
-    )
-
-    # patch ICE on aarch64 in tree-vect-slp, cf: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=111478
-    # patch taken from releases/gcc-12 branch
-    patch(
-        "https://github.com/gcc-mirror/gcc/commit/9d033155254ac6df5f47ab32896dbf336f991589.patch?full_index=1",
-        sha256="8b76fe575ef095b48ac45e8b56544c331663f840ce4b63abdb61510bf3647597",
-        when="@12.3.0 target=aarch64:",
-    )
-    # patch taken from releases/gcc-13 branch
-    patch(
-        "https://github.com/gcc-mirror/gcc/commit/7c67939ec384425a3d7383dfb4fb39aa7e9ad20a.patch?full_index=1",
-        sha256="f0826d7a9c9808af40f3434918f24ad942f1c6a6daec73f11cf52c544cf5fc01",
-        when="@13.2.0 target=aarch64:",
+        when="@9",
     )
 
     # see https://gcc.gnu.org/gcc-11/changes.html 11.5 Caveats
-    patch("patch-5522dec054cb940fe83661b96249aa12c54c1d77.patch", when="@11.5.0 target=aarch64:")
+    patch("patch-5522dec054cb940fe83661b96249aa12c54c1d77.patch", when="@11 target=aarch64:")
 
     build_directory = "spack-build"
 
@@ -657,9 +564,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # mirrors are tried. It takes care of modifying the suffix of gnu
         # mirror path so that Spack will also look for the correct file in
         # the mirrors
-        if (version < Version("6.4.0") and version != Version("5.5.0")) or version == Version(
-            "7.1.0"
-        ):
+        if version < Version("5"):
             self.gnu_mirror_path = self.gnu_mirror_path.replace("xz", "bz2")
         return super().url_for_version(version)
 
