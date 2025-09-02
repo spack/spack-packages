@@ -51,9 +51,7 @@ def main():
 
     if token:
         resp = requests.post(
-            f"{base_url}/requested_reviewers",
-            json={"reviewers": list(reviewers)},
-            headers=headers,
+            f"{base_url}/requested_reviewers", json={"reviewers": list(reviewers)}, headers=headers
         )
         # https://docs.github.com/en/rest/pulls/review-requests
         # endpoint may return status code 422 for users who are not collaborators
