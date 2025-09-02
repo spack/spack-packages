@@ -76,4 +76,4 @@ class Deno(Package):
 
         target = self.deno_versions[ver][self.system][self.machine]["target"]
 
-        return f"https://dl.deno.land/release/${version}/deno-${target}.zip"
+        return f"https://dl.deno.land/release/{version}/deno-{target}.zip"
