@@ -74,7 +74,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
             "dynamic_extensions",
             default=True,
             description="Support loadable extensions",
-            when=f"platform={plat}",
+            when=f"@:3.48 platform={plat}",
         )
 
         depends_on("readline", when=f"platform={plat}")
@@ -267,8 +267,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args.extend(self.enable_or_disable("rtree"))
 
         # Ref: https://www.sqlite.org/loadext.html
-        if self.spec.satisfies("@:3.48"):
-            args.extend(self.enable_or_disable("dynamic-extensions", variant="dynamic_extensions"))
+        args.extend(self.enable_or_disable("dynamic-extensions", variant="dynamic_extensions"))
 
         # Ref: https://www.sqlite.org/compile.html
         if "+column_metadata" in self.spec:
