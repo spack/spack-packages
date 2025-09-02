@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -21,6 +22,7 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/ROCm/hipFFT.git"
     url = "https://github.com/ROCm/hipfft/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
+    libraries = ["libhipfft"]
 
     maintainers("renjithravindrankannath", "srekolam", "afzpatel")
 
@@ -96,6 +98,17 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"rocfft amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
     # https://github.com/ROCm/rocFFT/pull/85)
     patch("001-remove-submodule-and-sync-shared-files-from-rocFFT.patch", when="@6.0.0")
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):
