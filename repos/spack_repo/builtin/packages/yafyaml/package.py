@@ -73,7 +73,8 @@ class Yafyaml(CMakePackage):
     # This bug is still in 2025.2.1
     # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/m-p/1703735
     conflicts(
-        "%oneapi@2025.2:", msg="yaFyaml does not compile with ifx 2025.2 due to a bug in fpp"
+        "^[virtuals=fortran] intel-oneapi-compilers@2025.2:",
+        msg="yaFyaml does not compile with ifx 2025.2 due to a bug in fpp",
     )
 
     variant(
