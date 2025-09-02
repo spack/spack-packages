@@ -19,7 +19,7 @@ class HipifyClang(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    executables=["hipify-perl"]
+    executables = ["hipify-perl"]
 
     license("MIT")
 
