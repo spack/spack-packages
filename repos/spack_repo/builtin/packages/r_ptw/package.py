@@ -33,5 +33,6 @@ class RPtw(RPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("r-nloptr", type=("build", "run"))
     depends_on("r-rcppde", type=("build", "run"), when="@1.9-16:")
+
+    depends_on("r-nloptr", type=("build", "run"), when="@:1.9-15")
