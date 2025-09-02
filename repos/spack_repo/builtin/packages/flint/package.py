@@ -36,6 +36,8 @@ class Flint(AutotoolsPackage):
     depends_on("gmp")  # mpir is a drop-in replacement for this
     depends_on("mpfr")  # Could also be built against mpir
 
+    depends_on("m4", type="build")
+
     def configure_args(self):
         spec = self.spec
         return [f"--with-gmp={spec['gmp'].prefix}", f"--with-mpfr={spec['mpfr'].prefix}"]
