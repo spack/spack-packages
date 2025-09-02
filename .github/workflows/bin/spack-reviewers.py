@@ -42,12 +42,12 @@ def main():
     reviewers = (maintainers | existing_reviewers) - {author}
 
     if existing_reviewers == reviewers:
-        print(f"[PR #{pr_number}]: labels already up-to-date")
+        print(f"[PR #{pr_number}]: reviewers already up-to-date")
         return
 
     added_reviewers = reviewers - existing_reviewers
     if added_reviewers:
-        print(f"[PR #{pr_number}]: Adding reviewer(s): @{' @'.join(added_reviewers)}")
+        print(f"[PR #{pr_number}]: adding reviewer(s): @{' @'.join(added_reviewers)}")
 
     if token:
         resp = requests.post(
