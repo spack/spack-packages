@@ -73,6 +73,8 @@ class Mariadb(CMakePackage):
     depends_on("openssl")
     depends_on("openssl@:1.0", when="@:10.1")
     depends_on("krb5")
+    depends_on("snappy", when="@11.8.3: platform=darwin")
+    depends_on("pcre2", when="@11.8.3: platform=darwin")
 
     conflicts("%gcc@9.1.0:", when="@:5.5")
     conflicts("%gcc@13:", when="@:10.8.7")  # https://github.com/spack/spack/issues/41377
