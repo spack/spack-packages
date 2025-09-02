@@ -22,4 +22,3 @@ class PyTextualPlotext(PythonPackage):
     depends_on("py-textual@5:")
     depends_on("py-plotext")
     depends_on("py-platformdirs")
-
