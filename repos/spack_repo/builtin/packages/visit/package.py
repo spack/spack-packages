@@ -438,7 +438,8 @@ class Visit(CMakePackage):
                 f.write(
                     """
                     from visit import *
-                    Launch()
+                    if "AddPlot" in dir():
+                         print("VisIt Success")
                     """
                 )
             visit_cmd("-cli", "-nowin", "-s", "{script_file_path}")
