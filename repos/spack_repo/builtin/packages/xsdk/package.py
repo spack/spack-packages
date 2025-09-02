@@ -114,6 +114,10 @@ class Xsdk(BundlePackage, CudaPackage, ROCmPackage):
     variant("raja", default=(sys.platform != "darwin"), description="Enable raja for hiop, exago")
     variant("pflotran", default=True, when="@:1.0.0", description="Enable pflotran package build")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
+
     xsdk_depends_on(
         "hypre@2.32.0+superlu-dist+shared", when="@1.1.0", cuda_var="cuda", rocm_var="rocm"
     )

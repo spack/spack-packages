@@ -29,11 +29,6 @@ class PyX21(PythonPackage):
 
     if sys.platform == "darwin":
         version(
-            "0.2.6-py3.8",
-            sha256="bbbfdb6b56562ecc81f0dc39e009713157011fbb50d47353eb25f633acf77204",
-            deprecated=True,
-        )
-        version(
             "0.2.6-py3.9",
             sha256="d7b4f06a71ac27d05ae774752b3ca396134916427f371b5995b07f0f43205043",
         )
@@ -43,11 +38,6 @@ class PyX21(PythonPackage):
         )
     elif sys.platform.startswith("linux"):
         version(
-            "0.2.6-py3.8",
-            sha256="64275052bcda784395bc613f750b8b5a6b1ddbfa4e7a590cb8e209543f0ca0c4",
-            deprecated=True,
-        )
-        version(
             "0.2.6-py3.9",
             sha256="e20b29650fcbf0be116ac93511033bf10debc76261b7350e018ff91b92ff950d",
         )
@@ -56,7 +46,6 @@ class PyX21(PythonPackage):
             sha256="7c5c58ff6dc81caac6815578f78cf545e719beb0bf4017f77120d38025d2bc7d",
         )
 
-    depends_on("python@3.8.0:3.8", type=("build", "run"), when="@0.2.6-py3.8")
     depends_on("python@3.9.0:3.9", type=("build", "run"), when="@0.2.6-py3.9")
     depends_on("python@3.10.0:3.10", type=("build", "run"), when="@0.2.6-py3.10")
     depends_on("py-pynacl", type=("build", "run"))

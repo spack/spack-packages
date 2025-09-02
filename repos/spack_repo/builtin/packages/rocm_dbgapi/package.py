@@ -25,6 +25,8 @@ class RocmDbgapi(CMakePackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="3f0df9d1f350cd6d88ddd41c2e574e4f385c109fcc1524b1de3bd69fce05f5b6")
+    version("6.4.2", sha256="fc62c2eb139db9ef454efaf5c18def6736f366c0a1677e8024aac622a5bae8b0")
     version("6.4.1", sha256="c4c16510b691506c3d0e17d6b2f1eb93529e99dee7877c44fa955a8083337463")
     version("6.4.0", sha256="5dcf627245cc9511c7ff22f46410c5e5777187fab97b7cfcd95e03e61069f72c")
     version("6.3.3", sha256="25c8e9f4a22f23004f2fc1998c284095b193591eb6143b47380455754948ab98")
@@ -41,9 +43,6 @@ class RocmDbgapi(CMakePackage):
     version("6.0.0", sha256="4e823eba255e46b93aff05fd5938ef2a51693ffd74debebffc1aabfce613805c")
     version("5.7.1", sha256="0ee9c2f083868849f2ea0cec7010e0270c27e7679ccbbadd12072cc0ef6c8a6f")
     version("5.7.0", sha256="285ddded8e7f1981d8861ffc1cd7770b78129e4955da08ad55a4779945699716")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="c7241bf94bdb97a4cf1befbf25b8c35720797710da6f6b5b9d6a4094c1bc9c8b")
-        version("5.6.0", sha256="9b66e47f4eccb3c8bbc324aade92aac6139539dda449427b7823d0c45341afc8")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -59,8 +58,6 @@ class RocmDbgapi(CMakePackage):
     depends_on("pciutils", type="build")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -77,6 +74,8 @@ class RocmDbgapi(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", type="build", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type=("build", "link"), when=f"@{ver}")

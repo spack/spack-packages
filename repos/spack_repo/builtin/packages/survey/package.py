@@ -33,7 +33,9 @@ class Survey(CMakePackage):
 
     maintainers("jgalarowicz")
 
-    version("1.1.1", branch="1.1.1")
+    version("1.1.3", branch="1.1.3")
+    version("1.1.2", tag="1.1.2")
+    version("1.1.1", tag="1.1.1")
     version("1.1.0", tag="1.1.0")
     version("1.0.9", tag="1.0.9")
     version("1.0.8.1", branch="1.0.8.1")

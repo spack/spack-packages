@@ -29,6 +29,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("25.08", sha256="6e903fd02e72a3d23b438ec257a96a5a948ac07200220669ab8ff16ff047bde6")
     version("25.07", sha256="19b9e5271451c202610f9c6569189c28fc05bcd655d53525df9169efeb5ee66f")
     version("25.06", sha256="2f69c708ddeaba6d4be3a12ab6951f171952f6f7948e628c5148d667c4197838")
     version("25.05", sha256="d80ae0b4ccb26696fcd3c04d96838592fd0043be25fceebd82cd165f809b1a5d")
@@ -153,9 +154,21 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=False, description="Enable HDF5-based I/O")
     variant("hypre", default=False, description="Enable Hypre interfaces")
     variant("petsc", default=False, description="Enable PETSc interfaces")
-    variant("sundials", default=False, description="Enable SUNDIALS interfaces")
+    variant("sundials", default=False, description="Enable SUNDIALS interfaces", when="@21:")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
+    variant(
+        "gpu_rdc",
+        default=True,
+        description="Enable relocatable GPU device code support",
+        when="+cuda",
+    )
+    variant(
+        "gpu_rdc",
+        default=True,
+        description="Enable relocatable GPU device code support",
+        when="+rocm",
+    )
 
     # Build dependencies
     depends_on("c", type="build")  # generated
@@ -180,7 +193,6 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libcatalyst@2.0: +conduit")
         depends_on("libcatalyst +mpi", when="+mpi")
     with when("+sundials"):
-        depends_on("sundials@4.0.0:4.1.0 +ARKODE +CVODE", when="@19.08:20.11")
         depends_on("sundials@5.7.0: +ARKODE +CVODE", when="@21.07:22.04")
         depends_on("sundials@6.0.0: +ARKODE +CVODE", when="@22.05:")
     for arch in CudaPackage.cuda_arch_values:
@@ -240,11 +252,6 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         "+catalyst",
         when="~conduit",
         msg="AMReX Catalyst2 support needs Conduit interfaces (+conduit)",
-    )
-    conflicts(
-        "+sundials",
-        when="@19.08:20.11 ~fortran",
-        msg="AMReX SUNDIALS support needs AMReX Fortran API (+fortran)",
     )
     conflicts(
         "+sundials",
@@ -361,12 +368,14 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             args.append("-DAMReX_CUDA_ERROR_CROSS_EXECUTION_SPACE_CALL=ON")
             cuda_arch = self.spec.variants["cuda_arch"].value
             args.append("-DAMReX_CUDA_ARCH=" + self.get_cuda_arch_string(cuda_arch))
+            args.append(self.define_from_variant("AMReX_GPU_RDC", "gpu_rdc"))
 
         if self.spec.satisfies("+rocm"):
             args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].hipcc))
             args.append("-DAMReX_GPU_BACKEND=HIP")
             targets = self.spec.variants["amdgpu_target"].value
             args.append("-DAMReX_AMD_ARCH=" + ";".join(str(x) for x in targets))
+            args.append(self.define_from_variant("AMReX_GPU_RDC", "gpu_rdc"))
 
         if self.spec.satisfies("+sycl"):
             args.append("-DAMReX_GPU_BACKEND=SYCL")

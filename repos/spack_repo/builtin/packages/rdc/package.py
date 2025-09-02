@@ -14,7 +14,7 @@ class Rdc(CMakePackage):
     """ROCm Data Center Tool"""
 
     homepage = "https://github.com/ROCm/rdc"
-    url = "https://github.com/ROCm/rdc/archive/rocm-6.1.2.tar.gz"
+    url = "https://github.com/ROCm/rdc/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
@@ -28,6 +28,9 @@ class Rdc(CMakePackage):
         return url.format(version)
 
     license("MIT")
+
+    version("6.4.3", sha256="1a4ba522b780375c8a8b24ceba34d5021d2255dc09fa7f841ae0249eeb96dea1")
+    version("6.4.2", sha256="56dcbdf3a0b4e330d7952e790cd6e7bca5fde351189d2f99026c1e4c8ac2fc63")
     version("6.4.1", sha256="8b6d58c6ce30497a9d6b465057a8a39be9e9e4603b75a52b5004335f12310024")
     version("6.4.0", sha256="2ee3def1e90784923f2043220974d30fe9581ec0d54c93628911ed8292fc56c4")
     version("6.3.3", sha256="9be314ea8d7e7af58ac4a24f5720f54d51ba553d3e1751bc9cfc4bff98494fab")
@@ -44,9 +47,6 @@ class Rdc(CMakePackage):
     version("6.0.0", sha256="5e3847a919d5f7efe99d8d76c96e78401659eccd1fb234b1b8cb4304096d6e89")
     version("5.7.1", sha256="5251eb3085f2019246b332e9552dfae1572cf64ddf58306b81cbe7108019ffee")
     version("5.7.0", sha256="924e94f14f6390d7a6ff7863fb4e2085c1ff5f9c12b8bd46471eb31f001c4f14")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="9e9f57cebbc5ae386a405957ed2c17344cdb42db5e1a71285f2c9bc09eea6519")
-        version("5.6.0", sha256="5213cd89215463862f6a1e9480ebe017944a6bb6b0db1722628afaa34af57991")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
@@ -57,12 +57,10 @@ class Rdc(CMakePackage):
     depends_on("grpc@1.61.2+shared", when="@6.2:")
     depends_on("protobuf")
     depends_on("libcap")
-    for ver in ["5.6.0", "5.6.1", "5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
+    for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"rocm-smi-lib@{ver}", type=("build", "link"), when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -79,14 +77,28 @@ class Rdc(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
 
-    for ver in ["6.2.0", "6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in [
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+    ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
     def patch(self):

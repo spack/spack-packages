@@ -20,6 +20,7 @@ class Cmake(Package):
     homepage = "https://www.cmake.org"
     url = "https://github.com/Kitware/CMake/releases/download/v3.19.0/cmake-3.19.0.tar.gz"
     git = "https://gitlab.kitware.com/cmake/cmake.git"
+    github = "https://github.com/kitware/cmake"
 
     maintainers("alalazo", "johnwparent")
 
@@ -30,6 +31,7 @@ class Cmake(Package):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("4.1.0", sha256="81ee8170028865581a8e10eaf055afb620fa4baa0beb6387241241a975033508")
     version("4.0.3", sha256="8d3537b7b7732660ea247398f166be892fe6131d63cc291944b45b91279f3ffb")
     version("4.0.0", sha256="ddc54ad63b87e153cf50be450a6580f1b17b4881de8941da963ff56991a4083b")
     version(
@@ -166,6 +168,12 @@ class Cmake(Package):
     # Statically linked binaries error on install when CMAKE_INSTALL_RPATH is set
     # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/9623
     patch("mr-9623.patch", when="@3.22.0:3.30")
+
+    patch(
+        f"{github}/commit/1b0c92a3a1b782ff3e1c4499b6ab8db614d45bcd.patch?full_index=1",
+        sha256="fdea723be9713f3ed4624055bf21ef5876647d63c151b91006608ec44a912ae1",
+        when="@3.11:3.31.6",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -440,7 +448,7 @@ class Cmake(Package):
         """Runs and checks output of the installed binary."""
         exe_path = join_path(self.prefix.bin, bin)
         if not os.path.exists(exe_path):
-            raise SkipTest(f"{exe} is not installed")
+            raise SkipTest(f"{exe_path} is not installed")
 
         exe = which(exe_path)
         out = exe("--version", output=str.split, error=str.split)

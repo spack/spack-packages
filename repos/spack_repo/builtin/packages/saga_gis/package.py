@@ -36,10 +36,6 @@ class SagaGis(AutotoolsPackage, SourceforgePackage):
     version("5.0.0", branch="release-5.0.0")
     version("4.1.0", branch="release-4.1.0")
     version("4.0.0", branch="release-4.0.0")
-    version("3.0.0", branch="release-3.0.0", deprecated=True)
-    version("2.3-lts", branch="release-2-3-lts", deprecated=True)
-    version("2.3.1", branch="release-2-3-1", deprecated=True)
-    version("2.3.0", branch="release-2-3-0", deprecated=True)
 
     variant("gui", default=True, description="Build GUI and interactive SAGA tools")
     variant("odbc", default=True, description="Build with ODBC support")

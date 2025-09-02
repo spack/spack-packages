@@ -37,8 +37,7 @@ class Atk(MesonPackage):
 
     def url_for_version(self, version):
         return (
-            f"http://ftp.gnome.org/pub/gnome/sources/atk/"
-            f"{version.up_to(2)}/atk-{version}.tar.xz"
+            f"http://ftp.gnome.org/pub/gnome/sources/atk/{version.up_to(2)}/atk-{version}.tar.xz"
         )
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
