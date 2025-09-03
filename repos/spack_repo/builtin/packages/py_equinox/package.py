@@ -17,8 +17,6 @@ class PyEquinox(PythonPackage):
 
     pypi = "equinox/equinox-0.11.10.tar.gz"
 
-    maintainers("viperMl")
-
     license("Apache-2.0", checked_by="viperML")
 
     version("0.11.12", sha256="bee22aabaf7ee0cde6f2ae58cf3b981dea73d47e297361a0203e299208ef1739")
