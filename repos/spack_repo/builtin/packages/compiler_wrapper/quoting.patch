@@ -1,0 +1,35 @@
+diff --git a/src/utils.cxx b/src/utils.cxx
+index aa65bcb..a22dcd5 100644
+--- a/src/utils.cxx
++++ b/src/utils.cxx
+@@ -211,16 +211,23 @@ void lower(std::string& str) {
+ }
+ 
+ std::string quoteAsNeeded(std::string& str) {
+-    if (str.find_first_of(" &<>|()") != std::string::npos) {
+-        // There are spaces or special characters in string, quote it
+-        return "\"" + str + "\"";
+-    }
++    // Note: the ordering if these two conditionals is important
++    // If the second conditional is executed first, the first
++    // will always be true as the second injects the string
++    // on which the first is conditioned
++    // Basically: If we find escaped strings: escape em again
++    // If we find space/special chars: escape the whole string
++
+     if (str.find_first_of('\"') != std::string::npos) {
+         // If there are escaped quotes in input
+         // We need to escape them as well as we're adding another
+-        // layer of indirection between builder and compiler
++        // layer of indirection between caller and compiler
+         std::regex const pattern("\"");
+-        return std::regex_replace(str, pattern, "\\\"");
++        str = std::regex_replace(str, pattern, "\\\"");
++    }
++    if (str.find_first_of(" &<>|()") != std::string::npos) {
++        // There are spaces or special characters in string, quote it
++        str = "\"" + str + "\"";
+     }
+     return str;
+ }
+

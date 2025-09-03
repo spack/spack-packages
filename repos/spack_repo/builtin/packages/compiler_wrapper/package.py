@@ -33,10 +33,13 @@ class CompilerWrapper(Package, NMakePackage):
 
     homepage_win = "https://github.com/spack/msvc-wrapper"
     url_win = "https://github.com/spack/msvc-wrapper/archive/refs/tags/v0.1.0.tar.gz"
+    git_win = "https://github.com/spack/msvc-wrapper.git"
 
 
     homepage = homepage_win if IS_WINDOWS else homepage_nix
     url = url_win if IS_WINDOWS else url_nix
+    if IS_WINDOWS:
+        git = git_win
 
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
@@ -53,18 +56,23 @@ class CompilerWrapper(Package, NMakePackage):
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
+        version("develop", branch="main")
         version("0.1.0", sha256="4eab2cb48bb83edb88780517c9dfa55778f8adc555ec4939cb73e2d05fed5a5a")
 
+    with when("@develop platform=windows"):
+        patch("quoting.patch")
+
     # available in 0.1.1
-    patch("fixup11.patch", when="platform=windows")
-    patch("quote_args.patch", when="platform=windows")
-    patch("include_regex.patch", when="platform=windows")
-    patch("pipe.patch", when="platform=windows")
-    patch("rsp.patch", when="platform=windows")
-    patch("paths.patch", when="platform=windows")
-    patch("path_fixup.patch", when="platform=windows")
-    patch("spack-installed-libs.patch", when="platform=windows")
-    patch("strip_pad.patch", when="platform=windows")
+    with when("@0.1.0 platform=windows"):
+        patch("fixup11.patch")
+        patch("quote_args.patch")
+        patch("include_regex.patch")
+        patch("pipe.patch")
+        patch("rsp.patch")
+        patch("paths.patch")
+        patch("path_fixup.patch")
+        patch("spack-installed-libs.patch")
+        patch("strip_pad.patch")
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
