@@ -31,7 +31,7 @@ class PyDolfinxMpc(PythonPackage):
     depends_on("py-cffi@:1.16", type=("build", "run"))
     depends_on("py-numpy@1.21:", type=("build", "run"))
     depends_on("py-mpi4py", type=("build", "run"))
-    
+
     depends_on("dolfinx-mpc@main", when="@main", type=("build"))
     depends_on("dolfinx-mpc@0.9.3", when="@0.9.3", type=("build"))
     depends_on("dolfinx-mpc@0.8.1", when="@0.8.1", type=("build"))
