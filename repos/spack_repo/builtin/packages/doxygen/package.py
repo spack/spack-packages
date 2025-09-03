@@ -10,15 +10,14 @@ from spack.package import *
 
 
 class Doxygen(CMakePackage):
-    """Doxygen is the de facto standard tool for generating
-    documentation from annotated C++ sources, but it also supports other
-    popular programming languages such as C, Objective-C, C#, PHP, Java,
-    Python, IDL (Corba, Microsoft, and UNO/OpenOffice flavors), Fortran,
-    and to some extent D. Doxygen also supports the hardware description
-    language VHDL."""
+    """Doxygen is the de facto standard tool for generating documentation from annotated C++
+    sources, but it also supports other popular programming languages such as C, Objective-C, C#,
+    PHP, Java, Python, IDL (Corba, Microsoft, and UNO/OpenOffice flavors), Fortran, and to some
+    extent D. Doxygen also supports the hardware description language VHDL.
+    """
 
     homepage = "https://www.doxygen.org"
-    url = "https://github.com/doxygen/doxygen/archive/refs/tags/Release_1_14_0.tar.gz"
+    url = "https://github.com/doxygen/doxygen/archive/refs/tags/Release_1_13_2.tar.gz"
 
     license("GPL-2.0", checked_by="mcmehrtens")
 
@@ -136,9 +135,9 @@ class Doxygen(CMakePackage):
         when="@1.10:1.11.0",
     )
 
-    # Fixes a bug where Doxygen would fail to compile if newer versions of LLVM were used
+    # Doxygen fails to compile if newer version of LLVM are used
     # https://github.com/doxygen/doxygen/issues/10928
-    patch("llvm19-fix-1.13.2.patch", when="@1.13.2")
+    conflicts("%llvm@19:", when="@:1.13.2")
 
     # Some GCC 7.x get stuck in an infinite loop
     conflicts("%gcc@7.0:7.9", when="@1.9:")
