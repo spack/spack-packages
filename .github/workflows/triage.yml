@@ -40,6 +40,7 @@ jobs:
 
       - name: Tag Maintainers on PR
         run: |
+          . spack-core/share/spack/setup-env.sh
           python3 .github/workflows/bin/spack-reviewers.py
         env:
           GH_PR_NUMBER: ${{ github.event.number }}
