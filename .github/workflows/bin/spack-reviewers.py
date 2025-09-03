@@ -8,7 +8,7 @@ import subprocess
 
 import requests
 
-IS_PACKAGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/package.py$")
+IS_PACKAGE_CHANGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/.*$")
 
 
 def main():
@@ -29,7 +29,7 @@ def main():
     maintainers = set()
 
     for file in pull_request_files.json():
-        if match := IS_PACKAGE.match(file["filename"]):
+        if match := IS_PACKAGE_CHANGE.match(file["filename"]):
             package = match.group(1)
 
             # add maintainers from packages here
@@ -47,7 +47,9 @@ def main():
 
     added_reviewers = reviewers - existing_reviewers
     if added_reviewers:
-        print(f"[PR #{pr_number}]: adding reviewer(s): @{' @'.join(added_reviewers)}")
+        print(f"[PR #{pr_number}]: adding reviewer(s):")
+        for reviewer in sorted(added_reviewers):
+            print(f"    @{reviewer}")
 
     if token:
         resp = requests.post(
