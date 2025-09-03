@@ -40,6 +40,10 @@ spack:
       require:
       - '@2.22:'
       - target=x86_64_v3
+    py-numpy:
+      require:
+      - '@1.26:'
+      - target=x86_64_v3
     rivet:
       require:
       - hepmc=3
