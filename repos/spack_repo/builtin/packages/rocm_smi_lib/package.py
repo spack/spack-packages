@@ -96,7 +96,6 @@ class RocmSmiLib(CMakePackage):
         when="@6.1.1:",
     )
 
-    patch("disable_pdf_generation_with_doxygen_and_latex.patch", when="@:5.6")
     patch(
         "https://github.com/ROCm/rocm_smi_lib/commit/ce405476cabf66a884a351cb2e3253bd5c29e06b.patch?full_index=1",
         sha256="54094b5dbd05b79341e38e95f785dcbb0ba4a5aef4bad19e075ea77470164138",

@@ -68,7 +68,7 @@ class Rocsolver(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.8:", type="build")
-    depends_on("fmt@7:8.0.1", type="test", when="@5.6:")
+    depends_on("fmt@7:8.0.1", type="test")
     depends_on("fortran", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
@@ -127,7 +127,7 @@ class Rocsolver(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

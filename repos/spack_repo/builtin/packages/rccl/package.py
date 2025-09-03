@@ -86,7 +86,6 @@ class Rccl(CMakePackage):
     )
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
-    patch("0003-Fix-numactl-rocm-smi-path-issue.patch", when="@5.6")
     patch("0004-Set-rocm-core-path-for-version-file.patch", when="@6.0:6.2")
     patch("0004-Set-rocm-core-path-for-version-file-6.3.patch", when="@6.3")
     patch("0004-Set-rocm-core-path-for-version-file-6.4.patch", when="@6.4")

@@ -72,7 +72,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("boost@1.64.0:1.76.0 +program_options cxxstd=14", type="test")
     depends_on("py-pyaml", type="test", when="@6.1:")
 
-    patch("remove-hipblas-clients-file-installation.patch", when="@5.6:5.7.1")
+    patch("remove-hipblas-clients-file-installation.patch", when="@5.7")
     patch("remove-hipblas-clients-file-installation-6.0.patch", when="@6.0:")
     patch("modify-hipblas-common-dependency.patch", when="@6.3:")
 

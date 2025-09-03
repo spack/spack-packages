@@ -244,7 +244,7 @@ class Hip(CMakePackage):
     patch("0014-Remove-compiler-rt-linkage-for-host-for-5.7.0.patch", when="@5.7.0:5.7")
     patch("0014-remove-compiler-rt-linkage-for-host.6.0.patch", when="@6.0")
     patch("0014-remove-compiler-rt-linkage-for-host.6.1.patch", when="@6.1")
-    patch("0015-reverting-operator-mixup-fix-for-slate.patch", when="@5.6:6.0")
+    patch("0015-reverting-operator-mixup-fix-for-slate.patch", when="@:6.0")
     patch("0018-reverting-hipMemoryType-with-memoryType.patch", when="@6.0:6.2")
 
     # See https://github.com/ROCm/HIP/pull/3206
@@ -444,16 +444,16 @@ class Hip(CMakePackage):
             )
         perl = self.spec["perl"].command
 
-        if self.spec.satisfies("@5.6:"):
+        if self.spec.satisfies("@5.7:"):
             with working_dir("clr/hipamd/bin"):
                 filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
-        if self.spec.satisfies("@5.6:5.7"):
+        if self.spec.satisfies("@5.7"):
             with working_dir("hipcc/bin"):
                 filter_shebang("hipconfig")
 
         if self.spec.satisfies("+rocm"):
             numactl = self.spec["numactl"].prefix.lib
-            if self.spec.satisfies("@5.6:5.7"):
+            if self.spec.satisfies("@5.7"):
                 with working_dir("hipcc/src"):
                     filter_file(" -lnuma", f" -L{numactl} -lnuma", "hipBin_amd.h")
 
@@ -515,7 +515,7 @@ class Hip(CMakePackage):
         args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path + "/clr/opencl"))
         args.append(self.define("CLR_BUILD_HIP", True))
         args.append(self.define("CLR_BUILD_OCL", False))
-        if self.spec.satisfies("@5.6:5.7"):
+        if self.spec.satisfies("@5.7"):
             args.append(self.define("HIPCC_BIN_DIR", self.stage.source_path + "/hipcc/bin"))
         if self.spec.satisfies("@6.0:"):
             args.append(self.define("HIPCC_BIN_DIR", self.spec["hipcc"].prefix.bin))

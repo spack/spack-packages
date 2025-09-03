@@ -133,6 +133,6 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         else:
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

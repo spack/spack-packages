@@ -124,12 +124,8 @@ class RocmOpencl(CMakePackage):
 
     def cmake_args(self):
         args = ["-DUSE_COMGR_LIBRARY=yes", "-DBUILD_TESTS=ON"]
-        if self.spec.satisfies("@:5.6"):
-            args.append(self.define("ROCCLR_PATH", self.stage.source_path + "/rocclr"))
-            args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path))
-        if self.spec.satisfies("@5.7:"):
-            args.append(self.define("CLR_BUILD_HIP", False))
-            args.append(self.define("CLR_BUILD_OCL", True))
+        args.append(self.define("CLR_BUILD_HIP", False))
+        args.append(self.define("CLR_BUILD_OCL", True))
         if self.spec.satisfies("+asan"):
             args.append(
                 self.define(

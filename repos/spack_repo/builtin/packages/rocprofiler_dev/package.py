@@ -112,7 +112,6 @@ class RocprofilerDev(CMakePackage):
     depends_on("py-termcolor")
     depends_on("py-pandas", when="@6.0:")
 
-    patch("0002-add-fPIC-and-disable-tests-5.6.patch", when="@5.6")
     patch("0002-add-fPIC-and-disable-tests-5.7.patch", when="@5.7")
     patch("0003-disable-tests.patch", when="@6.0:")
 

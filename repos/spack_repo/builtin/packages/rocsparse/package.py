@@ -89,8 +89,7 @@ class Rocsparse(CMakePackage):
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    depends_on("googletest@1.11.0:", when="@5.6.0: +test")
-    depends_on("googletest@1.10.0:", when="+test")
+    depends_on("googletest@1.11.0:", when="+test")
     depends_on("python@3:", type="build", when="+test")
     depends_on("py-pyyaml", type="build", when="+test")
 
@@ -282,6 +281,6 @@ class Rocsparse(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args
