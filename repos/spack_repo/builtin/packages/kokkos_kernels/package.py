@@ -24,7 +24,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     license("Apache-2.0 WITH LLVM-exception")
 
     version("develop", branch="develop")
-    version("master", branch="master")
+    version("master", branch="master", deprecated=True)
     version("4.7.00", sha256="5c7c8c8f91817ab22dbc50ea72f02292bbd6c5b412d6f1588b27574600c478ef")
     version("4.6.02", sha256="a953f445660ed5aaab10e18fc4a90c4c178291e9d9d97d20abd4e6027f1193ec")
     version("4.6.01", sha256="95b9357f37ab3b9c3913c00741acb2501831c28ea8664de67818ae79c69c5908")

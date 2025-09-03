@@ -442,7 +442,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             resource(
                 name="nvidia-plugin-installer",
                 placement="nvidia-plugin-installer",
-                when="@{0}".format(v["version"]),
+                when="@{0}+nvidia".format(v["version"]),
                 expand=False,
                 **v["nvidia-plugin"],
             )
@@ -450,7 +450,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             resource(
                 name="amd-plugin-installer",
                 placement="amd-plugin-installer",
-                when="@{0}".format(v["version"]),
+                when="@{0}+amd".format(v["version"]),
                 expand=False,
                 **v["amd-plugin"],
             )

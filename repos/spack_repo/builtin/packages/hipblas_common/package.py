@@ -17,6 +17,7 @@ class HipblasCommon(CMakePackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="a6a0ad9b12fb104e96d19556e576bb2a8ddb630acf6209f171a61707eed1d6c8")
     version("6.4.2", sha256="2212ebede73269864d5303fec94f4d0774c196f68dc9afe50af4014f82f1e073")
     version("6.4.1", sha256="ba3cb314ceab9183aeac851e536c5d143933986f3099533edd327ffeb4b48e9b")
     version("6.4.0", sha256="8953bcf13ba1aa03cb29481bd90eaef373bf0e41cadff68e567ecd2ec0b07363")

@@ -15,7 +15,7 @@ class Rocblas(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocBLAS/"
     git = "https://github.com/ROCm/rocBLAS.git"
-    url = "https://github.com/ROCm/rocBLAS/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rocBLAS/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
@@ -23,6 +23,7 @@ class Rocblas(CMakePackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="754dcc88b30468a2293d2406d7fe40f78dc92dd77c193758f937532217ecdad3")
     version("6.4.2", sha256="703226c458bb3dd1155aad8bdc02cdae2ff789c6b44e41e4a49ae28e40baff98")
     version("6.4.1", sha256="517950ff6b3715dee8b2bcfbdd3968c65e1910e4b8e353e148574ae08aa6dc73")
     version("6.4.0", sha256="ab8e75c9f98d17817a650aa4f06ff1e6c6af92cd143079e361cb6a0c96676aaa")
@@ -77,6 +78,7 @@ class Rocblas(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
@@ -98,6 +100,7 @@ class Rocblas(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", type="build", when=f"@{ver}")
@@ -105,9 +108,9 @@ class Rocblas(CMakePackage):
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
-    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("python@3.6:", type="build")
@@ -142,6 +145,7 @@ class Rocblas(CMakePackage):
         ("@6.4.0", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
         ("@6.4.1", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
         ("@6.4.2", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
+        ("@6.4.3", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
     ]:
         resource(
             name="Tensile",

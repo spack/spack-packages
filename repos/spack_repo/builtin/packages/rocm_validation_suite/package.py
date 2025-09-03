@@ -17,13 +17,14 @@ class RocmValidationSuite(CMakePackage):
     compatible platform."""
 
     homepage = "https://github.com/ROCm/ROCmValidationSuite"
-    url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.1.1.tar.gz"
+    url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("6.4.3", sha256="2ed24ee2a4bd581515fbdea1c182f377b84be15d8a75ad448bafdc3380fe3624")
     version("6.4.2", sha256="2db0210ae6c894a8480bad0f50ea7553a5b2b14f6969006af666b9d1779285f7")
     version("6.4.1", sha256="2a0ce3e037e2eaee5a29bb796813f94faa9e080af29937583e5ddba7af3c3acb")
     version("6.4.0", sha256="1963aa0ec6f6b7e957a5521dbfba615c2047ef7f432048b4a14c979c90a6f995")
@@ -103,17 +104,30 @@ class RocmValidationSuite(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
-    for ver in ["6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+
+    for ver in [
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+    ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
     def patch(self):
