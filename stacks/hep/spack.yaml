@@ -5,8 +5,6 @@ spack:
   - $CI_PROJECT_DIR/.ci/gitlab/
 
   concretizer:
-    reuse: false
-    unify: when_possible
     static_analysis: true
 
   packages:
