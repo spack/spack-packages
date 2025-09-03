@@ -16,7 +16,7 @@ class Melissa(CMakePackage):
     git = "https://gitlab.inria.fr/melissa/melissa.git"
     url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.1.0/melissa-v2.1.0.tar.gz"
     # attention: Git**Hub**.com accounts
-    maintainers("abhishek1297", "viperML", "raffino")
+    maintainers("abhishek1297", "raffino")
 
     version("2.2.0", sha256="e805c9ac08de5aa666768d5d92bfc680f064bd9108415a911dfd08ad7b0a3cf3")
     version("2.1.1", sha256="6b92852429f13b144860edc37c7914723addabb0ec0bd108929ff567334d3f71")
