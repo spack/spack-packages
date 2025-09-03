@@ -15,6 +15,7 @@ class PyExpandvars(PythonPackage):
 
     license("MIT")
 
+    version("1.1.1", sha256="98add8268b760dfee457bde1c17bf745795fdebc22b7ddab75fd3278653f1e05")
     version("0.12.0", sha256="7d1adfa55728cf4b5d812ece3d087703faea953e0c0a1a78415de9df5024d844")
 
     depends_on("py-hatchling", type="build")
