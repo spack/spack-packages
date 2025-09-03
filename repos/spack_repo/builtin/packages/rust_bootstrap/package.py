@@ -172,6 +172,8 @@ class RustBootstrap(Package):
     depends_on("zlib +shared", when="^[virtuals=zlib-api] zlib")
     depends_on("patchelf@0.13:", when="platform=linux", type="build")
 
+    provides("rust-bootstrapper")
+
     def url_for_version(self, version):
         if self.os not in ("linux", "darwin"):
             return None

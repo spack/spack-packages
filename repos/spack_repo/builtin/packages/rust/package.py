@@ -80,23 +80,27 @@ class Rust(Package):
     # Compiling Rust requires a previous version of Rust.
     # The easiest way to bootstrap a Rust environment is to
     # download the binary distribution of the compiler and build with that.
+    # The alternative is to use a project like mrustc that builds rust from C++
+    # rust-bootstrap is the binary bootstrapper
+    # mrustc and rust-bootstrap both provide rust-bootstrapper
+    depends_on("rust-bootstrapper", type="build")
 
     # Pre-release version dependencies
-    depends_on("rust-bootstrap@nightly", type="build", when="@master")
-    depends_on("rust-bootstrap@nightly", type="build", when="@nightly")
+    depends_on("rust-bootstrap@nightly", type="build", when="@master^rust-bootstrap")
+    depends_on("rust-bootstrap@nightly", type="build", when="@nightly^rust-bootstrap")
 
     # Stable version dependencies
-    depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85")
-    depends_on("rust-bootstrap@1.82:1.83", type="build", when="@1.83")
-    depends_on("rust-bootstrap@1.80:1.81", type="build", when="@1.81")
-    depends_on("rust-bootstrap@1.77:1.78", type="build", when="@1.78")
-    depends_on("rust-bootstrap@1.75:1.76", type="build", when="@1.76")
-    depends_on("rust-bootstrap@1.74:1.75", type="build", when="@1.75")
-    depends_on("rust-bootstrap@1.73:1.74", type="build", when="@1.74")
-    depends_on("rust-bootstrap@1.72:1.73", type="build", when="@1.73")
-    depends_on("rust-bootstrap@1.69:1.70", type="build", when="@1.70")
-    depends_on("rust-bootstrap@1.64:1.65", type="build", when="@1.65")
-    depends_on("rust-bootstrap@1.59:1.60", type="build", when="@1.60")
+    depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85^rust-bootstrap")
+    depends_on("rust-bootstrap@1.82:1.83", type="build", when="@1.83^rust-bootstrap")
+    depends_on("rust-bootstrap@1.80:1.81", type="build", when="@1.81^rust-bootstrap")
+    depends_on("rust-bootstrap@1.77:1.78", type="build", when="@1.78^rust-bootstrap")
+    depends_on("rust-bootstrap@1.75:1.76", type="build", when="@1.76^rust-bootstrap")
+    depends_on("rust-bootstrap@1.74:1.75", type="build", when="@1.75^rust-bootstrap")
+    depends_on("rust-bootstrap@1.73:1.74", type="build", when="@1.74^rust-bootstrap")
+    depends_on("rust-bootstrap@1.72:1.73", type="build", when="@1.73^rust-bootstrap")
+    depends_on("rust-bootstrap@1.69:1.70", type="build", when="@1.70^rust-bootstrap")
+    depends_on("rust-bootstrap@1.64:1.65", type="build", when="@1.65^rust-bootstrap")
+    depends_on("rust-bootstrap@1.59:1.60", type="build", when="@1.60^rust-bootstrap")
 
     # src/llvm-project/llvm/cmake/modules/CheckCompilerVersion.cmake
     conflicts("%gcc@:7.3", when="@1.73:", msg="Host GCC version must be at least 7.4")
@@ -196,8 +200,12 @@ class Rust(Package):
         opts.append(f"build.docs={str(spec.satisfies('+docs')).lower()}")
 
         # Set binary locations for bootstrap rustc and cargo.
-        opts.append(f"build.cargo={spec['rust-bootstrap'].prefix.bin.cargo}")
-        opts.append(f"build.rustc={spec['rust-bootstrap'].prefix.bin.rustc}")
+        if spec.satisfies("%mrustc"):
+            opts.append(f"build.cargo={spec['mrustc'].prefix.bin.minicargo}")
+            opts.append(f"build.rustc={spec['mrustc'].prefix.bin.mrustc}")
+        else:
+            opts.append(f"build.cargo={spec['rust-bootstrap'].prefix.bin.cargo}")
+            opts.append(f"build.rustc={spec['rust-bootstrap'].prefix.bin.rustc}")
 
         # Disable bootstrap LLVM download.
         opts.append("llvm.download-ci-llvm=false")
