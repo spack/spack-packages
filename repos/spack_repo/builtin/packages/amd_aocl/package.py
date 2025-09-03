@@ -40,13 +40,10 @@ class AmdAocl(BundlePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    depends_on("scalapack")
-    depends_on("lapack")
-    depends_on("blas")
 
-    requires("^[virtuals=scalapack] amdscalapack")
-    requires("^[virtuals=lapack] amdlibflame")
-    requires("^[virtuals=blas] amdblis")
+    requires("amdscalapack")
+    requires("amdlibflame")
+    requires("amdblis")
 
     with when("+openmp"):
         depends_on("amdblis threads=openmp")
