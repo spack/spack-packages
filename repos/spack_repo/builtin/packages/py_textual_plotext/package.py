@@ -20,5 +20,5 @@ class PyTextualPlotext(PythonPackage):
     depends_on("python@3.8:3")
     depends_on("py-poetry-core")
     depends_on("py-textual@5:")
-    depends_on("py-plotext")
+    depends_on("py-plotext@5.2.8:5")
     depends_on("py-platformdirs")
