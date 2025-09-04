@@ -42,17 +42,17 @@ def main():
     author = pull_request["user"]["login"]
     reviewers = (maintainers | existing_reviewers) - {author}
 
-    # exit early if the PR notifies a very large number of people
-    if len(reviewers) > NUM_MAX_REVIEWERS:
-        print(f"[PR #{pr_number}]: skipping PR that would ping >{NUM_MAX_REVIEWERS} people")
-        return
-
     if existing_reviewers == reviewers:
         print(f"[PR #{pr_number}]: reviewers already up-to-date")
         return
 
     added_reviewers = reviewers - existing_reviewers
     if added_reviewers:
+        # exit early if the PR would notify a very large number of people
+        if len(added_reviewers) > NUM_MAX_REVIEWERS:
+            print(f"[PR #{pr_number}]: skipping PR that would ping >{NUM_MAX_REVIEWERS} people")
+            return
+
         print(f"[PR #{pr_number}]: adding reviewer(s):")
         for reviewer in sorted(added_reviewers):
             print(f"    @{reviewer}")
