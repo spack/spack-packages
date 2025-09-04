@@ -172,4 +172,8 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
 
     # gettext doesn't produce a pkg-config
     def setup_dependent_build_environment(self, env, dependent_spec):
-        env.append_flags("LDFLAGS", "-L{0} ".format(dependent_spec["gettext"].prefix.lib) + dependent_spec["gettext"].libs.link_flags)
+        env.append_flags(
+            "LDFLAGS",
+            "-L{0} ".format(dependent_spec["gettext"].prefix.lib)
+            + dependent_spec["gettext"].libs.link_flags,
+        )
