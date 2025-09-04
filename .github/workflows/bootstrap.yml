@@ -89,7 +89,7 @@ jobs:
       - name: Setup macOS
         if: ${{ matrix.runner != 'ubuntu-latest' }}
         run: |
-          brew install cmake bison tree
+          brew install bison tree
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
         with:
@@ -104,7 +104,7 @@ jobs:
           spack repo list
           spack bootstrap disable github-actions-v0.6
           spack bootstrap disable github-actions-v0.5
-          spack external find --not-buildable cmake bison
+          export PATH="$(brew --prefix bison)/bin:$(brew --prefix cmake)/bin:$PATH"
           spack -d solve zlib
           tree $HOME/.spack/bootstrap/store/
 
