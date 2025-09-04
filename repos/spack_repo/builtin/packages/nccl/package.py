@@ -16,7 +16,6 @@ class Nccl(MakefilePackage, CudaPackage):
     homepage = "https://github.com/NVIDIA/nccl"
     url = "https://github.com/NVIDIA/nccl/archive/v2.7.3-1.tar.gz"
 
-    maintainers("adamjstewart")
     libraries = ["libnccl.so"]
 
     version("2.27.7-1", sha256="98e6262bd55932c51e7c8ffc50cc764f019e4b94a8fd6694d839ae828ec8d128")
