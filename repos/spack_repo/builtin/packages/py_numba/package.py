@@ -18,6 +18,7 @@ class PyNumba(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.62.0rc1", sha256="f136e06c201c560cc18bfdf5f2459ed1ab5e66d14fb69f0ed35f811d1eae5b7b")
     version("0.61.2", sha256="8750ee147940a6637b80ecf7f95062185ad8726c8c28a2295b8ec1160a196f7d")
     version("0.61.0", sha256="888d2e89b8160899e19591467e8fdd4970e07606e1fbc248f239c89818d5f925")
     version("0.60.0", sha256="5df6158e5584eece5fc83294b949fd30b9f1125df7708862205217e068aabf16")
@@ -46,7 +47,7 @@ class PyNumba(PythonPackage):
     # max_numpy_run_version in setup.py is a non inclusive upper bound
     # min_numpy_run_version < min_numpy_build_version and these ranges use
     # min_numpy_build_version
-    depends_on("py-numpy@2.0:2.2", when="@0.61.2", type=("build", "run"))
+    depends_on("py-numpy@2.0:2.3", when="@0.61.2:", type=("build", "run"))
     depends_on("py-numpy@2.0:2.1", when="@0.61.0", type=("build", "run"))
     depends_on("py-numpy@2.0", when="@0.60", type=("build", "run"))
     depends_on("py-numpy@1.22:1.26", when="@0.58.1:0.59", type=("build", "run"))
@@ -57,6 +58,7 @@ class PyNumba(PythonPackage):
     depends_on("py-numpy@1.18:1.21", when="@0.55.0:0.55.1", type=("build", "run"))
     depends_on("py-numpy@1.17:1.20", when="@0.54", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
+    depends_on("py-llvmlite@0.45", when="@0.62", type=("build", "run"))
     depends_on("py-llvmlite@0.44", when="@0.61", type=("build", "run"))
     depends_on("py-llvmlite@0.43", when="@0.60", type=("build", "run"))
     depends_on("py-llvmlite@0.42", when="@0.59", type=("build", "run"))
