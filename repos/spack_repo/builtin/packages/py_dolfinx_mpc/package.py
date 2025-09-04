@@ -26,6 +26,7 @@ class PyDolfinxMpc(PythonPackage):
     depends_on("cmake@3.19:", when="@:0.8", type="build")
     depends_on("py-packaging")
 
+    depends_on("python@3.9:", when="@main:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.8:", type=("build", "run"))
 
     depends_on("py-cffi@:1.16", type=("build", "run"))
@@ -37,7 +38,7 @@ class PyDolfinxMpc(PythonPackage):
     depends_on("dolfinx-mpc@0.8.1", when="@0.8.1", type=("build"))
 
     depends_on("py-fenics-dolfinx@main+petsc4py", when="@main")
-    depends_on("py-fenics-dolfinx@0.9+petsc4py", when="@0.9")
+    depends_on("py-fenics-dolfinx@0.9:+petsc4py", when="@0.9")
     depends_on("py-fenics-dolfinx@0.8+petsc4py", when="@0.8")
 
     depends_on("py-nanobind@2:", when="@0.9:", type="build")
