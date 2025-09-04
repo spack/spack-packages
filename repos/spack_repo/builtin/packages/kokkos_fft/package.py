@@ -70,8 +70,8 @@ class KokkosFft(CMakePackage):
         ]
 
         if self.spec.satisfies("^kokkos+rocm"):
-            args.append(self.define("CMAKE_CXX_COMPILER", self["hip"].hipcc))
+            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
         else:
-            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
+            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["kokkos"].kokkos_cxx))
 
         return args
