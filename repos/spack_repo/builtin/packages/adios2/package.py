@@ -120,7 +120,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.12.0:", type="build")
 

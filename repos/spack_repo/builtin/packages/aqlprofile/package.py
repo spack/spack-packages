@@ -9,6 +9,20 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
+    "6.4.3": {
+        "apt": (
+            "9c859a05c6a246eebe75f40915d3788aff8f1f537ab62b3864852efbfb012a25",
+            "https://repo.radeon.com/rocm/apt/6.4.3/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.60403-128~22.04_amd64.deb",
+        ),
+        "yum": (
+            "2a0a3f76cfba27976f6e2053c6746000e693e733bdd7a466ef01127b51baf18a",
+            "https://repo.radeon.com/rocm/rhel8/6.4.3/main/hsa-amd-aqlprofile-1.0.0.60403-128.el8.x86_64.rpm",
+        ),
+        "zyp": (
+            "d5393b2800678eb18bc63b8b5ac7dc54ce74d47e7ac7979f49f64be6ea4a774b",
+            "https://repo.radeon.com/rocm/zyp/6.4.3/main/hsa-amd-aqlprofile6.4.3-1.0.0.60403-sles156.128.x86_64.rpm",
+        ),
+    },
     "6.4.2": {
         "apt": (
             "b0f2cbe31aa0ac9dd3a5584f580ea91b96412fca2feaac19f23bbfc5a60fc06d",
@@ -247,34 +261,6 @@ _versions = {
             "https://repo.radeon.com/rocm/zyp/5.7/main/hsa-amd-aqlprofile-1.0.0.50700.50700-sles154.63.x86_64.rpm",
         ),
     },
-    "5.6.1": {
-        "apt": (
-            "ddb231dc4c8ca45e586ba68cae86273c3bc109f5ec172855815fce1ea6aff172",
-            "https://repo.radeon.com/rocm/apt/5.6.1/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50601-93~20.04_amd64.deb",
-        ),
-        "yum": (
-            "3c67b2e3cfbe71441d4c504dee2c55c9010a15ad7c973f1f858a052fb60524a6",
-            "https://repo.radeon.com/rocm/yum/5.6.1/main/hsa-amd-aqlprofile-1.0.0.50601-93.el7.x86_64.rpm",
-        ),
-        "zyp": (
-            "956382a085356211a35cb24210764c4f5575ce4d3d842439e39cc94287004176",
-            "https://repo.radeon.com/rocm/zyp/5.6.1/main/hsa-amd-aqlprofile-1.0.0.50601-sles154.93.x86_64.rpm",
-        ),
-    },
-    "5.6.0": {
-        "apt": (
-            "67273e8513c0efdef6d52fb211a0cf4b7e117b1c5e737f8763946699324a9d7d",
-            "https://repo.radeon.com/rocm/apt/5.6/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50600-67~20.04_amd64.deb",
-        ),
-        "yum": (
-            "0aefd5f0eca5c1bcb55f5c80e946e252685533cbb3c936417abd44fe94c1f28e",
-            "https://repo.radeon.com/rocm/yum/5.6/main/hsa-amd-aqlprofile-1.0.0.50600-67.el7.x86_64.rpm",
-        ),
-        "zyp": (
-            "b752eb18eed98226bf0cffa492363d452b318432fd5ae01ad86172c4ce132bef",
-            "https://repo.radeon.com/rocm/zyp/5.6/main/hsa-amd-aqlprofile-1.0.0.50600-sles154.67.x86_64.rpm",
-        ),
-    },
 }
 
 
@@ -302,8 +288,6 @@ class Aqlprofile(Package):
     depends_on("cpio")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -321,6 +305,7 @@ class Aqlprofile(Package):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
 

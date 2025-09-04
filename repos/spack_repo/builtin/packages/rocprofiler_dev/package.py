@@ -14,13 +14,14 @@ class RocprofilerDev(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler"
     git = "https://github.com/ROCm/rocprofiler.git"
-    url = "https://github.com/ROCm/rocprofiler/archive/refs/tags/rocm-6.2.4.tar.gz"
+    url = "https://github.com/ROCm/rocprofiler/archive/refs/tags/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocprofiler64"]
     license("MIT")
 
+    version("6.4.3", sha256="b7d5a6848d0bb394bfcb2e667690abf50189010bdc2e6c6ebf401d0ba780c1a0")
     version("6.4.2", sha256="0c7e6e25b1b1bbc33a311c40bc9864cc1d73c1a55ec6616d5a9a14843f9dd836")
     version("6.4.1", sha256="d816f6d7bd138c15d68bceb111847a12ecff5efb50831bb4c3e02fab102ab471")
     version("6.4.0", sha256="c605bdbf5245f46267d4a422746fc941213beae494cd3f902b67fc5423979a57")
@@ -38,22 +39,13 @@ class RocprofilerDev(CMakePackage):
     version("6.0.0", sha256="6aca327a6ba302b5957002e55ac640dd185d51a354da3859e957448a5fc36b14")
     version("5.7.1", sha256="2fb7158592d89312ba419a272d907d8849373c0a676a83dd03c32b9942dfd27a")
     version("5.7.0", sha256="003af33db5585e71823b2b58618d795df926f6bd25943f2add388db23f2bf377")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="3e5eecce216418e61ffee893cbc8611e38305ee472d0e10d579eb74e287c8e1b")
-        version("5.6.0", sha256="ff811bd91580f60b6b4d397b6fce38d96f07debc6fd8a631b81d1b266cc9542d")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3:", type="build")
 
-    for ver in ["5.6.0", "5.6.1"]:
-        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-        depends_on(f"comgr@{ver}", when=f"@{ver}")
-
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -68,8 +60,6 @@ class RocprofilerDev(CMakePackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -106,6 +96,7 @@ class RocprofilerDev(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")

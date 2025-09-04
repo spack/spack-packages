@@ -95,7 +95,7 @@ class Charmpp(Package):
     variant(
         "pmi",
         default="none",
-        values=("none", "simplepmi", "slurmpmi", "slurmpmi2", "pmix", "cray-pmi"),
+        values=("none", "simplepmi", "slurmpmi2", "pmix", "cray-pmi"),
         description="The ucx/ofi/gni backends need PMI to run!",
     )
 
@@ -139,7 +139,6 @@ class Charmpp(Package):
 
     depends_on("ucx", when="backend=ucx")
     depends_on("libfabric", when="backend=ofi")
-    depends_on("slurm@:17-11-9-2", when="pmi=slurmpmi")
     depends_on("slurm@17-11-9-2:", when="pmi=slurmpmi2")
 
     # FIXME : As of now spack's OpenMPI recipe does not have a PMIx variant
@@ -148,7 +147,6 @@ class Charmpp(Package):
     depends_on("openmpi", when="pmi=pmix")
 
     depends_on("mpi", when="pmi=simplepmi")
-    depends_on("mpi", when="pmi=slurmpmi")
     depends_on("mpi", when="pmi=slurmpmi2")
     depends_on("cray-mpich", when="pmi=cray-pmi")
 
@@ -308,11 +306,7 @@ class Charmpp(Package):
                     "Note that PMIx is the preferred option."
                 )
 
-        if (
-            ("pmi=simplepmi" in self.spec)
-            or ("pmi=slurmpmi" in self.spec)
-            or ("pmi=slurmpmi2" in self.spec)
-        ):
+        if ("pmi=simplepmi" in self.spec) or ("pmi=slurmpmi2" in self.spec):
             if self.spec.satisfies("^openmpi"):
                 raise InstallError(
                     "To use any process management interface other than PMIx, "
@@ -333,8 +327,6 @@ class Charmpp(Package):
         options.append("-j%d" % make_jobs)
         options.append("--destination=%s" % builddir)
 
-        if spec.satisfies("pmi=slurmpmi"):
-            options.append("slurmpmi")
         if spec.satisfies("pmi=slurmpmi2"):
             options.append("slurmpmi2")
         if spec.satisfies("pmi=pmix"):

@@ -22,7 +22,7 @@ class KokkosNvccWrapper(Package):
 
     license("BSD-3-Clause")
 
-    version("master", branch="master")
+    version("master", branch="master", deprecated=True)
     version("develop", branch="develop")
 
     version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
@@ -159,9 +159,7 @@ class KokkosNvccWrapper(Package):
         deprecated=True,
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")  # needed for self.compiler.cxx
 
     depends_on("cuda")
 

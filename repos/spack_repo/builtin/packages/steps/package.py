@@ -84,7 +84,6 @@ class Steps(CMakePackage):
     depends_on("py-scipy", type=("build", "test", "run"))
     depends_on("python", type=("build", "test", "run"))
     depends_on("random123", when="~bundle")
-    depends_on("sundials@:2+int64", when="@:5~bundle")
     depends_on("sundials@:6+int64", when="@develop~bundle")
 
     def patch(self):

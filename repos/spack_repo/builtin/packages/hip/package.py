@@ -17,7 +17,7 @@ class Hip(CMakePackage):
 
     homepage = "https://github.com/ROCm/HIP"
     git = "https://github.com/ROCm/HIP.git"
-    url = "https://github.com/ROCm/HIP/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/HIP/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
@@ -25,6 +25,7 @@ class Hip(CMakePackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="3def2459ca9258f04d35d1d3b0173237cea2b963814886bb8af6a0e317718d3d")
     version("6.4.2", sha256="27e3558ecafa9a7471441aabdd870648fa2619147caa721bd98514fa00d246c1")
     version("6.4.1", sha256="f26f098b08504636c6f4e1da45b162f1df2ce6608eba85606fa7932d8fea960f")
     version("6.4.0", sha256="bec899ba67df9aa7056297e5ad104b8e36938b1bab22f1f418f69a8e0043d07f")
@@ -42,9 +43,6 @@ class Hip(CMakePackage):
     version("6.0.0", sha256="ba8ce0d0960b260ff44ab47da58f98b8df9b659835aa62e32e018a63379bbc79")
     version("5.7.1", sha256="ea34c75d2cff366fcdd45109c5be460a48d4fcf72b8a534368b54eae5d05db0e")
     version("5.7.0", sha256="8974a436e7f1daf232a77e27a215bcb24a8cc132aa11b5b885a7417ad4246074")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="1b0178da8e997eb0cbf2af63e1940f56aeddc8b9715d822d2c87fd60dbc01173")
-        version("5.6.0", sha256="befbfb4691d4331b1fdfe1f17a862e82e962eb9fb90457b2c61a5130b3e6b85b")
 
     variant("rocm", default=True, description="Enable ROCm support")
     variant("cuda", default=False, description="Build with CUDA")
@@ -78,8 +76,6 @@ class Hip(CMakePackage):
         depends_on("numactl")
 
         for ver in [
-            "5.6.0",
-            "5.6.1",
             "5.7.0",
             "5.7.1",
             "6.0.0",
@@ -94,8 +90,6 @@ class Hip(CMakePackage):
             depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
         for ver in [
-            "5.6.0",
-            "5.6.1",
             "5.7.0",
             "5.7.1",
             "6.0.0",
@@ -113,6 +107,7 @@ class Hip(CMakePackage):
             "6.4.0",
             "6.4.1",
             "6.4.2",
+            "6.4.3",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -137,6 +132,7 @@ class Hip(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
 
@@ -151,6 +147,7 @@ class Hip(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -160,6 +157,7 @@ class Hip(CMakePackage):
 
     # Add hip-clr sources thru the below
     for d_version, d_shasum in [
+        ("6.4.3", "aa7c9d9d7da3b5fc944b17ca7c032e8924a8dc327ec79eb8cb7f0c9df6fa76dc"),
         ("6.4.2", "6dca1ffff36dbf8665594a72b47b8dd0362f7ee446dea03961d8b5a639bf3ede"),
         ("6.4.1", "18ee75a04f6fc55e72f8b3fcad1e0d58eceb2ce0e0696ca76d9b3dfaf4bfd7ff"),
         ("6.4.0", "76fd0ad83da0dabf7c91ca4cff6c51f2be8ab259e08ad9743af47d1b3473c2ff"),
@@ -223,6 +221,7 @@ class Hip(CMakePackage):
         )
     # Add hipother sources thru the below
     for d_version, d_shasum in [
+        ("6.4.3", "bf5112a7dbc62ba292d782297edebb385b18563f4efebfb4b581230f9383a89f"),
         ("6.4.2", "c2828018e6241bf0464c38f63e16abeab0e8eb861f052454b2d1bc96e0bae66a"),
         ("6.4.1", "2251976146b65a5bdda5a46bfecf323d8dd122104a96394b0e76b35060a10842"),
         ("6.4.0", "53d5654d34e00f4bfa0846b291fe87ef6d43087349917159e663a842ea29a783"),

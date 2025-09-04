@@ -16,12 +16,13 @@ class RocmSmiLib(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocm_smi_lib"
     git = "https://github.com/ROCm/rocm_smi_lib.git"
-    url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-6.2.4.tar.gz"
+    url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath")
     libraries = ["librocm_smi64"]
 
+    version("6.4.3", sha256="74fde0f8cd9362f7073db22ffb98c72f1f7bdb42b6e7a63ae4e0a06607644d4a")
     version("6.4.2", sha256="466f6351c1d94c043195c6b5addd70d21eb1e678d5637b9849dc6b5d0e858cb5")
     version("6.4.1", sha256="c82c8c9de89537b903d82711c531b4b1c6d104098b5370d049527d1f250944b7")
     version("6.4.0", sha256="0c462520b4fa0cf9b49515b207b0ead32a5f96ddba487c5d4fa07a403690c05a")
@@ -39,9 +40,6 @@ class RocmSmiLib(CMakePackage):
     version("6.0.0", sha256="0053b42402fd007e5ca9b3186c70f2c6f1b3026558f328722adadc2838c51309")
     version("5.7.1", sha256="4d79cb0482b2f801cc7824172743e3dd2b44b9f6784d1ca2e5067f2fbb4ef803")
     version("5.7.0", sha256="a399db3d9fc113ce2dd1ab5608a1cf9129ec4b6a2a79ab7922b1d9f43c454640")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="9e94f9a941202c3d7ce917fd1cd78c4e0f06f48d6c929f3aa916378ccef1e02c")
-        version("5.6.0", sha256="88be875948a29454b8aacced8bb8ad967502a7a074ecbc579ed673c1650a2f7e")
 
     variant("shared", default=True, description="Build shared or static library")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
@@ -53,8 +51,6 @@ class RocmSmiLib(CMakePackage):
     depends_on("python@3:", type=("build", "run"))
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -72,6 +68,7 @@ class RocmSmiLib(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -89,6 +86,7 @@ class RocmSmiLib(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 

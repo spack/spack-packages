@@ -22,7 +22,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipSOLVER"
     git = "https://github.com/ROCm/hipSOLVER.git"
-    url = "https://github.com/ROCm/hipSOLVER/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/hipSOLVER/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
@@ -30,6 +30,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="403c2d0aacc3ea2dea5f6d61aca058337d448a224891b887ae1601ce68af8d15")
     version("6.4.2", sha256="5c1afee73157d042fd1dcae1ac416ea6f6f62207d7cb08595942b9f016673631")
     version("6.4.1", sha256="86ac30d5cf741a254485ed54c7f51e4c9bc9803cda31dab8e86f11b39742b28e")
     version("6.4.0", sha256="d6cf798c5f2d1d00a442f7a3f07c6f3a9e4ce5b3be36608aac7c97175dac9eb0")
@@ -47,9 +48,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     version("6.0.0", sha256="385849db02189d5e62096457e52ae899ae5c1ae7d409dc1da61f904d8861b48c")
     version("5.7.1", sha256="5592e965c0dc5722931302289643d1ece370220af2c7afc58af97b3395295658")
     version("5.7.0", sha256="0e35795bfbcb57ed8e8437471209fb7d230babcc31d9a4a0b3640c3ee639f4a7")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="2e546bc7771f7bf0aa7892b69cded725941573e8b70614759c3d03c21eb78dde")
-        version("5.6.0", sha256="11fa51d210853d93d24d55b20367738e49711793412f58e8d7689710b92ae16c")
 
     # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -85,8 +83,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hip +cuda", when="+cuda")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -104,6 +100,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
