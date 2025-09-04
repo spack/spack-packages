@@ -8,7 +8,7 @@ import subprocess
 
 import requests
 
-import spack
+import spack.repo
 
 IS_PACKAGE_CHANGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/.*$")
 
