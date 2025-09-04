@@ -28,7 +28,8 @@ class Ants(CMakePackage):
     version("2.2.0", sha256="62f8f9ae141cb45025f4bb59277c053acf658d4a3ba868c9e0f609af72e66b4a")
 
     depends_on("cxx", type="build")  # generated
-
+    depends_on("c", type="build") 
+    
     depends_on("zlib-api", type="link")
 
     variant("minc", default=True, description="Build ITK with MINC support")
