@@ -47,10 +47,12 @@ class PyMdanalysis(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@40.9:", type="build", when="@2.8.0:")
 
     depends_on("py-cython@0.28:", type="build")
 
     # MDAnalysis required dependencies (install_requires)
+    depends_on("py-numpy@2:", when="@2.8.0:", type=("build", "run"))
     depends_on("py-numpy@1.22.3:", when="@2.6.0:", type=("build", "run"))
     depends_on("py-numpy@1.21.0:", when="@2.5.0:", type=("build", "run"))
     depends_on("py-numpy@1.20.0:", type=("build", "run"))
@@ -69,6 +71,9 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-fasteners", type=("build", "run"), when="@:2.8")
     depends_on("py-filelock", type=("build", "run"), when="@2.9:")
     depends_on("py-mda-xdrlib", when="@2.7.0:", type=("build", "run"))
+    depends_on("py-waterdynamics", when="@2.8.0", type=("build", "run"))
+    depends_on("py-pathsimanalysis", when="@2.8.0", type=("build", "run"))
+    depends_on("py-mdahole2", when="@2.8.0", type=("build", "run"))
 
     # extra_format (extras_require)
     depends_on("py-netcdf4@1.0:", when="+extra_formats", type=("build", "run"))
@@ -89,7 +94,10 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-seaborn", when="+analysis", type=("build", "run"))
     depends_on("py-scikit-learn", when="+analysis", type=("build", "run"))
     depends_on("py-tidynamics@1:", when="+analysis", type=("build", "run"))
-    depends_on("py-networkx@2.0:", when="@2.7.0 +analysis", type=("build", "run"))
+    depends_on("py-networkx@2.0:", when="@2.7.0: +analysis", type=("build", "run"))
+    depends_on("py-waterdynamics", when="@2.9.0: +analysis", type=("build", "run"))
+    depends_on("py-pathsimanalysis", when="@2.9.0: +analysis", type=("build", "run"))
+    depends_on("py-mdahole2", when="@2.9.0: +analysis", type=("build", "run"))
 
     # historical dependencies
     depends_on("py-gsd@1.9.3:", when="@:2.5.0", type=("build", "run"))
