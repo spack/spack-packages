@@ -74,3 +74,7 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
     def libs(self):
         shared = self.spec.satisfies("libs=shared")
         return find_libraries(["libiconv"], root=self.prefix, recursive=True, shared=shared)
+
+    # libiconv doesn't produce a pkg-config
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        env.append_flags("LDFLAGS", "-L{0} ".format(dependent_spec["libiconv"].prefix.lib) + dependent_spec["libiconv"].libs.link_flags)

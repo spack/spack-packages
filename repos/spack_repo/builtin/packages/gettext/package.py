@@ -97,7 +97,10 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
     def flag_handler(self, name, flags):
         # this goes together with gl_cv_libxml_force_included=no
         if name == "ldflags" and self.spec.satisfies("+libxml2"):
-            flags.append("-lxml2")
+            flags.append(self.spec["libxml2"].libs.link_flags)
+        # gettext ignores libxml2's pkg-config
+        if name == "ldflags" and self.spec.satisfies("+libxml2^libxml2~shared"):
+            flags.append(self.spec["xz"].libs.link_flags)
         return (flags, None, None)
 
     @classmethod
@@ -166,3 +169,7 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
             shared=True if not shared_variant else shared_variant.value,
         )
         return libs
+
+    # gettext doesn't produce a pkg-config
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        env.append_flags("LDFLAGS", "-L{0} ".format(dependent_spec["gettext"].prefix.lib) + dependent_spec["gettext"].libs.link_flags)
