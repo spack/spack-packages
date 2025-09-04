@@ -26,7 +26,7 @@ class PyDolfinxMpc(PythonPackage):
     depends_on("cmake@3.19:", when="@:0.8", type="build")
     depends_on("py-packaging")
 
-    depends_on("python@3.9:", when="@main:", type=("build", "run"))
+    depends_on("python@3.9:", when="@main", type=("build", "run"))
     depends_on("python@3.8:", when="@0.8:", type=("build", "run"))
 
     depends_on("py-cffi@:1.16", type=("build", "run"))
