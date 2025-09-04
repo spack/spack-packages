@@ -9,6 +9,7 @@ import subprocess
 import requests
 
 IS_PACKAGE_CHANGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/.*$")
+NUM_MAX_REVIEWERS = 100
 
 
 def main():
@@ -23,12 +24,12 @@ def main():
     base_url = f"https://api.github.com/repos/{repository}/pulls/{pr_number}"
     pull_request = requests.get(base_url, headers=headers).json()
 
-    pull_request_files = requests.get(f"{base_url}/files", headers=headers)
+    pull_request_files = requests.get(f"{base_url}/files", headers=headers).json()
 
     existing_reviewers = {reviewer["login"] for reviewer in pull_request["requested_reviewers"]}
     maintainers = set()
 
-    for file in pull_request_files.json():
+    for file in pull_request_files:
         if match := IS_PACKAGE_CHANGE.match(file["filename"]):
             package = match.group(1)
 
@@ -40,6 +41,11 @@ def main():
 
     author = pull_request["user"]["login"]
     reviewers = (maintainers | existing_reviewers) - {author}
+
+    # exit early if the PR notifies a very large number of people
+    if len(reviewers) > NUM_MAX_REVIEWERS:
+        print(f"[PR #{pr_number}]: skipping PR that would ping >{NUM_MAX_REVIEWERS} people")
+        return
 
     if existing_reviewers == reviewers:
         print(f"[PR #{pr_number}]: reviewers already up-to-date")
