@@ -18,6 +18,7 @@ class Ucc(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     maintainers("zzzoom")
 
+    version("1.5.0", sha256="7ab61a3215616ee9a7a6f51e61cfaac9e7055a12b233aef8d4a7218d2cb3860f")
     version("1.4.4", sha256="e098e427c7b72b5434ae1e0da2258ab3bc271142c136b0bf4cf40ef9948b70d0")
     version("1.3.0", sha256="b56379abe5f1c125bfa83be305d78d81a64aa271b7b5fff0ac17b86725ff3acf")
     version("1.2.0", sha256="c1552797600835c0cf401b82dc89c4d27d5717f4fb805d41daca8e19f65e509d")
@@ -58,6 +59,12 @@ class Ucc(AutotoolsPackage, CudaPackage, ROCmPackage):
         args = []
         args.extend(self.with_or_without("cuda", activation_value="prefix"))
         args.extend(self.with_or_without("nccl", activation_value="prefix"))
+
+        if "+cuda" in self.spec:
+            if self.spec.variants["cuda_arch"].values != ("none",):
+                gencode_args = self.cuda_flags(self.spec.variants["cuda_arch"].values)
+                args.append(f"--with-nvcc-gencode='{' '.join(gencode_args)}'")
+
         if self.spec.satisfies("+rocm"):
             cppflags = " ".join(
                 "-I" + include_dir

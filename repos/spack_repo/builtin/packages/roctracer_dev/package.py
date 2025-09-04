@@ -17,7 +17,7 @@ class RoctracerDev(CMakePackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/roctracer"
     git = "https://github.com/ROCm/roctracer.git"
-    url = "https://github.com/ROCm/roctracer/archive/rocm-6.1.2.tar.gz"
+    url = "https://github.com/ROCm/roctracer/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
@@ -25,6 +25,8 @@ class RoctracerDev(CMakePackage, ROCmPackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="a4378652b3b7141ca3b2743eedada03757383bff88932db8e28d0afd5869b882")
+    version("6.4.2", sha256="c9bc3390fe4c406cc2b2bdb5a7e9f088e0107825624c9cd7b2a6ec120bc73ef8")
     version("6.4.1", sha256="57d61441d95b05b12cd05210a80d81cd1d7a21dab7487680897427dfbdafddca")
     version("6.4.0", sha256="e5c6e3b20ed3c0d2dca61ad472f9878107c9ce09a2108ff6583ae32031298022")
     version("6.3.3", sha256="0d03ebd058291d584be6bf8b114292c666a799b0fd23c697e1c6cb2b6d43f990")
@@ -41,15 +43,6 @@ class RoctracerDev(CMakePackage, ROCmPackage):
     version("6.0.0", sha256="941166a0363c5689bfec118d54e986c43fb1ec8cbf18d95721d9a824bd52c0f8")
     version("5.7.1", sha256="ec0453adac7e62b142eb0df1e1e2506863aac4c3f2ce9d117c3184c08c0c6b48")
     version("5.7.0", sha256="40bb757920488466e29df90bb80a975cc340bf7f8771fb1d754dfbb6b688d78e")
-    version("5.6.1", sha256="007c498be25b067ad9a7631a2b0892f9129150ee9714e471a921225875d45e69")
-    version("5.6.0", sha256="cbcfe4fa2e8b627006b320a93992fb3078696d8ef2ef049b4b880b6b7d57e13e")
-    version("5.5.1", sha256="3afc31ebfdb14b0365185ca6b9326a83b1503a94a51d910f5ce7ced192d8c133")
-    version("5.5.0", sha256="fe9ad95628fa96639db6fc33f78d334c814c7161b4a754598f5a4a7852625777")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="6b5111be5efd4d7fd6935ca99b06fab19b43d97a58d26fc1fe6e783c4de9a926")
-        version("5.4.0", sha256="04c1e955267a3e8440833a177bb976f57697aba0b90c325d07fc0c6bd4065aea")
-        version("5.3.3", sha256="f2cb1e6bb69ea1a628c04f984741f781ae1d8498dc58e15795bb03015f924d13")
-        version("5.3.0", sha256="36f1da60863a113bb9fe2957949c661f00a702e249bb0523cda1fb755c053808")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -61,14 +54,6 @@ class RoctracerDev(CMakePackage, ROCmPackage):
     depends_on("py-cppheaderparser", type="build")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -83,14 +68,6 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -107,39 +84,14 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
+        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
-
-    for ver in ["5.3.0", "5.3.3", "5.4.0", "5.4.3"]:
-        depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
-
-    for ver in [
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
-        "5.7.0",
-        "5.7.1",
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
-        "6.3.0",
-        "6.3.1",
-        "6.3.2",
-        "6.3.3",
-        "6.4.0",
-        "6.4.1",
-    ]:
-        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
-
-    patch("0001-include-rocprofiler-dev-path.patch", when="@5.3:5.4")
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     @classmethod
     def determine_version(cls, lib):
@@ -178,8 +130,6 @@ class RoctracerDev(CMakePackage, ROCmPackage):
             self.define("CMAKE_POSITION_INDEPENDENT_CODE", True),
             self.define("HIP_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++"),
         ]
-        if self.spec.satisfies("@:5.4.0"):
-            args.append(self.define("ROCPROFILER_PATH", self.spec["rocprofiler-dev"].prefix))
         if self.spec.satisfies("@6.0:"):
             args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         if self.spec.satisfies("@6.2:"):

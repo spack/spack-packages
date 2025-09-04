@@ -133,6 +133,10 @@ class Sherpa(CMakePackage, AutotoolsPackage):
             "ATOOLS/Org/Run_Parameter.C",
         )
 
+        if self.spec.satisfies("@:2"):
+            # remove errant 'R' which trips up newer texinfo
+            filter_file(r"R@end", "@end", "Manual/Starting.texi", string=True)
+
         if self.spec.satisfies("^recola@2:"):
             filter_file(
                 r'#include "recola.h"',

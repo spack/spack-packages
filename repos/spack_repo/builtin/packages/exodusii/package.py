@@ -6,7 +6,6 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 is_windows = sys.platform == "win32"
@@ -32,6 +31,9 @@ class Exodusii(CMakePackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version(
+        "2025-08-19", sha256="cdd571a26e77f7a0053c1c5638fed19a111f43f82b8a4c0f7e7b3339dc4cd401"
+    )
     version(
         "2024-04-03", sha256="72b095bae64b2b6c232630f79de763c6ade00c9b1199fc6980800891b2ab3751"
     )
@@ -119,13 +121,17 @@ class Exodusii(CMakePackage):
     )
     version("2016-08-09", commit="2ffeb1bd39454ad5aa230e12969ce976f3d1c92b", deprecated=True)
 
-    patch("Fix-ioss-tpl.patch", when="@2021-10-11:")
+    patch("Fix-ioss-tpl.patch", when="@2021-10-11:2024-04-03")
 
     # Build options
     variant("fortran", default=False, description="Compile with Fortran support")
     variant("shared", default=True, description="Enables the build of shared libraries")
     variant("mpi", default=True, description="Enables MPI parallelism.")
     variant("thread_safe", default=False, description="Enable thread-safe exodus library")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.22:", when="@2023-10-24:", type="build")
     depends_on("cmake@3.17:", when="@:2023-05-30", type="build")

@@ -19,7 +19,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     url = "https://github.com/cp2k/dbcsr/releases/download/v2.2.0/dbcsr-2.2.0.tar.gz"
     list_url = "https://github.com/cp2k/dbcsr/releases"
 
-    maintainers("dev-zero", "mtaillefumier", "RMeli")
+    maintainers("dev-zero", "mtaillefumier", "RMeli", "hfp")
 
     license("GPL-2.0-or-later")
 
@@ -38,7 +38,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     variant("tests", default=False, description="Build DBCSR unit tests")
     variant("tests", default=True, description="Build DBCSR unit tests", when="@2.1:2.2")
     variant("mpi", default=True, description="Compile with MPI")
-    variant("openmp", default=False, description="Build with OpenMP support")
+    variant("openmp", default=True, description="Build with OpenMP support")
     variant("shared", default=True, description="Build shared library")
     variant(
         "smm",
@@ -72,8 +72,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
 
     with when("smm=libxsmm"):
-        depends_on("libxsmm~header-only")
-        depends_on("libxsmm@1.11:1")
+        depends_on("libxsmm@1.11:")
 
     depends_on("cmake@3.10:", type="build")
     depends_on("cmake@3.12:", type="build", when="@2.1:")
@@ -87,7 +86,11 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hipblas", when="+rocm")
 
+    # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
     depends_on("opencl", when="+opencl")
+    opencl_loader_header_version = "2022.10.24"
+    depends_on(f"opencl-c-headers@{opencl_loader_header_version}:", when="+opencl")
+    requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:", when="+opencl")
 
     # All examples require MPI
     conflicts("+examples", when="~mpi", msg="Examples require MPI")
@@ -97,31 +100,36 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     # properties, since the parent class defines constraints for different archs
     # Instead just mark all unsupported cuda archs as conflicting.
     dbcsr_cuda_archs = ("35", "37", "60", "70", "80", "90")
-    cuda_msg = "dbcsr only supports cuda_arch {0}".format(dbcsr_cuda_archs)
+    cuda_msg = f"dbcsr only supports cuda_arch {dbcsr_cuda_archs}"
 
     for arch in CudaPackage.cuda_arch_values:
         if arch not in dbcsr_cuda_archs:
-            conflicts("+cuda", when="cuda_arch={0}".format(arch), msg=cuda_msg)
+            conflicts("+cuda", when=f"cuda_arch={arch}", msg=cuda_msg)
 
     conflicts("+cuda", when="cuda_arch=none", msg=cuda_msg)
 
     dbcsr_amdgpu_targets = ("gfx906", "gfx910", "gfx90a", "gfx90a:xnack-", "gfx90a:xnack+")
-    amd_msg = f"DBCSR supports these AMD gpu targets:  {', '.join(dbcsr_amdgpu_targets)}"
+    amd_msg = f"""DBCSR supports these AMD gpu targets:  {', '.join(dbcsr_amdgpu_targets)}.
+                  Set amdgpu_target explicitly to one of the supported targets"""
 
     for arch in ROCmPackage.amdgpu_targets:
         if arch not in dbcsr_amdgpu_targets:
-            conflicts("+rocm", when="amdgpu_target={0}".format(arch), msg=amd_msg)
+            conflicts("+rocm", when=f"amdgpu_target={arch}", msg=amd_msg)
 
-    accel_msg = "CUDA, ROCm and OpenCL support are mutually exlusive"
+    # GPU runtimes are usually mutually exclusive
+    accel_msg = "CUDA and ROCm are mutually exlusive"
     conflicts("+cuda", when="+rocm", msg=accel_msg)
     conflicts("+cuda", when="+opencl", msg=accel_msg)
     conflicts("+rocm", when="+opencl", msg=accel_msg)
 
-    # Require openmp threading for OpenBLAS by making other options conflict
+    # Require OpenMP threading by making other options conflict
+    conflicts("^intel-oneapi-mkl threads=none", when="+openmp")
+    conflicts("^intel-oneapi-mkl threads=tbb", when="+openmp")
     conflicts("^openblas threads=pthreads", when="+openmp")
     conflicts("^openblas threads=none", when="+openmp")
 
-    conflicts("smm=blas", when="+opencl")
+    # OpenCL backend implementation relies on LIBXSMM
+    requires("smm=libxsmm", when="+opencl")
 
     with when("+mpi"):
         # When using mpich 4.1 or higher, mpi_f08 has to be used, otherwise:
@@ -161,15 +169,20 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("USE_OPENMP", "openmp"),
             # C API needs MPI
             self.define_from_variant("WITH_C_API", "mpi"),
-            "-DBLAS_FOUND=true",
-            "-DBLAS_LIBRARIES=%s" % (spec["blas"].libs.joined(";")),
-            "-DLAPACK_FOUND=true",
-            "-DLAPACK_LIBRARIES=%s" % (spec["lapack"].libs.joined(";")),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("WITH_EXAMPLES", "examples"),
             self.define_from_variant("WITH_G2G", "g2g"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]
+
+        lapack, blas = spec["lapack"], spec["blas"]
+        if blas.name != "intel-oneapi-mkl":
+            args = [
+                "-DBLAS_FOUND=true",
+                "-DBLAS_LIBRARIES=%s" % (blas.libs.joined(";")),
+                "-DLAPACK_FOUND=true",
+                "-DLAPACK_LIBRARIES=%s" % (lapack.libs.joined(";")),
+            ]
 
         if self.spec.satisfies("+cuda"):
             cuda_arch = self.spec.variants["cuda_arch"].value[0]
@@ -199,7 +212,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
                 "gfx90a:xnack+": "Mi250",
             }[amd_arch]
 
-            args += ["-DWITH_GPU={0}".format(gpuver), "-DUSE_ACCEL=hip"]
+            args += [f"-DWITH_GPU={gpuver}", "-DUSE_ACCEL=hip"]
 
         if self.spec.satisfies("+opencl"):
             args += ["-DUSE_ACCEL=opencl"]

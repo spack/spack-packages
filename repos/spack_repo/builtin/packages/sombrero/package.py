@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from os import symlink
-
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
@@ -29,13 +27,6 @@ class Sombrero(MakefilePackage):
     version(
         "2021-07-08", sha256="816b0f0a684a421fa620f11c21649ac162e85d1febd6a7e10cfd07604760c0d6"
     )
-    # Version 1 is incompatible with spack
-    # as CFLAGS and the like are hardcoded in the makefile.
-    version(
-        "1.0",
-        sha256="423a631c86f0e5f14dea186228871099ca0374dc07bf1bb24b6be17f79784682",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 
@@ -48,6 +39,18 @@ class Sombrero(MakefilePackage):
         sombrero_sh = FileFilter(join_path(self.stage.source_path, "sombrero.sh"))
         sombrero_dir = join_path(prefix.bin, "sombrero")
         sombrero_sh.filter("sombrero/", "{0}/".format(sombrero_dir))
+        # Sombrero makefile forces silent rules (`-s`), but we want them to be
+        # verbose, for easier debugging when something fails.
+        makerules = FileFilter(join_path(self.stage.source_path, "Make", "MkRules"))
+        makerules.filter("-s", "")
+
+    def build(self, spec, prefix):
+        # Pass to make the actual C/C++/MPI compilers.
+        make(
+            f"GCC={self.compiler.cc}",
+            f"CXX={self.compiler.cxx}",
+            f"MPICC={self.spec['mpi'].mpicc}",
+        )
 
     def install(self, spec, prefix):
         sombrero_dir = join_path(prefix.bin, "sombrero")

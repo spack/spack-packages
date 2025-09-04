@@ -15,14 +15,16 @@ class PyHatch(PythonPackage):
 
     license("MIT")
 
+    version("1.14.1", sha256="ca1aff788f8596b0dd1f8f8dfe776443d2724a86b1976fabaf087406ba3d0713")
     version("1.13.0", sha256="5e1a75770cfe8f3ebae3abfded3a976238b0acefd19cdabc5245597525b8066f")
     version("1.12.0", sha256="ae80478d10312df2b44d659c93bc2ed4d33aecddce4b76378231bdf81c8bf6ad")
 
     depends_on("python@3.8:", type=("build", "run"))
 
-    depends_on("py-hatchling@1.24.2:", type="build")
+    depends_on("py-hatchling@1.24.2:", type=("build", "run"))
+    depends_on("py-hatchling@1.26.3:", type=("build", "run"), when="@1.14:")
     depends_on("py-hatch-vcs@0.3.0:", type="build")
-    depends_on("py-pyproject-hooks", type=("build"))
+    depends_on("py-pyproject-hooks", type="build")
 
     depends_on("py-click@8.0.6:", type=("build", "run"))
     depends_on("py-httpx@0.22.0:", type=("build", "run"))
@@ -35,7 +37,9 @@ class PyHatch(PythonPackage):
     depends_on("py-shellingham@1.4.0:", type=("build", "run"))
     depends_on("py-tomli-w@1.0:", type=("build", "run"))
     depends_on("py-tomlkit@0.11.1:", type=("build", "run"))
-    depends_on("py-userpath@1.7:1.7", type=("build", "run"))
+    depends_on("py-userpath@1.7:1", type=("build", "run"))
     depends_on("py-uv@0.1.35:", type=("build", "run"))
+    depends_on("py-uv@0.5.23:", type=("build", "run"), when="@1.14:")
     depends_on("py-virtualenv@20.26.1:", type=("build", "run"))
-    depends_on("py-zstandard@:1", type=("build", "run"))
+    depends_on("py-virtualenv@20.26.6:", type=("build", "run"), when="@1.14:")
+    depends_on("py-zstandard@:0", type=("build", "run"))

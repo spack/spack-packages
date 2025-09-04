@@ -42,6 +42,7 @@ default:
       when: always
       variables:
         SPACK_PIPELINE_TYPE: "spack_protected_branch"
+        SPACK_PRUNE_UNTOUCHED: "False"
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         SPACK_REQUIRE_SIGNING: "True"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
@@ -72,7 +73,7 @@ default:
   stage: generate
   script:
     - spack --version
-    - spack env activate --without-view ${CI_PROJECT_DIR}/.ci/gitlab/stacks/${SPACK_CI_STACK_NAME}
+    - spack env activate --without-view ${CI_PROJECT_DIR}/stacks/${SPACK_CI_STACK_NAME}
     - spack config add -f ./.ci/configs/repos.yaml
     - spack repo list
     - spack compiler find
@@ -195,7 +196,7 @@ dotenv:
 ########################################
 #
 # First add a new spack.yml defining the pipeline to run in
-# .ci/gitlab/stacks/my-super-cool-stack/spack.yaml
+# stacks/my-stack/spack.yaml
 #
 # Then add the following entries at the bottom of this file.
 #
@@ -206,26 +207,25 @@ dotenv:
 # extends list.
 #
 ########################################
-# My Super Cool Pipeline
+# My Stack Pipeline
 ########################################
-# .my-super-cool-stack:
+# .my-stack:
 #   variables:
-#     SPACK_CI_STACK_NAME: my-super-cool-stack
-#     tags: [ "all", "tags", "your", "job", "needs"]
+#     SPACK_CI_STACK_NAME: my-stack
 #
-# my-super-cool-stack-generate:
-#   extends: [ ".generate", ".my-super-cool-stack" ]
+# my-stack-generate:
+#   extends: [ ".generate", ".my-stack" ]
 #
-# my-super-cool-stack-build:
-#   extends: [ ".build", ".my-super-cool-stack" ]
+# my-stack-build:
+#   extends: [ ".build", ".my-stack" ]
 #   trigger:
 #     include:
-#       - artifact: jobs_scratch_dir/my-super-cool-stack/cloud-ci-pipeline.yml
-#         job: my-super-cool-stack-generate
+#       - artifact: jobs_scratch_dir/my-stack/cloud-ci-pipeline.yml
+#         job: my-stack-generate
 #     strategy: depend
 #   needs:
 #     - artifacts: True
-#       job: my-super-cool-stack-generate
+#       job: my-stack-generate
 
 ########################################
 # E4S pipeline
@@ -413,6 +413,9 @@ developer-tools-darwin-build:
 
 radiuss-generate:
   extends: [ ".radiuss", ".generate-x86_64" ]
+  image:
+    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    entrypoint: ['']
 
 radiuss-build:
   extends: [ ".radiuss", ".build" ]
@@ -503,6 +506,28 @@ data-vis-sdk-build:
   needs:
     - artifacts: True
       job: data-vis-sdk-generate
+
+########################################
+# TOOLS SDK
+########################################
+.tools-sdk:
+  variables:
+    SPACK_CI_STACK_NAME: tools-sdk
+
+tools-sdk-generate:
+  extends: [ ".tools-sdk", ".generate-x86_64"]
+  image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
+
+tools-sdk-build:
+  extends: [ ".tools-sdk", ".build" ]
+  trigger:
+    include:
+      - artifact: jobs_scratch_dir/tools-sdk/cloud-ci-pipeline.yml
+        job: tools-sdk-generate
+    strategy: depend
+  needs:
+    - artifacts: True
+      job: tools-sdk-generate
 
 ########################################
 # Spack Tutorial
@@ -667,7 +692,7 @@ ml-darwin-aarch64-mps-build:
 
 hep-generate:
   extends: [ ".hep", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-gcc-11.4:2024.03.01
+  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
 
 hep-build:
   extends: [ ".hep", ".build" ]

@@ -34,16 +34,10 @@ class PyTensorflowProbability(Package):
     version("0.20.0", sha256="f0fb9a1f88a36a8f57d4d9cce4f9bf8dfacb6fc7778751729fe3c3067e5a1363")
     version("0.19.0", sha256="b32d2ae211ec727df9791b501839619f5389134bd6d4fe951570f500b0e75f55")
     version("0.18.0", sha256="f4852c0fea9117333ccb868f7a2ca75aecf5dd765dc39fd4ee5f8ab6fe87e909")
-    version(
-        "0.12.1",
-        sha256="1fe89e85fd053bf36e8645a5a1a53b729bc254cf1516bc224fcbd1e4ff50083a",
-        deprecated=True,
-    )
 
     extends("python@3.9:", when="@0.22:")
     extends("python@3.8:", when="@0.20:0.21")
     extends("python@3.7:", when="@0.13:0.19")
-    extends("python@3.6:", when="@0.8:0.12")
     depends_on("py-pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
@@ -54,9 +48,7 @@ class PyTensorflowProbability(Package):
     depends_on("py-numpy@1.13.3:", type=("build", "run"))
     depends_on("py-decorator", type=("build", "run"))
     depends_on("py-cloudpickle@1.3:", when="@0.12:", type=("build", "run"))
-    depends_on("py-cloudpickle@1.1.1", when="@0.8", type=("build", "run"))
     depends_on("py-gast@0.3.2:", when="@0.12:", type=("build", "run"))
-    depends_on("py-gast@0.2", when="@0.8", type=("build", "run"))
     depends_on("py-dm-tree", when="@0.12:", type=("build", "run"))
 
     # tensorflow_probability/python/__init__.py
@@ -88,7 +80,6 @@ class PyTensorflowProbability(Package):
     depends_on(
         "py-tensorflow@2.10:2", when="@0.18", type=("build", "run")
     )  # keep here for backwards compatibility
-    depends_on("py-tensorflow@2.4:", when="@0.12:0.17", type=("build", "run"))
 
     # TODO: Directories have changed in Bazel 7, need to update manual install logic
     depends_on("bazel@3.2:6", type="build")

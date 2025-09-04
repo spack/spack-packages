@@ -77,7 +77,7 @@ class Kentutils(MakefilePackage):
         if name == "cflags":
             flags.append(self.compiler.cc_pic_flag)
         elif name == "ldflags":
-            flags.append(f'{self.spec["libiconv"].libs.ld_flags}')
+            flags.append(f"{self.spec['libiconv'].libs.ld_flags}")
         return (flags, None, None)
 
     @property

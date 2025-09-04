@@ -21,16 +21,16 @@ class Vtk(CMakePackage):
     url = "https://www.vtk.org/files/release/9.0/VTK-9.0.0.tar.gz"
     list_url = "https://www.vtk.org/download/"
 
-    maintainers("chuckatkins", "danlipsa", "johnwparent")
+    maintainers("chuckatkins", "danlipsa", "johnwparent", "vicentebolea")
 
     license("BSD-3-Clause")
 
     version(
-        "9.5.0",
-        sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d",
+        "9.5.1",
+        sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f",
         preferred=True,
     )
-
+    version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
     version("9.3.1", sha256="8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
     version("9.2.6", sha256="06fc8d49c4e56f498c40fcb38a563ed8d4ec31358d0101e8988f0bb4d539dd12")
@@ -64,26 +64,29 @@ class Vtk(CMakePackage):
 
     # VTK7 defaults to OpenGL2 rendering backend
     variant("opengl2", default=True, description="Enable OpenGL2 backend")
-    variant("python", default=False, description="Enable Python support", when="@8:")
+    variant("python", default=False, description="Enable Python support", when="@9.0.2:")
     variant("qt", default=False, description="Build with support for Qt")
     variant("xdmf", default=False, description="Build XDMF file support")
     variant("ffmpeg", default=False, description="Build with FFMPEG support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("examples", default=False, description="Enable building & installing the VTK examples")
+    variant("versioned_install", default=True, description="Include version in library filenames")
 
     patch("gcc.patch", when="@6.1.0")
 
-    # patches to fix some missing stl includes
-    # which lead to build errors on newer compilers
+    # Fix missing standard includes that lead to build errors on newer compilers
+    # Patch for <limits>
     patch(
         "https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c.diff",
         when="@9:9.0",
         sha256="0546696bd02f3a99fccb9b7c49533377bf8179df16d901cefe5abf251173716d",
     )
+    # Patch for <cstdint>
+    # See https://gitlab.kitware.com/vtk/vtk/-/issues/18782
     patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/1233ceec268d5366c66f5e79786ec784042b591.diff",
+        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
+        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
         when="@9.1:9.2",
-        sha256="38380bd20443d94d8ce9f339b9b2fbdea03400aa9d6dbb7e3ef138a65f11c080",
     )
 
     # Patch for paraview 5.10: +hdf5 ^hdf5@1.13.2:
@@ -107,8 +110,6 @@ class Vtk(CMakePackage):
         extends("python@:3.11", when="@:9.2")
         extends("python@:3.10", when="@:9.2.2")
         extends("python@:3.9", when="@:9.1")
-        extends("python@:3.8", when="@:9.0.1")
-        extends("python@:3.7", when="@:8.2.0")
 
     # We need mpi4py if buidling python wrappers and using MPI
     depends_on("py-mpi4py", when="+python+mpi", type="run")
@@ -240,14 +241,6 @@ class Vtk(CMakePackage):
         when="@9.1",
     )
 
-    # vtk@9 does not compile with gcc 13 or 14
-    # https://gitlab.kitware.com/vtk/vtk/-/issues/18782
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
-        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
-        when="@9.1:9.2 %gcc@13:",
-    )
-
     # SEACAS >= 2024-06-27 needs c++17 which is already required in VTK master.
     patch(
         "https://gitlab.kitware.com/vtk/vtk/-/commit/00afe3ae0def6c2d0a6f7cb497c8d55874127820.diff",
@@ -273,19 +266,18 @@ class Vtk(CMakePackage):
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
     patch("vtk_clang19_size_t.patch", when="@9.2:9.4.2")
 
-    # Needed to build VTK with external SEACAS >= 2022-10-14
-    @when("@9.4:")
     def patch(self):
-        filter_file(
-            "^.*USE_VARIABLES SEACASIoss_INCLUDE_DIRS.*$", "", "ThirdParty/ioss/CMakeLists.txt"
-        )
+        if self.spec.satisfies("@9.2:"):
+            # provide definition for Ioss::Init::Initializer::Initializer(),
+            # required on macOS, as "-undefined error" is the default,
+            # but not on Linux, as undefined symbols are tolerated
+            filter_file("TARGETS Ioss", "TARGETS Ioss Ionit", "ThirdParty/ioss/CMakeLists.txt")
 
-    @when("@9.2:")
-    def patch(self):
-        # provide definition for Ioss::Init::Initializer::Initializer(),
-        # required on macOS, as "-undefined error" is the default,
-        # but not on Linux, as undefined symbols are tolerated
-        filter_file("TARGETS Ioss", "TARGETS Ioss Ionit", "ThirdParty/ioss/CMakeLists.txt")
+        if self.spec.satisfies("@9.4:"):
+            # Needed to build VTK with external SEACAS >= 2022-10-14
+            filter_file(
+                "^.*USE_VARIABLES SEACASIoss_INCLUDE_DIRS.*$", "", "ThirdParty/ioss/CMakeLists.txt"
+            )
 
     def url_for_version(self, version):
         url = "http://www.vtk.org/files/release/{0}/VTK-{1}.tar.gz"
@@ -536,6 +528,8 @@ class Vtk(CMakePackage):
             # A bug in tao pegtl causes build failures with intel compilers
             if "%intel" in spec and spec.version >= Version("8.2"):
                 cmake_args.append("-DVTK_MODULE_ENABLE_VTK_IOMotionFX:BOOL=OFF")
+
+        cmake_args.append(self.define_from_variant("VTK_VERSIONED_INSTALL", "versioned_install"))
 
         # -no-ipo prevents an internal compiler error from multi-file
         # optimization (https://github.com/spack/spack/issues/20471)

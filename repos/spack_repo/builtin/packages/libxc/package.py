@@ -107,7 +107,6 @@ class Libxc(AutotoolsPackage, CudaPackage, CMakePackage):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
-
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # microarchitecture-specific optimization flags should be controlled
         # by Spack, otherwise we may end up with contradictory or invalid flags
@@ -161,7 +160,6 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
-
     def cmake_args(self):
         spec = self.spec
         args = [

@@ -49,6 +49,20 @@ class Rivet(AutotoolsPackage):
         description="HepMC version to link against",
     )
 
+    with when("@4.1:"):
+        variant(
+            "plugin-match",
+            default="none",
+            multi=True,
+            description="List of Rivet analyses to be included",
+        )
+        variant(
+            "plugin-unmatch",
+            default="none",
+            multi=True,
+            description="List of Rivet analyses to be excluded",
+        )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -153,6 +167,16 @@ class Rivet(AutotoolsPackage):
         else:
             args += ["--with-hepmc3=" + self.spec["hepmc3"].prefix]
             args += ["--with-hepmc3-libpath=" + self.spec["hepmc3"].libs.directories[0]]
+
+        if "plugin-match" in self.spec.variants:
+            val = self.spec.variants["plugin-match"].value
+            if "none" not in val:
+                args += [f"--with-plugin-match={' '.join(val)}"]
+
+        if "plugin-unmatch" in self.spec.variants:
+            val = self.spec.variants["plugin-unmatch"].value
+            if "none" not in val:
+                args += [f"--with-plugin-unmatch={' '.join(val)}"]
 
         args += ["--with-fastjet=" + self.spec["fastjet"].prefix]
         args += ["--with-yoda=" + self.spec["yoda"].prefix]

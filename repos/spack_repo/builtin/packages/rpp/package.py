@@ -16,7 +16,7 @@ class Rpp(CMakePackage):
 
     homepage = "https://github.com/ROCm/rpp"
     git = "https://github.com/ROCm/rpp.git"
-    url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-6.4.3.tar.gz"
 
     def url_for_version(self, version):
         if version >= Version("5.7.0"):
@@ -30,6 +30,8 @@ class Rpp(CMakePackage):
     maintainers("srekolam", "afzpatel")
     license("MIT")
 
+    version("6.4.3", sha256="3c098c8951fb2730ecedbc57a4f966b344f630bc48fb3a6d33c62af28cf52cde")
+    version("6.4.2", sha256="55966e3d099748ae3fd9784ef23c8639fd84e0f602bf57a22513048cbe82c066")
     version("6.4.1", sha256="448973f167ca9aad9628acc7d06a06c6443a34dc23a4fa325eefaf37a52ce242")
     version("6.4.0", sha256="e59e5aa6b140de062430cab03c9c2b88a3b444c53ae17c6b885898e16aefd39b")
     version("6.3.3", sha256="e6b586679a3705bf6b7bb3c5852541d329bd967e110999ac59dc052b49a92cbc")
@@ -46,13 +48,6 @@ class Rpp(CMakePackage):
     version("6.0.0", sha256="3626a648bc773520f5cd5ca15f494de6e74b422baf32491750ce0737c3367f15")
     version("5.7.1", sha256="36fff5f1c52d969c3e2e0c75b879471f731770f193c9644aa6ab993fb8fa4bbf")
     version("5.7.0", sha256="1c612cde3c3d3840ae75ee5c1ee59bd8d61b1fdbf84421ae535cda863470fc06")
-    version("1.2.0", sha256="660a11e1bd8706967835597b26daa874fd1507459bfebe22818149444bec540c")
-    with default_args(deprecated=True):
-        version("1.1.0", sha256="9b1b9e721df27ee577819710b261071c68b2dccba96d9daf5d0535ee5f0e045f")
-        version("1.0.0", sha256="040601e356b0a06c4ffb2043320ae822ab0da78af867392002c7b68dbd85989c")
-        version("0.99", sha256="f1d7ec65d0148ddb7b3ce836a7e058727036df940d72d1683dee590a913fd44a")
-        version("0.98", sha256="191b5d89bf990ae22b5ef73675b89ed4371c3ce342ab9cc65383fa12ef13086e")
-        version("0.97", sha256="8ce1a869ff67a29579d87d399d8b0bd97bf12ae1b6b1ca1f161cb8a262fb9939")
 
     variant(
         "build_type",
@@ -181,6 +176,8 @@ class Rpp(CMakePackage):
                 "6.3.3",
                 "6.4.0",
                 "6.4.1",
+                "6.4.2",
+                "6.4.3",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):

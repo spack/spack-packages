@@ -45,7 +45,6 @@ class Tempo(AutotoolsPackage):
 
     @run_after("install")
     def post_install_packages(self):
-
         # Copy some files over needed by TEMPO, again only for the master version
         if "master" in str(self.version):
             cd(self.stage.source_path)

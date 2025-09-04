@@ -71,7 +71,7 @@ class Dd4hep(CMakePackage):
     variant("ddcond", default=True, description="Build DDCond subpackage.")
     variant("ddalign", default=True, description="Build DDAlign subpackage.")
     variant("dddigi", default=True, description="Build DDDigi subpackage.")
-    variant("ddeve", default=True, description="Build DDEve subpackage.")
+    variant("ddeve", default=True, description="Build DDEve subpackage.", when="@1.24:")
     variant("utilityapps", default=True, description="Build UtilityApps subpackage.")
 
     # variants for other build options
@@ -121,11 +121,12 @@ class Dd4hep(CMakePackage):
 
     with when("+ddeve"):
         depends_on("root @6.08: +geom +opengl +x")
-        depends_on("root @:6.27", when="@:1.23")
         conflicts("^root ~webgui", when="^root@6.28:")
         # For DD4hep >= 1.24, DDEve_Interface needs ROOT::ROOTGeomViewer only if ROOT >= 6.27
         requires("^root +root7 +webgui", when="@1.24: ^root @6.27:")
-    depends_on("root @6.08: +gdml +geom +math +python +x +opengl", when="+utilityapps")
+    # As of https://github.com/AIDASoft/DD4hep/pull/1426, ROOT::Eve is not required
+    depends_on("root @6.08: +gdml +geom +math +python", when="@1.32: +utilityapps")
+    depends_on("root @6.08: +gdml +geom +math +python +x +opengl", when="@:1.31 +utilityapps")
 
     with when("+ddg4"):
         depends_on("boost +iostreams")

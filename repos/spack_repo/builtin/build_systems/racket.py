@@ -4,17 +4,16 @@
 import os
 from typing import Optional, Tuple
 
-from llnl.util.lang import ClassProperty, classproperty
-
-from spack.build_environment import SPACK_NO_PARALLEL_MAKE
 from spack.package import (
     Builder,
+    ClassProperty,
     Executable,
     PackageBase,
     Prefix,
     ProcessError,
     Spec,
     build_system,
+    classproperty,
     determine_number_of_jobs,
     extends,
     maintainers,
@@ -22,7 +21,6 @@ from spack.package import (
     tty,
     working_dir,
 )
-from spack.util.environment import env_flag
 
 
 def _homepage(cls: "RacketPackage") -> Optional[str]:
@@ -42,7 +40,7 @@ class RacketPackage(PackageBase):
     # build-system class we are using
     build_system_class = "RacketPackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "racket"
+    default_buildsystem = "racket"
 
     build_system("racket")
 
@@ -59,10 +57,10 @@ class RacketBuilder(Builder):
     phases = ("install",)
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods: Tuple[str, ...] = tuple()
+    package_methods: Tuple[str, ...] = tuple()
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_directory", "build_time_test_callbacks", "subdirectory")
+    package_attributes = ("build_directory", "build_time_test_callbacks", "subdirectory")
 
     #: Callback names for build-time test
     build_time_test_callbacks = ["check"]
@@ -86,7 +84,9 @@ class RacketBuilder(Builder):
         """Install everything from build directory."""
         raco = Executable("raco")
         with working_dir(self.build_directory):
-            parallel = pkg.parallel and (not env_flag(SPACK_NO_PARALLEL_MAKE))
+            parallel = pkg.parallel and (
+                os.environ.get("SPACK_NO_PARALLEL_MAKE", "false").lower() not in ("true", "1")
+            )
             name = pkg.racket_name
             assert name is not None, "Racket package name is not set"
             args = [
