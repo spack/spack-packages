@@ -34,8 +34,4 @@ class Fastani(CMakePackage, AutotoolsPackage):
     depends_on("zlib-api", type=("build", "link"))
 
     def cmake_args(self):
-        args = [
-            "-DBUILD_TESTING=OFF",
-        ]
-
-        return args
+        return ["-DBUILD_TESTING=OFF"]
