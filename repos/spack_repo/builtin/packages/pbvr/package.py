@@ -146,4 +146,3 @@ class Pbvr(MakefilePackage):
             install_tree(
                 os.path.join(src, "Client/build/App/Font"), os.path.join(prefix.bin, "Font")
             )
-
