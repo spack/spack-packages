@@ -178,13 +178,6 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
         when="@:5.0.1 ^blt@0.4:",
     )
 
-    # https://github.com/LLNL/Umpire/pull/805
-    patch(
-        "https://github.com/LLNL/Umpire/commit/47ff0aa1f7a01a917c3b7ac618e8a9e44a10fd25.patch?full_index=1",
-        sha256="802f074a05e1cb1f428e13d99c5fcb1435f86bd8f36a1ea2f7b6756e6625e0a0",
-        when="@2022.10.0",
-    )
-
     # https://github.com/LLNL/Umpire/pull/816
     patch(
         "https://github.com/LLNL/Umpire/commit/2292d1d6078f6d9523b7ad0886ffa053644569d5.patch?full_index=1",
