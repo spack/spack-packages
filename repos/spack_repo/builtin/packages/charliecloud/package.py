@@ -188,17 +188,17 @@ class Charliecloud(AutotoolsPackage):
             args.append("--disable-html")
 
         if self.spec.satisfies("+squashfuse"):
-            if self.spec.satisfies("@0.40:"):
-                # Version 0.40 uses a new syntax for squashfuse
+            if self.spec.satisfies("@:0.39"):
+                args.append(f"--with-libsquashfuse={self.spec['squashfuse'].prefix}")
+            else:
+                # Version 0.40+ uses a new syntax for squashfuse
                 args.append(f"--with-squashfuse-include={self.spec['squashfuse'].prefix}/include")
                 args.append(f"--with-squashfuse-lib={self.spec['squashfuse'].prefix}/lib")
-            else:
-                args.append(f"--with-libsquashfuse={self.spec['squashfuse'].prefix}")
         else:
-            if self.spec.satisfies("@0.40:"):
-                args.append("--with-squashfuse=no")
-            else:
+            if self.spec.satisfies("@:0.39"):
                 args.append("--with-libsquashfuse=no")
+            else:
+                args.append("--with-squashfuse=no")
 
         if "+cdi" in self.spec and self.spec.satisfies("@0.40:"):
             cjson_spec = self.spec["cjson"]
