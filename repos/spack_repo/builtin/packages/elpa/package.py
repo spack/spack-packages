@@ -185,7 +185,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
                 flags.append(spec["mpi"].headers.include_flags)
             if name == "fflags":
                 flags.append(f'-I{spec["mpi"].prefix.lib}')
-            if name == "ldflags":# or name == "fflags":
+            if name == "ldflags":
                 flags.append(spec["mpi"].libs.search_flags)
                 flags.append(spec["mpi"].libs.link_flags)
                 if spec["mpi"].name == "openmpi":
@@ -272,9 +272,6 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+mpi"):
             options += [
-                #"CC={0}".format(spec["mpi"].mpicc),
-                #"CXX={0}".format(spec["mpi"].mpicxx),
-                #"FC={0}".format(spec["mpi"].mpifc),
                 "SCALAPACK_LDFLAGS={0}".format(spec["scalapack"].libs.joined()),
             ]
 
