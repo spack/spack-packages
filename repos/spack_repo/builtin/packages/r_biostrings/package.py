@@ -16,6 +16,7 @@ class RBiostrings(RPackage):
 
     bioc = "Biostrings"
 
+    version("2.76.0", commit="2e04124cda03d509d857df228153a45c89840284")
     version("2.68.0", commit="f28b7838fb8321a9956506b3d2f4af2740bca124")
     version("2.66.0", commit="3470ca7da798971e2c3a595d8dc8d0d86f14dc53")
     version("2.64.1", commit="ffe263e958463bd1edb5d5d9316cfd89905be53c")
@@ -55,3 +56,5 @@ class RBiostrings(RPackage):
     depends_on("r-xvector@0.37.1:", type=("build", "run"), when="@2.66.0:")
     depends_on("r-genomeinfodb", type=("build", "run"), when="@2.62.0:")
     depends_on("r-crayon", type=("build", "run"), when="@2.58.0:")
+
+    conflicts("r@4.5.0:", when="@:2.75")
