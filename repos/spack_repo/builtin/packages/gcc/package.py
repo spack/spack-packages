@@ -322,7 +322,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # The very first version of GDC that became part of GCC already supported version 2.076 of
         # the language and runtime.
         # See https://wiki.dlang.org/GDC#Status
-        provides("D@2")
+        provides("d-lang@2")
 
         # Support for the D programming language has been added to GCC 9.
         # See https://gcc.gnu.org/gcc-9/changes.html#d

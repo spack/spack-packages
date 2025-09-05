@@ -37,7 +37,7 @@ class Ldc(CMakePackage):
     depends_on("binutils", type=("build", "link", "run"))
     depends_on("ldc-bootstrap", type=("build", "link"))
 
-    provides("D@2")
+    provides("d-lang@2")
 
     def cmake_args(self):
         ldmd2 = self.spec["ldc-bootstrap"].prefix.bin.ldmd2
