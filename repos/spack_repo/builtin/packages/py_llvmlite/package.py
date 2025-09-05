@@ -57,6 +57,7 @@ class PyLlvmlite(PythonPackage):
         depends_on("llvm@10.0", when=f"@0.34:0.36 target={t}")
 
     depends_on("binutils", type="build")
+    depends_on("ncurses", type="link")
 
     # TODO: investigate
     conflicts("%apple-clang@15:")
