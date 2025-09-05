@@ -180,7 +180,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             if self.spec.satisfies("@2024.05.001,2025.01.001 %aocc"):
                 # fix an issue where main library and test suite containing duplicate symbols
                 flags.append("-Wl,--allow-multiple-definition")
-        if spec.satisfies("+mpi"): # Use spack's compiler wrapper instead of mpi's wrapper
+        if spec.satisfies("+mpi"):  # Use spack's compiler wrapper instead of mpi's wrapper
             if name == "cflags" or name == "cxxflags" or name == "fflags":
                 flags.append(spec["mpi"].headers.include_flags)
             if name == "fflags":
@@ -271,9 +271,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         options += self.enable_or_disable("openmp")
 
         if self.spec.satisfies("+mpi"):
-            options += [
-                "SCALAPACK_LDFLAGS={0}".format(spec["scalapack"].libs.joined()),
-            ]
+            options += ["SCALAPACK_LDFLAGS={0}".format(spec["scalapack"].libs.joined())]
 
         if self.spec.satisfies("+autotune"):
             options.append("--enable-autotune-redistribute-matrix")
