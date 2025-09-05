@@ -50,5 +50,6 @@ class Xterm(AutotoolsPackage):
     depends_on("bzip2")
     depends_on("ncurses")
 
+    depends_on("c", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("termcap", type="link")
