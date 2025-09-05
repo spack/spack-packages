@@ -109,7 +109,7 @@ class Charliecloud(AutotoolsPackage):
 
     variant("docs", default=False, description="Build man pages and html docs")
     variant("squashfuse", default=True, description="Build with squashfuse support", when="@0.32:")
-    variant("cdi", default=False, description="Build with CDI support", when="@0.40:")
+    variant("cdi", default=True, description="Build with CDI support", when="@0.40:")
 
     depends_on("c", type="build")  # generated
 
