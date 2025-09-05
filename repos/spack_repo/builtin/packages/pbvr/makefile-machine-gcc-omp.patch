@@ -1,13 +1,8 @@
-diff --git a/CS_server/arch/Makefile_machine_gcc_omp b/CS_server/arch/Makefile_machine_gcc_omp
-index 3974aa4..337cc37 100644
---- a/CS_server/arch/Makefile_machine_gcc_omp
-+++ b/CS_server/arch/Makefile_machine_gcc_omp
-@@ -1,6 +1,6 @@
- CXX=g++
- CXXFLAGS=-O3 -fopenmp -march=native -std=c++17
+--- a/CS_server/arch/Makefile_machine_gcc_omp   2025-08-26 12:07:02.000000000 +0900
++++ b/CS_server/arch/Makefile_machine_gcc_omp   2025-08-26 12:07:16.000000000 +0900
+@@ -3,4 +3,4 @@
  CC=gcc
--CCFLAGS=-O3 -fopenmp -march=native
-+CCFLAGS=-O3 -fopenmp -march=native -fcommon
+ CCFLAGS=-O3 -fopenmp -march=native -fcommon
  LD=g++
 -LDFLAGS=-fopenmp -lstdc++ -static-libgcc -static-libstdc++
-+LDFLAGS=-fopenmp -L/lib64 -lstdc++ -static-libgcc -static-libstdc++
++LDFLAGS=-fopenmp -lstdc++ -static-libgcc
