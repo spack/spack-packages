@@ -127,7 +127,6 @@ class Charliecloud(AutotoolsPackage):
     depends_on("py-requests", type="run")
     depends_on("git@2.28.1:", type="run", when="@0.29:")  # build cache
     depends_on("py-lark", type="run", when="@:0.24")  # 0.25+ bundles lark
-    depends_on("py-lark", type="build", when="@0.39:")
 
     # Man page and html docs.
     depends_on("rsync", type="build", when="+docs")
