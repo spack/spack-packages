@@ -67,7 +67,7 @@ class Pbvr(MakefilePackage):
 
     def setup_build_environment(self, env):
         compiler_name = self.spec.compiler.name
-        if compiler_name != 'gcc':
+        if compiler_name != "gcc":
             raise InstallError(f"{self.name} is only supported with the GCC compiler.")
 
     def patch(self):
@@ -140,6 +140,10 @@ class Pbvr(MakefilePackage):
         if "+client" in spec:
             install("Client/build/App/pbvr_client", prefix.bin)
             src = self.stage.source_path
-            install_tree(os.path.join(src, "Client/build/App/Shader"), os.path.join(prefix.bin, "Shader"))
-            install_tree(os.path.join(src, "Client/build/App/Font"), os.path.join(prefix.bin, "Font"))
+            install_tree(
+                os.path.join(src, "Client/build/App/Shader"), os.path.join(prefix.bin, "Shader")
+            )
+            install_tree(
+                os.path.join(src, "Client/build/App/Font"), os.path.join(prefix.bin, "Font")
+            )
 
