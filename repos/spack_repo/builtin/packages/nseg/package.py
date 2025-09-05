@@ -19,46 +19,53 @@ class Nseg(MakefilePackage):
         expand=False,
     )
 
+    source_files = ["makefile", "genwin.c", "genwin.h", "lnfac.h", "nmerge.c", "runnseg"]
     resource(
-        name="makefile",
+        name=source_files[0],
         url="ftp://ftp.ncbi.nih.gov/pub/seg/nseg/makefile",
         sha256="32937aef6969550ca3c762b5dd61b1520635cc46e773e35e56c5718f75838cee",
         expand=False,
+        placement=source_files[0],
     )
 
     resource(
-        name="genwin.c",
+        name=source_files[1],
         url="ftp://ftp.ncbi.nih.gov/pub/seg/nseg/genwin.c",
         sha256="d392d2db625dc8c90b00f2a86028a3a45d121e15eb403b51c2f9b01692ab10d9",
         expand=False,
+        placement=source_files[1],
     )
 
     resource(
-        name="genwin.h",
+        name=source_files[2],
         url="ftp://ftp.ncbi.nih.gov/pub/seg/nseg/genwin.h",
         sha256="1c701d87bf6200bfa40faa16fe665828a010727ef1aa0e8a1e5823605165fb86",
         expand=False,
+        placement=source_files[2],
     )
 
     resource(
-        name="lnfac.h",
+        name=source_files[3],
         url="ftp://ftp.ncbi.nih.gov/pub/seg/nseg/lnfac.h",
         sha256="5048e4f3dc3a7ea420d4eb4912a661f285634fbb205411b647b1f00c3fe3a0d2",
         expand=False,
+        placement=source_files[3],
     )
 
     resource(
-        name="nmerge.c",
+        name=source_files[4],
         url="ftp://ftp.ncbi.nih.gov/pub/seg/nseg/nmerge.c",
         sha256="c8a4bb4c960acf7fcd7509b635766b618efdab9f09aec36443040759eca3bce3",
         expand=False,
+        placement=source_files[4],
     )
 
     resource(
-        name="runnseg",
+        name=source_files[5],
         url="ftp://ftp.ncbi.nih.gov/pub/seg/nseg/runnseg",
         sha256="2830a5a1c5ea1a879cf3a415dfbb23db7a81e84d41698ddf765f2e1ef42e7c78",
         expand=False,
+        placement=source_files[5],
     )
 
     build_directory = "nseg"
@@ -72,11 +79,10 @@ class Nseg(MakefilePackage):
         copy("nseg.c", join_path(self.build_directory, "nseg.c"))
 
         # move all of the single-file resources into the build dir
-        for key in self.resources:
-            for res in self.resources[key]:
-                res_name = res.name
-                res_path = join_path(res.fetcher.stage.source_path, res.name)
-                copy(res_path, join_path(self.build_directory, res_name))
+        for source in self.source_files:
+            src = "{0}/{1}/{2}".format(self.stage.source_path, source, source)
+            dest = "{0}/{1}".format(self.build_directory, source)
+            copy(src, dest)
 
         if self.spec.satisfies("%fj"):
             sfiles = ["genwin.c", "nseg.c"]
