@@ -6,12 +6,11 @@ import os
 import shutil
 import sys
 
-from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.generic import Package
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
-from spack_repo.builtin.build_systems.generic import GenericBuilder
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
-from spack_repo.builtin.build_systems.generic import GenericBuilder
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.generic import GenericBuilder, Package
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
 from spack.package import *
 
 
@@ -617,6 +616,7 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
             if os.access(f, os.R_OK):
                 return FileList(f)
         return FileList(find(self.prefix, "test.mk", recursive=True))
+
 
 def str_to_timerid(timer_type):
     timer_ids = {"auto": "-1", "std": "0", "posix": "2", "mac": "4", "mpi": "6"}
@@ -1479,6 +1479,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             except NoHeadersError:
                 pass
         return all_hdrs
+
 
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
