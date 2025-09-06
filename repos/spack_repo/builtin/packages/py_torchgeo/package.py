@@ -89,7 +89,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-pyproj@3.3:", when="@0.6:")
         depends_on("py-pyproj@3:", when="@0.5:")
         depends_on("py-pyproj@2.2:")
-        depends_on("py-rasterio@1.3.3:", when="@0.7:")
+        depends_on("py-rasterio@1.3.11:", when="@0.7:")
         depends_on("py-rasterio@1.3:", when="@0.6:")
         depends_on("py-rasterio@1.2:", when="@0.5:")
         depends_on("py-rasterio@1.0.20:", when="@0.3:")
