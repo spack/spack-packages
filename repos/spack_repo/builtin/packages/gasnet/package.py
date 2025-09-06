@@ -47,6 +47,7 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
     # Versions fetched from git require a Bootstrap step
     bootstrap_version = "@master:,2025.2.0-snapshot"
 
+    version("2025.8.0", sha256="bd5919099477d1d2f59c247d006e9d1ac017c9190c974f5e069667418e5bf48d")
     version("2024.5.0", sha256="f945e80f71d340664766b66290496d230e021df5e5cd88f404d101258446daa9")
     version("2023.9.0", sha256="2d9f15a794e10683579ce494cd458b0dd97e2d3327c4d17e1fea79bd95576ce6")
     version("2023.3.0", sha256="e1fa783d38a503cf2efa7662be591ca5c2bb98d19ac72a9bc6da457329a9a14f")
