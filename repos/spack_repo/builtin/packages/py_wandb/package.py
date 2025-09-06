@@ -62,6 +62,7 @@ class PyWandb(PythonPackage):
     depends_on("py-sentry-sdk@2:", type=("build", "run"), when="@0.18.4:")
     depends_on("py-sentry-sdk@1:", type=("build", "run"))
     depends_on("py-packaging", type=("build", "run"), when="@0.20:")
+    depends_on("py-eval-type-backport", type=("build", "run"), when="@0.19: ^python@:3.9")
 
     # Historical dependencies
     depends_on("py-setproctitle", type=("build", "run"), when="@:0.20")
@@ -69,6 +70,3 @@ class PyWandb(PythonPackage):
     depends_on("py-dockerpy-creds@0.4:", type=("build", "run"), when="@:0.19")
     depends_on("py-appdirs@1.4.3:", type=("build", "run"), when="@:0.16")
     depends_on("py-pathtools", type=("build", "run"), when="@:0.15")
-
-    # Todo https://github.com/wandb/wandb/blob/v0.21.0/pyproject.toml
-    # eval_type_backport; python_version < '3.10'
