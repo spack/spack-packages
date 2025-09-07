@@ -49,7 +49,7 @@ class Librsvg(AutotoolsPackage, MesonPackage):
 
     depends_on("gobject-introspection", type="build")
     depends_on("pkgconfig", type="build")
-    # minimum supported rust version (MSRV) from `meson.build` or `configure` file 
+    # minimum supported rust version (MSRV) from `meson.build` or `configure` file
     depends_on("rust@1.85.1:", when="@2.61:", type="build")
     depends_on("rust@1.77.2:", when="@2.59:", type="build")
     depends_on("rust@1.70:", when="@2.57:", type="build")
