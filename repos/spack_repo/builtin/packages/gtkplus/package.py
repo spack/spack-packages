@@ -21,7 +21,7 @@ class Gtkplus(AutotoolsPackage, MesonPackage):
     build_system(
         conditional("autotools", when="@:3.24.35"),
         conditional("meson", when="@3.24.9:"),
-        default="autotools",
+        default="meson",
     )
 
     version("3.24.50", sha256="399118a5699314622165a11b769ea9b6ed68e037b6d46d57cfcf4851dec07529")
