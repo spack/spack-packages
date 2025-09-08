@@ -29,6 +29,7 @@ class Rocwmma(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("6.4.3", sha256="34797c458603688748a046b611e14693221843de96740ed3ba5c606d41ab0cdf")
     version("6.4.2", sha256="63bbac42242ea3bf5f5dd160739a0bd8a2d01c0f6456c187a2e6c29fecdcc93a")
     version("6.4.1", sha256="888e9794adff06ca1be811d80018e761b9a9cf84cb88dec9e51bc3a6db7a359a")
     version("6.4.0", sha256="d95d53f70b4a2adc565bf4490515626cb7109f1d2e8a9978626610d3f178cf42")
@@ -46,9 +47,6 @@ class Rocwmma(CMakePackage):
     version("6.0.0", sha256="f9e97e7c6c552d43ef8c7348e4402bead2cd978d0f81a9657d6a0f6c83a6139b")
     version("5.7.1", sha256="a998a1385e6ad7062707ddb9ff82bef727ca48c39a10b4d861667024e3ffd2a3")
     version("5.7.0", sha256="a8f1b090e9e504a149a924c80cfb6aca817359b43833a6512ba32e178245526f")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="41a5159ee1ad5fc411fe6220f37bd754e26d3883c24c0f2378f50ef628bc1b8f")
-        version("5.6.0", sha256="78b6ab10fce71d10a9d762b2eaab3390eb13b05c764f47a3b0a303ec3d37acf8")
 
     # gfx908:xnack-;gfx90a:xnack-;gfx90a:xnack+
     # are only targets currently supported for @5.2.0
@@ -77,8 +75,6 @@ class Rocwmma(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -96,6 +92,7 @@ class Rocwmma(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, type="build", when="@" + ver)

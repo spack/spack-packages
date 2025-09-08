@@ -66,6 +66,8 @@ class Ninja(Package):
     depends_on("cxx", type="build")  # generated
 
     depends_on("python", type="build")
+    # Python 3.13 added in https://github.com/ninja-build/ninja/pull/2340
+    depends_on("python@:3.12", type="build", when="@:1.11")
     depends_on("re2c@0.11.3:", type="build", when="+re2c")
 
     phases = ["configure", "install"]

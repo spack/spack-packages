@@ -24,6 +24,7 @@ class PyKeras(PythonPackage):
     tags = ["e4s"]
     license("Apache-2.0")
 
+    version("3.11.3", sha256="efda616835c31b7d916d72303ef9adec1257320bc9fd4b2b0138840fc65fb5b7")
     version("3.11.2", sha256="b78a4af616cbe119e88fa973d2b0443b70c7f74dd3ee888e5026f0b7e78a2801")
     version("3.11.1", sha256="7a27f384467fa8d0b0281665b52efd6bd948f20854099e35929786ce44d847f0")
     version("3.11.0", sha256="f5dfeaf4fcaea180e032f7c1e373f1868961e2940dcfcaaf9a5b711baf41bd60")

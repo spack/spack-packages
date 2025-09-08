@@ -21,6 +21,7 @@ class RocmCore(CMakePackage):
     libraries = ["librocm-core"]
 
     license("MIT")
+    version("6.4.3", sha256="dae6e06739882a3ce7be13ac300c22ab35ce80b4e853a21a1a3237fdc0411eb9")
     version("6.4.2", sha256="f3af7cfd930e20610736335ea860b9a39fb9bba4153fdc34b46ffe7da86a40ab")
     version("6.4.1", sha256="ac56938879a550ecd55ef5c00067203a0b3faf5a17a48d649728b1a3c65b040c")
     version("6.4.0", sha256="058739404c91105c1b34117803f6b48917a23191291ce67020e6b983b45450c1")
@@ -38,9 +39,6 @@ class RocmCore(CMakePackage):
     version("6.0.0", sha256="d950ee4b63336f34579b6e1dda2d05966b7afa9c84bcdc13874991d1147dc788")
     version("5.7.1", sha256="fc4915019ddfd126e8ef6a15006bce3aa7bd5fd11dc8eb04ce2ee6bdf9c6ae7f")
     version("5.7.0", sha256="722689bfec46c35f5428a41c5aacfc31efec2294fc3b0112861c562f8a71ac93")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="eeef75e16e05380ccbc8df17a02dc141a66dddaadb444a97f7278f78067c498c")
-        version("5.6.0", sha256="3c3d47c8b774968d768d42810a3fed42d058b7d6da248d5295df2a7ffb262568")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -64,6 +62,7 @@ class RocmCore(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 

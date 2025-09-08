@@ -42,6 +42,7 @@ class Rocsparse(CMakePackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="fca59e70da33a046be36ea2fe83ba18ea8f0a5c9efd255e0427802ba3a134d0a")
     version("6.4.2", sha256="30c0b6c2aaa3686a94150d69560a96697551088d1ee9595a1c5feb7c10fd9501")
     version("6.4.1", sha256="f44db33179d5f8e18f948ff3ac8bd9b59f7bfdd67c66a7972ef1ee0eb15872de")
     version("6.4.0", sha256="a0fb423b80da72f072a6d80b9837c80c671b5fae719f57c0e83d7e4e27d3d187")
@@ -59,9 +60,6 @@ class Rocsparse(CMakePackage):
     version("6.0.0", sha256="bdc618677ec78830c6af315d61194d6ab8532345b8daeeb115aca96f274d4ca4")
     version("5.7.1", sha256="4c09b182b371124675d4057246021b5ed45e2833fdbf265b37a9b06b668baf0a")
     version("5.7.0", sha256="a42f0eb531b015b719e2bdcdff0cfb214e9894f73107966260f26931f982ecbc")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="6a50a64354507f1374e1a86aa7f5c07d1aaa96ac193ac292c279153087bb5d54")
-        version("5.6.0", sha256="5797db3deb4a532e691447e3e8c923b93bd9fe4c468f3a88f00cecd80bebcae4")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -70,8 +68,6 @@ class Rocsparse(CMakePackage):
     depends_on("cmake@3.5:", type="build")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -89,6 +85,7 @@ class Rocsparse(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")

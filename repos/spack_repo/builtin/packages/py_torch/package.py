@@ -627,6 +627,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # Spack logs have trouble handling colored output
         env.set("COLORIZE_OUTPUT", "OFF")
 
+        # Currently there are no variants/dependencies for Intel GPU support
+        env.set("USE_XPU", "OFF")
+
         enable_or_disable("test", keyword="BUILD")
         enable_or_disable("caffe2", keyword="BUILD")
 

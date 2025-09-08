@@ -21,6 +21,7 @@ class PyPyomo(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.9.4", sha256="34ad22cd6bf9956de9c0d3842d01c1f92dee0515b25aa3e8f113b326549b1231")
     version("6.9.3", sha256="54ec698bb31f78460e1627cbfa90cb2741b629c1ecaca7035bd2e340351a47f7")
     version("6.9.2", sha256="81b2b14ea619244824e1c547cc12602fe9a6e19309cbf0742868c5b1ef37cb35")
     version("6.9.1", sha256="ccb85fa4b03450c32614a939c6830d073a7ce79461b12b0f1e7809db96ae86de")
