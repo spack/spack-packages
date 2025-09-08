@@ -140,6 +140,10 @@ class Abinit(AutotoolsPackage):
     patch("fix_for_fujitsu.patch", when="@:8 %fj")
     patch("fix_for_fujitsu.v9.patch", when="@9: %fj")
 
+    # Fix obsolete bool typedef (breaks in gcc@15)
+    # Fixed since 10.4
+    patch("fix_for_gcc15_stdbool.patch", when="@9:10.2.7 %gcc@15:")
+
     def configure_args(self):
         spec = self.spec
         options = self.with_or_without("libxml2")
