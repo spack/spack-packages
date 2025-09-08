@@ -13,22 +13,22 @@ class PyMumps4py(PythonPackage):
 
     version("1.0.0", sha256="634dd52a9942e88a430d6c8b519cbf6e50db77dd5f1be1cb04e5ab3f3e9da8ba")
 
-    # Python requirements
-    depends_on("python@3.5:", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
-    depends_on("py-pip", type="build")
+    # build dependencies
+    with default_args(type="build"):
+        depends_on("cmake")
+        depends_on("py-setuptools")
+        depends_on("py-cython")
 
-    # Runtime and build deps
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-cython", type="build")
-    depends_on("py-mpi4py", type=("build", "run"))
+    # Python dependencies
+    with default_args(type=("build", "run")):
+        depends_on("py-numpy")
+        depends_on("py-mpi4py")
 
     # Optional/test deps
     depends_on("py-pytest", type="test")
 
     # External solver
     depends_on("mumps")
-    depends_on("cmake", type="build")
 
     def build_args(self, spec, prefix):
         # Ensure MUMPS include/lib are passed if setup.py needs them
