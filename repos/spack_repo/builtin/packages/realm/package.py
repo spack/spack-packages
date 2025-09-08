@@ -108,6 +108,16 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
             multi=False,
         )
 
+    with when("network=ucx"):
+        variant(
+            "ucx_backends",
+            default="p2p",
+            values=("p2p", "mpi"),
+            description="UCX Bootstraps to build and install",
+            multi=True,
+        )
+        requires("ucx_backends=p2p", msg="p2p backend is always enabled")
+
     variant("shared", default=False, description="Build shared libraries.")
 
     variant(
@@ -160,9 +170,14 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
         from_variant = self.define_from_variant
         options = [
             self.define("REALM_ENABLE_INSTALL", True),
+            self.define("REALM_INSTALL", True),  # remove once inconsistency is fixed
             from_variant("REALM_CXX_STANDARD", "cxxstd"),
             from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define("REALM_ENABLE_UCX", spec.satisfies("network=ucx")),
+            self.define("REALM_INSTALL_UCX_BOOTSTRAPS", spec.satisfies("network=ucx")),
+            self.define(
+                "UCX_BOOTSTRAP_ENABLE_MPI", spec.satisfies("network=ucx ucx_backends=mpi")
+            ),
             self.define("REALM_ENABLE_GASNETEX", spec.satisfies("network=gasnet")),
             self.define("REALM_ENABLE_MPI", spec.satisfies("network=mpi")),
             from_variant("REALM_ENABLE_CUDA", "cuda"),
