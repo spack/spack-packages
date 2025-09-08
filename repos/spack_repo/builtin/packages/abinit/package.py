@@ -100,7 +100,7 @@ class Abinit(AutotoolsPackage):
     # constrain libxc version
     depends_on("libxc")
     depends_on("libxc@:2", when="@:8")
-    depends_on("libxc@:5", when="@9.8:")
+    depends_on("libxc+kxc@5:", when="@9.4:")
 
     # libxml2
     depends_on("libxml2", when="@9:+libxml2")
