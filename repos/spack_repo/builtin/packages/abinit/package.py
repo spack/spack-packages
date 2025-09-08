@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Abinit(AutotoolsPackage):
+class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
     """ABINIT is a package whose main program allows one to find the total
     energy, charge density and electronic structure of systems made of
     electrons and nuclei (molecules and periodic solids) within
@@ -53,6 +55,12 @@ class Abinit(AutotoolsPackage):
 
     variant("wannier90", default=False, description="Enables the Wannier90 library")
     variant("libxml2", default=False, description="Enable libxml2 support, used by multibinit")
+    variant(
+        "gpu_openmp_offload",
+        when="@10.4: +openmp",
+        default=False,
+        description="Enable OpenMP offload support. Requires CUDA & NVHPC or ROCM & Cray CE",
+    )
 
     variant(
         "optimization-flavor",
@@ -95,6 +103,11 @@ class Abinit(AutotoolsPackage):
         # Cannot ask for +wannier90 if it does not depend on MPI
         conflicts("+wannier90")
 
+    with when("+rocm"):
+        depends_on("hipblas+rocm")
+        depends_on("hipfft+rocm")
+        depends_on("hipsolver+rocm")
+
     # constrain version of hdf5
     depends_on("hdf5@:1.8", when="@9:9.8")
     depends_on("hdf5@:1.14", when="@10:")
@@ -116,6 +129,58 @@ class Abinit(AutotoolsPackage):
 
     conflicts("%gcc@7:", when="@:8.8")
     conflicts("%gcc@9:", when="@:8.10")
+
+    conflicts("%nvhpc", when="@:9.8")
+    conflicts("%cce", when="@:9.8")
+
+    conflicts(
+        "+gpu_openmp_offload",
+        when="~mpi",
+        msg="ABINIT builds with GPU support require MPI support enabled as well",
+    )
+    conflicts(
+        "+cuda",
+        when="~gpu_openmp_offload",
+        msg="ABINIT builds with GPU support require OpenMP offload support enabled as well",
+    )
+    conflicts(
+        "+rocm",
+        when="~gpu_openmp_offload",
+        msg="ABINIT builds with GPU support require OpenMP offload support enabled as well",
+    )
+    conflicts(
+        "+cuda",
+        when="~openmp",
+        msg="ABINIT builds with GPU support require OpenMP support enabled as well",
+    )
+    conflicts(
+        "+rocm",
+        when="~openmp",
+        msg="ABINIT builds with GPU support require OpenMP support enabled as well",
+    )
+    conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
+    conflicts("amdgpu_target=none", when="+rocm", msg="ROCM architecture is required")
+
+    requires(
+        "%nvhpc",
+        "%cce",
+        when="+gpu_openmp_offload",
+        policy="one_of",
+        msg="ABINIT with OpenMP offload builds only with NVHPC or Cray CE",
+    )
+    requires(
+        "+cuda",
+        "+rocm",
+        when="+gpu_openmp_offload",
+        policy="one_of",
+        msg="ABINIT with OpenMP offload builds only with CUDA or ROCM",
+    )
+
+    # propagate ROCm architecture when +rocm
+    for arch in ROCmPackage.amdgpu_targets:
+        depends_on("hipblas+rocm amdgpu_target=%s" % arch, when="+rocm amdgpu_target=%s" % arch)
+        depends_on("hipfft+rocm amdgpu_target=%s" % arch, when="+rocm amdgpu_target=%s" % arch)
+        depends_on("hipsolver+rocm amdgpu_target=%s" % arch, when="+rocm amdgpu_target=%s" % arch)
 
     # need openmp threading for abinit+openmp
     # TODO: The logic here can be reversed with the new concretizer. Instead of
@@ -211,8 +276,21 @@ class Abinit(AutotoolsPackage):
         # Activate OpenMP in Abinit Fortran code.
         if spec.satisfies("+openmp"):
             oapp("--enable-openmp=yes")
+            if spec.satisfies("+gpu_openmp_offload"):
+                oapp("--enable-openmp-offload=yes")
+            else:
+                oapp("--enable-openmp-offload=no")
         else:
             oapp("--enable-openmp=no")
+            oapp("--enable-openmp-offload=no")
+
+        if spec.satisfies("+cuda"):
+            oapp(f"--with-cuda={spec['cuda'].prefix}")
+            oapp(f"GPU_ARCH={self.spec.variants['cuda_arch'].value[0]}")
+
+        if spec.satisfies("+rocm"):
+            oapp(f"--with-rocm={spec['hip'].prefix}")
+            oapp(f"GPU_ARCH={self.spec.variants['amdgpu_target'].value[0]}")
 
         # BLAS/LAPACK/SCALAPACK-ELPA
         linalg = spec["lapack"].libs + spec["blas"].libs
