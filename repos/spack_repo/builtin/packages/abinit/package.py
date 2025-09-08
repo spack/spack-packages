@@ -94,7 +94,8 @@ class Abinit(AutotoolsPackage):
         conflicts("+wannier90")
 
     # constrain version of hdf5
-    depends_on("hdf5@:1.8", when="@9:")
+    depends_on("hdf5@:1.8", when="@9:9.8")
+    depends_on("hdf5@:1.14", when="@10:")
 
     # constrain libxc version
     depends_on("libxc")
