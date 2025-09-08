@@ -126,6 +126,8 @@ class Mgis(CMakePackage):
         args.append("-Denable-website=OFF")
         args.append("-Denable-doxygen-doc=OFF")
 
+        args.append("-DTFEL_DIR={0}/share/tfel/cmake".format(self.spec["tfel"].prefix))
+        
         for i in ["c", "fortran", "python"]:
             if "+" + i in self.spec:
                 args.append("-Denable-{0}-bindings=ON".format(i))
