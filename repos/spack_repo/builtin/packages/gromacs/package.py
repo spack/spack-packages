@@ -52,9 +52,11 @@ class Gromacs(CMakePackage, CudaPackage):
     # 2025 is supported.
     version("main", branch="main")
     version("master", branch="main", deprecated=True)
+    version("2025.3", sha256="8bdfca0268f3f10a7ca3c06e59b62f73ea02420c67211c0ff3912f32d7833c65")
     version("2025.2", sha256="0df09f9d45a99ef00e66b9baa9493a27e906813763a3b6c7672217c66b43ea11")
     version("2025.1", sha256="0adf621a80fd8043f8defec84ce02811c0cdf42a052232890932d81f25c4d28a")
     version("2025.0", sha256="a27ad35a646295bbec129abe684d9d03d1e2e0bd76b0d625e9055746aaefae82")
+    version("2024.6", sha256="7cbad81f51c71a144d646515a7249aa74940b3f68071f51410e3a9473f05b339")
     version("2024.5", sha256="fecf06b186cddb942cfb42ee8da5f3eb2b9993e6acc0a2f18d14ac0b014424f3")
     version("2024.4", sha256="ac618ece2e58afa86b536c5a2c4fcb937f0760318f12d18f10346b6bdebd86a8")
     version("2024.3", sha256="bbda056ee59390be7d58d84c13a9ec0d4e3635617adf2eb747034922cba1f029")
@@ -252,6 +254,11 @@ class Gromacs(CMakePackage, CudaPackage):
     variant(
         "sve", default=True, description="Enable SVE on aarch64 if available", when="target=a64fx"
     )
+    conflicts(
+        "+sve",
+        when="%clang@20",
+        msg="There is a severe performance regression in GROMACS with SVE and Clang 20; disable SVE (~sve) or use a different compiler. See https://gitlab.com/gromacs/gromacs/-/issues/5390",
+    )
     variant(
         "relaxed_double_precision",
         default=False,
@@ -374,7 +381,9 @@ class Gromacs(CMakePackage, CudaPackage):
     depends_on("cmake@3.9.6:3", type="build", when="@2020")
     depends_on("cmake@3.13.0:3", type="build", when="@2021")
     depends_on("cmake@3.16.3:3", type="build", when="@2022:")
-    depends_on("cmake@3.18.4:3", type="build", when="@main")
+    depends_on("cmake@3.18.4:3", type="build", when="@2023:")
+    depends_on("cmake@3.28.0:3", type="build", when="@2025:")
+    depends_on("cmake@3.28.0:3", type="build", when="@main")
     depends_on("cmake@3.16.0:3", type="build", when="%fj")
     depends_on("pkgconfig", type="build")
 
@@ -673,13 +682,13 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+cufftmp"):
             options.append("-DGMX_USE_CUFFTMP=ON")
             options.append(
-                f'-DcuFFTMp_ROOT={self.spec["nvhpc"].prefix}/Linux_{self.spec.target.family}'
-                + f'/{self.spec["nvhpc"].version}/math_libs'
+                f"-DcuFFTMp_ROOT={self.spec['nvhpc'].prefix}/Linux_{self.spec.target.family}"
+                + f"/{self.spec['nvhpc'].version}/math_libs"
             )
 
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
-            options.append(f'-DHeffte_ROOT={self.spec["heffte"].prefix}')
+            options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
 
         if self.spec.satisfies("+intel-data-center-gpu-max"):
             options.append("-DGMX_GPU_NB_CLUSTER_SIZE=8")

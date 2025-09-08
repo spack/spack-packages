@@ -27,12 +27,9 @@ class RocmClangOcl(CMakePackage):
     version("6.0.0", sha256="74b5a64c32f3c57e7e4de638fffabbf448ecdb3dd8e65678b7ba0633352b4ca3")
     version("5.7.1", sha256="32e4430d009cbbf5404ca9cbbb549b36897fa1826bc2285372e293cfe7531bf8")
     version("5.7.0", sha256="c9ca80bfee674e740039256a846107373f1cf6554dc28398599976d8646a0392")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="c41deb1b564d939fc897b2bbdb13570b2234fa4c052a39783f5ad2dd1052f901")
-        version("5.6.0", sha256="1afc47dee02d73c10de422f254067f4ef3ff921c4a1204d54ecc40e61fc63497")
 
     depends_on("cmake@3.5:", type="build")
-    for ver in ["5.6.0", "5.6.1", "5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
+    for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 

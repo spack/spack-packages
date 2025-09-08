@@ -120,7 +120,6 @@ class Gtkplus(AutotoolsPackage, MesonPackage):
 
 
 class BuildEnvironment:
-
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
@@ -129,7 +128,6 @@ class BuildEnvironment:
 
 
 class MesonBuilder(BuildEnvironment, meson.MesonBuilder):
-
     def meson_args(self):
         args = []
 
@@ -150,7 +148,6 @@ class MesonBuilder(BuildEnvironment, meson.MesonBuilder):
 
 
 class AutotoolsBuilder(BuildEnvironment, autotools.AutotoolsBuilder):
-
     def configure_args(self):
         true = which("true")
         args = [

@@ -13,11 +13,13 @@ class HipTensor(CMakePackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipTensor"
     git = "https://github.com/ROCm/hipTensor.git"
-    url = "https://github.com/ROCm/hipTensor/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/hipTensor/archive/refs/tags/rocm-6.4.2.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "afzpatel")
 
+    version("6.4.3", sha256="2b584559691b710b52447d44da062f29cf4f1151257d8f491875f68107c60f5c")
+    version("6.4.2", sha256="de5285ae9eb105153ac6e2cd699d9020a30c7e99d7918f90ea83bdcda935f6d9")
     version("6.4.1", sha256="25d9d63bc4aef76e64b679b14c0fb102a0d513a3ab188d66ed91ac9bd35c5f39")
     version("6.4.0", sha256="cc2a738defa72cd2b39f4d358c7967dc93b490160b6eb74f893c4626ad334310")
     version("6.3.3", sha256="2f4e34c5a96004e24fcdf70f9157f1079ab177a78f6dbf96ea8290f668257c23")
@@ -57,6 +59,8 @@ class HipTensor(CMakePackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"composable-kernel@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")

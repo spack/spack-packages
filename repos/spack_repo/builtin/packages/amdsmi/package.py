@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -14,13 +15,15 @@ class Amdsmi(CMakePackage):
     applications to monitor and control AMD device."""
 
     homepage = "https://github.com/ROCm/amdsmi"
-    url = "https://github.com/ROCm/amdsmi/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/amdsmi/archive/refs/tags/rocm-6.4.3.tar.gz"
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libamd_smi"]
 
     license("MIT")
+    version("6.4.3", sha256="a850125bf33402cad6e57d2130e32d8b37bfc315a6dcfddd90fb593fea1f0e46")
+    version("6.4.2", sha256="194652d8d6fa8acfdd638ae1d474647ea057441e139971d366a24cbb265722f9")
     version("6.4.1", sha256="5e1030cebacf2c92e63a555db6433ce7bb4f91409910ec98947e459d36630401")
     version("6.4.0", sha256="6f0200ba7305171e9dadbfcd41ff00c194b98d2b88e0555c57739ef01c767233")
     version("6.3.3", sha256="e23abc65a1cd75764d7da049b91cce2a095b287279efcd4f90b4b9b63b974dd5")

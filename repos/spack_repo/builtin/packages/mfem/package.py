@@ -186,9 +186,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         "threadsafe",
         default=False,
         description=(
-            "Enable thread safe features."
-            " Required for OpenMP."
-            " May cause minor performance issues."
+            "Enable thread safe features. Required for OpenMP. May cause minor performance issues."
         ),
     )
     variant(
@@ -297,7 +295,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     # See https://github.com/mfem/mfem/issues/2957
     conflicts("^mpich@4:", when="@:4.3+mpi")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+strumpack")
     depends_on("gmake", type="build")
 
     depends_on("mpi", when="+mpi")
@@ -323,8 +322,6 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("blas", when="+lapack")
     depends_on("lapack@3.0:", when="+lapack")
 
-    depends_on("sundials@2.7.0", when="@:3.3.0+sundials~mpi")
-    depends_on("sundials@2.7.0+mpi+hypre", when="@:3.3.0+sundials+mpi")
     depends_on("sundials@2.7.0:", when="@3.3.2:+sundials~mpi")
     depends_on("sundials@2.7.0:+mpi+hypre", when="@3.3.2:+sundials+mpi")
     depends_on("sundials@5.0.0:5", when="@4.1.0:4.4+sundials~mpi")

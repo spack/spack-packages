@@ -137,7 +137,6 @@ class GeopmRuntime(AutotoolsPackage):
             bash("./autogen.sh")
 
     def configure_args(self):
-
         with when("@3.0.1"):
             args = [
                 "--with-bash-completion-dir="

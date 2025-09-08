@@ -137,7 +137,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("mumps", default=False, description="Compile with support for MUMPS solvers")
     variant("suite-sparse", default=False, description="Compile with SuiteSparse solvers")
     variant("superlu-dist", default=False, description="Compile with SuperluDist solvers")
-    variant("superlu", default=False, description="Compile with SuperLU solvers")
     variant("strumpack", default=False, description="Compile with STRUMPACK solvers")
     variant("x11", default=False, description="Compile with X11 when +exodus")
 
@@ -348,11 +347,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+mesquite", when="@:12.10,master")
     # Strumpack is only available as of mid-2021
     conflicts("+strumpack", when="@:13.0")
-    # Can only use one type of SuperLU
-    conflicts("+superlu-dist", when="+superlu")
-    # Amesos and Ifpack only support up to SuperLU 4.x.y interfaces
-    conflicts("+amesos", when="+superlu@5:")
-    conflicts("+ifpack", when="+superlu@5:")
     # For Trilinos v11 we need to force SuperLUDist=OFF, since only the
     # deprecated SuperLUDist v3.3 together with an Amesos patch is working.
     conflicts("+superlu-dist", when="@11.4.1:11.14.3")
@@ -429,12 +423,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos-kernels~shared", when="+cuda_rdc")
         depends_on("kokkos-kernels~shared", when="+rocm_rdc")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=4.6.02", when="@master:")
+        depends_on("kokkos@=4.7.00", when="@master:")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=4.6.02", when="@master:")
+        depends_on("kokkos-kernels@=4.7.00", when="@master:")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
         depends_on("kokkos-kernels@=4.2.01", when="@15.1:15")
@@ -481,9 +475,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("strumpack+shared", when="+strumpack")
     depends_on("suite-sparse@:7.3.1", when="+suite-sparse")
     depends_on("superlu-dist", when="+superlu-dist")
-    depends_on("superlu@3:5.2", when="@12.18.1: +superlu")
-    depends_on("superlu@3:5.1.1", when="@12.14.1 +superlu")
-    depends_on("superlu@3:4", when="@:12.12.1 +superlu")
     depends_on("swig", when="@:14 +python")
     depends_on("zlib-api", when="+zoltan")
 
@@ -919,7 +910,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             ("MUMPS", "mumps", "mumps"),
             ("AMD", "suite-sparse", "suite-sparse"),
             ("UMFPACK", "suite-sparse", "suite-sparse"),
-            ("SuperLU", "superlu", "superlu"),
             ("SuperLUDist", "superlu-dist", "superlu-dist"),
             ("X11", "x11", "libx11"),
         ]

@@ -14,12 +14,14 @@ class HipTests(CMakePackage):
     """This repository provides unit tests for HIP implementation."""
 
     homepage = "https://github.com/ROCm/hip-tests"
-    url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/hip-tests.git"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("6.4.3", sha256="7e25bb8ae6c707000ae9620cf4cd42ff055223630139d6219b017e5516a42487")
+    version("6.4.2", sha256="8a39c8b9fa373636b86dd4c2df758a525de6772f27ee1e8e2c3d84c3f287532a")
     version("6.4.1", sha256="81614a66fc4dd97a0b6948d067f9423116ca852725074c4deecf549d379b2680")
     version("6.4.0", sha256="bf609b7b4c7a567ed265d3cb305510321a47c5f311a80ae8d1beed1f4891c070")
     version("6.3.3", sha256="7c8ccc78bdc7d684f2bc55ef1affa64e7ddad4b2bf28f12a5aede079002b8a12")
@@ -50,6 +52,8 @@ class HipTests(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")

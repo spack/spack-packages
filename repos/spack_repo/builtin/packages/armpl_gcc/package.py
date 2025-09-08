@@ -284,8 +284,7 @@ def get_package_url_before_24(version):
     if os == "macOS":
         if armpl_version.startswith("23.06"):
             return (
-                f"{base_url}/{armpl_version_dashed}/"
-                f"armpl_{armpl_version}_{compiler_version}.dmg"
+                f"{base_url}/{armpl_version_dashed}/armpl_{armpl_version}_{compiler_version}.dmg"
             )
         else:
             filename = f"arm-performance-libraries_{armpl_version}_macOS.dmg"

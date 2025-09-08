@@ -28,6 +28,34 @@ Spack is an open source project.  Questions, discussion, and contributions are w
 * **Matrix space**: [#spack-space:matrix.org](https://matrix.to/#/#spack-space:matrix.org):
   [bridged](https://github.com/matrix-org/matrix-appservice-slack#matrix-appservice-slack) to Slack.
 
+## Structure of this repo
+
+This repository does not look like the original Spack package repositories. Its structure
+has been renovated a bit to make it work better with modern python tooling. The repo
+looks like this:
+
+```
+spack-packages/
+    repos/                          # add this to PYTHONPATH for your editor
+        spack_repo/                 # dedicated python package for spack repositories
+            builtin/                # namespace of this package repository
+                build_systems/      # build_systems: common base classes used by many packages
+                packages/           # This is where all the package.py files go
+                    <PKG_NAME>/     # e.g., hdf5, zlib, mfem
+                        package.py  # actual package recipes
+```
+
+The new repository structure is designed around several goals:
+
+1. Make it easy to add the repository to `PYTHONPATH`;
+2. Allow common python code like `build_systems` to live in the package repo, not core
+   Spack; and
+3. Allow multiple reositories (e.g. something in addition to `builtin` to live in the
+   same git repository.
+
+If you use an editor like vscode, you should be able to point it directly to the `repos/`
+directory and have the editor understand the package code.
+
 ## Contributing
 
 To contribute, simply make a pull request to this repository with your package changes.

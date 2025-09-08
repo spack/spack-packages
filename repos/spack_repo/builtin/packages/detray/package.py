@@ -21,6 +21,8 @@ class Detray(CMakePackage):
 
     license("MPL-2.0", checked_by="stephenswat")
 
+    version("0.100.1", sha256="5e68986889ae083503b3506015c649a0dcf1eadbeec642bb7749ee91c9fca201")
+    version("0.100.0", sha256="a34686403807db822dc71f2bc61b9d72e9837a525b22c0b86c6452bf9ec7b0e4")
     version("0.99.0", sha256="86baa957ec55e8eecb5a9dffe135b88265dd0f88f75bf0068c9068ea304c0fb5")
     version("0.98.0", sha256="d90c70d2d4bdd9dbd09024ff6990d57f610947c9544afccadf611316de76b2d9")
     version("0.97.0", sha256="cddee6074b92da9823afe016949c023843d9bc079caddaa7f52900dbefdf64a7")
@@ -108,6 +110,7 @@ class Detray(CMakePackage):
                 )
 
     depends_on("actsvg +meta")
+    depends_on("actsvg @0.4.57:", when="@0.100:")
 
     def cmake_args(self):
         args = [

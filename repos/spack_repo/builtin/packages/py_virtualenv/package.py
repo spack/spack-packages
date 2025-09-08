@@ -15,6 +15,7 @@ class PyVirtualenv(PythonPackage):
     git = "https://github.com/pypa/virtualenv.git"
 
     license("MIT")
+    version("20.26.6", sha256="280aede09a2a5c317e409a00102e7077c6432c5a38f0ef938e643805a7ad2c48")
     version("20.26.5", sha256="ce489cac131aa58f4b25e321d6d186171f78e6cb13fafbf32a840cee67733ff4")
     version("20.26.4", sha256="c17f4e0f3e6036e9f26700446f85c76ab11df65ff6d8a9cbfad9f71aabfcf23c")
     version("20.26.3", sha256="4c43a2a236279d9ea36a0d76f98d84bd6ca94ac4e0f4a3b9d46d05e10fea542a")
@@ -64,11 +65,11 @@ class PyVirtualenv(PythonPackage):
     depends_on(
         "py-importlib-metadata@0.12:3", when="@20.0.0:20.2.0 ^python@:3.7", type=("build", "run")
     )
-    depends_on("py-platformdirs@3.9.1:3", when="@20.24.1:", type=("build", "run"))
+    depends_on("py-platformdirs@3.9.1:4", when="@20.24.7:", type=("build", "run"))
+    depends_on("py-platformdirs@3.9.1:3", when="@20.24.1:20.24.6", type=("build", "run"))
     depends_on("py-platformdirs@3.2:3", when="@20.22:20.23.0", type=("build", "run"))
     depends_on("py-platformdirs@2.4:2", when="@20.16.3:20.21", type=("build", "run"))
     depends_on("py-platformdirs@2:2", when="@20.5:20.16.2", type=("build", "run"))
-
     # Historical dependencies
     with when("@:20.17"):
         # not just build-time, requires pkg_resources

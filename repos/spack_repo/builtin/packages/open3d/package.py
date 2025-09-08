@@ -128,5 +128,4 @@ class Open3d(CMakePackage, CudaPackage):
             return
 
         with working_dir("spack-test"):
-            python = which(python.path)
             python("-c", "import open3d")
