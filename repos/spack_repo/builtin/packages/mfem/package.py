@@ -617,6 +617,11 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
                 return FileList(f)
         return FileList(find(self.prefix, "test.mk", recursive=True))
 
+    @property
+    def xlinker(self):
+        using_nvcc = "+cuda" in self.spec and "+enzyme" not in self.spec
+        return "-Wl," if not using_nvcc else "-Xlinker="
+
 
 def str_to_timerid(timer_type):
     timer_ids = {"auto": "-1", "std": "0", "posix": "2", "mac": "4", "mpi": "6"}
@@ -1441,11 +1446,6 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
 
     def is_sys_lib_path(self, dir):
         return dir in self.sys_lib_paths
-
-    @property
-    def xlinker(self):
-        using_nvcc = "+cuda" in self.spec and "+enzyme" not in self.spec
-        return "-Wl," if not using_nvcc else "-Xlinker="
 
     # Similar to spec[pkg].libs.ld_flags but prepends rpath flags too.
     # Also does not add system library paths as defined by 'sys_lib_paths'
