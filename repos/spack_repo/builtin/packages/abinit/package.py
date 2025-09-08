@@ -358,6 +358,9 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
             spec["lapack"].name == "openblas" or spec.satisfies("^fujitsu-ssl2")
         ):
             linalg_flavor = "openblas"
+        # Cray wrapper will set flags for cray-libsci itself so "netlib" is alright here
+        elif spec["lapack"].name == "cray-libsci":
+            linalg_flavor = "netlib"
         else:
             # If you need to force custom (and not have it as fallback, like now)
             # you should likely implement a variant to force it, but it seems that
