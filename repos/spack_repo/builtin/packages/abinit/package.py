@@ -61,6 +61,12 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
         default=False,
         description="Enable OpenMP offload support. Requires CUDA & NVHPC or ROCM & Cray CE",
     )
+    variant(
+        "gpu_aware_mpi",
+        when="@10.4: +mpi+gpu_openmp_offload",
+        default=True,
+        description="Enable optimizations for GPU-aware MPI",
+    )
 
     variant(
         "optimization-flavor",
@@ -107,6 +113,28 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
         depends_on("hipblas+rocm")
         depends_on("hipfft+rocm")
         depends_on("hipsolver+rocm")
+
+    # Need a MPI provider built with either CUDA or ROCM when configured
+    # with GPU-aware optimizations
+    requires(
+        "^cray-mpich +cuda",
+        "^mpich +cuda",
+        "^mvapich +cuda",
+        "^mvapich2 +cuda",
+        "^openmpi+cuda",
+        when="+gpu_aware_mpi+cuda",
+        policy="one_of",
+        msg="'+gpu_aware_mpi +cuda' requires an MPI implementation with CUDA awareness enabled.",
+    )
+
+    requires(
+        "^cray-mpich +rocm",
+        "^mpich +rocm",
+        "^openmpi +rocm",
+        when="+gpu_aware_mpi+rocm",
+        policy="one_of",
+        msg="'+gpu_aware_mpi +rocm' requires an MPI implementation with ROCm awareness enabled.",
+    )
 
     # constrain version of hdf5
     depends_on("hdf5@:1.8", when="@9:9.8")
@@ -291,6 +319,9 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm"):
             oapp(f"--with-rocm={spec['hip'].prefix}")
             oapp(f"GPU_ARCH={self.spec.variants['amdgpu_target'].value[0]}")
+
+        if spec.satisfies("+gpu_aware_mpi"):
+            oapp("--enable-mpi-gpu-aware=yes")
 
         # BLAS/LAPACK/SCALAPACK-ELPA
         linalg = spec["lapack"].libs + spec["blas"].libs
