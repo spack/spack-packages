@@ -67,7 +67,7 @@ class Abinit(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("atompaw")
+    depends_on("atompaw", when="@:8")
     depends_on("blas")
     depends_on("lapack")
 
