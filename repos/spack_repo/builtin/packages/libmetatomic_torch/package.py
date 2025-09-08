@@ -11,7 +11,7 @@ class LibmetatomicTorch(CMakePackage):
     """TorchScript/C++ bindings to metatomic"""
 
     homepage = "https://docs.metatensor.org/metatomic"
-    url = "https://github.com/metatensor/metatomic/releases/download/metatomic-torch-v0.1.2/metatomic_torch-0.1.2.tar.gz"
+    url = "https://github.com/metatensor/metatomic/releases/download/metatomic-torch-v0.1.3/metatomic_torch-0.1.3.tar.gz"
     git = "https://github.com/metatensor/metatomic.git"
 
     maintainers("HaoZeke", "luthaf", "rmeli")

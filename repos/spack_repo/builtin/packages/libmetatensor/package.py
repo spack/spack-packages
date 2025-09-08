@@ -11,13 +11,13 @@ class Libmetatensor(CMakePackage):
     """Self-describing sparse tensor data format for atomistic machine learning and beyond."""
 
     homepage = "https://docs.metatensor.org"
-    url = "https://github.com/metatensor/metatensor/releases/download/metatensor-core-v0.1.14/metatensor-core-cxx-0.1.14.tar.gz"
+    url = "https://github.com/metatensor/metatensor/releases/download/metatensor-core-v0.1.17/metatensor-core-cxx-0.1.17.tar.gz"
     git = "https://github.com/metatensor/metatensor.git"
 
     maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    version("0.1.14", sha256="dc6cdd9cf0113e2f012ecf68b81cc7cfc71bef3d2020b41574de8fa403dba646")
+    version("0.1.17", sha256="42119e11908239915ccc187d7ca65449b461f1d4b5af4d6df1fb613d687da76a")
 
     variant("static", default=False, description="Build both shared and static library versions")
 
