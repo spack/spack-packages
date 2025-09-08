@@ -30,6 +30,8 @@ class Abinit(AutotoolsPackage):
     license("Apache-2.0")
 
     maintainers("downloadico")
+    version("10.4.7", sha256="161c60ef90686c19e0718363eb5a17bfa29494e5fbdc59be45a7342e20349768")
+    version("10.4.3", sha256="2150ac8472ad570f3cd3fa34c8bc6ac496c6715b319b69e3aa011a555d72d7d7")
     version("10.2.7", sha256="e0e1049b01b4ebaec29be632cd554caeccb4b2a8acf2e148c8ac505e6b226dc1")
     version("10.0.9", sha256="17650580295e07895f6c3c4b1f3f0fe0e0f3fea9bab5fd8ce7035b16a62f8e5e")
     version("10.0.7", sha256="a9fc044b33861b7defd50fafd19a73eb6f225e18ae30b23bc731d9c8009c881c")
