@@ -203,7 +203,7 @@ spack:
   - hpx +cuda cuda_arch=90
   - kokkos +wrapper +cuda cuda_arch=90
   - kokkos-kernels +cuda cuda_arch=90 ^kokkos +wrapper +cuda cuda_arch=90
-  - kokkos-fft device_backend=cufft +tests
+  - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper +cuda cuda_arch=90
   - libceed +cuda cuda_arch=90
   - magma +cuda cuda_arch=90
   - mfem +cuda cuda_arch=90

@@ -273,7 +273,7 @@ spack:
   - hypre +cuda cuda_arch=80
   - kokkos +wrapper +cuda cuda_arch=80
   - kokkos-kernels +cuda cuda_arch=80 ^kokkos +wrapper +cuda cuda_arch=80
-  - kokkos-fft device_backend=cufft +tests
+  - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper +cuda cuda_arch=80
   - libceed +cuda cuda_arch=80
   - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard +cuda cuda_arch=80 ^cusz +cuda cuda_arch=80
   - magma +cuda cuda_arch=80
@@ -322,6 +322,7 @@ spack:
   - hypre +cuda cuda_arch=90
   - kokkos +wrapper +cuda cuda_arch=90
   - kokkos-kernels +cuda cuda_arch=90 ^kokkos +wrapper +cuda cuda_arch=90
+  - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper +cuda cuda_arch=90
   - libceed +cuda cuda_arch=90
   - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard +cuda cuda_arch=90 ^cusz +cuda cuda_arch=90
   - magma +cuda cuda_arch=90
