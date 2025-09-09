@@ -116,6 +116,7 @@ spack:
   - hypre
   - kokkos +openmp
   - kokkos-kernels +openmp
+  - kokkos-fft host_backend=fftw-openmp +tests
   - legion
   - libnrm
   - libquo
