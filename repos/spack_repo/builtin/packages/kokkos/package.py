@@ -89,11 +89,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "cuda": [False, "Whether to build CUDA backend"],
         "openmp": [False, "Whether to build OpenMP backend"],
         "threads": [False, "Whether to build the C++ threads backend"],
-        "serial": [True, "Whether to build serial backend"],
+        "serial": [False, "Whether to build serial backend"],
         "rocm": [False, "Whether to build HIP backend"],
         "sycl": [False, "Whether to build the SYCL backend"],
         "openmptarget": [False, "Whether to build the OpenMPTarget backend"],
     }
+    requires("+serial", when="~openmp ~threads", msg="Kokkos requires at least one host backend")
     conflicts(
         "".join([f"~{d}" for d in devices_variants]),
         msg="Kokkos requires at least one active backend",
