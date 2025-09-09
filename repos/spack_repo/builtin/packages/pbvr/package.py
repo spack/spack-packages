@@ -142,8 +142,8 @@ class Pbvr(MakefilePackage):
             install("Client/build/App/pbvr_client", prefix.bin)
             src = self.stage.source_path
             install_tree(
-                os.path.join(src, "Client/build/App/Shader"), os.path.join(prefix.bin, "Shader")
+                join_path(src, "Client/build/App/Shader"), join_path(prefix.bin, "Shader")
             )
             install_tree(
-                os.path.join(src, "Client/build/App/Font"), os.path.join(prefix.bin, "Font")
+                join_path(src, "Client/build/App/Font"), join_path(prefix.bin, "Font")
             )
