@@ -121,7 +121,7 @@ class Proj(CMakePackage, AutotoolsPackage):
         # in the exported CMake config
         # add that.
         # Upstream in proj as of 9.2
-        patch("proj_find_tiff_dep.patch", when="@7:9.1")
+        patch("proj_config_find_tiff_dep.patch", when="@7:9.1")
         # https://github.com/spack/spack/pull/41065
         patch("proj.cmakelists.5.0.patch", when="@5.0")
         patch("proj.cmakelists.5.1.patch", when="@5.1:5.2")
