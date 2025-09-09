@@ -28,7 +28,7 @@ class PyMumps4py(PythonPackage):
     depends_on("py-pytest", type="test")
 
     # External solver
-    depends_on("mumps")
+    depends_on("mumps+float+complex+double")
 
     def build_args(self, spec, prefix):
         # Ensure MUMPS include/lib are passed if setup.py needs them
