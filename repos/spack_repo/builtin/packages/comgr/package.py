@@ -102,6 +102,7 @@ class Comgr(CMakePackage):
         return args
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        env.prepend_path("CMAKE_MODULE_PATH", self.spec["llvm-amdgpu"].prefix.lib.cmake.clang)
         if self.spec.satisfies("@5.7: +asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
