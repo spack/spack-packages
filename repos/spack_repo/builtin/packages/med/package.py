@@ -69,15 +69,15 @@ class Med(CMakePackage):
     depends_on("python", when="+python")
     conflicts("~shared", when="+python", msg="Python bindings require shared libraries")
 
-    conflicts("@4.1.0", when="~shared", msg="Link error when static")
-
-    # C++11 requires a space between literal and identifier
-    patch("add_space.patch", when="@3.2.0")
-
     # Fix problem where CMake "could not find TARGET hdf5"
     # The patch only works with HDF5 shared library builds
     patch("med-4.1.0-hdf5-target.patch", when="@4.0.0:4.1.0")
     depends_on("hdf5+shared", when="@4.0.0:4.1.0")
+
+    patch("MAJ_400_410_champs.patch", when="@4.1.0+static", working_dir="./tools/medimport/4.0.0")
+
+    # C++11 requires a space between literal and identifier
+    patch("add_space.patch", when="@3.2.0")
 
     def patch(self):
         # resembles FindSalomeHDF5.patch as in salome-configuration
