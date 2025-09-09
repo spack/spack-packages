@@ -265,7 +265,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
                 "CC={0}".format(spec["mpi"].mpicc),
                 "CXX={0}".format(spec["mpi"].mpicxx),
                 "FC={0}".format(spec["mpi"].mpifc),
-                "SCALAPACK_LDFLAGS={0}".format(spec["scalapack"].libs.joined())
+                "SCALAPACK_LDFLAGS={0}".format(spec["scalapack"].libs.joined()),
             ]
 
         if self.spec.satisfies("+autotune"):
