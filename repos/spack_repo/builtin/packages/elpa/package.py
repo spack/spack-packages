@@ -180,16 +180,6 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             if self.spec.satisfies("@2024.05.001,2025.01.001 %aocc"):
                 # fix an issue where main library and test suite containing duplicate symbols
                 flags.append("-Wl,--allow-multiple-definition")
-        if spec.satisfies("+mpi"):  # Use spack's compiler wrapper instead of mpi's wrapper
-            if name == "cflags" or name == "cxxflags" or name == "fflags":
-                flags.append(spec["mpi"].headers.include_flags)
-            if name == "fflags":
-                flags.append(f'-I{spec["mpi"].prefix.lib}')
-            if name == "ldflags":
-                flags.append(spec["mpi"].libs.search_flags)
-                flags.append(spec["mpi"].libs.link_flags)
-                if spec["mpi"].name == "openmpi":
-                    flags.append("-lmpi_mpifh")
 
         return (flags, None, None)
 
@@ -271,7 +261,12 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         options += self.enable_or_disable("openmp")
 
         if self.spec.satisfies("+mpi"):
-            options += ["SCALAPACK_LDFLAGS={0}".format(spec["scalapack"].libs.joined())]
+            options += [
+                "CC={0}".format(spec["mpi"].mpicc),
+                "CXX={0}".format(spec["mpi"].mpicxx),
+                "FC={0}".format(spec["mpi"].mpifc),
+                "SCALAPACK_LDFLAGS={0}".format(spec["scalapack"].libs.joined())
+            ]
 
         if self.spec.satisfies("+autotune"):
             options.append("--enable-autotune-redistribute-matrix")
