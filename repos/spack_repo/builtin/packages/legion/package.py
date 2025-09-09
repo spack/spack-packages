@@ -56,6 +56,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("realm", when="@master")
     depends_on("realm+kokkos", when="@master +kokkos")
+    depends_on("realm+hdf5", when="@master +hdf5")
     depends_on("realm+hwloc", when="@master +hwloc")
     depends_on("realm+openmp", when="@master +openmp")
     depends_on("realm+cuda", when="@master +cuda")
