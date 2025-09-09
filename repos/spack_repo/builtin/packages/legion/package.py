@@ -119,6 +119,9 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     patch("hip-offload-arch.patch", when="@23.03.0 +rocm")
 
     def patch(self):
+        if self.spec.satisfies("@master"):
+            # conflicts with Realm FindGASNet.cmake
+            force_remove("cmake/FindGASNet.cmake")
         if self.spec.satisfies("@:25.06.0,stable network=gasnet conduit=ofi-slingshot11") and (
             self.spec.satisfies("^[virtuals=mpi] cray-mpich+wrappers")
             or self.spec.satisfies("^[virtuals=mpi] mpich netmod=ofi ^libfabric fabrics=cxi")
