@@ -77,6 +77,7 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     variant("debug", default=False, description="Enable library debugging mode")
+    variant("pic", default=True, description="Produce position-independent code (for shared libs)")
 
     variant("seq", default=True, description="support SEQ-mode single-threaded GASNet clients")
     variant("par", default=False, description="support PAR-mode pthreaded GASNet clients")
@@ -184,6 +185,17 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
         options += self.enable_or_disable("pshm")
         options += self.enable_or_disable("pthreads")
         options += self.enable_or_disable("mpi-compat", variant="mpi_compat")
+
+        flags = {"cflags": [], "cxxflags": [], "mpi-cflags": []}
+
+        if self.spec.satisfies("+pic"):
+            flags["cflags"].append(self.compiler.cc_pic_flag)
+            flags["mpi-cflags"].append(self.compiler.cc_pic_flag)
+            flags["cxxflags"].append(self.compiler.cxx_pic_flag)
+
+        for key, value in sorted(flags.items()):
+            if value:
+                options.append(f"--with-{key}={' '.join(value)}")
 
         if not spec.satisfies("pmi=none"):
             options.append("--enable-pmi")
