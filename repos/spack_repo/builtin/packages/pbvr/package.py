@@ -36,7 +36,7 @@ class Pbvr(MakefilePackage):
 
     maintainers("sakamoto-naohito")
 
-    license("LGPL-3.0-only")
+    license("LGPL-3.0-only AND BSD-3-Clause")
 
     version("3.5.0", sha256="264c82d9e94b6f8477952ce2f80834332dbc9047db694f7f3ba2ab07c7c92aae")
 
