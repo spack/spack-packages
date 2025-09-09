@@ -27,6 +27,7 @@ class SalomeMed(CMakePackage):
         "5.0.0",
         sha256="267e76d0c67ec51c10e3199484ec1508baa8d5ed845c628adf660529dce7a3d4",
         url="ftp://ftp.cea.fr/pub/salome/prerequisites/med-5.0.0.tar.bz2",
+        deprecated=True,
     )
     version(
         "4.1.1",
