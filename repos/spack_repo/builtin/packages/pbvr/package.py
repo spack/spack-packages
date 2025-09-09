@@ -65,10 +65,7 @@ class Pbvr(MakefilePackage):
     patch("makefile-machine-gcc-omp.patch", when="~mpi")
     patch("makefile-machine-gcc-mpi-omp.patch", when="+mpi")
 
-    def setup_build_environment(self, env):
-        compiler_name = self.spec.compiler.name
-        if compiler_name != "gcc":
-            raise InstallError(f"{self.name} is only supported with the GCC compiler.")
+    requires("%cxx=gcc")
 
     def patch(self):
         source_dir = self.stage.source_path
