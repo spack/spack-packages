@@ -85,7 +85,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
         multi=False,
     )
 
-    depends_on("gasnet", when="network=gasnet")
+    depends_on("gasnet+pic", when="network=gasnet")
 
     # configs based on https://github.com/StanfordLegion/gasnet
     depends_on("gasnet+mpi_compat+pshm conduits=smp", when="network=gasnet conduit=smp")
