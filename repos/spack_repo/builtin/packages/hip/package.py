@@ -449,17 +449,13 @@ class Hip(CMakePackage):
                 string=True,
             )
         perl = self.spec["perl"].command
-
-        if self.spec.satisfies("@5.7:"):
-            with working_dir("clr/hipamd/bin"):
-                filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
+        with working_dir("clr/hipamd/bin"):
+            filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
         if self.spec.satisfies("@5.7"):
+            numactl = self.spec["numactl"].prefix.lib
             with working_dir("hipcc/bin"):
                 filter_shebang("hipconfig")
-
-        if self.spec.satisfies("+rocm"):
-            numactl = self.spec["numactl"].prefix.lib
-            if self.spec.satisfies("@5.7"):
+            if self.spec.satisfies("+rocm"):
                 with working_dir("hipcc/src"):
                     filter_file(" -lnuma", f" -L{numactl} -lnuma", "hipBin_amd.h")
 

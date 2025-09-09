@@ -99,7 +99,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     # Below patch is to set the flag -mcode-object-version=none until
     # the below fix is available in device-libs release code.
     # https://github.com/ROCm/ROCm-Device-Libs/commit/f0356159dbdc93ea9e545f9b61a7842f9c881fdf
-    patch("patch-llvm-5.5.0.patch", when="@:5.7 +rocm-device-libs")
+    patch("patch-llvm-5.5.0.patch", when="@5.7 +rocm-device-libs")
 
     # i1 muls can sometimes happen after SCEV.
     # They resulted in ISel failures because we were missing the patterns for them.

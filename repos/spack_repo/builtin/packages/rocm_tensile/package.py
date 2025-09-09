@@ -97,7 +97,7 @@ class RocmTensile(CMakePackage):
 
     root_cmakelists_dir = "Tensile/Source"
 
-    patch("0003-require-openmp-extras-when-tensile-use-openmp.patch", when="@5.7.0:")
+    patch("0003-require-openmp-extras-when-tensile-use-openmp.patch")
     patch("0004-replace_rocm_smi.patch", when="@6.4")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
