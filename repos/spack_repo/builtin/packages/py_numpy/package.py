@@ -23,6 +23,8 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.3.4", sha256="a7d018bfedb375a8d979ac758b120ba846a7fe764911a64465fd87b8729f4a6a")
+    version("2.3.3", sha256="ddc7c39727ba62b80dfdbedf400d1c10ddfa8eefbd7ec8dcb118be8b56d31029")
     version("2.3.2", sha256="e0486a11ec30cdecb53f184d496d1c6a20786c81e55e41640270130056f8ee48")
     version("2.3.1", sha256="1ec9ae20a4226da374362cca3c62cd753faf2f951440b0e3b98e93c235441d2b")
     version("2.3.0", sha256="581f87f9e9e9db2cba2141400e160e9dd644ee248788d6f90636eeb8fd9260a6")
@@ -176,8 +178,19 @@ class PyNumpy(PythonPackage):
             when="@1.26:1.26.3",
         )
 
+    # https://github.com/spack/spack-packages/issues/1477
+    @when("@1.26 ^intel-oneapi-compilers@2025.2")
+    def patch(self):
+        filter_file(
+            ".get(compiler_id, ['-O3'])",
+            ".get(compiler_id, ['-O1'])",
+            "./numpy/core/meson.build",
+            string=True,
+        )
+
     # meson.build
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#compilers
+    conflicts("%gcc@:9.2", when="@2.3:", msg="NumPy requires GCC >= 9.3")
     conflicts("%gcc@:8.3", when="@1.26:", msg="NumPy requires GCC >= 8.4")
     conflicts("%gcc@:6.4", when="@1.23:", msg="NumPy requires GCC >= 6.5")
     conflicts("%gcc@:4.7", msg="NumPy requires GCC >= 4.8")

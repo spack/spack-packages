@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -13,14 +15,33 @@ class RocprofilerSystems(CMakePackage):
     homepage = "https://github.com/ROCm/rocprofiler-systems"
     git = "https://github.com/ROCm/rocprofiler-systems.git"
     url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.3.1.tar.gz"
+    executables = ["rocprof-sys-sample"]
+    tags = ["rocm"]
 
-    maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath", "wilephan-amd")
+    maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
-
-    version("amd-mainline", branch="amd-mainline", submodules=True, deprecated=True)
-    version("amd-staging", branch="amd-staging", submodules=True, deprecated=True)
-
+    version(
+        "7.0.2",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-7.0.2",
+        commit="8bad624afb06ea2b567e985484d1b5d604865743",
+        submodules=True,
+    )
+    version(
+        "7.0.0",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-7.0.0",
+        commit="1030d99db9934a07f1d276f6aadd0eb810b5f5f9",
+        submodules=True,
+    )
+    version(
+        "6.4.3",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-6.4.3",
+        commit="ba0bfe8cf344294347cbb854084ab5b5df1b1a43",
+        submodules=True,
+    )
     version(
         "6.4.2",
         git="https://github.com/ROCm/rocprofiler-systems",
@@ -124,7 +145,8 @@ class RocprofilerSystems(CMakePackage):
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
-    depends_on("dyninst@:12", when="~internal-dyninst")
+    depends_on("dyninst@:12", when="@6 ~internal-dyninst")
+    depends_on("dyninst@13", when="@7 ~internal-dyninst")
     depends_on(
         "boost+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
         when="+internal-dyninst",
@@ -146,11 +168,26 @@ class RocprofilerSystems(CMakePackage):
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
             depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
-        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
             depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
+
+        for ver in [
+            "6.3.0",
+            "6.3.1",
+            "6.3.2",
+            "6.3.3",
+            "6.4.0",
+            "6.4.1",
+            "6.4.2",
+            "6.4.3",
+            "7.0.0",
+            "7.0.2",
+        ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
-        for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
+        for ver in ["7.0.0", "7.0.2"]:
+            depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
     patch(
@@ -207,6 +244,8 @@ class RocprofilerSystems(CMakePackage):
             args.append(
                 self.define("libunwind_INCLUDE_DIR", self.spec["libunwind"].prefix.include)
             )
+        if spec.satisfies("@7.0:"):
+            args.append(self.define("ROCPROFSYS_BUILD_TBB", "ON"))
         return args
 
     def flag_handler(self, name, flags):
@@ -214,6 +253,16 @@ class RocprofilerSystems(CMakePackage):
             if name == "ldflags":
                 flags.append("-lintl")
         return (flags, None, None)
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"rocm: v(\d+)\.(\d+)", output)
+        if match:
+            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+        else:
+            ver = None
+        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if "+tau" in self.spec:

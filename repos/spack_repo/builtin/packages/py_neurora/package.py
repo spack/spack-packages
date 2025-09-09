@@ -15,6 +15,7 @@ class PyNeurora(PythonPackage):
 
     license("MIT")
 
+    version("1.1.6.12", sha256="cdd2708f7d8320a795d4dd23d2ea174de8c81e9568a58a9ddde7a1245e0ba5d4")
     version("1.1.6.10", sha256="cdfed753b9d2e227cd15e3215fc0297ad5df0b131ef87a849e3fcec90788c514")
     version("1.1.6.9", sha256="052d826e17d6a40171d487b188bd68863e36e41e37740da5eec33562241e36ce")
     version("1.1.6.8", sha256="84aebe82ce0e8e99b306dcab7b5e15f85269862c379f16b8161dbab64e7d1dd2")

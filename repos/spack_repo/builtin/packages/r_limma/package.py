@@ -15,6 +15,7 @@ class RLimma(RPackage):
 
     bioc = "limma"
 
+    version("3.64.3", commit="0f42428e09766efb49ab672419cdbe745872b22e")
     version("3.56.0", commit="efe857829233edb11ae317ce5d1ad4ea3073cf7f")
     version("3.54.0", commit="1d1fa843d4fe2f8c94fd843bb1e80b8384d8306e")
     version("3.52.4", commit="3226c29ad8c18aa7e6722f4a2c95ff8ac900437e")
@@ -27,7 +28,10 @@ class RLimma(RPackage):
     version("3.34.9", commit="6755278a929f942a49e2441fb002a3ed393e1139")
     version("3.32.10", commit="593edf28e21fe054d64137ae271b8a52ab05bc60")
 
+    conflicts("r@4.5.0:", when="@:3.60.4")
+
     depends_on("c", type="build")  # generated
 
     depends_on("r@2.3.0:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@3.40.6:")
+    depends_on("r-statmod", type=("build", "run"), when="@3.64.3:")

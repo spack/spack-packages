@@ -1,0 +1,193 @@
+diff --git a/src/launchSvc/msmpiLaunchSvcMc.vcxproj b/src/launchSvc/msmpiLaunchSvcMc.vcxproj
+index b9a9eba..e299044 100644
+--- a/src/launchSvc/msmpiLaunchSvcMc.vcxproj
++++ b/src/launchSvc/msmpiLaunchSvcMc.vcxproj
+@@ -16,7 +16,7 @@
+   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+   <ItemGroup>
+     <CustomBuild Include="$(SrcRoot)\launchSvc\launchSvcMsg.mc">
+-      <Command>mc.exe -um -h $(SrcRoot)\launchSvc\$(O) -r $(SrcRoot)\launchSvc\$(O) $(SrcRoot)\launchSvc\launchSvcMsg.mc</Command>
++      <Command>mc.exe -um -h "$(SrcRoot)\launchSvc\$(O)" -r "$(SrcRoot)\launchSvc\$(O)" "$(SrcRoot)\launchSvc\launchSvcMsg.mc"</Command>
+       <Outputs>$(SrcRoot)\launchSvc\$(O)\launchSvcMsg.h;$(SrcRoot)\launchSvc\$(O)\launchSvcMsg.rc</Outputs>
+    </CustomBuild>
+   </ItemGroup>
+diff --git a/src/mpi/common/mpicommon.vcxproj b/src/mpi/common/mpicommon.vcxproj
+index a3f7e70..f06f77d 100644
+--- a/src/mpi/common/mpicommon.vcxproj
++++ b/src/mpi/common/mpicommon.vcxproj
+@@ -23,7 +23,7 @@
+       <PrecompiledHeaderOutputFile>$(IntDir)\pch_hdr.src</PrecompiledHeaderOutputFile>
+       <AdditionalIncludeDirectories>
+         %(AdditionalIncludeDirectories);
+-        $(MPI_SRC_ROOT)\common\$(O);
++        "$(MPI_SRC_ROOT)\common\$(O)";
+       </AdditionalIncludeDirectories>
+     </ClCompile>
+   </ItemDefinitionGroup>
+@@ -59,7 +59,7 @@
+ 
+   <ItemDefinitionGroup>
+     <PostBuildEvent>
+-      <Command>robocopy .\ $(BinariesBuildTypeArchDirectory)\$(MPI_BIN_DESTINATION) mpitrace.man
++      <Command>robocopy .\ "$(BinariesBuildTypeArchDirectory)\$(MPI_BIN_DESTINATION)" mpitrace.man
+ set rc=%errorlevel%
+ if not %rc%==1 exit %rce% else exit 0</Command>
+     </PostBuildEvent>
+@@ -78,20 +78,20 @@ if not %rc%==1 exit %rce% else exit 0</Command>
+           Inputs="$(MPI_SRC_ROOT)\common\extracterrmsgs;$(MPI_SRC_ROOT)\common\errnames.txt"
+           Outputs="$(O)\defmsg.h">
+     <PropertyGroup>
+-      <FileToSkip Condition="'$(BuildArchitecture)'=='amd64'">$(BaseIntermediateOutputPath)i386\errtest.c</FileToSkip>
+-      <FileToSkip Condition="'$(BuildArchitecture)'=='i386'">$(BaseIntermediateOutputPath)amd64\errtest.c</FileToSkip>
++      <FileToSkip Condition="'$(BuildArchitecture)'=='amd64'">"$(BaseIntermediateOutputPath)i386\errtest.c"</FileToSkip>
++      <FileToSkip Condition="'$(BuildArchitecture)'=='i386'">"$(BaseIntermediateOutputPath)amd64\errtest.c"</FileToSkip>
+     </PropertyGroup>
+     <ItemGroup>
+-      <DirectoriesToParse Include="$(MPI_SRC_ROOT)\common"/>
+-      <DirectoriesToParse Include="$(MPI_SRC_ROOT)\msmpi"/>
+-      <DirectoriesToParse Include="$(MPI_SRC_ROOT)\pmilib"/>
+-      <DirectoriesToParse Include="$(MPI_SRC_ROOT)\mpiexec"/>
+-      <DirectoriesToParse Include="$(MPI_SRC_ROOT)\smpd"/>
+-      <DirectoriesToParse Include="$(SrcRoot)\launchSvc"/>
++      <DirectoriesToParse Include="&quot;$(MPI_SRC_ROOT)\common&quot;"/>
++      <DirectoriesToParse Include="&quot;$(MPI_SRC_ROOT)\msmpi&quot;"/>
++      <DirectoriesToParse Include="&quot;$(MPI_SRC_ROOT)\pmilib&quot;"/>
++      <DirectoriesToParse Include="&quot;$(MPI_SRC_ROOT)\mpiexec&quot;"/>
++      <DirectoriesToParse Include="&quot;$(MPI_SRC_ROOT)\smpd&quot;"/>
++      <DirectoriesToParse Include="&quot;$(SrcRoot)\launchSvc&quot;"/>
+     </ItemGroup>
+     <Exec ConsoleToMsBuild="true"
+           IgnoreExitCode="true"
+-          Command="perl $(MPI_SRC_ROOT)\common\extracterrmsgs -skip=$(FileToSkip) -outpath=$(O) -outfile=defmsg.h -testfile=errtest.c @(DirectoriesToParse,' ')"/>
++          Command="perl &quot;$(MPI_SRC_ROOT)\common\extracterrmsgs&quot; -skip=$(FileToSkip) -outpath=$(O) -outfile=defmsg.h -testfile=errtest.c @(DirectoriesToParse,' ')"/>
+   </Target>
+ 
+ </Project>
+diff --git a/src/mpi/common/traceManifest.vcxproj b/src/mpi/common/traceManifest.vcxproj
+index eb9281d..c4f6e57 100644
+--- a/src/mpi/common/traceManifest.vcxproj
++++ b/src/mpi/common/traceManifest.vcxproj
+@@ -16,7 +16,7 @@
+ 
+   <ItemGroup>
+     <CustomBuild Include="$(MPI_SRC_ROOT)\common\mpitrace.man">
+-      <Command>mc.exe -um -p Trace -P EVENT_ -h $(MPI_SRC_ROOT)\common\$(O) -r $(MPI_SRC_ROOT)\common\$(O) -z MpiTraceEvents $(MPI_SRC_ROOT)\common\mpitrace.man</Command>
++      <Command>mc.exe -um -p Trace -P EVENT_ -h "$(MPI_SRC_ROOT)\common\$(O)" -r "$(MPI_SRC_ROOT)\common\$(O)" -z MpiTraceEvents "$(MPI_SRC_ROOT)\common\mpitrace.man"</Command>
+       <Outputs>$(MPI_SRC_ROOT)\common\$(O)\MpiTraceEvents.h;$(MPI_SRC_ROOT)\common\$(O)\MpiTraceEvents.rc</Outputs>
+    </CustomBuild>
+   </ItemGroup>
+diff --git a/src/mpi/msmpi/dll/msmpi.vcxproj b/src/mpi/msmpi/dll/msmpi.vcxproj
+index 9eb7dff..884fd63 100644
+--- a/src/mpi/msmpi/dll/msmpi.vcxproj
++++ b/src/mpi/msmpi/dll/msmpi.vcxproj
+@@ -20,8 +20,8 @@
+       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+       <AdditionalIncludeDirectories>
+         %(AdditionalIncludeDirectories);
+-        $(MPI_SRC_ROOT)\msmpi\channels;
+-        $(MPI_SRC_ROOT)\msmpi\mpid;
++        "$(MPI_SRC_ROOT)\msmpi\channels";
++        "$(MPI_SRC_ROOT)\msmpi\mpid";
+         .\$(O)
+       </AdditionalIncludeDirectories>
+     </ClCompile>
+@@ -45,22 +45,22 @@
+         $(PUBLIC_SDK_LIB)\Iphlpapi.lib;
+         $(PUBLIC_SDK_LIB)\authz.lib;
+         $(PUBLIC_SDK_LIB)\ntdsapi.lib;
+-        $(ND_DIR)\ndutil.lib;
+-        $(OutDir)\..\mpichannels\mpichannels.lib;
+-        $(OutDir)\..\mpiio\mpiio.lib;
+-        $(OutDir)\..\mpicommon\mpicommon.lib;
+-        $(OutDir)\..\mpiutil\mpiutil.lib;
+-        $(OutDir)\..\pmicli\pmicli.lib;
+-        $(OutDir)\..\mpiapi\mpiapi.lib;
+-        $(OutDir)\..\mpid\mpid.lib;
+-        $(OutDir)\..\mpifort\mpifort.lib;
+-        $(OutDir)\..\pmilib\pmilib.lib;
+-        $(OutDir)\..\mpi_debugger\mpi_debugger.lib;
++        "$(ND_DIR)\ndutil.lib";
++        "$(OutDir)\..\mpichannels\mpichannels.lib";
++        "$(OutDir)\..\mpiio\mpiio.lib";
++        "$(OutDir)\..\mpicommon\mpicommon.lib";
++        "$(OutDir)\..\mpiutil\mpiutil.lib";
++        "$(OutDir)\..\pmicli\pmicli.lib";
++        "$(OutDir)\..\mpiapi\mpiapi.lib";
++        "$(OutDir)\..\mpid\mpid.lib";
++        "$(OutDir)\..\mpifort\mpifort.lib";
++        "$(OutDir)\..\pmilib\pmilib.lib";
++        "$(OutDir)\..\mpi_debugger\mpi_debugger.lib";
+         $(CRT_Libs);
+       </AdditionalDependencies>
+       <AdditionalLibraryDirectories>
+-        $(SPACK_IFORT)\lib;
+-        $(ND_DIR);
++        "$(SPACK_IFORT)\lib";
++        "$(ND_DIR)";
+       </AdditionalLibraryDirectories>
+       <ModuleDefinitionFile>.\msmpi.def</ModuleDefinitionFile>
+     </Link>
+@@ -114,7 +114,7 @@
+ 
+   <ItemDefinitionGroup>
+     <PostBuildEvent>
+-      <Command>robocopy $(OutDir) $(BinariesBuildTypeArchDirectory)\$(MPI_SDK_DESTINATION)\lib msmpi.lib
++      <Command>robocopy "$(OutDir)" "$(BinariesBuildTypeArchDirectory)\$(MPI_SDK_DESTINATION)\lib" msmpi.lib
+ set rc=%errorlevel%
+ if not %rc%==1 exit %rce% else exit 0</Command>
+     </PostBuildEvent>
+diff --git a/src/mpi/msmpi/mpid/mpid.vcxproj b/src/mpi/msmpi/mpid/mpid.vcxproj
+index de9cebf..79000ba 100644
+--- a/src/mpi/msmpi/mpid/mpid.vcxproj
++++ b/src/mpi/msmpi/mpid/mpid.vcxproj
+@@ -23,17 +23,17 @@
+       <PrecompiledHeaderOutputFile>$(IntDir)\pch_hdr.src</PrecompiledHeaderOutputFile>
+       <AdditionalIncludeDirectories>
+         %(AdditionalIncludeDirectories);
+-        $(MPI_SRC_ROOT)\msmpi\channels;
+-        $(MPI_SRC_ROOT)\msmpi\io;
+-        $(MPI_SRC_ROOT)\msmpi\mpid;
+-        $(O);
++        "$(MPI_SRC_ROOT)\msmpi\channels";
++        "$(MPI_SRC_ROOT)\msmpi\io";
++        "$(MPI_SRC_ROOT)\msmpi\mpid";
++        "$(O)";
+       </AdditionalIncludeDirectories>
+     </ClCompile>
+     <Midl>
+       <StructMemberAlignment>8</StructMemberAlignment>
+       <PreprocessorDefinitions>MIDL_PASS</PreprocessorDefinitions>
+       <DefaultCharType>unsigned</DefaultCharType>
+-      <AdditionalOptions>/ms_ext /c_ext /sstub $(MPI_SRC_ROOT)\msmpi\mpid\$(O)\dynproc_s.c /prefix all RpcCli /prefix server RpcSrv /no_stamp /no_settings_comment /lcid 1033 -sal -target NT60</AdditionalOptions>
++      <AdditionalOptions>/ms_ext /c_ext /sstub "$(MPI_SRC_ROOT)\msmpi\mpid\$(O)\dynproc_s.c" /prefix all RpcCli /prefix server RpcSrv /no_stamp /no_settings_comment /lcid 1033 -sal -target NT60</AdditionalOptions>
+       <SuppressCompilerWarnings>true</SuppressCompilerWarnings>
+       <WarningLevel></WarningLevel>
+     </Midl>
+diff --git a/src/mpi/pmilib/cli/pmicli.vcxproj b/src/mpi/pmilib/cli/pmicli.vcxproj
+index f2b5d64..58fb74b 100644
+--- a/src/mpi/pmilib/cli/pmicli.vcxproj
++++ b/src/mpi/pmilib/cli/pmicli.vcxproj
+@@ -26,8 +26,8 @@
+       <PrecompiledHeaderOutputFile>$(IntDir)\pch_hdr.src</PrecompiledHeaderOutputFile>
+       <AdditionalIncludeDirectories>
+         %(AdditionalIncludeDirectories);
+-        $(MPI_SRC_ROOT)\msmpi\include;
+-        $(MPI_SRC_ROOT)\pmilib\lib\$(O);
++        "$(MPI_SRC_ROOT)\msmpi\include";
++        "$(MPI_SRC_ROOT)\pmilib\lib\$(O)";
+         .\$(O)
+       </AdditionalIncludeDirectories>
+     </ClCompile>
+diff --git a/src/mpi/pmilib/lib/pmilib.vcxproj b/src/mpi/pmilib/lib/pmilib.vcxproj
+index eff6765..b76c612 100644
+--- a/src/mpi/pmilib/lib/pmilib.vcxproj
++++ b/src/mpi/pmilib/lib/pmilib.vcxproj
+@@ -36,7 +36,7 @@
+         $(MPI_SRC_ROOT)\common;
+       </AdditionalIncludeDirectories>
+       <DefaultCharType>unsigned</DefaultCharType>
+-      <AdditionalOptions>/prefix all RpcCli /prefix server RpcSrv /ms_ext /c_ext /no_stamp /no_settings_comment /lcid 1033 -sal -target NT60 /acf $(MPI_SRC_ROOT)\pmilib\SmpdRpc.acf /sstub $(MPI_SRC_ROOT)\pmilib\lib\$(O)\smpdrpc_s.c</AdditionalOptions>
++      <AdditionalOptions>/prefix all RpcCli /prefix server RpcSrv /ms_ext /c_ext /no_stamp /no_settings_comment /lcid 1033 -sal -target NT60 /acf "$(MPI_SRC_ROOT)\pmilib\SmpdRpc.acf" /sstub "$(MPI_SRC_ROOT)\pmilib\lib\$(O)\smpdrpc_s.c"</AdditionalOptions>
+       <SuppressCompilerWarnings>true</SuppressCompilerWarnings>
+       <WarningLevel></WarningLevel>
+     </Midl>

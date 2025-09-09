@@ -16,7 +16,7 @@ class Rocrand(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocRAND"
     git = "https://github.com/ROCm/rocRAND.git"
-    url = "https://github.com/ROCm/rocRAND/archive/rocm-6.0.2.tar.gz"
+    url = "https://github.com/ROCm/rocRAND/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
@@ -24,6 +24,9 @@ class Rocrand(CMakePackage):
 
     license("MIT")
 
+    version("7.0.2", sha256="ee0fee0ee7d3b59aafba8f9935c28c528363f941b42eea05045023c27e61938d")
+    version("7.0.0", sha256="b8539339d1538d1aae69b7b77e62eee00c8586001b996f1c8af0c7579e85a9a6")
+    version("6.4.3", sha256="6d174b679c1829e1740d8cb2a59bb43b7a34bd42e9234026860762ead90cccf9")
     version("6.4.2", sha256="43b370e7f4acb44a0eb4a403f658a3b3db2f748dbf5d9582014c20cb3ba8329c")
     version("6.4.1", sha256="690f8edc7789719876cf6119e58aa1335b4ca17b775a753dffb9a07000af9df7")
     version("6.4.0", sha256="689bc7de81741a0b3feb9f4415a55c2cf1ae58a378fbd9b1a33769caf62bbf95")
@@ -41,9 +44,6 @@ class Rocrand(CMakePackage):
     version("6.0.0", sha256="cee93231c088be524bb2cb0e6093ec47e62e61a55153486bebbc2ca5b3d49360")
     version("5.7.1", sha256="885cd905bbd23d02ba8f3f87d5c0b79bc44bd020ea9af190f3959cf5aa33d07d")
     version("5.7.0", sha256="d6053d986821e5cbc6cfec0778476efb1411ef943f11e7a8b973b1814a259dcf")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="6bf71e687ffa0fcc1b00e3567dd43da4147a82390f1b2db5e6f1f594dee6066d")
-        version("5.6.0", sha256="cc894d2f1af55e16b62c179062063946609c656043556189c656a115fd7d6f5f")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -67,8 +67,6 @@ class Rocrand(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -86,6 +84,9 @@ class Rocrand(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")

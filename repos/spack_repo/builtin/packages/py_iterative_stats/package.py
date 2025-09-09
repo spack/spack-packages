@@ -12,7 +12,7 @@ class PyIterativeStats(PythonPackage):
 
     pypi = "iterative-stats/iterative_stats-0.1.0.tar.gz"
     git = "https://github.com/IterativeStatistics/BasicIterativeStatistics.git"
-    maintainers("robcaulk", "viperML", "abhishek1297")
+    maintainers("robcaulk", "abhishek1297")
 
     license("BSD-3-Clause")
 

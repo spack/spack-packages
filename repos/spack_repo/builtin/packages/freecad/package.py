@@ -29,7 +29,7 @@ class Freecad(CMakePackage):
     depends_on("opencascade")
     depends_on("xerces-c")
     depends_on("vtk")
-    depends_on("salome-med")
+    depends_on("med")
     depends_on(
         "boost+python+filesystem+date_time+graph+iostreams+program_options+regex+serialization+system+thread"  # noqa: E501
     )

@@ -27,6 +27,8 @@ class PyMatplotlib(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "rgommers")
 
+    version("3.10.7", sha256="a06ba7e2a2ef9131c79c49e63dad355d2d878413a0376c1727c8b9335ff731c7")
+    version("3.10.6", sha256="ec01b645840dd1996df21ee37f208cd8ba57644779fa20464010638013d3203c")
     version("3.10.5", sha256="352ed6ccfb7998a00881692f38b4ca083c691d3e275b4145423704c34c909076")
     version("3.10.3", sha256="2f82d2c5bb7ae93aaaa4cd42aca65d76ce6376f83304fa3a630b569aca274df0")
     version("3.10.1", sha256="e8d2d0e3881b129268585bf4765ad3ee73a4591d77b9a18c214ac7e3a79fb2ba")
@@ -148,6 +150,8 @@ class PyMatplotlib(PythonPackage):
     depends_on("python@3.10:", when="@3.10:", type=("build", "link", "run"))
     depends_on("python@3.9:", when="@3.8:", type=("build", "link", "run"))
     depends_on("python@3.8:", when="@3.6:", type=("build", "link", "run"))
+    # Python 3.12 removed SafeConfigParser, which was used up to matplotlib 3.5.0.
+    depends_on("python@:3.11", when="@:3.4", type=("build", "link", "run"))
     depends_on("python", type=("build", "link", "run"))
     depends_on("py-contourpy@1.0.1:", when="@3.6:", type=("build", "run"))
     depends_on("py-cycler@0.10:", type=("build", "run"))
@@ -168,6 +172,7 @@ class PyMatplotlib(PythonPackage):
     depends_on("py-packaging", when="@3.5:", type=("build", "run"))
     depends_on("pil@8:", when="@3.8.1:", type=("build", "run"))
     depends_on("pil@6.2:", when="@3.3:", type=("build", "run"))
+    depends_on("py-pyparsing@3:", when="@3.10.7:", type=("build", "run"))
     depends_on("py-pyparsing@2.3.1:3.0", when="@3.7.2", type=("build", "run"))
     depends_on("py-pyparsing@2.3.1:", when="@3.7:", type=("build", "run"))
     depends_on("py-pyparsing@2.2.1:", when="@3.4:", type=("build", "run"))

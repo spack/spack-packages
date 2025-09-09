@@ -20,7 +20,9 @@ class Rocjpeg(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
-
+    version("7.0.2", sha256="fe1813e333dfb958d74693301ffb70e1baa2601ffd8b8d644f4026e56048164a")
+    version("7.0.0", sha256="00dfac45d1776f5e79704fc56bae1b5017fc19326f69e363a49285ebf72bff2e")
+    version("6.4.3", sha256="28c95c30603d6a0e39632cd31e8adcbe80786f5d77e15bb88cfef341eaf4eb94")
     version("6.4.2", sha256="543d0a25b7da44885c99845041a54f391f484e0f1e051973c5993f08185d82fa")
     version("6.4.1", sha256="23eed12646409d8f931f6bbdacf68df246c762877a3c0ef723568f89f0f5b40f")
     version("6.4.0", sha256="5488f5ab9c475566716d99ad32fb4c20686ac1bcc00c9242221abdbde2b94ffe")
@@ -31,7 +33,18 @@ class Rocjpeg(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+    ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -58,5 +71,11 @@ class Rocjpeg(CMakePackage):
                     "CMAKE_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
+        if self.spec.satisfies("@6.4"):
             args.append(self.define("AMDGPU_DRM_INCLUDE_DIRS", self.spec["libdrm"].prefix.include))
+        if self.spec.satisfies("@7.0:"):
+            args.append(
+                self.define("LIBDRM_AMDGPU_INCLUDE_DIR", self.spec["libdrm"].prefix.include)
+            )
+            args.append(self.define("LIBDRM_AMDGPU_LIBRARY", self.spec["libdrm"].prefix.lib))
         return args

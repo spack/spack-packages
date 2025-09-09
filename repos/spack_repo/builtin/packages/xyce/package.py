@@ -35,34 +35,10 @@ class Xyce(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("master", branch="master")
+    version("7.10.0", sha256="b5a883196f0a2b3972fd13c541fecf04735bfabc7d124d7c7e17de707204f4e2")
     version("7.9.0", sha256="36ea88736b5e2012f28755588c857c88ed5dab5f4eccd3f59c6f42e6320fee4e")
     version("7.8.0", sha256="f763b7d5ad6defd25d2c7e5cc95155958cd12510a5e22a179daab459b21fa713")
     version("7.7.0", sha256="1b95450e1905c3af3c16b42c41d5ef1f8ab0e640f48086d0cb4d52961a90a175")
-    version(
-        "7.6.0",
-        sha256="fc25557e2edc82adbe0436a15fca2929a2f9ab08ddf91f1a47aab5e8b27ec88c",
-        deprecated=True,
-    )
-    version(
-        "7.5.0",
-        sha256="854d7d5e19e0ee2138d1f20f10f8f27f2bebb94ec81c157040955cff7250dacd",
-        deprecated=True,
-    )
-    version(
-        "7.4.0",
-        sha256="2d6bc1b7377834b2e0bf50131e96728c5be83dbb3548e765bb48911067c87c91",
-        deprecated=True,
-    )
-    version(
-        "7.3.0",
-        sha256="43869a70967f573ff6f00451db3f4642684834bdad1fd3926380e3789016b446",
-        deprecated=True,
-    )
-    version(
-        "7.2.0",
-        sha256="cf49705278ecda46373784bb24925cb97f9017b6adff49e4416de146bdd6a4b5",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -132,8 +108,6 @@ class Xyce(CMakePackage):
 
     # tested versions of Trilinos against older versions of Xyce
     depends_on("trilinos@13.5.0:14.4", when="@7.6.0:7.7.0")
-    depends_on("trilinos@12.12.1:13.4", when="@7.5")
-    depends_on("trilinos@12.12.1", when="@:7.4")
     requires("^trilinos gotype=all cxxstd=11", when="^trilinos@:12.15")
     # pymi requires Kokkos/KokkosKernels >= 3.3, Trilinos 13.2 onward
     depends_on("trilinos@13.2.0:", when="+pymi")
@@ -166,27 +140,6 @@ class Xyce(CMakePackage):
         conflicts("^cray-libsci", msg="cray-libsci not supported with +pymi_static_tpls")
         # netlib-xblas+plain_blas is always static
 
-    # fix MPI issue
-    patch(
-        "https://github.com/xyce/xyce/commit/2f95783637a5171a7f65f5d18c24d9a580a7f39e.patch?full_index=1",
-        sha256="1aeaac78830fbc9ae089a50ef61c6cbd89d29ead54ce7fdca258e194fa05b1a3",
-        when="@:7.6",
-    )
-
-    # fix RPATH issue on mac
-    patch(
-        "https://github.com/xyce/xyce/commit/40dbc0e0341a5cf9a7fa82a87313869dc284fdd9.patch?full_index=1",
-        sha256="3c32faeeea0bb29be44ec20e414670c9fd375f9ed921a7f6e9fd3de02c28859d",
-        when="@7.3:7.5 +shared",
-    )
-
-    # fix parameter merging in pymi
-    patch(
-        "https://github.com/xyce/xyce/commit/fdf457fce1b1511b8a29d134d38e515fb7149246.patch?full_index=1",
-        sha256="077f91d2ff0649b3f7e83c224f71a030521c6fb5a84b29acd772d5657cdb6c23",
-        when="@7.4:7.6 +pymi",
-    )
-
     # fix missing type
     patch(
         "https://github.com/Xyce/Xyce/commit/47d9dd04ec55cd8722cb3704a88beb228dfcf363.patch?full_index=1",
@@ -203,7 +156,6 @@ class Xyce(CMakePackage):
     patch(
         "454-cmake-xyce.patch",
         sha256="4d47cd1f10607205e64910ac124c6dd329f1ecbf861416e9da24a1736f2149ff",
-        when="@7.6:",
     )
 
     def cmake_args(self):

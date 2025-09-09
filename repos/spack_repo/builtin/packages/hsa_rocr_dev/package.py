@@ -24,6 +24,9 @@ class HsaRocrDev(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhsa-runtime64"]
 
+    version("7.0.2", sha256="9c2020f7a42d60fe9775865ab58464078007926a3b01f1ca8128557c89e7a566")
+    version("7.0.0", sha256="9ea2cbcf343f643ede6e16d82fbd0303771e1978759b2e546d0efc0df3263e4c")
+    version("6.4.3", sha256="3b23bed04cbed72304d31d69901eb76afa2099c7ac37f055348dfcda2d25e41a")
     version("6.4.2", sha256="8ad5dbf7cb0f728b8e515f46a41db24ed3b99ca894ccdd9f4d9bac969e9e35bb")
     version("6.4.1", sha256="f72d100a46a2dd9f4c870cef156604777f1bdb1841df039d14bf37b19814b9da")
     version("6.4.0", sha256="ff740e8c8f2229c6dc47577363f707b1a44ea4254f8ad74f8f0a669998829535")
@@ -41,9 +44,6 @@ class HsaRocrDev(CMakePackage):
     version("6.0.0", sha256="99e8fa1af52d0bf382f28468e1a345af1ff3452c35914a6a7b5eeaf69fc568db")
     version("5.7.1", sha256="655e9bfef4b0b6ad3f9b89c934dc0a8377273bb0bccbda6c399ac5d5d2c1c04c")
     version("5.7.0", sha256="2c56ec5c78a36f2b847afd4632cb25dbf6ecc58661eb2ae038c2552342e6ce23")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="4de9a57c2092edf9398d671c8a2c60626eb7daf358caf710da70d9c105490221")
-        version("5.6.0", sha256="30875d440df9d8481ffb24d87755eae20a0efc1114849a72619ea954f1e9206c")
 
     variant("shared", default=True, description="Build shared or static library")
     variant("image", default=True, description="build with or without image support")
@@ -64,8 +64,6 @@ class HsaRocrDev(CMakePackage):
     depends_on("libdrm", when="@6.3:")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -80,8 +78,6 @@ class HsaRocrDev(CMakePackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -99,14 +95,26 @@ class HsaRocrDev(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+    ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
-
-    patch("0002-Remove-explicit-RPATH-again.patch", when="@:5.6")
 
     @property
     def root_cmakelists_dir(self):

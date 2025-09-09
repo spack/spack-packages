@@ -13,13 +13,15 @@ class Rocprim(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocPRIM"
     git = "https://github.com/ROCm/rocPRIM.git"
-    url = "https://github.com/ROCm/rocPRIM/archive/rocm-6.1.0.tar.gz"
+    url = "https://github.com/ROCm/rocPRIM/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
-
+    version("7.0.2", sha256="bde28c7d08b46ba46d9ab13496d0d63353e4eae0e7e884167c10bccc9ebcb933")
+    version("7.0.0", sha256="e4cbdeae91e95e1fb7388c39a8686ec8015599f579190538e6ada8b1dec244c2")
+    version("6.4.3", sha256="b66feed30fe53aa8f2f8902604394c72f156b6517f8e5174d5b9d0b3dfcbb3c1")
     version("6.4.2", sha256="c228a7b434f7b9cb70204e43326a07bf31f4dacb15ae5e34ea1cfd839d0d459b")
     version("6.4.1", sha256="ff84b839bbe07fd2c97771c1b864dac641bfa654a652e75b0e7fed5e3ec5bb7c")
     version("6.4.0", sha256="c35c568b83f8894fc3b9b722343b0ea75c3bd961be24075fb3527d5230788e26")
@@ -37,9 +39,6 @@ class Rocprim(CMakePackage):
     version("6.0.0", sha256="51f26c9f891a64c8db8df51d75d86d404d682092fd9d243e966ac6b2a6de381a")
     version("5.7.1", sha256="15d820a0f61aed60efbba88b6efe6942878b02d912f523f9cf8f33a4583d6cd7")
     version("5.7.0", sha256="a1bf94bbad13a0410b49476771270606d8a9d257188ee3ec3a37eee80540fe9b")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="e9ec1b0039c07cf3096653a04224fe5fe755afc6ba000f6838b3a8bc84df27de")
-        version("5.6.0", sha256="360d6ece3c4a3c289dd88043432026fb989e982ae4d05230d8cdc858bcd50466")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -62,8 +61,6 @@ class Rocprim(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -81,6 +78,9 @@ class Rocprim(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -112,7 +112,7 @@ class Rocprim(CMakePackage):
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
-        if self.spec.satisfies("@5.6:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

@@ -13,11 +13,14 @@ class Rocminfo(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocminfo"
     git = "https://github.com/ROCm/rocminfo.git"
-    url = "https://github.com/ROCm/rocminfo/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rocminfo/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "haampie")
 
+    version("7.0.2", sha256="06098e7fa92c618ecd042dca3c980f270617f2085b93d1465a4b7e7cc4d12661")
+    version("7.0.0", sha256="fdab0c04941a64f585605b05d4e520fb2261d10175227cc6e9f934e868462eea")
+    version("6.4.3", sha256="0aa040963daaa2b5ebbec818a2d53c83612912686336160c223fb664dc0ca92b")
     version("6.4.2", sha256="b559f7e22086db952cec098d5512c77ae844f955a16d2cbbbd088fb3844c8787")
     version("6.4.1", sha256="eabbe4bfb29152900bbde812c6fffd5555b45842259242d85f29e449c00f3249")
     version("6.4.0", sha256="060184e70755cb267017553ec37cc5b36af2c94e6b0643cad4b9fed270199a79")
@@ -35,9 +38,6 @@ class Rocminfo(CMakePackage):
     version("6.0.0", sha256="bc29f1798644b6dea73895353dffada9db7366d0058274e587ebd3291a4d3844")
     version("5.7.1", sha256="642dc2ec4254b3c30c43064e6690861486db820b25f4906ec78bdb47e68dcd0b")
     version("5.7.0", sha256="a5a3c19513bf26f17f163a03ba5288c5c761619ef55f0cb9e15472771748b93e")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="780b186ac7410a503eca1060f4bbc35db1b7b4d1d714d15c7534cd26d8af7b54")
-        version("5.6.0", sha256="87d98a736e4f7510d1475d35717842068d826096a0af7c15a395bcf9d36d7fa0")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -46,8 +46,6 @@ class Rocminfo(CMakePackage):
     extends("python@3:")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -62,8 +60,6 @@ class Rocminfo(CMakePackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -81,6 +77,9 @@ class Rocminfo(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

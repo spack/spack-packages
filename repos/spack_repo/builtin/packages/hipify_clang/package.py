@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -13,13 +15,16 @@ class HipifyClang(CMakePackage):
 
     homepage = "https://github.com/ROCm/HIPIFY"
     git = "https://github.com/ROCm/HIPIFY.git"
-    url = "https://github.com/ROCm/HIPIFY/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/HIPIFY/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["hipify-perl"]
 
     license("MIT")
-
+    version("7.0.2", sha256="d6e78b025c2cb36f9470d1ec572adc8abc7f2c79bb9a5e21cf46fabd305c4b9c")
+    version("7.0.0", sha256="285c23572087efa55196d65c94714541831090e20427e8281dd44771e6faf1f5")
+    version("6.4.3", sha256="00156b62bfe3e8c848fb7e4573e55253ec0c86e663a226e794ff314934060182")
     version("6.4.2", sha256="b20623789fcdd21d3fb9d935b8c4c51c12f9b3e444e7e02f29e2869899db2531")
     version("6.4.1", sha256="f22595edb0501bc29aa62263a65333748ebb5a50db80179f6c8e5141697a22ef")
     version("6.4.0", sha256="874e3ee9801f795aaae30d6ea86e5edc991d5f71a5dee0a8e8eb7ce6379a51eb")
@@ -37,26 +42,21 @@ class HipifyClang(CMakePackage):
     version("6.0.0", sha256="91bed2b72a6684a04e078e50b12b36b93f64ff96523283f4e5d9a33c11e6b967")
     version("5.7.1", sha256="43121e62233dab010ab686d6805bc2d3163f0dc5e89cc503d50c4bcd59eeb394")
     version("5.7.0", sha256="10e4386727e102fba166f012147120a6ec776e8d95fbcac3af93e243205d80a6")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="ec3a4f276556f9fd924ea3c89be11b6c6ddf999cdd4387f669e38e41ee0042e8")
-        version("5.6.0", sha256="a2572037a7d3bd0813bd6819a5e6c0e911678db5fd3ab15a65370601df91891b")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
     # the patch was added to install the targets in the correct directory structure
     # this will fix the issue https://github.com/spack/spack/issues/30711
 
-    patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@5.6:6.0")
+    patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@:6.0")
     patch("0003-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@6.1")
-    patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:")
+    patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:6")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -74,9 +74,18 @@ class HipifyClang(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"HIP version (\S+)", output)
+        return match.group(1) if match else "None"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # The installer puts the binaries directly into the prefix
