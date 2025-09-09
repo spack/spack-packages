@@ -61,7 +61,7 @@ class CompilerWrapper(Package, NMakePackage):
 
     with when("@develop platform=windows"):
         patch("quoting.patch")
-
+        patch("long_name.patch")
     # available in 0.1.1
     with when("@0.1.0 platform=windows"):
         patch("fixup11.patch")
