@@ -17,7 +17,7 @@ class SalomeConfiguration(Package):
     maintainers("franciskloss")
 
     homepage = "https://www.salome-platform.org"
-    git = "https://git.salome-platform.org/gitpub/tools/configuration.git"
+    git = "https://github.com/SalomePlatform/configuration.git"
 
     version("9.13.0", tag="V9_13_0", commit="1c9b00436fc0e8264742460ebc102ae7d1970e97")
     version("9.12.0", tag="V9_12_0", commit="61ed79521f31363ba4aeedcd59812a4838c076aa")

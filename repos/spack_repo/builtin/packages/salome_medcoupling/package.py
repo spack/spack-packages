@@ -17,7 +17,7 @@ class SalomeMedcoupling(CMakePackage):
     maintainers("franciskloss")
 
     homepage = "https://docs.salome-platform.org/latest/dev/MEDCoupling/developer/index.html"
-    git = "https://git.salome-platform.org/gitpub/tools/medcoupling.git"
+    git = "https://github.com/SalomePlatform/medcoupling.git"
 
     license("LGPL-2.1-or-later")
 
