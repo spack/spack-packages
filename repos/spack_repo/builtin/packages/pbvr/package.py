@@ -129,7 +129,8 @@ class Pbvr(MakefilePackage):
                     make()
 
             # Build Sevrer
-            make("-C", "CS_server")
+            with working_dir(join_path(self.stage.source_path, "CS_server")):
+                make()
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
