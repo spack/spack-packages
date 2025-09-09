@@ -79,6 +79,16 @@ class RdmaCore(CMakePackage):
 
     patch("libdrm.patch", when="@34:52")
 
+    def patch(self):
+        if self.spec.satisfies("+pyverbs"):
+            # avoid exceeding shebang length limit during build (in particular in CI)
+            filter_file(
+                r"#!${PYTHON_EXECUTABLE}",
+                "#!/usr/bin/env python",
+                "buildlib/Findcython.cmake",
+                string=True,
+            )
+
     variant(
         "static",
         default=True,
