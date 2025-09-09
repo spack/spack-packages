@@ -41,7 +41,7 @@ class Amrvis(MakefilePackage):
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", type="build", when="+profiling")
 
     depends_on("gmake", type="build")
     depends_on("mpi", when="+mpi")
