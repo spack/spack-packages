@@ -61,18 +61,18 @@ class SalomeMedcoupling(CMakePackage):
         depends_on(f"salome-configuration@{_ver}", when=f"@{_ver}")
 
     for _mpi_variant in ("~mpi", "+mpi"):
-        for _static_variant in ("~static", "+static"):
+        for _static_variant, _shared_variant in (("~static", "+shared"), ("+static", "~shared")):
             for _int64_variant in ("~int64", "+int64"):
                 depends_on(
-                    f"med@4.1.1{_mpi_variant}{_static_variant}{_int64_variant}",
+                    f"med@4.1.1{_mpi_variant}{_shared_variant}{_int64_variant}",
                     when=f"@9.11.0:{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
-                    f"med@4.1.0{_mpi_variant}{_static_variant}{_int64_variant}",
+                    f"med@4.1.0{_mpi_variant}{_shared_variant}{_int64_variant}",
                     when=f"@9.5.0:9.10.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
-                    f"med@4.0.0{_mpi_variant}{_static_variant}{_int64_variant}",
+                    f"med@4.0.0{_mpi_variant}{_shared_variant}{_int64_variant}",
                     when=f"@9.3.0:9.4.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
 
