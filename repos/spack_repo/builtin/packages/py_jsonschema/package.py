@@ -55,7 +55,9 @@ class PyJsonschema(PythonPackage):
     depends_on("py-rpds-py@0.7.1:", when="@4.18:", type=("build", "run"))
 
     # Historical dependencies
-    depends_on("py-importlib-resources@1.4:", when="@4.2.1:4.23 ^python@:3.8", type=("build", "run"))
+    depends_on(
+        "py-importlib-resources@1.4:", when="@4.2.1:4.23 ^python@:3.8", type=("build", "run")
+    )
     depends_on("py-importlib-resources", when="@4.2.0 ^python@:3.8", type=("build", "run"))
     depends_on("py-pkgutil-resolve-name@1.3.10:", when="@4.10.0:4.23 ^python@:3.8")
     depends_on("py-setuptools@40.6.0:", when="@4:4.4", type="build")
