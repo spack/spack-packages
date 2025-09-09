@@ -12,7 +12,7 @@ from spack.package import *
 
 class SalomeMedcoupling(CMakePackage):
     """salome-medcoupling is a part of SALOME platform to manipulate meshes and
-    fields in memory, and use salome-med format for files."""
+    fields in memory, and uses MED format for files."""
 
     maintainers("franciskloss")
 
@@ -24,14 +24,14 @@ class SalomeMedcoupling(CMakePackage):
     version("9.13.0", tag="V9_13_0", commit="8bea530c92cd907ae859ef11fd95b2db54b2894a")
     version("9.12.0", tag="V9_12_0", commit="28e485bde1c26dc835ec7acf449b1d519997ddce")
     version("9.11.0", tag="V9_11_0", commit="1b5fb5650409b0ad3a61da3215496f2adf2dae02")
-    version("9.10.0", tag="V9_10_0", commit="fe2e38d301902c626f644907e00e499552bb2fa5")
-    version("9.9.0", tag="V9_9_0", commit="5b2a9cc1cc18fffd5674a589aacf368008983b45")
-    version("9.8.0", tag="V9_8_0", commit="8a82259c9a9228c54efeddd52d4afe6c0e397c30")
-    version("9.7.0", tag="V9_7_0", commit="773434a7f2a5cbacc2f50e93ea6d6a48a157acd9")
-    version("9.6.0", tag="V9_6_0", commit="2c14a65b40252770b3503945405f5bdb2f29f8e2")
-    version("9.5.0", tag="V9_5_0", commit="dd75474d950baf8ff862b03cb1685f2a2d562846")
-    version("9.4.0", tag="V9_4_0", commit="984fe46c4076f08f42ef43e290e3cd1aea5a8182")
-    version("9.3.0", tag="V9_3_0", commit="32521cd6e5c113de5db7953a80149e5ab492120a")
+    version("9.10.0", tag="V9_10_0", commit="fe2e38d301902c626f644907e00e499552bb2fa5", deprecated=True)
+    version("9.9.0", tag="V9_9_0", commit="5b2a9cc1cc18fffd5674a589aacf368008983b45", deprecated=True)
+    version("9.8.0", tag="V9_8_0", commit="8a82259c9a9228c54efeddd52d4afe6c0e397c30", deprecated=True)
+    version("9.7.0", tag="V9_7_0", commit="773434a7f2a5cbacc2f50e93ea6d6a48a157acd9", deprecated=True)
+    version("9.6.0", tag="V9_6_0", commit="2c14a65b40252770b3503945405f5bdb2f29f8e2", deprecated=True)
+    version("9.5.0", tag="V9_5_0", commit="dd75474d950baf8ff862b03cb1685f2a2d562846", deprecated=True)
+    version("9.4.0", tag="V9_4_0", commit="984fe46c4076f08f42ef43e290e3cd1aea5a8182", deprecated=True)
+    version("9.3.0", tag="V9_3_0", commit="32521cd6e5c113de5db7953a80149e5ab492120a", deprecated=True)
 
     variant("static", default=False, description="Enable static library build")
     variant("mpi", default=False, description="Enable MPI")
@@ -64,15 +64,15 @@ class SalomeMedcoupling(CMakePackage):
         for _static_variant in ("~static", "+static"):
             for _int64_variant in ("~int64", "+int64"):
                 depends_on(
-                    f"salome-med@4.1.1{_mpi_variant}{_static_variant}{_int64_variant}",
+                    f"med@4.1.1{_mpi_variant}{_static_variant}{_int64_variant}",
                     when=f"@9.11.0:{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
-                    f"salome-med@4.1.0{_mpi_variant}{_static_variant}{_int64_variant}",
+                    f"med@4.1.0{_mpi_variant}{_static_variant}{_int64_variant}",
                     when=f"@9.5.0:9.10.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
-                    f"salome-med@4.0.0{_mpi_variant}{_static_variant}{_int64_variant}",
+                    f"med@4.0.0{_mpi_variant}{_static_variant}{_int64_variant}",
                     when=f"@9.3.0:9.4.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
 
