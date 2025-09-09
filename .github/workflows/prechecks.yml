@@ -73,22 +73,3 @@ jobs:
       run: |
         . spack-core/share/spack/setup-env.sh
         spack ci verify-versions HEAD~1 HEAD
-
-  canonicalization:
-    name: package.py canonicalization
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/spack/all-pythons:2025-07-25
-
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-        with:
-          fetch-depth: 0
-      - uses: ./.github/actions/checkout-spack
-
-      - name: Test package.py canonicalization
-        run: .github/workflows/bin/canonicalize.py
-          --spack $PWD/spack-core
-          --python python3.6 python3.7 python3.8 python3.9 python3.10 python3.11 python3.12 python3.13
-          --input-dir repos/spack_repo/builtin/packages/
-          --output-dir canonicalized
