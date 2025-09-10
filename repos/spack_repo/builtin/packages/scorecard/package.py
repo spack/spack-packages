@@ -13,7 +13,7 @@ class Scorecard(GoPackage):
     homepage = "https://scorecard.dev/"
     url = "https://github.com/ossf/scorecard/archive/refs/tags/v5.2.1.tar.gz"
 
-    maintainers("alecbcs")
+    maintainers("alecbcs", "tgamblin")
 
     license("Apache-2.0", checked_by="alecbcs")
 
