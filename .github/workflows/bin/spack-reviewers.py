@@ -4,9 +4,10 @@
 
 import os
 import re
-import subprocess
 
 import requests
+
+import spack.repo
 
 IS_PACKAGE_CHANGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/.*$")
 
@@ -33,10 +34,8 @@ def main():
             package = match.group(1)
 
             # add maintainers from packages here
-            result = subprocess.run(
-                ["spack", "maintainers", package], capture_output=True, text=True, check=False
-            )
-            maintainers.update(result.stdout.split())
+            pkg_maintainers = spack.repo.PATH.get_pkg_class(package).maintainers
+            maintainers.update(pkg_maintainers)
 
     author = pull_request["user"]["login"]
     reviewers = (maintainers | existing_reviewers) - {author}
