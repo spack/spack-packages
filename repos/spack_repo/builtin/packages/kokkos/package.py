@@ -217,7 +217,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     }
 
     conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
-    
+
     spack_micro_arch_map = {
         "thunderx2": "THUNDERX2",
         "zen": "ZEN",
