@@ -54,6 +54,8 @@ class Rdkit(CMakePackage):
 
     variant("freetype", default=True, description="Build freetype support")
 
+    depends_on("python@:3.11", when="@:2022_09_5 +python")
+
     with when("@2022_09_5:"):
         variant(
             "python",
@@ -82,7 +84,7 @@ class Rdkit(CMakePackage):
 
         conflicts("+xyz2mol", when="~yaehmop", msg="XY2MOL requires YAeHMOP")
 
-    depends_on("boost@1.53.0: +python +serialization +iostreams +system")
+    depends_on("boost@1.53.0: +python +serialization +iostreams +system +conversion")
     depends_on("sqlite")
     depends_on("freetype", when="@2020_09_1: +freetype")
 
