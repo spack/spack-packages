@@ -17,23 +17,27 @@ class Kenlm(CMakePackage):
 
     variant("python", default=True, description="Build Python bindings")
 
-    extends("python", when="+python")
-
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.10:", type="build")
     depends_on("boost@1.41.0: +program_options +thread +system +test", type="build")
     depends_on("eigen@3.1.0:", type="build")
 
-    def cmake_args(self):
-        args = [self.define("BUILD_SHARED_LIBS", False), self.define("KENLM_MAX_ORDER", 6)]
 
-        return args
+    extends("python", when="+python")
+    # Python 3.13 breaks the build
+    # https://github.com/kpu/kenlm/pull/468
+    # https://github.com/kpu/kenlm/pull/473
+    depends_on("python@:3.12", when="+python", type=("build", "run"))
+    depends_on("py-cython@0.29.35:", type="build", when="+python")
+
+    def cmake_args(self):
+        return [
+            self.define("BUILD_SHARED_LIBS", False),
+            self.define("KENLM_MAX_ORDER", 6),
+            self.define_from_variant("ENABLE_PYTHON", "python")
+        ]
 
     def setup_build_environment(self, env):
         env.set("CXXFLAGS", "-fPIC")
-
-    def install(self, spec, prefix):
-        # Kenlm lacks an install in its CMakeList
-        install_tree(join_path(self.build_directory, "bin"), prefix.bin)
