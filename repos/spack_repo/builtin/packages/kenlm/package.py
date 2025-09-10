@@ -24,7 +24,6 @@ class Kenlm(CMakePackage):
     depends_on("boost@1.41.0: +program_options +thread +system +test", type="build")
     depends_on("eigen@3.1.0:", type="build")
 
-
     extends("python", when="+python")
     # Python 3.13 breaks the build
     # https://github.com/kpu/kenlm/pull/468
@@ -36,7 +35,7 @@ class Kenlm(CMakePackage):
         return [
             self.define("BUILD_SHARED_LIBS", False),
             self.define("KENLM_MAX_ORDER", 6),
-            self.define_from_variant("ENABLE_PYTHON", "python")
+            self.define_from_variant("ENABLE_PYTHON", "python"),
         ]
 
     def setup_build_environment(self, env):
