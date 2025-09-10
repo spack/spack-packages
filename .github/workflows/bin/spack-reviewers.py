@@ -4,9 +4,10 @@
 
 import os
 import re
-import subprocess
 
 import requests
+
+import spack.repo
 
 IS_PACKAGE_CHANGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/.*$")
 
@@ -23,6 +24,10 @@ def main():
     base_url = f"https://api.github.com/repos/{repository}/pulls/{pr_number}"
     pull_request = requests.get(base_url, headers=headers).json()
 
+    if pull_request["draft"]:
+        print(f"[PR #{pr_number}]: skipping draft pull request")
+        return
+
     pull_request_files = requests.get(f"{base_url}/files", headers=headers)
 
     existing_reviewers = {reviewer["login"] for reviewer in pull_request["requested_reviewers"]}
@@ -33,10 +38,11 @@ def main():
             package = match.group(1)
 
             # add maintainers from packages here
-            result = subprocess.run(
-                ["spack", "maintainers", package], capture_output=True, text=True, check=False
-            )
-            maintainers.update(result.stdout.split())
+            try:
+                pkg_maintainers = spack.repo.PATH.get_pkg_class(package).maintainers
+                maintainers.update(pkg_maintainers)
+            except spack.repo.UnknownPackageError:
+                pass
 
     author = pull_request["user"]["login"]
     reviewers = (maintainers | existing_reviewers) - {author}

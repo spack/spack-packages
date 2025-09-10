@@ -55,4 +55,7 @@ class RGtools(RPackage):
     version("3.8.1", sha256="051484459bd8ad1b03425b8843d24f6828fea18f7357cfa1c192198cc3f4ba38")
     version("3.5.0", sha256="86b6a51a92ddb3c78095e0c5dc20414c67f6e28f915bf0ee11406adad3e476f6")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     depends_on("r@2.10:", type=("build", "run"))
