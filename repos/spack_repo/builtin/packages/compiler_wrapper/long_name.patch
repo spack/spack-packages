@@ -78,7 +78,7 @@ index 9458d17..26d940d 100644
              CoffReaderWriter coff_reader(report_args.at("coff"));
              CoffParser coff(&coff_reader);
 diff --git a/src/utils.cxx b/src/utils.cxx
-index a22dcd5..2ed3bdb 100644
+index a22dcd5..5258caa 100644
 --- a/src/utils.cxx
 +++ b/src/utils.cxx
 @@ -11,6 +11,7 @@
@@ -134,7 +134,7 @@ index a22dcd5..2ed3bdb 100644
      return stripped_drive + path_remainder;
  }
  
-@@ -545,6 +552,33 @@ std::string mangle_name(const std::string& name) {
+@@ -545,6 +552,36 @@ std::string mangle_name(const std::string& name) {
          // relative paths, assume they're relative to the CWD of the linker (as they have to be)
          abs_out = join({GetCWD(), name}, "\\");
      }
@@ -142,7 +142,10 @@ index a22dcd5..2ed3bdb 100644
 +    if (abs_out.length() > MAX_NAME_LEN) {
 +        // Name is too long we need to attempt to shorten
 +        // strip prefix
-+        std::string const pre = getenv("SPACK_STAGE_DIR");
++        std::string pre = GetSpackEnv("SPACK_STAGE_DIR");
++        if (pre.empty()) {
++            pre = GetCWD();
++        }
 +        std::string const rel = R"(\\?\)" + lstrip(abs_out, pre);
 +        // Get SFN length so we can create buffer
 +        DWORD const sfn_size = GetShortPathNameA(rel.c_str(), nullptr, 0);
@@ -168,7 +171,7 @@ index a22dcd5..2ed3bdb 100644
      char* chr_abs_out = new char[abs_out.length() + 1];
      strcpy(chr_abs_out, abs_out.c_str());
      replace_path_characters(chr_abs_out, abs_out.length());
-@@ -579,7 +613,7 @@ bool SpackInstalledLib(const std::string& lib) {
+@@ -579,7 +616,7 @@ bool SpackInstalledLib(const std::string& lib) {
              "unset");
          return false;
      }
@@ -177,7 +180,7 @@ index a22dcd5..2ed3bdb 100644
      startswith(stripped_lib, prefix);
  }
  
-@@ -732,3 +766,10 @@ char* findstr(char* search_str, const char* substr, size_t size) {
+@@ -732,3 +769,10 @@ char* findstr(char* search_str, const char* substr, size_t size) {
      }
      return nullptr;
  }

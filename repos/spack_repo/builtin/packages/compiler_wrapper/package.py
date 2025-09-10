@@ -61,7 +61,7 @@ class CompilerWrapper(Package, NMakePackage):
 
     with when("@develop platform=windows"):
         # patch("quoting.patch")
-        patch("long_name.patch")
+        patch("long_path_support.patch")
     # available in 0.1.1
     with when("@0.1.0 platform=windows"):
         patch("fixup11.patch")
@@ -213,7 +213,7 @@ class EnvironmentSetup:
         for item in env_paths:
             env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)
 
-        env.set("SPACK_STAGE_DIR", self.pkg.stage.source_path)
+        env.set("SPACK_CONTEXT_ROOT", dependent_spec.package.stage.source_path)
 
 
 class GenericBuilder(GenericBuilder, EnvironmentSetup):
