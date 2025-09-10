@@ -101,8 +101,6 @@ class HsaRocrDev(CMakePackage):
     for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
-    patch("0002-Remove-explicit-RPATH-again.patch", when="@:5.6")
-
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@6.3:"):

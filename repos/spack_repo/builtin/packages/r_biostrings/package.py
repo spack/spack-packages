@@ -32,7 +32,7 @@ class RBiostrings(RPackage):
     depends_on("r-iranges@2.31.2:", type=("build", "run"), when="@2.66.0:")
     depends_on("r-xvector@0.29.2:", type=("build", "run"))
     depends_on("r-xvector@0.37.1:", type=("build", "run"), when="@2.66.0:")
-    depends_on("r-genomeinfodb", type=("build", "run"), when="@2.62.0:")
-    depends_on("r-crayon", type=("build", "run"), when="@2.58.0:")
+    depends_on("r-genomeinfodb", type=("build", "run"))
+    depends_on("r-crayon", type=("build", "run"))
 
     conflicts("r@4.5.0:", when="@:2.75")
