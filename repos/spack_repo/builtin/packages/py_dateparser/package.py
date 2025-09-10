@@ -20,12 +20,15 @@ class PyDateparser(PythonPackage):
 
     variant("calendars", default=True, description="Add calendar libraries")
 
-    depends_on("python@2.7:2.8,3.5:", type=("build", "run"))
+    depends_on("python@3.8:", when="@1.2.1:", type=("build", "run"))
+    depends_on("python@2.7:2.8,3.5:", when="@0.7.2", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-python-dateutil@2.7.5:", type=("build", "run"))
+    depends_on("py-python-dateutil@2.7:", when="@1.2.1:", type=("build", "run"))
+    depends_on("py-python-dateutil", type=("build", "run"))
     depends_on("py-pytz@2024.2:", when="@1.2.1:", type=("build", "run"))
     depends_on("py-pytz", type=("build", "run"))
-    depends_on("py-regex@2024.9.11:", when="@1.2.1:", type=("build", "run"))
+    depends_on("py-regex@2015.06.24:", when="@1.2.1:", type=("build", "run"))
+    conflicts("^py-regex@2019.02.19,2021.8.27")
     depends_on("py-regex", type=("build", "run"))
     depends_on("py-tzlocal@0.2:", when="@1.2.1:", type=("build", "run"))
     depends_on("py-tzlocal", type=("build", "run"))

@@ -42,7 +42,9 @@ class PyFastapi(PythonPackage):
 
     with when("+all"):
         depends_on("py-httpx@0.23:", type=("build", "run"))
+        depends_on("py-jinja2@3.1.5:", when="@0.115.12:", type=("build", "run"))
         depends_on("py-jinja2@2.11.2:", type=("build", "run"))
+        depends_on("py-python-multipart@0.0.18:", when="@0.115.12:", type=("build", "run"))
         depends_on("py-python-multipart@0.0.7:", when="@0.109.1:", type=("build", "run"))
         depends_on("py-itsdangerous@1.1:", type=("build", "run"))
         depends_on("py-pyyaml@5.3.1:", type=("build", "run"))

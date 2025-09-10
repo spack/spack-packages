@@ -26,4 +26,4 @@ class PyHttptools(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.29.24:", when="@0.6.2:", type="build")
     depends_on("py-cython@0.29.24:0.29", when="@0.5.0", type="build")
-    depends_on("py-cython@0.29.14", when="@0.1.1", type="build")
+    depends_on("py-cython@0.29.14:", when="@0.1.1", type="build")

@@ -18,6 +18,6 @@ class PyFaustCchardet(PythonPackage):
     version("2.1.19", sha256="f89386297cde0c8e0f5e21464bc2d6d0e4a4fc1b1d77cdb238ca24d740d872e0")
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-wheel", type="build")
     depends_on("py-cython", type="build")
     depends_on("pkgconfig", type="build")
+    depends_on("python@3.6:", type=("build", "run"))

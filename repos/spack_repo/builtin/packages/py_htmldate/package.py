@@ -19,7 +19,7 @@ class PyHtmldate(PythonPackage):
     version("1.9.3", sha256="ac0caf4628c3ded4042011e2d60dc68dfb314c77b106587dd307a80d77e708e9")
 
     depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@61:", type="build")
     depends_on("py-charset-normalizer@3.4.0:", type=("build", "run"))
     depends_on("py-dateparser@1.1.2:", type=("build", "run"))
     depends_on("py-lxml@4.9.2", when="platform=darwin ^python@:3.8", type=("build", "run"))

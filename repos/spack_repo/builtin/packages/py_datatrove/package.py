@@ -20,6 +20,9 @@ class PyDatatrove(PythonPackage):
     version("0.5.0", sha256="b1fb13324e86126dace2de2dcaa7aeab53facfc1628f5f6e0ecf5789c78649ad")
     version("0.4.0", sha256="c29a873a12ed8d3b089d9adbc80078db3ec45de94ca9e9bf851e0a5c5ce474c3")
 
+    variant("io", default=True, description="Enable IO features")
+    variant("processing", default=True, description="Enable advanced processing features")
+
     # Python version requirement
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
@@ -33,9 +36,6 @@ class PyDatatrove(PythonPackage):
     depends_on("py-numpy@2:", type=("build", "run"))
     depends_on("py-tqdm", type=("build", "run"))
     depends_on("py-rich", type=("build", "run"))
-
-    variant("io", default=True, description="Enable IO features")
-    variant("processing", default=True, description="Enable advanced processing features")
 
     with when("+io"):
         depends_on("py-faust-cchardet", type=("build", "run"))
