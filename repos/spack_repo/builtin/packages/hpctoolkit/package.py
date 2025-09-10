@@ -178,6 +178,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("dyninst@12.1.0:12", when="@2022:2023.08")
     depends_on("dyninst@10.2.0:12", when="@2021")
     depends_on("dyninst@9.3.2:12", when="@:2020")
+    depends_on("patchelf", type="build")
     depends_on("elfutils~nls", type="link")
     depends_on("gotcha@1.0.3:", when="@:2020.09")
     depends_on("tbb")
