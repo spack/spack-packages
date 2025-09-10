@@ -5,14 +5,14 @@
 import os
 import warnings
 
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Gasnet(Package, CudaPackage, ROCmPackage):
+class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
     """GASNet is a language-independent, networking middleware layer that
     provides network-independent, high-performance communication primitives
     including Remote Memory Access (RMA) and Active Messages (AM). It has been
@@ -22,18 +22,22 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
     writers (as opposed to end users), and the primary goals are high
     performance, interface portability, and expressiveness.
 
-    ***NOTICE***: The GASNet library built by this Spack package is ONLY intended for
-    unit-testing purposes, and is generally UNSUITABLE FOR PRODUCTION USE.
-    The RECOMMENDED way to build GASNet is as an embedded library as configured
-    by the higher-level client runtime package (UPC++, Legion, Chapel, etc), including
-    system-specific configuration.
+    ***NOTICE***: The Spack built version of GASNet is generally considered
+    UNSUITABLE FOR PRODUCTION USE by its authors.  The RECOMMENDED way to build
+    GASNet is as an embedded library as configured by the higher-level client
+    runtime package (UPC++, Chapel, etc), including system-specific configuration.
+
+    Despite this recommendation, this Spack package is a best effort to allow
+    supporting a range of platforms. For optimal performance and more
+    fine-grained control on a particular target platform, HPC admins can provide an
+    external build.
     """
 
     homepage = "https://gasnet.lbl.gov"
     url = "https://gasnet.lbl.gov/EX/GASNet-2024.5.0.tar.gz"
     git = "https://bitbucket.org/berkeleylab/gasnet.git"
 
-    maintainers("PHHargrove", "bonachea")
+    maintainers("PHHargrove", "bonachea", "rbberger")
 
     tags = ["e4s", "ecp"]
 
@@ -73,6 +77,49 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
     )
 
     variant("debug", default=False, description="Enable library debugging mode")
+    variant("pic", default=True, description="Produce position-independent code (for shared libs)")
+
+    variant("seq", default=True, description="support SEQ-mode single-threaded GASNet clients")
+    variant("par", default=False, description="support PAR-mode pthreaded GASNet clients")
+    variant("parsync", default=False, description="support PARSYNC-mode pthreaded GASNet clients")
+
+    variant("pshm", default=True, description="Enable/disable inter-process shared memory support")
+    variant("pthreads", default=False, description="enable use of pthreads")
+    variant(
+        "mpi_compat", default=False, description="Enable/disable MPI compatibility in all conduits"
+    )
+
+    variant(
+        "pmi", default="none", values=("none", "x", "1", "2", "cray"), description="PMI version"
+    )
+    variant(
+        "segment",
+        default="off",
+        values=("off", "fast", "large", "everything"),
+        description="Build GASNet in the FAST/LARGE/EVERYTHING shared segment configuration",
+    )
+
+    with when("conduits=ofi"):
+        variant(
+            "ofi_provider",
+            default="auto",
+            values=("auto", "cxi"),
+            description="Statically configure ofi-conduit for the given provider",
+        )
+        variant(
+            "ofi_spawner",
+            default="auto",
+            values=("auto", "ssh", "mpi", "pmi"),
+            description="ofi job spawner",
+        )
+
+    with when("conduits=ibv"):
+        variant(
+            "ibv_max_hcas",
+            default="1",
+            values=(str(x) for x in range(9)),
+            description="Maximum number of IBV HCAs to open",
+        )
 
     variant(
         "cuda",
@@ -99,8 +146,13 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("gmake", type="build")
 
+    depends_on("mpi", when="+mpi_compat")
     depends_on("mpi", when="conduits=mpi")
+
     depends_on("libfabric", when="conduits=ofi")
+
+    depends_on("pmix", when="pmi=x")
+    depends_on("cray-pmi", when="pmi=cray")
 
     depends_on("autoconf@2.69", type="build", when=bootstrap_version)
     depends_on("automake@1.16:", type="build", when=bootstrap_version)
@@ -111,8 +163,9 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
 
     depends_on("oneapi-level-zero@1.8.0:", when="+level_zero")
 
-    def install(self, spec, prefix):
-        if spec.satisfies(self.bootstrap_version):
+    @run_before("configure")
+    def bootstrap(self):
+        if self.spec.satisfies(self.bootstrap_version):
             bootstrapsh = Executable("./Bootstrap")
             bootstrapsh()
             # Record git-describe when fetched from git:
@@ -122,58 +175,86 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
             except ProcessError:
                 warnings.warn("Omitting version stamp due to git error")
 
-        # The GASNet-EX library has a highly multi-dimensional configure space,
-        # to accomodate the varying behavioral requirements of each client runtime.
-        # The library's ABI/link compatibility is strongly dependent on these
-        # client-specific build-time settings, and that variability is deliberately NOT
-        # encoded in the variants of this package. The recommended way to build/deploy
-        # GASNet is as an EMBEDDED library within the build of the client package
-        # (eg. Berkeley UPC, UPC++, Legion, etc), some of which provide build-time
-        # selection of the GASNet library sources. This spack package provides
-        # the GASNet-EX sources, for use by appropriate client packages.
-        install_tree(".", prefix + "/src")
+    def configure_args(self):
+        spec = self.spec
+        options = ["--disable-auto-conduit-detect", "--enable-rpath"]
+        options += self.enable_or_disable("debug")
+        options += self.enable_or_disable("par")
+        options += self.enable_or_disable("seq")
+        options += self.enable_or_disable("parsync")
+        options += self.enable_or_disable("pshm")
+        options += self.enable_or_disable("pthreads")
+        options += self.enable_or_disable("mpi-compat", variant="mpi_compat")
 
-        # Library build is provided for unit-testing purposes only (see notice above)
-        if "conduits=none" not in spec:
-            options = ["--prefix=%s" % prefix]
+        flags = {"cflags": [], "cxxflags": [], "mpi-cflags": []}
 
-            if spec.satisfies("+debug"):
-                options.append("--enable-debug")
+        if self.spec.satisfies("+pic"):
+            flags["cflags"].append(self.compiler.cc_pic_flag)
+            flags["mpi-cflags"].append(self.compiler.cc_pic_flag)
+            flags["cxxflags"].append(self.compiler.cxx_pic_flag)
 
-            if spec.satisfies("+cuda"):
-                options.append("--enable-kind-cuda-uva")
-                options.append("--with-cuda-home=" + spec["cuda"].prefix)
+        for key, value in sorted(flags.items()):
+            if value:
+                options.append(f"--with-{key}={' '.join(value)}")
 
-            if spec.satisfies("+rocm"):
-                options.append("--enable-kind-hip")
-                options.append("--with-hip-home=" + spec["hip"].prefix)
+        if not spec.satisfies("pmi=none"):
+            options.append("--enable-pmi")
+            options.append(f"--with-pmi-version={spec.variants['pmi'].value}")
 
-            if spec.satisfies("+level_zero"):
-                options.append("--enable-kind-ze")
-                options.append("--with-ze-home=" + spec["oneapi-level-zero"].prefix)
+            if spec.satisfies("pmi=x"):
+                options.append(f"--with-pmi-home={spec['pmix'].prefix}")
+            elif spec.satisfies("pmi=cray"):
+                options.append(f"--with-pmi-home={spec['cray-pmi'].prefix}")
+        else:
+            options.append("--disable-pmi")
 
-            if spec.satisfies("conduits=mpi"):
-                options.append("--enable-mpi-compat")
-            else:
-                options.append("--disable-mpi-compat")
+        if spec.satisfies("+cuda"):
+            options.append("--enable-kind-cuda-uva")
+            options.append("--with-cuda-home=" + spec["cuda"].prefix)
 
-            options.append("--disable-auto-conduit-detect")
-            for c in spec.variants["conduits"].value:
-                options.append("--enable-" + c)
+        if spec.satisfies("+rocm"):
+            options.append("--enable-kind-hip")
+            options.append("--with-hip-home=" + spec["hip"].prefix)
 
-            options.append("--enable-rpath")
+        if spec.satisfies("+level_zero"):
+            options.append("--enable-kind-ze")
+            options.append("--with-ze-home=" + spec["oneapi-level-zero"].prefix)
 
-            configure(*options)
-            make()
-            make("install")
+        for c in spec.variants["conduits"].value:
+            options.append("--enable-" + c)
 
-            for c in spec.variants["conduits"].value:
+        if spec.satisfies("conduits=mpi") or spec.satisfies("+mpi_compat"):
+            options.append(f"--with-mpi-cc={spec['mpi'].mpicc}")
+
+        if spec.satisfies("conduits=ibv"):
+            options.append(f"--with-ibv-max-hcas={spec.variants['ibv_max_hcas'].value}")
+
+        if spec.satisfies("conduits=ofi"):
+            if not spec.satisfies("ofi_provider=auto"):
+                options.append(f"--with-ofi-provider={spec.variants['ofi_provider'].value}")
+            if not spec.satisfies("ofi_spawner=auto"):
+                options.append(f"--with-ofi-spawner={spec.variants['ofi_spawner'].value}")
+        return options
+
+    @run_after("build")
+    def build_tests(self):
+        if not self.spec.satisfies("conduits=none"):
+            for c in self.spec.variants["conduits"].value:
+                make("-C", c + "-conduit", "testgasnet-par")
+                make("-C", c + "-conduit", "testtools-par")
+
+    @run_after("install")
+    def install_source(self):
+        install_tree(self.stage.source_path, self.prefix + "/src")
+
+    @run_after("install")
+    def install_tests(self):
+        if not self.spec.satisfies("conduits=none"):
+            for c in self.spec.variants["conduits"].value:
                 testdir = join_path(self.prefix.tests, c)
                 mkdirp(testdir)
-                make("-C", c + "-conduit", "testgasnet-par")
                 install(c + "-conduit/testgasnet", testdir)
-            make("-C", c + "-conduit", "testtools-par")
-            install(c + "-conduit/testtools", self.prefix.tests)
+                install(c + "-conduit/testtools", prefix.tests)
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
