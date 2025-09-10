@@ -24,6 +24,7 @@ class Wcslib(AutotoolsPackage):
     variant("x", default=False, description="Use the X Window System")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("gmake", type="build")
     depends_on("flex@2.5.9:", type="build")
     depends_on("fortran", type="build")
