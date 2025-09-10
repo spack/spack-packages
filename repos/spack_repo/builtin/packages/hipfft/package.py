@@ -111,6 +111,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
         elif self.spec.satisfies("+cuda"):
             args.append(self.define("BUILD_WITH_LIB", "CUDA"))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args
