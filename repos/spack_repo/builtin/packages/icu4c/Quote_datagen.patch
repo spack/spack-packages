@@ -1,0 +1,184 @@
+diff --git a/source/data/makedata.mak b/source/data/makedata.mak
+index 1fe8c88593c..36dcd4cd7b8 100644
+--- a/source/data/makedata.mak
++++ b/source/data/makedata.mak
+@@ -285,7 +285,7 @@ ICU_DATA_BUILD_VERBOSE=
+ # Keep track of whether they are built via timestamp files.
+ 
+ $(TOOLS_TS): "$(ICUTOOLS)\genrb\$(CFGTOOLS)\genrb.exe" "$(ICUTOOLS)\gencnval\$(CFGTOOLS)\gencnval.exe" "$(ICUTOOLS)\gencfu\$(CFGTOOLS)\gencfu.exe" "$(ICUTOOLS)\icupkg\$(CFGTOOLS)\icupkg.exe" "$(ICUTOOLS)\makeconv\$(CFGTOOLS)\makeconv.exe" "$(ICUPBIN)\pkgdata.exe"
+-	@echo "timestamp" > $(TOOLS_TS)
++	@echo "timestamp" > "$(TOOLS_TS)"
+ 
+ # On Unix, Python generates at configure time a list of Makefile rules.
+ # On Windows, however, we run the Python data build script at build time instead.
+@@ -312,7 +312,7 @@ $(COREDATA_TS):
+ 		--filter_file "$(ICU_DATA_FILTER_FILE)" \
+ 		$(ICU_DATA_BUILD_VERBOSE) \
+ 		$(ICU_DATA_BUILDTOOL_OPTS)
+-	@echo "timestamp" > $(COREDATA_TS)
++	@echo "timestamp" > "$(COREDATA_TS)"
+ 
+ 	
+ # The core Unicode properties files (uprops.icu, ucase.icu, ubidi.icu)
+@@ -458,7 +458,7 @@ icu4j-data-install :
+ 	-@erase "$(U_ICUDATA_NAME).dll"
+ 	copy "$(ICUTMP)\$(ICUPKG).dat" "$(ICUOUT)\$(U_ICUDATA_NAME)$(U_ICUDATA_ENDIAN_SUFFIX).dat"
+ 	-@erase "$(ICUTMP)\$(ICUPKG).dat"
+-	@echo "timestamp" > $(ARM_CROSSBUILD_TS)
++	@echo "timestamp" > "$(ARM_CROSSBUILD_TS)"
+ 
+ # utility target to create missing directories
+ # Most directories are made by Python, but still create ICUTMP
+diff --git a/source/python/icutools/databuilder/renderers/common_exec.py b/source/python/icutools/databuilder/renderers/common_exec.py
+index 91c12fdcf62..c80979bc497 100644
+--- a/source/python/icutools/databuilder/renderers/common_exec.py
++++ b/source/python/icutools/databuilder/renderers/common_exec.py
+@@ -70,7 +70,7 @@ def run_helper(request, common_vars, platform, tool_dir, verbose, tool_cfg=None,
+ 
+     assert isinstance(request.tool, IcuTool)
+     if platform == "windows":
+-        cmd_template = "{TOOL_DIR}/{TOOL}/{TOOL_CFG}/{TOOL}.exe {{ARGS}}".format(
++        cmd_template = "\"{TOOL_DIR}/{TOOL}/{TOOL_CFG}/{TOOL}.exe\" {{ARGS}}".format(
+             TOOL_DIR = tool_dir,
+             TOOL_CFG = tool_cfg,
+             TOOL = request.tool.name,
+diff --git a/source/test/testdata/BUILDRULES.py b/source/test/testdata/BUILDRULES.py
+index a93a3816a1f..978f285d46b 100644
+--- a/source/test/testdata/BUILDRULES.py
++++ b/source/test/testdata/BUILDRULES.py
+@@ -63,7 +63,7 @@ def generate_rb(config, io, common_vars):
+             input_files = [InFile("%s.txt" % bn) for bn in basenames],
+             output_files = [OutFile("%s.res" % bn) for bn in basenames],
+             tool = IcuTool("genrb"),
+-            args = "-q -i {LIBRARY_DATA_DIR} -s {IN_DIR} -d {OUT_DIR} {INPUT_FILE}",
++            args = "-q -i \"{LIBRARY_DATA_DIR}\" -s {IN_DIR} -d \"{OUT_DIR}\" {INPUT_FILE}",
+             format_with = {},
+             repeat_with = {}
+         ),
+@@ -74,7 +74,7 @@ def generate_rb(config, io, common_vars):
+             input_files = [InFile("encoded.utf16be")],
+             output_files = [OutFile("encoded.res")],
+             tool = IcuTool("genrb"),
+-            args = "-s {IN_DIR} -eUTF-16BE -d {OUT_DIR} {INPUT_FILES[0]}",
++            args = "-s {IN_DIR} -eUTF-16BE -d \"{OUT_DIR}\" {INPUT_FILES[0]}",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -83,7 +83,7 @@ def generate_rb(config, io, common_vars):
+             input_files = [InFile("zoneinfo64.txt")],
+             output_files = [TmpFile("zoneinfo64.res")],
+             tool = IcuTool("genrb"),
+-            args = "-s {IN_DIR} -d {TMP_DIR} {INPUT_FILES[0]}",
++            args = "-s {IN_DIR} -d \"{TMP_DIR}\" {INPUT_FILES[0]}",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -92,7 +92,7 @@ def generate_rb(config, io, common_vars):
+             input_files = [InFile("filtertest.txt")],
+             output_files = [OutFile("filtertest.res")],
+             tool = IcuTool("genrb"),
+-            args = "-s {IN_DIR} -d {OUT_DIR} -i {OUT_DIR} "
++            args = "-s {IN_DIR} -d \"{OUT_DIR}\" -i \"{OUT_DIR}\" "
+                 "--filterDir {IN_DIR}/filters filtertest.txt",
+             format_with = {}
+         )
+@@ -107,7 +107,7 @@ def generate_sprep(config, io, common_vars):
+             input_files = [InFile("nfs4_cs_prep_ci.txt")],
+             output_files = [OutFile("nfscsi.spp")],
+             tool = IcuTool("gensprep"),
+-            args = "-s {IN_DIR} -d {OUT_DIR} -b nfscsi -u 3.2.0 {INPUT_FILES[0]}",
++            args = "-s {IN_DIR} -d \"{OUT_DIR}\" -b nfscsi -u 3.2.0 {INPUT_FILES[0]}",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -116,7 +116,7 @@ def generate_sprep(config, io, common_vars):
+             input_files = [InFile("nfs4_cs_prep_cs.txt")],
+             output_files = [OutFile("nfscss.spp")],
+             tool = IcuTool("gensprep"),
+-            args = "-s {IN_DIR} -d {OUT_DIR} -b nfscss -u 3.2.0 {INPUT_FILES[0]}",
++            args = "-s {IN_DIR} -d \"{OUT_DIR}\" -b nfscss -u 3.2.0 {INPUT_FILES[0]}",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -125,7 +125,7 @@ def generate_sprep(config, io, common_vars):
+             input_files = [InFile("nfs4_cis_prep.txt")],
+             output_files = [OutFile("nfscis.spp")],
+             tool = IcuTool("gensprep"),
+-            args = "-s {IN_DIR} -d {OUT_DIR} -b nfscis -u 3.2.0 -k -n {IN_DIR}/../../data/unidata {INPUT_FILES[0]}",
++            args = "-s {IN_DIR} -d \"{OUT_DIR}\" -b nfscis -u 3.2.0 -k -n {IN_DIR}/../../data/unidata {INPUT_FILES[0]}",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -134,7 +134,7 @@ def generate_sprep(config, io, common_vars):
+             input_files = [InFile("nfs4_mixed_prep_s.txt")],
+             output_files = [OutFile("nfsmxs.spp")],
+             tool = IcuTool("gensprep"),
+-            args = "-s {IN_DIR} -d {OUT_DIR} -b nfsmxs -u 3.2.0 -k -n {IN_DIR}/../../data/unidata {INPUT_FILES[0]}",
++            args = "-s {IN_DIR} -d \"{OUT_DIR}\" -b nfsmxs -u 3.2.0 -k -n {IN_DIR}/../../data/unidata {INPUT_FILES[0]}",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -143,7 +143,7 @@ def generate_sprep(config, io, common_vars):
+             input_files = [InFile("nfs4_mixed_prep_p.txt")],
+             output_files = [OutFile("nfsmxp.spp")],
+             tool = IcuTool("gensprep"),
+-            args = "-s {IN_DIR} -d {OUT_DIR} -b nfsmxp -u 3.2.0 -k -n {IN_DIR}/../../data/unidata {INPUT_FILES[0]}",
++            args = "-s {IN_DIR} -d \"{OUT_DIR}\" -b nfsmxp -u 3.2.0 -k -n {IN_DIR}/../../data/unidata {INPUT_FILES[0]}",
+             format_with = {}
+         )
+     ]
+@@ -167,7 +167,7 @@ def generate_conv(config, io, common_vars):
+             input_files = [InFile("%s.ucm" % bn) for bn in basenames],
+             output_files = [OutFile("%s.cnv" % bn) for bn in basenames],
+             tool = IcuTool("makeconv"),
+-            args = "--small -d {OUT_DIR} {IN_DIR}/{INPUT_FILE}",
++            args = "--small -d \"{OUT_DIR}\" {IN_DIR}/{INPUT_FILE}",
+             format_with = {},
+             repeat_with = {}
+         )
+@@ -201,7 +201,7 @@ def generate_other(config, io, common_vars):
+             input_files = [InFile("testnorm.txt")],
+             output_files = [OutFile("testnorm.nrm")],
+             tool = IcuTool("gennorm2"),
+-            args = "-s {IN_DIR} {INPUT_FILES[0]} -o {OUT_DIR}/{OUTPUT_FILES[0]}",
++            args = "-s {IN_DIR} {INPUT_FILES[0]} -o \"{OUT_DIR}/{OUTPUT_FILES[0]}\"",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -210,7 +210,7 @@ def generate_other(config, io, common_vars):
+             input_files = [],
+             output_files = [OutFile("test.icu")],
+             tool = IcuTool("gentest"),
+-            args = "-d {OUT_DIR}",
++            args = "-d \"{OUT_DIR}\"",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -219,7 +219,7 @@ def generate_other(config, io, common_vars):
+             input_files = [],
+             output_files = [TmpFile("testtable32.txt")],
+             tool = IcuTool("gentest"),
+-            args = "-r -d {TMP_DIR}",
++            args = "-r -d \"{TMP_DIR}\"",
+             format_with = {}
+         ),
+         SingleExecutionRequest(
+@@ -228,7 +228,7 @@ def generate_other(config, io, common_vars):
+             input_files = [TmpFile("testtable32.txt")],
+             output_files = [OutFile("testtable32.res")],
+             tool = IcuTool("genrb"),
+-            args = "-s {TMP_DIR} -d {OUT_DIR} {INPUT_FILES[0]}",
++            args = "-s \"{TMP_DIR}\" -d \"{OUT_DIR}\" {INPUT_FILES[0]}",
+             format_with = {}
+         )
+     ]
+diff --git a/source/test/testdata/testdata.mak b/source/test/testdata/testdata.mak
+index 2809efd0ca3..73637676af6 100644
+--- a/source/test/testdata/testdata.mak
++++ b/source/test/testdata/testdata.mak
+@@ -42,4 +42,4 @@ CREATE_DIRS :
+ 		--src_dir "$(TESTDATA)" \
+ 		--tmp_dir "$(TESTDATATMP)" \
+ 		--out_dir "$(TESTDATABLD)"
+-	"$(ICUPBIN)\pkgdata" -f -v -m common -c -p"$(TESTPKG)" -d "$(TESTDATAOUT)" -T "$(TESTDATABLD)" -s "$(TESTDATABLD)" $(TESTDATATMP)\testdata.lst
++	"$(ICUPBIN)\pkgdata" -f -v -m common -c -p"$(TESTPKG)" -d "$(TESTDATAOUT)" -T "$(TESTDATABLD)" -s "$(TESTDATABLD)" "$(TESTDATATMP)\testdata.lst"

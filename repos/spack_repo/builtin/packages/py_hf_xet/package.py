@@ -16,5 +16,8 @@ class PyHfXet(PythonPackage):
 
     version("1.1.5", sha256="69ebbcfd9ec44fdc2af73441619eeb06b94ee34511bbcf57cd423820090f5694")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     # https://github.com/huggingface/xet-core/blob/v1.1.5/hf_xet/pyproject.toml
     depends_on("py-maturin@1.7:1", type="build")

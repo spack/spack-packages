@@ -15,6 +15,7 @@ class PyGeemap(PythonPackage):
 
     license("MIT")
 
+    version("0.36.1", sha256="378bbaaf87a74f70f021ae727d8310871fe35a7fc4b14321dbc698a56730426c")
     version("0.36.0", sha256="cb5da3bc6414d4b75dc97a333e46cadc2492de992741abcb09d5b875e6f65823")
     version("0.35.1", sha256="98f3f17fb1d07a6fe43b06f03fb680e10517adfd96002184015a3d4fe92435d6")
 
@@ -28,7 +29,7 @@ class PyGeemap(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("py-anywidget", when="@0.36:")
         depends_on("py-bqplot")
-        depends_on("py-colour")
+        depends_on("py-earthengine-api@1.5.12:", when="@0.36.1:")
         depends_on("py-earthengine-api@1:")
         depends_on("py-eerepr@0.1:", when="@0.36:")
         depends_on("py-eerepr@0.0.4:")
@@ -46,3 +47,6 @@ class PyGeemap(PythonPackage):
         depends_on("py-pyshp@2.3.1:")
         depends_on("py-python-box")
         depends_on("py-scooby")
+
+        # Historical dependencies
+        depends_on("py-colour", when="@:0.36.0")

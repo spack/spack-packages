@@ -563,12 +563,6 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     variant("fortran", default=True, description="Enable Fortran support")
     variant("gpfs", default=False, description="Enable GPFS support")
-    variant(
-        "singularity",
-        default=False,
-        when="@:4",
-        description="Build deprecated support for the Singularity container",
-    )
     variant("lustre", default=False, description="Lustre filesystem library support")
     variant("romio", default=True, when="@:5", description="Enable ROMIO support")
     variant("romio", default=False, when="@5:", description="Enable ROMIO support")
@@ -621,7 +615,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     # Variants to use internal packages
     variant("internal-hwloc", default=False, description="Use internal hwloc")
-    variant("internal-pmix", default=False, description="Use internal pmix")
+    variant("internal-pmix", default=False, description="Use internal pmix and prrte")
     variant("internal-libevent", default=False, description="Use internal libevent")
     variant("openshmem", default=False, description="Enable building OpenSHMEM")
     variant("debug", default=False, description="Make debug build", when="build_system=autotools")
@@ -689,8 +683,6 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("sqlite", when="+sqlite3")
     depends_on("zlib-api", when="@3:")
     depends_on("valgrind~mpi", when="+memchecker")
-    # Singularity release 3 works better
-    depends_on("singularity@3:", when="+singularity")
     depends_on("lustre", when="+lustre")
 
     depends_on("opa-psm2", when="fabrics=psm2")
@@ -733,9 +725,17 @@ with '-Wl,-commons,use_dylibs' and without
         # See https://www.mail-archive.com/announce@lists.open-mpi.org//msg00158.html
         depends_on("pmix@:4.2.2", when="@:4.1.5")
 
-        # When an external PMIx is used, also an external PRRTE should be used
-        # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
-        depends_on("prrte")
+        # @:4 does not depend on prrte and used orte
+        with when("@5"):
+
+            # When an external PMIx is used, also an external PRRTE should be used
+            # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
+            depends_on("prrte")
+
+            # only prrte knows about schedulers
+            # https://github.com/spack/spack-packages/pull/1145#issuecomment-3208378366
+            for scheduler in [s for s in SCHEDULERS if s not in ("loadleveler")] + ["none"]:
+                depends_on(f"prrte schedulers={scheduler}", when=f"schedulers={scheduler}")
 
     # Libevent is required when *vendored* PMIx is used
     depends_on("libevent@2:", when="~internal-libevent")
@@ -776,6 +776,12 @@ with '-Wl,-commons,use_dylibs' and without
         "schedulers=loadleveler",
         when="@3:",
         msg="The loadleveler scheduler is not supported with openmpi(>=3).",
+    )
+
+    conflicts(
+        "schedulers=auto",
+        when="~internal-pmix",
+        msg="External pmix/prrte requires specifying schedulers explicitly (including 'none').",
     )
 
     # According to this comment on github:
@@ -898,11 +904,6 @@ with '-Wl,-commons,use_dylibs' and without
                     variants.append("+cxx_exceptions")
                 else:
                     variants.append("~cxx_exceptions")
-
-            # singularity
-            if version in ver(":4"):
-                if re.search(r"--with-singularity", output):
-                    variants.append("+singularity")
 
             # lustre
             if re.search(r"--with-lustre", output):
@@ -1185,7 +1186,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(["--enable-debug"])
 
         # Package dependencies
-        for dep in ["lustre", "singularity", "valgrind"]:
+        for dep in ["lustre", "valgrind"]:
             if "^" + dep in spec:
                 config_args.append("--with-{0}={1}".format(dep, spec[dep].prefix))
 

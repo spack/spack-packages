@@ -16,6 +16,8 @@ class PyTorchmetrics(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("1.8.2", sha256="cf64a901036bf107f17a524009eea7781c9c5315d130713aeca5747a686fe7a5")
+    version("1.8.1", sha256="04ca021105871637c5d34d0a286b3ab665a1e3d2b395e561f14188a96e862fdb")
     version("1.8.0", sha256="8b4d011963a602109fb8255018c2386391e8c4c7f48a09669fbf7bb7889fda8c")
     version("1.7.4", sha256="506a1a5c7c304cd77ba323ca4b009e46b814fd2be9dcf0f4ccc2e5c0f5b4b0c1")
     version("1.7.3", sha256="08450a19cdb67ba1608aac0b213e5dc73033e11b60ad4719696ebcede591621e")
@@ -34,11 +36,6 @@ class PyTorchmetrics(PythonPackage):
     version("1.4.0", sha256="0b1e5acdcc9beb05bfe369d3d56cfa5b143f060ebfd6079d19ccc59ba46465b3")
     version("1.3.2", sha256="0a67694a4c4265eeb54cda741eaf5cb1f3a71da74b7e7e6215ad156c9f2379f6")
     version("1.3.1", sha256="8d371f7597a1a5eb02d5f2ed59642d6fef09093926997ce91e18b1147cc8defa")
-    version(
-        "1.3.0",
-        sha256="e8ac3adcc61e7a847d0504b0a0e0a3b7f57796178b239c6fafb5d20c0c9460ac",
-        deprecated=True,
-    )  # Yanked
     version("1.2.1", sha256="217387738f84939c39b534b20d4983e737cc448d27aaa5340e0327948d97ca3e")
     version("1.2.0", sha256="7eb28340bde45e13187a9ad54a4a7010a50417815d8181a5df6131f116ffe1b7")
     version("1.1.1", sha256="65ea34205c0506eecfd06b98f63f4d2a2c5c0e17367cf324e1747adc854c80a5")

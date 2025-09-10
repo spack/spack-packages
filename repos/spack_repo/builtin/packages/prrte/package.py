@@ -45,6 +45,7 @@ class Prrte(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("pmix")
+    depends_on("pmix@6:", when="@4:")
     depends_on("pmix@:5", when="@:3")
     # NOTE: prrte 3.0.1 requires pmix 4.2.4
     # https://github.com/openpmix/prrte/compare/v3.0.0...v3.0.1
@@ -62,6 +63,18 @@ class Prrte(AutotoolsPackage):
     depends_on("flex", type=("build"))
     depends_on("pkgconfig", type="build")
     depends_on("python@3.7:", type="build", when="@develop")
+
+    # https://github.com/openpmix/openpmix/blob/master/docs/installing-pmix/configure-cli-options/runtime.rst
+    SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
+
+    variant(
+        "schedulers",
+        values=disjoint_sets(("none"), SCHEDULERS).with_non_feature_values("none"),
+        description="List of schedulers for which support is enabled",
+    )
+    depends_on("lsf", when="schedulers=lsf")
+    depends_on("pbs", when="schedulers=tm")
+    depends_on("slurm", when="schedulers=slurm")
 
     def url_for_version(self, version):
         if version <= Version("3"):
@@ -88,5 +101,24 @@ class Prrte(AutotoolsPackage):
         config_args.append("--with-hwloc={0}".format(spec["hwloc"].prefix))
         # pmix
         config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+
+        # schedulers
+        # see prte_check_X.m4 files in
+        # https://github.com/openpmix/prrte/tree/master/config
+        if spec.satisfies("schedulers=alps"):
+            config_args.append("--with-alps")
+
+        if spec.satisfies("schedulers=lsf"):
+            config_args.append(f"--with-lsf={self.spec['lsf'].prefix}")
+            config_args.append(f"--with-lsf-libdir={spec['lsf'].libs.directories[0]}")
+
+        if spec.satisfies("schedulers=sge"):
+            config_args.append("--with-sge")
+
+        if spec.satisfies("schedulers=tm"):
+            config_args.append(f"--with-tm={self.spec['pbs'].prefix}")
+
+        if spec.satisfies("schedulers=slurm"):
+            config_args.append("--with-slurm")
 
         return config_args

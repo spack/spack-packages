@@ -115,7 +115,7 @@ class Dealii(CMakePackage, CudaPackage):
     variant("p4est", default=True, description="Compile with P4est (only with MPI)")
     variant("petsc", default=True, description="Compile with Petsc (only with MPI)")
     variant("scalapack", default=True, description="Compile with ScaLAPACK (only with MPI)")
-    variant("sundials", default=True, description="Compile with Sundials")
+    variant("sundials", default=True, description="Compile with Sundials", when="@9.3:")
     variant("slepc", default=True, description="Compile with Slepc (only with Petsc and MPI)")
     variant("symengine", default=True, description="Compile with SymEngine")
     variant("simplex", default=True, description="Compile with Simplex support")
@@ -231,7 +231,6 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("scalapack", when="@9.0:+scalapack")
     depends_on("slepc", when="+slepc+petsc+mpi")
     depends_on("slepc~arpack", when="+slepc+petsc+mpi+int64")
-    depends_on("sundials@:3~pthread", when="@9.0:9.2+sundials")
     depends_on("sundials@5:5.8", when="@9.3:9.3.3+sundials")
     depends_on("sundials@5:6.7", when="@9.3.4:+sundials")
     depends_on("taskflow@3.4:", when="@9.6:+taskflow")
@@ -354,7 +353,7 @@ class Dealii(CMakePackage, CudaPackage):
         )
 
     # Interfaces added in 9.0.0:
-    for _package in ["assimp", "gmsh", "nanoflann", "scalapack", "sundials", "adol-c"]:
+    for _package in ["assimp", "gmsh", "nanoflann", "scalapack", "adol-c"]:
         conflicts(
             "+{0}".format(_package),
             when="@:8.5.1",

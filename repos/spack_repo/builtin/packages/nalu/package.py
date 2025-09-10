@@ -49,7 +49,7 @@ class Nalu(CMakePackage):
         "trilinos"
         "+mpi+exodus+tpetra+muelu+belos+ifpack2+amesos2+zoltan+stk+boost+gtest"
         "~epetra~ml"
-        "~superlu-dist+superlu+hdf5+shards~hypre gotype=long"
+        "~superlu-dist+hdf5+shards~hypre gotype=long"
     )
     depends_on("trilinos~shared", when="~shared")
     # Optional dependencies

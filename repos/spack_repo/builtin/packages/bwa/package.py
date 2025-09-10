@@ -17,6 +17,16 @@ class Bwa(Package):
 
     license("GPL-3.0-only")
 
+    version(
+        "0.7.19",
+        sha256="cdff5db67652c5b805a3df08c4e813a822c65791913eccfb3cf7d528588f37bc",
+        url="https://github.com/lh3/bwa/archive/refs/tags/v0.7.19.tar.gz",
+    )
+    version(
+        "0.7.18",
+        sha256="194788087f7b9a77c0114aa481b2ef21439f6abab72488c83917302e8d0e7870",
+        url="https://github.com/lh3/bwa/archive/refs/tags/v0.7.18.tar.gz",
+    )
     version("0.7.17", sha256="de1b4d4e745c0b7fc3e107b5155a51ac063011d33a5d82696331ecf4bed8d0fd")
     version("0.7.15", sha256="2f56afefa49acc9bf45f12edb58e412565086cc20be098b8bf15ec07de8c0515")
     version("0.7.13", sha256="559b3c63266e5d5351f7665268263dbb9592f3c1c4569e7a4a75a15f17f0aedc")
@@ -37,6 +47,12 @@ class Bwa(Package):
         when="target=aarch64:",
     )
 
+    patch(
+        "https://github.com/lh3/bwa/commit/2a1ae7b6f34a96ea25be007ac9d91e57e9d32284.patch?full_index=1",
+        sha256="92191690850c131bd462816162697a79b63558094000badea87a0d5d1b669325",
+        when="@0.7.13:0.7.17",
+    )
+
     def install(self, spec, prefix):
         zlib_inc_path = spec["zlib-api"].prefix.include
         if platform.machine() == "aarch64":
@@ -51,14 +67,6 @@ class Bwa(Package):
         filter_file(r"^LIBS=", "LIBS=-L%s " % spec["zlib-api"].prefix.lib, "Makefile")
         # use spack C compiler
         filter_file("^CC=.*", "CC={0}".format(spack_cc), "Makefile")
-        # fix gcc 10+ errors
-        if self.spec.satisfies("%gcc@10:"):
-            filter_file(
-                "const uint8_t rle_auxtab[8]",
-                "extern const uint8_t rle_auxtab[8]",
-                "rle.h",
-                string=True,
-            )
         make()
 
         mkdirp(prefix.bin)

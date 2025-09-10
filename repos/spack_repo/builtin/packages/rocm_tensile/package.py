@@ -14,13 +14,15 @@ class RocmTensile(CMakePackage):
 
     homepage = "https://github.com/ROCm/Tensile/"
     git = "https://github.com/ROCm/Tensile.git"
-    url = "https://github.com/ROCm/Tensile/archive/rocm-6.1.1.tar.gz"
+    url = "https://github.com/ROCm/Tensile/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
+    version("6.4.3", sha256="0190bfc7050c6ea73fb20ce4d35a056644e129f792f3b016b079ee6cc237a598")
+    version("6.4.2", sha256="0c30d711ed09f53af9509e264addad9be25e897a7ad490752741cb848a2f31e6")
     version("6.4.1", sha256="f96fe39fbb0d43e39b258b21d66234abf3248f8cfa6954f922618d4bb7d04c74")
     version("6.4.0", sha256="cfe32aa31aa0dd79018d0cdd36e09df3a548159cb7b8e18d0ef6513d0febce90")
     version("6.3.3", sha256="5849fc3898e9cea05569c0ee102c13043c4df67079119572687bc42f274ae496")
@@ -37,9 +39,6 @@ class RocmTensile(CMakePackage):
     version("6.0.0", sha256="5d90add62d1439b7daf0527316e950e454e5d8beefb4f723865fe9ab26c7aa42")
     version("5.7.1", sha256="9211a51b23c22b7a79e4e494e8ff3c31e90bf21adb8cce260acc57891fb2c917")
     version("5.7.0", sha256="fe2ae067c1c579f33d7a1e26da3fe6b4ed44befa08f9dfce2ceae586f184b816")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="3e78c933563fade8781a1dca2079bff135af2f5d2c6eb0147797d2c1f24d006c")
-        version("5.6.0", sha256="383728ecf49def59ab9a7f8a1d1e2eaf8b528e36b461e27030a2aab1a1ed80cb")
 
     tensile_architecture = (
         "all",
@@ -70,8 +69,6 @@ class RocmTensile(CMakePackage):
     depends_on(Boost.with_default_variants)
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -88,6 +85,8 @@ class RocmTensile(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -98,7 +97,7 @@ class RocmTensile(CMakePackage):
 
     root_cmakelists_dir = "Tensile/Source"
 
-    patch("0003-require-openmp-extras-when-tensile-use-openmp.patch", when="@5.6.0:")
+    patch("0003-require-openmp-extras-when-tensile-use-openmp.patch")
     patch("0004-replace_rocm_smi.patch", when="@6.4")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
