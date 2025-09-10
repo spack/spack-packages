@@ -21,6 +21,7 @@ class PyScikitLearn(PythonPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("1.7.2", sha256="20e9e49ecd130598f1ca38a1d85090e1a600147b9c02fa6f15d69cb53d968fda")
     version("1.7.1", sha256="24b3f1e976a4665aa74ee0fcaac2b8fccc6ae77c8e07ab25da3ba6d3292b9802")
     version("1.7.0", sha256="c01e869b15aec88e2cdb73d27f15bdbe03bce8e2fb43afbe77c45d399e73a5a3")
     version("1.6.1", sha256="b4fc2525eca2c69a59260f583c56a7557c6ccdf8deafdba6e060f94c1c59738e")
@@ -52,7 +53,8 @@ class PyScikitLearn(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.13", when="@1.7:")
+        depends_on("python@3.10:3.14", when="@1.7.2:")
+        depends_on("python@3.10:3.13", when="@1.7.0:1.7.1")
         depends_on("python@3.9:3.13", when="@1.5.2:1.6")
         depends_on("python@3.9:3.12", when="@1.4:1.5.1")
         depends_on("python@3.8:3.12", when="@1.3.1:1.3")
@@ -62,6 +64,8 @@ class PyScikitLearn(PythonPackage):
         depends_on("python@:3.9", when="@0.24:1.0.1")
 
     with default_args(type="build"):
+        # Upper bounds are only for long-term stability, can safely be ignored unless known issues
+        # https://github.com/scikit-learn/scikit-learn/pull/32151
         depends_on("py-meson-python@0.17.1:", when="@1.7.1:")
         depends_on("py-meson-python@0.16:", when="@1.5.1:")
         depends_on("py-meson-python@0.15:", when="@1.5:")
