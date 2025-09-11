@@ -14,11 +14,13 @@ class PyMarkupsafe(PythonPackage):
     Mako templating engine, the Pylons web framework and many more."""
 
     homepage = "https://palletsprojects.com/p/markupsafe"
-    pypi = "MarkupSafe/MarkupSafe-1.1.1.tar.gz"
+    pypi = "MarkupSafe/markupsafe-3.0.2.tar.gz"
     git = "https://github.com/pallets/markupsafe.git"
 
     license("BSD-3-Clause")
 
+    version("3.0.2", sha256="ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0")
+    version("2.1.5", sha256="d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b")
     version("2.1.3", sha256="af598ed32d6ae86f1b747b82783958b1a4ab8f617b06fe68795c7f026abbdcad")
     version("2.1.1", sha256="7f91197cc9e48f989d12e4e6fbc46495c446636dfc81b9ccf50bb0ec74b91d4b")
     version("2.0.1", sha256="594c67807fb16238b30c44bdf74f36c02cdf22d1c8cda91ef8a0ed8dabf5620a")
@@ -32,5 +34,16 @@ class PyMarkupsafe(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("python@3.9:", type=("build", "run"), when="@3:")
+    depends_on("python@3.7:", type=("build", "run"), when="@2:")
+    depends_on("py-setuptools@70.1:", type="build", when="@3:")
     depends_on("py-setuptools", type="build")
-    depends_on("python@3.7:", when="@2.0:")
+
+    def url_for_version(self, version):
+        if version >= Version("3.0.0"):
+            name = "markupsafe"
+        else:
+            name = "MarkupSafe"
+        return (
+            f"https://files.pythonhosted.org/packages/source/M/MarkupSafe/{name}-{version}.tar.gz"
+        )

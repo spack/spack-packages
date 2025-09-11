@@ -44,13 +44,14 @@ class Specfem3dGlobe(AutotoolsPackage, CudaPackage):
 
     def configure_args(self):
         args = []
+        spec = self.spec
 
-        if "+cuda" in self.spec:
+        if "+cuda" in spec:
             args.append("--with-cuda")
             args.append("CUDA_LIB={0}".format(spec["cuda"].libs.directories[0]))
             args.append("CUDA_INC={0}".format(spec["cuda"].prefix.include))
             args.append("MPI_INC={0}".format(spec["mpi"].prefix.include))
-        if "+opencl" in self.spec:
+        if "+opencl" in spec:
             args.append("--with-opencl")
             args.append("OCL_LIB={0}".format(spec["opencl"].libs.directories[0]))
             args.append("OCL_INC={0}".format(spec["opencl"].prefix.include))

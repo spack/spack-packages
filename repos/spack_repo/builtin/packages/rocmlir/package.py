@@ -15,11 +15,19 @@ class Rocmlir(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocMLIR"
     git = "https://github.com/ROCm/rocMLIR.git"
-    url = "https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-6.2.1.tar.gz"
+    url = "https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
 
+    version("7.0.2", sha256="01e4b5c3f22c23595816a8c16e3ec67d39c7c5f63ecfa2d8a641ef65a9b79d50")
+    version(
+        "7.0.0",
+        url="https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-7.0.1.tar.gz",
+        sha256="84ac7addddb184599d8aa3cc9fd3ff62f177f73a8e484fb7bbed11330dc87288",
+    )
+    version("6.4.3", sha256="5f48cdbb35738223d18f92fd4624a270e20afcc3f67aaae75b76b09b9a3865e6")
+    version("6.4.2", sha256="9ad8e64a01902771255371fdd08de7e574bbe71c00245837173d42f54a7599e9")
     version("6.4.1", sha256="15cb80da488f88274afff358e6706f54139d1003a9ddcc918afc58af4ebc5c6a")
     version("6.4.0", sha256="e377ad70fd5a5723427edf9464dde8e7892dabd1f783123d39a2fa2faf87079f")
     version("6.3.3", sha256="87242b811536132a02ce79fe430c70485f9b1477de22d8376e7e923a9c9ad98b")
@@ -77,6 +85,10 @@ class Rocmlir(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")

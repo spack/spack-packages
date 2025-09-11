@@ -26,6 +26,7 @@ class QuantumEspresso(CMakePackage, Package):
     license("GPL-2.0-only")
 
     version("develop", branch="develop")
+    version("7.5", sha256="7e1f7a9a21b63192f5135218bee20a5321b66582e4756536681b76e9c59b3cc8")
     version("7.4.1", sha256="6ef9c53dbf0add2a5bf5ad2a372c0bff935ad56c4472baa001003e4f932cab97")
     version("7.4", sha256="b15dcfe25f4fbf15ccd34c1194021e90996393478226e601d876f7dea481d104")
     version("7.3.1", sha256="2c58b8fadfe4177de5a8b69eba447db5e623420b070dea6fd26c1533b081d844")
@@ -76,7 +77,8 @@ class QuantumEspresso(CMakePackage, Package):
         depends_on("cmake@3.14.0:", type="build")
 
     variant("libxc", default=False, description="Uses libxc")
-    depends_on("libxc@5.1.2:", when="+libxc")
+    depends_on("libxc", when="+libxc")
+    depends_on("libxc@5.1.2:~shared", when="@:7.5+libxc")
 
     variant("openmp", default=True, description="Enables OpenMP support")
     # Need OpenMP threaded FFTW and BLAS libraries when configured
@@ -194,7 +196,7 @@ class QuantumEspresso(CMakePackage, Package):
         )
         conflicts(
             "@6.3:6.4.0 hdf5=serial",
-            msg="QE-to-QMCPACK wave function converter only " "supported with parallel HDF5",
+            msg="QE-to-QMCPACK wave function converter only supported with parallel HDF5",
         )
         conflicts("@:7.0 hdf5=none", msg="QE-to-QMCPACK wave function converter requires HDF5")
         # QE > 7.0, the converter for QMCPACK can be built without hdf5 enabled in QE.

@@ -14,6 +14,7 @@ class Grpc(CMakePackage):
 
     license("Apache-2.0 AND BSD-3-Clause AND MIT")
 
+    version("1.67.1", sha256="d74f8e99a433982a12d7899f6773e285c9824e1d9a173ea1d1fb26c9bd089299")
     version("1.66.1", sha256="79ed4ab72fa9589b20f8b0b76c16e353e4cfec1d773d33afad605d97b5682c61")
     version("1.64.0", sha256="d5509e40fb24f6390deeef8a88668124f4ec77d2ebb3b1a957b235a2f08b70c0")
     version("1.63.0", sha256="493d9905aa09124c2f44268b66205dd013f3925a7e82995f36745974e97af609")
@@ -52,7 +53,7 @@ class Grpc(CMakePackage):
     variant(
         "codegen",
         default=True,
-        description="Builds code generation plugins for protobuf " "compiler (protoc)",
+        description="Builds code generation plugins for protobuf compiler (protoc)",
     )
     variant(
         "cxxstd",
@@ -75,6 +76,7 @@ class Grpc(CMakePackage):
         depends_on("abseil-cpp")
         # missing includes: https://github.com/grpc/grpc/commit/bc044174401a0842b36b8682936fc93b5041cf88
         depends_on("abseil-cpp@:20230802", when="@:1.61")
+        depends_on("abseil-cpp@20240116.1:20240117.0", when="@1.67")
 
     depends_on("re2+pic@2023-09-01", when="@1.33.1:")
 

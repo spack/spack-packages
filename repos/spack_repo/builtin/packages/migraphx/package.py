@@ -14,13 +14,17 @@ class Migraphx(CMakePackage):
 
     homepage = "https://github.com/ROCm/AMDMIGraphX"
     git = "https://github.com/ROCm/AMDMIGraphX.git"
-    url = "https://github.com/ROCm/AMDMIGraphX/archive/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/AMDMIGraphX/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libmigraphx"]
 
     license("MIT")
+    version("7.0.2", sha256="33979c1d8f514d65f823f28b2cd2eb11338477403f295e6367244a3abb0abadd")
+    version("7.0.0", sha256="b63634546781af8550395ebc6356e9a3e91a992d82ccb228ea60c719727f5247")
+    version("6.4.3", sha256="d3839034d3cbd7762818002e87da730f3c3172cdefca1aab58ade8d2a9889651")
+    version("6.4.2", sha256="2c008ce2af0900ce7802ec078c2e69f59d8af980ce5161bee625111aec7d941b")
     version("6.4.1", sha256="25716eb8a7f73cba722cc60ba6a71fbf6459f5491a350c285cf1ec904c339095")
     version("6.4.0", sha256="9041ea3c0ea0a22884e049f2a12559b6221eac897d31b3ebe0cf3e7a5b7d0268")
     version("6.3.3", sha256="a268baa99b145a32fe282e407cf923b1c1022f2ddab36d7178537b860fdfcf8d")
@@ -37,9 +41,6 @@ class Migraphx(CMakePackage):
     version("6.0.0", sha256="7bb3f5011da9b1f3b79707b06118c523c1259215f650c2ffa5622a7e1d88868f")
     version("5.7.1", sha256="3e58c043a5a7d1357ee05725fd6cd41e190b070f1ba57f61300128429902089c")
     version("5.7.0", sha256="14f13554367d2d6490d66f8b5b739203225e7acce25085559e7c4acf29e2a4d5")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="b108c33f07572ffd880b20f6de06f1934ab2a1b41ae69095612322ac412fa91c")
-        version("5.6.0", sha256="eaec90535d62002fd5bb264677ad4a7e30c55f18d2a287680d0495c7e60432b2")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -50,7 +51,7 @@ class Migraphx(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    patch("0005-Adding-half-include-directory-path-migraphx.patch", when="@5.6.0:5.7")
+    patch("0005-Adding-half-include-directory-path-migraphx.patch", when="@5.7")
     patch("0006-add-option-to-turn-off-ck.patch", when="@5.7")
     patch(
         "https://github.com/ROCm/AMDMIGraphX/commit/728bea3489c97c9e1ddda0a0ae527ffd2d70cb97.patch?full_index=1",
@@ -70,7 +71,7 @@ class Migraphx(CMakePackage):
     depends_on("blaze", type="build")
     depends_on("nlohmann-json", type="link")
     depends_on("msgpack-c", type="link")
-    depends_on("half@2:", when="@5.6:6.2")
+    depends_on("half@2:", when="@:6.2")
     depends_on("half")
     depends_on("python@3.5:", type="build")
     depends_on("py-pybind11@2.6:", type="build")
@@ -78,8 +79,6 @@ class Migraphx(CMakePackage):
     depends_on("abseil-cpp")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -96,29 +95,35 @@ class Migraphx(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
         depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+
+    for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
+        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
+
     for ver in [
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
         "6.3.0",
         "6.3.1",
         "6.3.2",
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
+        depends_on(f"hipblas@{ver}", when=f"@{ver}")
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
     @property
     def cmake_python_hints(self):

@@ -110,6 +110,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6:", when="@0.4.28:")
             depends_on(f"{pkg_dep}@6.3:", when="@0.6:")
+            depends_on(f"{pkg_dep}@:6")
             depends_on(pkg_dep)
         depends_on("rocprofiler-register", when="^hip@6.2:")
         depends_on("hipblas-common", when="^hip@6.3:")
@@ -235,6 +236,16 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
             for pkg_dep in rocm_dependencies:
                 env.prepend_path("TF_ROCM_MULTIPLE_PATHS", spec[pkg_dep].prefix)
                 env.prune_duplicate_paths("TF_ROCM_MULTIPLE_PATHS")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        if "+cuda" in self.spec:
+            libs = find_libraries(
+                "libcupti", root=self.spec["cuda"].prefix, shared=True, recursive=True
+            )
+            for libdir in libs.directories:
+                env.append_path("LD_LIBRARY_PATH", libdir)
+
+            env.set("XLA_FLAGS", f'--xla_gpu_cuda_data_dir={self.spec["cuda"].prefix}')
 
     def install(self, spec, prefix):
         # https://jax.readthedocs.io/en/latest/developer.html

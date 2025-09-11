@@ -93,7 +93,7 @@ class Hiop(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "deepchecking",
         default=False,
-        description="Ultra safety checks - " "used for increased robustness and self-diagnostics",
+        description="Ultra safety checks - used for increased robustness and self-diagnostics",
     )
     variant("ginkgo", default=False, description="Enable/disable ginkgo solver")
     variant(
@@ -320,7 +320,7 @@ class Hiop(CMakePackage, CudaPackage, ROCmPackage):
         exe = which(exe)
 
         for i, args in enumerate(options):
-            with test_part(self, f"test_{exName}_{i+1}", purpose=" ".join(args)):
+            with test_part(self, f"test_{exName}_{i + 1}", purpose=" ".join(args)):
                 exe(*args)
 
     def test_NlpMdsEx1(self):

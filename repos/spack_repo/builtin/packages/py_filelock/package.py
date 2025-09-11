@@ -19,6 +19,7 @@ class PyFilelock(PythonPackage):
 
     license("Unlicense")
 
+    version("3.19.1", sha256="66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58")
     version("3.12.4", sha256="2e6f249f1f3654291606e046b09f1fd5eac39b360664c27f5aad072012f8bcbd")
     version("3.12.0", sha256="fc03ae43288c013d2ea83c8597001b1129db351aad9c57fe2409327916b8e718")
     version("3.8.0", sha256="55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc")
@@ -35,9 +36,12 @@ class PyFilelock(PythonPackage):
     version("2.0.9", sha256="0f91dce339c9f25d6f2e0733a17e4f9a47b139dffda52619a0e61e013e5c6782")
     version("2.0.8", sha256="7e48e4906de3c9a5d64d8f235eb3ae1050dfefa63fd65eaf318cc915c935212b")
 
+    depends_on("python@3.9:", when="@3.17:", type=("build", "run"))
     depends_on("python@3.8:", when="@3.12.3:", type=("build", "run"))
 
+    depends_on("py-hatch-vcs@0.5:", when="@3.19:", type="build")
     depends_on("py-hatch-vcs@0.3:", when="@3.8:", type="build")
+    depends_on("py-hatchling@1.27:", when="@3.17:", type="build")
     depends_on("py-hatchling@1.18:", when="@3.12.3:", type="build")
     depends_on("py-hatchling@1.14:", when="@3.8:", type="build")
 

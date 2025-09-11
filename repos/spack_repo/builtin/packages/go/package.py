@@ -36,11 +36,17 @@ class Go(Package):
     extendable = True
     executables = ["^go$"]
     unresolved_libraries = ["libtiff.so.*"]  # go/src/debug/elf/testdata/libtiffxx.so_
+    tags = ["build-tools"]
 
     maintainers("alecbcs")
 
     license("BSD-3-Clause")
 
+    version("1.25.3", sha256="a81a4ba593d0015e10c51e267de3ff07c7ac914dfca037d9517d029517097795")
+    version("1.25.2", sha256="3711140cfb87fce8f7a13f7cd860df041e6c12f7610f40cac6ec6fa2b65e96e4")
+    version("1.25.1", sha256="d010c109cee94d80efe681eab46bdea491ac906bf46583c32e9f0dbb0bd1a594")
+    version("1.24.7", sha256="2a8f50db0f88803607c50d7ea8834dcb7bd483c6b428a91e360fdf8624b46464")
+    version("1.24.6", sha256="e1cb5582aab588668bc04c07de18688070f6b8c9b2aaf361f821e19bd47cfdbd")
     version("1.24.4", sha256="5a86a83a31f9fa81490b8c5420ac384fd3d95a3e71fba665c7b3f95d1dfef2b4")
     version("1.24.3", sha256="229c08b600b1446798109fae1f569228102c8473caba8104b6418cb5bc032878")
     version("1.24.2", sha256="9dc77ffadc16d837a1bf32d99c624cb4df0647cee7b119edd9e7b1bcc05f2e00")
@@ -62,26 +68,6 @@ class Go(Package):
     version("1.22.6", sha256="9e48d99d519882579917d8189c17e98c373ce25abaebb98772e2927088992a51")
     version("1.22.4", sha256="fed720678e728a7ca30ba8d1ded1caafe27d16028fab0232b8ba8e22008fb784")
 
-    # Deprecated versions due to CVEs
-    with default_args(deprecated=True):
-        # https://nvd.nist.gov/vuln/detail/CVE-2024-24790
-        # https://nvd.nist.gov/vuln/detail/CVE-2024-24789
-        version(
-            "1.22.2", sha256="374ea82b289ec738e968267cac59c7d5ff180f9492250254784b2044e90df5a9"
-        )
-        version(
-            "1.22.1", sha256="79c9b91d7f109515a25fc3ecdaad125d67e6bdb54f6d4d98580f46799caea321"
-        )
-        version(
-            "1.22.0", sha256="4d196c3d41a0d6c1dfc64d04e3cc1f608b0c436bd87b7060ce3e23234e1f4d5c"
-        )
-        version(
-            "1.21.6", sha256="124926a62e45f78daabbaedb9c011d97633186a33c238ffc1e25320c02046248"
-        )
-        version(
-            "1.21.5", sha256="285cbbdf4b6e6e62ed58f370f3f6d8c30825d6e56c5853c66d3c23bcdb09db19"
-        )
-
     provides("golang")
 
     depends_on("bash", type="build")
@@ -89,8 +75,7 @@ class Go(Package):
     depends_on("sed", type="build")
 
     depends_on("go-or-gccgo-bootstrap@1.22.6:", type="build", when="@1.24:")
-    depends_on("go-or-gccgo-bootstrap@1.20.6:", type="build", when="@1.22:")
-    depends_on("go-or-gccgo-bootstrap@1.17.13:", type="build", when="@1.20:")
+    depends_on("go-or-gccgo-bootstrap@1.20.6:", type="build")
     depends_on("go-or-gccgo-bootstrap", type="build")
 
     phases = ["build", "install"]

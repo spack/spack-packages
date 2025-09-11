@@ -23,6 +23,16 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
     license("GPL-3.0-or-later")
 
     version(
+        "16.2",
+        sha256="be3a361736b8367c24aaf80fa1b31066a3f3eddd7afef3fb6d84145c0413ee0c",
+        url="https://gitlab.com/octopus-code/octopus/-/archive/16.2/octopus-16.2.tar.gz",
+    )
+    version(
+        "16.1",
+        sha256="b4fb625e271ecfa279ffde641c29b9fd21ef0e593219f6340a44b6ab03c90dd4",
+        url="https://gitlab.com/octopus-code/octopus/-/archive/16.1/octopus-16.1.tar.gz",
+    )
+    version(
         "16.0",
         sha256="b44067fc96d27891aab331df36ceebde8f7b628b1dca8a967ce9aec5e0543917",
         url="https://gitlab.com/octopus-code/octopus/-/archive/16.0/octopus-16.0.tar.gz",
@@ -211,8 +221,8 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         expected = [
             "Running octopus",
             "CalculationMode = recipe",
-            "DISCLAIMER: The authors do not " "guarantee that the implementation",
-            "recipe leads to an edible dish, " 'for it is clearly "system-dependent".',
+            "DISCLAIMER: The authors do not guarantee that the implementation",
+            'recipe leads to an edible dish, for it is clearly "system-dependent".',
             "Calculation ended on",
         ]
 

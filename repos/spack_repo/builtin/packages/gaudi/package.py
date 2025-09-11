@@ -57,6 +57,19 @@ class Gaudi(CMakePackage, CudaPackage):
 
     maintainers("drbenmorgan", "vvolkl", "jmcarcell")
 
+    _cxxstd_values = (
+        conditional("14", when="@:38"),
+        conditional("17", when="@:38"),
+        conditional("20", when="@38:"),
+    )
+    _cxxstd_common = {
+        "values": _cxxstd_values,
+        "multi": False,
+        "description": "Use the specified C++ standard when building.",
+    }
+    variant("cxxstd", default="17", when="@:38", **_cxxstd_common)
+    variant("cxxstd", default="20", when="@39:", **_cxxstd_common)
+
     variant("aida", default=False, description="Build AIDA interfaces support")
     variant("cppunit", default=False, description="Build with CppUnit unit testing")
     variant("docs", default=False, description="Build documentation with Doxygen")
@@ -94,7 +107,9 @@ class Gaudi(CMakePackage, CudaPackage):
         sha256="6b377fd10828bf26367c26792a5465351f3f0b5f7f6073dbcae6fa9195d4a414",
         when="@38.1:39",
     )
-    conflicts("^root@6.36:", when="@:38.0")
+    # Legacy CompressionSetting removed in ROOT 6.36, but used through Gaudi 39.1.
+    # See https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1678
+    conflicts("^root@6.36:", when="@:39.1")
 
     # IAuditor: define static strings in implementation
     # https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1781
@@ -147,6 +162,10 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("range-v3")
     depends_on("root +python +root7 +ssl +tbb")
     requires("^root +threads", when="^root@:6.19.01")
+    # force root to have the same cxxstd
+    for _cxxstd in _cxxstd_values:
+        for _v in _cxxstd:
+            depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value}")
     depends_on("zlib-api")
     depends_on("py-pytest-cov", when="@39:")
 
@@ -201,8 +220,11 @@ class Gaudi(CMakePackage, CudaPackage):
         ]
         # Release notes for v39.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v39r0
         # Gaudi@39: needs C++ >= 20, and we need to force CMake to use C++ 20 with old gcc:
-        if self.spec.satisfies("@39: %gcc@:13"):
-            args.append(self.define("GAUDI_CXX_STANDARD", "20"))
+        args.append(self.define_from_variant("GAUDI_CXX_STANDARD", "cxxstd"))
+        if self.spec.satisfies("%apple-clang"):
+            # fixes a build error with apple-clang
+            args.append(self.define("CMAKE_CXX_FLAGS", "-fmodules"))
+
         return args
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

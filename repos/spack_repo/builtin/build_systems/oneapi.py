@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 """Common utilities for managing intel oneapi packages."""
+
 import os
 import platform
 import shutil
@@ -225,10 +226,9 @@ class IntelOneApiLibraryPackage(IntelOneApiPackage):
             )
 
         # query the compiler for the library path
-        with self.compiler.compiler_environment():
-            omp_lib_path = Executable(self.compiler.cc)(
-                "--print-file-name", f"{libname}.{shared_library_suffix(self.spec)}", output=str
-            ).strip()
+        omp_lib_path = Executable(self.compiler.cc)(
+            "--print-file-name", f"{libname}.{shared_library_suffix(self.spec)}", output=str
+        ).strip()
 
         # Newer versions of clang do not give the full path to libomp. If that's
         # the case, look in a path relative to the compiler where libomp is

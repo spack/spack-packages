@@ -19,6 +19,10 @@ class Geomodel(CMakePackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("6.19.0", sha256="d78e9035bd520c5aae007ee5806116ac0a9077b99927bd8810ced49295e1f44d")
+    version("6.18.0", sha256="c32a7e1946bc7710f873e0e64b977cd3aad49e480833c728592428fd6aab34e4")
+    version("6.17.0", sha256="61c9e68e41fae9dc697e90440bb668d364df952b1d53f034d2384e6720e8823c")
+    version("6.16.0", sha256="bdecb722f1e45a7fccab05ded30ac231d6362ece3e681a203f40a1ed2f40be10")
     version("6.15.0", sha256="6e71a2b76972bd2940d035cdb96a8083a04b4ebe93ea95404b5aed39049c76da")
     version("6.14.0", sha256="b294f624145f922efd1da4016b79e698cabb0034cc6791841648d7845fd9fb15")
     version("6.13.0", sha256="8f1ebfe7fb502af078ed535410160becca2eb81286b94154b43c89873a3c45ad")
@@ -85,7 +89,7 @@ class Geomodel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@:3", when="@:6.10", type="build")
 
-    depends_on("eigen@3.2.9:")
+    depends_on("eigen@3.2.9:3")
     depends_on("nlohmann-json@3.6.1:")
     depends_on("sqlite@3.7.17:")
     depends_on("xerces-c@3.2.3:")

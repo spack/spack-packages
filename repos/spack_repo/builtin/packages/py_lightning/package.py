@@ -12,12 +12,17 @@ class PyLightning(PythonPackage):
 
     homepage = "https://github.com/Lightning-AI/pytorch-lightning"
     pypi = "lightning/lightning-2.0.0.tar.gz"
+    git = "https://github.com/Lightning-AI/pytorch-lightning.git"
     skip_modules = ["lightning.app", "lightning.data", "lightning.store"]
 
     maintainers("adamjstewart")
 
     license("Apache-2.0")
 
+    version("master", branch="master")
+    version("2.5.5", sha256="4d3d66c5b1481364a7e6a1ce8ddde1777a04fa740a3145ec218a9941aed7dd30")
+    version("2.5.4", sha256="cec9459a356117f11c501b591fe80f327947614fc345dc6b6c9f8d4d373f214e")
+    version("2.5.3", sha256="4ed3e12369a1e0f928beecf5c9f5efdabda60a9216057954851e2d89f1abecde")
     version("2.5.2", sha256="9550df613cfb22358ebf77b4a8ad45f3767cd7d26ba2d52b7f036bd3cdd701c4")
     version("2.5.1", sha256="aca88f8abf3fc38d8b40c1f82ce481f4379c2b181a6eeeb9217db0aba8e40736")
     version("2.5.0", sha256="3090d979acbc5a97a91906687f9530a246f357fd6b1a81a38d8a8c998ba6db5f")
@@ -43,15 +48,6 @@ class PyLightning(PythonPackage):
     version("2.0.6", sha256="bff959f65eed2f626dd65e7b2cfd0d3ddcd0c4ca19ffc8f5f49a4ba4494ca528")
     version("2.0.5", sha256="77df233129b29c11df7b5e071e24e29420d5efbdbbac9cb6fb4602b7b5afce8a")
     version("2.0.4", sha256="f5f5ed75a657caa8931051590ed000d46bf1b8311ae89bb17a961c3f299dbf33")
-    version("2.0.3", sha256="5a70f05e40f1d7882f81eace0d4a86fe2604b423f8df42beaabd187bfdb420cf")
-    version("2.0.2", sha256="fa32d671850a5be2d961c6705c927f6f48d1cf9696f61f7d865244142e684430")
-    version("2.0.1", sha256="abf4f9e10b0d97348336038db79f4efc75daa2f3f81876822273023294d6ef3e")
-    version("2.0.0", sha256="dfe158aa91ac139d8bdfccc7cdb627072e0052076ae9c0459c8fa12a028dbe6c")
-    version(
-        "1.9.5",
-        sha256="4a6ee1bf338f7677f04d339b84dd0c9c0fa407c3dacea366a111dc86476d4dec",
-        deprecated=True,
-    )
 
     depends_on("py-setuptools", type="build")
 
@@ -61,8 +57,10 @@ class PyLightning(PythonPackage):
         depends_on("python@3.8:", when="@2:")
 
         # src/lightning.egg-info/requires.txt
-        depends_on("py-pyyaml@5.4:7")
-        depends_on("py-fsspec@2022.5:2025+http", when="@2.3:")
+        depends_on("py-pyyaml@5.4.1:7", when="@2.5.3:")
+        depends_on("py-pyyaml@5.4:7", when="@:2.5.2")
+        depends_on("py-fsspec@2022.5:2026+http", when="@2.5.3:")
+        depends_on("py-fsspec@2022.5:2025+http", when="@2.3:2.5.2")
         depends_on("py-fsspec@2022.5:2024+http", when="@2.1.3:2.2")
         depends_on("py-fsspec@2021.6.1:2024+http", when="@2.1.0:2.1.2")
         depends_on("py-fsspec@2022.5:2024+http", when="@2.0.5:2.0")
@@ -70,20 +68,21 @@ class PyLightning(PythonPackage):
         depends_on("py-lightning-utilities@0.10:1", when="@2.4:")
         depends_on("py-lightning-utilities@0.8:1", when="@2.1:2.3")
         depends_on("py-lightning-utilities@0.7:1", when="@2.0")
-        depends_on("py-lightning-utilities@0.6.0.post0:1", when="@:1")
-        depends_on("py-packaging@20:24", when="@2.1:")
+        depends_on("py-packaging@20:26", when="@2.5.3:")
+        depends_on("py-packaging@20:24", when="@2.1:2.5.2")
         depends_on("py-packaging@17.1:24", when="@:2.0")
         depends_on("py-torch@2.1:3", when="@2.4:")
         depends_on("py-torch@2:3", when="@2.3")
         depends_on("py-torch@1.13:3", when="@2.2:")
         depends_on("py-torch@1.12:3", when="@2.1")
         depends_on("py-torch@1.11:3", when="@2.0")
-        depends_on("py-torch@1.10:3", when="@:1")
-        depends_on("py-torchmetrics@0.7:2", when="@2.0.9:")
+        depends_on("py-torchmetrics@0.7.1:2", when="@2.5.3:")
+        depends_on("py-torchmetrics@0.7:2", when="@2.0.9:2.5.2")
         depends_on("py-torchmetrics@0.7:1", when="@:2.0.8")
         depends_on("py-tqdm@4.57:5")
-        depends_on("py-typing-extensions@4.4:5", when="@2.2:")
-        depends_on("py-typing-extensions@4:5")
+        depends_on("py-typing-extensions@4.5.1:5", when="@2.5.3:")
+        depends_on("py-typing-extensions@4.4:5", when="@2.2:2.5.2")
+        depends_on("py-typing-extensions@4:5", when="@:2.1")
 
         # Only an alias, not actually used by the library
         # depends_on("py-pytorch-lightning", when="@2:")
@@ -104,30 +103,22 @@ class PyLightning(PythonPackage):
             depends_on("py-dateutils@:1")
             depends_on("py-deepdiff@5.7:7")
             depends_on("py-fastapi@0.92:1", when="@2.0.4:")
-            depends_on("py-fastapi@0.69:0.88", when="@2.0.3")
-            depends_on("py-fastapi@:0.88", when="@:2.0.2")
             depends_on("py-inquirer@2.10:4")
             depends_on("py-lightning-cloud@0.5.38:", when="@2.0.9:")
             depends_on("py-lightning-cloud@0.5.37:", when="@2.0.5:")
             depends_on("py-lightning-cloud@0.5.34:", when="@2.0.3:")
-            depends_on("py-lightning-cloud@0.5.31:", when="@2:")
-            depends_on("py-lightning-cloud@0.5.27:", when="@:1")
             depends_on("py-psutil@:6")
             depends_on("py-pydantic@1.7.4:2.1", when="@2.0.7:")
             depends_on("py-pydantic@1.7.4:2.0", when="@2.0.6")
             depends_on("py-pydantic@1.7.4:1", when="@2.0.5")
             depends_on("py-pydantic@1.7.4:3", when="@2.0.3:2.0.4")
-            depends_on("py-pydantic@:2", when="@:2.0.2")
             depends_on("py-python-multipart@0.0.5:1")
             depends_on("py-requests@:3")
             depends_on("py-rich@12.3:14", when="@2:")
-            depends_on("py-rich@:14", when="@:1")
             depends_on("py-starlette", when="@2.0.3:")
-            depends_on("py-starlette@:1", when="@:2.0.2")
             depends_on("py-starsessions@1.2.1:1")
             depends_on("py-traitlets@5.3:6")
             depends_on("py-urllib3@:3", when="@2.0.4:")
-            depends_on("py-urllib3@:2", when="@:2.0.3")
             depends_on("py-uvicorn@:1")
             depends_on("py-websocket-client@:2")
             depends_on("py-websockets@:12", when="@2.0.5:")

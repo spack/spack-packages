@@ -39,6 +39,7 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
     executables = ["^hwloc-bind$"]
 
     version("master", branch="master")
+    version("2.12.2", sha256="ff7d309fdff7ceddfe15c1e79eaff25f3126a134f29f44d4e85571f187a6bab8")
     version("2.11.1", sha256="9f320925cfd0daeaf3a3d724c93e127ecac63750c623654dca0298504aac4c2c")
     version("2.10.0", sha256="c7fd8a1404a9719c76aadc642864b9f77aed1dc1fc8882d6af861a9260ba240d")
     version("2.9.3", sha256="5985db3a30bbe51234c2cd26ebe4ae9b4c3352ab788b1a464c40c0483bf4de59")
@@ -191,11 +192,11 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.append("--disable-rsmi")
 
         if self.spec.satisfies("+rocm"):
-            args.append(f'--with-rocm={self.spec["hip"].prefix}')
-            args.append(f'--with-rocm-version={self.spec["hip"].version}')
+            args.append(f"--with-rocm={self.spec['hip'].prefix}")
+            args.append(f"--with-rocm-version={self.spec['hip'].version}")
 
         if self.spec.satisfies("+cuda"):
-            args.append(f'--with-cuda={self.spec["cuda"].prefix}')
-            args.append(f'--with-cuda-version={self.spec["cuda"].version}')
+            args.append(f"--with-cuda={self.spec['cuda'].prefix}")
+            args.append(f"--with-cuda-version={self.spec['cuda'].version}")
 
         return args

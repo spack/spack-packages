@@ -26,3 +26,7 @@ class FluxPython(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-cffi", type=("build", "run"))
+
+    depends_on("flux-core", type=("build", "link", "run"))
+    depends_on("flux-security")
+    depends_on("json-glib")

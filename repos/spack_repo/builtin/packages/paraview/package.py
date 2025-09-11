@@ -17,6 +17,29 @@ from spack.package import *
 IS_WINDOWS = sys.platform == "win32"
 
 
+# This is (more or less) the mapping hard-coded in VTK-m logic
+# see https://gitlab.kitware.com/vtk/vtk-m/-/blob/v2.1.0/CMake/VTKmDeviceAdapters.cmake?ref_type=tags#L221-247
+supported_cuda_archs = {
+    "20": "fermi",
+    "21": "fermi",
+    "30": "kepler",
+    "32": "kepler",
+    "35": "kepler",
+    "37": "kepler",
+    "50": "maxwel",
+    "52": "maxwel",
+    "53": "maxwel",
+    "60": "pascal",
+    "61": "pascal",
+    "62": "pascal",
+    "70": "volta",
+    "72": "volta",
+    "75": "turing",
+    "80": "ampere",
+    "86": "ampere",
+}
+
+
 class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     """ParaView is an open-source, multi-platform data analysis and
     visualization application. This package includes the Catalyst
@@ -75,7 +98,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         default=True,
         description="Install include files for Catalyst or plugins support",
     )
-    variant("python", default=False, description="Enable Python support", when="@5.6:")
+    variant("python", default=False, description="Enable Python support", when="@5.8:")
     variant("fortran", default=False, description="Enable Fortran support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("qt", default=False, description="Enable Qt (gui) support")
@@ -162,28 +185,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
     # CUDA ARCH
 
-    # This is (more or less) the mapping hard-coded in VTK-m logic
-    # see https://gitlab.kitware.com/vtk/vtk-m/-/blob/v2.1.0/CMake/VTKmDeviceAdapters.cmake?ref_type=tags#L221-247
-    supported_cuda_archs = {
-        "20": "fermi",
-        "21": "fermi",
-        "30": "kepler",
-        "32": "kepler",
-        "35": "kepler",
-        "37": "kepler",
-        "50": "maxwel",
-        "52": "maxwel",
-        "53": "maxwel",
-        "60": "pascal",
-        "61": "pascal",
-        "62": "pascal",
-        "70": "volta",
-        "72": "volta",
-        "75": "turing",
-        "80": "ampere",
-        "86": "ampere",
-    }
-
     # VTK-m and transitively ParaView does not support Tesla Arch
     for _arch in ("10", "11", "12", "13"):
         conflicts(f"cuda_arch={_arch}", when="+cuda", msg="ParaView requires cuda_arch >= 20")
@@ -217,7 +218,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     # VTK < 8.2.1 can't handle Python 3.8
     # This affects Paraview <= 5.7 (VTK 8.2.0)
     # https://gitlab.kitware.com/vtk/vtk/-/issues/17670
-    depends_on("python@3:3.7", when="@:5.7 +python", type=("build", "run"))
     depends_on("python@3:", when="@5.8:+python", type=("build", "run"))
 
     depends_on("py-numpy", when="+python", type=("build", "run"))
@@ -266,7 +266,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("bzip2")
     depends_on("double-conversion")
     depends_on("expat")
-    depends_on("eigen@3:")
+    depends_on("eigen@3")
     depends_on("freetype")
     depends_on("freetype@:2.10.2", when="@:5.8")
     # depends_on('hdf5+mpi', when='+mpi')
@@ -287,6 +287,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libtheora")
     depends_on("libtiff")
     depends_on("netcdf-c")
+    depends_on("netcdf-c@:4.9.2", when="@:5.13")
     depends_on("pegtl@2.8.3")
     depends_on("protobuf@3.4:")
     # Paraview 5.10 can't build with protobuf > 3.18
@@ -395,6 +396,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
     # https://github.com/Kitware/VTK-m/commit/48e385af319543800398656645327243a29babfb
     patch("vtkm-fix-problems-in-class-member-names.patch", when="@5.13.2 %oneapi@2025:")
+
+    # Vtk's findpegtl's include search is wrong: https://gitlab.kitware.com/vtk/vtk/-/issues/17876
+    patch("pegtl_tao_find.patch", when="platform=windows")
 
     generator("ninja", "make", default="ninja")
     # https://gitlab.kitware.com/paraview/paraview/-/issues/21223

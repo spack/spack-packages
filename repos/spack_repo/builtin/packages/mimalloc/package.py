@@ -77,15 +77,13 @@ class Mimalloc(CMakePackage):
         ),
         "override": (
             True,
-            "Override the standard malloc interface (e.g. define entry points "
-            "for malloc() etc)",
+            "Override the standard malloc interface (e.g. define entry points for malloc() etc)",
             None,
         ),
         "xmalloc": (False, "Enable abort() call on memory allocation failure by default", None),
         "show_errors": (
             False,
-            "Show error and warning messages by default (only enabled by default "
-            "in DEBUG mode)",
+            "Show error and warning messages by default (only enabled by default in DEBUG mode)",
             None,
         ),
         "use_cxx": (
@@ -134,6 +132,6 @@ class Mimalloc(CMakePackage):
 
         # Use LTO also for non-Intel compilers please. This can be removed when they
         # bump cmake_minimum_required to VERSION 3.9.
-        if "+ipo" in self.spec:
+        if "+ipo" in self.spec and self.spec.satisfies("@:2.0.7"):
             args.append("-DCMAKE_POLICY_DEFAULT_CMP0069=NEW")
         return args

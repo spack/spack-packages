@@ -61,7 +61,6 @@ class PyMypy(PythonPackage):
     version("0.800", sha256="e0202e37756ed09daf4b0ba64ad2c245d357659e014c3f51d8cd0681ba66940a")
     version("0.790", sha256="2b21ba45ad9ef2e2eb88ce4aeadd0112d0f5026418324176fd494a6824b74975")
     version("0.740", sha256="48c8bc99380575deb39f5d3400ebb6a8a1cb5cc669bbba4d3bb30f904e0a0e7d")
-    version("0.670", sha256="e80fd6af34614a0e898a57f14296d0dacb584648f0339c2e000ddbf0f4cc2f8d")
 
     # pyproject.toml
     depends_on("py-setuptools@75.1.0:", when="@1.14:", type="build")
@@ -81,7 +80,6 @@ class PyMypy(PythonPackage):
     depends_on("py-mypy-extensions@1:", when="@1.1:", type=("build", "run"))
     depends_on("py-mypy-extensions@0.4.3:", when="@0.930:1.0", type=("build", "run"))
     depends_on("py-mypy-extensions@0.4.3:0.4", when="@0.700:0.929", type=("build", "run"))
-    depends_on("py-mypy-extensions@0.4.0:0.4", when="@:0.699", type=("build", "run"))
     depends_on("py-pathspec@0.9:", when="@1.16:", type=("build", "run"))
     depends_on("py-tomli@1.1:", when="@0.950: ^python@:3.10", type=("build", "run"))
     depends_on("py-tomli@1.1:", when="@0.930:0.949", type=("build", "run"))
@@ -94,7 +92,6 @@ class PyMypy(PythonPackage):
     depends_on("py-typed-ast@1.4.0:1", when="@0.920:1.4 ^python@:3.7", type=("build", "run"))
     depends_on("py-typed-ast@1.4.0:1.4", when="@0.900:0.910 ^python@:3.7", type=("build", "run"))
     depends_on("py-typed-ast@1.4.0:1.4", when="@0.700:0.899", type=("build", "run"))
-    depends_on("py-typed-ast@1.3.1:1.3", when="@:0.699", type=("build", "run"))
 
     # https://github.com/python/mypy/issues/13627
     conflicts("^python@3.10.7:", when="@:0.971")

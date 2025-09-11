@@ -49,6 +49,9 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     maintainers("adamjstewart", "aweits")
     tags = ["e4s"]
 
+    version("2.20.0", sha256="a640d1f97be316a09301dfc9347e3d929ad4d9a2336e3ca23c32c93b0ff7e5d0")
+    version("2.19.1", sha256="fcfb3e88ab3eebdbab98a03c869a4d2616d52ea166c8d8021de1ef921b47be8d")
+    version("2.19.0", sha256="4691b18e8c914cdf6759b80f1b3b7f3e17be41099607ed0143134f38836d058e")
     version("2.18.1", sha256="467c512b631e72ad5c9d5c16b23669bcf89675de630cfbb58f9dde746d34afa8")
     version(
         "2.18.0-rocm-enhanced",
@@ -116,81 +119,6 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     version("2.5.2", sha256="bcccc6ba0b8ac1d10d3302f766eed71911acecc0bc43d0bd27d97a1e7ce275a8")
     version("2.5.1", sha256="8d2728e155a3aa6befd9cb3d0980fabd25e2142d124f8f6b6c78cdf17ff79da5")
     version("2.5.0", sha256="233875ea27fc357f6b714b2a0de5f6ff124b50c1ee9b3b41f9e726e9e677b86c")
-    version(
-        "2.4.4",
-        sha256="f1abc3ed92c3ce955db2a7db5ec422a3a98f015331183194f97b99fe77a09bb4",
-        deprecated=True,
-    )
-    version(
-        "2.4.3",
-        sha256="cafd520c753f8755a9eb1262932f685dc722d8658f08373f8ec88d8acd58d7d4",
-        deprecated=True,
-    )
-    version(
-        "2.4.2",
-        sha256="edc88da97277906513d53eeee57997a2036fa32ac1f1937730301764fa06cdc0",
-        deprecated=True,
-    )
-    version(
-        "2.4.1",
-        sha256="f681331f8fc0800883761c7709d13cda11942d4ad5ff9f44ad855e9dc78387e0",
-        deprecated=True,
-    )
-    version(
-        "2.4.0",
-        sha256="26c833b7e1873936379e810a39d14700281125257ddda8cd822c89111db6f6ae",
-        deprecated=True,
-    )
-    version(
-        "2.3.4",
-        sha256="195947838b0918c15d79bc6ed85ff714b24d6d564b4d07ba3de0b745a2f9b656",
-        deprecated=True,
-    )
-    version(
-        "2.3.3",
-        sha256="b91e5bcd373b942c4a62c6bcb7ff6f968b1448152b82f54a95dfb0d8fb9c6093",
-        deprecated=True,
-    )
-    version(
-        "2.3.2",
-        sha256="21a703d2e68cd0677f6f9ce329198c24fd8203125599d791af9f1de61aadf31f",
-        deprecated=True,
-    )
-    version(
-        "2.3.2",
-        sha256="21a703d2e68cd0677f6f9ce329198c24fd8203125599d791af9f1de61aadf31f",
-        deprecated=True,
-    )
-    version(
-        "2.3.1",
-        sha256="ee534dd31a811f7a759453567257d1e643f216d8d55a25c32d2fbfff8153a1ac",
-        deprecated=True,
-    )
-    version(
-        "2.3.0",
-        sha256="2595a5c401521f20a2734c4e5d54120996f8391f00bb62a57267d930bce95350",
-        deprecated=True,
-    )
-    version(
-        "2.2.3",
-        sha256="5e6c779ca8392864d436d88893461dcce783c3a8d46dcb2b2f2ee8ece3cc4538",
-        deprecated=True,
-    )
-    version(
-        "2.2.2",
-        sha256="fb4b5d26c5b983350f7ce8297b71176a86a69e91faf66e6ebb1e58538ad3bb51",
-        deprecated=True,
-    )
-    version(
-        "2.2.1",
-        sha256="e6a28e64236d729e598dbeaa02152219e67d0ac94d6ed22438606026a02e0f88",
-        deprecated=True,
-    )
-    version(
-        "2.2.0",
-        sha256="69cd836f87b8c53506c4f706f655d423270f5a563b76dc1cfa60fbc3184185a3",
-        deprecated=True,
-    )
 
     variant("mkl", default=False, description="Build with MKL support")
     variant("jemalloc", default=False, description="Build with jemalloc as malloc support")
@@ -232,7 +160,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     with default_args(type="build"):
         # See .bazelversion
-        depends_on("bazel@6.5.0", when="@2.16:")
+        depends_on("bazel@7.4.1", when="@2.20:")
+        depends_on("bazel@6.5.0", when="@2.16:2.19")
         depends_on("bazel@6.1.0", when="@2.14:2.15")
         depends_on("bazel@5.3.0", when="@2.11:2.13")
         depends_on("bazel@5.1.1", when="@2.10")
@@ -241,8 +170,6 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("bazel@4.2.1:4.99.0", when="@2.8")
         depends_on("bazel@3.7.2:4.99.0", when="@2.7")
         depends_on("bazel@3.7.2:3.99.0", when="@2.5:2.6")
-        depends_on("bazel@3.1.0:3.99.0", when="@2.3:2.4")
-        depends_on("bazel@2.0.0", when="@2.2")
 
         # tensorflow/tools/pip_package/build_pip_package.sh
         depends_on("patchelf", when="@2.13: platform=linux")
@@ -255,21 +182,19 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     with default_args(type=("build", "run")):
         # Python support based on wheel availability
-        depends_on("python@3.9:3.12", when="@2.16:")
+        depends_on("python@3.9:3.13", when="@2.20:")
+        depends_on("python@3.9:3.12", when="@2.16:2.19")
         depends_on("python@3.9:3.11", when="@2.14:2.15")
         depends_on("python@3.8:3.11", when="@2.12:2.13")
         depends_on("python@:3.10", when="@2.8:2.11")
-        depends_on("python@:3.9", when="@2.5:2.7")
-        depends_on("python@:3.8", when="@2.2:2.4")
+        depends_on("python@:3.9", when="@:2.7")
 
-        # Listed under REQUIRED_PACKAGES in tensorflow/tools/pip_package/setup.py
+        # Listed under REQUIRED_PACKAGES in tensorflow/tools/pip_package/setup.py.tpl
         depends_on("py-absl-py@1:", when="@2.9:")
         depends_on("py-absl-py@0.4:", when="@2.7:2.8")
         depends_on("py-absl-py@0.10:0", when="@2.4:2.6")
-        depends_on("py-absl-py@0.7:", when="@:2.3")
         depends_on("py-astunparse@1.6:", when="@2.7:")
         depends_on("py-astunparse@1.6.3:1.6", when="@2.4:2.6")
-        depends_on("py-astunparse@1.6.3", when="@2.2:2.3")
         depends_on("py-flatbuffers@24.3.25:", when="@2.17:")
         depends_on("py-flatbuffers@23.5.26:", when="@2.14:")
         depends_on("py-flatbuffers@23.1.21:", when="@2.13")
@@ -283,30 +208,26 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-gast@0.2.1:", when="@2.8")
         depends_on("py-gast@0.2.1:0.4", when="@2.7")
         depends_on("py-gast@0.4.0", when="@2.5:2.6")
-        depends_on("py-gast@0.3.3", when="@2.2:2.4")
-        depends_on("py-gast@0.2.2", when="@:2.1")
         depends_on("py-google-pasta@0.1.1:", when="@2.7:")
         depends_on("py-google-pasta@0.2:0", when="@2.4:2.6")
-        depends_on("py-google-pasta@0.1.8:", when="@2.2:2.3")
-        depends_on("py-google-pasta@0.1.6:", when="@:2.1")
         depends_on("py-libclang@13:", when="@2.9:")
         depends_on("py-libclang@9.0.1:", when="@2.7:2.8")
-        depends_on("py-opt-einsum@2.3.2:", when="@:2.3,2.7:")
+        depends_on("py-opt-einsum@2.3.2:", when="@2.7:")
         depends_on("py-opt-einsum@3.3", when="@2.4:2.6")
         depends_on("py-packaging", when="@2.9:")
-        depends_on("py-protobuf@3.20.3:4.20,4.21.6:5", when="@2.18:")
+        depends_on("py-protobuf@5.28:", when="@2.20:")
+        depends_on("py-protobuf@3.20.3:4.20,4.21.6:5", when="@2.18:2.19")
         depends_on("py-protobuf@3.20.3:4.20,4.21.6:4", when="@2.12:2.17")
         depends_on("py-protobuf@3.9.2:", when="@2.3:2.11")
-        depends_on("py-protobuf@3.8.0:", when="@:2.2")
         # https://github.com/protocolbuffers/protobuf/issues/10051
         # https://github.com/tensorflow/tensorflow/issues/56266
         depends_on("py-protobuf@:3.19", when="@:2.11")
         depends_on("py-requests@2.21:2", when="@2.16:")
         depends_on("py-requests")
         depends_on("py-setuptools")
-        depends_on("py-six@1.12:", when="@:2.3,2.7:")
+        depends_on("py-six@1.12:", when="@2.7:")
         depends_on("py-six@1.15", when="@2.4:2.6")
-        depends_on("py-termcolor@1.1:", when="@:2.3,2.7:")
+        depends_on("py-termcolor@1.1:", when="@2.7:")
         depends_on("py-termcolor@1.1", when="@2.4:2.6")
         depends_on("py-typing-extensions@3.6.6:", when="@2.7:2.12,2.14:")
         depends_on("py-typing-extensions@3.6.6:4.5", when="@2.13")
@@ -314,48 +235,40 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-wrapt@1.11:", when="@2.7:2.11,2.13,2.16:")
         depends_on("py-wrapt@1.11:1.14", when="@2.12,2.14:2.15")
         depends_on("py-wrapt@1.12.1:1.12", when="@2.4:2.6")
-        depends_on("py-wrapt@1.11.1:", when="@:2.3")
-
-        # TODO: add packages for these dependencies
-        # depends_on('py-tensorflow-io-gcs-filesystem@0.23.1:', when='@2.8:')
-        # depends_on('py-tensorflow-io-gcs-filesystem@0.21:', when='@2.7')
 
         if sys.byteorder == "little":
             # Only builds correctly on little-endian machines
             depends_on("py-grpcio@1.24.3:1", when="@2.7:")
             depends_on("py-grpcio@1.37.0:1", when="@2.6")
             depends_on("py-grpcio@1.34", when="@2.5")
-            depends_on("py-grpcio@1.32", when="@2.4")
-            depends_on("py-grpcio@1.8.6:", when="@:2.3")
 
-        for minor_ver in range(2, 19):
+        for minor_ver in range(5, 21):
             depends_on("py-tensorboard@2.{}".format(minor_ver), when="@2.{}".format(minor_ver))
 
         # TODO: support circular run-time dependencies
         # depends_on('py-keras')
 
-        depends_on("py-numpy@1.26:2.0", when="@2.18:")
+        depends_on("py-numpy@1.26:", when="@2.20:")
+        depends_on("py-numpy@1.26:2.1", when="@2.19")
+        depends_on("py-numpy@1.26:2.0", when="@2.18")
         depends_on("py-numpy@1.23.5:", when="@2.14:2.17")
         depends_on("py-numpy@1.22:1.24.3", when="@2.13")
         depends_on("py-numpy@1.22:1.23", when="@2.12")
         depends_on("py-numpy@1.20:", when="@2.8:2.11")
         depends_on("py-numpy@1.14.5:", when="@2.7")
         depends_on("py-numpy@1.19.2:1.19", when="@2.4:2.6")
-        # https://github.com/tensorflow/tensorflow/issues/40688
-        depends_on("py-numpy@1.16.0:1.18", when="@:2.3")
         # https://github.com/tensorflow/tensorflow/issues/67291
         depends_on("py-numpy@:1", when="@:2.17")
         depends_on("py-h5py@3.11:", when="@2.18:")
         depends_on("py-h5py@3.10:", when="@2.16:")
         depends_on("py-h5py@2.9:", when="@2.7:2.15")
         depends_on("py-h5py@3.1", when="@2.5:2.6")
-        depends_on("py-h5py@2.10", when="@2.2:2.4")
-        depends_on("py-h5py@:2.10.0", when="@2.1.3:2.1")
         # propagate the mpi variant setting for h5py/hdf5 to avoid unexpected crashes
-        depends_on("py-h5py+mpi", when="@2.1.3:+mpi")
-        depends_on("py-h5py~mpi", when="@2.1.3:~mpi")
-        depends_on("hdf5+mpi", when="@2.1.3:+mpi")
-        depends_on("hdf5~mpi", when="@2.1.3:~mpi")
+        depends_on("py-h5py+mpi", when="+mpi")
+        depends_on("py-h5py~mpi", when="~mpi")
+        depends_on("hdf5+mpi", when="+mpi")
+        depends_on("hdf5~mpi", when="~mpi")
+        depends_on("py-ml-dtypes@0.5.1:0", when="@2.19:")
         depends_on("py-ml-dtypes@0.4:0", when="@2.18.1")
         depends_on("py-ml-dtypes@0.4", when="@2.18.0")
         depends_on("py-ml-dtypes@0.3.1:0.4", when="@2.17")
@@ -367,12 +280,12 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-jax@0.3.15:", when="@2.12")
         depends_on("py-keras-preprocessing@1.1.1:", when="@2.7:2.10")
         depends_on("py-keras-preprocessing@1.1.2:1.1", when="@2.4:2.6")
-        depends_on("py-keras-preprocessing@1.1.1:1.1", when="@2.3")
-        depends_on("py-keras-preprocessing@1.1:", when="@2.2")
-        depends_on("py-scipy@1.4.1", when="@2.2.0,2.3.0")
         depends_on("py-wheel@0.32:0", when="@2.7")
         depends_on("py-wheel@0.35:0", when="@2.4:2.6")
-        depends_on("py-wheel@0.26:", when="@:2.3")
+
+        # TODO: add packages for these dependencies
+        # depends_on("py-tensorflow-io-gcs-filesystem@0.23.1:", when="@2.8:2.19")
+        # depends_on("py-tensorflow-io-gcs-filesystem@0.21:", when="@2.7")
 
     # TODO: add packages for some of these dependencies
     depends_on("mkl", when="+mkl")
@@ -381,25 +294,21 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # depends_on('trisycl',    when='+opencl~computepp')
     with when("+cuda"):
         # https://www.tensorflow.org/install/source#gpu
+        depends_on("cuda@12.5:", when="@2.18:")
         depends_on("cuda@12.3:", when="@2.16:")
         depends_on("cuda@12.2:", when="@2.15:")
         depends_on("cuda@11.8:", when="@2.12:")
         depends_on("cuda@11.2:", when="@2.5:")
-        depends_on("cuda@11.0:", when="@2.4:")
-        depends_on("cuda@10.1:", when="@2.1:")
 
         depends_on("cuda@:11.7.0", when="@:2.9")
         depends_on("cuda@:11.4", when="@2.4:2.7")
-        depends_on("cuda@:10.2", when="@:2.3")
 
+        depends_on("cudnn@9.3:", when="@2.18:")
         depends_on("cudnn@8.9:8", when="@2.15:")
         depends_on("cudnn@8.7:8", when="@2.14:")
         depends_on("cudnn@8.6:8", when="@2.12:")
         depends_on("cudnn@8.1:8", when="@2.5:")
-        depends_on("cudnn@8.0:8", when="@2.4:")
-        depends_on("cudnn@7.6:8", when="@2.1:")
 
-        depends_on("cudnn@:7", when="@:2.2")
     # depends_on('tensorrt', when='+tensorrt')
     depends_on("nccl", when="+nccl+cuda")
     depends_on("mpi", when="+mpi")
@@ -447,10 +356,6 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     )
     conflicts("+mpi", when="platform=windows")
     conflicts("+ios", when="platform=linux", msg="iOS support only available on macOS")
-    # https://github.com/tensorflow/tensorflow/pull/45404
-    conflicts("platform=darwin target=aarch64:", when="@:2.4")
-    # https://github.com/tensorflow/tensorflow/pull/39225
-    conflicts("target=aarch64:", when="@:2.2")
 
     rocm_versions = [
         "2.7.4-rocm-enhanced",
@@ -485,6 +390,21 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
 
+    # https://github.com/spack/spack/issues/49958
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/90563.patch?full_index=1",
+        sha256="78b858380521f4624fd95bfa32fd038cdd8168b783c2a13502c4169431517618",
+        when="@2.19",
+    )
+
+    # Fix build error with GCC 13
+    # https://github.com/tensorflow/tensorflow/issues/84977
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/90558.patch?full_index=1",
+        sha256="3c93c6226bbde3a4c2aedbac42bc136eacf8da65f5623f7effad437ebf2ba4aa",
+        when="@2.19",
+    )
+
     # https://github.com/tensorflow/tensorflow/issues/94277
     # https://github.com/tensorflow/tensorflow/pull/94289
     patch("h5py-3.13.0.patch", when="@2.18")
@@ -498,12 +418,11 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         when="@2.9:2.10.0",
     )
 
-    # can set an upper bound if/when
-    # https://github.com/tensorflow/tensorflow/pull/89032 is merged
+    # https://github.com/tensorflow/tensorflow/pull/89032
     patch(
         "allow-empty-config-environment-variables.patch",
         sha256="e061875c2ca9c157a7837d02afdd25205817def3460745523d5089bbeaa77d29",
-        when="@1.4.0:",
+        when="@1.4.0:2.19",
     )
 
     # Version 2.10 produces an error related to cuBLAS:
@@ -523,7 +442,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     # allow linker to be found in PATH
     # https://github.com/tensorflow/tensorflow/issues/39263
-    patch("null_linker_bin_path.patch", when="@2.5:")
+    patch("null_linker_bin_path.patch", when="@2.5:2.19")
 
     # Reset import order to that of 2.4. Part of
     # https://bugs.gentoo.org/800824#c3 From the patch:
@@ -594,7 +513,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # Please input the desired Python library path to use
         env.set("PYTHON_LIB_PATH", python_platlib)
-        env.set("TF_PYTHON_VERSION", spec["python"].version.up_to(2))
+        env.set("TF_PYTHON_VERSION", str(spec["python"].version.up_to(2)))
 
         # Ensure swig is in PATH or set SWIG_PATH
         env.set("SWIG_PATH", spec["swig"].prefix.bin.swig)
@@ -879,7 +798,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 ".tf_configure.bazelrc",
             )
 
-        if spec.satisfies("~opencl"):
+        if spec.satisfies("@:1.19~opencl"):
             # 1.8.0 and 1.9.0 aborts with numpy import error during python_api
             # generation somehow the wrong PYTHONPATH is used...
             # set --distinct_host_configuration=false as a workaround

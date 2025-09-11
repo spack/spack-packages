@@ -11,7 +11,6 @@ from spack.package import *
 #
 # Need to add:
 #  KOKKOS support using an external (i.e. spack-supplied) kokkos library.
-#  Data Warehouse (FAODEL) enable/disable
 
 is_windows = sys.platform == "win32"
 
@@ -35,6 +34,15 @@ class Seacas(CMakePackage):
 
     # ###################### Versions ##########################
     version("master", branch="master")
+    version(
+        "2025-10-14", sha256="f9351a8f1a555a015020f249b1e5c26a282fbb6e274f9b71eb38720d61267dda"
+    )
+    version(
+        "2025-08-28", sha256="29125a84859c78b6bb0b5909ce7443aa2774235f0fc75dedf467a223603e0ffd"
+    )
+    version(
+        "2025-08-19", sha256="f745ca9a57bfd7f771632fb5f154eb38ed3260e1430d968f2db725f8d8ee8545"
+    )
     version(
         "2025-07-07", sha256="c1700d39cef818c87335dd3789403e47dc9efc2f01c8c3fb8e7d54b2db02a54a"
     )
@@ -81,11 +89,6 @@ class Seacas(CMakePackage):
         "2023-11-27", sha256="fea1c0a6959d46af7478c9c16aac64e76c6dc358da38e2fe8793c15c1cffa8fc"
     )
     version(
-        "2023-10-24",
-        sha256="f93bf0327329c302ed3feb6adf2e3968f01ec325084a457b2c2dbbf6c4f751a2",
-        deprecated=True,
-    )
-    version(
         "2023-05-30", sha256="3dd982841854466820a3902163ad1cf1b3fbab65ed7542456d328f2d1a5373c1"
     )
     version(
@@ -102,76 +105,6 @@ class Seacas(CMakePackage):
     )
     version(
         "2022-01-27", sha256="beff12583814dcaf75cf8f1a78bb183c1dcc8937bc18d5206672e3a692db05e0"
-    )
-    version(
-        "2021-10-11",
-        sha256="f8a6dac813c0937fed4a5377123aa61d47eb459ba87ddf368d02ebe10c2c3a0d",
-        deprecated=True,
-    )
-    version(
-        "2021-09-30",
-        sha256="5d061e35e93eb81214da3b67ddda2829cf5efed38a566be6363a9866ba2f9ab3",
-        deprecated=True,
-    )
-    version(
-        "2021-05-12",
-        sha256="92663767f0317018d6f6e422e8c687e49f6f7eb2b92e49e837eb7dc0ca0ac33d",
-        deprecated=True,
-    )
-    version(
-        "2021-04-05",
-        sha256="76f66eec1fec7aba30092c94c7609495e6b90d9dcb6f35b3ee188304d02c6e04",
-        deprecated=True,
-    )
-    version(
-        "2021-01-20",
-        sha256="7814e81981d03009b6816be3eb4ed3845fd02cc69e006ee008a2cbc85d508246",
-        deprecated=True,
-    )
-    version(
-        "2021-01-06",
-        sha256="b233502a7dc3e5ab69466054cf358eb033e593b8679c6721bf630b03999bd7e5",
-        deprecated=True,
-    )
-    version(
-        "2020-08-13",
-        sha256="e5eaf203eb2dbfb33c61ccde26deea459d058aaea79b0847e2f4bdb0cef1ddcb",
-        deprecated=True,
-    )
-    version(
-        "2020-05-12",
-        sha256="7fc6915f60568b36e052ba07a77d691c99abe42eaba6ae8a6dc74bb33490ed60",
-        deprecated=True,
-    )
-    version(
-        "2020-03-16",
-        sha256="2eb404f3dcb17c3e7eacf66978372830d40ef3722788207741fcd48417807af6",
-        deprecated=True,
-    )
-    version(
-        "2020-01-16",
-        sha256="5ae84f61e410a4f3f19153737e0ac0493b144f20feb1bbfe2024f76613d8bff5",
-        deprecated=True,
-    )
-    version(
-        "2019-12-18",
-        sha256="f82cfa276ebc5fe6054852383da16eba7a51c81e6640c73b5f01fc3109487c6f",
-        deprecated=True,
-    )
-    version(
-        "2019-10-14",
-        sha256="ca4cf585cdbc15c25f302140fe1f61ee1a30d72921e032b9a854492b6c61fb91",
-        deprecated=True,
-    )
-    version(
-        "2019-08-20",
-        sha256="a82c1910c2b37427616dc3716ca0b3c1c77410db6723aefb5bea9f47429666e5",
-        deprecated=True,
-    )
-    version(
-        "2019-07-26",
-        sha256="651dac832b0cfee0f63527f563415c8a65b8e4d79242735c1e2aec606f6b2e17",
-        deprecated=True,
     )
 
     # ###################### Variants ##########################
@@ -213,7 +146,18 @@ class Seacas(CMakePackage):
         default=False,
         description="Enable ADIOS2. See https://github.com/ornladios/ADIOS2",
     )
-    variant("cgns", default=True, description="Enable CGNS.")
+    # enabling cgns fails builds on Windows, see seacas CI default configuration
+    # https://github.com/sandialabs/seacas/blob/master/.appveyor.yml#L71
+    for plat in ["linux", "darwin", "freebsd"]:
+        with when(f"platform={plat}"):
+            variant("cgns", default=True, description="Enable CGNS.")
+
+    variant(
+        "aws",
+        default=False,
+        when="@2025-10-14:",
+        description="Enable support for S3 compatible storage using AWS SDK's S3 module",
+    )
     variant(
         "faodel",
         default=False,
@@ -269,8 +213,12 @@ class Seacas(CMakePackage):
     depends_on("trilinos~exodus+mpi+pamgen", when="+mpi+pamgen")
     depends_on("trilinos~exodus~mpi+pamgen", when="~mpi+pamgen")
     # Always depends on netcdf-c
-    depends_on("netcdf-c@4.8.0:+mpi+parallel-netcdf", when="+mpi")
+    depends_on("netcdf-c@4.8.0:+mpi", when="+mpi")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=linux")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=darwin")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=freebsd")
     depends_on("netcdf-c@4.8.0:~mpi", when="~mpi")
+    depends_on("netcdf-c@:4.9.2", when="@:2024-08-15")
     depends_on("hdf5+hl~mpi", when="~mpi")
     depends_on("hdf5+hl+mpi", when="+mpi")
 
@@ -312,6 +260,9 @@ class Seacas(CMakePackage):
     with when("+metis"):
         depends_on("metis+int64+real64")
         depends_on("parmetis+int64", when="+mpi")
+    with when("+aws"):
+        depends_on("aws-sdk-cpp")
+        depends_on("cereal")
 
     # The Faodel TPL is only supported in seacas@2021-04-05:
     depends_on("faodel@1.2108.1:+mpi", when="+faodel +mpi")
@@ -337,6 +288,12 @@ class Seacas(CMakePackage):
     # Based on install-tpl.sh script, cereal seems to only be used when faodel enabled
     depends_on("cereal", when="@2021-04-02: +faodel")
 
+    def flag_handler(self, name: str, flags: List[str]):
+        if name == "fflags" and self.spec.satisfies("@2022:2022-03 %fortran=gcc@10:"):
+            # Required for recent GCC compilers, flag exists since GCC 10
+            flags.append("-fallow-argument-mismatch")
+        return (flags, None, None)
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib)
 
@@ -357,11 +314,11 @@ class Seacas(CMakePackage):
         options.extend(
             [
                 from_variant(project_name_base + "_ENABLE_TESTS", "tests"),
-                define(project_name_base + "_ENABLE_CXX11", True),
                 define(project_name_base + "_ENABLE_Kokkos", False),
                 define(project_name_base + "_HIDE_DEPRECATED_CODE", False),
                 # Seacas MSVC tests are not tested with Zoltan
                 # which causes build errors, skip for now
+                define("ENABLE_ExoNull", True),
                 define(project_name_base + "_ENABLE_Zoltan", not is_windows),
                 from_variant("CMAKE_INSTALL_RPATH_USE_LINK_PATH", "shared"),
                 from_variant("BUILD_SHARED_LIBS", "shared"),
@@ -374,6 +331,11 @@ class Seacas(CMakePackage):
                 define(project_name_base + "_ENABLE_SEACAS", True),
             ]
         )
+        if spec.satisfies("@2025-08-28:"):
+            options.append(define(project_name_base + "_ENABLE_CXX17", True))
+        else:
+            options.append(define(project_name_base + "_ENABLE_CXX11", True))
+
         if "~shared" in self.spec and not is_windows:
             options.append(self.define(f"{project_name_base}_EXTRA_LINK_FLAGS", "z;dl"))
         options.append(from_variant("TPL_ENABLE_MPI", "mpi"))
@@ -513,6 +475,12 @@ class Seacas(CMakePackage):
         options.append(from_variant("TPL_ENABLE_CGNS", "cgns"))
         if "+cgns" in spec:
             options.append(define("CGNS_ROOT", spec["cgns"].prefix))
+
+        options.append(from_variant("TPL_ENABLE_AWSSDK", "aws"))
+        if "+aws" in spec:
+            options.append(define("AWSSDK_ROOT", spec["aws-sdk-cpp"].prefix))
+            options.append(define("TPL_ENABLE_Cereal", True))
+            options.append(define("Cereal_INCLUDE_DIRS", spec["cereal"].prefix.include))
 
         options.append(from_variant("TPL_ENABLE_Faodel", "faodel"))
         for pkg in ("Faodel", "BOOST"):

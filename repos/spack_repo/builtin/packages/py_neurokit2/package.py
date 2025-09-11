@@ -22,6 +22,7 @@ class PyNeurokit2(PythonPackage):
 
     license("MIT")
 
+    version("0.2.12", sha256="f1ca66136a397ce31bc9df8319a3fd04c544950b6e43080d13ea83e89492ca7c")
     version("0.2.4", sha256="4699704f6890ae3510d5abf1deec86a59d793d31cda51b627f6eae65360d298f")
     version("0.2.2", sha256="0c33b060f9ac5ec8a6a0e23261fdbc36a98cb48e06142a1653fd12698806a952")
     version("0.1.5", sha256="4df48c0ce8971e32e32f36c2263986b00fd83da5eadaaa98e4bb5ab6bcd930e5")
@@ -30,9 +31,13 @@ class PyNeurokit2(PythonPackage):
 
     depends_on("py-setuptools@40.6.0:", type="build")
     depends_on("py-pytest-runner", type="build")
+
+    depends_on("py-requests", type=("build", "run"), when="@0.2.8:")
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-pandas", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
-    depends_on("py-scikit-learn@1:", when="@0.2:", type=("build", "run"))
+    depends_on("py-scikit-learn@1:", type=("build", "run"), when="@0.2:")
     depends_on("py-scikit-learn", type=("build", "run"))
+    depends_on("py-matplotlib@3.5:", type=("build", "run"), when="@0.2.11:")
     depends_on("py-matplotlib", type=("build", "run"))
+    depends_on("py-pywavelets@1.4:", type=("build", "run"), when="@0.2.12:")

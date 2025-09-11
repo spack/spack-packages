@@ -49,6 +49,8 @@ class Nek5000(Package):
 
     depends_on("mpi", when="+mpi")
 
+    depends_on("visit", when="+visit")
+
     patch("add_fjfortran.patch", when="%fj")
 
     @run_after("install")

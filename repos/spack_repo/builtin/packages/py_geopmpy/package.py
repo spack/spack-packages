@@ -23,6 +23,8 @@ class PyGeopmpy(PythonPackage):
     version("3.2.0", sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025")
     version("3.1.0", sha256="2d890cad906fd2008dc57f4e06537695d4a027e1dc1ed92feed4d81bb1a1449e")
 
+    variant("pytorch", default=False, description="Enable PyTorch support (for FFNet agent)")
+
     for ver in ["3.1.0", "3.2.0", "develop"]:
         depends_on(f"py-geopmdpy@{ver}", type="run", when=f"@{ver}")
         depends_on(f"geopm-runtime@{ver}", type=("build", "run"), when=f"@{ver}")
@@ -47,7 +49,7 @@ class PyGeopmpy(PythonPackage):
     depends_on("py-dash@2.17.1:", type="run")
     depends_on("py-matplotlib", type="run")
     depends_on("py-plotly@5.18.0:", type="run")
-    depends_on("py-torch@1.10.2:", type="run")
+    depends_on("py-torch@1.10.2:", when="+pytorch", type="run")
     depends_on("numactl", type="run")
     depends_on("stress-ng", type="run")
 

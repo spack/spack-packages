@@ -40,9 +40,13 @@ class Mpt(BundlePackage):
     ) -> None:
         # use the Spack compiler wrappers under MPI
         dependent_module = dependent_spec.package.module
-        env.set("MPICC_CC", dependent_module.spack_cc)
-        env.set("MPICXX_CXX", dependent_module.spack_cxx)
-        env.set("MPIF90_F90", dependent_module.spack_fc)
+        for var_name, attr_name in (
+            ("MPICC_CC", "spack_cc"),
+            ("MPICXX_CXX", "spack_cxx"),
+            ("MPIF90_F90", "spack_fc"),
+        ):
+            if hasattr(dependent_module, attr_name):
+                env.set(var_name, getattr(dependent_module, attr_name))
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # Because MPI is both runtime and compiler, we have to setup the mpi
