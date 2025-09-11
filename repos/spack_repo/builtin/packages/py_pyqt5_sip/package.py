@@ -31,10 +31,11 @@ class PyPyqt5Sip(PythonPackage):
         when="@12.12:12.13 %gcc@14:",
     )
 
-
     def url_for_version(self, version):
         if version >= Version("12.17.0"):
             name = "pyqt5-sip"
         else:
             name = "PyQt5-sip"
-        return f"https://files.pythonhosted.org/packages/source/P/PyQt5-sip/{name}-{version}.tar.gz"
+        return (
+            f"https://files.pythonhosted.org/packages/source/P/PyQt5-sip/{name}-{version}.tar.gz"
+        )
