@@ -13,14 +13,14 @@ class PyMetatensorTorch(PythonPackage):
     homepage = "https://docs.metatensor.org"
     pypi = "metatensor-torch/metatensor_torch-0.7.5.tar.gz"
 
-    import_modules = ["metatensor"]
+    import_modules = ["metatensor.torch"]
 
     maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    version("0.7.6", sha256="bcc23b535e5b86c0d49096cbf73de67141896f4f14c114515d97b936a78353a1")
+    version("0.8.0", sha256="240ea8c37328f6bb61ec9f3e482131f0875c73166a0e349a8dd8b85204c58bd7")
 
-    depends_on("py-vesin", type=("run", "build"))
+    depends_on("py-vesin", type=("build", "run"))
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"))
 
