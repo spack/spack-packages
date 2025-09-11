@@ -53,32 +53,93 @@ class Pbvr(MakefilePackage):
     depends_on("qt-svg@6.2.4+widgets", when="+client")
     depends_on("vtk@9.3.1~mpi", when="~mpi")
     depends_on("vtk@9.3.1+mpi", when="+mpi")
-    depends_on("freeglut", when="+client")
+    depends_on("freeglut")
 
-    patch("kvs-conf.patch", when="~client~extended_fileformat")
-    patch("kvs-extended-fileformat-conf.patch", when="~client+extended_fileformat")
-    patch("kvs-client-conf.patch", when="+client~extended_fileformat")
-    patch("kvs-client-extended-fileformat-conf.patch", when="+client+extended_fileformat")
-
-    patch("pbvr-conf.patch", when="~mpi")
-    patch("pbvr-conf-mpi.patch", when="+mpi")
     patch("makefile-machine-gcc-omp.patch", when="~mpi")
     patch("makefile-machine-gcc-mpi-omp.patch", when="+mpi")
 
     requires("%cxx=gcc")
 
+    def setup_build_environment(self, env):
+        env.set("KVS_CPP", "g++")
+        env.set("SPACK_KVS_DIR", self.prefix)
+        env.set("VTK_VERSION", "9.3")
+        env.set("VTK_INCLUDE_PATH", self.spec["vtk"].prefix.include + "/vtk-9.3")
+        env.set("VTK_LIB_PATH", self.spec["vtk"].prefix.lib)
+
     def patch(self):
-        source_dir = self.stage.source_path
-        for root, dirs, files in os.walk(source_dir):
-            for fname in files:
-                path = os.path.join(root, fname)
-                try:
-                    with open(path, "r", encoding="utf-8") as f:
-                        content = f.read()
-                    if "KVS_DIR" in content:
-                        filter_file("KVS_DIR", "SPACK_KVS_DIR", path)
-                except Exception:
-                    pass
+        filter_file(
+            "KVS_ENABLE_GLEW +=.*$",
+            "KVS_ENABLE_GLEW=0",
+            "KVS/kvs.conf"
+        )
+        filter_file(
+            "KVS_SUPPORT_OPENXR +=.*$",
+            "KVS_SUPPORT_OPENXR=0",
+            "KVS/kvs.conf"
+        )
+        filter_file(
+            "PBVR_MAKE_KVSML_COMVERTER=.*$",
+            "PBVR_MAKE_KVSML_COMVERTER=1",
+            "CS_server/pbvr.conf"
+        )
+        if self.spec.satisfies("+client"):
+            filter_file(
+                "KVS_SUPPORT_QT +=.*$",
+                "KVS_SUPPORT_QT=1",
+                "KVS/kvs.conf"
+            )
+        if self.spec.satisfies("+extended_fileformat"):
+            filter_file(
+                "KVS_SUPPORT_EXTENDED_FILE_FORMAT +=.*$",
+                "KVS_SUPPORT_EXTENDED_FILE_FORMAT=1",
+                "KVS/kvs.conf"
+            )
+        if self.spec.satisfies("+mpi"):
+            filter_file(
+                "PBVR_MACHINE=Makefile_machine_mac_gcc_omp",
+                "PBVR_MACHINE=Makefile_machine_gcc_mpi_omp",
+                "CS_server/pbvr.conf"
+            )
+        else:
+            filter_file(
+                "PBVR_MACHINE=Makefile_machine_mac_gcc_omp",
+                "PBVR_MACHINE=Makefile_machine_gcc_omp",
+                "CS_server/pbvr.conf"
+            )
+
+        # Upstream KVS uses the environment variable KVS_DIR to locate its installation.
+        # This conflicts with user-provided builds of KVS outside of Spack.
+        # To avoid ambiguity, we replace KVS_DIR with SPACK_KVS_DIR in the relevant files.
+        files_to_patch = [
+            "Client/SETTINGS.pri",
+            "Client/App/App.pro",
+            "CS_server/Makefile",
+            "CS_server/KVSMLConverter/Makefile.def",
+            "CS_server/VisModule/Makefile",
+            "CS_server/VisModule/Makefile.def",
+            "KVS/Makefile.$make",
+            "KVS/Makefile.def",
+            "KVS/Source/Makefile",
+            "KVS/Source/Core/Makefile",
+            "KVS/Source/Core/NanoVG/FontStash.cpp",
+            "KVS/Source/Core/OpenGL/ShaderSource.cpp",
+            "KVS/Source/SupportExtendedFileFormat/Makefile",
+            "KVS/Source/SupportGLUT/Makefile",
+            "KVS/Source/SupportQt/SupportQt.pri",
+            "KVS/Source/SupportQt/Event/Event.pri",
+            "KVS/Source/SupportQt/Viewer/Viewer.pri",
+            "KVS/Source/SupportQt/Widget/Widget.pri",
+            "KVS/Tool/kvscheck/Makefile",
+            "KVS/Tool/kvsconv/Makefile",
+            "KVS/Tool/kvsmake/Constant.h",
+            "KVS/Tool/kvsmake/Makefile",
+            "KVS/Tool/kvsmake/Makefile.kvs.template",
+            "KVS/Tool/kvsmake/QtProject.template",
+            "KVS/Tool/kvsview/Makefile",
+        ]
+        for f in files_to_patch:
+            filter_file("KVS_DIR", "SPACK_KVS_DIR", f)
 
     def build(self, spec, prefix):
         # Workaround for qmake's $$system() not capturing command output correctly.
@@ -86,10 +147,9 @@ class Pbvr(MakefilePackage):
         # To avoid it, Qt is built with the '-no-feature-forkfd_pidfd' option to disable
         # the use of new process management features that rely on pidfd.
         # Note: Red Hat fixed this kernel issue in version 4.18.0-392 and later.
-        is_rhel8_bug_fixed = False
         release_str = platform.uname().release
         match = re.match(r"^(\d+\.\d+\.\d+)-([\d\.]+)\.el8", release_str)
-        if match and not is_rhel8_bug_fixed:
+        if match:
             base_version = match.group(1)
             build_number = match.group(2).split(".")[0]
             full_version = f"{base_version}.{build_number}"
@@ -100,34 +160,28 @@ class Pbvr(MakefilePackage):
                     " on Red Hat Enterprise Linux 8 versions older than 8.7.\n"
                     "You need to fix the package.py file for qt-base,"
                     " so please refer to the following URL.\n"
-                    "https://github.com/CCSEPBVR/CS-IS-PBVR/wiki/BuildforLinux_JP"
+                    "English:https://github.com/CCSEPBVR/CS-IS-PBVR/wiki/PackageManager_EN\n"
+                    "Japanese:https://github.com/CCSEPBVR/CS-IS-PBVR/wiki/PackageManager_JP"
                 )
 
-        with set_env(
-            KVS_CPP="g++",
-            SPACK_KVS_DIR=prefix,
-            VTK_VERSION="9.3",
-            VTK_INCLUDE_PATH=str(spec["vtk"].prefix.include) + "/vtk-9.3",
-            VTK_LIB_PATH=str(spec["vtk"].prefix.lib),
-        ):
-            # Build KVS
-            build_dir = join_path(self.stage.source_path, "KVS")
+        # Build KVS
+        build_dir = join_path(self.stage.source_path, "KVS")
+        with working_dir(build_dir):
+            make()
+            make("install")
+
+        # Build Client
+        if "+client" in spec:
+            qmake = Executable(spec["qt-base"].prefix.bin.qmake)
+            build_dir = join_path(self.stage.source_path, "Client/build")
+            os.makedirs(build_dir)
             with working_dir(build_dir):
+                qmake("../pbvr_client.pro")
                 make()
-                make("install")
 
-            # Build Client
-            if "+client" in spec:
-                qmake = Executable(spec["qt-base"].prefix.bin.qmake)
-                build_dir = join_path(self.stage.source_path, "Client/build")
-                os.makedirs(build_dir)
-                with working_dir(build_dir):
-                    qmake("../pbvr_client.pro")
-                    make()
-
-            # Build Sevrer
-            with working_dir(join_path(self.stage.source_path, "CS_server")):
-                make()
+        # Build Sevrer
+        with working_dir(join_path(self.stage.source_path, "CS_server")):
+            make()
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
