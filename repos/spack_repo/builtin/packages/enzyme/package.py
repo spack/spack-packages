@@ -88,11 +88,11 @@ class Enzyme(CMakePackage):
         ver = self.llvm_version.up_to(1)
 
         llvm = find_libraries("LLVMEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
-        env.set("LLVMENZYME", llvm.joined(";"))
+        env.set("LLVMENZYME", ";".join(llvm))
 
         clang = find_libraries("ClangEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
-        env.set("CLANGENZYME", clang.joined(";"))
+        env.set("CLANGENZYME", ";".join(clang))
 
         if self.version >= Version("0.0.32"):  # TODO actual lower bound
             lld = find_libraries("LLDEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
-            env.set("LLDENZYME", lld.joined(";"))
+            env.set("LLDENZYME", ";".join(lld))
