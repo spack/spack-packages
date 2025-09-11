@@ -18,7 +18,8 @@ class Casacore(CMakePackage):
     maintainers("mpokorny")
 
     license("LGPL-2.0-only")
-
+    
+    version("3.7.1", sha256="ad7ad865d5d8517524bdde71e0083a69442648b693850660dadb0ce6109d91c7")
     version("3.6.1", sha256="480d3340fa17e9ba67f18efbaff4bbb272a01d1f400d2295c0b6c86eb7abcf82")
     version("3.6.0", sha256="c88075aa73c2139b323b71a7f5d56cec5a6a0de649efd11e2d00ca033be5a0d7")
     version("3.5.0", sha256="63f1c8eff932b0fcbd38c598a5811e6e5397b72835b637d6f426105a183b3f91")
@@ -74,7 +75,7 @@ class Casacore(CMakePackage):
     depends_on("python@2.6:", when="@:3.5.0 +python")
     depends_on("python@3:", when="@3.6.0: +python")
     depends_on("boost +python", when="+python")
-    depends_on("boost +system +filesystem", when="+dysco")
+    # depends_on("boost +system +filesystem", when="+dysco")
     depends_on("py-numpy@:1", when="@:3.6.0 +python")
     depends_on("py-numpy", when="@3.6.1: +python")
     depends_on("gsl", when="+dysco")
