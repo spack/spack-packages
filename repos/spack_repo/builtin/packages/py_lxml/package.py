@@ -17,6 +17,7 @@ class PyLxml(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.0.1", sha256="2b3a882ebf27dd026df3801a87cf49ff791336e0f94b0fad195db77e01240690")
     version("5.3.0", sha256="4e109ca30d1edec1ac60cdbe341905dc3b8f55b16855e03a54aaf59e51ec8c6f")
     version("5.2.2", sha256="bb2dc4898180bea79863d5487e5f9c7c34297414bad54bcd0f0852aee9cfdb87")
     version("4.9.2", sha256="2455cfaeb7ac70338b3257f41e21f0724f4b5b0c0e7702da67ee6c3640835b67")
@@ -40,6 +41,7 @@ class PyLxml(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("python@3.8:", type=("build", "run"), when="@6:")
     depends_on("py-setuptools", type="build")
 
     depends_on("libxml2@2.9.2:", type=("build", "link", "run"))
@@ -47,6 +49,7 @@ class PyLxml(PythonPackage):
     depends_on("py-html5lib", when="+html5", type=("build", "run"))
     depends_on("py-beautifulsoup4", when="+htmlsoup", type=("build", "run"))
     depends_on("py-cssselect@0.7:", when="+cssselect", type=("build", "run"))
+    depends_on("py-cython@3.1.2:", type="build", when="@6:")
     depends_on("py-cython@3.0.11:", type="build", when="@5.3:")
     depends_on("py-cython@3.0.10:", type="build", when="@5.2:")
     depends_on("py-cython@3.0.9:", type="build", when="@5.1.1:")
