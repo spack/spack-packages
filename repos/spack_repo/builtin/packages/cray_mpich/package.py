@@ -104,9 +104,7 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
     def setup_dependent_package(self, module, dependent_spec):
         spec = self.spec
         if spec.satisfies("+wrappers"):
-            MpichEnvironmentModifications.setup_dependent_package(
-                self, module, dependent_spec
-            )
+            MpichEnvironmentModifications.setup_dependent_package(self, module, dependent_spec)
         elif spack_cc is not None:
             spec.mpicc = spack_cc
             spec.mpicxx = spack_cxx
@@ -140,7 +138,9 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
         gtl_lib_info = find_gtl_lib()
         if gtl_lib_info is not None:
             # The user ask for GPu support (+rocm amdgpu_target=* etc.)
-            libs += find_libraries(gtl_lib_info["name"], root=gtl_lib_info["path"], recursive=False)
+            libs += find_libraries(
+                gtl_lib_info["name"], root=gtl_lib_info["path"], recursive=False
+            )
 
         return libs
 
@@ -182,9 +182,7 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
             gtl_lib = gtl_kind["lib"]
 
             if self.spec.satisfies(f"+{variant} {arch_variant}=*"):
-                accelerator_architecture_set = set(
-                    self.spec.variants[arch_variant].value
-                )
+                accelerator_architecture_set = set(self.spec.variants[arch_variant].value)
 
                 if len(
                     accelerator_architecture_set
@@ -228,10 +226,7 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
         gtl_lib_info = find_gtl_lib()
         if gtl_lib_info is not None:
             return {
-                "ldflags": [
-                    f"-L{gtl_lib_info['path']}",
-                    f"-Wl,-rpath,{gtl_lib_info['path']}",
-                ],
+                "ldflags": [f"-L{gtl_lib_info['path']}", f"-Wl,-rpath,{gtl_lib_info['path']}"],
                 "ldlibs": [f"-l{gtl_lib_info['name']}"],
             }
         # No rocm/cuda variant, no GTL.
