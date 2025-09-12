@@ -19,7 +19,6 @@ class PyMetatensorOperations(PythonPackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.3.4", sha256="448c155e5d4ac7ad7bdf56a6d0883f641622d54d4357f50b2149b2cb2ad8d66a")
-    version("0.3.3", sha256="432d267ce1f3c5ee11994d5348e70bc517a3c19ef68982af7bb470463e3c1b6b")
 
     # pyproject.toml
     depends_on("python@3.9:", type=("build", "run"))
