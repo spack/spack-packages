@@ -6,6 +6,8 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
+import os
+
 
 class PyMetatensorTorch(PythonPackage):
     """Torchscript bindings for metatensor"""
@@ -29,3 +31,25 @@ class PyMetatensorTorch(PythonPackage):
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
     depends_on("cmake@3.16:", type="build")
+
+
+    @run_after("install")
+    def workaround(self):
+        """
+        Workaround for the incorrect usage of namespace packages.
+
+        See https://github.com/metatensor/metatensor/issues/976 
+        """
+        python = self.spec["python"]
+        python_version = python.version.up_to(2)
+
+        metatensor_core = os.path.join(self.spec["py-metatensor-core"].prefix.lib, f"python{python_version}", "site-packages", "metatensor")
+        metatensor_torch = os.path.join(self.prefix.lib, f"python{python_version}", "site-packages", "metatensor", "torch")
+
+        dest = os.path.join(metatensor_core, "torch")
+
+        if os.path.lexists(dest):
+            os.remove(dest)
+
+        symlink(metatensor_torch, dest)
+

@@ -31,3 +31,4 @@ class PyMetatomicTorch(PythonPackage):
     depends_on("py-packaging@23:", type="build")
     # CMakeLists.txt
     depends_on("cmake@3.16:", type="build")
+

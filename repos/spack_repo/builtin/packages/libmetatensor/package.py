@@ -29,5 +29,8 @@ class Libmetatensor(CMakePackage):
     depends_on("cxx", type="build")
 
     def cmake_args(self):
-        args = [self.define_from_variant("METATENSOR_INSTALL_BOTH_STATIC_SHARED", "static")]
+        args = [
+            self.define("METATENSOR_INSTALL_BOTH_STATIC_SHARED", "OFF"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "static"),
+        ]
         return args
