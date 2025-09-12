@@ -104,7 +104,9 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
     def setup_dependent_package(self, module, dependent_spec):
         spec = self.spec
         if spec.satisfies("+wrappers"):
-            MpichEnvironmentModifications.setup_dependent_package(self, module, dependent_spec)
+            MpichEnvironmentModifications.setup_dependent_package(
+                self, module, dependent_spec
+            )
         elif spack_cc is not None:
             spec.mpicc = spack_cc
             spec.mpicxx = spack_cxx
@@ -135,10 +137,15 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
         libs = find_libraries(libraries, root=self.prefix.lib, recursive=True)
         libs += find_libraries(libraries, root=self.prefix.lib64, recursive=True)
 
+        gtl_lib_info = find_gtl_lib()
+        if gtl_lib_info is not None:
+            # The user ask for GPu support (+rocm amdgpu_target=* etc.)
+            libs += find_libraries(gtl_lib_info["name"], root=gtl_lib_info["path"], recursive=False)
+
         return libs
 
     @property
-    def gtl_lib(self):
+    def find_gtl_lib(self):
         # GPU transport Layer (GTL) handling background:
         # - The cray-mpich module defines an environment variable per supported
         # GPU (say, PE_MPICH_GTL_LIBS_amd_gfx942). So we should read the
@@ -175,7 +182,9 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
             gtl_lib = gtl_kind["lib"]
 
             if self.spec.satisfies(f"+{variant} {arch_variant}=*"):
-                accelerator_architecture_set = set(self.spec.variants[arch_variant].value)
+                accelerator_architecture_set = set(
+                    self.spec.variants[arch_variant].value
+                )
 
                 if len(
                     accelerator_architecture_set
@@ -211,11 +220,19 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
                 )[0]
 
                 # Early break. Only one GTL can be active at a given time.
-                return {
-                    "ldflags": [
-                        f"-L{gtl_library_directory}",
-                        f"-Wl,-rpath,{gtl_library_directory}",
-                    ],
-                    "ldlibs": [f"-l{gtl_library_name}"],
-                }
+                return {"path": gtl_library_directory, "name": gtl_library_name}
+        return None
+
+    @property
+    def gtl_lib(self):
+        gtl_lib_info = find_gtl_lib()
+        if gtl_lib_info is not None:
+            return {
+                "ldflags": [
+                    f"-L{gtl_lib_info['path']}",
+                    f"-Wl,-rpath,{gtl_lib_info['path']}",
+                ],
+                "ldlibs": [f"-l{gtl_lib_info['name']}"],
+            }
+        # No rocm/cuda variant, no GTL.
         return {}
