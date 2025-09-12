@@ -68,44 +68,30 @@ class Pbvr(MakefilePackage):
         env.set("VTK_LIB_PATH", self.spec["vtk"].prefix.lib)
 
     def patch(self):
+        filter_file("KVS_ENABLE_GLEW +=.*$", "KVS_ENABLE_GLEW=0", "KVS/kvs.conf")
+        filter_file("KVS_SUPPORT_OPENXR +=.*$", "KVS_SUPPORT_OPENXR=0", "KVS/kvs.conf")
         filter_file(
-            "KVS_ENABLE_GLEW +=.*$",
-            "KVS_ENABLE_GLEW=0",
-            "KVS/kvs.conf"
-        )
-        filter_file(
-            "KVS_SUPPORT_OPENXR +=.*$",
-            "KVS_SUPPORT_OPENXR=0",
-            "KVS/kvs.conf"
-        )
-        filter_file(
-            "PBVR_MAKE_KVSML_COMVERTER=.*$",
-            "PBVR_MAKE_KVSML_COMVERTER=1",
-            "CS_server/pbvr.conf"
+            "PBVR_MAKE_KVSML_COMVERTER=.*$", "PBVR_MAKE_KVSML_COMVERTER=1", "CS_server/pbvr.conf"
         )
         if self.spec.satisfies("+client"):
-            filter_file(
-                "KVS_SUPPORT_QT +=.*$",
-                "KVS_SUPPORT_QT=1",
-                "KVS/kvs.conf"
-            )
+            filter_file("KVS_SUPPORT_QT +=.*$", "KVS_SUPPORT_QT=1", "KVS/kvs.conf")
         if self.spec.satisfies("+extended_fileformat"):
             filter_file(
                 "KVS_SUPPORT_EXTENDED_FILE_FORMAT +=.*$",
                 "KVS_SUPPORT_EXTENDED_FILE_FORMAT=1",
-                "KVS/kvs.conf"
+                "KVS/kvs.conf",
             )
         if self.spec.satisfies("+mpi"):
             filter_file(
                 "PBVR_MACHINE=Makefile_machine_mac_gcc_omp",
                 "PBVR_MACHINE=Makefile_machine_gcc_mpi_omp",
-                "CS_server/pbvr.conf"
+                "CS_server/pbvr.conf",
             )
         else:
             filter_file(
                 "PBVR_MACHINE=Makefile_machine_mac_gcc_omp",
                 "PBVR_MACHINE=Makefile_machine_gcc_omp",
-                "CS_server/pbvr.conf"
+                "CS_server/pbvr.conf",
             )
 
         # Upstream KVS uses the environment variable KVS_DIR to locate its installation.
@@ -195,6 +181,4 @@ class Pbvr(MakefilePackage):
             install_tree(
                 join_path(src, "Client/build/App/Shader"), join_path(prefix.bin, "Shader")
             )
-            install_tree(
-                join_path(src, "Client/build/App/Font"), join_path(prefix.bin, "Font")
-            )
+            install_tree(join_path(src, "Client/build/App/Font"), join_path(prefix.bin, "Font"))
