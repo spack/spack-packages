@@ -55,8 +55,8 @@ class Gdl(CMakePackage):
     depends_on("hdf5", when="+hdf5")
     depends_on("libx11", when="+x11")
 
-    depends_on("plplot+wx", when="@:1.0.6 +wx@:5.11")        #plplot dependency removed in v1.1
-    depends_on("plplot+wx+wxold", when="@:1.0.6 +wx@5.12:")
+    depends_on("plplot+wx", when="@:1.0.6 +wx")  #plplot dependency removed in v1.1
+    depends_on("plplot+wx+wxold", when="@:1.0.6 +wx")
     depends_on("plplot~wx", when="@:1.0.6 ~wx")
     
     depends_on("proj@:8", when="+proj")
@@ -129,7 +129,7 @@ class Gdl(CMakePackage):
             args += ["-DOPENMP=OFF"]
 
         if self.spec.satisfies("+proj"):
-            args += ["-DLIBPROJ=ON"] 
+            args += ["-DLIBPROJ=ON"]
         else:
             args += ["-DLIBPROJ=OFF"]
 
