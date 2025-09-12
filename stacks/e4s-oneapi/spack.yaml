@@ -223,6 +223,7 @@ spack:
   - cabana +sycl ^kokkos +sycl +openmp cxxstd=17
   - ginkgo +sycl
   - kokkos +sycl +openmp cxxstd=17
+  - kokkos-fft host_backend=fftw-openmp device_backend=onemkl +tests ^kokkos +sycl +openmp cxxstd=17
   - sundials +sycl +examples-install cxxstd=17
   - tau +mpi +opencl +level_zero +syscall
   - upcxx +level_zero
