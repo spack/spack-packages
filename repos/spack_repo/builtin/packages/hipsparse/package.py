@@ -133,6 +133,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

@@ -319,11 +319,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     conflicts("languages=jit", when="@:4")
 
     with when("languages=d"):
-        # The very first version of GDC that became part of GCC already supported version 2.076 of
-        # the language and runtime.
-        # See https://wiki.dlang.org/GDC#Status
-        provides("D@2")
-
         # Support for the D programming language has been added to GCC 9.
         # See https://gcc.gnu.org/gcc-9/changes.html#d
         conflicts("@:8", msg="support for D has been added in GCC 9.1")

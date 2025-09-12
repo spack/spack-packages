@@ -1,0 +1,63 @@
+from spack_repo.builtin.build_systems.python import PythonPackage
+
+from spack.package import *
+
+
+class PyMumps4py(PythonPackage):
+    """Python wrapper for the MUMPS solver (MUMPS4PY)."""
+
+    homepage = "https://github.com/imadki/mumps4py"
+    url = "https://github.com/imadki/mumps4py/archive/refs/tags/1.0.0.tar.gz"
+
+    maintainers = ["williampiat3"]
+
+    version("1.0.0", sha256="634dd52a9942e88a430d6c8b519cbf6e50db77dd5f1be1cb04e5ab3f3e9da8ba")
+
+    # build dependencies
+    with default_args(type="build"):
+        depends_on("cmake")
+        depends_on("py-setuptools")
+        depends_on("py-cython")
+
+    # Python dependencies
+    with default_args(type=("build", "run")):
+        depends_on("py-numpy")
+        depends_on("py-mpi4py")
+
+    # Optional/test deps
+    depends_on("py-pytest", type="test")
+
+    # External solver
+    depends_on("mumps+float+complex+double")
+
+    def build_args(self, spec, prefix):
+        # Ensure MUMPS include/lib are passed if setup.py needs them
+        mumps = spec["mumps"]
+        args = [
+            "--inplace",
+            "MUMPS_INC={0}".format(mumps.prefix.include),
+            "MUMPS_LIB={0}".format(mumps.prefix.lib),
+        ]
+        return args
+
+    def setup_build_environment(self, env):
+        # Required by mumps4py to specify which MUMPS solvers to use
+        env.set("MUMPS_SOLVERS", "dmumps,cmumps,zmumps,smumps")
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def run_source_tests(self):
+        """Test if all solvers are working"""
+        with working_dir("spack-test", create=True):
+            python(
+                "-c",
+                ";".join(
+                    [
+                        "from mumps4py.mumps_solver import MumpsSolver",
+                        "MumpsSolver(verbose=False,system='complex64')",
+                        "MumpsSolver(verbose=False, system='complex128')",
+                        "MumpsSolver(verbose=False, system='double')",
+                        " MumpsSolver(verbose=False, system='single')",
+                    ]
+                ),
+            )

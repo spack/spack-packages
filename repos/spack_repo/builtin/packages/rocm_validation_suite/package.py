@@ -45,10 +45,6 @@ class RocmValidationSuite(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
-    patch(
-        "007-cleanup-path-reference-donot-download-googletest-yaml-library-path_5.6.patch",
-        when="@5.6",
-    )
     patch("008-correcting-library-and-include-path-WITHOUT-RVS-BUILD-TESTS.patch", when="@5.7")
 
     # Replacing ROCM_PATH with corresponding package prefix path.

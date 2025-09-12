@@ -34,6 +34,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     version("develop", branch="develop")
     version("2025.0.stable", branch="release/2025.0")
+    version("2025.0.1", tag="2025.0.1", commit="ed42fab06e0c4be41fba510f151a5ae153fbd5e5")
     version("2024.01.stable", branch="release/2024.01")
     version("2024.01.1", tag="2024.01.1", commit="0672b9a9a2a1e3846c5e2059fb73a07a129f22cd")
     version("2023.08.stable", branch="release/2023.08")
@@ -191,6 +192,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("libunwind@1.4: +xz")
     depends_on("libunwind +pic libs=static", when="@:2023.08")
     depends_on("mbedtls+pic", when="@:2022.03")
+    depends_on("patchelf@0.11:", when="@2025:")
     depends_on("xerces-c transcoder=iconv")
     depends_on("xxhash@0.8.1:", when="@2025:")
     depends_on("xz", type="link")
@@ -202,8 +204,9 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
     depends_on("py-docutils", type="build", when="@2025:")
-    depends_on("py-sphinx", type="build", when="+docs")
-    depends_on("py-myst-parser@0.19:", type="build", when="+docs")
+    depends_on("py-sphinx@6:8", type="build", when="+docs")
+    depends_on("py-myst-parser@3:4", type="build", when="+docs")
+    depends_on("py-sphinx-book-theme@1", type="build", when="+docs")
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
@@ -225,12 +228,21 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         depends_on("intel-xed+pic")
         depends_on("intel-xed+deprecated-includes", when="@:2024.01.1")
 
-    # Avoid 'link' dep, we don't actually link, and that adds rpath
-    # that conflicts with app.
-    depends_on("hip@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("hsa-rocr-dev@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
+    with when("@:2024"):
+        # Avoid 'link' dep, we don't actually link, and that adds rpath
+        # that conflicts with app.
+        depends_on("hip@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("hsa-rocr-dev@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
+
+    with when("@2025:"):
+        # The consideration above is no longer needed as of 2025.0.0, we use libdl and
+        # similar tricks to avoid rpath conflicts.
+        depends_on("hip@4.5:", when="+rocm")
+        depends_on("hsa-rocr-dev@4.5:", when="+rocm")
+        depends_on("roctracer-dev@4.5:", when="+rocm")
+        depends_on("rocprofiler-dev@4.5:", when="+rocm")
 
     conflicts("%gcc@:7", when="@2022.10:", msg="hpctoolkit requires gnu gcc 8.x or later")
     conflicts("%gcc@:6", when="@2021.00:2022.06", msg="hpctoolkit requires gnu gcc 7.x or later")
