@@ -137,9 +137,9 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
         gtl_lib_info = self.find_gtl_lib()
         if gtl_lib_info is not None:
-            # The user ask for GPu support (+rocm amdgpu_target=* etc.)
+            # The user asked for GPU support (+rocm amdgpu_target=* etc.)
             libs += find_libraries(
-                gtl_lib_info["name"], root=gtl_lib_info["path"], recursive=False
+                [f"lib{gtl_lib_info['name']}"], root=gtl_lib_info["path"], recursive=False
             )
 
         return libs
