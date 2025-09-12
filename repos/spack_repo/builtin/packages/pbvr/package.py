@@ -12,7 +12,6 @@ from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from llnl.util.filesystem import install_tree
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Pbvr(MakefilePackage):
