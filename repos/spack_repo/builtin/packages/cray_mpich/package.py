@@ -135,7 +135,7 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
         libs = find_libraries(libraries, root=self.prefix.lib, recursive=True)
         libs += find_libraries(libraries, root=self.prefix.lib64, recursive=True)
 
-        gtl_lib_info = find_gtl_lib()
+        gtl_lib_info = self.find_gtl_lib()
         if gtl_lib_info is not None:
             # The user ask for GPu support (+rocm amdgpu_target=* etc.)
             libs += find_libraries(
@@ -223,7 +223,7 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
     @property
     def gtl_lib(self):
-        gtl_lib_info = find_gtl_lib()
+        gtl_lib_info = self.find_gtl_lib()
         if gtl_lib_info is not None:
             return {
                 "ldflags": [f"-L{gtl_lib_info['path']}", f"-Wl,-rpath,{gtl_lib_info['path']}"],
