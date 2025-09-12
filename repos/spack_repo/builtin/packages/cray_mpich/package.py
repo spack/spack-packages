@@ -144,7 +144,6 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
         return libs
 
-    @property
     def find_gtl_lib(self):
         # GPU transport Layer (GTL) handling background:
         # - The cray-mpich module defines an environment variable per supported
