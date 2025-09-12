@@ -35,7 +35,7 @@ class Gdl(CMakePackage):
     version("1.0.6", sha256="b02a257d59ad608cd300471e9cac6c23b6dc75938f79eaba812e30c56aed4865")
     version("1.0.5", sha256="b1ea9ee700b3fead67e78877ac95dde84b6d0fa4e959dd17251c078673dd52ec")
     version("1.0.4", sha256="f248123c1c82710d070243e29b2dd445bc6fd378800f3bdaa4b8cb46962c5fb1")
-    version("1.0.3", sha256="db72eeb84c54dba387d5474500ce005ff1dc605b070bd00f57a552d3bb6ab16c") 
+    version("1.0.3", sha256="db72eeb84c54dba387d5474500ce005ff1dc605b070bd00f57a552d3bb6ab16c")
 
     variant("graphicsmagick", default=False, description="Enable GraphicsMagick")
     variant("hdf4", default=False, description="Enable HDF4")
@@ -62,7 +62,7 @@ class Gdl(CMakePackage):
     depends_on("plplot+wx", when="@:1.0.6 +wx")  # plplot dependency removed in v1.1
     depends_on("plplot+wx+wxold", when="@:1.0.6 +wx")
     depends_on("plplot~wx", when="@:1.0.6 ~wx")
-    
+
     depends_on("proj@:8", when="+proj")
     depends_on("wxwidgets", when="+wx")
     depends_on("mpi", when="+mpi")
