@@ -11,16 +11,16 @@ class LibmetatomicTorch(CMakePackage):
     """TorchScript/C++ bindings to metatomic"""
 
     homepage = "https://docs.metatensor.org/metatomic"
-    url = "https://github.com/metatensor/metatomic/releases/download/metatomic-torch-v0.1.3/metatomic_torch-0.1.3.tar.gz"
+    url = "https://github.com/metatensor/metatomic/releases/download/metatomic-torch-v0.1.4/metatomic-torch-cxx-0.1.4.tar.gz"
     git = "https://github.com/metatensor/metatomic.git"
 
     maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    version("0.1.3", sha256="60a4b651cf6e15f175879af74d18215d45cc4fd5e42a61242a180e2014fe9fd2")
+    version("0.1.4", sha256="385ec8b8515d674b6a9f093f724792b2469e7ea2365ca596f574b64e38494f94")
 
     depends_on("cmake@3.16:", type="build")
     depends_on("cxx", type="build")
     depends_on("c", type="build")
-    depends_on("libmetatensor-torch@0.7.6:", type=("build", "run"))
+    depends_on("libmetatensor-torch@0.8.0:")
     depends_on("py-torch@2.1.0:2.7.0")
