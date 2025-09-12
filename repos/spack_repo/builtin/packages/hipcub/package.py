@@ -89,7 +89,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"hip +cuda@{ver}", when=f"+cuda @{ver}")
 
     # fix hardcoded search in /opt/rocm and broken config mode search
-    patch("find-hip-cuda-rocm-5.3.patch", when="@5.6:5.7 +cuda")
+    patch("find-hip-cuda-rocm-5.3.patch", when="@5.7 +cuda")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+rocm"):
@@ -106,7 +106,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

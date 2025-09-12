@@ -44,7 +44,7 @@ class HipifyClang(CMakePackage):
     # the patch was added to install the targets in the correct directory structure
     # this will fix the issue https://github.com/spack/spack/issues/30711
 
-    patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@5.6:6.0")
+    patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@:6.0")
     patch("0003-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@6.1")
     patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:")
 
