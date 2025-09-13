@@ -118,4 +118,7 @@ class Med(CMakePackage):
         if "+mpi" in spec:
             options.extend(["-DMEDFILE_USE_MPI=YES", "-DMPI_ROOT_DIR=%s" % spec["mpi"].prefix])
 
+        if "+python" in spec and spec['python'].version >= Version('3.9'):
+            options.extend(["-DCMAKE_CXX_FLAGS=-DPyEval_CallObject=PyObject_CallObject"])
+
         return options
