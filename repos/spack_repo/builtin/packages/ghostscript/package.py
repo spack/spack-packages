@@ -54,6 +54,8 @@ class Ghostscript(AutotoolsPackage):
         "+tesseract", when="platform=darwin", msg="Tesseract does not build correctly on macOS"
     )
 
+    patch("nogoto.patch", when="%fj@:4.1.0")
+
     build_targets = ["default", "so"]
     install_targets = ["install", "soinstall"]
 
