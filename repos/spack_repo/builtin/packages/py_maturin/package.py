@@ -31,7 +31,7 @@ class PyMaturin(PythonPackage):
     version("0.13.7", sha256="c0a77aa0c57f945649ca711c806203a1b6888ad49c2b8b85196ffdcf0421db77")
 
     with default_args(type="build"):
-        depends_on("py-setuptools@77:", when="@1.9:")
+        depends_on("py-setuptools@77:", when="@1.9.4:")
         depends_on("py-setuptools")
         depends_on("py-setuptools-rust@1.11:", when="@1.8.6:")
         depends_on("py-setuptools-rust@1.4:")
