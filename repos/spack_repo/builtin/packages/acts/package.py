@@ -12,7 +12,7 @@ from spack.package import *
 def submodules(package):
     submodules = []
     if package.spec.satisfies("+odd"):
-         submodules.append("thirdparty/OpenDataDetector")
+        submodules.append("thirdparty/OpenDataDetector")
     return submodules
 
 
