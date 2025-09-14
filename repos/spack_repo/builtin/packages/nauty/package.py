@@ -74,6 +74,12 @@ class Nauty(AutotoolsPackage):
         for path, sha256 in url_and_sha256:
             patch(path, when=condition, level=1, sha256=sha256)
 
+    patch(
+        "file://{0}/nauty-file-offset-configinput.patch".format(os.path.dirname(__file__)),
+        when="@2.6r7",
+        sha256="54756a8b7f64e939583822c398055310dc8184bbd6e85f94ec5dd080276ea844",
+    )
+
     depends_on("m4", type="build", when="@2.6r7")
     depends_on("autoconf", type="build", when="@2.6r7")
     depends_on("automake", type="build", when="@2.6r7")
