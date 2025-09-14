@@ -26,6 +26,7 @@ class PyPygdal(PythonPackage):
     version("3.3.2.10", sha256="7fb9eec8aeb36b94389ff9f2b40cdceffefc8c290d813f4908b4acd208ca3a84")
     version("3.3.0.10", sha256="ea0c20bee67fac94fe0b1cb604a4fd0dc600aa8aa15cf9a7b6dc76adeb48670e")
     version("3.0.4.6", sha256="8e39b58cd9465bb5f41786a7cf6a62df93334c104db05a5bfb8181a0be276b86")
+    version("3.0.1.5", sha256="1222f69fe5e6b632d0d2a42d3acb8fac80fb4577c05e01969d8cd5548192ccaa")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -37,3 +38,4 @@ class PyPygdal(PythonPackage):
     depends_on("gdal@3.3.2", type=("build", "link", "run"), when="@3.3.2.10")
     depends_on("gdal@3.3.0", type=("build", "link", "run"), when="@3.3.0.10")
     depends_on("gdal@3.0.4", type=("build", "link", "run"), when="@3.0.4.6")
+    depends_on("gdal@3.0.1", type=("build", "link", "run"), when="@3.0.1.5")
