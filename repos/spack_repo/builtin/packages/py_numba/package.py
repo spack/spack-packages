@@ -47,7 +47,8 @@ class PyNumba(PythonPackage):
     # max_numpy_run_version in setup.py is a non inclusive upper bound
     # min_numpy_run_version < min_numpy_build_version and these ranges use
     # min_numpy_build_version
-    depends_on("py-numpy@2.0:2.3", when="@0.61.2:", type=("build", "run"))
+    depends_on("py-numpy@2.0:2.3", when="@0.62:", type=("build", "run"))
+    depends_on("py-numpy@2.0:2.2", when="@0.61.2", type=("build", "run"))
     depends_on("py-numpy@2.0:2.1", when="@0.61.0", type=("build", "run"))
     depends_on("py-numpy@2.0", when="@0.60", type=("build", "run"))
     depends_on("py-numpy@1.22:1.26", when="@0.58.1:0.59", type=("build", "run"))
