@@ -36,11 +36,15 @@ class Go(Package):
     extendable = True
     executables = ["^go$"]
     unresolved_libraries = ["libtiff.so.*"]  # go/src/debug/elf/testdata/libtiffxx.so_
+    tags = ["build-tools"]
 
     maintainers("alecbcs")
 
     license("BSD-3-Clause")
 
+    version("1.25.1", sha256="d010c109cee94d80efe681eab46bdea491ac906bf46583c32e9f0dbb0bd1a594")
+    version("1.24.7", sha256="2a8f50db0f88803607c50d7ea8834dcb7bd483c6b428a91e360fdf8624b46464")
+    version("1.24.6", sha256="e1cb5582aab588668bc04c07de18688070f6b8c9b2aaf361f821e19bd47cfdbd")
     version("1.24.4", sha256="5a86a83a31f9fa81490b8c5420ac384fd3d95a3e71fba665c7b3f95d1dfef2b4")
     version("1.24.3", sha256="229c08b600b1446798109fae1f569228102c8473caba8104b6418cb5bc032878")
     version("1.24.2", sha256="9dc77ffadc16d837a1bf32d99c624cb4df0647cee7b119edd9e7b1bcc05f2e00")

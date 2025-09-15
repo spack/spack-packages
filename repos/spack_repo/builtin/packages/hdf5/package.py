@@ -9,8 +9,6 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-import llnl.util.lang
-
 from spack.package import *
 
 
@@ -603,7 +601,7 @@ class Hdf5(CMakePackage):
         # 1.10.6 and 1.12.0. The current develop versions do not produce 'h5pfc'
         # at all. Here, we make sure that 'h5pfc' is available when Fortran and
         # MPI support are enabled (only for versions that generate 'h5fc').
-        if self.spec.satisfies("@1.8.22:1.8," "1.10.6:1.10.9," "1.12.0:1.12.2" "+fortran+mpi"):
+        if self.spec.satisfies("@1.8.22:1.8,1.10.6:1.10.9,1.12.0:1.12.2+fortran+mpi"):
             with working_dir(self.prefix.bin):
                 # No try/except here, fix the condition above instead:
                 symlink("h5fc", "h5pfc")
@@ -689,7 +687,7 @@ class Hdf5(CMakePackage):
                     symlink(src_lib, dst_lib)
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version(self):
         spec_vers_str = str(self.spec.version.up_to(3))
         if "develop" in spec_vers_str:

@@ -62,6 +62,8 @@ class Madgraph5amc(MakefilePackage):
 
     conflicts("%gcc@10:", when="@2.7.3")
 
+    depends_on("fortran", type="build")
+
     depends_on("syscalc")
     depends_on("gosam-contrib", when="+ninja")
     depends_on("collier", when="+collier")
@@ -149,7 +151,7 @@ class Madgraph5amc(MakefilePackage):
         if "+pythia8" in spec:
             with open("install-pythia8-interface", "w") as f:
                 f.write(
-                    f"""set pythia8_path {spec['pythia8'].prefix}
+                    f"""set pythia8_path {spec["pythia8"].prefix}
                         install mg5amc_py8_interface
                 """
                 )

@@ -16,6 +16,7 @@ class PyTimm(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("1.0.16", sha256="a3b8130dd2cb8dc3b9f5e3d09ab6d677a6315a8695fd5264eb6d52a4a46c1044")
     version("1.0.15", sha256="756a3bc30c96565f056e608a9b559daed904617eaadb6be536f96874879b1055")
     version("1.0.14", sha256="00a7f2cc04ce3ed8f80476bbb7eea27eac8cf6f2d59b5e9aa9cdd375dd6550db")
     version("1.0.13", sha256="39190337cff26a15d180b660374c901ac472b69d91d8cfc5a5bb47c600fb3716")

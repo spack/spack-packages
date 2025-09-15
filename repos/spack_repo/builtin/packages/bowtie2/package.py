@@ -17,6 +17,7 @@ class Bowtie2(MakefilePackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.5.4", sha256="94ec207a0494b9f5e0e62dbbca8cb79fe4ff16602395802a86d098349c6ef004")
     version("2.5.2", sha256="2c47a7da0a507c68319b307cdd15dee385127cc817d6bbf1d357af8d8af578ef")
     version("2.5.1", sha256="cb6cbbbb5a7167a2f21a3d63cb9774336361f540e1ec3d8ff907f955c35f71b8")
     version("2.4.5", sha256="d3cbd5f323393b5649aea10325d7c4b77f02035a8b204e5ac18eba95236e076a")

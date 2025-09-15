@@ -13,12 +13,10 @@ class Plink(Package):
     computationally efficient manner."""
 
     homepage = "https://www.cog-genomics.org/plink/1.9/"
+    git = "https://github.com/chrchang/plink-ng.git"
 
-    version(
-        "1.9-beta6.27",
-        commit="a2ea957c893fbb0558358edef27f3ecbf3d360f8",
-        git="https://github.com/chrchang/plink-ng.git",
-    )
+    version("1.9-beta7.7", commit="8bf44299e6eed58f3ebd27f7e28cead11b814785")
+    version("1.9-beta6.27", commit="a2ea957c893fbb0558358edef27f3ecbf3d360f8")
     version(
         "1.9-beta6.10",
         sha256="f8438656996c55a5edd95c223cce96277de6efaab1b9b1d457bfee0c272058d8",
@@ -45,7 +43,8 @@ class Plink(Package):
         depends_on("lapack", when="@1.9-beta6.27:")
     depends_on("gmake", type="build")
 
-    patch("dynamic_zlib.patch", when="@1.9-beta6.27:")
+    patch("dynamic_zlib.patch", when="@1.9-beta6.27:1.9-beta6.99")
+    patch("dynamic_zlib-1.3.patch", when="@1.9-beta7.7:")
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)

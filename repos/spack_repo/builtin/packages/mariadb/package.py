@@ -20,10 +20,12 @@ class Mariadb(CMakePackage):
     """
 
     homepage = "https://mariadb.org/about/"
-    url = "http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.2.8/source/mariadb-10.2.8.tar.gz"
+    url = "https://archive.mariadb.org/mariadb-12.1.1/source/mariadb-12.1.1.tar.gz"
 
     license("GPL-2.0-or-later")
 
+    version("12.1.1", sha256="ac5359c7361a5fffd9a6df769a694d3c832dacf94003debc2926fff77db12248")
+    version("11.8.3", sha256="1014a85c768de8f9e9c6d4bf0b42617f3b1588be1ad371f71674ea32b87119c0")
     version("11.3.2", sha256="5570778f0a2c27af726c751cda1a943f3f8de96d11d107791be5b44a0ce3fb5c")
     version("10.9.6", sha256="fe6f5287fccc6a65b8bbccae09e841e05dc076fcc13017078854ca387eab8ae9")
     version("10.8.8", sha256="8de1a151842976a492d6331b543d0ed87259febbbc03b9ebce07c80d754d6361")
@@ -40,7 +42,7 @@ class Mariadb(CMakePackage):
     variant(
         "nonblocking",
         default=True,
-        description="Allow non blocking " "operations in the mariadb client library.",
+        description="Allow non blocking operations in the mariadb client library.",
     )
 
     provides("mariadb-client")
@@ -54,6 +56,7 @@ class Mariadb(CMakePackage):
     # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants)
     depends_on("cmake@2.6:", type="build")
+    depends_on("diffutils", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("bison", type="build")
     depends_on("jemalloc")
@@ -70,6 +73,9 @@ class Mariadb(CMakePackage):
     depends_on("openssl")
     depends_on("openssl@:1.0", when="@:10.1")
     depends_on("krb5")
+    depends_on("snappy", when="@11.8.3:")
+    depends_on("pcre2", when="@11.8.3:")
+    depends_on("fmt", when="@11.8.3:")
 
     conflicts("%gcc@9.1.0:", when="@:5.5")
     conflicts("%gcc@13:", when="@:10.8.7")  # https://github.com/spack/spack/issues/41377

@@ -14,9 +14,15 @@ class Mergiraf(CargoPackage):
 
     homepage = "https://mergiraf.org/"
     url = "https://codeberg.org/mergiraf/mergiraf/archive/v0.6.0.tar.gz"
+    list_url = "https://codeberg.org/mergiraf/mergiraf/releases"
 
     maintainers("alecbcs")
 
     license("GPL-3.0-only")
 
+    version("0.13.0", sha256="8b3851bac8ebac3c973c0f82fcaf1e4cc7a68d4effe3a4d727963b3824972909")
+    version("0.12.1", sha256="5006c72d446e2b634e41d6d760661773ad449fed93154a8c8d461ad91461f997")
+    version("0.8.1", sha256="b9f76cd133dbd60382a00705e4bed67727b94082f6c6a72d43fd6b7593a18595")
     version("0.6.0", sha256="548b0ae3d811d6410beae9e7294867c7e6d791cf9f68ddda5c24e287f7978030")
+
+    depends_on("rust@1.89:", type="build", when="@0.12:")

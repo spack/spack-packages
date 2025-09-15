@@ -9,9 +9,6 @@ from contextlib import contextmanager
 
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util.filesystem import windows_sfn
-
-from spack.operating_systems.mac_os import macos_version
 from spack.package import *
 
 
@@ -37,14 +34,36 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     # explanation of version numbering scheme
 
     # Maintenance releases (even numbers)
+    version("5.42.0", sha256="e093ef184d7f9a1b9797e2465296f55510adb6dab8842b0c3ed53329663096dc")
+    version("5.40.2", sha256="10d4647cfbb543a7f9ae3e5f6851ec49305232ea7621aed24c7cfbb0bef4b70d")
     version("5.40.0", sha256="c740348f357396327a9795d3e8323bafd0fe8a5c7835fc1cbaba0cc8dfe7161f")
-    version("5.38.2", sha256="a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e")
-    version("5.38.0", sha256="213ef58089d2f2c972ea353517dc60ec3656f050dcc027666e118b508423e517")
-    version("5.36.3", sha256="f2a1ad88116391a176262dd42dfc52ef22afb40f4c0e9810f15d561e6f1c726a")
-    version("5.36.1", sha256="68203665d8ece02988fc77dc92fccbb297a83a4bb4b8d07558442f978da54cc1")
-    version("5.36.0", sha256="e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a")
 
     # End of life releases (deprecated)
+    version(
+        "5.38.2",
+        sha256="a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e",
+        deprecated=True,
+    )
+    version(
+        "5.38.0",
+        sha256="213ef58089d2f2c972ea353517dc60ec3656f050dcc027666e118b508423e517",
+        deprecated=True,
+    )
+    version(
+        "5.36.3",
+        sha256="f2a1ad88116391a176262dd42dfc52ef22afb40f4c0e9810f15d561e6f1c726a",
+        deprecated=True,
+    )
+    version(
+        "5.36.1",
+        sha256="68203665d8ece02988fc77dc92fccbb297a83a4bb4b8d07558442f978da54cc1",
+        deprecated=True,
+    )
+    version(
+        "5.36.0",
+        sha256="e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a",
+        deprecated=True,
+    )
     version(
         "5.34.1",
         sha256="357951a491b0ba1ce3611263922feec78ccd581dddc24a446b033e25acf242a1",
@@ -175,7 +194,8 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
 
     if sys.platform != "win32":
         depends_on("gmake", type="build")
-        depends_on("gdbm@:1.23")
+        depends_on("gdbm")
+        depends_on("gdbm@:1.23", when="@:5.36")
         # Bind us below gdbm-1.20 due to API change: https://github.com/Perl/perl5/issues/18915
         depends_on("gdbm@:1.19", when="@:5.35")
         # :5.28 needs gdbm@:1:14.1: https://rt-archive.perl.org/perl5/Ticket/Display.html?id=133295

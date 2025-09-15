@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import glob
 import os
 import sys
@@ -9,7 +8,6 @@ import sys
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.util.environment
 from spack.package import *
 
 
@@ -34,6 +32,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("7.2.0", sha256="a9bff89ccf39915d729e08ae0a0c6a71ce0ebbe98411e9a2eb3c83c8db0af39c")
     version("7.1.0", sha256="5818afb6dba3ece57f51e65897db5062f8e3464e6ed294b654ebf34c3991bc4f")
     version("7.0.1", sha256="c105da5d8fea7b113b0741a943d467a06c98db959ce71bdd9a50b9f03eecc43e")
     # Note: version 7.0.0 is omitted due to build issues, see PR 33940 for more information
@@ -56,6 +55,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
     variant("cuda", default=False, description="Enable CUDA support")
     variant("nvml", default=False, description="Enable NVML support")
     variant("rocm_smi", default=False, description="Enable ROCm SMI support")
+    variant("rocp_sdk", default=False, when="@7.2:", description="Enable ROCp support")
     variant(
         "rdpmc",
         default=True,
@@ -70,16 +70,18 @@ class Papi(AutotoolsPackage, ROCmPackage):
     # The PAPI configure option "--with-shlib-tools" is deprecated
     # and therefore not implemented here
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
+    depends_on("perl", when="@7.1.0:", type="build")
     depends_on("lm-sensors", when="+lmsensors")
     depends_on("cuda", when="+cuda")
     depends_on("cuda", when="+nvml")
     depends_on("bc", when="+cuda", type="build")
     depends_on("hsa-rocr-dev", when="+rocm")
     depends_on("rocprofiler-dev", when="+rocm")
+    depends_on("rocprofiler-sdk", when="+rocp_sdk")
     depends_on("llvm-amdgpu", when="+rocm")
     depends_on("rocm-openmp-extras", when="+rocm")
     depends_on("rocm-smi-lib", when="+rocm_smi")
@@ -100,6 +102,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
         sha256="64c57b3ad4026255238cc495df6abfacc41de391a0af497c27d0ac819444a1f8",
         when="@5.4.0:5.6%gcc@8:",
     )
+    patch("perl-in-env.patch", when="@7.1.0:")
     # 7.1.0 erroneously adds -ffree-form for all fortran compilers
     patch("sysdetect-free-form-fix.patch", when="@7.1.0")
     patch("crayftn-fixes.patch", when="@6.0.0:%cce@9:")
@@ -128,6 +131,8 @@ class Papi(AutotoolsPackage, ROCmPackage):
             env.set("AQLPROFILE_READ_API", "1")
         if "+rocm_smi" in spec:
             env.append_flags("CFLAGS", "-I%s/rocm_smi" % spec["rocm-smi-lib"].prefix.include)
+        if "+rocp_sdk" in spec:
+            env.set("PAPI_ROCP_SDK_ROOT", spec["rocprofiler-sdk"].prefix)
         #
         # Intel OneAPI LLVM cannot compile papi unless the DBG enviroment variable is cleared
         #
@@ -161,6 +166,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
                 "nvml",
                 "rocm",
                 "rocm_smi",
+                "rocp_sdk",
             ],
         )
         if components:
@@ -177,6 +183,11 @@ class Papi(AutotoolsPackage, ROCmPackage):
 
         if "+debug" in spec:
             options.append("--with-debug=yes")
+
+        if self.run_tests:
+            options.append("--with-tests=ctests")
+        else:
+            options.append("--with-tests=no")
 
         return options
 
@@ -224,7 +235,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
         if not os.path.exists(test_dir):
             raise SkipTest("Skipping smoke tests, directory doesn't exist")
         with working_dir(test_dir, create=False):
-            with spack.util.environment.set_env(PAPIROOT=self.prefix):
+            with set_env(PAPIROOT=self.prefix):
                 make = self.spec["gmake"].command
                 make()
                 exe_simple = which("simple")

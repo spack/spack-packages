@@ -58,7 +58,7 @@ class Xgboost(CMakePackage, CudaPackage):
         depends_on("cuda@:12.4", when="@:2.1")
 
     depends_on("nccl", when="+nccl")
-    depends_on("llvm-openmp", when="+openmp %apple-clang")
+    depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("hwloc", when="%clang")
 
     # https://github.com/dmlc/xgboost/issues/6972

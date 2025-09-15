@@ -21,7 +21,6 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
     applications. Core math functions include BLAS, LAPACK,
     ScaLAPACK, sparse solvers, fast Fourier transforms, and vector
     math.
-
     """
 
     maintainers("rscohn2")
@@ -191,7 +190,7 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
         msg="MKL with OpenMP threading requires GCC, clang, or Intel compilers",
     )
 
-    depends_on("tbb")
+    depends_on("tbb", when="threads=tbb")
     # cluster libraries need mpi
     depends_on("mpi", when="+cluster")
 
@@ -206,10 +205,9 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
         requires("mpi_family=openmpi", when="^[virtuals=mpi] openmpi")
         requires("mpi_family=openmpi", when="^[virtuals=mpi] hpcx-mpi")
 
-    provides("fftw-api@3")
     provides("scalapack", when="+cluster")
-    provides("mkl")
-    provides("lapack", "blas")
+    provides("lapack", "blas", "mkl")
+    provides("fftw-api@3")
 
     @run_after("install")
     def fixup_installation(self):

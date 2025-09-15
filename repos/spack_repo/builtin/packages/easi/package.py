@@ -68,10 +68,11 @@ class Easi(CMakePackage):
     conflicts("jit=impalajit", when="target=riscv64:")
 
     def cmake_args(self):
-        args = []
-        args.append(self.define_from_variant("ASAGI", "asagi"))
-        args.append(self.define_from_variant("PYTHON_BINDINGS", "python"))
-        self.define("PYBIND11_USE_FETCHCONTENT", False)
+        args = [
+            self.define_from_variant("ASAGI", "asagi"),
+            self.define_from_variant("PYTHON_BINDINGS", "python"),
+            self.define("PYBIND11_USE_FETCHCONTENT", False),
+        ]
         spec = self.spec
         if spec.satisfies("jit=impalajit") or spec.satisfies("jit=impalajit-llvm"):
             args.append(self.define("IMPALAJIT", True))

@@ -29,9 +29,12 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     test_requires_compiler = True
 
-    license("BSD-3-Clause")
+    license("Apache-2.0", when="@2025:")
+    license("BSD-3-Clause", when="@:2024")
 
     version("develop", branch="develop")
+    version("2025.0.stable", branch="release/2025.0")
+    version("2025.0.1", tag="2025.0.1", commit="ed42fab06e0c4be41fba510f151a5ae153fbd5e5")
     version("2024.01.stable", branch="release/2024.01")
     version("2024.01.1", tag="2024.01.1", commit="0672b9a9a2a1e3846c5e2059fb73a07a129f22cd")
     version("2023.08.stable", branch="release/2023.08")
@@ -83,8 +86,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     variant(
         "papi",
         default=True,
-        description="Use PAPI instead of perfmon for access to "
-        "the hardware performance counters.",
+        description="Use PAPI instead of perfmon for access to the hardware performance counters.",
     )
 
     # Accelerator variants: cuda, rocm, etc.
@@ -119,11 +121,20 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         "docs",
         default=False,
         description="Include extra documentation (user's manual)",
-        when="@develop",
+        when="@2025:",
     )
 
     variant(
         "python", default=False, description="Support unwinding Python source.", when="@2023.03:"
+    )
+
+    variant(
+        "auditor_default",
+        default=True,
+        sticky=True,
+        when="@2025:",
+        description="Whether to use LD_AUDIT by default in hpcrun, can be set to "
+        "false to work around bugs in Glibc <2.35",
     )
 
     build_system(
@@ -141,7 +152,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         depends_on("libtool", type="build")
 
     with when("build_system=meson"):
-        depends_on("meson@1.1.0:", type="build")
+        depends_on("meson@1.3.2:", type="build")
 
         with when("@:2024.01"):
             depends_on("gmake", type="build")
@@ -181,19 +192,21 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("libunwind@1.4: +xz")
     depends_on("libunwind +pic libs=static", when="@:2023.08")
     depends_on("mbedtls+pic", when="@:2022.03")
+    depends_on("patchelf@0.11:", when="@2025:")
     depends_on("xerces-c transcoder=iconv")
-    depends_on("xxhash@0.8.1:", when="@develop")
+    depends_on("xxhash@0.8.1:", when="@2025:")
     depends_on("xz", type="link")
     depends_on("xz+pic libs=static", type="link", when="@:2023.08")
     depends_on("yaml-cpp@0.7.0: +shared", when="@2022.10:")
-    depends_on("googletest@1.8.1: +gmock", type="test", when="@develop")
+    depends_on("googletest@1.8.1: +gmock", type="test", when="@2025:")
 
     depends_on("zlib-api")
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
-    depends_on("py-docutils", type="build", when="@develop")
-    depends_on("py-sphinx", type="build", when="+docs")
-    depends_on("py-myst-parser@0.19:", type="build", when="+docs")
+    depends_on("py-docutils", type="build", when="@2025:")
+    depends_on("py-sphinx@6:8", type="build", when="+docs")
+    depends_on("py-myst-parser@3:4", type="build", when="+docs")
+    depends_on("py-sphinx-book-theme@1", type="build", when="+docs")
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
@@ -215,12 +228,21 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         depends_on("intel-xed+pic")
         depends_on("intel-xed+deprecated-includes", when="@:2024.01.1")
 
-    # Avoid 'link' dep, we don't actually link, and that adds rpath
-    # that conflicts with app.
-    depends_on("hip@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("hsa-rocr-dev@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
+    with when("@:2024"):
+        # Avoid 'link' dep, we don't actually link, and that adds rpath
+        # that conflicts with app.
+        depends_on("hip@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("hsa-rocr-dev@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
+
+    with when("@2025:"):
+        # The consideration above is no longer needed as of 2025.0.0, we use libdl and
+        # similar tricks to avoid rpath conflicts.
+        depends_on("hip@4.5:", when="+rocm")
+        depends_on("hsa-rocr-dev@4.5:", when="+rocm")
+        depends_on("roctracer-dev@4.5:", when="+rocm")
+        depends_on("rocprofiler-dev@4.5:", when="+rocm")
 
     conflicts("%gcc@:7", when="@2022.10:", msg="hpctoolkit requires gnu gcc 8.x or later")
     conflicts("%gcc@:6", when="@2021.00:2022.06", msg="hpctoolkit requires gnu gcc 7.x or later")
@@ -232,8 +254,15 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     # https://gitlab.com/hpctoolkit/hpctoolkit/-/issues/831
     conflicts(
-        "^elfutils@0.191:",
+        "^elfutils@0.191",
         msg="avoid elfutils 0.191 (known critical errors in hpcstruct for CUDA binaries)",
+    )
+
+    # https://gitlab.com/hpctoolkit/hpctoolkit/-/issues/897
+    conflicts(
+        "%cmake@3.30:3.31",
+        when="@2025: +cuda",
+        msg="avoid known conflict between CMake 3.30:3.31 and CUDA",
     )
 
     conflicts("+cray", when="@2022.10.01", msg="hpcprof-mpi is not available in 2022.10.01")
@@ -422,9 +451,11 @@ class MesonBuilder(meson.MesonBuilder):
             "-Drocm=" + ("enabled" if spec.satisfies("+rocm") else "disabled"),
             "-Dlevel0=" + ("enabled" if spec.satisfies("+level_zero") else "disabled"),
             "-Dgtpin=" + ("enabled" if spec.satisfies("+gtpin") else "disabled"),
+            "-Dhpcrun_use_auditor_by_default="
+            + ("true" if spec.satisfies("+auditor_default") else "false"),
         ]
 
-        if spec.satisfies("@develop"):
+        if spec.satisfies("@2025:"):
             args.append("-Dtests=" + ("enabled" if self.pkg.run_tests else "disabled"))
 
         if spec.satisfies("@:2024.01"):

@@ -10,8 +10,6 @@ import sys
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
 from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
-from llnl.util.filesystem import windows_sfn
-
 from spack.package import *
 
 is_windows = sys.platform == "win32"
@@ -31,87 +29,38 @@ class Curl(NMakePackage, AutotoolsPackage):
 
     license("curl")
 
-    version("8.11.1", sha256="e9773ad1dfa21aedbfe8e1ef24c9478fa780b1b3d4f763c98dd04629b5e43485")
-
-    # Deprecated versions due to CVEs
-    version(
-        "8.10.1",
-        sha256="3763cd97aae41dcf41950d23e87ae23b2edb2ce3a5b0cf678af058c391b6ae31",
-        deprecated=True,
-    )
-    version(
-        "8.8.0",
-        sha256="40d3792d38cfa244d8f692974a567e9a5f3387c547579f1124e95ea2a1020d0d",
-        deprecated=True,
-    )
-    version(
-        "8.7.1",
-        sha256="05bbd2b698e9cfbab477c33aa5e99b4975501835a41b7ca6ca71de03d8849e76",
-        deprecated=True,
-    )
-    version(
-        "8.6.0",
-        sha256="b4785f2d8877fa92c0e45d7155cf8cc6750dbda961f4b1a45bcbec990cf2fa9b",
-        deprecated=True,
-    )
-    version(
-        "8.4.0",
-        sha256="e5250581a9c032b1b6ed3cf2f9c114c811fc41881069e9892d115cc73f9e88c6",
-        deprecated=True,
-    )
-    version(
-        "8.1.2",
-        sha256="b54974d32fd610acace92e3df1f643144015ac65847f0a041fdc17db6f43f243",
-        deprecated=True,
-    )
-    version(
-        "8.0.1",
-        sha256="9b6b1e96b748d04b968786b6bdf407aa5c75ab53a3d37c1c8c81cdb736555ccf",
-        deprecated=True,
-    )
-    # needed by r@:4.2
-    version(
-        "7.88.1",
-        sha256="8224b45cce12abde039c12dc0711b7ea85b104b9ad534d6e4c5b4e188a61c907",
-        deprecated=True,
-    )
-    # needed by old r-curl
-    version(
-        "7.63.0",
-        sha256="9bab7ed4ecff77020a312d84cc5fb7eb02d58419d218f267477a724a17fd8dd8",
-        deprecated=True,
-    )
-
-    default_tls = "openssl"
-    if sys.platform == "darwin":
-        default_tls = "secure_transport"
-    elif sys.platform == "win32":
-        default_tls = "sspi"
+    version("8.15.0", sha256="699a6d2192322792c88088576cff5fe188452e6ea71e82ca74409f07ecc62563")
+    version("8.14.1", sha256="5760ed3c1a6aac68793fc502114f35c3e088e8cd5c084c2d044abdf646ee48fb")
 
     # TODO: add dependencies for other possible TLS backends
-    variant(
-        "tls",
-        default=default_tls,
-        description="TLS backend",
-        values=(
+
+    # common arguments for tls variant definitions
+    tls_args = {
+        "description": "TLS backend",
+        "multi": True,
+        "values": (
             # 'amissl',
             # 'bearssl',
             "gnutls",
-            conditional("mbedtls", when="@7.46:"),
+            "mbedtls",
             # 'mesalink',
-            conditional("nss", when="@:7.81"),
             "openssl",
             # 'rustls',
             # 'schannel',
-            "secure_transport",
+            # secure_transport support was removed in curl 8.15.0
+            conditional("secure_transport", when="platform=darwin @:8.14"),
             # 'wolfssl',
             conditional("sspi", when="platform=windows"),
         ),
-        multi=True,
-    )
+    }
+
+    variant("tls", default="openssl", **tls_args)
+    variant("tls", default="sspi", when="platform=windows", **tls_args)
+    variant("tls", default="secure_transport", when="platform=darwin @:8.14", **tls_args)
+
     variant("nghttp2", default=True, description="build nghttp2 library (requires C++11)")
     variant("libssh2", default=False, description="enable libssh2 support")
-    variant("libssh", default=False, description="enable libssh support", when="@7.58:")
+    variant("libssh", default=False, description="enable libssh support")
     variant("gssapi", default=False, description="enable Kerberos support")
     variant("librtmp", default=False, description="enable Rtmp support")
     variant("ldap", default=False, description="enable ldap support")
@@ -134,21 +83,8 @@ class Curl(NMakePackage, AutotoolsPackage):
     depends_on("pkgconfig", type="build", when="platform=freebsd")
 
     depends_on("gnutls", when="tls=gnutls")
-
-    with when("tls=mbedtls"):
-        depends_on("mbedtls +pic")
-        depends_on("mbedtls@:2", when="@:7.78")
-        depends_on("mbedtls@:3.5", when="@:8.7")
-        depends_on("mbedtls@2:", when="@7.79:")
-        depends_on("mbedtls@3.2:", when="@8.8")  # https://github.com/curl/curl/issues/13748
-
-    depends_on("nss", when="tls=nss")
-
-    with when("tls=openssl"):
-        depends_on("openssl")
-        # Since https://github.com/curl/curl/commit/ee36e86ce8f77a017c49b8312814c33f4b969565
-        # there is OpenSSL 3 detection.
-        depends_on("openssl@:1", when="@:7.76")
+    depends_on("mbedtls@2: +pic", when="tls=mbedtls")
+    depends_on("openssl", when="tls=openssl")
 
     depends_on("libidn2", when="+libidn2")
     depends_on("zlib-api")
@@ -158,12 +94,12 @@ class Curl(NMakePackage, AutotoolsPackage):
     depends_on("krb5", when="+gssapi")
     depends_on("rtmpdump", when="+librtmp")
 
+    # Perl pops up as a build-time dependency sometimes in curl.
+    # They try to fix it quickly when it happens.
     # https://github.com/curl/curl/issues/12832
     # https://github.com/curl/curl/issues/13508
-    depends_on("perl", type="build", when="@8.6:8.7.1")
-
-    # https://github.com/curl/curl/pull/9054
-    patch("easy-lock-sched-header.patch", when="@7.84.0")
+    # https://github.com/curl/curl/issues/18088
+    depends_on("perl", type="build", when="@8.15.0")
 
     build_system("autotools", conditional("nmake", when="platform=windows"), default="autotools")
 
@@ -229,11 +165,9 @@ class AutotoolsBuilder(AutotoolsBuilder):
             "--without-libgsasl",
             "--without-libpsl",
             "--without-zstd",
+            "--disable-docs",
             "--disable-manual",
         ]
-
-        if spec.satisfies("@8.7:"):
-            args.append("--disable-docs")
 
         args += self.enable_or_disable("libs")
 
@@ -241,12 +175,6 @@ class AutotoolsBuilder(AutotoolsBuilder):
         # TODO: certs for other tls options.
         if spec.satisfies("tls=gnutls") or spec.satisfies("tls=openssl"):
             args.extend(["--without-ca-bundle", "--without-ca-path", "--with-ca-fallback"])
-
-        # https://daniel.haxx.se/blog/2021/06/07/bye-bye-metalink-in-curl/
-        # We always disable it explicitly, but the flag is gone in newer
-        # versions.
-        if spec.satisfies("@:7.77"):
-            args.append("--without-libmetalink")
 
         if spec.satisfies("+gssapi"):
             args.append("--with-gssapi=" + spec["krb5"].prefix)
@@ -270,41 +198,22 @@ class AutotoolsBuilder(AutotoolsBuilder):
             return "--without-gnutls"
 
     def with_or_without_mbedtls(self, activated):
-        if self.spec.satisfies("@7.46:"):
-            if activated:
-                return "--with-mbedtls=" + self.spec["mbedtls"].prefix
-            else:
-                return "--without-mbedtls"
-
-    def with_or_without_nss(self, activated):
         if activated:
-            return "--with-nss=" + self.spec["nss"].prefix
+            return "--with-mbedtls=" + self.spec["mbedtls"].prefix
         else:
-            return "--without-nss"
+            return "--without-mbedtls"
 
     def with_or_without_openssl(self, activated):
-        if self.spec.satisfies("@7.77:"):
-            if activated:
-                return "--with-openssl=" + self.spec["openssl"].prefix
-            else:
-                return "--without-openssl"
+        if activated:
+            return "--with-openssl=" + self.spec["openssl"].prefix
         else:
-            if activated:
-                return "--with-ssl=" + self.spec["openssl"].prefix
-            else:
-                return "--without-ssl"
+            return "--without-openssl"
 
     def with_or_without_secure_transport(self, activated):
-        if self.spec.satisfies("@7.65:"):
-            if activated:
-                return "--with-secure-transport"
-            else:
-                return "--without-secure-transport"
+        if activated:
+            return "--with-secure-transport"
         else:
-            if activated:
-                return "--with-darwinssl"
-            else:
-                return "--without-darwinssl"
+            return "--without-secure-transport"
 
 
 class NMakeBuilder(BuildEnvironment, NMakeBuilder):
@@ -316,6 +225,7 @@ class NMakeBuilder(BuildEnvironment, NMakeBuilder):
         args.append("mode=%s" % mode)
         args.append("WITH_ZLIB=%s" % mode)
         args.append("ZLIB_PATH=%s" % self.spec["zlib-api"].prefix)
+        args.append("WINBUILD_ACKNOWLEDGE_DEPRECATED=yes")
         if self.spec.satisfies("+libssh"):
             args.append("WITH_SSH=%s" % mode)
         if self.spec.satisfies("+libssh2"):

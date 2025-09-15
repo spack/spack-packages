@@ -27,6 +27,7 @@ class Julia(MakefilePackage):
     maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
+    version("1.11.6", sha256="f02acdc8b9aadad568db405dfc4c82ea172f332d0c7a4a0db78ce36cd3cca9f3")
     version("1.11.5", sha256="bb6b42ff01bca3ff7118ddd360f96b4a6654ed7e658b82d50fb06504e7939755")
     version("1.11.4", sha256="28b06591df0ee40928712a88af8785eb05dc7ed08a7c9600dd7c376f90f9e53b")
     version("1.11.3", sha256="80f371ece1576fb7a38c8c930f7cad592fe314083b8a1fc9cd8bd8b165c9cb76")
@@ -34,6 +35,7 @@ class Julia(MakefilePackage):
     version("1.11.1", sha256="895549f40b21dee66b6380e30811f40d2d938c2baba0750de69c9a183cccd756")
     version("1.11.0", sha256="a938c6b7758a83e817b56db3e542bd85e6d74db75e1381b1ba24cd6e3dc8c566")
 
+    version("1.10.10", sha256="b564321e9ee71796f467b3872cdefdccdb97ca26e19ee8106df96f6d24061090")
     version("1.10.9", sha256="780206a73d2274c7e90b38352e27ed851c593a98f566b9bfa5f1b638336e954b")
     version("1.10.8", sha256="8ba5fa4722b2159c4e40d813468b5bd92d9582cba9ed036b577373e7c535cda7")
     version("1.10.7", sha256="9ff0fec7ff92e27c5909982047d1bd2dc80a32173e21a2e2e029eca2ccc1c0e1")
@@ -43,6 +45,7 @@ class Julia(MakefilePackage):
     version("1.10.3", sha256="b3cd34c839d25b98a162070b4e3abd5f34564ffdad13e07073be7885e5678a18")
     version("1.10.2", sha256="e3d20c02975da054aeb18d32ed84c5d760d54d2563e45e25017684a5a105d185")
 
+    version("1.9.4", sha256="4b4e882c7fa7618eacd91cc0207672c81a4ccf4877cd409b28f472eb8b18bb97")
     version("1.9.3", sha256="8d7dbd8c90e71179e53838cdbe24ff40779a90d7360e29766609ed90d982081d")
     version("1.9.2", sha256="015438875d591372b80b09d01ba899657a6517b7c72ed41222298fef9d4ad86b")
     version("1.9.0", sha256="48f4c8a7d5f33d0bc6ce24226df20ab49e385c2d0c3767ec8dfdb449602095b2")
@@ -58,11 +61,6 @@ class Julia(MakefilePackage):
     version("1.7.2", sha256="0847943dd65001f3322b00c7dc4e12f56e70e98c6b798ccbd4f02d27ce161fef")
     version("1.7.1", sha256="17d298e50e4e3dd897246ccebd9f40ce5b89077fa36217860efaec4576aa718e")
     version("1.7.0", sha256="8e870dbef71bc72469933317a1a18214fd1b4b12f1080784af7b2c56177efcb4")
-
-    version("1.6.7", sha256="74af1dc7b5841757a06a899923a62cac04665c09829324e8bf53cfb66f7b3d61")
-    version("1.6.6", sha256="a8023708cadb2649395769810e6cec8afc8e352aa6d407189b6c88b86d7f5090")
-    version("1.6.5", sha256="b70ae299ff6b63a9e9cbf697147a48a31b4639476d1947cb52e4201e444f23cb")
-    version("1.6.4", sha256="a4aa921030250f58015201e28204bff604a007defc5a379a608723e6bb1808d4")
 
     variant("precompile", default=True, description="Improve julia startup time")
     variant("openlibm", default=True, description="Use openlibm instead of libm")
@@ -97,7 +95,7 @@ class Julia(MakefilePackage):
     depends_on("libuv-julia@1.44.2", when="@1.8.2:1.9")
     depends_on("libuv-julia@1.44.3", when="@1.10.0:1.10")
     depends_on("libuv-julia@1.48.0", when="@1.11.0:")
-    depends_on("suite-sparse@5.4:5.10", when="@1.6:1.9")
+    depends_on("suite-sparse@5.4:5.10", when="@:1.9")
 
     with when("@1.11.0:1.11"):
         # libssh2.so.1, libpcre2-8.so.0, libmbedtls.so.14, libmbedcrypto.so.7, libmbedx509.so.1,
@@ -105,7 +103,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.11.0:5")
         depends_on("libgit2@1.7.2:1.7")
-        depends_on("libssh2@1.11")
+        depends_on("libssh2@1.11:1")
         depends_on("llvm@16.0.6 +lld shlib_symbol_version=JL_LLVM_16.0")
         depends_on("mbedtls@2.28.2:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -119,7 +117,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.8.0:5")
         depends_on("libgit2@1.6.4:1.6")
-        depends_on("libssh2@1.11.0:1.11")
+        depends_on("libssh2@1.11.0:1")
         depends_on("llvm@15.0.7 +lld shlib_symbol_version=JL_LLVM_15.0")
         depends_on("mbedtls@2.28.2:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -133,7 +131,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.4.0:5")
         depends_on("libgit2@1.5.0:1.5")
-        depends_on("libssh2@1.10.0:1.10")
+        depends_on("libssh2@1.10.0:1")
         depends_on("llvm@14.0.6 +lld shlib_symbol_version=JL_LLVM_14.0")
         depends_on("mbedtls@2.28.0:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -146,7 +144,7 @@ class Julia(MakefilePackage):
         # libcurl.so.4
         depends_on("libblastrampoline@5.1.0:5")
         depends_on("libgit2@1.3.0:1.3")
-        depends_on("libssh2@1.10.0:1.10")
+        depends_on("libssh2@1.10.0:1")
         depends_on("llvm@13.0.1 shlib_symbol_version=JL_LLVM_13.0")
         depends_on("mbedtls@2.28.0:2.28")
         depends_on("openlibm@0.8.1:0.8", when="+openlibm")
@@ -158,23 +156,12 @@ class Julia(MakefilePackage):
         # openlibm.so.3
         depends_on("libblastrampoline@3.0.0:3")
         depends_on("libgit2@1.1.0:1.1")
-        depends_on("libssh2@1.9.0:1.9")
+        depends_on("libssh2@1.9.0:1")
         depends_on("libuv@1.42.0")
         depends_on("llvm@12.0.1")
         depends_on("mbedtls@2.24.0:2.24")
         depends_on("openlibm@0.7.0:0.7", when="+openlibm")
         depends_on("curl@7.73.0:")
-
-    with when("@1.6.0:1.6"):
-        # libssh2.so.1, libpcre2-8.so.0, mbedtls.so.13, mbedcrypto.so.5, mbedx509.so.1
-        # openlibm.so.3, (todo: complete this list for upperbounds...)
-        depends_on("libgit2@1.1.0:1.1")
-        depends_on("libssh2@1.9.0:1.9")
-        depends_on("libuv@1.39.0")
-        depends_on("llvm@11.0.1")
-        depends_on("mbedtls@2.24.0:2.24")
-        depends_on("openlibm@0.7.0:0.7", when="+openlibm")
-        depends_on("curl@7.73.0:8.9")  # patch for forward compat with curl@8.10 does not apply
 
     # Patches for llvm
     depends_on("llvm", patches="llvm7-symver-jlprefix.patch", when="@:1.7")
@@ -278,7 +265,6 @@ class Julia(MakefilePackage):
     conflicts("%gcc@12:", when="@:1.7")
 
     # Patches for julia
-    patch("julia-1.6-system-libwhich-and-p7zip-symlink.patch", when="@1.6.0:1.6")
     patch("use-add-rpath.patch", when="@:1.8.0")
     patch("use-add-rpath-2.patch", when="@1.8.1:1.8")
 
@@ -302,7 +288,7 @@ class Julia(MakefilePackage):
     patch(
         "https://github.com/JuliaLang/julia/commit/5d43397ee52323f1c015513b2be3909078b646ef.patch?full_index=1",
         sha256="15f9f2a7b6ae21aa5de8655970c673a953e1d46018e901f7fff98aead8e4a929",
-        when="@1.6.4:1.9.0",
+        when="@:1.9.0",
     )
 
     # Fix gfortran abi detection https://github.com/JuliaLang/julia/pull/44026
@@ -418,7 +404,6 @@ class Julia(MakefilePackage):
             "USE_SYSTEM_LIBGIT2:=1",
             "USE_SYSTEM_LIBSSH2:=1",
             "USE_SYSTEM_LIBSUITESPARSE:=1",  # @1.7:
-            "USE_SYSTEM_SUITESPARSE:=1",  # @:1.6
             "USE_SYSTEM_LIBUNWIND:=1",
             "USE_SYSTEM_LIBUV:=1",
             "USE_SYSTEM_LIBWHICH:=1",
@@ -446,8 +431,8 @@ class Julia(MakefilePackage):
             "USE_INTEL_JITEVENTS:=0",  # @1.9:
         ]
 
-        options.append("USEGCC:={}".format("1" if "%gcc" in spec else "0"))
-        options.append("USECLANG:={}".format("1" if "%clang" in spec else "0"))
+        options.append("USEGCC:={}".format("1" if "%c=gcc" in spec else "0"))
+        options.append("USECLANG:={}".format("1" if "%c=llvm" in spec else "0"))
 
         options.extend(
             [

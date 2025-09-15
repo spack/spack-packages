@@ -19,8 +19,9 @@ class Scotch(CMakePackage, MakefilePackage):
     url = "https://gitlab.inria.fr/scotch/scotch/-/archive/v7.0.1/scotch-v7.0.1.tar.gz"
     list_url = "https://gforge.inria.fr/frs/?group_id=248"
 
-    maintainers("pghysels")
+    maintainers("AlexanderRichert-NOAA", "climbfuji")
 
+    version("7.0.8", sha256="21f48ac85c7991a5eb5fae9232dd68584556ccc500f85e2ebd6b5b275617e11a")
     version("7.0.7", sha256="02084471d2ca525f8a59b4bb8c607eb5cca452d6a38cf5c89f5f92f7edc1a5b5")
     version("7.0.6", sha256="b44acd0d2f53de4b578fa3a88944cccc45c4d2961cd8cefa9b9a1d5431de8e2b")
     version("7.0.4", sha256="8ef4719d6a3356e9c4ca7fefd7e2ac40deb69779a5c116f44da75d13b3d2c2c3")
@@ -123,9 +124,19 @@ class Scotch(CMakePackage, MakefilePackage):
 
         return scotchlibs + zlibs
 
+    def patch(self):
+        # Add ternary operator to set 'actgrafptr->bbalglbval' to zero to avoid div by zero
+        # in the case of fewer vertices than processing elements for PT-Scotch.
+        # Solution comes from Scotch authors, and will be included in 7.0.9.
+        if self.spec.satisfies("@:7.0.8 %oneapi"):
+            filter_file(
+                r"(actgrafptr->bbalglbval       =) (\(double\) actgrafptr->compglbload0dlt / \(double\) actgrafptr->compglbload0avg);",  # noqa: E501
+                r"\1 (actgrafptr->compglbload0avg != 0) ? \2 : 0;",
+                "src/libscotch/bdgraph.c",
+            )
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
-
     def cmake_args(self):
         args = [
             self.define_from_variant("BUILD_LIBSCOTCHMETIS", "metis"),
