@@ -13,7 +13,7 @@ class PyMetatensorTorch(PythonPackage):
     """Torchscript bindings for metatensor"""
 
     homepage = "https://docs.metatensor.org"
-    pypi = "metatensor-torch/metatensor_torch-0.7.5.tar.gz"
+    pypi = "metatensor-torch/metatensor_torch-0.0.0.tar.gz"
 
     import_modules = ["metatensor.torch"]
 

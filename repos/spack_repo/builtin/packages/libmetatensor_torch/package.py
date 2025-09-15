@@ -11,7 +11,7 @@ class LibmetatensorTorch(CMakePackage):
     """TorchScript/C++ bindings to metatensor"""
 
     homepage = "https://docs.metatensor.org"
-    url = "https://github.com/metatensor/metatensor/releases/download/metatensor-torch-v0.7.6/metatensor-torch-cxx-0.7.6.tar.gz"
+    url = "https://github.com/metatensor/metatensor/releases/download/metatensor-torch-v0.0.0/metatensor-torch-cxx-0.0.0.tar.gz"
     git = "https://github.com/metatensor/metatensor.git"
 
     maintainers("HaoZeke", "luthaf", "rmeli")

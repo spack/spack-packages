@@ -11,7 +11,7 @@ class Libmetatensor(CMakePackage):
     """Self-describing sparse tensor data format for atomistic machine learning and beyond."""
 
     homepage = "https://docs.metatensor.org"
-    url = "https://github.com/metatensor/metatensor/releases/download/metatensor-core-v0.1.17/metatensor-core-cxx-0.1.17.tar.gz"
+    url = "https://github.com/metatensor/metatensor/releases/download/metatensor-core-v0.0.0/metatensor-core-cxx-0.0.0.tar.gz"
     git = "https://github.com/metatensor/metatensor.git"
 
     maintainers("HaoZeke", "luthaf", "rmeli")

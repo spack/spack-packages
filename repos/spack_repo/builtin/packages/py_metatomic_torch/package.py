@@ -11,7 +11,7 @@ class PyMetatomicTorch(PythonPackage):
     """Torchscript bindings for metatomic"""
 
     homepage = "https://docs.metatensor.org/metatomic"
-    pypi = "metatomic-torch/metatomic_torch-0.1.2.tar.gz"
+    pypi = "metatomic-torch/metatomic_torch-0.0.0.tar.gz"
 
     import_modules = ["metatomic.torch"]
 

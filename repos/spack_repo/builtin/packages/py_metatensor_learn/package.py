@@ -11,7 +11,7 @@ class PyMetatensorLearn(PythonPackage):
     """Building blocks for the atomistic machine learning models based on PyTorch and NumPy"""
 
     homepage = "https://docs.metatensor.org"
-    pypi = "metatensor-learn/metatensor_learn-0.3.2.tar.gz"
+    pypi = "metatensor-learn/metatensor_learn-0.0.0.tar.gz"
 
     import_modules = ["metatensor.learn"]
 

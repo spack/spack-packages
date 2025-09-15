@@ -11,7 +11,7 @@ class PyMetatensorOperations(PythonPackage):
     """Operations to manipulate metatensor data types."""
 
     homepage = "https://docs.metatensor.org"
-    pypi = "metatensor-operations/metatensor_operations-0.3.3.tar.gz"
+    pypi = "metatensor-operations/metatensor_operations-0.0.0.tar.gz"
 
     import_modules = ["metatensor.operations"]
 

@@ -14,7 +14,7 @@ class PyMetatensorCore(PythonPackage):
     """Python bindings for metatensor-core"""
 
     homepage = "https://docs.metatensor.org"
-    pypi = "metatensor-core/metatensor_core-0.1.17.tar.gz"
+    pypi = "metatensor-core/metatensor_core-0.0.0.tar.gz"
 
     import_modules = ["metatensor"]
 

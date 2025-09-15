@@ -11,7 +11,7 @@ class PyVesin(PythonPackage):
     """Computing neighbor lists for atomistic system."""
 
     homepage = "https://luthaf.fr/vesin/latest/index.html"
-    pypi = "vesin/vesin-0.3.7.tar.gz"
+    pypi = "vesin/vesin-0.0.0.tar.gz"
 
     import_modules = ["vesin"]
 
