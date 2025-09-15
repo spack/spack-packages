@@ -7,11 +7,12 @@ import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Libfabric(AutotoolsPackage, CudaPackage):
+class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     """The Open Fabrics Interfaces (OFI) is a framework focused on exporting
     fabric communication services to applications."""
 
@@ -234,6 +235,10 @@ class Libfabric(AutotoolsPackage, CudaPackage):
 
         if self.spec.satisfies("+gdrcopy"):
             args.append(f"--with-gdrcopy={self.spec['gdrcopy'].prefix}")
+
+        if self.spec.satisfies("+rocm"):
+            args.append(f"--with-rocr={self.spec['hip'].prefix}")
+            args.append(f"--enable-rocr-dlopen")
 
         return args
 
