@@ -104,7 +104,7 @@ spack:
   - lhapdfsets sets=default
   - madgraph5amc
   - njet
-  - opendatadetector
+  #- opendatadetector. # Note: gitlab.cern.ch unavailable
   - openloops
   - pandoramonitoring
   - pandorapfa
