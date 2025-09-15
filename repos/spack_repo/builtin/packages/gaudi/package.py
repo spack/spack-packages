@@ -107,7 +107,9 @@ class Gaudi(CMakePackage, CudaPackage):
         sha256="6b377fd10828bf26367c26792a5465351f3f0b5f7f6073dbcae6fa9195d4a414",
         when="@38.1:39",
     )
-    conflicts("^root@6.36:", when="@:38.0")
+    # Legacy CompressionSetting removed in ROOT 6.36, but used through Gaudi 39.1.
+    # See https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1678
+    conflicts("^root@6.36:", when="@:39.1")
 
     # IAuditor: define static strings in implementation
     # https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1781

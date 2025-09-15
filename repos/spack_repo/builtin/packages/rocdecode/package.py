@@ -13,13 +13,14 @@ class Rocdecode(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocDecode"
     git = "https://github.com/ROCm/rocDecode.git"
-    url = "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-6.2.0.tar.gz"
+    url = "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-6.4.3.tar.gz"
 
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("6.4.3", sha256="dd485e1cf24eb6f7315c32afcd2eb639a64dfb100a747bdbef3aa3235c4e3fa9")
     version("6.4.2", sha256="43c3bc2fe71c150bd6e646c95f834002df80d0bc6489082731c0be68fb785eac")
     version("6.4.1", sha256="35e364cec1405c76cfbb91215e1a327efea1e60340d8c8df12c0e5b2f0e1321e")
     version("6.4.0", sha256="d82c17687cc8ccac67fe2d401edd25c9825b38777b7a7b4100f84658838a1e50")
@@ -60,10 +61,11 @@ class Rocdecode(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     patch("0001-add-amdgpu-drm-include.patch", when="@6.4")

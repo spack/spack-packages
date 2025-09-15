@@ -47,20 +47,6 @@ class PyScipy(PythonPackage):
     version("1.7.2", sha256="fa2dbabaaecdb502641b0b3c00dec05fb475ae48655c66da16c9ed24eda1e711")
     version("1.7.1", sha256="6b47d5fa7ea651054362561a28b1ccc8da9368a39514c1bbf6c0977a1c376764")
     version("1.7.0", sha256="998c5e6ea649489302de2c0bc026ed34284f531df89d2bdc8df3a0d44d165739")
-    with default_args(deprecated=True):
-        version("1.6.3", sha256="a75b014d3294fce26852a9d04ea27b5671d86736beb34acdfc05859246260707")
-        version("1.6.2", sha256="e9da33e21c9bc1b92c20b5328adb13e5f193b924c9b969cd700c8908f315aa59")
-        version("1.6.1", sha256="c4fceb864890b6168e79b0e714c585dbe2fd4222768ee90bc1aa0f8218691b11")
-        version("1.6.0", sha256="cb6dc9f82dfd95f6b9032a8d7ea70efeeb15d5b5fd6ed4e8537bb3c673580566")
-        version("1.5.4", sha256="4a453d5e5689de62e5d38edf40af3f17560bfd63c9c5bd228c18c1f99afa155b")
-        version("1.5.3", sha256="ddae76784574cc4c172f3d5edd7308be16078dd3b977e8746860c76c195fa707")
-        version("1.5.2", sha256="066c513d90eb3fd7567a9e150828d39111ebd88d3e924cdfc9f8ce19ab6f90c9")
-        version("1.5.1", sha256="039572f0ca9578a466683558c5bf1e65d442860ec6e13307d528749cfe6d07b8")
-        version("1.5.0", sha256="4ff72877d19b295ee7f7727615ea8238f2d59159df0bdd98f91754be4a2767f0")
-        version("1.4.1", sha256="dee1bbf3a6c8f73b6b218cb28eed8dd13347ea2f87d572ce19b289d6fd3fbc59")
-        version("1.4.0", sha256="31f7cfa93b01507c935c12b535e24812594002a02a56803d7cd063e9920d25e8")
-        version("1.3.3", sha256="64bf4e8ae0db2d42b58477817f648d81e77f0b381d0ea4427385bba3f959380a")
-        version("1.3.2", sha256="a03939b431994289f39373c57bbe452974a7da724ae7f9620a1beee575434da4")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -77,7 +63,6 @@ class PyScipy(PythonPackage):
         depends_on("python@3.8:3.10", when="@1.8:1.9.1")
         depends_on("python@:3.10", when="@1.7.2:1.7")
         depends_on("python@:3.9", when="@1.5.4:1.7.1")
-        depends_on("python@:3.8", when="@1.3.2:1.5.3")
 
     # Build dependencies (do not include upper bound unless known issues)
     with default_args(type="build"):
@@ -99,8 +84,6 @@ class PyScipy(PythonPackage):
             depends_on("py-pybind11@2.10.4:", when="@1.11:")
             depends_on("py-pybind11@2.10.1:", when="@1.10:")
             depends_on("py-pybind11@2.4.3:", when="@1.5:")
-            depends_on("py-pybind11@2.4.0:", when="@1.4.1:")
-            depends_on("py-pybind11@2.2.4:", when="@1.4.0:")
         depends_on("py-pythran@0.14:", when="@1.13:")
         depends_on("py-pythran@0.15:", when="@1.12")
         depends_on("py-pythran@0.12:", when="@1.10:")
@@ -121,8 +104,6 @@ class PyScipy(PythonPackage):
         depends_on("py-numpy@1.18.5:1.25", when="@1.9")
         depends_on("py-numpy@1.17.3:1.24", when="@1.8")
         depends_on("py-numpy@1.16.5:1.22", when="@1.6:1.7")
-        depends_on("py-numpy@1.14.5:1.21", when="@1.5")
-        depends_on("py-numpy@1.13.3:1.21", when="@1.3:1.4")
 
     # Test dependencies
     with default_args(type="test"):
@@ -146,7 +127,6 @@ class PyScipy(PythonPackage):
         depends_on("py-setuptools", when="@:1.8")
         depends_on("py-setuptools@:59", when="@1.8")
         depends_on("py-setuptools@:57", when="@1.7")
-        depends_on("py-setuptools@:51.0.0", when="@1.6")
 
     # meson.build
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#compilers
@@ -183,18 +163,6 @@ class PyScipy(PythonPackage):
     # https://docs.scipy.org/doc//scipy-1.10.1/release.1.7.3.html
     conflicts("platform=darwin target=aarch64:", when="@:1.7.2")
 
-    # https://github.com/scipy/scipy/pull/11324
-    conflicts("@1.4.0:1.4.1", when="target=ppc64le:")
-
-    # https://github.com/scipy/scipy/issues/12860
-    patch(
-        "https://git.sagemath.org/sage.git/plain/build/pkgs/scipy/patches/extern_decls.patch?id=711fe05025795e44b84233e065d240859ccae5bd",
-        sha256="5433f60831cb554101520a8f8871ac5a32c95f7a971ccd68b69049535b106780",
-        when="@:1.5.3",
-    )
-
-    patch("scipy-clang.patch", when="@1.5.0:1.6.3 %clang")
-
     # https://github.com/scipy/scipy/issues/21884
     patch(
         "https://github.com/scipy/scipy/commit/ab7d08c6148286059f6498ab5c3070268d13cbd9.patch?full_index=1",
@@ -225,12 +193,6 @@ class PyScipy(PythonPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # https://github.com/scipy/scipy/issues/9080
         env.set("F90", spack_fc)
-
-        # https://github.com/scipy/scipy/issues/11611
-        if self.spec.satisfies("@:1.4 %gcc@10:"):
-            env.set("FFLAGS", "-fallow-argument-mismatch")
-            if self.spec.satisfies("^py-numpy@1.16:1.17"):
-                env.set("NPY_DISTUTILS_APPEND_FLAGS", "1")
 
         # https://github.com/scipy/scipy/issues/14935
         if self.spec.satisfies("%intel ^py-pythran"):

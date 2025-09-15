@@ -21,6 +21,7 @@ class PyPyomo(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.9.4", sha256="34ad22cd6bf9956de9c0d3842d01c1f92dee0515b25aa3e8f113b326549b1231")
     version("6.9.3", sha256="54ec698bb31f78460e1627cbfa90cb2741b629c1ecaca7035bd2e340351a47f7")
     version("6.9.2", sha256="81b2b14ea619244824e1c547cc12602fe9a6e19309cbf0742868c5b1ef37cb35")
     version("6.9.1", sha256="ccb85fa4b03450c32614a939c6830d073a7ce79461b12b0f1e7809db96ae86de")
@@ -52,26 +53,6 @@ class PyPyomo(PythonPackage):
     version("5.7.2", sha256="f10ada18ade84b16225dc519ef1788dd6d5f22cb22d0ea44db64c96d14cb7bb0")
     version("5.7.1", sha256="1228204d7eb4cdd217fed6323a7434de68e89a2aaa74085ea47f1b42fb64d8cd")
     version("5.7", sha256="27e3a3c8411de9bc52e5e6aa88e9a0de0dd7369126bc905996e23057775905d7")
-    version(
-        "5.6.9",
-        sha256="17bc3c15b405e3ba3a3b7cf9bf3867f6b8e57b611c8ecfdd43fd802587ee8bc6",
-        deprecated=True,
-    )
-    version(
-        "5.6.8",
-        sha256="28cbe034b06a477053616a3ce5ef43149bfd7d025cac490c2a3dd006c388b60d",
-        deprecated=True,
-    )
-    version(
-        "5.6.7",
-        sha256="fc97cc9d5a55c5185358ba65c1f9530c9af17e67a9aae7b36c3414f159030ae0",
-        deprecated=True,
-    )
-    version(
-        "5.6.6",
-        sha256="813e14a604b9d3ac63bdd0880c07f5f4e1b8f0a8a10345f1b42bee762219c001",
-        deprecated=True,
-    )
 
     variant("cython", default=False, description="Enable cythonization of Pyomo.")
     variant("tests", default=False, description="Install testing dependencies.", when="@6.1:")
@@ -80,8 +61,8 @@ class PyPyomo(PythonPackage):
     )
     variant("optional", default=False, description="Install optional dependencies.", when="@6.1:")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     ############################
     # UPDATE THESE AS REQUIRED
@@ -95,7 +76,6 @@ class PyPyomo(PythonPackage):
     depends_on("python@3.6:3.10", when="@6.3", type=("build", "run"))
     depends_on("python@3.6:3.9", when="@6.0:6.2", type=("build", "run"))
     depends_on("python@2.7:2.8,3.4:3.9", when="@5.7", type=("build", "run"))
-    depends_on("python@2.7:2.8,3.4:3.8", when="@5.6", type=("build", "run"))
 
     # universally required
     depends_on("py-setuptools@65:", type="build")

@@ -21,11 +21,6 @@ class PyCleo(PythonPackage):
     version("2.0.1", sha256="eb4b2e1f3063c11085cebe489a6e9124163c226575a3c3be69b2e51af4a15ec5")
     version("2.0.0", sha256="fbc5cb141cbc31ea8ffd3d5cd67d3b183fa38aa5098fd37e39e9a953a232fda9")
     version("1.0.0", sha256="bb5e4f70db83a597575ec86a1ed8fc56bd80934cfea3db97a23ea50c03b78382")
-    version(
-        "1.0.0a5",
-        sha256="097c9d0e0332fd53cc89fc11eb0a6ba0309e6a3933c08f7b38558555486925d3",
-        deprecated=True,
-    )
     version("0.8.1", sha256="3d0e22d30117851b45970b6c14aca4ab0b18b1b53c8af57bed13208147e4069f")
 
     depends_on("python@2.7,3.4:3", type=("build", "run"))

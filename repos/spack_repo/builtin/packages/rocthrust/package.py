@@ -21,6 +21,7 @@ class Rocthrust(CMakePackage):
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("6.4.3", sha256="58ab36c901d347a6e989d0103b6c24b907361a4258fa1bbbfb3dca7ae0a2f066")
     version("6.4.2", sha256="a9d84f29435e039c33d236fce9ce91da15f2fc6d6ef7dd391d75af9559441780")
     version("6.4.1", sha256="1b50e504b81ddadc4cf086aa48e4dbff26e6e0051fc48bf3b0438308890114d6")
     version("6.4.0", sha256="b590b69cfecf30b66202e426ad1adcb577651d72ed9dd7425281b5668e6262fe")
@@ -38,9 +39,6 @@ class Rocthrust(CMakePackage):
     version("6.0.0", sha256="a3fdafe4b6124118e07f23a3b0270d91740da324f61aaa3e8c034da08d9312b1")
     version("5.7.1", sha256="b7cb9ea6c42b2c6b610c34d2c438443e0f99245bd391aff18591949bf1cd53ee")
     version("5.7.0", sha256="64e10f071acfc5b8e3c168b9178289cf1afc7b168bf1962793fc256b25074d3a")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="63df61d5ab46d4cfda6066d748274bacecc77151692e372e6f7df5e91852bdc2")
-        version("5.6.0", sha256="e52a27bcb4add38a5f0f3a5c7e409c230bf4ba9afae19bd2e06c2be00d39db59")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -61,8 +59,6 @@ class Rocthrust(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -80,6 +76,7 @@ class Rocthrust(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
@@ -104,7 +101,7 @@ class Rocthrust(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

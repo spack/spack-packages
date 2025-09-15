@@ -95,7 +95,7 @@ spack:
       - openfoam ^scotch@6.0.9
       - target=neoverse_v1
     openmpi:
-      variants: ~atomics ~cuda ~cxx ~cxx_exceptions ~internal-hwloc ~java +legacylaunchers ~lustre ~memchecker +pmi +romio ~singularity +vt +wrapper-rpath fabrics=ofi schedulers=slurm
+      variants: ~atomics ~cuda ~cxx ~cxx_exceptions ~internal-hwloc ~java +legacylaunchers ~lustre ~memchecker +pmi +romio +vt +wrapper-rpath fabrics=ofi schedulers=slurm
       require:
       - '@4:'
       - target=neoverse_v1

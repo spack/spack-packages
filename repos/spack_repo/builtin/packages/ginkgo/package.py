@@ -29,7 +29,6 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
     version("main", branch="main")
-    version("master", branch="master", deprecated=True)
     version("1.9.0", commit="20cfd68795f58078898da9890baa311b46845a8b")  # v1.9.0
     version("1.8.0", commit="586b1754058d7a32d4bd1b650f9603484c2a8927")  # v1.8.0
     version("1.7.0", commit="49242ff89af1e695d7794f6d50ed9933024b66fe")  # v1.7.0

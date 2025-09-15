@@ -216,7 +216,7 @@ class Icon(AutotoolsPackage):
         else:
             args.append("--disable-gpu")
 
-        if gpu in self.nvidia_targets or "+comin" in self.spec:
+        if gpu in self.nvidia_targets or self.spec.satisfies("+comin"):
             flags["ICON_LDFLAGS"].extend(self.compiler.stdcxx_libs)
 
         if self.compiler.name == "gcc":

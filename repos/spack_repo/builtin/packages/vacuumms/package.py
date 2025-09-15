@@ -28,23 +28,6 @@ class Vacuumms(CMakePackage):
     # This is the main branch, for the latest functionality
     version("develop", branch="develop")
 
-    version(
-        "1.2.0",
-        sha256="1836e6c29d1e83a79f9c6a9b686d1419bd72618aba7c46d3d038373808519d56",
-        preferred=True,
-        deprecated=False,
-    )
-    version(
-        "1.1.4",
-        sha256="13052bafca8622df5f14613b3d4cddd50bae725e0c13c1df7f3cdee28a2e673a",
-        deprecated=False,
-    )
-    version(
-        "1.0.0",
-        sha256="c18fe52f5041880da7f50d3808d37afb3e9c936a56f80f67838d045bf7af372f",
-        deprecated=True,
-    )
-
     variant("test", default=True, description="enable CMake testing")
     variant("tiff", default=False, description="Build TIFF utilities")
     variant("cuda", default=False, description="Build CUDA applications and utilities")

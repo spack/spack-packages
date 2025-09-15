@@ -15,13 +15,14 @@ class Rocfft(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocFFT/"
     git = "https://github.com/ROCm/rocFFT.git"
-    url = "https://github.com/ROCm/rocfft/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rocfft/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocfft"]
 
     license("MIT")
+    version("6.4.3", sha256="9ccd198ab1ec1b729992d00fbe5f9e3955ed77690974d8bd1b713539b6c21c7e")
     version("6.4.2", sha256="5dd068127129ad537de176d21d009f1b1b9540274dee13c486e9c4607629aa77")
     version("6.4.1", sha256="66e543990736bc4bf3b27fa085cca3bea0d42252f960be376371549707e35373")
     version("6.4.0", sha256="0e9f3f23d8facee65e32baaec7941119b56eb17313b8b514e1c3994c9777c320")
@@ -39,9 +40,6 @@ class Rocfft(CMakePackage):
     version("6.0.0", sha256="fb8ba56572702e77e4383d922cd1fee4ad3fa5f63a5ebdb3d9c354439a446992")
     version("5.7.1", sha256="202f11f60dc8738e29bbd1b397d419e032794f8bffb7f48f2b31f09cc5f08bc2")
     version("5.7.0", sha256="3c4a1537a6ec76dc9b622644fe3890647306bf9f28f61c5d2028259c31bb964f")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="a65861e453587c3e6393da75b0b1976508c61f968aecda77fbec920fea48489e")
-        version("5.6.0", sha256="e3d4a6c1bdac78f9a22033f57011af783d560308103f73542f9e0e4dd133d38a")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -78,8 +76,6 @@ class Rocfft(CMakePackage):
     depends_on("rocrand", type="test")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -97,6 +93,7 @@ class Rocfft(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
@@ -161,6 +158,6 @@ class Rocfft(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

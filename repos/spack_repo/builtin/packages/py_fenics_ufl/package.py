@@ -21,7 +21,7 @@ class PyFenicsUfl(PythonPackage):
 
     license("LGPL-3.0-or-later")
 
-    version("main", branch="main")
+    version("main", branch="main", no_cache=True)
     version("2024.2.0", sha256="d9353d23ccbdd9887f8d6edab74c04fe06d818da972072081dbf0c25bc86f5a7")
     version(
         "2024.1.0.post1", sha256="6e38e93a2c8417271c9fb316e0d0ea5fe1101c6a37b2496fff8290e7ea7ead74"
@@ -56,5 +56,5 @@ class PyFenicsUfl(PythonPackage):
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def check_build(self):
-        with working_dir("test"):
-            Executable("py.test")()
+        with working_dir(self.stage.source_path):
+            python("-m", "pytest")

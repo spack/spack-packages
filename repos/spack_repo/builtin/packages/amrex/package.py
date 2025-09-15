@@ -29,6 +29,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("25.09", sha256="9c288e502c98a9ebf62c9f46081ecd65703ad49bd8b3eaf17939146cf442163a")
     version("25.08", sha256="6e903fd02e72a3d23b438ec257a96a5a948ac07200220669ab8ff16ff047bde6")
     version("25.07", sha256="19b9e5271451c202610f9c6569189c28fc05bcd655d53525df9169efeb5ee66f")
     version("25.06", sha256="2f69c708ddeaba6d4be3a12ab6951f171952f6f7948e628c5148d667c4197838")
@@ -154,7 +155,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=False, description="Enable HDF5-based I/O")
     variant("hypre", default=False, description="Enable Hypre interfaces")
     variant("petsc", default=False, description="Enable PETSc interfaces")
-    variant("sundials", default=False, description="Enable SUNDIALS interfaces")
+    variant("sundials", default=False, description="Enable SUNDIALS interfaces", when="@21:")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
     variant(
@@ -193,7 +194,6 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libcatalyst@2.0: +conduit")
         depends_on("libcatalyst +mpi", when="+mpi")
     with when("+sundials"):
-        depends_on("sundials@4.0.0:4.1.0 +ARKODE +CVODE", when="@19.08:20.11")
         depends_on("sundials@5.7.0: +ARKODE +CVODE", when="@21.07:22.04")
         depends_on("sundials@6.0.0: +ARKODE +CVODE", when="@22.05:")
     for arch in CudaPackage.cuda_arch_values:
@@ -253,11 +253,6 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         "+catalyst",
         when="~conduit",
         msg="AMReX Catalyst2 support needs Conduit interfaces (+conduit)",
-    )
-    conflicts(
-        "+sundials",
-        when="@19.08:20.11 ~fortran",
-        msg="AMReX SUNDIALS support needs AMReX Fortran API (+fortran)",
     )
     conflicts(
         "+sundials",

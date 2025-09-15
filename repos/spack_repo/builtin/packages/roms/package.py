@@ -38,6 +38,7 @@ class Roms(MakefilePackage):
         description="Turn on symbolic debug information with no optimization",
     )
 
+    depends_on("c", type="build")
     depends_on("fortran", type="build")  # generated
 
     depends_on("mpi", when="+mpi")
