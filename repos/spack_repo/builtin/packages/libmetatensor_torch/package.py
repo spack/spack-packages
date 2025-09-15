@@ -23,4 +23,4 @@ class LibmetatensorTorch(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("c", type="build")
     depends_on("libmetatensor@0.1.14:0.1")
-    depends_on("py-torch@2.1.0:2.7.0")
+    depends_on("py-torch@2.1.0:")
