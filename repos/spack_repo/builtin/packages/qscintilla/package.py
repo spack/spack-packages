@@ -78,9 +78,10 @@ class Qscintilla(QMakePackage):
         )
         # if prefix includes symlinks, the realpath is what was written to the make file
         makefile.filter(
-            "$(INSTALL_ROOT)" + os.path.realpath(self.spec["qmake"].prefix), "$(INSTALL_ROOT)", string=True
+            "$(INSTALL_ROOT)" + os.path.realpath(self.spec["qmake"].prefix),
+            "$(INSTALL_ROOT)",
+            string=True,
         )
-
 
     @run_after("install", when="+designer")
     def make_designer(self):
@@ -95,7 +96,9 @@ class Qscintilla(QMakePackage):
             )
             # if prefix includes symlinks, the realpath is what was written to the make file
             makefile.filter(
-                "$(INSTALL_ROOT)" + os.path.realpath(self.spec["qmake"].prefix), "$(INSTALL_ROOT)", string=True
+                "$(INSTALL_ROOT)" + os.path.realpath(self.spec["qmake"].prefix),
+                "$(INSTALL_ROOT)",
+                string=True,
             )
             make("install")
 
@@ -122,7 +125,13 @@ class Qscintilla(QMakePackage):
                 # add widgets and printsupport to Qsci.pro
                 # also add link statement to fix "undefined symbol _Z...Qsciprinter...
                 # without no-as-needed this can be dropped from linking stage
-                link_qscilibs = "LIBS += -Wl,--no-as-needed -L" + self.prefix.lib + " -lqscintilla2_" + qtx + " -Wl,--as-needed"
+                link_qscilibs = (
+                    "LIBS += -Wl,--no-as-needed -L"
+                    + self.prefix.lib
+                    + " -lqscintilla2_"
+                    + qtx
+                    + " -Wl,--as-needed"
+                )
                 tomlfile.write(
                     f"""
 [tool.sip.builder]
