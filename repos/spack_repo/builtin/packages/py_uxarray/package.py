@@ -42,7 +42,6 @@ class PyUxarray(PythonPackage):
     #      TypeError: descriptor '__call__' for 'type' objects doesn't apply to a 'property' object
     # https://github.com/dask/dask/issues/11038
     depends_on("py-dask@2024.7.1: +dataframe", type=("build", "run"))
-    depends_on("py-dask-expr@1.1.9:", type=("build", "run"))
 
     # https://github.com/holoviz/hvplot/issues/1471
     depends_on("py-datashader", type=("build", "run"))
