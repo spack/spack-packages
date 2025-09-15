@@ -18,7 +18,7 @@ class PyNumba(PythonPackage):
 
     license("BSD-2-Clause")
 
-    version("0.62.0rc1", sha256="f136e06c201c560cc18bfdf5f2459ed1ab5e66d14fb69f0ed35f811d1eae5b7b")
+    version("0.62.0rc2", sha256="4f9a4a9c61e1b1a8a75ef862c4fc265599c32d760b30b29b58442a0da384e30f")
     version("0.61.2", sha256="8750ee147940a6637b80ecf7f95062185ad8726c8c28a2295b8ec1160a196f7d")
     version("0.61.0", sha256="888d2e89b8160899e19591467e8fdd4970e07606e1fbc248f239c89818d5f925")
     version("0.60.0", sha256="5df6158e5584eece5fc83294b949fd30b9f1125df7708862205217e068aabf16")
