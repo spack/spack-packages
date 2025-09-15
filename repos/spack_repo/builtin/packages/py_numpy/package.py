@@ -183,7 +183,7 @@ class PyNumpy(PythonPackage):
             ".get(compiler_id, ['-O3'])",
             ".get(compiler_id, ['-O1'])",
             "./numpy/core/meson.build",
-            string=True
+            string=True,
         )
 
     # meson.build
