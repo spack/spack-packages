@@ -18,6 +18,7 @@ class PyIpykernel(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.30.1", sha256="6abb270161896402e76b91394fcdce5d1be5d45f456671e5080572f8505be39b")
     version("6.29.5", sha256="f093a22c4a40f8828f8e330a9c297cb93dcab13bd9678ded6de8e5cf81c56215")
     version("6.29.4", sha256="3d44070060f9475ac2092b760123fadf105d2e2493c24848b6691a7c4f42af5c")
     version("6.28.0", sha256="69c11403d26de69df02225916f916b37ea4b9af417da0a8c827f84328d88e5f3")
@@ -40,6 +41,7 @@ class PyIpykernel(PythonPackage):
     depends_on("py-hatchling@1.4:", when="@6.13.1:", type="build")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@6.30:")
         depends_on("python@3.8:", when="@6.11:")
         depends_on("python@3.8:3.11", when="@6:6.10")
         depends_on("python@3.6:3.9", when="@5.5:5")
@@ -64,6 +66,7 @@ class PyIpykernel(PythonPackage):
         depends_on("py-traitlets@4.1.0:")
         depends_on("py-traitlets@:5", when="@:6.10")
 
+        depends_on("py-jupyter-client@8:", when="@6.30:")
         depends_on("py-jupyter-client@6.1.12:", when="@6.11:")
         depends_on("py-jupyter-client")
         depends_on("py-jupyter-client@:7", when="@:6.10")
@@ -71,18 +74,27 @@ class PyIpykernel(PythonPackage):
 
         depends_on("py-jupyter-core@4.12:", when="@6.22:")
 
+        depends_on("py-nest-asyncio@1.4:", when="@6.30:")
         depends_on("py-nest-asyncio", when="@6.6.1:")
 
+        depends_on("py-tornado@6.2:", when="@6.30:")
         depends_on("py-tornado@6.1:", when="@6.11:")
         depends_on("py-tornado@5:", when="@6.10:")
         depends_on("py-tornado@4.2:", when="@5:")
         depends_on("py-tornado@:6", when="@:6.10")
 
+        depends_on("py-appnope@0.1.2:", when="@6.30: platform=darwin")
         depends_on("py-appnope", when="@5.1.3: platform=darwin")
+
+        depends_on("py-pyzmq@25:", when="@6.30:")
         depends_on("py-pyzmq@24:", when="@6.28:")
         depends_on("py-pyzmq@20:", when="@6.22:")
         depends_on("py-pyzmq@17:", when="@6.15:")
+
+        depends_on("py-psutil@5.7:", when="@6.30:")
         depends_on("py-psutil", when="@6.9.2:")
+
+        depends_on("py-packaging@22:", when="@6.30:")
         depends_on("py-packaging", when="@6.12:")
 
     conflicts("^py-jupyter-core@5.0")

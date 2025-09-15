@@ -69,8 +69,7 @@ class Rocwmma(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@3.16:", type="build", when="@5.6.0:")
-    depends_on("cmake@3.5:", type="build")
+    depends_on("cmake@3.16:", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
 
@@ -104,7 +103,7 @@ class Rocwmma(CMakePackage):
     for tgt in itertools.chain(["auto"], amdgpu_targets):
         depends_on("rocblas amdgpu_target={0}".format(tgt), when="amdgpu_target={0}".format(tgt))
 
-    patch("0001-add-rocm-smi-lib-path-for-building-tests.patch", when="@5.6:6.3")
+    patch("0001-add-rocm-smi-lib-path-for-building-tests.patch", when="@:6.3")
     patch("0002-use-find-package-rocm-smi.patch", when="@6.4:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

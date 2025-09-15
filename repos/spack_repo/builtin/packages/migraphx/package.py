@@ -49,7 +49,7 @@ class Migraphx(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    patch("0005-Adding-half-include-directory-path-migraphx.patch", when="@5.6.0:5.7")
+    patch("0005-Adding-half-include-directory-path-migraphx.patch", when="@5.7")
     patch("0006-add-option-to-turn-off-ck.patch", when="@5.7")
     patch(
         "https://github.com/ROCm/AMDMIGraphX/commit/728bea3489c97c9e1ddda0a0ae527ffd2d70cb97.patch?full_index=1",
@@ -69,7 +69,7 @@ class Migraphx(CMakePackage):
     depends_on("blaze", type="build")
     depends_on("nlohmann-json", type="link")
     depends_on("msgpack-c", type="link")
-    depends_on("half@2:", when="@5.6:6.2")
+    depends_on("half@2:", when="@:6.2")
     depends_on("half")
     depends_on("python@3.5:", type="build")
     depends_on("py-pybind11@2.6:", type="build")

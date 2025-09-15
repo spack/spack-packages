@@ -154,7 +154,7 @@ class Rocblas(CMakePackage):
             when=f"{t_version} +tensile",
         )
 
-    patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.6:5.7")
+    patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
     patch("0009-use-rocm-smi-config.patch", when="@6.4")
 
@@ -228,7 +228,7 @@ class Rocblas(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@6.3:"):
             args.append(self.define_from_variant("BUILD_WITH_HIPBLASLT", "hipblaslt"))

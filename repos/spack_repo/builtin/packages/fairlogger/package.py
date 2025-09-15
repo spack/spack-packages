@@ -17,21 +17,6 @@ class Fairlogger(CMakePackage):
 
     version("develop", branch="dev", get_full_repo=True)
     version("2.2.0", sha256="8dfb11e3aa0a9c545f3dfb310d261956727cea558d4123fd8c9c98e135e4d02b")
-    version(
-        "1.11.1",
-        sha256="bba5814f101d705792499e43b387190d8b8c7592466171ae045d4926485f2f70",
-        deprecated=True,
-    )
-    version(
-        "1.10.4",
-        sha256="2fa321893f2c8c599cca160db243299ce1e941fbfb3f935b1139caa943bc0dba",
-        deprecated=True,
-    )
-    version(
-        "1.9.3",
-        sha256="0c02076ed708372d5ae7bdebcefc8e45a8cbfa480eea781308336d60a2781f3a",
-        deprecated=True,
-    )
 
     generator("make", "ninja", default="ninja")
 
@@ -45,15 +30,7 @@ class Fairlogger(CMakePackage):
     variant(
         "cxxstd",
         default="default",
-        values=(
-            "default",
-            conditional("11", when="@:1.9"),
-            conditional("14", when="@:1"),
-            "17",
-            "20",
-            "23",
-            "26",
-        ),
+        values=("default", "17", "20", "23", "26"),
         multi=False,
         description="Use the specified C++ standard when building.",
     )
@@ -69,7 +46,6 @@ class Fairlogger(CMakePackage):
     depends_on("boost", when="+pretty")
     conflicts("^boost@1.70:", when="^cmake@:3.14")
     depends_on("fmt")
-    depends_on("fmt@:8", when="@:1.9")
 
     def patch(self):
         """FairLogger gets its version number from git.
@@ -83,9 +59,6 @@ class Fairlogger(CMakePackage):
                 rf"\1 DEFAULT_VERSION {self.spec.version})",
                 "CMakeLists.txt",
             )
-
-        if self.spec.satisfies("@:1"):
-            filter_file(r"(LANGUAGES C CXX)", r"LANGUAGES CXX", "CMakeLists.txt")
 
     def cmake_args(self):
         args = [
