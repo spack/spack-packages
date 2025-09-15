@@ -22,7 +22,6 @@ class PyMetatensorTorch(PythonPackage):
 
     version("0.8.0", sha256="240ea8c37328f6bb61ec9f3e482131f0875c73166a0e349a8dd8b85204c58bd7")
 
-    depends_on("py-vesin", type=("build", "run"))
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"))
 
