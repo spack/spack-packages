@@ -25,7 +25,7 @@ class PyMetatomicTorch(PythonPackage):
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("py-metatensor-torch@0.8.0:0.8", type=("build", "run"))
     # >=0.3.0 and <0.4.0
-    depends_on("py-metatensor-operations@0.3", type=("build", "run"))
+    depends_on("py-metatensor-operations@0.3.0:0.3", type=("build", "run"))
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
