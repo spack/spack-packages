@@ -32,6 +32,9 @@ class Exodusii(CMakePackage):
 
     version("master", branch="master")
     version(
+        "2025-08-19", sha256="cdd571a26e77f7a0053c1c5638fed19a111f43f82b8a4c0f7e7b3339dc4cd401"
+    )
+    version(
         "2024-04-03", sha256="72b095bae64b2b6c232630f79de763c6ade00c9b1199fc6980800891b2ab3751"
     )
     version(
@@ -118,7 +121,7 @@ class Exodusii(CMakePackage):
     )
     version("2016-08-09", commit="2ffeb1bd39454ad5aa230e12969ce976f3d1c92b", deprecated=True)
 
-    patch("Fix-ioss-tpl.patch", when="@2021-10-11:")
+    patch("Fix-ioss-tpl.patch", when="@2021-10-11:2024-04-03")
 
     # Build options
     variant("fortran", default=False, description="Compile with Fortran support")

@@ -15,8 +15,6 @@ class PyWadlerLindig(PythonPackage):
 
     version("0.1.3", sha256="476fb7015135f714cef8f8eac7c44b164c8b993345e651a9b6f25b7b112440c9")
 
-    maintainers("viperML")
-
     license("Apache-2.0", checked_by="viperML")
 
     depends_on("py-hatchling", type="build")

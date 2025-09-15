@@ -39,6 +39,7 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
     variant("nalu_wind_gpu", default=False, description="Enable Nalu-Wind on the GPU")
     variant("sycl", default=False, description="Enable SYCL backend for AMR-Wind")
     variant("gpu-aware-mpi", default=False, description="gpu-aware-mpi")
+    variant("openturbine", default=False, description="Couple with OpenTurbine structural solver")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -75,6 +76,7 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("yaml-cpp@0.6:")
     depends_on("tioga~nodegid")
     depends_on("openfast+cxx@2.6.0:")
+    depends_on("nalu-wind+openturbine", when="+openturbine")
     depends_on("amr-wind+sycl", when="+amr_wind_gpu+sycl")
     depends_on("kokkos-nvcc-wrapper", type="build", when="+cuda")
     depends_on("mpi")

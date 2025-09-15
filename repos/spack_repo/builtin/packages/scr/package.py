@@ -35,29 +35,10 @@ class Scr(CMakePackage):
     version("develop", branch="develop")
     version("legacy", branch="legacy")
 
-    version(
-        "3.1.0",
-        sha256="ca1f37c84e0ff7a307e68f213c8cc868974d7fb30f16826853a711c7c3a55ffa",
-        preferred=True,
-    )
+    version("3.1.0", sha256="ca1f37c84e0ff7a307e68f213c8cc868974d7fb30f16826853a711c7c3a55ffa")
     version("3.0.1", sha256="ba8f9e676aec8176ecc46c31a4f470ac95047101654de8cc88e01a1f9d95665a")
     version("3.0.0", sha256="e204d3e99a49efac50b4bedc7ac05f55a05f1a65429500d919900c82490532cc")
     version("2.0.0", sha256="471978ae0afb56a20847d3989b994fbd680d1dea21e77a5a46a964b6e3deed6b")
-    version(
-        "1.2.2",
-        sha256="764a85638a9e8762667ec1f39fa5f7da7496fca78de379a22198607b3e027847",
-        deprecated=True,
-    )
-    version(
-        "1.2.1",
-        sha256="23acab2dc7203e9514455a5168f2fd57bc590affb7a1876912b58201513628fe",
-        deprecated=True,
-    )
-    version(
-        "1.2.0",
-        sha256="e3338ab2fa6e9332d2326c59092b584949a083a876adf5a19d4d5c7a1bbae047",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

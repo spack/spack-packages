@@ -45,6 +45,7 @@ class PyKorniaRs(PythonPackage):
 
     # See https://github.com/kornia/kornia-rs/commit/93f768137814709b60767f7fc24a9b0184002aee
     patch("py-kornia-rs-pin-fast_image_resize.patch", when="@0.1.9")
+    patch("py-kornia-rs-pin-circular_buffer.patch", when="@0.1.9")
 
     @property
     def build_directory(self):

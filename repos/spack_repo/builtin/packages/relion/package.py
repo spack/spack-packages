@@ -96,6 +96,11 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("mkl", when="+mklfft")
     depends_on("ctffind", type="run")
     depends_on("motioncor2", type="run", when="+external_motioncor2")
+    # version 5 deps
+    depends_on("py-relion-blush", type="run", when="@5:")
+    depends_on("py-relion-classranker", type="run", when="@5:")
+    depends_on("topaz-3dem", type="run", when="@5:")
+    depends_on("model-angelo", type="run", when="@5:")
 
     # TODO: more externals to add
     # Spack packages needed
@@ -110,8 +115,6 @@ class Relion(CMakePackage, CudaPackage):
 
     def cmake_args(self):
         args = [
-            "-DCMAKE_C_FLAGS=-g",
-            "-DCMAKE_CXX_FLAGS=-g",
             "-DGUI=%s" % ("+gui" in self.spec),
             "-DDoublePrec_CPU=%s" % ("+double" in self.spec),
             "-DDoublePrec_GPU=%s" % ("+double-gpu" in self.spec),
@@ -119,6 +122,9 @@ class Relion(CMakePackage, CudaPackage):
             "-DMKLFFT=%s" % ("+mklfft" in self.spec),
             "-DALTCPU=%s" % ("+altcpu" in self.spec),
         ]
+        if self.spec.satisfies("+gui"):
+            incs = [f"-I{self.spec[lib].prefix.include}" for lib in ["libx11", "xproto"]]
+            args += ["-DCMAKE_CXX_FLAGS=" + " ".join(incs)]
 
         if "+cuda" in self.spec:
             carch = self.spec.variants["cuda_arch"].value[0]
@@ -128,6 +134,10 @@ class Relion(CMakePackage, CudaPackage):
                 raise ValueError("Must select a value for cuda_arch")
             else:
                 args += ["-DCUDA=ON", "-DCudaTexture=ON", "-DCUDA_ARCH=%s" % (carch)]
+
+        if self.spec.satisfies("@5: ~cuda"):
+            # Relion 5 defaults to CUDA=ON so it has to be explicitly disabled.
+            args.append("-DCUDA=OFF")
 
         return args
 

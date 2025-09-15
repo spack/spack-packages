@@ -60,7 +60,7 @@ class Iwyu(CMakePackage):
     depends_on("llvm+clang@8.0:8", when="@0.12")
     depends_on("llvm+clang@7.0:7", when="@0.11")
 
-    requires("llvm targets=all", "llvm targets=x86", msg="iwyu needs the X86AsmParser")
+    requires("^llvm targets=all", "^llvm targets=x86", msg="iwyu needs the X86AsmParser")
 
     patch("iwyu-013-cmake.patch", when="@0.13:0.14")
 

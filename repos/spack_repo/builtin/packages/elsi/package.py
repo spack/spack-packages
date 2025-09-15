@@ -179,7 +179,7 @@ class Elsi(CMakePackage, CudaPackage):
 
         if self.spec.satisfies("^elpa+cuda"):
             elpa_gpu_string = "nvidia-gpu" if self.spec.satisfies("^elpa@2021:") else "gpu"
-            args.append(self.define(ELSI_ELPA_GPU_STRING, elpa_gpu_string))
+            args.append(self.define("ELSI_ELPA_GPU_STRING", elpa_gpu_string))
 
         args.append(self.define("INC_PATHS", ";".join(set(inc_paths))))
 
