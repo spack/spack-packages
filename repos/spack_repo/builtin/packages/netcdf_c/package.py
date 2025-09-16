@@ -67,7 +67,9 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         # Building netcdf-c w/ hdf5+mpi causes CMake's FindMPI to inject a path to the current
         # netcdf-c source directory into its targets interface properties causing CMake configure
         # failures. This patch strips the source dir from the MPI include interface
-        patch("strip_csd_from_mpi_inc.patch", when="@4.7.1: platform=windows")
+        patch("strip_csd_from_mpi_inc.patch", when="@4.7.1:4.9.2 platform=windows")
+
+        patch("netcdf-4.9.3-deflate-include-zlib.patch", when="@4.9.3")
 
     # Some of the patches touch configure.ac and, therefore, require forcing the autoreconf stage:
     _force_autoreconf_when = []

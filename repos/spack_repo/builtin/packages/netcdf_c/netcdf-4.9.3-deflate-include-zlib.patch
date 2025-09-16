@@ -1,0 +1,17 @@
+diff --git a/plugins/CMakeLists.txt b/plugins/CMakeLists.txt
+index fbaeb2130..b3606e15f 100644
+--- a/plugins/CMakeLists.txt
++++ b/plugins/CMakeLists.txt
+@@ -86,7 +86,12 @@ buildplugin(h5unknown "h5unknown")
+ 
+ buildplugin(h5shuffle "h5shuffle")
+ buildplugin(h5fletcher32 "h5fletcher32")
++IF(ENABLE_ZLIB)
+ buildplugin(h5deflate "h5deflate")
++target_include_directories(h5deflate
++  PRIVATE
++  ${ZLIB_INCLUDE_DIRS}
++)
+ 
+ buildplugin(nczmisc "zmisc")
+ buildplugin(nczhdf5filters "zhdf5filters" netcdf)
