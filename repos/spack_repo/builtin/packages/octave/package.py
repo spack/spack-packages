@@ -400,4 +400,3 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
             env.set("CXX", self.compiler.cxx + " -std=gnu++17")
         else:
             env.set("CXX", self.compiler.cxx)
-
