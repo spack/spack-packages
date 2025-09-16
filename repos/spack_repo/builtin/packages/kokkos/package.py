@@ -26,9 +26,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     license("Apache-2.0 WITH LLVM-exception")
 
-    version("master", branch="master")
+    version("master", branch="master", deprecated=True)
     version("develop", branch="develop")
 
+    version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
     version("4.6.02", sha256="baf1ebbe67abe2bbb8bb6aed81b4247d53ae98ab8475e516d9c87e87fa2422ce")
     version("4.6.01", sha256="b9d70e4653b87a06dbb48d63291bf248058c7c7db4bd91979676ad5609bb1a3a")
     version("4.6.00", sha256="be72cf7fc6ef6b99c614f29b945960013a2aaa23859bfe1a560d8d9aa526ec9c")
@@ -162,7 +163,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         deprecated=True,
     )
 
-    depends_on("c", type="build")
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
     depends_on("cmake@3.16:", type="build")
@@ -222,6 +222,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "zen2": "ZEN2",
         "zen3": "ZEN3",
         "zen4": "ZEN4",
+        "zen5": "ZEN5",
         "steamroller": "KAVERI",
         "excavator": "CARIZO",
         "power7": "POWER7",
@@ -258,6 +259,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "75": "turing75",
         "80": "ampere80",
         "86": "ampere86",
+        "87": "ampere87",
         "89": "ada89",
         "90": "hopper90",
         "100": "blackwell100",
@@ -315,6 +317,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "intel_gen11",
         "intel_gen12lp",
         "intel_dg1",
+        "intel_dg2",
         "intel_xehp",
         "intel_pvc",
     )
@@ -393,6 +396,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/rbberger/kokkos/commit/293319c5844f4d8eea51eb9cd1457115a5016d3f.patch?full_index=1",
         sha256="145619e87dbf26b66ea23e76906576e2a854a3b09f2a2dd70363e61419fa6a6e",
         when="@4.2.00",
+    )
+    # Remove unnecessary C and C++ languages dependency in scripts/spack_test/CMakeLists.txt (upstreamed in https://github.com/kokkos/kokkos/pull/8357)
+    patch(
+        "https://github.com/kokkos/kokkos/commit/05d4901538251fff7ae6e58c84db670ad326b5c8.patch?full_index=1",
+        sha256="89eb693ad4913c4fd06b25d786d56bfa631d7d612df80c0f5331852e358e0608",
+        when="@3.4.0:4.4",
     )
 
     variant("shared", default=True, description="Build shared libraries")
@@ -534,6 +543,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         options.append(
             self.define_from_variant("Kokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC", "alloc_async")
         )
+
+        if self.version == Version("4.7.00"):
+            options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
 
         # Remove duplicate options
         return dedupe(options)

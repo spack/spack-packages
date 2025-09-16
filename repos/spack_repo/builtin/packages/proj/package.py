@@ -116,6 +116,12 @@ class Proj(CMakePackage, AutotoolsPackage):
         # https://github.com/OSGeo/PROJ/pull/3374
         patch("proj-8-tiff.patch", when="@8:9.1")
         patch("proj-7-tiff.patch", when="@7")
+        # The two patches above add linkage to the TIFF::TIFF
+        # CMake target, but fail to add a find_dependency
+        # in the exported CMake config
+        # add that.
+        # Upstream in proj as of 9.2
+        patch("proj_config_find_tiff_dep.patch", when="@7:9.1")
         # https://github.com/spack/spack/pull/41065
         patch("proj.cmakelists.5.0.patch", when="@5.0")
         patch("proj.cmakelists.5.1.patch", when="@5.1:5.2")

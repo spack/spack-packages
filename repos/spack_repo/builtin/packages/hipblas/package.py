@@ -17,7 +17,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipBLAS"
     git = "https://github.com/ROCm/hipBLAS.git"
-    url = "https://github.com/ROCm/hipBLAS/archive/rocm-6.2.4.tar.gz"
+    url = "https://github.com/ROCm/hipBLAS/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
@@ -25,6 +25,8 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="75121df09f9b0b3116c19258c9526e0cff3d8845361031305ba0369f140fd8b8")
+    version("6.4.2", sha256="f56035ecb60c5244f27fd4b5f5298096212fa301689615bdce833b83bf3da733")
     version("6.4.1", sha256="3fa0a690bf96104afb093d19a4f565012a59ab6df378df8aef5420914e82d91b")
     version("6.4.0", sha256="544a302bdc494af02147dc14c75d088031927e1c3a2f7a349d817497000b1c34")
     version("6.3.3", sha256="8f645a5c9298170e71354437188eeca8272ff2b98077e9f34d1ca0fd7f27b7f8")
@@ -41,9 +43,6 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     version("6.0.0", sha256="8fbd0c244fe82eded866e06d2399b1d91ab5d43d2ebcb73382c7ce1ae48d9cb3")
     version("5.7.1", sha256="794e9298f48ffbe3bd1c1ab87a5c2c2b953713500155fdec9ef8cbb11f81fc8a")
     version("5.7.0", sha256="8c6cd2ffa4ce6ab03e05feffe074685b5525610870aebe9d78f817b3037f33a4")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="f9da82fbefc68b84081ea0ed0139b91d2a540357fcf505c7f1d57eab01eb327c")
-        version("5.6.0", sha256="9453a31324e10ba528f8f4755d2c270d0ed9baa33e980d8f8383204d8e28a563")
 
     # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -74,13 +73,13 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("boost@1.64.0:1.76.0 +program_options cxxstd=14", type="test")
     depends_on("py-pyaml", type="test", when="@6.1:")
 
-    patch("remove-hipblas-clients-file-installation.patch", when="@5.6:5.7.1")
+    patch("remove-hipblas-clients-file-installation.patch", when="@5.7")
     patch("remove-hipblas-clients-file-installation-6.0.patch", when="@6.0:")
     patch("modify-hipblas-common-dependency.patch", when="@6.3:")
 
     depends_on("hip +cuda", when="+cuda")
 
-    for ver in ["5.6.0", "5.6.1", "5.7.0", "5.7.1"]:
+    for ver in ["5.7.0", "5.7.1"]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
@@ -100,6 +99,8 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
@@ -109,7 +110,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
         depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
 
     @classmethod
@@ -137,7 +138,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@6.1:") and self.run_tests:
             args.append(self.define("LINK_BLIS", "OFF"))

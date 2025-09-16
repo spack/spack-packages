@@ -25,6 +25,8 @@ class Sqlite(AutotoolsPackage, NMakePackage):
 
     license("blessing")
 
+    version("3.50.4", sha256="a3db587a1b92ee5ddac2f66b3edb41b26f9c867275782d46c3a088977d6a5b18")
+    version("3.50.2", sha256="84a616ffd31738e4590b65babb3a9e1ef9370f3638e36db220ee0e73f8ad2156")
     version("3.46.0", sha256="6f8e6a7b335273748816f9b3b62bbdc372a889de8782d7f048c653a447417a7d")
     version("3.45.3", sha256="b2809ca53124c19c60f42bf627736eae011afdcc205bb48270a5ee9a38191531")
     version("3.45.1", sha256="cd9c27841b7a5932c9897651e20b86c701dd740556989b01ca596fcfa3d49a0a")
@@ -72,7 +74,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
             "dynamic_extensions",
             default=True,
             description="Support loadable extensions",
-            when=f"platform={plat}",
+            when=f"@:3.48 platform={plat}",
         )
 
         depends_on("readline", when=f"platform={plat}")
@@ -162,7 +164,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
 
             # check for fts
             def query_fts(version):
-                return "CREATE VIRTUAL TABLE name " "USING fts{:d}(sender, title, body);".format(
+                return "CREATE VIRTUAL TABLE name USING fts{:d}(sender, title, body);".format(
                     version
                 )
 
@@ -192,7 +194,9 @@ class Sqlite(AutotoolsPackage, NMakePackage):
             raise ValueError(f"Unsupported sqlite version: {version}")
         # See https://www.sqlite.org/chronology.html for version -> year
         # correspondence.
-        if version >= Version("3.45.0"):
+        if version >= Version("3.48.0"):
+            year = "2025"
+        elif version >= Version("3.45.0"):
             year = "2024"
         elif version >= Version("3.41.0"):
             year = "2023"

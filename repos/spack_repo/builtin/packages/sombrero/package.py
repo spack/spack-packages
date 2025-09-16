@@ -27,13 +27,6 @@ class Sombrero(MakefilePackage):
     version(
         "2021-07-08", sha256="816b0f0a684a421fa620f11c21649ac162e85d1febd6a7e10cfd07604760c0d6"
     )
-    # Version 1 is incompatible with spack
-    # as CFLAGS and the like are hardcoded in the makefile.
-    version(
-        "1.0",
-        sha256="423a631c86f0e5f14dea186228871099ca0374dc07bf1bb24b6be17f79784682",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 

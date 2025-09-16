@@ -211,7 +211,12 @@ class Scorep(AutotoolsPackage):
     # Handle any mapping of Spack compiler names to Score-P args
     # This should continue to exist for backward compatibility
     def clean_compiler(self, compiler):
-        renames = {"cce": "cray", "rocmcc": "amdclang", "intel-oneapi-compilers": "oneapi"}
+        renames = {
+            "cce": "cray",
+            "rocmcc": "amdclang",
+            "intel-oneapi-compilers": "oneapi",
+            "llvm": "clang",
+        }
         if compiler in renames:
             return renames[compiler]
         return compiler
@@ -253,7 +258,11 @@ class Scorep(AutotoolsPackage):
             )
         )
         config_args.extend(
-            self.with_or_without("libgotcha", activation_value="prefix", variant="gotcha")
+            self.with_or_without(
+                "libgotcha",
+                activation_value=lambda _: self.spec["gotcha"].prefix,
+                variant="gotcha",
+            )
         )
         config_args.extend(self.enable_or_disable("llvm-plugin"))
         config_args.extend(self.enable_or_disable("gcc-plugin"))

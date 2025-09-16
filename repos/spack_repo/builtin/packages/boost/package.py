@@ -123,6 +123,7 @@ class Boost(Package):
         "container",
         "context",
         "contract",
+        "conversion",
         "coroutine",
         "date_time",
         "exception",
@@ -159,6 +160,7 @@ class Boost(Package):
     # signals library was removed from boost in 1.69
     # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
     all_libs_opts = {
+        "conversion": {"when": "@1.87.0:"},
         "charconv": {"when": "@1.85.0:"},
         "cobalt": {"when": "@1.84.0:"},
         "signals": {"when": "@:1.68"},
@@ -245,7 +247,7 @@ class Boost(Package):
         values=("global", "protected", "hidden"),
         default="hidden",
         multi=False,
-        description="Default symbol visibility in compiled libraries " "(1.69.0 or later)",
+        description="Default symbol visibility in compiled libraries (1.69.0 or later)",
     )
 
     depends_on("c", type="build")

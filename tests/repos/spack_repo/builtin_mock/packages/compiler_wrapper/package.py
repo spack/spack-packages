@@ -176,7 +176,7 @@ class CompilerWrapper(Package):
             env.set(wrapper_var_name, str(wrapper_path))
             env.set(f"SPACK_{wrapper_var_name}_RPATH_ARG", compiler_pkg.rpath_arg)
 
-            isa_arg = microarchitecture_flags(self.spec, language)
+            isa_arg = microarchitecture_flags(dependent_spec, language)
 
             if isa_arg:
                 env.set(f"SPACK_TARGET_ARGS_{attr_name.upper()}", isa_arg)

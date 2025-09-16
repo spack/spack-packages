@@ -57,10 +57,17 @@ class GobjectIntrospection(MesonPackage, AutotoolsPackage):
     # https://gitlab.gnome.org/GNOME/gobject-introspection/-/merge_requests/283
     depends_on("libffi@:3.3", when="@:1.72")  # libffi 3.4 caused seg faults
     depends_on("python")
+
     with when("^python@3.12:"):
         depends_on("py-setuptools@48:", type=("build", "run"))
+
         # https://gitlab.gnome.org/GNOME/gobject-introspection/-/merge_requests/490
-        depends_on("py-setuptools@:73", type=("build", "run"), when="@:1.81.0")
+        # restores setuptools@74: support
+        patch(
+            "https://gitlab.gnome.org/GNOME/gobject-introspection/-/merge_requests/490/commits.patch",
+            sha256="8085a21385aba2370ba0859f7d0c5f0a6d6a051ab3c0ea0b8881d567d6356299",
+            when="@1.66:1.81.0",
+        )
 
     # This package creates several scripts from
     # toosl/g-ir-tool-template.in.  In their original form these
