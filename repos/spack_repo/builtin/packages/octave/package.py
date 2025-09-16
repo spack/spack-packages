@@ -396,4 +396,8 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
         module.octave = Executable(join_path(self.spec.prefix.bin, "octave"))
 
     def setup_run_environment(self, env):
-        env.set("CXX", self.compiler.cxx + " -std=gnu++17")
+        if self.spec.satisfies("@10.2.0:"):
+            env.set("CXX", self.compiler.cxx + " -std=gnu++17")
+        else:
+            env.set("CXX", self.compiler.cxx)
+
