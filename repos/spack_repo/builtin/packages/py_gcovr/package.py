@@ -16,7 +16,6 @@ class PyGcovr(PythonPackage):
     homepage = "https://gcovr.com/"
     pypi = "gcovr/gcovr-8.3.tar.gz"
 
-    version("develop", branch="main")
     version("8.3", sha256="faa371f9c4a7f78c9800da655107d4f99f04b718d1c0d9f48cafdcbef0049079")
     version("8.2", sha256="9a1dddd4585d13ec77555db5d6b6a31ee81587ea6fc604ff9fcd232cb0782df5")
     version("7.2", sha256="e3e95cb56ca88dbbe741cb5d69aa2be494eb2fc2a09ee4f651644a670ee5aeb3")
