@@ -86,8 +86,10 @@ class Legion(CMakePackage, ROCmPackage):
             when=f"+kokkos+cuda cuda_arch={arch} %clang",
         )
 
-    depends_on("kokkos@3.3.01:~cuda", when="+kokkos~cuda")
-    depends_on("kokkos@3.3.01:~cuda+openmp", when="+kokkos+openmp")
+    depends_on("kokkos@3.3.01:+cuda+cuda_lambda+wrapper", when="+kokkos+cuda~openmp")
+    depends_on("kokkos@3.3.01:+cuda+cuda_lambda+openmp+wrapper", when="+kokkos+cuda+openmp")
+    depends_on("kokkos@3.3.01:~cuda+openmp", when="+kokkos~cuda+openmp")
+    depends_on("kokkos@3.3.01:~cuda", when="+kokkos~cuda~openmp")
 
     # https://github.com/spack/spack/issues/37232#issuecomment-1553376552
     patch("hip-offload-arch.patch", when="@23.03.0 +rocm")
