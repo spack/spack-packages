@@ -25,12 +25,13 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
 
     homepage = "https://www.gnu.org/software/octave/"
     gnu_mirror_path = "octave/octave-4.0.0.tar.gz"
-    maintainers("mtmiller")
+    maintainers("cessenat", "mmuetzel")
 
     extendable = True
 
     license("GPL-3.0-or-later")
 
+    version("10.2.0", sha256="07fb6d9339d2f350735c91671be8e874d160018cc6b688f9efd9d558d237f69f")
     version("9.4.0", sha256="da9481205bfa717660b7d4a16732d8b2d58aadceab4993d41242a8e2848ea6c1")
     version("9.3.0", sha256="809fa39a7acc84815bf4dc4d2d7e6b228ce75a07f3b2413f3313aa8e0aaa3287")
     version("9.1.0", sha256="3f8c6c6ecfa249a47c97e18e651be4db8499be2f5de1a095a3eea53efc01d6a1")
@@ -132,9 +133,13 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
         # of the build.
         mkoctfile_in = os.path.join(self.stage.source_path, "src", "mkoctfile.in.cc")
         quote = lambda s: '"' + s + '"'
+        if self.spec.satisfies("@10.2.0:"):
+            cxx = quote(self.compiler.cxx + " -std=gnu++17")
+        else:
+            cxx = quote(self.compiler.cxx)
         entries_to_patch = {
             r"%OCTAVE_CONF_MKOCTFILE_CC%": quote(self.compiler.cc),
-            r"%OCTAVE_CONF_MKOCTFILE_CXX%": quote(self.compiler.cxx),
+            r"%OCTAVE_CONF_MKOCTFILE_CXX%": cxx,
             r"%OCTAVE_CONF_MKOCTFILE_F77%": quote(self.compiler.f77),
             r"%OCTAVE_CONF_MKOCTFILE_DL_LD%": quote(self.compiler.cxx),
             r"%OCTAVE_CONF_MKOCTFILE_LD_CXX%": quote(self.compiler.cxx),
@@ -389,3 +394,6 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
         """
         # Octave extension builds can have a global Octave executable function
         module.octave = Executable(join_path(self.spec.prefix.bin, "octave"))
+
+    def setup_run_environment(self, env):
+        env.set("CXX", self.compiler.cxx + " -std=gnu++17")
