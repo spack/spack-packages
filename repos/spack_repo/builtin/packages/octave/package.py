@@ -87,7 +87,6 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
     # Required dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("cxx@17:", when="@10:")
     depends_on("fortran", type="build")
 
     depends_on("blas")
