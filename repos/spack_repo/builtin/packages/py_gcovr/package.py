@@ -27,10 +27,9 @@ class PyGcovr(PythonPackage):
     depends_on("python@3.6:", when="@5.0", type=("build", "run"))
     depends_on("python@2.7:2,3.5:", when="@:4", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"), when="@:8.2")
-
-    depends_on("py-hatchling", when="@8.3:")
-    depends_on("py-hatch-vcs", when="@8.3:")
-    depends_on("py-hatch-fancy-pypi-readme", when="@8.3:")
+    depends_on("py-hatchling", when="@8.3:", type="build")
+    depends_on("py-hatch-vcs", when="@8.3:", type="build")
+    depends_on("py-hatch-fancy-pypi-readme", when="@8.3:", type="build")
 
     depends_on("py-jinja2", type=("build", "run"))
     depends_on("py-lxml", type=("build", "run"))
