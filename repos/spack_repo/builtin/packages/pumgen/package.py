@@ -14,7 +14,9 @@ class Pumgen(CMakePackage):
     homepage = "https://github.com/SeisSol/PUMGen/wiki/How-to-compile-PUMGen"
     git = "https://github.com/SeisSol/PUMGen.git"
     version("master", branch="master", submodules=True)
-
+    version(
+        "1.1.2", tag="v1.1.2", commit="4e2cd979ca697e525ae9888aa218d97bee24915f", submodules=True
+    )
     version(
         "1.1.1", tag="v1.1.1", commit="ad3d0f22edfdb72713ef7bb42a41251fa7275bd8", submodules=True
     )
