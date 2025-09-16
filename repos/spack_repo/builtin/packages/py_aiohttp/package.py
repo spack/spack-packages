@@ -46,7 +46,7 @@ class PyAiohttp(PythonPackage):
         depends_on("py-async-timeout@4:5", when="@3.8: ^python@:3.10")
         depends_on("py-async-timeout@3", when="@:3.7.4 ^python@:3.10")
         depends_on("py-asynctest@0.13.0", when="@3.8.0: ^python@:3.7")
-        depends_on("py-yarl@1.17:1", when="@3.11:")
+        depends_on("py-yarl@1.17:", when="@3.11:")
         depends_on("py-yarl@1")
         depends_on("py-typing-extensions@3.7.4:", when="@3.8: ^python@:3.7")
         depends_on("py-typing-extensions@3.6.5:", when="@3.7")
