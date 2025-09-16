@@ -76,7 +76,7 @@ class Casacore(CMakePackage):
     depends_on("python@2.6:", when="@:3.5.0 +python")
     depends_on("python@3:", when="@3.6.0: +python")
     depends_on("boost +python", when="+python")
-    depends_on("boost +system +filesystem", type=("build","link"), when="@:3.6 +dysco")
+    depends_on("boost +system +filesystem", type=("build", "link"), when="@:3.6 +dysco")
     depends_on("boost +system +filesystem", type="test", when="@3.7: +dysco")
     depends_on("py-numpy@:1", when="@:3.6.0 +python")
     depends_on("py-numpy", when="@3.6.1: +python")
