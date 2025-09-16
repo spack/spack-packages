@@ -5,8 +5,8 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.package import *
 from spack import *
+from spack.package import *
 
 
 class Turbovnc(CMakePackage):
@@ -18,32 +18,30 @@ class Turbovnc(CMakePackage):
     homepage = "http://www.turbovnc.org/"
     url = "https://github.com/TurboVNC/turbovnc/releases/download/3.2/turbovnc-3.2.tar.gz"
 
-    version('3.2', '513075e66426b09b717c3f676091e117')
+    version("3.2", "513075e66426b09b717c3f676091e117")
 
-    variant('server',  default=True,  description='Enable server build')
-    variant('x11deps', default=True,  description='Depends x11 depends')
+    variant("server", default=True, description="Enable server build")
+    variant("x11deps", default=True, description="Depends x11 depends")
 
-    depends_on("libx11", when='+x11deps')
-    depends_on("libjpeg-turbo@1.5.1:", when='@2.1:')
-    depends_on('openssl')
+    depends_on("libx11", when="+x11deps")
+    depends_on("libjpeg-turbo@1.5.1:", when="@2.1:")
+    depends_on("openssl")
 
-    depends_on("java@17")    
-    depends_on("libxext", when='+x11deps')
-    depends_on("libxdmcp", when='+x11deps')
-    depends_on("libxau", when='+x11deps')
-    depends_on("libxdamage", when='+x11deps')
-    depends_on("libxcursor", when='+x11deps')
-    depends_on("libxxf86vm", when='+x11deps')
-    depends_on("libxxf86misc", when='+x11deps')
-    depends_on("xf86vidmodeproto", when='+x11deps')
-    depends_on("libxi", when='+x11deps')    
+    depends_on("java@17")
+    depends_on("libxext", when="+x11deps")
+    depends_on("libxdmcp", when="+x11deps")
+    depends_on("libxau", when="+x11deps")
+    depends_on("libxdamage", when="+x11deps")
+    depends_on("libxcursor", when="+x11deps")
+    depends_on("libxxf86vm", when="+x11deps")
+    depends_on("libxxf86misc", when="+x11deps")
+    depends_on("xf86vidmodeproto", when="+x11deps")
+    depends_on("libxi", when="+x11deps")
 
-
-    depends_on('xkeyboard-config', when='+x11deps', type=('build', 'run'))
-    depends_on('font-util fonts=font-adobe-75dpi', when='+x11deps', type='run')
-    depends_on('xkbcomp', when='+x11deps', type=('build', 'run'))
-    depends_on('xauth', when='+x11deps', type=('build', 'run'))
-
+    depends_on("xkeyboard-config", when="+x11deps", type=("build", "run"))
+    depends_on("font-util fonts=font-adobe-75dpi", when="+x11deps", type="run")
+    depends_on("xkbcomp", when="+x11deps", type=("build", "run"))
+    depends_on("xauth", when="+x11deps", type=("build", "run"))
 
     with when("+server"):
         depends_on("libxfont2")
@@ -54,28 +52,29 @@ class Turbovnc(CMakePackage):
         depends_on("kbproto")
         depends_on("xorgproto")
         depends_on("virtualgl")
-        
+
     def cmake_args(self):
 
         options = []
-        options.append('-DTVNC_BUILDJAVA:BOOL=OFF')
-        options.append('-DTVNC_BUILDNATIVE:BOOL=ON')
-        options.append('-DTVNC_BUILDSERVER:BOOL=ON')
-        options.append('-DTVNC_DRI3=OFF')
-        if '+server' in self.spec:
-            options.append('-DTVNC_BUILDSERVER:BOOL=ON')
-            if '~x11deps' in self.spec:
-                options.append('-DTVNC_NVCONTROL:BOOL=ON')
+        options.append("-DTVNC_BUILDJAVA:BOOL=OFF")
+        options.append("-DTVNC_BUILDNATIVE:BOOL=ON")
+        options.append("-DTVNC_BUILDSERVER:BOOL=ON")
+        options.append("-DTVNC_DRI3=OFF")
+        if "+server" in self.spec:
+            options.append("-DTVNC_BUILDSERVER:BOOL=ON")
+            if "~x11deps" in self.spec:
+                options.append("-DTVNC_NVCONTROL:BOOL=ON")
         else:
-            options.append('-DTVNC_BUILDSERVER:BOOL=OFF')
-        if '+x11deps' in self.spec:
-            options.append('-DXKB_BASE_DIRECTORY:PATH=' +
-                           self.spec['xkeyboard-config'].prefix +
-                           '/share/X11/xkb')
-            options.append('-DXKB_BIN_DIRECTORY:PATH=' +
-                           self.spec['xkbcomp'].prefix + '/bin')
+            options.append("-DTVNC_BUILDSERVER:BOOL=OFF")
+        if "+x11deps" in self.spec:
+            options.append(
+                "-DXKB_BASE_DIRECTORY:PATH="
+                + self.spec["xkeyboard-config"].prefix
+                + "/share/X11/xkb"
+            )
+            options.append("-DXKB_BIN_DIRECTORY:PATH=" + self.spec["xkbcomp"].prefix + "/bin")
 
-        options.append('-DTJPEG_LIBRARY='+self.spec["libjpeg-turbo"].prefix + '/lib/libturbojpeg.a')
+        options.append(
+            "-DTJPEG_LIBRARY=" + self.spec["libjpeg-turbo"].prefix + "/lib/libturbojpeg.a"
+        )
         return options
-
-    

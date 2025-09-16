@@ -100,7 +100,7 @@ class Mesa(MesonPackage):
 
     # TODO: effectively deal with EGL.  The implications of this have not been
     # worked through yet
-    variant('egl', default=False, description="Enable the EGL frontend.")
+    variant("egl", default=False, description="Enable the EGL frontend.")
 
     # TODO: Effectively deal with hardware drivers
     # The implication of this is enabling DRI, among other things, and
