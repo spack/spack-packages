@@ -130,7 +130,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("raja", default=True, description="Build with RAJA support")
     variant("umpire", default=True, description="Build with Umpire support")
     variant("mfem", default=False, description="Build MFEM filter support")
-    variant("dray", default=False, description="Build with Devil Ray support")
+    variant("dray", default=False, when="@0.8.1:", description="Build with Devil Ray support")
     variant("adios2", default=False, description="Build Adios2 filter support")
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
@@ -233,6 +233,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+umpire"):
         depends_on("umpire")
+        depends_on("umpire@:6", when="@:0.8")
         depends_on("umpire@:2023.06.0", when="@:0.9.2")
         depends_on("umpire@2024.02.1:2024.02.99", when="@0.9.3:")
 
@@ -303,26 +304,6 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     # fides
     depends_on("fides", when="+fides")
-
-    #######################
-    # Devil Ray
-    #######################
-    # Ascent 0.9.0 includes Devil Ray, prior to 0.9.0
-    # Devil Ray was developed externally
-    # devil ray variants with mpi
-    # we have to specify both because mfem makes us
-    depends_on("dray~test~utils", when="@:0.8.0  +dray")
-    depends_on("dray@0.1.8:", when="@:0.8.0 +dray")
-    # propagate relevent variants to dray
-    depends_on("dray+cuda", when="@:0.8.0 +dray+cuda")
-    depends_on("dray~cuda", when="@:0.8.0 +dray~cuda")
-    propagate_cuda_arch("dray", "@:0.8.0 +dray")
-    depends_on("dray+mpi", when="@:0.8.0 +dray+mpi")
-    depends_on("dray~mpi", when="@:0.8.0 +dray~mpi")
-    depends_on("dray+shared", when="@:0.8.0 +dray+shared")
-    depends_on("dray~shared", when="@:0.8.0 +dray~shared")
-    depends_on("dray+openmp", when="@:0.8.0 +dray+openmp")
-    depends_on("dray~openmp", when="@:0.8.0 +dray~openmp")
 
     # Adios2
     depends_on("adios2", when="+adios2")
@@ -770,19 +751,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         #######################
         if spec.satisfies("+dray"):
             cfg.write("# devil ray\n")
-            if self.spec.satisfies("@0.8.1:"):
-                cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
-                cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
-            else:
-                cfg.write("# devil ray from spack \n")
-                cfg.write(cmake_cache_entry("DRAY_DIR", spec["dray"].prefix))
-        else:
-            if self.spec.satisfies("@0.8.1:"):
-                cfg.write("# devil ray\n")
-                cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
-                cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
-            else:
-                cfg.write("# devil ray not build by spack\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
+        elif spec.satisfies("~dray"):
+            cfg.write("# devil ray\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
 
         #######################
         # Adios2
