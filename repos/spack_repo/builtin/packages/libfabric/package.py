@@ -101,11 +101,11 @@ class Libfabric(AutotoolsPackage, CudaPackage):
         multi=True,
     )
 
-    # NOTE: the 'kdreg2' variant enables use of the special /dev/kdreg2 file to
+    # NOTE: the 'kdreg' variant enables use of the special /dev/kdreg2 file to
     #   assist in memory registration caching in the GNI provider.  This
     #   device file can only be opened once per process, however, and thus it
     #   frequently conflicts with MPI.
-    variant("kdreg2", default=False, description="Enable kdreg2 on supported Cray platforms")
+    variant("kdreg", default=False, description="Enable kdreg2 on supported Cray platforms")
     variant("debug", default=False, description="Enable debugging")
     variant("uring", default=False, when="@1.17.0:", description="Enable uring support")
     variant("level_zero", default=False, description="Enable Level Zero support")
@@ -205,11 +205,13 @@ class Libfabric(AutotoolsPackage, CudaPackage):
     def configure_args(self):
         args = [
             *self.enable_or_disable("debug"),
-            *self.with_or_without("kdreg2"),
             *self.with_or_without("uring"),
             *self.with_or_without("cuda", activation_value="prefix"),
             *self.with_or_without("ze", variant="level_zero"),
         ]
+
+        if self.spec.satisfies("+kdreg"):
+            args.append("--with-kdreg2")
 
         for fabric in [f if isinstance(f, str) else f[0].value for f in self.fabrics]:
             if f"fabrics={fabric}" in self.spec:
