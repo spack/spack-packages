@@ -23,6 +23,7 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.3.3", sha256="ddc7c39727ba62b80dfdbedf400d1c10ddfa8eefbd7ec8dcb118be8b56d31029")
     version("2.3.2", sha256="e0486a11ec30cdecb53f184d496d1c6a20786c81e55e41640270130056f8ee48")
     version("2.3.1", sha256="1ec9ae20a4226da374362cca3c62cd753faf2f951440b0e3b98e93c235441d2b")
     version("2.3.0", sha256="581f87f9e9e9db2cba2141400e160e9dd644ee248788d6f90636eeb8fd9260a6")

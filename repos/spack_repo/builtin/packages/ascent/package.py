@@ -64,11 +64,15 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
 
     version(
-        "0.9.4",
-        tag="v0.9.4",
-        commit="02e7f79d53db77b6af923bfa105840f574195474",
+        "0.9.5",
+        tag="v0.9.5",
+        commit="1c32d88b01439263cb4e473756a222824bb75abb",
         submodules=True,
         preferred=True,
+    )
+
+    version(
+        "0.9.4", tag="v0.9.4", commit="02e7f79d53db77b6af923bfa105840f574195474", submodules=True
     )
 
     version(
