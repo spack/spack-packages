@@ -30,6 +30,13 @@ class Aspell(AutotoolsPackage, GNUMirrorPackage):
     patch("fix_cpp.patch")
     patch("issue-519.patch", when="@:0.60.6.1")
 
+    # allow aspell to build with newer compilers that enforce template instantiation
+    # e.g. gcc@15: and clang
+    patch(
+        "https://github.com/GNUAspell/aspell/commit/ee6cbb12ff36a1e6618d7388a78dd4e0a2b44041.patch?full_index=1",
+        sha256="96e6b23947744e5d1374640a38cf20ec541b64c00a063cbed6d1fcc3e3fc19ee",
+    )
+
     # workaround due to https://github.com/GNUAspell/aspell/issues/591
     @run_after("configure", when="@0.60.8:")
     def make_missing_files(self):
