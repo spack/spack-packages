@@ -48,7 +48,7 @@ class Nek5000(Package):
     depends_on("fortran", type="build")  # generated
 
     depends_on("mpi", when="+mpi")
-    
+
     # new line added to fix visit dependency
     depends_on("visit", when="+visit")
 
