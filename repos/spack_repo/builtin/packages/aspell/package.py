@@ -18,6 +18,8 @@ class Aspell(AutotoolsPackage, GNUMirrorPackage):
 
     extendable = True  # support activating dictionaries
 
+    maintainers("alecbcs")
+
     license("LGPL-2.1-or-later")
 
     version("0.60.8.1", sha256="d6da12b34d42d457fa604e435ad484a74b2effcd120ff40acd6bb3fb2887d21b")
