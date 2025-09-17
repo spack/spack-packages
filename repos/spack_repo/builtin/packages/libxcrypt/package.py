@@ -22,11 +22,7 @@ class Libxcrypt(AutotoolsPackage):
     version("4.4.36", sha256="e5e1f4caee0a01de2aee26e3138807d6d3ca2b8e67287966d1fefd65e1fd8943")
     version("4.4.35", sha256="a8c935505b55f1df0d17f8bfd59468c7c6709a1d31831b0f8e3e045ab8fd455d")
 
-    variant(
-        "obsolete_api",
-        default=False,
-        description="Enable all compatibility interfaces",
-    )
+    variant("obsolete_api", default=False, description="Enable all compatibility interfaces")
 
     patch("truncating-conversion.patch", when="@4.4.30")
 
