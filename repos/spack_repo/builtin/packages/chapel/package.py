@@ -489,8 +489,10 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     with when("@2.2: +rocm"):
         depends_on("hsa-rocr-dev@6.0:6.2")
         depends_on("hip@6.0:6.2")
-    # This is the case because the package only supports ROCm 6, and Chapel requires bundled LLVM for that version.
-    # TODO: Modify this constrant and message if/when Chapel supports an additional ROCm version without that requirement.
+    # This is the case because the package only supports ROCm 6, and Chapel
+    # requires bundled LLVM for that version.
+    # TODO: Modify this constrant and message if/when Chapel supports an
+    # additional ROCm version without that requirement.
     requires("llvm=bundled", when="+rocm", msg="Chapel ROCm support requires llvm=bundled")
 
     conflicts(
