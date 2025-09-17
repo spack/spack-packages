@@ -48,6 +48,8 @@ class Nek5000(Package):
     depends_on("fortran", type="build")  # generated
 
     depends_on("mpi", when="+mpi")
+    
+    depends_on('visit', when='+visit')
 
     patch("add_fjfortran.patch", when="%fj")
 
