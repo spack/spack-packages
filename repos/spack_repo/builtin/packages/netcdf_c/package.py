@@ -69,6 +69,10 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         # failures. This patch strips the source dir from the MPI include interface
         patch("strip_csd_from_mpi_inc.patch", when="@4.7.1:4.9.2 platform=windows")
 
+        # Netcdf's source for the h5deflate target contains includes for zlib headers
+        # but fails to include that header in the include interface in the relevant
+        # CMake target, this patch adds that.
+        # Similar to https://github.com/Unidata/netcdf-c/pull/3132
         patch("netcdf-4.9.3-deflate-include-zlib.patch", when="@4.9.3")
 
     # Some of the patches touch configure.ac and, therefore, require forcing the autoreconf stage:
