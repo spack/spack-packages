@@ -33,10 +33,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
-    version(
-        "20250722",
-        sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26",
-    )
+    version("20250722", sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26")
     version(
         "20240829.4", sha256="e7d6d60b94ada5acc2e1e9966ae12547fd550d6967d4511b8655c77e24878728"
     )

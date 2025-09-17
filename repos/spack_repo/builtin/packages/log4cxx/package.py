@@ -20,11 +20,7 @@ class Log4cxx(CMakePackage):
     version("1.2.0", sha256="09f4748aa5675ef5c0770bedbf5e00488668933c5a935a43ac5b85be2436c48a")
 
     variant(
-        "cxxstd",
-        default="20",
-        description="C++ standard",
-        values=("11", "17", "20"),
-        multi=False,
+        "cxxstd", default="20", description="C++ standard", values=("11", "17", "20"), multi=False
     )
 
     depends_on("cmake@3.13:", type="build")
