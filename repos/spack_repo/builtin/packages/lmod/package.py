@@ -66,7 +66,7 @@ class Lmod(AutotoolsPackage):
 
     depends_on("bc", type="build", when="@8.7.10:")
 
-    depends_on("pkgconf", type="build")
+    depends_on("pkgconfig", type="build")
 
     # GNU sed is required instead of bsd sed on macOS
     depends_on("sed", type="build", when="platform=darwin")
