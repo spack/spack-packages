@@ -16,12 +16,6 @@ class Aom(CMakePackage):
     license("BSD-2-Clause AND AOM-Patent-License-1.0", checked_by="tgamblin")
 
     version("3.12.1", tag="v3.12.1", commit="10aece4157eb79315da205f39e19bf6ab3ee30d0")
-    version(
-        "1.0.0-errata1",
-        tag="v1.0.0-errata1",
-        commit="add4b15580e410c00c927ee366fa65545045a5d9",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
