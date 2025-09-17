@@ -24,4 +24,5 @@ class Osqp(CMakePackage):
     version("0.6.0", commit="0baddd36bd57ec1cace0a52c6dd9663e8f16df0a", submodules=True)
     version("0.5.0", commit="97050184aa2cbebe446ae02d1f8b811243e180d6", submodules=True)
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
