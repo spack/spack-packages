@@ -49,8 +49,6 @@ class Pciutils(MakefilePackage):
                 major_version = str(self.version).split(".")[0]
                 libname = f"libpci.so.{major_version}"
                 symlink_path = os.path.join(lib_dir, libname)
-                if os.path.islink(symlink_path) or os.path.exists(symlink_path):
-                    os.remove(symlink_path)
                 os.symlink(os.path.basename(so_candidates[0]), symlink_path)
         else:
             make("install", "PREFIX={0}".format(prefix))
