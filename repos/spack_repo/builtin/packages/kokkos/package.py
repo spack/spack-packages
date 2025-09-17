@@ -252,11 +252,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(tpl, when="+%s" % tpl)
 
     variant("wrapper", default=False, description="Use nvcc-wrapper for CUDA build")
-    variant(
-        "cmake_lang",
-        default=False,
-        description="Use CMake language support for CUDA/HIP",
-    )
+    variant("cmake_lang", default=False, description="Use CMake language support for CUDA/HIP")
     depends_on("kokkos-nvcc-wrapper", when="+wrapper")
     depends_on("kokkos-nvcc-wrapper@develop", when="@develop+wrapper")
     conflicts("+wrapper", when="~cuda")
