@@ -105,7 +105,7 @@ default:
     SPACK_CONCRETIZER_REQUIRE_CHECKSUM: 1
     SPACK_BACKTRACE: 1
   interruptible: true
-  timeout: 60 minutes
+  timeout: 120 minutes
   # Retry for everything but "legitimate build failures" (script_failure)
   retry:
     max: 2
