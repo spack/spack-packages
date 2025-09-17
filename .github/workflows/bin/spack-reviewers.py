@@ -45,7 +45,7 @@ def main():
             except spack.repo.UnknownPackageError:
                 pass
 
-    # filter maintianers to those who have triage permissions in the repo
+    # filter maintainers to those who have triage permissions in the repo
     # users without triage permissions are unable to review PRs
     pingable_maintainers = set()
     for maintainer in maintainers:
