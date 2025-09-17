@@ -26,7 +26,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     license("Apache-2.0 WITH LLVM-exception")
 
-    version("master", branch="master", deprecated=True)
     version("develop", branch="develop")
 
     version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
@@ -78,90 +77,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         sha256="5024979f06bc8da2fb696252a66297f3e0e67098595a0cc7345312b3b4aa0f54",
         url="https://github.com/kokkos/kokkos/archive/3.7.02.tar.gz",
     )
-    version(
-        "3.7.01",
-        sha256="0481b24893d1bcc808ec68af1d56ef09b82a1138a1226d6be27c3b3c3da65ceb",
-        url="https://github.com/kokkos/kokkos/archive/3.7.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.7.00",
-        sha256="62e3f9f51c798998f6493ed36463f66e49723966286ef70a9dcba329b8443040",
-        url="https://github.com/kokkos/kokkos/archive/3.7.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.6.01",
-        sha256="1b80a70c5d641da9fefbbb652e857d7c7a76a0ebad1f477c253853e209deb8db",
-        url="https://github.com/kokkos/kokkos/archive/3.6.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.6.00",
-        sha256="53b11fffb53c5d48da5418893ac7bc814ca2fde9c86074bdfeaa967598c918f4",
-        url="https://github.com/kokkos/kokkos/archive/3.6.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.5.00",
-        sha256="748f06aed63b1e77e3653cd2f896ef0d2c64cb2e2d896d9e5a57fec3ff0244ff",
-        url="https://github.com/kokkos/kokkos/archive/3.5.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.4.01",
-        sha256="146d5e233228e75ef59ca497e8f5872d9b272cb93e8e9cdfe05ad34a23f483d1",
-        url="https://github.com/kokkos/kokkos/archive/3.4.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.4.00",
-        sha256="2e4438f9e4767442d8a55e65d000cc9cde92277d415ab4913a96cd3ad901d317",
-        url="https://github.com/kokkos/kokkos/archive/3.4.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.3.01",
-        sha256="4919b00bb7b6eb80f6c335a32f98ebe262229d82e72d3bae6dd91aaf3d234c37",
-        url="https://github.com/kokkos/kokkos/archive/3.3.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.3.00",
-        sha256="170b9deaa1943185e928f8fcb812cd4593a07ed7d220607467e8f0419e147295",
-        url="https://github.com/kokkos/kokkos/archive/3.3.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.2.01",
-        sha256="9e27a3d8f81559845e190d60f277d84d6f558412a3df3301d9545e91373bcaf1",
-        url="https://github.com/kokkos/kokkos/archive/3.2.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.2.00",
-        sha256="05e1b4dd1ef383ca56fe577913e1ff31614764e65de6d6f2a163b2bddb60b3e9",
-        url="https://github.com/kokkos/kokkos/archive/3.2.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.1.01",
-        sha256="ff5024ebe8570887d00246e2793667e0d796b08c77a8227fe271127d36eec9dd",
-        url="https://github.com/kokkos/kokkos/archive/3.1.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.1.00",
-        sha256="b935c9b780e7330bcb80809992caa2b66fd387e3a1c261c955d622dae857d878",
-        url="https://github.com/kokkos/kokkos/archive/3.1.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.0.00",
-        sha256="c00613d0194a4fbd0726719bbed8b0404ed06275f310189b3493f5739042a92b",
-        url="https://github.com/kokkos/kokkos/archive/3.0.00.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
@@ -177,16 +92,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "sycl": [False, "Whether to build the SYCL backend"],
         "openmptarget": [False, "Whether to build the OpenMPTarget backend"],
     }
-    conflicts("+rocm", when="@:3.0")
-    conflicts("+sycl", when="@:3.3")
-    conflicts("+openmptarget", when="@:3.5")
     conflicts(
         "".join([f"~{d}" for d in devices_variants]),
         msg="Kokkos requires at least one active backend",
     )
-
-    # https://github.com/spack/spack/issues/29052
-    conflicts("@:3.5 +sycl", when="%oneapi@2022:")
 
     tpls_variants = {
         "hpx": [False, "Whether to enable the HPX library"],
@@ -347,11 +256,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "cmake_lang",
         default=False,
         description="Use CMake language support for CUDA/HIP",
-        when="@3.6:",
     )
     depends_on("kokkos-nvcc-wrapper", when="+wrapper")
     depends_on("kokkos-nvcc-wrapper@develop", when="@develop+wrapper")
-    depends_on("kokkos-nvcc-wrapper@master", when="@master+wrapper")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
 
@@ -359,7 +266,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant("cxxstd", default="17", values=cxxstds, multi=False, description="C++ standard")
     variant("pic", default=False, description="Build position independent code")
 
-    conflicts("cxxstd=11", when="@3.7:")
+    conflicts("cxxstd=11")
     conflicts("cxxstd=14", when="@4.0:")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
@@ -385,11 +292,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("hpx cxxstd={0}".format(cxxstd), when="+hpx cxxstd={0}".format(cxxstd))
 
     # HPX version constraints
-    depends_on("hpx@:1.6", when="@:3.5 +hpx")
-    depends_on("hpx@1.7:", when="@3.6: +hpx")
+    depends_on("hpx@1.7:", when="+hpx")
 
     # Patches
-    patch("hpx_profiling_fences.patch", when="@3.5.00 +hpx")
     patch("sycl_bhalft_test.patch", when="@4.2.00 +sycl")
     # adds amd_gfx940 support to Kokkos 4.2.00 (upstreamed in https://github.com/kokkos/kokkos/pull/6671)
     patch(
@@ -401,7 +306,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/kokkos/kokkos/commit/05d4901538251fff7ae6e58c84db670ad326b5c8.patch?full_index=1",
         sha256="89eb693ad4913c4fd06b25d786d56bfa631d7d612df80c0f5331852e358e0608",
-        when="@3.4.0:4.4",
+        when="@:4.4",
     )
 
     variant("shared", default=True, description="Build shared libraries")
