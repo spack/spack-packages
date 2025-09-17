@@ -489,9 +489,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     with when("@2.2: +rocm"):
         depends_on("hsa-rocr-dev@6.0:6.2")
         depends_on("hip@6.0:6.2")
-    requires("llvm=bundled", when="+rocm ^hip@6.0:6.2", msg="ROCm 6 support requires llvm=bundled")
-    conflicts("llvm=spack", when="+rocm", msg="Chapel ROCm support through Spack requires llvm=bundled")
-    conflicts("llvm=none",  when="+rocm", msg="Chapel ROCm support through Spack requires llvm=bundled")
+    requires("llvm=bundled", when="+rocm ^hip@6.0:6.2", msg="Chapel ROCm 6 support requires llvm=bundled")
 
     conflicts(
         "comm_substrate=unset",
