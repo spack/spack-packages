@@ -36,12 +36,9 @@ def concretize_and_setup(default_mock_concretization, monkeypatch):
     def _func(spec_str):
         s = default_mock_concretization(spec_str)
         setup_package(s.package, False)
-        monkeypatch.setattr(s.package.module, "make", MakeExecutable("make", jobs=1))
-        monkeypatch.setattr(s.package.module, "ninja", MakeExecutable("ninja", jobs=1))
         return s
 
     return _func
-
 
 @pytest.fixture
 def test_dir(tmp_path: pathlib.Path):
