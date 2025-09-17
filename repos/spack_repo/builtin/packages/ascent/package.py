@@ -126,6 +126,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("raja", default=True, description="Build with RAJA support")
     variant("umpire", default=True, description="Build with Umpire support")
     variant("mfem", default=False, description="Build MFEM filter support")
+    variant("dray", default=False, when="@0.8.1:", description="Build with Devil Ray support")
     variant("adios2", default=False, description="Build Adios2 filter support")
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
@@ -740,6 +741,18 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_entry("OCCA_DIR", spec["occa"].prefix))
         else:
             cfg.write("# occa not built by spack \n")
+
+        #######################
+        # Devil Ray
+        #######################
+        if spec.satisfies("+dray"):
+            cfg.write("# devil ray\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
+        else:
+            cfg.write("# devil ray\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
 
         #######################
         # Adios2
