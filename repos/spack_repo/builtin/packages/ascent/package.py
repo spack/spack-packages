@@ -749,7 +749,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write("# devil ray\n")
             cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
             cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
-        else:
+        elif spec.satisfies("~dray"):
             cfg.write("# devil ray\n")
             cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
             cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
