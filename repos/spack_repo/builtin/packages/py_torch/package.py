@@ -146,7 +146,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Required dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("binutils@2.36:", type="build")
+    depends_on("binutils@2.36:", when="platform=linux", type="build")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
