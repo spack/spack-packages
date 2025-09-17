@@ -49,6 +49,8 @@ class Hipblaslt(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
+
     depends_on("cmake@3.25.2:", type="build", when="@6.2.0:")
     depends_on("python@3.7:")
     depends_on("python@3.8:3.13.2", when="@6.4:")
@@ -140,6 +142,14 @@ class Hipblaslt(CMakePackage):
                 string=True,
             )
 
+        if not self.spec.external:
+            if self.spec.satisfies("@6.4:") and self.run_tests:
+                filter_file(
+                    r"${HIP_CLANG_ROOT}/lib",
+                    "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
+                    "clients/CMakeLists.txt",
+                    string=True,
+                )
     def cmake_args(self):
         args = [
             self.define("Tensile_CODE_OBJECT_VERSION", "default"),

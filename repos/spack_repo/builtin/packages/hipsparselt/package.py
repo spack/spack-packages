@@ -57,6 +57,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")
 
     for ver in [
         "6.0.0",
@@ -103,6 +104,16 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.2.patch", when="@6.2")
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.3.patch", when="@6.3")
     patch("0002-add-hipsparse-include.patch", when="@6.4")
+
+    def patch(self):
+        if not self.spec.external:
+            if self.spec.satisfies("@6.4:") and self.run_tests:
+                filter_file(
+                    r"${HIP_CLANG_ROOT}/lib",
+                    "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
+                    "clients/CMakeLists.txt",
+                    string=True,
+                )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
