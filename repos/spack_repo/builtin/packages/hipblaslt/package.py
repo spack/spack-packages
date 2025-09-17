@@ -150,6 +150,7 @@ class Hipblaslt(CMakePackage):
                     "clients/CMakeLists.txt",
                     string=True,
                 )
+
     def cmake_args(self):
         args = [
             self.define("Tensile_CODE_OBJECT_VERSION", "default"),
