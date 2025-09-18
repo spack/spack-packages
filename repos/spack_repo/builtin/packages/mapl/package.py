@@ -330,6 +330,9 @@ class Mapl(CMakePackage):
     depends_on("esmf~debug", when="~debug")
     depends_on("esmf+debug", when="+debug")
 
+    # MAPL2 only supports ESMF 9 from 2.61 onwards
+    conflicts("esmf@9:", when="@:2.60")
+
     # udunits dependency from MAPL 2.48 onwards
     depends_on("udunits", when="@2.48:")
 
