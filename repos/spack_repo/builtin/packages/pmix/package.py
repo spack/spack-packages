@@ -151,10 +151,4 @@ class Pmix(AutotoolsPackage):
             config_args.append("--with-curl=" + spec["curl"].prefix)
             config_args.append("--with-jansson=" + spec["jansson"].prefix)
 
-        config_args.extend(
-            self.enable_or_disable(
-                "pmi-backward-compatibility", variant="pmi_backwards_compatibility"
-            )
-        )
-
         return config_args
