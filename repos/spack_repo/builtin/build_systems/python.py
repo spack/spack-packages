@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import functools
-import operator
 import os
 import re
 import shutil
@@ -15,8 +13,6 @@ from spack.package import (
     ClassProperty,
     HeaderList,
     LibraryList,
-    NoHeadersError,
-    NoLibrariesError,
     PackageBase,
     Prefix,
     Spec,
@@ -27,8 +23,6 @@ from spack.package import (
     extends,
     filter_file,
     find,
-    find_all_headers,
-    find_all_libraries,
     has_shebang,
     join_path,
     path_contains_subdirectory,
