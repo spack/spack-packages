@@ -47,7 +47,7 @@ class PyDatatrove(PythonPackage):
         depends_on("py-zstandard", type=("build", "run"))
 
     with when("+processing"):
-        depends_on("py-fasttext-numpy2", type=("build", "run"))
+        depends_on("py-fasttext-numpy2-wheel", type=("build", "run"))
         depends_on("py-nltk", type=("build", "run"))
         depends_on("py-inscriptis", type=("build", "run"))
         depends_on("py-tldextract", type=("build", "run"))
