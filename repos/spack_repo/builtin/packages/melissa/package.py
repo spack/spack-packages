@@ -19,10 +19,7 @@ class Melissa(CMakePackage):
     maintainers("abhishek1297", "raffino")
 
     version("develop", branch="develop")
-    version(
-        "2.0.0",
-        sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
-    )
+    version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
