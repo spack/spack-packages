@@ -38,7 +38,10 @@ class Libevent(AutotoolsPackage):
     version("2.0.12", sha256="ac0283f72e0f881e93ac3ae9497a20c78bd075c6c12506ad10e821aa1c29e5ab")
 
     variant(
-        "openssl", default=True, description="Build with encryption enabled at the libevent level.", when="@2.1:"
+        "openssl",
+        default=True,
+        description="Build with encryption enabled at the libevent level.",
+        when="@2.1:",
     )
 
     depends_on("c", type="build")  # generated

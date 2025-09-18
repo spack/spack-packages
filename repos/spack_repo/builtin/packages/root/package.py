@@ -294,7 +294,12 @@ class Root(CMakePackage):
     )
     variant("x", default=(not _is_macos), description="Enable set of graphical options")
     variant("xml", default=True, description="Enable XML parser interface")
-    variant("xrootd", default=False, description="Build xrootd file server and its client", when="@6.23:")
+    variant(
+        "xrootd",
+        default=False,
+        description="Build xrootd file server and its client",
+        when="@6.23:",
+    )
 
     # ###################### Compiler variants ########################
 

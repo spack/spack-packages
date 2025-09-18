@@ -74,13 +74,9 @@ class Xrootd(CMakePackage):
         when="@5.7:",
     )
 
-    variant(
-        "scitokens-cpp", default=False, description="Enable support for SciTokens"
-    )
+    variant("scitokens-cpp", default=False, description="Enable support for SciTokens")
 
-    variant(
-        "client_only", default=False, description="Build and install client only"
-    )
+    variant("client_only", default=False, description="Build and install client only")
 
     # Before 5.7, the C++ standard was not honored.
     # See https://github.com/xrootd/xrootd/pull/1929
