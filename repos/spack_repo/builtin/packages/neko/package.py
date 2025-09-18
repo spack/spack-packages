@@ -40,11 +40,7 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     # Requires cuda or rocm enabled MPI
-    variant(
-        "device-mpi",
-        default=False,
-        description="Build with support for device-aware MPI",
-    )
+    variant("device-mpi", default=False, description="Build with support for device-aware MPI")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
