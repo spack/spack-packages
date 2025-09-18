@@ -12,7 +12,7 @@ class PyFasttextNumpy2Wheel(PythonPackage):
     learning, fixed for numpy 2 compatibility."""
 
     homepage = "https://github.com/hynky1999/Fasttext-np-2.0.0"
-    pypi = "fasttext-numpy2-wheel/fasttext-numpy2-wheel-0.9.2.tar.gz"
+    pypi = "fasttext_numpy2_wheel/fasttext_numpy2_wheel-0.9.2.tar.gz"
 
     maintainers("thomas-bouvier")
 
