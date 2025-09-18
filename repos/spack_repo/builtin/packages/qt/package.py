@@ -82,7 +82,7 @@ class Qt(Package):
     variant("phonon", default=False, description="Build with phonon support.")
     variant("shared", default=True, description="Build shared libraries.")
     variant("sql", default=True, description="Build with SQL support.")
-    variant("ssl", default=True, description="Build with OpenSSL support.")
+    variant("ssl", default=True, description="Build with OpenSSL support.", when="@5.10:")
     variant("tools", default=True, description="Build tools, including Qt Designer.")
 
     provides("qmake")
@@ -260,7 +260,6 @@ class Qt(Package):
 
     with when("+ssl"):
         depends_on("openssl")
-        depends_on("openssl@:1.0", when="@4:5.9")
         depends_on("openssl@1.1.1:", when="@5.15.0:")
 
     depends_on("libpng", when="@4:")

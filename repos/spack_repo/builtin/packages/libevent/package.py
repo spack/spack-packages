@@ -38,13 +38,11 @@ class Libevent(AutotoolsPackage):
     version("2.0.12", sha256="ac0283f72e0f881e93ac3ae9497a20c78bd075c6c12506ad10e821aa1c29e5ab")
 
     variant(
-        "openssl", default=True, description="Build with encryption enabled at the libevent level."
+        "openssl", default=True, description="Build with encryption enabled at the libevent level.", when="@2.1:"
     )
 
     depends_on("c", type="build")  # generated
 
-    # Versions before 2.1 do not build with OpenSSL 1.1
-    depends_on("openssl@:1.0", when="@:2.0+openssl")
     depends_on("openssl", when="+openssl")
 
     def url_for_version(self, version):
