@@ -32,7 +32,32 @@ class Pdi(CMakePackage):
     version(
         "1.9.1-fixed", sha256="13d052a7d5d53271638382f06e9da0d58b01ed9cfdf9c4fa1e82367b9e1732e1"
     )
+    version(
+        "1.9.1",
+        sha256="5bb6257efb32674db69e2d89a8947015a2f1e284dbe8dcfdc601f6412640b551",
+        deprecated=True,
+    )
+    version(
+        "1.9.0",
+        sha256="04fee7851c4f2a156daddf7eb2c3c3b0132d80d3f0e448cdeebda0b7c4595639",
+        deprecated=True,
+    )
     version("1.8.3", sha256="df7200289a2a368ec874140039b417abdfe681b57fb1b9f4c52f924952226020")
+    version(
+        "1.8.2",
+        sha256="bb4d1654c97f7ff379067adbff339f8b4117c0cf9432f41f1a5cb20a747cac1a",
+        deprecated=True,
+    )
+    version(
+        "1.8.1",
+        sha256="43f0c0b2bda5515ecf99da7be1600af2c1f669d6c73e3f309275b14940c7e35c",
+        deprecated=True,
+    )
+    version(
+        "1.8.0",
+        sha256="5d353bfa64f45ee4715b88bd30330030f79f2020cd6bede0ad9b8f9beddadea9",
+        deprecated=True,
+    )
 
     variant("benchs", default=False, description="Build benchmarks")
     variant("docs", default=False, description="Build documentation")
@@ -50,11 +75,14 @@ class Pdi(CMakePackage):
     depends_on("paraconf +fortran", type=("link", "run"), when="+fortran")
     depends_on("pkgconfig", type=("build"))
     depends_on("python@3.8.2:3", type=("build", "link", "run"), when="+python")
+    depends_on(
+        "python@3:3.11.9", type=("build", "link", "run"), when="@:1.8.2 +python"
+    )  # Needs distutils.
     depends_on("py-pybind11@2.4.3:2", type=("link"), when="+python")
     depends_on(
-        "py-setuptools", type=("build", "link"), when="+python^python@3.12:"
+        "py-setuptools", type=("build", "link"), when="@1.8.3: +python^python@3.12:"
     )  # Needs distutils.
-    depends_on("spdlog@1.5:", type=("link"))
+    depends_on("spdlog@1.5:", type=("link"), when="@1.5:")
 
     root_cmakelists_dir = "pdi"
 
