@@ -258,46 +258,11 @@ class PythonPackage(PythonExtension):
 
     @property
     def headers(self) -> HeaderList:
-        """Discover header files in platlib."""
-
-        # Remove py- prefix in package name
-        name = self.spec.name[3:]
-
-        # Headers should only be in include or platlib, but no harm in checking purelib too
-        include = self.prefix.join(self.spec["python"].package.include).join(name)
-        python = self.python_spec
-        platlib = self.prefix.join(python.package.platlib).join(name)
-        purelib = self.prefix.join(python.package.purelib).join(name)
-
-        headers_list = map(find_all_headers, [include, platlib, purelib])
-        headers = functools.reduce(operator.add, headers_list)
-
-        if headers:
-            return headers
-
-        msg = "Unable to locate {} headers in {}, {}, or {}"
-        raise NoHeadersError(msg.format(self.spec.name, include, platlib, purelib))
+        return HeaderList([])
 
     @property
     def libs(self) -> LibraryList:
-        """Discover libraries in platlib."""
-
-        # Remove py- prefix in package name
-        name = self.spec.name[3:]
-
-        # Libraries should only be in platlib, but no harm in checking purelib too
-        python = self.python_spec
-        platlib = self.prefix.join(python.package.platlib).join(name)
-        purelib = self.prefix.join(python.package.purelib).join(name)
-
-        libs_list = map(functools.partial(find_all_libraries, recursive=True), [platlib, purelib])
-        libs = functools.reduce(operator.add, libs_list)
-
-        if libs:
-            return libs
-
-        msg = "Unable to recursively locate {} libraries in {} or {}"
-        raise NoLibrariesError(msg.format(self.spec.name, platlib, purelib))
+        return LibraryList([])
 
 
 @register_builder("python_pip")
