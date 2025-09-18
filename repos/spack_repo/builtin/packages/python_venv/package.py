@@ -25,7 +25,7 @@ class PythonVenv(Package):
     extends("python")
 
     if True:
-        pass # trigger rebuild
+        pass  # trigger rebuild
 
     def install(self, spec, prefix):
         # Create a virtual environment
