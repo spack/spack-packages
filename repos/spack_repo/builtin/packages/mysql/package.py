@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import tempfile
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.packages.boost.package import Boost
