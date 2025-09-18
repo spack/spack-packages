@@ -221,6 +221,9 @@ class PyNumpy(PythonPackage):
     conflicts("%oneapi", when="@1.23.0:1.23.3")
     # https://github.com/spack/spack/pull/44735
     conflicts("%oneapi", when="@2:")
+    #
+    # yoder:
+    conflicts('@:1.26.3', when='^python@3.12', msg="Known bug with @1.26.2, 1.26.3 when ^python@3.12")
 
     @property
     def archive_files(self):
