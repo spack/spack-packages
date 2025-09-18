@@ -51,8 +51,7 @@ class Mvapich2Gdr(MpichEnvironmentModifications, AutotoolsPackage):
 
     variant(
         "pmi_version",
-        description="The pmi version to be used with slurm. "
-        "Is ignored if set for mpirun",
+        description="The pmi version to be used with slurm. " "Is ignored if set for mpirun",
         default="pmi1",
         values=("simple", "pmi1", "pmi2"),
         multi=False,

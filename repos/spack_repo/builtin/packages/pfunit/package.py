@@ -102,8 +102,7 @@ class Pfunit(CMakePackage):
     # CMake 3.25.0 has an issue with pFUnit
     # https://gitlab.kitware.com/cmake/cmake/-/issues/24203
     conflicts(
-        "^cmake@3.25.0",
-        msg="CMake 3.25.0 has a bug with pFUnit. Please use another version.",
+        "^cmake@3.25.0", msg="CMake 3.25.0 has a bug with pFUnit. Please use another version."
     )
 
     conflicts("%gcc@:8.3.9", msg="pFUnit requires GCC 8.4.0 or newer")
