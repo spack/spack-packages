@@ -36,34 +36,13 @@ class Nim(Package):
     version("1.4.4", sha256="6d73729def143f72fc2491ca937a9cab86d2a8243bd845a5d1403169ad20660e")
     version("1.4.2", sha256="03a47583777dd81380a3407aa6a788c9aa8a67df4821025770c9ac4186291161")
     version("1.2.18", sha256="a1739185508876f6e21a13f590a20e219ce3eec1b0583ea745e9058c37ad833e")
-    with default_args(deprecated=True):
-        # Past development (odd-numbered) versions
-        version("1.9.3", sha256="d8de7515db767f853d9b44730f88ee113bfe9c38dcccd5afabc773e2e13bf87c")
-
-        # CVE-2021-46872, CVE-2021-29495, CVE-2021-21374, CVE-2021-21373, CVE-2021-21372
-        version(
-            "1.0.10", sha256="28045fb6dcd86bd79748ead7874482d665ca25edca68f63d6cebc925b1428da5"
-        )
-
-        # CVE-2020-15694, CVE-2020-15693, CVE-2020-15692, CVE-2020-15690
-        version(
-            "0.20.0", sha256="51f479b831e87b9539f7264082bb6a64641802b54d2691b3c6e68ac7e2699a90"
-        )
-        version(
-            "0.19.9",
-            sha256="154c440cb8f27da20b3d6b1a8cc03f63305073fb995bbf26ec9bc6ad891ce276",
-            url="https://github.com/nim-lang/nightlies/releases/download/2019-06-02-devel-1255b3c/nim-0.19.9-linux_x64.tar.xz",
-        )
-        version(
-            "0.19.6", sha256="a09f0c58d29392434d4fd6d15d4059cf7e013ae948413cb9233b8233d67e3a29"
-        )
 
     variant(
         "sqlite", default=False, when="@:1.7.3", description="Install SQLite for std/db_sqlite"
     )
 
     depends_on("c", type="build")
-    depends_on("gmake", type="build", when="@0.20:")
+    depends_on("gmake", type="build")
     depends_on("pcre", type="link")
     depends_on("openssl", type="link")
     depends_on("openssl@1", type="link", when="@:1.6.9")
@@ -92,7 +71,7 @@ class Nim(Package):
     patch(
         "https://github.com/nim-lang/nimble/commit/89954f8b03b05970aea78c8fe1241138f5bbeae8.patch?full_index=1",
         sha256="5e6f7e2d2dac5d2ed70b5047418d9b43e156de35737f9fad0052ae30dd539b03",
-        when="@:1.2.9,1.4.0:1.4.3",
+        when="@1.4.0:1.4.3",
         working_dir="dist/nimble",
     )
 
@@ -133,8 +112,6 @@ class Nim(Package):
         if self.spec.satisfies("^[virtuals=libc] musl"):
             if self.spec.satisfies("@1.9.3:"):
                 pthreadModule = "lib/std/private/threadtypes.nim"
-            elif self.spec.satisfies("@:0.19.6"):
-                pthreadModule = "lib/system/threads.nim"
             else:
                 pthreadModule = "lib/system/threadlocalstorage.nim"
 
@@ -149,12 +126,8 @@ class Nim(Package):
         if spec.satisfies("@develop"):
             with working_dir("csources_v2"):
                 make()
-
-        elif spec.satisfies("@0.20:"):
-            make()
-
         else:
-            Executable("./build.sh")()
+            make()
 
         nim = Executable(join_path("bin", "nim"))
         # Separate nimcache allows parallel compilation of different versions of the Nim compiler
