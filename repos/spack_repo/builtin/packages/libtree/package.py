@@ -54,7 +54,7 @@ class Libtree(MakefilePackage, CMakePackage):
         return "https://github.com/haampie/libtree/archive/refs/tags/v{0}.tar.gz".format(version)
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    depends_on("cxx", type="build", when="@:2")
 
     # Version 2.x and earlier (CMake)
     with when("build_system=cmake"):
