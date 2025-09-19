@@ -91,4 +91,4 @@ class PyPsyclone(PythonPackage):
 
     def setup_run_environment(self, env):
         # Set config file path
-        env.set('PSYCLONE_CONFIG', join_path(self.prefix.share, "psyclone", "psyclone.cfg"))
+        env.set("PSYCLONE_CONFIG", join_path(self.prefix.share, "psyclone", "psyclone.cfg"))
