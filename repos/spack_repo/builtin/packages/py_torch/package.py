@@ -110,6 +110,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     _desc = "Build the flash_attention kernel for scaled dot product attention"
     variant("flash_attention", default=True, description=_desc, when="@1.13:+cuda")
     variant("flash_attention", default=True, description=_desc, when="@1.13:+rocm")
+    variant("cusparselt", default=True, description="Use NVIDIA cuSPARSELt", when="+cuda")
     # py-torch has strict dependencies on old protobuf/py-protobuf versions that
     # cause problems with other packages that require newer versions of protobuf
     # and py-protobuf --> provide an option to use the internal/vendored protobuf.
@@ -117,6 +118,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda+rocm")
     conflicts("+gloo+rocm")
+    conflicts("+cusparselt+rocm")
     conflicts("+rocm", when="@2.3", msg="Rocm doesn't support py-torch 2.3 release")
     conflicts("+rocm", when="@2.4", msg="Rocm doesn't support py-torch 2.4 release")
     conflicts("+tensorpipe", when="+rocm ^hip@:5.1", msg="TensorPipe not supported until ROCm 5.2")
@@ -313,6 +315,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("ucc", when="+ucc")
     depends_on("ucx", when="+ucc")
     depends_on("mkl", when="+mkldnn")
+    depends_on("nvidia-cusparselt", when="+cusparselt")
 
     # Test dependencies
     with default_args(type="test"):
@@ -684,6 +687,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         enable_or_disable("mps")
         enable_or_disable("breakpad")
         enable_or_disable("flash_attention")
+        enable_or_disable("cusparselt")
 
         enable_or_disable("nccl")
         if "+cuda+nccl" in self.spec:
