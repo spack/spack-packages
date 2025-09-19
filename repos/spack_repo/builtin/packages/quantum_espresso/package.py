@@ -443,14 +443,6 @@ class QuantumEspresso(CMakePackage, Package):
     # gipaw.x will only be installed with cmake if the qe-gipaw version is >= 5c4a4ce.
     patch("gipaw-eccee44.patch", when="@7.2+gipaw build_system=cmake")
 
-    # QE 7.4.1 +libxc build_system cmake can't rely on find_package() to handle 
-    # version check. With patch applied cmake checks after ${Libxc_FOUND} 
-    patch(
-        "https://gitlab.com/QEF/q-e/-/commit/cf52afc88f7fa61ba7a17aa7dbec5ca5f0b60ff3.diff",
-        sha256="f15616cac7a8de6a693c406a988db93347498522b219c67a6086613dcc3b67ce",
-        when="@7.4.1+libxc",
-    )
-
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         spec = self.spec
