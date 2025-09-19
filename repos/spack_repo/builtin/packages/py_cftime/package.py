@@ -18,6 +18,8 @@ class PyCftime(PythonPackage):
     version("1.6.4", sha256="38970aa0d0ed9ed6b1d90f2cff2301b7299ae62d38e39a540400ab00edb4d2ce")
     version("1.0.3.4", sha256="f261ff8c65ceef4799784cd999b256d608c177d4c90b083553aceec3b6c23fd3")
 
+    depends_on("c", type="build")
+
     # https://github.com/Unidata/cftime/blob/v1.6.3rel/Changelog#L7
     depends_on("python@:3.11", when="@:1.6.2")
 
