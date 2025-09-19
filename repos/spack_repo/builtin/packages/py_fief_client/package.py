@@ -13,7 +13,7 @@ class PyFiefClient(PythonPackage):
     homepage = "https://docs.fief.dev/integrate/python/"
     pypi = "fief_client/fief_client-0.20.0.tar.gz"
 
-    version("0.20.0", sha256="425f40cc7c45c651daec63da402e033c53d91dcaa3f9bf208873fd8692fc16dc")
+    version("0.20.0", sha256="dbfb906d03c4a5402ceac5c843aa4708535fb6f5d5c1c4e263ec06fbbbc434d7")
 
     variant("cli", default=False, description="Install the CLI")
 

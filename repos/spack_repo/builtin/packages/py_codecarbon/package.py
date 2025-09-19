@@ -14,7 +14,7 @@ class PyCodecarbon(PythonPackage):
     homepage = "https://mlco2.github.io/codecarbon/"
     pypi = "codecarbon/codecarbon-3.0.4.tar.gz"
 
-    version("3.0.4", sha256="6f47dd6fa52fd25936b632bf22f85e7df0e8def683d68df55487e0f4e8bd688c")
+    version("3.0.4", sha256="4292fede09e44753b1185a8b91c53e1ed9108692733f612f32c44cab779dcc8c")
 
     depends_on("py-setuptools@61:", type="build")
     depends_on("py-wheel", type="build")
