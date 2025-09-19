@@ -77,7 +77,11 @@ class Pflogger(CMakePackage):
     )
 
     # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
-    conflicts("%oneapi@2025.2", when="@:1.16.0", msg="oneAPI 2025.2 only works with pflogger 1.16.1 onwards")
+    conflicts(
+        "%oneapi@2025.2",
+        when="@:1.16.0",
+        msg="oneAPI 2025.2 only works with pflogger 1.16.1 onwards",
+    )
 
     @when("@1.16.1 ^intel-oneapi-compilers@2025.2")
     def patch(self):
