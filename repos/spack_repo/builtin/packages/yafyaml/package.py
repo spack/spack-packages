@@ -69,6 +69,24 @@ class Yafyaml(CMakePackage):
 
     conflicts("%gcc@13.3:", when="@:1.3.0", msg="GCC 13.3+ only works with yafyaml 1.4.0 onwards")
 
+    # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+    conflicts("%oneapi@2025.2", when="@:1.4", msg="oneAPI 2025.2 only works with yafyaml 1.5.1 onwards")
+
+    @when("@1.5.1 ^intel-oneapi-compilers@2025.2")
+    def patch(self):
+        filter_file(
+            "__RC__)",
+            "rc=status); __VERIFY__(status)",
+            "src/Nodes/BaseNode_implementation.F90",
+            string=True,
+        )
+        filter_file(
+            "__RC__)",
+            "rc=status); __VERIFY__(status)",
+            "src/Lexer.F90",
+            string=True,
+        )
+
     variant(
         "build_type",
         default="Release",
