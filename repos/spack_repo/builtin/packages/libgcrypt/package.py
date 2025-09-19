@@ -17,6 +17,7 @@ class Libgcrypt(AutotoolsPackage):
 
     license("LGPL-2.1-or-later AND GPL-2.0-or-later")
 
+    version("1.11.2", sha256="6ba59dd192270e8c1d22ddb41a07d95dcdbc1f0fb02d03c4b54b235814330aac")
     version("1.11.1", sha256="24e91c9123a46c54e8371f3a3a2502f1198f2893fbfbf59af95bc1c21499b00e")
     version("1.10.3", sha256="8b0870897ac5ac67ded568dcfadf45969cfa8a6beb0fd60af2a9eadc2a3272aa")
 

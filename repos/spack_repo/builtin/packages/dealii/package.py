@@ -110,7 +110,6 @@ class Dealii(CMakePackage, CudaPackage):
     variant("muparser", default=True, description="Compile with muParser")
     variant("nanoflann", default=False, description="Compile with Nanoflann")
     variant("netcdf", default=False, description="Compile with Netcdf (only with MPI)")
-    variant("oce", default=False, description="Compile with OCE")
     variant("opencascade", default=True, description="Compile with OPENCASCADE")
     variant("p4est", default=True, description="Compile with P4est (only with MPI)")
     variant("petsc", default=True, description="Compile with Petsc (only with MPI)")
@@ -202,9 +201,8 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("graphviz", when="+doc")
     depends_on("ginkgo", when="@9.1:+ginkgo")
     depends_on("ginkgo@1.4.0:", when="@9.4:+ginkgo")
-    depends_on("gmsh+oce", when="@9.0:+gmsh+oce", type=("build", "run"))
     depends_on("gmsh+opencascade", when="@9.0:+gmsh+opencascade", type=("build", "run"))
-    depends_on("gmsh", when="@9.0:+gmsh~opencascade~oce", type=("build", "run"))
+    depends_on("gmsh", when="@9.0:+gmsh~opencascade", type=("build", "run"))
     depends_on("gsl", when="@8.5.0:+gsl")
     # TODO: next line fixes concretization with petsc
     depends_on("hdf5+mpi+hl+fortran", when="+hdf5+mpi+petsc")
@@ -223,7 +221,6 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("nanoflann", when="@9.0:9.2+nanoflann")
     depends_on("netcdf-c+mpi", when="+netcdf+mpi")
     depends_on("netcdf-cxx", when="+netcdf+mpi")
-    depends_on("oce", when="+oce")
     depends_on("opencascade", when="+opencascade")
     depends_on("p4est", when="+p4est+mpi")
     depends_on("petsc+mpi~int64", when="+petsc+mpi~int64")
@@ -339,8 +336,6 @@ class Dealii(CMakePackage, CudaPackage):
         when="@9.6:",
         msg="Deal.II 9.6 onwards requires the C++ standard to be set to 17 or later.",
     )
-
-    conflicts("oce", when="+opencascade", msg="Only one among OCE or OPENCASCADE can be selected.")
 
     # Interfaces added in 8.5.0:
     for _package in ["gsl", "python"]:
@@ -658,11 +653,6 @@ class Dealii(CMakePackage, CudaPackage):
                     self.define("SCALAPACK_LIBRARY", scalapack_libs.joined(";")),
                 ]
             )
-
-        # Open Cascade -- OCE
-        if "+oce" in spec:
-            options.append(self.define_from_variant("DEAL_II_WITH_OPENCASCADE", "oce"))
-            options.append(self.define("OPENCASCADE_DIR", spec["oce"].prefix))
 
         # Open Cascade -- OpenCascade
         if "+opencascade" in spec:
