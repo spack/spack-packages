@@ -16,6 +16,14 @@ class Snakemake(PythonPackage):
 
     license("MIT")
 
+    version("9.11.4", sha256="37b13337c87124d3cbd345f7a6ec976d4c485ac5b60d3d3379dcfe41b426dbb2")
+    version("9.11.3", sha256="db4e3405fbb104e561e4e466520df071ef77bf3e4faa205a1964dcb9c8519d25")
+    version("9.11.2", sha256="d0905992f6db8f887bb40234336a7979d9088886a7cabfb4334557c400d66ec9")
+    version("9.11.1", sha256="b04bd4804821b0f0910fc967154b72ec113cbfc171837322bf26ad9d3798f75c")
+    version("9.11.0", sha256="f4b64d1b52525487e74f05a4ee6912fca9a42af2736c522e6c3abd6d361ba1c5")
+    version("9.10.1", sha256="538308d13c0848c3d1a8b166f3a608d7a4800c3bac2313bd02b29fdf8c5a2c9f")
+    version("9.10.0", sha256="4a934412dbb1a205f7b698be9c59bbc29aeaae6e9c271bbf49defae81e11d351")
+    version("9.9.0", sha256="38b5e1a39d4f6eee361c9e30da1de5ec629ff67581e6ac3497e415d92f02961d")
     version("9.6.3", sha256="0ab3710d7782749eda5dc1af7f06b75d041172a1abdab31fc5c2ed78ec4f39cd")
     # FIXME the necessary dependencies for versions @9: have not been added below
     version(
