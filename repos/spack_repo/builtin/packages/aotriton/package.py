@@ -48,6 +48,9 @@ class Aotriton(CMakePackage):
     depends_on("pkgconfig", type="build")
     conflicts("^openssl@3.3.0")
 
+    # https://github.com/ROCm/aotriton/blob/main/README.md?plain=1#L24
+    conflicts("%gcc@:11.3", when="@0.9b:", msg="The binary delivery is compiled with gcc13")
+
     # ROCm dependencies
     depends_on("hip", type="build")
     depends_on("llvm-amdgpu", type="build")

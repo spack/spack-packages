@@ -73,7 +73,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("rocm", default=False, description="Use ROCm")
     variant("cudnn", default=not is_darwin, description="Use cuDNN", when="+cuda")
     variant("fbgemm", default=True, description="Use FBGEMM (quantized 8-bit server operators)")
-    variant("kineto", default=True, description="Use Kineto profiling library", when="@1.8:")
+    variant("kineto", default=True, description="Use Kineto profiling library", when="@1.8: ~rocm")
+    variant("kineto", default=False, description="Use Kineto profiling library", when="@1.8: +rocm")
     variant("magma", default=not is_darwin, description="Use MAGMA", when="+cuda")
     variant("metal", default=is_darwin, description="Use Metal for Caffe2 iOS build")
     variant(
@@ -90,9 +91,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("numpy", default=True, description="Use NumPy")
     variant("openmp", default=True, description="Use OpenMP for parallel code")
     variant("qnnpack", default=True, description="Use QNNPACK (quantized 8-bit operators)")
-    variant("valgrind", default=True, description="Use Valgrind", when="@1.8: platform=linux")
-    variant("xnnpack", default=True, description="Use XNNPACK")
-    variant("mkldnn", default=True, description="Use MKLDNN")
+    variant("valgrind", default=True, description="Use Valgrind", when="@1.8: platform=linux ~rocm")
+    variant("valgrind", default=False, description="Use Valgrind", when="@1.8: platform=linux +rocm")
+    variant("xnnpack", default=True, description="Use XNNPACK", when="~rocm")
+    variant("xnnpack", default=False, description="Use XNNPACK", when="+rocm")
+    variant("mkldnn", default=True, description="Use MKLDNN", when="~rocm")
+    variant("mkldnn", default=False, description="Use MKLDNN", when="+rocm")
     variant("distributed", default=True, description="Use distributed")
     variant("mpi", default=True, description="Use MPI for Caffe2", when="+distributed")
     variant("ucc", default=False, description="Use UCC", when="@1.13: +distributed")
@@ -117,6 +121,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda+rocm")
     conflicts("+gloo+rocm")
+    conflicts("+mkldnn+rocm")
+    conflicts("+valgrind+rocm")
+    conflicts("+kineto+rocm")
+    conflicts("+caffe2+rocm")
+    conflicts("+xnnpack+rocm")
     conflicts("+rocm", when="@2.3", msg="Rocm doesn't support py-torch 2.3 release")
     conflicts("+rocm", when="@2.4", msg="Rocm doesn't support py-torch 2.4 release")
     conflicts("+tensorpipe", when="+rocm ^hip@:5.1", msg="TensorPipe not supported until ROCm 5.2")
@@ -305,6 +314,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocblas")
         depends_on("miopen-hip")
         depends_on("rocminfo")
+        depends_on("hipsparselt", when="@2.8:")
         depends_on("aotriton@0.8.1b", when="@2.5:2.6")
         depends_on("aotriton@0.9.1b", when="@2.7:")
         depends_on("composable-kernel@:6.3.2", when="@2.5")
@@ -334,6 +344,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         "https://github.com/pytorch/pytorch/commit/231c72240d80091f099c95e326d3600cba866eee.patch?full_index=1",
         sha256="5e56556a5698e6c43d0e7e9e3da6d7d819a4886bcd717e7b8e22ec08414a0b66",
         when="@2.8.0",
+    )
+    # https://github.com/pytorch/pytorch/pull/156486
+    patch(
+        "https://github.com/pytorch/pytorch/commit/a23f4471b952d8cd630b860639e0aaa9be957d60.patch?full_index=1",
+        sha256="c99622bab1f2bd35674e2ee978a7b8896bb0b8e5d50172c4c60e691a2151ec9f",
+        when="@2.8.0 +rocm",
     )
 
     # https://github.com/pytorch/pytorch/issues/151592
