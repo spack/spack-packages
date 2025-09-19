@@ -89,7 +89,7 @@ class Dealii(CMakePackage, CudaPackage):
         "examples_compile",
         default=True,
         when="@:9.6",
-        description="Install binary files of tutorial programs"
+        description="Install binary files of tutorial programs",
     )
     variant("int64", default=False, description="Compile with 64 bit indices support")
     variant("mpi", default=True, description="Compile with MPI")
