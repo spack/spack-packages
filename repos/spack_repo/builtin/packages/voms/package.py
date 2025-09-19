@@ -51,8 +51,13 @@ class Voms(AutotoolsPackage):
             join_path(self.spec["zlib-api"].prefix.lib, "pkgconfig"),
         ]
         pkg_env = {"PKG_CONFIG_PATH": ":".join(pkgconfig_paths)}
-        env.set("GSOAP_SSL_PP_CFLAGS", pkgconfig("--cflags", "gsoapssl++", "zlib", output=str, env=pkg_env),)
-        env.set("GSOAP_SSL_PP_LIBS", pkgconfig("--libs", "gsoapssl++", "zlib", output=str, env=pkg_env),)
+        env.set(
+            "GSOAP_SSL_PP_CFLAGS",
+            pkgconfig("--cflags", "gsoapssl++", "zlib", output=str, env=pkg_env),
+        )
+        env.set(
+            "GSOAP_SSL_PP_LIBS", pkgconfig("--libs", "gsoapssl++", "zlib", output=str, env=pkg_env)
+        )
 
     def autoreconf(self, spec, prefix):
         autogen = Executable("./autogen.sh")
