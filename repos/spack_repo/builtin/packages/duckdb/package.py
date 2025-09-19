@@ -28,22 +28,6 @@ class Duckdb(MakefilePackage):
     version("1.1.2", sha256="a3319a64c390ed0454c869b2e4fc0af2413cd49f55cd0f1400aaed9069cdbc4c")
     version("1.1.1", sha256="a764cef80287ccfd8555884d8facbe962154e7c747043c0842cd07873b4d6752")
     version("1.1.0", sha256="d9be2c6d3a5ebe2b3d33044fb2cb535bb0bd972a27ae38c4de5e1b4caa4bf68d")
-    # CVE-2024-41672
-    version(
-        "1.0.0",
-        sha256="04e472e646f5cadd0a3f877a143610674b0d2bcf9f4102203ac3c3d02f1c5f26",
-        deprecated=True,
-    )
-    version(
-        "0.10.3",
-        sha256="7855587b3491dd488993287caee28720bee43ae28e92e8f41ea4631e9afcbf88",
-        deprecated=True,
-    )
-    version(
-        "0.10.2",
-        sha256="662a0ba5c35d678ab6870db8f65ffa1c72e6096ad525a35b41b275139684cea6",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -65,13 +49,6 @@ class Duckdb(MakefilePackage):
     variant("icu", default=False, description="Compile with bundled ICU library")
     variant("ninjabuild", default=True, description="Use GEN=ninja to build")
     variant("static_openssl", default=False, description="Build with static openSSL")
-    variant(
-        "openssl",
-        default=False,
-        description="Compile with bundled OpenSSL library",
-        when="@:0.9.2",
-    )
-
     variant("extension_autoload", default=False, description="Enable extension auto-loading")
     variant("extension_autoinstall", default=False, description="Enable extension auto-installing")
     variant("extension_repo", default=True, description="Copy extensions to prefix")
@@ -97,13 +74,6 @@ class Duckdb(MakefilePackage):
     # APIs
     variant("python", default=True, description="Build with Python driver")
     extends("python", when="+python")
-
-    # Observed failure in an AVX2-specific codeblock on x86_64_v4 target
-    conflicts(
-        "@1.0.0",
-        when="target=x86_64_v3:",
-        msg="See: https://github.com/duckdb/duckdb/issues/12362",
-    )
 
     @property
     def duckdb_extension_prefix(self):
@@ -138,8 +108,7 @@ class Duckdb(MakefilePackage):
                 env.set(make_flag, "1")
             elif "~" + flag in self.spec:
                 env.set(make_flag, "0")
-        if self.spec.satisfies("@0.10.2:"):
-            env.set("OVERRIDE_GIT_DESCRIBE", f"v{self.spec.version}")
+        env.set("OVERRIDE_GIT_DESCRIBE", f"v{self.spec.version}")
         if self.spec.satisfies("+extension_repo"):
             env.set("LOCAL_EXTENSION_REPO", self.prefix.lib.duckdb.extensions)
         if self.spec.satisfies("+extension_autoload"):
@@ -161,33 +130,24 @@ class Duckdb(MakefilePackage):
         # set OVERRIDE_GIT_DESCRIBE to force the version when not building from a repo.
 
         version = self.spec.version
-        if self.spec.satisfies("@:0.9.2"):
-            # Prior to version 0.10.0, this was sufficient
+        # Override the fallback values that are set when GIT_COMMIT_HASH doesn't work
+        for i, n in enumerate(["MAJOR", "MINOR", "PATCH"]):
             filter_file(
-                r'(message\(STATUS "git hash \$\{GIT_COMMIT_HASH\}, '
-                r'version \$\{DUCKDB_VERSION\}"\))',
-                'set(DUCKDB_VERSION "v{0}")\n\\1'.format(version),
+                r"set\(DUCKDB_{0}_VERSION \d+\)".format(n),
+                "set(DUCKDB_{0}_VERSION {1})".format(n, version[i]),
                 "CMakeLists.txt",
             )
-        elif not self.spec.satisfies("@0.10.0"):
-            # Override the fallback values that are set when GIT_COMMIT_HASH doesn't work
-            for i, n in enumerate(["MAJOR", "MINOR", "PATCH"]):
-                filter_file(
-                    r"set\(DUCKDB_{0}_VERSION \d+\)".format(n),
-                    "set(DUCKDB_{0}_VERSION {1})".format(n, version[i]),
-                    "CMakeLists.txt",
-                )
-            # Need to manually set DUCKDB_NORMALIZED_VERSION for helper scripts
-            filter_file(
-                r'(message\(STATUS "git hash \$\{GIT_COMMIT_HASH\},'
-                r" version \$\{DUCKDB_VERSION\},"
-                r' extension folder \$\{DUCKDB_NORMALIZED_VERSION\}"\))',
-                'set(DUCKDB_VERSION "v${DUCKDB_MAJOR_VERSION}'
-                '.${DUCKDB_MINOR_VERSION}.${DUCKDB_PATCH_VERSION}")'
-                '\nset(DUCKDB_NORMALIZED_VERSION "${DUCKDB_VERSION}")'
-                "\n\\1",
-                "CMakeLists.txt",
-            )
+        # Need to manually set DUCKDB_NORMALIZED_VERSION for helper scripts
+        filter_file(
+            r'(message\(STATUS "git hash \$\{GIT_COMMIT_HASH\},'
+            r" version \$\{DUCKDB_VERSION\},"
+            r' extension folder \$\{DUCKDB_NORMALIZED_VERSION\}"\))',
+            'set(DUCKDB_VERSION "v${DUCKDB_MAJOR_VERSION}'
+            '.${DUCKDB_MINOR_VERSION}.${DUCKDB_PATCH_VERSION}")'
+            '\nset(DUCKDB_NORMALIZED_VERSION "${DUCKDB_VERSION}")'
+            "\n\\1",
+            "CMakeLists.txt",
+        )
 
         if self.spec.satisfies("+extension_repo"):
             mkdirp(self.prefix.lib.duckdb.extensions)

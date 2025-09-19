@@ -42,7 +42,6 @@ class Zoltan(AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("m4", type="build")
-    depends_on("perl@:5.21", type="build", when="@:3.6")
 
     depends_on("mpi", when="+mpi")
     depends_on("metis", when="+parmetis")
