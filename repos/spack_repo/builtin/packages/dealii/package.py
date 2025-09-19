@@ -32,6 +32,8 @@ class Dealii(CMakePackage, CudaPackage):
     generator("make")
 
     version("master", branch="master")
+    version("9.7.1", sha256="0f2096ef83db54fdcebe9f3d148fa713f63f1c3f567941b53bcb4a1a8ea7de43")
+    version("9.7.0", sha256="398ffbb5de1ea52b88a47aaa54a253ad58ee4e810a8c5aa0a0f549ecb1bc4c6c")
     version("9.6.2", sha256="1051e332de3822488e91c2b0460681052a3c4c5ac261cdd7a6af784869a25523")
     version("9.6.1", sha256="9fcaa3968ac2eab41573b3614756a898a3ea91afcd9f3477ab2f30bb19aa669a")
     version("9.6.0", sha256="675323f0eb8eed2cfc93e2ced07a0ec5727c6a566ff9e7786c01a2ddcde17bed")
@@ -84,7 +86,10 @@ class Dealii(CMakePackage, CudaPackage):
     variant("doc", default=False, description="Compile with documentation")
     variant("examples", default=True, description="Install source files of tutorial programs")
     variant(
-        "examples_compile", default=True, description="Install binary files of tutorial programs"
+        "examples_compile",
+        default=True,
+        when="@:9.6",
+        description="Install binary files of tutorial programs"
     )
     variant("int64", default=False, description="Compile with 64 bit indices support")
     variant("mpi", default=True, description="Compile with MPI")
@@ -192,6 +197,7 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("adol-c@2.6.4:", when="@9.0:+adol-c")
     depends_on("arborx", when="@9.3:+arborx")
     depends_on("arborx+trilinos", when="@9.3:+arborx+trilinos")
+    depends_on("arborx@1.5:", when="@9.7:+arborx")
     depends_on("arpack-ng+mpi", when="+arpack+mpi")
     depends_on("assimp", when="@9.0:+assimp")
     # cgal 6 not yet supported: https://github.com/spack/spack/pull/47285#issuecomment-2455403447
@@ -231,6 +237,7 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("sundials@5:5.8", when="@9.3:9.3.3+sundials")
     depends_on("sundials@5:6.7", when="@9.3.4:+sundials")
     depends_on("taskflow@3.4:", when="@9.6:+taskflow")
+    depends_on("taskflow@3.10:", when="@9.7:+taskflow")
     depends_on("trilinos gotype=int", when="+trilinos@12.18.1:")
     depends_on("trilinos+cuda+cuda_constexpr", when="@9.6:+trilinos+cuda")
     # TODO: next line fixes concretization with trilinos and adol-c
