@@ -28,3 +28,7 @@ class CasacoreMeasures(Package):
         mkdirp(self.prefix.share.data)
         update = Executable(self.prefix.bin.update_measures)
         update()
+
+    def setup_dependent_package(self, module, dependent_spec):
+        """Provide measures data directory to dependent packages."""
+        module.casacore_measures_data_dir = self.spec.prefix.share.data

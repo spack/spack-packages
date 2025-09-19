@@ -51,6 +51,7 @@ class Casacore(CMakePackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("tablelocking", default=True, description="Enable table locking")
     variant("threads", default=True, description="Use mutex thread synchronization")
+    variant("tests", default=False, description="Build and run tests")
 
     # Force dependency on readline in v3.2 and earlier. Although the
     # presence of readline is tested in CMakeLists.txt, and casacore
@@ -81,6 +82,8 @@ class Casacore(CMakePackage):
     depends_on("py-numpy@:1", when="@:3.6.0 +python")
     depends_on("py-numpy", when="@3.6.1: +python")
     depends_on("gsl", when="+dysco")
+    depends_on("casacore-measures", when="+tests")
+    depends_on("boost +system +filesystem +test", when="+tests")
 
     conflicts("+tablelocking", when="+mpi")
     conflicts("~threads", when="+openmp")
@@ -99,6 +102,11 @@ class Casacore(CMakePackage):
         args.append(self.define_from_variant("USE_ADIOS2", "adios2"))
         args.append(self.define_from_variant("USE_MPI", "mpi"))
         args.append("-DPORTABLE=ON")  # let Spack determine arch build flags
+
+        # Use casacore-measures data directory if available
+        if spec.satisfies("^casacore-measures"):
+            measures_spec = spec["casacore-measures"]
+            args.append(self.define("DATA_DIR", measures_spec.prefix.share.data))
 
         # fftw3 is required by casacore starting with v3.4.0, but the
         # old fftpack is still available. For v3.4.0 and later, we
@@ -121,12 +129,8 @@ class Casacore(CMakePackage):
         if spec.satisfies("@3.6.0:"):
             args.append(self.define("USE_PCH", True))
 
-        # tests won't pass unless measures data are installed, which
-        # we don't do in this package, and for which we don't yet
-        # provide any way of specifying at build time
-        #
-        # args.append(self.define('BUILD_TESTING', self.run_tests))
-        args.append(self.define("BUILD_TESTING", False))
+        # Enable testing when tests variant is enabled and measures data is available
+        args.append(self.define("BUILD_TESTING", spec.satisfies("+tests")))
 
         return args
 
