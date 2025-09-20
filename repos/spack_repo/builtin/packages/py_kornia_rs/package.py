@@ -47,9 +47,6 @@ class PyKorniaRs(PythonPackage):
     patch("py-kornia-rs-pin-fast_image_resize.patch", when="@0.1.9")
     patch("py-kornia-rs-pin-circular_buffer.patch", when="@0.1.9")
 
-    # TODO: debug this segfault
-    conflicts("^rust@1.88:")
-
     @property
     def build_directory(self):
         return "kornia-py" if self.spec.satisfies("@0.1.3:") else "py-kornia"
