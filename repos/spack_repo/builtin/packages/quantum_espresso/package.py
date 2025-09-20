@@ -443,6 +443,7 @@ class QuantumEspresso(CMakePackage, Package):
     # gipaw.x will only be installed with cmake if the qe-gipaw version is >= 5c4a4ce.
     patch("gipaw-eccee44.patch", when="@7.2+gipaw build_system=cmake")
 
+
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         spec = self.spec
