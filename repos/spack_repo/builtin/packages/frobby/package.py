@@ -23,7 +23,7 @@ class Frobby(MakefilePackage):
 
     license("GPL-2.0-or-later", checked_by="d-torrance")
 
-    version("0.9.5", tag="v0.9.5")
+    version("0.9.5", tag="v0.9.5", commit="cbda56e8bb0d706f8cd7e6594a8a034797f53eb5")
 
     depends_on("cxx", type="build")
 
