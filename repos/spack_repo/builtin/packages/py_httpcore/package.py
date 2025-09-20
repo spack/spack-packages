@@ -40,4 +40,4 @@ class PyHttpcore(PythonPackage):
         depends_on("py-anyio@3", when="@0.14.7")
         depends_on("py-anyio@3:4", when="@0.16.3:0.18")
 
-    depends_on("py-setuptools", when="@:1.16.3", type="build")
+    depends_on("py-setuptools", when="@:0.16.3", type="build")
