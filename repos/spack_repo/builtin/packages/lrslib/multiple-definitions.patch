@@ -1,0 +1,23 @@
+diff -Naur spack-src.old/lrsnashlib.c spack-src/lrsnashlib.c
+--- a/lrsnashlib.c	2024-07-29 09:36:20.927068643 +0200
++++ b/lrsnashlib.c	2024-07-29 09:38:53.617172534 +0200
+@@ -19,6 +19,7 @@
+ #include "lrslib.h"
+ #include "lrsnashlib.h"
+ 
++long FirstTime;
+ 
+ //========================================================================
+ // Standard solver. Modified version of main() from lrsNash
+diff -Naur spack-src.old/lrsnashlib.h spack-src/lrsnashlib.h
+--- a/lrsnashlib.h	2024-07-29 09:36:20.927068643 +0200
++++ b/lrsnashlib.h	2024-07-29 09:36:45.758760323 +0200
+@@ -65,7 +65,7 @@
+ void updateFwidth(game *g, int col, int pos, char *str);
+ 
+ 
+-long FirstTime;          /* set this to true for every new game to be solved */
++extern long FirstTime;          /* set this to true for every new game to be solved */
+ static long Debug_flag;
+ static long Verbose_flag;
+ 
