@@ -11,7 +11,7 @@ class PyUv(PythonPackage):
     """An extremely fast Python package and project manager, written in Rust."""
 
     homepage = "https://github.com/astral-sh/uv"
-    pypi = "uv/0.4.15.tar.gz"
+    pypi = "uv/uv-0.4.15.tar.gz"
 
     license("APACHE 2.0 or MIT")
 
@@ -21,9 +21,17 @@ class PyUv(PythonPackage):
     version("0.4.16", sha256="2144995a87b161d063bd4ef8294b1e948677bd90d01f8394d0e3fca037bb847f")
     version("0.4.15", sha256="8e36b8e07595fc6216d01e729c81a0b4ff029a93cc2ef987a73d3b650d6d559c")
 
-    depends_on("rust", type=("build", "run"))
+    # from Cargo.toml
+    depends_on("rust@1.84:", type=("build", "run"), when="@0.6.13:")
+    depends_on("rust@1.83:", type=("build", "run"), when="@0.5.9:")
+    depends_on("rust@1.81:", type=("build", "run"))
+
     depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-maturin@1:1", type="build")
+    depends_on("py-maturin@1", type="build")
+
+    depends_on("gmake", type="build")
+
+    # Historical dependencies
     depends_on("cmake", type="build", when="@:0.6.3")
 
     @when("@:0.6.3")
