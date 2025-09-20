@@ -64,18 +64,42 @@ class Python(Package):
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
-        version("3.13.5", sha256="e6190f52699b534ee203d9f417bdbca05a92f23e35c19c691a50ed2942835385")
-        version("3.13.4", sha256="2666038f1521b7a8ec34bf2997b363778118d6f3979282c93723e872bcd464e0")
-        version("3.13.3", sha256="988d735a6d33568cbaff1384a65cb22a1fb18a9ecb73d43ef868000193ce23ed")
-        version("3.13.2", sha256="b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
-        version("3.13.1", sha256="1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
-        version("3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
-        version("3.12.9", sha256="45313e4c5f0e8acdec9580161d565cf5fea578e3eabf25df7cc6355bf4afa1ee")
-        version("3.12.8", sha256="5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45")
-        version("3.12.7", sha256="73ac8fe780227bf371add8373c3079f42a0dc62deff8d612cd15a618082ab623")
-        version("3.11.11", sha256="883bddee3c92fcb91cf9c09c5343196953cbb9ced826213545849693970868ed")
-        version("3.10.16", sha256="f2e22ed965a93cfeb642378ed6e6cdbc127682664b24123679f3d013fafe9cd0")
-        version("3.9.21", sha256="667c3ba2ca98d39ead1162f6548c3475768582e2ff89e0821d25eb956ac09944")
+        version(
+            "3.13.5", sha256="e6190f52699b534ee203d9f417bdbca05a92f23e35c19c691a50ed2942835385"
+        )
+        version(
+            "3.13.4", sha256="2666038f1521b7a8ec34bf2997b363778118d6f3979282c93723e872bcd464e0"
+        )
+        version(
+            "3.13.3", sha256="988d735a6d33568cbaff1384a65cb22a1fb18a9ecb73d43ef868000193ce23ed"
+        )
+        version(
+            "3.13.2", sha256="b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9"
+        )
+        version(
+            "3.13.1", sha256="1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55"
+        )
+        version(
+            "3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4"
+        )
+        version(
+            "3.12.9", sha256="45313e4c5f0e8acdec9580161d565cf5fea578e3eabf25df7cc6355bf4afa1ee"
+        )
+        version(
+            "3.12.8", sha256="5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45"
+        )
+        version(
+            "3.12.7", sha256="73ac8fe780227bf371add8373c3079f42a0dc62deff8d612cd15a618082ab623"
+        )
+        version(
+            "3.11.11", sha256="883bddee3c92fcb91cf9c09c5343196953cbb9ced826213545849693970868ed"
+        )
+        version(
+            "3.10.16", sha256="f2e22ed965a93cfeb642378ed6e6cdbc127682664b24123679f3d013fafe9cd0"
+        )
+        version(
+            "3.9.21", sha256="667c3ba2ca98d39ead1162f6548c3475768582e2ff89e0821d25eb956ac09944"
+        )
 
     # EOL versions we still want to be able to install
     with default_args(deprecated=True):
