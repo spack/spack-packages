@@ -86,7 +86,7 @@ class Clingo(CMakePackage):
         depends_on("re2c@0.13:", type="build")
         depends_on("winbison@2.4.12:")
 
-    with when("+python"):
+    with when("@5.6:5.8,master,develop +python"):
         extends("python")
         depends_on("python@3.6:", type=("build", "link", "run"))
         depends_on("py-cffi@1.14:", type=("build", "run"), when="@5.5.0: platform=linux")
