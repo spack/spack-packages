@@ -26,7 +26,6 @@ class Madgraph5amc(MakefilePackage):
     timeout = {"timeout": 60}
 
     with default_args(fetch_options=timeout):
-        version("3.6.2", sha256="1dde78f865278d8b9a59ca608076f495ad82cebe75f10469faba97210ddcdb6f")
         version("3.5.6", sha256="d4f336196303df748074ac92f251db8e6592fca37b3059c2e0f2a764c7e50975")
         version(
             "2.9.20",
