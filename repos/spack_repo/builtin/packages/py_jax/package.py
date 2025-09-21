@@ -23,6 +23,7 @@ class PyJax(PythonPackage):
 
     tags = ["e4s"]
 
+    version("0.7.2", sha256="71a42b964bc6d52e819311429e6c0f5742e2a4650226dab1a1dd26fd986ca70d")
     version("0.7.1", sha256="118f56338c503361d2791f069d24339d8d44a8db442ed851d2e591222fb7a56d")
     version("0.7.0", sha256="4dd8924f171ed73a4f1a6191e2f800ae1745069989b69fabc45593d6b6504003")
     version("0.6.2", sha256="a437d29038cbc8300334119692744704ca7941490867b9665406b7f90665cd96")
@@ -81,6 +82,7 @@ class PyJax(PythonPackage):
         depends_on("py-ml-dtypes@0.2:", when="@0.4.14:")
         depends_on("py-ml-dtypes@0.1:", when="@0.4.9:")
         depends_on("py-ml-dtypes@0.0.3:", when="@0.4.7:")
+        depends_on("py-numpy@2:", when="@0.7.2:")
         depends_on("py-numpy@1.26:", when="@0.6.2:")
         depends_on("py-numpy@1.25:", when="@0.5:")
         depends_on("py-numpy@1.24:", when="@0.4.31:")
@@ -90,6 +92,7 @@ class PyJax(PythonPackage):
         # https://github.com/google/jax/issues/19246
         depends_on("py-numpy@:1", when="@:0.4.25")
         depends_on("py-opt-einsum")
+        depends_on("py-scipy@1.13:", when="@0.7.2:")
         depends_on("py-scipy@1.12:", when="@0.6.2:")
         depends_on("py-scipy@1.11.1:", when="@0.5:")
         depends_on("py-scipy@1.10:", when="@0.4.31:")
@@ -100,6 +103,7 @@ class PyJax(PythonPackage):
         # jax/_src/lib/__init__.py
         # https://github.com/google/jax/commit/8be057de1f50756fe7522f7e98b2f30fad56f7e4
         for v in [
+            "0.7.2",
             "0.7.1",
             "0.7.0",
             "0.6.2",
@@ -149,6 +153,7 @@ class PyJax(PythonPackage):
             depends_on(f"py-jaxlib@:{v}", when=f"@{v}")
 
         # See _minimum_jaxlib_version in jax/version.py
+        depends_on("py-jaxlib@0.7.2:", when="@0.7.2:")
         depends_on("py-jaxlib@0.7.1:", when="@0.7.1:")
         depends_on("py-jaxlib@0.7.0:", when="@0.7.0:")
         depends_on("py-jaxlib@0.6.2:", when="@0.6.2:")
