@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class GreenMbpt(CMakePackage):
+class GreenMbpt(CMakePackage, CudaPackage):
     """GreenMbpt (green-mbpt) is a weak-coupling perturbation expansion solver for the simulation
     of electronic structure in real materials using first principles Green's function methods.
     """
@@ -22,6 +23,13 @@ class GreenMbpt(CMakePackage):
 
     # Variant for CUDA Kernels
     variant("cuda", default=False, description="Enable CUDA support (requires CUDAToolkit >= 12)")
+    conflicts(
+        "cuda_arch=none",
+        when="+cuda",
+        msg="A value for cuda_arch must be specified. Add cuda_arch=XX."
+        "Please visit https://developer.nvidia.com/cuda-gpus to find out the architecture of your GPU."
+        "You can also run `nvidia-smi` on the compute nodes if you have the NVIDIA drivers installed.",
+    )
 
     # Build system dependency
     depends_on("cmake@3.27:", type="build")
@@ -43,6 +51,7 @@ class GreenMbpt(CMakePackage):
         args.append(self.define("CMAKE_CXX_COMPILER", mpi.mpicxx))
         if "+cuda" in self.spec:
             args.append(self.define("CUSTOM_KERNELS", "https://github.com/Green-Phys/green-gpu"))
+            args.append(self.define("GPU_ARCH", self.spec.variants['cuda_arch'].value[0]))
         return args
 
     def setup_run_environment(self, env):
