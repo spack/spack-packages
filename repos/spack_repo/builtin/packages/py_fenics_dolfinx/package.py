@@ -45,7 +45,6 @@ class PyFenicsDolfinx(PythonPackage):
 
     depends_on("cmake@3.21:", when="@0.9:", type="build")
     depends_on("cmake@3.19:", when="@:0.8", type="build")
-    depends_on("hdf5", type="build")
     depends_on("pkgconfig", type="build")
 
     depends_on("python@3.9:", when="@0.8:", type=("build", "run"))
