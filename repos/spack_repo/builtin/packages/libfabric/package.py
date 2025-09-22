@@ -110,6 +110,7 @@ class Libfabric(AutotoolsPackage, CudaPackage):
     variant("debug", default=False, description="Enable debugging")
     variant("uring", default=False, when="@1.17.0:", description="Enable uring support")
     variant("level_zero", default=False, description="Enable Level Zero support")
+    variant("gdrcopy", default=False, when="+cuda", description="Enable gdrcopy support")
 
     # For version 1.9.0:
     # headers: fix forward-declaration of enum fi_collective_op with C++
@@ -139,6 +140,7 @@ class Libfabric(AutotoolsPackage, CudaPackage):
     depends_on("cassini-headers", when="fabrics=cxi")
     depends_on("cxi-driver", when="fabrics=cxi")
     depends_on("xpmem", when="fabrics=xpmem")
+    depends_on("gdrcopy", when="+gdrcopy")
 
     depends_on("m4", when="@main", type="build")
     depends_on("autoconf", when="@main", type="build")
@@ -229,6 +231,9 @@ class Libfabric(AutotoolsPackage, CudaPackage):
 
         if self.spec.satisfies("fabrics=xpmem"):
             args.append(f"--enable-xpmem={self.spec['xpmem'].prefix}")
+
+        if self.spec.satisfies("+gdrcopy"):
+            args.append(f"--with-gdrcopy={self.spec['gdrcopy'].prefix}")
 
         return args
 
