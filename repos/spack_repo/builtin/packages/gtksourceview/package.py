@@ -32,9 +32,7 @@ class Gtksourceview(MesonPackage, AutotoolsPackage):
     depends_on("fortran", type="build")  # generated
 
     build_system(
-        conditional("autotools", when="@:4.2"),
-        conditional("meson", when="@4.8:"),
-        default="meson",
+        conditional("autotools", when="@:4.2"), conditional("meson", when="@4.8:"), default="meson"
     )
 
     depends_on("m4", type="build")
