@@ -13,6 +13,7 @@ class Alpscore(CMakePackage):
     with strongly correlated electrons.
     Note that this package provides only the core libraries of ALPS.
     """
+
     # Homepage and source
     homepage = "https://alpscore.org"
     url = "https://github.com/ALPSCore/ALPSCore/archive/refs/tags/v2.3.2.tar.gz"
@@ -37,7 +38,7 @@ class Alpscore(CMakePackage):
 
     def cmake_args(self):
         args = []
-        mpi = self.spec['mpi']
+        mpi = self.spec["mpi"]
         args.append(self.define("CMAKE_C_COMPILER", mpi.mpicc))
         args.append(self.define("CMAKE_CXX_COMPILER", mpi.mpicxx))
         return args

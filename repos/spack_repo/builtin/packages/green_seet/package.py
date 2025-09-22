@@ -44,7 +44,7 @@ class GreenSeet(CMakePackage):
     def cmake_args(self):
         args = []
         # Tell CMake to use Spack's MPI wrappers
-        mpi = self.spec['mpi']
+        mpi = self.spec["mpi"]
         args.append(self.define("CMAKE_C_COMPILER", mpi.mpicc))
         args.append(self.define("CMAKE_CXX_COMPILER", mpi.mpicxx))
         # if "+cuda" in self.spec:
@@ -57,7 +57,7 @@ class GreenSeet(CMakePackage):
         git = which("git")
         git("clone", "https://github.com/Green-Phys/green-seet-solvers.git", seet_solvers_src_dir)
 
-        seet_solvers_build_dir   = join_path(seet_solvers_src_dir, "spack-build")
+        seet_solvers_build_dir = join_path(seet_solvers_src_dir, "spack-build")
         seet_solvers_install_dir = join_path(prefix, "seet_solvers")
 
         args = self.cmake_args() + [
@@ -74,9 +74,7 @@ class GreenSeet(CMakePackage):
 
         # ---------- Step 2: Build main project ----------
         build_dir = join_path(self.stage.source_path, "spack-build")
-        args_main = self.cmake_args() + [
-            self.define("CMAKE_INSTALL_PREFIX", prefix),
-        ]
+        args_main = self.cmake_args() + [self.define("CMAKE_INSTALL_PREFIX", prefix)]
 
         with working_dir(build_dir, create=True):
             cmake(self.stage.source_path, *args_main)

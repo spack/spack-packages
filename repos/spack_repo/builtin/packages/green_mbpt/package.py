@@ -49,12 +49,12 @@ class GreenMbpt(CMakePackage, CudaPackage):
     def cmake_args(self):
         args = []
         # Tell CMake to use Spack's MPI wrappers
-        mpi = self.spec['mpi']
+        mpi = self.spec["mpi"]
         args.append(self.define("CMAKE_C_COMPILER", mpi.mpicc))
         args.append(self.define("CMAKE_CXX_COMPILER", mpi.mpicxx))
         if "+cuda" in self.spec:
             args.append(self.define("CUSTOM_KERNELS", "https://github.com/Green-Phys/green-gpu"))
-            args.append(self.define("GPU_ARCH", self.spec.variants['cuda_arch'].value[0]))
+            args.append(self.define("GPU_ARCH", self.spec.variants["cuda_arch"].value[0]))
         return args
 
     def setup_run_environment(self, env):
