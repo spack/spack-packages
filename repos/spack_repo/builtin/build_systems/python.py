@@ -163,7 +163,7 @@ class PythonExtension(PackageBase):
                 continue
 
             # If it's executable and has a shebang, copy and patch it.
-            if (s.st_mode & 0b111) and has_shebang(src):
+            if (s.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) and has_shebang(src):
                 copied_files[(s.st_dev, s.st_ino)] = dst
                 shutil.copy2(src, dst)
                 filter_file(
