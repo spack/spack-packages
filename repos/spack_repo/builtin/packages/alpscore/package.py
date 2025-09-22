@@ -8,9 +8,9 @@ from spack.package import *
 
 
 class Alpscore(CMakePackage):
-    """The ALPS (Algorithms and Libraries for Physics Simulations) Core libraries aim to provide a set of well tested, robust, and standardized
-    components for numerical simulations of condensed matter systems, in particular systems
-    with strongly correlated electrons.
+    """The ALPS (Algorithms and Libraries for Physics Simulations) Core libraries aim to provide
+    a set of well tested, robust, and standardized components for numerical simulations of
+    condensed matter systems, in particular systems with strongly correlated electrons.
     Note that this package provides only the core libraries of ALPS.
     """
 

@@ -39,7 +39,6 @@ class GreenSeet(CMakePackage):
     depends_on("alpscore@2.3.2:")
 
     # TODO: CUDA Variant -- consider later
-    # variant("cuda", default=False, description="Enable CUDA support (requires CUDAToolkit >= 12)")
 
     def cmake_args(self):
         args = []
@@ -47,8 +46,6 @@ class GreenSeet(CMakePackage):
         mpi = self.spec["mpi"]
         args.append(self.define("CMAKE_C_COMPILER", mpi.mpicc))
         args.append(self.define("CMAKE_CXX_COMPILER", mpi.mpicxx))
-        # if "+cuda" in self.spec:
-        #     args.append(self.define("CUSTOM_KERNELS", "https://github.com/Green-Phys/green-gpu"))
         return args
 
     def install(self, spec, prefix):

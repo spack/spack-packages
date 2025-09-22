@@ -30,8 +30,8 @@ class GreenMbpt(CMakePackage, CudaPackage):
         "cuda_arch=none",
         when="+cuda",
         msg="A value for cuda_arch must be specified. Add cuda_arch=XX."
-        "Please visit https://developer.nvidia.com/cuda-gpus to find out the architecture of your GPU."
-        "You can also run `nvidia-smi` on the compute nodes if you have the NVIDIA drivers installed.",
+        "Visit https://developer.nvidia.com/cuda-gpus to find out the architecture of your GPU."
+        "You can also run `nvidia-smi` on the compute nodes if the NVIDIA drivers are installed.",
     )
 
     # Build system dependency
