@@ -32,3 +32,9 @@ class PyDaskMpi(PythonPackage):
     # jupyter-server-proxy is not a needed dependency; https://github.com/dask/dask-mpi/pull/102
     # this significantly reduces the dependency tree of py-dask-mpi
     patch("remove-dependency-jupyter-proxy.patch", when="@:2022.4.0")
+
+    # fix for python 3.12+, merged into mainline
+    # https://github.com/dask/dask-mpi/pull/123
+    # this PR-as-a-patch doesn't apply onto top of @2022, so this patch is rebased ontop of
+    # 2022.4.0 tag release
+    patch("py312-versioneer.patch", when="@2022 ^python@3.12:")
