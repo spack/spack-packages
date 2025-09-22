@@ -29,7 +29,7 @@ spack:
 
   specs:
     # Horovod
-    # - py-horovod
+    - py-horovod
 
     # Hugging Face
     - py-transformers
@@ -40,8 +40,8 @@ spack:
 
     # Keras
     - py-keras backend=tensorflow
-    # - py-keras backend=jax
-    # - py-keras backend=torch
+    - py-keras backend=jax
+    - py-keras backend=torch
     - py-keras-applications
     - py-keras-preprocessing
     - py-keras2onnx
