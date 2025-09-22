@@ -22,7 +22,7 @@ class GreenMbpt(CMakePackage, CudaPackage):
     license("MIT", checked_by="egull")
 
     # Versions and checksums
-    version("0.3.0", sha256="d331c505ce54056bebe9b02899be9096f2c0014b21fa582be07f9579ee32e259")
+    version("0.3.0", sha256="181873fa442831d21662cf38c15f30ae97d89c07c5256d45232774a5c072574d")
 
     # Variant for CUDA Kernels
     variant("cuda", default=False, description="Enable CUDA support (requires CUDAToolkit >= 12)")
