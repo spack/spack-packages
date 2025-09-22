@@ -13,13 +13,16 @@ class GreenMbpt(CMakePackage, CudaPackage):
     of electronic structure in real materials using first principles Green's function methods.
     """
 
+    # Homepage and source
     homepage = "https://www.green-phys.org"
-    url = "https://github.com/Green-Phys/green-mbpt"
-    git = "https://github.com/Green-Phys/green-mbpt"
-    version("develop", branch="main")
+    url = "https://github.com/Green-Phys/green-mbpt/archive/refs/tags/v0.3.0.tar.gz"
 
+    # Maintainers and License info
     maintainers("egull", "gauravharsha")
     license("MIT", checked_by="egull")
+
+    # Versions and checksums
+    version("0.3.0", sha256="d331c505ce54056bebe9b02899be9096f2c0014b21fa582be07f9579ee32e259")
 
     # Variant for CUDA Kernels
     variant("cuda", default=False, description="Enable CUDA support (requires CUDAToolkit >= 12)")
