@@ -35,7 +35,7 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
     )
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build") # yoder
+    depends_on("cxx", type="build")  # yoder
 
     depends_on("m4@1.4.6:", type="build")
 
