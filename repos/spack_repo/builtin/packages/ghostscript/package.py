@@ -37,6 +37,7 @@ class Ghostscript(AutotoolsPackage):
     depends_on("krb5", type="link")
 
     depends_on("freetype@2.4.2:")
+    depends_on("fontconfig", type="link")
     depends_on("jpeg")
     depends_on("lcms")
     depends_on("libpng")
