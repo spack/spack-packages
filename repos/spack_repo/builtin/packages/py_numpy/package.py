@@ -224,9 +224,8 @@ class PyNumpy(PythonPackage):
     #
     # yoder:
     conflicts(
-          '@:1.26.3', when='^python@3.12',
-           msg="Known bug with @1.26.2, 1.26.3 when ^python@3.12"
-              )
+        "@:1.26.3", when="^python@3.12", msg="Known bug with @1.26.2, 1.26.3 when ^python@3.12"
+    )
 
     @property
     def archive_files(self):
