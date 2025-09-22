@@ -7,7 +7,7 @@ from spack.package import *
 from spack.install_test import SkipTest
 
 
-class QuEST(CMakePackage, CudaPackage, ROCmPackage):
+class Quest(CMakePackage, CudaPackage, ROCmPackage):
     """A multithreaded, distributed, GPU-accelerated simulator of quantum computers."""
 
     homepage = "https://quest.qtechtheory.org"
@@ -49,20 +49,31 @@ class QuEST(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         args = [
             # from variants
-            self.define_from_variant("ENABLE_CUDA", "cuda"),
             self.define_from_variant("BUILD_EXAMPLES", "examples"),
             self.define_from_variant("ENABLE_DISTRIBUTION", "mpi"),
             self.define_from_variant("ENABLE_MULTITHREADING", "openmp"),
             self.define_from_variant("FLOAT_PRECISION", "precision"),
-            self.define_from_variant("ENABLE_HIP", "rocm"),
             self.define_from_variant("ENABLE_TESTING", "tests"),
 
             # others
             self.define("DOWNLOAD_CATCH2", False)   # don't use internal catch2
         ]
 
+        if self.spec.satisfies("+cuda"):
+            args.append(self.define("ENABLE_CUDA", True))
+            args.append(
+                self.define("CMAKE_CUDA_ARCHITECTURES", ";".join(self.spec.variants["cuda_arch"].value))
+            )
+
+        if self.spec.satisfies("+rocm"):
+            args.append(self.define("ENABLE_HIP", True))
+            args.append(
+                self.define("CMAKE_HIP_ARCHITECTURES", ";".join(self.spec.variants["amdgpu_target"].value))
+            )
+
         return args
     
     def patch(self):
         # remove extra 'quest' that is added to the install path
         filter_file(r'^cmake_path\(APPEND CMAKE_INSTALL_PREFIX "quest"\)$', "", "CMakeLists.txt")
+
