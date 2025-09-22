@@ -149,7 +149,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             conflicts(
                 f"cuda_arch={val}",
                 msg="PyTorch 2.8.0+ does not support sm_50–sm_60 architectures "
-                "with CUDA 12.8 or newer. Use CUDA 12.6 instead."
+                "with CUDA 12.8 or newer. Use CUDA 12.6 instead.",
             )
 
     # Required dependencies
