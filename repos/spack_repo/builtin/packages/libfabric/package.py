@@ -110,7 +110,7 @@ class Libfabric(AutotoolsPackage, CudaPackage):
     variant("debug", default=False, description="Enable debugging")
     variant("uring", default=False, when="@1.17.0:", description="Enable uring support")
     variant("level_zero", default=False, description="Enable Level Zero support")
-    variant("gdrcopy", default=False, when="+cuda", description="Enable gdrcopy support")
+    variant("gdrcopy", default=False, when="@1.12: +cuda", description="Enable gdrcopy support")
 
     # For version 1.9.0:
     # headers: fix forward-declaration of enum fi_collective_op with C++
