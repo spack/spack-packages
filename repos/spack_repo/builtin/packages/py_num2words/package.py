@@ -15,6 +15,7 @@ class PyNum2words(PythonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("0.5.14", sha256="b066ec18e56b6616a3b38086b5747daafbaa8868b226a36127e0451c0cf379c6")
     version("0.5.12", sha256="7e7c0b0f080405aa3a1dd9d32b1ca90b3bf03bab17b8e54db05e1b78301a0988")
     version("0.5.10", sha256="37cd4f60678f7e1045cdc3adf6acf93c8b41bf732da860f97d301f04e611cc57")
 

@@ -21,14 +21,15 @@ def main():
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
-    base_url = f"https://api.github.com/repos/{repository}/pulls/{pr_number}"
-    pull_request = requests.get(base_url, headers=headers).json()
+    base_url = f"https://api.github.com/repos/{repository}"
+    pr_url = f"{base_url}/pulls/{pr_number}"
+    pull_request = requests.get(pr_url, headers=headers).json()
 
     if pull_request["draft"]:
         print(f"[PR #{pr_number}]: skipping draft pull request")
         return
 
-    pull_request_files = requests.get(f"{base_url}/files", headers=headers)
+    pull_request_files = requests.get(f"{pr_url}/files", headers=headers)
 
     existing_reviewers = {reviewer["login"] for reviewer in pull_request["requested_reviewers"]}
     maintainers = set()
@@ -44,8 +45,16 @@ def main():
             except spack.repo.UnknownPackageError:
                 pass
 
+    # filter maintainers to those who have triage permissions in the repo
+    # users without triage permissions are unable to review PRs
+    pingable_maintainers = set()
+    for maintainer in maintainers:
+        resp = requests.get(f"{base_url}/collaborators/{maintainer}", headers=headers)
+        if resp.status_code == 204:
+            pingable_maintainers.add(maintainer)
+
     author = pull_request["user"]["login"]
-    reviewers = (maintainers | existing_reviewers) - {author}
+    reviewers = (pingable_maintainers | existing_reviewers) - {author}
 
     if existing_reviewers == reviewers:
         print(f"[PR #{pr_number}]: reviewers already up-to-date")
@@ -59,13 +68,9 @@ def main():
 
     if token:
         resp = requests.post(
-            f"{base_url}/requested_reviewers", json={"reviewers": list(reviewers)}, headers=headers
+            f"{pr_url}/requested_reviewers", json={"reviewers": list(reviewers)}, headers=headers
         )
-        # https://docs.github.com/en/rest/pulls/review-requests
-        # endpoint may return status code 422 for users who are not collaborators
-        # or have not accepted their invites to the organization yet
-        if resp.status_code != 422:
-            resp.raise_for_status()
+        resp.raise_for_status()
 
 
 if __name__ == "__main__":

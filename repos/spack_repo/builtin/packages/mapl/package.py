@@ -39,6 +39,8 @@ class Mapl(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("2.61.0", sha256="bb768fd60214d5b6fe6120e08a5ebd869f576392a3252a4715fd7c32d0dea97a")
+    version("2.60.0", sha256="470f4da9cc516fdf8206dbc84ab13f53792f3af5e54cd5315ff70d44e5700788")
     version("2.59.0", sha256="a1137bf62e885256d295c66929cd77658a559f88dbed4f433544f432c5c7a059")
     version("2.58.1", sha256="176c7baccd0182e353184808b1048baa6100d8700ca532e0d02bea6ae5771aba")
     version("2.57.0", sha256="6991e6b7521842c9c94b549dd0fed778e8b6dad1201708aad3193c274597e36a")
@@ -176,8 +178,14 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v3.64.0",
+        when="@2.60:",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.62.1",
-        when="@2.56:",
+        when="@2.56:2.59",
     )
     resource(
         name="esma_cmake",
@@ -276,8 +284,7 @@ class Mapl(CMakePackage):
 
     # MAPL can use ifx only from MAPL 2.51 onwards and only supports
     # ifx 2025.0 and newer due to bugs in ifx.
-    conflicts("%oneapi@2025:", when="@:2.50")
-    conflicts("^[virtuals=fortran] intel-oneapi-compilers")
+    conflicts("^[virtuals=fortran] intel-oneapi-compilers@2025:", when="@:2.50")
 
     variant("flap", default=False, description="Build with FLAP support", when="@:2.39")
     variant("pflogger", default=True, description="Build with pFlogger support")
@@ -323,6 +330,9 @@ class Mapl(CMakePackage):
     depends_on("esmf", when="@:2.12.99")
     depends_on("esmf~debug", when="~debug")
     depends_on("esmf+debug", when="+debug")
+
+    # MAPL2 only supports ESMF 9 from 2.61 onwards
+    conflicts("esmf@9:", when="@:2.60")
 
     # udunits dependency from MAPL 2.48 onwards
     depends_on("udunits", when="@2.48:")

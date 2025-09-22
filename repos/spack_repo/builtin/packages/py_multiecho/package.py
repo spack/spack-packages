@@ -15,6 +15,7 @@ class PyMultiecho(PythonPackage):
 
     license("MIT")
 
+    version("0.31", sha256="0c853ddd8aaff8137410077e24d03cd63dade70c0b4c9da122fc573c415af28d")
     version("0.29", sha256="df4860fe4478c162f976bdc4bdd2dc1c51ba2c33cb23658ac7218cf1597c4f0a")
     version("0.28", sha256="d0459bd03398547116d8e989b2d2b7922af0ae7ae77e233794dd7253a2abced3")
 
@@ -22,9 +23,10 @@ class PyMultiecho(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-argparse-manpage+setuptools", type="build", when="@0.29:")
 
-    depends_on("py-coloredlogs", type=("build", "run"))
+    depends_on("py-rich", type=("build", "run"), when="@0.31:")
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-nibabel", type=("build", "run"))
 
     # Historical dependencies
+    depends_on("py-coloredlogs", type=("build", "run"), when="@:30")
     depends_on("python@3.6:3.9", type=("build", "run"), when="@0.28")

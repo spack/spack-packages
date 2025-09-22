@@ -23,6 +23,7 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.3.3", sha256="ddc7c39727ba62b80dfdbedf400d1c10ddfa8eefbd7ec8dcb118be8b56d31029")
     version("2.3.2", sha256="e0486a11ec30cdecb53f184d496d1c6a20786c81e55e41640270130056f8ee48")
     version("2.3.1", sha256="1ec9ae20a4226da374362cca3c62cd753faf2f951440b0e3b98e93c235441d2b")
     version("2.3.0", sha256="581f87f9e9e9db2cba2141400e160e9dd644ee248788d6f90636eeb8fd9260a6")
@@ -174,6 +175,16 @@ class PyNumpy(PythonPackage):
             "https://github.com/numpy/numpy/commit/953cc2dfc0f0e063a01778d1392c931d9031c469.patch?full_index=1",
             sha256="fe42a018a69cfafb7c4efc183a7c73835a298e45a8f9a585cb411170871ff596",
             when="@1.26:1.26.3",
+        )
+
+    # https://github.com/spack/spack-packages/issues/1477
+    @when("@1.26 ^intel-oneapi-compilers@2025.2")
+    def patch(self):
+        filter_file(
+            ".get(compiler_id, ['-O3'])",
+            ".get(compiler_id, ['-O1'])",
+            "./numpy/core/meson.build",
+            string=True,
         )
 
     # meson.build

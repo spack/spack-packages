@@ -15,6 +15,7 @@ class PyPluggy(PythonPackage):
 
     license("MIT")
 
+    version("1.6.0", sha256="7dcc130b76258d33b90f61b658791dede3486c3e6bfb003ee5c9bfb396dd22f3")
     version("1.5.0", sha256="2cffa88e94fdc978c4c574f15f9e59b7f4201d439195c3715ca9e2486f1d0cf1")
     version("1.4.0", sha256="8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be")
     version("1.0.0", sha256="4224373bacce55f955a878bf9cfa763c1e360858e330072059e10bad68531159")
@@ -26,12 +27,15 @@ class PyPluggy(PythonPackage):
     version("0.6.0", sha256="7f8ae7f5bdf75671a718d2daf0a64b7885f74510bcd98b1a0bb420eb9a9d0cff")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@65:", when="@1.6:")
         depends_on("py-setuptools@45:", when="@1.1:")
         depends_on("py-setuptools")
+        depends_on("py-setuptools-scm@8:+toml", when="@1.6:")
         depends_on("py-setuptools-scm@6.2.3:+toml", when="@1.1:")
         depends_on("py-setuptools-scm")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@1.6:")
         depends_on("python@3.8:", when="@1.3:")
         depends_on("python@3.7:", when="@1.1:")
         depends_on("py-importlib-metadata@0.12:", when="^python@:3.7")
