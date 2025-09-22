@@ -33,8 +33,8 @@ class Vecgeom(CMakePackage, CudaPackage):
     version("master", branch="master", get_full_repo=True)
     version(
         "2.0.0-rc.7",
-        url="https://gitlab.cern.ch/-/project/981/uploads/f1017874e9d138165f221d4b854a39a4/VecGeom-v2.0.0-rc.7.tar.gz>
-        sha256="f95eacd7154f7b41950161988465b5c086f80dade91dec8328085949c6f443a0>
+        url="https://gitlab.cern.ch/-/project/981/uploads/f1017874e9d138165f221d4b854a39a4/VecGeom-v2.0.0-rc.7.tar.gz",
+        sha256="f95eacd7154f7b41950161988465b5c086f80dade91dec8328085949c6f443a0",
     )
     version(
         "1.2.11",
