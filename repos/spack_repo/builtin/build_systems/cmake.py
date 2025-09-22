@@ -219,7 +219,7 @@ class CMakePackage(PackageBase):
         depends_on("ninja", type="build", when="generator=ninja")
 
         # CMake earlier than 4.1 improperly handles arguments provided to
-        # the linker when using msvc as a c/cxx compiler and oneapi as a 
+        # the linker when using msvc as a c/cxx compiler and oneapi as a
         # fortran compiler https://gitlab.kitware.com/cmake/cmake/-/issues/26005
         #
         # Currently in Spack msvc is modeled as both the fortran/cxx compiler
