@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack.package import *
+
 from spack.install_test import SkipTest
+from spack.package import *
 
 
 class Quest(CMakePackage, CudaPackage, ROCmPackage):
@@ -28,7 +29,7 @@ class Quest(CMakePackage, CudaPackage, ROCmPackage):
         default="2",
         description="Set floating-point precision",
         values=("1", "2", "4"),
-        multi=False
+        multi=False,
     )
     variant("tests", default=False, description="Build tests")
 
@@ -54,26 +55,21 @@ class Quest(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_MULTITHREADING", "openmp"),
             self.define_from_variant("FLOAT_PRECISION", "precision"),
             self.define_from_variant("ENABLE_TESTING", "tests"),
-
             # others
-            self.define("DOWNLOAD_CATCH2", False)   # don't use internal catch2
+            self.define("DOWNLOAD_CATCH2", False),  # don't use internal catch2
         ]
 
         if self.spec.satisfies("+cuda"):
             args.append(self.define("ENABLE_CUDA", True))
 
             targets = ";".join(self.spec.variants["cuda_arch"].value)
-            args.append(
-                self.define("CMAKE_CUDA_ARCHITECTURES", targets)
-            )
+            args.append(self.define("CMAKE_CUDA_ARCHITECTURES", targets))
 
         if self.spec.satisfies("+rocm"):
             args.append(self.define("ENABLE_HIP", True))
 
             targets = ";".join(self.spec.variants["amdgpu_target"].value)
-            args.append(
-                self.define("CMAKE_HIP_ARCHITECTURES", targets)
-            )
+            args.append(self.define("CMAKE_HIP_ARCHITECTURES", targets))
 
         return args
 
