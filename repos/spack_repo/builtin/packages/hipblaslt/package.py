@@ -141,14 +141,14 @@ class Hipblaslt(CMakePackage):
                 "tensilelite/Tensile/Ops/gen_assembly.sh",
                 string=True,
             )
-
-        if self.spec.satisfies("@6.4:") and self.run_tests:
-            filter_file(
-                r"${HIP_CLANG_ROOT}/lib",
-                "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
-                "clients/CMakeLists.txt",
-                string=True,
-            )
+        if not self.spec["hip"].external:
+            if self.spec.satisfies("@6.4:") and self.run_tests:
+                filter_file(
+                    r"${HIP_CLANG_ROOT}/lib",
+                    "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
+                    "clients/CMakeLists.txt",
+                    string=True,
+                )
 
     def cmake_args(self):
         args = [
