@@ -81,7 +81,7 @@ class Legion(CMakePackage, ROCmPackage):
 
     # cuda-centric
     cuda_arch_list = CudaPackage.cuda_arch_values
-    for arch in CudaPackage.cuda_arch_values:
+    for arch in cuda_arch_list:
         # UCX transport dependency when using CUDA
         depends_on(f"ucc cuda_arch={arch}", when=f"@25.03.0: network=ucx +cuda cuda_arch={arch}")
 
