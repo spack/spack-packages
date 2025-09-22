@@ -73,21 +73,27 @@ class Legion(CMakePackage, ROCmPackage):
     depends_on("hwloc", when="+hwloc")
     depends_on("libfabric", when="network=gasnet conduit=ofi-slingshot11")
 
+    # Kokkos base version
+    depends_on("kokkos@3.3.01:", when="+kokkos")
+
+    # OpenMP backend
+    depends_on("kokkos+openmp", when="+kokkos+openmp")
+
     # cuda-centric
     cuda_arch_list = CudaPackage.cuda_arch_values
-    for arch in cuda_arch_list:
+    for arch in CudaPackage.cuda_arch_values:
+        # UCX transport dependency when using CUDA
         depends_on(f"ucc cuda_arch={arch}", when=f"@25.03.0: network=ucx +cuda cuda_arch={arch}")
+
+        # Kokkos CUDA + compiler-specific wrapper
         depends_on(
-            f"kokkos@3.3.01:+cuda+cuda_lambda+wrapper cuda_arch={arch}",
+            f"kokkos+cuda+cuda_lambda+wrapper cuda_arch={arch}",
             when=f"+kokkos+cuda cuda_arch={arch} %gcc",
         )
         depends_on(
-            f"kokkos@3.3.01:+cuda+cuda_lambda~wrapper cuda_arch={arch}",
+            f"kokkos+cuda+cuda_lambda~wrapper cuda_arch={arch}",
             when=f"+kokkos+cuda cuda_arch={arch} %clang",
         )
-
-    depends_on("kokkos@3.3.01:~cuda+openmp", when="+kokkos~cuda+openmp")
-    depends_on("kokkos@3.3.01:~cuda", when="+kokkos~cuda~openmp")
 
     # https://github.com/spack/spack/issues/37232#issuecomment-1553376552
     patch("hip-offload-arch.patch", when="@23.03.0 +rocm")
@@ -125,9 +131,9 @@ class Legion(CMakePackage, ROCmPackage):
         depends_on(
             f"ucc amdgpu_target={arch}", when=f"@25.03.0: network=ucx +rocm amdgpu_target={arch}"
         )
-        depends_on(f"kokkos@3.3.01:+rocm amdgpu_target={arch}", when=f"+rocm amdgpu_target={arch}")
+        depends_on(f"kokkos+rocm amdgpu_target={arch}", when=f"+kokkos+rocm amdgpu_target={arch}")
 
-    depends_on("kokkos@3.3.01:+rocm", when="+kokkos+rocm")
+    depends_on("kokkos+rocm", when="+kokkos+rocm")
 
     # https://github.com/StanfordLegion/legion/#dependencies
     depends_on("python@3.8:", when="+python")
