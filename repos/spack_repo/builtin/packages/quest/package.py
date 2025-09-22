@@ -37,10 +37,10 @@ class Quest(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+mpi"):
         depends_on("mpi")
-    
+
     with when("+tests"):
         depends_on("catch2")
-    
+
     def check(self):
         if self.spec.satisfies("~tests"):
             raise SkipTest("To run tests for QuEST you must enable the 'tests' variant!")
@@ -61,19 +61,22 @@ class Quest(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+cuda"):
             args.append(self.define("ENABLE_CUDA", True))
+
+            targets = ";".join(self.spec.variants["cuda_arch"].value)
             args.append(
-                self.define("CMAKE_CUDA_ARCHITECTURES", ";".join(self.spec.variants["cuda_arch"].value))
+                self.define("CMAKE_CUDA_ARCHITECTURES", targets)
             )
 
         if self.spec.satisfies("+rocm"):
             args.append(self.define("ENABLE_HIP", True))
+
+            targets = ";".join(self.spec.variants["amdgpu_target"].value)
             args.append(
-                self.define("CMAKE_HIP_ARCHITECTURES", ";".join(self.spec.variants["amdgpu_target"].value))
+                self.define("CMAKE_HIP_ARCHITECTURES", targets)
             )
 
         return args
-    
+
     def patch(self):
         # remove extra 'quest' that is added to the install path
         filter_file(r'^cmake_path\(APPEND CMAKE_INSTALL_PREFIX "quest"\)$', "", "CMakeLists.txt")
-
