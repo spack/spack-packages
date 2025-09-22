@@ -17,6 +17,9 @@ class PyUxarray(PythonPackage):
 
     license("Apache-2.0", checked_by="climbfuji")
 
+    maintainer("Chrismarsh")
+
+    version("2025.9.0", sha256="cdbeef657bb75518a9c4a1880ac2e2d446b1c2bdaacf15e6ce45654a2ed47f34")
     version("2025.8.0", sha256="2279e3f4c5ca78d6a896441ee98ea29a228c7b24a0571c425d1c689939794c44")
     version("2025.6.0", sha256="f354648373c2c253bce80af1339f052b651e4ecff68fff78635c843324f7d228")
     version("2025.5.1", sha256="420fab51843a26642d876c451badd4fafcbac16f1703f391abed19f6beac1a04")
@@ -25,7 +28,9 @@ class PyUxarray(PythonPackage):
     version("2024.10.0", sha256="f65a9920ce085af9a38349dc5ece4f9b83bc015dc8cb738d245d343f7816fd59")
 
     # Build-time dependencies
-    depends_on("python@3.9:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"), when="@2024")
+    depends_on("python@3.10:", type=("build", "run"), when="@2025:")
+
     depends_on("py-setuptools@60:", type="build")
     depends_on("py-setuptools-scm@8:", type="build")
 
