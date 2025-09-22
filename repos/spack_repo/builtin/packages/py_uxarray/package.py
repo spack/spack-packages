@@ -17,7 +17,7 @@ class PyUxarray(PythonPackage):
 
     license("Apache-2.0", checked_by="climbfuji")
 
-    maintainer("Chrismarsh")
+    maintainers("Chrismarsh")
 
     version("2025.9.0", sha256="cdbeef657bb75518a9c4a1880ac2e2d446b1c2bdaacf15e6ce45654a2ed47f34")
     version("2025.8.0", sha256="2279e3f4c5ca78d6a896441ee98ea29a228c7b24a0571c425d1c689939794c44")
