@@ -128,7 +128,7 @@ class Clingo(CMakePackage):
         args = [
             self.define("CLINGO_BUILD_WITH_LUA", False),
             self.define("CLASP_INSTALL_LIB", True),
-            self.define("CLASP_WITH_THREADS", True)
+            self.define("CLASP_WITH_THREADS", True),
         ]
         if self.spec.satisfies("+python"):
             suffix = python(
