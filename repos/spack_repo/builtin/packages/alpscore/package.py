@@ -13,17 +13,15 @@ class Alpscore(CMakePackage):
     with strongly correlated electrons.
     Note that this package provides only the core libraries of ALPS.
     """
-    # Add a proper url for your package's homepage here.
+    # Homepage and source
     homepage = "https://alpscore.org"
     url = "https://github.com/ALPSCore/ALPSCore/archive/refs/tags/v2.3.2.tar.gz"
 
-    # List of maintainers
+    # Maintainers and License info
     maintainers("egull")
-
-    # Licence info
     license("MIT", checked_by="egull")
 
-    # Add proper versions and checksums here.
+    # Versions and checksums
     version("2.3.2", sha256="bd9b5af0a33acc825ffedfaa0bf794a420ab2b9b50f6a4e634ecbde43ae9cc24")
 
     # Build system dependencies

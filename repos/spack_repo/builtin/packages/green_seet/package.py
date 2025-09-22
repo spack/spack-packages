@@ -18,12 +18,14 @@ class GreenSeet(CMakePackage):
     # Homepage and source
     homepage = "https://www.green-phys.org"
     url = "https://github.com/Green-Phys/green-mbpt"
-    git = "https://github.com/Green-Phys/green-mbpt"
-    version("develop", branch="SEET")
 
-    # Maintainers
+    # Maintainers and License info
     maintainers("egull", "gauravharsha")
     license("MIT")
+
+    # Versions and checksums
+    git = "https://github.com/Green-Phys/green-mbpt"
+    version("develop", branch="SEET")
 
     # Build system dependency
     depends_on("cmake@3.27:", type="build")
