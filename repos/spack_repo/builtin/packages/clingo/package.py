@@ -90,10 +90,10 @@ class Clingo(CMakePackage):
         extends("python")
         depends_on("python@3.6:", type=("build", "link", "run"))
 
-    with when("@5.6:5.8,master,develop +python"):
-        depends_on("py-cffi@1.14:", type=("build", "run"), when="@5.5.0: platform=linux")
-        depends_on("py-cffi@1.14:", type=("build", "run"), when="@5.5.0: platform=darwin")
-        depends_on("py-cffi@1.14:", type=("build", "run"), when="@5.5.0: platform=freebsd")
+    with when("@5.5: +python"):
+        depends_on("py-cffi@1.14:", type=("build", "run"), when="platform=linux")
+        depends_on("py-cffi@1.14:", type=("build", "run"), when="platform=darwin")
+        depends_on("py-cffi@1.14:", type=("build", "run"), when="platform=freebsd")
 
     patch("python38.patch", when="@5.3:5.4.0")
     patch("size-t.patch", when="%msvc")
@@ -124,15 +124,11 @@ class Clingo(CMakePackage):
     def cmake_py_shared(self):
         return self.define("CLINGO_BUILD_PY_SHARED", "ON")
 
-    @property
-    def clasp_threads(self):
-        return self.define("CLASP_WITH_THREADS", True)
-
     def cmake_args(self):
         args = [
             self.define("CLINGO_BUILD_WITH_LUA", False),
             self.define("CLASP_INSTALL_LIB", True),
-            self.clasp_threads,
+            self.define("CLASP_WITH_THREADS", True)
         ]
         if self.spec.satisfies("+python"):
             suffix = python(
