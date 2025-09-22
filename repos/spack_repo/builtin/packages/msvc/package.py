@@ -140,13 +140,21 @@ class Msvc(Package, CompilerPackage):
         # compiler.
         # Spack first finds the compilers via VSWHERE
         # and stores their path, but their respective VCVARS
-        # file must be invoked before useage.
+        # file must be invoked before useage. 
         env_cmds = []
         compiler_root = os.path.join(os.path.dirname(self.cc), "../../../../../..")
-        vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvars64.bat")
+        vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvarsall.bat")
         # get current platform architecture and format for vcvars argument
         arch = host_platform().default.lower()
-        arch = arch.replace("-", "_")
+        x86_64 = "x86_64"
+        host_map = {
+            "x86-64": x86_64,
+            "x86-64-v2": x86_64,
+            "x86-64-v3": x86_64,
+
+
+        }
+
         if self.spec.satisfies("target=x86_64:"):
             arch = "amd64"
 
