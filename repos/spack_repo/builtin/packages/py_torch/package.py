@@ -143,6 +143,18 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         "https://developer.nvidia.com/cuda-gpus",
     )
 
+    # https://github.com/pytorch/pytorch/releases/tag/v2.8.0#backwards-incompatible-changes
+    with when("@2.8: +cuda ^cuda@12.8:"):
+        for val in CudaPackage.cuda_arch_values:
+            if val.isdigit() and 50 <= int(val) <= 60:
+                conflicts(
+                    f"cuda_arch={val}",
+                    msg="PyTorch 2.8.0+ does not support "
+                    "sm_50–sm_60 architectures "
+                    "with CUDA 12.8 or newer. "
+                    "Use CUDA 12.6 instead.",
+                )
+
     # Required dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
