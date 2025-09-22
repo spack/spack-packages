@@ -55,7 +55,7 @@ class GreenSeet(CMakePackage):
         # ---------- Step 1: Build seet_solvers ----------
         seet_solvers_src_dir = join_path(self.stage.source_path, "seet_solvers_src")
         git = which("git")
-        git("clone", "https://github.com/gauravharsha/seet_solvers.git", seet_solvers_src_dir)
+        git("clone", "https://github.com/Green-Phys/green-seet-solvers.git", seet_solvers_src_dir)
 
         seet_solvers_build_dir   = join_path(seet_solvers_src_dir, "spack-build")
         seet_solvers_install_dir = join_path(prefix, "seet_solvers")
