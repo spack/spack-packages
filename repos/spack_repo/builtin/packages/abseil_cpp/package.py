@@ -111,6 +111,4 @@ class AbseilCpp(CMakePackage):
     @property
     def libs(self):
         shared = "+shared" in self.spec
-        return find_libraries(
-            "libabsl_*", root=self.prefix, recursive=True, shared=shared
-        )
+        return find_libraries("libabsl_*", root=self.prefix, recursive=True, shared=shared)
