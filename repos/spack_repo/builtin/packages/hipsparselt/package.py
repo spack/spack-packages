@@ -105,9 +105,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("netlib-lapack@3.7.1:", type="test")
     depends_on("python-venv", when="@7.0:")
 
-    for t_version, t_commit in [
-        ("7.0.0", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
-    ]:
+    for t_version, t_commit in [("7.0.0", "7fc3631478ce7887f3cfdba3adb149240ac539db")]:
         resource(
             name="hipblaslt",
             git="https://github.com/ROCm/hipBLASLt.git",
@@ -180,7 +178,9 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             )
         if self.spec.satisfies("@7.0:"):
             args.append(
-                self.define("Tensile_TEST_LOCAL_PATH", f"{self.stage.source_path}/hipBLASLt/tensilelite")
+                self.define(
+                    "Tensile_TEST_LOCAL_PATH", f"{self.stage.source_path}/hipBLASLt/tensilelite"
+                )
             )
             args.append(self.define("Python_EXECUTABLE", self.spec["python"].prefix.bin.python3))
             args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
