@@ -27,7 +27,7 @@ class Rstudio(CMakePackage):
     depends_on("pkgconfig", type="build")
     depends_on("ant", type="build")
     depends_on("boost+pic@1.69:")
-    
+
     # depends_on("qt+webkit@5.12:")
     depends_on("qt+webkit@:5.6.999")
     depends_on("patchelf@0.9:")
