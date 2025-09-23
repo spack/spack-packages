@@ -35,26 +35,6 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     version("0.5.1", sha256="182d5466fbd98ba9400b343b55f6a06e03b77daed4de1dd16f632ac0a3620249")
     version("0.5.0", sha256="4a8834224d96fd01897e5872ac109f60d91ef0bd7b63fac05a73dcdb61a5530e")
     version("0.4.4", sha256="8b5ae63aa2d50c2ecf48d752424e4a33c50c07d9f0f5ca5448246de3286fd836")
-    version(
-        "0.4.3",
-        sha256="b4f603dce1dc9c4894ea4c86f6574026ea8536714982e7dc6dff7472c925c892",
-        deprecated=True,
-    )
-    version(
-        "0.4.2",
-        sha256="eeca9705413f5e16e0fb81154e042600c8df125af7049912757feb01d43730e2",
-        deprecated=True,
-    )
-    version(
-        "0.4.1",
-        sha256="24e5c15eb9eec45f52d94a6719ae3505388b49d409cb7e26c875c70ac409bd2c",
-        deprecated=True,
-    )
-    version(
-        "0.4.0",
-        sha256="8b8eaef84641eeca0fc40321d358205fc9d51e3c6dc7bd1bf03218c1919c774e",
-        deprecated=True,
-    )
 
     _cxxstd_values = ("17", "20")
 
@@ -88,7 +68,6 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cli11", when="@0.6:")
     depends_on("nlohmann-json")
     depends_on("covfie@0.13:", when="+covfie")
-    depends_on("geant4@10.5:11.1", when="@0.3.1:0.4.1 +geant4")
     depends_on("geant4@10.5:11.2", when="@0.4.2:0.4 +geant4")
     depends_on("geant4@10.5:", when="@0.5: +geant4")
     depends_on("g4vg@1.0.2:", when="@0.6: +geant4 +vecgeom")

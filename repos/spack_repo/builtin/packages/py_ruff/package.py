@@ -31,6 +31,7 @@ class PyRuff(PythonPackage):
     version("0.1.6", sha256="1b09f29b16c6ead5ea6b097ef2764b42372aebe363722f1605ecbcd2b9207184")
 
     depends_on("c", type="build")
+    depends_on("gmake", type="build")
 
     with default_args(type="build"):
         depends_on("py-maturin@1")
