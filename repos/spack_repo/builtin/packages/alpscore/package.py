@@ -27,12 +27,10 @@ class Alpscore(CMakePackage):
 
     # Build system dependencies
     depends_on("cmake@3.1:", type="build")
-    conflicts("^cmake@3.6", when="platform=darwin", msg="CMake 3.6 has a known issue on macOS")
 
     # Other dependencies
     depends_on("mpi")
     depends_on("hdf5@1.8: ~mpi+hl")
-    conflicts("^hdf5@1.10 ~mpi+hl", msg="HDF5 1.10 has a known issue")
     depends_on("boost@1.56.0: +chrono +date_time +filesystem +iostreams +mpi")
     depends_on("eigen@3.3.4:")
 
