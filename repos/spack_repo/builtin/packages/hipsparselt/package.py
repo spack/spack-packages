@@ -90,6 +90,9 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0"]:
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
+    for ver in ["7.0.0"]:
+        depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
+
     depends_on("cmake@3.5:", type="build")
     depends_on("msgpack-c@3:")
     depends_on("python@3.6:")
@@ -100,6 +103,17 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("py-joblib")
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("python-venv", when="@7.0:")
+
+    for t_version, t_commit in [
+        ("7.0.0", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
+    ]:
+        resource(
+            name="hipblaslt",
+            git="https://github.com/ROCm/hipBLASLt.git",
+            commit=t_commit,
+            when=f"@{t_version}",
+        )
 
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack.patch", when="@6.0")
     # Below patch sets the proper path for clang++,lld and clang-offload-blunder inside the
@@ -109,6 +123,18 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.2.patch", when="@6.2")
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.3.patch", when="@6.3")
     patch("0002-add-hipsparse-include.patch", when="@6.4")
+
+    def patch(self):
+        if self.spec.satisfies("@7.0:"):
+            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{self.spec['python'].version[:-1]}/site-packages"
+            filter_file(
+                "${PROJECT_BINARY_DIR}/lib",
+                ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
+                "hipBLASLt/tensilelite/CMakeLists.txt",
+                "hipBLASLt/tensilelite/Tensile/cmake/TensileConfig.cmake",
+                "hipBLASLt/library/src/amd_detail/rocblaslt/src/extops/CMakeLists.txt",
+                string=True,
+            )
 
     @classmethod
     def determine_version(cls, lib):
@@ -152,4 +178,10 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             args.append(
                 self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
             )
+        if self.spec.satisfies("@7.0:"):
+            args.append(
+                self.define("Tensile_TEST_LOCAL_PATH", f"{self.stage.source_path}/hipBLASLt/tensilelite")
+            )
+            args.append(self.define("Python_EXECUTABLE", self.spec["python"].prefix.bin.python3))
+            args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
         return args
