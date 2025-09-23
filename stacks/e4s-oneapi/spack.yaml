@@ -223,7 +223,6 @@ spack:
   - cabana +sycl ^kokkos +sycl +openmp cxxstd=17
   - ginkgo +sycl
   - kokkos +sycl +openmp cxxstd=17
-  - kokkos-fft host_backend=fftw-openmp device_backend=onemkl +tests ^kokkos +sycl +openmp cxxstd=17
   - sundials +sycl +examples-install cxxstd=17
   - tau +mpi +opencl +level_zero +syscall
   - upcxx +level_zero
@@ -233,6 +232,7 @@ spack:
   # - hypre +sycl                                     # hypre-2.32.0: gpu/intel/level0/level0-command-process.c:94:61: error: illegal initializer type 'atomic_int' (aka '_Atomic(int)')
   # - kokkos-kernels ^kokkos +sycl +openmp cxxstd=17  # kokkos-kernels-4.5.01: /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/group_algorithm.hpp:598:31: error: SYCL kernel cannot call an undefined function without SYCL_EXTERNAL attribute
   # - petsc +sycl                                     # kokkos-kernels-4.4.01: /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/group_algorithm.hpp:598:31: error: SYCL kernel cannot call an undefined function without SYCL_EXTERNAL attribute
+  # - kokkos-fft host_backend=fftw-openmp device_backend=onemkl +tests ^kokkos +sycl +openmp cxxstd=17
   # - slate +sycl                                     # blaspp-2024.10.26: blas/device.hh:46:14: fatal error: 'sycl.hpp' file not found
 
   ci:
