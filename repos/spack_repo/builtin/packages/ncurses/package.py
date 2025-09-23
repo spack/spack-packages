@@ -141,9 +141,6 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
             "--disable-overwrite",
         ]
 
-        if self.spec.satisfies("%gcc@15:"):
-            opts.append("CFLAGS=-std=gnu17")
-
         if spec.satisfies("@:6.2"):
             opts.append("--with-pkg-config-libdir={0}/pkgconfig".format(prefix.lib))
         else:
