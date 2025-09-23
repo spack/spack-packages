@@ -670,7 +670,7 @@ class RocmOpenmpExtras(Package):
             "-DLLVM_INCLUDE_DOCS=0",
             "-DLLVM_INCLUDE_UTILS=0",
             "-DCLANG_DEFAULT_PIE_ON_LINUX=0",
-            f"../../rocm-openmp-extras/flang/flang-{legacy_or_classic}/" \
+            f"../../rocm-openmp-extras/flang/flang-{legacy_or_classic}/"
             f"{flang_legacy_version}/llvm-{legacy_or_classic}/llvm",
         ]
 
