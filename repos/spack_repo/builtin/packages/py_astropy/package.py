@@ -187,3 +187,10 @@ class PyAstropy(PythonPackage):
             modules.append("astropy.visualization.wcsaxes")
 
         return modules
+
+    def flag_handler(self, name, flags):
+        (flags, _, _) = super().flag_handler(name, flags)
+        if name == "cflags":
+            if self.spec.satisfies("@:7") and self.spec.satisfies("%gcc@15:"):
+                flags.append("-Wno-incompatible-pointer-types")
+        return (flags, None, None)
