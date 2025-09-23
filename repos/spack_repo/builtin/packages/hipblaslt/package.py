@@ -152,7 +152,8 @@ class Hipblaslt(CMakePackage):
                 string=True,
             )
         if self.spec.satisfies("@7.0:"):
-            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{self.spec['python'].version[:-1]}/site-packages"
+            py_ver = self.spec["python"].version[:-1]
+            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
             filter_file(
                 "${PROJECT_BINARY_DIR}/lib",
                 ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
