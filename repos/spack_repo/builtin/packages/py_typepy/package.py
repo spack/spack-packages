@@ -17,7 +17,9 @@ class PyTypepy(PythonPackage):
 
     version("1.3.4", sha256="89c1f66de6c6133209c43a94d23431d320ba03ef5db18f241091ea594035d9de")
 
-    variant("datetime", default=False, description="Install dependencies needed for datetime support")
+    variant(
+        "datetime", default=False, description="Install dependencies needed for datetime support"
+    )
 
     with default_args(type="build"):
         depends_on("py-setuptools@64:")
