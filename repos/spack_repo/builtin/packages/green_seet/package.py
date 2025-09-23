@@ -50,7 +50,8 @@ class GreenSeet(CMakePackage):
         return args
 
     def install(self, spec, prefix):
-        # ---------- Step 1: Build seet_solvers ----------
+        # ---------- Step 1: Build green-seet-solvrs ----------
+        # NOTE: green-seet-solvers will be merged into green-mbpt for next SEET release
         seet_solvers_src_dir = join_path(self.stage.source_path, "seet_solvers_src")
         git = which("git")
         git("clone", "https://github.com/Green-Phys/green-seet-solvers.git", seet_solvers_src_dir)
