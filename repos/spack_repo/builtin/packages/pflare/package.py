@@ -8,7 +8,6 @@ from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 from spack.util.environment import EnvironmentModifications
-from spack.util.executable import which
 
 
 class Pflare(MakefilePackage):
@@ -87,9 +86,9 @@ class Pflare(MakefilePackage):
 
         extra_inc = f"-I{petsc_inc_src}"
         with set_env(
-            CFLAGS=(f"{os.environ.get('CFLAGS','')} {extra_inc}").strip(),
-            CXXFLAGS=(f"{os.environ.get('CXXFLAGS','')} {extra_inc}").strip(),
-            CPPFLAGS=(f"{os.environ.get('CPPFLAGS','')} {extra_inc}").strip(),
+            CFLAGS=(f"{os.environ.get('CFLAGS', '')} {extra_inc}").strip(),
+            CXXFLAGS=(f"{os.environ.get('CXXFLAGS', '')} {extra_inc}").strip(),
+            CPPFLAGS=(f"{os.environ.get('CPPFLAGS', '')} {extra_inc}").strip(),
         ):
             # The Makefile has a `build_tests_check` target that builds the library and tests
             make("build_tests_check", parallel=True)
