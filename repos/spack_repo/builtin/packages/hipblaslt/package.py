@@ -114,7 +114,7 @@ class Hipblaslt(CMakePackage):
         if self.spec.satisfies("@:6.4"):
             env.set("CXX", self.spec["hip"].hipcc)
         else:
-            env.set("CXX",  f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
         if self.spec.satisfies("@6.3.0:"):
             env.set(
                 "TENSILE_ROCM_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++"
@@ -129,9 +129,7 @@ class Hipblaslt(CMakePackage):
                 f"{self.spec['rocminfo'].prefix}/bin/rocm_agent_enumerator",
             )
         if self.spec.satisfies("@7.0:"):
-            env.set(
-                "ROCM_LD_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/ld.lld"
-            )
+            env.set("ROCM_LD_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/ld.lld")
 
     def patch(self):
         if self.spec.satisfies("@6.3:6.4"):
@@ -192,5 +190,9 @@ class Hipblaslt(CMakePackage):
             args.append(self.define("Python_EXECUTABLE", self.spec["python"].prefix.bin.python3))
             args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
         if self.spec.satisfies("@7.0:"):
-            args.append(self.define("ROCROLLER_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"))
+            args.append(
+                self.define(
+                    "ROCROLLER_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
+                )
+            )
         return args

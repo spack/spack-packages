@@ -196,5 +196,10 @@ class MiopenHip(CMakePackage):
         if self.spec.satisfies("@6.3:"):
             args.append(self.define_from_variant("MIOPEN_USE_HIPBLASLT", "hipblaslt"))
         if self.spec.satisfies("@7:"):
-            args.append(self.define("MIOPEN_OFFLOADBUNDLER_BIN", f"{self.spec['llvm-amdgpu'].prefix.bin}/clang-offload-bundler"))
+            args.append(
+                self.define(
+                    "MIOPEN_OFFLOADBUNDLER_BIN",
+                    f"{self.spec['llvm-amdgpu'].prefix.bin}/clang-offload-bundler",
+                )
+            )
         return args

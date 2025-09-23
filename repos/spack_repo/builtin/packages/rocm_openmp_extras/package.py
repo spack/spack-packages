@@ -537,7 +537,8 @@ class RocmOpenmpExtras(Package):
 
         if self.spec.version >= Version("6.1.0"):
             os.symlink(
-                os.path.join(omp_bin_dir, f"flang-{legacy_or_classic}"), os.path.join(bin_dir, f"flang-{legacy_or_classic}")
+                os.path.join(omp_bin_dir, f"flang-{legacy_or_classic}"),
+                os.path.join(bin_dir, f"flang-{legacy_or_classic}"),
             )
         os.symlink(os.path.join(omp_lib_dir, "libdevice"), os.path.join(lib_dir, "libdevice"))
         os.symlink(os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug"))

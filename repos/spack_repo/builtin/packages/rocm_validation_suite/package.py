@@ -88,7 +88,6 @@ class RocmValidationSuite(CMakePackage):
     ]:
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
-
     for ver in [
         "5.7.0",
         "5.7.1",
@@ -108,7 +107,7 @@ class RocmValidationSuite(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
-     ]:
+    ]:
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
     for ver in [

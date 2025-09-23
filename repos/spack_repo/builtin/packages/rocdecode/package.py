@@ -105,6 +105,8 @@ class Rocdecode(CMakePackage):
         if self.spec.satisfies("@6.4"):
             args.append(self.define("AMDGPU_DRM_INCLUDE_DIRS", self.spec["libdrm"].prefix.include))
         if self.spec.satisfies("@7.0:"):
-            args.append(self.define("LIBDRM_AMDGPU_INCLUDE_DIR", self.spec["libdrm"].prefix.include))
+            args.append(
+                self.define("LIBDRM_AMDGPU_INCLUDE_DIR", self.spec["libdrm"].prefix.include)
+            )
             args.append(self.define("LIBDRM_AMDGPU_LIBRARY", self.spec["libdrm"].prefix.lib))
         return args

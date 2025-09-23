@@ -47,6 +47,9 @@ class Transferbench(CMakePackage):
         args = []
         if self.spec.satisfies("@7.0:"):
             args.append(self.define("HSA_INCLUDE_DIR", self.spec["hsa-rocr-dev"].prefix.include))
-            args.append(self.define("HSA_LIBRARY", f"{self.spec['hsa-rocr-dev'].prefix.lib}/libhsa-runtime64.so"))
+            args.append(
+                self.define(
+                    "HSA_LIBRARY", f"{self.spec['hsa-rocr-dev'].prefix.lib}/libhsa-runtime64.so"
+                )
+            )
         return args
-
