@@ -10,8 +10,10 @@ ci:
     - match:
       - composable-kernel
       - py-torch
+      - aotriton
       - wrf
       build-job:
+        timeout: 600 minutes
         tags: [ "spack", "huge" ]
         variables:
           CI_JOB_SIZE: huge
