@@ -25,8 +25,7 @@ class GreenSeet(CMakePackage):
     license("MIT")
 
     # Versions and checksums
-    git = "https://github.com/Green-Phys/green-mbpt"
-    version("develop", branch="SEET")
+    version("seet-dev", branch="SEET", commit="7b076bf07930157d9583f9e942867bc08605a4dd")
 
     # Build system dependency
     depends_on("cmake@3.27:", type="build")
