@@ -20,6 +20,7 @@ class Rocmlir(CMakePackage):
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
 
+    version("7.0.0", url="https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-6.4.3.tar.gz", sha256="5f48cdbb35738223d18f92fd4624a270e20afcc3f67aaae75b76b09b9a3865e6")
     version("6.4.3", sha256="5f48cdbb35738223d18f92fd4624a270e20afcc3f67aaae75b76b09b9a3865e6")
     version("6.4.2", sha256="9ad8e64a01902771255371fdd08de7e574bbe71c00245837173d42f54a7599e9")
     version("6.4.1", sha256="15cb80da488f88274afff358e6706f54139d1003a9ddcc918afc58af4ebc5c6a")
@@ -81,6 +82,7 @@ class Rocmlir(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")

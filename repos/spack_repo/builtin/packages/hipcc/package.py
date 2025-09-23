@@ -13,7 +13,7 @@ class Hipcc(CMakePackage):
     """HIPCC: HIP compiler driver"""
 
     homepage = "https://github.com/ROCm/hipcc"
-    git = "https://github.com/ROCm/hipcc.git"
+    git = "https://github.com/ROCm/llvm-project.git"
 
     def url_for_version(self, version):
         if version <= Version("6.0.2"):
@@ -27,6 +27,7 @@ class Hipcc(CMakePackage):
     executables = ["hipcc"]
 
     license("MIT")
+    version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
     version("6.4.3", sha256="7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7")
     version("6.4.2", sha256="9f42cb73d90bd4561686c0366f60f6e58cfd32ff24b094c69e8259fb5d177457")
     version("6.4.1", sha256="460ad28677092b9eb86ffdc49bcb4d01035e32b4f05161d85f90c9fa80239f50")
@@ -54,7 +55,8 @@ class Hipcc(CMakePackage):
 
     patch("0014-remove-compiler-rt-linkage-for-host.6.0.patch", when="@6.0")
     patch("0014-remove-compiler-rt-linkage-for-host.6.1.patch", when="@6.1")
-    patch("0001-Update-the-ROCMINFO-HIPCLANG-PATHS-inside-hipcc-6.2.0.patch", when="@6.2:")
+    patch("0001-Update-the-ROCMINFO-HIPCLANG-PATHS-inside-hipcc-6.2.0.patch", when="@6.2:6")
+    patch("0002-Update-rocm-agent-enumerator-path.patch", when="@7.0:")
 
     @property
     def root_cmakelists_dir(self):

@@ -35,6 +35,7 @@ aomp = [
     "1a60ee18b2b58b83f38f8cb3cdeb304689be49b47a721a185d73648c4db78427",
     "1a4b14f88a763a69e30479d27390d4bdc3307e00b5fd1cafbc645599f109f41b",
     "559704720772503a4be2ee205033614a699fae765cc6baf90b8b3c8013678b78",
+    "f4931776c294354e80d562e0837881c52d2d5bfb30f7371ecb454cce6f44bbfc",
 ]
 
 devlib = [
@@ -56,6 +57,7 @@ devlib = [
     "460ad28677092b9eb86ffdc49bcb4d01035e32b4f05161d85f90c9fa80239f50",
     "9f42cb73d90bd4561686c0366f60f6e58cfd32ff24b094c69e8259fb5d177457",
     "7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7",
+    "3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211",
 ]
 
 llvm = [
@@ -77,6 +79,7 @@ llvm = [
     "460ad28677092b9eb86ffdc49bcb4d01035e32b4f05161d85f90c9fa80239f50",
     "9f42cb73d90bd4561686c0366f60f6e58cfd32ff24b094c69e8259fb5d177457",
     "7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7",
+    "3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211",
 ]
 
 flang = [
@@ -98,6 +101,7 @@ flang = [
     "84b8a9501bece0a56d038c4f0210b0a2537ae6c1b5005c89eec026af07d52bc6",
     "4bab6319c378629df868503be1f9e86effa5148924966a780d2ee1d7b6dd6747",
     "fcc8b30fc7772ccb36c28af2deb5d1efe6ecf4da3fc2e457a2b7b299b693a290",
+    "4b03e7932d3291f1d285dc68e2cde6f2e1f1bbf66a2c5da77b329bf902d4b14e",
 ]
 
 extras = [
@@ -119,6 +123,7 @@ extras = [
     "cf20b02b1f99f506c198866ef03f2265dc355627760f82cda3878d5bc6486afc",
     "5c005fdd3ec1bcd8588628d87298cb59e2ee276a02046b9f2592ab90d39e1f52",
     "e13112f5ce118a25decf9626460ca5f1e2333976e23879cb0a4a6a5343db858f",
+    "5a8172d80162f46c84e9fabd06c25d044767855746a059c859a0180ac4424791",
 ]
 
 versions = [
@@ -140,6 +145,7 @@ versions = [
     "6.4.1",
     "6.4.2",
     "6.4.3",
+    "7.0.0",
 ]
 versions_dict = dict()  # type: Dict[str,Dict[str,str]]
 components = ["aomp", "devlib", "llvm", "flang", "extras"]
@@ -163,6 +169,7 @@ class RocmOpenmpExtras(Package):
     license("Apache-2.0")
 
     maintainers("srekolam", "renjithravindrankannath", "estewart08", "afzpatel")
+    version("7.0.0", sha256=versions_dict["7.0.0"]["aomp"])
     version("6.4.3", sha256=versions_dict["6.4.3"]["aomp"])
     version("6.4.2", sha256=versions_dict["6.4.2"]["aomp"])
     version("6.4.1", sha256=versions_dict["6.4.1"]["aomp"])
@@ -218,6 +225,7 @@ class RocmOpenmpExtras(Package):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -283,6 +291,7 @@ class RocmOpenmpExtras(Package):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -524,9 +533,11 @@ class RocmOpenmpExtras(Package):
         if not os.path.exists(os.path.join(bin_dir, "flang2")):
             os.symlink(os.path.join(omp_bin_dir, "flang2"), os.path.join(bin_dir, "flang2"))
 
+        legacy_or_classic = "classic" if self.spec.satisfies("@7.0:") else "legacy"
+
         if self.spec.version >= Version("6.1.0"):
             os.symlink(
-                os.path.join(omp_bin_dir, "flang-legacy"), os.path.join(bin_dir, "flang-legacy")
+                os.path.join(omp_bin_dir, f"flang-{legacy_or_classic}"), os.path.join(bin_dir, f"flang-{legacy_or_classic}")
             )
         os.symlink(os.path.join(omp_lib_dir, "libdevice"), os.path.join(lib_dir, "libdevice"))
         os.symlink(os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug"))
@@ -613,13 +624,15 @@ class RocmOpenmpExtras(Package):
 
         components["openmp-debug"] += openmp_common_args
 
+        flang_bin = "flang-classic" if self.spec.satisfies("@7.0:") else "flang"
+
         # Shared cmake configuration for pgmath, flang, flang-runtime
         flang_common_args = [
             "-DLLVM_ENABLE_ASSERTIONS=ON",
             f"-DLLVM_CONFIG={bin_dir}/llvm-config",
             f"-DCMAKE_CXX_COMPILER={bin_dir}/clang++",
             f"-DCMAKE_C_COMPILER={bin_dir}/clang",
-            f"-DCMAKE_Fortran_COMPILER={bin_dir}/flang",
+            f"-DCMAKE_Fortran_COMPILER={bin_dir}/{flang_bin}",
             "-DLLVM_TARGETS_TO_BUILD=AMDGPU;x86",
             # Spack thinks some warnings from the flang build are errors.
             # Disable those warnings in C and CXX flags.
@@ -637,6 +650,8 @@ class RocmOpenmpExtras(Package):
 
         components["pgmath"] += flang_common_args
         components["offload"] = ["../rocm-openmp-extras/llvm-project/offload"]
+        if self.spec.satisfies("@7.0:"):
+            components["offload"] += [f"-DLLVM_DIR={llvm_prefix}/lib/cmake/llvm"]
         components["offload"] += openmp_common_args
 
         flang_legacy_version = "17.0-4"
@@ -654,13 +669,11 @@ class RocmOpenmpExtras(Package):
             "-DLLVM_INCLUDE_DOCS=0",
             "-DLLVM_INCLUDE_UTILS=0",
             "-DCLANG_DEFAULT_PIE_ON_LINUX=0",
-            "../../rocm-openmp-extras/flang/flang-legacy/{0}/llvm-legacy/llvm".format(
-                flang_legacy_version
-            ),
+            f"../../rocm-openmp-extras/flang/flang-{legacy_or_classic}/{flang_legacy_version}/llvm-{legacy_or_classic}/llvm",
         ]
 
         components["flang-legacy"] = [
-            f"../rocm-openmp-extras/flang/flang-legacy/{flang_legacy_version}"
+            f"../rocm-openmp-extras/flang/flang-{legacy_or_classic}/{flang_legacy_version}"
         ]
 
         if not self.spec.satisfies("%cxx=rocmcc"):
@@ -715,7 +728,7 @@ class RocmOpenmpExtras(Package):
             cmake_args = components[component]
             cmake_args.extend(std_cmake_args)
             if component == "flang-legacy-llvm":
-                with working_dir(f"spack-build-{component}/llvm-legacy", create=True):
+                with working_dir(f"spack-build-{component}/llvm-{legacy_or_classic}", create=True):
                     cmake_args.append("-DCMAKE_BUILD_TYPE=Release")
                     cmake(*cmake_args)
                     make()

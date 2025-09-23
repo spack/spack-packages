@@ -17,6 +17,7 @@ class RocmValidationSuite(CMakePackage):
     compatible platform."""
 
     homepage = "https://github.com/ROCm/ROCmValidationSuite"
+    git = "https://github.com/ROCm/ROCmValidationSuite.git"
     url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
@@ -24,6 +25,7 @@ class RocmValidationSuite(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("7.0.0", sha256="093951bfe198a47871137329341ca3d0fdb175183fc1121eb80cbac9da542317")
     version("6.4.3", sha256="2ed24ee2a4bd581515fbdea1c182f377b84be15d8a75ad448bafdc3380fe3624")
     version("6.4.2", sha256="2db0210ae6c894a8480bad0f50ea7553a5b2b14f6969006af666b9d1779285f7")
     version("6.4.1", sha256="2a0ce3e037e2eaee5a29bb796813f94faa9e080af29937583e5ddba7af3c3acb")
@@ -86,6 +88,7 @@ class RocmValidationSuite(CMakePackage):
     ]:
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
+
     for ver in [
         "5.7.0",
         "5.7.1",
@@ -105,11 +108,33 @@ class RocmValidationSuite(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+     ]:
+        depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
+
+    for ver in [
+        "5.7.0",
+        "5.7.1",
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
-        depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -123,12 +148,17 @@ class RocmValidationSuite(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0"]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
+
+    for ver in ["7.0.0"]:
+        depends_on(f"amdsmi@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
 
     def patch(self):
         if self.spec.satisfies("@:5.7"):
