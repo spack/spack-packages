@@ -18,6 +18,7 @@ class GreenSeet(CMakePackage):
     # Homepage and source
     homepage = "https://www.green-phys.org"
     url = "https://github.com/Green-Phys/green-mbpt"
+    git = "https://github.com/Green-Phys/green-mbpt"
 
     # Maintainers and License info
     maintainers("egull", "gauravharsha")
