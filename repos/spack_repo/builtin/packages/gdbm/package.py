@@ -71,5 +71,5 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
         opts = ["--enable-libgdbm-compat", "CPPFLAGS=-D_GNU_SOURCE"]
         if self.spec.satisfies("%gcc@15:"):
             opts.append("CFLAGS=-std=gnu17")
-            
+
         return opts
