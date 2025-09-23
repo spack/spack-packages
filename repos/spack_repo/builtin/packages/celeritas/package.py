@@ -82,6 +82,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.13:", type="build")
     depends_on("cmake@3.18:", type="build", when="+cuda+vecgeom")
     depends_on("cmake@3.22:", type="build", when="+rocm")
+    depends_on("cmake@3.27:", type="build", when="+covfie")
 
     depends_on("cli11", when="@0.6:")
     depends_on("nlohmann-json")
