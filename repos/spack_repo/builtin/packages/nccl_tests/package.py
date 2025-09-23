@@ -16,6 +16,8 @@ class NcclTests(MakefilePackage, CudaPackage):
     homepage = "https://github.com/NVIDIA/nccl-tests"
     url = "https://github.com/NVIDIA/nccl-tests/archive/v2.0.0.tar.gz"
 
+    version("2.17.1", sha256="ba04264e080e25bc54ca8e529cb0c7429f78e60ad2b04d9fe5104700a3c44072")
+    version("2.17.0", sha256="6df0709541305e5316f61885b6990dc0825ea845eb100a37818fd0ad9205256f")
     version("2.16.3", sha256="ec373552e216c0df03414718bd588585a1719971b20a5939a2f9488c8ce767eb")
     version("2.13.6", sha256="52b472a58a4918d3221a9b8c4bd9335382643d7e241983918b64692d685cc3d1")
     version("2.0.0", sha256="731fc3b7c37de59cfe880bf198349ac185639ef23570749ea6aef334c850c49c")
