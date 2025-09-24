@@ -238,7 +238,6 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+rocm"):
             args.append(f"--with-rocr={self.spec['hip'].prefix}")
-            args.append("--enable-rocr-dlopen")
 
         return args
 
