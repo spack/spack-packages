@@ -18,6 +18,12 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
 
     maintainers("carns", "mdorier", "fbudin69500")
 
+    build_system(
+        conditional("cmake", when="@0.22.0:"),
+        conditional("autotools", when="@:0.21.0"),
+        default="cmake",
+    )
+
     version("main", branch="main")
     version("0.21.0", sha256="d0a527cd0dcbeb9a8f04d090140cdedb66d9a90c6794a046d48d6bc2d11fc278")
     version("0.20.0", sha256="ed19f65c3c0dda42b285904f64508d1997f4b0fcef81cddb011aa9c42381eb2a")
