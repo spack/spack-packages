@@ -40,7 +40,7 @@ class Libproxy(CMakePackage, MesonPackage):
     version("0.4.13", sha256="d610bc0ef81a18ba418d759c5f4f87bf7102229a9153fb397d7d490987330ffd")
 
     variant("perl", default=False, description="Enable Perl bindings")
-    variant("python", default=False, description="Enable Python bindings", when="@0.4.14:0.4.18")
+    variant("python", default=False, description="Enable Python bindings", when="@0.4.14:0.4")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
