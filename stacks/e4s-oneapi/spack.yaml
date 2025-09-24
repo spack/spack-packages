@@ -190,6 +190,7 @@ spack:
   # - geopm-runtime                 # concretize: c-blosc2: conflicts with '%oneapi';
   - glvis                         # llvm-17.0.6: https://github.com/spack/spack/issues/49625
   # - gptune ~mpispawn              # py-maturin-1.8.3: rust-lld: error: undefined symbol: __intel_cpu_feature_indicator_x
+  # - kokkos-fft host_backend=fftw-openmp +tests # commenting out until build error is resolved
   # - lbann                         # lbann-0.104: https://github.com/spack/spack/issues/49619
   # - libpressio +bitgrooming +bzip2 ~cuda ~cusz +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp # concretize: c-blosc2: conflicts with '%oneapi';
   # - nek5000 +mpi ~visit           # nek5000-19.0: RuntimeError: Cannot build example: short_tests/eddy.
@@ -231,6 +232,7 @@ spack:
   # - hypre +sycl                                     # hypre-2.32.0: gpu/intel/level0/level0-command-process.c:94:61: error: illegal initializer type 'atomic_int' (aka '_Atomic(int)')
   # - kokkos-kernels ^kokkos +sycl +openmp cxxstd=17  # kokkos-kernels-4.5.01: /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/group_algorithm.hpp:598:31: error: SYCL kernel cannot call an undefined function without SYCL_EXTERNAL attribute
   # - petsc +sycl                                     # kokkos-kernels-4.4.01: /opt/intel/oneapi/compiler/2025.1/bin/compiler/../../include/sycl/group_algorithm.hpp:598:31: error: SYCL kernel cannot call an undefined function without SYCL_EXTERNAL attribute
+  # - kokkos-fft host_backend=fftw-openmp device_backend=onemkl +tests ^kokkos +sycl +openmp cxxstd=17
   # - slate +sycl                                     # blaspp-2024.10.26: blas/device.hh:46:14: fatal error: 'sycl.hpp' file not found
 
   ci:
