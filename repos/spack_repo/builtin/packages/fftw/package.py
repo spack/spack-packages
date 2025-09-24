@@ -123,9 +123,13 @@ class FftwBase(AutotoolsPackage):
 
         # Specific SIMD support.
         # all precisions
-        simd_features = ["sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "vsx"]
+        simd_features = ["sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "vsx", "asimd"]
         # float only
         float_simd_features = ["altivec", "sse", "neon"]
+
+        # aarchv8 introduced asimd to replace neon feature
+        if "asimd" in spec.target:
+            float_simd_features.remove("neon")
 
         # Workaround NVIDIA/PGI compiler bug when avx512 is enabled
         if spec.satisfies("%nvhpc"):
@@ -145,7 +149,11 @@ class FftwBase(AutotoolsPackage):
         simd_options = []
         for feature in simd_features:
             msg = "--enable-{0}" if feature in spec.target else "--disable-{0}"
-            simd_options.append(msg.format(feature))
+            feature_opt = feature
+            # CPU feature is asimd but neon used in option.
+            if feature == "asimd":
+                feature_opt = "neon"
+            simd_options.append(msg.format(feature_opt))
 
         # If no features are found, enable the generic ones
         if not any(f in spec.target for f in simd_features + float_simd_features):
