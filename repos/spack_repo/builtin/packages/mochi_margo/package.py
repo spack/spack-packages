@@ -71,8 +71,11 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
     version("0.4.3", sha256="61a634d6983bee2ffa06e1e2da4c541cb8f56ddd9dd9f8e04e8044fb38657475")
     version("0.4.2", sha256="91085e28f50e373b9616e1ae5c3c8d40a19a7d3776259592d8f361766890bcaa")
 
-    variant('hwloc', default=True, when="@0.21:",
-            description="Use hwloc to help select network cards when possible")
+    variant('hwloc',
+            default=True,
+            when="@0.21:",
+            description="Use hwloc to help select network cards when possible"
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -94,7 +97,7 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
     # "breadcrumb" support not available in mercury-1.0
     depends_on("mercury@1.0.0:", type=("build", "link", "run"), when="@:0.5.1")
     depends_on("mercury@2.0.0:", type=("build", "link", "run"), when="@0.5.2:")
-    depends_on('hwloc', when='+hwloc')
+    depends_on("hwloc", when="+hwloc")
 
     # Fix pthread detection
     # https://github.com/mochi-hpc/mochi-margo/pull/177
