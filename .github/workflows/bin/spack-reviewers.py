@@ -12,6 +12,12 @@ import spack.repo
 IS_PACKAGE_CHANGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/.*$")
 
 
+def msg(message: str, entries=()):
+    print(message, flush=True)
+    for entry in entries:
+        print(f"    {entry}", flush=True)
+
+
 def main():
     repository = os.environ["GH_REPO"]
     pr_number = os.environ["GH_PR_NUMBER"]
@@ -26,45 +32,62 @@ def main():
     pull_request = requests.get(pr_url, headers=headers).json()
 
     if pull_request["draft"]:
-        print(f"[PR #{pr_number}]: skipping draft pull request")
+        msg("skipping draft pull request")
         return
 
-    pull_request_files = requests.get(f"{pr_url}/files", headers=headers)
-
     existing_reviewers = {reviewer["login"] for reviewer in pull_request["requested_reviewers"]}
-    maintainers = set()
+    if existing_reviewers:
+        msg("existing reviewers:", existing_reviewers)
+    else:
+        msg("no existing reviewers")
 
-    for file in pull_request_files.json():
-        if match := IS_PACKAGE_CHANGE.match(file["filename"]):
-            package = match.group(1)
+    pull_request_files = requests.get(f"{pr_url}/files", headers=headers)
+    changed_packages = {
+        match.group(1)
+        for file in pull_request_files.json()
+        if (match := IS_PACKAGE_CHANGE.match(file["filename"]))
+    }
 
-            # add maintainers from packages here
-            try:
-                pkg_maintainers = spack.repo.PATH.get_pkg_class(package).maintainers
-                maintainers.update(pkg_maintainers)
-            except spack.repo.UnknownPackageError:
-                pass
+    if changed_packages:
+        msg("changed packages:", changed_packages)
+    else:
+        msg("no changed packages")
+        return
+
+    maintainers: set[str] = set()
+    for package in changed_packages:
+        try:
+            maintainers.update(spack.repo.PATH.get_pkg_class(package).maintainers)
+        except spack.repo.UnknownPackageError as e:
+            msg(f"warning: {e}")
+            pass
 
     # filter maintainers to those who have triage permissions in the repo
     # users without triage permissions are unable to review PRs
-    pingable_maintainers = set()
-    for maintainer in maintainers:
-        resp = requests.get(f"{base_url}/collaborators/{maintainer}", headers=headers)
-        if resp.status_code == 204:
-            pingable_maintainers.add(maintainer)
+    collab_url = f"{base_url}/collaborators"
+    pingable_maintainers = {
+        maintainer
+        for maintainer in maintainers
+        if requests.get(f"{collab_url}/{maintainer}", headers=headers).status_code == 204
+    }
+
+    if maintainers != pingable_maintainers:
+        msg(
+            "the following package maintainers cannot be added as reviewers "
+            "(no collaborator status):",
+            sorted(maintainers - pingable_maintainers),
+        )
 
     author = pull_request["user"]["login"]
     reviewers = (pingable_maintainers | existing_reviewers) - {author}
 
     if existing_reviewers == reviewers:
-        print(f"[PR #{pr_number}]: reviewers already up-to-date")
+        msg("reviewers already up-to-date")
         return
 
     added_reviewers = reviewers - existing_reviewers
     if added_reviewers:
-        print(f"[PR #{pr_number}]: adding reviewer(s):")
-        for reviewer in sorted(added_reviewers):
-            print(f"    @{reviewer}")
+        msg("adding reviewers:", added_reviewers)
 
     if token:
         resp = requests.post(
