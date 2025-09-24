@@ -1112,6 +1112,14 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 set_install_permissions(libgomp_spec_file)
                 tty.info(f"Wrote new libgomp spec file to {libgomp_spec_file}")
 
+    # The configure --sysroot doesn't propagate down into the sub-builds, e.g., libiberty.
+    # Starting with SDK 26 and clang 17, limits.h amongst other sys includes aren't included
+    # via other means, resulting in a failed build. Keep this for other builds for safety.
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if sys.platform == "darwin":
+            macos_sdk_path = Executable("xcrun")("--show-sdk-path", output=str).strip()
+            env.set("CFLAGS", f"--sysroot {macos_sdk_path}")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.cc and self.spec.satisfies("languages=c"):
             env.set("CC", self.cc)
