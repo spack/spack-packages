@@ -59,7 +59,7 @@ class Express(CMakePackage):
 
             # Dont try and compile against specific file
             edit.filter(
-                r"\${PROTOBUF_LIB_DIR}/" "libprotobuf.a", "%s" % self.spec["protobuf"].libs
+                r"\${PROTOBUF_LIB_DIR}/libprotobuf.a", "%s" % self.spec["protobuf"].libs
             )
 
         if self.spec.satisfies("%boost@1.82:"):
