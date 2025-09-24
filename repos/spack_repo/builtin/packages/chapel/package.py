@@ -496,7 +496,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
     # provides %rocmcc, which we don't want to use.
     requires(
-        *(comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
+        *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
         policy="one_of",
         when="+rocm",
         msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
