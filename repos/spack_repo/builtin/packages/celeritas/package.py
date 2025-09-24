@@ -27,6 +27,8 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", get_full_repo=True)
 
+    version("0.6.2", sha256="efca5a7f4797cd29d2b4e0b2251896b9fe4253ed95ff5c18f4d0476d4c34b48d")
+    version("0.6.1", sha256="fe97cdb87e579559c29a0366058327243945bf2a0e25aac4d562c8fe0c672c2a")
     version("0.6.0", sha256="c776dee357ecff42f85ed02c328f24b092400af28e67af2c0e195ce8f67613b0")
     version("0.5.3", sha256="4d1fe1f34e899c3599898fb6d44686d2582a41b0872784514aa8c562597b3ee6")
     version("0.5.2", sha256="46311c096b271d0331b82c02485ac6bf650d5b0f7bd948fb01aef5058f8824e3")
@@ -61,6 +63,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.13:", type="build")
     depends_on("cmake@3.18:", type="build", when="+cuda+vecgeom")
     depends_on("cmake@3.22:", type="build", when="+rocm")
+    depends_on("cmake@3.27:", type="build", when="+covfie")
 
     depends_on("cli11", when="@0.6:")
     depends_on("nlohmann-json")
