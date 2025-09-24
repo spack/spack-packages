@@ -17,11 +17,13 @@ class PyDominate(PythonPackage):
 
     homepage = "https://github.com/Knio/dominate"
     pypi = "dominate/dominate-2.6.0.tar.gz"
-    # license = "LGPL-3.0"
 
     license("LGPL-3.0-or-later")
 
+    version("2.9.1", sha256="558284687d9b8aae1904e3d6051ad132dd4a8c0cf551b37ea4e7e42a31d19dc4")
     version("2.6.0", sha256="76ec2cde23700a6fc4fee098168b9dee43b99c2f1dd0ca6a711f683e8eb7e1e4")
 
-    depends_on("python@2.7:2,3.4:", type=("build", "run"))
+    # https://github.com/Knio/dominate/issues/172
+    depends_on("python@:3.11", when="@:2.8", type=("build", "run"))
+    depends_on("py-setuptools@64:", when="@2.9:", type="build")
     depends_on("py-setuptools", type="build")

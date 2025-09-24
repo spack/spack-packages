@@ -15,6 +15,7 @@ class Transferbench(CMakePackage):
     url = "https://github.com/ROCm/TransferBench/archive/refs/tags/rocm-6.4.0.tar.gz"
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    tags = ["rocm"]
 
     license("MIT")
 

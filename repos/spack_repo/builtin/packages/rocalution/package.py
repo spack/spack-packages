@@ -25,7 +25,7 @@ class Rocalution(CMakePackage):
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["librocalution_hip"]
+    libraries = ["librocalution"]
 
     license("MIT")
 
