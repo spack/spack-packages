@@ -103,7 +103,7 @@ class Madgraph5amc(MakefilePackage):
         set_parameter("syscalc_path", spec["syscalc"].prefix.bin)
 
         if "+ninja" in spec:
-            set_parameter("ninja", spec["gosam-contrib"].prefix)
+            set_parameter("ninja", spec["gosam-contrib"].prefix.lib)
 
         if "+collier" in spec:
             set_parameter("collier", spec["collier"].prefix.lib)
