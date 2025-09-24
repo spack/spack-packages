@@ -34,7 +34,7 @@ class PySentrySdk(PythonPackage):
     variant("httpx", default=False, when="@1.5.5:", description="Builts with httpx")
 
     depends_on("python@3.6:", type=("build", "run"), when="@2:")
-    depends_on("python@2.7,3.4:", type=("build", "run"))
+    depends_on("python@2.7,3.4:", type=("build", "run"), when="@:1")
     depends_on("py-setuptools", type="build")
     depends_on("py-urllib3@1.26.11:", type=("build", "run"), when="@2.34.1:")
     depends_on("py-urllib3@1.10.0:", type=("build", "run"))

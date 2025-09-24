@@ -8,8 +8,7 @@ from spack.package import *
 
 
 class PyWandb(PythonPackage):
-    """A tool for visualizing and tracking your machine
-    learning experiments."""
+    """A tool for visualizing and tracking your machine learning experiments."""
 
     homepage = "https://github.com/wandb/wandb"
     pypi = "wandb/wandb-0.13.9.tar.gz"
@@ -34,15 +33,15 @@ class PyWandb(PythonPackage):
 
     depends_on("py-pyyaml", type=("build", "run"))
 
-    depends_on("py-protobuf@3.19:6", type=("build", "run"), when="@0.19.10: ^python@3.10:")
-    depends_on("py-protobuf@3.15:6", type=("build", "run"), when="@0.19.10: ^python@3.9")
-    depends_on("py-protobuf@3.12:6", type=("build", "run"), when="@0.19.10: ^python@:3.8")
-    depends_on("py-protobuf@3.19:5", type=("build", "run"), when="@0.17.1:0.19.9 ^python@3.10:")
-    depends_on("py-protobuf@3.15:5", type=("build", "run"), when="@0.17.1:0.19.9 ^python@3.9")
-    depends_on("py-protobuf@3.12:5", type=("build", "run"), when="@0.17.1:0.19.9 ^python@:3.8")
-    depends_on("py-protobuf@3.19:4", type=("build", "run"), when="@:0.17.0 ^python@3.10:")
-    depends_on("py-protobuf@3.15:4", type=("build", "run"), when="@:0.17.0 ^python@3.9")
-    depends_on("py-protobuf@3.12:4", type=("build", "run"), when="@:0.17.0 ^python@:3.8")
+    depends_on("py-protobuf@3.19:6", type=("build", "run"), when="@0.19.10: platform=linux ^python@3.10:")
+    depends_on("py-protobuf@3.15:6", type=("build", "run"), when="@0.19.10: platform=linux ^python@3.9")
+    depends_on("py-protobuf@3.12:6", type=("build", "run"), when="@0.19.10: platform=linux ^python@:3.8")
+    depends_on("py-protobuf@3.19:5", type=("build", "run"), when="@0.17.1:0.19.9 platform=linux ^python@3.10:")
+    depends_on("py-protobuf@3.15:5", type=("build", "run"), when="@0.17.1:0.19.9 platform=linux ^python@3.9")
+    depends_on("py-protobuf@3.12:5", type=("build", "run"), when="@0.17.1:0.19.9 platform=linux ^python@:3.8")
+    depends_on("py-protobuf@3.19:4", type=("build", "run"), when="@:0.17.0 platform=linux ^python@3.10:")
+    depends_on("py-protobuf@3.15:4", type=("build", "run"), when="@:0.17.0 platform=linux ^python@3.9")
+    depends_on("py-protobuf@3.12:4", type=("build", "run"), when="@:0.17.0 platform=linux ^python@:3.8")
     conflicts("^py-protobuf@4.21.0,5.28.0")
 
     depends_on("py-typing-extensions@4.8:4", type=("build", "run"), when="@0.20:")
