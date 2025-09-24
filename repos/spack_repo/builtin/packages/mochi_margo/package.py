@@ -75,7 +75,7 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
         "hwloc",
         default=True,
         when="@0.21:",
-        description="Use hwloc to help select network cards when possible"
+        description="Use hwloc to help select network cards when possible",
     )
 
     depends_on("c", type="build")
