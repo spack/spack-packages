@@ -273,7 +273,6 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("lapack", when="+armadillo")
     depends_on("arrow+filesystem", when="+arrow")
 
-
     # cmake configure fails if arrow and utf8proc can't be found, even when not
     # enabled
     # https://github.com/OSGeo/gdal/issues/12327
