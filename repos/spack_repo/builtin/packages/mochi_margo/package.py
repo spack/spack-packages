@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems import autotools, cmake
 from spack import *
 from spack.package import *
+from spack_repo.builtin.build_systems import autotools, cmake
 
 
 class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
