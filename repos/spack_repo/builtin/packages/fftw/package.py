@@ -127,7 +127,7 @@ class FftwBase(AutotoolsPackage):
         # float only
         float_simd_features = ["altivec", "sse", "neon"]
 
-        # aarchv8 introduced asimd to replace neon feature
+        # armv8 introduced asimd to replace neon feature
         if "asimd" in spec.target:
             float_simd_features.remove("neon")
 
