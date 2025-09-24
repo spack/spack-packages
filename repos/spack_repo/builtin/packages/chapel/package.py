@@ -492,6 +492,15 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # TODO: Modify this constrant and message if/when Chapel supports an
     # additional ROCm version without that requirement.
     requires("llvm=bundled", when="+rocm", msg="Chapel ROCm support requires llvm=bundled")
+    # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
+    # provides %rocmcc, which we don't want to use.
+    requires(
+        "%clang",
+        "%gcc",
+        policy="one_of",
+        when="+rocm",
+        msg="Chapel ROCm support requires clang or gcc as the host compiler",
+    )
 
     conflicts(
         "comm_substrate=unset",
