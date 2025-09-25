@@ -165,6 +165,9 @@ class LinaroForge(Package):
             "25.0.4", sha256="ee93a414f6183165cd8addf926a4a586668ce29930f34edd43d33c750646f0be"
         )
         version(
+            "25.0.4", sha256="ee93a414f6183165cd8addf926a4a586668ce29930f34edd43d33c750646f0be"
+        )
+        version(
             "25.0.3", sha256="4d6abe4f46356339e0df789229f19b92c1ba13b794ce426a2e73e5aed319a6f6"
         )
         version(
