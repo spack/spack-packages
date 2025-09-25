@@ -79,16 +79,8 @@ class FftwBase(AutotoolsPackage):
         # On Apple Arm machines, configure uses arm rather than aarch64
         # to check NEON.
         if self.spec.satisfies("target=m1:"):
-            filter_file(
-                r" aarch64\)",
-                r" aarch64 | arm)",
-                "configure",
-            )
-            filter_file(
-                r" aarch64\)",
-                r" aarch64 | arm)",
-                "configure.ac",
-            )
+            filter_file(r" aarch64\)", r" aarch64 | arm)", "configure")
+            filter_file(r" aarch64\)", r" aarch64 | arm)", "configure.ac")
 
     def autoreconf(self, spec, prefix):
         if spec.satisfies("+pfft_patches"):
