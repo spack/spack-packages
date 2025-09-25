@@ -76,6 +76,20 @@ class FftwBase(AutotoolsPackage):
         if os.path.isfile("fftw/config.h"):
             os.rename("fftw/config.h", "fftw/config.h.SPACK_RENAMED")
 
+        # On Apple Arm machines, configure uses arm rather than aarch64
+        # to check NEON.
+        if self.spec.satisfies("target=m1:"):
+            filter_file(
+                r"\saarch64)",
+                r" aarch64 | arm)",
+                "configure",
+            )
+            filter_file(
+                r"\saarch64)",
+                r" aarch64 | arm)",
+                "configure.ac",
+            )
+
     def autoreconf(self, spec, prefix):
         if spec.satisfies("+pfft_patches"):
             autoreconf = which("autoreconf")
@@ -120,6 +134,9 @@ class FftwBase(AutotoolsPackage):
                 options.insert(0, "CFLAGS=" + self.compiler.openmp_flag)
         if spec.satisfies("+mpi"):
             options.append("--enable-mpi")
+
+        if spec.satisfies("target=aarch64:"):
+            options.append("--enable-armv8-cntvct-el0")
 
         # Specific SIMD support.
         # all precisions
