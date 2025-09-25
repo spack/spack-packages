@@ -21,6 +21,7 @@ class PyMetatensorTorch(PythonPackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.8.0", sha256="240ea8c37328f6bb61ec9f3e482131f0875c73166a0e349a8dd8b85204c58bd7")
+    version("0.8.1", sha256="11986d4c2964054baae9fe10ffc36c6a6ba70a78d97b406cb6c2e14e72a0cf72")
 
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"))
