@@ -432,7 +432,12 @@ cpp -P -traditional-cpp -undef \"$@\"
                 f.write(cpp_wrapper)
             set_executable(join_path(self.stage.source_path, "cpp_wrapper.sh"))
 
-            filter_file("SYSTEM_DSO_EXTENSION = SYSTEM_DSO_SUFFIX", "SYSTEM_DSO_EXTENSION = 'SYSTEM_DSO_SUFFIX'", "shared/DSO_Utilities.F90", string=True)
+            filter_file(
+                "SYSTEM_DSO_EXTENSION = SYSTEM_DSO_SUFFIX",
+                "SYSTEM_DSO_EXTENSION = 'SYSTEM_DSO_SUFFIX'",
+                "shared/DSO_Utilities.F90",
+                string=True,
+            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # esma_cmake, an internal dependency of mapl, is
