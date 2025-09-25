@@ -212,7 +212,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
             *self.with_or_without("uring"),
             *self.with_or_without("cuda", activation_value="prefix"),
             *self.with_or_without("ze", variant="level_zero"),
-            *self.with_or_without("gdrcopy"),
+            *self.with_or_without("gdrcopy", activation_value="prefix"),
             *self.with_or_without(
                 "rocr", variant="rocm", activation_value=lambda _: self.spec["hip"].prefix
                 ),
