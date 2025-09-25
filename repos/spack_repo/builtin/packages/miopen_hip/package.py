@@ -15,13 +15,16 @@ class MiopenHip(CMakePackage):
 
     homepage = "https://github.com/ROCm/MIOpen"
     git = "https://github.com/ROCm/MIOpen.git"
-    url = "https://github.com/ROCm/MIOpen/archive/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/MIOpen/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libMIOpen"]
 
     license("MIT")
+
+    version("6.4.3", sha256="d78eacc4314da049cc3d39877ee5b6b64b463f900be4a84c0b0b6d7a6f56148d")
+    version("6.4.2", sha256="30c475a07af5b955e40b4b5dca705d2ea5c2e51112d1b24c0216046f22f45bc1")
     version("6.4.1", sha256="3e9e8bc8d9dfb31b27e955ead3430825e88b7f1501d289ba023d34208916c724")
     version("6.4.0", sha256="5b101f9177d49654968a3f3c01c9eede561a8fe5178f2ae4d8e5acb16b0b17e6")
     version("6.3.3", sha256="755beaec2e97aa4fafcdb07e4becbcddcb0c3cef6af256a04716d46e90c2f520")
@@ -38,9 +41,6 @@ class MiopenHip(CMakePackage):
     version("6.0.0", sha256="a0718a48353be30ff98118ade511f0c1b454e394d8f934aefe7dd6946562b2e9")
     version("5.7.1", sha256="912a658fe21ce6f1982b0f2ff251c3f7bb618f2e7e9876d983bcb54e3cd7129e")
     version("5.7.0", sha256="5cd0b62254469e1c246d5890d2b78f8aedcf42cf8a327eabc1a391b83bcd14e1")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="ff627d68ed9e52433a3c808b5d3ff179a398b77ce81b00cfea7b2c4da5162c6c")
-        version("5.6.0", sha256="d620ddab5b488bdf81242654fefa337c6b71dc410c2ff26d30a4ee86a8d22d11")
 
     variant(
         "ck",
@@ -48,6 +48,7 @@ class MiopenHip(CMakePackage):
         description="Enable MIOpen to use composable kernels for various operation",
     )
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
+    variant("hipblaslt", default=True, when="@6.3:", description="Build with hipblaslt")
 
     conflicts("+asan", when="os=rhel9")
     conflicts("+asan", when="os=centos7")
@@ -70,7 +71,7 @@ class MiopenHip(CMakePackage):
     depends_on("zlib-api")
     depends_on("frugally-deep", when="@6.3:")
 
-    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.6.0:5.7")
+    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.7")
     patch("0002-add-include-dir-miopen-hip-6.0.0.patch", when="@6.0")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.1.0.patch", when="@6.1")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.2.0.patch", when="@6.2")
@@ -85,7 +86,7 @@ class MiopenHip(CMakePackage):
         when="@6.3:",
     )
 
-    for ver in ["5.6.0", "5.6.1", "5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
+    for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-clang-ocl@{ver}", when=f"@{ver}")
@@ -95,7 +96,19 @@ class MiopenHip(CMakePackage):
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
-    for ver in ["6.2.0", "6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in [
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+    ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -103,10 +116,10 @@ class MiopenHip(CMakePackage):
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
         depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
 
     depends_on("nlohmann-json", type="link")
     depends_on("googletest", when="@6.1:")
@@ -154,14 +167,13 @@ class MiopenHip(CMakePackage):
             self.define("DEVICELIBS_PREFIX_PATH", self.get_bitcode_dir()),
             self.define_from_variant("MIOPEN_USE_COMPOSABLEKERNEL", "ck"),
         ]
-        if self.spec.satisfies("@5.6.0:6.1"):
+        if self.spec.satisfies("@:6.1"):
             args.append(
                 "-DNLOHMANN_JSON_INCLUDE={0}".format(self.spec["nlohmann-json"].prefix.include)
             )
-        if self.spec.satisfies("@5.6.0:6.2"):
+        if self.spec.satisfies("@:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
             args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
-        if self.spec.satisfies("@5.7.0:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK", "OFF"))
         if self.spec.satisfies("@6.0:6.2"):
             args.append(
@@ -178,4 +190,6 @@ class MiopenHip(CMakePackage):
                     f"-I{self.spec['sqlite'].prefix.include} ",
                 )
             )
+        if self.spec.satisfies("@6.3:"):
+            args.append(self.define_from_variant("MIOPEN_USE_HIPBLASLT", "hipblaslt"))
         return args

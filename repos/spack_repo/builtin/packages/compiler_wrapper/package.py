@@ -38,7 +38,7 @@ class CompilerWrapper(Package):
     if sys.platform != "win32":
         version(
             "1.0",
-            sha256="c65a9d2b2d4eef67ab5cb0684d706bb9f005bb2be94f53d82683d7055bdb837c",
+            sha256="a5ff4fcdbeda284a7993b87f294b6338434cffc84ced31e4d04008ed5ea389bf",
             expand=False,
         )
     else:

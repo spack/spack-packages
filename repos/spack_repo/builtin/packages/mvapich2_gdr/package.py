@@ -37,7 +37,7 @@ class Mvapich2Gdr(MpichEnvironmentModifications, AutotoolsPackage):
         "process_managers",
         description="The process manager to activate.",
         default="mpirun",
-        values=("none", "slurm", "mpiexec", "mpirun", "pbs", "jsrun"),
+        values=("none", "slurm", "mpiexec", "mpirun", "pbs"),
         multi=False,
     )
 
@@ -51,11 +51,9 @@ class Mvapich2Gdr(MpichEnvironmentModifications, AutotoolsPackage):
 
     variant(
         "pmi_version",
-        description="The pmi version to be used with slurm. "
-        "Is ignored if set for mpirun or jsrun. "
-        "jsrun uses pmix regardless of chosen option.",
+        description="The pmi version to be used with slurm. " "Is ignored if set for mpirun",
         default="pmi1",
-        values=("simple", "pmi1", "pmi2", "pmix"),
+        values=("simple", "pmi1", "pmi2"),
         multi=False,
     )
 
@@ -80,7 +78,6 @@ class Mvapich2Gdr(MpichEnvironmentModifications, AutotoolsPackage):
     depends_on("libpciaccess@0.13.5", when=(sys.platform != "darwin"))
     depends_on("libxml2@2.9.10")
     depends_on("cuda@9.2.88:", when="+cuda")
-    depends_on("pmix@3.1.3", when="pmi_version=pmix")
     depends_on("hip@3.9.0:", when="+rocm")
 
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
@@ -127,25 +124,15 @@ class Mvapich2Gdr(MpichEnvironmentModifications, AutotoolsPackage):
         if "process_managers=mpiexec" in spec:
             opts.append("--with-pm=mpiexec")
             opts.append("--with-pmi=" + spec.variants["pmi_version"].value)
-            if "pmi_version=pmix" in spec:
-                opts.append("--with-pmix={0}".format(spec["pmix"].prefix))
         # See: http://slurm.schedmd.com/mpi_guide.html#mvapich2
         elif "process_managers=slurm" in spec:
             opts.append("--with-pm=slurm")
             opts.append("--with-pmi=" + spec.variants["pmi_version"].value)
-            if "pmi_version=pmix" in spec:
-                opts.append("--with-pmix={0}".format(spec["pmix"].prefix))
         elif "process_managers=none" in spec:
             opts.append("--with-pm=none")
             opts.append("--with-pmi=" + spec.variants["pmi_version"].value)
-            if "pmi_version=pmix" in spec:
-                opts.append("--with-pmix={0}".format(spec["pmix"].prefix))
         elif "process_managers=pbs" in spec:
             opts.append(["--with-pm=hydra", "--with-pbs=/opt/pbs"])
-        elif "process_managers=jsrun" in spec:
-            opts.append(
-                ["--with-pmi=pmix", "--with-pmix={0}".format(spec["pmix"].prefix), "--with-pm=jsm"]
-            )
         return opts
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
@@ -153,8 +140,6 @@ class Mvapich2Gdr(MpichEnvironmentModifications, AutotoolsPackage):
             env.set("SLURM_MPI_TYPE", "pmi1")
         if "pmi_version=pmi2" in self.spec:
             env.set("SLURM_MPI_TYPE", "pmi2")
-        if "pmi_version=pmix" in self.spec:
-            env.set("SLURM_MPI_TYPE", "pmix")
 
         # Because MPI functions as a compiler, we need to treat it as one and
         # add its compiler paths to the run environment.

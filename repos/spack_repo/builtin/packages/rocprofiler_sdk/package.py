@@ -24,6 +24,18 @@ class RocprofilerSdk(CMakePackage):
     license("MIT")
 
     version(
+        "6.4.3",
+        tag="rocm-6.4.3",
+        commit="fb30388fd30c073ac7baf3dad775f37c51aafcc8",
+        submodules=True,
+    )
+    version(
+        "6.4.2",
+        tag="rocm-6.4.2",
+        commit="e8e49fe76971000a42a5a177d9a727d16dd0ebcf",
+        submodules=True,
+    )
+    version(
         "6.4.1",
         tag="rocm-6.4.1",
         commit="e8e49fe76971000a42a5a177d9a727d16dd0ebcf",
@@ -68,15 +80,16 @@ class RocprofilerSdk(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
         depends_on(f"rccl@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
 
     def setup_run_environment(self, env):
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["aqlprofile"].prefix.lib)
+        if not self.spec.external:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["aqlprofile"].prefix.lib)

@@ -560,12 +560,9 @@ class Hdf5(CMakePackage):
         # and pointing these variables at the MSVC compilers
         # breaks CMake's mpi detection for MSMPI.
         if spec.satisfies("+mpi") and "msmpi" not in spec:
-            args.extend(
-                [
-                    "-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
-                    "-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc,
-                ]
-            )
+            if spec.satisfies("+cxx"):
+                args.append("-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx)
+            args.append("-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc)
 
             if spec.satisfies("+fortran"):
                 args.extend(["-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
@@ -601,7 +598,7 @@ class Hdf5(CMakePackage):
         # 1.10.6 and 1.12.0. The current develop versions do not produce 'h5pfc'
         # at all. Here, we make sure that 'h5pfc' is available when Fortran and
         # MPI support are enabled (only for versions that generate 'h5fc').
-        if self.spec.satisfies("@1.8.22:1.8," "1.10.6:1.10.9," "1.12.0:1.12.2" "+fortran+mpi"):
+        if self.spec.satisfies("@1.8.22:1.8,1.10.6:1.10.9,1.12.0:1.12.2+fortran+mpi"):
             with working_dir(self.prefix.bin):
                 # No try/except here, fix the condition above instead:
                 symlink("h5fc", "h5pfc")

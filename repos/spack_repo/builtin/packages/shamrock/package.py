@@ -47,7 +47,6 @@ class Shamrock(CMakePackage):
     extends("python", when="+pybindings")
 
     def cmake_args(self):
-
         spec = self.spec
 
         args = [

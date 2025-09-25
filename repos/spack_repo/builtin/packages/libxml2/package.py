@@ -66,7 +66,9 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
         version("2.9.2", sha256="5178c30b151d044aefb1b08bf54c3003a0ac55c59c866763997529d60770d5bc")
         version("2.7.8", sha256="cda23bc9ebd26474ca8f3d67e7d1c4a1f1e7106364b690d822e009fdc3c417ec")
 
-    variant("http", default=False, description="Enable HTTP support")
+    # http support was deprecated in 2.13 and removed in 2.15
+    # https://github.com/GNOME/libxml2/commit/b85d77d156476bcb910b2a25b21a091957d10de6
+    variant("http", default=False, description="Enable HTTP support", when="@:2.14")
     variant("python", default=False, description="Enable Python support")
     variant("shared", default=True, description="Build shared library")
     variant("pic", default=True, description="Enable position-independent code (PIC)")
@@ -75,7 +77,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
     depends_on("c", type="build")
 
-    depends_on("pkgconfig@0.9.0:", type="build", when="build_system=autotools")
+    depends_on("pkgconfig", type="build", when="build_system=autotools")
     # conditional on non Windows, but rather than specify for each platform
     # specify for non Windows builder, which has equivalent effect
     depends_on("iconv", when="build_system=autotools")
@@ -274,6 +276,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
         args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("LIBXML2_WITH_PYTHON", "python"),
+            self.define_from_variant("LIBXML2_WITH_HTTP", "http"),
             self.define("LIBXML2_WITH_LZMA", True),
             self.define("LIBXML2_WITH_ZLIB", True),
             self.define("LIBXML2_WITH_TESTS", True),

@@ -64,11 +64,19 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
 
     version(
-        "0.9.3",
-        tag="v0.9.3",
-        commit="e69d6ec77938846caae8fea7ed988b1151ac9b81",
+        "0.9.5",
+        tag="v0.9.5",
+        commit="1c32d88b01439263cb4e473756a222824bb75abb",
         submodules=True,
         preferred=True,
+    )
+
+    version(
+        "0.9.4", tag="v0.9.4", commit="02e7f79d53db77b6af923bfa105840f574195474", submodules=True
+    )
+
+    version(
+        "0.9.3", tag="v0.9.3", commit="e69d6ec77938846caae8fea7ed988b1151ac9b81", submodules=True
     )
 
     version(
@@ -122,7 +130,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("raja", default=True, description="Build with RAJA support")
     variant("umpire", default=True, description="Build with Umpire support")
     variant("mfem", default=False, description="Build MFEM filter support")
-    variant("dray", default=False, description="Build with Devil Ray support")
+    variant("dray", default=False, when="@0.8.1:", description="Build with Devil Ray support")
     variant("adios2", default=False, description="Build Adios2 filter support")
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
@@ -173,6 +181,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     # Certain CMake versions have been found to break for our use cases
     depends_on("cmake@3.14.1:3.14,3.18.2:", type="build")
+    depends_on("cmake@3.23:", type="build", when="@0.9.4:")
 
     #######################
     # Conduit
@@ -180,7 +189,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@:0.7.2", when="@:0.7.1")
     depends_on("conduit@0.8.2:", when="@0.8:")
     depends_on("conduit@0.8.6:", when="@0.9:")
-    depends_on("conduit@0.9.1:0.9.3", when="@0.9.3:")
+    depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
+    depends_on("conduit@0.9.4", when="@0.9.4")
     depends_on("conduit+python", when="+python")
     depends_on("conduit~python", when="~python")
     depends_on("conduit+mpi", when="+mpi")
@@ -192,10 +202,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # we need a shared version of python b/c linking with static python lib
     # causes duplicate state issues when running compiled python modules.
     with when("+python"):
-        depends_on("python+shared")
+        depends_on("python+shared", type=("build", "link", "run"))
         extends("python")
-        depends_on("py-numpy", type=("build", "run"))
-        depends_on("py-pip", type=("build", "run"))
+        depends_on("py-numpy", type=("build", "link", "run"))
+        depends_on("py-pip", type="build")
+        depends_on("py-wheel", when="@0.9.4:", type="build")
+        depends_on("py-setuptools", type="build")
 
     #######################
     # MPI
@@ -221,6 +233,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+umpire"):
         depends_on("umpire")
+        depends_on("umpire@:6", when="@:0.8")
         depends_on("umpire@:2023.06.0", when="@:0.9.2")
         depends_on("umpire@2024.02.1:2024.02.99", when="@0.9.3:")
 
@@ -291,26 +304,6 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     # fides
     depends_on("fides", when="+fides")
-
-    #######################
-    # Devil Ray
-    #######################
-    # Ascent 0.9.0 includes Devil Ray, prior to 0.9.0
-    # Devil Ray was developed externally
-    # devil ray variants with mpi
-    # we have to specify both because mfem makes us
-    depends_on("dray~test~utils", when="@:0.8.0  +dray")
-    depends_on("dray@0.1.8:", when="@:0.8.0 +dray")
-    # propagate relevent variants to dray
-    depends_on("dray+cuda", when="@:0.8.0 +dray+cuda")
-    depends_on("dray~cuda", when="@:0.8.0 +dray~cuda")
-    propagate_cuda_arch("dray", "@:0.8.0 +dray")
-    depends_on("dray+mpi", when="@:0.8.0 +dray+mpi")
-    depends_on("dray~mpi", when="@:0.8.0 +dray~mpi")
-    depends_on("dray+shared", when="@:0.8.0 +dray+shared")
-    depends_on("dray~shared", when="@:0.8.0 +dray~shared")
-    depends_on("dray+openmp", when="@:0.8.0 +dray+openmp")
-    depends_on("dray~openmp", when="@:0.8.0 +dray~openmp")
 
     # Adios2
     depends_on("adios2", when="+adios2")
@@ -411,7 +404,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             sys_type = env["SYS_TYPE"]
         compiler_str = f"{self['c'].name}-{self['c'].version}"
         host_config_path = (
-            f"{socket.gethostname()}-{sys_type}-{compiler_str}" f"-ascent-{spec.dag_hash()}.cmake"
+            f"{socket.gethostname()}-{sys_type}-{compiler_str}-ascent-{spec.dag_hash()}.cmake"
         )
         host_config_path = os.path.abspath(join_path(self.stage.path, host_config_path))
         return host_config_path
@@ -758,19 +751,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         #######################
         if spec.satisfies("+dray"):
             cfg.write("# devil ray\n")
-            if self.spec.satisfies("@0.8.1:"):
-                cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
-                cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
-            else:
-                cfg.write("# devil ray from spack \n")
-                cfg.write(cmake_cache_entry("DRAY_DIR", spec["dray"].prefix))
-        else:
-            if self.spec.satisfies("@0.8.1:"):
-                cfg.write("# devil ray\n")
-                cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
-                cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
-            else:
-                cfg.write("# devil ray not build by spack\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
+        elif spec.satisfies("~dray"):
+            cfg.write("# devil ray\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
 
         #######################
         # Adios2

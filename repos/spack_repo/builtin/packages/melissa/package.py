@@ -16,27 +16,10 @@ class Melissa(CMakePackage):
     git = "https://gitlab.inria.fr/melissa/melissa.git"
     url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.0.0/melissa-v2.0.0.tar.gz"
     # attention: Git**Hub**.com accounts
-    maintainers("abhishek1297", "viperML", "raffino")
+    maintainers("abhishek1297", "raffino")
 
-    version(
-        "2.0.0",
-        sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
-        preferred=True,
-    )
     version("develop", branch="develop")
-
-    # DEPRECATED VERSIONS
-    version(
-        "0.7.1",
-        sha256="c30584f15fecf6297712a88e4d28851bfd992f31209fd7bb8af2feebe73d539d",
-        deprecated=True,
-    )
-    version(
-        "0.7.0",
-        sha256="a801d0b512e31a0750f98cfca80f8338985e06abf9b26e96f7645a022864e41c",
-        deprecated=True,
-    )
-    # ================================================================================================
+    version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated

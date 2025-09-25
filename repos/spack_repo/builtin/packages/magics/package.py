@@ -35,12 +35,6 @@ class Magics(CMakePackage):
 
     conflicts("%gcc@11:", when="@:4.4", msg="missing #include <limits>")
 
-    variant(
-        "grib",
-        default="eccodes",
-        values=("eccodes", "grib-api"),
-        description="Specify GRIB backend",
-    )
     variant("netcdf", default=False, description="Enable NetCDF support")
     variant("cairo", default=False, description="Enable cairo support[png/jpeg]")
     variant("fortran", default=False, description="Enable Fortran interface")
@@ -87,8 +81,7 @@ class Magics(CMakePackage):
     depends_on("libpng")
 
     # GRIB support is non-optional, regardless of what the instruction says.
-    depends_on("eccodes", when="grib=eccodes")
-    depends_on("grib-api", when="grib=grib-api")
+    depends_on("eccodes")
 
     # Even if netcdf is disabled and -DENABLE_NETCDF=OFF is set, building
     # magics still requires legacy netcdf-cxx
@@ -97,8 +90,7 @@ class Magics(CMakePackage):
     # Optional dependencies
     depends_on("netcdf-cxx", when="+netcdf")
     depends_on("pango", when="+cairo")
-    depends_on("libemos grib=eccodes", when="+bufr grib=eccodes")
-    depends_on("libemos grib=grib-api", when="+bufr grib=grib-api")
+    depends_on("libemos", when="+bufr")
     depends_on("qt", when="+metview+qt")
 
     depends_on("python", type=("build"))
@@ -117,13 +109,7 @@ class Magics(CMakePackage):
         filter_file("HAVE_GRIB", "SKIP_REQUIRED_FILE_WASREMOVED", "test/CMakeLists.txt")
 
     def cmake_args(self):
-        args = ["-DENABLE_ODB=OFF", "-DENABLE_SPOT=OFF"]
-
-        if self.spec.variants["grib"].value == "eccodes":
-            args.append("-DENABLE_ECCODES=ON")
-        else:
-            if self.spec.satisfies("@2.29.1:"):
-                args.append("-DENABLE_ECCODES=OFF")
+        args = ["-DENABLE_ODB=OFF", "-DENABLE_SPOT=OFF", "-DENABLE_ECCODES=ON"]
 
         # magics@4.2.4:4.3.1 cannot be built without netcdf
         if "+netcdf" in self.spec or self.spec.satisfies("@4.1.0:4.3.1"):

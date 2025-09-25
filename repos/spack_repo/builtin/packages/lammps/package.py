@@ -33,386 +33,40 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
-    version("20250612", sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7")
-    version("20250402", sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca")
-    version("20250204", sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1")
-    version("20241119", sha256="7d1a825f13eef06d82ed8ae950f4a5ca6da9f6a5979745a85a7a58781e4c6ffa")
     version(
-        "20240829.3",
-        sha256="75a9fb55d3c10f44cbc7b30313351ce9b12ab3003c1400147fa3590b6d651c73",
+        "20250722",
+        sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26",
         preferred=True,
     )
     version(
-        "20240829.2",
-        sha256="f8ca3f021a819ced8658055f7750e235c51b4937ddb621cf1bd7bee08e0b6266",
+        "20250612",
+        sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7",
         deprecated=True,
     )
     version(
-        "20240829.1",
-        sha256="3aea41869aa2fb8120fc4814cab645686f969e2eb7c66aa5587e500597d482dc",
+        "20250402",
+        sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca",
         deprecated=True,
     )
     version(
-        "20240829",
-        sha256="6112e0cc352c3140a4874c7f74db3c0c8e30134024164509ecf3772b305fde2e",
+        "20250204",
+        sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1",
         deprecated=True,
     )
     version(
-        "20240627",
-        sha256="2174a99d266279823a8c57629ee1c21ec357816aefd85f964d9f859fe9222aa5",
-        deprecated=True,
-    )
-    version(
-        "20240417",
-        sha256="158b288725c251fd8b30dbcf61749e0d6a042807da92af865a7d3c413efdd8ea",
-        deprecated=True,
-    )
-    version(
-        "20240207.1",
-        sha256="3ba62c2a1ed463fceedf313a1c3ea2997994aa102379a8d35b525ea424f56776",
-        deprecated=True,
-    )
-    version(
-        "20240207",
-        sha256="d518f32de4eb2681f2543be63926411e72072dd7d67c1670c090b5baabed98ac",
-        deprecated=True,
-    )
-    version(
-        "20231121",
-        sha256="704d8a990874a425bcdfe0245faf13d712231ba23f014a3ebc27bc14398856f1",
-        deprecated=True,
+        "20240829.4", sha256="e7d6d60b94ada5acc2e1e9966ae12547fd550d6967d4511b8655c77e24878728"
     )
     version(
         "20230802.4", sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b"
     )
     version(
-        "20230802.3",
-        sha256="6666e28cb90d3ff01cbbda6c81bdb85cf436bbb41604a87f2ab2fa559caa8510",
-        deprecated=True,
-    )
-    version(
-        "20230802.2",
-        sha256="3bcecabc9cad08d0a4e4d989b52d29c58505f7ead8ebacf43c9db8d9fd3d564a",
-        deprecated=True,
-    )
-    version(
-        "20230802.1",
-        sha256="0e5568485e5ee080412dba44a1b7a93f864f1b5c75121f11d528854269953ed0",
-        deprecated=True,
-    )
-    version(
-        "20230802",
-        sha256="48dc8b0b0583689e80ea2052275acbc3e3fce89707ac557e120db5564257f7df",
-        deprecated=True,
-    )
-    version(
-        "20230615",
-        sha256="8470ed7b26ccd3728f4b44a7f1c520f1af23a648af685fd30b42b840fdfae2ff",
-        deprecated=True,
-    )
-    version(
-        "20230328",
-        sha256="14f5a5c37e4b46466e90d8b35476800e66acee74999f7358f4c12dfe662bfd99",
-        deprecated=True,
-    )
-    version(
-        "20230208",
-        sha256="60221242145da4479e5b207d9a0eed90af4168d7a297b4dc8c0e7f2b3215602e",
-        deprecated=True,
-    )
-    version(
-        "20221222",
-        sha256="75372ee7ef982767fc4ed4dc95e20ddca8247419adeb0c1276c40e43d1eab955",
-        deprecated=True,
-    )
-    version(
-        "20221103",
-        sha256="d28517b84b157d4e46a1a64ed787b4662d8f2f5ade3f5a04bb0caed068f32f7e",
-        deprecated=True,
-    )
-    version(
-        "20220915",
-        sha256="392b8d35fc7919b0efaf8b389259a9b795a817e58e75e380467c63d03a0dab75",
-        deprecated=True,
-    )
-    version(
-        "20220803",
-        sha256="f37cb0b35c1682ffceae5826aadce47278aa7003099a1655fcea43acd7d37926",
-        deprecated=True,
-    )
-    version(
         "20220623.4", sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf"
-    )
-    version(
-        "20220623.3",
-        sha256="8a276a01b50d37eecfe6eb36f420f354cde51936d20aca7944dea60d3c098c89",
-        deprecated=True,
-    )
-    version(
-        "20220623.2",
-        sha256="8a560213e83919623525c4a7c4b5f0eda35cdf3b0c0e6548fd891379e04ca9e6",
-        deprecated=True,
-    )
-    version(
-        "20220623.1",
-        sha256="58e3b2b984f8935bb0db5631e143be2826c45ffd48844f7c394f36624a3e17a2",
-        deprecated=True,
-    )
-    version(
-        "20220623",
-        sha256="d27ede095c9f00cd13a26f967a723d07cf8f4df65c700ed73573577bc173d5ce",
-        deprecated=True,
-    )
-    version(
-        "20220602",
-        sha256="3e8f54453e53b3b387a68317277f832b8cf64a981e64b21e98bb37ea36ac4a60",
-        deprecated=True,
-    )
-    version(
-        "20220504",
-        sha256="fe05bae8090fd0177b3c1b987cd32a9cb7cd05d790828ba954c764eb52e10b52",
-        deprecated=True,
-    )
-    version(
-        "20220324",
-        sha256="d791cc93eedfc345fdf87bfa5b6f7e17e461f86ba197f9e9c3d477ce8657a7ef",
-        deprecated=True,
-    )
-    version(
-        "20220217",
-        sha256="e5bd2bf325835fa98d1b95f0667c83076580916027df5b8109d5470d1b97da98",
-        deprecated=True,
-    )
-    version(
-        "20220107",
-        sha256="fbf6c6814968ae0d772d7b6783079ff4f249a8faeceb39992c344969e9f1edbb",
-        deprecated=True,
-    )
-    version(
-        "20211214",
-        sha256="9f7b1ee2394678c1a6baa2c158a62345680a952eee251783e3c246b3f12db4c9",
-        deprecated=True,
-    )
-    version(
-        "20211027",
-        sha256="c06f682fcf9d5921ca90c857a104e90fba0fe65decaac9732745e4da49281938",
-        deprecated=True,
     )
     version(
         "20210929.3", sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e"
     )
-    version(
-        "20210929.2",
-        sha256="9318ca816cde16a9a4174bf22a1966f5f2155cb32c0ad5a6757633276411fb36",
-        deprecated=True,
-    )
-    version(
-        "20210929.1",
-        sha256="5000b422c9c245b92df63507de5aa2ea4af345ea1f00180167aaa084b711c27c",
-        deprecated=True,
-    )
-    version(
-        "20210929",
-        sha256="2dff656cb21fd9a6d46c818741c99d400cfb1b12102604844663b655fb2f893d",
-        deprecated=True,
-    )
-    version(
-        "20210920",
-        sha256="e3eba96933c1dd3177143c7ac837cae69faceba196948fbad2970425db414d8c",
-        deprecated=True,
-    )
-    version(
-        "20210831",
-        sha256="532c42576a79d72682deaf43225ca773ed9f9e35deb484a82f91905b6cba23ec",
-        deprecated=True,
-    )
-    version(
-        "20210730",
-        sha256="c5e998c8282a835d2bcba4fceffe3cecdf9aed9bdf79fa9c945af573e632f6e7",
-        deprecated=True,
-    )
-    version(
-        "20210728",
-        sha256="6b844d2c3f7170a59d36fbf761483aa0c63d95eda254d00fe4d10542403abe36",
-        deprecated=True,
-    )
-    version(
-        "20210702",
-        sha256="4fdd8ca2dbde8809c0048716650b73ae1f840e22ebe24b25f6f7a499377fea57",
-        deprecated=True,
-    )
-    version(
-        "20210527",
-        sha256="f9f29970941f406d5c250de52a4cd07e5a4e44ae3b5ffed46edd019d998b8c33",
-        deprecated=True,
-    )
-    version(
-        "20210514",
-        sha256="74d9c4386f2181b15a024314c42b7a0b0aaefd3b4b947aeca00fe07e5b2f3317",
-        deprecated=True,
-    )
-    version(
-        "20210408",
-        sha256="1645147b7777de4f616b8232edf0b597868084f969c777fa0a757949c3f71f56",
-        deprecated=True,
-    )
-    version(
-        "20210310",
-        sha256="25708378dbeccf794bc5045aceb84380bf4a3ca03fc8e5d150a26ca88d371474",
-        deprecated=True,
-    )
-    version(
-        "20210210",
-        sha256="2c5ba2c7935ad559ca94ee826e8727e65b49ef4582eb856534fffba70e44101a",
-        deprecated=True,
-    )
     version("20201029", sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726")
-    version(
-        "20200721",
-        sha256="845bfeddb7b667799a1a5dbc166b397d714c3d2720316604a979d3465b4190a9",
-        deprecated=True,
-    )
-    version(
-        "20200630",
-        sha256="413cbfabcc1541a339c7a4ab5693fbeb768f46bb1250640ba94686c6e90922fc",
-        deprecated=True,
-    )
-    version(
-        "20200505",
-        sha256="c49d77fd602d28ebd8cf10f7359b9fc4d14668c72039028ed7792453d416de73",
-        deprecated=True,
-    )
     version("20200303", sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1")
-    version(
-        "20200227",
-        sha256="1aabcf38bc72285797c710b648e906151a912c36b634a9c88ac383aacf85516e",
-        deprecated=True,
-    )
-    version(
-        "20200218",
-        sha256="73bcf146660804ced954f6a0a8dce937482677778d46018ca5a688127bf97211",
-        deprecated=True,
-    )
-    version(
-        "20200204",
-        sha256="3bf3de546ede34ffcd89f1fca5fd66aa78c662e7c8a76e30ce593e44a00d23ce",
-        deprecated=True,
-    )
-    version(
-        "20200124",
-        sha256="443829560d760690e1ae21ad54922f56f34f640a81e817f5cc65d2a4af3a6a5d",
-        deprecated=True,
-    )
-    version(
-        "20200109",
-        sha256="f2fd24f6c10837801f490913d73f672ec7c6becda08465d7e834a2bfbe3d7cd6",
-        deprecated=True,
-    )
-    version(
-        "20191120",
-        sha256="fd146bf517a6c2fb8a69ecb3749dc352eef94414739cd7855c668c690af85d27",
-        deprecated=True,
-    )
-    version(
-        "20191030",
-        sha256="5279567f731386ffdb87800b448903a63de2591064e13b4d5216acae25b7e541",
-        deprecated=True,
-    )
-    version(
-        "20190919",
-        sha256="0f693203afe86bc70c084c55f29330bdeea3e3ad6791f81c727f7a34a7f6caf3",
-        deprecated=True,
-    )
-    version(
-        "20190807",
-        sha256="895d71914057e070fdf0ae5ccf9d6552b932355056690bdb8e86d96549218cc0",
-        deprecated=True,
-    )
-    version(
-        "20190605",
-        sha256="c7b35090aef7b114d2b47a7298c1e8237dd811da87995c997bf7639cca743152",
-        deprecated=True,
-    )
-    version(
-        "20181212",
-        sha256="ccc5d2c21c4b62ce4afe7b3a0fe2f37b83e5a5e43819b7c2e2e255cce2ce0f24",
-        deprecated=True,
-    )
-    version(
-        "20181207",
-        sha256="d92104d008a7f1d0b6071011decc5c6dc8b936a3418b20bd34b055371302557f",
-        deprecated=True,
-    )
-    version(
-        "20181127",
-        sha256="c076b633eda5506f895de4c73103df8b995d9fec01be82c67c7608efcc345179",
-        deprecated=True,
-    )
-    version(
-        "20181115",
-        sha256="3bc9c166e465cac625c4a8e4060e597003f4619dadd57d3bc8d25bcd930f286e",
-        deprecated=True,
-    )
-    version(
-        "20181109",
-        sha256="dd30fe492fa147fb6f39bfcc79d8c786b9689f7fbe86d56de58cace53b6198c9",
-        deprecated=True,
-    )
-    version(
-        "20181024",
-        sha256="a171dff5aff7aaa2c9606ab2abc9260f2b685a5c7f6d650e7f2b59cf4aa149d6",
-        deprecated=True,
-    )
-    version(
-        "20181010",
-        sha256="bda762ee2d2dcefe0b4e36fb689c6b9f7ede49324444ccde6c59cba727b4b02d",
-        deprecated=True,
-    )
-    version(
-        "20180918",
-        sha256="02f143d518d8647b77137adc527faa9725c7afbc538d670253169e2a9b3fa0e6",
-        deprecated=True,
-    )
-    version(
-        "20180905",
-        sha256="ee0df649e33a9bf4fe62e062452978731548a56b7487e8e1ce9403676217958d",
-        deprecated=True,
-    )
-    version(
-        "20180831",
-        sha256="6c604b3ebd0cef1a5b18730d2c2eb1e659b2db65c5b1ae6240b8a0b150e4dff3",
-        deprecated=True,
-    )
-    version(
-        "20180822",
-        sha256="9f8942ca3f8e81377ae88ccfd075da4e27d0dd677526085e1a807777c8324074",
-        deprecated=True,
-    )
-    version(
-        "20180629",
-        sha256="1acf7d9b37b99f17563cd4c8bb00ec57bb2e29eb77c0603fd6871898de74763b",
-        deprecated=True,
-    )
-    version(
-        "20180316",
-        sha256="a81f88c93e417ecb87cd5f5464c9a2570384a48ff13764051c5e846c3d1258c1",
-        deprecated=True,
-    )
-    version(
-        "20180222",
-        sha256="374254d5131b7118b9ab0f0e27d20c3d13d96b03ed2b5224057f0c1065828694",
-        deprecated=True,
-    )
-    version(
-        "20170922",
-        sha256="f0bf6eb530d528f4d261d0a261e5616cbb6e990156808b721e73234e463849d3",
-        deprecated=True,
-    )
-    version(
-        "20170901",
-        sha256="5d88d4e92f4e0bb57c8ab30e0d20de556830af820223778b9967bec2184efd46",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -422,24 +76,11 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
-        "20240829.3",
-        "20240829.2",
-        "20240829.1",
-        "20240829",
+        "20250722",
+        "20240829.4",
         "20230802.4",
-        "20230802.3",
-        "20230802.2",
-        "20230802.1",
-        "20230802",
         "20220623.4",
-        "20220623.3",
-        "20220623.2",
-        "20220623.1",
-        "20220623",
         "20210929.3",
-        "20210929.2",
-        "20210929.1",
-        "20210929",
         "20201029",
         "20200303",
     }
@@ -503,7 +144,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "intel": {"when": "@20210702:"},
         "interlayer": {"when": "@20210728:"},
         "kim": {},
-        "kokkos": {},
+        "kokkos": {"when": "@20201029:"},
         "kspace": {"default": True},
         "latboltz": {"when": "@20210702:"},
         "latte": {"when": "@20170922:20230328"},
@@ -723,7 +364,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("curl", when="+curl")
     depends_on("libpng", when="+png")
     depends_on("ffmpeg", when="+ffmpeg")
-    depends_on("kokkos+deprecated_code+shared@3.0.00", when="@20200303+kokkos")
     depends_on("kokkos+shared@3.1:", when="@20200505:+kokkos")
     depends_on("kokkos@3.7.01:", when="@20230208: +kokkos")
     depends_on("kokkos@4.3.00:", when="@20240417: +kokkos")
@@ -731,6 +371,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@4.4.01:", when="@20241119: +kokkos")
     depends_on("kokkos@4.5.01:", when="@20250204: +kokkos")
     depends_on("kokkos@4.6.00:", when="@20250402: +kokkos")
+    depends_on("kokkos@4.6.02:", when="@20250722: +kokkos")
     depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
     depends_on("plumed", when="+user-plumed")
@@ -792,7 +433,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("+user-phonon", when="~kspace")
     conflicts("+phonon", when="~kspace")
     conflicts("%gcc@9:", when="@:20200303+openmp")
-    conflicts("+kokkos", when="@:20200227")
     conflicts("+dielectric", when="~kspace")
     conflicts("+dielectric", when="@:20210702~user-misc")
     conflicts("+dielectric", when="@20210728:~extra-pair")

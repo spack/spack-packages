@@ -62,8 +62,6 @@ class PyPylint(PythonPackage):
     depends_on("py-astroid@2.12.4:2.13", when="@2.15", type=("build", "run"))
     depends_on("py-astroid@2.14.2:2.15", when="@2.16:2", type=("build", "run"))
     depends_on("py-astroid@3.3.8:3.3", when="@3.3.7:", type=("build", "run"))
-    depends_on("py-isort@4.2.5:", type=("build", "run"))
-    depends_on("py-isort@4.2.5:4", when="@2.3.1:2.5", type=("build", "run"))
     depends_on("py-isort@4.2.5:5", when="@2.6:2", type=("build", "run"))
     depends_on("py-isort@4.2.5:6", when="@3.3.7:", type=("build", "run"))
     depends_on("py-mccabe", type=("build", "run"))

@@ -19,6 +19,8 @@ class Gnupg(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.5.12", sha256="48d7b15474d330c571128a49eb32ae2332c086ce7945fb94d4c5491b07985e09")
+    version("2.5.11", sha256="5f765ec1eb605dce9e9c48679cd43b5818d4d4b84c8ea4c0c60eb5dca13c405c")
     version("2.5.6", sha256="377f9d79af0ce494c0946dbe7c92197425bb522d7edd6f54acbc9869695131a8")
     version("2.5.3", sha256="23128b136aed4e5121e793d1b6c60ee50c8007a9d926c1313e524d05386b54ac")
     version("2.5.2", sha256="7f404ccc6a58493fedc15faef59f3ae914831cff866a23f0bf9d66cfdd0fea29")
@@ -36,18 +38,11 @@ class Gnupg(AutotoolsPackage):
     version("2.3.7", sha256="ee163a5fb9ec99ffc1b18e65faef8d086800c5713d15a672ab57d3799da83669")
     version("2.2.40", sha256="1164b29a75e8ab93ea15033300149e1872a7ef6bdda3d7c78229a735f8204c28")
 
-    # Versions up to 2.2.27, and 2.3.6 deprecated over CVE-2022-34903
-    version(
-        "1.4.23",
-        sha256="c9462f17e651b6507848c08c430c791287cd75491f8b5a8b50c6ed46b12678ba",
-        deprecated=True,
-    )
-
     depends_on("c", type="build")  # generated
 
-    depends_on("npth@1.2:", when="@2:")
+    depends_on("npth@1.2:")
 
-    depends_on("libgpg-error@1.24:", when="@2:")
+    depends_on("libgpg-error@1.24:")
     depends_on("libgpg-error@1.41:", when="@2.3:")
     depends_on("libgpg-error@1.46:", when="@2.4:")
     # https://github.com/gpg/gnupg/commit/d78131490edd7f7db142702b8144bc30e65dbd8d
@@ -55,12 +50,12 @@ class Gnupg(AutotoolsPackage):
     # https://github.com/gpg/gnupg/commit/c3bab200d97460028d842d76484b4c08fb947fef
     depends_on("libgpg-error@1.51:", when="@2.5.2:")
 
-    depends_on("libgcrypt@1.7.0:", when="@2:")
+    depends_on("libgcrypt@1.7.0:")
     depends_on("libgcrypt@1.9.1:", when="@2.3:")
     # https://github.com/gpg/gnupg/commit/f305e703d51079a17bcfc15d54f4c5f591dcff56
     depends_on("libgcrypt@1.11:", when="@2.5:")
 
-    depends_on("libksba@1.3.4:", when="@2:")
+    depends_on("libksba@1.3.4:")
     depends_on("libksba@1.6.3:", when="@2.4:")
 
     depends_on("libassuan@:2", when="@:2.4.3")
@@ -68,16 +63,12 @@ class Gnupg(AutotoolsPackage):
     # https://github.com/gpg/gnupg/commit/0d20b79ab79819f6177737a61e886d4820e475e2
     depends_on("libassuan@3:", when="@2.5.0:")
 
-    depends_on("pinentry", type="run", when="@2:")
-    depends_on("iconv", when="@2:")
+    depends_on("pinentry", type="run")
+    depends_on("iconv")
     depends_on("zlib-api")
 
-    depends_on("gawk", type="build", when="@:1")
     # note: perl and curl are gnupg1 dependencies when keyserver support is
     # requested, but we disable that.
-
-    # Getting some linking error.
-    conflicts("%gcc@10:", when="@:1")
 
     executables = ["^gpg$", "^gpg-agent$"]
 
@@ -121,22 +112,6 @@ class Gnupg(AutotoolsPackage):
                 args.append(f"--with-libiconv-prefix={self.spec['iconv'].prefix}")
             else:
                 args.append("--without-libiconv-prefix")
-
-        if self.spec.satisfies("@:1"):
-            args.extend(
-                [
-                    "--disable-agent-support",
-                    "--disable-card-support",
-                    "--disable-photo-viewers",
-                    "--disable-exec",
-                    "--disable-keyserver-path",
-                    "--disable-keyserver-helpers",
-                    "--disable-gnupg-iconv",
-                    "--disable-dns-srv",
-                    "--disable-dns-cert",
-                    "--disable-gnupg-iconv",
-                ]
-            )
 
         if self.run_tests:
             args.append("--enable-all-tests")

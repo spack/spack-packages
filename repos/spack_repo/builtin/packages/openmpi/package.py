@@ -521,7 +521,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         values=disjoint_sets(("auto",), FABRICS).with_non_feature_values(
             "auto", "none"
         ),  # shared memory transports
-        description="List of fabrics that are enabled; " "'auto' lets openmpi determine",
+        description="List of fabrics that are enabled; 'auto' lets openmpi determine",
     )
 
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge", "loadleveler")
@@ -563,12 +563,6 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     variant("fortran", default=True, description="Enable Fortran support")
     variant("gpfs", default=False, description="Enable GPFS support")
-    variant(
-        "singularity",
-        default=False,
-        when="@:4",
-        description="Build deprecated support for the Singularity container",
-    )
     variant("lustre", default=False, description="Lustre filesystem library support")
     variant("romio", default=True, when="@:5", description="Enable ROMIO support")
     variant("romio", default=False, when="@5:", description="Enable ROMIO support")
@@ -621,7 +615,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     # Variants to use internal packages
     variant("internal-hwloc", default=False, description="Use internal hwloc")
-    variant("internal-pmix", default=False, description="Use internal pmix")
+    variant("internal-pmix", default=False, description="Use internal pmix and prrte", when="@3:")
     variant("internal-libevent", default=False, description="Use internal libevent")
     variant("openshmem", default=False, description="Enable building OpenSHMEM")
     variant("debug", default=False, description="Make debug build", when="build_system=autotools")
@@ -633,6 +627,13 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
 built with the mpicc/mpifort/etc. compiler wrappers
 with '-Wl,-commons,use_dylibs' and without
 '-Wl,-flat_namespace'.""",
+    )
+
+    variant(
+        "cray-xpmem",
+        default=False,
+        when="fabrics=xpmem",
+        description="use cray-xpmem instead of xpmem configure flag",
     )
 
     # Patch to allow two-level namespace on a MacOS platform when building
@@ -682,8 +683,6 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("sqlite", when="+sqlite3")
     depends_on("zlib-api", when="@3:")
     depends_on("valgrind~mpi", when="+memchecker")
-    # Singularity release 3 works better
-    depends_on("singularity@3:", when="+singularity")
     depends_on("lustre", when="+lustre")
 
     depends_on("opa-psm2", when="fabrics=psm2")
@@ -718,13 +717,25 @@ with '-Wl,-commons,use_dylibs' and without
     # PMIx is unavailable for @1, and required for @2:
     # OpenMPI @2: includes a vendored version:
     with when("~internal-pmix"):
-        depends_on("pmix@1", when="@2")
+        depends_on("pmix", when="@3:")
         depends_on("pmix@3.2:", when="@4:")
         depends_on("pmix@4.2.4:", when="@5:")
 
         # pmix@4.2.3 contains a breaking change, compat fixed in openmpi@4.1.6
         # See https://www.mail-archive.com/announce@lists.open-mpi.org//msg00158.html
         depends_on("pmix@:4.2.2", when="@:4.1.5")
+
+        # @:4 does not depend on prrte and used orte
+        with when("@5"):
+
+            # When an external PMIx is used, also an external PRRTE should be used
+            # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
+            depends_on("prrte")
+
+            # only prrte knows about schedulers
+            # https://github.com/spack/spack-packages/pull/1145#issuecomment-3208378366
+            for scheduler in [s for s in SCHEDULERS if s not in ("loadleveler")] + ["none"]:
+                depends_on(f"prrte schedulers={scheduler}", when=f"schedulers={scheduler}")
 
     # Libevent is required when *vendored* PMIx is used
     depends_on("libevent@2:", when="~internal-libevent")
@@ -764,7 +775,13 @@ with '-Wl,-commons,use_dylibs' and without
     conflicts(
         "schedulers=loadleveler",
         when="@3:",
-        msg="The loadleveler scheduler is not supported with " "openmpi(>=3).",
+        msg="The loadleveler scheduler is not supported with openmpi(>=3).",
+    )
+
+    conflicts(
+        "schedulers=auto",
+        when="~internal-pmix",
+        msg="External pmix/prrte requires specifying schedulers explicitly (including 'none').",
     )
 
     # According to this comment on github:
@@ -779,6 +796,9 @@ with '-Wl,-commons,use_dylibs' and without
     # Building against an external PMIx with an internal Libevent or HWLOC is unsupported
     conflicts("~internal-pmix", "+internal-hwloc")
     conflicts("~internal-pmix", "+internal-libevent")
+
+    # May be able to get working for LLVM 18/19 using FC=flang-new
+    conflicts("%fortran=clang %llvm@:19")
 
     filter_compiler_wrappers("openmpi/*-wrapper-data*", relative_root="share")
 
@@ -884,11 +904,6 @@ with '-Wl,-commons,use_dylibs' and without
                     variants.append("+cxx_exceptions")
                 else:
                     variants.append("~cxx_exceptions")
-
-            # singularity
-            if version in ver(":4"):
-                if re.search(r"--with-singularity", output):
-                    variants.append("+singularity")
 
             # lustre
             if re.search(r"--with-lustre", output):
@@ -1075,9 +1090,12 @@ with '-Wl,-commons,use_dylibs' and without
         return f"--with-ucc={self.spec['ucc'].prefix}"
 
     def with_or_without_xpmem(self, activated):
+        s1 = "xpmem"
+        if self.spec.satisfies("+cray-xpmem"):
+            s1 = "cray-xpmem"
         if not activated:
-            return "--without-xpmem"
-        return f"--with-xpmem={self.spec['xpmem'].prefix}"
+            return f"--without-{s1}"
+        return f"--with-{s1}={self.spec['xpmem'].prefix}"
 
     def with_or_without_knem(self, activated):
         if not activated:
@@ -1154,10 +1172,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(self.with_or_without("fabrics"))
 
         if spec.satisfies("@2.0.0:"):
-            if "fabrics=xpmem" in spec:
-                config_args.append("--with-cray-xpmem")
-            else:
-                config_args.append("--without-cray-xpmem")
+            config_args.append(self.with_or_without_xpmem("fabrics=xpmem" in spec))
 
         # Schedulers
         if "schedulers=auto" not in spec:
@@ -1171,7 +1186,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(["--enable-debug"])
 
         # Package dependencies
-        for dep in ["lustre", "singularity", "valgrind"]:
+        for dep in ["lustre", "valgrind"]:
             if "^" + dep in spec:
                 config_args.append("--with-{0}={1}".format(dep, spec[dep].prefix))
 
@@ -1181,11 +1196,15 @@ with '-Wl,-commons,use_dylibs' and without
         elif "^libevent" in spec:
             config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
 
-        # PMIx support
+        # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):
             config_args.append("--with-pmix=internal")
-        elif "^pmix" in spec:
-            config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            config_args.append("--with-prrte=internal")
+        else:
+            if "^pmix" in spec:
+                config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+            if "^prrte" in spec:
+                config_args.append("--with-prrte={0}".format(spec["prrte"].prefix))
 
         if "^zlib-api" in spec:
             config_args.append("--with-zlib={0}".format(spec["zlib-api"].prefix))

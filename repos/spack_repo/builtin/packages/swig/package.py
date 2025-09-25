@@ -130,7 +130,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
 
     def test_swiglib(self):
         """check that the lib dir exists"""
-        assert os.path.isdir(self._swiglib), f"SWIG library does not exist at '{swiglib}'"
+        assert os.path.isdir(self._swiglib), f"SWIG library does not exist at '{self._swiglib}'"
 
     def test_swig_swg(self):
         """check that swig.swg exists"""

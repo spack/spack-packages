@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems import cmake, meson
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
 
 
-class SimpleDftd3(MesonPackage):
+class SimpleDftd3(MesonPackage, CMakePackage):
     """
     Simple reimplementation of the DFT-D3 dispersion correction
     """
@@ -19,6 +21,8 @@ class SimpleDftd3(MesonPackage):
     maintainers("awvwgk")
 
     license("LGPL-3.0-or-later")
+
+    build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
     version("1.2.1", sha256="3a12c04c490badc63054aca18ea7670d416fcc2152cfe9b8af220da57c39f942")
@@ -35,18 +39,28 @@ class SimpleDftd3(MesonPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
-
-    depends_on("mctc-lib")
     depends_on("meson@0.57.1:", type="build")  # mesonbuild/meson#8377
-    depends_on("pkgconfig", type="build")
-    depends_on("toml-f")
     depends_on("py-cffi", when="+python")
     depends_on("python@3.6:", when="+python")
+    depends_on("pkgconfig", type="build")
+    depends_on("blas")
+
+    for build_system in ["cmake", "meson"]:
+        depends_on(f"mctc-lib build_system={build_system}", when=f"build_system={build_system}")
+        depends_on(f"toml-f build_system={build_system}", when=f"build_system={build_system}")
+        depends_on(f"mstore build_system={build_system}", when=f"build_system={build_system}")
 
     extends("python", when="+python")
 
+
+class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         return [
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
         ]
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        return [self.define_from_variant("WITH_OpenMP", "openmp")]

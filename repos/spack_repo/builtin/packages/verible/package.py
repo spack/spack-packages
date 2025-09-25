@@ -38,6 +38,16 @@ class Verible(Package):
     version("master", branch="master")
 
     version(
+        "0.0.4023",
+        sha256="01235dc9f771bcc4996d18b89bb5f1f9f478d5be3a1a3ca7efc1406e87dad2ed",
+        url="https://github.com/chipsalliance/verible/archive/refs/tags/v0.0-4023-gc1271a00.tar.gz",
+    )
+    version(
+        "0.0.4013",
+        sha256="703766302083af76eeb3e545683017643ff24e4184e3195296623992eb55e4b8",
+        url="https://github.com/chipsalliance/verible/archive/refs/tags/v0.0-4013-gba3dc371.tar.gz",
+    )
+    version(
         "0.0.3999",
         sha256="0b282233b91fc6884708f76232dcc3b38d47a14c783c5a0b8035bb23bcb8dbc7",
         url="https://github.com/chipsalliance/verible/archive/refs/tags/v0.0-3999-g93adb37c.tar.gz",
@@ -118,7 +128,8 @@ class Verible(Package):
         url="https://github.com/chipsalliance/verible/archive/refs/tags/v0.0-3428-gcfcbb82b.tar.gz",
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("flex", type="build")
     depends_on("bison", type="build")

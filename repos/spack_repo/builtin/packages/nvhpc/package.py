@@ -23,6 +23,16 @@ from spack.package import *
 #  - package key must be in the form '{os}-{arch}' where 'os' is in the
 #    format returned by platform.system() and 'arch' by platform.machine()
 _versions = {
+    "25.7": {
+        "Linux-aarch64": (
+            "fe8c8f24592e6ccf716bb402b3924bf88238e2b3b6752dd7555afcb7d5a5df72",
+            "https://developer.download.nvidia.com/hpc-sdk/25.7/nvhpc_2025_257_Linux_aarch64_cuda_multi.tar.gz",
+        ),
+        "Linux-x86_64": (
+            "793521410a1937ecd2e031c3e10842dffc001fdac6658806348c3caf51f8a9f2",
+            "https://developer.download.nvidia.com/hpc-sdk/25.7/nvhpc_2025_257_Linux_x86_64_cuda_multi.tar.gz",
+        ),
+    },
     "25.5": {
         "Linux-aarch64": (
             "a1aa824bfdfe0c3541b233fc520757824bbcddbbb3fdf2524fdd15f2feb28347",
@@ -478,8 +488,7 @@ class Nvhpc(Package, CompilerPackage):
         default="single",
         values=("single", "network"),
         multi=False,
-        description="Network installs are for installations shared "
-        "by different operating systems",
+        description="Network installs are for installations shared by different operating systems",
     )
     variant("lapack", default=True, description="Enable LAPACK")
     variant("mpi", default=False, description="Enable MPI")
@@ -623,10 +632,15 @@ class Nvhpc(Package, CompilerPackage):
 
             env.prepend_path("LD_LIBRARY_PATH", mpi_prefix.lib)
 
-            env.set("OMPI_CC", spack_cc)
-            env.set("OMPI_CXX", spack_cxx)
-            env.set("OMPI_FC", spack_fc)
-            env.set("OMPI_F77", spack_f77)
+            dependent_module = dependent_spec.package.module
+            for var_name, attr_name in (
+                ("OMPI_CC", "spack_cc"),
+                ("OMPI_CXX", "spack_cxx"),
+                ("OMPI_FC", "spack_fc"),
+                ("OMPI_F77", "spack_f77"),
+            ):
+                if hasattr(dependent_module, attr_name):
+                    env.set(var_name, getattr(dependent_module, attr_name))
 
     def setup_dependent_package(self, module, dependent_spec):
         if "+mpi" in self.spec or self.provides("mpi"):

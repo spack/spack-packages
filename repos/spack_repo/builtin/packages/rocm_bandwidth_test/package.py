@@ -13,11 +13,13 @@ class RocmBandwidthTest(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocm_bandwidth_test"
     git = "https://github.com/ROCm/rocm_bandwidth_test.git"
-    url = "https://github.com/ROCm/rocm_bandwidth_test/archive/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rocm_bandwidth_test/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("6.4.3", sha256="2b8d9eb16191e9d8dcfdc345615298b36b8e7d468f1b40d46638989301b03688")
+    version("6.4.2", sha256="70cd7918dd07564241576e4ae8a4c5d007f87aa3d93589baded49022dc2cf27b")
     version("6.4.1", sha256="6910f52af9416802245d4fb6406274fd2bde6e9c287cc2d602adf682ecf98e4e")
     version("6.4.0", sha256="0a4c8aa32e041f0344eda448927d677b4a65835dda9736a7f2ab72b8e7f14d1c")
     version("6.3.3", sha256="d33f656eb6ba7db78b41c4bcf6d830b511dc97c6d645760e6d05edd07fcaefba")
@@ -34,9 +36,6 @@ class RocmBandwidthTest(CMakePackage):
     version("6.0.0", sha256="9023401bd6a896059545b8e6263c6730afd89d7d45c0f5866261c300415532a6")
     version("5.7.1", sha256="7426ef1e317b8293e4d6389673cfa8c63efb3f7d061e2f50a6f0b1b706e2a2a7")
     version("5.7.0", sha256="fa95c28488ab4bb6d920b9f3c316554ca340f44c87ec2efb4cf8fa488e63ddd9")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="849af715d08dfd89e7aa5e4453b624151db1cafaa567ab5fa36a77948b90bf0d")
-        version("5.6.0", sha256="ae2f7263a21a3a650068f43e3112b2b765eea80a5af2297572f850c77f83c85e")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
@@ -44,8 +43,6 @@ class RocmBandwidthTest(CMakePackage):
     depends_on("cmake@3:", type="build")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -60,8 +57,6 @@ class RocmBandwidthTest(CMakePackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -78,6 +73,8 @@ class RocmBandwidthTest(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

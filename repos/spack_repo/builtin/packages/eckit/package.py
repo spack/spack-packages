@@ -64,7 +64,7 @@ class Eckit(CMakePackage):
     variant(
         "unicode",
         default=True,
-        description="Enable support for Unicode characters in Yaml/JSON" "parsers",
+        description="Enable support for Unicode characters in Yaml/JSON parsers",
     )
     variant("aio", default=True, description="Enable asynchronous IO")
     variant("fismahigh", default=False, description="Apply patching for FISMA-high compliance")
@@ -111,8 +111,7 @@ class Eckit(CMakePackage):
     conflicts(
         "linalg=lapack",
         when="linalg=mkl",
-        msg='"linalg=lapack" is implied when "linalg=mkl" and '
-        "must not be specified additionally",
+        msg='"linalg=lapack" is implied when "linalg=mkl" and must not be specified additionally',
     )
 
     def cmake_args(self):
