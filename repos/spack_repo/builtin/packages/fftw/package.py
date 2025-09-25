@@ -80,12 +80,12 @@ class FftwBase(AutotoolsPackage):
         # to check NEON.
         if self.spec.satisfies("target=m1:"):
             filter_file(
-                r"\saarch64)",
+                r" aarch64)",
                 r" aarch64 | arm)",
                 "configure",
             )
             filter_file(
-                r"\saarch64)",
+                r" aarch64)",
                 r" aarch64 | arm)",
                 "configure.ac",
             )
