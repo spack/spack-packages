@@ -5,6 +5,7 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonExtension
+
 from spack.package import *
 
 
@@ -27,11 +28,10 @@ class TsneCuda(CMakePackage, CudaPackage, PythonExtension):
 
     patch("fix_cmakelists.patch")
 
-
     depends_on("c", type="build")  # you'll get linker errors otherwise
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.20:3.30") # CMake 3.31 messes a bit too much with find CUDA
+    depends_on("cmake@3.20:3.30")  # CMake 3.31 messes a bit too much with find CUDA
     depends_on("cuda@9:")
     depends_on("blas")
     depends_on("lapack")
