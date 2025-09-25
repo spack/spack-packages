@@ -60,9 +60,9 @@ class Tau(Package):
     version("2.23.1", sha256="31a4d0019cec6ef57459a9cd18a220f0130838a5f1a0b5ea7879853f5a38cf88")
 
     # Disable some default dependencies on Darwin/OSX
-    _is_darwin = (sys.platform == 'darwin')
+    _is_darwin = sys.platform == "darwin"
     darwin_default = not _is_darwin
-    libunwind_darwin_default = 'none' if _is_darwin else 'shared'
+    libunwind_darwin_default = "none" if _is_darwin else "shared"
 
     variant("scorep", default=False, description="Activates SCOREP support")
     variant("openmp", default=False, description="Use OpenMP threads")
@@ -76,8 +76,8 @@ class Tau(Package):
     variant(
         "libunwind",
         default=libunwind_darwin_default,
-        values=('none', 'shared', 'static'),
-        description="Activates support of libunwind"
+        values=("none", "shared", "static"),
+        description="Activates support of libunwind",
     )
     variant("otf2", default=True, description="Activates support of Open Trace Format (OTF)")
     variant("pdt", default=True, description="Use PDT for source code instrumentation")
@@ -170,8 +170,8 @@ class Tau(Package):
         depends_on("python@2.7:")
         # python 3.11 doesn't work in the 2.32 releases
         depends_on("python@:3.10", when="@:2.32.1")
-    depends_on('libunwind libs=static +pic', when='libunwind=static')
-    depends_on('libunwind libs=shared', when='libunwind=shared')
+    depends_on("libunwind libs=static +pic", when="libunwind=static")
+    depends_on("libunwind libs=shared", when="libunwind=shared")
     depends_on("mpi", when="+mpi", type=("build", "run", "link"))
     # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
     depends_on("cuda@:12.8", when="+cuda")
@@ -346,11 +346,11 @@ class Tau(Package):
         if "+elf" in spec:
             options.append("-elf=%s" % spec["elf"].prefix)
 
-        libunwind_opt = spec.variants['libunwind'].value
-        if libunwind_opt != 'none':
+        libunwind_opt = spec.variants["libunwind"].value
+        if libunwind_opt != "none":
             options.append("-unwind=%s" % spec["libunwind"].prefix)
-            if libunwind_opt == 'static':
-                options.append('-static_libunwind')
+            if libunwind_opt == "static":
+                options.append("-static_libunwind")
 
         if "+otf2" in spec:
             options.append("-otf=%s" % spec["otf2"].prefix)
