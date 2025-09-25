@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -18,6 +20,7 @@ class Hipblaslt(CMakePackage):
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
     tags = ["rocm"]
+    libraries = ["libhipblaslt"]
 
     license("MIT")
     version("6.4.3", sha256="64252588faf8a9089838e8f427e911617916fd6905a8cc65370e8d25fafdf0e4")
@@ -149,6 +152,17 @@ class Hipblaslt(CMakePackage):
                     "clients/CMakeLists.txt",
                     string=True,
                 )
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def cmake_args(self):
         args = [

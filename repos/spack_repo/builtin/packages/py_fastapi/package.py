@@ -16,6 +16,7 @@ class PyFastapi(PythonPackage):
 
     license("MIT")
 
+    version("0.115.12", sha256="1e2c2a2646905f9e83d32f04a3f86aff4a286669c6c950ca95b5fd68c2602681")
     version("0.115.4", sha256="db653475586b091cb8b2fec2ac54a680ac6a158e07406e1abae31679e8826349")
     version("0.110.2", sha256="b53d673652da3b65e8cd787ad214ec0fe303cad00d2b529b86ce7db13f17518d")
     version("0.109.2", sha256="f3817eac96fe4f65a2ebb4baa000f394e55f5fccdaf7f75250804bc58f354f73")
@@ -28,7 +29,8 @@ class PyFastapi(PythonPackage):
     depends_on("py-hatchling@1.13:", when="@0.98:0.110.2", type="build")
     depends_on("py-hatchling", when="@:0.110.2", type="build")
 
-    depends_on("py-starlette@0.40:0.41", when="@0.115.3:", type=("build", "run"))
+    depends_on("py-starlette@0.40.0:0.46", when="@0.115.12:", type=("build", "run"))
+    depends_on("py-starlette@0.40:0.41", when="@0.115.3:0.115.6", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.40", when="@0.115.2", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.38", when="@0.112.1:0.115.1", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.37", when="@0.110.1:0.112.0", type=("build", "run"))
@@ -40,7 +42,9 @@ class PyFastapi(PythonPackage):
 
     with when("+all"):
         depends_on("py-httpx@0.23:", type=("build", "run"))
+        depends_on("py-jinja2@3.1.5:", when="@0.115.12:", type=("build", "run"))
         depends_on("py-jinja2@2.11.2:", type=("build", "run"))
+        depends_on("py-python-multipart@0.0.18:", when="@0.115.12:", type=("build", "run"))
         depends_on("py-python-multipart@0.0.7:", when="@0.109.1:", type=("build", "run"))
         depends_on("py-itsdangerous@1.1:", type=("build", "run"))
         depends_on("py-pyyaml@5.3.1:", type=("build", "run"))

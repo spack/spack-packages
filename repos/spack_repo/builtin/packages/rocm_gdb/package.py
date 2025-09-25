@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
@@ -15,6 +16,7 @@ class RocmGdb(AutotoolsPackage):
     homepage = "https://github.com/ROCm/ROCgdb"
     url = "https://github.com/ROCm/ROCgdb/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
+    executables = ["rocgdb"]
 
     license("LGPL-2.0-or-later")
 
@@ -108,3 +110,13 @@ class RocmGdb(AutotoolsPackage):
             "--disable-gprofng",
         ]
         return options
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"rocm-rel-(\d+)\.(\d+)", output)
+        if match:
+            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+        else:
+            ver = None
+        return ver
