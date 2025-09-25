@@ -26,6 +26,7 @@ class Madgraph5amc(MakefilePackage):
     timeout = {"timeout": 60}
 
     with default_args(fetch_options=timeout):
+        version("3.5.9", sha256="1e707fcd18f5b967c3f6220b3e5538622c93472376cae6666c56d0f2c2dd4b92")
         version("3.5.6", sha256="d4f336196303df748074ac92f251db8e6592fca37b3059c2e0f2a764c7e50975")
         version(
             "2.9.20",
@@ -102,7 +103,7 @@ class Madgraph5amc(MakefilePackage):
         set_parameter("syscalc_path", spec["syscalc"].prefix.bin)
 
         if "+ninja" in spec:
-            set_parameter("ninja", spec["gosam-contrib"].prefix)
+            set_parameter("ninja", spec["gosam-contrib"].prefix.lib)
 
         if "+collier" in spec:
             set_parameter("collier", spec["collier"].prefix.lib)
