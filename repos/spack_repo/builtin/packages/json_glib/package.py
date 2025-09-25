@@ -66,7 +66,7 @@ class JsonGlib(MesonPackage):
         make("install")
 
     def url_for_version(self, version):
-       return f"https://download.gnome.org/sources/json-glib/{version.up_to(2)}/json-glib-{version}.tar.xz"
+        return f"https://download.gnome.org/sources/json-glib/{version.up_to(2)}/json-glib-{version}.tar.xz"
 
 class MesonBuilder(meson.MesonBuilder):
     @when("@1.9.2:")
