@@ -52,7 +52,7 @@ class Pango(MesonPackage):
     depends_on("meson@0.55.3:", type="build", when="@1.48.1:")
     depends_on("meson@0.60:", type="build", when="@1.50.13:")
     depends_on("meson@0.63:", type="build", when="@1.54:")
-    depends_on("pkgconfig@0.9.0:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("harfbuzz")
     depends_on("harfbuzz+coretext", when="platform=darwin")
     depends_on("cairo+ft+fc")

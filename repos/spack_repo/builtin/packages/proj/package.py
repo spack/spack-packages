@@ -133,7 +133,7 @@ class Proj(CMakePackage, AutotoolsPackage):
         depends_on("cmake@2.6:", when="@:4", type="build")
 
     with when("build_system=autotools"):
-        depends_on("pkgconfig@0.9:", when="@6:", type="build")
+        depends_on("pkgconfig", when="@6:", type="build")
 
     depends_on("sqlite@3.11:", when="@6:")
     depends_on("libtiff@4:", when="@7:+tiff")
