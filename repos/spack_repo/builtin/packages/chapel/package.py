@@ -118,7 +118,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "dpcpp": "intel",
         "gcc": "gnu",
         "intel": "intel",
-        "llvm": "llvm",
+        "llvm": "clang",
         "oneapi": "intel",
         "rocmcc": "clang",
         "unset": "unset",
