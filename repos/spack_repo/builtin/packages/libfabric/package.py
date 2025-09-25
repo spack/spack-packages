@@ -215,7 +215,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
             *self.with_or_without("gdrcopy", activation_value="prefix"),
             *self.with_or_without(
                 "rocr", variant="rocm", activation_value=lambda _: self.spec["hip"].prefix
-                ),
+            ),
         ]
 
         if self.spec.satisfies("+kdreg"):
