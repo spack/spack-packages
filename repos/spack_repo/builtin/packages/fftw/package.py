@@ -81,12 +81,12 @@ class FftwBase(AutotoolsPackage):
         if self.spec.satisfies("target=m1:"):
             filter_file(
                 r" aarch64\)",
-                r" aarch64 | arm\)",
+                r" aarch64 | arm)",
                 "configure",
             )
             filter_file(
                 r" aarch64\)",
-                r" aarch64 | arm\)",
+                r" aarch64 | arm)",
                 "configure.ac",
             )
 
