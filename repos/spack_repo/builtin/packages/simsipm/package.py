@@ -43,6 +43,8 @@ class Simsipm(CMakePackage):
     depends_on("python@3.6:", when="+python", type=("build", "run"))
     depends_on("py-pybind11", when="+python", type=("build", "link"))
 
+    conflicts("arch=aarch64", msg="package uses x86 internals and does not support aarch64")
+
     def cmake_args(self):
         args = [
             self.define("CMAKE_CXX_STANDARD", self.spec.variants["cxxstd"].value),
