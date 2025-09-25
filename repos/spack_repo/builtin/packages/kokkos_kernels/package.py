@@ -208,9 +208,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
 
-        if spec.satisfies("+diy"):
-            options.append(self.define("Spack_WORKAROUND", True))
-
         options.append(self.define("Kokkos_ROOT", spec["kokkos"].prefix))
         if spec.satisfies("^kokkos+rocm"):
             options.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
