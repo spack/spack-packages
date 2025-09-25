@@ -398,6 +398,9 @@ class Mapl(CMakePackage):
     # when using apple-clang version 15.x or newer, need to use the llvm-openmp library
     depends_on("llvm-openmp", when="%apple-clang@15:", type=("build", "run"))
 
+    # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
+
     def cmake_args(self):
         args = [
             self.define_from_variant("BUILD_WITH_PFLOGGER", "pflogger"),
@@ -424,6 +427,11 @@ class Mapl(CMakePackage):
             if gfortran_major_ver >= 10:
                 fflags.append("-fallow-invalid-boz")
                 fflags.append("-fallow-argument-mismatch")
+
+        # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+        if self.spec.satisfies("^intel-oneapi-compilers@2025.2"):
+            fflags.append(f"-fpp-name={join_path(self.stage.source_path, 'cpp_wrapper.sh')}")
+
         if fflags:
             args.append(self.define("CMAKE_Fortran_FLAGS", " ".join(fflags)))
 
@@ -469,6 +477,17 @@ class Mapl(CMakePackage):
             filter_file(
                 "(target_link_libraries[^)]+PUBLIC )", r"\1 %s " % nc_flags, "pfio/CMakeLists.txt"
             )
+
+        # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+        if self.spec.satisfies("^intel-oneapi-compilers@2025.2"):
+            cpp_wrapper = """#!/usr/bin/env bash
+cpp -P -traditional-cpp -undef \"$@\"
+"""
+            with open(join_path(self.stage.source_path, "cpp_wrapper.sh"), "w") as f:
+                f.write(cpp_wrapper)
+            set_executable(join_path(self.stage.source_path, "cpp_wrapper.sh"))
+
+            filter_file("SYSTEM_DSO_EXTENSION = SYSTEM_DSO_SUFFIX", "SYSTEM_DSO_EXTENSION = 'SYSTEM_DSO_SUFFIX'", "shared/DSO_Utilities.F90", string=True)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # esma_cmake, an internal dependency of mapl, is
