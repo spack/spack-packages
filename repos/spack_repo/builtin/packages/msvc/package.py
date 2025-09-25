@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os.path
+import platform
 import re
+import struct
 import subprocess
 
 from spack_repo.builtin.build_systems import compiler
@@ -144,8 +146,39 @@ class Msvc(Package, CompilerPackage):
         env_cmds = []
         compiler_root = os.path.join(os.path.dirname(self.cc), "../../../../../..")
         vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvarsall.bat")
+
         # get current platform architecture and format for vcvars argument
-        arch = spack.vendor.archspec.cpu.host().family.name
+        # vcvars target/host arch arguments are in the form of
+        # host-arc_target-arch, so in vcvars terms x86_64 is not the 64bit
+        # extension of x86, it's a 32bit host with a 64bit target, which, will
+        # run on a 64bit host, but is not accurate, and doesn't scale to arm.
+        # compose a proper vcvars arch string
+        
+        # get spec target
+        spec_target_arch = self.spec.target.family.name
+        # get host bitness
+        host_machine_type = platform.machine().lower()
+
+        # generic check for arm arch
+        check_arm = lambda x: "arm" in x or "aarch" in x
+
+        # establish host arch and bit
+        host_is_arm = check_arm(host_machine_type)
+        host_is_64bit = struct.calcsize('P')*8 == 64
+        # establish target arch and bit
+        target_is_arm = check_arm(spec_target_arch)
+        target_is_64bit = "64" in spec_target_arch
+
+        def compute_arch(is64bit, is_arm):
+            if is_arm:
+                return "arm64" if is64bit else "arm"
+            return "x64" if is64bit else "x86"
+        # convert understanding of target and host to vcvars terms
+        host_arch = compute_arch(host_is_64bit, host_is_arm)
+        target_arch = compute_arch(target_is_64bit, target_is_arm)
+        # vcvars target host string
+        arch = f"{host_arch}_{target_arch}"
+
         msvc_version = Version(re.search(Msvc.compiler_version_regex, self.cc).group(1))
         self.vcvars_call = VCVarsInvocation(vcvars_script_path, arch, msvc_version)
         env_cmds.append(self.vcvars_call)
