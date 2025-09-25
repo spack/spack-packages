@@ -49,7 +49,6 @@ class Nek5000(Package):
 
     depends_on("mpi", when="+mpi")
 
-    # new line added to fix visit dependency
     depends_on("visit", when="+visit")
 
     patch("add_fjfortran.patch", when="%fj")
