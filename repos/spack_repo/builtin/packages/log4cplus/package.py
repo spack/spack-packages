@@ -23,3 +23,8 @@ class Log4cplus(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+
+    def url_for_version(self, version):
+        # log4cplus tags use REL_X_Y_Z
+        rel = "REL_{0}".format(str(version).replace('.', '_'))
+        return f"https://github.com/log4cplus/log4cplus/releases/download/{rel}/log4cplus-{version}.tar.bz2"
