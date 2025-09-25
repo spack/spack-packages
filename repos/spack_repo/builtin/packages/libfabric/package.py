@@ -212,30 +212,31 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
             *self.with_or_without("uring"),
             *self.with_or_without("cuda", activation_value="prefix"),
             *self.with_or_without("ze", variant="level_zero"),
+            *self.with_or_without("kdreg2", variant="kdreg"),
             *self.with_or_without("gdrcopy", activation_value="prefix"),
             *self.with_or_without(
                 "rocr", variant="rocm", activation_value=lambda _: self.spec["hip"].prefix
             ),
         ]
 
-        if self.spec.satisfies("+kdreg"):
-            args.append("--with-kdreg2")
-
         for fabric in [f if isinstance(f, str) else f[0].value for f in self.fabrics]:
             if f"fabrics={fabric}" in self.spec:
-                args.append(f"--enable-{fabric}")
+                if fabric == "xpmem":
+                    args.append(f"--enable-xpmem={self.spec['xpmem'].prefix}")
+                elif fabric == "cxi":
+                    args.append(f"--with-json-c={self.spec['json-c'].prefix}")
+                    args.append(f"--with-curl={self.spec['curl'].prefix}")
+                    args.append(
+                        f"--with-cassini-headers={self.spec['cassini-headers'].prefix.include}"
+                    )
+                    args.append(
+                        f"--with-cxi-uapi-headers={self.spec['cxi-driver'].prefix.include}"
+                    )
+                    args.append(f"--enable-cxi={self.spec['libcxi'].prefix}")
+                else:
+                    args.append(f"--enable-{fabric}")
             else:
                 args.append(f"--disable-{fabric}")
-
-        if self.spec.satisfies("fabrics=cxi"):
-            args.append(f"--with-json-c={self.spec['json-c'].prefix}")
-            args.append(f"--with-curl={self.spec['curl'].prefix}")
-            args.append(f"--with-cassini-headers={self.spec['cassini-headers'].prefix.include}")
-            args.append(f"--with-cxi-uapi-headers={self.spec['cxi-driver'].prefix.include}")
-            args.append(f"--enable-cxi={self.spec['libcxi'].prefix}")
-
-        if self.spec.satisfies("fabrics=xpmem"):
-            args.append(f"--enable-xpmem={self.spec['xpmem'].prefix}")
 
         return args
 
