@@ -398,7 +398,11 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_string("CMAKE_CXX_FLAGS_RELEASE", "-O1"))
 
         # C++17
-        if spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl") or spec.satisfies("^rocprim@7.0:"):
+        if (
+            spec.satisfies("@2024.07.0:")
+            and spec.satisfies("+sycl")
+            or spec.satisfies("^rocprim@7.0:")
+        ):
             entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
         # C++14
         elif spec.satisfies("@0.14.0:"):
