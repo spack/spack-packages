@@ -23,6 +23,7 @@ class Libunwind(AutotoolsPackage):
 
     version("master", branch="master")
     version("1.8-stable", branch="v1.8-stable")
+    version("1.8.3", sha256="be30d910e67f58d82e753231f1357f326a1a088acf126b21ff77e60aab19b90b")
     version("1.8.2", sha256="7f262f1a1224f437ede0f96a6932b582c8f5421ff207c04e3d9504dfa04c8b82")
     version("1.8.1", sha256="ddf0e32dd5fafe5283198d37e4bf9decf7ba1770b6e7e006c33e6df79e6a6157")
     version("1.7-stable", branch="v1.7-stable")
@@ -109,7 +110,7 @@ class Libunwind(AutotoolsPackage):
     patch(
         "https://src.fedoraproject.org/rpms/libunwind/raw/49b1c9d51f8194546ba559f3f20e10889c8a073a/f/457612f470f8c0e718cdf7f14ef1ecb583f3b3a6.patch",
         sha256="4562c231f1051bd327cf27b6940445e5c0d83e5d8427a6ca36c9f0853b3e4a6d",
-        when="@1.8:",
+        when="@1.8",
     )
 
     def url_for_version(self, version):

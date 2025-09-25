@@ -32,7 +32,7 @@ class Fontconfig(AutotoolsPackage):
     depends_on("freetype")
     depends_on("gperf", type="build", when="@2.11.1:")
     depends_on("libxml2@2.6:")
-    depends_on("pkgconfig@0.9:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("font-util")
     depends_on("uuid", when="@2.13.1:")
     depends_on("python@3:", type="build", when="@2.13.93:")

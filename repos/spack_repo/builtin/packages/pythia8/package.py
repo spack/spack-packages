@@ -37,31 +37,6 @@ class Pythia8(AutotoolsPackage):
     version("8.303", sha256="cd7c2b102670dae74aa37053657b4f068396988ef7da58fd3c318c84dc37913e")
     version("8.302", sha256="7372e4cc6f48a074e6b7bc426b040f218ec4a64b0a55e89da6af56933b5f5085")
     version("8.301", sha256="51382768eb9aafb97870dca1909516422297b64ef6a6b94659259b3e4afa7f06")
-    version(
-        "8.244",
-        sha256="e34880f999daf19cdd893a187123927ba77d1bf851e30f6ea9ec89591f4c92ca",
-        deprecated=True,
-    )
-    version(
-        "8.240",
-        sha256="d27495d8ca7707d846f8c026ab695123c7c78c7860f04e2c002e483080418d8d",
-        deprecated=True,
-    )
-    version(
-        "8.235",
-        sha256="e82f0d6165a8250a92e6aa62fb53201044d8d853add2fdad6d3719b28f7e8e9d",
-        deprecated=True,
-    )
-    version(
-        "8.230",
-        sha256="332fad0ed4f12e6e0cb5755df0ae175329bc16bfaa2ae472d00994ecc99cd78d",
-        deprecated=True,
-    )
-    version(
-        "8.212",
-        sha256="f8fb4341c7e8a8be3347eb26b00329a388ccf925313cfbdba655a08d7fd5a70e",
-        deprecated=True,
-    )
 
     variant(
         "cxxstd",
@@ -115,7 +90,6 @@ class Pythia8(AutotoolsPackage):
     depends_on("evtgen", when="+evtgen")
     depends_on("fastjet@3.0.0:", when="+fastjet")
     depends_on("lhapdf@6.2:", when="+lhapdf")
-    depends_on("boost", when="+lhapdf @:8.213")
     depends_on("rivet", when="+rivet")
     depends_on("yoda", when="@:8.312 +rivet")
     depends_on("yoda@2:", when="+yoda")

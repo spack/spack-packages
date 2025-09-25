@@ -81,6 +81,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     # ROCPRIM is not a direct dependency, but until we have reviewed our CMake
     # setup for rocthrust, this needs to also be added here.
     depends_on("rocprim", when="+rocm")
+    # error due to change in warpSize constant definition in ROCm 7.0
+    depends_on("hip@:6", when="@:1.9.0 +rocm")
     depends_on("hwloc@2.1:", when="+hwloc")
     # TODO: replace with the next PAPI version when available (>7.0.1.0)
     depends_on("papi@master+sde", when="+sde")
