@@ -497,7 +497,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # provides %rocmcc, which we don't want to use.
     requires(
         *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
-        policy="one_of",
+        policy="any_of",  # any to ensure %clang works
         when="+rocm",
         msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
     )
