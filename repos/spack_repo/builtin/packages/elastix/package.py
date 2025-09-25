@@ -34,9 +34,3 @@ class Elastix(CMakePackage):
 
     depends_on("itk@5.4:", when="@5.2:")
     depends_on("itk@5.3:", when="@5.1:")
-    depends_on("itk@5.1.1:", when="@5.0.1")
-
-    def cmake_args(self):
-        # TODO: Add support for elastix build-args
-        args = []
-        return args
