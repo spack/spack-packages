@@ -257,7 +257,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
 
     # Required dependencies
     # Versions come from gdal_check_package in cmake/helpers/CheckDependentLibraries.cmake
-    depends_on("pkgconfig@0.25:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("proj@6.3.1:", when="@3.9:")
     depends_on("proj@6:")
     depends_on("zlib-api")

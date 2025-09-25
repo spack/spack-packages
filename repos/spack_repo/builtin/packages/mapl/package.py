@@ -137,41 +137,6 @@ class Mapl(CMakePackage):
     version("2.23.1", sha256="563f3e9f33adae298835e7de7a4a29452a2a584d191248c59494c49d3ee80d24")
     version("2.23.0", sha256="ae25ec63d0f288599c668f35fdbccc76abadbfc6d48f95b6eb4e7a2c0c69f241")
     version("2.22.0", sha256="3356b8d29813431d272c5464e265f3fe3ce1ac7f49ae6d41da34fe4b82aa691a")
-    version(
-        "2.12.3",
-        sha256="e849eff291939509e74830f393cb2670c2cc96f6160d8060dbeb1742639c7d41",
-        deprecated=True,
-    )
-    version(
-        "2.11.0",
-        sha256="76351e026c17e2044b89085db639e05ba0e7439a174d14181e01874f0f93db44",
-        deprecated=True,
-    )
-    version(
-        "2.8.1",
-        sha256="a7657d4c52a66c3a6663e436d2c2dd4dbb81addd747e1ace68f59843665eb739",
-        deprecated=True,
-    )
-    version(
-        "2.8.0",
-        sha256="6da60a21ab77ecebc80575f25b756c398ef48f635ab0b9c96932a1d4ebd8b4a0",
-        deprecated=True,
-    )
-    version(
-        "2.7.3",
-        sha256="e8cdc0816471bb4c42673c2fa66d9d749f5a18944cd31580a2d6fd6d961ba163",
-        deprecated=True,
-    )
-    version(
-        "2.7.2",
-        sha256="8f123352c665c434a18ff87304a71a61fb3342919adcccfea2a40729992d9f93",
-        deprecated=True,
-    )
-    version(
-        "2.7.1",
-        sha256="8239fdbebd2caa47a232c24927f7a91196704e35c8b7909e1bbbefccf0647ea6",
-        deprecated=True,
-    )
 
     # Versions later than 3.14 remove FindESMF.cmake
     # from ESMA_CMake.
@@ -253,24 +218,6 @@ class Mapl(CMakePackage):
         tag="v3.21.0",
         when="@2.22.0:2.33",
     )
-    # NOTE: Remove this resource(), the patch() commands below
-    # and the actual patches when MAPL 2.12 and older are deleted
-    resource(
-        name="esma_cmake",
-        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
-        tag="v3.13.0",
-        when="@:2.12.3",
-    )
-
-    # Patch to configure Apple M1 chip in x86_64 Rosetta 2 emulator mode
-    # Needed for versions earlier than 3.14 of ESMA_cmake only.
-    patch("esma_cmake_apple_m1_rosetta.patch", when="@:2.12.3")
-
-    # Patch to add missing NetCDF C target in various CMakeLists.txt
-    patch("mapl-2.12.3-netcdf-c.patch", when="@:2.12.3")
-
-    # Patch to add missing MPI Fortran target to top-level CMakeLists.txt
-    patch("mapl-2.12.3-mpi-fortran.patch", when="@:2.12.3")
 
     # MAPL only compiles with MPICH from version 2.42.0 and higher so we conflict
     # with older versions. Also, it's only been tested with MPICH 4, so we don't
@@ -327,7 +274,6 @@ class Mapl(CMakePackage):
     depends_on("esmf@8.5:", when="@2.40:2.43")
     depends_on("esmf@8.4", when="@2.34:2.39")
     depends_on("esmf@8.3", when="@2.22:2.33")
-    depends_on("esmf", when="@:2.12.99")
     depends_on("esmf~debug", when="~debug")
     depends_on("esmf+debug", when="+debug")
 
@@ -415,8 +361,7 @@ class Mapl(CMakePackage):
         if self.spec.satisfies("@:2.39"):
             args.append(self.define("BUILD_WITH_FLAP", self.spec.satisfies("+flap")))
 
-        if self.spec.satisfies("@2.22.0:"):
-            args.append(self.define("CMAKE_MODULE_PATH", self.spec["esmf"].prefix.cmake))
+        args.append(self.define("CMAKE_MODULE_PATH", self.spec["esmf"].prefix.cmake))
 
         # Compatibility flags for gfortran
         fflags = []

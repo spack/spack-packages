@@ -615,7 +615,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     # Variants to use internal packages
     variant("internal-hwloc", default=False, description="Use internal hwloc")
-    variant("internal-pmix", default=False, description="Use internal pmix and prrte")
+    variant("internal-pmix", default=False, description="Use internal pmix and prrte", when="@3:")
     variant("internal-libevent", default=False, description="Use internal libevent")
     variant("openshmem", default=False, description="Enable building OpenSHMEM")
     variant("debug", default=False, description="Make debug build", when="build_system=autotools")
@@ -717,7 +717,7 @@ with '-Wl,-commons,use_dylibs' and without
     # PMIx is unavailable for @1, and required for @2:
     # OpenMPI @2: includes a vendored version:
     with when("~internal-pmix"):
-        depends_on("pmix@1", when="@2")
+        depends_on("pmix", when="@3:")
         depends_on("pmix@3.2:", when="@4:")
         depends_on("pmix@4.2.4:", when="@5:")
 

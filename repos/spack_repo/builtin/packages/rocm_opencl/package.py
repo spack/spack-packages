@@ -20,7 +20,7 @@ class RocmOpencl(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libOpenCL"]
+    libraries = ["libamdocl64"]
 
     license("MIT")
 
@@ -123,7 +123,9 @@ class RocmOpencl(CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        else:
+            ver = None
+        return ver
 
     def cmake_args(self):
         args = ["-DUSE_COMGR_LIBRARY=yes", "-DBUILD_TESTS=ON"]

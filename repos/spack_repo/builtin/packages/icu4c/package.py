@@ -40,7 +40,7 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
         with when(f"platform={plat}"):
             variant(
                 "cxxstd",
-                default="11",
+                default="17",
                 values=(conditional("11", "14", when="@:74"), "17"),
                 multi=False,
                 description="Use the specified C++ standard when building",
