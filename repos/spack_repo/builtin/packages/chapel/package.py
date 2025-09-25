@@ -607,7 +607,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         with set_env(CHPL_MAKE_THIRD_PARTY=join_path(self.build_directory, "third-party")):
             # print all the explicitly set CHPL_* config variables to assist in debugging
             for var in self.chpl_env_vars:
-                tty.info(var + '=' + os.getenv(var, '<unset>'))
+                tty.info(var + "=" + os.getenv(var, "<unset>"))
             make()
             with set_env(CHPL_HOME=self.build_directory):
                 if spec.satisfies("+chpldoc"):
