@@ -17,7 +17,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipRAND"
     git = "https://github.com/ROCm/hipRAND.git"
-    url = "https://github.com/ROCm/hipRAND/archive/rocm-6.1.2.tar.gz"
+    url = "https://github.com/ROCm/hipRAND/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
@@ -25,6 +25,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
+    version("6.4.3", sha256="15b67f1b0dcad6319d2fa54d3330a075e74d52a650b682f44afa086cb0f526f0")
     version("6.4.2", sha256="5edc609c1ef03f97a06bcf0e1aaa0402a3964cc66d3437da8136becf2db75a43")
     version("6.4.1", sha256="6310b63c31c68e454f6498f06679843bdbd27e1eca0fd40ed1700cae9fce88e0")
     version("6.4.0", sha256="60e9153edf617e984361696aa60af3ad44c5ae01ed75ad610c617a387b0559a4")
@@ -92,6 +93,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on("rocrand@" + ver, when="+rocm @" + ver)
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
@@ -133,6 +135,6 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         else:
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

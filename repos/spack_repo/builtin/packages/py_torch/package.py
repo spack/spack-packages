@@ -146,6 +146,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Required dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("binutils@2.36:", when="platform=linux", type="build")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
@@ -277,8 +278,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("cuda@10.2:11.4", when="@1.10+cuda")
         depends_on("cuda@9.2:11.4", when="@1.6:1.9+cuda")
     # https://github.com/pytorch/pytorch#prerequisites
+    depends_on("cudnn@8.5:9", when="@2.8:+cudnn")
     # https://github.com/pytorch/pytorch/issues/119400
-    depends_on("cudnn@8.5:9.0", when="@2.3:+cudnn")
+    depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("nccl", when="+nccl+cuda")
     depends_on("magma+cuda", when="+magma+cuda")
@@ -626,6 +628,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         # Spack logs have trouble handling colored output
         env.set("COLORIZE_OUTPUT", "OFF")
+
+        # Currently there are no variants/dependencies for Intel GPU support
+        env.set("USE_XPU", "OFF")
 
         enable_or_disable("test", keyword="BUILD")
         enable_or_disable("caffe2", keyword="BUILD")

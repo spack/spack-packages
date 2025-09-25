@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -13,11 +15,20 @@ class RocprofilerSystems(CMakePackage):
     homepage = "https://github.com/ROCm/rocprofiler-systems"
     git = "https://github.com/ROCm/rocprofiler-systems.git"
     url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.3.1.tar.gz"
+    executables = ["rocprof-sys-sample"]
+    tags = ["rocm"]
 
-    maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath", "wilephan-amd")
+    maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
 
+    version(
+        "6.4.3",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-6.4.3",
+        commit="ba0bfe8cf344294347cbb854084ab5b5df1b1a43",
+        submodules=True,
+    )
     version(
         "6.4.2",
         git="https://github.com/ROCm/rocprofiler-systems",
@@ -143,10 +154,10 @@ class RocprofilerSystems(CMakePackage):
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
             depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
-        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+        for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
             depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
-        for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
@@ -211,6 +222,16 @@ class RocprofilerSystems(CMakePackage):
             if name == "ldflags":
                 flags.append("-lintl")
         return (flags, None, None)
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"rocm: v(\d+)\.(\d+)", output)
+        if match:
+            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+        else:
+            ver = None
+        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if "+tau" in self.spec:

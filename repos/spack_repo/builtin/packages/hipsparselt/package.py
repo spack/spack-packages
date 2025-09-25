@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -17,12 +18,17 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     Currently, hipSPARSELt supports rocSPARSELt and cuSPARSELt v0.4 as backends."""
 
     homepage = "https://github.com/ROCm/hipsparselt"
-    url = "https://github.com/ROCm/hipSPARSELt/archive/refs/tags/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/hipSPARSELt/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/hipsparseLt.git"
+    tags = ["rocm"]
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
 
+    libraries = ["libhipsparselt"]
+
     license("MIT")
+
+    version("6.4.3", sha256="2255b2732a9101a7b4fb51f4d11810be64dc3999728c77850a3918cabcf5cb50")
     version("6.4.2", sha256="5148b05436e8f7ceffdb31a01da53adc061019055cecf9b71051103045656dc8")
     version("6.4.1", sha256="74836c789e912e61532aacf275efb053ac6d0818b3da360e7b236e1b82b3152b")
     version("6.4.0", sha256="3950f424c5623bdf764e23c263f3a63de62e3690f491251b88054e27560dc604")
@@ -72,13 +78,14 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipsparse@{ver}", when=f"@{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}", type="test")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
     depends_on("cmake@3.5:", type="build")
@@ -100,6 +107,17 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.2.patch", when="@6.2")
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.3.patch", when="@6.3")
     patch("0002-add-hipsparse-include.patch", when="@6.4")
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)

@@ -15,15 +15,16 @@ class RocmOpencl(CMakePackage):
     """OpenCL: Open Computing Language on ROCclr"""
 
     homepage = "https://github.com/ROCm/clr"
-    url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-{0}.tar.gz"
+    url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/clr.git"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libOpenCL"]
+    libraries = ["libamdocl64"]
 
     license("MIT")
 
+    version("6.4.3", sha256="aa7c9d9d7da3b5fc944b17ca7c032e8924a8dc327ec79eb8cb7f0c9df6fa76dc")
     version("6.4.2", sha256="6dca1ffff36dbf8665594a72b47b8dd0362f7ee446dea03961d8b5a639bf3ede")
     version("6.4.1", sha256="18ee75a04f6fc55e72f8b3fcad1e0d58eceb2ce0e0696ca76d9b3dfaf4bfd7ff")
     version("6.4.0", sha256="76fd0ad83da0dabf7c91ca4cff6c51f2be8ab259e08ad9743af47d1b3473c2ff")
@@ -89,6 +90,7 @@ class RocmOpencl(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
@@ -110,6 +112,7 @@ class RocmOpencl(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 
@@ -120,16 +123,14 @@ class RocmOpencl(CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        else:
+            ver = None
+        return ver
 
     def cmake_args(self):
         args = ["-DUSE_COMGR_LIBRARY=yes", "-DBUILD_TESTS=ON"]
-        if self.spec.satisfies("@:5.6"):
-            args.append(self.define("ROCCLR_PATH", self.stage.source_path + "/rocclr"))
-            args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path))
-        if self.spec.satisfies("@5.7:"):
-            args.append(self.define("CLR_BUILD_HIP", False))
-            args.append(self.define("CLR_BUILD_OCL", True))
+        args.append(self.define("CLR_BUILD_HIP", False))
+        args.append(self.define("CLR_BUILD_OCL", True))
         if self.spec.satisfies("+asan"):
             args.append(
                 self.define(

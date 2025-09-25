@@ -23,25 +23,12 @@ class Mbedtls(MakefilePackage):
 
     # version 3.x
     version("3.6.2", sha256="8b54fb9bcf4d5a7078028e0520acddefb7900b3e66fec7f7175bb5b7d85ccdca")
-    with default_args(deprecated=True):
-        # https://nvd.nist.gov/vuln/detail/CVE-2024-45159
-        version("3.6.1", sha256="fc8bef0991b43629b7e5319de6f34f13359011105e08e3e16eed3a9fe6ffd3a3")
-        version("3.6.0", sha256="3ecf94fcfdaacafb757786a01b7538a61750ebd85c4b024f56ff8ba1490fcd38")
-        version("3.3.0", sha256="a22ff38512697b9cd8472faa2ea2d35e320657f6d268def3a64765548b81c3ec")
 
     # version 2.x
     version("2.28.9", sha256="e85ea97aaf78dd6c0a5ba2e54dd5932ffa15f39abfc189c26beef7684630c02b")
     version("2.28.8", sha256="241c68402cef653e586be3ce28d57da24598eb0df13fcdea9d99bfce58717132")
     version("2.28.2", sha256="1db6d4196178fa9f8264bef5940611cd9febcd5d54ec05f52f1e8400f792b5a4")
     version("2.7.19", sha256="3da12b1cebe1a25da8365d5349f67db514aefcaa75e26082d7cb2fa3ce9608aa")
-
-    # deprecated versions
-    # required by julia@1.6:1.7
-    version(
-        "2.24.0",
-        sha256="b5a779b5f36d5fc4cba55faa410685f89128702423ad07b36c5665441a06a5f3",
-        deprecated=True,
-    )
 
     variant("pic", default=False, description="Compile with position independent code.")
     variant(

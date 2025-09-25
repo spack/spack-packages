@@ -13,13 +13,13 @@ class Rocprim(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocPRIM"
     git = "https://github.com/ROCm/rocPRIM.git"
-    url = "https://github.com/ROCm/rocPRIM/archive/rocm-6.1.0.tar.gz"
+    url = "https://github.com/ROCm/rocPRIM/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
-
+    version("6.4.3", sha256="b66feed30fe53aa8f2f8902604394c72f156b6517f8e5174d5b9d0b3dfcbb3c1")
     version("6.4.2", sha256="c228a7b434f7b9cb70204e43326a07bf31f4dacb15ae5e34ea1cfd839d0d459b")
     version("6.4.1", sha256="ff84b839bbe07fd2c97771c1b864dac641bfa654a652e75b0e7fed5e3ec5bb7c")
     version("6.4.0", sha256="c35c568b83f8894fc3b9b722343b0ea75c3bd961be24075fb3527d5230788e26")
@@ -76,6 +76,7 @@ class Rocprim(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -107,7 +108,7 @@ class Rocprim(CMakePackage):
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
-        if self.spec.satisfies("@5.6:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

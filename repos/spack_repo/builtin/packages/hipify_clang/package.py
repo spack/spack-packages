@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -13,13 +15,15 @@ class HipifyClang(CMakePackage):
 
     homepage = "https://github.com/ROCm/HIPIFY"
     git = "https://github.com/ROCm/HIPIFY.git"
-    url = "https://github.com/ROCm/HIPIFY/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/HIPIFY/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["hipify-perl"]
 
     license("MIT")
 
+    version("6.4.3", sha256="00156b62bfe3e8c848fb7e4573e55253ec0c86e663a226e794ff314934060182")
     version("6.4.2", sha256="b20623789fcdd21d3fb9d935b8c4c51c12f9b3e444e7e02f29e2869899db2531")
     version("6.4.1", sha256="f22595edb0501bc29aa62263a65333748ebb5a50db80179f6c8e5141697a22ef")
     version("6.4.0", sha256="874e3ee9801f795aaae30d6ea86e5edc991d5f71a5dee0a8e8eb7ce6379a51eb")
@@ -43,7 +47,7 @@ class HipifyClang(CMakePackage):
     # the patch was added to install the targets in the correct directory structure
     # this will fix the issue https://github.com/spack/spack/issues/30711
 
-    patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@5.6:6.0")
+    patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@:6.0")
     patch("0003-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@6.1")
     patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:")
 
@@ -69,9 +73,16 @@ class HipifyClang(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"HIP version (\S+)", output)
+        return match.group(1) if match else "None"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # The installer puts the binaries directly into the prefix

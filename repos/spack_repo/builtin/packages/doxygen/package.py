@@ -10,17 +10,18 @@ from spack.package import *
 
 
 class Doxygen(CMakePackage):
-    """Doxygen is the de facto standard tool for generating documentation
-    from annotated C++ sources, but it also supports other popular programming
-    languages such as C, Objective-C, C#, PHP, Java, Python, IDL (Corba,
-    Microsoft, and UNO/OpenOffice flavors), Fortran, VHDL, Tcl, and to some
-    extent D.."""
+    """Doxygen is the de facto standard tool for generating documentation from annotated C++
+    sources, but it also supports other popular programming languages such as C, Objective-C, C#,
+    PHP, Java, Python, IDL (Corba, Microsoft, and UNO/OpenOffice flavors), Fortran, and to some
+    extent D. Doxygen also supports the hardware description language VHDL.
+    """
 
     homepage = "https://www.doxygen.org"
     url = "https://github.com/doxygen/doxygen/archive/refs/tags/Release_1_13_2.tar.gz"
 
-    license("GPL-2.0-or-later")
+    license("GPL-2.0", checked_by="mcmehrtens")
 
+    version("1.14.0", sha256="5663bf33e979381f470c2f4055c3b162e0abe41bdd6c5dccefd8d8775780bcc3")
     version("1.13.2", sha256="4c9d9c8e95c2af4163ee92bcb0f3af03b2a4089402a353e4715771e8d3701c48")
     version("1.13.1", sha256="16632b5052e0e5f8acbcfc80aaf37f0e445e777ca68aab0df136a68fa855d91c")
     version("1.13.0", sha256="f447f6d3dce91e70d323611fc5e1b15dfff705093eddbe8f36f2d9b10d99743d")
@@ -134,6 +135,10 @@ class Doxygen(CMakePackage):
         when="@1.10:1.11.0",
     )
 
+    # Doxygen fails to compile if newer version of LLVM are used
+    # https://github.com/doxygen/doxygen/issues/10928
+    conflicts("%llvm@19:", when="@:1.13.2")
+
     # Some GCC 7.x get stuck in an infinite loop
     conflicts("%gcc@7.0:7.9", when="@1.9:")
 
@@ -157,4 +162,5 @@ class Doxygen(CMakePackage):
         return [
             self.define("use_sys_spdlog", self.spec.satisfies("@1.9.8:")),
             self.define("use_sys_sqlite3", self.spec.satisfies("@1.10:")),
+            self.define("use_sys_fmt", self.spec.satisfies("@1.14:")),
         ]

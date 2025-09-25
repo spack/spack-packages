@@ -14,7 +14,7 @@ class Rdc(CMakePackage):
     """ROCm Data Center Tool"""
 
     homepage = "https://github.com/ROCm/rdc"
-    url = "https://github.com/ROCm/rdc/archive/rocm-6.1.2.tar.gz"
+    url = "https://github.com/ROCm/rdc/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
@@ -28,6 +28,8 @@ class Rdc(CMakePackage):
         return url.format(version)
 
     license("MIT")
+
+    version("6.4.3", sha256="1a4ba522b780375c8a8b24ceba34d5021d2255dc09fa7f841ae0249eeb96dea1")
     version("6.4.2", sha256="56dcbdf3a0b4e330d7952e790cd6e7bca5fde351189d2f99026c1e4c8ac2fc63")
     version("6.4.1", sha256="8b6d58c6ce30497a9d6b465057a8a39be9e9e4603b75a52b5004335f12310024")
     version("6.4.0", sha256="2ee3def1e90784923f2043220974d30fe9581ec0d54c93628911ed8292fc56c4")
@@ -50,7 +52,7 @@ class Rdc(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.15:", type="build")
-    depends_on("grpc@1.55.0+shared", when="@5.6.0:6.0")
+    depends_on("grpc@1.55.0+shared", when="@:6.0")
     depends_on("grpc@1.59.1+shared", when="@6.1")
     depends_on("grpc@1.61.2+shared", when="@6.2:")
     depends_on("protobuf")
@@ -76,6 +78,7 @@ class Rdc(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -91,10 +94,11 @@ class Rdc(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
     def patch(self):

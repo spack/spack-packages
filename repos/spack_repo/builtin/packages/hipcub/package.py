@@ -14,13 +14,14 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipCUB"
     git = "https://github.com/ROCm/hipCUB.git"
-    url = "https://github.com/ROCm/hipCUB/archive/rocm-6.1.2.tar.gz"
+    url = "https://github.com/ROCm/hipCUB/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("BSD-3-Clause")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("6.4.3", sha256="1246f2d23665e4c4ec58a923d96b35cbfa4079adeda8bac47ba8fad3f85437bf")
     version("6.4.2", sha256="31efcb029c6f5056c04a03e881704206e988dda949cd308ef8c474e5bb9bbaee")
     version("6.4.1", sha256="93a213a37142ae38518b6d912b89dc0ecb50e092ce84df4cb06447f1528fcc29")
     version("6.4.0", sha256="2c044ed9bf53b9410ef6de4ca578384569b0a89cac4e8604dfdde390b2918481")
@@ -81,13 +82,14 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocprim@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip +cuda@{ver}", when=f"+cuda @{ver}")
 
     # fix hardcoded search in /opt/rocm and broken config mode search
-    patch("find-hip-cuda-rocm-5.3.patch", when="@5.6:5.7 +cuda")
+    patch("find-hip-cuda-rocm-5.3.patch", when="@5.7 +cuda")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+rocm"):
@@ -104,7 +106,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

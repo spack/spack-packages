@@ -29,7 +29,8 @@ class PyDmTree(PythonPackage):
     depends_on("cxx", type="build")
 
     # Based on PyPI wheel availability
-    depends_on("python@:3.12", when="@0.1.8:", type=("build", "run"))
+    depends_on("python@3.10:3.13", when="@0.1.9:", type=("build", "run"))
+    depends_on("python@:3.11", when="@0.1.8", type=("build", "run"))
     depends_on("python@:3.10", when="@0.1.6:0.1.7", type=("build", "run"))
 
     depends_on("python@3.10:", type=("build", "run"), when="@0.1.9:")

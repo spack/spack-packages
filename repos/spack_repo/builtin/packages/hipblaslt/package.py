@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -18,8 +20,10 @@ class Hipblaslt(CMakePackage):
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
     tags = ["rocm"]
+    libraries = ["libhipblaslt"]
 
     license("MIT")
+    version("6.4.3", sha256="64252588faf8a9089838e8f427e911617916fd6905a8cc65370e8d25fafdf0e4")
     version("6.4.2", sha256="5e5f4a84aa4e5ef6018d0d91e97fc20394c7c17822cc8fb8307fff07b1d91823")
     version("6.4.1", sha256="929f781f86df40143c3ab98df2d746170dedb6788e368335e24c84796285a8a4")
     version("6.4.0", sha256="a4baa0c7336db9d46a0884c8ccfd0fb7e00a502b478aed9f588aa26fa8773353")
@@ -68,6 +72,7 @@ class Hipblaslt(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -76,11 +81,11 @@ class Hipblaslt(CMakePackage):
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("msgpack-c")
@@ -137,6 +142,17 @@ class Hipblaslt(CMakePackage):
                 "tensilelite/Tensile/Ops/gen_assembly.sh",
                 string=True,
             )
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def cmake_args(self):
         args = [

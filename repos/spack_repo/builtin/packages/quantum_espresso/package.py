@@ -76,7 +76,7 @@ class QuantumEspresso(CMakePackage, Package):
         depends_on("cmake@3.14.0:", type="build")
 
     variant("libxc", default=False, description="Uses libxc")
-    depends_on("libxc@5.1.2:", when="+libxc")
+    depends_on("libxc@5.1.2:~shared", when="+libxc")
 
     variant("openmp", default=True, description="Enables OpenMP support")
     # Need OpenMP threaded FFTW and BLAS libraries when configured

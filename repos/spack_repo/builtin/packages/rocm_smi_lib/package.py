@@ -16,12 +16,13 @@ class RocmSmiLib(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocm_smi_lib"
     git = "https://github.com/ROCm/rocm_smi_lib.git"
-    url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-6.2.4.tar.gz"
+    url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath")
     libraries = ["librocm_smi64"]
 
+    version("6.4.3", sha256="74fde0f8cd9362f7073db22ffb98c72f1f7bdb42b6e7a63ae4e0a06607644d4a")
     version("6.4.2", sha256="466f6351c1d94c043195c6b5addd70d21eb1e678d5637b9849dc6b5d0e858cb5")
     version("6.4.1", sha256="c82c8c9de89537b903d82711c531b4b1c6d104098b5370d049527d1f250944b7")
     version("6.4.0", sha256="0c462520b4fa0cf9b49515b207b0ead32a5f96ddba487c5d4fa07a403690c05a")
@@ -67,6 +68,7 @@ class RocmSmiLib(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -84,6 +86,7 @@ class RocmSmiLib(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 
@@ -96,7 +99,6 @@ class RocmSmiLib(CMakePackage):
         when="@6.1.1:",
     )
 
-    patch("disable_pdf_generation_with_doxygen_and_latex.patch", when="@:5.6")
     patch(
         "https://github.com/ROCm/rocm_smi_lib/commit/ce405476cabf66a884a351cb2e3253bd5c29e06b.patch?full_index=1",
         sha256="54094b5dbd05b79341e38e95f785dcbb0ba4a5aef4bad19e075ea77470164138",

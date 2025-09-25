@@ -12,11 +12,13 @@ class Rocal(CMakePackage):
     of storage formats and modify them through a processing graph programmable by the user."""
 
     homepage = "https://github.com/ROCm/rocAL"
-    url = "https://github.com/ROCm/rocAL/archive/refs/tags/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rocAL/archive/refs/tags/rocm-6.4.3.tar.gz"
+    tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("6.4.3", sha256="b25798a37372e671fa8e73a6c0ca651ccec8231ef71441b24614f0aa157811ff")
     version("6.4.2", sha256="0ec6508d95fe1dbe5b711e6c0ee226790ca7245640fa0702f1ddc76f8981f691")
     version("6.4.1", sha256="9ed8949b7a0c588b6ab8b804e353819314659cedfecfdf91fffc1c73f33d3014")
     version("6.4.0", sha256="6239caa398c2779c1c7ecff3cebe7d206cd2fa591c1800f6f2ae16329876dd4a")
@@ -46,6 +48,7 @@ class Rocal(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"mivisionx@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")

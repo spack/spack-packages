@@ -15,13 +15,14 @@ class Rocfft(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocFFT/"
     git = "https://github.com/ROCm/rocFFT.git"
-    url = "https://github.com/ROCm/rocfft/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rocfft/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocfft"]
 
     license("MIT")
+    version("6.4.3", sha256="9ccd198ab1ec1b729992d00fbe5f9e3955ed77690974d8bd1b713539b6c21c7e")
     version("6.4.2", sha256="5dd068127129ad537de176d21d009f1b1b9540274dee13c486e9c4607629aa77")
     version("6.4.1", sha256="66e543990736bc4bf3b27fa085cca3bea0d42252f960be376371549707e35373")
     version("6.4.0", sha256="0e9f3f23d8facee65e32baaec7941119b56eb17313b8b514e1c3994c9777c320")
@@ -92,6 +93,7 @@ class Rocfft(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
@@ -156,6 +158,6 @@ class Rocfft(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

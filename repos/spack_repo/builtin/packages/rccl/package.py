@@ -18,11 +18,17 @@ class Rccl(CMakePackage):
 
     homepage = "https://github.com/ROCm/rccl"
     git = "https://github.com/ROCm/rccl.git"
-    url = "https://github.com/ROCm/rccl/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rccl/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librccl"]
+    version(
+        "6.4.3",
+        tag="rocm-6.4.3",
+        commit="2f7ac66cd64c68d4af8bb4562ce193778a7e470e",
+        submodules=True,
+    )
     version(
         "6.4.2",
         tag="rocm-6.4.2",
@@ -86,7 +92,6 @@ class Rccl(CMakePackage):
     )
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
-    patch("0003-Fix-numactl-rocm-smi-path-issue.patch", when="@5.6")
     patch("0004-Set-rocm-core-path-for-version-file.patch", when="@6.0:6.2")
     patch("0004-Set-rocm-core-path-for-version-file-6.3.patch", when="@6.3")
     patch("0004-Set-rocm-core-path-for-version-file-6.4.patch", when="@6.4")
@@ -115,6 +120,7 @@ class Rccl(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -123,7 +129,7 @@ class Rccl(CMakePackage):
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 

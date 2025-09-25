@@ -13,11 +13,12 @@ class Rocminfo(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocminfo"
     git = "https://github.com/ROCm/rocminfo.git"
-    url = "https://github.com/ROCm/rocminfo/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rocminfo/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "haampie")
 
+    version("6.4.3", sha256="0aa040963daaa2b5ebbec818a2d53c83612912686336160c223fb664dc0ca92b")
     version("6.4.2", sha256="b559f7e22086db952cec098d5512c77ae844f955a16d2cbbbd088fb3844c8787")
     version("6.4.1", sha256="eabbe4bfb29152900bbde812c6fffd5555b45842259242d85f29e449c00f3249")
     version("6.4.0", sha256="060184e70755cb267017553ec37cc5b36af2c94e6b0643cad4b9fed270199a79")
@@ -74,6 +75,7 @@ class Rocminfo(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

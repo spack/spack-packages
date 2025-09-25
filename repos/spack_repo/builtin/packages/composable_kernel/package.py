@@ -15,11 +15,13 @@ class ComposableKernel(CMakePackage):
 
     homepage = "https://github.com/ROCm/composable_kernel"
     git = "https://github.com/ROCm/composable_kernel.git"
-    url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-6.4.3.tar.gz"
+    tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
 
     license("MIT")
 
+    version("6.4.3", sha256="70d9a2da51d7967e95329884dbd0154753b3ffaecd7272501c59e951bb5160cc")
     version("6.4.2", sha256="6e2acd889d7558f3be88915f249496394a690dd5d7675c36e4053e3856b51567")
     version("6.4.1", sha256="6db4d36673da6506ca52625b3bd40c29d3b376d31a224fd221ffe60cf97564bf")
     version("6.4.0", sha256="8dbfea0bdc4950ca60e8d1ea43edf1f515c4a34e47ead951415c49a0669a3baf")
@@ -59,6 +61,7 @@ class ComposableKernel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     for ver in [
+        "6.4.3",
         "6.4.2",
         "6.4.1",
         "6.4.0",

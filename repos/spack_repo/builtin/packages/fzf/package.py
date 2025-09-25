@@ -26,6 +26,7 @@ class Fzf(GoPackage):
 
     # Versions from newest to oldest
     version("master", branch="master")
+    version("0.65.2", sha256="53b7e0077833f96ae04fd1e312ed65b2d5c427422b652dd3ce6c2d1702f8ce56")
     version("0.65.1", sha256="82fa35dc3ba5d716db26a507f90bb0e724f586123c28ad3fb376bd8384669abf")
     version("0.64.0", sha256="e990529375a75e9be03b58b6a136573b9fd1189c1223aaa760e47fcb94812172")
     version("0.62.0", sha256="e5beae86a3d026b2c2cfc165715d45b831b9f337a9e96f711ba3bc3d15e50900")
