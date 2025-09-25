@@ -212,6 +212,10 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
             *self.with_or_without("uring"),
             *self.with_or_without("cuda", activation_value="prefix"),
             *self.with_or_without("ze", variant="level_zero"),
+            *self.with_or_without("gdrcopy"),
+            *self.with_or_without(
+                "rocr", variant="rocm", activation_value=lambda _: self.spec["hip"].prefix
+                ),
         ]
 
         if self.spec.satisfies("+kdreg"):
@@ -232,12 +236,6 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("fabrics=xpmem"):
             args.append(f"--enable-xpmem={self.spec['xpmem'].prefix}")
-
-        if self.spec.satisfies("+gdrcopy"):
-            args.append(f"--with-gdrcopy={self.spec['gdrcopy'].prefix}")
-
-        if self.spec.satisfies("+rocm"):
-            args.append(f"--with-rocr={self.spec['hip'].prefix}")
 
         return args
 
