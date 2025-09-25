@@ -157,7 +157,7 @@ class Python(Package):
 
     if sys.platform != "win32":
         depends_on("gmake", type="build")
-        depends_on("pkgconfig@0.9.0:", type="build")
+        depends_on("pkgconfig", type="build")
         depends_on("gettext +libxml2", when="+libxml2")
         depends_on("gettext ~libxml2", when="~libxml2")
 
