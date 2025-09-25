@@ -26,5 +26,5 @@ class Log4cplus(CMakePackage):
 
     def url_for_version(self, version):
         # log4cplus tags use REL_X_Y_Z
-        rel = "REL_{0}".format(str(version).replace('.', '_'))
+        rel = "REL_{0}".format(str(version).replace(".", "_"))
         return f"https://github.com/log4cplus/log4cplus/releases/download/{rel}/log4cplus-{version}.tar.bz2"
