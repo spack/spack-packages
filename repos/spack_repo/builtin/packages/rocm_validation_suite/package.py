@@ -45,10 +45,6 @@ class RocmValidationSuite(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
-    patch(
-        "007-cleanup-path-reference-donot-download-googletest-yaml-library-path_5.6.patch",
-        when="@5.6",
-    )
     patch("008-correcting-library-and-include-path-WITHOUT-RVS-BUILD-TESTS.patch", when="@5.7")
 
     # Replacing ROCM_PATH with corresponding package prefix path.
@@ -70,7 +66,7 @@ class RocmValidationSuite(CMakePackage):
     depends_on("googletest")
     depends_on("doxygen", type="build")
     depends_on("libdrm", when="@6.4:")
-    depends_on("pciutils+shared", type="build", when="@6.4:")
+    depends_on("pciutils+shared", when="@6.4:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec

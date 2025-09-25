@@ -12,10 +12,11 @@ class NlohmannJson(CMakePackage):
 
     homepage = "https://nlohmann.github.io/json/"
     url = "https://github.com/nlohmann/json/archive/v3.1.2.tar.gz"
-    maintainers("ax3l")
+    maintainers("ax3l", "pearzt")
 
     license("MIT")
 
+    version("3.12.0", sha256="4b92eb0c06d10683f7447ce9406cb97cd4b453be18d7279320f7b2f025c10187")
     version("3.11.3", sha256="0d8ef5af7f9794e3263480193c491549b2ba6cc74bb018906202ada498a79406")
     version("3.11.2", sha256="d69f9deb6a75e2580465c6c4c5111b89c4dc2fa94e3a85fcd2ffcd9a143d9273")
     # v3.11.0 & v3.11.1 omitted; released with significant regressions

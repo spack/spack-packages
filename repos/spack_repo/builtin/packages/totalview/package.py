@@ -24,6 +24,24 @@ class Totalview(Package):
     # will be the documentation.  The architecture-specific tarballs are added
     # as resources dependent on the specific architecture used.
     version(
+        "2025.3-x86-64",
+        sha256="64014770970bc6cb42a4cb1455cea95d4609964a38de0ecdc6713d4d5ee8bcdc",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.3/totalview_2025.3.4_linux_x86-64.tar",
+    )
+
+    version(
+        "2025.3-powerle",
+        sha256="dfdedbe0004ae4ee5926671165a94575c575e5c1a559cb44e4720b920948667a",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.3/totalview_2025.3.4_linux_powerle.tar",
+    )
+
+    version(
+        "2025.3-linux-arm64",
+        sha256="229592fddf989857cfcab89436cec4718308d7cbd6f3c3167be26b2cbf5d411f",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.3/totalview_2025.3.4_linux_arm64.tar",
+    )
+
+    version(
         "2025.2-x86-64",
         sha256="4f017ea4aad111dd118d5442c86c33e37fdd63aa368d62ba2821cbbba472b5fe",
         url="https://dslwuu69twiif.cloudfront.net/totalview/2025.2/totalview_2025.2.6_linux_x86-64.tar",

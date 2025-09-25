@@ -58,6 +58,10 @@ _os_pkg_map = {
 }
 
 _versions = {
+    "25.07": {
+        "deb": ("28a0cdf84b1f8e61d1d1ea484f4e2ecf645f7d916bb002ed34d46f6eb2e41345"),
+        "rpm": ("274d6f22b2f6c62cd72db4f64a91189159102aea87e6ae951ce92bcff230133b"),
+    },
     "25.04.1": {
         "deb": ("2228ba0a4093b5fc7fb0d64ad074560d30e0900e2f2f48f4431aadde5c22fa07"),
         "rpm": ("666e6813cd54a9a75a33fe92f223f52e12371a1ac517da96695d3487ee1424d8"),
@@ -474,7 +478,7 @@ class ArmplGcc(Package):
 
         # Link the same libraries as the gcc used for Arm PL
         armpl_libs += find_libraries(
-            ["libstdc++", "libgomp", "libm"],
+            ["libgomp", "libm"],
             root=self["gcc"].prefix,
             shared=self.spec.satisfies("+shared"),
             recursive=True,

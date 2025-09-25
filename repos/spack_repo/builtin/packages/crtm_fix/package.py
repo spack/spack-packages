@@ -20,6 +20,7 @@ class CrtmFix(Package):
     )
 
     version("3.1.2.0", sha256="4cfcba3030f13799c7543a9322669e3963038abf95f3eb5117bd909dea63fb4b")
+    version("3.1.1.3", sha256="a69778ff6bec7a1b7a76b79dbc94f442c1ed51fca1c4014464aada2730e63ca7")
     version("3.1.1.2", sha256="c2e289f690d82a3aa82d2239cbb567cd514fa0f476a8b498ceba11670685ca66")
     version(
         "2.4.0.1_emc", sha256="6e4005b780435c8e280d6bfa23808d8f12609dfd72f77717d046d4795cac0457"
