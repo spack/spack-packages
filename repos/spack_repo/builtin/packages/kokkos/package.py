@@ -28,6 +28,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("4.7.01", sha256="404cf33e76159e83b8b4ad5d86f6899d442b5da4624820ab457412116cdcd201")
     version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
     version("4.6.02", sha256="baf1ebbe67abe2bbb8bb6aed81b4247d53ae98ab8475e516d9c87e87fa2422ce")
     version("4.6.01", sha256="b9d70e4653b87a06dbb48d63291bf248058c7c7db4bd91979676ad5609bb1a3a")
@@ -445,7 +446,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Kokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC", "alloc_async")
         )
 
-        if self.version == Version("4.7.00"):
+        if self.version == Version("4.7.00") or self.version == Version("4.7.01"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
 
         # Remove duplicate options
