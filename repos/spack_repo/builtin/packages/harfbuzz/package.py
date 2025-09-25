@@ -28,6 +28,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     # Ref: https://github.com/harfbuzz/harfbuzz/blob/main/COPYING
     license("MIT-old", checked_by="wdconinc")
 
+    version("11.5.1", sha256="972a60a8d274d49e70361da6920c3a73dfb0fb4387f6c6811906a47ba634d8a1")
     version("11.4.1", sha256="7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698")
     version("11.3.3", sha256="e1fbca6b32a91ae91ecd9eb2ca8d47a5bfe2b1cb2e54855ab7a0b464919ef358")
     version("11.2.1", sha256="093714c8548a285094685f0bdc999e202d666b59eeb3df2ff921ab68b8336a49")
