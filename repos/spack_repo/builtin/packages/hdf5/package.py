@@ -568,16 +568,26 @@ class Hdf5(CMakePackage):
         if spec.satisfies("+mpi") and "msmpi" not in spec:
             args.extend(
                 [
-                    "-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
                     "-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc,
-                    "-DCMAKE_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
                     "-DCMAKE_C_COMPILER:PATH=%s" % spec["mpi"].mpicc,
                 ]
             )
 
+            if spec.satisfies("+cxx"):
+                args.extend(
+                    [
+                        "-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
+                        "-DCMAKE_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
+                    ]
+                )
+
             if spec.satisfies("+fortran"):
-                args.extend(["-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
-                args.extend(["-DCMAKE_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
+                args.extend(
+                    [
+                        "-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc,
+                        "-DCMAKE_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc,
+                    ]
+                )
 
         # work-around for https://github.com/HDFGroup/hdf5/issues/1320
         if spec.satisfies("@1.10.8,1.13.0"):
