@@ -23,6 +23,5 @@ class PyDonfig(PythonPackage):
 
     depends_on("py-setuptools@62.6:", type="build")
 
-    # strictly should be 0.28 but 0.29 is a safe version
-    depends_on("py-versioneer@0.28:0.29 +toml", type="build")
+    depends_on("py-versioneer@0.28: +toml", type="build")
     depends_on("py-pyyaml", type=("build", "run"))
