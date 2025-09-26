@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -17,6 +19,7 @@ class HipifyClang(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["hipify-perl"]
 
     license("MIT")
 
@@ -74,6 +77,12 @@ class HipifyClang(CMakePackage):
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"HIP version (\S+)", output)
+        return match.group(1) if match else "None"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # The installer puts the binaries directly into the prefix

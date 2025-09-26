@@ -27,46 +27,6 @@ class Apex(CMakePackage):
     version("2.6.2", sha256="0c3ec26631db7925f50cf4e8920a778b57d11913f239a0eb964081f925129725")
     version("2.6.1", sha256="511dbab0af541489052a3d6379c48f9577e51654491d3b2c8545020e9d29fb29")
     version("2.6.0", sha256="25b4f6afd1083475dc6680b5da87759c62d31fcf368996185573694fc40d5317")
-    version(
-        "2.5.1",
-        sha256="c01016e6a8a3a77e1021281ae53681cb83ea7a369c346ef85d45d27bacca2fca",
-        deprecated=True,
-    )
-    version(
-        "2.5.0",
-        sha256="d4a95f6226985acf2143e2b779b7bba3caf823564b04826b022f1a0c31093a0f",
-        deprecated=True,
-    )
-    version(
-        "2.4.1",
-        sha256="055d09dd36c529ebd3bab4defbec4ad1d227c004a291faf26e77e4ab79ce470c",
-        deprecated=True,
-    )
-    version(
-        "2.4.0",
-        sha256="15d8957da7b37d2c684a6f0f32aef65b0b26be6558da17963cf71f3fd3cfdf2f",
-        deprecated=True,
-    )
-    version(
-        "2.3.2",
-        sha256="acf37c024a2283cafbf206f508929208b62c8f800af22ad7c74c570863a31bb4",
-        deprecated=True,
-    )
-    version(
-        "2.3.1",
-        sha256="86bf6933f2c53531fcb24cda9fc7dc9919909bed54740d1e0bc3e7ce6ed78091",
-        deprecated=True,
-    )
-    version(
-        "2.3.0",
-        sha256="7e1d16c9651b913c5e28abdbad75f25c55ba25e9fa35f5d979c1d3f9b9852c58",
-        deprecated=True,
-    )
-    version(
-        "2.2.0",
-        sha256="cd5eddb1f6d26b7dbb4a8afeca2aa28036c7d0987e0af0400f4f96733889c75c",
-        deprecated=True,
-    )
 
     # Disable some default dependencies on Darwin/OSX
     darwin_default = False
@@ -127,9 +87,6 @@ class Apex(CMakePackage):
     # Conflicts
     conflicts("+jemalloc", when="+gperftools")
     conflicts("+plugins", when="~activeharmony")
-    # Compatibility fixed in 2.6.0 with
-    # https://github.com/UO-OACISS/apex/commit/4a7bdbb93367c3b1172ccb978825c67316f8bf4a
-    conflicts("^otf2@3:", when="@:2.5")
 
     # https://github.com/UO-OACISS/apex/pull/177#issuecomment-1726322959
     conflicts("+openmp", when="%gcc")
@@ -144,19 +101,12 @@ class Apex(CMakePackage):
 
     # Patches
 
-    # This patch ensures that the missing dependency_tree.hpp header is
-    # installed
-    patch("install-includes.patch", when="@2.3.2:2.4.1")
-
     def cmake_args(self):
         args = []
         spec = self.spec
         # CMake variables were updated in version 2.3.0, to make
         prefix = "APEX_WITH"
         test_prefix = "APEX_"
-        if spec.satisfies("@2.2.0"):
-            prefix = "USE"
-            test_prefix = ""
 
         args.append(self.define_from_variant(prefix + "_ACTIVEHARMONY", "activeharmony"))
         args.append(self.define_from_variant(prefix + "_BFD", "binutils"))

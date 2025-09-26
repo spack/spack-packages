@@ -55,7 +55,7 @@ class Imagemagick(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("pkgconfig@0.20:", type="build")
+    depends_on("pkgconfig", type="build")
 
     depends_on("fontconfig@2.1:")
     depends_on("freetype@2.8:")

@@ -12,6 +12,7 @@ class HipblasCommon(CMakePackage):
 
     homepage = "https://github.com/ROCm/hipBLAS-common"
     url = "https://github.com/ROCm/hipBLAS-common/archive/refs/tags/rocm-6.3.0.tar.gz"
+    tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
