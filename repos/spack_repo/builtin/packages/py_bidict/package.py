@@ -13,7 +13,7 @@ class PyBidict(PythonPackage):
     homepage = "https://github.com/jab/bidict"
     pypi = "bidict/bidict-0.23.1.tar.gz"
 
-    license("MPL-2.0", checked_by="github_user1")
+    license("MPL-2.0")
 
     version("0.23.1", sha256="03069d763bc387bbd20e7d49914e75fc4132a41937fa3405417e1a5a2d006d71")
 
