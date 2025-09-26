@@ -79,8 +79,8 @@ class Mpibind(AutotoolsPackage):
 
     # Need mpibind v0.23+ and hwloc v2.12+ for NV Grace Hopper
     depends_on("hwloc@2.12: +cuda +nvml", type="link",
-               when="@0.23: +cuda target=neoverse_v2")
-    conflicts("@:0.22 +cuda target=neoverse_v2",
+               when="@0.23: +cuda target=neoverse_v2:")
+    conflicts("@:0.22 +cuda target=neoverse_v2:",
               msg="version 0.23+ is needed for NVIDIA Grace Hopper")
 
     # flux-core >= 0.30.0 supports FLUX_SHELL_RC_PATH,
