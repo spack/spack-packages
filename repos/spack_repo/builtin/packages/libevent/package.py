@@ -41,12 +41,13 @@ class Libevent(AutotoolsPackage):
         "openssl",
         default=True,
         description="Build with encryption enabled at the libevent level.",
-        when="@2.1:",
     )
 
     depends_on("c", type="build")  # generated
 
     depends_on("openssl", when="+openssl")
+
+    conflicts("+openssl", when="@:2.0")
 
     def url_for_version(self, version):
         if version >= Version("2.0.22"):

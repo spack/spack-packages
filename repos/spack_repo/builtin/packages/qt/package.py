@@ -82,7 +82,7 @@ class Qt(Package):
     variant("phonon", default=False, description="Build with phonon support.")
     variant("shared", default=True, description="Build shared libraries.")
     variant("sql", default=True, description="Build with SQL support.")
-    variant("ssl", default=True, description="Build with OpenSSL support.", when="@5.10:")
+    variant("ssl", default=True, description="Build with OpenSSL support.")
     variant("tools", default=True, description="Build tools, including Qt Designer.")
 
     provides("qmake")
@@ -310,6 +310,8 @@ class Qt(Package):
         when="@5.7:5.15",
         msg="qtwebengine@5.7:5.15 are based on Google Chromium versions which depend on Py2",
     )
+
+    conflicts("+ssl", when="@:5.9")
 
     # gcc@4 is not supported as of Qt@5.14
     # https://doc.qt.io/qt-5.14/supported-platforms.html
