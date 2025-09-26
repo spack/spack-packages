@@ -83,6 +83,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.16:", type="build")
     conflicts("cmake@3.28", when="@:4.2.01 +cuda")
+    conflicts("^cuda@13:", when="@:4.7.0")
 
     devices_variants = {
         "cuda": [False, "Whether to build CUDA backend"],
@@ -446,7 +447,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Kokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC", "alloc_async")
         )
 
-        if self.version == Version("4.7.00") or self.version == Version("4.7.01"):
+        if self.version == Version("4.7.00"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
 
         # Remove duplicate options
