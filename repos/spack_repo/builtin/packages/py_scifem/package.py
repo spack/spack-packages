@@ -43,7 +43,7 @@ class PyScifem(PythonPackage):
 
     depends_on("py-fenics-dolfinx@0.9:", when="@0.4:", type="run")
     depends_on("py-fenics-dolfinx@main", when="@main", type="run")
-    depends_on("py-numpy@1.20:", type=("run"))
+    depends_on("py-numpy", type=("run"))
     depends_on("py-packaging", type=("run"))
 
     with when("+adios2"):
