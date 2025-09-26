@@ -72,5 +72,5 @@ class JsonGlib(MesonPackage):
 class MesonBuilder(meson.MesonBuilder):
     @when("@1.9.2:")
     def meson_args(self):
-        args = ["-Ddocumentation=disabled", "-Dman=false", "-Dtests=false", "-Dconformance=false"]
+        args = ["-Ddocumentation=disabled"]
         return args
