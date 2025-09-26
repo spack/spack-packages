@@ -424,11 +424,15 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # TODO: for CHPL_X_CC and CHPL_X_CXX, can we capture an arbitrary path, possibly
     # with arguments?
+    # NOTE: this list should include all vars potentially set by this spackage in
+    # setup_run_environment that potentially affect the build, otherwise executing
+    # `spack load chapel` may contaminate a subsequent `spack install chapel`.
     chpl_env_vars = [
         "CHPL_ATOMICS",
         "CHPL_AUX_FILESYS",
         "CHPL_COMM",
         "CHPL_COMM_SUBSTRATE",
+        "CHPL_CUDA_PATH",
         "CHPL_DEVELOPER",
         "CHPL_GASNET_SEGMENT",
         "CHPL_GMP",
@@ -437,9 +441,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_GPU_MEM_STRATEGY",
         "CHPL_HOME",
         "CHPL_HOST_ARCH",
-        # "CHPL_HOST_CC",
+        "CHPL_HOST_CC",
         "CHPL_HOST_COMPILER",
-        # "CHPL_HOST_CXX",
+        "CHPL_HOST_CXX",
         "CHPL_HOST_JEMALLOC",
         "CHPL_HOST_MEM",
         "CHPL_HOST_PLATFORM",
@@ -452,15 +456,17 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_LLVM_SUPPORT",
         "CHPL_LLVM_VERSION",
         "CHPL_LOCALE_MODEL",
+        "CHPL_MAKE_THIRD_PARTY",
         "CHPL_MEM",
         "CHPL_RE2",
+        "CHPL_ROCM_PATH",
         "CHPL_SANITIZE",
         "CHPL_SANITIZE_EXE",
         "CHPL_TARGET_ARCH",
-        # "CHPL_TARGET_CC",
+        "CHPL_TARGET_CC",
         "CHPL_TARGET_COMPILER",
         "CHPL_TARGET_CPU",
-        # "CHPL_TARGET_CXX",
+        "CHPL_TARGET_CXX",
         "CHPL_TARGET_PLATFORM",
         "CHPL_TASKS",
         "CHPL_TIMERS",
