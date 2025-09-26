@@ -27,7 +27,7 @@ class PyGeopmpy(PythonPackage):
 
     for ver in ["3.1.0", "3.2.0", "develop"]:
         depends_on(f"py-geopmdpy@{ver}", type="run", when=f"@{ver}")
-        depends_on(f"geopm-runtime@{ver}", type=("build", "run"), when=f"@{ver}")
+        depends_on(f"libgeopm@{ver}", type=("build", "run"), when=f"@{ver}")
 
     depends_on("python@3.6:3", type=("build", "run"))
     depends_on("py-setuptools@53.0.0:", when="@3.1", type="build")
@@ -59,5 +59,5 @@ class PyGeopmpy(PythonPackage):
         if not self.spec.version.isdevelop():
             env.set("SETUPTOOLS_SCM_PRETEND_VERSION", self.version)
         if self.version >= Version("3.2.0"):  # Required for CFFI API mode builds
-            env.append_path("C_INCLUDE_PATH", self.spec["geopm-runtime"].prefix.include)
-            env.append_path("LIBRARY_PATH", self.spec["geopm-runtime"].prefix.lib)
+            env.append_path("C_INCLUDE_PATH", self.spec["libgeopm"].prefix.include)
+            env.append_path("LIBRARY_PATH", self.spec["libgeopm"].prefix.lib)

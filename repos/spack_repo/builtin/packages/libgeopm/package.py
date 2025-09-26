@@ -9,7 +9,7 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack.package import *
 
 
-class GeopmRuntime(AutotoolsPackage):
+class Libgeopm(AutotoolsPackage):
     """The Global Extensible Open Power Manager (GEOPM) Runtime is designed to
     enhance energy efficiency of applications through active hardware
     configuration."""
