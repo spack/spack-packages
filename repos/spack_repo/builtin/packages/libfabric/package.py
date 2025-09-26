@@ -212,12 +212,14 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
             *self.with_or_without("uring"),
             *self.with_or_without("cuda", activation_value="prefix"),
             *self.with_or_without("ze", variant="level_zero"),
-            *self.with_or_without("kdreg2", variant="kdreg"),
             *self.with_or_without("gdrcopy", activation_value="prefix"),
             *self.with_or_without(
                 "rocr", variant="rocm", activation_value=lambda _: self.spec["hip"].prefix
             ),
         ]
+
+        if self.spec.satisfies("+kdreg"):
+            args.append("--with-kdreg2")
 
         for fabric in [f if isinstance(f, str) else f[0].value for f in self.fabrics]:
             if f"fabrics={fabric}" in self.spec:
