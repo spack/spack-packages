@@ -19,6 +19,8 @@ class Qemu(AutotoolsPackage):
     # Docs say TCG is "under a BSD license" but all the headers for TCG have the MIT license.
     license("GPL-2.0-only AND LGPL-2.1-only AND MIT", checked_by="tgamblin")
 
+    version("10.1.0", sha256="e0517349b50ca73ebec2fa85b06050d5c463ca65c738833bd8fc1f15f180be51")
+    version("9.2.4", sha256="f3cc1c4eabfdb288218ac3e33763dbe9e276d8bc890b867a2335d58de2ddd39a")
     version("9.1.0", sha256="816b7022a8ba7c2ac30e2e0cf973e826f6bcc8505339603212c5ede8e94d7834")
     version("4.1.1", sha256="ed6fdbbdd272611446ff8036991e9b9f04a2ab2e3ffa9e79f3bab0eb9a95a1d2")
     version("4.1.0", sha256="656e60218689bdeec69903087fd7582d5d3e72238d02f4481d8dc6d79fd909c6")
@@ -110,6 +112,7 @@ class Qemu(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("pkgconfig", type="build")
+    depends_on("diffutils", type="build")
     depends_on("py-tomli", when="@9:", type="build")
     depends_on("meson@1.1.0:", when="@9:", type="build")
 
@@ -118,6 +121,9 @@ class Qemu(AutotoolsPackage):
     depends_on("capstone", when="@9:")
     depends_on("dtc", when="@9:")
     depends_on("flex", when="@9:")
+    depends_on("glib@2.66:", when="@9.1:")
+    depends_on("glib@2.56:", when="@6.1:")
+    depends_on("glib@2.48:", when="@4.2:")
     depends_on("glib@2.40:")
     depends_on("gnutls", when="@9:")
     depends_on("libslirp", when="@9:")
