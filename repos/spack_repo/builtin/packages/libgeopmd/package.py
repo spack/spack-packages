@@ -9,7 +9,7 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack.package import *
 
 
-class GeopmService(AutotoolsPackage):
+class Libgeopmd(AutotoolsPackage):
     """The Global Extensible Open Power Manager (GEOPM) Service provides a
     user interface for accessing hardware telemetry and settings securely.
 

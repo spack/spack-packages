@@ -60,7 +60,7 @@ class GeopmRuntime(AutotoolsPackage):
 
     # Other dependencies
     for ver in ["3.1.0", "3.2.0", "develop"]:
-        depends_on(f"geopm-service@{ver}", type=("build", "run"), when=f"@{ver}")
+        depends_on(f"libgeopmd@{ver}", type=("build", "run"), when=f"@{ver}")
 
     depends_on("py-setuptools-scm@6.4.2:", when="@develop", type="build")  # Used in autogen.sh
     depends_on("bash-completion")
@@ -92,7 +92,7 @@ class GeopmRuntime(AutotoolsPackage):
             bash("./autogen.sh")
 
     def configure_args(self):
-        args = ["--disable-geopmd-local", f"--with-geopmd={self.spec['geopm-service'].prefix}"]
+        args = ["--disable-geopmd-local", f"--with-geopmd={self.spec['libgeopmd'].prefix}"]
 
         args += self.enable_or_disable("debug")
         args += self.enable_or_disable("overhead")

@@ -36,7 +36,7 @@ class PyGeopmdpy(PythonPackage):
     depends_on("fortran", type="build")  # generated
 
     for ver in ["3.1.0", "3.2.0", "develop"]:
-        depends_on(f"geopm-service@{ver}", type=("build", "test", "run"), when=f"@{ver}")
+        depends_on(f"libgeopmd@{ver}", type=("build", "test", "run"), when=f"@{ver}")
     depends_on("py-dasbus@1.6.0:", type=("build", "run"))
     depends_on("py-cffi@1.14.5:", when="@3.1", type="run")
     depends_on("py-cffi@1.14.5:", when="@3.2:", type=("build", "run"))
@@ -59,5 +59,5 @@ class PyGeopmdpy(PythonPackage):
         if not self.spec.version.isdevelop():
             env.set("SETUPTOOLS_SCM_PRETEND_VERSION", self.version)
         if self.version >= Version("3.2.0"):  # Required for CFFI API mode builds
-            env.append_path("C_INCLUDE_PATH", self.spec["geopm-service"].prefix.include)
-            env.append_path("LIBRARY_PATH", self.spec["geopm-service"].prefix.lib)
+            env.append_path("C_INCLUDE_PATH", self.spec["libgeopmd"].prefix.include)
+            env.append_path("LIBRARY_PATH", self.spec["libgeopmd"].prefix.lib)
