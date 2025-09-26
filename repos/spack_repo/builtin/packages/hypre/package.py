@@ -28,6 +28,7 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("MIT")
 
     version("develop", branch="master")
+    version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")
     version("2.33.0", sha256="0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
     version("2.32.0", sha256="2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
     version("2.31.0", sha256="9a7916e2ac6615399de5010eb39c604417bb3ea3109ac90e199c5c63b0cb4334")
@@ -132,10 +133,10 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("rocblas", when="@2.29.0: +rocm")
     depends_on("hipblas", when="+rocm +superlu-dist")
     # naming conflict with the __syncwarp function
-    depends_on("hip@:6", when="@:2.33.0 +rocm")
+    depends_on("hip@:6", when="@:3.0.0 +rocm")
     depends_on("umpire", when="+umpire")
-    depends_on("umpire+rocm", when="+umpire+rocm")
-    depends_on("umpire+cuda", when="+umpire+cuda")
+    depends_on("umpire+rocm", when="+rocm")
+    depends_on("umpire+cuda", when="+cuda")
     depends_on("caliper", when="+caliper")
 
     gpu_pkgs = ["magma", "umpire"]
