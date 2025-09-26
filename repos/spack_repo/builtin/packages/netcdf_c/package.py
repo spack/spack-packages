@@ -63,6 +63,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         # When #2595 lands, this patch should be updated to include only
         # the changes not incorporated into that PR
         patch("netcdfc_correct_and_export_link_interface.patch", when="@:4.9.2")
+        patch("curl_find_dependency.patch", when="^curl build_system=cmake")
 
         # Building netcdf-c w/ hdf5+mpi causes CMake's FindMPI to inject a path to the current
         # netcdf-c source directory into its targets interface properties causing CMake configure
