@@ -41,17 +41,21 @@ class Mpibind(AutotoolsPackage):
     version("0.5.0", commit="8698f07412232e4dd4de4802b508374dc0de48c9",
             no_cache=True, deprecated=True)
 
+    # mpibind does not depend on CUDA or ROCm, but uses
+    # these variants to configure hwloc accordingly
     variant("cuda", default=False,
             description="Build with support for NVIDIA GPUs")
     variant("rocm", default=False,
             description="Build with support for AMD GPUs")
+
     variant("flux", default=False,
             description="Build the Flux plugin")
+    variant("python", default=False,
+            description="Build the Python bindings")
+
     # See slurm dependency below
     # variant("slurm", default=False,
     #         description="Build the Slurm plugin")
-    variant("python", default=False,
-            description="Build the Python bindings")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
