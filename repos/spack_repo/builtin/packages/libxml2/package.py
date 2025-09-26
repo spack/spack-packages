@@ -67,10 +67,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
     )
 
     build_system(
-        conditional("nmake", when="platform=windows"),
-        "cmake",
-        "autotools",
-        default="autotools",
+        conditional("nmake", when="platform=windows"), "cmake", "autotools", default="autotools"
     )
 
     def flag_handler(self, name, flags):
