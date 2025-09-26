@@ -39,6 +39,7 @@ class Mapl(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("2.62.0", sha256="5973a8cac75c55fcc0f4c5256f7d485ab99d2a52ff42d4359ce8d0f3f94d9133")
     version("2.61.0", sha256="bb768fd60214d5b6fe6120e08a5ebd869f576392a3252a4715fd7c32d0dea97a")
     version("2.60.0", sha256="470f4da9cc516fdf8206dbc84ab13f53792f3af5e54cd5315ff70d44e5700788")
     version("2.59.0", sha256="a1137bf62e885256d295c66929cd77658a559f88dbed4f433544f432c5c7a059")
@@ -143,8 +144,14 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v3.65.0",
+        when="@2.62:",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.64.0",
-        when="@2.60:",
+        when="@2.60:2.61",
     )
     resource(
         name="esma_cmake",
@@ -345,7 +352,7 @@ class Mapl(CMakePackage):
     depends_on("llvm-openmp", when="%apple-clang@15:", type=("build", "run"))
 
     # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
-    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
+    depends_on("gcc", when="@:2.61 ^intel-oneapi-compilers@2025.2", type="build")
 
     def cmake_args(self):
         args = [
@@ -374,7 +381,7 @@ class Mapl(CMakePackage):
                 fflags.append("-fallow-argument-mismatch")
 
         # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
-        if self.spec.satisfies("^intel-oneapi-compilers@2025.2"):
+        if self.spec.satisfies("@:2.61 ^intel-oneapi-compilers@2025.2"):
             fflags.append(f"-fpp-name={join_path(self.stage.source_path, 'cpp_wrapper.sh')}")
 
         if fflags:
@@ -424,7 +431,7 @@ class Mapl(CMakePackage):
             )
 
         # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
-        if self.spec.satisfies("^intel-oneapi-compilers@2025.2"):
+        if self.spec.satisfies("@:2.61 ^intel-oneapi-compilers@2025.2"):
             cpp_wrapper = """#!/usr/bin/env bash
 cpp -P -traditional-cpp -undef \"$@\"
 """
