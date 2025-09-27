@@ -69,6 +69,15 @@ class Scotch(CMakePackage, MakefilePackage):
         values=("NONE", "FIXED_SEED", "FULL"),
         multi=False,
         description="Determinism configuration",
+        when="build_system=makefile",
+    )
+    variant(
+        "determinism",
+        default="FIXED_SEED",
+        values=("NONE", "FIXED_SEED", "FULL"),
+        multi=False,
+        description="Determinism configuration",
+        when="@7.0.7: build_system=cmake",
     )
 
     depends_on("c", type="build")
@@ -155,10 +164,10 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("MPI_THREAD_MULTIPLE", "mpi_thread"),
         ]
 
-        if self.pkg.version > Version("7.0.4"):
+        if self.spec.satisfies("@7.0.5:"):
             args.append(self.define("ENABLE_TESTS", self.pkg.run_tests))
 
-        if self.pkg.version >= Version("7.0.7"):
+        if self.spec.satisfies("@7.0.7:"):
             args.append(self.define_from_variant("SCOTCH_DETERMINISTIC", "determinism"))
 
         if "+int64" in self.spec:
