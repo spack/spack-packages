@@ -7,7 +7,7 @@ import platform
 from spack.package import *
 
 
-class NvidiaCusparselt(Package):
+class Cusparselt(Package):
     """A high-performance CUDA library dedicated to general matrix-matrix operations
     in which at least one operand is a structured sparse matrix with 50% sparsity ratio."""
 
