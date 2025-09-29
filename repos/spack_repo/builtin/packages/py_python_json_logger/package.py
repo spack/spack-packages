@@ -27,7 +27,7 @@ class PyPythonJsonLogger(PythonPackage):
     depends_on("py-typing-extensions", type="build", when="@3.1: ^python@:3.9")
 
     def url_for_version(self, version):
-        if version >= Version("3.1"):
+        if self.spec.satisfies("@3.1:"):
             name = "python_json_logger"
         else:
             name = "python-json-logger"
