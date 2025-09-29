@@ -3,16 +3,16 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import sys
 
-from spack_repo.builtin.build_systems import autotools, meson
+from spack_repo.builtin.build_systems import autotools, meson, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.meson import MesonPackage
-
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack.package import *
 
 IS_WINDOWS = sys.platform == "win32"
 
 
-class Harfbuzz(MesonPackage, AutotoolsPackage):
+class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
     """The Harfbuzz package contains an OpenType text shaping engine."""
 
     homepage = "https://github.com/harfbuzz/harfbuzz"
@@ -20,7 +20,10 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     git = "https://github.com/harfbuzz/harfbuzz.git"
 
     build_system(
-        conditional("autotools", when="@:2.9"), conditional("meson", when="@3:"), default="meson"
+        conditional("autotools", when="@:2.9"), 
+        conditional("meson", when="@3:"), 
+        conditional("cmake", when="@3:"),
+        default="meson" if not IS_WINDOWS else "cmake"
     )
 
     # HarfBuzz is licensed under the so-called "Old MIT" license,
@@ -67,6 +70,31 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         when="platform=darwin",
         description="Enable CoreText shaper backend on macOS",
     )
+    variant(
+        "shared",
+        default=True, 
+        when="build_system=cmake",
+        description="Build shared harfbuzz"
+    )
+
+
+    with when("platform=windows build_system=cmake"):
+        variant(
+            "uniscribe",
+            default=False,
+            description="Enable Uniscribe shaper backend on Windows",
+        )
+        variant(
+            "directwrite",
+            default=False,
+            description="Enable directwrite shaper backend on Windows"
+        )
+        variant(
+            "gdi",
+            default=False,
+            description="Enable GDI integration helpers on Windows",
+        )
+    
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -86,6 +114,12 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
+            variant(
+                "utils",
+                default=False,
+                when="build_system=cmake",
+                description="Build harfbuzz utils"
+            )
             depends_on("pkgconfig", type="build")
             depends_on("glib")
             depends_on("gobject-introspection")
@@ -159,5 +193,26 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
         args.append(f"GTKDOC_REBASE={true}")
         args.extend(self.with_or_without("graphite2"))
         args.extend(self.with_or_without("coretext"))
+
+        return args
+
+
+class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
+    def cmake_args(self):
+        use_gobject = not IS_WINDOWS
+        args = [
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define("HB_HAVE_FREETYPE", True),
+            self.define("HB_HAVE_ICU", True),
+            self.define_from_variant("HB_HAVE_GRAPHITE2", "graphite2"),
+            self.define_from_variant("HB_HAVE_UNISCRIBE", "uniscribe"),
+            self.define_from_variant("HB_HAVE_GDI", "gdi"),
+            self.define_from_variant("HB_HAVE_DIRECTWRITE", "directwrite"),
+            self.define("HB_HAVE_GLIB", use_gobject),
+            self.define("HB_HAVE_CAIRO", use_gobject),
+            self.define("HB_BUILD_UTILS", use_gobject and self.spec.satisfies("+utils")),
+            self.define("HB_HAVE_GOBJECT", use_gobject),
+            self.define("HB_HAVE_INTROSPECTION", use_gobject),
+        ]
 
         return args
