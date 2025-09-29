@@ -13,7 +13,7 @@ class PyGeopmdpy(PythonPackage):
 
     homepage = "https://geopm.github.io"
     git = "https://github.com/geopm/geopm.git"
-    url = "https://github.com/geopm/geopm/tarball/v3.2.0"
+    url = "https://github.com/geopm/geopm/tarball/v3.2.1"
 
     maintainers("bgeltz", "cmcantalupo")
     license("BSD-3-Clause")
@@ -28,6 +28,7 @@ class PyGeopmdpy(PythonPackage):
     )
 
     version("develop", branch="dev", get_full_repo=True)
+    version("3.2.1", sha256="9177da3af335256592c4ea8ae0dd4f8f9c8fb4caf65965af6216e7975d094b99")
     version("3.2.0", sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025")
     version("3.1.0", sha256="2d890cad906fd2008dc57f4e06537695d4a027e1dc1ed92feed4d81bb1a1449e")
 
@@ -35,7 +36,7 @@ class PyGeopmdpy(PythonPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    for ver in ["3.1.0", "3.2.0", "develop"]:
+    for ver in ["3.1.0", "3.2.0", "3.2.1", "develop"]:
         depends_on(f"libgeopmd@{ver}", type=("build", "test", "run"), when=f"@{ver}")
     depends_on("py-dasbus@1.6.0:", type=("build", "run"))
     depends_on("py-cffi@1.14.5:", when="@3.1", type="run")
@@ -52,6 +53,7 @@ class PyGeopmdpy(PythonPackage):
     depends_on("py-defusedxml@0.7.1:", when="@3.2:", type="test")
     depends_on("py-grpcio@1.30.2:", when="+grpc", type=("build", "run"))
     depends_on("py-protobuf@3.12.4:", when="+grpc", type=("build", "run"))
+    depends_on("py-sdnotify@0.3.2:", when="@3.2.1:", type="run")
 
     build_directory = "geopmdpy"
 

@@ -23,6 +23,7 @@ class Libgeopm(AutotoolsPackage):
     tags = ["e4s"]
 
     version("develop", branch="dev", get_full_repo=True)
+    version("3.2.1", sha256="9177da3af335256592c4ea8ae0dd4f8f9c8fb4caf65965af6216e7975d094b99")
     version("3.2.0", sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025")
     version("3.1.0", sha256="2d890cad906fd2008dc57f4e06537695d4a027e1dc1ed92feed4d81bb1a1449e")
 
@@ -59,7 +60,7 @@ class Libgeopm(AutotoolsPackage):
     depends_on("file")
 
     # Other dependencies
-    for ver in ["3.1.0", "3.2.0", "develop"]:
+    for ver in ["3.1.0", "3.2.0", "3.2.1", "develop"]:
         depends_on(f"libgeopmd@{ver}", type=("build", "run"), when=f"@{ver}")
 
     depends_on("py-setuptools-scm@6.4.2:", when="@develop", type="build")  # Used in autogen.sh
