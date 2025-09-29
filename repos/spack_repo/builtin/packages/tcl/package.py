@@ -41,6 +41,12 @@ class Tcl(AutotoolsPackage, NMakePackage, SourceforgePackage):
 
     license("TCL")
 
+    version("9.0.2", sha256="e074c6a8d9ba2cddf914ba97b6677a552d7a52a3ca102924389a05ccb249b520")
+    version(
+        "8.6.17",
+        sha256="a3903371efcce8a405c5c245d029e9f6850258a60fa3761c4d58995610949b31",
+        preferred=True,
+    )
     version("8.6.12", sha256="26c995dd0f167e48b11961d891ee555f680c175f7173ff8cb829f4ebcde4c1a6")
     version("8.6.11", sha256="8c0486668586672c5693d7d95817cb05a18c5ecca2f40e2836b9578064088258")
     version("8.6.10", sha256="5196dbf6638e3df8d5c87b5815c8c2b758496eb6f0e41446596c9a4e638d87ed")

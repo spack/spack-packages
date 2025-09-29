@@ -71,7 +71,7 @@ class MiopenHip(CMakePackage):
     depends_on("zlib-api")
     depends_on("frugally-deep", when="@6.3:")
 
-    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.6.0:5.7")
+    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.7")
     patch("0002-add-include-dir-miopen-hip-6.0.0.patch", when="@6.0")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.1.0.patch", when="@6.1")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.2.0.patch", when="@6.2")
@@ -167,14 +167,13 @@ class MiopenHip(CMakePackage):
             self.define("DEVICELIBS_PREFIX_PATH", self.get_bitcode_dir()),
             self.define_from_variant("MIOPEN_USE_COMPOSABLEKERNEL", "ck"),
         ]
-        if self.spec.satisfies("@5.6.0:6.1"):
+        if self.spec.satisfies("@:6.1"):
             args.append(
                 "-DNLOHMANN_JSON_INCLUDE={0}".format(self.spec["nlohmann-json"].prefix.include)
             )
-        if self.spec.satisfies("@5.6.0:6.2"):
+        if self.spec.satisfies("@:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
             args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
-        if self.spec.satisfies("@5.7.0:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK", "OFF"))
         if self.spec.satisfies("@6.0:6.2"):
             args.append(

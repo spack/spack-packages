@@ -144,7 +144,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "intel": {"when": "@20210702:"},
         "interlayer": {"when": "@20210728:"},
         "kim": {},
-        "kokkos": {},
+        "kokkos": {"when": "@20201029:"},
         "kspace": {"default": True},
         "latboltz": {"when": "@20210702:"},
         "latte": {"when": "@20170922:20230328"},
@@ -364,7 +364,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("curl", when="+curl")
     depends_on("libpng", when="+png")
     depends_on("ffmpeg", when="+ffmpeg")
-    depends_on("kokkos+deprecated_code+shared@3.0.00", when="@20200303+kokkos")
     depends_on("kokkos+shared@3.1:", when="@20200505:+kokkos")
     depends_on("kokkos@3.7.01:", when="@20230208: +kokkos")
     depends_on("kokkos@4.3.00:", when="@20240417: +kokkos")

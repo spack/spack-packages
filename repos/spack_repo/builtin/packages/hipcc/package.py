@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -23,6 +24,7 @@ class Hipcc(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     tags = ["rocm"]
+    executables = ["hipcc"]
 
     license("MIT")
     version("6.4.3", sha256="7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7")
@@ -60,6 +62,12 @@ class Hipcc(CMakePackage):
             return "."
         else:
             return join_path("amd", "hipcc")
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"roc-(\S+)", output)
+        return match.group(1) if match else None
 
     def patch(self):
         numactl = self.spec["numactl"].prefix.lib

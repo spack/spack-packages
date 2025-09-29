@@ -135,13 +135,13 @@ class Ceed(BundlePackage, CudaPackage, ROCmPackage):
     # ceed-2.0
     depends_on("nek5000@17.0", when="@2.0.0+nek")
     depends_on("nektools@17.0%gcc", when="@2.0.0+nek")
-    depends_on("gslib@1.0.2", when="@2.0.0+nek")
+    depends_on("gslib@1.0.3", when="@2.0.0+nek")
     depends_on("nekbone@17.0", when="@2.0.0+nek")
     depends_on("nekcem@7332619", when="@2.0.0+nek")
     # ceed-1.0
     depends_on("nek5000@17.0", when="@1.0.0+nek")
     depends_on("nektools@17.0%gcc", when="@1.0.0+nek")
-    depends_on("gslib@1.0.2", when="@1.0.0+nek")
+    depends_on("gslib@1.0.3", when="@1.0.0+nek")
     depends_on("nekbone@17.0", when="@1.0.0+nek")
     depends_on("nekcem@0b8bedd", when="@1.0.0+nek")
 
