@@ -77,7 +77,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
     depends_on("c", type="build")
 
-    depends_on("pkgconfig@0.9.0:", type="build", when="build_system=autotools")
+    depends_on("pkgconfig", type="build", when="build_system=autotools")
     # conditional on non Windows, but rather than specify for each platform
     # specify for non Windows builder, which has equivalent effect
     depends_on("iconv", when="build_system=autotools")

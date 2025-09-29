@@ -24,6 +24,7 @@ class Fd(CargoPackage):
 
     # Versions from newest to oldest
     version("master", branch="master")
+    version("10.3.0", sha256="2edbc917a533053855d5b635dff368d65756ce6f82ddefd57b6c202622d791e9")
     version("10.2.0", sha256="73329fe24c53f0ca47cd0939256ca5c4644742cb7c14cf4114c8c9871336d342")
     version("10.1.0", sha256="ee4b2403388344ff60125c79ff25b7895a170e7960f243ba2b5d51d2c3712d97")
     version("9.0.0", sha256="306d7662994e06e23d25587246fa3fb1f528579e42a84f5128e75feec635a370")
