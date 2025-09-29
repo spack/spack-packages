@@ -267,6 +267,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp~cuda", when="~cuda")
     depends_on("camp~rocm", when="~rocm")
     depends_on("camp@2025.09.0:", when="@2025.09.0:")  # 2025.09.0 is a future version
+    depends_on("camp@2025.03.0:", when="@2025.03.0:")
     depends_on("camp@2024.07.0:", when="@2024.07.0:")
     depends_on("camp@2024.02.1", when="@2024.02.1")
     depends_on("camp@2024.02.0", when="@2024.02.0")

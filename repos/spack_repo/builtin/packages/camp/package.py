@@ -79,6 +79,7 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cub", when="^cuda@:10")
 
     depends_on("blt", type="build")
+    depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.02.1:")
     depends_on("blt@0.6.1", type="build", when="@2024.02.0")
     depends_on("blt@0.5.0:0.5.3", type="build", when="@2022.03.0:2023.06.0")
