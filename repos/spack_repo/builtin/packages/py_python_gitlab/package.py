@@ -45,7 +45,7 @@ class PyPythonGitlab(PythonPackage):
     depends_on("py-six", when="@:1", type=("build", "run"))
 
     def url_for_version(self, version):
-        if version >= Version("4.5"):
+        if self.spec.satisfies("@4.5:"):
             name = "python_gitlab"
         else:
             name = "python-gitlab"
