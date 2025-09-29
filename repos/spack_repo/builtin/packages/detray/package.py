@@ -21,6 +21,9 @@ class Detray(CMakePackage):
 
     license("MPL-2.0", checked_by="stephenswat")
 
+    version("0.103.0", sha256="7b3d3c94cf42be7450e9fe008b567a2f425e6f1986b61d8a3a66814383599043")
+    version("0.102.0", sha256="534848b5d5d25c33dffd35a48cda04b24aea03c7c13d0c1240ad73ef06765368")
+    version("0.101.0", sha256="f13db54da9b888258ab73a963d5a4bc08b655cc4aef47935e486b7cbe43e0965")
     version("0.100.1", sha256="5e68986889ae083503b3506015c649a0dcf1eadbeec642bb7749ee91c9fca201")
     version("0.100.0", sha256="a34686403807db822dc71f2bc61b9d72e9837a525b22c0b86c6452bf9ec7b0e4")
     version("0.99.0", sha256="86baa957ec55e8eecb5a9dffe135b88265dd0f88f75bf0068c9068ea304c0fb5")
@@ -89,7 +92,9 @@ class Detray(CMakePackage):
     depends_on("cmake@3.21:", type="build", when="@0.95:")
     depends_on("vecmem@1.6.0:")
     depends_on("vecmem@1.8.0:", when="@0.76:")
+    depends_on("vecmem@1.18.0:", when="@0.102:")
     depends_on("covfie@0.10.0:")
+    depends_on("covfie@0.15.3:", when="@0.102:")
     depends_on("nlohmann-json@3.11.0:", when="+json")
     depends_on("dfelibs@20211029:", when="@:0.88")
     depends_on("acts-algebra-plugins@0.18.0: +vecmem")
@@ -99,6 +104,7 @@ class Detray(CMakePackage):
     # The version number of algebra plugins was not correct before v0.28.0.
     depends_on("acts-algebra-plugins@0.28.0:", when="@0.87:")
     depends_on("acts-algebra-plugins@0.28.0: +vecmem", when="@0.95:")
+    depends_on("acts-algebra-plugins@0.30.0: +vecmem", when="@0.103:")
 
     # Detray imposes requirements on the C++ standard values used by Algebra
     # Plugins.
