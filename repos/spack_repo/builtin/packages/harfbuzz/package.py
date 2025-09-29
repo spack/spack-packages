@@ -22,7 +22,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
     build_system(
         conditional("autotools", when="@:2.9"), 
         conditional("meson", when="@3:"), 
-        conditional("cmake", when="@3:"),
+        conditional("cmake", when="@10:"),
         default="meson" if not IS_WINDOWS else "cmake"
     )
 
@@ -78,22 +78,28 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
     )
 
 
-    with when("platform=windows build_system=cmake"):
-        variant(
-            "uniscribe",
-            default=False,
-            description="Enable Uniscribe shaper backend on Windows",
-        )
-        variant(
-            "directwrite",
-            default=False,
-            description="Enable directwrite shaper backend on Windows"
-        )
-        variant(
-            "gdi",
-            default=False,
-            description="Enable GDI integration helpers on Windows",
-        )
+    with when("build_system=cmake"):
+        with when("platform=windows"):
+            variant(
+                "uniscribe",
+                default=False,
+                description="Enable Uniscribe shaper backend on Windows",
+            )
+            variant(
+                "directwrite",
+                default=False,
+                description="Enable directwrite shaper backend on Windows"
+            )
+            variant(
+                "gdi",
+                default=False,
+                description="Enable GDI integration helpers on Windows",
+            )
+        # CMake system dropped a number of source files
+        # they're correctly added as of 11.5
+        patch("harfbuzz_10_0_cmake_add_missing_table_sources.patch", when="@10:11.1")
+        patch("harfbuzz_11_2_cmake_add_missing_table_sources.patch", when="@11.2:11.3")
+        patch("harfbuzz_11_4_cmake_add_missing_table_sources.patch", when="@11.4")
     
 
     depends_on("c", type="build")
