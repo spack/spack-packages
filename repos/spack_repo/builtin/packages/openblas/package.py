@@ -162,6 +162,9 @@ class Openblas(CMakePackage, MakefilePackage):
     # https://github.com/OpenMathLib/OpenBLAS/pull/1703
     patch("openblas-0.3.2-cmake.patch", when="@0.3.1:0.3.2")
 
+    # https://github.com/OpenMathLib/OpenBLAS/issues/5473
+    patch("openblas-0.3.30-apple-LTO.patch", when="@0.3.30 platform=darwin")
+
     # Disable experimental TLS code that lead to many threading issues
     # https://github.com/OpenMathLib/OpenBLAS/issues/1735#issuecomment-422954465
     # https://github.com/OpenMathLib/OpenBLAS/issues/1761#issuecomment-421039174
