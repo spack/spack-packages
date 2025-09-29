@@ -31,7 +31,7 @@ class PyYapf(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@58.5:", type="build", when="@0.40.2:")
-    depends_on("py-platformdir@3.5.1:", type=("build", "run"), when="@0.40:")
+    depends_on("py-platformdirs@3.5.1:", type=("build", "run"), when="@0.40:")
     depends_on("py-platformdirs@3.5.1:", type=("build", "run"), when="@0.40:")
     depends_on("py-tomli@2.0.1:", type=("build", "run"), when="@0.33: ^python@:3.10")
     depends_on("py-importlib-metadata@6.6:", type=("build", "run"), when="@0.40:0.40.1")
