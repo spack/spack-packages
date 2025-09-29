@@ -16,6 +16,7 @@ class PyBreathe(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("4.36.0", sha256="94fc2277e639929e898cb95559d9d2c51cf764b787eaf6fa04f848a6550c2ff5")
     version("4.35.0", sha256="55b54723752fc04b892a0f868782b1df65e69db6ca94fb32cf04be495bfd7841")
     version("4.34.0", sha256="b22e70eb4000492508d687d71f258c8f9678398e277bcee0daf34cd438a46e25")
     version("4.33.1", sha256="acda75b216b227ec09ffd74378a6c7ed8f023df4539693c6e20574d1df52e75b")
