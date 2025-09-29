@@ -123,19 +123,6 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.3.patch", when="@6.3")
     patch("0002-add-hipsparse-include.patch", when="@6.4")
 
-    def patch(self):
-        if self.spec.satisfies("@7.0:"):
-            py_ver = self.spec["python"].version[:-1]
-            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
-            filter_file(
-                "${PROJECT_BINARY_DIR}/lib",
-                ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
-                "hipBLASLt/tensilelite/CMakeLists.txt",
-                "hipBLASLt/tensilelite/Tensile/cmake/TensileConfig.cmake",
-                "hipBLASLt/library/src/amd_detail/rocblaslt/src/extops/CMakeLists.txt",
-                string=True,
-            )
-
     @classmethod
     def determine_version(cls, lib):
         match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
@@ -156,6 +143,17 @@ class Hipsparselt(CMakePackage, ROCmPackage):
                     "clients/CMakeLists.txt",
                     string=True,
                 )
+        if self.spec.satisfies("@7.0:"):
+            py_ver = self.spec["python"].version[:-1]
+            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
+            filter_file(
+                "${PROJECT_BINARY_DIR}/lib",
+                ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
+                "hipBLASLt/tensilelite/CMakeLists.txt",
+                "hipBLASLt/tensilelite/Tensile/cmake/TensileConfig.cmake",
+                "hipBLASLt/library/src/amd_detail/rocblaslt/src/extops/CMakeLists.txt",
+                string=True,
+            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
