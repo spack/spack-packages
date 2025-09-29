@@ -24,6 +24,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     license("Apache-2.0 WITH LLVM-exception")
 
     version("develop", branch="develop")
+    version("4.7.01", sha256="f3e1452db0e182c8e32c61632465e3a829159b9ae0645d9e4cd97b4fa09c36e1")
     version("4.7.00", sha256="5c7c8c8f91817ab22dbc50ea72f02292bbd6c5b412d6f1588b27574600c478ef")
     version("4.6.02", sha256="a953f445660ed5aaab10e18fc4a90c4c178291e9d9d97d20abd4e6027f1193ec")
     version("4.6.01", sha256="95b9357f37ab3b9c3913c00741acb2501831c28ea8664de67818ae79c69c5908")
@@ -133,6 +134,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
         depends_on("fortran", type="build", when=f"+{tpl}")
     depends_on("kokkos")
     depends_on("kokkos@develop", when="@develop")
+    depends_on("kokkos@4.7.01", when="@4.7.01")
     depends_on("kokkos@4.7.00", when="@4.7.00")
     depends_on("kokkos@4.6.02", when="@4.6.02")
     depends_on("kokkos@4.6.01", when="@4.6.01")

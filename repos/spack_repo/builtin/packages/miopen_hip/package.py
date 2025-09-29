@@ -70,7 +70,15 @@ class MiopenHip(CMakePackage):
     depends_on("sqlite")
     depends_on("half@1")
     depends_on("zlib-api")
-    depends_on("frugally-deep", when="@6.3:")
+    # Inside requirements.txt of the miopen repository, frugally-deep is
+    # is using ROCm/frugally-deep@9683d557eb672ee2304f80f6682c51242d748a50
+    # this is specfically mapped to frugally-deep@0.15.x using later 0.16
+    # versions or above is causing an issue,
+    # https://github.com/ROCm/MIOpen/issues/3588 and requires updates to
+    # src/kernels/gfx9[08|0a|42].tn.model to support this
+    # new format to support frugally-deep 0.16.0 or later
+
+    depends_on("frugally-deep@0.15.31", when="@6.3:")
 
     patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.7")
     patch("0002-add-include-dir-miopen-hip-6.0.0.patch", when="@6.0")
