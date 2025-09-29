@@ -108,6 +108,15 @@ class Qemu(AutotoolsPackage):
     version("0.10.0", sha256="cd554729fa9d0ec17164afbc1cea62d02bde3db8e16db3fd1b8e71d8e1b3dd41")
     version("0.9.1", sha256="a9655a471d0649f5540b890447b35849c162d9b986bf2bbddcb68461748e0f42")
 
+    with default_args(type="build"):
+        depends_on("python")
+        depends_on("python@3.8:", when="@8.2:")
+        # qemu is not forward compatible with pip 25.2, which is vendored by python,
+        # bumped in v3.13.6
+        # https://github.com/qemu/qemu/commit/6ad034e71232c2929ed546304c9d249312bb632f
+        # https://github.com/python/cpython/commit/1ba09b2f0445eb80fd255ee2d9cbbdc859e0bb41
+        depends_on("python@:3.13.5", when="@:10.0")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
