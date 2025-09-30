@@ -1,5 +1,5 @@
 diff --git a/src/ld.cxx b/src/ld.cxx
-index 8669273..073f7d0 100644
+index 8669273..7bdb209 100644
 --- a/src/ld.cxx
 +++ b/src/ld.cxx
 @@ -44,8 +44,12 @@ DWORD LdInvocation::InvokeToolchain() {
@@ -10,7 +10,7 @@ index 8669273..073f7d0 100644
 -        std::string piped_args = link_run.get_lib_link_args();
 +        std::string const def_file = link_run.get_def_file().empty()
 +                                         ? " "
-+                                         : ": " + link_run.get_def_file();
++                                         : ":" + link_run.get_def_file();
 +        std::string const def = "-def" + def_file;
 +
 +        std::string const piped_args = link_run.get_lib_link_args();
@@ -18,7 +18,7 @@ index 8669273..073f7d0 100644
          this->rpath_executor =
              ExecuteCommand("lib.exe", LdInvocation::ComposeCommandLists({
 diff --git a/src/linker_invocation.cxx b/src/linker_invocation.cxx
-index 1a96b5a..9bd326f 100644
+index 1a96b5a..dd26c30 100644
 --- a/src/linker_invocation.cxx
 +++ b/src/linker_invocation.cxx
 @@ -46,11 +46,10 @@ void LinkerInvocation::Parse() {
@@ -36,15 +36,19 @@ index 1a96b5a..9bd326f 100644
          } else if (endswith(normal_token, ".obj")) {
              this->objs_.push_back(*token);
          } else if (startswith(normal_token, "@") &&
-@@ -60,6 +59,8 @@ void LinkerInvocation::Parse() {
+@@ -60,9 +59,11 @@ void LinkerInvocation::Parse() {
              // Primarily utilized by CMake and MSBuild projects to bypass
              // Command line length limits
              this->rsp_file_ = *token;
 +        } else if (startswith(normal_token, "def")) {
-+            this->def_file_ = strip(split(*token, ":")[1], "\"");
++            this->def_file_ = strip(split(*token, ":", 1)[1], "\"");
          } else if (this->piped_args_.find(normal_token) !=
                     this->piped_args_.end()) {
-             this->piped_args_.at(normal_token).emplace_back(normal_token);
+-            this->piped_args_.at(normal_token).emplace_back(normal_token);
++            this->piped_args_.at(normal_token).emplace_back(*token);
+         }
+     }
+     std::string const ext = this->is_exe_ ? ".exe" : ".dll";
 diff --git a/src/linker_invocation.h b/src/linker_invocation.h
 index d195afe..a892094 100644
 --- a/src/linker_invocation.h
@@ -64,15 +68,46 @@ index d195afe..a892094 100644
  };
 \ No newline at end of file
 diff --git a/src/utils.cxx b/src/utils.cxx
-index 49db7f4..df5822a 100644
+index 49db7f4..f2a98e1 100644
 --- a/src/utils.cxx
 +++ b/src/utils.cxx
-@@ -449,7 +449,7 @@ void normalArg(std::string& arg) {
+@@ -224,6 +224,14 @@ void lower(std::string& str) {
+     });
+ }
+ 
++/**
++ * Quotes str as needed
++ *  If str has existing escaped quotes, or a space/reserved character
++ *  Escape escaped quotes using an escaped backslash preceding the escaped
++ *  quote. Escape reserved characters by quoting the entire string
++ * 
++ *  Return the escaped string
++ */
+ std::string quoteAsNeeded(std::string& str) {
+     // Note: the ordering if these two conditionals is important
+     // If the second conditional is executed first, the first
+@@ -448,8 +456,10 @@ bool isCommandArg(const std::string& arg, const std::string& command) {
+ void normalArg(std::string& arg) {
      // first normalize capitalization
      lower(arg);
++    // strip any leading/trailing quotes
++    arg = strip(lstrip(arg, "\""), "\"");
      // strip leading / and -
 -    arg = strip(strip(arg, "-"), "/");
 +    arg = lstrip(lstrip(arg, "-"), "/");
  }
  
  std::string reportLastError() {
+diff --git a/src/utils.h b/src/utils.h
+index e2f5a80..e5a7ed3 100644
+--- a/src/utils.h
++++ b/src/utils.h
+@@ -132,6 +132,8 @@ char* findstr(char* search_str, const char* substr, size_t size);
+ // side effects on Windows
+ void quoteList(StrList& args);
+ 
++std::string quoteAsNeeded(std::string& str);
++
+ /// @brief Searches a sections of a string for a given regex using provided
+ ///     options to control search behavior
+ /// @param searchDomain - string to be searched
