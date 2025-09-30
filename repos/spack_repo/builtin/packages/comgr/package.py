@@ -13,7 +13,7 @@ class Comgr(CMakePackage):
     """This provides various Lightning Compiler related services. It currently
     contains one library, the Code Object Manager (Comgr)"""
 
-    homepage = "https://github.com/ROCm/ROCm-CompilerSupport"
+    homepage = "https://github.com/ROCm/llvm-project"
     git = "https://github.com/ROCm/llvm-project.git"
 
     def url_for_version(self, version):
