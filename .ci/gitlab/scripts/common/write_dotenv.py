@@ -19,7 +19,7 @@ def read_dotenv(file):
     dotenv = {}
     for line in file:
         if "=" in line:
-            key, value = line.rsplit("=", 1)
+            key, value = line.split("=", 1)
             dotenv[key] = value.strip()
     return dotenv
 
@@ -32,7 +32,11 @@ def write_dotenv(env, file):
 if __name__ == "__main__":
     dotenv = {}
     base_dotenv = sys.argv[1] if len(sys.argv) > 1 else None
-    if os.path.exists(base_dotenv):
+    if base_dotenv:
+        if not os.path.exists(base_dotenv):
+            print(f"File does not exist: {base_dotenv}")
+            exit(1)
+
         print(f"Found base dotenv: {base_dotenv}")
         with open(base_dotenv, "r", encoding="utf-8") as fd:
             dotenv = read_dotenv(fd)
