@@ -120,6 +120,16 @@ class Pumi(CMakePackage):
                 args.append("-DSIM_DISCRETE=ON")
         return args
 
+    # copied from slate package
+    def mpi_launcher(self):
+        searchpath = [self.spec["mpi"].prefix.bin]
+        try:
+            searchpath.insert(0, self.spec["slurm"].prefix.bin)
+        except KeyError:
+            print("Slurm not found, ignoring.")
+        commands = ["srun", "mpirun", "mpiexec"]
+        return which(*commands, path=searchpath) or which(*commands)
+
     def test_partition(self):
         """Testing pumi mesh partitioning"""
         if self.spec.satisfies("@:2.2.6"):
@@ -134,18 +144,12 @@ class Pumi(CMakePackage):
             "pipe_2_.smb",
             "2",
         ]
-        mpiexe_list = ["mpirun", "mpiexec", "srun"]
-        for mpiexe in mpiexe_list:
-            tty.info(f"Attempting to build and launch with {os.path.basename(mpiexe)}")
-            try:
-                options = ["--immediate=30"] + options if mpiexe == "srun" else options
-                exe = which(mpiexe)
-                out = exe(*options, output=str.split, error=str.split)
-                assert "mesh pipe_2_.smb written" in out
-                return
-            except (Exception, ProcessError) as err:
-                tty.info(f"Skipping {mpiexe}: {str(err)}")
-        assert False, "No MPI executable was found"
+
+        launcher = self.mpi_launcher()
+        assert launcher is not None, "Cannot run tests due to absence of MPI launcher"
+        out = launcher(*options, output=str.split, error=str.split)
+        assert "mesh pipe_2_.smb written" in out
+        return
 
     def test_refine(self):
         """Testing pumi uniform mesh refinement"""
