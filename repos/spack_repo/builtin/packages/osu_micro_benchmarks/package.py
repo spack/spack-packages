@@ -63,17 +63,20 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
         wrapper_flags = []
         build_system_flags = []
 
-        if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
-            if self.spec.satisfies("^[virtuals=mpi] cray-mpich"):
-                gtl_lib = self.spec["cray-mpich"].package.gtl_lib
-                build_system_flags.extend(gtl_lib.get(name) or [])
-            # hipcc is not wrapped, we need to pass the flags via the build
-            # system.
-            build_system_flags.extend(flags)
-        else:
-            wrapper_flags.extend(flags)
+        if name == "ldlibs":
+            # librt not available on darwin (and not required)
+            if not sys.platform == "darwin":
+                build_system_flags.append("-lrt")
 
-        return (wrapper_flags, [], build_system_flags)
+        if (self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm")) and self.spec.satisfies(
+            "^[virtuals=mpi] cray-mpich"
+        ):
+            # hipcc is not wrapped, we need to pass GPU flags via the build system.
+            gtl_lib = self.spec["cray-mpich"].package.gtl_lib
+            build_system_flags.extend(gtl_lib.get(name) or [])
+
+        wrapper_flags.extend(flags)
+        return (wrapper_flags, None, build_system_flags)
 
     def configure_args(self):
         spec = self.spec
@@ -101,9 +104,6 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
                 ]
             )
 
-        # librt not available on darwin (and not required)
-        if not sys.platform == "darwin":
-            config_args.append("LDFLAGS=-lrt")
         return config_args
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
