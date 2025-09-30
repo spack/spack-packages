@@ -98,3 +98,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
         env.prepend_path("PATH", join_path(mpidir, "pt2pt"))
         env.prepend_path("PATH", join_path(mpidir, "one-sided"))
         env.prepend_path("PATH", join_path(mpidir, "collective"))
+        if self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"):
+            xccldir = join_path(self.prefix.libexec, "osu-micro-benchmarks", "xccl")
+            env.prepend_path("PATH", join_path(xccldir, "pt2pt"))
+            env.prepend_path("PATH", join_path(xccldir, "collective"))
