@@ -226,7 +226,7 @@ dotenv:
       dotenv: env
   tags: [ "spack", "service" ]
   script:
-  - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/refs/pull/342/head/.ci/gitlab/scripts/common/write_dotenv.py
+  - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/refs/pull/1790/head/.ci/gitlab/scripts/common/write_dotenv.py
   - python3 write_dotenv.py .ci/env
   - cat env
 
