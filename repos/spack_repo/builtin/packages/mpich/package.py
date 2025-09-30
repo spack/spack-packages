@@ -172,8 +172,8 @@ supported, and netmod is ignored if device is ch3:sock.""",
         multi=False,
     )
     for _yaksa_cond in (
-        "@4.0: device=ch4 datatype-engine=auto",
-        "@4.0: device=ch4 datatype-engine=yaksa",
+        "@4.0:4.3 device=ch4 datatype-engine=auto",
+        "@4.0:4.3 device=ch4 datatype-engine=yaksa",
     ):
         with when(_yaksa_cond):
             depends_on("yaksa")
