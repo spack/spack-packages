@@ -220,7 +220,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cuda@9.0.0:", when="@:22.04")
         depends_on("cuda@10.0.0:", when="@22.05:")
         depends_on("cuda@11.0.0:", when="@22.12:")
-        depends_on("cuda@:12", when="@:25.09") # enforce cuda < 13 before 25.10
+        depends_on("cuda@:12", when="@:25.09")  # enforce cuda < 13 before 25.10
     depends_on("python@2.7:", type="build", when="@:20.04")
     depends_on("cmake@3.5:", type="build", when="@:18.10")
     depends_on("cmake@3.13:", type="build", when="@18.11:19.03")
