@@ -26,7 +26,7 @@ class PyJupyterServerProxy(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"), when="@4:")
     depends_on("py-hatch-jupyter-builder@0.8.3:", type="build", when="@4.1.1:")
     depends_on("py-hatchling@1.18.0:", type="build", when="@4.1.1:")
-    depends_on("py-jupyterlab@4.0.5:4", type="build", when="@4.1:")
+    depends_on("py-jupyterlab@4.0.6:4", type="build", when="@4.1:")
     depends_on("py-jupyterlab@3", type="build", when="@:3")
 
     depends_on("py-aiohttp", type=("build", "run"))
