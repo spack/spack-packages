@@ -1,0 +1,78 @@
+diff --git a/src/ld.cxx b/src/ld.cxx
+index 8669273..073f7d0 100644
+--- a/src/ld.cxx
++++ b/src/ld.cxx
+@@ -44,8 +44,12 @@ DWORD LdInvocation::InvokeToolchain() {
+             return ExitConditions::NORMALIZE_NAME_FAILURE;
+         }
+         std::string const abs_out_imp_lib_name = imp_lib_name + ".dll-abs.lib";
+-        std::string def = "-def ";
+-        std::string piped_args = link_run.get_lib_link_args();
++        std::string const def_file = link_run.get_def_file().empty()
++                                         ? " "
++                                         : ": " + link_run.get_def_file();
++        std::string const def = "-def" + def_file;
++
++        std::string const piped_args = link_run.get_lib_link_args();
+         // create command line to generate new import lib
+         this->rpath_executor =
+             ExecuteCommand("lib.exe", LdInvocation::ComposeCommandLists({
+diff --git a/src/linker_invocation.cxx b/src/linker_invocation.cxx
+index 1a96b5a..9bd326f 100644
+--- a/src/linker_invocation.cxx
++++ b/src/linker_invocation.cxx
+@@ -46,11 +46,10 @@ void LinkerInvocation::Parse() {
+             this->implibname_ = implib_line[1];
+         } else if (endswith(normal_token, ".lib")) {
+             this->libs_.push_back(*token);
+-        } else if (normal_token == "/dll" || normal_token == "-dll") {
++        } else if (normal_token == "dll") {
+             this->is_exe_ = false;
+-        } else if (startswith(normal_token, "-out") ||
+-                   startswith(normal_token, "/out")) {
+-            this->output_ = split(*token, ":", 1)[1];
++        } else if (startswith(normal_token, "out")) {
++            this->output_ = split(*token, ":")[1];
+         } else if (endswith(normal_token, ".obj")) {
+             this->objs_.push_back(*token);
+         } else if (startswith(normal_token, "@") &&
+@@ -60,6 +59,8 @@ void LinkerInvocation::Parse() {
+             // Primarily utilized by CMake and MSBuild projects to bypass
+             // Command line length limits
+             this->rsp_file_ = *token;
++        } else if (startswith(normal_token, "def")) {
++            this->def_file_ = strip(split(*token, ":")[1], "\"");
+         } else if (this->piped_args_.find(normal_token) !=
+                    this->piped_args_.end()) {
+             this->piped_args_.at(normal_token).emplace_back(normal_token);
+diff --git a/src/linker_invocation.h b/src/linker_invocation.h
+index d195afe..a892094 100644
+--- a/src/linker_invocation.h
++++ b/src/linker_invocation.h
+@@ -36,9 +36,8 @@ class LinkerInvocation {
+     StrList objs_;
+     bool is_exe_;
+     std::map<std::string, StrList> piped_args_ = {
+-        {"def", {}},          {"export", {}},    {"include", {}},
+-        {"libpath", {}},      {"ltcg", {}},      {"machine", {}},
+-        {"nodefaultlib", {}}, {"subsystem", {}}, {"verbose", {}},
+-        {"wx", {}},
++        {"export", {}},    {"include", {}}, {"libpath", {}},
++        {"ltcg", {}},      {"machine", {}}, {"nodefaultlib", {}},
++        {"subsystem", {}}, {"verbose", {}}, {"wx", {}},
+     };
+ };
+\ No newline at end of file
+diff --git a/src/utils.cxx b/src/utils.cxx
+index 49db7f4..df5822a 100644
+--- a/src/utils.cxx
++++ b/src/utils.cxx
+@@ -449,7 +449,7 @@ void normalArg(std::string& arg) {
+     // first normalize capitalization
+     lower(arg);
+     // strip leading / and -
+-    arg = strip(strip(arg, "-"), "/");
++    arg = lstrip(lstrip(arg, "-"), "/");
+ }
+ 
+ std::string reportLastError() {

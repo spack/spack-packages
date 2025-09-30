@@ -63,6 +63,7 @@ class CompilerWrapper(Package, NMakePackage):
         # patch("quoting.patch")
         # patch("long_path_support.patch")
         patch("c_cxx.patch")
+        patch("improve_def_forwarding.patch")
     # available in 0.1.1
     with when("@0.1.0 platform=windows"):
         patch("fixup11.patch")
