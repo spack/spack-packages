@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class OmegaH(CMakePackage, CudaPackage):
-    """Omega_h is a C++11 library providing data structures and algorithms
+    """Omega_h is a C++17 library providing data structures and algorithms
     for adaptive discretizations. Its specialty is anisotropic triangle and
     tetrahedral mesh adaptation. It runs efficiently on most modern HPC
     hardware including GPUs.
@@ -21,6 +21,11 @@ class OmegaH(CMakePackage, CudaPackage):
     maintainers("cwsmith")
     tags = ["e4s"]
     version("main", branch="main")
+    version(
+        "10.10.0-scorec",
+        commit="0f60bb58521f275c1bcf44b6813c52a21c28ae21",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
     version(
         "10.8.6-scorec",
         commit="a730c78e516d7f6cca4f8b4e4e0a5eb8020f9ad9",
