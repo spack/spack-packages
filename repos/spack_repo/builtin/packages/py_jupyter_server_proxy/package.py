@@ -32,9 +32,9 @@ class PyJupyterServerProxy(PythonPackage):
     depends_on("py-aiohttp", type=("build", "run"))
     depends_on("py-importlib-metadata@4.8.3:", type=("build", "run"), when="@4: ^python@:3.9")
     depends_on("py-jupyter-server@1.24:", type=("build", "run"), when="@4.2:")
-    depends_on("py-jupyter-server@1:", type=("build", "run"))
+    depends_on("py-jupyter-server@1:", type=("build", "run"), when="@:4.1")
     depends_on("py-simpervisor@1:", type=("build", "run"), when="@4.1:")
-    depends_on("py-simpervisor@0.4:", type=("build", "run"))
+    depends_on("py-simpervisor@0.4:", type=("build", "run"), when="@:4.0")
     depends_on("py-tornado@6.1:", type=("build", "run"), when="@4.2:")
     depends_on("py-traitlets@5.1:", type=("build", "run"), when="@4.1.1:")
 
