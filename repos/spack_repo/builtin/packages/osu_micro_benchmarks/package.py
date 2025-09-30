@@ -65,7 +65,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         if "+cuda" in spec:
             config_args.extend(["--enable-cuda", "--with-cuda=%s" % spec["cuda"].prefix])
-            config_args.extend(["--enable-ncclomb", "--with-nccl=%s", spec["cuda"].prefix])
+            config_args.extend(["--enable-ncclomb", "--with-nccl=%s" % spec["cuda"].prefix])
             cuda_arch = spec.variants["cuda_arch"].value
             if "none" not in cuda_arch:
                 config_args.append("NVCCFLAGS=" + " ".join(self.cuda_flags(cuda_arch)))
