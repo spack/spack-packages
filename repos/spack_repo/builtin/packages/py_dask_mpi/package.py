@@ -48,7 +48,5 @@ class PyDaskMpi(PythonPackage):
     @when("@2025")
     def patch(self):
         filter_file(
-            '    python_requires=">=3.6,<3.12",',
-            '    python_requires=">=3.6",',
-            "setup.py",
+            '    python_requires=">=3.6,<3.12",', '    python_requires=">=3.6",', "setup.py"
         )
