@@ -63,6 +63,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     )
     variant("json", default=False, when="@27:", description="Build with json support")
     variant("native", default=False, when="@28:", description="Enable native compilation of elisp")
+    variant("sqlite", default=False, when="@29.1:", description="Build with sqlite3 support")
     variant("tls", default=True, description="Build with gnutls support")
     variant("treesitter", default=False, when="@29:", description="Build with tree-sitter support")
 
@@ -90,6 +91,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     depends_on("tree-sitter", when="+treesitter")
     depends_on("gcc@11: +strip languages=jit", when="+native")
     depends_on("jansson@2.7:", when="+json")
+    depends_on("sqlite@3", when="+sqlite")
 
     # GUI dependencies
     with when("gui=x11"):
