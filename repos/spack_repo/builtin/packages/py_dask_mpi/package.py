@@ -12,6 +12,7 @@ class PyDaskMpi(PythonPackage):
 
     homepage = "https://github.com/dask/dask-mpi"
     pypi = "dask-mpi/dask-mpi-2.21.0.tar.gz"
+    git = "https://github.com/dask/dask-mpi.git"
 
     skip_modules = ["dask_mpi.tests"]
 
@@ -22,9 +23,7 @@ class PyDaskMpi(PythonPackage):
     # https://github.com/dask/dask-mpi/issues/136
     # but various fixes have been implimented so this is
     # the most recent main commit as of 2025-09-26
-    version("2025.0.0",
-            sha256="39ee0564af77be6eb34e52581dafbb1335ba82d0fccd2d7fa6182e530251a19d",
-            url="https://www.github.com/dask/dask-mpi/tarball/3d4742e7fca906e265234fb48360990eafe51950")
+    version("2025.4.0", commit="3d4742e7fca906e265234fb48360990eafe51950")
     version("2022.4.0", sha256="0a04f1d7d35a06cdff506593330d4414ea242c9172498ce191f5742eac499e17")
     version("2.21.0", sha256="76e153fc8c58047d898970b33ede0ab1990bd4e69cc130c6627a96f11b12a1a7")
     version("2.0.0", sha256="774cd2d69e5f7154e1fa133c22498062edd31507ffa2ea19f4ab4d8975c27bc3")
@@ -44,7 +43,6 @@ class PyDaskMpi(PythonPackage):
     # fix for python 3.12+, merged into mainline
     # https://github.com/dask/dask-mpi/pull/123
     conflicts("^python@3.12:", when="@:2022")
-    requires("@2025:", when="^python@3.12:")
 
     # https://github.com/dask/dask-mpi/issues/137
     @when("@2025")
