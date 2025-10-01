@@ -352,7 +352,7 @@ class Mapl(CMakePackage):
     depends_on("llvm-openmp", when="%apple-clang@15:", type=("build", "run"))
 
     # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
-    depends_on("gcc", when="@:2.61 ^intel-oneapi-compilers@2025.2", type="build")
+    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
 
     def cmake_args(self):
         args = [
@@ -381,6 +381,7 @@ class Mapl(CMakePackage):
                 fflags.append("-fallow-argument-mismatch")
 
         # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+        # this is taken care of inside of ESMA_cmake for MAPL 2.62+
         if self.spec.satisfies("@:2.61 ^intel-oneapi-compilers@2025.2"):
             fflags.append(f"-fpp-name={join_path(self.stage.source_path, 'cpp_wrapper.sh')}")
 

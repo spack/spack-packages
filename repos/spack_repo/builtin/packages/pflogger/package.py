@@ -84,6 +84,12 @@ class Pflogger(CMakePackage):
         msg="oneAPI 2025.2 only works with pflogger 1.16.1 onwards",
     )
 
+    # This is needed because for ifx 2025.2, we need to use cpp from GNU as fpp from oneapi
+    # is broken. To pull that in, we need to say pflogger depends on C, even though it really
+    # doesn't.
+    depends_on("c", when="^intel-oneapi-compilers@2025.2", type="build")
+    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
+
     @when("@1.16.1 ^intel-oneapi-compilers@2025.2")
     def patch(self):
         filter_file("_RC)", "rc=status); _VERIFY(status,'',rc)", "src/Config.F90", string=True)

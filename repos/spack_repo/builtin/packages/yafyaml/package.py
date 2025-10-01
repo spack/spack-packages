@@ -75,6 +75,12 @@ class Yafyaml(CMakePackage):
         "%oneapi@2025.2", when="@:1.5.0", msg="oneAPI 2025.2 only works with yafyaml 1.5.1 onwards"
     )
 
+    # This is needed because for ifx 2025.2, we need to use cpp from GNU as fpp from oneapi
+    # is broken. To pull that in, we need to say yafyaml depends on C, even though it really
+    # doesn't.
+    depends_on("c", when="^intel-oneapi-compilers@2025.2", type="build")
+    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
+
     @when("@1.5.1 ^intel-oneapi-compilers@2025.2")
     def patch(self):
         for pf in ["src/Nodes/BaseNode_implementation.F90", "src/Lexer.F90"]:
