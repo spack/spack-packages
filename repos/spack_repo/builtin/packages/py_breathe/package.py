@@ -9,10 +9,10 @@ from spack.package import *
 
 class PyBreathe(PythonPackage):
     """This is an extension to reStructuredText and Sphinx to be able to read
-    and render the Doxygen xml output."""
+    and render Doxygen XML output."""
 
-    homepage = "https://github.com/michaeljones/breathe"
-    url = "https://github.com/michaeljones/breathe/archive/v4.11.1.tar.gz"
+    homepage = "https://github.com/breathe-doc/breathe"
+    url = "https://github.com/breathe-doc/breathe/archive/refs/tags/v4.36.0.tar.gz"
 
     maintainers("sethrj")
 
@@ -34,22 +34,26 @@ class PyBreathe(PythonPackage):
     version("4.7.1", sha256="afb1ab0084b25d3670fa8f5cf2eeaee6fe61bfc77876e3816b140eacd4949875")
     version("4.7.0", sha256="5629c67f5adb41f39375d36c5f0d60d34b1230be268125e535205d77f69211e4")
 
-    depends_on("py-setuptools", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@4.36:")
+        depends_on("python@3.6:", when="@4.33:4.35")
+        depends_on("python@3.5:", when="@4.21:4.32")
 
-    depends_on("python@3.5:", type=("build", "run"), when="@4.21:4.32")
-    depends_on("python@3.6:", type=("build", "run"), when="@4.33:")
-    depends_on("py-docutils@0.5:", type=("build", "run"), when="@:4.20")
-    depends_on("py-docutils@0.12:", type=("build", "run"), when="@4.21:")
-    # Note: Pygments is missing from the setup.py in 4.34.0 but is listed in
-    # the requirements file and used by breathe.filetypes.
-    depends_on("py-pygments@1.6:", type=("build", "run"), when="@4.21:")
-    depends_on("py-six@1.4:", type=("build", "run"), when="@:4.20")
-    depends_on("py-six@1.9:", type=("build", "run"), when="@4.21:4.32")
-    depends_on("py-sphinx", type=("build", "run"))
-    depends_on("py-sphinx@:3", type=("build", "run"), when="@:4.20")
-    depends_on("py-sphinx@3:3.2", type=("build", "run"), when="@4.21:4.32")
-    depends_on("py-sphinx@3:4", type=("build", "run"), when="@4.33")
-    depends_on("py-sphinx@4,5.0.1:5", type=("build", "run"), when="@4.34")
-    depends_on("py-sphinx@4,5.0.1:", type=("build", "run"), when="@4.35:")
+        depends_on("py-sphinx@7.2:", when="@4.35:")
+        depends_on("py-sphinx@4,5.0.1:5", when="@4.34")
+        depends_on("py-sphinx@3:4", when="@4.33")
+        depends_on("py-sphinx@3:3.2", when="@4.21:4.32")
+        depends_on("py-sphinx@:3", when="@:4.20")
 
+        depends_on("py-six@1.9:", when="@4.21:4.32")
+        depends_on("py-six@1.4:", when="@:4.20")
+
+    with default_args(type="build"):
+        depends_on("py-flit-core@3.7:", when="@4.36:")
+        depends_on("py-setuptools", type="build", when="@:4.35")
+
+    # Doxygen is *implicitly* required to build the XML files used by breathe,
+    # but it is not called directly. It is used directly by the examples, which
+    # are not hooked up to this spack recipe.
     depends_on("doxygen@1.8.4:", type="run")
+
