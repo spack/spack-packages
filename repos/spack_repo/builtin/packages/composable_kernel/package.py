@@ -16,6 +16,7 @@ class ComposableKernel(CMakePackage):
     homepage = "https://github.com/ROCm/composable_kernel"
     git = "https://github.com/ROCm/composable_kernel.git"
     url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-6.4.3.tar.gz"
+    tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
 
     license("MIT")

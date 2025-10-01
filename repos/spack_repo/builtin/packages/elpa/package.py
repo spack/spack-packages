@@ -28,6 +28,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     version("master", branch="master")
 
     version(
+        "2025.06.001", sha256="feeb1fea1ab4a8670b8d3240765ef0ada828062ef7ec9b735eecba2848515c94"
+    )
+    version(
         "2025.01.002", sha256="8febe408c590ba9b44bd8bce04605fd1b7da964afcd8fd5f1ce9edecb3d0b65d"
     )
     version(
@@ -82,7 +85,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         sha256="90f18c84e740a35d726e44078a111fac3b6278a0e750ce1f3ea154ee78e93298",
         when="@:2025.01.001",
     )
-    patch("hipcc.patch", when="+rocm @2025.01.001")
+    patch("hipcc.patch", when="+rocm @2025.01.001:2025.06.001")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -177,6 +180,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             if self.spec.satisfies("@2024.05.001,2025.01.001 %aocc"):
                 # fix an issue where main library and test suite containing duplicate symbols
                 flags.append("-Wl,--allow-multiple-definition")
+
         return (flags, None, None)
 
     def configure_args(self):
@@ -237,12 +241,12 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             # Can't yet be changed to the new option --enable-amd-gpu-kernels
             # https://github.com/marekandreas/elpa/issues/55
             options.append("--enable-amd-gpu")
-            if spec.satisfies("@2025.01.001"):
+            if spec.satisfies("@2025.01.001:"):
                 options.append(
-                    "HIPCC={0} -I{1} -I{2}".format(
+                    "HIPCC={0} {1} {2}".format(
                         spec["hip"].hipcc,
-                        spec["rocblas"].prefix.include,
-                        spec["rocsolver"].prefix.include,
+                        spec["rocblas"].headers.include_flags,
+                        spec["rocsolver"].headers.include_flags,
                     )
                 )
             else:

@@ -315,7 +315,7 @@ class Openblas(CMakePackage, MakefilePackage):
         # headers either included in one of these two headers, or included in
         # one of the source files implementing functions declared in these
         # headers.
-        return find_headers(["cblas", "lapacke"], self.prefix.include)
+        return find_headers(["cblas", "lapacke"], self.prefix.include, recursive=True)
 
     @property
     def libs(self):
