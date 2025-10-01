@@ -40,6 +40,7 @@ class Gspell(MesonPackage):
             f"https://download.gnome.org/sources/gspell/{version.up_to(2)}/gspell-{version}.tar.xz"
         )
 
+
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         args = ["-Dgtk_doc=false", "-Dtests=false"]
