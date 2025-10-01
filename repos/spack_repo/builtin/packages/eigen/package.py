@@ -75,9 +75,9 @@ class Eigen(CMakePackage, ROCmPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
-    depends_on("cmake@3.10:", when="@3.4.1:")
-    depends_on("cmake@3.5:", when="@3.4.0")
-    depends_on("cmake@:3", when="@:3.3")
+    depends_on("cmake@3.10:", when="@3.4.1:", type="build")
+    depends_on("cmake@3.5:", when="@3.4.0", type="build")
+    depends_on("cmake@:3", when="@:3.3", type="build")
 
     depends_on("boost@1.53:", when="@master", type="test")
     # TODO: latex and doxygen needed to produce docs with make doc
