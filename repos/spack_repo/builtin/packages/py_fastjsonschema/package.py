@@ -31,7 +31,7 @@ class PyFastjsonschema(PythonPackage):
 
     depends_on("python@3.3:3.13", when="@2.21:", type=("build", "run"))
     depends_on("python@3.3:3.12", when="@2.20", type=("build", "run"))
-    depends_on("python@3.3:3.11", when="@2.16.3:@2.19", type=("build", "run"))
+    depends_on("python@3.3:3.11", when="@2.16.3:2.19", type=("build", "run"))
     depends_on("python@3.3:", when="@2.15:", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
