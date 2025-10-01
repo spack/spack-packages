@@ -30,8 +30,8 @@ class PyFastjsonschema(PythonPackage):
     version("2.15.1", sha256="671f36d225b3493629b5e789428660109528f373cf4b8a22bac6fa2f8191c2d2")
 
     depends_on("python@3.3:3.13", when="@2.21:", type=("build", "run"))
-    depends_on("python@3.3:3.12", when="@2.20:", type=("build", "run"))
-    depends_on("python@3.3:3.11", when="@2.16.3:", type=("build", "run"))
+    depends_on("python@3.3:3.12", when="@2.20", type=("build", "run"))
+    depends_on("python@3.3:3.11", when="@2.16.3:@2.19", type=("build", "run"))
     depends_on("python@3.3:", when="@2.15:", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
