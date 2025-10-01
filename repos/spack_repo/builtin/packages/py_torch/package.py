@@ -800,6 +800,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             python("run_test.py")
 
     @property
+    def libs(self):
+        return find_libraries("libtorch*", root=python_platlib, recursive=True, shared=True)
+
+    @property
     def cmake_prefix_paths(self):
         cmake_prefix_paths = [join_path(python_platlib, "torch", "share", "cmake")]
         return cmake_prefix_paths
