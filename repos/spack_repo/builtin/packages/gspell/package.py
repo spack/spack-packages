@@ -22,7 +22,7 @@ class Gspell(MesonPackage):
 
     depends_on("c", type="build")
 
-    depends_on("cairo", type="build") 
+    depends_on("cairo", type="build")
     depends_on("enchant", type="build")
     depends_on("glib@2.54:", type="build")
     depends_on("gtk-doc", type="build")
@@ -36,8 +36,9 @@ class Gspell(MesonPackage):
     depends_on("zlib", type="build")
 
     def url_for_version(self, version):
-        return f"https://download.gnome.org/sources/gspell/{version.up_to(2)}/gspell-{version}.tar.xz"
-
+        return (
+            f"https://download.gnome.org/sources/gspell/{version.up_to(2)}/gspell-{version}.tar.xz"
+        )
 
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
