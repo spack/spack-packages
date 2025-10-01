@@ -43,6 +43,9 @@ class Legion(CMakePackage, ROCmPackage):
     version("stable", branch="stable")
     version("master", branch="master")
 
+    # Old control replication commits used by FleCSI releases, prior to 24.03.0
+    version("cr-20230307", commit="435183796d7c8b6ac1035a6f7af480ded750f67d", deprecated=True)
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
