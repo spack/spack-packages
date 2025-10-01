@@ -82,7 +82,7 @@ class Elfutils(AutotoolsPackage, SourcewarePackage):
     depends_on("gettext", when="+nls")
     depends_on("iconv")
     depends_on("m4", type="build")
-    depends_on("pkgconfig@0.9.0:", type=("build", "link"))
+    depends_on("pkgconfig", type=("build", "link"))
 
     # debuginfod has extra dependencies
     with when("+debuginfod"), default_args(type="link"):
