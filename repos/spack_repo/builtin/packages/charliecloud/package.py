@@ -89,7 +89,8 @@ class Charliecloud(AutotoolsPackage):
 
     @property
     def force_autoreconf(self):
-        return self.spec.satisfies("@0.39:")
+        # return self.spec.satisfies("@0.39:")
+        return self.spec.satisfies("@0.39")
 
     def autoreconf(self, spec, prefix):
         which("bash")("autogen.sh")
