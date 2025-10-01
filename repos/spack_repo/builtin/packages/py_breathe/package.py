@@ -56,4 +56,3 @@ class PyBreathe(PythonPackage):
     # but it is not called directly. It is used directly by the examples, which
     # are not hooked up to this spack recipe.
     depends_on("doxygen@1.8.4:", type="run")
-
