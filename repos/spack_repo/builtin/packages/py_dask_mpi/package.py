@@ -42,7 +42,7 @@ class PyDaskMpi(PythonPackage):
 
     # fix for python 3.12+, merged into mainline
     # https://github.com/dask/dask-mpi/pull/123
-    conflicts("^python@3.12:", when="@:2022")
+    depends_on("python@:3.11", when="@:2022")
 
     # https://github.com/dask/dask-mpi/issues/137
     @when("@2025")
