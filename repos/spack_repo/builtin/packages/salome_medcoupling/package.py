@@ -84,11 +84,11 @@ class SalomeMedcoupling(CMakePackage):
                     when=f"@9.11.0:{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
-                    f"med@4.1.0{_mpi_variant}{_shared_variant}{_int64_variant}",
+                    f"salome-med@4.1.0{_mpi_variant}{_static_variant}{_int64_variant}",
                     when=f"@9.5.0:9.10.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
-                    f"med@4.0.0{_mpi_variant}{_shared_variant}{_int64_variant}",
+                    f"salome-med@4.0.0{_mpi_variant}{_static_variant}{_int64_variant}",
                     when=f"@9.3.0:9.4.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
 
