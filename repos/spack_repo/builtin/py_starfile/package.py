@@ -42,5 +42,5 @@ class PyStarfile(PythonPackage):
 
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-pandas@2.1.1:", type=("build", "run"))
-    depends_on("py-arrow", type=("build", "run"))
+    depends_on("py-arrow", type=("build", "run"), when="@0.5.5:")
     depends_on("py-typing-extensions", type=("build", "run"))
