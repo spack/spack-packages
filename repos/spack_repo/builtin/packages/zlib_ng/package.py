@@ -10,6 +10,9 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
+if True:
+    pass
+
 
 class ZlibNg(AutotoolsPackage, CMakePackage):
     """zlib replacement with optimizations for next generation systems."""
