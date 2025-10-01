@@ -89,14 +89,13 @@ class Charliecloud(AutotoolsPackage):
 
     @property
     def force_autoreconf(self):
-        # return self.spec.satisfies("@0.39:")
-        return self.spec.satisfies("@0.39")
+        return self.spec.satisfies("@0.39:")
 
     def autoreconf(self, spec, prefix):
         which("bash")("autogen.sh")
 
     def configure_args(self):
-        args = [f"--with-python={self.spec['python'].command.path}"]
+        args = ["--with-python=/usr/bin/env python3"]
 
         if self.spec.satisfies("+docs"):
             sphinx_bin = f"{self.spec['py-sphinx'].prefix.bin}"
