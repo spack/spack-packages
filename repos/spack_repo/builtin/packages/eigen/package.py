@@ -29,7 +29,9 @@ class Eigen(CMakePackage, ROCmPackage):
         preferred=True,
     )
     version("3.4.1", sha256="b93c667d1b69265cdb4d9f30ec21f8facbbe8b307cf34c0b9942834c6d4fdbe2")
-    version("3.4.0-44-ge7248b26a", commit="e7248b26a1ed53fa030c5c459f7ea095dfd276ac", deprecated=True)
+    version(
+        "3.4.0-44-ge7248b26a", commit="e7248b26a1ed53fa030c5c459f7ea095dfd276ac", deprecated=True
+    )
     version("3.4.0", sha256="8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72")
     version("3.3.9", sha256="7985975b787340124786f092b3a07d594b2e9cd53bbfe5f3d9b1daee7d55f56f")
     version("3.3.8", sha256="146a480b8ed1fb6ac7cd33fec9eb5e8f8f62c3683b3f850094d9d5c35a92419a")
