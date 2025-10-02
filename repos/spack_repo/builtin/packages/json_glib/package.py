@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems import meson
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
@@ -18,6 +19,8 @@ class JsonGlib(MesonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("1.10.8", sha256="55c5c141a564245b8f8fbe7698663c87a45a7333c2a2c56f06f811ab73b212dd")
+    version("1.9.2", sha256="8f9f04e0045bda82affd464ee575796600fe29014b817392a3b72ceb2d10c595")
     version("1.6.6", sha256="96ec98be7a91f6dde33636720e3da2ff6ecbb90e76ccaa49497f31a6855a490e")
     version(
         "1.5.2",
@@ -61,3 +64,13 @@ class JsonGlib(MesonPackage):
     def install(self, spec, prefix):
         """Run the AutotoolsPackage install phase"""
         make("install")
+
+    def url_for_version(self, version):
+        return f"https://download.gnome.org/sources/json-glib/{version.up_to(2)}/json-glib-{version}.tar.xz"
+
+
+class MesonBuilder(meson.MesonBuilder):
+    @when("@1.9.2:")
+    def meson_args(self):
+        args = ["-Ddocumentation=disabled"]
+        return args

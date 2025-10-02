@@ -44,6 +44,7 @@ class R(AutotoolsPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+    depends_on("findutils", type="build")
 
     depends_on("blas")
     requires("^openblas symbol_suffix=none", when="^openblas")

@@ -93,8 +93,10 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
         default=False,
         description="Speed up computations related to the Thin Plate Spline transformer",
     )
+    # cmake configure fails if arrow~filesystem is found when variant ~arrow
+    # https://github.com/OSGeo/gdal/issues/12327
     variant(
-        "arrow", default=False, when="build_system=cmake", description="Required for Arrow driver"
+        "arrow", default=True, when="build_system=cmake", description="Required for Arrow driver"
     )
     variant("avif", default=False, when="@3.10:", description="Required for AVIF driver")
     variant(
@@ -272,6 +274,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("blas", when="+armadillo")
     depends_on("lapack", when="+armadillo")
     depends_on("arrow+filesystem", when="+arrow")
+
     depends_on("libavif", when="+avif")
     # depends_on("basis-universal", when="+basisu")
     depends_on("c-blosc", when="+blosc")
