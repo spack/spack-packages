@@ -25,7 +25,7 @@ class TorchScatter(CMakePackage):
     version("2.0.4", sha256="4fdadd6587f16ef3ff63c52f313f0c9dd97d13ae6496867fe566c309a4ea4036")
     version("2.0.3", sha256="ff2ca1468cb4e49b65bea8f889971f196f209231fbee0cc8bd1615ecb367400b")
 
-    #depends_on("cxx", type="build")
+    depends_on("cxx", type="build")
     depends_on("py-torch")
 
     # FIXME: Add dependencies if required.
@@ -33,6 +33,9 @@ class TorchScatter(CMakePackage):
 
     def cmake_args(self):
         args = []
-        args.append(self.define('WITH_CUDA', False))
-        args.append(self.define('WITH_PYTHON', False))
+        args.append("-DWITH_CUDA=OFF")
+        args.append("-DWITH_PYTHON=ON")
+        args.append("-DCMAKE_BUILD_TYPE=Release")
+        args.append("-DCMAKE_CXX_STANDARD=20")
+
         return args
