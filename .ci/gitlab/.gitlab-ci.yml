@@ -49,8 +49,8 @@ default:
 .base-job:
   variables:
     PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
-    SPACK_CI_CONFIG_ROOT: "${SPACK_PACKAGES_ROOT}/.ci/gitlab/configs"
-    SPACK_CI_SCRIPTS_ROOT: "${SPACK_PACKAGES_ROOT}/.ci/gitlab/scripts"
+    SPACK_CI_CONFIG_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/configs"
+    SPACK_CI_SCRIPTS_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts"
 
   rules:
     - if: $SPACK_CI_DISABLE_STACKS =~ /.+/ && $SPACK_CI_STACK_NAME =~ $SPACK_CI_DISABLE_STACKS
@@ -96,7 +96,7 @@ default:
   stage: generate
   script:
     - spack --version
-    - spack env activate --without-view ${SPACK_PACKAGES_ROOT}/stacks/${SPACK_CI_STACK_NAME}
+    - spack env activate --without-view ${SPACK_CI_PACKAGES_ROOT}/stacks/${SPACK_CI_STACK_NAME}
     - spack repo list
     - spack compiler find
     - spack audit configs
@@ -112,8 +112,8 @@ default:
       ci generate --check-index-only -j ${SPACK_CONCRETIZE_JOBS}
       --forward-variable SPACK_CHECKOUT_VERSION
       --forward-variable SPACK_CHECKOUT_REPO
-      --forward-variable SPACK_PACKAGES_ROOT
-      --forward-variable SPACK_ROOT
+      --forward-variable SPACK_CI_PACKAGES_ROOT
+      --forward-variable SPACK_CI_SPACK_ROOT
       --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
       --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
   artifacts:
@@ -158,9 +158,7 @@ default:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
-    - export SPACK_ROOT_SAVE="${SPACK_ROOT}"
-    - . "${SPACK_ROOT}/share/spack/setup-env.sh"
-    - export SPACK_ROOT="${SPACK_ROOT_SAVE}"
+    - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
   after_script:
     - cat /proc/loadavg || true
@@ -199,7 +197,7 @@ default:
     - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
     - $ErrorActionPreference=$ErrorActionOld
     - *clone_spack
-    - . $SPACK_ROOT\share\spack\setup-env.ps1
+    - . $SPACK_CI_SPACK_ROOT\share\spack\setup-env.ps1
     - spack arch
   after_script:
     - $ErrorActionOld=$ErrorActionPreference
@@ -768,7 +766,7 @@ aws-pcluster-generate-x86_64_v4:
       - cat /proc/loadavg || true
       - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
       - *clone_spack
-      - . "${SPACK_ROOT}/share/spack/setup-env.sh"
+      - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
       - spack arch
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
@@ -800,7 +798,7 @@ aws-pcluster-generate-neoverse_v1:
       - cat /proc/loadavg || true
       - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
       - *clone_spack
-      - . "${SPACK_ROOT}/share/spack/setup-env.sh"
+      - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
       - spack arch
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
@@ -833,7 +831,7 @@ aws-pcluster-build-neoverse_v1:
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - *clone_spack
-    - . "${SPACK_ROOT}/share/spack/setup-env.sh"
+    - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
   after_script:
     - cat /proc/loadavg || true

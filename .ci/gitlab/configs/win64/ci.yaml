@@ -13,7 +13,7 @@ ci:
         - git checkout FETCH_HEAD
         - cd ${CI_PROJECT_DIR}
       - fsutil 8dot3name set C:\ 0
-      - . ${SPACK_ROOT}\share\spack\setup-env.ps1
+      - . ${SPACK_CI_SPACK_ROOT}\share\spack\setup-env.ps1
       - If (Test-Path -path C:\\key\intermediate_ci_signing_key.gpg) { spack.ps1 gpg trust C:\\key\intermediate_ci_signing_key.gpg }
       - If (Test-Path -path C:\\key\spack_public_key.gpg) { spack.ps1 gpg trust C:\\key\spack_public_key.gpg }
 
