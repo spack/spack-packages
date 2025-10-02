@@ -6,13 +6,13 @@ CI_AUX_DIR = os.path.join(".ci", "tmp", "spack")
 
 
 def configure_packages_repo(dotenv):
-    dotenv["SPACK_PACKAGES_ROOT"] = CI_PROJECT_DIR
-    dotenv["SPACK_ROOT"] = CI_AUX_DIR
+    dotenv["SPACK_CI_PACKAGES_ROOT"] = CI_PROJECT_DIR
+    dotenv["SPACK_CI_SPACK_ROOT"] = CI_AUX_DIR
 
 
 def configure_core_repo(dotenv):
-    dotenv["SPACK_PACKAGES_ROOT"] = CI_AUX_DIR
-    dotenv["SPACK_ROOT"] = CI_PROJECT_DIR
+    dotenv["SPACK_CI_PACKAGES_ROOT"] = CI_AUX_DIR
+    dotenv["SPACK_CI_SPACK_ROOT"] = CI_PROJECT_DIR
 
 
 def read_dotenv(file):
