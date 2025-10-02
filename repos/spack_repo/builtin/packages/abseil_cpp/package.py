@@ -78,7 +78,6 @@ class AbseilCpp(CMakePackage):
     )
 
     variant("shared", default=True, description="Build shared instead of static libraries")
-    variant("xx", default=True, description="Build shared instead of static libraries")
 
     conflicts("+shared", when="@:20190808")
 
