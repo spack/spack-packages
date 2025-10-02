@@ -176,6 +176,18 @@ class Vtk(CMakePackage):
     # a patch with the same name is also applied to paraview
     # the two patches are the same but for the path to the files they patch
     patch("vtk_alias_hdf5.patch", when="@9:")
+    # VTK 9.5 adds linkage to inonit when using an external IOSS
+    # backport that to 9.4
+    patch(
+        "https://gitlab.kitware.com/vtk/vtk/-/commit/ee029647e086b3ca01a372b347704f30be87d499.patch",
+        sha="50cbb7dfedafe6740772ff974be426ed870d430e90a23988b8a692f90ba120d3",
+        when="@9.4"
+    )
+    # Linking against an external gl2ps causes linker errors due to a lack of
+    # glgetdoublev on macos. Vtk provides an alias for this, us it
+    # Upstream issue: https://gitlab.kitware.com/vtk/vtk/-/issues/19561
+    patch("vtk-alias-gldoublev.patch", when="platform=darwin @9.4:")
+
     # VTK 9.0 on Windows uses dll instead of lib for hdf5-hl target, which fails linking. Can't
     # be fixed by bumping CMake lower bound, because VTK vendors FindHDF5.cmake. Various other
     # patches to FindHDF5.cmake are missing, so add conflict instead of a series of patches.
