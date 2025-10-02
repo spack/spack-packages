@@ -187,7 +187,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
         depends_on(spackname, when=f"+{tpl}")
 
     # lapack TPL depends on blas TPL
-    conflicts('+lapack', when='~blas')
+    conflicts("+lapack", when="~blas")
 
     patch("pr_2296_430.patch", when="@4.3.00:4.4.00")
     patch("pr_2296_400.patch", when="@4.0.00:4.2.01")
