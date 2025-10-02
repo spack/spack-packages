@@ -36,6 +36,6 @@ class TorchScatter(CMakePackage):
         args.append("-DWITH_CUDA=OFF")
         args.append("-DWITH_PYTHON=ON")
         args.append("-DCMAKE_BUILD_TYPE=Release")
-        args.append("-DCMAKE_CXX_STANDARD=20")
+        args.append(self.define('CMAKE_CXX_STANDARD', '20'))
 
         return args
