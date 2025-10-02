@@ -52,7 +52,7 @@ class Grpc(CMakePackage):
     variant(
         "codegen",
         default=True,
-        description="Builds code generation plugins for protobuf " "compiler (protoc)",
+        description="Builds code generation plugins for protobuf compiler (protoc)",
     )
     variant(
         "cxxstd",

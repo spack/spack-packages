@@ -35,11 +35,6 @@ class Graphviz(AutotoolsPackage):
     version("2.44.1", sha256="0f8f3fbeaddd474e0a270dc9bb0e247a1ae4284ae35125af4adceffae5c7ae9b")
     version("2.42.4", sha256="a1ca0c4273d96bbf32fbfcbb784c8da2e38da13e7d2bbf9b24fe94ae45e79c4c")
     version("2.40.1", sha256="581596aaeac5dae3f57da6ecde62ad7709a992df341e8f7c6177b41e8b1ae4f6")
-    version(
-        "2.38.0",
-        sha256="c1b1e326b5d1f45b0ce91edd7acc68e80ff6be6b470008766e4d466aafc9801f",
-        deprecated=True,
-    )
 
     # Language bindings
     language_bindings = ["java"]
@@ -53,7 +48,7 @@ class Graphviz(AutotoolsPackage):
         variant(
             lang,
             default=False,
-            description="Enable for optional {0} language " "bindings".format(lang),
+            description="Enable for optional {0} language bindings".format(lang),
         )
 
     # Feature variants
@@ -148,7 +143,7 @@ class Graphviz(AutotoolsPackage):
     conflicts(
         "%gcc@:5.9",
         when="@2.40.1+qt ^qt@5:",
-        msg="graphviz-2.40.1 needs gcc-6 or greater to compile with QT5 " "suppport",
+        msg="graphviz-2.40.1 needs gcc-6 or greater to compile with QT5 suppport",
     )
 
     def autoreconf(self, spec, prefix):

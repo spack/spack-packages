@@ -9,9 +9,9 @@ from spack.package import *
 
 def async_api_validator(pkg_name, variant_name, values):
     if "none" in values and len(values) != 1:
-        raise SpackError("The value 'none' is not usable" " with other async_api values.")
+        raise SpackError("The value 'none' is not usable with other async_api values.")
     if "intel_cppr" in values and "cray_dw" in values:
-        raise SpackError("The 'intel_cppr' and 'cray_dw' asynchronous" " APIs are incompatible.")
+        raise SpackError("The 'intel_cppr' and 'cray_dw' asynchronous APIs are incompatible.")
 
 
 class Axl(CMakePackage):
@@ -35,16 +35,6 @@ class Axl(CMakePackage):
     version("0.5.0", sha256="9f3bbb4de563896551bdb68e889ba93ea1984586961ad8c627ed766bff020acf")
     version("0.4.0", sha256="0530142629d77406a00643be32492760c2cf12d1b56c6b6416791c8ff5298db2")
     version("0.3.0", sha256="737d616b669109805f7aed1858baac36c97bf0016e1115b5c56ded05d792613e")
-    version(
-        "0.2.0",
-        sha256="d04a445f102b438fe96a1ff3429790b0c035f0d23c2797bb5601a00b582a71fc",
-        deprecated=True,
-    )
-    version(
-        "0.1.1",
-        sha256="36edac007938fe47d979679414c5c27938944d32536e2e149f642916c5c08eaa",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")

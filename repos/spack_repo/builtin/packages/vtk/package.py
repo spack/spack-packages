@@ -21,16 +21,16 @@ class Vtk(CMakePackage):
     url = "https://www.vtk.org/files/release/9.0/VTK-9.0.0.tar.gz"
     list_url = "https://www.vtk.org/download/"
 
-    maintainers("chuckatkins", "danlipsa", "johnwparent")
+    maintainers("chuckatkins", "danlipsa", "johnwparent", "vicentebolea")
 
     license("BSD-3-Clause")
 
     version(
-        "9.5.0",
-        sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d",
+        "9.5.1",
+        sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f",
         preferred=True,
     )
-
+    version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
     version("9.3.1", sha256="8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
     version("9.2.6", sha256="06fc8d49c4e56f498c40fcb38a563ed8d4ec31358d0101e8988f0bb4d539dd12")
@@ -39,24 +39,26 @@ class Vtk(CMakePackage):
     version("9.0.3", sha256="bc3eb9625b2b8dbfecb6052a2ab091fc91405de4333b0ec68f3323815154ed8a")
     version("9.0.1", sha256="1b39a5e191c282861e7af4101eaa8585969a2de05f5646c9199a161213a622c7")
     version("9.0.0", sha256="15def4e6f84d72f82386617fe595ec124dda3cbd13ea19a0dcd91583197d8715")
-    # v8.2.1a is a compatability version of VTK to allow VisIt to build in CI and contains
-    # patches that were not tested by VTK CI or for a VTK release
-    # - Python 3.8 compatability
-    # - VisIt 3.3.3 compatability
-    version(
-        "8.2.1a",
-        url="https://www.vtk.org/files/release/8.2/VTK-8.2.0.tar.gz",
-        sha256="34c3dc775261be5e45a8049155f7228b6bd668106c72a3c435d95730d17d57bb",
-    )
-    version("8.2.0", sha256="34c3dc775261be5e45a8049155f7228b6bd668106c72a3c435d95730d17d57bb")
-    version("8.1.2", sha256="0995fb36857dd76ccfb8bb07350c214d9f9099e80b1e66b4a8909311f24ff0db")
-    version("8.1.1", sha256="71a09b4340f0a9c58559fe946dc745ab68a866cf20636a41d97b6046cb736324")
-    version("8.1.0", sha256="6e269f07b64fb13774f5925161fb4e1f379f4e6a0131c8408c555f6b58ef3cb7")
-    version("8.0.1", sha256="49107352923dea6de05a7b4c3906aaf98ef39c91ad81c383136e768dcf304069")
-    version("7.1.0", sha256="5f3ea001204d4f714be972a810a62c0f2277fbb9d8d2f8df39562988ca37497a")
-    version("7.0.0", sha256="78a990a15ead79cdc752e86b83cfab7dbf5b7ef51ba409db02570dbdd9ec32c3")
-    version("6.3.0", sha256="92a493354c5fa66bea73b5fc014154af5d9f3f6cee8d20a826f4cd5d4b0e8a5e")
-    version("6.1.0", sha256="bd7df10a479606d529a8b71f466c44a2bdd11fd534c62ce0aa44fad91883fa34")
+
+    with default_args(deprecated=True):
+        # v8.2.1a is a compatability version of VTK to allow VisIt to build in CI and contains
+        # patches that were not tested by VTK CI or for a VTK release
+        # - Python 3.8 compatability
+        # - VisIt 3.3.3 compatability
+        version(
+            "8.2.1a",
+            url="https://www.vtk.org/files/release/8.2/VTK-8.2.0.tar.gz",
+            sha256="34c3dc775261be5e45a8049155f7228b6bd668106c72a3c435d95730d17d57bb",
+        )
+        version("8.2.0", sha256="34c3dc775261be5e45a8049155f7228b6bd668106c72a3c435d95730d17d57bb")
+        version("8.1.2", sha256="0995fb36857dd76ccfb8bb07350c214d9f9099e80b1e66b4a8909311f24ff0db")
+        version("8.1.1", sha256="71a09b4340f0a9c58559fe946dc745ab68a866cf20636a41d97b6046cb736324")
+        version("8.1.0", sha256="6e269f07b64fb13774f5925161fb4e1f379f4e6a0131c8408c555f6b58ef3cb7")
+        version("8.0.1", sha256="49107352923dea6de05a7b4c3906aaf98ef39c91ad81c383136e768dcf304069")
+        version("7.1.0", sha256="5f3ea001204d4f714be972a810a62c0f2277fbb9d8d2f8df39562988ca37497a")
+        version("7.0.0", sha256="78a990a15ead79cdc752e86b83cfab7dbf5b7ef51ba409db02570dbdd9ec32c3")
+        version("6.3.0", sha256="92a493354c5fa66bea73b5fc014154af5d9f3f6cee8d20a826f4cd5d4b0e8a5e")
+        version("6.1.0", sha256="bd7df10a479606d529a8b71f466c44a2bdd11fd534c62ce0aa44fad91883fa34")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -64,26 +66,29 @@ class Vtk(CMakePackage):
 
     # VTK7 defaults to OpenGL2 rendering backend
     variant("opengl2", default=True, description="Enable OpenGL2 backend")
-    variant("python", default=False, description="Enable Python support", when="@8:")
+    variant("python", default=False, description="Enable Python support", when="@9.0.2:")
     variant("qt", default=False, description="Build with support for Qt")
     variant("xdmf", default=False, description="Build XDMF file support")
     variant("ffmpeg", default=False, description="Build with FFMPEG support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("examples", default=False, description="Enable building & installing the VTK examples")
+    variant("versioned_install", default=True, description="Include version in library filenames")
 
     patch("gcc.patch", when="@6.1.0")
 
-    # patches to fix some missing stl includes
-    # which lead to build errors on newer compilers
+    # Fix missing standard includes that lead to build errors on newer compilers
+    # Patch for <limits>
     patch(
         "https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c.diff",
         when="@9:9.0",
         sha256="0546696bd02f3a99fccb9b7c49533377bf8179df16d901cefe5abf251173716d",
     )
+    # Patch for <cstdint>
+    # See https://gitlab.kitware.com/vtk/vtk/-/issues/18782
     patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/1233ceec268d5366c66f5e79786ec784042b591.diff",
+        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
+        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
         when="@9.1:9.2",
-        sha256="38380bd20443d94d8ce9f339b9b2fbdea03400aa9d6dbb7e3ef138a65f11c080",
     )
 
     # Patch for paraview 5.10: +hdf5 ^hdf5@1.13.2:
@@ -107,8 +112,6 @@ class Vtk(CMakePackage):
         extends("python@:3.11", when="@:9.2")
         extends("python@:3.10", when="@:9.2.2")
         extends("python@:3.9", when="@:9.1")
-        extends("python@:3.8", when="@:9.0.1")
-        extends("python@:3.7", when="@:8.2.0")
 
     # We need mpi4py if buidling python wrappers and using MPI
     depends_on("py-mpi4py", when="+python+mpi", type="run")
@@ -238,14 +241,6 @@ class Vtk(CMakePackage):
         "https://gitlab.kitware.com/vtk/vtk/-/commit/5a1c96e12e9b4a660d326be3bed115a2ceadb573.diff",
         sha256="c446a90459b108082db5b28d9aeda99d030e636325e01929beba062cafb16b76",
         when="@9.1",
-    )
-
-    # vtk@9 does not compile with gcc 13 or 14
-    # https://gitlab.kitware.com/vtk/vtk/-/issues/18782
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
-        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
-        when="@9.1:9.2 %gcc@13:",
     )
 
     # SEACAS >= 2024-06-27 needs c++17 which is already required in VTK master.
@@ -535,6 +530,8 @@ class Vtk(CMakePackage):
             # A bug in tao pegtl causes build failures with intel compilers
             if "%intel" in spec and spec.version >= Version("8.2"):
                 cmake_args.append("-DVTK_MODULE_ENABLE_VTK_IOMotionFX:BOOL=OFF")
+
+        cmake_args.append(self.define_from_variant("VTK_VERSIONED_INSTALL", "versioned_install"))
 
         # -no-ipo prevents an internal compiler error from multi-file
         # optimization (https://github.com/spack/spack/issues/20471)

@@ -3,12 +3,41 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
 _versions = {
+    "6.4.3": {
+        "apt": (
+            "9c859a05c6a246eebe75f40915d3788aff8f1f537ab62b3864852efbfb012a25",
+            "https://repo.radeon.com/rocm/apt/6.4.3/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.60403-128~22.04_amd64.deb",
+        ),
+        "yum": (
+            "2a0a3f76cfba27976f6e2053c6746000e693e733bdd7a466ef01127b51baf18a",
+            "https://repo.radeon.com/rocm/rhel8/6.4.3/main/hsa-amd-aqlprofile-1.0.0.60403-128.el8.x86_64.rpm",
+        ),
+        "zyp": (
+            "d5393b2800678eb18bc63b8b5ac7dc54ce74d47e7ac7979f49f64be6ea4a774b",
+            "https://repo.radeon.com/rocm/zyp/6.4.3/main/hsa-amd-aqlprofile6.4.3-1.0.0.60403-sles156.128.x86_64.rpm",
+        ),
+    },
+    "6.4.2": {
+        "apt": (
+            "b0f2cbe31aa0ac9dd3a5584f580ea91b96412fca2feaac19f23bbfc5a60fc06d",
+            "https://repo.radeon.com/rocm/apt/6.4.2/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.60402-120~22.04_amd64.deb",
+        ),
+        "yum": (
+            "87201f122f27e1d6a8caaaa44b654e39aac41b46d63c44546c2aca3dfec3b8db",
+            "https://repo.radeon.com/rocm/rhel8/6.4.2/main/hsa-amd-aqlprofile-1.0.0.60402-120.el8.x86_64.rpm",
+        ),
+        "zyp": (
+            "345c480f54435ac44f40b137d55bab05297b51d7206954afca26578ad75e6ef9",
+            "https://repo.radeon.com/rocm/zyp/6.4.2/main/hsa-amd-aqlprofile6.4.2-1.0.0.60402-sles156.120.x86_64.rpm",
+        ),
+    },
     "6.4.1": {
         "apt": (
             "9e0917b47d40318f73d4323bdc0fdaa27202931544bc4e89f706c4ddd9bd9428",
@@ -233,34 +262,6 @@ _versions = {
             "https://repo.radeon.com/rocm/zyp/5.7/main/hsa-amd-aqlprofile-1.0.0.50700.50700-sles154.63.x86_64.rpm",
         ),
     },
-    "5.6.1": {
-        "apt": (
-            "ddb231dc4c8ca45e586ba68cae86273c3bc109f5ec172855815fce1ea6aff172",
-            "https://repo.radeon.com/rocm/apt/5.6.1/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50601-93~20.04_amd64.deb",
-        ),
-        "yum": (
-            "3c67b2e3cfbe71441d4c504dee2c55c9010a15ad7c973f1f858a052fb60524a6",
-            "https://repo.radeon.com/rocm/yum/5.6.1/main/hsa-amd-aqlprofile-1.0.0.50601-93.el7.x86_64.rpm",
-        ),
-        "zyp": (
-            "956382a085356211a35cb24210764c4f5575ce4d3d842439e39cc94287004176",
-            "https://repo.radeon.com/rocm/zyp/5.6.1/main/hsa-amd-aqlprofile-1.0.0.50601-sles154.93.x86_64.rpm",
-        ),
-    },
-    "5.6.0": {
-        "apt": (
-            "67273e8513c0efdef6d52fb211a0cf4b7e117b1c5e737f8763946699324a9d7d",
-            "https://repo.radeon.com/rocm/apt/5.6/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.50600-67~20.04_amd64.deb",
-        ),
-        "yum": (
-            "0aefd5f0eca5c1bcb55f5c80e946e252685533cbb3c936417abd44fe94c1f28e",
-            "https://repo.radeon.com/rocm/yum/5.6/main/hsa-amd-aqlprofile-1.0.0.50600-67.el7.x86_64.rpm",
-        ),
-        "zyp": (
-            "b752eb18eed98226bf0cffa492363d452b318432fd5ae01ad86172c4ce132bef",
-            "https://repo.radeon.com/rocm/zyp/5.6/main/hsa-amd-aqlprofile-1.0.0.50600-sles154.67.x86_64.rpm",
-        ),
-    },
 }
 
 
@@ -270,7 +271,11 @@ class Aqlprofile(Package):
     Provides AQL packets helper methods for perfcounters (PMC) and SQ threadtraces (SQTT).
     """
 
+    tags = ["rocm"]
+
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+
+    libraries = ["libhsa-amd-aqlprofile64"]
 
     spack_os = host_platform().default_os
     if "rhel" in spack_os or "centos" in spack_os:
@@ -288,8 +293,6 @@ class Aqlprofile(Package):
     depends_on("cpio")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -306,6 +309,8 @@ class Aqlprofile(Package):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
 
@@ -322,6 +327,17 @@ class Aqlprofile(Package):
 
         install_tree(f"opt/rocm-{spec.version}/share/", prefix.share)
         install_tree(f"opt/rocm-{spec.version}/lib/", prefix.lib)
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if not self.spec.external:

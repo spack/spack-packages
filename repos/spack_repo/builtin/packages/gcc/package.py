@@ -36,9 +36,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("master", branch="master")
 
     # Latest stable
-    version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
+    version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
 
     # Previous stable series releases
+    version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
     # Final releases of previous versions
     version("14.3.0", sha256="e0dc77297625631ac8e50fa92fffefe899a4eb702592da5c32ef04e2293aca3a")
@@ -62,6 +63,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("4.6.4", sha256="35af16afa0b67af9b8eb15cafb76d2bc5f568540552522f5dc2c88dd45d977e8")
     version("4.5.4", sha256="eef3f0456db8c3d992cbb51d5d32558190bc14f3bc19383dd93acc27acc6befc")
 
+    # Used in the tutorial
+    version("12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b")
+
     # Deprecated older non-final releases
     with default_args(deprecated=True):
         version(
@@ -80,9 +84,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         version(
             "12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175"
-        )
-        version(
-            "12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b"
         )
         version(
             "12.2.0", sha256="e549cf9cf3594a00e27b6589d4322d70e0720cdd213f39beb4181e06926230ff"
@@ -318,11 +319,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     conflicts("languages=jit", when="@:4")
 
     with when("languages=d"):
-        # The very first version of GDC that became part of GCC already supported version 2.076 of
-        # the language and runtime.
-        # See https://wiki.dlang.org/GDC#Status
-        provides("D@2")
-
         # Support for the D programming language has been added to GCC 9.
         # See https://gcc.gnu.org/gcc-9/changes.html#d
         conflicts("@:8", msg="support for D has been added in GCC 9.1")
@@ -1199,8 +1195,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 return candidate_gdc
             else:
                 raise InstallError(
-                    "Cannot resolve ambiguity when detecting GDC that belongs to "
-                    "%{0}".format(self.compiler.spec),
+                    "Cannot resolve ambiguity when detecting GDC that belongs to %{0}".format(
+                        self.compiler.spec
+                    ),
                     long_msg="The candidates are:{0}{0}{1}{0}".format(
                         error_nl,
                         error_nl.join(

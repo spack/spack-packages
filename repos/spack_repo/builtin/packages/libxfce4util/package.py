@@ -31,7 +31,7 @@ class Libxfce4util(AutotoolsPackage):
         depends_on("gettext", when="@4.18:")
 
     with default_args(type=("run", "link", "build")):
-        depends_on("pkgconfig@0.9.0:")
+        depends_on("pkgconfig")
         depends_on("glib@2")
         depends_on("gobject-introspection", when="+introspection")
         depends_on("vala", when="+vala")

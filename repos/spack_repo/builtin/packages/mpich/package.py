@@ -183,8 +183,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
     variant(
         "hcoll",
         default=False,
-        description="Enable support for Mellanox HCOLL accelerated "
-        "collective operations library",
+        description="Enable support for Mellanox HCOLL accelerated collective operations library",
         when="@3.3: device=ch4 netmod=ucx",
     )
 

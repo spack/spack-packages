@@ -23,16 +23,6 @@ class Cppad(CMakePackage):
     version(
         "20220000.5", sha256="9fb4562f6169855eadcd86ac4671593d1c0edf97bb6ce7cbb28e19af2bfc165e"
     )
-    version(
-        "20180000.0",
-        sha256="a5226e4c5aa2ad6d95668f987b39939315bf134a0a793231984e6d42d6488cca",
-        deprecated=True,
-    )
-    version(
-        "20170114",
-        sha256="fa3980a882be2a668a7522146273a1b4f1d8dabe66ad4aafa8964c8c1fd6f957",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

@@ -133,7 +133,6 @@ class HypreCmake(CMakePackage, CudaPackage):
 
             for exe_name in ["ex5big", "ex15big"]:
                 with test_part(self, f"test_bigint_{exe_name}", purpose=f"Ensure {exe_name} runs"):
-
                     program = which(exe_name)
                     if program is None:
                         raise SkipTest(f"{exe_name} does not exist in version {self.version}")

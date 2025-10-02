@@ -19,6 +19,7 @@ class Damaris(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.12.1", tag="v1.12.1", commit="34473ed117445f97a26091890f8ffd111a1d8b9c")
     version("1.12.0", tag="v1.12.0", commit="62599496ea208788530a952fdf0037495a6b6270")
     version("1.11.1", tag="v1.11.1", commit="a7954bbeed999bbf04305e2f6855bc7ddade78fd")
     version("1.11.0", tag="v1.11.0", commit="1aee2a8971584712d81323d77f9805448fe54947")
@@ -31,21 +32,6 @@ class Damaris(CMakePackage):
     version("1.8.0", tag="v1.8.0", commit="56701eee59d464cc73d248fbd5e7a8a70e7a3933")
     version("1.7.1", tag="v1.7.1", commit="09dfbe7828ee295b4433c9e01c6523fa6b4adab5")
     version("1.7.0", tag="v1.7.0", commit="9ab3ea4c568de16f5d43b8b5ad71feb4864a5584")
-    version(
-        "1.6.0", tag="v1.6.0", commit="1fe4c61cce03babd24315b8e6156f226baac97a2", deprecated=True
-    )
-    version(
-        "1.5.0", tag="v1.5.0", commit="68206a696ad430aa8426ca370501aa71914fbc87", deprecated=True
-    )
-    version(
-        "1.3.3", tag="v1.3.3", commit="f1c473507c080738f7092f6a7d72deb938ade786", deprecated=True
-    )
-    version(
-        "1.3.2", tag="v1.3.2", commit="38b50664523e56900809a19f0cf52fc0ab5dca53", deprecated=True
-    )
-    version(
-        "1.3.1", tag="v1.3.1", commit="6cee3690fa7d387acc8f5f650a7b019e13b90284", deprecated=True
-    )
 
     variant("fortran", default=True, description="Enables Fortran support")
     variant("hdf5", default=False, description="Enables the HDF5 storage plugin")

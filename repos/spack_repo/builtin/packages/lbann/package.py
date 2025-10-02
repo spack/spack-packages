@@ -64,8 +64,7 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
         "distconv",
         default=False,
         sticky=True,
-        description="Builds with support for spatial, filter, or channel "
-        "distributed convolutions",
+        description="Builds with support for spatial, filter, or channel distributed convolutions",
     )
     variant(
         "dtype",

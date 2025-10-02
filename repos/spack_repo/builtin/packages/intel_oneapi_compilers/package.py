@@ -14,6 +14,17 @@ from spack.package import *
 
 versions = [
     {
+        "version": "2025.2.1",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/04c5fd98-57e6-4a4b-be4d-e84de3aea45a/intel-dpcpp-cpp-compiler-2025.2.1.7_offline.sh",
+            "sha256": "028ef9e2176289bab6b9d19828199d26cb6cd91babdcfcece7a9dd00c5a50376",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/466b0d65-e502-4172-9e06-24c565029b96/intel-fortran-compiler-2025.2.1.9_offline.sh",
+            "sha256": "75165cc737d164cda2c068e0d8ec4f269f005a50bc2e254cd3cab6fdd063e145",
+        },
+    },
+    {
         "version": "2025.2.0",
         "cpp": {
             "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/39c79383-66bf-4f44-a6dd-14366e34e255/intel-dpcpp-cpp-compiler-2025.2.0.527_offline.sh",
@@ -431,7 +442,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             resource(
                 name="nvidia-plugin-installer",
                 placement="nvidia-plugin-installer",
-                when="@{0}".format(v["version"]),
+                when="@{0}+nvidia".format(v["version"]),
                 expand=False,
                 **v["nvidia-plugin"],
             )
@@ -439,7 +450,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             resource(
                 name="amd-plugin-installer",
                 placement="amd-plugin-installer",
-                when="@{0}".format(v["version"]),
+                when="@{0}+amd".format(v["version"]),
                 expand=False,
                 **v["amd-plugin"],
             )

@@ -44,7 +44,12 @@ class Libspatialite(AutotoolsPackage):
     depends_on("geos@:3.9", when="@:5.0.0")
     depends_on("iconv")
     depends_on("librttopo", when="@5.0.1:")
-    depends_on("libxml2+http")
+
+    # in libxml2 2.15+ http support is completely removed, so this will need
+    # to be refined when libspatiallite is updated
+    # https://www.gaia-gis.it/fossil/libspatialite/tktview?name=e8f33aa9d8
+    # https://www.gaia-gis.it/fossil/libspatialite/tktview?name=ac85f0fca3
+    depends_on("libxml2 +http")
     depends_on("minizip", when="@5.0.0:")
     depends_on("proj")
     depends_on("proj@:5", when="@:4")

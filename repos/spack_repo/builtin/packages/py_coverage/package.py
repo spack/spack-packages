@@ -15,6 +15,8 @@ class PyCoverage(PythonPackage):
 
     license("Apache-2.0")
 
+    version("7.10.7", sha256="f4ab143ab113be368a3e9b795f9cd7906c5ef407d6173fe9675a902e1fffc239")
+    version("7.10.0", sha256="2768885aef484b5dcde56262cbdfba559b770bfc46994fe9485dc3614c7a5867")
     version("7.2.6", sha256="2025f913f2edb0272ef15d00b1f335ff8908c921c8eb2013536fcaf61f5a683d")
     version("6.4.4", sha256="e16c45b726acb780e1e6f88b286d3c10b3914ab03438f32117c4aa52d7f30d58")
     version("6.3.1", sha256="6c3f6158b02ac403868eea390930ae64e9a9a2a5bbfafefbb920d29258d9f2f8")
@@ -31,6 +33,9 @@ class PyCoverage(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("python@3.9:", type=("build", "run"), when="@7.6.2:")
+    depends_on("python@3.8:", type=("build", "run"), when="@7.3:")
+    depends_on("python@3.7:", type=("build", "run"), when="@6.3:")
     depends_on("py-setuptools", type="build")
     depends_on("py-tomli", when="@6: +toml ^python@:3.10", type=("build", "run"))
     depends_on("py-toml", when="@:5 +toml", type=("build", "run"))

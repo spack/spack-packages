@@ -31,19 +31,13 @@ class Povray(AutotoolsPackage):
     license("AGPL-3.0-or-later")
 
     version("3.7.0.10", sha256="7bee83d9296b98b7956eb94210cf30aa5c1bbeada8ef6b93bb52228bbc83abff")
-    # The following version no longer builds
-    version(
-        "3.7.0.8",
-        sha256="53d11ebd2972fc452af168a00eb83aefb61387662c10784e81b63e44aa575de4",
-        deprecated=True,
-    )
 
     variant("boost", default=True, description="Build with boost support")
     variant("debug", default=False, description="Enable compiler debugging mode")
     variant(
         "io-restrictions",
         default=True,
-        description="Enable POV-Rays mechanism for control of I/O " "operations",
+        description="Enable POV-Rays mechanism for control of I/O operations",
     )
     variant("jpeg", default=True, description="Build with jpeg support")
     variant("libpng", default=True, description="Build with libpng support")

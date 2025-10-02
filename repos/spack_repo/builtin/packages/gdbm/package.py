@@ -39,6 +39,13 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("readline")
 
+    # Fix nanosleep build error: https://cgit.git.savannah.gnu.org/cgit/gdbm.git/commit/?id=ed0a865345681982ea02c6159c0f3d7702c928a1
+    patch(
+        "https://git.savannah.gnu.org/cgit/gdbm.git/rawdiff/?id=ed0a865345681982ea02c6159c0f3d7702c928a1",
+        sha256="cdba23a8da0bbdf91921247d226f9ca13e2a1c9541434f7a9132ba39346762ad",
+        when="@1.25 platform=darwin",
+    )
+
     patch("macOS.patch", when="@1.21 platform=darwin")
     patch("gdbm.patch", when="@:1.18 %gcc@10:")
     patch("gdbm.patch", when="@:1.18 %clang@11:")

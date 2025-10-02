@@ -17,6 +17,8 @@ class Gh(GoPackage):
 
     license("MIT")
 
+    version("2.79.0", sha256="2408f3f5d69ea7efde1f174ee058ca011b8ab24e583178c6f090f3e91767bda4")
+    version("2.76.2", sha256="6aee5afebdabd33f4c5e8604a9b7fa55e5bbac2a5cd36101cc221c990320c8b3")
     version("2.74.2", sha256="58d383e75e1a6f3eb5e5694f232d1ed6f7f53681fda9c6a997e6e1be344edd94")
     version("2.74.1", sha256="ac894d0f16f78db34818c396aad542b1512a776b925a7639d5d5a30d205a103b")
     version("2.74.0", sha256="b13e60f114388cbc20ba410d57b43f262814dec7d3e37363accfd525c6885d3b")
@@ -53,14 +55,14 @@ class Gh(GoPackage):
 
     conflicts("platform=darwin", when="@2.28.0")
 
-    depends_on("go@1.24.4:", type="build", when="@2.74.2:")
-    depends_on("go@1.23.0:", type="build", when="@2.66.0:")
-    depends_on("go@1.22.5:", type="build", when="@2.56.0:")
-    depends_on("go@1.22.0:", type="build", when="@2.47.0:")
-    depends_on("go@1.21.0:", type="build", when="@2.33.0:")
-    depends_on("go@1.19.0:", type="build", when="@2.21.0:")
-    depends_on("go@1.18.0:", type="build", when="@2.10.0:")
-    depends_on("go@1.16.0:", type="build")
+    depends_on("go@1.24:", type="build", when="@2.74.2:")
+    depends_on("go@1.23:", type="build", when="@2.66:")
+    depends_on("go@1.22.5:", type="build", when="@2.56:")
+    depends_on("go@1.22:", type="build", when="@2.47:")
+    depends_on("go@1.21:", type="build", when="@2.33:")
+    depends_on("go@1.19:", type="build", when="@2.21:")
+    depends_on("go@1.18:", type="build", when="@2.10:")
+    depends_on("go@1.16:", type="build")
 
     @property
     def build_args(self):

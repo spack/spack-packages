@@ -17,19 +17,14 @@ class PyNumcodecs(PythonPackage):
     pypi = "numcodecs/numcodecs-0.6.4.tar.gz"
     git = "https://github.com/zarr-developers/numcodecs.git"
 
-    # 'numcodecs.tests' excluded from 'import_modules' because it requires
-    # an additional dependency on 'pytest'
-    import_modules = ["numcodecs"]
+    # Requires pytest
+    skip_modules = ["numcodecs.tests"]
 
     license("MIT")
 
     version("main", branch="main", submodules=True)
-    version("master", branch="main", submodules=True, deprecated=True)
-    version(
-        "0.15.0",
-        sha256="52fb0c20d99845ef600eb3f8c8ad3e22fe2cb4f2a53394d331210af7cc3375ca",
-        preferred=True,
-    )
+    version("0.16.2", sha256="9922dae0c3b01b5bed3b4bae239f4787e891daa3262c27971298669d029d10e9")
+    version("0.15.0", sha256="52fb0c20d99845ef600eb3f8c8ad3e22fe2cb4f2a53394d331210af7cc3375ca")
     version("0.13.0", sha256="ba4fac7036ea5a078c7afe1d4dffeb9685080d42f19c9c16b12dad866703aa2e")
     version("0.12.1", sha256="05d91a433733e7eef268d7e80ec226a0232da244289614a8f3826901aec1098e")
     version("0.12.0", sha256="6388e5f4e94d18a7165fbd1c9d3637673b74157cff8bc644005f9e2a4c717d6e")
@@ -37,24 +32,39 @@ class PyNumcodecs(PythonPackage):
     version("0.7.3", sha256="022b12ad83eb623ec53f154859d49f6ec43b15c36052fa864eaf2d9ee786dd85")
     version("0.6.4", sha256="ef4843d5db4d074e607e9b85156835c10d006afc10e175bda62ff5412fca6e4d")
 
-    variant("msgpack", default=False, description="Codec to encode data as msgpacked bytes.")
+    variant("crc32c", default=False, description="CRC32C codec", when="@0.14:")
+    variant("msgpack", default=False, description="Codec to encode data as msgpacked bytes")
 
-    depends_on("c", type="build")  # generated
+    with default_args(type=("build", "link", "run")):
+        depends_on("python@3.11:", when="@0.14:")
+        depends_on("python@3.10:", when="@0.13:")
+        depends_on("python@3.8:", when="@0.11:0.12")
+        depends_on("python@3.6:3", when="@0.7:0.10")
+        depends_on("py-numpy@1.24:", when="@0.14:")
+        depends_on("py-numpy@1.7:")
+        # https://github.com/zarr-developers/numcodecs/issues/521
+        depends_on("py-numpy@:1", when="@:0.12.0")
 
-    depends_on("python@3.10:", when="@0.13:", type=("build", "link", "run"))
-    depends_on("python@3.8:", when="@0.11:0.12", type=("build", "link", "run"))
-    depends_on("python@3.6:3", when="@0.7:0.10", type=("build", "link", "run"))
-    depends_on("py-setuptools@64:", when="@0.11:", type="build")
-    depends_on("py-setuptools@18.1:", type="build")
-    depends_on("py-setuptools-scm@6.2: +toml", when="@0.11:", type="build")
-    depends_on("py-setuptools-scm@1.5.5: +toml", type="build")
-    depends_on("py-cython", type="build")
-    depends_on("py-numpy@1.7:", type=("build", "run"))
-    # https://github.com/zarr-developers/numcodecs/issues/521
-    depends_on("py-numpy@:1", when="@:0.12.0", type=("build", "run"))
-    depends_on("py-py-cpuinfo", when="@0.11:", type="build")
-    depends_on("py-entrypoints", when="@0.10.1:0.11", type=("build", "run"))
-    depends_on("py-msgpack", type=("build", "run"), when="+msgpack")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("py-setuptools@77:", when="@0.16.1:")
+        depends_on("py-setuptools@64:", when="@0.11:")
+        depends_on("py-setuptools@18.1:")
+        depends_on("py-setuptools-scm@6.2: +toml", when="@0.11:")
+        depends_on("py-setuptools-scm@1.5.5: +toml")
+        depends_on("py-cython")
+        depends_on("py-py-cpuinfo", when="@0.11:")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-typing-extensions", when="@0.16:")
+
+        # Historical dependencies
+        depends_on("py-deprecated", when="@0.15")
+        depends_on("py-entrypoints", when="@0.10.1:0.11")
+
+    with default_args(type="run"):
+        depends_on("py-crc32c@2.7:", when="+crc32c")
+        depends_on("py-msgpack", when="+msgpack")
 
     patch("apple-clang-12.patch", when="@:0.13 %apple-clang@12:")
 

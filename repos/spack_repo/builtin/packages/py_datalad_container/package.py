@@ -15,12 +15,15 @@ class PyDataladContainer(PythonPackage):
 
     license("MIT")
 
+    version("1.2.6", sha256="64ec4a92d1d6ef2889d0f1045c44e1441d887e61a49aa79b01e05d82e733a85f")
     version("1.2.0", sha256="35239a7a00a7fec98828ef78f929d16047349ef0e921c8be9cf933ff845aece6")
     version("1.1.7", sha256="02574c1d3d1e83c8ef3ab75b6a3523ce5acc870b0b79af12ae433ac140c5cb16")
     version("1.1.5", sha256="f6099a0124ddb2f021531d5020a583eca3cd9243e4e609b0f58e3f72e779b601")
 
+    depends_on("py-setuptools@59:", when="@1.2.6:", type="build")
     depends_on("py-setuptools@43:", when="@1.1.6:", type="build")
     depends_on("py-setuptools", type="build")
+    depends_on("py-tomli", when="@1.2.4:", type="build")
 
     depends_on("py-datalad@0.18:", when="@1.1.9:", type=("build", "run"))
     depends_on("py-datalad@0.13:", type=("build", "run"))

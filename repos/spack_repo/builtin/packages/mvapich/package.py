@@ -28,6 +28,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     license("Unlicense")
 
     # Prefer the latest stable release
+    version("4.1", sha256="a36c459befd5b0d1b66e4a217250d89d9f77b903fcc4a050efddb1c475b8dcab")
     version("4.0", sha256="c532f7bdd5cca71f78c12e0885c492f6e276e283711806c84d0b0f80bb3e3b74")
     version("3.0", sha256="ee076c4e672d18d6bf8dd2250e4a91fa96aac1db2c788e4572b5513d86936efb")
 
@@ -75,7 +76,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
         "process_managers",
         description="List of the process managers to activate",
         values=disjoint_sets(("auto",), ("slurm",), ("hydra", "gforker", "remshell"))
-        .with_error("'slurm' or 'auto' cannot be activated along with " "other process managers")
+        .with_error("'slurm' or 'auto' cannot be activated along with other process managers")
         .with_default("auto")
         .with_non_feature_values("auto"),
     )

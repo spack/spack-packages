@@ -14,12 +14,14 @@ class RoctracerDevApi(Package):
 
     homepage = "https://github.com/ROCm/roctracer"
     git = "https://github.com/ROCm/roctracer.git"
-    url = "https://github.com/ROCm/roctracer/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/roctracer/archive/refs/tags/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    version("6.4.3", sha256="a4378652b3b7141ca3b2743eedada03757383bff88932db8e28d0afd5869b882")
+    version("6.4.2", sha256="c9bc3390fe4c406cc2b2bdb5a7e9f088e0107825624c9cd7b2a6ec120bc73ef8")
     version("6.4.1", sha256="57d61441d95b05b12cd05210a80d81cd1d7a21dab7487680897427dfbdafddca")
     version("6.4.0", sha256="e5c6e3b20ed3c0d2dca61ad472f9878107c9ce09a2108ff6583ae32031298022")
     version("6.3.3", sha256="0d03ebd058291d584be6bf8b114292c666a799b0fd23c697e1c6cb2b6d43f990")
@@ -36,9 +38,6 @@ class RoctracerDevApi(Package):
     version("6.0.0", sha256="941166a0363c5689bfec118d54e986c43fb1ec8cbf18d95721d9a824bd52c0f8")
     version("5.7.1", sha256="ec0453adac7e62b142eb0df1e1e2506863aac4c3f2ce9d117c3184c08c0c6b48")
     version("5.7.0", sha256="40bb757920488466e29df90bb80a975cc340bf7f8771fb1d754dfbb6b688d78e")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="007c498be25b067ad9a7631a2b0892f9129150ee9714e471a921225875d45e69")
-        version("5.6.0", sha256="cbcfe4fa2e8b627006b320a93992fb3078696d8ef2ef049b4b880b6b7d57e13e")
 
     depends_on("cxx", type="build")  # generated
 

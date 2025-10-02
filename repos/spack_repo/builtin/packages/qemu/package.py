@@ -19,6 +19,8 @@ class Qemu(AutotoolsPackage):
     # Docs say TCG is "under a BSD license" but all the headers for TCG have the MIT license.
     license("GPL-2.0-only AND LGPL-2.1-only AND MIT", checked_by="tgamblin")
 
+    version("10.1.0", sha256="e0517349b50ca73ebec2fa85b06050d5c463ca65c738833bd8fc1f15f180be51")
+    version("9.2.4", sha256="f3cc1c4eabfdb288218ac3e33763dbe9e276d8bc890b867a2335d58de2ddd39a")
     version("9.1.0", sha256="816b7022a8ba7c2ac30e2e0cf973e826f6bcc8505339603212c5ede8e94d7834")
     version("4.1.1", sha256="ed6fdbbdd272611446ff8036991e9b9f04a2ab2e3ffa9e79f3bab0eb9a95a1d2")
     version("4.1.0", sha256="656e60218689bdeec69903087fd7582d5d3e72238d02f4481d8dc6d79fd909c6")
@@ -106,10 +108,20 @@ class Qemu(AutotoolsPackage):
     version("0.10.0", sha256="cd554729fa9d0ec17164afbc1cea62d02bde3db8e16db3fd1b8e71d8e1b3dd41")
     version("0.9.1", sha256="a9655a471d0649f5540b890447b35849c162d9b986bf2bbddcb68461748e0f42")
 
+    with default_args(type="build"):
+        depends_on("python")
+        depends_on("python@3.8:", when="@8.2:")
+        # qemu is not forward compatible with pip 25.2, which is vendored by python,
+        # bumped in v3.13.6
+        # https://github.com/qemu/qemu/commit/6ad034e71232c2929ed546304c9d249312bb632f
+        # https://github.com/python/cpython/commit/1ba09b2f0445eb80fd255ee2d9cbbdc859e0bb41
+        depends_on("python@:3.13.5", when="@:10.0")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     depends_on("pkgconfig", type="build")
+    depends_on("diffutils", type="build")
     depends_on("py-tomli", when="@9:", type="build")
     depends_on("meson@1.1.0:", when="@9:", type="build")
 
@@ -118,6 +130,9 @@ class Qemu(AutotoolsPackage):
     depends_on("capstone", when="@9:")
     depends_on("dtc", when="@9:")
     depends_on("flex", when="@9:")
+    depends_on("glib@2.66:", when="@9.1:")
+    depends_on("glib@2.56:", when="@6.1:")
+    depends_on("glib@2.48:", when="@4.2:")
     depends_on("glib@2.40:")
     depends_on("gnutls", when="@9:")
     depends_on("libslirp", when="@9:")

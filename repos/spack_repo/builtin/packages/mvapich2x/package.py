@@ -39,8 +39,7 @@ class Mvapich2x(MpichEnvironmentModifications, AutotoolsPackage):
     variant(
         "feature",
         description=(
-            "Feature descriptions are specified at: "
-            "https://mvapich.cse.ohio-state.edu/downloads/"
+            "Feature descriptions are specified at: https://mvapich.cse.ohio-state.edu/downloads/"
         ),
         default="basic",
         values=("basic", "basic-xpmem", "advanced", "advanced-xpmem"),
@@ -51,7 +50,7 @@ class Mvapich2x(MpichEnvironmentModifications, AutotoolsPackage):
         "process_managers",
         description="List of the process managers to activate",
         default="mpirun",
-        values=("slurm", "mpirun", "pbs", "jsrun"),
+        values=("slurm", "mpirun", "pbs"),
         multi=False,
     )
 
@@ -74,19 +73,16 @@ class Mvapich2x(MpichEnvironmentModifications, AutotoolsPackage):
     variant(
         "pmi_version",
         description=(
-            "The pmi version to be used with slurm. This variant is "
-            "IGNORED if set for mpirun or jsrun. jsrun uses pmix "
-            "regardless of chosen option."
+            "The pmi version to be used with slurm. This variant is " "IGNORED if set for mpirun"
         ),
         default="pmi1",
-        values=("pmi1", "pmi2", "pmix"),
+        values=("pmi1", "pmi2"),
         multi=False,
     )
 
     depends_on("bison@3.4.2", type="build")
     depends_on("libpciaccess@0.13.5", when=(sys.platform != "darwin"))
     depends_on("libxml2@2.9.10")
-    depends_on("pmix@3.1.3", when="pmi_version=pmix")
 
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
 
@@ -163,18 +159,8 @@ class Mvapich2x(MpichEnvironmentModifications, AutotoolsPackage):
                 opts.append("--with-pmi=pmi1")
             if "pmi_version=pmi2" in spec:
                 opts.append("--with-pmi=pmi2")
-            if "pmi_version=pmix" in spec:
-                opts.append("--with-pmi=pmix")
-                opts.append("--with-pmix={0}".format(spec["pmix"].prefix))
         elif "process_managers=pbs" in spec:
             opts = ["--with-ch3-rank-bits=32", "--with-pbs=/opt/pbs", "--with-pm=hydra"]
-        elif "process_managers=jsrun" in spec:
-            opts = [
-                "--with-ch3-rank-bits=32",
-                "--with-pmi=pmix",
-                "--with-pmix={0}".format(["pmix"].prefix),
-                "--with-pm=jsm",
-            ]
         opts.append("--disable-gl")
         return opts
 
@@ -184,7 +170,7 @@ class Mvapich2x(MpichEnvironmentModifications, AutotoolsPackage):
         spec = self.spec
         xpmem_ldflags = ""
         if "feature=basic-xpmem" in spec or "feature=advanced-xpmem" in spec:
-            xpmem_ldflags = " -Wl,-rpath,/opt/xpmem/lib " "-L/opt/xpmem/lib -lxpmem"
+            xpmem_ldflags = " -Wl,-rpath,/opt/xpmem/lib -L/opt/xpmem/lib -lxpmem"
 
         # Add default LDFLAGS and combine together
         LDFLAGS = "LDFLAGS=-Wl,-rpath,XORIGIN/placeholder"
@@ -205,8 +191,6 @@ class Mvapich2x(MpichEnvironmentModifications, AutotoolsPackage):
             env.set("SLURM_MPI_TYPE", "pmi1")
         if "pmi_version=pmi2" in self.spec:
             env.set("SLURM_MPI_TYPE", "pmi2")
-        if "pmi_version=pmix" in self.spec:
-            env.set("SLURM_MPI_TYPE", "pmix")
 
         # Because MPI functions as a compiler, we need to treat it as one and
         # add its compiler paths to the run environment.

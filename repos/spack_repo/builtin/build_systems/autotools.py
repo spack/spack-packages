@@ -276,9 +276,7 @@ class AutotoolsBuilder(BuilderWithDefaults):
                 "`gnuconfig` package is broken"
             ).format(gnuconfig_dir)
             if gnuconfig.external:
-                msg += (
-                    " or the `gnuconfig` package prefix is misconfigured as" " an external package"
-                )
+                msg += " or the `gnuconfig` package prefix is misconfigured as an external package"
             raise InstallError(msg)
 
         # Filter working substitutes
@@ -756,9 +754,7 @@ To resolve this problem, please try the following:
                 def _default_generator(is_activated):
                     if is_activated:
                         line = f"--{activation_word}-{option_value}"
-                        if activation_value is not None and activation_value(
-                            option_value
-                        ):  # NOQA=ignore=E501
+                        if activation_value is not None and activation_value(option_value):
                             line = f"{line}={activation_value(option_value)}"
                         return line
                     return f"--{deactivation_word}-{option_value}"
