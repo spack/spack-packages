@@ -29,6 +29,7 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("Unlicense")
 
     # Prefer the latest stable release
+    version("4.1", sha256="be0a60f342cb94b6719799077072d87aa6e306f21e2c4a09eba6c581f83d4619")
     version("4.0", sha256="942156804425752ab8b7884a6995581d7d9e93f58025ca71b58e6412eb766eae")
 
     provides("mpi")
