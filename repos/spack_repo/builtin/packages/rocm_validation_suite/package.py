@@ -62,6 +62,8 @@ class RocmValidationSuite(CMakePackage):
         when="@6.3",
     )
     patch("010-add-drm-include-path.patch", when="@6.4")
+    # https://github.com/ROCm/ROCmValidationSuite/pull/998
+    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0")
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
     depends_on("yaml-cpp~shared")
