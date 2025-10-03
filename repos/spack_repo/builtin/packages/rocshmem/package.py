@@ -12,6 +12,7 @@ class Rocshmem(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocSHMEM"
     url = "https://github.com/ROCm/rocSHMEM/archive/refs/tags/rocm-6.4.0.tar.gz"
+    tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
