@@ -313,7 +313,7 @@ e4s-rocm-external-build:
 
 e4s-oneapi-generate:
   extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-oneapi-2025.1:2025.03.24
+  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.2-1759968993
 
 e4s-oneapi-build:
   extends: [ ".e4s-oneapi", ".build" ]
