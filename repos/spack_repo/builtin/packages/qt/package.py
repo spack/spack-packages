@@ -195,7 +195,9 @@ class Qt(Package):
         when="@5.9.2: %gcc@14:",
     )
 
-    # Do not define `wtf_ceil()` in MathExtras.h on macOS
+    # Do not define `wtf_ceil()` in MathExtras.h on macOS.
+    # Prevents reference to removed API in order to avoid compilation errors
+    # for webkit on macOS.
     patch("qt515-mathextras.patch", when="@5.15.4:5.15 platform=darwin")
 
     conflicts("%gcc@10:", when="@5.9:5.12.6 +opengl")
