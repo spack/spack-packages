@@ -7,24 +7,26 @@ import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Libfabric(AutotoolsPackage, CudaPackage):
+class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     """The Open Fabrics Interfaces (OFI) is a framework focused on exporting
     fabric communication services to applications."""
 
     homepage = "https://libfabric.org/"
     url = "https://github.com/ofiwg/libfabric/releases/download/v1.8.0/libfabric-1.8.0.tar.bz2"
     git = "https://github.com/ofiwg/libfabric.git"
-    maintainers("rajachan")
+    maintainers("rajachan", "msimberg")
 
     executables = ["^fi_info$"]
 
     license("GPL-2.0-or-later")
 
     version("main", branch="main")
+    version("2.3.0", sha256="1d18fce868f8fef68b42fccd1f5df2555369739e8cb7c148532a0529a308eb09")
     version("2.2.0", sha256="ff6d05240b4a9753bb3d1eaf962f5a06205038df5142374a6ef40f931bb55ecc")
     version("2.1.0", sha256="97df312779e2d937246d2f46385b700e0958ed796d6fed7aae77e2d18923e19f")
     version("2.0.0", sha256="1a8e40f1f331d6ee2e9ace518c0088a78c8a838968f8601c2b77fd012a7bf0f5")
@@ -101,14 +103,15 @@ class Libfabric(AutotoolsPackage, CudaPackage):
         multi=True,
     )
 
-    # NOTE: the 'kdreg' variant enables use of the special /dev/kdreg file to
+    # NOTE: the 'kdreg' variant enables use of the special /dev/kdreg2 file to
     #   assist in memory registration caching in the GNI provider.  This
     #   device file can only be opened once per process, however, and thus it
     #   frequently conflicts with MPI.
-    variant("kdreg", default=False, description="Enable kdreg on supported Cray platforms")
+    variant("kdreg", default=False, description="Enable kdreg2 on supported Cray platforms")
     variant("debug", default=False, description="Enable debugging")
     variant("uring", default=False, when="@1.17.0:", description="Enable uring support")
     variant("level_zero", default=False, description="Enable Level Zero support")
+    variant("gdrcopy", default=False, when="@1.12: +cuda", description="Enable gdrcopy support")
 
     # For version 1.9.0:
     # headers: fix forward-declaration of enum fi_collective_op with C++
@@ -135,7 +138,10 @@ class Libfabric(AutotoolsPackage, CudaPackage):
     depends_on("liburing@2.1:", when="+uring")
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("libcxi", when="fabrics=cxi")
+    depends_on("cassini-headers", when="fabrics=cxi")
+    depends_on("cxi-driver", when="fabrics=cxi")
     depends_on("xpmem", when="fabrics=xpmem")
+    depends_on("gdrcopy", when="+gdrcopy")
 
     depends_on("m4", when="@main", type="build")
     depends_on("autoconf", when="@main", type="build")
@@ -203,27 +209,36 @@ class Libfabric(AutotoolsPackage, CudaPackage):
     def configure_args(self):
         args = [
             *self.enable_or_disable("debug"),
-            *self.with_or_without("kdreg"),
             *self.with_or_without("uring"),
             *self.with_or_without("cuda", activation_value="prefix"),
             *self.with_or_without("ze", variant="level_zero"),
+            *self.with_or_without("gdrcopy", activation_value="prefix"),
+            *self.with_or_without(
+                "rocr", variant="rocm", activation_value=lambda _: self.spec["hip"].prefix
+            ),
         ]
+
+        if self.spec.satisfies("+kdreg"):
+            args.append("--with-kdreg2")
 
         for fabric in [f if isinstance(f, str) else f[0].value for f in self.fabrics]:
             if f"fabrics={fabric}" in self.spec:
-                args.append(f"--enable-{fabric}")
+                if fabric == "xpmem":
+                    args.append(f"--enable-xpmem={self.spec['xpmem'].prefix}")
+                elif fabric == "cxi":
+                    args.append(f"--with-json-c={self.spec['json-c'].prefix}")
+                    args.append(f"--with-curl={self.spec['curl'].prefix}")
+                    args.append(
+                        f"--with-cassini-headers={self.spec['cassini-headers'].prefix.include}"
+                    )
+                    args.append(
+                        f"--with-cxi-uapi-headers={self.spec['cxi-driver'].prefix.include}"
+                    )
+                    args.append(f"--enable-cxi={self.spec['libcxi'].prefix}")
+                else:
+                    args.append(f"--enable-{fabric}")
             else:
                 args.append(f"--disable-{fabric}")
-
-        if self.spec.satisfies("fabrics=cxi"):
-            args.append(f"--with-json-c={self.spec['json-c'].prefix}")
-            args.append(f"--with-curl={self.spec['curl'].prefix}")
-            args.append(f"--with-cassini-headers={self.spec['cassini-headers'].prefix.include}")
-            args.append(f"--with-cxi-uapi-headers={self.spec['cxi-driver'].prefix.include}")
-            args.append(f"--enable-cxi={self.spec['libcxi'].prefix}")
-
-        if self.spec.satisfies("fabrics=xpmem"):
-            args.append(f"--enable-xpmem={self.spec['xpmem'].prefix}")
 
         return args
 

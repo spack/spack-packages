@@ -55,19 +55,25 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     with when("build_system=cmake"):
         # TODO: document why we need to revert https://github.com/Unidata/netcdf-c/pull/1731
         #  with the following patch:
-        patch("4.8.1-win-hdf5-with-zlib.patch", when="@4.8.1: platform=windows")
+        patch("4.8.1-win-hdf5-with-zlib.patch", when="@4.8.1:4.9.2 platform=windows")
 
         # TODO: https://github.com/Unidata/netcdf-c/pull/2595 contains some of the changes
         # made in this patch but is not sufficent to replace the patch. There is currently
         # no upstream PR (or set of PRs) covering all changes in this path.
         # When #2595 lands, this patch should be updated to include only
         # the changes not incorporated into that PR
-        patch("netcdfc_correct_and_export_link_interface.patch")
+        patch("netcdfc_correct_and_export_link_interface.patch", when="@:4.9.2")
 
         # Building netcdf-c w/ hdf5+mpi causes CMake's FindMPI to inject a path to the current
         # netcdf-c source directory into its targets interface properties causing CMake configure
         # failures. This patch strips the source dir from the MPI include interface
-        patch("strip_csd_from_mpi_inc.patch", when="@4.7.1: platform=windows")
+        patch("strip_csd_from_mpi_inc.patch", when="@4.7.1:4.9.2 platform=windows")
+
+        # Netcdf's source for the h5deflate target contains includes for zlib headers
+        # but fails to include that header in the include interface in the relevant
+        # CMake target, this patch adds that.
+        # Similar to https://github.com/Unidata/netcdf-c/pull/3132
+        patch("netcdf-4.9.3-deflate-include-zlib.patch", when="@4.9.3")
 
     # Some of the patches touch configure.ac and, therefore, require forcing the autoreconf stage:
     _force_autoreconf_when = []
@@ -189,6 +195,11 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     # https://docs.unidata.ucar.edu/nug/current/getting_and_building_netcdf.html
     depends_on("curl@7.18.0:", when="+dap")
     depends_on("curl@7.18.0:", when="+byterange")
+
+    # curl is supposed to only be needed when +dap or +byterange, but the check is missing
+    # this is fixed in 4.9.3. Spack autotools already protects against this
+    # https://github.com/Unidata/netcdf-c/issues/3016
+    depends_on("curl@7.18.0:", when="@:4.9.2 build_system=cmake")
 
     # Need to include libxml2 when using DAP in 4.9.0 and newer to build
     # https://github.com/Unidata/netcdf-c/commit/53464e89635a43b812b5fec5f7abb6ff34b9be63

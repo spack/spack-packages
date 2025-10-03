@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -19,8 +20,11 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     homepage = "https://github.com/ROCm/hipsparselt"
     url = "https://github.com/ROCm/hipSPARSELt/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/hipsparseLt.git"
+    tags = ["rocm"]
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
+
+    libraries = ["libhipsparselt"]
 
     license("MIT")
 
@@ -57,6 +61,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")
 
     for ver in [
         "6.0.0",
@@ -103,6 +108,27 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.2.patch", when="@6.2")
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.3.patch", when="@6.3")
     patch("0002-add-hipsparse-include.patch", when="@6.4")
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
+
+    def patch(self):
+        if not self.spec["hip"].external:
+            if self.spec.satisfies("@6.4:") and self.run_tests:
+                filter_file(
+                    r"${HIP_CLANG_ROOT}/lib",
+                    "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
+                    "clients/CMakeLists.txt",
+                    string=True,
+                )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)

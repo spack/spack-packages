@@ -22,8 +22,7 @@ class PyArkouda(PythonPackage):
     test_requires_compiler = True
 
     # A list of GitHub accounts to notify when the package is updated.
-    # TODO: add arkouda devs github account
-    maintainers("arezaii")
+    maintainers("1RyanK", "ajpotts", "arezaii", "drculhane", "jaketrookman")
 
     version("master", branch="master")
 

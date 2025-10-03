@@ -16,6 +16,7 @@ class PyPygments(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("2.19.2", sha256="636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887")
     version("2.18.0", sha256="786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199")
     version("2.16.1", sha256="1daff0494820c69bc8941e407aa20f577374ee88364ee10a98fdbe0aece96e29")
     version("2.16.0", sha256="4f6df32f21dca07a54a0a130bda9a25d2241e9e0a206841d061c85a60cc96145")
@@ -31,7 +32,11 @@ class PyPygments(PythonPackage):
     version("2.0.1", sha256="5e039e1d40d232981ed58914b6d1ac2e453a7e83ddea22ef9f3eeadd01de45cb")
     version("2.0.2", sha256="7320919084e6dac8f4540638a46447a3bd730fca172afc17d2c03eed22cf4f51")
 
+    depends_on("python@3.8:", when="@2.18:", type="build")
+    depends_on("python@3.7:", when="@2.15:", type="build")
     depends_on("py-hatchling", when="@2.17:", type="build")
+
+    # Historical dependencies
     depends_on("py-setuptools@61:", when="@2.15:2.16", type=("build", "run"))
     depends_on("py-setuptools", when="@:2.14", type=("build", "run"))
 

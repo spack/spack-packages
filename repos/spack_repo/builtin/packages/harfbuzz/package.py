@@ -28,6 +28,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     # Ref: https://github.com/harfbuzz/harfbuzz/blob/main/COPYING
     license("MIT-old", checked_by="wdconinc")
 
+    version("11.5.1", sha256="972a60a8d274d49e70361da6920c3a73dfb0fb4387f6c6811906a47ba634d8a1")
     version("11.4.1", sha256="7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698")
     version("11.3.3", sha256="e1fbca6b32a91ae91ecd9eb2ca8d47a5bfe2b1cb2e54855ab7a0b464919ef358")
     version("11.2.1", sha256="093714c8548a285094685f0bdc999e202d666b59eeb3df2ff921ab68b8336a49")
@@ -58,41 +59,6 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     version("3.3.2", sha256="1c13bca136c4f66658059853e2c1253f34c88f4b5c5aba6050aba7b5e0ce2503")
     version("3.2.0", sha256="0ada50a1c199bb6f70843ab893c55867743a443b84d087d54df08ad883ebc2cd")
     version("3.1.2", sha256="4056b1541dd8bbd8ec29207fe30e568805c0705515632d7fec53a94399bc7945")
-    version(
-        "2.9.1",
-        sha256="0edcc980f526a338452180e701d6aba6323aef457b6686976a7d17ccbddc51cf",
-        deprecated=True,
-    )
-    version(
-        "2.6.8",
-        sha256="6648a571a27f186e47094121f0095e1b809e918b3037c630c7f38ffad86e3035",
-        deprecated=True,
-    )
-    version(
-        "2.3.1",
-        sha256="f205699d5b91374008d6f8e36c59e419ae2d9a7bb8c5d9f34041b9a5abcae468",
-        deprecated=True,
-    )
-    version(
-        "2.1.3",
-        sha256="613264460bb6814c3894e3953225c5357402915853a652d40b4230ce5faf0bee",
-        deprecated=True,
-    )
-    version(
-        "1.9.0",
-        sha256="11eca62bf0ac549b8d6be55f4e130946399939cdfe7a562fdaee711190248b00",
-        deprecated=True,
-    )
-    version(
-        "1.4.6",
-        sha256="21a78b81cd20cbffdb04b59ac7edfb410e42141869f637ae1d6778e74928d293",
-        deprecated=True,
-    )
-    version(
-        "0.9.37",
-        sha256="255f3b3842dead16863d1d0c216643d97b80bfa087aaa8fc5926da24ac120207",
-        deprecated=True,
-    )
 
     variant("graphite2", default=False, description="enable support for graphite2 font engine")
     variant(
@@ -110,6 +76,13 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         depends_on("meson@0.55:", when="@3.2.1:")
         depends_on("meson@0.52:")
 
+        # As of 11.5.0 Harfbuzz made the decision to drop
+        # support for CMake build freetype
+        # backport the old support
+        patch(
+            "harfbuzz_11.5.0_support_cmake_freetype.patch", when="@5: ^freetype build_system=cmake"
+        )
+
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
             depends_on("pkgconfig", type="build")
@@ -122,17 +95,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("graphite2", when="+graphite2")
 
-    conflicts(
-        "%intel", when="@2.3.1:", msg="harfbuzz-2.3.1 does not build with the Intel compiler"
-    )
-
-    def url_for_version(self, version):
-        if self.spec.satisfies("@2.3.2:"):
-            url = "https://github.com/harfbuzz/harfbuzz/releases/download/{0}/harfbuzz-{0}.tar.xz"
-        else:
-            url = "http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-{0}.tar.bz2"
-
-        return url.format(version)
+    conflicts("%intel", msg="harfbuzz-2.3.1 does not build with the Intel compiler")
 
     # Function borrowed from superlu
     def flag_handler(self, name, flags):

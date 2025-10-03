@@ -110,6 +110,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     _desc = "Build the flash_attention kernel for scaled dot product attention"
     variant("flash_attention", default=True, description=_desc, when="@1.13:+cuda")
     variant("flash_attention", default=True, description=_desc, when="@1.13:+rocm")
+    variant("cusparselt", default=True, description="Use NVIDIA cuSPARSELt", when="@2.1: +cuda")
     # py-torch has strict dependencies on old protobuf/py-protobuf versions that
     # cause problems with other packages that require newer versions of protobuf
     # and py-protobuf --> provide an option to use the internal/vendored protobuf.
@@ -146,6 +147,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Required dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("binutils@2.36:", when="platform=linux", type="build")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
@@ -277,8 +279,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("cuda@10.2:11.4", when="@1.10+cuda")
         depends_on("cuda@9.2:11.4", when="@1.6:1.9+cuda")
     # https://github.com/pytorch/pytorch#prerequisites
+    depends_on("cudnn@8.5:9", when="@2.8:+cudnn")
     # https://github.com/pytorch/pytorch/issues/119400
-    depends_on("cudnn@8.5:9.0", when="@2.3:+cudnn")
+    depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("nccl", when="+nccl+cuda")
     depends_on("magma+cuda", when="+magma+cuda")
@@ -312,6 +315,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("ucc", when="+ucc")
     depends_on("ucx", when="+ucc")
     depends_on("mkl", when="+mkldnn")
+    depends_on("cusparselt", when="+cusparselt")
 
     # Test dependencies
     with default_args(type="test"):
@@ -676,6 +680,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             env.set("CUDNN_INCLUDE_DIR", self.spec["cudnn"].prefix.include)
             env.set("CUDNN_LIBRARY", self.spec["cudnn"].libs[0])
 
+        enable_or_disable("cusparselt")
         enable_or_disable("fbgemm")
         enable_or_disable("kineto")
         enable_or_disable("magma")

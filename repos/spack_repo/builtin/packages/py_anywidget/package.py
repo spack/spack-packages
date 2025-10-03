@@ -18,6 +18,8 @@ class PyAnywidget(PythonPackage):
     version("0.9.18", sha256="262cf459b517a7d044d6fbc84b953e9c83f026790b2dd3ce90f21a7f8eded00f")
 
     depends_on("py-hatchling", type="build")
+    # from [tool.hatch.build.hooks.jupyter-builder]
+    depends_on("py-hatch-jupyter-builder@0.5:", type="build")
 
     with default_args(type=("build", "run")):
         depends_on("py-ipywidgets@7.6:")

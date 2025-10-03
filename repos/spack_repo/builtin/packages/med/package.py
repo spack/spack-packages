@@ -27,27 +27,12 @@ class Med(CMakePackage):
         sha256="a082b705d1aafe95d3a231d12c57f0b71df554c253e190acca8d26fc775fb1e6",
         url="https://files.salome-platform.org/Salome/medfile/med-4.1.1.tar.gz",
     )
-    # Older versions are no more available from the official provider
-    version(
-        "4.1.0",
-        sha256="847db5d6fbc9ce6924cb4aea86362812c9a5ef6b9684377e4dd6879627651fce",
-        deprecated=True,
-    )
-    version(
-        "4.0.0",
-        sha256="a474e90b5882ce69c5e9f66f6359c53b8b73eb448c5f631fa96e8cd2c14df004",
-        deprecated=True,
-    )
-    version(
-        "3.2.0",
-        sha256="d52e9a1bdd10f31aa154c34a5799b48d4266dc6b4a5ee05a9ceda525f2c6c138",
-        deprecated=True,
-    )
 
     variant("api23", default=True, description="Enable API2.3")
     variant("mpi", default=True, description="Enable MPI")
     variant("shared", default=False, description="Builds a shared version of the library")
     variant("fortran", default=False, description="Enable Fortran support")
+    variant("int64", default=False, description="Use 64-bit integers as indices.")
     variant("doc", default=False, description="Install documentation")
     variant("python", default=False, description="Build Python bindings")
 
@@ -55,7 +40,6 @@ class Med(CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("hdf5@:1.8.22", when="@3.2.0")
     depends_on("hdf5@1.10.2:1.10.7", when="@4")
     depends_on("hdf5@1.12.1:1.12", when="@5:")
 
@@ -68,16 +52,6 @@ class Med(CMakePackage):
     depends_on("swig", type="build", when="+python")
     depends_on("python", when="+python")
     conflicts("~shared", when="+python", msg="Python bindings require shared libraries")
-
-    conflicts("@4.1.0", when="~shared", msg="Link error when static")
-
-    # C++11 requires a space between literal and identifier
-    patch("add_space.patch", when="@3.2.0")
-
-    # Fix problem where CMake "could not find TARGET hdf5"
-    # The patch only works with HDF5 shared library builds
-    patch("med-4.1.0-hdf5-target.patch", when="@4.0.0:4.1.0")
-    depends_on("hdf5+shared", when="@4.0.0:4.1.0")
 
     def patch(self):
         # resembles FindSalomeHDF5.patch as in salome-configuration
@@ -100,6 +74,9 @@ class Med(CMakePackage):
         ]
         if "~fortran" in spec:
             options.append("-DCMAKE_Fortran_COMPILER=")
+
+        if "+int64" in spec:
+            options.append("-DMED_MEDINT_TYPE=long")
 
         if "+api23" in spec:
             options.extend(
