@@ -27,7 +27,6 @@ class PyCleo(PythonPackage):
     depends_on("python@2.7,3.4:3", type=("build", "run"))
     depends_on("python@3.7:3", when="@1:", type=("build", "run"))
     depends_on("py-poetry-core@1:", type="build")
-
     depends_on("py-poetry-core@1.1:1", when="@1:2.0.0", type="build")
     depends_on("py-poetry-core@1.1.0:", when="@2.0.1:", type="build")
 
