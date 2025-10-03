@@ -181,7 +181,7 @@ class Vtk(CMakePackage):
     patch(
         "https://gitlab.kitware.com/vtk/vtk/-/commit/ee029647e086b3ca01a372b347704f30be87d499.patch",
         sha256="50cbb7dfedafe6740772ff974be426ed870d430e90a23988b8a692f90ba120d3",
-        when="@9.4"
+        when="@9.4",
     )
     # Linking against an external gl2ps causes linker errors due to a lack of
     # glgetdoublev on macos. Vtk provides an alias for this, us it
