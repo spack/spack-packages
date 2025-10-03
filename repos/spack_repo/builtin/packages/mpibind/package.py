@@ -3,8 +3,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import sys
+
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+
 from spack.package import *
+
 
 class Mpibind(AutotoolsPackage):
     """A portable runtime library that automatically maps
@@ -25,33 +28,28 @@ class Mpibind(AutotoolsPackage):
     # AC_INIT would be missing the version argument,
     # which is derived with git.
     version("master", branch="master", get_full_repo=True)
-    version("0.23.0", commit="7d23407726004c7092a20ebdf6e9661f020b4ae7",
-            no_cache=True)
-    version("0.22.0", commit="7181024843b110074ad87009a7a671bb666f90a4",
-            no_cache=True)
-    version("0.21.0", commit="e8dca93adff52d464bffe7281f7ac0c3a63be4c0",
-            no_cache=True)
-    version("0.20.0", commit="8cd20ed9353a69336415193da90d86de789b1e3c",
-            no_cache=True)
+    version("0.23.0", commit="7d23407726004c7092a20ebdf6e9661f020b4ae7", no_cache=True)
+    version("0.22.0", commit="7181024843b110074ad87009a7a671bb666f90a4", no_cache=True)
+    version("0.21.0", commit="e8dca93adff52d464bffe7281f7ac0c3a63be4c0", no_cache=True)
+    version("0.20.0", commit="8cd20ed9353a69336415193da90d86de789b1e3c", no_cache=True)
 
-    version("0.8.0", commit="ff38b9dcd150ca1e8a8796835d8e1e1847b3ba68",
-            no_cache=True, deprecated=True)
-    version("0.7.0", commit="3c437a97cd841b9c13abfbe1062a0285e1a29d3e",
-            no_cache=True, deprecated=True)
-    version("0.5.0", commit="8698f07412232e4dd4de4802b508374dc0de48c9",
-            no_cache=True, deprecated=True)
+    version(
+        "0.8.0", commit="ff38b9dcd150ca1e8a8796835d8e1e1847b3ba68", no_cache=True, deprecated=True
+    )
+    version(
+        "0.7.0", commit="3c437a97cd841b9c13abfbe1062a0285e1a29d3e", no_cache=True, deprecated=True
+    )
+    version(
+        "0.5.0", commit="8698f07412232e4dd4de4802b508374dc0de48c9", no_cache=True, deprecated=True
+    )
 
     # mpibind does not depend on CUDA or ROCm, but uses
     # these variants to configure hwloc accordingly
-    variant("cuda", default=False,
-            description="Build with support for NVIDIA GPUs")
-    variant("rocm", default=False,
-            description="Build with support for AMD GPUs")
+    variant("cuda", default=False, description="Build with support for NVIDIA GPUs")
+    variant("rocm", default=False, description="Build with support for AMD GPUs")
 
-    variant("flux", default=False,
-            description="Build the Flux plugin")
-    variant("python", default=False,
-            description="Build the Python bindings")
+    variant("flux", default=False, description="Build the Flux plugin")
+    variant("python", default=False, description="Build the Python bindings")
 
     # See slurm dependency below
     # variant("slurm", default=False,
@@ -67,26 +65,21 @@ class Mpibind(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     depends_on("hwloc@2:+libxml2", type="link")
-    depends_on("hwloc@2:+pci", type="link",
-               when=(sys.platform != "darwin"))
+    depends_on("hwloc@2:+pci", type="link", when=(sys.platform != "darwin"))
 
-    depends_on("hwloc@2: +cuda +nvml", type="link",
-               when="+cuda")
-    depends_on("hwloc@2.4: +rocm +opencl", type="link",
-               when="@:0.19 +rocm")
-    depends_on("hwloc@2.4: +rocm", type="link",
-               when="@0.20: +rocm")
+    depends_on("hwloc@2: +cuda +nvml", type="link", when="+cuda")
+    depends_on("hwloc@2.4: +rocm +opencl", type="link", when="@:0.19 +rocm")
+    depends_on("hwloc@2.4: +rocm", type="link", when="@0.20: +rocm")
 
     # Need mpibind v0.23+ and hwloc v2.12+ for NV Grace Hopper
-    depends_on("hwloc@2.12: +cuda +nvml", type="link",
-               when="@0.23: +cuda target=neoverse_v2:")
-    conflicts("@:0.22 +cuda target=neoverse_v2:",
-              msg="version 0.23+ is needed for NVIDIA Grace Hopper")
+    depends_on("hwloc@2.12: +cuda +nvml", type="link", when="@0.23: +cuda target=neoverse_v2:")
+    conflicts(
+        "@:0.22 +cuda target=neoverse_v2:", msg="version 0.23+ is needed for NVIDIA Grace Hopper"
+    )
 
     # flux-core >= 0.30.0 supports FLUX_SHELL_RC_PATH,
     # which is needed to load the plugin into Flux
-    depends_on("flux-core@0.30:", type="link",
-               when="+flux")
+    depends_on("flux-core@0.30:", type="link", when="+flux")
 
     # The slurm spack package does not provide
     # slurm.pc (pkgconf). If mpibind can't find
@@ -98,10 +91,8 @@ class Mpibind(AutotoolsPackage):
     # depends_on("slurm", type="link",
     #            when="+slurm")
 
-    depends_on("python@3:", type=("build", "run"),
-               when="+python")
-    depends_on("py-cffi", type=("build", "run"),
-               when="+python")
+    depends_on("python@3:", type=("build", "run"), when="+python")
+    depends_on("py-cffi", type=("build", "run"), when="+python")
 
     def autoreconf(self, spec, prefix):
         autoreconf("--install", "--verbose", "--force")
@@ -109,8 +100,7 @@ class Mpibind(AutotoolsPackage):
     @when("+flux")
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         """Load the mpibind plugin into Flux"""
-        env.prepend_path("FLUX_SHELL_RC_PATH",
-                         join_path(self.prefix, "share", "mpibind"))
+        env.prepend_path("FLUX_SHELL_RC_PATH", join_path(self.prefix, "share", "mpibind"))
 
     # To build and run the C unit tests, make sure 'libtap'
     # is installed and recognized by pkgconfig.
