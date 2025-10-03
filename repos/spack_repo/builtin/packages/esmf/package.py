@@ -323,7 +323,14 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("ESMF_LAPACK", "system")
 
             # Specifies the path where the LAPACK library is located.
-            env.set("ESMF_LAPACK_LIBPATH", spec["lapack"].prefix.lib)
+            env.set(
+                "ESMF_LAPACK_LIBPATH",
+                [
+                    lib_dir
+                    for lib_dir in spec["lapack"].libs.directories
+                    if spec["lapack"].prefix in lib_dir
+                ][0],
+            )
 
             # Specifies the linker directive needed to link the LAPACK library
             # to the application.
