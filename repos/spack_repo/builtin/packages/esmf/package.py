@@ -322,7 +322,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # ESMF code.
             env.set("ESMF_LAPACK", "system")
 
-            # Specifies the path where the LAPACK library is located.
+            # Specifies the path where the LAPACK library is located. We cannot
+            # simply rely on spec["lapack"].prefix.lib here because some
+            # providers (e.g., MKL) use a deeper directory structure for the
+            # library directory that is not easily generalized. We must also
+            # filter out any system library paths included by the package.
             env.set(
                 "ESMF_LAPACK_LIBPATH",
                 [
