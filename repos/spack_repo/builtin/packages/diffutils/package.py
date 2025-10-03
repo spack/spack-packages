@@ -4,13 +4,13 @@
 
 import re
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
 from spack.package import *
 
 
-class Diffutils(AutotoolsPackage, GNUMirrorPackage):
+class Diffutils(Package, GNUMirrorPackage):
     """GNU Diffutils is a package of several programs related to finding
     differences between files."""
 
@@ -55,3 +55,11 @@ class Diffutils(AutotoolsPackage, GNUMirrorPackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"diff \(GNU diffutils\) (\S+)", output)
         return match.group(1) if match else None
+
+    def install(self, spec, prefix):
+        configure = Executable(join_path(self.stage.source_path, "configure"))
+        make = which("make")
+        with working_dir(self.build_directory, create=True):
+            configure(f"--prefix={prefix}")
+            make()
+            make("install")

@@ -60,6 +60,7 @@ class AutotoolsPackage(PackageBase):
         depends_on("gnuconfig", type="build", when="target=aarch64:")
         depends_on("gnuconfig", type="build", when="target=riscv64:")
         depends_on("gmake", type="build")
+        depends_on("diffutils", type="build")
         conflicts("platform=windows")
 
     def flags_to_build_system_args(self, flags):

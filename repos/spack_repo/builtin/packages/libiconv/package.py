@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
 from spack.package import *
 
 
-class Libiconv(AutotoolsPackage, GNUMirrorPackage):
+class Libiconv(Package, GNUMirrorPackage):
     """GNU libiconv provides an implementation of the iconv() function
     and the iconv program for character set conversion."""
 
@@ -23,7 +23,9 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
     version("1.15", sha256="ccf536620a45458d26ba83887a983b96827001e92a13847b45e4925cc8913178")
     version("1.14", sha256="72b24ded17d687193c3366d0ebe7cde1e6b18f0df8c55438ac95be39e8a30613")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+
+    build_directory = "spack-build"
 
     variant(
         "libs",
@@ -43,7 +45,16 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
     def configure_args(self):
         args = ["--enable-extra-encodings"]
 
-        args += self.enable_or_disable("libs")
+        if self.spec.satisfies("libs=shared"):
+            args.append("--enable-shared")
+        else:
+            args.append("--disable-shared")
+
+        if self.spec.satisfies("libs=static"):
+            args.append("--enable-static")
+        else:
+            args.append("--disable-static")
+
         args.append("--with-pic")
 
         # Starting version 1.17, libiconv uses the version of gnulib that implements a
@@ -57,9 +68,17 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
         if self.spec.satisfies("@1.17:%nvhpc"):
             args.append("gl_cv_cc_wallow=none")
 
+        return args
+
+    def install(self, spec, prefix):
+        configure = Executable(join_path(self.stage.source_path, "configure"))
+        make = which("make")
         # A hack to patch config.guess in the libcharset sub directory
         copy("./build-aux/config.guess", "libcharset/build-aux/config.guess")
-        return args
+        with working_dir(self.build_directory, create=True):
+            configure(f"--prefix={prefix}", *self.configure_args())
+            make()
+            make("install")
 
     @property
     def libs(self):
