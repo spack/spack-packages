@@ -484,7 +484,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
         return results
 
     def flag_handler(self, name, flags):
-        if name == "fflags":
+        if name == "fflags" and "fortran" in self.spec:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1795817
             # https://github.com/spack/spack/issues/17934
             if any(self.spec["fortran"].satisfies(s) for s in ["gcc@10:", "llvm@11:19.1.7"]):
