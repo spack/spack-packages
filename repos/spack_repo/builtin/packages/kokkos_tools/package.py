@@ -28,6 +28,12 @@ class KokkosTools(CMakePackage):
 
     def cmake_args(self):
         args = [
+            self.define("CMAKE_DISABLE_FIND_PACKAGE_Variorum", True),
+            self.define("KokkosTools_ENABLE_APEX", False),
+            self.define("KokkosTools_ENABLE_CALIPER", False),
+            self.define("KokkosTools_ENABLE_EXAMPLES", False),
+            self.define("KokkosTools_ENABLE_SINGLE", False),
+            self.define("KokkosTools_ENABLE_TESTS", False),
             self.define_from_variant("KokkosTools_ENABLE_MPI", "mpi"),
             self.define_from_variant("KokkosTools_ENABLE_PAPI", "papi"),
         ]
