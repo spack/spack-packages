@@ -196,8 +196,7 @@ class Qt(Package):
     )
 
     # Do not define `wtf_ceil()` in MathExtras.h on macOS
-    patch("qt515-mathextras.patch", working_dir="qtdeclarative", when="@5.15.4:5 platform=darwin")
-    patch("qt515-mathextras-js.patch", working_dir="qtscript", when="@5.15.4:5 platform=darwin")
+    patch("qt515-mathextras.patch", when="@5.15.4:5 platform=darwin")
 
     conflicts("%gcc@10:", when="@5.9:5.12.6 +opengl")
     conflicts("%gcc@11:", when="@5.8")
