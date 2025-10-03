@@ -75,7 +75,8 @@ class Mariadb(CMakePackage):
     depends_on("krb5")
     depends_on("snappy", when="@11.8.3:")
     depends_on("pcre2", when="@11.8.3:")
-    depends_on("fmt", when="@11.8.3:")
+    depends_on("fmt@11:", when="@11:")
+    depends_on("fmt@:8", when="@:10")
 
     conflicts("%gcc@9.1.0:", when="@:5.5")
     conflicts("%gcc@13:", when="@:10.8.7")  # https://github.com/spack/spack/issues/41377
@@ -91,6 +92,7 @@ class Mariadb(CMakePackage):
     def cmake_args(self):
         args = []
 
-        args.append("-DENABLE_DTRACE:BOOL=OFF")
+        args.append(self.define("ENABLE_DTRACE", "OFF"))
+        args.append(self.define("WITH_LIBFMT", "system"))
 
         return args
