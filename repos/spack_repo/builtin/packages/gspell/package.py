@@ -38,5 +38,6 @@ class Gspell(MesonPackage):
         return (
             f"https://download.gnome.org/sources/gspell/{version.up_to(2)}/gspell-{version}.tar.xz"
         )
+
     def meson_args(self):
         return ["-Dgtk_doc=false", "-Dtests=false"]
