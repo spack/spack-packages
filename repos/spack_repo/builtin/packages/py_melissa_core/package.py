@@ -45,7 +45,7 @@ class PyMelissaCore(PythonPackage, CudaPackage):
     # ============================================================
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
     depends_on("fortran", type="build")  # generated
     depends_on("py-setuptools@46.4:", type="build")
 
