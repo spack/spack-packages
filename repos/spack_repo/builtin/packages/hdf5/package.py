@@ -499,7 +499,7 @@ class Hdf5(CMakePackage):
                 variants.append("~szip")
 
             match = re.search(r"Default API mapping: (\S+)", output)
-            if match and match.group(1) in set(["v114", "v112", "v110", "v18", "v16"]):
+            if match and match.group(1) in set(["v200", "v114", "v112", "v110", "v18", "v16"]):
                 variants.append("api={0}".format(match.group(1)))
 
             results.append(" ".join(variants))
@@ -523,10 +523,6 @@ class Hdf5(CMakePackage):
             tty.warn("hdf5@:1.8.15+shared does not produce static libraries")
 
         args = [
-            # Always enable this option. This does not actually enable any
-            # features: it only *allows* the user to specify certain
-            # combinations of other arguments.
-            self.define("ALLOW_UNSUPPORTED", True),
             # Speed-up the building by skipping the examples:
             self.define("HDF5_BUILD_EXAMPLES", False),
             self.define(
@@ -538,7 +534,6 @@ class Hdf5(CMakePackage):
             ),
             self.define_from_variant("HDF5_ENABLE_SUBFILING_VFD", "subfiling"),
             self.define_from_variant("HDF5_ENABLE_MAP_API", "map"),
-            self.define("HDF5_ENABLE_Z_LIB_SUPPORT", True),
             self.define_from_variant("HDF5_ENABLE_SZIP_SUPPORT", "szip"),
             self.define_from_variant("HDF5_ENABLE_SZIP_ENCODING", "szip"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
@@ -551,6 +546,22 @@ class Hdf5(CMakePackage):
             self.define_from_variant("HDF5_BUILD_JAVA", "java"),
             self.define_from_variant("HDF5_BUILD_TOOLS", "tools"),
         ]
+
+        # Always enable this option. This does not actually enable any
+        # features: it only *allows* the user to specify certain
+        # combinations of other arguments.
+        # The option name has been changed to HDF5_ALLOW_UNSUPPORTED for
+        # HDF5 2.0 and higher versions.
+        if self.spec.satisfies("@2.0.0:"):
+            args.append(self.define("HDF5_ALLOW_UNSUPPORTED", True))
+        else:
+            args.append(self.define("ALLOW_UNSUPPORTED", True))
+
+        # The name of option Z_LIB_SUPPORT was also changed to ZLIB_SUPPORT.
+        if self.spec.satisfies("@2.0.0:"):
+            args.append(self.define("HDF5_ENABLE_ZLIB_SUPPORT", True))
+        else:
+            args.append(self.define("HDF5_ENABLE_Z_LIB_SUPPORT", True))
 
         api = spec.variants["api"].value
         if api != "default":
