@@ -9,21 +9,21 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class Openturbine(CMakePackage, CudaPackage, ROCmPackage):
-    """An open-source wind turbine structural dynamics simulation code."""
+class Kynema(CMakePackage, CudaPackage, ROCmPackage):
+    """An open-source performance-oriented structural dynamics simulation code."""
 
     license("MIT License", checked_by="ddement")
 
-    homepage = "https://www.exascaleproject.org/research-project/exawind/"
-    url = "https://github.com/Exawind/openturbine.git"
-    git = "https://github.com/Exawind/openturbine.git"
+    homepage = "https://kynema.github.io/kynema/"
+    url = "https://github.com/kynema/kynema.git"
+    git = "https://github.com/kynema/kynema.git"
 
     maintainers("faisal-bhuiyan", "ddement", "deslaughter")
 
     version("main", branch="main")
 
-    variant("tests", default=False, description="Build OpenTurbine Test Suite")
-    variant("openmp", default=False, description="Build OpenTurbine with OpenMP support")
+    variant("tests", default=False, description="Build Kynema Test Suite")
+    variant("openmp", default=False, description="Build Kynema with OpenMP support")
     variant("vtk", default=False, description="Enable VTK")
     variant("adi", default=False, description="Build the OpenFAST ADI external project")
     variant("rosco", default=False, description="Build the ROSCO controller external project")
@@ -62,10 +62,11 @@ class Openturbine(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     depends_on("cxx", type="build")
-    depends_on("netcdf-c")
-    depends_on("yaml-cpp")
+    depends_on("netcdf-c@4.9:")
+    depends_on("yaml-cpp@0.6:")
     depends_on("kokkos-kernels")
     depends_on("lapack")
+    depends_on("eigen")
 
     depends_on("kokkos@4.6:")
     depends_on("kokkos-kernels@4.6:")
@@ -81,8 +82,8 @@ class Openturbine(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos-kernels~cuda", when="~cuda")
     depends_on("kokkos-kernels~openmp", when="~openmp")
 
-    depends_on("suite-sparse", when="+klu")
-    depends_on("suite-sparse", when="+umfpack")
+    depends_on("suite-sparse@7.4:", when="+klu")
+    depends_on("suite-sparse@7.4:", when="+umfpack")
     depends_on("superlu", when="+superlu")
     depends_on("superlu-mt", when="+superlu-mt")
     depends_on("mkl", when="+mkl")
@@ -94,15 +95,15 @@ class Openturbine(CMakePackage, CudaPackage, ROCmPackage):
 
     def cmake_args(self):
         options = [
-            self.define_from_variant("OpenTurbine_ENABLE_TESTS", "tests"),
-            self.define_from_variant("OpenTurbine_ENABLE_OPENFAST_ADI", "adi"),
-            self.define_from_variant("OpenTurbine_ENABLE_ROSCO_CONTROLLER", "rosco"),
-            self.define_from_variant("OpenTurbine_ENABLE_KLU", "klu"),
-            self.define_from_variant("OpenTurbine_ENABLE_UMFPACK", "umfpack"),
-            self.define_from_variant("OpenTurbine_ENABLE_SUPERLU", "superlu"),
-            self.define_from_variant("OpenTurbine_ENABLE_SUPERLU_MT", "superlu-mt"),
-            self.define_from_variant("OpenTurbine_ENABLE_MKL", "mkl"),
-            self.define_from_variant("OpenTurbine_ENABLE_CUSOLVERSP", "cusolversp"),
-            self.define_from_variant("OpenTurbine_ENABLE_CUDSS", "cudss"),
+            self.define_from_variant("Kynema_ENABLE_TESTS", "tests"),
+            self.define_from_variant("Kynema_ENABLE_OPENFAST_ADI", "adi"),
+            self.define_from_variant("Kynema_ENABLE_ROSCO_CONTROLLER", "rosco"),
+            self.define_from_variant("Kynema_ENABLE_KLU", "klu"),
+            self.define_from_variant("Kynema_ENABLE_UMFPACK", "umfpack"),
+            self.define_from_variant("Kynema_ENABLE_SUPERLU", "superlu"),
+            self.define_from_variant("Kynema_ENABLE_SUPERLU_MT", "superlu-mt"),
+            self.define_from_variant("Kynema_ENABLE_MKL", "mkl"),
+            self.define_from_variant("Kynema_ENABLE_CUSOLVERSP", "cusolversp"),
+            self.define_from_variant("Kynema_ENABLE_CUDSS", "cudss"),
         ]
         return options

@@ -18,6 +18,7 @@ class PrometheusCpp(CMakePackage):
     license("MIT", checked_by="mdorier")
 
     version("master", branch="master", submodules=True)
+    version("1.3.0", sha256="62bc2cc9772db2314dbaae506ae2a75c8ee897dab053d8729e86a637b018fdb6")
     version("1.2.4", sha256="0d6852291063c35853e88805c73b52f73c0c08b78c1e7bc4d588fcf72a7172eb")
 
     depends_on("c", type="build")
