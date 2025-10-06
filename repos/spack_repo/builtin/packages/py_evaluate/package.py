@@ -15,8 +15,9 @@ class PyEvaluate(PythonPackage):
     homepage = "https://github.com/huggingface/evaluate"
     pypi = "evaluate/evaluate-0.4.0.tar.gz"
 
-    maintainers("meyersbs")
+    license("apache-2.0")
 
+    version("0.4.6", sha256="e07036ca12b3c24331f83ab787f21cc2dbf3631813a1631e63e40897c69a3f21")
     version("0.4.0", sha256="bd6a59879be9ae13b681684e56ae3e6ea657073c4413b30335e9efa9856e4f44")
 
     depends_on("py-setuptools", type="build")
@@ -33,4 +34,4 @@ class PyEvaluate(PythonPackage):
     depends_on("py-fsspec@2021.05.0:+http", type=("build", "run"))
     depends_on("py-huggingface-hub@0.7.0:", type=("build", "run"))
     depends_on("py-packaging", type=("build", "run"))
-    depends_on("py-responses@:0.18", type=("build", "run"))
+    depends_on("py-responses@:0.18", type=("build", "run"), when="@0.4.0")
