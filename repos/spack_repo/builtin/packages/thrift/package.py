@@ -26,6 +26,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
 
     license("Apache-2.0")
 
+    version("0.22.0", sha256="794a0e455787960d9f27ab92c38e34da27e8deeda7a5db0e59dc64a00df8a1e5")
     version("0.21.0", sha256="9a24f3eba9a4ca493602226c16d8c228037db3b9291c6fc4019bfe3bd39fc67c")
     version("0.18.1", sha256="04c6f10e5d788ca78e13ee2ef0d2152c7b070c0af55483d6b942e29cff296726")
     version("0.17.0", sha256="b272c1788bb165d99521a2599b31b97fa69e5931d099015d91ae107a0b0cc58f")
@@ -47,7 +48,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
     variant("java", default=False, description="Build support for java")
     variant("javascript", default=False, description="Build Javascript library")
     variant("nodejs", default=False, description="Build NodeJS library")
-    variant("python", default=True, description="Build support for python")
+    variant("python", default=True, description="Build support for python", when="build_system=autotools")
 
     build_system("cmake", "autotools", default="autotools")
 
@@ -86,7 +87,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
     depends_on("npm", when="+nodejs", type="build")
 
     with when("+python"):
-        extends("python")
+        extends("python", type=("build", "link", "run"))
         depends_on("py-pip", type="build")
         depends_on("py-setuptools", type="build")
         depends_on("py-six@1.7.2:", type=("build", "run"))
@@ -97,6 +98,9 @@ class Thrift(CMakePackage, AutotoolsPackage):
         when="@0.16.0",
     )
 
+    # https://github.com/spack/spack-packages/issues/1852
+    conflicts("+python", when="build_system=cmake", msg="CMake build does not install python bindings correctly")
+    conflicts("~openssl", when="build_system=autotools", msg="+openssl required with build_system=autotools")
 
 class CMakeBuilder(CMakeBuilder):
     def setup_build_environment(self, env: EnvironmentModifications):
