@@ -21,7 +21,7 @@ class Ambertools(CMakePackage):
     maintainers("d-beltran")
 
     version("22jlmrcc", sha256="1571d4e0f7d45b2a71dce5999fa875aea8c90ee219eb218d7916bf30ea229121")
-
+    version("v25", sha256="ac009b2adeb25ccd2191db28905b867df49240e038dc590f423edf0d84f8a13b", url="https://ambermd.org/downloads/ambertools25.tar.bz2")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -44,7 +44,8 @@ class Ambertools(CMakePackage):
         type=("build", "run"),
     )
     # Python dependencies
-    depends_on("python@3.8:3.10 +tkinter", type=("build", "run"))
+    depends_on("python@3.8:3.10 +tkinter",when="22jlmrcc", type=("build", "run"))
+    depends_on("python@3.11:", when="v25", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
