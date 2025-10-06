@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -15,7 +17,7 @@ class PyPeft(PythonPackage):
     homepage = "https://github.com/huggingface/peft"
     pypi = "peft/peft-0.5.0.tar.gz"
 
-    maintainers("meyersbs")
+    license("Apache-2.0")
 
     version("0.5.0", sha256="3cc03049ac6130426d82c22ca54cc6de849e7c6727181393e7751f7f512a9ced")
 
