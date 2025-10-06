@@ -262,7 +262,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
             # Floating point precision
             args.append(self.define("HYPRE_ENABLE_SINGLE", spec.satisfies("precision=single")))
             args.append(
-                args.append(self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble")))
+               self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble"))
             )
             args.append(
                 self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "mixed-precision")
@@ -353,9 +353,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
             configure_args.extend(pkg.enable_or_disable("gpu-profiling"))
             configure_args.extend(pkg.enable_or_disable("fortran"))
 
-            if spec.satisfies("+cuda") or \
-               spec.satisfies("+rocm") or \
-               spec.satisfies("+sycl"):
+            if spec.satisfies("+cuda") or spec.satisfies("+rocm") or spec.satisfies("+sycl"):
                 configure_args.append(f"--with-cxxstandard={self.spec.cxxstd}")
                 if spec.satisfies("+pic"):
                     configure_args.append("--with-extra-CXXFLAGS=-fPIC")
