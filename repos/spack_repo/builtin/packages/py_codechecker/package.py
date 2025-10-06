@@ -27,26 +27,24 @@ class PyCodechecker(PythonPackage):
     depends_on("cppcheck@1.80:", type=("build", "run"))
 
     # https://github.com/Ericsson/codechecker/blob/v6.26.2/analyzer/requirements.txt
-    depends_on("py-lxml@5.3.0", type=("build", "run"))
+    depends_on("py-lxml@5.3.0:", type=("build", "run"))
     depends_on("py-portalocker@3.1.1:", type=("build", "run"))
     depends_on("py-psutil@5.9.8:", type=("build", "run"))
     depends_on("py-pyyaml@6.0.1:", type=("build", "run"))
     depends_on("py-sarif-tools@3.0.4:", type=("build", "run"))
     depends_on("py-multiprocess@0.70.15:", type=("build", "run"))
-    # types-PyYAML==6.0.12.12 ??
+    depends_on("py-types-pyyaml@6.0.12.12:", type=("build", "run"))
 
     # https://github.com/Ericsson/codechecker/blob/v6.26.2/web/requirements.txt
-
-    depends_on("py-authlib", type=("build", "run"))
-    depends_on("py-requests", type=("build", "run"))
-    depends_on("py-sqlalchemy", type=("build", "run"))
-    depends_on("py-alembic", type=("build", "run"))
-    depends_on("py-gitpython", type=("build", "run"))
+    # some are duplicates of those above
+    depends_on("py-authlib@1.3.1:", type=("build", "run"))
+    depends_on("py-requests@2.32.4:", type=("build", "run"))
+    depends_on("py-sqlalchemy@1.4.54:1", type=("build", "run"))
+    depends_on("py-alembic@1.5.5:", type=("build", "run"))
     depends_on("thrift +python", type=("build", "run"))
-    
-    
+    # https://github.com/Ericsson/codechecker/issues/4437
+    depends_on("thrift@0.22: +python", type=("build", "run"), when="^python@3.12:")
+    depends_on("py-gitpython@3.1.41:", type=("build", "run"))
+
     depends_on("node-js@16:", type=("build", "run"))
     
-
-    # depends_on("curl")
-    # depends_on("git")
