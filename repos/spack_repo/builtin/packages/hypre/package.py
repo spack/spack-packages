@@ -66,7 +66,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     version("2.10.1", sha256="a4a9df645ebdc11e86221b794b276d1e17974887ead161d5050aaf0b43bb183a")
     version("2.10.0b", sha256="b55dbdc692afe5a00490d1ea1c38dd908dae244f7bdd7faaf711680059824c11")
 
-    variant("shared", default=True, description="Build shared library (disables static library)")
+    variant("shared", default=False, description="Build shared library (disables static library)")
+    variant("pic", default=False, description="Build position independent code")
     # Use internal SuperLU routines for FEI - version 2.12.1 and below
     variant("internal-superlu", default=False, description="Use internal SuperLU routines")
     variant(
@@ -88,6 +89,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("sycl", default=False, description="Enable SYCL support")
     variant("magma", default=False, description="Enable MAGMA interface")
     variant("caliper", default=False, description="Enable Caliper support")
+    variant("mixed-precision", default=False, description="Enable mixed precision support")
     variant(
         "precision",
         default="double",
@@ -96,7 +98,13 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         description="Floating point precision",
         when="@2.12.1:",
     )
-    variant("mixed-precision", default=False, description="Enable mixed precision support")
+    variant(
+        "cxxstd",
+        default="17",
+        values=("11", "14", "17", "20", "23"),
+        multi=False,
+        description="C++ language standard (for GPU builds)",
+    )
 
     # Patch to add gptune hookup codes
     patch("ij_gptune.patch", when="+gptune@2.19.0")
@@ -168,10 +176,17 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+cuda", when="+int64")
     conflicts("+rocm", when="+int64")
     conflicts("+rocm", when="@:2.20")
-    conflicts("+unified-memory", when="~cuda~rocm")
+    conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gptune", when="~mpi")
+    conflicts("+shared", when="+cuda")
     # Umpire device allocator exports device code, which requires static libs
     conflicts("+umpire", when="+shared+cuda")
+
+    # C++ standard
+    conflicts("cxxstd=11", when="^cuda@13:")
+    conflicts("cxxstd=11", when="^hip@7:")
+    conflicts("cxxstd=14", when="^cuda@13:")
+    conflicts("cxxstd=14", when="^hip@7:")
 
     # Patch to build shared libraries on Darwin does not apply to
     # versions before 2.13.0
@@ -194,6 +209,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     # Options added in v2.21.0
     conflicts("+umpire", when="@:2.20")
     conflicts("+gpu-profiling+rocm", when="@:2.20")
+    conflicts("+pic", when="@:2.20")
 
     # Option added in v2.24.0
     conflicts("+sycl", when="@:2.23")
@@ -230,8 +246,10 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
             spec = pkg.spec
             args = []
 
-            # Library type
+            # Library toggles
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
+            args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
+            args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
 
             # Core toggles
             args.append(self.define_from_variant("HYPRE_ENABLE_MPI", "mpi"))
@@ -242,9 +260,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
             args.append(self.define_from_variant("HYPRE_ENABLE_MIXEDINT", "mixedint"))
 
             # Floating point precision
-            args.append(self.define_from_variant("HYPRE_ENABLE_SINGLE", "precision=single"))
+            args.append(self.define("HYPRE_ENABLE_SINGLE", spec.satisfies("precision=single")))
             args.append(
-                self.define_from_variant("HYPRE_ENABLE_LONG_DOUBLE", "precision=longdouble")
+                args.append(self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble")))
             )
             args.append(
                 self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "mixed-precision")
@@ -334,6 +352,16 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
             configure_args.extend(pkg.enable_or_disable("gpu-aware-mpi"))
             configure_args.extend(pkg.enable_or_disable("gpu-profiling"))
             configure_args.extend(pkg.enable_or_disable("fortran"))
+
+            if spec.satisfies("+cuda") or \
+               spec.satisfies("+rocm") or \
+               spec.satisfies("+sycl"):
+                configure_args.append(f"--with-cxxstandard={self.spec.cxxstd}")
+                if spec.satisfies("+pic"):
+                    configure_args.append("--with-extra-CXXFLAGS=-fPIC")
+
+            if spec.satisfies("+pic"):
+                configure_args.append("--with-extra-CFLAGS=-fPIC")
 
             if spec.satisfies("precision=single"):
                 configure_args.append("--enable-single")
