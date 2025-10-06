@@ -107,6 +107,15 @@ class Proj(CMakePackage, AutotoolsPackage):
         patch("proj.cmakelists.5.0.patch", when="@5.0")
         patch("proj.cmakelists.5.1.patch", when="@5.1:5.2")
 
+        # proj 8-9.1 relies on an undocumented side effect of CMake's
+        # FindCurl module, patch it to use the interface supported by
+        # both curl's cmake module and CMake's find curl module
+        # This is fixed in proj upstream as of 9.2
+        # there is a slight difference in requirements for 8 vs 9:9.1
+        # hence two patches
+        patch("proj_8_include_curl_dirs.patch", when="@8")
+        patch("proj_9_include_curl_dirs.patch", when="@9:9.1")
+
         depends_on("cmake@3.16:", when="@9.4:", type="build")
         depends_on("cmake@3.9:", when="@6:", type="build")
         depends_on("cmake@3.5:", when="@5", type="build")
