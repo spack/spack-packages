@@ -210,15 +210,6 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+rocm", when="+sycl", msg="ROCm and SYCL are mutually exclusive")
     conflicts("+gpu-profiling", when="~cuda~rocm", msg="GPU profiling requires CUDA or ROCm")
 
-    # Enforce compiler requirements for SYCL variant
-    # sycl_msg = "SYCL support requires an Intel oneAPI compiler (e.g., icx)"
-    # conflicts("+sycl", when="%gcc", msg=sycl_msg)
-    # conflicts("+sycl", when="%clang", msg=sycl_msg)
-    # conflicts("+sycl", when="%apple-clang", msg=sycl_msg)
-    # conflicts("+sycl", when="%rocmcc", msg=sycl_msg)
-    # conflicts("+sycl", when="%aocc", msg=sycl_msg)
-    # conflicts("+sycl", when="%nvhpc", msg=sycl_msg)
-
     configure_directory = "src"
     root_cmakelists_dir = "src"
 
