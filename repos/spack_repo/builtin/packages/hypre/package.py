@@ -262,7 +262,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
             # Floating point precision
             args.append(self.define("HYPRE_ENABLE_SINGLE", spec.satisfies("precision=single")))
             args.append(
-               self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble"))
+                self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble"))
             )
             args.append(
                 self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "mixed-precision")
