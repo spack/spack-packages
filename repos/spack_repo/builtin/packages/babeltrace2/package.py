@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from os.path import join as pjoin
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -18,6 +16,9 @@ class Babeltrace2(AutotoolsPackage):
     git = "https://github.com/efficios/babeltrace.git"
     url = "https://github.com/efficios/babeltrace/archive/refs/tags/v2.1.2.tar.gz"
 
+    # Maintaining this package; not the original author of Babeltrace2
+    maintainers("minghangli-uni")
+
     license("MIT")
 
     version("2.1.2", sha256="92e261e1811f4a7f747ee4bc5ac21c0054cd7906f88ad799fab81f16e08c2122")
@@ -30,44 +31,44 @@ class Babeltrace2(AutotoolsPackage):
     version("2.0.3", sha256="6cdeaa3bfc12d47936e7c664c5a2610c376ad3d2dfc8cf947137c4b3a2051dd3")
     version("2.0.2", sha256="1c09428fec2d0000bf6f5332da2624b39fbf110477b82d2cb0856dcb74c58afc")
 
-    def url_for_version(self, v):
-        return f"https://github.com/efficios/babeltrace/archive/refs/tags/v{v}.tar.gz"
-
     variant("python", default=True, description="Build Python3 bindings (bt2)")
     variant("plugins", default=True, description="Enable Python plugin provider")
-    variant("manpages", default=False, description="Build man pages (needs doc toolchain)")
+    variant("manpages", default=True, description="Build man pages")
+
+    depends_on("c", type="build")
 
     depends_on("pkgconfig", type="build")
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
+    depends_on("libtool", type="build")
     depends_on("glib@2.22:", type=("build", "link"))
-    depends_on("python@3.9:", when="+python", type=("build", "run"))
+    depends_on("python@3.4:", when="+python", type=("build", "run"))
     depends_on("py-setuptools", when="+python", type="build")
+    depends_on("swig@2.0:", when="+python", type="build")
 
-    extends("python", when="+python")
+    depends_on("asciidoc", when="+manpages", type="build")
+    depends_on("xmlto", when="+manpages", type="build")
 
     def setup_build_environment(self, env):
-        if "+python" in self.spec:
+        if self.spec.satisfies("+python"):
             env.set("PYTHON", self.spec["python"].command.path)
 
     def setup_run_environment(self, env):
-        if "+python" in self.spec:
+        if self.spec.satisfies("+python"):
             pyver = self.spec["python"].version.up_to(2)
             env.prepend_path(
-                "PYTHONPATH", pjoin(self.prefix.lib, f"python{pyver}", "site-packages")
+                "PYTHONPATH", join_path(self.prefix.lib, f"python{pyver}", "site-packages")
             )
 
     def configure_args(self):
-        spec = self.spec
         args = []
-        if "+python" in spec:
+        if self.spec.satisfies("+python"):
             args.append("--enable-python-bindings")
-            args.append(f"PYTHON={spec['python'].command.path}")
-            if "+plugins" in spec:
-                args.append("--enable-python-plugins")
-        else:
-            args.append("--disable-python-bindings")
 
-        args.append("--enable-man-pages" if "+manpages" in spec else "--disable-man-pages")
+        if self.spec.satisfies("+plugins"):
+            args.append("--enable-python-plugins")
+
+        if self.spec.satisfies("~manpages"):
+            args.append("--disable-man-pages")
 
         return args
