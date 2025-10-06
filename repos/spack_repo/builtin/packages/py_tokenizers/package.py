@@ -14,6 +14,7 @@ class PyTokenizers(PythonPackage):
     homepage = "https://github.com/huggingface/tokenizers"
     pypi = "tokenizers/tokenizers-0.6.0.tar.gz"
 
+    version("0.22.1", sha256="61de6522785310a309b3407bac22d99c4db5dba349935e99e4d15ea2226af2d9")
     version("0.21.0", sha256="ee0894bf311b75b0c03079f33859ae4b2334d675d4e93f5a4132e1eae2834fe4")
     version("0.20.4", sha256="db50ac15e92981227f499268541306824f49e97dbeec05d118ebdc7c2d22322c")
     version("0.19.1", sha256="ee59e6680ed0fdbe6b724cf38bd70400a0c1dd623b07ac729087270caeac88e3")
@@ -24,7 +25,8 @@ class PyTokenizers(PythonPackage):
 
     # TODO: This package currently requires internet access to install.
     depends_on("py-maturin@1", when="@0.14:", type="build")
-    depends_on("py-huggingface-hub@0.16.4:0", when="@0.15:", type=("build", "run"))
+    depends_on("py-huggingface-hub@0.16.4:0", when="@0.15:0.21.0", type=("build", "run"))
+    depends_on("py-huggingface-hub@0.16.4:1", when="@0.22.1:", type=("build", "run"))
 
     # cargo resolves dependencies, which includes openssl-sys somewhere, which needs
     # system pkgconfig and openssl.
