@@ -131,6 +131,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("metis~int64", when="~int64")
 
     conflicts("^hypre+int64", msg="Palace uses HYPRE's mixedint option for 64 bit integers")
+    depends_on("hypre@:2", when="@:0.14.0", msg="MFEM 4.8 is incompatible with hypre v3+")
     depends_on("hypre~complex")
     depends_on("hypre+shared", when="+shared")
     depends_on("hypre~shared", when="~shared")
