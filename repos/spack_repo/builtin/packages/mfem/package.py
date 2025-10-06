@@ -308,6 +308,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         depends_on("hypre@2.10.0:2.13", when="@:3.3")
         depends_on("hypre@:2.20.0", when="@3.4:4.2")
         depends_on("hypre@:2.23.0", when="@4.3.0")
+        depends_on('hypre@:2', when='@:4.8.0')
 
     # If hypre is built with +cuda, propagate cuda_arch
     requires("^hypre@2.22.1:", when="+mpi+cuda ^hypre+cuda")
