@@ -179,7 +179,7 @@ class Vtk(CMakePackage):
     # VTK 9.5 adds linkage to inonit when using an external IOSS
     # backport that to 9.4
     patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/ee029647e086b3ca01a372b347704f30be87d499.patch",
+        "https://gitlab.kitware.com/vtk/vtk/-/commit/ee029647e086b3ca01a372b347704f30be87d499.diff",
         sha256="50cbb7dfedafe6740772ff974be426ed870d430e90a23988b8a692f90ba120d3",
         when="@9.4",
     )
