@@ -16,7 +16,8 @@ class PyLlvmlite(PythonPackage):
 
     license("BSD-2-Clause")
 
-    version("0.45.0rc2", sha256="c264f8ac7ffc139d66cd243f6369d71c164098cc4fdf4e0af90dde004ba39fc1")
+    version("0.45.1", sha256="09430bb9d0bb58fc45a45a57c7eae912850bedc095cd0810a57de109c69e1c32")
+    version("0.45.0", sha256="ceb0bcd20da949178bd7ab78af8de73e9f3c483ac46b5bef39f06a4862aa8336")
     version("0.44.0", sha256="07667d66a5d150abed9157ab6c0b9393c9356f229784a4385c02f99e94fc94d4")
     version("0.43.0", sha256="ae2b5b5c3ef67354824fb75517c8db5fbe93bc02cd9671f3c62271626bc041d5")
     version("0.42.0", sha256="f92b09243c0cc3f457da8b983f67bd8e1295d0f5b3746c7a1861d7a99403854a")
