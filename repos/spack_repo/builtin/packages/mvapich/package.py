@@ -6,13 +6,15 @@ import itertools
 import re
 import sys
 
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
 
 from spack.package import *
 
 
-class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
+class Mvapich(MpichEnvironmentModifications, AutotoolsPackage, CudaPackage, ROCmPackage):
     """Mvapich is a High-Performance MPI Library for clusters with diverse
     networks (InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE) and computing
     platforms (x86 (Intel and AMD), ARM and OpenPOWER)"""
@@ -38,8 +40,6 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
 
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
     variant("debug", default=False, description="Enable debug info and error messages at run-time")
-
-    variant("cuda", default=False, description="Enable CUDA extension")
 
     variant("regcache", default=True, description="Enable memory registration cache")
 
@@ -229,6 +229,11 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             args.extend(["--enable-cuda", "--with-cuda={0}".format(spec["cuda"].prefix)])
         else:
             args.append("--disable-cuda")
+
+        if "+rocm" in self.spec:
+            args.extend(["--enable-hip", "--with-hip={0}".format(spec["hip"].prefix)])
+        else:
+            args.append("--disable-hip")
 
         if "+regcache" in self.spec:
             args.append("--enable-registration-cache")
