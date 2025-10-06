@@ -231,15 +231,15 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
             args = []
 
             # Library type
-            args.append(self.define_from_variant("BUILD_SHARED_LIBS", "+shared"))
+            args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
             # Core toggles
-            args.append(self.define_from_variant("HYPRE_ENABLE_MPI", "+mpi"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_OPENMP", "+openmp"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_FORTRAN", "+fortran"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_COMPLEX", "+complex"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_BIGINT", "+int64"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_MIXEDINT", "+mixedint"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_MPI", "mpi"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_OPENMP", "openmp"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_FORTRAN", "fortran"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_COMPLEX", "complex"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_BIGINT", "int64"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_MIXEDINT", "mixedint"))
 
             # Floating point precision
             args.append(self.define_from_variant("HYPRE_ENABLE_SINGLE", "precision=single"))
@@ -247,30 +247,30 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
                 self.define_from_variant("HYPRE_ENABLE_LONG_DOUBLE", "precision=longdouble")
             )
             args.append(
-                self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "+mixed-precision")
+                self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "mixed-precision")
             )
 
             # External BLAS/LAPACK when +lapack (Note +lapack works for blas as well)
-            args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_BLAS", "+lapack"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_LAPACK", "+lapack"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_BLAS", "lapack"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_LAPACK", "lapack"))
 
             # GPU backends
-            args.append(self.define_from_variant("HYPRE_ENABLE_CUDA", "+cuda"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_HIP", "+rocm"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_SYCL", "+sycl"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_CUDA", "cuda"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_HIP", "rocm"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_SYCL", "sycl"))
             if spec.satisfies("+cuda"):
                 args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
 
             # GPU auxiliary options
-            args.append(self.define_from_variant("HYPRE_ENABLE_GPU_AWARE_MPI", "+gpu-aware-mpi"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_GPU_PROFILING", "+gpu-profiling"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_UNIFIED_MEMORY", "+unified-memory"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_GPU_AWARE_MPI", "gpu-aware-mpi"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_GPU_PROFILING", "gpu-profiling"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_UNIFIED_MEMORY", "unified-memory"))
 
             # TPLs
-            args.append(self.define_from_variant("HYPRE_ENABLE_UMPIRE", "+umpire"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_CALIPER", "+caliper"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_DSUPERLU", "+superlu-dist"))
-            args.append(self.define_from_variant("HYPRE_ENABLE_MAGMA", "+magma"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_UMPIRE", "umpire"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_CALIPER", "caliper"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_DSUPERLU", "superlu-dist"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_MAGMA", "magma"))
 
             # GPU architectures
             cuda_arch_vals = spec.variants.get("cuda_arch", None)
