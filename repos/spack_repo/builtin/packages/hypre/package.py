@@ -67,7 +67,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     version("2.10.0b", sha256="b55dbdc692afe5a00490d1ea1c38dd908dae244f7bdd7faaf711680059824c11")
 
     variant("shared", default=False, description="Build shared library (disables static library)")
-    variant("pic", default=False, description="Build position independent code")
+    variant("pic", default=True, description="Build position independent code")
     # Use internal SuperLU routines for FEI - version 2.12.1 and below
     variant("internal-superlu", default=False, description="Use internal SuperLU routines")
     variant(
