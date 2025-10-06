@@ -4,14 +4,15 @@
 
 import os
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
+class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     """Hypre is a library of high performance preconditioners that
     features parallel multigrid methods for both structured and
     unstructured grid problems."""
@@ -25,9 +26,15 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     test_requires_compiler = True
 
-    license("MIT")
+    # License
+    license("Apache-2.0 OR MIT")
 
+    # Support both CMake and Autotools. CMake is available and default only for v3+.
+    build_system(conditional("cmake", when="@3:"), "autotools", default="cmake")
+
+    # Package versions
     version("develop", branch="master")
+    version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")
     version("2.33.0", sha256="0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
     version("2.32.0", sha256="2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
     version("2.31.0", sha256="9a7916e2ac6615399de5010eb39c604417bb3ea3109ac90e199c5c63b0cb4334")
@@ -75,7 +82,7 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("debug", default=False, description="Build debug instead of optimized version")
     variant("unified-memory", default=False, description="Use unified memory")
-    variant("fortran", default=True, description="Enables fortran bindings")
+    variant("fortran", default=False, description="Enables fortran bindings")
     variant("gptune", default=False, description="Add the GPTune hookup code")
     variant("umpire", default=False, description="Enable Umpire support")
     variant("sycl", default=False, description="Enable SYCL support")
@@ -89,6 +96,7 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
         description="Floating point precision",
         when="@2.12.1:",
     )
+    variant("mixed-precision", default=False, description="Enable mixed precision support")
 
     # Patch to add gptune hookup codes
     patch("ij_gptune.patch", when="+gptune@2.19.0")
@@ -131,13 +139,19 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("rocsolver", when="@2.29.0: +rocm")
     depends_on("rocblas", when="@2.29.0: +rocm")
     depends_on("hipblas", when="+rocm +superlu-dist")
-    # naming conflict with the __syncwarp function
-    depends_on("hip@:6", when="@:2.33.0 +rocm")
-    depends_on("umpire", when="+umpire")
-    depends_on("umpire+rocm", when="+umpire+rocm")
-    depends_on("umpire+cuda", when="+umpire+cuda")
+    depends_on("hip@:6", when="@:3.0.0 +rocm")
+    depends_on("umpire+c", when="+umpire")
+    depends_on("umpire+rocm", when="+rocm")
+    depends_on("umpire+cuda", when="+cuda")
     depends_on("caliper", when="+caliper")
+    depends_on("intel-oneapi-mkl", when="+sycl")
+    depends_on("intel-oneapi-dpl", when="+sycl")
 
+    # If using CMake, we require at least the following version
+    with when("build_system=cmake"):
+        depends_on("cmake@3.21:", type="build")
+
+    # Make sure some TPLs use the same GPU architecture as hypre
     gpu_pkgs = ["magma", "umpire"]
     for sm_ in CudaPackage.cuda_arch_values:
         for pkg in gpu_pkgs:
@@ -187,13 +201,26 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
     # Option added in v2.29.0
     conflicts("+magma", when="@:2.28")
 
+    # Option added in v3.0.0
+    conflicts("+mixed-precision", when="@:2.33")
+
     # GPU checks
     conflicts("+cuda", when="+rocm", msg="CUDA and ROCm are mutually exclusive")
     conflicts("+cuda", when="+sycl", msg="CUDA and SYCL are mutually exclusive")
     conflicts("+rocm", when="+sycl", msg="ROCm and SYCL are mutually exclusive")
     conflicts("+gpu-profiling", when="~cuda~rocm", msg="GPU profiling requires CUDA or ROCm")
 
+    # Enforce compiler requirements for SYCL variant
+    # sycl_msg = "SYCL support requires an Intel oneAPI compiler (e.g., icx)"
+    # conflicts("+sycl", when="%gcc", msg=sycl_msg)
+    # conflicts("+sycl", when="%clang", msg=sycl_msg)
+    # conflicts("+sycl", when="%apple-clang", msg=sycl_msg)
+    # conflicts("+sycl", when="%rocmcc", msg=sycl_msg)
+    # conflicts("+sycl", when="%aocc", msg=sycl_msg)
+    # conflicts("+sycl", when="%nvhpc", msg=sycl_msg)
+
     configure_directory = "src"
+    root_cmakelists_dir = "src"
 
     def url_for_version(self, version):
         if version >= Version("2.12.0"):
@@ -205,194 +232,257 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         return url
 
-    def configure_args(self):
-        spec = self.spec
-        configure_args = [f"--prefix={prefix}"]
+    # Builder implementations
+    class CMakeBuilder(CMakeBuilder):
+        def cmake_args(self):
+            pkg = self.pkg
+            spec = pkg.spec
+            args = []
 
-        # Note: --with-(lapack|blas)_libs= needs space separated list of names
-        if spec.satisfies("+lapack"):
-            configure_args.append("--with-lapack")
-            configure_args.append("--with-blas")
-            configure_args.append("--with-lapack-libs=%s" % " ".join(spec["lapack"].libs.names))
-            configure_args.append("--with-blas-libs=%s" % " ".join(spec["blas"].libs.names))
-            configure_args.append(
-                "--with-lapack-lib-dirs=%s" % " ".join(spec["lapack"].libs.directories)
+            # Library type
+            args.append(self.define_from_variant("BUILD_SHARED_LIBS", "+shared"))
+
+            # Core toggles
+            args.append(self.define_from_variant("HYPRE_ENABLE_MPI", "+mpi"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_OPENMP", "+openmp"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_FORTRAN", "+fortran"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_COMPLEX", "+complex"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_BIGINT", "+int64"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_MIXEDINT", "+mixedint"))
+
+            # Floating point precision
+            args.append(self.define_from_variant("HYPRE_ENABLE_SINGLE", "precision=single"))
+            args.append(
+                self.define_from_variant("HYPRE_ENABLE_LONG_DOUBLE", "precision=longdouble")
             )
-            configure_args.append(
-                "--with-blas-lib-dirs=%s" % " ".join(spec["blas"].libs.directories)
+            args.append(
+                self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "+mixed-precision")
             )
 
-        if spec.satisfies("+mpi"):
-            os.environ["CC"] = spec["mpi"].mpicc
-            os.environ["CXX"] = spec["mpi"].mpicxx
-            if spec.satisfies("+fortran"):
-                os.environ["F77"] = spec["mpi"].mpif77
-                os.environ["FC"] = spec["mpi"].mpifc
-            configure_args.append("--with-MPI")
-            configure_args.append(f"--with-MPI-lib-dirs={spec['mpi'].prefix.lib}")
-            configure_args.append(f"--with-MPI-include={spec['mpi'].prefix.include}")
-        else:
-            configure_args.append("--without-MPI")
+            # External BLAS/LAPACK when +lapack (Note +lapack works for blas as well)
+            args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_BLAS", "+lapack"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_LAPACK", "+lapack"))
 
-        configure_args.extend(self.with_or_without("openmp"))
+            # GPU backends
+            args.append(self.define_from_variant("HYPRE_ENABLE_CUDA", "+cuda"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_HIP", "+rocm"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_SYCL", "+sycl"))
+            if spec.satisfies("+cuda"):
+                args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
 
-        if spec.satisfies("+int64"):
-            configure_args.append("--enable-bigint")
-        else:
-            configure_args.append("--disable-bigint")
+            # GPU auxiliary options
+            args.append(self.define_from_variant("HYPRE_ENABLE_GPU_AWARE_MPI", "+gpu-aware-mpi"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_GPU_PROFILING", "+gpu-profiling"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_UNIFIED_MEMORY", "+unified-memory"))
 
-        configure_args.extend(self.enable_or_disable("mixedint"))
+            # TPLs
+            args.append(self.define_from_variant("HYPRE_ENABLE_UMPIRE", "+umpire"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_CALIPER", "+caliper"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_DSUPERLU", "+superlu-dist"))
+            args.append(self.define_from_variant("HYPRE_ENABLE_MAGMA", "+magma"))
 
-        configure_args.extend(self.enable_or_disable("complex"))
+            # GPU architectures
+            cuda_arch_vals = spec.variants.get("cuda_arch", None)
+            if cuda_arch_vals and cuda_arch_vals.value:
+                arch_list = sorted(list(cuda_arch_vals.value))
+                args.append(self.define("CMAKE_CUDA_ARCHITECTURES", ";".join(arch_list)))
 
-        if spec.satisfies("precision=single"):
-            configure_args.append("--enable-single")
-        elif spec.satisfies("precision=longdouble"):
-            configure_args.append("--enable-longdouble")
+            amdgpu_vals = spec.variants.get("amdgpu_target", None)
+            if amdgpu_vals and amdgpu_vals.value:
+                gfx_list = sorted(list(amdgpu_vals.value))
+                args.append(self.define("CMAKE_HIP_ARCHITECTURES", ";".join(gfx_list)))
 
-        if spec.satisfies("+shared"):
-            configure_args.append("--enable-shared")
+            return args
 
-        if spec.satisfies("~internal-superlu"):
-            configure_args.append("--without-superlu")
-            # MLI and FEI do not build without superlu on Linux
-            configure_args.append("--without-mli")
-            # FEI option was removed in hypre 2.17
-            if self.version < Version("2.17.0"):
-                configure_args.append("--without-fei")
+    class AutotoolsBuilder(AutotoolsBuilder):
+        def configure_args(self):
+            pkg = self.pkg
+            spec = pkg.spec
+            configure_args = [f"--prefix={pkg.prefix}"]
 
-        if spec.satisfies("+superlu-dist"):
-            configure_args.append(
-                "--with-dsuperlu-include=%s" % spec["superlu-dist"].prefix.include
-            )
-            configure_args.append("--with-dsuperlu-lib=%s" % spec["superlu-dist"].libs)
-            configure_args.append("--with-dsuperlu")
-
-        if spec.satisfies("+umpire"):
-            configure_args.append("--with-umpire-include=%s" % spec["umpire"].prefix.include)
-            configure_args.append("--with-umpire-lib=%s" % spec["umpire"].libs)
-            if spec.satisfies("~cuda~rocm"):
-                configure_args.append("--with-umpire-host")
-            else:
-                configure_args.append("--with-umpire")
-
-        if spec.satisfies("+caliper"):
-            configure_args.append("--with-caliper")
-            configure_args.append("--with-caliper-include=%s" % spec["caliper"].prefix.include)
-            configure_args.append("--with-caliper-lib=%s" % spec["caliper"].libs)
-
-        configure_args.extend(self.enable_or_disable("debug"))
-
-        if spec.satisfies("+cuda"):
-            configure_args.append(f"--with-cuda-home={spec['cuda'].prefix}")
-            configure_args.extend(["--with-cuda", "--enable-curand", "--enable-cusparse"])
-            cuda_arch_vals = spec.variants["cuda_arch"].value
-            if cuda_arch_vals:
-                cuda_arch_sorted = list(sorted(cuda_arch_vals, reverse=True))
-                cuda_arch = cuda_arch_sorted[0]
-                configure_args.append(f"--with-gpu-arch={cuda_arch}")
-            # New in 2.21.0: replaces --enable-cub
-            if spec.satisfies("@2.21.0: ~umpire"):
-                configure_args.append("--enable-device-memory-pool")
-            elif spec.satisfies("@:2.20.99"):
-                configure_args.append("--enable-cub")
-            if spec.satisfies("@2.29.0:"):
-                configure_args.extend(["--enable-cublas", "--enable-cusolver"])
-        else:
-            configure_args.extend(["--without-cuda", "--disable-curand", "--disable-cusparse"])
-            if spec.satisfies("@:2.20.99"):
-                configure_args.append("--disable-cub")
-            if spec.satisfies("@2.29:"):
-                configure_args.append("--disable-cusolver")
-
-        if spec.satisfies("+rocm"):
-            configure_args.append("--with-hip")
-            rocm_pkgs = ["rocthrust", "rocprim", "rocrand", "rocsparse"]
-            if spec.satisfies("+superlu-dist"):
-                rocm_pkgs.append("hipblas")
-            if spec.satisfies("@2.29.0:"):
-                rocm_pkgs.extend(["rocblas", "rocsolver"])
-                configure_args.extend(["--enable-rocblas", "--enable-rocsolver"])
-            rocm_inc = " ".join(set(spec[pkg].headers.include_flags for pkg in rocm_pkgs))
-            configure_args.extend(
-                ["--enable-rocrand", "--enable-rocsparse", f"--with-extra-CUFLAGS={rocm_inc}"]
-            )
-            rocm_arch_vals = spec.variants["amdgpu_target"].value
-            if rocm_arch_vals:
-                rocm_arch_sorted = list(sorted(rocm_arch_vals, reverse=True))
-                rocm_arch = rocm_arch_sorted[0]
-                configure_args.append(f"--with-gpu-arch={rocm_arch}")
-        else:
-            configure_args.extend(["--without-hip", "--disable-rocrand", "--disable-rocsparse"])
-            if spec.satisfies("@2.29.0:"):
-                configure_args.extend(["--disable-rocblas", "--disable-rocsolver"])
-
-        if spec.satisfies("+sycl"):
-            configure_args.append("--with-sycl")
-            sycl_compatible_compilers = ["icpx"]
-            if os.path.basename(self.compiler.cxx) not in sycl_compatible_compilers:
-                raise InstallError(
-                    "Hypre's SYCL GPU Backend requires the oneAPI CXX (icpx) compiler."
+            # Note: --with-(lapack|blas)_libs= needs space separated list of names
+            if spec.satisfies("+lapack"):
+                configure_args.append("--with-lapack")
+                configure_args.append("--with-blas")
+                configure_args.append(
+                    "--with-lapack-libs=%s" % " ".join(spec["lapack"].libs.names)
+                )
+                configure_args.append("--with-blas-libs=%s" % " ".join(spec["blas"].libs.names))
+                configure_args.append(
+                    "--with-lapack-lib-dirs=%s" % " ".join(spec["lapack"].libs.directories)
+                )
+                configure_args.append(
+                    "--with-blas-lib-dirs=%s" % " ".join(spec["blas"].libs.directories)
                 )
 
-        if spec.satisfies("+unified-memory"):
-            configure_args.append("--enable-unified-memory")
+            if spec.satisfies("+mpi"):
+                os.environ["CC"] = spec["mpi"].mpicc
+                os.environ["CXX"] = spec["mpi"].mpicxx
+                if spec.satisfies("+fortran"):
+                    os.environ["F77"] = spec["mpi"].mpif77
+                    os.environ["FC"] = spec["mpi"].mpifc
+                configure_args.append("--with-MPI")
+                configure_args.append(f"--with-MPI-lib-dirs={spec['mpi'].prefix.lib}")
+                configure_args.append(f"--with-MPI-include={spec['mpi'].prefix.include}")
+            else:
+                configure_args.append("--without-MPI")
 
-        if spec.satisfies("+magma"):
-            configure_args.append("--with-magma-include=%s" % spec["magma"].prefix.include)
-            configure_args.append("--with-magma-lib=%s" % spec["magma"].libs)
-            configure_args.append("--with-magma")
+            configure_args.extend(pkg.with_or_without("openmp"))
 
-        if spec.satisfies("+gpu-aware-mpi"):
-            configure_args.append("--enable-gpu-aware-mpi")
+            if spec.satisfies("+int64"):
+                configure_args.append("--enable-bigint")
+            else:
+                configure_args.append("--disable-bigint")
 
-        if spec.satisfies("+gpu-profiling"):
-            configure_args.append("--enable-gpu-profiling")
+            configure_args.extend(pkg.enable_or_disable("debug"))
+            configure_args.extend(pkg.enable_or_disable("mixedint"))
+            configure_args.extend(pkg.enable_or_disable("complex"))
+            configure_args.extend(pkg.enable_or_disable("mixed-precision"))
+            configure_args.extend(pkg.enable_or_disable("shared"))
+            configure_args.extend(pkg.enable_or_disable("unified-memory"))
+            configure_args.extend(pkg.enable_or_disable("gpu-aware-mpi"))
+            configure_args.extend(pkg.enable_or_disable("gpu-profiling"))
+            configure_args.extend(pkg.enable_or_disable("fortran"))
 
-        configure_args.extend(self.enable_or_disable("fortran"))
+            if spec.satisfies("precision=single"):
+                configure_args.append("--enable-single")
+            elif spec.satisfies("precision=longdouble"):
+                configure_args.append("--enable-longdouble")
 
-        return configure_args
+            if spec.satisfies("~internal-superlu"):
+                configure_args.append("--without-superlu")
+                # MLI and FEI do not build without superlu on Linux
+                configure_args.append("--without-mli")
+                # FEI option was removed in hypre 2.17
+                if pkg.version < Version("2.17.0"):
+                    configure_args.append("--without-fei")
+
+            if spec.satisfies("+superlu-dist"):
+                configure_args.append(
+                    "--with-dsuperlu-include=%s" % spec["superlu-dist"].prefix.include
+                )
+                configure_args.append("--with-dsuperlu-lib=%s" % spec["superlu-dist"].libs)
+                configure_args.append("--with-dsuperlu")
+
+            if spec.satisfies("+umpire"):
+                configure_args.append("--with-umpire-include=%s" % spec["umpire"].prefix.include)
+                configure_args.append("--with-umpire-lib-dirs=%s" % spec["umpire"].prefix.lib)
+                configure_args.append("--with-umpire-libs=umpire camp")
+                if spec.satisfies("~cuda~rocm"):
+                    configure_args.append("--with-umpire-host")
+                else:
+                    configure_args.append("--with-umpire")
+            else:
+                configure_args.append("--without-umpire")
+
+            if spec.satisfies("+caliper"):
+                configure_args.append("--with-caliper")
+                configure_args.append("--with-caliper-include=%s" % spec["caliper"].prefix.include)
+                configure_args.append("--with-caliper-lib=%s" % spec["caliper"].libs)
+
+            if spec.satisfies("+cuda"):
+                configure_args.append(f"--with-cuda-home={spec['cuda'].prefix}")
+                configure_args.extend(["--with-cuda", "--enable-curand", "--enable-cusparse"])
+                cuda_arch_vals = spec.variants["cuda_arch"].value
+                if cuda_arch_vals:
+                    cuda_arch_sorted = list(sorted(cuda_arch_vals, reverse=True))
+                    cuda_arch = cuda_arch_sorted[0]
+                    configure_args.append(f"--with-gpu-arch={cuda_arch}")
+                # New in 2.21.0: replaces --enable-cub
+                if spec.satisfies("@2.21.0: ~umpire"):
+                    configure_args.append("--enable-device-memory-pool")
+                elif spec.satisfies("@:2.20.99"):
+                    configure_args.append("--enable-cub")
+                if spec.satisfies("@2.29.0:"):
+                    configure_args.extend(["--enable-cublas", "--enable-cusolver"])
+            else:
+                configure_args.extend(["--without-cuda", "--disable-curand", "--disable-cusparse"])
+                if spec.satisfies("@:2.20.99"):
+                    configure_args.append("--disable-cub")
+                if spec.satisfies("@2.29:"):
+                    configure_args.append("--disable-cusolver")
+
+            if spec.satisfies("+rocm"):
+                configure_args.append("--with-hip")
+                rocm_pkgs = ["rocthrust", "rocprim", "rocrand", "rocsparse"]
+                if spec.satisfies("+superlu-dist"):
+                    rocm_pkgs.append("hipblas")
+                if spec.satisfies("@2.29.0:"):
+                    rocm_pkgs.extend(["rocblas", "rocsolver"])
+                    configure_args.extend(["--enable-rocblas", "--enable-rocsolver"])
+                rocm_inc = " ".join(set(spec[pkg_].headers.include_flags for pkg_ in rocm_pkgs))
+                configure_args.extend(
+                    ["--enable-rocrand", "--enable-rocsparse", f"--with-extra-CUFLAGS={rocm_inc}"]
+                )
+                rocm_arch_vals = spec.variants["amdgpu_target"].value
+                if rocm_arch_vals:
+                    rocm_arch_sorted = list(sorted(rocm_arch_vals, reverse=True))
+                    rocm_arch = rocm_arch_sorted[0]
+                    configure_args.append(f"--with-gpu-arch={rocm_arch}")
+            else:
+                configure_args.extend(
+                    ["--without-hip", "--disable-rocrand", "--disable-rocsparse"]
+                )
+                if spec.satisfies("@2.29.0:"):
+                    configure_args.extend(["--disable-rocblas", "--disable-rocsolver"])
+
+            if spec.satisfies("+sycl"):
+                configure_args.append("--with-sycl")
+                sycl_compatible_compilers = ["icpx"]
+                if os.path.basename(pkg.compiler.cxx) not in sycl_compatible_compilers:
+                    raise InstallError(
+                        "Hypre's SYCL GPU Backend requires the oneAPI CXX (icpx) compiler."
+                    )
+
+            if spec.satisfies("+magma"):
+                configure_args.append("--with-magma-include=%s" % spec["magma"].prefix.include)
+                configure_args.append("--with-magma-lib=%s" % spec["magma"].libs)
+                configure_args.append("--with-magma")
+
+            return configure_args
+
+        def build(self, pkg, spec, prefix):
+            with working_dir("src"):
+                make()
+
+        def install(self, pkg, spec, prefix):
+            # Hypre's sources are staged under ./src so we'll have to manually cd into it
+            with working_dir("src"):
+                if pkg.run_tests:
+                    make("check")
+                    make("test")
+                    Executable(join_path("test", "ij"))()
+                    sstruct = Executable(join_path("test", "struct"))
+                    sstruct()
+                    sstruct("-in", "test/sstruct.in.default", "-solver", "40", "-rhsone")
+                make("install")
+                if spec.satisfies("+gptune"):
+                    make("test")
+                    mkdirp(pkg.prefix.bin)
+                    install(join_path("test", "ij"), pkg.prefix.bin)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
-        if spec.satisfies("+mpi"):
+        # Limit toolchain wrapper and flags to Autotools builds
+        if spec.satisfies("build_system=autotools +mpi"):
             env.set("CC", spec["mpi"].mpicc)
             env.set("CXX", spec["mpi"].mpicxx)
             if spec.satisfies("+fortran"):
                 env.set("F77", spec["mpi"].mpif77)
 
-        if spec.satisfies("+cuda"):
+        if spec.satisfies("build_system=autotools +cuda"):
             env.set("CUDA_HOME", spec["cuda"].prefix)
             env.set("CUDA_PATH", spec["cuda"].prefix)
             # In CUDA builds hypre currently doesn't handle flags correctly
             env.append_flags("CXXFLAGS", "-O2" if spec.satisfies("~debug") else "-g")
 
-        if spec.satisfies("+rocm"):
+        if spec.satisfies("build_system=autotools +rocm"):
             # As of 2022/04/05, the following are set by 'llvm-amdgpu' and
             # override hypre's default flags, so we unset them.
             env.unset("CFLAGS")
             env.unset("CXXFLAGS")
 
-    def build(self, spec, prefix):
-        with working_dir("src"):
-            make()
-
-    def install(self, spec, prefix):
-        # Hypre's source is staged under ./src so we'll have to manually
-        # cd into it.
-        with working_dir("src"):
-            if self.run_tests:
-                make("check")
-                make("test")
-                Executable(join_path("test", "ij"))()
-                sstruct = Executable(join_path("test", "struct"))
-                sstruct()
-                sstruct("-in", "test/sstruct.in.default", "-solver", "40", "-rhsone")
-            make("install")
-            if spec.satisfies("+gptune"):
-                make("test")
-                mkdirp(self.prefix.bin)
-                install(join_path("test", "ij"), self.prefix.bin)
+    # build/install phases are implemented in the AutotoolsBuilder
 
     extra_install_tests = join_path("src", "examples")
 
