@@ -117,10 +117,11 @@ class Hipblaslt(CMakePackage):
             env.set("CXX", self.spec["hip"].hipcc)
         else:
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
-        if self.spec.satisfies("@6.3.0:"):
+        if self.spec.satisfies("@6.3.0:6.4"):
             env.set(
                 "TENSILE_ROCM_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++"
             )
+        if self.spec.satisfies("@6.3.0:"):
             env.set(
                 "TENSILE_ROCM_OFFLOAD_BUNDLER_PATH",
                 f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler",
@@ -132,6 +133,7 @@ class Hipblaslt(CMakePackage):
             )
         if self.spec.satisfies("@7.0:"):
             env.set("ROCM_LD_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/ld.lld")
+            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
 
     def patch(self):
         if self.spec.satisfies("@6.3:6.4"):

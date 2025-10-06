@@ -11,8 +11,8 @@ from spack.package import *
 class RocmDeviceLibs(CMakePackage):
     """set of AMD specific device-side language runtime libraries"""
 
-    homepage = "https://github.com/ROCm/ROCm-Device-Libs"
-    git = "https://github.com/ROCm/ROCm-Device-Libs.git"
+    homepage = "https://github.com/ROCm/llvm-project"
+    git = "https://github.com/ROCm/llvm-project.git"
 
     def url_for_version(self, version):
         if version <= Version("6.0.2"):

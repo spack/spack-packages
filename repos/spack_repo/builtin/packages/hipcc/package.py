@@ -12,7 +12,7 @@ from spack.package import *
 class Hipcc(CMakePackage):
     """HIPCC: HIP compiler driver"""
 
-    homepage = "https://github.com/ROCm/hipcc"
+    homepage = "https://github.com/ROCm/llvm-project"
     git = "https://github.com/ROCm/llvm-project.git"
 
     def url_for_version(self, version):

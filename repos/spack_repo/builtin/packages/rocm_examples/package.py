@@ -80,7 +80,6 @@ class RocmExamples(CMakePackage):
     depends_on("hipsolver+cuda", when="+cuda")
     depends_on("hipblas+cuda", when="+cuda")
     depends_on("hipfft+cuda", when="@6.3: +cuda")
-    depends_on("hiprand", when="@7:")
 
     patch(
         "https://github.com/ROCm/rocm-examples/commit/669fc3e90ce95567464e80d7925f45cb525c81db.patch?full_index=1",
