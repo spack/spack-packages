@@ -69,9 +69,17 @@ class MiopenHip(CMakePackage):
     depends_on("sqlite")
     depends_on("half@1")
     depends_on("zlib-api")
-    depends_on("frugally-deep", when="@6.3:")
+    # Inside requirements.txt of the miopen repository, frugally-deep is
+    # is using ROCm/frugally-deep@9683d557eb672ee2304f80f6682c51242d748a50
+    # this is specfically mapped to frugally-deep@0.15.x using later 0.16
+    # versions or above is causing an issue,
+    # https://github.com/ROCm/MIOpen/issues/3588 and requires updates to
+    # src/kernels/gfx9[08|0a|42].tn.model to support this
+    # new format to support frugally-deep 0.16.0 or later
 
-    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.6.0:5.7")
+    depends_on("frugally-deep@0.15.31", when="@6.3:")
+
+    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.7")
     patch("0002-add-include-dir-miopen-hip-6.0.0.patch", when="@6.0")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.1.0.patch", when="@6.1")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.2.0.patch", when="@6.2")
@@ -167,14 +175,13 @@ class MiopenHip(CMakePackage):
             self.define("DEVICELIBS_PREFIX_PATH", self.get_bitcode_dir()),
             self.define_from_variant("MIOPEN_USE_COMPOSABLEKERNEL", "ck"),
         ]
-        if self.spec.satisfies("@5.6.0:6.1"):
+        if self.spec.satisfies("@:6.1"):
             args.append(
                 "-DNLOHMANN_JSON_INCLUDE={0}".format(self.spec["nlohmann-json"].prefix.include)
             )
-        if self.spec.satisfies("@5.6.0:6.2"):
+        if self.spec.satisfies("@:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
             args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
-        if self.spec.satisfies("@5.7.0:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK", "OFF"))
         if self.spec.satisfies("@6.0:6.2"):
             args.append(

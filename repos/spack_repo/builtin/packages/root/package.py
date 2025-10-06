@@ -35,6 +35,7 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.36.04", sha256="cc6367d8f563c6d49ca34c09d0b53cb0f41a528db6f86af111fd76744cda4596")
     version("6.36.02", sha256="510d677b33ac7ca48aa0d712bdb88d835a1ff6a374ef86f1a1e168fa279eb470")
     version("6.36.00", sha256="94afc8def92842679a130a27521be66e2abdaa37620888e61d828a43fc4b01a2")
 
@@ -293,7 +294,12 @@ class Root(CMakePackage):
     )
     variant("x", default=(not _is_macos), description="Enable set of graphical options")
     variant("xml", default=True, description="Enable XML parser interface")
-    variant("xrootd", default=False, description="Build xrootd file server and its client")
+    variant(
+        "xrootd",
+        default=False,
+        description="Build xrootd file server and its client",
+        when="@6.23:",
+    )
 
     # ###################### Compiler variants ########################
 
@@ -432,7 +438,6 @@ class Root(CMakePackage):
     depends_on("veccore@0.4.2:", when="@6.11.02: +veccore")
     depends_on("libxml2", when="+xml")
     depends_on("xrootd", when="+xrootd")
-    depends_on("xrootd@:4", when="@:6.22.03 +xrootd")
 
     depends_on("googletest", when="@6.28.00:", type="test")
 

@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -21,6 +22,7 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/ROCm/hipFFT.git"
     url = "https://github.com/ROCm/hipfft/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
+    libraries = ["libhipfft"]
 
     maintainers("renjithravindrankannath", "srekolam", "afzpatel")
 
@@ -97,6 +99,17 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/ROCm/rocFFT/pull/85)
     patch("001-remove-submodule-and-sync-shared-files-from-rocFFT.patch", when="@6.0.0")
 
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):
             self.asan_on(env)
@@ -111,6 +124,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
         elif self.spec.satisfies("+cuda"):
             args.append(self.define("BUILD_WITH_LIB", "CUDA"))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

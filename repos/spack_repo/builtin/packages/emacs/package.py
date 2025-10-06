@@ -30,6 +30,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     sanity_check_is_dir = ["share/emacs"]
 
     version("master", branch="master")
+    version("30.2", sha256="1d79a4ba4d6596f302a7146843fe59cf5caec798190bcc07c907e7ba244b076d")
     version("30.1", sha256="54404782ea5de37e8fcc4391fa9d4a41359a4ba9689b541f6bc97dd1ac283f6c")
     version("29.4", sha256="1adb1b9a2c6cdb316609b3e86b0ba1ceb523f8de540cfdda2aec95b6a5343abf")
     version("29.3", sha256="2de8df5cab8ac697c69a1c46690772b0cf58fe7529f1d1999582c67d927d22e4")
@@ -62,6 +63,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     )
     variant("json", default=False, when="@27:", description="Build with json support")
     variant("native", default=False, when="@28:", description="Enable native compilation of elisp")
+    variant("sqlite", default=False, when="@29.1:", description="Build with sqlite3 support")
     variant("tls", default=True, description="Build with gnutls support")
     variant("treesitter", default=False, when="@29:", description="Build with tree-sitter support")
 
@@ -87,8 +89,9 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     # Optional dependencies
     depends_on("gnutls", when="+tls")
     depends_on("tree-sitter", when="+treesitter")
-    depends_on("gcc@11: +strip languages=jit", when="+native")
+    depends_on("gcc@11: languages=jit", when="+native")
     depends_on("jansson@2.7:", when="+json")
+    depends_on("sqlite@3", when="+sqlite")
 
     # GUI dependencies
     with when("gui=x11"):

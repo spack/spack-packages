@@ -82,6 +82,8 @@ class Nccl(MakefilePackage, CudaPackage):
         msg="Must specify CUDA compute capabilities of your GPU, see "
         "https://developer.nvidia.com/cuda-gpus",
     )
+    # https://github.com/NVIDIA/nccl/issues/1743
+    conflicts("%gcc@14:", msg="Compilation issue with gcc 14", when="@:2.27.5-1")
 
     @classmethod
     def determine_version(cls, lib):

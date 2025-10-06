@@ -13,6 +13,7 @@ class Rocal(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocAL"
     url = "https://github.com/ROCm/rocAL/archive/refs/tags/rocm-6.4.3.tar.gz"
+    tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 

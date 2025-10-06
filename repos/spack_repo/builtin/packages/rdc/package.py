@@ -52,7 +52,7 @@ class Rdc(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.15:", type="build")
-    depends_on("grpc@1.55.0+shared", when="@5.6.0:6.0")
+    depends_on("grpc@1.55.0+shared", when="@:6.0")
     depends_on("grpc@1.59.1+shared", when="@6.1")
     depends_on("grpc@1.61.2+shared", when="@6.2:")
     depends_on("protobuf")
