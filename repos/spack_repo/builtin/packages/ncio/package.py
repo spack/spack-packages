@@ -17,7 +17,7 @@ class Ncio(CMakePackage):
     url = "https://github.com/NOAA-EMC/NCEPLIBS-ncio/archive/refs/tags/v1.0.0.tar.gz"
     git = "https://github.com/NOAA-EMC/NCEPLIBS-ncio"
 
-    maintainers("edwardhartnett", "AlexanderRichert-NOAA", "Hang-Lei-NOAA")
+    maintainers("Hang-Lei-NOAA", "AlexanderRichert-NOAA", "AlysonStahl-NOAA")
 
     version("develop", branch="develop")
     version("1.1.2", sha256="2e4506fe3176344f28e837f2f69bcbd3dda51a64cacf33af0e435b13abe094fc")
