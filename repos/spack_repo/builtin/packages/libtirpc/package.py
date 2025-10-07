@@ -26,6 +26,20 @@ class Libtirpc(AutotoolsPackage):
 
     provides("rpc")
 
+    # Allow build on macOS:
+    # - Adds a preprocessor define to make IPV6 defined available under expected names
+    # - Fixes configure template to correctly detect absence of `gss_pname_to_uid`
+    # - Avoids linking with shared cache
+    with when("@1.3.7 platform=darwin"):
+        patch("libtirpc-fix-ipv6-gss-macos-1.3.7.patch")
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
+
+    @property
+    def force_autoreconf(self):
+        return self.version == Version("1.3.7")
+
     # Remove -pipe flag to compiler in Makefiles when using nvhpc
     patch("libtirpc-remove-pipe-flag-for-nvhpc.patch", when="%nvhpc")
     # Allow to build on macOS
