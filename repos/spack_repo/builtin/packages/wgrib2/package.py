@@ -51,7 +51,7 @@ class Wgrib2(MakefilePackage, CMakePackage):
     git = "https://github.com/NOAA-EMC/wgrib2.git"
 
     maintainers(
-        "AlysonStahl-NOAA", "t-brown", "AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett"
+        "AlysonStahl-NOAA", "t-brown", "AlexanderRichert-NOAA", "Hang-Lei-NOAA"
     )
 
     build_system(
