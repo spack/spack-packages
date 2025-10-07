@@ -38,7 +38,7 @@ class Libtirpc(AutotoolsPackage):
 
     @property
     def force_autoreconf(self):
-        return self.version == Version("1.3.7")
+        return self.spec.satisfies("@1.3.7 platform=darwin")
 
     # Remove -pipe flag to compiler in Makefiles when using nvhpc
     patch("libtirpc-remove-pipe-flag-for-nvhpc.patch", when="%nvhpc")
