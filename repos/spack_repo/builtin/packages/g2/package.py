@@ -20,7 +20,7 @@ class G2(CMakePackage):
     url = "https://github.com/NOAA-EMC/NCEPLIBS-g2/archive/refs/tags/v3.4.3.tar.gz"
     git = "https://github.com/NOAA-EMC/NCEPLIBS-g2"
 
-    maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett")
+    maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "AlysonStahl-NOAA")
 
     license("LGPL-3.0")
 
