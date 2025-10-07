@@ -17,7 +17,7 @@ class Nemsiogfs(CMakePackage):
     url = "https://github.com/NOAA-EMC/NCEPLIBS-nemsiogfs/archive/refs/tags/v2.5.3.tar.gz"
     git = "https://github.com/NOAA-EMC/NCEPLIBS-nemsiogfs"
 
-    maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett")
+    maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "AlysonStahl-NOAA")
 
     version("develop", branch="develop")
     version("2.5.4", sha256="212f3ccde54590940d4fd7b486f4a7f9509ad89a0b19d6903501264203bcba80")
