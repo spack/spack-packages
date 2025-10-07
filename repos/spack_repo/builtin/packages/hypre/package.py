@@ -109,7 +109,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     # Patch to fix hip build (+rocm) via CMake for hypre v3.0.0
     patch(
         "https://github.com/hypre-space/hypre/pull/1394.patch?full_index=1",
-        sha256="8e7936a375addea4d0ec36a0a1d6c8854a377273acb733c8333e0db99d0d0d9b",
+        sha256="c9a98fb6aa6469c830fa7c12548c3be532d54bee5b7841e1550370ef497c5490",
         when="@3.0.0 +rocm",
     )
 
