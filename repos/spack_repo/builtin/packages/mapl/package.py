@@ -145,84 +145,98 @@ class Mapl(CMakePackage):
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.65.0",
+        commit="a1e28e6ec25bbbc7397549be73e19fd32cdc2323",
         when="@2.62:",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.64.0",
+        commit="923f364385f992d66021aac9b9dddadf57a6ec14",
         when="@2.60:2.61",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.62.1",
+        commit="e08e8804bcf081bd690d484e010bb6c865ef547f",
         when="@2.56:2.59",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.58.1",
+        commit="16805723f4c7a9449c429e955d74f4f2f7ee41a4",
         when="@2.55",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.55.0",
+        commit="ee49277f13b9b223cd86129a0c7094a359cbc4db",
         when="@2.51:2.54",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.51.0",
+        commit="53fae1237c88f9a6e60393dc6e4781555786b659",
         when="@2.48:2.50",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.46.0",
+        commit="00bfd6ce4d7d8152433b2b1ad2cbb6d6f6c7066a",
         when="@2.47",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.45.2",
+        commit="0f40e433189902d30af15fc92ace18dbf950d273",
         when="@2.45:2.46",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.40.0",
+        commit="92e9910b1f70d6ea75e9f552fd672001b740b15b",
         when="@2.44",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.36.0",
+        commit="e69296a5955ccc08618673125fccda0d0ca979ea",
         when="@2.42.0:2.43",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.31.0",
+        commit="7dc4c819dc5169e6b887374aa0fa0a8f71846832",
         when="@2.40.0:2.41",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.28.0",
+        commit="cb919eaea9489a2852d830a1eebf45b3c6acd223",
         when="@2.36.0:2.39",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.24.0",
+        commit="5664d95fddff4afd01a2d7388a8bd99123d65e7d",
         when="@2.34.0:2.35",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.21.0",
+        commit="6df72eb873659eb55bc119f320a6e6e7bd23f5b1",
         when="@2.22.0:2.33",
     )
 
