@@ -50,9 +50,7 @@ class Wgrib2(MakefilePackage, CMakePackage):
     url = "https://github.com/NOAA-EMC/wgrib2/archive/refs/tags/v3.5.0.tar.gz"
     git = "https://github.com/NOAA-EMC/wgrib2.git"
 
-    maintainers(
-        "AlysonStahl-NOAA", "t-brown", "AlexanderRichert-NOAA", "Hang-Lei-NOAA"
-    )
+    maintainers("AlysonStahl-NOAA", "t-brown", "AlexanderRichert-NOAA", "Hang-Lei-NOAA")
 
     build_system(
         conditional("cmake", when="@3.2:"), conditional("makefile", when="@:3.1"), default="cmake"
