@@ -526,10 +526,6 @@ class RocmOpenmpExtras(Package):
         if self.spec.version >= Version("6.1.0"):
             if os.path.islink((os.path.join(bin_dir, f"flang-{legacy_or_classic}"))):
                 os.unlink(os.path.join(bin_dir, f"flang-{legacy_or_classic}"))
-        if os.path.islink((os.path.join(lib_dir, "libdevice"))):
-            os.unlink(os.path.join(lib_dir, "libdevice"))
-        if os.path.islink((os.path.join(llvm_prefix, "lib-debug"))):
-            os.unlink(os.path.join(llvm_prefix, "lib-debug"))
         if not os.path.exists(os.path.join(bin_dir, "flang1")):
             os.symlink(os.path.join(omp_bin_dir, "flang1"), os.path.join(bin_dir, "flang1"))
         if not os.path.exists(os.path.join(bin_dir, "flang2")):
@@ -540,8 +536,14 @@ class RocmOpenmpExtras(Package):
                 os.path.join(omp_bin_dir, f"flang-{legacy_or_classic}"),
                 os.path.join(bin_dir, f"flang-{legacy_or_classic}"),
             )
-        os.symlink(os.path.join(omp_lib_dir, "libdevice"), os.path.join(lib_dir, "libdevice"))
-        os.symlink(os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug"))
+
+        if self.spec.satisfies("@:7"):
+            if os.path.islink((os.path.join(lib_dir, "libdevice"))):
+                os.unlink(os.path.join(lib_dir, "libdevice"))
+            if os.path.islink((os.path.join(llvm_prefix, "lib-debug"))):
+                os.unlink(os.path.join(llvm_prefix, "lib-debug"))
+            os.symlink(os.path.join(omp_lib_dir, "libdevice"), os.path.join(lib_dir, "libdevice"))
+            os.symlink(os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug"))
 
         # Set cmake args
         components = dict()

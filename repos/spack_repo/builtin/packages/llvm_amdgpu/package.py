@@ -89,7 +89,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     provides("libllvm@17", when="@5.7:6.1")
     provides("libllvm@18", when="@6.2:6.3")
-    provides("libllvm@19", when="@6.4:")
+    provides("libllvm@19", when="@6.4")
     provides("libllvm@20", when="@7.0")
 
     depends_on("c", type="build")  # generated
