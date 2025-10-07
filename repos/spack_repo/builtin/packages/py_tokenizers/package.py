@@ -23,6 +23,8 @@ class PyTokenizers(PythonPackage):
     version("0.13.1", sha256="3333d1cee5c8f47c96362ea0abc1f81c77c9b92c6c3d11cbf1d01985f0d5cf1d")
     version("0.10.3", sha256="1a5d3b596c6d3a237e1ad7f46c472d467b0246be7fd1a364f12576eb8db8f7e6")
 
+    depends_on("python@3.9:", type=("build", "run"), when="@0.22.1:")
+
     # TODO: This package currently requires internet access to install.
     depends_on("py-maturin@1:", when="@0.14:", type="build")
     depends_on("py-huggingface-hub@0.16.4:0", when="@0.15:0.21.0", type=("build", "run"))
