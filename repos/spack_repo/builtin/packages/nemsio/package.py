@@ -18,7 +18,7 @@ class Nemsio(CMakePackage):
     url = "https://github.com/NOAA-EMC/NCEPLIBS-nemsio/archive/refs/tags/v2.5.2.tar.gz"
     git = "https://github.com/NOAA-EMC/NCEPLIBS-nemsio"
 
-    maintainers("edwardhartnett", "AlexanderRichert-NOAA", "Hang-Lei-NOAA")
+    maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "AlysonStahl-NOAA")
 
     version("develop", branch="develop")
     version("2.5.5", sha256="f513062f82d67c93efc190545ece66c5be4753bd86aa882b26227eb6eb179edd")
