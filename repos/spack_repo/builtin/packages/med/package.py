@@ -32,6 +32,7 @@ class Med(CMakePackage):
     variant("mpi", default=True, description="Enable MPI")
     variant("shared", default=False, description="Builds a shared version of the library")
     variant("fortran", default=False, description="Enable Fortran support")
+    variant("int64", default=False, description="Use 64-bit integers as indices.")
     variant("doc", default=False, description="Install documentation")
     variant("python", default=False, description="Build Python bindings")
 
@@ -73,6 +74,9 @@ class Med(CMakePackage):
         ]
         if "~fortran" in spec:
             options.append("-DCMAKE_Fortran_COMPILER=")
+
+        if "+int64" in spec:
+            options.append("-DMED_MEDINT_TYPE=long")
 
         if "+api23" in spec:
             options.extend(

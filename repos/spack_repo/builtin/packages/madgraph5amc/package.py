@@ -44,6 +44,7 @@ class Madgraph5amc(MakefilePackage):
     variant("pythia8", default=False, description="Use external installation of Pythia8")
 
     depends_on("fortran", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("syscalc")
     depends_on("gosam-contrib", when="+ninja")
@@ -88,6 +89,9 @@ class Madgraph5amc(MakefilePackage):
         set_parameter("fastjet", join_path(spec["fastjet"].prefix.bin, "fastjet-config"))
 
         set_parameter("automatic_html_opening", "False")
+
+        set_parameter("cpp_compiler", self.compiler.cxx)
+        set_parameter("fortran_compiler", self.compiler.fc)
 
     def build(self, spec, prefix):
         with working_dir(join_path("vendor", "CutTools")):
