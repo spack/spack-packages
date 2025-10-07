@@ -11,15 +11,17 @@ class Charliecloud(AutotoolsPackage):
     """Lightweight user-defined software stacks for HPC."""
 
     maintainers("j-ogas", "reidpr", "loshak")
-    homepage = "https://hpc.github.io/charliecloud"
-    url = "https://github.com/hpc/charliecloud/releases/download/v0.18/charliecloud-0.18.tar.gz"
-    git = "https://github.com/hpc/charliecloud.git"
+    homepage = "https://charliecloud.io/"
+    url = "https://gitlab.com/charliecloud/main/-/archive/v0.42/main-v0.42.tar.gz"
+    git = "https://gitlab.com/charliecloud/charliecloud.git"
 
     tags = ["e4s"]
 
     license("Apache-2.0")
 
-    version("master", branch="master")
+    version("main", branch="main")
+    version("0.42", sha256="be98c025f58336a7b6e6d79804ef89dd489c5dcc5ad8faccb551ea0065dcd13a")
+    version("0.41", sha256="065cc50f8b7893f8a0e28d9d06e2e3640d0d8139d10ad59fe941aea1e33dfdc6")
     version("0.40", sha256="dcad81136d1fed905be6e573a7bf191ea655ae7827f7980bbe6559942f2affdd")
     version("0.39", sha256="38503b507119a970ac288df7181aefe6cd1a125b9d509f5cb162dacea7143fd1")
     version("0.38", sha256="1a3766d57ff4db9c65fd5c561bbaac52476c9a19fa10c1554190912a03429b7a")
