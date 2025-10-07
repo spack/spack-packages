@@ -17,7 +17,7 @@ class Sigio(CMakePackage):
     url = "https://github.com/NOAA-EMC/NCEPLIBS-sigio/archive/refs/tags/v2.3.2.tar.gz"
     git = "https://github.com/NOAA-EMC/NCEPLIBS-sigio"
 
-    maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett")
+    maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "AlysonStahl-NOAA")
 
     version("develop", branch="develop")
     version("2.3.3", sha256="2b4a04be3be10f222d0ff47f973f65a03b8b5521dcad8e8866f3bfe4e8dfafab")
