@@ -322,8 +322,19 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # ESMF code.
             env.set("ESMF_LAPACK", "system")
 
-            # Specifies the path where the LAPACK library is located.
-            env.set("ESMF_LAPACK_LIBPATH", spec["lapack"].prefix.lib)
+            # Specifies the path where the LAPACK library is located. We cannot
+            # simply rely on spec["lapack"].prefix.lib here because some
+            # providers (e.g., MKL) use a deeper directory structure for the
+            # library directory that is not easily generalized. We must also
+            # filter out any system library paths included by the package.
+            env.set(
+                "ESMF_LAPACK_LIBPATH",
+                [
+                    lib_dir
+                    for lib_dir in spec["lapack"].libs.directories
+                    if spec["lapack"].prefix in lib_dir
+                ][0],
+            )
 
             # Specifies the linker directive needed to link the LAPACK library
             # to the application.
@@ -411,6 +422,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
                     os.symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
+        # https://github.com/esmf-org/esmf/issues/497
+        filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
 
     def check(self):
         make("check", parallel=False)
