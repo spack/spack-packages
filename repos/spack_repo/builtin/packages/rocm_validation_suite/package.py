@@ -66,7 +66,7 @@ class RocmValidationSuite(CMakePackage):
     depends_on("googletest")
     depends_on("doxygen", type="build")
     depends_on("libdrm", when="@6.4:")
-    depends_on("pciutils+shared", type="build", when="@6.4:")
+    depends_on("pciutils+shared", when="@6.4:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec

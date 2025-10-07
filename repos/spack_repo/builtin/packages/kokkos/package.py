@@ -22,12 +22,13 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     test_requires_compiler = True
 
-    maintainers("cedricchevalier19", "nmm0", "lucbv")
+    maintainers("cedricchevalier19", "nmm0", "lucbv", "tpadioleau")
 
     license("Apache-2.0 WITH LLVM-exception")
 
     version("develop", branch="develop")
 
+    version("4.7.01", sha256="404cf33e76159e83b8b4ad5d86f6899d442b5da4624820ab457412116cdcd201")
     version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
     version("4.6.02", sha256="baf1ebbe67abe2bbb8bb6aed81b4247d53ae98ab8475e516d9c87e87fa2422ce")
     version("4.6.01", sha256="b9d70e4653b87a06dbb48d63291bf248058c7c7db4bd91979676ad5609bb1a3a")
@@ -81,21 +82,19 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
     depends_on("cmake@3.16:", type="build")
-    conflicts("cmake@3.28", when="@:4.2.01 +cuda")
+    conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
+    conflicts("^cuda@13:", when="@:4.7.0")
 
     devices_variants = {
         "cuda": [False, "Whether to build CUDA backend"],
         "openmp": [False, "Whether to build OpenMP backend"],
         "threads": [False, "Whether to build the C++ threads backend"],
-        "serial": [True, "Whether to build serial backend"],
+        "serial": [False, "Whether to build serial backend"],
         "rocm": [False, "Whether to build HIP backend"],
         "sycl": [False, "Whether to build the SYCL backend"],
         "openmptarget": [False, "Whether to build the OpenMPTarget backend"],
     }
-    conflicts(
-        "".join([f"~{d}" for d in devices_variants]),
-        msg="Kokkos requires at least one active backend",
-    )
+    requires("+serial", when="~openmp ~threads", msg="Kokkos requires at least one host backend")
 
     tpls_variants = {
         "hpx": [False, "Whether to enable the HPX library"],
@@ -124,6 +123,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
     }
+
+    conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
 
     spack_micro_arch_map = {
         "thunderx2": "THUNDERX2",

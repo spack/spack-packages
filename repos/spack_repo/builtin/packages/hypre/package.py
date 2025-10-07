@@ -131,6 +131,8 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("rocsolver", when="@2.29.0: +rocm")
     depends_on("rocblas", when="@2.29.0: +rocm")
     depends_on("hipblas", when="+rocm +superlu-dist")
+    # naming conflict with the __syncwarp function
+    depends_on("hip@:6", when="@:2.33.0 +rocm")
     depends_on("umpire", when="+umpire")
     depends_on("umpire+rocm", when="+umpire+rocm")
     depends_on("umpire+cuda", when="+umpire+cuda")

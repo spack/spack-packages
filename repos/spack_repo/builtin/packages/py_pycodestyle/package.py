@@ -16,6 +16,7 @@ class PyPycodestyle(PythonPackage):
 
     license("MIT")
 
+    version("2.14.0", sha256="c4b5b517d278089ff9d0abdec919cd97262a3367449ea1c8b49b91529167b783")
     version("2.11.0", sha256="259bcc17857d8a8b3b4a2327324b79e5f020a13c16074670f9c8c8f872ea76d0")
     version("2.10.0", sha256="347187bdb476329d98f695c213d7295a846d1152ff4fe9bacb8a9590b8ee7053")
     version("2.9.1", sha256="2c9607871d58c76354b697b42f5d57e1ada7d261c261efac224b664affdc5785")

@@ -8,14 +8,15 @@ import re
 import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
 from spack.package import *
 
-is_windows = sys.platform == "win32"
+IS_WINDOWS = sys.platform == "win32"
 
 
-class Curl(NMakePackage, AutotoolsPackage):
+class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     """cURL is an open source command line tool and library for
     transferring data with URL syntax"""
 
@@ -67,11 +68,15 @@ class Curl(NMakePackage, AutotoolsPackage):
     variant("libidn2", default=False, description="enable libidn2 support")
     variant(
         "libs",
-        default="shared,static" if not is_windows else "shared",
+        default="shared,static" if not IS_WINDOWS else "shared",
         values=("shared", "static"),
-        multi=not is_windows,
+        multi=not IS_WINDOWS,
         description="Build shared libs, static libs or both",
     )
+
+    with when("platform=windows build_system=cmake"):
+        variant("static-crt", default=False, description="Link to static CRT")
+        variant("unicode", default=False, description="Use the unicode version of Windows API")
 
     conflicts("platform=linux", when="tls=secure_transport", msg="Only supported on macOS")
 
@@ -81,6 +86,10 @@ class Curl(NMakePackage, AutotoolsPackage):
     depends_on("pkgconfig", type="build", when="platform=darwin")
     depends_on("pkgconfig", type="build", when="platform=linux")
     depends_on("pkgconfig", type="build", when="platform=freebsd")
+
+    # CMake 4.0: is not compatible with CMake systems requiring
+    # 3.0, which curl@7.63 requires
+    depends_on("cmake@:3", when="build_system=cmake @:7.63")
 
     depends_on("gnutls", when="tls=gnutls")
     depends_on("mbedtls@2: +pic", when="tls=mbedtls")
@@ -101,7 +110,12 @@ class Curl(NMakePackage, AutotoolsPackage):
     # https://github.com/curl/curl/issues/18088
     depends_on("perl", type="build", when="@8.15.0")
 
-    build_system("autotools", conditional("nmake", when="platform=windows"), default="autotools")
+    build_system(
+        "autotools",
+        "cmake",
+        conditional("nmake", when="@:8.11 platform=windows"),
+        default="cmake" if IS_WINDOWS else "autotools",
+    )
 
     @classmethod
     def determine_version(cls, exe):
@@ -277,3 +291,55 @@ class NMakeBuilder(BuildEnvironment, NMakeBuilder):
             # safeguard against future curl releases that do this for us
             if os.path.exists(libcurl_a) and not os.path.exists(libcurl):
                 symlink(libcurl_a, libcurl)
+
+
+class CMakeBuilder(CMakeBuilder):
+    def cmake_args(self):
+        args = [
+            self.define("BUILD_TESTING", False),
+            self.define("CURL_USE_LIBPSL", False),
+            # Curl's CMake will turn this off if not building static libcurl
+            self.define("BUILD_STATIC_CURL", True),
+            # enables install from cmake
+            self.define("CURL_DISABLE_INSTALL", False),
+            self.define("BUILD_MISC_DOCS", False),
+            self.define("BUILD_LIBCURL_DOCS", False),
+            self.define("BUILD_EXAMPLES", False),
+            self.define("CURL_BROTLI", False),
+            self.define("CURL_USE_GSASL", False),
+            self.define("CURL_ZSTD", False),
+            self.define("ENABLE_CURL_MANUAL", False),
+            self.define_from_variant("CURL_USE_LIBSSH2", "libssh2"),
+            self.define_from_variant("CURL_USE_LIBSSH", "libssh"),
+            self.define_from_variant("CURL_USE_OPENLDAP", "ldap"),
+            self.define_from_variant("CURL_DISABLE_LDAP", "ldap"),
+            self.define_from_variant("USE_NGHTTP2", "nghttp2"),
+            self.define_from_variant("CURL_USE_GSSAPI", "gssapi"),
+            self.define_from_variant("USE_LIBRTMP", "librtmp"),
+            self.define_from_variant("USE_LIBIDN2", "libidn2"),
+        ]
+
+        if self.spec.satisfies("tls=sspi"):
+            args.append(self.define("CURL_WINDOWS_SSPI", True))
+        if self.spec.satisfies("tls=gnutls"):
+            args.append(self.define("CURL_USE_GNUTLS", True))
+        if self.spec.satisfies("tls=mbedtls"):
+            args.append(self.define("CURL_USE_MBEDTLS", True))
+        if self.spec.satisfies("tls=openssl"):
+            args.append(self.define("CURL_USE_OPENSSL", True))
+
+        if self.spec.satisfies("platform=windows"):
+            args.extend(
+                [
+                    self.define_from_variant("ENABLE_UNICODE", "unicode"),
+                    self.define_from_variant("CURL_STATIC_CRT", "static-crt"),
+                ]
+            )
+            if self.spec.satisfies("+ldap"):
+                args.append(self.define("USE_WIN32_LDAP", True))
+
+        if self.spec.satisfies("libs=shared"):
+            args.append(self.define("BUILD_SHARED_LIBS", True))
+        if self.spec.satisfies("libs=static"):
+            args.append(self.define("BUILD_STATIC_LIBS", True))
+        return args
