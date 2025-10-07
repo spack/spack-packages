@@ -190,6 +190,9 @@ class RocmOpenmpExtras(Package):
     version("5.7.0", sha256=versions_dict["5.7.0"]["aomp"])
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
+    variant("flang-legacy", default=False, description="Build flang-legacy")
+
+    conflicts("~flang-legacy", when="@:6")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -304,7 +307,7 @@ class RocmOpenmpExtras(Package):
             expand=True,
             destination="rocm-openmp-extras",
             placement="flang",
-            when=f"@{ver}",
+            when=f"@{ver} +flang-legacy",
         )
 
         resource(
@@ -470,12 +473,12 @@ class RocmOpenmpExtras(Package):
                 libomptarget.format(src) + plugin,
                 string=True,
             )
-
-        filter_file(
-            "ADDITIONAL_VERSIONS 2.7",
-            "ADDITIONAL_VERSIONS 3",
-            flang.format(src) + "CMakeLists.txt",
-        )
+        if self.spec.satisfies("@:6"):
+            filter_file(
+                "ADDITIONAL_VERSIONS 2.7",
+                "ADDITIONAL_VERSIONS 3",
+                flang.format(src) + "CMakeLists.txt",
+            )
 
         filter_file(
             "if (LIBOMPTARGET_DEP_CUDA_FOUND)",
@@ -519,23 +522,24 @@ class RocmOpenmpExtras(Package):
         # flang1 and flang2 symlink needed for build of flang-runtime
         # libdevice symlink to rocm-openmp-extras for runtime
         # libdebug symlink to rocm-openmp-extras for runtime
-        if os.path.islink((os.path.join(bin_dir, "flang1"))):
-            os.unlink(os.path.join(bin_dir, "flang1"))
-        if os.path.islink((os.path.join(bin_dir, "flang2"))):
-            os.unlink(os.path.join(bin_dir, "flang2"))
-        if self.spec.version >= Version("6.1.0"):
-            if os.path.islink((os.path.join(bin_dir, f"flang-{legacy_or_classic}"))):
-                os.unlink(os.path.join(bin_dir, f"flang-{legacy_or_classic}"))
-        if not os.path.exists(os.path.join(bin_dir, "flang1")):
-            os.symlink(os.path.join(omp_bin_dir, "flang1"), os.path.join(bin_dir, "flang1"))
-        if not os.path.exists(os.path.join(bin_dir, "flang2")):
-            os.symlink(os.path.join(omp_bin_dir, "flang2"), os.path.join(bin_dir, "flang2"))
+        if self.spec.satisfies("+flang-legacy"):
+            if os.path.islink((os.path.join(bin_dir, "flang1"))):
+                os.unlink(os.path.join(bin_dir, "flang1"))
+            if os.path.islink((os.path.join(bin_dir, "flang2"))):
+                os.unlink(os.path.join(bin_dir, "flang2"))
+            if self.spec.version >= Version("6.1.0"):
+                if os.path.islink((os.path.join(bin_dir, f"flang-{legacy_or_classic}"))):
+                    os.unlink(os.path.join(bin_dir, f"flang-{legacy_or_classic}"))
+            if not os.path.exists(os.path.join(bin_dir, "flang1")):
+                os.symlink(os.path.join(omp_bin_dir, "flang1"), os.path.join(bin_dir, "flang1"))
+            if not os.path.exists(os.path.join(bin_dir, "flang2")):
+                os.symlink(os.path.join(omp_bin_dir, "flang2"), os.path.join(bin_dir, "flang2"))
 
-        if self.spec.version >= Version("6.1.0"):
-            os.symlink(
-                os.path.join(omp_bin_dir, f"flang-{legacy_or_classic}"),
-                os.path.join(bin_dir, f"flang-{legacy_or_classic}"),
-            )
+            if self.spec.version >= Version("6.1.0"):
+                os.symlink(
+                    os.path.join(omp_bin_dir, f"flang-{legacy_or_classic}"),
+                    os.path.join(bin_dir, f"flang-{legacy_or_classic}"),
+                )
 
         if self.spec.satisfies("@:7"):
             if os.path.islink((os.path.join(lib_dir, "libdevice"))):
@@ -720,10 +724,11 @@ class RocmOpenmpExtras(Package):
         build_order = ["aomp-extras", "openmp"]
         if self.spec.version >= Version("6.4.0"):
             build_order += ["offload"]
-        if self.spec.version >= Version("6.1.0"):
-            build_order += ["flang-legacy-llvm", "flang-legacy"]
 
-        build_order += ["pgmath", "flang", "flang-runtime"]
+        if self.spec.satisfies("+flang-legacy"):
+            if self.spec.version >= Version("6.1.0"):
+                build_order += ["flang-legacy-llvm", "flang-legacy"]
+            build_order += ["pgmath", "flang", "flang-runtime"]
         # Override standard CMAKE_BUILD_TYPE
         std_cmake_args = CMakeBuilder.std_args(self, generator="Unix Makefiles")
         for arg in std_cmake_args:
