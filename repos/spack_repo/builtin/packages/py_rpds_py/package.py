@@ -29,4 +29,7 @@ class PyRpdsPy(PythonPackage):
     depends_on("py-maturin@1.2:1", type="build", when="@0.19.1:0.25.1")
     depends_on("py-maturin@1.0:1", type="build", when="@:0.19.0")
 
+    # retrieved via cargo msrv
+    depends_on("rust@1.85:", type="build", when="@0.25:")
     depends_on("rust@1.76:", type="build", when="@0.19:")
+    depends_on("rust@1.60:", type="build")
