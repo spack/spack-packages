@@ -165,7 +165,9 @@ class Root(CMakePackage):
     variant("arrow", default=False, description="Enable Arrow interface")
     variant("cuda", when="@6.08.00:", default=False, description="Enable CUDA support")
     variant("cudnn", when="@6.20.02:", default=False, description="Enable cuDNN support")
-    variant("cxxmodules", when="@6.16:", default=True, description="Enable C++ modules")
+    # C++ module support in ROOT seemingly not currently working in macOS, will lead to build errors if turned on
+    # See https://root-forum.cern.ch/t/build-error-on-macos-macports-with-unctrl-h-ncurses-h/40239/22
+    variant("cxxmodules", when="@6.16:", default=not _is_macos, description="Enable C++ modules")
     variant(
         "daos", default=False, description="Enable RNTuple support for DAOS storage", when="@6.26:"
     )
@@ -657,6 +659,7 @@ class Root(CMakePackage):
             define("gnuinstall", True),
             define("libcxx", False),
             define("roottest", False),
+            define_from_variant("runtime_cxxmodules", "cxxmodules"),
             define_from_variant("rpath"),
             define("shared", True),
             define("soversion", True),
