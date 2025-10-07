@@ -31,7 +31,7 @@ class Aretomo2(MakefilePackage, CudaPackage):
 
     version("1.1.2", sha256="4cbb4d25d28778041d80ef2c598519b17b9a40aa84e1e99daf48ad5a90d946b4")
 
-    depends_on("c", type="build")  # Not really, but CUDA does
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("gmake", type="build")
 
