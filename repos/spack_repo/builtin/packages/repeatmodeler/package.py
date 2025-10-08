@@ -76,7 +76,7 @@ class Repeatmodeler(Package):
                 spec["ncbi-rmblastn"].prefix.bin,
                 "y",
                 spec["genometools"].prefix.bin,
-                spec["ltr-retriever"].prefix.bin,
+                spec["ltr-retriever"].prefix,
                 spec["mafft"].prefix.bin,
                 spec["ninja-phylogeny"].prefix.bin,
             ]

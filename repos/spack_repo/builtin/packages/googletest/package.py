@@ -44,13 +44,14 @@ class Googletest(CMakePackage):
 
     variant(
         "cxxstd",
-        default="14",
+        default="17",
         values=("98", "11", "14", "17", "20"),
         multi=False,
         description="Use the specified C++ standard when building",
     )
     conflicts("cxxstd=98", when="@1.9:")
     conflicts("cxxstd=11", when="@1.13:")
+    conflicts("cxxstd=14", when="@1.17:")
 
     def cmake_args(self):
         spec = self.spec
