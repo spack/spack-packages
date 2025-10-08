@@ -179,8 +179,10 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
         if dependent_spec.satisfies("^gettext+shared"):
             link_deps = dependent_spec["gettext"].dependencies(deptype="link")
             for link_dep in link_deps:
-                if not (dependent_spec["gettext"].satisfies(fr"^{link_dep.name}+shared") or \
-                        dependent_spec["gettext"].satisfies(fr"^{link_dep.name} libs=shared")):
+                if not (
+                    dependent_spec["gettext"].satisfies(rf"^{link_dep.name}+shared")
+                    or dependent_spec["gettext"].satisfies(rf"^{link_dep.name} libs=shared")
+                ):
                     env.append_flags(
                         "LDFLAGS",
                         "-L{0} ".format(dependent_spec[link_dep.name].prefix.lib)
@@ -198,4 +200,4 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
                     "LDFLAGS",
                     "-L{0} ".format(dependent_spec[link_dep.name].prefix.lib)
                     + dependent_spec[link_dep.name].libs.link_flags,
-                    )
+                )
