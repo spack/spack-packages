@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class Croc(GoPackage):
-    """croc is a tool that allows any two computers to simply and securely transfer files and folders."""
+    """croc is a tool that allows any two computers to simply and securely transfer files and
+    folders.
+    """
 
     homepage = "https://schollz.com/software/croc6"
     url = "https://github.com/schollz/croc/archive/refs/tags/v10.2.5.tar.gz"
