@@ -185,8 +185,8 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
                 ):
                     env.append_flags(
                         "LDFLAGS",
-                        "-L{0} ".format(dependent_spec[link_dep.name].prefix.lib)
-                        + dependent_spec[link_dep.name].libs.link_flags,
+                        "-L{0} ".format(dependent_spec["gettext"][link_dep.name].prefix.lib)
+                        + dependent_spec["gettext"][link_dep.name].libs.link_flags,
                     )
         else:
             env.append_flags(
@@ -198,6 +198,6 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
             for link_dep in link_deps:
                 env.append_flags(
                     "LDFLAGS",
-                    "-L{0} ".format(dependent_spec[link_dep.name].prefix.lib)
-                    + dependent_spec[link_dep.name].libs.link_flags,
+                    "-L{0} ".format(dependent_spec["gettext"][link_dep.name].prefix.lib)
+                    + dependent_spec["gettext"][link_dep.name].libs.link_flags,
                 )
