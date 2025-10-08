@@ -10,7 +10,8 @@ from spack.package import *
 
 class HsaAmdAqlprofile(CMakePackage):
     """Architected Queuing Language Profiling Library
-    AQLprofile is an open source library that enables advanced GPU profiling and tracing on AMD platforms"""
+    AQLprofile is an open source library that enables advanced
+    GPU profiling and tracing on AMD platforms"""
 
     homepage = "https://github.com/ROCm/aqlprofile"
     url = "https://github.com/ROCm/aqlprofile/archive/refs/tags/rocm-7.0.0.tar.gz"
