@@ -128,7 +128,7 @@ class Hdf5(CMakePackage):
         "api",
         default="default",
         description="Choose api compatibility for earlier version",
-        values=("default", "v116", "v114", "v112", "v110", "v18", "v16"),
+        values=("default", "v200", "v114", "v112", "v110", "v18", "v16"),
         multi=False,
     )
 
@@ -137,7 +137,8 @@ class Hdf5(CMakePackage):
     depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.12:", type="build")
-    depends_on("cmake@3.18:", type="build", when="@1.13:")
+    depends_on("cmake@3.18:", type="build", when="@1.14:")
+    depends_on("cmake@3.26:", type="build", when="@2.0:")
 
     with when("+mpi"):
         depends_on("mpi")
@@ -159,11 +160,11 @@ class Hdf5(CMakePackage):
         depends_on("pkgconfig", when=f"platform={plat}", type="run")
 
     conflicts("+mpi", "^mpich@4.0:4.0.3")
-    conflicts("api=v116", when="@1.6:1.14", msg="v116 is not compatible with this release")
+    conflicts("api=v200", when="@1.6:1.14", msg="v200 is not compatible with this release")
     conflicts(
-        "api=v116",
+        "api=v200",
         when="@develop-1.8:develop-1.14",
-        msg="v116 is not compatible with this release",
+        msg="v200 is not compatible with this release",
     )
     conflicts("api=v114", when="@1.6:1.12", msg="v114 is not compatible with this release")
     conflicts(
@@ -548,24 +549,32 @@ class Hdf5(CMakePackage):
         ]
 
         # Always enable this option. This does not actually enable any
-        # features: it only *allows* the user to specify certain
-        # combinations of other arguments.
-        # The option name has been changed to HDF5_ALLOW_UNSUPPORTED for
-        # HDF5 2.0 and higher versions.
+        # features: it only *allows* the user to specify certain combinations
+        # of other arguments that would normally be rejected as unsupported
+        # configurations.
+        # Note: This option was renamed from ALLOW_UNSUPPORTED to
+        # HDF5_ALLOW_UNSUPPORTED in HDF5 2.0.0 as part of the standardization
+        # of CMake option naming.
         if self.spec.satisfies("@2.0.0:"):
             args.append(self.define("HDF5_ALLOW_UNSUPPORTED", True))
         else:
             args.append(self.define("ALLOW_UNSUPPORTED", True))
 
-        # The name of option Z_LIB_SUPPORT was also changed to ZLIB_SUPPORT.
+        # The name of option HDF5_ENABLE_Z_LIB_SUPPORT was also changed 
+        # to HDF5_ENABLE_ZLIB_SUPPORT.
         if self.spec.satisfies("@2.0.0:"):
             args.append(self.define("HDF5_ENABLE_ZLIB_SUPPORT", True))
         else:
             args.append(self.define("HDF5_ENABLE_Z_LIB_SUPPORT", True))
 
+        # The name of option DEFAULT_API_VERSION was also changed to
+        # HDF5_DEFAULT_API_VERSION
         api = spec.variants["api"].value
         if api != "default":
-            args.append(self.define("DEFAULT_API_VERSION", api))
+            if self.spec.satisfies("@2.0.0:"):
+                args.append(self.define("HDF5_DEFAULT_API_VERSION", api))
+            else:
+                args.append(self.define("DEFAULT_API_VERSION", api))
 
         # MSMPI does not provide compiler wrappers
         # and pointing these variables at the MSVC compilers
