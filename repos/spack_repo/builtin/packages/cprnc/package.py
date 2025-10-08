@@ -36,6 +36,7 @@ class Cprnc(CMakePackage):
         name="genf90",
         git="https://github.com/PARALLELIO/genf90",
         tag="genf90_200608",
+        commit="4816965ba946731352bad195b7d946a5fe682ff5",
         destination="genf90-resource",
     )
 
