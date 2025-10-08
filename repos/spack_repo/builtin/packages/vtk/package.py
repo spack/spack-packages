@@ -211,6 +211,7 @@ class Vtk(CMakePackage):
     depends_on("jsoncpp")
     depends_on("libxml2")
     depends_on("lz4")
+    depends_on("netcdf-c@:4.9.2", when="io=exodusii")
     depends_on("netcdf-c@:4.9.2~mpi", when="io=netcdf ~mpi")
     depends_on("netcdf-c@:4.9.2+mpi", when="io=netcdf +mpi")
     depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
@@ -357,8 +358,13 @@ class Vtk(CMakePackage):
         cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IOIOSS", ioss_enabled))
 
         netcdf_enabled = module_variant("io=netcdf")
-        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_netcdf", netcdf_enabled))
         cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IONetCDF", netcdf_enabled))
+
+        # Needed by netcdf and exodusii io modules
+        cmake_args.append(
+            self.define("VTK_MODULE_ENABLE_VTK_netcdf", "YES" if "netcdf-c" in spec else "NO")
+        )
+
         if spec.satisfies("+mpi"):
             cmake_args.append(
                 self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
