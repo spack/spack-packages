@@ -560,7 +560,7 @@ class Hdf5(CMakePackage):
         else:
             args.append(self.define("ALLOW_UNSUPPORTED", True))
 
-        # The name of option HDF5_ENABLE_Z_LIB_SUPPORT was also changed 
+        # The name of option HDF5_ENABLE_Z_LIB_SUPPORT was also changed
         # to HDF5_ENABLE_ZLIB_SUPPORT.
         if self.spec.satisfies("@2.0.0:"):
             args.append(self.define("HDF5_ENABLE_ZLIB_SUPPORT", True))
