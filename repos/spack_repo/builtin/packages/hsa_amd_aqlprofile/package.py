@@ -9,9 +9,8 @@ from spack.package import *
 
 
 class HsaAmdAqlprofile(CMakePackage):
-    """rocm-core is a utility which can be used to get ROCm release version.
-    It also provides the Lmod modules files for the ROCm release.
-    getROCmVersion function provides the ROCm version."""
+    """Architected Queuing Language Profiling Library
+    AQLprofile is an open source library that enables advanced GPU profiling and tracing on AMD platforms"""
 
     homepage = "https://github.com/ROCm/aqlprofile"
     url = "https://github.com/ROCm/aqlprofile/archive/refs/tags/rocm-7.0.0.tar.gz"
