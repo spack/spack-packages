@@ -15,39 +15,28 @@ class Genesis(AutotoolsPackage, CudaPackage):
     and their complexes.
     """
 
-    homepage = "https://www.r-ccs.riken.jp/labs/cbrt/"
-    url = "https://www.r-ccs.riken.jp/labs/cbrt/wp-content/uploads/2020/09/genesis-1.5.1.tar.bz2"
-    git = "https://github.com/genesis-release-r-ccs/genesis-2.0.git"
+    homepage = "https://mdgenesis.org/"
+    url = "https://github.com/genesis-release-r-ccs/genesis/archive/refs/tags/v2.1.5.tar.gz"
 
-    license("LGPL-3.0-or-later")
+    license("LGPL-3.0-or-later", checked_by="chig")
 
-    version(
-        "1.6.0",
-        sha256="d0185a5464ed4231f6ee81f6dcaa15935a99fa30b96658d2b7c25d7fbc5b38e9",
-        url="https://www.r-ccs.riken.jp/labs/cbrt/wp-content/uploads/2020/12/genesis-1.6.0.tar.bz2",
-    )
-    version(
-        "1.5.1",
-        sha256="62a453a573c36779484b4ffed2dfa56ea03dfe1308d631b33ef03f733259b3ac",
-        url="https://www.r-ccs.riken.jp/labs/cbrt/wp-content/uploads/2020/09/genesis-1.5.1.tar.bz2",
-    )
+    version("2.1.5", sha256="622e6dc0bf9db54b2d18165f098044146abbf20837cb6209af2015856469afbf")
+    version("2.1.4", sha256="8a6ae1b5a775a41e6d6c398759d78c513a87537bb6832ebda9ea7d426c2408af")
+    version("2.1.3", sha256="24b0e407d4d6d54f570f3153d78773ffce79877fbf02f4d6c8bc68675caafecf")
+    version("2.1.2", sha256="cce6834f429d28a0f26450c8b92bab24e86b8c03bf7f2dc3868b74b65bf3f7f0")
+    version("2.1.1", sha256="0092822ce1a477dd2c4dc6b6035ccfeb0506d78e27b345e4f40bc844efe7a08d")
+    version("2.1.0", sha256="b348377875b99a62cb93a834047dedeb28cc2a1c615d0bcf0eecadaa1376020c")
+    version("2.0.3", sha256="a389ed869e6b04dd05a194c0f8577d5e1839f8bcd453fde5b30428a428405830")
+    version("2.0.2", sha256="8e80d7a1601bf6b12adf3e4ddcbec55aee27a3431784fbc0a46c784eb092f230")
+    version("2.0.0", sha256="87f097754cb36b1d532ca4952843e60b5115d1eb28e6c2c0fee77c8c720bd958")
 
-    resource(
-        when="@1.6.0",
-        name="user_guide",
-        url="https://www.r-ccs.riken.jp/labs/cbrt/wp-content/uploads/2020/12/GENESIS-1.6.0.pdf",
-        sha256="4a6d54eb8f66edde57a4099cdac40cc8e0e2fd6bdb84946da6bf2b3ed84a4ba1",
-        expand=False,
-        placement="doc",
-    )
-    resource(
-        when="@1.5.1",
-        name="user_guide",
-        url="https://www.r-ccs.riken.jp/labs/cbrt/wp-content/uploads/2019/10/GENESIS-1.4.0.pdf",
-        sha256="da2c3f8bfa1e93adb992d3cfce09fb45d8d447a94f9a4f884ac834ea7279b9c7",
-        expand=False,
-        placement="doc",
-    )
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
+    depends_on("m4", type="build")
 
     variant("openmp", default=True, description="Enable OpenMP.")
     variant("single", default=False, description="Enable single precision.")
