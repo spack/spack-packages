@@ -170,10 +170,32 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
         )
         return libs
 
-    # gettext doesn't produce a pkg-config
     def setup_dependent_build_environment(self, env, dependent_spec):
-        env.append_flags(
-            "LDFLAGS",
-            "-L{0} ".format(dependent_spec["gettext"].prefix.lib)
-            + dependent_spec["gettext"].libs.link_flags,
-        )
+        # gettext doesn't produce a pkg-config, which means that static dependencies are not
+        # propagated to dependent packages
+
+        # either gettext is built static (~shared), in which case we gather all dependencies
+        # otherwise, we are building shared and only require static dependencies
+        if dependent_spec.satisfies("^gettext+shared"):
+            link_deps = dependent_spec["gettext"].dependencies(deptype="link")
+            for link_dep in link_deps:
+                if not (dependent_spec["gettext"].satisfies(fr"^{link_dep.name}+shared") or \
+                        dependent_spec["gettext"].satisfies(fr"^{link_dep.name} libs=shared")):
+                    env.append_flags(
+                        "LDFLAGS",
+                        "-L{0} ".format(dependent_spec[link_dep.name].prefix.lib)
+                        + dependent_spec[link_dep.name].libs.link_flags,
+                    )
+        else:
+            env.append_flags(
+                "LDFLAGS",
+                "-L{0} ".format(dependent_spec["gettext"].prefix.lib)
+                + dependent_spec["gettext"].libs.link_flags,
+            )
+            link_deps = dependent_spec["gettext"].dependencies(deptype="link")
+            for link_dep in link_deps:
+                env.append_flags(
+                    "LDFLAGS",
+                    "-L{0} ".format(dependent_spec[link_dep.name].prefix.lib)
+                    + dependent_spec[link_dep.name].libs.link_flags,
+                    )

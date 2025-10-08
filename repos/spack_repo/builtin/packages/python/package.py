@@ -176,7 +176,7 @@ class Python(Package):
         depends_on("gdbm", when="+dbm")  # alternatively ndbm or berkeley-db
         depends_on("zlib-api", when="+zlib")
         depends_on("bzip2", when="+bz2")
-        depends_on("xz libs=shared", when="+lzma")
+        depends_on("xz", when="+lzma")
         depends_on("expat", when="+pyexpat")
         depends_on("libffi", when="+ctypes")
         # https://docs.python.org/3/whatsnew/3.11.html#build-changes
