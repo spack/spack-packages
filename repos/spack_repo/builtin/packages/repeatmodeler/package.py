@@ -83,9 +83,13 @@ class Repeatmodeler(Package):
             "util/TSD.pl",
             "util/viewMSA.pl",
             "util/visualizeAlignPNG.pl",
+            "configure",
         ]
         for f in file_list:
-            filter_file("^#!/usr/bin/perl.*$", "#!/usr/bin/env perl", f, ignore_absent=True)
+            filter_file(r"^#!.*perl( -w)?.*$", fr"#!{self.spec['perl'].prefix.bin.perl}\1", f, ignore_absent=True)
+        file_list = ["configure", "RepModelConfig.pm"]
+        for f in file_list:
+            filter_file(r'^.*system\( "clear" \).*$', "", f)
 
     def install(self, spec, prefix):
         # interactive configuration script
