@@ -86,7 +86,12 @@ class Repeatmodeler(Package):
             "configure",
         ]
         for f in file_list:
-            filter_file(r"^#!.*perl( -w)?.*$", fr"#!{self.spec['perl'].prefix.bin.perl}\1", f, ignore_absent=True)
+            filter_file(
+                r"^#!.*perl( -w)?.*$",
+                rf"#!{self.spec['perl'].prefix.bin.perl}\1",
+                f,
+                ignore_absent=True,
+            )
         file_list = ["configure", "RepModelConfig.pm"]
         for f in file_list:
             filter_file(r'^.*system\( "clear" \).*$', "", f)
