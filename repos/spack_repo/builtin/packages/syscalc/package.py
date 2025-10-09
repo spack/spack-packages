@@ -20,6 +20,7 @@ class Syscalc(CMakePackage):
 
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    depends_on("pkgconfig", type="build")
 
     tags = ["hep"]
 
