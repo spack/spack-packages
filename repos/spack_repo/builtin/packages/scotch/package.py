@@ -63,6 +63,22 @@ class Scotch(CMakePackage, MakefilePackage):
         when="@7.0.1",
         description="Link error handling library to libscotch/libptscotch",
     )
+    variant(
+        "determinism",
+        default="FULL",
+        values=("NONE", "FIXED_SEED", "FULL"),
+        multi=False,
+        description="Determinism configuration",
+        when="build_system=makefile",
+    )
+    variant(
+        "determinism",
+        default="FIXED_SEED",
+        values=("NONE", "FIXED_SEED", "FULL"),
+        multi=False,
+        description="Determinism configuration",
+        when="@7.0.7: build_system=cmake",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -148,8 +164,11 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("MPI_THREAD_MULTIPLE", "mpi_thread"),
         ]
 
-        if self.pkg.version > Version("7.0.4"):
+        if self.spec.satisfies("@7.0.5:"):
             args.append(self.define("ENABLE_TESTS", self.pkg.run_tests))
+
+        if self.spec.satisfies("@7.0.7:"):
+            args.append(self.define_from_variant("SCOTCH_DETERMINISTIC", "determinism"))
 
         if "+int64" in self.spec:
             args.append("-DINTSIZE=64")
@@ -174,7 +193,14 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     def edit(self, pkg, spec, prefix):
         makefile_inc = []
-        cflags = ["-O3", "-DCOMMON_RANDOM_FIXED_SEED", "-DSCOTCH_DETERMINISTIC", "-DSCOTCH_RENAME"]
+        cflags = ["-O3", "-DSCOTCH_RENAME"]
+
+        if "determinism=FIXED_SEED" in self.spec:
+            cflags.append("-DCOMMON_RANDOM_FIXED_SEED")
+
+        if "determinism=FULL" in self.spec:
+            cflags.append("-DCOMMON_RANDOM_FIXED_SEED")
+            cflags.append("-DSCOTCH_DETERMINISTIC")
 
         # SCOTCH_Num typedef: size of integers in arguments
         # SCOTCH_Idx typedef: indices for addressing
