@@ -56,6 +56,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.22:", when="@25.03.0:", type="build")
 
     depends_on("realm", when="@25.09.0:")
+    depends_on("realm+shared", when="@25.09.0: +shared")
     depends_on("realm+kokkos", when="@25.09.0: +kokkos")
     depends_on("realm+hdf5", when="@25.09.0: +hdf5")
     depends_on("realm+hwloc", when="@25.09.0: +hwloc")
