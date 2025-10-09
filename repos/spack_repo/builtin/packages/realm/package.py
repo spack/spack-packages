@@ -96,9 +96,10 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
         "gasnet+mpi_compat+pshm conduits=ibv ibv_max_hcas=4", when="network=gasnet conduit=ibv"
     )
     depends_on(
-        "gasnet+mpi_compat+pshm conduits=ofi ofi_provider=cxi ofi_spawner=pmi pmi=cray",
+        "gasnet+mpi_compat+pshm conduits=ofi ofi_provider=cxi ofi_spawner=pmi",
         when="network=gasnet conduit=ofi-slingshot11",
     )
+    depends_on("gasnet pmi=cray", when="^[virtuals=mpi] cray-mpich")
 
     with when("network=gasnet"):
         variant(
