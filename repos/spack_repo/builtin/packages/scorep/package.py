@@ -16,6 +16,7 @@ class Scorep(AutotoolsPackage):
     homepage = "https://www.vi-hps.org/projects/score-p"
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-7.1/scorep-7.1.tar.gz"
     maintainers("wrwilliams")
+    version("9.3", sha256="5498b31b1d6c04b08a9d408320a7515e884538d248de58b6dd11b48c8f364112")
     version("9.2", sha256="be3eaee99cdd0145e518c1aa959126df45e25b61579a007d062748b2844c499c")
     version("8.4", sha256="7bbde9a0721d27cc6205baf13c1626833bcfbabb1f33b325a2d67976290f7f8a")
     version("8.3", sha256="76c914e6319221c059234597a3bc53da788ed679179ac99c147284dcefb1574a")
@@ -50,8 +51,6 @@ class Scorep(AutotoolsPackage):
         when="^binutils",
     )
     variant("fortran", default=True, description="Enable fortran support")
-    # Putting this in as preparation. F08 support exists in 9.0 but configure does not respect
-    # --enable-mpi-f08 and will not until 9.1.
     variant(
         "mpi_f08", default=True, description="Enable MPI F08 support", when="@9.1: +mpi +fortran"
     )
