@@ -32,6 +32,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
 
     maintainers("pmccormick", "streichler", "elliottslaughter", "rbberger")
     tags = ["e4s"]
+    version("25.09.0", tag="legion-25.09.0", commit="8759d840099a138b5f395e86c841848520b34b73")
     version("25.06.0", tag="legion-25.06.0", commit="d8e35c48d089014b0f764181b7b90278a7558b21")
     version("25.03.0", tag="legion-25.03.0", commit="04716e3b3686d4af71e6a4398dfbe8cd869c057b")
     version("24.12.0", tag="legion-24.12.0", commit="2f087ebe433a19f9a3abd05382f951027933bad9")
@@ -54,14 +55,14 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.16:", when="@21.03.0:24.12.0", type="build")
     depends_on("cmake@3.22:", when="@25.03.0:", type="build")
 
-    depends_on("realm", when="@master")
-    depends_on("realm+kokkos", when="@master +kokkos")
-    depends_on("realm+hdf5", when="@master +hdf5")
-    depends_on("realm+hwloc", when="@master +hwloc")
-    depends_on("realm+openmp", when="@master +openmp")
-    depends_on("realm+cuda", when="@master +cuda")
-    depends_on("realm+rocm", when="@master +rocm")
-    depends_on("realm+cuda_unsupported_compiler", when="@master +cuda_unsupported_compiler")
+    depends_on("realm", when="@25.09.0:")
+    depends_on("realm+kokkos", when="@25.09.0: +kokkos")
+    depends_on("realm+hdf5", when="@25.09.0: +hdf5")
+    depends_on("realm+hwloc", when="@25.09.0: +hwloc")
+    depends_on("realm+openmp", when="@25.09.0: +openmp")
+    depends_on("realm+cuda", when="@25.09.0: +cuda")
+    depends_on("realm+rocm", when="@25.09.0: +rocm")
+    depends_on("realm+cuda_unsupported_compiler", when="@25.09.0: +cuda_unsupported_compiler")
 
     # TODO: Need to spec version of MPI v3 for use of the low-level MPI transport
     # layer. At present the MPI layer is still experimental and we discourge its
@@ -87,7 +88,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libfabric", when="@:25.06.0,stable network=gasnet conduit=ofi-slingshot11")
 
     depends_on(
-        "gasnet+par~seq~parsync+pthreads segment=fast", when="@master ^realm network=gasnet"
+        "gasnet+par~seq~parsync+pthreads segment=fast", when="@25.09.0: ^realm network=gasnet"
     )
 
     # Kokkos
@@ -113,13 +114,13 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
             f"kokkos+cuda+cuda_lambda~wrapper cuda_arch={arch}",
             when=f"@:25.06.0,stable +kokkos+cuda cuda_arch={arch} %clang",
         )
-        depends_on(f"realm cuda_arch={arch}", when=f"@master +cuda cuda_arch={arch}")
+        depends_on(f"realm cuda_arch={arch}", when=f"@25.09.0: +cuda cuda_arch={arch}")
 
     # https://github.com/spack/spack/issues/37232#issuecomment-1553376552
     patch("hip-offload-arch.patch", when="@23.03.0 +rocm")
 
     def patch(self):
-        if self.spec.satisfies("@master"):
+        if self.spec.satisfies("@25.09.0:"):
             # conflicts with Realm FindGASNet.cmake
             force_remove("cmake/FindGASNet.cmake")
         if self.spec.satisfies("@:25.06.0,stable network=gasnet conduit=ofi-slingshot11") and (
@@ -159,7 +160,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
             f"kokkos+rocm amdgpu_target={arch}",
             when=f"@:25.06.0,stable +rocm amdgpu_target={arch}",
         )
-        depends_on(f"realm amdgpu_target={arch}", when=f"@master +rocm amdgpu_target={arch}")
+        depends_on(f"realm amdgpu_target={arch}", when=f"@25.09.0: +rocm amdgpu_target={arch}")
 
     depends_on("kokkos+rocm", when="@:25.06.0,stable +kokkos+rocm")
 
