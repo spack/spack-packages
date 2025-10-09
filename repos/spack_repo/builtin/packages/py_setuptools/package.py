@@ -15,6 +15,7 @@ class PySetuptools(Package, PythonExtension):
     homepage = "https://github.com/pypa/setuptools"
     url = "https://files.pythonhosted.org/packages/py3/s/setuptools/setuptools-62.3.2-py3-none-any.whl"
     list_url = "https://pypi.org/simple/setuptools/"
+    license("MIT")
 
     maintainers("RobertMaaskant")
 

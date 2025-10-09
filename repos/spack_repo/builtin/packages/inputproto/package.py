@@ -15,6 +15,8 @@ class Inputproto(AutotoolsPackage, XorgPackage):
     management such as graphic tablets."""
 
     homepage = "https://cgit.freedesktop.org/xorg/proto/inputproto"
+    license("MIT-open-group")
+
     xorg_mirror_path = "proto/inputproto-2.3.2.tar.gz"
 
     version("2.3.2", sha256="10eaadd531f38f7c92ab59ef0708ca195caf3164a75c4ed99f0c04f2913f6ef3")

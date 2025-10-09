@@ -15,6 +15,8 @@ class Kbproto(AutotoolsPackage, XorgPackage):
     and controls for text keyboards."""
 
     homepage = "https://cgit.freedesktop.org/xorg/proto/kbproto"
+    license("HPND")
+
     xorg_mirror_path = "proto/kbproto-1.0.7.tar.gz"
 
     version("1.0.7", sha256="828cb275b91268b1a3ea950d5c0c5eb076c678fdf005d517411f89cc8c3bb416")

@@ -21,6 +21,7 @@ class Samrai(AutotoolsPackage):
     url = "https://computing.llnl.gov/projects/samrai/download/SAMRAI-v3.11.2.tar.gz"
     list_url = homepage
     tags = ["radiuss"]
+    license("LGPL-2.1-or-later")
 
     version("3.12.0", sha256="b8334aa22330a7c858e09e000dfc62abbfa3c449212b4993ec3c4035bed6b832")
     version("3.11.5", sha256="6ec1f4cf2735284fe41f74073c4f1be87d92184d79401011411be3c0671bd84c")

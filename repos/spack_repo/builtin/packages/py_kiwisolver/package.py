@@ -11,6 +11,7 @@ class PyKiwisolver(PythonPackage):
     """A fast implementation of the Cassowary constraint solver"""
 
     homepage = "https://github.com/nucleic/kiwi"
+    license("BSD-3-Clause")
     pypi = "kiwisolver/kiwisolver-1.1.0.tar.gz"
 
     version("1.4.8", sha256="23d5f023bdc8c7e54eb65f03ca5d5bb25b601eac4d7f1a042888a1f45237987e")

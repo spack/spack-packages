@@ -14,6 +14,7 @@ class PythonVenv(Package):
     """A Spack managed Python virtual environment"""
 
     homepage = "https://docs.python.org/3/library/venv.html"
+    license("PSF-2.0")
     has_code = False
 
     tags = ["build-tools"]

@@ -14,6 +14,7 @@ class Libmd(AutotoolsPackage):
 
     homepage = "https://www.hadrons.org/software/libmd/"
     url = "https://archive.hadrons.org/software/libmd/libmd-1.1.0.tar.xz"
+    license("BSD-3-Clause AND BSD-2-Clause AND ISC AND Beerware")
 
     maintainers("haampie")
 
