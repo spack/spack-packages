@@ -68,16 +68,16 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     # TODO: Need to spec version of MPI v3 for use of the low-level MPI transport
     # layer. At present the MPI layer is still experimental and we discourge its
     # use for general (not legion development) use cases.
-    depends_on("mpi", when="@:25.06.0,stable network=mpi")
+    depends_on("mpi", when="@:25.06.0 network=mpi")
     depends_on(
-        "mpi", when="@:25.06.0,stable network=gasnet"
+        "mpi", when="@:25.06.0 network=gasnet"
     )  # MPI is required to build gasnet (needs mpicc).
-    depends_on("ucx", when="@:25.06.0,stable network=ucx")
-    depends_on("ucc", when="@25.03.0:25.06.0,stable network=ucx")
-    depends_on("ucc+cuda+nccl", when="network=ucx +cuda @25.03.0:25.06.0,stable")
-    depends_on("ucc+rocm+rccl", when="network=ucx +rocm @25.03.0:25.06.0,stable")
-    depends_on("ucx", when="conduit=ucx @:25.06.0,stable")
-    depends_on("mpi", when="conduit=mpi @:25.06.0,stable")
+    depends_on("ucx", when="@:25.06.0 network=ucx")
+    depends_on("ucc", when="@25.03.0:25.06.0 network=ucx")
+    depends_on("ucc+cuda+nccl", when="network=ucx +cuda @25.03.0:25.06.0")
+    depends_on("ucc+rocm+rccl", when="network=ucx +rocm @25.03.0:25.06.0")
+    depends_on("ucx", when="conduit=ucx @:25.06.0")
+    depends_on("mpi", when="conduit=mpi @:25.06.0")
     depends_on("cuda@10.0:11.9", when="+cuda_unsupported_compiler @21.03.0:23.03.0")
     depends_on("cuda@10.0:11.9", when="+cuda @21.03.0:23.03.0")
     depends_on("cuda@11.7:12.8", when="+cuda_unsupported_compiler @23.06.0:")
@@ -86,7 +86,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hip@5.1:", when="+rocm")
     depends_on("hdf5", when="+hdf5")
     depends_on("hwloc", when="+hwloc")
-    depends_on("libfabric", when="@:25.06.0,stable network=gasnet conduit=ofi-slingshot11")
+    depends_on("libfabric", when="@:25.06.0 network=gasnet conduit=ofi-slingshot11")
 
     depends_on(
         "gasnet+par~seq~parsync+pthreads segment=fast", when="@25.09.0: ^realm network=gasnet"
@@ -105,15 +105,15 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         # UCX transport dependency when using CUDA
         depends_on(
             f"ucc cuda_arch={arch}",
-            when=f"@25.03.0:25.06.0,stable network=ucx +cuda cuda_arch={arch}",
+            when=f"@25.03.0:25.06.0 network=ucx +cuda cuda_arch={arch}",
         )
         depends_on(
             f"kokkos+cuda+cuda_lambda+wrapper cuda_arch={arch}",
-            when=f"@:25.06.0,stable +kokkos+cuda cuda_arch={arch} %gcc",
+            when=f"@:25.06.0 +kokkos+cuda cuda_arch={arch} %gcc",
         )
         depends_on(
             f"kokkos+cuda+cuda_lambda~wrapper cuda_arch={arch}",
-            when=f"@:25.06.0,stable +kokkos+cuda cuda_arch={arch} %clang",
+            when=f"@:25.06.0 +kokkos+cuda cuda_arch={arch} %clang",
         )
         depends_on(f"realm cuda_arch={arch}", when=f"@25.09.0: +cuda cuda_arch={arch}")
 
@@ -124,7 +124,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         if self.spec.satisfies("@25.09.0:"):
             # conflicts with Realm FindGASNet.cmake
             force_remove("cmake/FindGASNet.cmake")
-        if self.spec.satisfies("@:25.06.0,stable network=gasnet conduit=ofi-slingshot11") and (
+        if self.spec.satisfies("@:25.06.0 network=gasnet conduit=ofi-slingshot11") and (
             self.spec.satisfies("^[virtuals=mpi] cray-mpich+wrappers")
             or self.spec.satisfies("^[virtuals=mpi] mpich netmod=ofi ^libfabric fabrics=cxi")
             or self.spec.satisfies("^[virtuals=mpi] openmpi fabrics=ofi ^libfabric fabrics=cxi")
@@ -155,15 +155,15 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     for arch in ROCmPackage.amdgpu_targets:
         depends_on(
             f"ucc amdgpu_target={arch}",
-            when=f"@25.03.0:25.06.0,stable network=ucx +rocm amdgpu_target={arch}",
+            when=f"@25.03.0:25.06.0 network=ucx +rocm amdgpu_target={arch}",
         )
         depends_on(
             f"kokkos+rocm amdgpu_target={arch}",
-            when=f"@:25.06.0,stable +rocm amdgpu_target={arch}",
+            when=f"@:25.06.0 +rocm amdgpu_target={arch}",
         )
         depends_on(f"realm amdgpu_target={arch}", when=f"@25.09.0: +rocm amdgpu_target={arch}")
 
-    depends_on("kokkos+rocm", when="@:25.06.0,stable +kokkos+rocm")
+    depends_on("kokkos+rocm", when="@:25.06.0 +kokkos+rocm")
 
     # https://github.com/StanfordLegion/legion/#dependencies
     depends_on("python@3.8:", when="+python")
@@ -172,7 +172,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-pip", when="+python", type="build")
     depends_on("py-setuptools", when="+python", type="build")
 
-    depends_on("papi", when="@:25.06.0,stable +papi")
+    depends_on("papi", when="@:25.06.0 +papi")
     depends_on("zlib-api", when="+zlib")
 
     # A C++ standard variant to work-around some odd behaviors with apple-clang
@@ -193,7 +193,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         values=("gasnet", "mpi", "ucx", "none"),
         description="The network communications/transport layer to use.",
         multi=False,
-        when="@:25.06.0,stable",
+        when="@:25.06.0",
     )
 
     # Add Gasnet tarball dependency in spack managed manner
@@ -203,7 +203,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         git="https://github.com/StanfordLegion/gasnet.git",
         destination="stanfordgasnet",
         branch="master",
-        when="@:25.06.0,stable network=gasnet",
+        when="@:25.06.0 network=gasnet",
     )
 
     # We default to automatically embedding a gasnet build. To override this
@@ -221,7 +221,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         else:
             return True
 
-    with when("@:25.06.0,stable network=gasnet"):
+    with when("@:25.06.0 network=gasnet"):
         variant(
             "gasnet_root",
             default="none",
@@ -304,7 +304,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         "papi",
         default=False,
         description="Enable PAPI performance measurements.",
-        when="@:25.06.0,stable",
+        when="@:25.06.0",
     )
 
     variant("python", default=False, description="Enable Python support.")
