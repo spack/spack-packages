@@ -116,6 +116,11 @@ class Proj(CMakePackage, AutotoolsPackage):
         patch("proj_8_include_curl_dirs.patch", when="@8")
         patch("proj_9_include_curl_dirs.patch", when="@9:9.1")
 
+        # proj 8 uses CURL_LIBRARY instead of the correct
+        # CURL_LIBRARIES, patch to correct that useage
+        # fixed in upstream proj as of 9
+        patch("proj_8_curl_libraries.patch", when="@8")
+
         depends_on("cmake@3.16:", when="@9.4:", type="build")
         depends_on("cmake@3.9:", when="@6:", type="build")
         depends_on("cmake@3.5:", when="@5", type="build")
