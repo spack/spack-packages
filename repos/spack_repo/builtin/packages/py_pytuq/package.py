@@ -39,8 +39,6 @@ class PyPytuq(PythonPackage):
     depends_on("py-matplotlib", type=("build", "run"))
 
     variant("nn", default=False, description="Enable neural network support")
-    variant("optim", default=False, description="Enable optimization support")
 
     depends_on("py-torch", type=("build", "run"), when="+nn")
     depends_on("py-uqinn", type=("build", "run"), when="+nn")
-    depends_on("py-pyswarms", type=("build", "run"), when="+optim")
