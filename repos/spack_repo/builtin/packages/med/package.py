@@ -11,7 +11,7 @@ class Med(CMakePackage):
     """The MED file format is a specialization of the HDF5 standard."""
 
     homepage = "https://docs.salome-platform.org/latest/dev/MEDCoupling/med-file.html"
-    url = "https://files.salome-platform.org/Salome/other/med-3.2.0.tar.gz"
+    url = "https://files.salome-platform.org/Salome/medfile/med-4.1.1.tar.gz"
 
     maintainers("likask")
 
@@ -22,11 +22,8 @@ class Med(CMakePackage):
         sha256="267e76d0c67ec51c10e3199484ec1508baa8d5ed845c628adf660529dce7a3d4",
         url="https://files.salome-platform.org/Salome/medfile/med-5.0.0.tar.bz2",
     )
-    version(
-        "4.1.1",
-        sha256="a082b705d1aafe95d3a231d12c57f0b71df554c253e190acca8d26fc775fb1e6",
-        url="https://files.salome-platform.org/Salome/medfile/med-4.1.1.tar.gz",
-    )
+    version("4.2.0", sha256="87c840638f439626b7b3054f655b93a3b9cc8de2177389b09193b646c3095a65")
+    version("4.1.1", sha256="a082b705d1aafe95d3a231d12c57f0b71df554c253e190acca8d26fc775fb1e6")
 
     variant("api23", default=True, description="Enable API2.3")
     variant("mpi", default=True, description="Enable MPI")
