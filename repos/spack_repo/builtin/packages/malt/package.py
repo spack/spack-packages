@@ -65,12 +65,12 @@ class Malt(CMakePackage):
     depends_on("binutils", type="run")
 
     # since 1.4.0
-    depends_on("openssl", when="@:1.4.0")
-    depends_on("python@3:", when="@:1.4.0")
+    depends_on("openssl", when="@1.4.0:")
+    depends_on("python@3:", when="@1.4.0:")
 
     # configure options
     def cmake_args(self):
-        if when("@1.4.0:"):
+        if self.spec.satisfies("@1.4.0:"):
             return [
                 f"-DCRYPTO_PREFIX={self.spec['openssl'].prefix}",
                 f"-DPYTHON_PREFIX={self.spec['python'].prefix}",
@@ -78,3 +78,4 @@ class Malt(CMakePackage):
             ]
         else:
             return []
+	return []
