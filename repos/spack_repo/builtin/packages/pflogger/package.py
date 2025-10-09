@@ -76,6 +76,17 @@ class Pflogger(CMakePackage):
         msg="pFlogger only works with the Fujitsu compiler from version 1.13.0 onwards",
     )
 
+    # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+    conflicts(
+        "%oneapi@2025.2",
+        when="@:1.16.0",
+        msg="oneAPI 2025.2 only works with pflogger 1.16.1 onwards",
+    )
+
+    @when("@1.16.1 ^intel-oneapi-compilers@2025.2")
+    def patch(self):
+        filter_file("_RC)", "rc=status); _VERIFY(status,'',rc)", "src/Config.F90", string=True)
+
     depends_on("cmake@3.12:3", type="build", when="@:1.16")
     depends_on("cmake@3.24:", type="build", when="@1.17:")
 
