@@ -17,7 +17,8 @@ class PyAcpype(PythonPackage):
     homepage = "https://alanwilter.github.io/acpype/"
     pypi = "acpype/acpype-2023.10.27.tar.gz"
 
-    maintainers = "alanwilter"
+    license("GPL-3.0")
+    maintainers("adamwitmer")
 
     version(
         "2023.10.27", sha256="2041ef01031015b6901aabce75cf39c17c6d7e1a034f8b0f4d168f0a6bd06a99"
