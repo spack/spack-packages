@@ -16,7 +16,8 @@ class PyVermouthMartinize(PythonPackage):
     homepage = "https://github.com/marrink-lab/vermouth-martinize"
     pypi = "vermouth/vermouth-0.14.0.tar.gz"
 
-    maintainers("marrink-lab")
+    license("Apache-2.0")
+    maintainers("adamwitmer")
 
     version("0.14.0", sha256="9f1c6221ea8b6b6da2a4eff32fe7374b76adced3f2fd85da5cbb1cfcfbf10696")
 
