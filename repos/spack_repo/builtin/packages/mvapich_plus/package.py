@@ -23,13 +23,14 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     url = "https://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich-3.0.tar.gz"
     list_url = "https://mvapich.cse.ohio-state.edu/downloads/"
     executables = ["^mpiname$", "^mpichversion$"]
+    manual_download = True
 
     maintainers("natshineman", "harisubramoni", "MatthewLieber")
 
     license("Unlicense")
 
     # Prefer the latest stable release
-    version("4.1", sha256="93928855d4a134422a58d554df6b33720937f1c5708cd8e7bdd556bb9149a9d2")
+    version("4.1", sha256="be0a60f342cb94b6719799077072d87aa6e306f21e2c4a09eba6c581f83d4619")
     version("4.0", sha256="942156804425752ab8b7884a6995581d7d9e93f58025ca71b58e6412eb766eae")
 
     provides("mpi")
@@ -283,10 +284,10 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
         else:
             args.append("--enable-fast=all")
         if self.spec.satisfies("+cuda"):
-            args.extend(["--with-cuda={(spec['cuda'].prefix)}"])
+            args.extend([f"--with-cuda={(spec['cuda'].prefix)}"])
             # args.extend(["--with-cuda"])
         if self.spec.satisfies("+rocm"):
-            args.extend(["--with-rocm={spec['hip'].prefix}"])
+            args.extend([f"--with-rocm={spec['hip'].prefix}"])
 
         # no longer supported
         if self.spec.satisfies("+regcache"):
