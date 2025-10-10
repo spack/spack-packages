@@ -6,6 +6,7 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
+import os
 
 
 class Arrow(CMakePackage, CudaPackage):
@@ -160,6 +161,10 @@ class Arrow(CMakePackage, CudaPackage):
             # ARROW_USE_SSE was removed in 0.12
             # see https://issues.apache.org/jira/browse/ARROW-3844
             args.append(self.define("ARROW_USE_SSE", "ON"))
+
+        # https://github.com/apache/arrow/issues/47790
+        if self.spec.satisfies("%oneapi@2025:"):
+            args.append(self.define("ARROW_MIMALLOC","OFF"))
 
         args.append(self.define_from_variant("ARROW_COMPUTE", "compute"))
         args.append(self.define_from_variant("ARROW_CUDA", "cuda"))
