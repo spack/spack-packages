@@ -189,6 +189,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         when="+cuda",
     )
 
+    # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
     variant(
         "amdgpu_target",
         description="AMD GPU architecture",
