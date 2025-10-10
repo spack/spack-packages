@@ -67,6 +67,9 @@ class Ectrans(CMakePackage):
         when="@1.3.1:1.5.1",
     )
 
+    # LINK TO ISSUE HERE
+    patch("find_lapack.path", when="@1.5:")
+
     def cmake_args(self):
         args = [
             self.define_from_variant("ENABLE_MPI", "mpi"),
