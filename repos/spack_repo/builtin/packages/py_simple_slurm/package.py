@@ -13,10 +13,10 @@ class PySimpleSlurm(PythonPackage):
     homepage = "https://github.com/amq92/simple_slurm"
     pypi = "simple-slurm/simple_slurm-0.3.6.tar.gz"
 
-    maintainers = "mamachra"
+    license("AGPL-3.0")
+    maintainers("adamwitmer")
 
     version("0.3.6", sha256="0f88cac96b39d7d7e34c5a124919cebb41eb8a8ef2ff4fb65c363d940ff8551e")
 
-    # No explicit dependencies declared on PyPI; adjust if necessary
     depends_on("python@3.11:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
