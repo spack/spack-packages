@@ -14,7 +14,7 @@ class Pflare(MakefilePackage):
     """Library with parallel iterative methods for asymmetric linear systems built on PETSc."""
 
     homepage = "https://github.com/PFLAREProject/PFLARE"
-    url = "https://github.com/PFLAREProject/PFLARE/archive/refs/tags/v1.24.8.tar.gz"
+    url = "https://github.com/PFLAREProject/PFLARE/archive/refs/tags/v1.24.9.tar.gz"
     git = "https://github.com/PFLAREProject/PFLARE.git"
 
     # Add a list of GitHub accounts to
@@ -23,8 +23,8 @@ class Pflare(MakefilePackage):
     license("MIT", checked_by="stevendargaville")
 
     version(
-        "1.24.8",
-        sha256="b0a202466729b680f28506fcc9043aef59797c0a4ee5d0a0dbf43a42107fe7cf",
+        "1.24.9",
+        sha256="29e09a628d5bb59829b1f26106346608644b46fd9255c828036f003ef877b047",
         preferred=True,
     )
     version("main", branch="main")
@@ -39,6 +39,8 @@ class Pflare(MakefilePackage):
     depends_on("metis")
     depends_on("parmetis")
     depends_on("petsc@3.23.1:")
+    # Bug fixed in https://gitlab.com/petsc/petsc/-/merge_requests/8768
+    conflicts("^petsc@3.24.0", msg="PETSc 3.24.0 has a known bug in a routine used in PFLARE")
     # Optional Python dependencies (needed at build/run time by python/setup.py)
     depends_on("python", when="+python", type=("build", "run"))
     depends_on("py-setuptools", when="+python", type="build")
@@ -100,62 +102,11 @@ class Pflare(MakefilePackage):
     # ~~~~~~~~~~~~~~~
     # ~~~~~~~~~~~~~~~
     def install(self, spec, prefix):
-        import glob
-        import os
-
-        mkdirp(prefix.include)
-        mkdirp(prefix.lib)
-
-        # Headers (recursively, includes include/finclude)
-        install_tree("include", prefix.include)
-
-        # Library (shared preferred if present)
-        if os.path.exists("lib/libpflare.so"):
-            install("lib/libpflare.so", prefix.lib)
-        elif os.path.exists("lib/libpflare.a"):
-            install("lib/libpflare.a", prefix.lib)
-        else:
-            raise InstallError("PFLARE library not found in lib/")
-
-        # Fortran module files: from lib/ and top-level (compiler-dependent)
-        for mod in glob.glob("lib/*.mod"):
-            install(mod, prefix.include)
-        for mod in glob.glob("*.mod"):
-            install(mod, prefix.include)
-
-        # Python extension (if built) – place into site-packages
+        args = [f"PREFIX={prefix}"]
         if "+python" in spec:
             pyver = spec["python"].version.up_to(2)
-            pydir = join_path(prefix.lib, f"python{pyver}", "site-packages")
-            mkdirp(pydir)
-            for so in glob.glob("python/*.so"):
-                install(so, pydir)
-            # Copy only the shim module
-            shim = "python/pflare.py"
-            if os.path.exists(shim):
-                install(shim, pydir)
-
-        # ~~~~~~~~~~~~~~~
-        # Write out a pkg-config file
-        # Allows users to easily discover and link against PFLARE
-        # using `pkg-config --cflags --libs pflare`
-        # ~~~~~~~~~~~~~~~
-        pcdir = join_path(prefix.lib, "pkgconfig")
-        mkdirp(pcdir)
-        pc = f"""prefix={prefix}
-exec_prefix=${{prefix}}
-libdir=${{prefix}}/lib
-includedir=${{prefix}}/include
-
-Name: pflare
-Description: Library with parallel iterative methods for asymmetric linear systems built on PETSc.
-Version: {self.version}
-Cflags: -I${{includedir}}
-Libs: -L${{libdir}} -lpflare
-Requires: petsc
-"""
-        with open(join_path(pcdir, "pflare.pc"), "w") as f:
-            f.write(pc)
+            args.append(f"PYVER={pyver}")
+        make("install", *args)
 
     # ~~~~~~~~~~~~~~~
     # Let dependents query include and link flags
