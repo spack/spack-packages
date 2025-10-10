@@ -16,11 +16,10 @@ class PyGromacswrapper(PythonPackage):
     homepage = "https://github.com/Becksteinlab/GromacsWrapper"
     pypi = "gromacswrapper/gromacswrapper-0.9.2.tar.gz"
 
-    maintainers("orbeckst")
+    license("GPL-3.0-or-later")
+    maintainers("adamwitmer")
 
     version("0.9.2", sha256="73a7077258d68f92b1ee359e45af904e2f89766fc3f411bda9e2bf440f381a36")
-
-    license = "GPL-3.0-or-later"
 
     # Dependencies
     depends_on("python@3.11:", type=("build", "run"))
