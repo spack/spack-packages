@@ -42,6 +42,10 @@ class Melissa(CMakePackage):
         depends_on("libzmq@4.2:4")
         depends_on("mpi")
 
+    def setup_build_environment(self, env):
+        zmq_pkgconfig_path = self.spec["libzmq"].prefix.lib.pkgconfig
+        env.prepend_path("PKG_CONFIG_PATH", zmq_pkgconfig_path)
+
     def cmake_args(self):
         args = []
 
