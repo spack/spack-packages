@@ -487,7 +487,7 @@ class Python(Package):
         # install headers
         include_dir = proj_root / "Include"
         copy_tree(str(include_dir), prefix.include)
-        if self.spec.satisfies("@3.13:"):
+        if self.spec.satisfies("@3.13"):  # reverted in 3.14
             pyconfig = pcbuild_root / platform.machine().lower() / "pyconfig.h"
         else:
             pyconfig = proj_root / "PC" / "pyconfig.h"
