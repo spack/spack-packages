@@ -18,7 +18,8 @@ class PyPolyply(PythonPackage):
     version("gen_ff_clean", branch="gen_ff_clean")
     version("1.8.0", sha256="98b4c36c05f3436368c8d86425182200862ac16520f29eaa06568099497dafd8")
 
-    maintainers = "fgrunewald"
+    license("Apache-2.0")
+    maintainers("adamwitmer")
 
     # Build dependencies
     depends_on("py-setuptools@46.4.0:", type="build")
