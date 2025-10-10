@@ -51,7 +51,7 @@ class PyMelissaCore(PythonPackage, CudaPackage):
 
     with default_args(type=("build", "run")):
         depends_on("python@3.9:3.12", when="@:2.1.0")
-        depends_on("python@3.11:3.12", when="@2.1.1:,develop")
+        depends_on("python@3.11:3.12", when="@2.1.1:")
 
     with default_args(type="run"):
         depends_on("py-pyzmq@22.3.0:")
@@ -91,7 +91,7 @@ class PyMelissaCore(PythonPackage, CudaPackage):
             # Versions >2.17 require AVX-VNNI-INT8 CPU support.
             # Check your CPU flags for 'avxvnniint8' before increasing.
             depends_on("py-tensorflow@2.8.0:2.17 ~cuda", when="+tf")
-            depends_on("py-torch@1.12.1:2.6 ~cuda", when="+torch")
+            depends_on("py-torch@1.12.1:2 ~cuda", when="+torch")
 
         # With CUDA
         for arch in CudaPackage.cuda_arch_values:

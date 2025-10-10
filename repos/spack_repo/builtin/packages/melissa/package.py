@@ -34,7 +34,7 @@ class Melissa(CMakePackage):
         depends_on("cmake@3.15:", type="build")
         depends_on("python@3.9:3.12", type=("build", "run"))
 
-    with when("@2.1.1:,develop"):
+    with when("@2.1.1:"):
         depends_on("cmake@3.22:", type="build")
         depends_on("python@3.11:3.12", type=("build", "run"))
 
