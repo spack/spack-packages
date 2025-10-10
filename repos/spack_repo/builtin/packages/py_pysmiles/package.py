@@ -13,7 +13,8 @@ class PyPysmiles(PythonPackage):
     homepage = "https://github.com/pckroon/pysmiles"
     pypi = "pysmiles/pysmiles-2.0.0.tar.gz"
 
-    maintainers = "pckroon"
+    license("Apache-2.0")
+    maintainers("adamwitmer")
 
     version("2.0.0", sha256="9bd1da9bf172fc79f71d647d21bbba34178702c664ae0778e59b4d4d149cbe4d")
 
