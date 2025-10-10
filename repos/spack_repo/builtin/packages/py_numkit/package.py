@@ -13,7 +13,8 @@ class PyNumkit(PythonPackage):
     homepage = "https://github.com/Becksteinlab/numkit"
     pypi = "numkit/numkit-1.3.1.tar.gz"
 
-    maintainers = "orbeckst"
+    license("BSD")
+    maintainers("adamwitmer")
 
     version("1.3.1", sha256="18fba519ab4714d9426a818c04e4656bc60368169db0f65f5eece2ddae0e3211")
 
