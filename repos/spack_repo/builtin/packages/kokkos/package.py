@@ -189,6 +189,16 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         when="+cuda",
     )
 
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=("none",) + ROCmPackage.amdgpu_targets,
+        default="none",
+        multi=False,
+        sticky=True,
+        when="+rocm",
+    )
+
     amdgpu_arch_map = {
         "gfx900": "vega900",
         "gfx906": "vega906",
