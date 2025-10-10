@@ -160,6 +160,7 @@ class Python(Package):
     variant("zlib", default=True, description="Build zlib module")
     variant("bz2", default=True, description="Build bz2 module")
     variant("lzma", default=True, description="Build lzma module")
+    variant("zstd", default=True, description="Build zstd module", when="@3.14:")
     variant("pyexpat", default=True, description="Build pyexpat module")
     variant("ctypes", default=True, description="Build ctypes module")
     variant("tkinter", default=False, description="Build tkinter module")
@@ -193,6 +194,7 @@ class Python(Package):
         depends_on("zlib-api", when="+zlib")
         depends_on("bzip2", when="+bz2")
         depends_on("xz libs=shared", when="+lzma")
+        depends_on("zstd libs=shared", when="+zstd")
         depends_on("expat", when="+pyexpat")
         depends_on("libffi", when="+ctypes")
         # https://docs.python.org/3/whatsnew/3.11.html#build-changes
@@ -325,6 +327,13 @@ class Python(Package):
                 variants += "+tix"
             except ProcessError:
                 variants += "~tix"
+
+        if Version(version_str) >= Version("3.14"):
+            try:
+                python("-c", "import compression.zstd", error=os.devnull)
+                variants += "+zstd"
+            except ProcessError:
+                variants += "~zstd"
 
         # Some modules are platform-dependent
         if sys.platform != "win32" and Version(version_str) < Version("3.13"):
