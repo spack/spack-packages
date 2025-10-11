@@ -57,7 +57,7 @@ class Orca(Package):
         "avx2-6.0.0": "4.1.6",
         "avx2-6.0.1": "4.1.6",
         "avx2-6.1.0": "4.1.8",
-}
+    }
     for orca_version, openmpi_version in openmpi_versions.items():
         depends_on(
             "openmpi@{0}".format(openmpi_version), type="run", when="@{0}".format(orca_version)
