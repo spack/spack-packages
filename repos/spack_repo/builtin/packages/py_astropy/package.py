@@ -44,7 +44,6 @@ class PyAstropy(PythonPackage):
     depends_on("py-cython@0.29.30", when="@5.1:6.0", type="build")
     depends_on("py-cython@3.0", when="@6.1.0:6", type="build")
     depends_on("py-cython@3", when="@7.0.1:", type="build")
-    depends_on("py-numpy@2", when="@7.0.1:", type="build")
     depends_on("py-setuptools-scm@6.2:", when="@5.1:", type="build")
     depends_on("py-extension-helpers", when="@5.1:", type="build")
     depends_on("py-extension-helpers@1", when="@7.0.1:", type="build")
@@ -55,7 +54,7 @@ class PyAstropy(PythonPackage):
 
     depends_on("py-astropy-iers-data@0.2025.1.31.12.41.4:", when="@7.0.1:", type=("build", "run"))
     depends_on("py-astropy-iers-data", when="@6:", type=("build", "run"))
-    depends_on("py-numpy@1.23.2:", when="@7.0.1:", type="run")
+    depends_on("py-numpy@1.23.2:", when="@7.0.1:", type=("build", "run"))
     depends_on("py-numpy@1.23:", when="@6.1:", type=("build", "run"))
     depends_on("py-numpy@1.18:", when="@5.1:", type=("build", "run"))
     depends_on("py-numpy@1.16:", when="@4.0:", type=("build", "run"))
