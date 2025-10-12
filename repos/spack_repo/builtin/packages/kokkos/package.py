@@ -388,13 +388,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
         spack_microarches = []
         if spec.satisfies("+cuda"):
-            if isinstance(spec.variants["cuda_arch"].value, str):
-                cuda_arch = spec.variants["cuda_arch"].value
-            else:
-                if len(spec.variants["cuda_arch"].value) > 1:
-                    msg = "Kokkos supports only one cuda_arch at a time."
-                    raise InstallError(msg)
-                cuda_arch = spec.variants["cuda_arch"].value[0]
+            cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch != "none":
                 kokkos_arch_name = self.spack_cuda_arch_map[cuda_arch]
                 spack_microarches.append(kokkos_arch_name)
@@ -404,17 +398,17 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             spack_microarches.append(kokkos_microarch_name)
 
         if spec.satisfies("+rocm"):
-            for amdgpu_target in spec.variants["amdgpu_target"].value:
-                if amdgpu_target != "none":
-                    if amdgpu_target in self.amdgpu_arch_map:
-                        if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
-                            spack_microarches.append(self.amdgpu_apu_arch_map[amdgpu_target])
-                        else:
-                            spack_microarches.append(self.amdgpu_arch_map[amdgpu_target])
+            amdgpu_target = spec.variants["amdgpu_target"].value
+            if amdgpu_target != "none":
+                if amdgpu_target in self.amdgpu_arch_map:
+                    if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
+                        spack_microarches.append(self.amdgpu_apu_arch_map[amdgpu_target])
                     else:
-                        # Note that conflict declarations should prevent
-                        # choosing an unsupported AMD GPU target
-                        raise SpackError("Unsupported target: {0}".format(amdgpu_target))
+                        spack_microarches.append(self.amdgpu_arch_map[amdgpu_target])
+                else:
+                    # Note that conflict declarations should prevent
+                    # choosing an unsupported AMD GPU target
+                    raise SpackError("Unsupported target: {0}".format(amdgpu_target))
 
         if self.spec.variants["intel_gpu_arch"].value != "none":
             spack_microarches.append(self.spec.variants["intel_gpu_arch"].value)
