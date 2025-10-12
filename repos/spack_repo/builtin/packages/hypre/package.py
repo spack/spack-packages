@@ -226,6 +226,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Option added in v3.0.0
     conflicts("+mixed-precision", when="@:2.33")
+    conflicts("+mixed-precision +cuda")
+    conflicts("+mixed-precision +rocm")
+    conflicts("+mixed-precision +sycl")
 
     # GPU checks
     conflicts("+cuda", when="+rocm", msg="CUDA and ROCm are mutually exclusive")
