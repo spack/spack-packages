@@ -73,7 +73,7 @@ class Eigen(CMakePackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", type="build", when="@3.4.1:")
 
     depends_on("cmake@3.10:", when="@3.4.1:", type="build")
     depends_on("cmake@3.5:", when="@3.4.0", type="build")
