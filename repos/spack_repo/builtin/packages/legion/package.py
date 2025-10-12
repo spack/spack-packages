@@ -135,7 +135,7 @@ class Legion(CMakePackage, ROCmPackage):
     # OpenMP backend
     depends_on("kokkos+openmp", when="+kokkos+openmp")
     depends_on("kokkos~openmp", when="+kokkos~openmp")
-    
+
     # cuda-centric
     cuda_arch_list = CudaPackage.cuda_arch_values
     for arch in cuda_arch_list:
