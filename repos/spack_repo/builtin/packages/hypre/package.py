@@ -68,25 +68,42 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     variant("shared", default=False, description="Build shared library (disables static library)")
     variant(
-        "pic",
-        default=True,
-        when="@2.21: ~shared",
-        description="Build position independent code"
+        "pic", default=True, when="@2.21: ~shared", description="Build position independent code"
     )
     # Use internal SuperLU routines for FEI - version 2.12.1 and below
-    variant("internal-superlu", default=False, when="@:2.12.1", description="Use internal SuperLU routines")
+    variant(
+        "internal-superlu",
+        default=False,
+        when="@:2.12.1",
+        description="Use internal SuperLU routines",
+    )
     variant(
         "superlu-dist",
         default=False,
         when="@2.13:",
-        description="Activates support for SuperLU_Dist library"
+        description="Activates support for SuperLU_Dist library",
     )
     variant("lapack", default=True, description="Use external blas/lapack")
     variant("int64", default=False, description="Use 64bit integers")
-    variant("mixedint", default=False, when="@2.16:", description="Use 64bit integers while reducing memory use")
+    variant(
+        "mixedint",
+        default=False,
+        when="@2.16:",
+        description="Use 64bit integers while reducing memory use",
+    )
     variant("complex", default=False, description="Use complex values")
-    variant("gpu-aware-mpi", default=False, when="@2.18:", description="Enable GPU-aware MPI support")
-    variant("gpu-profiling", default=False, when="@2.21:", description="Enable GPU profiling markers support")
+    variant(
+        "gpu-aware-mpi",
+        default=False,
+        when="@2.18:",
+        description="Enable GPU-aware MPI support",
+    )
+    variant(
+        "gpu-profiling",
+        default=False,
+        when="@2.21:",
+        description="Enable GPU profiling markers support",
+    )
     variant("mpi", default=True, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("debug", default=False, description="Build debug instead of optimized version")
@@ -94,10 +111,15 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("fortran", default=False, description="Enables fortran bindings")
     variant("gptune", default=False, description="Add the GPTune hookup code")
     variant("umpire", default=False, when="@2.21:", description="Enable Umpire support")
-    variant("sycl", default=False, when="@2.24:",description="Enable SYCL support")
+    variant("sycl", default=False, when="@2.24:", description="Enable SYCL support")
     variant("magma", default=False, when="@2.29:", description="Enable MAGMA interface")
     variant("caliper", default=False, description="Enable Caliper support")
-    variant("mixed-precision", default=False, when="@3:", description="Enable mixed precision support")
+    variant(
+        "mixed-precision",
+        default=False,
+        when="@3:",
+        description="Enable mixed precision support",
+    )
     variant(
         "precision",
         default="double",
@@ -213,7 +235,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
                 requires(f"^{pkg} amdgpu_target={gfx}", when=f"+{pkg} amdgpu_target={gfx}")
 
     with when("+sycl"):
-        depends_on("intel-oneapi-compiler")
+        depends_on("intel-oneapi-compilers")
         depends_on("intel-oneapi-mkl")
         depends_on("intel-oneapi-dpl")
 
@@ -312,6 +334,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         libs = find_libraries("libHYPRE", root=self.prefix, shared=is_shared, recursive=True)
         return libs or None
 
+
 # Builder implementations
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
@@ -334,7 +357,9 @@ class CMakeBuilder(CMakeBuilder):
 
         # Floating point precision
         args.append(self.define("HYPRE_ENABLE_SINGLE", spec.satisfies("precision=single")))
-        args.append(self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble")))
+        args.append(
+            self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble"))
+        )
         args.append(self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "mixed-precision"))
 
         # External BLAS/LAPACK when +lapack (Note +lapack works for blas as well)
@@ -372,6 +397,7 @@ class CMakeBuilder(CMakeBuilder):
 
         return args
 
+
 class AutotoolsBuilder(AutotoolsBuilder):
     def configure_args(self):
         pkg = self.pkg
@@ -382,9 +408,7 @@ class AutotoolsBuilder(AutotoolsBuilder):
         if spec.satisfies("+lapack"):
             configure_args.append("--with-lapack")
             configure_args.append("--with-blas")
-            configure_args.append(
-                "--with-lapack-libs=%s" % " ".join(spec["lapack"].libs.names)
-            )
+            configure_args.append("--with-lapack-libs=%s" % " ".join(spec["lapack"].libs.names))
             configure_args.append("--with-blas-libs=%s" % " ".join(spec["blas"].libs.names))
             configure_args.append(
                 "--with-lapack-lib-dirs=%s" % " ".join(spec["lapack"].libs.directories)
@@ -428,7 +452,6 @@ class AutotoolsBuilder(AutotoolsBuilder):
             configure_args.append(f"--with-cxxstandard={self.spec.cxxstd}")
             if spec.satisfies("+pic"):
                 configure_args.append("--with-extra-CXXFLAGS=-fPIC")
-
 
         if spec.satisfies("precision=single"):
             configure_args.append("--enable-single")
@@ -506,9 +529,7 @@ class AutotoolsBuilder(AutotoolsBuilder):
                 rocm_arch = rocm_arch_sorted[0]
                 configure_args.append(f"--with-gpu-arch={rocm_arch}")
         else:
-            configure_args.extend(
-                ["--without-hip", "--disable-rocrand", "--disable-rocsparse"]
-            )
+            configure_args.extend(["--without-hip", "--disable-rocrand", "--disable-rocsparse"])
             if spec.satisfies("@2.29.0:"):
                 configure_args.extend(["--disable-rocblas", "--disable-rocsolver"])
 
