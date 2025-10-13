@@ -1,0 +1,27 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.python import PythonPackage
+from spack.package import *
+
+
+class PyTorchSpex(PythonPackage):
+    """Spherical expansions of atomic neighbourhoods"""
+
+    homepage = "https://www.example.com"
+    pypi = "torch_spex/torch_spex-0.0.0.tar.gz"
+
+    maintainers("RMeli", "luthaf", "")
+
+    license("UNKONWN", checked_by="RMeli")
+
+    version("0.1.0", sha256="82722780bf49638c439b8e7ca98ab31b956941aacef72382a9650ff1f1c5eed0")
+
+    depends_on("py-flit-core@3.4:3", type="build")
+
+    depends_on("py-numpy", type=("build", "run"))
+    depends_on("py-pyyaml", type=("build", "run"))
+    depends_on("py-scipy", type=("build", "run"))
+    depends_on("py-sphericart-torch", type=("build", "run"))
+
