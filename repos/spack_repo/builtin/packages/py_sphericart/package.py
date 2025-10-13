@@ -7,7 +7,8 @@ from spack.package import *
 
 
 class PySphericart(PythonPackage):
-    """Library for the efficient calculation of spherical harmonics and their derivatives in Cartesian coordinates."""
+    """Library for the efficient calculation of spherical harmonics
+    and their derivatives in Cartesian coordinates."""
 
     # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://sphericart.readthedocs.io/en/latest/index.html"
