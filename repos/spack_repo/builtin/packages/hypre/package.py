@@ -159,8 +159,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("umpire+rocm", when="+rocm")
     depends_on("umpire+cuda", when="+cuda")
     depends_on("caliper", when="+caliper")
-    depends_on("intel-oneapi-mkl", when="+sycl")
-    depends_on("intel-oneapi-dpl", when="+sycl")
+    with when("+sycl"):
+        depends_on("intel-oneapi-mkl")
+        depends_on("intel-oneapi-dpl")
 
     # If using CMake, we require at least the following version
     with when("build_system=cmake"):
