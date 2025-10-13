@@ -72,7 +72,7 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
             )
 
     # these are not cuda packages
-    for var in ["openmpi", "mpich", "mvapich-plus"]:
+    for var in ["openmpi@5:", "mpich", "mvapich-plus"]:
         depends_on(f"{var} +rocm", when=f"+rocm ^[virtuals=mpi] {var}")
 
     depends_on("parmetis +int64 +shared")
