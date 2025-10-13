@@ -189,6 +189,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_BOOST", "boost"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("ENABLE_OPENFAST", "openfast"),
+            self.define_from_variant("ENABLE_KYNEMA_SIXDOF", "kynema"),
             self.define_from_variant("ENABLE_TIOGA", "tioga"),
             self.define_from_variant("ENABLE_HYPRE", "hypre"),
             self.define_from_variant("ENABLE_TRILINOS_SOLVERS", "trilinos-solvers"),
