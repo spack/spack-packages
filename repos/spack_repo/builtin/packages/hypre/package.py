@@ -67,36 +67,44 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     version("2.10.0b", sha256="b55dbdc692afe5a00490d1ea1c38dd908dae244f7bdd7faaf711680059824c11")
 
     variant("shared", default=False, description="Build shared library (disables static library)")
-    variant("pic", default=True, when="~shared", description="Build position independent code")
-    # Use internal SuperLU routines for FEI - version 2.12.1 and below
-    variant("internal-superlu", default=False, description="Use internal SuperLU routines")
     variant(
-        "superlu-dist", default=False, description="Activates support for SuperLU_Dist library"
+        "pic",
+        default=True,
+        when="@2.21: ~shared",
+        description="Build position independent code"
+    )
+    # Use internal SuperLU routines for FEI - version 2.12.1 and below
+    variant("internal-superlu", default=False, when="@:2.12.1", description="Use internal SuperLU routines")
+    variant(
+        "superlu-dist",
+        default=False,
+        when="@2.13:",
+        description="Activates support for SuperLU_Dist library"
     )
     variant("lapack", default=True, description="Use external blas/lapack")
     variant("int64", default=False, description="Use 64bit integers")
-    variant("mixedint", default=False, description="Use 64bit integers while reducing memory use")
+    variant("mixedint", default=False, when="@2.16:", description="Use 64bit integers while reducing memory use")
     variant("complex", default=False, description="Use complex values")
-    variant("gpu-aware-mpi", default=False, description="Enable GPU-aware MPI support")
-    variant("gpu-profiling", default=False, description="Enable GPU profiling markers support")
+    variant("gpu-aware-mpi", default=False, when="@2.18:", description="Enable GPU-aware MPI support")
+    variant("gpu-profiling", default=False, when="@2.21:", description="Enable GPU profiling markers support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("debug", default=False, description="Build debug instead of optimized version")
     variant("unified-memory", default=False, description="Use unified memory")
     variant("fortran", default=False, description="Enables fortran bindings")
     variant("gptune", default=False, description="Add the GPTune hookup code")
-    variant("umpire", default=False, description="Enable Umpire support")
-    variant("sycl", default=False, description="Enable SYCL support")
-    variant("magma", default=False, description="Enable MAGMA interface")
+    variant("umpire", default=False, when="@2.21:", description="Enable Umpire support")
+    variant("sycl", default=False, when="@2.24:",description="Enable SYCL support")
+    variant("magma", default=False, when="@2.29:", description="Enable MAGMA interface")
     variant("caliper", default=False, description="Enable Caliper support")
-    variant("mixed-precision", default=False, description="Enable mixed precision support")
+    variant("mixed-precision", default=False, when="@3:", description="Enable mixed precision support")
     variant(
         "precision",
         default="double",
         values=("single", "double", "longdouble"),
         multi=False,
-        description="Floating point precision",
         when="@2.12.1:",
+        description="Floating point precision",
     )
     variant(
         "cxxstd",
@@ -136,106 +144,83 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     def patch(self):  # fix sequential compilation in 'src/seq_mv'
         filter_file("\tmake", "\t$(MAKE)", "src/seq_mv/Makefile")
 
+    # Compiler dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="+cuda")
     depends_on("cxx", type="build", when="+rocm")
     depends_on("cxx", type="build", when="+sycl")
     depends_on("fortran", type="build", when="+fortran")
 
+    # If using CMake, we require at least the following version
+    with when("build_system=cmake"):
+        depends_on("cmake@3.21:", type="build")
+
+    # General dependencies and conflicts
     depends_on("mpi", when="+mpi")
     depends_on("blas", when="+lapack")
     depends_on("lapack", when="+lapack")
     depends_on("magma", when="+magma")
     depends_on("superlu-dist", when="+superlu-dist+mpi")
-    depends_on("rocsparse", when="+rocm")
-    depends_on("rocthrust", when="+rocm")
-    depends_on("rocrand", when="+rocm")
-    depends_on("rocprim", when="+rocm")
-    depends_on("rocsolver", when="@2.29.0: +rocm")
-    depends_on("rocblas", when="@2.29.0: +rocm")
-    depends_on("hipblas", when="+rocm +superlu-dist")
-    depends_on("hip@:6", when="@:3.0.0 +rocm")
-    depends_on("umpire+c", when="+umpire")
-    depends_on("umpire+rocm", when="+rocm")
-    depends_on("umpire+cuda", when="+cuda")
     depends_on("caliper", when="+caliper")
-    with when("+sycl"):
-        depends_on("intel-oneapi-mkl")
-        depends_on("intel-oneapi-dpl")
-
-    # If using CMake, we require at least the following version
-    with when("build_system=cmake"):
-        depends_on("cmake@3.21:", type="build")
-
-    # Make sure some TPLs use the same GPU architecture as hypre
-    gpu_pkgs = ["magma", "umpire"]
-    for sm_ in CudaPackage.cuda_arch_values:
-        for pkg in gpu_pkgs:
-            depends_on(f"{pkg}+cuda cuda_arch={sm_}", when=f"+{pkg}+cuda cuda_arch={sm_}")
-
-    for gfx in ROCmPackage.amdgpu_targets:
-        for pkg in gpu_pkgs:
-            depends_on(f"{pkg}+rocm amdgpu_target={gfx}", when=f"+{pkg}+rocm amdgpu_target={gfx}")
-
-    # hypre@:2.28.0 uses deprecated cuSPARSE functions/types (e.g. csrsv2Info_t).
-    depends_on("cuda@:11", when="@:2.28.0+cuda")
-
-    # Conflicts
-    conflicts("+cuda", when="+int64")
-    conflicts("+rocm", when="+int64")
-    conflicts("+rocm", when="@:2.20")
-    conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gptune", when="~mpi")
-    conflicts("+shared", when="+cuda")
-    # Umpire device allocator exports device code, which requires static libs
-    conflicts("+umpire", when="+shared+cuda")
-
-    # C++ standard
-    conflicts("cxxstd=11", when="^cuda@13:")
-    conflicts("cxxstd=11", when="^hip@7:")
-    conflicts("cxxstd=14", when="^cuda@13:")
-    conflicts("cxxstd=14", when="^hip@7:")
 
     # Patch to build shared libraries on Darwin does not apply to
     # versions before 2.13.0
     conflicts("+shared@:2.12 platform=darwin")
 
-    # Version conflicts
-    # Option added in v2.13.0
-    conflicts("+superlu-dist", when="@:2.12")
+    # GPU-related dependencies and conflicts
+    gpu_pkgs = ["magma", "umpire"]
+    conflicts("+unified-memory", when="~cuda~rocm~sycl")
+    conflicts("+gpu-profiling", when="~cuda~rocm~sycl")
+    conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
+    with when("+cuda"):
+        depends_on("umpire+c+cuda", when="@3:")
 
-    # Internal SuperLU Option removed in v2.13.0
-    conflicts("+internal-superlu", when="@2.13.0:")
+        conflicts("@:2.18")
+        conflicts("cuda_arch=none")
+        conflicts("+mixed-precision")
+        conflicts("+shared +umpire")
+        conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
+        conflicts("+rocm", msg="CUDA and ROCm are mutually exclusive")
+        conflicts("+sycl", msg="CUDA and SYCL are mutually exclusive")
+        conflicts("cxxstd=11", when="^cuda@13:")
+        conflicts("cxxstd=14", when="^cuda@13:")
+        depends_on("cuda@:11", when="@:2.28.0")
+        for sm_ in CudaPackage.cuda_arch_values:
+            for pkg in gpu_pkgs:
+                requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
+                #depends_on(f"{pkg}+cuda cuda_arch={sm_}", when=f"+{pkg}+cuda cuda_arch={sm_}")
 
-    # Option added in v2.16.0
-    conflicts("+mixedint", when="@:2.15")
+    with when("+rocm"):
+        depends_on("umpire+c+rocm", when="@3:")
+        depends_on("rocsparse")
+        depends_on("rocthrust")
+        depends_on("rocrand")
+        depends_on("rocprim")
+        depends_on("rocsolver", when="@2.29.0:")
+        depends_on("rocblas", when="@2.29.0:")
+        depends_on("hipblas", when="+superlu-dist")
+        depends_on("hip@:6", when="@:3.0.0")
 
-    # Options added in v2.18.0
-    conflicts("+gpu-aware-mpi", when="@:2.17")
-    conflicts("+gpu-profiling+cuda", when="@:2.17")
+        conflicts("@:2.20")
+        conflicts("amdgpu_target=none")
+        conflicts("+mixed-precision")
+        conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
+        conflicts("+sycl", msg="ROCm and SYCL are mutually exclusive")
+        conflicts("cxxstd=11", when="^hip@7:")
+        conflicts("cxxstd=14", when="^hip@7:")
+        for gfx in ROCmPackage.amdgpu_targets:
+            for pkg in gpu_pkgs:
+                requires(f"^{pkg} amdgpu_target={gfx}", when=f"+{pkg} amdgpu_target={gfx}")
 
-    # Options added in v2.21.0
-    conflicts("+umpire", when="@:2.20")
-    conflicts("+gpu-profiling+rocm", when="@:2.20")
-    conflicts("+pic", when="@:2.20")
+    with when("+sycl"):
+        depends_on("intel-oneapi-compiler")
+        depends_on("intel-oneapi-mkl")
+        depends_on("intel-oneapi-dpl")
 
-    # Option added in v2.24.0
-    conflicts("+sycl", when="@:2.23")
-
-    # Option added in v2.29.0
-    conflicts("+magma", when="@:2.28")
-
-    # Option added in v3.0.0
-    conflicts("+mixed-precision", when="@:2.33")
-    conflicts("+mixed-precision +cuda")
-    conflicts("+mixed-precision +rocm")
-    conflicts("+mixed-precision +sycl")
-
-    # GPU checks
-    conflicts("+cuda", when="+rocm", msg="CUDA and ROCm are mutually exclusive")
-    conflicts("+cuda", when="+sycl", msg="CUDA and SYCL are mutually exclusive")
-    conflicts("+rocm", when="+sycl", msg="ROCm and SYCL are mutually exclusive")
-    conflicts("+gpu-profiling", when="~cuda~rocm", msg="GPU profiling requires CUDA or ROCm")
+        conflicts("+mixed-precision")
+        conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
+        conflicts("+gpu-profiling", msg="GPU profiling not available for SYCL!")
 
     configure_directory = "src"
     root_cmakelists_dir = "src"
