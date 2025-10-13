@@ -22,7 +22,7 @@ class Opticks(CMakePackage, CudaPackage):
 
     depends_on("cxx", type="build")
     depends_on("cmake@3.10:", type="build")
-    depends_on("cuda")
+
     depends_on("geant4@11.1.2")
     depends_on("glew")
     depends_on("glfw")
