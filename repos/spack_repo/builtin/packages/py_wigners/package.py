@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -15,7 +16,7 @@ class PyWigners(PythonPackage):
     maintainers("luthaf", "RMeli")
 
     # TODO: Dual license
-    #license("UNKNOWN", checked_by="github_user1")
+    # license("UNKNOWN", checked_by="github_user1")
 
     version("0.3.1", sha256="90882e69208a830140a244645e39d4c3a84b8db1a4feb926ba29d0cc374ac149")
 
