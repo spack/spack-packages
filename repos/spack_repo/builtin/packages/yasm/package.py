@@ -1,4 +1,4 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+classyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -21,6 +21,9 @@ class Yasm(AutotoolsPackage):
 
     version("develop", branch="master")
     version("1.3.0", sha256="3dce6601b495f5b3d45b59f7d2492a340ee7e84b5beca17e48f862502bd5603f")
+
+    # Ensure C23 compliance in boolean enum
+    patch("libyasm_bitvect_c23_bool.patch")
 
     depends_on("c", type="build")  # generated
 
