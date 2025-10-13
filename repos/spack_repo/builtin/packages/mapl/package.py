@@ -39,6 +39,7 @@ class Mapl(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("2.62.0", sha256="5973a8cac75c55fcc0f4c5256f7d485ab99d2a52ff42d4359ce8d0f3f94d9133")
     version("2.61.0", sha256="bb768fd60214d5b6fe6120e08a5ebd869f576392a3252a4715fd7c32d0dea97a")
     version("2.60.0", sha256="470f4da9cc516fdf8206dbc84ab13f53792f3af5e54cd5315ff70d44e5700788")
     version("2.59.0", sha256="a1137bf62e885256d295c66929cd77658a559f88dbed4f433544f432c5c7a059")
@@ -143,8 +144,14 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v3.65.0",
+        when="@2.62:",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.64.0",
-        when="@2.60:",
+        when="@2.60:2.61",
     )
     resource(
         name="esma_cmake",
@@ -344,6 +351,9 @@ class Mapl(CMakePackage):
     # when using apple-clang version 15.x or newer, need to use the llvm-openmp library
     depends_on("llvm-openmp", when="%apple-clang@15:", type=("build", "run"))
 
+    # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+    depends_on("gcc", when="@:2.61 ^intel-oneapi-compilers@2025.2", type="build")
+
     def cmake_args(self):
         args = [
             self.define_from_variant("BUILD_WITH_PFLOGGER", "pflogger"),
@@ -369,6 +379,11 @@ class Mapl(CMakePackage):
             if gfortran_major_ver >= 10:
                 fflags.append("-fallow-invalid-boz")
                 fflags.append("-fallow-argument-mismatch")
+
+        # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+        if self.spec.satisfies("@:2.61 ^intel-oneapi-compilers@2025.2"):
+            fflags.append(f"-fpp-name={join_path(self.stage.source_path, 'cpp_wrapper.sh')}")
+
         if fflags:
             args.append(self.define("CMAKE_Fortran_FLAGS", " ".join(fflags)))
 
@@ -413,6 +428,22 @@ class Mapl(CMakePackage):
             nc_flags = subprocess.check_output(nc_pc_cmd, encoding="utf8").strip()
             filter_file(
                 "(target_link_libraries[^)]+PUBLIC )", r"\1 %s " % nc_flags, "pfio/CMakeLists.txt"
+            )
+
+        # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+        if self.spec.satisfies("@:2.61 ^intel-oneapi-compilers@2025.2"):
+            cpp_wrapper = """#!/usr/bin/env bash
+cpp -P -traditional-cpp -undef \"$@\"
+"""
+            with open(join_path(self.stage.source_path, "cpp_wrapper.sh"), "w") as f:
+                f.write(cpp_wrapper)
+            set_executable(join_path(self.stage.source_path, "cpp_wrapper.sh"))
+
+            filter_file(
+                "SYSTEM_DSO_EXTENSION = SYSTEM_DSO_SUFFIX",
+                "SYSTEM_DSO_EXTENSION = 'SYSTEM_DSO_SUFFIX'",
+                "shared/DSO_Utilities.F90",
+                string=True,
             )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
