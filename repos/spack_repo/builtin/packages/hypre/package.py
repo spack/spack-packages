@@ -250,29 +250,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
         return url
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        spec = self.spec
-        # Limit toolchain wrapper and flags to Autotools builds
-        if spec.satisfies("build_system=autotools +mpi"):
-            env.set("CC", spec["mpi"].mpicc)
-            env.set("CXX", spec["mpi"].mpicxx)
-            if spec.satisfies("+fortran"):
-                env.set("F77", spec["mpi"].mpif77)
-
-        if spec.satisfies("build_system=autotools +cuda"):
-            env.set("CUDA_HOME", spec["cuda"].prefix)
-            env.set("CUDA_PATH", spec["cuda"].prefix)
-            # In CUDA builds hypre currently doesn't handle flags correctly
-            env.append_flags("CXXFLAGS", "-O2" if spec.satisfies("~debug") else "-g")
-
-        if spec.satisfies("build_system=autotools +rocm"):
-            # As of 2022/04/05, the following are set by 'llvm-amdgpu' and
-            # override hypre's default flags, so we unset them.
-            env.unset("CFLAGS")
-            env.unset("CXXFLAGS")
-
     # build/install phases are implemented in the AutotoolsBuilder
-
     extra_install_tests = join_path("src", "examples")
 
     @run_after("install")
@@ -542,22 +520,43 @@ class AutotoolsBuilder(AutotoolsBuilder):
 
         return configure_args
 
-        def build(self, pkg, spec, prefix):
-            with working_dir("src"):
-                make()
+    def build(self, pkg, spec, prefix):
+        with working_dir("src"):
+            make()
 
-        def install(self, pkg, spec, prefix):
-            # Hypre's sources are staged under ./src so we'll have to manually cd into it
-            with working_dir("src"):
-                if pkg.run_tests:
-                    make("check")
-                    make("test")
-                    Executable(join_path("test", "ij"))()
-                    sstruct = Executable(join_path("test", "struct"))
-                    sstruct()
-                    sstruct("-in", "test/sstruct.in.default", "-solver", "40", "-rhsone")
-                make("install")
-                if spec.satisfies("+gptune"):
-                    make("test")
-                    mkdirp(pkg.prefix.bin)
-                    install(join_path("test", "ij"), pkg.prefix.bin)
+    def install(self, pkg, spec, prefix):
+        # Hypre's sources are staged under ./src so we'll have to manually cd into it
+        with working_dir("src"):
+            if pkg.run_tests:
+                make("check")
+                make("test")
+                Executable(join_path("test", "ij"))()
+                sstruct = Executable(join_path("test", "struct"))
+                sstruct()
+                sstruct("-in", "test/sstruct.in.default", "-solver", "40", "-rhsone")
+            make("install")
+            if spec.satisfies("+gptune"):
+                make("test")
+                mkdirp(pkg.prefix.bin)
+                install(join_path("test", "ij"), pkg.prefix.bin)
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        spec = self.spec
+        # Limit toolchain wrapper and flags to Autotools builds
+        if spec.satisfies("build_system=autotools +mpi"):
+            env.set("CC", spec["mpi"].mpicc)
+            env.set("CXX", spec["mpi"].mpicxx)
+            if spec.satisfies("+fortran"):
+                env.set("F77", spec["mpi"].mpif77)
+
+        if spec.satisfies("build_system=autotools +cuda"):
+            env.set("CUDA_HOME", spec["cuda"].prefix)
+            env.set("CUDA_PATH", spec["cuda"].prefix)
+            # In CUDA builds hypre currently doesn't handle flags correctly
+            env.append_flags("CXXFLAGS", "-O2" if spec.satisfies("~debug") else "-g")
+
+        if spec.satisfies("build_system=autotools +rocm"):
+            # As of 2022/04/05, the following are set by 'llvm-amdgpu' and
+            # override hypre's default flags, so we unset them.
+            env.unset("CFLAGS")
+            env.unset("CXXFLAGS")
