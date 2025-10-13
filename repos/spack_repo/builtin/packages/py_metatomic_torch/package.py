@@ -37,5 +37,9 @@ class PyMetatomicTorch(PythonPackage):
     depends_on("cmake@3.22:", type="build", when="@0.1.5:")
 
     # Fix build when torch looks for a CUDA compiler
-    patch("https://github.com/metatensor/metatomic/commit/256f9f96eb36620e42228c25d7b3062d544a11c0.patch?full_index=1",
-          sha256="4e958c83e1a2b5684984f6db38c948a86cca6b5477f8e0a849496d235f81d628", when="@0.1.3", level=3)
+    patch(
+        "https://github.com/metatensor/metatomic/commit/256f9f96eb36620e42228c25d7b3062d544a11c0.patch?full_index=1",
+        sha256="4e958c83e1a2b5684984f6db38c948a86cca6b5477f8e0a849496d235f81d628",
+        when="@0.1.3",
+        level=3,
+    )

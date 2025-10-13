@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -26,5 +27,5 @@ class PySphericartTorch(PythonPackage):
 
     # setup.py
     depends_on("py-torch@2.1:", type=("build", "run"))
-    
+
     depends_on("py-sphericart")
