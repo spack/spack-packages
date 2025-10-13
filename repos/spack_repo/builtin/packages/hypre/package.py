@@ -93,10 +93,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     variant("complex", default=False, description="Use complex values")
     variant(
-        "gpu-aware-mpi",
-        default=False,
-        when="@2.18:",
-        description="Enable GPU-aware MPI support",
+        "gpu-aware-mpi", default=False, when="@2.18:", description="Enable GPU-aware MPI support"
     )
     variant(
         "gpu-profiling",
@@ -115,10 +112,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("magma", default=False, when="@2.29:", description="Enable MAGMA interface")
     variant("caliper", default=False, description="Enable Caliper support")
     variant(
-        "mixed-precision",
-        default=False,
-        when="@3:",
-        description="Enable mixed precision support",
+        "mixed-precision", default=False, when="@3:", description="Enable mixed precision support"
     )
     variant(
         "precision",
