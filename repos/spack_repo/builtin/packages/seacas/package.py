@@ -11,7 +11,6 @@ from spack.package import *
 #
 # Need to add:
 #  KOKKOS support using an external (i.e. spack-supplied) kokkos library.
-#  Data Warehouse (FAODEL) enable/disable
 
 is_windows = sys.platform == "win32"
 
@@ -151,6 +150,12 @@ class Seacas(CMakePackage):
             variant("cgns", default=True, description="Enable CGNS.")
 
     variant(
+        "aws",
+        default=False,
+        when="@master:",
+        description="Enable support for S3 compatible storage using AWS SDK's S3 module",
+    )
+    variant(
         "faodel",
         default=False,
         description="Enable Faodel. See https://github.com/sandialabs/faodel",
@@ -252,6 +257,9 @@ class Seacas(CMakePackage):
     with when("+metis"):
         depends_on("metis+int64+real64")
         depends_on("parmetis+int64", when="+mpi")
+    with when("+aws"):
+        depends_on("aws-sdk-cpp")
+        depends_on("cereal")
 
     # The Faodel TPL is only supported in seacas@2021-04-05:
     depends_on("faodel@1.2108.1:+mpi", when="+faodel +mpi")
@@ -303,11 +311,12 @@ class Seacas(CMakePackage):
         options.extend(
             [
                 from_variant(project_name_base + "_ENABLE_TESTS", "tests"),
-                define(project_name_base + "_ENABLE_CXX11", True),
+                define(project_name_base + "_ENABLE_CXX17", True),
                 define(project_name_base + "_ENABLE_Kokkos", False),
                 define(project_name_base + "_HIDE_DEPRECATED_CODE", False),
                 # Seacas MSVC tests are not tested with Zoltan
                 # which causes build errors, skip for now
+                define("ENABLE_ExoNull", True),
                 define(project_name_base + "_ENABLE_Zoltan", not is_windows),
                 from_variant("CMAKE_INSTALL_RPATH_USE_LINK_PATH", "shared"),
                 from_variant("BUILD_SHARED_LIBS", "shared"),
@@ -459,6 +468,12 @@ class Seacas(CMakePackage):
         options.append(from_variant("TPL_ENABLE_CGNS", "cgns"))
         if "+cgns" in spec:
             options.append(define("CGNS_ROOT", spec["cgns"].prefix))
+
+        options.append(from_variant("TPL_ENABLE_AWSSDK", "aws"))
+        if "+aws" in spec:
+            options.append(define("AWSSDK_ROOT", spec["aws-sdk-cpp"].prefix))
+            options.append(define("TPL_ENABLE_Cereal", True))
+            options.append(define("Cereal_INCLUDE_DIRS", spec["cereal"].prefix.include))
 
         options.append(from_variant("TPL_ENABLE_Faodel", "faodel"))
         for pkg in ("Faodel", "BOOST"):
