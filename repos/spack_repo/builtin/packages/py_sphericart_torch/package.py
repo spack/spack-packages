@@ -13,7 +13,7 @@ class PySphericartTorch(PythonPackage):
     homepage = "https://www.example.com"
     pypi = "sphericart_torch/sphericart_torch-0.0.0.tar.gz"
 
-    maintainers("RMeli", "luthaf")
+    maintainers("RMeli", "luthaf", "HaoZeke", "rubber-duck-debug")
 
     version("1.0.3", sha256="c3874bdb51d3e25f88622128336b61bd09023341b8c453a17c6bec29ab1ec964")
 

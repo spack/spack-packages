@@ -15,7 +15,7 @@ class PySphericart(PythonPackage):
     homepage = "https://sphericart.readthedocs.io/en/latest/index.html"
     pypi = "sphericart/sphericart-1.0.3.tar.gz"
 
-    maintainers("RMeli", "luthaf")
+    maintainers("RMeli", "luthaf", "HaoZeke", "rubber-duck-debug")
 
     version("1.0.3", sha256="007b21f075d5ba331519fe5cec6acf28d5bd458a970a158973d51047795afd12")
 

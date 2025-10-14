@@ -13,7 +13,7 @@ class PyTorchSpex(PythonPackage):
     homepage = "https://www.example.com"
     pypi = "torch_spex/torch_spex-0.0.0.tar.gz"
 
-    maintainers("RMeli", "luthaf", "")
+    maintainers("RMeli", "luthaf", "HaoZeke")
 
     license("UNKONWN", checked_by="RMeli")
 

@@ -13,7 +13,7 @@ class PyWigners(PythonPackage):
     homepage = "https://github.com/Luthaf/wigners"
     pypi = "wigners/wigners-0.3.1.tar.gz"
 
-    maintainers("luthaf", "RMeli")
+    maintainers("luthaf", "RMeli", "HaoZeke")
 
     # TODO: Dual license
     # license("UNKNOWN", checked_by="github_user1")
