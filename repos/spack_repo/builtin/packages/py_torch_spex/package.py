@@ -15,7 +15,8 @@ class PyTorchSpex(PythonPackage):
 
     maintainers("RMeli", "luthaf", "HaoZeke")
 
-    license("UNKONWN", checked_by="RMeli")
+    # pyproject.toml
+    license("MIT", checked_by="RMeli")
 
     version("0.1.0", sha256="82722780bf49638c439b8e7ca98ab31b956941aacef72382a9650ff1f1c5eed0")
 
