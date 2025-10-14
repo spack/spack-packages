@@ -237,9 +237,6 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+gpu-profiling", msg="GPU profiling not available for SYCL!")
 
-    configure_directory = "src"
-    root_cmakelists_dir = "src"
-
     def url_for_version(self, version):
         if version >= Version("2.12.0"):
             url = f"https://github.com/hypre-space/hypre/archive/v{version}.tar.gz"
@@ -309,6 +306,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
 # Builder implementations
 class CMakeBuilder(CMakeBuilder):
+    root_cmakelists_dir = "src"
+
     def cmake_args(self):
         pkg = self.pkg
         spec = pkg.spec
@@ -371,6 +370,8 @@ class CMakeBuilder(CMakeBuilder):
 
 
 class AutotoolsBuilder(AutotoolsBuilder):
+    configure_directory = "src"
+
     def configure_args(self):
         pkg = self.pkg
         spec = pkg.spec
