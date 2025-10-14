@@ -109,14 +109,11 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         depends_on("meson@0.60:", when="@11.1:")
         depends_on("meson@0.55:", when="@3.2.1:")
         depends_on("meson@0.52:")
+        # harfbuzz's Meson only supports autotools based
+        # freetype
+        depends_on("freetype build_system=autotools")
 
-        # As of 11.5.0 Harfbuzz made the decision to drop
-        # support for CMake build freetype
-        # backport the old support
-        patch(
-            "harfbuzz_11.5.0_support_cmake_freetype.patch",
-            when="@11.5: ^freetype build_system=cmake",
-        )
+
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
