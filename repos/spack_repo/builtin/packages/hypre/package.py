@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-
 from itertools import product
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
