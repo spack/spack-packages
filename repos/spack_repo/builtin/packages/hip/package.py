@@ -434,9 +434,12 @@ class Hip(CMakePackage):
         self.set_variables(env)
 
         if "amdgpu_target" in dependent_spec.variants:
-            arch = dependent_spec.variants["amdgpu_target"]
+            arch = dependent_spec.variants["amdgpu_target"].value
+            # some packages may define their own amdgpu_target variant that is not multi
+            if isinstance(arch, str):
+                arch = [arch]
             if "none" not in arch and "auto" not in arch:
-                env.set("HCC_AMDGPU_TARGET", ",".join(arch.value))
+                env.set("HCC_AMDGPU_TARGET", ",".join(arch))
 
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
