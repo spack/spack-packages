@@ -42,7 +42,7 @@ default:
       when: never
     - if: $CI_COMMIT_REF_NAME == "develop" || $CI_COMMIT_REF_NAME =~ /^releases\/v.*/
       # Pipelines on develop/release branches only rebuild what is missing from the mirror
-      when: always
+      when: on_success
       variables:
         SPACK_PIPELINE_TYPE: "spack_protected_branch"
         SPACK_PRUNE_UNTOUCHED: "False"
@@ -51,7 +51,7 @@ default:
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
     - if: $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/ || $CI_COMMIT_TAG =~ /^v.*/
       # Pipelines on tags (release or dev snapshots) only copy binaries from one mirror to another
-      when: always
+      when: on_success
       variables:
         SPACK_PIPELINE_TYPE: "spack_copy_only"
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
@@ -59,7 +59,7 @@ default:
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
-      when: always
+      when: on_success
       variables:
         SPACK_PIPELINE_TYPE: "spack_pull_request"
         SPACK_PRUNE_UNTOUCHED: "True"
