@@ -3,10 +3,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import sys
 
-from spack_repo.builtin.build_systems import autotools, meson, cmake
+from spack_repo.builtin.build_systems import autotools, cmake, meson
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin.build_systems.meson import MesonPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.meson import MesonPackage
+
 from spack.package import *
 
 IS_WINDOWS = sys.platform == "win32"
@@ -20,10 +21,10 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
     git = "https://github.com/harfbuzz/harfbuzz.git"
 
     build_system(
-        conditional("autotools", when="@:2.9"), 
-        conditional("meson", when="@3:"), 
+        conditional("autotools", when="@:2.9"),
+        conditional("meson", when="@3:"),
         conditional("cmake", when="@10:"),
-        default="meson" if not IS_WINDOWS else "cmake"
+        default="meson" if not IS_WINDOWS else "cmake",
     )
 
     # HarfBuzz is licensed under the so-called "Old MIT" license,
@@ -70,13 +71,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         when="platform=darwin",
         description="Enable CoreText shaper backend on macOS",
     )
-    variant(
-        "shared",
-        default=True, 
-        when="build_system=cmake",
-        description="Build shared harfbuzz"
-    )
-
+    variant("shared", default=True, when="build_system=cmake", description="Build shared harfbuzz")
 
     with when("build_system=cmake"):
         with when("platform=windows"):
@@ -88,19 +83,14 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
             variant(
                 "directwrite",
                 default=False,
-                description="Enable directwrite shaper backend on Windows"
+                description="Enable directwrite shaper backend on Windows",
             )
-            variant(
-                "gdi",
-                default=False,
-                description="Enable GDI integration helpers on Windows",
-            )
+            variant("gdi", default=False, description="Enable GDI integration helpers on Windows")
         # CMake system dropped a number of source files
         # they're correctly added as of 11.5
         patch("harfbuzz_10_0_cmake_add_missing_table_sources.patch", when="@10:11.1")
         patch("harfbuzz_11_2_cmake_add_missing_table_sources.patch", when="@11.2:11.3")
         patch("harfbuzz_11_4_cmake_add_missing_table_sources.patch", when="@11.4")
-    
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -113,15 +103,13 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         # freetype
         depends_on("freetype build_system=autotools")
 
-
-
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
             variant(
                 "utils",
                 default=False,
                 when="build_system=cmake",
-                description="Build harfbuzz utils"
+                description="Build harfbuzz utils",
             )
             depends_on("pkgconfig", type="build")
             depends_on("glib")
