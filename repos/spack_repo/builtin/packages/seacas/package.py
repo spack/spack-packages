@@ -152,7 +152,7 @@ class Seacas(CMakePackage):
     variant(
         "aws",
         default=False,
-        when="@master:",
+        when="@master",
         description="Enable support for S3 compatible storage using AWS SDK's S3 module",
     )
     variant(
@@ -311,7 +311,6 @@ class Seacas(CMakePackage):
         options.extend(
             [
                 from_variant(project_name_base + "_ENABLE_TESTS", "tests"),
-                define(project_name_base + "_ENABLE_CXX17", True),
                 define(project_name_base + "_ENABLE_Kokkos", False),
                 define(project_name_base + "_HIDE_DEPRECATED_CODE", False),
                 # Seacas MSVC tests are not tested with Zoltan
@@ -329,6 +328,11 @@ class Seacas(CMakePackage):
                 define(project_name_base + "_ENABLE_SEACAS", True),
             ]
         )
+        if spec.satisfies("@2025-08-28:"):
+            options.append(define(project_name_base + "_ENABLE_CXX17", True))
+        else:
+            options.append(define(project_name_base + "_ENABLE_CXX11", True))
+            
         if "~shared" in self.spec and not is_windows:
             options.append(self.define(f"{project_name_base}_EXTRA_LINK_FLAGS", "z;dl"))
         options.append(from_variant("TPL_ENABLE_MPI", "mpi"))
