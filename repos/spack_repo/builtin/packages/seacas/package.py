@@ -332,7 +332,7 @@ class Seacas(CMakePackage):
             options.append(define(project_name_base + "_ENABLE_CXX17", True))
         else:
             options.append(define(project_name_base + "_ENABLE_CXX11", True))
-            
+
         if "~shared" in self.spec and not is_windows:
             options.append(self.define(f"{project_name_base}_EXTRA_LINK_FLAGS", "z;dl"))
         options.append(from_variant("TPL_ENABLE_MPI", "mpi"))
