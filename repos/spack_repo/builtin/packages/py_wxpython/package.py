@@ -34,6 +34,7 @@ class PyWxpython(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@:75", type="build", when="@:4.1")  # deprecated license-file
     depends_on("py-pathlib2", type="build")
+    depends_on("py-requests", type="build")
 
     # Needed at runtime
     depends_on("py-numpy", type=("build", "run"))
