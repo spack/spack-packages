@@ -4,6 +4,7 @@
 
 import os
 
+from itertools import product
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -112,12 +113,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("magma", default=False, when="@2.29:", description="Enable MAGMA interface")
     variant("caliper", default=False, description="Enable Caliper support")
     variant(
-        "mixed-precision", default=False, when="@3:", description="Enable mixed precision support"
-    )
-    variant(
         "precision",
         default="double",
-        values=("single", "double", "longdouble"),
+        values=("single", "double", "longdouble", conditional("mixed", when="@3:")),
         multi=False,
         when="@2.12.1:",
         description="Floating point precision",
@@ -194,7 +192,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
         conflicts("@:2.18")
         conflicts("cuda_arch=none")
-        conflicts("+mixed-precision")
+        conflicts("precision=longdouble")
+        conflicts("precision=mixed")
         conflicts("+shared +umpire")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+rocm", msg="CUDA and ROCm are mutually exclusive")
@@ -202,9 +201,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         conflicts("cxxstd=11", when="^cuda@13:")
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
-        for sm_ in CudaPackage.cuda_arch_values:
-            for pkg in gpu_pkgs:
-                requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
+        for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
+            requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 
     with when("+rocm"):
         depends_on("umpire+c+rocm", when="@3:")
@@ -219,21 +217,24 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
         conflicts("@:2.20")
         conflicts("amdgpu_target=none")
-        conflicts("+mixed-precision")
+        conflicts("precision=longdouble")
+        conflicts("precision=mixed")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+sycl", msg="ROCm and SYCL are mutually exclusive")
         conflicts("cxxstd=11", when="^hip@7:")
         conflicts("cxxstd=14", when="^hip@7:")
-        for gfx in ROCmPackage.amdgpu_targets:
-            for pkg in gpu_pkgs:
-                requires(f"^{pkg} amdgpu_target={gfx}", when=f"+{pkg} amdgpu_target={gfx}")
+        for pkg, gfx in product(gpu_pkgs, ROCmPackage.amdgpu_targets):
+            requires(f"^{pkg} amdgpu_target={gfx}", when=f"+{pkg} amdgpu_target={gfx}")
 
     with when("+sycl"):
+        requires("%c,cxx=oneapi", msg="SYCL backend must be compiled with oneapi compilers")
+
         depends_on("intel-oneapi-compilers")
         depends_on("intel-oneapi-mkl")
         depends_on("intel-oneapi-dpl")
 
-        conflicts("+mixed-precision")
+        conflicts("precision=longdouble")
+        conflicts("precision=mixed")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+gpu-profiling", msg="GPU profiling not available for SYCL!")
 
@@ -331,7 +332,7 @@ class CMakeBuilder(CMakeBuilder):
         args.append(
             self.define("HYPRE_ENABLE_LONG_DOUBLE", spec.satisfies("precision=longdouble"))
         )
-        args.append(self.define_from_variant("HYPRE_ENABLE_MIXED_PRECISION", "mixed-precision"))
+        args.append(self.define("HYPRE_ENABLE_MIXED_PRECISION", spec.satisfies("precision=mixed")))
 
         # External BLAS/LAPACK when +lapack (Note +lapack works for blas as well)
         args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_BLAS", "lapack"))
@@ -412,7 +413,6 @@ class AutotoolsBuilder(AutotoolsBuilder):
         configure_args.extend(pkg.enable_or_disable("debug"))
         configure_args.extend(pkg.enable_or_disable("mixedint"))
         configure_args.extend(pkg.enable_or_disable("complex"))
-        configure_args.extend(pkg.enable_or_disable("mixed-precision"))
         configure_args.extend(pkg.enable_or_disable("shared"))
         configure_args.extend(pkg.enable_or_disable("unified-memory"))
         configure_args.extend(pkg.enable_or_disable("gpu-aware-mpi"))
@@ -430,6 +430,8 @@ class AutotoolsBuilder(AutotoolsBuilder):
             configure_args.append("--enable-single")
         elif spec.satisfies("precision=longdouble"):
             configure_args.append("--enable-longdouble")
+        elif spec.satisfies("precision=mixed"):
+            configure_args.append("--enable-mixed-precision")
 
         if spec.satisfies("~internal-superlu"):
             configure_args.append("--without-superlu")
@@ -508,11 +510,6 @@ class AutotoolsBuilder(AutotoolsBuilder):
 
         if spec.satisfies("+sycl"):
             configure_args.append("--with-sycl")
-            sycl_compatible_compilers = ["icpx"]
-            if os.path.basename(pkg.compiler.cxx) not in sycl_compatible_compilers:
-                raise InstallError(
-                    "Hypre's SYCL GPU Backend requires the oneAPI CXX (icpx) compiler."
-                )
 
         if spec.satisfies("+magma"):
             configure_args.append("--with-magma-include=%s" % spec["magma"].prefix.include)
