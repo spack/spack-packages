@@ -318,6 +318,8 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
         args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
+        if spec.satisfies("+complex %gcc@14:"):
+            args.append(self.define("CMAKE_C_FLAGS", "-Wno-error=incompatible-pointer-types"))
 
         # Core toggles
         args.append(self.define_from_variant("HYPRE_ENABLE_MPI", "mpi"))
@@ -420,6 +422,9 @@ class AutotoolsBuilder(AutotoolsBuilder):
         configure_args.extend(pkg.enable_or_disable("fortran"))
         if spec.satisfies("+pic"):
             configure_args.append("--with-extra-CFLAGS=-fPIC")
+
+        if spec.satisfies("+complex %gcc@14:"):
+            configure_args.append("--with-extra-CFLAGS=-Wno-error=incompatible-pointer-types")
 
         if spec.satisfies("+cuda") or spec.satisfies("+rocm") or spec.satisfies("+sycl"):
             configure_args.append(f"--with-cxxstandard={self.spec.cxxstd}")
