@@ -20,6 +20,7 @@ class PyAstropy(PythonPackage):
 
     license("BSD-3-Clause", checked_by="lgarrison")
 
+    version("7.1.1", sha256="6d128f0005e2c34f70113484468bf9d0e4ca1ee15a279cfd08bdd979d38db0f8")
     version("7.1.0", sha256="c8f254322295b1b8cf24303d6f155bf7efdb6c1282882b966ce3040eff8c53c5")
     version("7.0.1", sha256="392feeb443b2437cd4c2e0641a65e0f15ba791e148e9b1e5ed7de7dfcb38e460")
     version("6.1.0", sha256="6c3b915f10b1576190730ddce45f6245f9927dda3de6e3f692db45779708950f")
@@ -55,6 +56,7 @@ class PyAstropy(PythonPackage):
     # in newer pip versions --install-option does not exist
     depends_on("py-pip@:23.0", when="@:4.0", type="build")
 
+    depends_on("py-astropy-iers-data@0.2025.9.29.0.35.48:", when="@7.1.1:", type=("build", "run"))
     depends_on("py-astropy-iers-data@0.2025.1.31.12.41.4:", when="@7.0.1:", type=("build", "run"))
     depends_on("py-astropy-iers-data@0.2025.4.28.0.37.27:", when="@7.1.0:", type=("build", "run"))
     depends_on("py-astropy-iers-data", when="@6:", type=("build", "run"))
