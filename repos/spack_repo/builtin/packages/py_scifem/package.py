@@ -22,7 +22,7 @@ class PyScifem(PythonPackage):
     license("MIT", checked_by="jorgensd")
 
     version("main", branch="main")
-    version("0.12.0", sha256="d866d6d87277e8f541c336730d49fdcce9e3576252f855d051f9739b1ff0abb9")
+    version("0.13.1", sha256="8c5570c0a0184a1c44cfca1bf3427bebb0d72181251989ef62ecaeb2fd0ef957")
     version("0.7.0", sha256="016556573a05d2bebb983017c41427d906df870633d23e5bd9d68af8d4b81de2")
     version("0.6.0", sha256="548c9af8997537bc6830c898a9ffe7007dda16b5e40f3240c97e646cfd0a30b3")
     version("0.5.0", sha256="1e5978ab97889c2d6bad80e375c9db1b050bfb68c197eada17928e6908f15372")
