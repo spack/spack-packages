@@ -141,7 +141,7 @@ class Plumed(AutotoolsPackage):
         description="Activates FireArray support",
     )
     variant("pytorch", default=False, description="Activates PyTorch support", when="@2.9:")
-    variant("metatomic", default=False, description="Activates PyTorch support", when="@2.10:")
+    variant("metatomic", default=False, description="Activates metatomic support", when="@2.10:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
