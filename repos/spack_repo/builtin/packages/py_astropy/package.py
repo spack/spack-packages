@@ -145,7 +145,7 @@ class PyAstropy(PythonPackage):
         depends_on("py-pytest", when="@:6", type=("build", "run"))
         depends_on("py-fsspec+http@2023.4:", when="@6.1:", type=("build", "run"))
         depends_on("py-s3fs@2023.4:", when="@6.1:", type=("build", "run"))
-        #depends_on("py-uncompresspy@0.4:", type=("build", "run"))
+        # depends_on("py-uncompresspy@0.4:", type=("build", "run"))
         depends_on("py-typing-extensions@3.10.0.1:", when="@5.0.2:6", type=("build", "run"))
 
         # Historical optional dependencies
