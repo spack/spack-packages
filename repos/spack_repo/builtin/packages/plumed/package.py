@@ -115,7 +115,6 @@ class Plumed(AutotoolsPackage):
         conditional("opes", when="@2.7:"),
         conditional("pamm", when="optional_modules=adjmat"),
         "piv",
-        conditional("pytorch", when="@2.9:"),
         conditional("s2cm", when="@2.8:"),
         conditional("sasa", when="@2.8:"),
         "secondarystructure",
