@@ -26,7 +26,7 @@ class PyMetatensorCore(PythonPackage):
 
     for ver, sha in VERSIONS.items():
         version(ver, sha256=sha)
-        depends_on(f"libmetatensor@{ver}", when=f"@{ver}")
+        depends_on(f"libmetatensor@={ver}", when=f"@{ver}")
 
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")

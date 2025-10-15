@@ -62,7 +62,8 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         # no upstream PR (or set of PRs) covering all changes in this path.
         # When #2595 lands, this patch should be updated to include only
         # the changes not incorporated into that PR
-        patch("netcdfc_correct_and_export_link_interface.patch", when="@:4.9.2")
+        patch("netcdfc_correct_and_export_link_interface.patch", when="@:4.8")
+        patch("netcdfc_4.9_correct_and_export_link_interface.patch", when="@4.9:4.9.2")
 
         # Building netcdf-c w/ hdf5+mpi causes CMake's FindMPI to inject a path to the current
         # netcdf-c source directory into its targets interface properties causing CMake configure
@@ -74,6 +75,15 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         # CMake target, this patch adds that.
         # Similar to https://github.com/Unidata/netcdf-c/pull/3132
         patch("netcdf-4.9.3-deflate-include-zlib.patch", when="@4.9.3")
+
+        # Netcdf-c, on Windows, attempts to glob from the CMake prefix path
+        # which is wrong for a multidue of development and CMake practices reasons
+        # is error prone because it uses Windows paths (and prevents installation)
+        # and has no relation to actual runtime requirements for netcdf-c
+        # Additionally, Spack on Windows already does this for every package
+        # so remove this behavior from netcdf-c
+        patch("netcdf-c-4.9.3_no_glob_deps.patch", when="@4.9.3 platform=windows")
+        patch("netcdf-c-4.7-9.2_no_glob_deps.patch", when="@4.7:4.9.2 platform=windows")
 
     # Some of the patches touch configure.ac and, therefore, require forcing the autoreconf stage:
     _force_autoreconf_when = []
