@@ -35,5 +35,4 @@ class PySuperqt(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("py-pyconify", when="+iconify")
 
-
     conflicts("^py-typing-extensions@3.10.0.0")

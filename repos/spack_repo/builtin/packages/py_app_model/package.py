@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -13,7 +14,7 @@ class PyAppModel(PythonPackage):
     homepage = "https://github.com/pyapp-kit/app-model"
     pypi = "app_model/app_model-0.5.0.tar.gz"
 
-    maintainers("Markus92") 
+    maintainers("Markus92")
 
     license("BSD-3-Clause", checked_by="Markus92")
 

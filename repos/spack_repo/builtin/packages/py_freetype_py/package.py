@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -20,5 +21,5 @@ class PyFreetypePy(PythonPackage):
 
     depends_on("py-setuptools@42:", type="build")
     depends_on("py-setuptools-scm@3.4: +toml", type="build")
-    
+
     depends_on("freetype", type=("build", "run"))
