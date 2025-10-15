@@ -29,7 +29,11 @@ class PyPythonDateutil(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-setuptools@24.3:")
-        depends_on("py-setuptools-scm@:7", when="@2.9.0.post0:")
+        # Upstream restricts this dep version regardless of Python version, but it 
+        # is only actually needed for Python 2 and it breaks the version number when 
+        # installed by spack (pip / python thinks the version is "0.0.0") 
+        depends_on("py-setuptools-scm@:7", when="@2.9.0.post0: ^python@:2")
+        depends_on("py-setuptools-scm@8:", when="@2.9.0.post0: ^python@3:")
         depends_on("py-wheel", when="@2.8.0:")
 
     with default_args(type=("build", "run")):
