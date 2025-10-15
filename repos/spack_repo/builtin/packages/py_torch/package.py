@@ -806,6 +806,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     @property
     def libs(self):
-        return find_libraries("libtorch*", root=python_platlib, recursive=True, shared=True) + find_libraries(
-            "libc10*", root=python_platlib, recursive=True, shared=True
-        )
+        return find_libraries(
+            "libtorch*", root=python_platlib, recursive=True, shared=True
+        ) + find_libraries("libc10*", root=python_platlib, recursive=True, shared=True)

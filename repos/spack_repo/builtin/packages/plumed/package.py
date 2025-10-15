@@ -6,7 +6,6 @@ import collections
 import os
 from pathlib import Path
 
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -141,18 +140,8 @@ class Plumed(AutotoolsPackage):
         values=("none", "cpu", "cuda", "opencl"),
         description="Activates FireArray support",
     )
-    variant(
-        "pytorch",
-        default=False,
-        description="Activates PyTorch support",
-        when="@2.9:",
-    )
-    variant(
-        "metatomic",
-        default=False,
-        description="Activates PyTorch support",
-        when="@2.10:",
-    )
+    variant("pytorch", default=False, description="Activates PyTorch support", when="@2.9:")
+    variant("metatomic", default=False, description="Activates PyTorch support", when="@2.10:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -258,9 +247,7 @@ class Plumed(AutotoolsPackage):
         # the issue saying we have no LD_RO executable.
         configure_opts = ["--disable-ld-r"]
 
-        configure_opts.append(
-            "--disable-doc"
-        )
+        configure_opts.append("--disable-doc")
 
         # If using MPI then ensure the correct compiler wrapper is used.
         if "+mpi" in spec:
@@ -270,7 +257,7 @@ class Plumed(AutotoolsPackage):
             # additional argument is required to allow it to build.
             if spec.satisfies("^[virtuals=mpi] intel-oneapi-mpi"):
                 configure_opts.extend(["STATIC_LIBS=-mt_mpi"])
- 
+
         enable_libmetatomic = self.spec.satisfies("+metatomic")
         enable_libtorch = self.spec.satisfies("+pytorch") or self.spec.satisfies("+metatomic")
 
@@ -283,7 +270,9 @@ class Plumed(AutotoolsPackage):
             blas_libs = spec["blas"].libs
             extra_ldflags.append((gsl_libs + blas_libs).search_flags)
             extra_libs.append((gsl_libs + blas_libs).link_flags)
-            extra_cppflags.extend([spec["gsl"].headers.include_flags, spec["blas"].headers.include_flags])
+            extra_cppflags.extend(
+                [spec["gsl"].headers.include_flags, spec["blas"].headers.include_flags]
+            )
         # Set flags to help with ArrayFire
         if "arrayfire=none" not in spec:
             libaf = "arrayfire:{0}".format(spec.variants["arrayfire"].value)
@@ -295,10 +284,12 @@ class Plumed(AutotoolsPackage):
             pytorch_path = Path(spec["py-torch"].package.cmake_prefix_paths[0]).parent.parent
             extra_ldflags.append(spec["py-torch"].libs.search_flags)
             extra_libs.append(spec["py-torch"].libs.link_flags)
-            extra_cppflags.extend([
-                f"-I{pytorch_path / 'include'}",
-                f"-I{pytorch_path / 'include' / 'torch' / 'csrc' / 'api' / 'include'}",
-            ])
+            extra_cppflags.extend(
+                [
+                    f"-I{pytorch_path / 'include'}",
+                    f"-I{pytorch_path / 'include' / 'torch' / 'csrc' / 'api' / 'include'}",
+                ]
+            )
             print(extra_cppflags[-2:])
         if enable_libmetatomic:
             for l in ["libmetatensor", "libmetatensor-torch", "libmetatomic-torch"]:
@@ -330,7 +321,6 @@ class Plumed(AutotoolsPackage):
 
         # Construct list of optional modules
         optional_modules = spec.variants["optional_modules"].value
-
 
         # Predefined set of modules
         if "all" in optional_modules:
