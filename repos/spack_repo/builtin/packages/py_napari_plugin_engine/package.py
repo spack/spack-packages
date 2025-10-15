@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -12,7 +13,7 @@ class PyNapariPluginEngine(PythonPackage):
     homepage = "https://napari-plugin-engine.readthedocs.io/en/latest/"
     pypi = "napari-plugin-engine/napari-plugin-engine-0.2.0.tar.gz"
 
-    maintainers("Markus92") 
+    maintainers("Markus92")
 
     license("MIT", checked_by="github_user1")
 

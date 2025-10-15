@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -25,7 +26,7 @@ class PyNapariConsole(PythonPackage):
     depends_on("py-ipython@7.7.0:", type=("build", "run"))
     depends_on("py-ipykernel@5.2.0:", type=("build", "run"))
     depends_on("py-qtpy@1.7.0:", type=("build", "run"))
-    
+
     depends_on("py-qtconsole@4.5.1:", type=("build", "run"))
     conflicts("^py-qtconsole@4.7.6")
     conflicts("^py-qtconsole@5.4.2")

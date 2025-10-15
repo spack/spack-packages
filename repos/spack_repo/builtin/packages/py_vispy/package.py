@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -20,7 +21,6 @@ class PyVispy(PythonPackage):
 
     version("0.15.2", sha256="d52d10c0697f48990555cea2a2bad3f9f5a772391856fda364ea4bbc69fd075c")
 
-
     depends_on("py-setuptools@69.4.0:", type="build")
     depends_on("py-setuptools-scm@8.1: +toml", type="build")
 
@@ -30,4 +30,3 @@ class PyVispy(PythonPackage):
     depends_on("py-hsluv", type=("build", "run"))
     depends_on("py-kiwisolver", type=("build", "run"))
     depends_on("py-packaging", type=("build", "run"))
-
