@@ -79,7 +79,6 @@ class PyPyyaml(PythonPackage):
 
     def setup_build_environment(self, env):
         if "+libyaml" in self.spec:
-            # Add the libyaml path to RPATH so it's embedded in the binary
             env.append_flags("LDFLAGS", f"-L{self.spec['libyaml'].prefix.lib}")
             env.append_flags("LDFLAGS", f"-Wl,-rpath,{self.spec['libyaml'].prefix.lib}")
             env.append_flags("CFLAGS", f"-I{self.spec['libyaml'].prefix.include}")
