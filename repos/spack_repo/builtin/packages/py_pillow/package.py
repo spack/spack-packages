@@ -47,7 +47,7 @@ class PyPillowBase(PythonPackage):
     # https://pillow.readthedocs.io/en/stable/installation/python-support.html
     with default_args(type=("build", "link", "run")):
         depends_on("python@3.10:3.14", when="@12:")
-        depends_on("python@3.9:3.14", when="@11.3:")
+        depends_on("python@3.9:3.14", when="@11.3")
         depends_on("python@3.9:3.13", when="@11.0:11.2")
         depends_on("python@3.8:3.13", when="@10.4")
         depends_on("python@3.8:3.12", when="@10.1:10.3")
