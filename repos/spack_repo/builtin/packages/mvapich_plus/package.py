@@ -91,10 +91,14 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("zlib-api")
     depends_on("libpciaccess", when=(sys.platform != "darwin"))
     depends_on("libxml2")
-    depends_on("rccl", when="^hip")
     depends_on("libfabric", when="netmod=ofi")
     depends_on("slurm", when="process_managers=slurm")
+    depends_on("cuda", when="+cuda")
+    depends_on("gdrcopy", when="+cuda")
     depends_on("ucx", when="netmod=ucx")
+    depends_on("ucx +cuda +gdrcopy", when="netmod=ucx +cuda")
+    depends_on("hip", when="+rocm")
+    depends_on("ucx +rocm", when="netmod=ucx +rocm")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
@@ -285,7 +289,6 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.append("--enable-fast=all")
         if self.spec.satisfies("+cuda"):
             args.extend([f"--with-cuda={(spec['cuda'].prefix)}"])
-            # args.extend(["--with-cuda"])
         if self.spec.satisfies("+rocm"):
             args.extend([f"--with-rocm={spec['hip'].prefix}"])
 
