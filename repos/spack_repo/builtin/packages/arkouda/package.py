@@ -16,10 +16,8 @@ class Arkouda(MakefilePackage):
 
     # Arkouda does not have a current PyPI package, so we use the GitHub tarball
     list_url = "https://github.com/Bears-R-Us/arkouda/tags"
+    url = "https://github.com/Bears-R-Us/arkouda/archive/refs/tags/v2025.08.20.tar.gz"
     git = "https://github.com/Bears-R-Us/arkouda.git"
-
-    def url_for_version(self, version):
-        return f"https://github.com/Bears-R-Us/arkouda/archive/refs/tags/v{version}.tar.gz"
 
     # See https://spdx.org/licenses/ for a list.
     license("MIT")

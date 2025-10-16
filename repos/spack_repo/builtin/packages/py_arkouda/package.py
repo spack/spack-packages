@@ -14,10 +14,8 @@ class PyArkouda(PythonPackage):
 
     # Updating the arkouda PyPI package is future work
     list_url = "https://github.com/Bears-R-Us/arkouda/tags"
+    url = "https://github.com/Bears-R-Us/arkouda/archive/refs/tags/v2025.08.20.tar.gz"
     git = "https://github.com/Bears-R-Us/arkouda.git"
-
-    def url_for_version(self, version):
-        return f"https://github.com/Bears-R-Us/arkouda/archive/refs/tags/v{version}.tar.gz"
 
     # See https://spdx.org/licenses/ for a list.
     license("MIT")
