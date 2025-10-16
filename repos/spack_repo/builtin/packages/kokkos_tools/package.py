@@ -28,9 +28,10 @@ class KokkosTools(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define("CMAKE_DISABLE_FIND_PACKAGE_Variorum", True),
             self.define("KokkosTools_ENABLE_APEX", False),
             self.define("KokkosTools_ENABLE_CALIPER", False),
+            self.define("KokkosTools_ENABLE_SYSTEMTAP", False),
+            self.define("KokkosTools_ENABLE_VARIORUM", False),
             self.define("KokkosTools_ENABLE_EXAMPLES", False),
             self.define("KokkosTools_ENABLE_SINGLE", False),
             self.define("KokkosTools_ENABLE_TESTS", False),
