@@ -626,6 +626,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         when="@15:16",
     )
 
+    # https://github.com/llvm/llvm-project/issues/156679
+    patch(
+        "https://github.com/llvm/llvm-project/commit/cd24d108a2c19c23c4ac80b501fa7361963cca3d.patch?full_index=1",
+        sha256="0dc6e0bf66edf260b56c088dfbf37abb8417e210f256abe4ee11c395a2665ed8",
+        when="@21"
+    )
+
     @when("@14:17")
     def patch(self):
         # https://github.com/llvm/llvm-project/pull/69458
