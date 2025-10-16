@@ -22,6 +22,8 @@ class PyPahoMqtt(PythonPackage):
     homepage = "https://eclipse.dev/paho/"
     pypi = "paho-mqtt/paho_mqtt-2.1.0.tar.gz"
 
+    license("EPL-2.0 OR BSD-3-Clause")
+    
     version("2.1.0", sha256="12d6e7511d4137555a3f6ea167ae846af2c7357b10bc6fa4f7c3968fc1723834")
     version("2.0.0", sha256="13b205f29251e4f2c66a6c923c31fc4fd780561e03b2d775cff8e4f2915cf947")
 
