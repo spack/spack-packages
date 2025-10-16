@@ -51,6 +51,11 @@ class PyPyyaml(PythonPackage):
     # 6.0.2+ do now support Cython 3 per release notes
     conflicts("^py-cython@3:", when="@:6.0.1")
 
+    # Per pyyaml release notes, support for Python 3.13 was added in 6.0.2
+    # and support for Python 3.14 was added in 6.0.3.
+    conflicts("^python@3.13:", when="@:6.0.1")
+    conflicts("^python@3.14:", when="@:6.0.2")
+
     # With pyyaml 6.0.2, the tarfile changed from PyYAML-6.0.1.tar.gz to pyyaml-6.0.2.tar.gz
     def url_for_version(self, version):
         if version >= Version("6.0.2"):
