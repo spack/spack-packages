@@ -34,7 +34,8 @@ class Charliecloud(AutotoolsPackage):
     variant("cdi", default=True, description="Build with CDI support", when="@0.40:")
 
     depends_on("c", type="build")  # generated
-    depends_on("bdw-gc@8:", type=("build", "link"))
+    depends_on("bdw-gc", type=("build", "link"))
+    depends_on("bdw-gc@8:", type=("build", "link"), when="@0.40:")
 
     # Autoconf.
     depends_on("m4", type="build")
