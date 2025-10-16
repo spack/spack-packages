@@ -30,7 +30,7 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("Unlicense")
 
     # Prefer the latest stable release
-    version("4.1", sha256="be0a60f342cb94b6719799077072d87aa6e306f21e2c4a09eba6c581f83d4619")
+    version("4.1", sha256="e81b7f5ba804206f8917df3bda6abd5e16e8d6ffec4c2d9047e3ff2735a6465b")
     version("4.0", sha256="942156804425752ab8b7884a6995581d7d9e93f58025ca71b58e6412eb766eae")
 
     provides("mpi")
@@ -58,8 +58,8 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant(
         "process_managers",
         description="List of the process managers to activate",
-        values=disjoint_sets(("auto",), ("slurm",), ("hydra", "gforker", "remshell"))
-        .with_error("'slurm' or 'auto' cannot be activated along with other process managers")
+        values=disjoint_sets(("auto",), ("slurm",), ("cray",), ("hydra", "gforker", "remshell"))
+        .with_error("'slurm', 'cray', or 'auto' cannot be activated along with other process managers")
         .with_default("auto")
         .with_non_feature_values("auto"),
     )
@@ -72,8 +72,20 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
         "homepage url.",
         default="ofi",
         values=("ofi", "ucx"),
+        multi=True,
+    )
+
+    variant(
+        "shmmod",
+        description="Select the shmmod to be enabled for this build."
+        "For most systems auto will suffice. UCX will build with no internal "
+        "shmmod support. To force the posix shmmod, set posix.",
+        default="auto",
+        values=("auto", "posix"),
         multi=False,
     )
+
+    variant("xpmem", default=True, description="Build with XPMEM support")
 
     variant(
         "alloca", default=False, description="Use alloca to allocate temporary memory if available"
@@ -99,6 +111,7 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("ucx +cuda +gdrcopy", when="netmod=ucx +cuda")
     depends_on("hip", when="+rocm")
     depends_on("ucx +rocm", when="netmod=ucx +rocm")
+    depends_on("xpmem", when="+xpmem")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
@@ -291,12 +304,8 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.extend([f"--with-cuda={(spec['cuda'].prefix)}"])
         if self.spec.satisfies("+rocm"):
             args.extend([f"--with-rocm={spec['hip'].prefix}"])
-
-        # no longer supported
-        if self.spec.satisfies("+regcache"):
-            args.append("--enable-registration-cache")
-        else:
-            args.append("--disable-registration-cache")
+        if self.spec.satisfies("+xpmem"):
+            args.extend([f"--with-xpmem={spec['xpmem'].prefix}"])
 
         # probably don't want to do this
         args.extend(self.process_manager_options)
