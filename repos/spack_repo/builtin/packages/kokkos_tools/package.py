@@ -27,6 +27,9 @@ class KokkosTools(CMakePackage):
     depends_on("papi", when="+papi")
 
     def cmake_args(self):
+        # The plugins are intentionally disabled the time to properly introduce new variants
+        # with associated dependencies.
+        # Feel free to contribute.
         args = [
             self.define("KokkosTools_ENABLE_APEX", False),
             self.define("KokkosTools_ENABLE_CALIPER", False),
