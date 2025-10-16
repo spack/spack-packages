@@ -12,7 +12,7 @@ class Charliecloud(AutotoolsPackage):
 
     maintainers("j-ogas", "reidpr", "loshak")
     homepage = "https://charliecloud.io/"
-    url = "https://gitlab.com/charliecloud/main/-/archive/v0.42/main-v0.42.tar.gz"
+    url = "https://gitlab.com/charliecloud/charliecloud/-/archive/v0.42/main-v0.42.tar.gz"
     git = "https://gitlab.com/charliecloud/charliecloud.git"
 
     tags = ["e4s"]
