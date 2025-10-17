@@ -1,7 +1,8 @@
-# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
@@ -12,6 +13,8 @@ class PyAlbumentations(PythonPackage):
 
     homepage = "https://github.com/albu/albumentations"
     pypi = "albumentations/albumentations-1.1.0.tar.gz"
+
+    license("MIT")
 
     version("1.3.1", sha256="a6a38388fe546c568071e8c82f414498e86c9ed03c08b58e7a88b31cf7a244c6")
     version("1.1.0", sha256="60b067b3093908bcc52adb2aa5d44f57ebdbb8ab57a47b0b42f3dc1d3b1ce824")
