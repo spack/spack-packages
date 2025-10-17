@@ -8,6 +8,7 @@ import warnings
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from pathlib import Path
 
 from spack.package import *
 
@@ -40,6 +41,7 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
     maintainers("PHHargrove", "bonachea", "rbberger")
 
     tags = ["e4s", "ecp"]
+    executables = ["^gasnet_trace$"]
 
     version("develop", branch="develop")
     version("main", branch="stable")
@@ -316,3 +318,39 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
                 args = spawner[c][1:] + [test]
                 out = exe(*args, output=str.split, error=str.split)
                 assert expected in out
+
+    @classmethod
+    def determine_version(cls, exe):
+        prefix = Path(exe).parent.parent
+        config = prefix / "include" / "gasnet_config.h"
+        if config.exists():
+            with open(config, "r") as f:
+                for line in f:
+                    if line.startswith("#define GASNETI_RELEASE_VERSION"):
+                        return line.split()[2]
+        return None
+
+    @classmethod
+    def determine_variants(cls, exes, version):
+        results = []
+        for exe in exes:
+            variants = []
+            prefix = Path(exe).parent.parent
+            config = prefix / "include" / "gasnet_config.h"
+            if config.exists():
+                pshm = False
+                with open(config, "r") as f:
+                    for line in f:
+                        if line.startswith("#define GASNETI_CONDUITS"):
+                            variants.append("conduits:=" + ",".join(line.split()[3:]).strip().replace('"', ''))
+                        elif line.startswith("#define GASNET_SEGMENT_FAST 1"):
+                            variants.append("segment=fast")
+                        elif line.startswith("#define GASNET_SEGMENT_LARGE 1"):
+                            variants.append("segment=large")
+                        elif line.startswith("#define GASNET_SEGMENT_EVERYTHING 1"):
+                            variants.append("segment=everything")
+                        elif line.startswith("#define GASNETI_PSHM_ENABLED 1"):
+                            pshm = True
+                variants.append("+pshm" if pshm else "~pshm")
+            results.append(" ".join(variants))
+        return results
