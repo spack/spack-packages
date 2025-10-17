@@ -23,6 +23,7 @@ class Rccl(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librccl"]
+    version("7.0.0", sha256="b55ecb07e82b130c9ce4fe9c969c2192a18b462f0e87ac70386e01341af6a98f")
     version(
         "6.4.3",
         tag="rocm-6.4.3",
@@ -95,6 +96,7 @@ class Rccl(CMakePackage):
     patch("0004-Set-rocm-core-path-for-version-file.patch", when="@6.0:6.2")
     patch("0004-Set-rocm-core-path-for-version-file-6.3.patch", when="@6.3")
     patch("0004-Set-rocm-core-path-for-version-file-6.4.patch", when="@6.4")
+    patch("0005-Add-rocm-core-roctracer-path.patch", when="@7.0:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -121,6 +123,7 @@ class Rccl(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -129,7 +132,7 @@ class Rccl(CMakePackage):
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -169,6 +172,8 @@ class Rccl(CMakePackage):
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", True))
+        if self.spec.satisfies("@7.0:"):
+            args.append(self.define("EXPLICIT_ROCM_VERSION", self.version))
         return args
 
     def test_unit(self):

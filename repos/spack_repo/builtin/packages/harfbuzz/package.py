@@ -80,7 +80,8 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         # support for CMake build freetype
         # backport the old support
         patch(
-            "harfbuzz_11.5.0_support_cmake_freetype.patch", when="@5: ^freetype build_system=cmake"
+            "harfbuzz_11.5.0_support_cmake_freetype.patch",
+            when="@11.5: ^freetype build_system=cmake",
         )
 
     for plat in ["linux", "darwin", "freebsd"]:
