@@ -137,9 +137,9 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
         if len(other_pms) > 0:
             opts = ["--with-pm=%s" % ":".join(other_pms)]
         if spec.satisfies("process_managers=slurm"):
-            opts = ["--with-pm=none", f"--with-pmi=slurm"]
+            opts = ["--with-pm=none", "--with-pmi=slurm"]
         if spec.satisfies("process_managers=cray"):
-            opts = ["--with-pm=none", f"--with-pmi=pmi2", f"--with-pmi2=/opt/cray/pe/pmi/default"]
+            opts = ["--with-pm=none", "--with-pmi=pmi2", "--with-pmi2=/opt/cray/pe/pmi/default"]
         if "none" in spec.variants["process_managers"].value:
             opts = ["--with-pm=none"]
 
