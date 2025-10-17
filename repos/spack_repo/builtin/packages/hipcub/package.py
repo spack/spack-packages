@@ -84,7 +84,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
-	"7.0.0",
+        "7.0.0",
         "7.0.2",
     ]:
         depends_on(f"rocprim@{ver}", when=f"+rocm @{ver}")

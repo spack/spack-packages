@@ -113,7 +113,19 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
         depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
+
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+    ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
 
     @classmethod
