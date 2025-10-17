@@ -19,7 +19,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://legion.stanford.edu/realm/"
     git = "https://github.com/StanfordLegion/realm.git"
-    url = "https://github.com/StanfordLegion/realm/archive/refs/tags/v25.6.1-rc.3.tar.gz"
+    url = "https://github.com/StanfordLegion/realm/archive/refs/tags/v25.6.1-rc.4.tar.gz"
 
     license("Apache-2.0")
 
@@ -27,7 +27,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
     version(
-        "25.6.1-rc.3", sha256="fa100b8b55009941017a24e37a2834142f3af3a4abcd937e6be51099f747ebe6"
+        "25.6.1-rc.4", sha256="077776e553a3098e19b431e2db797c9749366c2cc2a7b85f8b1535a958f60857"
     )
 
     depends_on("c", type="build")
