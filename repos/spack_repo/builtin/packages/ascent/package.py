@@ -191,6 +191,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@0.8.6:", when="@0.9:")
     depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
     depends_on("conduit@0.9.4", when="@0.9.4")
+    depends_on("conduit@0.9.5", when="@0.9.5")
     depends_on("conduit+python", when="+python")
     depends_on("conduit~python", when="~python")
     depends_on("conduit+mpi", when="+mpi")
@@ -225,7 +226,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     #######################
     with when("+raja"):
         depends_on("raja")
-        depends_on("raja@2024.02.1:2024.02.99", when="@0.9.3:")
+        depends_on("raja@2024.02.1:2025.03.1", when="@0.9.3:")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+rocm", when="+rocm")
@@ -235,7 +236,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire")
         depends_on("umpire@:6", when="@:0.8")
         depends_on("umpire@:2023.06.0", when="@:0.9.2")
-        depends_on("umpire@2024.02.1:2024.02.99", when="@0.9.3:")
+        depends_on("umpire@2024.02.1:2025.03.1", when="@0.9.3:")
 
     #######################
     # BabelFlow

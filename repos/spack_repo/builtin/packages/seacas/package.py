@@ -35,6 +35,9 @@ class Seacas(CMakePackage):
     # ###################### Versions ##########################
     version("master", branch="master")
     version(
+        "2025-10-14", sha256="f9351a8f1a555a015020f249b1e5c26a282fbb6e274f9b71eb38720d61267dda"
+    )
+    version(
         "2025-08-28", sha256="29125a84859c78b6bb0b5909ce7443aa2774235f0fc75dedf467a223603e0ffd"
     )
     version(
@@ -152,7 +155,7 @@ class Seacas(CMakePackage):
     variant(
         "aws",
         default=False,
-        when="@master",
+        when="@2025-10-14:",
         description="Enable support for S3 compatible storage using AWS SDK's S3 module",
     )
     variant(
