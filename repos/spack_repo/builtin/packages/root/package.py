@@ -165,6 +165,7 @@ class Root(CMakePackage):
     variant("arrow", default=False, description="Enable Arrow interface")
     variant("cuda", when="@6.08.00:", default=False, description="Enable CUDA support")
     variant("cudnn", when="@6.20.02:", default=False, description="Enable cuDNN support")
+    variant("cxxmodules", when="@6.16:", default=True, description="Enable C++ modules")
     variant(
         "daos", default=False, description="Enable RNTuple support for DAOS storage", when="@6.26:"
     )
@@ -615,6 +616,7 @@ class Root(CMakePackage):
         else:
             _add_variant(v, f, ("root7", "webui"), "+webgui")
         _add_variant(v, f, "rpath", "+rpath")
+        _add_variant(v, f, "runtime_cxxmodules", "+cxxmodules")
         _add_variant(v, f, "shadowpw", "+shadow")
         _add_variant(v, f, "spectrum", "+spectrum")
         _add_variant(v, f, "sqlite", "+sqlite")
@@ -928,6 +930,10 @@ class Root(CMakePackage):
         env.set("CPPYY_BACKEND_LIBRARY", self.prefix.lib.root.libcppyy_backend)
         if "+rpath" not in self.spec:
             env.prepend_path(self.root_library_path, self.prefix.lib.root)
+
+        # https://github.com/root-project/root/issues/18949
+        if "+cxxmodules" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
 
     def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec):
         env.set("ROOTSYS", self.prefix)
