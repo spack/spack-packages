@@ -79,6 +79,16 @@ class RdmaCore(CMakePackage):
 
     patch("libdrm.patch", when="@34:52")
 
+    def patch(self):
+        if self.spec.satisfies("+pyverbs"):
+            # avoid exceeding shebang length limit during build (in particular in CI)
+            filter_file(
+                r"#!${PYTHON_EXECUTABLE}",
+                "#!/usr/bin/env python",
+                "buildlib/Findcython.cmake",
+                string=True,
+            )
+
     variant(
         "static",
         default=True,
@@ -87,7 +97,12 @@ class RdmaCore(CMakePackage):
     variant("pyverbs", default=True, description="Build with support for pyverbs")
     variant("man_pages", default=True, description="Build with support for man pages")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+
+    with when("+pyverbs"):
+        extends("python")
+        depends_on("python", type="build")
+        depends_on("py-cython", type="build")
 
     depends_on("pkgconfig", type="build")
     depends_on("py-docutils", when="+man_pages", type="build")
@@ -117,8 +132,11 @@ class RdmaCore(CMakePackage):
 
         cmake_args.append(self.define_from_variant("ENABLE_STATIC", "static"))
 
-        if self.spec.satisfies("~pyverbs"):
+        if self.spec.satisfies("+pyverbs"):
+            cmake_args.append(self.define("CMAKE_INSTALL_PYTHON_ARCH_LIB", python_platlib))
+        else:
             cmake_args.append("-DNO_PYVERBS=1")
+
         if self.spec.satisfies("~man_pages"):
             cmake_args.append("-DNO_MAN_PAGES=1")
 
