@@ -23,7 +23,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     git = "https://github.com/hypre-space/hypre.git"
     tags = ["e4s", "radiuss"]
 
-    maintainers("ulrikeyang", "osborn9", "victorapm", "balay")
+    maintainers("victorapm", "rfalgout", "oseikuffuor1", "liruipeng", "waynemitchell", "balay")
 
     test_requires_compiler = True
 
