@@ -153,9 +153,13 @@ class LinuxPerf(Package):
             checks.add("libpython")
             args.append("PYTHON={}".format(spec["python"].command))
             if which(spec["python"].prefix.bin.join("python-config")):
-                args.append("PYTHON_CONFIG={}".format(spec["python"].prefix.bin.join("python-config")))
+                args.append(
+                    "PYTHON_CONFIG={}".format(spec["python"].prefix.bin.join("python-config"))
+                )
             elif which(spec["python"].prefix.bin.join("python3-config")):
-                args.append("PYTHON_CONFIG={}".format(spec["python"].prefix.bin.join("python3-config")))
+                args.append(
+                    "PYTHON_CONFIG={}".format(spec["python"].prefix.bin.join("python3-config"))
+                )
         else:
             args.append("NO_LIBPYTHON=1")
 
