@@ -442,7 +442,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     # allow linker to be found in PATH
     # https://github.com/tensorflow/tensorflow/issues/39263
-    patch("null_linker_bin_path.patch", when="@2.5:")
+    patch("null_linker_bin_path.patch", when="@2.5:2.19")
 
     # Reset import order to that of 2.4. Part of
     # https://bugs.gentoo.org/800824#c3 From the patch:
