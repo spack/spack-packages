@@ -45,9 +45,9 @@ class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         args = []
         if not self.spec.satisfies("^libgit2+ssh"):
-            args.append(f"-Dssh=false")
+            args.append("-Dssh=false")
         if self.spec.satisfies("~vapi"):
-            args.append(f"-Dvapi=false")
+            args.append("-Dvapi=false")
         if self.spec.satisfies("~python"):
-            args.append(f"-Dpython=false")
+            args.append("-Dpython=false")
         return args
