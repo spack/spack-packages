@@ -22,6 +22,7 @@ _versions = {
     }
 }
 
+
 class Maqao(Package):
     """MAQAO performance analysis framework"""
 
