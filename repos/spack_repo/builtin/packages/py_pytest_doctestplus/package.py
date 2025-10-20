@@ -21,6 +21,16 @@ class PyPytestDoctestplus(PythonPackage):
     version("0.13.0", sha256="f884e2231fe5378cc8e5d1a272d19b01ebd352df0591a5add55ff50adac2d2d0")
     version("0.9.0", sha256="6fe747418461d7b202824a3486ba8f4fa17a9bd0b1eddc743ba1d6d87f03391a")
 
+    depends_on("py-setuptools-scm", type="build")
+    depends_on("py-setuptools@30.3.0:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.4.0:", type("build", "run"))
+    depends_on("python@3.8:", when="@1.1.0:", type("build", "run"))
+    depends_on("python@3.7:", when="@0.10.0:", type("build", "run"))
+    depends_on("python@3.6:", when="@0.9.0:", type("build", "run"))
+
+    depends_on("py-pytest@4.6:", type=("build", "run"))
+    depends_on("py-packaging@17:", when="@0.10:", type=("build", "run"))
+
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/p/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.3.0"):
@@ -28,9 +38,3 @@ class PyPytestDoctestplus(PythonPackage):
         else:
             name = "pytest-doctestplus"
         return url.format(name, version)
-
-    depends_on("py-setuptools@30.3.0:", type=("build", "run"))
-    depends_on("py-setuptools-scm", type="build")
-
-    depends_on("py-pytest@4.6:", type=("build", "run"))
-    depends_on("py-packaging@17:", when="@0.10:", type=("build", "run"))
