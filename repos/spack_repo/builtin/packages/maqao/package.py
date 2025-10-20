@@ -10,16 +10,16 @@ from spack.package import *
 
 # Declaring versions depending on architecture
 _versions = {
-        "2025.1.0": {
-            "x86_64": (
-                "e28f4c3ad8f15aaf455b46d6c46f6451fa8aef51ffee134bb766f98570941c8c",
-                "https://www.maqao.org/maqao_archive/maqao.x86_64.2025.1.0.tar.xz",
-            ),
-            "aarch64": (
-                "993d610a3625c7ff605233a388981d87a2f42741a900c29e5de1e47ae69e5b67",
-                "https://www.maqao.org/maqao_archive/maqao.aarch64.2025.1.0.tar.xz",
-            )
-        }
+    "2025.1.0": {
+        "x86_64": (
+            "e28f4c3ad8f15aaf455b46d6c46f6451fa8aef51ffee134bb766f98570941c8c",
+            "https://www.maqao.org/maqao_archive/maqao.x86_64.2025.1.0.tar.xz",
+        ),
+        "aarch64": (
+            "993d610a3625c7ff605233a388981d87a2f42741a900c29e5de1e47ae69e5b67",
+            "https://www.maqao.org/maqao_archive/maqao.aarch64.2025.1.0.tar.xz",
+        )
+    }
 }
 
 class Maqao(Package):
