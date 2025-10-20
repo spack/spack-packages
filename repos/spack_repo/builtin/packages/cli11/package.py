@@ -13,10 +13,11 @@ class Cli11(CMakePackage):
 
     homepage = "https://cliutils.github.io/CLI11/book/"
     url = "https://github.com/CLIUtils/CLI11/archive/v1.9.1.tar.gz"
-    maintainers("nightlark")
+    maintainers("nightlark", "sethrj")
 
     license("BSD-3-Clause")
 
+    version("2.6.0", sha256="8c11bc049090a66cb71c3e90350cddaa792b2a45e0a7841799900b95ca38b101")
     version("2.5.0", sha256="17e02b4cddc2fa348e5dbdbb582c59a3486fa2b2433e70a0c3bacb871334fd55")
     version("2.4.2", sha256="f2d893a65c3b1324c50d4e682c0cdc021dd0477ae2c048544f39eed6654b699a")
     version("2.4.1", sha256="73b7ec52261ce8fe980a29df6b4ceb66243bb0b779451dbd3d014cfec9fdbb58")
@@ -39,9 +40,10 @@ class Cli11(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.4:", type="build")
-    depends_on("cmake@3.5:", type="build", when="@2.4:")
-    depends_on("cmake@3.10:", type="build", when="@2.5:")
+    depends_on("cmake@3.4:", type="build", when="@:2.3")
+    depends_on("cmake@3.5:", type="build", when="@2.4")
+    depends_on("cmake@3.10:", type="build", when="@2.5")
+    depends_on("cmake@3.14:", type="build", when="@2.6:")
 
     def cmake_args(self):
         args = [
