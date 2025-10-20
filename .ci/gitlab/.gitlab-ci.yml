@@ -63,7 +63,7 @@ default:
       when: never
     - if: $CI_COMMIT_REF_NAME == "develop" || $CI_COMMIT_REF_NAME =~ /^releases\/v.*/
       # Pipelines on develop/release branches only rebuild what is missing from the mirror
-      when: always
+      when: on_success
       variables:
         SPACK_PIPELINE_TYPE: "spack_protected_branch"
         SPACK_PRUNE_UNTOUCHED: "False"
@@ -80,7 +80,7 @@ default:
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
-      when: always
+      when: on_success
       variables:
         <<: *common_pr_vars
         SPACK_PRUNE_UNTOUCHED: "True"
