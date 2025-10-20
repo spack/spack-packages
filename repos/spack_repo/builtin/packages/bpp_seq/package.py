@@ -18,11 +18,6 @@ class BppSeq(CMakePackage):
     license("CECILL-2.0")
 
     version("2.4.1", sha256="dbfcb04803e4b7f08f9f159da8a947c91906c3ca8b20683ac193f6dc524d4655")
-    version(
-        "2.2.0",
-        sha256="0927d7fb0301c1b99a7353d5876deadb4a3040776cc74e8fe1c366fe920e7b6b",
-        deprecated=True,
-    )
 
     depends_on("cxx", type="build")  # generated
 

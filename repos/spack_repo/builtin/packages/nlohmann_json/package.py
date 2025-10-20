@@ -12,7 +12,7 @@ class NlohmannJson(CMakePackage):
 
     homepage = "https://nlohmann.github.io/json/"
     url = "https://github.com/nlohmann/json/archive/v3.1.2.tar.gz"
-    maintainers("ax3l")
+    maintainers("ax3l", "pearzt")
 
     license("MIT")
 

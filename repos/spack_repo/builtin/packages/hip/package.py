@@ -25,6 +25,7 @@ class Hip(CMakePackage):
 
     license("MIT")
 
+    version("7.0.0", sha256="762794050eb9f47d8278a3d023bb47fd075c30c91ea9c4719cae55d91535de3c")
     version("6.4.3", sha256="3def2459ca9258f04d35d1d3b0173237cea2b963814886bb8af6a0e317718d3d")
     version("6.4.2", sha256="27e3558ecafa9a7471441aabdd870648fa2619147caa721bd98514fa00d246c1")
     version("6.4.1", sha256="f26f098b08504636c6f4e1da45b162f1df2ce6608eba85606fa7932d8fea960f")
@@ -108,6 +109,7 @@ class Hip(CMakePackage):
             "6.4.1",
             "6.4.2",
             "6.4.3",
+            "7.0.0",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -133,6 +135,7 @@ class Hip(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
 
@@ -148,6 +151,7 @@ class Hip(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -157,6 +161,7 @@ class Hip(CMakePackage):
 
     # Add hip-clr sources thru the below
     for d_version, d_shasum in [
+        ("7.0.0", "cc417e73cda903511db5a72b77704fd41bf7b39204c5cacb2c64701b344b8c5d"),
         ("6.4.3", "aa7c9d9d7da3b5fc944b17ca7c032e8924a8dc327ec79eb8cb7f0c9df6fa76dc"),
         ("6.4.2", "6dca1ffff36dbf8665594a72b47b8dd0362f7ee446dea03961d8b5a639bf3ede"),
         ("6.4.1", "18ee75a04f6fc55e72f8b3fcad1e0d58eceb2ce0e0696ca76d9b3dfaf4bfd7ff"),
@@ -217,6 +222,7 @@ class Hip(CMakePackage):
         )
     # Add hipother sources thru the below
     for d_version, d_shasum in [
+        ("7.0.0", "611aa99b4fe88988850e4533056ebfede1cb546ca2f208dbf3eda84b041ef6d6"),
         ("6.4.3", "bf5112a7dbc62ba292d782297edebb385b18563f4efebfb4b581230f9383a89f"),
         ("6.4.2", "c2828018e6241bf0464c38f63e16abeab0e8eb861f052454b2d1bc96e0bae66a"),
         ("6.4.1", "2251976146b65a5bdda5a46bfecf323d8dd122104a96394b0e76b35060a10842"),
@@ -293,6 +299,7 @@ class Hip(CMakePackage):
                 "comgr": rocm_prefix,
                 "rocm-device-libs": rocm_prefix,
                 "hipify-clang": rocm_prefix,
+                "rocm-core": rocm_prefix,
             }
 
             if self.spec.satisfies("@5.7:"):
@@ -310,6 +317,7 @@ class Hip(CMakePackage):
                 "comgr": self.spec["comgr"].prefix,
                 "rocm-device-libs": self.spec["llvm-amdgpu"].prefix,
                 "hipify-clang": self.spec["hipify-clang"].prefix,
+                "rocm-core": self.spec["rocm-core"].prefix,
             }
         paths["bitcode"] = paths["rocm-device-libs"].amdgcn.bitcode
 
@@ -387,6 +395,11 @@ class Hip(CMakePackage):
             )
             env.append_path(
                 "HIPCC_LINK_FLAGS_APPEND", f"--rocm-path={paths['rocm-path']}", separator=" "
+            )
+            env.append_path(
+                "HIPCC_COMPILE_FLAGS_APPEND",
+                f"-isystem {paths['rocm-core']}/include",
+                separator=" ",
             )
         elif self.spec.satisfies("+cuda"):
             env.set("CUDA_PATH", self.spec["cuda"].prefix)

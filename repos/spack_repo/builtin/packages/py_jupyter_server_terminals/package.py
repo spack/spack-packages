@@ -13,6 +13,7 @@ class PyJupyterServerTerminals(PythonPackage):
     homepage = "https://github.com/jupyter-server/jupyter_server_terminals"
     pypi = "jupyter_server_terminals/jupyter_server_terminals-0.4.4.tar.gz"
 
+    version("0.5.3", sha256="5ae0295167220e9ace0edcfdb212afd2b01ee8d179fe6f23c899590e9b8a5269")
     version("0.4.4", sha256="57ab779797c25a7ba68e97bcfb5d7740f2b5e8a83b5e8102b10438041a7eac5d")
 
     depends_on("python@3.8:", type=("build", "run"))

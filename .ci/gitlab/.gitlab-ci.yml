@@ -9,6 +9,9 @@ variables:
   # PROTECTED_MIRROR_FETCH_DOMAIN: "https://binaries.spack.io"
   PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
   PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
+  SPACK_CI_DISABLE_STACKS:
+    value: /^.*cray.*$/
+    expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
@@ -313,7 +316,7 @@ e4s-rocm-external-build:
 
 e4s-oneapi-generate:
   extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-oneapi-2025.1:2025.03.24
+  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.2-1759968993
 
 e4s-oneapi-build:
   extends: [ ".e4s-oneapi", ".build" ]
@@ -571,7 +574,7 @@ tutorial-build:
 
 ml-linux-x86_64-cpu-generate:
   extends: [ ".generate-x86_64", .ml-linux-x86_64-cpu, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
 ml-linux-x86_64-cpu-build:
   extends: [ ".build", ".ml-linux-x86_64-cpu" ]
@@ -593,7 +596,7 @@ ml-linux-x86_64-cpu-build:
 
 ml-linux-x86_64-cuda-generate:
   extends: [ ".generate-x86_64", .ml-linux-x86_64-cuda, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
 ml-linux-x86_64-cuda-build:
   extends: [ ".build", ".ml-linux-x86_64-cuda"  ]
@@ -615,7 +618,7 @@ ml-linux-x86_64-cuda-build:
 
 ml-linux-x86_64-rocm-generate:
   extends: [ ".generate-x86_64", .ml-linux-x86_64-rocm, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
 ml-linux-x86_64-rocm-build:
   extends: [ ".build", ".ml-linux-x86_64-rocm" ]
@@ -637,7 +640,7 @@ ml-linux-x86_64-rocm-build:
 
 ml-linux-aarch64-cpu-generate:
   extends: [ ".generate-aarch64", .ml-linux-aarch64-cpu ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
 ml-linux-aarch64-cpu-build:
   extends: [ ".build", ".ml-linux-aarch64-cpu" ]
@@ -659,7 +662,7 @@ ml-linux-aarch64-cpu-build:
 
 ml-linux-aarch64-cuda-generate:
   extends: [ ".generate-aarch64", .ml-linux-aarch64-cuda ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
 ml-linux-aarch64-cuda-build:
   extends: [ ".build", ".ml-linux-aarch64-cuda" ]
