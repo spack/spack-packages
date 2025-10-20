@@ -13,8 +13,8 @@ class Comgr(CMakePackage):
     """This provides various Lightning Compiler related services. It currently
     contains one library, the Code Object Manager (Comgr)"""
 
-    homepage = "https://github.com/ROCm/ROCm-CompilerSupport"
-    git = "https://github.com/ROCm/ROCm-CompilerSupport.git"
+    homepage = "https://github.com/ROCm/llvm-project"
+    git = "https://github.com/ROCm/llvm-project.git"
 
     def url_for_version(self, version):
         if version <= Version("6.0.2"):
@@ -29,6 +29,7 @@ class Comgr(CMakePackage):
     libraries = ["libamd_comgr"]
 
     license("NCSA")
+    version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
     version("6.4.3", sha256="7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7")
     version("6.4.2", sha256="9f42cb73d90bd4561686c0366f60f6e58cfd32ff24b094c69e8259fb5d177457")
     version("6.4.1", sha256="460ad28677092b9eb86ffdc49bcb4d01035e32b4f05161d85f90c9fa80239f50")
@@ -79,6 +80,7 @@ class Comgr(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         # llvm libs are linked statically, so this *could* be a build dep
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
