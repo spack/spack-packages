@@ -40,12 +40,18 @@ class Maqao(Package):
     def install(self, spec, prefix):
         # Checking platform is Linux
         if spec.platform != "linux":
-            raise InstallError("Unsupported platform: {0}. Supported platforms: linux".format(spec.platform))
+            raise InstallError(
+                "Unsupported platform: {0}. Supported platforms: linux".format(spec.platform)
+            )
         # Checking architecture is either x86_64 or aarch64
-        arch=spec.target.family
+        arch = spec.target.family
         if arch not in ["x86_64", "aarch64"]:
-            raise InstallError("Unsupported architecture: {0}. Supported architectures: x86_64, aarch64".format(arch))
+            raise InstallError(
+                "Unsupported architecture: {0}. Supported architectures: x86_64, aarch64".format(
+                    arch
+                )
+            )
         # Installing from archive
-        tar = which('tar')
-        tar('xJf', self.stage.archive_file)
-        install_tree('.', prefix)
+        tar = which("tar")
+        tar("xJf", self.stage.archive_file)
+        install_tree(".", prefix)
