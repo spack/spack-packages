@@ -29,6 +29,8 @@ class GreenSeet(CMakePackage):
 
     # Build system dependency
     depends_on("cmake@3.27:", type="build")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # Other dependencies
     depends_on("mpi")

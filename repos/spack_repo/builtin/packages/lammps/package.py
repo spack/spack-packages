@@ -397,6 +397,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("vtk", when="+user-vtk")
     depends_on("vtk", when="+vtk")
     depends_on("hipcub", when="~kokkos +rocm")
+    depends_on("hipcub@:6", when="@:20250722 ~kokkos +rocm")
     depends_on("llvm-amdgpu ", when="+rocm", type="build")
     depends_on("rocm-openmp-extras", when="+rocm +openmp", type="build")
     depends_on("llvm-openmp", when="+openmp %apple-clang", type="build")
