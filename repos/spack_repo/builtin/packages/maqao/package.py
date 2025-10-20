@@ -18,7 +18,7 @@ _versions = {
         "aarch64": (
             "993d610a3625c7ff605233a388981d87a2f42741a900c29e5de1e47ae69e5b67",
             "https://www.maqao.org/maqao_archive/maqao.aarch64.2025.1.0.tar.xz",
-        )
+        ),
     }
 }
 
