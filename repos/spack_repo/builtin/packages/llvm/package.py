@@ -54,6 +54,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("main", branch="main")
 
     # Latest stable
+    version("21.1.4", sha256="3a0921d78be74302cb054da1dad59e706814d8fed3a6ac9b532e935825a0715c")
     version("21.1.3", sha256="5bc91fe86bafebc64189465faca1ff35626dcb1b8539a14ae2ec07834c3e8e95")
     version("21.1.2", sha256="eced3dd78186621f4df8a1accbcd1ecf2ee399571e62d052c21e9bf363af2166")
     version("21.1.1", sha256="5f048351ee63050d7fa45b6a1160768fb222a8d306a89e1344515ef7a4bcd278")
@@ -630,7 +631,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     patch(
         "https://github.com/llvm/llvm-project/commit/cd24d108a2c19c23c4ac80b501fa7361963cca3d.patch?full_index=1",
         sha256="0dc6e0bf66edf260b56c088dfbf37abb8417e210f256abe4ee11c395a2665ed8",
-        when="@21",
+        when="@21.1.0:21.1.4",
     )
 
     @when("@14:17")
