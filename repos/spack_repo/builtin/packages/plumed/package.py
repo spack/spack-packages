@@ -284,6 +284,8 @@ class Plumed(AutotoolsPackage):
             pytorch_path = Path(spec["py-torch"].package.cmake_prefix_paths[0]).parent.parent
             extra_ldflags.append(spec["py-torch"].libs.search_flags)
             extra_libs.append(spec["py-torch"].libs.link_flags)
+            # Add include paths manually
+            # Spack HeaderList.cpp_flags does not support include paths within include paths
             extra_cppflags.extend(
                 [
                     f"-I{pytorch_path / 'include'}",
