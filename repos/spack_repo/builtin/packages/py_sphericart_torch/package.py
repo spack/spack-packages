@@ -10,7 +10,7 @@ from spack.package import *
 class PySphericartTorch(PythonPackage):
     """Library for the calculation of spherical harmonics in Cartesian coordinates"""
 
-    homepage = "https://www.example.com"
+    homepage = "https://sphericart.readthedocs.io/en/latest/"
     pypi = "sphericart_torch/sphericart_torch-0.0.0.tar.gz"
 
     maintainers("RMeli", "luthaf", "HaoZeke", "rubber-duck-debug")

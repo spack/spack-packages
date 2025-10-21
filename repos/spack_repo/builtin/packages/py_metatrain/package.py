@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PyMetatrain(PythonPackage):
-    """FIXME: Put a proper description of your package here."""
+    """Train, fine-tune, and manipulate machine learning models for atomistic systems"""
 
     homepage = "https://docs.metatensor.org/metatrain/latest/index.html#"
     pypi = "metatrain/metatrain-2025.10.tar.gz"

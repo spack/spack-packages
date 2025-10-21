@@ -10,7 +10,7 @@ from spack.package import *
 class PyTorchSpex(PythonPackage):
     """Spherical expansions of atomic neighbourhoods"""
 
-    homepage = "https://www.example.com"
+    homepage = "https://github.com/lab-cosmo/torch-spex"
     pypi = "torch_spex/torch_spex-0.0.0.tar.gz"
 
     maintainers("RMeli", "luthaf", "HaoZeke")
