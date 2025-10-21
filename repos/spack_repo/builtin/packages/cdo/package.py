@@ -202,10 +202,7 @@ class Cdo(AutotoolsPackage):
 
     variant("netcdf", default=True, description="Enable NetCDF support")
     variant(
-        "grib2",
-        default="eccodes",
-        values=("eccodes", "grib-api", "none"),
-        description="Specify GRIB2 backend",
+        "grib2", default="eccodes", values=("eccodes", "none"), description="Specify GRIB2 backend"
     )
     variant(
         "external-grib1",
@@ -238,7 +235,6 @@ class Cdo(AutotoolsPackage):
     # Same in case hdf5 is used in the frontend
     depends_on("hdf5+threadsafe", when="+hdf5")
 
-    depends_on("grib-api", when="grib2=grib-api")
     depends_on("eccodes", when="grib2=eccodes")
 
     depends_on("szip", when="+szip")
@@ -291,10 +287,6 @@ class Cdo(AutotoolsPackage):
                 flags["LIBS"].append(eccodes_libs.link_flags)
                 if not is_system_path(eccodes_spec.prefix):
                     flags["LDFLAGS"].append(eccodes_libs.search_flags)
-        elif self.spec.variants["grib2"].value == "grib-api":
-            config_args.append("--with-grib_api=" + yes_or_prefix("grib-api"))
-            if self.spec.satisfies("@1.9:"):
-                config_args.append("--without-eccodes")
         else:
             config_args.append("--without-grib_api")
             if self.spec.satisfies("@1.9:"):

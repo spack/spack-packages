@@ -38,7 +38,7 @@ class PyMacs2(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@41.2:", when="@2.2.4:", type="build")
     depends_on("py-numpy@1.17:", when="@2.2.4:", type=("build", "run"))
-    depends_on("py-cython@0.29.24:", when="@2.2.8:", type="build")
+    depends_on("py-cython@0.29.24:0.29.36", when="@2.2.8:", type="build")
     depends_on("py-cython@0.29:", when="@2.2.4:2.2.7.1", type="build")
 
     def patch(self):

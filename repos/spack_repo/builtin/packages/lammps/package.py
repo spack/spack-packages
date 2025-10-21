@@ -144,7 +144,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "intel": {"when": "@20210702:"},
         "interlayer": {"when": "@20210728:"},
         "kim": {},
-        "kokkos": {},
+        "kokkos": {"when": "@20201029:"},
         "kspace": {"default": True},
         "latboltz": {"when": "@20210702:"},
         "latte": {"when": "@20170922:20230328"},
@@ -364,7 +364,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("curl", when="+curl")
     depends_on("libpng", when="+png")
     depends_on("ffmpeg", when="+ffmpeg")
-    depends_on("kokkos+deprecated_code+shared@3.0.00", when="@20200303+kokkos")
     depends_on("kokkos+shared@3.1:", when="@20200505:+kokkos")
     depends_on("kokkos@3.7.01:", when="@20230208: +kokkos")
     depends_on("kokkos@4.3.00:", when="@20240417: +kokkos")
@@ -398,6 +397,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("vtk", when="+user-vtk")
     depends_on("vtk", when="+vtk")
     depends_on("hipcub", when="~kokkos +rocm")
+    depends_on("hipcub@:6", when="@:20250722 ~kokkos +rocm")
     depends_on("llvm-amdgpu ", when="+rocm", type="build")
     depends_on("rocm-openmp-extras", when="+rocm +openmp", type="build")
     depends_on("llvm-openmp", when="+openmp %apple-clang", type="build")

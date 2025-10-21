@@ -18,7 +18,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     mesh topology, mesh geometry, and mesh adjacency information.
     """
 
-    homepage = "http://flecsi.org/"
+    homepage = "https://www.flecsi.org/"
     git = "https://github.com/flecsi/flecsi.git"
     maintainers("rbberger", "opensdh")
 
@@ -27,18 +27,10 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     version("2.4.0", tag="v2.4.0", commit="598d518b4105ec91ee42ee50420aa46a32a0f60f")
     version("2.3.2", tag="v2.3.2", commit="736fc74248777a00dbd41f1a66ae49e615c8a514")
     version(
-        "2.3.1", tag="v2.3.1", commit="6c04b9b21790533e457764bd7f8f26757db1552f", deprecated=True
+        "2.2.1", tag="v2.2.1", commit="84b5b232aebab40610f57387778db80f6c8c84c5", deprecated=True
     )
     version(
-        "2.3.0", tag="v2.3.0", commit="90bc8267fceb02060e54646f73b45d4252aef491", deprecated=True
-    )
-    version("2.2.1", tag="v2.2.1", commit="84b5b232aebab40610f57387778db80f6c8c84c5")
-    version("2.2.0", tag="v2.2.0", commit="dd531ac16c5df124d76e385c6ebe9b9589c2d3ad")
-    version(
-        "2.1.0", tag="v2.1.0", commit="533df139c267e2a93c268dfe68f9aec55de11cf0", deprecated=True
-    )
-    version(
-        "2.0.0", tag="v2.0.0", commit="5ceebadf75d1c98999ea9e9446926722d061ec22", deprecated=True
+        "2.2.0", tag="v2.2.0", commit="dd531ac16c5df124d76e385c6ebe9b9589c2d3ad", deprecated=True
     )
 
     variant(
@@ -51,7 +43,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("flog", default=False, description="Enable logging support")
     variant("graphviz", default=False, description="Enable GraphViz Support")
-    variant("doc", default=False, description="Enable documentation", when="@2.2:")
+    variant("doc", default=False, description="Enable documentation")
     variant("hdf5", default=True, description="Enable HDF5 Support")
     variant(
         "caliper_detail",
@@ -74,13 +66,11 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hdf5+hl+mpi", when="+hdf5")
     depends_on("metis@5.1.0:", when="@:2.3.1")
     depends_on("parmetis@4.0.3:", when="@:2.3.1")
-    depends_on("boost@1.70.0: cxxstd=17 +program_options +stacktrace")
+    depends_on("boost@1.79.0: cxxstd=17 +program_options +stacktrace")
 
-    depends_on("cmake@3.15:")
-    depends_on("cmake@3.19:", when="@2.2:")
+    depends_on("cmake@3.19:")
     depends_on("cmake@3.23:", when="@2.3:")
     depends_on("boost +atomic +filesystem +regex +system", when="@:2.2.1")
-    depends_on("boost@1.79.0:", when="@2.2:")
     depends_on("kokkos@3.2.00:", when="+kokkos")
     depends_on("kokkos@3.7:", when="+kokkos @2.3:")
     depends_on("kokkos@3.7:", when="@2.4:")
@@ -89,9 +79,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos +rocm", when="+kokkos +rocm")
     depends_on("kokkos +openmp", when="+kokkos +openmp")
     requires("+openmp", when="@:2.3 ^kokkos +openmp")
-    depends_on("legion@cr-20210122", when="backend=legion @2.0:2.1.0")
     depends_on("legion@cr-20230307", when="backend=legion @2.2.0:2.2.1")
-    depends_on("legion@24.03.0:", when="backend=legion @2.2.2:")
     depends_on("legion@24.09.0:", when="backend=legion @2.3.1:")
     depends_on("legion+shared", when="backend=legion +shared")
     depends_on("legion+hdf5", when="backend=legion +hdf5")
@@ -106,7 +94,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("openmpi@4.1.0:", when="^[virtuals=mpi] openmpi")
     depends_on("graphviz@2.49.0:", when="+graphviz @2.3:")
 
-    # FleCSI 2.2+ documentation dependencies
+    # FleCSI documentation dependencies
     depends_on("py-sphinx", when="+doc")
     depends_on("py-sphinx-rtd-theme", when="+doc")
     depends_on("py-recommonmark", when="@:2.2 +doc")
@@ -136,46 +124,26 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
 
     def cmake_args(self):
         spec = self.spec
+        options = [
+            self.define_from_variant("FLECSI_BACKEND", "backend"),
+            self.define_from_variant("CALIPER_DETAIL", "caliper_detail"),
+            self.define_from_variant("ENABLE_FLOG", "flog"),
+            self.define_from_variant("ENABLE_GRAPHVIZ", "graphviz"),
+            self.define_from_variant("ENABLE_HDF5", "hdf5"),
+            self.define_from_variant("ENABLE_KOKKOS", "kokkos"),
+            self.define_from_variant("ENABLE_OPENMP", "openmp"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define("ENABLE_UNIT_TESTS", self.run_tests),
+            self.define_from_variant("ENABLE_DOCUMENTATION", "doc"),
+        ]
 
-        if spec.satisfies("@2.2:"):
-            options = [
-                self.define_from_variant("FLECSI_BACKEND", "backend"),
-                self.define_from_variant("CALIPER_DETAIL", "caliper_detail"),
-                self.define_from_variant("ENABLE_FLOG", "flog"),
-                self.define_from_variant("ENABLE_GRAPHVIZ", "graphviz"),
-                self.define_from_variant("ENABLE_HDF5", "hdf5"),
-                self.define_from_variant("ENABLE_KOKKOS", "kokkos"),
-                self.define_from_variant("ENABLE_OPENMP", "openmp"),
-                self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-                self.define("ENABLE_UNIT_TESTS", self.run_tests),
-                self.define_from_variant("ENABLE_DOCUMENTATION", "doc"),
-            ]
-
-            if self.spec.satisfies("^kokkos +rocm"):
-                options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
-                options.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
-                if self.spec.satisfies("backend=legion"):
-                    # CMake pulled in via find_package(Legion) won't work without this
-                    options.append(self.define("HIP_PATH", "{0}/hip".format(spec["hip"].prefix)))
-            elif self.spec.satisfies("^kokkos"):
-                options.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
-        else:
-            # kept for supporing version prior to 2.2
-            options = [
-                self.define_from_variant("FLECSI_RUNTIME_MODEL", "backend"),
-                self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-                self.define_from_variant("CALIPER_DETAIL", "caliper_detail"),
-                self.define_from_variant("ENABLE_GRAPHVIZ", "graphviz"),
-                self.define_from_variant("ENABLE_KOKKOS", "kokkos"),
-                self.define_from_variant("ENABLE_OPENMP", "openmp"),
-                self.define_from_variant("ENABLE_DOXYGEN", "doc"),
-                self.define_from_variant("ENABLE_FLOG", "flog"),
-                self.define("ENABLE_MPI", True),
-                self.define("ENABLE_UNIT_TESTS", self.run_tests),
-                self.define_from_variant("ENABLE_HDF5", "hdf5"),
-            ]
-
-            if spec.variants["backend"].value == "hpx":
-                options.append(self.define("HPX_IGNORE_CMAKE_BUILD_TYPE_COMPATIBILITY", True))
+        if self.spec.satisfies("^kokkos +rocm"):
+            options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
+            options.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
+            if self.spec.satisfies("backend=legion"):
+                # CMake pulled in via find_package(Legion) won't work without this
+                options.append(self.define("HIP_PATH", "{0}/hip".format(spec["hip"].prefix)))
+        elif self.spec.satisfies("^kokkos"):
+            options.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
 
         return options

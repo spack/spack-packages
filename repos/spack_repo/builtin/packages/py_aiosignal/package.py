@@ -16,8 +16,10 @@ class PyAiosignal(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.4.0", sha256="f47eecd9468083c2029cc99945502cb7708b082c232f9aca65da147157b251c7")
     version("1.2.0", sha256="78ed67db6c7b7ced4f98e495e572106d5c432a93e1ddd1bf475e1dc05f5b7df2")
 
+    depends_on("python@3.9:", type=("build", "run"), when="@1.4:")
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-frozenlist@1.1.0:", type=("build", "run"))

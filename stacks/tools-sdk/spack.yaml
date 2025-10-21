@@ -4,9 +4,9 @@ spack:
   include:
   # Include the SDK package configurations
   # TODO: Tag this with a release
-  - path: https://raw.githubusercontent.com/tools-integration/tools-sdk/7ed3748ef8dbd91eccbfba34f86dc5174556ebaf/spack/configs/packages.yaml
-    sha256: 026634f98320690230b9160ac2af54d7fe9319a001e08736b7ea900834c4982d
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - path: https://raw.githubusercontent.com/tools-integration/tools-sdk/96ee62feaad3936185937d10185ea17731bd1c7f/spack/configs/packages.yaml
+    sha256: 7e6e369f07e740e3f1cf972ed88f89da7d0c773de0ad45d80441fafed073887d
+  - ../../.ci/gitlab/
 
   packages:
     all:

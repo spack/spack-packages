@@ -26,7 +26,8 @@ class PyCharsetNormalizer(PythonPackage):
     with default_args(type="build"):
         depends_on("py-setuptools")
         depends_on("py-setuptools-scm", when="@3.4.2:")
-        depends_on("py-mypy@1.4.1:1.15.0", when="@3.4.2:")
+        # Optional dependency when building with --use-mypyc
+        # depends_on("py-mypy@1.4.1:1.15.0", when="@3.4.2:")
 
     with default_args(type=("build", "run")):
         depends_on("python@3.7:3.13", when="@3.4:")

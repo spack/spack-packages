@@ -42,7 +42,7 @@ class Libxslt(AutotoolsPackage):
 
     depends_on("c", type="build")
 
-    depends_on("pkgconfig@0.9.0:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("iconv")
     depends_on("libxml2")
     depends_on("libxml2+python", when="+python")
