@@ -84,6 +84,7 @@ class Eigen(CMakePackage, ROCmPackage):
     # TODO: Other dependencies might be needed to test this package
 
     conflicts("@3.4.1", when="platform=windows")
+    conflicts("@5.0.0", when="platform=windows")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("CPATH", self.prefix.include.eigen3)
