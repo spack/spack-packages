@@ -40,6 +40,7 @@ class Dorado(CMakePackage, CudaPackage):
     conflicts("%gcc@13:", msg="Dorado will not build with gcc@13 and newer.")
 
     patch("cmake-htslib.patch")
+    patch("hdf5-libaec.patch")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("LD_LIBRARY_PATH", self.spec["libdeflate"].prefix.lib64)
