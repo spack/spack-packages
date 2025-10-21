@@ -292,7 +292,6 @@ class Plumed(AutotoolsPackage):
                     f"-I{pytorch_path / 'include' / 'torch' / 'csrc' / 'api' / 'include'}",
                 ]
             )
-            print(extra_cppflags[-2:])
         if enable_libmetatomic:
             for libname in ["libmetatensor", "libmetatensor-torch", "libmetatomic-torch"]:
                 extra_ldflags.append(spec[libname].libs.search_flags)
