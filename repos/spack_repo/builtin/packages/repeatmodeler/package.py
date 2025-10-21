@@ -18,11 +18,13 @@ class Repeatmodeler(Package):
 
     license("OSL-2.1")
 
+    version("2.0.7", sha256="2873697a885e7115bf5e940cf880f47de17efb7a200ec2d3a1627d5a689f7a8f")
     version("2.0.4", sha256="94aad46cc70911d48de3001836fc3165adb95b2b282b5c53ab0d1da98c27a6b6")
     version(
         "1.0.11",
         sha256="7ff0d588b40f9ad5ce78876f3ab8d2332a20f5128f6357413f741bb7fa172193",
         url="https://www.repeatmasker.org/RepeatModeler/RepeatModeler-open-1.0.11.tar.gz",
+        deprecated=True,
     )
 
     depends_on("perl", type=("build", "run"))
@@ -45,7 +47,8 @@ class Repeatmodeler(Package):
     depends_on("mafft", type="run", when="@2.0.4:")
     depends_on("ninja-phylogeny", type="run", when="@2.0.4:")
     depends_on("blat", type="run", when="@2.0.4:")
-    depends_on("ltr-retriever", type="run", when="@2.0.4:")
+    depends_on("ltr-retriever@=2.9.0", type="run", when="@2.0.4:")
+    depends_on("repeatafterme", type="run", when="@2.0.7:")
 
     def patch(self):
         file_list = [
@@ -98,6 +101,7 @@ class Repeatmodeler(Package):
 
     def install(self, spec, prefix):
         # interactive configuration script
+        # once 1.0.11 is removed we can clean this up a bit
         if spec.satisfies("@1.0.11"):
             config_answers = [
                 "",
@@ -129,6 +133,8 @@ class Repeatmodeler(Package):
                 spec["mafft"].prefix.bin,
                 spec["ninja-phylogeny"].prefix.bin,
             ]
+        if spec.satisfies("@2.0.7:"):
+            config_answers.insert(2, spec["repeatafterme"].prefix.bin)
 
         config_filename = "spack-config.in"
 
