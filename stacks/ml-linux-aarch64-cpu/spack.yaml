@@ -16,7 +16,7 @@ spack:
     py-jaxlib:
       require: "%c,cxx=clang"
     py-tensorflow:
-      require: "%c,cxx=gcc"
+      require: "%c,cxx=clang"
     py-torch:
       require: "%c,cxx=gcc"
 
