@@ -27,6 +27,9 @@ class Julia(MakefilePackage):
     maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
+    version("1.12.1", sha256="7ef9c3e33ea626cba4aa64a7b5e00854d12f1090c9c1ac077a13b6b2e16ba559")
+    version("1.12.0", sha256="c4f84dd858c36fbad010ebc4a73700f0dbb8c0f573c0734b9f7ae3f8fed0bba8")
+
     version("1.11.9", sha256="3c73d9612ee5bbd9d73b9eee26937c970bea37f51dc24aa23fd4b232539eb7d8")
     version("1.11.8", sha256="c5b00ba80eb311dc90e8fe153348218efb5dc0632b6c47d138fe80e9c5ca037e")
     version("1.11.7", sha256="5378209de1c3da1a13d13fc74beffab984a998a77ae1a6a9901f27008da93c29")
@@ -93,6 +96,20 @@ class Julia(MakefilePackage):
     depends_on("libuv-julia@1.44.3", when="@1.10.0:1.10")
     depends_on("libuv-julia@1.48.0", when="@1.11.0:")
     depends_on("suite-sparse@5.4:5.10", when="@:1.9")
+
+    with when("@1.12.0:1.12"):
+        # libssh2.so.1, libpcre2-8.so.0, libsll.so.3,
+        # libopenlibm.so.4, libblastrampoline.so.5, libgit2.so.1.9, libnghttp2.so.14,
+        # libcurl.so.4
+        depends_on("libblastrampoline@5.13.1:5")
+        depends_on("libgit2@1.9.0:1.9")
+        depends_on("libssh2@1.11:1")
+        depends_on("llvm@18.1.8 +lld shlib_symbol_version=JL_LLVM_18.0")
+        depends_on("openssl@3.5.1:3.5")
+        depends_on("openlibm@0.8.7:0.8", when="+openlibm")
+        depends_on("nghttp2@1.64.0:1.64")
+        depends_on("curl@8.11.1:")
+        depends_on("suite-sparse@7.8.3")
 
     with when("@1.11.0:1.11"):
         # libssh2.so.1, libpcre2-8.so.0, libmbedtls.so.14, libmbedcrypto.so.7, libmbedx509.so.1,
@@ -195,6 +212,14 @@ class Julia(MakefilePackage):
         patches=patch(
             "https://raw.githubusercontent.com/spack/patches/d042ae8f41493547d4263d249a13546f2c971972/julia/4997cd3006a3171d9b33f9a72ff9fdadc84e91a7c86aa044dcf495eef3a02893.patch",
             sha256="4997cd3006a3171d9b33f9a72ff9fdadc84e91a7c86aa044dcf495eef3a02893",
+        ),
+    )
+    depends_on(
+        "llvm",
+        when="^llvm@18.1.8",
+        patches=patch(
+            "https://raw.githubusercontent.com/spack/patches/10e0bd8dc806d99212bab865fe3f72475ea810e6/julia/900363d08b2090bb44240aa33c1ee26558a183016db4fb7e048be4c1665c436e.patch",
+            sha256="900363d08b2090bb44240aa33c1ee26558a183016db4fb7e048be4c1665c436e",
         ),
     )
 
@@ -376,7 +401,8 @@ class Julia(MakefilePackage):
             "USE_SYSTEM_LIBWHICH:=1",
             "USE_SYSTEM_LLD:=1",  # @1.9:
             "USE_SYSTEM_LLVM:=1",
-            "USE_SYSTEM_MBEDTLS:=1",
+            "USE_SYSTEM_MBEDTLS:=1",  # @:1.12
+            "USE_SYSTEM_OPENSSL:=1",  # @1.12:
             "USE_SYSTEM_MPFR:=1",
             "USE_SYSTEM_P7ZIP:=1",
             "USE_SYSTEM_PATCHELF:=1",
