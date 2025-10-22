@@ -22,7 +22,7 @@ class Musica(CMakePackage):
     url = "https://github.com/NCAR/musica/archive/refs/tags/v0.13.0.tar.gz"
     git = "https://github.com/NCAR/musica.git"
 
-    maintainers("kshores", "mattldawson", "boulderdaze")
+    maintainers("kshores", "boulderdaze")
 
     license("Apache-2.0", checked_by="kshores")
 

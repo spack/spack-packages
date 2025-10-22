@@ -24,6 +24,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["e4s"]
 
+    version("2.4.1", tag="v2.4.1", commit="f57a634e3f1f136e8932ad81f267d3b69657ae15")
     version("2.4.0", tag="v2.4.0", commit="598d518b4105ec91ee42ee50420aa46a32a0f60f")
     version("2.3.2", tag="v2.3.2", commit="736fc74248777a00dbd41f1a66ae49e615c8a514")
     version(
@@ -100,6 +101,8 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-recommonmark", when="@:2.2 +doc")
     depends_on("doxygen", when="+doc")
     depends_on("graphviz", when="+doc")
+    depends_on("texlive", when="@2.4.1: +doc")
+    depends_on("pdf2svg", when="@2.4.1: +doc")
 
     # Propagate cuda_arch requirement to dependencies
     for _flag in CudaPackage.cuda_arch_values:
