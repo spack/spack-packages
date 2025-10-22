@@ -12,17 +12,7 @@ class Imod(MakefilePackage, CudaPackage):
     sections and optical sections. The package contains tools for assembling
     and aligning data within multiple types and sizes of image stacks, viewing
     3-D data from any orientation, and modeling and display of the image files.
-    IMOD was developed primarily by David Mastronarde, Rick Gaudette, Sue Held,
-    Jim Kremer, Quanren Xiong, Suraj Khochare, and John Heumann at the
-    University of Colorado.
-
-    The development of IMOD has been supported by grants from the National
-    Center for Research Resources, the National Institute of General Medical
-    Sciences, and the National Institute for Biomedical Imaging and
-    Bioengineering. IMOD and virtually all programs contained within the IMOD
-    package are Copyright (c) 1994-2024 by the Regents of the University of
-    Colorado. Other contributors are acknowledged in our Copyright and Credits
-    statement.  """
+    """
 
     homepage = "https://bio3d.colorado.edu/imod/"
     hg = "http://bio3d.colorado.edu/imod/nightlyBuilds/IMOD"
@@ -34,7 +24,8 @@ class Imod(MakefilePackage, CudaPackage):
 
     version("5.2.3", revision="b520a584fca2")
 
-    # FIXME: Add dependencies if required.
+    variant("fftw", default=False, description="Use external FFTW?")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
@@ -43,7 +34,7 @@ class Imod(MakefilePackage, CudaPackage):
     depends_on("qt@5.12:")  # Can do with 4.6:, but they themselves recommend 5.12+
     depends_on("cuda", when="+cuda")
     depends_on("libtiff@4:")
-    depends_on("fftw@3:")
+    depends_on("fftw@3:", when="+fftw")
     depends_on("hdf5")
     depends_on("jpeg")
     depends_on("glu")
@@ -55,11 +46,21 @@ class Imod(MakefilePackage, CudaPackage):
         # TODO args about FFTW, CUDA
         configure(*configure_args)
 
+        if self.spec.satisfies("+cuda"):
+            cuda_flags = " ".join(self.cuda_flags(self.spec.variants["cuda_arch"].value))
+            filter_file(r"-arch sm_\d{2}", cuda_flags, "configure")
+
     def flag_handler(self, name: str, flags: List[str]):
         if name == "fflags":
             flags.append("-fallow-argument-mismatch")
         return (flags, None, None)
 
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+fftw"):
+            env.set("FFTW3_DIR", self.spec["fftw"].prefix)
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDA_DIR", self.spec["cuda"].prefix)
+
+def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("IMOD_DIR", self.prefix)
 
