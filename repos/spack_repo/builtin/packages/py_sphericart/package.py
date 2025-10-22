@@ -8,7 +8,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 
-class PySphericart(PythonPackage, CudaPackage):
+class PySphericart(PythonPackage):
     """Library for the efficient calculation of spherical harmonics
     and their derivatives in Cartesian coordinates."""
 
@@ -28,7 +28,5 @@ class PySphericart(PythonPackage, CudaPackage):
     depends_on("py-numpy", type=("build", "run"))
 
     def setup_build_environment(self, env):
-        if self.spec.satisfies("+cuda"):
-            env.set("CUDA_HOME", self.spec["cuda"].prefix)
-        else:
-            env.unset("CUDA_HOME")
+        # Prevent sphericart to accidentally pick up CUDA
+        env.unset("CUDA_HOME")

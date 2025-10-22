@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class PySphericartTorch(PythonPackage):
+class PySphericartTorch(PythonPackage, CudaPackage):
     """Library for the calculation of spherical harmonics in Cartesian coordinates"""
 
     homepage = "https://sphericart.readthedocs.io/en/latest/"
@@ -28,4 +29,8 @@ class PySphericartTorch(PythonPackage):
     # setup.py
     depends_on("py-torch@2.1:", type=("build", "run"))
 
-    depends_on("py-sphericart")
+    def setup_build_environment(self, env):
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDA_HOME", self.spec["cuda"].prefix)
+        else:
+            env.unset("CUDA_HOME")
