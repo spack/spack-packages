@@ -3,16 +3,18 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class PySphericart(PythonPackage):
+class PySphericart(PythonPackage, CudaPackage):
     """Library for the efficient calculation of spherical harmonics
     and their derivatives in Cartesian coordinates."""
 
     homepage = "https://sphericart.readthedocs.io/en/latest/index.html"
     pypi = "sphericart/sphericart-1.0.3.tar.gz"
+    git = "https://github.com/lab-cosmo/sphericart.git"
 
     maintainers("RMeli", "luthaf", "HaoZeke", "rubber-duck-debug")
 
@@ -24,3 +26,9 @@ class PySphericart(PythonPackage):
     depends_on("py-setuptools@44:", type="build")
 
     depends_on("py-numpy", type=("build", "run"))
+
+    def setup_build_environment(self, env):
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDA_HOME", self.spec["cuda"].prefix)
+        else:
+            env.unset("CUDA_HOME")
