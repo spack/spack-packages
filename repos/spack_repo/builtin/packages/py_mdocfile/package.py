@@ -16,10 +16,15 @@ class PyMdocfile(PythonPackage):
     license("BSD-3-Clause", checked_by="Markus92")
 
     version("0.2.2", sha256="74d2dbe55ffda288f61cfac82aaf0052e1365a65c5acc1ed93e3c86e1457e5b0")
+    version("0.0.8", sha256="61e352b569128fdeaff9f639e6aa3d46c8f8c3b8fe36627461ba0153f46f103d")
 
     depends_on("python@3.9:")
-    depends_on("py-hatchling", type="build")
+    depends_on("py-hatchling", type="build", when="@0.1.0:")
+    depends_on("py-hatch-vcs", type="build", when="@0.1.0:")
+    depends_on("py-setuptools", type="build", when="@:0.0.8")
+    depends_on("py-setuptools-scm", type="build", when="@:0.0.8")
 
-    depends_on("py-pydantic@2:")
+    depends_on("py-pydantic@2:", when="@0.1.0:")
+    depends_on("py-pydantic")
     depends_on("py-pandas")
 
