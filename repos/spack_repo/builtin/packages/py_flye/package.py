@@ -44,8 +44,7 @@ class PyFlye(PythonPackage):
     conflicts("%clang@:3.2", msg=msg)
     conflicts("%apple-clang@:4.9", msg=msg)
 
-    patch("dir_fix.patch", when="@:2.9")
-    #patch("dir_fix.patch", when="@:2.8,=2.9")
+    patch("dir_fix.patch", when="@:2.8,=2.9")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.target.family == "aarch64":
