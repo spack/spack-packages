@@ -798,7 +798,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 ".tf_configure.bazelrc",
             )
 
-        if spec.satisfies("@:1~opencl"):
+        if spec.satisfies("@:1.19~opencl"):
             # 1.8.0 and 1.9.0 aborts with numpy import error during python_api
             # generation somehow the wrong PYTHONPATH is used...
             # set --distinct_host_configuration=false as a workaround
