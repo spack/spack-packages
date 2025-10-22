@@ -21,8 +21,7 @@ class Sysbench(AutotoolsPackage):
 
     variant("mysql", default=True, description="Build with MySQL support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
