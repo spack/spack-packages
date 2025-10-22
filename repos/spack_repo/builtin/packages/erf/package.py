@@ -39,7 +39,7 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
-    variant("hip", default=False)
+    variant("hip", default=False, description="Enable HIP/rocm support")
     variant("sycl", default=False, description="Enable SYCL support")
     variant("netcdf", default=False, description="Enable NetCDF support")
     variant("particles", default=False, description="Enable particle support")
@@ -88,7 +88,7 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+cuda", when="+sycl", msg="Cannot enable both CUDA and SYCL")
     conflicts("+hip", when="+sycl", msg="Cannot enable both HIP and SYCL")
     conflicts("+fft", when="~mpi", msg="FFT support requires MPI")
-    conflicts('+radiation', when='platform=darwin', msg='Radiation is not supported on macOS')
+    conflicts("+radiation", when="platform=darwin", msg="Radiation is not supported on macOS")
 
     def cmake_args(self):
         args = [
@@ -108,31 +108,37 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
         args.append(self.define("GIT_SUBMODULE_PROTOCOL", "https"))
         args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
         args.append(self.define("CMAKE_BUILD_TYPE", "Release"))
-        args.append(self.define("ERF_DIM","3"))
+        args.append(self.define("ERF_DIM", "3"))
 
         if "+netcdf" in self.spec:
-            args.extend([
-                self.define("NetCDF_C_PATH", self.spec["netcdf-c"].prefix),
-                self.define("NetCDF_FORTRAN_PATH", self.spec["netcdf-fortran"].prefix),
-            ])
+            args.extend(
+                [
+                    self.define("NetCDF_C_PATH", self.spec["netcdf-c"].prefix),
+                    self.define("NetCDF_FORTRAN_PATH", self.spec["netcdf-fortran"].prefix),
+                ]
+            )
 
         if "+radiation" in self.spec:
             if "+cuda" in self.spec:
                 args.append(self.define("Kokkos_ARCH_AMPERE80", True))
-            args.extend([
-                self.define("ERF_ENABLE_KOKKOS", True),
-                self.define("Kokkos_ARCH_AMPERE", True),
-                self.define("ERF_ENABLE_EKAT", True),
-                self.define("ERF_ENABLE_RRTMGP", True)
-            ])
+            args.extend(
+                [
+                    self.define("ERF_ENABLE_KOKKOS", True),
+                    self.define("Kokkos_ARCH_AMPERE", True),
+                    self.define("ERF_ENABLE_EKAT", True),
+                    self.define("ERF_ENABLE_RRTMGP", True),
+                ]
+            )
 
         if "+cuda" in self.spec:
             archs = self.spec.variants["cuda_arch"].value or ["80"]
             args.append(self.define("CMAKE_CUDA_ARCHITECTURES", ";".join(archs)))
-            args.extend([
-                self.define("ERF_ENABLE_CUDA", "ON"),
-                self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix),
-            ])
+            args.extend(
+                [
+                    self.define("ERF_ENABLE_CUDA", "ON"),
+                    self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix),
+                ]
+            )
 
         if "+hip" in self.spec:
             args.append(self.define("CMAKE_HIP_ARCHITECTURES", "gfx906;gfx908;gfx90a"))
@@ -142,10 +148,10 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
 
     def setup_build_environment(self, env):
         super(Erf, self).setup_build_environment(env)
-        env.set('GIT_CONFIG_COUNT', '1')
-        env.set('GIT_CONFIG_KEY_0', 'url.https://github.com/.insteadOf')
-        env.set('GIT_CONFIG_VALUE_0', 'git@github.com:')
-        env.set('AMREX_HOME', self.spec['amrex'].prefix)
+        env.set("GIT_CONFIG_COUNT", "1")
+        env.set("GIT_CONFIG_KEY_0", "url.https://github.com/.insteadOf")
+        env.set("GIT_CONFIG_VALUE_0", "git@github.com:")
+        env.set("AMREX_HOME", self.spec["amrex"].prefix)
         if "+hip" in self.spec:
             env.set("HIPCXX", self.spec["hip"].prefix.bin.hipcc)
         if "+openmp" in self.spec:
