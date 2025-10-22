@@ -15,8 +15,7 @@ class PyWigners(PythonPackage):
 
     maintainers("luthaf", "RMeli", "HaoZeke")
 
-    # TODO: Dual license
-    # license("UNKNOWN", checked_by="github_user1")
+    license("Apache-2.0 OR MIT", checked_by="RMeli")
 
     version("0.3.1", sha256="90882e69208a830140a244645e39d4c3a84b8db1a4feb926ba29d0cc374ac149")
 
