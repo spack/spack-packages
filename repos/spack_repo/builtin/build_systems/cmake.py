@@ -60,6 +60,13 @@ def _maybe_set_python_hints(pkg: PackageBase, args: List[str]) -> None:
     )
 
 
+def _dependencies_cmake_extra_args(pkg: PackageBase, args: List[str]) -> None:
+    for dep in pkg.spec.traverse(deptype=("build", "link")):
+        extra_args = getattr(dep.package, "cmake_extra_args", None)
+        if extra_args:
+            args.extend(extra_args)
+
+
 def _supports_compilation_databases(pkg: PackageBase) -> bool:
     """Check if this package (and CMake) can support compilation databases."""
 
@@ -406,6 +413,7 @@ class CMakeBuilder(BuilderWithDefaults):
 
         _conditional_cmake_defaults(pkg, args)
         _maybe_set_python_hints(pkg, args)
+        _dependencies_cmake_extra_args(pkg, args)
 
         return args
 
