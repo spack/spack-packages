@@ -19,6 +19,8 @@ class Sysbench(AutotoolsPackage):
     version("1.0.19", sha256="39cde56b58754d97b2fe6a1688ffc0e888d80c262cf66daee19acfb2997f9bdd")
     version("1.0.18", sha256="c679b285e633c819d637bdafaeacc1bec13f37da5b3357c7e17d97a71bf28cb1")
 
+    variant("mysql", default=True, description="Build with MySQL support")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -26,4 +28,11 @@ class Sysbench(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("mysql-client")
+    depends_on("mysql-client", when="+mysql")
+
+    def configure_args(self):
+        args = []
+
+        args.extend(self.with_or_without("mysql"))
+
+        return args
