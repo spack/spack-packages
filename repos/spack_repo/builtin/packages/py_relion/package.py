@@ -3,10 +3,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack.package import *
 
 
-class PyRelion(PythonPackage):
+class PyRelion(PythonPackage, CudaPackage):
     """This is a helper package for relion, not to be used by end-users.
 
     relion (for REgularised LIkelihood OptimisatioN, pronounce rely-on) is a
@@ -24,11 +25,12 @@ class PyRelion(PythonPackage):
     version("5.0.1", sha256="acbf898e96513b092514a56ff2a255c69a795e7a6f04131eacc8f55e2a900c23")
     version("5.0.0", sha256="5d02d529bfdb396204310b35963f35e5ec40ed9fd10bc88c901119ae7d7739fc")
 
+    variant("cuda", default=True, description="Build with CUDA (recommended)")
+
     depends_on("python@3.10")
     depends_on("py-setuptools@45:", type="build")
     depends_on("py-wheel", type="build")
-    depends_on("py-setuptools-scm@6.3", type="build")
-    depends_on("py-torch@2.0.1", when="@5.0")  # TODO how to define Cuda?
+    depends_on("py-setuptools-scm@6.3:", type="build")
     depends_on("py-torchvision@0.15.2", when="@5.0")
     depends_on("py-tqdm@4.65.0", when="@5.0")
     depends_on("py-mrcfile@1.4.3", when="@5.0")
@@ -37,9 +39,8 @@ class PyRelion(PythonPackage):
     depends_on("py-scikit-learn@1.3.0", when="@5.0")
     depends_on("py-umap-learn@0.5.3", when="@5.0")
     depends_on("py-matplotlib@3.7.2", when="@5.0")
-    depends_on("py-pydantic@1.10.19", when="@5.0")  # Should be .18 but that doesn't exist in Spack
-    # depends_on("py-napari+all@0.4.18", when="@5.0")  # TODO create package
-    depends_on("tsne-cuda@3.0.1 +cuda +python", when="@5.0")  # Only when cuda
+    depends_on("py-pydantic@1.10.19", when="@5.0")
+    depends_on("py-napari+all@0.4.18", when="@5.0")
     depends_on("py-pyqt5@5.15.9", when="@5.0")
     depends_on("py-typer@0.9.0", when="@5.0")
     depends_on("py-biopython@1.81", when="@5.0")
@@ -54,8 +55,17 @@ class PyRelion(PythonPackage):
     depends_on("py-lil-aretomo", when="@5.0")
     depends_on("py-makefun")
     depends_on("py-lru-dict")
+    depends_on("py-topaz-3dem", type="run", when="@5:")
+    depends_on("py-model-angelo", type="run", when="@5:")
+    depends_on("py-relion-blush", type="run", when="@5:")
+    depends_on("py-relion-classranker", type="run", when="@5:")
 
+    for arch in CudaPackage.cuda_arch_values:
+      depends_on(f"tsne-cuda@3.0.1 +cuda cuda_arch={arch} +python", when=f"@5.0 +cuda cuda_arch={arch}")
+      depends_on(f"py-torch@2.0.1 +cuda cuda_arch={arch}", when=f"@5.0 +cuda cuda_arch={arch}")
+   
+    depends_on("py-torch@2.0.1 ~cuda", when="@5.0 ~cuda")
 
     # Set version so setuptools won't complain about not being able to determine it
     def setup_build_environment(self, env):
-        env.set("SETUPTOOLS_SCM_PRETEND_VERSION", self.spec.version)
+        env.set("SETUPTOOLS_SCM_PRETEND_VERSION", str(self.spec.version))
