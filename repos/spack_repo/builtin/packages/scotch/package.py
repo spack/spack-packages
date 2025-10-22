@@ -21,6 +21,8 @@ class Scotch(CMakePackage, MakefilePackage):
 
     maintainers("AlexanderRichert-NOAA", "climbfuji")
 
+    version("7.0.10", sha256="8327725a08cdd4fc7575e291251883b4f93f75b07a54bc58f89f50dcbba7b244")
+    version("7.0.9", sha256="6d50c3f66e3e0e2058bce45ed9eee171fd8d6c01123c802a98544948a1c3d5d1")
     version("7.0.8", sha256="21f48ac85c7991a5eb5fae9232dd68584556ccc500f85e2ebd6b5b275617e11a")
     version("7.0.7", sha256="02084471d2ca525f8a59b4bb8c607eb5cca452d6a38cf5c89f5f92f7edc1a5b5")
     version("7.0.6", sha256="b44acd0d2f53de4b578fa3a88944cccc45c4d2961cd8cefa9b9a1d5431de8e2b")
@@ -79,10 +81,12 @@ class Scotch(CMakePackage, MakefilePackage):
         description="Determinism configuration",
         when="@7.0.7: build_system=cmake",
     )
+    variant("fortran", default=True, when="@7.0.9:", description="Enable Fortran interface")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", type="build", when="@:7.0.8")
+    depends_on("fortran", type="build", when="+fortran")
 
     # Does not build with flex 2.6.[23]
     depends_on("flex@:2.6.1,2.6.4:", type="build")

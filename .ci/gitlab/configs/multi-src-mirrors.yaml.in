@@ -5,7 +5,7 @@ mirrors:
     source: False
     binary: True
   buildcache-destination:
-    fetch: ${PR_MIRROR_FETCH_DOMAIN}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
-    push: ${PR_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
+    fetch: ${PR_MIRROR_FETCH_DOMAIN}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
+    push: ${PR_MIRROR_PUSH_DOMAIN}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
     source: False
     binary: True
