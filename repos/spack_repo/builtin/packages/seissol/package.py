@@ -264,6 +264,7 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
                 if v == "intel_gpu" and cg in ("auto", "tinytc"):
                     depends_on("tiny_tensor_compiler", when=f"+{v} device_codegen={cg}")
 
+        depends_on("intel-oneapi-compilers", when="+intel_gpu")
         depends_on("libxsmm@=1.17 +generator", when="gemm_tools_list=LIBXSMM target=x86_64:")
 
     def cmake_args(self):
