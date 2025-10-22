@@ -1,8 +1,8 @@
-from spack.package import *
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
-import os
+
+from spack.package import *
 
 
 class Erf(CMakePackage, CudaPackage, ROCmPackage):
