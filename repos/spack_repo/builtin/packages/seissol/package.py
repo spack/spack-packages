@@ -108,6 +108,11 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     forwarded_variants = ["cuda", "intel_gpu", "rocm"]
+    device_codegen_options = {}
+    for v in forwarded_variants:
+        device_codegen_options[v] = ("auto", "gemmforge-chainforge", "tensorforge")
+    device_codegen_options["intel_gpu"] += ("tinytc",)
+
     for v in forwarded_variants:
         variant(
             "sycl_backend",
@@ -120,6 +125,13 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
             "sycl_gemm",
             default=False,
             description="Use SYCL also for the wave propagation part (default for Intel GPUs)",
+            when=f"+{v}",
+        )
+        variant(
+            "device_codegen",
+            description="GPU code generators",
+            default="auto",
+            values=device_codegen_options[v],
             when=f"+{v}",
         )
 
@@ -242,10 +254,15 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("py-matplotlib")
         depends_on("py-pspamm", when="gemm_tools_list=PSpaMM")
 
-        forwarded_variants = ["cuda", "intel_gpu", "rocm"]
         for v in forwarded_variants:
-            depends_on("py-gemmforge", when=f"+{v}")
-            depends_on("py-chainforgecodegen", when=f"+{v}")
+            for cg in device_codegen_options[v]:
+                if cg in ("auto", "gemmforge-chainforge"):
+                    depends_on("py-gemmforge", when=f"+{v} device_codegen={cg}")
+                    depends_on("py-chainforgecodegen", when=f"+{v} device_codegen={cg}")
+                if cg in ("auto", "tensorforge"):
+                    depends_on("py-tensorforge", when=f"+{v} device_codegen={cg}")
+                if v == "intel_gpu" and cg in ("auto", "tinytc"):
+                    depends_on("tiny_tensor_compiler", when=f"+{v} device_codegen={cg}")
 
         depends_on("libxsmm@=1.17 +generator", when="gemm_tools_list=LIBXSMM target=x86_64:")
 
@@ -318,6 +335,9 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
             args.append(f"-DSYCLCC={syclcc_backends[sycl_backend]}")
             if self.spec.satisfies("+sycl_gemm"):
                 args.append(f"-DDEVICE_BACKEND={sycl_backends[sycl_backend]}")
+
+            device_codegen = self.spec.variants["device_codegen"].value
+            args.append(f"-DDEVICE_CODEGEN_OPTIONS={device_codegen}")
 
         # CPU arch
 
