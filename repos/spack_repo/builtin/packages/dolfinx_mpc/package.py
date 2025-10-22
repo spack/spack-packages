@@ -22,7 +22,6 @@ class DolfinxMpc(CMakePackage):
     version("main", branch="main")
     version("0.9.3", sha256="efa312cc498e428aab44acccc9bb0c74c200eda005742de7778c8e68fa84e8df")
     version("0.8.1", sha256="e0254b4a1c9c1456583c1415821946b11b0b2e48dbfee6558da2bbedfe78b461")
-    version("0.7.2", sha256="decf73dac8688ed235b8ee357b763d80a0d477110f35757117c1de649930c71a")
 
     # HDF5 dependency requires C in CMake
     depends_on("c", type="build")
@@ -31,8 +30,7 @@ class DolfinxMpc(CMakePackage):
     depends_on("fenics-dolfinx@main+petsc", when="@main")
     depends_on("fenics-dolfinx@0.9+petsc", when="@0.9")
     depends_on("fenics-dolfinx@0.8+petsc", when="@0.8")
-    depends_on("fenics-dolfinx@0.7+petsc", when="@0.7")
-
+    depends_on("boost@1.70:+timer+filesystem", when="@:0.9")
     depends_on("cmake@3.21:", when="@0.9:", type="build")
     depends_on("cmake@3.19:", when="@:0.8", type="build")
 

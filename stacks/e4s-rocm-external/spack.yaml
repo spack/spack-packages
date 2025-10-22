@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     reuse: false
@@ -132,8 +132,6 @@ spack:
         prefix: /opt/rocm-6.2.1
         extra_attributes:
           compilers:
-            c: /opt/rocm-6.2.1/llvm/bin/clang++
-            c++: /opt/rocm-6.2.1/llvm/bin/clang++
             hip: /opt/rocm-6.2.1/hip/bin/hipcc
     hipify-clang:
       buildable: false
@@ -159,10 +157,6 @@ spack:
       externals:
       - spec: hsa-rocr-dev@6.2.1
         prefix: /opt/rocm-6.2.1/
-        extra_atributes:
-          compilers:
-            c: /opt/rocm-6.2.1/llvm/bin/clang++
-            cxx: /opt/rocm-6.2.1/llvm/bin/clang++
     roctracer-dev-api:
       buildable: false
       externals:
@@ -239,6 +233,7 @@ spack:
   - hpx +rocm amdgpu_target=gfx908
   - hypre +rocm amdgpu_target=gfx908
   - kokkos +rocm amdgpu_target=gfx908
+  - kokkos-fft device_backend=hipfft +tests ^kokkos +rocm amdgpu_target=gfx908
   - lammps +rocm amdgpu_target=gfx908
   - legion +rocm amdgpu_target=gfx908
   - libceed +rocm amdgpu_target=gfx908
@@ -285,6 +280,7 @@ spack:
   - hpx +rocm amdgpu_target=gfx90a
   - hypre +rocm amdgpu_target=gfx90a
   - kokkos +rocm amdgpu_target=gfx90a
+  - kokkos-fft device_backend=hipfft +tests ^kokkos +rocm amdgpu_target=gfx90a
   - lammps +rocm amdgpu_target=gfx90a
   - legion +rocm amdgpu_target=gfx90a
   - libceed +rocm amdgpu_target=gfx90a

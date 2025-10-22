@@ -28,6 +28,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     # Ref: https://github.com/harfbuzz/harfbuzz/blob/main/COPYING
     license("MIT-old", checked_by="wdconinc")
 
+    version("11.5.1", sha256="972a60a8d274d49e70361da6920c3a73dfb0fb4387f6c6811906a47ba634d8a1")
     version("11.4.1", sha256="7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698")
     version("11.3.3", sha256="e1fbca6b32a91ae91ecd9eb2ca8d47a5bfe2b1cb2e54855ab7a0b464919ef358")
     version("11.2.1", sha256="093714c8548a285094685f0bdc999e202d666b59eeb3df2ff921ab68b8336a49")
@@ -74,6 +75,14 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         depends_on("meson@0.60:", when="@11.1:")
         depends_on("meson@0.55:", when="@3.2.1:")
         depends_on("meson@0.52:")
+
+        # As of 11.5.0 Harfbuzz made the decision to drop
+        # support for CMake build freetype
+        # backport the old support
+        patch(
+            "harfbuzz_11.5.0_support_cmake_freetype.patch",
+            when="@11.5: ^freetype build_system=cmake",
+        )
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):

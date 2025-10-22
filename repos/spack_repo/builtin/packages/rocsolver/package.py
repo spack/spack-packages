@@ -46,6 +46,7 @@ class Rocsolver(CMakePackage):
 
     license("BSD-2-Clause")
 
+    version("7.0.0", sha256="635bbf625d81e11afc70f6c0e23212ed13ea20ea50cf995d3dfa0e4636c19558")
     version("6.4.3", sha256="6c2c6019eaf49abb30fc54f09b3d755ebcfbbd30d9b71052aa13bb0cbc26d2bb")
     version("6.4.2", sha256="fe78538ead2ce9a95abbec74bc2c85408d5224f80b4816520e2d55d6b0188935")
     version("6.4.1", sha256="d27d3e0a59fbe1fb82172f545e38857643bb86fa1cd69ba51e9e292440a785c6")
@@ -94,6 +95,7 @@ class Rocsolver(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")

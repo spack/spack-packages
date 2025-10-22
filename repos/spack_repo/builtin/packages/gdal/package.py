@@ -93,8 +93,10 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
         default=False,
         description="Speed up computations related to the Thin Plate Spline transformer",
     )
+    # cmake configure fails if arrow~filesystem is found when variant ~arrow
+    # https://github.com/OSGeo/gdal/issues/12327
     variant(
-        "arrow", default=False, when="build_system=cmake", description="Required for Arrow driver"
+        "arrow", default=True, when="build_system=cmake", description="Required for Arrow driver"
     )
     variant("avif", default=False, when="@3.10:", description="Required for AVIF driver")
     variant(
@@ -257,7 +259,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
 
     # Required dependencies
     # Versions come from gdal_check_package in cmake/helpers/CheckDependentLibraries.cmake
-    depends_on("pkgconfig@0.25:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("proj@6.3.1:", when="@3.9:")
     depends_on("proj@6:")
     depends_on("zlib-api")
@@ -272,6 +274,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("blas", when="+armadillo")
     depends_on("lapack", when="+armadillo")
     depends_on("arrow+filesystem", when="+arrow")
+
     depends_on("libavif", when="+avif")
     # depends_on("basis-universal", when="+basisu")
     depends_on("c-blosc", when="+blosc")
@@ -307,7 +310,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("iconv", when="+iconv")
     # depends_on('idb', when='+idb')
     # depends_on('ingres', when='+ingres')
-    depends_on("jasper@1.900.1", patches=[patch("uuid.patch")], when="+jasper")
+    # depends_on("jasper@1.900.1", patches=[patch("uuid.patch")], when="+jasper")
     depends_on("jpeg", when="+jpeg")
     depends_on("libjxl", when="+jxl")
     # depends_on('kakadu', when='+kdu')
@@ -440,6 +443,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     conflicts("+fme")
     conflicts("+idb")
     conflicts("+ingres")
+    conflicts("+jasper")
     conflicts("+kdu")
     conflicts("+libcsf")
     conflicts("+luratech")

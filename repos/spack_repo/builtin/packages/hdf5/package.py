@@ -560,12 +560,9 @@ class Hdf5(CMakePackage):
         # and pointing these variables at the MSVC compilers
         # breaks CMake's mpi detection for MSMPI.
         if spec.satisfies("+mpi") and "msmpi" not in spec:
-            args.extend(
-                [
-                    "-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
-                    "-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc,
-                ]
-            )
+            if spec.satisfies("+cxx"):
+                args.append("-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx)
+            args.append("-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc)
 
             if spec.satisfies("+fortran"):
                 args.extend(["-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
