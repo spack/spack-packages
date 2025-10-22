@@ -4,8 +4,10 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 import os
 
+
 class Erf(CMakePackage, CudaPackage, ROCmPackage):
     """ERF solves the compressible Navier-Stokes on a Arakawa C-grid for large-scale weather modeling."""
+
     homepage = "https://erf.readthedocs.io/en/latest/index.html"
     url = "https://github.com/erf-model/ERF/archive/refs/tags/25.08.tar.gz"
     git = "https://github.com/erf-model/ERF.git"
