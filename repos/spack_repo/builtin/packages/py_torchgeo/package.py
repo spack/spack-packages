@@ -203,6 +203,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-nbsphinx@0.8.5:")
         depends_on("py-pytorch-sphinx-theme")
         depends_on("py-sphinx@4:5")
+        depends_on("pandoc")
 
     with when("+style"), default_args(type="run"):
         depends_on("prettier@3:", when="@0.6:")
