@@ -23,3 +23,7 @@ class PyImutils(PythonPackage):
     version("0.5.4", sha256="03827a9fca8b5c540305c0844a62591cf35a0caec199cb0f2f0a4a0fb15d8f24")
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-numpy", type=("build", "run"))
+    depends_on("py-scipy", type=("build", "run"))
+    depends_on("py-matplotlib", type=("build", "run"))
+    depends_on("opencv+python3", type=("build", "run"))
