@@ -19,6 +19,9 @@ class Aotriton(CMakePackage):
 
     license("MIT")
     version(
+        "0.10b", tag="0.10b", commit="6fca155f4deeb8d9529326f7b69f350aeeb93477", submodules=True
+    )
+    version(
         "0.9.2b", tag="0.9.2b", commit="b388d223d8c7213545603e00f6f3148c54d1f525", submodules=True
     )
     version(
@@ -46,6 +49,7 @@ class Aotriton(CMakePackage):
     depends_on("zlib-api", type="link")
     depends_on("xz", type="link")
     depends_on("pkgconfig", type="build")
+    depends_on("llvm +mlir", when="%gcc")
     conflicts("^openssl@3.3.0")
 
     # https://github.com/ROCm/aotriton/blob/main/README.md?plain=1#L24
