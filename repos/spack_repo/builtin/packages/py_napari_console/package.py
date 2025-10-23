@@ -18,7 +18,7 @@ class PyNapariConsole(PythonPackage):
 
     version("0.1.3", sha256="ba4f7e1cdca65a7924631372a5e58884e2e35a2b9092c79b98acb9c2dfe1254f")
 
-    depends_on("python@3.9:", "run")
+    depends_on("python@3.9:", type="run")
 
     depends_on("py-setuptools@42:", type="build")
     depends_on("py-setuptools-scm@8:", type="build")
