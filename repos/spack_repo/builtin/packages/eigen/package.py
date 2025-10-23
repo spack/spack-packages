@@ -67,6 +67,20 @@ class Eigen(CMakePackage, ROCmPackage):
         sha256="b8877a84c4338f08ab8a6bb8b274c768e93d36ac05b733b078745198919a74bf",
     )
 
+
+    patch(
+        "https://gitlab.com/libeigen/eigen/-/merge_requests/2017.diff",
+        sha256="89b31dd7a28764b95758c9777f9084cacede084e87d5d2623efc754dc1987864",
+        when="@3.4.1:5.0.0 platform=windows"
+    )
+
+    patch(
+        "https://gitlab.com/libeigen/eigen/-/merge_requests/2019.diff",
+        sha256="5d4521e391a4e62e1ee7a98df5dbb20f67c4a1210863babfdbfec0466c8d2b13",
+        when="@3.4.1:5.0.0 platform=windows"
+    )
+    
+
     # there is a bug in 3.3.4 that provokes a compile error with the xl compiler
     # See https://gitlab.com/libeigen/eigen/-/issues/1555
     patch("xlc-compilation-3.3.4.patch", when="@3.3.4%xl_r")
@@ -82,9 +96,6 @@ class Eigen(CMakePackage, ROCmPackage):
     depends_on("boost@1.53:", when="@master", type="test")
     # TODO: latex and doxygen needed to produce docs with make doc
     # TODO: Other dependencies might be needed to test this package
-
-    conflicts("@3.4.1", when="platform=windows")
-    conflicts("@5.0.0", when="platform=windows")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("CPATH", self.prefix.include.eigen3)
