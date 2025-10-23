@@ -98,10 +98,15 @@ class RocmBandwidthTest(CMakePackage):
 
     for ver in ["7.0.0", "7.0.2"]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        depends_on(f"transferbench@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver}", when=f"@{ver}")
 
-    patch("add_numa_hsa.patch")
-    patch("change_install_path.patch")
+    patch("add_numa_hsa.patch", when="@7.0.0")
+    patch("modify_hsa_include.patch", when="@7.0.2")
+
+    # https://github.com/ROCm/rocm_bandwidth_test/issues/131
+    # install doesnt honour CMAKE_INSTALL_PREFIX
+    patch("change_install_path.patch", when="@7.0.0")
+    patch("change_install_path_7.0.2.patch", when="@7.0.2")
 
     @property
     def build_targets(self):
@@ -123,4 +128,5 @@ class RocmBandwidthTest(CMakePackage):
             )
             args.append(self.define("AMD_APP_STANDALONE_BUILD_PACKAGE", "ON"))
             args.append(self.define("NUMA_INCLUDE_DIR", self.spec["numactl"].prefix.include))
+            args.append(self.define("HSA_INCLUDE_DIR", self.spec["hsa-rocr-dev"].prefix.include))
         return args
