@@ -94,7 +94,7 @@ class PyNapari(PythonPackage):
     depends_on("py-npe2@0.7.9:", when="@0.6:", type=("build", "run"))
     depends_on("py-npe2@0.5.2:", when="@0.4:", type=("build", "run"))
 
-    #Optional dependencies
+    # Optional dependencies
     depends_on("py-pyqt5@5.12.3:", when="@0.4:0.5 +all", type=("build", "run"))
     depends_on("py-pyqt5@5.15.8:", when="@0.6.5 +all", type=("build", "run"))
     conflicts("^py-pqt5@5.15.0", when="@0.4:0.5 +all")

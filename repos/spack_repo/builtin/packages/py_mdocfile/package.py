@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -27,4 +28,3 @@ class PyMdocfile(PythonPackage):
     depends_on("py-pydantic@2:", when="@0.1.0:")
     depends_on("py-pydantic")
     depends_on("py-pandas")
-

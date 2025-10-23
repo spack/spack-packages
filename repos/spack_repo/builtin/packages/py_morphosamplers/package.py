@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -21,7 +22,7 @@ class PyMorphosamplers(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-setuptools@45:", type="build")
     depends_on("py-setuptools-scm@6.2:", type="build")
-    
+
     depends_on("py-einops", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-psygnal", type=("build", "run"))

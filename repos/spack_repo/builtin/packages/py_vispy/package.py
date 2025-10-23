@@ -28,7 +28,9 @@ class PyVispy(PythonPackage):
     depends_on("py-setuptools-scm", type="build")
 
     depends_on("py-numpy@2:", when="@0.14.3:", type=("build", "run"))
-    depends_on("py-numpy@1", when="@:0.14.2", type=("build", "run"))  # https://github.com/numpy/numpy/issues/26191
+    depends_on(
+        "py-numpy@1", when="@:0.14.2", type=("build", "run")
+    )  # https://github.com/numpy/numpy/issues/26191
     depends_on("py-cython@3:", when="@0.15:", type=("build", "run"))
     depends_on("py-cython@0.29.2:", type=("build", "run"))
     depends_on("py-freetype-py", type=("build", "run"))

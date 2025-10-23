@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.python import PythonPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.python import PythonPackage
+
 from spack.package import *
 
 
@@ -61,9 +62,11 @@ class PyRelion(PythonPackage, CudaPackage):
     depends_on("py-relion-classranker", type="run", when="@5:")
 
     for arch in CudaPackage.cuda_arch_values:
-      depends_on(f"tsne-cuda@3.0.1 +cuda cuda_arch={arch} +python", when=f"@5.0 +cuda cuda_arch={arch}")
-      depends_on(f"py-torch@2.0.1 +cuda cuda_arch={arch}", when=f"@5.0 +cuda cuda_arch={arch}")
-   
+        depends_on(
+            f"tsne-cuda@3.0.1 +cuda cuda_arch={arch} +python", when=f"@5.0 +cuda cuda_arch={arch}"
+        )
+        depends_on(f"py-torch@2.0.1 +cuda cuda_arch={arch}", when=f"@5.0 +cuda cuda_arch={arch}")
+
     depends_on("py-torch@2.0.1 ~cuda", when="@5.0 ~cuda")
 
     # Set version so setuptools won't complain about not being able to determine it

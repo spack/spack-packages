@@ -1,13 +1,14 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.makefile import MakefilePackage
+
 from spack.package import *
 
 
 class Imod(MakefilePackage, CudaPackage):
-    """ IMOD is a set of image processing, modeling and display programs used
+    """IMOD is a set of image processing, modeling and display programs used
     for tomographic reconstruction and for 3D reconstruction of EM serial
     sections and optical sections. The package contains tools for assembling
     and aligning data within multiple types and sizes of image stacks, viewing
@@ -18,7 +19,6 @@ class Imod(MakefilePackage, CudaPackage):
     hg = "http://bio3d.colorado.edu/imod/nightlyBuilds/IMOD"
 
     maintainers("Markus92")
-
 
     license("GPL-2", checked_by="Markus292")
 
@@ -61,6 +61,6 @@ class Imod(MakefilePackage, CudaPackage):
         if self.spec.satisfies("+cuda"):
             env.set("CUDA_DIR", self.spec["cuda"].prefix)
 
-def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.set("IMOD_DIR", self.prefix)
 
+def setup_run_environment(self, env: EnvironmentModifications) -> None:
+    env.set("IMOD_DIR", self.prefix)

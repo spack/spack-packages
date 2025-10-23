@@ -104,7 +104,7 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("pbzip2", type="run", when="@5:")
     depends_on("xz", type="run", when="@5:")
     depends_on("zstd", type="run", when="@5:")
-    #TODO add cuda_arch
+    # TODO add cuda_arch
     depends_on(f"py-relion@5.0.1 +cuda", type=("build", "run"), when="@5.0.1 +cuda")
     depends_on(f"py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 ~cuda")
     # depends_on(f"py-relion@5.0.0 +cuda", type=("build", "run"), when="@5.0.0 +cuda")
@@ -145,8 +145,10 @@ class Relion(CMakePackage, CudaPackage):
                 args += ["-DCUDA=ON", "-DCudaTexture=ON", "-DCUDA_ARCH=%s" % (carch)]
 
             if self.spec.satisfies("@5:"):
-                cuda_flags = " ".join(CudaPackage.cuda_flags(self.spec.variants["cuda_arch"].value))
-                args += [f'-DCUDARCH={cuda_flags}']
+                cuda_flags = " ".join(
+                    CudaPackage.cuda_flags(self.spec.variants["cuda_arch"].value)
+                )
+                args += [f"-DCUDARCH={cuda_flags}"]
 
         if self.spec.satisfies("@5: ~cuda"):
             # Relion 5 defaults to CUDA=ON so it has to be explicitly disabled.

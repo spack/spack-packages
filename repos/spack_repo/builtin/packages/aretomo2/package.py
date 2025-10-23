@@ -1,8 +1,9 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.makefile import MakefilePackage
+
 from spack.package import *
 
 
@@ -28,21 +29,19 @@ class Aretomo2(MakefilePackage, CudaPackage):
     depends_on("cuda")
     conflicts("~cuda")
 
-    build_targets=["exe"]
+    build_targets = ["exe"]
 
     patch("cuda_arch_makefile.patch")
 
     def edit(self, spec, prefix):
         cuda_arch = self.spec.variants["cuda_arch"].value
         cuda_gencode = " ".join(self.cuda_flags(cuda_arch))
-        
+
         makefile = FileFilter("makefile")
         makefile.filter("NVCC = .*", "NVCC = nvcc -std=c++11")  # Let Spack handle the path
         makefile.filter("CUDAHOME = .*", f"CC = {self.spec['cuda'].prefix}")
         makefile.filter("CUDA_GENCODE =.*", f"CUDA_GENCODE = {cuda_gencode}")
 
-
     def install(self, spec, prefix):
         mkdir(prefix.bin)
         install("AreTomo2", prefix.bin)
-
