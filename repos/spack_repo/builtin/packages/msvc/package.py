@@ -142,7 +142,7 @@ class Msvc(Package, CompilerPackage):
         # compiler.
         # Spack first finds the compilers via VSWHERE
         # and stores their path, but their respective VCVARS
-        # file must be invoked before useage. 
+        # file must be invoked before useage.
         env_cmds = []
         compiler_root = os.path.join(os.path.dirname(self.cc), "../../../../../..")
         vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvarsall.bat")
@@ -153,7 +153,7 @@ class Msvc(Package, CompilerPackage):
         # extension of x86, it's a 32bit host with a 64bit target, which, will
         # run on a 64bit host, but is not accurate, and doesn't scale to arm.
         # compose a proper vcvars arch string
-        
+
         # get spec target
         spec_target_arch = self.spec.target.family.name
         # get host bitness
@@ -164,7 +164,7 @@ class Msvc(Package, CompilerPackage):
 
         # establish host arch and bit
         host_is_arm = check_arm(host_machine_type)
-        host_is_64bit = struct.calcsize('P')*8 == 64
+        host_is_64bit = struct.calcsize("P") * 8 == 64
         # establish target arch and bit
         target_is_arm = check_arm(spec_target_arch)
         target_is_64bit = "64" in spec_target_arch
@@ -173,6 +173,7 @@ class Msvc(Package, CompilerPackage):
             if is_arm:
                 return "arm64" if is64bit else "arm"
             return "x64" if is64bit else "x86"
+
         # convert understanding of target and host to vcvars terms
         host_arch = compute_arch(host_is_64bit, host_is_arm)
         target_arch = compute_arch(target_is_64bit, target_is_arm)
