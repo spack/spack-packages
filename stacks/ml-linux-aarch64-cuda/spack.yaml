@@ -21,7 +21,8 @@ spack:
     py-jaxlib:
       require: "%c,cxx=clang"
     py-tensorflow:
-      require: "%c,cxx=clang"
+      require:
+        - any_of: ["@:2.18 %c,cxx=gcc", "@2.19: %c,cxx=clang"]
     py-torch:
       require:
       - target=aarch64
