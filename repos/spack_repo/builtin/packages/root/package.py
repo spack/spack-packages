@@ -658,7 +658,6 @@ class Root(CMakePackage):
             define("libcxx", False),
             define("roottest", False),
             define_from_variant("rpath"),
-            define("runtime_cxxmodules", False if self.spec.satisfies("@:6.18") else True),
             define("shared", True),
             define("soversion", True),
             define("testing", self.run_tests),
@@ -932,8 +931,8 @@ class Root(CMakePackage):
             env.prepend_path(self.root_library_path, self.prefix.lib.root)
 
         # https://github.com/root-project/root/issues/18949
-        if "+cxxmodules" in self.spec:
-            env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec):
         env.set("ROOTSYS", self.prefix)
@@ -948,6 +947,10 @@ class Root(CMakePackage):
         if "platform=darwin" in self.spec:
             # Newer deployment targets cause fatal errors in rootcling
             env.unset("MACOSX_DEPLOYMENT_TARGET")
+
+        # https://github.com/root-project/root/issues/18949
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec):
         env.prepend_path("ROOT_INCLUDE_PATH", dependent_spec.prefix.include)
