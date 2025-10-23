@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import platform
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -23,6 +25,9 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     version("4.0.0.0", sha256="b17a43c3fee70ec3811ba8f1b484ccc50e60e255f6f2ae5962bcd26fe81899d4")
 
     generator("ninja")
+
+    # At the moment we are only testing linux
+    requires("platform=linux", msg="ArcaneFramework is only available for linux")
 
     variant(
         "build_mode",
@@ -78,11 +83,15 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.26:", type="build")
 
+    # Hack to only add 'dotnet-core-sdk' because 'spack audit' can not
+    # find a valid 'dotnet-core-sdk' version on macos or windows.
+    if platform.system() == "Linux":
+        depends_on("dotnet-core-sdk", when="+arcane", type=("build", "link", "run"))
+        depends_on("dotnet-core-sdk", when="+alien", type=("build", "link", "run"))
+
     # TODO: Handle variants for alien standalone and alien with arcane
     # For example, alien standalone does not depend on 'libxml2'
-    depends_on("dotnet-core-sdk", when="+arcane", type=("build", "link", "run"))
     depends_on("libxml2", when="+arcane")
-    depends_on("dotnet-core-sdk", when="+alien", type=("build", "link", "run"))
     depends_on("libxml2", when="+alien")
 
     depends_on("glib")
