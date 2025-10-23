@@ -47,15 +47,23 @@ class Ectrans(CMakePackage):
 
     variant("transi", default=True, description="Compile TransI C-interface to trans")
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
+
+    # Add explicit dependency on newer cmake versions in order to apply patch
+    # "find_lapack.patch", see below and https://github.com/ecmwf-ifs/ectrans/issues/316
+    # Newer versions of ectrans (not yet released) also require cmake@3.25: by default).
+    depends_on("cmake@3.25:", type="build")
 
     depends_on("ecbuild", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")
+    # ectrans distinguishes between mkl and fftw
     depends_on("fftw-api", when="+fftw")
     depends_on("mkl", when="+mkl")
+    conflicts("+mkl", when="+fftw")
 
     depends_on("fiat~mpi", when="~mpi")
     depends_on("fiat+mpi", when="+mpi")
@@ -67,8 +75,8 @@ class Ectrans(CMakePackage):
         when="@1.3.1:1.5.1",
     )
 
-    # LINK TO ISSUE HERE
-    patch("find_lapack.path", when="@1.5:")
+    # https://github.com/ecmwf-ifs/ectrans/issues/316
+    patch("find_lapack.patch", when="@1.5:")
 
     def cmake_args(self):
         args = [
