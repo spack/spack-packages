@@ -17,10 +17,40 @@ class SalmonTddft(CMakePackage):
     with norm-conserving pseudopotentials."""
 
     homepage = "https://salmon-tddft.jp"
-    url = "https://salmon-tddft.jp/download/SALMON-v.2.0.0.tar.gz"
+    git = "https://github.com/SALMON-TDDFT/SALMON2.git"
 
-    license("BSD-3-Clause-Open-MPI")
+    license("Apache-2.0")
 
+    version(
+        "2.2.2",
+        url="http://salmon-tddft.jp/download/SALMON-v.2.2.2.tar.gz",
+        sha256="581cbb6b45853e1378820675ac97f435",
+    )
+    version(
+        "2.2.1",
+        url="http://salmon-tddft.jp/download/SALMON-v.2.2.1.tar.gz",
+        sha256="a8154f19e83424bee51e295bb9241366",
+    )
+    version(
+        "2.2.0",
+        url="http://salmon-tddft.jp/download/SALMON-v.2.2.0.tar.gz",
+        sha256="d71436df3a1ad507f665abb8453eee15",
+    )
+    version(
+        "2.1.0",
+        url="http://salmon-tddft.jp/download/SALMON-v.2.1.0.tar.gz",
+        sha256="95e1fabbbf161359ce6ec563cace99f4",
+    )
+    version(
+        "2.0.2",
+        url="http://salmon-tddft.jp/download/SALMON-v.2.0.2.tar.gz",
+        sha256="5b72057b14ed898e5fb0ea9b468f0da6",
+    )
+    version(
+        "2.0.1",
+        url="http://salmon-tddft.jp/download/SALMON-v.2.0.1.tar.gz",
+        sha256="277967063c57faf5ade2930025896f42",
+    )
     version("2.0.0", sha256="c3bb80bc5d338cba21cd8f345acbf2f2d81ef75af069a0a0ddbdc0acf358456c")
     version("1.2.1", sha256="a5045149e49abe9dd9edefe00cd1508a1323081bc3d034632176b728effdbaeb")
 
@@ -105,4 +135,6 @@ class SalmonTddft(CMakePackage):
         if name == "fflags":
             if self.spec.satisfies("%gcc"):
                 flags.append("-ffree-line-length-none")
+            if self.spec.satisfies("%gcc@10:"):
+                flags.append("-fallow-argument-mismatch")
         return (None, None, flags)
