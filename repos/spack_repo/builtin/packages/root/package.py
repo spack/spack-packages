@@ -941,7 +941,6 @@ class Root(CMakePackage):
         env.prepend_path("PATH", self.prefix.bin)
         env.append_path("CMAKE_MODULE_PATH", self.prefix.cmake)
         env.prepend_path("ROOT_INCLUDE_PATH", dependent_spec.prefix.include)
-        env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
         if "+rpath" not in self.spec:
             env.prepend_path(self.root_library_path, self.prefix.lib.root)
         if "platform=darwin" in self.spec:
