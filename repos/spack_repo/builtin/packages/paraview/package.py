@@ -266,7 +266,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("bzip2")
     depends_on("double-conversion")
     depends_on("expat")
-    depends_on("eigen@3:")
+    depends_on("eigen@3")
     depends_on("freetype")
     depends_on("freetype@:2.10.2", when="@:5.8")
     # depends_on('hdf5+mpi', when='+mpi')
