@@ -12,8 +12,8 @@ from spack.package import *
 class Cce(Package, CompilerPackage):
     """Stub package for external detection of the Cray compiler package."""
 
-    homepage = "https://cpe.ext.hpe.com/docs/cce/index.html"
-    url = "https://cpe.ext.hpe.com/docs/cce/index.html"
+    homepage = "https://cpe.ext.hpe.com/docs/latest/cce/index.html"
+    url = "https://cpe.ext.hpe.com/docs/latest/cce/index.html"
 
     has_code = False
 
@@ -58,7 +58,27 @@ class Cce(Package, CompilerPackage):
 
     maintainers("becker33")
 
+    version("12.0.2")
+    version("12.0.3")
+    version("13.0.0")
+    version("13.0.1")
+    version("13.0.2")
+    version("14.0.0")
+    version("14.0.1")
+    version("14.0.2")
+    version("14.0.3")
+    version("14.0.4")
+    version("15.0.0")
+    version("15.0.1")
     version("16.0.0")
+    version("16.0.1")
+    version("17.0.0")
+    version("17.0.1")
+    version("18.0.0")
+    version("18.0.1")
+    version("19.0.0")
+    version("19.0.1")
+    version("20.0.0")
 
     provides("c", "cxx")
     provides("fortran")
