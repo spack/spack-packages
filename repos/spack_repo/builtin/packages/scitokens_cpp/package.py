@@ -47,7 +47,7 @@ class ScitokensCpp(CMakePackage):
     depends_on("openssl")
     depends_on("sqlite")
     depends_on("curl")
-    depends_on("jwt-cpp", type="build")sc
+    depends_on("jwt-cpp", type="build")
     depends_on("jwt-cpp@0.7:", type="build", when="@master")
     depends_on("pkgconfig", type="build")
     depends_on("uuid", type="build")
