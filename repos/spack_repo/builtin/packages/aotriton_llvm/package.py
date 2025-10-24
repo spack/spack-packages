@@ -13,14 +13,14 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack.package import *
 
 
-class AotritonLlvm(CMakePackage, CudaPackage,CompilerPackage):
+class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
     """FIXME: Put a proper description of your package here."""
 
     homepage = "https://github.com/llvm/llvm-project"
     url = "https://github.com/llvm/llvm-project/archive/llvmorg-7.1.0.tar.gz"
     git = "https://github.com/llvm/llvm-project"
-    #url = "https://oaitriton.blob.core.windows.net/public/llvm-builds/llvm-86b69c31-ubuntu-x64.tar.gz"
-    
+    # url = "https://oaitriton.blob.core.windows.net/public/llvm-builds/llvm-86b69c31-ubuntu-x64.tar.gz"
+
     version("main", branch="main")
     version("20.1.0", commit="86b69c31642e98f8357df62c09d118ad1da4e16a")
     generator("ninja")
@@ -57,8 +57,7 @@ class AotritonLlvm(CMakePackage, CudaPackage,CompilerPackage):
             self.define("LLVM_BUILD_UTILS", "ON"),
             self.define("LLVM_TARGETS_TO_BUILD", "host;NVPTX;AMDGPU"),
             self.define("MLIR_ENABLE_BINDINGS_PYTHON", "ON"),
-            self.define("LLVM_ENABLE_TERMINFO", "OFF")
+            self.define("LLVM_ENABLE_TERMINFO", "OFF"),
         ]
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         return args
-
