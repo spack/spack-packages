@@ -320,7 +320,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocblas")
         depends_on("miopen-hip")
         depends_on("rocminfo")
-	depends_on("hipsparselt", when="@2.8:")
+        depends_on("hipsparselt", when="@2.8:")
         depends_on("aotriton@0.4b", when="@2.3")
         depends_on("aotriton@0.6b", when="@2.4")
         depends_on("aotriton@0.7b:0.8b", when="@2.5")
