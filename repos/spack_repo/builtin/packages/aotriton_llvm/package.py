@@ -10,6 +10,7 @@ from spack.package import *
 
 
 class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
+    """Package for aotriton-llvm: A custom LLVM build for AoTriton."""
 
     homepage = "https://github.com/llvm/llvm-project"
     git = "https://github.com/llvm/llvm-project"
