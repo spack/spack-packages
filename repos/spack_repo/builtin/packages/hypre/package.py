@@ -193,6 +193,9 @@ class Hypre(AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+rocm", when="+sycl", msg="ROCm and SYCL are mutually exclusive")
     conflicts("+gpu-profiling", when="~cuda~rocm", msg="GPU profiling requires CUDA or ROCm")
 
+    # https://github.com/hypre-space/hypre/pull/1353
+    conflicts("^cuda@13:", when="@:2 +cuda")
+
     configure_directory = "src"
 
     def url_for_version(self, version):

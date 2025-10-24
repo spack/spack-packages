@@ -479,6 +479,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("rocm", default=False, sticky=True, description="Enable AMD ROCm GPU support")
     variant("cuda", default=False, sticky=True, description="Enable Nvidia CUDA GPU support")
 
+    conflicts("^cuda@13:", when="+cuda")
+
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
 
     conflicts(
