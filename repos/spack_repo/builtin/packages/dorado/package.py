@@ -80,7 +80,8 @@ class Dorado(CMakePackage, CudaPackage):
             f.write("include_directories(${HTSLIB_PREFIX}/include)\n")
             f.write("add_library(htslib SHARED IMPORTED)\n")
             f.write(
-                "set_target_properties(htslib PROPERTIES IMPORTED_LOCATION ${HTSLIB_PREFIX}/lib/libhts.so)\n"
+                "set_target_properties(htslib PROPERTIES IMPORTED_LOCATION "
+                "${HTSLIB_PREFIX}/lib/libhts.so)\n"
             )
 
     def cmake_args(self):
