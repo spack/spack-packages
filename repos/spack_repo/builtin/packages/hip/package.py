@@ -429,6 +429,7 @@ class Hip(CMakePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         self.set_variables(env)
+        env.set("HIP_PATH", self.spec.prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.set_variables(env)
