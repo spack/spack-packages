@@ -10,7 +10,6 @@ from spack.package import *
 
 
 class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
-    """FIXME: Put a proper description of your package here."""
 
     homepage = "https://github.com/llvm/llvm-project"
     url = "https://github.com/llvm/llvm-project/archive/llvmorg-7.1.0.tar.gz"
