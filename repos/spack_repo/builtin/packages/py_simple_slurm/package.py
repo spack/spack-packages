@@ -18,5 +18,4 @@ class PySimpleSlurm(PythonPackage):
 
     version("0.3.6", sha256="0f88cac96b39d7d7e34c5a124919cebb41eb8a8ef2ff4fb65c363d940ff8551e")
 
-    depends_on("python@3.11:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
