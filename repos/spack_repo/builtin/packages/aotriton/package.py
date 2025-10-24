@@ -49,7 +49,12 @@ class Aotriton(CMakePackage):
     depends_on("zlib-api", type="link")
     depends_on("xz", type="link")
     depends_on("pkgconfig", type="build")
-    depends_on("aotriton-llvm@20.1.0", when="%gcc @0.9b:")
+
+    # build llvm version with mlir with the commit that matches inside the llvm-hash.txt
+    depends_on("aotriton-llvm@0.10", when="@0.10b")
+    depends_on("aotriton-llvm@0.9", when="@0.9b:0.9.2b")
+    depends_on("aotriton-llvm@0.8", when="@0.8:0.8.2b")
+
     conflicts("^openssl@3.3.0")
 
     # https://github.com/ROCm/aotriton/blob/main/README.md?plain=1#L24

@@ -12,12 +12,13 @@ from spack.package import *
 class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
 
     homepage = "https://github.com/llvm/llvm-project"
-    url = "https://github.com/llvm/llvm-project/archive/llvmorg-7.1.0.tar.gz"
     git = "https://github.com/llvm/llvm-project"
-    # url = "https://oaitriton.blob.core.windows.net/public/llvm-builds/llvm-86b69c31-ubuntu-x64.tar.gz"
+    url = "https://github.com/llvm/llvm-project/archive/llvmorg-7.1.0.tar.gz"
 
-    version("main", branch="main")
-    version("20.1.0", commit="86b69c31642e98f8357df62c09d118ad1da4e16a")
+    version("main", commit="b5cc222d7429fe6f18c787f633d5262fac2e676f")
+    version("0.10", commit="3c709802d31b5bc5ed3af8284b40593ff39b9eec")
+    version("0.9", commit="86b69c31642e98f8357df62c09d118ad1da4e16a")
+    version("0.8", commit="bd9145c8c21334e099d51b3e66f49d51d24931ee")
     generator("ninja")
     depends_on("cxx", type="build")
     depends_on("c", type="build")
@@ -29,6 +30,7 @@ class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
     depends_on("libxml2", type="link")
     depends_on("py-pybind11")
     depends_on("pkgconfig", type="build")
+    depends_on("py-nanobind", when="@0.10")
 
     root_cmakelists_dir = "llvm"
 
