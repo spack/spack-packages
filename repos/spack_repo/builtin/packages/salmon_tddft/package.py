@@ -19,6 +19,7 @@ class SalmonTddft(CMakePackage):
     homepage = "https://salmon-tddft.jp"
     git = "https://github.com/SALMON-TDDFT/SALMON2.git"
 
+    maintainers("syamada0", "freifrauvonbleifrei")
     license("Apache-2.0")
 
     version(
