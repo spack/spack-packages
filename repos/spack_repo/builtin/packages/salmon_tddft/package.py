@@ -87,7 +87,7 @@ class SalmonTddft(CMakePackage):
     conflicts("+manycore", when="@2.0.0:")
     conflicts("+current_processing", when="@2.0.0:")
 
-    patch("fjmpi.patch", when="@2.0.0: %fj")
+    patch("fjmpi.patch", when="@2.0.0 %fj")
     patch("v2.0.libxc-5.0.patch", when="@2.0.0 +libxc")
     patch("cmakefix.patch", when="+scalapack")
 
