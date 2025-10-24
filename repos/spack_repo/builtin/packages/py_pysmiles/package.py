@@ -18,7 +18,6 @@ class PyPysmiles(PythonPackage):
 
     version("2.0.0", sha256="9bd1da9bf172fc79f71d647d21bbba34178702c664ae0778e59b4d4d149cbe4d")
 
-    depends_on("python@3.11:", type=("build", "run"))
     depends_on("py-networkx", type=("build", "run"))
     depends_on("py-setuptools@30.3.0:", type="build")
     depends_on("py-pbr", type="build")
