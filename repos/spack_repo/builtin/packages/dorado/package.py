@@ -56,7 +56,7 @@ class Dorado(CMakePackage, CudaPackage):
         env.prepend_path("LIBRARY_PATH", self.spec["libdeflate"].prefix.lib64)
 
     def patch(self):
-        with when("@:0.9"):  # 1.0 removes these lines from the CMakeLists.txt files
+        if self.spec.satisfies("@:0.9"):  # 1.0 removes these lines from the CMakeLists.txt files
             filter_file(
                 "add_dependencies(dorado_lib htslib_project)", "", "CMakeLists.txt", string=True
             )
@@ -67,7 +67,7 @@ class Dorado(CMakePackage, CudaPackage):
                 string=True,
             )
 
-            with when("@0.9.5:0.9.6"):
+            if self.spec.satisfies("@0.9.5:0.9.6"):
                 filter_file(
                     "add_dependencies(dorado_secondary htslib_project)",
                     "",
