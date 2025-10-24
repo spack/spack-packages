@@ -21,10 +21,14 @@ class PyGromacswrapper(PythonPackage):
 
     version("0.9.2", sha256="73a7077258d68f92b1ee359e45af904e2f89766fc3f411bda9e2bf440f381a36")
 
+    # Variants
+    variant("pandas", default=True, description="Optional dependency on Pandas")
+
     # Dependencies
-    depends_on("python@3.11:", type=("build", "run"))
-    depends_on("py-numpy@1.0:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
+    depends_on("py-numpy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("py-scipy", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
+    depends_on("py-numkit", type=("build", "run"))
+    depends_on("py-setuptools@42:", type="build")
     depends_on("py-wheel", type="build")
+    depends_on("py-pandas", when="+pandas")
