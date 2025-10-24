@@ -33,13 +33,17 @@ if __name__ == "__main__":
     dotenv = {}
     base_dotenv = sys.argv[1] if len(sys.argv) > 1 else None
     if base_dotenv:
-        if not os.path.exists(base_dotenv):
+        if os.path.exists(base_dotenv):
+            print(f"Found base dotenv: {base_dotenv}")
+            with open(base_dotenv, "r", encoding="utf-8") as fd:
+                dotenv = read_dotenv(fd)
+        else:
             print(f"File does not exist: {base_dotenv}")
-            exit(1)
 
-        print(f"Found base dotenv: {base_dotenv}")
-        with open(base_dotenv, "r", encoding="utf-8") as fd:
-            dotenv = read_dotenv(fd)
+    # Setup the repo/version to be used for checkout
+    for checkout_var in ("SPACK_CHECKOUT_REPO", "SPACK_CHECKOUT_VERSION"):
+        if checkout_var in os.environ:
+            dotenv[checkout_var] = os.environ[checkout_var]
 
     repo_override = os.environ.get("CI_PROJECT_NAME")
     if repo_override and not repo_override.endswith("packages"):

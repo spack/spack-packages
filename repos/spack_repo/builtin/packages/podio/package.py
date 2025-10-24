@@ -21,6 +21,7 @@ class Podio(CMakePackage):
     tags = ["hep", "key4hep"]
 
     version("master", branch="master")
+    version("1.5", sha256="3d316a86420a1e79088488f229bb8d1259244cf17752c40f817abeec2cec89a5")
     version("1.4.1", sha256="d70dad214ac683e76c6e1093804c0f1ec4e7133a704173e2f1777a1279eb1535")
     version("1.4", sha256="f8b7f5ba965ff58270d617f50f168a4683a98fbcd643b66f1852bec960e02bbd")
     version("1.3", sha256="7efdf049822f171f4da5e83a7101096c066679904e59e741f3c2833ccda5e363")
@@ -76,6 +77,7 @@ class Podio(CMakePackage):
     depends_on("catch2@3.1:", type=("test"))
     depends_on("catch2@3.4:", type=("test"), when="cxxstd=20")
     depends_on("catch2@3.3:", type=("test"), when="@1.2: cxxstd=17")
+    depends_on("catch2@3.5:", type=("test"), when="@1.5:")
     depends_on("py-graphviz", type=("run"))
     depends_on("py-tabulate", type=("run", "test"))
 
