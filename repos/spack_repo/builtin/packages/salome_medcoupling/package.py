@@ -53,7 +53,7 @@ class SalomeMedcoupling(CMakePackage):
 
     depends_on("libxml2@2.9.1:")
     depends_on("libtirpc")
-    depends_on("cppunit")
+    depends_on("cppunit", type="test")
     depends_on("python@3.6.5:")
     depends_on("py-scipy@0.19.1:1.14", type=("build", "run"))
     depends_on("py-numpy@1.15.1:1", type=("build", "run"))
@@ -136,6 +136,8 @@ class SalomeMedcoupling(CMakePackage):
         else:
             options.extend(["-DMEDCOUPLING_PARTITIONER_SCOTCH=OFF"])
 
+        options.append(self.define("MEDCOUPLING_BUILD_TESTS", self.run_tests))
+
         options.extend(
             [
                 "-DMEDCOUPLING_BUILD_DOC=OFF",
@@ -144,7 +146,6 @@ class SalomeMedcoupling(CMakePackage):
                 "-DMEDCOUPLING_PARTITIONER_PARMETIS=OFF",
                 "-DMEDCOUPLING_PARTITIONER_PTSCOTCH=OFF",
                 "-DMEDCOUPLING_MICROMED=OFF",
-                "-DMEDCOUPLING_BUILD_TESTS=OFF",
             ]
         )
 
