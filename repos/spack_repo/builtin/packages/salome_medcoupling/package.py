@@ -120,7 +120,7 @@ class SalomeMedcoupling(CMakePackage):
             self.define_from_variant("MEDCOUPLING_USE_MPI", "mpi"),
             self.define_from_variant("SALOME_USE_MPI", "mpi"),
             self.define_from_variant("MEDCOUPLING_USE_64BIT_IDS", "int64"),
-            self.define_from_variant("MEDCOUPLING_ENABLE_PARTITIONER","partitioner"),
+            self.define_from_variant("MEDCOUPLING_ENABLE_PARTITIONER", "partitioner"),
             self.define_from_variant("MEDCOUPLING_PARTITIONER_METIS", "metis"),
             self.define_from_variant("MEDCOUPLING_PARTITIONER_SCOTCH", "scotch"),
             self.define("MEDCOUPLING_BUILD_TESTS", self.run_tests),
