@@ -65,7 +65,8 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("py-numpy@1.15.1:1", type=("build", "run"))
     depends_on("boost+python+numpy@1.58.0:", when="@:9.12")
     depends_on("boost+python+numpy@1.71.0:", when="@9.13:")
-    depends_on("swig@3.0.12:", type="build")
+    depends_on("swig@3.0.12:", when="@:9.10", type="build")
+    depends_on("swig@4.0.2:", when="@9.11:", type="build")
 
     depends_on("metis@5.1.0:", when="+metis")
     depends_on("scotch@6.0.4:", when="+scotch")
