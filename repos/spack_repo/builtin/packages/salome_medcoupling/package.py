@@ -48,12 +48,15 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    # See https://github.com/SalomePlatform/sat_salome/blob/master/applications for the dependencies
+    # and their version used for official releases
+
     depends_on("libxml2@2.9.1:")
     depends_on("libtirpc")
     depends_on("cppunit")
     depends_on("python@3.6.5:")
-    depends_on("py-scipy@0.19.1:", type=("build", "run"))
-    depends_on("py-numpy@1.15.1:", type=("build", "run"))
+    depends_on("py-scipy@0.19.1:1.14", type=("build", "run"))
+    depends_on("py-numpy@1.15.1:1", type=("build", "run"))
     depends_on("boost+python+numpy@1.58.0:")
     depends_on("swig@3.0.12:", type="build")
 
