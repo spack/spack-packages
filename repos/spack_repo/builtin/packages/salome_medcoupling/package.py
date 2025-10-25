@@ -21,6 +21,8 @@ class SalomeMedcoupling(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
+    version("9.15.0", sha256="4ec97fc881f12e71965ea73422319aac6f69319c5c688eb165329dce826cbbb8")
+    version("9.14.0", sha256="d4699b564fe1a113663649b9ff1c353314509763a5aca756569e6f4de8940049")
     version("9.13.0", sha256="54d010df0d8a66c7cf7b39a40e28aac16bc0bc20faf97c5190d0a2df4941e15e")
     version("9.12.0", sha256="b668b9b2883b456e3edf6f9f1ef3749f8c8cc5279ae212c388e53f69eed66db7")
     version("9.11.0", sha256="11d86030f7552a3b91fe0769784b42e9794b754e88c8b50405b75d130f1cb45a")
@@ -72,7 +74,7 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("scotch@6.1.2:", when="@9.13: +scotch")
     depends_on("mpi", when="+mpi")
 
-    for _min_ver in range(3, 14):
+    for _min_ver in range(3, 16):
         _ver = f"9.{_min_ver}.0"
         depends_on(f"salome-configuration@{_ver}", when=f"@{_ver}")
 
@@ -80,8 +82,12 @@ class SalomeMedcoupling(CMakePackage):
         for _static_variant, _shared_variant in (("~static", "+shared"), ("+static", "~shared")):
             for _int64_variant in ("~int64", "+int64"):
                 depends_on(
+                    f"med@4.2.0{_mpi_variant}{_shared_variant}{_int64_variant}",
+                    when=f"@9.15.0:{_mpi_variant}{_static_variant}{_int64_variant}",
+                )
+                depends_on(
                     f"med@4.1.1{_mpi_variant}{_shared_variant}{_int64_variant}",
-                    when=f"@9.11.0:{_mpi_variant}{_static_variant}{_int64_variant}",
+                    when=f"@9.11.0:9.14.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
                     f"salome-med@4.1.0{_mpi_variant}{_static_variant}{_int64_variant}",
