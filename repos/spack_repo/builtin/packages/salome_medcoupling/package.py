@@ -21,9 +21,9 @@ class SalomeMedcoupling(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
-    version("9.13.0", tag="V9_13_0", commit="8bea530c92cd907ae859ef11fd95b2db54b2894a")
-    version("9.12.0", tag="V9_12_0", commit="28e485bde1c26dc835ec7acf449b1d519997ddce")
-    version("9.11.0", tag="V9_11_0", commit="1b5fb5650409b0ad3a61da3215496f2adf2dae02")
+    version("9.13.0", sha256="54d010df0d8a66c7cf7b39a40e28aac16bc0bc20faf97c5190d0a2df4941e15e")
+    version("9.12.0", sha256="b668b9b2883b456e3edf6f9f1ef3749f8c8cc5279ae212c388e53f69eed66db7")
+    version("9.11.0", sha256="11d86030f7552a3b91fe0769784b42e9794b754e88c8b50405b75d130f1cb45a")
     with default_args(deprecated=True):
         version("9.10.0", tag="V9_10_0", commit="fe2e38d301902c626f644907e00e499552bb2fa5")
         version("9.9.0", tag="V9_9_0", commit="5b2a9cc1cc18fffd5674a589aacf368008983b45")
@@ -33,6 +33,10 @@ class SalomeMedcoupling(CMakePackage):
         version("9.5.0", tag="V9_5_0", commit="dd75474d950baf8ff862b03cb1685f2a2d562846")
         version("9.4.0", tag="V9_4_0", commit="984fe46c4076f08f42ef43e290e3cd1aea5a8182")
         version("9.3.0", tag="V9_3_0", commit="32521cd6e5c113de5db7953a80149e5ab492120a")
+
+    def url_for_version(self, version):
+        url = "https://github.com/SalomePlatform/medcoupling/archive/refs/tags/V{0}.tar.gz"
+        return url.format(version.underscored)
 
     variant("static", default=False, description="Enable static library build")
     variant("mpi", default=False, description="Enable MPI")
