@@ -45,8 +45,7 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
     # cray-mpich 8.1.7: features MPI compiler wrappers
     variant("wrappers", default=True, when="@8.1.7:", description="enable MPI wrappers")
-    variant("gtl", default=True, when="+rocm",
-            description="Enable GPU Accelerated Transports")
+    variant("gtl", default=True, when="+rocm", description="Enable GPU Accelerated Transports")
 
     provides("mpi@3")
 
