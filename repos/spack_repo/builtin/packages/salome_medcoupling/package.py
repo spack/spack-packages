@@ -69,7 +69,8 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("swig@4.0.2:", when="@9.11:", type="build")
 
     depends_on("metis@5.1.0:", when="+metis")
-    depends_on("scotch@6.0.4:", when="+scotch")
+    depends_on("scotch@6.0.4:", when="@:9.12 +scotch")
+    depends_on("scotch@6.1.2:", when="@9.13: +scotch")
     depends_on("mpi", when="+mpi")
 
     for _min_ver in range(3, 14):
