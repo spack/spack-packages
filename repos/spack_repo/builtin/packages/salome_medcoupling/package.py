@@ -54,6 +54,8 @@ class SalomeMedcoupling(CMakePackage):
     # See https://github.com/SalomePlatform/sat_salome/blob/master/applications for the dependencies
     # and their version used for official releases
 
+    depends_on("cmake@2.8.11:3", type="build")
+
     depends_on("libxml2@2.9.1:")
     depends_on("libtirpc")
     depends_on("cppunit", type="test")
