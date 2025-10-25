@@ -45,6 +45,9 @@ class SalomeMedcoupling(CMakePackage):
     variant("metis", default=False, description="Enable Metis")
     variant("scotch", default=False, description="Enable Scotch")
 
+    conflicts("~partitioner", when="+metis")
+    conflicts("~partitioner", when="+scotch")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -101,52 +104,20 @@ class SalomeMedcoupling(CMakePackage):
         )
 
     def cmake_args(self):
-        spec = self.spec
-        options = []
-
-        if "+static" in spec:
-            options.extend(["-DMEDCOUPLING_BUILD_STATIC=ON"])
-        else:
-            options.extend(["-DMEDCOUPLING_BUILD_STATIC=OFF"])
-
-        if "+mpi" in spec:
-            options.extend(["-DMEDCOUPLING_USE_MPI=ON", "-DSALOME_USE_MPI=ON"])
-        else:
-            options.extend(["-DMEDCOUPLING_USE_MPI=OFF", "-DSALOME_USE_MPI=OFF"])
-
-        if "+int64" in spec:
-            options.extend(["-DMEDCOUPLING_USE_64BIT_IDS=ON"])
-        else:
-            options.extend(["-DMEDCOUPLING_USE_64BIT_IDS=OFF"])
-
-        if "+partitioner" in spec:
-            options.extend(["-DMEDCOUPLING_ENABLE_PARTITIONER=ON"])
-        else:
-            options.extend(["-DMEDCOUPLING_ENABLE_PARTITIONER=OFF"])
-
-        if "+metis" in spec:
-            options.extend(["-DMEDCOUPLING_ENABLE_PARTITIONER=ON"])
-            options.extend(["-DMEDCOUPLING_PARTITIONER_METIS=ON"])
-        else:
-            options.extend(["-DMEDCOUPLING_PARTITIONER_METIS=OFF"])
-
-        if "+scotch" in spec:
-            options.extend(["-DMEDCOUPLING_ENABLE_PARTITIONER=ON"])
-            options.extend(["-DMEDCOUPLING_PARTITIONER_SCOTCH=ON"])
-        else:
-            options.extend(["-DMEDCOUPLING_PARTITIONER_SCOTCH=OFF"])
-
-        options.append(self.define("MEDCOUPLING_BUILD_TESTS", self.run_tests))
-
-        options.extend(
-            [
-                "-DMEDCOUPLING_BUILD_DOC=OFF",
-                "-DMEDCOUPLING_ENABLE_PYTHON=ON",
-                "-DMEDCOUPLING_ENABLE_RENUMBER=OFF",
-                "-DMEDCOUPLING_PARTITIONER_PARMETIS=OFF",
-                "-DMEDCOUPLING_PARTITIONER_PTSCOTCH=OFF",
-                "-DMEDCOUPLING_MICROMED=OFF",
-            ]
-        )
-
-        return options
+        args = [
+            self.define_from_variant("MEDCOUPLING_BUILD_STATIC", "static"),
+            self.define_from_variant("MEDCOUPLING_USE_MPI", "mpi"),
+            self.define_from_variant("SALOME_USE_MPI", "mpi"),
+            self.define_from_variant("MEDCOUPLING_USE_64BIT_IDS", "int64"),
+            self.define_from_variant("MEDCOUPLING_ENABLE_PARTITIONER","partitioner"),
+            self.define_from_variant("MEDCOUPLING_PARTITIONER_METIS", "metis"),
+            self.define_from_variant("MEDCOUPLING_PARTITIONER_SCOTCH", "scotch"),
+            self.define("MEDCOUPLING_BUILD_TESTS", self.run_tests),
+            self.define("MEDCOUPLING_BUILD_DOC", False),
+            self.define("MEDCOUPLING_ENABLE_PYTHON", True),
+            self.define("MEDCOUPLING_ENABLE_RENUMBER", False),
+            self.define("MEDCOUPLING_PARTITIONER_PARMETIS", False),
+            self.define("MEDCOUPLING_PARTITIONER_PTSCOTCH", False),
+            self.define("MEDCOUPLING_MICROMED", False),
+        ]
+        return args
