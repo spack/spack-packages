@@ -45,8 +45,8 @@ class SalomeMedcoupling(CMakePackage):
     variant("metis", default=False, description="Enable Metis")
     variant("scotch", default=False, description="Enable Scotch")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # See https://github.com/SalomePlatform/sat_salome/blob/master/applications for the dependencies
     # and their version used for official releases
