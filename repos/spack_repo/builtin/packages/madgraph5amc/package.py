@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import shutil
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
@@ -129,6 +130,17 @@ class Madgraph5amc(MakefilePackage):
 
         # TODO: Fix for reproducibility, see https://github.com/spack/spack/pull/41128#issuecomment-2305777485
         if "+pythia8" in spec:
+            # Overwrite Pythia8's version of `JetMatching.h` with the one from MadGraph5_aMC@NLO
+            src = join_path(self.prefix, "Template", "NLO", "MCatNLO", "Scripts", "JetMatching.h")
+            dst = join_path(
+                self.spec["pythia8"].prefix, "include", "Pythia8Plugins", "JetMatching.h"
+            )
+            backup = dst + ".orig"
+            if not os.path.exists(backup):
+                shutil.copy2(dst, backup)
+
+            shutil.copy2(src, dst)
+
             with open("install-pythia8-interface", "w") as f:
                 f.write(
                     f"""set pythia8_path {spec["pythia8"].prefix}
