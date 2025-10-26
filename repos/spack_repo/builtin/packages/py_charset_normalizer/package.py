@@ -33,6 +33,7 @@ class PyCharsetNormalizer(PythonPackage):
         depends_on("py-mypy@1.4.1:1.15.0", when="@3.4.2")
         depends_on("py-mypy@1.4.1:1.14.0", when="@3.4.1")
 
+    # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
         depends_on("python@3.8:3.14", when="@3.4.3:")
         depends_on("python@3.7:3.13", when="@3.4.0:3.4.2")
