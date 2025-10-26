@@ -93,7 +93,7 @@ class RocmSmiLib(CMakePackage):
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 
-    depends_on("pkg-config", when="@6.4:")
+    depends_on("pkgconfig", when="@6.4:")
     depends_on("libdrm", when="@6.4:")
 
     patch(
