@@ -144,7 +144,7 @@ class Gaudi(CMakePackage, CudaPackage):
     )
     depends_on(f"boost@1.70: +{boost_libs}", when="@35:")
     depends_on(f"boost@1.70: +{boost_libs}+fiber", when="@39:")
-    # Until gaudi@40.0, there is a build dependency on boost::system, which was removed in boost@1.89.
+    # Until gaudi@40.0, there is a build dependency on boost::system, removed in boost@1.89.
     # Ref: https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1809
     conflicts("^boost@1.89:", when="@:40.0", msg="Boost@1.89: requires Gaudi@40.1:")
 
