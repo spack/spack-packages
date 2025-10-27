@@ -120,7 +120,7 @@ class DarshanRuntime(AutotoolsPackage):
     variant("group_readable_logs", default=False, description="Write group-readable logs")
 
     def url_for_version(self, version):
-        if version < Version("3.5.0"):
+        if self.spec.satisfies("@:3.4"):
             return f"https://web.cels.anl.gov/projects/darshan/releases/darshan-{version}.tar.gz"
         else:
             return f"https://github.com/darshan-hpc/darshan/archive/refs/tags/{version}.tar.gz"
