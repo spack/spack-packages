@@ -188,9 +188,12 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
         options += self.enable_or_disable("pthreads")
         options += self.enable_or_disable("mpi-compat", variant="mpi_compat")
 
+        if not spec.satisfies("segment=off"):
+            options.append(f"--enable-segment-{spec.variants['segment'].value}")
+
         flags = {"cflags": [], "cxxflags": [], "mpi-cflags": []}
 
-        if self.spec.satisfies("+pic"):
+        if spec.satisfies("+pic"):
             flags["cflags"].append(self.compiler.cc_pic_flag)
             flags["mpi-cflags"].append(self.compiler.cc_pic_flag)
             flags["cxxflags"].append(self.compiler.cxx_pic_flag)
