@@ -152,6 +152,8 @@ class RocprofilerSystems(CMakePackage):
         when="+internal-dyninst",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
+    depends_on("intel-tbb@2019", when="%c,cxx=rocmcc")
+    depends_on("elfutils")
     depends_on("m4")
     depends_on("texinfo")
     depends_on("libunwind", type=("build", "run"))
@@ -197,6 +199,8 @@ class RocprofilerSystems(CMakePackage):
         working_dir="external/dyninst",
     )
 
+    patch("timemory-rocmcc.patch", when="@6.4.0: %c,cxx=rocmcc")
+
     def cmake_args(self):
         spec = self.spec
 
@@ -218,6 +222,7 @@ class RocprofilerSystems(CMakePackage):
             self.define_from_variant("ROCPROFSYS_USE_MPI_HEADERS", "mpi_headers"),
             self.define_from_variant("ROCPROFSYS_STRIP_LIBRARIES", "strip"),
             self.define_from_variant("ROCPROFSYS_INSTALL_PERFETTO_TOOLS", "perfetto_tools"),
+            self.define("ElfUtils_ROOT_DIR", spec["elfutils"].prefix),
             # timemory arguments
             self.define("TIMEMORY_BUILD_CALIPER", False),
             self.define_from_variant("TIMEMORY_USE_TAU", "tau"),
@@ -244,8 +249,16 @@ class RocprofilerSystems(CMakePackage):
             args.append(
                 self.define("libunwind_INCLUDE_DIR", self.spec["libunwind"].prefix.include)
             )
-        if spec.satisfies("@7.0:"):
-            args.append(self.define("ROCPROFSYS_BUILD_TBB", "ON"))
+        if spec.satisfies("%c,cxx=rocmcc"):
+            if spec.satisfies("@7.0"):
+                args.append(self.define("ROCPROFSYS_BUILD_TBB", "OFF"))
+            if spec.satisfies("+internal-dyninst"):
+                args.append(self.define("DYNINST_BUILD_TBB", "OFF"))
+        else:
+            if spec.satisfies("@7.0"):
+                args.append(self.define("ROCPROFSYS_BUILD_TBB", "ON"))
+            if spec.satisfies("+internal-dyninst"):
+                args.append(self.define("DYNINST_BUILD_TBB", "ON"))
         return args
 
     def flag_handler(self, name, flags):
