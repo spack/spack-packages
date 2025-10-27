@@ -20,6 +20,7 @@ class HipTests(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("7.0.0", sha256="f09760abd2f7f3a296419834096cf4a9e42ce3cbcf5f0efc36e74d0b7eb801eb")
     version("6.4.3", sha256="7e25bb8ae6c707000ae9620cf4cd42ff055223630139d6219b017e5516a42487")
     version("6.4.2", sha256="8a39c8b9fa373636b86dd4c2df758a525de6772f27ee1e8e2c3d84c3f287532a")
     version("6.4.1", sha256="81614a66fc4dd97a0b6948d067f9423116ca852725074c4deecf549d379b2680")
@@ -54,6 +55,7 @@ class HipTests(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -97,12 +99,20 @@ class HipTests(CMakePackage):
             "samples/2_Cookbook/19_cmake_lang/CMakeLists.txt",
             string=True,
         )
-        filter_file(
-            "${CMAKE_PREFIX_PATH}/bin/hipify-perl",
-            f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
-            "samples/0_Intro/square/CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("@:6.4"):
+            filter_file(
+                "${CMAKE_PREFIX_PATH}/bin/hipify-perl",
+                f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
+                "samples/0_Intro/square/CMakeLists.txt",
+                string=True,
+            )
+        if self.spec.satisfies("@7.0:"):
+            filter_file(
+                "${ROCM_PATH}/bin/hipify-perl",
+                f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
+                "samples/0_Intro/square/CMakeLists.txt",
+                string=True,
+            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -126,6 +136,8 @@ class HipTests(CMakePackage):
         """Copy the tests source files after the package is installed to an
         install test subdirectory for use during `spack test run`."""
         cache_extra_test_sources(self, "samples")
+        if self.spec.satisfies("@7.0:"):
+            cache_extra_test_sources(self, "catch")
 
     def test_samples(self):
         """build and run all hip samples"""

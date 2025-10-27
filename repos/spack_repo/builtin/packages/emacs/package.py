@@ -109,6 +109,13 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     conflicts("gui=x11", when="platform=darwin", msg="Use gui=cocoa for macOS GUI support")
     conflicts("@:26.3", when="platform=darwin os=catalina")
 
+    # Xcode 26 adds support for `posix_spawn_file_actions_addchdir`, but older
+    # macOS kernels (for example, macOS 15) do not implement it. The newer CLI
+    # tools can therefore appear to support the feature even though the kernel
+    # lacks the required support, causing Emacs to segfault during compilation.
+    patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sequoia")
+    patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sonoma")
+
     def configure_args(self):
         args = []
 

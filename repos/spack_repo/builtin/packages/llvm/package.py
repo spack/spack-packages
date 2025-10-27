@@ -256,6 +256,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         description="Enable zstd support for static analyzer / lld",
     )
 
+    variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
+
     provides("libllvm@20", when="@20.0.0:20")
     provides("libllvm@19", when="@19.0.0:19")
     provides("libllvm@18", when="@18.0.0:18")
@@ -351,6 +353,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     conflicts("%gcc@:5.0", when="@8:")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
+    # Compiler will throw errors like e.g. "no type named 'iterator'" or "class has no member"
+    conflicts("%gcc@15:", when="@:18")
 
     # libcxx=project imposes compiler conflicts
     # see https://libcxx.llvm.org/#platform-and-compiler-support for the latest release
@@ -1016,6 +1020,10 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         if spec.satisfies("+polly"):
             projects.append("polly")
             cmake_args.append(define("LINK_POLLY_INTO_TOOLS", True))
+        if spec.satisfies("+utils"):
+            cmake_args.extend(
+                [define("LLVM_BUILD_UTILS", True), define("LLVM_INSTALL_UTILS", True)]
+            )
 
         cmake_args.extend(
             [
