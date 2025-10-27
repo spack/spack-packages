@@ -34,6 +34,9 @@ class RNloptr(RPackage):
     version("1.2.1", sha256="1f86e33ecde6c3b0d2098c47591a9cd0fa41fb973ebf5145859677492730df97")
     version("1.0.4", sha256="84225b993cb1ef7854edda9629858662cc8592b0d1344baadea4177486ece1eb")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     depends_on("r-testthat", when="@2.0.0:2.1.0")
     depends_on("nlopt@2.4.0:")
     depends_on("nlopt@2.7.0:", when="@2.0.0:")
