@@ -6,7 +6,7 @@ spack:
   # TODO: Tag this with a release
   - path: https://raw.githubusercontent.com/tools-integration/tools-sdk/96ee62feaad3936185937d10185ea17731bd1c7f/spack/configs/packages.yaml
     sha256: 7e6e369f07e740e3f1cf972ed88f89da7d0c773de0ad45d80441fafed073887d
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   packages:
     all:

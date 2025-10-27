@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   packages:
     all:
@@ -16,7 +16,8 @@ spack:
     py-jaxlib:
       require: "%c,cxx=clang"
     py-tensorflow:
-      require: "%c,cxx=gcc"
+      require:
+        - any_of: ["@:2.18 %c,cxx=gcc", "@2.19: %c,cxx=clang"]
     py-torch:
       require: "%c,cxx=gcc"
 
