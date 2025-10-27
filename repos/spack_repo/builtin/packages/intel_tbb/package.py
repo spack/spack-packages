@@ -214,7 +214,7 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
             self.define("TBB_TEST", False),
         ]
 
-        if spec in "@2021.6.0:":
+        if spec.satisfies("@2021.6.0:"):
             options.append(self.define_from_variant("TBB_ENABLE_IPO", "ipo"))
 
         if spec.variants["cxxstd"].value != "default":
