@@ -37,3 +37,6 @@ class PySpatialpandas(PythonPackage):
     depends_on("py-pyarrow@10:", type="run")
     depends_on("py-pyarrow@14.0.1:", type="run", when="@0.5:")
     depends_on("py-retrying", type="run")
+
+    # https://github.com/holoviz/spatialpandas/issues/146
+    requires("@0.5:", when="^py-dask@2025.1:")
