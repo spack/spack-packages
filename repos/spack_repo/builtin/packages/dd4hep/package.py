@@ -158,6 +158,9 @@ class Dd4hep(CMakePackage):
         depends_on("podio@0.16:", when="@1.24:")
         depends_on("podio@0.16.3:", when="@1.26:")
         depends_on("podio@0.16.7:", when="@1.31:")
+        # Needs a version where the following changes have landed
+        # https://github.com/AIDASoft/DD4hep/commit/b16e724627bd131cc8395a60f4eb9e0e261d5890
+        depends_on("podio@:1.4", when="@:1.32")
 
     extends("python")
 

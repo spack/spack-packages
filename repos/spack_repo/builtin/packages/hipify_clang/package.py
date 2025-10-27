@@ -23,6 +23,7 @@ class HipifyClang(CMakePackage):
 
     license("MIT")
 
+    version("7.0.0", sha256="285c23572087efa55196d65c94714541831090e20427e8281dd44771e6faf1f5")
     version("6.4.3", sha256="00156b62bfe3e8c848fb7e4573e55253ec0c86e663a226e794ff314934060182")
     version("6.4.2", sha256="b20623789fcdd21d3fb9d935b8c4c51c12f9b3e444e7e02f29e2869899db2531")
     version("6.4.1", sha256="f22595edb0501bc29aa62263a65333748ebb5a50db80179f6c8e5141697a22ef")
@@ -49,7 +50,7 @@ class HipifyClang(CMakePackage):
 
     patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@:6.0")
     patch("0003-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@6.1")
-    patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:")
+    patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:6")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -74,6 +75,7 @@ class HipifyClang(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
