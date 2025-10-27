@@ -172,6 +172,7 @@ class CudaPackage(PackageBase):
     depends_on("cuda@13.0:", when="cuda_arch=110")
     depends_on("cuda@13.0:", when="cuda_arch=110a")
     depends_on("cuda@13.0:", when="cuda_arch=110f")
+
     depends_on("cuda@12.8:", when="cuda_arch=120")
     depends_on("cuda@12.8:", when="cuda_arch=120a")
     depends_on("cuda@12.9:", when="cuda_arch=120f")
@@ -279,7 +280,7 @@ class CudaPackage(PackageBase):
         conflicts("%intel@19.1:", when="+cuda ^cuda@:10.1")
         conflicts("%intel@19.2:", when="+cuda ^cuda@:11.1.0")
         conflicts("%intel@2021:", when="+cuda ^cuda@:11.4.0")
-        conflicts("%intel", when="+cuda ^cuda@:13.0")
+        conflicts("%intel", when="+cuda ^cuda@13.0:")
 
         # ARM
         # https://github.com/spack/spack/pull/39666#issuecomment-2377609263
