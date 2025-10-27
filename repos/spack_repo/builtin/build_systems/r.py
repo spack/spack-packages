@@ -103,6 +103,7 @@ class RPackage(Package):
     # needed for packages that need compiling
     depends_on("gmake", type="build", when="%c")
     depends_on("gmake", type="build", when="%cxx")
+    depends_on("gmake", type="build", when="%fortran")
 
     homepage: ClassProperty[Optional[str]] = classproperty(_homepage)
     url: ClassProperty[Optional[str]] = classproperty(_url)
