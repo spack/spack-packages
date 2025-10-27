@@ -6,6 +6,11 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
 
+# Note:
+# download links are in the form
+# https://code.mpimet.mpg.de/attachments/download/29309/cdi-2.4.0.tar.gz
+# and this maps versions to resource identifiers used internally (e.g. 29309 in the url above)
+# so that `url_for_version` can compose the right url for each version.
 RESOURCE_ID = {
     "2.4.0": 29309,
     "2.4.3": 29658,
