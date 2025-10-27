@@ -471,7 +471,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     conflicts("%gcc@:5.0", when="@8:")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
-    # Compiler will through errors like e.g. "no type named 'iterator'" or "class has no member"
+    # Compiler will throw errors like e.g. "no type named 'iterator'" or "class has no member"
     conflicts("%gcc@15:", when="@:18")
 
     # libcxx=project imposes compiler conflicts
