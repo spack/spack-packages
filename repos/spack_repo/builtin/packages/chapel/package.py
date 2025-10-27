@@ -479,8 +479,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("rocm", default=False, sticky=True, description="Enable AMD ROCm GPU support")
     variant("cuda", default=False, sticky=True, description="Enable Nvidia CUDA GPU support")
 
-    conflicts("^cuda@13:", when="+cuda")
-
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
 
     conflicts(
@@ -589,7 +587,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # but many of these are ALSO run-time dependencies of the executable
     # application built by that Chapel compiler from user-provided sources.
     with default_args(type=("build", "link", "run", "test")):
-        depends_on("cuda@11:", when="+cuda")
+        depends_on("cuda@11:12", when="+cuda")
         depends_on("gmp", when="gmp=spack")
         depends_on("hwloc", when="hwloc=spack")
         depends_on("libfabric", when="libfabric=spack")
