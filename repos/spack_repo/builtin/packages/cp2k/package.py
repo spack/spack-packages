@@ -118,7 +118,12 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         " are enabled",
     )
     variant("pytorch", default=False, description="Enable libtorch support")
-    variant("openpmd-api", default=False, description="Enable openPMD support", when="@2026.1: build_system=cmake")
+    variant(
+        "openpmd-api",
+        default=False,
+        description="Enable openPMD support",
+        when="@2026.1: build_system=cmake",
+    )
     variant("quip", default=False, description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
