@@ -16,6 +16,9 @@ class PyAutopep8(PythonPackage):
 
     license("MIT")
 
+    version("2.3.2", sha256="89440a4f969197b69a995e4ce0661b031f455a9f776d2c5ba3dbd83466931758")
+    version("2.1.2", sha256="77b07146bf127aa88de78efc270d395a54ebb8284fdbe6542c4aeb8d969f4d9a")
+    version("2.0.4", sha256="2913064abd97b3419d1cc83ea71f042cb821f87e45b9c88cad5ad3c4ea87fe0c")
     version("1.7.0", sha256="ca9b1a83e53a7fad65d731dc7a2a2d50aa48f43850407c59f6a1a306c4201142")
     version("1.6.0", sha256="44f0932855039d2c15c4510d6df665e4730f2b8582704fa48f9c55bd3e17d979")
     version("1.5.7", sha256="276ced7e9e3cb22e5d7c14748384a5cf5d9002257c0ed50c0e075b68011bb6d0")
