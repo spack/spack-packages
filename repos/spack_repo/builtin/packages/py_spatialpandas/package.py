@@ -27,7 +27,7 @@ class PySpatialpandas(PythonPackage):
 
     # https://github.com/holoviz/spatialpandas/issues/146
     depends_on("py-dask@:2024", type="run", when="@:0.4")
-    depends_on("py-dask@2025:", type="run", when="@0.5.0:")
+    depends_on("py-dask@2025.1:", type="run", when="@0.5.0:")
 
     depends_on("py-fsspec@2022.8:", type="run")
     depends_on("py-numba", type="run")
@@ -37,6 +37,3 @@ class PySpatialpandas(PythonPackage):
     depends_on("py-pyarrow@10:", type="run")
     depends_on("py-pyarrow@14.0.1:", type="run", when="@0.5:")
     depends_on("py-retrying", type="run")
-
-    # https://github.com/holoviz/spatialpandas/issues/146
-    requires("@0.5:", when="^py-dask@2025.1:")
