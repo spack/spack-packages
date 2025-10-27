@@ -12,12 +12,12 @@ from spack.package import *
 # and this maps versions to resource identifiers used internally (e.g. 29309 in the url above)
 # so that `url_for_version` can compose the right url for each version.
 RESOURCE_ID = {
-    "2.4.0": 29309,
-    "2.4.3": 29658,
-    "2.5.0": 29833,
-    "2.5.1": 29860,
-    "2.5.1.1": 29871,
     "2.5.3": 30033,
+    "2.5.1.1": 29871,
+    "2.5.1": 29860,
+    "2.5.0": 29833,
+    "2.4.3": 29658,
+    "2.4.0": 29309,
 }
 
 
