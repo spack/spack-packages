@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PyCodechecker(PythonPackage):
-    """ FIX ME """
+    """FIX ME"""
 
     homepage = "https://github.com/Ericsson/codechecker"
     pypi = "codechecker/codechecker-6.26.2.tar.gz"
@@ -47,4 +47,3 @@ class PyCodechecker(PythonPackage):
     depends_on("py-gitpython@3.1.41:", type=("build", "run"))
 
     depends_on("node-js@16:", type=("build", "run"))
-    

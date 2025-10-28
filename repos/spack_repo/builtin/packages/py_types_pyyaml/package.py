@@ -8,13 +8,16 @@ from spack.package import *
 
 
 class PyTypesPyyaml(PythonPackage):
-    """ This is a type stub package for the PyYAML package. It can be used by type checkers to check code that uses PyYAML.  """
+    """This is a type stub package for the PyYAML package. It can be used by type checkers to check code that uses PyYAML."""
 
     homepage = "https://github.com/Ericsson/codechecker"
     pypi = "types_PyYAML/types_pyyaml-6.0.12.20250915.tar.gz"
 
     license("MIT")
 
-    version("6.0.12.20250915", sha256="0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3")
+    version(
+        "6.0.12.20250915",
+        sha256="0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3",
+    )
 
     depends_on("py-setuptools", type="build")

@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PyAuthlib(PythonPackage):
-    """ The ultimate Python library in building OAuth and OpenID Connect servers. JWS, JWK, JWA, JWT are included. """
+    """The ultimate Python library in building OAuth and OpenID Connect servers. JWS, JWK, JWA, JWT are included."""
 
     homepage = "https://github.com/authlib/authlib"
     pypi = "authlib/authlib-1.6.5.tar.gz"
