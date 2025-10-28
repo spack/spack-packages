@@ -18,7 +18,6 @@ class PyAppModel(PythonPackage):
 
     license("BSD-3-Clause", checked_by="Markus92")
 
-    # version("0.5.0", sha256="fa329cf7b730572cce3daeac6678bbeaf1cf0a7dd485bf2c666b5508d54c8d0f")
     version("0.4.0", sha256="ccf667999f6c659e921ca3490b6da176971e67cf2f41abc34e33caa8cfa18573")
     version("0.1.4", sha256="67f5cdf16f79e22844f2bdb91fd90e81d05077c5882bc3536f9d74b515a5b1d4")
 
