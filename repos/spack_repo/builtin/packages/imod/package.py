@@ -43,7 +43,6 @@ class Imod(MakefilePackage, CudaPackage):
     def edit(self, spec, prefix):
         configure = Executable("./setup")
         configure_args = ["-inst", prefix]  # Set up prefix
-        # TODO args about FFTW, CUDA
         configure(*configure_args)
 
         if self.spec.satisfies("+cuda"):
@@ -61,6 +60,5 @@ class Imod(MakefilePackage, CudaPackage):
         if self.spec.satisfies("+cuda"):
             env.set("CUDA_DIR", self.spec["cuda"].prefix)
 
-
-def setup_run_environment(self, env: EnvironmentModifications) -> None:
-    env.set("IMOD_DIR", self.prefix)
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.set("IMOD_DIR", self.prefix)
