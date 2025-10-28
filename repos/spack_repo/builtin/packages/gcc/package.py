@@ -1120,7 +1120,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # Starting with SDK 26 and clang 17, limits.h amongst other sys includes aren't included
     # via other means, resulting in a failed build. Keep this for other builds for safety.
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if sys.platform == "darwin":
+        if self.spec.satisfies("platform=darwin"):
             macos_sdk_path = Executable("xcrun")("--show-sdk-path", output=str).strip()
             env.set("CFLAGS", f"--sysroot {macos_sdk_path}")
 
