@@ -104,9 +104,13 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("pbzip2", type="run", when="@5:")
     depends_on("xz", type="run", when="@5:")
     depends_on("zstd", type="run", when="@5:")
-    
+
     for arch in CudaPackage.cuda_arch_values:
-        depends_on(f"py-relion@5.0.1 +cuda cuda_arch={arch}", type=("build", "run"), when=f"@5.0.1 +cuda cuda_arch={arch}")
+        depends_on(
+            f"py-relion@5.0.1 +cuda cuda_arch={arch}",
+            type=("build", "run"),
+            when=f"@5.0.1 +cuda cuda_arch={arch}",
+        )
     depends_on(f"py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 ~cuda")
 
     patch("0002-Simple-patch-to-fix-intel-mkl-linking.patch", when="@:3.1.1 os=ubuntu18.04")
