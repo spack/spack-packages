@@ -104,15 +104,11 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("pbzip2", type="run", when="@5:")
     depends_on("xz", type="run", when="@5:")
     depends_on("zstd", type="run", when="@5:")
-    # TODO add cuda_arch
-    depends_on(f"py-relion@5.0.1 +cuda", type=("build", "run"), when="@5.0.1 +cuda")
+    
+    for arch in CudaPackage.cuda_arch_values:
+        depends_on(f"py-relion@5.0.1 +cuda cuda_arch={arch}", type=("build", "run"), when=f"@5.0.1 +cuda cuda_arch={arch}")
     depends_on(f"py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 ~cuda")
-    # depends_on(f"py-relion@5.0.0 +cuda", type=("build", "run"), when="@5.0.0 +cuda")
 
-    # TODO: more externals to add
-    # Spack packages needed
-    # - Gctf
-    # - ResMap
     patch("0002-Simple-patch-to-fix-intel-mkl-linking.patch", when="@:3.1.1 os=ubuntu18.04")
     patch(
         "https://github.com/3dem/relion/commit/2daa7447c1c871be062cce99109b6041955ec5e9.patch?full_index=1",
