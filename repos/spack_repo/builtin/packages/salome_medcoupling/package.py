@@ -44,11 +44,9 @@ class SalomeMedcoupling(CMakePackage):
     variant("mpi", default=False, description="Enable MPI")
     variant("int64", default=False, description="Use 64 bits indices")
     variant("partitioner", default=False, description="Enable partitioner")
-    variant("metis", default=False, description="Enable Metis")
-    variant("scotch", default=False, description="Enable Scotch")
+    variant("metis", default=False, when="+partitioner", description="Enable Metis")
+    variant("scotch", default=False, when="+partitioner", description="Enable Scotch")
 
-    conflicts("~partitioner", when="+metis")
-    conflicts("~partitioner", when="+scotch")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
