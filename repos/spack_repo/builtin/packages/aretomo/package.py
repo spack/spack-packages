@@ -31,7 +31,6 @@ class Aretomo(Package):
 
     depends_on("patchelf", type="build")
 
-    # AreTomo can use a different Cuda version from other loaded packages
     depends_on("cuda@10.1,10.2,11.1:11.8", type="link")
 
     def install(self, spec, prefix):
