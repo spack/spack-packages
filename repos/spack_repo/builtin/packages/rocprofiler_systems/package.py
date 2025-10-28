@@ -152,7 +152,7 @@ class RocprofilerSystems(CMakePackage):
         when="+internal-dyninst",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
-    depends_on("intel-tbb@2019", when="%c,cxx=rocmcc")
+    depends_on("intel-tbb@2019:2020.3", when="%c,cxx=rocmcc")
     depends_on("elfutils")
     depends_on("m4")
     depends_on("texinfo")
@@ -199,7 +199,7 @@ class RocprofilerSystems(CMakePackage):
         working_dir="external/dyninst",
     )
 
-    patch("timemory-rocmcc.patch", when="@6.4.0: %c,cxx=rocmcc")
+    patch("timemory-rocmcc.patch", when="%c,cxx=rocmcc")
 
     def cmake_args(self):
         spec = self.spec
