@@ -47,7 +47,6 @@ class SalomeMedcoupling(CMakePackage):
     variant("metis", default=False, when="+partitioner", description="Enable Metis")
     variant("scotch", default=False, when="+partitioner", description="Enable Scotch")
 
-
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
