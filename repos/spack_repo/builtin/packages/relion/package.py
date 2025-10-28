@@ -111,7 +111,7 @@ class Relion(CMakePackage, CudaPackage):
             type=("build", "run"),
             when=f"@5.0.1 +cuda cuda_arch={arch}",
         )
-    depends_on(f"py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 ~cuda")
+    depends_on("py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 ~cuda")
 
     patch("0002-Simple-patch-to-fix-intel-mkl-linking.patch", when="@:3.1.1 os=ubuntu18.04")
     patch(
