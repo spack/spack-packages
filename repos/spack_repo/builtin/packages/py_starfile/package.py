@@ -32,9 +32,6 @@ class PyStarfile(PythonPackage):
     version("0.5.6", sha256="e6efe40a43ceae8ec6d85ec2fae62ae570cbadb981fdc76fe4a66a1b90c36631")
     version("0.5.5", sha256="e472c24554a179e74ab2c0a6c43c21a185f081b9d1c3477b009ef9ba4461fd97")
     version("0.5.4", sha256="4e7cea4f871f5aeeff6829b2cd95efc0c2212ca7a3a583f5fc8ff53329bc4417")
-    version("0.5.3", sha256="923a05e93612546f3071d8afa2b1673a143836ed519b73ba5dad3c323b9c761b")
-    version("0.5.2", sha256="f65ad12bad6b64b40bd101bf0aeb4c6ed2342e8f6e10473ac68a3dfe7a236ed4")
-    version("0.5.1", sha256="b8902d81256ac44faa3a09fd8e102a1493c673892f6a1fabb19655f5d505a946")
 
     depends_on("python@3.8:", type=("build", "run"))
 
