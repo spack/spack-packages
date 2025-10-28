@@ -32,7 +32,7 @@ class Libharu(autotools.AutotoolsPackage, cmake.CMakePackage):
 
     build_system(
         conditional("cmake", when="@2.4.0:"),
-        conditional("autotools", when="@:2.3.99"),
+        conditional("autotools", when="@:2.3"),
         default="cmake",
     )
 
