@@ -46,7 +46,7 @@ class Cdi(AutotoolsPackage):
     def url_for_version(self, version):
         resource_id = RESOURCE_ID.get(str(version))
         if resource_id is None:
-            raise InstallError(f"Download link mapping for {version} has not been added yet.")
+            raise InstallError(f"don't know which url to use to download cdi@{version}")
         return "https://code.mpimet.mpg.de/attachments/download/{}/cdi-{}.tar.gz".format(
             resource_id, version
         )
