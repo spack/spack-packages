@@ -117,7 +117,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
     with when("build_system=cmake"):
         depends_on("cmake@3.25:", type="build", when="@17:")
         depends_on("cmake@3.20:", type="build", when="@:16")
-        depends_on("pkgconf", type="build")
+        depends_on("pkgconfig", type="build")
         cmake.generator("ninja")
 
     depends_on("perl", type="build")
