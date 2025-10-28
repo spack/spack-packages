@@ -322,7 +322,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocminfo")
         depends_on("hipsparselt", when="@2.8:")
         depends_on("aotriton@0.8b", when="@2.5:")
-        depends_on("aotriton@0.9b:0.10b", when="@2.7")
+        depends_on("aotriton@0.9.2b", when="@2.7")
         depends_on("aotriton@0.10b", when="@2.8")
         depends_on("composable-kernel@:6.3.2", when="@2.5")
         depends_on("composable-kernel@6.3.2:", when="@2.6:")

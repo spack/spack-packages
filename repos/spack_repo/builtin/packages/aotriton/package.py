@@ -67,11 +67,30 @@ class Aotriton(CMakePackage):
     depends_on("hsa-rocr-dev", type="build")
 
     def patch(self):
+        src = self.stage.source_path
         if self.spec.satisfies("^hip"):
             filter_file(
                 "/opt/rocm/llvm/bin/ld.lld",
                 f"{self.spec['llvm-amdgpu'].prefix}/bin/ld.lld",
                 "third_party/triton/third_party/amd/backend/compiler.py",
+                string=True,
+            )
+        filter_file(
+                r"LLVM_INCLUDE_DIRS",
+                f"{self.spec['aotriton-llvm'].prefix}/include",
+                "third_party/triton/python/setup.py",
+                string=True,
+            )
+        filter_file(
+                r"LLVM_LIBRARY_DIR",
+                f"{self.spec['aotriton-llvm'].prefix}/lib",
+                "third_party/triton/python/setup.py",
+                string=True,
+            )
+        filter_file(
+                r"LLVM_SYSPATH",
+                f"{self.spec['aotriton-llvm'].prefix}",
+                "third_party/triton/python/setup.py",
                 string=True,
             )
 
