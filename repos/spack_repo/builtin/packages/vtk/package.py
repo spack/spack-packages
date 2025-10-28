@@ -177,7 +177,8 @@ class Vtk(CMakePackage):
     # the two patches are the same but for the path to the files they patch
     patch("vtk_alias_hdf5.patch", when="@9:")
     # VTK 9.5 adds linkage to inonit when using an external IOSS
-    # backport that to 9.4
+    # backport that to 9.4 
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/12279
     patch("vtk_9.4_external_ioss_linkage.patch", when="@9.4")
     # Linking against an external gl2ps causes linker errors due to a lack of
     # glgetdoublev on macos. Vtk provides an alias for this, us it
