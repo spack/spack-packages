@@ -42,6 +42,7 @@ class PyCartopy(PythonPackage):
     )
     variant("plotting", default=False, description="Add plotting functionality")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     # Based on wheel availability on PyPI

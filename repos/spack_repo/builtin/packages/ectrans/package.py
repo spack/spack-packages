@@ -51,6 +51,11 @@ class Ectrans(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
+    # Add explicit dependency on newer cmake versions in order to apply patch
+    # "find_lapack.patch", see below and https://github.com/ecmwf-ifs/ectrans/issues/316
+    # Newer versions of ectrans (1.7.0+) also require cmake@3.25: by default.
+    depends_on("cmake@3.25:", when="@1.5:", type="build")
+
     depends_on("ecbuild", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("blas")
@@ -69,6 +74,9 @@ class Ectrans(CMakePackage):
         sha256="17999486a320a5c6a1a442adcdf2c341b49d005f45d09ad0e525594d50bdc39c",
         when="@1.3.1:1.5.1",
     )
+
+    # https://github.com/ecmwf-ifs/ectrans/issues/316
+    patch("find_lapack.patch", when="@1.5:")
 
     def cmake_args(self):
         args = [
