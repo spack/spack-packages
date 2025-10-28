@@ -26,8 +26,8 @@ class Aretomo2(MakefilePackage, CudaPackage):
     depends_on("cxx", type="build")
     depends_on("gmake", type="build")
 
-    depends_on("cuda")
     conflicts("~cuda")
+    conflicts("cuda_arch=none", when="+cuda", msg="A value for cuda_arch must be specified.")
 
     build_targets = ["exe"]
 
