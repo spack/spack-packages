@@ -19,6 +19,9 @@ class PyFenicsDolfinx(PythonPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main", no_cache=True)
+    version(
+        "0.10.0.post1", sha256="43ebfaf89fcb7809b11b94ba3e8ea8e56a99d724a45c51e99e39a35c577c441e"
+    )
     version("0.9.0", sha256="b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1")
     version("0.8.0", sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9")
     with default_args(deprecated=True):
@@ -47,22 +50,24 @@ class PyFenicsDolfinx(PythonPackage):
     depends_on("cmake@3.19:", when="@:0.8", type="build")
     depends_on("pkgconfig", type="build")
 
+    depends_on("python@3.10:", when="@0.10:", type=("build", "run"))
     depends_on("python@3.9:", when="@0.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.7", type=("build", "run"))
     depends_on("python@3.8:3.10", when="@0.6.0", type=("build", "run"))
 
-    for ver in ["main", "0.9.0", "0.8.0", "0.7.2", "0.6.0"]:
+    for ver in ["main", "0.10.0.post1", "0.9.0", "0.8.0", "0.7.2", "0.6.0"]:
         depends_on(f"fenics-dolfinx@{ver}", when=f"@{ver}")
 
-    for ver in ["main", "0.9", "0.8"]:
+    for ver in ["main", "0.10", "0.9", "0.8"]:
         depends_on(f"py-fenics-basix@{ver}", type=("build", "run"), when=f"@{ver}")
 
-    for ver in ["main", "0.9", "0.8", "0.7", "0.6"]:
+    for ver in ["main", "0.10", "0.9", "0.8", "0.7", "0.6"]:
         depends_on(f"fenics-basix@{ver}", type=("build", "link"), when=f"@{ver}")
         depends_on(f"py-fenics-ffcx@{ver}", type=("build", "link"), when=f"@{ver}")
 
     for ufl_ver, ver in [
         ("main", "main"),
+        ("2025.2", "0.10"),
         ("2024.2", "0.9"),
         ("2024.1", "0.8"),
         ("2023.2", "0.7"),
@@ -83,9 +88,10 @@ class PyFenicsDolfinx(PythonPackage):
 
     depends_on("py-cffi@:1.16", type=("build", "run"))
 
+    depends_on("py-nanobind@2.5:", when="@0.10:", type="build")
     depends_on("py-nanobind@2:", when="@0.9:", type="build")
     depends_on("py-nanobind@1.8:1.9", when="@0.8", type="build")
-    depends_on("py-scikit-build-core@0.10: +pyproject", when="@0.10:", type="build")
+    depends_on("py-scikit-build-core@0.10: +pyproject", when="@0.9:", type="build")
     depends_on("py-scikit-build-core@0.5: +pyproject", when="@0.8:0.9", type="build")
 
     depends_on("py-pybind11@2.7.0:", when="@:0.7", type=("build", "run"))
