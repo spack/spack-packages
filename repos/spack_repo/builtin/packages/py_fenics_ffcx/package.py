@@ -18,14 +18,17 @@ class PyFenicsFfcx(PythonPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main", no_cache=True)
+    version("0.10.0", sha256="fa27e2dc68988cbf9aca537eb5a58483f75cc719c1a383713b7f8cca49844ff9")
     version("0.9.0", sha256="afa517272a3d2249f513cb711c50b77cf8368dd0b8f5ea4b759142229204a448")
     version("0.8.0", sha256="8a854782dbd119ec1c23c4522a2134d5281e7f1bd2f37d64489f75da055282e3")
     with default_args(deprecated=True):
         version("0.7.0", sha256="7f3c3ca91d63ce7831d37799cc19d0551bdcd275bdfa4c099711679533dd1c71")
         version("0.6.0", sha256="076fad61d406afffd41019ae1abf6da3f76406c035c772abad2156127667980e")
 
+    depends_on("python@3.10:", when="@0.10:", type=("build", "run"))
     depends_on("python@3.9:", when="@0.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@:0.7", type=("build", "run"))
+    depends_on("py-setuptools@77:", when="@0.10:", type="build")
     depends_on("py-setuptools@62:", when="@0.7:", type="build")
     # Runtime dependency on pkg_resources from setuptools at 0.6.0
     depends_on("py-setuptools@58:", when="@:0.6", type=("build", "run"))
@@ -35,12 +38,14 @@ class PyFenicsFfcx(PythonPackage):
     depends_on("py-numpy@1.21:", type=("build", "run"))
 
     depends_on("py-fenics-ufl@main", type=("build", "run"), when="@main")
+    depends_on("py-fenics-ufl@2025.2.0:", type=("build", "run"), when="@0.10")
     depends_on("py-fenics-ufl@2024.2.0:", type=("build", "run"), when="@0.9")
     depends_on("py-fenics-ufl@2024.1.0:", type=("build", "run"), when="@0.8")
     depends_on("py-fenics-ufl@2023.2.0", type=("build", "run"), when="@0.7")
     depends_on("py-fenics-ufl@2023.1", type=("build", "run"), when="@0.6")
 
     depends_on("py-fenics-basix@main", type=("build", "run"), when="@main")
+    depends_on("py-fenics-basix@0.10", type=("build", "run"), when="@0.10")
     depends_on("py-fenics-basix@0.9", type=("build", "run"), when="@0.9")
     depends_on("py-fenics-basix@0.8", type=("build", "run"), when="@0.8")
     depends_on("py-fenics-basix@0.7", type=("build", "run"), when="@0.7")
