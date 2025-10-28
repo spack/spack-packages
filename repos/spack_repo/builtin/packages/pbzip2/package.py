@@ -32,5 +32,6 @@ class Pbzip2(MakefilePackage):
 
     def flag_handler(self, name: str, flags: List[str]):
         if name == "cxxflags":
-            flags.append("-Wno-reserved-user-defined-literal")
+            if self.spec.satisfies("%clang") or self.spec.satisfies("%apple-clang"):
+                flags.append("-Wno-reserved-user-defined-literal")
         return (flags, None, None)
