@@ -136,6 +136,10 @@ class RocprofilerSystems(CMakePackage):
         ),
     )
     variant("internal-dyninst", default=False, description="build internal dyninst")
+    variant("internal-tbb", default=False, description="build internal tbb")
+
+    conflicts("%rocmcc", when="+internal-tbb")
+    conflicts("%clang", when="+internal-tbb")
 
     extends("python", when="+python")
 
@@ -152,7 +156,7 @@ class RocprofilerSystems(CMakePackage):
         when="+internal-dyninst",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
-    depends_on("intel-tbb@2019:2020.3", when="%c,cxx=rocmcc")
+    depends_on("intel-tbb@2019:2020.3", when="~internal-tbb")
     depends_on("elfutils")
     depends_on("m4")
     depends_on("texinfo")
@@ -212,7 +216,6 @@ class RocprofilerSystems(CMakePackage):
             self.define("ROCPROFSYS_BUILD_STATIC_LIBGCC", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBSTDCXX", False),
             self.define_from_variant("ROCPROFSYS_BUILD_DYNINST", "internal-dyninst"),
-            self.define_from_variant("DYNINST_BUILD_TBB", "internal-dyninst"),
             self.define_from_variant("ROCPROFSYS_BUILD_LTO", "ipo"),
             self.define_from_variant("ROCPROFSYS_USE_MPI", "mpi"),
             self.define_from_variant("ROCPROFSYS_USE_OMPT", "ompt"),
@@ -249,16 +252,11 @@ class RocprofilerSystems(CMakePackage):
             args.append(
                 self.define("libunwind_INCLUDE_DIR", self.spec["libunwind"].prefix.include)
             )
-        if spec.satisfies("%c,cxx=rocmcc"):
-            if spec.satisfies("@7.0"):
-                args.append(self.define("ROCPROFSYS_BUILD_TBB", "OFF"))
-            if spec.satisfies("+internal-dyninst"):
-                args.append(self.define("DYNINST_BUILD_TBB", "OFF"))
-        else:
-            if spec.satisfies("@7.0"):
-                args.append(self.define("ROCPROFSYS_BUILD_TBB", "ON"))
-            if spec.satisfies("+internal-dyninst"):
-                args.append(self.define("DYNINST_BUILD_TBB", "ON"))
+
+        if spec.satisfies("@7.0:"):
+            args.append(self.define_from_variant("ROCPROFSYS_BUILD_TBB", "internal-tbb"))
+        if spec.satisfies("+internal-dyninst"):
+            args.append(self.define_from_variant("DYNINST_BUILD_TBB", "internal-tbb"))
         return args
 
     def flag_handler(self, name, flags):
