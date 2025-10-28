@@ -7,7 +7,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 
-class PyModelAngelo(PythonPackage):
+class ModelAngelo(PythonPackage):
     """ModelAngelo is an automatic atomic model building program for cryo-EM maps."""
 
     homepage = "https://github.com/3dem/model-angelo"

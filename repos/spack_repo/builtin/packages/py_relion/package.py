@@ -57,7 +57,7 @@ class PyRelion(PythonPackage, CudaPackage):
     depends_on("py-makefun")
     depends_on("py-lru-dict")
     depends_on("py-topaz-3dem", type="run", when="@5:")
-    depends_on("py-model-angelo", type="run", when="@5:")
+    depends_on("model-angelo", type="run", when="@5:")
     depends_on("py-relion-blush", type="run", when="@5:")
     depends_on("py-relion-classranker", type="run", when="@5:")
 
