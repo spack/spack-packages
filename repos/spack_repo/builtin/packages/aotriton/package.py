@@ -51,9 +51,9 @@ class Aotriton(CMakePackage):
     depends_on("pkgconfig", type="build")
 
     # build llvm version with mlir with the commit that matches inside the llvm-hash.txt
-    depends_on("aotriton-llvm@0.10", when="@0.10b")
-    depends_on("aotriton-llvm@0.9", when="@0.9b:0.9.2b")
-    depends_on("aotriton-llvm@0.8", when="@0.8:0.8.2b")
+    depends_on("aotriton-llvm@0.10", when="@0.10")
+    depends_on("aotriton-llvm@0.9", when="@0.9")
+    depends_on("aotriton-llvm@0.8", when="@0.8")
 
     conflicts("^openssl@3.3.0")
 
@@ -67,7 +67,6 @@ class Aotriton(CMakePackage):
     depends_on("hsa-rocr-dev", type="build")
 
     def patch(self):
-        src = self.stage.source_path
         if self.spec.satisfies("^hip"):
             filter_file(
                 "/opt/rocm/llvm/bin/ld.lld",
