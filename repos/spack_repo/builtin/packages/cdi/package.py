@@ -44,8 +44,11 @@ class Cdi(AutotoolsPackage):
     depends_on("netcdf-c", when="+netcdf")
 
     def url_for_version(self, version):
+        resource_id = RESOURCE_ID.get(str(version))
+        if resource_id is None:
+            raise InstallError(f"Download link mapping for {version} has not been added yet.")
         return "https://code.mpimet.mpg.de/attachments/download/{}/cdi-{}.tar.gz".format(
-            RESOURCE_ID[str(version)], version
+            resource_id, version
         )
 
     def configure_args(self):
