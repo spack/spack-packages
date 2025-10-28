@@ -20,6 +20,7 @@ class Libgeotiff(AutotoolsPackage):
 
     license("Public-Domain")
 
+    version("1.7.4", sha256="c598d04fdf2ba25c4352844dafa81dde3f7fd968daa7ad131228cd91e9d3dc47")
     version("1.7.1", sha256="05ab1347aaa471fc97347d8d4269ff0c00f30fa666d956baba37948ec87e55d6")
     version("1.7.0", sha256="fc304d8839ca5947cfbeb63adb9d1aa47acef38fc6d6689e622926e672a99a7e")
     version("1.6.0", sha256="9311017e5284cffb86f2c7b7a9df1fb5ebcdc61c30468fb2e6bca36e4272ebca")
