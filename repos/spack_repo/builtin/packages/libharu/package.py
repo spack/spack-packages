@@ -75,7 +75,3 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args.append(f"--with-png={spec['libpng'].prefix}")
 
         return args
-
-
-class CMakeBuilder(cmake.CMakeBuilder):
-    pass
