@@ -4,7 +4,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
-
 class Erf(CMakePackage, CudaPackage, ROCmPackage):
     """ERF solves the compressible Navier-Stokes on a Arakawa C-grid
     for large-scale weather modeling.
@@ -19,32 +18,30 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
 
     license("BSD-3-Clause", checked_by="larenspear")
 
-    version("25.10", tag="25.10", submodules=True)
+    version("25.10", tag="25.10", submodules=True, sha256="611f0a7e8714b762f63fee34cc3dbb83343d21e7")
     version("25.08", tag="25.08", submodules=True)
-    version("25.07", tag="25.08", submodules=True)
-    version("25.06", tag="25.08", submodules=True)
-    version("25.05", tag="25.08", submodules=True)
-    version("25.04", tag="25.08", submodules=True)
-    version("25.03", tag="25.08", submodules=True)
-    version("25.01", tag="25.08", submodules=True)
-    version("24.11", tag="25.08", submodules=True)
-    version("24.10", tag="25.08", submodules=True)
-    version("24.09", tag="25.08", submodules=True)
-    version("24.08", tag="25.08", submodules=True)
-    version("24.06", tag="25.08", submodules=True)
-    version("24.05", tag="25.08", submodules=True)
-    version("24.04", tag="25.08", submodules=True)
-    version("24.03", tag="25.08", submodules=True)
-    version("24.02", tag="25.08", submodules=True)
-    version("24.01", tag="25.08", submodules=True)
-    version("23.12", tag="25.08", submodules=True)
-    version("23.11", tag="25.08", submodules=True)
-    version("23.10", tag="25.08", submodules=True)
+    version("25.07", tag="25.07", submodules=True)
+    version("25.06", tag="25.06", submodules=True)
+    version("25.05", tag="25.05", submodules=True)
+    version("25.04", tag="25.04", submodules=True)
+    version("25.03", tag="25.03", submodules=True)
+    version("25.01", tag="25.01", submodules=True)
+    version("24.11", tag="24.11", submodules=True)
+    version("24.10", tag="24.10", submodules=True)
+    version("24.09", tag="24.09", submodules=True)
+    version("24.08", tag="24.08", submodules=True)
+    version("24.06", tag="24.06", submodules=True)
+    version("24.05", tag="24.05", submodules=True)
+    version("24.04", tag="24.04", submodules=True)
+    version("24.03", tag="24.03", submodules=True)
+    version("24.02", tag="24.02", submodules=True)
+    version("24.01", tag="24.01", submodules=True)
+    version("23.12", tag="23.12", submodules=True)
+    version("23.11", tag="23.11", submodules=True)
+    version("23.10", tag="23.10", submodules=True)
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
-    variant("hip", default=False, description="Enable HIP/rocm support")
-    variant("sycl", default=False, description="Enable SYCL support")
     variant("netcdf", default=False, description="Enable NetCDF support")
     variant("particles", default=False, description="Enable particle support")
     variant("multiblock", default=False, description="Enable multiblock support")
@@ -54,45 +51,51 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
     variant("fft", default=False, description="Enable FFT support")
     variant("debug", default=False, description="Enable debug build")
 
-    depends_on("cmake@3.20:", type="build")
-    depends_on("git", type="build")
-    depends_on("amrex", type=("build", "link", "run"))
-    for v in ("mpi", "openmp", "cuda", "sycl", "particles"):
-        depends_on(f"amrex+{v}", when=f"+{v}")
-        depends_on(f"amrex~{v}", when=f"~{v}")
-    for sm in CudaPackage.cuda_arch_values:
-        depends_on(f"amrex+cuda cuda_arch={sm}", when=f"+cuda cuda_arch={sm}")
-    depends_on("amrex+rocm", when="+hip")
-    depends_on("amrex~rocm", when="~hip")
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
-    depends_on("mpi", when="+mpi")
-    depends_on("cuda@11.0:", when="+cuda")
-    depends_on("hip@4.0:", when="+hip")
-    depends_on("rocm-openmp-extras", when="+hip")
-    depends_on("intel-oneapi-dpl", when="+sycl")
-    depends_on("intel-oneapi-mkl", when="+sycl")
-    depends_on("amrex@23.05:", when="@25.04")
-    depends_on("amrex@23.08:", when="@25.08")
-    depends_on("pkgconf", type="build")
+    with default_args(type="build"):
+        depends_on("cmake@3.20:")
+        depends_on("git")
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("fortran")
+        depends_on("pkgconf")
 
-    with when("+netcdf"):
-        depends_on("netcdf-c+mpi+parallel-netcdf", when="+mpi")
-        depends_on("netcdf-c~mpi+parallel-netcdf", when="~mpi")
-        depends_on("netcdf-fortran")
-        depends_on("hdf5+mpi", when="+mpi")
-        depends_on("hdf5~mpi", when="~mpi")
+    with default_args(type=("build", "link")):
+        depends_on("amrex")
+        for v in ("mpi", "openmp", "cuda", "particles"):
+            depends_on(f"amrex+{v}", when=f"+{v}")
+            depends_on(f"amrex~{v}", when=f"~{v}")
+        for sm in CudaPackage.cuda_arch_values:
+            depends_on(f"amrex+cuda cuda_arch={sm}", when=f"+cuda cuda_arch={sm}")
+        depends_on("mpi", when="+mpi")
+        depends_on("cuda@11.0:", when="+cuda")
+        depends_on("fftw", when="+fft")
 
-    depends_on("fftw", when="+fft")
+        with when("+netcdf"):
+            depends_on("netcdf-c+mpi+parallel-netcdf", when="+mpi")
+            depends_on("netcdf-c~mpi+parallel-netcdf", when="~mpi")
+            depends_on("hdf5+mpi", when="+mpi")
+            depends_on("hdf5~mpi", when="~mpi")
 
-    conflicts("+cuda", when="+hip", msg="Cannot enable both CUDA and HIP")
+
     conflicts("+openmp", when="+cuda", msg="Cannot enable both OpenMP and CUDA")
-    conflicts("+openmp", when="+hip", msg="Cannot enable both OpenMP and HIP")
-    conflicts("+cuda", when="+sycl", msg="Cannot enable both CUDA and SYCL")
-    conflicts("+hip", when="+sycl", msg="Cannot enable both HIP and SYCL")
     conflicts("+fft", when="~mpi", msg="FFT support requires MPI")
     conflicts("+radiation", when="platform=darwin", msg="Radiation is not supported on macOS")
+
+    _KOKKOS_SM_TO_FLAG = {
+        "70": "Kokkos_ARCH_VOLTA70",
+        "72": "Kokkos_ARCH_VOLTA72",
+        "75": "Kokkos_ARCH_TURING75",
+        "80": "Kokkos_ARCH_AMPERE80",
+        "86": "Kokkos_ARCH_AMPERE86",
+        "89": "Kokkos_ARCH_ADA89",     # if supported by your Kokkos
+        "90": "Kokkos_ARCH_HOPPER90",  # if supported by your Kokkos
+    }
+
+    def _kokkos_flags_from_cuda_arch(self, sm_list):
+        for sm in sm_list:
+            flag = self._KOKKOS_SM_TO_FLAG.get(sm)
+            if flag:
+                yield flag
 
     def cmake_args(self):
         args = [
@@ -123,16 +126,17 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
             )
 
         if "+radiation" in self.spec:
-            if "+cuda" in self.spec:
-                args.append(self.define("Kokkos_ARCH_AMPERE80", True))
             args.extend(
                 [
                     self.define("ERF_ENABLE_KOKKOS", True),
-                    self.define("Kokkos_ARCH_AMPERE", True),
                     self.define("ERF_ENABLE_EKAT", True),
                     self.define("ERF_ENABLE_RRTMGP", True),
                 ]
             )
+            if "+cuda" in self.spec:
+                sm_list = self.spec.variants["cuda_arch"].value or ["80"]
+                for kdef in self._kokkos_flags_from_cuda_arch(sm_list):
+                    args.append(self.define(kdef, True))
 
         if "+cuda" in self.spec:
             archs = self.spec.variants["cuda_arch"].value or ["80"]
@@ -144,31 +148,17 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
                 ]
             )
 
-        if "+hip" in self.spec:
-            args.append(self.define("CMAKE_HIP_ARCHITECTURES", "gfx906;gfx908;gfx90a"))
-
         print(args)
         return args
 
     def setup_build_environment(self, env):
-        super(Erf, self).setup_build_environment(env)
+        super().setup_build_environment(env)
         env.set("GIT_CONFIG_COUNT", "1")
         env.set("GIT_CONFIG_KEY_0", "url.https://github.com/.insteadOf")
         env.set("GIT_CONFIG_VALUE_0", "git@github.com:")
         env.set("AMREX_HOME", self.spec["amrex"].prefix)
-        if "+hip" in self.spec:
-            env.set("HIPCXX", self.spec["hip"].prefix.bin.hipcc)
         if "+openmp" in self.spec:
             if "%clang" in self.spec or "%gcc" in self.spec:
                 env.append_flags("CFLAGS", self.compiler.openmp_flag)
                 env.append_flags("CXXFLAGS", self.compiler.openmp_flag)
                 env.append_flags("FFLAGS", self.compiler.openmp_flag)
-            elif "%intel" in self.spec:
-                env.append_flags("CFLAGS", "-qopenmp")
-                env.append_flags("CXXFLAGS", "-qopenmp")
-                env.append_flags("FFLAGS", "-qopenmp")
-                print(self.compiler.openmp_flag)
-
-    def configure_args(self):
-        args = super(Erf, self).configure_args()
-        return args
