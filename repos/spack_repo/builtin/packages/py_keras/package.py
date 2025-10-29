@@ -78,7 +78,7 @@ class PyKeras(PythonPackage):
     # TODO: add openvino backend (keras 3.8+)
     variant(
         "backend",
-        default="torch",
+        default="tensorflow",
         description="Backend library. Set KERAS_BACKEND with first value.",
         values=["tensorflow", "jax", "torch"],
         multi=True,
