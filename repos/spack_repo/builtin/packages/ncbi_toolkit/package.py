@@ -73,6 +73,9 @@ class NcbiToolkit(AutotoolsPackage):
 
     # boost 1.87 removes dummy_cond(). ncbi-toolset 29.5.0 fixes this.
     conflicts("boost@1.87:", when="@:29_4")
+
+    # libxml2's xmlGetLastError starts returning const in libxml2@2.12:
+    # ncbi-toolkit fixes this in :29
     conflicts("libxml2@2.12:", when="@:28")
 
     def configure_args(self):
