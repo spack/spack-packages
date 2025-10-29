@@ -49,7 +49,6 @@ class Erf(CMakePackage, CudaPackage):
     variant("tests", default=False, description="Enable tests")
     variant("fcompare", default=False, description="Enable fcompare")
     variant("fft", default=False, description="Enable FFT support")
-    variant("debug", default=False, description="Enable debug build")
 
     with default_args(type="build"):
         depends_on("cmake@3.20:")
@@ -114,7 +113,6 @@ class Erf(CMakePackage, CudaPackage):
         args.append(self.define("ERF_CLONE_AMREX", False))
         args.append(self.define("GIT_SUBMODULE_PROTOCOL", "https"))
         args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
-        args.append(self.define("CMAKE_BUILD_TYPE", "Release"))
         args.append(self.define("ERF_DIM", "3"))
 
         if "+netcdf" in self.spec:
