@@ -38,6 +38,7 @@ class Scnlib(CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     depends_on("fast-float@5:")
+    depends_on("fast-float@:6", when="@:3")
 
     depends_on("boost +regex cxxstd=17", when="regex-backend=Boost")
     depends_on("boost +icu", when="+icu")
