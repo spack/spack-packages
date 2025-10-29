@@ -19,6 +19,7 @@ class PyTransformers(PythonPackage):
 
     license("Apache-2.0")
 
+    version("4.57.0", sha256="d045753f3d93f9216e693cdb168698dfd2e9d3aad1bb72579a5d60ebf1545a8b")
     version("4.48.3", sha256="a5e8f1e9a6430aa78215836be70cecd3f872d99eeda300f41ad6cc841724afdb")
     version("4.46.3", sha256="8ee4b3ae943fe33e82afff8e837f4b052058b07ca9be3cb5b729ed31295f72cc")
     version("4.44.2", sha256="36aa17cc92ee154058e426d951684a2dab48751b35b49437896f898931270826")
@@ -38,6 +39,7 @@ class PyTransformers(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("python@3.9:", when="@4.47:")
         depends_on("py-filelock")
+        depends_on("py-huggingface-hub@0.34:0", when="@4.57:")
         depends_on("py-huggingface-hub@0.24:0", when="@4.47:")
         depends_on("py-huggingface-hub@0.23.2:", when="@4.42.3:")
         depends_on("py-huggingface-hub@0.19.3:", when="@4.38.1:")
@@ -52,9 +54,11 @@ class PyTransformers(PythonPackage):
         depends_on("py-pyyaml@5.1:", when="@4.24:")
         depends_on("py-regex@:2019.12.16,2019.12.18:")
         depends_on("py-requests")
+        depends_on("py-safetensors@0.4.3:", when="@4.57:")
         depends_on("py-safetensors@0.4.1:", when="@4.38.1:")
         depends_on("py-safetensors@0.3.1:", when="@4.31:")
-        depends_on("py-tokenizers@0.21", when="@4.47:")
+        depends_on("py-tokenizers@0.22:0.23.0", when="@4.57:")
+        depends_on("py-tokenizers@0.21", when="@4.47:4.48.3")
         depends_on("py-tokenizers@0.20", when="@4.45:4.46")
         depends_on("py-tokenizers@0.19", when="@4.40:4.44")
         depends_on("py-tokenizers@0.14:0.18", when="@4.35:4.39.3")
