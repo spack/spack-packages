@@ -31,9 +31,7 @@ class Libharu(autotools.AutotoolsPackage, cmake.CMakePackage):
     version("2.2.0", sha256="5e63246d2da0272a9dbe5963fd827c7efa6e29d97a2d047c0d4c5f0b780f10b5")
 
     build_system(
-        conditional("cmake", when="@2.4:"),
-        conditional("autotools", when="@:2.3"),
-        default="cmake",
+        conditional("cmake", when="@2.4:"), conditional("autotools", when="@:2.3"), default="cmake"
     )
 
     depends_on("c", type="build")  # generated
