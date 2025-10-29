@@ -4,6 +4,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
+
 class Erf(CMakePackage, CudaPackage):
     """ERF solves the compressible Navier-Stokes on a Arakawa C-grid
     for large-scale weather modeling.
@@ -74,7 +75,6 @@ class Erf(CMakePackage, CudaPackage):
             depends_on("netcdf-c~mpi+parallel-netcdf", when="~mpi")
             depends_on("hdf5+mpi", when="+mpi")
             depends_on("hdf5~mpi", when="~mpi")
-
 
     conflicts("+openmp", when="+cuda", msg="Cannot enable both OpenMP and CUDA")
     conflicts("+fft", when="~mpi", msg="FFT support requires MPI")
