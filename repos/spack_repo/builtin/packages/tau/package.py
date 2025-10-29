@@ -147,7 +147,9 @@ class Tau(Package):
         description="Do not add -no-pie while linking with Ubuntu.",
     )
     variant("openacc", default=False, description="Activates OpenACC support")
-    variant("perfetto", default=True, description="Activates Perfetto tracing support", when="@2.35:")
+    variant(
+        "perfetto", default=True, description="Activates Perfetto tracing support", when="@2.35:"
+    )
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
