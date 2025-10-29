@@ -4,7 +4,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
-class Erf(CMakePackage, CudaPackage, ROCmPackage):
+class Erf(CMakePackage, CudaPackage):
     """ERF solves the compressible Navier-Stokes on a Arakawa C-grid
     for large-scale weather modeling.
     """
@@ -87,8 +87,8 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
         "75": "Kokkos_ARCH_TURING75",
         "80": "Kokkos_ARCH_AMPERE80",
         "86": "Kokkos_ARCH_AMPERE86",
-        "89": "Kokkos_ARCH_ADA89",     # if supported by your Kokkos
-        "90": "Kokkos_ARCH_HOPPER90",  # if supported by your Kokkos
+        "89": "Kokkos_ARCH_ADA89",
+        "90": "Kokkos_ARCH_HOPPER90",
     }
 
     def _kokkos_flags_from_cuda_arch(self, sm_list):
@@ -148,7 +148,6 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
                 ]
             )
 
-        print(args)
         return args
 
     def setup_build_environment(self, env):
