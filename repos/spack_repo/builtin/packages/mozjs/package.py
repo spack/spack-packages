@@ -23,6 +23,8 @@ class Mozjs(AutotoolsPackage):
     version("128.1.0", sha256="ccdab622a395622abc6d80040a11715ad81a614f601db6672c05b98ac91fd9b5")
     version("115.28.0", sha256="91b52505f91ec8bc1ba93afc50c59a845a5f6a57fac4967df04d54906a14181a")
 
+    conflicts("platform=darwin", msg="Darwin is not currently supported.")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
