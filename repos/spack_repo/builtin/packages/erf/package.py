@@ -72,6 +72,7 @@ class Erf(CMakePackage, CudaPackage):
         with when("+netcdf"):
             depends_on("netcdf-c+mpi+parallel-netcdf", when="+mpi")
             depends_on("netcdf-c~mpi+parallel-netcdf", when="~mpi")
+            depends_on("netcdf-fortran")
             depends_on("hdf5+mpi", when="+mpi")
             depends_on("hdf5~mpi", when="~mpi")
 
