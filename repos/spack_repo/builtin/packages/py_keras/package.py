@@ -12,18 +12,19 @@ from spack.package import *
 class PyKeras(PythonPackage):
     """Multi-backend Keras.
 
-    Keras 3 is a new multi-backend implementation of the Keras API,
-    with support for TensorFlow, JAX, and PyTorch.
+    Keras 3 is a multi-backend deep learning framework, with support for
+    JAX, TensorFlow, PyTorch, and OpenVINO (for inference-only).
     """
 
     homepage = "https://keras.io"
     git = "https://github.com/keras-team/keras.git"
     pypi = "keras/keras-3.0.0.tar.gz"
-
-    maintainers("adamjstewart")
     tags = ["e4s"]
-    license("Apache-2.0")
 
+    license("Apache-2.0")
+    maintainers("adamjstewart")
+
+    version("3.12.0", sha256="536e3f8385a05ae04e82e08715a1a59988578087e187b04cb0a6fad11743f07f")
     version("3.11.3", sha256="efda616835c31b7d916d72303ef9adec1257320bc9fd4b2b0138840fc65fb5b7")
     version("3.11.2", sha256="b78a4af616cbe119e88fa973d2b0443b70c7f74dd3ee888e5026f0b7e78a2801")
     version("3.11.1", sha256="7a27f384467fa8d0b0281665b52efd6bd948f20854099e35929786ce44d847f0")
@@ -109,7 +110,8 @@ class PyKeras(PythonPackage):
 
         # requirements-tensorflow-cuda.txt
         with when("backend=tensorflow"):
-            depends_on("py-tensorflow@2.18.1:2.18", when="@3.10:")
+            depends_on("py-tensorflow@2.20", when="@3.12:")
+            depends_on("py-tensorflow@2.18.1:2.18", when="@3.10:3.11")
             depends_on("py-tensorflow@2.18", when="@3.7:3.9")
             depends_on("py-tensorflow@2.17", when="@3.5:3.6")
             depends_on("py-tensorflow@2.16.1:2.16", when="@3.0:3.4")
@@ -126,7 +128,8 @@ class PyKeras(PythonPackage):
 
         # requirements-torch-cuda.txt
         with when("backend=torch"):
-            depends_on("py-torch@2.6.0", when="@3.10:")
+            depends_on("py-torch@2.9.0", when="@3.12:")
+            depends_on("py-torch@2.6.0", when="@3.10:3.11")
             depends_on("py-torch@2.5.1", when="@3.7:3.9")
             depends_on("py-torch@2.4.1", when="@3.6")
             depends_on("py-torch@2.4.0", when="@3.5")
