@@ -73,6 +73,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("adiak@0.4:0", when="@2.11: +adiak")
 
     depends_on("papi@5.3:", when="+papi")
+    depends_on("papi@7.1.0: ~rdpmc", when="@2.12: +papi target=sapphirerapids")
 
     depends_on("libpfm4@4.8:4", when="+libpfm")
 
@@ -177,6 +178,14 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_path("adiak_DIR", spec["adiak"].prefix))
         if spec.satisfies("+papi"):
             entries.append(cmake_cache_path("PAPI_PREFIX", spec["papi"].prefix))
+            if spec["papi"].satisfies("@6.0.0:"):
+                entries.append(
+                    cmake_cache_option("WITH_PAPI_RDPMC", spec["papi"].satisfies("+rdpmc"))
+                )
+            else:
+                # The rdpmc toggle for PAPI was added in version 6.0.0
+                # We can safely assume that the feature is enabled in older versions
+                entries.append(cmake_cache_option("WITH_PAPI_RDPMC", True))
         if spec.satisfies("+libdw"):
             entries.append(cmake_cache_path("LIBDW_PREFIX", spec["elfutils"].prefix))
         if spec.satisfies("+libpfm"):
@@ -208,6 +217,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_option("WITH_VTUNE", spec.satisfies("+vtune")))
         entries.append(cmake_cache_option("WITH_PYTHON_BINDINGS", spec.satisfies("+python")))
         entries.append(cmake_cache_option("WITH_LIBUNWIND", spec.satisfies("+libunwind")))
+        entries.append(cmake_cache_option("WITH_ARCH", str(spec.target)))
 
         return entries
 
