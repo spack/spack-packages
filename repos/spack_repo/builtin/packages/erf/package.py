@@ -110,8 +110,8 @@ class Erf(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ERF_ENABLE_FFT", "fft"),
             self.define("ERF_DIM", "3"),
         ]
-        args.append(self.define("ERF_USE_EXTERNAL_AMREX", False))
-        args.append(self.define("ERF_CLONE_AMREX", True))
+        args.append(self.define("ERF_USE_EXTERNAL_AMREX", True))
+        args.append(self.define("ERF_CLONE_AMREX", False))
         args.append(self.define("GIT_SUBMODULE_PROTOCOL", "https"))
         args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
         args.append(self.define("CMAKE_BUILD_TYPE", "Release"))
