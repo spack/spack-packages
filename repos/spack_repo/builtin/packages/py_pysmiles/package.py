@@ -20,4 +20,4 @@ class PyPysmiles(PythonPackage):
 
     depends_on("py-networkx", type=("build", "run"))
     depends_on("py-setuptools@30.3.0:", type="build")
-    depends_on("py-pbr", type="build")
+    depends_on("py-pbr", type=("build", "run"))
