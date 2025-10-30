@@ -23,8 +23,10 @@ class Wcslib(AutotoolsPackage):
     variant("cfitsio", default=False, description="Include CFITSIO support")
     variant("x", default=False, description="Use the X Window System")
 
+    depends_on("c", type="build")
     depends_on("gmake", type="build")
     depends_on("flex@2.5.9:", type="build")
+    depends_on("fortran", type="build")
     depends_on("cfitsio", when="+cfitsio")
     depends_on("libx11", when="+x")
 
