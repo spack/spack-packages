@@ -35,6 +35,7 @@ class Mmseqs2(CMakePackage, CudaPackage):
     depends_on("mpi", when="+mpi")
     depends_on("cuda", when="@16: +cuda")
 
+    conflicts("cuda", when="@:15 +cuda")
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
     conflicts(
         "cmake@3.14:,:4", when="@18-8cc5c", msg="Cuda >=3.15 and <4 is required to compile MMseqs2"
