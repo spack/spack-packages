@@ -501,6 +501,11 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         sha256="38529b557df029d6a987fa7e337db40b0ac1c1bb921776b95aacaa40e945cd21",
         when="@4.1.8,5.0.7",
     )
+
+    # Add missing header for memcpy
+    # https://github.com/open-mpi/ompi/commit/aa5577441ff1ab7f97f8b63e442b37457c7bd997
+    patch("add_string.patch", when="@5.0.1:5.0.8 +rocm")
+
     FABRICS = (
         "psm",
         "psm2",
