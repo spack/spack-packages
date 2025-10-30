@@ -15,6 +15,12 @@ class PyNumexpr(PythonPackage):
 
     license("MIT", checked_by="lgarrison")
 
+    version("2.14.1", sha256="7cb4c2d5d686f366e1121c287f48c3964ae3ec2ecc559d64a12bb315beebbf9a")
+    version("2.13.1", sha256="11ed30449f53647d02ae18fef8521ddcf28dc914650bd9289eecb6c687200b78")
+    version("2.13.0", sha256="5d195fc922db64a171347795b4404c11cc0f3cd9088ac182539874c2c1e8dace")
+    version("2.12.1", sha256="27e2143fdd80900838704b6e3d58fb98fb26a39982a82311870106f48e5e1628")
+    version("2.12.0", sha256="f9be674524372576a26c3342ebe822b9fa9cb9b8b8344cebd6052aba1e81995c")
+    version("2.11.0", sha256="5756eeb1c53bbbcbce2f343065ae6a128a947356621c6db6e57fb552790590ca")
     version("2.10.2", sha256="7e61a8aa4dacb15787b31c31bd7edf90c026d5e6dbe727844c238726e8464592")
     version("2.9.0", sha256="4df4163fcab20030137e8f2aa23e88e1e42e6fe702387cfd95d7675e1d84645e")
     version("2.8.8", sha256="10b377c6ec6d9c01349d00e16dd82e6a6f4439c8c2b1945e490df1436c1825f5")
@@ -34,6 +40,7 @@ class PyNumexpr(PythonPackage):
 
     depends_on("python@3.7:", when="@2.8.3:", type=("build", "run"))
     depends_on("python@3.9:", when="@2.8.7:", type=("build", "run"))
+    depends_on("python@3.10:", when="@2.11.0:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
     depends_on("py-numpy@2:", when="@2.10.2:", type="build")
