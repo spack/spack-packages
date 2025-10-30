@@ -22,6 +22,8 @@ variant_map_common = {
     "g2c": "USE_G2CLIB",
     "png": "USE_PNG",
     "jasper": "USE_JASPER",
+    "g2c_low": "USE_G2CLIB_LOW",
+    "g2c_high": "USE_G2CLIB_HIGH",
     "openmp": "USE_OPENMP",
     "wmo_validation": "USE_WMO_VALIDATION",
     "ipolates": "USE_IPOLATES",
@@ -59,6 +61,7 @@ class Wgrib2(MakefilePackage, CMakePackage):
     )
 
     version("develop", branch="develop")
+    version("3.7.0", sha256="b741a07710a8195c99a7d50de05bde90182ab4334f5c4a0d6d057c4e20cc6a75")
     version("3.6.0", sha256="55913cb58f2b329759de17f5a84dd97ad1844d7a93956d245ec94f4264d802be")
     version("3.5.0", sha256="b27b48228442a08bddc3d511d0c6335afca47252ae9f0e41ef6948f804afa3a1")
     version("3.4.0", sha256="ecbce2209c09bd63f1bca824f58a60aa89db6762603bda7d7d3fa2148b4a0536")
@@ -151,6 +154,18 @@ class Wgrib2(MakefilePackage, CMakePackage):
         when="@:3.1",
     )
     variant(
+        "g2c_low",
+        default=True,
+        description="Include NCEP g2clib (png,jpeg2000)",
+        when="@3.7:",
+    )
+    variant(
+        "g2c_high",
+        default=False,
+        description="Include NCEP g2clib (add -g2clib 2)",
+        when="@3.7:",
+    )
+    variant(
         "disable_timezone", default=False, description="Some machines do not support timezones"
     )
     variant(
@@ -158,13 +173,13 @@ class Wgrib2(MakefilePackage, CMakePackage):
         default=False,
         description="Some machines do not support the alarm to terminate wgrib2",
     )
-    variant("png", default=True, description="PNG encoding")
-    variant("jasper", default=True, description="JPEG compression using Jasper")
+    variant("png", default=True, description="PNG encoding", when="@:3.7"
+    variant("jasper", default=True, description="JPEG compression using Jasper", when="@:3.7")
     variant("openmp", default=True, description="OpenMP parallelization")
     variant("wmo_validation", default=False, description="WMO validation")
     #    variant("shared", default=False, description="Enable shared library", when="+lib")
     variant("disable_stat", default=False, description="Disable POSIX feature", when="@:3.1")
-    variant("openjpeg", default=False, description="Enable OpenJPEG")
+    variant("openjpeg", default=False, description="Enable OpenJPEG", when="@:3.7")
     variant(
         "enable_docs", default=False, description="Build doxygen documentation", when="@3.4.0:"
     )
@@ -176,8 +191,10 @@ class Wgrib2(MakefilePackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
-    depends_on("ip@5.1:", when="@3.5: +ipolates")
-    depends_on("lapack", when="@3.5: +ipolates")
+    depends_on("ip@5.2:", when="@develop +ipolates")
+    depends_on("g2c@2.2.0:", when="@3.7: +g2c_low")
+    depends_on("g2c@2.2.0:", when="@3.7: +g2c_high")
+    depends_on("lapack", when="@develop +ipolates")
     depends_on("libaec@1.0.6:", when="@3.2: +aec")
     # Options to use netcdf3 or netcdf4 merged into a single option with v3.4.0
     depends_on("netcdf-c", when="@3.4: +netcdf")
