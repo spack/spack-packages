@@ -101,6 +101,35 @@ class Vtk(CMakePackage):
         depends_on("scnlib")
         depends_on("verdict")
 
+        # depends_on("cgns") # conditional?
+        # depends_on("double-conversion", when="@:9.5")
+        # depends_on("eigen")
+        # depends_on("expat")
+        # depends_on("freetype")
+        # depends_on("gl2ps")
+        # depends_on("hdf5")
+        # depends_on("jpeg")
+        # depends_on("jsoncpp")
+        # depends_on("libogg")
+        # depends_on("libpng")
+        # depends_on("libtheora")
+        # depends_on("libtiff")
+        # depends_on("libxml2")
+        # depends_on("lz4")
+        # depends_on("netcdf-c")  # conditional?
+        # depends_on("nlohmann-json")
+        # depends_on("pugixml")
+        # depends_on("py-mpi4py")  # conditional?
+        # depends_on("seacas")  # conditional?
+        # depends_on("sqlite")
+        # depends_on("utf8cpp")
+        # depends_on("zlib-api")
+
+        # EXCLUDED
+        # depends_on("viskores")
+        # depends_on("token")
+        # depends_on("exprtk")
+
     patch("gcc.patch", when="@6.1.0")
 
     # Fix missing standard includes that lead to build errors on newer compilers
@@ -179,14 +208,14 @@ class Vtk(CMakePackage):
     # allow proj to be detected via a CMake produced export config file
     # failing that, falls back on standard library detection
     # required for VTK to build against modern proj/more robustly
-    patch("vtk_findproj_config.patch", when="@9:")
+    patch("vtk_findproj_config.patch", when="@9:")  # TODO upper bound?
     # adds a fake target alias'ing the hdf5 target to prevent
     # checks for that target from falling on VTK's empty stub target
     # Required to consume netcdf and hdf5 both built
     # with CMake from VTK
     # a patch with the same name is also applied to paraview
     # the two patches are the same but for the path to the files they patch
-    patch("vtk_alias_hdf5.patch", when="@9:")
+    patch("vtk_alias_hdf5.patch", when="@9:")  # TODO upper bound?
     # VTK 9.0 on Windows uses dll instead of lib for hdf5-hl target, which fails linking. Can't
     # be fixed by bumping CMake lower bound, because VTK vendors FindHDF5.cmake. Various other
     # patches to FindHDF5.cmake are missing, so add conflict instead of a series of patches.
@@ -217,7 +246,7 @@ class Vtk(CMakePackage):
     depends_on("hdf5~mpi", when="~mpi")
     depends_on("hdf5+mpi", when="+mpi")
     depends_on("hdf5@1.8:", when="@8:9.0")
-    depends_on("hdf5@1.10:", when="@9.1:")
+    depends_on("hdf5@1.10:", when="@9.1:")  # TODO upper bound?
     depends_on("jpeg")
     depends_on("jsoncpp")
     depends_on("libxml2")
@@ -235,20 +264,20 @@ class Vtk(CMakePackage):
     depends_on("pugixml", when="@9:")
     depends_on("libogg")
     depends_on("libtheora")
-    depends_on("utf8cpp", when="@9:")
-    depends_on("gl2ps", when="@8.1:")
-    depends_on("gl2ps@1.4.1:", when="@9:")
+    depends_on("utf8cpp", when="@9:")  # TODO upper bound?
+    depends_on("gl2ps", when="@8.1:")  # TODO upper bound?
+    depends_on("gl2ps@1.4.1:", when="@9:")  # TODO upper bound?
     # "8.2.1a" uses an internal proj so this special cases 8.2.1a
-    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")
-    depends_on("proj@8:", when="@9.2:")
-    depends_on("cgns@4.1.1:+mpi", when="@9.1: io=cgns +mpi")
-    depends_on("cgns@4.1.1:~mpi", when="@9.1: io=cgns ~mpi")
+    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")  # TODO verify this
+    depends_on("proj@8:", when="@9.2:")  # TODO upper bound?
+    depends_on("cgns@4.1.1:+mpi", when="@9.1: io=cgns +mpi")  # TODO upper bound?
+    depends_on("cgns@4.1.1:~mpi", when="@9.1: io=cgns ~mpi")  # TODO upper bound?
     depends_on("ospray@2.1:2", when="raytracing=ospray")
     depends_on("openimagedenoise", when="raytracing=ospray")
     depends_on("ospray +mpi", when="raytracing=ospray +mpi")
 
     # VTK introduced Seacas IOSS dependency on 9.1
-    with when("@9.1: io=ioss"):
+    with when("@9.1: io=ioss"):  # TODO upper bound?
         depends_on("seacas+mpi", when="+mpi")
         depends_on("seacas~mpi", when="~mpi")
         depends_on("seacas@2021-05-12:2022-10-14", when="@9.1")
@@ -256,6 +285,7 @@ class Vtk(CMakePackage):
         # and to be safe against other issues, make them build with this version only:
         depends_on("seacas@2022-10-14", when="@9.2:9.3")
         depends_on("seacas@2024-06-27", when="@9.4:")
+        # TODO probably we can bump version
 
     depends_on("nlohmann-json", when="@9.2:")
 
