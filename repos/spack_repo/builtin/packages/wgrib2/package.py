@@ -173,7 +173,7 @@ class Wgrib2(MakefilePackage, CMakePackage):
         default=False,
         description="Some machines do not support the alarm to terminate wgrib2",
     )
-    variant("png", default=True, description="PNG encoding", when="@:3.7"
+    variant("png", default=True, description="PNG encoding", when="@:3.7")
     variant("jasper", default=True, description="JPEG compression using Jasper", when="@:3.7")
     variant("openmp", default=True, description="OpenMP parallelization")
     variant("wmo_validation", default=False, description="WMO validation")
