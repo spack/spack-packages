@@ -87,6 +87,20 @@ class Vtk(CMakePackage):
     )
     variant("advanced_debug", default=False, description="Enable the VTK_DEBUG_LEAKS flag")
 
+    with when("@9.5:"):
+        depends_on("cli11")
+        depends_on("fast-float")
+        depends_on("fast-float@7", when="@:9.5.2")
+        depends_on("fmt")
+        depends_on("fmt@11", when="@:9.5.2")
+        depends_on("libharu")
+        depends_on("libproj")
+        depends_on("lzma")
+        depends_on("pegtl")
+        depends_on("pegtl@3", when="@:9.5.2")
+        depends_on("scnlib")
+        depends_on("verdict")
+
     patch("gcc.patch", when="@6.1.0")
 
     # Fix missing standard includes that lead to build errors on newer compilers
@@ -216,9 +230,9 @@ class Vtk(CMakePackage):
     depends_on("libtiff")
     depends_on("zlib-api")
     depends_on("eigen@:3", when="@8.2.0:")
-    depends_on("double-conversion", when="@8.2.0:")
+    depends_on("double-conversion", when="@8.2.0:9.5")
     depends_on("sqlite", when="@8.2.0:")
-    depends_on("pugixml", when="@8.3.0:")
+    depends_on("pugixml", when="@9:")
     depends_on("libogg")
     depends_on("libtheora")
     depends_on("utf8cpp", when="@9:")
