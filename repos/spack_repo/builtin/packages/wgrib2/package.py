@@ -153,8 +153,12 @@ class Wgrib2(MakefilePackage, CMakePackage):
         description="Include NCEP g2clib (mainly for testing purposes)",
         when="@:3.1",
     )
-    variant("g2c_low", default=True, description="Include NCEP g2clib (png,jpeg2000)", when="@3.7:")
-    variant("g2c_high", default=False, description="Include NCEP g2clib (add -g2clib 2)", when="@3.7:")
+    variant(
+        "g2c_low", default=True, description="Include NCEP g2clib (png,jpeg2000)", when="@3.7:"
+    )
+    variant(
+        "g2c_high", default=False, description="Include NCEP g2clib (add -g2clib 2)", when="@3.7:"
+    )
     variant(
         "disable_timezone", default=False, description="Some machines do not support timezones"
     )
