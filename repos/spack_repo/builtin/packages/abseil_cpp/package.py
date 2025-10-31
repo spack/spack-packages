@@ -19,7 +19,22 @@ class AbseilCpp(CMakePackage):
     license("Apache-2.0", checked_by="wdconinc")
 
     version(
+        "20250814.1", sha256="1692f77d1739bacf3f94337188b78583cf09bab7e420d2dc6c5605a4f86785a1"
+    )
+    version(
+        "20250512.1", sha256="9b7a064305e9fd94d124ffa6cc358592eb42b5da588fb4e07d09254aa40086db"
+    )
+    version(
+        "20250127.1", sha256="b396401fd29e2e679cace77867481d388c807671dc2acc602a0259eeb79b7811"
+    )
+    version(
+        "20240722.1", sha256="40cee67604060a7c8794d931538cb55f4d444073e556980c88b6c49bb9b19bb7"
+    )
+    version(
         "20240722.0", sha256="f50e5ac311a81382da7fa75b97310e4b9006474f9560ac46f54a9967f07d4ae3"
+    )
+    version(
+        "20240116.3", sha256="e887b423da5a1ba66e71610094fd7147ff2febfedccdfbf00f2c644ac21adf83"
     )
     version(
         "20240116.2", sha256="733726b8c3a6d39a4120d7e45ea8b41a434cdacde401cba500f14236c49b39dc"
@@ -83,8 +98,8 @@ class AbseilCpp(CMakePackage):
 
     variant(
         "cxxstd",
-        values=(conditional("11", when="@:2022"), "14", "17", "20"),
-        default="14",
+        values=(conditional("11", when="@:20220623"), conditional("14", when="@:20250127"), "17", "20"),
+        default="17",
         description="C++ standard used during compilation",
     )
 
