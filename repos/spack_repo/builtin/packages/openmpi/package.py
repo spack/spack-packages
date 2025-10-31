@@ -805,6 +805,10 @@ with '-Wl,-commons,use_dylibs' and without
     # May be able to get working for LLVM 18/19 using FC=flang-new
     conflicts("%fortran=clang %llvm@:19")
 
+    # Open MPI 5.0.8 has a bug with NAG Fortran
+    # https://github.com/open-mpi/ompi/issues/13380
+    conflicts("%fortran=nag", when="@5.0.8:", msg="Open MPI 5.0.8 has a bug with the NAG compiler")
+
     filter_compiler_wrappers("openmpi/*-wrapper-data*", relative_root="share")
 
     extra_install_tests = "examples"
