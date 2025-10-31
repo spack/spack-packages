@@ -985,6 +985,11 @@ with '-Wl,-commons,use_dylibs' and without
 
         return find_libraries(libraries, root=self.prefix, shared=True, recursive=True)
 
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # We need to unset MACOSX_DEPLOYMENT_TARGET on macOS if building with NAG Fortran
+        if self.spec.satisfies("platform=darwin") and self.spec.satisfies("%fortran=nag"):
+            env.unset("MACOSX_DEPLOYMENT_TARGET")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # Because MPI is both a runtime and a compiler, we have to setup the
         # compiler components as part of the run environment.
