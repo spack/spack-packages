@@ -23,12 +23,12 @@ class Eigen(CMakePackage, ROCmPackage):
     license("MPL-2.0")
 
     version("master", branch="master")
-    version("3.4.0-44-ge7248b26a", commit="e7248b26a1ed53fa030c5c459f7ea095dfd276ac")
+    version("5.0.0", sha256="315c881e19e17542a7d428c5aa37d113c89b9500d350c433797b730cd449c056")
+    version("3.4.1", sha256="b93c667d1b69265cdb4d9f30ec21f8facbbe8b307cf34c0b9942834c6d4fdbe2")
     version(
-        "3.4.0",
-        sha256="8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72",
-        preferred=True,
+        "3.4.0-44-ge7248b26a", commit="e7248b26a1ed53fa030c5c459f7ea095dfd276ac", deprecated=True
     )
+    version("3.4.0", sha256="8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72")
     version("3.3.9", sha256="7985975b787340124786f092b3a07d594b2e9cd53bbfe5f3d9b1daee7d55f56f")
     version("3.3.8", sha256="146a480b8ed1fb6ac7cd33fec9eb5e8f8f62c3683b3f850094d9d5c35a92419a")
     version("3.3.7", sha256="d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57")
@@ -73,10 +73,18 @@ class Eigen(CMakePackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="@3.4.1:")
+
+    depends_on("cmake@3.10:", when="@3.4.1:", type="build")
+    depends_on("cmake@3.5:", when="@3.4.0", type="build")
+    depends_on("cmake@:3", when="@:3.3", type="build")
 
     depends_on("boost@1.53:", when="@master", type="test")
     # TODO: latex and doxygen needed to produce docs with make doc
     # TODO: Other dependencies might be needed to test this package
+
+    conflicts("@3.4.1", when="platform=windows")
+    conflicts("@5.0.0", when="platform=windows")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("CPATH", self.prefix.include.eigen3)

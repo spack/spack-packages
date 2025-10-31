@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     reuse: false
@@ -233,6 +233,7 @@ spack:
   - hpx +rocm amdgpu_target=gfx908
   - hypre +rocm amdgpu_target=gfx908
   - kokkos +rocm amdgpu_target=gfx908
+  - kokkos-fft device_backend=hipfft +tests ^kokkos +rocm amdgpu_target=gfx908
   - lammps +rocm amdgpu_target=gfx908
   - legion +rocm amdgpu_target=gfx908
   - libceed +rocm amdgpu_target=gfx908
@@ -279,6 +280,7 @@ spack:
   - hpx +rocm amdgpu_target=gfx90a
   - hypre +rocm amdgpu_target=gfx90a
   - kokkos +rocm amdgpu_target=gfx90a
+  - kokkos-fft device_backend=hipfft +tests ^kokkos +rocm amdgpu_target=gfx90a
   - lammps +rocm amdgpu_target=gfx90a
   - legion +rocm amdgpu_target=gfx90a
   - libceed +rocm amdgpu_target=gfx90a

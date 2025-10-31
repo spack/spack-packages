@@ -31,6 +31,12 @@ class Graphite2(CMakePackage):
 
     patch("regparm.patch")
 
+    patch(
+        "https://src.fedoraproject.org/rpms/graphite2/raw/deba28323b0a3b7a3dcfd06df1efc2195b102ed7/f/graphite2-1.3.14-gcc15.patch",
+        sha256="4cff0ae949153596d26d5f8bfaa4ce80bcff23a157b34ff797c6d00b4268a4b1",
+        when="%gcc@15:",
+    )
+
     @run_after("install")
     def darwin_fix(self):
         # The shared library is not installed correctly on Darwin; fix this

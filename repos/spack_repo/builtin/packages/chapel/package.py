@@ -63,13 +63,16 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
 
+    version("2.6.0", sha256="e469c35be601cf1f59af542ab885e8a14aa2b087b79af0d5372a4421976c74b6")
     version("2.5.0", sha256="020220ca9bf52b9f416e9a029bdc465bb1f635c1e274c6ca3c18d1f83e41fce1")
     version("2.4.0", sha256="a51a472488290df12d1657db2e7118ab519743094f33650f910d92b54c56f315")
-    version("2.3.0", sha256="0185970388aef1f1fae2a031edf060d5eac4eb6e6b1089e7e3b15a130edd8a31")
-    version("2.2.0", sha256="bb16952a87127028031fd2b56781bea01ab4de7c3466f7b6a378c4d8895754b6")
-    version("2.1.0", sha256="72593c037505dd76e8b5989358b7580a3fdb213051a406adb26a487d26c68c60")
-    version("2.0.1", sha256="19ebcd88d829712468cfef10c634c3e975acdf78dd1a57671d11657574636053")
-    version("2.0.0", sha256="b5387e9d37b214328f422961e2249f2687453c2702b2633b7d6a678e544b9a02")
+
+    with default_args(deprecated=True):
+        version("2.3.0", sha256="0185970388aef1f1fae2a031edf060d5eac4eb6e6b1089e7e3b15a130edd8a31")
+        version("2.2.0", sha256="bb16952a87127028031fd2b56781bea01ab4de7c3466f7b6a378c4d8895754b6")
+        version("2.1.0", sha256="72593c037505dd76e8b5989358b7580a3fdb213051a406adb26a487d26c68c60")
+        version("2.0.1", sha256="19ebcd88d829712468cfef10c634c3e975acdf78dd1a57671d11657574636053")
+        version("2.0.0", sha256="b5387e9d37b214328f422961e2249f2687453c2702b2633b7d6a678e544b9a02")
 
     sanity_check_is_dir = ["bin", join_path("lib", "chapel"), join_path("share", "chapel")]
     sanity_check_is_file = [join_path("bin", "chpl")]
@@ -115,7 +118,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "dpcpp": "intel",
         "gcc": "gnu",
         "intel": "intel",
-        "llvm": "llvm",
+        "llvm": "clang",
         "oneapi": "intel",
         "rocmcc": "clang",
         "unset": "unset",
@@ -421,11 +424,15 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # TODO: for CHPL_X_CC and CHPL_X_CXX, can we capture an arbitrary path, possibly
     # with arguments?
+    # NOTE: this list should include all vars potentially set by this spackage in
+    # setup_run_environment that potentially affect the build, otherwise executing
+    # `spack load chapel` may contaminate a subsequent `spack install chapel`.
     chpl_env_vars = [
         "CHPL_ATOMICS",
         "CHPL_AUX_FILESYS",
         "CHPL_COMM",
         "CHPL_COMM_SUBSTRATE",
+        "CHPL_CUDA_PATH",
         "CHPL_DEVELOPER",
         "CHPL_GASNET_SEGMENT",
         "CHPL_GMP",
@@ -434,9 +441,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_GPU_MEM_STRATEGY",
         "CHPL_HOME",
         "CHPL_HOST_ARCH",
-        # "CHPL_HOST_CC",
+        "CHPL_HOST_CC",
         "CHPL_HOST_COMPILER",
-        # "CHPL_HOST_CXX",
+        "CHPL_HOST_CXX",
         "CHPL_HOST_JEMALLOC",
         "CHPL_HOST_MEM",
         "CHPL_HOST_PLATFORM",
@@ -449,15 +456,17 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_LLVM_SUPPORT",
         "CHPL_LLVM_VERSION",
         "CHPL_LOCALE_MODEL",
+        "CHPL_MAKE_THIRD_PARTY",
         "CHPL_MEM",
         "CHPL_RE2",
+        "CHPL_ROCM_PATH",
         "CHPL_SANITIZE",
         "CHPL_SANITIZE_EXE",
         "CHPL_TARGET_ARCH",
-        # "CHPL_TARGET_CC",
+        "CHPL_TARGET_CC",
         "CHPL_TARGET_COMPILER",
         "CHPL_TARGET_CPU",
-        # "CHPL_TARGET_CXX",
+        "CHPL_TARGET_CXX",
         "CHPL_TARGET_PLATFORM",
         "CHPL_TASKS",
         "CHPL_TIMERS",
@@ -479,12 +488,25 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "https://github.com/chapel-lang/chapel/issues/27273",
     )
 
-    conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.0.0 or later")
+    conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
     # Chapel restricts the allowable ROCm versions
     with when("@2.2: +rocm"):
         depends_on("hsa-rocr-dev@6.0:6.2")
         depends_on("hip@6.0:6.2")
-    requires("llvm=bundled", when="+rocm ^hip@6.0:6.2", msg="ROCm 6 support requires llvm=bundled")
+    # This is the case because the package only supports ROCm 6, and Chapel
+    # requires bundled LLVM for that version.
+    # TODO: Modify this constrant and message if/when Chapel supports an
+    # additional ROCm version without that requirement.
+    requires("llvm=bundled", when="+rocm", msg="Chapel ROCm support requires llvm=bundled")
+
+    # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
+    # provides %rocmcc, which we don't want to use.
+    requires(
+        *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
+        policy="any_of",  # any to ensure %clang works
+        when="+rocm",
+        msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
+    )
 
     conflicts(
         "comm_substrate=unset",
@@ -589,6 +611,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     def build(self, spec, prefix):
         with set_env(CHPL_MAKE_THIRD_PARTY=join_path(self.build_directory, "third-party")):
+            # print all the explicitly set CHPL_* config variables to assist in debugging
+            for var in self.chpl_env_vars:
+                tty.info(var + "=" + os.getenv(var, "<unset>"))
             make()
             with set_env(CHPL_HOME=self.build_directory):
                 if spec.satisfies("+chpldoc"):

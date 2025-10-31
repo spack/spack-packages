@@ -55,6 +55,8 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.16:", type="build", when="@0.5.0:")
 
     depends_on("googletest", type="build", when="+testing")
+
+    depends_on("kokkos")
     _versions = {"0.3:": "@3.1:", "0.4:": "@3.2:", "0.6:": "@3.7:"}
     for _version in _versions:
         _kk_version = _versions[_version]
