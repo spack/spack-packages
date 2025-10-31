@@ -98,7 +98,12 @@ class AbseilCpp(CMakePackage):
 
     variant(
         "cxxstd",
-        values=(conditional("11", when="@:20220623"), conditional("14", when="@:20250127"), "17", "20"),
+        values=(
+            conditional("11", when="@:20220623"),
+            conditional("14", when="@:20250127"),
+            "17",
+            "20",
+        ),
         default="17",
         description="C++ standard used during compilation",
     )
