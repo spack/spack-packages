@@ -556,9 +556,7 @@ class RocmOpenmpExtras(Package):
             if os.path.islink((os.path.join(llvm_prefix, "lib-debug"))):
                 os.unlink(os.path.join(llvm_prefix, "lib-debug"))
             symlink(os.path.join(omp_lib_dir, "libdevice"), os.path.join(lib_dir, "libdevice"))
-            symlink(
-                os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug")
-            )
+            symlink(os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug"))
 
         # Set cmake args
         components = dict()
