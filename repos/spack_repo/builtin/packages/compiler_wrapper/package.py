@@ -57,22 +57,9 @@ class CompilerWrapper(Package, NMakePackage):
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
         version("develop", branch="main")
-        version("0.1.0", sha256="4eab2cb48bb83edb88780517c9dfa55778f8adc555ec4939cb73e2d05fed5a5a")
 
     with when("@develop platform=windows"):
-        patch("c_cxx.patch")
-        patch("improve_def_arg_forwarding.patch")
-    # available in 0.1.1
-    with when("@0.1.0 platform=windows"):
-        patch("fixup11.patch")
-        patch("quote_args.patch")
-        patch("include_regex.patch")
-        patch("pipe.patch")
-        patch("rsp.patch")
-        patch("paths.patch")
-        patch("path_fixup.patch")
-        patch("spack-installed-libs.patch")
-        patch("strip_pad.patch")
+        patch("def-and-exe-enhanced-support.patch")
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get

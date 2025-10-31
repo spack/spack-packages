@@ -1,0 +1,915 @@
+diff --git a/Makefile b/Makefile
+index e31f957..45f668f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -66,6 +66,9 @@ install : cl.exe
+ 	mklink $(PREFIX)\relocate.exe $(PREFIX)\cl.exe
+ 
+ setup_test: cl.exe
++	echo "-------------------"
++	echo "Running Test Setup"
++	echo "-------------------"
+ 	-@ if NOT EXIST "tmp\test" mkdir "tmp\test"
+ 	cd tmp\test
+ 	copy ..\..\cl.exe cl.exe
+@@ -77,6 +80,9 @@ setup_test: cl.exe
+ # * space in a path - preserved by quoted arguments
+ # * escaped quoted arguments
+ build_and_check_test_sample : setup_test
++	echo "--------------------"
++	echo "Building Test Sample"
++	echo "--------------------"
+ 	cd tmp\test
+ 	cl /c /EHsc "..\..\test\src file\calc.cxx" /DCALC_EXPORTS /DCALC_HEADER="\"calc header/calc.h\"" /I ..\..\test\include
+ 	cl /c /EHsc ..\..\test\main.cxx /I ..\..\test\include
+@@ -88,6 +94,9 @@ build_and_check_test_sample : setup_test
+ # Test basic wrapper behavior - did the absolute path to the DLL get injected
+ # into the executable
+ test_wrapper : build_and_check_test_sample
++	echo "--------------------"
++	echo "Running Wrapper Test"
++	echo "--------------------"
+ 	cd tmp
+ 	move test\tester.exe .\tester.exe
+ 	.\tester.exe
+@@ -101,6 +110,9 @@ test_wrapper : build_and_check_test_sample
+ 
+ # Test relocating an executable - re-write internal paths to dlls
+ test_relocate_exe: build_and_check_test_sample
++	echo "--------------------------"
++	echo "Running Relocate Exe Test"
++	echo "--------------------------"
+ 	cd tmp\test
+ 	-@ if NOT EXIST "relocate.exe" mklink relocate.exe cl.exe
+ 	move calc.dll ..\calc.dll
+@@ -112,6 +124,9 @@ test_relocate_exe: build_and_check_test_sample
+ 
+ # Test relocating a dll - re-write import library
+ test_relocate_dll: build_and_check_test_sample
++	echo "--------------------------"
++	echo "Running Relocate DLL test"
++	echo "--------------------------"
+ 	cd tmp/test
+ 	-@ if NOT EXIST "relocate.exe" mklink relocate.exe cl.exe
+ 	cd ..
+@@ -127,6 +142,9 @@ test_relocate_dll: build_and_check_test_sample
+ 	cd ../..
+ 
+ test_pipe_overflow: build_and_check_test_sample
++	echo "--------------------"
++	echo " Pipe overflow test"
++	echo "--------------------"
+ 	set SPACK_CC_TMP=%SPACK_CC%
+ 	set SPACK_CC=$(MAKEDIR)\test\lots-of-output.bat
+ 	cl /c /EHsc "test\src file\calc.cxx"
+@@ -136,12 +154,18 @@ build_zerowrite_test: test\writezero.obj
+ 	link $(LFLAGS) $** Shlwapi.lib /out:writezero.exe
+ 
+ test_zerowrite: build_zerowrite_test
++	echo "-----------------------"
++	echo "Running zerowrite test"
++	echo "-----------------------"
+ 	set SPACK_CC_TMP=%SPACK_CC%
+ 	set SPACK_CC=$(MAKEDIR)\writezero.exe
+ 	cl /c EHsc "test\src file\calc.cxx"
+ 	set SPACK_CC=%SPACK_CC_TMP%
+ 
+ test_long_paths: build_and_check_test_sample
++	echo "------------------------"
++	echo "Running long paths test"
++	echo "------------------------"
+ 	mkdir tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+ 	xcopy /E test\include tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+ 	xcopy /E "test\src file" tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+@@ -158,6 +182,9 @@ test_long_paths: build_and_check_test_sample
+ 	cd ../../../..
+ 
+ test_relocate_long_paths: test_long_paths
++	echo "---------------------------------"
++	echo "Running relocate logn paths test"
++	echo "---------------------------------"
+ 	cd tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+ 	-@ if NOT EXIST "relocate.exe" mklink relocate.exe cl.exe
+ 	cd ..
+@@ -172,10 +199,49 @@ test_relocate_long_paths: test_long_paths
+ 	.\tester.exe
+ 	cd ../../../..
+ 
++test_def_file_name_override:
++	mkdir tmp\test\def\def_override
++	xcopy /E test\include tmp\test\def\def_override
++	xcopy /E "test\src file" tmp\test\def\def_override
++	xcopy test\main.cxx tmp\test\def\def_override
++	xcopy test\calc.def tmp\test\def\def_override
++	cd tmp\test\def\def_override
++	copy ..\..\..\..\cl.exe cl.exe
++	-@ if NOT EXIST "link.exe" mklink link.exe cl.exe
++	cl /c /EHsc "calc.cxx" /DCALC_DEF_EXPORTS /DCALC_HEADER="\"calc header/calc.h\"" /I include
++	cl /c /EHsc main.cxx /I include
++	link $(LFLAGS) /DEF:calc.def calc.obj /DLL
++	link $(LFLAGS) main.obj calc.lib /out:tester.exe
++	tester.exe
++	cd ../../../.. 
++
++test_exe_with_exports:
++	echo ------------------------------
++	echo Running exe with exports test
++	echo ------------------------------
++	mkdir tmp\test\exe_with_exports
++	xcopy /E test\include tmp\test\exe_with_exports
++	xcopy /E "test\src file" tmp\test\exe_with_exports
++	xcopy test\main2.h tmp\test\exe_with_exports
++	xcopy test\main2.cxx tmp\test\exe_with_exports
++	xcopy test\main3.cxx tmp\test\exe_with_exports
++	cd tmp\test\exe_with_exports
++	copy ..\..\..\cl.exe cl.exe
++	-@ if NOT EXIST "link.exe" mklink link.exe cl.exe
++	cl /c /EHsc "calc.cxx" /DCALC_EXPORTS /DCALC_HEADER="\"calc header/calc.h\"" /I include
++	cl /c /EHsc main2.cxx /DMAIN_EXPORTS /I include
++	cl /c /EHsc main3.cxx /I include
++	link $(LFLAGS) calc.obj /out:calc.dll /DLL
++	link $(LFLAGS) main2.obj calc.lib /out:tester1.exe
++	link $(LFLAGS) main3.obj calc.lib tester1.lib /out:tester2.exe
++	tester1.exe
++	tester2.exe
++	cd ../../..
++
+ test_and_cleanup: test clean-test
+ 
+ 
+-test: test_wrapper test_relocate_exe test_relocate_dll test_long_paths test_pipe_overflow
++test: test_wrapper test_relocate_exe test_relocate_dll test_exe_with_exports test_def_file_name_override test_long_paths test_pipe_overflow 
+ 
+ 
+ clean : clean-test clean-cl
+diff --git a/src/coff_parser.cxx b/src/coff_parser.cxx
+index 3cda566..25f4b28 100644
+--- a/src/coff_parser.cxx
++++ b/src/coff_parser.cxx
+@@ -292,7 +292,7 @@ bool CoffParser::ValidateLongName(coff_member* member, int size) {
+     }
+     // If a name has an object file, this is not an import
+     // member
+-    char* obj_res = findstr(member->data, ".obj", size);
++    char const* obj_res = findstr(member->data, ".obj", size);
+     return obj_res == nullptr;
+ }
+ 
+@@ -326,7 +326,7 @@ void CoffParser::NormalizeSectionNames(const std::string& name, char* section,
+                                        size_t data_size) {
+     size_t const name_len = name.size();
+     char* section_search_start = section;
+-    char* search_terminator = section + data_size;
++    char const* search_terminator = section + data_size;
+     ptrdiff_t offset = 0;
+     while (section_search_start && (section_search_start < search_terminator)) {
+         // findstr's final parameter takes the size of the search domain
+@@ -378,8 +378,7 @@ bool CoffParser::NormalizeName(std::string& name) {
+     // The dll is found with and without an extenion, depending on the context of the location
+     // i.e. in the section data, it can be found with both an extension and extensionless
+     //  whereas in the symbol table or linker member strings, it's always found without an extension
+-    std::string const name_no_dll = strip(name, ".dll");
+-    std::string const name_no_ext = strip(name_no_dll, ".DLL");
++    std::string const name_no_ext = stripLastExt(name);
+     // Flag allowing us to skip multiple attempts
+     // to rename the long names member this name
+     bool long_name_renamed = false;
+diff --git a/src/commandline.cxx b/src/commandline.cxx
+index 76b95af..38bd760 100644
+--- a/src/commandline.cxx
++++ b/src/commandline.cxx
+@@ -28,20 +28,6 @@ int redefinedArgCheck(const std::map<std::string, std::string>& args,
+     return 0;
+ }
+ 
+-/**
+- * Check for the presense of an argument in the argument map
+- */
+-int checkArgumentPresence(const std::map<std::string, std::string>& args,
+-                          const char* val, bool required = true) {
+-    if (args.find(val) == args.end()) {
+-        std::cerr << "Warning! Argument (" << val << ") not present\n";
+-        if (required) {
+-            return 0;
+-        }
+-    }
+-    return 1;
+-}
+-
+ bool print_help() {
+     std::cout << "Spack's Windows compiler wrapper\n";
+     std::cout << "Version: " << STRING(MSVC_WRAPPER_VERSION) << "\n";
+@@ -82,28 +68,20 @@ bool print_help() {
+                  "this file:\n";
+     std::cout << "\n";
+     std::cout << "      Options:\n";
+-    std::cout << "          --pe <path to pe file>                       = PE "
++    std::cout << "          --pe <path to pe file>                      = PE "
+                  "(dll/exe) file to be relocated\n";
+-    std::cout << "          [--coff <path to coff file>]                 = "
++    std::cout << "          --coff <path to coff file>                  = "
+                  "COFF (import library) file to be relocated\n";
+     std::cout << "                                                         If "
+-                 "relocating an exe, this is not required.\n";
+-    std::cout << "          --full                                       = "
++                 "relocating an exe or dll plugin, this may not be required.\n";
++    std::cout << "          --full                                      = "
+                  "Relocate dynamic references inside\n";
+     std::cout << "                                                          "
+                  "the pe in addition to re-generating\n";
+     std::cout << "                                                          "
+                  "the import library\n";
+     std::cout << "                                                          "
+-                 "Note: this is assumed to be true if\n";
+-    std::cout << "                                                           "
+-                 "relocating an executable.\n";
+-    std::cout << "                                                          If "
+-                 "an executable is relocated, no import\n";
+-    std::cout << "                                                          "
+-                 "library operations are performed.\n";
+-    std::cout << "                                                          "
+-                 "When relocating a DLL, the import library for\n";
++                 "When relocating a PE, the import library for\n";
+     std::cout << "                                                          "
+                  "said library is regenerated and the old imp lib\n";
+     std::cout << "                                                          "
+diff --git a/src/ld.cxx b/src/ld.cxx
+index 8669273..abb3299 100644
+--- a/src/ld.cxx
++++ b/src/ld.cxx
+@@ -32,61 +32,70 @@ DWORD LdInvocation::InvokeToolchain() {
+         {this->command_args, this->include_args, this->lib_args,
+          this->lib_dir_args, this->obj_args}));
+     link_run.Parse();
+-    // We're creating a dll, we need to create an appropriate import lib
+-    if (!link_run.IsExeLink()) {
+-        std::string const imp_lib_name = link_run.get_implib_name();
+-        std::string dll_name;
+-        try {
+-            dll_name = link_run.get_mangled_out();
+-        } catch (const NameTooLongError& e) {
+-            std::cerr << "Unable to mangle PE " << link_run.get_out()
+-                      << " name is too long\n";
+-            return ExitConditions::NORMALIZE_NAME_FAILURE;
+-        }
+-        std::string const abs_out_imp_lib_name = imp_lib_name + ".dll-abs.lib";
+-        std::string def = "-def ";
+-        std::string piped_args = link_run.get_lib_link_args();
+-        // create command line to generate new import lib
+-        this->rpath_executor =
+-            ExecuteCommand("lib.exe", LdInvocation::ComposeCommandLists({
+-                                          {def, piped_args, "-name:" + dll_name,
+-                                           "-out:" + abs_out_imp_lib_name},
+-                                          {link_run.get_rsp_file()},
+-                                          this->obj_args,
+-                                          this->lib_args,
+-                                          this->lib_dir_args,
+-                                      }));
+-        this->rpath_executor.Execute();
+-        DWORD const err_code = this->rpath_executor.Join();
+-        if (err_code != 0) {
+-            return err_code;
+-        }
+-        CoffReaderWriter coff_reader(abs_out_imp_lib_name);
+-        CoffParser coff(&coff_reader);
+-        if (!coff.Parse()) {
+-            debug("Failed to parse COFF file: " + abs_out_imp_lib_name);
+-            return ExitConditions::COFF_PARSE_FAILURE;
+-        }
+-        if (!coff.NormalizeName(dll_name)) {
+-            debug("Failed to normalize name for COFF file: " +
+-                  abs_out_imp_lib_name);
+-            return ExitConditions::NORMALIZE_NAME_FAILURE;
+-        }
+-        debug("Renaming library from " + abs_out_imp_lib_name + " to " +
+-              imp_lib_name);
+-        int const remove_exitcode = std::remove(imp_lib_name.c_str());
+-        if (remove_exitcode) {
+-            debug("Failed to remove original import library with exit code: " +
+-                  remove_exitcode);
+-            return ExitConditions::LIB_REMOVE_FAILURE;
+-        }
+-        int const rename_exitcode =
+-            std::rename(abs_out_imp_lib_name.c_str(), imp_lib_name.c_str());
+-        if (rename_exitcode) {
+-            debug("Failed to rename temporary import library with exit code: " +
+-                  rename_exitcode);
+-            return ExitConditions::FILE_RENAME_FAILURE;
+-        }
++    // We're creating a PE, we need to create an appropriate import lib
++    std::string const imp_lib_name = link_run.get_implib_name();
++    // If there is no implib, we don't need to bother
++    // trying to rename
++    if (!fileExists(imp_lib_name)) {
++        // There are numerous contexts in which a PE file
++        // may not export symbols, some are bugs in the
++        // upstream project, most are valid, all are not
++        // the concern of this wrapper
++        return 0;
++    }
++    std::string pe_name;
++    try {
++        pe_name = link_run.get_mangled_out();
++    } catch (const NameTooLongError& e) {
++        std::cerr << "Unable to mangle PE " << link_run.get_out()
++                  << " name is too long\n";
++        return ExitConditions::NORMALIZE_NAME_FAILURE;
++    }
++    std::string const abs_out_imp_lib_name = imp_lib_name + ".pe-abs.lib";
++    std::string const def_file =
++        link_run.get_def_file().empty() ? " " : ":" + link_run.get_def_file();
++    std::string const def = "-def" + def_file;
++    std::string const piped_args = link_run.get_lib_link_args();
++    // create command line to generate new import lib
++    this->rpath_executor =
++        ExecuteCommand("lib.exe", LdInvocation::ComposeCommandLists({
++                                      {def, piped_args, "-name:" + pe_name,
++                                       "-out:" + abs_out_imp_lib_name},
++                                      {link_run.get_rsp_file()},
++                                      this->obj_args,
++                                      this->lib_args,
++                                      this->lib_dir_args,
++                                  }));
++    this->rpath_executor.Execute();
++    DWORD const err_code = this->rpath_executor.Join();
++    if (err_code != 0) {
++        return err_code;
++    }
++    CoffReaderWriter coff_reader(abs_out_imp_lib_name);
++    CoffParser coff(&coff_reader);
++    if (!coff.Parse()) {
++        debug("Failed to parse COFF file: " + abs_out_imp_lib_name);
++        return ExitConditions::COFF_PARSE_FAILURE;
++    }
++    if (!coff.NormalizeName(pe_name)) {
++        debug("Failed to normalize name for COFF file: " +
++              abs_out_imp_lib_name);
++        return ExitConditions::NORMALIZE_NAME_FAILURE;
++    }
++    debug("Renaming library from " + abs_out_imp_lib_name + " to " +
++          imp_lib_name);
++    int const remove_exitcode = std::remove(imp_lib_name.c_str());
++    if (remove_exitcode) {
++        debug("Failed to remove original import library with exit code: " +
++              remove_exitcode);
++        return ExitConditions::LIB_REMOVE_FAILURE;
++    }
++    int const rename_exitcode =
++        std::rename(abs_out_imp_lib_name.c_str(), imp_lib_name.c_str());
++    if (rename_exitcode) {
++        debug("Failed to rename temporary import library with exit code: " +
++              rename_exitcode);
++        return ExitConditions::FILE_RENAME_FAILURE;
+     }
+     return ret_code;
+ }
+diff --git a/src/linker_invocation.cxx b/src/linker_invocation.cxx
+index 1a96b5a..4ed82be 100644
+--- a/src/linker_invocation.cxx
++++ b/src/linker_invocation.cxx
+@@ -3,10 +3,12 @@
+  *
+  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+  */
+-
+-#include "linker_invocation.h"
++#include <fstream>
++#include <iostream>
++#include <sstream>
+ #include <string>
+ #include <utility>
++#include "linker_invocation.h"
+ #include "utils.h"
+ 
+ /**
+@@ -46,11 +48,10 @@ void LinkerInvocation::Parse() {
+             this->implibname_ = implib_line[1];
+         } else if (endswith(normal_token, ".lib")) {
+             this->libs_.push_back(*token);
+-        } else if (normal_token == "/dll" || normal_token == "-dll") {
++        } else if (normal_token == "dll") {
+             this->is_exe_ = false;
+-        } else if (startswith(normal_token, "-out") ||
+-                   startswith(normal_token, "/out")) {
+-            this->output_ = split(*token, ":", 1)[1];
++        } else if (startswith(normal_token, "out")) {
++            this->output_ = split(*token, ":")[1];
+         } else if (endswith(normal_token, ".obj")) {
+             this->objs_.push_back(*token);
+         } else if (startswith(normal_token, "@") &&
+@@ -60,12 +61,25 @@ void LinkerInvocation::Parse() {
+             // Primarily utilized by CMake and MSBuild projects to bypass
+             // Command line length limits
+             this->rsp_file_ = *token;
++        } else if (startswith(normal_token, "def")) {
++            this->def_file_ = strip(split(*token, ":", 1)[1], "\"");
+         } else if (this->piped_args_.find(normal_token) !=
+                    this->piped_args_.end()) {
+-            this->piped_args_.at(normal_token).emplace_back(normal_token);
++            this->piped_args_.at(normal_token).emplace_back(*token);
+         }
+     }
++    // If we have a def file and no name, attempt to
++    // scrape the def file for a name to be sure
++    // we respect the intended project name
++    // vs overriding via the CLI
++    if (!this->def_file_.empty() && this->output_.empty()) {
++        this->processDefFile();
++    }
+     std::string const ext = this->is_exe_ ? ".exe" : ".dll";
++    // If output wasn't defined on the command line
++    // or the def file
++    // compute it based on the same logic as the linker
++    // i.e. first obj file name
+     if (this->output_.empty()) {
+         // with no "out" argument, the linker
+         // will place the file in the CWD
+@@ -73,14 +87,79 @@ void LinkerInvocation::Parse() {
+         std::string const filename = split(name_obj, "\\").back();
+         this->output_ = join({GetCWD(), strip(filename, ".obj")}, "\\") + ext;
+     }
+-    this->name_ = strip(this->output_, ext);
+     if (this->implibname_.empty()) {
+-        this->implibname_ = this->name_ + ".lib";
++        std::string const name = strip(this->output_, ext);
++        this->implibname_ = name + ".lib";
+     }
+ }
+ 
+-std::string LinkerInvocation::get_name() {
+-    return this->name_;
++/**
++ * processDefFile reads a def file passed to the linker
++ *  looking for either LIBRARY or NAME keywords
++ *  If found the LinkerInvocation name_ attribute is assigned
++ *  to the def file defined library name
++ *  and the def file is re-written without that name for use
++ *  if our lib pass so we can easily compose an absolute path'd
++ *  version of that name
++ */
++void LinkerInvocation::processDefFile() {
++
++    // Def from link line
++    std::ifstream def_in(this->def_file_);
++    if (!def_in) {
++        std::cerr << "Error: Could not open input def file: " << this->def_file_
++                  << "\n";
++    }
++
++    std::string line;
++    bool def_file_export_name = false;
++    StrList exports;
++
++    while (std::getline(def_in, line)) {
++        std::stringstream def_line(line);
++        std::string keyword;
++        def_line >> keyword;
++
++        // extract the intended output library name, overwrite
++        // default name derived from first obj file
++        // We can leave this def file is as we override on the
++        // CLI
++        // Name renames exes
++        // Library renames DLLs
++        // These def keywords override the command line use
++        // of /DLL
++        if (keyword == "NAME") {
++            this->is_exe_ = true;
++            def_line >> this->pe_name_;
++            this->pe_name_ = this->pe_name_ + ".exe";
++            def_file_export_name = true;
++        } else if (keyword == "LIBRARY") {
++            this->is_exe_ = false;
++            def_line >> this->pe_name_;
++            this->pe_name_ = this->pe_name_ + ".dll";
++            def_file_export_name = true;
++        } else {
++            exports.push_back(line);
++        }
++    }
++    if (def_file_export_name) {
++        const std::string def_name = stem(this->def_file_);
++        const std::string def_path =
++            this->def_file_.substr(0, this->def_file_.find(def_name));
++        const std::string rename_def = def_path + def_name + "-rename.def";
++
++        std::ofstream def_out(rename_def);
++        if (!def_out) {
++            std::cerr << "Error: could not open output def file: " << rename_def
++                      << "\n";
++        }
++        for (const auto& line : exports) {
++            def_out << line << "\n";
++        }
++        def_out.close();
++        this->def_file_ = rename_def;
++    }
++    def_in.close();
+ }
+ 
+ std::string LinkerInvocation::get_implib_name() {
+@@ -112,13 +191,13 @@ std::string LinkerInvocation::get_rsp_file() {
+ }
+ 
+ std::string LinkerInvocation::get_out() {
+-    return this->output_;
++    return this->pe_name_.empty() ? this->output_ : this->pe_name_;
+ }
+ 
+ std::string LinkerInvocation::get_mangled_out() {
+-    return mangle_name(this->output_);
++    return mangle_name(this->get_out());
+ }
+ 
+ bool LinkerInvocation::IsExeLink() {
+-    return this->is_exe_ || endswith(this->output_, ".exe");
++    return this->is_exe_ || endswith(this->get_out(), ".exe");
+ }
+diff --git a/src/linker_invocation.h b/src/linker_invocation.h
+index d195afe..a92a538 100644
+--- a/src/linker_invocation.h
++++ b/src/linker_invocation.h
+@@ -16,7 +16,6 @@ class LinkerInvocation {
+     ~LinkerInvocation() = default;
+     void Parse();
+     bool IsExeLink();
+-    std::string get_name();
+     std::string get_out();
+     std::string get_mangled_out();
+     std::string get_implib_name();
+@@ -25,9 +24,10 @@ class LinkerInvocation {
+     std::string get_lib_link_args();
+ 
+    private:
++    void processDefFile();
+     std::string line_;
+     StrList tokens_;
+-    std::string name_;
++    std::string pe_name_;
+     std::string implibname_;
+     std::string def_file_;
+     std::string rsp_file_;
+@@ -36,9 +36,8 @@ class LinkerInvocation {
+     StrList objs_;
+     bool is_exe_;
+     std::map<std::string, StrList> piped_args_ = {
+-        {"def", {}},          {"export", {}},    {"include", {}},
+-        {"libpath", {}},      {"ltcg", {}},      {"machine", {}},
+-        {"nodefaultlib", {}}, {"subsystem", {}}, {"verbose", {}},
+-        {"wx", {}},
++        {"export", {}},    {"include", {}}, {"libpath", {}},
++        {"ltcg", {}},      {"machine", {}}, {"nodefaultlib", {}},
++        {"subsystem", {}}, {"verbose", {}}, {"wx", {}},
+     };
+ };
+\ No newline at end of file
+diff --git a/src/main.cxx b/src/main.cxx
+index 45bac48..1fb0b63 100644
+--- a/src/main.cxx
++++ b/src/main.cxx
+@@ -37,8 +37,6 @@ int main(int argc, const char* argv[]) {
+                             patch_args.at("cmd") == "deploy";
+         bool const report = !(patch_args.find("report") == patch_args.end());
+         bool const has_pe = !(patch_args.find("pe") == patch_args.end());
+-        bool const is_exe =
+-            has_pe ? endswith(patch_args.at("pe"), ".exe") : false;
+         bool const debug = !(patch_args.find("debug") == patch_args.end());
+         bool const is_validate =
+             !(patch_args.find("verify") == patch_args.end());
+@@ -49,25 +47,13 @@ int main(int argc, const char* argv[]) {
+             std::cout << "No binaries to operate on... nothing to do\n";
+             return ExitConditions::CLI_FAILURE;
+         }
+-        if (is_exe && !full) {
+-            std::cout << "Executable file provided but --full not specified, "
+-                         "nothing to do...\n";
+-            return ExitConditions::CLI_FAILURE;
+-        }
+-        // The only scenario its ok to have a dll/exe and no coff is when we're creating a cache
+-        // entry
+-        if (!is_exe && !has_coff && !deploy) {
+-            std::cout << "Attempting to relocate DLL without coff file, please "
+-                         "provide a coff file.\n";
+-            return ExitConditions::CLI_FAILURE;
+-        }
+         if (is_validate && !has_coff) {
+             std::cout << "Attempting to validate without a coff file, nothing "
+                          "to validate\n";
+             return ExitConditions::CLI_FAILURE;
+         }
+         if (report && !has_coff) {
+-            std::cout << "Attempting to report without a binary, nothing to "
++            std::cout << "Attempting to report without a coff file, nothing to "
+                          "report...\n";
+             return ExitConditions::CLI_FAILURE;
+         }
+diff --git a/src/utils.cxx b/src/utils.cxx
+index 49db7f4..ea48bfb 100644
+--- a/src/utils.cxx
++++ b/src/utils.cxx
+@@ -6,6 +6,7 @@
+ #include "utils.h"
+ #include <errhandlingapi.h>
+ #include <fileapi.h>
++#include <fstream>
+ #include <handleapi.h>
+ #include <minwinbase.h>
+ #include <minwindef.h>
+@@ -196,6 +197,27 @@ std::string join(const StrList& args, const std::string& join_char) {
+     return joined_path;
+ }
+ 
++/**
++ * @brief Removes trailing extenion from a path
++ * i.e. from /path/to/my/file.txt.tmp this method
++ * would remove .tmp and return 
++ * /path/to/my/file.txt
++ * @param path - path to have trailing ext removed from 
++ * 
++ * @return path with last ext removed
++ */
++std::string stripLastExt(const std::string& path) {
++    // ensure we're only operating on file component
++    const std::string base = basename(path);
++    const size_t ext_pos = base.rfind('.');
++    std::string path_no_ext;
++    if (ext_pos != std::string::npos) {
++        const size_t ext_len = base.length() - ext_pos;
++        path_no_ext = path.substr(0, path.length() - ext_len);
++    }
++    return path_no_ext;
++}
++
+ void StripPathAndExe(std::string& command) {
+     StripPath(command);
+     StripExe(command);
+@@ -224,6 +246,14 @@ void lower(std::string& str) {
+     });
+ }
+ 
++/**
++ * Quotes str as needed
++ *  If str has existing escaped quotes, or a space/reserved character
++ *  Escape escaped quotes using an escaped backslash preceding the escaped
++ *  quote. Escape reserved characters by quoting the entire string
++ * 
++ *  Return the escaped string
++ */
+ std::string quoteAsNeeded(std::string& str) {
+     // Note: the ordering if these two conditionals is important
+     // If the second conditional is executed first, the first
+@@ -330,7 +360,7 @@ std::string regexReplace(
+  * or an empty string as appropriate
+  */
+ std::string GetSpackEnv(const char* env) {
+-    char* env_val = getenv(env);
++    char const* env_val = getenv(env);
+     return env_val ? env_val : std::string();
+ }
+ 
+@@ -448,8 +478,10 @@ bool isCommandArg(const std::string& arg, const std::string& command) {
+ void normalArg(std::string& arg) {
+     // first normalize capitalization
+     lower(arg);
++    // strip any leading/trailing quotes
++    arg = strip(lstrip(arg, "\""), "\"");
+     // strip leading / and -
+-    arg = strip(strip(arg, "-"), "/");
++    arg = lstrip(lstrip(arg, "-"), "/");
+ }
+ 
+ std::string reportLastError() {
+@@ -617,7 +649,7 @@ std::string mangle_name(const std::string& name) {
+     char* chr_abs_out = new char[abs_out.length() + 1];
+     strcpy(chr_abs_out, abs_out.c_str());
+     replace_path_characters(chr_abs_out, abs_out.length());
+-    char* padded_path =
++    char const* padded_path =
+         pad_path(chr_abs_out, static_cast<DWORD>(abs_out.length()));
+     mangled_abs_out = std::string(padded_path, MAX_NAME_LEN);
+ 
+@@ -626,6 +658,13 @@ std::string mangle_name(const std::string& name) {
+     return mangled_abs_out;
+ }
+ 
++bool fileExists(const std::string& fname) {
++    std::ifstream file(fname);
++    bool const exists = file.good();
++    file.close();
++    return exists;
++}
++
+ /**
+  * Determines whether a string contains path characters
+  *  \param name string to check for path characters
+@@ -649,7 +688,7 @@ bool SpackInstalledLib(const std::string& lib) {
+         return false;
+     }
+     std::string const stripped_lib = strip_padding(lib);
+-    startswith(stripped_lib, prefix);
++    return startswith(stripped_lib, prefix);
+ }
+ 
+ LibraryFinder::LibraryFinder() : search_vars{"SPACK_RELOCATE_PATH"} {}
+@@ -791,7 +830,7 @@ int get_slash_name_length(const char* slash_name) {
+ }
+ 
+ char* findstr(char* search_str, const char* substr, size_t size) {
+-    char* search = search_str;
++    char* search = search_str;  // NOLINT
+     size_t const str_size = strlen(substr);
+     while (search < search_str + size) {
+         if (!strncmp(search, substr, str_size)) {
+diff --git a/src/utils.h b/src/utils.h
+index e2f5a80..b04d929 100644
+--- a/src/utils.h
++++ b/src/utils.h
+@@ -110,6 +110,8 @@ void StripPath(std::string& command);
+ // Strips .exe extension from path
+ void StripExe(std::string& command);
+ 
++std::string stripLastExt(const std::string& path);
++
+ // Drives both StripPath and StripExe on the same path
+ // resulting in a parentless, non exe extensioned path
+ void StripPathAndExe(std::string& command);
+@@ -132,6 +134,8 @@ char* findstr(char* search_str, const char* substr, size_t size);
+ // side effects on Windows
+ void quoteList(StrList& args);
+ 
++std::string quoteAsNeeded(std::string& str);
++
+ /// @brief Searches a sections of a string for a given regex using provided
+ ///     options to control search behavior
+ /// @param searchDomain - string to be searched
+@@ -193,6 +197,15 @@ void replace_special_characters(char* mangled, size_t len);
+ bool SpackInstalledLib(const std::string& lib);
+ 
+ // File and File handle helpers //
++/**
++ * @brief Returns boolean indicating whether
++ * the given file exists
++ * 
++ * @param fname file to check for existence
++ * 
++ * @return true if fname exists, false otherwise
++ */
++bool fileExists(const std::string& fname);
+ 
+ // Returns File offset given RVA
+ DWORD RvaToFileOffset(PIMAGE_SECTION_HEADER& section_header,
+diff --git a/src/winrpath.cxx b/src/winrpath.cxx
+index dd385c6..f98e063 100644
+--- a/src/winrpath.cxx
++++ b/src/winrpath.cxx
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+  */
+ #include <cstdio>
+-#include <cstdio>
++#include <stdio.h>
+ #include <windows.h>  // NOLINT
+ #include "winrpath.h"
+ #include <fileapi.h>
+@@ -137,7 +137,8 @@ bool LibRename::RenameDll(char* name_loc, const std::string& dll_path) const {
+  * On extraction, we find dll names with the Spack sigil and rename (and repad) them with
+  * the correct absolute path to the requisite DLL on the new host system.
+  * 
+- * This approach is heavily based on https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/pe-file-header-parser-in-c++#first-dll-name
++ * This approach is heavily based on 
++ * https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/pe-file-header-parser-in-c++#first-dll-name
+  * 
+  * \param pe_in the PE file for which to perform the imported DLL rename procedure
+  * 
+@@ -253,7 +254,6 @@ LibRename::LibRename(std::string p_exe, std::string coff, bool full,
+       pe(std::move(p_exe)),
+       deploy(deploy),
+       coff(std::move(coff)) {
+-    this->is_exe = endswith(this->pe, ".exe");
+     std::string const coff_path = stem(this->coff);
+     this->tmp_def_file = coff_path + "-tmp.def";
+     this->def_file = coff_path + ".def";
+@@ -353,9 +353,8 @@ bool LibRename::ComputeDefFile() {
+  */
+ bool LibRename::ExecuteRename() {
+     // If we're not deploying, we're extracting
+-    // recompute the .def and .lib for dlls
+-    // exes do not typically have import libs so we don't handle
+-    // that case
++    // recompute the .def and .lib for dlls and optionally
++    // exes
+     // We do not bother with defs for things that don't have
+     // import libraries
+     if (!this->deploy && !this->coff.empty()) {
+diff --git a/src/winrpath.h b/src/winrpath.h
+index 4876e1a..e166465 100644
+--- a/src/winrpath.h
++++ b/src/winrpath.h
+@@ -55,5 +55,4 @@ class LibRename {
+     bool full;
+     bool deploy;
+     bool replace;
+-    bool is_exe;
+ };
+diff --git a/test/calc.def b/test/calc.def
+new file mode 100644
+index 0000000..59f93ce
+--- /dev/null
++++ b/test/calc.def
+@@ -0,0 +1,4 @@
++LIBRARY calcdef
++
++EXPORTS
++    add
+\ No newline at end of file
+diff --git a/test/include/calc header/calc.h b/test/include/calc header/calc.h
+index d7d3975..855dc7c 100644
+--- a/test/include/calc header/calc.h	
++++ b/test/include/calc header/calc.h	
+@@ -7,6 +7,8 @@
+ 
+ #ifdef CALC_EXPORTS
+ #define CALC_API __declspec(dllexport)
++#elif CALC_DEF_EXPORTS
++#define CALC_API
+ #else
+ #define CALC_API __declspec(dllimport)
+ #endif
+diff --git a/test/main2.cxx b/test/main2.cxx
+new file mode 100644
+index 0000000..e2ba16a
+--- /dev/null
++++ b/test/main2.cxx
+@@ -0,0 +1,17 @@
++/**
++ * Copyright Spack Project Developers. See COPYRIGHT file for details.
++ *
++ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
++ */
++#include "main2.h"
++#include "calc header/calc.h"
++
++extern "C" int sub(const int& a, const int& b) {
++    return a - b;
++}
++
++int main(int /*argc*/, char** /*argv*/) {
++    add(1, 2);
++    sub(2, 1);
++    return 0;
++}
+\ No newline at end of file
+diff --git a/test/main2.h b/test/main2.h
+new file mode 100644
+index 0000000..ba381ba
+--- /dev/null
++++ b/test/main2.h
+@@ -0,0 +1,14 @@
++/**
++ * Copyright Spack Project Developers. See COPYRIGHT file for details.
++ *
++ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
++ */
++#pragma once
++
++#ifdef MAIN_EXPORTS
++#define MAIN_API __declspec(dllexport)
++#else
++#define MAIN_API __declspec(dllimport)
++#endif
++
++extern "C" MAIN_API int sub(const int& a, const int& b);
+\ No newline at end of file
+diff --git a/test/main3.cxx b/test/main3.cxx
+new file mode 100644
+index 0000000..232435d
+--- /dev/null
++++ b/test/main3.cxx
+@@ -0,0 +1,13 @@
++/**
++ * Copyright Spack Project Developers. See COPYRIGHT file for details.
++ *
++ * SPDX-License-Identifier: (Apache-2.0 OR MIT)
++ */
++#include "main2.h"
++#include "calc header/calc.h"
++
++int main(int /*argc*/, char** /*argv*/) {
++    sub(2, 1);
++    add(1, 2);
++    return 0;
++}
+\ No newline at end of file
+diff --git a/test/src file/calc.cxx b/test/src file/calc.cxx
+index 09ebd77..1bfce7c 100644
+--- a/test/src file/calc.cxx	
++++ b/test/src file/calc.cxx	
+@@ -4,7 +4,7 @@
+  * SPDX-License-Identifier: (Apache-2.0 OR MIT)
+  */
+ 
+-#if defined(CALC_HEADER)
++#ifdef CALC_HEADER
+ #include CALC_HEADER /* "calc.h" */
+ #else
+ #include "calc header/calc.h"
