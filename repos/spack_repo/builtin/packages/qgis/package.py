@@ -16,7 +16,7 @@ class Qgis(CMakePackage):
     homepage = "https://qgis.org"
     url = "https://qgis.org/downloads/qgis-3.8.1.tar.bz2"
 
-    maintainers("adamjstewart", "Sinan81")
+    maintainers("adamjstewart", "Sinan81", "Chrismarsh")
 
     license("GPL-2.0-or-later")
 
@@ -193,6 +193,13 @@ class Qgis(CMakePackage):
     patch("pyqt5.patch", when="@:3.14 ^qt@5")
     patch("pyqt5_3165x.patch", when="@3.16.5:3.21 ^qt@5 ^py-sip@4")
     patch("pyqt5_322x.patch", when="@3.22: ^qt@5 ^py-sip@4")
+
+    # https://github.com/qgis/QGIS/pull/62142
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/qgis/QGIS/pull/62142.patch?full_index=1",
+        when="@3.40 ^py-sip@6.11:",
+        sha256="edb2c149f88c1adfee3791f1928c5119301900541cb40a6d1cc5b68d8aa3b688",
+    )
 
     @run_before("cmake", when="^py-pyqt5")
     def fix_pyqt5_cmake(self):

@@ -238,6 +238,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         when="@2.8:2.10",
     )
 
+    # https://github.com/ornladios/ADIOS2/pull/4578
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
+        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
+        when="@2.8:",
+    )
+
     @when("%fj")
     def patch(self):
         """add fujitsu mpi commands #16864"""

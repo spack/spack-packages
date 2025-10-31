@@ -20,10 +20,12 @@ class RocmOpencl(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libOpenCL"]
+    libraries = ["libamdocl64"]
 
     license("MIT")
 
+    version("7.0.2", sha256="b49b1ccbf86ef78f4da5ff13ec3ee94f6133c55db3a95b823577b0808db5f2f1")
+    version("7.0.0", sha256="cc417e73cda903511db5a72b77704fd41bf7b39204c5cacb2c64701b344b8c5d")
     version("6.4.3", sha256="aa7c9d9d7da3b5fc944b17ca7c032e8924a8dc327ec79eb8cb7f0c9df6fa76dc")
     version("6.4.2", sha256="6dca1ffff36dbf8665594a72b47b8dd0362f7ee446dea03961d8b5a639bf3ede")
     version("6.4.1", sha256="18ee75a04f6fc55e72f8b3fcad1e0d58eceb2ce0e0696ca76d9b3dfaf4bfd7ff")
@@ -91,6 +93,8 @@ class RocmOpencl(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
@@ -116,6 +120,9 @@ class RocmOpencl(CMakePackage):
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 
+    for ver in ["7.0.0", "7.0.2"]:
+        depends_on(f"hsa-amd-aqlprofile@{ver}", type="link", when=f"@{ver}")
+
     @classmethod
     def determine_version(cls, lib):
         match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
@@ -123,7 +130,9 @@ class RocmOpencl(CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        else:
+            ver = None
+        return ver
 
     def cmake_args(self):
         args = ["-DUSE_COMGR_LIBRARY=yes", "-DBUILD_TESTS=ON"]

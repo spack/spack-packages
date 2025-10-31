@@ -16,20 +16,8 @@ class Scorep(AutotoolsPackage):
     homepage = "https://www.vi-hps.org/projects/score-p"
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-7.1/scorep-7.1.tar.gz"
     maintainers("wrwilliams")
+    version("9.3", sha256="5498b31b1d6c04b08a9d408320a7515e884538d248de58b6dd11b48c8f364112")
     version("9.2", sha256="be3eaee99cdd0145e518c1aa959126df45e25b61579a007d062748b2844c499c")
-    # 9.1 has a critical bug in Pthread instrumentation fixed by 9.2
-    version(
-        "9.1",
-        sha256="a6593716e62c751937f3be78782bf09b3737a68c46cdbeabec7cff80d2fdc7c8",
-        deprecated="true",
-    )
-    # 9.0 has several less-critical bugs/misfeatures revealed by public use of libgotcha-based
-    # library wrapping, but should be avoided in preference to 9.2+.
-    version(
-        "9.0",
-        sha256="5d0a5db4cc6f31c30ae03c7e6f6245e83667b0ff38a7041ffe8b2e8e581e0997",
-        deprecated="true",
-    )
     version("8.4", sha256="7bbde9a0721d27cc6205baf13c1626833bcfbabb1f33b325a2d67976290f7f8a")
     version("8.3", sha256="76c914e6319221c059234597a3bc53da788ed679179ac99c147284dcefb1574a")
     # version 8.2 was immediately superseded before it hit Spack
@@ -63,8 +51,6 @@ class Scorep(AutotoolsPackage):
         when="^binutils",
     )
     variant("fortran", default=True, description="Enable fortran support")
-    # Putting this in as preparation. F08 support exists in 9.0 but configure does not respect
-    # --enable-mpi-f08 and will not until 9.1.
     variant(
         "mpi_f08", default=True, description="Enable MPI F08 support", when="@9.1: +mpi +fortran"
     )
@@ -102,7 +88,7 @@ class Scorep(AutotoolsPackage):
     depends_on("opari2@2.0.6:", when="@7:")
 
     # Conditional dependencies for variants
-    depends_on("mpi@2.2:", type=("build", "run"), when="@7.0:+mpi")
+    depends_on("mpi@2.2:", type=("build", "run"), when="+mpi")
     depends_on("mpi", type=("build", "run"), when="+mpi")
     depends_on("papi", when="+papi")
     depends_on("pdt", when="+pdt")
@@ -119,7 +105,7 @@ class Scorep(AutotoolsPackage):
     # https://github.com/spack/spack/issues/1609
     conflicts("platform=darwin")
     # Score-P first has support for ROCm 6.x as of v8.4
-    conflicts("hip@6.0:", when="@1.0:8.3+hip")
+    conflicts("hip@6.0:", when="@:8.3+hip")
 
     # Utility function: extract the first directory in `root` where
     # we find `libname`. Used to handle CUDA irregular layouts.

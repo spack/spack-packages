@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   packages:
     all:
@@ -13,6 +13,13 @@ spack:
       - ~rocm
     mpi:
       require: openmpi
+    py-jaxlib:
+      require: "%c,cxx=clang"
+    py-tensorflow:
+      require:
+        - any_of: ["@:2.18 %c,cxx=gcc", "@2.19: %c,cxx=clang"]
+    py-torch:
+      require: "%c,cxx=gcc"
 
   specs:
     # Horovod
@@ -83,7 +90,7 @@ spack:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+          name: ghcr.io/spack/ubuntu-24.04:v2025-09-15
           entrypoint: ['']
 
   cdash:

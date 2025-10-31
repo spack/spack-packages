@@ -10,7 +10,7 @@ from spack.package import *
 class Charliecloud(AutotoolsPackage):
     """Lightweight user-defined software stacks for HPC."""
 
-    maintainers("j-ogas", "reidpr")
+    maintainers("j-ogas", "reidpr", "loshak")
     homepage = "https://hpc.github.io/charliecloud"
     url = "https://github.com/hpc/charliecloud/releases/download/v0.18/charliecloud-0.18.tar.gz"
     git = "https://github.com/hpc/charliecloud.git"
@@ -20,6 +20,8 @@ class Charliecloud(AutotoolsPackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("0.40", sha256="dcad81136d1fed905be6e573a7bf191ea655ae7827f7980bbe6559942f2affdd")
+    version("0.39", sha256="38503b507119a970ac288df7181aefe6cd1a125b9d509f5cb162dacea7143fd1")
     version("0.38", sha256="1a3766d57ff4db9c65fd5c561bbaac52476c9a19fa10c1554190912a03429b7a")
     version("0.37", sha256="1fd8e7cd1dd09a001aead5e105e3234792c1a1e9e30417f495ab3f422ade7397")
     version("0.36", sha256="b6b1a085d8ff82abc6d625ab990af3925c84fa08ec837828b383f329bd0b8e72")
@@ -27,6 +29,7 @@ class Charliecloud(AutotoolsPackage):
 
     variant("docs", default=False, description="Build man pages and html docs")
     variant("squashfuse", default=True, description="Build with squashfuse support")
+    variant("cdi", default=True, description="Build with CDI support", when="@0.40:")
 
     depends_on("c", type="build")  # generated
 
@@ -73,11 +76,26 @@ class Charliecloud(AutotoolsPackage):
         depends_on("squashfuse@0.1.105:0.2.0,0.4.0:", type="link", when="@0.36:")
         depends_on("squashfuse@0.1.105:0.2.0,0.4.0", type="link", when="@0.35")
 
+    with when("+cdi"):
+        # Require cjson for CDI support
+        depends_on("cjson", type="build", when="@0.40:")
+
+    def url_for_version(self, version):
+        if version >= Version("0.39"):
+            url_fmt = "https://gitlab.com/charliecloud/main/-/archive/v{0}/main-v{0}.tar.gz"
+        else:
+            url_fmt = "https://github.com/hpc/charliecloud/releases/download/v{0}/charliecloud-{0}.tar.gz"
+        return url_fmt.format(version)
+
+    @property
+    def force_autoreconf(self):
+        return self.spec.satisfies("@0.39:")
+
     def autoreconf(self, spec, prefix):
         which("bash")("autogen.sh")
 
     def configure_args(self):
-        args = [f"--with-python={self.spec['python'].command.path}"]
+        args = ["--with-python=/usr/bin/env python3"]
 
         if self.spec.satisfies("+docs"):
             sphinx_bin = f"{self.spec['py-sphinx'].prefix.bin}"
@@ -87,9 +105,23 @@ class Charliecloud(AutotoolsPackage):
             args.append("--disable-html")
 
         if self.spec.satisfies("+squashfuse"):
-            args.append(f"--with-libsquashfuse={self.spec['squashfuse'].prefix}")
+            if self.spec.satisfies("@:0.39"):
+                args.append(f"--with-libsquashfuse={self.spec['squashfuse'].prefix}")
+            else:
+                # Version 0.40+ uses a new syntax for squashfuse
+                args.append(f"--with-squashfuse-include={self.spec['squashfuse'].prefix}/include")
+                args.append(f"--with-squashfuse-lib={self.spec['squashfuse'].prefix}/lib")
         else:
-            args.append("--with-libsquashfuse=no")
+            if self.spec.satisfies("@:0.39"):
+                args.append("--with-libsquashfuse=no")
+            else:
+                args.append("--with-squashfuse=no")
+
+        if "+cdi" in self.spec and self.spec.satisfies("@0.40:"):
+            cjson_spec = self.spec["cjson"]
+            args.append("--with-json=yes")
+            args.append(f"--with-json-include={cjson_spec.prefix.include}")
+            args.append(f"--with-json-lib={cjson_spec.libs.directories[0]}")
 
         return args
 
