@@ -29,6 +29,7 @@ class Glib(MesonPackage):
     license("LGPL-2.1-or-later")
 
     # Even minor versions are stable, odd minor versions are development, only add even numbers
+    version("2.86.1", sha256="119d1708ca022556d6d2989ee90ad1b82bd9c0d1667e066944a6d0020e2d5e57")
     version("2.82.5", sha256="05c2031f9bdf6b5aba7a06ca84f0b4aced28b19bf1b50c6ab25cc675277cbc3f")
     version("2.82.2", sha256="ab45f5a323048b1659ee0fbda5cecd94b099ab3e4b9abf26ae06aeb3e781fd63")
     version(
@@ -94,6 +95,7 @@ class Glib(MesonPackage):
     depends_on("libffi")
     depends_on("zlib-api")
     depends_on("gettext")
+    depends_on("gir-scanner", when="@2.79:", type="build")
     depends_on("perl", type=("build", "run"))
     extends("python", type=("build", "run"))
     # Uses distutils in gio/gdbus-2.0/codegen/utils.py
@@ -124,7 +126,7 @@ class Glib(MesonPackage):
         gio_tests.filter("'file' : {},", "")
         gio_tests.filter("'gdbus-peer'", "'file'")
         gio_tests.filter("'gdbus-address-get-session' : {},", "")
-        filter_file("'mkenums.py'( : {})*,*", "", "gobject/tests/meson.build")
+        #filter_file("'mkenums.py'( : {})*,*", "", "gobject/tests/meson.build")
         filter_file("'fileutils' : {},", "", "glib/tests/meson.build")
 
     @property
