@@ -8,8 +8,7 @@ from spack.package import *
 
 
 class GirScanner(MesonPackage):
-    """The gi-r-scanner is from the GObject Introspection and required for building full glib.
-    """
+    """The gi-r-scanner is from the GObject Introspection and required for building full glib."""
 
     homepage = "https://wiki.gnome.org/Projects/GObjectIntrospection"
     url = "https://download.gnome.org/sources/gobject-introspection/1.72/gobject-introspection-1.72.0.tar.xz"
@@ -29,7 +28,7 @@ class GirScanner(MesonPackage):
     # Does not build with sed from Darwin
     depends_on("sed", when="platform=darwin", type="build")
 
-    #depends_on("cairo+gobject")
+    # depends_on("cairo+gobject")
     depends_on("glib-bootstrap@2.86:", when="@1.86", type="link")
 
     depends_on("libffi")
@@ -72,20 +71,20 @@ class GirScanner(MesonPackage):
     def parallel(self):
         return not self.spec.satisfies("%fj")
 
+
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         args = []
         args.append("-Dcairo=disabled")
         args.append("-Ddoctool=disabled")
-        #args.append("-Dbuild_introspection_data=false")
-        
+        # args.append("-Dbuild_introspection_data=false")
+
         return args
 
     @run_after("install")
     def clean_install(self):
         rm = which("rm")
-        binaries = ["g-ir-compiler", "g-ir-generate",
-                    "g-ir-annotation-tool", "g-ir-inspect"]
+        binaries = ["g-ir-compiler", "g-ir-generate", "g-ir-annotation-tool", "g-ir-inspect"]
         rm("-r", self.prefix.include, join_path(self.prefix.share, "man"))
         rm("-r", join_path(self.prefix.share, "aclocal"))
         for b in binaries:

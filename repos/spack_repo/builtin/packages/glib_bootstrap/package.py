@@ -11,8 +11,7 @@ from spack.package import *
 
 
 class GlibBootstrap(MesonPackage):
-    """GLib with no dependency on gobject-introspection used to bootstrap a gobject-introspection.
-    """
+    """GLib with no dependency on gobject-introspection used to bootstrap a gobject-introspection."""
 
     homepage = "https://developer.gnome.org/glib/"
     url = "https://download.gnome.org/sources/glib/2.82/glib-2.82.5.tar.xz"
@@ -82,7 +81,9 @@ class MesonBuilder(meson.MesonBuilder):
             filter_file(
                 "Libs:",
                 "Libs: -L{0} -Wl,-rpath={0} ".format(spec["gettext"].libs.directories[0]),
-                join_path(self.spec["glib-bootstrap"].libs.directories[0], "pkgconfig", "glib-2.0.pc"),
+                join_path(
+                    self.spec["glib-bootstrap"].libs.directories[0], "pkgconfig", "glib-2.0.pc"
+                ),
             )
 
     def meson_args(self):

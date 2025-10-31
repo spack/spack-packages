@@ -126,7 +126,7 @@ class Glib(MesonPackage):
         gio_tests.filter("'file' : {},", "")
         gio_tests.filter("'gdbus-peer'", "'file'")
         gio_tests.filter("'gdbus-address-get-session' : {},", "")
-        #filter_file("'mkenums.py'( : {})*,*", "", "gobject/tests/meson.build")
+        # filter_file("'mkenums.py'( : {})*,*", "", "gobject/tests/meson.build")
         filter_file("'fileutils' : {},", "", "glib/tests/meson.build")
 
     @property
