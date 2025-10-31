@@ -29,7 +29,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
 
     # Prefer the latest stable release
     version("4.1", sha256="25a53d3725b669e2c648158fb7c9fc5b1388953f3a2f949748586c447d0e43ee")
-    version("4.0", sha256="ee076c4e672d18d6bf8dd2250e4a91fa96aac1db2c788e4572b5513d86936efb")
+    version("4.0", sha256="c532f7bdd5cca71f78c12e0885c492f6e276e283711806c84d0b0f80bb3e3b74")
     with default_args(deprecated=True):
         version("3.0", sha256="ee076c4e672d18d6bf8dd2250e4a91fa96aac1db2c788e4572b5513d86936efb")
 
