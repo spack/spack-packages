@@ -70,6 +70,7 @@ class PyFenicsUfl(PythonPackage):
     depends_on("python@3.9:", when="@2025.1.0:", type=("build", "run"))
     depends_on("python@3.8:", when="@2023.2.0:", type=("build", "run"))
 
+    depends_on("py-setuptools@77:", when="@2025.1.0:", type="build")
     depends_on("py-setuptools@62:", when="@2023.2.0:", type="build")
     depends_on("py-setuptools@58:", when="@2022.1.0:2023.1.1.post0", type="build")
     depends_on("py-setuptools@40:", when="@2016.2.0:2021.1.0", type="build")
