@@ -80,9 +80,9 @@ class PyKeras(PythonPackage):
     variant(
         "backend",
         default="tensorflow",
-        description="backend library",
+        description="Backend library. Set KERAS_BACKEND with first value.",
         values=["tensorflow", "jax", "torch"],
-        multi=False,
+        multi=True,
         when="@3:",
     )
 
@@ -176,7 +176,7 @@ class PyKeras(PythonPackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@3:"):
-            env.set("KERAS_BACKEND", self.spec.variants["backend"].value)
+            env.set("KERAS_BACKEND", self.spec.variants["backend"].value[0])
 
     @when("@2.5:2")
     def patch(self):
