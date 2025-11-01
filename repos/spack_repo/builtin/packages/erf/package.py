@@ -12,6 +12,8 @@ class Erf(CMakePackage, CudaPackage):
     homepage = "https://erf.readthedocs.io/en/latest/index.html"
     url = "https://github.com/erf-model/ERF/archive/refs/tags/25.10.tar.gz"
     git = "https://github.com/erf-model/ERF.git"
+    def url_for_version(self, v):
+        return f"https://github.com/erf-model/ERF/archive/refs/tags/{v}.tar.gz"
     test_requires_compiler = True
 
     maintainers("larenspear")
@@ -82,7 +84,7 @@ class Erf(CMakePackage, CudaPackage):
             self.define("ERF_CLONE_AMREX", False),
             self.define("GIT_SUBMODULE_PROTOCOL", "https"),
             self.define("MPIEXEC_PREFLAGS", "--oversubscribe"),
-            self.define("ERF_DIM", "3"),
+            self.define("ERF_DIM", "3")
         ]
 
         if "+netcdf" in self.spec:
