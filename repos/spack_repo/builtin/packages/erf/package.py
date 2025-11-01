@@ -10,7 +10,7 @@ class Erf(CMakePackage, CudaPackage):
     """
 
     homepage = "https://erf.readthedocs.io/en/latest/index.html"
-    url = "https://github.com/erf-model/ERF/archive/refs/tags/25.08.tar.gz"
+    url = "https://github.com/erf-model/ERF/archive/refs/tags/25.10.tar.gz"
     git = "https://github.com/erf-model/ERF.git"
     test_requires_compiler = True
 
@@ -18,34 +18,22 @@ class Erf(CMakePackage, CudaPackage):
 
     license("BSD-3-Clause", checked_by="larenspear")
 
-    version("25.10", tag="25.10", submodules=True)
-    version("25.08", tag="25.08", submodules=True)
-    version("25.07", tag="25.07", submodules=True)
-    version("25.06", tag="25.06", submodules=True)
-    version("25.05", tag="25.05", submodules=True)
-    version("25.04", tag="25.04", submodules=True)
-    version("25.03", tag="25.03", submodules=True)
-    version("25.01", tag="25.01", submodules=True)
-    version("24.11", tag="24.11", submodules=True)
-    version("24.10", tag="24.10", submodules=True)
-    version("24.09", tag="24.09", submodules=True)
-    version("24.08", tag="24.08", submodules=True)
-    version("24.06", tag="24.06", submodules=True)
-    version("24.05", tag="24.05", submodules=True)
-    version("24.04", tag="24.04", submodules=True)
-    version("24.03", tag="24.03", submodules=True)
-    version("24.02", tag="24.02", submodules=True)
-    version("24.01", tag="24.01", submodules=True)
-    version("23.12", tag="23.12", submodules=True)
-    version("23.11", tag="23.11", submodules=True)
-    version("23.10", tag="23.10", submodules=True)
+    version("25.10", sha256="92575d25a8e87266f1b3a9a0c16a5755b84c45d489a060abeec6ddea8b8d8fe0")
+    version("25.08", sha256="c8723384e00fb4bbb694385bdbc5187f38ee1509a0a18a23efc1094212fd21f4")
+    version("25.07", sha256="bee8c136872c4e5400fdf2f6a432c8dc17f9b8384715158d9780a2c561a51642")
+    version("25.06", sha256="dd1d627faf67477e3fa1f58b006f7e2b00316c66e8c99baf8b6cfbedce37b5f2")
+    version("25.05", sha256="eb56a44d915d6af3ad30438dff6b96d9c489ae7c610fe4cdd0c17f2f26cc4b28")
+    version("25.04", sha256="fc6837b252c1cebd0f2d38cdb3cea8ad55c837e4163c76e5d3508d973b282a42")
+    version("25.03", sha256="3068c0c5f66538bcc1a12ee8c3eb142e5d02b73b71ab1cfbb244a053e8d5cf4a")
+    version("25.01", sha256="11e48aadfc420c3f9adb05a0c5778776d6cb0915476532fd7a095d9f167ef584")
+    version("24.11", sha256="19e7ce4829a46c98baf55b1dc4b2cefc508f2db41182e47c0ca788fe9280783f")
+    version("24.10", sha256="7c9ba35374e71103fab8c5ba3ea107b4574e3270038bc3e8cbdcbe30eba26e7a")
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("netcdf", default=False, description="Enable NetCDF support")
     variant("particles", default=False, description="Enable particle support")
     variant("multiblock", default=False, description="Enable multiblock support")
-    variant("radiation", default=False, description="Enable radiation support")
     variant("tests", default=False, description="Enable tests")
     variant("fcompare", default=False, description="Enable fcompare")
     variant("fft", default=False, description="Enable FFT support")
@@ -78,23 +66,6 @@ class Erf(CMakePackage, CudaPackage):
 
     conflicts("+openmp", when="+cuda", msg="Cannot enable both OpenMP and CUDA")
     conflicts("+fft", when="~mpi", msg="FFT support requires MPI")
-    conflicts("+radiation", when="platform=darwin", msg="Radiation is not supported on macOS")
-
-    _KOKKOS_SM_TO_FLAG = {
-        "70": "Kokkos_ARCH_VOLTA70",
-        "72": "Kokkos_ARCH_VOLTA72",
-        "75": "Kokkos_ARCH_TURING75",
-        "80": "Kokkos_ARCH_AMPERE80",
-        "86": "Kokkos_ARCH_AMPERE86",
-        "89": "Kokkos_ARCH_ADA89",
-        "90": "Kokkos_ARCH_HOPPER90",
-    }
-
-    def _kokkos_flags_from_cuda_arch(self, sm_list):
-        for sm in sm_list:
-            flag = self._KOKKOS_SM_TO_FLAG.get(sm)
-            if flag:
-                yield flag
 
     def cmake_args(self):
         args = [
@@ -103,17 +74,16 @@ class Erf(CMakePackage, CudaPackage):
             self.define_from_variant("ERF_ENABLE_NETCDF", "netcdf"),
             self.define_from_variant("ERF_ENABLE_PARTICLES", "particles"),
             self.define_from_variant("ERF_ENABLE_MULTIBLOCK", "multiblock"),
-            self.define_from_variant("ERF_ENABLE_RADIATION", "radiation"),
             self.define_from_variant("ERF_BUILD_TESTS", "tests"),
             self.define_from_variant("ERF_BUILD_FCOMPARE", "fcompare"),
             self.define_from_variant("ERF_ENABLE_FFT", "fft"),
             self.define("ERF_DIM", "3"),
+            self.define("ERF_USE_EXTERNAL_AMREX", True),
+            self.define("ERF_CLONE_AMREX", False),
+            self.define("GIT_SUBMODULE_PROTOCOL", "https"),
+            self.define("MPIEXEC_PREFLAGS", "--oversubscribe"),
+            self.define("ERF_DIM", "3"),
         ]
-        args.append(self.define("ERF_USE_EXTERNAL_AMREX", True))
-        args.append(self.define("ERF_CLONE_AMREX", False))
-        args.append(self.define("GIT_SUBMODULE_PROTOCOL", "https"))
-        args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
-        args.append(self.define("ERF_DIM", "3"))
 
         if "+netcdf" in self.spec:
             args.extend(
@@ -122,19 +92,6 @@ class Erf(CMakePackage, CudaPackage):
                     self.define("NetCDF_FORTRAN_PATH", self.spec["netcdf-fortran"].prefix),
                 ]
             )
-
-        if "+radiation" in self.spec:
-            args.extend(
-                [
-                    self.define("ERF_ENABLE_KOKKOS", True),
-                    self.define("ERF_ENABLE_EKAT", True),
-                    self.define("ERF_ENABLE_RRTMGP", True),
-                ]
-            )
-            if "+cuda" in self.spec:
-                sm_list = self.spec.variants["cuda_arch"].value or ["80"]
-                for kdef in self._kokkos_flags_from_cuda_arch(sm_list):
-                    args.append(self.define(kdef, True))
 
         if "+cuda" in self.spec:
             archs = self.spec.variants["cuda_arch"].value or ["80"]
