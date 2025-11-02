@@ -21,6 +21,7 @@ class PyMemray(PythonPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("gmake", type="build")
 
     depends_on("python@3.7:", type=("build", "link", "run"))
 
