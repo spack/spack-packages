@@ -13,10 +13,13 @@ class OctaveControl(OctavePackage, SourceforgePackage):
     based on the proven SLICOT Library"""
 
     homepage = "https://octave.sourceforge.io/control/"
-    sourceforge_mirror_path = "octave/control-3.2.0.tar.gz"
+    # sourceforge_mirror_path = "octave/control-3.2.0.tar.gz"
+    git = "https://github.com/gnu-octave/pkg-control/"
+    url = "https://github.com/gnu-octave/pkg-control/releases/download/control-4.1.3/control-4.1.3.tar.gz"
 
     license("GPL-3.0-or-later")
 
+    version("4.1.3", sha256="07ce19c121778333e409b4fd67d8946ff6fa9d0eb93b00312b331b86ea6954b4")
     version("3.2.0", sha256="faf1d510d16ab46e4fa91a1288f4a7839ee05469c33e4698b7a007a0bb965e3e")
 
     depends_on("cxx", type="build")  # generated
