@@ -183,8 +183,8 @@ class Vtk(CMakePackage):
         # vtk@9.2: need Ioss::Utils::get_debug_stream() which only 2022-10-14 provides,
         # and to be safe against other issues, make them build with this version only:
         depends_on("seacas@2022-10-14", when="@9.2:9.3")
-        depends_on("seacas@2024-06-27", when="@9.4:")
-        # TODO probably we can bump version
+        depends_on("seacas@2024-06-27", when="@9.4")
+        depends_on("seacas@2025-02-27", when="@9.5")
 
     with when("@9: io=netcdf"):
         depends_on("netcdf-c ~mpi", when="~mpi")
