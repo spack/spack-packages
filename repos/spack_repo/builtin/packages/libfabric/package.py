@@ -114,6 +114,11 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("level_zero", default=False, description="Enable Level Zero support")
     variant("gdrcopy", default=False, when="@1.12: +cuda", description="Enable gdrcopy support")
 
+    # The CXI provider hardcodes CXIP_FI_VERSION to FI_VERSION(2, 2).
+    # Make it match the libfabric we're building so that 2.3.x
+    # builds pick up the correct FI version.
+    patch("cxi_fi_version_2.3.patch", when="@2.3.0:2.3.1")
+
     # For version 1.9.0:
     # headers: fix forward-declaration of enum fi_collective_op with C++
     patch(
