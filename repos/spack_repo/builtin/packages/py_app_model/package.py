@@ -36,7 +36,7 @@ class PyAppModel(PythonPackage):
         depends_on("py-pydantic-compat@0.1.1:", when="@0.4")
         depends_on("py-in-n-out@0.1.5:")
         depends_on("py-typing-extensions@4.12:")
-        
+
         with when("+qt"):
             depends_on("py-qtpy@2.4.0:")
             depends_on("py-superqt@0.7.2: +iconify")
