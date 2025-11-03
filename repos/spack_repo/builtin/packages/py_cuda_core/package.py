@@ -31,5 +31,4 @@ class PyCudaCore(PythonPackage):
     build_directory = "cuda_core"
 
     def setup_build_environment(self, env):
-        cuda_version = self.spec["cuda"].version
         env.append_path("LIBRARY_PATH", self.spec["cuda"].prefix.lib64)
