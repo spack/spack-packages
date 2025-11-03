@@ -131,7 +131,7 @@ class Vtk(CMakePackage):
         depends_on("libharu")
         depends_on("lzma")
         depends_on("pegtl")
-        depends_on("pegtl@3", when="@:9.5.2")
+        depends_on("pegtl@2", when="@:9.5.2")
         depends_on("scnlib")
         depends_on("verdict")
 
