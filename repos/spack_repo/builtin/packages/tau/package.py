@@ -153,14 +153,7 @@ class Tau(Package):
     variant(
         "force-legacy-l0",
         default=False,
-        description="Forces the use of Legacy L0 profiler",
-        when="@2.35",
-    )
-
-    variant(
-        "force-new-l0",
-        default=False,
-        description="Forces the use of New L0 profiler",
+        description="Forces the use of Legacy L0 profiler. Older GPUs or drivers may require the legacy profiler.",
         when="@2.35",
     )
 
@@ -254,17 +247,7 @@ class Tau(Package):
         when="+force-legacy-l0",
         msg="Level zero needs to be enabled with +force-legacy-l0",
     )
-    requires(
-        "+level_zero",
-        when="+force-new-l0",
-        msg="Level zero needs to be enabled with +force-new-l0",
-    )
-    conflicts(
-        "+force-legacy-l0",
-        when="+force-new-l0",
-        msg="Cannot force the use of both new and legacy L0 profiler",
-    )
-
+    
     # https://github.com/UO-OACISS/tau2/commit/1d2cb6b
     patch("tau-rocm-disable-llvm-plugin.patch", when="@2.33.2 +rocm")
     # https://github.com/UO-OACISS/tau2/commit/523df968dd17ffad74f0d944ecbb958ba0e8c6e8
@@ -502,11 +485,10 @@ class Tau(Package):
         if "+perfetto" in spec:
             options.append("-perfetto")
 
-        if "+force-new-l0" in spec:
-            options.append("-force_new_l0")
-
         if "+force-legacy-l0" in spec:
             options.append("-force_legacy_l0")
+        else:
+            options.append("-force_new_l0")
 
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)
