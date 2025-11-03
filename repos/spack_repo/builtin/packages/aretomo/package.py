@@ -22,7 +22,6 @@ class Aretomo(Package):
 
     maintainers("Markus92")
 
-    version_date = {"1.3.4": "Feb222023"}
     version(
         "1.3.4",
         url=f"file://{os.getcwd()}/AreTomo_1.3.4_Feb222023.zip",
