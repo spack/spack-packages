@@ -153,7 +153,7 @@ class Tau(Package):
     variant(
         "force-legacy-l0",
         default=False,
-        description="Forces the use of Legacy L0 profiler. Older GPUs or drivers may require the legacy profiler.",
+        description="Use of Legacy L0 profiler. Option required for old drivers/GPU.",
         when="@2.35",
     )
 
