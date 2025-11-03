@@ -158,7 +158,7 @@ class Vtk(CMakePackage):
 
     depends_on("mpi", when="+mpi")  # for builing viskores internally
 
-    # just for theora WIP check when theora stopped being built internally
+    # TODO just for theora, check when theora stopped being built internally
     depends_on("libogg", when="@:8")
 
     # === CONDITIONAL DEPENDENCIES
