@@ -377,7 +377,7 @@ class RocmOpenmpExtras(Package):
         gfx_list = "gfx700 gfx701 gfx801 gfx803 gfx900 gfx902 gfx906 gfx908"
 
         if self.spec.version >= Version("4.3.1"):
-            gfx_list = gfx_list + " gfx90a gfx1030 gfx1031"
+            gfx_list = gfx_list + " gfx90a gfx1030 gfx1031 gfx942"
         env.set("GFXLIST", gfx_list)
         if self.spec.satisfies("%cxx=gcc"):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["gcc-runtime"].prefix.lib)
