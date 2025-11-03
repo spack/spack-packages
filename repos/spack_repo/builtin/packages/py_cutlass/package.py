@@ -57,8 +57,6 @@ class PythonPipBuilder(pybs.PythonPipBuilder):
 
         args = type(self).std_args(pkg) + [f"--prefix={prefix}"]
 
-        # Respect any config/global options from the base implementation
-        from spack_repo.builtin.build_systems import python as pybs
         for setting in pybs._flatten_dict(self.config_settings(spec, prefix)):
             args.append(f"--config-settings={setting}")
         for option in self.install_options(spec, prefix):
