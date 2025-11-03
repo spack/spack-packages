@@ -13,8 +13,8 @@ class PyCutlass(PythonPackage):
     """Python helpers shipped in NVIDIA CUTLASS: `cutlass_library` and `pycute`."""
 
     homepage = "https://github.com/NVIDIA/cutlass"
-    git      = "https://github.com/NVIDIA/cutlass.git"
-    url      = "https://github.com/NVIDIA/cutlass/archive/refs/tags/v3.3.0.tar.gz"
+    git = "https://github.com/NVIDIA/cutlass.git"
+    url = "https://github.com/NVIDIA/cutlass/archive/refs/tags/v3.3.0.tar.gz"
 
     version("main", branch="main")
     version("4.1.0", sha256="8d4675b11e9e5207e3940eaac0f46db934ada371cbb3627c9fda642d912b6230")
@@ -26,10 +26,10 @@ class PyCutlass(PythonPackage):
     depends_on("py-wheel", type="build")
 
     # Keep the C++ CUTLASS in lockstep
-    depends_on("cutlass@main",   when="@main")
-    depends_on("cutlass@4.1.0",  when="@4.1.0")
-    depends_on("cutlass@4.0.0",  when="@4.0.0")
-    depends_on("cutlass@3.9.2",  when="@3.9.2")
+    depends_on("cutlass@main", when="@main")
+    depends_on("cutlass@4.1.0", when="@4.1.0")
+    depends_on("cutlass@4.0.0", when="@4.0.0")
+    depends_on("cutlass@3.9.2", when="@3.9.2")
 
     @property
     def build_directory(self):
