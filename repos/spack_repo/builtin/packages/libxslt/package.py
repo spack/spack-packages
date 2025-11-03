@@ -99,6 +99,6 @@ class CMakeBuilder(CMakeBuilder):
         return [
             self.define_from_variant("LIBXSLT_WITH_PYTHON", "python"),
             self.define_from_variant("LIBXSLT_WITH_CRYPTO", "crypto"),
-            self.define("DLIBXSLT_WITH_MODULES", False),
-            self.define("DLIBXSLT_WITH_TESTS", False),
+            self.define("LIBXSLT_WITH_MODULES", False),
+            self.define("LIBXSLT_WITH_TESTS", False),
         ]
