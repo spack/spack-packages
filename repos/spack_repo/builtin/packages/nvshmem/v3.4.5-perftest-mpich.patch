@@ -1,0 +1,21 @@
+diff --git i/perftest/common/utils.cu w/perftest/common/utils.cu
+index 81c8ced..5272ed4 100644
+--- i/perftest/common/utils.cu
++++ w/perftest/common/utils.cu
+@@ -263,8 +263,22 @@ void init_wrapper(int *c, char ***v) {
+ 
+         mpi_fn_table.fn_MPI_Init(c, v);
+ 
+-        MPI_COMM_WORLD_PLACEHOLDER = (MPI_Comm)dlsym(nvshmemi_mpi_handle, "ompi_mpi_comm_world");
+-        MPI_UINT8_T_PLACEHOLDER = (MPI_Datatype)dlsym(nvshmemi_mpi_handle, "ompi_mpi_uint8_t");
++#if defined(NVSHMEM_MPI_IS_OMPI) && NVSHMEM_MPI_IS_OMPI
++        MPI_COMM_WORLD_PLACEHOLDER = (MPI_Comm)dlsym(nvshmemi_mpi_handle, "ompi_mpi_comm_world");
++        MPI_UINT8_T_PLACEHOLDER = (MPI_Datatype)dlsym(nvshmemi_mpi_handle, "ompi_mpi_uint8_t");
++#else
++        /* Non-OpenMPI (MPICH, Cray-MPICH, Intel MPI, etc.) */
++        MPI_COMM_WORLD_PLACEHOLDER = MPI_COMM_WORLD;
++        MPI_UINT8_T_PLACEHOLDER    = MPI_UINT8_T;
++#endif
+ 
+         mpi_fn_table.fn_MPI_Comm_rank(MPI_COMM_WORLD_PLACEHOLDER, &rank);
+         mpi_fn_table.fn_MPI_Comm_size(MPI_COMM_WORLD_PLACEHOLDER, &nranks);
