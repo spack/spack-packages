@@ -21,6 +21,8 @@ class RocmTensile(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
+    version("7.0.2", sha256="6c87c6a0795d54051aaad97c4467ee1a298ce24ddf450a287f9496df8ab3b6d3")
+    version("7.0.0", sha256="1b825a8b79822adafb2d9747b1e4ff78ce14a71561b02048fe134eecf224714c")
     version("6.4.3", sha256="0190bfc7050c6ea73fb20ce4d35a056644e129f792f3b016b079ee6cc237a598")
     version("6.4.2", sha256="0c30d711ed09f53af9509e264addad9be25e897a7ad490752741cb848a2f31e6")
     version("6.4.1", sha256="f96fe39fbb0d43e39b258b21d66234abf3248f8cfa6954f922618d4bb7d04c74")
@@ -87,6 +89,8 @@ class RocmTensile(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -98,7 +102,7 @@ class RocmTensile(CMakePackage):
     root_cmakelists_dir = "Tensile/Source"
 
     patch("0003-require-openmp-extras-when-tensile-use-openmp.patch")
-    patch("0004-replace_rocm_smi.patch", when="@6.4")
+    patch("0004-replace_rocm_smi.patch", when="@6.4:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)

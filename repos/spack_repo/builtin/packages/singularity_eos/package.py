@@ -32,6 +32,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.10.0", sha256="f2b5986d2e7f11b61c4cc1ac3b264adac39e16047f95fac29c60a19a2853f35b")
     version("1.9.2", sha256="4a58782020ad7bff3ea1c0cf55838a3692205770dbe4be39a3df25ba6fae302d")
     version("1.9.1", sha256="148889e1b2d5bdc3d59c5fd6a6b5da25bb4f4f0f4343c57b3ccaf96691c93aff")
     version("1.9.0", sha256="460b36a8311df430e6d4cccf3e72a6b3afda7db8d092b4a0a4259c4363c4dbde")
@@ -41,7 +42,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     # build with kokkos, kokkos-kernels for offloading support
     variant("kokkos", default=False, description="Enable kokkos")
     variant(
-        "kokkos-kernels", default=False, description="Enable kokkos-kernals for linear algebra"
+        "kokkos-kernels", default=False, description="Enable kokkos-kernels for linear algebra"
     )
 
     # for compatibility with downstream projects
@@ -99,10 +100,13 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("catch2@3.0.1:", when="@1.9.0:", type="test")
     depends_on("py-numpy", type="test")
 
-    # linear algebra when not using GPUs
-    depends_on("eigen@3.3.8:", when="~kokkos-kernels")
-    requires("+kokkos-kernels", when="+cuda")
-    requires("+kokkos-kernels", when="+rocm")
+    # Require kokkos for device/offloading support
+    requires("+kokkos", when="+cuda")
+    requires("+kokkos", when="+rocm")
+
+    # linear algebra when using closure models. Eigen without kokkos
+    depends_on("eigen@3.3.8:", when="~kokkos-kernels+closure")
+    requires("+kokkos-kernels", when="+kokkos+closure")
 
     depends_on("eospac", when="+eospac")
 
@@ -165,9 +169,6 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("amdgpu_target=none", when="+rocm", msg="ROCm architecture is required")
 
     # these are mirrored in the cmake configuration
-    conflicts("+cuda", when="~kokkos")
-    conflicts("+rocm", when="~kokkos")
-    conflicts("+kokkos-kernels", when="~kokkos")
     conflicts("+hdf5", when="~spiner")
 
     conflicts("+fortran", when="~closure")

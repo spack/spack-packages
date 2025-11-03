@@ -54,6 +54,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("main", branch="main")
 
     # Latest stable
+    version("21.1.4", sha256="3a0921d78be74302cb054da1dad59e706814d8fed3a6ac9b532e935825a0715c")
+    version("21.1.3", sha256="5bc91fe86bafebc64189465faca1ff35626dcb1b8539a14ae2ec07834c3e8e95")
+    version("21.1.2", sha256="eced3dd78186621f4df8a1accbcd1ecf2ee399571e62d052c21e9bf363af2166")
+    version("21.1.1", sha256="5f048351ee63050d7fa45b6a1160768fb222a8d306a89e1344515ef7a4bcd278")
+    version("21.1.0", sha256="fba0618cf8de48ec05880c446edd756a2669157eab9d29949e971c77da10275f")
+
+    # Previous stable series releases
     version("20.1.8", sha256="a6cbad9b2243b17e87795817cfff2107d113543a12486586f8a055a2bb044963")
     version("20.1.7", sha256="91865189d0ca30ca81b7f7af637aca745b6eeeba97c5dfb0ab7d79a1d9659289")
     version("20.1.6", sha256="afa487c401613f5e4a35935b2abfb5d07e6ebfa20df32787e34a5c7e97c6ea4b")
@@ -64,17 +71,31 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("20.1.1", sha256="edde69aa3e48a3892a8f01332ff79cfb6179151b42503c4ba77d2cd408b013bf")
     version("20.1.0", sha256="08bc382733777dda3c96259e3732ff96c1df98d0470c4f85b163274eae687f4f")
 
-    # Previous stable series releases
-    version("19.1.7", sha256="59abea1c22e64933fad4de1671a61cdb934098793c7a31b333ff58dc41bff36c")
-    version("19.1.6", sha256="f07fdcbb27b2b67aa95e5ddadf45406b33228481c250e65175066d36536a1ee2")
-    version("19.1.5", sha256="e2204b9903cd9d7ee833a2f56a18bef40a33df4793e31cc090906b32cbd8a1f5")
-    version("19.1.4", sha256="010e1fd3cabee8799bd2f8a6fbc68f28207494f315cf9da7057a2820f79fd531")
-    version("19.1.3", sha256="e5106e2bef341b3f5e41340e4b6c6a58259f4021ad801acf14e88f1a84567b05")
-    version("19.1.2", sha256="622cb6c5e95a3bb7e9876c4696a65671f235bd836cfd0c096b272f6c2ada41e7")
-    version("19.1.1", sha256="115dfd98a353d05bffdab3f80db22f159da48aca0124e8c416f437adcd54b77f")
-    version("19.1.0", sha256="0a08341036ca99a106786f50f9c5cb3fbe458b3b74cab6089fd368d0edb2edfe")
+    with default_args(deprecated=True):
+        version(
+            "19.1.6", sha256="f07fdcbb27b2b67aa95e5ddadf45406b33228481c250e65175066d36536a1ee2"
+        )
+        version(
+            "19.1.5", sha256="e2204b9903cd9d7ee833a2f56a18bef40a33df4793e31cc090906b32cbd8a1f5"
+        )
+        version(
+            "19.1.4", sha256="010e1fd3cabee8799bd2f8a6fbc68f28207494f315cf9da7057a2820f79fd531"
+        )
+        version(
+            "19.1.3", sha256="e5106e2bef341b3f5e41340e4b6c6a58259f4021ad801acf14e88f1a84567b05"
+        )
+        version(
+            "19.1.2", sha256="622cb6c5e95a3bb7e9876c4696a65671f235bd836cfd0c096b272f6c2ada41e7"
+        )
+        version(
+            "19.1.1", sha256="115dfd98a353d05bffdab3f80db22f159da48aca0124e8c416f437adcd54b77f"
+        )
+        version(
+            "19.1.0", sha256="0a08341036ca99a106786f50f9c5cb3fbe458b3b74cab6089fd368d0edb2edfe"
+        )
 
     # Final releases of previous versions
+    version("19.1.7", sha256="59abea1c22e64933fad4de1671a61cdb934098793c7a31b333ff58dc41bff36c")
     version("18.1.8", sha256="09c08693a9afd6236f27a2ebae62cda656eba19021ef3f94d59e931d662d4856")
     version("17.0.6", sha256="81494d32e6f12ea6f73d6d25424dbd2364646011bb8f7e345ca870750aa27de1")
     version("16.0.6", sha256="56b2f75fdaa95ad5e477a246d3f0d164964ab066b4619a01836ef08e475ec9d5")
@@ -136,6 +157,10 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     variant("offload", default=True, when="@19:", description="Build the Offload subproject")
     conflicts("+offload", when="~clang")
+
+    # The offload subproject requires lld:
+    # https://github.com/llvm/llvm-project/commit/346792aafb483a53fb5e3274298d85bc2dde4a35
+    conflicts("~lld", when="+offload")
 
     variant("libomptarget", default=True, description="Build the OpenMP offloading library")
     conflicts("+libomptarget", when="~clang")
@@ -256,6 +281,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         description="Enable zstd support for static analyzer / lld",
     )
 
+    variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
+
     provides("libllvm@20", when="@20.0.0:20")
     provides("libllvm@19", when="@19.0.0:19")
     provides("libllvm@18", when="@18.0.0:18")
@@ -351,6 +378,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     conflicts("%gcc@:5.0", when="@8:")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
+    # Compiler will throw errors like e.g. "no type named 'iterator'" or "class has no member"
+    conflicts("%gcc@15:", when="@:18")
 
     # libcxx=project imposes compiler conflicts
     # see https://libcxx.llvm.org/#platform-and-compiler-support for the latest release
@@ -623,6 +652,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         "https://github.com/llvm/llvm-project/commit/73e15b5edb4fa4a77e68c299a6e3b21e610d351f.patch?full_index=1",
         sha256="b540ef6e3728d7881d95775a163314fac6e2f9207f5d5e8b79c8c73c73ba4dc3",
         when="@15:16",
+    )
+
+    # https://github.com/llvm/llvm-project/issues/156679
+    patch(
+        "https://github.com/llvm/llvm-project/commit/cd24d108a2c19c23c4ac80b501fa7361963cca3d.patch?full_index=1",
+        sha256="0dc6e0bf66edf260b56c088dfbf37abb8417e210f256abe4ee11c395a2665ed8",
+        when="@21.1.0:21.1.4",
     )
 
     @when("@14:17")
@@ -1016,6 +1052,10 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         if spec.satisfies("+polly"):
             projects.append("polly")
             cmake_args.append(define("LINK_POLLY_INTO_TOOLS", True))
+        if spec.satisfies("+utils"):
+            cmake_args.extend(
+                [define("LLVM_BUILD_UTILS", True), define("LLVM_INSTALL_UTILS", True)]
+            )
 
         cmake_args.extend(
             [

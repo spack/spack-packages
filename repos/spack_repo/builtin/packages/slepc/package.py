@@ -25,6 +25,8 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("main", branch="main")
+    version("3.24.0", sha256="6e2d14c98aa9138ac698a2a04a7c6a9f9569988f570b2cfbe4935d32364cb4e9")
+    version("3.23.3", sha256="6b0c4f706bdfca46f00b30026b4d92a4eb68faa03e40cbcbfeadb89999653621")
     version("3.23.2", sha256="3060a95692151ef0f9ba4ca11da18d5dcd86697b59f6aeee723de92d7bd465a1")
     version("3.23.1", sha256="c2fde066521bbccfbc80aa15182bca69ffaf00a7de648459fd04b81589896238")
     version("3.23.0", sha256="78252f7b2f540c5fdadadee0fd21f3e6eff810f82cb45482f327b524c8db63d0")
@@ -72,7 +74,19 @@ class Slepc(Package, CudaPackage, ROCmPackage):
 
     # Cannot mix release and development versions of SLEPc and PETSc:
     depends_on("petsc@main", when="@main")
-    for ver in ["3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15", "3.14"]:
+    for ver in [
+        "3.24",
+        "3.23",
+        "3.22",
+        "3.21",
+        "3.20",
+        "3.19",
+        "3.18",
+        "3.17",
+        "3.16",
+        "3.15",
+        "3.14",
+    ]:
         depends_on(f"petsc@{ver}", when=f"@{ver}")
     depends_on("petsc+cuda", when="+cuda")
     depends_on("arpack-ng~mpi", when="+arpack^petsc~mpi~int64")
