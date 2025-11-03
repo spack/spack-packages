@@ -121,6 +121,7 @@ class Vtk(CMakePackage):
     # TODO conditional NOT ANDROID AND NOT APPLE_IOS AND NOT VTK_OPENGL_USE_GLES
     depends_on("gl2ps", when="@8.1:")
     depends_on("gl2ps@1.4.1:", when="@9:")
+    depends_on("xz")
 
     with when("@9.5:"):
         depends_on("cli11")
@@ -129,7 +130,6 @@ class Vtk(CMakePackage):
         depends_on("fmt")
         depends_on("fmt@11", when="@:9.5.2")
         depends_on("libharu")
-        depends_on("lzma")
         depends_on("pegtl")
         depends_on("pegtl@2", when="@:9.5.2")
         depends_on("scnlib")
@@ -206,7 +206,6 @@ class Vtk(CMakePackage):
     depends_on("gl@3.2:", when="+opengl2")
     depends_on("gl@1.2:", when="~opengl2")
 
-    depends_on("xz")
     depends_on("libxt", when="^[virtuals=gl] glx platform=linux")  # just for x11? web?
     depends_on("glew")  # viskores
 
