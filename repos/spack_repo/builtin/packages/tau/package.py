@@ -150,6 +150,16 @@ class Tau(Package):
     variant(
         "perfetto", default=True, description="Activates Perfetto tracing support", when="@2.35:"
     )
+    variant(
+        "force-legacy-l0",
+        default=False,
+        description="Forces the use of Legacy L0 profiler", when="@2.35")
+    
+    variant(
+        "force-new-l0",
+        default=False,
+        description="Forces the use of New L0 profiler", when="@2.35")
+    
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -234,6 +244,13 @@ class Tau(Package):
         when="+rocm",
         msg="Using ROCm, select either +rocprofiler, +roctracer, +rocprofv2 or +rocprofiler-sdk",
     )
+
+    requires("+level_zero", when="+force-legacy-l0", 
+             msg="Level zero needs to be enabled with +force-legacy-l0")
+    requires("+level_zero", when="+force-new-l0", 
+             msg="Level zero needs to be enabled with +force-new-l0")
+    conflicts("+force-legacy-l0", when="+force-new-l0", 
+              msg="Cannot force the use of both new and legacy L0 profiler")
 
     # https://github.com/UO-OACISS/tau2/commit/1d2cb6b
     patch("tau-rocm-disable-llvm-plugin.patch", when="@2.33.2 +rocm")
@@ -471,6 +488,12 @@ class Tau(Package):
 
         if "+perfetto" in spec:
             options.append("-perfetto")
+
+        if "+force-new-l0" in spec:
+            options.append("-force_new_l0")
+
+        if "+force-legacy-l0" in spec:
+            options.append("-force_legacy_l0")
 
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)
