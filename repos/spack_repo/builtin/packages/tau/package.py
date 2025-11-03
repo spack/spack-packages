@@ -247,7 +247,7 @@ class Tau(Package):
         when="+force-legacy-l0",
         msg="Level zero needs to be enabled with +force-legacy-l0",
     )
-    
+
     # https://github.com/UO-OACISS/tau2/commit/1d2cb6b
     patch("tau-rocm-disable-llvm-plugin.patch", when="@2.33.2 +rocm")
     # https://github.com/UO-OACISS/tau2/commit/523df968dd17ffad74f0d944ecbb958ba0e8c6e8
