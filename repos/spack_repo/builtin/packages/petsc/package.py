@@ -608,6 +608,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             if not spec.satisfies("cuda_arch=none"):
                 cuda_arch = spec.variants["cuda_arch"].value
                 options.append("--with-cuda-gencodearch={0}".format(cuda_arch[0]))
+        else:
+            options.append("--with-cudac=0")
         if "+rocm" in spec:
             if not spec.satisfies("amdgpu_target=none"):
                 hip_arch = spec.variants["amdgpu_target"].value
@@ -629,6 +631,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 hip_lib += spec[pkg].libs.joined() + " "
             options.append("HIPPPFLAGS=%s" % hip_inc)
             options.append("--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib, spec["hip"].prefix.lib))
+        else:
+            options.append("--with-hipc=0")
 
         if "superlu-dist" in spec:
             if spec.satisfies("@3.10.3:3.15"):
