@@ -155,7 +155,7 @@ class Vtk(CMakePackage):
         # See https://github.com/spack/spack/pull/22303 for reference
         depends_on(Boost.with_default_variants, when="io=xdmf")
 
-    depends_on("mpi", when="+mpi")  # for builing viskores internally
+    depends_on("mpi", when="+mpi")  # for building viskores internally
 
     # TODO just for theora, check when theora stopped being built internally
     depends_on("libogg", when="@:8")
