@@ -115,8 +115,7 @@ class Vtk(CMakePackage):
     depends_on("libtheora")
     depends_on("utf8cpp", when="@9:")
 
-    # 8.2.1a uses an internal proj so this special case
-    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")
+    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")  # exclude 8.2.1a which uses internal one
     depends_on("proj@8:", when="@9.2:")
 
     # TODO conditional NOT ANDROID AND NOT APPLE_IOS AND NOT VTK_OPENGL_USE_GLES
