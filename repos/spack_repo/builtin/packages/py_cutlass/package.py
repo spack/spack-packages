@@ -1,12 +1,13 @@
 # Copyright Spack Project Developers.
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.python import PythonPackage
-from spack_repo.builtin.build_systems import python as pybs
-from spack.package import *
-
 import os
 from contextlib import contextmanager
+
+from spack_repo.builtin.build_systems import python as pybs
+from spack_repo.builtin.build_systems.python import PythonPackage
+
+from spack.package import *
 
 
 class PyCutlass(PythonPackage):
