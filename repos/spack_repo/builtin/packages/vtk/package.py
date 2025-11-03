@@ -162,8 +162,9 @@ class Vtk(CMakePackage):
     depends_on("libogg", when="@:8")
 
     # === CONDITIONAL DEPENDENCIES
-    depends_on("adios2+mpi", when="io=adios2 +mpi")
-    depends_on("adios2~mpi", when="io=adios2 ~mpi")
+    with when("io=adios2"):
+        depends_on("adios2+mpi", when="+mpi")
+        depends_on("adios2~mpi", when="~mpi")
     requires("io=adios2", when="@:8 io=fides")
 
     depends_on("ffmpeg", when="io=ffmpeg")
