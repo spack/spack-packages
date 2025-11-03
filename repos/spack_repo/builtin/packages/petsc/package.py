@@ -244,6 +244,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # the patch is an adaptation of the original commit to 3.7.5
     patch("disable-DEPRECATED_ENUM.diff", when="@3.14.1 +cuda")
     patch("revert-3.18.0-ver-format-for-dealii.patch", when="@3.18.0")
+    patch(
+        "https://gitlab.com/petsc/petsc/-/commit/8ecb7dbc89a1f2ff56020c12a12db63d6a1842dc.diff",
+        when="@3.24.1",
+        sha256="fa5ef56e4d26b5a29e3545b3f07cfa12c767f31ce513b03aa75fa65d931d81ab",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
