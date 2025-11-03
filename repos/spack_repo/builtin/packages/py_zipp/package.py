@@ -15,7 +15,7 @@ class PyZipp(PythonPackage):
 
     license("MIT")
 
-    version("3.21.0", sha256="2c9958f6430a2040341a52eb608ed6dd93ef4392e02ffe219417c1b28b5dd1f4")
+    version("3.23.0", sha256="a07157588a12518c9d4034df3fbbee09c814741a33ff63c05fa29d26a2404166")
     version("3.17.0", sha256="84e64a1c28cf7e91ed2078bb8cc8c259cb19b76942096c8d7b84947690cabaf0")
     version("3.8.1", sha256="05b45f1ee8f807d0cc928485ca40a07cb491cf092ff587c0df9cb1fd154848d2")
     version("3.6.0", sha256="71c644c5369f4a6e07636f0aa966270449561fcea2e3d6747b8d23efaa9d7832")
@@ -26,11 +26,12 @@ class PyZipp(PythonPackage):
     depends_on("python@3.8:", when="@3.16:", type=("build", "run"))
     # needed for spack bootstrap as spack itself supports python 3.6
     depends_on("python@3.7:", when="@3.8.1:", type=("build", "run"))
-    depends_on("py-setuptools@61.2:", when="@3.18.2:", type="build")
+    depends_on("py-setuptools@77:", when="@3.22:", type="build")
     depends_on("py-setuptools@56:", when="@3.5.1:", type="build")
     depends_on("py-setuptools@34.4:", when="@0.3.3:", type="build")
     depends_on("py-setuptools-scm@3.4.1: +toml", when="@2.0.1:", type="build")
     depends_on("py-setuptools-scm@1.15.0:", type="build")
+    depends_on("py-coherent-licensed", when="@3.22:", type="build")
 
     # Historical dependencies
     depends_on("py-more-itertools", type=("build", "run"), when="@0.6.0:2.1.0")
