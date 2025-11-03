@@ -141,6 +141,9 @@ class Vtk(CMakePackage):
         # depends_on("token")
         # depends_on("exprtk")
 
+    # TODO IOLAS, InfoVis/Boost, InfoVis/BoostGraph and FilterReebGraph
+    depends_on(Boost.with_default_variants)
+
     # === 2nd-level DEPENDENCIES, for 3rd party libraries built internally
     with when("@:8 io=xdmf"):
         depends_on("mpi", when="+mpi")
@@ -332,6 +335,7 @@ class Vtk(CMakePackage):
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
     patch("vtk_clang19_size_t.patch", when="@9.2:9.4.2")
 
+    # TODO this patch method is a workaround for applying multiple patches
     def patch(self):
         if self.spec.satisfies("@9.2: io=ioss"):
             # provide definition for Ioss::Init::Initializer::Initializer(),
