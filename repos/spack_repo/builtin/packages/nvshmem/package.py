@@ -115,7 +115,7 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
         depends_on("py-cuda-bindings",     type="run")
         depends_on("py-mpi4py", when="+mpi4py",  type="run")
         depends_on("py-cupy",   when="+cupy",    type="run")
-        depends_on("py-pytorch@2.6:", when="+pytorch", type="run")
+        depends_on("py-torch@2.6:", when="+pytorch", type="run")
 
     patch("v3.4.5-perftest-mpich.patch", when="@3.4.5 +mpi")
 
