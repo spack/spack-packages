@@ -218,7 +218,7 @@ class Julia(MakefilePackage):
         "llvm",
         when="^llvm@18.1.8",
         patches=patch(
-            "https://raw.githubusercontent.com/spack/patches/10e0bd8dc806d99212bab865fe3f72475ea810e6/julia/900363d08b2090bb44240aa33c1ee26558a183016db4fb7e048be4c1665c436e.patch",
+            "https://raw.githubusercontent.com/spack/patches/4d9ce09c4793f4899a588741fdc459530e26b313/julia/900363d08b2090bb44240aa33c1ee26558a183016db4fb7e048be4c1665c436e.patch",
             sha256="900363d08b2090bb44240aa33c1ee26558a183016db4fb7e048be4c1665c436e",
         ),
     )
