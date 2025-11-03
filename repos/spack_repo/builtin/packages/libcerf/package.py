@@ -39,6 +39,8 @@ class Libcerf(AutotoolsPackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
+    depends_on("perl", type="build")
+
 
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):

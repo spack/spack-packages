@@ -42,6 +42,14 @@ class YamlCpp(CMakePackage):
     # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants, when="@0.5.0:0.5.3")
 
+    # Explicitly include <cstdint>
+    # See https://github.com/jbeder/yaml-cpp/pull/1310
+    patch(
+        "https://github.com/jbeder/yaml-cpp/commit/7b469b4220f96fb3d036cf68cd7bd30bd39e61d2.patch?full_index=1",
+        sha256="0bb42bea4f38ac5e9b51a46938cf7ed12c23e62c8690a166101caa00f09dd639",
+        when="@0.7:",
+    )
+
     conflicts("%gcc@:4.7", when="@0.6.0:", msg="versions 0.6.0: require c++11 support")
     conflicts("%clang@:3.3.0", when="@0.6.0:", msg="versions 0.6.0: require c++11 support")
     conflicts("%apple-clang@:4.0.0", when="@0.6.0:", msg="versions 0.6.0: require c++11 support")

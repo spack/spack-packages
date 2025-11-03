@@ -187,6 +187,10 @@ class Visit(CMakePackage):
     depends_on("mfem+shared+exceptions+fms+conduit", when="+mfem")
     depends_on("libfms@0.2:", when="+mfem")
 
+    # The checks in the build system are not consistent
+    requires("+mfem", when="+conduit")
+    requires("+conduit", when="+mfem")
+
     with when("+adios2"):
         depends_on("adios2")
         # adios 2.8 removed adios2_taustubs (https://github.com/visit-dav/visit/issues/19209)

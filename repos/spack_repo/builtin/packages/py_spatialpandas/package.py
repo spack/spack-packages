@@ -16,17 +16,24 @@ class PySpatialpandas(PythonPackage):
 
     license("BSD-2-Clause", checked_by="climbfuji")
 
+    version("0.5.0", sha256="412bb93bb25f49b6c057e825560d14c06e71137228fa99dc007b3a191bfbabd1")
     version("0.4.10", sha256="032e24ebb40f75c5c79cb79d7c281f2990e69ba382c0b24acb53da7bba60851c")
 
     depends_on("python@3.9:", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "run"), when="@0.5:")
     depends_on("py-hatchling", type="build")
     depends_on("py-hatch-vcs", type="build")
     depends_on("py-param", type="build")
 
-    depends_on("py-dask", type="run")
+    # https://github.com/holoviz/spatialpandas/issues/146
+    depends_on("py-dask@:2024", type="run", when="@:0.4")
+    depends_on("py-dask@2025.1:", type="run", when="@0.5.0:")
+
     depends_on("py-fsspec@2022.8:", type="run")
     depends_on("py-numba", type="run")
     depends_on("py-packaging", type="run")
     depends_on("py-pandas", type="run")
+    depends_on("py-pandas@2:", type="run", when="@0.5:")
     depends_on("py-pyarrow@10:", type="run")
+    depends_on("py-pyarrow@14.0.1:", type="run", when="@0.5:")
     depends_on("py-retrying", type="run")

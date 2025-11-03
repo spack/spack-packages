@@ -118,6 +118,12 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         " are enabled",
     )
     variant("pytorch", default=False, description="Enable libtorch support")
+    variant(
+        "openpmd-api",
+        default=False,
+        description="Enable openPMD support",
+        when="@2026.1: build_system=cmake",
+    )
     variant("quip", default=False, description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
@@ -383,6 +389,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libvori@210412:", when="@8.2:")
         depends_on("libvori@220621:", when="@2023.1:")
 
+    with when("+openpmd-api"):
+        depends_on("openpmd-api@0.16.1:")
+
     # the bundled libcusmm uses numpy in the parameter prediction (v7+)
     # which is written using Python 3
     depends_on("py-numpy", when="@7:+cuda")
@@ -502,6 +511,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/cp2k/cp2k/commit/9ae0441d1aa760e247a8a389793207ec65a35775
     # https://github.com/electronic-structure/SIRIUS/pull/1048
     patch("sirius-api-7.7.0.patch", when="@2024.2:2025.1 ^sirius@7.7.0")
+
+    # Fix missing S in data/BASIS_MOLOPT_UZH
+    # https://github.com/cp2k/cp2k/pull/4140
+    patch(
+        "https://github.com/cp2k/cp2k/commit/da03128481adf8f78a8a04ebeae0490480c03b89.patch?full_index=1",
+        sha256="0d542c414216866953c95e642d2590b3d313717dfaebbf12cfafedbdd3bf54a3",
+        when="@=2025.1",
+    )
 
     def patch(self):
         # Patch for an undefined constant due to incompatible changes in ELPA
@@ -1128,6 +1145,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_COSMA", "cosma"),
             self.define_from_variant("CP2K_USE_LIBXC", "libxc"),
             self.define_from_variant("CP2K_USE_LIBTORCH", "pytorch"),
+            self.define_from_variant("CP2K_USE_OPENPMD", "openpmd-api"),
             self.define_from_variant("CP2K_USE_METIS", "pexsi"),
             self.define_from_variant("CP2K_USE_SUPERLU", "pexsi"),
             self.define_from_variant("CP2K_USE_PLUMED", "plumed"),
