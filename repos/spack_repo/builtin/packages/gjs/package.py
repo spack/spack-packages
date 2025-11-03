@@ -17,9 +17,9 @@ class Gjs(MesonPackage):
     homepage = "https://gitlab.gnome.org/GNOME/gjs"
     url = "https://download.gnome.org/sources/gjs/1.86/gjs-1.86.0.tar.xz"
     git = "https://gitlab.gnome.org/GNOME/gjs.git"
-    
+
     maintainers("KineticTheory")
-    
+
     license("GNU LGPL-2.1")
 
     version("1.86.0", sha256="63448f7a57804d4c2a8d0c7f5e90e224d04d4eb2d560142c076c65a8eda00799")
@@ -46,7 +46,7 @@ class Gjs(MesonPackage):
     depends_on("readline", type="build", when="+readline")
 
     def url_for_version(self, version):
-      return f"https://download.gnome.org/sources/gjs/{version.up_to(2)}/gjs-{version}.tar.xz"
+        return f"https://download.gnome.org/sources/gjs/{version.up_to(2)}/gjs-{version}.tar.xz"
 
     def meson_args(self):
         args = []
