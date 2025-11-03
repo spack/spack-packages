@@ -115,9 +115,9 @@ class Vtk(CMakePackage):
     depends_on("libtheora")
     depends_on("utf8cpp", when="@9:")
 
-    # "8.2.1a" uses an internal proj so this special cases 8.2.1a
-    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")  # TODO verify this
-    depends_on("proj@8:", when="@9.2:")  # TODO upper bound?
+    # 8.2.1a uses an internal proj so this special case
+    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")
+    depends_on("proj@8:", when="@9.2:")
 
     # TODO conditional NOT ANDROID AND NOT APPLE_IOS AND NOT VTK_OPENGL_USE_GLES
     depends_on("gl2ps", when="@8.1:")
@@ -471,8 +471,9 @@ class Vtk(CMakePackage):
 
             if spec.satisfies("@8.2.0:"):
                 cmake_args += [
-                    # libproj handling changed in VTK 8.2
-                    self.define("VTK_USE_SYSTEM_LIBPROJ", False),
+                    # libproj handling changed in VTK 8.2,
+                    # and 8.2.1a is the only one that should use internal version
+                    self.define("VTK_USE_SYSTEM_LIBPROJ", not spec.satisfies("@=8.2.1a")),
                     # pugixml has been introduced, but not yet used as external
                     self.define("VTK_USE_SYSTEM_PUGIXML", False),
                 ]
