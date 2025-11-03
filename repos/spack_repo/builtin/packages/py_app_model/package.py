@@ -27,15 +27,16 @@ class PyAppModel(PythonPackage):
     depends_on("py-hatchling", type="build")
     depends_on("py-hatch-vcs", type="build")
 
-    depends_on("py-psygnal@0.10:", when="@0.4:", type=("build", "run"))
-    depends_on("py-psygnal@0.3.4:", type=("build", "run"))
-    depends_on("py-pydantic@2.8:", when="@0.5:", type=("build", "run"))
-    depends_on("py-pydantic@1.10.18:", when="@0.4", type=("build", "run"))
-    depends_on("py-pydantic@1.8.2:1", when="@0.1.4:0.1", type=("build", "run"))
-    depends_on("py-pydantic-compat@0.1.1:", when="@0.4", type=("build", "run"))
-    depends_on("py-in-n-out@0.1.5:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.12:", type=("build", "run"))
-
-    with default_args(when="+qt", type=("build", "run")):
-        depends_on("py-qtpy@2.4.0:")
-        depends_on("py-superqt@0.7.2: +iconify")
+    with default_args(type=("build", "run")):
+        depends_on("py-psygnal@0.10:", when="@0.4:")
+        depends_on("py-psygnal@0.3.4:")
+        depends_on("py-pydantic@2.8:", when="@0.5:")
+        depends_on("py-pydantic@1.10.18:", when="@0.4")
+        depends_on("py-pydantic@1.8.2:1", when="@0.1.4:0.1")
+        depends_on("py-pydantic-compat@0.1.1:", when="@0.4")
+        depends_on("py-in-n-out@0.1.5:")
+        depends_on("py-typing-extensions@4.12:")
+        
+        with when("+qt"):
+            depends_on("py-qtpy@2.4.0:")
+            depends_on("py-superqt@0.7.2: +iconify")
