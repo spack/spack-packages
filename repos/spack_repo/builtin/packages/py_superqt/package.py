@@ -28,7 +28,6 @@ class PySuperqt(PythonPackage):
     depends_on("py-pygments@2.4:", type=("build", "run"))
     depends_on("py-qtpy@2.4:", when="@0.7.6:", type=("build", "run"))
     depends_on("py-qtpy@1.1:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.12:", when="@0.7.6: ^python@3.13:", type=("build", "run"))
     depends_on("py-typing-extensions@4.5:", when="@0.7.6:", type=("build", "run"))
     depends_on("py-typing-extensions@3.7.4.3:", when="@0.6.1", type=("build", "run"))
 
