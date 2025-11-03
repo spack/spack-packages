@@ -78,7 +78,6 @@ class Vtk(CMakePackage):
         ).with_default("cgns,exodusii,ioss,netcdf"),
         description="Enable IO modules",
     )
-    requires("io=adios2", when="io=fides")
 
     variant(
         "raytracing",
@@ -87,6 +86,43 @@ class Vtk(CMakePackage):
     )
     variant("advanced_debug", default=False, description="Enable the VTK_DEBUG_LEAKS flag")
 
+    # === 3rd party dependencies
+    depends_on("expat")
+
+    depends_on("hdf5~mpi", when="~mpi")
+    depends_on("hdf5+mpi", when="+mpi")
+    depends_on("hdf5@1.10:", when="@9.1:")
+    depends_on("hdf5@1.8:", when="@8:9.0")
+
+    depends_on("freetype")
+    # https://gitlab.kitware.com/vtk/vtk/-/issues/18033
+    depends_on("freetype @:2.10.2", when="@:9.0.1")
+
+    depends_on("py-mpi4py", when="+python+mpi", type="run")
+
+    depends_on("jpeg")
+    depends_on("jsoncpp")
+    depends_on("libxml2")
+    depends_on("lz4")
+    depends_on("libpng")
+    depends_on("libtiff")
+    depends_on("nlohmann-json", when="@9.2:")
+    depends_on("zlib-api")
+    depends_on("eigen@:3", when="@8.2.0:")
+    depends_on("double-conversion", when="@8.2.0:9.5")
+    depends_on("sqlite", when="@8.2.0:")
+    depends_on("pugixml", when="@9:")
+    depends_on("libtheora")
+    depends_on("utf8cpp", when="@9:")
+
+    # "8.2.1a" uses an internal proj so this special cases 8.2.1a
+    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")  # TODO verify this
+    depends_on("proj@8:", when="@9.2:")  # TODO upper bound?
+
+    # TODO conditional NOT ANDROID AND NOT APPLE_IOS AND NOT VTK_OPENGL_USE_GLES
+    depends_on("gl2ps", when="@8.1:")
+    depends_on("gl2ps@1.4.1:", when="@9:")
+
     with when("@9.5:"):
         depends_on("cli11")
         depends_on("fast-float")
@@ -94,42 +130,93 @@ class Vtk(CMakePackage):
         depends_on("fmt")
         depends_on("fmt@11", when="@:9.5.2")
         depends_on("libharu")
-        depends_on("libproj")
         depends_on("lzma")
         depends_on("pegtl")
         depends_on("pegtl@3", when="@:9.5.2")
         depends_on("scnlib")
         depends_on("verdict")
 
-        # depends_on("cgns") # conditional?
-        # depends_on("double-conversion", when="@:9.5")
-        # depends_on("eigen")
-        # depends_on("expat")
-        # depends_on("freetype")
-        # depends_on("gl2ps")
-        # depends_on("hdf5")
-        # depends_on("jpeg")
-        # depends_on("jsoncpp")
-        # depends_on("libogg")
-        # depends_on("libpng")
-        # depends_on("libtheora")
-        # depends_on("libtiff")
-        # depends_on("libxml2")
-        # depends_on("lz4")
-        # depends_on("netcdf-c")  # conditional?
-        # depends_on("nlohmann-json")
-        # depends_on("pugixml")
-        # depends_on("py-mpi4py")  # conditional?
-        # depends_on("seacas")  # conditional?
-        # depends_on("sqlite")
-        # depends_on("utf8cpp")
-        # depends_on("zlib-api")
-
-        # EXCLUDED
+        # currently excluded
         # depends_on("viskores")
         # depends_on("token")
         # depends_on("exprtk")
 
+    # === 2nd-level DEPENDENCIES, for 3rd party libraries built internally
+    with when("@:8 io=xdmf"):
+        depends_on("mpi", when="+mpi")
+
+        depends_on("boost")
+        depends_on("boost+mpi", when="+mpi")
+
+        # TODO: replace this with an explicit list of components of Boost,
+        # for instance depends_on('boost +filesystem')
+        # See https://github.com/spack/spack/pull/22303 for reference
+        depends_on(Boost.with_default_variants, when="io=xdmf")
+
+    depends_on("mpi", when="+mpi")  # for builing viskores internally
+
+    # just for theora WIP check when theora stopped being built internally
+    depends_on("libogg", when="@:8")
+
+    # === CONDITIONAL DEPENDENCIES
+    depends_on("adios2+mpi", when="io=adios2 +mpi")
+    depends_on("adios2~mpi", when="io=adios2 ~mpi")
+    requires("io=adios2", when="@:8 io=fides")
+
+    depends_on("ffmpeg", when="io=ffmpeg")
+
+    with when("io=cgns"):
+        with when("@9:"):
+            depends_on("cgns@4.1.1:")
+            depends_on("cgns+mpi", when="+mpi")
+            depends_on("cgns~mpi", when="~mpi")
+
+    # VTK introduced Seacas IOSS dependency on 9.1
+    with when("@9.1: io=ioss"):
+        depends_on("seacas+mpi", when="+mpi")
+        depends_on("seacas~mpi", when="~mpi")
+
+        depends_on("seacas@2021-05-12:2022-10-14", when="@9.1")
+        # vtk@9.2: need Ioss::Utils::get_debug_stream() which only 2022-10-14 provides,
+        # and to be safe against other issues, make them build with this version only:
+        depends_on("seacas@2022-10-14", when="@9.2:9.3")
+        depends_on("seacas@2024-06-27", when="@9.4:")
+        # TODO probably we can bump version
+
+    with when("@9: io=netcdf"):
+        depends_on("netcdf-c ~mpi", when="~mpi")
+        depends_on("netcdf-c +mpi", when="+mpi")
+        depends_on("netcdf-c@:4.9.2")
+    depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
+
+    depends_on("ospray@2.1:2", when="raytracing=ospray")
+    depends_on("openimagedenoise", when="raytracing=ospray")
+    depends_on("ospray +mpi", when="raytracing=ospray +mpi")
+
+    # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
+    depends_on("qt+opengl", when="+qt")
+
+    # === TODO TO BE CHECKED
+
+    # The use of the OpenGL2 backend requires at least OpenGL Core Profile
+    # version 3.2 or higher.
+    depends_on("gl@3.2:", when="+opengl2")
+    depends_on("gl@1.2:", when="~opengl2")
+
+    depends_on("xz")
+    depends_on("libxt", when="^[virtuals=gl] glx platform=linux")  # just for x11? web?
+    depends_on("glew")  # viskores
+
+    # === PYTHON
+    # Based on PyPI wheel availability
+    with when("+python"), default_args(type=("build", "link", "run")):
+        extends("python@:3.13")
+        extends("python@:3.12", when="@:9.3")
+        extends("python@:3.11", when="@:9.2")
+        extends("python@:3.10", when="@:9.2.2")
+        extends("python@:3.9", when="@:9.1")
+
+    # === PATCHES
     patch("gcc.patch", when="@6.1.0")
 
     # Fix missing standard includes that lead to build errors on newer compilers
@@ -161,17 +248,6 @@ class Vtk(CMakePackage):
     # has a bogus version check for GCC/Intel version to early exit. This drops the early exit.
     patch("vtk-bogus-compiler-check.patch", when="@7.1:8")
 
-    # Based on PyPI wheel availability
-    with when("+python"), default_args(type=("build", "link", "run")):
-        extends("python@:3.13")
-        extends("python@:3.12", when="@:9.3")
-        extends("python@:3.11", when="@:9.2")
-        extends("python@:3.10", when="@:9.2.2")
-        extends("python@:3.9", when="@:9.1")
-
-    # We need mpi4py if buidling python wrappers and using MPI
-    depends_on("py-mpi4py", when="+python+mpi", type="run")
-
     # python3.7 compatibility patch backported from upstream
     # https://gitlab.kitware.com/vtk/vtk/commit/706f1b397df09a27ab8981ab9464547028d0c322
     patch("python3.7-const-char.patch", when="@7.0.0:8.1.1 ^python@3.7:")
@@ -195,12 +271,6 @@ class Vtk(CMakePackage):
     # Fix link error in exodusII
     patch("vtk-8.2-exodusII-gcc11.patch", when="@8.2.1a")
 
-    # The use of the OpenGL2 backend requires at least OpenGL Core Profile
-    # version 3.2 or higher.
-    depends_on("gl@3.2:", when="+opengl2")
-    depends_on("gl@1.2:", when="~opengl2")
-
-    depends_on("xz")
     patch("vtk_find_liblzma.patch", when="@8.2")
     patch("vtk_movie_link_ogg.patch", when="@8.2")
     patch("vtk_use_sqlite_name_vtk_expects.patch", when="@8.2")
@@ -220,75 +290,6 @@ class Vtk(CMakePackage):
     # be fixed by bumping CMake lower bound, because VTK vendors FindHDF5.cmake. Various other
     # patches to FindHDF5.cmake are missing, so add conflict instead of a series of patches.
     conflicts("@9.0 platform=windows")
-    depends_on("libxt", when="^[virtuals=gl] glx platform=linux")
-
-    # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
-    depends_on("qt+opengl", when="+qt")
-
-    depends_on("boost", when="io=xdmf")
-    depends_on("boost+mpi", when="io=xdmf +mpi")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="io=xdmf")
-    depends_on("ffmpeg", when="io=ffmpeg")
-    depends_on("mpi", when="+mpi")
-
-    depends_on("adios2+mpi", when="io=adios2 +mpi")
-    depends_on("adios2~mpi", when="io=adios2 ~mpi")
-    depends_on("expat")
-    # See <https://gitlab.kitware.com/vtk/vtk/-/issues/18033> for why vtk doesn't
-    # work yet with freetype 2.10.3 (including possible patches)
-    depends_on("freetype @:2.10.2", when="@:9.0.1")
-    depends_on("freetype")
-    depends_on("glew")
-    depends_on("hdf5~mpi", when="~mpi")
-    depends_on("hdf5+mpi", when="+mpi")
-    depends_on("hdf5@1.8:", when="@8:9.0")
-    depends_on("hdf5@1.10:", when="@9.1:")  # TODO upper bound?
-    depends_on("jpeg")
-    depends_on("jsoncpp")
-    depends_on("libxml2")
-    depends_on("lz4")
-    depends_on("netcdf-c@:4.9.2", when="io=exodusii")
-    depends_on("netcdf-c@:4.9.2~mpi", when="io=netcdf ~mpi")
-    depends_on("netcdf-c@:4.9.2+mpi", when="io=netcdf +mpi")
-    depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
-    depends_on("libpng")
-    depends_on("libtiff")
-    depends_on("zlib-api")
-    depends_on("eigen@:3", when="@8.2.0:")
-    depends_on("double-conversion", when="@8.2.0:9.5")
-    depends_on("sqlite", when="@8.2.0:")
-    depends_on("pugixml", when="@9:")
-    depends_on("libogg")
-    depends_on("libtheora")
-    depends_on("utf8cpp", when="@9:")  # TODO upper bound?
-    depends_on("gl2ps", when="@8.1:")  # TODO upper bound?
-    depends_on("gl2ps@1.4.1:", when="@9:")  # TODO upper bound?
-    # "8.2.1a" uses an internal proj so this special cases 8.2.1a
-    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")  # TODO verify this
-    depends_on("proj@8:", when="@9.2:")  # TODO upper bound?
-    depends_on("cgns@4.1.1:+mpi", when="@9.1: io=cgns +mpi")  # TODO upper bound?
-    depends_on("cgns@4.1.1:~mpi", when="@9.1: io=cgns ~mpi")  # TODO upper bound?
-    depends_on("ospray@2.1:2", when="raytracing=ospray")
-    depends_on("openimagedenoise", when="raytracing=ospray")
-    depends_on("ospray +mpi", when="raytracing=ospray +mpi")
-
-    # VTK introduced Seacas IOSS dependency on 9.1
-    with when("@9.1: io=ioss"):  # TODO upper bound?
-        depends_on("seacas+mpi", when="+mpi")
-        depends_on("seacas~mpi", when="~mpi")
-        depends_on("seacas@2021-05-12:2022-10-14", when="@9.1")
-        # vtk@9.2: need Ioss::Utils::get_debug_stream() which only 2022-10-14 provides,
-        # and to be safe against other issues, make them build with this version only:
-        depends_on("seacas@2022-10-14", when="@9.2:9.3")
-        depends_on("seacas@2024-06-27", when="@9.4:")
-        # TODO probably we can bump version
-
-    depends_on("nlohmann-json", when="@9.2:")
-
     # For finding Fujitsu-MPI wrapper commands
     patch("find_fujitsu_mpi.patch", when="@:8.2.0%fj")
     # Freetype@2.10.3 no longer exports FT_CALLBACK_DEF, this
