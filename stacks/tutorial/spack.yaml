@@ -49,12 +49,14 @@ spack:
   - $gcc_old_packages
   - $clang_packages
   - $gcc_spack_built_packages
-
+  concretizer:
+    # Hacky way to allow bootstrapping the compiler
+    unify: when_possible
   ci:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/tutorial-ubuntu-22.04:v2023-10-30
+          name: ghcr.io/spack/tutorial-ubuntu-22.04:pr-70  # FIXME when merged
           entrypoint: ['']
   cdash:
     build-group: Spack Tutorial
