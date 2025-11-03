@@ -17,7 +17,7 @@ class Relion(CMakePackage, CudaPackage):
     homepage = "https://www2.mrc-lmb.cam.ac.uk/relion"
     git = "https://github.com/3dem/relion.git"
     url = "https://github.com/3dem/relion/archive/4.0.0.zip"
-    maintainers("Markus92")
+    maintainers("dacolombo", "Markus92")
 
     license("GPL-2.0-only")
 
