@@ -11,10 +11,9 @@ from spack.package import *
 
 class TsneCuda(CMakePackage, CudaPackage, PythonExtension):
     """tsne-cuda is an optimized CUDA version of FIt-SNE algorithm with
-    associated python modules. We find that our implementation of t-SNE can be
-    up to 1200x faster than Sklearn, or up to 50x faster than Multicore-TSNE
-    when used with the right GPU. The paper describing our approach, as well as
-    the results below, is available at https://arxiv.org/abs/1807.11824."""
+    associated python modules. Authors find that their implementation of t-SNE
+    can be up to 1200x faster than Sklearn, or up to 50x faster than
+    Multicore-TSNE when used with the right GPU."""
 
     homepage = "https://github.com/CannyLab/tsne-cuda/"
     url = "https://github.com/CannyLab/tsne-cuda/archive/refs/tags/3.0.1.tar.gz"
@@ -28,7 +27,7 @@ class TsneCuda(CMakePackage, CudaPackage, PythonExtension):
 
     patch("fix_cmakelists.patch")
 
-    depends_on("c", type="build")  # you'll get linker errors otherwise
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.20:3.30", type="build")  # CMake 3.31 messes a bit too much with find CUDA
 
@@ -37,11 +36,11 @@ class TsneCuda(CMakePackage, CudaPackage, PythonExtension):
     depends_on("lapack")
     depends_on("gflags@2.2:")
     depends_on("googletest@1.10:", type=("build", "link", "run"))
-    depends_on("faiss@1.6.5: +cuda +shared", type=("build", "run"))
+    depends_on("faiss@1.6.5: +cuda +shared", type=("build", "link", "run"))
     depends_on("cxxopts")
 
     variant("cuda", default=True, description="Use CUDA acceleration")
-    conflicts("~cuda", msg="Cuda is mandatory")
+    conflicts("~cuda", msg="CUDA is a hard requirement")
     conflicts(
         "cuda_arch=none",
         when="+cuda",
