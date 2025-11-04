@@ -427,7 +427,7 @@ class AutotoolsBuilder(AutotoolsBuilder):
             configure_args.append("--with-extra-CFLAGS=-Wno-error=incompatible-pointer-types")
 
         if spec.satisfies("+cuda") or spec.satisfies("+rocm") or spec.satisfies("+sycl"):
-            configure_args.append(f"--with-cxxstandard={self.spec.cxxstd}")
+            configure_args.append(f"--with-cxxstandard={self.spec.variants['cxxstd'].value}")
             if spec.satisfies("+pic"):
                 configure_args.append("--with-extra-CXXFLAGS=-fPIC")
 

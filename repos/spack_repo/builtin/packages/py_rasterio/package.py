@@ -81,5 +81,7 @@ class PyRasterio(PythonPackage):
     depends_on("gdal@2.4:3.3", when="@1.2.7:1.2")
     depends_on("gdal@2.3:3.2", when="@1.2.0:1.2.6")
 
+    # https://github.com/rasterio/rasterio/issues/3371
+    conflicts("^gdal@3.11:", when="@:1.4.3")
     # https://github.com/rasterio/rasterio/pull/3212
     conflicts("^gdal@3.10:", when="@:1.4.1")

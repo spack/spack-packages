@@ -63,7 +63,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     for level in ("low", "medium", "high"):
         depends_on("caliper@:2.5,2.8:", when=f"caliper_detail={level}")
 
-    depends_on("graphviz", when="+graphviz")
+    depends_on("graphviz@:12", when="+graphviz")
     depends_on("hdf5+hl+mpi", when="+hdf5")
     depends_on("metis@5.1.0:", when="@:2.3.1")
     depends_on("parmetis@4.0.3:", when="@:2.3.1")

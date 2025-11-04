@@ -15,6 +15,8 @@ class Pandoc(Package):
 
     homepage = "https://pandoc.org"
 
+    license("GPL-2.0")
+
     # The following installs the binaries for pandoc and pandoc-citeproc. The
     # reason for installing binaries is that pandoc is a Haskell package and
     # the Haskell framework is not yet in Spack. See #1408 for a discussion of
