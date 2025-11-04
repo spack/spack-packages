@@ -154,7 +154,7 @@ class Tau(Package):
         "force-legacy-l0",
         default=False,
         description="Use of Legacy L0 profiler. Option required for old drivers/GPU.",
-        when="@2.35",
+        when="@2.35:",
     )
 
     depends_on("c", type="build")  # generated
