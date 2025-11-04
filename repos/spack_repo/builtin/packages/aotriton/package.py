@@ -74,24 +74,45 @@ class Aotriton(CMakePackage):
                 "third_party/triton/third_party/amd/backend/compiler.py",
                 string=True,
             )
-        filter_file(
-            r"LLVM_INCLUDE_DIRS",
-            f"{self.spec['aotriton-llvm'].prefix}/include",
-            "third_party/triton/python/setup.py",
-            string=True,
-        )
-        filter_file(
-            r"LLVM_LIBRARY_DIR",
-            f"{self.spec['aotriton-llvm'].prefix}/lib",
-            "third_party/triton/python/setup.py",
-            string=True,
-        )
-        filter_file(
-            r"LLVM_SYSPATH",
-            f"{self.spec['aotriton-llvm'].prefix}",
-            "third_party/triton/python/setup.py",
-            string=True,
-        )
+
+        if self.spec.satisfies("@:0.9"):
+            filter_file(
+                    r"LLVM_INCLUDE_DIRS",
+                    f"{self.spec['aotriton-llvm'].prefix}/include",
+                    "third_party/triton/python/setup.py",
+                    string=True,
+                )
+            filter_file(
+                    r"LLVM_LIBRARY_DIR",
+                    f"{self.spec['aotriton-llvm'].prefix}/lib",
+                    "third_party/triton/python/setup.py",
+                    string=True,
+                )
+            filter_file(
+                    r"LLVM_SYSPATH",
+                    f"{self.spec['aotriton-llvm'].prefix}",
+                    "third_party/triton/python/setup.py",
+                    string=True,
+                )
+        if self.spec.satisfies("@10.0"):
+            filter_file(
+                    r"LLVM_INCLUDE_DIRS",
+                    f"{self.spec['aotriton-llvm'].prefix}/include",
+                    "third_party/triton/setup.py",
+                    string=True,
+                )
+            filter_file(
+                    r"LLVM_LIBRARY_DIR",
+                    f"{self.spec['aotriton-llvm'].prefix}/lib",
+                    "third_party/triton/setup.py",
+                    string=True,
+                )
+            filter_file(
+                    r"LLVM_SYSPATH",
+                    f"{self.spec['aotriton-llvm'].prefix}",
+                    "third_party/triton/setup.py",
+                    string=True,
+                )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set environment variables used to control the build"""
@@ -103,4 +124,5 @@ class Aotriton(CMakePackage):
     def cmake_args(self):
         args = []
         args.append(self.define("AOTRITON_GPU_BUILD_TIMEOUT", 0))
+        args.append(self.define("AOTRITON_NOIMAGE_MODE","ON"))
         return args
