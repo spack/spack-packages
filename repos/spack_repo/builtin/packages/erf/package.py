@@ -22,16 +22,27 @@ class Erf(CMakePackage, CudaPackage):
 
     license("BSD-3-Clause", checked_by="larenspear")
 
-    version("25.10", sha256="92575d25a8e87266f1b3a9a0c16a5755b84c45d489a060abeec6ddea8b8d8fe0")
-    version("25.08", sha256="c8723384e00fb4bbb694385bdbc5187f38ee1509a0a18a23efc1094212fd21f4")
-    version("25.07", sha256="bee8c136872c4e5400fdf2f6a432c8dc17f9b8384715158d9780a2c561a51642")
-    version("25.06", sha256="dd1d627faf67477e3fa1f58b006f7e2b00316c66e8c99baf8b6cfbedce37b5f2")
-    version("25.05", sha256="eb56a44d915d6af3ad30438dff6b96d9c489ae7c610fe4cdd0c17f2f26cc4b28")
-    version("25.04", sha256="fc6837b252c1cebd0f2d38cdb3cea8ad55c837e4163c76e5d3508d973b282a42")
-    version("25.03", sha256="3068c0c5f66538bcc1a12ee8c3eb142e5d02b73b71ab1cfbb244a053e8d5cf4a")
-    version("25.01", sha256="11e48aadfc420c3f9adb05a0c5778776d6cb0915476532fd7a095d9f167ef584")
-    version("24.11", sha256="19e7ce4829a46c98baf55b1dc4b2cefc508f2db41182e47c0ca788fe9280783f")
-    version("24.10", sha256="7c9ba35374e71103fab8c5ba3ea107b4574e3270038bc3e8cbdcbe30eba26e7a")
+    version("25.10", tag="25.10", submodules=True)
+    version("25.08", tag="25.08", submodules=True)
+    version("25.07", tag="25.07", submodules=True)
+    version("25.06", tag="25.06", submodules=True)
+    version("25.05", tag="25.05", submodules=True)
+    version("25.04", tag="25.04", submodules=True)
+    version("25.03", tag="25.03", submodules=True)
+    version("25.01", tag="25.01", submodules=True)
+    version("24.11", tag="24.11", submodules=True)
+    version("24.10", tag="24.10", submodules=True)
+    version("24.09", tag="24.09", submodules=True)
+    version("24.08", tag="24.08", submodules=True)
+    version("24.06", tag="24.06", submodules=True)
+    version("24.05", tag="24.05", submodules=True)
+    version("24.04", tag="24.04", submodules=True)
+    version("24.03", tag="24.03", submodules=True)
+    version("24.02", tag="24.02", submodules=True)
+    version("24.01", tag="24.01", submodules=True)
+    version("23.12", tag="23.12", submodules=True)
+    version("23.11", tag="23.11", submodules=True)
+    version("23.10", tag="23.10", submodules=True)
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
@@ -51,7 +62,6 @@ class Erf(CMakePackage, CudaPackage):
         depends_on("pkgconf")
 
     with default_args(type=("build", "link")):
-        depends_on("amrex")
         for v in ("mpi", "openmp", "cuda", "particles"):
             depends_on(f"amrex+{v}", when=f"+{v}")
             depends_on(f"amrex~{v}", when=f"~{v}")
@@ -62,11 +72,9 @@ class Erf(CMakePackage, CudaPackage):
         depends_on("fftw", when="+fft")
 
         with when("+netcdf"):
-            depends_on("netcdf-c+mpi+parallel-netcdf", when="+mpi")
-            depends_on("netcdf-c~mpi+parallel-netcdf", when="~mpi")
+            depends_on("netcdf-c+mpi+parallel-netcdf")
             depends_on("netcdf-fortran")
             depends_on("hdf5+mpi", when="+mpi")
-            depends_on("hdf5~mpi", when="~mpi")
 
     conflicts("+openmp", when="+cuda", msg="Cannot enable both OpenMP and CUDA")
     conflicts("+fft", when="~mpi", msg="FFT support requires MPI")
