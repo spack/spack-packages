@@ -284,7 +284,7 @@ class Acts(CMakePackage, CudaPackage):
         when="@:16",
     )
     variant("edm4hep", default=False, description="Build EDM4hep plugin", when="@25:")
-    # FIXME: Can't build Exa.TrkX plugin+examples yet, missing cuGraph dep
+    variant("gnn", default=False, description="Build the GNN plugin", when="@44:")
     variant(
         "fatras",
         default=False,
@@ -427,6 +427,8 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("mlpack@3.1.1:", when="+mlpack")
     depends_on("nlohmann-json @3.9.1:", when="@0.14: +json")
     depends_on("nlohmann-json @3.10.5:", when="@37: +json")
+    depends_on("torch-scatter", when="+gnn")
+    depends_on("torch-scatter +cuda", when="+cuda")
     depends_on("podio @0.6:", when="@25: +edm4hep")
     depends_on("podio @0.16:", when="@30.3: +edm4hep")
     depends_on("podio @:0", when="@:35 +edm4hep")
@@ -487,6 +489,8 @@ class Acts(CMakePackage, CudaPackage):
     conflicts("^boost@1.85.0")
     # See https://github.com/acts-project/acts/pull/3921
     conflicts("^edm4hep@0.99:", when="@:37")
+    # See https://github.com/acts-project/acts/pull/4631
+    conflicts("+gnn ~cuda", when="@:44.0")
 
     def cmake_args(self):
         spec = self.spec
@@ -539,6 +543,7 @@ class Acts(CMakePackage, CudaPackage):
             example_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEOMODEL", "geomodel"),
+            plugin_cmake_variant("GNN", "gnn"),
             example_cmake_variant("HEPMC3", "hepmc3"),
             plugin_cmake_variant("IDENTIFICATION", "identification"),
             cmake_variant(integration_tests_label, "integration_tests"),
