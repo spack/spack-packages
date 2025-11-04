@@ -88,6 +88,12 @@ class Tau(Package):
     variant("opari", default=False, description="Activates Opari2 instrumentation")
     variant("shmem", default=False, description="Activates SHMEM support")
     variant("gasnet", default=False, description="Activates GASNET support")
+    variant(
+        "ittnotify",
+        default=False,
+        description="Activates Intel ITTNotify collector",
+        when="@2.35:",
+    )
     variant("cuda", default=False, description="Activates CUDA support")
     variant("rocm", default=False, description="Activates ROCm support", when="@2.28:")
     variant(
@@ -383,6 +389,9 @@ class Tau(Package):
 
         if "+gasnet" in spec:
             options.append("-gasnet=%s" % spec["gasnet"].prefix)
+
+        if "+ittnotify" in spec:
+            options.append("-ittnotify")
 
         if "+cuda" in spec:
             options.append("-cuda=%s" % spec["cuda"].prefix)
