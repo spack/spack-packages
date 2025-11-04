@@ -24,11 +24,12 @@ class PyNapariPluginManager(PythonPackage):
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-setuptools-scm +toml", type="build")
 
-    depends_on("py-npe2", type=("build", "run"))
-    depends_on("py-qtpy", type=("build", "run"))
-    depends_on("py-superqt", type=("build", "run"))
-    depends_on("py-packaging", type=("build", "run"))
-    depends_on("py-pip", type=("build", "run"))
-    # Other dependencies include napari - but that'd be circular
+    with default_args(type=("build", "run")):
+        depends_on("py-npe2")
+        depends_on("py-qtpy")
+        depends_on("py-superqt")
+        depends_on("py-packaging")
+        depends_on("py-pip")
+        # Other dependencies include napari - but that'd be circular
 
     patch("clean_pyproject_toml.patch")
