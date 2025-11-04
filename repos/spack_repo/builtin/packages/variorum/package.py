@@ -6,8 +6,6 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
-# cuda package, rocm package -- amd_gpu_target, cuda_arch variant
-
 
 class Variorum(CMakePackage):
     """Variorum is a library providing vendor-neutral interfaces for
@@ -54,7 +52,6 @@ class Variorum(CMakePackage):
         values=("intel", "ibm", "arm"),
         multi=False,
     )
-    # TODO: detect
     variant(
         "gpu",
         default="none",
@@ -76,7 +73,8 @@ class Variorum(CMakePackage):
     # cuda@10.1.243 works, as does 12.4.1
 
     depends_on("cuda", type=("build", "link"), when="gpu=nvidia")  # required for nvml
-    # depends_on("esmi", type=("build", "link"), when="gpu=amd")  # required for amd
+    # If esmi spack package is added, then variorum will depend on it for CPU builds
+    # depends_on("esmi", type=("build", "link"), when="cpu=amd")  # required for amd
 
     depends_on("hwloc +nvml", type=("build", "link"), when="gpu=nvidia")
     depends_on("hwloc", type=("build", "link"), when="gpu=none")
