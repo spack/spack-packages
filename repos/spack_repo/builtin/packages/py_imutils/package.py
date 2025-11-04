@@ -26,4 +26,4 @@ class PyImutils(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("opencv+python3", type=("build", "run"))
+    depends_on("opencv+python3+imgcodecs", type=("build", "run"))
