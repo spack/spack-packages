@@ -16,7 +16,7 @@ class Nim(Package):
     """
 
     homepage = "https://nim-lang.org/"
-    url = "https://nim-lang.org/download/nim-2.2.2.tar.xz"
+    url = "https://nim-lang.org/download/nim-2.2.6.tar.xz"
     git = "https://github.com/nim-lang/Nim.git"
 
     license("MIT", checked_by="Buldram")
@@ -24,6 +24,7 @@ class Nim(Package):
     maintainers("Buldram")
 
     version("develop", branch="devel")
+    version("2.2.6", sha256="657b0e3d5def788148d2a87fa6123fa755b2d92cad31ef60fd261e451785528b")
     version("2.2.4", sha256="f82b419750fcce561f3f897a0486b180186845d76fb5d99f248ce166108189c7")
     version("2.2.2", sha256="7fcc9b87ac9c0ba5a489fdc26e2d8480ce96a3ca622100d6267ef92135fd8a1f")
     version("2.2.0", sha256="ce9842849c9760e487ecdd1cdadf7c0f2844cafae605401c7c72ae257644893c")
@@ -32,10 +33,6 @@ class Nim(Package):
     version("2.0.12", sha256="c4887949c5eb8d7f9a9f56f0aeb2bf2140fabf0aee0f0580a319e2a09815733a")
     version("2.0.4", sha256="71526bd07439dc8e378fa1a6eb407eda1298f1f3d4df4476dca0e3ca3cbe3f09")
     version("1.6.20", sha256="ffed047504d1fcaf610f0dd7cf3e027be91a292b0c9c51161504c2f3b984ffb9")
-    version("1.4.8", sha256="b798c577411d7d95b8631261dbb3676e9d1afd9e36740d044966a0555b41441a")
-    version("1.4.4", sha256="6d73729def143f72fc2491ca937a9cab86d2a8243bd845a5d1403169ad20660e")
-    version("1.4.2", sha256="03a47583777dd81380a3407aa6a788c9aa8a67df4821025770c9ac4186291161")
-    version("1.2.18", sha256="a1739185508876f6e21a13f590a20e219ce3eec1b0583ea745e9058c37ad833e")
 
     variant(
         "sqlite", default=False, when="@:1.7.3", description="Install SQLite for std/db_sqlite"
@@ -45,35 +42,7 @@ class Nim(Package):
     depends_on("gmake", type="build")
     depends_on("pcre", type="link")
     depends_on("openssl", type="link")
-    depends_on("openssl@1", type="link", when="@:1.6.9")
     depends_on("sqlite@3:", type="link", when="+sqlite")
-
-    # CVE-2021-46872
-    patch(
-        "https://github.com/nim-lang/Nim/commit/17522d6ae1444614be78b1002005513105f2893f.patch?full_index=1",
-        sha256="fee426d5f027a8676d94309932812c5d70e1bc089f4d030326a413cacba78330",
-        when="@1.4.0:1.4.9",
-    )
-    # CVE-2021-21374, CVE-2021-29495
-    patch(
-        "https://github.com/nim-lang/Nim/commit/c7d090c418f7847bdfa1fd3bfed831470665c3e9.patch?full_index=1",
-        sha256="88fd2a137a2170a4df41b9f5419a47aff78b0dbf421405e22a6d6a066e3e0431",
-        when="@1.4.0:1.4.3",
-    )
-    # CVE-2021-21373
-    patch(
-        "https://github.com/nim-lang/nimble/commit/aec0ae5c23d2e2a2ec28e97dcb9dd6cb1e68b134.patch?full_index=1",
-        sha256="4fe4f8b760e7a516fcd51d6ce02562432f1d34623751f52556d4e6c1823e705a",
-        when="@1:1.2.9,1.4.0:1.4.3",
-        working_dir="dist/nimble",
-    )
-    # CVE-2021-21372
-    patch(
-        "https://github.com/nim-lang/nimble/commit/89954f8b03b05970aea78c8fe1241138f5bbeae8.patch?full_index=1",
-        sha256="5e6f7e2d2dac5d2ed70b5047418d9b43e156de35737f9fad0052ae30dd539b03",
-        when="@1.4.0:1.4.3",
-        working_dir="dist/nimble",
-    )
 
     resource(
         name="csources_v2",

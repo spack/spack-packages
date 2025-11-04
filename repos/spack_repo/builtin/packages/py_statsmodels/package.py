@@ -21,17 +21,19 @@ class PyStatsmodels(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.14.5", sha256="de260e58cccfd2ceddf835b55a357233d6ca853a1aa4f90f7553a52cc71c6ddf")
     version("0.14.1", sha256="2260efdc1ef89f39c670a0bd8151b1d0843567781bcafec6cda0534eb47a94f6")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("python", type=("build", "link", "run"))
+    depends_on("python@3.9:", when="@0.14.2:", type=("build", "link", "run"))
+    depends_on("python@3.8:", type=("build", "link", "run"))
 
-    depends_on("py-setuptools@69.0.2:", when="@0.14.1: ^python@3.12:", type="build")
-    depends_on("py-setuptools@63.4.3:", when="@0.14.1:", type="build")
-
-    # pyproject.toml
+    depends_on("py-setuptools@69.0.2:", when="@0.14.1:", type="build")
+    depends_on("py-setuptools@69.0.2:", when="@0.14.1 ^python@3.12:", type="build")
+    depends_on("py-setuptools@63.4.3:", when="@0.14.1", type="build")
+    depends_on("py-cython@3.0.10:3", when="@0.14.2:", type="build")
     depends_on("py-cython@0.29.33:3", when="@0.14.1", type="build")
     depends_on("py-setuptools-scm+toml@8", when="@0.14.1:", type="build")
 
@@ -40,16 +42,19 @@ class PyStatsmodels(PythonPackage):
     #    https://github.com/pydata/patsy/pull/131
 
     # requirements.txt
-    depends_on("py-numpy@1.22.3:1", when="@0.14.1:", type=("build", "link", "run"))
-    # https://github.com/statsmodels/statsmodels/issues/9194
-    depends_on("py-numpy@:1", when="@:0.14.1", type=("build", "link", "run"))
-    depends_on("py-scipy@1.4:", when="@0.13.5:", type=("build", "run"))
-    conflicts("^py-scipy@1.9.2", when="@:0.14.1")
+    depends_on("py-numpy@1.22.3:2", when="@0.14.3:", type=("build", "link", "run"))
+    depends_on("py-numpy@1.22.3:1", when="@0.14.1", type=("build", "link", "run"))
+    depends_on("py-scipy@1.8:", when="@0.14.2:", type=("build", "run"))
+    depends_on("py-scipy@1.4:", when="@0.13.5:0.14.1", type=("build", "run"))
+    depends_on("py-pandas@1.4:", when="@0.14:", type=("build", "run"))
     depends_on("py-pandas@1:", when="@0.14:", type=("build", "run"))
-    conflicts("^py-scipy@2.1.0", when="@:0.14.1")
     depends_on("py-pandas@0.25:", when="@0.13:", type=("build", "run"))
-    depends_on("py-patsy@0.5.4:", when="@0.14.1:", type=("build", "run"))
+    depends_on("py-patsy@0.5.6:", when="@0.14.2:", type=("build", "run"))
+    depends_on("py-patsy@0.5.4:", when="@0.14.1", type=("build", "run"))
     depends_on("py-packaging@21.3:", when="@0.13.2:", type=("build", "run"))
+
+    conflicts("^py-scipy@1.9.2")
+    conflicts("^py-pandas@2.1.0")
 
     depends_on("py-pytest", type="test")
 

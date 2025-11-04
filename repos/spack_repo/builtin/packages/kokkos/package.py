@@ -22,7 +22,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     test_requires_compiler = True
 
-    maintainers("cedricchevalier19", "nmm0", "lucbv")
+    maintainers("cedricchevalier19", "nmm0", "lucbv", "tpadioleau")
 
     license("Apache-2.0 WITH LLVM-exception")
 
@@ -82,22 +82,19 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
     depends_on("cmake@3.16:", type="build")
-    conflicts("cmake@3.28", when="@:4.2.01 +cuda")
+    conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
     devices_variants = {
         "cuda": [False, "Whether to build CUDA backend"],
         "openmp": [False, "Whether to build OpenMP backend"],
         "threads": [False, "Whether to build the C++ threads backend"],
-        "serial": [True, "Whether to build serial backend"],
+        "serial": [False, "Whether to build serial backend"],
         "rocm": [False, "Whether to build HIP backend"],
         "sycl": [False, "Whether to build the SYCL backend"],
         "openmptarget": [False, "Whether to build the OpenMPTarget backend"],
     }
-    conflicts(
-        "".join([f"~{d}" for d in devices_variants]),
-        msg="Kokkos requires at least one active backend",
-    )
+    requires("+serial", when="~openmp ~threads", msg="Kokkos requires at least one host backend")
 
     tpls_variants = {
         "hpx": [False, "Whether to enable the HPX library"],
@@ -126,6 +123,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
     }
+
+    conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
 
     spack_micro_arch_map = {
         "thunderx2": "THUNDERX2",
@@ -188,6 +187,17 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         multi=False,
         sticky=True,
         when="+cuda",
+    )
+
+    # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=("none",) + ROCmPackage.amdgpu_targets,
+        default="none",
+        multi=False,
+        sticky=True,
+        when="+rocm",
     )
 
     amdgpu_arch_map = {
@@ -378,13 +388,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
         spack_microarches = []
         if spec.satisfies("+cuda"):
-            if isinstance(spec.variants["cuda_arch"].value, str):
-                cuda_arch = spec.variants["cuda_arch"].value
-            else:
-                if len(spec.variants["cuda_arch"].value) > 1:
-                    msg = "Kokkos supports only one cuda_arch at a time."
-                    raise InstallError(msg)
-                cuda_arch = spec.variants["cuda_arch"].value[0]
+            cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch != "none":
                 kokkos_arch_name = self.spack_cuda_arch_map[cuda_arch]
                 spack_microarches.append(kokkos_arch_name)
@@ -394,17 +398,17 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             spack_microarches.append(kokkos_microarch_name)
 
         if spec.satisfies("+rocm"):
-            for amdgpu_target in spec.variants["amdgpu_target"].value:
-                if amdgpu_target != "none":
-                    if amdgpu_target in self.amdgpu_arch_map:
-                        if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
-                            spack_microarches.append(self.amdgpu_apu_arch_map[amdgpu_target])
-                        else:
-                            spack_microarches.append(self.amdgpu_arch_map[amdgpu_target])
+            amdgpu_target = spec.variants["amdgpu_target"].value
+            if amdgpu_target != "none":
+                if amdgpu_target in self.amdgpu_arch_map:
+                    if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
+                        spack_microarches.append(self.amdgpu_apu_arch_map[amdgpu_target])
                     else:
-                        # Note that conflict declarations should prevent
-                        # choosing an unsupported AMD GPU target
-                        raise SpackError("Unsupported target: {0}".format(amdgpu_target))
+                        spack_microarches.append(self.amdgpu_arch_map[amdgpu_target])
+                else:
+                    # Note that conflict declarations should prevent
+                    # choosing an unsupported AMD GPU target
+                    raise SpackError("Unsupported target: {0}".format(amdgpu_target))
 
         if self.spec.variants["intel_gpu_arch"].value != "none":
             spack_microarches.append(self.spec.variants["intel_gpu_arch"].value)
@@ -424,21 +428,39 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             options.append(self.define("CMAKE_CXX_COMPILER", self.kokkos_cxx))
         elif "+rocm" in self.spec:
             if "+cmake_lang" in self.spec:
+                if self.spec.satisfies("%cxx=clang"):
+                    options.append(self.define("CMAKE_HIP_COMPILER", self.compiler.cxx))
+                else:
+                    options.append(
+                        self.define(
+                            "CMAKE_HIP_COMPILER",
+                            join_path(self.spec["llvm-amdgpu"].prefix.bin, "amdclang++"),
+                        )
+                    )
+                options.append(from_variant("CMAKE_HIP_STANDARD", "cxxstd"))
                 options.append(
                     self.define(
-                        "CMAKE_HIP_COMPILER",
-                        join_path(self.spec["llvm-amdgpu"].prefix.bin, "amdclang++"),
+                        "CMAKE_HIP_ARCHITECTURES", self.spec.variants["amdgpu_target"].value
                     )
                 )
-                options.append(from_variant("CMAKE_HIP_STANDARD", "cxxstd"))
+                options.append(self.define("CMAKE_HIP_EXTENSIONS", False))
             else:
                 options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("Kokkos_ENABLE_ROCTHRUST", True))
         elif "+cuda" in self.spec and "+cmake_lang" in self.spec:
+            if self.spec.satisfies("%cxx=clang"):
+                options.append(self.define("CMAKE_CUDA_COMPILER", self.compiler.cxx))
+            else:
+                options.append(
+                    self.define(
+                        "CMAKE_CUDA_COMPILER", join_path(self.spec["cuda"].prefix.bin, "nvcc")
+                    )
+                )
             options.append(
-                self.define("CMAKE_CUDA_COMPILER", join_path(self.spec["cuda"].prefix.bin, "nvcc"))
+                self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value)
             )
             options.append(from_variant("CMAKE_CUDA_STANDARD", "cxxstd"))
+            options.append(self.define("CMAKE_CUDA_EXTENSIONS", False))
 
         if self.spec.satisfies("%oneapi") or self.spec.satisfies("%intel"):
             options.append(self.define("CMAKE_CXX_FLAGS", "-fp-model=precise"))
