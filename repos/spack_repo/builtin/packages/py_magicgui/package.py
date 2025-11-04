@@ -26,8 +26,9 @@ class PyMagicgui(PythonPackage):
 
     depends_on("py-hatchling", type="build")
 
-    depends_on("py-docstring-parser@0.7:", type=("build", "run"))
-    depends_on("py-psygnal@0.8.0:", type=("build", "run"))
-    depends_on("py-qtpy@2.4.0:", type=("build", "run"))
-    depends_on("py-superqt@0.7.2: +iconify", type=("build", "run"))
-    depends_on("py-typing-extensions@4.6:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("py-docstring-parser@0.7:")
+        depends_on("py-psygnal@0.8.0:")
+        depends_on("py-qtpy@2.4.0:")
+        depends_on("py-superqt@0.7.2: +iconify")
+        depends_on("py-typing-extensions@4.6:")
