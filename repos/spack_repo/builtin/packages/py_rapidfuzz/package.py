@@ -15,6 +15,7 @@ class PyRapidfuzz(PythonPackage):
 
     license("MIT")
 
+    version("3.14.3", sha256="2491937177868bc4b1e469087601d53f925e8d270ccc21e07404b4b5814b7b5f")
     version("3.14.1", sha256="b02850e7f7152bd1edff27e9d584505b84968cacedee7a734ec4050c655a803c")
     version("3.3.1", sha256="6783b3852f15ed7567688e2e358757a7b4f38683a915ba5edc6c64f1a3f0b450")
     version("2.2.0", sha256="acb8839aac452ec61a419fdc8799e8a6e6cd21bed53d04678cdda6fba1247e2f")
