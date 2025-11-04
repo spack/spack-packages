@@ -139,6 +139,8 @@ class Hipblaslt(CMakePackage):
 
     patch("003-use-rocm-smi-config.patch", when="@6.4:7.0")
     patch("0004-Set-rocm-smi-ld-path-7.0.patch", when="@7.0")
+    # https://github.com/ROCm/rocm-libraries/pull/2115
+    patch("005-add-roctracer-include-dir.patch", when="@7.1")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@:6.4"):
@@ -164,6 +166,8 @@ class Hipblaslt(CMakePackage):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
 
     def patch(self):
+        py_ver = self.spec["python"].version[:-1]
+        joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
         if self.spec.satisfies("@6.3:6.4"):
             filter_file(
                 "${rocm_path}/llvm/bin",
@@ -183,9 +187,7 @@ class Hipblaslt(CMakePackage):
                 "tensilelite/Tensile/Ops/gen_assembly.sh",
                 string=True,
             )
-        if self.spec.satisfies("@7.0:"):
-            py_ver = self.spec["python"].version[:-1]
-            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
+        if self.spec.satisfies("@7.0"):
             filter_file(
                 "${PROJECT_BINARY_DIR}/lib",
                 ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
