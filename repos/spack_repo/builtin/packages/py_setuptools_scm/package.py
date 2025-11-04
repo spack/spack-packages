@@ -18,6 +18,7 @@ class PySetuptoolsScm(PythonPackage):
 
     license("MIT")
 
+    version("9.2.2", sha256="1c674ab4665686a0887d7e24c03ab25f24201c213e82ea689d2f3e169ef7ef57")
     version("8.2.1", sha256="51cfdd1deefc9b8c08d1a61e940a59c4dec39eb6c285d33fa2f1b4be26c7874d")
     version("8.2.0", sha256="a18396a1bc0219c974d1a74612b11f9dce0d5bd8b1dc55c65f6ac7fd609e8c28")
     version("8.1.0", sha256="42dea1b65771cba93b7a515d65a65d8246e560768a66b9106a592c8e7f26c8a7")
