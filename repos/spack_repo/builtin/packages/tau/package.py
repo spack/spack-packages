@@ -484,11 +484,12 @@ class Tau(Package):
 
         if "+perfetto" in spec:
             options.append("-perfetto")
-
-        if "+force-legacy-l0" in spec:
-            options.append("-force_legacy_l0")
-        else:
-            options.append("-force_new_l0")
+        
+        if spec.satisfies("@2.35:"):
+            if "+force-legacy-l0" in spec:
+                options.append("-force_legacy_l0")
+            else:
+                options.append("-force_new_l0")
 
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)
