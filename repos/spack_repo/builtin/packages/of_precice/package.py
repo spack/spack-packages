@@ -38,8 +38,8 @@ class OfPrecice(Package):
     depends_on("yaml-cpp")
     depends_on("pkgconfig", type="build")
 
-    conflicts("precice@3:", when="@:1.2.3")
-    conflicts("precice@:2", when="@1.3.0:")
+    depends_on("precice@:2", when="@:1.2.3")
+    depends_on("precice@3:", when="@1.3.0:")
 
     # General patches
     common = ["change-userdir.sh", "spack-derived-Allwmake"]
