@@ -25,6 +25,7 @@ class RoctracerDev(CMakePackage, ROCmPackage):
 
     license("MIT")
 
+    version("7.0.2", sha256="c9dc54fc8b68a7598b3e9453f7962a87cb02e86d64e5681452ebafd62fb85e96")
     version("7.0.0", sha256="c1f435b8040c6d34720eeadf837bc888b1c5aaccbfd7efaff4d602f1957f812f")
     version("6.4.3", sha256="a4378652b3b7141ca3b2743eedada03757383bff88932db8e28d0afd5869b882")
     version("6.4.2", sha256="c9bc3390fe4c406cc2b2bdb5a7e9f088e0107825624c9cd7b2a6ec120bc73ef8")
@@ -88,6 +89,7 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         "6.4.2",
         "6.4.3",
         "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")

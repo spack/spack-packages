@@ -1,0 +1,49 @@
+diff --git a/configure.ac b/configure.ac
+index 18cae3a..da20fe6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -54,9 +54,15 @@ if test "x$enable_gssapi" = xyes; then
+ 
+     gssapi_save_CPPFLAGS="$CPPFLAGS"
+     gssapi_save_LIBS="$LIBS"
+-    CPPFLAGS="$GSSAPI_CPPFLAGS $CPPFLAGS"
++    CPPFLAGS="$GSSAPI_CFLAGS $CPPFLAGS"
+     LIBS="$GSSAPI_LIBS $LIBS"
+-    AC_CHECK_FUNCS([gss_pname_to_uid])
++    AC_CHECK_DECL([gss_pname_to_uid],
++        [AC_DEFINE([HAVE_GSS_PNAME_TO_UID], [1], [Define to 1 if you have the gss_pname_to_uid function.])],
++        [],
++        [[#include <gssapi/gssapi.h>
++          #ifdef HAVE_GSSAPI_GSSAPI_EXT_H
++          #include <gssapi/gssapi_ext.h>
++          #endif]])
+     CPPFLAGS="$gssapi_save_CPPFLAGS"
+     LIBS="$gssapi_save_LIBS"
+ fi
+diff --git a/src/Makefile.am b/src/Makefile.am
+index cfda770..8d6db6b 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -17,6 +17,8 @@ lib_LTLIBRARIES = libtirpc.la
+ 
+ libtirpc_la_LDFLAGS = @LDFLAG_NOUNDEFINED@ -no-undefined @PTHREAD_LIBS@
+ libtirpc_la_LDFLAGS += -version-info @LT_VERSION_INFO@
++# macOS: Opt out of dyld shared cache to allow linking with spack libraries
++libtirpc_la_LDFLAGS += -Wl,-not_for_dyld_shared_cache
+ 
+ # Generate version script from template
+ libtirpc.map: $(srcdir)/libtirpc.map.in
+diff --git a/src/svc_dg.c b/src/svc_dg.c
+index 3d42b6a..4bfa1a0 100644
+--- a/src/svc_dg.c
++++ b/src/svc_dg.c
+@@ -37,6 +37,9 @@
+  *
+  * Does some caching in the hopes of achieving execute-at-most-once semantics.
+  */
++
++#define __APPLE_USE_RFC_3542
++
+ #ifdef HAVE_CONFIG_H
+ #include "config.h"
+ #endif

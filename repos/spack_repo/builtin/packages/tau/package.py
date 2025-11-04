@@ -147,6 +147,9 @@ class Tau(Package):
         description="Do not add -no-pie while linking with Ubuntu.",
     )
     variant("openacc", default=False, description="Activates OpenACC support")
+    variant(
+        "perfetto", default=True, description="Activates Perfetto tracing support", when="@2.35:"
+    )
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -465,6 +468,9 @@ class Tau(Package):
                 options.append("-boost=%s" % spec["boost"].prefix)
             if "+elf" not in spec:
                 options.append("-elf=%s" % spec["elfutils"].prefix)
+
+        if "+perfetto" in spec:
+            options.append("-perfetto")
 
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)
