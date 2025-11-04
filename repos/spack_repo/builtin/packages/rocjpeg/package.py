@@ -45,6 +45,7 @@ class Rocjpeg(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")

@@ -96,6 +96,7 @@ class RocmOpencl(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
@@ -121,7 +122,7 @@ class RocmOpencl(CMakePackage):
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", type="link", when=f"@{ver}")
 
     @classmethod
