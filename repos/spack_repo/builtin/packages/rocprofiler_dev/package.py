@@ -21,6 +21,7 @@ class RocprofilerDev(CMakePackage):
     libraries = ["librocprofiler64"]
     license("MIT")
 
+    version("7.1.0", sha256="d029f0011092b9cd6bebeec1775d07eb2ae5fa039937db7376f8177b1956b4c6")
     version("7.0.2", sha256="149557a5db8920e9d003ef7bfc3c5d7580c97c97abada1654a556b2203969124")
     version("7.0.0", sha256="74c305dd270d9644eeab70d985f9195dd0bcd36a0a256c2fbd4f780436efd334")
     version("6.4.3", sha256="b7d5a6848d0bb394bfcb2e667690abf50189010bdc2e6c6ebf401d0ba780c1a0")
@@ -106,12 +107,13 @@ class RocprofilerDev(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     depends_on("py-lxml")

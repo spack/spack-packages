@@ -20,6 +20,7 @@ class Rocjpeg(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("7.1.0", sha256="26ea59dd772c57ae5476a6ba3799bf86981694fbba9b87af882ed76c1b89c639")
     version("7.0.2", sha256="fe1813e333dfb958d74693301ffb70e1baa2601ffd8b8d644f4026e56048164a")
     version("7.0.0", sha256="00dfac45d1776f5e79704fc56bae1b5017fc19326f69e363a49285ebf72bff2e")
     version("6.4.3", sha256="28c95c30603d6a0e39632cd31e8adcbe80786f5d77e15bb88cfef341eaf4eb94")

@@ -43,6 +43,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     license("Apache-2.0")
+    version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
     version("7.0.2", sha256="fd612fa750bebd0c3be0ea642b2cae8ff5c7e00a2280b22b9ea16ee86a11d763")
     version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
     version("6.4.3", sha256="7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7")
@@ -104,6 +105,13 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("libxml2", type="link")
     depends_on("pkgconfig", type="build")
 
+    depends_on("numactl", when="@7.1:")
+    depends_on("libdrm", when="@7.1:")
+    depends_on("libelf", when="@7.1:")
+
+    for ver in ["7.1.0"]:
+        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
+
     # This flavour of LLVM doesn't work on MacOS, so we should ensure that it
     # isn't used to satisfy any of the libllvm dependencies on the Darwin
     # platform.
@@ -162,6 +170,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         )
 
     for d_version, d_shasum in [
+        ("7.1.0", "383fa8e1776c3ee527cdddc9f9ac6f7134c3fcd8758eae9be8bd3a8b7fdca9b1"),
         ("7.0.2", "9c2020f7a42d60fe9775865ab58464078007926a3b01f1ca8128557c89e7a566"),
         ("7.0.0", "9ea2cbcf343f643ede6e16d82fbd0303771e1978759b2e546d0efc0df3263e4c"),
         ("6.4.3", "3b23bed04cbed72304d31d69901eb76afa2099c7ac37f055348dfcda2d25e41a"),
@@ -247,12 +256,23 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             elif self.spec.satisfies("@6.1:"):
                 dir = os.path.join(self.stage.source_path, "amd/device-libs")
 
-            args.extend(
-                [
-                    self.define("LLVM_EXTERNAL_PROJECTS", "device-libs"),
-                    self.define("LLVM_EXTERNAL_DEVICE_LIBS_SOURCE_DIR", dir),
-                ]
-            )
+            if self.spec.satisfies("@:7.0"):
+                args.extend(
+                    [
+                        self.define("LLVM_EXTERNAL_PROJECTS", "device-libs"),
+                        self.define("LLVM_EXTERNAL_DEVICE_LIBS_SOURCE_DIR", dir),
+                    ]
+                )
+            else:
+                args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", dir))
+                args.append(self.define("ROCM_DEVICE_LIBS_INSTALL_PREFIX_PATH", self.prefix))
+                args.append(self.define("ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC", "lib/clang/20/lib/amdgcn"))
+                args.append(self.define("OPENMP_ENABLE_LIBOMPTARGET", "ON"))
+                args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH", os.path.join(self.stage.source_path, "hsa-runtime")))
+                args.append(self.define("OFFLOAD_EXTERNAL_PROJECT_UNIFIED_ROCR", "ON"))
+                args.append(self.define("LIBOMPTARGET_ENABLE_DEBUG", "ON"))
+                args.append(self.define("LIBOMPTARGET_NO_SANITIZER_AMDGPU", "ON"))
+                llvm_runtimes.extend(["offload", "openmp"])
 
         if self.spec.satisfies("+llvm_dylib"):
             args.append(self.define("LLVM_BUILD_LLVM_DYLIB", True))
@@ -290,6 +310,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             llvm_projects.extend(["mlir", "flang"])
             args.append(self.define("LIBOMPTARGET_BUILD_DEVICE_FORTRT", "ON"))
             args.append(self.define("FLANG_RUNTIME_F128_MATH_LIB", "libquadmath"))
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("LLVM_ENABLE_ZLIB", "ON"))
+            args.append(self.define("LLVM_INSTALL_UTILS", "ON"))
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
         return args
@@ -318,7 +341,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     @run_after("install")
     def post_install(self):
-        if self.spec.satisfies("@6.1: +rocm-device-libs"):
+        if self.spec.satisfies("@6.1:7.0 +rocm-device-libs"):
             exe = self.prefix.bin.join("llvm-config")
             output = Executable(exe)("--version", output=str, error=str)
             version = re.split("[.]", output)[0]

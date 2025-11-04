@@ -24,6 +24,7 @@ class RocmOpencl(CMakePackage):
 
     license("MIT")
 
+    version("7.1.0", sha256="d53ee72dd430c934a53b1fe5c798ac34c53e8826589f8f9f214419512059ad2d")
     version("7.0.2", sha256="b49b1ccbf86ef78f4da5ff13ec3ee94f6133c55db3a95b823577b0808db5f2f1")
     version("7.0.0", sha256="cc417e73cda903511db5a72b77704fd41bf7b39204c5cacb2c64701b344b8c5d")
     version("6.4.3", sha256="aa7c9d9d7da3b5fc944b17ca7c032e8924a8dc327ec79eb8cb7f0c9df6fa76dc")

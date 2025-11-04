@@ -19,6 +19,7 @@ class RocprofilerCompute(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("7.1.0", sha256="11a65dac6e4099b4f2bb438320ef8206bb130a8a31bba52e90b594cdc235969b")
     version("7.0.2", sha256="b56ab5c57883e2c3d75b7cc584279eb91157de195722f90c09cad51701ef4650")
     version("7.0.0", sha256="0ef46ee668b6ee6936911ecd70947abb4e501ced1c4f87d8001a6e35b9781705")
     version("6.4.3", sha256="d5005322dbfdd0feccd619d8fb6665f8631d74be1d6345be8726eff76829747b")

@@ -22,6 +22,7 @@ class Rocblas(CMakePackage):
     libraries = ["librocblas"]
 
     license("MIT")
+    version("7.1.0", sha256="54f38222d0e58344cf5c86f151d418c071b59145297fd2ed953bb561df1e12c3")
     version("7.0.2", sha256="8398cda68242db2386abc9eaf00c3588bb27e2b382e29be2bc5624c2d4ac8a99")
     version("7.0.0", sha256="337a77cec31927e484672002d245d3aebf7a67e95658a8477fc593c95cf281fb")
     version("6.4.3", sha256="754dcc88b30468a2293d2406d7fe40f78dc92dd77c193758f937532217ecdad3")
@@ -82,6 +83,7 @@ class Rocblas(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
@@ -106,6 +108,7 @@ class Rocblas(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", type="build", when=f"@{ver}")
@@ -124,10 +127,11 @@ class Rocblas(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("python@3.6:", type="build")
@@ -165,6 +169,7 @@ class Rocblas(CMakePackage):
         ("@6.4.3", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
         ("@7.0.0", "cca3c8136aa812109629e6291ce9f0ca846b68d3"),
         ("@7.0.2", "63c27e505cb532ff8e568d737bfdbd9e1d024665"),
+        ("@7.1.0", "0c8314da90fee8cf3b16dcb1bbc75bc1266e123f"),
     ]:
         resource(
             name="Tensile",

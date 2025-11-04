@@ -27,6 +27,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     libraries = ["libhipsparselt"]
 
     license("MIT")
+    version("7.1.0", sha256="99c351269856b823419facd8d83a5cc4384dbf447dbb445afd1469032009c704")
     version("7.0.2", sha256="04bb529fa656624f8875b726aa5ef1699207fdc5de4b3446986eafc4890ef708")
     version("7.0.0", sha256="317f035fe13f3fa008d567f9553978483821ab34ca8108ecc11fbb2b47bd99e0")
     version("6.4.3", sha256="2255b2732a9101a7b4fb51f4d11810be64dc3999728c77850a3918cabcf5cb50")
@@ -83,6 +84,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipsparse@{ver}", when=f"@{ver}")
@@ -100,10 +102,11 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("cmake@3.5:", type="build")
@@ -119,6 +122,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("python-venv", when="@7.0:")
 
     for t_version, t_commit in [
+        ("7.1.0", "25c46a44a79d748394622b0b0c7b7acf7574619a"),
         ("7.0.2", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
         ("7.0.0", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
     ]:

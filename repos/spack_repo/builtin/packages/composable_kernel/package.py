@@ -20,6 +20,7 @@ class ComposableKernel(CMakePackage):
     maintainers("srekolam", "afzpatel")
 
     license("MIT")
+    version("7.1.0", sha256="03c7fffcad2aed373486315266fdf9dd400a280d383b543ff48ebd3acb3f985f")
     version("7.0.2", sha256="b7293e3451750f606ab845585b3dd4eb4e185d4dda4a22290d73e8874a45a26b")
     version("7.0.0", sha256="20593d704608f39edfdfe0075ca030471b7df32ae594a5f4d8762a59bb012108")
     version("6.4.3", sha256="70d9a2da51d7967e95329884dbd0154753b3ffaecd7272501c59e951bb5160cc")
@@ -62,6 +63,7 @@ class ComposableKernel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     for ver in [
+        "7.1.0",
         "7.0.2",
         "7.0.0",
         "6.4.3",

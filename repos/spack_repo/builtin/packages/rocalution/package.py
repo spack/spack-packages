@@ -29,6 +29,7 @@ class Rocalution(CMakePackage):
 
     license("MIT")
 
+    version("7.1.0", sha256="0f8d8c24317b30d7269841b9fe5ab2d24dddd3d5132e84b4f8ac1cd9d30b0ff2")
     version("7.0.2", sha256="638e9c5f677a8b8c3437dacdcdd0f0d7cc70546d8bbd4e86813a5b90703a0619")
     version("7.0.0", sha256="0ca9d0e4a9ade70370cb2cc5c8f29206507a7e941385933ba41a39ea82b53d5a")
     version("6.4.3", sha256="e74efb3ed6925c5552e5c488f40ac9610e00f100433d9bda92ccb6985878f46f")
@@ -89,6 +90,7 @@ class Rocalution(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
