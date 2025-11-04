@@ -39,4 +39,4 @@ class Mct(AutotoolsPackage):
         return (None, flags, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("FCFLAGS", self.compiler.fc_pic_flag)
+        env.set("FCFLAGS", self["fortran"].pic_flag)
