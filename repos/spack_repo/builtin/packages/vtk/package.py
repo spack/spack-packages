@@ -98,7 +98,7 @@ class Vtk(CMakePackage):
     # https://gitlab.kitware.com/vtk/vtk/-/issues/18033
     depends_on("freetype @:2.10.2", when="@:9.0.1")
 
-    depends_on("py-mpi4py", when="+python+mpi", type="run")
+    depends_on("py-mpi4py", when="+python+mpi", type=("build", "run"))
 
     depends_on("jpeg")
     depends_on("jsoncpp")
