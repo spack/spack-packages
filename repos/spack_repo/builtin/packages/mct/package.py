@@ -33,9 +33,9 @@ class Mct(AutotoolsPackage):
     # unfortunately, also need to set FCFLAGS and not just FFLAGS
     def flag_handler(self, name, flags):
         if name == "cflags":
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
         elif name == "fflags":
-            flags.append(self.compiler.fc_pic_flag)
+            flags.append(self["fortran"].pic_flag)
         return (None, flags, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
