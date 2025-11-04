@@ -16,8 +16,10 @@ class Libcxi(AutotoolsPackage):
 
     license("LGPL-2.1-or-later or BSD-3-Clause")
 
-    # no releases, tags: see https://github.com/HewlettPackard/shs-libcxi/issues/2
     version("main", branch="main")
+    version("13.0.0", tag="release/shs-13.0.0")
+    version("12.0.1", tag="release/shs-12.0.1")
+    version("12.0.0", tag="release/shs-12.0.0")
 
     variant("level_zero", default=False, description="Enable level zero support")
     variant("cuda", default=False, description="Build with CUDA support")
