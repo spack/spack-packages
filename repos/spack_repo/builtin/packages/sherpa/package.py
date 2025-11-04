@@ -38,6 +38,8 @@ class Sherpa(CMakePackage, AutotoolsPackage):
         conditional("cmake", when="@3:"), conditional("autotools", when="@:2"), default="cmake"
     )
 
+    conflicts("%gcc@15:", when="@:3.0.2")
+
     _cxxstd_values = (conditional("11", "14", "17", when="@:"), conditional("20", when="@3:"))
     variant(
         "cxxstd",
