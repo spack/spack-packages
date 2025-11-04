@@ -6,6 +6,8 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
+# cuda package, rocm package -- amd_gpu_target, cuda_arch variant
+
 
 class Variorum(CMakePackage):
     """Variorum is a library providing vendor-neutral interfaces for
@@ -49,28 +51,16 @@ class Variorum(CMakePackage):
         "cpu",
         default="intel",
         description="Supported CPU architecture",
-        values=("intel", "amd", "ibm", "arm"),
+        values=("intel", "ibm", "arm"),
         multi=False,
     )
+    # TODO: detect
     variant(
         "gpu",
         default="none",
         description="Supported GPU architecture",
         values=("intel", "amd", "nvidia", "none"),
         multi=False,
-    )
-
-    # do not build on AMD CPUs--ESMI, hsmp, and amd_energy do not have spack packages,
-    # but are required by variorum on AMD CPUs
-    for os in ["ventura", "monterey", "bigsur"]:
-        conflicts(f"platform=darwin os={os}", msg=f"{os} is not supported")
-
-    conflicts(
-        "cpu=amd",
-        msg=(
-            "Support for AMD CPUs is not supported through the Spack package."
-            "The build requires ESMI, HSMP, and amd_energy modules."
-        ),
     )
 
     ########################
@@ -86,7 +76,7 @@ class Variorum(CMakePackage):
     # cuda@10.1.243 works, as does 12.4.1
 
     depends_on("cuda", type=("build", "link"), when="gpu=nvidia")  # required for nvml
-    depends_on("esmi", type=("build", "link"), when="gpu=amd")  # required for amd
+    # depends_on("esmi", type=("build", "link"), when="gpu=amd")  # required for amd
 
     depends_on("hwloc +nvml", type=("build", "link"), when="gpu=nvidia")
     depends_on("hwloc", type=("build", "link"), when="gpu=none")
