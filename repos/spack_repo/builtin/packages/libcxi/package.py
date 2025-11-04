@@ -27,7 +27,7 @@ class Libcxi(AutotoolsPackage):
 
     depends_on("c", type="build")
 
-    with default_args(type="build", when="@main"):
+    with default_args(type="build"):
         depends_on("autoconf")
         depends_on("automake")
         depends_on("libtool")
@@ -59,7 +59,6 @@ class Libcxi(AutotoolsPackage):
             string=True,
         )
 
-    @when("@main")
     def autoreconf(self, spec, prefix):
         sh = which("sh")
         sh("autogen.sh")
