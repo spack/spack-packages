@@ -31,7 +31,7 @@ class PyTwine(PythonPackage):
         depends_on("py-pkginfo@1.4.2:", when="@:3.6")
         depends_on("py-readme-renderer@35:", when="@4.0.1:")
         depends_on("py-readme-renderer@21.0:")
-        
+
         # requests@2.30 brings in compatibility with urllib3@2, which has minor breaking.
         # even though the requests/urlib pairing is compatible, twine wasn't compatible
         # with urllib3@2: changes
@@ -39,8 +39,8 @@ class PyTwine(PythonPackage):
         # https://github.com/psf/requests/blob/main/HISTORY.md#2300-2023-05-03
         depends_on("py-requests@2.20:2.29.0", when="@:4")
         depends_on("py-requests@2.20:", when="@6:")
-        depends_on("py-requests-toolbelt@0.8,0.9.1", when="^py-urllib3@1")   
-        depends_on("py-requests-toolbelt@1:", when="^py-urllib3@2:") 
+        depends_on("py-requests-toolbelt@0.8,0.9.1", when="^py-urllib3@1")
+        depends_on("py-requests-toolbelt@1:", when="^py-urllib3@2:")
         depends_on("py-urllib3@1.26:1", when="@3.8:4")
         depends_on("py-urllib3@1.26:", when="@6:")
 
