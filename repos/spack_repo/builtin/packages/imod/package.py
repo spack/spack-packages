@@ -38,7 +38,8 @@ class Imod(MakefilePackage, CudaPackage):
     depends_on("hdf5")
     depends_on("jpeg")
     depends_on("glu")
-    depends_on("tcsh")
+    depends_on("tcsh", type=("build", "run"))
+    depends_on("python", type=("run"))
 
     def edit(self, spec, prefix):
         configure = Executable("./setup")
