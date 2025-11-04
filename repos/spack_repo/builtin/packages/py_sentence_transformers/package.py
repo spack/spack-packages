@@ -1,8 +1,8 @@
-# Copyright 2013-2023 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
@@ -18,6 +18,8 @@ class PySentenceTransformers(PythonPackage):
     pypi = "sentence-transformers/sentence-transformers-2.2.2.tar.gz"
 
     maintainers("meyersbs")
+
+    license("Apache-2.0")
 
     version("3.4.1", sha256="68daa57504ff548340e54ff117bd86c1d2f784b21e0fb2689cf3272b8937b24b")
     version("2.2.2", sha256="dbc60163b27de21076c9a30d24b5b7b6fa05141d68cf2553fa9a77bf79a29136")
