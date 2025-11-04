@@ -63,13 +63,16 @@ class PyRelion(PythonPackage, CudaPackage):
         depends_on("py-relion-blush", type="run")
         depends_on("py-relion-classranker", type="run")
 
-    for arch in CudaPackage.cuda_arch_values:
-        depends_on(
-            f"tsne-cuda@3.0.1 +cuda cuda_arch={arch} +python", when=f"@5.0 +cuda cuda_arch={arch}"
-        )
-        depends_on(f"py-torch@2.0.1 +cuda cuda_arch={arch}", when=f"@5.0 +cuda cuda_arch={arch}")
+        for arch in CudaPackage.cuda_arch_values:
+            depends_on(
+                f"tsne-cuda@3.0.1 +cuda cuda_arch={arch} +python",
+                when=f"@5.0 +cuda cuda_arch={arch}",
+            )
+            depends_on(
+                f"py-torch@2.0.1 +cuda cuda_arch={arch}", when=f"@5.0 +cuda cuda_arch={arch}"
+            )
 
-    depends_on("py-torch@2.0.1 ~cuda", when="@5.0 ~cuda")
+        depends_on("py-torch@2.0.1 ~cuda", when="@5.0 ~cuda")
 
     # Set version so setuptools won't complain about not being able to determine it
     def setup_build_environment(self, env):
