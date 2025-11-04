@@ -484,7 +484,7 @@ class Tau(Package):
 
         if "+perfetto" in spec:
             options.append("-perfetto")
-        
+
         if spec.satisfies("@2.35:"):
             if "+force-legacy-l0" in spec:
                 options.append("-force_legacy_l0")
