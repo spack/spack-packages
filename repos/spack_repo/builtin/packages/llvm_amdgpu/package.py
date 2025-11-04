@@ -264,11 +264,20 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                     ]
                 )
             else:
-                args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", dir))
+                args.append(
+                    self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", dir)
+                )
                 args.append(self.define("ROCM_DEVICE_LIBS_INSTALL_PREFIX_PATH", self.prefix))
-                args.append(self.define("ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC", "lib/clang/20/lib/amdgcn"))
+                args.append(
+                    self.define("ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC", "lib/clang/20/lib/amdgcn")
+                )
                 args.append(self.define("OPENMP_ENABLE_LIBOMPTARGET", "ON"))
-                args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH", os.path.join(self.stage.source_path, "hsa-runtime")))
+                args.append(
+                    self.define(
+                        "LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH",
+                        os.path.join(self.stage.source_path, "hsa-runtime"),
+                    )
+                )
                 args.append(self.define("OFFLOAD_EXTERNAL_PROJECT_UNIFIED_ROCR", "ON"))
                 args.append(self.define("LIBOMPTARGET_ENABLE_DEBUG", "ON"))
                 args.append(self.define("LIBOMPTARGET_NO_SANITIZER_AMDGPU", "ON"))

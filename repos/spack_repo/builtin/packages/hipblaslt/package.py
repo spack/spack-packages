@@ -208,7 +208,9 @@ class Hipblaslt(CMakePackage):
             msgpack_path = f"{self.spec['py-msgpack'].prefix}/lib/python{py_ver}/site-packages"
             filter_file(
                 "${_python_path}",
-                ":".join(["${_python_path}", joblib_path, yaml_path, packaging_path, msgpack_path]),
+                ":".join(
+                    ["${_python_path}", joblib_path, yaml_path, packaging_path, msgpack_path]
+                ),
                 "projects/hipblaslt/cmake/hipblaslt_python.cmake",
                 string=True,
             )

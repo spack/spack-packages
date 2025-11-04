@@ -20,7 +20,9 @@ class Rocmlir(CMakePackage):
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
 
-    version("7.1.0", branch="release/rocm-rel-7.1", commit="3d7e854e66a40ad31909e2a93b166e27ea14fc32")
+    version(
+        "7.1.0", branch="release/rocm-rel-7.1", commit="3d7e854e66a40ad31909e2a93b166e27ea14fc32"
+    )
     version("7.0.2", sha256="01e4b5c3f22c23595816a8c16e3ec67d39c7c5f63ecfa2d8a641ef65a9b79d50")
     version(
         "7.0.0",
