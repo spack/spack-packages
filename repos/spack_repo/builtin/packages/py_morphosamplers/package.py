@@ -23,10 +23,11 @@ class PyMorphosamplers(PythonPackage):
     depends_on("py-setuptools@45:", type="build")
     depends_on("py-setuptools-scm@6.2:", type="build")
 
-    depends_on("py-einops", type=("build", "run"))
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-psygnal", type=("build", "run"))
-    depends_on("py-pydantic", type=("build", "run"))
-    depends_on("py-pydantic-compat", type=("build", "run"))
-    depends_on("py-scipy", type=("build", "run"))
-    depends_on("py-typing-extensions", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("py-einops")
+        depends_on("py-numpy")
+        depends_on("py-psygnal")
+        depends_on("py-pydantic")
+        depends_on("py-pydantic-compat")
+        depends_on("py-scipy")
+        depends_on("py-typing-extensions")
