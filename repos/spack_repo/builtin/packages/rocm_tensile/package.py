@@ -144,7 +144,9 @@ class RocmTensile(CMakePackage):
             args.append(self.define("__skip_rocmclang", "ON"))
 
         if self.spec.satisfies("@7.1:"):
-            args.append(self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/next-cmake/cmake"))
+            args.append(
+                self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/next-cmake/cmake")
+            )
         return args
 
     def install(self, spec, prefix):
