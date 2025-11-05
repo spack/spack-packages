@@ -316,10 +316,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(self.define("LIBOMPTARGET_ENABLE_DEBUG", "ON"))
             args.append(self.define("LIBOMPTARGET_NO_SANITIZER_AMDGPU", "ON"))
             hsa_path = os.path.join(self.stage.source_path, "hsa-runtime")
-            args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH",hsa_path))
+            args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH", hsa_path))
             args.append(self.define("OFFLOAD_EXTERNAL_PROJECT_UNIFIED_ROCR", "ON"))
             devlibs_dir = os.path.join(self.stage.source_path, "amd/device-libs")
-            args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", devlibs_dir))
+            args.append(
+                self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", devlibs_dir)
+            )
 
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
