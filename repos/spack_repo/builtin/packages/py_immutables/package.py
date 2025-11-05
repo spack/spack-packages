@@ -16,6 +16,7 @@ class PyImmutables(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.21", sha256="b55ffaf0449790242feb4c56ab799ea7af92801a0a43f9e2f4f8af2ab24dfc4a")
     version("0.20", sha256="1d2f83e6a6a8455466cd97b9a90e2b4f7864648616dfa6b19d18f49badac3876")
     version("0.19", sha256="df17942d60e8080835fcc5245aa6928ef4c1ed567570ec019185798195048dcf")
     version("0.18", sha256="5336c7974084cce62f7e29aaff81a3c3f75e0fd0a23a2faeb986ae0ea08d8cf4")
