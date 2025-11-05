@@ -107,7 +107,10 @@ class RocmTensile(CMakePackage):
     patch("0004-replace_rocm_smi.patch", when="@6.4:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("@7.1:"):
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
+        else:
+            env.set("CXX", self.spec["hip"].hipcc)
         env.append_flags("LDFLAGS", "-pthread")
 
     def get_gpulist_for_tensile_support(self):
@@ -140,6 +143,8 @@ class RocmTensile(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/next-cmake/cmake"))
         return args
 
     def install(self, spec, prefix):

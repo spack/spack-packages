@@ -47,6 +47,7 @@ class RocprofilerCompute(CMakePackage):
     depends_on("py-dash-bootstrap-components", type=("build", "run"))
     depends_on("py-textual", when="@7.0:")
     depends_on("py-textual-plotext", when="@7.0:")
+    depends_on("py-sqlalchemy@2.0.42:", when="@7.1:")
 
     def cmake_args(self):
         args = [self.define("ENABLE_TESTS", self.run_tests)]

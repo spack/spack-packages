@@ -18,7 +18,6 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     Currently, hipSPARSELt supports rocSPARSELt and cuSPARSELt v0.4 as backends."""
 
     homepage = "https://github.com/ROCm/hipsparselt"
-    url = "https://github.com/ROCm/hipSPARSELt/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/hipsparseLt.git"
     tags = ["rocm"]
 
@@ -26,8 +25,16 @@ class Hipsparselt(CMakePackage, ROCmPackage):
 
     libraries = ["libhipsparselt"]
 
+    def url_for_version(self, version):
+        if version <= Version("7.0.2"):
+            url = "https://github.com/ROCm/hipsparselt/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+
     license("MIT")
-    version("7.1.0", sha256="99c351269856b823419facd8d83a5cc4384dbf447dbb445afd1469032009c704")
+    version("7.1.0", sha256="d9e138a15e8195a7e9b5e15240e50c557b830d50a2bafa27db14dad3884dbfd8")
     version("7.0.2", sha256="04bb529fa656624f8875b726aa5ef1699207fdc5de4b3446986eafc4890ef708")
     version("7.0.0", sha256="317f035fe13f3fa008d567f9553978483821ab34ca8108ecc11fbb2b47bd99e0")
     version("6.4.3", sha256="2255b2732a9101a7b4fb51f4d11810be64dc3999728c77850a3918cabcf5cb50")
@@ -109,6 +116,10 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     for ver in ["7.0.0", "7.0.2", "7.1.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
+    for ver in ["7.1.0"]:
+        depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
+
     depends_on("cmake@3.5:", type="build")
     depends_on("msgpack-c@3:")
     depends_on("python@3.6:")
@@ -120,9 +131,11 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
     depends_on("python-venv", when="@7.0:")
+    depends_on("py-pyyaml+libyaml", when="@7.1:")
+    depends_on("py-packaging", when="@7.1:")
+    depends_on("py-msgpack", when="@7.1:")
 
     for t_version, t_commit in [
-        ("7.1.0", "25c46a44a79d748394622b0b0c7b7acf7574619a"),
         ("7.0.2", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
         ("7.0.0", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
     ]:
@@ -153,6 +166,8 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         return ver
 
     def patch(self):
+        py_ver = self.spec["python"].version[:-1]
+        joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
         if not self.spec["hip"].external:
             if self.spec.satisfies("@6.4:") and self.run_tests:
                 filter_file(
@@ -161,9 +176,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
                     "clients/CMakeLists.txt",
                     string=True,
                 )
-        if self.spec.satisfies("@7.0:"):
-            py_ver = self.spec["python"].version[:-1]
-            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
+        if self.spec.satisfies("@7.0"):
             filter_file(
                 "${PROJECT_BINARY_DIR}/lib",
                 ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
@@ -172,9 +185,31 @@ class Hipsparselt(CMakePackage, ROCmPackage):
                 "hipBLASLt/library/src/amd_detail/rocblaslt/src/extops/CMakeLists.txt",
                 string=True,
             )
+        if self.spec.satisfies("@7.1:"):
+            filter_file(
+                "${PROJECT_BINARY_DIR}/lib",
+                ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
+                "projects/hipblaslt/tensilelite/CMakeLists.txt",
+                "projects/hipblaslt/tensilelite/Tensile/cmake/TensileConfig.cmake",
+                string=True,
+            )
+            yaml_path = f"{self.spec['py-pyyaml'].prefix}/lib/python{py_ver}/site-packages"
+            packaging_path = f"{self.spec['py-packaging'].prefix}/lib/python{py_ver}/site-packages"
+            msgpack_path = f"{self.spec['py-msgpack'].prefix}/lib/python{py_ver}/site-packages"
+            filter_file(
+                "${_python_path}",
+                ":".join(
+                    ["${_python_path}", joblib_path, yaml_path, packaging_path, msgpack_path]
+                ),
+                "projects/hipblaslt/cmake/hipblaslt_python.cmake",
+                string=True,
+            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("@7.1:"):
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
+        else:
+            env.set("CXX", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
         env.set("TENSILE_ROCM_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
@@ -188,6 +223,13 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         )
         if self.spec.satisfies("@6.3:"):
             env.set("ROCM_SMI_PATH", f"{self.spec['rocm-smi-lib'].prefix}/bin/rocm-smi")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.1"):
+            return "projects/hipsparselt"
+        else:
+            return "."
 
     def cmake_args(self):
         args = [
@@ -204,12 +246,15 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             args.append(
                 self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
             )
-        if self.spec.satisfies("@7.0:"):
+        if self.spec.satisfies("@7.0"):
             args.append(
                 self.define(
                     "Tensile_TEST_LOCAL_PATH", f"{self.stage.source_path}/hipBLASLt/tensilelite"
                 )
             )
+        if self.spec.satisfies("@7.0:"):
             args.append(self.define("Python_EXECUTABLE", self.spec["python"].prefix.bin.python3))
             args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("BUILD_USE_LOCAL_TENSILE", "OFF"))
         return args
