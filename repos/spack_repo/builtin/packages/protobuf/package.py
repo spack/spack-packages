@@ -16,6 +16,7 @@ class Protobuf(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("33.0", sha256="b6b03fbaa3a90f3d4f2a3fa4ecc41d7cd0326f92fcc920a7843f12206c8d52cd")
     version("32.1", sha256="d2081ab9528292f7980ef2d88d2be472453eea4222141046ad4f660874d5f24e")
     version("3.29.3", sha256="c8d0ed0085f559444f70311791cf7aef414246b9942441443963184b534dbf9e")
     version("3.28.2", sha256="1b6b6a7a7894f509f099c4469b5d4df525c2f3c9e4009e5b2db5b0f66cb8ee0e")
