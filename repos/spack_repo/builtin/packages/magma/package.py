@@ -74,6 +74,10 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/icl-utk-edu/magma/issues/7
     conflicts("^cuda@12.6:", when="@:2.8.0")
 
+    # 2.9.0 release not compatible with CUDA-13.0
+    # https://github.com/icl-utk-edu/magma/issues/61
+    conflicts("^cuda@13:", when="@:2.9.0")
+
     # Many cuda_arch values were not recognized by MAGMA's CMakeLists.txt
     with when("@:2.8"):
         # All cuda_arch values are supported in 2.9.0 release
