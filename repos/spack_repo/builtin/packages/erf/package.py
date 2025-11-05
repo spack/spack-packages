@@ -72,6 +72,7 @@ class Erf(CMakePackage, CudaPackage):
         depends_on("fftw", when="+fft")
 
         with when("+netcdf"):
+            depends_on("amrex+mpi")
             depends_on("netcdf-c+mpi+parallel-netcdf")
             depends_on("netcdf-fortran")
             depends_on("hdf5+mpi", when="+mpi")
