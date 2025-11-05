@@ -54,11 +54,16 @@ class PyTriton(PythonPackage):
     def setup_run_environment(self, env):
         cuda = self.spec["cuda"].prefix
         cuda_bin = os.path.join(str(cuda), "bin")
+        cuda_inc = os.path.join(str(cuda), "include")
+        cupti_path = self.pkg.spec["cuda"].prefix.extras.CUPTI
 
         env.set("TRITON_PTXAS_PATH", os.path.join(cuda_bin, "ptxas"))
         env.set("TRITON_CUOBJDUMP_PATH", os.path.join(cuda_bin, "cuobjdump"))
         env.set("TRITON_NVDISASM_PATH", os.path.join(cuda_bin, "nvdisasm"))
-
+        env.set("TRITON_CUDACRT_PATH", cuda_inc)
+        env.set("TRITON_CUDART_PATH", cuda_inc)
+        env.set("TRITON_CUPTI_INCLUDE_PATH", os.path.join(cupti_path, "include"))
+        env.set("TRITON_CUPTI_LIB_PATH", os.path.join(cupti_path, "lib64"))
 
 class PythonPipBuilder(pybs.PythonPipBuilder):
 
