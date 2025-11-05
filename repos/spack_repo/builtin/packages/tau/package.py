@@ -88,6 +88,12 @@ class Tau(Package):
     variant("opari", default=False, description="Activates Opari2 instrumentation")
     variant("shmem", default=False, description="Activates SHMEM support")
     variant("gasnet", default=False, description="Activates GASNET support")
+    variant(
+        "ittnotify",
+        default=False,
+        description="Activates Intel ITTNotify collector",
+        when="@2.35:",
+    )
     variant("cuda", default=False, description="Activates CUDA support")
     variant("rocm", default=False, description="Activates ROCm support", when="@2.28:")
     variant(
@@ -147,6 +153,9 @@ class Tau(Package):
         description="Do not add -no-pie while linking with Ubuntu.",
     )
     variant("openacc", default=False, description="Activates OpenACC support")
+    variant(
+        "perfetto", default=True, description="Activates Perfetto tracing support", when="@2.35:"
+    )
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -381,6 +390,9 @@ class Tau(Package):
         if "+gasnet" in spec:
             options.append("-gasnet=%s" % spec["gasnet"].prefix)
 
+        if "+ittnotify" in spec:
+            options.append("-ittnotify")
+
         if "+cuda" in spec:
             options.append("-cuda=%s" % spec["cuda"].prefix)
 
@@ -465,6 +477,9 @@ class Tau(Package):
                 options.append("-boost=%s" % spec["boost"].prefix)
             if "+elf" not in spec:
                 options.append("-elf=%s" % spec["elfutils"].prefix)
+
+        if "+perfetto" in spec:
+            options.append("-perfetto")
 
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)

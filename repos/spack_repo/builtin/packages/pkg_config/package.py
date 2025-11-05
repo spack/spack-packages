@@ -69,7 +69,7 @@ class PkgConfig(AutotoolsPackage):
             "%cce",
             "%apple-clang@15:",
             "%clang@15:",
-            "%llvm-amdgpu@7:",
+            "%llvm-amdgpu",
         ):
             if spec.satisfies(strict_compiler):
                 config_args.append("CFLAGS=-Wno-error=int-conversion")
