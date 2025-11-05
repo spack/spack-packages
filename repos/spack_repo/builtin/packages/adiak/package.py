@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -19,9 +21,11 @@ class Adiak(CMakePackage):
 
     variant("mpi", default=True, description="Build with MPI support")
     variant("shared", default=True, description="Build dynamic libraries")
+    variant("python", default=False, when="@master", description="Build Python bindings")
 
     license("MIT")
 
+    version("master", branch="master")
     version(
         "0.4.1", commit="7ac997111785bee6d9391664b1d18ebc2b3c557b", submodules=True, preferred=True
     )
@@ -35,6 +39,9 @@ class Adiak(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("mpi", when="+mpi")
+
+    depends_on("python@3", when="+python", type=("build", "link", "run"))
+    depends_on("py-pybind11@3.0.0:", when="+python", type=("build", "link", "run"))
 
     def cmake_args(self):
         args = []
@@ -50,5 +57,17 @@ class Adiak(CMakePackage):
         else:
             args.append("-DBUILD_SHARED_LIBS=OFF")
 
+        if self.spec.satisfies("+python"):
+            args.append("-DENABLE_PYTHON_BINDINGS=ON")
+            pybind11_cmake = os.path.join(
+                self.spec["py-pybind11"].prefix, "pybind11", "share", "cmake", "pybind11"
+            )
+            args.append(f"-Dpybind11_DIR={pybind11_cmake}")
+
         args.append("-DENABLE_TESTS=OFF")
         return args
+
+    def setup_run_environment(self, env):
+        if self.spec.satisfies("+python"):
+            env.prepend_path("PYTHONPATH", self.spec.prefix.join(python_platlib))
+            env.prepend_path("PYTHONPATH", self.spec.prefix.join(python_purelib))
