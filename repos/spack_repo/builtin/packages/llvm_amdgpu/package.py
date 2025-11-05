@@ -108,6 +108,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("numactl", when="@7.1:")
     depends_on("libdrm", when="@7.1:")
     depends_on("libelf", when="@7.1:")
+    depends_on("xxd", when="@7.1:")
 
     for ver in ["7.1.0"]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
@@ -264,24 +265,10 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                     ]
                 )
             else:
-                args.append(
-                    self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", dir)
-                )
                 args.append(self.define("ROCM_DEVICE_LIBS_INSTALL_PREFIX_PATH", self.prefix))
                 args.append(
                     self.define("ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC", "lib/clang/20/lib/amdgcn")
                 )
-                args.append(self.define("OPENMP_ENABLE_LIBOMPTARGET", "ON"))
-                args.append(
-                    self.define(
-                        "LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH",
-                        os.path.join(self.stage.source_path, "hsa-runtime"),
-                    )
-                )
-                args.append(self.define("OFFLOAD_EXTERNAL_PROJECT_UNIFIED_ROCR", "ON"))
-                args.append(self.define("LIBOMPTARGET_ENABLE_DEBUG", "ON"))
-                args.append(self.define("LIBOMPTARGET_NO_SANITIZER_AMDGPU", "ON"))
-                llvm_runtimes.extend(["offload", "openmp"])
 
         if self.spec.satisfies("+llvm_dylib"):
             args.append(self.define("LLVM_BUILD_LLVM_DYLIB", True))
@@ -306,10 +293,11 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         args.append("-DSANITIZER_HSA_INCLUDE_PATH={0}".format(hsainc_path))
         args.append("-DSANITIZER_COMGR_INCLUDE_PATH={0}".format(comgrinc_path))
         args.append("-DSANITIZER_AMDGPU:Bool=ON")
+        if self.spec.satisfies("@6.1:7.0"):
+            args.append(self.define("LLVM_ENABLE_LIBCXX", "OFF"))
         if self.spec.satisfies("@6.1:"):
             llvm_projects.remove("compiler-rt")
             llvm_runtimes.extend(["compiler-rt", "libunwind"])
-            args.append(self.define("LLVM_ENABLE_LIBCXX", "OFF"))
             args.append(self.define("CLANG_LINK_FLANG_LEGACY", True))
             args.append(self.define("CMAKE_CXX_STANDARD", 17))
             args.append(self.define("FLANG_INCLUDE_DOCS", False))
@@ -320,8 +308,19 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(self.define("LIBOMPTARGET_BUILD_DEVICE_FORTRT", "ON"))
             args.append(self.define("FLANG_RUNTIME_F128_MATH_LIB", "libquadmath"))
         if self.spec.satisfies("@7.1:"):
+            llvm_runtimes.extend(["offload", "openmp"])
             args.append(self.define("LLVM_ENABLE_ZLIB", "ON"))
             args.append(self.define("LLVM_INSTALL_UTILS", "ON"))
+            args.append(self.define("OPENMP_ENABLE_LIBOMPTARGET", "ON"))
+            args.append(self.define("LLVM_ENABLE_LIBCXX", "ON"))
+            args.append(self.define("LIBOMPTARGET_ENABLE_DEBUG", "ON"))
+            args.append(self.define("LIBOMPTARGET_NO_SANITIZER_AMDGPU", "ON"))
+            hsa_path = os.path.join(self.stage.source_path, "hsa-runtime")
+            args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH",hsa_path))
+            args.append(self.define("OFFLOAD_EXTERNAL_PROJECT_UNIFIED_ROCR", "ON"))
+            devlibs_dir = os.path.join(self.stage.source_path, "amd/device-libs")
+            args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", devlibs_dir))
+
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
         return args

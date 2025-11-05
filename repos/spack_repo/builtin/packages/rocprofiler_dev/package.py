@@ -126,6 +126,7 @@ class RocprofilerDev(CMakePackage):
     depends_on("py-jinja2")
     depends_on("py-termcolor")
     depends_on("py-pandas", when="@6.0:")
+    depends_on("elfutils", when="@7.1:")
 
     patch("0002-add-fPIC-and-disable-tests-5.7.patch", when="@5.7")
     patch("0003-disable-tests.patch", when="@6.0:")
@@ -158,6 +159,10 @@ class RocprofilerDev(CMakePackage):
             args.append(self.define("ROCM_ROOT_DIR", self.spec["hsakmt-roct"].prefix.include))
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("ROCPROFILER_BUILD_PLUGIN_PERFETTO", "OFF"))
+
+        # libdw related error when building att
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCPROFILER_BUILD_PLUGIN_ATT", "OFF"))
         return args
 
     @run_after("install")
