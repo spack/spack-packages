@@ -424,6 +424,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos+hip_relocatable_device_code~shared", when="+rocm_rdc")
         depends_on("kokkos-kernels~shared", when="+cuda_rdc")
         depends_on("kokkos-kernels~shared", when="+rocm_rdc")
+        depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
         depends_on("kokkos@=4.7.01", when="@master:")
         depends_on("kokkos@=4.5.01", when="@16.1")
