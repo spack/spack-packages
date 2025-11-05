@@ -120,9 +120,6 @@ class Erf(CMakePackage, CudaPackage):
 
     def setup_build_environment(self, env):
         super().setup_build_environment(env)
-        env.set("GIT_CONFIG_COUNT", "1")
-        env.set("GIT_CONFIG_KEY_0", "url.https://github.com/.insteadOf")
-        env.set("GIT_CONFIG_VALUE_0", "git@github.com:")
         env.set("AMREX_HOME", self.spec["amrex"].prefix)
         if "+openmp" in self.spec:
             if "%clang" in self.spec or "%gcc" in self.spec:
