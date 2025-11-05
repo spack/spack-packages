@@ -26,7 +26,9 @@ class PySentenceTransformers(PythonPackage):
     version("2.2.2", sha256="dbc60163b27de21076c9a30d24b5b7b6fa05141d68cf2553fa9a77bf79a29136")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/s/sentence-transformers/{0}-{1}.tar.gz"
+        url = (
+            "https://files.pythonhosted.org/packages/source/s/sentence-transformers/{0}-{1}.tar.gz"
+        )
         if version == Version("2.2.2"):
             name = "sentence-transformers"
         else:
