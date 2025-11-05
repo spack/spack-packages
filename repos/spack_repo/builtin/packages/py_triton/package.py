@@ -55,7 +55,7 @@ class PyTriton(PythonPackage):
         cuda = self.spec["cuda"].prefix
         cuda_bin = os.path.join(str(cuda), "bin")
         cuda_inc = os.path.join(str(cuda), "include")
-        cupti_path = self.pkg.spec["cuda"].prefix.extras.CUPTI
+        cupti_path = self.spec["cuda"].prefix.extras.CUPTI
 
         env.set("TRITON_PTXAS_PATH", os.path.join(cuda_bin, "ptxas"))
         env.set("TRITON_CUOBJDUMP_PATH", os.path.join(cuda_bin, "cuobjdump"))
