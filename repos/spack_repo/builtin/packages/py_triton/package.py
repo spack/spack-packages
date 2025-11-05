@@ -65,6 +65,7 @@ class PyTriton(PythonPackage):
         env.set("TRITON_CUPTI_INCLUDE_PATH", os.path.join(cupti_path, "include"))
         env.set("TRITON_CUPTI_LIB_PATH", os.path.join(cupti_path, "lib64"))
 
+
 class PythonPipBuilder(pybs.PythonPipBuilder):
 
     def _build_llvm(self, pkg: PythonPackage):
