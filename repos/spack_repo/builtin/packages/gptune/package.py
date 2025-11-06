@@ -17,9 +17,11 @@ def terminate_bash_failures(dir):
 
 
 class Gptune(CMakePackage):
-    """GPTune is an autotuning framework that relies on multitask and transfer
-    learnings to help solve the underlying black-box optimization problem using
-    Bayesian optimization methodologies."""
+    """GPTune is an auto-tuning framework.
+
+    It relies on multitask and transfer learnings to help solve the underlying black-box
+    optimization problem using Bayesian optimization methodologies.
+    """
 
     homepage = "https://gptune.lbl.gov/"
     url = "https://github.com/gptune/GPTune/archive/refs/tags/3.0.0.tar.gz"
@@ -31,57 +33,94 @@ class Gptune(CMakePackage):
     license("BSD-3-Clause-LBNL")
 
     version("master", branch="master")
+    version("5.0.0", sha256="edb28563ef9e0de32f71197b5528262fd7dfcdb85a42df534ff13caf7187dd4c")
     version("4.0.0", sha256="4f954a810d83b73f5abe5b15b79e3ed5b7ebf7bc0ae7335d27b68111bd078102")
-    version("3.0.0", sha256="e19bfc3033fff11ff8c20cae65b88b7ca005d2c4e4db047f9f23226126ec92fa")
-    version("2.1.0", sha256="737e0a1d83f66531098beafa73dd479f12def576be83b1c7b8ea5f1615d60a53")
+    with default_args(deprecated=True):
+        version("3.0.0", sha256="e19bfc3033fff11ff8c20cae65b88b7ca005d2c4e4db047f9f23226126ec92fa")
+        version("2.1.0", sha256="737e0a1d83f66531098beafa73dd479f12def576be83b1c7b8ea5f1615d60a53")
 
     variant("superlu", default=False, description="Build the SuperLU_DIST example")
     variant("hypre", default=False, description="Build the Hypre example")
     variant("mpispawn", default=True, description="MPI spawning-based interface")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    # These requirements are probably wrong, but that's all we have:
+    #
+    # v5.0: https://github.com/gptune/GPTune/blob/5.0.0/requirements.txt
+    # v4.0: https://github.com/gptune/GPTune/blob/4.0.0/requirements.txt
+    # v3.0: https://github.com/gptune/GPTune/blob/3.0.0/requirements.txt
+    # v2.1: https://github.com/gptune/GPTune/blob/2.1.0/requirements.txt
 
-    depends_on("mpi", type=("build", "link", "run"))
-    depends_on("cmake@3.17:", type="build")
+    # Build dependencies
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("fortran")
+        depends_on("cmake@3.17:")
+        depends_on("py-setuptools")
+
+    # Runtime dependencies
+    depends_on("blas")
+    depends_on("lapack")
+    depends_on("scalapack")
+    with default_args(type=("build", "link", "run")):
+        depends_on("mpi")
+        depends_on("openturns+python")
+
+    # This needs to stay out of the context manager, because the "when" is applied to "patch" :-(
+    # depends_on("py-scikit-optimize@0.9.0", patches=[patch("space.patch")], type=("build", "run"), when="@5")
+    with default_args(type=("build", "run")):
+        depends_on("python")
+        depends_on("py-numpy")
+        depends_on("py-joblib")
+        depends_on("py-scikit-learn")
+        depends_on("py-scipy@1.7:")
+        depends_on("py-pyaml")
+        depends_on("py-matplotlib")
+        depends_on("py-gpy")
+        depends_on("py-lhsmdu")
+        # depends_on("py-ipyparallel")
+        depends_on("py-opentuner@0.8.8:")
+        depends_on("py-hpbandster")
+        depends_on("py-filelock")
+        depends_on("py-requests")
+        depends_on("py-ytopt-autotune@1.1.0")
+        # Not documented in requirements.txt
+        depends_on("py-mpi4py@3.0.3:")
+        depends_on("py-pandas")
+        depends_on("py-pyyaml")
+
+        with when("@5"):
+            depends_on("py-numpy@2")
+            depends_on("py-pybind11")
+            # depends_on("py-configspace@:0.6.0")
+            depends_on("py-configspace")
+            depends_on("py-statsmodels@0.13.0:")
+            # depends_on("py-gpy@1.13.2:")
+            depends_on("py-salib")
+            depends_on("py-termcolor")
+
+        with when("@4"):
+            depends_on("py-salib")
+            depends_on("py-statsmodels@0.13.0:")
+
+        with when("@:4"):
+            depends_on("py-numpy@:1.23")
+            # Version 5 does not depend on pygmo if Python is > 3.8
+            depends_on("pygmo")
+
+        with when("@3:"):
+            depends_on("py-pymoo")
+            depends_on("py-cloudpickle")
+
+        with when("@2"):
+            depends_on("py-numpy@:1.21.5")
+
     depends_on("jq", type="run")
-    depends_on("blas", type="link")
-    depends_on("lapack", type="link")
-    depends_on("scalapack", type="link")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-ipyparallel", type=("build", "run"))
-    depends_on("py-numpy@:1.23", type=("build", "run"), when="@:4.0.0")
-    depends_on("py-numpy@:1.21.5", type=("build", "run"), when="@:2.1.0")
-    depends_on("py-pandas", type=("build", "run"))
-    depends_on("py-joblib", type=("build", "run"))
-    depends_on("py-scikit-learn", type=("build", "run"))
-    depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("py-pyyaml", type=("build", "run"))
-    depends_on("py-scikit-optimize@0.9.0", patches=[patch("space.patch")], type=("build", "run"))
-    depends_on("py-gpy", type=("build", "run"))
-    depends_on("py-lhsmdu", type=("build", "run"))
-    depends_on("py-hpbandster", type=("build", "run"))
-    depends_on("py-opentuner", type=("build", "run"))
-    depends_on("py-ytopt-autotune@1.1.0", type=("build", "run"))
-    depends_on("py-filelock", type=("build", "run"))
-    depends_on("py-requests", type=("build", "run"))
-    depends_on("py-pyaml", type=("build", "run"))
-    depends_on("py-statsmodels@0.13.0:", type=("build", "run"))
-    depends_on("py-mpi4py@3.0.3:", type=("build", "run"))
-    depends_on("python", type=("build", "run"))
-    depends_on("pygmo", type=("build", "run"))
-    depends_on("openturns", type=("build", "run"))
-    depends_on("py-pymoo", type=("build", "run"), when="@3.0.0:")
 
     depends_on("superlu-dist@develop", when="+superlu", type=("build", "run"))
     depends_on("hypre+gptune@2.19.0", when="+hypre", type=("build", "run"))
 
-    depends_on("openmpi@4:", when="+mpispawn", type=("build", "run"))
-    conflicts("^mpich", when="+mpispawn")
-    conflicts("^spectrum-mpi", when="+mpispawn")
-    conflicts("^cray-mpich", when="+mpispawn")
-    conflicts("%gcc@:7")
+    requires("^mpi=openmpi@4:", when="+mpispawn")
 
     def cmake_args(self):
         spec = self.spec
@@ -89,19 +128,17 @@ class Gptune(CMakePackage):
         if "%gcc@10:" in spec or self.spec.satisfies("%apple-clang@11:"):
             fc_flags.append("-fallow-argument-mismatch")
 
-        args = [
-            "-DGPTUNE_INSTALL_PATH=%s" % python_platlib,
-            "-DTPL_BLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),
-            "-DTPL_LAPACK_LIBRARIES=%s" % spec["lapack"].libs.joined(";"),
-            "-DTPL_SCALAPACK_LIBRARIES=%s" % spec["scalapack"].libs.joined(";"),
-            "-DCMAKE_Fortran_FLAGS=" + "".join(fc_flags),
-            "-DBUILD_SHARED_LIBS=ON",
-            "-DCMAKE_CXX_COMPILER=%s" % spec["mpi"].mpicxx,
-            "-DCMAKE_C_COMPILER=%s" % spec["mpi"].mpicc,
-            "-DCMAKE_Fortran_COMPILER=%s" % spec["mpi"].mpifc,
+        return [
+            self.define("GPTUNE_INSTALL_PATH", python_platlib),
+            self.define("TPL_BLAS_LIBRARIES", spec["blas"].libs.joined(";")),
+            self.define("TPL_LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")),
+            self.define("TPL_SCALAPACK_LIBRARIES", spec["scalapack"].libs.joined(";")),
+            self.define("CMAKE_Fortran_FLAGS", "".join(fc_flags)),
+            self.define("BUILD_SHARED_LIBS", True),
+            self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
+            self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc),
+            self.define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
         ]
-
-        return args
 
     examples_src_dir = "examples"
     nodes = 1
