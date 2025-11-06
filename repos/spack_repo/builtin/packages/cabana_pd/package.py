@@ -15,6 +15,7 @@ class CabanaPd(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/ORNL/CabanaPD"
     url = "https://github.com/ORNL/CabanaPD/archive/refs/tags/0.4.0.tar.gz"
 
+    maintainers("streeve")
     license("BSD 3-Clause", checked_by="cmelone")
 
     version("0.4.0", sha256="a8971284d3c3d0b5f0bf7ee64e893a2b1e2d094cc0ba62b3c04b1f2fda476bca")
