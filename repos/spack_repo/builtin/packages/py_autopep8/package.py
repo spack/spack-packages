@@ -25,7 +25,7 @@ class PyAutopep8(PythonPackage):
     version("1.3.3", sha256="ff787bffb812818c3071784b5ce9a35f8c481a0de7ea0ce4f8b68b8788a12f30")
 
     depends_on("python@3.8.0:", when="@2.1.0:", type=("build", "run"))
-    depends_on("python@3.9.0:", when="@2.3.0:", type=("build", "run"))
+    depends_on("python@3.9.0:", when="@2.3.2:", type=("build", "run"))
 
     depends_on("py-pycodestyle@2.3.0:", when="@1.3:", type=("build", "run"))
     depends_on("py-pycodestyle@2.4.0:", when="@1.4:", type=("build", "run"))
