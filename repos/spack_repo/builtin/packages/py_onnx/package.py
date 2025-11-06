@@ -77,7 +77,7 @@ class PyOnnx(PythonPackage):
     depends_on("py-numpy@1.21:", type=("build", "run"), when="@1.16.2:")
     depends_on("py-numpy@:1", type=("build", "run"), when="@:1.16")
     depends_on("py-typing-extensions@4.7.1:", type=("build", "run"), when="@1.18:")
-    depends_on("py-ml-dtypes", type=("build", "run"), when="@1.19:")
+    depends_on("py-ml-dtypes@0.5:", type=("build", "run"), when="@1.19:")
 
     # Historical dependencies
     depends_on("py-six", type=("build", "run"), when="@:1.8.1")
