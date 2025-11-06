@@ -13,8 +13,8 @@ class OctaveStatistics(OctavePackage, SourceforgePackage):
 
     homepage = "https://octave.sourceforge.io/statistics/"
     sourceforge_mirror_path = "octave/statistics-1.4.2.tar.gz"
-    # git = "https://github.com/gnu-octave/statistics/"
-    url = "https://github.com/gnu-octave/statistics/releases/download/release-1.7.6/statistics-1.7.6.tar.gz"
+    git = "https://github.com/gnu-octave/statistics/"
+    # url = "https://github.com/gnu-octave/statistics/releases/download/release-1.7.6/statistics-1.7.6.tar.gz"
 
     version("1.7.6", sha256="a518c50209e25e59742414c73955060f83c39c07b2d9a20b2fc8d13bd3106af3")
     version("1.4.2", sha256="7976814f837508e70367548bfb0a6d30aa9e447d4e3a66914d069efb07876247")
