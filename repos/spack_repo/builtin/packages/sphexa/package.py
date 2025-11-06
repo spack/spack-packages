@@ -21,6 +21,11 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     license("MIT")
 
     version("0.95", sha256="1007ffa97eb2085d50173676ec5e6387d1da7a8b78f204308223fbdbbecc60a1")
+    version(
+            "0.93.1",
+            sha256="95a93d0063ac8857b9be12c1aca24f5b2eef9dd4ffe8cf3f6b552a4dd54b940f",
+            deprecated=True
+            )
     version("develop", branch="develop")
 
     variant("hdf5", default=True, description="Enable support for HDF5 I/O")
