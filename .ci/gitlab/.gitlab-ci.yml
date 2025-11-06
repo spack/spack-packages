@@ -759,7 +759,7 @@ hep-build:
   variables:
     SPACK_CI_STACK_NAME: aws-pcluster-x86_64_v4
 
-aws-pcluster-generate-x86_64_v4:
+aws-pcluster-x86_64_v4-generate:
   extends: [ ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
   before_script:
     # TODO: Move this to the container next time it is rebuilt
@@ -774,23 +774,23 @@ aws-pcluster-generate-x86_64_v4:
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
-aws-pcluster-build-x86_64_v4:
+aws-pcluster-x86_64_v4-build:
   extends: [ ".aws-pcluster-x86_64_v4", ".build" ]
   trigger:
     << : *trigger_build
     include:
       - artifact: jobs_scratch_dir/aws-pcluster-x86_64_v4/cloud-ci-pipeline.yml
-        job: aws-pcluster-generate-x86_64_v4
+        job: aws-pcluster-x86_64_v4-generate
   needs:
     - artifacts: True
-      job: aws-pcluster-generate-x86_64_v4
+      job: aws-pcluster-x86_64_v4-generate
 
 # Neoverse_v1 (one pipeline per target)
 .aws-pcluster-neoverse_v1:
   variables:
     SPACK_CI_STACK_NAME: aws-pcluster-neoverse_v1
 
-aws-pcluster-generate-neoverse_v1:
+aws-pcluster-neoverse_v1-generate:
   # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
   extends: [ ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
   before_script:
@@ -806,16 +806,16 @@ aws-pcluster-generate-neoverse_v1:
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
-aws-pcluster-build-neoverse_v1:
+aws-pcluster-neoverse_v1-build:
   extends: [  ".aws-pcluster-neoverse_v1", ".build" ]
   trigger:
     << : *trigger_build
     include:
       - artifact: jobs_scratch_dir/aws-pcluster-neoverse_v1/cloud-ci-pipeline.yml
-        job: aws-pcluster-generate-neoverse_v1
+        job: aws-pcluster-neoverse_v1-generate
   needs:
     - artifacts: True
-      job: aws-pcluster-generate-neoverse_v1
+      job: aws-pcluster-neoverse_v1-generate
 
 # Cray definitions
 .generate-cray:
