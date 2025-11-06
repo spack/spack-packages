@@ -134,6 +134,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     conflicts("+xnnpack+rocm")
     conflicts("+rocm", when="@2.3", msg="Rocm doesn't support py-torch 2.3 release")
     conflicts("+rocm", when="@2.4", msg="Rocm doesn't support py-torch 2.4 release")
+    conflicts("+rocm", when="@2.8", msg="Rocm doesn't support py-torch 2.8 release")
     conflicts("+tensorpipe", when="+rocm ^hip@:5.1", msg="TensorPipe not supported until ROCm 5.2")
     conflicts("+breakpad", when="target=ppc64:")
     conflicts("+breakpad", when="target=ppc64le:")
@@ -332,7 +333,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("hipsparselt", when="@2.8:")
         depends_on("aotriton@0.8b", when="@2.5:")
         depends_on("aotriton@0.9.2b", when="@2.7")
-        depends_on("aotriton@0.10b", when="@2.8")
+        depends_on("aotriton@0.10b", when="@2.8:")
         depends_on("composable-kernel@:6.3.2", when="@2.5")
         depends_on("composable-kernel@6.3.2:", when="@2.6:")
     depends_on("mpi", when="+mpi")
@@ -435,6 +436,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("PR152569-Update-spack-includes-2.5.patch", when="@2.5+rocm")
     patch("PR152569-Update-spack-includes-2.6.patch", when="@2.6+rocm")
     patch("PR152569-Update-spack-includes-2.7.patch", when="@2.7+rocm")
+    patch("Revert-PR159080.patch", when="@2.9+rocm")
 
     # https://github.com/pytorch/pytorch/pull/147993
     # prevents pytorch from potentially using system version of config.h
