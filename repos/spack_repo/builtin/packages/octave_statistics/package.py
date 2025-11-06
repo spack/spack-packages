@@ -12,8 +12,8 @@ class OctaveStatistics(OctavePackage, SourceforgePackage):
     """Additional statistics functions for Octave."""
 
     homepage = "https://octave.sourceforge.io/statistics/"
-    # sourceforge_mirror_path = "octave/statistics-1.4.2.tar.gz"
-    git = "https://github.com/gnu-octave/statistics/"
+    sourceforge_mirror_path = "octave/statistics-1.4.2.tar.gz"
+    # git = "https://github.com/gnu-octave/statistics/"
     url = "https://github.com/gnu-octave/statistics/releases/download/release-1.7.6/statistics-1.7.6.tar.gz"
 
     version("1.7.6", sha256="a518c50209e25e59742414c73955060f83c39c07b2d9a20b2fc8d13bd3106af3")
@@ -21,4 +21,12 @@ class OctaveStatistics(OctavePackage, SourceforgePackage):
 
     depends_on("octave-io")
     depends_on("cxx", type="build")
+
+    def url_for_version(self, version):
+        if version <= Version("1.4.3"):
+            return f"https://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics--{version}.tar.gz"
+        else:
+            url = "https://github.com/gnu-octave/statistics/releases/download/release-{0}/statistics-{1}.tar.gz"
+            return url.format(version, version)
+
     extends("octave@4.0.0:")
