@@ -316,6 +316,27 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
 
     build_system("cmake", "autotools", default=default_build_system)
 
+    @when("build_system=cmake")
+    def patch(self):
+        """Fix bad code in ncgen/CMakeLists.txt that removes
+        the rpath for dependencies like hdf5."""
+        filter_file(
+            "SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
+            "#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
+            "ncgen/CMakeLists.txt",
+            string=True
+        )
+        # https://github.com/Unidata/netcdf-c/issues/3199
+        filter_file(
+            "CHECK_FUNCTION_EXISTS(MPI_Comm_f2c  HAVE_MPI_COMM_F2C)",
+            """if(MPI_mpi_LIBRARY)
+  SET(CMAKE_REQUIRED_LIBRARIES ${MPI_mpi_LIBRARY} ${CMAKE_REQUIRED_LIBRARIES})
+endif()
+CHECK_FUNCTION_EXISTS(MPI_Comm_f2c  HAVE_MPI_COMM_F2C)""",
+            "CMakeLists.txt",
+            string = True
+        )
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@4.9.0:+shared"):
             # Both HDF5 and NCZarr backends honor the same environment variable:
