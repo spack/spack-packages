@@ -1,0 +1,20 @@
+diff --git a/makefile b/makefile
+index b3af0ce..6fe7c00 100755
+--- a/makefile
++++ b/makefile
+@@ -165,13 +165,8 @@ OBJS = $(patsubst %.cpp, %.o, $(SRCS))
+ CC = g++ -std=c++11
+ CFLAG = -c -g -pthread -m64
+ NVCC = $(CUDAHOME)/bin/nvcc -std=c++11
+-CUFLAG = -Xptxas -dlcm=ca -O2 \
+-	-gencode arch=compute_75,code=sm_75 \
+-	-gencode arch=compute_70,code=sm_70 \
+-	-gencode arch=compute_61,code=sm_61 \
+-	-gencode arch=compute_60,code=sm_60 \
+-	-gencode arch=compute_53,code=sm_53 \
+-	-gencode arch=compute_52,code=sm_52 
++CUDA_GENCODE = -gencode arch=compute_60,code=sm_60
++CUFLAG = -Xptxas -dlcm=ca -O2 $(CUDA_GENCODE)
+ #------------------------------------------
+ cuda: $(CUCPPS)
+ 
