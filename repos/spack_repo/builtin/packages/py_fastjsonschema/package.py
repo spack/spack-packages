@@ -16,6 +16,7 @@ class PyFastjsonschema(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.21.2", sha256="b1eb43748041c880796cd077f1a07c3d94e93ae84bba5ed36800a33554ae05de")
     version("2.21.1", sha256="794d4f0a58f848961ba16af7b9c85a3e88cd360df008c59aac6fc5ae9323b5d4")
     version("2.21.0", sha256="a02026bbbedc83729da3bfff215564b71902757f33f60089f1abae193daa4771")
     version("2.20.0", sha256="3d48fc5300ee96f5d116f10fe6f28d938e6008f59a6a025c2649475b87f76a23")
