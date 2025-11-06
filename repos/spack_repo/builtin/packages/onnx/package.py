@@ -20,7 +20,11 @@ class Onnx(CMakePackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
-    version("master", branch="master")
+    version("main", branch="main")
+    version("master", branch="master", deprecated=True)
+    version("1.19.1", sha256="ce9d2569a61d64e8a3d05b92194f60ffb7c868dbb754a71f5b4d992273a9413d")
+    version("1.19.0", sha256="2c2ac5a078b0350a0723fac606be8cd9e9e8cbd4c99bab1bffe2623b188fd236")
+    version("1.18.0", sha256="b466af96fd8d9f485d1bb14f9bbdd2dfb8421bc5544583f014088fb941a1d21e")
     version("1.17.0", sha256="8d5e983c36037003615e5a02d36b18fc286541bf52de1a78f6cf9f32005a820e")
     version("1.16.2", sha256="84fc1c3d6133417f8a13af6643ed50983c91dacde5ffba16cc8bb39b22c2acbb")
     version("1.16.1", sha256="0e6aa2c0a59bb2d90858ad0040ea1807117cc2f05b97702170f18e6cd6b66fb3")
@@ -54,14 +58,18 @@ class Onnx(CMakePackage):
     version("1.6.0_2020-02-16", commit="9fdae4c68960a2d44cd1cc871c74a6a9d469fa1f")  # py-torch@1.5
     version("1.6.0_2019-11-06", commit="fea8568cac61a482ed208748fdc0e1a8e47f62f5")  # py-torch@1.4
 
-    depends_on("c", type="build")  # FIXME: note https://github.com/onnx/onnx/pull/6826
+    depends_on("c", type="build", when="@:1.18")
     depends_on("cxx", type="build")
 
     generator("ninja")
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.14:", type="build", when="@1.17:")
+    depends_on("cmake@3.26:", type="build", when="@1.20:")
     depends_on("python", type="build")
     depends_on("protobuf")
+
+    # Allow conversion from OpSchema to OpSchemaRegisterOnce (needed for onnxruntime)
+    patch("OpSchemaRegisterOnce.patch", when="@1.18.0:1.19")
 
     def patch(self):
         if self.spec.satisfies("@1.13:1.14 ^protobuf@3.22:"):
