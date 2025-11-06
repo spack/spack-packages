@@ -290,6 +290,9 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         "please use a newer release.",
     )
 
+    # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+    conflicts("^cuda@13:", when="+cuda")
+
     def _get_sys_type(self, spec):
         sys_type = spec.architecture
         if "SYS_TYPE" in env:
