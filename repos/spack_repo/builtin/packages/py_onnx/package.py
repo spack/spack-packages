@@ -19,6 +19,7 @@ class PyOnnx(PythonPackage):
 
     homepage = "https://github.com/onnx/onnx"
     pypi = "Onnx/onnx-1.6.0.tar.gz"
+    git = "https://github.com/onnx/onnx.git"
 
     license("Apache-2.0", checked_by="wdconinc")
 
