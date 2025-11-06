@@ -45,4 +45,6 @@ class Rocshmem(CMakePackage):
         args = []
         if self.spec.satisfies("@6.4"):
             args.append(self.define("USE_GPU_IB", False))
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCM_PATH", self.spec["rocm-core"].prefix))
         return args
