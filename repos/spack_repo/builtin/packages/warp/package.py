@@ -81,8 +81,10 @@ class Warp(CMakePackage, CudaPackage):
     def set_cuda_archs(self) -> None:
         cuda_targets = ";".join(self.spec.variants["cuda_arch"].value)
         filter_file(
-            r'^set_target_properties\(NativeAcceleration PROPERTIES CUDA_ARCHITECTURES "\d+(?:;\d+)*"\)$',
-            f'set_target_properties(NativeAcceleration PROPERTIES CUDA_ARCHITECTURES "{cuda_targets}")',
+            r"^set_target_properties\(NativeAcceleration PROPERTIES CUDA_ARCHITECTURES"
+            + r'\d+(?:;\d+)*"\)$',
+            "set_target_properties(NativeAcceleration"
+            + f'PROPERTIES CUDA_ARCHITECTURES "{cuda_targets}")',
             "NativeAcceleration/CMakeLists.txt",
         )
 
@@ -122,7 +124,8 @@ class Warp(CMakePackage, CudaPackage):
         ]:
             dotnet(
                 "publish",
-                "-nowarn:CS0219,CS0162,CS0168,CS0649,CS0067,CS0414,CS0661,CS0659,CS0169,CS0618,CS1998,MSB3270,SYSLIB0011",
+                "-nowarn:CS0219,CS0162,CS0168,CS0649,CS0067,CS0414,"
+                + "CS0661,CS0659,CS0169,CS0618,CS1998,MSB3270,SYSLIB0011",
                 "--configuration",
                 "Release",
                 "--framework",
