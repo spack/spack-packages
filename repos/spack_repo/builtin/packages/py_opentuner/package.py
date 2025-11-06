@@ -29,7 +29,7 @@ class PyOpentuner(PythonPackage):
         depends_on("py-numpy@1.8.0:")
         depends_on("py-sqlalchemy@0.8.2:")
 
-        with when("@1.8.8"):
+        with when("@0.8.8"):
             depends_on("py-numpy@1.22:")
             depends_on("py-sqlalchemy@1.2.19:")
 
