@@ -101,6 +101,7 @@ class PyOnnx(PythonPackage):
     )
 
     # Allow conversion from OpSchema to OpSchemaRegisterOnce (needed for onnxruntime)
+    # Ref: https://github.com/onnx/onnx/pull/7390
     patch("OpSchemaRegisterOnce.patch", when="@1.18.0:1.19")
 
     # By default, ONNX always uses .setuptools-cmake-build/ under the source path,

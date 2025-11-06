@@ -69,6 +69,7 @@ class Onnx(CMakePackage):
     depends_on("protobuf")
 
     # Allow conversion from OpSchema to OpSchemaRegisterOnce (needed for onnxruntime)
+    # Ref: https://github.com/onnx/onnx/pull/7390
     patch("OpSchemaRegisterOnce.patch", when="@1.18.0:1.19")
 
     def patch(self):
