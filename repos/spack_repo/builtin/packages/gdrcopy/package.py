@@ -20,6 +20,7 @@ class Gdrcopy(MakefilePackage, CudaPackage):
     license("MIT")
 
     version("master", branch="master")
+    version("2.5.1", sha256="c6d5ebb7dabb89d798f27609511735595004da73af28d93ac041bb5290c4cbec")
     version("2.5", sha256="196400877be7e511edcf2a87b21a605cca99522ff217c97429348fd9153b30d7")
     version("2.4.4", sha256="8802f7bc4a589a610118023bdcdd83c10a56dea399acf6eeaac32e8cc10739a8")
     version("2.4.3", sha256="2727e671d6091f1178a1b10124c41f5a4dd5ce8a23b65a084ef00c178d5914b2")
@@ -51,7 +52,7 @@ class Gdrcopy(MakefilePackage, CudaPackage):
         env.set("CUDA", self.spec["cuda"].prefix)
 
         if self.spec.satisfies("@2.4:"):
-            env.set("NVCCFLAGS", "".join(self.cuda_flags(self.spec.variants["cuda_arch"].values)))
+            env.set("NVCCFLAGS", " ".join(self.cuda_flags(self.spec.variants["cuda_arch"].values)))
 
     def build(self, spec, prefix):
         make("lib")

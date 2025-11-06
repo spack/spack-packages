@@ -185,11 +185,11 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
 
     with when("+cuda"):
-        for var in ["openmpi", "mpich", "mvapich", "mvapich2", "mvapich2-gdr"]:
+        for var in ["openmpi", "mpich", "mvapich", "mvapich2"]:
             depends_on(f"{var} +cuda", when=f"^[virtuals=mpi] {var}")
 
     with when("+rocm"):
-        for var in ["mpich", "mvapich2-gdr"]:
+        for var in ["mpich"]:
             depends_on(f"{var} +rocm", when=f"^[virtuals=mpi] {var}")
 
     # with cuda 12 and llvm 14:15, we have the issue: "error: no template named 'texture"

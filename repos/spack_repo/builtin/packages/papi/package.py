@@ -62,6 +62,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
         when="@6.0.0:",
         description="Enable use of rdpmc for reading counters, when possible",
     )
+    variant("topdown", default=False, when="@7.2:", description="Enable topdown support")
 
     variant("shared", default=True, description="Build shared libraries")
     # PAPI requires building static libraries, so there is no "static" variant
@@ -74,6 +75,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
+    depends_on("perl", when="@7.1.0:", type="build")
     depends_on("lm-sensors", when="+lmsensors")
     depends_on("cuda", when="+cuda")
     depends_on("cuda", when="+nvml")
@@ -101,6 +103,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
         sha256="64c57b3ad4026255238cc495df6abfacc41de391a0af497c27d0ac819444a1f8",
         when="@5.4.0:5.6%gcc@8:",
     )
+    patch("perl-in-env.patch", when="@7.1.0:")
     # 7.1.0 erroneously adds -ffree-form for all fortran compilers
     patch("sysdetect-free-form-fix.patch", when="@7.1.0")
     patch("crayftn-fixes.patch", when="@6.0.0:%cce@9:")
@@ -165,6 +168,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
                 "rocm",
                 "rocm_smi",
                 "rocp_sdk",
+                "topdown",
             ],
         )
         if components:

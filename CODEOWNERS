@@ -30,9 +30,9 @@
 
 ###
 # CI Components maintained by Kitware
-/.ci/configs/              @kwryankrattiger @scottwittenburg @zackgalbreath
-/.ci/gitlab/configs/       @kwryankrattiger @scottwittenburg @zackgalbreath
-.ci/gitlab/.gitlab-ci.yml  @kwryankrattiger @scottwittenburg @zackgalbreath
+/.ci/configs/              @kwryankrattiger @zackgalbreath
+/.ci/gitlab/configs/       @kwryankrattiger @zackgalbreath
+.ci/gitlab/.gitlab-ci.yml  @kwryankrattiger @zackgalbreath
 
 ###
 # CI Components maintained by UO
@@ -41,15 +41,16 @@
 
 ###
 # GitHub Actions maintainers
-/.github/actions/*    @haampie @kwryankrattiger
-/.github/workflows/*  @alecbcs @alalazo @haampie @kwryankrattiger
+/.github/actions    @haampie @kwryankrattiger
+/.github/workflows  @alecbcs @alalazo @haampie @kwryankrattiger
 
 ###
 # GitHub project maintainers
+.ci/env                   @spack/spack-releasers
 .github/*.md              @spack/spack-releasers
 .github/*.yml             @spack/spack-releasers
 /.github/ISSUE_TEMPLATE/  @spack/spack-releasers
-CODEOWNDERS               @spack/spack-releasers
+CODEOWNERS                @spack/spack-releasers
 LICENSE*                  @spack/spack-releasers
 NOTICE                    @spack/spack-releasers
 README.md                 @spack/spack-releasers

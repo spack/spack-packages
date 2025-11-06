@@ -107,3 +107,8 @@ class AbseilCpp(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
         ]
+
+    @property
+    def libs(self):
+        shared = self.spec.satisfies("+shared")
+        return find_libraries("libabsl_*", root=self.prefix, recursive=True, shared=shared)

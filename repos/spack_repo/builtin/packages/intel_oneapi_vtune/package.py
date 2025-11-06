@@ -30,6 +30,24 @@ class IntelOneapiVtune(IntelOneApiLibraryPackageWithSdk):
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/vtune-profiler.html"
 
     version(
+        "2025.7.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/a04c89ad-d663-4f70-bd3d-bb44f5c16d57/intel-vtune-2025.7.0.248_offline.sh",
+        sha256="4bc06c56eab368ee0ff57e87ea0f563663db6c60ea3f9cf9badf16928e43e321",
+        expand=False,
+    )
+    version(
+        "2025.6.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/a62585a0-db22-4fc3-8554-a5ed74d5a4e8/intel-vtune-2025.6.0.31_offline.sh",
+        sha256="60830610ce9807f951285c89f585f001c339a8c6deaa4bc8db33931ba7ae6167",
+        expand=False,
+    )
+    version(
+        "2025.5.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/2775669e-5be4-4982-96de-d0ca5444859a/intel-vtune-2025.5.0.40_offline.sh",
+        sha256="dc75067a48dc04a58b15b5944f1d8e951f3340ef7e2652030cab082ff53c6a87",
+        expand=False,
+    )
+    version(
         "2025.4.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/4f1e7dad-5201-4f0c-b302-bc3a8825d824/intel-vtune-2025.4.0.248_offline.sh",
         sha256="8fb6c54235989e70f8b97235903f345e21b4cbd0f9588a3b4a7660a9f05e1760",

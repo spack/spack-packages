@@ -32,6 +32,7 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("release", branch="release")
+    version("1.1.0-rc1", sha256="cdf04a193798e284bf71dc7e22868c531f11e158431c19deae016565f450550d")
     version(
         "1.0.0",
         sha256="5bff5bbd747b7662bb4630889960371d06fcc5e5a962d974a898d1883f196eba",

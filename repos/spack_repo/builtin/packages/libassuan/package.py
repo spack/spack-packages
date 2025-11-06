@@ -31,7 +31,8 @@ class Libassuan(AutotoolsPackage):
 
     depends_on("libgpg-error@1.17:")
 
-    conflicts("platform=darwin", when="@3")
+    # error with multiple duplicate symbols in linker -- fixed in v3.0.2
+    conflicts("platform=darwin", when="@3.0.0:3.0.1")
 
     def configure_args(self):
         return [

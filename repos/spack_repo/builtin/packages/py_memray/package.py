@@ -15,11 +15,13 @@ class PyMemray(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.19.1", sha256="7fcf306eae2c00144920b01913f42fa7f235af7a80fa3226ab124672a5cb1d8f")
     version("1.15.0", sha256="1beffa2bcba3dbe0f095d547927286eca46e272798b83026dd1b5db58e16ed56")
     version("1.1.0", sha256="876e46e0cd42394be48b33f81314bc946f4eb023b04bf1def084c25ccf1d2bb6")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("gmake", type="build")
 
     depends_on("python@3.7:", type=("build", "link", "run"))
 
@@ -38,7 +40,7 @@ class PyMemray(PythonPackage):
         depends_on("py-textual@0.34:", when="@1.11:")
 
     # https://github.com/bloomberg/memray#building-from-source
-    depends_on("elfutils", when="platform=linux @1.13:")
+    depends_on("elfutils+debuginfod", when="platform=linux @1.13:")
     depends_on("libunwind", when="platform=linux")
     depends_on("lz4")
 

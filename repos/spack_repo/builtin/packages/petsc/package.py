@@ -24,6 +24,10 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.24.1", sha256="d77f3fd5187a72ce5b68a056aa8fcccd37b6dc7a388991d1d8fa0bde32b0abc8")
+    version("3.24.0", sha256="cc9063d80cae3ca87dd34586a92bac49613818a0689d9eac1bd91a799c5d0983")
+    version("3.23.7", sha256="f4fb2bad8c80319e723987868e87d8384f2ae2162e07917d4c41d6e467b1d254")
+    version("3.23.6", sha256="07e0492c5c38d2fc5aa6dd981c450086f3b88f8834df11247a87d4becfb85c72")
     version("3.23.5", sha256="b0bb614dfbf36c286c8cad30912fe77359dccbf6b65a5edd1dde82af293f21fc")
     version("3.23.4", sha256="711b2ad46b14f12fe74fcbc7f9b514444646f1e7b20ed57dc7482d34dfc4ca77")
     version("3.23.3", sha256="bb51e8cbaa3782afce38c6f0bdd64d20ed090695992b7d49817518aa7e909139")
@@ -90,96 +94,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     version("3.14.2", sha256="87a04fd05cac20a2ec47094b7d18b96e0651257d8c768ced2ef7db270ecfb9cb")
     version("3.14.1", sha256="0b4681165a9af96594c794b97ac6993452ec902726679f6b50bb450f89d230ed")
     version("3.14.0", sha256="a8f9caba03e0d57d8452c08505cf96be5f6949adaa266e819382162c03ddb9c5")
-    version(
-        "3.13.6",
-        sha256="67ca2cf3040d08fdc51d27f660ea3157732b24c2f47aae1b19d63f62a39842c2",
-        deprecated=True,
-    )
-    version(
-        "3.13.5",
-        sha256="10fc542dab961c8b17db35ad3a208cb184c237fc84e183817e38e6c7ab4b8732",
-        deprecated=True,
-    )
-    version(
-        "3.13.4",
-        sha256="8d470cba1ceb9638694550134a2f23aac85ed7249cb74992581210597d978b94",
-        deprecated=True,
-    )
-    version(
-        "3.13.3",
-        sha256="dc744895ee6b9c4491ff817bef0d3abd680c5e3c25e601be44240ce65ab4f337",
-        deprecated=True,
-    )
-    version(
-        "3.13.2",
-        sha256="6083422a7c5b8e89e5e4ccf64acade9bf8ab70245e25bca3a3da03caf74602f1",
-        deprecated=True,
-    )
-    version(
-        "3.13.1",
-        sha256="74a895e44e2ff1146838aaccb7613e7626d99e0eed64ca032c87c72d084efac3",
-        deprecated=True,
-    )
-    version(
-        "3.13.0",
-        sha256="f0ea543a54145c5d1387e25b121c3fd1b1ca834032c5a33f6f1d929e95bdf0e5",
-        deprecated=True,
-    )
-    version(
-        "3.12.5",
-        sha256="d676eb67e79314d6cca6422d7c477d2b192c830b89d5edc6b46934f7453bcfc0",
-        deprecated=True,
-    )
-    version(
-        "3.12.4",
-        sha256="56a941130da93bbacb3cfa74dcacea1e3cd8e36a0341f9ced09977b1457084c3",
-        deprecated=True,
-    )
-    version(
-        "3.12.3",
-        sha256="91f77d7b0f54056f085b9e27938922db3d9bb1734a2e2a6d26f43d3e6c0cf631",
-        deprecated=True,
-    )
-    version(
-        "3.12.2",
-        sha256="d874b2e198c4cb73551c2eca1d2c5d27da710be4d00517adb8f9eb3d6d0375e8",
-        deprecated=True,
-    )
-    version(
-        "3.12.1",
-        sha256="b72d895d0f4a79acb13ebc782b47b26d10d4e5706d399f533afcd5b3dba13737",
-        deprecated=True,
-    )
-    version(
-        "3.12.0",
-        sha256="ba9ecf69783c7ebf05bd1c91dd1d4b38bf09b7a2d5f9a774aa6bb46deff7cb14",
-        deprecated=True,
-    )
-    version(
-        "3.11.4",
-        sha256="319cb5a875a692a67fe5b1b90009ba8f182e21921ae645d38106544aff20c3c1",
-        deprecated=True,
-    )
-    version(
-        "3.11.3",
-        sha256="199ad9650a9f58603b49e7fff7cd003ceb03aa231e5d37d0bf0496c6348eca81",
-        deprecated=True,
-    )
-    version(
-        "3.11.2",
-        sha256="4d244dd7d1565d6534e776445fcf6977a6ee2a8bb2be4a36ac1e0fc1f9ad9cfa",
-        deprecated=True,
-    )
-    version(
-        "3.11.1",
-        sha256="cb627f99f7ce1540ebbbf338189f89a5f1ecf3ab3b5b0e357f9e46c209f1fb23",
-        deprecated=True,
-    )
-    version(
-        "3.11.0",
-        sha256="b3bed2a9263193c84138052a1b92d47299c3490dd24d1d0bf79fb884e71e678a",
-        deprecated=True,
-    )
 
     variant("shared", default=True, description="Enables the build of shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
@@ -322,21 +236,19 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("+kokkos", when="~mpi", msg=mpi_msg)
     conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
 
-    # older versions of petsc did not support mumps when +int64
-    conflicts("+mumps", when="@:3.12+int64")
-
     filter_compiler_wrappers("petscvariables", "reconfigure*.py", relative_root="lib/petsc/conf")
     filter_compiler_wrappers("petsc.pc", "PETSc.pc", relative_root="lib/pkgconfig")
 
     # temporary workaround Clang 8.1.0 with XCode 8.3 on macOS, see
     # https://bitbucket.org/petsc/petsc/commits/4f290403fdd060d09d5cb07345cbfd52670e3cbc
     # the patch is an adaptation of the original commit to 3.7.5
-    patch("macos-clang-8.1.0.diff", when="@3.7.5%apple-clang@8.1.0:")
-    patch("pkg-config-3.7.6-3.8.4.diff", when="@3.7.6:3.8.4")
-    patch("xcode_stub_out_of_sync.patch", when="@:3.10.4")
-    patch("xlf_fix-dup-petscfecreate.patch", when="@3.11.0")
     patch("disable-DEPRECATED_ENUM.diff", when="@3.14.1 +cuda")
     patch("revert-3.18.0-ver-format-for-dealii.patch", when="@3.18.0")
+    patch(
+        "https://gitlab.com/petsc/petsc/-/commit/8ecb7dbc89a1f2ff56020c12a12db63d6a1842dc.diff",
+        when="@3.24.1",
+        sha256="fa5ef56e4d26b5a29e3545b3f07cfa12c767f31ce513b03aa75fa65d931d81ab",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -372,14 +284,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     with default_args(type="build"):
         depends_on("python@2.6:2.8,3.4:")
         depends_on("python@3.4:", when="@3.18:")
-        depends_on("python@:3.8", when="@:3.13")
         depends_on("python@:3.12", when="@:3.21")  # import xdrlib
 
     # Other dependencies
-    depends_on("metis@5:~int64+real64", when="@:3.7+metis~int64+double")
-    depends_on("metis@5:~int64", when="@:3.7+metis~int64~double")
-    depends_on("metis@5:+int64+real64", when="@:3.7+metis+int64+double")
-    depends_on("metis@5:+int64", when="@:3.7+metis+int64~double")
     # petsc-3.8+ uses default (float) metis with any (petsc) precision
     depends_on("metis@5:~int64", when="@3.8:+metis~int64")
     depends_on("metis@5:+int64", when="@3.8:+metis+int64")
@@ -389,8 +296,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("scotch+esmumps~metis+mpi", when="+ptscotch")
     depends_on("scotch+int64", when="+ptscotch+int64")
 
-    depends_on("hdf5@:1.10+mpi", when="@:3.12+hdf5+mpi")
-    depends_on("hdf5+mpi", when="@3.13:+hdf5+mpi")
+    depends_on("hdf5+mpi", when="+hdf5+mpi")
     depends_on("hdf5+mpi", when="+exodusii+mpi")
     depends_on("hdf5+mpi", when="+cgns+mpi")
     depends_on("zlib-api", when="+hdf5")
@@ -412,23 +318,12 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre+int64", when="+hypre+int64")
     depends_on("hypre~int64", when="+hypre~int64")
     depends_on("hypre+mpi~internal-superlu", when="+hypre")
-    depends_on("hypre@2.14:2.18.2", when="@3.11:3.13+hypre")
     depends_on("hypre@2.14:2.22.0", when="@3.14:3.15+hypre")
     depends_on("hypre@2.14:2.28.0", when="@3.16:3.19+hypre")
     depends_on("hypre@2.14:", when="@3.20+hypre")
     depends_on("hypre@2.32:", when="@3.22:+hypre")
     depends_on("hypre@develop", when="@main+hypre")
 
-    depends_on("superlu-dist@:4.3~int64", when="@3.4.4:3.6.4+superlu-dist+mpi~int64")
-    depends_on("superlu-dist@:4.3+int64", when="@3.4.4:3.6.4+superlu-dist+mpi+int64")
-    depends_on("superlu-dist@5.0.0:5.1.3~int64", when="@3.7.0:3.7+superlu-dist+mpi~int64")
-    depends_on("superlu-dist@5.0.0:5.1.3+int64", when="@3.7.0:3.7+superlu-dist+mpi+int64")
-    depends_on("superlu-dist@5.2.0:5.2~int64", when="@3.8:3.9+superlu-dist+mpi~int64")
-    depends_on("superlu-dist@5.2.0:5.2+int64", when="@3.8:3.9+superlu-dist+mpi+int64")
-    depends_on("superlu-dist@5.4.0:5.4~int64", when="@3.10:3.10.2+superlu-dist+mpi~int64")
-    depends_on("superlu-dist@5.4.0:5.4+int64", when="@3.10:3.10.2+superlu-dist+mpi+int64")
-    depends_on("superlu-dist@6.1.0:6.1~int64", when="@3.10.3:3.12+superlu-dist+mpi~int64")
-    depends_on("superlu-dist@6.1.0:6.1+int64", when="@3.10.3:3.12+superlu-dist+mpi+int64")
     depends_on("superlu-dist@6.1:~int64", when="@3.13.0:+superlu-dist+mpi~int64")
     depends_on("superlu-dist@6.1:+int64", when="@3.13.0:+superlu-dist+mpi+int64")
     depends_on("superlu-dist@develop~int64", when="@main+superlu-dist+mpi~int64")
@@ -712,12 +607,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+cuda" in spec:
             if not spec.satisfies("cuda_arch=none"):
                 cuda_arch = spec.variants["cuda_arch"].value
-                if spec.satisfies("@3.14:"):
-                    options.append("--with-cuda-gencodearch={0}".format(cuda_arch[0]))
-                else:
-                    options.append(
-                        "CUDAFLAGS=-gencode arch=compute_{0},code=sm_{0}".format(cuda_arch[0])
-                    )
+                options.append("--with-cuda-gencodearch={0}".format(cuda_arch[0]))
+        else:
+            options.append("--with-cudac=0")
         if "+rocm" in spec:
             if not spec.satisfies("amdgpu_target=none"):
                 hip_arch = spec.variants["amdgpu_target"].value
@@ -739,6 +631,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 hip_lib += spec[pkg].libs.joined() + " "
             options.append("HIPPPFLAGS=%s" % hip_inc)
             options.append("--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib, spec["hip"].prefix.lib))
+        else:
+            options.append("--with-hipc=0")
 
         if "superlu-dist" in spec:
             if spec.satisfies("@3.10.3:3.15"):
@@ -828,10 +722,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     def setup_build_tests(self):
         """Copy the build test files after the package is installed to an
         install test subdirectory for use during `spack test run`."""
-        if not self.spec.satisfies("@3.13:"):
-            tty.warn("Stand-alone tests only available for v3.13:")
-            return
-
         cache_extra_test_sources(
             self,
             [join_path("src", "ksp", "ksp", "tutorials"), join_path("src", "snes", "tutorials")],

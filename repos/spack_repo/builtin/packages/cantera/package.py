@@ -24,7 +24,6 @@ class Cantera(SConsPackage):
 
     variant("python", default=False, description="Build the Cantera Python module")
     variant("matlab", default=False, description="Build the Cantera Matlab toolbox")
-    variant("sundials", default=True, description="Build with Sundials")
 
     # Required dependencies
     depends_on("c", type="build")  # generated
@@ -39,7 +38,6 @@ class Cantera(SConsPackage):
     # for instance depends_on('boost +filesystem')
     # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants)
-    depends_on("sundials@:3.1.2+lapack", when="+sundials")  # must be compiled with -fPIC
     depends_on("blas")
     depends_on("lapack")
     depends_on("yaml-cpp")
@@ -53,8 +51,6 @@ class Cantera(SConsPackage):
 
     # Matlab toolbox dependencies
     extends("matlab", when="+matlab")
-
-    conflicts("~sundials", when="@2.3.0:")
 
     def build_args(self, spec, prefix):
         # Valid args can be found by running `scons help`
@@ -115,25 +111,6 @@ class Cantera(SConsPackage):
                     "build_thread_safe=yes",
                     "boost_inc_dir={0}".format(spec["boost"].prefix.include),
                     "boost_lib_dir={0}".format(spec["boost"].prefix.lib),
-                ]
-            )
-
-        # Sundials support
-        if spec.satisfies("+sundials"):
-            if spec.satisfies("@2.3.0:"):
-                args.append("system_sundials=y")
-            else:
-                args.extend(
-                    [
-                        "use_sundials=y",
-                        "sundials_license={0}".format(spec["sundials"].prefix.LICENSE),
-                    ]
-                )
-
-            args.extend(
-                [
-                    "sundials_include={0}".format(spec["sundials"].prefix.include),
-                    "sundials_libdir={0}".format(spec["sundials"].prefix.lib),
                 ]
             )
 

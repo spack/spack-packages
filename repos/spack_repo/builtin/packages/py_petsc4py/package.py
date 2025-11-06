@@ -21,6 +21,10 @@ class PyPetsc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.24.1", sha256="94d7ba092b3d690215740b7616d9da52b8351bff3af56213bc5c4eabd7341361")
+    version("3.24.0", sha256="3dc92ccb27a80d5bce87e186e5644ec90a3bd91569145ae1908ee6364816911b")
+    version("3.23.7", sha256="9b2a667922683b176ca8a80ada365c69b01093f0aa5b095fd594e15a5ae2552c")
+    version("3.23.6", sha256="2f122b79c84c728702e3367e0d72e4ccf16cdf25aa200148018b4e7864e431e8")
     version("3.23.5", sha256="2d4d5c98d86c4d9f2e6d811a3ba85d2be8a2af7153db446b6e411eb2a2e35a18")
     version("3.23.4", sha256="e91a7020873131eb3afdd108ab6b523e1d136e67a3283a703f9bf330ae9eaccd")
     version("3.23.3", sha256="e46914d30e55a91cd0100f7fb0bc99423e733e1a5c082cd69c6fb8f1b1a5b970")
@@ -82,21 +86,6 @@ class PyPetsc4py(PythonPackage):
     version("3.15.0", sha256="87dcc5ef63a1f0e1a963619f7527e623f52341b2806056b0ef5fdfb0b8b287ad")
     version("3.14.1", sha256="f5f8daf3a4cd1dfc945876b0d83a05b25f3c54e08046312eaa3e3036b24139c0")
     version("3.14.0", sha256="33ac9fb55a541e4c1deabd6e2144da96d5ae70e70c830a55de558000cf3f0ec5")
-    version(
-        "3.13.0",
-        sha256="0e11679353c0c2938336a3c8d1a439b853e20d3bccd7d614ad1dbea3ec5cb31f",
-        deprecated=True,
-    )
-    version(
-        "3.12.0",
-        sha256="4c94a1dbbf244b249436b266ac5fa4e67080d205420805deab5ec162b979df8d",
-        deprecated=True,
-    )
-    version(
-        "3.11.0",
-        sha256="ec114b303aadaee032c248a02021e940e43c6437647af0322d95354e6f2c06ad",
-        deprecated=True,
-    )
 
     variant("mpi", default=True, description="Activates MPI support")
 
@@ -121,20 +110,7 @@ class PyPetsc4py(PythonPackage):
     depends_on("petsc+mpi", when="+mpi")
     depends_on("petsc~mpi", when="~mpi")
     depends_on("petsc@main", when="@main")
-    for ver in [
-        "3.23",
-        "3.22",
-        "3.21",
-        "3.20",
-        "3.19",
-        "3.18",
-        "3.17",
-        "3.16",
-        "3.15",
-        "3.13",
-        "3.12",
-        "3.11",
-    ]:
+    for ver in ["3.24", "3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15"]:
         depends_on(f"petsc@{ver}", when=f"@{ver}")
     depends_on("petsc@3.14.2:3.14", when="@3.14.1:3.14")
     depends_on("petsc@3.14.0:3.14.1", when="@3.14.0")

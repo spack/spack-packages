@@ -17,7 +17,7 @@ class PyUproot(PythonPackage):
     on C++ ROOT. Instead, it uses Numpy to cast blocks of data from the ROOT
     file as Numpy arrays."""
 
-    homepage = "https://github.com/scikit-hep/uproot4"
+    homepage = "https://github.com/scikit-hep/uproot5"
     pypi = "uproot/uproot-4.0.6.tar.gz"
 
     maintainers("vvolkl")
@@ -26,6 +26,13 @@ class PyUproot(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("5.6.3", sha256="47f2aefcdcae503c9a21900381ac42a7bc3274cd0c52cd0686700d282ad0f46b")
+    version("5.5.2", sha256="d765be4bea1df58cc237672fe4e8a10a2f7a40a2c7a8cf643333af48def07f5c")
+    version("5.4.2", sha256="53b245baf27067efd86fb92bd11d0efb12e8aff8b7455c85b27807e24e31d99b")
+    version("5.3.13", sha256="4af7cd874e7c1cd0703f17de70b52c9f2492cf0bca27d962c4a3f2755bb89fa9")
+    version("5.2.2", sha256="ce6abba7efaae35d891f15ad1757ece63620f0db12260403fbd0339e41951fc1")
+    version("5.1.2", sha256="f69ee9381243cb0fea58c01a94a8a7abee29de3b67cdb9c9c9cccdd2caccd934")
+    version("5.0.13", sha256="0b1a36c98a010bae5bea52f7fd98e85fee82cd7154af42a5e5a1ca6baf3dae25")
     version("5.0.5", sha256="1a2ac98d595bde7c83c7d5b716d33bb74abd44df6e8d84af62c638edb6c9abab")
     version("5.0.4", sha256="c4ea1af198e3292a4649e3fe789d11b038c1ed57c10f167fc3f52100300c2eea")
     version("5.0.3", sha256="a4ab3f2ea0b98746f601d43115a64b36f9c2145e9793da1e1cd9aaca72f311ab")
@@ -64,13 +71,22 @@ class PyUproot(PythonPackage):
 
     depends_on("python@2.6:2,3.5:", type=("build", "run"))
     depends_on("python@3.6:", type=("build", "run"), when="@4.2.0:")
+    depends_on("python@3.7:", type=("build", "run"), when="@5.0:")
+    depends_on("python@3.8:", type=("build", "run"), when="@5.1:")
+    depends_on("python@3.9:", type=("build", "run"), when="@5.5:")
     depends_on("py-hatchling", when="@5:", type="build")
+    depends_on("py-hatch-vcs", when="@5.2:", type="build")
     depends_on("py-setuptools", when="@:4", type=("build", "run"))
     depends_on("py-setuptools@42:", type=("build", "run"), when="@4.1.8:4")
     depends_on("py-awkward@2:", type=("build", "run"), when="@5:")
-    depends_on("py-importlib-metadata", when="@5: ^python@:3.7", type=("build", "run"))
+    depends_on("py-awkward@2.4.6:", type=("build", "run"), when="@5.1:")
+    depends_on("py-cramjam@2.5.0:", type=("build", "run"), when="@5.3:")
+    depends_on("py-xxhash", type=("build", "run"), when="@5.4:")
     depends_on("py-numpy", type=("build", "run"))
+    depends_on("py-numpy@:1", type=("build", "run"), when="@:5.3.2")
+    depends_on("py-fsspec", type=("build", "run"))
     depends_on("py-packaging", when="@5:", type=("build", "run"))
+    depends_on("py-typing-extensions@4.1:", when="@5.1: ^python@:3.10", type=("build", "run"))
 
     depends_on("xrootd", when="+xrootd")
 
@@ -78,3 +94,6 @@ class PyUproot(PythonPackage):
     depends_on("xxhash", when="+lz4")
 
     depends_on("zstd", when="+zstd")
+
+    # Historical dependencies
+    depends_on("py-importlib-metadata", when="@5:5.2 ^python@:3.7", type=("build", "run"))

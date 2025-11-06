@@ -36,9 +36,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("master", branch="master")
 
     # Latest stable
-    version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
+    version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
 
     # Previous stable series releases
+    version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
     # Final releases of previous versions
     version("14.3.0", sha256="e0dc77297625631ac8e50fa92fffefe899a4eb702592da5c32ef04e2293aca3a")
@@ -318,11 +319,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     conflicts("languages=jit", when="@:4")
 
     with when("languages=d"):
-        # The very first version of GDC that became part of GCC already supported version 2.076 of
-        # the language and runtime.
-        # See https://wiki.dlang.org/GDC#Status
-        provides("D@2")
-
         # Support for the D programming language has been added to GCC 9.
         # See https://gcc.gnu.org/gcc-9/changes.html#d
         conflicts("@:8", msg="support for D has been added in GCC 9.1")
@@ -463,10 +459,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             )
 
         # aarch64-darwin support from Iain Sandoe's branch
+        # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
         patch(
             "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..a495b2dded281beeafec91074e4e82a5a3df8104.patch?full_index=1",
             sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
-            when="@14.2.0 target=aarch64:",
+            when="@14.2.0",
         )
         patch(
             "https://github.com/iains/gcc-14-branch/compare/cd0059a1976303638cea95f216de129334fc04d1..gcc-14.1-darwin-r1.patch?full_index=1",
@@ -528,6 +525,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         )
 
         conflicts("+bootstrap", when="@11.3.0,13.1: target=aarch64:")
+
+        # 14.2.0 cannot bootstrap on x86_64
+        conflicts("+bootstrap", when="@14.2.0")
 
         # Use -headerpad_max_install_names in the build,
         # otherwise updated load commands won't fit in the Mach-O header.
@@ -1115,6 +1115,14 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                             f.write(line)
                 set_install_permissions(libgomp_spec_file)
                 tty.info(f"Wrote new libgomp spec file to {libgomp_spec_file}")
+
+    # The configure --sysroot doesn't propagate down into the sub-builds, e.g., libiberty.
+    # Starting with SDK 26 and clang 17, limits.h amongst other sys includes aren't included
+    # via other means, resulting in a failed build. Keep this for other builds for safety.
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("platform=darwin"):
+            macos_sdk_path = Executable("xcrun")("--show-sdk-path", output=str).strip()
+            env.set("CFLAGS", f"--sysroot {macos_sdk_path}")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.cc and self.spec.satisfies("languages=c"):

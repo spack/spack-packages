@@ -107,7 +107,9 @@ class Gaudi(CMakePackage, CudaPackage):
         sha256="6b377fd10828bf26367c26792a5465351f3f0b5f7f6073dbcae6fa9195d4a414",
         when="@38.1:39",
     )
-    conflicts("^root@6.36:", when="@:38.0")
+    # Legacy CompressionSetting removed in ROOT 6.36, but used through Gaudi 39.1.
+    # See https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1678
+    conflicts("^root@6.36:", when="@:39.1")
 
     # IAuditor: define static strings in implementation
     # https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1781
@@ -142,6 +144,9 @@ class Gaudi(CMakePackage, CudaPackage):
     )
     depends_on(f"boost@1.70: +{boost_libs}", when="@35:")
     depends_on(f"boost@1.70: +{boost_libs}+fiber", when="@39:")
+    # Until gaudi@40.0, there is a build dependency on boost::system, removed in boost@1.89.
+    # Ref: https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1809
+    conflicts("^boost@1.89:", when="@:40.0", msg="Boost@1.89: requires Gaudi@40.1:")
 
     depends_on("clhep")
     depends_on("cmake", type="build")

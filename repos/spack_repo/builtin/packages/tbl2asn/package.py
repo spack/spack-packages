@@ -17,11 +17,6 @@ class Tbl2asn(Package):
     version(
         "2022-04-26", sha256="c76481700e196ebd98a83f4174e0146569db9d6fe5753ac18691e9836d5c6a75"
     )
-    version(
-        "2020-03-01",
-        sha256="7cc1119d3cfcbbffdbd4ecf33cef8bbdd44fc5625c72976bee08b1157625377e",
-        deprecated=True,
-    )
 
     depends_on("libidn@1.34", type="run")
 
@@ -30,8 +25,5 @@ class Tbl2asn(Package):
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
-        if spec.satisfies("@2020-03-01"):
-            install("../linux.tbl2asn", prefix.bin.tbl2asn)
-        else:
-            install("linux64.tbl2asn", prefix.bin.tbl2asn)
+        install("linux64.tbl2asn", prefix.bin.tbl2asn)
         set_executable(prefix.bin.tbl2asn)

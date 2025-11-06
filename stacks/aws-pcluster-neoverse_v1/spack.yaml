@@ -1,7 +1,7 @@
 spack:
   view: false
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   definitions:
   - apps:
@@ -26,7 +26,7 @@ spack:
         - - mkdir spack
           - cd spack
           - git init
-          - git remote add origin https://github.com/spack/spack.git
+          - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
           - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
           - git checkout FETCH_HEAD
           - cd ..
@@ -95,7 +95,7 @@ spack:
       - openfoam ^scotch@6.0.9
       - target=neoverse_v1
     openmpi:
-      variants: ~atomics ~cuda ~cxx ~cxx_exceptions ~internal-hwloc ~java +legacylaunchers ~lustre ~memchecker +pmi +romio ~singularity +vt +wrapper-rpath fabrics=ofi schedulers=slurm
+      variants: ~atomics ~cuda ~cxx ~cxx_exceptions ~internal-hwloc ~java +legacylaunchers ~lustre ~memchecker +pmi +romio +vt +wrapper-rpath fabrics=ofi schedulers=slurm
       require:
       - '@4:'
       - target=neoverse_v1

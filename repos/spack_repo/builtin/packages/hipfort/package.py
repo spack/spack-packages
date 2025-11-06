@@ -12,13 +12,16 @@ class Hipfort(CMakePackage):
 
     homepage = "https://github.com/ROCm/hipfort"
     git = "https://github.com/ROCm/hipfort.git"
-    url = "https://github.com/ROCm/hipfort/archive/rocm-6.1.1.tar.gz"
+    url = "https://github.com/ROCm/hipfort/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
-
+    version("7.0.2", sha256="25de35f1d261f82a6022b0eb0322167398971bde3d48483f8936f3341b510ab2")
+    version("7.0.0", sha256="7b6f7033ec4b73934bd1b04a396f9e920eac5f5a2c17d06fc2a74aeb38b2f27f")
+    version("6.4.3", sha256="6cfd4f704ee4f156d15afa30b8e029a4af336a6cb60fe4f6ca6fb85c86a266bd")
+    version("6.4.2", sha256="28f83c278bffb5a07469466061a4e6a76dce1030bcb7d16aa73da803181e532b")
     version("6.4.1", sha256="4981ab58a59da29b79bb038cd3438e84bf5a7f246b1de4c41d3fec6a11d37294")
     version("6.4.0", sha256="a2e4c10f1c6561789208ba5a41a00b562c8048ec503339cb4eed236ee3cf6131")
     version("6.3.3", sha256="dacb7d5a30689e6a8f81ec251daaa4a74b40f1d28145953c7d42ccd29cecee7c")
@@ -35,9 +38,6 @@ class Hipfort(CMakePackage):
     version("6.0.0", sha256="151cf11648885db799aade0d00a7882589e7195643b02beaa251f1b2a43aceed")
     version("5.7.1", sha256="859fac509e195f3ab97c555b5f63afea325a61aae0f281cb19a970a1b533dead")
     version("5.7.0", sha256="57b04d59f61683a1b141d6d831d10c9fdecea483991ec02d14c14e441e935c05")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="a55345cc9ccaf0cd69d306b8eb9ec2a02c220a57e9c396443cc7273aa3377adc")
-        version("5.6.0", sha256="03176a099bc81e212ad1bf9d86f35561f8f2d21a2f126732d7620e1ea59888d5")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
@@ -50,8 +50,6 @@ class Hipfort(CMakePackage):
     depends_on("binutils", when="%cce")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -68,6 +66,10 @@ class Hipfort(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", type="build", when=f"@{ver}")
 

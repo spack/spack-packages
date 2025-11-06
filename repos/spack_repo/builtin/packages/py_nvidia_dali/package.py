@@ -17,13 +17,30 @@ class PyNvidiaDali(PythonPackage):
     homepage = "https://developer.nvidia.com/dali"
     url = "https://developer.download.nvidia.com/compute/redist/"
 
+    maintainers("thomas-bouvier")
+
+    # py-nvidia-dali is not available on these platforms, but is depended on by
+    # py-nvidia-modulus which does not have such conflict statements.
     skip_version_audit = ["platform=darwin", "platform=windows"]
 
-    maintainers("thomas-bouvier")
+    conflicts("platform=darwin")
+    conflicts("platform=windows")
 
     system = platform.system().lower()
     arch = platform.machine()
     if "linux" in system and arch == "x86_64":
+        version(
+            "1.50.0-cuda120",
+            sha256="3bd42581e6e39d76fa754f56ddb1ccf33195847d6b54b4e0da921adede3d6da8",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda120/nvidia_dali_cuda120-1.50.0-py3-none-manylinux2014_x86_64.whl",
+            expand=False,
+        )
+        version(
+            "1.50.0-cuda110",
+            sha256="c80237a529ea76b73d6b176918d2e278ff29f89c884c0e1dde185c952511497d",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda110/nvidia_dali_cuda110-1.50.0-py3-none-manylinux2014_x86_64.whl",
+            expand=False,
+        )
         version(
             "1.41.0-cuda120",
             sha256="240b4135e7c71c5f669d2f2970fa350f7ad1a0a4aab588a3ced578f9b6d7abd9",
@@ -122,6 +139,18 @@ class PyNvidiaDali(PythonPackage):
         )
     elif "linux" in system and arch == "aarch64":
         version(
+            "1.50.0-cuda120",
+            sha256="734379e8e5f167ec8601117531c6da9c9587bc7ed02e210edcec9fe354e974d6",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda120/nvidia_dali_cuda120-1.50.0-py3-none-manylinux2014_aarch64.whl",
+            expand=False,
+        )
+        version(
+            "1.50.0-cuda110",
+            sha256="7d4915c376c2e6a919d5b0408c6ece5f102c4093dda969b40513639f5cac91b0",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda110/nvidia_dali_cuda110-1.50.0-py3-none-manylinux2014_aarch64.whl",
+            expand=False,
+        )
+        version(
             "1.41.0-cuda120",
             sha256="5b9eddcd6433244a1c5bec44db71c5dccede7d81f929711c634c4d79f6ce5f81",
             url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda120/nvidia_dali_cuda120-1.41.0-17427117-py3-none-manylinux2014_aarch64.whl",
@@ -219,6 +248,7 @@ class PyNvidiaDali(PythonPackage):
         )
 
     cuda120_versions = (
+        "@1.50.0-cuda120",
         "@1.41.0-cuda120",
         "@1.36.0-cuda120",
         "@1.27.0-cuda120",
@@ -229,6 +259,7 @@ class PyNvidiaDali(PythonPackage):
         "@1.22.0-cuda120",
     )
     cuda110_versions = (
+        "@1.50.0-cuda110",
         "@1.41.0-cuda110",
         "@1.36.0-cuda110",
         "@1.27.0-cuda110",
@@ -244,10 +275,15 @@ class PyNvidiaDali(PythonPackage):
     for v in cuda110_versions:
         depends_on("cuda@11", when=v, type=("build", "run"))
 
-    depends_on("python@3.8:3.12", when="@1.36:", type=("build", "run"))
+    depends_on("python@3.9:3.13", when="@1.50:", type=("build", "run"))
+    depends_on("python@3.8:3.13", when="@1.44:1.49", type=("build", "run"))
+    depends_on("python@3.8:3.12", when="@1.36:1.43", type=("build", "run"))
     depends_on("python@3.6:3.11", when="@1.23:1.27", type=("build", "run"))
     depends_on("python@3.6:3.10", when="@:1.22", type=("build", "run"))
-    depends_on("py-astunparse@1.6.0:", type=("build", "run"))
-    depends_on("py-gast@0.3.3:", when="@1.27:", type=("build", "run"))
+    depends_on("py-astunparse@1.6.0:1.6.3", type=("build", "run"))
+    depends_on("py-gast@0.3.3:0.6.0", when="@1.27:", type=("build", "run"))
     depends_on("py-gast@0.2.1:0.4.0", when="@:1.26", type=("build", "run"))
-    depends_on("py-dm-tree", when="@1.27:", type=("build", "run"))
+    depends_on("py-six@1.16:1.17", when="@1.41:", type=("build", "run"))
+    depends_on("py-dm-tree@:0.1.9", when="@1.27: ^python@3.10:", type=("build", "run"))
+    depends_on("py-dm-tree@:0.1.8", when="@1.27: ^python@:3.9", type=("build", "run"))
+    depends_on("py-packaging@:24.2", when="@1.45:", type=("build", "run"))

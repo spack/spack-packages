@@ -16,9 +16,14 @@ class Nccl(MakefilePackage, CudaPackage):
     homepage = "https://github.com/NVIDIA/nccl"
     url = "https://github.com/NVIDIA/nccl/archive/v2.7.3-1.tar.gz"
 
-    maintainers("adamjstewart")
+    maintainers("msimberg")
     libraries = ["libnccl.so"]
 
+    version("2.28.7-1", sha256="1d2d1dd53e6c6bb42c200d9b934fa31fd528cbf3c6443581519aa628fcbd618a")
+    version("2.28.3-1", sha256="888b305a79954b67022cfdd91aec515e88c9fed7ddbd2fb96af4ee3295853bb0")
+    version("2.28.1-1", sha256="4945974609e04ab870a1264acdcc01cef08e6217fd42fd1b13d9b247181473d8")
+    version("2.27.7-1", sha256="98e6262bd55932c51e7c8ffc50cc764f019e4b94a8fd6694d839ae828ec8d128")
+    version("2.27.6-1", sha256="be322d358891c48acf34ac23655e7ebdce27bcfa83d67d09483c335d3b5021cc")
     version("2.27.5-1", sha256="e8a8972fc7f7517703510ef23608d41f6484db5331fca37827b4af3f66995344")
     version("2.27.3-1", sha256="97cde99265d0b76004b96e258deea6365df18ff9a292b8588f648e59c3ce1f2e")
     version("2.26.6-1", sha256="2a4f86198510e1f0764c116b33ff70e082240f87d158b2017d7f34c7c3768ac6")
@@ -78,6 +83,8 @@ class Nccl(MakefilePackage, CudaPackage):
         msg="Must specify CUDA compute capabilities of your GPU, see "
         "https://developer.nvidia.com/cuda-gpus",
     )
+    # https://github.com/NVIDIA/nccl/issues/1743
+    conflicts("%gcc@14:", msg="Compilation issue with gcc 14", when="@:2.27.5-1")
 
     @classmethod
     def determine_version(cls, lib):

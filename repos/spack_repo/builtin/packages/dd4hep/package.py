@@ -71,7 +71,7 @@ class Dd4hep(CMakePackage):
     variant("ddcond", default=True, description="Build DDCond subpackage.")
     variant("ddalign", default=True, description="Build DDAlign subpackage.")
     variant("dddigi", default=True, description="Build DDDigi subpackage.")
-    variant("ddeve", default=True, description="Build DDEve subpackage.")
+    variant("ddeve", default=True, description="Build DDEve subpackage.", when="@1.24:")
     variant("utilityapps", default=True, description="Build UtilityApps subpackage.")
 
     # variants for other build options
@@ -85,7 +85,7 @@ class Dd4hep(CMakePackage):
         when="@1.26: +hepmc3",
     )
     variant("lcio", default=False, description="Enable build with lcio")
-    variant("edm4hep", default=True, description="Enable build with edm4hep")
+    variant("edm4hep", default=True, description="Enable build with edm4hep", when="@1.24:")
     variant("geant4units", default=False, description="Use geant4 units throughout")
     variant("tbb", default=False, description="Enable build with tbb")
     variant(
@@ -121,7 +121,6 @@ class Dd4hep(CMakePackage):
 
     with when("+ddeve"):
         depends_on("root @6.08: +geom +opengl +x")
-        depends_on("root @:6.27", when="@:1.23")
         conflicts("^root ~webgui", when="^root@6.28:")
         # For DD4hep >= 1.24, DDEve_Interface needs ROOT::ROOTGeomViewer only if ROOT >= 6.27
         requires("^root +root7 +webgui", when="@1.24: ^root @6.27:")
@@ -155,11 +154,13 @@ class Dd4hep(CMakePackage):
 
         # Specific version requirements
         depends_on("edm4hep@0.10.5:", when="@1.31:")
-        depends_on("podio@:0.16.03", when="@:1.23")
         depends_on("podio@:0", when="@:1.29")
         depends_on("podio@0.16:", when="@1.24:")
         depends_on("podio@0.16.3:", when="@1.26:")
         depends_on("podio@0.16.7:", when="@1.31:")
+        # Needs a version where the following changes have landed
+        # https://github.com/AIDASoft/DD4hep/commit/b16e724627bd131cc8395a60f4eb9e0e261d5890
+        depends_on("podio@:1.4", when="@:1.32")
 
     extends("python")
 

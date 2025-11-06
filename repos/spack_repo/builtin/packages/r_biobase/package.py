@@ -15,6 +15,7 @@ class RBiobase(RPackage):
 
     bioc = "Biobase"
 
+    version("2.68.0", commit="9fd33eac9ba400994ea1786c3d9b2ea3be5b71ee")
     version("2.60.0", commit="8dc10d2d26dc0847740ff2b4f16cc1ae2e936464")
     version("2.58.0", commit="767f2f33f158f233616178e12ce08cdb03d2a5a2")
     version("2.56.0", commit="3b2dd91b333677c2f27257c7624014a55e73c52b")
@@ -25,6 +26,8 @@ class RBiobase(RPackage):
     version("2.40.0", commit="6555edbbcb8a04185ef402bfdea7ed8ac72513a5")
     version("2.38.0", commit="83f89829e0278ac014b0bc6664e621ac147ba424")
     version("2.36.2", commit="15f50912f3fa08ccb15c33b7baebe6b8a59ce075")
+
+    conflicts("r@4.5.0:", when="@:2.64.0")
 
     depends_on("c", type="build")  # generated
 

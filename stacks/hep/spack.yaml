@@ -2,11 +2,9 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
-    reuse: false
-    unify: when_possible
     static_analysis: true
 
   packages:
@@ -22,7 +20,7 @@ spack:
       variants: +mpi
     acts:
       require:
-      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +podio +pythia8 +python +svg +tgeo cxxstd=20
+      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
       - target=x86_64_v3
     celeritas:
       require:
@@ -39,6 +37,10 @@ spack:
     py-iminuit:
       require:
       - '@2.22:'
+      - target=x86_64_v3
+    py-numpy:
+      require:
+      - '@1.26:'
       - target=x86_64_v3
     rivet:
       require:
@@ -95,7 +97,8 @@ spack:
   #- genie +atmo
   - geomodel +examples +fullsimlight +geomodelg4 +hepmc3 +pythia +tools ~visualization
   - hepmc
-  - hepmc3 +interfaces +protobuf +python +rootio
+  # hepmc3 fixed to 3.3.0 due to whizard, see https://github.com/spack/spack-packages/pull/427#issuecomment-3167516435
+  - hepmc3@3.3.0 +interfaces +protobuf +python +rootio
   #- herwig3 +njet +vbfnlo  # Note: herwig3 fails to find evtgen
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
@@ -103,7 +106,7 @@ spack:
   - lhapdfsets sets=default
   - madgraph5amc
   - njet
-  - opendatadetector
+  #- opendatadetector. # Note: gitlab.cern.ch unavailable
   - openloops
   - pandoramonitoring
   - pandorapfa
@@ -113,8 +116,10 @@ spack:
   #- professor
   - py-awkward
   - py-boost-histogram
+  - py-dask-awkward ~io
+  - py-dask-histogram
   - py-hepunits
-  - py-hist
+  - py-hist +dask +fit +plot
   - py-histbook
   - py-histoprint
   - py-iminuit

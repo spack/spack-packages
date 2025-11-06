@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import Optional, Tuple
 
-from spack.package import ClassProperty, classproperty, extends, mkdirp
+from spack.package import ClassProperty, classproperty, depends_on, extends, mkdirp
 
 from .generic import GenericBuilder, Package
 
@@ -99,6 +99,11 @@ class RPackage(Package):
     build_system_class = "RPackage"
 
     extends("r")
+
+    # needed for packages that need compiling
+    depends_on("gmake", type="build", when="%c")
+    depends_on("gmake", type="build", when="%cxx")
+    depends_on("gmake", type="build", when="%fortran")
 
     homepage: ClassProperty[Optional[str]] = classproperty(_homepage)
     url: ClassProperty[Optional[str]] = classproperty(_url)

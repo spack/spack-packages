@@ -16,7 +16,6 @@ class Xnnpack(CMakePackage):
 
     license("BSD-3-Clause")
 
-    version("master", branch="master", deprecated=True)
     version("2024-02-29", commit="fcbf55af6cf28a4627bcd1f703ab7ad843f0f3a2")  # py-torch@2.3:
     version("2022-12-22", commit="51a987591a6fc9f0fc0707077f53d763ac132cbf")  # py-torch@2.0:2.2
     version("2022-02-16", commit="ae108ef49aa5623b896fc93d4298c49d1750d9ba")  # py-torch@1.12:1.13
