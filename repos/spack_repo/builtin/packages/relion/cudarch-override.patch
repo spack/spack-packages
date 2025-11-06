@@ -1,0 +1,22 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8b8cd506..55b58905 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -186,14 +186,14 @@ if(CUDA)
+     if (CUDA_ARCH STREQUAL "")
+         if (${CUDA_VERSION} VERSION_LESS "13.0") # Pascal (e.g. 1080)
+             message(STATUS "Setting fallback CUDA_ARCH=50 (Pascal)")
+-            set(CUDARCH "-arch=sm_50")
++	    set(CUDARCH "-arch=sm_50" CACHE STRING "CUDA arch compiler flag override")
+         else() # CUDA >= 13.0 no longer supports Pascal. 75 = Turing (e.g. 2080) 
+             message(STATUS "Setting fallback CUDA_ARCH=75 (Turing)")
+-            set(CUDARCH "-arch=sm_75")
++	    set(CUDARCH "-arch=sm_75" CACHE STRING "CUDA arch compiler flag override")
+         endif()
+     else ()
+         message(STATUS "Using provided CUDA_ARCH=${CUDA_ARCH}")
+-        set(CUDARCH "-arch=sm_${CUDA_ARCH}")
++	set(CUDARCH "-arch=sm_${CUDA_ARCH}" CACHE STRING "CUDA arch compiler flag override")
+     endif ()
+ 
+     if(CUDA_FOUND)
