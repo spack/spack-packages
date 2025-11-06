@@ -290,6 +290,9 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         "please use a newer release.",
     )
 
+    # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+    conflicts("^cuda@13:", when="+cuda")
+
     def _get_sys_type(self, spec):
         sys_type = spec.architecture
         if "SYS_TYPE" in env:
@@ -341,7 +344,9 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
             hipcc_flags = []
-            if self.spec.satisfies("@0.14.0:"):
+            if self.spec.satisfies("^rocprim@7.0"):
+                hipcc_flags.append("-std=c++17")
+            elif self.spec.satisfies("@0.14.0:"):
                 hipcc_flags.append("-std=c++14")
             entries.append(cmake_cache_string("HIP_HIPCC_FLAGS", " ".join(hipcc_flags)))
         else:
@@ -396,7 +401,11 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_string("CMAKE_CXX_FLAGS_RELEASE", "-O1"))
 
         # C++17
-        if spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl"):
+        if (
+            spec.satisfies("@2024.07.0:")
+            and spec.satisfies("+sycl")
+            or spec.satisfies("^rocprim@7.0:")
+        ):
             entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
         # C++14
         elif spec.satisfies("@0.14.0:"):

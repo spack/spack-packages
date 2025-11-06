@@ -102,7 +102,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-segmentation-models-pytorch@0.5:", when="@0.7.1:")
         # https://github.com/microsoft/torchgeo/pull/2740
         depends_on("py-segmentation-models-pytorch@0.3.3:0.4", when="@0.7.0")
-        depends_on("py-segmentation-models-pytorch@0.2:0.4")
+        depends_on("py-segmentation-models-pytorch@0.2:0.4", when="@:0.6")
         depends_on("py-shapely@1.8.5:", when="@0.7:")
         depends_on("py-shapely@1.8:", when="@0.6:")
         depends_on("py-shapely@1.7.1:", when="@0.5:")
@@ -203,6 +203,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-nbsphinx@0.8.5:")
         depends_on("py-pytorch-sphinx-theme")
         depends_on("py-sphinx@4:5")
+        depends_on("pandoc")
 
     with when("+style"), default_args(type="run"):
         depends_on("prettier@3:", when="@0.6:")

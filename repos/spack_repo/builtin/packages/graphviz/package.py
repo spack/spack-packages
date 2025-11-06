@@ -21,6 +21,9 @@ class Graphviz(AutotoolsPackage):
 
     license("EPL-1.0")
 
+    version("14.0.1", sha256="7ce6c384da3c3e5e1f2216489c37f42c313def843eea4d20199c219779f544b8")
+    version("13.1.2", sha256="c062e7ef870b2b2d0196076b601839316ede3a5a10efad2e9d9f2d3fbd9d57ca")
+    version("12.2.1", sha256="a990b38c3ea807a06597ce8d46d87878e59bb3fb12609fd98c02a861a4ca81b8")
     version("12.1.0", sha256="ad2023c23935397d4b5a34c14682f8098d2f20d2144c63d20d05be372757fdb1")
     version("11.0.0", sha256="95173d21922082b0b2649fb24c1dc4bbc1e39504a92903b88df39804778cbb9d")
     version("10.0.1", sha256="eaa60fea2b3ad904e3bf6919710c1ba3207ce31b5d7da1687dd3b734de8736f6")

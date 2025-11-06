@@ -16,6 +16,7 @@ class Librdkafka(AutotoolsPackage):
 
     license("BSD-2-Clause")
 
+    version("2.11.1", sha256="a2c87186b081e2705bb7d5338d5a01bc88d43273619b372ccb7bb0d264d0ca9f")
     version("2.8.0", sha256="5bd1c46f63265f31c6bfcedcde78703f77d28238eadf23821c2b43fc30be3e25")
     version("2.6.1", sha256="0ddf205ad8d36af0bc72a2fec20639ea02e1d583e353163bf7f4683d949e901b")
     version("2.6.0", sha256="abe0212ecd3e7ed3c4818a4f2baf7bf916e845e902bb15ae48834ca2d36ac745")
@@ -29,9 +30,10 @@ class Librdkafka(AutotoolsPackage):
     version("1.4.4", sha256="0984ffbe17b9e04599fb9eceb16cfa189f525a042bef02474cd1bbfe1ea68416")
     version("1.4.2", sha256="3b99a36c082a67ef6295eabd4fb3e32ab0bff7c6b0d397d6352697335f4e57eb")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
+    depends_on("pkgconfig", type="build")
     depends_on("zstd")
     depends_on("lz4")
     depends_on("curl")

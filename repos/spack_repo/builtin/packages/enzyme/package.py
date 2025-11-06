@@ -25,6 +25,8 @@ class Enzyme(CMakePackage):
     root_cmakelists_dir = "enzyme"
 
     version("main", branch="main")
+    version("0.0.206", sha256="600fd2db370fb40abb6411e0e80df524aea03f2c1ad50a2765ecaab9e1115c77")
+    version("0.0.196", sha256="2b9cfcb7c34e56fc8191423042df06241cf32928eefbb113ac3c5199e3361cb2")
     version("0.0.186", sha256="125e612df0b6b82b07e1e13218c515bc54e04aa1407e57f4f31d3abe995f4714")
     version("0.0.173", sha256="b8477fb5bead9e9ece76d450ebd0afee99914235c6e1a6ef8c05bf288e3c0478")
     version("0.0.172", sha256="688200164787d543641cb446cff20f6a8e8b5c92bb7032ebe7f867efa67ceafb")
@@ -87,11 +89,11 @@ class Enzyme(CMakePackage):
         ver = self.llvm_version.up_to(1)
 
         llvm = find_libraries("LLVMEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
-        env.set("LLVMENZYME", llvm.joined(";"))
+        env.set("LLVMENZYME", ";".join(llvm))
 
         clang = find_libraries("ClangEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
-        env.set("CLANGENZYME", clang.joined(";"))
+        env.set("CLANGENZYME", ";".join(clang))
 
         if self.version >= Version("0.0.32"):  # TODO actual lower bound
             lld = find_libraries("LLDEnzyme-{0}".format(ver), root=self.prefix, recursive=True)
-            env.set("LLDMENZYME", lld.joined(";"))
+            env.set("LLDENZYME", ";".join(lld))

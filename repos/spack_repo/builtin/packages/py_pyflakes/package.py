@@ -15,6 +15,7 @@ class PyPyflakes(PythonPackage):
 
     license("MIT")
 
+    version("3.4.0", sha256="b24f96fafb7d2ab0ec5075b7350b3d2d2218eab42003821c06344973d3ea2f58")
     version("3.1.0", sha256="a0aae034c444db0071aa077972ba4768d40c830d9539fd45bf4cd3f8f6992efc")
     version("3.0.1", sha256="ec8b276a6b60bd80defed25add7e439881c19e64850afd9b346283d4165fd0fd")
     version("2.5.0", sha256="491feb020dca48ccc562a8c0cbe8df07ee13078df59813b83959cbdada312ea3")
@@ -36,7 +37,9 @@ class PyPyflakes(PythonPackage):
     version("0.9.1", sha256="baad29ac1e884c7077eb32ed1d9ee5cf30bf4b888329e1fcb51b9aa5298cb3b9")
     version("0.9.0", sha256="4c4d73085ce5de9d8147011c060d129659baa1111d1a5a3035f2bd03f2976538")
 
-    depends_on("python@3.6:", when="@2.5:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"), when="@3.3:")
+    depends_on("python@3.8:", type=("build", "run"), when="@3.1:")
+    depends_on("python@3.6:", type=("build", "run"), when="@2.5:")
     depends_on("python@2.7:2.8,3.4:", type=("build", "run"))
     # Most Python packages only require py-setuptools as a build dependency.
     # However, py-pyflakes requires py-setuptools during runtime as well.

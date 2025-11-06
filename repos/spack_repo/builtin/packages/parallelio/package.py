@@ -64,12 +64,19 @@ class Parallelio(CMakePackage):
     depends_on("netcdf-c ~mpi", type="link", when="~mpi")
     depends_on("netcdf-fortran", type="link", when="+fortran")
     depends_on("parallel-netcdf", type="link", when="+pnetcdf")
+    depends_on("netcdf-c ~parallel-netcdf", type="link", when="~pnetcdf")
 
-    resource(name="genf90", git="https://github.com/PARALLELIO/genf90.git", tag="genf90_200608")
+    resource(
+        name="genf90",
+        git="https://github.com/PARALLELIO/genf90.git",
+        tag="genf90_200608",
+        commit="4816965ba946731352bad195b7d946a5fe682ff5",
+    )
     resource(
         name="CMake_Fortran_utils",
         git="https://github.com/CESM-Development/CMake_Fortran_utils.git",
         tag="CMake_Fortran_utils_150308",
+        commit="c2572f19d671c35a4cca26911a55ef78b3ba2829",
     )
 
     # Allow argument mismatch in gfortran versions > 10 for mpi library compatibility

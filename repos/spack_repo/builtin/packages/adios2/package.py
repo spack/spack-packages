@@ -114,6 +114,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # ifx does not support submodules in separate files
     conflicts("%oneapi@:2022.1.0", when="+fortran")
 
+    # https://github.com/ornladios/ADIOS2/issues/4620
+    conflicts("^cuda@13:", when="+cuda")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
@@ -236,6 +239,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/ornladios/adios2/commit/b7a5957.patch?full_index=1",
         sha256="d854008ab27d6ebfa66fffb78126b17713cda3234ed19bf331f85a720e599a32",
         when="@2.8:2.10",
+    )
+
+    # https://github.com/ornladios/ADIOS2/pull/4578
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
+        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
+        when="@2.8:",
     )
 
     @when("%fj")

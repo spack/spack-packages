@@ -28,7 +28,8 @@ class Otf2(AutotoolsPackage):
     extends("python")
 
     # `imp` module required
-    depends_on("python@:3.11", type=("build", "run"))
+    depends_on("python@3", type=("build", "run"), when="@3.1:")
+    depends_on("python@:3.11", type=("build", "run"), when="@:3.0")
 
     # Fix missing initialization of variable resulting in issues when used by
     # APEX/HPX: https://github.com/STEllAR-GROUP/hpx/issues/5239
