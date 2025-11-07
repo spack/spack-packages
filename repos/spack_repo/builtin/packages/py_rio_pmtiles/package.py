@@ -7,6 +7,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 class PyRioPmtiles(PythonPackage):
+    """Library and utilities to write and read PMTiles archives - cloud-optimized archives of map tiles."""
 
     homepage = "https://docs.protomaps.com/"
     pypi = "rio_pmtiles/rio_pmtiles-1.0.3.tar.gz"

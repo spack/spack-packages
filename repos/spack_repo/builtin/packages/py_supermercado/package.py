@@ -7,6 +7,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 class PySupermercado(PythonPackage):
+    """supermercado extends the functionality of mercantile with additional commands"""
 
     pypi = "supermercado/supermercado-0.3.0.tar.gz"
     git = "https://github.com/mapbox/supermercado"
