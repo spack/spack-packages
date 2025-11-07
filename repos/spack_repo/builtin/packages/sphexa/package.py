@@ -60,7 +60,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
 
         hdf5lib = "H5HUT"
-        with when("@:0.95"):
+        if self.spec.satisfies("@:0.94"):
             hdf5lib = "H5PART"
 
         args = [
