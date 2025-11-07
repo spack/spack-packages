@@ -47,7 +47,9 @@ class CabanaPd(CMakePackage, CudaPackage, ROCmPackage):
 
         args.append(self.define_from_variant("CabanaPD_ENABLE_TESTING", "tests"))
 
+        # use hipcc as the cxx compiler if we are compiling for rocm
+        # keeps the wrapper instead of changing CMAKE_CXX_COMPILER
         if self.spec.satisfies("+rocm"):
-            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
+            env["SPACK_CXX"] = self.spec["hip"].hipcc
 
         return args
