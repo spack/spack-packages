@@ -45,7 +45,7 @@ class PyRst2pdf(PythonPackage):
     depends_on("py-pygments", type=("build", "run"), when="@:0.102")
     depends_on("py-pyyaml@6:", type=("build", "run"), when="@0.103:")
     depends_on("py-pyyaml", type=("build", "run"), when="@:0.102")
-    depends_on("py-reportlab@4:", type=("build", "run"), when="@0.103")
+    depends_on("py-reportlab@4:", type=("build", "run"), when="@0.103:")
     depends_on("py-reportlab", type=("build", "run"), when="@:0.102")
     depends_on("py-smartypants@2:", type=("build", "run"), when="@0.103:")
     depends_on("py-smartypants", type=("build", "run"), when="@:0.102")
