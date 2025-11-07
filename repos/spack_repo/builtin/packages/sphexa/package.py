@@ -21,11 +21,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     license("MIT")
 
     version("0.95", sha256="1007ffa97eb2085d50173676ec5e6387d1da7a8b78f204308223fbdbbecc60a1")
-    version(
-            "0.93.1",
-            sha256="95a93d0063ac8857b9be12c1aca24f5b2eef9dd4ffe8cf3f6b552a4dd54b940f",
-            deprecated=True
-            )
+    version("0.93.1", sha256="95a93d0063ac8857b9be12c1aca24f5b2eef9dd4ffe8cf3f6b552a4dd54b940f")
     version("develop", branch="develop")
 
     variant("hdf5", default=True, description="Enable support for HDF5 I/O")
@@ -44,12 +40,13 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")
 
     depends_on("mpi")
-    depends_on("cuda@12:", when="+cuda")
+    depends_on("cuda@12:", when="@0.95: +cuda")
+    depends_on("cuda@11.2:", when="@0.93: +cuda")
     depends_on("hip", when="+rocm")
     depends_on("rocthrust", when="+rocm")
     depends_on("hipcub", when="+rocm")
     depends_on("hdf5 +mpi", when="+hdf5")
-    depends_on("h5hut@master", when="+hdf5")
+    depends_on("h5hut@master", when="@0.95: +hdf5")
 
     # Build MPI with GPU support when GPU aware MPI is requested.
     # For cray-mpich, the user is responsible to configure it for GPU aware MPI.
@@ -61,7 +58,8 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
 
         depends_on("mpich +rocm", when="+rocm ^[virtuals=mpi] mpich")
 
-    conflicts("%gcc@:12")
+    conflicts("%gcc@:11", when="@0.95:")
+    conflicts("%gcc@:10", when="@:0.93.1")
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
     conflicts("amdgpu_target=none", when="+rocm", msg="HIP architecture is required")
     conflicts("+cuda", when="+rocm", msg="CUDA and HIP cannot both be enabled")
@@ -69,8 +67,12 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         spec = self.spec
 
+        hdf5lib = "H5HUT"
+        with when("@:0.95"):
+            hdf5lib = "H5PART"
+
         args = [
-            self.define_from_variant("SPH_EXA_WITH_H5HUT", "hdf5"),
+            self.define_from_variant("SPH_EXA_WITH_" + hdf5lib, "hdf5"),
             self.define_from_variant("SPH_EXA_WITH_CUDA", "cuda"),
             self.define_from_variant("RYOANJI_WITH_CUDA", "cuda"),
             self.define_from_variant("CSTONE_WITH_CUDA", "cuda"),
