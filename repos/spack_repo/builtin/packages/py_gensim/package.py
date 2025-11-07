@@ -33,11 +33,13 @@ class PyGensim(PythonPackage):
 
     depends_on("py-cython", type=("build", "run"), when="@4.3.1:")
 
-    depends_on("py-numpy@1.11.3:", type=("build", "run"))
-    depends_on("py-numpy@1.18.5:", type=("build", "run"), when="@4.3.1:")
+    # Upper version limit related to: https://github.com/piskvorky/gensim/issues/3541
+    depends_on("py-numpy@1.11.3:1.25", type=("build", "run"))
+    depends_on("py-numpy@1.18.5:1.25", type=("build", "run"), when="@4.3.1:")
 
-    depends_on("py-scipy@0.18.1:", type=("build", "run"))
-    depends_on("py-scipy@1.7.0:", type=("build", "run"), when="@4.3.1:")
+    # Upper version limit related to: https://github.com/piskvorky/gensim/issues/3525
+    depends_on("py-scipy@0.18.1:1.12", type=("build", "run"))
+    depends_on("py-scipy@1.7.0:1.12", type=("build", "run"), when="@4.3.1:")
 
     depends_on("py-six@1.5.0:", type=("build", "run"), when="@:3.8.3")
 
@@ -45,4 +47,5 @@ class PyGensim(PythonPackage):
     depends_on("py-smart-open@1.8.1:", when="@3.8.1:", type=("build", "run"))
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GENSIM_CYTHON_REQUIRES", "Cython=={0}".format(self.spec["py-cython"].version))
+        if self.spec.satisfies("^py-cython"):
+            env.set("GENSIM_CYTHON_REQUIRES", "Cython=={0}".format(self.spec["py-cython"].version))
