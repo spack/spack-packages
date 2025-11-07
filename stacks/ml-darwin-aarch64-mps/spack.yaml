@@ -18,6 +18,8 @@ spack:
       require:
       - ~fortran
       - target=aarch64
+    py-setuptools:
+      require: '@80.9.0'
 
   specs:
   # Horovod
