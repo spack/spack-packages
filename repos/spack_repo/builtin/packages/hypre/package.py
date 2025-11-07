@@ -201,6 +201,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         conflicts("cxxstd=11", when="^cuda@13:")
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
+        # https://github.com/hypre-space/hypre/pull/1353
+        conflicts("^cuda@13:", when="@:2")
         for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
             requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 
@@ -427,7 +429,7 @@ class AutotoolsBuilder(AutotoolsBuilder):
             configure_args.append("--with-extra-CFLAGS=-Wno-error=incompatible-pointer-types")
 
         if spec.satisfies("+cuda") or spec.satisfies("+rocm") or spec.satisfies("+sycl"):
-            configure_args.append(f"--with-cxxstandard={self.spec.cxxstd}")
+            configure_args.append(f"--with-cxxstandard={self.spec.variants['cxxstd'].value}")
             if spec.satisfies("+pic"):
                 configure_args.append("--with-extra-CXXFLAGS=-fPIC")
 

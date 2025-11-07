@@ -13,6 +13,8 @@ class PyPytorchSphinxTheme(PythonPackage):
     homepage = "https://github.com/pytorch/pytorch_sphinx_theme"
     git = "https://github.com/pytorch/pytorch_sphinx_theme.git"
 
+    license("MIT")
+
     version("master", branch="master")
 
     depends_on("py-setuptools", type="build")
