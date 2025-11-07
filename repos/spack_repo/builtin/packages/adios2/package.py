@@ -31,6 +31,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version(
+        "2.11.0-rc1", sha256="5885ef24e2567d0240acd18053e7a003a15ed94b59c967bce6456257d4e17abe"
+    )
+    version(
         "2.10.2",
         sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e",
         preferred=True,
