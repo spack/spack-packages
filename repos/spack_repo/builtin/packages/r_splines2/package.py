@@ -22,6 +22,8 @@ class RSplines2(RPackage):
 
     version("0.5.3", sha256="c27e7bd12d615095f765f4c1ed3cb9e39b922653aabbe88c4ca3ac31e6a01ddc")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.2.3:", type=("build", "run"))
 
     depends_on("r-rcpp", type=("build", "run"))
