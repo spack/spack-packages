@@ -27,14 +27,6 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=True, description="Enable support for HDF5 I/O")
     variant("gpu_aware_mpi", default=True, description="GPU aware MPI")
 
-    variant(
-        "cxxstd",
-        default="20",
-        multi=False,
-        description="Compile using the specified C++ standard",
-        values=("20", "23"),
-    )
-
     depends_on("cmake@3.22:", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
