@@ -60,6 +60,12 @@ class PyRasterio(PythonPackage):
         # https://github.com/rasterio/rasterio/issues/3024
         depends_on("py-numpy@:1", when="@:1.3.9")
 
+        # From README.rst and setup.py
+        depends_on("gdal@3.5:", when="@1.4:")
+        depends_on("gdal@3.1:", when="@1.3:")
+        depends_on("gdal@2.4:3.3", when="@1.2.7:1.2")
+        depends_on("gdal@2.3:3.2", when="@1.2.0:1.2.6")
+
     with default_args(type=("build", "run")):
         depends_on("py-affine")
         depends_on("py-attrs")
@@ -75,13 +81,13 @@ class PyRasterio(PythonPackage):
         depends_on("py-setuptools", when="@:1.3.9")
         depends_on("py-snuggs@1.4.1:", when="@:1.3")
 
-    # From README.rst and setup.py
-    depends_on("gdal@3.5:", when="@1.4:")
-    depends_on("gdal@3.1:", when="@1.3:")
-    depends_on("gdal@2.4:3.3", when="@1.2.7:1.2")
-    depends_on("gdal@2.3:3.2", when="@1.2.0:1.2.6")
-
     # https://github.com/rasterio/rasterio/issues/3371
     conflicts("^gdal@3.11:", when="@:1.4.3")
     # https://github.com/rasterio/rasterio/pull/3212
     conflicts("^gdal@3.10:", when="@:1.4.1")
+
+    # ensure cython absolutely gets the right gdal and embeds the correct rpaths
+    def setup_build_environment(self, env):
+        gdal = self.spec['gdal']
+        env.set('GDAL_CONFIG', join_path(gdal.prefix.bin, 'gdal-config'))
+        env.prepend_path('LDFLAGS', f"-Wl,-rpath,{gdal.libs.directories[0]}")
