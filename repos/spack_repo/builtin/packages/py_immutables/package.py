@@ -25,9 +25,15 @@ class PyImmutables(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("python@3.5:", type=("build", "run"))
-    depends_on("python@3.6:", type=("build", "run"), when="@0.16:")
-    depends_on("python@:3.12", type=("build", "run"), when="@:0.20")
+    # Based on PyPI wheel availability
+    with default_args(type=("build", "link", "run")):
+        depends_on("python@3.8:3.13", when="@0.21")
+        depends_on("python@3.8:3.12", when="@0.20")
+        depends_on("python@3.6:3.11", when="@0.19")
+        depends_on("python@3.6:3.10", when="@0.17:0.18")
+        depends_on("python@3.6:3.9", when="@0.16")
+        depends_on("python@3.5:3.9", when="@0.15")
+        depends_on("python@3.5:3.8", when="@0.14")
     depends_on("py-setuptools", type="build")
     # setuptools 68 is more strict about the format of pyproject.toml and fails to install older
     # versions of this package
