@@ -26,6 +26,7 @@ class PyGeopmdpy(PythonPackage):
         when="@3.2:",
         description="Enable additional packages for data analysis and post-processing",
     )
+    variant("optimize", default=True, when="@develop", description="Enable geopmopt support")
 
     version("develop", branch="dev", get_full_repo=True)
     version("3.2.1", sha256="9177da3af335256592c4ea8ae0dd4f8f9c8fb4caf65965af6216e7975d094b99")
@@ -54,6 +55,7 @@ class PyGeopmdpy(PythonPackage):
     depends_on("py-grpcio@1.30.2:", when="+grpc", type=("build", "run"))
     depends_on("py-protobuf@3.12.4:", when="+grpc", type=("build", "run"))
     depends_on("py-sdnotify@0.3.2:", when="@3.2.1:", type="run")
+    depends_on("py-scikit-optimize@0.9.0:", when="+optimize", type="run")
 
     build_directory = "geopmdpy"
 
