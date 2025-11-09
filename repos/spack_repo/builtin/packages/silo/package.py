@@ -7,17 +7,17 @@ from spack_repo.builtin.build_systems import autotools, cmake
 
 class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     """Silo is a library for reading and writing a wide variety of scientific
-    data to binary, disk files."""
+    data to binary, disk or memory (in-situ) files."""
 
     homepage = "https://wci.llnl.gov/simulation/computer-codes/silo"
     git = "https://github.com/LLNL/Silo.git"
     url = "https://wci.llnl.gov/sites/wci/files/2021-01/silo-4.10.2.tgz"
     maintainers("patrickb314")
 
-    # Base license is BSD; enable add-ons changes effective licensing
-    license("BSD-3-Clause", when="license=bsdonly")
+    # Base license is BSD; fpzip and hzip variants change effective licensing.
     # Versions of both hzip and fpzip built into silo are NOT BSD licensed.
-    # Newer versions of fpzip are BSD licensed but not the version, 1.0.2, in Silo
+    # Newer versions of fpzip are BSD licensed but not version 1.0.2 in Silo.
+    license("BSD-3-Clause", when="license=bsdonly")
 
     version("main", branch="main")
     version(
@@ -57,7 +57,8 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     variant("python", default=True, description="Enable Python support")
     variant("fortran", default=True, description="Enable Fortran support")
     variant("shared", default=True, description="Build shared libraries")
-    variant("silex", default=False, description="Builds Silex, a GUI for viewing Silo files")
+    variant("silex", default=False,
+            description="Build Silex, a GUI alternative to text browser for viewing Silo files")
     variant("pic", default=True, description="Produce position-independent code (for shared libs)")
     variant("hdf5", default=True, description="Support HDF5 for database I/O")
     variant("zfp", default=True, description="Enable zfp compression features")
@@ -72,8 +73,8 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
     depends_on("python", type=("build", "link"), when="+python")
-    # The mkinc tool uses perl...could relax this dependency by
-    # relying upon committing mkinc generated files to repo
+    # The mkinc tool uses perl. Silo project could elim. this
+    # by relying upon mkinc generated files committed to repo
     depends_on("perl", type="build")
     depends_on("hdf5@1.8:1.10", when="@:4.10+hdf5")
     depends_on("hdf5@1.12:", when="@4.11:+hdf5")
@@ -119,9 +120,9 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
 
     # If bsdonly enbabled, hzip and fpzip cannot be enabled
     conflicts("license=bsdonly", when="+hzip",
-              msg="BSD-only build requires ~hzip")
+              msg="BSD-only build cannot use +hzip")
     conflicts("license=bsdonly", when="+fpzip",
-              msg="BSD-only build requires ~fpzip")
+              msg="BSD-only build cannot use +fpzip")
 
     # zfp include missing
     patch("zfp_error.patch", when="@4.11:4.11-bsd +hdf5")
@@ -137,7 +138,6 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         conditional("autotools", when="@:4.12.0"),
         default="cmake",
     )
-
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
