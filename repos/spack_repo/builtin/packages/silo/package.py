@@ -90,7 +90,8 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     depends_on("hdf5@1.8:1.10", when="@:4.10+hdf5")
     depends_on("hdf5@1.12:", when="@4.11:+hdf5")
     depends_on("qt +gui~framework@4.8:4.9", when="+silex")
-    #depends_on("qt@6.0:", when="@4.12.0: +silex")
+    # As of Silo 4.12.0, there is no Qt6 support in Spack
+    # depends_on("qt@6.0:", when="@4.12.0: +silex")
     depends_on("qt@5.0:5", when="@:4.11.1 +silex")
     depends_on("libx11", when="+silex")
     # Xmu dependency is required on Ubuntu 18-20
