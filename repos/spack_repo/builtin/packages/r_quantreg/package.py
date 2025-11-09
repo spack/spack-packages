@@ -50,3 +50,7 @@ class RQuantreg(RPackage):
 
     # Historical dependencies
     depends_on("r-conquer", type=("build", "run"), when="@5.82:5.86")
+
+    depends_on("c", type=("build"))
+    depends_on("cxx", type=("build")) 
+    depends_on("fortran", type=("build"))

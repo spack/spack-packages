@@ -38,3 +38,6 @@ class RSurvival(RPackage):
     depends_on("r@3.4:", type=("build", "run"), when="@3.1-12:")
     depends_on("r@2.13.0:", type=("build", "run"))
     depends_on("r-matrix", type=("build", "run"))
+
+    depends_on("c", type=("build"))
+    depends_on("fortran", type=("build"))

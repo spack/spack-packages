@@ -34,3 +34,6 @@ class RXml(RPackage):
     depends_on("r@2.13.0:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@3.99-0.5:")
     depends_on("libxml2@2.6.3:")
+
+    depends_on("c", type=("build"))
+    depends_on("fortran", type=("build"))
