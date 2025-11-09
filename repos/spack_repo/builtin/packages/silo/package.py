@@ -129,7 +129,8 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     # hzip and fpzip are not available in the BSD releases
     conflicts("+hzip", when="@4.10.2-bsd,4.11-bsd")
     conflicts("+fpzip", when="@4.10.2-bsd,4.11-bsd")
-    conflicts("+silex", when="@4.12.0:", msg="Requires Qt6")
+    # There is no support for Qt6 yet in Spack
+    # conflicts("+silex", when="@4.12.0:", msg="Requires Qt6")
 
     # If bsdonly enbabled, hzip and fpzip cannot be enabled
     conflicts("license=bsdonly", when="+hzip", msg="BSD-only build cannot use +hzip")
