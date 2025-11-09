@@ -32,6 +32,7 @@ class RRcurl(RPackage):
     version("1.95-4.8", sha256="e72243251bbbec341bc5864305bb8cc23d311d19c5d0d9310afec7eb35aa2bfb")
 
     depends_on("c", type="build")
+    depends_on("fortran", type=("build"))
 
     depends_on("r@3.0.0:", type=("build", "run"))
     depends_on("r@3.4.0:", type=("build", "run"), when="@1.98:")
