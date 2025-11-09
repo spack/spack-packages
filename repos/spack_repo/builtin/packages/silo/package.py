@@ -65,6 +65,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         description="Build Silex, a GUI alternative to text browser for viewing Silo files",
     )
     variant("pic", default=True, description="Produce position-independent code (for shared libs)")
+    variant("mpi", default=False, when="@:4.11", description="(deprecated)")
     variant("hdf5", default=True, description="Support HDF5 for database I/O")
     variant("zfp", default=True, description="Enable zfp compression features")
     variant("hzip", default=False, description="Enable hzip compression features (!BSD)")
