@@ -41,6 +41,10 @@ class RNloptr(RPackage):
     depends_on("nlopt@2.4.0:")
     depends_on("nlopt@2.7.0:", when="@2.0.0:")
 
+    depends_on("c", type=("build"))
+    depends_on("cxx", type=("build"))
+    depends_on("fortran", type=("build"))
+
     def configure_args(self):
         include_flags = self.spec["nlopt"].headers.include_flags
         libs = self.spec["nlopt"].libs.libraries[0]

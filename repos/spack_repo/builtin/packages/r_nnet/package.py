@@ -25,6 +25,8 @@ class RNnet(RPackage):
     version("7.3-12", sha256="2723523e8581cc0e2215435ac773033577a16087a3f41d111757dd96b8c5559d")
 
     depends_on("c", type="build")
+    depends_on("fortran", type=("build"))
 
     depends_on("r@3.0.0:", type=("build", "run"), when="@7.3-14:")
     depends_on("r@2.14:", type=("build", "run"))
+

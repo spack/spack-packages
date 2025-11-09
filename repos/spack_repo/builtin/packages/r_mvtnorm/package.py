@@ -31,3 +31,4 @@ class RMvtnorm(RPackage):
 
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.0-9:")
     depends_on("r@1.9.0:", type=("build", "run"))
+

@@ -53,3 +53,6 @@ class RLme4(RPackage):
 
     # Historical dependencies
     depends_on("r-statmod", type=("build", "run"), when="@1.1-26")
+
+    depends_on("c", type=("build"))
+    depends_on("cxx", type=("build"))

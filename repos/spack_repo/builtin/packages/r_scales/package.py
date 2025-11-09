@@ -44,3 +44,6 @@ class RScales(RPackage):
     depends_on("r-dichromat", type=("build", "run"), when="@:0.5.0")
     depends_on("r-plyr", type=("build", "run"), when="@:0.5.0")
     depends_on("r-rcpp", type=("build", "run"), when="@:1.0.0")
+
+    depends_on("cxx", type=("build"))
+    depends_on("fortran", type=("build"))

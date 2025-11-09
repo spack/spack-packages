@@ -19,6 +19,10 @@ class Navi(Package):
 
     version("2.20.1", sha256="92644677dc46e13aa71b049c5946dede06a22064b3b1834f52944d50e3fdb950")
     depends_on("rust")
+    
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     def install(self, spec, prefix):
         cargo = which("cargo")

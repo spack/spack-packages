@@ -35,3 +35,6 @@ class RMatrixstats(RPackage):
 
     depends_on("r@2.12.0:", type=("build", "run"))
     depends_on("r@3.4.0:", type=("build", "run"), when="@1.5.0:")
+
+    depends_on("c", type=("build"))
+    depends_on("fortran", type=("build"))

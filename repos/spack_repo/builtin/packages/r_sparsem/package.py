@@ -28,3 +28,6 @@ class RSparsem(RPackage):
     depends_on("fortran", type="build")
 
     depends_on("r@2.15:", type=("build", "run"))
+
+    depends_on("c", type=("build"))
+    depends_on("fortran", type=("build"))

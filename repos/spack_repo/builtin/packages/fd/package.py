@@ -34,6 +34,8 @@ class Fd(CargoPackage):
 
     # Build dependencies
     depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
     depends_on("rust@1.77.2:", type="build", when="@10:")
     depends_on("rust@1.70:", type="build", when="@8.7.1:")
     depends_on("rust@1.64:", type="build", when="@8.7:")
