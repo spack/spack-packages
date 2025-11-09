@@ -57,8 +57,11 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     variant("python", default=True, description="Enable Python support")
     variant("fortran", default=True, description="Enable Fortran support")
     variant("shared", default=True, description="Build shared libraries")
-    variant("silex", default=False,
-            description="Build Silex, a GUI alternative to text browser for viewing Silo files")
+    variant(
+        "silex",
+        default=False,
+        description="Build Silex, a GUI alternative to text browser for viewing Silo files",
+    )
     variant("pic", default=True, description="Produce position-independent code (for shared libs)")
     variant("hdf5", default=True, description="Support HDF5 for database I/O")
     variant("zfp", default=True, description="Enable zfp compression features")
@@ -66,8 +69,12 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     variant("fpzip", default=False, description="Enable fpzip compression features (!BSD)")
 
     # convenience multi-valued 'license mode'
-    variant("license", values=("llnllegacy", "bsdonly"), default="bsdonly",
-            description="BSD-only licensed build (disables !BSD compression features)")
+    variant(
+        "license",
+        values=("llnllegacy", "bsdonly"),
+        default="bsdonly",
+        description="BSD-only licensed build (disables !BSD compression features)",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -119,10 +126,8 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     conflicts("+fpzip", when="@4.10.2-bsd,4.11-bsd")
 
     # If bsdonly enbabled, hzip and fpzip cannot be enabled
-    conflicts("license=bsdonly", when="+hzip",
-              msg="BSD-only build cannot use +hzip")
-    conflicts("license=bsdonly", when="+fpzip",
-              msg="BSD-only build cannot use +fpzip")
+    conflicts("license=bsdonly", when="+hzip", msg="BSD-only build cannot use +hzip")
+    conflicts("license=bsdonly", when="+fpzip", msg="BSD-only build cannot use +fpzip")
 
     # zfp include missing
     patch("zfp_error.patch", when="@4.11:4.11-bsd +hdf5")
