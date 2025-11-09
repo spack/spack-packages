@@ -295,6 +295,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define("SILO_ENABLE_BROWSER", True),
             self.define("SILO_ENABLE_INSTALL_LITE_HEADERS", True),
             self.define_from_variant("SILO_ENABLE_SHARED", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             self.define_from_variant("SILO_ENABLE_SILEX", "silex"),
             self.define_from_variant("SILO_ENABLE_HDF5", "hdf5"),
             self.define_from_variant("SILO_ENABLE_FORTRAN", "fortran"),
