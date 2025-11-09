@@ -13,7 +13,7 @@ class Dyninst(CMakePackage):
     """API for dynamic binary instrumentation.  Modify programs while they
     are executing without recompiling, re-linking, or re-executing."""
 
-    homepage = "https://dyninst.org"
+    homepage = "https://paradyn.org"
     url = "https://github.com/dyninst/dyninst/archive/refs/tags/v12.2.0.tar.gz"
     git = "https://github.com/dyninst/dyninst.git"
     maintainers("hainest")
