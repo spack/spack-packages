@@ -11,7 +11,7 @@ from spack.package import *
 # Submodules are only required for ODD
 def submodules(package):
     submodules = []
-    if package.spec.satisfies("+odd"):
+    if package is None or package.spec.satisfies("+odd"):
         submodules.append("thirdparty/OpenDataDetector")
     return submodules
 
@@ -50,6 +50,12 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("44.1.0", commit="9c79dd801e4ab1e2485c3198cc6b987ec1369e5b", submodules=submodules)
+    version("44.0.1", commit="404f40aaa6211231b6c6726a364b08134a2e3fa4", submodules=submodules)
+    version("44.0.0", commit="d5d65c794d3676034f37d89e555c131b5b7ad807", submodules=submodules)
+    # NOTE: Versions between 39.2.0 and 44.0.0 are not available via Spack,
+    # as they cannot be built without downloading third-party dependencies
+    # from remote, non-Spack sources.
     version("39.2.0", commit="94cf48783efd713f38106b18211d1c59f4e8cdec", submodules=submodules)
     version("39.1.0", commit="09225b0d0bba24d57a696e347e3027b39404bb75", submodules=submodules)
     version("39.0.0", commit="b055202e2fbdd509bc186eb4782714bc46f38f3f", submodules=submodules)
@@ -386,16 +392,21 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("autodiff @0.5.11:0.5.99", when="@1.2:16 +autodiff")
     depends_on("boost @1.62:1.69 +program_options +test", when="@:0.10.3")
     depends_on("boost @1.71: +filesystem +program_options +test", when="@0.10.4:")
+    depends_on("boost @1.77: +filesystem +program_options +test", when="@42:")
     depends_on("cmake @3.14:", type="build")
     depends_on("covfie @0.10:", when="+traccc")
+    depends_on("covfie @0.13.0:", when="+traccc @42:")
     depends_on("cuda @12:", when="+traccc")
     depends_on("dd4hep @1.11: +dddetectors +ddrec", when="+dd4hep")
     depends_on("dd4hep @1.21: +dddetectors +ddrec", when="@20: +dd4hep")
+    depends_on("dd4hep @1.26: +dddetectors +ddrec", when="@42: +dd4hep")
     depends_on("dd4hep +ddg4", when="+dd4hep +geant4 +examples")
     depends_on("detray @0.72.1:", when="+traccc")
     depends_on("detray @0.75.3:", when="@37: +traccc")
+    depends_on("detray @0.101.0:", when="@42.1: +traccc")
     depends_on("edm4hep @0.4.1:", when="+edm4hep")
     depends_on("edm4hep @0.7:", when="@25: +edm4hep")
+    depends_on("edm4hep @0.10.5:", when="@42: +edm4hep")
     depends_on("eigen @3.3.7:3", when="@15.1:")
     depends_on("eigen @3.3.7:3.3", when="@:15.0")
     depends_on("eigen @3.4:3", when="@36.1:")
@@ -404,10 +415,12 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("geomodel +geomodelg4", when="+geomodel")
     depends_on("geomodel @4.6.0:", when="+geomodel")
     depends_on("geomodel @6.3.0:", when="+geomodel @36.1:")
+    depends_on("geomodel @6.8.0:", when="+geomodel @43.1:")
     depends_on("git-lfs", when="@12.0.0:")
     depends_on("gperftools", when="+profilecpu")
     depends_on("gperftools", when="+profilemem")
     depends_on("hepmc3 @3.2.1:", when="+hepmc3")
+    depends_on("hepmc3 @3.2.4:", when="@42: +hepmc3")
     depends_on("heppdt", when="+hepmc3 @:4.0")
     depends_on("intel-tbb @2020.1:", when="+examples +tbb")
     depends_on("intel-tbb @2020.1:", when="+examples @37.3:")
@@ -420,22 +433,33 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("podio @:1.4", when="@:44 +edm4hep +examples")
     depends_on("podio @0.16:", when="+podio")
     depends_on("podio @:0", when="@:35 +podio")
+    # TODO: Clarify version on next release
+    depends_on("podio @:1.4.1", when="@:44.1.0")
     depends_on("pythia8", when="+pythia8")
     depends_on("python", when="+python")
     depends_on("python@3.8:", when="+python @19.11:19")
     depends_on("python@3.8:", when="+python @21:")
+    depends_on("python@3.12:", when="@44:", type="build")
+    depends_on("py-numpy @2.2", when="@44:", type="build")
     depends_on("py-onnxruntime@:1.12", when="+onnx @:23.2")
     depends_on("py-onnxruntime@1.12:", when="+onnx @23.3:")
+    depends_on("py-particle @0.24", when="@44:", type="build")
     depends_on("py-pybind11 @2.6.2:", when="+python @18:")
     depends_on("py-pybind11 @2.13.1:", when="+python @36:")
     depends_on("py-pytest", when="+python +unit_tests")
+    depends_on("py-setuptools", when="@44:44.1.0", type="build")
+    depends_on("py-sympy @1.13", when="@44:", type="build")
+    # TODO: Clarify version on next release
+    depends_on("py-hatchling", when="@44.1.1:", type="build")
 
     with when("+tgeo"):
         depends_on("root @6.10:")
         depends_on("root @6.20:", when="@0.8.1:")
+        depends_on("root @6.28:", when="@42:")
 
     depends_on("sycl", when="+sycl")
     depends_on("vecmem@0.4: +sycl", when="+sycl")
+    depends_on("vecmem@1.17.0:", when="@42: +traccc")
 
     # ACTS imposes requirements on the C++ standard values used by ROOT
     for _cxxstd in _cxxstd_values:

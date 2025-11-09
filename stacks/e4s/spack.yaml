@@ -118,7 +118,7 @@ spack:
   - glvis
   - gmp
   - gotcha
-  - gptune ~mpispawn
+  # - gptune ~mpispawn
   - gromacs +cp2k ^cp2k +dlaf build_system=cmake
   - h5bench
   - hdf5-vol-async

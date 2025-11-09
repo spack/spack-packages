@@ -17,6 +17,7 @@ class PySip(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("6.14.0", sha256="20c086aba387707b34cf47fd96d1a978d01e2b95807e86f8aaa960081f163b28")
     version("6.12.0", sha256="083ced94f85315493231119a63970b2ba42b1d38b38e730a70e02a99191a89c6")
     version("6.8.5", sha256="5dddd5966e9875d89ecde9d3e6ac63225f9972e4d25c09e20fa22f1819409c70")
     version("6.7.9", sha256="35d51fc10f599d3696abb50f29d068ad04763df7b77808c76b74597660f99b17")
