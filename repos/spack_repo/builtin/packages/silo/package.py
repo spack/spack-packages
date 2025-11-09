@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems import autotools, cmake
+
+from spack.package import *
+
 
 class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     """Silo is a library for reading and writing a wide variety of scientific
@@ -144,6 +146,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         default="cmake",
     )
 
+
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
     def flag_handler(self, name, flags):
@@ -281,6 +284,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def libs(self):
         shared = "+shared" in self.spec
         return find_libraries("libsilo*", root=self.prefix, shared=shared, recursive=True)
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
