@@ -128,7 +128,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-typing-extensions@4.5:", when="@0.7:")
 
         # Only part of lightning[pytorch-extra] we actually require.
-        depends_on("py-jsonargparse@4.26.1:+signatures", when="@0.5:")
+        depends_on("py-jsonargparse@4.25:+signatures", when="@0.5:")
 
         # Historical dependencies
         depends_on("py-omegaconf@2.1:", when="@:0.4.0")
@@ -228,6 +228,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-nbmake@1.3.3:", when="@0.4.1:")
         depends_on("py-nbmake@0.1:", when="@0.3.1:")
         depends_on("py-nbmake@0.1:1.1", when="@:0.3.0")
+        depends_on("py-packaging@20.9:", when="@0.7.2:")
         depends_on("py-pytest@7.3:", when="@0.6:")
         depends_on("py-pytest@6.2:", when="@0.5:")
         depends_on("py-pytest@6.1.2:")
@@ -240,10 +241,10 @@ class PyTorchgeo(PythonPackage):
 
     # https://github.com/microsoft/torchgeo/pull/1123
     conflicts("py-kornia@0.6.10:", when="@:0.4.0")
+    # https://github.com/torchgeo/torchgeo/pull/3052
+    conflicts("py-lightning@2.5.5:2.5")
     # https://github.com/microsoft/torchgeo/pull/2484
     conflicts("py-lightning@=2.5.0")
-    # https://github.com/torchgeo/torchgeo/pull/3052
-    conflicts("py-lightning@=2.5.5")
     # https://github.com/Lightning-AI/pytorch-lightning/issues/19977
     conflicts("py-lightning@2.3")
     # https://github.com/microsoft/torchgeo/pull/2151
