@@ -6,6 +6,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
+
 class PyPmtiles(PythonPackage):
     """PMTiles is a single-file archive format for tiled data"""
 
