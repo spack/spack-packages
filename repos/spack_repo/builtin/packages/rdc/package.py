@@ -57,7 +57,7 @@ class Rdc(CMakePackage):
     depends_on("grpc@1.55.0+shared", when="@:6.0")
     depends_on("grpc@1.59.1+shared", when="@6.1")
     depends_on("grpc@1.61.2+shared", when="@6.2:6.4")
-    depends_on("grpc@1.67.1+shared", when="@7.0:")
+    depends_on("grpc@1.67.1 cxxstd=17 +shared", when="@7.0:")
     depends_on("protobuf")
     depends_on("libcap")
     for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:

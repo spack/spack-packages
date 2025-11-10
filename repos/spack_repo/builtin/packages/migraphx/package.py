@@ -69,6 +69,7 @@ class Migraphx(CMakePackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("protobuf", type="link")
+    depends_on("protobuf", type=("build", "link"), when="@7.1:")
     depends_on("blaze", type="build")
     depends_on("nlohmann-json", type="link")
     depends_on("msgpack-c", type="link")
@@ -178,6 +179,9 @@ class Migraphx(CMakePackage):
                     "CMAKE_CXX_FLAGS", "-fsanitize=address -shared-libasan -I{0}".format(abspath)
                 )
             )
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("PROTOBUF_INCLUDE_DIR", self.spec["protobuf"].prefix.include))
+
         return args
 
     def test_unit_tests(self):

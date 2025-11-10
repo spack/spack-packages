@@ -65,7 +65,7 @@ class RocmValidationSuite(CMakePackage):
     )
     patch("010-add-drm-include-path.patch", when="@6.4")
     # https://github.com/ROCm/ROCmValidationSuite/pull/998
-    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0")
+    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0:")
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
     depends_on("yaml-cpp~shared")
@@ -218,5 +218,9 @@ class RocmValidationSuite(CMakePackage):
         if self.spec.satisfies("@6.3.0:"):
             args.append(self.define("CMAKE_INSTALL_RPATH", self.spec.prefix.lib))
             args.append(self.define("CPACK_PACKAGING_INSTALL_PREFIX", self.spec.prefix))
+
+        if self.spec.satisfies("@7.1:"):
+            # hipblaslt config file no longer sets this
+            args.append(self.define("hipblaslt_INCLUDE_DIR", self.spec["hipblaslt"].prefix.include))
 
         return args
