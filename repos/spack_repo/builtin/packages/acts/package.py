@@ -302,7 +302,7 @@ class Acts(CMakePackage, CudaPackage):
     variant("onnx", default=False, description="Build ONNX plugin")
     variant(
         "torch",
-        default=True,
+        default=False,
         description="Build the torch based parts of the GNN plugin",
         when="@43:",
     )
