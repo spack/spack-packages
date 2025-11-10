@@ -304,7 +304,7 @@ class Acts(CMakePackage, CudaPackage):
         "torch",
         default=False,
         description="Build the torch based parts of the GNN plugin",
-        when="@43:",
+        when="@44: +gnn",
     )
     variant("odd", default=False, description="Build the Open Data Detector", when="@19.1:")
     variant("podio", default=False, description="Build Podio plugin", when="@30.3:")
