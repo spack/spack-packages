@@ -62,7 +62,6 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     variant(
         "silex",
         default=False,
-        when="@:4.11.1",
         description="Build Silex, a GUI alternative to text browser for viewing Silo files",
     )
     variant("pic", default=True, description="Produce position-independent code (for shared libs)")
@@ -90,7 +89,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     depends_on("hdf5@1.8:1.10", when="@:4.10+hdf5")
     depends_on("hdf5@1.12:", when="@4.11:+hdf5")
     depends_on("qt +gui~framework@4.8:4.9", when="+silex")
-    depends_on("qt-base@6 +gui +widgets", when="@4.12.0: +silex")
+    depends_on("qt-base@6: +gui +widgets", when="@4.12.0: +silex")
     depends_on("qt@5.0:5", when="@:4.11.1 +silex")
     depends_on("libx11", when="+silex")
     # Xmu dependency is required on Ubuntu 18-20
