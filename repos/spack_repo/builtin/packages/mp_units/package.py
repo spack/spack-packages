@@ -32,72 +32,36 @@ class MpUnits(CMakePackage):
     generator = "Ninja"
 
     depends_on("cxx", type="build")
-    cxxstds = [ "20", "23", "26"]
+    cxxstds = ["20", "23", "26"]
     variant("cxxstd", default="23", values=cxxstds, multi=False, description="C++ standard")
 
     requires(
-            "%clang@:17,19:",
-            when='%cxx=clang',
-            msg="builds only with a GCC or Clang that support C++ 20",
-            )
+        "%clang@:17,19:",
+        when="%cxx=clang",
+        msg="builds only with a GCC or Clang that support C++ 20",
+    )
 
-
-    depends_on("fmt", when='std_format=OFF')
-    depends_on("fmt", when='std_format=AUTO')
-    depends_on("gsl-lite", when='contracts=GSL-LITE')
+    depends_on("fmt", when="std_format=OFF")
+    depends_on("fmt", when="std_format=AUTO")
+    depends_on("gsl-lite", when="contracts=GSL-LITE")
     depends_on("catch2")
 
     # package-provided variants (keep only those that change cmake options)
-    variant(
-            "cxx_modules",
-            default="ON",
-            values=("ON", "OFF"),
-            when="@2.2.0:"
-            )
-    variant(
-            "build_install",
-            default="ON",
-            values=("ON", "OFF"),
-            when="@2.5.0:"
-            )
-    variant(
-            "std_format",
-            default="AUTO",
-            values=("AUTO", "ON", "OFF"),
-            when="@2.2.0:"
-            )
-    variant(
-            "no_crtp",
-            default="AUTO",
-            values=("AUTO", "ON", "OFF"),
-            when="@2.2.0:"
-            )
-    variant(
-            "contracts",
-            default="GSL-LITE",
-            values=("NONE", "GSL-LITE", "MS-GSL"),
-            when="@2.2.0:"
-            )
-    variant(
-            "freestanding",
-            default="OFF",
-            values=("ON", "OFF"),
-            when="@2.2.0:"
-            )
-    variant(
-            "natural_units",
-            default="ON",
-            values=("ON", "OFF"),
-            when="@2.5.0:"
-            )
+    variant("cxx_modules", default="ON", values=("ON", "OFF"), when="@2.2.0:")
+    variant("build_install", default="ON", values=("ON", "OFF"), when="@2.5.0:")
+    variant("std_format", default="AUTO", values=("AUTO", "ON", "OFF"), when="@2.2.0:")
+    variant("no_crtp", default="AUTO", values=("AUTO", "ON", "OFF"), when="@2.2.0:")
+    variant("contracts", default="GSL-LITE", values=("NONE", "GSL-LITE", "MS-GSL"), when="@2.2.0:")
+    variant("freestanding", default="OFF", values=("ON", "OFF"), when="@2.2.0:")
+    variant("natural_units", default="ON", values=("ON", "OFF"), when="@2.5.0:")
 
     def cmake_args(self):
         args = []
-        args.append(self.define_from_variant('MP_UNITS_BUILD_CXX_MODULES', "cxx_modules"))
-        args.append(self.define_from_variant('MP_UNITS_BUILD_INSTALL', "build_install"))
-        args.append(self.define_from_variant('MP_UNITS_API_STD_FORMAT', "std_format"))
-        args.append(self.define_from_variant('MP_UNITS_API_NO_CRTP', 'no_crtp'))
-        args.append(self.define_from_variant('MP_UNITS_API_CONTRACTS', 'contracts'))
-        args.append(self.define_from_variant('MP_UNITS_API_FREESTANDING', 'freestanding'))
-        args.append(self.define_from_variant('MP_UNITS_API_NATURAL_UNITS', 'natural_units'))
+        args.append(self.define_from_variant("MP_UNITS_BUILD_CXX_MODULES", "cxx_modules"))
+        args.append(self.define_from_variant("MP_UNITS_BUILD_INSTALL", "build_install"))
+        args.append(self.define_from_variant("MP_UNITS_API_STD_FORMAT", "std_format"))
+        args.append(self.define_from_variant("MP_UNITS_API_NO_CRTP", "no_crtp"))
+        args.append(self.define_from_variant("MP_UNITS_API_CONTRACTS", "contracts"))
+        args.append(self.define_from_variant("MP_UNITS_API_FREESTANDING", "freestanding"))
+        args.append(self.define_from_variant("MP_UNITS_API_NATURAL_UNITS", "natural_units"))
         return args
