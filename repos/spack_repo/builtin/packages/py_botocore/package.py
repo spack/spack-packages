@@ -57,8 +57,3 @@ class PyBotocore(PythonPackage):
         depends_on("py-docutils@0.10:0.15", when="@:1.17")
 
     conflicts("py-urllib3@2.2.0")
-
-
-
-
-
