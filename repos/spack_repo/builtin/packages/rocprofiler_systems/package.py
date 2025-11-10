@@ -23,11 +23,10 @@ class RocprofilerSystems(CMakePackage):
     license("MIT")
     version(
         "7.1.0",
-        git="https://github.com/ROCm/rocprofiler-systems",
+        git="https://github.com/ROCm/rocm-systems",
         tag="rocm-7.1.0",
-        commit="d6b4f76485fe0a9491977d5b40faac8ccd3ca846",
+        commit="4179531dcd9825841e88c8082ac4068b6a65fd0a",
         submodules=True,
-        submodules_delete=["examples/openmp/external/ompvv"],
     )
     version(
         "7.0.2",
@@ -213,9 +212,22 @@ class RocprofilerSystems(CMakePackage):
     patch(
         "https://github.com/ROCm/timemory/commit/b5e41aa9e4b83ab0868211d81924ac4f639bd998.patch?full_index=1",
         sha256="2696f59dd9b6e74bf44bfcc56a0536c3f1f3845c29fac18f0224dee72bd9225f",
-        when="+internal-tbb",
-        working_dir="external/tbb",
+        when="@7.1: %rocmcc",
+        working_dir="projects/rocprofiler-systems/external/timemory",
     )
+    patch(
+        "https://github.com/ROCm/timemory/commit/b5e41aa9e4b83ab0868211d81924ac4f639bd998.patch?full_index=1",
+        sha256="2696f59dd9b6e74bf44bfcc56a0536c3f1f3845c29fac18f0224dee72bd9225f",
+        when="@:7.0 %rocmcc",
+        working_dir="external/timemory",
+    )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.1:"):
+            return "projects/rocprofiler-systems"
+        else:
+            return "."
 
     def cmake_args(self):
         spec = self.spec

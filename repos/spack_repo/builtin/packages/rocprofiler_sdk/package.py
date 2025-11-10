@@ -98,6 +98,7 @@ class RocprofilerSdk(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("sqlite", when="@7:")
+    depends_on("elfutils", when="@7.1:")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
@@ -125,6 +126,12 @@ class RocprofilerSdk(CMakePackage):
 
     for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
+
+    def cmake_args(self):
+        args = []
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ElfUtils_ROOT_DIR", self.spec["elfutils"].prefix))
+        return args
 
     def setup_run_environment(self, env):
         if not self.spec.external:
