@@ -1,9 +1,10 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class TorchScatter(CMakePackage):
+class TorchScatter(CMakePackage, CudaPackage):
     """Torch Extension Library of Optimized Scatter Operations.
 
     This version of the package is consumable by downstream users via CMake
@@ -26,8 +27,6 @@ class TorchScatter(CMakePackage):
     version("2.0.5", sha256="e29b364beaa9c84a99e0e236be89ed19d4452d89010ff736184ddcce488b47f6")
     version("2.0.4", sha256="4fdadd6587f16ef3ff63c52f313f0c9dd97d13ae6496867fe566c309a4ea4036")
     version("2.0.3", sha256="ff2ca1468cb4e49b65bea8f889971f196f209231fbee0cc8bd1615ecb367400b")
-
-    variant("cuda", default=False, description="Build with CUDA support")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
