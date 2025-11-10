@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PySarifTools(PythonPackage):
-    """ A set of command line tools and Python library for working with SARIF files. """
+    """A set of command line tools and Python library for working with SARIF files."""
 
     homepage = "https://github.com/microsoft/sarif-tools"
     pypi = "sarif_tools/sarif_tools-3.0.5.tar.gz"

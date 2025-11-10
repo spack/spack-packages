@@ -29,6 +29,5 @@ class PyAlembic(PythonPackage):
     depends_on("py-typing-extensions@4.12:", type=("build", "run"), when="@1.16:")
     depends_on("py-tomli", type=("build", "run"), when="@1.16: ^python@:3.10")
 
-
     depends_on("py-python-dateutil", type=("build", "run"), when="@:1.5")
     depends_on("py-python-editor@0.3:", type=("build", "run"), when="@:1.5")
