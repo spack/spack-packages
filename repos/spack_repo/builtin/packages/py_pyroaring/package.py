@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class PyPyroaring(PythonPackage):
-    """An efficient and light-weight ordered set of integers. This is a Python wrapper for the C library CRoaring."""
+    """An efficient and light-weight ordered set of integers. 
+    This is a Python wrapper for the C library CRoaring."""
 
     homepage = "https://github.com/Ezibenroc/PyRoaringBitMap"
     pypi = "pyroaring/pyroaring-1.0.3.tar.gz"
