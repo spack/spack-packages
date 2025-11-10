@@ -48,13 +48,55 @@ class MpUnits(CMakePackage):
     depends_on("catch2")
 
     # package-provided variants (keep only those that change cmake options)
-    variant("cxx_modules", default="ON", values=("ON", "OFF"), when="@2.2.0:")
-    variant("build_install", default="ON", values=("ON", "OFF"), when="@2.5.0:")
-    variant("std_format", default="AUTO", values=("AUTO", "ON", "OFF"), when="@2.2.0:")
-    variant("no_crtp", default="AUTO", values=("AUTO", "ON", "OFF"), when="@2.2.0:")
-    variant("contracts", default="GSL-LITE", values=("NONE", "GSL-LITE", "MS-GSL"), when="@2.2.0:")
-    variant("freestanding", default="OFF", values=("ON", "OFF"), when="@2.2.0:")
-    variant("natural_units", default="ON", values=("ON", "OFF"), when="@2.5.0:")
+    variant(
+        "cxx_modules",
+        default="ON",
+        values=("ON", "OFF"),
+        when="@2.2.0:",
+        description="Adds C++ modules to the default targets.",
+    )
+    variant(
+        "build_install",
+        default="ON",
+        values=("ON", "OFF"),
+        when="@2.5.0:",
+        description="Creates an installable target. Users may want to turn this off for example when consuming the library via CMake's add_subdirectory or similar mechanisms.",
+    )
+    variant(
+        "std_format",
+        default="AUTO",
+        values=("AUTO", "ON", "OFF"),
+        when="@2.2.0:",
+        description="Enables the usage of std::format and associated facilities for text formatting. If it is not supported, then the {fmt} library is used instead.",
+    )
+    variant(
+        "no_crtp",
+        default="AUTO",
+        values=("AUTO", "ON", "OFF"),
+        when="@2.2.0:",
+        description="Removes the need for the usage of the CRTP idiom in the quantity_spec definitions.",
+    )
+    variant(
+        "contracts",
+        default="GSL-LITE",
+        values=("NONE", "GSL-LITE", "MS-GSL"),
+        when="@2.2.0:",
+        description="Enables checking of preconditions and additional asserts in the code.",
+    )
+    variant(
+        "freestanding",
+        default="OFF",
+        values=("ON", "OFF"),
+        when="@2.2.0:",
+        description="Configures the library in the freestanding mode. When enabled, the library's source code should build with the compiler's -ffreestanding compilation option without any issues.",
+    )
+    variant(
+        "natural_units",
+        default="ON",
+        values=("ON", "OFF"),
+        when="@2.5.0:",
+        description="Enables experimental natural units systems support.",
+    )
 
     def cmake_args(self):
         args = []
