@@ -5,7 +5,14 @@ spack:
   - ../../.ci/gitlab/
   packages:
     all:
-      require: target=x86_64_v3
+      require:
+      - target=x86_64_v3
+      - spec: '%gcc-runtime@12'
+        when: '%gcc@12'
+      - spec: '%gcc-runtime@11'
+        when: '%gcc@11'
+      - spec: '%gcc-runtime@10'
+        when: '%gcc@10'
     tbb:
       require: intel-tbb
   definitions:
@@ -52,6 +59,7 @@ spack:
   concretizer:
     # Hacky way to allow bootstrapping the compiler
     unify: when_possible
+    compiler_mixing: false
   ci:
     pipeline-gen:
     - build-job:
