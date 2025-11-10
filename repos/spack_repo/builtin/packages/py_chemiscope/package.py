@@ -20,7 +20,7 @@ class PyChemiscope(PythonPackage):
     version("0.8.6", sha256="d5e9a95f3b6106a281c0c7bfad837aac504052b841b36dee690187cd3545140d")
 
     # pyproject.toml requires-python
-    depends_on("python@2.10:", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "run"))
 
     # pyproject.toml [build-system]
     depends_on("py-setuptools", type="build")
