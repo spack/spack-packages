@@ -18,15 +18,15 @@ spack:
   definitions:
   - gcc_system_packages:
     - matrix:
-      - - zlib-ng
+      - - zlib-ng@2.2.4
         - zlib-ng@2.0.7
         - zlib-ng@2.0.7 cflags=-O3
-        - tcl
+        - tcl ^zlib-ng@2.2.4
         - tcl ^zlib-ng@2.0.7 cflags=-O3
-        - hdf5
+        - hdf5+mpi^openmpi
         - hdf5~mpi
         - hdf5+hl+mpi ^mpich
-        - trilinos
+        - trilinos ^openmpi
         - trilinos +hdf5 ^hdf5+hl+mpi ^mpich
         - gcc@12.3
         - mpileaks
@@ -37,10 +37,10 @@ spack:
         - vim
       - ['%gcc@11']
   - gcc_old_packages:
-    - zlib-ng%gcc@10
+    - zlib-ng@2.2.4%gcc@10
   - clang_packages:
     - matrix:
-      - [zlib-ng, tcl ^zlib-ng@2.0.7]
+      - [zlib-ng@2.2.4, tcl ^zlib-ng@2.0.7]
       - ['%clang@14']
   - gcc_spack_built_packages:
     - matrix:
