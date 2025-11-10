@@ -762,6 +762,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     hypre_rocm_libs += hypre["rocsparse"].libs
                 if "^rocrand" in hypre:
                     hypre_rocm_libs += hypre["rocrand"].libs
+                if hypre.version >= Version("2.29.0"):
+                    if "^rocsolver" in hypre:
+                        hypre_rocm_libs += hypre["rocsolver"].libs
+                    if "^rocblas" in hypre:
+                        hypre_rocm_libs += hypre["rocblas"].libs
                 hypre_gpu_libs = " " + ld_flags_from_library_list(hypre_rocm_libs)
             options += [
                 "HYPRE_OPT=-I%s" % hypre.prefix.include,
