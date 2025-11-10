@@ -22,10 +22,6 @@ class PyMetatrain(PythonPackage):
 
     variant("soap_bpnn", default=False, description="Enable SOAP-BPNN architecture")
 
-    # pyproject.toml [project]
-    depends_on("python@3.9:", type=("build", "run"), when="@2025.10:")
-    depends_on("python@3.10:", type=("build", "run"), when="@2025.11:")
-
     # pyproject.toml [build-system]
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-setuptools-scm@8:", type="build")
