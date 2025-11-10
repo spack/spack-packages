@@ -6,6 +6,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
+
 class PySupermercado(PythonPackage):
     """supermercado extends the functionality of mercantile with additional commands"""
 

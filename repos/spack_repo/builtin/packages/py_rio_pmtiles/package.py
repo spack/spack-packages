@@ -6,6 +6,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
+
 class PyRioPmtiles(PythonPackage):
     """Library and utilities to write and read PMTiles archives - cloud-optimized archives of map tiles."""
 
@@ -27,4 +28,3 @@ class PyRioPmtiles(PythonPackage):
     depends_on("py-shapely@2")
     depends_on("py-supermercado")
     depends_on("py-tqdm@4")
-

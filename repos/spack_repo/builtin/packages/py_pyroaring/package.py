@@ -20,4 +20,3 @@ class PyPyroaring(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("cxx", type="build")
     depends_on("py-cython@3.0.2:", type="build")
-
