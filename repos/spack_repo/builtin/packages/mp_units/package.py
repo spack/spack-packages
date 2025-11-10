@@ -60,14 +60,20 @@ class MpUnits(CMakePackage):
         default="ON",
         values=("ON", "OFF"),
         when="@2.5.0:",
-        description="Creates an installable target. Users may want to turn this off for example when consuming the library via CMake's add_subdirectory or similar mechanisms.",
+        description=(
+            "Creates an installable target. Users may want to turn this off for example when consuming the library "
+            "via CMake's add_subdirectory or similar mechanisms."
+        ),
     )
     variant(
         "std_format",
         default="AUTO",
         values=("AUTO", "ON", "OFF"),
         when="@2.2.0:",
-        description="Enables the usage of std::format and associated facilities for text formatting. If it is not supported, then the {fmt} library is used instead.",
+        description=(
+            "Enables the usage of std::format and associated facilities for text formatting. If it is not supported, "
+            "then the {fmt} library is used instead."
+        ),
     )
     variant(
         "no_crtp",
@@ -88,7 +94,10 @@ class MpUnits(CMakePackage):
         default="OFF",
         values=("ON", "OFF"),
         when="@2.2.0:",
-        description="Configures the library in the freestanding mode. When enabled, the library's source code should build with the compiler's -ffreestanding compilation option without any issues.",
+        description=(
+            "Configures the library in the freestanding mode. When enabled, the library's source code should build "
+            "with the compiler's -ffreestanding compilation option without any issues."
+        ),
     )
     variant(
         "natural_units",
