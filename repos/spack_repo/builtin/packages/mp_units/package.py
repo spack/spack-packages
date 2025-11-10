@@ -61,8 +61,8 @@ class MpUnits(CMakePackage):
         values=("ON", "OFF"),
         when="@2.5.0:",
         description=(
-            "Creates an installable target. Users may want to turn this off for example when consuming the library "
-            "via CMake's add_subdirectory or similar mechanisms."
+            "Creates an installable target. Users may want to turn this off for example when "
+            "consuming the library via CMake's add_subdirectory or similar mechanisms."
         ),
     )
     variant(
@@ -71,8 +71,8 @@ class MpUnits(CMakePackage):
         values=("AUTO", "ON", "OFF"),
         when="@2.2.0:",
         description=(
-            "Enables the usage of std::format and associated facilities for text formatting. If it is not supported, "
-            "then the {fmt} library is used instead."
+            "Enables the usage of std::format and associated facilities for text formatting. If "
+            "it is not supported, then the {fmt} library is used instead."
         ),
     )
     variant(
@@ -80,7 +80,9 @@ class MpUnits(CMakePackage):
         default="AUTO",
         values=("AUTO", "ON", "OFF"),
         when="@2.2.0:",
-        description="Removes the need for the usage of the CRTP idiom in the quantity_spec definitions.",
+        description=(
+            "Removes the need for the usage of the CRTP idiom in the quantity_spec definitions."
+        ),
     )
     variant(
         "contracts",
@@ -95,8 +97,9 @@ class MpUnits(CMakePackage):
         values=("ON", "OFF"),
         when="@2.2.0:",
         description=(
-            "Configures the library in the freestanding mode. When enabled, the library's source code should build "
-            "with the compiler's -ffreestanding compilation option without any issues."
+            "Configures the library in the freestanding mode. When enabled, the library's source "
+            "code should build with the compiler's -ffreestanding compilation option without any "
+            "issues."
         ),
     )
     variant(
