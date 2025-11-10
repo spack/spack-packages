@@ -60,6 +60,7 @@ class PyRasterio(PythonPackage):
         # https://github.com/rasterio/rasterio/issues/3024
         depends_on("py-numpy@:1", when="@:1.3.9")
 
+    with default_args(type=("build", "link")):
         # From README.rst and setup.py
         depends_on("gdal@3.5:", when="@1.4:")
         depends_on("gdal@3.1:", when="@1.3:")
