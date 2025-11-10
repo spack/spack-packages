@@ -17,12 +17,15 @@ class PySphericart(PythonPackage):
 
     maintainers("RMeli", "luthaf", "HaoZeke", "rubber-duck-debug")
 
-    version("1.0.3", sha256="007b21f075d5ba331519fe5cec6acf28d5bd458a970a158973d51047795afd12")
+    version("1.0.5", sha256="b1e424d85f2460bf1884f0e42355af7c846e23c4a8789a0aca545e8117edbc6e")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+
+    # pyproject.toml
     depends_on("py-wheel@0.36:", type="build")
     depends_on("py-setuptools@44:", type="build")
+    depends_on("cmake@3.30:", type="build")
 
     depends_on("py-numpy", type=("build", "run"))
 
