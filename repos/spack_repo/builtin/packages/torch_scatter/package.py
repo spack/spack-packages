@@ -28,11 +28,16 @@ class TorchScatter(CMakePackage, CudaPackage):
     version("2.0.4", sha256="4fdadd6587f16ef3ff63c52f313f0c9dd97d13ae6496867fe566c309a4ea4036")
     version("2.0.3", sha256="ff2ca1468cb4e49b65bea8f889971f196f209231fbee0cc8bd1615ecb367400b")
 
+    variant("python", default=False, description="Also ensure python bindings are available")
+
     depends_on("cxx", type="build")
     depends_on("c", type="build")
 
     depends_on("py-torch")
     depends_on("py-torch +cuda", when="+cuda")
+
+    depends_on("py-torch-scatter@master", when="@master +python")
+    depends_on("py-torch-scatter@2.1.2", when="@2.1.2 +python")
 
     conflicts("py-torch@2.1:", when="@:2.1.2")
 
@@ -40,6 +45,6 @@ class TorchScatter(CMakePackage, CudaPackage):
         args = [
             self.define_from_variant("WITH_CUDA", "cuda"),
             self.define("CMAKE_CXX_STANDARD", "20"),
-            self.define("WITH_PYTHON", True),
+            self.define("WITH_PYTHON", False),
         ]
         return args
