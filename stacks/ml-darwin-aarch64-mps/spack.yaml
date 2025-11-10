@@ -18,6 +18,8 @@ spack:
       require:
       - ~fortran
       - target=aarch64
+    python:
+      require: "@3.13:"
 
   specs:
   # Hugging Face
