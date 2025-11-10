@@ -244,9 +244,11 @@ class Rocblas(CMakePackage):
             # https://github.com/ROCm/Tensile/blob/93e10678a0ced7843d9332b80bc17ebf9a166e8e/Tensile/Parallel.py#L38
             args.append(self.define("Tensile_CPU_THREADS", min(16, make_jobs)))
 
-        # See https://github.com/ROCm/rocBLAS/commit/c1895ba4bb3f4f5947f3818ebd155cf71a27b634
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         # See https://github.com/ROCm/rocBLAS/issues/1196
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
