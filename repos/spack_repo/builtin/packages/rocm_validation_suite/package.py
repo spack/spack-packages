@@ -221,6 +221,8 @@ class RocmValidationSuite(CMakePackage):
 
         if self.spec.satisfies("@7.1:"):
             # hipblaslt config file no longer sets this
-            args.append(self.define("hipblaslt_INCLUDE_DIR", self.spec["hipblaslt"].prefix.include))
+            args.append(
+                self.define("hipblaslt_INCLUDE_DIR", self.spec["hipblaslt"].prefix.include)
+            )
 
         return args
