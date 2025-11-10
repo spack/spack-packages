@@ -85,7 +85,7 @@ class ComposableKernel(CMakePackage):
         "5.7.1",
         "5.7.0",
     ]:
-        depends_on("hip@" + ver, when="@" + ver)
+        depends_on("hip+rocm@" + ver, when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, when="@" + ver)
         depends_on("rocm-cmake@" + ver, when="@" + ver, type="build")
 
