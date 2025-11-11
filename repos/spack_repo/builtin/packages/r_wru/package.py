@@ -44,6 +44,8 @@ class RWru(RPackage):
     version("0.0-2", sha256="4ad5a09a5663906ea546fd9169444a559643d87ac18115e88b538a9260d40d4d")
     version("0.0-1", sha256="604a3e0f04fa3b1c5ee13543c0e3841f5a050f784f561d7ed8576542a27584ae")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.2.0:", type=("build", "run"), when="@0.0-1:")
     depends_on("r@3.5.0:", type=("build", "run"), when="@0.0-10:")
     depends_on("r@4.1.0:", type=("build", "run"), when="@1.0.0:")

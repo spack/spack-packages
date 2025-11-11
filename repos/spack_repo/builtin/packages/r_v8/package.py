@@ -24,6 +24,8 @@ class RV8(RPackage):
     version("4.0.0", sha256="146a4cb671264f865ac2f2e35bfdfb37e2df70e4f6784354fb6e8a80a19dbbc8")
     version("3.6.0", sha256="a3969898bf4a7c13d3130fae0d385cd048d46372ff4a412917b914b159261377")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-rcpp@0.12.12:", type=("build", "run"))
     depends_on("r-jsonlite@1.0:", type=("build", "run"))
     depends_on("r-curl@1.0:", type=("build", "run"))
