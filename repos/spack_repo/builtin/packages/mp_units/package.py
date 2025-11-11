@@ -16,6 +16,7 @@ class MpUnits(CMakePackage):
 
     license("MIT", checked_by="maiterth")
 
+    version("master", branch="master")
     version("2.4.0", sha256="777e53ba8da891161e90a93b90b92fa66951d49aaae1b0203ddf934532bbeb56")
     version("2.3.0", sha256="ce2f167ff788ae769e73ea7676f15302827cd37908da3928dcae048f916898d6")
     version("2.2.1", sha256="ce5edb27fad9c54b388040341a03d7f2462d61dcedad85b4c983c0e648a91bac")
@@ -28,6 +29,7 @@ class MpUnits(CMakePackage):
     version("0.6.0", sha256="c9d8a98f7845024581a69d425d2de0e786f0c70d7a72358279ea67e1cf377529")
 
     # build tools / deps
+    depends_on("cmake@3.25:", type="build")
     depends_on("ninja", type="build")
     # keep generator to hint Spack to prefer Ninja (only works if the selected cmake supports it)
     generator = "Ninja"
@@ -110,13 +112,21 @@ class MpUnits(CMakePackage):
         description="Enables experimental natural units systems support.",
     )
 
+    patch("format_header.patch", when="@2.2.0:2.4.0 std_format=ON")
+    patch("format_header.patch", when="@2.2.0:2.4.0 std_format=AUTO")
+
     def cmake_args(self):
         args = []
-        args.append(self.define_from_variant("MP_UNITS_BUILD_CXX_MODULES", "cxx_modules"))
-        args.append(self.define_from_variant("MP_UNITS_BUILD_INSTALL", "build_install"))
-        args.append(self.define_from_variant("MP_UNITS_API_STD_FORMAT", "std_format"))
-        args.append(self.define_from_variant("MP_UNITS_API_NO_CRTP", "no_crtp"))
-        args.append(self.define_from_variant("MP_UNITS_API_CONTRACTS", "contracts"))
-        args.append(self.define_from_variant("MP_UNITS_API_FREESTANDING", "freestanding"))
-        args.append(self.define_from_variant("MP_UNITS_API_NATURAL_UNITS", "natural_units"))
+        if self.spec.satisfies("@2.2.0:"):
+            args.append(self.define_from_variant("MP_UNITS_BUILD_CXX_MODULES", "cxx_modules"))
+            args.append(self.define_from_variant("MP_UNITS_API_STD_FORMAT", "std_format"))
+            args.append(self.define_from_variant("MP_UNITS_API_NO_CRTP", "no_crtp"))
+            args.append(self.define_from_variant("MP_UNITS_API_CONTRACTS", "contracts"))
+            args.append(self.define_from_variant("MP_UNITS_API_FREESTANDING", "freestanding"))
+
+        # MP_UNITS_API_NATURAL_UNITS and MP_UNITS_BUILD_INSTALL were added later — guard them.
+        if self.spec.satisfies("@2.5.0:"):
+            args.append(self.define_from_variant("MP_UNITS_API_NATURAL_UNITS", "natural_units"))
+            args.append(self.define_from_variant("MP_UNITS_BUILD_INSTALL", "build_install"))
+
         return args

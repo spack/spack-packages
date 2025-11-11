@@ -1,0 +1,15 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index f698ac53..24a40a9b 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -47,6 +47,10 @@ if(${projectPrefix}BUILD_AS_SYSTEM_HEADERS)
+ endif()
+ 
+ # check for C++ features
++# CMake provided:
++include(CheckIncludeFileCXX)
++check_include_file_cxx("format" ${projectPrefix}LIB_FORMAT_SUPPORTED)
++# custom feature_supported:
+ check_cxx_feature_supported(__cpp_lib_format ${projectPrefix}LIB_FORMAT_SUPPORTED)
+ check_cxx_feature_supported("__cpp_constexpr >= 202211L" ${projectPrefix}STATIC_CONSTEXPR_VARS_IN_CONSTEXPR_FUNCTIONS)
+ check_cxx_feature_supported(__cpp_explicit_this_parameter ${projectPrefix}EXPLICIT_THIS_PARAMETER_SUPPORTED)
