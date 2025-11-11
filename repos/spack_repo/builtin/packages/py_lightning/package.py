@@ -20,6 +20,7 @@ class PyLightning(PythonPackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("2.5.6", sha256="57b6abe87080895bc237fb7f36b7b4abaa2793760cbca00e3907e56607e0ed27")
     version("2.5.5", sha256="4d3d66c5b1481364a7e6a1ce8ddde1777a04fa740a3145ec218a9941aed7dd30")
     version("2.5.4", sha256="cec9459a356117f11c501b591fe80f327947614fc345dc6b6c9f8d4d373f214e")
     version("2.5.3", sha256="4ed3e12369a1e0f928beecf5c9f5efdabda60a9216057954851e2d89f1abecde")

@@ -31,6 +31,8 @@ class PyPlotly(PythonPackage):
 
     depends_on("python@3.8:", when="@5.19.0:", type=("build", "run"))
     depends_on("python@3.6:3.11", when="@5.2.2:5.18.0", type=("build", "run"))
+    # collections.MutableSequence moved to collections.abc.MutableSequence
+    depends_on("python@:3.9", when="@2", type=("build", "run"))
 
     depends_on("py-setuptools@61:", when="@6.1:", type="build")
     depends_on("py-setuptools@40.8.0:", when="@5.14.1:", type="build")

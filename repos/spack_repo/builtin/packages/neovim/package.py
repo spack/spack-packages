@@ -20,6 +20,8 @@ class Neovim(CMakePackage):
 
     version("master", branch="master")
     version("stable", tag="stable")
+    version("0.11.5", sha256="c63450dfb42bb0115cd5e959f81c77989e1c8fd020d5e3f1e6d897154ce8b771")
+    version("0.11.4", sha256="83cf9543bedab8bec8c11cd50ccd9a4bf1570420a914b9a28f83ad100ca6d524")
     version("0.11.3", sha256="7f1ce3cc9fe6c93337e22a4bc16bee71e041218cc9177078bd288c4a435dbef0")
     version("0.11.2", sha256="324759a1bcd1a80b32a7eae1516ee761ec3e566d08284a24c4c7ca59079aabfa")
     version("0.10.1", sha256="edce96e79903adfcb3c41e9a8238511946325ea9568fde177a70a614501af689")
