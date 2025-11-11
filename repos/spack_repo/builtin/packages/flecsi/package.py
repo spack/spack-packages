@@ -72,9 +72,8 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.19:")
     depends_on("cmake@3.23:", when="@2.3:")
     depends_on("boost +atomic +filesystem +regex +system", when="@:2.2.1")
-    depends_on("kokkos@3.2.00:", when="+kokkos")
-    depends_on("kokkos@3.7:", when="+kokkos @2.3:")
-    depends_on("kokkos@3.7:", when="@2.4:")
+    depends_on("kokkos", when="+kokkos @2.3:")
+    depends_on("kokkos", when="@2.4:")
     depends_on("kokkos +cuda", when="+kokkos +cuda")
     requires("^kokkos +cuda_constexpr +cuda_lambda", when="^kokkos +cuda")
     depends_on("kokkos +rocm", when="+kokkos +rocm")
@@ -126,7 +125,6 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^hpx networking=none", when="backend=hpx")
 
     for cxxstd in ("11", "14"):
-        conflicts(f"^kokkos cxxstd={cxxstd}")
         conflicts(f"^boost cxxstd={cxxstd}")
         conflicts(f"^hpx cxxstd={cxxstd}", when="backend=hpx")
 
