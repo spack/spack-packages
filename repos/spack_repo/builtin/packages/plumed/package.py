@@ -259,7 +259,7 @@ class Plumed(AutotoolsPackage):
                 configure_opts.extend(["STATIC_LIBS=-mt_mpi"])
 
         enable_libmetatomic = self.spec.satisfies("+metatomic")
-        enable_libtorch = self.spec.satisfies("+pytorch") or self.spec.satisfies("+metatomic")
+        enable_libtorch = self.spec.satisfies("+pytorch")
 
         extra_ldflags = []
         extra_libs = []
