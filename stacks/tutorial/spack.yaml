@@ -64,7 +64,7 @@ spack:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/tutorial-ubuntu-22.04:f626551836c51800fe45b3e40674daab730fba97fb45393296aef05b185c3ebc
+          name: ghcr.io/spack/tutorial-ubuntu-22.04:main
           entrypoint: ['']
   cdash:
     build-group: Spack Tutorial
