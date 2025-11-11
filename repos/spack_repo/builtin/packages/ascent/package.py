@@ -204,6 +204,10 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # causes duplicate state issues when running compiled python modules.
     with when("+python"):
         depends_on("python+shared", type=("build", "link", "run"))
+
+        # https://github.com/Alpine-DAV/ascent/issues/1628
+        depends_on("python@:3.11", type=("build", "link", "run"))
+
         extends("python")
         depends_on("py-numpy", type=("build", "link", "run"))
         depends_on("py-pip", type="build")
