@@ -64,7 +64,13 @@ class PkgConfig(AutotoolsPackage):
             # the cycle by using the internal glib.
             config_args.append("--with-internal-glib")
 
-        for strict_compiler in ("%oneapi", "%cce", "%apple-clang@15:", "%clang@15:"):
+        for strict_compiler in (
+            "%oneapi",
+            "%cce",
+            "%apple-clang@15:",
+            "%clang@15:",
+            "%llvm-amdgpu",
+        ):
             if spec.satisfies(strict_compiler):
                 config_args.append("CFLAGS=-Wno-error=int-conversion")
                 break

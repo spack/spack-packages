@@ -22,6 +22,7 @@ class Rocfft(CMakePackage):
     libraries = ["librocfft"]
 
     license("MIT")
+    version("7.0.2", sha256="05ccbdcb9d2860c72ff9665670aac44286aaaeabd4fb4e9530e7f4f1b5b01c71")
     version("7.0.0", sha256="d0fb29b9ff90f603045cbe0f2f2d5db6fb9ff5d4d667d304565b80a62c1ed767")
     version("6.4.3", sha256="9ccd198ab1ec1b729992d00fbe5f9e3955ed77690974d8bd1b713539b6c21c7e")
     version("6.4.2", sha256="5dd068127129ad537de176d21d009f1b1b9540274dee13c486e9c4607629aa77")
@@ -96,6 +97,7 @@ class Rocfft(CMakePackage):
         "6.4.2",
         "6.4.3",
         "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")

@@ -24,6 +24,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.24.1", sha256="d77f3fd5187a72ce5b68a056aa8fcccd37b6dc7a388991d1d8fa0bde32b0abc8")
     version("3.24.0", sha256="cc9063d80cae3ca87dd34586a92bac49613818a0689d9eac1bd91a799c5d0983")
     version("3.23.7", sha256="f4fb2bad8c80319e723987868e87d8384f2ae2162e07917d4c41d6e467b1d254")
     version("3.23.6", sha256="07e0492c5c38d2fc5aa6dd981c450086f3b88f8834df11247a87d4becfb85c72")
@@ -243,6 +244,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # the patch is an adaptation of the original commit to 3.7.5
     patch("disable-DEPRECATED_ENUM.diff", when="@3.14.1 +cuda")
     patch("revert-3.18.0-ver-format-for-dealii.patch", when="@3.18.0")
+    patch(
+        "https://gitlab.com/petsc/petsc/-/commit/8ecb7dbc89a1f2ff56020c12a12db63d6a1842dc.diff",
+        when="@3.24.1",
+        sha256="fa5ef56e4d26b5a29e3545b3f07cfa12c767f31ce513b03aa75fa65d931d81ab",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -602,6 +608,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             if not spec.satisfies("cuda_arch=none"):
                 cuda_arch = spec.variants["cuda_arch"].value
                 options.append("--with-cuda-gencodearch={0}".format(cuda_arch[0]))
+        else:
+            options.append("--with-cudac=0")
         if "+rocm" in spec:
             if not spec.satisfies("amdgpu_target=none"):
                 hip_arch = spec.variants["amdgpu_target"].value
@@ -623,6 +631,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 hip_lib += spec[pkg].libs.joined() + " "
             options.append("HIPPPFLAGS=%s" % hip_inc)
             options.append("--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib, spec["hip"].prefix.lib))
+        else:
+            options.append("--with-hipc=0")
 
         if "superlu-dist" in spec:
             if spec.satisfies("@3.10.3:3.15"):
