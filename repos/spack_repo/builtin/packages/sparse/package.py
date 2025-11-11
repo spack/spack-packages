@@ -22,17 +22,20 @@ class Sparse(MakefilePackage):
 
     variant("pic", default=True, description="Build with position independent code")
 
+    patch(
+        "spTest_time_patch.patch",
+        sha256="e10ee8e790bfbc198ba065bf3f9b4b4526b61997dfc238c922c8e5c429043657",
+    )
+
     depends_on("c", type="build")  # generated
 
     def edit(self, spec, prefix):
         with working_dir("./src"):
             makefile = FileFilter("Makefile")
+            sparse_cflags = "CFLAGS = -O2 {0}".format(self.compiler.c99_flag)
             if "+pic" in self.spec:
-                makefile.filter(
-                    "CFLAGS = .*", "CFLAGS = -O2 {0}".format(self.compiler.cc_pic_flag)
-                )
-            else:
-                makefile.filter("CFLAGS = .*", "CFLAGS = -O2")
+                sparse_cflags += " {0}".format(self.compiler.cc_pic_flag)
+            makefile.filter("CFLAGS = .*", sparse_cflags)
             makefile.filter("CC = .*", "CC = {0}".format(spack_cc))
             makefile.filter("LIBRARY = .*", "LIBRARY = ../lib/libsparse.a")
 
