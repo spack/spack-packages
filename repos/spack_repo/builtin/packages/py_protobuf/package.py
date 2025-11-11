@@ -75,7 +75,7 @@ class PyProtobuf(PythonPackage):
 
     # Minor version must match protobuf
     for ver in range(32, 33):
-        depends_on(f"protobuf@3.{ver}", when=f"@6.{ver}")
+        depends_on(f"protobuf@{ver}", when=f"@6.{ver}")
     for ver in range(26, 29):
         depends_on(f"protobuf@3.{ver}", when=f"@5.{ver}")
     for ver in range(21, 26):
