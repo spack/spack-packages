@@ -136,6 +136,9 @@ class Rocwmma(CMakePackage):
         )
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         return args
