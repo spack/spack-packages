@@ -64,7 +64,7 @@ spack:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/tutorial-ubuntu-22.04:pr-70  # FIXME when merged
+          name: ghcr.io/spack/tutorial-ubuntu-22.04:f626551836c51800fe45b3e40674daab730fba97fb45393296aef05b185c3ebc
           entrypoint: ['']
   cdash:
     build-group: Spack Tutorial

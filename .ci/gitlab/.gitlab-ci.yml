@@ -580,7 +580,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:pr-70  # fixme when merged
+  image: ghcr.io/spack/tutorial-ubuntu-22.04:f626551836c51800fe45b3e40674daab730fba97fb45393296aef05b185c3ebc
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
