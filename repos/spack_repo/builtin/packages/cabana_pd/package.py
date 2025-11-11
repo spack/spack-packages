@@ -39,8 +39,8 @@ class CabanaPd(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"cabana {cuda_dep}", when=cuda_dep)
 
     for arch in ROCmPackage.amdgpu_targets:
-        rocm_dep = "+rocm amdgpu_target={0}".format(arch)
-        depends_on("cabana {0}".format(rocm_dep), when=rocm_dep)
+        rocm_dep = f"+rocm amdgpu_target={arch}"
+        depends_on(f"cabana {rocm_dep}", when=rocm_dep)
 
     def cmake_args(self):
         args = []
