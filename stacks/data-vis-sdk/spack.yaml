@@ -44,7 +44,7 @@ spack:
       - "@14:"
       - target=x86_64_v3
       # Minimize LLVM
-      variants: ~lldb~lld~libomptarget~polly~gold libunwind=none compiler-rt=none
+      variants: ~lldb~lld~offload~libomptarget~polly~gold libunwind=none compiler-rt=none
     libllvm:
       require: ["llvm"]
     visit:

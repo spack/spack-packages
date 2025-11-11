@@ -27,5 +27,8 @@ class RDeldir(RPackage):
     version("0.1-21", sha256="b9dabcc1813c7a0f8edaf720a94bdd611a83baf3d3e52e861d352369e815690c")
     version("0.1-14", sha256="89d365a980ef8589971e5d311c6bd59fe32c48dbac8000a880b9655032c99289")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@0.99:", type=("build", "run"))
     depends_on("r@3.5.0:", type=("build", "run"), when="@0.2-3:")
