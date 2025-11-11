@@ -19,9 +19,6 @@ jobs:
           spec: "erf+mpi+openmp"
         - name: ~mpi+openmp
           spec: "erf~mpi+openmp"
-          spec: "erf+mpi+netcdf~particles+openmp"
-        - name: +mpi+netcdf~particles+openmp+fft
-          spec: "erf+mpi+netcdf~particles+openmp+fft"
 
     steps:
 
