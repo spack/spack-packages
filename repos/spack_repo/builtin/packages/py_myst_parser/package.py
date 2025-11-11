@@ -39,8 +39,8 @@ class PyMystParser(PythonPackage):
     depends_on("py-flit-core@3.4:3", type="build")
 
     depends_on("py-docutils@0.15:0.19", type=("build", "run"), when="@:1")
-    depends_on("py-docutils@0.16:0.20", type=("build", "run"), when="@2:")
-    depends_on("py-docutils@0.18:0.21", type=("build", "run"), when="@3:")
+    depends_on("py-docutils@0.16:0.20", type=("build", "run"), when="@2")
+    depends_on("py-docutils@0.18:0.21", type=("build", "run"), when="@3")
     depends_on("py-docutils@0.19:0.21", type=("build", "run"), when="@4:")
 
     depends_on("py-jinja2", type=("build", "run"))  # let sphinx decide version

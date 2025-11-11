@@ -25,4 +25,6 @@ class RCpp11(RPackage):
     version("0.4.0", sha256="1768fd07dc30dfbbf8f3fb1a1183947cb7e1dfd909165c4d612a63c163a41e87")
     version("0.2.5", sha256="6fef9306c0c3043252c987e77c99ef679b2ea46dffafae318dbeb38ad21a2e20")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.5.0:", when="@0.4.6:", type=("build", "run"))
