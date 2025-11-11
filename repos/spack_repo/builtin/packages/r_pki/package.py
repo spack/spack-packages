@@ -19,5 +19,7 @@ class RPki(RPackage):
 
     version("0.1-14", sha256="c024e81977b978b705460df96639e3369420bd7e8f4f3242ec796255dc1b7966")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@2.9.0:", type=("build", "run"))
     depends_on("r-base64enc", type=("build", "run"))

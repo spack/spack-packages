@@ -30,6 +30,8 @@ class RSf(RPackage):
     version("0.7-7", sha256="d1780cb46a285b30c7cc41cae30af523fbc883733344e53f7291e2d045e150a4")
     version("0.7-5", sha256="53ed0567f502216a116c4848f5a9262ca232810f82642df7b98e0541a2524868")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r-classint@0.2-1:", type=("build", "run"))
     depends_on("r-classint@0.4-1:", type=("build", "run"), when="@0.9-7:")

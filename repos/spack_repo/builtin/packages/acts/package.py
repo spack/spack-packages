@@ -284,7 +284,7 @@ class Acts(CMakePackage, CudaPackage):
         when="@:16",
     )
     variant("edm4hep", default=False, description="Build EDM4hep plugin", when="@25:")
-    # FIXME: Can't build Exa.TrkX plugin+examples yet, missing cuGraph dep
+    variant("gnn", default=False, description="Build the GNN plugin", when="@44:")
     variant(
         "fatras",
         default=False,
@@ -300,6 +300,12 @@ class Acts(CMakePackage, CudaPackage):
     variant("legacy", default=False, description="Build the Legacy package")
     variant("mlpack", default=False, description="Build MLpack plugin", when="@25:31")
     variant("onnx", default=False, description="Build ONNX plugin")
+    variant(
+        "torch",
+        default=False,
+        description="Build the torch based parts of the GNN plugin",
+        when="@44: +gnn",
+    )
     variant("odd", default=False, description="Build the Open Data Detector", when="@19.1:")
     variant("podio", default=False, description="Build Podio plugin", when="@30.3:")
     variant(
@@ -427,6 +433,8 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("mlpack@3.1.1:", when="+mlpack")
     depends_on("nlohmann-json @3.9.1:", when="@0.14: +json")
     depends_on("nlohmann-json @3.10.5:", when="@37: +json")
+    depends_on("torch-scatter", when="+gnn")
+    depends_on("torch-scatter +cuda", when="+cuda")
     depends_on("podio @0.6:", when="@25: +edm4hep")
     depends_on("podio @0.16:", when="@30.3: +edm4hep")
     depends_on("podio @:0", when="@:35 +edm4hep")
@@ -451,6 +459,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("py-sympy @1.13", when="@44:", type="build")
     # TODO: Clarify version on next release
     depends_on("py-hatchling", when="@44.1.1:", type="build")
+    depends_on("py-torch", when="+gnn +torch")
 
     with when("+tgeo"):
         depends_on("root @6.10:")
@@ -487,6 +496,8 @@ class Acts(CMakePackage, CudaPackage):
     conflicts("^boost@1.85.0")
     # See https://github.com/acts-project/acts/pull/3921
     conflicts("^edm4hep@0.99:", when="@:37")
+    # See https://github.com/acts-project/acts/pull/4631
+    conflicts("+gnn ~cuda", when="@:44.0")
 
     def cmake_args(self):
         spec = self.spec
@@ -539,6 +550,7 @@ class Acts(CMakePackage, CudaPackage):
             example_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEOMODEL", "geomodel"),
+            plugin_cmake_variant("GNN", "gnn"),
             example_cmake_variant("HEPMC3", "hepmc3"),
             plugin_cmake_variant("IDENTIFICATION", "identification"),
             cmake_variant(integration_tests_label, "integration_tests"),
@@ -598,6 +610,10 @@ class Acts(CMakePackage, CudaPackage):
                 args.append(f"-DCUDA_FLAGS=-arch=sm_{cuda_arch[0]}")
                 arch_str = ";".join(self.spec.variants["cuda_arch"].value)
                 args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
+
+        if spec.satisfies("+gnn"):
+            args.append(self.define("ACTS_GNN_ENABLE_ONNX", self.spec.satisfies("+onnx")))
+            args.append(self.define("ACTS_GNN_ENABLE_TORCH", self.spec.satisfies("+torch")))
 
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 

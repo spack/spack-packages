@@ -332,7 +332,7 @@ def configuration_dir(tmp_path_factory: pytest.TempPathFactory, linux_os):
 def _create_mock_configuration_scopes(configuration_dir):
     """Create the configuration scopes used in `config` and `mutable_config`."""
     return [
-        (ConfigScopePriority.BUILTIN, InternalConfigScope("_builtin", CONFIG_DEFAULTS)),
+        (ConfigScopePriority.DEFAULTS, InternalConfigScope("_builtin", CONFIG_DEFAULTS)),
         (
             ConfigScopePriority.CONFIG_FILES,
             DirectoryConfigScope("site", str(configuration_dir / "site")),
