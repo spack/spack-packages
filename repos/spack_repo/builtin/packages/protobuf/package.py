@@ -16,8 +16,23 @@ class Protobuf(CMakePackage):
 
     license("BSD-3-Clause")
 
-    version("3.33.0", sha256="b6b03fbaa3a90f3d4f2a3fa4ecc41d7cd0326f92fcc920a7843f12206c8d52cd")
-    version("3.32.1", sha256="d2081ab9528292f7980ef2d88d2be472453eea4222141046ad4f660874d5f24e")
+    # note:
+    # https://protobuf.dev/support/version-support/
+    #
+    # protobuf versioning scheme changed: after 3.20 there is 21.0.
+    #
+    # Prior to this change, all languages had major version "3" and 3 components. Now, protobuf
+    # versions follow the protoc versioning, with 2 components.
+    #
+    # What about language versions? language runtimes still have a version which is composed as
+    #
+    # <lang-runtime-version>.<protobuf-major>.<protobuf-minor>
+    #
+    # Hence language runtime version has explicted also the protobuf version it is compatible with.
+
+    version("33.0", sha256="b6b03fbaa3a90f3d4f2a3fa4ecc41d7cd0326f92fcc920a7843f12206c8d52cd")
+    version("32.1", sha256="d2081ab9528292f7980ef2d88d2be472453eea4222141046ad4f660874d5f24e")
+    # start of wrongly mapped versions
     version("3.29.3", sha256="c8d0ed0085f559444f70311791cf7aef414246b9942441443963184b534dbf9e")
     version("3.28.2", sha256="1b6b6a7a7894f509f099c4469b5d4df525c2f3c9e4009e5b2db5b0f66cb8ee0e")
     version("3.27.5", sha256="a4aa92d0a207298149bf553d9a3192f3562eb91740086f50fa52331e60fa480c")
@@ -34,6 +49,7 @@ class Protobuf(CMakePackage):
     version("3.21.3", sha256="c29d8b4b79389463c546f98b15aa4391d4ed7ec459340c47bffe15db63eb9126")
     version("3.21.2", sha256="66e1156ac78290db81335c79d1fc5a54123ebb62a43eb2e5b42a44ca23087517")
     version("3.21.1", sha256="a295dd3b9551d3e2749a9969583dea110c6cdcc39d02088f7c7bb1100077e081")
+    # end of wrongly mapped versions
     version("3.20.3", sha256="9c0fd39c7a08dff543c643f0f4baf081988129a411b977a07c46221793605638")
     version("3.20.2", sha256="88231778cffebf93bc905e76ea757fae0f2ef497cc00f64973e41f1acd4fc781")
     version("3.20.1", sha256="8b28fdd45bab62d15db232ec404248901842e5340299a57765e48abe8a80d930")
