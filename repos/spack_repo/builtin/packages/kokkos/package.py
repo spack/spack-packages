@@ -83,6 +83,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
     depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.22:", type="build", when="@5:")
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
