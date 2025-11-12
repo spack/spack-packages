@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 import re
 
 from spack_repo.builtin.build_systems.generic import Package
@@ -108,7 +107,7 @@ class Go(Package):
 
     def install(self, spec, prefix):
         install_tree(".", prefix.go)
-        os.symlink(prefix.go.bin, prefix.bin)
+        symlink(prefix.go.bin, prefix.bin)
 
     def setup_dependent_package(self, module, dependent_spec):
         """Called before go modules' build(), install() methods.
