@@ -951,15 +951,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             # TODO: Need to update checkChplDoc to work in the spack testing environment
             pass
 
-    def test_mason(self):
-        """Run the mason test"""
-        if not self.spec.satisfies("+mason"):
-            print("Skipping mason test as mason variant is not set")
-            return
-        else:
-            # TODO: Need to create a mason test for the spack testing environment
-            pass
-
     @run_after("install")
     def copy_test_files(self):
         """Copy test files to the install directory"""
