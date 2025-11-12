@@ -274,11 +274,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
 
-    cxxstds = ["11", "14", "17", "20"]
+    cxxstds = ["17", "20"]
     variant("cxxstd", default="17", values=cxxstds, multi=False, description="C++ standard")
     variant("pic", default=False, description="Build position independent code")
 
-    conflicts("cxxstd=14")
     conflicts("cxxstd=17", when="@5:")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
@@ -287,17 +286,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # Expose a way to disable CudaMallocAsync that can cause problems
     # with some MPI such as cray-mpich
     variant("alloc_async", default=False, description="Use CudaMallocAsync", when="@4.2: +cuda")
-
-    # SYCL and OpenMPTarget require C++17 or higher
-    for cxxstdver in cxxstds[: cxxstds.index("17")]:
-        conflicts(
-            "+sycl", when="cxxstd={0}".format(cxxstdver), msg="SYCL requires C++17 or higher"
-        )
-        conflicts(
-            "+openmptarget",
-            when="cxxstd={0}".format(cxxstdver),
-            msg="OpenMPTarget requires C++17 or higher",
-        )
 
     # HPX should use the same C++ standard
     for cxxstd in cxxstds:
