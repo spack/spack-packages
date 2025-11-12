@@ -886,8 +886,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+chpldoc"):
             exes.append("chpldoc")
-        if self.spec.satisfies("+mason"):
-            exes.append("mason")
 
         for exe in exes:
             reason = f"ensure version of {exe} is {self._output_version_long}"
