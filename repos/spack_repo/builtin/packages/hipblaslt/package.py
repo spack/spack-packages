@@ -271,4 +271,6 @@ class Hipblaslt(CMakePackage):
             args.append(self.define("HIPBLASLT_ENABLE_CLIENT", self.run_tests))
         else:
             args.append(self.define("BUILD_CLIENTS_TESTS", self.run_tests))
+        if self.spec.satisfies("@7.1: %gcc@8.0:8.9"):
+            args.append(self.define("HIPBLASLT_ENABLE_ROCROLLER", "False"))
         return args
