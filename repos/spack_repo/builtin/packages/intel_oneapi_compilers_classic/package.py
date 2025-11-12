@@ -170,7 +170,10 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
         for binary in binaries:
             os.symlink(prefix.bin.intel64.join(binary), prefix.bin.join(binary))
         install_tree(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
-        install_tree(self.oneapi_compiler_prefix.linux.compiler.lib.intel64_lin, prefix.linux.compiler.lib.intel64_lin)
+        install_tree(
+            self.oneapi_compiler_prefix.linux.compiler.lib.intel64_lin,
+            prefix.linux.compiler.lib.intel64_lin,
+        )
         install_tree(self.oneapi_compiler_prefix.linux.include, prefix.include)
         install_tree(self.oneapi_compiler_prefix.linux.compiler, prefix.compiler)
         install_tree(self.oneapi_compiler_prefix.documentation.en.man, prefix.man)
