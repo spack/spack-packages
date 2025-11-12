@@ -38,7 +38,11 @@ class KokkosFft(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    depends_on("kokkos@4.4:4 +complex_align")
+    depends_on("cmake@3.22:3", when="@0.3:")
+
+    depends_on("kokkos +complex_align")
+    depends_on("kokkos@4.4:4", when="@0.3")
+    depends_on("kokkos@4.5:4", when="@0.4:")
     # kokkos-fft currently only supports compilation with the Kokkos nvcc wrapper
     requires("^kokkos +serial", when="host_backend=fftw-serial")
     requires("^kokkos +openmp", when="host_backend=fftw-openmp")
