@@ -85,6 +85,18 @@ class Vecgeom(CMakePackage, CudaPackage):
         sha256="b9419c6666389b69ee2c9125d10f25b423fce339495413ac4762ae6f32bdea63",
         when="@:1.2.10 ^apple-clang@17:",
     )
+    # Fix use of cuda RNG that breaks nvhpc installations of CUDA (backport)
+    patch(
+        "https://gitlab.cern.ch/VecGeom/VecGeom/-/merge_requests/1355.diff",
+        sha256="fa46338f12bbc171c1f8957b9156552beeee7b1e7a5784603420198911980f92",
+        when="@:1.2.11 +cuda"
+    )
+    # Fix use of cuda RNG that breaks nvhpc installations of CUDA (v2 rc)
+    patch(
+        "https://gitlab.cern.ch/VecGeom/VecGeom/-/merge_requests/1353.diff",
+        sha256="73cb6033191955c320642f4427d22d6b628e5acf9ef470826a8bb112a07af170",
+        when="2.0.0-rc.7 +cuda"
+    )
 
     for _std, _when in _std_when(_cxxstd_values):
         depends_on(f"geant4 cxxstd={_std}", when=f"{_when} +geant4 cxxstd={_std}")
