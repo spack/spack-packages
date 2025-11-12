@@ -28,6 +28,9 @@ class CabanaPd(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")
     depends_on("c", type="build")
 
+    # cannot simultaneously use hipcc and another c++ compiler
+    requires("%cxx=rocmcc", when="+rocm")
+
     depends_on("cabana+grid@0.7.0:")
     depends_on("nlohmann-json@3.10.0:")
     depends_on("cabana+hdf5", when="+hdf5")
