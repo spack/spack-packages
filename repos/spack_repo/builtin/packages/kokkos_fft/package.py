@@ -37,8 +37,7 @@ class KokkosFft(CMakePackage):
     variant("tests", default=False, description="Enable tests")
 
     depends_on("cxx", type="build")
-
-    depends_on("cmake@3.22:3", when="@0.3:")
+    depends_on("cmake@3.22:3", type="build")
 
     depends_on("kokkos +complex_align")
     depends_on("kokkos@4.4:4", when="@0.3")
