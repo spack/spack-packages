@@ -40,6 +40,9 @@ class PyCffi(PythonPackage):
         depends_on("python@:3.9", when="@:1.14")
 
     depends_on("pkgconfig", type="build")
+    # Not yet documented, but required for PEP 639 support
+    # https://github.com/python-cffi/cffi/issues/200
+    depends_on("py-setuptools@77:", type="build", when="@2:")
     depends_on("py-setuptools@66.1:", type="build", when="@1.16:")
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools", type="run", when="^python@3.12:")

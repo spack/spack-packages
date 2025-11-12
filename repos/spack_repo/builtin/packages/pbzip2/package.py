@@ -29,3 +29,9 @@ class Pbzip2(MakefilePackage):
     def edit(self, spec, prefix):
         makefile = FileFilter("Makefile")
         makefile.filter("PREFIX = .*", f"PREFIX = {prefix}")
+
+    def flag_handler(self, name: str, flags: List[str]):
+        if name == "cxxflags":
+            if self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=apple-clang"):
+                flags.append("-Wno-reserved-user-defined-literal")
+        return (flags, None, None)
