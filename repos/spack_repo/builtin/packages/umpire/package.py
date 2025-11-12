@@ -232,7 +232,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", type="build", when="+fortran")  # generated
 
     depends_on("cmake@3.23:", when="@2024.07.0:", type="build")
     depends_on("cmake@3.23:", when="@2022.10.0: +rocm", type="build")
@@ -349,7 +349,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         option_prefix = "UMPIRE_" if spec.satisfies("@2022.03.0:") else ""
 
-        if spec.satisfies("+fortran") and "fortran" in spec:
+        if spec.satisfies("+fortran"):
             entries.append(cmake_cache_option("ENABLE_FORTRAN", True))
         else:
             entries.append(cmake_cache_option("ENABLE_FORTRAN", False))
