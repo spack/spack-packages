@@ -79,7 +79,7 @@ class Matlab(Package):
         # Fix broken link
         with working_dir(self.spec.prefix.bin.glnxa64):
             os.unlink("libSDL2.so")
-            os.symlink("libSDL2-2.0.so.0.2.1", "libSDL2.so")
+            symlink("libSDL2-2.0.so.0.2.1", "libSDL2.so")
 
         # Fix to random exceptions when changing display settings
         # https://www.mathworks.com/matlabcentral/answers/373897-external-monitor-throws-java-exception
