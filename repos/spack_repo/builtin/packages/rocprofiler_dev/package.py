@@ -21,6 +21,8 @@ class RocprofilerDev(CMakePackage):
     libraries = ["librocprofiler64"]
     license("MIT")
 
+    version("7.0.2", sha256="149557a5db8920e9d003ef7bfc3c5d7580c97c97abada1654a556b2203969124")
+    version("7.0.0", sha256="74c305dd270d9644eeab70d985f9195dd0bcd36a0a256c2fbd4f780436efd334")
     version("6.4.3", sha256="b7d5a6848d0bb394bfcb2e667690abf50189010bdc2e6c6ebf401d0ba780c1a0")
     version("6.4.2", sha256="0c7e6e25b1b1bbc33a311c40bc9864cc1d73c1a55ec6616d5a9a14843f9dd836")
     version("6.4.1", sha256="d816f6d7bd138c15d68bceb111847a12ecff5efb50831bb4c3e02fab102ab471")
@@ -78,6 +80,11 @@ class RocprofilerDev(CMakePackage):
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"roctracer-dev-api@{ver}", when=f"@{ver}")
+        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
+
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
+
     for ver in [
         "5.7.0",
         "5.7.1",
@@ -97,11 +104,15 @@ class RocprofilerDev(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
-        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
+
+    for ver in ["7.0.0", "7.0.2"]:
+        depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     depends_on("py-lxml")
     depends_on("py-cppheaderparser")

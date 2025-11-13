@@ -319,6 +319,9 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     # currently only available for cuda.
     conflicts("+shared", when="+cuda")
 
+    # https://github.com/LLNL/Umpire/pull/992
+    conflicts("^cuda@13:", when="+cuda")
+
     def _get_sys_type(self, spec):
         sys_type = spec.architecture
         if "SYS_TYPE" in env:

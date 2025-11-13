@@ -17,6 +17,7 @@ class Typos(CargoPackage):
 
     license("Apache-2.0 OR MIT", checked_by="alecbcs")
 
+    version("1.38.1", sha256="f7e83dfecba57d778c916bd3d554129fd6d79e0fa781f605e83c7dd89e30711d")
     version("1.36.2", sha256="23229bf78a136bce3c456019d71e25b57858275c8fd947426b8a5b32d639abe3")
     version("1.35.1", sha256="41e981cc763393b1374d2891f64c0ec62eb9b99320f4af6e1e3f4aa85fe1db36")
     version("1.32.0", sha256="11c1ac4f9427cd572ce728c20814ebd8b8769ed909b7d1309d805d9a37b81084")

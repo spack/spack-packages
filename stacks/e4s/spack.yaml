@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     reuse: false
@@ -84,6 +84,7 @@ spack:
   - amrex
   - arborx
   - argobots
+  - arkouda
   - axom
   - bolt
   - boost
@@ -117,7 +118,7 @@ spack:
   - glvis
   - gmp
   - gotcha
-  - gptune ~mpispawn
+  # - gptune ~mpispawn
   - gromacs +cp2k ^cp2k +dlaf build_system=cmake
   - h5bench
   - hdf5-vol-async
@@ -171,6 +172,7 @@ spack:
   - pruners-ninja
   - pumi
   - py-amrex
+  - py-arkouda
   - py-h5py
   - py-jupyterhub
   - py-libensemble
