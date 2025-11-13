@@ -105,9 +105,11 @@ class Npb(MakefilePackage):
     # Cannot be built in parallel
     parallel = False
 
-    conflicts('implementation=serial',
-              when='@3.4:',
-              msg="The serial version of NPB is not included in this distribution. Please use the OMP version instead or download a previous version from NPB3.3.1.")
+    conflicts(
+        "implementation=serial",
+        when="@3.4:",
+        msg="The serial version of NPB is not included in this distribution. Please use the OMP version instead or download a previous version from NPB3.3.1.",
+    )
 
     @property
     def build_directory(self):
