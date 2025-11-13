@@ -736,8 +736,8 @@ class Python(Package):
         prefix = self.prefix
 
         if spec.satisfies("+pythoncmd"):
-            os.symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
-            os.symlink(
+            symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
+            symlink(
                 os.path.join(prefix.bin, "python3-config"),
                 os.path.join(prefix.bin, "python-config"),
             )

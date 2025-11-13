@@ -838,7 +838,7 @@ class Cuda(Package):
             includedir = "targets/ppc64le-linux/include"
             os.makedirs(os.path.join(prefix, includedir))
             os.makedirs(os.path.join(prefix, "src"))
-            os.symlink(includedir, os.path.join(prefix, "include"))
+            symlink(includedir, os.path.join(prefix, "include"))
 
         install_shell = which("sh")
 

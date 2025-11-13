@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import glob
-import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -52,4 +51,4 @@ class Energyplus(Package):
 
         mkdirp(prefix.bin)
         for b in ["energyplus", "EPMacro", "ExpandObjects"]:
-            os.symlink(join_path(prefix.lib.energyplus, b), join_path(prefix.bin, b))
+            symlink(join_path(prefix.lib.energyplus, b), join_path(prefix.bin, b))

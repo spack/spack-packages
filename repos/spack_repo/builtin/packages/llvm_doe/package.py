@@ -385,7 +385,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
                 sym = os.path.join(self.stage.path, "ld.lld")
                 if os.path.exists(bin) and not os.path.exists(sym):
                     mkdirp(self.stage.path)
-                    os.symlink(bin, sym)
+                    symlink(bin, sym)
             env.prepend_path("PATH", self.stage.path)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
