@@ -263,13 +263,9 @@ class Rocblas(CMakePackage):
             args.append(
                 self.define("PKGBLAS_INCLUDE_DIRS", self.spec["netlib-lapack"].prefix.include)
             )
-            args.append(
-                self.define("PKGBLAS_LIBRARIES", self.spec["netlib-lapack"].prefix.lib64)
-            )
+            args.append(self.define("PKGBLAS_LIBRARIES", self.spec["netlib-lapack"].prefix.lib64))
         if self.spec.satisfies("@7.1:"):
-            args.append(
-                "-DROCTX_PATH={0}".format(self.spec["roctracer-dev"].prefix)
-            )
+            args.append(self.define("ROCTX_PATH", self.spec["roctracer-dev"].prefix))
         return args
 
     @run_after("build")
