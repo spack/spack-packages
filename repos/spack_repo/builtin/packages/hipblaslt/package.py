@@ -165,6 +165,9 @@ class Hipblaslt(CMakePackage):
             env.set("ROCM_LD_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/ld.lld")
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
 
+        if self.spec.satisfies("@7.1") and self.run_tests:
+            env.append_flags("LDFLAGS", "-lstdc++fs")
+
     def patch(self):
         py_ver = self.spec["python"].version[:-1]
         joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"

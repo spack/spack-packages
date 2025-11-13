@@ -68,6 +68,7 @@ class Rocblas(CMakePackage):
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("amdblis", type="test")
+    depends_on("netlib-lapack@3.7.1:", type="test", when="@7.1:")
 
     for ver in [
         "6.2.0",
@@ -258,6 +259,17 @@ class Rocblas(CMakePackage):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@6.3:"):
             args.append(self.define_from_variant("BUILD_WITH_HIPBLASLT", "hipblaslt"))
+        if self.spec.satisfies("@7.1:"):
+            args.append(
+                self.define("PKGBLAS_INCLUDE_DIRS", self.spec["netlib-lapack"].prefix.include)
+            )
+            args.append(
+                self.define("PKGBLAS_LIBRARIES", self.spec["netlib-lapack"].prefix.lib64)
+            )
+        if self.spec.satisfies("@7.1:"):
+            args.append(
+                "-DROCTX_PATH={0}".format(self.spec["roctracer-dev"].prefix)
+            )
         return args
 
     @run_after("build")
