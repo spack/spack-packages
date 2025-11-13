@@ -14,7 +14,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class MvapichPlus(Package,CudaPackage, ROCmPackage):
+class MvapichPlus(Package, CudaPackage, ROCmPackage):
     """Mvapich is a High-Performance MPI Library for clusters with diverse
     networks (InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE) and computing
     platforms (x86 (Intel and AMD), ARM and OpenPOWER)"""
@@ -31,10 +31,12 @@ class MvapichPlus(Package,CudaPackage, ROCmPackage):
 
     # Prefer the latest stable release
 
-    
-    version("4.1",sha256="46f599629d0ceb26b0c2f099e88f75fc055d115b4db45df0d6135cbd41fe0f8a",url="https://mvapich.cse.ohio-state.edu/download/mvapich/plus/4.1/mvapich-plus-installer.sh",expand=False
-        )
- 
+    version(
+        "4.1",
+        sha256="46f599629d0ceb26b0c2f099e88f75fc055d115b4db45df0d6135cbd41fe0f8a",
+        url="https://mvapich.cse.ohio-state.edu/download/mvapich/plus/4.1/mvapich-plus-installer.sh",
+        expand=False,
+    )
 
     provides("mpi")
     provides("mpi@:4.1")
@@ -124,44 +126,43 @@ class MvapichPlus(Package,CudaPackage, ROCmPackage):
     def install(self, spec, prefix):
         print(self.stage.source_path)
         runfile = glob(join_path(self.stage.source_path, "*"))[0]
-        mvp_ver=str(spec.version)
-        gpu="nogpu"
-        gpu_ver=""
-        apu=''
+        mvp_ver = str(spec.version)
+        gpu = "nogpu"
+        gpu_ver = ""
+        apu = ""
         if spec.satisfies("^cuda"):
             gpu = "cuda"
-            gpu_ver=str(spec['cuda'].version)[:4]
-        elif spec.satisfies('+rocm'):
+            gpu_ver = str(spec["cuda"].version)[:4]
+        elif spec.satisfies("+rocm"):
             gpu = "rocm"
-            gpu_ver=spec['hip'].version
-            if spec.satisfies('+apu'):
-                apu='.mi300a'
+            gpu_ver = spec["hip"].version
+            if spec.satisfies("+apu"):
+                apu = ".mi300a"
 
         netmod = "ucx" if spec.satisfies("netmod=ucx") else "ofi"
         comp = str(spec.compiler)
         comp = f"{comp[:comp.find('@')]}{comp[comp.find('@')+1:comp.find('/')]}"
-        el="el8"
-        os="rhel8"
-        if str(spec.os) == "rocky9" or str(spec.os)=="rhel9":
+        el = "el8"
+        os = "rhel8"
+        if str(spec.os) == "rocky9" or str(spec.os) == "rhel9":
 
-           el="el9"
-           os="rhel9"
-        ofed="24.10"
-        slurm=''
-        if spec.satisfies('process_managers=slurm'):
-            slurm='.slurm'
-        rpm= f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{os}.ofed{ofed}.{netmod}.{comp}{slurm}{apu}-4.1-1.{el}.x86_64.rpm"
+            el = "el9"
+            os = "rhel9"
+        ofed = "24.10"
+        slurm = ""
+        if spec.satisfies("process_managers=slurm"):
+            slurm = ".slurm"
+        rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{os}.ofed{ofed}.{netmod}.{comp}{slurm}{apu}-4.1-1.{el}.x86_64.rpm"
 
         install_shell = which("bash")
 
         arguments = [
             runfile,  # the install script
-            "--prefix=%s" % prefix, # Where to install
-            "--rpm=%s" % rpm, # rpm name
+            "--prefix=%s" % prefix,  # Where to install
+            "--rpm=%s" % rpm,  # rpm name
         ]
 
         install_shell(*arguments)
-
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("MPI_ROOT", self.prefix)
@@ -214,4 +215,3 @@ class MvapichPlus(Package,CudaPackage, ROCmPackage):
             os.path.join(self.prefix.lib, f"libmpicxx.{dso_suffix}"),
             os.path.join(self.prefix.lib, f"libmpi.{dso_suffix}"),
         ]
-
