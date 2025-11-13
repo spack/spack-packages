@@ -7,7 +7,6 @@ import re
 import sys
 from glob import glob
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -152,7 +151,8 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
         slurm = ""
         if spec.satisfies("process_managers=slurm"):
             slurm = ".slurm"
-        rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{os}.ofed{ofed}.{netmod}.{comp}{slurm}{apu}-4.1-1.{el}.x86_64.rpm"
+        rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{os}.ofed{ofed}.{netmod}.{comp}\
+                {slurm}{apu}-4.1-1.{el}.x86_64.rpm"
 
         install_shell = which("bash")
 
