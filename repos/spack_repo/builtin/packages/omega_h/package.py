@@ -102,6 +102,8 @@ class OmegaH(CMakePackage, CudaPackage):
     # https://github.com/SCOREC/omega_h/pull/118
     conflicts("@10.5:10.8.5 +cuda~kokkos")
 
+    conflicts("@11.0.0-scorec +cuda", msg="direct CUDA backend has been removed in 11.0.0-scorec. Use Kokkos with cuda enabled.")
+
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
 
@@ -133,17 +135,18 @@ class OmegaH(CMakePackage, CudaPackage):
                 args.append("-DCMAKE_CXX_COMPILER:FILEPATH={0}".format(self.spec["mpi"].mpicxx))
         else:
             args.append("-DOmega_h_USE_MPI:BOOL=OFF")
-        if "+cuda" in self.spec:
-            args.append("-DOmega_h_USE_CUDA:BOOL=ON")
-            cuda_arch_list = self.spec.variants["cuda_arch"].value
-            cuda_arch = cuda_arch_list[0]
-            if cuda_arch != "none":
-                if self.spec.satisfies("@10:"):
-                    args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
-                else:
-                    args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
-        else:
-            args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
+        if self.spec.satisfies("@:10.10.0"):
+            if "+cuda" in self.spec:
+                args.append("-DOmega_h_USE_CUDA:BOOL=ON")
+                cuda_arch_list = self.spec.variants["cuda_arch"].value
+                cuda_arch = cuda_arch_list[0]
+                if cuda_arch != "none":
+                    if self.spec.satisfies("@10:"):
+                        args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
+                    else:
+                        args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
+            else:
+                args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
         if "+trilinos" in self.spec:
             args.append("-DOmega_h_USE_Trilinos:BOOL=ON")
         if "+gmsh" in self.spec:
