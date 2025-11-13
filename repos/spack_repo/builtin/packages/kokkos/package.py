@@ -101,10 +101,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     tpls_variants = {
-        "hpx": [False, "Whether to enable the HPX library"],
-        "hwloc": [False, "Whether to enable the HWLOC library"],
-        "numactl": [False, "Whether to enable the LIBNUMA library"],
-        "memkind": [False, "Whether to enable the MEMKIND library"],
+        "hpx": [False, None, "Whether to enable the HPX library"],
+        "hwloc": [False, None, "Whether to enable the HWLOC library"],
+        "numactl": [False, "@:4", "Whether to enable the LIBNUMA library"],
+        "memkind": [False, "@:4", "Whether to enable the MEMKIND library"],
     }
 
     options_variants = {
@@ -263,8 +263,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
 
-    for tpl, (dflt, desc) in tpls_variants.items():
-        variant(tpl, default=dflt, description=desc)
+    for tpl, (dflt, when, desc) in tpls_variants.items():
+        variant(tpl, default=dflt, description=desc, when=when)
         depends_on(tpl, when="+%s" % tpl)
 
     variant("wrapper", default=False, description="Use nvcc-wrapper for CUDA build")
