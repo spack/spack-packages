@@ -68,7 +68,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
     for ver in [
@@ -207,6 +207,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@7.1:"):
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
+            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
         else:
             env.set("CXX", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
