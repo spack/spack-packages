@@ -126,9 +126,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant(
         "scalapack", default=False, when="+fortran", description="Activates support for Scalapack"
     )
-    variant(
-        "trilinos", default=False, description="Activates support for Trilinos (only parallel)"
-    )
     variant("mkl-pardiso", default=False, description="Activates support for MKL Pardiso")
     variant("int64", default=False, description="Compile with 64bit indices")
     variant(
@@ -232,7 +229,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("+p4est", when="~mpi", msg=mpi_msg)
     conflicts("+ptscotch", when="~mpi", msg=mpi_msg)
     conflicts("+superlu-dist", when="~mpi", msg=mpi_msg)
-    conflicts("+trilinos", when="~mpi", msg=mpi_msg)
     conflicts("+kokkos", when="~mpi", msg=mpi_msg)
     conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
 
@@ -337,8 +333,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mumps+mpi~int64~metis~parmetis+openmp", when="+mumps~metis+openmp")
     depends_on("mumps+mpi~int64+metis+parmetis+openmp", when="+mumps+metis+openmp")
     depends_on("scalapack", when="+mumps")
-    depends_on("trilinos@12.6.2:+mpi", when="@3.7.0:+trilinos+mpi")
-    depends_on("trilinos@develop+mpi", when="@main+trilinos+mpi")
     depends_on("mkl", when="+mkl-pardiso")
     depends_on("fftw+mpi", when="+fftw+mpi")
     depends_on("suite-sparse", when="+suite-sparse")
@@ -495,10 +489,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("@:3.22 ^cuda@12.8:"):
             options.append("CUDAPPFLAGS=-Wno-deprecated-gpu-targets")
 
-        if "trilinos" in spec:
-            if spec.satisfies("^trilinos+boost"):
-                options.append("--with-boost=1")
-
         if spec.satisfies("clanguage=C++"):
             options.append("--with-clanguage=C++")
         else:
@@ -541,7 +531,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("hdf5" + hdf5libs, "hdf5", True, True),
             ("zlib-api", "zlib", True, True),
             "mumps",
-            ("trilinos", "trilinos", False, False),
             ("fftw:mpi", "fftw", True, True),
             ("valgrind", "valgrind", False, False),
             "gmp",
