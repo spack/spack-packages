@@ -154,7 +154,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
                 "SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
                 "#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
                 "ncgen/CMakeLists.txt",
-                string=True
+                string=True,
             )
 
     variant("mpi", default=True, description="Enable parallel I/O for netcdf-4")
@@ -393,6 +393,8 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
         ]
+        if any(self.spec.satisfies(s) for s in ["+mpi", "+parallel-netcdf", "^hdf5+mpi~shared"]):
+            base_cmake_args.append(self.define("CMAKE_C_COMPILER", self.spec["mpi"].mpicc))
         if "+parallel-netcdf" in self.pkg.spec:
             base_cmake_args.append(self.define(nc + "ENABLE_PNETCDF", True))
         if self.pkg.spec.satisfies("@4.3.1:"):
