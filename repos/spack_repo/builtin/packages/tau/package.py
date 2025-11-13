@@ -524,7 +524,7 @@ class Tau(Package):
                 src = join_path(self.prefix, subdir, d)
                 dest = join_path(self.prefix, d)
                 if os.path.isdir(src) and not os.path.exists(dest):
-                    os.symlink(join_path(subdir, d), dest)
+                    symlink(join_path(subdir, d), dest)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         pattern = join_path(self.prefix.lib, "Makefile.*")
