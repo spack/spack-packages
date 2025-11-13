@@ -29,6 +29,7 @@ class Rocwmma(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("7.0.2", sha256="359604712e6802fbb66ebddf4c337916c5a851bd4302d8c3ab5c31f0d8b7ec7e")
     version("7.0.0", sha256="14e0cec245c7c4827dc5421c9878fab5e1734112933351f8bef3a0d1ed68f6b6")
     version("6.4.3", sha256="34797c458603688748a046b611e14693221843de96740ed3ba5c606d41ab0cdf")
     version("6.4.2", sha256="63bbac42242ea3bf5f5dd160739a0bd8a2d01c0f6456c187a2e6c29fecdcc93a")
@@ -94,6 +95,7 @@ class Rocwmma(CMakePackage):
         "6.4.2",
         "6.4.3",
         "7.0.0",
+        "7.0.2",
     ]:
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, type="build", when="@" + ver)

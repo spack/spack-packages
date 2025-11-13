@@ -63,6 +63,7 @@ class Gloo(CMakePackage, CudaPackage):
 
     def cmake_args(self):
         return [
+            self.define_from_variant("GLOO_USE_TORCH_DTYPES", "cuda"),
             self.define_from_variant("USE_CUDA", "cuda"),
             self.define_from_variant("USE_LIBUV", "libuv"),
         ]
