@@ -30,6 +30,7 @@ class Fckit(CMakePackage):
     version("0.10.0", sha256="f16829f63a01cdef5e158ed2a51f6d4200b3fe6dce8f251af158141a1afe482b")
     version("0.9.5", sha256="183cd78e66d3283d9e6e8e9888d3145f453690a4509fb701b28d1ac6757db5de")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
