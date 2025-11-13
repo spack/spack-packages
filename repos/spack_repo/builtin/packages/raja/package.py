@@ -419,7 +419,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         # C++17
         if spec.satisfies("@2025.09.0:") or (
-            spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl") or (
+            spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl")) or (
             or spec.satisfies("^rocprim@7.0:")
         ):
             entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
