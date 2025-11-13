@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.9.0", tag="v2.9.0", commit="0fabc3ba44823f257e70ce397d989c8de5e362c1")
     version("2.8.0", tag="v2.8.0", commit="ba56102387ef21a3b04b357e5b183d48f0afefc7")
     version("2.7.1", tag="v2.7.1", commit="e2d141dbde55c2a4370fac5165b0561b6af4798b")
     version("2.7.0", tag="v2.7.0", commit="134179474539648ba7dee1317959529fbd0e7f89")
@@ -110,6 +111,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     _desc = "Build the flash_attention kernel for scaled dot product attention"
     variant("flash_attention", default=True, description=_desc, when="@1.13:+cuda")
     variant("flash_attention", default=True, description=_desc, when="@1.13:+rocm")
+    variant("cusparselt", default=True, description="Use NVIDIA cuSPARSELt", when="@2.1: +cuda")
     # py-torch has strict dependencies on old protobuf/py-protobuf versions that
     # cause problems with other packages that require newer versions of protobuf
     # and py-protobuf --> provide an option to use the internal/vendored protobuf.
@@ -150,7 +152,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.9:3.13", when="@2.5:")
+        depends_on("python@3.10:3.14", when="@2.9:")
+        depends_on("python@3.9:3.13", when="@2.5:2.8")
         depends_on("python@3.8:3.12", when="@2.2:2.4")
         depends_on("python@3.8:3.11", when="@2.0:2.1")
         depends_on("python@:3.10", when="@1.11:1")
@@ -174,19 +177,23 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-sympy@1.13.3:", when="@2.7:")
         depends_on("py-sympy@1.13.1", when="@2.5:2.6")
         depends_on("py-sympy", when="@2:")
+        depends_on("py-networkx@2.5.1:", when="@2.9:")
         depends_on("py-networkx", when="@2:")
         depends_on("py-jinja2", when="@2:")
+        depends_on("py-fsspec@0.8.5:", when="@2.9:")
         depends_on("py-fsspec", when="@2.1:")
 
         # pyproject.toml
-        depends_on("py-setuptools@62.3:79", when="@2.8:")
+        depends_on("py-setuptools@70.1:79", when="@2.9:")
+        depends_on("py-setuptools@62.3:79", when="@2.8")
         depends_on("py-setuptools")
-        depends_on("py-astunparse", when="@1.13:")
         depends_on("py-numpy")
         # https://github.com/pytorch/pytorch/issues/107302
         depends_on("py-numpy@:1", when="@:2.2")
+        depends_on("py-packaging", when="@2.9:")
         depends_on("py-pyyaml")
         depends_on("py-requests", when="@1.13:")
+        depends_on("py-six", when="@1.13:1,2.9:")
 
     # Undocumented dependencies
     depends_on("py-tqdm", type="run")
@@ -217,7 +224,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cpuinfo@2022-08-19", when="@1.13:2.0")
     depends_on("cpuinfo@2020-12-17", when="@1.8:1.12")
     depends_on("cpuinfo@2020-06-11", when="@1.6:1.7")
-    depends_on("gloo@2025-06-04", when="@2.8:+gloo")
+    depends_on("gloo@2025-08-21", when="@2.9:+gloo")
+    depends_on("gloo@2025-06-04", when="@2.8+gloo")
     depends_on("gloo@2023-12-03", when="@2.3:2.7+gloo")
     depends_on("gloo@2023-05-19", when="@2.1:2.2+gloo")
     depends_on("gloo@2023-01-17", when="@2.0+gloo")
@@ -252,6 +260,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("pthreadpool@2020-10-05", when="@1.8")
     depends_on("pthreadpool@2020-06-15", when="@1.6:1.7")
     with default_args(type=("build", "link", "run")):
+        depends_on("py-pybind11@3.0.1:", when="@2.9:")
         depends_on("py-pybind11@2.13.6:", when="@2.6:")
         depends_on("py-pybind11@2.13.5:", when="@2.5")
         depends_on("py-pybind11@2.12.0:", when="@2.3:2.4")
@@ -270,6 +279,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Optional dependencies
     with default_args(type=("build", "link", "run")):
         # cmake/public/cuda.cmake
+        depends_on("cuda@12:", when="@2.9:+cuda")
         depends_on("cuda@11:", when="@2.4:+cuda")
         # https://github.com/pytorch/pytorch/issues/122169
         depends_on("cuda@11:12.3", when="@2.0:2.3+cuda")
@@ -278,8 +288,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("cuda@10.2:11.4", when="@1.10+cuda")
         depends_on("cuda@9.2:11.4", when="@1.6:1.9+cuda")
     # https://github.com/pytorch/pytorch#prerequisites
+    depends_on("cudnn@8.5:9", when="@2.8:+cudnn")
     # https://github.com/pytorch/pytorch/issues/119400
-    depends_on("cudnn@8.5:9.0", when="@2.3:+cudnn")
+    depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("nccl", when="+nccl+cuda")
     depends_on("magma+cuda", when="+magma+cuda")
@@ -313,6 +324,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("ucc", when="+ucc")
     depends_on("ucx", when="+ucc")
     depends_on("mkl", when="+mkldnn")
+    depends_on("cusparselt", when="+cusparselt")
 
     # Test dependencies
     with default_args(type="test"):
@@ -325,7 +337,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("mkl@2021.1.1:2021.4.0", when="@2.3 platform=windows")
         depends_on("py-cffi", when="@:1")
         depends_on("py-future", when="@1.5:1")
-        depends_on("py-six", when="@1.13:1")
+        depends_on("py-astunparse", when="@1.13:2.8")
 
     conflicts("%gcc@:9.3", when="@2.2:", msg="C++17 support required")
 
@@ -677,6 +689,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             env.set("CUDNN_INCLUDE_DIR", self.spec["cudnn"].prefix.include)
             env.set("CUDNN_LIBRARY", self.spec["cudnn"].libs[0])
 
+        enable_or_disable("cusparselt")
         enable_or_disable("fbgemm")
         enable_or_disable("kineto")
         enable_or_disable("magma")

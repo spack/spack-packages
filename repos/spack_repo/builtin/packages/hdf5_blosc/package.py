@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 import shutil
 import sys
 
@@ -17,14 +16,14 @@ def _install_shlib(name, src, dst):
         shlib0 = name + ".0.dylib"
         shlib = name + ".dylib"
         install(join_path(src, shlib0), join_path(dst, shlib0))
-        os.symlink(shlib0, join_path(dst, shlib))
+        symlink(shlib0, join_path(dst, shlib))
     else:
         shlib000 = name + ".so.0.0.0"
         shlib0 = name + ".so.0"
         shlib = name + ".dylib"
         install(join_path(src, shlib000), join_path(dst, shlib000))
-        os.symlink(shlib000, join_path(dst, shlib0))
-        os.symlink(shlib0, join_path(dst, shlib))
+        symlink(shlib000, join_path(dst, shlib0))
+        symlink(shlib0, join_path(dst, shlib))
 
 
 class Hdf5Blosc(Package):

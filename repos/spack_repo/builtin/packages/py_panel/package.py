@@ -15,6 +15,7 @@ class PyPanel(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.7.5", sha256="8bf5041174593fdb0e8c46bef3ade334ae7e97ef64f52c8955a1d7c62b5db18d")
     version("1.6.3a2", sha256="c4413f8f604c7457b4f0fe7b3d375cc8cdeeacdbf01480b89cd00a49453a734a")
     version("1.5.2", sha256="30a45f314716bdde2de5c002fbd3a0b4d6ff85459e2179284df559455ff1534b")
     version("0.14.4", sha256="b853d2f53d7738ec6372525360c5bf9427a71ed990685ccac703bc9b442e9951")
@@ -29,8 +30,9 @@ class PyPanel(PythonPackage):
     depends_on("py-hatch-vcs", type="build", when="@1.5.2:")
 
     depends_on("py-bokeh@2.4.3:2.4", type=("build", "run"), when="@0.14.4")
-    depends_on("py-bokeh@3.5:3.6", type=("build", "run"), when="@1.5.2:")
-    depends_on("py-bokeh@3.5:3.7", type=("build", "run"), when="@1.6.3:")
+    depends_on("py-bokeh@3.5:3.6", type=("build", "run"), when="@1.5.2")
+    depends_on("py-bokeh@3.5:3.7", type=("build", "run"), when="@1.6.3")
+    depends_on("py-bokeh@3.7", type=("build", "run"), when="@1.7.5:")
 
     depends_on("py-param@1.12:", type=("build", "run"), when="@0.14.4")
     depends_on("py-param@2.1:2", type=("build", "run"), when="@1.5.2:")

@@ -15,6 +15,7 @@ class Libtirpc(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("1.3.7", sha256="b47d3ac19d3549e54a05d0019a6c400674da716123858cfdb6d3bdd70a66c702")
     version("1.3.3", sha256="6474e98851d9f6f33871957ddee9714fdcd9d8a5ee9abb5a98d63ea2e60e12f3")
     version("1.2.6", sha256="4278e9a5181d5af9cd7885322fdecebc444f9a3da87c526e7d47f7a12a37d1cc")
     version("1.1.4", sha256="2ca529f02292e10c158562295a1ffd95d2ce8af97820e3534fe1b0e3aec7561d")
@@ -24,6 +25,20 @@ class Libtirpc(AutotoolsPackage):
     depends_on("krb5")
 
     provides("rpc")
+
+    # Allow build on macOS:
+    # - Adds a preprocessor define to make IPV6 defined available under expected names
+    # - Fixes configure template to correctly detect absence of `gss_pname_to_uid`
+    # - Avoids linking with shared cache
+    with when("@1.3.7 platform=darwin"):
+        patch("libtirpc-fix-ipv6-gss-macos-1.3.7.patch")
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
+
+    @property
+    def force_autoreconf(self):
+        return self.spec.satisfies("@1.3.7 platform=darwin")
 
     # Remove -pipe flag to compiler in Makefiles when using nvhpc
     patch("libtirpc-remove-pipe-flag-for-nvhpc.patch", when="%nvhpc")

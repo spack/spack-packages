@@ -195,6 +195,11 @@ class Qt(Package):
         when="@5.9.2: %gcc@14:",
     )
 
+    # Do not define `wtf_ceil()` in MathExtras.h on macOS.
+    # Prevents reference to removed API in order to avoid compilation errors
+    # for webkit on macOS.
+    patch("qt515-mathextras.patch", when="@5.15.4:5.15 platform=darwin")
+
     conflicts("%gcc@10:", when="@5.9:5.12.6 +opengl")
     conflicts("%gcc@11:", when="@5.8")
     conflicts("%apple-clang@13:", when="@:5.13")
@@ -260,7 +265,6 @@ class Qt(Package):
 
     with when("+ssl"):
         depends_on("openssl")
-        depends_on("openssl@:1.0", when="@4:5.9")
         depends_on("openssl@1.1.1:", when="@5.15.0:")
 
     depends_on("libpng", when="@4:")
@@ -311,6 +315,8 @@ class Qt(Package):
         when="@5.7:5.15",
         msg="qtwebengine@5.7:5.15 are based on Google Chromium versions which depend on Py2",
     )
+
+    conflicts("+ssl", when="@:5.9")
 
     # gcc@4 is not supported as of Qt@5.14
     # https://doc.qt.io/qt-5.14/supported-platforms.html

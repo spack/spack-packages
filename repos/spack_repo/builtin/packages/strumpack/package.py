@@ -94,6 +94,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zfp@0.5.5", when="@:7.0.1 +zfp")
     depends_on("zfp", when="@7.0.2: +zfp")
     depends_on("hipblas", when="+rocm")
+    depends_on("hipblas@:6", when="@:8.0.0 +rocm")
     depends_on("hipsparse", type="link", when="@7.0.1: +rocm")
     depends_on("rocsolver", when="+rocm")
     depends_on("rocthrust", when="+rocm")

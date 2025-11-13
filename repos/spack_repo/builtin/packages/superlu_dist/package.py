@@ -76,17 +76,25 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("parmetis ~int64", when="~int64")
     depends_on("cmake@3.18.1:", type="build", when="@7.1.0:")
     depends_on("hipblas", when="+rocm")
+    depends_on("hipblas@:6", when="@:9.1.0 +rocm")
     depends_on("rocsolver", when="+rocm")
 
     conflicts("+rocm", when="+cuda")
     conflicts("+cuda", when="@:6.3")
     # See https://github.com/xiaoyeli/superlu_dist/issues/87
     conflicts("^cuda@11.5.0:", when="@7.1.0:7.1 +cuda")
+    # https://github.com/xiaoyeli/superlu_dist/pull/193
+    conflicts("^cuda@13:", when="@:9.1 +cuda")
 
     patch("xl-611.patch", when="@:6.1.1 %xl")
     patch("xl-611.patch", when="@:6.1.1 %xl_r")
     patch("superlu-cray-ftn-case.patch", when="@7.1.1 %cce")
     patch("CMAKE_INSTALL_LIBDIR.patch", when="@7.0.0:7.2.0")
+    patch(
+        "https://github.com/xiaoyeli/superlu_dist/commit/5a1946f347e6d813a250af874dee0942f4fdfc44.patch?full_index=1",
+        sha256="6472c192f6d24d4d762193385c5a46a536282cae786c13354a5e80f5ebfac64c",
+        when="@9.0:9.1",
+    )
 
     def cmake_args(self):
         spec = self.spec

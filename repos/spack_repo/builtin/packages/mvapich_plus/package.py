@@ -23,18 +23,18 @@ class MvapichPlus(Package,CudaPackage, ROCmPackage):
     url = "https://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich-3.0.tar.gz"
     list_url = "https://mvapich.cse.ohio-state.edu/downloads/"
     executables = ["^mpiname$", "^mpichversion$"]
+    manual_download = True
 
     maintainers("natshineman", "harisubramoni", "MatthewLieber")
 
     license("Unlicense")
 
     # Prefer the latest stable release
+
     
     version("4.1",sha256="46f599629d0ceb26b0c2f099e88f75fc055d115b4db45df0d6135cbd41fe0f8a",url="https://mvapich.cse.ohio-state.edu/download/mvapich/plus/4.1/mvapich-plus-installer.sh",expand=False
         )
-    
-    #version("4.1", sha256="be0a60f342cb94b6719799077072d87aa6e306f21e2c4a09eba6c581f83d4619")
-    #version("4.0", sha256="942156804425752ab8b7884a6995581d7d9e93f58025ca71b58e6412eb766eae")
+ 
 
     provides("mpi")
     provides("mpi@:4.1")
@@ -58,7 +58,6 @@ class MvapichPlus(Package,CudaPackage, ROCmPackage):
         multi=False,
         description="Control the level of thread support",
     )
-    
 
     variant(
         "process_managers",

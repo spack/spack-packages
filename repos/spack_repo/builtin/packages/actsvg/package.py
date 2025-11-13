@@ -64,6 +64,16 @@ class Actsvg(CMakePackage):
     depends_on("py-pybind11@2.10:", when="+python @0.4.42:")
     depends_on("py-pybind11@2.13:", when="+python @0.4.53:")
 
+    def patch(self):
+        # Attempt to patch the version string into the source code, as many
+        # versions of this package do not have correct version strings embedded
+        # in the source code.
+        filter_file(
+            r"project\s*\(\s*actsvg\s+VERSION\s+\d+\.\d+(\.\d+)?\s+LANGUAGES\s+CXX\s*\)",
+            "project (actsvg VERSION %s LANGUAGES CXX )" % (str(self.spec.version)),
+            "CMakeLists.txt",
+        )
+
     def cmake_args(self):
         args = [
             self.define_from_variant("ACTSVG_BUILD_EXAMPLES", "examples"),
