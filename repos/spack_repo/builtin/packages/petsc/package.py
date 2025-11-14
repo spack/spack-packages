@@ -301,6 +301,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("zlib-api", when="+hdf5")
     depends_on("zlib-api", when="+libpng")
     depends_on("zlib-api", when="+p4est")
+    depends_on("zlib-api", when="+exodusii")
     depends_on("parmetis+int64", when="+metis+mpi+int64")
     depends_on("parmetis~int64", when="+metis+mpi~int64")
     depends_on("valgrind", when="+valgrind")
