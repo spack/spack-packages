@@ -391,6 +391,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
 
+    # Fix build error with CUDA
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/99046.patch?full_index=1",
+        sha256="2912121c181de1a695f1ee791cf94f8d71fca4955e8095e506e814d07eac5825",
+        when="@2.20",
+    )
+
     # https://github.com/spack/spack/issues/49958
     patch(
         "https://github.com/tensorflow/tensorflow/pull/90563.patch?full_index=1",
