@@ -639,11 +639,11 @@ class Python(Package):
                     ),
                 ]
             )
-            
+
         # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
         if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
             config_args.append("py_cv_module__tkinter=n/a")
-            
+
         # Disable the nis module in the configure script for Python 3.11 and 3.12. It is deleted
         # in Python 3.13. See ``def patch`` for disabling the nis module in Python 3.10 and older.
         if spec.satisfies("@3.11:3.12"):
