@@ -281,10 +281,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+wrapper", when="+cmake_lang")
     conflicts("+multiple_cmake_lang", when="+cmake_lang")
 
-    cxxstds = ["17", "20"]
+    cxxstds = ["11", "14", "17", "20"]
     variant("cxxstd", default="17", values=cxxstds, multi=False, description="C++ standard")
     variant("pic", default=False, description="Build position independent code")
 
+    conflicts("cxxstd=11")
+    conflicts("cxxstd=14")
     conflicts("cxxstd=17", when="@5:")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
