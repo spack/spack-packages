@@ -317,10 +317,10 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre~complex", when="+hypre~complex")
     depends_on("hypre+int64", when="+hypre+int64")
     depends_on("hypre~int64", when="+hypre~int64")
-    depends_on("hypre+mpi~internal-superlu", when="+hypre")
+    depends_on("hypre+mpi", when="+hypre")
     depends_on("hypre@2.14:2.22.0", when="@3.14:3.15+hypre")
     depends_on("hypre@2.14:2.28.0", when="@3.16:3.19+hypre")
-    depends_on("hypre@2.14:", when="@3.20+hypre")
+    depends_on("hypre@2.14:", when="@3.20:3.21+hypre")
     depends_on("hypre@2.32:", when="@3.22:+hypre")
     depends_on("hypre@develop", when="@main+hypre")
 
