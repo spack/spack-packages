@@ -17,6 +17,8 @@ spack:
       require: "osmesa"
     mpi:
       require: openmpi
+    python:
+      require: "@3.13:"
     py-jaxlib:
       require: "%c,cxx=clang"
     py-tensorflow:
@@ -77,18 +79,14 @@ spack:
 
     # scikit-learn
     - py-scikit-learn
-    - py-scikit-learn-extra
 
     # TensorBoard
     - py-tensorboard
-    - py-tensorboard-data-server
-    - py-tensorboard-plugin-wit
     - py-tensorboardx
 
     # TensorFlow
     - py-tensorflow
     - py-tensorflow-datasets
-    - py-tensorflow-hub
     - py-tensorflow-metadata
     - py-tensorflow-probability
 

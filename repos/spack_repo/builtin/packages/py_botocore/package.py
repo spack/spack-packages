@@ -43,18 +43,17 @@ class PyBotocore(PythonPackage):
 
     depends_on("py-setuptools", type="build")
 
-    depends_on("py-jmespath@0.7.1:1", type=("build", "run"))
-    depends_on("py-jmespath@0.7.1:0", type=("build", "run"), when="@:1.23")
-    depends_on("py-docutils@0.10:0.15", type=("build", "run"), when="@:1.17")
-    depends_on("py-python-dateutil@2.1:2", type=("build", "run"))
-    depends_on(
-        "py-urllib3@1.25.4:2.1,2.2.1:2", type=("build", "run"), when="@1.34.63: ^python@3.10:"
-    )
-    depends_on(
-        "py-urllib3@1.25.4:2.0", type=("build", "run"), when="@1.31.62:1.34.62 ^python@3.10:"
-    )
-    depends_on("py-urllib3@1.25.4:1.26", type=("build", "run"), when="@1.31.62: ^python@:3.9")
-    depends_on("py-urllib3@1.25.4:1.26", type=("build", "run"), when="@1.19.16:1.31.61")
-    depends_on("py-urllib3@1.25.4:1.25", type=("build", "run"), when="@1.19.0:1.19.15")
-    depends_on("py-urllib3@1.20:1.25", type=("build", "run"), when="@1.14.12:1.18")
-    depends_on("py-urllib3@1.20:1.25", type=("build", "run"), when="@:1.14.11")
+    with default_args(type=("build", "run")):
+        depends_on("py-jmespath@0.7.1:1", when="@1.24:")
+        depends_on("py-jmespath@0.7.1:0", when="@:1.23")
+        depends_on("py-python-dateutil@2.1:2")
+        depends_on("py-urllib3@1.25.4:2", when="@1.34.63:")
+        depends_on("py-urllib3@1.25.4:2.0", when="@1.31.62:1.34.62")
+        depends_on("py-urllib3@1.25.4:1.26", when="@1.19:1.31.61")
+        depends_on("py-urllib3@1.20:1.25", when="@1.14.12:1.18")
+        depends_on("py-urllib3@1.20:1.25", when="@:1.14.11")
+
+        # Historical dependencies
+        depends_on("py-docutils@0.10:0.15", when="@:1.17")
+
+    conflicts("py-urllib3@2.2.0")
