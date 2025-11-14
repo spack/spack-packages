@@ -639,6 +639,7 @@ class Python(Package):
                     ),
                 ]
             )
+            
         # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
         if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
             config_args.append("py_cv_module__tkinter=n/a")
