@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class PyPandera(PythonPackage):
-    """A light-weight and flexible data validation and testing tool for statistical data objects."""
+    """
+    A light-weight and flexible data validation and testing tool for statistical data objects.
+    """
 
     homepage = "https://github.com/pandera-dev/pandera"
     pypi = "pandera/pandera-0.24.0.tar.gz"
