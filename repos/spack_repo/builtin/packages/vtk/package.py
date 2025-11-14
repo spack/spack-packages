@@ -212,8 +212,9 @@ class Vtk(CMakePackage):
     depends_on("freetype @:2.10.2", when="@:9.0.1")
     depends_on("freetype")
     depends_on("glew")
-    depends_on("hdf5~mpi+hl", when="~mpi")
-    depends_on("hdf5+mpi+hl", when="+mpi")
+    depends_on("hdf5+hl"}
+    depends_on("hdf5~mpi", when="~mpi")
+    depends_on("hdf5+mpi", when="+mpi")
     depends_on("hdf5@1.8:", when="@8:9.0")
     depends_on("hdf5@1.10:", when="@9.1:")
     depends_on("jpeg")
