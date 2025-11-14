@@ -55,9 +55,13 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
     variant("papi", description="Enable/Disable support for papi", default=False)
     variant("graphing", description="Enable/Disable support for graphing", default=False)
+    variant("xccl", when="+cuda", description="Enable/Disable XCCL benchmarks", default=True)
+    variant("xccl", when="+rocm", description="Enable/Disable XCCL benchmarks", default=True)
     depends_on("papi", when="+papi")
     depends_on("gnuplot", when="+graphing")
     depends_on("imagemagick", when="+graphing")
+    depends_on("nccl", when="+cuda+xccl")
+    depends_on("rccl", when="+rocm+xccl")
 
     def configure_args(self):
         spec = self.spec
@@ -65,7 +69,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         if "+cuda" in spec:
             config_args.extend(["--enable-cuda", "--with-cuda=%s" % spec["cuda"].prefix])
-            if spec.satisfies("^cuda@11:") or spec.satisfies("^nccl"):
+            if spec.satisfies("+xccl"):
                 config_args.extend(["--enable-ncclomb", "--with-nccl=%s" % spec["cuda"].prefix])
             cuda_arch = spec.variants["cuda_arch"].value
             if "none" not in cuda_arch:
@@ -73,7 +77,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         if "+rocm" in spec:
             config_args.extend(["--enable-rocm", "--with-rocm=%s" % spec["hip"].prefix])
-            if spec.satisfies("^hip@3.5:") or spec.satisfies("^rccl"):
+            if spec.satisfies("+xccl"):
                 config_args.extend(["--enable-rcclomb", "--with-rccl=%s" % spec["hip"].prefix])
             rocm_arch = spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
