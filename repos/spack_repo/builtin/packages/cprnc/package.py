@@ -40,8 +40,6 @@ class Cprnc(CMakePackage):
     )
 
     def cmake_args(self):
-        args = [
-            self.define("GENF90_PATH", join_path(self.stage.source_path, "genf90"))
-        ]
+        args = [self.define("GENF90_PATH", join_path(self.stage.source_path, "genf90"))]
 
         return args
