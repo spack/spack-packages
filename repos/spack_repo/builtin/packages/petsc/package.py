@@ -114,6 +114,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("tetgen", default=False, description="Activates support for Tetgen")
     variant("ml", default=False, description="Activates support for ML")
     variant("zoltan", default=False, description="Activates support for Zoltan")
+    variant(
+        "exodusii", default=False, description="Activates support for ExodusII (only parallel)"
+    )
     # Mumps is disabled by default, because it depends on Scalapack
     # which is not portable to all HPC systems
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
@@ -150,9 +153,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("mpfr", default=False, description="Activates support for MPFR")
     variant("moab", default=False, description="Acivates support for MOAB (only parallel)")
     variant("random123", default=False, description="Activates support for Random123")
-    variant(
-        "exodusii", default=False, description="Activates support for ExodusII (only parallel)"
-    )
     variant("cgns", default=False, description="Activates support for CGNS (only parallel)")
     variant("memkind", default=False, description="Activates support for Memkind")
     variant(
@@ -219,6 +219,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # These require +mpi
     mpi_msg = "Requires +mpi"
     conflicts("+cgns", when="~mpi", msg=mpi_msg)
+    conflicts("+ml", when="~mpi", msg=mpi_msg)
+    conflicts("+zoltan", when="~mpi", msg=mpi_msg)
     conflicts("+exodusii", when="~mpi", msg=mpi_msg)
     conflicts("+fftw", when="~mpi", msg=mpi_msg)
     conflicts("+hdf5", when="~mpi", msg=mpi_msg)
@@ -306,8 +308,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mmg", when="+parmmg")
     depends_on("parmmg", when="+parmmg")
     depends_on("tetgen+pic", when="+tetgen")
-    depends_on("trilinos+ml", when="+ml")
-    depends_on("zoltan", when="+zoltan")
+    depends_on("trilinos+mpi+ml", when="+ml+mpi")
+    depends_on("trilinos+mpi+zoltan", when="+zoltan+mpi")
+    depends_on("trilinos+mpi+exodus", when="+exodusii+mpi")
 
     depends_on("hypre+fortran", when="+hypre+fortran")
     depends_on("hypre~fortran", when="+hypre~fortran")
@@ -344,7 +347,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("jpeg", when="+jpeg")
     depends_on("libpng", when="+libpng")
     depends_on("giflib", when="+giflib")
-    depends_on("exodusii+mpi", when="+exodusii+mpi")
     depends_on("netcdf-c+mpi", when="+exodusii+mpi")
     depends_on("parallel-netcdf", when="+exodusii+mpi")
     depends_on("random123", when="+random123")
@@ -543,7 +545,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("parallel-netcdf", "pnetcdf", True, True),
             ("moab", "moab", False, False),
             ("random123", "random123", False, False),
-            ("exodusii", "exodusii", False, False),
             "cgns",
             "memkind",
             "p4est",
@@ -557,7 +558,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             "parmmg",
             ("tetgen", "tetgen", False, False),
             ("ml", "trilinos", False, False),
-            "zoltan",
+            ("zoltan", "trilinos", False, False),
+            ("exodusii", "trilinos", False, False),
         ):
             # Cannot check `library in spec` because of transitive deps
             # Cannot check variants because parmetis keys on +metis
