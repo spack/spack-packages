@@ -102,12 +102,12 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("debug", default=False, description="Compile in debug mode")
     variant("sycl", default=False, description="Enable sycl build")
 
-    variant("metis", default=True, description="Activates support for metis and parmetis")
+    variant("metis", default=False, description="Activates support for metis and parmetis")
     variant(
         "ptscotch", default=False, description="Activates support for PTScotch (only parallel)"
     )
-    variant("hdf5", default=True, description="Activates support for HDF5 (only parallel)")
-    variant("hypre", default=True, description="Activates support for Hypre (only parallel)")
+    variant("hdf5", default=False, description="Activates support for HDF5 (only parallel)")
+    variant("hypre", default=False, description="Activates support for Hypre (only parallel)")
     variant("hpddm", default=False, description="Activates support for HPDDM (only parallel)")
     variant("mmg", default=False, description="Activates support for MMG")
     variant("parmmg", default=False, description="Activates support for ParMMG (only parallel)")
@@ -118,7 +118,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
     variant(
         "superlu-dist",
-        default=True,
+        default=False,
         when="+fortran",
         description="Activates support for superlu-dist (only parallel)",
     )
