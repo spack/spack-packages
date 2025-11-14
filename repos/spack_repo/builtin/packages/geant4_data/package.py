@@ -227,4 +227,4 @@ class Geant4Data(BundlePackage):
                     raise InstallError(f"Dependency `{s.name}` does not expose `g4datasetname`")
 
                 d = "{0}/data/{1}".format(s.prefix.share, s.package.g4datasetname)
-                os.symlink(d, os.path.basename(d))
+                symlink(d, os.path.basename(d))

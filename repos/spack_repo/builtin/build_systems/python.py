@@ -28,6 +28,7 @@ from spack.package import (
     path_contains_subdirectory,
     register_builder,
     run_after,
+    symlink,
     test_part,
     tty,
     when,
@@ -174,7 +175,7 @@ class PythonExtension(PackageBase):
             except (OSError, KeyError):
                 target = None
             if target:
-                os.symlink(os.path.relpath(target, os.path.dirname(dst)), dst)
+                symlink(os.path.relpath(target, os.path.dirname(dst)), dst)
             else:
                 view.link(src, dst, spec=self.spec)
 
