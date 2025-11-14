@@ -68,7 +68,6 @@ class Rocblas(CMakePackage):
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("amdblis", type="test")
-    depends_on("netlib-lapack@3.7.1:", type="test", when="@7.1:")
 
     for ver in [
         "6.2.0",
@@ -181,7 +180,8 @@ class Rocblas(CMakePackage):
 
     patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
-    patch("0009-use-rocm-smi-config.patch", when="@6.4")
+    patch("0009-use-rocm-smi-config.patch", when="@6.4:")
+    patch("0001-remove-blas-override.patch", when="@7.1:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -259,11 +259,6 @@ class Rocblas(CMakePackage):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@6.3:"):
             args.append(self.define_from_variant("BUILD_WITH_HIPBLASLT", "hipblaslt"))
-        if self.spec.satisfies("@7.1:"):
-            args.append(
-                self.define("PKGBLAS_INCLUDE_DIRS", self.spec["netlib-lapack"].prefix.include)
-            )
-            args.append(self.define("PKGBLAS_LIBRARIES", self.spec["netlib-lapack"].prefix.lib64))
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("ROCTX_PATH", self.spec["roctracer-dev"].prefix))
         return args
