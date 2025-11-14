@@ -427,17 +427,19 @@ class Hip(CMakePackage):
         # being used to compile. This is only important for external ROCm
         # installations, which may otherwise pick up the wrong GCC toolchain.
         if self.spec.external and self.spec.satisfies("%gcc"):
-            # This is picked up by hipcc.
-            env.append_path(
-                "HIPCC_COMPILE_FLAGS_APPEND",
-                f"--gcc-toolchain={self.compiler.prefix}",
-                separator=" ",
+            gcc = Executable(self.compiler.cc)
+            libgcc_path = gcc("-print-file-name=libgcc.a", output=str, fail_on_error=False).strip()
+            libgcc_dir = os.path.abspath(os.path.dirname(libgcc_path))
+            gcc_install_dir_flag = (
+                f"--gcc-install-dir={libgcc_dir}" if os.path.exists(libgcc_dir) else None
             )
-            env.append_path(
-                "HIPCC_LINK_FLAGS_APPEND", f"--gcc-toolchain={self.compiler.prefix}", separator=" "
-            )
-            # This is picked up by CMake when using HIP as a CMake language.
-            env.append_path("HIPFLAGS", f"--gcc-toolchain={self.compiler.prefix}", separator=" ")
+
+            if gcc_install_dir_flag:
+                # This is picked up by hipcc.
+                env.append_path("HIPCC_COMPILE_FLAGS_APPEND", gcc_install_dir_flag, separator=" ")
+                env.append_path("HIPCC_LINK_FLAGS_APPEND", gcc_install_dir_flag, separator=" ")
+                # This is picked up by CMake when using HIP as a CMake language.
+                env.append_path("HIPFLAGS", gcc_install_dir_flag, separator=" ")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         self.set_variables(env)
