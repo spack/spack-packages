@@ -15,6 +15,7 @@ class PyPyzmq(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("27.1.0", sha256="ac0765e3d44455adb6ddbf4417dcce460fc40a05978c08efdf2948072f6db540")
     version("26.2.0", sha256="070672c258581c8e4f640b5159297580a9974b026043bd4ab0470be9ed324f1f")
     version("26.1.1", sha256="a7db05d8b7cd1a8c6610e9e9aa55d525baae7a44a43e18bc3260eb3f92de96c6")
     version("26.0.3", sha256="dba7d9f2e047dfa2bca3b01f4f84aa5246725203d6284e3790f2ca15fba6b40a")
@@ -30,32 +31,31 @@ class PyPyzmq(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    # pyproject.toml
-    with when("@26:"):
-        depends_on("py-scikit-build-core +pyproject", type="build")
-    with when("@:25"):
-        depends_on("py-setuptools", type="build")
-        # https://github.com/zeromq/pyzmq/issues/1278
-        # https://github.com/zeromq/pyzmq/pull/1317
-        depends_on("py-setuptools@:59", when="@17:18.0", type="build")
-
-    depends_on("py-packaging", type="build")
     depends_on("py-cython@3:", type="build", when="@26:")
-    depends_on("py-cython@0.29.35:", type="build", when="@25.1.1: ^python@3.12:")
-    depends_on("py-cython@0.29:", type="build", when="@22.3.0:")
-    depends_on("py-cython@0.20:", type="build", when="@18:")
-    depends_on("py-cython@0.16:", type="build")
+    depends_on("py-cython@0.29.35:", type="build", when="@25.1.1:25 ^python@3.12:")
+    depends_on("py-cython@0.29:", type="build", when="@19:25")
+    depends_on("py-cython@0.20:", type="build", when="@:18")
+    depends_on("py-packaging", type="build")
+    depends_on("py-scikit-build-core+pyproject@0.10:", type="build", when="@26.3:")
+    depends_on("py-scikit-build-core+pyproject", type="build", when="@26.0:26.2")
+
+    # from README
+    depends_on("libzmq@3.2.2:", type=("build", "link"), when="@22.3.0:")
     depends_on("libzmq", type=("build", "link"))
-    depends_on("libzmq@3.2:", type=("build", "link"), when="@22.3.0:")
-    # Only when python is provided by 'pypy'
-    depends_on("py-py", type=("build", "run"), when="@:22")
-    depends_on("py-cffi", type=("build", "run"), when="@:22")
 
     # Undocumented dependencies
     depends_on("py-gevent", type=("build", "run"))
 
     # https://github.com/zeromq/pyzmq/issues/1915
     conflicts("^py-cython@3.1:", when="@:25")
+
+    # Historical dependencies
+    depends_on("py-setuptools@:59", type="build", when="@17:18.0")
+    depends_on("py-setuptools", type="build", when="@:25")
+    depends_on("py-setuptools-scm+toml", type="build", when="@25.1.1:25")
+    # Only when python is provided by 'pypy'
+    depends_on("py-py", type=("build", "run"), when="@:22")
+    depends_on("py-cffi", type=("build", "run"), when="@:22")
 
     @run_before("install", when="@15:19")
     def remove_cythonized_files(self):
