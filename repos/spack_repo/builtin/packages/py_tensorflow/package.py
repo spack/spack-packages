@@ -304,10 +304,11 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("cuda@:11.4", when="@2.4:2.7")
 
         depends_on("cudnn@9.3:", when="@2.18:")
-        depends_on("cudnn@8.9:8", when="@2.15:")
-        depends_on("cudnn@8.7:8", when="@2.14:")
-        depends_on("cudnn@8.6:8", when="@2.12:")
-        depends_on("cudnn@8.1:8", when="@2.5:")
+        depends_on("cudnn@:8", when="@:2.17")
+        depends_on("cudnn@8.9:", when="@2.15:")
+        depends_on("cudnn@8.7:", when="@2.14:")
+        depends_on("cudnn@8.6:", when="@2.12:")
+        depends_on("cudnn@8.1:", when="@2.5:")
 
     # depends_on('tensorrt', when='+tensorrt')
     depends_on("nccl", when="+nccl+cuda")
