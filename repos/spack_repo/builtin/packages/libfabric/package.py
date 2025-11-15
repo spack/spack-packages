@@ -114,6 +114,15 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("level_zero", default=False, description="Enable Level Zero support")
     variant("gdrcopy", default=False, when="@1.12: +cuda", description="Enable gdrcopy support")
 
+    # Backporting from main for versions 2.3.x
+    # The CXI provider hardcodes CXIP_FI_VERSION to FI_VERSION(2, 2).
+    # Make it match the libfabric we're building
+    patch(
+        "https://github.com/ofiwg/libfabric/commit/f565852cedc7b6fd3848ed2f11b1dd90ed37be05.patch?full_index=1",
+        sha256="da2514252074c350fb5cbdb04f267cf227d0a575902fe6cad355afe1dc7c0102",
+        when="@2.3 fabrics=cxi",
+    )
+
     # For version 1.9.0:
     # headers: fix forward-declaration of enum fi_collective_op with C++
     patch(
