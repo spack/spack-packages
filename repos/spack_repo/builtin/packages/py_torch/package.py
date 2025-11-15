@@ -74,10 +74,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("rocm", default=False, description="Use ROCm")
     variant("cudnn", default=not is_darwin, description="Use cuDNN", when="+cuda")
     variant("fbgemm", default=True, description="Use FBGEMM (quantized 8-bit server operators)")
-    variant("kineto", default=True, description="Use Kineto profiling library", when="@1.8: ~rocm")
-    variant(
-        "kineto", default=False, description="Use Kineto profiling library", when="@1.8: +rocm"
-    )
+    variant("kineto", default=True, description="Use Kineto profiling library", when="@1.8:")
     variant("magma", default=not is_darwin, description="Use MAGMA", when="+cuda")
     variant("metal", default=is_darwin, description="Use Metal for Caffe2 iOS build")
     variant(
@@ -94,14 +91,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("numpy", default=True, description="Use NumPy")
     variant("openmp", default=True, description="Use OpenMP for parallel code")
     variant("qnnpack", default=True, description="Use QNNPACK (quantized 8-bit operators)")
-    variant(
-        "valgrind", default=True, description="Use Valgrind", when="@1.8: platform=linux ~rocm"
-    )
-    variant(
-        "valgrind", default=False, description="Use Valgrind", when="@1.8: platform=linux +rocm"
-    )
-    variant("xnnpack", default=True, description="Use XNNPACK", when="~rocm")
-    variant("xnnpack", default=False, description="Use XNNPACK", when="+rocm")
+    variant("valgrind", default=True, description="Use Valgrind", when="@1.8: platform=linux")
+    variant("xnnpack", default=True, description="Use XNNPACK")
     variant("mkldnn", default=True, description="Use MKLDNN")
     variant("distributed", default=True, description="Use distributed")
     variant("mpi", default=True, description="Use MPI for Caffe2", when="+distributed")

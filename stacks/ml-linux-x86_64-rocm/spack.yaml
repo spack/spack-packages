@@ -33,9 +33,6 @@ spack:
       - "%c,cxx=gcc"
 
   specs:
-    # Horovod
-    - py-horovod
-
     # Hugging Face
     - py-transformers
 
@@ -49,10 +46,9 @@ spack:
     # - py-keras backend=torch
 
     # PyTorch
-    # Does not yet support Spack-installed ROCm
     - py-botorch
     - py-gpytorch
-    # - py-kornia
+    - py-kornia
     - py-lightning
     - py-pytorch-lightning
     - py-segmentation-models-pytorch
