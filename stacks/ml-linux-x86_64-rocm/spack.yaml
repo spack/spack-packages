@@ -52,7 +52,7 @@ spack:
     # Does not yet support Spack-installed ROCm
     - py-botorch
     - py-gpytorch
-    - py-kornia
+    # - py-kornia
     - py-lightning
     - py-pytorch-lightning
     - py-segmentation-models-pytorch
