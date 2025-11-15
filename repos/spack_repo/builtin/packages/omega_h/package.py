@@ -75,6 +75,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("warnings", default=False, description="Compile C++ with warnings")
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
+    variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
@@ -101,8 +102,6 @@ class OmegaH(CMakePackage, CudaPackage):
 
     # https://github.com/SCOREC/omega_h/pull/118
     conflicts("@10.5:10.8.5 +cuda~kokkos")
-
-    conflicts("@11.0.0-scorec +cuda", msg="direct CUDA backend has been removed in 11.0.0-scorec. Use Kokkos with cuda enabled.")
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
