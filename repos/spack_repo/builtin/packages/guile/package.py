@@ -51,6 +51,7 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
     depends_on("libffi")
     depends_on("readline", when="+readline")
     depends_on("pkgconfig", type="build")
+    depends_on("gperf", when="@3:")
 
     build_directory = "spack-build"
 
