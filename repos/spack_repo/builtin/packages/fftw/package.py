@@ -76,12 +76,6 @@ class FftwBase(AutotoolsPackage):
         if os.path.isfile("fftw/config.h"):
             os.rename("fftw/config.h", "fftw/config.h.SPACK_RENAMED")
 
-        # On Apple Arm machines, configure uses arm rather than aarch64
-        # to check NEON.
-        if self.spec.satisfies("target=m1:"):
-            filter_file(r" aarch64\)", r" aarch64 | arm)", "configure")
-            filter_file(r" aarch64\)", r" aarch64 | arm)", "configure.ac")
-
     def autoreconf(self, spec, prefix):
         if spec.satisfies("+pfft_patches"):
             autoreconf = which("autoreconf")
@@ -111,6 +105,13 @@ class FftwBase(AutotoolsPackage):
         # Base options
         options = ["--prefix={0}".format(prefix), "--enable-threads"]
         options.extend(self.enable_or_disable("shared"))
+
+        # On Apple Arm machines, force to use aarch64 rather than arm
+        # to check for NEON due to logic in configure.
+        if self.spec.satisfies("target=m1:"):
+            uname = Executable("uname")
+            uname_r = uname("-r", output=str)
+            options.append("--build=aarch64-apple-darwin{0}".format(uname_r))
 
         if not self.compiler.f77 or not self.compiler.fc:
             options.append("--disable-fortran")
