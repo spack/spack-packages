@@ -59,6 +59,8 @@ class Ggml(CMakePackage, CudaPackage, ROCmPackage):
                 blas_vendor = "OpenBLAS"
             elif self.spec.satisfies("%blas=intel-oneapi-mkl"):
                 blas_vendor = "Intel"
+            elif self.spec.satisfies("%blas=veclibfort"):
+                blas_vendor = "Apple"
             else:
                 blas_vendor = "Generic"
             args.append(self.define("GGML_BLAS_VENDOR", blas_vendor))
