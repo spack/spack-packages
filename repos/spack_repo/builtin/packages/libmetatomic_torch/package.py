@@ -14,7 +14,7 @@ class LibmetatomicTorch(CMakePackage):
     url = "https://github.com/metatensor/metatomic/releases/download/metatomic-torch-v0.0.0/metatomic-torch-cxx-0.0.0.tar.gz"
     git = "https://github.com/metatensor/metatomic.git"
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.1.6", sha256="4cb9b7bb530a98119186167c31fb00ea7ef3bcc45d593e449e7670e9313e5327")
