@@ -38,6 +38,12 @@ class Cdi(AutotoolsPackage):
 
     depends_on("netcdf-c", when="+netcdf")
 
+    # note:
+    # starting from 2.5.1 the provided cmake config file looks for `cdi` instead of `libcdi`,
+    # but autotools still builds `cdi`.
+    # cmake build system is going to build `libcdi` in future releases.
+    patch("cmake-config-libname.patch", when="@2.5.1: build_system=autotools")
+
     def configure_args(self):
         args = []
         if "+netcdf" in self.spec:
