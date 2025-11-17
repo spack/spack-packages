@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -37,3 +39,9 @@ class LlamaCpp(CMakePackage):
             self.define_from_variant("LLAMA_USE_CURL", "curl"),
         ]
         return args
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        if os.path.exists(self.prefix.lib64):
+            env.set("LLAMA_CPP_LIB_PATH", self.prefix.lib64)
+        else:
+            env.set("LLAMA_CPP_LIB_PATH", self.prefix.lib)
