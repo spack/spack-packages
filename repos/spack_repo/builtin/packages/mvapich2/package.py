@@ -26,7 +26,9 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
     executables = ["^mpiname$", "^mpichversion$"]
 
     with default_args(deprecated=True):
-        version("2.3.7-1", sha256="fdd971cf36d6476d007b5d63d19414546ca8a2937b66886f24a1d9ca154634e4")
+        version(
+            "2.3.7-1", sha256="fdd971cf36d6476d007b5d63d19414546ca8a2937b66886f24a1d9ca154634e4"
+        )
         version("2.3.7", sha256="c39a4492f4be50df6100785748ba2894e23ce450a94128181d516da5757751ae")
         version("2.3.6", sha256="b3a62f2a05407191b856485f99da05f5e769d6381cd63e2fcb83ee98fc46a249")
         version("2.3.5", sha256="f9f467fec5fc981a89a7beee0374347b10c683023c76880f92a1a0ad4b961a8c")
@@ -35,8 +37,12 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
         version("2.3.2", sha256="30cc0d7bcaa075d204692f76bca4d65a539e0f661c7460ffa9f835d6249e1ebf")
         version("2.3.1", sha256="314e12829f75f3ed83cd4779a972572d1787aac6543a3d024ea7c6080e0ee3bf")
         version("2.3", sha256="01d5fb592454ddd9ecc17e91c8983b6aea0e7559aa38f410b111c8ef385b50dd")
-        version("2.3rc2", sha256="dc3801f879a54358d17002a56afd45186e2e83edc5b8367b5c317e282eb6d6bf")
-        version("2.3rc1", sha256="607d309c864a6d57f5fa78fe6dd02368919736b8be0f4ddb938aba303ef9c45c")
+        version(
+            "2.3rc2", sha256="dc3801f879a54358d17002a56afd45186e2e83edc5b8367b5c317e282eb6d6bf"
+        )
+        version(
+            "2.3rc1", sha256="607d309c864a6d57f5fa78fe6dd02368919736b8be0f4ddb938aba303ef9c45c"
+        )
         version("2.3a", sha256="7f0bc94265de9f66af567a263b1be6ef01755f7f6aedd25303d640cc4d8b1cff")
         version("2.2", sha256="791a6fc2b23de63b430b3e598bf05b1b25b82ba8bf7e0622fc81ba593b3bb131")
         version("2.1", sha256="49f3225ad17d2f3b6b127236a0abdc979ca8a3efb8d47ab4b6cd4f5252d05d29")
