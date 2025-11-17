@@ -46,3 +46,6 @@ class RRcppeigen(RPackage):
 
     # Historical dependencies
     depends_on("r-matrix@1.1-0:", type=("build", "run"), when="@:0.3.3.9.3")
+
+    depends_on("cxx", type=("build"))
+    depends_on("fortran", type=("build"))

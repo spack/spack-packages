@@ -24,6 +24,28 @@ class RustBootstrap(Package):
     # should update these binary releases as bootstrapping requirements are
     # modified by new releases of Rust.
     rust_releases = {
+        "1.91.0": {
+            "darwin": {
+                "x86_64": "b329b458c8074023e5f6934bcd6c0bbef5075ac0090548c3d45a7de82e0c5b0c",
+                "aarch64": "ec42d93940933340ee55e67003699ebe264aa82d7cf0d5ae08100c06b1bfacfa",
+            },
+            "linux": {
+                "x86_64": "bad9a353330d9f409fe9db790da5701074112f804073506bb2808dd97b940b3c",
+                "aarch64": "29c5a608861cc9c06d3f86852a7d7b1a868de2d7ab90d4ff625aeebfb9383390",
+                "powerpc64le": "1a357b1e44f7ec7c2da62461a4180d8d8b599dd06045e7e2b83cd7f93972d6d7",
+            },
+        },
+        "1.88.0": {
+            "darwin": {
+                "x86_64": "b36b0bfac17e0a1f6cc06b9fdc4e2131ad578b4122a67792236b58650ae4c5c8",
+                "aarch64": "dee921b9a41b1c3fbb088ad31dcca3b232de2cb89c268db75f40912eeaa474db",
+            },
+            "linux": {
+                "x86_64": "ad6f0cc845e7fcca17fd451bafd2c04a7bbcb543f8f3ef5bc412fd1fef99ef7b",
+                "aarch64": "dbc75abc31d142eacf15e60d0e51c4f291539974221d217b80786756b0ce1d6b",
+                "powerpc64le": "e1f16b2885237695f3cce7fc2f0128a938fc07462b076cb61bd2f06e5f8baf38",
+            },
+        },
         "1.86.0": {
             "darwin": {
                 "x86_64": "bf8121850b2f6a46566f6c2bbe9fa889b915b1039febf36853ea9d9c4256c67d",

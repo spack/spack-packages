@@ -66,3 +66,7 @@ class RGenomicfeatures(RPackage):
     depends_on("r-biobase@2.15.1:", type=("build", "run"))
 
     depends_on("r-rmysql", type=("build", "run"), when="@1.30.3")
+
+    depends_on("c", type=("build"))
+    depends_on("cxx", type=("build"))
+    depends_on("fortran", type=("build"))

@@ -21,6 +21,8 @@ class Bat(CargoPackage):
     version("0.13.0", sha256="f4aee370013e2a3bc84c405738ed0ab6e334d3a9f22c18031a7ea008cd5abd2a")
     version("0.12.1", sha256="1dd184ddc9e5228ba94d19afc0b8b440bfc1819fef8133fe331e2c0ec9e3f8e2")
 
+    depends_on("rust", type="build") 
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated

@@ -23,3 +23,6 @@ class RFilelock(RPackage):
     depends_on("c", type="build")
 
     depends_on("r@3.4:", type=("build", "run"), when="@1.0.3:")
+
+    depends_on("c", type=("build"))
+    depends_on("fortran", type=("build"))
