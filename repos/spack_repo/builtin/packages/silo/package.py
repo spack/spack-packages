@@ -125,6 +125,11 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     patch("hdf5-113.patch", when="@4.11:4.11-bsd +hdf5 ^hdf5@1.13:")
     conflicts("^hdf5@1.13:", when="@:4.10.2-bsd")
 
+    # compression features available only w/ HDF5 driver
+    conflicts('+hzip', when='~hdf5', msg='+hzip requires +hdf5')
+    conflicts('+fpzip', when='~hdf5', msg='+fpzip requires +hdf5')
+    conflicts('+zfp', when='~hdf5', msg='zfp requires +hdf5')
+    
     # hzip and fpzip are not available in the BSD releases
     conflicts("+hzip", when="@4.10.2-bsd,4.11-bsd,4.11.1-bsd")
     conflicts("+fpzip", when="@4.10.2-bsd,4.11-bsd,4.11.1-bsd")
@@ -255,6 +260,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         config_args.extend(self.enable_or_disable("shared"))
         config_args.extend(self.enable_or_disable("hzip"))
         config_args.extend(self.enable_or_disable("fpzip"))
+        config_args.extend(self.enable_or_disable("zfp"))
 
         # Do not specify the prefix of zlib if it is in a system directory
         # (see https://github.com/spack/spack/pull/21900).
