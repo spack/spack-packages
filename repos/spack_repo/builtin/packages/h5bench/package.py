@@ -24,23 +24,14 @@ class H5bench(CMakePackage):
 
     version("1.4", commit="67a3e6d91508e5ab77db79c6187b2eb3c96119e0", submodules=True)
     version("1.3", commit="ec75a466a77c337b4252c0afe1055c7fbe841e16", submodules=True)
-    version(
-        "1.2", commit="866af6777573d20740d02acc47a9080de093e4ad", submodules=True, deprecated=True
-    )
-    version(
-        "1.1", commit="1276530a128025b83a4d9e3814a98f92876bb5c4", submodules=True, deprecated=True
-    )
-    version(
-        "1.0", commit="9d3438c1bc66c5976279ef203bd11a8d48ade724", submodules=True, deprecated=True
-    )
 
-    variant("metadata", default=False, when="@1.2:", description="Enables metadata benchmark")
-    variant("amrex", default=False, when="@1.2:", description="Enables AMReX benchmark")
-    variant("exerciser", default=False, when="@1.2:", description="Enables exerciser benchmark")
-    variant("openpmd", default=False, when="@1.2:", description="Enables OpenPMD benchmark")
-    variant("e3sm", default=False, when="@1.2:", description="Enables E3SM benchmark")
-    variant("async", default=False, when="@1.2:", description="Enables ASYNC VOL Connector")
-    variant("all", default=False, when="@1.2:", description="Enables all h5bench benchmarks")
+    variant("metadata", default=False, description="Enables metadata benchmark")
+    variant("amrex", default=False, description="Enables AMReX benchmark")
+    variant("exerciser", default=False, description="Enables exerciser benchmark")
+    variant("openpmd", default=False, description="Enables OpenPMD benchmark")
+    variant("e3sm", default=False, description="Enables E3SM benchmark")
+    variant("async", default=False, description="Enables ASYNC VOL Connector")
+    variant("all", default=False, description="Enables all h5bench benchmarks")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

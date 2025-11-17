@@ -18,6 +18,7 @@ class PyPyqt5(SIPPackage):
 
     license("GPL-3.0-only")
 
+    version("5.15.11", sha256="fda45743ebb4a27b4b1a51c6d8ef455c4c1b5d610c90d2934c7802b5c1557c52")
     version("5.15.9", sha256="dc41e8401a90dc3e2b692b411bd5492ab559ae27a27424eed4bd3915564ec4c0")
 
     depends_on("cxx", type="build")  # generated
@@ -25,10 +26,12 @@ class PyPyqt5(SIPPackage):
 
     # pyproject.toml
     depends_on("py-sip@6.6.2:6", type="build")
+    depends_on("py-sip@6.8.6:6", type="build", when="@5.15.11:")
     depends_on("py-pyqt-builder@1.14.1:1", type="build")
 
     # PKG-INFO
     depends_on("py-pyqt5-sip@12.11:12", type=("build", "run"))
+    depends_on("py-pyqt5-sip@12.15:12", type=("build", "run"), when="@5.15.11:")
 
     # README
     depends_on("qt@5+opengl")

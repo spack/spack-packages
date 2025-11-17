@@ -39,6 +39,10 @@ class Mapl(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("2.62.1", sha256="6fa0d5eb3d9ea620ca6ed8ad6561b0ea445517c69ad21451137d0bb65c7dbede")
+    version("2.62.0", sha256="5973a8cac75c55fcc0f4c5256f7d485ab99d2a52ff42d4359ce8d0f3f94d9133")
+    version("2.61.0", sha256="bb768fd60214d5b6fe6120e08a5ebd869f576392a3252a4715fd7c32d0dea97a")
+    version("2.60.0", sha256="470f4da9cc516fdf8206dbc84ab13f53792f3af5e54cd5315ff70d44e5700788")
     version("2.59.0", sha256="a1137bf62e885256d295c66929cd77658a559f88dbed4f433544f432c5c7a059")
     version("2.58.1", sha256="176c7baccd0182e353184808b1048baa6100d8700ca532e0d02bea6ae5771aba")
     version("2.57.0", sha256="6991e6b7521842c9c94b549dd0fed778e8b6dad1201708aad3193c274597e36a")
@@ -135,134 +139,120 @@ class Mapl(CMakePackage):
     version("2.23.1", sha256="563f3e9f33adae298835e7de7a4a29452a2a584d191248c59494c49d3ee80d24")
     version("2.23.0", sha256="ae25ec63d0f288599c668f35fdbccc76abadbfc6d48f95b6eb4e7a2c0c69f241")
     version("2.22.0", sha256="3356b8d29813431d272c5464e265f3fe3ce1ac7f49ae6d41da34fe4b82aa691a")
-    version(
-        "2.12.3",
-        sha256="e849eff291939509e74830f393cb2670c2cc96f6160d8060dbeb1742639c7d41",
-        deprecated=True,
-    )
-    version(
-        "2.11.0",
-        sha256="76351e026c17e2044b89085db639e05ba0e7439a174d14181e01874f0f93db44",
-        deprecated=True,
-    )
-    version(
-        "2.8.1",
-        sha256="a7657d4c52a66c3a6663e436d2c2dd4dbb81addd747e1ace68f59843665eb739",
-        deprecated=True,
-    )
-    version(
-        "2.8.0",
-        sha256="6da60a21ab77ecebc80575f25b756c398ef48f635ab0b9c96932a1d4ebd8b4a0",
-        deprecated=True,
-    )
-    version(
-        "2.7.3",
-        sha256="e8cdc0816471bb4c42673c2fa66d9d749f5a18944cd31580a2d6fd6d961ba163",
-        deprecated=True,
-    )
-    version(
-        "2.7.2",
-        sha256="8f123352c665c434a18ff87304a71a61fb3342919adcccfea2a40729992d9f93",
-        deprecated=True,
-    )
-    version(
-        "2.7.1",
-        sha256="8239fdbebd2caa47a232c24927f7a91196704e35c8b7909e1bbbefccf0647ea6",
-        deprecated=True,
-    )
 
     # Versions later than 3.14 remove FindESMF.cmake
     # from ESMA_CMake.
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v3.65.0",
+        commit="a1e28e6ec25bbbc7397549be73e19fd32cdc2323",
+        when="@2.62:",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v3.64.0",
+        commit="923f364385f992d66021aac9b9dddadf57a6ec14",
+        when="@2.60:2.61",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.62.1",
-        when="@2.56:",
+        commit="e08e8804bcf081bd690d484e010bb6c865ef547f",
+        when="@2.56:2.59",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.58.1",
+        commit="16805723f4c7a9449c429e955d74f4f2f7ee41a4",
         when="@2.55",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.55.0",
+        commit="ee49277f13b9b223cd86129a0c7094a359cbc4db",
         when="@2.51:2.54",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.51.0",
+        commit="53fae1237c88f9a6e60393dc6e4781555786b659",
         when="@2.48:2.50",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.46.0",
+        commit="00bfd6ce4d7d8152433b2b1ad2cbb6d6f6c7066a",
         when="@2.47",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.45.2",
+        commit="0f40e433189902d30af15fc92ace18dbf950d273",
         when="@2.45:2.46",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.40.0",
+        commit="92e9910b1f70d6ea75e9f552fd672001b740b15b",
         when="@2.44",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.36.0",
+        commit="e69296a5955ccc08618673125fccda0d0ca979ea",
         when="@2.42.0:2.43",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.31.0",
+        commit="7dc4c819dc5169e6b887374aa0fa0a8f71846832",
         when="@2.40.0:2.41",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.28.0",
+        commit="cb919eaea9489a2852d830a1eebf45b3c6acd223",
         when="@2.36.0:2.39",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.24.0",
+        commit="5664d95fddff4afd01a2d7388a8bd99123d65e7d",
         when="@2.34.0:2.35",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.21.0",
+        commit="6df72eb873659eb55bc119f320a6e6e7bd23f5b1",
         when="@2.22.0:2.33",
+        placement="ESMA_cmake",
     )
-    # NOTE: Remove this resource(), the patch() commands below
-    # and the actual patches when MAPL 2.12 and older are deleted
-    resource(
-        name="esma_cmake",
-        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
-        tag="v3.13.0",
-        when="@:2.12.3",
-    )
-
-    # Patch to configure Apple M1 chip in x86_64 Rosetta 2 emulator mode
-    # Needed for versions earlier than 3.14 of ESMA_cmake only.
-    patch("esma_cmake_apple_m1_rosetta.patch", when="@:2.12.3")
-
-    # Patch to add missing NetCDF C target in various CMakeLists.txt
-    patch("mapl-2.12.3-netcdf-c.patch", when="@:2.12.3")
-
-    # Patch to add missing MPI Fortran target to top-level CMakeLists.txt
-    patch("mapl-2.12.3-mpi-fortran.patch", when="@:2.12.3")
 
     # MAPL only compiles with MPICH from version 2.42.0 and higher so we conflict
     # with older versions. Also, it's only been tested with MPICH 4, so we don't
@@ -276,8 +266,7 @@ class Mapl(CMakePackage):
 
     # MAPL can use ifx only from MAPL 2.51 onwards and only supports
     # ifx 2025.0 and newer due to bugs in ifx.
-    conflicts("%oneapi@2025:", when="@:2.50")
-    conflicts("^[virtuals=fortran] intel-oneapi-compilers")
+    conflicts("^[virtuals=fortran] intel-oneapi-compilers@2025:", when="@:2.50")
 
     variant("flap", default=False, description="Build with FLAP support", when="@:2.39")
     variant("pflogger", default=True, description="Build with pFlogger support")
@@ -320,9 +309,11 @@ class Mapl(CMakePackage):
     depends_on("esmf@8.5:", when="@2.40:2.43")
     depends_on("esmf@8.4", when="@2.34:2.39")
     depends_on("esmf@8.3", when="@2.22:2.33")
-    depends_on("esmf", when="@:2.12.99")
     depends_on("esmf~debug", when="~debug")
     depends_on("esmf+debug", when="+debug")
+
+    # MAPL2 only supports ESMF 9 from 2.61 onwards
+    conflicts("esmf@9:", when="@:2.60")
 
     # udunits dependency from MAPL 2.48 onwards
     depends_on("udunits", when="@2.48:")
@@ -388,6 +379,9 @@ class Mapl(CMakePackage):
     # when using apple-clang version 15.x or newer, need to use the llvm-openmp library
     depends_on("llvm-openmp", when="%apple-clang@15:", type=("build", "run"))
 
+    # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
+
     def cmake_args(self):
         args = [
             self.define_from_variant("BUILD_WITH_PFLOGGER", "pflogger"),
@@ -402,8 +396,7 @@ class Mapl(CMakePackage):
         if self.spec.satisfies("@:2.39"):
             args.append(self.define("BUILD_WITH_FLAP", self.spec.satisfies("+flap")))
 
-        if self.spec.satisfies("@2.22.0:"):
-            args.append(self.define("CMAKE_MODULE_PATH", self.spec["esmf"].prefix.cmake))
+        args.append(self.define("CMAKE_MODULE_PATH", self.spec["esmf"].prefix.cmake))
 
         # Compatibility flags for gfortran
         fflags = []
@@ -414,6 +407,12 @@ class Mapl(CMakePackage):
             if gfortran_major_ver >= 10:
                 fflags.append("-fallow-invalid-boz")
                 fflags.append("-fallow-argument-mismatch")
+
+        # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+        # this is taken care of inside of ESMA_cmake for MAPL 2.62+
+        if self.spec.satisfies("@:2.61 ^intel-oneapi-compilers@2025.2"):
+            fflags.append(f"-fpp-name={join_path(self.stage.source_path, 'cpp_wrapper.sh')}")
+
         if fflags:
             args.append(self.define("CMAKE_Fortran_FLAGS", " ".join(fflags)))
 
@@ -458,6 +457,22 @@ class Mapl(CMakePackage):
             nc_flags = subprocess.check_output(nc_pc_cmd, encoding="utf8").strip()
             filter_file(
                 "(target_link_libraries[^)]+PUBLIC )", r"\1 %s " % nc_flags, "pfio/CMakeLists.txt"
+            )
+
+        # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+        if self.spec.satisfies("@:2.61 ^intel-oneapi-compilers@2025.2"):
+            cpp_wrapper = """#!/usr/bin/env bash
+cpp -P -traditional-cpp -undef \"$@\"
+"""
+            with open(join_path(self.stage.source_path, "cpp_wrapper.sh"), "w") as f:
+                f.write(cpp_wrapper)
+            set_executable(join_path(self.stage.source_path, "cpp_wrapper.sh"))
+
+            filter_file(
+                "SYSTEM_DSO_EXTENSION = SYSTEM_DSO_SUFFIX",
+                "SYSTEM_DSO_EXTENSION = 'SYSTEM_DSO_SUFFIX'",
+                "shared/DSO_Utilities.F90",
+                string=True,
             )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

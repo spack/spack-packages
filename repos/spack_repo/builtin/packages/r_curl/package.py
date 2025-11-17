@@ -25,23 +25,14 @@ class RCurl(RPackage):
     license("MIT")
 
     version("6.2.0", sha256="0399bb6bcad5f31ad2a2a7165ff8c976111707125ca0a9c4b8ccf40bb5eb1635")
-    version("5.2.1", sha256="4a7a4d8c08aa1bca2fcd9c58ade7b4b0ea2ed9076d0521071be29baac8adfa90")
-    version("5.0.0", sha256="d7f3cac9b513914ffa8f6f64e6fa5dd96c8273378ace6b0c16b71bc6ba59c9b2")
-    version("4.3.3", sha256="3567b6acad40dad68acfe07511c853824839d451a50219a96dd6d125ed617c9e")
-    version("4.3.2", sha256="90b1facb4be8b6315bb3d272ba2dd90b88973f6ea1ab7f439550230f8500a568")
-    version("4.3", sha256="7406d485bb50a6190e3ed201e3489063fd249b8b3b1b4f049167ac405a352edb")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@3.0.0:", type=("build", "run"))
-    depends_on("curl", when="@4.3:")
-    depends_on("curl@:7.63", when="@:4.0")
-
-    # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=282908
-    requires("^curl@:8.10", when="@:5.2.1")
+    depends_on("r@3:", type=("build", "run"))
+    depends_on("curl")
 
     # (Jan 2025) MacOS ships a very buggy libcurl 8.7.1 so we avoid this until apple updates it
     # See: https://github.com/jeroen/curl/issues/376
     # from: https://github.com/jeroen/curl/blob/v6.2.0/configure#L18
-    depends_on("curl@8.8.0:", when="@6.2.0: platform=darwin")
+    depends_on("curl@8.8:", when="platform=darwin")

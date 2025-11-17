@@ -36,6 +36,8 @@ class RStanheaders(RPackage):
     version("2.17.1", sha256="4300a1910a2eb40d7a6ecabea3c1e26f0aa9421eeb3000689272a0f62cb80d97")
     version("2.10.0-2", sha256="ce4e335172bc65da874699302f6ba5466cdbcf69458c11954c0f131fc78b59b7")
 
+    depends_on("c", type=("build"))
+
     depends_on("r+X", type=("build", "run"))
     depends_on("r@3.4.0:", type=("build", "run"), when="@2.18.0:")
     depends_on("r-rcppparallel@5.0.1:", type=("build", "run"), when="@2.21.0:")

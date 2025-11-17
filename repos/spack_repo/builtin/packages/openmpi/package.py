@@ -79,10 +79,13 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Current
     version(
-        "5.0.8", sha256="53131e1a57e7270f645707f8b0b65ba56048f5b5ac3f68faabed3eb0d710e449"
-    )  # libmpi.so.40.40.8
+        "5.0.9", sha256="dfb72762531170847af3e4a0f21d77d7b23cf36f67ce7ce9033659273677d80b"
+    )  # libmpi.so.40.40.7
 
     # Still supported
+    version(
+        "5.0.8", sha256="53131e1a57e7270f645707f8b0b65ba56048f5b5ac3f68faabed3eb0d710e449"
+    )  # libmpi.so.40.40.7
     version(
         "5.0.7", sha256="119f2009936a403334d0df3c0d74d5595a32d99497f9b1d41e90019fee2fc2dd"
     )  # libmpi.so.40.40.7
@@ -501,6 +504,11 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
         sha256="38529b557df029d6a987fa7e337db40b0ac1c1bb921776b95aacaa40e945cd21",
         when="@4.1.8,5.0.7",
     )
+
+    # Add missing header for memcpy
+    # https://github.com/open-mpi/ompi/commit/aa5577441ff1ab7f97f8b63e442b37457c7bd997
+    patch("add_string.patch", when="@5.0.1:5.0.8 +rocm")
+
     FABRICS = (
         "psm",
         "psm2",
@@ -615,7 +623,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     # Variants to use internal packages
     variant("internal-hwloc", default=False, description="Use internal hwloc")
-    variant("internal-pmix", default=False, description="Use internal pmix and prrte")
+    variant("internal-pmix", default=False, description="Use internal pmix and prrte", when="@3:")
     variant("internal-libevent", default=False, description="Use internal libevent")
     variant("openshmem", default=False, description="Enable building OpenSHMEM")
     variant("debug", default=False, description="Make debug build", when="build_system=autotools")
@@ -717,7 +725,7 @@ with '-Wl,-commons,use_dylibs' and without
     # PMIx is unavailable for @1, and required for @2:
     # OpenMPI @2: includes a vendored version:
     with when("~internal-pmix"):
-        depends_on("pmix@1", when="@2")
+        depends_on("pmix", when="@3:")
         depends_on("pmix@3.2:", when="@4:")
         depends_on("pmix@4.2.4:", when="@5:")
 

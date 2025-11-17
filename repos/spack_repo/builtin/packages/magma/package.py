@@ -53,6 +53,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
     depends_on("cuda@8:", when="@2.5.1: +cuda")  # See PR #14471
     depends_on("hipblas", when="+rocm")
+    depends_on("hipblas@:6", when="@:2.9.0 +rocm")
     depends_on("hipsparse", when="+rocm")
     depends_on("rocm-core", when="@2.8.0: +rocm")
     depends_on("python", when="@master", type="build")
@@ -72,6 +73,10 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     # 2.8.0 release not compatible with CUDA-12.6
     # https://github.com/icl-utk-edu/magma/issues/7
     conflicts("^cuda@12.6:", when="@:2.8.0")
+
+    # 2.9.0 release not compatible with CUDA-13.0
+    # https://github.com/icl-utk-edu/magma/issues/61
+    conflicts("^cuda@13:", when="@:2.9.0")
 
     # Many cuda_arch values were not recognized by MAGMA's CMakeLists.txt
     with when("@:2.8"):

@@ -30,6 +30,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop")
     version("main", branch="main")
     version("master", branch="master", deprecated=True)
+    version("1.10.0", commit="d4e0e9f8c8eb36cc2044189834d82742b925f27e")  # v1.10.0
     version("1.9.0", commit="20cfd68795f58078898da9890baa311b46845a8b")  # v1.9.0
     version("1.8.0", commit="586b1754058d7a32d4bd1b650f9603484c2a8927")  # v1.8.0
     version("1.7.0", commit="49242ff89af1e695d7794f6d50ed9933024b66fe")  # v1.7.0
@@ -58,6 +59,9 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "half_precision", default=True, description="Enable half-precision support", when="@1.9.0:"
     )
+    variant(
+        "bfloat16_precision", default=True, description="Enable bfloat16 support", when="@1.10.0:"
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -82,6 +86,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     # ROCPRIM is not a direct dependency, but until we have reviewed our CMake
     # setup for rocthrust, this needs to also be added here.
     depends_on("rocprim", when="+rocm")
+    # error due to change in warpSize constant definition in ROCm 7.0
+    depends_on("hip@:6", when="+rocm")
     depends_on("hwloc@2.1:", when="+hwloc")
     # TODO: replace with the next PAPI version when available (>7.0.1.0)
     depends_on("papi@master+sde", when="+sde")
@@ -117,6 +123,9 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     # Probably fixed in NVIDIA/cccl#1528 which hopefully comes with the next CUDA release
     conflicts("^cuda@12.4", when="+cuda", msg="CCCL 2.3 bug causes build failure.")
 
+    # https://github.com/ginkgo-project/ginkgo/pull/1926
+    conflicts("^cuda@13:", when="@:1.10.0 +cuda")
+
     # https://github.com/ginkgo-project/ginkgo/pull/1524
     patch("ginkgo-sycl-pr1524.patch", when="@1.7.0 +sycl %oneapi@2024:")
 
@@ -134,6 +143,13 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/ginkgo-project/ginkgo/commit/369b12a5f4431577d60a61e67f2b0537b428abca.patch?full_index=1",
         sha256="27d6ae6c87bec15464d20a963c336e89eac92625d07e3f9548e33cd7b952a496",
         when="+rocm @1.8.0",
+    )
+
+    # Removes undefined behavior in MPI call
+    patch(
+        "https://github.com/ginkgo-project/ginkgo/pull/1875.patch?full_index=1",
+        sha256="25b3b040e0836a65ed416607bed8bc62dd56cf6f2630e2950cc840b904134891",
+        when="@1.10.0",
     )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
@@ -173,6 +189,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("GINKGO_WITH_PAPI_SDE", "sde"),
             from_variant("GINKGO_DEVEL_TOOLS", "develtools"),
             from_variant("GINKGO_ENABLE_HALF", "half_precision"),
+            from_variant("GINKGO_ENABLE_BFLOAT16", "bfloat16_precision"),
             # As we are not exposing benchmarks, examples, tests nor doc
             # as part of the installation, disable building them altogether.
             "-DGINKGO_BUILD_BENCHMARKS=OFF",
@@ -206,6 +223,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
             if archs != "none":
                 arch_str = ";".join(archs)
                 args.append("-DGINKGO_HIP_AMDGPU={0}".format(arch_str))
+                args.append(self.define("CMAKE_HIP_ARCHITECTURES", arch_str))
             if spec.satisfies("^hip@5.2.0:"):
                 args.append(
                     self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip)

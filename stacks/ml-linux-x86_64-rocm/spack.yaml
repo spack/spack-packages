@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
   packages:
     all:
       target: ["x86_64_v3"]
@@ -11,10 +11,20 @@ spack:
       - ~cuda
       - +rocm
       - amdgpu_target=gfx90a
+    eigen:
+      require: ~rocm
     gl:
       require: "osmesa"
+    miopen-hip:
+      require: ~ck
     mpi:
       require: openmpi
+    python:
+      require: "@3.13:"
+    py-jaxlib:
+      require: "%c,cxx=clang"
+    py-tensorflow:
+      require: "%c,cxx=clang"
     py-torch:
       require:
       - target=x86_64_v3
@@ -22,15 +32,9 @@ spack:
       - +rocm
       - amdgpu_target=gfx90a
       - ~flash_attention
-    miopen-hip:
-      require: ~ck
-    eigen:
-      require: ~rocm
+      - "%c,cxx=gcc"
 
   specs:
-    # Horovod
-    # - py-horovod
-
     # Hugging Face
     - py-transformers
 
@@ -42,51 +46,36 @@ spack:
     - py-keras backend=tensorflow
     # - py-keras backend=jax
     # - py-keras backend=torch
-    - py-keras-applications
-    - py-keras-preprocessing
-    - py-keras2onnx
 
     # PyTorch
     # Does not yet support Spack-installed ROCm
     # - py-botorch
-    # - py-efficientnet-pytorch
     # - py-gpytorch
     # - py-kornia
     # - py-lightning
-    # - py-pytorch-gradual-warmup-lr
     # - py-pytorch-lightning
     # - py-segmentation-models-pytorch
     # - py-timm
     # - py-torch
-    # - py-torch-cluster
     # - py-torch-geometric
     # - py-torch-nvidia-apex
-    # - py-torch-scatter
-    # - py-torch-sparse
-    # - py-torch-spline-conv
     # - py-torchaudio
     # - py-torchdata
-    # - py-torchfile
     # - py-torchgeo
     # - py-torchmetrics
-    # - py-torchtext
     # - py-torchvision
     # - py-vector-quantize-pytorch
 
     # scikit-learn
     - py-scikit-learn
-    - py-scikit-learn-extra
 
     # TensorBoard
     - py-tensorboard
-    - py-tensorboard-data-server
-    - py-tensorboard-plugin-wit
     - py-tensorboardx
 
     # TensorFlow
     - py-tensorflow
     - py-tensorflow-datasets
-    - py-tensorflow-hub
     - py-tensorflow-metadata
     - py-tensorflow-probability
 
@@ -98,7 +87,7 @@ spack:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+          name: ghcr.io/spack/ubuntu-24.04:v2025-09-15
           entrypoint: ['']
 
   cdash:

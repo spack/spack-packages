@@ -14,44 +14,21 @@ class Gtkplus(AutotoolsPackage, MesonPackage):
     interfaces for applications."""
 
     homepage = "https://www.gtk.org/"
-    url = "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.26.tar.xz"
+    url = "https://download.gnome.org/sources/gtk/3.24/gtk-3.24.50.tar.xz"
 
     license("LGPL-2.0-or-later")
 
     build_system(
         conditional("autotools", when="@:3.24.35"),
         conditional("meson", when="@3.24.9:"),
-        default="autotools",
+        default="meson",
     )
 
+    version("3.24.50", sha256="399118a5699314622165a11b769ea9b6ed68e037b6d46d57cfcf4851dec07529")
+    version("3.24.43", sha256="7e04f0648515034b806b74ae5d774d87cffb1a2a96c468cb5be476d51bf2f3c7")
     version("3.24.41", sha256="47da61487af3087a94bc49296fd025ca0bc02f96ef06c556e7c8988bd651b6fa")
     version("3.24.29", sha256="f57ec4ade8f15cab0c23a80dcaee85b876e70a8823d9105f067ce335a8268caa")
     version("3.24.26", sha256="2cc1b2dc5cad15d25b6abd115c55ffd8331e8d4677745dd3ce6db725b4fff1e9")
-    version(
-        "3.22.30",
-        sha256="a1a4a5c12703d4e1ccda28333b87ff462741dc365131fbc94c218ae81d9a6567",
-        deprecated=True,
-    )
-    version(
-        "3.20.10",
-        sha256="e81da1af1c5c1fee87ba439770e17272fa5c06e64572939814da406859e56b70",
-        deprecated=True,
-    )
-    version(
-        "2.24.32",
-        sha256="b6c8a93ddda5eabe3bfee1eb39636c9a03d2a56c7b62828b359bf197943c582e",
-        deprecated=True,
-    )
-    version(
-        "2.24.31",
-        sha256="68c1922732c7efc08df4656a5366dcc3afdc8791513400dac276009b40954658",
-        deprecated=True,
-    )
-    version(
-        "2.24.25",
-        sha256="38af1020cb8ff3d10dda2c8807f11e92af9d2fa4045de61c62eedb7fbc7ea5b3",
-        deprecated=True,
-    )
 
     variant("cups", default=False, description="enable cups support")
 
@@ -95,7 +72,10 @@ class Gtkplus(AutotoolsPackage, MesonPackage):
     patch("no-demos.patch", when="@2.0:2")
 
     def url_for_version(self, version):
-        url = "https://download.gnome.org/sources/gtk+/{0}/gtk+-{1}.tar.xz"
+        if self.spec.satisfies("@:3.24.43"):
+            url = "https://download.gnome.org/sources/gtk+/{0}/gtk+-{1}.tar.xz"
+        else:
+            url = "https://download.gnome.org/sources/gtk/{0}/gtk-{1}.tar.xz"
         return url.format(version.up_to(2), version)
 
     def patch(self):

@@ -15,6 +15,7 @@ class PySentrySdk(PythonPackage):
 
     license("MIT")
 
+    version("2.34.1", sha256="69274eb8c5c38562a544c3e9f68b5be0a43be4b697f5fd385bf98e4fbe672687")
     version("1.5.5", sha256="98fd155fa5d5fec1dbabed32a1a4ae2705f1edaa5dae4e7f7b62a384ba30e759")
     version("0.17.6", sha256="1a086486ff9da15791f294f6e9915eb3747d161ef64dee2d038a4d0b4a369b24")
 
@@ -32,13 +33,16 @@ class PySentrySdk(PythonPackage):
     variant("chalice", default=False, description="Builts with chalice")
     variant("httpx", default=False, when="@1.5.5:", description="Builts with httpx")
 
-    depends_on("python@2.7,3.4:", type=("build", "run"))
+    depends_on("python@3.6:", type=("build", "run"), when="@2:")
+    depends_on("python@2.7,3.4:", type=("build", "run"), when="@:1")
     depends_on("py-setuptools", type="build")
+    depends_on("py-urllib3@1.26.11:", type=("build", "run"), when="@2.34.1:")
     depends_on("py-urllib3@1.10.0:", type=("build", "run"))
     depends_on("py-certifi", type=("build", "run"))
 
     depends_on("py-flask@0.11:", type=("build", "run"), when="+flask")
     depends_on("py-blinker@1.1:", type=("build", "run"), when="+flask")
+    depends_on("py-markupsafe", type=("build", "run"), when="@1.23: +flask")
     depends_on("py-quart@0.16.1:", type=("build", "run"), when="+quart")
     depends_on("py-blinker@1.1:", type=("build", "run"), when="+quart")
     depends_on("py-bottle@0.12.13:", type=("build", "run"), when="+bottle")
@@ -46,6 +50,7 @@ class PySentrySdk(PythonPackage):
     depends_on("py-django@1.8:", type=("build", "run"), when="+django")
     depends_on("py-celery@3:", type=("build", "run"), when="+celery")
     depends_on("py-aiohttp@3.5:", type=("build", "run"), when="+aiohttp")
+    depends_on("py-tornado@6:", type=("build", "run"), when="@2.7.1: +tornado")
     depends_on("py-tornado@5:", type=("build", "run"), when="+tornado")
     depends_on("py-sqlalchemy@1.2:", type=("build", "run"), when="+sqlalchemy")
     depends_on("py-pyspark@2.4.4:", type=("build", "run"), when="+pyspark")
@@ -54,3 +59,11 @@ class PySentrySdk(PythonPackage):
     depends_on("py-asttokens", type=("build", "run"), when="+pure_eval")
     depends_on("py-chalice@1.16.0:", type=("build", "run"), when="+chalice")
     depends_on("py-httpx@0.16.0:", type=("build", "run"), when="+httpx")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/s/sentry-sdk/sentry{0}sdk-{1}.tar.gz"
+        if version >= Version("1.45.1"):
+            dash = "_"
+        else:
+            dash = "-"
+        return url.format(dash, version)
