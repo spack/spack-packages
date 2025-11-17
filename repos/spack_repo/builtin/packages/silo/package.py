@@ -76,6 +76,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         "license",
         values=("llnllegacy", "bsdonly"),
         default="bsdonly",
+        when="@4.12.0:",
         description="BSD-only licensed build (disables !BSD compression features)",
     )
 
@@ -125,8 +126,8 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     conflicts("^hdf5@1.13:", when="@:4.10.2-bsd")
 
     # hzip and fpzip are not available in the BSD releases
-    conflicts("+hzip", when="@4.10.2-bsd,4.11-bsd")
-    conflicts("+fpzip", when="@4.10.2-bsd,4.11-bsd")
+    conflicts("+hzip", when="@4.10.2-bsd,4.11-bsd,4.11.1-bsd")
+    conflicts("+fpzip", when="@4.10.2-bsd,4.11-bsd,4.11.1-bsd")
 
     # If bsdonly enbabled, hzip and fpzip cannot be enabled
     conflicts("license=bsdonly", when="+hzip", msg="BSD-only build cannot use +hzip")
