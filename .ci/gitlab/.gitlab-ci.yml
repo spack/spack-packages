@@ -332,7 +332,7 @@ e4s-neoverse-v2-build:
 
 e4s-rocm-external-generate:
   extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-gcc-11.4-rocm6.2.1:2024.10.08
+  image: ghcr.io/spack/e4s-rocm-base-x86_64:v6.4.3-1760790880
 
 e4s-rocm-external-build:
   extends: [ ".e4s-rocm-external", ".build" ]
@@ -590,7 +590,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:v2023-10-30
+  image: ghcr.io/spack/tutorial-ubuntu-22.04:main
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]

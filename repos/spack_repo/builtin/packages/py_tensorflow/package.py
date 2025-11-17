@@ -304,10 +304,11 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("cuda@:11.4", when="@2.4:2.7")
 
         depends_on("cudnn@9.3:", when="@2.18:")
-        depends_on("cudnn@8.9:8", when="@2.15:")
-        depends_on("cudnn@8.7:8", when="@2.14:")
-        depends_on("cudnn@8.6:8", when="@2.12:")
-        depends_on("cudnn@8.1:8", when="@2.5:")
+        depends_on("cudnn@:8", when="@:2.17")
+        depends_on("cudnn@8.9:", when="@2.15:")
+        depends_on("cudnn@8.7:", when="@2.14:")
+        depends_on("cudnn@8.6:", when="@2.12:")
+        depends_on("cudnn@8.1:", when="@2.5:")
 
     # depends_on('tensorrt', when='+tensorrt')
     depends_on("nccl", when="+nccl+cuda")
@@ -389,6 +390,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("%clang@:15", when="@2.18:")
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
+
+    # Fix build error with CUDA
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/99046.patch?full_index=1",
+        sha256="2912121c181de1a695f1ee791cf94f8d71fca4955e8095e506e814d07eac5825",
+        when="@2.20",
+    )
 
     # https://github.com/spack/spack/issues/49958
     patch(

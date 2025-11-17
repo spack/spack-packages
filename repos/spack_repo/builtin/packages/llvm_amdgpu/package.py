@@ -327,7 +327,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                 self.prefix.amdgcn, join_path(self.prefix.lib.clang, version, "lib", "amdgcn")
             )
             shutil.rmtree(self.prefix.amdgcn)
-            os.symlink(
+            symlink(
                 join_path(self.prefix.lib.clang, version, "lib", "amdgcn"),
                 os.path.join(self.prefix, "amdgcn"),
             )
