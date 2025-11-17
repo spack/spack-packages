@@ -63,7 +63,7 @@ class Libtirpc(AutotoolsPackage):
         """Libtirpc installs its headers in a subdirectory of include.
         Softlink them to the include directory so that packages that
         expect to find rpc/rpc.h in include can find it."""
-        mkdirp(self.prefix.include)
+
         for header in os.listdir(self.prefix.include.tirpc):
             src = join_path(self.prefix.include.tirpc, header)
             dst = join_path(self.prefix.include, header)
