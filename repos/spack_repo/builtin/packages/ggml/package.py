@@ -29,6 +29,7 @@ class Ggml(CMakePackage, CudaPackage, ROCmPackage):
     variant("cuda", default=False, description="build CUDA backend")
     variant("rocm", default=False, description="build HIP backend")
     variant("metal", default=True, description="build Metal backend", when="platform=darwin")
+    variant("rpc", default=False, description="build with RPC support")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -50,6 +51,7 @@ class Ggml(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("GGML_CUDA", "cuda"),
             self.define_from_variant("GGML_ROCM", "rocm"),
             self.define_from_variant("GGML_METAL", "metal"),
+            self.define_from_variant("GGML_RPC", "rpc"),
         ]
 
         if self.spec.satisfies("+blas"):
