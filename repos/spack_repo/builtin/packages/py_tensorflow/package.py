@@ -22,7 +22,6 @@ rocm_dependencies = [
     "rccl",
     "hipsparse",
     "rocprim",
-    "llvm-amdgpu",
     "hsa-rocr-dev",
     "rocminfo",
     "hipsolver",
@@ -49,6 +48,11 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     maintainers("adamjstewart", "aweits")
     tags = ["e4s"]
 
+    version(
+        "2.20.0-rocm-enhanced",
+        sha256="1db75eb24f617ac0b1aea417c294cbdf98ec7ede3cb2957e07c1e9f8eefa8713",
+        url="https://github.com/ROCm/tensorflow-upstream/archive/refs/tags/v2.20.0-rocm-enhanced.tar.gz",
+    )
     version("2.20.0", sha256="a640d1f97be316a09301dfc9347e3d929ad4d9a2336e3ca23c32c93b0ff7e5d0")
     version("2.19.1", sha256="fcfb3e88ab3eebdbab98a03c869a4d2616d52ea166c8d8021de1ef921b47be8d")
     version("2.19.0", sha256="4691b18e8c914cdf6759b80f1b3b7f3e17be41099607ed0143134f38836d058e")
@@ -317,6 +321,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # depends_on('android-sdk', when='+android')
 
     with when("+rocm"):
+        depends_on("llvm-amdgpu")
+        depends_on("hipblaslt", when="@2.20:")
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6.0:", when="@2.14:")
             depends_on(f"{pkg_dep}@:6.3", when="@:2.18")
@@ -364,6 +370,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.14-rocm-enhanced",
         "2.16.1-rocm-enhanced",
         "2.18.0-rocm-enhanced",
+        "2.20.0-rocm-enhanced",
     ]
     rocm_conflicts = [
         ":2.7.4-a",
@@ -371,8 +378,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.11.0.0:2.14-a",
         "2.14-z:2.16.1-a",
         "2.16.1-z:2.18.0-a",
-        "2.18.0-z:",
+        "2.18.0-z:2.20.0-a",
+        "2.20.0-z:"
     ]
+
     conflicts("~rocm", when=f"@{','.join(rocm_versions)}")
     conflicts("+rocm", when=f"@{','.join(rocm_conflicts)}")
 
@@ -493,7 +502,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         sha256="75a61a79ce3aae51fda920f677f4dc045374b20e25628626eb37ca19c3a3b4c4",
         when="@2.16.1-rocm-enhanced +rocm",
     )
-    patch("set_jit_true.patch", when="@2.18.0-rocm-enhanced +rocm")
+    patch("set_jit_true.patch", when="@2.18.0-rocm-enhanced: +rocm")
     phases = ["configure", "build", "install"]
 
     def flag_handler(self, name, flags):
@@ -619,14 +628,25 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         # Do you wish to build TensorFlow with ROCm support?
         if "+rocm" in spec:
             env.set("TF_NEED_ROCM", "1")
-            env.set("TF_HIPBLASLT", "0")
-            env.set("MIOPEN_PATH", spec["miopen-hip"].prefix)
-            env.set("ROCTRACER_PATH", spec["roctracer-dev"].prefix)
-            env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
-            for pkg_dep in rocm_dependencies:
-                pkg_dep_cap = pkg_dep.upper().replace("-", "_")
-                env.set(f"{pkg_dep_cap}_PATH", spec[pkg_dep].prefix)
-            env.set("TF_ROCM_AMDGPU_TARGETS", ",".join(self.spec.variants["amdgpu_target"].value))
+            if not spec["hip"].external:
+                env.set("TF_ROCM_AMDGPU_TARGETS", ",".join(self.spec.variants["amdgpu_target"].value))
+                env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
+
+                if spec.satisfies("@:2.18"):
+                    env.set("TF_HIPBLASLT", "0")
+                    env.set("MIOPEN_PATH", spec["miopen-hip"].prefix)
+                    env.set("ROCTRACER_PATH", spec["roctracer-dev"].prefix)
+                    for pkg_dep in rocm_dependencies:
+                        pkg_dep_cap = pkg_dep.upper().replace("-", "_")
+                        env.set(f"{pkg_dep_cap}_PATH", spec[pkg_dep].prefix)
+                else:
+                    transitive_rocm_dependencies=["hipblas-common", "rocprofiler-register", "hsakmt-roct", "comgr", "aqlprofile", "hsa-amd-aqlprofile"]
+                    for pkg_dep in transitive_rocm_dependencies:
+                        if self.spec.satisfies(f"^{pkg_dep}"):
+                            rocm_dependencies.append(pkg_dep)
+                    for pkg_dep in rocm_dependencies:
+                        env.prepend_path("TF_ROCM_MULTIPLE_PATHS", spec[pkg_dep].prefix)
+                    env.prune_duplicate_paths("TF_ROCM_MULTIPLE_PATHS")
         else:
             env.set("TF_NEED_ROCM", "0")
 
@@ -914,6 +934,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 self.stage.source_path, "bazel-bin/tensorflow/tools/pip_package/wheel_house/"
             )
             args.append(f"--repo_env=OUTPUT_PATH={buildpath}")
+            if self.spec.satisfies("@2.20:") and not self.spec["hip"].external:
+                args.append("--@local_config_rocm//rocm:rocm_path_type=multiple")
         # https://github.com/tensorflow/tensorflow/issues/63298
         if self.spec.satisfies("@2.17:"):
             args.append("//tensorflow/tools/pip_package:wheel")
