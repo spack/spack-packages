@@ -296,7 +296,7 @@ class Plumed(AutotoolsPackage):
             for libname in ["libmetatensor", "libmetatensor-torch", "libmetatomic-torch"]:
                 extra_ldflags.append(spec[libname].libs.search_flags)
                 extra_libs.append(spec[libname].libs.link_flags)
-                extra_cppflags.append(spec[libnamd].headers.include_flags)
+                extra_cppflags.append(spec[libname].headers.include_flags)
 
         if extra_ldflags:
             configure_opts.append("LDFLAGS={0}".format(" ".join(extra_ldflags)))
