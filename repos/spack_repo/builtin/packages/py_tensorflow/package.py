@@ -379,7 +379,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.14-z:2.16.1-a",
         "2.16.1-z:2.18.0-a",
         "2.18.0-z:2.20.0-a",
-        "2.20.0-z:"
+        "2.20.0-z:",
     ]
 
     conflicts("~rocm", when=f"@{','.join(rocm_versions)}")
@@ -629,7 +629,9 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         if "+rocm" in spec:
             env.set("TF_NEED_ROCM", "1")
             if not spec["hip"].external:
-                env.set("TF_ROCM_AMDGPU_TARGETS", ",".join(self.spec.variants["amdgpu_target"].value))
+                env.set(
+                    "TF_ROCM_AMDGPU_TARGETS", ",".join(self.spec.variants["amdgpu_target"].value)
+                )
                 env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
 
                 if spec.satisfies("@:2.18"):
@@ -640,7 +642,14 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                         pkg_dep_cap = pkg_dep.upper().replace("-", "_")
                         env.set(f"{pkg_dep_cap}_PATH", spec[pkg_dep].prefix)
                 else:
-                    transitive_rocm_dependencies=["hipblas-common", "rocprofiler-register", "hsakmt-roct", "comgr", "aqlprofile", "hsa-amd-aqlprofile"]
+                    transitive_rocm_dependencies = [
+                        "hipblas-common",
+                        "rocprofiler-register",
+                        "hsakmt-roct",
+                        "comgr",
+                        "aqlprofile",
+                        "hsa-amd-aqlprofile",
+                    ]
                     for pkg_dep in transitive_rocm_dependencies:
                         if self.spec.satisfies(f"^{pkg_dep}"):
                             rocm_dependencies.append(pkg_dep)
