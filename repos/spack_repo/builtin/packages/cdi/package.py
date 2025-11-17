@@ -28,6 +28,13 @@ class Cdi(AutotoolsPackage):
         "netcdf", default=True, description="This is needed to read/write NetCDF files with CDI"
     )
 
+    with default_args(type="build"):
+        depends_on("c")
+
+        depends_on("autoconf")
+        depends_on("automake")
+        depends_on("libtool")
+
     depends_on("netcdf-c", when="+netcdf")
 
     def configure_args(self):
