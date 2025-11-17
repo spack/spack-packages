@@ -32,6 +32,13 @@ class LlamaCpp(CMakePackage):
     depends_on("curl", when="+curl")
     depends_on("ggml")
 
+    # Fixes RPC tool install https://github.com/ggml-org/llama.cpp/pull/17149
+    patch(
+        "https://github.com/ggml-org/llama.cpp/commit/d2d626938aa7b0137df6a808e0637151806a9d5a.patch?full_index=1",
+        sha256="ad664f362da58313f5230c2c895da0201b3c2ba120c6d7072563b30f387f8fe3",
+        when="@:7019 ^ggml+rpc",
+    )
+
     def cmake_args(self):
         args = [
             self.define("LLAMA_USE_SYSTEM_GGML", True),
