@@ -66,14 +66,14 @@ class Nccl(MakefilePackage, CudaPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    # Make verbs default but package like aws-ofi-nccl can be used instead which loads
+    # Make verbs default but packages like aws-ofi-nccl can be used instead which loads
     # another library to use instead at runtime.
     variant(
         "fabrics",
         values=disjoint_sets(("auto",), ("verbs",))  # supported transports
         .with_default("verbs")
         .with_non_feature_values("auto"),
-        description="List of fabrics that are enabled; " "'auto' lets nccl determine at runtime",
+        description="List of fabrics that are enabled; 'auto' lets nccl determine at runtime",
     )
 
     depends_on("rdma-core", when="fabrics=verbs", type="run")
