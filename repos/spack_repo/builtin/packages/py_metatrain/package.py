@@ -42,6 +42,6 @@ class PyMetatrain(PythonPackage):
 
     # soap-bpnn
     # pyproject.toml [project.optional-dependencies] soap-bpnn
-    with default_args(type=("build", "run")):
-        depends_on("py-wigners", when="+soap_bpnn")
-        depends_on("py-torch-spex", when="+soap_bpnn")
+    with default_args(type=("build", "run"), when="+soap_bpnn"):
+        depends_on("py-wigners")
+        depends_on("py-torch-spex")
