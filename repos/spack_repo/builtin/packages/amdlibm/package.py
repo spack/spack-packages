@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.scons import SConsPackage
@@ -111,8 +110,8 @@ class Amdlibm(SConsPackage, CMakePackage):
     def create_symlink(self):
         """Symbolic link for backward compatibility"""
         with working_dir(self.prefix.lib):
-            os.symlink("libalm.a", "libamdlibm.a")
-            os.symlink("libalm.so", "libamdlibm.so")
+            symlink("libalm.a", "libamdlibm.a")
+            symlink("libalm.so", "libamdlibm.so")
             if self.spec.satisfies("@4.0:"):
-                os.symlink("libalmfast.a", "libamdlibmfast.a")
-                os.symlink("libalmfast.so", "libamdlibmfast.so")
+                symlink("libalmfast.a", "libamdlibmfast.a")
+                symlink("libalmfast.so", "libamdlibmfast.so")

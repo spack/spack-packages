@@ -31,6 +31,7 @@ class Yafyaml(CMakePackage):
 
     version("main", branch="main")
 
+    version("1.6.0", sha256="4eb4834c40e70eb1d81669e4397fe09e9f08dde292feb3a889362debdbf9d339")
     version("1.5.1", sha256="c9e7f873fdcb579fca53196f3a1ad68149dc6e980e6533e1119687f5a7463cc1")
     version("1.4.0", sha256="2a415087eb26d291ff40da4430d668c702d22601ed52a72d001140d97372bc7d")
     version("1.3.0", sha256="a3882210b2620485471e3337d995edc1e653b49d9caaa902a43293826a61a635")
@@ -73,6 +74,12 @@ class Yafyaml(CMakePackage):
     conflicts(
         "%oneapi@2025.2", when="@:1.5.0", msg="oneAPI 2025.2 only works with yafyaml 1.5.1 onwards"
     )
+
+    # This is needed because for ifx 2025.2, we need to use cpp from GNU as fpp from oneapi
+    # is broken. To pull that in, we need to say yafyaml depends on C, even though it really
+    # doesn't.
+    depends_on("c", when="^intel-oneapi-compilers@2025.2", type="build")
+    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
 
     @when("@1.5.1 ^intel-oneapi-compilers@2025.2")
     def patch(self):

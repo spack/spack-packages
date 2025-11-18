@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 import re
 
 from spack_repo.builtin.build_systems.generic import Package
@@ -42,6 +41,7 @@ class Go(Package):
 
     license("BSD-3-Clause")
 
+    version("1.25.3", sha256="a81a4ba593d0015e10c51e267de3ff07c7ac914dfca037d9517d029517097795")
     version("1.25.2", sha256="3711140cfb87fce8f7a13f7cd860df041e6c12f7610f40cac6ec6fa2b65e96e4")
     version("1.25.1", sha256="d010c109cee94d80efe681eab46bdea491ac906bf46583c32e9f0dbb0bd1a594")
     version("1.24.7", sha256="2a8f50db0f88803607c50d7ea8834dcb7bd483c6b428a91e360fdf8624b46464")
@@ -107,7 +107,7 @@ class Go(Package):
 
     def install(self, spec, prefix):
         install_tree(".", prefix.go)
-        os.symlink(prefix.go.bin, prefix.bin)
+        symlink(prefix.go.bin, prefix.bin)
 
     def setup_dependent_package(self, module, dependent_spec):
         """Called before go modules' build(), install() methods.

@@ -61,7 +61,6 @@ class Python(Package):
     version("3.12.12", sha256="487c908ddf4097a1b9ba859f25fe46d22ccaabfb335880faac305ac62bffb79b")
     version("3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182")
     version("3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec")
-    version("3.9.24", sha256="9a32cfc683aecaadbd9ed891ac2af9451ff37f48a00a2d8e1f4ecd9c2a1ffdcb")
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
@@ -111,6 +110,9 @@ class Python(Package):
             "3.10.16", sha256="f2e22ed965a93cfeb642378ed6e6cdbc127682664b24123679f3d013fafe9cd0"
         )
         version(
+            "3.9.24", sha256="9a32cfc683aecaadbd9ed891ac2af9451ff37f48a00a2d8e1f4ecd9c2a1ffdcb"
+        )
+        version(
             "3.9.23", sha256="9a69aad184dc1d06f6819930741da3a328d34875a41f8ba33875774dbfc51b51"
         )
         version(
@@ -119,6 +121,9 @@ class Python(Package):
 
     # EOL versions we still want to be able to install
     with default_args(deprecated=True):
+        version(
+            "3.9.25", sha256="a7438eabd3a48139f42d4e058096af8d880b0bb6e8fb8c78838892e4ce5583f2"
+        )
         version(
             "3.8.20", sha256="9f2d5962c2583e67ef75924cd56d0c1af78bf45ec57035cf8a2cc09f74f4bf78"
         )
@@ -731,8 +736,8 @@ class Python(Package):
         prefix = self.prefix
 
         if spec.satisfies("+pythoncmd"):
-            os.symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
-            os.symlink(
+            symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
+            symlink(
                 os.path.join(prefix.bin, "python3-config"),
                 os.path.join(prefix.bin, "python-config"),
             )
