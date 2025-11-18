@@ -235,11 +235,11 @@ class Warpx(CMakePackage, PythonExtension):
 
         return args
 
-    @property                                                                                                                                         
-    def build_targets(self):                                                                                                                          
-        targets = super().build_targets                                                                                                               
-        if self.spec.satisfies("+python"):                                                                                                            
-            targets.extend(["pip_wheel", "pip_install_nodeps"])                                                                                       
+    @property
+    def build_targets(self):
+        targets = super().build_targets
+        if self.spec.satisfies("+python"):
+            targets.extend(["pip_wheel", "pip_install_nodeps"])
         return targets
 
     @property
