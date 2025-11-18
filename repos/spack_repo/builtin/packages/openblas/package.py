@@ -42,16 +42,36 @@ class Openblas(CMakePackage, MakefilePackage):
 
     # Deprecate versions before 2022
     with default_args(deprecated=True):
-        version("0.3.19", sha256="947f51bfe50c2a0749304fbe373e00e7637600b0a47b78a51382aeb30ca08562")
-        version("0.3.18", sha256="1632c1e8cca62d8bed064b37747e331a1796fc46f688626337362bf0d16aeadb")
-        version("0.3.17", sha256="df2934fa33d04fd84d839ca698280df55c690c86a5a1133b3f7266fce1de279f")
-        version("0.3.16", sha256="fa19263c5732af46d40d3adeec0b2c77951b67687e670fb6ba52ea3950460d79")
-        version("0.3.15", sha256="30a99dec977594b387a17f49904523e6bc8dd88bd247266e83485803759e4bbe")
-        version("0.3.14", sha256="d381935d26f9cae8e4bbd7d7f278435adf8e3a90920edf284bb9ad789ee9ad60")
-        version("0.3.13", sha256="79197543b17cc314b7e43f7a33148c308b0807cd6381ee77f77e15acf3e6459e")
-        version("0.3.12", sha256="65a7d3a4010a4e3bd5c0baa41a234797cd3a1735449a4a5902129152601dc57b")
-        version("0.3.11", sha256="bc4617971179e037ae4e8ebcd837e46db88422f7b365325bd7aba31d1921a673")
-        version("0.3.10", sha256="0484d275f87e9b8641ff2eecaa9df2830cbe276ac79ad80494822721de6e1693")
+        version(
+            "0.3.19", sha256="947f51bfe50c2a0749304fbe373e00e7637600b0a47b78a51382aeb30ca08562"
+        )
+        version(
+            "0.3.18", sha256="1632c1e8cca62d8bed064b37747e331a1796fc46f688626337362bf0d16aeadb"
+        )
+        version(
+            "0.3.17", sha256="df2934fa33d04fd84d839ca698280df55c690c86a5a1133b3f7266fce1de279f"
+        )
+        version(
+            "0.3.16", sha256="fa19263c5732af46d40d3adeec0b2c77951b67687e670fb6ba52ea3950460d79"
+        )
+        version(
+            "0.3.15", sha256="30a99dec977594b387a17f49904523e6bc8dd88bd247266e83485803759e4bbe"
+        )
+        version(
+            "0.3.14", sha256="d381935d26f9cae8e4bbd7d7f278435adf8e3a90920edf284bb9ad789ee9ad60"
+        )
+        version(
+            "0.3.13", sha256="79197543b17cc314b7e43f7a33148c308b0807cd6381ee77f77e15acf3e6459e"
+        )
+        version(
+            "0.3.12", sha256="65a7d3a4010a4e3bd5c0baa41a234797cd3a1735449a4a5902129152601dc57b"
+        )
+        version(
+            "0.3.11", sha256="bc4617971179e037ae4e8ebcd837e46db88422f7b365325bd7aba31d1921a673"
+        )
+        version(
+            "0.3.10", sha256="0484d275f87e9b8641ff2eecaa9df2830cbe276ac79ad80494822721de6e1693"
+        )
         version("0.3.9", sha256="17d4677264dfbc4433e97076220adc79b050e4f8a083ea3f853a53af253bc380")
         version("0.3.8", sha256="8f86ade36f0dbed9ac90eb62575137388359d97d8f93093b38abe166ad7ef3a8")
         version("0.3.7", sha256="bde136122cef3dd6efe2de1c6f65c10955bbb0cc01a520c2342f5287c28f9379")
@@ -62,12 +82,24 @@ class Openblas(CMakePackage, MakefilePackage):
         version("0.3.2", sha256="e8ba64f6b103c511ae13736100347deb7121ba9b41ba82052b1a018a65c0cb15")
         version("0.3.1", sha256="1f5e956f35f3acdd3c74516e955d797a320c2e0135e31d838cbdb3ea94d0eb33")
         version("0.3.0", sha256="cf51543709abe364d8ecfb5c09a2b533d2b725ea1a66f203509b21a8e9d8f1a1")
-        version("0.2.20", sha256="5ef38b15d9c652985774869efd548b8e3e972e1e99475c673b25537ed7bcf394")
-        version("0.2.19", sha256="9c40b5e4970f27c5f6911cb0a28aa26b6c83f17418b69f8e5a116bb983ca8557")
-        version("0.2.18", sha256="7d9f8d4ea4a65ab68088f3bb557f03a7ac9cb5036ef2ba30546c3a28774a4112")
-        version("0.2.17", sha256="0fe836dfee219ff4cadcc3567fb2223d9e0da5f60c7382711fb9e2c35ecf0dbf")
-        version("0.2.16", sha256="766f350d0a4be614812d535cead8c816fc3ad3b9afcd93167ea5e4df9d61869b")
-        version("0.2.15", sha256="73c40ace5978282224e5e122a41c8388c5a19e65a6f2329c2b7c0b61bacc9044")
+        version(
+            "0.2.20", sha256="5ef38b15d9c652985774869efd548b8e3e972e1e99475c673b25537ed7bcf394"
+        )
+        version(
+            "0.2.19", sha256="9c40b5e4970f27c5f6911cb0a28aa26b6c83f17418b69f8e5a116bb983ca8557"
+        )
+        version(
+            "0.2.18", sha256="7d9f8d4ea4a65ab68088f3bb557f03a7ac9cb5036ef2ba30546c3a28774a4112"
+        )
+        version(
+            "0.2.17", sha256="0fe836dfee219ff4cadcc3567fb2223d9e0da5f60c7382711fb9e2c35ecf0dbf"
+        )
+        version(
+            "0.2.16", sha256="766f350d0a4be614812d535cead8c816fc3ad3b9afcd93167ea5e4df9d61869b"
+        )
+        version(
+            "0.2.15", sha256="73c40ace5978282224e5e122a41c8388c5a19e65a6f2329c2b7c0b61bacc9044"
+        )
 
     variant(
         "fortran",
