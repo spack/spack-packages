@@ -22,9 +22,10 @@ class PySphericartTorch(PythonPackage, CudaPackage):
     depends_on("cxx", type="build")
 
     # pyproject.toml
-    depends_on("py-wheel@0.36:", type="build")
-    depends_on("py-setuptools@77:", type="build")
-    depends_on("cmake@3.30:", type="build")
+    with default_args(type="build"):
+        depends_on("py-wheel@0.36:")
+        depends_on("py-setuptools@77:")
+        depends_on("cmake@3.30:")
     depends_on("py-numpy", type=("build", "run"))
 
     # setup.py

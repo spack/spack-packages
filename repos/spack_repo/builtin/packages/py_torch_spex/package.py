@@ -22,7 +22,8 @@ class PyTorchSpex(PythonPackage):
 
     depends_on("py-flit-core@3.4:3", type="build")
 
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-pyyaml", type=("build", "run"))
-    depends_on("py-scipy", type=("build", "run"))
-    depends_on("py-sphericart-torch", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("py-numpy")
+        depends_on("py-pyyaml")
+        depends_on("py-scipy")
+        depends_on("py-sphericart-torch")
