@@ -14,7 +14,7 @@ class LibmetatensorTorch(CMakePackage):
     url = "https://github.com/metatensor/metatensor/releases/download/metatensor-torch-v0.0.0/metatensor-torch-cxx-0.0.0.tar.gz"
     git = "https://github.com/metatensor/metatensor.git"
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.8.2", sha256="0be618d0cdcfca86cd0c25f47d360b6a2410ebb09ece8d21f153e933ce64bb55")
