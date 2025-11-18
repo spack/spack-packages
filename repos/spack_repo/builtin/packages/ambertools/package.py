@@ -36,6 +36,7 @@ class Ambertools(CMakePackage):
     version("25", sha256="ac009b2adeb25ccd2191db28905b867df49240e038dc590f423edf0d84f8a13b")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("flex", type="build")
     depends_on("bison", type="build")
