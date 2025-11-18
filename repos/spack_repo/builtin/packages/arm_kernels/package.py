@@ -21,6 +21,9 @@ class ArmKernels(MakefilePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+
+    requires("target=aarch64:", msg="package is only available on aarch64")
+
     depends_on("cxx", type="build")
 
     def patch(self):
