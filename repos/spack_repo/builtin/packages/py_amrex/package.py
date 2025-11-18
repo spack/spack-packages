@@ -27,7 +27,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     version("25.04", sha256="2c765d581f21170ea26a5eb50bdd2c9151d2dbed9f1002dc25e62f38ed6220c0")
 
     for v in ["25.04", "develop"]:
-        depends_on("amrex@{0}".format(v), when="@{0}".format(v), type=("build", "link"))
+        depends_on(f"amrex@{v}", when=f"@{v}", type=("build", "link"))
 
     variant(
         "dimensions",
