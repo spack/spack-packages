@@ -130,4 +130,4 @@ class GitAnnex(Package):
             git_files = ["git", "git-receive-pack", "git-shell", "git-upload-pack"]
             for i in git_files:
                 os.remove(join_path(prefix.bin, i))
-                os.symlink(join_path(spec["git"].prefix.bin, i), join_path(prefix.bin, i))
+                symlink(join_path(spec["git"].prefix.bin, i), join_path(prefix.bin, i))
