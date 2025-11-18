@@ -14,16 +14,18 @@ class Gtkplus(AutotoolsPackage, MesonPackage):
     interfaces for applications."""
 
     homepage = "https://www.gtk.org/"
-    url = "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.26.tar.xz"
+    url = "https://download.gnome.org/sources/gtk/3.24/gtk-3.24.50.tar.xz"
 
     license("LGPL-2.0-or-later")
 
     build_system(
         conditional("autotools", when="@:3.24.35"),
         conditional("meson", when="@3.24.9:"),
-        default="autotools",
+        default="meson",
     )
 
+    version("3.24.50", sha256="399118a5699314622165a11b769ea9b6ed68e037b6d46d57cfcf4851dec07529")
+    version("3.24.43", sha256="7e04f0648515034b806b74ae5d774d87cffb1a2a96c468cb5be476d51bf2f3c7")
     version("3.24.41", sha256="47da61487af3087a94bc49296fd025ca0bc02f96ef06c556e7c8988bd651b6fa")
     version("3.24.29", sha256="f57ec4ade8f15cab0c23a80dcaee85b876e70a8823d9105f067ce335a8268caa")
     version("3.24.26", sha256="2cc1b2dc5cad15d25b6abd115c55ffd8331e8d4677745dd3ce6db725b4fff1e9")
@@ -70,7 +72,10 @@ class Gtkplus(AutotoolsPackage, MesonPackage):
     patch("no-demos.patch", when="@2.0:2")
 
     def url_for_version(self, version):
-        url = "https://download.gnome.org/sources/gtk+/{0}/gtk+-{1}.tar.xz"
+        if self.spec.satisfies("@:3.24.43"):
+            url = "https://download.gnome.org/sources/gtk+/{0}/gtk+-{1}.tar.xz"
+        else:
+            url = "https://download.gnome.org/sources/gtk/{0}/gtk-{1}.tar.xz"
         return url.format(version.up_to(2), version)
 
     def patch(self):

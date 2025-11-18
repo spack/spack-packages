@@ -58,9 +58,6 @@ class Clingo(CMakePackage):
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.18:", type="build", when="@5.5:")
 
-    # 5.7.1 and lower incompatible with cmake 4.0 due to cmake_minimum_required version 3.1
-    depends_on("cmake@:3", type="build", when="@:5.7")
-
     depends_on("doxygen", type="build", when="+docs")
 
     depends_on("re2c@0.13:", type="build")
