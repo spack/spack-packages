@@ -96,7 +96,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libxc@4.0.0:", when="@7.2.0:")
     depends_on("libxc@:7", when="@:7.5")
     depends_on("spglib")
-    depends_on("hdf5+hl")
+    depends_on("hdf5+hl+cxx")
     depends_on("pkgconfig", type="build")
     depends_on("fmt", when="@7.8:")
     depends_on("simple-dftd3 build_system=cmake", when="+dftd3")
