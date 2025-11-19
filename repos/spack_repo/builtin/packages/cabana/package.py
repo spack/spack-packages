@@ -120,6 +120,9 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+silo", when="@:0.3.0")
     conflicts("+hdf5", when="@:0.5.0")
 
+    # Hypre doesn't support rocm for older versions
+    conflicts("+hypre +rocm", when="@:0.7.0")
+
     @when("+mpi")
     def patch(self):
         # CMakeLists.txt tries to enable C when MPI is requsted, but too late:
