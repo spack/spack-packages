@@ -17,7 +17,7 @@ class OctaveStatistics(OctavePackage):
     version(
         "1.4.2",
         sha256="7976814f837508e70367548bfb0a6d30aa9e447d4e3a66914d069efb07876247",
-        url=f"https://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics--1.4.2.tar.gz",
+        url="https://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics--1.4.2.tar.gz",
     )
 
     depends_on("octave-io")
