@@ -16,6 +16,7 @@ import pytest
 import spack.bootstrap.core
 import spack.caches
 import spack.package_base
+import spack.solver.asp
 import spack.stage
 import spack.subprocess_context
 from spack.concretize import concretize_one
@@ -331,7 +332,7 @@ def configuration_dir(tmp_path_factory: pytest.TempPathFactory, linux_os):
 def _create_mock_configuration_scopes(configuration_dir):
     """Create the configuration scopes used in `config` and `mutable_config`."""
     return [
-        (ConfigScopePriority.BUILTIN, InternalConfigScope("_builtin", CONFIG_DEFAULTS)),
+        (ConfigScopePriority.DEFAULTS, InternalConfigScope("_builtin", CONFIG_DEFAULTS)),
         (
             ConfigScopePriority.CONFIG_FILES,
             DirectoryConfigScope("site", str(configuration_dir / "site")),
@@ -444,6 +445,7 @@ def mock_store(
     mock_packages_repo,
     mock_configuration_scopes,
     _store_dir_and_cache: Tuple[Path, Path],
+    glibc_compatibility,
 ):
     """Creates a read-only mock database with some packages installed note
     that the ref count for dyninst here will be 3, as it's recycled
@@ -550,3 +552,33 @@ def _recursive_chmod(path: Path, mode: int):
             os.chmod(os.path.join(root, file), mode)
         for dir in dirs:
             os.chmod(os.path.join(root, dir), mode)
+
+
+@pytest.fixture(autouse=True, scope="session")
+def _c_compiler_always_exists():
+    fn = spack.solver.asp.c_compiler_runs
+    spack.solver.asp.c_compiler_runs = _true
+    mthd = spack.compilers.libraries.CompilerPropertyDetector.default_libc
+    spack.compilers.libraries.CompilerPropertyDetector.default_libc = _libc_from_python
+    yield
+    spack.solver.asp.c_compiler_runs = fn
+    spack.compilers.libraries.CompilerPropertyDetector.default_libc = mthd
+
+
+def _libc_from_python(self):
+    return spack.spec.Spec("glibc@=2.28", external_path="/some/path")
+
+
+def _true(x):
+    return True
+
+
+@pytest.fixture(scope="session", autouse=True)
+def glibc_compatibility():
+    """Selects whether we use OS compatibility for binaries, or libc compatibility."""
+    if spack.platforms.real_host().name != "linux":
+        return
+
+    spack.solver.core.using_libc_compatibility = lambda: True
+    spack.solver.runtimes.using_libc_compatibility = spack.solver.core.using_libc_compatibility
+    spack.solver.asp.using_libc_compatibility = spack.solver.core.using_libc_compatibility

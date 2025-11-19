@@ -10,12 +10,10 @@ from spack.package import *
 class Clingo(CMakePackage):
     """Clingo: A grounder and solver for logic programs
 
-    Clingo is part of the Potassco project for Answer Set
-    Programming (ASP). ASP offers a simple and powerful modeling
-    language to describe combinatorial problems as logic
-    programs. The clingo system then takes such a logic program and
-    computes answer sets representing solutions to the given
-    problem."""
+    Clingo is part of the Potassco project for Answer Set Programming (ASP). ASP offers a simple
+    and powerful modeling language to describe combinatorial problems as logic programs. The
+    clingo system then takes such a logic program and computes answer sets representing solutions
+    to the given problem."""
 
     homepage = "https://potassco.org/clingo/"
     url = "https://github.com/potassco/clingo/archive/v5.2.2.tar.gz"
@@ -52,15 +50,13 @@ class Clingo(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    variant("apps", default=True, description="build command line applications")
     variant("docs", default=False, description="build documentation with Doxygen")
     variant("python", default=True, description="build with python bindings")
 
     # See https://github.com/potassco/clingo/blob/v5.5.2/INSTALL.md
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.18:", type="build", when="@5.5:")
-
-    # 5.7.1 and lower incompatible with cmake 4.0 due to cmake_minimum_required version 3.1
-    depends_on("cmake@:3", type="build", when="@:5.7")
 
     depends_on("doxygen", type="build", when="+docs")
 
@@ -120,12 +116,11 @@ class Clingo(CMakePackage):
                 "clasp/libpotassco/CMakeLists.txt",
             )
 
-    @property
-    def cmake_py_shared(self):
-        return self.define("CLINGO_BUILD_PY_SHARED", "ON")
+    cmake_py_shared = True
 
     def cmake_args(self):
         args = [
+            self.define_from_variant("CLINGO_BUILD_APPS", "apps"),
             self.define("CLINGO_BUILD_WITH_LUA", False),
             self.define("CLASP_INSTALL_LIB", True),
             self.define("CLASP_WITH_THREADS", True),
@@ -141,7 +136,7 @@ class Clingo(CMakePackage):
                 self.define("PYCLINGO_USE_INSTALL_PREFIX", True),
                 self.define("PYCLINGO_INSTALL_DIR", python_platlib),
                 self.define("PYCLINGO_SUFFIX", suffix),
-                self.cmake_py_shared,
+                self.define("CLINGO_BUILD_PY_SHARED", self.cmake_py_shared),
             ]
         else:
             args += [self.define("CLINGO_BUILD_WITH_PYTHON", False)]

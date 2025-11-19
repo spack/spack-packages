@@ -21,6 +21,7 @@ class Met(AutotoolsPackage):
     maintainers("AlexanderRichert-NOAA", "climbfuji")
 
     version("develop", branch="develop")
+    version("12.1.1", sha256="da242378932f3057a06cf96e53dcdf74612197f70753e4be32c6390c63056031")
     version("12.0.1", sha256="ef396a99ca6c2248855848cd194f9ceaf3b051fb5e8c01a0b0b2a00110b1fcfb")
     version("12.0.0", sha256="9a54275cfefbad6010d4449a8fa756ad40fae03fa62a766cbbfda170c422e5e4")
     version("11.1.1", sha256="d02f9281d46bc45c931ca233a51ce20ba2158c0dd26acac2cb76c5a68788022a")
@@ -71,6 +72,11 @@ class Met(AutotoolsPackage):
     # https://github.com/JCSDA/spack-stack/issues/615
     patch("apple-clang-string-cast-operator.patch", when="@10.1.1:11.0 %apple-clang@14:")
     patch("apple-clang-no-register.patch", when="@10.1.1:11.0 %apple-clang@14:")
+
+    # https://github.com/spack/spack-packages/issues/1284
+    @when("@11:12.0")
+    def patch(self):
+        filter_file("int errno;", "//int errno;", "src/basic/vx_config/temp_file.cc", string=True)
 
     def url_for_version(self, version):
         if version < Version("11"):

@@ -43,6 +43,13 @@ class PyScikitImage(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    variant(
+        "data",
+        default=False,
+        when="@0.18:",
+        description="Enable downloading of full selection of demo datasets",
+    )
+
     # Get dependencies for:
     #
     # @0.20:      from pyproject.toml
@@ -92,6 +99,8 @@ class PyScikitImage(PythonPackage):
         depends_on("py-lazy-loader@0.3:", when="@0.22:")
         depends_on("py-lazy-loader@0.2:", when="@0.21:")
         depends_on("py-lazy-loader@0.1:", when="@0.20:")
+        depends_on("py-pooch@1.6.0:", when="@0.21: +data")
+        depends_on("py-pooch@1.3.0:", when="@0.18: +data")
 
     with default_args(type="build"):
         depends_on("py-meson-python@0.16:", when="@0.25:")

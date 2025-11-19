@@ -25,12 +25,8 @@ class ProcessInProcess(Package):
 
     license("BSD-2-Clause-FreeBSD")
 
-    # PiP version 1 is obsolete
-    version("1", branch="pip-1", deprecated=True)
     # PiP version 2 is stable one
-    version("2", branch="pip-2", preferred=True)
-    # PiP version 3 is experimental and unstable yet
-    version("3", branch="pip-3", deprecated=True)
+    version("2", branch="pip-2")
 
     depends_on("c", type="build")  # generated
 
@@ -117,72 +113,6 @@ class ProcessInProcess(Package):
             destination="PiP-gdb",
             when="@2 os=rhel8",
         )
-
-        # resources for PiP version 3
-        #  PiP-glibc resource
-        #   for rhel/centos 7
-        resource(
-            name="PiP-glibc",
-            git="https://github.com/procinproc/PiP-glibc.git",
-            branch="centos/glibc-2.17-260.el7.pip.branch",
-            destination="PiP-glibc",
-            when="@3 os=centos7",
-        )
-        resource(
-            name="PiP-glibc",
-            git="https://github.com/procinproc/PiP-glibc.git",
-            branch="centos/glibc-2.17-260.el7.pip.branch",
-            destination="PiP-glibc",
-            when="@3 os=rhel7",
-        )
-        #   for rhel/centos 8
-        resource(
-            name="PiP-glibc",
-            git="https://github.com/procinproc/PiP-glibc.git",
-            branch="centos/glibc-2.28-72.el8_1.1.pip.branch",
-            destination="PiP-glibc",
-            when="@3 os=centos8",
-        )
-        resource(
-            name="PiP-glibc",
-            git="https://github.com/procinproc/PiP-glibc.git",
-            branch="centos/glibc-2.28-72.el8_1.1.pip.branch",
-            destination="PiP-glibc",
-            when="@3 os=rhel8",
-        )
-
-        with when("+pipgdb"):
-            #  PiP-gdb resource
-            #   for rhel/centos 7
-            resource(
-                name="PiP-gdb",
-                git="https://github.com/procinproc/PiP-gdb.git",
-                branch="centos/gdb-7.6.1-94.el7.pip.branch",
-                destination="PiP-gdb",
-                when="@3 os=centos7",
-            )
-            resource(
-                name="PiP-gdb",
-                git="https://github.com/procinproc/PiP-gdb.git",
-                branch="centos/gdb-7.6.1-94.el7.pip.branch",
-                destination="PiP-gdb",
-                when="@3 os=rhel7",
-            )
-            #   for rhel/centos 8
-            resource(
-                name="PiP-gdb",
-                git="https://github.com/procinproc/PiP-gdb.git",
-                branch="centos/gdb-8.2-12.el8.pip.branch",
-                destination="PiP-gdb",
-                when="@3 os=centos8",
-            )
-            resource(
-                name="PiP-gdb",
-                git="https://github.com/procinproc/PiP-gdb.git",
-                branch="centos/gdb-8.2-12.el8.pip.branch",
-                destination="PiP-gdb",
-                when="@3 os=rhel8",
-            )
 
     # PiP testsuite (agnostic with PiP and OS versions)
     resource(

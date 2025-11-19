@@ -17,7 +17,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     url = "https://github.com/Exawind/amr-wind/archive/refs/tags/v1.3.0.tar.gz"
     git = "https://github.com/Exawind/amr-wind.git"
 
-    maintainers("jrood-nrel", "psakievich")
+    maintainers("jrood-nrel")
 
     tags = ["ecp", "ecp-apps"]
     submodules = True
@@ -25,6 +25,9 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("3.8.1", tag="v3.8.1", commit="464ce0891979dbef9972c5b868facee1c974779d")
+    version("3.8.0", tag="v3.8.0", commit="35d63755ce213caedc1c1e96e93e9a4bfe5bffc3")
+    version("3.7.0", tag="v3.7.0", commit="243e620c263761d34b3ef54694cfd3f787321c24")
     version("3.6.0", tag="v3.6.0", commit="7346fd2a99e5d66ecf2ef3bafa1ebe621211d21f")
     version("3.5.0", tag="v3.5.0", commit="412f015f2496cb0c0c802240bb9c11848b408fa0")
     version("3.4.2", tag="v3.4.2", commit="ed475a0533dfacf1fdff0b707518ccf99040d9f9")
@@ -91,10 +94,9 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-numpy@2:", when="+netcdf")
     depends_on("py-matplotlib", when="+masa")
     depends_on("py-pandas", when="+masa")
-    depends_on("openfast+cxx", when="+openfast")
+    depends_on("openfast+cxx@3.5:4.0", when="@:3.5 +openfast")
+    depends_on("openfast+cxx@3.5.0:3.5.9,4.1:", when="@3.6: +openfast")
     depends_on("openfast+netcdf", when="+openfast+netcdf")
-    depends_on("openfast@3.5:4.0", when="@:3.5")
-    depends_on("openfast@3.5.0:3.5.9,4.1:", when="@3.6:")
     depends_on("helics@:3.3.2", when="+helics")
     depends_on("helics@:3.3.2+mpi", when="+helics+mpi")
     depends_on("fftw", when="@2.1: +waves2amr")
