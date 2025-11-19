@@ -14,7 +14,7 @@ class PyPicmistandard(PythonPackage):
     git = "https://github.com/picmi-standard/picmi.git"
     pypi = "picmistandard/picmistandard-0.34.0.tar.gz"
 
-    maintainers("ax3l", "dpgrote", "RemiLehe")
+    maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
 
     version("master", branch="master")
     version("0.34.0", sha256="28db66c652c7ce7bedf79ecf7e764a02fa5e51ac05a2fb1cf9433354ac056ec1")
