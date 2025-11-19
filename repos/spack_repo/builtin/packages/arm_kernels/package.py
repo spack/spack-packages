@@ -38,4 +38,4 @@ class ArmKernels(MakefilePackage):
 
     def install(self, spec, prefix):
         mkdir(prefix.bin)
-        install_tree("arithmetic", prefix.bin)
+        install("arithmetic/*.x", prefix.bin)
