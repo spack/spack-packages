@@ -23,6 +23,6 @@ class OctaveControl(OctavePackage):
         url="https://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/control--3.2.0.tar.gz",
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     extends("octave@4.0.0:")
