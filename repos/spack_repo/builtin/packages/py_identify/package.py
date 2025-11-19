@@ -15,6 +15,7 @@ class PyIdentify(PythonPackage):
 
     homepage = "https://github.com/pre-commit/identify"
     pypi = "identify/identify-1.4.7.tar.gz"
+    maintainers("sethrj")
 
     license("MIT")
 

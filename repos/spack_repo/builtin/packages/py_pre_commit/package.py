@@ -13,6 +13,7 @@ class PyPreCommit(PythonPackage):
 
     homepage = "https://github.com/pre-commit/pre-commit"
     pypi = "pre_commit/pre_commit-1.20.0.tar.gz"
+    maintainers("sethrj")
 
     license("MIT")
 
