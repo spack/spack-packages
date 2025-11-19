@@ -91,7 +91,8 @@ class Geomodel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@:3", when="@:6.10", type="build")
 
-    depends_on("eigen@3.2.9:3")
+    depends_on("eigen@3.2.9:3", when="@:6.20")
+    depends_on("eigen@3.2.9:5", when="@6.21:")
     depends_on("nlohmann-json@3.6.1:")
     depends_on("sqlite@3.7.17:")
     depends_on("xerces-c@3.2.3:")
