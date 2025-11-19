@@ -88,6 +88,8 @@ class Nano(AutotoolsPackage):
 
     depends_on("c", type="build")
 
+    depends_on("sed", type="build")
+
     depends_on("pkgconfig", type="build")
     depends_on("gettext@0.18.3:")
     depends_on("gettext@0.20:", when="@8.1:")
