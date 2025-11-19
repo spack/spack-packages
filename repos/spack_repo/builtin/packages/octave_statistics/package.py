@@ -22,11 +22,5 @@ class OctaveStatistics(OctavePackage, SourceforgePackage):
     depends_on("octave-io")
     depends_on("cxx", type="build")
 
-    def url_for_version(self, version):
-        if version <= Version("1.4.3"):
-            return f"https://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/statistics--{version}.tar.gz"
-        else:
-            url = "https://github.com/gnu-octave/statistics/releases/download/release-{0}/statistics-{1}.tar.gz"
-            return url.format(version, version)
 
     extends("octave@4.0.0:")
