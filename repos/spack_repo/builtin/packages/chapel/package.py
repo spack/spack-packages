@@ -197,6 +197,14 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     variant(
+        "comm_ofi_oob",
+        values=("sockets", "mpi", "pmi2"),
+        default="sockets",
+        description="Select out-of-band support",
+        multi=False,
+    )
+
+    variant(
         "comm_substrate",
         default="unset",
         description="Build Chapel with GASNet multi-locale support using the "
@@ -431,6 +439,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_ATOMICS",
         "CHPL_AUX_FILESYS",
         "CHPL_COMM",
+        "CHPL_COMM_OFI_OOB",
         "CHPL_COMM_SUBSTRATE",
         "CHPL_CUDA_PATH",
         "CHPL_DEVELOPER",
