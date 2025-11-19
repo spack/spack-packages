@@ -62,6 +62,7 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     version("develop", branch="develop")
     version("master", branch="master")
 
+    version("2025.10.0", sha256="bb43348d351777b7462e6bbadda358b426cd150e138ac08ee74649b91bba32ec")
     version("2023.9.0", sha256="6bad2976b4bfc0263b497daa967f448159c3c2259827c8376bc96c9bf9171a83")
     version("2023.3.0", sha256="382af3c093decdb51f0533e19efb4cc7536b6617067b2dd89431e323704a1009")
     version("2022.9.0", sha256="dbf15fd9ba38bfe2491f556b55640343d6303048a117c4e84877ceddb64e4c7c")
