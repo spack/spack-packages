@@ -24,6 +24,9 @@ class REarth(RPackage):
     version("5.3.0", sha256="05ace806271a74b3ddf8718a93237fe2a8550a8659ebd87f8079c0bda5e02437")
     version("5.1.2", sha256="326f98e8c29365ca3cd5584cf2bd6529358f5ef81664cbd494162f92b6c3488d")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@3.4.0:", type=("build", "run"))
     depends_on("r-formula@1.2-3:", type=("build", "run"))
     depends_on("r-plotmo@3.5.4:", type=("build", "run"))

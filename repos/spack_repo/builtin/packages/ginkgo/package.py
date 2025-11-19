@@ -123,6 +123,9 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     # Probably fixed in NVIDIA/cccl#1528 which hopefully comes with the next CUDA release
     conflicts("^cuda@12.4", when="+cuda", msg="CCCL 2.3 bug causes build failure.")
 
+    # https://github.com/ginkgo-project/ginkgo/pull/1926
+    conflicts("^cuda@13:", when="@:1.10.0 +cuda")
+
     # https://github.com/ginkgo-project/ginkgo/pull/1524
     patch("ginkgo-sycl-pr1524.patch", when="@1.7.0 +sycl %oneapi@2024:")
 

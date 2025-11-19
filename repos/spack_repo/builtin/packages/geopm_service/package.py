@@ -81,7 +81,7 @@ class GeopmService(AutotoolsPackage):
     depends_on("cuda", when="+nvml")
     depends_on("grpc+shared", when="+grpc")
     depends_on("protobuf", when="+grpc")
-    depends_on("pkgconf", when="+grpc")
+    depends_on("pkgconfig", when="+grpc")
 
     configure_directory = "libgeopmd"
 

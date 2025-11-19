@@ -20,12 +20,15 @@ class Fastqc(Package):
     version("0.11.7", sha256="59cf50876bbe5f363442eb989e43ae3eaab8d932c49e8cff2c1a1898dd721112")
     version("0.11.5", sha256="dd7a5ad80ceed2588cf6d6ffe35e0f161c0d9977ed08355f5e4d9473282cbd66")
     version("0.11.4", sha256="adb233f9fae7b02fe99e716664502adfec1b9a3fbb84eed4497122d6d33d1fe7")
+    version("0.11.2", sha256="f362b141e696d67442fa16c3a71118936e0b14a0343bb88735973a920cbaef09")
 
     depends_on("java", type="run")
     depends_on("perl")  # for fastqc "script", any perl will do
 
     patch("fastqc_0.12.x.patch", level=0, when="@0.12:")
-    patch("fastqc_0.11.x.patch", level=0, when="@:0.11.9")
+    patch("fastqc_0.11.x.patch", level=0, when="@0.11.4:0.11.9")
+    # Custom patch for 0.11.2 as it doesn't have one of the .jar files
+    patch("fastqc_0.11.2.patch", level=0, when="@0.11.2")
 
     def patch(self):
         filter_file("/usr/bin/perl", self.spec["perl"].command.path, "fastqc", backup=False)
@@ -34,7 +37,8 @@ class Fastqc(Package):
         mkdir(prefix.bin)
         mkdir(prefix.lib)
         install("fastqc", prefix.bin)
-        install("cisd-jhdf5.jar", prefix.lib)
+        if not self.spec.satisfies("@0.11.2"):
+            install("cisd-jhdf5.jar", prefix.lib)
         install("jbzip2-0.9.jar", prefix.lib)
         if self.spec.satisfies("@:0.11.9"):
             install("sam-1.103.jar", prefix.lib)
