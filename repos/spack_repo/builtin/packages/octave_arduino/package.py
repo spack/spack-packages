@@ -23,7 +23,7 @@ class OctaveArduino(OctavePackage):
         url="https://sourceforge.net/projects/octave/files/Octave%20Forge%20Packages/Individual%20Package%20Releases/arduino--0.2.0.tar.gz",
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("octave-instrctl@0.5.0:", when="@0.12.2:")
     depends_on("octave-instrctl")
