@@ -39,7 +39,6 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
     variant("debug", default=False, description="Enable debug info and error messages at run-time")
 
-
     variant("regcache", default=True, description="Enable memory registration cache")
 
     # Accepted values are:
