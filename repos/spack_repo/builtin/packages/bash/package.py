@@ -31,6 +31,8 @@ class Bash(AutotoolsPackage, GNUMirrorPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
 
+    depends_on("sed", type="build")
+
     depends_on("ncurses")
     depends_on("readline@8.3:", when="@5.3:")
     depends_on("readline@8.2:", when="@5.2:")
