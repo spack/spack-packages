@@ -75,7 +75,12 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
 
     depends_on("gmake", type="build", when="platform=linux")
     depends_on("gmake", type="build", when="platform=darwin")
-
+    #
+#    # yoder:
+#    def flag_handler(self, name, flags):
+#      if name in ('cflags', 'cxxflags'):
+#        flags.append('-std=c99')
+    #
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("version", output=str, error=str)
