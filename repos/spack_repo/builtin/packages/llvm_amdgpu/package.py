@@ -217,7 +217,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     def _standard_flag(self, *, language, standard):
         flags = {
-            "cxx": {"11": "-std=c++11", "14": "-std=c++14", "17": "-std=c++17", "20": "-std=c++20"},
+            "cxx": {
+                "11": "-std=c++11",
+                "14": "-std=c++14",
+                "17": "-std=c++17",
+                "20": "-std=c++20",
+            },
             "c": {"99": "-std=c99", "11": "-std=c1x"},
         }
         return flags[language][standard]
