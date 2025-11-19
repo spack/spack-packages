@@ -14,6 +14,7 @@ class AwscliV2(PythonPackage):
     url = "https://github.com/aws/aws-cli/archive/refs/tags/2.13.22.tar.gz"
     list_url = "https://github.com/aws/aws-cli/tags"
 
+    license("Apache-2.0")
     maintainers("climbfuji", "teaguesterling")
 
     version("2.24.24", sha256="d7b135ef02c96d50d81c0b5eb2723cf474cfda8e1758cccabbcaa6c14f281419")

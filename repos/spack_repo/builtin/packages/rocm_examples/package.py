@@ -12,6 +12,7 @@ class RocmExamples(CMakePackage):
     """A collection of examples for the ROCm software stack"""
 
     homepage = "https://github.com/ROCm/rocm-examples"
+    git = "https://github.com/ROCm/rocm-examples.git"
     url = "https://github.com/ROCm/rocm-examples/archive/refs/tags/rocm-6.2.1.tar.gz"
 
     tags = ["rocm"]
@@ -19,6 +20,9 @@ class RocmExamples(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     license("MIT")
+
+    version("7.0.2", sha256="02ca88ec6ce584b6710f295c2ab2df61d38a6a5e4950082863186922be40f062")
+    version("7.0.0", sha256="a06dd85c3b55e62626884b9fe477393729ab5cbf7fb45c432df49bb3d918c0fe")
     version("6.4.3", sha256="febace4c74256c9dc29b3ef71227dad615701263aa4825fd4b1bb00145e59122")
     version("6.4.2", sha256="c9aa4d24a7542d029185fe382a0382bd208b2984813ebb854c352b78daf9fb80")
     version("6.4.1", sha256="ceece00ac0cb3431e032ce52eb660667fdfdcc64c1c7e9bb15ac1177fa20db83")
@@ -44,6 +48,8 @@ class RocmExamples(CMakePackage):
     depends_on("mesa", type="build", when="+cuda")
 
     for ver in [
+        "7.0.2",
+        "7.0.0",
         "6.4.3",
         "6.4.2",
         "6.4.1",
@@ -67,7 +73,18 @@ class RocmExamples(CMakePackage):
         depends_on(f"rocsparse@{ver}", when=f"@{ver} +rocm")
         depends_on(f"rocsolver@{ver}", when=f"@{ver} +rocm")
 
-    for ver in ["6.4.3", "6.4.2", "6.4.1", "6.4.0", "6.3.3", "6.3.2", "6.3.1", "6.3.0"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+    ]:
         depends_on(f"hipfft@{ver}", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
 
