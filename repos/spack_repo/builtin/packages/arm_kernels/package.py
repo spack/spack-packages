@@ -8,8 +8,9 @@ from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
+
 class ArmKernels(MakefilePackage):
-    """This is a suite of simple Arm assembly kernels for testing 
+    """This is a suite of simple Arm assembly kernels for testing
     the performance and functionality of Arm CPUs.
     """
 
@@ -27,31 +28,13 @@ class ArmKernels(MakefilePackage):
     depends_on("cxx", type="build")
 
     def patch(self):
-        filter_file(
-            r"CXX = .*",
-            "", 
-            "config.mk",
-        )
-        filter_file(
-            r"CXXFLAGS = .*",
-            "",
-            "config.mk",
-        )
+        filter_file(r"CXX = .*", "", "config.mk")
+        filter_file(r"CXXFLAGS = .*", "", "config.mk")
         target = self.spec.target
         if "sve" not in target.features:
-            filter_file(
-                r"^.*_sve_.*\.x.*",
-                "	\\",
-                "arithmetic/Makefile",
-            )
+            filter_file(r"^.*_sve_.*\.x.*", "	\\", "arithmetic/Makefile")
         if "fphp" not in target.features:
-            filter_file(
-                r"^.*fp16_.*\.x.*",
-                "	\\",
-                "arithmetic/Makefile",
-            )
-
-
+            filter_file(r"^.*fp16_.*\.x.*", "	\\", "arithmetic/Makefile")
 
     def install(self, spec, prefix):
         mkdir(prefix.bin)
