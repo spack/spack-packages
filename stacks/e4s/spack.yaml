@@ -198,7 +198,7 @@ spack:
   - umap
   - umpire
   - upcxx
-  - variorum
+  - variorum cpu=intel gpu=none
   - wannier90
   - wps
   - wrf
