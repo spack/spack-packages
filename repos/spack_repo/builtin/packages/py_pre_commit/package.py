@@ -16,6 +16,8 @@ class PyPreCommit(PythonPackage):
 
     license("MIT")
 
+    version("4.4.0", sha256="f0233ebab440e9f17cabbb558706eb173d19ace965c68cdce2c081042b4fab15")
+    version("4.3.0", sha256="499fe450cc9d42e9d58e606262795ecb64dd05438943c62b66f6a8673da30b16")
     version("4.2.0", sha256="601283b9757afd87d40c4c4a9b2b5de9637a8ea02eaff7adc2d0fb4e04841146")
     version("4.1.0", sha256="ae3f018575a588e30dfddfab9a05448bfbd6b73d78709617b5a2b853549716d4")
     version("4.0.1", sha256="80905ac375958c0444c65e9cebebd948b3cdb518f335a091a670a89d652139d2")
