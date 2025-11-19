@@ -28,13 +28,10 @@ class Warpx(CMakePackage, PythonExtension):
     version("develop", branch="development")
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
+    depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
     for v in ["25.04", "develop"]:
-        depends_on(
-            f"amrex@{v} build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile",
-            when=f"@{v}",
-            type=("build", "link"),
-        )
-        depends_on("py-amrex@{0}".format(v), when="@{0} +python".format(v), type=("build", "run"))
+        depends_on(f"amrex@{v}", when=f"@{v}")
+        depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
     variant("app", default=True, description="Build the WarpX executable application")
     variant("ascent", default=False, description="Enable Ascent in situ visualization")
@@ -90,9 +87,9 @@ class Warpx(CMakePackage, PythonExtension):
     depends_on("boost@1.66.0: +math", when="+qedtablegen")
     depends_on("cmake@3.24.0:", type="build")
     with when("+ascent"):
-        depends_on("ascent", when="+ascent")
-        depends_on("ascent +cuda", when="+ascent compute=cuda")
-        depends_on("ascent +mpi", when="+ascent +mpi")
+        depends_on("ascent")
+        depends_on("ascent +cuda", when="compute=cuda")
+        depends_on("ascent +mpi", when="+mpi")
         depends_on("amrex +ascent +conduit")
     with when("+catalyst"):
         depends_on("libcatalyst@2.0: +conduit")
@@ -238,9 +235,12 @@ class Warpx(CMakePackage, PythonExtension):
 
         return args
 
-    def edit(self, spec, prefix):
-        with when("+python"):
-            self.build_targets.extend(["pip_wheel", "pip_install_nodeps"])
+    @property
+    def build_targets(self):
+        targets = super().build_targets
+        if self.spec.satisfies("+python"):
+            targets.extend(["pip_wheel", "pip_install_nodeps"])
+        return targets
 
     @property
     def libs(self):
