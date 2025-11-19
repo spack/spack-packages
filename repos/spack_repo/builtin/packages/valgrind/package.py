@@ -26,7 +26,8 @@ class Valgrind(AutotoolsPackage, SourcewarePackage):
     sourceware_mirror_path = "valgrind/valgrind-3.13.0.tar.bz2"
     git = "git://sourceware.org/git/valgrind.git"
 
-    license("GPL-2.0-or-later")
+    license("GPL-3.0-only", when="@3.26:")
+    license("GPL-2.0-or-later", when="@:3.25")
 
     version("develop", branch="master")
     version("3.26.0", sha256="8d54c717029106f1644aadaf802ab9692e53d93dd015cbd19e74190eba616bd7")
