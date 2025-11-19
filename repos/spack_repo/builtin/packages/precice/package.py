@@ -125,6 +125,13 @@ class Precice(CMakePackage):
     conflicts("%clang@:3.7")
     conflicts("%intel@:16")
 
+    # Fixes missing #include<array> in src/mesh/Edge.hpp
+    patch(
+        "edge-incomplete-type.patch",
+        when="@2.0",
+        sha256="4017a89e4f77f623807a6cd057d9a095788879310f1bddd98837920d252b1ac7",
+    )
+
     def xsdk_tpl_args(self):
         return [
             "-DTPL_ENABLE_BOOST:BOOL=ON",
