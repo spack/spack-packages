@@ -160,7 +160,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Compiler dependencies
     depends_on("c", type="build")
-    for dep in ('cuda', 'rocm', 'sycl', 'caliper'):
+    for dep in ("cuda", "rocm", "sycl", "caliper"):
         depends_on("cxx", type="build", when=f"+{dep}")
     depends_on("fortran", type="build", when="+fortran")
 
