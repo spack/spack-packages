@@ -51,13 +51,15 @@ class Amdlibflame(CMakePackage, LibflameBase):
     version("5.1", sha256="25524ba78b5952303369fa0859d217e44071144fd122a9dc3f72ed0bd73e3b2d")
     version("5.0", sha256="3bee3712459a8c5bd728a521d8a4c8f46735730bf35d48c878d2fc45fc000918")
     version("4.2", sha256="93a433c169528ffba74a99df0ba3ce3d5b1fab9bf06ce8d2fd72ee84768ed84c")
-    version("4.1", sha256="8aed69c60d11cc17e058cabcb8a931cee4f343064ade3e73d3392b7214624b61")
-    version("4.0", sha256="bcb05763aa1df1e88f0da5e43ff86d956826cbea1d9c5ff591d78a3e091c66a4")
-    version("3.2", sha256="6b5337fb668b82d0ed0a4ab4b5af4e2f72e4cedbeeb4a8b6eb9a3ef057fb749a")
-    version("3.1", sha256="4520fb93fcc89161f65a40810cae0fa1f87cecb242da4a69655f502545a53426")
-    version("3.0.1", sha256="5859e7b39ffbe73115dd598b035f212d36310462cf3a45e555a5087301710776")
-    version("3.0", sha256="d94e08b688539748571e6d4c1ec1ce42732eac18bd75de989234983c33f01ced")
-    version("2.2", sha256="12b9c1f92d2c2fa637305aaa15cf706652406f210eaa5cbc17aaea9fcfa576dc")
+
+    with default_args(deprecated=True):
+        version("4.1", sha256="8aed69c60d11cc17e058cabcb8a931cee4f343064ade3e73d3392b7214624b61")
+        version("4.0", sha256="bcb05763aa1df1e88f0da5e43ff86d956826cbea1d9c5ff591d78a3e091c66a4")
+        version("3.2", sha256="6b5337fb668b82d0ed0a4ab4b5af4e2f72e4cedbeeb4a8b6eb9a3ef057fb749a")
+        version("3.1", sha256="4520fb93fcc89161f65a40810cae0fa1f87cecb242da4a69655f502545a53426")
+        version("3.0.1", sha256="5859e7b39ffbe73115dd598b035f212d36310462cf3a45e555a5087301710776")
+        version("3.0", sha256="d94e08b688539748571e6d4c1ec1ce42732eac18bd75de989234983c33f01ced")
+        version("2.2", sha256="12b9c1f92d2c2fa637305aaa15cf706652406f210eaa5cbc17aaea9fcfa576dc")
 
     variant("ilp64", default=False, when="@3.0.1: ", description="Build with ILP64 support")
     variant(
@@ -69,8 +71,8 @@ class Amdlibflame(CMakePackage, LibflameBase):
         description="Use hardware vectorization support",
     )
 
-    variant("logging", default="False", description="Enable AOCL DTL Logging")
-    variant("tracing", default="False", description="Enable AOCL DTL Tracing")
+    variant("logging", default=False, description="Enable AOCL DTL Logging")
+    variant("tracing", default=False, description="Enable AOCL DTL Tracing")
 
     # Build system
     build_system(
@@ -80,7 +82,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
     # Required dependencies
     with when("build_system=cmake"):
         generator("make")
-        depends_on("cmake@3.22:", when="@:5.0", type="build")
+        depends_on("cmake@3.22:", type="build")
         depends_on("cmake@3.26:", when="@5.1:", type="build")
 
     conflicts("threads=pthreads", msg="pthread is not supported")
@@ -92,7 +94,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
     patch("supermat.patch", when="@4.0:4.1", level=1)
     patch("libflame-pkgconfig.patch", when="@4.2")
 
-    provides("flame@5.2", when="@2:")
+    provides("flame@5.2")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
