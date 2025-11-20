@@ -33,17 +33,15 @@ class Bfs(MakefilePackage):
     version("3.0.2", sha256="d3456a9aeecc031064db0dbe012e55a11eb97be88d0ab33a90e570fe66457f92")
     version("3.0.1", sha256="a38bb704201ed29f4e0b989fb2ab3791ca51c3eff90acfc31fff424579bbf962")
 
-    # Build dependencies
     depends_on("c", type="build")
+    depends_on("sed", type="build")
 
-    # System dependencies
+    depends_on("oniguruma")
+
     depends_on("acl", when="platform=linux")
     depends_on("attr", when="platform=linux")
     depends_on("libcap", when="platform=linux")
     depends_on("liburing@2.4:", when="platform=linux @3.1:")
-
-    # Required dependencies
-    depends_on("oniguruma")
 
     @run_before("build", when="@4:")
     def configure(self):
