@@ -1280,6 +1280,28 @@ print(json.dumps(config))
         module.python_platlib = join_path(dependent_spec.prefix, self.platlib)
         module.python_purelib = join_path(dependent_spec.prefix, self.purelib)
 
+    def set_dependent_cmake_args(self, pkg: PackageBase, args: List[str]) -> None:
+        """Set the {Python3,Python,PYTHON}_EXECUTABLE CMake variables explicitly if the package
+        has the variable ``find_python_hints`` set to True. This ensures that CMake locates the
+        right Python in its builtin FindPython3, FindPython, and FindPythonInterp modules.
+        Spack does CMake's job here because CMake's modules only search for Python versions known
+        at the time of release by default.
+        """
+
+        # Allow packages to disable these hints be setting a the member variable
+        # ``find_python_hints`` to False. By default this is always applied.
+        if not getattr(pkg, "find_python_hints", True):
+            return
+
+        python_executable = pkg.spec["python"].command.path
+        args.extend(
+            [
+                define("PYTHON_EXECUTABLE", python_executable),
+                define("Python_EXECUTABLE", python_executable),
+                define("Python3_EXECUTABLE", python_executable),
+            ]
+        )
+
     def add_files_to_view(self, view, merge_map, skip_if_exists=True):
         """Make the view a virtual environment if it isn't one already.
 

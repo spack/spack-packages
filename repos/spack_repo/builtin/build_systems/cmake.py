@@ -42,29 +42,12 @@ def _extract_primary_generator(generator):
     return _primary_generator_extractor.match(generator).group(1)
 
 
-def _maybe_set_python_hints(pkg: PackageBase, args: List[str]) -> None:
-    """Set the PYTHON_EXECUTABLE, Python_EXECUTABLE, and Python3_EXECUTABLE CMake variables
-    if the package has Python as build or link dep and ``find_python_hints`` is set to True. See
-    ``find_python_hints`` for context."""
-    if not getattr(pkg, "find_python_hints", False) or not pkg.spec.dependencies(
-        "python", deptype=("build", "link")
-    ):
-        return
-    python_executable = pkg.spec["python"].command.path
-    args.extend(
-        [
-            define("PYTHON_EXECUTABLE", python_executable),
-            define("Python_EXECUTABLE", python_executable),
-            define("Python3_EXECUTABLE", python_executable),
-        ]
-    )
-
-
 def _dependencies_cmake_extra_args(pkg: PackageBase, args: List[str]) -> None:
-    for dep in pkg.spec.traverse(deptype=("build", "link")):
-        extra_args = getattr(dep.package, "cmake_extra_args", None)
-        if extra_args:
-            args.extend(extra_args)
+    for dep in pkg.spec.dependencies(deptype=("build", "link")):
+        try:
+            dep.package.set_dependent_cmake_args(pkg, args)
+        except Exception:
+            continue
 
 
 def _supports_compilation_databases(pkg: PackageBase) -> bool:
@@ -185,13 +168,6 @@ class CMakePackage(PackageBase):
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
     default_buildsystem = "cmake"
-
-    #: When this package depends on Python and ``find_python_hints`` is set to True, pass the
-    #: defines {Python3,Python,PYTHON}_EXECUTABLE explicitly, so that CMake locates the right
-    #: Python in its builtin FindPython3, FindPython, and FindPythonInterp modules. Spack does
-    #: CMake's job because CMake's modules by default only search for Python versions known at the
-    #: time of release.
-    find_python_hints = True
 
     build_system("cmake")
 
@@ -412,7 +388,6 @@ class CMakeBuilder(BuilderWithDefaults):
             )
 
         _conditional_cmake_defaults(pkg, args)
-        _maybe_set_python_hints(pkg, args)
         _dependencies_cmake_extra_args(pkg, args)
 
         return args

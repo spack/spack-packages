@@ -176,9 +176,8 @@ class Mesa(MesonPackage):
                 flags.append("-std=c99")
         return super().flag_handler(name, flags)
 
-    @property
-    def cmake_extra_args(self):
-        return ["-DOpenGL_GL_PREFERENCE:STRING=LEGACY"]
+    def set_dependent_cmake_args(self, pkg: PackageBase, args: List[str]):
+        args.append("-DOpenGL_GL_PREFERENCE:STRING=LEGACY")
 
     @property
     def libglx_headers(self):
