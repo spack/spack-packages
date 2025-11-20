@@ -144,6 +144,8 @@ class PyMatplotlib(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("gmake", type="build", when="%gcc")
+
     # https://matplotlib.org/stable/install/dependencies.html
     # Runtime dependencies
     # Mandatory dependencies

@@ -46,6 +46,8 @@ class Pcre2(AutotoolsPackage, CMakePackage):
 
     depends_on("c", type="build")
 
+    depends_on("gmake", type="build", when="%gcc")
+
     with when("build_system=cmake"):
         depends_on("zlib")
         depends_on("bzip2")
