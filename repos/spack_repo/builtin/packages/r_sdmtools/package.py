@@ -32,4 +32,6 @@ class RSdmtools(RPackage):
     version("1.1-12", sha256="6dc4a8a046e7fced190402f39a9bae6f863e08c320f0881367c022b2f220f14b")
     version("1.1-11", sha256="1caf8fa1914ad6921d76e7b22a8c25cfe55892b0d21aef3b2a7b8f5b79b9388b")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r-r-utils", type=("build", "run"))
