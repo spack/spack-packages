@@ -359,6 +359,10 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("HYPRE_ENABLE_CALIPER", "caliper"))
         args.append(self.define_from_variant("HYPRE_ENABLE_DSUPERLU", "superlu-dist"))
         args.append(self.define_from_variant("HYPRE_ENABLE_MAGMA", "magma"))
+        if spec.satisfies("+superlu-dist"):
+            args.append(self.define("TPL_DSUPERLU_INCLUDE_DIRS",
+                        self.spec["superlu-dist"].prefix.include))
+            args.append(self.define("TPL_DSUPERLU_LIBRARIES", self.spec["superlu-dist"].libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)
