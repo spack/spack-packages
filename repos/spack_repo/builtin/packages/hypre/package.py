@@ -363,6 +363,9 @@ class CMakeBuilder(CMakeBuilder):
                 self.define("TPL_DSUPERLU_INCLUDE_DIRS", self.spec["superlu-dist"].prefix.include)
             )
             args.append(self.define("TPL_DSUPERLU_LIBRARIES", self.spec["superlu-dist"].libs))
+        if spec.satisfies("+magma"):
+            args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
+            args.append(self.define("TPL_MAGMA_LIBRARIES", self.spec["magma"].libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)
