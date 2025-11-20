@@ -421,7 +421,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             for suffix in [shared_library_suffix(self.spec), static_library_suffix(self.spec)]:
                 library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
-                    os.symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
+                    symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
         # https://github.com/esmf-org/esmf/issues/497
         filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
 
