@@ -199,8 +199,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     variant(
         "comm_ofi_oob",
-        values=("sockets", "mpi", "pmi2"),
-        default="sockets",
+        values=("sockets", "mpi", "pmi2", "unset"),
+        default="unset",
         description="Select out-of-band support",
         multi=False,
     )
