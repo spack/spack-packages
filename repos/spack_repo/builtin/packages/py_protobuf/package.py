@@ -76,9 +76,9 @@ class PyProtobuf(PythonPackage):
     # https://protobuf.dev/support/version-support/#python
     for ver in range(30, 33):
         depends_on(f"protobuf@{ver}", when=f"@6.{ver}")
-    for ver in range(26, 29):
+    for ver in range(26, 30):
         depends_on(f"protobuf@{ver}", when=f"@5.{ver}")
-    for ver in range(21, 25):
+    for ver in range(21, 26):
         depends_on(f"protobuf@{ver}", when=f"@4.{ver}")
     for ver in range(0, 21):
         depends_on(f"protobuf@3.{ver}", when=f"@3.{ver}")
