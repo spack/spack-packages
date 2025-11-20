@@ -168,6 +168,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "darwin",
         "hpe-apollo",
         "hpe-cray-ex",
+        "hpe-cray-xd",
         "linux32",
         "linux64",
         "netbsd32",
