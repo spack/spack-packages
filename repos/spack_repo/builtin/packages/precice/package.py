@@ -155,8 +155,13 @@ class Precice(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant(mpi_option, "mpi"),
             self.define_from_variant(petsc_option, "petsc"),
-            self.define_from_variant(python_option, "python"),
         ]
+
+        # Python 3 is only supported after version 2
+        if spec.satisfies("@2:"):
+            cmake_args.append(self.define_from_variant(python_option, "python"))
+        else:
+            cmake_args.append("-DPYTHON=OFF")
 
         # The xSDK installation policies were implemented after 1.5.2.
         # The TPL arguments were removed in 3.0.0.
