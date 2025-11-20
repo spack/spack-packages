@@ -130,6 +130,12 @@ class Precice(CMakePackage):
         "edge-incomplete-type.patch",
         when="@2.0",
         sha256="4017a89e4f77f623807a6cd057d9a095788879310f1bddd98837920d252b1ac7",
+        )
+    # Fixes linking to boost system by using BOOST_ERROR_CODE_HEADER_ONLY
+    patch(
+        "boost-system-header-only.patch",
+        when="@2.3.0",
+        sha256="6a38783eec984a59991f0895d411212e0ba1ebd2ec2c8f53f962df8facbc0344",
     )
 
     def xsdk_tpl_args(self):
