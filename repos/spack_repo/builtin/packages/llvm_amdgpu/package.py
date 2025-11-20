@@ -72,7 +72,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         "fortran",
         default=True,
         when="@:6.99",
-        description="External instances of llvm-amdgpu before 7 may provide fortran"
+        description="External instances of llvm-amdgpu before 7 may provide fortran",
     )
 
     variant(
@@ -360,7 +360,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     @classmethod
     def determine_variants(cls, exes, version_str):
-        #raise Exception("<--- " + str(exes) + " " + version_str)
         compilers = cls.determine_compiler_paths(exes=exes)
         variants = ""
         if "fortran" in compilers and Version(version_str) < Version("7"):
