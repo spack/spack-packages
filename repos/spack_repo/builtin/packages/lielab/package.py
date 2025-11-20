@@ -6,6 +6,7 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
+
 class Lielab(CMakePackage):
     """Lielab is a C++ library for numerical Lie-theory: Lie groups, Lie algebras, homogeneous
     manifolds, and various functions and algorithms on these spaces."""
