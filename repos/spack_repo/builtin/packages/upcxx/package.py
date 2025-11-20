@@ -65,9 +65,15 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     version("2025.10.0", sha256="bb43348d351777b7462e6bbadda358b426cd150e138ac08ee74649b91bba32ec")
     version("2023.9.0", sha256="6bad2976b4bfc0263b497daa967f448159c3c2259827c8376bc96c9bf9171a83")
     with default_args(deprecated=True):
-        version("2023.3.0", sha256="382af3c093decdb51f0533e19efb4cc7536b6617067b2dd89431e323704a1009")
-        version("2022.9.0", sha256="dbf15fd9ba38bfe2491f556b55640343d6303048a117c4e84877ceddb64e4c7c")
-        version("2022.3.0", sha256="72bccfc9dfab5c2351ee964232b3754957ecfdbe6b4de640e1b1387d45019496")
+        version(
+            "2023.3.0", sha256="382af3c093decdb51f0533e19efb4cc7536b6617067b2dd89431e323704a1009"
+        )
+        version(
+            "2022.9.0", sha256="dbf15fd9ba38bfe2491f556b55640343d6303048a117c4e84877ceddb64e4c7c"
+        )
+        version(
+            "2022.3.0", sha256="72bccfc9dfab5c2351ee964232b3754957ecfdbe6b4de640e1b1387d45019496"
+        )
     # Do NOT add older versions here.
     # UPC++ releases over 2 years old are not supported.
     depends_on("c", type="build")  # generated
@@ -109,9 +115,7 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
         msg='cross=none is unacceptable on Cray XC. Please specify an appropriate "cross" value',
     )
     conflicts(
-        "@2025.10.0:",
-        when=is_CrayXC(),
-        msg='Cray XC support was removed in upcxx@2025.10.0',
+        "@2025.10.0:", when=is_CrayXC(), msg="Cray XC support was removed in upcxx@2025.10.0"
     )
 
     # UPC++ always relies on GASNet-EX.
