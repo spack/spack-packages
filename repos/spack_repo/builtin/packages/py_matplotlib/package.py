@@ -144,6 +144,9 @@ class PyMatplotlib(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    # This is required for the gcc lto wrapper which calls gmake
+    # Without this the spack installer doesn't know what to pass
+    # when building with the gnu jobserver
     depends_on("gmake", type="build", when="%gcc")
 
     # https://matplotlib.org/stable/install/dependencies.html

@@ -47,8 +47,6 @@ class Pkgconf(AutotoolsPackage):
 
     executables = ["^pkgconf$", "^pkg-config$"]
 
-    depends_on("gmake", type="build", when="%gcc")
-
     @classmethod
     def determine_version(cls, exe):
         exe = Executable(exe)
