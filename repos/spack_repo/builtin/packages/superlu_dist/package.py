@@ -23,6 +23,7 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="master")
     version("amd", branch="amd")
+    version("9.2.0", sha256="d1df0e53d269cfc17379bb358e1b2b566d2807cb4a680b2ec1e4f35a77f707d1")
     version("9.1.0", sha256="1cb2c6dc7e8231b2ec30c1266e55e440ffca9f55527771d8df28f900dd179f9d")
     version("9.0.0", sha256="aa43d33d4b1b0f5f7b5ad7685e9a6bc25088832c6c74d2ab8f75a2c9f4e9e955")
     version("8.2.1", sha256="b77d065cafa6bc1a1dcc15bf23fd854f54b05762b165badcffc195835ad2bddf")
