@@ -132,11 +132,7 @@ class Elmerfem(CMakePackage):
 
         # Hypre include fix
         if self.spec.satisfies("+hypre"):
-            filter_file(
-                '#include "krylov.h"',
-                '#include "HYPRE_krylov.h"',
-                'fem/src/SolveHypre.c'
-        )
+            filter_file('#include "krylov.h"', '#include "HYPRE_krylov.h"', "fem/src/SolveHypre.c")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("ELMER_HOME", self.prefix)
