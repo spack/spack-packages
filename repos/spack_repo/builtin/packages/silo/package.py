@@ -11,10 +11,10 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     """Silo is a library for reading and writing a wide variety of scientific
     data to binary, disk or memory (in-situ) files."""
 
-    homepage = "https://wci.llnl.gov/simulation/computer-codes/silo"
+    homepage = "https://silo.llnl.gov"
     git = "https://github.com/LLNL/Silo.git"
-    url = "https://wci.llnl.gov/sites/wci/files/2021-01/silo-4.10.2.tgz"
-    maintainers("patrickb314")
+    url = "https://github.com/LLNL/Silo/releases/tag/4.12.0"
+    maintainers("patrickb314","markcmiller86")
 
     # Base license is BSD; fpzip and hzip variants change effective licensing.
     # Versions of both hzip and fpzip built into silo are NOT BSD licensed.
@@ -23,8 +23,13 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
 
     version("main", branch="main")
     version(
-        "4.11.1",
+        "4.12.0",
         preferred=True,
+        sha256="5251816e43b08c19c925480b2daf85cc9b75e494b91df37df0eacc092279cfd0",
+        url="https://github.com/LLNL/Silo/archive/refs/tags/4.12.0.tar.gz",
+    )
+    version(
+        "4.11.1",
         sha256="49eddc00304aa4a19074b099559edbdcaa3532c98df32f99aa62b9ec3ea7cee2",
         url="https://github.com/LLNL/Silo/releases/download/4.11.1/silo-4.11.1.tar.xz",
     )
