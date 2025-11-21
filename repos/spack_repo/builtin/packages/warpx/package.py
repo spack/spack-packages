@@ -176,7 +176,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("py-pybind11@3.0.1:", when="@25.08:", type=("build", "link"))
         depends_on("py-wheel@0.40:", type="build")
 
-    conflicts("~qed +qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
+    conflicts("~qed", when="+qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
 
     def cmake_args(self):
         spec = self.spec
