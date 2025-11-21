@@ -145,6 +145,7 @@ class Warpx(CMakePackage, PythonExtension):
             depends_on("pkgconfig", type="build")
     with when("compute=sycl"):
         depends_on("amrex +sycl")
+        depends_on("intel-oneapi-mkl", when="+fft")
     with when("+fft dims=rz"):
         depends_on("lapackpp")
         depends_on("blaspp")
@@ -171,13 +172,6 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("py-wheel@0.40:", type="build")
 
     conflicts("~qed +qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
-
-    # https://github.com/BLAST-WarpX/warpx/issues/5774
-    conflicts(
-        "compute=sycl dims=rz",
-        when="+fft",
-        msg="WarpX spectral solvers are not yet running on SYCL GPUs for RZ (GH#5774)",
-    )
 
     def cmake_args(self):
         spec = self.spec
