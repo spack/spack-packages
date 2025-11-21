@@ -130,13 +130,6 @@ class Elmerfem(CMakePackage):
                 string=True,
             )
 
-        # if self.spec.satisfies("+lua"):
-        #     filter_file(
-        #         '#include "lapi.h"',
-        #         '#include "lua.h"',
-        #         'fem/src/elmer_lua_iface.c'
-        #     )
-
         # Hypre include fix
         if self.spec.satisfies("+hypre"):
             filter_file(
