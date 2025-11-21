@@ -17,7 +17,7 @@ class Warpx(CMakePackage, PythonExtension):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/25.04.tar.gz"
+    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/25.11.tar.gz"
     git = "https://github.com/BLAST-WarpX/warpx.git"
 
     maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
@@ -26,10 +26,11 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("25.11", sha256="4e2b4636fee995ad075a907cf216fc089d1220824b8743b62c01e188fa6c23d7")
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
     depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
-    for v in ["25.04", "develop"]:
+    for v in ["25.04", "25.11", "develop"]:
         depends_on(f"amrex@{v}", when=f"@{v}")
         depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
@@ -44,6 +45,7 @@ class Warpx(CMakePackage, PythonExtension):
         multi=False,
         description="On-node, accelerated computing backend",
     )
+    # TODO: 25.06+ also provides RCYLINDER RSPHERE, but w/o Python support
     variant(
         "dims",
         default="1,2,rz,3",
@@ -118,7 +120,6 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("amrex precision=single")
     with when("precision=double"):
         depends_on("amrex precision=double")
-    depends_on("py-pybind11@2.12.0:", when="+python", type=("build", "link"))
     depends_on("sensei@4.0.0:", when="+sensei")
     with when("compute=cuda"):
         depends_on("amrex +cuda")
@@ -157,14 +158,16 @@ class Warpx(CMakePackage, PythonExtension):
     # note: in Spack, we only need the cmake package, not py-cmake
     with when("+python"):
         extends("python")
-        depends_on("python@3.8:", type=("build", "run"))
+        depends_on("python@3.9:", type=("build", "run"))
         depends_on("py-numpy@1.15.0:", type=("build", "run"))
         depends_on("py-mpi4py@2.1.0:", type=("build", "run"), when="+mpi")
         depends_on("py-periodictable@1.5:1", type=("build", "run"))
-        depends_on("py-picmistandard@0.33.0", type=("build", "run"), when="@25.01:")
+        depends_on("py-picmistandard@0.33.0", type=("build", "run"), when="@25.01:25.10")
+        depends_on("py-picmistandard@0.34.0", type=("build", "run"), when="@25.11:")
         depends_on("py-pip@23:", type="build")
         depends_on("py-setuptools@42:", type="build")
         depends_on("py-pybind11@2.12.0:", type=("build", "link"))
+        depends_on("py-pybind11@3.0.1:", when="@25.08:", type=("build", "link"))
         depends_on("py-wheel@0.40:", type="build")
 
     conflicts("~qed +qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
@@ -280,8 +283,9 @@ class Warpx(CMakePackage, PythonExtension):
         # test openPMD output if compiled in
         if "+openpmd" in spec:
             cli_args.append("diag1.format=openpmd")
-            # RZ: thetaMode output uses different variables
-            cli_args.append("diag1.fields_to_plot=Er Et Ez Br Bt Bz jr jt jz rho")
+            if dim == "rz":
+                # RZ: thetaMode output uses different variables
+                cli_args.append("diag1.fields_to_plot=Er Et Ez Br Bt Bz jr jt jz rho")
         return cli_args
 
     def check(self):

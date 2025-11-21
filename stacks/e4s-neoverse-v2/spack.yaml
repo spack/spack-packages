@@ -44,6 +44,8 @@ spack:
       require: "+examples target=neoverse_v2 %gcc"
     paraview:
       require: "+examples target=neoverse_v2 %gcc"
+    boost:
+      require: "cxxstd=17"
 
   specs:
   # CPU
