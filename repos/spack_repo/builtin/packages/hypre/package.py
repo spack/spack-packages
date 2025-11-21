@@ -135,6 +135,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@3.0.0 +rocm",
     )
 
+    # Patch to fix build with TPLs
+    patch("hypre30000-tpls.patch", when="@3.0.0")
+
     # Patch to add gptune hookup codes
     patch("ij_gptune.patch", when="+gptune@2.19.0")
 
