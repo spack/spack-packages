@@ -138,6 +138,8 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch[0] != "none":
                 append_define("CMAKE_CUDA_ARCHITECTURES", cuda_arch[0])
+            if spec.satisfies("^cuda@13:"):
+                append_define("CMAKE_CXX_STANDARD", "17")
 
         if "+rocm" in spec and (spec.satisfies("@amd") or spec.satisfies("@8:")):
             append_define("TPL_ENABLE_HIPLIB", True)
