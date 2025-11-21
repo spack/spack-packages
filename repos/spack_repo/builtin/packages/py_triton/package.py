@@ -17,6 +17,7 @@ class PyTriton(PythonPackage):
     license("MIT")
 
     version("main", branch="main")
+    version("3.5.1", sha256="03d7c41f6f2dc1dfa3445776c4a893dc34b1e0ece42b953f036c071ff6409b80")
     version("3.4.0", sha256="a96e87a911794c907fab30e0c7a3f96ef4e9e8fdc8812cd8bbc6f0457619072f")
     version("3.3.1", sha256="9dc77d9205933bf2fc05eb054f4f1d92acd79a963826174d57fe9cfd58ba367b")
     version("3.2.0", sha256="04eb07e2ff1b87bf4b26e132d696177248bfb9c71cecd4864e561a9c103de9b3")
@@ -37,6 +38,8 @@ class PyTriton(PythonPackage):
     depends_on("py-filelock", type=("build", "run"))
     depends_on("zlib-api", type="link")
     conflicts("^openssl@3.3.0")
+    # the prebuilt llvm depends on glibc@2.34:
+    conflicts("^glibc@:2.33", when="@3.4.0:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set environment variables used to control the build"""
