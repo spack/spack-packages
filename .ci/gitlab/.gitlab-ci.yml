@@ -70,14 +70,10 @@ default:
         SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
         SPACK_REQUIRE_SIGNING: "True"
         OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
-    - if: $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/ || $CI_COMMIT_TAG =~ /^v.*/
-      # Pipelines on tags (release or dev snapshots) only copy binaries from one mirror to another
-      when: never
+    - if: $CI_COMMIT_TAG =~ /^v.*/ || $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/
+      when: always
       variables:
-        SPACK_PIPELINE_TYPE: "spack_copy_only"
-        SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
-        PIPELINE_MIRROR_TEMPLATE: "copy-only-protected-mirrors.yaml.in"
-        OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
+        NOOP_JOB: 1
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
       when: on_success
@@ -152,6 +148,13 @@ default:
 .generate-base:
   extends: [ ".base-job", ".generate-common" ]
   before_script:
+    # Check if bypass for noop is set
+    - |
+      [ ! -z ${NOOP_JOB} ] && \
+      python3 ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py \
+      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+    - |
+      [ ! -z ${NOOP_JOB} ] && exit 0
     - uname -a || true
     - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
     - nproc || true
@@ -193,6 +196,13 @@ default:
   before_script:
     - $ErrorActionOld=$ErrorActionPreference
     - $ErrorActionPreference="SilentlyContinue"
+    - |
+      If ( $NOOP_JOB )
+      {
+          python ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+      }
+    - |
+      If ( $NOOP_JOB ) { exit 0 }
     - python -c"import psutil;print(psutil.getloadavg())"
     - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
     - $ErrorActionPreference=$ErrorActionOld
@@ -322,7 +332,7 @@ e4s-neoverse-v2-build:
 
 e4s-rocm-external-generate:
   extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-gcc-11.4-rocm6.2.1:2024.10.08
+  image: ghcr.io/spack/e4s-rocm-base-x86_64:v6.4.3-1760790880
 
 e4s-rocm-external-build:
   extends: [ ".e4s-rocm-external", ".build" ]
@@ -580,7 +590,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:v2023-10-30
+  image: ghcr.io/spack/tutorial-ubuntu-22.04:main
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
@@ -759,7 +769,7 @@ hep-build:
   variables:
     SPACK_CI_STACK_NAME: aws-pcluster-x86_64_v4
 
-aws-pcluster-generate-x86_64_v4:
+aws-pcluster-x86_64_v4-generate:
   extends: [ ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
   before_script:
     # TODO: Move this to the container next time it is rebuilt
@@ -774,23 +784,23 @@ aws-pcluster-generate-x86_64_v4:
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
-aws-pcluster-build-x86_64_v4:
+aws-pcluster-x86_64_v4-build:
   extends: [ ".aws-pcluster-x86_64_v4", ".build" ]
   trigger:
     << : *trigger_build
     include:
       - artifact: jobs_scratch_dir/aws-pcluster-x86_64_v4/cloud-ci-pipeline.yml
-        job: aws-pcluster-generate-x86_64_v4
+        job: aws-pcluster-x86_64_v4-generate
   needs:
     - artifacts: True
-      job: aws-pcluster-generate-x86_64_v4
+      job: aws-pcluster-x86_64_v4-generate
 
 # Neoverse_v1 (one pipeline per target)
 .aws-pcluster-neoverse_v1:
   variables:
     SPACK_CI_STACK_NAME: aws-pcluster-neoverse_v1
 
-aws-pcluster-generate-neoverse_v1:
+aws-pcluster-neoverse_v1-generate:
   # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
   extends: [ ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
   before_script:
@@ -806,16 +816,16 @@ aws-pcluster-generate-neoverse_v1:
     - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
       - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
-aws-pcluster-build-neoverse_v1:
+aws-pcluster-neoverse_v1-build:
   extends: [  ".aws-pcluster-neoverse_v1", ".build" ]
   trigger:
     << : *trigger_build
     include:
       - artifact: jobs_scratch_dir/aws-pcluster-neoverse_v1/cloud-ci-pipeline.yml
-        job: aws-pcluster-generate-neoverse_v1
+        job: aws-pcluster-neoverse_v1-generate
   needs:
     - artifacts: True
-      job: aws-pcluster-generate-neoverse_v1
+      job: aws-pcluster-neoverse_v1-generate
 
 # Cray definitions
 .generate-cray:

@@ -106,9 +106,9 @@ class Amdblis(BlisBase):
     def create_symlink(self):
         with working_dir(self.prefix.lib):
             if os.path.isfile("libblis-mt.a"):
-                os.symlink("libblis-mt.a", "libblis.a")
+                symlink("libblis-mt.a", "libblis.a")
             if os.path.isfile("libblis-mt.so"):
-                os.symlink("libblis-mt.so", "libblis.so")
+                symlink("libblis-mt.so", "libblis.so")
 
     @property
     def libs(self):

@@ -90,7 +90,7 @@ class Gmake(Package, GNUMirrorPackage):
             Executable(build_sh)()
             os.mkdir(prefix.bin)
             install("make", prefix.bin)
-            os.symlink("make", prefix.bin.gmake)
+            symlink("make", prefix.bin.gmake)
 
     def setup_dependent_package(self, module, dspec):
         module.make = MakeExecutable(

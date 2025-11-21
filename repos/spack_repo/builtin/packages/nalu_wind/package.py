@@ -23,32 +23,20 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/exawind/nalu-wind.git"
     url = "https://github.com/Exawind/nalu-wind/archive/refs/tags/v2.0.0.tar.gz"
 
-    maintainers("jrood-nrel", "psakievich")
+    maintainers("jrood-nrel")
 
     tags = ["ecp", "ecp-apps"]
+    submodules = True
 
-    version("master", branch="master", submodules=True)
-    version(
-        "2.4.0", tag="v2.4.0", commit="85c06c5264fd8689002dc0ea32cbb74b2bff1668", submodules=True
-    )
-    version(
-        "2.3.0", tag="v2.3.0", commit="94cea346455f6841c8ce28d54c6d894bbf5e9a0a", submodules=True
-    )
-    version(
-        "2.2.2", tag="v2.2.2", commit="6e98cb004e5cc2dcb60d09b155182a7095007c8e", submodules=True
-    )
-    version(
-        "2.2.1", tag="v2.2.1", commit="ffa9de729df2a11b5241fdeb7628e7fab9f48f9b", submodules=True
-    )
-    version(
-        "2.2.0", tag="v2.2.0", commit="a530903dd9fd67df2528e990ca496f64d45e5e20", submodules=True
-    )
-    version(
-        "2.1.0", tag="v2.1.0", commit="9242f8b766379465ee325a9cbcdcd7f2398d4eef", submodules=True
-    )
-    version(
-        "2.0.0", tag="v2.0.0", commit="dd115634489a736f48593f10be7ac2c992b16088", submodules=True
-    )
+    version("master", branch="master")
+    version("2.5.0", tag="v2.5.0", commit="2382077a7112a1aeb90f850994eb92d76abe0434")
+    version("2.4.0", tag="v2.4.0", commit="85c06c5264fd8689002dc0ea32cbb74b2bff1668")
+    version("2.3.0", tag="v2.3.0", commit="94cea346455f6841c8ce28d54c6d894bbf5e9a0a")
+    version("2.2.2", tag="v2.2.2", commit="6e98cb004e5cc2dcb60d09b155182a7095007c8e")
+    version("2.2.1", tag="v2.2.1", commit="ffa9de729df2a11b5241fdeb7628e7fab9f48f9b")
+    version("2.2.0", tag="v2.2.0", commit="a530903dd9fd67df2528e990ca496f64d45e5e20")
+    version("2.1.0", tag="v2.1.0", commit="9242f8b766379465ee325a9cbcdcd7f2398d4eef")
+    version("2.0.0", tag="v2.0.0", commit="dd115634489a736f48593f10be7ac2c992b16088")
 
     variant("pic", default=True, description="Position independent code")
     variant(

@@ -16,6 +16,7 @@ class Protobuf(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("33.1", sha256="0c98bb704ceb4e68c92f93907951ca3c36130bc73f87264e8c0771a80362ac97")
     version("32.1", sha256="d2081ab9528292f7980ef2d88d2be472453eea4222141046ad4f660874d5f24e")
     version("3.29.3", sha256="c8d0ed0085f559444f70311791cf7aef414246b9942441443963184b534dbf9e")
     version("3.28.2", sha256="1b6b6a7a7894f509f099c4469b5d4df525c2f3c9e4009e5b2db5b0f66cb8ee0e")
@@ -140,6 +141,14 @@ class Protobuf(CMakePackage):
         "https://github.com/protocolbuffers/protobuf/commit/38a24729ec94e6576a1425951c898ad0b91ad2d2.patch?full_index=1",
         when="@3.22:3.24.3 ^abseil-cpp@20240116:",
         sha256="c061356db31cdce29c8cdd98a3a8219ef048ebc2318d0dec26c1f2c5e5dae29b",
+    )
+
+    # Broken build on aarch64 due to __builtin_arm_crc32cd
+    # See https://github.com/protocolbuffers/protobuf/pull/23164
+    patch(
+        "https://github.com/protocolbuffers/protobuf/commit/cbe193ab7ef6f8979cc33a876073217b364f4118.patch?full_index=1",
+        when="@32 target=aarch64:",
+        sha256="7727723e904dd74f35122da87837b60fd53e0642f302d53f96b9dbc6f9ac6d05",
     )
 
     def cmake_args(self):
