@@ -148,8 +148,13 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("intel-oneapi-mkl", when="+fft")
     with when("+fft dims=rz"):
         depends_on("lapackpp")
+        depends_on("lapackpp +cuda", when="compute=cuda")
+        depends_on("lapackpp +rocm", when="compute=hip")
+        depends_on("lapackpp +sycl", when="compute=sycl")
         depends_on("blaspp")
         depends_on("blaspp +cuda", when="compute=cuda")
+        depends_on("blaspp +rocm", when="compute=hip")
+        depends_on("blaspp +sycl", when="compute=sycl")
     with when("+openpmd"):
         depends_on("openpmd-api@0.16.1:")
         depends_on("openpmd-api ~mpi", when="~mpi")
