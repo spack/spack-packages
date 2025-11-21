@@ -95,7 +95,7 @@ class Elmerfem(CMakePackage):
             args.append("-DWITH_Trilinos=OFF")
 
         if spec.satisfies("+lua"):
-            args.extend(["-DWITH_LUA=ON", "-DUSE_SYSTEM_LUA=ON"])
+            args.extend(["-DWITH_LUA=ON", "-DUSE_SYSTEM_LUA:BOOL=FALSE"])
             if spec.satisfies("%gcc"):
                 args.append("-DCMAKE_Fortran_FLAGS=-ffree-line-length-none")
 
@@ -129,6 +129,21 @@ class Elmerfem(CMakePackage):
                 "fem/tests/CMakeLists.txt",
                 string=True,
             )
+
+        # if self.spec.satisfies("+lua"):
+        #     filter_file(
+        #         '#include "lapi.h"',
+        #         '#include "lua.h"',
+        #         'fem/src/elmer_lua_iface.c'
+        #     )
+
+        # Hypre include fix
+        if self.spec.satisfies("+hypre"):
+            filter_file(
+                '#include "krylov.h"',
+                '#include "HYPRE_krylov.h"',
+                'fem/src/SolveHypre.c'
+        )
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("ELMER_HOME", self.prefix)
