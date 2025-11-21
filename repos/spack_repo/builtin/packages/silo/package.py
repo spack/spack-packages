@@ -14,7 +14,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     homepage = "https://silo.llnl.gov"
     git = "https://github.com/LLNL/Silo.git"
     url = "https://github.com/LLNL/Silo/releases/tag/4.12.0"
-    maintainers("patrickb314","markcmiller86")
+    maintainers("patrickb314", "markcmiller86")
 
     # Base license is BSD; fpzip and hzip variants change effective licensing.
     # Versions of both hzip and fpzip built into silo are NOT BSD licensed.
