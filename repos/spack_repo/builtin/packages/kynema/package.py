@@ -62,6 +62,7 @@ class Kynema(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
     depends_on("netcdf-c@4.9:")
     depends_on("yaml-cpp@0.6:")
     depends_on("kokkos-kernels")
