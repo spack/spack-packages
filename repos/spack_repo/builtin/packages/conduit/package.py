@@ -39,6 +39,10 @@ class Conduit(CMakePackage):
 
     license("BSD-3-Clause")
 
+    # Don't use the automatic hints in favor of building the hostconfig
+    find_mpi_hints = False
+    find_python_hints = False
+
     version("develop", branch="develop", submodules=True)
     # note: the main branch in conduit was renamed to develop, this next entry
     # is to bridge any spack dependencies that are still using the name master

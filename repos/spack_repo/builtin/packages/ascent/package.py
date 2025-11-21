@@ -57,6 +57,10 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     url = "https://github.com/Alpine-DAV/ascent/releases/download/v0.5.1/ascent-v0.5.1-src-with-blt.tar.gz"
     tags = ["radiuss", "e4s"]
 
+    # Don't use the automatic hints in favor of building the hostconfig
+    find_mpi_hints = False
+    find_python_hints = False
+
     maintainers("cyrush")
 
     license("BSD-3-Clause")

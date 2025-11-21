@@ -131,8 +131,6 @@ class Sensei(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define("SENSEI_USE_EXTERNAL_pugixml", True),
             self.define(f"{prefix}ENABLE_SENSEI", True),
-            self.define("MPI_C_COMPILER", spec["mpi"].mpicc),
-            self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx),
             # Don"t rely on MPI found in cray environment for cray systems.
             # On non-cray systems this should be a no-op
             self.define(f"{prefix}ENABLE_CRAY_MPICH", False),

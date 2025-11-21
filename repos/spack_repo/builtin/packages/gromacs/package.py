@@ -532,8 +532,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     [
                         "-DCMAKE_C_COMPILER=%s" % spack_cc,
                         "-DCMAKE_CXX_COMPILER=%s" % spack_cxx,
-                        "-DMPI_C_COMPILER=%s" % self.spec["mpi"].mpicc,
-                        "-DMPI_CXX_COMPILER=%s" % self.spec["mpi"].mpicxx,
                     ]
                 )
         else:

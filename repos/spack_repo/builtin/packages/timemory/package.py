@@ -327,10 +327,6 @@ class Timemory(CMakePackage, PythonExtension):
             self.define_from_variant("TIMEMORY_USE_ALLINEA_MAP", "allinea_map"),
         ]
 
-        if "+mpi" in spec:
-            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
-            args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
-
         if "+cuda" in spec:
             # newer versions use 'TIMEMORY_CUDA_ARCH'
             key = "CUDA_ARCH" if spec.satisfies("@:3.0.1") else "TIMEMORY_CUDA_ARCH"

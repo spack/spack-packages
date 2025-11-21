@@ -440,9 +440,6 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
 
         args = ["-S{0}".format(join_path(".", "cache", "amrex", "Tests", "SpackSmokeTest"))]
         args.append("-DAMReX_ROOT=" + self.prefix)
-        if self.spec.satisfies("+mpi"):
-            args.append("-DMPI_C_COMPILER=" + self.spec["mpi"].mpicc)
-            args.append("-DMPI_CXX_COMPILER=" + self.spec["mpi"].mpicxx)
 
         if self.spec.satisfies("+cuda"):
             args.append("-DCMAKE_CUDA_COMPILER=" + join_path(self.spec["cuda"].prefix.bin, "nvcc"))

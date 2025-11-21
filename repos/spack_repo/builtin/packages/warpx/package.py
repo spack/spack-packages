@@ -206,11 +206,6 @@ class Warpx(CMakePackage, PythonExtension):
         args.append("-DWarpX_amrex_internal=OFF")
         args.append(self.define_from_variant("WarpX_FFT", "fft"))
 
-        # FindMPI needs an extra hint sometimes, particularly on cray systems
-        if "+mpi" in spec:
-            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
-            args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
-
         if "+openpmd" in spec:
             args.append("-DWarpX_openpmd_internal=OFF")
 

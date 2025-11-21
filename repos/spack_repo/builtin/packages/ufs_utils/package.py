@@ -71,11 +71,5 @@ class UfsUtils(CMakePackage):
     depends_on("w3emc")
     depends_on("zlib-api")
 
-    def cmake_args(self):
-        return [
-            "-DMPI_C_COMPILER=%s" % self.spec["mpi"].mpicc,
-            "-DMPI_Fortran_COMPILER=%s" % self.spec["mpi"].mpifc,
-        ]
-
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("ESMFMKFILE", join_path(self.spec["esmf"].prefix.lib, "esmf.mk"))

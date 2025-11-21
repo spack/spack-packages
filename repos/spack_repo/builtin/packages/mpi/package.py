@@ -5,9 +5,9 @@
 import os
 
 from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
-
 
 class Mpi(Package):
     """Virtual package for the Message Passing Interface."""
@@ -16,7 +16,19 @@ class Mpi(Package):
     virtual = True
 
     def set_dependent_cmake_args(self, pkg: PackageBase, args: List[str]) -> None:
-        if not getattr(pkg, "find_mpi_hints", False):
+        if not getattr(pkg, "find_mpi_hints", True):
+            return
+
+        args.extend([
+            "-DMPIEXEC:FILEPATH=%s/bin/mpiexec" % spec["mpi"].prefix,
+            "-DMPIEXEC_EXECUTABLE:FILEPATH=%s/bin/mpiexec" % spec["mpi"].prefix,
+            "-DMPI_HOME:PATH=%s", spec["mpi"].prefix),
+        ]
+
+        # MSMPI does not provide compiler wrappers
+        # and pointing these variables at the MSVC compilers
+        # breaks CMake's mpi detection for MSMPI.
+        if "msmpi" in self.spec:
             return
 
         if "c" in pkg.spec:
@@ -24,6 +36,7 @@ class Mpi(Package):
         if "cxx" in pkg.spec:
             args.append(pkg.define("MPI_CXX_COMPILER", pkg.spec["mpi"].mpicxx))
         if "fortran" in pkg.spec:
+            # By default use the generic fortran wrapper not F77
             if getattr(pkg, "find_mpi_fortan77", False):
                 args.append(pkg.define("MPI_Fortran_COMPILER", pkg.spec["mpi"].mpif77))
             else:

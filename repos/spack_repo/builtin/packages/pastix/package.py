@@ -96,13 +96,4 @@ class Pastix(CMakePackage, CudaPackage):
         elif spec.satisfies("^[virtuals=lapack] openblas"):
             args.extend([self.define("BLA_VENDOR", "OpenBLAS")])
 
-        if spec.satisfies("+mpi"):
-            args.extend(
-                [
-                    self.define("MPI_C_COMPILER", self.spec["mpi"].mpicc),
-                    self.define("MPI_CXX_COMPILER", self.spec["mpi"].mpicxx),
-                    self.define("MPI_Fortran_COMPILER", self.spec["mpi"].mpifc),
-                ]
-            )
-
         return args

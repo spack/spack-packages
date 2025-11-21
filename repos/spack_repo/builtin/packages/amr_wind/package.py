@@ -152,8 +152,6 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+mpi"):
             args.append(define("MPI_HOME", spec["mpi"].prefix))
-            args.append(define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
-            args.append(define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
         if spec.satisfies("+hdf5"):
             args.append(define("AMR_WIND_ENABLE_HDF5", True))

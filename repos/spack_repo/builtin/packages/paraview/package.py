@@ -646,17 +646,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             cmake_args.append("-DPARAVIEW_ENABLE_PYTHON:BOOL=OFF")
 
         cmake_args.append("-DPARAVIEW_USE_MPI:BOOL=%s" % variant_bool("+mpi"))
-        if "+mpi" in spec:
-            mpi_args = ["-DMPIEXEC:FILEPATH=%s/bin/mpiexec" % spec["mpi"].prefix]
-            if not sys.platform == "win32":
-                mpi_args.extend(
-                    [
-                        "-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
-                        "-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc,
-                        "-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc,
-                    ]
-                )
-            cmake_args.extend(mpi_args)
 
         cmake_args.append("-DPARAVIEW_BUILD_SHARED_LIBS:BOOL=%s" % variant_bool("+shared"))
 

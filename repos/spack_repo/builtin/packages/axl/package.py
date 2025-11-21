@@ -82,8 +82,6 @@ class Axl(CMakePackage):
         args.append(self.define("WITH_KVTREE_PREFIX", spec["kvtree"].prefix))
 
         args.append(self.define_from_variant("MPI"))
-        if spec.satisfies("+mpi"):
-            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
         if spec.satisfies("@:0.3.0"):
             apis = list(spec.variants["async_api"].value)

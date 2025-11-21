@@ -556,17 +556,6 @@ class Hdf5(CMakePackage):
         if api != "default":
             args.append(self.define("DEFAULT_API_VERSION", api))
 
-        # MSMPI does not provide compiler wrappers
-        # and pointing these variables at the MSVC compilers
-        # breaks CMake's mpi detection for MSMPI.
-        if spec.satisfies("+mpi") and "msmpi" not in spec:
-            if spec.satisfies("+cxx"):
-                args.append("-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx)
-            args.append("-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc)
-
-            if spec.satisfies("+fortran"):
-                args.extend(["-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
-
         # work-around for https://github.com/HDFGroup/hdf5/issues/1320
         if spec.satisfies("@1.10.8,1.13.0"):
             args.append(self.define("HDF5_INSTALL_CMAKE_DIR", "share/cmake/hdf5"))

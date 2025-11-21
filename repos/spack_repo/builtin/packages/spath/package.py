@@ -41,8 +41,6 @@ class Spath(CMakePackage):
         spec = self.spec
         args = []
         args.append(self.define_from_variant("MPI"))
-        if "+mpi" in spec:
-            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
         if spec.satisfies("@0.1.0:"):
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))

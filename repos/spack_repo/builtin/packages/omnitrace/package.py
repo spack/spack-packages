@@ -187,10 +187,6 @@ class Omnitrace(CMakePackage):
             tau_root = spec["tau"].prefix
             args.append(self.define("TAU_ROOT_DIR", tau_root))
 
-        if "+mpi" in spec:
-            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
-            args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
-
         if spec.satisfies("@1.8:,rocm-6.2:0"):
             args.append(self.define("dl_LIBRARY", "dl"))
             args.append(

@@ -537,13 +537,6 @@ class Dealii(CMakePackage, CudaPackage):
         # MPI
         options.append(self.define_from_variant("DEAL_II_WITH_MPI", "mpi"))
         if spec.satisfies("+mpi"):
-            options.extend(
-                [
-                    self.define("MPI_C_COMPILER", spec["mpi"].mpicc),
-                    self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx),
-                    self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc),
-                ]
-            )
             # FIXME: Fix issues with undefined references in MPI. e.g,
             # libmpi.so: undefined reference to `opal_memchecker_base_isaddressable'
             if spec.satisfies("^openmpi"):

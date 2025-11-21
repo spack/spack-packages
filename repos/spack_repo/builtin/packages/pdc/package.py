@@ -48,7 +48,6 @@ class Pdc(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define("MPI_C_COMPILER", self.spec["mpi"].mpicc),
             self.define("BUILD_MPI_TESTING", "ON"),
             self.define("BUILD_SHARED_LIBS", "ON"),
             self.define("BUILD_TESTING", "ON"),

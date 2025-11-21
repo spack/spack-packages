@@ -106,9 +106,6 @@ class Openfast(CMakePackage):
                     self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
                     self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc),
                     self.define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
-                    self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx),
-                    self.define("MPI_C_COMPILER", spec["mpi"].mpicc),
-                    self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc),
                     self.define("HDF5_ROOT", spec["hdf5"].prefix),
                     self.define("YAML_ROOT", spec["yaml-cpp"].prefix),
                     # The following expects that HDF5 was built with CMake.

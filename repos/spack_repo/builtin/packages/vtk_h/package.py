@@ -35,6 +35,9 @@ class VtkH(CMakePackage, CudaPackage):
     url = "https://github.com/Alpine-DAV/vtk-h/releases/download/v0.5.8/vtkh-v0.5.8.tar.gz"
     git = "https://github.com/Alpine-DAV/vtk-h.git"
 
+    # Don't use the automatic MPI hints in favor of building the hostconfig
+    find_mpi_hints = False
+
     maintainers("cyrush")
 
     version("develop", branch="develop", submodules=True)

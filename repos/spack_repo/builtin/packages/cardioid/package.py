@@ -43,8 +43,6 @@ class Cardioid(CMakePackage):
             "-DENABLE_OPENMP:BOOL=ON",
             "-DENABLE_MPI:BOOL=ON",
             "-DENABLE_FIND_MPI:BOOL=OFF",
-            "-DMPI_C_COMPILER:STRING=" + spec["mpi"].mpicc,
-            "-DMPI_CXX_COMPILER:STRING=" + spec["mpi"].mpicxx,
             "-DCMAKE_C_COMPILER:STRING=" + spec["mpi"].mpicc,
             "-DCMAKE_CXX_COMPILER:STRING=" + spec["mpi"].mpicxx,
         ]

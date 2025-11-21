@@ -107,15 +107,6 @@ class Chameleon(CMakePackage, CudaPackage):
                 ]
             )
 
-        if spec.satisfies("+mpi ~simgrid"):
-            args.extend(
-                [
-                    self.define("MPI_C_COMPILER", self.spec["mpi"].mpicc),
-                    self.define("MPI_CXX_COMPILER", self.spec["mpi"].mpicxx),
-                    self.define("MPI_Fortran_COMPILER", self.spec["mpi"].mpifc),
-                ]
-            )
-
         if spec.satisfies("^[virtuals=blas,lapack] intel-oneapi-mkl threads=none"):
             args.extend([self.define("BLA_VENDOR", "Intel10_64lp_seq")])
         elif spec.satisfies("^[virtuals=blas,lapack] intel-oneapi-mkl"):

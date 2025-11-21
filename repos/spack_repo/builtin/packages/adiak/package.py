@@ -39,8 +39,6 @@ class Adiak(CMakePackage):
     def cmake_args(self):
         args = []
         if self.spec.satisfies("+mpi"):
-            args.append(f"-DMPI_CXX_COMPILER={self.spec['mpi'].mpicxx}")
-            args.append(f"-DMPI_C_COMPILER={self.spec['mpi'].mpicc}")
             args.append("-DENABLE_MPI=ON")
         else:
             args.append("-DENABLE_MPI=OFF")

@@ -60,7 +60,6 @@ class Er(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         args = []
-        args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
         args.append(self.define("WITH_KVTREE_PREFIX", spec["kvtree"].prefix))
         args.append(self.define("WITH_REDSET_PREFIX", spec["redset"].prefix))
         args.append(self.define("WITH_SHUFFILE_PREFIX", spec["shuffile"].prefix))

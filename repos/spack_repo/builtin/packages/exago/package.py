@@ -209,8 +209,6 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
         else:
             args.append(self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc))
             args.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))
-            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
-            args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
             if spec.satisfies("+cuda"):
                 args.append(self.define("MPI_CXX_HEADER_DIR", spec["mpi"].prefix.include))
 

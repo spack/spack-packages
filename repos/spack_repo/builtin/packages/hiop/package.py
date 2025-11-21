@@ -243,9 +243,6 @@ class Hiop(CMakePackage, CudaPackage, ROCmPackage):
             args.extend(
                 [
                     self.define("MPI_HOME", spec["mpi"].prefix),
-                    self.define("MPI_C_COMPILER", spec["mpi"].mpicc),
-                    self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx),
-                    self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc),
                 ]
             )
             # NOTE: On Cray platforms, libfabric is occasionally not picked up

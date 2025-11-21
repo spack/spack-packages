@@ -67,9 +67,6 @@ class Nalu(CMakePackage):
                 "-DCMAKE_C_COMPILER=%s" % spec["mpi"].mpicc,
                 "-DCMAKE_CXX_COMPILER=%s" % spec["mpi"].mpicxx,
                 "-DCMAKE_Fortran_COMPILER=%s" % spec["mpi"].mpifc,
-                "-DMPI_C_COMPILER=%s" % spec["mpi"].mpicc,
-                "-DMPI_CXX_COMPILER=%s" % spec["mpi"].mpicxx,
-                "-DMPI_Fortran_COMPILER=%s" % spec["mpi"].mpifc,
                 self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             ]
         )
