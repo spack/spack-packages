@@ -250,7 +250,9 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def force_autoreconf(self):
         # Update autoconf's tests whether libtool supports shared libraries.
         # (Otherwise, shared libraries are always disabled on Darwin.)
-        if self.spec.satisfies("@4.11-bsd") or self.spec.satisfies("@4.10.2-bsd"):
+        if self.spec.satisfies("@4.11.1-bsd") or \
+           self.spec.satisfies("@4.11-bsd") or \
+           self.spec.satisfies("@4.10.2-bsd"):
             return False
         else:
             return self.spec.satisfies("+shared")
