@@ -7,15 +7,15 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 
-class PyBrotli(PythonPackage):
-    """Python bindings for the Brotli compression library."""
+class PyPycryptodomex(PythonPackage):
+    """Cryptographic library for Python."""
 
-    homepage = "https://github.com/google/brotli"
-    pypi = "Brotli/Brotli-1.1.0.tar.gz"
+    homepage = "https://www.pycryptodome.org/"
+    pypi = "pycryptodomex/pycryptodomex-3.23.0.tar.gz"
 
-    license("MIT")
+    license("BSD-2-Clause")
 
-    version("1.1.0", sha256="81de08ac11bcb85841e440c13611c00b67d3bf82698314928d0b676362546724")
+    version("3.23.0", sha256="71909758f010c82bc99b0abf4ea12012c98962fbf0583c2164f8b84533c2e4da")
 
     depends_on("python", type=("build", "link", "run"))
     depends_on("c", type="build")
