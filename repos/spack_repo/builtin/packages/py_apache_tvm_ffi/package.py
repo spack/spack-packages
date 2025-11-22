@@ -1,0 +1,35 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.python import PythonPackage
+
+from spack.package import *
+
+
+class PyApacheTvmFfi(PythonPackage):
+    """Open ABI and FFI for Machine Learning Systems"""
+
+    homepage = "https://github.com/apache/tvm-ffi"
+    pypi="apache-tvm-ffi/apache_tvm_ffi-0.1.3.tar.gz"
+    git = homepage + ".git"
+
+    license("Apache-2.0")
+
+    version("main", branch="main")
+    version("0.1.3", sha256="d33f0bc0d028cddf321d69724c916504272a7f03dfc1d8e507d9d0f88b6f7cbf")
+    version("0.1.2", sha256="ba45ebf98bab436442f3ee34c8b9c69e00797ae3529ea3df37a56aa7aa479cf2")
+    version("0.1.1", sha256="728ce3f4ae02b89a7147b718f7f670afac3c6d1f96df38d488757274643709fc")
+    version("0.1.0", sha256="ba45ebf98bab436442f3ee34c8b9c69e00797ae3529ea3df37a56aa7aa479cf2")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("py-typing-extensions@4.5:")
+
+    with default_args(type="build"):
+        # https://github.com/apache/tvm-ffi/blob/v0.1.3/pyproject.toml
+        depends_on("py-scikit-build-core@0.10.0:")
+        depends_on("py-cython@3.0:")
+        depends_on("py-setuptools-scm")
+        depends_on("cmake")
+        depends_on("ninja@1.11:")
