@@ -306,8 +306,6 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         args = [
-            self.define("SILO_ENABLE_JSON", False),
-            self.define("SILO_ENABLE_ASAN", False),
             self.define("SILO_ENABLE_SILOCK", True),
             self.define("SILO_ENABLE_BROWSER", True),
             self.define("SILO_ENABLE_INSTALL_LITE_HEADERS", True),
@@ -318,4 +316,10 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("SILO_ENABLE_FORTRAN", "fortran"),
             self.define_from_variant("SILO_ENABLE_PYTHON_MODULE", "python"),
         ]
+
+        if spec.satisfies("license=bsdonly"):
+            args.append(self.define("SILO_BUILD_FOR_BSD", True))
+        else:
+            args.append(self.define("SILO_BUILD_FOR_BSD", False))
+
         return args
