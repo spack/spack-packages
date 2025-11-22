@@ -320,7 +320,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("SILO_ENABLE_ZFP", "zfp"),
         ]
 
-        if spec.satisfies("license=bsdonly"):
+        if self.spec.satisfies("license=bsdonly"):
             args.append(self.define("SILO_BUILD_FOR_BSD_LICENSE", True))
         else:
             args.append(self.define("SILO_BUILD_FOR_BSD_LICENSE", False))
