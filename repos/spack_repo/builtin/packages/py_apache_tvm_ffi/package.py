@@ -11,7 +11,7 @@ class PyApacheTvmFfi(PythonPackage):
     """Open ABI and FFI for Machine Learning Systems"""
 
     homepage = "https://github.com/apache/tvm-ffi"
-    pypi="apache-tvm-ffi/apache_tvm_ffi-0.1.3.tar.gz"
+    pypi = "apache-tvm-ffi/apache_tvm_ffi-0.1.3.tar.gz"
     git = homepage + ".git"
 
     license("Apache-2.0")
