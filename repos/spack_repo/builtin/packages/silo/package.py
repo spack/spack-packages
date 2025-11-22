@@ -315,6 +315,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("SILO_ENABLE_HDF5", "hdf5"),
             self.define_from_variant("SILO_ENABLE_FORTRAN", "fortran"),
             self.define_from_variant("SILO_ENABLE_PYTHON_MODULE", "python"),
+            self.define_from_variant("SILO_ENABLE_HZIP", "hzip"),
+            self.define_from_variant("SILO_ENABLE_FPZIP", "fpzip"),
+            self.define_from_variant("SILO_ENABLE_ZFP", "zfp"),  
         ]
 
         if spec.satisfies("license=bsdonly"):
