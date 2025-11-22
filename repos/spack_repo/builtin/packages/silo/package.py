@@ -318,8 +318,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
         ]
 
         if spec.satisfies("license=bsdonly"):
-            args.append(self.define("SILO_BUILD_FOR_BSD", True))
+            args.append(self.define("SILO_BUILD_FOR_BSD_LICENSE", True))
         else:
-            args.append(self.define("SILO_BUILD_FOR_BSD", False))
+            args.append(self.define("SILO_BUILD_FOR_BSD_LICENSE", False))
 
         return args
