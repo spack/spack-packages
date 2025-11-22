@@ -18,6 +18,8 @@ class RList(RPackage):
 
     version("9.2.6", sha256="6a2b1dd9cdee87d739605fb38463cb6e04680c94b73f51fbd39b5552a62432e4")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r-sandwich@2.3-3:", type=("build", "run"))
     depends_on("r-vgam@0.9-8:", type=("build", "run"))

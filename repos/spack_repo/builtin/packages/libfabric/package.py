@@ -19,11 +19,11 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     homepage = "https://libfabric.org/"
     url = "https://github.com/ofiwg/libfabric/releases/download/v1.8.0/libfabric-1.8.0.tar.bz2"
     git = "https://github.com/ofiwg/libfabric.git"
-    maintainers("rajachan", "msimberg")
+    maintainers("rajachan", "msimberg", "darrylabbate")
 
     executables = ["^fi_info$"]
 
-    license("GPL-2.0-or-later")
+    license("BSD-2-Clause OR GPL-2.0-only")
 
     version("main", branch="main")
     version("2.3.1", sha256="2e939f17ce4d30a999d0445f741d3055b19dfd894eff70450e23470fe774f35a")
@@ -113,6 +113,15 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("uring", default=False, when="@1.17.0:", description="Enable uring support")
     variant("level_zero", default=False, description="Enable Level Zero support")
     variant("gdrcopy", default=False, when="@1.12: +cuda", description="Enable gdrcopy support")
+
+    # Backporting from main for versions 2.3.x
+    # The CXI provider hardcodes CXIP_FI_VERSION to FI_VERSION(2, 2).
+    # Make it match the libfabric we're building
+    patch(
+        "https://github.com/ofiwg/libfabric/commit/f565852cedc7b6fd3848ed2f11b1dd90ed37be05.patch?full_index=1",
+        sha256="da2514252074c350fb5cbdb04f267cf227d0a575902fe6cad355afe1dc7c0102",
+        when="@2.3 fabrics=cxi",
+    )
 
     # For version 1.9.0:
     # headers: fix forward-declaration of enum fi_collective_op with C++

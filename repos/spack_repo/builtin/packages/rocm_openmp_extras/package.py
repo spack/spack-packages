@@ -377,7 +377,7 @@ class RocmOpenmpExtras(Package):
         gfx_list = "gfx700 gfx701 gfx801 gfx803 gfx900 gfx902 gfx906 gfx908"
 
         if self.spec.version >= Version("4.3.1"):
-            gfx_list = gfx_list + " gfx90a gfx1030 gfx1031"
+            gfx_list = gfx_list + " gfx90a gfx1030 gfx1031 gfx942"
         env.set("GFXLIST", gfx_list)
         if self.spec.satisfies("%cxx=gcc"):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["gcc-runtime"].prefix.lib)
@@ -540,12 +540,12 @@ class RocmOpenmpExtras(Package):
                 if os.path.islink((os.path.join(bin_dir, f"flang-{legacy_or_classic}"))):
                     os.unlink(os.path.join(bin_dir, f"flang-{legacy_or_classic}"))
             if not os.path.exists(os.path.join(bin_dir, "flang1")):
-                os.symlink(os.path.join(omp_bin_dir, "flang1"), os.path.join(bin_dir, "flang1"))
+                symlink(os.path.join(omp_bin_dir, "flang1"), os.path.join(bin_dir, "flang1"))
             if not os.path.exists(os.path.join(bin_dir, "flang2")):
-                os.symlink(os.path.join(omp_bin_dir, "flang2"), os.path.join(bin_dir, "flang2"))
+                symlink(os.path.join(omp_bin_dir, "flang2"), os.path.join(bin_dir, "flang2"))
 
             if self.spec.version >= Version("6.1.0"):
-                os.symlink(
+                symlink(
                     os.path.join(omp_bin_dir, f"flang-{legacy_or_classic}"),
                     os.path.join(bin_dir, f"flang-{legacy_or_classic}"),
                 )
@@ -555,10 +555,8 @@ class RocmOpenmpExtras(Package):
                 os.unlink(os.path.join(lib_dir, "libdevice"))
             if os.path.islink((os.path.join(llvm_prefix, "lib-debug"))):
                 os.unlink(os.path.join(llvm_prefix, "lib-debug"))
-            os.symlink(os.path.join(omp_lib_dir, "libdevice"), os.path.join(lib_dir, "libdevice"))
-            os.symlink(
-                os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug")
-            )
+            symlink(os.path.join(omp_lib_dir, "libdevice"), os.path.join(lib_dir, "libdevice"))
+            symlink(os.path.join(self.prefix, "lib-debug"), os.path.join(llvm_prefix, "lib-debug"))
 
         # Set cmake args
         components = dict()
@@ -758,7 +756,7 @@ class RocmOpenmpExtras(Package):
                     cmake(*cmake_args)
                     make()
                     make("install")
-                    os.symlink(os.path.join(bin_dir, "clang"), os.path.join(omp_bin_dir, "clang"))
+                    symlink(os.path.join(bin_dir, "clang"), os.path.join(omp_bin_dir, "clang"))
             else:
                 with working_dir(f"spack-build-{component}", create=True):
                     # OpenMP build needs to be run twice(Release, Debug)

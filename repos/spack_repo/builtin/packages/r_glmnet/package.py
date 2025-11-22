@@ -30,6 +30,10 @@ class RGlmnet(RPackage):
     version("2.0-13", sha256="f3288dcaddb2f7014d42b755bede6563f73c17bc87f8292c2ef7776cb9b9b8fd")
     version("2.0-5", sha256="2ca95352c8fbd93aa7800f3d972ee6c1a5fcfeabc6be8c10deee0cb457fd77b1")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@3.6.0:", type=("build", "run"), when="@4.1:")
 
     depends_on("r-matrix@1.0-6:", type=("build", "run"))

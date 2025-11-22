@@ -196,7 +196,7 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
         headers = glob.glob(os.path.join(prefix.include, "ncursesw", "*.h"))
         for header in headers:
             h = os.path.basename(header)
-            os.symlink(os.path.join("ncursesw", h), os.path.join(prefix.include, h))
+            symlink(os.path.join("ncursesw", h), os.path.join(prefix.include, h))
 
         if spec.satisfies("@6.3:"):
             pc_stage = "{0}/lib/pkgconfig".format(self.stage.source_path)
@@ -210,7 +210,7 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
         libncurses = "{0}/libncurses.{1}".format(self.prefix.lib, soext)
         libcurses = "{0}/libcurses.{1}".format(self.prefix.lib, soext)
         if not os.path.exists(libcurses) and os.path.exists(libncurses):
-            os.symlink(libncurses, libcurses)
+            symlink(libncurses, libcurses)
 
     def query_parameter_options(self):
         """Use query parameters passed to spec (e.g., "spec[ncurses:wide]")

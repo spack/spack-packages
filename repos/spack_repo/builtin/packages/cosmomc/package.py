@@ -69,7 +69,7 @@ class Cosmomc(Package):
         except OSError:
             pass
         if spec.satisfies("+planck"):
-            os.symlink(join_path(os.environ["CLIK_DATA"], "plc_2.0"), clikdir)
+            symlink(join_path(os.environ["CLIK_DATA"], "plc_2.0"), clikdir)
         else:
             os.environ.pop("CLIK_DATA", "")
             os.environ.pop("CLIK_PATH", "")
@@ -178,7 +178,7 @@ class Cosmomc(Package):
         cosmomc = Executable(exe)
         with working_dir("spack-check", create=True):
             for entry in ["camb", "chains", "data", "paramnames", "planck_covmats"]:
-                os.symlink(join_path(prefix.share, "cosmomc", entry), entry)
+                symlink(join_path(prefix.share, "cosmomc", entry), entry)
             inifile = join_path(prefix.share, "cosmomc", "test.ini")
             cosmomc(*(args + [inifile]))
             if spec.satisfies("+planck"):
