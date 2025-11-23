@@ -15,7 +15,9 @@ class PyYtDlp(PythonPackage):
 
     license("Unlicense")
 
-    version("2025.11.12", sha256="5f0795a6b8fc57a5c23332d67d6c6acf819a0b46b91a6324bae29414fa97f052")
+    version(
+        "2025.11.12", sha256="5f0795a6b8fc57a5c23332d67d6c6acf819a0b46b91a6324bae29414fa97f052"
+    )
 
     variant("default", default=True, description="Install networking dependencies")
 
