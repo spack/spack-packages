@@ -20,6 +20,7 @@ class Ggml(CMakePackage, CudaPackage, ROCmPackage):
     license("MIT")
 
     version("master", branch="master")
+    version("0.9.4-20251117", commit="c23776f22d616d8cb635145381cad365bac675e7")
     version("0.9.4", tag="v0.9.4", commit="72632094336524a9c809e129e8b1c52154543a5a")
 
     variant("shared", default=True, description="build shared libraries")
