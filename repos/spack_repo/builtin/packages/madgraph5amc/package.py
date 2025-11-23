@@ -55,6 +55,20 @@ class Madgraph5amc(MakefilePackage):
     depends_on("libtirpc")
     depends_on("pythia8", when="+pythia8")
 
+    # MadGraph5_aMC@NLO installs its own version of include/Pythia8Plugins/JetMatching.h
+    # in the pythia8 installation, see Template/NLO/MCatNLO/Scripts/JetMatching.h.
+    # In spack, we impose this as a patch to pythia8 when used as a dependency.
+    # The version in MadGraph5_aMC@NLO has not meaningfully changed since v3.3.x;
+    # this patch approach intends to bridge changes to JetMatching.h in pythia8.308.
+    depends_on(
+        "pythia8@8.301:",
+        patches=[
+            patch("madgraph5amc-3.3-pythia8-8.301-JetMatching.patch", when="@8.301:8.307"),
+            # patches verified from 8.301 to 8.315
+        ],
+        when="+pythia8 @3.3:"
+    )
+
     patch("gcc14.patch", when="@:3.5.5%gcc@14:")
     patch("madgraph5amc.patch", level=0, when="@:2.9")
     # Fix running from CVMFS on AFS, for example on lxplus at CERN

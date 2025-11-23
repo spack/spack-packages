@@ -1,0 +1,128 @@
+diff --git a/include/Pythia8Plugins/JetMatching.h b/include/Pythia8Plugins/JetMatching.h
+index ea90816..9ff78fc 100644
+--- a/include/Pythia8Plugins/JetMatching.h
++++ b/include/Pythia8Plugins/JetMatching.h
+@@ -1372,6 +1372,10 @@ inline void JetMatchingMadgraph::sortIncomingProcess(const Event &event) {
+   clearDJR();
+   clear_nMEpartons();
+ 
++  // Step-FxFx-1: remove preclustering from FxFx
++
++ /* 
++
+   // For FxFx, pre-cluster partons in the event into jets.
+   if (doFxFx) {
+ 
+@@ -1434,12 +1438,17 @@ inline void JetMatchingMadgraph::sortIncomingProcess(const Event &event) {
+ 
+     // Done. Clean-up
+     workEventJet.clear();
++    
++   */
++
++  // Step-FxFx-2: : set the same eventProcess for both MLM and FxFx. This was only for MLM
++  // Add the type 2 selection also for FxFx
+ 
+   // For MLM matching, simply take hard process state from workEvent,
+   // without any preclustering.
+-  } else {
++  //} else {
+     eventProcess = workEvent;
+-  }
++  //}
+ 
+   // Sort original process final state into light/heavy jets and 'other'.
+   // Criteria:
+@@ -1465,10 +1474,18 @@ inline void JetMatchingMadgraph::sortIncomingProcess(const Event &event) {
+     if (eventProcess[i].isGluon()
+       || (eventProcess[i].idAbs() <= nQmatch) ) {
+       orig_idx = 0;
++      if (doFxFx) {
++          // Crucial point FxFx: MG5 puts the scale of a not-to-be-matched quark 1 MeV lower than scalup. For
++          // such particles, we should keep the default "2"
++          idx = ( trunc(1000. * eventProcess[i].scale()) == trunc(1000. * infoPtr->scalup()) ) ? 0 : 2;
++
++      }
++      else {
+       // Crucial point: MG puts the scale of a non-QCD particle to eCM. For
+       // such particles, we should keep the default "2"
+       idx = ( eventProcess[i].scale() < 1.999 * sqrt(infoPtr->eA()
+         * infoPtr->eB()) ) ? 0 : 2;
++      }
+     }
+ 
+     // Heavy jets:  all quarks with id greater than nQmatch
+@@ -1671,8 +1688,36 @@ inline int JetMatchingMadgraph::matchPartonsToJetsLight() {
+   // Count of the number of hadronic jets in SlowJet accounting
+   int nCLjets = nClus - nJets;
+   // Get number of partons. Different for MLM and FxFx schemes.
+-  int nRequested = (doFxFx) ? npNLO() : nParton;
+-
++  //int nRequested = (doFxFx) ? npNLO() : nParton;
++  //Step-FxFx-3: Change nRequested subtracting the typeIdx[2] partons
++  //Exclude the highest multiplicity sample in the case of real emissions and all typeIdx[2]
++  //npNLO=multiplicity,nJetMax=njmax(shower_card),typeIdx[2]="Weak" jets
++  int nRequested = (doFxFx && !(npNLO()==nJetMax && npNLO()==(typeIdx[2].size()-1) )) ? npNLO()-typeIdx[2].size() : nParton;
++
++  //Step-FxFx-4:For FxFx veto the real emissions that have only typeIdx=2 partons
++  //From Step-FxFx-3 they already have negative nRequested, so this step may not be necessary
++  //Exclude the highest multiplicity sample
++  if (doFxFx && npNLO()<nJetMax && typeIdx[2].size()>0 && npNLO()==(typeIdx[2].size()-1)) {
++        return MORE_JETS;
++  }
++//----------------
++  //Exclude all Weak Jets for matching
++  //if (doFxFx && typeIdx[2].size()>0) {
++  //      return MORE_JETS;
++  //} // 2A
++  //keep only Weak Jets for matching
++  //if (doFxFx && typeIdx[2].size()==0) {
++  //      return MORE_JETS;
++  //} // 2B
++  //keep only lowest multiplicity sample @0
++  //if (doFxFx && npNLO()==1) {
++  //      return MORE_JETS;
++  //} // 2C
++  //keep only highest multiplicity sample @1
++  //if (doFxFx && npNLO()==0) {
++  //      return MORE_JETS;
++  //} // 2D
++//--------------
+   // Veto event if too few hadronic jets
+   if ( nCLjets < nRequested ) return LESS_JETS;
+ 
+@@ -1684,7 +1729,11 @@ inline int JetMatchingMadgraph::matchPartonsToJetsLight() {
+     // For FxFx, in the non-highest multipicity, all jets need to matched to
+     // partons. For nCLjets > nRequested, this is not possible. Hence, we can
+     // veto here already.
+-    if ( doFxFx && nRequested < nJetMax && nCLjets > nRequested )
++    // if ( doFxFx && nRequested < nJetMax && nCLjets > nRequested )
++    //Step-FxFx-5:Change the nRequested to npNLO() in the first condition
++    //Before in Step-FxFx-3 it was nRequested=npNLO() for FxFx
++    //This way we correctly select the non-highest multipicity regardless the nRequested
++     if ( doFxFx && npNLO() < nJetMax && nCLjets > nRequested )
+       return MORE_JETS;
+ 
+     // Now continue in inclusive mode.
+@@ -1814,10 +1863,17 @@ inline int JetMatchingMadgraph::matchPartonsToJetsLight() {
+ 
+   // Jet matching veto for FxFx
+   if (doFxFx) {
+-    if ( nRequested <  nJetMax && nMatched != nRequested )
+-      return UNMATCHED_PARTON;
+-    if ( nRequested == nJetMax && nMatched <  nRequested )
+-      return UNMATCHED_PARTON;
++//    if ( nRequested <  nJetMax && nMatched != nRequested )
++//      return UNMATCHED_PARTON;
++//    if ( nRequested == nJetMax && nMatched <  nRequested )
++//      return UNMATCHED_PARTON;
++      //Step-FxFx-6:Change the nRequested to npNLO() in the first condition (like in Step-FxFx-5)
++      //Before in Step-FxFx-3 it was nRequested=npNLO() for FxFx
++      //This way we correctly select the non-highest multipicity regardless the nRequested
++      if ( npNLO() <  nJetMax && nMatched != nRequested )
++        return UNMATCHED_PARTON;
++      if ( npNLO() == nJetMax && nMatched <  nRequested )
++        return UNMATCHED_PARTON;
+   }
+ 
+   // Do jet matching for MLM.
