@@ -102,32 +102,33 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("debug", default=False, description="Compile in debug mode")
     variant("sycl", default=False, description="Enable sycl build")
 
-    variant("metis", default=True, description="Activates support for metis and parmetis")
+    variant("metis", default=False, description="Activates support for metis and parmetis")
     variant(
         "ptscotch", default=False, description="Activates support for PTScotch (only parallel)"
     )
-    variant("hdf5", default=True, description="Activates support for HDF5 (only parallel)")
-    variant("hypre", default=True, description="Activates support for Hypre (only parallel)")
+    variant("hdf5", default=False, description="Activates support for HDF5 (only parallel)")
+    variant("hypre", default=False, description="Activates support for Hypre (only parallel)")
     variant("hpddm", default=False, description="Activates support for HPDDM (only parallel)")
     variant("mmg", default=False, description="Activates support for MMG")
     variant("parmmg", default=False, description="Activates support for ParMMG (only parallel)")
     variant("tetgen", default=False, description="Activates support for Tetgen")
+    variant("ml", default=False, description="Activates support for ML")
     variant("zoltan", default=False, description="Activates support for Zoltan")
+    variant(
+        "exodusii", default=False, description="Activates support for ExodusII (only parallel)"
+    )
     # Mumps is disabled by default, because it depends on Scalapack
     # which is not portable to all HPC systems
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
     variant(
         "superlu-dist",
-        default=True,
+        default=False,
         when="+fortran",
         description="Activates support for superlu-dist (only parallel)",
     )
     variant("strumpack", default=False, description="Activates support for Strumpack")
     variant(
         "scalapack", default=False, when="+fortran", description="Activates support for Scalapack"
-    )
-    variant(
-        "trilinos", default=False, description="Activates support for Trilinos (only parallel)"
     )
     variant("mkl-pardiso", default=False, description="Activates support for MKL Pardiso")
     variant("int64", default=False, description="Compile with 64bit indices")
@@ -152,9 +153,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("mpfr", default=False, description="Activates support for MPFR")
     variant("moab", default=False, description="Acivates support for MOAB (only parallel)")
     variant("random123", default=False, description="Activates support for Random123")
-    variant(
-        "exodusii", default=False, description="Activates support for ExodusII (only parallel)"
-    )
     variant("cgns", default=False, description="Activates support for CGNS (only parallel)")
     variant("memkind", default=False, description="Activates support for Memkind")
     variant(
@@ -221,6 +219,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # These require +mpi
     mpi_msg = "Requires +mpi"
     conflicts("+cgns", when="~mpi", msg=mpi_msg)
+    conflicts("+ml", when="~mpi", msg=mpi_msg)
+    conflicts("+zoltan", when="~mpi", msg=mpi_msg)
     conflicts("+exodusii", when="~mpi", msg=mpi_msg)
     conflicts("+fftw", when="~mpi", msg=mpi_msg)
     conflicts("+hdf5", when="~mpi", msg=mpi_msg)
@@ -232,7 +232,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("+p4est", when="~mpi", msg=mpi_msg)
     conflicts("+ptscotch", when="~mpi", msg=mpi_msg)
     conflicts("+superlu-dist", when="~mpi", msg=mpi_msg)
-    conflicts("+trilinos", when="~mpi", msg=mpi_msg)
     conflicts("+kokkos", when="~mpi", msg=mpi_msg)
     conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
 
@@ -302,6 +301,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("zlib-api", when="+hdf5")
     depends_on("zlib-api", when="+libpng")
     depends_on("zlib-api", when="+p4est")
+    depends_on("zlib-api", when="+exodusii")
     depends_on("parmetis+int64", when="+metis+mpi+int64")
     depends_on("parmetis~int64", when="+metis+mpi~int64")
     depends_on("valgrind", when="+valgrind")
@@ -309,7 +309,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mmg", when="+parmmg")
     depends_on("parmmg", when="+parmmg")
     depends_on("tetgen+pic", when="+tetgen")
-    depends_on("zoltan", when="+zoltan")
+    depends_on("trilinos+mpi+ml", when="+ml+mpi")
+    depends_on("trilinos+mpi+zoltan", when="+zoltan+mpi")
+    depends_on("trilinos+mpi+exodus", when="+exodusii+mpi")
 
     depends_on("hypre+fortran", when="+hypre+fortran")
     depends_on("hypre~fortran", when="+hypre~fortran")
@@ -317,11 +319,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre~complex", when="+hypre~complex")
     depends_on("hypre+int64", when="+hypre+int64")
     depends_on("hypre~int64", when="+hypre~int64")
-    depends_on("hypre+mpi~internal-superlu", when="+hypre")
+    depends_on("hypre+mpi", when="+hypre")
     depends_on("hypre@2.14:2.22.0", when="@3.14:3.15+hypre")
     depends_on("hypre@2.14:2.28.0", when="@3.16:3.19+hypre")
-    depends_on("hypre@2.14:", when="@3.20+hypre")
-    depends_on("hypre@2.32:", when="@3.22:+hypre")
+    depends_on("hypre@2.21:", when="@3.20:3.21+hypre")
+    depends_on("hypre@2.31:", when="@3.22:+hypre")
     depends_on("hypre@develop", when="@main+hypre")
 
     depends_on("superlu-dist@6.1:~int64", when="@3.13.0:+superlu-dist+mpi~int64")
@@ -337,8 +339,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mumps+mpi~int64~metis~parmetis+openmp", when="+mumps~metis+openmp")
     depends_on("mumps+mpi~int64+metis+parmetis+openmp", when="+mumps+metis+openmp")
     depends_on("scalapack", when="+mumps")
-    depends_on("trilinos@12.6.2:+mpi", when="@3.7.0:+trilinos+mpi")
-    depends_on("trilinos@develop+mpi", when="@main+trilinos+mpi")
     depends_on("mkl", when="+mkl-pardiso")
     depends_on("fftw+mpi", when="+fftw+mpi")
     depends_on("suite-sparse", when="+suite-sparse")
@@ -348,7 +348,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("jpeg", when="+jpeg")
     depends_on("libpng", when="+libpng")
     depends_on("giflib", when="+giflib")
-    depends_on("exodusii+mpi", when="+exodusii+mpi")
     depends_on("netcdf-c+mpi", when="+exodusii+mpi")
     depends_on("parallel-netcdf", when="+exodusii+mpi")
     depends_on("random123", when="+random123")
@@ -495,10 +494,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("@:3.22 ^cuda@12.8:"):
             options.append("CUDAPPFLAGS=-Wno-deprecated-gpu-targets")
 
-        if "trilinos" in spec:
-            if spec.satisfies("^trilinos+boost"):
-                options.append("--with-boost=1")
-
         if spec.satisfies("clanguage=C++"):
             options.append("--with-clanguage=C++")
         else:
@@ -541,7 +536,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("hdf5" + hdf5libs, "hdf5", True, True),
             ("zlib-api", "zlib", True, True),
             "mumps",
-            ("trilinos", "trilinos", False, False),
             ("fftw:mpi", "fftw", True, True),
             ("valgrind", "valgrind", False, False),
             "gmp",
@@ -552,7 +546,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("parallel-netcdf", "pnetcdf", True, True),
             ("moab", "moab", False, False),
             ("random123", "random123", False, False),
-            ("exodusii", "exodusii", False, False),
             "cgns",
             "memkind",
             "p4est",
@@ -565,7 +558,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             "mmg",
             "parmmg",
             ("tetgen", "tetgen", False, False),
-            "zoltan",
+            ("ml", "trilinos", False, False),
+            ("zoltan", "trilinos", False, False),
+            ("exodusii", "trilinos", False, False),
         ):
             # Cannot check `library in spec` because of transitive deps
             # Cannot check variants because parmetis keys on +metis

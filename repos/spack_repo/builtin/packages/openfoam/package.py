@@ -590,7 +590,7 @@ class Openfoam(Package):
         projdir = "OpenFOAM-v{0}".format(self.version)
         if not os.path.exists(join_path(self.stage.path, projdir)):
             tty.info("Added directory link {0}".format(projdir))
-            os.symlink(
+            symlink(
                 os.path.relpath(self.stage.source_path, self.stage.path),
                 join_path(self.stage.path, projdir),
             )
@@ -883,7 +883,7 @@ class Openfoam(Package):
         """Add symlinks into bin/, lib/ (eg, for other applications)"""
         # Make build log visible - it contains OpenFOAM-specific information
         with working_dir(self.projectdir):
-            os.symlink(
+            symlink(
                 join_path(os.path.relpath(self.install_log_path)),
                 join_path("log." + str(self.foam_arch)),
             )
@@ -894,14 +894,14 @@ class Openfoam(Package):
         # ln -s platforms/linux64GccXXX/lib lib
         with working_dir(self.projectdir):
             if os.path.isdir(self.archlib):
-                os.symlink(self.archlib, "lib")
+                symlink(self.archlib, "lib")
 
         # (cd bin && ln -s ../platforms/linux64GccXXX/bin/* .)
         with working_dir(join_path(self.projectdir, "bin")):
             for f in [
                 f for f in glob.glob(join_path("..", self.archbin, "*")) if os.path.isfile(f)
             ]:
-                os.symlink(f, os.path.basename(f))
+                symlink(f, os.path.basename(f))
 
     # Executables like decomposePar require interface libraries for optional dependencies, but if
     # the dependency is missing, an dummy library is used and put in lib/dummy. Allow this until

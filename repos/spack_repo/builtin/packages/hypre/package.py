@@ -201,6 +201,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         conflicts("cxxstd=11", when="^cuda@13:")
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
+        # https://github.com/hypre-space/hypre/pull/1353
+        conflicts("^cuda@13:", when="@:2")
         for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
             requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 

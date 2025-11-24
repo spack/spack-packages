@@ -884,7 +884,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
                 sym = os.path.join(self.stage.path, "ld.lld")
                 if os.path.exists(bin) and not os.path.exists(sym):
                     mkdirp(self.stage.path)
-                    os.symlink(bin, sym)
+                    symlink(bin, sym)
             env.prepend_path("PATH", self.stage.path)
 
         if self.spec.satisfies("platform=darwin"):
