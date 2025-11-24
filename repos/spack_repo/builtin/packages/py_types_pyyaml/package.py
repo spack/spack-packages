@@ -21,4 +21,5 @@ class PyTypesPyyaml(PythonPackage):
         sha256="0f8b54a528c303f0e6f7165687dd33fafa81c807fcac23f632b63aa624ced1d3",
     )
 
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
