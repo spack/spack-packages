@@ -25,8 +25,8 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     version(
         "4.12.0",
         preferred=True,
-        sha256="5251816e43b08c19c925480b2daf85cc9b75e494b91df37df0eacc092279cfd0",
-        url="https://github.com/LLNL/Silo/archive/refs/tags/4.12.0.tar.gz",
+        sha256="bde1685e4547d5dd7416bd6215b41f837efef0e4934d938ba776957afbebdff0",
+        url="https://github.com/LLNL/Silo/archive/refs/tags/4.12.0.tar.xz",
     )
     version(
         "4.11.1",
