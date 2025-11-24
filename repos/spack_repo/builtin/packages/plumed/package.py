@@ -292,7 +292,7 @@ class Plumed(AutotoolsPackage):
                 [
                     f"-I{pytorch_path / 'include'}",
                     f"-I{pytorch_path / 'include' / 'torch' / 'csrc' / 'api' / 'include'}",
-                    spec["python"].headers.include_flags
+                    spec["python"].headers.include_flags,
                 ]
             )
         if enable_libmetatomic:
@@ -346,4 +346,3 @@ class Plumed(AutotoolsPackage):
         configure_opts.append("--enable-modules={0}".format(selected_modules))
 
         return configure_opts
-
