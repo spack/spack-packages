@@ -17,6 +17,7 @@ class PySarifTools(PythonPackage):
 
     license("MIT")
 
+    depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-poetry", type="build")
 
     depends_on("py-jinja2@3.1.6:", type=("build", "run"))
