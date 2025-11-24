@@ -27,6 +27,8 @@ class RSpadesTools(RPackage):
     version("0.3.9", sha256="84dc47f55ded58746dcb943fde97fa4a4b852e1d2f45949ab1914cf8454e00f3")
     version("0.3.6", sha256="661f8ee792874e7447be78103775b63f18ec69e773a7b275dd977adb406dd3e5")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r@3.6:", type=("build", "run"), when="@0.3.9:")
     depends_on("r@4.0:", type=("build", "run"), when="@0.3.10:")

@@ -63,18 +63,17 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     for level in ("low", "medium", "high"):
         depends_on("caliper@:2.5,2.8:", when=f"caliper_detail={level}")
 
-    depends_on("graphviz", when="+graphviz")
+    depends_on("graphviz@:12", when="+graphviz")
     depends_on("hdf5+hl+mpi", when="+hdf5")
     depends_on("metis@5.1.0:", when="@:2.3.1")
     depends_on("parmetis@4.0.3:", when="@:2.3.1")
-    depends_on("boost@1.79.0: cxxstd=17 +program_options +stacktrace")
+    depends_on("boost@1.79.0: +program_options +stacktrace")
 
     depends_on("cmake@3.19:")
     depends_on("cmake@3.23:", when="@2.3:")
     depends_on("boost +atomic +filesystem +regex +system", when="@:2.2.1")
-    depends_on("kokkos@3.2.00:", when="+kokkos")
-    depends_on("kokkos@3.7:", when="+kokkos @2.3:")
-    depends_on("kokkos@3.7:", when="@2.4:")
+    depends_on("kokkos", when="+kokkos @2.3:")
+    depends_on("kokkos", when="@2.4:")
     depends_on("kokkos +cuda", when="+kokkos +cuda")
     requires("^kokkos +cuda_constexpr +cuda_lambda", when="^kokkos +cuda")
     depends_on("kokkos +rocm", when="+kokkos +rocm")
@@ -89,7 +88,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("legion+cuda", when="backend=legion ^kokkos+cuda")
     depends_on("legion+rocm", when="backend=legion ^kokkos+rocm")
     depends_on("hdf5@1.10.7:", when="backend=legion +hdf5")
-    depends_on("hpx@1.10.0: cxxstd=17 malloc=system", when="backend=hpx")
+    depends_on("hpx@1.10.0: malloc=system", when="backend=hpx")
     depends_on("mpi")
     depends_on("mpich@3.4.1:", when="^[virtuals=mpi] mpich")
     depends_on("openmpi@4.1.0:", when="^[virtuals=mpi] openmpi")
@@ -124,6 +123,10 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^legion conduit=none", when="backend=legion")
     conflicts("+hdf5", when="backend=hpx", msg="HPX backend doesn't support HDF5")
     conflicts("^hpx networking=none", when="backend=hpx")
+
+    for cxxstd in ("11", "14"):
+        conflicts(f"^boost cxxstd={cxxstd}")
+        conflicts(f"^hpx cxxstd={cxxstd}", when="backend=hpx")
 
     def cmake_args(self):
         spec = self.spec
