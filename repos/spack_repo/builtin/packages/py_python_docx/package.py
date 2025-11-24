@@ -23,4 +23,3 @@ class PyPythonDocx(PythonPackage):
 
     depends_on("py-lxml@3.1.0:", type=("build", "run"))
     depends_on("py-typing-extensions@4.9.0:", type=("build", "run"))
-

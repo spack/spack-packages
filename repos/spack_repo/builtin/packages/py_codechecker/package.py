@@ -8,8 +8,8 @@ from spack.package import *
 
 
 class PyCodechecker(PythonPackage):
-    """CodeChecker is a static analysis infrastructure built on the LLVM/Clang 
-    Static Analyzer toolchain, replacing scan-build in a Linux or macOS (OS X) 
+    """CodeChecker is a static analysis infrastructure built on the LLVM/Clang
+    Static Analyzer toolchain, replacing scan-build in a Linux or macOS (OS X)
     development environment."""
 
     homepage = "https://github.com/Ericsson/codechecker"
