@@ -78,7 +78,7 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("rocsparse@3.8:", when="+magma+rocm", type=("build", "run"))
     depends_on("hipblas@3.8:", when="+magma+rocm", type=("build", "run"))
     depends_on("hipsparse@3.8:", when="+magma+rocm", type=("build", "run"))
-    depends_on("intel-oneapi-mkl@2023.2.0:", when="+sycl", type=("build", "run"))
+    depends_on("intel-oneapi-mkl@2023.2.0: +sycl", when="+sycl", type=("build", "run"))
     depends_on("intel-oneapi-mpi@2021.10.0:", when="+sycl", type=("build", "run"))
 
     examples_src_dir = "examples"

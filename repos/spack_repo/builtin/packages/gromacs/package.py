@@ -104,6 +104,13 @@ class Gromacs(CMakePackage, CudaPackage):
         + "package that provides the virtual package `sycl`, such as AdaptiveCpp "
         + "plus a clang compiler.",
     )
+
+    # Require oneAPI MKL with SYCL support when the GROMACS build uses
+    # SYCL from oneAPI. (GROMACS can support other GPU 3D-FFT libraries
+    # in this build configuration, but these are not currently supported
+    # in this spack GROMACS recipe.)
+    requires("^intel-oneapi-mkl +sycl", when="+sycl %oneapi")
+
     variant(
         "intel-data-center-gpu-max",
         default=False,

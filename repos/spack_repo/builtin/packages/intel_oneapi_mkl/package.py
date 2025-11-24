@@ -196,6 +196,40 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
         msg="MKL with OpenMP threading requires GCC, clang, or Intel compilers",
     )
 
+    # Several MKL libraries have explicit SYCL dependencies for their GPU support,
+    # so declare a variant to model that accurately.
+    variant(
+        "sycl",
+        default=False,
+        when="@2021:",
+        description="Use SYCL support - requires oneAPI SYCL runtime from matching compiler",
+    )
+    # Let spack work out that a dependency on the oneAPI runtime is required
+    depends_on("sycl", when="+sycl")
+    # Ensure the solver can't try hipSYCL
+    conflicts("hipsycl", when="+sycl")
+    # Ensure the solver enforces the one-to-one mapping between versions of MKL libraries
+    # that depend on SYCL to the SYCL runtime library from the compiler that was in the
+    # same oneAPI release. This satisfies the linking requirements of the MKL shared objects.
+    depends_on("intel-oneapi-runtime@2025.3", when="@2025.3 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2025.2", when="@2025.2 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2025.1", when="@2025.1 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2025.0", when="@2025.0 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2024.2", when="@2024.2 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2024.1", when="@2024.1 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2024.0", when="@2024.0 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2023.2", when="@2023.2 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2023.1", when="@2023.1 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2023.0", when="@2023.0 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2022.2", when="@2022.2 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2022.1", when="@2022.1 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2022.0", when="@2022.0 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2021.4", when="@2021.4 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2021.3", when="@2021.3 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2021.2", when="@2021.2 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2021.1", when="@2021.1 +sycl", type=("run"))
+    depends_on("intel-oneapi-runtime@2021.0", when="@2021.0 +sycl", type=("run"))
+
     depends_on("tbb", when="threads=tbb")
     # cluster libraries need mpi
     depends_on("mpi", when="+cluster")
