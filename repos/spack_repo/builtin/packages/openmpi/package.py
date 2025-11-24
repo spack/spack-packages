@@ -702,6 +702,7 @@ with '-Wl,-commons,use_dylibs' and without
     depends_on("binutils+libiberty", when="fabrics=mxm")
     with when("fabrics=ucx"):
         depends_on("ucx")
+        depends_on("ucx +cuda", when="+cuda")
         depends_on("ucx +thread_multiple", when="+thread_multiple")
         depends_on("ucx +thread_multiple", when="@3.0.0:")
         depends_on("ucx@1.9.0:", when="@4.0.6:4.0")
