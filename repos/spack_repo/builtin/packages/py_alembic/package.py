@@ -19,6 +19,8 @@ class PyAlembic(PythonPackage):
     version("1.0.7", sha256="16505782b229007ae905ef9e0ae6e880fddafa406f086ac7d442c1aaf712f8c2")
 
     depends_on("python@2.7:2.8,3.6:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"), when="@1.15:")
+
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@77.0.3:", type="build", when="@1.16:")
 
