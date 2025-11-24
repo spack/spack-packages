@@ -18,4 +18,6 @@ class PyAuthlib(PythonPackage):
     version("1.6.5", sha256="6aaf9c79b7cc96c900f0b284061691c5d4e61221640a948fe690b556a6d6d10b")
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-cryptography", type=("build", "run"))
+
+    # in setup.py
+    depends_on("py-cryptography@3.2:", type=("build", "run"))
