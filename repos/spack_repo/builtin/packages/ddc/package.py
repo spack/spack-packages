@@ -51,7 +51,7 @@ class Ddc(CMakePackage):
             ("+rocm", "device_backend=hipfft"),
             ("+sycl", "device_backend=onemkl"),
         ]:
-            depends_on(f"kokkos-fft@0.3.0 {backend}", when=f"^kokkos {variant}")
+            depends_on(f"kokkos-fft@0.3:0 {backend}", when=f"^kokkos {variant}")
 
     with when("+splines"):
         depends_on("ginkgo@1.8:1")
