@@ -17,6 +17,7 @@ class PyAuthlib(PythonPackage):
     license("BSD-3-Clause")
     version("1.6.5", sha256="6aaf9c79b7cc96c900f0b284061691c5d4e61221640a948fe690b556a6d6d10b")
 
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
     # in setup.py
