@@ -21,6 +21,7 @@ class PyCodechecker(PythonPackage):
 
     depends_on("cxx")
     depends_on("c")
+    depends_on("python@3.9:", type=("build", "run"))
 
     depends_on("py-setuptools@70.2.0:", type="build")
 
