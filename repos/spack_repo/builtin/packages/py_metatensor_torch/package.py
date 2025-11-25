@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.8.2": "60a81ccb5bda11ee173abfecd02a5d126d2788732b2ebb4d701ba0c82c7331a1",
     "0.8.1": "11986d4c2964054baae9fe10ffc36c6a6ba70a78d97b406cb6c2e14e72a0cf72",
     "0.8.0": "240ea8c37328f6bb61ec9f3e482131f0875c73166a0e349a8dd8b85204c58bd7",
     "0.7.6": "bcc23b535e5b86c0d49096cbf73de67141896f4f14c114515d97b936a78353a1",
@@ -26,18 +27,22 @@ class PyMetatensorTorch(PythonPackage):
     maintainers("HaoZeke", "luthaf", "rmeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    # setup.py
     for ver, sha256 in VERSIONS.items():
         version(ver, sha256=sha256)
         depends_on(f"libmetatensor-torch@={ver}", when=f"@{ver}")
 
+    # setup.py
     depends_on("py-torch@2.1:", type=("build", "run"))
-    depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"))
+    depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"), when="@0.7.6")
+    depends_on("py-metatensor-core@0.1.15:0.1", type=("build", "run"), when="@0.8.0:")
 
     # pyproject.toml
     depends_on("python@3.9:", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "run"), when="@0.8.1:")
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
-    depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.16:", type="build") # metatensor/python/CMakeLists.txt
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("METATENSOR_TORCH_PYTHON_USE_EXTERNAL_LIB", "ON")
