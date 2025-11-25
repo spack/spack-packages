@@ -592,6 +592,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
             make_defs.append("NUM_THREADS=512")
 
+        # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
+        # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
+        if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
+            make_defs.append("NO_SVE=1")
+
         return make_defs
 
     @property
