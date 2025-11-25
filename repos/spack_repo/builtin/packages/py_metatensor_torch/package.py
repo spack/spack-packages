@@ -42,7 +42,7 @@ class PyMetatensorTorch(PythonPackage):
     depends_on("python@3.10:", type=("build", "run"), when="@0.8.1:")
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
-    depends_on("cmake@3.16:", type="build") # metatensor/python/CMakeLists.txt
+    depends_on("cmake@3.16:", type="build")  # metatensor/python/CMakeLists.txt
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("METATENSOR_TORCH_PYTHON_USE_EXTERNAL_LIB", "ON")
