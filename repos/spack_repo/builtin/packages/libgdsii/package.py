@@ -20,7 +20,7 @@ class Libgdsii(AutotoolsPackage):
 
     version("0.21", sha256="1adc571c6b53df4c08d108f9ac4f4a7fd6fbefd4bc56f74e0b7b2801353671b8")
 
-    depends_on("c", type"build")
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     depends_on("autoconf", type="build")
