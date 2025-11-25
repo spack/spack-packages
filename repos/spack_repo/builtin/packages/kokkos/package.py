@@ -437,7 +437,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         self.append_args("ENABLE", self.tpls_variants.keys(), options)
 
         for tpl in self.tpls_variants:
-            if spec.variants[tpl].value:
+            if spec.satisfies(f"+{tpl}"):
                 options.append(self.define(tpl + "_DIR", spec[tpl].prefix))
 
         if self.spec.satisfies("+wrapper"):
