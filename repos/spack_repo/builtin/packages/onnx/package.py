@@ -69,7 +69,7 @@ class Onnx(CMakePackage):
     depends_on("cmake@3.26:", type="build", when="@1.20:")
     depends_on("python", type="build")
     depends_on("protobuf")
-    
+
     # ONNX uses the cxxstd from abseil-cpp, which is a dependency of protobuf
     conflicts("^abseil-cpp cxxstd=11", when="@1.19:", msg="ONNX 1.19+ requires Abseil with C++17")
     conflicts("^abseil-cpp cxxstd=14", when="@1.19:", msg="ONNX 1.19+ requires Abseil with C++17")
