@@ -85,7 +85,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     with when("@5:"):
         conflicts("%gcc@:10.3")
         conflicts("%llvm@:13")
-        conflicts("%llvm@:14", when="+cuda +cmake_lang")
+        conflicts("%llvm@:14", when="+cuda ~wrapper")
         conflicts("%apple-clang@:7")
         conflicts("%oneapi@:2021")
         conflicts("%oneapi@:2024", when="+sycl")
