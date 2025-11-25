@@ -1,3 +1,21 @@
+diff --git a/src/config/cmake/HYPRE_CMakeUtilities.cmake b/src/config/cmake/HYPRE_CMakeUtilities.cmake
+index 43a059d16..782616851 100644
+--- a/src/config/cmake/HYPRE_CMakeUtilities.cmake
++++ b/src/config/cmake/HYPRE_CMakeUtilities.cmake
+@@ -704,6 +704,13 @@ macro(setup_mixed_precision_compilation module_name)
+       ${CMAKE_SOURCE_DIR}/matrix_matrix
+       ${CMAKE_SOURCE_DIR}/multivector
+     )
++    # Set position independent code for shared library builds
++    # Object libraries need explicit -fPIC when used in shared libraries
++    if(BUILD_SHARED_LIBS)
++      set_target_properties(${module_name}_${precision} PROPERTIES
++        POSITION_INDEPENDENT_CODE ON
++      )
++    endif()
+     # Link to MPI if it's enabled
+     if(HYPRE_ENABLE_MPI)
+       target_link_libraries(${module_name}_${precision} PRIVATE MPI::MPI_C)
 diff --git a/src/parcsr_ls/CMakeLists.txt b/src/parcsr_ls/CMakeLists.txt
 index eb4ac565b..19829fdd5 100644
 --- a/src/parcsr_ls/CMakeLists.txt
@@ -11,7 +29,7 @@ index eb4ac565b..19829fdd5 100644
    F90_HYPRE_parcsr_amg.c
    F90_HYPRE_parcsr_bicgstab.c
 diff --git a/src/utilities/_hypre_utilities.h b/src/utilities/_hypre_utilities.h
-index 66cb71c19..cc13322b9 100644
+index 66cb71c19..fca531d96 100644
 --- a/src/utilities/_hypre_utilities.h
 +++ b/src/utilities/_hypre_utilities.h
 @@ -18,6 +18,80 @@
@@ -173,6 +191,18 @@ index 66cb71c19..cc13322b9 100644
  #ifndef hypre_MATRIX_STATS_HEADER
  #define hypre_MATRIX_STATS_HEADER
  
+@@ -1725,11 +1728,7 @@ typedef struct
+ 
+ } hypre_TimingType;
+ 
+-#ifdef HYPRE_TIMING_GLOBALS
+-hypre_TimingType *hypre_global_timing = NULL;
+-#else
+ extern hypre_TimingType *hypre_global_timing;
+-#endif
+ 
+ /*-------------------------------------------------------
+  * Accessor functions
 diff --git a/src/utilities/headers b/src/utilities/headers
 index 841f787ff..4a615cd5e 100755
 --- a/src/utilities/headers
@@ -206,3 +236,40 @@ index a4e5ac9f1..1c75c6244 100644
  #include <magma_v2.h>
  
  #ifdef __cplusplus
+diff --git a/src/utilities/timing.c b/src/utilities/timing.c
+index d9cf2bff8..662fb5ca3 100644
+--- a/src/utilities/timing.c
++++ b/src/utilities/timing.c
+@@ -12,10 +12,15 @@
+  *****************************************************************************/
+ 
+ #define HYPRE_TIMING
+-#define HYPRE_TIMING_GLOBALS
+ #include "_hypre_utilities.h"
+ #include "timing.h"
+ 
++/* Global variable for timing */
++/* guard definition of global variables to avoid linker errors for multiprecision build */
++#if defined (hypre_DEFINE_GLOBAL)
++hypre_TimingType *hypre_global_timing = NULL;
++#endif
++
+ /*-------------------------------------------------------
+  * Timing macros
+  *-------------------------------------------------------*/
+diff --git a/src/utilities/timing.h b/src/utilities/timing.h
+index 0d3d4d6e4..6cde306ca 100644
+--- a/src/utilities/timing.h
++++ b/src/utilities/timing.h
+@@ -88,11 +88,7 @@ typedef struct
+ 
+ } hypre_TimingType;
+ 
+-#ifdef HYPRE_TIMING_GLOBALS
+-hypre_TimingType *hypre_global_timing = NULL;
+-#else
+ extern hypre_TimingType *hypre_global_timing;
+-#endif
+ 
+ /*-------------------------------------------------------
+  * Accessor functions
