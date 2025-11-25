@@ -203,7 +203,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         default="unset",
         description="Select out-of-band support (CHPL_COMM_OFI_OOB)",
         multi=False,
-        when="comm=ofi",
+        when="@2.2: comm=ofi",
     )
 
     variant(
@@ -562,6 +562,13 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "+python-bindings",
             msg="Python bindings require building with LLVM, see "
             "https://chapel-lang.org/docs/tools/chapel-py/chapel-py.html#installation",
+        )
+
+    for target in ["host", "target"]:
+        conflicts(
+            f"{target}_platform=hpe-cray-xd",
+            when="@:2.4",
+            msg="Platform hpe-cray-xd requires Chapel 2.5.0 or later",
         )
 
     # Add dependencies
