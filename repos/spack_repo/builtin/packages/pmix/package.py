@@ -71,29 +71,33 @@ class Pmix(AutotoolsPackage):
 
     depends_on("c", type="build")
     depends_on("pkgconfig", type="build")
-    depends_on("m4", type="build", when="@master")
-    depends_on("autoconf@2.69:", type="build", when="@master")
-    depends_on("automake@1.13.4:", type="build", when="@master")
-    depends_on("libtool@2.4.2:", type="build", when="@master")
-    depends_on("flex@2.5.39:", type="build", when="@master")
-    depends_on("perl", type="build", when="@master")
+    depends_on("m4", type="build")
+    depends_on("autoconf@2.69:", type="build")
+    depends_on("automake@1.13.4:", type="build")
+    depends_on("libtool@2.4.2:", type="build")
+    depends_on("flex@2.5.4:", type="build")
+    depends_on("perl", type="build")
+    depends_on("python@3.7:", type=("build", "run"), when="@6:")
+
+    depends_on("libevent@2.0.21:")
+    depends_on("hwloc@2.1:", when="@6:")
+    depends_on("hwloc@1.11:")
+    depends_on("zlib-api")
+
+    depends_on("curl", when="+restful")
+    depends_on("jansson@2.11:", when="+restful")
+
+    depends_on("python", when="+python")
+    depends_on("py-cython", when="+python")
+    depends_on("py-setuptools", when="+python")
+
+    depends_on("munge", when="+munge")
+
     depends_on("python@3.7:", type="build", when="+docs")
     depends_on("py-sphinx@5:", type="build", when="+docs")
     depends_on("py-recommonmark", type="build", when="+docs")
     depends_on("py-docutils", type="build", when="+docs")
     depends_on("py-sphinx-rtd-theme", type="build", when="+docs")
-
-    depends_on("libtool@2.4.2:", type="build")
-
-    depends_on("libevent@2.0.20:")
-    depends_on("hwloc@1.11:")
-    depends_on("zlib-api")
-    depends_on("curl", when="+restful")
-    depends_on("jansson@2.11:", when="+restful")
-    depends_on("python", when="+python")
-    depends_on("py-cython", when="+python")
-    depends_on("py-setuptools", when="+python")
-    depends_on("munge", when="+munge")
 
     def autoreconf(self, spec, prefix):
         """Only needed when building from git checkout"""
