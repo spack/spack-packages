@@ -85,3 +85,10 @@ class PyRasterio(PythonPackage):
     conflicts("^gdal@3.11:", when="@:1.4.3")
     # https://github.com/rasterio/rasterio/pull/3212
     conflicts("^gdal@3.10:", when="@:1.4.1")
+
+    # ensure cython absolutely gets the right gdal and embeds the correct rpaths
+    def setup_build_environment(self, env):
+        gdal = self.spec["gdal"]
+        # looks for this envar in setup.py
+        env.set("GDAL_CONFIG", join_path(gdal.prefix.bin, "gdal-config"))
+        env.prepend_path("LDFLAGS", f"-Wl,-rpath,{gdal.libs.directories[0]}")
