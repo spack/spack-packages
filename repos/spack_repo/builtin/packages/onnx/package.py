@@ -88,6 +88,7 @@ class Onnx(CMakePackage):
             # Try to get ONNX to use the same version of python as the spec is using
             self.define("PY_VERSION", self.spec["python"].version.up_to(2)),
             self.define("ONNX_BUILD_TESTS", self.run_tests),
+            self.define("ONNX_USE_PROTOBUF_SHARED_LIBS", self.spec["protobuf"].variants["shared"].value),
         ]
         if self.spec.satisfies("@1.15: ^protobuf@3.22:"):
             # CMAKE_CXX_STANDARD can be set on command line as of 1.15
