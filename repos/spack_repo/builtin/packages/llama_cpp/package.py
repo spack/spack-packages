@@ -20,7 +20,7 @@ class LlamaCpp(CMakePackage):
     license("MIT")
 
     version("master", branch="master")
-    version("7086" tag="b7086", commit="7aaeedc098a77e9323044187101db4f6b69988da")
+    version("7086", tag="b7086", commit="7aaeedc098a77e9323044187101db4f6b69988da")
     version("6999", tag="b6999", commit="cb1adf885105da7ce23db746b4202f4e987aa3e8")
 
     variant("shared", default=True, description="build shared libraries")
