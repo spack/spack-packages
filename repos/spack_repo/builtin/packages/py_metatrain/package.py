@@ -13,7 +13,7 @@ class PyMetatrain(PythonPackage):
     homepage = "https://docs.metatensor.org/metatrain/latest/index.html"
     pypi = "metatrain/metatrain-2025.11.tar.gz"
 
-    maintainers("RMeli", "luthaf", "HaoZeke")
+    maintainers("RMeli", "Luthaf", "HaoZeke")
 
     license("BSD-3-Clause", checked_by="RMeli")
 

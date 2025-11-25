@@ -15,7 +15,7 @@ class PyMetatomicTorch(PythonPackage):
 
     import_modules = ["metatomic.torch"]
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.1.6", sha256="cb1a966bd69e13234b02289f984705ecdbf5eb3cbcb050c1e103741adc708d50")

@@ -15,7 +15,7 @@ class PyVesin(PythonPackage):
 
     import_modules = ["vesin"]
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.4.2", sha256="46bcfdc4d56490d43a6d8c5882b900b5cf49cff68b6ffb78d442ff85d0104d4f")

@@ -15,7 +15,7 @@ class PyMetatensorLearn(PythonPackage):
 
     import_modules = ["metatensor.learn"]
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.4.0", sha256="78ab06157075d754789bf2c048fb2e2cbf75806bd0ef87f8191eae8cb9a4ef23")

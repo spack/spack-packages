@@ -15,7 +15,7 @@ class PyMetatensorOperations(PythonPackage):
 
     import_modules = ["metatensor.operations"]
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     version("0.4.0", sha256="5eefca88c92479a2b9d1125ee53e31cacca539e220c2ad2c91bff2223c3609d5")

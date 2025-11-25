@@ -24,7 +24,7 @@ class PyMetatensorTorch(PythonPackage):
 
     import_modules = ["metatensor.torch"]
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     # setup.py
