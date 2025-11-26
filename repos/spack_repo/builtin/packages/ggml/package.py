@@ -9,21 +9,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class Ggml(CMakePackage, CudaPackage, ROCmPackage):
-    """Tensor library for machine learning"""
-
-    homepage = "https://github.com/ggml-org/ggml"
-    git = "https://github.com/ggml-org/ggml.git"
-
-    maintainers("rbberger")
-
-    license("MIT")
-
-    version("master", branch="master")
-    version("0.9.4-20251120", commit="781baf2a14d9e0aaee542b2e1bb918bfc4132199")
-    version("0.9.4-20251117", commit="c23776f22d616d8cb635145381cad365bac675e7")
-    version("0.9.4", tag="v0.9.4", commit="72632094336524a9c809e129e8b1c52154543a5a")
-
+class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
     variant("shared", default=True, description="build shared libraries")
     variant("cpu", default=True, description="build CPU backend")
     variant("blas", default=True, description="build BLAS backend")
@@ -85,3 +71,19 @@ class Ggml(CMakePackage, CudaPackage, ROCmPackage):
                 arch_str = ";".join(archs)
                 args.append(self.define("CMAKE_HIP_ARCHITECTURES", arch_str))
         return args
+
+
+class Ggml(GGMLPackageBase):
+    """Tensor library for machine learning"""
+
+    homepage = "https://github.com/ggml-org/ggml"
+    git = "https://github.com/ggml-org/ggml.git"
+
+    maintainers("rbberger")
+
+    license("MIT")
+
+    version("master", branch="master")
+    version("0.9.4-20251120", commit="781baf2a14d9e0aaee542b2e1bb918bfc4132199")
+    version("0.9.4-20251117", commit="c23776f22d616d8cb635145381cad365bac675e7")
+    version("0.9.4", tag="v0.9.4", commit="72632094336524a9c809e129e8b1c52154543a5a")
