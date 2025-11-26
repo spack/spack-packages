@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.9.1", tag="v2.9.1", commit="d38164a545b4a4e4e0cf73ce67173f70574890b6")
     version("2.9.0", tag="v2.9.0", commit="0fabc3ba44823f257e70ce397d989c8de5e362c1")
     version("2.8.0", tag="v2.8.0", commit="ba56102387ef21a3b04b357e5b183d48f0afefc7")
     version("2.7.1", tag="v2.7.1", commit="e2d141dbde55c2a4370fac5165b0561b6af4798b")
@@ -119,10 +120,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda+rocm")
     conflicts("+gloo+rocm")
-    conflicts("+valgrind+rocm")
-    conflicts("+kineto+rocm")
-    conflicts("+caffe2+rocm")
-    conflicts("+xnnpack+rocm")
     conflicts("+rocm", when="@2.3", msg="Rocm doesn't support py-torch 2.3 release")
     conflicts("+rocm", when="@2.4", msg="Rocm doesn't support py-torch 2.4 release")
     conflicts("+rocm", when="@2.8", msg="Rocm doesn't support py-torch 2.8 release")
@@ -305,7 +302,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("valgrind", when="+valgrind")
     with when("+rocm"):
         depends_on("hsa-rocr-dev")
-        depends_on("hip")
+        depends_on("hip@7.0:", when="@2.9")
+        depends_on("hip@:6.4", when="@:2.7")
         depends_on("rccl", when="+nccl")
         depends_on("rocprim")
         depends_on("hipcub")
@@ -322,7 +320,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("miopen-hip")
         depends_on("rocminfo")
         depends_on("composable-kernel")
-        depends_on("hipsparselt", when="@2.8:")
+        depends_on("hipsparselt@7.0:", when="@2.9")
         depends_on("aotriton@0.8b", when="@2.5:2.6")
         depends_on("aotriton@0.9.2b", when="@2.7")
         depends_on("aotriton@0.10b", when="@2.8:")
@@ -352,12 +350,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         "https://github.com/pytorch/pytorch/commit/231c72240d80091f099c95e326d3600cba866eee.patch?full_index=1",
         sha256="5e56556a5698e6c43d0e7e9e3da6d7d819a4886bcd717e7b8e22ec08414a0b66",
         when="@2.8.0",
-    )
-    # https://github.com/pytorch/pytorch/pull/156486
-    patch(
-        "https://github.com/pytorch/pytorch/commit/a23f4471b952d8cd630b860639e0aaa9be957d60.patch?full_index=1",
-        sha256="c99622bab1f2bd35674e2ee978a7b8896bb0b8e5d50172c4c60e691a2151ec9f",
-        when="@2.8.0 +rocm",
     )
 
     # https://github.com/pytorch/pytorch/issues/151592
@@ -426,7 +418,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("PR152569-Update-spack-includes-2.5.patch", when="@2.5+rocm")
     patch("PR152569-Update-spack-includes-2.6.patch", when="@2.6+rocm")
     patch("PR152569-Update-spack-includes-2.7.patch", when="@2.7+rocm")
-    patch("Revert-PR159080.patch", when="@2.9+rocm")
 
     # https://github.com/pytorch/pytorch/pull/147993
     # prevents pytorch from potentially using system version of config.h
@@ -576,6 +567,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             "torch_global_deps PROPERTIES LINKER_LANGUAGE CXX",
             "caffe2/CMakeLists.txt",
         )
+        if self.spec.satisfies("@2.6:+rocm"):
+            filter_file(
+                "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)",
+                "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)\n"
+                "set(ROCTRACER_INCLUDE_DIR $ENV{ROCTRACER_INCLUDE_DIR})",
+                "cmake/public/LoadHIP.cmake",
+                string=True,
+            )
         if self.spec.satisfies("@2.1:2.7+rocm"):
             filter_file(
                 "${ROCM_INCLUDE_DIRS}/rocm-core/rocm_version.h",
@@ -765,9 +764,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             env.set("BLAS", "FLAME")
             env.set("WITH_BLAS", "FLAME")
         elif self.spec["blas"].name == "intel-oneapi-mkl":
-            env.set("BLAS", "MKL")
-            env.set("WITH_BLAS", "mkl")
-            env.set("INTEL_MKL_DIR", self.spec["mkl"].prefix.mkl.latest)
+            if "+mkldnn" in self.spec:
+                env.set("BLAS", "MKL")
+                env.set("WITH_BLAS", "mkl")
+                env.set("INTEL_MKL_DIR", self.spec["mkl"].prefix.mkl.latest)
         elif self.spec["blas"].name == "openblas":
             env.set("BLAS", "OpenBLAS")
             env.set("WITH_BLAS", "open")
