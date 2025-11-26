@@ -15,12 +15,12 @@ class _4ti2(AutotoolsPackage):
     optimization and algebraic geometry."""
 
     homepage = "https://4ti2.github.io/"
-    url = "https://github.com/4ti2/4ti2/releases/download/Release_1_6_13/4ti2-1.6.13.tar.gz"
 
     maintainers("d-torrance")
 
     license("GPL-2.0-or-later", checked_by="d-torrance")
 
+    version("1.6.14", sha256="1bc340173f93ca4abd30ea962118bd5057fdedf7e79c71d2a0c4cc9569f8b0b1")
     version("1.6.13", sha256="f59e1ea5563d2188b0e8ff61a8584845a899e3e54a570305f6f99b26c9b1e6b5")
 
     depends_on("c", type="build")
@@ -30,3 +30,6 @@ class _4ti2(AutotoolsPackage):
     depends_on("gmp")
 
     depends_on("which", type="run")
+
+    def url_for_version(self, version):
+        return f"https://github.com/4ti2/4ti2/releases/download/Release_{version.underscored}/4ti2-{version}.tar.gz"
