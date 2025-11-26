@@ -20,6 +20,7 @@ class PyTorchvision(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.24.1", sha256="071da2078600bfec4886efab77358c9329abfedcf1488b05879b556cb9b84ba7")
     version("0.24.0", sha256="f799cdd1d67a3edbcdc6af8fb416fe1b019b512fb426c0314302cd81518a0095")
     version("0.23.0", sha256="db5a91569e5eb4a3b02e9eaad6080335f5ae3824890a697f5618541999f04027")
     version("0.22.1", sha256="fa1b0a58e13c08329bcff8d52607b4e25944fd074c01dee1b501c8158fadcdec")
@@ -81,6 +82,7 @@ class PyTorchvision(PythonPackage):
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.9.1", when="@0.24.1")
         depends_on("py-torch@2.9.0", when="@0.24.0")
         depends_on("py-torch@2.8.0", when="@0.23.0")
         depends_on("py-torch@2.7.1", when="@0.22.1")

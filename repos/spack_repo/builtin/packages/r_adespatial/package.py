@@ -28,6 +28,8 @@ class RAdespatial(RPackage):
     version("0.3-14", sha256="a2ef7549c1ed7a23651716c633b25eaff468af8ccbf2e9fcd164e485984cbfbf")
     version("0.3-8", sha256="e3fd3209ce3f0a862a0794187e8c884f1697c87c96e569a2f51f252e00022906")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r-ade4@1.7-13:", type=("build", "run"))
     depends_on("r-adegraphics", type=("build", "run"))
     depends_on("r-adephylo", type=("build", "run"))

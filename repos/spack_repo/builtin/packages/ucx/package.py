@@ -21,6 +21,8 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
     license("BSD-3-Clause")
 
+    version("master", branch="master", submodules=True)
+
     # Current
     version("1.19.0", sha256="9af07d55281059542f20c5b411db668643543174e51ac71f53f7ac839164f285")
 
@@ -175,6 +177,10 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
             if self.spec.satisfies("@:1.15 ^hip@6:"):
                 filter_file("HIP_PLATFORM_HCC", "HIP_PLATFORM_AMD", "configure", string=True)
+
+    @when("@master")
+    def autoreconf(self, spec, prefix):
+        Executable("./autogen.sh")()
 
     @when("@1.9-dev")
     def autoreconf(self, spec, prefix):
