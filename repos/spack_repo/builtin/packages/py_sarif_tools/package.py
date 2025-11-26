@@ -20,8 +20,8 @@ class PySarifTools(PythonPackage):
     depends_on("py-poetry", type="build")
 
     depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-jinja2@3.1.6:", type=("build", "run"))
-    depends_on("py-jsonpath-ng@1.6.0:", type=("build", "run"))
-    depends_on("py-matplotlib@3.7:", type=("build", "run"))
-    depends_on("py-python-docx@1.1.2:", type=("build", "run"))
-    depends_on("py-pyyaml@6.0.1:", type=("build", "run"))
+    depends_on("py-jinja2@3.1.6:3", type=("build", "run"))
+    depends_on("py-jsonpath-ng@1.6.0:1", type=("build", "run"))
+    depends_on("py-matplotlib@3.7:3", type=("build", "run"))
+    depends_on("py-python-docx@1.1.2:1", type=("build", "run"))
+    depends_on("py-pyyaml@6.0.1:6", type=("build", "run"))
