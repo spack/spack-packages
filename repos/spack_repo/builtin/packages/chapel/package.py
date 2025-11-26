@@ -50,7 +50,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     # TODO: Re-enable these once we add determine_version and determine_variants
-    # executables = ["^chpl$", "^chpldoc$"]
+    # executables = ["^chpl$", "^chpldoc$", "^mason$"]
 
     # A list of GitHub accounts to notify when the package is updated.
     # TODO: add chapel-project github account
@@ -186,6 +186,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # TODO: refactor this somehow, this is a separate documentation tool, not a variant of chapel
     variant("chpldoc", default=False, description="Build chpldoc in addition to chpl")
+
+    variant("mason", default=False, description="Enable Mason package manager support")
 
     variant("developer", default=False, description="Enable Chapel developer mode")
 
@@ -559,6 +561,13 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     depends_on("doxygen@1.8.17:", when="+chpldoc")
 
+    requires("+chpldoc", when="+mason", msg="Mason requires chpldoc")
+    # TODO: what would it take to make `comm` be a multi-valued variant?
+    # so even if a user had `comm=ofi +mason`, the concretized spec would be
+    # `comm=ofi,none +mason`
+    requires("comm=none", when="+mason", msg="Mason requires comm=none")
+    requires("re2=bundled", when="+mason", msg="Mason requires re2=bundled")
+
     # TODO: keep up to date with util/chplenv/chpl_llvm.py
     with when("llvm=spack ~rocm"):
         depends_on("llvm@11:17", when="@:2.0.1")
@@ -618,6 +627,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             with set_env(CHPL_HOME=self.build_directory):
                 if spec.satisfies("+chpldoc"):
                     make("chpldoc")
+                if spec.satisfies("+mason"):
+                    make("mason")
                 if spec.satisfies("+python-bindings"):
                     make("chapel-py-venv")
                     python("-m", "ensurepip", "--default-pip")
