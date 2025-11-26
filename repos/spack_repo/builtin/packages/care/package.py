@@ -132,19 +132,23 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("umpire")
     depends_on("umpire+mpi", when="+mpi")
+    depends_on("umpire@2025.03.0:", when="@0.15.0:")
     depends_on("umpire@2024.07.0:", when="@0.13.2:")
     depends_on("umpire@2024.02.1:", when="@0.13.0:")
     depends_on("umpire@2024.02.0:", when="@0.12.0:")
     depends_on("umpire@2022.10.0:", when="@0.10.0:")
 
     depends_on("raja")
+    depends_on("raja@2025.03.0:", when="@0.15.0:")
     depends_on("raja@2024.07.0:", when="@0.13.2:")
     depends_on("raja@2024.02.2:", when="@0.13.1:")
     depends_on("raja@2024.02.1:", when="@0.13.0:")
     depends_on("raja@2024.02.0:", when="@0.12.0:")
     depends_on("raja@2022.10.5:", when="@0.10.0:")
 
-    depends_on("chai+enable_pick+raja")
+    depends_on("chai+enable_pick", when="@:0.14.99")
+    depends_on("chai+raja")
+    depends_on("chai@2025.03.0:", when="@0.15.0:")
     depends_on("chai@2024.07.0:", when="@0.13.2:")
     depends_on("chai@2024.02.2:", when="@0.13.1:")
     depends_on("chai@2024.02.1:", when="@0.13.0:")
@@ -161,10 +165,6 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         depends_on("chai+openmp")
 
     with when("+cuda"):
-        # WARNING: this package currently only supports an internal cub
-        # package. This will cause a race condition if compiled with another
-        # package that uses cub. TODO: have all packages point to the same external
-        # cub package.
         depends_on("cub")
 
         depends_on("umpire+cuda")

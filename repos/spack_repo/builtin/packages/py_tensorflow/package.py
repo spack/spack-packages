@@ -163,17 +163,18 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     extends("python")
 
     with default_args(type="build"):
+        # Bazel tends to be backwards-compatible within major versions
         # See .bazelversion
-        depends_on("bazel@7.4.1", when="@2.20:")
-        depends_on("bazel@6.5.0", when="@2.16:2.19")
-        depends_on("bazel@6.1.0", when="@2.14:2.15")
-        depends_on("bazel@5.3.0", when="@2.11:2.13")
-        depends_on("bazel@5.1.1", when="@2.10")
+        depends_on("bazel@7.4.1:7", when="@2.20:")
+        depends_on("bazel@6.5.0:6", when="@2.16:2.19")
+        depends_on("bazel@6.1.0:6", when="@2.14:2.15")
+        depends_on("bazel@5.3.0:5", when="@2.11:2.13")
+        depends_on("bazel@5.1.1:5", when="@2.10")
         # See _TF_MIN_BAZEL_VERSION and _TF_MAX_BAZEL_VERSION in configure.py
-        depends_on("bazel@4.2.2:5.99.0", when="@2.9")
-        depends_on("bazel@4.2.1:4.99.0", when="@2.8")
-        depends_on("bazel@3.7.2:4.99.0", when="@2.7")
-        depends_on("bazel@3.7.2:3.99.0", when="@2.5:2.6")
+        depends_on("bazel@4.2.2:5", when="@2.9")
+        depends_on("bazel@4.2.1:4", when="@2.8")
+        depends_on("bazel@3.7.2:4", when="@2.7")
+        depends_on("bazel@3.7.2:3", when="@2.5:2.6")
 
         # tensorflow/tools/pip_package/build_pip_package.sh
         depends_on("patchelf", when="@2.13: platform=linux")
