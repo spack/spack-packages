@@ -34,10 +34,6 @@ class Mariadb(CMakePackage):
     version("10.4.8", sha256="10cc2c3bdb76733c9c6fd1e3c6c860d8b4282c85926da7d472d2a0e00fffca9b")
     version("10.4.7", sha256="c8e6a6d0bb4f22c416ed675d24682a3ecfa383c5283efee70c8edf131374d817")
     version("10.2.8", sha256="8dd250fe79f085e26f52ac448fbdb7af2a161f735fae3aed210680b9f2492393")
-    version("10.1.23", sha256="54d8114e24bfa5e3ebdc7d69e071ad1471912847ea481b227d204f9d644300bf")
-    version("5.5.56", sha256="950c3422cb262b16ce133caadbc342219f50f9b45dcc71b8db78fc376a971726")
-    version("10.1.14", sha256="18e71974a059a268a3f28281599607344d548714ade823d575576121f76ada13")
-    version("5.5.49", sha256="2c82f2af71b88a7940d5ff647498ed78922c92e88004942caa213131e20f4706")
 
     variant(
         "nonblocking",
@@ -71,13 +67,12 @@ class Mariadb(CMakePackage):
     depends_on("libzmq")
     depends_on("msgpack-c")
     depends_on("openssl")
-    depends_on("openssl@:1.0", when="@:10.1")
     depends_on("krb5")
     depends_on("snappy", when="@11.8.3:")
     depends_on("pcre2", when="@11.8.3:")
-    depends_on("fmt", when="@11.8.3:")
+    depends_on("fmt@11:", when="@11:")
+    depends_on("fmt@:8", when="@:10")
 
-    conflicts("%gcc@9.1.0:", when="@:5.5")
     conflicts("%gcc@13:", when="@:10.8.7")  # https://github.com/spack/spack/issues/41377
 
     # patch needed for cmake-3.20
@@ -91,6 +86,7 @@ class Mariadb(CMakePackage):
     def cmake_args(self):
         args = []
 
-        args.append("-DENABLE_DTRACE:BOOL=OFF")
+        args.append(self.define("ENABLE_DTRACE", "OFF"))
+        args.append(self.define("WITH_LIBFMT", "system"))
 
         return args

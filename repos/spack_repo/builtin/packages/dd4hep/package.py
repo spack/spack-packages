@@ -27,6 +27,7 @@ class Dd4hep(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.33", sha256="23f78163e1371a5f092758cdc60a18906b1b19bbeacdd7c68557ebf71424fc23")
     version("1.32.1", sha256="f47fbede967b609e142c3116d23b4993f9d57fbae28a1739b5333503bc498883")
     version("1.32", sha256="8bde4eab9af9841e040447282ea7df3a16e4bcec587c3a1e32f41987da9b1b4d")
     version("1.31", sha256="9c06a1b4462fc1b51161404889c74b37350162d0b0ac2154db27e3f102670bd1")
@@ -158,6 +159,9 @@ class Dd4hep(CMakePackage):
         depends_on("podio@0.16:", when="@1.24:")
         depends_on("podio@0.16.3:", when="@1.26:")
         depends_on("podio@0.16.7:", when="@1.31:")
+        # Needs a version where the following changes have landed
+        # https://github.com/AIDASoft/DD4hep/commit/b16e724627bd131cc8395a60f4eb9e0e261d5890
+        depends_on("podio@:1.4", when="@:1.32")
 
     extends("python")
 

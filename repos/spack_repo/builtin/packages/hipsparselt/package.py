@@ -27,7 +27,8 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     libraries = ["libhipsparselt"]
 
     license("MIT")
-
+    version("7.0.2", sha256="04bb529fa656624f8875b726aa5ef1699207fdc5de4b3446986eafc4890ef708")
+    version("7.0.0", sha256="317f035fe13f3fa008d567f9553978483821ab34ca8108ecc11fbb2b47bd99e0")
     version("6.4.3", sha256="2255b2732a9101a7b4fb51f4d11810be64dc3999728c77850a3918cabcf5cb50")
     version("6.4.2", sha256="5148b05436e8f7ceffdb31a01da53adc061019055cecf9b71051103045656dc8")
     version("6.4.1", sha256="74836c789e912e61532aacf275efb053ac6d0818b3da360e7b236e1b82b3152b")
@@ -80,14 +81,30 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipsparse@{ver}", when=f"@{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}", type="test")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+    ]:
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
+
+    for ver in ["7.0.0", "7.0.2"]:
+        depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("msgpack-c@3:")
@@ -99,7 +116,18 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("py-joblib")
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("python-venv", when="@7.0:")
 
+    for t_version, t_commit in [
+        ("7.0.2", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
+        ("7.0.0", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
+    ]:
+        resource(
+            name="hipblaslt",
+            git="https://github.com/ROCm/hipBLASLt.git",
+            commit=t_commit,
+            when=f"@{t_version}",
+        )
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack.patch", when="@6.0")
     # Below patch sets the proper path for clang++,lld and clang-offload-blunder inside the
     # tensorlite subdir of hipblas . Also adds hipsparse and msgpack include directories
@@ -129,6 +157,17 @@ class Hipsparselt(CMakePackage, ROCmPackage):
                     "clients/CMakeLists.txt",
                     string=True,
                 )
+        if self.spec.satisfies("@7.0:"):
+            py_ver = self.spec["python"].version[:-1]
+            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
+            filter_file(
+                "${PROJECT_BINARY_DIR}/lib",
+                ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
+                "hipBLASLt/tensilelite/CMakeLists.txt",
+                "hipBLASLt/tensilelite/Tensile/cmake/TensileConfig.cmake",
+                "hipBLASLt/library/src/amd_detail/rocblaslt/src/extops/CMakeLists.txt",
+                string=True,
+            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -161,4 +200,12 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             args.append(
                 self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
             )
+        if self.spec.satisfies("@7.0:"):
+            args.append(
+                self.define(
+                    "Tensile_TEST_LOCAL_PATH", f"{self.stage.source_path}/hipBLASLt/tensilelite"
+                )
+            )
+            args.append(self.define("Python_EXECUTABLE", self.spec["python"].prefix.bin.python3))
+            args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
         return args

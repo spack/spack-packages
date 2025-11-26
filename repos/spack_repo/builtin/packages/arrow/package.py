@@ -161,6 +161,10 @@ class Arrow(CMakePackage, CudaPackage):
             # see https://issues.apache.org/jira/browse/ARROW-3844
             args.append(self.define("ARROW_USE_SSE", "ON"))
 
+        # https://github.com/apache/arrow/issues/47790
+        if self.spec.satisfies("%oneapi@2025:"):
+            args.append(self.define("ARROW_MIMALLOC", "OFF"))
+
         args.append(self.define_from_variant("ARROW_COMPUTE", "compute"))
         args.append(self.define_from_variant("ARROW_CUDA", "cuda"))
         args.append(self.define_from_variant("ARROW_DATASET", "dataset"))

@@ -28,6 +28,8 @@ class RGraphlayouts(RPackage):
     version("0.7.1", sha256="380f8ccb0b08735694e83f661fd56a0d592a78448ae91b89c290ba8582d66717")
     version("0.5.0", sha256="83f61ce07580c5a64c7044c12b20d98ccf138c7e78ff12855cdfc206e1fab10d")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r-igraph", type=("build", "run"))
     depends_on("r-rcpp", type=("build", "run"))

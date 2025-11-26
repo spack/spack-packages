@@ -165,6 +165,10 @@ class Root(CMakePackage):
     variant("arrow", default=False, description="Enable Arrow interface")
     variant("cuda", when="@6.08.00:", default=False, description="Enable CUDA support")
     variant("cudnn", when="@6.20.02:", default=False, description="Enable cuDNN support")
+    # C++ module support in ROOT seemingly not currently working in macOS,
+    # will lead to build errors if turned on
+    # See https://root-forum.cern.ch/t/build-error-on-macos-macports-with-unctrl-h-ncurses-h/40239/22
+    variant("cxxmodules", when="@6.16:", default=not _is_macos, description="Enable C++ modules")
     variant(
         "daos", default=False, description="Enable RNTuple support for DAOS storage", when="@6.26:"
     )
@@ -294,7 +298,12 @@ class Root(CMakePackage):
     )
     variant("x", default=(not _is_macos), description="Enable set of graphical options")
     variant("xml", default=True, description="Enable XML parser interface")
-    variant("xrootd", default=False, description="Build xrootd file server and its client")
+    variant(
+        "xrootd",
+        default=False,
+        description="Build xrootd file server and its client",
+        when="@6.23:",
+    )
 
     # ###################### Compiler variants ########################
 
@@ -433,7 +442,6 @@ class Root(CMakePackage):
     depends_on("veccore@0.4.2:", when="@6.11.02: +veccore")
     depends_on("libxml2", when="+xml")
     depends_on("xrootd", when="+xrootd")
-    depends_on("xrootd@:4", when="@:6.22.03 +xrootd")
 
     depends_on("googletest", when="@6.28.00:", type="test")
 
@@ -611,6 +619,7 @@ class Root(CMakePackage):
         else:
             _add_variant(v, f, ("root7", "webui"), "+webgui")
         _add_variant(v, f, "rpath", "+rpath")
+        _add_variant(v, f, "runtime_cxxmodules", "+cxxmodules")
         _add_variant(v, f, "shadowpw", "+shadow")
         _add_variant(v, f, "spectrum", "+spectrum")
         _add_variant(v, f, "sqlite", "+sqlite")
@@ -651,8 +660,8 @@ class Root(CMakePackage):
             define("gnuinstall", True),
             define("libcxx", False),
             define("roottest", False),
+            define_from_variant("runtime_cxxmodules", "cxxmodules"),
             define_from_variant("rpath"),
-            define("runtime_cxxmodules", False),
             define("shared", True),
             define("soversion", True),
             define("testing", self.run_tests),
@@ -925,6 +934,10 @@ class Root(CMakePackage):
         if "+rpath" not in self.spec:
             env.prepend_path(self.root_library_path, self.prefix.lib.root)
 
+        # https://github.com/root-project/root/issues/18949
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
+
     def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec):
         env.set("ROOTSYS", self.prefix)
         env.set("ROOT_VERSION", "v{0}".format(self.version.up_to(1)))
@@ -937,6 +950,10 @@ class Root(CMakePackage):
         if "platform=darwin" in self.spec:
             # Newer deployment targets cause fatal errors in rootcling
             env.unset("MACOSX_DEPLOYMENT_TARGET")
+
+        # https://github.com/root-project/root/issues/18949
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec):
         env.prepend_path("ROOT_INCLUDE_PATH", dependent_spec.prefix.include)

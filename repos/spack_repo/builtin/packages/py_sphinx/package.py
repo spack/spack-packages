@@ -16,6 +16,7 @@ class PySphinx(PythonPackage):
     license("BSD-2-Clause")
     maintainers("adamjstewart")
 
+    version("8.2.3", sha256="398ad29dee7f63a75888314e9424d40f52ce5a6a87ae88e7071e80af296ec348")
     version("8.2.0", sha256="5b0067853d6e97f3fa87563e3404ebd008fce03525b55b25da90706764da6215")
     version("8.1.3", sha256="43c1911eecb0d3e161ad78611bc905d1ad0e523e4ddc202a58a821773dc4c927")
     version("8.1.2", sha256="b19e24b51d1926567e0bb8f4fbd372e40cb19f1f62bcba91b45c9ee0cdd8874e")
@@ -107,6 +108,7 @@ class PySphinx(PythonPackage):
     version("1.3.1", sha256="1a6e5130c2b42d2de301693c299f78cc4bd3501e78b610c08e45efc70e2b5114")
 
     with default_args(type="build"):
+        depends_on("py-flit-core@3.11:", when="@8.2.1:")
         depends_on("py-flit-core@3.10:", when="@8.2:")
         depends_on("py-flit-core@3.7:", when="@5.2:")
 

@@ -19,11 +19,17 @@ jobs:
       pull-requests: write
       issues: write
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3
         with:
           ref: develop # DO NOT CHANGE
 
-      - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+      - uses: actions/create-github-app-token@7e473efe3cb98aa54f8d4bac15400b15fad77d94
+        id: generate-spackbot-token
+        with:
+          app-id: ${{ secrets.SPACKBOT_TRIAGE_APP_ID }}
+          private-key: ${{ secrets.SPACKBOT_TRIAGE_PRIVATE_KEY }}
+
+      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
       - uses: ./.github/actions/checkout-spack
 
       - name: Install Python dependencies
@@ -35,7 +41,7 @@ jobs:
         env:
           GH_PR_NUMBER: ${{ github.event.number }}
           GH_REPO: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}
           LABELS_CONFIG: .github/labels.yml
 
       - name: Tag Maintainers on PR
@@ -45,4 +51,4 @@ jobs:
         env:
           GH_PR_NUMBER: ${{ github.event.number }}
           GH_REPO: ${{ github.repository }}
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}

@@ -274,6 +274,13 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     # hsa include path is hsa-rocr-dev-prefix-path/include
     patch("correcting-hsa-include-path.patch", when="@2024.01 ^hip@6.0:")
 
+    # Fix +gtpin build for original Meson release
+    patch(
+        "https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/1329.diff",
+        when="@2025.0.1 +gtpin",
+        sha256="ac486278726620ef932c48aef41d5aab6ba0359b5b1eced651724237877f445b",
+    )
+
     # Fix a bug where make would mistakenly overwrite hpcrun-fmt.h.
     # https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/751
     @when("@:2022")

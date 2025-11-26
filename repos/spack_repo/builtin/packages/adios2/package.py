@@ -18,7 +18,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     """The Adaptable Input Output System version 2,
     developed in the Exascale Computing Program"""
 
-    homepage = "https://csmd.ornl.gov/software/adios2"
+    homepage = "https://adios2.readthedocs.io"
     url = "https://github.com/ornladios/ADIOS2/archive/v2.8.0.tar.gz"
     git = "https://github.com/ornladios/ADIOS2.git"
     test_requires_compiler = True
@@ -31,10 +31,11 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version(
-        "2.10.2",
-        sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e",
+        "2.11.0",
+        sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf",
         preferred=True,
     )
+    version("2.10.2", sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e")
     version("2.10.1", sha256="ce776f3a451994f4979c6bd6d946917a749290a37b7433c0254759b02695ad85")
     version("2.10.0", sha256="e5984de488bda546553dd2f46f047e539333891e63b9fe73944782ba6c2d95e4")
     version("2.9.2", sha256="78309297c82a95ee38ed3224c98b93d330128c753a43893f63bbe969320e4979")
@@ -113,6 +114,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     # ifx does not support submodules in separate files
     conflicts("%oneapi@:2022.1.0", when="+fortran")
+
+    # https://github.com/ornladios/ADIOS2/issues/4620
+    conflicts("^cuda@13:", when="+cuda")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -238,6 +242,20 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         when="@2.8:2.10",
     )
 
+    # https://github.com/ornladios/ADIOS2/pull/4578
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
+        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
+        when="@2.8:2.10",
+    )
+
+    # https://github.com/ornladios/ADIOS2/pull/4729
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/0bdda7d4729b898397e024010b1e82cb72921501.patch?full_index=1",
+        sha256="c7214845bc9e4262deb901f9d689236e014f5193018617675bea4bed80ca20aa",
+        when="@2.11:",
+    )
+
     @when("%fj")
     def patch(self):
         """add fujitsu mpi commands #16864"""
@@ -329,14 +347,20 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
         libs_to_seek.add("libadios2_core")
         libs_to_seek.add("libadios2_c")
-        libs_to_seek.add("libadios2_cxx11")
+        if spec.satisfies("@:2.10"):
+            libs_to_seek.add("libadios2_cxx11")
+        else:
+            libs_to_seek.add("libadios2_cxx")
         if spec.satisfies("+fortran"):
             libs_to_seek.add("libadios2_fortran")
 
         if spec.satisfies("+mpi"):
             libs_to_seek.add("libadios2_core_mpi")
             libs_to_seek.add("libadios2_c_mpi")
-            libs_to_seek.add("libadios2_cxx11_mpi")
+            if spec.satisfies("@:2.10"):
+                libs_to_seek.add("libadios2_cxx11_mpi")
+            else:
+                libs_to_seek.add("libadios2_cxx_mpi")
             if spec.satisfies("+fortran"):
                 libs_to_seek.add("libadios2_fortran_mpi")
 
