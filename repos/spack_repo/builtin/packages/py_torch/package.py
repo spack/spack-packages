@@ -567,7 +567,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             "torch_global_deps PROPERTIES LINKER_LANGUAGE CXX",
             "caffe2/CMakeLists.txt",
         )
-        if self.spec.satisfies("@2.6:+rocm"):
+        if self.spec.satisfies("@2.5:+rocm"):
             filter_file(
                 "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)",
                 "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)\n"
