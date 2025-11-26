@@ -28,7 +28,7 @@ class PyPydantic(PythonPackage):
     variant("dotenv", default=False, description="Install requirements for pydantic.dotenv")
 
     depends_on("python@3.8:", type="build", when="@2")
-    depends_on("python@3.8:", type="build", when="@2.11.0:")
+    depends_on("python@3.9:", type="build", when="@2.11.0:")
     depends_on("py-setuptools", type="build", when="@1")
     depends_on("py-hatchling", type="build", when="@2")
     depends_on("py-hatch-fancy-pypi-readme@22.5.0:", type="build", when="@2")
