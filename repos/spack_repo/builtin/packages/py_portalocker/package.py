@@ -23,3 +23,4 @@ class PyPortalocker(PythonPackage):
     depends_on("python@3.9:", when="@3:", type=("build", "run"))
     depends_on("py-setuptools@38.3.0:", type="build")
     depends_on("py-setuptools-scm", type="build", when="@3.2.0:")
+    depends_on("py-pywin32@226:", type=("build", "run"), when="platform=windows")
