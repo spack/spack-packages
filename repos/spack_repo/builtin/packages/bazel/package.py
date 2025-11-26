@@ -111,6 +111,10 @@ class Bazel(Package):
     patch("unix_cc_configure_fj-0.29.1.patch", when="@:4%fj")
     patch("bazelruleclassprovider_fj-0.25.patch", when="%fj")
 
+    # https://github.com/bazelbuild/bazel/pull/27014
+    # https://github.com/bazelbuild/bazel/pull/27160
+    conflicts("os=tahoe", when="@:7.6,8:8.4.1")
+
     # https://blog.bazel.build/2021/05/21/bazel-4-1.html
     conflicts("platform=darwin target=aarch64:", when="@:4.0")
 
