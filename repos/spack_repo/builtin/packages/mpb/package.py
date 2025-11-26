@@ -32,7 +32,7 @@ class Mpb(AutotoolsPackage):
     depends_on("libctl")
 
     def flag_handler(self, name, flags):
-        if self.spec.satisfies("%c=gcc@14:") and name == "cflags":
+        if name == "cflags" and self.spec.satisfies("%c=gcc@14:"):
             flags.append("-Wno-int-conversion")
         return inject_flags(name, flags)
 
