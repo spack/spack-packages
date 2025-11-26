@@ -69,7 +69,7 @@ class PyHeat(PythonPackage):
             depends_on("py-torch@1.11:2.3.2+cuda", type=("build", "run"))
             depends_on("py-torchvision@0.12:", type=("build", "run"))
 
-        with when("~rocm"):
+        with when("+rocm"):
             depends_on("py-torch@1.11:2.3.2+rocm", type=("build", "run"))
             depends_on("py-torchvision@0.12:", type=("build", "run"))
 
@@ -91,7 +91,7 @@ class PyHeat(PythonPackage):
             depends_on("py-torch@2.0:2.8.0+cuda", type=("build", "run"))
             depends_on("py-torchvision@0.15:", type=("build", "run"))
 
-        with when("~rocm"):
+        with when("+rocm"):
             depends_on("py-torch@2.0:2.8.0+rocm", type=("build", "run"))
             depends_on("py-torchvision@0.15:", type=("build", "run"))
 
