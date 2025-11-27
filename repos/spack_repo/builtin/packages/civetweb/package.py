@@ -40,7 +40,13 @@ class Civetweb(CMakePackage):
             self.define("CIVETWEB_ENABLE_ZLIB", True),
             self.define("CIVETWEB_ENABLE_SSL", True),
         ]
-        args.append(self.define("CIVETWEB_SSL_OPENSSL_API_1_0", self.spec.satisfies("^openssl@1.0")))
-        args.append(self.define("CIVETWEB_SSL_OPENSSL_API_1_1", self.spec.satisfies("^openssl@1.1")))
-        args.append(self.define("CIVETWEB_SSL_OPENSSL_API_3_0", self.spec.satisfies("^openssl@3:")))
+        args.append(
+            self.define("CIVETWEB_SSL_OPENSSL_API_1_0", self.spec.satisfies("^openssl@1.0"))
+        )
+        args.append(
+            self.define("CIVETWEB_SSL_OPENSSL_API_1_1", self.spec.satisfies("^openssl@1.1"))
+        )
+        args.append(
+            self.define("CIVETWEB_SSL_OPENSSL_API_3_0", self.spec.satisfies("^openssl@3:"))
+        )
         return args
