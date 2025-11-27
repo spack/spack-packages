@@ -5,6 +5,9 @@
 
 from spack_repo.builtin.build_systems.oneapi import IntelOneApiLibraryPackage, IntelOneApiPackage
 
+import os
+import re
+
 from spack.package import *
 
 
@@ -191,6 +194,44 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
 
     provides("mpi@:3.1")
     conflicts("+generic-names +classic-names")
+
+    executables = [r"^mpiicpx$"]
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("-v", output=str, error=str)
+        match = re.search(r"MPI Library (20\d\d(\.\d+)+)", output)
+        return match.group(1) if match else None
+
+    @classmethod
+    def determine_variants(cls, exes, version_str):
+        output = Executable(exes[0])("-show", output=str, error=str)
+        lib_paths = re.findall(r'-L"?([^\s"]+)"?', output)
+        variants_set = set()
+        for lib_path in set(lib_paths):
+            mpi_root = join_path(lib_path, "..")
+            # Look for ilp64
+            if os.path.exists(join_path(lib_path, "libmpi_ilp64.so")):
+                variants_set.add("+ilp64")
+            # Look for libfabric
+            libfabric_dir = join_path(mpi_root, "opt/mpi/libfabric/lib")
+            if os.path.exists(join_path(libfabric_dir, "libfabric.so")):
+                variants_set.add("~external-libfabric")
+            # If generic executables don't exist, disable the variant
+            mpicxx_path = join_path(mpi_root, "bin", "mpicxx")
+            if not os.path.exists(mpicxx_path):
+                variants_set.add("~generic-names")
+            # If classic executables don't exist, disable the variant
+            mpiicpc_path = join_path(mpi_root, "bin", "mpiicpc")
+            if not os.path.exists(mpiicpc_path):
+                variants_set.add("~classic-names")
+            
+        if "+ilp64" not in variants_set:
+            variants_set.add("~ilp64")
+        if "~external-libfabric" not in variants_set:
+            variants_set.add("+external-libfabric")
+
+        return "".join(list(variants_set))
 
     @property
     def mpiexec(self):
