@@ -283,17 +283,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("wrapper", default=False, description="Use nvcc-wrapper for CUDA build")
     variant("cmake_lang", default=False, description="Use CMake language support for CUDA/HIP")
-    variant(
-        "multiple_cmake_lang",
-        default=False,
-        description="Installation usable in CXX and backend-compatible languages CUDA/HIP",
-        when="@5:",
-    )
     depends_on("kokkos-nvcc-wrapper", when="+wrapper")
     depends_on("kokkos-nvcc-wrapper@develop", when="@develop+wrapper")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
-    conflicts("+multiple_cmake_lang", when="+cmake_lang")
 
     cxxstds = ["11", "14", "17", "20"]
     variant("cxxstd", default="17", values=cxxstds, multi=False, description="C++ standard")
@@ -399,7 +392,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             from_variant("BUILD_SHARED_LIBS", "shared"),
             from_variant("Kokkos_ENABLE_COMPILE_AS_CMAKE_LANGUAGE", "cmake_lang"),
-            from_variant("Kokkos_ENABLE_MULTIPLE_CMAKE_LANGUAGES", "multiple_cmake_lang"),
         ]
 
         spack_microarches = []
