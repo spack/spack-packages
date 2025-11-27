@@ -11,7 +11,7 @@ class Flint(AutotoolsPackage):
     """FLINT (Fast Library for Number Theory)."""
 
     homepage = "https://flintlib.org"
-    url = "https://flintlib.org/flint-3.1.2.tar.gz"
+    url = "https://flintlib.org/download/flint-3.1.2.tar.gz"
     git = "https://github.com/flintlib/flint.git"
     list_url = "https://flintlib.org/downloads.html"
     list_depth = 0
