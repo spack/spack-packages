@@ -3,10 +3,10 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.oneapi import IntelOneApiLibraryPackage, IntelOneApiPackage
-
 import os
 import re
+
+from spack_repo.builtin.build_systems.oneapi import IntelOneApiLibraryPackage, IntelOneApiPackage
 
 from spack.package import *
 
@@ -225,7 +225,7 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
             mpiicpc_path = join_path(mpi_root, "bin", "mpiicpc")
             if not os.path.exists(mpiicpc_path):
                 variants_set.add("~classic-names")
-            
+
         if "+ilp64" not in variants_set:
             variants_set.add("~ilp64")
         if "~external-libfabric" not in variants_set:
