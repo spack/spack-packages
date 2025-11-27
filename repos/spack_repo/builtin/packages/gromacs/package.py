@@ -361,8 +361,8 @@ class Gromacs(CMakePackage, CudaPackage):
 
     # 2025.0 CMake fix for PLUMED
     patch(
-        "https://gitlab.com/gromacs/gromacs/-/merge_requests/4966.patch",
-        sha256="6a1c2847add8d834118db47cbd980232812db680de958478e081df2ca76ffba3",
+        "https://gitlab.com/gromacs/gromacs/-/merge_requests/4966.diff",
+        sha256="9372c235719ca04d6dd418fb5943f773e03f05246e3e059a8578089b14b2420c",
         when="@2025.0"
     )
 
