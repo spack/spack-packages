@@ -339,7 +339,6 @@ class Gromacs(CMakePackage, CudaPackage):
         depends_on("gcc-runtime@9:", when="@2023:2024")
         depends_on("gcc-runtime@11:", when="@2025:")
 
-    depends_on("hwloc@1.0:1", when="+hwloc@2016:2018")
     depends_on("hwloc", when="+hwloc@2019:")
 
     depends_on("cp2k@8.1:", when="+cp2k")
@@ -360,13 +359,11 @@ class Gromacs(CMakePackage, CudaPackage):
     requires("^[virtuals=fftw-api] intel-oneapi-mkl", when="^[virtuals=lapack] intel-oneapi-mkl")
     requires("^[virtuals=lapack] intel-oneapi-mkl", when="^[virtuals=fftw-api] intel-oneapi-mkl")
 
-    patch("gmxDetectCpu-cmake-3.14.patch", when="@2018:2019.3^cmake@3.14.0:")
-    patch("gmxDetectSimd-cmake-3.14.patch", when="@5.0:2017^cmake@3.14.0:")
-    # 2021.2 will always try to build tests (see https://gromacs.bioexcel.eu/t/compilation-failure-for-gromacs-2021-1-and-2021-2-with-cmake-3-20-2/2129)
+    # 2025.0 CMake fix for PLUMED
     patch(
-        "https://gitlab.com/gromacs/gromacs/-/commit/10262892e11a87fda0f59e633c89ed5ab1100509.diff",
-        sha256="2c30d00404b76421c13866cc42afa5e63276f7926c862838751b158df8727b1b",
-        when="@2021.1:2021.2",
+        "https://gitlab.com/gromacs/gromacs/-/merge_requests/4966.patch",
+        sha256="6a1c2847add8d834118db47cbd980232812db680de958478e081df2ca76ffba3",
+        when="@2025.0"
     )
 
     filter_compiler_wrappers(
@@ -774,9 +771,12 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         # Ensure that the GROMACS log files report how the code was patched
         # during the build, so that any problems are easier to diagnose.
+        # Do not rely on GMX_USE_PLUMED=AUTO
         if self.spec.satisfies("+plumed"):
+            options.append("-DGMX_USE_PLUMED=ON")
             options.append("-DGMX_VERSION_STRING_OF_FORK=PLUMED-spack")
         else:
+            options.append("-DGMX_USE_PLUMED=OFF")
             options.append("-DGMX_VERSION_STRING_OF_FORK=spack")
         return options
 
