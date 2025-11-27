@@ -24,9 +24,6 @@ class PyPymoo(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    with when("@0.6.1.5"):
-        depends_on("python@3.9:")
-
     with default_args(type="build"):
         depends_on("py-setuptools")
         depends_on("py-setuptools@77:", when="@0.6.1.5")
