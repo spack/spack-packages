@@ -19,7 +19,7 @@ _versions = {
             "sha256": "6d0152abbfb85c51abb47bbf8d21711cb43c409a0e673d67970dbe6cf20c1970",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2025.3" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2025.3"],
     },
     "2025.2.0": {
         "version_kwargs": {
@@ -27,7 +27,7 @@ _versions = {
             "sha256": "7bfdde1379a9cd3c2784af4352931a0527a5c483c9da71e851a3f06e055af7c7",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2025.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2025.2"],
     },
     "2025.1.0": {
         "version_kwargs": {
@@ -35,7 +35,7 @@ _versions = {
             "sha256": "80a4b1338b48b3fbee55a8dc784f92e5e88d618f1b99d80f5f207a00c86a6638",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2025.1" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2025.1"],
     },
     "2025.0.1": {
         "version_kwargs": {
@@ -43,7 +43,7 @@ _versions = {
             "sha256": "bd86677aa17499c89ca7a3c3c83b73f0644147e4f1d2a218b45a7349cf582f4a",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2025.0" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2025.0"],
     },
     "2025.0.0": {
         "version_kwargs": {
@@ -51,7 +51,7 @@ _versions = {
             "sha256": "c0fe8c43718c56858df96ad469b22d9d5e5c1aa4b872e34c6cbebfb17bd15b9c",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2025.0" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2025.0"],
     },
     "2024.2.2": {
         "version_kwargs": {
@@ -60,7 +60,7 @@ _versions = {
             "expand": False,
             "preferred": True,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2024.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2024.2"],
     },
     "2024.2.1": {
         "version_kwargs": {
@@ -68,7 +68,7 @@ _versions = {
             "sha256": "adfb1391f87a0a638772ac3146db92126a4accf4da1fe8707a000b27dd2448ef",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2024.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2024.2"],
     },
     "2024.2.0": {
         "version_kwargs": {
@@ -76,7 +76,7 @@ _versions = {
             "sha256": "f1f46f5352c197a9840e08fc191a879dad79ebf742fe782e386ba8006f262f7a",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2024.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2024.2"],
     },
     "2024.1.0": {
         "version_kwargs": {
@@ -84,7 +84,7 @@ _versions = {
             "sha256": "b121bc70d3493ef1fbd05f077b1cd27ac4eb2fd1099f44e9f4b8a1366995fb92",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2024.1" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2024.1"],
     },
     "2024.0.0": {
         "version_kwargs": {
@@ -92,7 +92,7 @@ _versions = {
             "sha256": "2a3be7d01d75ba8cc3059f9a32ae72e5bfc93e68e72e94e79d7fa6ea2f7814de",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2024.0" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2024.0"],
     },
     "2023.2.0": {
         "version_kwargs": {
@@ -100,7 +100,7 @@ _versions = {
             "sha256": "4a0d93da85a94d92e0ad35dc0fc3b3ab7f040bd55ad374c4d5ec81a57a2b872b",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2023.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2023.2"],
     },
     "2023.1.0": {
         "version_kwargs": {
@@ -108,7 +108,7 @@ _versions = {
             "sha256": "cc28c94cab23c185520b93c5a04f3979d8da6b4c90cee8c0681dd89819d76167",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2023.1" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2023.1"],
     },
     "2023.0.0": {
         "version_kwargs": {
@@ -116,7 +116,7 @@ _versions = {
             "sha256": "0d61188e91a57bdb575782eb47a05ae99ea8eebefee6b2dfe20c6708e16e9927",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2023.0" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2023.0"],
     },
     "2022.2.1": {
         "version_kwargs": {
@@ -124,7 +124,7 @@ _versions = {
             "sha256": "eedd4b795720de776b1fc5f542ae0fac37ec235cdb567f7c2ee3182e73e3e59d",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2022.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2022.2"],
     },
     "2022.2.0": {
         "version_kwargs": {
@@ -132,7 +132,7 @@ _versions = {
             "sha256": "07d7caedd4b9f025c6fd439a0d2c2f279b18ecbbb63cadb864f6c63c1ed942db",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2022.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2022.2"],
     },
     "2022.1.0": {
         "version_kwargs": {
@@ -140,7 +140,7 @@ _versions = {
             "sha256": "4b325a3c4c56e52f4ce6c8fbb55d7684adc16425000afc860464c0f29ea4563e",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2022.1" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2022.1"],
     },
     "2022.0.2": {
         "version_kwargs": {
@@ -148,7 +148,7 @@ _versions = {
             "sha256": "134b748825a474acc862bb4a7fada99741a15b7627cfaa6ba0fb05ec0b902b5e",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2022.0" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2022.0"],
     },
     "2022.0.1": {
         "version_kwargs": {
@@ -156,7 +156,7 @@ _versions = {
             "sha256": "22afafbe2f3762eca052ac21ec40b845ff2f3646077295c88c2f37f80a0cc160",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2022.0" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2022.0"],
     },
     "2021.4.0": {
         "version_kwargs": {
@@ -164,7 +164,7 @@ _versions = {
             "sha256": "9ad546f05a421b4f439e8557fd0f2d83d5e299b0d9bd84bdd86be6feba0c3915",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2021.4" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2021.4"],
     },
     "2021.3.0": {
         "version_kwargs": {
@@ -172,7 +172,7 @@ _versions = {
             "sha256": "a06e1cdbfd8becc63440b473b153659885f25a6e3c4dcb2907ad9cd0c3ad59ce",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2021.3" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2021.3"],
     },
     "2021.2.0": {
         "version_kwargs": {
@@ -180,7 +180,7 @@ _versions = {
             "sha256": "816e9df26ff331d6c0751b86ed5f7d243f9f172e76f14e83b32bf4d1d619dbae",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2021.2" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2021.2"],
     },
     "2021.1.1": {
         "version_kwargs": {
@@ -188,9 +188,10 @@ _versions = {
             "sha256": "818b6bd9a6c116f4578cda3151da0612ec9c3ce8b2c8a64730d625ce5b13cc0c",
             "expand": False,
         },
-        "compatible_sycl_compiler_versions": [ "%oneapi@2021.1" ],
+        "compatible_sycl_compiler_versions": ["%oneapi@2021.1"],
     },
 }
+
 
 @IntelOneApiPackage.update_description
 class IntelOneapiMkl(IntelOneApiLibraryPackage):
@@ -265,9 +266,11 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
     # was in the same oneAPI release, but this may change when the SYCL ABI
     # stabilizes.
     for version in _versions.keys():
-        requires(*_versions[version]["compatible_sycl_compiler_versions"],
-                 policy='one_of',
-                 when=f"@{version} +sycl")
+        requires(
+            *_versions[version]["compatible_sycl_compiler_versions"],
+            policy="one_of",
+            when=f"@{version} +sycl",
+        )
 
     depends_on("tbb", when="threads=tbb")
     # cluster libraries need mpi
