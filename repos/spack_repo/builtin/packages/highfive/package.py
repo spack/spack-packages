@@ -71,10 +71,8 @@ class Highfive(CMakePackage):
         ]
 
     def url_for_version(self, version):
-        print(help(Version))
         if version < Version("3.0.0"):
             url = "https://github.com/BlueBrain/HighFive/archive/v{0}.tar.gz"
         else:
             url = "https://github.com/highfive-devs/highfive/archive/v{0}.tar.gz"
-        print("URL **********************************", url.format(version))
         return url.format(version)
