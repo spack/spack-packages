@@ -22,6 +22,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     license("BSD-3-Clause", when="license=bsdonly")
 
     version("main", branch="main")
+    version("4.12RC", branch="4.12RC")
     version(
         "4.12.0",
         preferred=True,
