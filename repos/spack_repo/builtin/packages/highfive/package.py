@@ -13,7 +13,6 @@ class Highfive(CMakePackage):
     """HighFive - Header only C++ HDF5 interface"""
 
     homepage = "https://github.com/highfive-devs/highfive"
-    url = "https://github.com/highfive-devs/highfive/archive/refs/tags/v3.2.0.tar.gz"
     git = "https://github.com/highfive-devs/highfive.git"
 
     maintainers("1uc", "gouarin")
@@ -70,3 +69,12 @@ class Highfive(CMakePackage):
             self.define("HIGHFIVE_UNIT_TESTS", False),
             self.define("HIGHFIVE_EXAMPLES", False),
         ]
+
+    def url_for_version(self, version):
+        print(help(Version))
+        if version < Version("3.0.0"):
+            url = "https://github.com/BlueBrain/HighFive/archive/v{0}.tar.gz"
+        else:
+            url = "https://github.com/highfive-devs/highfive/archive/v{0}.tar.gz"
+        print("URL **********************************", url.format(version))
+        return url.format(version)
