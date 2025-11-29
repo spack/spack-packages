@@ -13,7 +13,7 @@ class Civetweb(CMakePackage):
 
     homepage = "https://github.com/civetweb/civetweb"
     url = "https://github.com/civetweb/civetweb/archive/refs/tags/v1.16.tar.gz"
-
+    git = "https://github.com/civetweb/civetweb.git"
     maintainers("wdconinc")
 
     license("MIT", checked_by="wdconinc")
