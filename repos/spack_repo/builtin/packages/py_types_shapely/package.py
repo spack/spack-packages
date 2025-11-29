@@ -15,7 +15,9 @@ class PyTypesShapely(PythonPackage):
 
     license("Apache-2.0")
 
-    version("2.1.0.20250917", sha256="5c56670742105aebe40c16414390d35fcaa55d6f774d328c1a18273ab0e2134a")
+    version(
+        "2.1.0.20250917", sha256="5c56670742105aebe40c16414390d35fcaa55d6f774d328c1a18273ab0e2134a"
+    )
 
     depends_on("py-setuptools@77.0.3:", type="build")
     depends_on("py-numpy@1.20:", type=("build", "run"))
