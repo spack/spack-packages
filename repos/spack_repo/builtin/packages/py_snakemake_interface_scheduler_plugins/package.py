@@ -11,7 +11,9 @@ class PySnakemakeInterfaceSchedulerPlugins(PythonPackage):
     """Scheduler plugin interface for snakemake."""
 
     homepage = "https://github.com/snakemake/snakemake-interface-scheduler-plugins"
-    pypi = "snakemake_interface_scheduler_plugins/snakemake_interface_scheduler_plugins-2.0.2.tar.gz"
+    pypi = (
+        "snakemake_interface_scheduler_plugins/snakemake_interface_scheduler_plugins-2.0.2.tar.gz"
+    )
 
     license("MIT")
 

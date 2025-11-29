@@ -110,14 +110,14 @@ class Snakemake(PythonPackage):
     depends_on("py-snakemake-interface-common@1.17:1", type=("build", "run"), when="@8.4.10:")
     depends_on("py-snakemake-interface-common@1.15:1", type=("build", "run"), when="@8:")
 
-    depends_on(
-        "py-snakemake-interface-storage-plugins@4.1.0:4", type=("build", "run"), when="@9:"
-    )
+    depends_on("py-snakemake-interface-storage-plugins@4.1.0:4", type=("build", "run"), when="@9:")
     depends_on(
         "py-snakemake-interface-storage-plugins@3.2.3:3", type=("build", "run"), when="@8.15.1:8"
     )
     depends_on(
-        "py-snakemake-interface-storage-plugins@3.1:3", type=("build", "run"), when="@8.4.10:8.15.0"
+        "py-snakemake-interface-storage-plugins@3.1:3",
+        type=("build", "run"),
+        when="@8.4.10:8.15.0",
     )
     depends_on("py-snakemake-interface-storage-plugins@4", type=("build", "run"), when="@9.1:")
     depends_on("py-snakemake-interface-storage-plugins@3", type=("build", "run"), when="@8:9.0")
