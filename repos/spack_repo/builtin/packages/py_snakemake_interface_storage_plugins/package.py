@@ -24,7 +24,7 @@ class PySnakemakeInterfaceStoragePlugins(PythonPackage):
     version("3.5.0", sha256="88ee1dde95f9d5abb03113c52fb8cfa78ee502cce9ec788c161b3c09076fc075")
     version("3.4.0", sha256="7e1289bda0f693640dc1257815c35168fe4996be977621bcc1671b58217c69ae")
     version("3.3.0", sha256="203d8f794dfb37d568ad01a6c375fa8beac36df8e488c0f9b9f75984769c362a")
-    version("3.2.4", sha256="4cc60329a186486a689ec932fe0d6c538b930f8c33dc21e657a3791b8161fbe9")
+    version("3.2.4", sha256="a44b99339f369703e3cfa5f21f3f513ca2000c8790c364be0e5df7d03fb264d3")
     version("3.1.0", sha256="26e95be235ef2a9716b890ea96c3a9a2e62061c5d72fbb89c2fad2afada87304")
 
     depends_on("py-wrapt@1.15:1", type=("build", "run"))
