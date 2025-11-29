@@ -22,6 +22,7 @@ class PyTensorflowMetadata(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.17.2", sha256="cdd53c34010d26fd71fad1658f6ac5720b5f2734ef4854da0a069124ecb737a0")
     version("1.17.1", sha256="6a49a3fac9616336d23c04990e7a8e566d4c97024730e11a7ec7a511c9167e2b")
     version("1.10.0", sha256="e7aa81aa01433e2a75c11425affd55125b64f384baf96b71eeb3a88dca8cf2ae")
     version("1.5.0", sha256="f0ec8aaf62fd772ef908efe4ee5ea3bc0d67dcbf10ae118415b7b206a1d61745")
@@ -39,9 +40,17 @@ class PyTensorflowMetadata(PythonPackage):
         depends_on("py-absl-py@0.9:0.12", when="@:1.5")
         depends_on("py-googleapis-common-protos@1.56.4:1", when="@1.15: ^python@3.11:")
         depends_on("py-googleapis-common-protos@1.52:1", when="@:1.14")
-        depends_on("py-protobuf@4.25.2:5", when="@1.17: ^python@3.11:")
+        depends_on("py-protobuf@4.25.2:", when="@1.17.2: ^python@3.11:")
+        depends_on("py-protobuf@4.25.2:5", when="@1.17.0:1.17.1 ^python@3.11:")
         depends_on("py-protobuf@4.21.6:4.21", when="@1.17: ^python@:3.10")
         depends_on("py-protobuf@3.13:3", when="@:1.16")
+
+    # https://github.com/tensorflow/metadata/pull/59
+    patch(
+        "https://github.com/tensorflow/metadata/pull/59.patch?full_index=1",
+        sha256="57b1354b6fff5318c0713bb3b467098b9955afe19c76eaf1f9e62c600b4942c7",
+        when="@1.17:",
+    )
 
     # Fix non-existing zlib URL
     patch(
