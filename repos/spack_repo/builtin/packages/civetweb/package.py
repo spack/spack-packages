@@ -21,7 +21,7 @@ class Civetweb(CMakePackage):
     version("1.16", sha256="f0e471c1bf4e7804a6cfb41ea9d13e7d623b2bcc7bc1e2a4dd54951a24d60285")
 
     variant("shared", default=False, description="Build shared libraries instead of static ones")
-    
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
