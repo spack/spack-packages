@@ -127,6 +127,10 @@ class Podio(CMakePackage):
         # Frame header needs to be available for python bindings
         env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
 
+        # Pythonizations require Python.h accessible for ACLiC
+        if self.spec.satisfies("@1.5:"):
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["python"].headers.directories)
+
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
