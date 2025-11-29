@@ -435,7 +435,7 @@ class Root(CMakePackage):
 
     # Optional dependencies
     depends_on("arrow", when="+arrow")
-    depends_on("civetweb", when="+http")
+    depends_on("civetweb +shared", when="+http")
     depends_on("cuda", when="+cuda")
     depends_on("cuda", when="+cudnn")
     depends_on("cudnn", when="+cudnn")
