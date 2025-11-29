@@ -18,6 +18,7 @@ class Civetweb(CMakePackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("1.16-213-g5864b55a", commit="5864b55a94f4b5238155cbf2baec707f0fa2ba6d")
     version("1.16", sha256="f0e471c1bf4e7804a6cfb41ea9d13e7d623b2bcc7bc1e2a4dd54951a24d60285")
 
     variant("shared", default=False, description="Build shared libraries instead of static ones")
