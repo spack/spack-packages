@@ -25,6 +25,9 @@ class Bazel(Package):
 
     license("Apache-2.0")
 
+    version("7.7.1", sha256="6181b3570c2f657d989b1141fb0c1a08eb5f08106ca577dc7dc52e7d0238379a")
+    version("7.7.0", sha256="277946818c77fff70be442864cecc41faac862b6f2d0d37033e2da0b1fee7e0f")
+    version("7.6.2", sha256="320582db87133c6a7b58d93b6a97bb7d67916fe7940d60fbb4ecc36c7a48da6d")
     version("7.4.1", sha256="83386618bc489f4da36266ef2620ec64a526c686cf07041332caff7c953afaf5")
     version("7.0.2", sha256="dea2b90575d43ef3e41c402f64c2481844ecbf0b40f8548b75a204a4d504e035")
     version("7.0.1", sha256="596b13e071d27c43343ec8f5d263cb5312fafe7ef8702401f7ed492f182f4e6c")
@@ -73,6 +76,10 @@ class Bazel(Package):
     depends_on("java@11", when="@5.3:7.1", type=("build", "run"))
     depends_on("java@8,11", when="@:5.2", type=("build", "run"))
     depends_on("python+pythoncmd", type=("build", "run"))
+
+    # https://github.com/bazelbuild/bazel/pull/27014
+    # https://github.com/bazelbuild/bazel/pull/27160
+    conflicts("os=tahoe", when="@:7.6.1,8:8.4.1")
 
     patch(
         "https://github.com/bazelbuild/bazel/commit/05b1f061c9256ec0eb6fb71716ed93feb0c31b59.patch?full_index=1",
@@ -194,6 +201,11 @@ class Bazel(Package):
         # https://github.com/bazelbuild/bazel/issues/10327
         env.set("BAZEL_LINKOPTS", "")
         env.set("BAZEL_LINKLIBS", "-lstdc++")
+
+        # https://github.com/bazelbuild/bazel/issues/27349
+        # https://github.com/bazelbuild/bazel/issues/27401
+        if self.spec.satisfies("@7.6.2:7"):
+            env.set("BAZEL_DEV_VERSION_OVERRIDE", str(self.version))
 
         args = ["--color=no", "--verbose_failures", f"--jobs={make_jobs}"]
 
