@@ -18,6 +18,8 @@ class Dlpack(CMakePackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("1.2", sha256="58284a3b004a48450c958a23b30274527ebaf35a061124bbd4193fffa45efbd6")  
+    version("1.1", sha256="2e3b94b55825c240cc58e6721e15b449978cbae21a2a4caa23058b0157ee2fb3")  
     version("1.0", sha256="f8cfdcb634ff3cf0e3d9a3426e019e1c6469780a3b0020c9bc4ecc09cf9abcb1")
     version("0.8", sha256="cf965c26a5430ba4cc53d61963f288edddcd77443aa4c85ce722aaf1e2f29513")
     version("0.5", sha256="9209ac194a175aaab4381313891fba047cb173b2bdd15ac934f83f567f9cd514")
