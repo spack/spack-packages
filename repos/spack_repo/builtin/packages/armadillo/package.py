@@ -51,6 +51,7 @@ class Armadillo(CMakePackage):
     depends_on("lapack")
     depends_on("superlu@5.2:5", when="@:14.4")
     depends_on("superlu@5.2:7", when="@14.6:")
+    depends_on("metis", when="^superlu@6:")
     depends_on("hdf5", when="+hdf5")
 
     # Adds an `#undef linux` to prevent preprocessor expansion of include
@@ -86,16 +87,21 @@ class Armadillo(CMakePackage):
     def cmake_args(self):
         spec = self.spec
 
+        # Build SuperLU library list including static METIS library for versions 6+
+        superlu_libs = spec["superlu"].libs
+        if spec.satisfies("^superlu@6:"):
+            superlu_libs = superlu_libs + spec["metis"].libs
+
         return [
             # ARPACK support
-            self.define("ARPACK_LIBRARY", spec["arpack-ng"].libs.joined(";")),
+            self.define("ARPACK_LIBRARY", spec["arpack-ng"].libs),
             # BLAS support
-            self.define("BLAS_LIBRARY", spec["blas"].libs.joined(";")),
+            self.define("BLAS_LIBRARY", spec["blas"].libs),
             # LAPACK support
-            self.define("LAPACK_LIBRARY", spec["lapack"].libs.joined(";")),
+            self.define("LAPACK_LIBRARY", spec["lapack"].libs),
             # SuperLU support
             self.define("SuperLU_INCLUDE_DIR", spec["superlu"].prefix.include),
-            self.define("SuperLU_LIBRARY", spec["superlu"].libs.joined(";")),
+            self.define("SuperLU_LIBRARY", superlu_libs),
             # HDF5 support
             self.define("DETECT_HDF5", "ON" if spec.satisfies("+hdf5") else "OFF"),
             # disable flexiblas support because armadillo will possibly detect system
