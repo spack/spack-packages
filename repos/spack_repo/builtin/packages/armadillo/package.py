@@ -18,6 +18,8 @@ class Armadillo(CMakePackage):
 
     license("Apache-2.0")
 
+    version("15.2.2", sha256="8ee01cd4da55bc07b7bc7d3cba702ac6e8137d384d7e7185f3f4ae1f0c79704f")
+    version("15.0.3", sha256="9f55ec10f0a91fb6479ab4ed2b37a52445aee917706a238d170b5220c022fe43")
     version("14.6.3", sha256="ad1e2aa5b90a389ab714e2d00972ce64da42582b17dd89c18935358551e6e205")
     version("14.6.1", sha256="bec67f368fc61673c4c9e9429d20135a42ba80a2c7f8592b912e5f97e289bfc0")
     version("14.4.3", sha256="c3aadd59bdb0ea4339b056f29972f92ee19fdc52f68eb78d32d2e4caf4d80c3a")
@@ -46,6 +48,7 @@ class Armadillo(CMakePackage):
 
     depends_on("cmake@2.8.12:", type="build")
     depends_on("cmake@3.5:", type="build", when="@14:")
+    depends_on("cmake@3.10:", type="build", when="@14.6:")
     depends_on("arpack-ng")  # old arpack causes undefined symbols
     depends_on("blas")
     depends_on("lapack")
