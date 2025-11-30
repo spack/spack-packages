@@ -67,6 +67,7 @@ class Snakemake(PythonPackage):
     depends_on("py-jsonschema", type=("build", "run"))
     depends_on("py-nbformat", type=("build", "run"))
     depends_on("py-packaging@24.0:", type=("build", "run"), when="@9.7:")
+    depends_on("py-packaging@24.2:", type=("build", "run"), when="@9.7: ^py-setuptools@77:")
     depends_on("py-packaging", type=("build", "run"), when="@7.29.0:")
     depends_on("py-psutil", type=("build", "run"))
     depends_on("py-pulp@2.3.1:3.3", type=("build", "run"), when="@9.11.5:")
