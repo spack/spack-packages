@@ -19,8 +19,8 @@ class Fcgi(AutotoolsPackage):
     license("OML")
 
     version("2.4.7", sha256="e41ddc3a473b555bdc0cbd80703dcb1f4610c1a7700d3b9d3d0c14a416e1074b")
+    # CVE-2025-23016
     with default_args(deprecated=True):
-        # CVE-2025-23016
         version("2.4.4", sha256="c0e0d9cc7d1e456d7278c974e2826f593ef5ca555783eba81e7e9c1a07ae0ecc")
         version("2.4.3", sha256="5273bc54c28215d81b9bd78f937a9bcdd4fe94e41ccd8d7c991aa8a01b50b70e")
         version("2.4.2", sha256="1fe83501edfc3a7ec96bb1e69db3fd5ea1730135bd73ab152186fd0b437013bc")
