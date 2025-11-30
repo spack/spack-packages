@@ -37,3 +37,9 @@ class Fcgi(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     parallel = False
+
+    def patch(self):
+        if self.spec.satisfies("@2.4.7"):
+            # 2.4.7 removed m4/ but not AC_CONFIG_MACRO_DIR
+            # https://github.com/FastCGI-Archives/fcgi2/pull/78
+            mkdirp(self.stage.source_path, "m4")
