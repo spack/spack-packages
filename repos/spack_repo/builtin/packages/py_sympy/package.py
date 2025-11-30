@@ -10,7 +10,7 @@ from spack.package import *
 class PySympy(PythonPackage):
     """SymPy is a Python library for symbolic mathematics."""
 
-    homepage = "https://github.com/sympy/sympy"
+    homepage = "https://www.sympy.org"
     pypi = "sympy/sympy-0.7.6.tar.gz"
     git = "https://github.com/sympy/sympy.git"
 
