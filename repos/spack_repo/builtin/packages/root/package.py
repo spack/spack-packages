@@ -35,11 +35,15 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.36.06", sha256="62f9d38d2f2ed3d46653529c98e8cbc9b8866776494eb40ba0c23e2f46b681c4")
     version("6.36.04", sha256="cc6367d8f563c6d49ca34c09d0b53cb0f41a528db6f86af111fd76744cda4596")
     version("6.36.02", sha256="510d677b33ac7ca48aa0d712bdb88d835a1ff6a374ef86f1a1e168fa279eb470")
     version("6.36.00", sha256="94afc8def92842679a130a27521be66e2abdaa37620888e61d828a43fc4b01a2")
 
     # Supported LTS release series (note: more recent STS releases may be further down)
+    version("6.32.20", sha256="c4a9936d55adea8b5b20db9be2e356d95a0d97c9e78a92cd6494b7294838d261")
+    version("6.32.18", sha256="0b7d18b209e2a34e611e7cb2e6b82b6559fd86d64d1a7e8bf65cd13059839956")
+    version("6.32.16", sha256="1b9afc6730aa727722cc60d44a403f7a39b7226086181827bc4cabd0bea4c568")
     version("6.32.14", sha256="dfb5193127ff80ebfa10e6a4dcdf56eeec0eface65fc3de347d853ae9653aeff")
     version("6.32.12", sha256="2e41968aeb0406ee31c30af9c046143099b251846e0839cb04f4e960c7893e19")
     version("6.32.10", sha256="5a896804ec153685e8561adaa4e546b708139c484280aa6713a0a178f5b7f98b")
@@ -165,7 +169,10 @@ class Root(CMakePackage):
     variant("arrow", default=False, description="Enable Arrow interface")
     variant("cuda", when="@6.08.00:", default=False, description="Enable CUDA support")
     variant("cudnn", when="@6.20.02:", default=False, description="Enable cuDNN support")
-    variant("cxxmodules", when="@6.16:", default=True, description="Enable C++ modules")
+    # C++ module support in ROOT seemingly not currently working in macOS,
+    # will lead to build errors if turned on
+    # See https://root-forum.cern.ch/t/build-error-on-macos-macports-with-unctrl-h-ncurses-h/40239/22
+    variant("cxxmodules", when="@6.16:", default=not _is_macos, description="Enable C++ modules")
     variant(
         "daos", default=False, description="Enable RNTuple support for DAOS storage", when="@6.26:"
     )
@@ -657,6 +664,7 @@ class Root(CMakePackage):
             define("gnuinstall", True),
             define("libcxx", False),
             define("roottest", False),
+            define_from_variant("runtime_cxxmodules", "cxxmodules"),
             define_from_variant("rpath"),
             define("shared", True),
             define("soversion", True),

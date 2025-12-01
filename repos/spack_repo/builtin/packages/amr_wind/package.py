@@ -57,6 +57,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     variant("mpi", default=True, description="Enable MPI support")
     variant("netcdf", default=False, description="Enable NetCDF support")
     variant("openfast", default=False, description="Enable OpenFAST integration")
+    variant("kynema", default=False, description="Enable Kynema integration")
     variant("openmp", default=False, description="Enable OpenMP for CPU builds")
     variant("shared", default=True, description="Build shared libraries")
     variant("tests", default=True, description="Activate regression tests")
@@ -94,10 +95,10 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-numpy@2:", when="+netcdf")
     depends_on("py-matplotlib", when="+masa")
     depends_on("py-pandas", when="+masa")
-    depends_on("openfast+cxx", when="+openfast")
+    depends_on("openfast+cxx@3.5:4.0", when="@:3.5 +openfast")
+    depends_on("openfast+cxx@3.5.0:3.5.9,4.1:", when="@3.6: +openfast")
     depends_on("openfast+netcdf", when="+openfast+netcdf")
-    depends_on("openfast@3.5:4.0", when="@:3.5")
-    depends_on("openfast@3.5.0:3.5.9,4.1:", when="@3.6:")
+    depends_on("kynema", when="+kynema")
     depends_on("helics@:3.3.2", when="+helics")
     depends_on("helics@:3.3.2+mpi", when="+helics+mpi")
     depends_on("fftw", when="@2.1: +waves2amr")
@@ -148,6 +149,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
             "helics",
             "umpire",
             "sycl",
+            "kynema",
         ]
         args = [self.define_from_variant("AMR_WIND_ENABLE_%s" % v.upper(), v) for v in vs]
 
