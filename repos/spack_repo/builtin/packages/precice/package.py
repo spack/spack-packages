@@ -130,7 +130,7 @@ class Precice(CMakePackage):
         "edge-incomplete-type.patch",
         when="@2.0",
         sha256="4017a89e4f77f623807a6cd057d9a095788879310f1bddd98837920d252b1ac7",
-        )
+    )
     # Fixes linking to boost system by using BOOST_ERROR_CODE_HEADER_ONLY
     patch(
         "boost-system-header-only.patch",
