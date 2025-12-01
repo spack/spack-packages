@@ -24,6 +24,7 @@ class PyBlis(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("python@:3.14", when="@:0.9.1", type=("build", "run"))
     depends_on("python@3.9:3.14", when="@1.3.3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.25:", when="@0.7.9:0.9.1", type="build")
