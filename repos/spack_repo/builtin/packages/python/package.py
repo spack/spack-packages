@@ -642,9 +642,8 @@ class Python(Package):
                 ]
             )
 
-        if self.version >= Version("3.14.0"):
-            if "~gil" in spec:
-                config_args.append("--disable-gil")
+        if "~gil" in spec:
+            config_args.append("--disable-gil")
 
         # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
         if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
