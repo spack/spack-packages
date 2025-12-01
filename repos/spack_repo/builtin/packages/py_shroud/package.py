@@ -9,7 +9,7 @@ from spack.package import *
 
 class PyShroud(PythonPackage):
     """Shroud is a tool for creating a Fortran or Python interface to a C or C++ library.
-       It can also create a C API for a C++ library."""
+    It can also create a C API for a C++ library."""
 
     homepage = "https://github.com/LLNL/shroud"
     git = "https://github.com/LLNL/shroud.git"
