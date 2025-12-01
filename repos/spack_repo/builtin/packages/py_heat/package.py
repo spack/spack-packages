@@ -20,13 +20,13 @@ class PyHeat(PythonPackage):
     license("MIT")
 
     version("1.6.0", sha256="cd011e67c284b7f94d0f1c6ff8bf5309535fa26a895b0db2df83290c47dae55b")
-    version("1.5.1", sha256="95fea9daec6c2d5f0453159dbcd5efb26cb23997f0981e49fe9793a2fd342313")
-    version("1.5.0", sha256="a2e2d7f0c1f340ab2597f2b9c02563f0057419a53287fbf4cdf1a7934bc6d60b")
+   # version("1.5.1", sha256="95fea9daec6c2d5f0453159dbcd5efb26cb23997f0981e49fe9793a2fd342313")
+   # version("1.5.0", sha256="a2e2d7f0c1f340ab2597f2b9c02563f0057419a53287fbf4cdf1a7934bc6d60b")
     version("1.4.2", sha256="d6714428a9c5204c1c44a2b246f228effaddc688f812277f229f4acdbcfeb7c5")
     version("1.4.1", sha256="ecd871717c372a6983f643c0178dda44bc017d6b32b9258dbf3775af95f580ce")
     version("1.4.0", sha256="6836fa10f9ce62ea61cf1bdc3283d7ad0c305836cc5a08c4edfd30695708e788")
-    version("1.3.1", sha256="8997ddc56a1d3078b44a1e2933adc0a7fbf678bd19bade3ae015bc0e13d40d3b")
-    version("1.3.0", sha256="fa247539a559881ffe574a70227d3c72551e7c4a9fb29b0945578d6a840d1c87")
+   # version("1.3.1", sha256="8997ddc56a1d3078b44a1e2933adc0a7fbf678bd19bade3ae015bc0e13d40d3b")
+   # version("1.3.0", sha256="fa247539a559881ffe574a70227d3c72551e7c4a9fb29b0945578d6a840d1c87")
 
     variant("docutils", default=False, description="Use the py-docutils package")
     variant("hdf5", default=False, description="Use the py-h5py package needed for HDF5 support")
