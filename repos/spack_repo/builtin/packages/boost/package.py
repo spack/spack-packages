@@ -378,6 +378,14 @@ class Boost(Package):
         sha256="b6f6ce68282159d46c716a1e6c819c815914bdb096cddc516fa48134209659f2",
     )
 
+    # Fix: "Compile issue with flat_tree insert"
+    # See: https://github.com/boostorg/container/pull/101
+    patch(
+        "container_PR101.patch",
+        when="@1.66.0:1.69.0",
+        sha256="d216bf7c826c577912aa518c76c17697898483f95336cc035ae9ed16b12dc2b0",
+    )
+
     # Fix: "Unable to compile code using boost/process.hpp"
     # See: https://github.com/boostorg/process/issues/116
     # Patch: https://github.com/boostorg/process/commit/6a4d2ff72114ef47c7afaf92e1042aca3dfa41b0.patch

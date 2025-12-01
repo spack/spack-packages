@@ -24,6 +24,7 @@ class PyKornia(PythonPackage):
         "adamjstewart",
     )
 
+    version("0.8.2", sha256="5411b2ce0dd909d1608016308cd68faeef90f88c47f47e8ecd40553fd4d8b937")
     version("0.8.1", sha256="9ce5a54a11df661794934a293f89f8b8d49e83dd09b0b9419f6082ab07afe433")
     version("0.8.0", sha256="a0ffc31106e8d777a8df693572ad5ea11f7236b8bc1d452754f5e57de012ea9a")
     version("0.7.4", sha256="1f8dd6268ca5a2f2ec04b13c48da4dfb90ba2cfae7e31e0cc80d37f6520fa3f1")
@@ -45,17 +46,18 @@ class PyKornia(PythonPackage):
     version("0.6.1", sha256="f638fb3309f88666545866c162f510b6d485fd8f7131d5570d4e6c0d295fdcd6")
     version("0.5.10", sha256="428b4b934a2ba7360cc6cba051ed8fd96c2d0f66611fdca0834e82845f14f65d")
 
-    # pyproject.toml
-    depends_on("py-setuptools@61.2:", when="@0.6.11:", type="build")
-    depends_on("py-setuptools", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@61.2:", when="@0.6.11:")
+        depends_on("py-setuptools")
 
-    # requirements/requirements.txt
-    depends_on("py-kornia-rs@0.1.9:", when="@0.8.1:", type=("build", "run"))
-    depends_on("py-kornia-rs@0.1:", when="@0.7.2:", type=("build", "run"))
-    depends_on("py-packaging", when="@0.6:", type=("build", "run"))
-    depends_on("py-torch@1.9.1:", when="@0.6.9:", type=("build", "run"))
-    depends_on("py-torch@1.8.1:", when="@0.6:", type=("build", "run"))
-    depends_on("py-torch@1.6.0:", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-pytest-runner", when="@:0.6.10")
 
-    # Historical dependencies
-    depends_on("py-pytest-runner", when="@:0.6.10", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("py-kornia-rs@0.1.9:", when="@0.8.1:")
+        depends_on("py-kornia-rs@0.1:", when="@0.7.2:")
+        depends_on("py-packaging", when="@0.6:")
+        depends_on("py-torch@2:", when="@0.8.2:")
+        depends_on("py-torch@1.9.1:", when="@0.6.9:")
+        depends_on("py-torch@1.8.1:", when="@0.6:")
+        depends_on("py-torch@1.6.0:")

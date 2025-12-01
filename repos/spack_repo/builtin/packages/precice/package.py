@@ -125,6 +125,13 @@ class Precice(CMakePackage):
     conflicts("%clang@:3.7")
     conflicts("%intel@:16")
 
+    # Fixes missing #include<array> in src/mesh/Edge.hpp
+    patch(
+        "edge-incomplete-type.patch",
+        when="@2.0",
+        sha256="4017a89e4f77f623807a6cd057d9a095788879310f1bddd98837920d252b1ac7",
+    )
+
     def xsdk_tpl_args(self):
         return [
             "-DTPL_ENABLE_BOOST:BOOL=ON",
@@ -155,8 +162,13 @@ class Precice(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant(mpi_option, "mpi"),
             self.define_from_variant(petsc_option, "petsc"),
-            self.define_from_variant(python_option, "python"),
         ]
+
+        # Python 3 is only supported after version 2
+        if spec.satisfies("@2:"):
+            cmake_args.append(self.define_from_variant(python_option, "python"))
+        else:
+            cmake_args.append("-DPYTHON=OFF")
 
         # The xSDK installation policies were implemented after 1.5.2.
         # The TPL arguments were removed in 3.0.0.

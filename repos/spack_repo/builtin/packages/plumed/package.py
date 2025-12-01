@@ -4,6 +4,7 @@
 
 import collections
 import os
+from pathlib import Path
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
@@ -35,6 +36,7 @@ class Plumed(AutotoolsPackage):
 
     version("master", branch="master")
 
+    version("2.10.0", sha256="ca6410d47e91b4e0f953e1a8933f15b05c4681167611ab3b096ab121155f6879")
     version("2.9.2", sha256="301fbc958374f81d9b8c7a1eac73095f6dded52cce73ce33d64bdbebf51ac63d")
     version("2.9.1", sha256="e24563ad1eb657611918e0c978d9c5212340f128b4f1aa5efbd439a0b2e91b58")
     version("2.9.0", sha256="612d2387416b5f82dd8545709921440370e144fd46cef633654cf0ee43bac5f8")
@@ -138,6 +140,8 @@ class Plumed(AutotoolsPackage):
         values=("none", "cpu", "cuda", "opencl"),
         description="Activates FireArray support",
     )
+    variant("pytorch", default=False, description="Activates PyTorch support", when="@2.9:")
+    variant("metatomic", default=False, description="Activates metatomic support", when="@2.10:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -160,12 +164,16 @@ class Plumed(AutotoolsPackage):
     depends_on("m4", type="build")
     depends_on("py-cython", type="build")
 
+    depends_on("py-torch", when="+pytorch")
+    conflicts("+metatomic ~pytorch", msg="metatomic support requires PyTorch")
+    depends_on("libmetatomic-torch", when="+metatomic")
+
     # https://github.com/plumed/plumed2/issues/1256
     conflicts("^py-cython@3.1:", when="@:2.9.3")
 
     force_autoreconf = True
 
-    parallel = False
+    parallel = True
 
     def apply_patch(self, other):
         # The name of MD engines differ slightly from the ones used in Spack
@@ -239,6 +247,8 @@ class Plumed(AutotoolsPackage):
         # the issue saying we have no LD_RO executable.
         configure_opts = ["--disable-ld-r"]
 
+        configure_opts.append("--disable-doc")
+
         # If using MPI then ensure the correct compiler wrapper is used.
         if "+mpi" in spec:
             configure_opts.extend(["--enable-mpi", "CXX={0}".format(spec["mpi"].mpicxx)])
@@ -248,19 +258,57 @@ class Plumed(AutotoolsPackage):
             if spec.satisfies("^[virtuals=mpi] intel-oneapi-mpi"):
                 configure_opts.extend(["STATIC_LIBS=-mt_mpi"])
 
+        enable_libmetatomic = self.spec.satisfies("+metatomic")
+        enable_libtorch = self.spec.satisfies("+pytorch")
+
+        extra_ldflags = []
         extra_libs = []
+        extra_cppflags = []
         # Set flags to help find gsl
         if "+gsl" in spec:
             gsl_libs = spec["gsl"].libs
             blas_libs = spec["blas"].libs
-            extra_libs.append((gsl_libs + blas_libs).ld_flags)
+            extra_ldflags.append((gsl_libs + blas_libs).search_flags)
+            extra_libs.append((gsl_libs + blas_libs).link_flags)
+            extra_cppflags.extend(
+                [spec["gsl"].headers.include_flags, spec["blas"].headers.include_flags]
+            )
         # Set flags to help with ArrayFire
         if "arrayfire=none" not in spec:
             libaf = "arrayfire:{0}".format(spec.variants["arrayfire"].value)
-            extra_libs.append(spec[libaf].libs.search_flags)
+            extra_ldflags.append(spec[libaf].libs.search_flags)
+            extra_libs.append(spec[libaf].libs.link_flags)
+            extra_cppflags.append(spec[libaf].headers.include_flags)
+        # Set flags to help with PyTorch
+        if enable_libtorch:
+            pytorch_path = Path(spec["py-torch"].package.cmake_prefix_paths[0]).parent.parent
+            extra_ldflags.append(spec["py-torch"].libs.search_flags)
+            extra_libs.append(spec["py-torch"].libs.link_flags)
+            extra_ldflags.append(spec["python"].libs.search_flags)
+            extra_libs.append(spec["python"].libs.link_flags)
+            # Add include paths manually
+            # Spack HeaderList.cpp_flags does not support include paths within include paths
+            extra_cppflags.extend(
+                [
+                    f"-I{pytorch_path / 'include'}",
+                    f"-I{pytorch_path / 'include' / 'torch' / 'csrc' / 'api' / 'include'}",
+                    spec["python"].headers.include_flags,
+                ]
+            )
+        if enable_libmetatomic:
+            for libname in ["libmetatensor", "libmetatensor-torch", "libmetatomic-torch"]:
+                extra_ldflags.append(spec[libname].libs.search_flags)
+                extra_libs.append(spec[libname].libs.link_flags)
+                extra_cppflags.append(spec[libname].headers.include_flags)
+
+        if extra_ldflags:
+            configure_opts.append("LDFLAGS={0}".format(" ".join(extra_ldflags)))
 
         if extra_libs:
-            configure_opts.append("LDFLAGS={0}".format(" ".join(extra_libs)))
+            configure_opts.append("LIBS={0}".format(" ".join(extra_libs)))
+
+        if extra_cppflags:
+            configure_opts.append("CPPFLAGS={0}".format(" ".join(extra_cppflags)))
 
         # Additional arguments
         configure_opts.extend(
@@ -270,11 +318,14 @@ class Plumed(AutotoolsPackage):
                 "--enable-af_cpu={0}".format("yes" if "arrayfire=cpu" in spec else "no"),
                 "--enable-af_cuda={0}".format("yes" if "arrayfire=cuda" in spec else "no"),
                 "--enable-af_ocl={0}".format("yes" if "arrayfire=ocl" in spec else "no"),
+                "--enable-libtorch={0}".format("yes" if enable_libtorch else "no"),
+                "--enable-libmetatomic={0}".format("yes" if enable_libmetatomic else "no"),
             ]
         )
 
         # Construct list of optional modules
-        optional_modules = self.spec.variants["optional_modules"].value
+        optional_modules = spec.variants["optional_modules"].value
+
         # Predefined set of modules
         if "all" in optional_modules:
             selected_modules = "all"
@@ -282,9 +333,16 @@ class Plumed(AutotoolsPackage):
             selected_modules = "reset"
         # Custom set of modules
         else:
+            # Ensure modules from variants
+            if spec.satisfies("+pytorch") or sepec.satisfies("+metatomic"):
+                optional_modules += ("pytorch",)
+            if spec.satisfies("+libmetatomic"):
+                optional_modules += ("metatomic",)
+
             selected_modules = "none"
             for mod in optional_modules:
                 selected_modules += ":+{0}".format(mod)
+
         configure_opts.append("--enable-modules={0}".format(selected_modules))
 
         return configure_opts
