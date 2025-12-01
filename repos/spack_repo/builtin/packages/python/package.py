@@ -173,6 +173,7 @@ class Python(Package):
     variant("tix", default=False, description="Build Tix module", when="+tkinter")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=linux")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=darwin")
+    variant("gil", default=True, description="Build with Global Interpreter Lock")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -640,6 +641,10 @@ class Python(Package):
                     ),
                 ]
             )
+
+        if self.version >= Version("3.14.0"):
+            if "~gil" in spec:
+                config_args.append("--disable-gil")
 
         # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
         if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
