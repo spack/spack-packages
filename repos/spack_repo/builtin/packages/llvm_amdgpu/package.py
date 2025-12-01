@@ -68,9 +68,11 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     provides("fortran", when="@7.0:")
     provides("fortran", when="+fortran")
 
+    # External instances of this package may include a fortran compiler
     variant(
         "fortran",
-        default=True,
+        default=False,
+        sticky=True,
         when="@:6.99",
         description="External instances of llvm-amdgpu before 7 may provide fortran",
     )
