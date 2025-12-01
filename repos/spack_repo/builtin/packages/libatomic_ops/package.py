@@ -11,11 +11,12 @@ class LibatomicOps(AutotoolsPackage):
     """This package provides semi-portable access to hardware-provided
     atomic memory update operations on a number architectures."""
 
-    homepage = "https://www.hboehm.info/gc/"
-    url = "https://github.com/ivmai/libatomic_ops/releases/download/v7.8.0/libatomic_ops-7.8.0.tar.gz"
+    homepage = "https://github.com/bdwgc/libatomic_ops/"
+    url = "https://github.com/bdwgc/libatomic_ops/releases/download/v7.10.0/libatomic_ops-7.10.0.tar.gz"
 
     license("GPL-2.0-only")
 
+    version("7.10.0", sha256="0db3ebff755db170f65e74a64ec4511812e9ee3185c232eeffeacd274190dfb0")
     version("7.8.2", sha256="d305207fe207f2b3fb5cb4c019da12b44ce3fcbc593dfd5080d867b1a2419b51")
     version("7.8.0", sha256="15676e7674e11bda5a7e50a73f4d9e7d60452271b8acf6fd39a71fefdf89fa31")
     version("7.6.14", sha256="390f244d424714735b7050d056567615b3b8f29008a663c262fb548f1802d292")
