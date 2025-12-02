@@ -28,11 +28,11 @@ class PySnakemakeInterfaceStoragePlugins(PythonPackage):
     version("3.1.0", sha256="26e95be235ef2a9716b890ea96c3a9a2e62061c5d72fbb89c2fad2afada87304")
 
     depends_on("py-wrapt@1.15:", when="@4.2:", type=("build", "run"))  
-    depends_on("py-wrapt@1.15:1", when="@:4.1",, type=("build", "run"))
+    depends_on("py-wrapt@1.15:1", when="@:4.1", type=("build", "run"))
     depends_on("py-reretry@0.11.8:", when="@4.2:", type=("build", "run"))  
-    depends_on("py-reretry@0.11.8:0.11", when="@:4.1",, type=("build", "run"))
+    depends_on("py-reretry@0.11.8:0.11", when="@:4.1", type=("build", "run"))
     depends_on("py-throttler@1.2.2:", when="@4.2:", type=("build", "run"))  
-    depends_on("py-throttler@1.2.2:1", when="@:4.1",, type=("build", "run"))
+    depends_on("py-throttler@1.2.2:1", when="@:4.1", type=("build", "run"))
     depends_on("py-humanfriendly@10:", type=("build", "run"), when="@3.6:4.1")
 
     depends_on("py-snakemake-interface-common@1.12:", when="@4.2:", type=("build", "run"))  
