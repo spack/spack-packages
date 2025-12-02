@@ -431,8 +431,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # the installed GCC not portable across different glibc versions. Original
     # GCC bug report: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=118009. For
     # GCC 15 we can directly use the upstream patch. For GCC 12-14 the patch
-    # has been backported. For GCC 11 the fix should actually be applied and
-    # older versions have not been tested.
+    # has been backported. The patch is not applied to GCC 11 since the "fixinclude"
+    # is in fact needed for that version (see GCC commit description). Older versions
+    # have not been checked or tested.
     patch(
         "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
         sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
