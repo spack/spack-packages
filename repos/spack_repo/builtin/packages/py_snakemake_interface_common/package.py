@@ -31,8 +31,9 @@ class PySnakemakeInterfaceCommon(PythonPackage):
     depends_on("py-setuptools@42:", type="build", when="@1.18:")
     depends_on("py-wheel", type="build", when="@1.18:")
 
-    depends_on("py-argparse-dataclass@2", type=("build", "run"))
-    depends_on("py-configargparse@1.7", type=("build", "run"), when="@1.18:")
+    depends_on("py-argparse-dataclass@2:", type=("build", "run"), when="@1.18:")
+    depends_on("py-argparse-dataclass@2", type=("build", "run"), when="@:1.17")
+    depends_on("py-configargparse@1.7:", type=("build", "run"), when="@1.18:")
     depends_on("py-packaging@24:25", type=("build", "run"), when="@1.20.1:")
 
     # Historical dependencies

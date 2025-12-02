@@ -59,7 +59,7 @@ class Snakemake(PythonPackage):
     depends_on("py-immutables", type=("build", "run"), when="@8:")
     depends_on("py-configargparse", type=("build", "run"))
     depends_on("py-connectionpool@0.0.3:", type=("build", "run"))
-    depends_on("py-datrie", type=("build", "run"), when="@:8")
+    depends_on("py-datrie", type=("build", "run"), when="@:8.29.0")
     depends_on("py-docutils", type=("build", "run"))
     depends_on("py-gitpython", type=("build", "run"))
     depends_on("py-humanfriendly", type=("build", "run"), when="@7.20.0:")
@@ -71,9 +71,10 @@ class Snakemake(PythonPackage):
     depends_on("py-packaging", type=("build", "run"), when="@7.29.0:")
     depends_on("py-psutil", type=("build", "run"))
     depends_on("py-pulp@2.3.1:3.3", type=("build", "run"), when="@9.11.5:")
-    depends_on("py-pulp@2.3.1:3.2", type=("build", "run"), when="@9.1:9.11.4")
-    depends_on("py-pulp@2.3.1:2.9", type=("build", "run"), when="@9.0")
-    depends_on("py-pulp@2.3.1:2.9", type=("build", "run"), when="@8.22.0:8")
+    depends_on("py-pulp@2.3.1:3.2", type=("build", "run"), when="@9.6:9.11.4")  
+    depends_on("py-pulp@2.3.1:3.1", type=("build", "run"), when="@9.3.1:9.5.1")  
+    depends_on("py-pulp@2.3.1:3.0", type=("build", "run"), when="@9.1:9.3.0")
+    depends_on("py-pulp@2.3.1:2.9", type=("build", "run"), when="@8.22.0:9.0")
     depends_on("py-pulp@2.3.1:2.8", type=("build", "run"), when="@8.1.2:8.21")
     depends_on("py-pulp@2:", type=("build", "run"), when="@:8.1.1")
     depends_on("py-pyyaml", type=("build", "run"))
@@ -115,6 +116,9 @@ class Snakemake(PythonPackage):
         "py-snakemake-interface-storage-plugins@4.1.0:4", type=("build", "run"), when="@9.1:"
     )
     depends_on(
+        "py-snakemake-interface-storage-plugins@3.5:3", type=("build", "run"), when="@9.0:9.0.1"
+    )
+    depends_on(
         "py-snakemake-interface-storage-plugins@3.2.3:3", type=("build", "run"), when="@8.15.1:8"
     )
     depends_on(
@@ -140,7 +144,8 @@ class Snakemake(PythonPackage):
     depends_on("py-tabulate", type=("build", "run"))
     depends_on("py-throttler", type=("build", "run"), when="@7:")
     depends_on("py-wrapt", type=("build", "run"))
-    depends_on("py-yte@1.5.1:1", type=("build", "run"), when="@7.28.1:")
+    depends_on("py-yte@1.5.5:1", type=("build", "run"), when="@8.26.0:")  
+    depends_on("py-yte@1.5.1:1", type=("build", "run"), when="@7.28.1:8.25.5")
     depends_on("py-yte@1", type=("build", "run"), when="@7:7.28.0")
     depends_on("py-dpath@2.1.6:2", type=("build", "run"), when="@8.3:")
     depends_on("py-conda-inject@1.3.1:1", type=("build", "run"), when="@8:")
