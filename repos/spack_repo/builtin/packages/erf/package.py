@@ -10,6 +10,7 @@ def submodules(package):
 
     return submodules
 
+
 class Erf(CMakePackage, CudaPackage):
     """ERF solves the compressible Navier-Stokes on a Arakawa C-grid
     for large-scale weather modeling.
@@ -133,4 +134,3 @@ class Erf(CMakePackage, CudaPackage):
                 env.append_flags("CFLAGS", self.compiler.openmp_flag)
                 env.append_flags("CXXFLAGS", self.compiler.openmp_flag)
                 env.append_flags("FFLAGS", self.compiler.openmp_flag)
-
