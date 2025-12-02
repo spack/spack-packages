@@ -27,4 +27,3 @@ class PyYte(PythonPackage):
     depends_on("py-dpath@2.1:2", type=("build", "run"), when="@1.5.2:")
     depends_on("py-plac@1.3.4:1", type=("build", "run"))
     depends_on("py-pyyaml@6", type=("build", "run"))
-
