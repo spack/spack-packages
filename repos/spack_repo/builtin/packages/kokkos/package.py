@@ -303,6 +303,17 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # with some MPI such as cray-mpich
     variant("alloc_async", default=False, description="Use CudaMallocAsync", when="@4.2: +cuda")
 
+    # SYCL and OpenMPTarget require C++17 or higher
+    for cxxstdver in cxxstds[: cxxstds.index("17")]:
+        conflicts(
+            "+sycl", when="cxxstd={0}".format(cxxstdver), msg="SYCL requires C++17 or higher"
+        )
+        conflicts(
+            "+openmptarget",
+            when="cxxstd={0}".format(cxxstdver),
+            msg="OpenMPTarget requires C++17 or higher",
+        )
+
     # HPX should use the same C++ standard
     for cxxstd in cxxstds:
         depends_on("hpx cxxstd={0}".format(cxxstd), when="+hpx cxxstd={0}".format(cxxstd))
