@@ -46,6 +46,7 @@ class Esmf(MakefilePackage, PythonExtension):
     version("8.0.1", sha256="13ce2ca0ae622548c00f7bb18317fb100235ca8b7ddbfac7e201a339e8eb05a3")
 
     variant("mpi", default=True, description="Build with MPI support")
+    variant("openmp", default=True, description="Build with OpenMP support")
     variant("external-lapack", default=False, description="Build with external LAPACK library")
     variant("netcdf", default=True, description="Build with NetCDF support")
     variant("pnetcdf", default=False, description="Build with pNetCDF support")
@@ -313,6 +314,15 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("ESMF_COMM", comm_variant)
 
         ##########
+        # OpenMP #
+        ##########
+
+        if spec.satisfies("+openmp"):
+            env.set("ESMF_OPENMP", "ON")
+        else:
+            env.set("ESMF_OPENMP", "OFF")
+
+        ##########
         # LAPACK #
         ##########
 
@@ -421,7 +431,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             for suffix in [shared_library_suffix(self.spec), static_library_suffix(self.spec)]:
                 library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
-                    os.symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
+                    symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
         # https://github.com/esmf-org/esmf/issues/497
         filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
 
