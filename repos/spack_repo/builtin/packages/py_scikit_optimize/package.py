@@ -29,18 +29,27 @@ class PyScikitOptimize(PythonPackage):
     version("0.5.2", sha256="1d7657a4b8ef9aa6d81e49b369c677c584e83269f11710557741d3b3f8fa0a75")
     variant("plots", default=True, description="Build with plot support from py-matplotlib")
 
+    depends_on("py-setuptools@61.2:", when="@0.10.2:", type="build")
     depends_on("py-setuptools", type="build")
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-numpy@1.13.3:", when="@0.9:", type=("build", "run"))
     depends_on("py-numpy@1.20.3:", when="@0.10.2:", type=("build", "run"))
-    depends_on("py-scipy@0.14:", type=("build", "run"))
-    depends_on("py-scipy@0.19.1:", when="@0.9:", type=("build", "run"))
+    depends_on("py-numpy@1.13.3:", when="@0.9:", type=("build", "run"))
+    depends_on("py-numpy", type=("build", "run"))
     depends_on("py-scipy@1.1.0:", when="@0.10.2:", type=("build", "run"))
-    depends_on("py-scikit-learn@0.19.1:", type=("build", "run"))
-    depends_on("py-scikit-learn@0.20:", when="@0.9:", type=("build", "run"))
+    depends_on("py-scipy@0.19.1:", when="@0.9:", type=("build", "run"))
+    depends_on("py-scipy@0.14:", type=("build", "run"))
     depends_on("py-scikit-learn@1.0.0:", when="@0.10.2:", type=("build", "run"))
+    depends_on("py-scikit-learn@0.20:", when="@0.9:", type=("build", "run"))
+    depends_on("py-scikit-learn@0.19.1:", type=("build", "run"))
     depends_on("py-pyaml@16.9:", when="@0.9:", type=("build", "run"))
     depends_on("py-joblib@0.11:", when="@0.9:", type=("build", "run"))
 
     depends_on("py-matplotlib", when="+plots")
     depends_on("py-matplotlib@2:", when="@0.9:+plots")
+
+    def url_for_version(self, version):
+        url = "https://pypi.org/packages/source/s/scikit-optimize/scikit{}optimize-{}.tar.gz"
+        if version < Version("0.10.2"):
+            separator = "-"
+        else:
+            separator = "_"
+        return url.format(separator, version)
