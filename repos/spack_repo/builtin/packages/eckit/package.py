@@ -21,6 +21,10 @@ class Eckit(CMakePackage):
 
     license("Apache-2.0")
 
+    version("1.32.3", sha256="33e0fac2656cdd2f2d877dbfe7a4751ee657ab732c00dd90bd48a406298a100f")
+    version("1.31.4", sha256="045ebd9aaecf2773dc8c82f4226022776576cb0d911a76f8d1d069c97e9530c8")
+    version("1.30.0", sha256="1f58360dedfaa285a6b8087916768e6d12406e9fda2b6ba0a5c875f7a3db5398")
+    version("1.29.3", sha256="5afb6ac5bd95d68b7b0fdf42bdfe21370515b8e9ef7b3db91a89e021aa9133f2")
     version("1.28.3", sha256="24b2b8d9869849a646aa3fd9d95e4181a92358cd837d95b22e25d718a6ad7738")
     version("1.28.2", sha256="d122db8bb5bcaadf3256a24f0f90d9bcedad35ef8f25e7eccd8c93c506dbdd24")
     version("1.27.0", sha256="499f3f8c9aec8d3f42369e3ceedc98b2b09ac04993cfd38dfdf7d38931703fe7")
@@ -76,6 +80,7 @@ class Eckit(CMakePackage):
     depends_on("cmake@3.12:3.19,3.22:", type="build")
     depends_on("ecbuild@3.5:", when="@:1.20.99", type="build")
     depends_on("ecbuild@3.7:", when="@1.21:", type="build")
+    depends_on("ecbuild@3.11:", when="@1.31:", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("llvm-openmp", when="+openmp %apple-clang", type=("build", "run"))

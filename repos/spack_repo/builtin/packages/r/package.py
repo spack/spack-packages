@@ -78,6 +78,7 @@ class R(AutotoolsPackage):
         depends_on("libx11")
         depends_on("libxmu")
         depends_on("libxt")
+        depends_on("tcl")
         depends_on("tk")
 
     # Make R use a symlink to which in Sys.which, otherwise an absolute path

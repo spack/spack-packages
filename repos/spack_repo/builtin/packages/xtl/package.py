@@ -19,6 +19,8 @@ class Xtl(CMakePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="master")
+    version("0.8.1", sha256="e69a696068ccffd2b435539d583665981b6c6abed596a72832bffbe3e13e1f49")
+    version("0.8.0", sha256="ee38153b7dd0ec84cee3361f5488a4e7e6ddd26392612ac8821cbc76e740273a")
     version("0.7.7", sha256="44fb99fbf5e56af5c43619fc8c29aa58e5fad18f3ba6e7d9c55c111b62df1fbb")
     version("0.7.4", sha256="3c88be0e696b64150c4de7a70f9f09c00a335186b0b0b409771ef9f56bca7d9a")
     version("0.7.2", sha256="95c221bdc6eaba592878090916383e5b9390a076828552256693d5d97f78357c")

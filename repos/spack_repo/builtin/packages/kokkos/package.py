@@ -94,7 +94,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "sycl": [False, "Whether to build the SYCL backend"],
         "openmptarget": [False, "Whether to build the OpenMPTarget backend"],
     }
-    requires("+serial", when="~openmp ~threads", msg="Kokkos requires at least one host backend")
+    requires(
+        "+serial", when="~hpx ~openmp ~threads", msg="Kokkos requires at least one host backend"
+    )
 
     tpls_variants = {
         "hpx": [False, "Whether to enable the HPX library"],
