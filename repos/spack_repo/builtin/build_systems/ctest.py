@@ -1,7 +1,7 @@
 import os
 import shlex
-import socket
 import shutil
+import socket
 
 import spack.llnl.util.filesystem as fs
 
@@ -9,10 +9,10 @@ try:
     import spack.build_systems.cmake as cmake_build_system
 except ImportError:
     import spack_repo.builtin.build_systems.cmake as cmake_build_system
-import spack.reporters.cdash
-from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack.package import *
 
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+
+from spack.package import *
 
 UNIT_TEST_TIMEOUT = os.getenv("SPACK_TEST_TIMEOUT", "1800")
 SPACK_BUILD_NAME_PREFIX = os.getenv("SPACK_BUILD_NAME_PREFIX", None)
@@ -187,10 +187,7 @@ class CTestBuilder(cmake_build_system.CMakeBuilder):
             with fs.working_dir(self.build_directory):
                 ctest = self.get_ctest()
                 try:
-                    ctest(
-                        self.define("CTEST_BUILD", True),
-                        *self.ctest_args,
-                    )
+                    ctest(self.define("CTEST_BUILD", True), *self.ctest_args)
                 finally:
                     self.update_reported_xml("Build.xml")
         else:
@@ -206,11 +203,7 @@ class CTestBuilder(cmake_build_system.CMakeBuilder):
 
             with fs.working_dir(self.build_directory):
                 try:
-                    ctest(
-                        "--no-tests=ignore",
-                        self.define("CTEST_TEST", True),
-                        *self.ctest_args,
-                    )
+                    ctest("--no-tests=ignore", self.define("CTEST_TEST", True), *self.ctest_args)
                 finally:
                     if SPACK_REPORT_WITH_CTEST:
                         self.update_reported_xml("Test.xml")
