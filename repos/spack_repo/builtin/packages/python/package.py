@@ -173,7 +173,12 @@ class Python(Package):
     variant("tix", default=False, description="Build Tix module", when="+tkinter")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=linux")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=darwin")
-    variant("freethreading", default=False, description="Removes the Global Interpreter Lock", when="@3.13:")
+    variant(
+        "freethreading",
+        default=False,
+        description="Removes the Global Interpreter Lock",
+        when="@3.13:",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
