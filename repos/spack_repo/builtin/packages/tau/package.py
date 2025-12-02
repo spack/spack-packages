@@ -29,6 +29,7 @@ class Tau(Package):
     license("MIT")
 
     version("master", branch="master")
+    version("2.35", sha256="b13c6a0579da59853f8e6482d5f3aaed482bc1306c4eb91411c1568f647bf348")
     version("2.34.1", sha256="0e90726372fa1b6f726eb62b0840350070a00215144853ee07a852a99458c619")
     version("2.34", sha256="229ab425e0532e635a0be76d60b8aa613adf7596d15a9ced0b87e7f243bb2132")
     version("2.33.2", sha256="8ee81fe75507612379f70033183bed2a90e1245554b2a78196b6c5145da44f27")
@@ -88,6 +89,12 @@ class Tau(Package):
     variant("opari", default=False, description="Activates Opari2 instrumentation")
     variant("shmem", default=False, description="Activates SHMEM support")
     variant("gasnet", default=False, description="Activates GASNET support")
+    variant(
+        "ittnotify",
+        default=False,
+        description="Activates Intel ITTNotify collector",
+        when="@2.35:",
+    )
     variant("cuda", default=False, description="Activates CUDA support")
     variant("rocm", default=False, description="Activates ROCm support", when="@2.28:")
     variant(
@@ -147,6 +154,16 @@ class Tau(Package):
         description="Do not add -no-pie while linking with Ubuntu.",
     )
     variant("openacc", default=False, description="Activates OpenACC support")
+    variant(
+        "perfetto", default=True, description="Activates Perfetto tracing support", when="@2.35:"
+    )
+    variant(
+        "force-legacy-l0",
+        default=False,
+        description="Use of Legacy L0 profiler. Option required for old drivers/GPU.",
+        when="@2.35:",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -230,6 +247,12 @@ class Tau(Package):
         policy="one_of",
         when="+rocm",
         msg="Using ROCm, select either +rocprofiler, +roctracer, +rocprofv2 or +rocprofiler-sdk",
+    )
+
+    requires(
+        "+level_zero",
+        when="+force-legacy-l0",
+        msg="Level zero needs to be enabled with +force-legacy-l0",
     )
 
     # https://github.com/UO-OACISS/tau2/commit/1d2cb6b
@@ -381,11 +404,19 @@ class Tau(Package):
         if "+gasnet" in spec:
             options.append("-gasnet=%s" % spec["gasnet"].prefix)
 
+        if "+ittnotify" in spec:
+            options.append("-ittnotify")
+
         if "+cuda" in spec:
             options.append("-cuda=%s" % spec["cuda"].prefix)
 
         if "+level_zero" in spec:
             options.append("-level_zero=%s" % spec["oneapi-level-zero"].prefix)
+            if spec.satisfies("@2.35:"):
+                if "+force-legacy-l0" in spec:
+                    options.append("-force_legacy_l0")
+                else:
+                    options.append("-force_new_l0")
 
         if "+opencl" in spec:
             options.append("-opencl")
@@ -465,6 +496,9 @@ class Tau(Package):
                 options.append("-boost=%s" % spec["boost"].prefix)
             if "+elf" not in spec:
                 options.append("-elf=%s" % spec["elfutils"].prefix)
+
+        if "+perfetto" in spec:
+            options.append("-perfetto")
 
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)
