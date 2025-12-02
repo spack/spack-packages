@@ -1,0 +1,86 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 128d72a..9d70cd7 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -58,6 +58,7 @@ if(NOT DEFINED CMAKE_CUDA_STANDARD)
+     set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+ endif()
+ 
++if(NOT DEFINED CUDA_ARCH)
+ if(CUDAToolkit_VERSION_MAJOR EQUAL "10")
+     set(CUDA_ARCH
+         -gencode=arch=compute_30,code=sm_30
+@@ -106,7 +107,7 @@ else()
+         -gencode=arch=compute_61,code=sm_61
+         )
+ endif()
+-
++endif()
+ 
+ set(CUDA_OPTS
+     -O3
+@@ -157,6 +158,10 @@ if(NOT ${GPU_FAISS_FOUND})
+ endif()
+ include_directories(${FAISS_INCLUDE_DIR})
+ 
++#-------------------------------------------------------------------------------
++# cxxopts configuration
++find_package(cxxopts CONFIG REQUIRED)
++
+ # Project Setup
+ #-------------------------------------------------------------------------------
+ include_directories(
+@@ -164,7 +169,6 @@ include_directories(
+     src/include
+     ${CUDA_INCLUDE_DIRS}
+     third_party/
+-    third_party/cxxopts/include/
+     ${ZMQ_INCLUDE_DIR}
+ )
+ link_directories(
+@@ -212,7 +216,7 @@ add_library(tsnecuda SHARED ${SOURCES})
+ # set_property(TARGET tsnecuda PROPERTY POSITION_INDEPENDENT_CODE TRUE)
+ target_link_libraries(tsnecuda PRIVATE
+     gflags
+-    gtest
++    GTest::gtest
+     CUDA::cudart
+     CUDA::cublas
+     # CUDA::cublasLt
+@@ -220,12 +224,14 @@ target_link_libraries(tsnecuda PRIVATE
+     CUDA::cufftw
+     CUDA::cusparse
+     OpenMP::OpenMP_CXX
++    cxxopts::cxxopts
+     pthread
+-    -Wl,--allow-multiple-definition
+     ${ZMQ_LIBRARIES}
+     ${FAISS_LIBRARIES}
+ )
+ 
++target_link_options(tsnecuda PRIVATE -Wl,--allow-multiple-definition)
++
+ # BLAS configuration
+ #-------------------------------------------------------------------------------
+ find_package(MKL)
+@@ -244,8 +250,19 @@ endif()
+ # Main executable
+ #-------------------------------------------------------------------------------
+ add_executable(tsne src/exe/main.cu)
+-target_link_libraries(tsne tsnecuda)
++target_link_libraries(tsne PRIVATE
++    cxxopts::cxxopts
++    tsnecuda
++)
+ 
++#-------------------------------------------------------------------------------
++# Install target
++#-------------------------------------------------------------------------------
++install(TARGETS tsne tsnecuda
++        RUNTIME DESTINATION bin
++        LIBRARY DESTINATION lib
++	ARCHIVE DESTINATION lib/static
++)
+ #-------------------------------------------------------------------------------
+ # Python library copy and build
+ #-------------------------------------------------------------------------------
