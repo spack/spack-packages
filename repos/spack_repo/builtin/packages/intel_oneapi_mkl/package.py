@@ -211,7 +211,7 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
     # For a downstream package to depend on this one and link to shared
     # objects from MKL that depend on SYCL, the linker must be able to find
     # the libsycl.so that came from the compiler that originally built MKL.
-    # The mappings in _versions ensures the spack solver can only choose
+    # This mapping ensures the spack solver can only choose
     # compatible MKL and compiler (and thus runtime) versions. Up to at least
     # 2026.0, that mapping is one-to-one, i.e MKL requires the compiler that
     # was in the same oneAPI release, but this may change when the SYCL ABI
