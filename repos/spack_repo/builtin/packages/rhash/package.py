@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
@@ -87,9 +85,7 @@ class Rhash(MakefilePackage):
             install("librhash/*.dylib", prefix.lib)
         else:
             make("install-lib-shared", "DESTDIR={0}".format(prefix), "PREFIX=")
-            os.symlink(
-                join_path(prefix.lib, "librhash.so.0"), join_path(prefix.lib, "librhash.so")
-            )
+            symlink(join_path(prefix.lib, "librhash.so.0"), join_path(prefix.lib, "librhash.so"))
 
     @when("@1.3.6:")
     def install(self, spec, prefix):
