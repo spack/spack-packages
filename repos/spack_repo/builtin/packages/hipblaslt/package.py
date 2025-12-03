@@ -169,7 +169,7 @@ class Hipblaslt(CMakePackage):
             env.append_flags("LDFLAGS", "-lstdc++fs")
 
     def patch(self):
-        py_ver = self.spec["python"].version[:-1]
+        py_ver = self.spec["python"].version.up_to(2)
         joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
         if self.spec.satisfies("@6.3:6.4"):
             filter_file(
