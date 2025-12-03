@@ -15,6 +15,7 @@ class Spades(CMakePackage):
     url = "https://github.com/ablab/spades/releases/download/v3.15.3/SPAdes-3.15.3.tar.gz"
     maintainers("snehring")
 
+    version("4.2.0", sha256="043322129f8536411f1172b7d1c9adfcb6d49d152c10066ccc03e86b6f615a6b")
     version("4.0.0", sha256="07c02eb1d9d90f611ac73bdd30ddc242ed51b00c8a3757189e8a8137ad8cfb8b")
     version("3.15.5", sha256="155c3640d571f2e7b19a05031d1fd0d19bd82df785d38870fb93bd241b12bbfa")
     version("3.15.3", sha256="b2e5a9fd7a65aee5ab886222d6af4f7b7bc7f755da7a03941571fabd6b9e1499")
