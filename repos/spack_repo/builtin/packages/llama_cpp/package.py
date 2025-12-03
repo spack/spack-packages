@@ -31,8 +31,6 @@ class LlamaCpp(GGMLPackageBase):
     depends_on("curl", when="+curl")
     depends_on("ggml", when="+system_ggml")
 
-    depends_on("ggml@0.9.4-20251117:", when="@7086 +system_ggml")
-
     for v in ("cpu", "blas", "openmp", "cuda", "rocm", "metal", "rpc"):
         depends_on(f"ggml+{v}", when=f"+system_ggml +{v}")
         depends_on(f"ggml~{v}", when=f"+system_ggml ~{v}")
