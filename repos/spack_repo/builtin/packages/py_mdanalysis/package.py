@@ -41,12 +41,14 @@ class PyMdanalysis(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("python@3.11:", type=("build", "run"), when="@2.10.0:")
     depends_on("python@3.10:", type=("build", "run"), when="@2.8.0:")
     depends_on("python@3.9:", type=("build", "run"), when="@2.5.0:")
     depends_on("python@3.8:", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@10.9.0:", type="build", when="@2.8.0:")
+    depends_on("py-setuptools@40.9.0:", type="build", when="@2.10.0:")
 
     depends_on("py-cython@0.28:", type="build")
 
@@ -69,7 +71,7 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-packaging", type=("build", "run"))
     depends_on("py-fasteners", when="@:2.8.0", type=("build", "run"))
     depends_on("py-mda-xdrlib", when="@2.7.0:", type=("build", "run"))
-    depends_on("py-filelock", when="@2.9.0", type=("build", "run"))
+    depends_on("py-filelock", when="@2.9.0:", type=("build", "run"))
 
     # extra_format (extras_require)
     depends_on("py-netcdf4@1.0:", when="+extra_formats", type=("build", "run"))
