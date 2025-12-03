@@ -47,8 +47,7 @@ class PyMdanalysis(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools@10.9.0:", type="build", when="@2.8.0:")
-    depends_on("py-setuptools@40.9.0:", type="build", when="@2.10.0:")
+    depends_on("py-setuptools@40.9.0:", type="build", when="@2.8.0:")
 
     depends_on("py-cython@0.28:", type="build")
 
