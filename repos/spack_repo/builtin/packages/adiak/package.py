@@ -21,14 +21,15 @@ class Adiak(CMakePackage):
 
     variant("mpi", default=True, description="Build with MPI support")
     variant("shared", default=True, description="Build dynamic libraries")
-    variant("python", default=False, when="@master", description="Build Python bindings")
+    variant("python", default=False, when="@0.5.0:", description="Build Python bindings")
 
     license("MIT")
 
     version("master", branch="master")
     version(
-        "0.4.1", commit="7ac997111785bee6d9391664b1d18ebc2b3c557b", submodules=True, preferred=True
+        "0.5.0", commit="f08c8375c613e13e9b9c6a1db271cbf8f0d3f3e3", submodules=True, preferred=True
     )
+    version("0.4.1", commit="7ac997111785bee6d9391664b1d18ebc2b3c557b", submodules=True)
     version("0.4.0", commit="7e8b7233f8a148b402128ed46b2f0c643e3b397e", submodules=True)
     version("0.2.2", commit="3aedd494c81c01df1183af28bc09bade2fabfcd3", submodules=True)
     version("0.2.1", commit="950e3bfb91519ecb7b7ee7fa3063bfab23c0e2c9", submodules=True)
