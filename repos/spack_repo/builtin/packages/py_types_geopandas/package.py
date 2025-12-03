@@ -15,7 +15,9 @@ class PyTypesGeopandas(PythonPackage):
 
     license("Apache-2.0")
 
-    version("1.1.1.20250829", sha256="df386c6674052918b299e587e07acddf990110fb39478e0593cdd12e5f20f799")
+    version(
+        "1.1.1.20250829", sha256="df386c6674052918b299e587e07acddf990110fb39478e0593cdd12e5f20f799"
+    )
 
     depends_on("py-setuptools@77.0.3:", type="build")
 
