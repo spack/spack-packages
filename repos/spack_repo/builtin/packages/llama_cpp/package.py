@@ -26,7 +26,7 @@ class LlamaCpp(GGMLPackageBase):
     version("7086", tag="b7086", commit="7aaeedc098a77e9323044187101db4f6b69988da")
 
     variant("curl", default=True, description="use curl for model download")
-    variant("system_ggml", default=False, description="build embedded GGML library")
+    variant("system_ggml", default=False, description="use external GGML library")
 
     depends_on("curl", when="+curl")
     depends_on("ggml", when="+system_ggml")
