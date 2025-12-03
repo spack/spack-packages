@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -170,7 +171,8 @@ class Hipblaslt(CMakePackage):
 
     def patch(self):
         py_ver = self.spec["python"].version.up_to(2)
-        joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
+        purelib = self.spec["python"].package.purelib
+        joblib_path = os.path.join(self.spec["py-joblib"].prefix, purelib)
         if self.spec.satisfies("@6.3:6.4"):
             filter_file(
                 "${rocm_path}/llvm/bin",
@@ -215,9 +217,9 @@ class Hipblaslt(CMakePackage):
                     string=True,
                 )
         if self.spec.satisfies("@7.1:"):
-            yaml_path = f"{self.spec['py-pyyaml'].prefix}/lib/python{py_ver}/site-packages"
-            packaging_path = f"{self.spec['py-packaging'].prefix}/lib/python{py_ver}/site-packages"
-            msgpack_path = f"{self.spec['py-msgpack'].prefix}/lib/python{py_ver}/site-packages"
+            yaml_path = os.path.join(self.spec["py-pyyaml"].prefix, purelib)
+            packaging_path = os.path.join(self.spec["py-packaging"].prefix, purelib)
+            msgpack_path = os.path.join(self.spec["py-msgpack"].prefix, purelib)
             filter_file(
                 "${_python_path}",
                 ":".join(
