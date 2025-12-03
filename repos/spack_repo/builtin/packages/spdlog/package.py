@@ -124,6 +124,13 @@ class Spdlog(CMakePackage):
 
     conflicts("^fmt@11.1:", when="@:1.12")
 
+    variant(
+        "cxxstd",
+        values=("11", "14", "17", "20"),
+        default="14",
+        description="C++ standard used during compilation",
+    )
+
     def cmake_args(self):
         args = []
 
@@ -132,6 +139,7 @@ class Spdlog(CMakePackage):
                 [
                     self.define_from_variant("SPDLOG_BUILD_SHARED", "shared"),
                     self.define("SPDLOG_FMT_EXTERNAL", True),
+                    self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
                     # tests and examples
                     self.define("SPDLOG_BUILD_TESTS", self.run_tests),
                     self.define("SPDLOG_BUILD_EXAMPLE", self.run_tests),

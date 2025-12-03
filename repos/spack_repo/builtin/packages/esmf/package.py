@@ -46,6 +46,7 @@ class Esmf(MakefilePackage, PythonExtension):
     version("8.0.1", sha256="13ce2ca0ae622548c00f7bb18317fb100235ca8b7ddbfac7e201a339e8eb05a3")
 
     variant("mpi", default=True, description="Build with MPI support")
+    variant("openmp", default=True, description="Build with OpenMP support")
     variant("external-lapack", default=False, description="Build with external LAPACK library")
     variant("netcdf", default=True, description="Build with NetCDF support")
     variant("pnetcdf", default=False, description="Build with pNetCDF support")
@@ -311,6 +312,15 @@ class MakefileBuilder(makefile.MakefileBuilder):
         comm_variant = spec.variants["esmf_comm"].value
         if comm_variant != "auto":
             env.set("ESMF_COMM", comm_variant)
+
+        ##########
+        # OpenMP #
+        ##########
+
+        if spec.satisfies("+openmp"):
+            env.set("ESMF_OPENMP", "ON")
+        else:
+            env.set("ESMF_OPENMP", "OFF")
 
         ##########
         # LAPACK #

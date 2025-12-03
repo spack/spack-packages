@@ -197,6 +197,8 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             "--disable-silent-rules",
             "--disable-new-dtags",
             "--enable-fortran=all",
+            "--disable-cuda",
+            "--disable-hip",
             "--enable-threads={0}".format(spec.variants["threads"].value),
             "--enable-wrapper-rpath={0}".format("no" if "~wrapperrpath" in spec else "yes"),
         ]
@@ -215,11 +217,6 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             )
         else:
             args.append("--enable-fast=O3,ndebug")
-
-        if "+cuda" in self.spec:
-            args.extend(["--enable-cuda", "--with-cuda={0}".format(spec["cuda"].prefix)])
-        else:
-            args.append("--disable-cuda")
 
         if "+regcache" in self.spec:
             args.append("--enable-registration-cache")
