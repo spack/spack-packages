@@ -12,11 +12,12 @@ class PyMako(PythonPackage):
     ideas from the existing templating languages."""
 
     homepage = "https://www.makotemplates.org/"
-    pypi = "Mako/Mako-1.0.1.tar.gz"
+    pypi = "Mako/mako-1.3.10.tar.gz"
     git = "https://github.com/sqlalchemy/mako"
 
     license("MIT")
 
+    version("1.3.10", sha256="99579a6f39583fa7e5630a28c3c1f440e4e97a414b80372649c0ce338da2ea28")
     version("1.2.4", sha256="d60a3903dc3bb01a18ad6a89cdbe2e4eadc69c0bc8ef1e3773ba53d44c3f7a34")
     version("1.2.2", sha256="3724869b363ba630a272a5f89f68c070352137b8fd1757650017b7e06fda163f")
     version("1.1.6", sha256="4e9e345a41924a954251b95b4b28e14a301145b544901332e658907a7464b6b2")
@@ -25,8 +26,19 @@ class PyMako(PythonPackage):
     version("1.0.4", sha256="fed99dbe4d0ddb27a33ee4910d8708aca9ef1fe854e668387a9ab9a90cbf9059")
     version("1.0.1", sha256="45f0869febea59dab7efd256fb451c377cbb7947bef386ff0bb44627c31a8d1c")
 
+    depends_on("python@3.8:", when="@1.3:", type="build")
+    depends_on("python@3.7:", when="@1.2:", type="build")
     depends_on("py-setuptools@47:", when="@1.2.2:", type="build")
     depends_on("py-setuptools", type="build")
 
     depends_on("py-markupsafe@0.9.2:", type=("build", "run"))
+
+    # Historical dependencies
     depends_on("py-importlib-metadata", when="@1.2.2: ^python@:3.7", type=("build", "run"))
+
+    def url_for_version(self, version):
+        if version >= Version("1.3.6"):
+            name = "mako"
+        else:
+            name = "Mako"
+        return f"https://files.pythonhosted.org/packages/source/M/Mako/{name}-{version}.tar.gz"

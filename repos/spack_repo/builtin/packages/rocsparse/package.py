@@ -42,6 +42,8 @@ class Rocsparse(CMakePackage):
 
     license("MIT")
 
+    version("7.0.2", sha256="26dd7df3c470f877d0f9ab15dccdac1915a3939e2ab9e00a83342c6edf289c8a")
+    version("7.0.0", sha256="22aeb42b8c300a40ae29001781a92da8e396a2e42c4dce1abf66276552fca39e")
     version("6.4.3", sha256="fca59e70da33a046be36ea2fe83ba18ea8f0a5c9efd255e0427802ba3a134d0a")
     version("6.4.2", sha256="30c0b6c2aaa3686a94150d69560a96697551088d1ee9595a1c5feb7c10fd9501")
     version("6.4.1", sha256="f44db33179d5f8e18f948ff3ac8bd9b59f7bfdd67c66a7972ef1ee0eb15872de")
@@ -86,13 +88,14 @@ class Rocsparse(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    depends_on("googletest@1.11.0:", when="@5.6.0: +test")
-    depends_on("googletest@1.10.0:", when="+test")
+    depends_on("googletest@1.11.0:", when="+test")
     depends_on("python@3:", type="build", when="+test")
     depends_on("py-pyyaml", type="build", when="+test")
 
@@ -284,6 +287,6 @@ class Rocsparse(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

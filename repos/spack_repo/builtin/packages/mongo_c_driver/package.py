@@ -36,11 +36,6 @@ class MongoCDriver(AutotoolsPackage, CMakePackage):
     version("1.7.0", sha256="48a0dbd44fef2124b51cf501f06be269b1a39452303b880b37473a6030c6e023")
     version("1.6.3", sha256="82df03de117a3ccf563b9eccfd2e5365df8f215a36dea7446d439969033ced7b")
     version("1.6.2", sha256="7ec27e9be4da2bf9e4b316374f8c29f816f0a0f019b984411777e9681e17f70e")
-    version(
-        "1.6.1",
-        sha256="1bdfb27944c6da8e56da209a5d56efac70df1f8c4ca4498b46f75bf3f9360898",
-        deprecated=True,
-    )
 
     variant("ssl", default=True, description="Enable SSL support.")
     variant("snappy", default=True, description="Enable Snappy support.")

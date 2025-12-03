@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     reuse: false
@@ -75,6 +75,9 @@ spack:
       - "+examples"
       - "~qt ^[virtuals=gl] osmesa" # Headless
       - "target=x86_64_v3 %gcc"
+    boost:
+      require:
+      - cxxstd=17
 
   specs:
   # CPU
@@ -84,6 +87,7 @@ spack:
   - amrex
   - arborx
   - argobots
+  - arkouda
   - axom
   - bolt
   - boost
@@ -117,7 +121,7 @@ spack:
   - glvis
   - gmp
   - gotcha
-  - gptune ~mpispawn
+  # - gptune ~mpispawn
   - gromacs +cp2k ^cp2k +dlaf build_system=cmake
   - h5bench
   - hdf5-vol-async
@@ -130,6 +134,7 @@ spack:
   - julia ^llvm ~clang ~gold ~polly targets=amdgpu,bpf,nvptx,webassembly
   - kokkos +openmp
   - kokkos-kernels +openmp
+  - kokkos-fft host_backend=fftw-openmp +tests
   - laghos
   - lammps +amoeba +asphere +bocs +body +bpm +brownian +cg-dna +cg-spica +class2 +colloid +colvars +compress +coreshell +dielectric +diffraction +dipole +dpd-basic +dpd-meso +dpd-react +dpd-smooth +drude +eff +electrode +extra-compute +extra-dump +extra-fix +extra-molecule +extra-pair +fep +granular +interlayer +kspace +lepton +machdyn +manybody +mc +meam +mesont +misc +ml-iap +ml-pod +ml-snap +mofff +molecule +openmp-package +opt +orient +peri +phonon +plugin +poems +qeq +reaction +reaxff +replica +rigid +shock +sph +spin +srd +tally +uef +voronoi +yaff
   - lbann
@@ -170,6 +175,7 @@ spack:
   - pruners-ninja
   - pumi
   - py-amrex
+  - py-arkouda
   - py-h5py
   - py-jupyterhub
   - py-libensemble
@@ -195,7 +201,7 @@ spack:
   - umap
   - umpire
   - upcxx
-  - variorum
+  - variorum cpu=intel gpu=none
   - wannier90
   - wps
   - wrf
@@ -272,6 +278,7 @@ spack:
   - hypre +cuda cuda_arch=80
   - kokkos +wrapper +cuda cuda_arch=80
   - kokkos-kernels +cuda cuda_arch=80 ^kokkos +wrapper +cuda cuda_arch=80
+  - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper +cuda cuda_arch=80
   - libceed +cuda cuda_arch=80
   - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard +cuda cuda_arch=80 ^cusz +cuda cuda_arch=80
   - magma +cuda cuda_arch=80
@@ -320,6 +327,7 @@ spack:
   - hypre +cuda cuda_arch=90
   - kokkos +wrapper +cuda cuda_arch=90
   - kokkos-kernels +cuda cuda_arch=90 ^kokkos +wrapper +cuda cuda_arch=90
+  - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper +cuda cuda_arch=90
   - libceed +cuda cuda_arch=90
   - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard +cuda cuda_arch=90 ^cusz +cuda cuda_arch=90
   - magma +cuda cuda_arch=90

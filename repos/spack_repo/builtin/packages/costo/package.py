@@ -22,7 +22,6 @@ class Costo(CMakePackage):
     version("0.0.8", tag="v0.0.8", preferred=True)
     version("0.0.5", tag="v0.0.5")
     version("develop", branch="devel")
-    version("main", branch="main", deprecated=True)
 
     variant("shared", default=True, description="Build shared library")
     variant("tests", default=False, description="Enable testing")

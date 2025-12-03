@@ -251,6 +251,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     conflicts("+shared", when="@:3.3.2")
     conflicts("~static~shared")
     conflicts("~threadsafe", when="@:3+openmp")
+    requires("+threadsafe", when="+openmp")
 
     conflicts("+cuda", when="@:3")
     conflicts("+rocm", when="@:4.1")
@@ -308,6 +309,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         depends_on("hypre@2.10.0:2.13", when="@:3.3")
         depends_on("hypre@:2.20.0", when="@3.4:4.2")
         depends_on("hypre@:2.23.0", when="@4.3.0")
+        depends_on("hypre@:2", when="@:4.8.0")
 
     # If hypre is built with +cuda, propagate cuda_arch
     requires("^hypre@2.22.1:", when="+mpi+cuda ^hypre+cuda")
@@ -464,6 +466,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("libceed@0.7:0.8", when="@4.2.0+libceed")
     depends_on("libceed@0.8:0.9", when="@4.3.0+libceed")
     depends_on("libceed@0.10.1:", when="@4.4.0:+libceed")
+
+    depends_on("libceed+openmp", when="+libceed+openmp")
+    depends_on("libceed~openmp", when="+libceed~openmp")
+
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on(
             "libceed+cuda cuda_arch={0}".format(sm_),
@@ -761,6 +767,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     hypre_rocm_libs += hypre["rocsparse"].libs
                 if "^rocrand" in hypre:
                     hypre_rocm_libs += hypre["rocrand"].libs
+                if hypre.satisfies("@2.39.0:"):
+                    if "^rocsolver" in hypre:
+                        hypre_rocm_libs += hypre["rocsolver"].libs
+                    if "^rocblas" in hypre:
+                        hypre_rocm_libs += hypre["rocblas"].libs
                 hypre_gpu_libs = " " + ld_flags_from_library_list(hypre_rocm_libs)
             options += [
                 "HYPRE_OPT=-I%s" % hypre.prefix.include,

@@ -31,7 +31,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     A unique design feature of Trilinos is its focus on packages.
     """
 
-    homepage = "https://trilinos.org/"
+    homepage = "https://trilinos.github.io"
     url = "https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-12-12-1.tar.gz"
     git = "https://github.com/trilinos/Trilinos.git"
 
@@ -131,6 +131,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # TPLs (alphabet order)
     variant("adios2", default=False, description="Enable ADIOS2")
     variant("boost", default=False, description="Compile with Boost")
+    variant("cusparse", default=False, description="Enable cuSPARSE support")
     variant("hdf5", default=False, description="Compile with HDF5")
     variant("hypre", default=False, description="Compile with Hypre preconditioner")
     variant("mpi", default=True, description="Compile with MPI parallelism")
@@ -376,6 +377,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         msg="trilinos~wrapper+cuda can only be built with the Clang compiler",
     )
     conflicts("+cuda_rdc", when="~cuda")
+    conflicts("+cusparse", when="~cuda")
     conflicts("+rocm_rdc", when="~rocm")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="%clang")
@@ -422,13 +424,14 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos+hip_relocatable_device_code~shared", when="+rocm_rdc")
         depends_on("kokkos-kernels~shared", when="+cuda_rdc")
         depends_on("kokkos-kernels~shared", when="+rocm_rdc")
+        depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=4.7.00", when="@master:")
+        depends_on("kokkos@=4.7.01", when="@master:")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=4.7.00", when="@master:")
+        depends_on("kokkos-kernels@=4.7.01", when="@master:")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
         depends_on("kokkos-kernels@=4.2.01", when="@15.1:15")
@@ -450,7 +453,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.23:", type="build", when="@14.0.0:")
     depends_on("hdf5+hl", when="+hdf5")
     for plat in ["darwin", "linux"]:
-        depends_on("hypre~internal-superlu~int64", when="+hypre platform=%s" % plat)
+        depends_on("hypre~int64", when="+hypre platform=%s" % plat)
     depends_on("hypre-cmake~int64", when="+hypre platform=windows")
     depends_on("kokkos-nvcc-wrapper", when="+wrapper")
     depends_on("lapack")
@@ -905,6 +908,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             ("ADIOS2", "adios2", "adios2"),
             ("Boost", "boost", "boost"),
             ("CUDA", "cuda", "cuda"),
+            ("CUSPARSE", "cusparse", "cuda"),
             ("HDF5", "hdf5", "hdf5"),
             ("HYPRE", "hypre", "hypre"),
             ("MUMPS", "mumps", "mumps"),
