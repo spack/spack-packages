@@ -52,14 +52,14 @@ class Erf(CMakePackage, CudaPackage):
     version("23.11", tag="23.11", submodules=submodules)
     version("23.10", tag="23.10", submodules=submodules)
 
-    variant("mpi", default=True, description="Enable MPI support")
+    variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
-    variant("netcdf", default=True, description="Enable NetCDF support")
-    variant("particles", default=True, description="Enable particle support")
+    variant("netcdf", default=False, description="Enable NetCDF support")
+    variant("particles", default=False, description="Enable particle support")
     variant("multiblock", default=False, description="Enable multiblock support")
     variant("tests", default=False, description="Enable tests")
-    variant("fcompare", default=True, description="Enable fcompare")
-    variant("fft", default=True, description="Enable FFT support")
+    variant("fcompare", default=False, description="Enable fcompare")
+    variant("fft", default=False, description="Enable FFT support")
 
     with default_args(type="build"):
         depends_on("cmake@3.20:")
