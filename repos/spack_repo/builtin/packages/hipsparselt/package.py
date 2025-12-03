@@ -165,7 +165,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         return ver
 
     def patch(self):
-        py_ver = self.spec["python"].version[:-1]
+        py_ver = self.spec["python"].version.up_to(2)
         joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
         if not self.spec["hip"].external:
             if self.spec.satisfies("@6.4:") and self.run_tests:
