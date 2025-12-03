@@ -21,6 +21,7 @@ class PyMdanalysis(PythonPackage):
 
     license("CC-BY-ND-3.0")
 
+    version("2.10.0", sha256="5cef1f1eba4b25cbf9dd4045f08eeab293bb9577b970aa96132f14491312d877")
     version("2.9.0", sha256="fe7a4ac33e7a5c1001d954667d7e630aeb26cab6f8917fdbac6ffad903999497")
     version("2.8.0", sha256="0cf8efda7cb4a1cc33a92d2cd0d69a3d9b33c06c603df3c386caf6edccf46099")
     version("2.7.0", sha256="572e82945e5d058e3749ec5f18e6b3831ef7f2119cb54672567ae9a977201e93")
@@ -68,9 +69,6 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-packaging", type=("build", "run"))
     depends_on("py-fasteners", when="@:2.8.0", type=("build", "run"))
     depends_on("py-mda-xdrlib", when="@2.7.0:", type=("build", "run"))
-    depends_on("py-waterdynamics", when="@2.8.0", type=("build", "run"))
-    depends_on("py-pathsimanalysis", when="@2.8.0", type=("build", "run"))
-    depends_on("py-mdahole2", when="@2.8.0", type=("build", "run"))
     depends_on("py-filelock", when="@2.9.0", type=("build", "run"))
 
     # extra_format (extras_require)
