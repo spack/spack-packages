@@ -47,3 +47,11 @@ class PyMdanalysistests(PythonPackage):
 
     depends_on("py-setuptools@40.9.0:", when="@2.8.0:", type="build")
     depends_on("py-setuptools", type="build")
+
+    def url_for_version(self, version):
+        """
+        From version 2.8.0 onwards, the archive named changed
+        to 'mdanalysistests-{version}.tar.gz from 'MDAnalysistests-{version}.tar.gz
+        """
+        if version >= Version("2.8.0"):
+            return f"https://files.pythonhosted.org/packages/source/m/mdanalysistests/mdanalysistests-{version}.tar.gz"
