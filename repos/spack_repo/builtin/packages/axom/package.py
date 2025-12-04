@@ -105,7 +105,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         description="Build with hooks for Adiak/Caliper performance analysis",
     )
 
-    variant("c2c", default=False, description="Build with c2c")
     variant("opencascade", default=False, description="Build with opencascade")
 
     variant("mfem", default=False, description="Build with mfem")
@@ -211,7 +210,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("rocprim", when="+rocm")
 
-    depends_on("c2c", when="+c2c")
     depends_on("opencascade", when="+opencascade")
 
     with when("+mfem"):
