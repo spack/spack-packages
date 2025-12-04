@@ -44,8 +44,6 @@ class Adiak(CMakePackage):
     depends_on("python@3", when="+python", type=("build", "link", "run"))
     depends_on("py-pybind11@3.0.0:", when="+python", type=("build", "link", "run"))
 
-    conflicts("+python", when="@:0.4")
-
     def cmake_args(self):
         args = []
         if self.spec.satisfies("+mpi"):
