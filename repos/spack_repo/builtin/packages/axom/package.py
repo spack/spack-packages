@@ -335,7 +335,9 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         #   option will turn off most compiler optimizations similar to use of
         #   '-O0'; use '-Rno-debug-disables-optimization' to disable this remark
         if spec.satisfies("%oneapi"):
-            entries.append(cmake_cache_string("CMAKE_CXX_FLAGS_DEBUG", "-g -Rno-debug-disables-optimization"))
+            entries.append(
+                cmake_cache_string("CMAKE_CXX_FLAGS_DEBUG", "-g -Rno-debug-disables-optimization")
+            )
 
         return entries
 
@@ -379,14 +381,18 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
             # Recommended MPI flags
             hip_link_flags += "-lxpmem "
-            hip_link_flags += "-L/opt/cray/pe/mpich/{0}/gtl/lib ".format(spec["mpi"].version.up_to(3))
+            hip_link_flags += "-L/opt/cray/pe/mpich/{0}/gtl/lib ".format(
+                spec["mpi"].version.up_to(3)
+            )
             hip_link_flags += "-Wl,-rpath,/opt/cray/pe/mpich/{0}/gtl/lib ".format(
                 spec["mpi"].version.up_to(3)
             )
             hip_link_flags += "-lmpi_gtl_hsa "
 
             if spec.satisfies("^hip@6.0.0:"):
-                hip_link_flags += "-L{0}/lib/llvm/lib -Wl,-rpath,{0}/lib/llvm/lib ".format(rocm_root)
+                hip_link_flags += "-L{0}/lib/llvm/lib -Wl,-rpath,{0}/lib/llvm/lib ".format(
+                    rocm_root
+                )
             else:
                 hip_link_flags += "-L{0}/llvm/lib -Wl,-rpath,{0}/llvm/lib ".format(rocm_root)
             # Only amdclang requires this path; cray compiler fails if this is included
@@ -403,8 +409,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
             # Additional library path for cray compiler
             if self.spec.satisfies("%cce"):
                 hip_link_flags += "-L/opt/cray/pe/cce/{0}/cce/x86_64/lib -Wl,-rpath,/opt/cray/pe/cce/{0}/cce/x86_64/lib ".format(
-                                        self.spec.compiler.version
-                                    )
+                    self.spec.compiler.version
+                )
 
             # Remove extra link library for crayftn
             if spec.satisfies("+fortran") and self.is_fortran_compiler("crayftn"):
