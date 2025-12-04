@@ -99,5 +99,9 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-networkx@2.0:", when="@:2.6.1", type=("build", "run"))
 
     def url_for_version(self, version):
+        """
+        From version 2.8.0 onwards, the archive named changed
+        to 'mdanalysis-{version}.tar.gz from 'MDAnalysis-{version}.tar.gz
+        """
         if version >= Version("2.8.0"):
             return f"https://files.pythonhosted.org/packages/source/m/mdanalysis/mdanalysis-{version}.tar.gz"
