@@ -408,9 +408,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
             # Additional library path for cray compiler
             if self.spec.satisfies("%cce"):
-                hip_link_flags += "-L/opt/cray/pe/cce/{0}/cce/x86_64/lib -Wl,-rpath,/opt/cray/pe/cce/{0}/cce/x86_64/lib ".format(
-                    self.spec.compiler.version
-                )
+                lib_path = "/opt/cray/pe/cce/{0}/cce/x86_64/lib".format(self.spec.compiler.version)
+                hip_link_flags += "-L{0} -Wl,-rpath,{0}".format(lib_path)
 
             # Remove extra link library for crayftn
             if spec.satisfies("+fortran") and self.is_fortran_compiler("crayftn"):
