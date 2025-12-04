@@ -54,6 +54,9 @@ class PySlepc4py(PythonPackage):
 
     patch("ldshared.patch", when="@:3.18")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("py-cython@3:", when="@3.20:", type="build")
     depends_on("py-cython@0.29.32:", when="^python@3.11:", type="build")
     depends_on("py-cython@0.24:", type="build")
