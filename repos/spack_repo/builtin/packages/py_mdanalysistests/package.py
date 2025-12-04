@@ -17,6 +17,9 @@ class PyMdanalysistests(PythonPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.10.0", sha256="286b8678e19195093a19b57b26d76b8274415d33ac23fc872355639fcb49beef")
+    version("2.9.0", sha256="8e4942ec3aaef5e93aeb39690293764ab9995550135ff1bd0df2f40cb95c0626")
+    version("2.8.0", sha256="a611dfa060088cc11e582c90dbd37bd1142d65423f7de6e304d3d694655aee0b")
     version("2.7.0", sha256="326d65d7f14da8d1b047aab87ca312a68459a5fd18ddf6d8cb9ac9c3ca51d9e5")
     version("2.6.1", sha256="043f7451f4d9c42ea9e6609a81a6002948e2c74fd268282e0831416789b22e5e")
     version("2.6.0", sha256="16fdd10e5240b606e8f9210b7cbd9e4be110e6b8d79bb6e72ce6250c4731a817")
@@ -25,6 +28,8 @@ class PyMdanalysistests(PythonPackage):
     version("2.4.2", sha256="6e8fb210a4268691c77717ea5157e82d85874a4f7ee0f8f177718451a44ee793")
 
     # Version need to match MDAnalysis'
+    depends_on("py-mdanalysis@2.9.0", when="@2.9.0", type=("build", "run"))
+    depends_on("py-mdanalysis@2.8.0", when="@2.8.0", type=("build", "run"))
     depends_on("py-mdanalysis@2.7.0", when="@2.7.0", type=("build", "run"))
     depends_on("py-mdanalysis@2.6.1", when="@2.6.1", type=("build", "run"))
     depends_on("py-mdanalysis@2.6.0", when="@2.6.0", type=("build", "run"))
@@ -32,10 +37,13 @@ class PyMdanalysistests(PythonPackage):
     depends_on("py-mdanalysis@2.4.3", when="@2.4.3", type=("build", "run"))
     depends_on("py-mdanalysis@2.4.2", when="@2.4.2", type=("build", "run"))
 
+    depends_on("python@3.11:", when="@2.10.0:", type=("build", "run"))
+    depends_on("python@3.10:", when="@2.8.0:", type=("build", "run"))
     depends_on("python@3.9:", when="@2.5.0:", type=("build", "run"))
     depends_on("python@3.8:", type=("build", "run"))
 
     depends_on("py-pytest@3.3.0:", type=("build", "run"))
     depends_on("py-hypothesis", type=("build", "run"))
 
+    depends_on("py-setuptools@40.9.0:", when="@2.8.0:", type="build")
     depends_on("py-setuptools", type="build")
