@@ -18,6 +18,8 @@ class PyFenicsBasix(PythonPackage):
     license("MIT")
 
     version("main", branch="main", no_cache=True)
+    version("0.10.0.post0", sha256="11a6482fb8d7204fbd77aaf457a9ae3e75db1707b3e30ea2c938eccfee925ea4")
+    version("0.10.0", sha256="b93221dac7d3fea8c10e77617f6201036de35d0c5437440b718de69a28c3773f")
     version("0.9.0", sha256="60e96b2393084729b261cb10370f0e44d12735ab3dbd1f15890dec23b9e85329")
     version("0.8.0", sha256="b299af82daf8fa3e4845e17f202491fe71b313bf6ab64c767a5287190b3dd7fe")
     with default_args(deprecated=True):
@@ -26,7 +28,7 @@ class PyFenicsBasix(PythonPackage):
 
     depends_on("cxx", type="build")
 
-    for ver in ("main", "0.9.0", "0.8.0", "0.7.0", "0.6.0"):
+    for ver in ("main", "0.10.0.post0", "0.10.0", "0.9.0", "0.8.0", "0.7.0", "0.6.0"):
         depends_on(f"fenics-basix@{ver}", type=("build", "run"), when=f"@{ver}")
 
     # See python/CMakeLists.txt
@@ -40,12 +42,16 @@ class PyFenicsBasix(PythonPackage):
     depends_on("py-numpy@1.21:", type=("build", "run"))
     depends_on("py-pybind11@2.9.1:", when="@:0.7", type="build")
     depends_on("py-setuptools@42:", when="@:0.7", type="build")
-    depends_on("py-nanobind@2:", when="@0.10:", type="build")
+    depends_on("py-nanobind@2.5:", when="@0.10:", type="build")
+    depends_on("py-nanobind@2:", when="@0.9:", type="build")
     depends_on("py-nanobind@1.6.0:", when="@0.8:0.9", type="build")
     depends_on("py-scikit-build-core+pyproject@0.10:", when="@0.10:", type="build")
     depends_on("py-scikit-build-core+pyproject@0.5.0:", when="@0.8:0.9", type="build")
 
     def config_settings(self, spec, prefix):
-        return {"build.tool-args": f"-j{make_jobs}", "build.verbose": "true"}
+        return {
+            "build.tool-args": f"-j{make_jobs}",
+            "build.verbose": "true",
+        }
 
     build_directory = "python"
