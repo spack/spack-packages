@@ -64,20 +64,22 @@ class Gptune(CMakePackage):
         "py-scikit-optimize@0.9.0", 
         patches=[patch("space.patch")], 
         type=("build", "run"),
-        when="@:4.0.0"
+        when="@:4.0.0",
     )
-    depends_on("py-scikit-optimize@0.9.0", 
+    depends_on(
+        "py-scikit-optimize@0.9.0", 
         patches=[patch("gptunev5-skopt.patch")], 
         type=("build", "run"),
-        when="@5.0.0:"
+        when="@5.0.0:",
     )
     depends_on("py-gpy", type=("build", "run"))
     depends_on("py-lhsmdu", type=("build", "run"))
     depends_on("py-hpbandster", type=("build", "run"))
     depends_on("py-opentuner", type=("build", "run"))
-    depends_on("py-ytopt-autotune@1.1.0", 
+    depends_on(
+        "py-ytopt-autotune@1.1.0", 
         patches=[patch("gptunev5-autotune.patch")], 
-        type=("build", "run")
+        type=("build", "run"),
     )
     depends_on("py-filelock", type=("build", "run"))
     depends_on("py-requests", type=("build", "run"))
