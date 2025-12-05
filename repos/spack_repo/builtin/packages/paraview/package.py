@@ -404,11 +404,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     patch("pegtl_tao_find.patch", when="platform=windows")
 
     # https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7593
-    patch(
-        "https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7593.diff",
-        when="@:6.0 +cdi",
-        sha256="2ca60e559f9cc930627066eafafb3791ddd24c9c848b8227ae92049cfaba98f4",
-    )
+    patch("paraview-cdireader-lazy.patch", when="@:6.0 +cdi")
 
     generator("ninja", "make", default="ninja")
     # https://gitlab.kitware.com/paraview/paraview/-/issues/21223
