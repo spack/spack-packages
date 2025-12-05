@@ -19,7 +19,9 @@ class PyFenicsDolfinx(PythonPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main", no_cache=True)
-    version("0.10.0.post4", sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605")
+    version(
+        "0.10.0.post4", sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605"
+    )
     version("0.9.0", sha256="b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1")
     version("0.8.0", sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9")
     with default_args(deprecated=True):
@@ -53,7 +55,7 @@ class PyFenicsDolfinx(PythonPackage):
     depends_on("python@3.9:", when="@0.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.7", type=("build", "run"))
     depends_on("python@3.8:3.10", when="@0.6.0", type=("build", "run"))
-    
+
     for ver in ["main", "0.10.0.post4", "0.9.0", "0.8.0", "0.7.2", "0.6.0"]:
         depends_on(f"fenics-dolfinx@{ver}", when=f"@{ver}")
 

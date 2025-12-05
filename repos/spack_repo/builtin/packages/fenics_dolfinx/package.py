@@ -17,7 +17,9 @@ class FenicsDolfinx(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main", no_cache=True)
-    version("0.10.0.post4", sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605")
+    version(
+        "0.10.0.post4", sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605"
+    )
     version(
         "0.10.0.post2", sha256="eae83794fee8141c80c59c03a2f4ac208af2b62c8f36e5d19c93e0d279029f52"
     )
