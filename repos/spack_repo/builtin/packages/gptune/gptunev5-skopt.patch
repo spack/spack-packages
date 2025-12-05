@@ -1,0 +1,70 @@
+diff --git a/benchmarks/bench_ml.py b/benchmarks/bench_ml.py
+old mode 100644
+new mode 100755
+index 526afac..c18ac42
+--- a/benchmarks/bench_ml.py
++++ b/benchmarks/bench_ml.py
+@@ -161,7 +161,7 @@ def load_data_target(name):
+             samples = np.array(data)
+             data = dict()
+             data["data"] = samples[:, :-1]
+-            data["target"] = np.array(samples[:, -1], dtype=np.int)
++            data["target"] = np.array(samples[:, -1], dtype=int)
+     else:
+         raise ValueError("dataset not supported.")
+     return data["data"], data["target"]
+diff --git a/skopt/space/space.py b/skopt/space/space.py
+old mode 100644
+new mode 100755
+index bed1e05..702d60a
+--- a/skopt/space/space.py
++++ b/skopt/space/space.py
+@@ -244,13 +244,13 @@ class Real(Dimension):
+     name : str or None
+         Name associated with the dimension, e.g., "learning rate".
+ 
+-    dtype : str or dtype, default=np.float
++    dtype : str or dtype, default=float
+         float type which will be used in inverse_transform,
+         can be float.
+ 
+     """
+     def __init__(self, low, high, prior="uniform", base=10, transform=None,
+-                 name=None, dtype=np.float, optimize=True):
++                 name=None, dtype=float, optimize=True):
+         if high <= low:
+             raise ValueError("the lower bound {} has to be less than the"
+                              " upper bound {}".format(low, high))
+@@ -348,7 +348,7 @@ class Real(Dimension):
+         if self.dtype == float or self.dtype == 'float':
+             # necessary, otherwise the type is converted to a numpy type
+             inv_transform = getattr(inv_transform, "tolist", lambda: value)()
+-            return [round(val, 6) for val in inv_transform]
++            return [round(val, 8) for val in inv_transform] # round(val, 6) causes problems in the random sample generation when #sample>1e6
+         else:
+             return inv_transform
+ 
+diff --git a/skopt/space/transformers.py b/skopt/space/transformers.py
+old mode 100644
+new mode 100755
+index 6889295..f2dfb16
+--- a/skopt/space/transformers.py
++++ b/skopt/space/transformers.py
+@@ -259,7 +259,7 @@ class Normalize(Transformer):
+         if (self.high - self.low) == 0.:
+             return X * 0.
+         if self.is_int:
+-            return (np.round(X).astype(np.int) - self.low) /\
++            return (np.round(X).astype(int) - self.low) /\
+                    (self.high - self.low)
+         else:
+             return (X - self.low) / (self.high - self.low)
+@@ -272,7 +272,7 @@ class Normalize(Transformer):
+             raise ValueError("All values should be greater than 0.0")
+         X_orig = X * (self.high - self.low) + self.low
+         if self.is_int:
+-            return np.round(X_orig).astype(np.int)
++            return np.round(X_orig).astype(int)
+         return X_orig
+ 
+ 
