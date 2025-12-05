@@ -37,12 +37,12 @@ class CompilerWrapper(Package):
 
     if sys.platform != "win32":
         version(
-            "1.0",
-            sha256="a5ff4fcdbeda284a7993b87f294b6338434cffc84ced31e4d04008ed5ea389bf",
+            "1.1",
+            sha256="0f1cc7699e803a0f00c1b40f7786f48be795a3924a61695090cc91c6d63069ac",
             expand=False,
         )
     else:
-        version("1.0")
+        version("1.1")
         has_code = False
 
     def bin_dir(self) -> pathlib.Path:
