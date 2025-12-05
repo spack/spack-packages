@@ -156,6 +156,10 @@ class FftwBase(AutotoolsPackage):
         if spec.satisfies("%nvhpc") and "neon" in simd_features:
             simd_features.remove("neon")
 
+        # GCC on apple silicon does not support Neon intrinsics
+        if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
+            float_simd_features.remove("neon")
+
         simd_options = []
         for feature in simd_features:
             msg = "--enable-{0}" if feature in spec.target else "--disable-{0}"
