@@ -12,18 +12,23 @@ from spack.package import *
 class PyKeras(PythonPackage):
     """Multi-backend Keras.
 
-    Keras 3 is a new multi-backend implementation of the Keras API,
-    with support for TensorFlow, JAX, and PyTorch.
+    Keras 3 is a multi-backend deep learning framework, with support for
+    JAX, TensorFlow, PyTorch, and OpenVINO (for inference-only).
     """
 
     homepage = "https://keras.io"
     git = "https://github.com/keras-team/keras.git"
     pypi = "keras/keras-3.0.0.tar.gz"
-
-    maintainers("adamjstewart")
     tags = ["e4s"]
-    license("Apache-2.0")
 
+    license("Apache-2.0")
+    maintainers("adamjstewart")
+
+    version("3.12.0", sha256="536e3f8385a05ae04e82e08715a1a59988578087e187b04cb0a6fad11743f07f")
+    version("3.11.3", sha256="efda616835c31b7d916d72303ef9adec1257320bc9fd4b2b0138840fc65fb5b7")
+    version("3.11.2", sha256="b78a4af616cbe119e88fa973d2b0443b70c7f74dd3ee888e5026f0b7e78a2801")
+    version("3.11.1", sha256="7a27f384467fa8d0b0281665b52efd6bd948f20854099e35929786ce44d847f0")
+    version("3.11.0", sha256="f5dfeaf4fcaea180e032f7c1e373f1868961e2940dcfcaaf9a5b711baf41bd60")
     version("3.10.0", sha256="6e9100bf66eaf6de4b7f288d34ef9bb8b5dcdd62f42c64cfd910226bb34ad2d2")
     version("3.9.2", sha256="322aab6418ee3de1e2bd0871b60a07f0e444e744a7e8cba79af8b42408879ecf")
     version("3.9.1", sha256="1ba893820258d4eab9a5a94a6faae2d8f4b134019d0bfa19868606b6381502ff")
@@ -75,9 +80,9 @@ class PyKeras(PythonPackage):
     variant(
         "backend",
         default="tensorflow",
-        description="backend library",
+        description="Backend library. Set KERAS_BACKEND with first value.",
         values=["tensorflow", "jax", "torch"],
-        multi=False,
+        multi=True,
         when="@3:",
     )
 
@@ -88,6 +93,7 @@ class PyKeras(PythonPackage):
 
     with default_args(type=("build", "run")):
         # pyproject.toml
+        depends_on("python@3.10:", when="@3.11:")
         depends_on("python@3.9:", when="@3:")
         depends_on("python@3.8:", when="@2.12:")
         depends_on("py-absl-py", when="@2.6:")
@@ -104,7 +110,8 @@ class PyKeras(PythonPackage):
 
         # requirements-tensorflow-cuda.txt
         with when("backend=tensorflow"):
-            depends_on("py-tensorflow@2.18.1:2.18", when="@3.10:")
+            depends_on("py-tensorflow@2.20", when="@3.12:")
+            depends_on("py-tensorflow@2.18.1:2.18", when="@3.10:3.11")
             depends_on("py-tensorflow@2.18", when="@3.7:3.9")
             depends_on("py-tensorflow@2.17", when="@3.5:3.6")
             depends_on("py-tensorflow@2.16.1:2.16", when="@3.0:3.4")
@@ -112,7 +119,8 @@ class PyKeras(PythonPackage):
 
         # requirements-jax-cuda.txt
         with when("backend=jax"):
-            depends_on("py-jax@0.6.0", when="@3.10:")
+            depends_on("py-jax@0.6.2", when="@3.11:")
+            depends_on("py-jax@0.6.0", when="@3.10")
             depends_on("py-jax@0.4.28", when="@3.6:3.9")
             depends_on("py-jax@0.4.23", when="@3.0.5:3.5")
             depends_on("py-jax", when="@3:")
@@ -120,7 +128,8 @@ class PyKeras(PythonPackage):
 
         # requirements-torch-cuda.txt
         with when("backend=torch"):
-            depends_on("py-torch@2.6.0", when="@3.10:")
+            depends_on("py-torch@2.9.0", when="@3.12:")
+            depends_on("py-torch@2.6.0", when="@3.10:3.11")
             depends_on("py-torch@2.5.1", when="@3.7:3.9")
             depends_on("py-torch@2.4.1", when="@3.6")
             depends_on("py-torch@2.4.0", when="@3.5")
@@ -128,7 +137,7 @@ class PyKeras(PythonPackage):
             depends_on("py-torch@2.1.2", when="@3.0.3:3.0.5")
             depends_on("py-torch@2.1.1", when="@3.0.1:3.0.2")
             depends_on("py-torch@2.1.0", when="@3.0.0")
-            depends_on("py-torchvision@0.20.1", when="@3.7:")
+            depends_on("py-torchvision@0.20.1", when="@3.7:3.8")
             depends_on("py-torchvision@0.19.1", when="@3.6")
             depends_on("py-torchvision@0.19.0", when="@3.5")
             depends_on("py-torchvision@0.17.1", when="@3.1:3.4")
@@ -167,7 +176,7 @@ class PyKeras(PythonPackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@3:"):
-            env.set("KERAS_BACKEND", self.spec.variants["backend"].value)
+            env.set("KERAS_BACKEND", self.spec.variants["backend"].value[0])
 
     @when("@2.5:2")
     def patch(self):

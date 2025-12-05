@@ -10,7 +10,6 @@ import tempfile
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
-import spack.util.environment
 from spack.package import *
 
 
@@ -32,6 +31,9 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("10.3.0", sha256="2fcb38dc062e440f1e06c069bbca840ed46dcc8f983e473e1558fcc38384ee6b")
+    version("10.2.0", sha256="07fb6d9339d2f350735c91671be8e874d160018cc6b688f9efd9d558d237f69f")
+    version("10.1.0", sha256="aed449cba379fc1e1186ec3fc3c96e0860789278fbc823ae2cebe60344344b78")
     version("9.4.0", sha256="da9481205bfa717660b7d4a16732d8b2d58aadceab4993d41242a8e2848ea6c1")
     version("9.3.0", sha256="809fa39a7acc84815bf4dc4d2d7e6b228ce75a07f3b2413f3313aa8e0aaa3287")
     version("9.1.0", sha256="3f8c6c6ecfa249a47c97e18e651be4db8499be2f5de1a095a3eea53efc01d6a1")
@@ -156,22 +158,21 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
 
         # We need to unset these variables since we are still within
         # Spack's build environment when running tests
-        vars_to_unset = ["CC", "CXX", "F77", "FC"]
+        mkoctfile_env = os.environ.copy()
+        mkoctfile_env.pop("CC", None)
+        mkoctfile_env.pop("CXX", None)
+        mkoctfile_env.pop("F77", None)
+        mkoctfile_env.pop("FC", None)
 
-        with spack.util.environment.preserve_environment(*vars_to_unset):
-            # Delete temporarily the environment variables that point
-            # to Spack compiler wrappers
-            for v in vars_to_unset:
-                del os.environ[v]
-            # Check that mkoctfile outputs the expected value for CC
-            cc = mkoctfile("-p", "CC", output=str)
-            msg = "mkoctfile didn't output the expected CC compiler"
-            assert self.compiler.cc in cc, msg
+        # Check that mkoctfile outputs the expected value for CC
+        cc = mkoctfile("-p", "CC", output=str, env=mkoctfile_env)
+        msg = "mkoctfile didn't output the expected CC compiler"
+        assert self.compiler.cc in cc, msg
 
-            # Try to compile an Octave extension
-            shutil.copy(helloworld_cc, tmp_dir)
-            with working_dir(tmp_dir):
-                mkoctfile("helloworld.cc")
+        # Try to compile an Octave extension
+        shutil.copy(helloworld_cc, tmp_dir)
+        with working_dir(tmp_dir):
+            mkoctfile("helloworld.cc", env=mkoctfile_env)
 
     def configure_args(self):
         # See

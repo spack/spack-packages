@@ -7,14 +7,10 @@ import pathlib
 import platform
 import re
 import sys
-from itertools import chain
 from typing import Any, List, Optional, Tuple
 
-from llnl.util.lang import stable_partition
-
-import spack.deptypes as dt
-from spack import traverse
 from spack.package import (
+    BuilderWithDefaults,
     InstallError,
     PackageBase,
     Prefix,
@@ -22,6 +18,7 @@ from spack.package import (
     build_system,
     conflicts,
     depends_on,
+    get_cmake_prefix_path,
     register_builder,
     run_after,
     tty,
@@ -29,9 +26,8 @@ from spack.package import (
     when,
     working_dir,
 )
-from spack.util.environment import filter_system_paths
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 # Regex to extract the primary generator from the CMake generator
 # string.
@@ -51,7 +47,7 @@ def _maybe_set_python_hints(pkg: PackageBase, args: List[str]) -> None:
     if the package has Python as build or link dep and ``find_python_hints`` is set to True. See
     ``find_python_hints`` for context."""
     if not getattr(pkg, "find_python_hints", False) or not pkg.spec.dependencies(
-        "python", dt.BUILD | dt.LINK
+        "python", deptype=("build", "link")
     ):
         return
     python_executable = pkg.spec["python"].command.path
@@ -80,7 +76,7 @@ def _supports_compilation_databases(pkg: PackageBase) -> bool:
 
 def _conditional_cmake_defaults(pkg: PackageBase, args: List[str]) -> None:
     """Set a few default defines for CMake, depending on its version."""
-    cmakes = pkg.spec.dependencies("cmake", dt.BUILD)
+    cmakes = pkg.spec.dependencies("cmake", deptype="build")
 
     if len(cmakes) != 1:
         return
@@ -169,27 +165,6 @@ def generator(*names: str, default: Optional[str] = None) -> None:
         conflicts(f"generator={x}")
 
 
-def get_cmake_prefix_path(pkg: PackageBase) -> List[str]:
-    """Obtain the CMAKE_PREFIX_PATH entries for a package, based on the cmake_prefix_path package
-    attribute of direct build/test and transitive link dependencies."""
-    edges = traverse.traverse_topo_edges_generator(
-        traverse.with_artificial_edges([pkg.spec]),
-        visitor=traverse.MixedDepthVisitor(
-            direct=dt.BUILD | dt.TEST, transitive=dt.LINK, key=traverse.by_dag_hash
-        ),
-        key=traverse.by_dag_hash,
-        root=False,
-        all_edges=False,  # cover all nodes, not all edges
-    )
-    ordered_specs = [edge.spec for edge in edges]
-    # Separate out externals so they do not shadow Spack prefixes
-    externals, spack_built = stable_partition((s for s in ordered_specs), lambda x: x.external)
-
-    return filter_system_paths(
-        path for spec in chain(spack_built, externals) for path in spec.package.cmake_prefix_paths
-    )
-
-
 class CMakePackage(PackageBase):
     """Specialized class for packages built using CMake
 
@@ -202,7 +177,7 @@ class CMakePackage(PackageBase):
     build_system_class = "CMakePackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "cmake"
+    default_buildsystem = "cmake"
 
     #: When this package depends on Python and ``find_python_hints`` is set to True, pass the
     #: defines {Python3,Python,PYTHON}_EXECUTABLE explicitly, so that CMake locates the right
@@ -242,6 +217,18 @@ class CMakePackage(PackageBase):
         depends_on("cmake", type="build")
         depends_on("gmake", type="build", when="generator=make")
         depends_on("ninja", type="build", when="generator=ninja")
+
+        # CMake earlier than 4.1 improperly handles arguments provided to
+        # the linker when using msvc as a c/cxx compiler and oneapi as a
+        # fortran compiler https://gitlab.kitware.com/cmake/cmake/-/issues/26005
+        #
+        # Currently in Spack msvc is modeled as both the fortran/cxx compiler
+        # due to restrictions w/ oneapi on Windows, but in reality, when msvc
+        # is the fortran compiler, it is utilizing oneapi, and this
+        # must conflict.
+        # this should be updated to reflect a oneapi fortran provider
+        # once oneapi is usable with fortran on Windows
+        conflicts("cmake@:4.0", when="%cxx=msvc %fortran=msvc")
 
     def flags_to_build_system_args(self, flags):
         """Return a list of all command line arguments to pass the specified
@@ -317,10 +304,10 @@ class CMakeBuilder(BuilderWithDefaults):
     phases: Tuple[str, ...] = ("cmake", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods: Tuple[str, ...] = ("cmake_args", "check")
+    package_methods: Tuple[str, ...] = ("cmake_args", "check")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes: Tuple[str, ...] = (
+    package_attributes: Tuple[str, ...] = (
         "build_targets",
         "install_targets",
         "build_time_test_callbacks",
@@ -468,7 +455,7 @@ class CMakeBuilder(BuilderWithDefaults):
             primary_generator = _extract_primary_generator(self.generator)
             configure_artifact = "Makefile"
             if primary_generator == "Ninja":
-                configure_artifact = "ninja.build"
+                configure_artifact = "build.ninja"
 
             if os.path.isfile(os.path.join(self.build_directory, configure_artifact)):
                 tty.msg(

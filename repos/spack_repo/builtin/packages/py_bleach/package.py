@@ -15,6 +15,7 @@ class PyBleach(PythonPackage):
 
     license("Apache-2.0")
 
+    version("6.2.0", sha256="123e894118b8a599fd80d3ec1a6d4cc7ce4e5882b1317a7e1ba69b56e95f991f")
     version("6.0.0", sha256="1a1a85c1595e07d8db14c5f09f09e6433502c51c595970edc090551f0db99414")
     version("5.0.1", sha256="0d03255c47eb9bd2f26aa9bb7f2107732e7e8fe195ca2f64709fcf3b0a4a085c")
     version("4.1.0", sha256="0900d8b37eba61a802ee40ac0061f8c2b5dee29c1927dd1d233e075ebf5a71da")
@@ -23,7 +24,19 @@ class PyBleach(PythonPackage):
     version("3.1.0", sha256="3fdf7f77adcf649c9911387df51254b813185e32b2c6619f690b593a617e19fa")
     version("1.5.0", sha256="978e758599b54cd3caa2e160d74102879b230ea8dc93871d0783721eef58bc65")
 
+    variant("css", default=False, when="@5:", description="Add css support")
+
+    depends_on("python@3.9:", type=("build", "run"), when="@6.2:")
+    depends_on("python@3.8:", type=("build", "run"), when="@6.1:")
+    depends_on("python@3.7:", type=("build", "run"), when="@5:")
     depends_on("py-setuptools", type=("build", "run"))
-    depends_on("py-six@1.9.0:", type=("build", "run"))
     depends_on("py-webencodings", type=("build", "run"))
-    depends_on("py-packaging", when="@3.1.5:4", type=("build", "run"))
+
+    with when("+css"):
+        depends_on("py-tinycss2@1.1:1.4", type=("build", "run"), when="@6.2:")
+        depends_on("py-tinycss2@1.1:1.2", type=("build", "run"), when="@6.1")
+        depends_on("py-tinycss2@1.1", type=("build", "run"), when="@:6.0")
+
+    # Historical dependencies
+    depends_on("py-six@1.9.0:", type=("build", "run"), when="@:6.1")
+    depends_on("py-packaging", type=("build", "run"), when="@3.1.5:4")

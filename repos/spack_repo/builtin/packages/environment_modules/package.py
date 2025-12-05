@@ -13,13 +13,15 @@ class EnvironmentModules(Package):
     modification of a user's environment via module files.
     """
 
-    homepage = "https://cea-hpc.github.io/modules/"
-    url = "https://github.com/cea-hpc/modules/releases/download/v5.5.0/modules-5.5.0.tar.gz"
-    git = "https://github.com/cea-hpc/modules.git"
+    homepage = "https://envmodules.io"
+    url = "https://github.com/envmodules/modules/releases/download/v5.6.1/modules-5.6.1.tar.gz"
+    git = "https://github.com/envmodules/modules.git"
 
     maintainers("xdelaruelle")
 
     version("main", branch="main")
+    version("5.6.1", sha256="b175e57860e62d87b6118a79cc2d76e857e5774a9ff78558d6726122760b0034")
+    version("5.6.0", sha256="9dd78f1543012acd3a1a14ba86dc1dca8f7d176396ea3f0027a92dcf5ff2057c")
     version("5.5.0", sha256="ad0e360c7adc2515a99836863d98499b3ad89cd7548625499b20293845b040cb")
     version("5.4.0", sha256="586245cbf9420866078d8c28fce8ef4f192530c69a0f368f51e848340dcf3b90")
     version("5.3.1", sha256="d02f9ce4f8baf6c99edceb7c73bfdd1e97d77bcc4725810b86efed9f58dda962")
@@ -60,7 +62,13 @@ class EnvironmentModules(Package):
         url="http://prdownloads.sourceforge.net/modules/modules-3.2.10.tar.gz",
     )
 
-    variant("X", default=True, description="Build with X functionality")
+    variant("X", default=True, when="@:3.2", description="Build with X functionality")
+
+    # Enable all new features that are disabled by default due to the substantial behavior changes
+    # see https://modules.readthedocs.io/en/latest/INSTALL.html#instopt-enable-new-features
+    variant(
+        "new-features", default=True, when="@5.0:", description="Build with new features enabled"
+    )
 
     depends_on("c", type="build")  # generated
 
@@ -82,6 +90,13 @@ class EnvironmentModules(Package):
     depends_on("tcl@8.5:8", type=("build", "link", "run"), when="@5.0.0:5.4.0")
     depends_on("tcl@8.5:", type=("build", "link", "run"), when="@5.5.0:")
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("@:3.2"):
+                flags.append("-Wno-error=implicit-function-declaration")
+                flags.append("-Wno-error=int-conversion")
+        return (flags, None, None)
+
     def install(self, spec, prefix):
         tcl = spec["tcl"]
 
@@ -93,15 +108,15 @@ class EnvironmentModules(Package):
         ]
 
         # ./configure script on version 4.5.2 breaks when specific options are
-        # set (see https://github.com/cea-hpc/modules/issues/354)
+        # set (see https://github.com/envmodules/modules/issues/354)
         if not spec.satisfies("@4.5.2"):
             config_args.extend(["--disable-dependency-tracking", "--disable-silent-rules"])
 
         if spec.satisfies("~X"):
-            config_args = ["--without-x"] + config_args
+            config_args.extend(["--without-x"])
 
-        if self.spec.satisfies("@5.5.0:"):
-            config_args.extend(["--enable-conflict-unload"])
+        if spec.satisfies("+new-features"):
+            config_args.extend(["--enable-new-features"])
 
         if self.spec.satisfies("@4.4.0:4.8"):
             config_args.extend(

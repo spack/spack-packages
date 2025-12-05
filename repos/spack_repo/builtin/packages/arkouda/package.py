@@ -6,7 +6,6 @@
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Arkouda(MakefilePackage):
@@ -16,23 +15,33 @@ class Arkouda(MakefilePackage):
     homepage = "https://github.com/Bears-R-Us/arkouda"
 
     # Arkouda does not have a current PyPI package, so we use the GitHub tarball
-    url = "https://github.com/Bears-R-Us/arkouda/archive/refs/tags/v2024.10.02.tar.gz"
+    list_url = "https://github.com/Bears-R-Us/arkouda/tags"
+    url = "https://github.com/Bears-R-Us/arkouda/archive/refs/tags/v2025.08.20.tar.gz"
     git = "https://github.com/Bears-R-Us/arkouda.git"
 
     # See https://spdx.org/licenses/ for a list.
     license("MIT")
 
     # A list of GitHub accounts to notify when the package is updated.
-    # TODO: add arkouda devs github account
-    maintainers("arezaii")
+    maintainers("1RyanK", "ajpotts", "arezaii", "drculhane", "jaketrookman")
 
-    version("master", branch="master")
+    version("main", branch="main")
 
     version(
-        "2024.10.02", sha256="00671a89a08be57ff90a94052f69bfc6fe793f7b50cf9195dd7ee794d6d13f23"
+        "2025.08.20", sha256="3e305930905397ff3a7a28a5d8cc2c9adca4194ca7f6ee51f749f427a2dea92c"
     )
     version(
-        "2024.06.21", sha256="ab7f753befb3a0b8e27a3d28f3c83332d2c6ae49678877a7456f0fcfe42df51c"
+        "2025.07.03", sha256="eb888fac7b0eec6b4f3bfa0bfe14e5c8f15b449286e84c45ba95c44d8cd3917a"
+    )
+    version(
+        "2024.10.02",
+        sha256="00671a89a08be57ff90a94052f69bfc6fe793f7b50cf9195dd7ee794d6d13f23",
+        deprecated=True,
+    )
+    version(
+        "2024.06.21",
+        sha256="ab7f753befb3a0b8e27a3d28f3c83332d2c6ae49678877a7456f0fcfe42df51c",
+        deprecated=True,
     )
 
     variant(
@@ -41,17 +50,25 @@ class Arkouda(MakefilePackage):
         description="Build Arkouda for multi-locale execution on a cluster or supercomputer",
     )
 
-    depends_on("chapel@2.1: +hdf5 +zmq", type=("build", "link", "run", "test"))
+    depends_on(
+        "chapel@2.0:2.4 +hdf5 +zmq",
+        when="@2025.07.03:2025.08.20",
+        type=("build", "link", "run", "test"),
+    )
+    depends_on(
+        "chapel@2.1: +hdf5 +zmq", when="@:2025.01.13", type=("build", "link", "run", "test")
+    )
+
     depends_on("cmake@3.13.4:", type="build")
     depends_on("python@3.9:", type=("build", "link", "run", "test"))
     depends_on("libzmq@4.2.5:", type=("build", "link", "run", "test"))
     depends_on("hdf5+hl~mpi", type=("build", "link", "run", "test"))
     depends_on("libiconv", type=("build", "link", "run", "test"))
     depends_on("libidn2", type=("build", "link", "run", "test"))
-    depends_on(
-        "arrow +parquet +snappy +zlib +brotli +bz2 +lz4 +zstd",
-        type=("build", "link", "run", "test"),
-    )
+    depends_on("arrow@:19+brotli+bz2+lz4+parquet+snappy+zlib+zstd", type=("build", "link", "run"))
+
+    # force lz4 to use cmake (add as a direct dep to control its variant)
+    depends_on("lz4 build_system=cmake", type="build")
 
     requires("^chapel comm=none", when="~distributed")
     requires("^chapel +python-bindings", when="@2024.10.02:")

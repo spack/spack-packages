@@ -20,6 +20,7 @@ class RRsamtools(RPackage):
 
     license("MIT")
 
+    version("2.24.0", commit="5fa43af28dd6ae25fbabd23e2e7329003ba53e30")
     version("2.16.0", commit="3eb6d03acecb8d640ec5201cacdc322e9e0c2445")
     version("2.14.0", commit="8302eb7fa1c40384f1af5855222d94f2efbdcad1")
     version("2.12.0", commit="d6a65dd57c5a17e4c441a27492e92072f69b175e")
@@ -55,11 +56,14 @@ class RRsamtools(RPackage):
     depends_on("r-rhtslib@1.16.3", type=("build", "run"), when="@2.0.3")
     depends_on("r-rhtslib@1.17.7:", type=("build", "run"), when="@2.2.1:")
     depends_on("r-rhtslib@1.99.3:", type=("build", "run"), when="@2.14.0:")
+    depends_on("r-rhtslib@3.3.1:", type=("build", "run"), when="@2.24.0:")
     depends_on("gmake", type="build")
 
     # this is not a listed dependency but is needed
     depends_on("curl")
     depends_on("zlib-api")
+
+    conflicts("r@4.5.0:", when="@:2.23")
 
     def patch(self):
         with working_dir("src"):

@@ -15,8 +15,13 @@ from spack_repo.builtin.build_systems.cmake import generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.platforms.cray
 from spack.package import *
+
+
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
 
 
 class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
@@ -38,11 +43,6 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("benchmarking", branch="benchmarking")
     version("0.104", sha256="a847c7789082ab623ed5922ab1248dd95f5f89d93eed44ac3d6a474703bbc0bf")
     version("0.103", sha256="9da1bf308f38323e30cb07f8ecf8efa05c7f50560e8683b9cd961102b1b3e25a")
-    version(
-        "0.102",
-        sha256="3734a76794991207e2dd2221f05f0e63a86ddafa777515d93d99d48629140f1a",
-        deprecated=True,
-    )
 
     variant(
         "build_type",
@@ -59,8 +59,7 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
         "distconv",
         default=False,
         sticky=True,
-        description="Builds with support for spatial, filter, or channel "
-        "distributed convolutions",
+        description="Builds with support for spatial, filter, or channel distributed convolutions",
     )
     variant(
         "dtype",
@@ -80,6 +79,7 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
         default=False,
         description="Builds with support for image processing data with OpenCV",
     )
+    variant("slingshot", default=slingshot_network(), description="Enable slingshot support")
     variant("vtune", default=False, description="Builds with support for Intel VTune")
     variant("onednn", default=False, description="Support for OneDNN")
     variant("onnx", default=False, description="Support for exporting models into ONNX format")
@@ -164,13 +164,8 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
     # Note that while Aluminum typically includes the dependency for the AWS OFI
     # plugins, if Aluminum is pre-built, LBANN needs to make sure that the module
     # is loaded
-    with when("+cuda"):
-        if spack.platforms.cray.slingshot_network():
-            depends_on("aws-ofi-nccl")  # Note: NOT a CudaPackage
-
-    with when("+rocm"):
-        if spack.platforms.cray.slingshot_network():
-            depends_on("aws-ofi-rccl")
+    depends_on("aws-ofi-nccl", when="+cuda +slingshot")
+    depends_on("aws-ofi-rccl", when="+rocm +slingshot")
 
     depends_on("hdf5+mpi", when="+distconv")
 

@@ -4,6 +4,7 @@
 
 import collections
 import os
+from pathlib import Path
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
@@ -35,6 +36,7 @@ class Plumed(AutotoolsPackage):
 
     version("master", branch="master")
 
+    version("2.10.0", sha256="ca6410d47e91b4e0f953e1a8933f15b05c4681167611ab3b096ab121155f6879")
     version("2.9.2", sha256="301fbc958374f81d9b8c7a1eac73095f6dded52cce73ce33d64bdbebf51ac63d")
     version("2.9.1", sha256="e24563ad1eb657611918e0c978d9c5212340f128b4f1aa5efbd439a0b2e91b58")
     version("2.9.0", sha256="612d2387416b5f82dd8545709921440370e144fd46cef633654cf0ee43bac5f8")
@@ -69,55 +71,6 @@ class Plumed(AutotoolsPackage):
     version("2.5.1", sha256="de309980dcfd6f6e0e70e138856f4bd9eb4d8a513906a5e6389f18a5af7f2eba")
     version("2.5.0", sha256="53e08187ec9f8af2326fa84407e34644a7c51d2af93034309fb70675eee5e4f7")
 
-    # These versions don't build in CI.
-    version(
-        "2.4.6",
-        sha256="c22ad19f5cd36ce9fe4ba0b53158fc2a3d985c48fc04606e3f3b3e835b994cb3",
-        deprecated=True,
-    )
-    version(
-        "2.4.4",
-        sha256="1e5c24109314481fad404da97d61c7339b219e27e120c9c80bacc79c9f6a51a8",
-        deprecated=True,
-    )
-    version(
-        "2.4.2",
-        sha256="528ce57f1f5330480bcd403140166a4580efd2acaea39c85dfeca5e2cd649321",
-        deprecated=True,
-    )
-    version(
-        "2.4.1",
-        sha256="f00410ebdd739c2ddf55fcd714ff4bd88a1029e02d2fc9cea0b5fca34e0fc4eb",
-        deprecated=True,
-    )
-
-    version(
-        "2.3.5",
-        sha256="a6a66ca4582c1aecc6138c96be015e13cd06a718e8446b2f13e610fe34602e4f",
-        deprecated=True,
-    )
-    version(
-        "2.3.3",
-        sha256="ac058ff529f207d5b4169fb5a87bdb3c77307dfef1ac543ad8b6c74c5de7fc91",
-        deprecated=True,
-    )
-    version(
-        "2.3.0",
-        sha256="b1c8a54a313a0569e27e36420770074f35406453f73de70e55c424652abeddf1",
-        deprecated=True,
-    )
-
-    version(
-        "2.2.4",
-        sha256="d7a1dba34a7fe03f23e8d39ab6e15b230c4851373fdceb3602e2de26ea53ce37",
-        deprecated=True,
-    )
-    version(
-        "2.2.3",
-        sha256="2db19c5f6a2918833941d0bf47b5431d0865529d786df797ccc966d763ed7b0c",
-        deprecated=True,
-    )
-
     # Variants. PLUMED by default builds a number of optional modules.
     # The ones listed here are not built by default for various reasons,
     # such as stability, lack of testing, or lack of demand.
@@ -137,39 +90,36 @@ class Plumed(AutotoolsPackage):
     # These are implemented using multi-valued variants (`disjoint_sets`),
     # and the `conditional` option to handle version conflicts.
     single_optional_modules = (
-        conditional("adjmat", when="@2.3:"),
+        "adjmat",
         "analysis",
         conditional("annfunc", when="@2.6:"),
         "bias",
         "cltools",
         "colvar",
         "crystallization",
-        conditional("dimred", when="@2.5:"),
-        conditional("drr", when="@2.4:"),
-        conditional("eds", when="@2.4:"),
+        "dimred",
+        "drr",
+        "eds",
         conditional("fisst", when="@2.7:"),
         "function",
         conditional("funnel", when="@2.7:"),
         "generic",
-        conditional("imd", when="@:2.2.99"),
-        conditional("isdb", when="@2.4:"),
-        conditional("logmfd", when="@2.5:"),
+        "isdb",
+        "logmfd",
         "manyrestraints",
         "mapping",
         conditional("maze", when="@2.6:"),
         "molfile",
         "multicolvar",
         conditional("opes", when="@2.7:"),
-        conditional("pamm", when="@2.5: optional_modules=adjmat"),
-        conditional("piv", when="@2.5:"),
-        conditional("reference", when="@:2.2.99"),
+        conditional("pamm", when="optional_modules=adjmat"),
+        "piv",
         conditional("s2cm", when="@2.8:"),
         conditional("sasa", when="@2.8:"),
         "secondarystructure",
         "setup",
         "vatom",
-        conditional("ves", when="@2.4:"),
-        conditional("vesselbase", when="@:2.2.99"),
+        "ves",
         conditional("xdrfile", when="@2.8:"),
     )
 
@@ -190,6 +140,8 @@ class Plumed(AutotoolsPackage):
         values=("none", "cpu", "cuda", "opencl"),
         description="Activates FireArray support",
     )
+    variant("pytorch", default=False, description="Activates PyTorch support", when="@2.9:")
+    variant("metatomic", default=False, description="Activates metatomic support", when="@2.10:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -199,9 +151,6 @@ class Plumed(AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("blas")
     depends_on("lapack")
-    # For libmatheval support through the 'function' module
-    # which is enabled by default (or when optional_modules=all)
-    depends_on("libmatheval", when="@:2.4")
     depends_on("arrayfire", when="arrayfire=cpu")
     depends_on("arrayfire+cuda", when="arrayfire=cuda")
     depends_on("arrayfire+opencl", when="arrayfire=opencl")
@@ -213,11 +162,24 @@ class Plumed(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("py-cython", type="build", when="@2.5:")
+    depends_on("py-cython", type="build")
+
+    depends_on("py-torch", when="+pytorch")
+    conflicts("+metatomic ~pytorch", msg="metatomic support requires PyTorch")
+    depends_on("libmetatomic-torch", when="+metatomic")
+
+    # https://github.com/plumed/plumed2/issues/1256
+    conflicts("^py-cython@3.1:", when="@:2.9.3")
+
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/plumed/plumed2/pull/1313.patch?full_index=1",
+        sha256="d4d2b6a178e4b38863f2acc9450ae27b4652368c369e96dd093bbdffaf811105",
+        when="@2.10.0",
+    )
 
     force_autoreconf = True
 
-    parallel = False
+    parallel = True
 
     def apply_patch(self, other):
         # The name of MD engines differ slightly from the ones used in Spack
@@ -261,7 +223,6 @@ class Plumed(AutotoolsPackage):
         # provided by optimized libraries due to linking order
         filter_file("-lgslcblas", "", "configure.ac")
 
-    @when("@2.5:")
     def patch(self):
         # Ensure Spack's wrappers are used to compile the Python interface
         env = (
@@ -292,6 +253,8 @@ class Plumed(AutotoolsPackage):
         # the issue saying we have no LD_RO executable.
         configure_opts = ["--disable-ld-r"]
 
+        configure_opts.append("--disable-doc")
+
         # If using MPI then ensure the correct compiler wrapper is used.
         if "+mpi" in spec:
             configure_opts.extend(["--enable-mpi", "CXX={0}".format(spec["mpi"].mpicxx)])
@@ -301,19 +264,57 @@ class Plumed(AutotoolsPackage):
             if spec.satisfies("^[virtuals=mpi] intel-oneapi-mpi"):
                 configure_opts.extend(["STATIC_LIBS=-mt_mpi"])
 
+        enable_libmetatomic = self.spec.satisfies("+metatomic")
+        enable_libtorch = self.spec.satisfies("+pytorch")
+
+        extra_ldflags = []
         extra_libs = []
+        extra_cppflags = []
         # Set flags to help find gsl
         if "+gsl" in spec:
             gsl_libs = spec["gsl"].libs
             blas_libs = spec["blas"].libs
-            extra_libs.append((gsl_libs + blas_libs).ld_flags)
+            extra_ldflags.append((gsl_libs + blas_libs).search_flags)
+            extra_libs.append((gsl_libs + blas_libs).link_flags)
+            extra_cppflags.extend(
+                [spec["gsl"].headers.include_flags, spec["blas"].headers.include_flags]
+            )
         # Set flags to help with ArrayFire
         if "arrayfire=none" not in spec:
             libaf = "arrayfire:{0}".format(spec.variants["arrayfire"].value)
-            extra_libs.append(spec[libaf].libs.search_flags)
+            extra_ldflags.append(spec[libaf].libs.search_flags)
+            extra_libs.append(spec[libaf].libs.link_flags)
+            extra_cppflags.append(spec[libaf].headers.include_flags)
+        # Set flags to help with PyTorch
+        if enable_libtorch:
+            pytorch_path = Path(spec["py-torch"].package.cmake_prefix_paths[0]).parent.parent
+            extra_ldflags.append(spec["py-torch"].libs.search_flags)
+            extra_libs.append(spec["py-torch"].libs.link_flags)
+            extra_ldflags.append(spec["python"].libs.search_flags)
+            extra_libs.append(spec["python"].libs.link_flags)
+            # Add include paths manually
+            # Spack HeaderList.cpp_flags does not support include paths within include paths
+            extra_cppflags.extend(
+                [
+                    f"-I{pytorch_path / 'include'}",
+                    f"-I{pytorch_path / 'include' / 'torch' / 'csrc' / 'api' / 'include'}",
+                    spec["python"].headers.include_flags,
+                ]
+            )
+        if enable_libmetatomic:
+            for libname in ["libmetatensor", "libmetatensor-torch", "libmetatomic-torch"]:
+                extra_ldflags.append(spec[libname].libs.search_flags)
+                extra_libs.append(spec[libname].libs.link_flags)
+                extra_cppflags.append(spec[libname].headers.include_flags)
+
+        if extra_ldflags:
+            configure_opts.append("LDFLAGS={0}".format(" ".join(extra_ldflags)))
 
         if extra_libs:
-            configure_opts.append("LDFLAGS={0}".format(" ".join(extra_libs)))
+            configure_opts.append("LIBS={0}".format(" ".join(extra_libs)))
+
+        if extra_cppflags:
+            configure_opts.append("CPPFLAGS={0}".format(" ".join(extra_cppflags)))
 
         # Additional arguments
         configure_opts.extend(
@@ -323,11 +324,14 @@ class Plumed(AutotoolsPackage):
                 "--enable-af_cpu={0}".format("yes" if "arrayfire=cpu" in spec else "no"),
                 "--enable-af_cuda={0}".format("yes" if "arrayfire=cuda" in spec else "no"),
                 "--enable-af_ocl={0}".format("yes" if "arrayfire=ocl" in spec else "no"),
+                "--enable-libtorch={0}".format("yes" if enable_libtorch else "no"),
+                "--enable-libmetatomic={0}".format("yes" if enable_libmetatomic else "no"),
             ]
         )
 
         # Construct list of optional modules
-        optional_modules = self.spec.variants["optional_modules"].value
+        optional_modules = spec.variants["optional_modules"].value
+
         # Predefined set of modules
         if "all" in optional_modules:
             selected_modules = "all"
@@ -335,9 +339,16 @@ class Plumed(AutotoolsPackage):
             selected_modules = "reset"
         # Custom set of modules
         else:
+            # Ensure modules from variants
+            if spec.satisfies("+pytorch") or sepec.satisfies("+metatomic"):
+                optional_modules += ("pytorch",)
+            if spec.satisfies("+libmetatomic"):
+                optional_modules += ("metatomic",)
+
             selected_modules = "none"
             for mod in optional_modules:
                 selected_modules += ":+{0}".format(mod)
+
         configure_opts.append("--enable-modules={0}".format(selected_modules))
 
         return configure_opts

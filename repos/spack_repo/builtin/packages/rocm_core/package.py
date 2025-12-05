@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -14,13 +15,18 @@ class RocmCore(CMakePackage):
     getROCmVersion function provides the ROCm version."""
 
     homepage = "https://github.com/ROCm/rocm-core"
-    url = "https://github.com/ROCm/rocm-core/archive/refs/tags/rocm-6.2.4.tar.gz"
+    url = "https://github.com/ROCm/rocm-core/archive/refs/tags/rocm-6.4.2.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocm-core"]
 
     license("MIT")
+    version("7.0.2", sha256="2d126d47aa4523d84e5ab026680fa2b1145db332ff5e4aa74b48f8ed0ecd975d")
+    version("7.0.0", sha256="d7741e12d184a6553f6d39b3ff4d113a2e7eeb509d5ec08e06cdaf51dcd26f90")
+    version("6.4.3", sha256="dae6e06739882a3ce7be13ac300c22ab35ce80b4e853a21a1a3237fdc0411eb9")
+    version("6.4.2", sha256="f3af7cfd930e20610736335ea860b9a39fb9bba4153fdc34b46ffe7da86a40ab")
+    version("6.4.1", sha256="ac56938879a550ecd55ef5c00067203a0b3faf5a17a48d649728b1a3c65b040c")
     version("6.4.0", sha256="058739404c91105c1b34117803f6b48917a23191291ce67020e6b983b45450c1")
     version("6.3.3", sha256="d2a3900424dea1dcc0e303c288d2c07e1345c2d5348398449998e8007fe7fd44")
     version("6.3.2", sha256="3243f661e5e995341e81127a6096ac80169b8481826ebadc02e24020f1ff985d")
@@ -36,10 +42,6 @@ class RocmCore(CMakePackage):
     version("6.0.0", sha256="d950ee4b63336f34579b6e1dda2d05966b7afa9c84bcdc13874991d1147dc788")
     version("5.7.1", sha256="fc4915019ddfd126e8ef6a15006bce3aa7bd5fd11dc8eb04ce2ee6bdf9c6ae7f")
     version("5.7.0", sha256="722689bfec46c35f5428a41c5aacfc31efec2294fc3b0112861c562f8a71ac93")
-    version("5.6.1", sha256="eeef75e16e05380ccbc8df17a02dc141a66dddaadb444a97f7278f78067c498c")
-    version("5.6.0", sha256="3c3d47c8b774968d768d42810a3fed42d058b7d6da248d5295df2a7ffb262568")
-    version("5.5.1", sha256="bc73060432ffdc2e210394835d383890b9652476074ef4708d447473f273ce76")
-    version("5.5.0", sha256="684d3312bb14f05dc280cf136f5eddff38ba340cd85c383d6a217d8e27d3d57d")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -61,8 +63,24 @@ class RocmCore(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

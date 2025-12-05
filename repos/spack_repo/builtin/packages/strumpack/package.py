@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -9,7 +8,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
@@ -96,6 +94,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zfp@0.5.5", when="@:7.0.1 +zfp")
     depends_on("zfp", when="@7.0.2: +zfp")
     depends_on("hipblas", when="+rocm")
+    depends_on("hipblas@:6", when="@:8.0.0 +rocm")
     depends_on("hipsparse", type="link", when="@7.0.1: +rocm")
     depends_on("rocsolver", when="+rocm")
     depends_on("rocthrust", when="+rocm")

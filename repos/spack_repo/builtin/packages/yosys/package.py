@@ -30,6 +30,14 @@ class Yosys(MakefilePackage):
 
     version("master", branch="master")
 
+    version("0.60", commit="5bafeb77dc71e054fa331ab9efa613e6fb0a1c49", submodules=True)
+    version("0.59.1", commit="26b51148a80ea546481cf4f0516be97e4ba251cc", submodules=True)
+    version("0.59", commit="03eb2206d7b8a830dd32d0e1673986318111a4c3", submodules=True)
+    version("0.58", commit="157aabb5831cc77d08346001c4a085f188d7c736", submodules=True)
+    version("0.57", commit="3aca86049e79a165932e3e7660358376f45acaed", submodules=True)
+    version("0.56", commit="9c447ad9d4b1ea589369364eea38b4d70da2c599", submodules=True)
+    version("0.55", commit="60f126cd00c94892782470192d6c9f7abebe7c05", submodules=True)
+    version("0.54", commit="db72ec3bde296a9512b2d1e6fabf81cfb07c2c1b", submodules=True)
     version("0.53", commit="53c22ab7c0ced80861c7536c5dae682c30fb5834", submodules=True)
     version("0.52", commit="fee39a3284c90249e1d9684cf6944ffbbcbb8f90", submodules=True)
     version("0.51", commit="c4b5190229616f7ebf8197f43990b4429de3e420", submodules=True)
@@ -90,13 +98,13 @@ class Yosys(MakefilePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("PREFIX", self.prefix)
-        env.set("CXXFLAGS", f'-I{self.spec["readline"].prefix.include}')
+        env.set("CXXFLAGS", f"-I{self.spec['readline'].prefix.include}")
         env.set(
-            "LDFLAGS", f'-L{self.spec["readline"].prefix.lib} -L{self.spec["zlib"].prefix.lib}'
+            "LDFLAGS", f"-L{self.spec['readline'].prefix.lib} -L{self.spec['zlib'].prefix.lib}"
         )
         if self.spec.satisfies("+abc"):
             env.set("ENABLE_ABC", "1")
-            env.set("ABC_READLINE_INCLUDES", f'-I{self.spec["readline"].prefix.include}')
+            env.set("ABC_READLINE_INCLUDES", f"-I{self.spec['readline'].prefix.include}")
         else:
             env.set("ENABLE_ABC", "0")
         if self.spec.satisfies("+ccache"):

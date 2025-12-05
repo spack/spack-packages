@@ -26,6 +26,7 @@ class Proj(CMakePackage, AutotoolsPackage):
 
     license("MIT")
 
+    version("9.7.0", sha256="65705ecd987b50bf63e15820ce6bd17c042feaabda981249831bd230f6689709")
     version("9.4.1", sha256="ffe20170ee2b952207adf8a195e2141eab12cda181e49fdeb54425d98c7171d7")
     version("9.4.0", sha256="3643b19b1622fe6b2e3113bdb623969f5117984b39f173b4e3fb19a8833bd216")
     version("9.3.1", sha256="b0f919cb9e1f42f803a3e616c2b63a78e4d81ecfaed80978d570d3a5e29d10bc")
@@ -46,11 +47,6 @@ class Proj(CMakePackage, AutotoolsPackage):
     version("7.2.0", sha256="2957798e5fe295ff96a2af1889d0428e486363d210889422f76dd744f7885763")
     version("7.1.0", sha256="876151e2279346f6bdbc63bd59790b48733496a957bccd5e51b640fdd26eaa8d")
     version("7.0.1", sha256="a7026d39c9c80d51565cfc4b33d22631c11e491004e19020b3ff5a0791e1779f")
-    version(
-        "7.0.0",
-        sha256="ee0e14c1bd2f9429b1a28999240304c0342ed739ebaea3d4ff44c585b1097be8",
-        deprecated=True,
-    )
     version("6.3.2", sha256="cb776a70f40c35579ae4ba04fb4a388c1d1ce025a1df6171350dc19f25b80311")
     version("6.3.1", sha256="6de0112778438dcae30fcc6942dee472ce31399b9e5a2b67e8642529868c86f8")
     version("6.2.0", sha256="b300c0f872f632ad7f8eb60725edbf14f0f8f52db740a3ab23e7b94f1cd22a50")
@@ -61,21 +57,6 @@ class Proj(CMakePackage, AutotoolsPackage):
     version("5.0.1", sha256="a792f78897482ed2c4e2af4e8a1a02e294c64e32b591a635c5294cb9d49fdc8c")
     version("4.9.2", sha256="60bf9ad1ed1c18158e652dfff97865ba6fb2b67f1511bc8dceae4b3c7e657796")
     version("4.9.1", sha256="fca0388f3f8bc5a1a803d2f6ff30017532367992b30cf144f2d39be88f36c319")
-    version(
-        "4.8.0",
-        sha256="2db2dbf0fece8d9880679154e0d6d1ce7c694dd8e08b4d091028093d87a9d1b5",
-        deprecated=True,
-    )
-    version(
-        "4.7.0",
-        sha256="fc5440002a496532bfaf423c28bdfaf9e26cc96c84ccefcdefde911efbd98986",
-        deprecated=True,
-    )
-    version(
-        "4.6.1",
-        sha256="76d174edd4fdb4c49c1c0ed8308a469216c01e7177a4510b1b303ef3c5f97b47",
-        deprecated=True,
-    )
 
     variant("tiff", default=True, when="@7:", description="Enable TIFF support")
     variant("curl", default=True, when="@7:", description="Enable curl support")
@@ -116,9 +97,29 @@ class Proj(CMakePackage, AutotoolsPackage):
         # https://github.com/OSGeo/PROJ/pull/3374
         patch("proj-8-tiff.patch", when="@8:9.1")
         patch("proj-7-tiff.patch", when="@7")
+        # The two patches above add linkage to the TIFF::TIFF
+        # CMake target, but fail to add a find_dependency
+        # in the exported CMake config
+        # add that.
+        # Upstream in proj as of 9.2
+        patch("proj_config_find_tiff_dep.patch", when="@7:9.1")
         # https://github.com/spack/spack/pull/41065
         patch("proj.cmakelists.5.0.patch", when="@5.0")
         patch("proj.cmakelists.5.1.patch", when="@5.1:5.2")
+
+        # proj 8-9.1 relies on an undocumented side effect of CMake's
+        # FindCurl module, patch it to use the interface supported by
+        # both curl's cmake module and CMake's find curl module
+        # This is fixed in proj upstream as of 9.2
+        # there is a slight difference in requirements for 8 vs 9:9.1
+        # hence two patches
+        patch("proj_8_include_curl_dirs.patch", when="@8")
+        patch("proj_9_include_curl_dirs.patch", when="@9:9.1")
+
+        # proj 8 uses CURL_LIBRARY instead of the correct
+        # CURL_LIBRARIES, patch to correct that useage
+        # fixed in upstream proj as of 9
+        patch("proj_8_curl_libraries.patch", when="@8")
 
         depends_on("cmake@3.16:", when="@9.4:", type="build")
         depends_on("cmake@3.9:", when="@6:", type="build")
@@ -126,7 +127,7 @@ class Proj(CMakePackage, AutotoolsPackage):
         depends_on("cmake@2.6:", when="@:4", type="build")
 
     with when("build_system=autotools"):
-        depends_on("pkgconfig@0.9:", when="@6:", type="build")
+        depends_on("pkgconfig", when="@6:", type="build")
 
     depends_on("sqlite@3.11:", when="@6:")
     depends_on("libtiff@4:", when="@7:+tiff")
@@ -175,6 +176,8 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
         else:
             test_flag = "PROJ4_TESTS"
         args.append(self.define(test_flag, self.pkg.run_tests))
+        if self.spec["curl"].satisfies("build_system=cmake"):
+            args.append(self.define("CMAKE_CXX_FLAGS", "-DCURL_STATICLIB"))
         return args
 
 

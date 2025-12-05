@@ -31,6 +31,7 @@ class Boost(Package):
     license("BSL-1.0")
 
     version("develop", branch="develop", submodules=True)
+    version("1.89.0", sha256="85a33fa22621b4f314f8e85e1a5e2a9363d22e4f4992925d4bb3bc631b5a0c7a")
     version("1.88.0", sha256="46d9d2c06637b219270877c9e16155cbd015b6dc84349af064c088e9b5b12f7b")
     version("1.87.0", sha256="af57be25cb4c4f4b413ed692fe378affb4352ea50fbe294a11ef548f4d527d89")
     version("1.86.0", sha256="1bed88e40401b2cb7a1f76d4bab499e352fa4d0c5f31c0dbae64e24d34d7513b")
@@ -100,7 +101,6 @@ class Boost(Package):
             "+random",
             "+regex",
             "+serialization",
-            "+signals",
             "+system",
             "+test",
             "+thread",
@@ -124,6 +124,7 @@ class Boost(Package):
         "container",
         "context",
         "contract",
+        "conversion",
         "coroutine",
         "date_time",
         "exception",
@@ -145,6 +146,7 @@ class Boost(Package):
         "regex",
         "serialization",
         "signals",
+        "signals2",
         "stacktrace",
         "system",
         "test",
@@ -155,8 +157,16 @@ class Boost(Package):
         "wave",
     ]
 
-    # Add any extra requirements for specific
-    all_libs_opts = {"charconv": {"when": "@1.85.0:"}, "cobalt": {"when": "@1.84.0:"}}
+    # Add any extra requirements for specific libraries
+    # signals library was removed from boost in 1.69
+    # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
+    all_libs_opts = {
+        "conversion": {"when": "@1.87.0:"},
+        "charconv": {"when": "@1.85.0:"},
+        "cobalt": {"when": "@1.84.0:"},
+        "signals": {"when": "@:1.68"},
+        "signals2": {"when": "@1.4:"},
+    }
 
     for lib in all_libs:
         lib_opts = all_libs_opts.get(lib, {})
@@ -238,7 +248,7 @@ class Boost(Package):
         values=("global", "protected", "hidden"),
         default="hidden",
         multi=False,
-        description="Default symbol visibility in compiled libraries " "(1.69.0 or later)",
+        description="Default symbol visibility in compiled libraries (1.69.0 or later)",
     )
 
     depends_on("c", type="build")
@@ -317,10 +327,20 @@ class Boost(Package):
     # safe to do so on affected platforms.
     conflicts("+clanglibcpp", when="@1.85: +stacktrace")
 
+    # https://github.com/boostorg/python/issues/400
+    conflicts(
+        "@:1.80.0",
+        when="+python ^python@3.11:",
+        msg="Boost.python.enum has a known bug for boost@:1.80.0 and python@3.11:",
+    )
+
     # On Windows, the signals variant is required when building any of
     # the all_libs variants.
     for lib in all_libs:
-        requires("+signals", when=f"+{lib} platform=windows")
+        if lib not in ["signals", "signals2"]:
+            # <= 1.68 needs signals, after that needs signals2
+            requires("+signals", when=f"@:1.68 +{lib} platform=windows")
+            requires("+signals2", when=f"@1.69: +{lib} platform=windows")
 
     # Patch fix from https://svn.boost.org/trac/boost/ticket/11856
     patch("boost_11856.patch", when="@1.60.0%gcc@4.4.7")
@@ -357,6 +377,14 @@ class Boost(Package):
         "https://482372.bugs.gentoo.org/attachment.cgi?id=356970",
         when="@1.53.0:1.54",
         sha256="b6f6ce68282159d46c716a1e6c819c815914bdb096cddc516fa48134209659f2",
+    )
+
+    # Fix: "Compile issue with flat_tree insert"
+    # See: https://github.com/boostorg/container/pull/101
+    patch(
+        "container_PR101.patch",
+        when="@1.66.0:1.69.0",
+        sha256="d216bf7c826c577912aa518c76c17697898483f95336cc035ae9ed16b12dc2b0",
     )
 
     # Fix: "Unable to compile code using boost/process.hpp"
@@ -716,7 +744,7 @@ class Boost(Package):
         """
         bootstrap_options = list()
         if self.spec.satisfies("%msvc"):
-            bootstrap_options.append(f"vc{self.compiler.platform_toolset_ver}")
+            bootstrap_options.append("vc%s" % self["msvc"].platform_toolset_ver)
         elif self.spec.satisfies("%gcc"):
             bootstrap_options.append("gcc")
         elif self.spec.satisfies("%clang"):

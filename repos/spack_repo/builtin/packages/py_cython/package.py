@@ -16,6 +16,11 @@ class PyCython(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.1.3", sha256="10ee785e42328924b78f75a74f66a813cb956b4a9bc91c44816d089d5934c089")
+    version("3.1.2", sha256="6bbf7a953fa6762dfecdec015e3b054ba51c0121a45ad851fa130f63f5331381")
+    version("3.1.1", sha256="505ccd413669d5132a53834d792c707974248088c4f60c497deb1b416e366397")
+    version("3.1.0", sha256="1097dd60d43ad0fff614a57524bfd531b35c13a907d13bee2cc2ec152e6bf4a1")
+    version("3.0.12", sha256="b988bb297ce76c671e28c97d017b95411010f7c77fa6623dd0bb47eed1aee1bc")
     version("3.0.11", sha256="7146dd2af8682b4ca61331851e6aebce9fe5158e75300343f80c07ca80b1faff")
     version("3.0.10", sha256="dcc96739331fb854dcf503f94607576cfe8488066c61ca50dfd55836f132de99")
     version("3.0.8", sha256="8333423d8fd5765e7cceea3a9985dd1e0a5dfeb2734629e1a2ed2d6233d39de6")
@@ -34,63 +39,18 @@ class PyCython(PythonPackage):
     version("0.29.23", sha256="6a0d31452f0245daacb14c979c77e093eb1a546c760816b5eed0047686baad8e")
     version("0.29.22", sha256="df6b83c7a6d1d967ea89a2903e4a931377634a297459652e4551734c48195406")
     version("0.29.21", sha256="e57acb89bd55943c8d8bf813763d20b9099cc7165c0f16b707631a7654be9cad")
-    with default_args(deprecated=True):
-        version(
-            "0.29.20", sha256="22d91af5fc2253f717a1b80b8bb45acb655f643611983fd6f782b9423f8171c7"
-        )
-        version(
-            "0.29.16", sha256="232755284f942cbb3b43a06cd85974ef3c970a021aef19b5243c03ee2b08fa05"
-        )
-        version(
-            "0.29.15", sha256="60d859e1efa5cc80436d58aecd3718ff2e74b987db0518376046adedba97ac30"
-        )
-        version(
-            "0.29.14", sha256="e4d6bb8703d0319eb04b7319b12ea41580df44fd84d83ccda13ea463c6801414"
-        )
-        version(
-            "0.29.13", sha256="c29d069a4a30f472482343c866f7486731ad638ef9af92bfe5fca9c7323d638e"
-        )
-        version(
-            "0.29.10", sha256="26229570d6787ff3caa932fe9d802960f51a89239b990d275ae845405ce43857"
-        )
-        version(
-            "0.29.7", sha256="55d081162191b7c11c7bfcb7c68e913827dfd5de6ecdbab1b99dab190586c1e8"
-        )
-        version(
-            "0.29.5", sha256="9d5290d749099a8e446422adfb0aa2142c711284800fb1eb70f595101e32cbf1"
-        )
-        version("0.29", sha256="94916d1ede67682638d3cc0feb10648ff14dc51fb7a7f147f4fedce78eaaea97")
-        version(
-            "0.28.6", sha256="68aa3c00ef1deccf4dd50f0201d47c268462978c12c42943bc33dc9dc816ac1b"
-        )
-        version(
-            "0.28.3", sha256="1aae6d6e9858888144cea147eb5e677830f45faaff3d305d77378c3cba55f526"
-        )
-        version(
-            "0.28.1", sha256="152ee5f345012ca3bb7cc71da2d3736ee20f52cd8476e4d49e5e25c5a4102b12"
-        )
-        version(
-            "0.25.2", sha256="f141d1f9c27a07b5a93f7dc5339472067e2d7140d1c5a9e20112a5665ca60306"
-        )
-        version(
-            "0.23.5", sha256="0ae5a5451a190e03ee36922c4189ca2c88d1df40a89b4f224bc842d388a0d1b6"
-        )
-        version(
-            "0.23.4", sha256="fec42fecee35d6cc02887f1eef4e4952c97402ed2800bfe41bbd9ed1a0730d8e"
-        )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@:3.13")
+        depends_on("python@:3.14")
+        depends_on("python@:3.13", when="@:3.1.2")
         depends_on("python@:3.12", when="@:3.0.10")
         depends_on("python@:3.11", when="@:3.0.3")  # Cythonize still used distutils
         depends_on("python@:3.10", when="@:0.29.28")
         depends_on("python@:3.9", when="@:0.29.24")
-        depends_on("python@:3.8", when="@:0.29.20")
-        depends_on("python@:3.7", when="@:0.29.13")
 
     # https://github.com/cython/cython/issues/5751
     # https://github.com/cython/cython/commit/0000fb4c319ef8f7e8eabcc99677f99a8c503cc3

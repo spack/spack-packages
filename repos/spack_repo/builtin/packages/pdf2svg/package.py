@@ -15,14 +15,22 @@ class Pdf2svg(AutotoolsPackage):
 
     license("GPL-2.0-only")
 
+    version("0.2.4", sha256="fd765256f18b5890639e93cabdf631b640966ed1ea9ebd561aede9d3be2155e4")
     version("0.2.3", sha256="4fb186070b3e7d33a51821e3307dce57300a062570d028feccd4e628d50dea8a")
     version("0.2.2", sha256="e5f1d9b78821e44cd85379fb07f38a42f00bb2bde3743b95301ff8c0a5ae229a")
 
     depends_on("c", type="build")  # generated
 
-    depends_on("pkgconfig@0.9.0:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("cairo@1.2.6:")
+    depends_on("cairo@1.16:", when="@0.2.4:")
     depends_on("poppler@0.5.4:+glib")
+
+    conflicts(
+        "^cairo@1.17.6:",
+        when="@:0.2.3",
+        msg="earlier versions produce wrong output with newer cairo versions",
+    )
 
     # Note: the latest version of poppler requires glib 2.41+,
     # but pdf2svg uses g_type_init, which is deprecated in glib 2.36+.

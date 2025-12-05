@@ -14,19 +14,17 @@ class Mivisionx(CMakePackage):
 
     homepage = "https://github.com/ROCm/MIVisionX"
     git = "https://github.com/ROCm/MIVisionX.git"
-    url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.0.tar.gz"
+    url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.3.tar.gz"
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     tags = ["rocm"]
 
-    def url_for_version(self, version):
-        if version == Version("1.7"):
-            return "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/archive/1.7.tar.gz"
-
-        url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
     license("MIT")
+    version("7.0.2", sha256="ae4f230890f0ddaf0be5ea9a891843312e44c86bd8697c7e663cea142722c4de")
+    version("7.0.0", sha256="31a963625e6ab6a85c371c189f265f304d7c75c573189d09882e5b2e7ca131ec")
+    version("6.4.3", sha256="a489623d757d8e9825eb7eef7d799f33c84810ba053ee99106bad5f97058ab15")
+    version("6.4.2", sha256="efdde57dc1c48936f371c3c548f36040bfce74d835cf1f9816076dfa601ce29e")
+    version("6.4.1", sha256="9f1a1a33dc2770ac014e5ea019ebde6cadcca017840753b9cb8cf1598d2d83c8")
     version("6.4.0", sha256="de3902ad2402bf29e4f53617ec10d34188b0c67547fc290390ff0c8ac4ad505a")
     version("6.3.3", sha256="6ab255305b786c6152ffe12211f329d2bc56823bb2192a945b9aa5efe6731b82")
     version("6.3.2", sha256="2e7984e4ef2e6195aa9afa11030b8418aee885bec9befa220b9b53b5229b7fae")
@@ -42,22 +40,9 @@ class Mivisionx(CMakePackage):
     version("6.0.0", sha256="01324a12f21ea0e29a4d7d7c60498ba9231723569fedcdd90f28ddffb5e0570e")
     version("5.7.1", sha256="bfc074bc32ebe84c72149ee6abb30b5b6499023d5b98269232de82e35d0505a8")
     version("5.7.0", sha256="07e4ec8a8c06a9a8bb6394a043c9c3e7176acd3b462a16de91ef9518a64df9ba")
-    version("5.6.1", sha256="b2ff95c1488e244f379482631dae4f9ab92d94a513d180e03607aa1e184b5b0a")
-    version("5.6.0", sha256="34c184e202b1a6da2398b66e33c384d5bafd8f8291089c18539715c5cb73eb1f")
-    version("5.5.1", sha256="e8209f87a57c4222003a936240e7152bbfa496862113358f29d4c3e80d4cdf56")
-    version("5.5.0", sha256="af266550ecccad80f08954f23e47e8264eb338b0928a5314bd6efca349fc5a14")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="4da82974962a70c326ce2427c664517b1efdff436efe222e6bc28817c222a082")
-        version("5.4.0", sha256="caa28a30972704ddbf1a87cefdc0b0a35381d369961c43973d473a1573bd35cc")
-        version("5.3.3", sha256="378fafcb327e17e0e11fe1d1029d1740d84aaef0fd59614ed7376499b3d716f6")
-        version("5.3.0", sha256="58e68f1c78bbe5694e42bf61be177f9e94bfd3e0c113ec6284493c8684836c58")
 
-    # Adding 2 variants OPENCL ,HIP which HIP as default. earlier to 5.0.0,OPENCL
-    # was the default but has change dto HIP from 5.0.0 onwards.
-    # when tested with HIP as true for versions before 5.1.0, build errors were encountered
-    # this was corrected with 5.2.0. Hence it was made as default starting with 5.2.0 onwards
+    # Adding variant HIP which HIP as default.
 
-    variant("opencl", default=False, description="Use OPENCL as the backend")
     variant("hip", default=True, description="Use HIP as backend")
     variant("add_tests", default=False, description="add tests and samples folder")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
@@ -66,52 +51,33 @@ class Mivisionx(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
-    patch("0001-add-half-include-path.patch", when="@5.5")
-    patch("0001-add-half-include-path-5.6.patch", when="@5.6:6.1")
-    patch("0002-add-half-include-path-for-tests.patch", when="@5.5:6.0 +add_tests")
+    patch("0001-add-half-include-path-5.6.patch", when="@:6.1")
+    patch("0002-add-half-include-path-for-tests.patch", when="@:6.0 +add_tests")
     patch("0002-add-half-include-path-for-tests-6.1.0.patch", when="@6.1 +add_tests")
     patch("0002-add-half-include-path-for-tests-6.2.0.patch", when="@6.2.0: +add_tests")
 
-    patch(
-        "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/commit/da24882438b91a0ae1feee23206b75c1a1256887.patch?full_index=1",
-        sha256="41caff199224f904ef5dc2cd9c5602d6cfa41eba6af0fcc782942a09dd202ab4",
-        when="@5.6",
-    )
-
-    conflicts("+opencl", when="@5.6.0:")
-    conflicts("+add_tests", when="@:5.4")
-
     def patch(self):
-        if self.spec.satisfies("@5.1.3: + hip"):
-            filter_file(
-                r"${ROCM_PATH}/include/miopen/config.h",
-                "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
-                "amd_openvx_extensions/CMakeLists.txt",
-                string=True,
-            )
-        if self.spec.satisfies("@5.1.3: + opencl"):
-            filter_file(
-                r"${ROCM_PATH}/include/miopen/config.h",
-                "{0}/include/miopen/config.h".format(self.spec["miopen-opencl"].prefix),
-                "amd_openvx_extensions/CMakeLists.txt",
-                string=True,
-            )
-        if self.spec.satisfies("@5.3.0: + hip"):
-            filter_file(
-                r"${ROCM_PATH}/llvm/bin/clang++",
-                "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
-                "amd_openvx/openvx/hipvx/CMakeLists.txt",
-                "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
-                string=True,
-            )
-        if self.spec.satisfies("@5.5.0:6.1 + hip"):
+        filter_file(
+            r"${ROCM_PATH}/include/miopen/config.h",
+            "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
+            "amd_openvx_extensions/CMakeLists.txt",
+            string=True,
+        )
+        filter_file(
+            r"${ROCM_PATH}/llvm/bin/clang++",
+            "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
+            "amd_openvx/openvx/hipvx/CMakeLists.txt",
+            "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
+            string=True,
+        )
+        if self.spec.satisfies("@:6.1 + hip"):
             filter_file(
                 r"${ROCM_PATH}/llvm/bin/clang++",
                 "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
                 "rocAL/rocAL/rocAL_hip/CMakeLists.txt",
                 string=True,
             )
-        if self.spec.satisfies("@5.5.0:6.0.0 +add_tests"):
+        if self.spec.satisfies("@:6.0.0 +add_tests"):
             filter_file(
                 r"${ROCM_PATH}/include/mivisionx",
                 "{0}/include/mivisionx".format(self.spec.prefix),
@@ -187,23 +153,20 @@ class Mivisionx(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.5:", type="build")
-    depends_on("ffmpeg@:4", type="build", when="@:5.3")
-    depends_on("ffmpeg@4.4", type="build", when="@5.4:")
+    depends_on("ffmpeg@4.4:", type="build")
     depends_on("protobuf@:3", type="build")
     depends_on(
         "opencv@4.5:"
         "+calib3d+features2d+highgui+imgcodecs+imgproc"
         "+video+videoio+flann+photo+objdetect+png+jpeg",
         type="build",
-        when="@5.3:",
     )
     depends_on("openssl")
     depends_on("libjpeg-turbo@2.0.6+partial_decoder", type="build", when="@:6.2.0")
-    depends_on("rpp@1.2.0", when="@5.5:5.6")
-    depends_on("lmdb", when="@5.5:")
-    depends_on("py-setuptools", when="@5.6:")
-    depends_on("py-wheel", when="@5.6:")
-    depends_on("py-pybind11", when="@5.6:")
+    depends_on("lmdb")
+    depends_on("py-setuptools")
+    depends_on("py-wheel")
+    depends_on("py-pybind11")
     depends_on("py-google-api-python-client", when="+add_tests")
     depends_on("py-protobuf@3.20.3", type=("build", "run"), when="+add_tests")
     depends_on("py-future", when="+add_tests")
@@ -211,26 +174,8 @@ class Mivisionx(CMakePackage):
     depends_on("py-pytz", when="+add_tests")
     depends_on("rapidjson", when="@5.7:")
 
-    # need to choose atleast one backend and both cannot be set
-    # HIP as backend did not build for older releases 5.1.0 where
-    # OPENCL was default backend.
-    conflicts("+opencl+hip")
-
-    with when("+opencl"):
-        for ver in ["5.3.0", "5.3.3", "5.4.0", "5.4.3", "5.5.0", "5.5.1"]:
-            depends_on(f"rocm-opencl@{ver}", when=f"@{ver}")
-            depends_on(f"miopengemm@{ver}", when=f"@{ver}")
-            depends_on(f"miopen-opencl@{ver}", when=f"@{ver}")
     with when("+hip"):
         for ver in [
-            "5.3.0",
-            "5.3.3",
-            "5.4.0",
-            "5.4.3",
-            "5.5.0",
-            "5.5.1",
-            "5.6.0",
-            "5.6.1",
             "5.7.0",
             "5.7.1",
             "6.0.0",
@@ -246,81 +191,24 @@ class Mivisionx(CMakePackage):
             "6.3.2",
             "6.3.3",
             "6.4.0",
+            "6.4.1",
+            "6.4.2",
+            "6.4.3",
+            "7.0.0",
+            "7.0.2",
         ]:
-            depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
-        for ver in [
-            "5.3.3",
-            "5.4.0",
-            "5.4.3",
-            "5.5.0",
-            "5.5.1",
-            "5.6.0",
-            "5.6.1",
-            "5.7.0",
-            "5.7.1",
-            "6.0.0",
-            "6.0.2",
-            "6.1.0",
-            "6.1.1",
-            "6.1.2",
-            "6.2.0",
-            "6.2.1",
-            "6.2.4",
-            "6.3.0",
-            "6.3.1",
-            "6.3.2",
-            "6.3.3",
-            "6.4.0",
-        ]:
-            depends_on(f"migraphx@{ver}", when=f"@{ver}")
+            depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
-
-    for ver in [
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
-        "5.7.0",
-        "5.7.1",
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
-        "6.3.0",
-        "6.3.1",
-        "6.3.2",
-        "6.3.3",
-        "6.4.0",
-    ]:
-        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
+            depends_on(f"migraphx@{ver}", when=f"@{ver}")
+            depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+            depends_on(f"rpp@{ver}", when=f"@{ver}")
+            depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+            depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on("python@3.5:", type="build")
-
-    for ver in [
-        "5.7.0",
-        "5.7.1",
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
-        "6.3.0",
-        "6.3.1",
-        "6.3.2",
-        "6.3.3",
-        "6.4.0",
-    ]:
-        depends_on(f"rpp@{ver}", when=f"@{ver}")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("MIVISIONX_MODEL_COMPILER_PATH", self.spec.prefix.libexec.mivisionx.model_compiler)
-        if self.spec.satisfies("@6.1:"):
+        if self.spec.satisfies("@6.1:") and not self.spec.external:
             env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
@@ -343,25 +231,21 @@ class Mivisionx(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         protobuf = spec["protobuf"].prefix.include
-        args = [self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf))]
-        if self.spec.satisfies("+opencl"):
-            args.append(self.define("BACKEND", "OPENCL"))
-            args.append(self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix))
+        args = [
+            self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf)),
+            self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix)),
+            self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix)),
+            self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
+        ]
         if self.spec.satisfies("+hip"):
             args.append(self.define("BACKEND", "HIP"))
             args.append(self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix))
             args.append(self.define("HIP_PATH", spec["hip"].prefix))
-        if self.spec.satisfies("~hip~opencl"):
+
+        if self.spec.satisfies("~hip"):
             args.append(self.define("BACKEND", "CPU"))
-        if self.spec.satisfies("@5.5:"):
-            args.append(
-                self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix))
-            )
-            args.append(
-                self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix))
-            )
-            args.append(self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix))
-        if self.spec.satisfies("@5.5:6.2.0"):
+
+        if self.spec.satisfies("@:6.2.0"):
             args.append(
                 self.define(
                     "TurboJpeg_LIBRARIES_DIRS", "{0}/lib64".format(spec["libjpeg-turbo"].prefix)

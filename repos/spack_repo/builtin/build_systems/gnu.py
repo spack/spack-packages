@@ -4,8 +4,7 @@
 
 from typing import Optional
 
-import spack.util.url
-from spack.package import PackageBase
+from spack.package import PackageBase, join_url
 
 
 class GNUMirrorPackage(PackageBase):
@@ -26,13 +25,10 @@ class GNUMirrorPackage(PackageBase):
     @property
     def urls(self):
         self._ensure_gnu_mirror_path_is_set_or_raise()
-        return [
-            spack.util.url.join(m, self.gnu_mirror_path, resolve_href=True)
-            for m in self.base_mirrors
-        ]
+        return [join_url(m, self.gnu_mirror_path, resolve_href=True) for m in self.base_mirrors]
 
     def _ensure_gnu_mirror_path_is_set_or_raise(self):
         if self.gnu_mirror_path is None:
             cls_name = type(self).__name__
-            msg = "{0} must define a `gnu_mirror_path` attribute" " [none defined]"
+            msg = "{0} must define a `gnu_mirror_path` attribute [none defined]"
             raise AttributeError(msg.format(cls_name))

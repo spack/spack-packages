@@ -26,30 +26,13 @@ class Madgraph5amc(MakefilePackage):
     timeout = {"timeout": 60}
 
     with default_args(fetch_options=timeout):
+        version("3.5.9", sha256="1e707fcd18f5b967c3f6220b3e5538622c93472376cae6666c56d0f2c2dd4b92")
         version("3.5.6", sha256="d4f336196303df748074ac92f251db8e6592fca37b3059c2e0f2a764c7e50975")
         version(
             "2.9.20",
             sha256="09a70e2e8b52e504bcaaa6527d3cec9641b043f5f853f2d11fa3c9970b7efae9",
             preferred=True,
         )
-        with default_args(deprecated=True):
-            version(
-                "2.9.19", sha256="ec95d40ec8845e57682400ef24a3b769a4d0542e3a849b7c5e10105d0a0f8e61"
-            )
-            version(
-                "2.9.17", sha256="6781c515ccc2005a953c35dcf9238632b761a937f1832bdfaa5514510b8c5a17"
-            )
-            # Older versions have been removed, only the latest LTS versions are available:
-            version(
-                "2.8.3.2",
-                sha256="4077eee75f9255fe627755fe0ac5da5d72f5d5c4f70b6e06e4e564e9c512b215",
-                url="https://launchpad.net/mg5amcnlo/lts/2.8.x/+download/MG5_aMC_v2.8.3.2.tar.gz",
-            )
-            version(
-                "2.7.3.py3",
-                sha256="400c26f9b15b07baaad9bd62091ceea785c2d3a59618fdc27cad213816bc7225",
-                url="https://launchpad.net/mg5amcnlo/lts/2.7.x/+download/MG5_aMC_v2.7.3.py3.tar.gz",
-            )
 
     variant(
         "atlas",
@@ -60,25 +43,20 @@ class Madgraph5amc(MakefilePackage):
     variant("collier", default=False, description="Use external installation" + " of Collier")
     variant("pythia8", default=False, description="Use external installation of Pythia8")
 
-    conflicts("%gcc@10:", when="@2.7.3")
+    depends_on("fortran", type="build")
+    depends_on("cxx", type="build")
 
-    depends_on("syscalc")
     depends_on("gosam-contrib", when="+ninja")
     depends_on("collier", when="+collier")
     depends_on("lhapdf")
     depends_on("fastjet")
-    depends_on("py-six", when="@2.7.3.py3,2.8.0:", type=("build", "run"))
+    depends_on("py-six", type=("build", "run"))
 
-    depends_on("python@3.7:", when="@2.7.3.py3", type=("build", "run"))
     depends_on("libtirpc")
     depends_on("pythia8", when="+pythia8")
 
     patch("gcc14.patch", when="@:3.5.5%gcc@14:")
-    patch("array-bounds.patch", when="@:2.8.1")
     patch("madgraph5amc.patch", level=0, when="@:2.9")
-    patch("madgraph5amc-2.7.3.atlas.patch", level=0, when="@2.7.3.py3+atlas")
-    patch("madgraph5amc-2.8.0.atlas.patch", level=0, when="@2.8.0+atlas")
-    patch("madgraph5amc-2.8.0.atlas.patch", level=0, when="@2.8.1+atlas")
     # Fix running from CVMFS on AFS, for example on lxplus at CERN
     patch(
         "https://patch-diff.githubusercontent.com/raw/mg5amcnlo/mg5amcnlo/pull/96.diff?full_index=1",
@@ -97,10 +75,8 @@ class Madgraph5amc(MakefilePackage):
             join_path("input", "mg5_configuration.txt"),
         )
 
-        set_parameter("syscalc_path", spec["syscalc"].prefix.bin)
-
         if "+ninja" in spec:
-            set_parameter("ninja", spec["gosam-contrib"].prefix)
+            set_parameter("ninja", spec["gosam-contrib"].prefix.lib)
 
         if "+collier" in spec:
             set_parameter("collier", spec["collier"].prefix.lib)
@@ -110,6 +86,9 @@ class Madgraph5amc(MakefilePackage):
         set_parameter("fastjet", join_path(spec["fastjet"].prefix.bin, "fastjet-config"))
 
         set_parameter("automatic_html_opening", "False")
+
+        set_parameter("cpp_compiler", self.compiler.cxx)
+        set_parameter("fortran_compiler", self.compiler.fc)
 
     def build(self, spec, prefix):
         with working_dir(join_path("vendor", "CutTools")):
@@ -149,7 +128,7 @@ class Madgraph5amc(MakefilePackage):
         if "+pythia8" in spec:
             with open("install-pythia8-interface", "w") as f:
                 f.write(
-                    f"""set pythia8_path {spec['pythia8'].prefix}
+                    f"""set pythia8_path {spec["pythia8"].prefix}
                         install mg5amc_py8_interface
                 """
                 )

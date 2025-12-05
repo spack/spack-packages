@@ -19,19 +19,19 @@ class GeopmService(AutotoolsPackage):
 
     homepage = "https://geopm.github.io"
     git = "https://github.com/geopm/geopm.git"
-    url = "https://github.com/geopm/geopm/tarball/v3.1.0"
+    url = "https://github.com/geopm/geopm/tarball/v3.2.0"
 
     maintainers("bgeltz", "cmcantalupo")
     license("BSD-3-Clause")
     tags = ["e4s"]
 
     version("develop", branch="dev", get_full_repo=True)
+    version("3.2.0", sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025")
     version("3.1.0", sha256="2d890cad906fd2008dc57f4e06537695d4a027e1dc1ed92feed4d81bb1a1449e")
-    version("3.0.1", sha256="32ba1948de58815ee055470dcdea64593d1113a6cad70ce00ab0286c127f8234")
 
     variant("debug", default=False, description="Enable debug")
-    variant("docs", default=True, when="@3.0.1", description="Create man pages with Sphinx")
     variant("systemd", default=True, description="Enable use of systemd/DBus")
+    variant("grpc", default=False, when="@3.2:", description="Enable gRPC support")
     variant("liburing", default=True, description="Enables the use of liburing for batch I/O")
     variant(
         "libcap", default=True, description="Enables the use of libcap to do capabilities checks"
@@ -45,10 +45,11 @@ class GeopmService(AutotoolsPackage):
         "rawmsr",
         default=True,
         description="Enable direct use of standard msr device driver",
-        when="@develop",
+        when="@3.2:",
     )
 
     conflicts("+nvml", when="+level_zero", msg="LevelZero and NVML support are mutually exclusive")
+    conflicts("+grpc", when="+systemd", msg="gRPC and systemd support are mutually exclusive")
 
     conflicts("%gcc@:7.2", msg="Requires C++17 support")
     conflicts("%clang@:4", msg="Requires C++17 support")
@@ -56,11 +57,8 @@ class GeopmService(AutotoolsPackage):
     conflicts("platform=darwin", msg="Darwin is not supported")
     conflicts("platform=windows", msg="Windows is not supported")
 
-    conflicts("target=aarch64:", msg="Only available on x86_64", when="@3.0.1")
-    conflicts("target=ppc64:", msg="Only available on x86_64", when="@3.0.1")
-    conflicts("target=ppc64le:", msg="Only available on x86_64", when="@3.0.1")
-
-    patch("0001-Support-NVML-via-CUDA-installation.patch", when="+nvml")
+    patch("nvml-v3.1+.patch", when="@3.1: +nvml")
+    patch("libtool.patch", when="@3.2")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -72,30 +70,8 @@ class GeopmService(AutotoolsPackage):
     depends_on("libtool", type="build")
     depends_on("file")
 
-    with when("@3.0.1"):
-        # Docs dependencies
-        #   Moved to python3-geopm-doc as of v3.1
-        depends_on("doxygen", type="build", when="+docs")
-        depends_on("py-docstring-parser@0.13.0:", type="build", when="+docs")
-        depends_on("py-sphinx", type="build", when="+docs")
-        depends_on("py-sphinx-rtd-theme@1:", type="build", when="+docs")
-        depends_on("py-sphinxemoji@0.2.0:", type="build", when="+docs")
-        depends_on("py-sphinx-tabs@3.3.1:", type="build", when="+docs")
-        depends_on("py-pygments@2.13.0:", type="build", when="+docs")
-
-        # Other Python dependencies - from service/setup.py
-        #   Moved to python3-geopmdpy as of v3.1
-        depends_on("py-setuptools@53.0.0:", type="build")
-        depends_on("py-dasbus@1.6.0:", type=("build", "run"))
-        depends_on("py-psutil@5.8.0:", type=("build", "run"))
-        depends_on("py-jsonschema@3.2.0:", type=("build", "run"))
-        depends_on("py-pyyaml@6.0:", type=("build", "run"))
-        depends_on("py-cffi@1.14.5:", type="run")
-
     # Other dependencies
-    for ver in ["3.1.0", "develop"]:
-        depends_on(f"py-geopmdpy@{ver}", type="run", when=f"@{ver}")
-    depends_on("py-setuptools-scm@7.0.3:", when="@3.1:", type="build")
+    depends_on("py-setuptools-scm@6.4.2:", when="@develop", type="build")  # Used in autogen.sh
     depends_on("bash-completion")
     depends_on("unzip")
     depends_on("systemd", when="+systemd")
@@ -103,24 +79,17 @@ class GeopmService(AutotoolsPackage):
     depends_on("liburing", when="+liburing")
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("cuda", when="+nvml")
+    depends_on("grpc+shared", when="+grpc")
+    depends_on("protobuf", when="+grpc")
+    depends_on("pkgconfig", when="+grpc")
 
-    extends("python")
-
-    @property
-    def configure_directory(self):
-        if self.version == Version("3.0.1"):
-            return "service"
-        else:
-            return "libgeopmd"
+    configure_directory = "libgeopmd"
 
     def autoreconf(self, spec, prefix):
         bash = which("bash")
         with working_dir(self.configure_directory):
             if not spec.version.isdevelop():
-                if self.version == Version("3.0.1"):
-                    version_file = "VERSION_OVERRIDE"
-                else:
-                    version_file = "VERSION"
+                version_file = "VERSION"
                 # Required to workaround missing VERSION files
                 # from GitHub generated source tarballs
                 with open(version_file, "w") as fd:
@@ -129,18 +98,16 @@ class GeopmService(AutotoolsPackage):
 
     def configure_args(self):
         args = [
-            "--with-bash-completion-dir="
-            + join_path(self.spec.prefix, "share", "bash-completion", "completions"),
             *self.enable_or_disable("debug"),
-            *self.enable_or_disable("docs"),
             *self.enable_or_disable("systemd"),
-            *self.enable_or_disable("liburing"),
+            *self.enable_or_disable("io-uring", variant="liburing"),
             *self.with_or_without("liburing", activation_value="prefix"),
             *self.enable_or_disable("libcap"),
             *self.with_or_without("gnu-ld"),
             *self.enable_or_disable("levelzero", variant="level_zero"),
             *self.enable_or_disable("nvml"),
             *self.enable_or_disable("rawmsr"),
+            *self.enable_or_disable("grpc"),
         ]
 
         if self.spec.satisfies("+nvml"):

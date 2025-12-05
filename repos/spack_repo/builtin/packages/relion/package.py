@@ -17,11 +17,18 @@ class Relion(CMakePackage, CudaPackage):
     homepage = "https://www2.mrc-lmb.cam.ac.uk/relion"
     git = "https://github.com/3dem/relion.git"
     url = "https://github.com/3dem/relion/archive/4.0.0.zip"
-    maintainers("dacolombo")
+    maintainers("dacolombo", "Markus92")
 
     license("GPL-2.0-only")
 
-    version("5.0.0", sha256="800ad0c0aa778cbf584fcf8986976645f2b25d677a80f168e5397975b9db6e47")
+    version("5.0.1", sha256="3253230cd4b3d9633a5cac906937039b9971eb9430c3e2d838473777fb811f4c")
+    # The 5.0.0 has a few bugs causing it not to fully function in Spack
+    version(
+        "5.0.0",
+        sha256="800ad0c0aa778cbf584fcf8986976645f2b25d677a80f168e5397975b9db6e47",
+        deprecated=True,
+    )
+
     version("4.0.1", sha256="7e0d56fd4068c99f943dc309ae533131d33870392b53a7c7aae7f65774f667be")
     version("4.0.0", sha256="0987e684e9d2dfd630f1ad26a6847493fe9fcd829ec251d8bc471d11701d51dd")
 
@@ -63,20 +70,21 @@ class Relion(CMakePackage, CudaPackage):
 
     # these new values were added in relion 3
     # do not seem to cause problems with < 3
-    variant("mklfft", default=True, description="Use MKL rather than FFTW for FFT")
+    variant("mklfft", default=False, description="Use MKL rather than FFTW for FFT")
     variant(
         "allow_ctf_in_sagd",
         default=True,
         description=(
-            "Allow CTF-modulation in SAGD, " "as specified in Claim 1 of patent US10,282,513B2"
+            "Allow CTF-modulation in SAGD, as specified in Claim 1 of patent US10,282,513B2"
         ),
+        when="@3",
     )
     variant("altcpu", default=False, description="Use CPU acceleration", when="~cuda")
 
     variant(
         "external_motioncor2",
         default=False,
-        description="Have external motioncor2 available in addition to " "Relion builtin",
+        description="Have external motioncor2 available in addition to Relion builtin",
     )
 
     depends_on("mpi")
@@ -90,28 +98,37 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("libtiff")
     depends_on("libpng", when="@4:")
 
-    depends_on("cuda", when="+cuda")
     depends_on("cuda@9:", when="@3: +cuda")
+    conflicts("cuda@13:", when="@:5.0.0 +cuda")
     depends_on("tbb", when="+altcpu")
     depends_on("mkl", when="+mklfft")
-    depends_on("ctffind", type="run")
+    depends_on("ctffind@4.1:4", type="run", when="@5")
+    depends_on("ctffind@:4", type="run")
     depends_on("motioncor2", type="run", when="+external_motioncor2")
 
-    # TODO: more externals to add
-    # Spack packages needed
-    # - Gctf
-    # - ResMap
+    depends_on("ghostscript", type="run", when="@4:")
+    depends_on("pbzip2", type="run", when="@5:")
+    depends_on("xz", type="run", when="@5:")
+    depends_on("zstd", type="run", when="@5:")
+
+    for arch in CudaPackage.cuda_arch_values:
+        depends_on(
+            f"py-relion@5.0.1 +cuda cuda_arch={arch}",
+            type=("build", "run"),
+            when=f"@5.0.1 +cuda cuda_arch={arch}",
+        )
+    depends_on("py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 ~cuda")
+
     patch("0002-Simple-patch-to-fix-intel-mkl-linking.patch", when="@:3.1.1 os=ubuntu18.04")
     patch(
         "https://github.com/3dem/relion/commit/2daa7447c1c871be062cce99109b6041955ec5e9.patch?full_index=1",
         sha256="4995b0d4bc24a1ec99042a4b73e9db84918eb6f622dacb308b718146bfb6a5ea",
         when="@4.0.0",
     )
+    patch("cudarch-override.patch", when="@5: +cuda")
 
     def cmake_args(self):
         args = [
-            "-DCMAKE_C_FLAGS=-g",
-            "-DCMAKE_CXX_FLAGS=-g",
             "-DGUI=%s" % ("+gui" in self.spec),
             "-DDoublePrec_CPU=%s" % ("+double" in self.spec),
             "-DDoublePrec_GPU=%s" % ("+double-gpu" in self.spec),
@@ -119,6 +136,9 @@ class Relion(CMakePackage, CudaPackage):
             "-DMKLFFT=%s" % ("+mklfft" in self.spec),
             "-DALTCPU=%s" % ("+altcpu" in self.spec),
         ]
+        if self.spec.satisfies("+gui"):
+            incs = [f"-I{self.spec[lib].prefix.include}" for lib in ["libx11", "xproto"]]
+            args += ["-DCMAKE_CXX_FLAGS=" + " ".join(incs)]
 
         if "+cuda" in self.spec:
             carch = self.spec.variants["cuda_arch"].value[0]
@@ -128,6 +148,20 @@ class Relion(CMakePackage, CudaPackage):
                 raise ValueError("Must select a value for cuda_arch")
             else:
                 args += ["-DCUDA=ON", "-DCudaTexture=ON", "-DCUDA_ARCH=%s" % (carch)]
+
+            if self.spec.satisfies("@5:"):
+                cuda_flags = " ".join(
+                    CudaPackage.cuda_flags(self.spec.variants["cuda_arch"].value)
+                )
+                args += [f"-DCUDARCH={cuda_flags}"]
+
+        if self.spec.satisfies("@5: ~cuda"):
+            # Relion 5 defaults to CUDA=ON so it has to be explicitly disabled.
+            args.append("-DCUDA=OFF")
+
+        if self.spec.satisfies("@5:"):
+            args.append(f"-DPYTHON_EXE_PATH={self.spec['python'].command.path}")
+            args.append("-DFETCH_WEIGHTS=OFF")
 
         return args
 

@@ -95,16 +95,17 @@ class Ffmpeg(AutotoolsPackage):
 
     conflicts("@1", when="platform=darwin target=aarch64:", msg="requires gas-preprocessor")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("alsa-lib", when="platform=linux")
     depends_on("iconv")
-    depends_on("yasm@1.2.0:")
+    depends_on("nasm", type="build")
     depends_on("zlib-api")
 
     depends_on("pkgconfig", type="build")
 
+    depends_on("aom@2.0.0:", when="@7.1:+libaom")
     depends_on("aom", when="+libaom")
     depends_on("bzip2", when="+bzlib")
     depends_on("fontconfig", when="+drawtext")

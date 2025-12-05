@@ -5,6 +5,7 @@ import os
 from typing import List
 
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -18,7 +19,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 
 class MesonPackage(PackageBase):
@@ -31,7 +32,7 @@ class MesonPackage(PackageBase):
     build_system_class = "MesonPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "meson"
+    default_buildsystem = "meson"
 
     build_system("meson")
 
@@ -100,10 +101,10 @@ class MesonBuilder(BuilderWithDefaults):
     phases = ("meson", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("meson_args", "check")
+    package_methods = ("meson_args", "check")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_targets",
         "install_targets",
         "build_time_test_callbacks",

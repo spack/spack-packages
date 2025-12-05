@@ -13,20 +13,16 @@ class QESirius(CMakePackage):
     """SIRIUS enabled fork of QuantumESPRESSO."""
 
     homepage = "https://github.com/electronic-structure/q-e-sirius/"
-    url = "https://github.com/electronic-structure/q-e-sirius/archive/v6.5-rc4-sirius.tar.gz"
+    url = "https://github.com/electronic-structure/q-e-sirius/archive/refs/tags/q-e-sirius/1.0.0.tar.gz"
     git = "https://github.com/electronic-structure/q-e-sirius.git"
 
     maintainers("simonpintarelli")
 
     license("GPL-2.0-or-later")
 
-    version("develop-ristretto", branch="ristretto", preferred=True, submodules=True)
-    version(
-        "6.7-rc1-sirius",
-        tag="v6.7-rc1-sirius",
-        commit="b1c79e30a2f9351316a90ca296f98cffef1f35c3",
-        submodules=True,
-    )
+    version("develop-ristretto", branch="ristretto", submodules=True)
+    version("1.0.1", sha256="512f982aa60fe9fd1cc588fa270e74427c66b62cb2d02ac1cb6cd07dcbe72204")
+    version("1.0.0", sha256="d85485db8e9252a0bcd67a6a348b2a74626030183199b0edeb97f14c33bca15b")
 
     variant("openmp", default=True, description="Enables OpenMP support")
     variant("libxc", default=False, description="Support functionals through libxc")
@@ -41,9 +37,9 @@ class QESirius(CMakePackage):
         multi=False,
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", type="build")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("sirius +fortran")
     depends_on("sirius +apps", when="+sirius_apps")

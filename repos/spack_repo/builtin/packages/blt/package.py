@@ -41,7 +41,7 @@ def llnl_link_helpers(options, spec, compiler):
                 options.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags, description))
 
     if "cxx" in spec and spec["cxx"].name == "cce":
-        description = "Adds a missing rpath for libraries " "associated with the fortran compiler"
+        description = "Adds a missing rpath for libraries associated with the fortran compiler"
         # Here is where to find libs that work for fortran
         libdir = "/opt/cray/pe/cce/{0}/cce-clang/x86_64/lib".format(compiler.version)
         linker_flags = "${{BLT_EXE_LINKER_FLAGS}} -Wl,-rpath,{0}".format(libdir)
@@ -75,6 +75,7 @@ class Blt(Package):
     #  if you export targets this could cause problems in downstream
     #  projects if not handled properly. More info here:
     #  https://llnl-blt.readthedocs.io/en/develop/tutorial/exporting_targets.html
+    version("0.7.1", sha256="136765087b78da96dff77dfd6eb9a1238dbfb67da9c7474bc8fb8532fc8ee015")
     version("0.7.0", sha256="df8720a9cba1199d21f1d32649cebb9dddf95aa61bc3ac23f6c8a3c6b6083528")
     version("0.6.2", sha256="84b663162957c1fe0e896ac8e94cbf2b6def4a152ccfa12a293db14fb25191c8")
     version("0.6.1", sha256="205540b704b8da5a967475be9e8f2d1a5e77009b950e7fbf01c0edabc4315906")

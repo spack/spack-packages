@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-import copy
 import os
 import sys
 
@@ -11,8 +10,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import spack.util.environment
-from spack.build_environment import dso_suffix
 from spack.package import *
 
 GPU_MAP = {
@@ -27,6 +24,7 @@ GPU_MAP = {
     "gfx90a": "Mi250",
     "gfx90a:xnack-": "Mi250",
     "gfx90a:xnack+": "Mi250",
+    "gfx942": "Mi300",
 }
 
 
@@ -39,16 +37,17 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     build_system(conditional("cmake", when="@2023.2:"), "makefile", default="cmake")
 
     homepage = "https://www.cp2k.org"
-    url = "https://github.com/cp2k/cp2k/releases/download/v3.0.0/cp2k-3.0.tar.bz2"
+    url = "https://github.com/cp2k/cp2k/releases/download/v2025.2/cp2k-2025.2.tar.bz2"
     git = "https://github.com/cp2k/cp2k.git"
     list_url = "https://github.com/cp2k/cp2k/releases"
 
-    maintainers("dev-zero", "mtaillefumier", "RMeli", "abussy")
+    maintainers("dev-zero", "mtaillefumier", "RMeli", "abussy", "hfp")
 
     tags = ["e4s"]
 
     license("GPL-2.0-or-later")
 
+    version("2025.2", sha256="c8392a4e123304644ec8d241443796277c6ed7ae977452317e779f3c387c2e19")
     version("2025.1", sha256="65c8ad5488897b0f995919b9fa77f2aba4b61677ba1e3c19bb093d5c08a8ce1d")
     version("2024.3", sha256="a6eeee773b6b1fb417def576e4049a89a08a0ed5feffcd7f0b33c7d7b48f19ba")
     version("2024.2", sha256="cc3e56c971dee9e89b705a1103765aba57bf41ad39a11c89d3de04c8b8cdf473")
@@ -73,6 +72,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         values=("libxsmm", "libsmm", "blas"),
         description="Library for small matrix multiplications",
     )
+    variant("opencl", default=False, description="Enable OpenCL backend")
     variant("plumed", default=False, description="Enable PLUMED support")
     variant(
         "libint", default=True, description="Use libint, required for HFX (and possibly others)"
@@ -118,20 +118,35 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         " are enabled",
     )
     variant("pytorch", default=False, description="Enable libtorch support")
+    variant(
+        "openpmd-api",
+        default=False,
+        description="Enable openPMD support",
+        when="@2026.1: build_system=cmake",
+    )
     variant("quip", default=False, description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
     variant("smeagol", default=False, description="Enable libsmeagol support", when="@2025.2:")
+    variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
+    variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
+    variant(
+        "grid_gpu", default=False, description="Enable grid GPU backend", when="@2025.2: +opencl"
+    )
     variant(
         "pw_gpu", default=True, description="Enable FFT calculations on GPU", when="@2025.2: +cuda"
     )
-    variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
-    variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
     variant(
         "pw_gpu",
         default=False,
         description="Enable FFT calculations on GPU",
         when="@2025.2: +rocm",
+    )
+    variant(
+        "pw_gpu",
+        default=False,
+        description="Enable FFT calculations on GPU",
+        when="@2025.2: +opencl",
     )
     variant(
         "hip_backend_cuda",
@@ -172,8 +187,11 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("vdwxc", default=False, description="Enable VDW support in SIRIUS.", when="+sirius")
-
     variant("deepmd", default=False, description="Enable DeepMD-kit support")
+    variant("tblite", default=False, description="Enable tblite support", when="@2025.2:")
+    variant("nlcg", default=False, description="Enable nlcg support in sirius", when="+sirius")
+    variant("vcsqnm", default=False, description="Enable VCSQNM support in sirius", when="+sirius")
+
     conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
     with when("+cuda"):
@@ -225,8 +243,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("greenx", when="+greenx")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
-    depends_on("libvdwxc", when="+vdwxc")
 
+    depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
     with when("+openmp"):
         depends_on("fftw+openmp", when="^[virtuals=fftw-api] fftw")
@@ -234,20 +252,32 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cray-fftw+openmp", when="^[virtuals=fftw-api] cray-fftw")
         depends_on("armpl-gcc threads=openmp", when="^[virtuals=blas] armpl-gcc")
         depends_on("openblas threads=openmp", when="^[virtuals=blas] openblas")
+        depends_on("intel-oneapi-mkl threads=openmp", when="^[virtuals=fftw-api] intel-oneapi-mkl")
+        depends_on(
+            "intel-oneapi-mkl+gfortran threads=openmp",
+            when="^[virtuals=blas] intel-oneapi-mkl %gcc",
+        )
+        depends_on("intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
         # The Cray compiler wrappers will automatically add libsci_mp with
         # -fopenmp. Since CP2K unconditionally links blas/lapack/scalapack
         # we have to be consistent.
         depends_on("cray-libsci+openmp", when="^[virtuals=blas] cray-libsci")
 
     with when("smm=libxsmm"):
-        depends_on("libxsmm~header-only")
         # require libxsmm-1.11+ since 1.10 can leak file descriptors in Fortran
         depends_on("libxsmm@1.11:")
         depends_on("libxsmm@1.17:", when="@9.1:")
-        # build needs to be fixed for libxsmm@2 once it is released
-        depends_on("libxsmm@:1")
         # use pkg-config (support added in libxsmm-1.10) to link to libxsmm
         depends_on("pkgconfig", type="build")
+
+    # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
+    with when("+opencl"):
+        depends_on("opencl", when="+opencl")
+        opencl_loader_header_version = "2022.10.24"
+        depends_on(f"opencl-c-headers@{opencl_loader_header_version}:")
+        requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
+        # OpenCL backend implementation relies on LIBXSMM
+        requires("smm=libxsmm")
 
     with when("+libint"):
         depends_on("pkgconfig", type="build", when="@7.0:")
@@ -277,6 +307,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mpi@3:", when="@2023.1:")
         depends_on("scalapack")
         depends_on("mpich+fortran", when="^[virtuals=mpi] mpich")
+        depends_on("intel-oneapi-mkl +cluster", when="^[virtuals=scalapack] intel-oneapi-mkl")
         conflicts("~mpi_f08", when="^mpich@4.1:")
 
     with when("+cosma"):
@@ -337,22 +368,29 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # like ELPA, SCALAPACK are independent and Spack will ensure that
     # a consistent/compatible combination is pulled into the dependency graph.
     with when("+sirius"):
-        depends_on("sirius+fortran+shared")
+        depends_on("sirius+fortran+shared+scalapack")
         depends_on("sirius+cuda", when="+cuda")
         depends_on("sirius+rocm", when="+rocm")
         depends_on("sirius+openmp", when="+openmp")
         depends_on("sirius~openmp", when="~openmp")
         depends_on("sirius@7.3:", when="@9.1")
-        depends_on("sirius@7.4:7.5", when="@2023.2")
+        depends_on("sirius@7.4:", when="@2023.2")
         depends_on("sirius@7.5:", when="@2024.1:")
-        depends_on("sirius@7.6:7.7 +pugixml", when="@2024.2:")
-        depends_on("sirius@7.7: +pugixml", when="@2025.2:")
+        depends_on("sirius@7.6:+pugixml", when="@2024.2:")
+        depends_on("sirius@7.7:+pugixml", when="@2025.2:")
         depends_on("sirius+vdwxc", when="+vdwxc")
+        depends_on("sirius+nlcglib", when="@2025.2:+nlcg")
+        depends_on("sirius+vcsqnm", when="@2025.2:+vcsqnm")
+        depends_on("sirius@7.8.1:+dftd3+dftd4", when="@2025.2:+dftd4")
+        depends_on("sirius@7.5.0:+dlaf", when="+dlaf")
 
     with when("+libvori"):
         depends_on("libvori@201219:", when="@8.1")
         depends_on("libvori@210412:", when="@8.2:")
         depends_on("libvori@220621:", when="@2023.1:")
+
+    with when("+openpmd-api"):
+        depends_on("openpmd-api@0.16.1:")
 
     # the bundled libcusmm uses numpy in the parameter prediction (v7+)
     # which is written using Python 3
@@ -369,10 +407,13 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
         # DBCSR as external dependency
         depends_on("dbcsr@2.6: ~examples")
+        depends_on("dbcsr@2.8:", when="@2025.1:")
         depends_on("dbcsr+openmp", when="+openmp")
+        depends_on("dbcsr+opencl", when="+opencl")
         depends_on("dbcsr+mpi", when="+mpi")
-        depends_on("dbcsr+cuda", when="+cuda")
         depends_on("dbcsr+rocm", when="+rocm")
+        depends_on("dbcsr+cuda", when="+cuda")
+
         depends_on("dbcsr smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
 
@@ -400,7 +441,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # versions. Instead just mark all unsupported cuda archs as conflicting.
 
     supported_cuda_arch_list = ("35", "37", "60", "70", "80", "90")
-    supported_rocm_arch_list = ("gfx906", "gfx908", "gfx90a", "gfx90a:xnack-", "gfx90a:xnack+")
+    supported_rocm_arch_list = (
+        "gfx906",
+        "gfx908",
+        "gfx90a",
+        "gfx90a:xnack-",
+        "gfx90a:xnack+",
+        "gfx942",
+    )
     cuda_msg = "cp2k only supports cuda_arch {0}".format(supported_cuda_arch_list)
     rocm_msg = "cp2k only supports amdgpu_target {0}".format(supported_rocm_arch_list)
 
@@ -464,6 +512,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/electronic-structure/SIRIUS/pull/1048
     patch("sirius-api-7.7.0.patch", when="@2024.2:2025.1 ^sirius@7.7.0")
 
+    # Fix missing S in data/BASIS_MOLOPT_UZH
+    # https://github.com/cp2k/cp2k/pull/4140
+    patch(
+        "https://github.com/cp2k/cp2k/commit/da03128481adf8f78a8a04ebeae0490480c03b89.patch?full_index=1",
+        sha256="0d542c414216866953c95e642d2590b3d313717dfaebbf12cfafedbdd3bf54a3",
+        when="@=2025.1",
+    )
+
     def patch(self):
         # Patch for an undefined constant due to incompatible changes in ELPA
         if self.spec.satisfies("@9.1:2022.2 +elpa"):
@@ -475,6 +531,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
                 )
 
         # Patch for resolving .mod file conflicts in ROCm by implementing 'USE, INTRINSIC'
+        # This patch triggers compilation errors on some systems as rocm install these
+        # modules files in rocm/include/llvm and this directory is given to gcc
+
         if self.spec.satisfies("+rocm"):
             for directory, subdirectory, files in os.walk(os.getcwd()):
                 for i in files:
@@ -510,7 +569,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         optimization_flags = {
             "gcc": ["-O2", "-funroll-loops", "-ftree-vectorize"],
-            "intel": ["-O2", "-pc64", "-unroll"],
+            "intel-oneapi-compilers": ["-O2", "-fp-model precise"],
+            "intel": ["-g", "-O2", "-fp-model precise"],
             "nvhpc": ["-fast"],
             "cce": ["-O2"],
             "xl": ["-O3"],
@@ -538,6 +598,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         nvflags = ["-O3"]
         ldflags = []
         libs = []
+        dso_suffix = shared_library_suffix(spec)
 
         # CP2K Makefile doesn't set C standard
         if spec.satisfies("@2023.2:"):
@@ -547,10 +608,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # C99-style for-loops with inline definition of iterating variable.
             cflags.append(pkg.compiler.c99_flag)
 
-        if spec.satisfies("%intel"):
-            cflags.append("-fp-model precise")
-            cxxflags.append("-fp-model precise")
-            fcflags += ["-fp-model precise", "-heap-arrays 64", "-g", "-traceback"]
+        if spec.satisfies("%intel") or spec.satisfies("%intel-oneapi-compilers"):
+            fcflags += ["-traceback"]  # -heap-arrays 64
         elif spec.satisfies("%gcc"):
             fcflags += [
                 "-ffree-form",
@@ -636,10 +695,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
             libs += [
                 join_path(spec["pexsi"].libs.directories[0], "libpexsi.a"),
                 join_path(spec["superlu-dist"].libs.directories[0], "libsuperlu_dist.a"),
-                join_path(
-                    spec["parmetis"].libs.directories[0], "libparmetis.{0}".format(dso_suffix)
-                ),
-                join_path(spec["metis"].libs.directories[0], "libmetis.{0}".format(dso_suffix)),
+                join_path(spec["parmetis"].libs.directories[0], f"libparmetis.{dso_suffix}"),
+                join_path(spec["metis"].libs.directories[0], f"libmetis.{dso_suffix}"),
             ]
 
         if spec.satisfies("+elpa"):
@@ -683,7 +740,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if spec.satisfies("+plumed"):
             dflags.extend(["-D__PLUMED2"])
             cppflags.extend(["-D__PLUMED2"])
-            libs += [join_path(spec["plumed"].prefix.lib, "libplumed.{0}".format(dso_suffix))]
+            libs += [join_path(spec["plumed"].prefix.lib, f"libplumed.{dso_suffix}")]
 
         if spec.satisfies("+libvori"):
             cppflags += ["-D__LIBVORI"]
@@ -715,9 +772,16 @@ class MakefileBuilder(makefile.MakefileBuilder):
         fc = spack_fc if "~mpi" in spec else spec["mpi"].mpifc
 
         # Intel
-        if spec.satisfies("%intel"):
-            cppflags.extend(["-D__INTEL", "-D__HAS_ISO_C_BINDING", "-D__USE_CP2K_TRACE"])
-            fcflags.extend(["-diag-disable 8290,8291,10010,10212,11060", "-free", "-fpp"])
+        if spec.satisfies("%intel") or spec.satisfies("%intel-oneapi-compilers"):
+            cppflags.extend(
+                [
+                    "-D__INTEL",
+                    "-D__HAS_IEEE_EXCEPTIONS",
+                    "-D__HAS_ISO_C_BINDING",
+                    "-D__USE_CP2K_TRACE",
+                ]
+            )
+            fcflags.extend(["-free", "-fpp", "-diag-disable 8290,8291,10010,10212,11060"])
 
         # FFTW, LAPACK, BLAS
         lapack = spec["lapack"].libs
@@ -873,15 +937,12 @@ class MakefileBuilder(makefile.MakefileBuilder):
         with open(self.makefile, "w") as mkf:
             if spec.satisfies("+plumed"):
                 mkf.write(
-                    "# include Plumed.inc as recommended by"
-                    "PLUMED to include libraries and flags"
+                    "# include Plumed.inc as recommended by PLUMED to include libraries and flags"
                 )
                 mkf.write("include {0}\n".format(self.pkg["plumed"].plumed_inc))
 
             mkf.write("\n# COMPILER, LINKER, TOOLS\n\n")
-            mkf.write(
-                "FC  = {0}\n" "CC  = {1}\n" "CXX = {2}\n" "LD  = {3}\n".format(fc, cc, cxx, fc)
-            )
+            mkf.write("FC  = {0}\nCC  = {1}\nCXX = {2}\nLD  = {3}\n".format(fc, cc, cxx, fc))
 
             if spec.satisfies("%intel"):
                 intel_bin_dir = ancestor(pkg.compiler.cc)
@@ -893,7 +954,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 # and use `-fpp` instead
                 mkf.write("CPP = # {0} -P\n".format(spack_cc))
                 mkf.write("AR  = {0}/xiar -qs\n".format(intel_bin_dir))
-            else:
+            else:  # incl. spec.satisfies("%intel-oneapi-compilers")
                 mkf.write("CPP = # {0} -E\n".format(spack_cc))
                 mkf.write("AR  = ar -qs\n")  # r = qs is a GNU extension
 
@@ -922,7 +983,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             mkf.write(fflags("LDFLAGS", ldflags))
             mkf.write(fflags("LIBS", libs))
 
-            if spec.satisfies("%intel"):
+            if spec.satisfies("%intel") or spec.satisfies("%intel-oneapi-compilers"):
                 mkf.write(fflags("LDFLAGS_C", ldflags + ["-nofor-main"]))
 
             if spec.satisfies("%aocc@5:"):
@@ -941,7 +1002,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # Apparently the Makefile bases its paths on PWD
         # so we need to set PWD = self.build_directory
-        with spack.util.environment.set_env(PWD=self.build_directory):
+        with set_env(PWD=self.build_directory):
             super().build(pkg, spec, prefix)
 
             with working_dir(self.build_directory):
@@ -1000,7 +1061,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # CP2K < 7 still uses $PWD to detect the current working dir
         # and Makefile is in a subdir, account for both facts here:
-        with spack.util.environment.set_env(CP2K_DATA_DIR=data_dir, PWD=self.build_directory):
+        with set_env(CP2K_DATA_DIR=data_dir, PWD=self.build_directory):
             with working_dir(self.build_directory):
                 make("test", *self.build_targets)
 
@@ -1044,6 +1105,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
         spec = self.spec
         args = []
 
+        if spec.satisfies("+opencl"):
+            args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
+
         if spec.satisfies("+cuda"):
             if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
                 raise InstallError("CP2K supports only one cuda_arch at a time.")
@@ -1081,6 +1145,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_COSMA", "cosma"),
             self.define_from_variant("CP2K_USE_LIBXC", "libxc"),
             self.define_from_variant("CP2K_USE_LIBTORCH", "pytorch"),
+            self.define_from_variant("CP2K_USE_OPENPMD", "openpmd-api"),
             self.define_from_variant("CP2K_USE_METIS", "pexsi"),
             self.define_from_variant("CP2K_USE_SUPERLU", "pexsi"),
             self.define_from_variant("CP2K_USE_PLUMED", "plumed"),
@@ -1100,8 +1165,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_TREXIO", "trexio"),
             self.define_from_variant("CP2K_USE_GREENX", "greenx"),
             self.define_from_variant("CP2K_USE_LIBVDWXC", "vdwxc"),
+            self.define_from_variant("CP2K_USE_TBLITE", "tblite"),
         ]
 
+        if spec.satisfies("+sirius"):
+            args += [
+                self.define_from_variant("CP2K_USE_SIRIUS_DFTD4", "dftd4"),
+                self.define_from_variant("CP2K_USE_SIRIUS_VCSQNM", "vcsqnm"),
+                self.define_from_variant("CP2K_USE_SIRIUS_NLCG", "nlcg"),
+            ]
         if spec.satisfies("^[virtuals=fftw-api] fftw+openmp"):
             args += ["-DCP2K_USE_FFTW3_WITH_OPENMP=ON"]
 
@@ -1125,10 +1197,14 @@ class CMakeBuilder(cmake.CMakeBuilder):
         blas = spec["blas"]
 
         if blas.name == "intel-oneapi-mkl":
-            if spec.satisfies("^[virtuals=fftw-api] intel-oneapi-mkl"):
-                args += ["-DCP2K_USE_FFTW3_WITH_MKL=ON"]
-
             args += ["-DCP2K_BLAS_VENDOR=MKL"]
+
+            if spec.satisfies("+openmp"):
+                mkl_thread = "thread" if spec.satisfies("%gcc") else "intel-thread"
+                args += [f"-DCP2K_BLAS_THREADING={mkl_thread}"]
+            else:
+                args += ["-DCP2K_BLAS_THREADING=sequential"]
+
             if sys.platform == "darwin":
                 args += [
                     self.define("CP2K_BLAS_VENDOR", "CUSTOM"),

@@ -18,6 +18,7 @@ class PyNumba(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.62.0rc2", sha256="4f9a4a9c61e1b1a8a75ef862c4fc265599c32d760b30b29b58442a0da384e30f")
     version("0.61.2", sha256="8750ee147940a6637b80ecf7f95062185ad8726c8c28a2295b8ec1160a196f7d")
     version("0.61.0", sha256="888d2e89b8160899e19591467e8fdd4970e07606e1fbc248f239c89818d5f925")
     version("0.60.0", sha256="5df6158e5584eece5fc83294b949fd30b9f1125df7708862205217e068aabf16")
@@ -29,21 +30,6 @@ class PyNumba(PythonPackage):
     version("0.55.2", sha256="e428d9e11d9ba592849ccc9f7a009003eb7d30612007e365afe743ce7118c6f4")
     version("0.55.1", sha256="03e9069a2666d1c84f93b00dbd716fb8fedde8bb2c6efafa2f04842a46442ea3")
     version("0.54.0", sha256="bad6bd98ab2e41c34aa9c80b8d9737e07d92a53df4f74d3ada1458b0b516ccff")
-    version(
-        "0.51.1",
-        sha256="1e765b1a41535684bf3b0465c1d0a24dcbbff6af325270c8f4dad924c0940160",
-        deprecated=True,
-    )
-    version(
-        "0.50.1",
-        sha256="89e81b51b880f9b18c82b7095beaccc6856fcf84ba29c4f0ced42e4e5748a3a7",
-        deprecated=True,
-    )
-    version(
-        "0.48.0",
-        sha256="9d21bc77e67006b5723052840c88cc59248e079a907cc68f1a1a264e1eaba017",
-        deprecated=True,
-    )
 
     variant("tbb", default=False, description="Build with Intel Threading Building Blocks")
 
@@ -53,17 +39,15 @@ class PyNumba(PythonPackage):
     # Be careful that the bounds given in setup.py are exclusive on the upper bound
     # i.e., [min, max)
     depends_on("python@3.10:3.13", when="@0.61:", type=("build", "run"))
-    depends_on("python@3.9:3.12", when="@0.59:", type=("build", "run"))
+    depends_on("python@3.9:3.12", when="@0.59:0.60", type=("build", "run"))
     depends_on("python@3.8:3.11", when="@0.57:0.58", type=("build", "run"))
     depends_on("python@3.7:3.10", when="@0.55:0.56", type=("build", "run"))
     depends_on("python@3.7:3.9", when="@0.54", type=("build", "run"))
-    depends_on("python@3.6:3.9", when="@0.53", type=("build", "run"))
-    depends_on("python@3.6:3.8", when="@0.52", type=("build", "run"))
-    depends_on("python@3.6:3.8", when="@0.48:0.51", type=("build", "run"))
 
     # max_numpy_run_version in setup.py is a non inclusive upper bound
     # min_numpy_run_version < min_numpy_build_version and these ranges use
     # min_numpy_build_version
+    depends_on("py-numpy@2.0:2.3", when="@0.62:", type=("build", "run"))
     depends_on("py-numpy@2.0:2.2", when="@0.61.2", type=("build", "run"))
     depends_on("py-numpy@2.0:2.1", when="@0.61.0", type=("build", "run"))
     depends_on("py-numpy@2.0", when="@0.60", type=("build", "run"))
@@ -74,8 +58,8 @@ class PyNumba(PythonPackage):
     depends_on("py-numpy@1.18:1.22", when="@0.55.2:0.56.0", type=("build", "run"))
     depends_on("py-numpy@1.18:1.21", when="@0.55.0:0.55.1", type=("build", "run"))
     depends_on("py-numpy@1.17:1.20", when="@0.54", type=("build", "run"))
-    depends_on("py-numpy@1.15:1.20", when="@0.48:0.53", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
+    depends_on("py-llvmlite@0.45", when="@0.62", type=("build", "run"))
     depends_on("py-llvmlite@0.44", when="@0.61", type=("build", "run"))
     depends_on("py-llvmlite@0.43", when="@0.60", type=("build", "run"))
     depends_on("py-llvmlite@0.42", when="@0.59", type=("build", "run"))
@@ -83,14 +67,9 @@ class PyNumba(PythonPackage):
     depends_on("py-llvmlite@0.40", when="@0.57", type=("build", "run"))
     depends_on("py-llvmlite@0.39", when="@0.56", type=("build", "run"))
     depends_on("py-llvmlite@0.38", when="@0.55", type=("build", "run"))
-    depends_on("py-llvmlite@0.37", when="@0.54.0", type=("build", "run"))
-    depends_on("py-llvmlite@0.34", when="@0.51.1", type=("build", "run"))
-    depends_on("py-llvmlite@0.33", when="@0.50.1", type=("build", "run"))
-    depends_on("py-llvmlite@0.31", when="@0.48", type=("build", "run"))
-    depends_on("py-importlib-metadata", when="@0.56:^python@:3.8", type=("build", "run"))
+    depends_on("py-llvmlite@0.37", when="@0.54", type=("build", "run"))
 
     depends_on("tbb", when="+tbb")
-    conflicts("~tbb", when="@:0.50")  # No way to disable TBB
     # Version 6.0.0 of llvm had a hidden symbol which breaks numba at runtime.
     # See https://reviews.llvm.org/D44140
     conflicts("^llvm@6.0.0")

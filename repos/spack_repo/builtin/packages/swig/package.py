@@ -130,7 +130,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
 
     def test_swiglib(self):
         """check that the lib dir exists"""
-        assert os.path.isdir(self._swiglib), f"SWIG library does not exist at '{swiglib}'"
+        assert os.path.isdir(self._swiglib), f"SWIG library does not exist at '{self._swiglib}'"
 
     def test_swig_swg(self):
         """check that swig.swg exists"""
@@ -153,7 +153,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def create_symlink(self):
         # CMake compatibility: see https://github.com/spack/spack/pull/6240
         with working_dir(self.prefix.bin):
-            os.symlink("swig", "swig{0}.0".format(self.spec.version.up_to(1)))
+            symlink("swig", "swig{0}.0".format(self.spec.version.up_to(1)))
 
     @when(Swig.AUTOCONF_VERSIONS)
     def autoreconf(self, pkg, spec, prefix):

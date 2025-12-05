@@ -20,6 +20,11 @@ class QtTools(QtPackage):
     license("BSD-3-Clause")
 
     # src/assistant/qlitehtml is a submodule that is not in the git archive
+    version("6.10.1", commit="9e0030f889168f7a0ec1bb47a7d7138a497b3c96", submodules=True)
+    version("6.10.0", commit="f33c4bb1dee569eec4ffe1333584cb4b75af6c59", submodules=True)
+    version("6.9.3", commit="89031fa54058af5e4d92ee08d31642ca338e9c0c", submodules=True)
+    version("6.9.2", commit="f117f860edcbe49a38275bfe35d3573614be6107", submodules=True)
+    version("6.9.1", commit="9e8f157b49c78c05abf8fa87da21e04cdf09780c", submodules=True)
     version("6.9.0", commit="087e300bf286aaee92682d828ee0bd622e00d52a", submodules=True)
     version("6.8.3", commit="2649ea1aa5cc1c23bd920ae94dd50071315ea30f", submodules=True)
     version("6.8.2", commit="8aa2456d4461516f54c98916fcd699557afb41ad", submodules=True)
@@ -42,10 +47,15 @@ class QtTools(QtPackage):
     # use of relative path in https://github.com/qt/qttools/blob/6.8.2/.gitmodules
     conflicts("+assistant", when="@6.8.2", msg="Incorrect git submodule prevents +assistant")
 
+    depends_on("c")
+    depends_on("cxx")
+
     depends_on("llvm +clang")
 
     depends_on("qt-base +network")
     depends_on("qt-base +widgets", when="+designer")
+
+    depends_on("zstd@1.3:", when="+designer")
 
     for _v in QtBase.versions:
         v = str(_v)
@@ -61,8 +71,14 @@ class QtTools(QtPackage):
 
         if spec.satisfies("+assistant"):
             define("FEATURE_assistant", True)
+        else:
+            define("FEATURE_assistant", False)
 
         if spec.satisfies("+designer"):
             define("FEATURE_designer", True)
+            define("FEATURE_zstd", True)
+        else:
+            define("FEATURE_designer", False)
+            define("FEATURE_zstd", False)
 
         return args

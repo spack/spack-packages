@@ -18,6 +18,7 @@ class PyFsspec(PythonPackage):
     # Requires pytest
     skip_modules = ["fsspec.tests"]
 
+    version("2025.9.0", sha256="19fd429483d25d28b65ec68f9f4adc16c17ea2c7c7bf54ec61360d478fb19c19")
     version("2024.10.0", sha256="eda2d8a4116d4f2429db8550f2457da57279247dd930bb12f821b58391359493")
     version("2024.5.0", sha256="1d021b0b0f933e3b3029ed808eb400c08ba101ca2de4b3483fbc9ca23fcee94a")
     version("2024.3.1", sha256="f39780e282d7d117ffb42bb96992f8a90795e4d0fb0f661a70ca39fe9c43ded9")
@@ -34,8 +35,10 @@ class PyFsspec(PythonPackage):
 
     variant("http", default=False, description="HTTPFileSystem support", when="@0.8.1:")
 
-    depends_on("py-setuptools", type="build", when="@:2024.4")
     depends_on("py-hatchling", type="build", when="@2024.5:")
     depends_on("py-hatch-vcs", type="build", when="@2024.5:")
-    depends_on("py-requests", type=("build", "run"), when="@:2023+http")
     depends_on("py-aiohttp", type=("build", "run"), when="+http")
+
+    # Historical dependencies
+    depends_on("py-setuptools", type="build", when="@:2024.4")
+    depends_on("py-requests", type=("build", "run"), when="@:2023+http")

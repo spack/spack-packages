@@ -12,14 +12,18 @@ class RocprofilerCompute(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-compute"
     git = "https://github.com/ROCm/rocprofiler-compute.git"
-    url = "https://github.com/ROCm/rocprofiler-compute/archive/refs/tags/rocm-6.3.2.tar.gz"
+    url = "https://github.com/ROCm/rocprofiler-compute/archive/refs/tags/rocm-6.4.3.tar.gz"
 
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
-
+    version("7.0.2", sha256="b56ab5c57883e2c3d75b7cc584279eb91157de195722f90c09cad51701ef4650")
+    version("7.0.0", sha256="0ef46ee668b6ee6936911ecd70947abb4e501ced1c4f87d8001a6e35b9781705")
+    version("6.4.3", sha256="d5005322dbfdd0feccd619d8fb6665f8631d74be1d6345be8726eff76829747b")
+    version("6.4.2", sha256="0a0c5cbcc6d54881c58899d2f0db7feaa0d5665bf13e19f0715cb22f54b11187")
+    version("6.4.1", sha256="a48837861dad010516f579ba627b1cf49469c56d74787f7b0883c5198de6e2a7")
     version("6.4.0", sha256="484a8974ebf973fa00241bf3665eac790b3c317aa36b794cc2998f892b3036fc")
     version("6.3.3", sha256="0f563874f71b593cbdcdf0eea58b08c7437f1abf807f0886a3a30afa9e7f4953")
     version("6.3.2", sha256="317f19acfa6e6780923e6c8144c3c223b523c382588df528b6df001fae38d13d")
@@ -40,6 +44,8 @@ class RocprofilerCompute(CMakePackage):
     depends_on("py-dash-svg", type=("build", "run"))
     depends_on("py-dash", type=("build", "run"))
     depends_on("py-dash-bootstrap-components", type=("build", "run"))
+    depends_on("py-textual", when="@7.0:")
+    depends_on("py-textual-plotext", when="@7.0:")
 
     def cmake_args(self):
         args = [self.define("ENABLE_TESTS", self.run_tests)]

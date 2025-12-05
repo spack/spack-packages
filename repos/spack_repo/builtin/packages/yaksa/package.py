@@ -29,6 +29,7 @@ class Yaksa(AutotoolsPackage, CudaPackage, ROCmPackage):
     url = "https://github.com/pmodels/yaksa/archive/refs/tags/v0.2.tar.gz"
     maintainers("raffenet", "yfguo", "hzhou")
 
+    version("0.4", sha256="380d5780c73b4d9623ed558daebf77f2497931783ed7403bab08682d6f25da86")
     version("0.3", sha256="c9e5291211bee8852831bb464f430ad5ba1541e31db5718a6fa2f2d3329fc2d9")
     version("0.2", sha256="9401cb6153dc8c34ddb9781bbabd418fd26b0a27b5da3294ecc21af7be9c86f2")
 
@@ -41,6 +42,13 @@ class Yaksa(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
     depends_on("python@3:", type="build")
+
+    # fix for error: no member named 'memoryType' in 'struct hipPointerAttribute_t'
+    patch(
+        "https://github.com/pmodels/yaksa/commit/5ebbadb7771d194f3819e3dd1ac8b5b467024afb.patch?full_index=1",
+        sha256="0ae3ab6f932c1b31dde38babc181c1507e70d87e435d8fc6c82e0911fb55d560",
+        when="@0.3 +rocm ^hip@6:",
+    )
 
     def autoreconf(self, spec, prefix):
         sh = which("sh")

@@ -17,6 +17,7 @@ class Googletest(CMakePackage):
     maintainers("sethrj")
 
     version("main", branch="main")
+    version("1.17.0", sha256="65fab701d9829d38cb77c14acdc431d2108bfdbf8979e40eb8ae567edf10b27c")
     version("1.15.2", sha256="7b42b4d6ed48810c5362c265a17faebe90dc2373c885e5216439d37927f02926")
     version("1.15.0", sha256="7315acb6bf10e99f332c8a43f00d5fbb1ee6ca48c52f6b936991b216c586aaad")
     version("1.14.0", sha256="8ad598c73ad796e0d8280b082cebd82a630d73e73cd3c70057938a6501bba5d7")
@@ -43,13 +44,14 @@ class Googletest(CMakePackage):
 
     variant(
         "cxxstd",
-        default="14",
+        default="17",
         values=("98", "11", "14", "17", "20"),
         multi=False,
         description="Use the specified C++ standard when building",
     )
     conflicts("cxxstd=98", when="@1.9:")
     conflicts("cxxstd=11", when="@1.13:")
+    conflicts("cxxstd=14", when="@1.17:")
 
     def cmake_args(self):
         spec = self.spec

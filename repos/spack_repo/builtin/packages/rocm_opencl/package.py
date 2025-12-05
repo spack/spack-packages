@@ -15,28 +15,20 @@ class RocmOpencl(CMakePackage):
     """OpenCL: Open Computing Language on ROCclr"""
 
     homepage = "https://github.com/ROCm/clr"
+    url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/clr.git"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libOpenCL"]
-
-    def url_for_version(self, version):
-        if version == Version("3.5.0"):
-            return (
-                "https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/roc-3.5.0.tar.gz"
-            )
-        elif version <= Version("5.6.1"):
-            url = (
-                "https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-{0}.tar.gz"
-            )
-        else:
-            url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-{0}.tar.gz"
-        return url.format(version)
+    libraries = ["libamdocl64"]
 
     license("MIT")
 
-    version("master", branch="main", deprecated=True)
+    version("7.0.2", sha256="b49b1ccbf86ef78f4da5ff13ec3ee94f6133c55db3a95b823577b0808db5f2f1")
+    version("7.0.0", sha256="cc417e73cda903511db5a72b77704fd41bf7b39204c5cacb2c64701b344b8c5d")
+    version("6.4.3", sha256="aa7c9d9d7da3b5fc944b17ca7c032e8924a8dc327ec79eb8cb7f0c9df6fa76dc")
+    version("6.4.2", sha256="6dca1ffff36dbf8665594a72b47b8dd0362f7ee446dea03961d8b5a639bf3ede")
+    version("6.4.1", sha256="18ee75a04f6fc55e72f8b3fcad1e0d58eceb2ce0e0696ca76d9b3dfaf4bfd7ff")
     version("6.4.0", sha256="76fd0ad83da0dabf7c91ca4cff6c51f2be8ab259e08ad9743af47d1b3473c2ff")
     version("6.3.3", sha256="8e5adca8f8c2d99d4a4e49605dd6b56b7881b762ee8ce15b4a7000e3cd982fec")
     version("6.3.2", sha256="ec13dc4ffe212beee22171cb2825d2b16cdce103c835adddb482b9238cf4f050")
@@ -52,15 +44,6 @@ class RocmOpencl(CMakePackage):
     version("6.0.0", sha256="798b55b5b5fb90dd19db54f136d8d8e1da9ae1e408d5b12b896101d635f97e50")
     version("5.7.1", sha256="c78490335233a11b4d8a5426ace7417c555f5e2325de10422df06c0f0f00f7eb")
     version("5.7.0", sha256="bc2447cb6fd86dff6a333b04e77ce85755104d9011a14a044af53caf02449573")
-    version("5.6.1", sha256="ec26049f7d93c95050c27ba65472736665ec7a40f25920a868616b2970f6b845")
-    version("5.6.0", sha256="52ab260d00d279c2a86c353901ffd88ee61b934ad89e9eb480f210656705f04e")
-    version("5.5.1", sha256="a8a62a7c6fc5398406d2203b8cb75621a24944688e545d917033d87de2724498")
-    version("5.5.0", sha256="0df9fa0b8aa0c8e6711d34eec0fdf1ed356adcd9625bc8f1ce9b3e72090f3e4f")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="b0f8339c844a2e62773bd85cd1e7c5ecddfe71d7c8e8d604e1a1d60900c30873")
-        version("5.4.0", sha256="a294639478e76c75dac0e094b418f9bd309309b07faf6af126cdfad9aab3c5c7")
-        version("5.3.3", sha256="cab394e6ef16c35bab8de29a66b96a7dc0e7d1297aaacba3718fa1d369233c9f")
-        version("5.3.0", sha256="d251e2efe95dc12f536ce119b2587bed64bbda013969fa72be58062788044a9e")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -78,25 +61,6 @@ class RocmOpencl(CMakePackage):
     depends_on("xproto", when="+asan")
     depends_on("opencl-icd-loader@2024.05.08", when="@6.2:")
 
-    for d_version, d_shasum in [
-        ("5.6.1", "cc9a99c7e4de3d9360c0a471b27d626e84a39c9e60e0aff1e8e1500d82391819"),
-        ("5.6.0", "864f87323e793e60b16905284fba381a7182b960dd4a37fb67420c174442c03c"),
-        ("5.5.1", "1375fc7723cfaa0ae22a78682186d4804188b0a54990bfd9c0b8eb421b85e37e"),
-        ("5.5.0", "efbae9a1ef2ab3de5ca44091e9bb78522e76759c43524c1349114f9596cc61d1"),
-        ("5.4.3", "71d9668619ab57ec8a4564d11860438c5aad5bd161a3e58fbc49555fbd59182d"),
-        ("5.4.0", "46a1579310b3ab9dc8948d0fb5bed4c6b312f158ca76967af7ab69e328d43138"),
-        ("5.3.3", "f8133a5934f9c53b253d324876d74f08a19e2f5b073bc94a62fe64b0d2183a18"),
-        ("5.3.0", "2bf14116b5e2270928265f5d417b3d0f0f2e13cbc8ec5eb8c80d4d4a58ff7e94"),
-    ]:
-        resource(
-            name="rocclr",
-            url=f"https://github.com/ROCm/ROCclr/archive/rocm-{d_version}.tar.gz",
-            sha256=d_shasum,
-            expand=True,
-            destination="",
-            placement="rocclr",
-            when=f"@{d_version}",
-        )
     # For avx build, the start address of values_ buffer in KernelParameters is not
     # correct as it is computed based on 16-byte alignment.
     patch(
@@ -110,18 +74,7 @@ class RocmOpencl(CMakePackage):
         when="@5.7:6.0",
     )
 
-    # Patch to set package installation path for OpenCL.
-    patch("0001-fix-build-error-rocm-opencl-5.1.0.patch", when="@5.1")
-
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -137,10 +90,15 @@ class RocmOpencl(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
-        "master",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
+        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
     for ver in [
         "6.0.0",
@@ -156,31 +114,14 @@ class RocmOpencl(CMakePackage):
         "6.3.2",
         "6.3.3",
         "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 
-    for ver in [
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
-        "5.7.0",
-        "5.7.1",
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
-        "6.3.0",
-        "6.3.1",
-        "6.3.2",
-        "6.3.3",
-        "6.4.0",
-    ]:
-        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
+    for ver in ["7.0.0", "7.0.2"]:
+        depends_on(f"hsa-amd-aqlprofile@{ver}", type="link", when=f"@{ver}")
 
     @classmethod
     def determine_version(cls, lib):
@@ -189,16 +130,14 @@ class RocmOpencl(CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        else:
+            ver = None
+        return ver
 
     def cmake_args(self):
         args = ["-DUSE_COMGR_LIBRARY=yes", "-DBUILD_TESTS=ON"]
-        if self.spec.satisfies("@:5.6"):
-            args.append(self.define("ROCCLR_PATH", self.stage.source_path + "/rocclr"))
-            args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path))
-        if self.spec.satisfies("@5.7:"):
-            args.append(self.define("CLR_BUILD_HIP", False))
-            args.append(self.define("CLR_BUILD_OCL", True))
+        args.append(self.define("CLR_BUILD_HIP", False))
+        args.append(self.define("CLR_BUILD_OCL", True))
         if self.spec.satisfies("+asan"):
             args.append(
                 self.define(

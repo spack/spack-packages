@@ -17,6 +17,8 @@ class Yoda(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.1.2", sha256="f11c9ad00d7db5da59950c834a094eadaf886dfd9d9ccac161afd44a6a334bf1")
+    version("2.1.1", sha256="012f58ee682f3037842f23a2f6deb964572214a1d647258c277e0a097c39a66b")
     version("2.1.0", sha256="eba2efa58d407e5ca60205593339cdab12b7659255020358454b0f6502d115c2")
     version("2.0.3", sha256="c066b1ae723e7cc76011e134fe9d69b378670ae03aae8a2781b0606692440143")
     version("2.0.2", sha256="31a41413641189814ff3c6bbb96ac5d17d2b68734fe327d06794cdbd3a540399")

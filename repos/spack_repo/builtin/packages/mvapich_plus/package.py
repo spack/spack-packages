@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import itertools
 import os.path
 import re
 import sys
@@ -23,16 +22,18 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     url = "https://mvapich.cse.ohio-state.edu/download/mvapich/mv2/mvapich-3.0.tar.gz"
     list_url = "https://mvapich.cse.ohio-state.edu/downloads/"
     executables = ["^mpiname$", "^mpichversion$"]
+    manual_download = True
 
     maintainers("natshineman", "harisubramoni", "MatthewLieber")
 
     license("Unlicense")
 
     # Prefer the latest stable release
+    version("4.1", sha256="be0a60f342cb94b6719799077072d87aa6e306f21e2c4a09eba6c581f83d4619")
     version("4.0", sha256="942156804425752ab8b7884a6995581d7d9e93f58025ca71b58e6412eb766eae")
 
     provides("mpi")
-    provides("mpi@:3.1")
+    provides("mpi@:4.1")
 
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
     variant("debug", default=False, description="Enable debug info and error messages at run-time")
@@ -52,27 +53,12 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
         multi=False,
         description="Control the level of thread support",
     )
-    # 32 is needed when job size exceeds 32768 cores
-    variant(
-        "ch3_rank_bits",
-        default="32",
-        values=("16", "32"),
-        multi=False,
-        description="Number of bits allocated to the rank field (16 or 32)",
-    )
-    variant(
-        "pmi_version",
-        description="Which pmi version to be used. If using pmi2 add it to your CFLAGS",
-        default="simple",
-        values=("simple", "pmi2"),
-        multi=False,
-    )
 
     variant(
         "process_managers",
         description="List of the process managers to activate",
         values=disjoint_sets(("auto",), ("slurm",), ("hydra", "gforker", "remshell"))
-        .with_error("'slurm' or 'auto' cannot be activated along with " "other process managers")
+        .with_error("'slurm' or 'auto' cannot be activated along with other process managers")
         .with_default("auto")
         .with_non_feature_values("auto"),
     )
@@ -111,16 +97,6 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    conflicts(
-        "process_managers=slurm pmi_version=simple",
-        msg="MVAPICH-Plus can not be built with slurm and simple pmi",
-    )
-
-    with when("process_managers=slurm"):
-        conflicts("pmi_version=pmi2")
-
-    with when("process_managers=auto"):
-        conflicts("pmi_version=pmi2")
 
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
 
@@ -128,10 +104,10 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     def determine_version(cls, exe):
         if exe.endswith("mpichversion"):
             output = Executable(exe)(output=str, error=str)
-            match = re.search(r"^MVAPICH2 Version:\s*(\S+)", output)
+            match = re.search(r"^MVAPICH Version:\s*(\S+)", output)
         elif exe.endswith("mpiname"):
             output = Executable(exe)("-a", output=str, error=str)
-            match = re.search(r"^MVAPICH2 (\S+)", output)
+            match = re.search(r"^MVAPICH (\S+)", output)
         return match.group(1) if match else None
 
     @property
@@ -156,14 +132,10 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
         opts = []
         if len(other_pms) > 0:
             opts = ["--with-pm=%s" % ":".join(other_pms)]
-
-        # See: http://slurm.schedmd.com/mpi_guide.html#mvapich2
         if spec.satisfies("process_managers=slurm"):
-            opts = [
-                "--with-pm=slurm",
-                f"--with-slurm={spec['slurm'].prefix}",
-                f"CFLAGS=-I{spec['slurm'].prefix}/include/slurm",
-            ]
+            opts = ["--with-pm=none", "--with-pmi=slurm"]
+        if spec.satisfies("process_managers=cray"):
+            opts = ["--with-pm=none", "--with-pmi=pmi2", "--with-pmi2=/opt/cray/pe/pmi/default"]
         if "none" in spec.variants["process_managers"].value:
             opts = ["--with-pm=none"]
 
@@ -291,12 +263,11 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
             "--disable-opencl",
             "--disable-gl",
             "--enable-fortran=all",
-            "-disable-omb",
+            "--disable-omb",
             f"--enable-wrapper-rpath={'no' if spec.satisfies('~wrapperrpath') else 'yes'}",
         ]
 
         args.extend(self.enable_or_disable("alloca"))
-        # args.append("--with-pmi=" + spec.variants["pmi_version"].value)
 
         if self.spec.satisfies("+debug"):
             args.extend(
@@ -312,22 +283,18 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
         else:
             args.append("--enable-fast=all")
         if self.spec.satisfies("+cuda"):
-            args.extend(["--enable-cuda", f"--with-cuda={(spec['cuda'].prefix)}"])
+            args.extend([f"--with-cuda={(spec['cuda'].prefix)}"])
+            # args.extend(["--with-cuda"])
         if self.spec.satisfies("+rocm"):
-            args.extend(
-                ["--enable-rocm", f"--with-rocm={spec['hip'].prefix}", "--enable-hip=basic"]
-            )
+            args.extend([f"--with-rocm={spec['hip'].prefix}"])
 
+        # no longer supported
         if self.spec.satisfies("+regcache"):
             args.append("--enable-registration-cache")
         else:
             args.append("--disable-registration-cache")
 
-        ld = ""
-        for path in itertools.chain(self.compiler.extra_rpaths, self.compiler.implicit_rpaths()):
-            ld += "-Wl,-rpath," + path + " "
-        if ld != "":
-            args.append("LDFLAGS=" + ld)
+        # probably don't want to do this
         args.extend(self.process_manager_options)
         args.extend(self.network_options)
         args.extend(self.file_system_options)

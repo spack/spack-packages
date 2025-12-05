@@ -6,7 +6,6 @@
 import os
 import socket
 import sys
-from os import environ as env
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -69,6 +68,7 @@ class VtkH(CMakePackage, CudaPackage):
     variant("logging", default=False, description="Build vtk-h with logging enabled")
     variant("contourtree", default=False, description="Enable contour tree support")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 

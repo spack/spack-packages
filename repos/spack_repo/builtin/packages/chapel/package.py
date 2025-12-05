@@ -10,18 +10,19 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-import llnl.util.lang
-
-import spack.platforms
-import spack.platforms.cray
 from spack.package import *
-from spack.util.environment import is_system_path, set_env
 
 
-@llnl.util.lang.memoized
+def slingshot_network():
+    return os.path.exists("/opt/cray/pe") and (
+        os.path.exists("/lib64/libcxi.so") or os.path.exists("/usr/lib64/libcxi.so")
+    )
+
+
+@memoized
 def is_CrayEX():
     # Credit to upcxx package for this hpe-cray-ex detection function
-    if spack.platforms.host().name == "linux":
+    if host_platform().name == "linux":
         target = os.environ.get("CRAYPE_NETWORK_TARGET")
         if target in ["ofi", "ucx"]:  # normal case
             return True
@@ -49,7 +50,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     # TODO: Re-enable these once we add determine_version and determine_variants
-    # executables = ["^chpl$", "^chpldoc$"]
+    # executables = ["^chpl$", "^chpldoc$", "^mason$"]
 
     # A list of GitHub accounts to notify when the package is updated.
     # TODO: add chapel-project github account
@@ -62,12 +63,16 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
 
+    version("2.6.0", sha256="e469c35be601cf1f59af542ab885e8a14aa2b087b79af0d5372a4421976c74b6")
+    version("2.5.0", sha256="020220ca9bf52b9f416e9a029bdc465bb1f635c1e274c6ca3c18d1f83e41fce1")
     version("2.4.0", sha256="a51a472488290df12d1657db2e7118ab519743094f33650f910d92b54c56f315")
-    version("2.3.0", sha256="0185970388aef1f1fae2a031edf060d5eac4eb6e6b1089e7e3b15a130edd8a31")
-    version("2.2.0", sha256="bb16952a87127028031fd2b56781bea01ab4de7c3466f7b6a378c4d8895754b6")
-    version("2.1.0", sha256="72593c037505dd76e8b5989358b7580a3fdb213051a406adb26a487d26c68c60")
-    version("2.0.1", sha256="19ebcd88d829712468cfef10c634c3e975acdf78dd1a57671d11657574636053")
-    version("2.0.0", sha256="b5387e9d37b214328f422961e2249f2687453c2702b2633b7d6a678e544b9a02")
+
+    with default_args(deprecated=True):
+        version("2.3.0", sha256="0185970388aef1f1fae2a031edf060d5eac4eb6e6b1089e7e3b15a130edd8a31")
+        version("2.2.0", sha256="bb16952a87127028031fd2b56781bea01ab4de7c3466f7b6a378c4d8895754b6")
+        version("2.1.0", sha256="72593c037505dd76e8b5989358b7580a3fdb213051a406adb26a487d26c68c60")
+        version("2.0.1", sha256="19ebcd88d829712468cfef10c634c3e975acdf78dd1a57671d11657574636053")
+        version("2.0.0", sha256="b5387e9d37b214328f422961e2249f2687453c2702b2633b7d6a678e544b9a02")
 
     sanity_check_is_dir = ["bin", join_path("lib", "chapel"), join_path("share", "chapel")]
     sanity_check_is_file = [join_path("bin", "chpl")]
@@ -78,6 +83,11 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("fix_chpl_line_length.patch", when="@:2.3.0")  # PRs 26357, 26381, 26491
     patch("fix_checkChplInstall.patch", when="@:2.3.0")  # PR 26317
     patch("fix_llvm_include_path_2.3.patch", when="@=2.3.0 llvm=bundled")  # PR 26402
+    patch(
+        "https://github.com/chapel-lang/chapel/pull/27365.patch?full_index=1",
+        when="@2.2:2.5",
+        sha256="1e49e48eb838c38db5b81ca4859e566067a61d537269e35a6a356edb76d3c86b",
+    )
 
     launcher_names = (
         "amudprun",
@@ -108,7 +118,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "dpcpp": "intel",
         "gcc": "gnu",
         "intel": "intel",
-        "llvm": "llvm",
+        "llvm": "clang",
         "oneapi": "intel",
         "rocmcc": "clang",
         "unset": "unset",
@@ -176,6 +186,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # TODO: refactor this somehow, this is a separate documentation tool, not a variant of chapel
     variant("chpldoc", default=False, description="Build chpldoc in addition to chpl")
+
+    variant("mason", default=False, description="Enable Mason package manager support")
 
     variant("developer", default=False, description="Enable Chapel developer mode")
 
@@ -323,7 +335,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
 
     requires(
-        "^libfabric" + (" fabrics=cxi" if spack.platforms.cray.slingshot_network() else ""),
+        "^libfabric" + (" fabrics=cxi" if slingshot_network() else ""),
         when="libfabric=spack",
         msg="libfabric requires cxi fabric provider on HPE-Cray EX machines",
     )
@@ -414,11 +426,15 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # TODO: for CHPL_X_CC and CHPL_X_CXX, can we capture an arbitrary path, possibly
     # with arguments?
+    # NOTE: this list should include all vars potentially set by this spackage in
+    # setup_run_environment that potentially affect the build, otherwise executing
+    # `spack load chapel` may contaminate a subsequent `spack install chapel`.
     chpl_env_vars = [
         "CHPL_ATOMICS",
         "CHPL_AUX_FILESYS",
         "CHPL_COMM",
         "CHPL_COMM_SUBSTRATE",
+        "CHPL_CUDA_PATH",
         "CHPL_DEVELOPER",
         "CHPL_GASNET_SEGMENT",
         "CHPL_GMP",
@@ -427,9 +443,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_GPU_MEM_STRATEGY",
         "CHPL_HOME",
         "CHPL_HOST_ARCH",
-        # "CHPL_HOST_CC",
+        "CHPL_HOST_CC",
         "CHPL_HOST_COMPILER",
-        # "CHPL_HOST_CXX",
+        "CHPL_HOST_CXX",
         "CHPL_HOST_JEMALLOC",
         "CHPL_HOST_MEM",
         "CHPL_HOST_PLATFORM",
@@ -442,15 +458,17 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_LLVM_SUPPORT",
         "CHPL_LLVM_VERSION",
         "CHPL_LOCALE_MODEL",
+        "CHPL_MAKE_THIRD_PARTY",
         "CHPL_MEM",
         "CHPL_RE2",
+        "CHPL_ROCM_PATH",
         "CHPL_SANITIZE",
         "CHPL_SANITIZE_EXE",
         "CHPL_TARGET_ARCH",
-        # "CHPL_TARGET_CC",
+        "CHPL_TARGET_CC",
         "CHPL_TARGET_COMPILER",
         "CHPL_TARGET_CPU",
-        # "CHPL_TARGET_CXX",
+        "CHPL_TARGET_CXX",
         "CHPL_TARGET_PLATFORM",
         "CHPL_TASKS",
         "CHPL_TIMERS",
@@ -464,16 +482,33 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("cuda", default=False, sticky=True, description="Enable Nvidia CUDA GPU support")
 
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
-    conflicts("+rocm", when="@:1", msg="ROCm support in spack requires Chapel 2.0.0 or later")
+
+    conflicts(
+        "^llvm@20",
+        when="@:2.5 +cuda",
+        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see "
+        "https://github.com/chapel-lang/chapel/issues/27273",
+    )
+
+    conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
     # Chapel restricts the allowable ROCm versions
-    with when("@2:2.1 +rocm"):
-        depends_on("hsa-rocr-dev@4:5.4")
-        depends_on("hip@4:5.4")
     with when("@2.2: +rocm"):
-        depends_on("hsa-rocr-dev@4:5.4,6.0:6.2")
-        depends_on("hip@4:5.4,6.0:6.2")
-    depends_on("llvm-amdgpu@4:5.4", when="+rocm llvm=spack")
-    requires("llvm=bundled", when="+rocm ^hip@6.0:6.2", msg="ROCm 6 support requires llvm=bundled")
+        depends_on("hsa-rocr-dev@6.0:6.2")
+        depends_on("hip@6.0:6.2")
+    # This is the case because the package only supports ROCm 6, and Chapel
+    # requires bundled LLVM for that version.
+    # TODO: Modify this constrant and message if/when Chapel supports an
+    # additional ROCm version without that requirement.
+    requires("llvm=bundled", when="+rocm", msg="Chapel ROCm support requires llvm=bundled")
+
+    # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
+    # provides %rocmcc, which we don't want to use.
+    requires(
+        *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
+        policy="any_of",  # any to ensure %clang works
+        when="+rocm",
+        msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
+    )
 
     conflicts(
         "comm_substrate=unset",
@@ -526,11 +561,19 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     depends_on("doxygen@1.8.17:", when="+chpldoc")
 
+    requires("+chpldoc", when="+mason", msg="Mason requires chpldoc")
+    # TODO: what would it take to make `comm` be a multi-valued variant?
+    # so even if a user had `comm=ofi +mason`, the concretized spec would be
+    # `comm=ofi,none +mason`
+    requires("comm=none", when="+mason", msg="Mason requires comm=none")
+    requires("re2=bundled", when="+mason", msg="Mason requires re2=bundled")
+
     # TODO: keep up to date with util/chplenv/chpl_llvm.py
     with when("llvm=spack ~rocm"):
         depends_on("llvm@11:17", when="@:2.0.1")
         depends_on("llvm@11:18", when="@2.1:2.2")
-        depends_on("llvm@11:19", when="@2.3:")
+        depends_on("llvm@11:19", when="@2.3:2.4")
+        depends_on("llvm@11:20", when="@2.5:")
 
     # Based on docs https://chapel-lang.org/docs/technotes/gpu.html#requirements
     depends_on("llvm@16:", when="llvm=spack +cuda ^cuda@12:")
@@ -553,7 +596,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # but many of these are ALSO run-time dependencies of the executable
     # application built by that Chapel compiler from user-provided sources.
     with default_args(type=("build", "link", "run", "test")):
-        depends_on("cuda@11:", when="+cuda")
+        depends_on("cuda@11:12", when="+cuda")
         depends_on("gmp", when="gmp=spack")
         depends_on("hwloc", when="hwloc=spack")
         depends_on("libfabric", when="libfabric=spack")
@@ -577,25 +620,36 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     def build(self, spec, prefix):
         with set_env(CHPL_MAKE_THIRD_PARTY=join_path(self.build_directory, "third-party")):
+            # print all the explicitly set CHPL_* config variables to assist in debugging
+            for var in self.chpl_env_vars:
+                tty.info(var + "=" + os.getenv(var, "<unset>"))
             make()
             with set_env(CHPL_HOME=self.build_directory):
                 if spec.satisfies("+chpldoc"):
                     make("chpldoc")
+                if spec.satisfies("+mason"):
+                    make("mason")
                 if spec.satisfies("+python-bindings"):
                     make("chapel-py-venv")
                     python("-m", "ensurepip", "--default-pip")
                     python("-m", "pip", "install", "tools/chapel-py")
 
     def install(self, spec, prefix):
-        make("install")
-        # We install CMakeLists.txt so we can later lookup the version number
-        # if working from a non-versioned release/branch (such as main)
-        if not self.is_versioned_release():
-            install("CMakeLists.txt", join_path(prefix.share, "chapel"))
-        install_tree("doc", join_path(prefix.share, "chapel", self._output_version_short, "doc"))
-        install_tree(
-            "examples", join_path(prefix.share, "chapel", self._output_version_short, "examples")
-        )
+        # Needed to prevent invalidating cache on subsequent cmake runs due to
+        # env changes, likely pertaining to spack compiler wrappers.
+        with set_env(CHPL_CMAKE_USE_CC_CXX="1"):
+            make("install")
+            # We install CMakeLists.txt so we can later lookup the version number
+            # if working from a non-versioned release/branch (such as main)
+            if not self.is_versioned_release():
+                install("CMakeLists.txt", join_path(prefix.share, "chapel"))
+            install_tree(
+                "doc", join_path(prefix.share, "chapel", self._output_version_short, "doc")
+            )
+            install_tree(
+                "examples",
+                join_path(prefix.share, "chapel", self._output_version_short, "examples"),
+            )
 
     def setup_chpl_platform(self, env):
         if self.spec.variants["host_platform"].value == "unset":
@@ -765,7 +819,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "CHPL_MAKE_THIRD_PARTY",
             join_path(self.prefix.lib, "chapel", self._output_version_short),
         )
-        env.set("CHPL_HOME", chpl_home)
+        with when("@2.2:2.5"):
+            env.set("CHPL_HOME", chpl_home)
 
     def get_chpl_version_from_cmakelists(self) -> str:
         cmake_lists = None
@@ -809,7 +864,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         return len(matches) == 0
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version_long(self) -> str:
         if not self.is_versioned_release():
             return self.get_chpl_version_from_cmakelists()
@@ -817,7 +872,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         return spec_vers_str
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version_short(self) -> str:
         if not self.is_versioned_release():
             return ".".join(self.get_chpl_version_from_cmakelists().split(".")[:-1])

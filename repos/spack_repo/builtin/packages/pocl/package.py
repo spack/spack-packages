@@ -7,7 +7,6 @@ import os
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
-from spack.package_test import compare_output_file, compile_c_and_execute
 
 
 class Pocl(CMakePackage):
@@ -111,7 +110,7 @@ class Pocl(CMakePackage):
 
     @run_after("install")
     def symlink_opencl(self):
-        os.symlink("CL", self.prefix.include.OpenCL)
+        symlink("CL", self.prefix.include.OpenCL)
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

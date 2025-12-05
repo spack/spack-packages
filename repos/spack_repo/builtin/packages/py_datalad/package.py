@@ -22,6 +22,8 @@ class PyDatalad(PythonPackage):
     pypi = "datalad/datalad-0.14.6.tar.gz"
     git = "https://github.com/datalad/datalad.git"
 
+    version("1.2.3", sha256="48f19d3e4fc7b2725240e6c47d6710f3bc46ad6b42455ff76dd3f6e34226f39f")
+    version("1.2.1", sha256="4d9f7ffe7a8a7b7eced97ba3d2d2257d527d4218c73ddf7e74eb343cf970d925")
     version("0.18.4", sha256="d832f3d70b79b7b66519ca30315791a6a265bdf8a86ddac5846489b75385cb09")
     version("0.18.3", sha256="2da57df609f62a52a6652ade802e8ce0f229d498a5b93b15df2b8c69f8875b6e")
     version("0.17.5", sha256="a221312c58b0b9b57605cc1a2288838f24932491b2e50475dd7a940151cafccd")
@@ -41,11 +43,14 @@ class PyDatalad(PythonPackage):
         "metadata-extra", when="@:0.17", default=False, description="Enable extra metadata support"
     )
 
+    depends_on("python@3.9:", type=("build", "run"), when="@1.1.4:")
+
+    depends_on("py-setuptools@59:", when="@1.1.6:", type="build")
     depends_on("py-setuptools@40.8.0:", type="build")
     # upper bound needed because otherwise the following error occurs:
     # 'extras_require' must be a dictionary whose values are strings or lists
     # of strings containing valid project/version requirement specifiers.
-    depends_on("py-setuptools@40.8.0:66", when="@:17", type="build")
+    depends_on("py-setuptools@40.8.0:66", when="@:0.17", type="build")
 
     depends_on("git", type=("build", "run"))
     depends_on("git-annex", type=("build", "run"))
@@ -63,6 +68,7 @@ class PyDatalad(PythonPackage):
     depends_on("py-fasteners@0.14:", type=("build", "run"))
     depends_on("py-packaging", when="@0.15.4:", type=("build", "run"))
     depends_on("py-patool@1.7:", type=("build", "run"))
+    depends_on("py-tqdm@4.32:", type=("build", "run"), when="@0.19:")
     depends_on("py-tqdm", type=("build", "run"))
     depends_on("py-typing-extensions@4:", when="@0.18.4: ^python@:3.10", type=("build", "run"))
     depends_on("py-typing-extensions", when="@0.18.3: ^python@:3.9", type=("build", "run"))
@@ -72,7 +78,7 @@ class PyDatalad(PythonPackage):
     depends_on("py-wrapt", when="@:0.15", type=("build", "run"))
 
     # downloaders
-    depends_on("py-boto", type=("build", "run"))
+    depends_on("py-boto3", type=("build", "run"), when="@1.1:")
     depends_on("py-keyring@20.0:23.8,23.9.1:", when="@0.16:", type=("build", "run"))
     depends_on("py-keyring@8.0:", type=("build", "run"))
     depends_on("py-keyrings-alt", type=("build", "run"))
@@ -81,8 +87,11 @@ class PyDatalad(PythonPackage):
 
     # publish
     depends_on("py-python-gitlab", when="@0.14.7:", type=("build", "run"))
-    depends_on("py-pygithub", when="@:0.16", type=("build", "run"))
-    depends_on("py-jsmin", when="@:0.14", type=("build", "run"))
+
+    # Historical dependencies
+    depends_on("py-boto", type=("build", "run"), when="@:1.0")
+    depends_on("py-pygithub", type=("build", "run"), when="@:0.16")
+    depends_on("py-jsmin", type=("build", "run"), when="@:0.14")
 
     # metadata
     with when("@:0.17"):
