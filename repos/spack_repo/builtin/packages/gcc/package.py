@@ -413,10 +413,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # Ditto for RHEL7/8: OpenBLAS uses flags which the RHEL system-binutils don't have:
     # https://github.com/xianyi/OpenBLAS/issues/3805#issuecomment-1319878852
     conflicts(
-        "~binutils", when="@10: os=rhel7", msg="gcc: Add +binutils - preinstalled as might be old"
+        "~binutils", when="@10: os=rhel7 ~mold", msg="gcc: Add +binutils - preinstalled as might be old"
     )
     conflicts(
-        "~binutils", when="@10: os=rhel8", msg="gcc: Add +binutils - preinstalled as might be old"
+        "~binutils", when="@10: os=rhel8 ~mold", msg="gcc: Add +binutils - preinstalled as might be old"
     )
 
     # GCC 11 requires GCC 4.8 or later (https://gcc.gnu.org/gcc-11/changes.html)
