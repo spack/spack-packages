@@ -18,6 +18,7 @@ class Paraconf(CMakePackage):
 
     maintainers("jbigot")
 
+    version("1.0.1", sha256="93884d40c1b195ad71c64f4b5301040b8b6ea4a0cae8b21e89232290d781b1eb")
     version("1.0.0", sha256="9336492c292088a7d97192f2b1fa306e11f6f32373ac75f29b9af7eecd5c0c11")
     version("0.4.16", sha256="d896cb5bbf1c6b311f6bed44263548c799265e1f22d50475aecbddc80b0db982")
     version("0.4.15", sha256="914befa7a8d6fbf2de3466e434a9ea20363900af5519859663a24c7a51bd26a6")
