@@ -47,7 +47,7 @@ class PyTensorflowMetadata(PythonPackage):
 
     # https://github.com/tensorflow/metadata/pull/59
     patch(
-        "https://github.com/tensorflow/metadata/pull/59/commits/53a2c997ba9e28125db45f88ee61cdbd063737dc.patch?full_index=1"
+        "https://github.com/tensorflow/metadata/pull/59/commits/53a2c997ba9e28125db45f88ee61cdbd063737dc.patch?full_index=1",
         sha256="e66beb805e212829531fa5f445cf089b8a8583fee7fb5a39224e474f149dfdb6",
         when="@1.17:",
     )
