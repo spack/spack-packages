@@ -123,12 +123,11 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-nanobind")
 
     with default_args(type="build"):
-        # Bazel tends to be backwards-compatible within major versions
         # .bazelversion
-        depends_on("bazel@7.4.1:7", when="@0.5.3:")
-        depends_on("bazel@6.5.0:6", when="@0.4.28:0.5.2")
-        depends_on("bazel@6.1.2:6", when="@0.4.11:0.4.27")
-        depends_on("bazel@5.1.1:5", when="@0.3.7:0.4.10")
+        depends_on("bazel@7.4.1", when="@0.5.3:")
+        depends_on("bazel@6.5.0", when="@0.4.28:0.5.2")
+        depends_on("bazel@6.1.2", when="@0.4.11:0.4.27")
+        depends_on("bazel@5.1.1", when="@0.3.7:0.4.10")
 
         # jaxlib/setup.py
         depends_on("py-setuptools")

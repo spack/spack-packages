@@ -79,7 +79,7 @@ class Bazel(Package):
 
     # https://github.com/bazelbuild/bazel/pull/27014
     # https://github.com/bazelbuild/bazel/pull/27160
-    conflicts("os=tahoe", when="@:7.6,8:8.4.1")
+    conflicts("os=tahoe", when="@:7.6.1,8:8.4.1")
 
     patch(
         "https://github.com/bazelbuild/bazel/commit/05b1f061c9256ec0eb6fb71716ed93feb0c31b59.patch?full_index=1",
