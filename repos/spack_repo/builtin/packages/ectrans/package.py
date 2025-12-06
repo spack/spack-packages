@@ -24,6 +24,8 @@ class Ectrans(CMakePackage):
 
     version("develop", branch="develop", no_cache=True)
     version("main", branch="main", no_cache=True)
+    version("1.7.0", sha256="224893a8edeaaf76140842340eb30ad4f9ab772591a55aab4e4493a978e086c7")
+    version("1.6.2", sha256="63e01a5106fb4eee70a4e544b84300b104507a3fbeb9b7374964c8c48e06acda")
     version("1.5.0", sha256="8b2b24d1988b92dc3793b29142946614fca9e9c70163ee207d2a123494430fde")
     version("1.4.0", sha256="1364827511a2eb11716aaee85062c3ab0e6b5d5dca7a7b9c364e1c43482b8691")
     version("1.2.0", sha256="2ee6dccc8bbfcc23faada1d957d141f24e41bb077c1821a7bc2b812148dd336c")

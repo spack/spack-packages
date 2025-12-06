@@ -114,6 +114,16 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("level_zero", default=False, description="Enable Level Zero support")
     variant("gdrcopy", default=False, when="@1.12: +cuda", description="Enable gdrcopy support")
 
+    variant("asan", default=False, when="@1.12:", description="Enable AddressSanitizer (ASan)")
+    variant("lsan", default=False, when="@1.20:", description="Enable LeakSanitizer (LSan)")
+    variant("tsan", default=False, when="@1.20:", description="Enable ThreadSanitizer (TSan)")
+    variant(
+        "ubsan",
+        default=False,
+        when="@1.20:",
+        description="Enable UndefinedBehaviorSanitizer (UBSan)",
+    )
+
     # Backporting from main for versions 2.3.x
     # The CXI provider hardcodes CXIP_FI_VERSION to FI_VERSION(2, 2).
     # Make it match the libfabric we're building
@@ -170,6 +180,8 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
         "set by OPX, resulting in undefined behavior.",
     )
 
+    conflicts("+asan +tsan")
+
     flag_handler = build_system_flags
 
     @classmethod
@@ -219,6 +231,10 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     def configure_args(self):
         args = [
             *self.enable_or_disable("debug"),
+            *self.enable_or_disable("asan"),
+            *self.enable_or_disable("lsan"),
+            *self.enable_or_disable("tsan"),
+            *self.enable_or_disable("ubsan"),
             *self.with_or_without("uring"),
             *self.with_or_without("cuda", activation_value="prefix"),
             *self.with_or_without("ze", variant="level_zero"),
