@@ -45,7 +45,6 @@ class Ollama(GoPackage, CudaPackage):
 
     depends_on("cmake@3.24:", type="build")
     depends_on("go", type="build")
-    depends_on("go@1.21.0:", type="build", when="@0.1.29:")
     depends_on("go@1.22.0:", type="build", when="@0.1.29:")
     depends_on("go@1.22.5:", type="build", when="@0.3.6:")
     depends_on("go@1.22.8:", type="build", when="@0.4.0:")
