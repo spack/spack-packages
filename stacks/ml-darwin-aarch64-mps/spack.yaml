@@ -65,7 +65,7 @@ spack:
   # Bazel codesign issues
   # - py-tensorflow
   # - py-tensorflow-datasets
-  - py-tensorflow-metadata
+  # - py-tensorflow-metadata
   # - py-tensorflow-probability
 
   # XGBoost
