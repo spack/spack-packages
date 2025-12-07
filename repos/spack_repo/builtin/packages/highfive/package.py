@@ -15,7 +15,7 @@ class Highfive(CMakePackage):
     homepage = "https://github.com/highfive-devs/highfive"
     git = "https://github.com/highfive-devs/highfive.git"
 
-    maintainers("1uc", "gouarin")
+    maintainers("1uc")
 
     license("BSL-1.0")
 
