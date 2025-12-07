@@ -24,26 +24,36 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
     version(
-        "0.1.5", tag="v0.1.5", commit="a32009bf1e314b514c07389123648ba19009f3a5", submodules=True
+        "0.1.7", tag="v0.1.7", commit="305c854be59b73eee297e24eb370bd75a8ff4179"
+    )
+    version(
+        "0.1.5", tag="v0.1.5", commit="a32009bf1e314b514c07389123648ba19009f3a5"
     )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     with default_args(type="build"):
+        # https://github.com/tile-ai/tilelang/blob/v0.1.7/pyproject.toml
+        depends_on("py-scikit-build-core", when="@0.1.7:")
+        depends_on("py-cython@3.0.0:", when="@0.1.7:")
+
         # https://github.com/tile-ai/tilelang/blob/v0.1.5/pyproject.toml
-        depends_on("cmake@3.26:")
-        depends_on("py-packaging")
-        depends_on("py-setuptools@61:")
+        depends_on("cmake@3.26:", when="@:0.1.5")
+        depends_on("py-packaging", when="@:0.1.5")
+        depends_on("py-setuptools@61:", when="@:0.1.5")
         # depends_on("py-wheel") # inherited if `pip` is the build system
 
         # https://github.com/tile-ai/tilelang/blob/v0.1.5/requirements-build.txt
-        depends_on("py-build")
-        depends_on("py-tox")
-        depends_on("py-auditwheel")
-        depends_on("patchelf")
+        depends_on("py-build", when="@:0.1.5")
+        depends_on("py-tox", when="@:0.1.5")
+        depends_on("py-auditwheel", when="@:0.1.5")
+        depends_on("patchelf", when="@:0.1.5")
 
     with default_args(type=["build", "run"]):
+        # https://github.com/tile-ai/tilelang/blob/v0.1.7/pyproject.toml
+        depends_on("py-apache-tvm-ffi@:0.1.1", when="@0.1.7:")
+        depends_on("py-tqdm@4.62.3:", when="@0.1.7:")
         # https://github.com/tile-ai/tilelang/blob/v0.1.5/requirements.txt
         depends_on("py-cython")
         depends_on("py-numpy@1.23.5:")
