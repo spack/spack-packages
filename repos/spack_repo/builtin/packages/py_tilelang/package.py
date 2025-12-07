@@ -35,7 +35,7 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-cython@3.0.0:", when="@0.1.7:")
 
         # https://github.com/tile-ai/tilelang/blob/v0.1.5/pyproject.toml
-        depends_on("cmake@3.26:", when="@:0.1.5")
+        depends_on("cmake@3.26:")
         depends_on("py-packaging", when="@:0.1.5")
         depends_on("py-setuptools@61:", when="@:0.1.5")
         # depends_on("py-wheel") # inherited if `pip` is the build system
@@ -70,3 +70,4 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
         # OSError: libnvrtc.so.12: cannot open shared object file: No such file or directory
         if self.spec.satisfies("+cuda"):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix.lib64)
+
