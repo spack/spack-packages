@@ -23,12 +23,8 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
     import_modules = ["tilelang", "tilelang.language", "tilelang.intrinsics"]
 
     version("main", branch="main")
-    version(
-        "0.1.7", tag="v0.1.7", commit="305c854be59b73eee297e24eb370bd75a8ff4179"
-    )
-    version(
-        "0.1.5", tag="v0.1.5", commit="a32009bf1e314b514c07389123648ba19009f3a5"
-    )
+    version("0.1.7", tag="v0.1.7", commit="305c854be59b73eee297e24eb370bd75a8ff4179")
+    version("0.1.5", tag="v0.1.5", commit="a32009bf1e314b514c07389123648ba19009f3a5")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -69,3 +65,4 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
             self.define_from_variant("USE_CUDA", "cuda"),
             self.define_from_variant("USE_ROCM", "rocm"),
         ]
+
