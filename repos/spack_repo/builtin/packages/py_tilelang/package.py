@@ -66,3 +66,7 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
             self.define_from_variant("USE_ROCM", "rocm"),
         ]
 
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # OSError: libnvrtc.so.12: cannot open shared object file: No such file or directory
+        if self.spec.satisfies("+cuda"):
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix.lib64)
