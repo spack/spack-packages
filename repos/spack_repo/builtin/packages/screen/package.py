@@ -45,3 +45,4 @@ class Screen(AutotoolsPackage, GNUMirrorPackage):
     depends_on("autoconf", type="build", when="@4.9.0:")
     depends_on("automake", type="build", when="@4.9.0:")
     depends_on("libtool", type="build", when="@4.9.0:")
+    depends_on("libxcrypt", type=("build", "link"), when="@3.9:")
