@@ -30,8 +30,8 @@ class PyPanel(PythonPackage):
     depends_on("py-hatch-vcs", type="build", when="@1.5.2:")
 
     depends_on("py-bokeh@2.4.3:2.4", type=("build", "run"), when="@0.14.4")
-    depends_on("py-bokeh@3.5:3.6", type=("build", "run"), when="@1.5.2:")
-    depends_on("py-bokeh@3.5:3.7", type=("build", "run"), when="@1.6.3:")
+    depends_on("py-bokeh@3.5:3.6", type=("build", "run"), when="@1.5.2")
+    depends_on("py-bokeh@3.5:3.7", type=("build", "run"), when="@1.6.3")
     depends_on("py-bokeh@3.7", type=("build", "run"), when="@1.7.5:")
 
     depends_on("py-param@1.12:", type=("build", "run"), when="@0.14.4")

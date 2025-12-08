@@ -671,7 +671,7 @@ class Hdf5(CMakePackage):
             with working_dir(self.prefix.lib):
                 for lib in libs:
                     libname = os.path.split(lib)[1]
-                    os.symlink(libname, libname.replace("_debug", ""))
+                    symlink(libname, libname.replace("_debug", ""))
 
     @run_after("install")
     def symlink_to_h5hl_wrappers(self):

@@ -36,12 +36,10 @@ class Cprnc(CMakePackage):
         git="https://github.com/PARALLELIO/genf90",
         tag="genf90_200608",
         commit="4816965ba946731352bad195b7d946a5fe682ff5",
-        destination="genf90-resource",
+        placement="genf90",
     )
 
     def cmake_args(self):
-        args = [
-            self.define("GENF90_PATH", join_path(self.stage.source_path, "genf90-resource/genf90"))
-        ]
+        args = [self.define("GENF90_PATH", join_path(self.stage.source_path, "genf90"))]
 
         return args

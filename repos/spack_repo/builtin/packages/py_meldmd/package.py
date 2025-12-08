@@ -61,7 +61,7 @@ class PyMeldmd(CMakePackage, PythonExtension, CudaPackage):
             pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
         for _, _, files in os.walk(self.spec["openmm"].prefix.lib.plugins):
             for f in files:
-                os.symlink(
+                symlink(
                     join_path(self.spec["openmm"].prefix.lib.plugins, f),
                     join_path(self.prefix.lib.plugins, f),
                 )
