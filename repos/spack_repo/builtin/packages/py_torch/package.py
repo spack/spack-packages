@@ -320,6 +320,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("miopen-hip")
         depends_on("rocminfo")
         depends_on("composable-kernel")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"composable-kernel amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
         depends_on("hipsparselt@7.0:", when="@2.9")
         depends_on("aotriton@0.8b", when="@2.5:2.6")
         depends_on("aotriton@0.9.2b", when="@2.7")
