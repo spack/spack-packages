@@ -18,9 +18,9 @@ class Bedops(MakefilePackage):
 
     maintainers("jacorvar")
 
-    # More regarding the peculiar license() directive: bedops is licensed under the GPL v2, but the
-    # bedops source bundles source for bzlip2, jansson, and zlib, and its LICENSE has the licenses
-    # for those source codes appended.
+    # Regarding the peculiar license() directive: bedops is licensed under the GPL v2,
+    # but the bedops source bundles source for bzlip2, jansson, and zlib, and its
+    # LICENSE has the licenses for those source codes appended.
     license("GPL-2.0-only AND bzip2-1.0.6 AND MIT AND Zlib")
 
     version("2.4.42", sha256="9daa0c098e37490a07f84664d2c61ff8909689995cf7e1673d259ccd4f1c453c")
