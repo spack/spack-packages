@@ -6,18 +6,20 @@ spack:
 
   packages:
     all:
-      target: [ "x86_64_v3" ]
+      variants: +mpi cuda_arch=70
       require:
       - target=x86_64_v3
-      providers:
-        blas:
-          - openblas
-        mkl:
+    blas:
+      require:
+      - openblas
+    mkl:
+      require:
           - intel-oneapi-mkl
-        mpi:
-          - openmpi
-          - mpich
-      variants: +mpi cuda_arch=70
+    mpi:
+      require:
+      - one_of:
+        - openmpi
+        - mpich
 
   specs:
   - ascent
@@ -40,8 +42,8 @@ spack:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/e4s-amazonlinux-2:v2025-09-15
+          name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
           entrypoint: ['']
 
   cdash:
-    build-group: RADIUSS AWS Packages
+    build-group: RADIUSS CUDA Packages
