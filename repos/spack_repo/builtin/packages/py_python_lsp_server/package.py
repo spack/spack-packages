@@ -32,9 +32,7 @@ class PyPythonLspServer(PythonPackage):
     depends_on("py-setuptools-scm@3.4.3:+toml", type="build")
 
     variant(
-        "formatter",
-        values=any_combination_of("black", "ruff"),
-        description="Formatter to use",
+        "formatter", values=any_combination_of("black", "ruff"), description="Formatter to use"
     )
 
     with default_args(type=("build", "run")):
