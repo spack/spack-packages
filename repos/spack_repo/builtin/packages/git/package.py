@@ -123,19 +123,19 @@ class Git(AutotoolsPackage):
     def patch(self):
         filter_file(r"^EXTLIBS =$", "#EXTLIBS =", "Makefile")
 
-        custom_vars = []
+        custom_lines = []
 
         # https://github.com/git/git/commit/cdda67de0316ec29dfc1e290bb7f2154b7b95ee8
         if self.spec.satisfies("platform=linux"):
             if self.spec.satisfies("@2.50:"):
                 if self.spec.satisfies("^glibc@:2.24"):
-                    custom_vars.append("CSPRNG_METHOD=")
+                    custom_lines.append("CSPRNG_METHOD=")
                 if self.spec.satisfies("^glibc@2.36:"):
-                    custom_vars.append("CSPRNG_METHOD=arc4random")
+                    custom_lines.append("CSPRNG_METHOD=arc4random")
 
         with open("config.mak", "w") as config_file:
-            for target in custom_vars:
-                config_file.write(target + "\n")
+            for entry in custom_lines:
+                config_file.write(entry + "\n")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # We use EXTLIBS rather than LDFLAGS so that git's Makefile
