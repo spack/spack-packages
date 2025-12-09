@@ -30,13 +30,6 @@ class PySetuptoolsScm(PythonPackage):
     version("3.5.0", sha256="5bdf21a05792903cafe7ae0c9501182ab52497614fa6b1750d9dbae7b60c1a87")
     version("1.15.6", sha256="49ab4685589986a42da85706b3311a2f74f1af567d39fee6cb1e088d7a75fb5f")
 
-    with default_args(deprecated=True):
-        version("7.0.5", sha256="031e13af771d6f892b941adb6ea04545bbf91ebc5ce68c78aaf3fff6e1fb4844")
-        version("7.0.3", sha256="cf8ab8e235bed840cd4559b658af0d8e8a70896a191bbc510ee914ec5325332d")
-        version("6.0.1", sha256="d1925a69cb07e9b29416a275b9fadb009a23c148ace905b2fb220649a6c18e92")
-        version("3.3.3", sha256="bd25e1fb5e4d603dcf490f1fde40fb4c595b357795674c3e5cb7f6217ab39ea5")
-        version("3.1.0", sha256="1191f2a136b5e86f7ca8ab00a97ef7aef997131f1f6d4971be69a1ef387d8b40")
-
     # Basically a no-op in setuptools_scm 7+, toml support is always built
     variant("toml", default=True, description="Build with TOML support")
 
@@ -70,7 +63,9 @@ class PySetuptoolsScm(PythonPackage):
         depends_on("py-typing-extensions", when="@8.0.0:8.0.3 ^python@:3.10")
         depends_on("py-typing-extensions", when="@7")
 
-        depends_on("py-packaging@20:", when="@6.3.0:8.0.1")
+        depends_on("py-packaging@20:", when="@6.3.0:6")
+        # https://github.com/pypa/setuptools/issues/4483#issuecomment-2236528158
+        depends_on("py-packaging@22:", when="@7: ^py-setuptools@71:")
 
         depends_on("py-wheel", when="@3.4.0:6.4.2")
 
@@ -81,6 +76,7 @@ class PySetuptoolsScm(PythonPackage):
         depends_on("py-typing-extensions", when="@7:8.0.4")
 
         depends_on("py-packaging@20.0:", when="@6.3:")
+        depends_on("py-packaging@24:", when="@7.1:")
 
         depends_on("py-importlib-metadata", when="@7: ^python@:3.7")
 

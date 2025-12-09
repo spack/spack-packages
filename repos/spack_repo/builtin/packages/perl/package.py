@@ -38,155 +38,8 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     version("5.40.2", sha256="10d4647cfbb543a7f9ae3e5f6851ec49305232ea7621aed24c7cfbb0bef4b70d")
     version("5.40.0", sha256="c740348f357396327a9795d3e8323bafd0fe8a5c7835fc1cbaba0cc8dfe7161f")
 
-    # End of life releases (deprecated)
-    version(
-        "5.38.2",
-        sha256="a0a31534451eb7b83c7d6594a497543a54d488bc90ca00f5e34762577f40655e",
-        deprecated=True,
-    )
-    version(
-        "5.38.0",
-        sha256="213ef58089d2f2c972ea353517dc60ec3656f050dcc027666e118b508423e517",
-        deprecated=True,
-    )
-    version(
-        "5.36.3",
-        sha256="f2a1ad88116391a176262dd42dfc52ef22afb40f4c0e9810f15d561e6f1c726a",
-        deprecated=True,
-    )
-    version(
-        "5.36.1",
-        sha256="68203665d8ece02988fc77dc92fccbb297a83a4bb4b8d07558442f978da54cc1",
-        deprecated=True,
-    )
-    version(
-        "5.36.0",
-        sha256="e26085af8ac396f62add8a533c3a0ea8c8497d836f0689347ac5abd7b7a4e00a",
-        deprecated=True,
-    )
-    version(
-        "5.34.1",
-        sha256="357951a491b0ba1ce3611263922feec78ccd581dddc24a446b033e25acf242a1",
-        deprecated=True,
-    )
-    version(
-        "5.34.0",
-        sha256="551efc818b968b05216024fb0b727ef2ad4c100f8cb6b43fab615fa78ae5be9a",
-        deprecated=True,
-    )
-    version(
-        "5.32.1",
-        sha256="03b693901cd8ae807231b1787798cf1f2e0b8a56218d07b7da44f784a7caeb2c",
-        deprecated=True,
-    )
-    version(
-        "5.32.0",
-        sha256="efeb1ce1f10824190ad1cadbcccf6fdb8a5d37007d0100d2d9ae5f2b5900c0b4",
-        deprecated=True,
-    )
-    version(
-        "5.30.3",
-        sha256="32e04c8bb7b1aecb2742a7f7ac0eabac100f38247352a73ad7fa104e39e7406f",
-        deprecated=True,
-    )
-    version(
-        "5.30.2",
-        sha256="66db7df8a91979eb576fac91743644da878244cf8ee152f02cd6f5cd7a731689",
-        deprecated=True,
-    )
-    version(
-        "5.30.1",
-        sha256="bf3d25571ff1ee94186177c2cdef87867fd6a14aa5a84f0b1fb7bf798f42f964",
-        deprecated=True,
-    )
-    version(
-        "5.30.0",
-        sha256="851213c754d98ccff042caa40ba7a796b2cee88c5325f121be5cbb61bbf975f2",
-        deprecated=True,
-    )
-    version(
-        "5.28.0",
-        sha256="7e929f64d4cb0e9d1159d4a59fc89394e27fa1f7004d0836ca0d514685406ea8",
-        deprecated=True,
-    )
-    version(
-        "5.26.2",
-        sha256="572f9cea625d6062f8a63b5cee9d3ee840800a001d2bb201a41b9a177ab7f70d",
-        deprecated=True,
-    )
-    version(
-        "5.24.1",
-        sha256="e6c185c9b09bdb3f1b13f678999050c639859a7ef39c8cad418448075f5918af",
-        deprecated=True,
-    )
-    version(
-        "5.22.4",
-        sha256="ba9ef57c2b709f2dad9c5f6acf3111d9dfac309c484801e0152edbca89ed61fa",
-        deprecated=True,
-    )
-    version(
-        "5.22.3",
-        sha256="1b351fb4df7e62ec3c8b2a9f516103595b2601291f659fef1bbe3917e8410083",
-        deprecated=True,
-    )
-    version(
-        "5.22.2",
-        sha256="81ad196385aa168cb8bd785031850e808c583ed18a7901d33e02d4f70ada83c2",
-        deprecated=True,
-    )
-    version(
-        "5.22.1",
-        sha256="2b475d0849d54c4250e9cba4241b7b7291cffb45dfd083b677ca7b5d38118f27",
-        deprecated=True,
-    )
-    version(
-        "5.22.0",
-        sha256="0c690807f5426bbd1db038e833a917ff00b988bf03cbf2447fa9ffdb34a2ab3c",
-        deprecated=True,
-    )
-    version(
-        "5.20.3",
-        sha256="3524e3a76b71650ab2f794fd68e45c366ec375786d2ad2dca767da424bbb9b4a",
-        deprecated=True,
-    )
-    version(
-        "5.18.4",
-        sha256="01a4e11a9a34616396c4a77b3cef51f76a297e1a2c2c490ae6138bf0351eb29f",
-        deprecated=True,
-    )
-    version(
-        "5.16.3",
-        sha256="69cf08dca0565cec2c5c6c2f24b87f986220462556376275e5431cc2204dedb6",
-        deprecated=True,
-    )
-
     # Development releases (odd numbers)
     version("5.39.10", sha256="4b7ffb3e068583fa5c8413390c998b2c15214f205ce737acc485b40932b9f419")
-    version(
-        "5.37.9",
-        sha256="9884fa8a4958bf9434b50f01cbfd187f9e2738f38fe1ae37f844e9950c5117c1",
-        deprecated=True,
-    )
-    version(
-        "5.35.0",
-        sha256="d6c0eb4763d1c73c1d18730664d43fcaf6100c31573c3b81e1504ec8f5b22708",
-        deprecated=True,
-    )
-    version(
-        "5.33.3",
-        sha256="4f4ba0aceb932e6cf7c05674d05e51ef759d1c97f0685dee65a8f3d190f737cd",
-        deprecated=True,
-    )
-    version(
-        "5.31.7",
-        sha256="d05c4e72128f95ef6ffad42728ecbbd0d9437290bf0f88268b51af011f26b57d",
-        deprecated=True,
-    )
-    version(
-        "5.31.4",
-        sha256="418a7e6fe6485cc713a86d1227ef112f0bb3f80322e3b715ffe42851d97804a5",
-        deprecated=True,
-    )
 
     extendable = True
 
@@ -194,61 +47,13 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
 
     if sys.platform != "win32":
         depends_on("gmake", type="build")
-        depends_on("gdbm@:1.23")
-        # Bind us below gdbm-1.20 due to API change: https://github.com/Perl/perl5/issues/18915
-        depends_on("gdbm@:1.19", when="@:5.35")
-        # :5.28 needs gdbm@:1:14.1: https://rt-archive.perl.org/perl5/Ticket/Display.html?id=133295
-        depends_on("gdbm@:1.14.1", when="@:5.28.0")
+        depends_on("gdbm")
         depends_on("berkeley-db")
         depends_on("bzip2")
         depends_on("zlib-api")
-        # :5.24.1 needs zlib@:1.2.8: https://rt.cpan.org/Public/Bug/Display.html?id=120134
-        conflicts("^zlib@1.2.9:", when="@5.20.3:5.24.1")
 
-    conflicts("@5.34.1:", when="%msvc@:19.29.30136")
-    # there has been a long fixed issue with 5.22.0 with regard to the ccflags
-    # definition.  It is well documented here:
-    # https://rt.perl.org/Public/Bug/Display.html?id=126468
-    patch("protect-quotes-in-ccflags.patch", when="@5.22.0")
-
-    # Support zlib-ng 2.1.2 and above for recent Perl
-    # Restrict zlib-ng to older versions for older Perl
-    # See https://github.com/pmqs/Compress-Raw-Zlib/issues/24
-    patch("zlib-ng.patch", when="@5.38 ^zlib-ng@2.1.2:")
-    conflicts("^zlib-ng@2.1.2:", when="@:5.37")
-
-    # Fix the Time-Local testase http://blogs.perl.org/users/tom_wyant/2020/01/my-y2020-bug.html
-    patch(
-        "https://rt.cpan.org/Public/Ticket/Attachment/1776857/956088/0001-Fix-Time-Local-tests.patch",
-        when="@5.26.0:5.28.9",
-        sha256="8cf4302ca8b480c60ccdcaa29ec53d9d50a71d4baf469ac8c6fca00ca31e58a2",
-    )
-    patch(
-        "https://raw.githubusercontent.com/costabel/fink-distributions/master/10.9-libcxx/stable/main/finkinfo/languages/perl5162-timelocal-y2020.patch",
-        when="@:5.24.1",
-        sha256="3bbd7d6f9933d80b9571533867b444c6f8f5a1ba0575bfba1fba4db9d885a71a",
-    )
-
-    # Fix build on Fedora 28
-    # https://bugzilla.redhat.com/show_bug.cgi?id=1536752
-    patch(
-        "https://src.fedoraproject.org/rpms/perl/raw/004cea3a67df42e92ffdf4e9ac36d47a3c6a05a4/f/perl-5.26.1-guard_old_libcrypt_fix.patch",
-        level=1,
-        sha256="0eac10ed90aeb0459ad8851f88081d439a4e41978e586ec743069e8b059370ac",
-        when="@:5.26.2",
-    )
-
-    # Enable builds with the NVIDIA compiler
-    # The Configure script assumes some gcc specific behavior, and use
-    # the mini Perl environment to bootstrap installation.
-    patch("nvhpc-5.30.patch", when="@5.30.0:5.30 %nvhpc")
-    patch("nvhpc-5.32.patch", when="@5.32.0:5.32 %nvhpc")
-    patch("nvhpc-5.34.patch", when="@5.34.0:5.34 %nvhpc")
-    conflicts(
-        "@5.32.0:",
-        when="%nvhpc@:20.11",
-        msg="The NVIDIA compilers are incompatible with version 5.32 and later",
-    )
+    conflicts("%msvc@:19.29.30136")
+    conflicts("%nvhpc@:20.11")
 
     # Make sure we don't get "recompile with -fPIC" linker errors when using static libs
     conflicts("^zlib~shared~pic", msg="Needs position independent code when using static zlib")
@@ -534,12 +339,6 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
             return
 
         spec = self.spec
-
-        if spec.satisfies("@:5.34 platform=darwin") and macos_version() >= Version("10.16"):
-            # Older perl versions reject MACOSX_DEPLOYMENT_TARGET=11 or higher
-            # as "unexpected"; override the environment variable set by spack's
-            # platforms.darwin .
-            env.set("MACOSX_DEPLOYMENT_TARGET", "10.16")
 
         # This is how we tell perl the locations of bzip and zlib.
         env.set("BUILD_BZIP2", "0")

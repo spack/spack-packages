@@ -21,7 +21,7 @@ class PyScikitLearn(PythonPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
-    version("master", branch="main", deprecated=True)
+    version("1.7.2", sha256="20e9e49ecd130598f1ca38a1d85090e1a600147b9c02fa6f15d69cb53d968fda")
     version("1.7.1", sha256="24b3f1e976a4665aa74ee0fcaac2b8fccc6ae77c8e07ab25da3ba6d3292b9802")
     version("1.7.0", sha256="c01e869b15aec88e2cdb73d27f15bdbe03bce8e2fb43afbe77c45d399e73a5a3")
     version("1.6.1", sha256="b4fc2525eca2c69a59260f583c56a7557c6ccdf8deafdba6e060f94c1c59738e")
@@ -47,43 +47,14 @@ class PyScikitLearn(PythonPackage):
     version("0.24.2", sha256="d14701a12417930392cd3898e9646cf5670c190b933625ebe7511b1f7d7b8736")
     version("0.24.1", sha256="a0334a1802e64d656022c3bfab56a73fbd6bf4b1298343f3688af2151810bbdf")
     version("0.24.0", sha256="076369634ee72b5a5941440661e2f306ff4ac30903802dc52031c7e9199ac640")
-    version(
-        "0.23.2",
-        sha256="20766f515e6cd6f954554387dfae705d93c7b544ec0e6c6a5d8e006f6f7ef480",
-        deprecated=True,
-    )
-    version(
-        "0.23.1",
-        sha256="e3fec1c8831f8f93ad85581ca29ca1bb88e2da377fb097cf8322aa89c21bc9b8",
-        deprecated=True,
-    )
-    version(
-        "0.23.0",
-        sha256="639a53df6273acc6a7510fb0c658b94e0c70bb13dafff9d14932c981ff9baff4",
-        deprecated=True,
-    )
-    version(
-        "0.22.2.post1",
-        sha256="57538d138ba54407d21e27c306735cbd42a6aae0df6a5a30c7a6edde46b0017d",
-        deprecated=True,
-    )
-    version(
-        "0.22.1",
-        sha256="51ee25330fc244107588545c70e2f3570cfc4017cff09eed69d6e1d82a212b7d",
-        deprecated=True,
-    )
-    version(
-        "0.22",
-        sha256="314abf60c073c48a1e95feaae9f3ca47a2139bd77cebb5b877c23a45c9e03012",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.13", when="@1.7:")
+        depends_on("python@3.10:3.14", when="@1.7.2:")
+        depends_on("python@3.10:3.13", when="@1.7.0:1.7.1")
         depends_on("python@3.9:3.13", when="@1.5.2:1.6")
         depends_on("python@3.9:3.12", when="@1.4:1.5.1")
         depends_on("python@3.8:3.12", when="@1.3.1:1.3")
@@ -91,9 +62,10 @@ class PyScikitLearn(PythonPackage):
         depends_on("python@3.8:3.10", when="@1.1.0:1.1.2")
         depends_on("python@:3.10", when="@1.0.2")
         depends_on("python@:3.9", when="@0.24:1.0.1")
-        depends_on("python@:3.8", when="@0.22:0.23")
 
     with default_args(type="build"):
+        # Upper bounds are only for long-term stability, can safely be ignored unless known issues
+        # https://github.com/scikit-learn/scikit-learn/pull/32151
         depends_on("py-meson-python@0.17.1:", when="@1.7.1:")
         depends_on("py-meson-python@0.16:", when="@1.5.1:")
         depends_on("py-meson-python@0.15:", when="@1.5:")
@@ -110,7 +82,6 @@ class PyScikitLearn(PythonPackage):
         depends_on("py-numpy@1.17.3:", when="@1.1:")
         depends_on("py-numpy@1.14.6:", when="@1.0:")
         depends_on("py-numpy@1.13.3:", when="@0.23:")
-        depends_on("py-numpy@1.11.0:", when="@0.21:")
         # https://github.com/scikit-learn/scikit-learn/issues/27075
         depends_on("py-numpy@:1", when="@:1.4.1")
 
@@ -121,7 +92,6 @@ class PyScikitLearn(PythonPackage):
         depends_on("py-scipy@1.3.2:", when="@1.1:")
         depends_on("py-scipy@1.1.0:", when="@1.0:")
         depends_on("py-scipy@0.19.1:", when="@0.23:")
-        depends_on("py-scipy@0.17.0:", when="@0.21:")
         depends_on("py-joblib@1.2:", when="@1.4:")
         depends_on("py-joblib@1.1.1:", when="@1.2:")
         depends_on("py-joblib@1:", when="@1.1:")

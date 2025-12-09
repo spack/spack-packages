@@ -48,7 +48,7 @@ class PyPsyclone(PythonPackage):
     depends_on("py-graphviz", type=("build", "run"))
     depends_on("py-configparser", type=("build", "run"))
     depends_on("py-jinja2", type="build")
-    depends_on("py-sympy", type=("build", "run"), when="@2.2.0:")
+    depends_on("py-sympy@1.6.1:", type=("build", "run"), when="@2.2.0:")
     depends_on("py-termcolor", type=("build", "run"))
 
     # Historical dependencies
@@ -88,3 +88,7 @@ class PyPsyclone(PythonPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Allow testing with installed executables
         env.prepend_path("PATH", self.prefix.bin)
+
+    def setup_run_environment(self, env):
+        # Set config file path
+        env.set("PSYCLONE_CONFIG", join_path(self.prefix.share, "psyclone", "psyclone.cfg"))

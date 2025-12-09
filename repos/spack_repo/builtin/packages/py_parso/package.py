@@ -17,6 +17,7 @@ class PyParso(PythonPackage):
 
     license("MIT")
 
+    version("0.8.5", sha256="034d7354a9a018bdce352f48b2a8a450f05e9d6ee85db84764e9b6bd96dafe5a")
     version("0.8.4", sha256="eb3a7b58240fb99099a345571deecc0f9540ea5f4dd2fe14c2a99d6b281ab92d")
     version("0.8.3", sha256="8c07be290bb59f03588915921e29e8a50002acaf2cdc5fa0e0114f91709fafa0")
     version("0.8.2", sha256="12b83492c6239ce32ff5eed6d3639d6a536170723c6f3f1506869f1ace413398")
@@ -26,6 +27,9 @@ class PyParso(PythonPackage):
     version("0.4.0", sha256="2e9574cb12e7112a87253e14e2c380ce312060269d04bd018478a3c92ea9a376")
 
     with default_args(type=("build", "run")):
+        # See parso/python/grammar*.txt
+        depends_on("python@:3.14", when="@:0.8.5")
+        # https://github.com/davidhalter/parso/commit/f670e6e7dc01e07576ec5c84cbf9fbce1a02c3eb
         depends_on("python@:3.13", when="@:0.8.4")
         # https://github.com/davidhalter/parso/commit/f7bea28bcc3a1862075e5b61a08d703d72be94aa
         depends_on("python@:3.12", when="@:0.8.3")

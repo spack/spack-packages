@@ -27,6 +27,7 @@ class Julia(MakefilePackage):
     maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
+    version("1.11.7", sha256="5378209de1c3da1a13d13fc74beffab984a998a77ae1a6a9901f27008da93c29")
     version("1.11.6", sha256="f02acdc8b9aadad568db405dfc4c82ea172f332d0c7a4a0db78ce36cd3cca9f3")
     version("1.11.5", sha256="bb6b42ff01bca3ff7118ddd360f96b4a6654ed7e658b82d50fb06504e7939755")
     version("1.11.4", sha256="28b06591df0ee40928712a88af8785eb05dc7ed08a7c9600dd7c376f90f9e53b")
@@ -57,16 +58,6 @@ class Julia(MakefilePackage):
     version("1.8.1", sha256="066f4ca7a2ad39b003e2af77dbecfbfb9b0a1cb1664033f657ffdbe2f374d956")
     version("1.8.0", sha256="0fa980286d6d912f24ed9f90a02930560d985e0ada8233a4ae5610884feb2438")
 
-    version("1.7.3", sha256="06df2a81e6a18d0333ffa58d36f6eb84934c38984898f9e0c3072c8facaa7306")
-    version("1.7.2", sha256="0847943dd65001f3322b00c7dc4e12f56e70e98c6b798ccbd4f02d27ce161fef")
-    version("1.7.1", sha256="17d298e50e4e3dd897246ccebd9f40ce5b89077fa36217860efaec4576aa718e")
-    version("1.7.0", sha256="8e870dbef71bc72469933317a1a18214fd1b4b12f1080784af7b2c56177efcb4")
-
-    version("1.6.7", sha256="74af1dc7b5841757a06a899923a62cac04665c09829324e8bf53cfb66f7b3d61")
-    version("1.6.6", sha256="a8023708cadb2649395769810e6cec8afc8e352aa6d407189b6c88b86d7f5090")
-    version("1.6.5", sha256="b70ae299ff6b63a9e9cbf697147a48a31b4639476d1947cb52e4201e444f23cb")
-    version("1.6.4", sha256="a4aa921030250f58015201e28204bff604a007defc5a379a608723e6bb1808d4")
-
     variant("precompile", default=True, description="Improve julia startup time")
     variant("openlibm", default=True, description="Use openlibm instead of libm")
     variant(
@@ -95,12 +86,11 @@ class Julia(MakefilePackage):
         " targets=amdgpu,bpf,nvptx,webassembly"
         " version_suffix=jl +link_llvm_dylib libunwind=none"
     )
-    depends_on("libuv", when="@:1.7")
     depends_on("libuv-julia@1.42.0", when="@1.8.0:1.8.1")
     depends_on("libuv-julia@1.44.2", when="@1.8.2:1.9")
     depends_on("libuv-julia@1.44.3", when="@1.10.0:1.10")
     depends_on("libuv-julia@1.48.0", when="@1.11.0:")
-    depends_on("suite-sparse@5.4:5.10", when="@1.6:1.9")
+    depends_on("suite-sparse@5.4:5.10", when="@:1.9")
 
     with when("@1.11.0:1.11"):
         # libssh2.so.1, libpcre2-8.so.0, libmbedtls.so.14, libmbedcrypto.so.7, libmbedx509.so.1,
@@ -156,31 +146,7 @@ class Julia(MakefilePackage):
         depends_on("nghttp2@1.47.0:1.47")
         depends_on("curl@7.84.0:")
 
-    with when("@1.7.0:1.7"):
-        # libssh2.so.1, libpcre2-8.so.0, mbedtls.so.13, mbedcrypto.so.5, mbedx509.so.1
-        # openlibm.so.3
-        depends_on("libblastrampoline@3.0.0:3")
-        depends_on("libgit2@1.1.0:1.1")
-        depends_on("libssh2@1.9.0:1")
-        depends_on("libuv@1.42.0")
-        depends_on("llvm@12.0.1")
-        depends_on("mbedtls@2.24.0:2.24")
-        depends_on("openlibm@0.7.0:0.7", when="+openlibm")
-        depends_on("curl@7.73.0:")
-
-    with when("@1.6.0:1.6"):
-        # libssh2.so.1, libpcre2-8.so.0, mbedtls.so.13, mbedcrypto.so.5, mbedx509.so.1
-        # openlibm.so.3, (todo: complete this list for upperbounds...)
-        depends_on("libgit2@1.1.0:1.1")
-        depends_on("libssh2@1.9.0:1")
-        depends_on("libuv@1.39.0")
-        depends_on("llvm@11.0.1")
-        depends_on("mbedtls@2.24.0:2.24")
-        depends_on("openlibm@0.7.0:0.7", when="+openlibm")
-        depends_on("curl@7.73.0:8.9")  # patch for forward compat with curl@8.10 does not apply
-
     # Patches for llvm
-    depends_on("llvm", patches="llvm7-symver-jlprefix.patch", when="@:1.7")
     depends_on(
         "llvm",
         when="^llvm@11.0.1",
@@ -261,7 +227,7 @@ class Julia(MakefilePackage):
     depends_on("dsfmt@2.2.4:")  # apparently 2.2.3->2.2.4 breaks API
     depends_on("gmp")
     depends_on("lapack")  # note: for now openblas is fixed...
-    depends_on("libblastrampoline", when="@1.7.0:")
+    depends_on("libblastrampoline")
     depends_on("libgit2")
     depends_on("libssh2 crypto=mbedtls")
     depends_on("mbedtls libs=shared")
@@ -277,11 +243,7 @@ class Julia(MakefilePackage):
     depends_on("zlib-api")
     depends_on("zlib +shared +pic +optimize", when="^[virtuals=zlib-api] zlib")
 
-    # https://github.com/JuliaLang/julia/pull/45649#issuecomment-1192377430
-    conflicts("%gcc@12:", when="@:1.7")
-
     # Patches for julia
-    patch("julia-1.6-system-libwhich-and-p7zip-symlink.patch", when="@1.6.0:1.6")
     patch("use-add-rpath.patch", when="@:1.8.0")
     patch("use-add-rpath-2.patch", when="@1.8.1:1.8")
 
@@ -305,21 +267,8 @@ class Julia(MakefilePackage):
     patch(
         "https://github.com/JuliaLang/julia/commit/5d43397ee52323f1c015513b2be3909078b646ef.patch?full_index=1",
         sha256="15f9f2a7b6ae21aa5de8655970c673a953e1d46018e901f7fff98aead8e4a929",
-        when="@1.6.4:1.9.0",
+        when="@:1.9.0",
     )
-
-    # Fix gfortran abi detection https://github.com/JuliaLang/julia/pull/44026
-    patch("fix-gfortran.patch", when="@1.7.0:1.7.2")
-
-    # Don't make julia run patchelf --set-rpath on llvm (presumably this should've
-    # only applied to libllvm when it's vendored by julia).
-    patch("revert-fix-rpath-of-libllvm.patch", when="@1.7.0:1.7.2")
-
-    # Allow build with clang.
-    patch("gcc-ifdef.patch", when="@1.7.0:1.7")
-
-    # Make sure Julia sets -DNDEBUG when including LLVM header files.
-    patch("llvm-NDEBUG.patch", when="@1.7.0:1.7")
 
     # suite-sparse@7.2.1 sometimes builds cuda stub libraries and Julia build
     # system deals with them, but we don't compile them, so we remove the code
@@ -334,7 +283,7 @@ class Julia(MakefilePackage):
         name="downloads-patch-1",
         placement="downloads-patch-1",
         expand=False,
-        when="@1.7:1.11 ^curl@8.10:",
+        when="@:1.11 ^curl@8.10:",
     )
 
     resource(
@@ -343,7 +292,7 @@ class Julia(MakefilePackage):
         name="downloads-jl-patch-2",
         placement="downloads-patch-2",
         expand=False,
-        when="@1.7:1.11 ^curl@8.10:",
+        when="@:1.11 ^curl@8.10:",
     )
 
     def patch(self):
@@ -367,6 +316,7 @@ class Julia(MakefilePackage):
             "curl",
             "dsfmt",
             "gmp",
+            "libblastrampoline",
             "libgit2",
             "libssh2",
             "libunwind",
@@ -380,8 +330,6 @@ class Julia(MakefilePackage):
         ]
         if "+openlibm" in self.spec:
             pkgs.append("openlibm")
-        if self.spec.satisfies("@1.7.0:"):
-            pkgs.append("libblastrampoline")
         for pkg in pkgs:
             for dir in self.spec[pkg].libs.directories:
                 env.prepend_path(linker_var, dir)
@@ -420,8 +368,7 @@ class Julia(MakefilePackage):
             "USE_SYSTEM_LIBBLASTRAMPOLINE:=1",
             "USE_SYSTEM_LIBGIT2:=1",
             "USE_SYSTEM_LIBSSH2:=1",
-            "USE_SYSTEM_LIBSUITESPARSE:=1",  # @1.7:
-            "USE_SYSTEM_SUITESPARSE:=1",  # @:1.6
+            "USE_SYSTEM_LIBSUITESPARSE:=1",
             "USE_SYSTEM_LIBUNWIND:=1",
             "USE_SYSTEM_LIBUV:=1",
             "USE_SYSTEM_LIBWHICH:=1",
@@ -471,7 +418,7 @@ class Julia(MakefilePackage):
         with open("Make.user", "w") as f:
             f.write("\n".join(options) + "\n")
 
-    @run_before("build", when="@1.7:1.11 ^curl@8.10:")
+    @run_before("build", when="@:1.11 ^curl@8.10:")
     def patch_downloads_stdlib(self):
         # stdlibs are distributed as tarballs, which we need to unpack so we can patch Downloads.jl
         # making it forward compatible with curl.

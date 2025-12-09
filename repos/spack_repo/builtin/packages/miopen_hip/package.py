@@ -15,13 +15,16 @@ class MiopenHip(CMakePackage):
 
     homepage = "https://github.com/ROCm/MIOpen"
     git = "https://github.com/ROCm/MIOpen.git"
-    url = "https://github.com/ROCm/MIOpen/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/MIOpen/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libMIOpen"]
 
     license("MIT")
+    version("7.0.2", sha256="f8e0fbc7e007d8b37b47a9369a9f849ab708d4fd8681a70c4f545d7ed1aa3ba0")
+    version("7.0.0", sha256="f835c204deaf299ee9525b9a77be329d6f4f0cdf808a1c39bb3c461b12ff1b53")
+    version("6.4.3", sha256="d78eacc4314da049cc3d39877ee5b6b64b463f900be4a84c0b0b6d7a6f56148d")
     version("6.4.2", sha256="30c475a07af5b955e40b4b5dca705d2ea5c2e51112d1b24c0216046f22f45bc1")
     version("6.4.1", sha256="3e9e8bc8d9dfb31b27e955ead3430825e88b7f1501d289ba023d34208916c724")
     version("6.4.0", sha256="5b101f9177d49654968a3f3c01c9eede561a8fe5178f2ae4d8e5acb16b0b17e6")
@@ -39,9 +42,6 @@ class MiopenHip(CMakePackage):
     version("6.0.0", sha256="a0718a48353be30ff98118ade511f0c1b454e394d8f934aefe7dd6946562b2e9")
     version("5.7.1", sha256="912a658fe21ce6f1982b0f2ff251c3f7bb618f2e7e9876d983bcb54e3cd7129e")
     version("5.7.0", sha256="5cd0b62254469e1c246d5890d2b78f8aedcf42cf8a327eabc1a391b83bcd14e1")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="ff627d68ed9e52433a3c808b5d3ff179a398b77ce81b00cfea7b2c4da5162c6c")
-        version("5.6.0", sha256="d620ddab5b488bdf81242654fefa337c6b71dc410c2ff26d30a4ee86a8d22d11")
 
     variant(
         "ck",
@@ -70,9 +70,17 @@ class MiopenHip(CMakePackage):
     depends_on("sqlite")
     depends_on("half@1")
     depends_on("zlib-api")
-    depends_on("frugally-deep", when="@6.3:")
+    # Inside requirements.txt of the miopen repository, frugally-deep is
+    # is using ROCm/frugally-deep@9683d557eb672ee2304f80f6682c51242d748a50
+    # this is specfically mapped to frugally-deep@0.15.x using later 0.16
+    # versions or above is causing an issue,
+    # https://github.com/ROCm/MIOpen/issues/3588 and requires updates to
+    # src/kernels/gfx9[08|0a|42].tn.model to support this
+    # new format to support frugally-deep 0.16.0 or later
 
-    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.6.0:5.7")
+    depends_on("frugally-deep@0.15.31", when="@6.3:")
+
+    patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.7")
     patch("0002-add-include-dir-miopen-hip-6.0.0.patch", when="@6.0")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.1.0.patch", when="@6.1")
     patch("0001-link-with-roctracer-when-building-miopendriver-6.2.0.patch", when="@6.2")
@@ -84,10 +92,10 @@ class MiopenHip(CMakePackage):
     patch(
         "https://github.com/ROCm/MIOpen/commit/d1a25ad0f4fc90dffea7a5dbb9cc7a9983a004c2.patch?full_index=1",
         sha256="3001a90202b572a5cd86a51905064903bcee74d8fa0d9649ee9732274c207801",
-        when="@6.3:",
+        when="@6.3:6.4",
     )
 
-    for ver in ["5.6.0", "5.6.1", "5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
+    for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-clang-ocl@{ver}", when=f"@{ver}")
@@ -108,6 +116,9 @@ class MiopenHip(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -115,11 +126,23 @@ class MiopenHip(CMakePackage):
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
         depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
-        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+    ]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 
     depends_on("nlohmann-json", type="link")
     depends_on("googletest", when="@6.1:")
@@ -167,14 +190,13 @@ class MiopenHip(CMakePackage):
             self.define("DEVICELIBS_PREFIX_PATH", self.get_bitcode_dir()),
             self.define_from_variant("MIOPEN_USE_COMPOSABLEKERNEL", "ck"),
         ]
-        if self.spec.satisfies("@5.6.0:6.1"):
+        if self.spec.satisfies("@:6.1"):
             args.append(
                 "-DNLOHMANN_JSON_INCLUDE={0}".format(self.spec["nlohmann-json"].prefix.include)
             )
-        if self.spec.satisfies("@5.6.0:6.2"):
+        if self.spec.satisfies("@:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
             args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
-        if self.spec.satisfies("@5.7.0:6.2"):
             args.append(self.define("MIOPEN_ENABLE_AI_IMMED_MODE_FALLBACK", "OFF"))
         if self.spec.satisfies("@6.0:6.2"):
             args.append(
@@ -193,4 +215,11 @@ class MiopenHip(CMakePackage):
             )
         if self.spec.satisfies("@6.3:"):
             args.append(self.define_from_variant("MIOPEN_USE_HIPBLASLT", "hipblaslt"))
+        if self.spec.satisfies("@7:"):
+            args.append(
+                self.define(
+                    "MIOPEN_OFFLOADBUNDLER_BIN",
+                    f"{self.spec['llvm-amdgpu'].prefix.bin}/clang-offload-bundler",
+                )
+            )
         return args

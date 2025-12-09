@@ -24,6 +24,8 @@ class RMemisc(RPackage):
     version("0.99.31.7", sha256="b403185850520db18ebd608df85c76df80e6c64af428cdc4e49c2fe487483637")
     version("0.99.31.6", sha256="52336b4ffc6e60c3ed10ccc7417231582b0d2e4c5c3b2184396a7d3ca9c1d96e")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r-lattice", type=("build", "run"))
     depends_on("r-mass", type=("build", "run"))

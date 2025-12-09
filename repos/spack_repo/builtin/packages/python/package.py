@@ -46,7 +46,7 @@ class Python(Package):
     list_depth = 1
     tags = ["windows", "build-tools"]
 
-    maintainers("skosukhin", "scheibelp")
+    maintainers("adamjstewart", "scheibelp")
 
     phases = ["configure", "build", "install"]
 
@@ -56,21 +56,74 @@ class Python(Package):
 
     license("0BSD")
 
-    version("3.13.5", sha256="e6190f52699b534ee203d9f417bdbca05a92f23e35c19c691a50ed2942835385")
-    version("3.13.4", sha256="2666038f1521b7a8ec34bf2997b363778118d6f3979282c93723e872bcd464e0")
-    version("3.13.3", sha256="988d735a6d33568cbaff1384a65cb22a1fb18a9ecb73d43ef868000193ce23ed")
-    version("3.13.2", sha256="b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9")
-    version("3.13.1", sha256="1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55")
-    version("3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4")
-    version("3.12.9", sha256="45313e4c5f0e8acdec9580161d565cf5fea578e3eabf25df7cc6355bf4afa1ee")
-    version("3.12.8", sha256="5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45")
-    version("3.12.7", sha256="73ac8fe780227bf371add8373c3079f42a0dc62deff8d612cd15a618082ab623")
-    version("3.11.11", sha256="883bddee3c92fcb91cf9c09c5343196953cbb9ced826213545849693970868ed")
-    version("3.10.16", sha256="f2e22ed965a93cfeb642378ed6e6cdbc127682664b24123679f3d013fafe9cd0")
-    version("3.9.21", sha256="667c3ba2ca98d39ead1162f6548c3475768582e2ff89e0821d25eb956ac09944")
+    version("3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851")
+    version("3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f")
+    version("3.12.12", sha256="487c908ddf4097a1b9ba859f25fe46d22ccaabfb335880faac305ac62bffb79b")
+    version("3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182")
+    version("3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec")
+
+    # Deprecated because newer bug fix patch releases exist
+    with default_args(deprecated=True):
+        version(
+            "3.13.7", sha256="6c9d80839cfa20024f34d9a6dd31ae2a9cd97ff5e980e969209746037a5153b2"
+        )
+        version(
+            "3.13.5", sha256="e6190f52699b534ee203d9f417bdbca05a92f23e35c19c691a50ed2942835385"
+        )
+        version(
+            "3.13.4", sha256="2666038f1521b7a8ec34bf2997b363778118d6f3979282c93723e872bcd464e0"
+        )
+        version(
+            "3.13.3", sha256="988d735a6d33568cbaff1384a65cb22a1fb18a9ecb73d43ef868000193ce23ed"
+        )
+        version(
+            "3.13.2", sha256="b8d79530e3b7c96a5cb2d40d431ddb512af4a563e863728d8713039aa50203f9"
+        )
+        version(
+            "3.13.1", sha256="1513925a9f255ef0793dbf2f78bb4533c9f184bdd0ad19763fd7f47a400a7c55"
+        )
+        version(
+            "3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4"
+        )
+        version(
+            "3.12.11", sha256="7b8d59af8216044d2313de8120bfc2cc00a9bd2e542f15795e1d616c51faf3d6"
+        )
+        version(
+            "3.12.9", sha256="45313e4c5f0e8acdec9580161d565cf5fea578e3eabf25df7cc6355bf4afa1ee"
+        )
+        version(
+            "3.12.8", sha256="5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45"
+        )
+        version(
+            "3.12.7", sha256="73ac8fe780227bf371add8373c3079f42a0dc62deff8d612cd15a618082ab623"
+        )
+        version(
+            "3.11.13", sha256="0f1a22f4dfd34595a29cf69ee7ea73b9eff8b1cc89d7ab29b3ab0ec04179dad8"
+        )
+        version(
+            "3.11.11", sha256="883bddee3c92fcb91cf9c09c5343196953cbb9ced826213545849693970868ed"
+        )
+        version(
+            "3.10.18", sha256="1b19ab802518eb36a851f5ddef571862c7a31ece533109a99df6d5af0a1ceb99"
+        )
+        version(
+            "3.10.16", sha256="f2e22ed965a93cfeb642378ed6e6cdbc127682664b24123679f3d013fafe9cd0"
+        )
+        version(
+            "3.9.24", sha256="9a32cfc683aecaadbd9ed891ac2af9451ff37f48a00a2d8e1f4ecd9c2a1ffdcb"
+        )
+        version(
+            "3.9.23", sha256="9a69aad184dc1d06f6819930741da3a328d34875a41f8ba33875774dbfc51b51"
+        )
+        version(
+            "3.9.21", sha256="667c3ba2ca98d39ead1162f6548c3475768582e2ff89e0821d25eb956ac09944"
+        )
 
     # EOL versions we still want to be able to install
     with default_args(deprecated=True):
+        version(
+            "3.9.25", sha256="a7438eabd3a48139f42d4e058096af8d880b0bb6e8fb8c78838892e4ce5583f2"
+        )
         version(
             "3.8.20", sha256="9f2d5962c2583e67ef75924cd56d0c1af78bf45ec57035cf8a2cc09f74f4bf78"
         )
@@ -80,194 +133,6 @@ class Python(Package):
         version(
             "3.6.15", sha256="54570b7e339e2cfd72b29c7e2fdb47c0b7b18b7412e61de5b463fc087c13b043"
         )
-
-    # Old patch versions to be removed in the next Spack version
-    with default_args(deprecated=True):
-        version(
-            "3.12.6", sha256="85a4c1be906d20e5c5a69f2466b00da769c221d6a684acfd3a514dbf5bf10a66"
-        )
-        version(
-            "3.12.5", sha256="38dc4e2c261d49c661196066edbfb70fdb16be4a79cc8220c224dfeb5636d405"
-        )
-        version(
-            "3.12.4", sha256="01b3c1c082196f3b33168d344a9c85fb07bfe0e7ecfe77fee4443420d1ce2ad9"
-        )
-        version(
-            "3.12.3", sha256="a6b9459f45a6ebbbc1af44f5762623fa355a0c87208ed417628b379d762dddb0"
-        )
-        version(
-            "3.12.2", sha256="a7c4f6a9dc423d8c328003254ab0c9338b83037bd787d680826a5bf84308116e"
-        )
-        version(
-            "3.12.1", sha256="d01ec6a33bc10009b09c17da95cc2759af5a580a7316b3a446eb4190e13f97b2"
-        )
-        version(
-            "3.12.0", sha256="51412956d24a1ef7c97f1cb5f70e185c13e3de1f50d131c0aac6338080687afb"
-        )
-        version(
-            "3.11.10", sha256="92f2faf242681bfa406d53a51e17d42c5373affe23a130cd9697e132ef574706"
-        )
-        version(
-            "3.11.9", sha256="e7de3240a8bc2b1e1ba5c81bf943f06861ff494b69fda990ce2722a504c6153d"
-        )
-        version(
-            "3.11.8", sha256="d3019a613b9e8761d260d9ebe3bd4df63976de30464e5c0189566e1ae3f61889"
-        )
-        version(
-            "3.11.7", sha256="068c05f82262e57641bd93458dfa883128858f5f4997aad7a36fd25b13b29209"
-        )
-        version(
-            "3.11.6", sha256="c049bf317e877cbf9fce8c3af902436774ecef5249a29d10984ca3a37f7f4736"
-        )
-        version(
-            "3.11.5", sha256="a12a0a013a30b846c786c010f2c19dd36b7298d888f7c4bd1581d90ce18b5e58"
-        )
-        version(
-            "3.11.4", sha256="85c37a265e5c9dd9f75b35f954e31fbfc10383162417285e30ad25cc073a0d63"
-        )
-        version(
-            "3.11.3", sha256="1a79f3df32265d9e6625f1a0b31c28eb1594df911403d11f3320ee1da1b3e048"
-        )
-        version(
-            "3.11.2", sha256="2411c74bda5bbcfcddaf4531f66d1adc73f247f529aee981b029513aefdbf849"
-        )
-        version(
-            "3.11.1", sha256="baed518e26b337d4d8105679caf68c5c32630d702614fc174e98cb95c46bdfa4"
-        )
-        version(
-            "3.11.0", sha256="64424e96e2457abbac899b90f9530985b51eef2905951febd935f0e73414caeb"
-        )
-        version(
-            "3.10.15", sha256="a27864e5ba2a4474f8f6c58ab92ff52767ac8b66f1646923355a53fe3ef15074"
-        )
-        version(
-            "3.10.14", sha256="cefea32d3be89c02436711c95a45c7f8e880105514b78680c14fe76f5709a0f6"
-        )
-        version(
-            "3.10.13", sha256="698ec55234c1363bd813b460ed53b0f108877c7a133d48bde9a50a1eb57b7e65"
-        )
-        version(
-            "3.10.12", sha256="a43cd383f3999a6f4a7db2062b2fc9594fefa73e175b3aedafa295a51a7bb65c"
-        )
-        version(
-            "3.10.11", sha256="f3db31b668efa983508bd67b5712898aa4247899a346f2eb745734699ccd3859"
-        )
-        version(
-            "3.10.10", sha256="fba64559dde21ebdc953e4565e731573bb61159de8e4d4cedee70fb1196f610d"
-        )
-        version(
-            "3.10.9", sha256="4ccd7e46c8898f4c7862910a1703aa0e63525913a519abb2f55e26220a914d88"
-        )
-        version(
-            "3.10.8", sha256="f400c3fb394b8bef1292f6dc1292c5fadc3533039a5bc0c3e885f3e16738029a"
-        )
-        version(
-            "3.10.7", sha256="1b2e4e2df697c52d36731666979e648beeda5941d0f95740aafbf4163e5cc126"
-        )
-        version(
-            "3.10.6", sha256="848cb06a5caa85da5c45bd7a9221bb821e33fc2bdcba088c127c58fad44e6343"
-        )
-        version(
-            "3.10.5", sha256="18f57182a2de3b0be76dfc39fdcfd28156bb6dd23e5f08696f7492e9e3d0bf2d"
-        )
-        version(
-            "3.10.4", sha256="f3bcc65b1d5f1dc78675c746c98fcee823c038168fc629c5935b044d0911ad28"
-        )
-        version(
-            "3.10.3", sha256="5a3b029bad70ba2a019ebff08a65060a8b9b542ffc1a83c697f1449ecca9813b"
-        )
-        version(
-            "3.10.2", sha256="3c0ede893011319f9b0a56b44953a3d52c7abf9657c23fb4bc9ced93b86e9c97"
-        )
-        version(
-            "3.10.1", sha256="b76117670e7c5064344b9c138e141a377e686b9063f3a8a620ff674fa8ec90d3"
-        )
-        version(
-            "3.10.0", sha256="c4e0cbad57c90690cb813fb4663ef670b4d0f587d8171e2c42bd4c9245bd2758"
-        )
-        version(
-            "3.9.20", sha256="1e71f006222666e0a39f5a47be8221415c22c4dd8f25334cc41aee260b3d379e"
-        )
-        version(
-            "3.9.19", sha256="f5f9ec8088abca9e399c3b62fd8ef31dbd2e1472c0ccb35070d4d136821aaf71"
-        )
-        version(
-            "3.9.18", sha256="504ce8cfd59addc04c22f590377c6be454ae7406cb1ebf6f5a350149225a9354"
-        )
-        version(
-            "3.9.17", sha256="8ead58f669f7e19d777c3556b62fae29a81d7f06a7122ff9bc57f7dd82d7e014"
-        )
-        version(
-            "3.9.16", sha256="1ad539e9dbd2b42df714b69726e0693bc6b9d2d2c8e91c2e43204026605140c5"
-        )
-        version(
-            "3.9.15", sha256="48d1ccb29d5fbaf1fb8f912271d09f7450e426d4dfe95978ef6aaada70ece4d8"
-        )
-        version(
-            "3.9.14", sha256="9201836e2c16361b2b7408680502393737d44f227333fe2e5729c7d5f6041675"
-        )
-        version(
-            "3.9.13", sha256="829b0d26072a44689a6b0810f5b4a3933ee2a0b8a4bfc99d7c5893ffd4f97c44"
-        )
-        version(
-            "3.9.12", sha256="70e08462ebf265012bd2be88a63d2149d880c73e53f1712b7bbbe93750560ae8"
-        )
-        version(
-            "3.9.11", sha256="3442400072f582ac2f0df30895558f08883b416c8c7877ea55d40d00d8a93112"
-        )
-        version(
-            "3.9.10", sha256="1aa9c0702edbae8f6a2c95f70a49da8420aaa76b7889d3419c186bfc8c0e571e"
-        )
-        version("3.9.9", sha256="2cc7b67c1f3f66c571acc42479cdf691d8ed6b47bee12c9b68430413a17a44ea")
-        version("3.9.8", sha256="7447fb8bb270942d620dd24faa7814b1383b61fa99029a240025fd81c1db8283")
-        version("3.9.7", sha256="a838d3f9360d157040142b715db34f0218e535333696a5569dc6f854604eb9d1")
-        version("3.9.6", sha256="d0a35182e19e416fc8eae25a3dcd4d02d4997333e4ad1f2eee6010aadc3fe866")
-        version("3.9.5", sha256="e0fbd5b6e1ee242524430dee3c91baf4cbbaba4a72dd1674b90fda87b713c7ab")
-        version("3.9.4", sha256="66c4de16daa74a825cf9da9ddae1fe020b72c3854b73b1762011cc33f9e4592f")
-        version("3.9.3", sha256="3afeb61a45b5a2e6f1c0f621bd8cf925a4ff406099fdb3d8c97b993a5f43d048")
-        version("3.9.2", sha256="7899e8a6f7946748830d66739f2d8f2b30214dad956e56b9ba216b3de5581519")
-        version("3.9.1", sha256="29cb91ba038346da0bd9ab84a0a55a845d872c341a4da6879f462e94c741f117")
-        version("3.9.0", sha256="df796b2dc8ef085edae2597a41c1c0a63625ebd92487adaef2fed22b567873e8")
-        version(
-            "3.8.19", sha256="c7fa55a36e5c7a19ec37d8f90f60a2197548908c9ac8b31e7c0dbffdd470eeac"
-        )
-        version(
-            "3.8.18", sha256="7c5df68bab1be81a52dea0cc2e2705ea00553b67107a301188383d7b57320b16"
-        )
-        version(
-            "3.8.17", sha256="def428fa6cf61b66bcde72e3d9f7d07d33b2e4226f04f9d6fce8384c055113ae"
-        )
-        version(
-            "3.8.16", sha256="71ca9d935637ed2feb59e90a368361dc91eca472a90acb1d344a2e8178ccaf10"
-        )
-        version(
-            "3.8.15", sha256="924d46999df82aa2eaa1de5ca51d6800ffb56b4bf52486a28f40634e3362abc4"
-        )
-        version(
-            "3.8.14", sha256="41f959c480c59211feb55d5a28851a56c7e22d02ef91035606ebb21011723c31"
-        )
-        version(
-            "3.8.13", sha256="903b92d76354366b1d9c4434d0c81643345cef87c1600adfa36095d7b00eede4"
-        )
-        version(
-            "3.8.12", sha256="316aa33f3b7707d041e73f246efedb297a70898c4b91f127f66dc8d80c596f1a"
-        )
-        version(
-            "3.8.11", sha256="b77464ea80cec14581b86aeb7fb2ff02830e0abc7bcdc752b7b4bdfcd8f3e393"
-        )
-        version(
-            "3.8.10", sha256="b37ac74d2cbad2590e7cd0dd2b3826c29afe89a734090a87bf8c03c45066cb65"
-        )
-        version("3.8.9", sha256="9779ec1df000bf86914cdd40860b88da56c1e61db59d37784beca14a259ac9e9")
-        version("3.8.8", sha256="76c0763f048e4f9b861d24da76b7dd5c7a3ba7ec086f40caedeea359263276f7")
-        version("3.8.7", sha256="20e5a04262f0af2eb9c19240d7ec368f385788bba2d8dfba7e74b20bab4d2bac")
-        version("3.8.6", sha256="313562ee9986dc369cd678011bdfd9800ef62fbf7b1496228a18f86b36428c21")
-        version("3.8.5", sha256="015115023c382eb6ab83d512762fe3c5502fa0c6c52ffebc4831c4e1a06ffc49")
-        version("3.8.4", sha256="32c4d9817ef11793da4d0d95b3191c4db81d2e45544614e8449255ca9ae3cc18")
-        version("3.8.3", sha256="6af6d4d2e010f9655518d0fc6738c7ff7069f10a4d2fbd55509e467f092a8b90")
-        version("3.8.2", sha256="e634a7a74776c2b89516b2e013dda1728c89c8149b9863b8cea21946daf9d561")
-        version("3.8.1", sha256="c7cfa39a43b994621b245e029769e9126caa2a93571cee2e743b213cceac35fb")
-        version("3.8.0", sha256="f1069ad3cae8e7ec467aa98a6565a62a48ef196cb8f1455a245a08db5e1792df")
 
     extendable = True
 
@@ -300,6 +165,7 @@ class Python(Package):
     variant("zlib", default=True, description="Build zlib module")
     variant("bz2", default=True, description="Build bz2 module")
     variant("lzma", default=True, description="Build lzma module")
+    variant("zstd", default=True, description="Build zstd module", when="@3.14:")
     variant("pyexpat", default=True, description="Build pyexpat module")
     variant("ctypes", default=True, description="Build ctypes module")
     variant("tkinter", default=False, description="Build tkinter module")
@@ -313,9 +179,10 @@ class Python(Package):
 
     if sys.platform != "win32":
         depends_on("gmake", type="build")
-        depends_on("pkgconfig@0.9.0:", type="build")
+        depends_on("pkgconfig", type="build")
         depends_on("gettext +libxml2", when="+libxml2")
-        depends_on("gettext ~libxml2", when="~libxml2")
+        depends_on("iconv", when="~libxml2")
+        depends_on("gettext ~libxml2", when="~libxml2 ^[virtuals=iconv]gettext")
 
         # Optional dependencies
         # See detect_modules() in setup.py for details
@@ -333,6 +200,7 @@ class Python(Package):
         depends_on("zlib-api", when="+zlib")
         depends_on("bzip2", when="+bz2")
         depends_on("xz libs=shared", when="+lzma")
+        depends_on("zstd libs=shared", when="+zstd")
         depends_on("expat", when="+pyexpat")
         depends_on("libffi", when="+ctypes")
         # https://docs.python.org/3/whatsnew/3.11.html#build-changes
@@ -465,6 +333,13 @@ class Python(Package):
                 variants += "+tix"
             except ProcessError:
                 variants += "~tix"
+
+        if Version(version_str) >= Version("3.14"):
+            try:
+                python("-c", "import compression.zstd", error=os.devnull)
+                variants += "+zstd"
+            except ProcessError:
+                variants += "~zstd"
 
         # Some modules are platform-dependent
         if sys.platform != "win32" and Version(version_str) < Version("3.13"):
@@ -618,7 +493,7 @@ class Python(Package):
         # install headers
         include_dir = proj_root / "Include"
         copy_tree(str(include_dir), prefix.include)
-        if self.spec.satisfies("@3.13:"):
+        if self.spec.satisfies("@3.13"):  # reverted in 3.14
             pyconfig = pcbuild_root / platform.machine().lower() / "pyconfig.h"
         else:
             pyconfig = proj_root / "PC" / "pyconfig.h"
@@ -766,6 +641,10 @@ class Python(Package):
                 ]
             )
 
+        # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
+        if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
+            config_args.append("py_cv_module__tkinter=n/a")
+
         # Disable the nis module in the configure script for Python 3.11 and 3.12. It is deleted
         # in Python 3.13. See ``def patch`` for disabling the nis module in Python 3.10 and older.
         if spec.satisfies("@3.11:3.12"):
@@ -862,8 +741,8 @@ class Python(Package):
         prefix = self.prefix
 
         if spec.satisfies("+pythoncmd"):
-            os.symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
-            os.symlink(
+            symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
+            symlink(
                 os.path.join(prefix.bin, "python3-config"),
                 os.path.join(prefix.bin, "python-config"),
             )

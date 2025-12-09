@@ -297,7 +297,7 @@ class Lua(LuaImplPackage):
                 for version_str in version_formats:
                     for joiner in ["", "-"]:
                         dest_path = "liblua{0}{1}.{2}".format(joiner, version_str, dso_suffix)
-                        os.symlink(src_path, dest_path)
+                        symlink(src_path, dest_path)
 
     @run_after("install")
     def generate_pkg_config(self):

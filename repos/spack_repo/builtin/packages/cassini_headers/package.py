@@ -18,6 +18,8 @@ class CassiniHeaders(Package):
     license("GPL-2.0-only or BSD-2-Clause")
 
     version("main", branch="main")
+    version("12.0.1", tag="release/shs-12.0.1")
+    version("12.0.0", tag="release/shs-12.0.0")
 
     def install(self, spec, prefix):
         with working_dir(self.stage.source_path):

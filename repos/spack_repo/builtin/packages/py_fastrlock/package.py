@@ -18,7 +18,6 @@ class PyFastrlock(PythonPackage):
 
     version("0.8.3", sha256="4af6734d92eaa3ab4373e6c9a1dd0d5ad1304e172b1521733c6c3b3d73c8fa5d")
     version("0.8.1", sha256="8a5f2f00021c4ac72e4dab910dc1863c0e008a2e7fb5c843933ae9bcfc3d0802")
-    version("0.5", sha256="9ae1a31f6e069b5f0f28ba63c594d0c952065de0a375f7b491d21ebaccc5166f")
 
     depends_on("c", type="build")  # generated
 
@@ -26,7 +25,6 @@ class PyFastrlock(PythonPackage):
     depends_on("py-cython", type="build")
     depends_on("py-cython@3.0.11:3.0", when="@0.8.3", type="build")
     depends_on("py-cython@3.0.0:3.0", when="@0.8.1", type="build")
-    depends_on("py-cython@0.29.13", when="@0.5", type="build")
     # in newer pip versions --install-option does not exist
     depends_on("py-pip", type="build")
     depends_on("py-pip@:23.0", when="@:0.8.1", type="build")

@@ -13,13 +13,16 @@ class Rocdecode(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocDecode"
     git = "https://github.com/ROCm/rocDecode.git"
-    url = "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-6.2.0.tar.gz"
+    url = "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-6.4.3.tar.gz"
 
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("7.0.2", sha256="4d8c49236135105f252fe6ccd8652a440b4646129cad8595eead49cc7d34aa96")
+    version("7.0.0", sha256="f0c1dd260bf091c44d15718008630d0b882b8f444f4740c9d8edcbbed1e759fe")
+    version("6.4.3", sha256="dd485e1cf24eb6f7315c32afcd2eb639a64dfb100a747bdbef3aa3235c4e3fa9")
     version("6.4.2", sha256="43c3bc2fe71c150bd6e646c95f834002df80d0bc6489082731c0be68fb785eac")
     version("6.4.1", sha256="35e364cec1405c76cfbb91215e1a327efea1e60340d8c8df12c0e5b2f0e1321e")
     version("6.4.0", sha256="d82c17687cc8ccac67fe2d401edd25c9825b38777b7a7b4100f84658838a1e50")
@@ -45,6 +48,7 @@ class Rocdecode(CMakePackage):
 
     depends_on("libva", type="build", when="@6.2:")
     depends_on("libdrm", type="build", when="@6.4:")
+    depends_on("ffmpeg", when="@7.0:")
 
     for ver in [
         "6.1.0",
@@ -60,10 +64,13 @@ class Rocdecode(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     patch("0001-add-amdgpu-drm-include.patch", when="@6.4")
@@ -97,5 +104,11 @@ class Rocdecode(CMakePackage):
                     "CMAKE_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
+        if self.spec.satisfies("@6.4"):
             args.append(self.define("AMDGPU_DRM_INCLUDE_DIRS", self.spec["libdrm"].prefix.include))
+        if self.spec.satisfies("@7.0:"):
+            args.append(
+                self.define("LIBDRM_AMDGPU_INCLUDE_DIR", self.spec["libdrm"].prefix.include)
+            )
+            args.append(self.define("LIBDRM_AMDGPU_LIBRARY", self.spec["libdrm"].prefix.lib))
         return args

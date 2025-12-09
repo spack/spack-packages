@@ -17,6 +17,7 @@ class KokkosFft(CMakePackage):
 
     license("Apache-2.0 WITH LLVM-exception OR MIT", checked_by="cedricchevalier19")
 
+    version("0.4.0", sha256="c51d37b8c06d74bdb2af0fa4e1eae40104c23ae0dae17c795bce55dbda6ab0d6")
     version("0.3.0", sha256="a13c423775afec5f9f79fa9a23dd6001d3d63bae9f4786b1e0cd3ed65b3993a3")
 
     variant(
@@ -36,8 +37,11 @@ class KokkosFft(CMakePackage):
     variant("tests", default=False, description="Enable tests")
 
     depends_on("cxx", type="build")
+    depends_on("cmake@3.22:3", type="build")
 
-    depends_on("kokkos@4.4:4 +complex_align")
+    depends_on("kokkos +complex_align")
+    depends_on("kokkos@4.4:4", when="@0.3")
+    depends_on("kokkos@4.5:4", when="@0.4:")
     # kokkos-fft currently only supports compilation with the Kokkos nvcc wrapper
     requires("^kokkos +serial", when="host_backend=fftw-serial")
     requires("^kokkos +openmp", when="host_backend=fftw-openmp")
@@ -70,7 +74,7 @@ class KokkosFft(CMakePackage):
         ]
 
         if self.spec.satisfies("^kokkos+rocm"):
-            args.append(self.define("CMAKE_CXX_COMPILER", self["hip"].hipcc))
+            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
         else:
             args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
 

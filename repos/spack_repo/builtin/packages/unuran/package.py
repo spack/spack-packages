@@ -12,9 +12,11 @@ class Unuran(AutotoolsPackage):
 
     homepage = "https://statmath.wu.ac.at/unuran"
     url = "https://statmath.wu.ac.at/unuran/unuran-1.8.1.tar.gz"
+    git = "https://github.com/unuran/unuran.git"
 
     license("GPL-2.0-or-later")
 
+    version("1.11.0", sha256="098793854c590b4c2c7e98bc48a45408875f48c5ad47650b5fabbd3e94dd8049")
     version("1.8.1", sha256="c270ae96857857dbac6450043df865e0517f52856ddbe5202fd35583b13c5193")
 
     variant("shared", default=True, description="Enable the build of shared libraries")

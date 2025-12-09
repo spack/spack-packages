@@ -26,7 +26,7 @@ ci:
       after_script:
       - - cat /proc/loadavg || true
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - - time ./spack/bin/spack python ${CI_PROJECT_DIR}/.ci/gitlab/scripts/common/aggregate_package_logs.spack.py
+      - - time ./spack/bin/spack python ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/aggregate_package_logs.spack.py
           --prefix /home/software/spack:${CI_PROJECT_DIR}/opt/spack
           --log install_times.json
           ${SPACK_ARTIFACTS_ROOT}/user_data/install_times.json || true
@@ -40,6 +40,21 @@ ci:
       id_tokens:
         GITLAB_OIDC_TOKEN:
           aud: "${OIDC_TOKEN_AUDIENCE}"
+      # Retry for everything but "legitimate build failures" (script_failure)
+      retry:
+        max: 2
+        when::
+          - unknown_failure
+          - api_failure
+          - stuck_or_timeout_failure
+          - runner_system_failure
+          - runner_unsupported
+          - stale_schedule
+          - job_execution_timeout
+          - archived_failure
+          - unmet_prerequisites
+          - scheduler_failure
+          - data_integrity_failure
 
   - signing-job:
       image:
@@ -130,13 +145,14 @@ ci:
       - - uname -a || true
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
-      - - mkdir spack
-        - cd spack
+      # Clone the other repo
+      - - mkdir -p .ci/tmp/spack
+        - cd .ci/tmp/spack
         - git init
-        - git remote add origin https://github.com/spack/spack.git
+        - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
         - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
         - git checkout FETCH_HEAD
-        - cd ..
-      - - . "./spack/share/spack/setup-env.sh"
+        - cd ${CI_PROJECT_DIR}
+      - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version
         - spack arch
