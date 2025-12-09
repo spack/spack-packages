@@ -1,0 +1,383 @@
+diff --git a/.github/workflows/ci.yaml b/.github/workflows/ci.yaml
+index 9979ea1..7c106b1 100644
+--- a/.github/workflows/ci.yaml
++++ b/.github/workflows/ci.yaml
+@@ -6,7 +6,6 @@ name: ci
+ 
+ on: [pull_request, push]
+ 
+-
+ concurrency:
+   group: ci-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
+   cancel-in-progress: true
+@@ -35,5 +34,5 @@ jobs:
+       - uses: actions/upload-artifact@v4
+         if: always()
+         with:
+-          name: tester
+-          path: tmp/test/tester.exe
++          name: tests
++          path: tmp
+diff --git a/.gitignore b/.gitignore
+index 6a74ea7..df2004f 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -19,4 +19,7 @@
+ /.vscode/
+ 
+ # ignore patch files
+-*.patch
+\ No newline at end of file
++*.patch
++
++.clang-tidy
++.clang-format
+\ No newline at end of file
+diff --git a/Makefile b/Makefile
+index 54646df..1d5b7bd 100644
+--- a/Makefile
++++ b/Makefile
+@@ -66,9 +66,10 @@ install : cl.exe
+ 	mklink $(PREFIX)\relocate.exe $(PREFIX)\cl.exe
+ 
+ setup_test: cl.exe
+-	echo "-------------------"
+-	echo "Running Test Setup"
+-	echo "-------------------"
++	@echo \n
++	@echo -------------------
++	@echo Running Test Setup
++	@echo -------------------
+ 	-@ if NOT EXIST "tmp\test" mkdir "tmp\test"
+ 	cd tmp\test
+ 	copy ..\..\cl.exe cl.exe
+@@ -80,9 +81,9 @@ setup_test: cl.exe
+ # * space in a path - preserved by quoted arguments
+ # * escaped quoted arguments
+ build_and_check_test_sample : setup_test
+-	echo "--------------------"
+-	echo "Building Test Sample"
+-	echo "--------------------"
++	@echo --------------------
++	@echo Building Test Sample
++	@echo --------------------
+ 	cd tmp\test
+ 	cl /c /EHsc "..\..\test\src file\calc.cxx" /DCALC_EXPORTS /DCALC_HEADER="\"calc header/calc.h\"" /I ..\..\test\include
+ 	cl /c /EHsc ..\..\test\main.cxx /I ..\..\test\include
+@@ -94,9 +95,10 @@ build_and_check_test_sample : setup_test
+ # Test basic wrapper behavior - did the absolute path to the DLL get injected
+ # into the executable
+ test_wrapper : build_and_check_test_sample
+-	echo "--------------------"
+-	echo "Running Wrapper Test"
+-	echo "--------------------"
++	@echo \n
++	@echo --------------------
++	@echo Running Wrapper Test
++	@echo --------------------
+ 	cd tmp
+ 	move test\tester.exe .\tester.exe
+ 	.\tester.exe
+@@ -110,9 +112,10 @@ test_wrapper : build_and_check_test_sample
+ 
+ # Test relocating an executable - re-write internal paths to dlls
+ test_relocate_exe: build_and_check_test_sample
+-	echo "--------------------------"
+-	echo "Running Relocate Exe Test"
+-	echo "--------------------------"
++	@echo \n
++	@echo --------------------------
++	@echo Running Relocate Exe Test
++	@echo --------------------------
+ 	cd tmp\test
+ 	-@ if NOT EXIST "relocate.exe" mklink relocate.exe cl.exe
+ 	move calc.dll ..\calc.dll
+@@ -124,9 +127,10 @@ test_relocate_exe: build_and_check_test_sample
+ 
+ # Test relocating a dll - re-write import library
+ test_relocate_dll: build_and_check_test_sample
+-	echo "--------------------------"
+-	echo "Running Relocate DLL test"
+-	echo "--------------------------"
++	@echo \n
++	@echo --------------------------
++	@echo Running Relocate DLL test
++	@echo --------------------------
+ 	cd tmp/test
+ 	-@ if NOT EXIST "relocate.exe" mklink relocate.exe cl.exe
+ 	cd ..
+@@ -142,9 +146,10 @@ test_relocate_dll: build_and_check_test_sample
+ 	cd ../..
+ 
+ test_pipe_overflow: build_and_check_test_sample
+-	echo "--------------------"
+-	echo " Pipe overflow test"
+-	echo "--------------------"
++	@echo \n
++	@echo --------------------
++	@echo  Pipe overflow test
++	@echo --------------------
+ 	set SPACK_CC_TMP=%SPACK_CC%
+ 	set SPACK_CC=$(MAKEDIR)\test\lots-of-output.bat
+ 	cl /c /EHsc "test\src file\calc.cxx"
+@@ -154,18 +159,20 @@ build_zerowrite_test: test\writezero.obj
+ 	link $(LFLAGS) $** Shlwapi.lib /out:writezero.exe
+ 
+ test_zerowrite: build_zerowrite_test
+-	echo "-----------------------"
+-	echo "Running zerowrite test"
+-	echo "-----------------------"
++	@echo \n
++	@echo -----------------------
++	@echo Running zerowrite test
++	@echo -----------------------
+ 	set SPACK_CC_TMP=%SPACK_CC%
+ 	set SPACK_CC=$(MAKEDIR)\writezero.exe
+ 	cl /c EHsc "test\src file\calc.cxx"
+ 	set SPACK_CC=%SPACK_CC_TMP%
+ 
+ test_long_paths: build_and_check_test_sample
+-	echo "------------------------"
+-	echo "Running long paths test"
+-	echo "------------------------"
++	@echo \n
++	@echo ------------------------
++	@echo Running long paths test
++	@echo ------------------------
+ 	mkdir tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+ 	xcopy /E test\include tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+ 	xcopy /E "test\src file" tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+@@ -182,9 +189,10 @@ test_long_paths: build_and_check_test_sample
+ 	cd ../../../..
+ 
+ test_relocate_long_paths: test_long_paths
+-	echo "---------------------------------"
+-	echo "Running relocate logn paths test"
+-	echo "---------------------------------"
++	@echo \n
++	@echo ---------------------------------
++	@echo Running relocate logn paths test
++	@echo ---------------------------------
+ 	cd tmp\tmp\verylongdirectoryname\evenlongersubdirectoryname
+ 	-@ if NOT EXIST "relocate.exe" mklink relocate.exe cl.exe
+ 	cd ..
+@@ -200,9 +208,10 @@ test_relocate_long_paths: test_long_paths
+ 	cd ../../../..
+ 
+ test_exe_with_exports:
+-	echo ------------------------------
+-	echo Running exe with exports test
+-	echo ------------------------------
++	@echo \n
++	@echo ------------------------------
++	@echo Running exe with exports test
++	@echo ------------------------------
+ 	mkdir tmp\test\exe_with_exports
+ 	xcopy /E test\include tmp\test\exe_with_exports
+ 	xcopy /E "test\src file" tmp\test\exe_with_exports
+@@ -223,6 +232,10 @@ test_exe_with_exports:
+ 	cd ../../..
+ 
+ test_def_file_name_override:
++	@echo
++	@echo ------------------------------------
++	@echo Running Def file name override test
++	@echo ------------------------------------
+ 	mkdir tmp\test\def\def_override
+ 	xcopy /E test\include tmp\test\def\def_override
+ 	xcopy /E "test\src file" tmp\test\def\def_override
+diff --git a/src/execute.cxx b/src/execute.cxx
+index b00bf1d..b4f8376 100644
+--- a/src/execute.cxx
++++ b/src/execute.cxx
+@@ -31,6 +31,8 @@ enum : std::uint16_t { InvalidExitCode = 999 };
+ ExecuteCommand::ExecuteCommand(std::string command)
+     : ChildStdOut_Rd(nullptr),
+       ChildStdOut_Wd(nullptr),
++      ChildStdErr_Rd(nullptr),
++      ChildStdErr_Wd(nullptr),
+       base_command(std::move(command)) {
+     this->CreateChildPipes();
+     this->SetupExecute();
+@@ -39,6 +41,8 @@ ExecuteCommand::ExecuteCommand(std::string command)
+ ExecuteCommand::ExecuteCommand(std::string arg, const StrList& args)
+     : ChildStdOut_Rd(nullptr),
+       ChildStdOut_Wd(nullptr),
++      ChildStdErr_Rd(nullptr),
++      ChildStdErr_Wd(nullptr),
+       base_command(std::move(arg)) {
+     for (const auto& argp : args) {
+         this->command_args.push_back(argp);
+@@ -51,6 +55,8 @@ ExecuteCommand& ExecuteCommand::operator=(
+     ExecuteCommand&& execute_command) noexcept {
+     this->ChildStdOut_Rd = std::move(execute_command.ChildStdOut_Rd);
+     this->ChildStdOut_Wd = std::move(execute_command.ChildStdOut_Wd);
++    this->ChildStdErr_Rd = std::move(execute_command.ChildStdErr_Rd);
++    this->ChildStdErr_Wd = std::move(execute_command.ChildStdErr_Wd);
+     this->procInfo = std::move(execute_command.procInfo);
+     this->startInfo = std::move(execute_command.startInfo);
+     this->saAttr = std::move(execute_command.saAttr);
+@@ -59,6 +65,7 @@ ExecuteCommand& ExecuteCommand::operator=(
+     this->base_command = std::move(execute_command.base_command);
+     this->command_args = std::move(execute_command.command_args);
+     this->child_out_future = std::move(execute_command.child_out_future);
++    this->child_err_future = std::move(execute_command.child_err_future);
+     this->exit_code_future = std::move(exit_code_future);
+     return *this;
+ }
+@@ -76,7 +83,7 @@ void ExecuteCommand::SetupExecute() {
+     // This structure specifies the STDIN and STDOUT handles for redirection.
+     ZeroMemory(&si_start_info, sizeof(STARTUPINFOW));
+     si_start_info.cb = sizeof(STARTUPINFOW);
+-    si_start_info.hStdError = this->ChildStdOut_Wd;
++    si_start_info.hStdError = this->ChildStdErr_Wd;
+     si_start_info.hStdOutput = this->ChildStdOut_Wd;
+     si_start_info.dwFlags |= STARTF_USESTDHANDLES;
+     this->procInfo = pi_proc_info;
+@@ -162,6 +169,7 @@ bool ExecuteCommand::ExecuteToolChainChild() {
+     // determine when child proc is done
+     free(nc_command_line);
+     CloseHandle(this->ChildStdOut_Wd);
++    CloseHandle(this->ChildStdErr_Wd);
+     return true;
+ }
+ 
+diff --git a/src/ld.cxx b/src/ld.cxx
+index 5cc0683..2a9bb49 100644
+--- a/src/ld.cxx
++++ b/src/ld.cxx
+@@ -6,6 +6,8 @@
+ #include "ld.h"
+ #include <minwindef.h>
+ #include <cstdio>
++#include <cstring>
++#include <fstream>
+ #include <iostream>
+ #include "coff_parser.h"
+ #include "coff_reader_writer.h"
+@@ -19,19 +21,31 @@ void LdInvocation::LoadToolchainDependentSpackVars(SpackEnvState& spackenv) {
+ }
+ 
+ DWORD LdInvocation::InvokeToolchain() {
++    // Run a pass of the linker
++
++    // First parse the linker command line to
++    // understand what we'll be doing
++    LinkerInvocation link_run(LdInvocation::ComposeCommandLists(
++        {this->command_args, this->include_args, this->lib_args,
++         this->lib_dir_args, this->obj_args}));
++    link_run.Parse();
++    // Run resource compiler to create
++    // Resource for id'ing binary when relocating its import library
++    std::string const rc_file = createRC(link_run.get_out());
++    // Add produced RC file to linker CLI to inject ID
++    // This needs to be at the end
++    this->lib_args.push_back(rc_file);
+     // Run base linker invocation to produce initial
+     // dll and import library
+     DWORD const ret_code = ToolChainInvocation::InvokeToolchain();
+     if (ret_code != 0) {
+         return ret_code;
+     }
++
+     // Next we want to construct the proper commmand line to
+     // recreate the import library from the same set of obj files
+     // and libs
+-    LinkerInvocation link_run(LdInvocation::ComposeCommandLists(
+-        {this->command_args, this->include_args, this->lib_args,
+-         this->lib_dir_args, this->obj_args}));
+-    link_run.Parse();
++
+     // We're creating a PE, we need to create an appropriate import lib
+     std::string const imp_lib_name = link_run.get_implib_name();
+     // If there is no implib, we don't need to bother
+@@ -99,3 +113,50 @@ DWORD LdInvocation::InvokeToolchain() {
+     }
+     return ret_code;
+ }
++
++std::string LdInvocation::createRC(const std::string& pe_stage_name) {
++    const std::string template_base =
++        "STRINGTABLE\n"
++        "BEGIN\n";
++    // This string table ID is completely arbitrary, HOWEVER
++    // Spack Core relies on this specific value
++    // If it is changed here, it must be changed in Spack Core
++    const std::string string_table_id = "    59673 ";
++    const std::string template_end = "END\n";
++    const std::string pe_name = stripLastExt(basename(pe_stage_name));
++    const std::string rc_file_name = pe_name + ".rc";
++    // This res file name needs to mirror the PE name _exactly_
++    // Otherwise the RC file will override the default
++    // or user set name, violating user expectations
++    std::string res_file_name = pe_name + ".res";
++
++    ExecuteCommand rc_executor("rc",
++                               {"/fo" + res_file_name + " " + rc_file_name});
++    std::ofstream rc_out(rc_file_name);
++    if (!rc_out) {
++        std::cerr << "Error: could not open rc file for creation: "
++                  << rc_file_name << "\n";
++        return std::string();
++    }
++    std::string abs_out;
++    if (IsPathAbsolute(pe_stage_name)) {
++        abs_out = pe_stage_name;
++    } else {
++        // relative paths, assume they're relative to the CWD of the linker (as they have to be)
++        abs_out = join({GetCWD(), pe_stage_name}, "\\");
++    }
++    char* chr_abs_out = new char[abs_out.length() + 1];
++    strcpy(chr_abs_out, abs_out.c_str());
++    char const* padded_path =
++        pad_path(chr_abs_out, static_cast<DWORD>(abs_out.length()));
++    abs_out = std::string(padded_path, MAX_NAME_LEN);
++    rc_out << template_base << string_table_id << '"' << abs_out << '"' << "\n"
++           << template_end;
++    rc_out.close();
++    rc_executor.Execute();
++    DWORD const err_code = rc_executor.Join();
++    if (err_code != 0) {
++        return std::string();
++    }
++    return res_file_name;
++}
+diff --git a/src/ld.h b/src/ld.h
+index a9f3a82..764baf4 100644
+--- a/src/ld.h
++++ b/src/ld.h
+@@ -20,4 +20,5 @@ class LdInvocation : public ToolChainInvocation {
+     void LoadToolchainDependentSpackVars(SpackEnvState& spackenv);
+     std::string lang = "link";
+     ExecuteCommand rpath_executor;
++    static std::string createRC(const std::string& pe_stage_name);
+ };
+diff --git a/src/linker_invocation.cxx b/src/linker_invocation.cxx
+index 4ed82be..ef52041 100644
+--- a/src/linker_invocation.cxx
++++ b/src/linker_invocation.cxx
+@@ -84,6 +84,9 @@ void LinkerInvocation::Parse() {
+         // with no "out" argument, the linker
+         // will place the file in the CWD
+         std::string const name_obj = this->objs_.front();
++        // std::string const filename =
++        //     strip(strip(split(name_obj, "\\").back(), ".lib"), ".obj");
++        // this->output_ = join({GetCWD(), filename}, "\\") + ext;
+         std::string const filename = split(name_obj, "\\").back();
+         this->output_ = join({GetCWD(), strip(filename, ".obj")}, "\\") + ext;
+     }
+diff --git a/src/toolchain.cxx b/src/toolchain.cxx
+index a1c103f..922785e 100644
+--- a/src/toolchain.cxx
++++ b/src/toolchain.cxx
+@@ -37,8 +37,8 @@ void ToolChainInvocation::InterpolateSpackEnv(SpackEnvState& spackenv) {
+ 
+ DWORD ToolChainInvocation::InvokeToolchain() {
+     StrList const command_line(ToolChainInvocation::ComposeCommandLists(
+-        {this->command_args, this->include_args, this->lib_args,
+-         this->lib_dir_args, this->obj_args}));
++        {this->command_args, this->include_args, this->lib_dir_args,
++         this->obj_args, this->lib_args}));
+     this->executor = ExecuteCommand(this->command, command_line);
+     debug("Setting up executor for " + std::string(typeid(*this).name()) +
+           "toolchain");

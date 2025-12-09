@@ -59,7 +59,7 @@ class CompilerWrapper(Package, NMakePackage):
         version("develop", branch="main")
 
     with when("@develop platform=windows"):
-        patch("def-and-exe-enhanced-support.patch")
+        patch("rc_dll_id.patch")
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
@@ -69,17 +69,7 @@ class CompilerWrapper(Package, NMakePackage):
     def setup_dependent_package(self, module, dependent_spec):
         def _spack_compiler_attribute(*, language: str) -> str:
             compiler_pkg = dependent_spec[language].package
-            if sys.platform != "win32":
-                # On non-Windows we return the appropriate path to the compiler wrapper
-                return str(self.bin_dir() / compiler_pkg.compiler_wrapper_link_paths[language])
-
-            # On Windows we return the real compiler
-            if language == "c":
-                return compiler_pkg.cc
-            elif language == "cxx":
-                return compiler_pkg.cxx
-            elif language == "fortran":
-                return compiler_pkg.fortran
+            return str(self.bin_dir() / compiler_pkg.compiler_wrapper_link_paths[language])
 
         if dependent_spec.has_virtual_dependency("c"):
             setattr(module, "spack_cc", _spack_compiler_attribute(language="c"))
