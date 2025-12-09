@@ -97,6 +97,12 @@ class Glib(MesonPackage):
         depends_on("pkgconfig")
         depends_on("gobject-introspection@1.80:", when="+introspection")
 
+        # needs to mask any system glib~introspection that the meson build accidentally finds
+        depends_on("glib-bootstrap", when="+introspection")
+
+        # meson build looks for cmake and will use a system on if we don't include this
+        depends_on("cmake")
+
     depends_on("libffi")
     depends_on("zlib-api")
     depends_on("gettext")
@@ -111,6 +117,7 @@ class Glib(MesonPackage):
     depends_on("util-linux", when="+libmount")
     depends_on("iconv")
     depends_on("elf")  # bin/gresource
+
 
     # glib prefers the libc version of gettext, which breaks the build if the
     # external version is also found.
