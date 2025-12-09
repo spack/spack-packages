@@ -23,6 +23,7 @@ class Eigen(CMakePackage, ROCmPackage):
     license("MPL-2.0")
 
     version("master", branch="master")
+    version("5.0.1", sha256="e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec")
     version("5.0.0", sha256="315c881e19e17542a7d428c5aa37d113c89b9500d350c433797b730cd449c056")
     version("3.4.1", sha256="b93c667d1b69265cdb4d9f30ec21f8facbbe8b307cf34c0b9942834c6d4fdbe2")
     version(

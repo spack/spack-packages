@@ -24,6 +24,12 @@ class Ccache(CMakePackage):
 
     license("GPL-3.0-or-later")
 
+    version("4.12.1", sha256="a3da50ab0fb0d42f60c17d1450312e6ace9b681f6221cb77c8a09a845f9d760c")
+    version("4.12", sha256="e884c62cbacae2e9488b8641a671a79fb7a1221db01310dacef61c9e55c2e55b")
+    version("4.11.3", sha256="28a407314f03a7bd7a008038dbaffa83448bc670e2fc119609b1d99fb33bb600")
+    version("4.11.2", sha256="d51b82bb8c3932649323fd4cb8e5a0a9f7fe7f672c71a6d6839bee13b4ded4c5")
+    version("4.11.1", sha256="7b44bd8acd8b062540cdb468d67ea4721a9a1c4759cd17de873d3c05f3930e68")
+    version("4.11", sha256="7dba208540dc61cedd5c93df8c960055a35f06e29a0a3cf766962251d4a5c766")
     version("4.10.2", sha256="108100960bb7e64573ea925af2ee7611701241abb36ce0aae3354528403a7d87")
     version("4.9.1", sha256="12834ecaaaf2db069dda1d1d991f91c19e3274cc04a471af5b64195def17e90f")
     version("4.8.3", sha256="d59dd569ad2bbc826c0bc335c8ebd73e78ed0f2f40ba6b30069347e63585d9ef")
