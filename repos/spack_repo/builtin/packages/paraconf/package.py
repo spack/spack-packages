@@ -38,6 +38,7 @@ class Paraconf(CMakePackage):
     depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.5:", type=("build"))
+    depends_on("cmake@3.10:", type=("build"), when="@1.0.1:")
     depends_on("pkgconfig", type=("build"))
     depends_on("libyaml@0.1.7:", type=("link", "run"))
 
