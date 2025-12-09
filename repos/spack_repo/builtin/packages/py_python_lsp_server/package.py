@@ -31,6 +31,12 @@ class PyPythonLspServer(PythonPackage):
     depends_on("py-setuptools@69:", type="build", when="@1.13:")
     depends_on("py-setuptools-scm@3.4.3:+toml", type="build")
 
+    variant(
+        "formatter",
+        values=any_combination_of("black", "ruff"),
+        description="Formatter to use",
+    )
+
     with default_args(type=("build", "run")):
         depends_on("py-docstring-to-markdown")
         depends_on("py-importlib-metadata@4.8.3:", when="@1.8.0: ^python@:3.9")
@@ -40,7 +46,8 @@ class PyPythonLspServer(PythonPackage):
         depends_on("py-python-lsp-jsonrpc@1.0.0:1")
         depends_on("py-python-lsp-jsonrpc@1.1.0:1", when="@1.8.0:")
         depends_on("py-ujson@3.0.0:")
-        depends_on("py-black", when="@1.13:")
+        depends_on("py-black", when="@1.13: formatter=black")
+        depends_on("py-ruff", when="@1.13: formatter=ruff")
         depends_on("py-importlib-metadata@4.8.3:", when="^python@:3.9")
 
     def url_for_version(self, version):
