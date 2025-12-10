@@ -58,7 +58,7 @@ class Occa(Package):
     # add missing header <cstdint>
     # https://github.com/libocca/occa/pull/684
     patch(
-        "https://patch-diff.githubusercontent.com/raw/libocca/occa/pull/684.diff",
+        "https://patch-diff.githubusercontent.com/raw/libocca/occa/pull/684.diff?full_index=1",
         sha256="0acd861f5e3791cbc223efa3004077aef9fc9ae4c39541212b5451fb954fbcb9",
         when="@1.2.0:1.5.0",
     )
