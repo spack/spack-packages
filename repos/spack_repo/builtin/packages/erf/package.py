@@ -3,14 +3,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
-
-def submodules(package):
-    submodules = []
-    submodules.append("Submodules/AMReX")
-
-    return submodules
-
-
 class Erf(CMakePackage, CudaPackage):
     """ERF solves the compressible Navier-Stokes on a Arakawa C-grid
     for large-scale weather modeling.
@@ -29,29 +21,29 @@ class Erf(CMakePackage, CudaPackage):
 
     license("BSD-3-Clause", checked_by="larenspear")
 
-    version("25.12", tag="25.12", submodules=submodules)
-    version("25.11", tag="25.11", submodules=submodules)
-    version("25.10", tag="25.10", submodules=submodules)
-    version("25.08", tag="25.08", submodules=submodules)
-    version("25.07", tag="25.07", submodules=submodules)
-    version("25.06", tag="25.06", submodules=submodules)
-    version("25.05", tag="25.05", submodules=submodules)
-    version("25.04", tag="25.04", submodules=submodules)
-    version("25.03", tag="25.03", submodules=submodules)
-    version("25.01", tag="25.01", submodules=submodules)
-    version("24.11", tag="24.11", submodules=submodules)
-    version("24.10", tag="24.10", submodules=submodules)
-    version("24.09", tag="24.09", submodules=submodules)
-    version("24.08", tag="24.08", submodules=submodules)
-    version("24.06", tag="24.06", submodules=submodules)
-    version("24.05", tag="24.05", submodules=submodules)
-    version("24.04", tag="24.04", submodules=submodules)
-    version("24.03", tag="24.03", submodules=submodules)
-    version("24.02", tag="24.02", submodules=submodules)
-    version("24.01", tag="24.01", submodules=submodules)
-    version("23.12", tag="23.12", submodules=submodules)
-    version("23.11", tag="23.11", submodules=submodules)
-    version("23.10", tag="23.10", submodules=submodules)
+    version("25.12", tag="25.12")
+    version("25.11", tag="25.11")
+    version("25.10", tag="25.10")
+    version("25.08", tag="25.08")
+    version("25.07", tag="25.07")
+    version("25.06", tag="25.06")
+    version("25.05", tag="25.05")
+    version("25.04", tag="25.04")
+    version("25.03", tag="25.03")
+    version("25.01", tag="25.01")
+    version("24.11", tag="24.11")
+    version("24.10", tag="24.10")
+    version("24.09", tag="24.09")
+    version("24.08", tag="24.08")
+    version("24.06", tag="24.06")
+    version("24.05", tag="24.05")
+    version("24.04", tag="24.04")
+    version("24.03", tag="24.03")
+    version("24.02", tag="24.02")
+    version("24.01", tag="24.01")
+    version("23.12", tag="23.12")
+    version("23.11", tag="23.11")
+    version("23.10", tag="23.10")
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
@@ -99,8 +91,7 @@ class Erf(CMakePackage, CudaPackage):
             self.define_from_variant("ERF_BUILD_TESTS", "tests"),
             self.define_from_variant("ERF_BUILD_FCOMPARE", "fcompare"),
             self.define_from_variant("ERF_ENABLE_FFT", "fft"),
-            self.define("ERF_DIM", "3"),
-            self.define("ERF_USE_EXTERNAL_AMREX", True),
+            self.define("ERF_USE_INTERNAL_AMREX", False),
             self.define("ERF_CLONE_AMREX", False),
             self.define("GIT_SUBMODULE_PROTOCOL", "https"),
             self.define("MPIEXEC_PREFLAGS", "--oversubscribe"),
