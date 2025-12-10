@@ -398,6 +398,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("python@3.6:", when="@7:+cuda")
     depends_on("py-fypp")
 
+    depends_on("py-torch", when="+pytorch")
+
     depends_on("spglib", when="+spglib")
 
     depends_on("dftd4@3.6.0: build_system=cmake", when="+dftd4")
