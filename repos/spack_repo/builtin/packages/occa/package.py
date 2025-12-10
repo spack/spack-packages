@@ -49,6 +49,14 @@ class Occa(Package):
     conflicts("%gcc@6:", when="^cuda@:8")
     conflicts("%gcc@7:", when="^cuda@:9")
 
+    # add missing header <cstdint>
+    # https://github.com/libocca/occa/pull/684
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/libocca/occa/pull/684.diff",
+        sha256="0acd861f5e3791cbc223efa3004077aef9fc9ae4c39541212b5451fb954fbcb9",
+        when="@1.2.0:1.5.0",
+    )
+
     def install(self, spec, prefix):
         # The build environment is set by the 'setup_build_environment' method.
         # Copy the source to the installation directory and build OCCA there.
