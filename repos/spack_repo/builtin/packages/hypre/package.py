@@ -185,7 +185,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+shared@:2.12 platform=darwin")
 
     # GPU-related dependencies and conflicts
-    gpu_pkgs = ["magma", "umpire"]
+    gpu_pkgs = ["magma", "umpire", "superlu-dist"]
     conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gpu-profiling", when="~cuda~rocm~sycl")
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
@@ -362,9 +362,10 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("HYPRE_ENABLE_DSUPERLU", "superlu-dist"))
         args.append(self.define_from_variant("HYPRE_ENABLE_MAGMA", "magma"))
         if spec.satisfies("+superlu-dist"):
-            args.append(
-                self.define("TPL_DSUPERLU_INCLUDE_DIRS", self.spec["superlu-dist"].prefix.include)
-            )
+            inc_list = [self.spec["superlu-dist"].prefix.include]
+            if spec.satisfies("+rocm"):
+                inc_list.append(self.spec["hipblas"].prefix.include)
+            args.append(self.define("TPL_DSUPERLU_INCLUDE_DIRS", ";".join(inc_list)))
             args.append(self.define("TPL_DSUPERLU_LIBRARIES", self.spec["superlu-dist"].libs))
         if spec.satisfies("+magma"):
             args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
