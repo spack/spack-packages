@@ -3,6 +3,7 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
+
 class Erf(CMakePackage, CudaPackage):
     """ERF solves the compressible Navier-Stokes on a Arakawa C-grid
     for large-scale weather modeling.
