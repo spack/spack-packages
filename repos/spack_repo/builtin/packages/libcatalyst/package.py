@@ -29,14 +29,15 @@ class Libcatalyst(CMakePackage):
     variant("fortran", default=False, description="Enable Fortran wrapping")
     variant("python", default=False, description="Enable Python wrapping")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
+
+    depends_on("cmake@3.26:", type="build")
     depends_on("pkgconfig", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("conduit", when="+conduit")
-    depends_on("cmake@3.26:", type="build")
     depends_on("python@3:", when="+python")
     depends_on("py-numpy", when="+python", type=("build", "link", "run"))
 
