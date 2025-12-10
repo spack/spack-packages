@@ -118,7 +118,6 @@ class Glib(MesonPackage):
     depends_on("iconv")
     depends_on("elf")  # bin/gresource
 
-
     # glib prefers the libc version of gettext, which breaks the build if the
     # external version is also found.
     patch("meson-gettext.patch", when="@:2.64")
