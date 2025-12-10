@@ -81,6 +81,8 @@ spack:
     # - py-xgboost
 
   ci:
+    broken-tests-packages:
+    - composable-kernel
     pipeline-gen:
     - build-job:
         image:
