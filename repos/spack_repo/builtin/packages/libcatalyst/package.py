@@ -55,6 +55,10 @@ class Libcatalyst(CMakePackage):
             self.define_from_variant("CATALYST_WRAP_PYTHON", "python"),
         ]
 
+        # workaround for hard-coded arch dependent install folder for python module
+        if self.spec.satisfies("+python"):
+            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
+
         return args
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
