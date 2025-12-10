@@ -316,7 +316,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         )
 
     # HPX should use the same C++ standard
-    for cxxstd in cxxstds:
+    for cxxstd in cxxstds[: cxxstds.index("23")]:
         depends_on("hpx cxxstd={0}".format(cxxstd), when="+hpx cxxstd={0}".format(cxxstd))
 
     # HPX version constraints
