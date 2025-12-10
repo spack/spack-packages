@@ -15,6 +15,7 @@ class BlastPlus(AutotoolsPackage):
 
     maintainers("weijianwen")
 
+    version("2.17.0", sha256="502057a88e9990e34e62758be21ea474cc0ad68d6a63a2e37b2372af1e5ea147")
     version("2.16.0", sha256="17c93cf009721023e5aecf5753f9c6a255d157561638b91b3ad7276fd6950c2b")
     version("2.15.0", sha256="6918c370524c8d44e028bf491e8f245a895e07c66c77b261ce3b38d6058216e0")
     version("2.14.1", sha256="712c2dbdf0fb13cc1c2d4f4ef5dd1ce4b06c3b57e96dfea8f23e6e99f5b1650e")
@@ -86,6 +87,8 @@ class BlastPlus(AutotoolsPackage):
     depends_on("perl", when="+perl")
 
     depends_on("lmdb", when="@2.7.1:")
+    depends_on("sqlite3", when="@2.15:")
+    depends_on("zstd", when="@2.17:")
 
     configure_directory = "c++"
 
@@ -167,5 +170,11 @@ class BlastPlus(AutotoolsPackage):
             config_args.append("--with-perl={0}".format(self.spec["perl"].prefix))
         else:
             config_args.append("--without-python")
+
+        with when("@2.15:"):
+            config_args.append("--with-sqlite={0}".format(self.spec["sqlite3"].prefix))
+
+        with when("@2.17:"):
+            config_args.append("--with-zstd={0}".format(self.spec["zstd"].prefix))
 
         return config_args
