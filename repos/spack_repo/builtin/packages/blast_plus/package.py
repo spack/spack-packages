@@ -87,7 +87,7 @@ class BlastPlus(AutotoolsPackage):
     depends_on("perl", when="+perl")
 
     depends_on("lmdb", when="@2.7.1:")
-    depends_on("sqlite3", when="@2.15:")
+    depends_on("sqlite", when="@2.15:")
     depends_on("zstd", when="@2.17:")
 
     configure_directory = "c++"
@@ -172,7 +172,7 @@ class BlastPlus(AutotoolsPackage):
             config_args.append("--without-python")
 
         with when("@2.15:"):
-            config_args.append("--with-sqlite={0}".format(self.spec["sqlite3"].prefix))
+            config_args.append("--with-sqlite={0}".format(self.spec["sqlite"].prefix))
 
         with when("@2.17:"):
             config_args.append("--with-zstd={0}".format(self.spec["zstd"].prefix))
