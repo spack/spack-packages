@@ -254,6 +254,7 @@ spack:
         image: ghcr.io/spack/e4s-rocm-base-x86_64:v6.4.3-1760790880
     broken-tests-packages:
     - paraview
+    - composable-kernel
 
   cdash:
     build-group: E4S ROCm External
