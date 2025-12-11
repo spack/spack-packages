@@ -66,8 +66,8 @@ class Preseq(MakefilePackage, AutotoolsPackage):
 
     @when("+hts")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CPPFLAGS", f"-I{self.spec["htslib"].prefix.include}")
-        env.set("LDFLAGS", f"-L{self.spec["htslib"].prefix.lib}")
+        env.set("CPPFLAGS", f"-I{self.spec['htslib'].prefix.include}")
+        env.set("LDFLAGS", f"-L{self.spec['htslib'].prefix.lib}")
 
     @when("@:2")
     def configure(self, spec, prefix):
