@@ -4,7 +4,6 @@
 
 import os.path
 import re
-import subprocess
 import sys
 from glob import glob
 
