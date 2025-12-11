@@ -108,17 +108,17 @@ class BlastPlus(AutotoolsPackage):
             config_args.extend(["--with-dll", "--without-static", "--without-static-exe"])
 
         if spec.satisfies("+jpeg"):
-            config_args.append("--with-jpeg={self.spec['jpeg'].prefix}")
+            config_args.append(f"--with-jpeg={self.spec['jpeg'].prefix}")
         else:
             config_args.append("--without-jpeg")
 
         if spec.satisfies("+png"):
-            config_args.append("--with-png={self.spec['libpng'].prefix}")
+            config_args.append(f"--with-png={self.spec['libpng'].prefix}")
         else:
             config_args.append("--without-png")
 
         if spec.satisfies("+freetype"):
-            config_args.append("--with-freetype={self.spec['freetype'].prefix}")
+            config_args.append(f"--with-freetype={self.spec['freetype'].prefix}")
         else:
             config_args.append("--without-freetype")
 
@@ -126,55 +126,55 @@ class BlastPlus(AutotoolsPackage):
         # if '+hdf5' in spec:
         #     # FIXME
         #     config_args.append(
-        #         '--with-hdf5={self.spec["hdf5"].prefix}')
+        #         f'--with-hdf5={self.spec["hdf5"].prefix}')
         #     )
         # else:
         #     config_args.append('--without-hdf5')
 
         if spec.satisfies("+zlib"):
-            config_args.append("--with-z={self.spec['zlib-api'].prefix}")
+            config_args.append(f"--with-z={self.spec['zlib-api'].prefix}")
         else:
             config_args.append("--without-z")
 
         if spec.satisfies("+bzip2"):
-            config_args.append("--with-bz2={self.spec['bzip2'].prefix}")
+            config_args.append(f"--with-bz2={self.spec['bzip2'].prefix}")
         else:
             config_args.append("--without-bz2")
 
         if spec.satisfies("+lzo"):
-            config_args.append("--with-lzo={self.spec['lzo'].prefix}")
+            config_args.append(f"--with-lzo={self.spec['lzo'].prefix}")
         else:
             config_args.append("--without-lzo")
 
         if spec.satisfies("+gnutls"):
-            config_args.append("--with-gnutls={self.spec['gnutls'].prefix}")
+            config_args.append(f"--with-gnutls={self.spec['gnutls'].prefix}")
         else:
             config_args.append("--without-gnutls")
 
         if spec.satisfies("+openssl"):
-            config_args.append("--with-openssl={self.spec['openssl'].prefix}")
+            config_args.append(f"--with-openssl={self.spec['openssl'].prefix}")
         else:
             config_args.append("--without-openssl")
 
         if spec.satisfies("+pcre"):
-            config_args.append("--with-pcre={self.spec['pcre'].prefix}")
+            config_args.append(f"--with-pcre={self.spec['pcre'].prefix}")
         else:
             config_args.append("--without-pcre")
 
         if spec.satisfies("+python"):
-            config_args.append("--with-python={self.spec['python'].home}")
+            config_args.append(f"--with-python={self.spec['python'].home}")
         else:
             config_args.append("--without-python")
 
         if spec.satisfies("+perl"):
-            config_args.append("--with-perl={self.spec['perl'].prefix}")
+            config_args.append(f"--with-perl={self.spec['perl'].prefix}")
         else:
             config_args.append("--without-python")
 
         with when("@2.15:"):
-            config_args.append("--with-sqlite={self.spec['sqlite'].prefix}")
+            config_args.append(f"--with-sqlite={self.spec['sqlite'].prefix}")
 
         with when("@2.17:"):
-            config_args.append("--with-zstd={self.spec['zstd'].prefix}")
+            config_args.append(f"--with-zstd={self.spec['zstd'].prefix}")
 
         return config_args
