@@ -16,7 +16,6 @@ class Preseq(MakefilePackage, AutotoolsPackage):
     initial sequencing experiment."""
 
     homepage = "https://github.com/smithlabcode/preseq"
-    url = "https://github.com/smithlabcode/preseq/releases/download/v2.0.2/preseq_v2.0.2.tar.bz2"
 
     license("GPL-3.0-only")
 
@@ -49,11 +48,21 @@ class Preseq(MakefilePackage, AutotoolsPackage):
     with when("+hts"):
         depends_on("htslib")
 
+    def url_for_version(self, version):
+        """
+        preseq 2 tarball has an _ and is bzipped while preseq 3 tarball has a - and is
+        gzipped
+        """
+        uri = f"https://github.com/smithlabcode/preseq/releases/download/v{version}"
+        if version < Version("3.0"):
+            return f"{uri}/preseq_v{version}.tar.bz2"
+        else:
+            return f"{uri}/preseq-{version}.tar.gz"
+
     @when("@:2")
     def setup_build_environment(self, env):
         env.set("PREFIX", self.prefix)
 
-    @when("@3:")
     @when("+hts")
     def setup_build_environment(self, env):
         env.set("CPPFLAGS", f"-I{self.spec["htslib"].prefix.include}")
