@@ -152,7 +152,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         if self.spec.satisfies("build_system=cmake"):
             filter_file(
                 "SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
-                "#SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
+                "SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)",
                 "ncgen/CMakeLists.txt",
                 string=True,
             )
