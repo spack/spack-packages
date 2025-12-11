@@ -30,8 +30,14 @@ class Preseq(MakefilePackage, AutotoolsPackage):
         default="autotools",
     )
 
-    variant("hts", default=False, description="Enable HTSlib to support BAM files", when="@3:")
+    variant(
+        "hts",
+        default=False,
+        description="Use HTSlib to support BAM to mapped read conversions",
+        when="@3:",
+    )
 
+    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     # As of 3.0, preseq does not link libefence
