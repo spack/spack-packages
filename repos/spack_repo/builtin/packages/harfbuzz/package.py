@@ -112,11 +112,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
-            variant(
-                "gobject",
-                default=True,
-                description="Enable GObject introspection",
-            )
+            variant("gobject", default=True, description="Enable GObject introspection")
             variant(
                 "utils",
                 default=False,
