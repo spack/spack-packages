@@ -46,6 +46,8 @@ class Rocsolver(CMakePackage):
 
     license("BSD-2-Clause")
 
+    version("7.0.2", sha256="675c7cdc0e582f93d81d2dcd953ea567f040cbeb300ccd2db61cad4a07ca1d5b")
+    version("7.0.0", sha256="635bbf625d81e11afc70f6c0e23212ed13ea20ea50cf995d3dfa0e4636c19558")
     version("6.4.3", sha256="6c2c6019eaf49abb30fc54f09b3d755ebcfbbd30d9b71052aa13bb0cbc26d2bb")
     version("6.4.2", sha256="fe78538ead2ce9a95abbec74bc2c85408d5224f80b4816520e2d55d6b0188935")
     version("6.4.1", sha256="d27d3e0a59fbe1fb82172f545e38857643bb86fa1cd69ba51e9e292440a785c6")
@@ -69,7 +71,7 @@ class Rocsolver(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.8:", type="build")
-    depends_on("fmt@7:8.0.1", type="test", when="@5.6:")
+    depends_on("fmt@7:8.0.1", type="test")
     depends_on("fortran", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
@@ -94,6 +96,8 @@ class Rocsolver(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
@@ -129,7 +133,7 @@ class Rocsolver(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

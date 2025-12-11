@@ -40,38 +40,13 @@ class Esmf(MakefilePackage, PythonExtension):
     version("8.5.0", sha256="acd0b2641587007cc3ca318427f47b9cae5bfd2da8d2a16ea778f637107c29c4")
     version("8.4.2", sha256="969304efa518c7859567fa6e65efd960df2b4f6d72dbf2c3f29e39e4ab5ae594")
     version("8.4.1", sha256="1b54cee91aacaa9df400bd284614cbb0257e175f6f3ec9977a2d991ed8aa1af6")
-    version(
-        "8.4.0",
-        sha256="28531810bf1ae78646cda6494a53d455d194400f19dccd13d6361871de42ed0f",
-        deprecated=True,
-    )
     version("8.3.1", sha256="6c39261e55dcdf9781cdfa344417b9606f7f961889d5ec626150f992f04f146d")
-    version(
-        "8.3.0",
-        sha256="0ff43ede83d1ac6beabd3d5e2a646f7574174b28a48d1b9f2c318a054ba268fd",
-        deprecated=True,
-    )
-    version("8.3.0b09", commit="5b7e546c4ba350bff9c9ebd00e5fa1c6315d17da", deprecated=True)
     version("8.2.0", sha256="27866c31fdb63c58e78211de970470ca02d274f5d4d6d97e94284d63b1c1d9e4")
     version("8.1.1", sha256="629690c7a488e84ac7252470349458d7aaa98b54c260f8b3911a2e2f3e713dd0")
-    version(
-        "8.1.0",
-        sha256="226219ec61cace89f4678eece93188155d7cbb50a13ec4c9c93174ef3d58d7c0",
-        deprecated=True,
-    )
     version("8.0.1", sha256="13ce2ca0ae622548c00f7bb18317fb100235ca8b7ddbfac7e201a339e8eb05a3")
-    version(
-        "8.0.0",
-        sha256="4b7904fdc935710071c4aafb9370834d40c2ee06365a8b5845317be8f71bf51f",
-        deprecated=True,
-    )
-    version(
-        "7.1.0r",
-        sha256="e08f21544083dcbe162b472852e321f8df14f4f711f35508403d32df438367a7",
-        deprecated=True,
-    )
 
     variant("mpi", default=True, description="Build with MPI support")
+    variant("openmp", default=True, description="Build with OpenMP support")
     variant("external-lapack", default=False, description="Build with external LAPACK library")
     variant("netcdf", default=True, description="Build with NetCDF support")
     variant("pnetcdf", default=False, description="Build with pNetCDF support")
@@ -144,10 +119,6 @@ class Esmf(MakefilePackage, PythonExtension):
     # explicit type cast of variables from long to int
     patch("longtoint.patch", when="@:8.3.2 %cce@14:")
     patch("longtoint.patch", when="@:8.3.2 %oneapi@2022:")
-
-    # Missing include file for newer gcc compilers
-    # https://trac.macports.org/ticket/57493
-    patch("cstddef.patch", when="@7.1.0r %gcc@8:")
 
     # Skip info print of ESMF_CPP due to permission denied errors
     # https://github.com/spack/spack/issues/35957
@@ -343,6 +314,15 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("ESMF_COMM", comm_variant)
 
         ##########
+        # OpenMP #
+        ##########
+
+        if spec.satisfies("+openmp"):
+            env.set("ESMF_OPENMP", "ON")
+        else:
+            env.set("ESMF_OPENMP", "OFF")
+
+        ##########
         # LAPACK #
         ##########
 
@@ -352,8 +332,19 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # ESMF code.
             env.set("ESMF_LAPACK", "system")
 
-            # Specifies the path where the LAPACK library is located.
-            env.set("ESMF_LAPACK_LIBPATH", spec["lapack"].prefix.lib)
+            # Specifies the path where the LAPACK library is located. We cannot
+            # simply rely on spec["lapack"].prefix.lib here because some
+            # providers (e.g., MKL) use a deeper directory structure for the
+            # library directory that is not easily generalized. We must also
+            # filter out any system library paths included by the package.
+            env.set(
+                "ESMF_LAPACK_LIBPATH",
+                [
+                    lib_dir
+                    for lib_dir in spec["lapack"].libs.directories
+                    if spec["lapack"].prefix in lib_dir
+                ][0],
+            )
 
             # Specifies the linker directive needed to link the LAPACK library
             # to the application.
@@ -440,7 +431,9 @@ class MakefileBuilder(makefile.MakefileBuilder):
             for suffix in [shared_library_suffix(self.spec), static_library_suffix(self.spec)]:
                 library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
-                    os.symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
+                    symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
+        # https://github.com/esmf-org/esmf/issues/497
+        filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
 
     def check(self):
         make("check", parallel=False)

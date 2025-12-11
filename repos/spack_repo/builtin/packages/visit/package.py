@@ -111,6 +111,13 @@ class Visit(CMakePackage):
     # Fix missing cmath include in QvisStripChart.C
     patch("20270-missing-cmath-QvisStripChart.patch", when="@:3.4.2")
 
+    # Support adios2>=2.11.0
+    patch(
+        "https://github.com/visit-dav/visit/commit/61d6166c546ebf637c743519f25c627cf121a7b5.patch?full_index=1",
+        sha256="3e4bda54793fc264b519760b334b04186ec2f35b677751857226c28728c6cd55",
+        when="@3.4: +adios2",
+    )
+
     conflicts(
         "+gui", when="^[virtuals=gl] osmesa", msg="GUI cannot be activated with OSMesa front-end"
     )
@@ -187,6 +194,10 @@ class Visit(CMakePackage):
     depends_on("mfem+shared+exceptions+fms+conduit", when="+mfem")
     depends_on("libfms@0.2:", when="+mfem")
     conflicts("^mfem build_system=cmake")
+
+    # The checks in the build system are not consistent
+    requires("+mfem", when="+conduit")
+    requires("+conduit", when="+mfem")
 
     with when("+adios2"):
         depends_on("adios2")

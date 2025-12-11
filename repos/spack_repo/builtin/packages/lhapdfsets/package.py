@@ -19,7 +19,7 @@ class Lhapdfsets(BundlePackage):
 
     maintainers("vvolkl", "wdconinc")
 
-    version("6.3.0")
+    version("6.5.5")
 
     depends_on("lhapdf", type="build")
     depends_on("tar", type="build")
@@ -32,8 +32,8 @@ class Lhapdfsets(BundlePackage):
 
     variant(
         "sets",
-        description="Individiual lhapdf sets to install",
-        values=("all", "default"),
+        description="Individiual lhapdf sets to install (all, default, or comma-separated list)",
+        multi=True,
         default="default",
     )
 
@@ -42,18 +42,20 @@ class Lhapdfsets(BundlePackage):
         tar = which("tar")
         curl = which("curl")
         sets = self.spec.variants["sets"].value
-        if sets == "all":
-            # parse set names from index file
-            all_sets = [
-                _line.split()[1]
-                for _line in open(
-                    join_path(os.path.dirname(__file__), "pdfsets.index")
-                ).readlines()
-            ]
-            sets = all_sets
-        elif sets == "default":
-            default_sets = ["MMHT2014lo68cl", "MMHT2014nlo68cl", "CT14lo", "CT14nlo"]
-            sets = default_sets
+        if len(sets) == 1:
+            if sets[0] == "all":
+                # parse set names from index file
+                all_sets = [
+                    _line.split()[1]
+                    for _line in open(
+                        join_path(os.path.dirname(__file__), "pdfsets.index")
+                    ).readlines()
+                ]
+                sets = all_sets
+            elif sets[0] == "default":
+                default_sets = ["MMHT2014lo68cl", "MMHT2014nlo68cl", "CT14lo", "CT14nlo"]
+                sets = default_sets
+
         with working_dir(self.prefix.share.lhapdfsets):
             for s in sets:
                 _filename = "%s.tar.gz" % s
@@ -81,4 +83,4 @@ class Lhapdfsets(BundlePackage):
             return None
         # unfortunately the sets are not versioned -
         # just hardcode the current version and hope it is fine
-        return Spec.from_detection("lhapdfsets@6.3.0", external_path=path)
+        return Spec.from_detection("lhapdfsets@6.5.5", external_path=path)

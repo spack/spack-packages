@@ -17,19 +17,27 @@ class SalomeConfiguration(Package):
     maintainers("franciskloss")
 
     homepage = "https://www.salome-platform.org"
-    git = "https://git.salome-platform.org/gitpub/tools/configuration.git"
+    git = "https://github.com/SalomePlatform/configuration.git"
 
-    version("9.13.0", tag="V9_13_0", commit="1c9b00436fc0e8264742460ebc102ae7d1970e97")
-    version("9.12.0", tag="V9_12_0", commit="61ed79521f31363ba4aeedcd59812a4838c076aa")
-    version("9.11.0", tag="V9_11_0", commit="33fc859a523e9f84cabaae2c55fdc64d1be11ec0")
-    version("9.10.0", tag="V9_10_0", commit="25f724f7a6c0000330a40c3851dcd8bc2493e1fa")
-    version("9.9.0", tag="V9_9_0", commit="5e61c7330cb2e0ff39e0bf4ba7b65d1d26c824ac")
-    version("9.8.0", tag="V9_8_0", commit="f1b2929d32953ac4d2056d564dab62e2e8d7c2a5")
-    version("9.7.0", tag="V9_7_0", commit="b1430e72bc252867289b45de9a94041841fade06")
-    version("9.6.0", tag="V9_6_0", commit="02e621fc9e24b4eab20f82ef921859013bf024b4")
-    version("9.5.0", tag="V9_5_0", commit="96ecd4927604943dc80ead4aaf732a9d0215b70c")
-    version("9.4.0", tag="V9_4_0", commit="057e00d65a86f058dd4b0f82a866fcc66d81ed63")
-    version("9.3.0", tag="V9_3_0", commit="de7bac0ee58007a9501fffa7c1488de029b19cdc")
+    version("9.15.0", sha256="01dd367a167383fbc03ca8de47e127c87f4a9d4c826c68768ac3a2bfd5f998f7")
+    version("9.14.0", sha256="9ff6cacfc272ef75211dee555b67acc50ec9dee1862676d429c24c13a60c6052")
+    version("9.13.0", sha256="b0bb296536cefb3b5e063a57fab8b66b510ff76d766fbd462ee10dedac3c4872")
+    version("9.12.0", sha256="81841371edfcf03a5099900f4205a37c56bfd9390f88dd9024e966bfb2e20f86")
+    version("9.11.0", sha256="a72f2cc828fbe769f0376cdbc60ee4c3573b4f9ceec5906ffe6bb7f010d08ee7")
+
+    with default_args(deprecated=True):
+        version("9.10.0", tag="V9_10_0", commit="25f724f7a6c0000330a40c3851dcd8bc2493e1fa")
+        version("9.9.0", tag="V9_9_0", commit="5e61c7330cb2e0ff39e0bf4ba7b65d1d26c824ac")
+        version("9.8.0", tag="V9_8_0", commit="f1b2929d32953ac4d2056d564dab62e2e8d7c2a5")
+        version("9.7.0", tag="V9_7_0", commit="b1430e72bc252867289b45de9a94041841fade06")
+        version("9.6.0", tag="V9_6_0", commit="02e621fc9e24b4eab20f82ef921859013bf024b4")
+        version("9.5.0", tag="V9_5_0", commit="96ecd4927604943dc80ead4aaf732a9d0215b70c")
+        version("9.4.0", tag="V9_4_0", commit="057e00d65a86f058dd4b0f82a866fcc66d81ed63")
+        version("9.3.0", tag="V9_3_0", commit="de7bac0ee58007a9501fffa7c1488de029b19cdc")
+
+    def url_for_version(self, version):
+        url = "https://github.com/SalomePlatform/configuration/archive/refs/tags/V{0}.tar.gz"
+        return url.format(version.underscored)
 
     patch("SalomeMacros.patch", working_dir="./cmake")
     patch("FindSalomeHDF5.patch", working_dir="./cmake", when="@:9.7.0")

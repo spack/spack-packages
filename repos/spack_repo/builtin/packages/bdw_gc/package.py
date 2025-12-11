@@ -41,9 +41,10 @@ class BdwGc(AutotoolsPackage):
         multi=False,
         description="Multithreading support",
     )
+    variant("cxx", default=False, description="Enable C++ support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("libatomic-ops", when="+libatomic-ops")
 
@@ -54,6 +55,7 @@ class BdwGc(AutotoolsPackage):
             "--enable-static",
             "--with-libatomic-ops={0}".format("yes" if "+libatomic-ops" in spec else "no"),
             "--enable-threads={0}".format(spec.variants["threads"].value),
+            "--enable-cplusplus={0}".format("yes" if "+cxx" in spec else "no"),
         ]
 
         return config_args

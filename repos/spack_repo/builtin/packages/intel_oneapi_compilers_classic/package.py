@@ -150,8 +150,30 @@ class IntelOneapiCompilersClassic(Package, CompilerPackage):
     def install(self, spec, prefix):
         # We do a full copy (not symlinks) to avoid a run dependency on intel-oneapi-compilers
         # which would prevent mixing versions in a DAG
-        install_tree(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin)
+        install_tree(self.oneapi_compiler_prefix.linux.bin.intel64, prefix.bin.intel64)
+        binaries = [
+            "codecov",
+            "fortcom",
+            "fpp",
+            "icc",
+            "icpc",
+            "ifort",
+            "mcpcom",
+            "profdcg",
+            "profmerge",
+            "profmergesampling",
+            "proforder",
+            "tselect",
+            "xiar",
+            "xild",
+        ]
+        for binary in binaries:
+            os.symlink(prefix.bin.intel64.join(binary), prefix.bin.join(binary))
         install_tree(self.oneapi_compiler_prefix.linux.lib, prefix.lib)
+        install_tree(
+            self.oneapi_compiler_prefix.linux.compiler.lib.intel64_lin,
+            prefix.linux.compiler.lib.intel64_lin,
+        )
         install_tree(self.oneapi_compiler_prefix.linux.include, prefix.include)
         install_tree(self.oneapi_compiler_prefix.linux.compiler, prefix.compiler)
         install_tree(self.oneapi_compiler_prefix.documentation.en.man, prefix.man)

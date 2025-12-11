@@ -24,7 +24,8 @@ class Hip(CMakePackage):
     libraries = ["libamdhip64"]
 
     license("MIT")
-
+    version("7.0.2", sha256="80486998b115e5f61b72913887ccc0507ac332eda4068879bdfb7e3c8611f666")
+    version("7.0.0", sha256="762794050eb9f47d8278a3d023bb47fd075c30c91ea9c4719cae55d91535de3c")
     version("6.4.3", sha256="3def2459ca9258f04d35d1d3b0173237cea2b963814886bb8af6a0e317718d3d")
     version("6.4.2", sha256="27e3558ecafa9a7471441aabdd870648fa2619147caa721bd98514fa00d246c1")
     version("6.4.1", sha256="f26f098b08504636c6f4e1da45b162f1df2ce6608eba85606fa7932d8fea960f")
@@ -108,6 +109,8 @@ class Hip(CMakePackage):
             "6.4.1",
             "6.4.2",
             "6.4.3",
+            "7.0.0",
+            "7.0.2",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -133,6 +136,8 @@ class Hip(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
 
@@ -148,6 +153,8 @@ class Hip(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -157,6 +164,8 @@ class Hip(CMakePackage):
 
     # Add hip-clr sources thru the below
     for d_version, d_shasum in [
+        ("7.0.2", "b49b1ccbf86ef78f4da5ff13ec3ee94f6133c55db3a95b823577b0808db5f2f1"),
+        ("7.0.0", "cc417e73cda903511db5a72b77704fd41bf7b39204c5cacb2c64701b344b8c5d"),
         ("6.4.3", "aa7c9d9d7da3b5fc944b17ca7c032e8924a8dc327ec79eb8cb7f0c9df6fa76dc"),
         ("6.4.2", "6dca1ffff36dbf8665594a72b47b8dd0362f7ee446dea03961d8b5a639bf3ede"),
         ("6.4.1", "18ee75a04f6fc55e72f8b3fcad1e0d58eceb2ce0e0696ca76d9b3dfaf4bfd7ff"),
@@ -175,8 +184,6 @@ class Hip(CMakePackage):
         ("6.0.0", "798b55b5b5fb90dd19db54f136d8d8e1da9ae1e408d5b12b896101d635f97e50"),
         ("5.7.1", "c78490335233a11b4d8a5426ace7417c555f5e2325de10422df06c0f0f00f7eb"),
         ("5.7.0", "bc2447cb6fd86dff6a333b04e77ce85755104d9011a14a044af53caf02449573"),
-        ("5.6.1", "0b88af1e99643899d11b1c8cf8a3c46601051b328a5e0ffbd44ee88b7eb0db33"),
-        ("5.6.0", "8dcd99110737a294f67a805639cf372890c8ca16c7603caaa793e71e84478fe4"),
     ]:
         resource(
             name="clr",
@@ -207,8 +214,6 @@ class Hip(CMakePackage):
     for d_version, d_shasum in [
         ("5.7.1", "d47d27ef2b5de7f49cdfd8547832ac9b437a32e6fc6f0e9c1646f4b704c90aee"),
         ("5.7.0", "9f839bf7226e5e26f3150f8ba6eca507ab9a668e68b207736301b3bb9040c973"),
-        ("5.6.1", "5800fac92b841ef6f52acda78d9bf86f83970bec0fb848a6265d239bdb7eb51a"),
-        ("5.6.0", "fdb7fdc9e4648376120330f034ee8353038d34c8a015f9eb0c208c56eeddd097"),
     ]:
         resource(
             name="hipcc",
@@ -221,6 +226,8 @@ class Hip(CMakePackage):
         )
     # Add hipother sources thru the below
     for d_version, d_shasum in [
+        ("7.0.2", "90ba233cc5242a2b3d2f4b4576b9d61f78bbf13f648e713a377b10df00257592"),
+        ("7.0.0", "611aa99b4fe88988850e4533056ebfede1cb546ca2f208dbf3eda84b041ef6d6"),
         ("6.4.3", "bf5112a7dbc62ba292d782297edebb385b18563f4efebfb4b581230f9383a89f"),
         ("6.4.2", "c2828018e6241bf0464c38f63e16abeab0e8eb861f052454b2d1bc96e0bae66a"),
         ("6.4.1", "2251976146b65a5bdda5a46bfecf323d8dd122104a96394b0e76b35060a10842"),
@@ -251,11 +258,10 @@ class Hip(CMakePackage):
     # Improve compilation without git repo and remove compiler rt linkage
     # for host and correction in CMake target path variable and
     # correcting the CMake path variable.
-    patch("0014-remove-compiler-rt-linkage-for-host.5.6.0.patch", when="@5.6.0:5.6")
     patch("0014-Remove-compiler-rt-linkage-for-host-for-5.7.0.patch", when="@5.7.0:5.7")
     patch("0014-remove-compiler-rt-linkage-for-host.6.0.patch", when="@6.0")
     patch("0014-remove-compiler-rt-linkage-for-host.6.1.patch", when="@6.1")
-    patch("0015-reverting-operator-mixup-fix-for-slate.patch", when="@5.6:6.0")
+    patch("0015-reverting-operator-mixup-fix-for-slate.patch", when="@:6.0")
     patch("0018-reverting-hipMemoryType-with-memoryType.patch", when="@6.0:6.2")
 
     # See https://github.com/ROCm/HIP/pull/3206
@@ -298,6 +304,7 @@ class Hip(CMakePackage):
                 "comgr": rocm_prefix,
                 "rocm-device-libs": rocm_prefix,
                 "hipify-clang": rocm_prefix,
+                "rocm-core": rocm_prefix,
             }
 
             if self.spec.satisfies("@5.7:"):
@@ -315,6 +322,7 @@ class Hip(CMakePackage):
                 "comgr": self.spec["comgr"].prefix,
                 "rocm-device-libs": self.spec["llvm-amdgpu"].prefix,
                 "hipify-clang": self.spec["hipify-clang"].prefix,
+                "rocm-core": self.spec["rocm-core"].prefix,
             }
         paths["bitcode"] = paths["rocm-device-libs"].amdgcn.bitcode
 
@@ -393,6 +401,11 @@ class Hip(CMakePackage):
             env.append_path(
                 "HIPCC_LINK_FLAGS_APPEND", f"--rocm-path={paths['rocm-path']}", separator=" "
             )
+            env.append_path(
+                "HIPCC_COMPILE_FLAGS_APPEND",
+                f"-isystem {paths['rocm-core']}/include",
+                separator=" ",
+            )
         elif self.spec.satisfies("+cuda"):
             env.set("CUDA_PATH", self.spec["cuda"].prefix)
             env.set("HIP_PATH", self.spec.prefix)
@@ -416,6 +429,7 @@ class Hip(CMakePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         self.set_variables(env)
+        env.set("HIP_PATH", self.spec.prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.set_variables(env)
@@ -426,9 +440,12 @@ class Hip(CMakePackage):
         self.set_variables(env)
 
         if "amdgpu_target" in dependent_spec.variants:
-            arch = dependent_spec.variants["amdgpu_target"]
+            arch = dependent_spec.variants["amdgpu_target"].value
+            # some packages may define their own amdgpu_target variant that is not multi
+            if isinstance(arch, str):
+                arch = [arch]
             if "none" not in arch and "auto" not in arch:
-                env.set("HCC_AMDGPU_TARGET", ",".join(arch.value))
+                env.set("HCC_AMDGPU_TARGET", ",".join(arch))
 
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
@@ -439,13 +456,6 @@ class Hip(CMakePackage):
         self.spec.hipcc = join_path(self.prefix.bin, "hipcc")
 
     def patch(self):
-        if self.spec.satisfies("@5.6.0:5.6 +rocm"):
-            filter_file(
-                '"${ROCM_PATH}/llvm"',
-                self.spec["llvm-amdgpu"].prefix,
-                "clr/hipamd/hip-config.cmake.in",
-                string=True,
-            )
         if self.spec.satisfies("@5.7:6.2 +rocm"):
             filter_file(
                 '"${ROCM_PATH}/llvm"',
@@ -461,17 +471,13 @@ class Hip(CMakePackage):
                 string=True,
             )
         perl = self.spec["perl"].command
-
-        if self.spec.satisfies("@5.6:"):
-            with working_dir("clr/hipamd/bin"):
-                filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
-        if self.spec.satisfies("@5.6:5.7"):
+        with working_dir("clr/hipamd/bin"):
+            filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
+        if self.spec.satisfies("@5.7"):
             with working_dir("hipcc/bin"):
                 filter_shebang("hipconfig")
-
-        if self.spec.satisfies("+rocm"):
-            numactl = self.spec["numactl"].prefix.lib
-            if self.spec.satisfies("@5.6:5.7"):
+            if self.spec.satisfies("+rocm"):
+                numactl = self.spec["numactl"].prefix.lib
                 with working_dir("hipcc/src"):
                     filter_file(" -lnuma", f" -L{numactl} -lnuma", "hipBin_amd.h")
 
@@ -533,7 +539,7 @@ class Hip(CMakePackage):
         args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path + "/clr/opencl"))
         args.append(self.define("CLR_BUILD_HIP", True))
         args.append(self.define("CLR_BUILD_OCL", False))
-        if self.spec.satisfies("@5.6:5.7"):
+        if self.spec.satisfies("@5.7"):
             args.append(self.define("HIPCC_BIN_DIR", self.stage.source_path + "/hipcc/bin"))
         if self.spec.satisfies("@6.0:"):
             args.append(self.define("HIPCC_BIN_DIR", self.spec["hipcc"].prefix.bin))

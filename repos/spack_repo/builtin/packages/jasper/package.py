@@ -2,14 +2,12 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems import autotools, cmake
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class Jasper(AutotoolsPackage, CMakePackage):
+class Jasper(CMakePackage):
     """Library for manipulating JPEG-2000 images"""
 
     homepage = "https://www.ece.uvic.ca/~frodo/jasper/"
@@ -22,15 +20,6 @@ class Jasper(AutotoolsPackage, CMakePackage):
     version("2.0.31", sha256="d419baa2f8a6ffda18472487f6314f0f08b673204723bf11c3a1f5b3f1b8e768")
     version("2.0.16", sha256="f1d8b90f231184d99968f361884e2054a1714fdbbd9944ba1ae4ebdcc9bbfdb1")
     version("2.0.14", sha256="85266eea728f8b14365db9eaf1edc7be4c348704e562bb05095b9a077cf1a97b")
-    version(
-        "1.900.1",
-        sha256="c2b03f28166f9dc8ae434918839ae9aa9962b880fcfd24eebddd0a2daeb9192c",
-        deprecated=True,
-    )
-
-    build_system(
-        conditional("cmake", when="@2:"), conditional("autotools", when="@:1"), default="cmake"
-    )
 
     variant("jpeg", default=True, description="Enable the use of the JPEG library")
     variant("opengl", default=False, description="Enable the use of the OpenGL and GLUT libraries")
@@ -39,23 +28,15 @@ class Jasper(AutotoolsPackage, CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    with when("build_system=cmake"):
-        depends_on("cmake@2.8.11:", type="build")
-        depends_on("cmake@3.12:", type="build", when="@3:")
+    depends_on("cmake@2.8.11:", type="build")
+    depends_on("cmake@3.12:", type="build", when="@3:")
 
     depends_on("jpeg", when="+jpeg")
     depends_on("gl", when="+opengl")
 
     # invalid compilers flags
-    conflicts("@2.0.0:2", when="%nvhpc")
+    conflicts("@2", when="%nvhpc")
 
-    # Fixes a bug where an assertion fails when certain JPEG-2000
-    # files with an alpha channel are processed.
-    # See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=469786
-    patch("fix_alpha_channel_assert_fail.patch", when="@1.900.1")
-
-
-class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         return [
             self.define("JAS_ENABLE_DOC", False),
@@ -64,12 +45,3 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("JAS_ENABLE_OPENGL", "opengl"),
             self.define_from_variant("JAS_ENABLE_SHARED", "shared"),
         ]
-
-
-class AutotoolsBuilder(autotools.AutotoolsBuilder):
-    def configure_args(self):
-        args = []
-        args.extend(self.enable_or_disable("jpeg"))
-        args.extend(self.enable_or_disable("opengl"))
-        args.extend(self.enable_or_disable("shared"))
-        return args
