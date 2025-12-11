@@ -283,7 +283,6 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp@0.2.2:0.2.3", when="@0.14.0")
     depends_on("camp@0.1.0", when="@0.10.0:0.13.0")
 
-    depends_on("cmake@3.23:", when="@2024.07.0:", type="build")
     depends_on("cmake@3.24:", when="@2025.09.0:", type="build")
     depends_on("cmake@3.23:", when="@2024.07.0:2025.03.2", type="build")
     depends_on("cmake@3.23:", when="@2022.10.0:2024.02.2+rocm", type="build")
