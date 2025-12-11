@@ -60,11 +60,11 @@ class Preseq(MakefilePackage, AutotoolsPackage):
             return f"{uri}/preseq-{version}.tar.gz"
 
     @when("@:2")
-    def setup_build_environment(self, env):
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("PREFIX", self.prefix)
 
     @when("+hts")
-    def setup_build_environment(self, env):
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CPPFLAGS", f"-I{self.spec["htslib"].prefix.include}")
         env.set("LDFLAGS", f"-L{self.spec["htslib"].prefix.lib}")
 
