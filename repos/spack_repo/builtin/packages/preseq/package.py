@@ -24,9 +24,14 @@ class Preseq(MakefilePackage, AutotoolsPackage):
     version("2.0.3", sha256="747ddd4227515a96a45fcff0709f26130386bff3458c829c7bc1f3306b4f3d91")
     version("2.0.2", sha256="1d7ea249bf4e5826e09697256643e6a2473bc302cd455f31d4eb34c23c10b97c")
 
+    build_system(
+        conditional("makefile", when="@:2"),
+        conditional("autotools", when="@3:"),
+        default="autotools",
+    )
+
     variant("hts", default=False, description="Enable HTSlib to support BAM files", when="@3:")
 
-    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     # As of 3.0, preseq does not link libefence
