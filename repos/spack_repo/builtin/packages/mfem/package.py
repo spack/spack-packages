@@ -6,12 +6,10 @@ import os
 import shutil
 import sys
 
-from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.generic import Package
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
-from spack_repo.builtin.build_systems.generic import GenericBuilder
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
-from spack_repo.builtin.build_systems.generic import GenericBuilder
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.generic import GenericBuilder, Package
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
@@ -308,6 +306,7 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^mpich@4:", when="@:4.3+mpi")
 
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
     depends_on("fortran", type="build", when="+strumpack")
 
     depends_on("gmake", type="build")
@@ -616,6 +615,12 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
             if os.access(f, os.R_OK):
                 return FileList(f)
         return FileList(find(self.prefix, "test.mk", recursive=True))
+
+    @property
+    def xlinker(self):
+        using_nvcc = "+cuda" in self.spec and "+enzyme" not in self.spec
+        return "-Wl," if not using_nvcc else "-Xlinker="
+
 
 def str_to_timerid(timer_type):
     timer_ids = {"auto": "-1", "std": "0", "posix": "2", "mac": "4", "mpi": "6"}
@@ -1441,11 +1446,6 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
     def is_sys_lib_path(self, dir):
         return dir in self.sys_lib_paths
 
-    @property
-    def xlinker(self):
-        using_nvcc = "+cuda" in self.spec and "+enzyme" not in self.spec
-        return "-Wl," if not using_nvcc else "-Xlinker="
-
     # Similar to spec[pkg].libs.ld_flags but prepends rpath flags too.
     # Also does not add system library paths as defined by 'sys_lib_paths'
     # above -- this is done to avoid issues like this:
@@ -1478,6 +1478,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             except NoHeadersError:
                 pass
         return all_hdrs
+
 
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
