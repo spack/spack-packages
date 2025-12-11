@@ -4,6 +4,7 @@
 
 import os.path
 import re
+import subprocess
 import sys
 from glob import glob
 
@@ -32,7 +33,7 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
 
     version(
         "4.1",
-        sha256="46f599629d0ceb26b0c2f099e88f75fc055d115b4db45df0d6135cbd41fe0f8a",
+        sha256="891b98563216222bd12171ec9ace4a831eef73094f3705a4635bb6104cdfb465",
         url="https://mvapich.cse.ohio-state.edu/download/mvapich/plus/4.1/mvapich-plus-installer.sh",
         expand=False,
     )
@@ -91,6 +92,7 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
     )
 
     depends_on("zlib-api")
+    depends_on("rpm")
     depends_on("libpciaccess", when=(sys.platform != "darwin"))
     depends_on("libxml2")
     depends_on("libfabric", when="netmod=ofi")
@@ -123,7 +125,6 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
         return find_libraries(libraries, root=self.prefix, shared=True, recursive=True)
 
     def install(self, spec, prefix):
-        print(self.stage.source_path)
         runfile = glob(join_path(self.stage.source_path, "*"))[0]
         mvp_ver = str(spec.version)
         gpu = "nogpu"
@@ -152,13 +153,14 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("process_managers=slurm"):
             slurm = ".slurm"
         rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{os}.ofed{ofed}.{netmod}.{comp}\
-                {slurm}{apu}-4.1-1.{el}.x86_64.rpm"
+{slurm}{apu}-4.1-1.{el}.x86_64.rpm"
 
         install_shell = which("bash")
-
+        io = f"{self.spec['rpm'].prefix}/bin/rpm2cpio"
         arguments = [
             runfile,  # the install script
             "--prefix=%s" % prefix,  # Where to install
+            "--io=%s" % io,  # rpm2cpio
             "--rpm=%s" % rpm,  # rpm name
         ]
 
