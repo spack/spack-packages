@@ -47,6 +47,7 @@ class Preseq(MakefilePackage, AutotoolsPackage):
 
     with when("+hts"):
         depends_on("htslib")
+        conflicts("gcc@13:")
 
     def url_for_version(self, version):
         """
