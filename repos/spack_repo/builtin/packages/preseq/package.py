@@ -43,9 +43,6 @@ class Preseq(MakefilePackage, AutotoolsPackage):
     # As of 3.0, preseq does not link libefence
     depends_on("libefence", when="@:2")
 
-    # As of 3.0, preseq does not require samtools
-    depends_on("samtools", when="@:2")
-
     # As of 3.0.2, preseq does not use gsl
     depends_on("gsl", when="@:3.0.1")
 
