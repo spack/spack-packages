@@ -72,5 +72,6 @@ class Preseq(MakefilePackage, AutotoolsPackage):
     def configure(self, spec, prefix):
         return
 
-    with when("+hts"):
-        configure_args=["--enable-hts"]
+    @when("+hts")
+    def configure_args(self):
+        return ["--enable-hts"]
