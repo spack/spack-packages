@@ -10,7 +10,7 @@ from spack.package import *
 
 
 class PyNvidiaNvimagecodec(PythonPackage):
-    """A nvImageCodec library of GPU- and CPU- accelerated codecs featuring a unified interface"""
+    """A nvImageCodec library of GPU- and CPU- accelerated codecs featuring a unified interface."""
 
     homepage = "https://docs.nvidia.com/cuda/nvimagecodec/index.html"
     git = "https://github.com/NVIDIA/nvImageCodec.git"

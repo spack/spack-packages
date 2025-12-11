@@ -18,6 +18,7 @@ class PyNvidiaDali(PythonPackage):
     url = "https://developer.download.nvidia.com/compute/redist/"
 
     maintainers("thomas-bouvier")
+    # todo(tbouvier): WITH_DYNAMIC_NVIMGCODEC?
 
     # py-nvidia-dali is not available on these platforms, but is depended on by
     # py-nvidia-modulus which does not have such conflict statements.
@@ -329,7 +330,4 @@ class PyNvidiaDali(PythonPackage):
         depends_on("py-nvidia-nvimagecodec@0.2.0", when="@1.36:1.41")
         depends_on("py-nvidia-nvjpeg2k", when="@1.46:1.48")
         depends_on("py-nvidia-nvtiff", when="@1.46:1.48")
-        depends_on("nvcomp", when="@1.50:")
-
-
-WITH_DYNAMIC_NVIMGCODEC
+        depends_on("py-nvidia-nvcomp", when="@1.50:")
