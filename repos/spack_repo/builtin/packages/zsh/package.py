@@ -16,15 +16,9 @@ class Zsh(AutotoolsPackage):
     homepage = "https://www.zsh.org"
     url = "https://downloads.sourceforge.net/project/zsh/zsh/5.4.2/zsh-5.4.2.tar.xz"
 
-    def url_for_version(self, version):
-        if version <= Version("5.9.0.0"):
-            url = "https://downloads.sourceforge.net/project/zsh/zsh/{0}/zsh-{0}.tar.xz"
-        if version > Version("5.9.0.1"):
-            url = "https://downloads.sourceforge.net/project/zsh/zsh-test/{0}-test/zsh-{0}-test.tar.xz"
-        return url.format(version, version)
-
     license("custom")
 
+    version("5.9.0.3", sha256="cf08faca2443eee56e7b61eb31ddc8198b0df95af41125c4591b367f9a46b9fc")
     version("5.9.0.2", sha256="da045106a64022371e670f7459a05cf4c60e6237a548af14af500d1652fa877e")
     version("5.9", sha256="9b8d1ecedd5b5e81fbf1918e876752a7dd948e05c1a0dba10ab863842d45acd5")
     version("5.8.1", sha256="b6973520bace600b4779200269b1e5d79e5f505ac4952058c11ad5bbf0dd9919")
@@ -53,6 +47,14 @@ class Zsh(AutotoolsPackage):
 
     conflicts("+lmod", when="~etcdir", msg="local etc required to setup env for lmod")
 
+    def url_for_version(self, version):
+        if version <= Version("5.9.0.0"):
+            url = "https://downloads.sourceforge.net/project/zsh/zsh/{0}/zsh-{0}.tar.xz"
+        if version > Version("5.9.0.1"):
+            url = "https://downloads.sourceforge.net/project/zsh/zsh-test/{0}-test/zsh-{0}-test.tar.xz"
+        return url.format(version, version)
+
+ 
     def configure_args(self):
         args = []
 
