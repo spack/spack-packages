@@ -295,6 +295,7 @@ fi
 # Note. SPACK_ALWAYS_XFLAGS are applied for all compiler invocations,
 # including version checks (SPACK_XFLAGS variants are not applied
 # for version checks).
+mode=""
 command="${0##*/}"
 comp="CC"
 vcheck_flags=""
