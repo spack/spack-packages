@@ -15,7 +15,7 @@ class PyHeat(PythonPackage):
     homepage = "https://github.com/helmholtz-analytics/heat/"
     pypi = "heat/heat-1.3.0.tar.gz"
 
-    maintainers("mrfh92", "ClaudiaComito", "JuanPedroGHM")
+    maintainers("ClaudiaComito", "JuanPedroGHM","LeonKaem")
 
     license("MIT")
 
@@ -123,4 +123,3 @@ class PyHeat(PythonPackage):
     depends_on("py-matplotlib@3.1.0:", when="+examples", type=("build", "link", "run"))
 
     conflicts("+cuda+rocm")
-    conflicts("+cuda", when="@1.4")
