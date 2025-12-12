@@ -483,6 +483,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
 
+    # CUDA conflicts and dependencies
     conflicts(
         "^llvm@20",
         when="@:2.5 +cuda",
@@ -490,6 +491,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "https://github.com/chapel-lang/chapel/issues/27273",
     )
 
+    conflicts("cuda@12.9:", when="+cuda") # deprecation warnings otherwise
+
+    # ROCm conflicts and dependencies
     conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
     # Chapel restricts the allowable ROCm versions
     with when("@2.2: +rocm"):
