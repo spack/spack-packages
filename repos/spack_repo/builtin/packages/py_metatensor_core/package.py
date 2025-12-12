@@ -23,7 +23,7 @@ class PyMetatensorCore(PythonPackage):
 
     import_modules = ["metatensor"]
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     depends_on("python@3.9:", type=("run", "build"))
