@@ -6,7 +6,9 @@ from spack.package import *
 
 def submodules(package):
     submodules = []
-    submodules.append("Submodules/AMReX")
+
+    with when("+noahmp"):
+        submodules.append("Submodules/Noah-MP")
 
     return submodules
 
@@ -61,6 +63,7 @@ class Erf(CMakePackage, CudaPackage):
     variant("tests", default=False, description="Enable tests")
     variant("fcompare", default=False, description="Enable fcompare")
     variant("fft", default=False, description="Enable FFT support")
+    variant("noahmp", default=False, description="Enable Noah-MP")
 
     with default_args(type="build"):
         depends_on("cmake@3.20:")
@@ -99,8 +102,9 @@ class Erf(CMakePackage, CudaPackage):
             self.define_from_variant("ERF_BUILD_TESTS", "tests"),
             self.define_from_variant("ERF_BUILD_FCOMPARE", "fcompare"),
             self.define_from_variant("ERF_ENABLE_FFT", "fft"),
+            self.define_from_variant("ERF_ENABLE_NOAHMP", "noahmp"),
             self.define("ERF_DIM", "3"),
-            self.define("ERF_USE_EXTERNAL_AMREX", True),
+            self.define("ERF_USE_INTERNAL_AMREX", False),
             self.define("ERF_CLONE_AMREX", False),
             self.define("GIT_SUBMODULE_PROTOCOL", "https"),
             self.define("MPIEXEC_PREFLAGS", "--oversubscribe"),
