@@ -22,7 +22,7 @@ class Gptune(CMakePackage):
     Bayesian optimization methodologies."""
 
     homepage = "https://gptune.lbl.gov/"
-    url = "https://github.com/gptune/GPTune/archive/refs/tags/3.0.0.tar.gz"
+    url = "https://github.com/gptune/GPTune/archive/refs/tags/5.0.0.tar.gz"
     git = "https://github.com/gptune/GPTune.git"
     maintainers("liuyangzhuan")
 
@@ -35,6 +35,7 @@ class Gptune(CMakePackage):
     version("4.0.0", sha256="4f954a810d83b73f5abe5b15b79e3ed5b7ebf7bc0ae7335d27b68111bd078102")
     version("3.0.0", sha256="e19bfc3033fff11ff8c20cae65b88b7ca005d2c4e4db047f9f23226126ec92fa")
     version("2.1.0", sha256="737e0a1d83f66531098beafa73dd479f12def576be83b1c7b8ea5f1615d60a53")
+    patch("gptunev5.patch", when="@5.0.0")
 
     variant("superlu", default=False, description="Build the SuperLU_DIST example")
     variant("hypre", default=False, description="Build the Hypre example")
@@ -68,11 +69,12 @@ class Gptune(CMakePackage):
     )
     depends_on(
         "py-scikit-optimize@0.9.0",
-        patches=[patch("gptunev5-skopt.patch")],
+        patches=[patch("gptunev5-skopt.patch", level=0)],
         type=("build", "run"),
         when="@5.0.0:",
     )
-    depends_on("py-gpy", type=("build", "run"))
+    depends_on("py-gpy@1.13.2:", type=("build", "run"), when="^python@3.9:")
+    depends_on("py-gpy@:1.13.1", type=("build", "run"), when="^python@:3.8")
     depends_on("py-lhsmdu", type=("build", "run"))
     depends_on("py-hpbandster", type=("build", "run"))
     depends_on("py-opentuner", type=("build", "run"))
@@ -80,6 +82,7 @@ class Gptune(CMakePackage):
         "py-ytopt-autotune@1.1.0",
         patches=[patch("gptunev5-autotune.patch")],
         type=("build", "run"),
+        when="@5.0.0:",
     )
     depends_on("py-filelock", type=("build", "run"))
     depends_on("py-requests", type=("build", "run"))
@@ -107,7 +110,8 @@ class Gptune(CMakePackage):
             fc_flags.append("-fallow-argument-mismatch")
 
         args = [
-            "-DGPTUNE_INSTALL_PATH=%s" % python_platlib,
+            "-DGPTUNE_INSTALL_PATH=%s"
+            % join_path(self.prefix, self.spec["python"].package.platlib),
             "-DTPL_BLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),
             "-DTPL_LAPACK_LIBRARIES=%s" % spec["lapack"].libs.joined(";"),
             "-DTPL_SCALAPACK_LIBRARIES=%s" % spec["scalapack"].libs.joined(";"),
@@ -152,7 +156,7 @@ class Gptune(CMakePackage):
             envfile.write("export GPTUNEROOT=$PWD\n")
             mpirun = spec["mpi"].prefix.bin.mpirun
             envfile.write(f"export MPIRUN={mpirun}\n")
-            gptune_path = join_path(python_platlib, "gptune")
+            gptune_path = join_path(self.prefix, self.spec["python"].package.platlib, "GPTune")
             envfile.write(f"export PYTHONPATH={gptune_path}:$PYTHONPATH\n")
             envfile.write("export proc=$(spack arch)\n")
             envfile.write(f"export mpi={spec['mpi'].name}\n")
@@ -166,15 +170,15 @@ class Gptune(CMakePackage):
                 + spec["blas"].name
                 + '\\":{\\"version_split\\":'
                 + " ["
-                + str(spec["blas"].versions).replace(".", ",")
+                + str(spec["blas"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["mpi"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["mpi"].versions).replace(".", ",")
+                + str(spec["mpi"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["scalapack"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["scalapack"].versions).replace(".", ",")
+                + str(spec["scalapack"].version).replace(".", ",")
                 + ']},\\"'
                 + str(comp_name)
                 + '\\":{\\"version_split\\": ['
@@ -186,15 +190,15 @@ class Gptune(CMakePackage):
                 + 'configurations\\":{\\"'
                 + spec["blas"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["blas"].versions).replace(".", ",")
+                + str(spec["blas"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["mpi"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["mpi"].versions).replace(".", ",")
+                + str(spec["mpi"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["scalapack"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["scalapack"].versions).replace(".", ",")
+                + str(spec["scalapack"].version).replace(".", ",")
                 + ']},\\"'
                 + str(comp_name)
                 + '\\":{\\"version_split\\": ['
@@ -214,10 +218,16 @@ class Gptune(CMakePackage):
 
         # copy the environment configuration to the python install directory
         cp = which("cp")
-        cp(script_path, join_path(python_platlib, "gptune"))
+        platlib = self.spec["python"].package.platlib
+        cp(script_path, join_path(self.prefix, platlib, "run_env.sh"))
+        cp(
+            "-r",
+            join_path(self.prefix, platlib, "GPTune"),
+            join_path(self.prefix, platlib, "gptune"),
+        )
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GPTUNE_INSTALL_PATH", python_platlib)
+        env.set("GPTUNE_INSTALL_PATH", join_path(self.prefix, self.spec["python"].package.platlib))
 
     cmd = {"bash": which("bash"), "cp": which("cp"), "git": which("git"), "rm": which("rm")}
 

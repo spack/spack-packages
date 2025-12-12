@@ -1,7 +1,3 @@
-diff --git a/autotune/problem.py b/autotune/problem.py
-old mode 100644
-new mode 100755
-index a6effc6..769a5e1
 --- a/autotune/problem.py
 +++ b/autotune/problem.py
 @@ -12,6 +12,7 @@ class TuningProblem:
@@ -29,3 +25,4 @@ index a6effc6..769a5e1
 +        
 +    def update_input_space(self, input_space):
 +        self.input_space = input_space
+
