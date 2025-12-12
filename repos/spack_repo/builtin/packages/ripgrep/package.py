@@ -35,13 +35,8 @@ class Ripgrep(CargoPackage):
 
     with when("+pcre2"):
         build_args=["--features", "pcre2"]
-        depends_on("pcre2", type="build")
+        depends_on("pcre2")
         depends_on("pkgconfig", type="build")
-
-    @when("+pcre2")
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        super().setup_build_environment
-        env.set("PCRE2_SYS_STATIC", "1")
 
     @run_after("install")
     def install_completions(self):
