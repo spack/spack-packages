@@ -109,6 +109,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         # harfbuzz's Meson only supports autotools based
         # freetype
         depends_on("freetype build_system=autotools")
+        depends_on("cairo build_system=meson")
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
