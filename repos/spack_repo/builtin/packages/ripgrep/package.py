@@ -33,15 +33,14 @@ class Ripgrep(CargoPackage):
     depends_on("rust@1.72:1.84", type="build", when="@14")
     depends_on("c", type="build")
 
-    build_args=["--release"]
-
     with when("+pcre2"):
-        build_args.append("--features 'pcre2'")
+        build_args=["--features", "pcre2"]
         depends_on("pcre2", type="build")
         depends_on("pkgconfig", type="build")
 
     @when("+pcre2")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        super().setup_build_environment
         env.set("PCRE2_SYS_STATIC", "1")
 
     @run_after("install")
