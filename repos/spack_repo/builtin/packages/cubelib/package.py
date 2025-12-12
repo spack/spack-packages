@@ -46,10 +46,10 @@ class Cubelib(AutotoolsPackage):
 
 
     def configure_args(self):
-        cname = self.clean_compiler(self.spec.compiler.name)
-        configure_args.append("--with-nocross-compiler-suite={0}".format(cname))
         configure_args = ["--enable-shared"]
         configure_args.append("--with-frontend-zlib=%s" % self.spec["zlib-api"].prefix.lib)
+        cname = self.clean_compiler(self.spec.compiler.name)
+        configure_args.append("--with-nocross-compiler-suite={0}".format(cname))
         return configure_args
 
     def install(self, spec, prefix):
