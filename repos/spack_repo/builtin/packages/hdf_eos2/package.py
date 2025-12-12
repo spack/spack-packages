@@ -18,11 +18,6 @@ class HdfEos2(AutotoolsPackage):
 
     homepage = "https://hdfeos.org"
     url = "https://git.earthdata.nasa.gov/projects/DAS/repos/hdfeos"
-    local_url = "file://{0}/hdf-eos2-{1}-src.tar.gz"
-    manual_download = True
-
-    # The old_url for archives is messy and is no longer used
-    old_url = "https://git.earthdata.nasa.gov/rest/git-lfs/storage/DAS/hdfeos/{0}?response-content-disposition=attachment%3B%20filename%3D%22{1}%22%3B%20filename*%3Dutf-8%27%27{1}"
 
     maintainers("climbfuji", "danrosen25")
 
@@ -35,28 +30,24 @@ class HdfEos2(AutotoolsPackage):
             "branch": "HDFEOS2_3.0",
             "archive": "hdf-eos2-3.0-src.tar.gz",
             "sha256": "3a5564b4d69b541139ff7dfdad948696cf31d9d1a6ea8af290c91a4c0ee37188",
-            "can_auto_download": True,
         },
         {
             "version": "2.20v1.00",
             "branch": "HDFEOS2.20",
             "archive": "HDF-EOS2.20v1.00.tar.Z",
             "sha256": "cb0f900d2732ab01e51284d6c9e90d0e852d61bba9bce3b43af0430ab5414903",
-            "can_auto_download": True,
         },
         {
             "version": "2.19v1.00",
             "branch": "HDFEOS2.19",
             "archive": "HDF-EOS2.19v1.00.tar.Z",
             "sha256": "3fffa081466e85d2b9436d984bc44fe97bbb33ad9d8b7055a322095dc4672e31",
-            "can_auto_download": True,
         },
         {
             "version": "2.19b",
             "branch": "HDFEOS2.19",
             "archive": "hdfeos2_19b.zip",
             "sha256": "a69993508dbf5fa6120bac3c906ab26f1ad277348dfc2c891305023cfdf5dc9d",
-            "can_auto_download": True,
             "deprecated": True,
         },
     ]
@@ -105,12 +96,7 @@ class HdfEos2(AutotoolsPackage):
         if vrec:
             branch = vrec[0]["branch"]
             archive = vrec[0]["archive"]
-            can_auto_download = vrec[0].get("can_auto_download", False)
-            if can_auto_download:
-                myurl = f"{self.url}/raw/{archive}?at=refs%2Fheads%2F{branch}"
-            else:
-                myurl = self.local_url.format(os.getcwd(), self.version)
-
+            myurl = f"{self.url}/raw/{archive}?at=refs%2Fheads%2F{branch}"
             return myurl
         else:
             sys.exit(
@@ -158,8 +144,7 @@ class HdfEos2(AutotoolsPackage):
         env.set("LDFLAGS", " ".join(extra_ldflags))
         # Use h4cc compiler wrapper and flags
         if self.spec.satisfies("^hdf"):
-            tmp = self.spec["hdf"].prefix
-            env.set("CC", os.path.join(tmp.bin, "h4cc"))
+            env.set("CC", os.path.join(self.spec["hdf"].prefix.bin, "h4cc"))
             if (
                 self.spec.satisfies("%clang@16:")
                 or self.spec.satisfies("%apple-clang@15:")
