@@ -24,6 +24,5 @@ class Mui(CMakePackage):
 
     def cmake_args(self):
         """Map Spack variants to the project's CMake options."""
-        args = []
-
-        return args
+        return []
+``
