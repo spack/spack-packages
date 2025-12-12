@@ -15,7 +15,7 @@ class PyHeat(PythonPackage):
     homepage = "https://github.com/helmholtz-analytics/heat/"
     pypi = "heat/heat-1.3.0.tar.gz"
 
-    maintainers("ClaudiaComito", "JuanPedroGHM","LeonKaem")
+    maintainers("ClaudiaComito", "JuanPedroGHM", "LeonKaem")
 
     license("MIT")
 
