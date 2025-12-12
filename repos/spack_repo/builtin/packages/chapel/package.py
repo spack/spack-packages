@@ -10,7 +10,9 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
+# TODO be more selective in importing packages
 from spack.package import *
+from spack.util.environment import is_system_path # avoid deprecation warnings
 
 
 def slingshot_network():
