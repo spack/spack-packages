@@ -12,7 +12,7 @@ class Httpie(PythonPackage):
 
     homepage = "https://httpie.io/"
     pypi = "httpie/httpie-2.6.0.tar.gz"
-    maintainers("BoboTiG")
+    maintainers("ebagrenrut")
 
     license("BSD-3-Clause")
 
