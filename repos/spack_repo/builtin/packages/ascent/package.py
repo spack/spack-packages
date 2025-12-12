@@ -632,6 +632,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+cuda"):
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "ON"))
+            cfg.write(
+                cmake_cache_entry(
+                    "CMAKE_CUDA_ARCHITECTURES", ";".join(spec.variants["cuda_arch"].values)
+                )
+            )
+
         else:
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "OFF"))
 
