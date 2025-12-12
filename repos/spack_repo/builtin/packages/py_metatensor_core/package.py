@@ -14,7 +14,6 @@ VERSIONS = {
 }
 
 
-
 class PyMetatensorCore(PythonPackage):
     """Python bindings for metatensor-core"""
 

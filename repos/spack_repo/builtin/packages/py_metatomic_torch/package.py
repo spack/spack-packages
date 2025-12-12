@@ -13,6 +13,7 @@ VERSIONS = {
     "0.1.3": "60a4b651cf6e15f175879af74d18215d45cc4fd5e42a61242a180e2014fe9fd2",
 }
 
+
 class PyMetatomicTorch(PythonPackage):
     """Torchscript bindings for metatomic"""
 
@@ -32,7 +33,6 @@ class PyMetatomicTorch(PythonPackage):
     for ver, sha256 in VERSIONS.items():
         version(ver, sha256=sha256)
         depends_on(f"libmetatomic-torch@={ver}", when=f"@{ver}")
-
 
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("python@3.10:", type=("build", "run"), when="@0.1.6:")
