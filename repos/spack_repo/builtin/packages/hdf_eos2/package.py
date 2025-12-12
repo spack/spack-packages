@@ -57,7 +57,7 @@ class HdfEos2(AutotoolsPackage):
             "archive": "hdfeos2_19b.zip",
             "sha256": "a69993508dbf5fa6120bac3c906ab26f1ad277348dfc2c891305023cfdf5dc9d",
             "can_auto_download": True,
-            "deprecated": True
+            "deprecated": True,
         },
     ]
 
@@ -76,7 +76,7 @@ class HdfEos2(AutotoolsPackage):
     variant("fortran", default=False, description="Enable Fortran support")
 
     conflicts("~static", when="~shared", msg="At least one of +static or +shared must be set")
-    conflicts('%gcc@14:', when='@:2', msg="GCC 14+ is only supported for version 3.0+")
+    conflicts("%gcc@14:", when="@:2", msg="GCC 14+ is only supported for version 3.0+")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build", when="+fortran")
@@ -166,7 +166,9 @@ class HdfEos2(AutotoolsPackage):
                 or self.spec.satisfies("%oneapi")
                 or self.spec.satisfies("%gcc@14:")
             ):
-                env.set("CFLAGS", "-Wno-error=implicit-function-declaration -Wno-error=implicit-int")
+                env.set(
+                    "CFLAGS", "-Wno-error=implicit-function-declaration -Wno-error=implicit-int"
+                )
 
     def configure_args(self):
         extra_args = []
