@@ -33,7 +33,21 @@ class Cubelib(AutotoolsPackage):
 
         return url.format(version.up_to(2), version)
 
+    def clean_compiler(self, compiler):
+        renames = {
+            "cce": "cray",
+            "rocmcc": "amdclang",
+            "intel-oneapi-compilers": "oneapi",
+            "llvm": "clang",
+        }
+        if compiler in renames:
+            return renames[compiler]
+        return compiler
+
+
     def configure_args(self):
+        cname = self.clean_compiler(self.spec.compiler.name)
+        configure_args.append("--with-nocross-compiler-suite={0}".format(cname))
         configure_args = ["--enable-shared"]
         configure_args.append("--with-frontend-zlib=%s" % self.spec["zlib-api"].prefix.lib)
         return configure_args
