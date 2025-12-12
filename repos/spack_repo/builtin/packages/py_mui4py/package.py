@@ -12,6 +12,7 @@ class PyMui4py(PythonPackage):
 
     homepage = "https://mxui.github.io/"
     git = "https://github.com/MxUI/MUI.git"
+    url = "https://github.com/MxUI/MUI/archive/refs/tags/2.0.tar.gz"
 
     build_directory = "wrappers/Python"
 
@@ -19,18 +20,18 @@ class PyMui4py(PythonPackage):
 
     license("Apache-2.0", checked_by="blairSmcc03")
 
-    version("2.0", branch="master")
+    version("2.0", sha256="fdddd4ffe72c22356eb53707567622a9bfb8d17836a9677a980f035e87e1b295")
+    version("master", branch="master")
 
-    extends("python")
-
-    depends_on("mui")
+    depends_on("mui@2", when="@2")
+    depends_on("mui@master", when="@master")
     depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-pip", type="build")
     depends_on("py-setuptools", type="build")
 
-    depends_on("py-pybind11", type=("build", "run"))
-    depends_on("py-numpy@1.22:", type=("build", "run"))
+    depends_on("py-pybind11", type=("build"))
+    depends_on("py-numpy@1.21:", type=("build", "run"))
     depends_on("py-mpi4py@3.0.0", type=("build", "run"))
+    depends_on("cmake@3.27:", type=("build"))
 
     def setup_build_environment(self, env):
         env.append_path("CPLUS_INCLUDE_PATH", self.spec["mui"].prefix.include)

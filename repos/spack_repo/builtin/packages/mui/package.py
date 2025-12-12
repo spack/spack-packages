@@ -12,17 +12,18 @@ class Mui(CMakePackage):
 
     homepage = "https://mxui.github.io/"
     git = "https://github.com/MxUI/MUI.git"
+    url = "https://github.com/MxUI/MUI/archive/refs/tags/2.0.tar.gz"
 
     maintainers("Wendi-L", "SLongshaw")
 
     license("Apache-2.0", checked_by="blairSmcc03")
 
-    version("2.0", branch="master")
+    version("2.0", sha256="fdddd4ffe72c22356eb53707567622a9bfb8d17836a9677a980f035e87e1b295")
+    version("master", branch="master")
 
-    depends_on("cmake@3.27:")
+    depends_on("cmake@3.18:")
     depends_on("mpi")
+    depends_on("cxx", type="build")
 
     def cmake_args(self):
-        """Map Spack variants to the project's CMake options."""
         return []
-``
