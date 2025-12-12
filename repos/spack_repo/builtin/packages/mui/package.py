@@ -14,7 +14,7 @@ class Mui(CMakePackage):
     git = "https://github.com/MxUI/MUI.git"
     url = "https://github.com/MxUI/MUI/archive/refs/tags/2.0.tar.gz"
 
-    maintainers("Wendi-L", "SLongshaw")
+    maintainers("blairSmcc03")
 
     license("Apache-2.0", checked_by="blairSmcc03")
 
