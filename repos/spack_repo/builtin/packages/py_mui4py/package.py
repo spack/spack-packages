@@ -16,7 +16,7 @@ class PyMui4py(PythonPackage):
 
     build_directory = "wrappers/Python"
 
-    maintainers("Wendi-L", "SLongshaw")
+    maintainers("blairSmcc03")
 
     license("Apache-2.0", checked_by="blairSmcc03")
 
