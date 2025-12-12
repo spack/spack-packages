@@ -154,7 +154,7 @@ class Mivisionx(CMakePackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("ffmpeg@4.4:", type="build")
-    depends_on("protobuf@:3", type="build")
+    depends_on("protobuf@3.12.4:", type="build")
     depends_on(
         "opencv@4.5:"
         "+calib3d+features2d+highgui+imgcodecs+imgproc"
