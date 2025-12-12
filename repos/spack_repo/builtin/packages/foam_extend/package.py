@@ -221,7 +221,7 @@ class FoamExtend(Package):
         with working_dir(parent):
             if original != target and not os.path.lexists(target):
                 os.rename(original, target)
-                os.symlink(target, original)
+                symlink(target, original)
                 tty.info("renamed {0} -> {1}".format(original, target))
 
     def patch(self):
@@ -427,7 +427,7 @@ class FoamExtend(Package):
         """Add symlinks into bin/, lib/ (eg, for other applications)"""
         # Make build log visible - it contains OpenFOAM-specific information
         with working_dir(self.projectdir):
-            os.symlink(
+            symlink(
                 join_path(os.path.relpath(self.install_log_path)),
                 join_path("log." + str(self.foam_arch)),
             )

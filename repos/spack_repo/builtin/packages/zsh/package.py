@@ -47,6 +47,8 @@ class Zsh(AutotoolsPackage):
 
     conflicts("+lmod", when="~etcdir", msg="local etc required to setup env for lmod")
 
+    patch("pointer-types.patch", when="@5.6.2:")
+
     def url_for_version(self, version):
         if version <= Version("5.9.0.0"):
             url = "https://downloads.sourceforge.net/project/zsh/zsh/{0}/zsh-{0}.tar.xz"
@@ -54,7 +56,6 @@ class Zsh(AutotoolsPackage):
             url = "https://downloads.sourceforge.net/project/zsh/zsh-test/{0}-test/zsh-{0}-test.tar.xz"
         return url.format(version, version)
 
- 
     def configure_args(self):
         args = []
 

@@ -29,6 +29,9 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("25.12", sha256="60a788cf398563cdf25438a3bbe597fe1f3b18f359b30fb3c0f568dd62908f1a")
+    version("25.11", sha256="be9e5f04e1f3e2252a14e5bb817fb4f2c231e0901ef85ee4e14341616f6b1ba6")
+    version("25.10", sha256="3c3e9e239b42a5c73e72a418bd29cf6bb7660646ee62f5e11ff131eaaa04fa16")
     version("25.09", sha256="9c288e502c98a9ebf62c9f46081ecd65703ad49bd8b3eaf17939146cf442163a")
     version("25.08", sha256="6e903fd02e72a3d23b438ec257a96a5a948ac07200220669ab8ff16ff047bde6")
     version("25.07", sha256="19b9e5271451c202610f9c6569189c28fc05bcd655d53525df9169efeb5ee66f")
@@ -219,6 +222,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cuda@9.0.0:", when="@:22.04")
         depends_on("cuda@10.0.0:", when="@22.05:")
         depends_on("cuda@11.0.0:", when="@22.12:")
+        depends_on("cuda@:12", when="@:25.09")  # enforce cuda < 13 before 25.10
     depends_on("python@2.7:", type="build", when="@:20.04")
     depends_on("cmake@3.5:", type="build", when="@:18.10")
     depends_on("cmake@3.13:", type="build", when="@18.11:19.03")

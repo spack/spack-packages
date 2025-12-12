@@ -24,6 +24,10 @@ class LinaroForge(Package):
     maintainers("kenche-linaro")
 
     if platform.machine() == "aarch64":
+        version("25.1", sha256="62d215e4ffd20e69863b1ffb7f043968aa7a3bf21280f5dcf2e64a2db7deb675")
+        version(
+            "25.0.4", sha256="6d9a7ffcc18c6b89175167e100d80c46e2206b7a3655d6449dc63881f834b031"
+        )
         version(
             "25.0.3", sha256="0cb6cc547bf53f63bb196da13b32f33ae5b9551d53535ed4e96b3606ade8a5f8"
         )
@@ -83,11 +87,6 @@ class LinaroForge(Package):
             "23.0.1", sha256="552e4a3f408ed4eb5f1bfbb83c94530ee8733579c56c3e98050c0ad2d43eb433"
         )
         version("23.0", sha256="7ae20bb27d539751d1776d1e09a65dcce821fc6a75f924675439f791261783fb")
-        version(
-            "22.1.4",
-            sha256="4e2af481a37b4c99dba0de6fac75ac945316955fc4170d06e321530adea7ac9f",
-            deprecated=True,
-        )
     elif platform.machine() == "ppc64le":
         # N.B. support for ppc64le was dropped in 24.0
         version(
@@ -110,17 +109,11 @@ class LinaroForge(Package):
             "23.0.1", sha256="08cffef2195ea96872d56e827f320eed40aaa82fd3b62d4c661a598fb2fb3a47"
         )
         version("23.0", sha256="0962c7e0da0f450cf6daffe1156e1f59e02c9f643df458ec8458527afcde5b4d")
-        version(
-            "22.1.3",
-            sha256="6479c3a4ae6ce6648c37594eb0266161f06d9f89010fca9299855848661dda49",
-            deprecated=True,
-        )
-        version(
-            "22.0.4",
-            sha256="f4cb5bcbaa67f9209299fe4653186a2829760b8b16a2883913aa43766375b04c",
-            deprecated=True,
-        )
     elif platform.machine() == "x86_64":
+        version("25.1", sha256="153b0264939762431cb5242cd67774832c9ac9c2a2658a6918110064c322eaa1")
+        version(
+            "25.0.4", sha256="ee93a414f6183165cd8addf926a4a586668ce29930f34edd43d33c750646f0be"
+        )
         version(
             "25.0.3", sha256="4d6abe4f46356339e0df789229f19b92c1ba13b794ce426a2e73e5aed319a6f6"
         )
@@ -180,16 +173,6 @@ class LinaroForge(Package):
             "23.0.1", sha256="1d681891c0c725363f0f45584c9b79e669d5c9782158453b7d24b4b865d72755"
         )
         version("23.0", sha256="f4ab12289c992dd07cb1a15dd985ef4713d1f9c0cf362ec5e9c995cca9b1cf81")
-        version(
-            "22.1.3",
-            sha256="4f8a8b1df6ad712e89c82eedf4bd85b93b57b3c8d5b37d13480ff058fa8f4467",
-            deprecated=True,
-        )
-        version(
-            "22.0.4",
-            sha256="a2c8c1da38b9684d7c4656a98b3fc42777b03fd474cd0bf969324804f47587e5",
-            deprecated=True,
-        )
 
     variant(
         "probe",

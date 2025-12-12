@@ -46,6 +46,7 @@ class Esmf(MakefilePackage, PythonExtension):
     version("8.0.1", sha256="13ce2ca0ae622548c00f7bb18317fb100235ca8b7ddbfac7e201a339e8eb05a3")
 
     variant("mpi", default=True, description="Build with MPI support")
+    variant("openmp", default=True, description="Build with OpenMP support")
     variant("external-lapack", default=False, description="Build with external LAPACK library")
     variant("netcdf", default=True, description="Build with NetCDF support")
     variant("pnetcdf", default=False, description="Build with pNetCDF support")
@@ -313,6 +314,15 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("ESMF_COMM", comm_variant)
 
         ##########
+        # OpenMP #
+        ##########
+
+        if spec.satisfies("+openmp"):
+            env.set("ESMF_OPENMP", "ON")
+        else:
+            env.set("ESMF_OPENMP", "OFF")
+
+        ##########
         # LAPACK #
         ##########
 
@@ -322,8 +332,19 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # ESMF code.
             env.set("ESMF_LAPACK", "system")
 
-            # Specifies the path where the LAPACK library is located.
-            env.set("ESMF_LAPACK_LIBPATH", spec["lapack"].prefix.lib)
+            # Specifies the path where the LAPACK library is located. We cannot
+            # simply rely on spec["lapack"].prefix.lib here because some
+            # providers (e.g., MKL) use a deeper directory structure for the
+            # library directory that is not easily generalized. We must also
+            # filter out any system library paths included by the package.
+            env.set(
+                "ESMF_LAPACK_LIBPATH",
+                [
+                    lib_dir
+                    for lib_dir in spec["lapack"].libs.directories
+                    if spec["lapack"].prefix in lib_dir
+                ][0],
+            )
 
             # Specifies the linker directive needed to link the LAPACK library
             # to the application.
@@ -410,7 +431,9 @@ class MakefileBuilder(makefile.MakefileBuilder):
             for suffix in [shared_library_suffix(self.spec), static_library_suffix(self.spec)]:
                 library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
-                    os.symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
+                    symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
+        # https://github.com/esmf-org/esmf/issues/497
+        filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
 
     def check(self):
         make("check", parallel=False)
