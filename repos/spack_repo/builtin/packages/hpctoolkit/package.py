@@ -192,9 +192,9 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
     depends_on("py-docutils", type="build", when="@2025:")
-    depends_on("py-sphinx@6:8", type="build", when="+docs")
+    depends_on("py-sphinx@6:9", type="build", when="+docs")
     depends_on("py-myst-parser@3:4", type="build", when="+docs")
-    depends_on("py-sphinx-book-theme@1", type="build", when="+docs")
+    depends_on("py-sphinx-book-theme@1.1:1", type="build", when="+docs")
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
@@ -229,8 +229,9 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         # similar tricks to avoid rpath conflicts.
         depends_on("hip@4.5:", when="+rocm")
         depends_on("hsa-rocr-dev@4.5:", when="+rocm")
-        depends_on("roctracer-dev@4.5:", when="+rocm")
-        depends_on("rocprofiler-dev@4.5:", when="+rocm")
+        depends_on("roctracer-dev@4.5:", when="@:2025.0 +rocm")
+        depends_on("rocprofiler-dev@4.5:", when="@:2025.0 +rocm")
+        depends_on("rocprofiler-sdk@6.2:", when="@2025.1: +rocm")
 
     conflicts("%gcc@:7", when="@2022.10:", msg="hpctoolkit requires gnu gcc 8.x or later")
     conflicts("%gcc@:6", when="@2021.00:2022.06", msg="hpctoolkit requires gnu gcc 7.x or later")
