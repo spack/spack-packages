@@ -7,9 +7,6 @@
 # Stacks without maintainers will ping infrastructure maintainers
 # /stacks/aws-pcluster-neoverse_v1/
 # /stacks/aws-pcluster-x86_64_v4/
-# /stacks/radiuss/
-# /stacks/radiuss-aws/
-# /stacks/radiuss-aws-aarch64/
 
 ###
 # Stacks with maintainers
@@ -27,6 +24,9 @@
 /stacks/tools-sdk/                            @kwryankrattiger
 /stacks/tutorial/                             @alecbcs @becker33 @tldahlgren @tgamblin
 /stacks/windows-vis/                          @johnwparent @kwryankrattiger @scheibelp
+/stacks/radiuss/                              @adrienbernede @davidbeckingsale
+/stacks/radiuss-cuda/                         @adrienbernede @davidbeckingsale
+/stacks/radiuss-aarch64/                      @adrienbernede @davidbeckingsale
 
 ###
 # CI Components maintained by Kitware
