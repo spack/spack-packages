@@ -11,7 +11,7 @@ from spack.package import *
 # Submodules are only required for ODD
 def submodules(package):
     submodules = []
-    if package.spec.satisfies("+odd"):
+    if package is None or package.spec.satisfies("+odd"):
         submodules.append("thirdparty/OpenDataDetector")
     return submodules
 
@@ -50,6 +50,14 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("44.3.0", commit="d4c630145d5050dd2edc58f1de0c872caff23dd8")
+    version("44.2.0", commit="c3d440eb1e441fcd15995b8af87ea1497e0cc126")
+    version("44.1.0", commit="9c79dd801e4ab1e2485c3198cc6b987ec1369e5b", submodules=submodules)
+    version("44.0.1", commit="404f40aaa6211231b6c6726a364b08134a2e3fa4", submodules=submodules)
+    version("44.0.0", commit="d5d65c794d3676034f37d89e555c131b5b7ad807", submodules=submodules)
+    # NOTE: Versions between 39.2.0 and 44.0.0 are not available via Spack,
+    # as they cannot be built without downloading third-party dependencies
+    # from remote, non-Spack sources.
     version("39.2.0", commit="94cf48783efd713f38106b18211d1c59f4e8cdec", submodules=submodules)
     version("39.1.0", commit="09225b0d0bba24d57a696e347e3027b39404bb75", submodules=submodules)
     version("39.0.0", commit="b055202e2fbdd509bc186eb4782714bc46f38f3f", submodules=submodules)
@@ -278,7 +286,7 @@ class Acts(CMakePackage, CudaPackage):
         when="@:16",
     )
     variant("edm4hep", default=False, description="Build EDM4hep plugin", when="@25:")
-    # FIXME: Can't build Exa.TrkX plugin+examples yet, missing cuGraph dep
+    variant("gnn", default=False, description="Build the GNN plugin", when="@44:")
     variant(
         "fatras",
         default=False,
@@ -294,6 +302,12 @@ class Acts(CMakePackage, CudaPackage):
     variant("legacy", default=False, description="Build the Legacy package")
     variant("mlpack", default=False, description="Build MLpack plugin", when="@25:31")
     variant("onnx", default=False, description="Build ONNX plugin")
+    variant(
+        "torch",
+        default=False,
+        description="Build the torch based parts of the GNN plugin",
+        when="@44: +gnn",
+    )
     variant("odd", default=False, description="Build the Open Data Detector", when="@19.1:")
     variant("podio", default=False, description="Build Podio plugin", when="@30.3:")
     variant(
@@ -386,16 +400,21 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("autodiff @0.5.11:0.5.99", when="@1.2:16 +autodiff")
     depends_on("boost @1.62:1.69 +program_options +test", when="@:0.10.3")
     depends_on("boost @1.71: +filesystem +program_options +test", when="@0.10.4:")
+    depends_on("boost @1.77: +filesystem +program_options +test", when="@42:")
     depends_on("cmake @3.14:", type="build")
     depends_on("covfie @0.10:", when="+traccc")
+    depends_on("covfie @0.13.0:", when="+traccc @42:")
     depends_on("cuda @12:", when="+traccc")
     depends_on("dd4hep @1.11: +dddetectors +ddrec", when="+dd4hep")
     depends_on("dd4hep @1.21: +dddetectors +ddrec", when="@20: +dd4hep")
+    depends_on("dd4hep @1.26: +dddetectors +ddrec", when="@42: +dd4hep")
     depends_on("dd4hep +ddg4", when="+dd4hep +geant4 +examples")
     depends_on("detray @0.72.1:", when="+traccc")
     depends_on("detray @0.75.3:", when="@37: +traccc")
+    depends_on("detray @0.101.0:", when="@42.1: +traccc")
     depends_on("edm4hep @0.4.1:", when="+edm4hep")
     depends_on("edm4hep @0.7:", when="@25: +edm4hep")
+    depends_on("edm4hep @0.10.5:", when="@42: +edm4hep")
     depends_on("eigen @3.3.7:3", when="@15.1:")
     depends_on("eigen @3.3.7:3.3", when="@:15.0")
     depends_on("eigen @3.4:3", when="@36.1:")
@@ -404,37 +423,54 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("geomodel +geomodelg4", when="+geomodel")
     depends_on("geomodel @4.6.0:", when="+geomodel")
     depends_on("geomodel @6.3.0:", when="+geomodel @36.1:")
+    depends_on("geomodel @6.8.0:", when="+geomodel @43.1:")
     depends_on("git-lfs", when="@12.0.0:")
     depends_on("gperftools", when="+profilecpu")
     depends_on("gperftools", when="+profilemem")
     depends_on("hepmc3 @3.2.1:", when="+hepmc3")
+    depends_on("hepmc3 @3.2.4:", when="@42: +hepmc3")
     depends_on("heppdt", when="+hepmc3 @:4.0")
     depends_on("intel-tbb @2020.1:", when="+examples +tbb")
     depends_on("intel-tbb @2020.1:", when="+examples @37.3:")
     depends_on("mlpack@3.1.1:", when="+mlpack")
     depends_on("nlohmann-json @3.9.1:", when="@0.14: +json")
     depends_on("nlohmann-json @3.10.5:", when="@37: +json")
+    depends_on("torch-scatter", when="+gnn")
+    depends_on("torch-scatter +cuda", when="+cuda")
     depends_on("podio @0.6:", when="@25: +edm4hep")
     depends_on("podio @0.16:", when="@30.3: +edm4hep")
     depends_on("podio @:0", when="@:35 +edm4hep")
+    depends_on("podio @:1.4", when="@:44 +edm4hep +examples")
     depends_on("podio @0.16:", when="+podio")
     depends_on("podio @:0", when="@:35 +podio")
+    # TODO: Clarify version on next release
+    depends_on("podio @:1.4.1", when="@:44.1.0")
     depends_on("pythia8", when="+pythia8")
     depends_on("python", when="+python")
     depends_on("python@3.8:", when="+python @19.11:19")
     depends_on("python@3.8:", when="+python @21:")
+    depends_on("python@3.12:", when="@44:", type="build")
+    depends_on("py-numpy @2.2", when="@44:", type="build")
     depends_on("py-onnxruntime@:1.12", when="+onnx @:23.2")
     depends_on("py-onnxruntime@1.12:", when="+onnx @23.3:")
+    depends_on("py-particle @0.24", when="@44:", type="build")
     depends_on("py-pybind11 @2.6.2:", when="+python @18:")
     depends_on("py-pybind11 @2.13.1:", when="+python @36:")
     depends_on("py-pytest", when="+python +unit_tests")
+    depends_on("py-setuptools", when="@44:44.1.0", type="build")
+    depends_on("py-sympy @1.13", when="@44:", type="build")
+    # TODO: Clarify version on next release
+    depends_on("py-hatchling", when="@44.1.1:", type="build")
+    depends_on("py-torch", when="+gnn +torch")
 
     with when("+tgeo"):
         depends_on("root @6.10:")
         depends_on("root @6.20:", when="@0.8.1:")
+        depends_on("root @6.28:", when="@42:")
 
     depends_on("sycl", when="+sycl")
     depends_on("vecmem@0.4: +sycl", when="+sycl")
+    depends_on("vecmem@1.17.0:", when="@42: +traccc")
 
     # ACTS imposes requirements on the C++ standard values used by ROOT
     for _cxxstd in _cxxstd_values:
@@ -462,6 +498,12 @@ class Acts(CMakePackage, CudaPackage):
     conflicts("^boost@1.85.0")
     # See https://github.com/acts-project/acts/pull/3921
     conflicts("^edm4hep@0.99:", when="@:37")
+    # See https://github.com/acts-project/acts/pull/4631
+    conflicts("+gnn ~cuda", when="@:44.0")
+
+    # The ODD package is fetched via the internet by the build system, which
+    # cannot be disabled.
+    conflicts("+odd", when="@44.2.0:")
 
     def cmake_args(self):
         spec = self.spec
@@ -514,6 +556,7 @@ class Acts(CMakePackage, CudaPackage):
             example_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEOMODEL", "geomodel"),
+            plugin_cmake_variant("GNN", "gnn"),
             example_cmake_variant("HEPMC3", "hepmc3"),
             plugin_cmake_variant("IDENTIFICATION", "identification"),
             cmake_variant(integration_tests_label, "integration_tests"),
@@ -573,6 +616,10 @@ class Acts(CMakePackage, CudaPackage):
                 args.append(f"-DCUDA_FLAGS=-arch=sm_{cuda_arch[0]}")
                 arch_str = ";".join(self.spec.variants["cuda_arch"].value)
                 args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
+
+        if spec.satisfies("+gnn"):
+            args.append(self.define("ACTS_GNN_ENABLE_ONNX", self.spec.satisfies("+onnx")))
+            args.append(self.define("ACTS_GNN_ENABLE_TORCH", self.spec.satisfies("+torch")))
 
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 

@@ -100,7 +100,7 @@ class IntelXed(Package):
         # See: https://github.com/intelxed/xed/issues/300
         try:
             lname = join_path(self.stage.source_path, "..", "xed")
-            os.symlink("spack-src", lname)
+            symlink("spack-src", lname)
         except OSError:
             pass
 

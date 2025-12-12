@@ -329,11 +329,11 @@ class Qt(Package):
 
     # Mapping for compilers/systems in the QT 'mkspecs'
     compiler_mapping = {
-        "intel": ("icc",),
+        "intel-oneapi-compilers-classic": ("icc",),
         # This only works because we apply patch "qt51514-oneapi.patch"
         # above that replaces calls to "icc" with calls to "icx" in
         # qtbase/mkspecs/*
-        "oneapi": ("icc",),
+        "intel-oneapi-compilers": ("icc",),
         "apple-clang": ("clang-libc++", "clang"),
         "clang": ("clang-libc++", "clang"),
         "aocc": ("clang-libc++", "clang"),

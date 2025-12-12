@@ -62,6 +62,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
         when="@6.0.0:",
         description="Enable use of rdpmc for reading counters, when possible",
     )
+    variant("topdown", default=False, when="@7.2:", description="Enable topdown support")
 
     variant("shared", default=True, description="Build shared libraries")
     # PAPI requires building static libraries, so there is no "static" variant
@@ -167,6 +168,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
                 "rocm",
                 "rocm_smi",
                 "rocp_sdk",
+                "topdown",
             ],
         )
         if components:

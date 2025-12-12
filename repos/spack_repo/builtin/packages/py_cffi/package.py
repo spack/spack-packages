@@ -15,7 +15,8 @@ class PyCffi(PythonPackage):
     homepage = "https://cffi.readthedocs.io/en/latest/"
     pypi = "cffi/cffi-1.13.0.tar.gz"
 
-    license("MIT")
+    license("MIT-0 AND MIT", when="@2:")
+    license("MIT", when="@:1")
 
     version("2.0.0", sha256="44d1b5909021139fe36001ae048dbdde8214afa20200eda0f64c068cac5d5529")
     version("1.17.1", sha256="1c39c6016c32bc48dd54561950ebd6836e1670f2ae46128f67cf49e789c52824")
@@ -40,6 +41,9 @@ class PyCffi(PythonPackage):
         depends_on("python@:3.9", when="@:1.14")
 
     depends_on("pkgconfig", type="build")
+    # Not yet documented, but required for PEP 639 support
+    # https://github.com/python-cffi/cffi/issues/200
+    depends_on("py-setuptools@77:", type="build", when="@2:")
     depends_on("py-setuptools@66.1:", type="build", when="@1.16:")
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools", type="run", when="^python@3.12:")

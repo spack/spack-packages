@@ -41,6 +41,8 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
     # +fftx +simt +mpi +jit
 
     conflicts("+rocm", when="+cuda", msg="FFTX only supports one GPU backend at a time")
+    # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+    conflicts("^cuda@13:", when="+cuda")
 
     @run_before("cmake")
     def create_lib_source_code(self):

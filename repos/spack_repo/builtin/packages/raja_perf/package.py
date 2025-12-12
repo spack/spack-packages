@@ -31,6 +31,12 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules="True")
     version("main", branch="main", submodules="True")
     version(
+        "2025.03.0",
+        tag="v2025.03.0",
+        commit="b66b9d7a1c6826037fed991492bc3ea1893d86ac",
+        submodules="True",
+    )
+    version(
         "2024.07.0",
         tag="v2024.07.0",
         commit="6e81aa58af244a13755a694bfdc7bc301139a244",
@@ -339,11 +345,13 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_option("RAJA_ENABLE_SYCL", spec.satisfies("+sycl")))
 
         # C++17
-        if spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl"):
+        if spec.satisfies("@2025.09.0:") or (
+            spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl")
+        ):
             entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
         # C++14
         # Using RAJA version as threshold on purpose (no 0.14 version of RAJAPerf were released).
-        elif spec.satisfies("@0.14.0:"):
+        elif spec.satisfies("@0.14.0:2025.09.0"):
             entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
 
         entries.append(cmake_cache_option("ENABLE_BENCHMARKS", "tests=benchmarks" in spec))

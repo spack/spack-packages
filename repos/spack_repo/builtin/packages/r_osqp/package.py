@@ -23,6 +23,9 @@ class ROsqp(RPackage):
     version("0.6.0.8", sha256="14034045ae4ae5ec4eae4944653d41d94282fa85a0cd53614ac86f34fd02ed97")
     version("0.6.0.7", sha256="ee6584d02341e3f1d8fab3b2cb93defd6c48d561297d82a6bedb3e7541868203")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-rcpp@0.12.14:", type=("build", "run"))
     depends_on("r-matrix", type=("build", "run"))
     depends_on("r-matrix@1.6-1:", type=("build", "run"), when="@0.6.3:")

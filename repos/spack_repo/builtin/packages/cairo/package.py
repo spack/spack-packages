@@ -46,14 +46,14 @@ class Cairo(AutotoolsPackage, MesonPackage):
     variant("X", default=False, description="Build with X11 support")
     variant("gobject", default=False, description="Enable cairo's gobject functions feature")
 
-    variant("svg", default=False, description="Enable cairo's SVG functions feature")
-    variant("png", default=False, description="Enable cairo's PNG functions feature")
+    variant("svg", default=True, description="Enable cairo's SVG functions feature")
+    variant("png", default=True, description="Enable cairo's PNG functions feature")
 
     # doesn't exist @1.17.8: but kept as compatibility
-    variant("pdf", default=False, description="Enable cairo's PDF surface backend feature")
+    variant("pdf", default=True, description="Enable cairo's PDF surface backend feature")
 
-    variant("ft", default=False, description="Enable cairo's FreeType font backend feature")
-    variant("fc", default=False, description="Enable cairo's Fontconfig font backend feature")
+    variant("ft", default=True, description="Enable cairo's FreeType font backend feature")
+    variant("fc", default=True, description="Enable cairo's Fontconfig font backend feature")
 
     # variants and build system depends for the autotools builds
     with when("build_system=autotools"):
@@ -81,7 +81,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
         variant("dwrite", default=False, description="Microsoft Windows DWrite font backend")
         variant(
             "zlib",
-            default=False,
+            default=True,
             description="Enable cairo's script, ps, pdf, xml functions feature",
         )
 
@@ -91,8 +91,8 @@ class Cairo(AutotoolsPackage, MesonPackage):
         # meson seems to have assumptions about what is enabled/disabled
         # so this protects against incompatible combinations
         requires(
-            "~zlib~ft~fc~png~pdf",
             "+zlib+ft+fc+png+pdf",
+            "~zlib~ft~fc~png~pdf",
             policy="one_of",
             msg="these variants must be activated, or deactivated, together",
         )

@@ -26,6 +26,8 @@ class RRstantools(RPackage):
     version("2.1.1", sha256="c95b15de8ec577eeb24bb5206e7b685d882f88b5e6902efda924b7217f463d2d")
     version("1.5.1", sha256="5cab16c132c12e84bd08e18cd6ef25ba39d67a04ce61015fc4490659c7cfb485")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r+X", type=("build", "run"))
     depends_on("r-desc", type=("build", "run"), when="@2.1.1:")
     depends_on("r-rcpp@0.12.16:", type=("build", "run"), when="@2.1.1:")
