@@ -89,7 +89,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("@:0.2"):
             makeopts += ["NDEBUG=%s" % ("" if spec.satisfies("+debug") else "1")]
 
-        elif spec.satisfies("@0.4:"):
+        elif spec.satisfies("@0.4:0.12"):
             # Determine options based on the compiler:
             if spec.satisfies("+debug"):
                 opt = "-g"
