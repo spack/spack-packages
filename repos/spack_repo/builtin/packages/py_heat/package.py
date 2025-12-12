@@ -82,9 +82,9 @@ class PyHeat(PythonPackage):
     with when("@1.5"):
         depends_on("python@3.9:3.12", type=("build", "run"))
         depends_on("py-mpi4py@3:", type=("build", "run"))
-        depends_on("py-numpy@1.22:1", type=("build", "run")) #FIXME need more info to numpy versions
+        depends_on("py-numpy@1.22:1", type=("build", "run"))
         depends_on("py-scipy@1.10:", type=("build", "run"))
-        depends_on("pil@6:", type=("build", "run")) #FIXME need more info to pil versions
+        depends_on("pil@6:", type=("build", "run"))
         depends_on("py-typing-extensions", type=("build", "run"))
         depends_on("py-torchvision@0.15.2:0.21.1", type=("build", "run"))
 
@@ -100,9 +100,8 @@ class PyHeat(PythonPackage):
     with when("@1.6"):
         depends_on("python@3.10:", type=("build", "run"))
         depends_on("py-mpi4py@3:", type=("build", "run"))
-        depends_on("py-numpy@1.22:1", type=("build", "run")) #FIXME need more info to numpy versions
         depends_on("py-scipy@1.14:", type=("build", "run"))
-        depends_on("pil@6:", type=("build", "run")) #FIXME need more info to pil versions
+        depends_on("pil@6:", when=("+examples"), type=("build", "run"))
         depends_on("py-typing-extensions", type=("build", "run"))
         depends_on("py-torchvision@0.15:", type=("build", "run"))
 
@@ -123,4 +122,5 @@ class PyHeat(PythonPackage):
     depends_on("py-scikit-learn@0.24.0:", when="+examples", type=("build", "link", "run"))
     depends_on("py-matplotlib@3.1.0:", when="+examples", type=("build", "link", "run"))
 
-    conflicts("+cuda", when="+rocm")
+    conflicts("+cuda+rocm")
+    conflicts("+cuda", when="@1.4")
