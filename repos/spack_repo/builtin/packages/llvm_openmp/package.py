@@ -86,9 +86,7 @@ class LlvmOpenmp(CMakePackage):
             os.rename(cmake_mod_dir, os.path.join(self.stage.path, "cmake"))
 
     def cmake_args(self):
-        cmake_args = [
-          self.define_from_variant("LIBOMP_FORTRAN_MODULES", "fortran")
-        ]
+        cmake_args = [self.define_from_variant("LIBOMP_FORTRAN_MODULES", "fortran")]
 
         # Add optional support for both Intel and gcc compilers
         if self.spec.satisfies("+multicompat"):
