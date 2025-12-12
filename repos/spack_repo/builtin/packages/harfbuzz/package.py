@@ -113,7 +113,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
-            variant("gobject", default=True, description="Enable GObject introspection")
+            variant("gobject", default=False, description="Enable GObject introspection")
             variant(
                 "utils",
                 default=False,
@@ -125,7 +125,6 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
             depends_on("gobject-introspection")
             depends_on("cairo+pdf+ft")
 
-    depends_on("gobject-introspection", when="+gobject")
     depends_on("icu4c")
     depends_on("freetype")
     depends_on("zlib-api")
