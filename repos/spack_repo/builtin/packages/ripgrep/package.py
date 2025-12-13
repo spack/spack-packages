@@ -35,7 +35,7 @@ class Ripgrep(CargoPackage):
     depends_on("c", type="build")
 
     with when("+pcre2"):
-        build_args=["--features pcre2"]
+        build_args=["--features", "pcre2"]
         depends_on("pcre2")
         depends_on("pkgconfig", type="build")
 
