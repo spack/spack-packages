@@ -35,9 +35,15 @@ class Ripgrep(CargoPackage):
     depends_on("c", type="build")
 
     with when("+pcre2"):
-        build_args=["--features", "pcre2"]
         depends_on("pcre2")
         depends_on("pkgconfig", type="build")
+
+    @property
+    def build_args(self):
+        if self.spec.satisfies("+pcre2"):
+            return ["--features", "pcre2"]
+
+        return []
 
     @run_after("install")
     def install_completions(self):
