@@ -45,19 +45,19 @@ class Ripgrep(CargoPackage):
 
         return []
 
-    @when("@14:")
     @run_after("install")
     def install_completions(self):
-        rg = Executable(self.prefix.bin.rg)
+        with when("@14:"):
+            rg = Executable(self.prefix.bin.rg)
 
-        mkdirp(bash_completion_path(self.prefix))
-        with open(bash_completion_path(self.prefix) / "rg", "w") as file:
-            rg("--generate", "complete-bash", output=file)
+            mkdirp(bash_completion_path(self.prefix))
+            with open(bash_completion_path(self.prefix) / "rg", "w") as file:
+                rg("--generate", "complete-bash", output=file)
 
-        mkdirp(fish_completion_path(self.prefix))
-        with open(fish_completion_path(self.prefix) / "rg.fish", "w") as file:
-            rg("--generate", "complete-fish", output=file)
+            mkdirp(fish_completion_path(self.prefix))
+            with open(fish_completion_path(self.prefix) / "rg.fish", "w") as file:
+                rg("--generate", "complete-fish", output=file)
 
-        mkdirp(zsh_completion_path(self.prefix))
-        with open(zsh_completion_path(self.prefix) / "_rg", "w") as file:
-            rg("--generate", "complete-zsh", output=file)
+            mkdirp(zsh_completion_path(self.prefix))
+            with open(zsh_completion_path(self.prefix) / "_rg", "w") as file:
+                rg("--generate", "complete-zsh", output=file)
