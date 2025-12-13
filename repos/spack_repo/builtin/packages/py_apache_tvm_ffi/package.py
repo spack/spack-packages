@@ -22,11 +22,11 @@ class PyApacheTvmFfi(PythonPackage):
     version("0.1.1", sha256="728ce3f4ae02b89a7147b718f7f670afac3c6d1f96df38d488757274643709fc")
     version("0.1.0", sha256="ba45ebf98bab436442f3ee34c8b9c69e00797ae3529ea3df37a56aa7aa479cf2")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
     depends_on("py-typing-extensions@4.5:")
 
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
         # https://github.com/apache/tvm-ffi/blob/v0.1.3/pyproject.toml
         depends_on("py-scikit-build-core@0.10.0:")
         depends_on("py-cython@3.0:")
