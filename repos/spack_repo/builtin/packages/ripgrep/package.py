@@ -45,6 +45,7 @@ class Ripgrep(CargoPackage):
 
         return []
 
+    @when("@14:")
     @run_after("install")
     def install_completions(self):
         rg = Executable(self.prefix.bin.rg)
