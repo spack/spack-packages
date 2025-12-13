@@ -47,7 +47,7 @@ class Ripgrep(CargoPackage):
 
     @run_after("install")
     def install_completions(self):
-        with when("@14:"):
+        if self.spec.satisfies("@14:"):
             rg = Executable(self.prefix.bin.rg)
 
             mkdirp(bash_completion_path(self.prefix))
