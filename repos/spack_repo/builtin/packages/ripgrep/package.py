@@ -30,11 +30,12 @@ class Ripgrep(CargoPackage):
     variant("pcre2", default=False, description="Add support for Perl-style regex via PCRE2")
 
     depends_on("rust@1.85:", type="build", when="@15:")
-    depends_on("rust@1.72:1.84", type="build", when="@14")
+    depends_on("rust@1.72:", type="build", when="@14")
+    depends_on("rust@1.31:", type="build", when="@:13")
     depends_on("c", type="build")
 
     with when("+pcre2"):
-        build_args=["--features", "pcre2"]
+        build_args=["--features pcre2"]
         depends_on("pcre2")
         depends_on("pkgconfig", type="build")
 
