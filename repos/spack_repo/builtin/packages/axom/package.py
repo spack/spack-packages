@@ -45,7 +45,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/LLNL/axom"
     git = "https://github.com/LLNL/axom.git"
-    tags = ["radiuss", "e4s"]
+    tags = ["radiuss"]
 
     test_requires_compiler = True
 
@@ -53,6 +53,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
     version("develop", branch="develop")
+    version("0.12.0", tag="v0.12.0", commit="297544010a3dfb98145a1a85f09f9c648c00a18c")
+    version("0.11.0", tag="v0.11.0", commit="685960486aa55d3a74a821ee02f6d9d9a3e67ab1")
     version("0.10.1", tag="v0.10.1", commit="6626ee1c5668176fb64dd9a52dec3e8596b3ba6b")
     version("0.10.0", tag="v0.10.0", commit="ea853a34a834415ea75f824160fc44cba9a0755d")
     version("0.9.0", tag="v0.9.0", commit="5f531595d941d16fa3b8583bfc347a845d9feb6d")
@@ -84,6 +86,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     variant("examples", default=True, description="Build examples")
     variant("tools", default=True, description="Build tools")
+    variant("tutorials", default=True, description="Build tutorials")
 
     # Hard requirement after Axom 0.6.1
     variant("cpp14", default=True, description="Build with C++14 support")
@@ -128,8 +131,10 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.21:", type="build", when="+rocm")
 
     depends_on("blt", type="build")
+    depends_on("blt@0.7.1:", type="build", when="@0.12:")
+    depends_on("blt@0.7", type="build", when="@0.11:")
+    depends_on("blt@0.6.2", type="build", when="@0.9:0.10")
     depends_on("blt@0.5.1:0.5.3", type="build", when="@0.6.1:0.8")
-    depends_on("blt@0.6.2:", type="build", when="@0.9:")
 
     depends_on("mpi", when="+mpi")
 
@@ -138,6 +143,9 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     for _var in ["fortran", "hdf5", "mpi", "python"]:
         depends_on("conduit+{0}".format(_var), when="+{0}".format(_var))
         depends_on("conduit~{0}".format(_var), when="~{0}".format(_var))
+
+    depends_on("conduit+python", when="+devtools")
+    depends_on("conduit~python", when="~devtools")
 
     depends_on("hdf5", when="+hdf5")
 
@@ -148,15 +156,22 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     with when("+umpire"):
         depends_on("umpire")
-        depends_on("umpire@2024.02.0:", when="@0.9:")
+        depends_on("umpire@2025.09:", when="@0.12:")
+        depends_on("umpire@2025.03", when="@0.11")
+        depends_on("umpire@2024.07", when="@0.10")
+        depends_on("umpire@2024.02", when="@0.9")
         depends_on("umpire@2022.03.0:2023.06", when="@0.7.0:0.8")
         depends_on("umpire@6.0.0", when="@0.6.0")
         depends_on("umpire@5:5.0.1", when="@:0.5.0")
         depends_on("umpire+openmp", when="+openmp")
+        depends_on("umpire+mpi3_shmem", when="+mpi")
 
     with when("+raja"):
         depends_on("raja")
-        depends_on("raja@2024.02.0:", when="@0.9:")
+        depends_on("raja@2025.09:", when="@0.12:")
+        depends_on("raja@2025.03", when="@0.11")
+        depends_on("raja@2024.07", when="@0.10")
+        depends_on("raja@2024.02", when="@0.9")
         depends_on("raja@2022.03.0:2023.06", when="@0.7.0:0.8")
         depends_on("raja@0.14.0", when="@0.6.0")
         depends_on("raja@:0.13.0", when="@:0.5.0")
@@ -184,12 +199,14 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"raja {ext_cuda_dep}", when=f"+raja {ext_cuda_dep}")
         depends_on(f"umpire {ext_cuda_dep}", when=f"+umpire {ext_cuda_dep}")
         depends_on(f"caliper {ext_cuda_dep}", when=f"+profiling {ext_cuda_dep}")
+        depends_on(f"mfem {ext_cuda_dep}", when=f"+mfem {ext_cuda_dep}")
 
     for val in ROCmPackage.amdgpu_targets:
         ext_rocm_dep = f"+rocm amdgpu_target={val}"
         depends_on(f"raja {ext_rocm_dep}", when=f"+raja {ext_rocm_dep}")
         depends_on(f"umpire {ext_rocm_dep}", when=f"+umpire {ext_rocm_dep}")
         depends_on(f"caliper {ext_rocm_dep}", when=f"+profiling {ext_rocm_dep}")
+        depends_on(f"mfem {ext_rocm_dep}", when=f"+mfem {ext_rocm_dep}")
 
     depends_on("rocprim", when="+rocm")
 
@@ -210,8 +227,12 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         depends_on("python")
         depends_on("py-sphinx")
         depends_on("py-shroud")
+        depends_on("py-pytest")
         depends_on("py-jsonschema")
-        depends_on("llvm+clang@14", type="build")
+
+        # Need clang@19 for clang-format
+        # (ENABLE_CLANGFORMAT will be OFF if not the exact version)
+        depends_on("llvm+clang@19", type="build")
 
     # -----------------------------------------------------------------------
     # Conflicts
@@ -304,6 +325,18 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("%cce"):
             entries.append(cmake_cache_string("CMAKE_CXX_FLAGS_DEBUG", "-O1 -g"))
 
+            # Remove unusable -Mfreeform flag injected by spack
+            entries = [entry.replace("-Mfreeform", "") for entry in entries]
+
+        # Disable intrusive warning:
+        #   icpx: remark: note that use of '-g' without any optimization-level
+        #   option will turn off most compiler optimizations similar to use of
+        #   '-O0'; use '-Rno-debug-disables-optimization' to disable this remark
+        if spec.satisfies("%oneapi"):
+            entries.append(
+                cmake_cache_string("CMAKE_CXX_FLAGS_DEBUG", "-g -Rno-debug-disables-optimization")
+            )
+
         return entries
 
     def initconfig_hardware_entries(self):
@@ -339,31 +372,42 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
             entries.append(cmake_cache_option("ENABLE_HIP", True))
 
-            rocm_root = os.path.dirname(spec["llvm-amdgpu"].prefix)
-            entries.append(cmake_cache_path("ROCM_PATH", rocm_root))
+            hip_link_flags = ""
 
-            hip_link_flags = "-L{0}/lib -Wl,-rpath,{0}/lib ".format(rocm_root)
+            rocm_root = spec["llvm-amdgpu"].prefix
+            entries.append(cmake_cache_path("ROCM_ROOT_DIR", rocm_root))
 
             # Recommended MPI flags
             hip_link_flags += "-lxpmem "
-            hip_link_flags += "-L/opt/cray/pe/mpich/{0}/gtl/lib ".format(spec["mpi"].version)
+            hip_link_flags += "-L/opt/cray/pe/mpich/{0}/gtl/lib ".format(
+                spec["mpi"].version.up_to(3)
+            )
             hip_link_flags += "-Wl,-rpath,/opt/cray/pe/mpich/{0}/gtl/lib ".format(
-                spec["mpi"].version
+                spec["mpi"].version.up_to(3)
             )
             hip_link_flags += "-lmpi_gtl_hsa "
+
+            if spec.satisfies("^hip@6.0.0:"):
+                hip_link_flags += "-L{0}/lib/llvm/lib -Wl,-rpath,{0}/lib/llvm/lib ".format(
+                    rocm_root
+                )
+            else:
+                hip_link_flags += "-L{0}/llvm/lib -Wl,-rpath,{0}/llvm/lib ".format(rocm_root)
+            # Only amdclang requires this path; cray compiler fails if this is included
+            if spec.satisfies("%llvm-amdgpu"):
+                hip_link_flags += "-L{0}/lib -Wl,-rpath,{0}/lib ".format(rocm_root)
+            hip_link_flags += "-lpgmath -lompstub "
 
             # Fixes for mpi for rocm until wrapper paths are fixed
             # These flags are already part of the wrapped compilers on TOSS4 systems
             if spec.satisfies("+fortran") and self.is_fortran_compiler("amdflang"):
                 hip_link_flags += "-Wl,--disable-new-dtags "
+                hip_link_flags += "-lflang -lflangrti "
 
-                if spec.satisfies("^hip@6.0.0:"):
-                    hip_link_flags += "-L{0}/lib/llvm/lib -Wl,-rpath,{0}/lib/llvm/lib ".format(
-                        rocm_root
-                    )
-                else:
-                    hip_link_flags += "-L{0}/llvm/lib -Wl,-rpath,{0}/llvm/lib ".format(rocm_root)
-                hip_link_flags += "-lpgmath -lflang -lflangrti -lompstub "
+            # Additional library path for cray compiler
+            if self.spec.satisfies("%cce"):
+                lib_path = "/opt/cray/pe/cce/{0}/cce/x86_64/lib".format(self.spec.compiler.version)
+                hip_link_flags += "-L{0} -Wl,-rpath,{0}".format(lib_path)
 
             # Remove extra link library for crayftn
             if spec.satisfies("+fortran") and self.is_fortran_compiler("crayftn"):
@@ -549,18 +593,16 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
             path2 = os.path.realpath(spec["doxygen"].prefix)
             self.find_path_replacement(path1, path2, path_replacements, "DEVTOOLS_ROOT", entries)
 
-        if spec.satisfies("+devtools") and spec.satisfies("^llvm"):
+        if spec.satisfies("+devtools") and spec.satisfies("^llvm@19"):
             clang_fmt_path = spec["llvm"].prefix.bin.join("clang-format")
             entries.append(cmake_cache_path("CLANGFORMAT_EXECUTABLE", clang_fmt_path))
         else:
-            entries.append("# ClangFormat disabled due to llvm and devtools not in spec\n")
+            entries.append("# ClangFormat disabled since llvm@19 and devtools not in spec\n")
             entries.append(cmake_cache_option("ENABLE_CLANGFORMAT", False))
 
         if spec.satisfies("+python") or spec.satisfies("+devtools"):
-            python_path = os.path.realpath(spec["python"].command.path)
-            for key in path_replacements:
-                python_path = python_path.replace(key, path_replacements[key])
-            entries.append(cmake_cache_path("PYTHON_EXECUTABLE", python_path))
+            python_bin_dir = get_spec_path(spec, "python", path_replacements, use_bin=True)
+            entries.append(cmake_cache_path("Python_EXECUTABLE", pjoin(python_bin_dir, "python3")))
 
         if spec.satisfies("^py-jsonschema"):
             jsonschema_dir = get_spec_path(spec, "py-jsonschema", path_replacements, use_bin=True)
@@ -602,6 +644,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         options.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
         options.append(self.define_from_variant("AXOM_ENABLE_EXAMPLES", "examples"))
         options.append(self.define_from_variant("AXOM_ENABLE_TOOLS", "tools"))
+        options.append(self.define_from_variant("AXOM_ENABLE_TUTORIALS", "tutorials"))
         if self.spec.satisfies("~raja") or self.spec.satisfies("+umpire"):
             options.append("-DAXOM_ENABLE_MIR:BOOL=OFF")
 
