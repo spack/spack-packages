@@ -31,5 +31,6 @@ class PyApacheTvmFfi(PythonPackage):
         depends_on("py-scikit-build-core@0.10.0:")
         depends_on("py-cython@3.0:")
         depends_on("py-setuptools-scm")
-        depends_on("cmake")
+        # https://github.com/apache/tvm-ffi/blob/v0.1.0/CMakeLists.txt#L18
+        depends_on("cmake@3.18:")
         depends_on("ninja@1.11:")
