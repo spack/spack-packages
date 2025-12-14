@@ -33,7 +33,7 @@ class PyNvidiaNvjpeg2k(PythonPackage):
         )
         version(
             "0.9.0.43-cuda110",
-            sh256="970518cfe3f345eb263df8c0b3e9c403800a353406ca36e75d7b1f6a58fb25d8",
+            sha256="970518cfe3f345eb263df8c0b3e9c403800a353406ca36e75d7b1f6a58fb25d8",
             url="https://files.pythonhosted.org/packages/41/83/7e975b58c82551e785eb2fb096f9f4dbb036987278da40bfe9f347ad53c4/nvidia_nvjpeg2k_cu11-0.9.0.43-py3-none-manylinux2014_x86_64.whl",
         )
         version(
@@ -77,7 +77,7 @@ class PyNvidiaNvjpeg2k(PythonPackage):
         "@0.9.1.47-cuda130",
     )
     cuda120_versions = (
-        "@0.9.1.47-cuda120"
+        "@0.9.1.47-cuda120",
         "@0.8.1.40-cuda120",
     )
     cuda110_versions = (
