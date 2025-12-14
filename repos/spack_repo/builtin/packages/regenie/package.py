@@ -43,8 +43,8 @@ class Regenie(CMakePackage):
     depends_on("lzma")
     depends_on("libdeflate")
     depends_on("python")
-    depends_on("netlib-lapack+lapacke+external-blas")
     depends_on("openblas threads=openmp")
+    depends_on("lapack")
     depends_on("bgen+headers+libs", when="~bgen-bundled-deps")
     depends_on("bgen+full-source", when="+bgen-bundled-deps")
     depends_on("boost+iostreams", when="+with-boostio")
@@ -98,9 +98,17 @@ class Regenie(CMakePackage):
             string=True,
         )
         # libblas needs to be defined before lapack
+        # and the lapack library name cna vary
+        # TODO: This may need more thoughtful handling for non-BLAS providers
+        lapack = self.spec["lapack"]
+        if lapack.satisfies("openblas"):
+            lapack_flag = ""
+        else:
+            lapack_flag = " -llapacke"
+
         filter_file(
             "${LAPACK_LIB} -llapacke ${BLAS_LIB}",
-            "${BLAS_LIB} ${LAPACK_LIB} -llapacke",
+            "${BLAS_LIB} ${LAPACK_LIB}" + lapack_flag,
             "CMakeLists.txt",
             string=True,
         )
