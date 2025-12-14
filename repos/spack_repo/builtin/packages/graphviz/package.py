@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -148,6 +149,22 @@ class Graphviz(AutotoolsPackage):
         when="@2.40.1+qt ^qt@5:",
         msg="graphviz-2.40.1 needs gcc-6 or greater to compile with QT5 suppport",
     )
+
+    tags = ["build-tools"]
+
+    executables = ["^dot$"]
+
+    @classmethod
+    def determine_version(cls, exe):
+        print(exe)
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"graphviz\s+version\s+([\d\.]+)", output)
+        return match.group(1) if match else None
+
+    @classmethod
+    def determine_variants(cls, exes, version_str):
+        variants = ""
+        return variants
 
     def autoreconf(self, spec, prefix):
         # We need to generate 'configure' when checking out sources from git
