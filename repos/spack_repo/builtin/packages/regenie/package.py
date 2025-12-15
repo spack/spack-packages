@@ -100,7 +100,7 @@ class Regenie(CMakePackage):
 
         # https://github.com/spack/spack-packages/issues/2745
         # libblas needs to be defined before lapack
-        # and the lapack library name cna vary
+        # and the lapack library name can vary
         # TODO: This may need more thoughtful handling for non-BLAS providers
         lapack = self.spec["lapack"]
         if lapack.satisfies("openblas"):
