@@ -80,7 +80,7 @@ class Gptune(CMakePackage):
     depends_on("py-opentuner", type=("build", "run"))
     depends_on(
         "py-ytopt-autotune@1.1.0",
-        patches=[patch("gptunev5-autotune.patch",when="@5.0.0:")],
+        patches=[patch("gptunev5-autotune.patch", when="@5.0.0:")],
         type=("build", "run"),
     )
     depends_on("py-filelock", type=("build", "run"))
