@@ -97,6 +97,8 @@ class Regenie(CMakePackage):
             "CMakeLists.txt",
             string=True,
         )
+
+        # https://github.com/spack/spack-packages/issues/2745
         # libblas needs to be defined before lapack
         # and the lapack library name cna vary
         # TODO: This may need more thoughtful handling for non-BLAS providers
@@ -105,6 +107,16 @@ class Regenie(CMakePackage):
             lapack_flag = ""
         else:
             lapack_flag = " -llapacke"
+
+        # Don't require finding a lapack library if we are not linking it explicitly
+        # e.g., openblas includes it in libblas
+        if not lapack_flag:
+            filter_file(
+                "find_library(LAPACK_LIB lapack REQUIRED)",
+                "find_package(LAPACK)",
+                "CMakeLists.txt",
+                string=True,
+            )
 
         filter_file(
             "${LAPACK_LIB} -llapacke ${BLAS_LIB}",
