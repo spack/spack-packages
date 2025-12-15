@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -120,6 +121,7 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("blt")
+    depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.07.0:")
     depends_on("blt@0.5.3", type="build", when="@2023.06")
     depends_on("blt@0.5.2:0.5.3", type="build", when="@2022.10")

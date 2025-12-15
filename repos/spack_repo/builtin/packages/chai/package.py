@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -144,6 +145,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("raja", default=False, description="Build plugin for RAJA")
     variant("examples", default=True, description="Build examples.")
     variant("openmp", default=False, description="Build using OpenMP")
+    variant("disable_rm", default=False, description="Disable resource manager")
     # TODO: figure out gtest dependency and then set this default True
     # and remove the +tests conflict below.
     variant(
@@ -280,11 +282,43 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             if spec.satisfies("+separable_compilation"):
                 entries.append(cmake_cache_option("CMAKE_CUDA_SEPARABLE_COMPILATION", True))
                 entries.append(cmake_cache_option("CUDA_SEPARABLE_COMPILATION", True))
+
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            # ppc64le workaround
+            if spec.satisfies("target=ppc64le %gcc@8.1:"):
+                cuda_flags.append("-Xcompiler -mno-float128")
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("ENABLE_CUDA", False))
 
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix)))
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix)))
+            else:
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)))
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
@@ -295,6 +329,31 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries = super(Chai, self).initconfig_mpi_entries()
         entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
+
+        if spec.satisfies("+mpi"):
+            # MPI configuration from mpi_for_radiuss_projects
+            if spec["mpi"].name == "spectrum-mpi" and spec.satisfies("^blt"):
+                entries.append(cmake_cache_string("BLT_MPI_COMMAND_APPEND", "mpibind"))
+
+            sys_type = spec.architecture
+            if "SYS_TYPE" in env:
+                sys_type = env["SYS_TYPE"]
+
+            # Replace /usr/bin/srun path with srun flux wrapper path on TOSS 4
+            if "toss_4" in sys_type:
+                srun_wrapper = which_string("srun")
+                mpi_exec_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_EXECUTABLE" in entry
+                ]
+                if len(mpi_exec_index) > 0:
+                    del entries[mpi_exec_index[0]]
+                mpi_exec_flag_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_NUMPROC_FLAG" in entry
+                ]
+                if len(mpi_exec_flag_index) > 0:
+                    del entries[mpi_exec_flag_index[0]]
+                entries.append(cmake_cache_path("MPIEXEC_EXECUTABLE", srun_wrapper))
+                entries.append(cmake_cache_string("MPIEXEC_NUMPROC_FLAG", "-n"))
 
         return entries
 
@@ -345,6 +404,12 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(
             cmake_cache_option(
                 "{}ENABLE_PICK".format(option_prefix), spec.satisfies("+enable_pick")
+            )
+        )
+
+        entries.append(
+            cmake_cache_option(
+                "{}DISABLE_RM".format(option_prefix), spec.satisfies("+disable_rm")
             )
         )
 
