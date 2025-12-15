@@ -7,8 +7,6 @@ from spack_repo.builtin.build_systems.sourceforge import SourceforgePackage
 
 from spack.package import *
 
-import os
-
 class Bbmap(MakefilePackage, SourceforgePackage):
     """Short read aligner for DNA and RNA-seq data."""
 
@@ -29,10 +27,10 @@ class Bbmap(MakefilePackage, SourceforgePackage):
     depends_on("java@8:", type=("build", "link", "run"))
 
     def edit(self, spec, prefix):
-        makefile="makefile.linux"
+        makefile = "makefile.linux"
 
         if spec.satisfies("platform=darwin"):
-            makefile="makefile.osx"
+            makefile = "makefile.osx"
 
         with working_dir(f"{self.build_directory}/jni"):
             rename(makefile, "Makefile")
