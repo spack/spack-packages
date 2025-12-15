@@ -7,7 +7,7 @@ from spack.package import *
 def submodules(package):
     submodules = []
 
-    with when("+noahmp"):
+    if package.spec.satisfies("+noahmp"):
         submodules.append("Submodules/Noah-MP")
 
     return submodules
