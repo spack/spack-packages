@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 import socket
 import sys
 
@@ -10,6 +11,7 @@ from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakePackage,
     cmake_cache_option,
     cmake_cache_path,
+    cmake_cache_string,
 )
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -36,6 +38,8 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.13.1", sha256="7cef0173e0e0673abb7943a2641b660adfbc3d6bc4b33941ab4f431f92a4d016")
+    version("2.13.0", sha256="28c6e8fd940bdee9e80d1e8ae1ce0f76d6a690cbb6242d4eec115d6c0204e331")
     version("2.12.1", sha256="2b5a8f98382c94dc75cc3f4517c758eaf9a3f9cea0a8dbdc7b38506060d6955c")
     version("2.11.0", sha256="b86b733cbb73495d5f3fe06e6a9885ec77365c8aa9195e7654581180adc2217c")
     version("2.10.0", sha256="14c4fb5edd5e67808d581523b4f8f05ace8549698c0e90d84b53171a77f58565")
@@ -65,9 +69,9 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("tools", default=True, description="Enable tools")
     variant("python", default=False, description="Build Python bindings")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", when="+fortran", type="build")
 
     depends_on("adiak@0.1:0", when="@:2.10 +adiak")
     depends_on("adiak@0.4:0", when="@2.11: +adiak")
@@ -90,8 +94,14 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm+cuda")
     # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
-    conflicts("^cuda@12.9:", "@:2.12.1")
+    conflicts("^cuda@12.9:", "@:2.13.1")
 
+    patch("libunwind.patch", when="@:2.13")
+    patch(
+        "https://github.com/LLNL/Caliper/commit/648f8ab496a4a2c3f38e0cfa572340e429d8c76e.patch?full_index=1",
+        sha256="d947b5df6b68a24f516bb3b4ec04c28d4b8246ac0cbe664cf113dd2b6ca92073",
+        when="@2.12:2.13",
+    )
     patch("for_aarch64.patch", when="@:2.11 target=aarch64:")
     patch(
         "sampler-service-missing-libunwind-include-dir.patch",
@@ -143,6 +153,25 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("WITH_NVTX", True))
             entries.append(cmake_cache_path("CUDA_TOOLKIT_ROOT_DIR", spec["cuda"].prefix))
             entries.append(cmake_cache_path("CUPTI_PREFIX", spec["cuda"].prefix))
+
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            # ppc64le workaround
+            if spec.satisfies("target=ppc64le %gcc@8.1:"):
+                cuda_flags.append("-Xcompiler -mno-float128")
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("WITH_CUPTI", False))
             entries.append(cmake_cache_option("WITH_NVTX", False))
@@ -150,6 +179,19 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("WITH_ROCTRACER", True))
             entries.append(cmake_cache_option("WITH_ROCTX", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix)))
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix)))
+            else:
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)))
         else:
             entries.append(cmake_cache_option("WITH_ROCTRACER", False))
             entries.append(cmake_cache_option("WITH_ROCTX", False))
@@ -161,6 +203,31 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries = super().initconfig_mpi_entries()
 
         entries.append(cmake_cache_option("WITH_MPI", spec.satisfies("+mpi")))
+
+        if spec.satisfies("+mpi"):
+            # MPI configuration from mpi_for_radiuss_projects
+            if spec["mpi"].name == "spectrum-mpi" and spec.satisfies("^blt"):
+                entries.append(cmake_cache_string("BLT_MPI_COMMAND_APPEND", "mpibind"))
+
+            sys_type = spec.architecture
+            if "SYS_TYPE" in env:
+                sys_type = env["SYS_TYPE"]
+
+            # Replace /usr/bin/srun path with srun flux wrapper path on TOSS 4
+            if "toss_4" in sys_type:
+                srun_wrapper = which_string("srun")
+                mpi_exec_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_EXECUTABLE" in entry
+                ]
+                if len(mpi_exec_index) > 0:
+                    del entries[mpi_exec_index[0]]
+                mpi_exec_flag_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_NUMPROC_FLAG" in entry
+                ]
+                if len(mpi_exec_flag_index) > 0:
+                    del entries[mpi_exec_flag_index[0]]
+                entries.append(cmake_cache_path("MPIEXEC_EXECUTABLE", srun_wrapper))
+                entries.append(cmake_cache_string("MPIEXEC_NUMPROC_FLAG", "-n"))
 
         return entries
 

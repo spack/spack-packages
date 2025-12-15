@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
