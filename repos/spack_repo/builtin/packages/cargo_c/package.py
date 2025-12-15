@@ -18,6 +18,6 @@ class CargoC(CargoPackage):
     version("0.10.18", sha256="0f2b699be7ad5cac05624701065ae521c7f6b8159bdbcb8103445fc2440d1a7e")
     version("0.10.17", sha256="a92b752f35e3ef54c992b2ba382466eb58a11020d13e62a25a4101bc055d5146")
     version("0.10.16", sha256="c0ebb3175393da5b55c3cd83ba1ae9d42d32e2aece6ceff1424239ffb68eb3e3")
-    
+
     depends_on("rust@1.89:", type="build", when="@0.10.17:")
     depends_on("rust@1.88:", type="build", when="@0.10.16:")
