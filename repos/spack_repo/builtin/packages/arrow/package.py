@@ -19,6 +19,9 @@ class Arrow(CMakePackage, CudaPackage):
 
     license("Apache-2.0")
 
+    version("22.0.0", sha256="8a95e6c7b9bec2bc0058feb73efe38ad6cfd49a0c7094db29b37ecaa8ab16051")
+    version("21.0.0", sha256="e92401790fdba33bfb4b8aa522626d800ea7fda4b6f036aaf39849927d2cf88d")
+    version("20.0.0", sha256="67e31a4f46528634b8c3cbb0dc60ac8f85859d906b400d83d0b6f732b0c5b0e3")
     version("19.0.1", sha256="4c898504958841cc86b6f8710ecb2919f96b5e10fa8989ac10ac4fca8362d86a")
     version("18.0.0", sha256="9c473f2c9914c59ab571761c9497cf0e5cfd3ea335f7782ccc6121f5cb99ae9b")
     version("16.1.0", sha256="9762d9ecc13d09de2a03f9c625a74db0d645cb012de1e9a10dfed0b4ddc09524")
@@ -52,6 +55,7 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("brotli", when="+brotli")
     depends_on("bzip2", when="+bz2")
     depends_on("cmake@3.2.0:", type="build")
+    depends_on("cmake@3.25.0:", type="build", when="@20:")
     depends_on("flatbuffers")
     conflicts("%gcc@14", when="@:15.0.1")  # https://github.com/apache/arrow/issues/40009
     depends_on("llvm@:11 +clang", when="+gandiva @:3", type="build")

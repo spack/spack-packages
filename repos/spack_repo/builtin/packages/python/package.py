@@ -56,14 +56,20 @@ class Python(Package):
 
     license("0BSD")
 
-    version("3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851")
-    version("3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f")
+    version("3.14.2", sha256="c609e078adab90e2c6bacb6afafacd5eaf60cd94cf670f1e159565725fcd448d")
+    version("3.13.11", sha256="03cfedbe06ce21bc44ce09245e091a77f2fee9ec9be5c52069048a181300b202")
     version("3.12.12", sha256="487c908ddf4097a1b9ba859f25fe46d22ccaabfb335880faac305ac62bffb79b")
     version("3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182")
     version("3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec")
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
+        version(
+            "3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851"
+        )
+        version(
+            "3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f"
+        )
         version(
             "3.13.7", sha256="6c9d80839cfa20024f34d9a6dd31ae2a9cd97ff5e980e969209746037a5153b2"
         )
@@ -181,7 +187,8 @@ class Python(Package):
         depends_on("gmake", type="build")
         depends_on("pkgconfig", type="build")
         depends_on("gettext +libxml2", when="+libxml2")
-        depends_on("gettext ~libxml2", when="~libxml2")
+        depends_on("iconv", when="~libxml2")
+        depends_on("gettext ~libxml2", when="~libxml2 ^[virtuals=iconv]gettext")
 
         # Optional dependencies
         # See detect_modules() in setup.py for details
@@ -640,6 +647,10 @@ class Python(Package):
                 ]
             )
 
+        # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
+        if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
+            config_args.append("py_cv_module__tkinter=n/a")
+
         # Disable the nis module in the configure script for Python 3.11 and 3.12. It is deleted
         # in Python 3.13. See ``def patch`` for disabling the nis module in Python 3.10 and older.
         if spec.satisfies("@3.11:3.12"):
@@ -736,8 +747,8 @@ class Python(Package):
         prefix = self.prefix
 
         if spec.satisfies("+pythoncmd"):
-            os.symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
-            os.symlink(
+            symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
+            symlink(
                 os.path.join(prefix.bin, "python3-config"),
                 os.path.join(prefix.bin, "python-config"),
             )

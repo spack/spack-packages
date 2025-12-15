@@ -39,6 +39,8 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     variant("libxsmm", default=False, description="Enable LIBXSMM backend", when="@0.3:")
     variant("magma", default=False, description="Enable MAGMA backend", when="@0.6:")
 
+    variant("openmp", default=False, description="Enable OpenMP support")
+
     conflicts("+rocm", when="@:0.7")
 
     depends_on("c", type="build")  # generated
@@ -145,6 +147,9 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
 
             if spec.satisfies("+magma"):
                 makeopts += ["MAGMA_DIR=%s" % spec["magma"].prefix]
+
+            if spec.satisfies("+openmp"):
+                makeopts += ["OPENMP=1"]
 
         return makeopts
 

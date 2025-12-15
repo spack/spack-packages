@@ -287,6 +287,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libtheora")
     depends_on("libtiff")
     depends_on("netcdf-c")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=darwin")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=freebsd")
+    depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=linux")
     depends_on("netcdf-c@:4.9.2", when="@:5.13")
     depends_on("pegtl@2.8.3")
     depends_on("protobuf@3.4:")
@@ -299,10 +302,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     # protobuf requires newer abseil-cpp, which in turn requires C++14,
     # but paraview uses C++11 by default. Use for 5.8+ until ParaView updates
     # its C++ standard level.
-    depends_on("protobuf@3.4:3.21", when="@5.8:%gcc")
-    depends_on("protobuf@3.4:3.21", when="@5.8:%clang")
-    depends_on("protobuf@3.4:3.21", when="@5.11:")
-    depends_on("protobuf@3.4:3.21", when="@master")
+    depends_on("protobuf@3.4:21", when="@5.8:%gcc")
+    depends_on("protobuf@3.4:21", when="@5.8:%clang")
+    depends_on("protobuf@3.4:21", when="@5.11:")
+    depends_on("protobuf@3.4:21", when="@master")
     depends_on("libxml2")
     depends_on("lz4")
     depends_on("xz")
