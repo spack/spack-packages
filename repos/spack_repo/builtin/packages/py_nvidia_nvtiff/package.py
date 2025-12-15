@@ -63,16 +63,9 @@ class PyNvidiaNvtiff(PythonPackage):
             url="https://files.pythonhosted.org/packages/1a/b2/3b470a42ab20920f40a6138cc345379e412bfee0d58a989fb26bc6b15581/nvidia_nvtiff_cu11-0.5.0.67-py3-none-manylinux2014_aarch64.whl",
         )
 
-    cuda130_versions = (
-        "@0.6.0.78-cuda130",
-    )
-    cuda120_versions = (
-        "@0.6.0.78-cuda120",
-        "@0.5.0.67-cuda120",
-    )
-    cuda110_versions = (
-        "@0.5.0.67-cuda110",
-    )
+    cuda130_versions = ("@0.6.0.78-cuda130",)
+    cuda120_versions = ("@0.6.0.78-cuda120", "@0.5.0.67-cuda120")
+    cuda110_versions = ("@0.5.0.67-cuda110",)
 
     for v in cuda130_versions:
         depends_on("cuda@13", when=v, type=("build", "run"))

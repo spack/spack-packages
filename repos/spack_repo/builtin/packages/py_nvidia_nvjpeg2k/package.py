@@ -73,17 +73,9 @@ class PyNvidiaNvjpeg2k(PythonPackage):
             url="https://files.pythonhosted.org/packages/4f/85/1daca97fbef54307691dde4bbd94b654a0535d3cdff1cb4a75adecc3f2be/nvidia_nvjpeg2k_cu11-0.8.1.40-py3-none-manylinux2014_aarch64.whl",
         )
 
-    cuda130_versions = (
-        "@0.9.1.47-cuda130",
-    )
-    cuda120_versions = (
-        "@0.9.1.47-cuda120",
-        "@0.8.1.40-cuda120",
-    )
-    cuda110_versions = (
-        "@0.9.0.43-cuda110",
-        "@0.8.1.40-cuda110",
-    )
+    cuda130_versions = ("@0.9.1.47-cuda130",)
+    cuda120_versions = ("@0.9.1.47-cuda120", "@0.8.1.40-cuda120")
+    cuda110_versions = ("@0.9.0.43-cuda110", "@0.8.1.40-cuda110")
 
     for v in cuda130_versions:
         depends_on("cuda@13", when=v, type=("build", "run"))

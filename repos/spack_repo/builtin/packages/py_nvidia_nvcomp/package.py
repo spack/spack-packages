@@ -74,17 +74,9 @@ class PyNvidiaNvcomp(PythonPackage):
             url="https://files.pythonhosted.org/packages/b7/08/07922c747e404df408d0e7637394d110607be8c11291f15be9168b833fee/nvidia_nvcomp_cu11-5.0.0.6-py3-none-manylinux_2_28_aarch64.whl",
         )
 
-    cuda130_versions = (
-        "@5.1.0.21-cuda130",
-        "@5.0.0.6-cuda130",
-    )
-    cuda120_versions = (
-        "@5.1.0.21-cuda120",
-        "@5.0.0.6-cuda120",
-    )
-    cuda110_versions = (
-        "@5.0.0.6-cuda110",
-    )
+    cuda130_versions = ("@5.1.0.21-cuda130", "@5.0.0.6-cuda130")
+    cuda120_versions = ("@5.1.0.21-cuda120", "@5.0.0.6-cuda120")
+    cuda110_versions = ("@5.0.0.6-cuda110",)
 
     for v in cuda130_versions:
         depends_on("cuda@13", when=v, type=("build", "run"))

@@ -167,9 +167,7 @@ class PyNvidiaNvimagecodec(PythonPackage):
     variant("nvjpeg2k", default=True, description="Enable NVJPEG2K support")
     variant("nvtiff", default=True, description="Enable NVTIFF support")
 
-    cuda130_versions = (
-        "@0.7.0.11-cuda130",
-    )
+    cuda130_versions = ("@0.7.0.11-cuda130",)
     cuda120_versions = (
         "@0.7.0.11-cuda120",
         "@0.6.1.37-cuda120",
