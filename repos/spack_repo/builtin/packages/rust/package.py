@@ -38,6 +38,7 @@ class Rust(Package):
     version("nightly")
 
     # Stable versions.
+    version("1.92.0", sha256="9e0d2ca75c7e275fdc758255bf4b03afb3d65d1543602746907c933b6901c3b8")
     version("1.86.0", sha256="022a27286df67900a044d227d9db69d4732ec3d833e4ffc259c4425ed71eed80")
     version("1.85.0", sha256="2f4f3142ffb7c8402139cfa0796e24baaac8b9fd3f96b2deec3b94b4045c6a8a")
     version("1.83.0", sha256="722d773bd4eab2d828d7dd35b59f0b017ddf9a97ee2b46c1b7f7fac5c8841c6e")
@@ -87,6 +88,7 @@ class Rust(Package):
     depends_on("rust-bootstrap@nightly", type="build", when="@nightly")
 
     # Stable version dependencies
+    depends_on("rust-bootstrap@1.91:1.92", type="build", when="@1.92")
     depends_on("rust-bootstrap@1.85:1.86", type="build", when="@1.86")
     depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85")
     depends_on("rust-bootstrap@1.82:1.83", type="build", when="@1.83")
