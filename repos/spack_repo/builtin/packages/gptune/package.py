@@ -109,8 +109,7 @@ class Gptune(CMakePackage):
             fc_flags.append("-fallow-argument-mismatch")
 
         args = [
-            "-DGPTUNE_INSTALL_PATH=%s"
-            % join_path(self.prefix, self.spec["python"].package.platlib),
+            f"-DGPTUNE_INSTALL_PATH={join_path(self.prefix, self.spec['python'].package.platlib)}",
             "-DTPL_BLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),
             "-DTPL_LAPACK_LIBRARIES=%s" % spec["lapack"].libs.joined(";"),
             "-DTPL_SCALAPACK_LIBRARIES=%s" % spec["scalapack"].libs.joined(";"),
