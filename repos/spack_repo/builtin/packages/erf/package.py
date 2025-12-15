@@ -139,5 +139,3 @@ class Erf(CMakePackage, CudaPackage):
                 env.append_flags("CFLAGS", self.compiler.openmp_flag)
                 env.append_flags("CXXFLAGS", self.compiler.openmp_flag)
                 env.append_flags("FFLAGS", self.compiler.openmp_flag)
-
-
