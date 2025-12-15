@@ -228,6 +228,8 @@ class Gptune(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("GPTUNE_INSTALL_PATH", join_path(self.prefix, self.spec["python"].package.platlib))
+        gptune_path = join_path(self.prefix, self.spec["python"].package.platlib, "GPTune")
+        env.prepend_path("PYTHONPATH", gptune_path)
 
     cmd = {"bash": which("bash"), "cp": which("cp"), "git": which("git"), "rm": which("rm")}
 
