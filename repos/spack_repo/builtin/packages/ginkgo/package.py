@@ -30,6 +30,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop")
     version("main", branch="main")
     version("master", branch="master", deprecated=True)
+    version("1.11.0", commit="4c77a5d826bd1597fd093f39c47688f8cc735690")  # v1.11.0
     version("1.10.0", commit="d4e0e9f8c8eb36cc2044189834d82742b925f27e")  # v1.10.0
     version("1.9.0", commit="20cfd68795f58078898da9890baa311b46845a8b")  # v1.9.0
     version("1.8.0", commit="586b1754058d7a32d4bd1b650f9603484c2a8927")  # v1.8.0
@@ -86,11 +87,10 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     # ROCPRIM is not a direct dependency, but until we have reviewed our CMake
     # setup for rocthrust, this needs to also be added here.
     depends_on("rocprim", when="+rocm")
-    # error due to change in warpSize constant definition in ROCm 7.0
-    depends_on("hip@:6", when="+rocm")
+    depends_on("hip", when="+rocm")
     depends_on("hwloc@2.1:", when="+hwloc")
-    # TODO: replace with the next PAPI version when available (>7.0.1.0)
-    depends_on("papi@master+sde", when="+sde")
+    depends_on("papi@master+sde", when="+sde @:1.10.0")
+    depends_on("papi@7.1.0: +sde", when="+sde @1.11.0:")
 
     depends_on("googletest", type="test")
     depends_on("numactl", type="test", when="+hwloc")
@@ -125,6 +125,10 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
     # https://github.com/ginkgo-project/ginkgo/pull/1926
     conflicts("^cuda@13:", when="@:1.10.0 +cuda")
+
+    # error due to change in warpSize constant definition in ROCm 7.0 prior to v.1.11.0
+    # https://github.com/ginkgo-project/ginkgo/pull/1954
+    conflicts("^hip@7:", when="@:1.10.0 +rocm")
 
     # https://github.com/ginkgo-project/ginkgo/pull/1524
     patch("ginkgo-sycl-pr1524.patch", when="@1.7.0 +sycl %oneapi@2024:")
