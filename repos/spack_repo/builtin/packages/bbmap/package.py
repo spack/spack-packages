@@ -28,24 +28,20 @@ class Bbmap(MakefilePackage, SourceforgePackage):
     depends_on("gmake", type="build")
     depends_on("java@8:", type=("build", "link", "run"))
 
-    @property
-    def build_directory(self):
-        return f"{self.pkg.stage.source_path}/jni"
-
     def edit(self, spec, prefix):
         makefile="makefile.linux"
 
         if spec.satisfies("platform=darwin"):
             makefile="makefile.osx"
 
-        with working_dir(self.build_directory):
+        with working_dir(f"{self.build_directory}/jni"):
             rename(makefile, "Makefile")
 
     def build(self, spec, prefix):
-        with working_dir(self.build_directory):
-            # BBMap comes with a pre-compiled library that must first be removed
-            self.pkg.module.make("clean")
-            self.pkg.module.make()
+        with working_dir(f"{self.build_directory}/jni"):
+            # BBMap comes with a pre-compiled x86_64 library that must first be removed
+            make("clean")
+            make()
 
     def install(self, spec, prefix):
         install_tree(".", prefix.bin)
