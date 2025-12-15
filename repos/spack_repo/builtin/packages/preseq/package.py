@@ -45,9 +45,9 @@ class Preseq(MakefilePackage, AutotoolsPackage):
     # As of 3.0.2, preseq does not use gsl
     depends_on("gsl", when="@:3.0.1")
 
-    with when("+hts"):
-        depends_on("htslib")
-        conflicts("gcc@13:")
+    depends_on("htslib", when="+hts")
+
+    conflicts("gcc@13:", when="+hts")
 
     def url_for_version(self, version):
         """
