@@ -163,6 +163,8 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("fmt")
     depends_on("fmt@:8", when="@:36.9")
     depends_on("fmt@:10", when="@:38")
+    depends_on("fmt@:11", when="@:40")
+    depends_on("fmt@:10", type="test")  # https://gitlab.cern.ch/gaudi/Gaudi/-/issues/345
     depends_on("intel-tbb@:2020.3", when="@:37.0")
     depends_on("tbb", when="@37.1:")
     depends_on("uuid")
