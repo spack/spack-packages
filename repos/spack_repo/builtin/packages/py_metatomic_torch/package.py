@@ -25,11 +25,6 @@ class PyMetatomicTorch(PythonPackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    version("0.1.6", sha256="cb1a966bd69e13234b02289f984705ecdbf5eb3cbcb050c1e103741adc708d50")
-    version("0.1.5", sha256="fb9680cd4cbac4348833af9cb2d196bcfbffb02da623397168e3f96c9a9e0e32")
-    version("0.1.4", sha256="c593bbc0fa3a410bd19d4a4a8d0008d5bd1c31a9faaca85b9d6b655ee1133bde")
-    version("0.1.3", sha256="60a4b651cf6e15f175879af74d18215d45cc4fd5e42a61242a180e2014fe9fd2")
-
     for ver, sha256 in VERSIONS.items():
         version(ver, sha256=sha256)
         depends_on(f"libmetatomic-torch@={ver}", when=f"@{ver}")
