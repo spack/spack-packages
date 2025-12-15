@@ -13,7 +13,7 @@ ci:
       - wrf
       build-job:
         tags: [ "spack", "huge" ]
-        timeout: 600 minutes
+        timeout: 1200 minutes
         variables:
           CI_JOB_SIZE: huge
           SPACK_BUILD_JOBS: "12"
