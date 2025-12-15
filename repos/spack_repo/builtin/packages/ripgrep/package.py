@@ -29,35 +29,34 @@ class Ripgrep(CargoPackage):
 
     variant("pcre2", default=False, description="Add support for Perl-style regex via PCRE2")
 
-    depends_on("rust@1.85:", type="build", when="@15:")
-    depends_on("rust@1.72:", type="build", when="@14")
-    depends_on("rust@1.31:", type="build", when="@:13")
     depends_on("c", type="build")
+    depends_on("pkgconfig", type="build", when="+pcre2")
+    depends_on("rust@1.85:", type="build", when="@15:")
+    depends_on("rust@1.72:", type="build", when="@14:")
+    depends_on("rust@1.31:", type="build")
 
-    with when("+pcre2"):
-        depends_on("pcre2")
-        depends_on("pkgconfig", type="build")
+    depends_on("pcre2", when="+pcre2")
 
     @property
     def build_args(self):
+        args = []
         if self.spec.satisfies("+pcre2"):
-            return ["--features", "pcre2"]
+            args.extend(["--features", "pcre2"])
 
-        return []
+        return args
 
-    @run_after("install")
+    @run_after("install", when="@14:")
     def install_completions(self):
-        if self.spec.satisfies("@14:"):
-            rg = Executable(self.prefix.bin.rg)
+        rg = Executable(self.prefix.bin.rg)
 
-            mkdirp(bash_completion_path(self.prefix))
-            with open(bash_completion_path(self.prefix) / "rg", "w") as file:
-                rg("--generate", "complete-bash", output=file)
+        mkdirp(bash_completion_path(self.prefix))
+        with open(bash_completion_path(self.prefix) / "rg", "w") as file:
+            rg("--generate", "complete-bash", output=file)
 
-            mkdirp(fish_completion_path(self.prefix))
-            with open(fish_completion_path(self.prefix) / "rg.fish", "w") as file:
-                rg("--generate", "complete-fish", output=file)
+        mkdirp(fish_completion_path(self.prefix))
+        with open(fish_completion_path(self.prefix) / "rg.fish", "w") as file:
+            rg("--generate", "complete-fish", output=file)
 
-            mkdirp(zsh_completion_path(self.prefix))
-            with open(zsh_completion_path(self.prefix) / "_rg", "w") as file:
-                rg("--generate", "complete-zsh", output=file)
+        mkdirp(zsh_completion_path(self.prefix))
+        with open(zsh_completion_path(self.prefix) / "_rg", "w") as file:
+            rg("--generate", "complete-zsh", output=file)
