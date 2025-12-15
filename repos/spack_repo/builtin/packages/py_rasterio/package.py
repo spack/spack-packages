@@ -22,6 +22,7 @@ class PyRasterio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("1.4.4", sha256="c95424e2c7f009b8f7df1095d645c52895cd332c0c2e1b4c2e073ea28b930320")
     version("1.4.3", sha256="201f05dbc7c4739dacb2c78a1cf4e09c0b7265b0a4d16ccbd1753ce4f2af350a")
     version("1.4.2", sha256="1be35ccb4d998a4c48fa51bbee9e37927ecd9b9e954a2b2581b8f3e9bb165332")
     version("1.4.1", sha256="d750362bb792d2311f94803ff309baec48486ecba75c9b905ea9b1f5eb06ef9f")
@@ -44,12 +45,14 @@ class PyRasterio(PythonPackage):
     # From pyproject.toml
     with default_args(type="build"):
         depends_on("py-setuptools@67.8:", when="@1.3.9:")
-        depends_on("py-cython@3.0.2:3", when="@1.3.10:")
+        depends_on("py-cython@3.1:3", when="@1.4.4:")
+        depends_on("py-cython@3.0.2:3", when="@1.3.10:1.4.3")
         depends_on("py-cython@0.29.29:", when="@1.3.3:1.3.9")
         depends_on("py-cython@0.29.24:0.29", when="@1.3.0:1.3.2")
 
     # From setup.py
     with default_args(type=("build", "link", "run")):
+        depends_on("python@3.10:", when="@1.4.4:")
         depends_on("python@3.9:", when="@1.4:")
         depends_on("python@3.8:", when="@1.3:")
         depends_on("python@3.6:3.9", when="@1.2")
@@ -67,22 +70,21 @@ class PyRasterio(PythonPackage):
         depends_on("py-click@4:", when="@1.2.4:")
         depends_on("py-click@4:7", when="@:1.2.3")
         depends_on("py-cligj@0.5:")
-        depends_on("py-importlib-metadata", when="@1.3.10: ^python@:3.9")
         depends_on("py-click-plugins")
         depends_on("py-pyparsing")
 
         # Historical dependencies
+        depends_on("py-importlib-metadata", when="@1.3.10: ^python@:3.9")
         depends_on("py-setuptools", when="@:1.3.9")
         depends_on("py-snuggs@1.4.1:", when="@:1.3")
 
     # From README.rst and setup.py
+    depends_on("gdal@3.6:", when="@1.4.4:")
     depends_on("gdal@3.5:", when="@1.4:")
     depends_on("gdal@3.1:", when="@1.3:")
     depends_on("gdal@2.4:3.3", when="@1.2.7:1.2")
     depends_on("gdal@2.3:3.2", when="@1.2.0:1.2.6")
 
-    # https://github.com/rasterio/rasterio/pull/3429
-    conflicts("^gdal@3.12:")
     # https://github.com/rasterio/rasterio/issues/3371
     conflicts("^gdal@3.11:", when="@:1.4.3")
     # https://github.com/rasterio/rasterio/pull/3212

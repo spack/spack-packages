@@ -34,3 +34,7 @@ class Udunits(AutotoolsPackage):
 
     def configure_args(self):
         return self.enable_or_disable("shared")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # We need to set UDUNITS2_XML_PATH so that udunits can find its default units file.
+        env.set("UDUNITS2_XML_PATH", join_path(self.prefix.share.udunits, "udunits2.xml"))
