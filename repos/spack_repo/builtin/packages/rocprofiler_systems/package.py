@@ -22,6 +22,13 @@ class RocprofilerSystems(CMakePackage):
 
     license("MIT")
     version(
+        "7.1.1",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-7.1.1",
+        commit="e4045f4ab75b9d36c68545e96e8a43daedf40aa8",
+        submodules=True,
+    )
+    version(
         "7.1.0",
         git="https://github.com/ROCm/rocprofiler-systems",
         tag="rocm-7.1.0",
@@ -195,11 +202,12 @@ class RocprofilerSystems(CMakePackage):
             "7.0.0",
             "7.0.2",
             "7.1.0",
+            "7.1.1",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
-        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
+        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
-        for ver in ["7.0.0", "7.0.2", "7.1.0"]:
+        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
