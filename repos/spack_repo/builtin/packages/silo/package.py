@@ -11,45 +11,53 @@ class Silo(AutotoolsPackage):
     """Silo is a library for reading and writing a wide variety of scientific
     data to binary, disk files."""
 
-    homepage = "https://wci.llnl.gov/simulation/computer-codes/silo"
+    homepage = "https://software.llnl.gov/Silo/"
     git = "https://github.com/LLNL/Silo.git"
-    url = "https://wci.llnl.gov/sites/wci/files/2021-01/silo-4.10.2.tgz"
+    url = "https://github.com/LLNL/Silo/releases/download/4.12.0/silo-4.12.0.tar.xz"
     maintainers("patrickb314")
 
     version("main", branch="main")
     version(
+        "4.12.0",
+        preferred=True,
+        sha256="bde1685e4547d5dd7416bd6215b41f837efef0e4934d938ba776957afbebdff0",
+    )
+    version(
         "4.11.1",
         preferred=True,
         sha256="49eddc00304aa4a19074b099559edbdcaa3532c98df32f99aa62b9ec3ea7cee2",
-        url="https://github.com/LLNL/Silo/releases/download/4.11.1/silo-4.11.1.tar.xz",
     )
     version(
         "4.11.1-bsd",
         sha256="51ccfdf3c09dfc98c7858a0a6f08cc3b2a07ee3c4142ee6482ba7b24e314c2aa",
-        url="https://github.com/LLNL/Silo/releases/download/4.11.1/silo-4.11.1-bsd.tar.xz",
     )
     version(
         "4.11",
         sha256="ab936c1f4fc158d9fdc4415965f7d9def7f4abeca596fe5a25bd8485654898ac",
-        url="https://github.com/LLNL/Silo/releases/download/v4.11/silo-4.11.tar.gz",
     )
     version(
         "4.11-bsd",
         sha256="6d0a85a079d48fcdcc0084ecb5fc4cfdcc64852edee780c60cb244d16f4bc4ec",
-        url="https://github.com/LLNL/Silo/releases/download/v4.11/silo-4.11-bsd.tar.gz",
     )
     version(
         "4.10.2",
-        sha256="3af87e5f0608a69849c00eb7c73b11f8422fa36903dd14610584506e7f68e638",
         preferred=True,
+        sha256="3af87e5f0608a69849c00eb7c73b11f8422fa36903dd14610584506e7f68e638",
     )
     version(
         "4.10.2-bsd",
         sha256="4b901dfc1eb4656e83419a6fde15a2f6c6a31df84edfad7f1dc296e01b20140e",
-        url="https://wci.llnl.gov/sites/wci/files/2021-01/silo-4.10.2-bsd.tgz",
+        url="https://sd.llnl.gov/sites/sd/files/2021-01/silo-4.10.2-bsd.tgz",
     )
-    version("4.9", sha256="90f3d069963d859c142809cfcb034bc83eb951f61ac02ccb967fc8e8d0409854")
-    version("4.8", sha256="c430c1d33fcb9bc136a99ad473d535d6763bd1357b704a915ba7b1081d58fb21")
+    version(
+        "4.9",
+        sha256="90f3d069963d859c142809cfcb034bc83eb951f61ac02ccb967fc8e8d0409854",
+        url="https://sd.llnl.gov/sites/sd/files/2021-01/silo-4.9.tgz",
+    )
+    version(
+        "4.8",
+        sha256="c430c1d33fcb9bc136a99ad473d535d6763bd1357b704a915ba7b1081d58fb21",
+        url="https://sd.llnl.gov/sites/sd/files/2021-01/silo-4.8.tgz",)
 
     variant("python", default=True, description="Enable Python support")
     variant("fortran", default=True, description="Enable Fortran support")
