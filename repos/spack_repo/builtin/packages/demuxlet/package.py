@@ -33,8 +33,18 @@ class Demuxlet(AutotoolsPackage):
         filter_file("-I ../../htslib/htslib", "", "Makefile.am", string=True)
         filter_file("-I ../htslib/", "", "Makefile.am", string=True)
         filter_file("../htslib/libhts.a", "-lhts", "Makefile.am", string=True)
+
+        # Add -ldeflate to LDFLAGS When depending on htslib with libdeflate
         if self.spec.satisfies("^htslib+libdeflate"):
             filter_file("-lcrypto", "-lcrypto -ldeflate", "Makefile.am", string=True)
+
+        # Remove -lcurl from LDFLAGS when depending on htslib sans libcurl
+        if not self.spec.satisfies("^htslib+libcurl"):
+            filter_file("-lcurl", "", "Makefile.am", string=True)
+
+        # Remove -lcrypto from LDFLAGS when depending on htslib sans S3 URL support
+        if not self.spec.satisfies("^htslib+s3"):
+            filter_file("-lcrypto", "", "Makefile.am", string=True)
 
     def autoreconf(self, spec, prefix):
         which("autoreconf")("-vfi")
