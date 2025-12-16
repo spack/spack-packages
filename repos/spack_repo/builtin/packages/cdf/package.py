@@ -19,7 +19,11 @@ class Cdf(MakefilePackage):
 
     license("NASA-1.3")
 
-    version("3.9.1", sha256="d548789117c52fcd4d08be5f432c86ae927e182d3876e800cd4ca98e5f7fa5e7")
+    version(
+        "3.9.1",
+        sha256="d548789117c52fcd4d08be5f432c86ae927e182d3876e800cd4ca98e5f7fa5e7",
+        url="https://spdf.gsfc.nasa.gov/pub/software/cdf/dist/cdf39_1/cdf39_1-dist-cdf.tar.gz",
+    )
 
     def edit(self, spec, prefix):
         """CDF build system doesn't require editing."""
