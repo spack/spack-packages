@@ -15,6 +15,10 @@ from spack.package import LinkTree
 
 
 class CrayMpichGtl(MpichEnvironmentModifications, BundlePackage):
+    """Package that modifies the behavior of Cray MPICH installations to default GTL support for
+    GPU-awareness. Simply add this package to your environment and the correct flag will be
+    appended to every MPI compiler wrapper invocation by default. The default run environment will
+    also be set to be GPU-aware."""
 
     version("1.0.0")
 
