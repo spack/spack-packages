@@ -91,6 +91,16 @@ ci:
         - spack config add 'config:build_stage:["$tempdir/$user/spack-stage", "$user_cache_path/stage"]'
         - spack config blame config
         - echo Copying environment specs from ${SPACK_COPY_ONLY_SOURCE} to ${SPACK_COPY_ONLY_DESTINATION}
+      before_script:
+        - echo "Refreshing AWS STS session for buildcache publish…"
+        - CREDS="$(aws sts assume-role \
+            --role-arn "${AWS_ROLE_ARN}" \
+            --role-session-name "spack-push-${CI_PIPELINE_ID}-${CI_JOB_ID}" \
+            --duration-seconds 3600)"
+        - export AWS_ACCESS_KEY_ID="$(echo "$CREDS" | jq -r .Credentials.AccessKeyId)"
+        - export AWS_SECRET_ACCESS_KEY="$(echo "$CREDS" | jq -r .Credentials.SecretAccessKey)"
+        - export AWS_SESSION_TOKEN="$(echo "$CREDS" | jq -r .Credentials.SessionToken)"
+        - aws sts get-caller-identity  # sanity check
         - spack buildcache sync "${SPACK_COPY_ONLY_SOURCE}" "${SPACK_COPY_ONLY_DESTINATION}"
         - curl -fLsS https://spack.github.io/keys/spack-public-binary-key.pub -o /tmp/spack-public-binary-key.pub
         - spack gpg trust /tmp/spack-public-binary-key.pub
