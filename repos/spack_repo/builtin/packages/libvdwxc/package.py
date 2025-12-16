@@ -13,12 +13,13 @@ class Libvdwxc(AutotoolsPackage):
     interactions for density functional theory"""
 
     homepage = "https://libvdwxc.gitlab.io/libvdwxc/"
-    url = "https://launchpad.net/libvdwxc/stable/0.4.0/+download/libvdwxc-0.4.0.tar.gz"
+    url = "https://launchpad.net/libvdwxc/stable/0.5.0/+download/libvdwxc-0.5.0.tar.gz"
     git = "https://gitlab.com/libvdwxc/libvdwxc"
 
     license("GPL-3.0-or-later")
 
     version("master", branch="master", submodules="False")
+    version("0.5.0", sha256="29fb70efd58aff51524d2172a87e8f88e760b696b0ddb9aa5878432bdffa3c2f")
     version("0.4.0", sha256="3524feb5bb2be86b4688f71653502146b181e66f3f75b8bdaf23dd1ae4a56b33")
 
     variant("mpi", default=True, description="Enable MPI support")
@@ -30,6 +31,10 @@ class Libvdwxc(AutotoolsPackage):
     depends_on("fftw-api@3")
     depends_on("mpi@2:", when="+mpi")
     depends_on("pfft", when="+pfft")
+
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
 
     # pfft needs MPI
     conflicts("~mpi", "+pfft")
@@ -65,3 +70,7 @@ class Libvdwxc(AutotoolsPackage):
     # The relevant upstream fix for the m4 would be:
     # https://gitlab.com/libvdwxc/libvdwxc/-/commit/9340f857515c4a2e56d2aa7cf3a21c41ba8559c3.diff
     patch("fftw-detection.patch", when="@:0.4.0")
+
+    def url_for_version(self, version):
+        url = "https://launchpad.net/libvdwxc/stable/{0}/+download/libvdwxc-{0}.tar.gz"
+        return url.format(version)
