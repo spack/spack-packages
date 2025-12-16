@@ -30,6 +30,7 @@ class Hipblaslt(CMakePackage):
     libraries = ["libhipblaslt"]
 
     license("MIT")
+    version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
     version("7.1.0", sha256="d9e138a15e8195a7e9b5e15240e50c557b830d50a2bafa27db14dad3884dbfd8")
     version("7.0.2", sha256="52d7c1c6852f501f5bd37fa962e6538592741792593a173d8b6963b8f7bd2c41")
     version("7.0.0", sha256="9a38822eea27080dbeab7dd9d39b4bdaeb7c25bc5d19ca6ccf24674c3b34dbae")
@@ -88,6 +89,7 @@ class Hipblaslt(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -108,11 +110,12 @@ class Hipblaslt(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("msgpack-c")
