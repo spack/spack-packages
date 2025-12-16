@@ -95,7 +95,7 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zstd")
     depends_on("protobuf@3.4:", when="@compat-2022-11-18:")
     # See https://github.com/CODARcode/MGARD/issues/240
-    depends_on("protobuf@:3.28", when="@:1.5.2")
+    depends_on("protobuf@:28", when="@:1.5.2")
     depends_on("libarchive", when="@compat-2021-11-12:")
     depends_on("tclap", when="@compat-2021-11-12")
     depends_on("yaml-cpp", when="@compat-2021-11-12:")
@@ -116,8 +116,8 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     conflicts(
         "%gcc@:7", when="@compat-2022-11-18:", msg="requires std::optional and other c++17 things"
     )
-    conflicts("protobuf@3.22:", when="target=ppc64le", msg="GCC 9.4 segfault in CI")
-    conflicts("protobuf@3.22:", when="+cuda target=aarch64:", msg="nvcc fails on ARM SIMD headers")
+    conflicts("protobuf@22:", when="target=ppc64le", msg="GCC 9.4 segfault in CI")
+    conflicts("protobuf@22:", when="+cuda target=aarch64:", msg="nvcc fails on ARM SIMD headers")
     # https://github.com/abseil/abseil-cpp/issues/1629
     conflicts("abseil-cpp@20240116.1", when="+cuda", msg="triggers nvcc parser bug")
 
