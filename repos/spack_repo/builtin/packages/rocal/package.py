@@ -18,6 +18,7 @@ class Rocal(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("7.1.0", sha256="670ef46f6b39311cdba7752069fd831c9146c88636a9c185dfa10cdc304b9682")
     version("7.0.2", sha256="ae9cde0d4bd4bb1d32899ac7f47679ec1b5ff5719dc91206f1911b4957b3f115")
     version("7.0.0", sha256="f971874b0f2f552a15482a3714c8cca335996e5a747c25f9c19d50a4d2304b3c")
     version("6.4.3", sha256="b25798a37372e671fa8e73a6c0ca651ccec8231ef71441b24614f0aa157811ff")
@@ -53,6 +54,7 @@ class Rocal(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"mivisionx@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
