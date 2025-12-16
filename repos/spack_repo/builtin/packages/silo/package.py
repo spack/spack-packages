@@ -28,7 +28,9 @@ class Silo(AutotoolsPackage):
         sha256="49eddc00304aa4a19074b099559edbdcaa3532c98df32f99aa62b9ec3ea7cee2",
     )
     version(
-        "4.11.1-bsd", sha256="51ccfdf3c09dfc98c7858a0a6f08cc3b2a07ee3c4142ee6482ba7b24e314c2aa"
+        "4.11.1-bsd",
+        sha256="51ccfdf3c09dfc98c7858a0a6f08cc3b2a07ee3c4142ee6482ba7b24e314c2aa",
+        url="ttps://github.com/LLNL/Silo/releases/download/4.11.1/silo-4.11.1-bsd.tar.xz",
     )
     version(
         "4.11",
