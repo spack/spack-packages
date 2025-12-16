@@ -7,10 +7,11 @@ import os
 import os.path
 import stat
 
-from spack.package import *
-from spack.package import LinkTree
 from spack_repo.builtin.build_systems.bundle import BundlePackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
+
+from spack.package import *
+from spack.package import LinkTree
 
 
 class CrayMpichGtl(MpichEnvironmentModifications, BundlePackage):
@@ -37,9 +38,7 @@ class CrayMpichGtl(MpichEnvironmentModifications, BundlePackage):
         self.setup_mpi_wrapper_variables(env)
 
     def setup_dependent_package(self, module, dependent_spec):
-        MpichEnvironmentModifications.setup_dependent_package(
-            self, module, dependent_spec
-        )
+        MpichEnvironmentModifications.setup_dependent_package(self, module, dependent_spec)
 
     def install(self, spec, prefix):
         dep = spec["cray-mpich"]
