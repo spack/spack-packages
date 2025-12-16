@@ -45,8 +45,6 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
     # cray-mpich 8.1.7: features MPI compiler wrappers
     variant("wrappers", default=True, when="@8.1.7:", description="enable MPI wrappers")
-    variant("gtl", default=True, when="+rocm", description="Enable GPU Accelerated Transports")
-    variant("gtl", default=True, when="+cuda", description="Enable GPU Accelerated Transports")
 
     provides("mpi@3")
 
@@ -119,16 +117,6 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
             if "fortran" in dependent_spec:
                 spec.mpifc = dependent_spec["fortran"].package.fortran
                 spec.mpif77 = dependent_spec["fortran"].package.fortran
-
-    def setup_dependent_build_environment(self, env, dependent_spec):
-        if self.spec.satisfies("+gtl"):
-            for flag in self.gtl_lib["ldflags"]:
-                env.prepend_path("LDFLAGS", flag)
-            env.prepend_path("LIBS", self.gtl_lib["ldlibs"][0])
-
-    def setup_dependent_run_environment(self, env, dependent_spec):
-        if self.spec.satisfies("+gtl"):
-            env.set("MPICH_GPU_SUPPORT_ENABLED", "1")
 
     @property
     def headers(self):
