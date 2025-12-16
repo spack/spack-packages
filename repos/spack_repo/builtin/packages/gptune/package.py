@@ -78,10 +78,7 @@ class Gptune(CMakePackage):
     depends_on("py-lhsmdu", type=("build", "run"))
     depends_on("py-hpbandster", type=("build", "run"))
     depends_on("py-opentuner", type=("build", "run"))
-    depends_on(
-        "py-ytopt-autotune@1.1.0",
-        type=("build", "run"),
-    )
+    depends_on("py-ytopt-autotune@1.1.0", type=("build", "run"))
     depends_on(
         "py-ytopt-autotune@1.1.0",
         patches=[patch("gptunev5-autotune.patch")],
