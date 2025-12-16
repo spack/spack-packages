@@ -44,7 +44,7 @@ class PyHeat(PythonPackage):
 
     depends_on("py-setuptools", type="build")
 
-# dependencies per major version, sourced from setup.py or pyproject.toml
+    # dependencies per major version, sourced from setup.py or pyproject.toml
     with when("@1.3"):
         depends_on("python@3.8:3.10", type=("build", "run"))
         depends_on("py-mpi4py@3:", type=("build", "run"))
@@ -82,14 +82,14 @@ class PyHeat(PythonPackage):
         depends_on("py-torchvision@0.15:", type=("build", "run"))
         depends_on("py-torch@2.0:2.8.0", type=("build", "run"))
 
-# specify differences cuda vs rocm
+    # specify differences cuda vs rocm
     with when("+cuda"):
         depends_on("py-torch+cuda", type=("build", "run"))
 
     with when("+rocm"):
         depends_on("py-torch+rocm", type=("build", "run"))
 
-# additional variants
+    # additional variants
     depends_on("py-docutils@0.16:", when="+docutils", type=("build", "link", "run"))
     depends_on("py-h5py@2.8.0:", when="+hdf5", type=("build", "link", "run"))
     depends_on("py-netcdf4@1.5.6:", when="+netcdf", type=("build", "link", "run"))
