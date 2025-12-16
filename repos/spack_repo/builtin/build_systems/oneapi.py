@@ -24,6 +24,7 @@ from spack.package import (
     mkdirp,
     redistribute,
     shared_library_suffix,
+    symlink,
     tty,
     variant,
 )
@@ -182,7 +183,7 @@ class IntelOneApiPackage(Package):
                 link_tree = LinkTree(src_path)
                 link_tree.merge(dest_path)
             else:
-                os.symlink(src_path, dest_path)
+                symlink(src_path, dest_path)
 
 
 class IntelOneApiLibraryPackage(IntelOneApiPackage):

@@ -33,6 +33,9 @@ class RSeurat(RPackage):
     version("2.1.0", sha256="7d20d231b979a4aa63cd7dae7e725405212e8975889f12b8d779c6c896c10ac3")
     version("2.0.1", sha256="6aa33aa3afb29a8be364ab083c7071cfbc56ad042a019bcf6f939e0c8c7744f0")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r@3.4.0:", type=("build", "run"), when="@2.3.1:")
     depends_on("r@3.6.0:", type=("build", "run"), when="@3.2.3:")

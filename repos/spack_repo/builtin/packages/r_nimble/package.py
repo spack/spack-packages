@@ -37,6 +37,8 @@ class RNimble(RPackage):
     version("0.9.1", sha256="ad5e8a171193cb0172e68bf61c4f94432c45c131a150101ad1c5c7318c335757")
     version("0.9.0", sha256="ebc28fadf933143eea73900cacaf96ff81cb3c2d607405016062b7e93afa5611")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.1.2:", type=("build", "run"))
     depends_on("r-igraph", type=("build", "run"))
     depends_on("r-coda", type=("build", "run"))

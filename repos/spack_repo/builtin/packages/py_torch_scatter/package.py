@@ -17,6 +17,7 @@ class PyTorchScatter(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("master", branch="master")
     version("2.1.2", sha256="69b3aa435f2424ac6a1bfb6ff702da6eb73b33ca0db38fb26989c74159258e47")
 
     depends_on("c", type="build")

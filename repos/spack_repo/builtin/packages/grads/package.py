@@ -40,7 +40,8 @@ class Grads(AutotoolsPackage):
     variant("hdf4", default=True, when="@2.2.2:", description="Enable HDF4 support")
     variant("netcdf", default=True, when="@2.2.2:", description="Enable NetCDF support")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("hdf5", when="+hdf5")
     depends_on("hdf", when="+hdf4")
@@ -82,6 +83,14 @@ class Grads(AutotoolsPackage):
             # Can use newer versions of HDF5, but 1.10 is the last API GrADS supports
             if "hdf5" in spec and spec["hdf5"].satisfies("@1.12:"):
                 flags.append("-DH5_USE_110_API")
+
+            if (
+                self.spec.satisfies("%apple-clang@15:")
+                or self.spec.satisfies("%clang@16:")
+                or self.spec.satisfies("%oneapi")
+                or self.spec.satisfies("%gcc@14:")
+            ):
+                flags.append("-Wno-error=implicit-function-declaration")
 
         return (flags, None, None)
 
