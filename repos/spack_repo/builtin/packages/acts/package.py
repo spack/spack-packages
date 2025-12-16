@@ -50,6 +50,9 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("44.4.0", commit="a05c35a14b39a461925d11de12ccd2da5e38b3d1")
+    version("44.3.0", commit="d4c630145d5050dd2edc58f1de0c872caff23dd8")
+    version("44.2.0", commit="c3d440eb1e441fcd15995b8af87ea1497e0cc126")
     version("44.1.0", commit="9c79dd801e4ab1e2485c3198cc6b987ec1369e5b", submodules=submodules)
     version("44.0.1", commit="404f40aaa6211231b6c6726a364b08134a2e3fa4", submodules=submodules)
     version("44.0.0", commit="d5d65c794d3676034f37d89e555c131b5b7ad807", submodules=submodules)
@@ -498,6 +501,10 @@ class Acts(CMakePackage, CudaPackage):
     conflicts("^edm4hep@0.99:", when="@:37")
     # See https://github.com/acts-project/acts/pull/4631
     conflicts("+gnn ~cuda", when="@:44.0")
+
+    # The ODD package is fetched via the internet by the build system, which
+    # cannot be disabled.
+    conflicts("+odd", when="@44.2.0:")
 
     def cmake_args(self):
         spec = self.spec
