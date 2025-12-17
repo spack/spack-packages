@@ -22,11 +22,21 @@ class Bbmap(MakefilePackage, SourceforgePackage):
     version("37.78", sha256="f2da19f64d2bfb7db4c0392212668b425c96a27c77bd9d88d8f0aea90a193509")
     version("37.36", sha256="befe76d7d6f3d0f0cd79b8a01004a2283bdc0b5ab21b0743e9dbde7c7d79e8a9")
 
+    variant(
+        "usejni",
+        default=False,
+        description=(
+            "Compile the libbbtoolsjni library for accelerated versions of BBMap, Dedupe, "
+            "BBMerge, and IceCreamFinder"
+        )
+    )
+
     # Building BBMap's jni libraries requires gcc, per the BBMap docs
-    depends_on("gcc", type="build")
-    depends_on("gmake", type="build")
+    depends_on("gcc", type="build", when="+usejni")
+    depends_on("gmake", type="build", when="+usejni")
     depends_on("java@8:", type=("build", "link", "run"))
 
+    @when("+usejni")
     def edit(self, spec, prefix):
         makefile = "makefile.linux"
 
@@ -36,6 +46,7 @@ class Bbmap(MakefilePackage, SourceforgePackage):
         with working_dir(f"{self.build_directory}/jni"):
             rename(makefile, "Makefile")
 
+    @when("+usejni")
     def build(self, spec, prefix):
         with working_dir(f"{self.build_directory}/jni"):
             # BBMap comes with a pre-compiled x86_64 library that must first be removed
