@@ -30,11 +30,7 @@ class Csvtk(GoPackage):
 
         bash_comp_path = bash_completion_path(self.prefix)
         mkdirp(bash_comp_path)
-        csvtk(
-            "genautocomplete",
-            "--shell=bash",
-            f"--file={join_path(bash_comp_path, self.name)}",
-        )
+        csvtk("genautocomplete", "--shell=bash", f"--file={join_path(bash_comp_path, self.name)}")
 
         fish_comp_path = fish_completion_path(self.prefix)
         mkdirp(fish_comp_path)
@@ -47,7 +43,5 @@ class Csvtk(GoPackage):
         zsh_comp_path = zsh_completion_path(self.prefix)
         mkdirp(zsh_comp_path)
         csvtk(
-            "genautocomplete",
-            "--shell=zsh",
-            f"--file={join_path(zsh_comp_path, f'_{self.name}')}",
+            "genautocomplete", "--shell=zsh", f"--file={join_path(zsh_comp_path, f'_{self.name}')}"
         )
