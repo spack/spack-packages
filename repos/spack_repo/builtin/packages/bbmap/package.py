@@ -33,7 +33,6 @@ class Bbmap(MakefilePackage, SourceforgePackage):
 
     # Building BBMap's jni libraries requires gcc, per the BBMap docs
     depends_on("gcc", type="build", when="+usejni")
-    depends_on("gmake", type="build", when="+usejni")
     depends_on("java@8:", type=("build", "link", "run"))
 
     def edit(self, spec, prefix):
