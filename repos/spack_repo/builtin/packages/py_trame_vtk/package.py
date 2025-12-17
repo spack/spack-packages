@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class PyTrameVtk(PythonPackage):
-    """trame-vtk extend trame widgets with components that can interface with VTK and/or ParaView."""
+    """
+    trame-vtk extend trame widgets with components that can interface with VTK and/or ParaView.
+    """
 
     homepage = "https://kitware.github.io/trame/"
     pypi = "trame-vtk/trame_vtk-2.10.0.tar.gz"
