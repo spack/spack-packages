@@ -146,13 +146,7 @@ ci:
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
       # Clone the other repo
-      - - mkdir -p .ci/tmp/spack
-        - cd .ci/tmp/spack
-        - git init
-        - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
-        - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
-        - git checkout FETCH_HEAD
-        - cd ${CI_PROJECT_DIR}
+      - ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/clone_spack.sh
       - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version
         - spack arch

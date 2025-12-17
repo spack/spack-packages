@@ -27,7 +27,7 @@ spack:
         image: {name: ghcr.io/spack/pcluster-amazonlinux-2:v2024-10-07, entrypoint: ['']}
         before_script:
         - . /etc/profile.d/modules.sh
-        - - bash ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/clone_spack.sh
+        - - ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/clone_spack.sh
           - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
           - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
           - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex

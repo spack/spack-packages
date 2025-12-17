@@ -1,3 +1,5 @@
+#!/bin/bash
+
 if [[ -d .ci/tmp/spack ]]; then
   exit 0
 fi
