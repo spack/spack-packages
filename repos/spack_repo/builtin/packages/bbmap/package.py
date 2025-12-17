@@ -41,19 +41,19 @@ class Bbmap(MakefilePackage, SourceforgePackage):
         if spec.satisfies("platform=darwin"):
             makefile = "makefile.osx"
 
-        with working_dir(f"{self.build_directory}/jni"):
+        with working_dir(join_path(self.build_directory, "jni")):
             rename(makefile, "Makefile")
 
     @when("+usejni")
     def build(self, spec, prefix):
-        with working_dir(f"{self.build_directory}/jni"):
+        with working_dir(join_path(self.build_directory, "jni")):
             # BBMap comes with a pre-compiled x86_64 library that must first be removed
             make("clean")
             make()
 
     @when("~usejni")
     def build(self, spec, prefix):
-        with working_dir(f"{self.build_directory}/jni"):
+        with working_dir(join_path(self.build_directory, "jni")):
             # When not building libbbtoolsjni, we should still remove the pre-compiled
             # library for x86_64, as it may fail on other platforms.
             make("clean")
