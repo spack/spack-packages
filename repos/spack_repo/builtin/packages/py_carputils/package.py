@@ -47,15 +47,11 @@ class PyCarputils(PythonPackage):
         depends_on("py-scipy@1.11", when="^python@3.9:3.11", type=("build", "run"))
         depends_on("py-scipy@1.9.2", when="^python@3.8", type=("build", "run"))
         depends_on("py-scipy@1.7.3", when="^python@3.7", type=("build", "run"))
-        depends_on("py-scipy@1.5", when="^python@3.6", type=("build", "run"))
-        depends_on("py-scipy@1.4", when="^python@3.5", type=("build", "run"))
 
         depends_on("py-numpy@1.26:", type=("build", "run"))
         depends_on("py-numpy@1.21.6:1.26", when="^python@3.9:3.11", type=("build", "run"))
         depends_on("py-numpy@1.18.5:1.25", when="^python@3.8", type=("build", "run"))
         depends_on("py-numpy@1.16.5:1.22", when="^python@3.7", type=("build", "run"))
-        depends_on("py-numpy@1.14.5:1.19.3", when="^python@3.6", type=("build", "run"))
-        depends_on("py-numpy@1.13.3:1.17.3", when="^python@3.5", type=("build", "run"))
 
         depends_on("py-tables@3.9:", type=("build", "run"))
         depends_on("py-tables@3.6.1", when="^python@:3.8", type=("build", "run"))
