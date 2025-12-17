@@ -12,6 +12,7 @@ ci:
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
       - - touch ${SPACK_USER_CACHE_PATH}/cache/*/*  # bump mtime of cache so it is not invalidated
       - - spack env activate --without-view ${SPACK_CONCRETE_ENV_DIR}
+        - spack repo list
         - spack compiler list
       - - mkdir -p ${SPACK_ARTIFACTS_ROOT}/user_data
         # AWS runners mount E4S public key (verification), UO runners mount public/private (signing/verification)
