@@ -328,7 +328,7 @@ class Acts(CMakePackage, CudaPackage):
     # names as synonyms, ensuring that both must be true at the same time. We
     # also enforce that nothing explicitly relies on the TGeo naming anymore,
     # and we use ROOT instead. We then "deprecate" the TGeo naming by
-    # eliminating it in ACTS release 45. Finally, we retain the TGeo naming 
+    # eliminating it in ACTS release 45. Finally, we retain the TGeo naming
     # until version 44 of ACTS is removed due to deprecation.
     variant(
         "tgeo", default=False, description="Build the TGeo plugin", when="@:34 +identification"
