@@ -28,7 +28,7 @@ class Bbmap(MakefilePackage, SourceforgePackage):
         description=(
             "Compile the libbbtoolsjni library for accelerated versions of BBMap, Dedupe, "
             "BBMerge, and IceCreamFinder"
-        )
+        ),
     )
 
     # Building BBMap's jni libraries requires gcc, per the BBMap docs
