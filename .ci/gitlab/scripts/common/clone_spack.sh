@@ -1,6 +1,6 @@
-#!/bin/bash
+#!/bin/sh -e
 
-if [[ -d .ci/tmp/spack ]]; then
+if [ -d .ci/tmp/spack ]; then
   exit 0
 fi
 
