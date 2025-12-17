@@ -449,7 +449,33 @@ class Hip(CMakePackage):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        self.set_variables(env)
+
+        env.set("HIPCC_COMPILE_FLAGS_APPEND", "")
+        if self.spec.satisfies("+rocm"):
+            env.append_path(
+                "HIPCC_COMPILE_FLAGS_APPEND", f"--rocm-path={paths['rocm-path']}", separator=" "
+            )
+            env.append_path(
+                "HIPCC_LINK_FLAGS_APPEND", f"--rocm-path={paths['rocm-path']}", separator=" "
+            )
+            env.append_path(
+                "HIPCC_COMPILE_FLAGS_APPEND",
+                f"-isystem {paths['rocm-core']}/include",
+                separator=" ",
+            )
+
+        if self.spec.external and self.spec.satisfies("%gcc"):
+            # This is picked up by hipcc.
+            env.append_path(
+                "HIPCC_COMPILE_FLAGS_APPEND",
+                f"--gcc-toolchain={self.compiler.prefix}",
+                separator=" ",
+            )
+            env.append_path(
+                "HIPCC_LINK_FLAGS_APPEND", f"--gcc-toolchain={self.compiler.prefix}", separator=" "
+            )
+            # This is picked up by CMake when using HIP as a CMake language.
+            env.append_path("HIPFLAGS", f"--gcc-toolchain={self.compiler.prefix}", separator=" ")
 
         if "amdgpu_target" in dependent_spec.variants:
             arch = dependent_spec.variants["amdgpu_target"].value
@@ -458,11 +484,6 @@ class Hip(CMakePackage):
                 arch = [arch]
             if "none" not in arch and "auto" not in arch:
                 env.set("HCC_AMDGPU_TARGET", ",".join(arch))
-
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        self.setup_dependent_build_environment(env, dependent_spec)
 
     def setup_dependent_package(self, module, dependent_spec):
         self.spec.hipcc = join_path(self.prefix.bin, "hipcc")
