@@ -36,4 +36,4 @@ class Csvtk(GoPackage):
 
         zsh_comp_path = zsh_completion_path(self.prefix)
         mkdirp(zsh_comp_path)
-        csvtk("genautocomplete", "--shell=zsh", f"--file={fish_comp_path}/_{self.name}")
+        csvtk("genautocomplete", "--shell=zsh", f"--file={zsh_comp_path}/_{self.name}")
