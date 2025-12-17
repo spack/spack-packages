@@ -41,7 +41,11 @@ class Garfieldpp(CMakePackage):
     depends_on("gsl")
     depends_on("geant4", when="+examples")
 
-    conflicts("root@6.38:", when="@:2025.01", msg="Garfield++ <= 2025.01 is not compatible with ROOT >= 6.38")
+    conflicts(
+        "root@6.38:",
+        when="@:2025.01",
+        msg="Garfield++ <= 2025.01 is not compatible with ROOT >= 6.38",
+    )
 
     def cmake_args(self):
         args = [
