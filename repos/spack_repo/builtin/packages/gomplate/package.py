@@ -29,7 +29,7 @@ class Gomplate(GoPackage):
         # we need to set its Version attribute. This is similar to what is done in the
         # gomplate Makefile.
         gomplate_version_path = self.module.go("list", "./version", output=str).strip()
-        with working_dir(f"{join_path(self.build_directory, "cmd", self.name)}"):
+        with working_dir(f"{join_path(self.build_directory, 'cmd', self.name)}"):
             # When building, set gomplate's version.Version to the value in the version
             # object for this package
             self.module.go(
