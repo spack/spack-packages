@@ -36,7 +36,6 @@ class Bbmap(MakefilePackage, SourceforgePackage):
     depends_on("gmake", type="build", when="+usejni")
     depends_on("java@8:", type=("build", "link", "run"))
 
-    @when("+usejni")
     def edit(self, spec, prefix):
         makefile = "makefile.linux"
 
@@ -52,6 +51,13 @@ class Bbmap(MakefilePackage, SourceforgePackage):
             # BBMap comes with a pre-compiled x86_64 library that must first be removed
             make("clean")
             make()
+
+    @when("~usejni")
+    def build(self, spec, prefix):
+        with working_dir(f"{self.build_directory}/jni"):
+            # When not building libbbtoolsjni, we should still remove the pre-compiled
+            # library for x86_64, as it may fail on other platforms.
+            make("clean")
 
     def install(self, spec, prefix):
         install_tree(".", prefix.bin)
