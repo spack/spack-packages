@@ -281,6 +281,11 @@ class Hipblaslt(CMakePackage):
                     "ROCROLLER_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
+            args.append(
+                self.define(
+                    "Tensile_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
+                )
+            )
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("HIPBLASLT_ENABLE_CLIENT", self.run_tests))
         else:

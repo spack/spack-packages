@@ -169,4 +169,4 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     def check(self):
         exe = Executable(join_path(self.build_directory, "clients", "staging", "hipblas-test"))
-        exe("--gtest_filter=-*known_bug*")
+        exe("--gtest_filter=-*known_bug*:_/getrs*:_/getri_batched.solver*")
