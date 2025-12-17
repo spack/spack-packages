@@ -33,10 +33,22 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
+    version("20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e")
+    version("20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c")
+    version(
+        "20250722.2",
+        sha256="fede484269cdb22f1cb738b4cd118a9bf9cb4bd3c85667f1e6a73a9fa5c2de6b",
+        preferred=True,
+    )
+    version(
+        "20250722.1",
+        sha256="4ba3648fae360ea1d3106e08bce13e21f856318196f4965f2a09fd812d572928",
+        deprecated=True,
+    )
     version(
         "20250722",
         sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26",
-        preferred=True,
+        deprecated=True,
     )
     version(
         "20250612",
@@ -76,6 +88,8 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20250722.2",
+        "20250722.1",
         "20250722",
         "20240829.4",
         "20230802.4",
@@ -108,8 +122,8 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "adios": {"when": "@20210702:"},
         "amoeba": {"when": "@20220803:"},
         "asphere": {},
-        "atc": {"when": "@20210702:"},
-        "awpmd": {"when": "@20210702:"},
+        "atc": {"when": "@20210702:20250722"},
+        "awpmd": {"when": "@20210702:20250722"},
         "bocs": {"when": "@20210702:"},
         "body": {},
         "bpm": {"when": "@20220504:"},
@@ -178,7 +192,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "phonon": {"when": "@20210702:"},
         "plugin": {"when": "@20210408:"},
         "plumed": {"when": "@20210702:"},
-        "poems": {},
+        "poems": {"when": "@:20250722"},
         "ptm": {"when": "@20210702:"},
         "python": {},
         "qeq": {},
@@ -324,6 +338,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     variant("tools", default=False, description="Build LAMMPS tools (msi2lmp, binary2txt, chain)")
 
     depends_on("cmake@3.16:", when="@20231121:", type="build")
+    depends_on("cmake@3.20:", when="@20250910:", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("mpi", when="+mpiio")
     depends_on("fftw-api@3", when="+kspace fft=fftw3")
@@ -372,6 +387,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@4.5.01:", when="@20250204: +kokkos")
     depends_on("kokkos@4.6.00:", when="@20250402: +kokkos")
     depends_on("kokkos@4.6.02:", when="@20250722: +kokkos")
+    depends_on("kokkos@4.7.01:", when="@20251210: +kokkos")
     depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
     depends_on("plumed", when="+user-plumed")
