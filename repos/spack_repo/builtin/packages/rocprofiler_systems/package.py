@@ -159,10 +159,7 @@ class RocprofilerSystems(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("dyninst@:12", when="@6 ~internal-dyninst")
     depends_on("dyninst@13", when="@7 ~internal-dyninst")
-    depends_on(
-          Boost.with_default_variants + "" .join("+container"),
-          when="+internal-dyninst"
-    )
+    depends_on(Boost.with_default_variants + "".join("+container"), when="+internal-dyninst")
     depends_on("boost@:1.88", when="+internal-dyninst")
 
     depends_on("libiberty+pic", when="+internal-dyninst")
