@@ -142,6 +142,10 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     # Add missing include statement
     patch("thrust-count-header.patch", when="+rocm @1.5.0")
 
+    # Revert the fix from github.com/ginkgo-project/ginkgo/pull/1954/changes
+    # This only affects the benchmark part of Ginkgo, which is not built by spack anyway
+    patch("remove_finding_thrust.patch", when="@1.11.0 +cuda")
+
     # Correctly find rocthrust through CMake
     patch(
         "https://github.com/ginkgo-project/ginkgo/commit/369b12a5f4431577d60a61e67f2b0537b428abca.patch?full_index=1",
