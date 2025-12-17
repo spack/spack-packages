@@ -11,7 +11,7 @@ from spack.package import *
 class Bbmap(MakefilePackage, SourceforgePackage):
     """Short read aligner for DNA and RNA-seq data."""
 
-    homepage = "https://sourceforge.net/projects/bbmap/"
+    homepage = "https://bbmap.org/tools/bbmap"
     sourceforge_mirror_path = "bbmap/BBMap_38.63.tar.gz"
 
     license("BSD-3-Clause-LBNL")
