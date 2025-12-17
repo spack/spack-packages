@@ -20,7 +20,7 @@ class PyTy(PythonPackage):
     version(
         "0.0.1a29",
         sha256="43bb55fd467a057880d62ad4bbb048223fd4fba7d8e4d7d5372a0f4881da83fe",
-        deprecated=True
+        deprecated=True,
     )
 
     # ruff/Cargo.toml
