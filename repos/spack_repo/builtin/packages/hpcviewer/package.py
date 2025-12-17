@@ -27,7 +27,10 @@ class Hpcviewer(Package):
     skip_version_audit = ["platform=windows"]
 
     darwin_sha = {
-        ("2025.3.1", "aarch64"): "c87d29f70bc39c23926c001d8393d48d2fdf1ae41da8096a5f2ab40b18d20105",
+        (
+            "2025.3.1",
+            "aarch64",
+        ): "c87d29f70bc39c23926c001d8393d48d2fdf1ae41da8096a5f2ab40b18d20105",
         ("2025.3.1", "x86_64"): "6b0f3d8e77fe4e0a7b6a97d022fba5671bc94762ff2d3c71ea4a3ab377d8fff2",
         ("2025.01", "aarch64"): "8884c60a972f864bd43fcf1933be5ec2095427de12394c96b943d2064dab044d",
         ("2025.01", "x86_64"): "2959313d5603ca9b14da04f3e5d51b19fc21c374eb3d5cc687d3f77f67bbf8b9",
@@ -57,7 +60,10 @@ class Hpcviewer(Package):
     }
 
     viewer_sha = {
-        ("2025.3.1", "aarch64"): "bf9d519cb679bf1ee49da46a6eb3c5f1f223f58e3228c53b9c13d6368dcc16dd",
+        (
+            "2025.3.1",
+            "aarch64",
+        ): "bf9d519cb679bf1ee49da46a6eb3c5f1f223f58e3228c53b9c13d6368dcc16dd",
         ("2025.3.1", "x86_64"): "3ad32708332fc61d53c67d93c17eeec3659e127df14552665f5689ad62773145",
         (
             "2025.2.0",
@@ -225,10 +231,12 @@ class Hpcviewer(Package):
         mkdirp(prefix.bin)
         wrapper = join_path(prefix.bin, "hpcviewer")
         with open(wrapper, "w") as wrapperf:
-            wrapperf.write(f"""\
+            wrapperf.write(
+                f"""\
 #!/bin/sh
 open {shlex.quote(str(bundle_dir))}
-""")
+"""
+            )
         set_executable(wrapper)
 
     @when("platform=linux @:2025.2")
