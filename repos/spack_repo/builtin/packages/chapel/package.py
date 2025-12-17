@@ -79,6 +79,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         version("2.2.0", sha256="bb16952a87127028031fd2b56781bea01ab4de7c3466f7b6a378c4d8895754b6")
         version("2.1.0", sha256="72593c037505dd76e8b5989358b7580a3fdb213051a406adb26a487d26c68c60")
         version("2.0.1", sha256="19ebcd88d829712468cfef10c634c3e975acdf78dd1a57671d11657574636053")
+        version("2.0.0", sha256="b5387e9d37b214328f422961e2249f2687453c2702b2633b7d6a678e544b9a02")
 
     sanity_check_is_dir = ["bin", join_path("lib", "chapel"), join_path("share", "chapel")]
     sanity_check_is_file = [join_path("bin", "chpl")]
