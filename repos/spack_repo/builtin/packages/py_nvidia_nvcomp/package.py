@@ -10,7 +10,8 @@ from spack.package import *
 
 
 class PyNvidiaNvcomp(PythonPackage):
-    """The nvCOMP library provides fast lossless data compression and decompression using a GPU. Not open-source anymore."""
+    """The nvCOMP library provides fast lossless data compression and
+    decompression using a GPU. Not open-source anymore."""
 
     homepage = "https://docs.nvidia.com/cuda/nvcomp/index.html"
     git = "https://github.com/NVIDIA/nvcomp"
