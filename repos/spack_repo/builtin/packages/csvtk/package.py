@@ -20,7 +20,7 @@ class Csvtk(GoPackage):
 
     @property
     def build_directory(self):
-        return f"{self.pkg.stage.source_path}/{self.name}"
+        return f"{super().build_directory}/{self.name}"
 
     @run_after("install")
     def install_completions(self):
