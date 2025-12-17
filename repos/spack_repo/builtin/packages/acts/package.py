@@ -344,7 +344,6 @@ class Acts(CMakePackage, CudaPackage):
         conflicts("~root", when="+tgeo")
         conflicts("+root", when="~tgeo")
 
-
     variant("traccc", default=False, description="Build the Traccc plugin", when="@35.1:")
 
     # Variants that only affect Acts examples for now
