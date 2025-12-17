@@ -26,7 +26,9 @@ class Esmf(MakefilePackage, PythonExtension):
     url = "https://github.com/esmf-org/esmf/archive/v8.4.1.tar.gz"
     git = "https://github.com/esmf-org/esmf.git"
 
-    maintainers("climbfuji", "jedwards4b", "AlexanderRichert-NOAA", "theurich", "uturuncoglu")
+    maintainers(
+        "climbfuji", "jedwards4b", "AlexanderRichert-NOAA", "theurich", "uturuncoglu", "danrosen25"
+    )
 
     # Develop is a special name for spack and is always considered the newest version
     version("develop", branch="develop")
@@ -139,6 +141,18 @@ class Esmf(MakefilePackage, PythonExtension):
             os.path.join("src/addon/esmpy/pyproject.toml"),
         )
 
+    def url_for_version(self, version):
+        if version < Version("8.0.0"):
+            # Older ESMF releases had a custom tag format ESMF_x_y_z
+            return "https://github.com/esmf-org/esmf/archive/ESMF_{0}.tar.gz".format(
+                version.underscored
+            )
+        else:
+            # Starting with ESMF 8.0.0 releases are in the form vx.y.z
+            return "https://github.com/esmf-org/esmf/archive/refs/tags/v{0}.tar.gz".format(
+                version.dotted
+            )
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("ESMFMKFILE", os.path.join(self.prefix.lib, "esmf.mk"))
 
@@ -157,18 +171,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
     # other systems where the logic in setup_build_environment
     # below sets the compilers to the MPI wrappers.
     filter_compiler_wrappers("esmf.mk", relative_root="lib")
-
-    def url_for_version(self, version):
-        if version < Version("8.0.0"):
-            # Older ESMF releases had a custom tag format ESMF_x_y_z
-            return "https://github.com/esmf-org/esmf/archive/ESMF_{0}.tar.gz".format(
-                version.underscored
-            )
-        else:
-            # Starting with ESMF 8.0.0 releases are in the form vx.y.z
-            return "https://github.com/esmf-org/esmf/archive/refs/tags/v{0}.tar.gz".format(
-                version.dotted
-            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
@@ -422,7 +424,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @run_after("install")
     def post_install(self):
-        install_tree("cmake", self.prefix.cmake)
+        if self.spec.satisfies("@8:"):
+            install_tree("cmake", self.prefix.cmake)
         # Several applications using ESMF are affected by CMake
         # capitalization issue. The following fix allows all apps
         # to use as-is. Note that since the macOS file system is
