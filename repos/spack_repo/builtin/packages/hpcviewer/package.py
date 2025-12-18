@@ -64,6 +64,10 @@ class Hpcviewer(Package):
             "2025.3.1",
             "aarch64",
         ): "bf9d519cb679bf1ee49da46a6eb3c5f1f223f58e3228c53b9c13d6368dcc16dd",
+        (
+            "2025.3.1",
+            "ppc64le",
+        ): "89752d321e2a9001db171145dd724962a3881443dd62445f13ffd1a2e9c38f4f",
         ("2025.3.1", "x86_64"): "3ad32708332fc61d53c67d93c17eeec3659e127df14552665f5689ad62773145",
         (
             "2025.2.0",
@@ -199,6 +203,9 @@ class Hpcviewer(Package):
     depends_on("java@17:", type=("build", "run"), when="@2024.09:2025.2")
     depends_on("java@11:", type=("build", "run"), when="@2021.0:2024.02")
     depends_on("java@8", type=("build", "run"), when="@:2020")
+
+    # Eclipse requires a newer glibc on powerpc, but not x86.
+    depends_on("glibc@2.34:", when="@2025.3: target=ppc64le:")
 
     # Install for MacOSX / Darwin
     @when("platform=darwin @:2025.2")
