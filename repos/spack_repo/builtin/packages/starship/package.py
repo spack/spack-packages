@@ -21,7 +21,7 @@ class Starship(CargoPackage):
 
     depends_on("c", type="build")
     depends_on("cmake", type="build")
-    depends_on("rust@1.85:", type="build")
+    depends_on("rust@1.89:", type="build")
 
     @property
     def build_args(self):
