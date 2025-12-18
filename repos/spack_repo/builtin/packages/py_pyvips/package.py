@@ -16,10 +16,10 @@ class PyPyvips(PythonPackage):
     version("3.1.1", sha256="84fe744d023b1084ac2516bb17064cacd41c7f8aabf8e524dd383534941b9301")
 
     depends_on("py-setuptools@61:", type="build")
-    depends_on("pkgconfig@1.5:", type="build")
+    depends_on("py-pkgconfig@1.5:", type="build") # needed to enable API mode
     depends_on("py-cffi@1:", type=("build", "run"))
 
-    depends_on("libvips +fftw +jpeg +tiff +png +poppler", type="link")
+    depends_on("libvips +fftw +jpeg +tiff +png +poppler", type=("run", "build", "link"))
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("LD_LIBRARY_PATH", self.spec["libvips"].prefix.lib)
