@@ -1,0 +1,28 @@
+--- a/autotune/problem.py
++++ b/autotune/problem.py
+@@ -12,6 +12,7 @@ class TuningProblem:
+         objective (Callable): a function wich returns a single scalar or a tuple of scalar values.
+         constraints (str, Callable, optional): if str then it is ... if a Callable then it is .... Defaults to None.
+         models (...): analytical models. Defaults to None.
++        input_var (...): a function to define the variance per tuning parameter value. Defaults to None.
+         name (str, optional): A name corresponding to the TuningProblem. Defaults to None.
+         constants (Dict): A dictionary defining global constants. Defaults to None. 
+ 
+@@ -46,6 +47,7 @@ class TuningProblem:
+         objective: Callable,
+         constraints=None,
+         models=None,
++        input_var=None,
+         name=None,
+         constants=None,         
+         **kwargs):
+@@ -57,4 +59,8 @@ class TuningProblem:
+         self.objective = objective
+         self.constraints = constraints
+         self.models = models
++        self.input_var = input_var
+         self.constants = constants
++        
++    def update_input_space(self, input_space):
++        self.input_space = input_space
+

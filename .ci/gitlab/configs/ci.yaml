@@ -12,6 +12,7 @@ ci:
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
       - - touch ${SPACK_USER_CACHE_PATH}/cache/*/*  # bump mtime of cache so it is not invalidated
       - - spack env activate --without-view ${SPACK_CONCRETE_ENV_DIR}
+        - spack repo list
         - spack compiler list
       - - mkdir -p ${SPACK_ARTIFACTS_ROOT}/user_data
         # AWS runners mount E4S public key (verification), UO runners mount public/private (signing/verification)
@@ -146,13 +147,7 @@ ci:
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
       # Clone the other repo
-      - - mkdir -p .ci/tmp/spack
-        - cd .ci/tmp/spack
-        - git init
-        - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
-        - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
-        - git checkout FETCH_HEAD
-        - cd ${CI_PROJECT_DIR}
+      - ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/clone_spack.sh
       - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version
         - spack arch

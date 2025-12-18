@@ -6,6 +6,13 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
+VERSIONS = {
+    "0.1.6": "cb1a966bd69e13234b02289f984705ecdbf5eb3cbcb050c1e103741adc708d50",
+    "0.1.5": "fb9680cd4cbac4348833af9cb2d196bcfbffb02da623397168e3f96c9a9e0e32",
+    "0.1.4": "c593bbc0fa3a410bd19d4a4a8d0008d5bd1c31a9faaca85b9d6b655ee1133bde",
+    "0.1.3": "60a4b651cf6e15f175879af74d18215d45cc4fd5e42a61242a180e2014fe9fd2",
+}
+
 
 class PyMetatomicTorch(PythonPackage):
     """Torchscript bindings for metatomic"""
@@ -18,10 +25,9 @@ class PyMetatomicTorch(PythonPackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    version("0.1.6", sha256="cb1a966bd69e13234b02289f984705ecdbf5eb3cbcb050c1e103741adc708d50")
-    version("0.1.5", sha256="fb9680cd4cbac4348833af9cb2d196bcfbffb02da623397168e3f96c9a9e0e32")
-    version("0.1.4", sha256="c593bbc0fa3a410bd19d4a4a8d0008d5bd1c31a9faaca85b9d6b655ee1133bde")
-    version("0.1.3", sha256="60a4b651cf6e15f175879af74d18215d45cc4fd5e42a61242a180e2014fe9fd2")
+    for ver, sha256 in VERSIONS.items():
+        version(ver, sha256=sha256)
+        depends_on(f"libmetatomic-torch@={ver}", when=f"@{ver}")
 
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("python@3.10:", type=("build", "run"), when="@0.1.6:")
@@ -38,6 +44,8 @@ class PyMetatomicTorch(PythonPackage):
     # CMakeLists.txt
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@0.1.5:")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # Fix build when torch looks for a CUDA compiler
     patch(
@@ -46,3 +54,6 @@ class PyMetatomicTorch(PythonPackage):
         when="@0.1.3",
         level=3,
     )
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        env.set("METATOMIC_TORCH_PYTHON_USE_EXTERNAL_LIB", "ON")
