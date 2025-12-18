@@ -477,11 +477,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     conflicts("platform=windows")  # Support for windows is through WSL only
 
-    requires(
-        "%gcc@9:12",
-        msg="Chapel requires GCC 9–12 due to LLVM and libstdc++ compatibility"
-    )
-
+    # Only apply if concretizer picked gcc
+    conflicts("%gcc@:7.3", when="%gcc", msg="Chapel requires GCC >= 7.4 (C++17) per Chapel prerequisites")
 
     # Ensure GPU support is Sticky: never allow the concretizer to choose this
     variant("rocm", default=False, sticky=True, description="Enable AMD ROCm GPU support")
