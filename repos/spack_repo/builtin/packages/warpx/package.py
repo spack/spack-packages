@@ -31,12 +31,7 @@ class Warpx(CMakePackage, PythonExtension):
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
     depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
-    for v in [
-        "develop",
-        "25.12",
-        "25.11",
-        "25.04",
-    ]:
+    for v in ["develop", "25.12", "25.11", "25.04"]:
         depends_on(f"amrex@{v}", when=f"@{v}")
         depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
