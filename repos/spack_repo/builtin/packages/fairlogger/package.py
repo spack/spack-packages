@@ -16,6 +16,7 @@ class Fairlogger(CMakePackage):
     maintainers("dennisklein", "ChristianTackeGSI")
 
     version("develop", branch="dev", get_full_repo=True)
+    version("2.3.1", sha256="6cebaeed266f0018c42e02d70a725ad83209a52b950e4d75c490e8bead5db7c7")
     version("2.2.0", sha256="8dfb11e3aa0a9c545f3dfb310d261956727cea558d4123fd8c9c98e135e4d02b")
 
     generator("make", "ninja", default="ninja")
@@ -46,6 +47,7 @@ class Fairlogger(CMakePackage):
     depends_on("boost", when="+pretty")
     conflicts("^boost@1.70:", when="^cmake@:3.14")
     depends_on("fmt")
+    depends_on("fmt@:11", when="@:2.3.0")
 
     def patch(self):
         """FairLogger gets its version number from git.

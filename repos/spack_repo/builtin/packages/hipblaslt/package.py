@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -15,14 +16,21 @@ class Hipblaslt(CMakePackage):
     and extends functionalities beyond a traditional BLAS library"""
 
     homepage = "https://github.com/ROCm/hipBLASLt"
-    url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-6.4.2.tar.gz"
     git = "https://github.com/ROCm/hipBLASLt.git"
+
+    def url_for_version(self, version):
+        if version <= Version("7.0.2"):
+            url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
     tags = ["rocm"]
     libraries = ["libhipblaslt"]
 
     license("MIT")
+    version("7.1.0", sha256="d9e138a15e8195a7e9b5e15240e50c557b830d50a2bafa27db14dad3884dbfd8")
     version("7.0.2", sha256="52d7c1c6852f501f5bd37fa962e6538592741792593a173d8b6963b8f7bd2c41")
     version("7.0.0", sha256="9a38822eea27080dbeab7dd9d39b4bdaeb7c25bc5d19ca6ccf24674c3b34dbae")
     version("6.4.3", sha256="64252588faf8a9089838e8f427e911617916fd6905a8cc65370e8d25fafdf0e4")
@@ -79,6 +87,7 @@ class Hipblaslt(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -98,11 +107,12 @@ class Hipblaslt(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("msgpack-c")
@@ -111,6 +121,12 @@ class Hipblaslt(CMakePackage):
     depends_on("netlib-lapack@3.7.1:", type="test")
     depends_on("py-pyyaml", type="test")
     depends_on("python-venv", when="@6.4:")
+    depends_on("blis", type="test", when="@7.1:")
+    depends_on("boost+filesystem", when="@7.1:")
+    depends_on("googletest@1.10.0:", when="@7.1:")
+    depends_on("py-pyyaml+libyaml", when="@7.1:")
+    depends_on("py-packaging", when="@7.1:")
+    depends_on("py-msgpack", when="@7.1:")
 
     # Sets the proper for clang++ and clang-offload-blunder.
     # Also adds hipblas and msgpack include directories
@@ -122,8 +138,10 @@ class Hipblaslt(CMakePackage):
     patch("002-link-roctracer.patch", when="@6.4")
     patch("002-link-roctracer.7.0.patch", when="@7.0")
 
-    patch("003-use-rocm-smi-config.patch", when="@6.4:")
+    patch("003-use-rocm-smi-config.patch", when="@6.4:7.0")
     patch("0004-Set-rocm-smi-ld-path-7.0.patch", when="@7.0")
+    # https://github.com/ROCm/rocm-libraries/pull/2115
+    patch("005-add-roctracer-include-dir.patch", when="@7.1")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@:6.4"):
@@ -148,7 +166,12 @@ class Hipblaslt(CMakePackage):
             env.set("ROCM_LD_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/ld.lld")
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
 
+        if self.spec.satisfies("@7.1") and self.run_tests:
+            env.append_flags("LDFLAGS", "-lstdc++fs")
+
     def patch(self):
+        purelib = self.spec["python"].package.purelib
+        joblib_path = os.path.join(self.spec["py-joblib"].prefix, purelib)
         if self.spec.satisfies("@6.3:6.4"):
             filter_file(
                 "${rocm_path}/llvm/bin",
@@ -168,9 +191,7 @@ class Hipblaslt(CMakePackage):
                 "tensilelite/Tensile/Ops/gen_assembly.sh",
                 string=True,
             )
-        if self.spec.satisfies("@7.0:"):
-            py_ver = self.spec["python"].version[:-1]
-            joblib_path = f"{self.spec['py-joblib'].prefix}/lib/python{py_ver}/site-packages"
+        if self.spec.satisfies("@7.0"):
             filter_file(
                 "${PROJECT_BINARY_DIR}/lib",
                 ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
@@ -180,13 +201,39 @@ class Hipblaslt(CMakePackage):
                 string=True,
             )
         if not self.spec["hip"].external:
-            if self.spec.satisfies("@6.4:") and self.run_tests:
+            if self.spec.satisfies("@6.4:7.0") and self.run_tests:
                 filter_file(
                     r"${HIP_CLANG_ROOT}/lib",
                     "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
                     "clients/CMakeLists.txt",
                     string=True,
                 )
+            if self.spec.satisfies("@7.1") and self.run_tests:
+                filter_file(
+                    r"${HIP_CLANG_ROOT}/lib",
+                    "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
+                    "projects/hipblaslt/clients/CMakeLists.txt",
+                    string=True,
+                )
+        if self.spec.satisfies("@7.1:"):
+            yaml_path = os.path.join(self.spec["py-pyyaml"].prefix, purelib)
+            packaging_path = os.path.join(self.spec["py-packaging"].prefix, purelib)
+            msgpack_path = os.path.join(self.spec["py-msgpack"].prefix, purelib)
+            filter_file(
+                "${_python_path}",
+                ":".join(
+                    ["${_python_path}", joblib_path, yaml_path, packaging_path, msgpack_path]
+                ),
+                "projects/hipblaslt/cmake/hipblaslt_python.cmake",
+                string=True,
+            )
+            filter_file(
+                "${PROJECT_BINARY_DIR}/lib",
+                ":".join(["${PROJECT_BINARY_DIR}/lib", joblib_path]),
+                "projects/hipblaslt/tensilelite/CMakeLists.txt",
+                "projects/hipblaslt/tensilelite/Tensile/cmake/TensileConfig.cmake",
+                string=True,
+            )
 
     @classmethod
     def determine_version(cls, lib):
@@ -199,6 +246,13 @@ class Hipblaslt(CMakePackage):
             ver = None
         return ver
 
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.1"):
+            return "projects/hipblaslt"
+        else:
+            return "."
+
     def cmake_args(self):
         args = [
             self.define("Tensile_CODE_OBJECT_VERSION", "default"),
@@ -207,7 +261,10 @@ class Hipblaslt(CMakePackage):
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
         if self.run_tests:
             args.append(
                 self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
@@ -221,4 +278,10 @@ class Hipblaslt(CMakePackage):
                     "ROCROLLER_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("HIPBLASLT_ENABLE_CLIENT", self.run_tests))
+        else:
+            args.append(self.define("BUILD_CLIENTS_TESTS", self.run_tests))
+        if self.spec.satisfies("@7.1: %gcc@8.0:8.9"):
+            args.append(self.define("HIPBLASLT_ENABLE_ROCROLLER", "False"))
         return args

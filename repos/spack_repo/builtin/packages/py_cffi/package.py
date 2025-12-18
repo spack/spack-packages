@@ -15,7 +15,8 @@ class PyCffi(PythonPackage):
     homepage = "https://cffi.readthedocs.io/en/latest/"
     pypi = "cffi/cffi-1.13.0.tar.gz"
 
-    license("MIT")
+    license("MIT-0 AND MIT", when="@2:")
+    license("MIT", when="@:1")
 
     version("2.0.0", sha256="44d1b5909021139fe36001ae048dbdde8214afa20200eda0f64c068cac5d5529")
     version("1.17.1", sha256="1c39c6016c32bc48dd54561950ebd6836e1670f2ae46128f67cf49e789c52824")

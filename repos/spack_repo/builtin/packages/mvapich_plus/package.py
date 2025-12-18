@@ -263,7 +263,7 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
             "--disable-opencl",
             "--disable-gl",
             "--enable-fortran=all",
-            "-disable-omb",
+            "--disable-omb",
             f"--enable-wrapper-rpath={'no' if spec.satisfies('~wrapperrpath') else 'yes'}",
         ]
 
