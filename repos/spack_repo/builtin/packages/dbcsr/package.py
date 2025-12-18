@@ -61,7 +61,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     variant("opencl", default=False, description="Enable OpenCL backend")
     variant("mpi_f08", default=False, when="@2.6:", description="Use mpi F08 module")
 
-    variant("g2g", default=False, description="GPU-aware MPI with CUDA/HIP")
+    variant("g2g", default=False, when="@:2.8", description="GPU-aware MPI with CUDA/HIP")
     conflicts("+g2g", when="~cuda ~rocm", msg="GPU-aware MPI requires +cuda or +rocm")
 
     depends_on("c", type="build")  # generated
