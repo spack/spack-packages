@@ -73,7 +73,7 @@ class Gaudi(CMakePackage, CudaPackage):
     variant("cxxstd", default="20", when="@39:", **_cxxstd_common)
 
     variant("aida", default=False, description="Build AIDA interfaces support")
-    variant("cppunit", default=False, description="Build with CppUnit unit testing")
+    variant("cppunit", default=False, description="Build with CppUnit unit testing", when="@:40.0")
     variant("docs", default=False, description="Build documentation with Doxygen")
     variant("examples", default=False, description="Build examples")
     variant("gaudialg", default=False, description="Build GaudiAlg support", when="@37.0:38")
