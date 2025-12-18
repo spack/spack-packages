@@ -47,6 +47,13 @@ class Esmf(MakefilePackage, PythonExtension):
     version("8.1.1", sha256="629690c7a488e84ac7252470349458d7aaa98b54c260f8b3911a2e2f3e713dd0")
     version("8.0.1", sha256="13ce2ca0ae622548c00f7bb18317fb100235ca8b7ddbfac7e201a339e8eb05a3")
 
+    # deprecated versions
+    version(
+        "7.1.0r",
+        sha256="e08f21544083dcbe162b472852e321f8df14f4f711f35508403d32df438367a7",
+        deprecated=True,
+    )
+
     variant("mpi", default=True, description="Build with MPI support")
     variant("openmp", default=True, description="Build with OpenMP support")
     variant("external-lapack", default=False, description="Build with external LAPACK library")
