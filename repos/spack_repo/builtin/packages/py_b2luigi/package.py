@@ -8,7 +8,10 @@ from spack.package import *
 
 
 class PyB2luigi(PythonPackage):
-    """b2luigi is a helper package constructed around luigi that helps you schedule working packages (so-called tasks) locally or on a batch system. Apart from the very powerful dependency management system by luigi, b2luigi extends the user interface and has a built-in support for the queue systems, e.g. LSF and HTCondor."""
+    """b2luigi is a helper package constructed around luigi that helps you schedule working
+    packages (so-called tasks) locally or on a batch system. Apart from the very powerful dependency
+    management system by luigi, b2luigi extends the user interface and has a built-in support
+    for the queue systems, e.g. LSF and HTCondor."""
 
     homepage = "https://github.com/belle2/b2luigi"
     pypi = "b2luigi/b2luigi-1.2.6.tar.gz"
