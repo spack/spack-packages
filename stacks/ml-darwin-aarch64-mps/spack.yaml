@@ -6,9 +6,7 @@ spack:
 
   packages:
     all:
-      target: ["aarch64"]
       require:
-      - target=aarch64
       - +mps
       - ~cuda
       - ~rocm
@@ -17,7 +15,6 @@ spack:
     openblas:
       require:
       - ~fortran
-      - target=aarch64
     python:
       require: "@3.13:"
 
