@@ -33,9 +33,9 @@ class Libvdwxc(AutotoolsPackage):
     depends_on("mpi@2:", when="+mpi")
     depends_on("pfft", when="+pfft")
 
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
+    depends_on("autoconf", type="build", when="@master")
+    depends_on("automake", type="build", when="@master")
+    depends_on("libtool", type="build", when="@master")
 
     # pfft needs MPI
     conflicts("~mpi", "+pfft")
@@ -71,7 +71,3 @@ class Libvdwxc(AutotoolsPackage):
     # The relevant upstream fix for the m4 would be:
     # https://gitlab.com/libvdwxc/libvdwxc/-/commit/9340f857515c4a2e56d2aa7cf3a21c41ba8559c3.diff
     patch("fftw-detection.patch", when="@:0.4.0")
-
-    def url_for_version(self, version):
-        url = "https://launchpad.net/libvdwxc/stable/{0}/+download/libvdwxc-{0}.tar.gz"
-        return url.format(version)
