@@ -17,6 +17,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.blt.package import llnl_link_helpers
 
 from spack.package import *
+from spack.util.executable import which_string
 
 
 class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
@@ -191,6 +192,13 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
         when="@:5.0.1 ^blt@0.4:",
     )
 
+    # https://github.com/LLNL/Umpire/pull/805
+    patch(
+        "https://github.com/LLNL/Umpire/commit/47ff0aa1f7a01a917c3b7ac618e8a9e44a10fd25.patch?full_index=1",
+        sha256="802f074a05e1cb1f428e13d99c5fcb1435f86bd8f36a1ea2f7b6756e6625e0a0",
+        when="@2022.10.0",
+    )
+
     # https://github.com/LLNL/Umpire/pull/816
     patch(
         "https://github.com/LLNL/Umpire/commit/2292d1d6078f6d9523b7ad0886ffa053644569d5.patch?full_index=1",
@@ -232,7 +240,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("backtrace", default=False, description="Enable backtrace tools")
     variant("dev_benchmarks", default=False, description="Enable developer benchmarks")
     variant("device_alloc", default=False, description="Enable DeviceAllocator")
-    variant("werror", default=False, description="Enable warnings as errors")
+    variant("werror", default=True, description="Enable warnings as errors")
     variant("asan", default=False, description="Enable ASAN")
     variant("sanitizer_tests", default=False, description="Enable address sanitizer tests")
     variant("fmt_header_only", default=True, description="Link to header-only fmt target")
@@ -266,7 +274,8 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp~cuda", when="~cuda")
     depends_on("camp~rocm", when="~rocm")
-    depends_on("camp@2025.09:", when="@2025.09:")
+    depends_on("camp@2025.12:", when="@develop")
+    depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
     depends_on("camp@2024.07", when="@2024.07")
     depends_on("camp@2024.02.1", when="@2024.02.1")
@@ -280,9 +289,9 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("sqlite", when="+sqlite_experimental")
     depends_on("mpi", when="+mpi")
 
-    depends_on("fmt@9.1:", when="@2024.02.0:")
+    depends_on("fmt@9.1:11.0", when="@2024.02.0:")
     # For some reason, we need c++ 17 explicitly only with intel
-    depends_on("fmt@9.1: cxxstd=17", when="@2024.02.0: %intel@19.1")
+    depends_on("fmt@9.1:11.0 cxxstd=17", when="@2024.02.0: %intel@19.1")
 
     with when("@5.0.0:"):
         with when("+cuda"):
@@ -386,11 +395,40 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("ENABLE_CUDA", True))
             # Umpire used to pick only the first architecture in the list. The shared logic in
             # CachedCMakePackage keeps the list of architectures.
+
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if spec.satisfies("target=ppc64le %gcc@8.1:"):
+                cuda_flags.append("-Xcompiler -mno-float128")
+
+            entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("ENABLE_CUDA", False))
 
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            compiler = self.compiler
+            rocm_root = spec["llvm-amdgpu"].prefix
+            hip_link_flags = ""
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix)))
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix)))
+            else:
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)))
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
@@ -419,6 +457,33 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(
             cmake_cache_option("UMPIRE_ENABLE_MPI3_SHARED_MEMORY", spec.satisfies("+mpi3_shmem"))
         )
+
+        # MPI configuration from mpi_for_radiuss_projects
+        if spec.satisfies("+mpi"):
+            if spec["mpi"].name == "spectrum-mpi" and spec.satisfies("^blt"):
+                entries.append(cmake_cache_string("BLT_MPI_COMMAND_APPEND", "mpibind"))
+
+            sys_type = spec.architecture
+            if "SYS_TYPE" in env:
+                sys_type = env["SYS_TYPE"]
+            # Replace /usr/bin/srun path with srun flux wrapper path on TOSS 4
+            # TODO: Remove this logic by adding `using_flux` case in
+            #  spack/lib/spack/spack/build_systems/cached_cmake.py:196 and remove hard-coded
+            #  path to srun in same file.
+            if "toss_4" in sys_type:
+                srun_wrapper = which_string("srun")
+                mpi_exec_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_EXECUTABLE" in entry
+                ]
+                if len(mpi_exec_index) > 0:
+                    del entries[mpi_exec_index[0]]
+                mpi_exec_flag_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_NUMPROC_FLAG" in entry
+                ]
+                if len(mpi_exec_flag_index) > 0:
+                    del entries[mpi_exec_flag_index[0]]
+                entries.append(cmake_cache_path("MPIEXEC_EXECUTABLE", srun_wrapper))
+                entries.append(cmake_cache_string("MPIEXEC_NUMPROC_FLAG", "-n"))
 
         return entries
 

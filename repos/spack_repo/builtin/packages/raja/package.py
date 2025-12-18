@@ -222,7 +222,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Build OpenMP backend")
     variant("shared", default=False, description="Build shared libs")
     variant("desul", default=False, description="Build desul atomics backend")
-    variant("vectorization", default=False, description="Build SIMD/SIMT intrinsics support")
+    variant("vectorization", default=True, description="Build SIMD/SIMT intrinsics support")
     variant(
         "omptask", default=False, description="Build OpenMP task variants of internal algorithms"
     )
@@ -231,6 +231,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("gpu-profiling", default=False, description="Enable GPU profiling")
 
     variant("plugins", default=False, description="Enable runtime plugins")
+    variant("caliper", default=False, description="Enable caliper support")
     variant("examples", default=True, description="Build examples.")
     variant("exercises", default=True, description="Build exercises.")
     # TODO: figure out gtest dependency and then set this default True
@@ -292,6 +293,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.14:", when="@:2022.03", type="build")
 
     depends_on("llvm-openmp", when="+openmp %apple-clang")
+
+    depends_on("caliper", when="+caliper")
 
     depends_on("rocprim", when="+rocm")
     with when("+rocm @0.12.0:"):

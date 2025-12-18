@@ -16,6 +16,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.blt.package import llnl_link_helpers
 
 from spack.package import *
+from spack.util.executable import which_string
 
 
 class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
@@ -231,6 +232,22 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("ENABLE_CUDA", True))
             # Shared handling of cuda.
 
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if spec.satisfies("target=ppc64le %gcc@8.1:"):
+                cuda_flags.append("-Xcompiler -mno-float128")
+
+            entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
+
             # Custom options.
             # We place everything in CMAKE_CUDA_FLAGS_(RELEASE|RELWITHDEBINFO|DEBUG)
             # which are not set by cuda_for_radiuss_projects
@@ -270,6 +287,18 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         if "+rocm" in spec:
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            hip_link_flags = ""
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix)))
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix)))
+            else:
+                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)))
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
@@ -305,6 +334,33 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries = super().initconfig_mpi_entries()
 
         entries.append(cmake_cache_option("ENABLE_MPI", "+mpi" in spec))
+
+        # MPI configuration from mpi_for_radiuss_projects
+        if spec.satisfies("+mpi"):
+            if spec["mpi"].name == "spectrum-mpi" and spec.satisfies("^blt"):
+                entries.append(cmake_cache_string("BLT_MPI_COMMAND_APPEND", "mpibind"))
+
+            sys_type = spec.architecture
+            if "SYS_TYPE" in env:
+                sys_type = env["SYS_TYPE"]
+            # Replace /usr/bin/srun path with srun flux wrapper path on TOSS 4
+            # TODO: Remove this logic by adding `using_flux` case in
+            #  spack/lib/spack/spack/build_systems/cached_cmake.py:196 and remove hard-coded
+            #  path to srun in same file.
+            if "toss_4" in sys_type:
+                srun_wrapper = which_string("srun")
+                mpi_exec_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_EXECUTABLE" in entry
+                ]
+                if len(mpi_exec_index) > 0:
+                    del entries[mpi_exec_index[0]]
+                mpi_exec_flag_index = [
+                    index for index, entry in enumerate(entries) if "MPIEXEC_NUMPROC_FLAG" in entry
+                ]
+                if len(mpi_exec_flag_index) > 0:
+                    del entries[mpi_exec_flag_index[0]]
+                entries.append(cmake_cache_path("MPIEXEC_EXECUTABLE", srun_wrapper))
+                entries.append(cmake_cache_string("MPIEXEC_NUMPROC_FLAG", "-n"))
 
         return entries
 
