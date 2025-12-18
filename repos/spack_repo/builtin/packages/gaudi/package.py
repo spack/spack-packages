@@ -216,7 +216,9 @@ class Gaudi(CMakePackage, CudaPackage):
     def cmake_args(self):
         args = [
             # Note: until 38.1, gaudi only builds examples when testing enabled
-            self.define("BUILD_TESTING", self.run_tests or self.spec.satisfies("@:38.1 +examples")),
+            self.define(
+                "BUILD_TESTING", self.run_tests or self.spec.satisfies("@:38.1 +examples")
+            ),
             self.define_from_variant("GAUDI_BUILD_EXAMPLES", "examples"),
             self.define_from_variant("GAUDI_USE_AIDA", "aida"),
             self.define_from_variant("GAUDI_USE_CPPUNIT", "cppunit"),
