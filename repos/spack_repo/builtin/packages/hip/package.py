@@ -450,6 +450,7 @@ class Hip(CMakePackage):
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
 
+        paths = self.get_paths()
         env.set("HIPCC_COMPILE_FLAGS_APPEND", "")
         if self.spec.satisfies("+rocm"):
             env.append_path(
