@@ -96,7 +96,7 @@ class Blt(Package):
     patch(
         "https://github.com/LLNL/blt/commit/5ff55b519fc8d5216b07edaf301e2d2bf328021e.patch?full_index=1",
         sha256="116702b89d01e022546911fe0b823afa99a6b37a35077055141ad5d480508422",
-        when="@0.7.1:",
+        when="@0.7.1",
     )
 
     depends_on("c", type="build")  # generated
