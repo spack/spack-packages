@@ -45,6 +45,8 @@ class ClingoBootstrap(Clingo):
         patch("version-script.patch", when="@spack,5.5:5.6")
         patch("version-script-5.4.patch", when="@5.2:5.4")
 
+    patch("optimized-hash-set.patch", when="@spack")
+
     # CMake at version 3.16.0 or higher has the possibility to force the
     # Python interpreter, which is crucial to build against external Python
     # in environment where more than one interpreter is in the same prefix

@@ -1,0 +1,104 @@
+From fdf6b2241be07205ee15eafd82c694271e6f3d02 Mon Sep 17 00:00:00 2001
+From: Harmen Stoppels <me@harmenstoppels.nl>
+Date: Thu, 18 Dec 2025 10:23:50 +0100
+Subject: [PATCH] hash_set.hh: optimizations
+
+- Switch table size from prime numbers to powers of two.
+- Replace the modulo operator (`%`) with a bitwise AND mask (`&`) for
+  hash mapping, reducing instruction cost
+- Precompute threshold
+---
+ libgringo/gringo/hash_set.hh | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
+
+diff --git a/libgringo/gringo/hash_set.hh b/libgringo/gringo/hash_set.hh
+index 5439377..0258331 100644
+--- a/libgringo/gringo/hash_set.hh
++++ b/libgringo/gringo/hash_set.hh
+@@ -63,9 +63,10 @@ public:
+ 
+     // at least n value can be inserted without reallocation
+     // and the container is larger by a constant factor c > 1 than c*r
+-    HashSet(SizeType n = 0, SizeType r = 0) : size_(0), reserved_(0) {
++    HashSet(SizeType n = 0, SizeType r = 0) : size_(0), reserved_(0), threshold_(0) {
+         if (n > 0) {
+             reserved_ = grow_(n, r);
++            threshold_ = static_cast<SizeType>(reserved_ * loadMax());
+             table_.reset(new ValueType[reserved_]);
+             std::fill(table_.get(), table_.get() + reserved_, Literals::open);
+         }
+@@ -85,15 +86,15 @@ public:
+     void swap(HashSet &other) {
+         std::swap(table_, other.table_);
+         std::swap(reserved_, other.reserved_);
++        std::swap(threshold_, other.threshold_);
+         std::swap(size_, other.size_);
+     }
+     SizeType reserved() const { return reserved_; }
+-    SizeType maxSize() const { return maxPrime<SizeType>(); }
++    SizeType maxSize() const { return 1u << 31; }
+     bool reserveNeedsRebuild(SizeType n) const {
+         if (n <= 11) { return n > reserved(); }
+         else {
+-            double load = double(n) / reserved_;
+-            return (load > loadMax() && reserved_ < maxSize()) || n > maxSize();
++            return (n > threshold_ && reserved_ < maxSize()) || n > maxSize();
+         }
+     }
+     template <typename Hasher, typename EqualTo>
+@@ -105,6 +106,7 @@ public:
+             if (table_) {
+                 TableType table(new ValueType[rNew]);
+                 reserved_ = rNew;
++                threshold_ = static_cast<SizeType>(reserved_ * loadMax());
+                 std::fill(table.get(), table.get() + reserved_, Literals::open);
+                 std::swap(table, table_);
+                 for (auto it = table.get(), ie = table.get() + rOld; it != ie; ++it) {
+@@ -114,6 +116,7 @@ public:
+             else {
+                 table_.reset(new ValueType[rNew]);
+                 reserved_ = rNew;
++                threshold_ = static_cast<SizeType>(reserved_ * loadMax());
+                 std::fill(table_.get(), table_.get() + reserved_, Literals::open);
+             }
+         }
+@@ -150,16 +153,26 @@ public:
+         --size_;
+     }
+ private:
++    static SizeType next_pow2(SizeType n) {
++        if (n == 0) { return 1; }
++        --n;
++        n |= n >> 1;
++        n |= n >> 2;
++        n |= n >> 4;
++        n |= n >> 8;
++        n |= n >> 16;
++        return n + 1;
++    }
+     SizeType grow_(SizeType n, SizeType r) {
+         if (n > maxSize()) { throw std::overflow_error("container size exceeded"); }
+         if (n > 11) { n = std::min(static_cast<SizeType>(std::max(n / loadMax() + 1.0, r * 2.0)), maxSize()); }
+-        return n < 4 ? n : nextPrime(n);
++        return next_pow2(n);
+     }
+ #ifdef GRINGO_PROBE_LINEAR
+     template <typename Hasher, typename... Args>
+     SizeType hash_(Hasher const &hasher, Args const &... val) {
+         size_t seed = hasher(val...);
+-        return hash_mix(seed) % reserved();
++        return hash_mix(seed) & (reserved() - 1);
+     }
+     template <typename Hasher, typename EqualTo, typename... Args>
+     std::pair<ValueType*, bool> find_(Hasher const &hasher, EqualTo const &equalTo, Args&&... val) {
+@@ -229,6 +242,7 @@ private:
+ private:
+     SizeType size_;
+     SizeType reserved_;
++    SizeType threshold_ = 0;
+     TableType table_;
+ };
+ 
+-- 
+2.43.0
+
