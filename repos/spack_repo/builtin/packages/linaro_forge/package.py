@@ -80,27 +80,27 @@ class LinaroForge(Package):
         version(
             "23.0.4",
             sha256="a19e6b247badaa52f78815761f71fb95a565024b7f79bdfb2f602f18b47a881c",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0.3",
             sha256="a7e23ef2a187f8e2d6a6692cafb931c9bb614abf58e45ea9c2287191c4c44f02",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0.2",
             sha256="698fda8f7cc05a06909e5dcc50b9956f94135d7b12e84ffb21999a5b45c70c74",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0.1",
             sha256="552e4a3f408ed4eb5f1bfbb83c94530ee8733579c56c3e98050c0ad2d43eb433",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0",
             sha256="7ae20bb27d539751d1776d1e09a65dcce821fc6a75f924675439f791261783fb",
-            deprecated=True
+            deprecated=True,
         )
     elif platform.machine() == "ppc64le":
         # N.B. support for ppc64le was dropped in 24.0
@@ -181,27 +181,27 @@ class LinaroForge(Package):
         version(
             "23.0.4",
             sha256="41a81840a273ea9a232efb4f031149867c5eff7a6381d787e18195f1171caac4",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0.3",
             sha256="f2a010b94838f174f057cd89d12d03a89ca946163536eab178dd1ec877cdc27f",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0.2",
             sha256="565f0c073c6c8cbb06c062ca414e3f6ff8c6ca6797b03d247b030a9fbc55a5b1",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0.1",
             sha256="1d681891c0c725363f0f45584c9b79e669d5c9782158453b7d24b4b865d72755",
-            deprecated=True
+            deprecated=True,
         )
         version(
             "23.0",
             sha256="f4ab12289c992dd07cb1a15dd985ef4713d1f9c0cf362ec5e9c995cca9b1cf81",
-            deprecated=True
+            deprecated=True,
         )
 
     variant(
