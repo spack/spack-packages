@@ -871,8 +871,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             after = spec["llvm-amdgpu"].prefix.bin.clang
             filter_file(before, after, ".bazelrc")
 
-        # filter_file("build:opt --copt=-march=native", "", ".tf_configure.bazelrc")
-        # filter_file("build:opt --host_copt=-march=native", "", ".tf_configure.bazelrc")
+        filter_file("build:opt --copt=-march=native", "", ".tf_configure.bazelrc")
+        filter_file("build:opt --host_copt=-march=native", "", ".tf_configure.bazelrc")
 
     def build(self, spec, prefix):
         # Bazel needs the directory to exist on install
