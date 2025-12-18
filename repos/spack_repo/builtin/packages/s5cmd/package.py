@@ -32,11 +32,11 @@ class S5cmd(GoPackage):
         bash_comp_path = bash_completion_path(self.prefix)
         mkdirp(bash_comp_path)
         with open(bash_comp_path / self.name, "w") as file:
-            env.set("SHELL", "bash")
+            env["SHELL"] = "bash"
             s5cmd("--install-completion", output=file)
 
         zsh_comp_path = zsh_completion_path(self.prefix)
         mkdirp(zsh_comp_path)
         with open(zsh_comp_path / f"_{self.name}", "w") as file:
-            env.set("SHELL", "zsh")
+            env["SHELL"] = "zsh"
             s5cmd("--install-completion", output=file)
