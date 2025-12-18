@@ -19,4 +19,7 @@ class PyPyvips(PythonPackage):
     depends_on("pkgconfig@1.5:", type="build")
     depends_on("py-cffi@1:", type=("build", "run"))
 
-    depends_on("libvips", type="link")
+    depends_on("libvips +fftw +jpeg +tiff +png +poppler", type="link")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.prepend_path("LD_LIBRARY_PATH", self.spec["libvips"].prefix.lib)
