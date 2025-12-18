@@ -26,6 +26,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
 
     license("MIT")
 
+    version("1.23.2", tag="v1.23.2", commit="a83fc4d58cb48eb68890dd689f94f28288cf2278")
     version("1.22.2", tag="v1.22.2", commit="5630b081cd25e4eccc7516a652ff956e51676794")
     version("1.21.1", tag="v1.21.1", commit="8f7cce3a49fdbdac96e0868b75b7d0159db7ac7f")
     version("1.21.0", tag="v1.21.0", commit="e0b66cad282043d4377cea5269083f17771b6dfc")
@@ -50,7 +51,9 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("cmake@3.26:", when="@1.17:", type="build")
     depends_on("cmake@3.1:", type="build")
 
-    depends_on("abseil-cpp@20240722.0: cxxstd=17", when="@1.20:")
+    # deps.txt
+    depends_on("abseil-cpp@20250512.0: cxxstd=17", when="@1.23:")
+    depends_on("abseil-cpp@20240722.0: cxxstd=17", when="@1.20:1.22")
     # Needs absl/strings/has_absl_stringify.h
     # cxxstd=20 may also work, but cxxstd=14 does not
     depends_on("abseil-cpp@20240116.0: cxxstd=17", when="@1.17:1.19.2")
@@ -61,6 +64,12 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-pybind11", type="build")
+    depends_on("py-pybind11@2.13.6:", when="@1.21:", type="build")
+
+    # shared flatbuffers presents as incorrect cmake target
+    depends_on("flatbuffers~shared", type=("build", "link"))
+    # version static_assert in onnxruntime/core/flatbuffers/schema/ort.fbs.h
+    depends_on("flatbuffers@23.5.26", when="@1.18:", type=("build", "link"))
 
     # requirements.txt
     depends_on("py-coloredlogs", when="@1.17:", type=("build", "run"))
@@ -75,13 +84,17 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("py-sympy@1.1:", type=("build", "run"))
 
     depends_on("protobuf")
+    depends_on("protobuf@3.21.12:", when="@1.23:")
     # https://github.com/microsoft/onnxruntime/pull/11639
     depends_on("protobuf@:3.19", when="@:1.11")
     depends_on("py-cerberus", type=("build", "run"))
+    # C++ onnx library with exported shape inference functions (patched in onnx package)
+    depends_on("onnx@1.18", type=("build", "link"), when="@1.23")
+    depends_on("onnx", type=("build", "link"))
     depends_on("py-onnx", type=("build", "run"))
+    depends_on("py-onnx@1.18", type=("build", "run"), when="@1.23")
     depends_on("py-onnx@:1.16", type=("build", "run"), when="@:1.18")
     depends_on("py-onnx@:1.15.0", type=("build", "run"), when="@:1.17")
-    depends_on("py-onnx@:1.16", type=("build", "run"), when="@:1.18")
     depends_on("zlib-api")
     depends_on("libpng")
     depends_on("cuda", when="+cuda")
@@ -118,6 +131,15 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
             depends_on(f"{pkg_dep}@6.1:", when="@1.18:")
             depends_on(pkg_dep)
 
+    patch(
+        "https://github.com/microsoft/onnxruntime/commit/4d614e15bd9e6949bc3066754791da403e00d66c.patch?full_index=1",
+        sha256="76f9920e591bc52ea80f661fa0b5b15479960004f1be103467b219e55c73a8cc",
+        when="@1.19:1.20",
+    )
+
+    # Fix __builtin_ia32_tpause compiler incompatibility between GCC and Clang
+    patch("fix-tpause-clang.patch", when="@1.23:", level=1)
+
     # Adopted from CMS experiment's fork of onnxruntime
     # https://github.com/cms-externals/onnxruntime/compare/5bc92df...d594f80
     patch("cms.patch", level=1, when="@1.7.2")
@@ -147,6 +169,12 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         "https://github.com/microsoft/onnxruntime/pull/23260.patch?full_index=1",
         sha256="fedcf5b0720ebad97d332f440f427a7e9f2fc96ff0a648f7832786ef1a83fe0e",
         when="@1.17:1.20.2",
+    )
+    # Fix missing cstdint include for uint32_t
+    patch(
+        "https://github.com/microsoft/onnxruntime/commit/d6e712c5b7b6260a61e54d1fe40107cf5366ee77.patch?full_index=1",
+        sha256="a48089490177d6115881325f0984d36b172d492c91eeb85fcc785ba112d863f9",
+        when="@:1.23",
     )
 
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
@@ -191,6 +219,15 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         value = self.dynamic_cpu_arch_values.index(value)
         env.set("MLAS_DYNAMIC_CPU_ARCH", str(value))
 
+    @property
+    def python_lib_dir(self):
+        python_vers_phrase = "python{0}".format(self.spec["python"].version.up_to(2))
+        return join_path("lib", python_vers_phrase)
+
+    @property
+    def site_packages_dir(self):
+        return join_path(self.python_lib_dir, "site-packages")
+
     def cmake_args(self):
         define = self.define
         define_from_variant = self.define_from_variant
@@ -206,6 +243,8 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
             define("onnxruntime_CROSS_COMPILING", False),
             define("onnxruntime_USE_FULL_PROTOBUF", True),
             define("onnxruntime_DISABLE_CONTRIB_OPS", False),
+            # Point to py-onnx for proto files (not in C++ onnx installation)
+            define("onnx_SOURCE_DIR", join_path(self.spec["py-onnx"].prefix, self.site_packages_dir)),
         ]
 
         if self.spec.satisfies("+cuda"):
