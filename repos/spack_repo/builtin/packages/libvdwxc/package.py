@@ -12,6 +12,7 @@ class Libvdwxc(AutotoolsPackage):
     """Portable C library of density functionals with van der Waals
     interactions for density functional theory"""
 
+    maintainers = "mtaillefumier"
     homepage = "https://libvdwxc.gitlab.io/libvdwxc/"
     url = "https://launchpad.net/libvdwxc/stable/0.5.0/+download/libvdwxc-0.5.0.tar.gz"
     git = "https://gitlab.com/libvdwxc/libvdwxc"
