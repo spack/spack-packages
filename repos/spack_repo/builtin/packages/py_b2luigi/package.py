@@ -18,16 +18,19 @@
 #
 # See the Spack documentation for more information on packaging.
 # ----------------------------------------------------------------------------
+from spack_repo.builtin.build_systems.python import PythonPackage
 
-from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
 
-class PyB2luigi(Package):
+class PyB2luigi(PythonPackage):
     """b2luigi is a helper package constructed around luigi that helps you schedule working packages (so-called tasks) locally or on a batch system. Apart from the very powerful dependency management system by luigi, b2luigi extends the user interface and has a built-in support for the queue systems, e.g. LSF and HTCondor."""
 
+    homepage = "https://github.com/belle2/b2luigi"
     pypi = "b2luigi/b2luigi-1.2.6.tar.gz"
+
+    license("GNU")
     
     # To be decided
     #maintainers("github_user1", "github_user2")
@@ -36,7 +39,7 @@ class PyB2luigi(Package):
     # as py_tenacity is a spack package
     version("1.2.6", sha256="9f3be756f0961ca2241d36d9a9174ea5a23ebd7787cbfa78632047aae25f1202")
 
-    depends_on("python@2.8:3.12", type=("build", "run"))
+    depends_on("python@3.8:3.12", type=("build", "run"))
     depends_on("py-luigi@3.0.2:", type=("build", "run"))
     depends_on("py-parse@1.8:", type=("build", "run"))
     depends_on("py-gitpython@2.1.11:", type=("build", "run"))
