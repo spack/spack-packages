@@ -56,7 +56,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # A list of GitHub accounts to notify when the package is updated.
     # TODO: add chapel-project github account
-    maintainers("arezaii", "bonachea", "arifthpe")
+    maintainers("arezaii", "bonachea", "arifthpe", "e-kayrakli")
 
     tags = ["e4s"]
 
