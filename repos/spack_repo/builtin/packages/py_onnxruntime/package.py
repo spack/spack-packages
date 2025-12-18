@@ -244,7 +244,9 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
             define("onnxruntime_USE_FULL_PROTOBUF", True),
             define("onnxruntime_DISABLE_CONTRIB_OPS", False),
             # Point to py-onnx for proto files (not in C++ onnx installation)
-            define("onnx_SOURCE_DIR", join_path(self.spec["py-onnx"].prefix, self.site_packages_dir)),
+            define(
+                "onnx_SOURCE_DIR", join_path(self.spec["py-onnx"].prefix, self.site_packages_dir)
+            ),
         ]
 
         if self.spec.satisfies("+cuda"):
