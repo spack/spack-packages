@@ -34,9 +34,9 @@ class PyB2luigi(Package):
 
     # We start at 1.2.6 as this was the change from retry2->tenacity dependency
     # as py_tenacity is a spack package
-    version("1.2.6", sha256="TODO INSERT SH256 WHEN VERSION IS AVAILABLE")
+    version("1.2.6", sha256="9f3be756f0961ca2241d36d9a9174ea5a23ebd7787cbfa78632047aae25f1202")
 
-    depends_on("python@3.8:3.12", type=("build", "run"))
+    depends_on("python@2.8:3.12", type=("build", "run"))
     depends_on("py-luigi@3.0.2:", type=("build", "run"))
     depends_on("py-parse@1.8:", type=("build", "run"))
     depends_on("py-gitpython@2.1.11:", type=("build", "run"))
