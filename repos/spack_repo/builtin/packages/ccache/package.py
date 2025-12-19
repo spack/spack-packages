@@ -103,14 +103,14 @@ class Ccache(CMakePackage):
         ]
 
         if self.spec.satisfies("@4.10:"):
-            args.extend([
-                self.define("DEPS", "LOCAL"),
-            ])
+            args.extend([self.define("DEPS", "LOCAL")])
         else:
-            args.extend([
-                self.define("ZSTD_FROM_INTERNET", False),
-                self.define("HIREDIS_FROM_INTERNET", False),
-            ])
+            args.extend(
+                [
+                    self.define("ZSTD_FROM_INTERNET", False),
+                    self.define("HIREDIS_FROM_INTERNET", False),
+                ]
+            )
 
         return args
 
