@@ -71,10 +71,14 @@ class Vecgeom(CMakePackage, CudaPackage):
     )
     variant("gdml", default=True, description="Support native GDML geometry descriptions")
     # TODO: delete geant4/root variants since they don't affect the build
-    variant("geant4", default=False, when="@:1", description="Support Geant4 geometry construction")
+    variant(
+        "geant4", default=False, when="@:1", description="Support Geant4 geometry construction"
+    )
     variant("root", default=False, when="@:1", description="Support ROOT geometry construction")
     variant("shared", default=True, description="Build shared libraries")
-    variant("surface", default=False, when="@2:", description="Support surface frame representation")
+    variant(
+        "surface", default=False, when="@2:", description="Support surface frame representation"
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
