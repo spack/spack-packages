@@ -52,7 +52,6 @@ class Thrift(CMakePackage, AutotoolsPackage):
         "python",
         default=True,
         description="Build support for python",
-        when="build_system=autotools",
     )
 
     build_system("cmake", "autotools", default="autotools")
