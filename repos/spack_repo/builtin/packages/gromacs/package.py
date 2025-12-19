@@ -365,6 +365,8 @@ class Gromacs(CMakePackage, CudaPackage):
         sha256="9372c235719ca04d6dd418fb5943f773e03f05246e3e059a8578089b14b2420c",
         when="@2025.0",
     )
+    # 2025.0 
+    patch("pr4965-2025.0.patch", when="@2025.0")
 
     filter_compiler_wrappers(
         "*.cmake", relative_root=os.path.join("share", "cmake", "gromacs_mpi")
