@@ -24,6 +24,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     license("GPL-2.0-or-later")
 
     version("develop", branch="develop")
+    version("2.9.1", sha256="fa5a4aeba0a07761511af2c26c779bd811b5ea0ef06a5d94535b6dd7b2e0ce59")
     version("2.9.0", sha256="a04cacd2203bd97a31ac993f9ab84237a48191140bba29efadbc27db544bbcd6")
     version("2.8.0", sha256="d55e4f052f28d1ed0faeaa07557241439243287a184d1fd27f875c8b9ca6bd96")
     version("2.7.0", sha256="25c367b49fb108c5230bcfb127f05fc16deff2bb467f437023dfa6045aff66f6")
