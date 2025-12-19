@@ -420,7 +420,6 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
 
             # HIP configuration from hip_for_radiuss_projects
-            compiler = self.compiler
             rocm_root = spec["llvm-amdgpu"].prefix
             hip_link_flags = ""
             gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
