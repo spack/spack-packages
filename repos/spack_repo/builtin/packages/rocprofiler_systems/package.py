@@ -158,7 +158,8 @@ class RocprofilerSystems(CMakePackage):
     depends_on("dyninst@:12", when="@6 ~internal-dyninst")
     depends_on("dyninst@13", when="@7 ~internal-dyninst")
     depends_on(
-        "boost+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
+        "boost@:1.88"
+        "+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
         when="+internal-dyninst",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")

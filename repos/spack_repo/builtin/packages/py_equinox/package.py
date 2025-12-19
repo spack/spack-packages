@@ -25,6 +25,7 @@ class PyEquinox(PythonPackage, CudaPackage):
     maintainers("abhishek1297")
     license("Apache-2.0", checked_by="abhishek1297")
 
+    version("0.13.2", sha256="509ad744ff99b7c684d45230d6890f9e78eac1a556d7a06db1eff664a3cac74f")
     version("0.13.1", sha256="e90f11cfe66b2f73f5c172260a17c48851794a0f243dd2cbe4ea70f4c90cbd07")
     version("0.13.0", sha256="d59615be722373e9d66e0ba78462964e6357fb76a8b1b98c2c6027961b778a69")
     version("0.12.2", sha256="648e4206bbc53b228922e8f18cd3cffe543ddda1172c0002f8954e484bab0023")
@@ -50,12 +51,15 @@ class PyEquinox(PythonPackage, CudaPackage):
             with when(cuda_specs):
                 depends_on(f"py-jaxlib@0.4.13:0.4.26 {cuda_specs}", when="@:0.11.10")
                 depends_on(f"py-jaxlib@0.4.38:0.5 {cuda_specs}", when="@0.11.11:0.11.12")
-                depends_on(f"py-jaxlib@0.4.38:0.6 {cuda_specs}", when="@0.12:")
+                depends_on(f"py-jaxlib@0.4.38: {cuda_specs}", when="@0.12:")
 
         depends_on("py-jax@0.4.13:0.4.26", when="@:0.11.10")
         depends_on("py-jax@0.4.38:0.5", when="@0.11.11:0.11.12")
-        depends_on("py-jax@0.4.38:0.6", when="@0.12:")
+        depends_on("py-jax@0.4.38:", when="@0.12:")
 
         depends_on("py-jaxtyping@0.2.20:")
         depends_on("py-typing-extensions@4.5.0:")
         depends_on("py-wadler-lindig@0.1.0:")
+
+    conflicts("^py-jaxlib@0.7.0:0.7.1", when="@0.12:")
+    conflicts("^py-jax@0.7.0:0.7.1", when="@0.12:")
