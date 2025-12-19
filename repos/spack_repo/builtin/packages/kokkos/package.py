@@ -289,16 +289,27 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
 
-    cxxstds = ["14", "17", "20", "23"]
     variant(
         "cxxstd",
         default="17",
-        values=(
-            conditional("14", when="@:3"),
-            conditional("17", when="@:4"),
-            "20",
-            conditional("23", when="@4:"),
-        ),
+        values=("14", "17", "20"),
+        when="@3",
+        multi=False,
+        description="C++ standard",
+    )
+    variant(
+        "cxxstd",
+        default="17",
+        values=("17", "20", "23"),
+        when="@4",
+        multi=False,
+        description="C++ standard",
+    )
+    variant(
+        "cxxstd",
+        default="20",
+        values=("20", "23"),
+        when="@5",
         multi=False,
         description="C++ standard",
     )
@@ -312,19 +323,13 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant("alloc_async", default=False, description="Use CudaMallocAsync", when="@4.2: +cuda")
 
     # SYCL and OpenMPTarget require C++17 or higher
-    for cxxstdver in cxxstds[: cxxstds.index("17")]:
-        conflicts(
-            "+sycl", when="cxxstd={0}".format(cxxstdver), msg="SYCL requires C++17 or higher"
-        )
-        conflicts(
-            "+openmptarget",
-            when="cxxstd={0}".format(cxxstdver),
-            msg="OpenMPTarget requires C++17 or higher",
-        )
+    conflicts("+sycl", when="cxxstd=14", msg="SYCL requires C++17 or higher")
+    conflicts("+openmptarget", when="cxxstd=14", msg="OpenMPTarget requires C++17 or higher")
 
     # HPX should use the same C++ standard
-    for cxxstd in cxxstds[: cxxstds.index("23")]:
-        depends_on("hpx cxxstd={0}".format(cxxstd), when="+hpx cxxstd={0}".format(cxxstd))
+    for cxxstd in ["14", "17", "20"]:
+        depends_on(f"hpx cxxstd={cxxstd}", when=f"+hpx cxxstd={cxxstd}")
+    conflicts("+hpx", when="cxxstd=23", msg="hpx package does not yet support cxxstd=23")
 
     # HPX version constraints
     depends_on("hpx@1.7:", when="+hpx")
