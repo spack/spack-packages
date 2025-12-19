@@ -79,6 +79,9 @@ class Ccache(CMakePackage):
 
     depends_on("zstd", when="@4.0:")
     depends_on("fmt@8:", when="@4.10:")
+    depends_on("xxhash@0.8:", when="@4.10:")
+    depends_on("span-lite@0.10.3:", when="@4.10:")
+    # NOTE: blake3, cpphttplib, tlexpected are all automatically vendored
 
     depends_on("hiredis@0.13.3:", when="@4.4: +redis")
     depends_on("pkgconfig", type="build", when="@4.4:")
