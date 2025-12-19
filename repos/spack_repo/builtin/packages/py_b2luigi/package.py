@@ -18,17 +18,19 @@ class PyB2luigi(PythonPackage):
 
     license("GNU")
 
+    tags = ["hep"]
+
     # To be decided
     # maintainers("github_user1", "github_user2")
 
     # We start at 1.2.6 as this was the change from retry2->tenacity dependency
     version("1.2.6", sha256="9f3be756f0961ca2241d36d9a9174ea5a23ebd7787cbfa78632047aae25f1202")
 
-    depends_on("python@3.8:3.12", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-luigi@3.0.2:", type=("build", "run"))
     depends_on("py-parse@1.8:", type=("build", "run"))
     depends_on("py-gitpython@2.1.11:", type=("build", "run"))
     depends_on("py-colorama@0.3.9:", type=("build", "run"))
     depends_on("py-cachetools@2.1.1:", type=("build", "run"))
     depends_on("py-jinja2", type=("build", "run"))
-    depends_on("py-tenacity@8:9", type=("build", "run"))
+    depends_on("py-tenacity@8", type=("build", "run"))
