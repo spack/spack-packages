@@ -28,6 +28,9 @@ class PyArkouda(PythonPackage):
     version("main", branch="main")
 
     version(
+        "2025.09.30", sha256="10f488a3ff3482b66f1b1e8a4235d72e91ad07acb932eca85d1e695f0f6155a2"
+    )
+    version(
         "2025.08.20", sha256="3e305930905397ff3a7a28a5d8cc2c9adca4194ca7f6ee51f749f427a2dea92c"
     )
     version(
@@ -47,15 +50,16 @@ class PyArkouda(PythonPackage):
     variant("dev", default=False, description="Include arkouda developer extras")
 
     depends_on("python@3.9:3.12.3", type=("build", "run"), when="@:2025.01.13")
-    depends_on("python@3.9:3.13", type=("build", "run"), when="@2025.07.03:")
+    depends_on("python@3.9:3.13", type=("build", "run"), when="@2025.07.03:2025.08.20")
+    depends_on("python@3.10:3.13", type=("build", "run"), when="@2025.09.30:")
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy@1.25:1", when="@:2025.01.13", type=("build", "run"))
     depends_on("py-numpy@2", when="@2025.07.03:", type=("build", "run"))
     depends_on("py-pandas@2.2.3:", when="@2025.07.03:")
     depends_on("py-pandas@1.4.0:", type=("build", "run"))
     conflicts("^py-pandas@2.2.0", msg="arkouda client not compatible with pandas 2.2.0")
-    depends_on("py-pyarrow@:19", type=("build", "run"))
-    depends_on("py-pyarrow@15:19", when="@2025.07.03:")
+    depends_on("py-pyarrow@:19", type=("build", "run"), when="@:2025.01.13")
+    depends_on("py-pyarrow@15:19", type=("build", "run"), when="@2025.07.03:")
     depends_on("py-pyzmq@20:", type=("build", "run"))
     depends_on("py-scipy@:1.13.1", type=("build", "run"), when="@:2025.01.13")
     depends_on("py-scipy@1.14:", when="@2025.07.03:")

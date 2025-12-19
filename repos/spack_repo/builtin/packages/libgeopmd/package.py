@@ -9,7 +9,7 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack.package import *
 
 
-class GeopmService(AutotoolsPackage):
+class Libgeopmd(AutotoolsPackage):
     """The Global Extensible Open Power Manager (GEOPM) Service provides a
     user interface for accessing hardware telemetry and settings securely.
 
@@ -19,13 +19,14 @@ class GeopmService(AutotoolsPackage):
 
     homepage = "https://geopm.github.io"
     git = "https://github.com/geopm/geopm.git"
-    url = "https://github.com/geopm/geopm/tarball/v3.2.0"
+    url = "https://github.com/geopm/geopm/tarball/v3.2.1"
 
     maintainers("bgeltz", "cmcantalupo")
     license("BSD-3-Clause")
     tags = ["e4s"]
 
     version("develop", branch="dev", get_full_repo=True)
+    version("3.2.1", sha256="9177da3af335256592c4ea8ae0dd4f8f9c8fb4caf65965af6216e7975d094b99")
     version("3.2.0", sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025")
     version("3.1.0", sha256="2d890cad906fd2008dc57f4e06537695d4a027e1dc1ed92feed4d81bb1a1449e")
 
@@ -48,8 +49,9 @@ class GeopmService(AutotoolsPackage):
         when="@3.2:",
     )
 
-    conflicts("+nvml", when="+level_zero", msg="LevelZero and NVML support are mutually exclusive")
-    conflicts("+grpc", when="+systemd", msg="gRPC and systemd support are mutually exclusive")
+    conflicts(
+        "+nvml", when="@3.1.0+level_zero", msg="LevelZero and NVML support are mutually exclusive"
+    )
 
     conflicts("%gcc@:7.2", msg="Requires C++17 support")
     conflicts("%clang@:4", msg="Requires C++17 support")
@@ -58,7 +60,7 @@ class GeopmService(AutotoolsPackage):
     conflicts("platform=windows", msg="Windows is not supported")
 
     patch("nvml-v3.1+.patch", when="@3.1: +nvml")
-    patch("libtool.patch", when="@3.2")
+    patch("libtool.patch", when="@3.2.0")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

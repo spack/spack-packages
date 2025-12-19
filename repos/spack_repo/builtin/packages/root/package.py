@@ -54,25 +54,62 @@ class Root(CMakePackage):
     version("6.32.00", sha256="12f203681a59041c474ce9523761e6f0e8861b3bee78df5f799a8db55189e5d2")
 
     # Supported STS release series
+    # 6.38 (through 2026-06-30)
+    version("6.38.00", sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc")
+
     # 6.34 (through 2025-06-30)
-    version("6.34.08", sha256="806045b156de03fe8f5661a670eab877f2e4d2da6c234dc3e31e98e2d7d96fe8")
-    version("6.34.06", sha256="a799d632dae5bb1ec87eae6ebc046a12268c6849f2a8837921c118fc51b6cff3")
-    version("6.34.04", sha256="e320c5373a8e87bb29b7280954ca8355ad8c4295cf49235606f0c8b200acb374")
-    version("6.34.02", sha256="166bec562e420e177aaf3133fa3fb09f82ecddabe8a2e1906345bad442513f94")
-    version("6.34.00", sha256="f3b00f3db953829c849029c39d7660a956468af247efd946e89072101796ab03")
+    with default_args(deprecated=True):
+        version(
+            "6.34.08", sha256="806045b156de03fe8f5661a670eab877f2e4d2da6c234dc3e31e98e2d7d96fe8"
+        )
+        version(
+            "6.34.06", sha256="a799d632dae5bb1ec87eae6ebc046a12268c6849f2a8837921c118fc51b6cff3"
+        )
+        version(
+            "6.34.04", sha256="e320c5373a8e87bb29b7280954ca8355ad8c4295cf49235606f0c8b200acb374"
+        )
+        version(
+            "6.34.02", sha256="166bec562e420e177aaf3133fa3fb09f82ecddabe8a2e1906345bad442513f94"
+        )
+        version(
+            "6.34.00", sha256="f3b00f3db953829c849029c39d7660a956468af247efd946e89072101796ab03"
+        )
 
     # Older release series
-    version("6.30.08", sha256="8bb8594867b9ded20a65e59f2cb6da965aa30851b8960f8cbf76293aec046b69")
-    version("6.30.06", sha256="300db7ed1b678ed2fb9635ca675921a1945c7c2103da840033b493091f55700c")
-    version("6.30.04", sha256="2b4180b698f39cc65d91084d833a884515b325bc5f673c8e39abe818b025d8cc")
-    version("6.30.02", sha256="7965a456d1ad1ee0d5fe4769bf5a8fec291af684ed93db0f3080a9c362435183")
-    version("6.30.00", sha256="0592c066954cfed42312957c9cb251654456064fe2d8dabdcb8826f1c0099d71")
-    version("6.28.12", sha256="fcd325267d238e9c6008f56a3a7e7c87fd864b1e633b0ffcf1f82b7e7ad3d249")
-    version("6.28.10", sha256="69d6fdeb607e6b20bd02c757fa6217024c0b6132c1e9b1dff4d85d9a2bb7e51e")
-    version("6.28.06", sha256="af3b673b9aca393a5c9ae1bf86eab2672aaf1841b658c5c6e7a30ab93c586533")
-    version("6.28.04", sha256="70f7f86a0cd5e3f2a0befdc59942dd50140d990ab264e8e56c7f17f6bfe9c965")
-    version("6.28.02", sha256="6643c07710e68972b00227c68b20b1016fec16f3fba5f44a571fa1ce5bb42faa")
-    version("6.28.00", sha256="afa1c5c06d0915411cb9492e474ea9ab12b09961a358e7e559013ed63b5d8084")
+    with default_args(deprecated=True):
+        version(
+            "6.30.08", sha256="8bb8594867b9ded20a65e59f2cb6da965aa30851b8960f8cbf76293aec046b69"
+        )
+        version(
+            "6.30.06", sha256="300db7ed1b678ed2fb9635ca675921a1945c7c2103da840033b493091f55700c"
+        )
+        version(
+            "6.30.04", sha256="2b4180b698f39cc65d91084d833a884515b325bc5f673c8e39abe818b025d8cc"
+        )
+        version(
+            "6.30.02", sha256="7965a456d1ad1ee0d5fe4769bf5a8fec291af684ed93db0f3080a9c362435183"
+        )
+        version(
+            "6.30.00", sha256="0592c066954cfed42312957c9cb251654456064fe2d8dabdcb8826f1c0099d71"
+        )
+        version(
+            "6.28.12", sha256="fcd325267d238e9c6008f56a3a7e7c87fd864b1e633b0ffcf1f82b7e7ad3d249"
+        )
+        version(
+            "6.28.10", sha256="69d6fdeb607e6b20bd02c757fa6217024c0b6132c1e9b1dff4d85d9a2bb7e51e"
+        )
+        version(
+            "6.28.06", sha256="af3b673b9aca393a5c9ae1bf86eab2672aaf1841b658c5c6e7a30ab93c586533"
+        )
+        version(
+            "6.28.04", sha256="70f7f86a0cd5e3f2a0befdc59942dd50140d990ab264e8e56c7f17f6bfe9c965"
+        )
+        version(
+            "6.28.02", sha256="6643c07710e68972b00227c68b20b1016fec16f3fba5f44a571fa1ce5bb42faa"
+        )
+        version(
+            "6.28.00", sha256="afa1c5c06d0915411cb9492e474ea9ab12b09961a358e7e559013ed63b5d8084"
+        )
 
     # ###################### Patches ##########################
 
@@ -235,6 +272,9 @@ class Root(CMakePackage):
     variant("qt6", when="@6.26:", default=False, description="Enable Qt6 web-based display")
     variant("r", default=False, description="Enable R ROOT bindings")
     variant("rpath", default=True, description="Enable RPATH")
+    conflicts(
+        "~rpath", when="@6.38:", msg="RPATHs are always applied if operating systems supports it"
+    )
     variant("roofit", default=True, description="Build the libRooFit advanced fitting package")
     variant("root7", default=False, description="Enable ROOT 7 support")
     variant("shadow", default=False, description="Enable shadow password support")
@@ -313,7 +353,7 @@ class Root(CMakePackage):
 
     variant(
         "cxxstd",
-        default="11",
+        default="17",
         values=("11", "14", "17", "20", "23"),
         multi=False,
         description="Use the specified C++ standard when building.",
@@ -399,6 +439,7 @@ class Root(CMakePackage):
 
     # Optional dependencies
     depends_on("arrow", when="+arrow")
+    depends_on("civetweb +shared", when="+http")
     depends_on("cuda", when="+cuda")
     depends_on("cuda", when="+cudnn")
     depends_on("cudnn", when="+cudnn")
@@ -692,6 +733,7 @@ class Root(CMakePackage):
 
         options += [
             define("builtin_cfitsio", False),
+            define("builtin_civetweb", False),
             define("builtin_davix", False),
             define("builtin_fftw3", False),
             define("builtin_freetype", False),
