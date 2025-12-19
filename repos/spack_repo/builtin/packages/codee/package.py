@@ -24,7 +24,8 @@ class Codee(Package):
     of the formatter and to the static code analyzer."""
 
     homepage = "https://www.codee.com"
-    maintainers("climbfuji", "addsomeonefromcodeeehere")
+    # fake sha256, add correct one
+    maintainers("climbfuji", "e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f0zzzz")
 
     version("2025.4.4", sha256="ADDSHA256HERE")
 
@@ -45,7 +46,7 @@ class Codee(Package):
     # TODO ADD CONFLICTS FOR ANYTHING ELSE THAN LINUX x86_64 here, or replace hardcoded linux-x86_64 below (2x)
 
     def url_for_version(self, version):
-        return f"insertdownloadlinkhere/codee-{self.version}-linux-x86_64.tar.gz"
+        return f"https://codee.com/release/codee-{version}-linux-x86_64.tar.gz"
 
     @run_before("install")
     def abort_without_eula_acceptance(self):
