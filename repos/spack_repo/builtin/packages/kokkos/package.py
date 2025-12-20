@@ -28,6 +28,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.0.0", sha256="c45f3e19c3eb71fc8b7210cb04cac658015fc1839e7cc0571f7406588ff9bcef")
+    version("4.7.02", sha256="a81826ac0a167933d13506bc2a986fb5517038df9abb780fe9bb2c1d4e80803b")
     version("4.7.01", sha256="404cf33e76159e83b8b4ad5d86f6899d442b5da4624820ab457412116cdcd201")
     version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
     version("4.6.02", sha256="baf1ebbe67abe2bbb8bb6aed81b4247d53ae98ab8475e516d9c87e87fa2422ce")
@@ -81,7 +83,22 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
+    with when("@5:"):
+        conflicts("%gcc@:10.3")
+        conflicts("%llvm@:13")
+        conflicts("%llvm@:14", when="+cuda ~wrapper")
+        conflicts("%apple-clang@:7")
+        conflicts("%oneapi@:2021")
+        conflicts("%oneapi@:2024", when="+sycl")
+        depends_on("cuda@12.2:", when="+cuda")
+        depends_on("hip@6.2:", when="+rocm")
+        conflicts("%nvhpc@:22.2")
+        conflicts("%msvc@:19.2")
+        conflicts("%arm@:20")
+
     depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.22:", type="build", when="@5:")
+    depends_on("cmake@3.25.2:", type="build", when="@5: +cuda +cmake_lang")
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
@@ -99,29 +116,29 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     tpls_variants = {
-        "hpx": [False, "Whether to enable the HPX library"],
-        "hwloc": [False, "Whether to enable the HWLOC library"],
-        "numactl": [False, "Whether to enable the LIBNUMA library"],
-        "memkind": [False, "Whether to enable the MEMKIND library"],
+        "hpx": [False, None, "Whether to enable the HPX library"],
+        "hwloc": [False, None, "Whether to enable the HWLOC library"],
+        "numactl": [False, "@:4", "Whether to enable the LIBNUMA library"],
+        "memkind": [False, "@:4", "Whether to enable the MEMKIND library"],
     }
 
     options_variants = {
         "aggressive_vectorization": [False, None, "Aggressively vectorize loops"],
-        "compiler_warnings": [False, None, "Print all compiler warnings"],
+        "compiler_warnings": [False, "@:4", "Print all compiler warnings"],
         "complex_align": [True, None, "Align complex numbers"],
         "cuda_constexpr": [False, "+cuda", "Activate experimental constexpr features"],
-        "cuda_lambda": [False, "+cuda", "Activate experimental lambda features"],
-        "cuda_ldg_intrinsic": [False, "+cuda", "Use CUDA LDG intrinsics"],
+        "cuda_lambda": [False, "@:4 +cuda", "Activate experimental lambda features"],
+        "cuda_ldg_intrinsic": [False, "@:4 +cuda", "Use CUDA LDG intrinsics"],
         "cuda_relocatable_device_code": [False, "+cuda", "Enable RDC for CUDA"],
         "hip_relocatable_device_code": [False, None, "Enable RDC for HIP"],
         "sycl_relocatable_device_code": [False, "@4.5: +sycl", "Enable RDC for SYCL"],
-        "cuda_uvm": [False, "+cuda", "Enable unified virtual memory (UVM) for CUDA"],
+        "cuda_uvm": [False, "@:4 +cuda", "Enable unified virtual memory (UVM) for CUDA"],
         "debug": [False, None, "Activate extra debug features - may increase compiletimes"],
         "debug_bounds_check": [False, None, "Use bounds checking - will increase runtime"],
-        "debug_dualview_modify_check": [False, None, "Debug check on dual views"],
-        "deprecated_code": [False, None, "Whether to enable deprecated code"],
-        "examples": [False, None, "Whether to build examples"],
-        "hpx_async_dispatch": [False, None, "Whether HPX supports asynchronous dispath"],
+        "debug_dualview_modify_check": [False, "@:4", "Debug check on dual views"],
+        "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
+        "examples": [False, "@:4", "Whether to build examples"],
+        "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
     }
@@ -261,8 +278,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
 
-    for tpl, (dflt, desc) in tpls_variants.items():
-        variant(tpl, default=dflt, description=desc)
+    for tpl, (dflt, when, desc) in tpls_variants.items():
+        variant(tpl, default=dflt, description=desc, when=when)
         depends_on(tpl, when="+%s" % tpl)
 
     variant("wrapper", default=False, description="Use nvcc-wrapper for CUDA build")
@@ -278,6 +295,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("cxxstd=11")
     conflicts("cxxstd=14", when="@4.0:")
+    conflicts("cxxstd=17", when="@5:")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
     conflicts("+cuda", when="cxxstd=20 ^cuda@:11")
@@ -423,7 +441,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         self.append_args("ENABLE", self.tpls_variants.keys(), options)
 
         for tpl in self.tpls_variants:
-            if spec.variants[tpl].value:
+            if spec.satisfies(f"+{tpl}"):
                 options.append(self.define(tpl + "_DIR", spec[tpl].prefix))
 
         if self.spec.satisfies("+wrapper"):
