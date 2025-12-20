@@ -34,7 +34,7 @@ class Acts(CMakePackage, CudaPackage):
     measurements.
 
     Key features of this project include: tracking geometry description which
-    can be constructed from TGeo, DD4Hep, or GDML input, simple and efficient
+    can be constructed from ROOT, DD4Hep, or GDML input, simple and efficient
     event data model, performant and highly flexible algorithms for track
     propagation and fitting, basic seed finding algorithms.
     """
@@ -240,19 +240,19 @@ class Acts(CMakePackage, CudaPackage):
         "examples",
         default=False,
         description="Build the examples",
-        when="@0.23:16 +digitization +fatras +identification +json +tgeo",
+        when="@0.23:16 +digitization +fatras +identification +json +root",
     )
     variant(
         "examples",
         default=False,
         description="Build the examples",
-        when="@17:34 +fatras +identification +json +tgeo",
+        when="@17:34 +fatras +identification +json +root",
     )
     variant(
         "examples",
         default=False,
         description="Build the examples",
-        when="@35: +fatras +json +tgeo",
+        when="@35: +fatras +json +root",
     )
     variant("integration_tests", default=False, description="Build the integration tests")
     variant("unit_tests", default=False, description="Build the unit tests")
@@ -279,7 +279,7 @@ class Acts(CMakePackage, CudaPackage):
         description="Build the auto-differentiation plugin",
         when="@1.2:32",
     )
-    variant("dd4hep", default=False, description="Build the DD4hep plugin", when="+tgeo")
+    variant("dd4hep", default=False, description="Build the DD4hep plugin", when="+root")
     variant(
         "digitization",
         default=False,
@@ -324,10 +324,28 @@ class Acts(CMakePackage, CudaPackage):
         when="@19.3:",
     )
     variant("sycl", default=False, description="Build the SyCL plugin", when="@1:34")
+
+    # The TGeo and ROOT variants are synonyms, and the goal is to slowly phase
+    # out the TGeo name. The plan for this is as follow. First, we use both
+    # names as synonyms, ensuring that both must be true at the same time. We
+    # also enforce that nothing explicitly relies on the TGeo naming anymore,
+    # and we use ROOT instead. We then "deprecate" the TGeo naming by
+    # eliminating it in ACTS release 45. Finally, we retain the TGeo naming
+    # until version 44 of ACTS is removed due to deprecation.
     variant(
         "tgeo", default=False, description="Build the TGeo plugin", when="@:34 +identification"
     )
-    variant("tgeo", default=False, description="Build the TGeo plugin", when="@35:")
+    variant("tgeo", default=False, description="Build the TGeo plugin", when="@35:44")
+    variant(
+        "root", default=False, description="Build the ROOT plugin", when="@:34 +identification"
+    )
+    variant("root", default=False, description="Build the ROOT plugin", when="@35:")
+    # Establish a mutual implication between the tgeo and root variants; if
+    # one is enabled, so must be the other.
+    with when("@:44"):
+        conflicts("~root", when="+tgeo")
+        conflicts("+root", when="~tgeo")
+
     variant("traccc", default=False, description="Build the Traccc plugin", when="@35.1:")
 
     # Variants that only affect Acts examples for now
@@ -464,7 +482,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("py-hatchling", when="@44.1.1:", type="build")
     depends_on("py-torch", when="+gnn +torch")
 
-    with when("+tgeo"):
+    with when("+root"):
         depends_on("root @6.10:")
         depends_on("root @6.20:", when="@0.8.1:")
         depends_on("root @6.28:", when="@42:")
@@ -478,7 +496,7 @@ class Acts(CMakePackage, CudaPackage):
         for _v in _cxxstd:
             depends_on(f"geant4 cxxstd={_v.value}", when=f"cxxstd={_v.value} +geant4")
             depends_on(f"geant4 cxxstd={_v.value}", when=f"cxxstd={_v.value} +fatras_geant4")
-            depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value} +tgeo")
+            depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value} +root")
 
     # When the traccc plugin is enabled, detray should match the Acts scalars
     with when("+traccc"):
@@ -574,7 +592,7 @@ class Acts(CMakePackage, CudaPackage):
             self.define_from_variant("ACTS_CUSTOM_SCALARTYPE", "scalar"),
             plugin_cmake_variant("ACTSVG", "svg"),
             plugin_cmake_variant("SYCL", "sycl"),
-            plugin_cmake_variant("TGEO", "tgeo"),
+            plugin_cmake_variant("TGEO", "root"),
             example_cmake_variant("TBB", "tbb", "USE"),
             plugin_cmake_variant("TRACCC", "traccc"),
             cmake_variant(unit_tests_label, "unit_tests"),

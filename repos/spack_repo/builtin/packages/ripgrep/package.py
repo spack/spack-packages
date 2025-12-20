@@ -27,11 +27,25 @@ class Ripgrep(CargoPackage):
     version("13.0.0", sha256="0fb17aaf285b3eee8ddab17b833af1e190d73de317ff9648751ab0660d763ed2")
     version("11.0.2", sha256="0983861279936ada8bc7a6d5d663d590ad34eb44a44c75c2d6ccd0ab33490055")
 
+    variant("pcre2", default=False, description="Add support for Perl-style regex via PCRE2")
+
+    depends_on("c", type="build")
+    depends_on("pkgconfig", type="build", when="+pcre2")
     depends_on("rust@1.85:", type="build", when="@15:")
     depends_on("rust@1.72:", type="build", when="@14:")
-    depends_on("c", type="build")
+    depends_on("rust@1.31:", type="build")
 
-    @run_after("install")
+    depends_on("pcre2", when="+pcre2")
+
+    @property
+    def build_args(self):
+        args = []
+        if self.spec.satisfies("+pcre2"):
+            args.extend(["--features", "pcre2"])
+
+        return args
+
+    @run_after("install", when="@14:")
     def install_completions(self):
         rg = Executable(self.prefix.bin.rg)
 

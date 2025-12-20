@@ -62,6 +62,8 @@ class PyGeopandas(PythonPackage):
         depends_on("py-pandas@0.24:", when="@0.9:")
         depends_on("py-pandas@0.23:", when="@0.6:")
         depends_on("py-pandas")
+        # https://github.com/geopandas/geopandas/pull/3621
+        depends_on("py-pandas@:2", when="@:1.1.1")
         depends_on("py-pyproj@3.5:", when="@1.1:")
         depends_on("py-pyproj@3.3:", when="@0.14:")
         depends_on("py-pyproj@2.6.1.post1:", when="@0.11:")
