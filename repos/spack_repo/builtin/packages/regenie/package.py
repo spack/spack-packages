@@ -125,6 +125,7 @@ class Regenie(CMakePackage):
             if self.spec.satisfies(f"~bundled-{dep}"):
                 lib = self.spec[dep]
                 filter_file(old_path, dep_dirs(lib.headers), "CMakeLists.txt", string=True)
+                filter_file(old_path, dep_dirs(lib.headers), "Makefile", string=True)
 
         # Avoid using vendored dependencies distribued with bgen
         if satisfies("~bgen-bundled-deps"):
