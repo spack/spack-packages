@@ -7,6 +7,10 @@ spack:
   concretizer:
     static_analysis: true
 
+  config:
+    # ROOT fails downloads frequentlysleads
+    url_fetch_method: curl --continue-at - --retry 3 --retry-all-errors
+
   packages:
     all:
       target: ["x86_64_v3"]
