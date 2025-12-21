@@ -10,6 +10,8 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
+import spack.util.environment as envutil
+
 _is_macos = sys.platform == "darwin"
 
 
@@ -883,7 +885,7 @@ class Root(CMakePackage):
         # system/compiler combinations don't like having -I/usr/include around.
         def add_include_path(dep_name):
             include_path = spec[dep_name].prefix.include
-            if not is_system_path(include_path):
+            if not envutil.is_system_path(include_path):
                 env.append_path("SPACK_INCLUDE_DIRS", include_path)
 
         # With that done, let's go fixing those deps
