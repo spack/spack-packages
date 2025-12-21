@@ -8,9 +8,8 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.package import *
-
 import spack.util.environment as envutil
+from spack.package import *
 
 _is_macos = sys.platform == "darwin"
 
