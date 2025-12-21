@@ -109,7 +109,7 @@ class NodeJs(Package):
     conflicts("%gcc@:10.0", when="@20:")
     conflicts("%gcc@:8.2", when="@16:")
     conflicts("%gcc@:6.2", when="@12:")
-    conflicts("%clang@:18.0", when="@25:")
+    conflicts("%clang@:19.0", when="@25:")
     conflicts("%apple-clang@:18", when="@25:")
     conflicts("%apple-clang@:16", when="@24:")
     conflicts("%apple-clang@:11", when="@21:")
