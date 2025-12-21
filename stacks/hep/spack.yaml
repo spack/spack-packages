@@ -8,7 +8,7 @@ spack:
     static_analysis: true
 
   config:
-    # ROOT fails downloads frequentlysleads
+    # ROOT fails downloads frequently
     url_fetch_method: curl --continue-at - --retry 3 --retry-all-errors
 
   packages:
