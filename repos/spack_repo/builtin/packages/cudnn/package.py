@@ -96,7 +96,7 @@ _versions = {
     "9.10.2.21-12": {
         "Linux-x86_64": "d0defcbc4c6dad711ff4cb66d254036a300c9071b07c7b64199aacab534313c1",
         "Linux-aarch64": "4d57dceba3be27a68b078ce8630525bf40ab7f1b546eb45d0b363c3eeb55f8fa",
-    },    
+    },
     "9.10.2.21-11": {
         "Linux-x86_64": "ab05bc70a120425b8b811544a6bc6458ca1f3cc54a8ccc51a1113749ecab1442",
         "Linux-aarch64": "6461e6037a3b8ab5a9c17f527877d493f7cde9eb855fadf686140c7e3fb41aaf",
