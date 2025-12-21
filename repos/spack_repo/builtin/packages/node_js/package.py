@@ -24,7 +24,7 @@ class NodeJs(Package):
     license("Unicode-TOU")
 
     # Current (latest features) - odd major number
-    version("25.2.1", sha256="1cbbdb66f99e0c41937eb8763c57e622eab43006742dc4d0856270b17215e376")  
+    version("25.2.1", sha256="1cbbdb66f99e0c41937eb8763c57e622eab43006742dc4d0856270b17215e376")
     version("23.11.1", sha256="75509306732090bfa99b004d097909315f7789badb4a495e82b5f17b6329247a")
     version("21.7.3", sha256="ce1f61347671ef219d9c2925313d629d3fef98fc8d7f5ef38dd4656f7d0f58e7")
     version("19.2.0", sha256="aac9d1a366fb57d68f4639f9204d1de5d6387656959a97ed929a5ba9e62c033a")
