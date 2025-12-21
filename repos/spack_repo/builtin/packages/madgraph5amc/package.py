@@ -201,7 +201,13 @@ class Madgraph5amc(MakefilePackage):
         if spec.variants["models"].value != ("None",):
             with open("install-models", "w") as f:
                 f.write(
-                    "\n".join([f"import model {model}" for model in spec.variants["models"].value if model != "None"])
+                    "\n".join(
+                        [
+                            f"import model {model}"
+                            for model in spec.variants["models"].value
+                            if model != "None"
+                        ]
+                    )
                 )
             mg5("install-models")
 
