@@ -17,7 +17,7 @@ class Root(CMakePackage):
     """ROOT is a data analysis framework."""
 
     homepage = "https://root.cern.ch"
-    url = "https://root.cern/download/root_v6.16.00.source.tar.gz"
+    url = "https://github.com/root-project/root/releases/download/v6-38-00/root_v6.38.00.source.tar.gz"
     git = "https://github.com/root-project/root.git"
 
     executables = ["^root$", "^root-config$"]
