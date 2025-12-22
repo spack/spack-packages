@@ -17,7 +17,7 @@ class Root(CMakePackage):
     """ROOT is a data analysis framework."""
 
     homepage = "https://root.cern.ch"
-    url = "https://github.com/root-project/root/releases/download/v6-38-00/root_v6.38.00.source.tar.gz"
+    url = "https://root.cern/download/root_v6.16.00.source.tar.gz"
     git = "https://github.com/root-project/root.git"
 
     executables = ["^root$", "^root-config$"]
@@ -35,7 +35,9 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
-    version("6.36.06", sha256="62f9d38d2f2ed3d46653529c98e8cbc9b8866776494eb40ba0c23e2f46b681c4")
+    version("6.36.06",
+            sha256="62f9d38d2f2ed3d46653529c98e8cbc9b8866776494eb40ba0c23e2f46b681c4",
+            url="https://github.com/root-project/root/releases/download/v6-36-06/root_v6.36.06.source.tar.gz")
     version("6.36.04", sha256="cc6367d8f563c6d49ca34c09d0b53cb0f41a528db6f86af111fd76744cda4596")
     version("6.36.02", sha256="510d677b33ac7ca48aa0d712bdb88d835a1ff6a374ef86f1a1e168fa279eb470")
     version("6.36.00", sha256="94afc8def92842679a130a27521be66e2abdaa37620888e61d828a43fc4b01a2")
@@ -55,7 +57,9 @@ class Root(CMakePackage):
 
     # Supported STS release series
     # 6.38 (through 2026-06-30)
-    version("6.38.00", sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc")
+    version("6.38.00",
+            sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc",
+            url="https://github.com/root-project/root/releases/download/v6-38-00/root_v6.38.00.source.tar.gz")
 
     # 6.34 (through 2025-06-30)
     with default_args(deprecated=True):
