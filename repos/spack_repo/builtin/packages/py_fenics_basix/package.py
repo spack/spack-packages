@@ -80,9 +80,6 @@ class PyFenicsBasix(PythonPackage):
             depends_on(f"py-fenics-ufl@{ufl_ver}", type="run", when=f"@{ver}")
 
     def config_settings(self, spec, prefix):
-        return {
-            "build.tool-args": f"-j{make_jobs}",
-            "build.verbose": "true",
-        }
+        return {"build.tool-args": f"-j{make_jobs}", "build.verbose": "true"}
 
     build_directory = "python"
