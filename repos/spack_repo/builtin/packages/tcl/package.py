@@ -10,6 +10,7 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.nmake import NMakePackage
 from spack_repo.builtin.build_systems.sourceforge import SourceforgePackage
 
+import spack.util.environment as envutil
 from spack.package import *
 
 is_windows = sys.platform == "win32"
@@ -167,7 +168,7 @@ class AnyBuilder(BaseBuilder):
         # where a system provided tcl is run against the standard libraries
         # of a Spack built tcl. See issue #7128 that relates to python but
         # it boils down to the same situation we have here.
-        if not is_system_path(self.spec.prefix.bin):
+        if not envutil.is_system_path(self.spec.prefix.bin):
             env.prepend_path("PATH", self.spec.prefix.bin)
 
         # WARNING: paths in $TCLLIBPATH must be *space* separated,
