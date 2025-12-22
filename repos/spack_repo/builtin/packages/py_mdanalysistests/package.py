@@ -33,7 +33,7 @@ class PyMdanalysistests(PythonPackage):
     # Version need to match MDAnalysis'
     for mdanalysistests_version, sha in VERSIONS.items():
         version(mdanalysistests_version, sha256=sha)
-        depends_on(f"py-mdanalysis@{version}", when=f"@{version}", type=("build", "run"))
+        depends_on(f"py-mdanalysis@{mdanalysistests_version}", when=f"@{mdanalysistests_version}", type=("build", "run"))
 
     depends_on("python@3.11:", when="@2.10.0:", type=("build", "run"))
     depends_on("python@3.10:", when="@2.8.0:", type=("build", "run"))
