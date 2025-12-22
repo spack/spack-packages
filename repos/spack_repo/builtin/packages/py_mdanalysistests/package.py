@@ -16,7 +16,7 @@ VERSIONS = {
     "2.6.0": "16fdd10e5240b606e8f9210b7cbd9e4be110e6b8d79bb6e72ce6250c4731a817",
     "2.5.0": "a15b53b7f8bed67900a2bf542bbb3cab81dc71674fa6cddb3248dd11880e4c9d",
     "2.4.3": "6fbdeccdbfb249f76520ee3605d007cd70292187e3754d0184c71e5afe133abb",
-    "2.4.2": "6e8fb210a4268691c77717ea5157e82d85874a4f7ee0f8f177718451a44ee793"
+    "2.4.2": "6e8fb210a4268691c77717ea5157e82d85874a4f7ee0f8f177718451a44ee793",
 }
 
 
@@ -31,8 +31,8 @@ class PyMdanalysistests(PythonPackage):
     license("GPL-3.0-or-later")
 
     # Version need to match MDAnalysis'
-    for version, sha in VERSIONS.items():
-        version(version, sha256=sha)
+    for mdanalysistests_version, sha in VERSIONS.items():
+        version(mdanalysistests_version, sha256=sha)
         depends_on(f"py-mdanalysis@{version}", when=f"@{version}", type=("build", "run"))
 
     depends_on("python@3.11:", when="@2.10.0:", type=("build", "run"))
