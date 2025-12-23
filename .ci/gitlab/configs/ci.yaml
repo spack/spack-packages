@@ -141,13 +141,17 @@ ci:
       variables:
         # Disable local configs to avoid issues on shell runners
         SPACK_DISABLE_LOCAL_CONFIG: "1"
+        REMOTE_SCRIPT_CLONE_SPACK_SHA256: da9ce276f9c0fbcaaa78a90c6047588fc468a7d945e9b199309bfb8edf2c5190
+        REMOTE_SCRIPT_REF: e1c30b77cd582a0aed5ff432a31fc1202427c80c
       before_script:
       - - export SPACK_USER_CACHE_PATH="${CI_PROJECT_DIR}/tmp/_user_cache/"
       - - uname -a || true
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
       # Clone the other repo
-      - ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/clone_spack.sh
+      - - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$REMOTE_SCRIPT_REF/.ci/gitlab/scripts/common/clone_spack.sh
+        - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256 clone_spack.sh" | sha256sum --check --status
+        - sh clone_spack.sh
       - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version
         - spack arch
