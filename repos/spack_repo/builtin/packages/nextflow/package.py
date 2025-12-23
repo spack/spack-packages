@@ -262,7 +262,7 @@ class Nextflow(Package):
         is_deprecated = False
 
         if "deprecated" in attrs:
-            is_deprecated = True
+            is_deprecated = attrs["deprecated"]
 
         # Edge release. Not preferred.
         if "edge" in ver:
