@@ -910,6 +910,7 @@ class Root(CMakePackage):
         env.set("CLING_STANDARD_PCH", "none")
         env.set("CPPYY_API_PATH", "none")
         env.set("CPPYY_BACKEND_LIBRARY", self.prefix.lib.root.libcppyy_backend)
+        # Always define ROOT's library path for downstream usage
         env.prepend_path(self.root_library_path, self.prefix.lib.root)
 
         # https://github.com/root-project/root/issues/18949
@@ -931,7 +932,9 @@ class Root(CMakePackage):
             env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec):
+        # Set up runtime dependencies *of downstream packages* that use ROOT
         env.prepend_path("ROOT_INCLUDE_PATH", dependent_spec.prefix.include)
+
         # For dependents that build dictionaries, ROOT needs to know where the
         # dictionaries have been installed.  This can be facilitated by
         # automatically prepending dependent package library paths to

@@ -231,10 +231,6 @@ class Dd4hep(CMakePackage):
         env.set("DD4hep_DIR", self.prefix)
         env.set("DD4hep_ROOT", self.prefix)
 
-    def setup_dependent_run_environment(self, env: EnvironmentModifications) -> None:
-        # Make plugins discoverable to ROOT
-        env.prepend_path("ROOT_LIBRARY_PATH", self.libs.directories[0])
-
     def url_for_version(self, version):
         # dd4hep releases are dashes and padded with a leading zero
         # the patch version is omitted when 0
