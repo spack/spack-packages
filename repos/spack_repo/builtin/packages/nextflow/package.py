@@ -301,7 +301,11 @@ class Nextflow(Package):
         ver = str(version).split("-standalone")
         uri = f"https://github.com/nextflow-io/nextflow/releases/download/v{ver[0]}"
         if "standalone" in str(version):
-            return f"{uri}/nextflow-{ver[0]}-dist"
+            # standalone binary name changed with 24.07.0-edge
+            if version < Version("24.07.0"):
+                return f"{uri}/nextflow-{ver[0]}-all"
+            else:
+                return f"{uri}/nextflow-{ver[0]}-dist"
         else:
             return f"{uri}/nextflow"
 
