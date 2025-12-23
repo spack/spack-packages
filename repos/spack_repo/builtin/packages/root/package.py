@@ -609,7 +609,8 @@ class Root(CMakePackage):
         _add_variant(v, f, "roofit", "+roofit")
         # webui feature renamed to webgui in 6.18
         _add_variant(v, f, ("root7", "webgui"), "+webgui")
-        _add_variant(v, f, "rpath", "+rpath")
+        if Version(version_str) < Version("6.38"):
+            _add_variant(v, f, "rpath", "+rpath")
         _add_variant(v, f, "runtime_cxxmodules", "+cxxmodules")
         _add_variant(v, f, "shadowpw", "+shadow")
         _add_variant(v, f, "spectrum", "+spectrum")
@@ -928,10 +929,6 @@ class Root(CMakePackage):
         # https://github.com/root-project/root/issues/18949
         if "+cxxmodules +vc" in self.spec:
             env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
-
-        # Also set up include and library paths since downstream packages may
-        # require libCling etc.
-        self.setup_dependent_run_environment(env, dependent_spec)
 
     def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec):
         env.prepend_path("ROOT_INCLUDE_PATH", dependent_spec.prefix.include)
