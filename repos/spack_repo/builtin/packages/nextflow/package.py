@@ -141,7 +141,7 @@ class Nextflow(Package):
                 "sha256": "77f43bc1c3d1749a68f294ae07e5cc0ffadde92f57106ea9711c4bafd68a6c64"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "024542ca21b00e44a1516265ae0b81396e22c468d4a11527a7dfe5e9de16ef76"
             },
         },
         "24.04.3": {
@@ -149,7 +149,7 @@ class Nextflow(Package):
                 "sha256": "e258f6395a38f044eb734cba6790af98b561aa521f63e2701fe95c050986e11c"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "7e6dce2df4565fcd1fb9bfea3f68087e51cb5b7aa3010eec20116917bea3a07b"
             },
         },
         "24.04.1": {
@@ -157,7 +157,7 @@ class Nextflow(Package):
                 "sha256": "d1199179e31d0701d86e6c38afa9ccade93f62d545e800824be7767a130510ba"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "bf98f93c90318fd06109855986caba06086b197256ce2068509372bed2b517a6"
             },
         },
         "23.10.1": {
@@ -165,7 +165,7 @@ class Nextflow(Package):
                 "sha256": "9abc54f1ffb2b834a8135d44300404552d1e27719659cbb635199898677b660a"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "5d8eb1b849108e058dbbcc0dbc737731215a85a4535321936c365e8c06c7409e"
             },
         },
         "23.10.0": {
@@ -173,7 +173,7 @@ class Nextflow(Package):
                 "sha256": "4b7fba61ecc6d53a6850390bb435455a54ae4d0c3108199f88b16b49e555afdd"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "c69f6055c97741b828b6ee67de38125a42f1774f1621afd34c0eb72ffea171a6"
             },
         },
         "23.04.3": {
@@ -181,7 +181,7 @@ class Nextflow(Package):
                 "sha256": "258714c0772db3cab567267e8441c5b72102381f6bd58fc6957c2972235be7e0"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "731b3fa6acf52440c05c9e8d9422edce24eb2cae3acc1603e8be55ca10ca6ac4"
             },
         },
         "23.04.1": {
@@ -189,7 +189,7 @@ class Nextflow(Package):
                 "sha256": "5de3e09117ca648b2b50778d3209feb249b35de0f97cdbcf52c7d92c7a96415c"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "1c6591adaedaa05aadd9f4c2cb4fe22d61c8d2a7ddcc99474125e9e94865d6a4"
             },
         },
         "22.10.4": {
@@ -197,7 +197,7 @@ class Nextflow(Package):
                 "sha256": "612a085e183546688e0733ebf342fb73865f560ad1315d999354048fbca5954d"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "feec0b078a1053512f2c21cdfc92f624f92062c49a3c14a201e6b7458ae5ac71"
             },
         },
         "22.10.3": {
@@ -205,7 +205,7 @@ class Nextflow(Package):
                 "sha256": "8d67046ca3b645fab2642d90848550a425c9905fd7dfc2b4753b8bcaccaa70dd"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "640b72aaf691db1b11f43306f6557df06518408eca01c2fa7429cbe37264db8b"
             },
         },
         "22.10.1": {
@@ -213,7 +213,7 @@ class Nextflow(Package):
                 "sha256": "fa6b6faa8b213860212da413e77141a56a5e128662d21ea6603aeb9717817c4c"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "c5edc9fc81d9c6eb4f628505f14f8bb4fe044d4fc7d9ef60654ba0d73abf5a80"
             },
         },
         "22.10.0": {
@@ -221,7 +221,7 @@ class Nextflow(Package):
                 "sha256": "6acea8bd21f7f66b1363eef900cd696d9523d2b9edb53327940f093189c1535e"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "a714beebcb544d6c140286219340a9440d412d2ad57a691de0f0610684204e83"
             },
         },
         "22.04.4": {
@@ -229,7 +229,7 @@ class Nextflow(Package):
                 "sha256": "e5ebf9942af4569db9199e8528016d9a52f73010ed476049774a76b201cd4b10"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "8d341a11d3efa95e8dbdcb26909942dcd6ce09c659f5372021b205403521d9bd"
             },
         },
         "22.04.3": {
@@ -237,7 +237,7 @@ class Nextflow(Package):
                 "sha256": "a1a79c619200b9f2719e8467cd5b8fbcb427f43adf945233ba9e03cd2f2d814e"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "5a16941b80361e3a5add8a169f636862c886df777c10b10d360be14df7268d5b"
             },
         },
         "22.04.1": {
@@ -245,7 +245,7 @@ class Nextflow(Package):
                 "sha256": "89ef482a53d2866a3cee84b3576053278b53507bde62db4ad05b1fcd63a9368a"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "56cca853251771e81e50e8db213582ad4714c59484016e8c48d25001b7178df9"
             },
         },
         "22.04.0": {
@@ -253,7 +253,7 @@ class Nextflow(Package):
                 "sha256": "8eba475aa395438ed222ff14df8fbe93928c14ffc68727a15b8308178edf9056"
             },
             "standalone": {
-                "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+                "sha256": "f366f14df881fb26dc2f815d34e91180eef6e2ba51d289b9776f71b905a36750"
             },
         },
     }
