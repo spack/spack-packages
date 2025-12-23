@@ -425,6 +425,24 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # https://github.com/iains/gcc-12-branch/issues/6
     conflicts("@:12", when="%apple-clang@14:14.0")
 
+    # Applies
+    # https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c,
+    # which fixes an incorrectly applied fixincludes rule for pthread.h, making
+    # the installed GCC not portable across different glibc versions. Original
+    # GCC bug report: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=118009. For
+    # GCC 15 we can directly use the upstream patch. For GCC 12-14 the patch
+    # has been backported. The patch is not applied to GCC 11 since the "fixinclude"
+    # is in fact needed for that version (see GCC commit description). Older versions
+    # have not been checked or tested.
+    patch(
+        "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
+        sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
+        when="@15:15.2",
+    )
+    patch("fixincludes-gcc-13-14.patch", when="@13:14")
+    patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
+    patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
+
     if sys.platform == "darwin":
         # Fix parallel build on APFS filesystem
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81797

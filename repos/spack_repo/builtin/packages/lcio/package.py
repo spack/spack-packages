@@ -22,6 +22,7 @@ class Lcio(CMakePackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.23.1", sha256="be418cf09ea50734f00168f94f4e7175fbb0987edf7caf4a591561903d3ebb82")
     version("2.23", sha256="8e56b96e0957173acc22fd4360d2002f4ebc8b5acb704ad7359b855f6d453896")
     version("2.22.6", sha256="69271f021198d15390a0134110ab5c1cbeea9a183cef3f94f0d1ee91fa4748bb")
     version("2.22.5", sha256="a756521a2419f8d25d4a4f1bab0008e16c9947020d015f2f6ce457ab0a0429bf")

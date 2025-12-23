@@ -71,12 +71,14 @@ class Parallelio(CMakePackage):
         git="https://github.com/PARALLELIO/genf90.git",
         tag="genf90_200608",
         commit="4816965ba946731352bad195b7d946a5fe682ff5",
+        placement="genf90",
     )
     resource(
         name="CMake_Fortran_utils",
         git="https://github.com/CESM-Development/CMake_Fortran_utils.git",
         tag="CMake_Fortran_utils_150308",
         commit="c2572f19d671c35a4cca26911a55ef78b3ba2829",
+        placement="CMake_Fortran_utils",
     )
 
     # Allow argument mismatch in gfortran versions > 10 for mpi library compatibility

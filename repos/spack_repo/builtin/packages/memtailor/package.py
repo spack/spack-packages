@@ -17,12 +17,14 @@ class Memtailor(AutotoolsPackage):
     standard, and allows multiple independent arenas."""
 
     homepage = "https://github.com/Macaulay2/memtailor"
+    url = "https://github.com/Macaulay2/memtailor/releases/download/v1.1/memtailor-1.1.tar.gz"
     git = "https://github.com/Macaulay2/memtailor"
 
     maintainers("d-torrance")
 
     license("BSD-3-Clause", checked_by="d-torrance")
 
+    version("1.1", sha256="ce0dc2e5befd1e1f65c99510bc68ddc5b60f13066eac12ec5ce4e1da822e44eb")
     version("1.0.2025.05.13", commit="07c84a6852212495182ec32c3bdb589579e342b5")
 
     depends_on("c", type="build")
@@ -32,7 +34,9 @@ class Memtailor(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
 
-    depends_on("googletest@:1.16.0")  # 1.17.0 requires c++17
+    # googletest 1.17.0 requires C++17 support, which wasn't added until 1.1
+    depends_on("googletest@:1.16.0", when="@:1.0.2025.05.13")
+    depends_on("googletest", when="@1.1:")
 
     def configure_args(self):
         return ["--enable-shared"]
