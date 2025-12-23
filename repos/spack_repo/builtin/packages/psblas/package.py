@@ -4,6 +4,7 @@
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
+# flake8: noqa: F401,F403
 from spack.package import *
 
 
@@ -15,7 +16,7 @@ class Psblas(AutotoolsPackage):
     # Url for your package's homepage here.
     homepage = "https://psctoolkit.github.io/"
     git = "https://github.com/sfilippone/psblas3.git"
-    url = "https://github.com/sfilippone/psblas3/archive/refs/tags/v3.9.0-rc1.tar.gz"
+    url = "https://github.com/sfilippone/psblas3/archive/refs/tags/v3.9.0.tar.gz"
 
     # List of GitHub accounts to notify when the package is updated.
     maintainers("cirdans-home", "sfilippone")
@@ -25,10 +26,12 @@ class Psblas(AutotoolsPackage):
 
     version("development", branch="development")
     version(
-        "3.9.0-rc1",
-        sha256="7a7091ce52582b6fc442e8793e36461be36c0947272ea803ad72736ec2d56da8",
+        "3.9.0",
+        sha256="ce523ed2d266fb6dc8723c45a2bcbf40a1c67b7ca61cd9408032a73af7cf8605",
         preferred=True,
     )
+    version("3.9.0-rc3", sha256="7744b3a2cb5d2d3b90e740d905590ee9b8d69c02148dce10ee1b8dc7667e53b1")
+    version("3.9.0-rc1", sha256="7a7091ce52582b6fc442e8793e36461be36c0947272ea803ad72736ec2d56da8")
     version("3.8.1-2", sha256="285ddb7c9a793ea7ecb428d68cf23f4cc04f1c567631aa84bc2bedb65a3d1b0c")
     version("3.8.1", sha256="02e1f00e644426eb15eb08c735cf9c8ae692392f35c2cfe4f7474e1ab91575dc")
     version("3.8.0-2", sha256="86a76bb0987edddd4c10c810d7f18e13742aadc66ac14ad3679669809c1184fa")
@@ -49,7 +52,7 @@ class Psblas(AutotoolsPackage):
     variant("mpi", default=True, description="Activates MPI support")
     # CUDA
     variant(
-        "cuda", default=False, description="Activate CUDA support", when="@development,3.9.0-rc1"
+        "cuda", default=False, description="Activate CUDA support", when="@development,3.9.0-rc1:"
     )
     variant(
         "cudacc",
@@ -67,14 +70,14 @@ class Psblas(AutotoolsPackage):
         "openmp",
         default=False,
         description="Activates OpenMP support",
-        when="@development,3.9.0-rc1",
+        when="@development,3.9.0-rc1,3.9.0-rc3,3.9.0",
     )
     # OpenACC support (requires GCC >= 14.2.0)
     variant(
         "openacc",
         default=False,
         description="Activate OpenACC support",
-        when="@development,3.9.0-rc1",
+        when="@development,3.9.0-rc1,3.9.0-rc3,3.9.0",
     )
     # Additional configure options
     variant("ccopt", default="none", description="Additional CCOPT flags")
@@ -173,7 +176,15 @@ class Psblas(AutotoolsPackage):
         make("install")
 
     def samples(self, spec, prefix):
-        with working_dir(prefix.samples.fileread):
+        fileread = prefix.samples.fileread
+        if spec.satisfies("@3.8.0-2:3.9.0-rc1"):
+            pargen = prefix.samples.pargen
+        elif spec.satisfies("@3.9.0-rc3:") or spec.satisfies("@development"):
+            pargen = prefix.samples.pdegen
+        else:
+            raise InstallError("Unsupported version layout")
+
+        with working_dir(fileread):
             make()
-        with working_dir(prefix.samples.pargen):
+        with working_dir(pargen):
             make()
