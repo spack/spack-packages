@@ -895,6 +895,12 @@ class Root(CMakePackage):
             # warnings when building against ROOT
             env.unset("MACOSX_DEPLOYMENT_TARGET")
 
+    @property
+    def root_library_path(self):
+        # This used to be version-dependent, but such old versions are no
+        # longer supported by Spack
+        return "ROOT_LIBRARY_PATH"
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("ROOTSYS", self.prefix)
         env.set("ROOT_VERSION", "v{0}".format(self.version.up_to(1)))
@@ -903,10 +909,10 @@ class Root(CMakePackage):
         env.set("CLING_STANDARD_PCH", "none")
         env.set("CPPYY_API_PATH", "none")
         env.set("CPPYY_BACKEND_LIBRARY", self.prefix.lib.root.libcppyy_backend)
-        env.prepend_path("ROOT_LIBRARY_PATH", self.prefix.lib.root)
+        env.prepend_path(self.root_library_path, self.prefix.lib.root)
 
         # https://github.com/root-project/root/issues/18949
-        if "+cxxmodules" in self.spec and "+vc" in self.spec:
+        if "+cxxmodules +vc" in self.spec:
             env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec):
@@ -936,4 +942,4 @@ class Root(CMakePackage):
         # versions).
         for lib_path in [dependent_spec.prefix.lib, dependent_spec.prefix.lib64]:
             if os.path.exists(lib_path):
-                env.prepend_path("ROOT_LIBRARY_PATH", lib_path)
+                env.prepend_path(self.root_library_path, lib_path)
