@@ -18,10 +18,10 @@ class Nextflow(Package):
     # The "release" distribution of the nextflow binary contains no bundled plugins and
     # is 'nextflow' in the project's release assets. The "standalone" distribution
     # bundles all first-party plugins and is 'nextflow-<version>-dist' in the project's
-    # release assets.  Only one or the other will be installed, as dictated by the
-    # `standalone` variant.  'edge' releases are also supported.
-    #
-    # For each version, boolean "deprecated" can be defined. E.g.
+    # release assets. Only one or the other will be installed, as dictated by the
+    # version string specified by the user. 'edge' releases are also supported. For each
+    # version, boolean "deprecated" can be defined to deprecated all distributions of
+    # that version. E.g.
     #     "25.12.0-edge": {
     #         "release": {
     #             ...
