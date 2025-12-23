@@ -270,6 +270,7 @@ class Nextflow(Package):
                 ver,
                 sha256=attrs["release"]["sha256"],
                 expand=False,
+                preferred=False,
                 deprecated=is_deprecated,
             )
 
@@ -288,6 +289,7 @@ class Nextflow(Package):
             f"{ver}-standalone",
             sha256=attrs["standalone"]["sha256"],
             expand=False,
+            preferred=False,
             deprecated=is_deprecated,
         )
 
