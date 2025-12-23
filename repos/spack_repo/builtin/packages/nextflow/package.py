@@ -298,14 +298,14 @@ class Nextflow(Package):
     depends_on("java@8:", type="run")
 
     def url_for_version(self, version):
-        ver = str(version).split("-standalone")
-        uri = f"https://github.com/nextflow-io/nextflow/releases/download/v{ver[0]}"
+        ver = str(version).replace("-standalone", "")
+        uri = f"https://github.com/nextflow-io/nextflow/releases/download/v{ver}"
         if "standalone" in str(version):
             # standalone binary name changed with 24.07.0-edge
             if version < Version("24.07.0"):
-                return f"{uri}/nextflow-{ver[0]}-all"
+                return f"{uri}/nextflow-{ver}-all"
             else:
-                return f"{uri}/nextflow-{ver[0]}-dist"
+                return f"{uri}/nextflow-{ver}-dist"
         else:
             return f"{uri}/nextflow"
 
