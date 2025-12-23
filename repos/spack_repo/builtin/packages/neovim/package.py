@@ -94,22 +94,24 @@ class Neovim(CMakePackage):
         depends_on("libtermkey@0.22:", type="link", when="@:0.9")
         depends_on("libvterm@0.1.4:", type="link", when="@:0.10")
         depends_on("msgpack-c@3.0.0:", type="link", when="@:0.10")
+        depends_on("tree-sitter@:0.25")
     with when("@0.7:"):
         depends_on("gettext@0.20.1:")
         depends_on("libluv@1.43.0:", type="link")
         depends_on("libuv@1.44.1:", type="link")
-        depends_on("tree-sitter@0.20.6:")
+        depends_on("tree-sitter@0.20.6:0.25")
     with when("@0.8:"):
         depends_on("libvterm@0.3:", type="link", when="@:0.10")
     with when("@0.9:"):
-        depends_on("tree-sitter@0.20.8:")
+        depends_on("tree-sitter@0.20.8:0.25")
     with when("@0.10:"):
         depends_on("cmake@3.13:", type="build")
         depends_on("libvterm@0.3.3:", when="@:0.10")
-        depends_on("tree-sitter@0.20.9:")
+        depends_on("tree-sitter@0.20.9:0.25")
     with when("@0.11:"):
         depends_on("cmake@3.16:", type="build")
         depends_on("utf8proc", type="link")
+        depends_on("tree-sitter@0.25", type="link", when="@:0.11.5")
         depends_on("tree-sitter@0.25:", type="link")
 
     # Support for `libvterm@0.2:` has been added in neovim@0.8.0

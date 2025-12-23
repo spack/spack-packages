@@ -16,6 +16,7 @@ class PyPydanticCore(PythonPackage):
 
     license("MIT", checked_by="qwertos")
 
+    version("2.41.5", sha256="08daa51ea16ad373ffd5e7606252cc32f07bc72b28284b6bc9c6df804816476e")
     version("2.41.4", sha256="70e47929a9d4a1905a67e4b687d5946026390568a8e952b92824118063cee4d5")
     version("2.27.1", sha256="62a763352879b84aa31058fc931884055fd75089cccbd9d58bb6afd01141b235")
     version("2.23.2", sha256="95d6bf449a1ac81de562d65d180af5d8c19672793c81877a2eda8fde5d08f2fd")

@@ -14,7 +14,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     """AMReX Python Bindings with pybind11"""
 
     homepage = "https://amrex-codes.github.io/amrex/"
-    url = "https://github.com/AMReX-Codes/pyamrex/archive/refs/tags/25.04.tar.gz"
+    url = "https://github.com/AMReX-Codes/pyamrex/archive/refs/tags/25.12.tar.gz"
     git = "https://github.com/AMReX-Codes/pyamrex.git"
 
     maintainers("ax3l", "EZoni", "atmyers", "sayerhs", "WeiqunZhang")
@@ -24,10 +24,12 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("25.12", sha256="f47271d2b559650a8af02564f889e6b5792536fedf374fb54fb1d1edfa4052eb")
+    version("25.11", sha256="87de39f435ba6d03bc69adb9cbcc7679da65ef0e4d6dcd60ab654a68220cbc1f")
     version("25.04", sha256="2c765d581f21170ea26a5eb50bdd2c9151d2dbed9f1002dc25e62f38ed6220c0")
 
-    for v in ["25.04", "develop"]:
-        depends_on("amrex@{0}".format(v), when="@{0}".format(v), type=("build", "link"))
+    for v in ["25.04", "25.11", "25.12", "develop"]:
+        depends_on(f"amrex@{v}", when=f"@{v}", type=("build", "link"))
 
     variant(
         "dimensions",
@@ -55,15 +57,16 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.24:3", type="build")
+    depends_on("cmake@3.24:", type="build")
     depends_on("pkgconfig", type="build")  # amrex +fft
-    depends_on("python@3.8:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-mpi4py@2.1.0:", type=("build", "run"), when="+mpi")
     depends_on("py-numpy@1.15:", type=("build", "run"))
     depends_on("py-packaging@23:", type="build")
     depends_on("py-pip@23:", type="build")
     depends_on("py-setuptools@42:", type="build")
     depends_on("py-pybind11@2.12.0:", type=("build", "link"))
+    depends_on("py-pybind11@3.0.1:", type=("build", "link"), when="@25.08:")
     depends_on("py-wheel@0.40:", type="build")
 
     # AMReX options

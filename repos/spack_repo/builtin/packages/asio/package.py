@@ -59,7 +59,7 @@ class Asio(AutotoolsPackage):
         msg="asio v1.22.1 fixed missing includes necessary for gcc v12 and above",
     )
 
-    stds = ("11", "14", "17", "2a")
+    stds = ("11", "14", "17", "20")
     variant(
         "cxxstd",
         default="11",
