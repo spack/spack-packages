@@ -243,18 +243,6 @@ _VERSIONS = {
 }
 
 
-def get_attrs_for_version(version: str, standalone: bool = False) -> Dict[str,str]:
-    """
-    Given a string `version` and a boolean `standalone`, return sha256 hash of the
-    version's standalone distribution if `standalone` is true, else return the sha256
-    hash of the version's release distribution.
-    """
-    if standalone:
-        return _VERSIONS[version]["standalone"]
-    else:
-        return _VERSIONS[version]["release"]
-
-
 class Nextflow(Package):
     """Data-driven computational pipelines."""
 
@@ -271,10 +259,7 @@ class Nextflow(Package):
     is_deprecated = False
     is_preferred = False
 
-    standalone = False
-
-    with when("+standalone"):
-        standalone = True
+    downloads_uri = "https://github.com/nextflow-io/nextflow/releases/download"
 
     for ver, attrs in _VERSIONS.items():
         if "deprecated" in attrs:
@@ -283,24 +268,31 @@ class Nextflow(Package):
         if "preferred" in attrs:
             is_preferred = attrs["preferred"]
 
+        # release dist for ver
         version(
             ver,
-            sha256=get_attrs_for_version(ver, standalone)["sha256"],
+            sha256=attrs["release"]["sha256"],
             expand=False,
             preferred=is_preferred,
             deprecated=is_deprecated,
+            url=f"{downloads_uri}/v{ver}/nextflow",
+            when="~standalone",
+        )
+
+        # standalone dist for dir
+        version(
+            ver,
+            sha256=attrs["standalone"]["sha256"],
+            expand=False,
+            preferred=is_preferred,
+            deprecated=is_deprecated,
+            url=f"{downloads_uri}/v{ver}/nextflow{ver}-dist",
+            when="+standalone",
         )
 
     depends_on("java@17:", type="run", when="@25:")
     depends_on("java@11:", type="run", when="@23:")
     depends_on("java@8:", type="run")
-
-    def url_for_version(self, version):
-        uri = f"https://github.com/nextflow-io/nextflow/releases/download/v{version}"
-        if self.spec.satisfies("+standalone"):
-            return f"{uri}/nextflow-{version}-dist"
-        else:
-            return f"{uri}/nextflow"
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
