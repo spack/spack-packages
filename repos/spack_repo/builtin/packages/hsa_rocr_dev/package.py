@@ -24,6 +24,7 @@ class HsaRocrDev(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhsa-runtime64"]
 
+    version("7.1.0", sha256="383fa8e1776c3ee527cdddc9f9ac6f7134c3fcd8758eae9be8bd3a8b7fdca9b1")
     version("7.0.2", sha256="9c2020f7a42d60fe9775865ab58464078007926a3b01f1ca8128557c89e7a566")
     version("7.0.0", sha256="9ea2cbcf343f643ede6e16d82fbd0303771e1978759b2e546d0efc0df3263e4c")
     version("6.4.3", sha256="3b23bed04cbed72304d31d69901eb76afa2099c7ac37f055348dfcda2d25e41a")
@@ -98,6 +99,7 @@ class HsaRocrDev(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
@@ -113,6 +115,7 @@ class HsaRocrDev(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 

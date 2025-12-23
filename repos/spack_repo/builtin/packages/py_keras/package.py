@@ -24,6 +24,7 @@ class PyKeras(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("3.13.0", sha256="ec51ad2ffcef086d0e3077ac461fa9e3bc54f91d94b49b7c9a84c9af7f54cf5e")
     version("3.12.0", sha256="536e3f8385a05ae04e82e08715a1a59988578087e187b04cb0a6fad11743f07f")
     version("3.11.3", sha256="efda616835c31b7d916d72303ef9adec1257320bc9fd4b2b0138840fc65fb5b7")
     version("3.11.2", sha256="b78a4af616cbe119e88fa973d2b0443b70c7f74dd3ee888e5026f0b7e78a2801")
@@ -93,6 +94,7 @@ class PyKeras(PythonPackage):
 
     with default_args(type=("build", "run")):
         # pyproject.toml
+        depends_on("python@3.11:", when="@3.13:")
         depends_on("python@3.10:", when="@3.11:")
         depends_on("python@3.9:", when="@3:")
         depends_on("python@3.8:", when="@2.12:")
