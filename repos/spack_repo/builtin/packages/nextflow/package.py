@@ -295,6 +295,7 @@ class Nextflow(Package):
 
     depends_on("java@17:", type="run", when="@25:")
     depends_on("java@11:", type="run", when="@23:")
+    depends_on("java@11:", type="run", when="platform=darwin")
     depends_on("java@8:", type="run")
 
     def url_for_version(self, version):
