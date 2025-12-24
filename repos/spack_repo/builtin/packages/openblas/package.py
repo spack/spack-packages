@@ -287,6 +287,10 @@ class Openblas(CMakePackage, MakefilePackage):
         when="@0.3.27 %oneapi",
     )
 
+    # Require automake for +ilp64 and symbol suffixes
+    require("~ilp64", when="build_system=cmake")
+    require("symbol_suffix=none", when="build_system=cmake")
+
     # Requires support for -mtune=generic
     conflicts("%fortran=clang %llvm@18")
 
