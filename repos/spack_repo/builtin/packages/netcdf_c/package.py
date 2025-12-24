@@ -393,6 +393,16 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             base_cmake_args.append(self.define(nc + "FIND_SHARED_LIBS", True))
         else:
             base_cmake_args.append(self.define(nc + "FIND_SHARED_LIBS", False))
+
+        if self.spec.satisfies("@4.9.0:+shared"):
+            # The plugins are not built when the shared libraries are disabled:
+            if self.spec.satisfies("@4.9.3:"):
+                # This toggle is not defined in the top-level CMake parameters but is still
+                # used by the plugin config; so we work around this bug for now
+                base_cmake_args.append(self.define("ENABLE_PLUGIN_INSTALL", True))
+                base_cmake_args.append(self.define("NETCDF_WITH_PLUGIN_DIR", self.prefix.plugins))
+            else:
+                base_cmake_args.append(self.define("PLUGIN_INSTALL_DIR", self.prefix.plugins))
         return base_cmake_args
 
     @run_after("install")
