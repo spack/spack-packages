@@ -287,7 +287,7 @@ class Openblas(CMakePackage, MakefilePackage):
         when="@0.3.27 %oneapi",
     )
 
-    # Require automake for +ilp64 and symbol suffixes
+    # ilp64 and symbol suffixes are not supported with CMake build system
     require("~ilp64", when="build_system=cmake")
     require("symbol_suffix=none", when="build_system=cmake")
 
