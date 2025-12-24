@@ -23,6 +23,6 @@ class PyTorchCDlpackExt(PythonPackage):
         depends_on("py-setuptools@61.0:")
         depends_on("py-apache-tvm-ffi@0.1.1:")
         depends_on("py-pybind11")
-    
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("CPLUS_INCLUDE_PATH", self.spec["py-pybind11"].prefix.include)
