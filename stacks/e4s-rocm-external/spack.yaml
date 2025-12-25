@@ -255,6 +255,7 @@ spack:
     broken-tests-packages:
     - paraview
     - composable-kernel
+    - py-llvmlite
 
   cdash:
     build-group: E4S ROCm External

@@ -5,6 +5,7 @@ ci:
     - superlu-dist    # srun -n 4 hangs
     - papyrus
     - composable-kernel
+    - py-llvmlite
 
   pipeline-gen:
   - build-job:

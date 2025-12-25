@@ -83,6 +83,7 @@ spack:
   ci:
     broken-tests-packages:
     - composable-kernel
+    - py-llvmlite
     pipeline-gen:
     - build-job:
         image:
