@@ -35,6 +35,7 @@ class PyDistributed(PythonPackage):
 
     version("2025.7.0", sha256="5f8ec20d3cdfb286452831c6f9ebee84527e9323256c20dd2938d9c6e62c5c18")
     version("2025.3.0", sha256="84a68c91db2a106c752ca7845fba8cd92ad4f3545c0fb2d9b6dec0f44b225539")
+    version("2024.12.1", sha256="438aa3ae48bfac9c2bb2ad03f9d47899286f9cb3db8a627b3b8c0de9e26f53dd")  
     version("2024.7.1", sha256="7bce7fa745163b55bdd67fd632b3edf57b31827640390b92d0ee3f73436429d3")
     version("2023.4.1", sha256="0140376338efdcf8db1d03f7c1fdbb5eab2a337b03e955d927c116824ee94ac5")
     version("2022.10.2", sha256="53f0a5bf6efab9a5ab3345cd913f6d3f3d4ea444ee2edbea331c7fef96fd67d0")

@@ -19,6 +19,7 @@ class PyDask(PythonPackage):
 
     version("2025.7.0", sha256="c3a0d4e78882e85ea81dbc71e6459713e45676e2d17e776c2f3f19848039e4cf")
     version("2025.3.0", sha256="322834f44ebc24abeb564c56ccb817c97d6e7af6be71ad0ad96b78b51f2e0e85")
+    version("2024.12.1", sha256="bac809af21c2dd7eb06827bccbfc612504f3ee6435580e548af912828f823195")  
     version("2024.7.1", sha256="dbaef2d50efee841a9d981a218cfeb50392fc9a95e0403b6d680450e4f50d531")
     version("2023.4.1", sha256="9dc72ebb509f58f3fe518c12dd5a488c67123fdd66ccb0b968b34fd11e512153")
     version("2022.10.2", sha256="42cb43f601709575fa46ce09e74bea83fdd464187024f56954e09d9b428ceaab")
@@ -45,7 +46,7 @@ class PyDask(PythonPackage):
 
     depends_on("python@3.8:", type=("build", "run"), when="@:2023.4.1")
     depends_on("python@3.9:", type=("build", "run"), when="@2024.7.1")
-    depends_on("python@3.10:", type=("build", "run"), when="@2025:")
+    depends_on("python@3.10:", type=("build", "run"), when="@2024.8.1:")
 
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@62.6:", type="build", when="@2023.4.1:")
@@ -129,6 +130,7 @@ class PyDask(PythonPackage):
     depends_on("py-distributed@2022.10.2", type=("build", "run"), when="@2022.10.2 +distributed")
     depends_on("py-distributed@2023.4.1", type=("build", "run"), when="@2023.4.1 +distributed")
     depends_on("py-distributed@2024.7.1", type=("build", "run"), when="@2024.7.1 +distributed")
+    depends_on("py-distributed@2024.12.1", type=("build", "run"), when="@2024.12.1 +distributed")
     depends_on("py-distributed@2025.3.0", type=("build", "run"), when="@2025.3.0 +distributed")
     depends_on("py-distributed@2025.7.0", type=("build", "run"), when="@2025.7.0 +distributed")
 
