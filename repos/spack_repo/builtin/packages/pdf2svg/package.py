@@ -21,7 +21,7 @@ class Pdf2svg(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("pkgconfig@0.9.0:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("cairo@1.2.6:")
     depends_on("cairo@1.16:", when="@0.2.4:")
     depends_on("poppler@0.5.4:+glib")

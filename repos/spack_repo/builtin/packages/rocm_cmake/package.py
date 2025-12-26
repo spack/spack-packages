@@ -20,6 +20,9 @@ class RocmCmake(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     license("MIT")
+    version("7.1.0", sha256="d17a109b3ade999926f5b25ce25082b378399654e3b2234cad5f83cdd00a2f32")
+    version("7.0.2", sha256="79c40408be17f7c73105e281154267fcc6851e1db8b6be01a411ef1d8050bc71")
+    version("7.0.0", sha256="16b220cb10c8ebe438c1ba3b9de014abcd782fd0b0bcffb39d3d2d1ff6957f2a")
     version("6.4.3", sha256="a2a29d5d5b6fcf01af8a662c2453c8c1bfc647fbcbfcbe86fc87d6af17287d24")
     version("6.4.2", sha256="61e0217a453e30a68e0a42cba61e7181b07ef0be72d19a1133f8f24cedebddf1")
     version("6.4.1", sha256="d6dfa862009d593f4d334e0c6da9ac52b228e52bb3b38b53405975f28087ca2f")
@@ -62,6 +65,9 @@ class RocmCmake(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 

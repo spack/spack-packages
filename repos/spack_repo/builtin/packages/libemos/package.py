@@ -26,36 +26,19 @@ class Libemos(CMakePackage):
     version("4.4.2", sha256="e2d20ad71e3beb398916f98a35a3c56ee0141d5bc9b3adff15095ff3b6dccea8")
 
     variant(
-        "grib",
-        default="eccodes",
-        values=("eccodes", "grib-api"),
-        description="Specify GRIB backend",
-    )
-    variant(
         "build_type",
         default="RelWithDebInfo",
         description="The build type to build",
         values=("Debug", "Release", "RelWithDebInfo", "Production"),
     )
 
-    depends_on("eccodes", when="grib=eccodes")
-    depends_on("grib-api", when="grib=grib-api")
+    depends_on("eccodes")
     depends_on("fftw precision=float,double")
     depends_on("cmake@2.8.11:", type="build")
     depends_on("pkgconfig", type="build")
 
-    conflicts("grib=eccodes", when="@:4.4.1", msg="Eccodes is supported starting version 4.4.2")
-
     def cmake_args(self):
-        args = []
-
-        if self.spec.variants["grib"].value == "eccodes":
-            args.append("-DENABLE_ECCODES=ON")
-        else:
-            if self.spec.satisfies("@4.4.2:"):
-                args.append("-DENABLE_ECCODES=OFF")
-
-        # To support long pathnames that spack generates
-        args.append("-DCMAKE_Fortran_FLAGS=-ffree-line-length-none")
-
-        return args
+        return [
+            self.define("ENABLE_ECCODE", True),
+            self.define("CMAKE_Fortran_FLAGS", "-ffree-line-length-none"),
+        ]

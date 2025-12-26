@@ -29,6 +29,7 @@ class Liburing(AutotoolsPackage):
     sanity_check_is_dir = ["include", "lib"]
 
     version("master", branch="master")
+    version("2.12", sha256="f1d10cb058c97c953b4c0c446b11e9177e8c8b32a5a88b309f23fdd389e26370")
     version("2.9", sha256="897b1153b55543e8b92a5a3eb9b906537a5fedcf8afaf241f8b8787940c79f8d")
     version("2.4", sha256="2398ec82d967a6f903f3ae1fd4541c754472d3a85a584dc78c5da2fabc90706b")
     version("2.3", sha256="60b367dbdc6f2b0418a6e0cd203ee0049d9d629a36706fcf91dfb9428bae23c8")

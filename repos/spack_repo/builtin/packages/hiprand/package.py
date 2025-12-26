@@ -24,7 +24,9 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
     libraries = ["libhiprand"]
 
     license("MIT")
-
+    version("7.1.0", sha256="c3bd27e74f0769fe46ea5067e05001f909dc83f01000a22e04e6a0e3d6f4dfc8")
+    version("7.0.2", sha256="0c7d18e55fd61070f3bd05b09217caf32c0cb502234b7d732562325b09c9483b")
+    version("7.0.0", sha256="fe0e5161e31591ae7441680c3a1f6d4c1a3fc298ef9f688acbfb3e8a3e6c936c")
     version("6.4.3", sha256="15b67f1b0dcad6319d2fa54d3330a075e74d52a650b682f44afa086cb0f526f0")
     version("6.4.2", sha256="5edc609c1ef03f97a06bcf0e1aaa0402a3964cc66d3437da8136becf2db75a43")
     version("6.4.1", sha256="6310b63c31c68e454f6498f06679843bdbd27e1eca0fd40ed1700cae9fce88e0")
@@ -94,6 +96,9 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
     ]:
         depends_on("rocrand@" + ver, when="+rocm @" + ver)
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")

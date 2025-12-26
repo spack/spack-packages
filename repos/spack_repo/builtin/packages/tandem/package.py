@@ -22,6 +22,7 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main", submodules=True)
+    version("1.2.0-rc", branch="dmay/staging", submodules=True)
 
     # we cannot use the tar.gz file because it does not contains submodules
     version(
@@ -29,6 +30,15 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
     )
     version("1.0", tag="v1.0", commit="eccab10cbdf5842ed9903fac7a023be5e2779f36", submodules=True)
 
+    # Simplex.h: Added #include <limits> to ensure std::numeric_limits is available explicitly,
+    # as required by standard-compliant compilers like GCC.
+    # CMakeLists.txt: Quoted LibxsmmGeneratorExecutable in WITH_LIBXSMM to ensure correct
+    # command-line interpretation, especially when paths contain spaces or special characters.
+    patch("fix_v1.1_compilation.diff", when="@1.1")
+
+    # same as the patch above and:
+    # doctest.h: Redefined SIGSTKSZ for compatibility with glibc 2.34+, where SIGSTKSZ may no
+    # longer be usable in preprocessor conditionals without explicit definition.
     patch("fix_v1.0_compilation.diff", when="@1.0")
 
     maintainers("dmay23", "Thomas-Ulrich")
@@ -52,10 +62,17 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("mpi")
 
-    for var in ["openmpi", "mpich", "mvapich", "mvapich2", "mvapich2-gdr"]:
+    for var in ["openmpi", "mpich", "mvapich-plus"]:
         depends_on(f"{var} +cuda", when=f"+cuda ^[virtuals=mpi] {var}")
 
-    for var in ["mpich", "mvapich2-gdr"]:
+    for var in ["openmpi", "mpich"]:
+        for tgt in CudaPackage.cuda_arch_values:
+            depends_on(
+                f"{var} +cuda cuda_arch={tgt}", when=f"+cuda cuda_arch={tgt} ^[virtuals=mpi] {var}"
+            )
+
+    # these are not cuda packages
+    for var in ["openmpi@5:", "mpich", "mvapich-plus"]:
         depends_on(f"{var} +rocm", when=f"+rocm ^[virtuals=mpi] {var}")
 
     depends_on("parmetis +int64 +shared")
@@ -65,7 +82,11 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("eigen@3.4.0")
 
     depends_on("zlib-api")
-    depends_on("petsc@3.16: +int64 +mumps +scalapack memalign=32")
+
+    depends_on("petsc +int64 +mumps +scalapack memalign=32")
+    depends_on("petsc@3.22", when="@1.2:")
+    depends_on("petsc@3.16:3.19", when="@:1.1")
+
     depends_on("petsc +knl", when="target=skylake:")
 
     with when("+cuda"):
@@ -76,7 +97,9 @@ class Tandem(CMakePackage, CudaPackage, ROCmPackage):
             depends_on(f"petsc +rocm amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
 
     depends_on("python@3", type="build", when="+python")
+    depends_on("python@3.9:", type="build", when="@:1.2 +python")
     depends_on("py-numpy", type="build", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
 
     # see https://github.com/TEAR-ERC/tandem/issues/45
     conflicts("%intel")

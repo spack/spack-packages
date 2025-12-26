@@ -20,6 +20,9 @@ class RocmDebugAgent(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocm-debug-agent"]
 
+    version("7.1.0", sha256="21224ffe5019f1e2a160cad587b0448e550954accce9fd051a915c3f95b54e5b")
+    version("7.0.2", sha256="72ef89af0ec15edf43a99a3e76a420d501fa0871825c9baecd9dff1fc4d021dd")
+    version("7.0.0", sha256="5d822964855979c5063e0ec9554596463d37cdf5f3501550887c034beb3adcc8")
     version("6.4.3", sha256="4be5783e3df89e8c3e35c5690d9414ca8a0b695081352bb945bb533e01de1d65")
     version("6.4.2", sha256="8b42dee486f959795acbac7f8bf287718edbb14393e6262c3dcec97f0697d949")
     version("6.4.1", sha256="0e9fc4626e16eea1c701b5206349fceab4ec596a1d22738977e779f673a26769")
@@ -84,6 +87,9 @@ class RocmDebugAgent(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-dbgapi@{ver}", when=f"@{ver}")

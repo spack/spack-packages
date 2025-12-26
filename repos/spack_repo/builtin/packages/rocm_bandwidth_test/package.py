@@ -17,7 +17,27 @@ class RocmBandwidthTest(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-
+    version(
+        "7.1.0",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.1.0",
+        commit="9f0a001fa5cfcbe6ecdf2e96fd91eacb371a8a1e",
+        submodules=True,
+    )
+    version(
+        "7.0.2",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.0.2",
+        commit="ae9cd3f755553027bf799f9bb71c11a6c556d366",
+        submodules=True,
+    )
+    version(
+        "7.0.0",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.0.0",
+        commit="49a72abaaaadb9934d6bcc96ac70663d7cca02f3",
+        submodules=True,
+    )
     version("6.4.3", sha256="2b8d9eb16191e9d8dcfdc345615298b36b8e7d468f1b40d46638989301b03688")
     version("6.4.2", sha256="70cd7918dd07564241576e4ae8a4c5d007f87aa3d93589baded49022dc2cf27b")
     version("6.4.1", sha256="6910f52af9416802245d4fb6406274fd2bde6e9c287cc2d602adf682ecf98e4e")
@@ -41,6 +61,8 @@ class RocmBandwidthTest(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3:", type="build")
+    depends_on("curl", when="@7.0:")
+    depends_on("numactl", when="@7.0:")
 
     for ver in [
         "5.7.0",
@@ -75,8 +97,44 @@ class RocmBandwidthTest(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    build_targets = ["package"]
+    for ver in ["7.0.0", "7.0.2", "7.1.0"]:
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver}", when=f"@{ver}")
+
+    patch("add_numa_hsa.patch", when="@7.0.0")
+    patch("modify_hsa_include.patch", when="@7.0.2:")
+
+    # https://github.com/ROCm/rocm_bandwidth_test/issues/131
+    # install doesnt honour CMAKE_INSTALL_PREFIX
+    patch("change_install_path.patch", when="@7.0.0")
+    patch("change_install_path_7.0.2.patch", when="@7.0.2:")
+
+    @property
+    def build_targets(self):
+        targets = []
+        if self.spec.satisfies("@:6.4.3"):
+            targets.append("package")
+        return targets
+
+    def cmake_args(self):
+        args = []
+        if self.spec.satisfies("@7.0:"):
+            args.append(
+                self.define("CMAKE_C_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
+            )
+            args.append(
+                self.define(
+                    "CMAKE_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
+                )
+            )
+            args.append(self.define("AMD_APP_STANDALONE_BUILD_PACKAGE", "ON"))
+            args.append(self.define("NUMA_INCLUDE_DIR", self.spec["numactl"].prefix.include))
+            args.append(self.define("HSA_INCLUDE_DIR", self.spec["hsa-rocr-dev"].prefix.include))
+        return args

@@ -30,6 +30,9 @@ class Rpp(CMakePackage):
     maintainers("srekolam", "afzpatel")
     license("MIT")
 
+    version("7.1.0", sha256="65d815f4957b27c1f994d4d905a107536fe90ffa4c229c015c241687f11fe2c0")
+    version("7.0.2", sha256="0836daecfde5dd7daa4269baae32d996d40ab6864622ad16000d00cf2aeac676")
+    version("7.0.0", sha256="b2ab0131480127a45386b3142168308bdbce7689c9a95e71c7b7a6481510fdad")
     version("6.4.3", sha256="3c098c8951fb2730ecedbc57a4f966b344f630bc48fb3a6d33c62af28cf52cde")
     version("6.4.2", sha256="55966e3d099748ae3fd9784ef23c8639fd84e0f602bf57a22513048cbe82c066")
     version("6.4.1", sha256="448973f167ca9aad9628acc7d06a06c6443a34dc23a4fa325eefaf37a52ce242")
@@ -72,7 +75,7 @@ class Rpp(CMakePackage):
     conflicts("+asan", when="os=centos8")
 
     patch("0001-include-half-openmp-through-spack-package.patch", when="@:5.7")
-    patch("0002-declare-handle-in-header.patch")
+    patch("0002-declare-handle-in-header.patch", when="@:6.4")
     patch("0003-include-half-through-spack-package.patch", when="@6.0:6.3")
 
     # adds half.hpp include directory and modifies how the libjpegturbo
@@ -178,6 +181,9 @@ class Rpp(CMakePackage):
                 "6.4.1",
                 "6.4.2",
                 "6.4.3",
+                "7.0.0",
+                "7.0.2",
+                "7.1.0",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):

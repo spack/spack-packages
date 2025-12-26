@@ -20,8 +20,6 @@ class Omnitrace(CMakePackage):
 
     license("MIT")
 
-    version("amd-mainline", branch="amd-mainline", submodules=True, deprecated=True)
-    version("amd-staging", branch="amd-staging", submodules=True, deprecated=True)
     version(
         "rocm-6.3.0",
         git="https://github.com/ROCm/rocprofiler-systems",
@@ -70,13 +68,6 @@ class Omnitrace(CMakePackage):
     version("1.7.2", commit="a41a5c155e0d3780de4c83a76f28d7c8ffa6414f", submodules=True)
     version("1.7.1", commit="67f7471253b8e031e476d80d2bc00e569285c1bf", submodules=True)
     version("1.7.0", commit="2a387f909935d06c6a4874a5b11f38fb8521800e", submodules=True)
-    with default_args(deprecated=True):
-        version("1.6.0", commit="15e6e6d979fcd5f549d952862400f292ec735b8c", submodules=True)
-        version("1.5.0", commit="2718596e5a6808a9278c3f6c8fddfaf977d3bcb6", submodules=True)
-        version("1.4.0", commit="23fb3946c7f4c0702b1b168e1d78b8b62597e3f1", submodules=True)
-        version("1.3.1", commit="641225f88304909fd2ca5407aec062d0fdf0ed8b", submodules=True)
-        version("1.3.0", commit="4dd144a32c8b83c44e132ef53f2b44fe4b4d5569", submodules=True)
-        version("1.2.0", commit="f82845388aab108ed1d1fc404f433a0def391bb3", submodules=True)
 
     variant(
         "rocm",

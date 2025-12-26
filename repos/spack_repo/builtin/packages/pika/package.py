@@ -166,6 +166,14 @@ class Pika(CMakePackage, CudaPackage, ROCmPackage):
     with when("+stdexec"):
         depends_on("stdexec")
         depends_on("stdexec@24.09:", when="@0.29:")
+        # https://github.com/pika-org/pika/issues/1448
+        conflicts(
+            "stdexec@25.09:",
+            msg="stdexec 25.09 changes the bulk customization mechanisms in a way that pika's "
+            "customizations no longer apply which leads to single-threaded execution where "
+            "parallel execution is expected; see https://github.com/pika-org/pika/issues/1448 "
+            "for more details",
+        )
     depends_on("rocblas", when="+rocm")
     depends_on("rocsolver", when="@0.5: +rocm")
     depends_on("tracy-client", when="+tracy")

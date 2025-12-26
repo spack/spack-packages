@@ -25,6 +25,9 @@ class RoctracerDev(CMakePackage, ROCmPackage):
 
     license("MIT")
 
+    version("7.1.0", sha256="a90077e2080531803dac154e64d6d481289a5839493ce131c4edc8b5ac1bc294")
+    version("7.0.2", sha256="c9dc54fc8b68a7598b3e9453f7962a87cb02e86d64e5681452ebafd62fb85e96")
+    version("7.0.0", sha256="c1f435b8040c6d34720eeadf837bc888b1c5aaccbfd7efaff4d602f1957f812f")
     version("6.4.3", sha256="a4378652b3b7141ca3b2743eedada03757383bff88932db8e28d0afd5869b882")
     version("6.4.2", sha256="c9bc3390fe4c406cc2b2bdb5a7e9f088e0107825624c9cd7b2a6ec120bc73ef8")
     version("6.4.1", sha256="57d61441d95b05b12cd05210a80d81cd1d7a21dab7487680897427dfbdafddca")
@@ -86,6 +89,9 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -101,22 +107,6 @@ class RoctracerDev(CMakePackage, ROCmPackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         return None
-
-    def patch(self):
-        filter_file(
-            r"${CMAKE_PREFIX_PATH}/hsa",
-            "${HSA_RUNTIME_INC_PATH}",
-            "src/CMakeLists.txt",
-            string=True,
-        )
-        with working_dir("script"):
-            filter_file(
-                "^#!/usr/bin/python[23]",
-                f"#!{self.spec['python'].command.path}",
-                "check_trace.py",
-                "gen_ostream_ops.py",
-                "hsaap.py",
-            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

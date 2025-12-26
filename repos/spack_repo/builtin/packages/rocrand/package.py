@@ -24,6 +24,9 @@ class Rocrand(CMakePackage):
 
     license("MIT")
 
+    version("7.1.0", sha256="616c2f61a4e05d8f07e4f95a26c1f031e66092cbf45354fe64c62becc9dcb751")
+    version("7.0.2", sha256="ee0fee0ee7d3b59aafba8f9935c28c528363f941b42eea05045023c27e61938d")
+    version("7.0.0", sha256="b8539339d1538d1aae69b7b77e62eee00c8586001b996f1c8af0c7579e85a9a6")
     version("6.4.3", sha256="6d174b679c1829e1740d8cb2a59bb43b7a34bd42e9234026860762ead90cccf9")
     version("6.4.2", sha256="43b370e7f4acb44a0eb4a403f658a3b3db2f748dbf5d9582014c20cb3ba8329c")
     version("6.4.1", sha256="690f8edc7789719876cf6119e58aa1335b4ca17b775a753dffb9a07000af9df7")
@@ -83,6 +86,9 @@ class Rocrand(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
@@ -110,7 +116,10 @@ class Rocrand(CMakePackage):
         args = [self.define("BUILD_BENCHMARK", "OFF"), self.define("BUILD_TEST", self.run_tests)]
 
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))

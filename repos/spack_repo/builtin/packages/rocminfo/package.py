@@ -18,6 +18,9 @@ class Rocminfo(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "haampie")
 
+    version("7.1.0", sha256="fdf1e08392d3645d64696c5de7c116a1ea7ff3c70f19c0cb46c9eece7c00062c")
+    version("7.0.2", sha256="06098e7fa92c618ecd042dca3c980f270617f2085b93d1465a4b7e7cc4d12661")
+    version("7.0.0", sha256="fdab0c04941a64f585605b05d4e520fb2261d10175227cc6e9f934e868462eea")
     version("6.4.3", sha256="0aa040963daaa2b5ebbec818a2d53c83612912686336160c223fb664dc0ca92b")
     version("6.4.2", sha256="b559f7e22086db952cec098d5512c77ae844f955a16d2cbbbd088fb3844c8787")
     version("6.4.1", sha256="eabbe4bfb29152900bbde812c6fffd5555b45842259242d85f29e449c00f3249")
@@ -76,6 +79,9 @@ class Rocminfo(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
