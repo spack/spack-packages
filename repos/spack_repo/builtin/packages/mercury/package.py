@@ -103,7 +103,7 @@ class Mercury(CMakePackage):
             define_from_variant("NA_USE_MPI", "mpi"),
             define_from_variant("NA_USE_SM", "sm"),
             define_from_variant("BUILD_TESTING", "tests"),
-            define_from_variant("BUILD_TESTING_PERF", "tests")
+            define_from_variant("BUILD_TESTING_PERF", "tests"),
         ]
 
         if "@2.3.0:" in spec:
