@@ -163,14 +163,14 @@ class UfsWeatherModel(CMakePackage):
 
         env.set("CCPP_SUITES", ",".join([x for x in spec.variants["ccpp_suites"].value if x]))
 
-        if spec.platform == "linux" and spec.satisfies("%intel"):
+        if spec.platform == "linux" and (spec.satisfies("%intel") or spec.satisfies("%oneapi")):
             env.set("CMAKE_Platform", "linux.intel")
         elif spec.platform == "linux" and spec.satisfies("%gcc"):
             env.set("CMAKE_Platform", "linux.gnu")
         elif spec.platform == "darwin" and spec.satisfies("%gcc"):
             env.set("CMAKE_Platform", "macosx.gnu")
         else:
-            msg = "The host system {0} and compiler {0} "
+            msg = "The host system {0} and compiler {1} "
             msg += "are not supported by UFS."
             raise InstallError(msg.format(spec.platform, self.compiler.name))
 
