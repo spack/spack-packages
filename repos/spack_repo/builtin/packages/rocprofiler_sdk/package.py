@@ -104,7 +104,9 @@ class RocprofilerSdk(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("sqlite", when="@7:")
-    depends_on("elfutils", when="@7.1:")
+    depends_on("elfutils")
+    depends_on("libdrm")
+    depends_on("pkgconfig", when="@7.1:")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
