@@ -168,6 +168,13 @@ class Root(CMakePackage):
         when="@6.32.0:6.32.02",
     )
 
+    # Fix cppyy double-install overwriting rpath
+    patch(
+        "https://github.com/root-project/root/commit/5b09965c2acf098f0bfba465c395a2ce23f276b5.patch?full_index=1",
+        sha256="131ab40a3be20b14929327bf9fc0a4c5e2da7d56aa1ad6f8bd39c7826038da81",
+        when="@6.38.0 +python",
+    )
+
     if _is_macos:
         # Resolve non-standard use of uint, _cf_
         # https://sft.its.cern.ch/jira/browse/ROOT-7886.
