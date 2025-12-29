@@ -42,7 +42,7 @@ class HpcxMpi(Package):
 
     @property
     def libs(self):
-    libraries = ["libmpi"]
+        libraries = ["libmpi"]
         return find_libraries(libraries, root=self.prefix, shared=True, recursive=True)
 
     def setup_dependent_build_environment(
