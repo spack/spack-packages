@@ -914,7 +914,7 @@ class Root(CMakePackage):
         env.prepend_path(self.root_library_path, self.prefix.lib.root)
 
         # https://github.com/root-project/root/issues/18949
-        if "+cxxmodules +vc" in self.spec:
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
             env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_build_environment(self, env: EnvironmentModifications, dependent_spec):
@@ -928,7 +928,7 @@ class Root(CMakePackage):
             env.unset("MACOSX_DEPLOYMENT_TARGET")
 
         # https://github.com/root-project/root/issues/18949
-        if "+cxxmodules +vc" in self.spec:
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
             env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec):
