@@ -21,12 +21,20 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
     license("BSD-3-Clause")
 
+    def url_for_version(self, version):
+        if version >= Version("1.20.0"):
+            version_prefix = ""
+        else:
+            version_prefix = "v"
+        return f"https://github.com/openucx/ucx/releases/download/{version_prefix}{version}/ucx-{version}.tar.gz"
+
     version("master", branch="master", submodules=True)
 
     # Current
-    version("1.19.1", sha256="dea5d821fce05b6ffe175a74e6e148386dd85791409fc71242f3d1369100fd8a")
+    version("1.20.0", sha256="8a2776c3e8d7da8aa45abe640a6956b33f71b59cf4120566a888ee2b0ecfe667")
 
     # Still supported
+    version("1.19.1", sha256="dea5d821fce05b6ffe175a74e6e148386dd85791409fc71242f3d1369100fd8a")
     version("1.19.0", sha256="9af07d55281059542f20c5b411db668643543174e51ac71f53f7ac839164f285")
     version("1.18.1", sha256="8018dd75f11b5e8d6e57dcdb5b798d2c1f000982c353efde1f3170025c6c3b4c")
     version("1.18.0", sha256="fa75070f5fa7442731b4ef5fc9549391e147ed3d859afeb1dad2d4513b39dc33")
