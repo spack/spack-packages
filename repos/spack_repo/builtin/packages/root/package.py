@@ -898,8 +898,9 @@ class Root(CMakePackage):
 
     @property
     def root_library_path(self):
-        # This used to be version-dependent, but such old versions are no
-        # longer supported by Spack
+        # The ROOT_LIBRARY_PATH environment variable was added to ROOT 6.26.
+        # For previous versions (no longer supported by Spack) it was
+        # LD_LIBRARY_PATH.
         return "ROOT_LIBRARY_PATH"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
@@ -926,6 +927,9 @@ class Root(CMakePackage):
         if "platform=darwin" in self.spec:
             # Newer deployment targets cause fatal errors in rootcling
             env.unset("MACOSX_DEPLOYMENT_TARGET")
+
+        # Note that setup_dependent_run_environment will add include and
+        # library path
 
         # https://github.com/root-project/root/issues/18949
         if "+cxxmodules" in self.spec and "+vc" in self.spec:
