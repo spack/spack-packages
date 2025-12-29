@@ -91,6 +91,7 @@ class Podio(CMakePackage):
 
     conflicts("+rntuple ^root@6.32:", when="@:0.99", msg="rntuple API change requires podio@1:")
     conflicts("+rntuple ^root@6.34:", when="@:1.1", msg="rntuple API change requires podio@1.2:")
+    conflicts("^python +freethreading", when="@:1.6", msg="python free-threading requires @1.7:")
 
     # See https://github.com/AIDASoft/podio/pull/600
     patch(
