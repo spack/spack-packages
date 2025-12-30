@@ -350,7 +350,9 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             )
         )
 
-        entries.append(cmake_cache_option("{}DISABLE_RM".format(option_prefix), spec.satisfies("+disable_rm")))
+        entries.append(
+            cmake_cache_option("{}DISABLE_RM".format(option_prefix), spec.satisfies("+disable_rm"))
+        )
 
         return entries
 
