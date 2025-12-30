@@ -97,8 +97,9 @@ class UfsWeatherModel(CMakePackage):
 
     variant("app", default="ATM", description="UFS application", when="@develop")
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("bacio")
     depends_on("mpi", when="+mpi")
