@@ -59,7 +59,7 @@ ci:
 
   - signing-job:
       image:
-        name: ghcr.io/spack/notary@sha256:8b685186de3e26bfacbdfea27cf3802c853e2f1311e833e4d857247791a636dc
+        name: ghcr.io/spack/notary@sha256:a1e2575e12a1d60083a65f0a1b35abf0df85d7086e7f8b10c2a9926614a46127
         entrypoint: [""]
       tags: ["aws"]
       script:
