@@ -116,10 +116,6 @@ class Root(CMakePackage):
     # Widely used patch (CMS, FNAL) to increase the size of static
     # buffers used to improve the operation of TString.
     patch("format-stringbuf-size.patch", level=0)
-    # Support use of `mariadb-c-client` and `mariadb` to provide the
-    # MySQL API _cf_
-    # https://github.com/root-project/root/commit/9c0fa8c554a569c971185249f9acfff4418c0c13.
-    patch("find-mysql.patch", level=1, when="@:6.16.00")
     # Some ROOT versions did not honor the option to avoid building an
     # internal version of unuran, _cf_
     # https://github.com/root-project/ROOT/commit/3e60764f133218b6938e5aa4986de760e8f058d9.
@@ -281,7 +277,6 @@ class Root(CMakePackage):
     variant("spectrum", default=False, description="Enable support for TSpectrum")
     variant("sqlite", default=False, description="Enable SQLite support")
     variant("ssl", default=False, description="Enable SSL encryption support")
-    variant("table", when="@:6.17", default=False, description="Build libTable contrib library")
     variant("tbb", default=True, description="TBB multi-threading support")
     variant(
         "tiff",
@@ -289,7 +284,6 @@ class Root(CMakePackage):
         default=True,
         description="Support TIFF in image processing (requires libtiff)",
     )
-    variant("threads", when="@:6.19.01", default=True, description="Enable using thread library")
     variant("tmva", default=False, description="Build TMVA multi variate analysis library")
     variant(
         "tmva-cpu",
@@ -335,9 +329,6 @@ class Root(CMakePackage):
         "veccore", default=False, description="Enable support for VecCore SIMD abstraction library"
     )
     variant(
-        "vmc", when="@:6.25", default=False, description="Enable the Virtual Monte Carlo interface"
-    )
-    variant(
         "webgui", default=True, description="Enable web-based UI components of ROOT", when="+root7"
     )
     variant("x", default=(not _is_macos), description="Enable set of graphical options")
@@ -365,7 +356,6 @@ class Root(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
 
-    depends_on("cmake@3.4.3:", type="build", when="@:6.16")
     depends_on("cmake@3.9:", type="build", when="@6.18.00:")
     depends_on("cmake@3.16:", type="build", when="@6.26.00:")
     depends_on("cmake@3.19:", type="build", when="@6.28.00: platform=darwin")
@@ -426,7 +416,6 @@ class Root(CMakePackage):
 
     # Python
     depends_on("python@2.7:", when="+python", type=("build", "run"))
-    depends_on("python@2.7:3.10", when="@:6.26.09 +python", type=("build", "run"))
     depends_on("python@3.8:", when="@6.34.00: +python", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"), when="+tmva-pymva")
     # See: https://sft.its.cern.ch/jira/browse/ROOT-10626
@@ -456,7 +445,6 @@ class Root(CMakePackage):
     depends_on("mysql-client", when="+mysql")
     depends_on("openssl", when="+ssl")
     depends_on("openssl", when="+davix")  # Also with davix
-    depends_on("oracle-instant-client@19.10.0.0.0", when="+oracle @:6.24.01")
     depends_on("postgresql", when="+postgres")
     depends_on("pythia6+root", when="+pythia6")
     depends_on("pythia8", when="+pythia8")
@@ -468,16 +456,6 @@ class Root(CMakePackage):
     depends_on("shadow", when="+shadow")
     depends_on("sqlite", when="+sqlite")
     depends_on("tbb", when="+tbb")
-    # See: https://github.com/root-project/root/issues/6933
-    conflicts(
-        "^intel-tbb@2021.1:", when="@:6.22", msg="Please use an older intel-tbb version for ROOT"
-    )
-    conflicts(
-        "^intel-oneapi-tbb@2021.1:",
-        when="@:6.22",
-        msg="Please use an older intel-tbb/intel-oneapi-tbb version for ROOT",
-    )
-    # depends_on('intel-tbb@:2021.0', when='@:6.22 ^intel-tbb')
     depends_on("unuran", when="+unuran")
     depends_on("vc@1.0:", when="@6.07.04: +vc")
     depends_on("vc@1.3.0:", when="@6.09.02: +vc")
@@ -496,18 +474,8 @@ class Root(CMakePackage):
     # See https://sft.its.cern.ch/jira/browse/ROOT-7517
     conflicts("%intel")
 
-    # ROOT <6.08 was incompatible with the GCC 5+ ABI
-    conflicts("%gcc@5:", when="@:6.07")
-
-    # The version of Clang featured in ROOT <6.12 fails to build with
-    # GCC 9.2.1, which we can safely extrapolate to the GCC 9 series.
-    conflicts("%gcc@9:", when="@:6.11")
-
     # GCC 15 support was added in 6.34.04
     conflicts("%gcc@15:", when="@:6.34.02")
-
-    # See https://github.com/root-project/root/issues/9297
-    conflicts("target=ppc64le:", when="@:6.24")
 
     # Incompatible variants
     if _is_macos:
@@ -537,23 +505,9 @@ class Root(CMakePackage):
 
     conflicts("%gcc@:10", when="cxxstd=20")
 
-    # See https://github.com/root-project/root/issues/11128
-    conflicts("%clang@16:", when="@:6.26.07", msg="clang 16+ support was added in root 6.26.08")
-
-    # See https://github.com/spack/spack/pull/44826
-    if _is_macos and macos_version() == Version("12"):
-        conflicts("@:6.27", when="+python", msg="macOS 12 python support for 6.28: only")
-
-    # See https://github.com/root-project/root/issues/11714
-    if _is_macos and macos_version() >= Version("13"):
-        conflicts("@:6.26.09", msg="macOS 13 support was added in root 6.26.10")
-
     # See https://github.com/root-project/root/issues/16219
     if _is_macos and macos_version() >= Version("15"):
         conflicts("@:6.32.05", msg="macOS 15 support was added in root 6.32.06")
-
-    # ROOT <6.14 is incompatible with Python >=3.7, which is the minimum supported by spack
-    conflicts("+python", when="@:6.13", msg="Spack wants python >=3.7, too new for ROOT <6.14")
 
     # ROOT does not support LTO builds
     # See https://github.com/root-project/root/issues/11135
@@ -636,8 +590,6 @@ class Root(CMakePackage):
         _add_variant(v, f, ("imt", "tbb"), "+tbb")
         if Version(version_str) <= Version("6.28"):
             _add_variant(v, f, "jemalloc", "+jemalloc")
-        if Version(version_str) <= Version("6.17"):
-            _add_variant(v, f, "memstat", "+memstat")
         _add_variant(v, f, ("minuit", "minuit2"), "+minuit")
         _add_variant(v, f, "mlp", "+mlp")
         if Version(version_str) <= Version("6.36"):
@@ -650,29 +602,19 @@ class Root(CMakePackage):
             _add_variant(v, f, "pythia6", "+pythia6")
         _add_variant(v, f, "pythia8", "+pythia8")
         _add_variant(v, f, "pyroot", "+python")
-        if Version(version_str) <= Version("6.17"):
-            _add_variant(v, f, ("qt", "qtgsi"), "+qt4")
-        if Version(version_str) >= Version("6.12") and Version(version_str) <= Version("6.34"):
+        if Version(version_str) <= Version("6.34"):
             _add_variant(v, f, "qt5web", "+qt5")
-        if Version(version_str) >= Version("6.26"):
-            _add_variant(v, f, "qt6web", "+qt6")
+        _add_variant(v, f, "qt6web", "+qt6")
         _add_variant(v, f, "r", "+r")
         _add_variant(v, f, "roofit", "+roofit")
         # webui feature renamed to webgui in 6.18
-        if Version(version_str) >= Version("6.18"):
-            _add_variant(v, f, ("root7", "webgui"), "+webgui")
-        else:
-            _add_variant(v, f, ("root7", "webui"), "+webgui")
+        _add_variant(v, f, ("root7", "webgui"), "+webgui")
         _add_variant(v, f, "rpath", "+rpath")
         _add_variant(v, f, "runtime_cxxmodules", "+cxxmodules")
         _add_variant(v, f, "shadowpw", "+shadow")
         _add_variant(v, f, "spectrum", "+spectrum")
         _add_variant(v, f, "sqlite", "+sqlite")
         _add_variant(v, f, "ssl", "+ssl")
-        if Version(version_str) <= Version("6.17"):
-            _add_variant(v, f, "table", "+table")
-        if Version(version_str) <= Version("6.19.01"):
-            _add_variant(v, f, "thread", "+threads")
         _add_variant(v, f, "tmva", "+tmva")
         _add_variant(v, f, "tmva-cpu", "+tmva-cpu")
         _add_variant(v, f, "tmva-gpu", "+tmva-gpu")
@@ -682,12 +624,21 @@ class Root(CMakePackage):
         _add_variant(v, f, "vc", "+vc")
         _add_variant(v, f, "vdt", "+vdt")
         _add_variant(v, f, "veccore", "+veccore")
-        if Version(version_str) <= Version("6.25"):
-            _add_variant(v, f, "vmc", "+vmc")
         _add_variant(v, f, ("x11", "xft"), "+x")
         _add_variant(v, f, "xml", "+xml")
         _add_variant(v, f, "xrootd", "+xrootd")
         return " ".join(v)
+
+    def url_for_version(self, version):
+        dotted = version.dotted
+        if version < Version("6.36.04"):
+            # Older releases available only on CERN mirror
+            return f"https://root.cern/download/root_v{dotted}.source.tar.gz"
+        else:
+            # Faster downloads
+            dashed = version.dashed
+            return f"https://github.com/root-project/root/releases/download/v{dashed}/root_v{dotted}.source.tar.gz"
+        return url.format(version.underscored)
 
     def cmake_args(self):
         define = self.define
@@ -714,13 +665,6 @@ class Root(CMakePackage):
             # it was compiled with at run time; see #17488, #18078 and #23886
             define("CLING_CXX_PATH", self.compiler.cxx),
         ]
-
-        if self.spec.satisfies("@:6.19.01"):
-            options += [
-                define("explicitlink", True),
-                define("pch", True),
-                define_from_variant("thread", "threads"),
-            ]
 
         if self.spec.satisfies("@:6.28"):
             options.append(define("cxxmodules", False))
@@ -831,7 +775,6 @@ class Root(CMakePackage):
             define_from_variant("sqlite"),
             define("srp", False),
             define_from_variant("ssl"),
-            define_from_variant("table"),
             define_from_variant("tbb"),
             define("tcmalloc", False),
             define_from_variant("tmva"),
@@ -840,7 +783,6 @@ class Root(CMakePackage):
             define_from_variant("vc"),
             define_from_variant("vdt"),
             define_from_variant("veccore"),
-            define_from_variant("vmc"),
             define_from_variant("x11", "x"),
             define_from_variant("xft", "x"),
             define_from_variant("xml"),
@@ -852,8 +794,6 @@ class Root(CMakePackage):
 
         # Necessary due to name change of variant (webui->webgui)
         # https://github.com/root-project/root/commit/d631c542909f2f793ca7b06abc622e292dfc4934
-        if self.spec.satisfies("@:6.17.02"):
-            options.append(define_from_variant("webui", "webgui"))
         if self.spec.satisfies("@6.18.00:"):
             options.append(define_from_variant("webgui", "webgui"))
 
@@ -864,9 +804,6 @@ class Root(CMakePackage):
 
         if self.spec.satisfies("@6.17.02:"):
             options.append(define_from_variant("tmva-pymva"))
-
-        if self.spec.satisfies("@:6.19.01"):
-            options += [define("astiff", True), define("cling", True)]
 
         if self.spec.satisfies("@6.20.02:"):
             options.append(define_from_variant("cudnn"))
@@ -943,10 +880,8 @@ class Root(CMakePackage):
                 env.append_path("SPACK_INCLUDE_DIRS", include_path)
 
         # With that done, let's go fixing those deps
-        if spec.satisfies("@:6.12"):
-            add_include_path("zlib-api")
         if "+x" in spec:
-            if spec.satisfies("@:6.08") or spec.satisfies("@6.22:"):
+            if spec.satisfies("@6.22:"):
                 add_include_path("xextproto")
             add_include_path("fontconfig")
             add_include_path("libx11")
@@ -962,11 +897,7 @@ class Root(CMakePackage):
 
     @property
     def root_library_path(self):
-        # Where possible, we do not use LD_LIBRARY_PATH as that is non-portable
-        # and pollutes the standard library-loading mechanisms on Linux systems.
         # The ROOT_LIBRARY_PATH environment variable was added to ROOT 6.26.
-        if self.spec.satisfies("@:6.25"):
-            return "LD_LIBRARY_PATH"
         return "ROOT_LIBRARY_PATH"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
