@@ -121,7 +121,7 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     )
     variant(
         "cxxstd",
-        default="20",
+        default="17",
         values=("11", "14", "17", "20"),
         description="C++ standard to build with",
     )
