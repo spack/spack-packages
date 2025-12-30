@@ -872,9 +872,9 @@ class Python(Package):
         #
         # in that order if using python@3.14.0, for example.
         suffixes = [
-            self.spec.version.up_to(2) + "t",
-            self.spec.version.up_to(2),
-            self.spec.version.up_to(1),
+            str(self.spec.version.up_to(2)) + "t",
+            str(self.spec.version.up_to(2)),
+            str(self.spec.version.up_to(1)),
             "",
         ]
         ext = "" if sys.platform != "win32" else ".exe"
