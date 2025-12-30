@@ -114,7 +114,9 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("docs", default=False, description="Build documentation")
     variant("loop_fuser", default=False, description="Enable loop fusion capability")
     variant("globalid", default=False, description="Support global ID index type")
-    variant("legacy_compatibility_mode", default=False, description="Enable legacy compatibility mode")
+    variant(
+        "legacy_compatibility_mode", default=False, description="Enable legacy compatibility mode"
+    )
     variant(
         "cxxstd",
         default="20",
@@ -303,7 +305,7 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         # C++ standard
         entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
-        
+
         entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+tests")))
         entries.append(cmake_cache_option("CARE_ENABLE_TESTS", spec.satisfies("+tests")))
         # For tests to work, we also need BLT_ENABLE_TESTS to be on.
@@ -331,7 +333,11 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
 
         entries.append(cmake_cache_option("CARE_ENABLE_LOOP_FUSER", spec.satisfies("+loop_fuser")))
-        entries.append(cmake_cache_option("CARE_LEGACY_COMPATIBILITY_MODE", spec.satisfies("+legacy_compatibility_mode")))
+        entries.append(
+            cmake_cache_option(
+                "CARE_LEGACY_COMPATIBILITY_MODE", spec.satisfies("+legacy_compatibility_mode")
+            )
+        )
 
         return entries
 
