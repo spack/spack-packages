@@ -176,6 +176,11 @@ class Dd4hep(CMakePackage):
     # See https://github.com/AIDASoft/DD4hep/issues/1210
     conflicts("^root@6.31.1:", when="@:1.27")
 
+    # See https://github.com/AIDASoft/DD4hep/pull/1547
+    conflicts(
+        "^python +freethreading", when="@:1.34", msg="python free-threading requires dd4hep@1.35:"
+    )
+
     @property
     def libs(self):
         # We need to override libs here, because we don't build a libdd4hep so
