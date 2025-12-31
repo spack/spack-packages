@@ -207,6 +207,9 @@ class Hpcviewer(Package):
     # Eclipse requires a newer glibc on powerpc, but not x86.
     depends_on("glibc@2.34:", when="@2025.3: target=ppc64le:")
 
+    # contains precompiled binaries without rpaths
+    unresolved_libraries = ["*"]
+
     # Install for MacOSX / Darwin
     @when("platform=darwin @:2025.2")
     def install(self, spec, prefix):
