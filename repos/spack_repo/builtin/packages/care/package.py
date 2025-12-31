@@ -119,9 +119,6 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         "legacy_compatibility_mode", default=False, description="Enable legacy compatibility mode"
     )
     variant(
-        "legacy_compatibility_mode", default=False, description="Enable legacy compatibility mode"
-    )
-    variant(
         "cxxstd",
         default="17",
         values=("11", "14", "17", "20"),
