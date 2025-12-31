@@ -40,7 +40,7 @@ class Glow(GoPackage):
     depends_on("go@1.23.6:", when="@2.1.0:")
     depends_on("go@1.21.4:", when="@2.0.0:")
     depends_on("go@1.16:", when="@1.5.0:")
-    depends_on("go@1.13:", when="@1.0.0:")
+    depends_on("go@1.13:")
 
     @property
     def build_args(self):
