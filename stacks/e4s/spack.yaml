@@ -115,7 +115,7 @@ spack:
   - fortrilinos
   - fpm
   - gasnet
-  - geopm-runtime
+  - libgeopm
   - ginkgo
   - globalarrays
   - glvis

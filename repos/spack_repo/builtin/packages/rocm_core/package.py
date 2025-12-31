@@ -22,6 +22,7 @@ class RocmCore(CMakePackage):
     libraries = ["librocm-core"]
 
     license("MIT")
+    version("7.1.0", sha256="3c7e990ff4da60119c8575982660331bf636f63a9c68c6a344d410b2bdfa5d39")
     version("7.0.2", sha256="2d126d47aa4523d84e5ab026680fa2b1145db332ff5e4aa74b48f8ed0ecd975d")
     version("7.0.0", sha256="d7741e12d184a6553f6d39b3ff4d113a2e7eeb509d5ec08e06cdaf51dcd26f90")
     version("6.4.3", sha256="dae6e06739882a3ce7be13ac300c22ab35ce80b4e853a21a1a3237fdc0411eb9")

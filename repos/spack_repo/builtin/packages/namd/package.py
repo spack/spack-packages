@@ -157,7 +157,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                         "gcc": m64
                         + "-O3 -fexpensive-optimizations -ffast-math -lpthread "
                         + archopt,
-                        "intel": "-O2 -ip -qopenmp-simd" + archopt,
+                        "intel": "-O2 -ip -qopenmp-simd " + archopt,
                         "clang": m64 + "-O3 -ffast-math -fopenmp " + archopt,
                         "aocc": m64 + "-O3 -ffp-contract=fast -ffast-math -fopenmp " + archopt,
                     }
@@ -170,7 +170,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                         "clang": m64 + "-O3 -ffast-math -fopenmp " + archopt,
                         "aocc": m64 + "-O3 -ffp-contract=fast -ffast-math " + archopt,
                         "intel-oneapi-compilers": m64
-                        + "-O3 -ffp-contract=fast -ffast-math"
+                        + "-O3 -ffp-contract=fast -ffast-math "
                         + archopt,
                     }
 
