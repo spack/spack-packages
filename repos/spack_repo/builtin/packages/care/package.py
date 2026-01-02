@@ -113,8 +113,6 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("examples", default=False, description="Build examples.")
     variant("docs", default=False, description="Build documentation")
     variant("loop_fuser", default=False, description="Enable loop fusion capability")
-    # TODO: add llnl-globalid package to spack-packages so that this variant is valid.
-    # variant("globalid", default=False, description="Support global ID index type")
     variant(
         "legacy_compatibility_mode", default=False, description="Enable legacy compatibility mode"
     )
@@ -176,8 +174,6 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("chai@2024.02.1", when="@0.13.0")
     depends_on("chai@2024.02.0", when="@0.12.0")
     depends_on("chai@2022.10.0", when="@0.10.0")
-
-    # depends_on("llnl-globalid", when="+globalid")
 
     conflicts("+openmp", when="+rocm")
     conflicts("+openmp", when="+cuda")
@@ -296,8 +292,6 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_path("UMPIRE_DIR", spec["umpire"].prefix))
         entries.append(cmake_cache_path("RAJA_DIR", spec["raja"].prefix))
         entries.append(cmake_cache_path("CHAI_DIR", spec["chai"].prefix))
-        # if spec.satisfies("+globalid"):
-        #    entries.append(cmake_cache_path("LLNL_GLOBALID_DIR", spec["llnl-globalid"].prefix))
 
         # Build options
         entries.append("#------------------{0}".format("-" * 60))
