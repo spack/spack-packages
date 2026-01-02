@@ -23,6 +23,7 @@ class PyKerchunk(PythonPackage):
     pypi = "kerchunk/kerchunk-0.2.9.tar.gz"
 
     license("MIT", checked_by="Chrismarsh")
+    maintainers("Chrismarsh")
 
     version("0.2.9", sha256="86a54da9a57a94fd6fb97be786e2d83182d3d8e4fd7c0ea2b67cde3d0641df7d")
 
