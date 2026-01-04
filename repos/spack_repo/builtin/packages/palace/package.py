@@ -276,7 +276,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
 
     def build(self, spec, prefix):
         with working_dir(self.build_directory):
-            if self.run_tests
+            if self.run_tests:
                 make("palace-tests")
             else:
                 make()
