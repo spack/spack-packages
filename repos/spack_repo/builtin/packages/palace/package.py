@@ -51,7 +51,6 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         default=True,
         description="Build with GSLIB library for high-order field interpolation",
     )
-    variant("tests", default=False, description="Build and install unit tests")
 
     # Fix API mismatch between libxsmm@main and internal libceed build
     patch("palace-0.12.0.patch", when="@0.12")
