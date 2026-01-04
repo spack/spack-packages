@@ -26,7 +26,9 @@ class Esmf(MakefilePackage, PythonExtension):
     url = "https://github.com/esmf-org/esmf/archive/v8.4.1.tar.gz"
     git = "https://github.com/esmf-org/esmf.git"
 
-    maintainers("climbfuji", "jedwards4b", "AlexanderRichert-NOAA", "theurich", "uturuncoglu")
+    maintainers(
+        "climbfuji", "jedwards4b", "AlexanderRichert-NOAA", "theurich", "uturuncoglu", "danrosen25"
+    )
 
     # Develop is a special name for spack and is always considered the newest version
     version("develop", branch="develop")
@@ -44,6 +46,13 @@ class Esmf(MakefilePackage, PythonExtension):
     version("8.2.0", sha256="27866c31fdb63c58e78211de970470ca02d274f5d4d6d97e94284d63b1c1d9e4")
     version("8.1.1", sha256="629690c7a488e84ac7252470349458d7aaa98b54c260f8b3911a2e2f3e713dd0")
     version("8.0.1", sha256="13ce2ca0ae622548c00f7bb18317fb100235ca8b7ddbfac7e201a339e8eb05a3")
+
+    # deprecated versions
+    version(
+        "7.1.0r",
+        sha256="e08f21544083dcbe162b472852e321f8df14f4f711f35508403d32df438367a7",
+        deprecated=True,
+    )
 
     variant("mpi", default=True, description="Build with MPI support")
     variant("openmp", default=True, description="Build with OpenMP support")
@@ -139,6 +148,18 @@ class Esmf(MakefilePackage, PythonExtension):
             os.path.join("src/addon/esmpy/pyproject.toml"),
         )
 
+    def url_for_version(self, version):
+        if version < Version("8.0.0"):
+            # Older ESMF releases had a custom tag format ESMF_x_y_z
+            return "https://github.com/esmf-org/esmf/archive/ESMF_{0}.tar.gz".format(
+                version.underscored
+            )
+        else:
+            # Starting with ESMF 8.0.0 releases are in the form vx.y.z
+            return "https://github.com/esmf-org/esmf/archive/refs/tags/v{0}.tar.gz".format(
+                version.dotted
+            )
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("ESMFMKFILE", os.path.join(self.prefix.lib, "esmf.mk"))
 
@@ -157,18 +178,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
     # other systems where the logic in setup_build_environment
     # below sets the compilers to the MPI wrappers.
     filter_compiler_wrappers("esmf.mk", relative_root="lib")
-
-    def url_for_version(self, version):
-        if version < Version("8.0.0"):
-            # Older ESMF releases had a custom tag format ESMF_x_y_z
-            return "https://github.com/esmf-org/esmf/archive/ESMF_{0}.tar.gz".format(
-                version.underscored
-            )
-        else:
-            # Starting with ESMF 8.0.0 releases are in the form vx.y.z
-            return "https://github.com/esmf-org/esmf/archive/refs/tags/v{0}.tar.gz".format(
-                version.dotted
-            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
@@ -422,7 +431,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @run_after("install")
     def post_install(self):
-        install_tree("cmake", self.prefix.cmake)
+        if self.spec.satisfies("@8:"):
+            install_tree("cmake", self.prefix.cmake)
         # Several applications using ESMF are affected by CMake
         # capitalization issue. The following fix allows all apps
         # to use as-is. Note that since the macOS file system is

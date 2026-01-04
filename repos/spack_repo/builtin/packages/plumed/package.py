@@ -171,6 +171,12 @@ class Plumed(AutotoolsPackage):
     # https://github.com/plumed/plumed2/issues/1256
     conflicts("^py-cython@3.1:", when="@:2.9.3")
 
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/plumed/plumed2/pull/1313.patch?full_index=1",
+        sha256="d4d2b6a178e4b38863f2acc9450ae27b4652368c369e96dd093bbdffaf811105",
+        when="@2.10.0",
+    )
+
     force_autoreconf = True
 
     parallel = True

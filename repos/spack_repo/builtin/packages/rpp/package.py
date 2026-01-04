@@ -30,6 +30,7 @@ class Rpp(CMakePackage):
     maintainers("srekolam", "afzpatel")
     license("MIT")
 
+    version("7.1.0", sha256="65d815f4957b27c1f994d4d905a107536fe90ffa4c229c015c241687f11fe2c0")
     version("7.0.2", sha256="0836daecfde5dd7daa4269baae32d996d40ab6864622ad16000d00cf2aeac676")
     version("7.0.0", sha256="b2ab0131480127a45386b3142168308bdbce7689c9a95e71c7b7a6481510fdad")
     version("6.4.3", sha256="3c098c8951fb2730ecedbc57a4f966b344f630bc48fb3a6d33c62af28cf52cde")
@@ -182,6 +183,7 @@ class Rpp(CMakePackage):
                 "6.4.3",
                 "7.0.0",
                 "7.0.2",
+                "7.1.0",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):
