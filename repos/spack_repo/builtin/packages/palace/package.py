@@ -203,8 +203,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
             depends_on(f"superlu-dist{rocm_variant}", when=f"+superlu-dist{rocm_variant}")
             depends_on(f"strumpack{rocm_variant}", when=f"+strumpack{rocm_variant}")
 
-    with when("+tests"):
-        depends_on("catch2@3:")
+    depends_on("catch2@3:", type="test")
 
     def cmake_args(self):
         args = [
@@ -222,7 +221,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("PALACE_WITH_SUNDIALS", "sundials"),
             self.define_from_variant("PALACE_WITH_SUPERLU", "superlu-dist"),
             self.define("PALACE_BUILD_EXTERNAL_DEPS", False),
-            self.define_from_variant("PALACE_MFEM_USE_EXCEPTIONS", "tests"),
+            self.define_from_variant("PALACE_MFEM_USE_EXCEPTIONS", self.run_tests),
         ]
 
         # We guarantee that there are arch specs with conflicts above
@@ -277,7 +276,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
 
     def build(self, spec, prefix):
         with working_dir(self.build_directory):
-            if spec.satisfies("+tests"):
+            if self.run_tests
                 make("palace-tests")
             else:
                 make()
