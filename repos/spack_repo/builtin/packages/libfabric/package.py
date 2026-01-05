@@ -113,8 +113,15 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("uring", default=False, when="@1.17.0:", description="Enable uring support")
     variant("level_zero", default=False, description="Enable Level Zero support")
     variant("gdrcopy", default=False, when="@1.12: +cuda", description="Enable gdrcopy support")
-    variant("cuda_dlopen", default=False, when="+cuda", description="Enable dlopen of CUDA libraries")
-    variant("gdrcopy_dlopen", default=False, when="+gdrcopy", description="Enable dlopen of gdr libraries")
+    variant(
+        "cuda_dlopen", default=False, when="+cuda", description="Enable dlopen of CUDA libraries"
+    )
+    variant(
+        "gdrcopy_dlopen",
+        default=False,
+        when="+gdrcopy",
+        description="Enable dlopen of gdr libraries",
+    )
 
     variant("asan", default=False, when="@1.12:", description="Enable AddressSanitizer (ASan)")
     variant("lsan", default=False, when="@1.20:", description="Enable LeakSanitizer (LSan)")
