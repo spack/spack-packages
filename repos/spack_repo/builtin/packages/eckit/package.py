@@ -56,10 +56,20 @@ class Eckit(CMakePackage):
         values=any_combination_of("eigen", "armadillo", "mkl", "lapack"),
         description="List of supported linear algebra backends",
     )
+
+    # There is probably a more elegant way to handle the differences
+    # in valid compression backends, but this works ...
     variant(
         "compression",
         values=any_combination_of("bzip2", "snappy", "lz4", "aec"),
         description="List of supported compression backends",
+        when="@:1.31",
+    )
+    variant(
+        "compression",
+        values=any_combination_of("bzip2", "snappy", "lz4", "aec", "zip"),
+        description="List of supported compression backends",
+        when="@1.32:",
     )
     variant("xxhash", default=True, description="Enable xxHash support for hashing")
     variant("ssl", default=False, description="Enable MD4 and SHA1 support with OpenSSL")
@@ -101,6 +111,7 @@ class Eckit(CMakePackage):
     depends_on("snappy", when="compression=snappy")
     depends_on("lz4", when="compression=lz4")
     depends_on("libaec", when="compression=aec")
+    depends_on("libzip", when="compression=zip")
 
     depends_on("openssl", when="+ssl")
 
@@ -144,6 +155,7 @@ class Eckit(CMakePackage):
             self.define("ENABLE_SNAPPY", "compression=snappy" in self.spec),
             self.define("ENABLE_LZ4", "compression=lz4" in self.spec),
             self.define("ENABLE_AEC", "compression=aec" in self.spec),
+            self.define("ENABLE_ZIP", "compression=zip" in self.spec),
             self.define_from_variant("ENABLE_XXHASH", "xxhash"),
             self.define_from_variant("ENABLE_SSL", "ssl"),
             self.define_from_variant("ENABLE_CURL", "curl"),

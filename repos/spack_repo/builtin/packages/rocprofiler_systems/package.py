@@ -22,6 +22,13 @@ class RocprofilerSystems(CMakePackage):
 
     license("MIT")
     version(
+        "7.1.0",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        tag="rocm-7.1.0",
+        commit="427f656162559f21fc3d6cb0e3688f3d31ae374c",
+        submodules=True,
+    )
+    version(
         "7.0.2",
         git="https://github.com/ROCm/rocprofiler-systems",
         tag="rocm-7.0.2",
@@ -136,7 +143,10 @@ class RocprofilerSystems(CMakePackage):
         ),
     )
     variant("internal-dyninst", default=False, description="build internal dyninst")
+    variant("internal-tbb", default=False, description="build internal tbb")
 
+    conflicts("%rocmcc", when="+internal-tbb")
+    conflicts("%clang", when="+internal-tbb")
     extends("python", when="+python")
 
     depends_on("c", type="build")  # generated
@@ -148,10 +158,13 @@ class RocprofilerSystems(CMakePackage):
     depends_on("dyninst@:12", when="@6 ~internal-dyninst")
     depends_on("dyninst@13", when="@7 ~internal-dyninst")
     depends_on(
-        "boost+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
+        "boost@:1.88"
+        "+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
         when="+internal-dyninst",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
+    depends_on("intel-tbb@2019:2020.3", when="~internal-tbb")
+    depends_on("elfutils")
     depends_on("m4")
     depends_on("texinfo")
     depends_on("libunwind", type=("build", "run"))
@@ -182,11 +195,12 @@ class RocprofilerSystems(CMakePackage):
             "6.4.3",
             "7.0.0",
             "7.0.2",
+            "7.1.0",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
-        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
+        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
-        for ver in ["7.0.0", "7.0.2"]:
+        for ver in ["7.0.0", "7.0.2", "7.1.0"]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
@@ -195,6 +209,12 @@ class RocprofilerSystems(CMakePackage):
         sha256="e64c6b75393e7fbd711c0bd0233628c176a352cd10b4057f00eec283426eaf0a",
         when="@:6.4.0 +internal-dyninst",
         working_dir="external/dyninst",
+    )
+    patch(
+        "https://github.com/ROCm/timemory/commit/b5e41aa9e4b83ab0868211d81924ac4f639bd998.patch?full_index=1",
+        sha256="2696f59dd9b6e74bf44bfcc56a0536c3f1f3845c29fac18f0224dee72bd9225f",
+        when="%rocmcc",
+        working_dir="external/timemory",
     )
 
     def cmake_args(self):
@@ -208,7 +228,6 @@ class RocprofilerSystems(CMakePackage):
             self.define("ROCPROFSYS_BUILD_STATIC_LIBGCC", False),
             self.define("ROCPROFSYS_BUILD_STATIC_LIBSTDCXX", False),
             self.define_from_variant("ROCPROFSYS_BUILD_DYNINST", "internal-dyninst"),
-            self.define_from_variant("DYNINST_BUILD_TBB", "internal-dyninst"),
             self.define_from_variant("ROCPROFSYS_BUILD_LTO", "ipo"),
             self.define_from_variant("ROCPROFSYS_USE_MPI", "mpi"),
             self.define_from_variant("ROCPROFSYS_USE_OMPT", "ompt"),
@@ -218,6 +237,7 @@ class RocprofilerSystems(CMakePackage):
             self.define_from_variant("ROCPROFSYS_USE_MPI_HEADERS", "mpi_headers"),
             self.define_from_variant("ROCPROFSYS_STRIP_LIBRARIES", "strip"),
             self.define_from_variant("ROCPROFSYS_INSTALL_PERFETTO_TOOLS", "perfetto_tools"),
+            self.define("ElfUtils_ROOT_DIR", spec["elfutils"].prefix),
             # timemory arguments
             self.define("TIMEMORY_BUILD_CALIPER", False),
             self.define_from_variant("TIMEMORY_USE_TAU", "tau"),
@@ -245,7 +265,9 @@ class RocprofilerSystems(CMakePackage):
                 self.define("libunwind_INCLUDE_DIR", self.spec["libunwind"].prefix.include)
             )
         if spec.satisfies("@7.0:"):
-            args.append(self.define("ROCPROFSYS_BUILD_TBB", "ON"))
+            args.append(self.define_from_variant("ROCPROFSYS_BUILD_TBB", "internal-tbb"))
+        if spec.satisfies("+internal-dyninst"):
+            args.append(self.define_from_variant("DYNINST_BUILD_TBB", "internal-tbb"))
         return args
 
     def flag_handler(self, name, flags):

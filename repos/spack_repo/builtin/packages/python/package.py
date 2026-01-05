@@ -56,14 +56,20 @@ class Python(Package):
 
     license("0BSD")
 
-    version("3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851")
-    version("3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f")
+    version("3.14.2", sha256="c609e078adab90e2c6bacb6afafacd5eaf60cd94cf670f1e159565725fcd448d")
+    version("3.13.11", sha256="03cfedbe06ce21bc44ce09245e091a77f2fee9ec9be5c52069048a181300b202")
     version("3.12.12", sha256="487c908ddf4097a1b9ba859f25fe46d22ccaabfb335880faac305ac62bffb79b")
     version("3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182")
     version("3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec")
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
+        version(
+            "3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851"
+        )
+        version(
+            "3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f"
+        )
         version(
             "3.13.7", sha256="6c9d80839cfa20024f34d9a6dd31ae2a9cd97ff5e980e969209746037a5153b2"
         )
@@ -173,6 +179,12 @@ class Python(Package):
     variant("tix", default=False, description="Build Tix module", when="+tkinter")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=linux")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=darwin")
+    variant(
+        "freethreading",
+        default=False,
+        description="Removes the Global Interpreter Lock",
+        when="@3.13:",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -293,6 +305,14 @@ class Python(Package):
                 break
         else:
             variants += "~pythoncmd"
+
+        if Version(version_str) >= Version("3.13"):
+            for exe in exes:
+                if exe.endswith("t"):
+                    variants += "+freethreading"
+                    break
+            else:
+                variants += "~freethreading"
 
         for module in [
             "readline",
@@ -641,6 +661,9 @@ class Python(Package):
                 ]
             )
 
+        if "+freethreading" in spec:
+            config_args.append("--disable-gil")
+
         # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
         if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
             config_args.append("py_cv_module__tkinter=n/a")
@@ -842,12 +865,18 @@ class Python(Package):
         # installed python, several different commands could be located
         # in the same directory. Be as specific as possible. Search for:
         #
-        # * python3.11
+        # * python3.14t
+        # * python3.14
         # * python3
         # * python
         #
-        # in that order if using python@3.11.0, for example.
-        suffixes = [self.spec.version.up_to(2), self.spec.version.up_to(1), ""]
+        # in that order if using python@3.14.0, for example.
+        suffixes = [
+            str(self.spec.version.up_to(2)) + "t",
+            str(self.spec.version.up_to(2)),
+            str(self.spec.version.up_to(1)),
+            "",
+        ]
         ext = "" if sys.platform != "win32" else ".exe"
         filenames = [f"python{ver}{ext}" for ver in suffixes]
         root = self.prefix.bin if sys.platform != "win32" else self.prefix
