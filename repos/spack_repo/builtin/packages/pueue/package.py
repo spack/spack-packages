@@ -17,6 +17,7 @@ class Pueue(CargoPackage):
 
     license("Apache-2.0 AND MIT")
 
+    version("4.0.2", sha256="059ee9688cb8b1ce46284f5ad58de21911b6af50098d29598085d2b9dbd432ab")
     version("4.0.1", sha256="7bbe552700041b2e9cd360b69c328d6932ad57d0e0a480a8992fab3a2737cdf8")
 
     depends_on("c", type="build")
