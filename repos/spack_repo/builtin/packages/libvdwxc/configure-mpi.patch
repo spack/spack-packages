@@ -1,0 +1,25 @@
+From f9fe1f30072f3efa4efe9c7a61385b7a3e7f0100 Mon Sep 17 00:00:00 2001
+From: Ask Hjorth Larsen <asklarsen@gmail.com>
+Date: Wed, 13 Aug 2025 02:08:40 +0200
+Subject: [PATCH] fix types of argc and argv to MPI_Init()
+
+---
+ config/m4/sd_arch_mpi.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/config/m4/sd_arch_mpi.m4 b/config/m4/sd_arch_mpi.m4
+index 4125453..0f1d1e7 100644
+--- a/config/m4/sd_arch_mpi.m4
++++ b/config/m4/sd_arch_mpi.m4
+@@ -403,7 +403,7 @@ AC_DEFUN([_SD_MPI_CHECK_CC_API], [
+     [[
+       int *argc;
+       char **argv;
+-      MPI_Init(argc, argv);
++      MPI_Init(argc, &argv);
+     ]])], [sd_mpi_cc_api_ok="yes"], [sd_mpi_cc_api_ok="no"])
+   AC_LANG_POP([C])
+   AC_MSG_RESULT([${sd_mpi_cc_api_ok}])
+-- 
+GitLab
+
