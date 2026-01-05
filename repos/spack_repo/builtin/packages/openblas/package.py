@@ -601,7 +601,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def build_targets(self):
-        return ["-s"] + self.make_defs + ["all"]
+        targets = ["libs", "netlib"]
+        if "shared" in self.spec:
+            targets.append("shared")
+        return ["-s"] + self.make_defs + targets
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
@@ -610,7 +613,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def install_targets(self):
-        make_args = ["install", "PREFIX={0}".format(self.prefix)]
+        make_args = [f"PREFIX={self.prefix}", "install"]
         return make_args + self.make_defs
 
     @run_after("install")
