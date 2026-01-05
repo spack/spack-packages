@@ -35,7 +35,7 @@ class Gomplate(GoPackage):
             self.module.go(
                 "build",
                 "-p",
-                str(self.module.make_jobs),
+                str(make_jobs),
                 "-ldflags",
                 f"-s -w -X {gomplate_version_path}.Version={self.version}",
                 "-o",
