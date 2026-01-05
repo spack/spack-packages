@@ -41,8 +41,10 @@ class Adiak(CMakePackage):
 
     depends_on("mpi", when="+mpi")
 
-    depends_on("python@3", when="+python", type=("build", "link", "run"))
-    depends_on("py-pybind11@3.0.0:", when="+python", type=("build", "link", "run"))
+    with when("+python"):
+        extends("python") 
+        depends_on("python@3:", type=("build", "link", "run")) 
+        depends_on("py-pybind11@3.0.0:", type=("build", "link", "run"))
 
     def cmake_args(self):
         args = []
@@ -67,8 +69,3 @@ class Adiak(CMakePackage):
 
         args.append("-DENABLE_TESTS=OFF")
         return args
-
-    def setup_run_environment(self, env):
-        if self.spec.satisfies("+python"):
-            env.prepend_path("PYTHONPATH", self.spec.prefix.join(python_platlib))
-            env.prepend_path("PYTHONPATH", self.spec.prefix.join(python_purelib))
