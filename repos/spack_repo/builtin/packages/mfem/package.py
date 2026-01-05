@@ -767,7 +767,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     hypre_rocm_libs += hypre["rocsparse"].libs
                 if "^rocrand" in hypre:
                     hypre_rocm_libs += hypre["rocrand"].libs
-                if hypre.satisfies("@2.26.0:"):
+                if hypre.satisfies("@2.29.0:"):
                     if "^rocsolver" in hypre:
                         hypre_rocm_libs += hypre["rocsolver"].libs
                     if "^rocblas" in hypre:
