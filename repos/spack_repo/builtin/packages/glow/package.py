@@ -46,7 +46,7 @@ class Glow(GoPackage):
     def build_args(self):
         return [
             "-p",
-            str(self.module.make_jobs),
+            str(make_jobs),
             "-modcacherw",
             "-ldflags",
             f"-s -w -X main.Version={self.version}",
