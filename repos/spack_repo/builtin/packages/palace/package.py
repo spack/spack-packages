@@ -220,7 +220,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("PALACE_WITH_SUNDIALS", "sundials"),
             self.define_from_variant("PALACE_WITH_SUPERLU", "superlu-dist"),
             self.define("PALACE_BUILD_EXTERNAL_DEPS", False),
-            self.define_from_variant("PALACE_MFEM_USE_EXCEPTIONS", self.run_tests),
+            self.define("PALACE_MFEM_USE_EXCEPTIONS", self.run_tests),
         ]
 
         # We guarantee that there are arch specs with conflicts above
