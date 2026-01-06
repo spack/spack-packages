@@ -197,6 +197,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         conflicts("cuda_arch=none")
         conflicts("precision=longdouble")
         conflicts("precision=mixed")
+        conflicts("+shared +umpire", when="@:2")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+rocm", msg="CUDA and ROCm are mutually exclusive")
         conflicts("+sycl", msg="CUDA and SYCL are mutually exclusive")
