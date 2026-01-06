@@ -213,7 +213,7 @@ spack:
   - amrex +rocm amdgpu_target=gfx90a
   - arborx +rocm amdgpu_target=gfx90a
   - cabana +rocm amdgpu_target=gfx90a
-  - caliper +rocm amdgpu_target=gfx90a
+  # - caliper +rocm amdgpu_target=gfx90a
   - chai +rocm amdgpu_target=gfx90a
   - fftx +rocm amdgpu_target=gfx90a
   - gasnet +rocm amdgpu_target=gfx90a
