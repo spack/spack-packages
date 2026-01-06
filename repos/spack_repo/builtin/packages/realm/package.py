@@ -189,10 +189,17 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
                 self.define("CMAKE_CUDA_COMPILER", join_path(spec["cuda"].prefix.bin, "nvcc"))
             )
             if spec.satisfies("+cuda_unsupported_compiler"):
-                options.append("-DCUDA_NVCC_FLAGS:STRING=--allow-unsupported-compiler")
+                options.append("-DCMAKE_CUDA_FLAGS:STRING=--allow-unsupported-compiler")
 
             options.append(
                 self.define("CMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value)
+            )
+        if spec.satisfies("+rocm"):
+            options.append(
+                self.define("CMAKE_HIP_COMPILER", join_path(spec["llvm-amdgpu"].prefix.bin, "amdclang++"))
+            )
+            options.append(
+                self.define("CMAKE_HIP_ARCHITECTURES", spec.variants["amdgpu_target"].value)
             )
 
         maxdims = int(spec.variants["max_dims"].value)
