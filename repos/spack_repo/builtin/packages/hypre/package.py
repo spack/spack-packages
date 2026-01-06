@@ -210,6 +210,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     with when("+rocm"):
         depends_on("umpire+c+rocm", when="@3:")
+        requires("+umpire", when="@3:")
+
         depends_on("rocsparse")
         depends_on("rocthrust")
         depends_on("rocrand")
