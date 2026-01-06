@@ -78,8 +78,9 @@ class Gnutls(AutotoolsPackage):
     depends_on("gettext")
     depends_on("libidn2@:2.0", when="@:3.5")
     depends_on("libidn2")
+    depends_on("nettle@3.10:", when="@3.8.10:")
     depends_on("nettle@3.4.1:", when="@3.6.7.1:")
-    depends_on("nettle@:2.9", when="@3.3.9")
+    depends_on("nettle@:2.9", when="@:3.3.9")
     depends_on("nettle", when="@3.5:")
 
     # Optional dependencies
