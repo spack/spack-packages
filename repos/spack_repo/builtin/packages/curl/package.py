@@ -93,6 +93,7 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     depends_on("cmake@:3", when="build_system=cmake @:7.63")
 
     depends_on("gnutls", when="tls=gnutls")
+    depends_on("mbedtls@3: +pic", when="tls=mbedtls @8.17:")
     depends_on("mbedtls@2: +pic", when="tls=mbedtls")
     depends_on("openssl", when="tls=openssl")
 
