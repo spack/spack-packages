@@ -24,6 +24,7 @@ class GlobusGsiProxySsl(AutotoolsPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("6.6", sha256="2b26087089993bf69d6827e9ce01c1afbc34d9ca8bf9d63cbcd55b5aae370f5b")
     version("6.5", sha256="4f20042d80a1fe28b40d9f7f4a1fc9f2790645e9b3f426a659b0c3f01eb04259")
 
     depends_on("c", type="build")

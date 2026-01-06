@@ -24,6 +24,7 @@ class GlobusGsiCredential(AutotoolsPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("8.5", sha256="abbcc12163299437bedad81de777b6cc36d3fb228fd37de414ca738f6ad14486")
     version("8.4", sha256="19e8fde9d4b335d60a021ac58c7559e5c34981e9332a8e574eda0b44ec160fa7")
 
     depends_on("c", type="build")
