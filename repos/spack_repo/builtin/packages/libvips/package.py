@@ -8,7 +8,7 @@ from spack_repo.builtin.build_systems.meson import MesonPackage
 from spack.package import *
 
 
-class Libvips(AutotoolsPackage, MesonPackage):
+class Libvips(MesonPackage, AutotoolsPackage):
     """libvips is a demand-driven, horizontally threaded image processing
     library. Compared to similar libraries, libvips runs quickly and uses
     little memory."""
@@ -46,11 +46,16 @@ class Libvips(AutotoolsPackage, MesonPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-
-    depends_on("autoconf", type="build", when="build_system=autotools")
-    depends_on("automake", type="build", when="build_system=autotools")
-    depends_on("libtool", type="build", when="build_system=autotools")
     depends_on("pkgconfig", type="build")
+
+    with when("build_system=meson"):
+        depends_on("meson", type="build")
+        depends_on("ninja", type="build")
+
+    with when("build_system=autotools"):
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
 
     depends_on("glib")
     depends_on("expat")
