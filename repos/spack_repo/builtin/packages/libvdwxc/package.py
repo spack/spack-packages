@@ -72,7 +72,7 @@ class Libvdwxc(AutotoolsPackage):
     # https://gitlab.com/libvdwxc/libvdwxc/-/commit/9340f857515c4a2e56d2aa7cf3a21c41ba8559c3.diff
     patch("fftw-detection.patch", when="@:0.4.0")
 
-    # fix a the mpi detection error
+    # fix a mpi detection error
     patch(
         "https://gitlab.com/libvdwxc/libvdwxc/-/merge_requests/25.diff",
         sha256="23a44ef5de0cd15517a3f8750d516c0978ce6f83b8eda0a35d317058d650e1a2",
