@@ -602,7 +602,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
     @property
     def build_targets(self):
         targets = ["libs", "netlib"]
-        if "shared" in self.spec:
+        if "+shared" in self.spec:
             targets.append("shared")
         return ["-s"] + self.make_defs + targets
 
