@@ -69,10 +69,11 @@ class Orca(Package):
             openmpi_version = "411"
 
         ver_parts = version.string.split("-")
+        ver_underscored = ver_parts[-1].replace(".", "_")
 
-        url = f"file://{os.getcwd()}/orca_{version.underscored}_linux_x86-64_shared_openmpi{openmpi_version}{'_avx2' if 'avx2' in ver_parts else ''}.tar.xz"
+        url = f"file://{os.getcwd()}/orca_{ver_underscored}_linux_x86-64_shared_openmpi{openmpi_version}{'_avx2' if 'avx2' in ver_parts else ''}.tar.xz"
         if self.spec.satisfies("@=avx2-6.0.0"):
-            url = f"file://{os.getcwd()}/orca_{version.underscored}_linux_x86-64_avx2_shared_openmpi{openmpi_version}.tar.xz"
+            url = f"file://{os.getcwd()}/orca_{ver_underscored}_linux_x86-64_avx2_shared_openmpi{openmpi_version}.tar.xz"
 
         return url
 
