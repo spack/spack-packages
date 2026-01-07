@@ -14,13 +14,17 @@ class RocprofilerSystems(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-systems"
     git = "https://github.com/ROCm/rocprofiler-systems.git"
-    url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.3.1.tar.gz"
     executables = ["rocprof-sys-sample"]
     tags = ["rocm"]
 
     maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.0"):
+            url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-{0}.tar.gz"
+        return url.format(version)
 
     version(
         "7.1.1",

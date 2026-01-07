@@ -18,6 +18,12 @@ class Hipblaslt(CMakePackage):
     homepage = "https://github.com/ROCm/hipBLASLt"
     git = "https://github.com/ROCm/hipBLASLt.git"
 
+    maintainers("srekolam", "afzpatel", "renjithravindrankannath")
+    tags = ["rocm"]
+    libraries = ["libhipblaslt"]
+
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.0.2"):
             url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-{0}.tar.gz"
@@ -25,11 +31,6 @@ class Hipblaslt(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    maintainers("srekolam", "afzpatel", "renjithravindrankannath")
-    tags = ["rocm"]
-    libraries = ["libhipblaslt"]
-
-    license("MIT")
     version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
     version("7.1.0", sha256="d9e138a15e8195a7e9b5e15240e50c557b830d50a2bafa27db14dad3884dbfd8")
     version("7.0.2", sha256="52d7c1c6852f501f5bd37fa962e6538592741792593a173d8b6963b8f7bd2c41")
