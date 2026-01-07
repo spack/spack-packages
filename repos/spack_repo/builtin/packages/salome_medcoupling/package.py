@@ -55,6 +55,7 @@ class SalomeMedcoupling(CMakePackage):
 
     depends_on("cmake@2.8.11:3", type="build")
 
+    depends_on("rpc")
     depends_on("libxml2@2.9.1:")
     depends_on("cppunit", type="test")
     depends_on("python@3.6.5:", when="@:9.12")

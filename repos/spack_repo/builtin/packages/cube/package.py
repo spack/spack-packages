@@ -19,6 +19,7 @@ class Cube(AutotoolsPackage):
     url = "https://apps.fz-juelich.de/scalasca/releases/cube/4.4/dist/cubegui-4.4.2.tar.gz"
     maintainers("swat-jsc")
 
+    version("4.9", sha256="10c76d6e3d44df64066d087a0ee9195b4e8121798a84a4d8bdc1da0e80837e11")
     version("4.8.2", sha256="bf2e02002bb2e5c4f61832ce37b62a440675c6453463014b33b2474aac78f86d")
     version("4.8.1", sha256="a8a2a62b4e587c012d3d32385bed7c500db14232419795e0f4272d1dcefc55bc")
     version("4.8", sha256="1df8fcaea95323e7eaf0cc010784a41243532c2123a27ce93cb7e3241557ff76")
@@ -29,6 +30,7 @@ class Cube(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("cubelib@4.9", when="@4.9")
     depends_on("cubelib@4.8", when="@4.8")
     depends_on("cubelib@4.7", when="@4.7")
     depends_on("cubelib@4.6", when="@4.6")
@@ -38,6 +40,11 @@ class Cube(AutotoolsPackage):
     depends_on("zlib-api")
 
     depends_on("qt@5:")
+
+    def url_for_version(self, version):
+        url = "https://apps.fz-juelich.de/scalasca/releases/cube/{0}/dist/cubegui-{1}.tar.gz"
+
+        return url.format(version.up_to(2), version)
 
     def configure_args(self):
         return ["--enable-shared"]

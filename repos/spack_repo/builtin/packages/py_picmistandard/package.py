@@ -12,11 +12,12 @@ class PyPicmistandard(PythonPackage):
 
     homepage = "https://picmi-standard.github.io"
     git = "https://github.com/picmi-standard/picmi.git"
-    pypi = "picmistandard/picmistandard-0.33.0.tar.gz"
+    pypi = "picmistandard/picmistandard-0.34.0.tar.gz"
 
-    maintainers("ax3l", "dpgrote", "RemiLehe")
+    maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
 
     version("master", branch="master")
+    version("0.34.0", sha256="28db66c652c7ce7bedf79ecf7e764a02fa5e51ac05a2fb1cf9433354ac056ec1")
     version("0.33.0", sha256="bdab1643385d85da1462ba8cebc4460dd87c735946f4766181714d7cb8cf2188")
     version("0.30.0", sha256="28b892b242e0cc044ad987d6bdc12811fe4a478d5096d6bc5989038ee9d9dab6")
     version("0.29.0", sha256="dc0bf3ddd3635df9935ac569b3085de387150c4f8e9851897078bb12d123dde8")
@@ -27,7 +28,7 @@ class PyPicmistandard(PythonPackage):
     version("0.23.2", sha256="2853fcfaf2f226a88bb6063ae564832b7e69965294fd652cd2ac04756fa4599a")
     version("0.23.1", sha256="c7375010b7a3431b519bc0accf097f2aafdb520e2a0126f42895cb96dcc7dcf1")
 
-    depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-numpy@1.15:1", type=("build", "run"))
-    depends_on("py-scipy@1.5:1", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
+    depends_on("py-numpy@1.15:", type=("build", "run"))
+    depends_on("py-scipy@1.5:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
