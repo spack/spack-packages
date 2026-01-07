@@ -150,7 +150,7 @@ ci:
         - nproc || true
       # Clone the other repo
       - - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$REMOTE_SCRIPT_REF/.ci/gitlab/scripts/common/clone_spack.sh
-        - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256 clone_spack.sh" | sha256sum -c
+        - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256  clone_spack.sh" | sha256sum -c
         - sh clone_spack.sh
       - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version

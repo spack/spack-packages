@@ -239,7 +239,7 @@ dotenv:
   - export WRITE_DOTENV_SCRIPT_REF="0f92f8bcd4dd94fc7379eef8db5c9ed6f1935402"
   - export WRITE_DOTENV_SCRIPT_SHA256="124d80ef595b9ddc2fca3f202a70ee15378547ad5e887fe7d3b248669c5ee54a"
   - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$WRITE_DOTENV_SCRIPT_REF/.ci/gitlab/scripts/common/write_dotenv.py
-  - echo "$WRITE_DOTENV_SCRIPT_SHA256 write_dotenv.py" | sha256sum -c
+  - echo "$WRITE_DOTENV_SCRIPT_SHA256  write_dotenv.py" | sha256sum -c
   - python3 write_dotenv.py .ci/env
   - cat env
 
