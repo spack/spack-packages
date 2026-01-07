@@ -74,7 +74,7 @@ class Libvdwxc(AutotoolsPackage):
 
     # fix a the mpi detection error
     patch(
-        "configure-mpi.patch",
-        sha256="c6ba457100fae6f42b772d4b1d36164ea28a81465233253bc329fb1246f95a83",
+        "https://gitlab.com/libvdwxc/libvdwxc/-/merge_requests/25.diff",
+        sha256="23a44ef5de0cd15517a3f8750d516c0978ce6f83b8eda0a35d317058d650e1a2",
         when="@0.5.0",
     )
