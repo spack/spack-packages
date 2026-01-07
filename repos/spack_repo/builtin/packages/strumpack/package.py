@@ -133,7 +133,6 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("STRUMPACK_USE_OPENMP", "openmp"),
             self.define_from_variant("STRUMPACK_USE_CUDA", "cuda"),
             self.define_from_variant("STRUMPACK_USE_HIP", "rocm"),
-            self.define_from_variant("STRUMPACK_USE_ZFP", "zfp"),
             self.define_from_variant("TPL_ENABLE_PARMETIS", "parmetis"),
             self.define_from_variant("TPL_ENABLE_SCOTCH", "scotch"),
             self.define_from_variant("TPL_ENABLE_BPACK", "butterflypack"),
