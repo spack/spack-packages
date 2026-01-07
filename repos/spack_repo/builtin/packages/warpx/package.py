@@ -26,7 +26,7 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
-    version("26.01", sha256="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+    version("26.01", sha256="c3b34a93e350e068c07e3107784885562cfa5c93ce3fd65fed002e5a6353d63d")
     version("25.12", sha256="fb59497e8427cf491312f83a72b011281d0aa04f6ebbb59b20afcbe0d86b136c")
     version("25.11", sha256="4e2b4636fee995ad075a907cf216fc089d1220824b8743b62c01e188fa6c23d7")
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
