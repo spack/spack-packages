@@ -224,6 +224,7 @@ class Tau(Package):
     conflicts("+dyninst", when="@:2.32.1")
     conflicts("+disable-no-pie", when="@:2.33.2")
     patch("unwind.patch", when="@2.29.0")
+    patch("pycuda.patch", when="@2.33:2.35.0")
 
     conflicts("+rocprofiler", when="+rocprofv2", msg="Use either rocprofiler or rocprofv2")
     conflicts(
