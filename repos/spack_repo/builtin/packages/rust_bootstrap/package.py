@@ -88,6 +88,8 @@ class RustBootstrap(Package):
                 "x86_64": "1f6f18ce19387c42968a474cf175e67f99280614ded9c752d5d2e37af3204bcd",
                 "aarch64": "2c66e31d774a0dcd4422db74584ebc6362ff3ae90c452caff9d2fb912c821e8d",
                 "powerpc64le": "3f8f68d79460475396a52b5ae70eee73d6fb194fff1c4ff4286b64fbebee4429",
+            },
+        },
         "1.86.0": {
             "darwin": {
                 "x86_64": "bf8121850b2f6a46566f6c2bbe9fa889b915b1039febf36853ea9d9c4256c67d",
