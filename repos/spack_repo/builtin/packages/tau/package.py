@@ -66,12 +66,7 @@ class Tau(Package):
     darwin_default = not _is_darwin
     libunwind_darwin_default = "none" if _is_darwin else "shared"
 
-    variant(
-        "julia",
-        default=False,
-        description="Activate Julia support",
-        when="@2.35.1:",
-    )
+    variant("julia", default=False, description="Activate Julia support", when="@2.35.1:")
     variant("scorep", default=False, description="Activates SCOREP support")
     variant("openmp", default=False, description="Use OpenMP threads")
     variant("pthreads", default=True, description="Use POSIX threads")
@@ -220,7 +215,11 @@ class Tau(Package):
     depends_on("dyninst@12.3.0:", when="+dyninst")
     depends_on("julia@1.6:", when="+julia")
 
-    conflicts("+julia", when="~pthreads ~ittnotify", msg="Julia support requires +pthreads and +ittnotify")
+    conflicts(
+        "+julia",
+        when="~pthreads ~ittnotify",
+        msg="Julia support requires +pthreads and +ittnotify",
+    )
 
     conflicts("+comm", when="@:2.34 +python", msg="Bug in +comm with +python up to @2.34")
 
