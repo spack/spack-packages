@@ -16,6 +16,8 @@ class HipblasCommon(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    depends_on("c", type="build")
+
     license("MIT")
     version("7.1.0", sha256="6c00bb9335ad2ad3d4730eb41ebc704b0207162d5f98da1cdce3eea1087c3944")
     version("7.0.2", sha256="7b8007784831d895fb0a432f366388bc7d212443a25ea9f14eb2aa0a7b4ad5d7")
