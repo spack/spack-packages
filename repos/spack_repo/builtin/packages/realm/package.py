@@ -60,8 +60,6 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos@4:", when="+kokkos")
     depends_on("kokkos+openmp", when="+kokkos+openmp")
     depends_on("kokkos~openmp", when="+kokkos~openmp")
-    depends_on("kokkos+cmake_lang", when="+kokkos+cuda")
-    depends_on("kokkos+cmake_lang", when="+kokkos+rocm")
     depends_on("kokkos %gcc", when="+kokkos %gcc")
     depends_on("kokkos %clang", when="+kokkos %clang")
 
@@ -185,6 +183,13 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
         ]
 
         options.append(f"-DREALM_LOG_LEVEL={str.upper(spec.variants['log_level'].value)}")
+
+        # for shared libraries, realm_kokkos.so will be self contained.
+        # however, in the static case we need to use the same compiler/wrapper as kokkos globally.
+        if self.spec.satisfies("~shared+kokkos ^kokkos+wrapper"):
+            options.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
+        elif self.spec.satisfies("~shared+kokkos ^kokkos~cmake_lang+rocm"):
+            options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
 
         if spec.satisfies("+cuda"):
             options.append(
