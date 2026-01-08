@@ -82,6 +82,7 @@ class Warpx(CMakePackage, PythonExtension):
     variant("petsc", default=False, description="Enable PETSc linear/nonlinear solvers")
     variant("python", default=False, description="Enable Python bindings")
     variant("qed", default=True, description="Enable QED support")
+    variant("simd", default=False, description="Enable SIMD support")
     variant("qedtablegen", default=False, description="QED table generation support")
     variant("shared", default=True, description="Build a shared version of the library")
     variant("tprof", default=True, description="Enable tiny profiling features")
@@ -115,6 +116,9 @@ class Warpx(CMakePackage, PythonExtension):
     with when("+petsc"):
         depends_on("petsc")
         depends_on("amrex +petsc")
+    with when("+simd"):
+        depends_on("vir-simd")
+        depends_on("amrex +simd")
     depends_on("mpi", when="+mpi")
     with when("+mpi"):
         depends_on("amrex +mpi")
@@ -207,6 +211,7 @@ class Warpx(CMakePackage, PythonExtension):
             self.define_from_variant("WarpX_PYTHON", "python"),
             self.define_from_variant("WarpX_QED", "qed"),
             self.define_from_variant("WarpX_QED_TABLE_GEN", "qedtablegen"),
+            self.define_from_variant("WarpX_SIMD", "simd"),
         ]
 
         args.append("-DWarpX_amrex_internal=OFF")
