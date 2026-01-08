@@ -62,6 +62,8 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos~openmp", when="+kokkos~openmp")
     depends_on("kokkos+cmake_lang", when="+kokkos+cuda")
     depends_on("kokkos+cmake_lang", when="+kokkos+rocm")
+    depends_on("kokkos %gcc", when="+kokkos %gcc")
+    depends_on("kokkos %clang", when="+kokkos %clang")
 
     depends_on("python@3.8:", when="+python")
 
