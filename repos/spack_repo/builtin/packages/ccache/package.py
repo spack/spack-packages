@@ -4,12 +4,12 @@
 
 import re
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackageNoCache
 
 from spack.package import *
 
 
-class Ccache(CMakePackage):
+class Ccache(CMakePackageNoCache):
     """ccache is a compiler cache. It speeds up recompilation by caching
     previous compilations and detecting when the same compilation is being done
     again."""
@@ -88,6 +88,12 @@ class Ccache(CMakePackage):
     conflicts("%clang@:4", when="@4.4:")
 
     patch("fix-gcc-12.patch", when="@4.8:4.8.2 %gcc@12")
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        # When using ccache as a build dep, don't use the directory as part of the hash
+        env.set("CCACHE_NOHASHDIR", "yes")
 
     def cmake_args(self):
         return [

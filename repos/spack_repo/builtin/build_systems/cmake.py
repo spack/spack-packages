@@ -28,6 +28,7 @@ from spack.package import (
 )
 
 from ._checks import execute_build_time_tests
+import spack_repo.builtin.build_systems.compiler_cache as compiler_cache
 
 # Regex to extract the primary generator from the CMake generator
 # string.
@@ -165,8 +166,11 @@ def generator(*names: str, default: Optional[str] = None) -> None:
         conflicts(f"generator={x}")
 
 
-class CMakePackage(PackageBase):
+class CMakePackageNoCache(PackageBase):
     """Specialized class for packages built using CMake
+
+    This version of the CMakePackage class does not include the
+    compiler caching variant ccache
 
     For more information on the CMake build system, see:
     https://cmake.org/cmake/help/latest/
@@ -273,6 +277,22 @@ class CMakePackage(PackageBase):
 
     def define_from_variant(self, cmake_var: str, variant: Optional[str] = None) -> str:
         return define_from_variant(self, cmake_var, variant)
+
+
+class CMakePackage(CMakePackageNoCache):
+    """Specialized class for packages built using CMake.
+
+    Provides extra variant ccache which allows configuration of compilation caching with
+    ccache/sccache/etc..
+
+    For more information on the CMake build system, see:
+    https://cmake.org/cmake/help/latest/
+    """
+
+    # CMAKE_<LANG>_COMPILER_LAUNCHER can be used to enable compilation cacheing.
+    # This feature is meant to replace the existing Spack configuration for ccache as it
+    # better enables build systems to describe compatiblity.
+    compiler_cache.configure()
 
 
 @register_builder("cmake")
@@ -395,6 +415,17 @@ class CMakeBuilder(BuilderWithDefaults):
             define("CMAKE_PREFIX_PATH", get_cmake_prefix_path(pkg)),
             define("CMAKE_BUILD_TYPE", build_type),
         ]
+
+        ccache = compiler_cache.determine_from_spec(pkg.spec)
+        if ccache:
+            if "c" in pkg.spec:
+                args.append(define("CMAKE_C_COMPILER_LAUNCHER", ccache.value))
+            if "cxx" in pkg.spec:
+                args.append(define("CMAKE_CXX_COMPILER_LAUNCHER", ccache.value))
+
+            # Ccache does not support fortran (https://github.com/ccache/ccache/pull/90)
+            if "fortran" in pkg.spec and ccache == compiler_cache.CompilationCache.SCCACHE:
+                args.append(define("CMAKE_Fortran_COMPILER_LAUNCHER", ccache.value))
 
         if primary_generator == "Unix Makefiles":
             args.append(define("CMAKE_VERBOSE_MAKEFILE", True))
