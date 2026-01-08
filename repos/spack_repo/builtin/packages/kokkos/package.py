@@ -307,9 +307,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+openmptarget", when="cxxstd=14", msg="OpenMPTarget requires C++17 or higher")
 
     # HPX should use the same C++ standard
-    for cxxstd in ["14", "17", "20"]:
+    for cxxstd in ["14", "17", "20", "23"]:
         depends_on(f"hpx cxxstd={cxxstd}", when=f"+hpx cxxstd={cxxstd}")
-    conflicts("+hpx", when="cxxstd=23", msg="hpx package does not yet support cxxstd=23")
 
     # HPX version constraints
     depends_on("hpx@1.7:", when="+hpx")
