@@ -41,6 +41,7 @@ class PyMdanalysis(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+
     depends_on("python@3.11:", type=("build", "run"), when="@2.10.0:")
     depends_on("python@3.10:", type=("build", "run"), when="@2.8.0:")
     depends_on("python@3.9:", type=("build", "run"), when="@2.5.0:")
@@ -58,6 +59,8 @@ class PyMdanalysis(PythonPackage):
     depends_on("py-numpy@1.20.0:", when="@:2.4.0", type=("build", "run"))
     # https://github.com/MDAnalysis/mdanalysis/pull/4482
     depends_on("py-numpy@:1", when="@:2.7.0", type=("build", "run"))
+    # https://github.com/MDAnalysis/mdanalysis/issues/5061
+    conflicts("py-numpy@2.1:", when="@:2.9.0", msg="MDAnalysis versions up to 2.9.0 are incompatible with numpy 2.1+")
 
     depends_on("py-griddataformats@0.4.0:", type=("build", "run"))
     depends_on("py-mmtf-python@1.0.0:", type=("build", "run"))
