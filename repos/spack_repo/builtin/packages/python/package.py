@@ -306,6 +306,14 @@ class Python(Package):
         else:
             variants += "~pythoncmd"
 
+        if Version(version_str) >= Version("3.13"):
+            for exe in exes:
+                if exe.endswith("t"):
+                    variants += "+freethreading"
+                    break
+            else:
+                variants += "~freethreading"
+
         for module in [
             "readline",
             "sqlite3",
@@ -857,12 +865,18 @@ class Python(Package):
         # installed python, several different commands could be located
         # in the same directory. Be as specific as possible. Search for:
         #
-        # * python3.11
+        # * python3.14t
+        # * python3.14
         # * python3
         # * python
         #
-        # in that order if using python@3.11.0, for example.
-        suffixes = [self.spec.version.up_to(2), self.spec.version.up_to(1), ""]
+        # in that order if using python@3.14.0, for example.
+        suffixes = [
+            str(self.spec.version.up_to(2)) + "t",
+            str(self.spec.version.up_to(2)),
+            str(self.spec.version.up_to(1)),
+            "",
+        ]
         ext = "" if sys.platform != "win32" else ".exe"
         filenames = [f"python{ver}{ext}" for ver in suffixes]
         root = self.prefix.bin if sys.platform != "win32" else self.prefix

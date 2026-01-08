@@ -29,6 +29,7 @@ class Comgr(CMakePackage):
     libraries = ["libamd_comgr"]
 
     license("NCSA")
+    version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
     version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
     version("7.0.2", sha256="fd612fa750bebd0c3be0ea642b2cae8ff5c7e00a2280b22b9ea16ee86a11d763")
     version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
@@ -85,6 +86,7 @@ class Comgr(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         # llvm libs are linked statically, so this *could* be a build dep
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
