@@ -1137,6 +1137,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             umpire_libs = umpire.libs
             if "^camp" in umpire:
                 umpire_opts += umpire["camp"].headers
+                umpire_libs += umpire["camp"].libs
             if "^fmt" in umpire:
                 umpire_opts += umpire["fmt"].headers
                 umpire_libs += umpire["fmt"].libs

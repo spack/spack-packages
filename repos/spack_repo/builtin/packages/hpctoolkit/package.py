@@ -33,6 +33,8 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     license("BSD-3-Clause", when="@:2024")
 
     version("develop", branch="develop")
+    version("2025.1.stable", branch="release/2025.1")
+    version("2025.1.0", tag="2025.1.0", commit="9f9bdf0885ffc28ab51251bc5359485ff75d2a21")
     version("2025.0.stable", branch="release/2025.0")
     version("2025.0.1", tag="2025.0.1", commit="ed42fab06e0c4be41fba510f151a5ae153fbd5e5")
     version("2024.01.stable", branch="release/2024.01")
@@ -192,9 +194,12 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
     depends_on("py-docutils", type="build", when="@2025:")
-    depends_on("py-sphinx@6:8", type="build", when="+docs")
-    depends_on("py-myst-parser@3:4", type="build", when="+docs")
-    depends_on("py-sphinx-book-theme@1", type="build", when="+docs")
+    depends_on("py-sphinx@6:", type="build", when="+docs")
+    depends_on("py-sphinx@6:8", type="build", when="@2025.0 +docs")
+    depends_on("py-myst-parser@3:", type="build", when="+docs")
+    depends_on("py-myst-parser@3:4", type="build", when="@2025.0 +docs")
+    depends_on("py-sphinx-book-theme@1:", type="build", when="+docs")
+    depends_on("py-sphinx-book-theme@1", type="build", when="@2025.0 +docs")
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
@@ -224,13 +229,17 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
         depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
 
-    with when("@2025:"):
+    with when("@2025:2025.0"):
         # The consideration above is no longer needed as of 2025.0.0, we use libdl and
         # similar tricks to avoid rpath conflicts.
         depends_on("hip@4.5:", when="+rocm")
         depends_on("hsa-rocr-dev@4.5:", when="+rocm")
         depends_on("roctracer-dev@4.5:", when="+rocm")
         depends_on("rocprofiler-dev@4.5:", when="+rocm")
+
+    with when("@2025.1:"):
+        depends_on("rocprofiler-sdk@6.2:", when="+rocm")
+        depends_on("hip@6.2:", type="test", when="+rocm")
 
     conflicts("%gcc@:7", when="@2022.10:", msg="hpctoolkit requires gnu gcc 8.x or later")
     conflicts("%gcc@:6", when="@2021.00:2022.06", msg="hpctoolkit requires gnu gcc 7.x or later")
@@ -279,6 +288,13 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         "https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/1329.diff",
         when="@2025.0.1 +gtpin",
         sha256="ac486278726620ef932c48aef41d5aab6ba0359b5b1eced651724237877f445b",
+    )
+
+    # Fix +docs build for 2025.0.x versions before the fix was merged
+    patch(
+        "https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/1395.diff",
+        when="@2025.0:2025.0.1 +docs",
+        sha256="7954f9286e707832595bb31b19137ea9d5c7e3ef801cb9a69d2e1d78d383fdab",
     )
 
     # Fix a bug where make would mistakenly overwrite hpcrun-fmt.h.
