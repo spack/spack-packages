@@ -277,10 +277,10 @@ class Openfoam(Package):
     version("develop", branch="develop", submodules="True")
     version("master", branch="master", submodules="True")
     version(
-        "2512", 
+        "2512",
         tag="OpenFOAM-v2512",
         commit="87ed40d256d22ea38fcc648dfc82a22162427b18",
-        submodules=submodules
+        submodules=submodules,
     )
     version("2506", sha256="63d26f48ae7ee9a7806a0ceb339ef8a0ba485a4714d54fbfb31e78e1a4849965")
     version("2412", sha256="c353930105c39b75dac7fa7cfbfc346390caa633a868130fd8c9816ef5f732cd")
