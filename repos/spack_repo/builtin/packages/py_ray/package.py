@@ -66,10 +66,12 @@ class PyRay(PythonPackage):
         depends_on("py-grpcio@1.32.0:", when="@2.53.0: ^python@:3.9", type=("build", "run"))
         depends_on("py-gpustat@1:", when="@2.0.1", type=("build", "run"))
         depends_on("py-opencensus", type=("build", "run"))
-        depends_on("py-pydantic", type=("build", "run"))
+        depends_on("py-pydantic@1,2.12:2", type=("build", "run"))
         depends_on("py-prometheus-client@0.7.1:", when="@2.53.0:", type=("build", "run"))
         depends_on("py-prometheus-client@0.7.1:0.13", when="@2.0.1", type=("build", "run"))
         depends_on("py-smart-open", type=("build", "run"))
+        depends_on("py-virtualenv@20.0.24:", when="@2.53.0:", type=("build", "run"))
+        conflicts("py-virtualenv@20.21.1")
 
     build_directory = "python"
 
