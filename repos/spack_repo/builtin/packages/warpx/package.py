@@ -79,6 +79,7 @@ class Warpx(CMakePackage, PythonExtension):
         description="Floating point precision (single/double)",
     )
     variant("fft", default=True, description="Enable support for FFT-based solvers")
+    variant("petsc", default=False, description="Enable PETSc linear/nonlinear solvers")
     variant("python", default=False, description="Enable Python bindings")
     variant("qed", default=True, description="Enable QED support")
     variant("qedtablegen", default=False, description="QED table generation support")
@@ -111,6 +112,9 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("amrex +eb")
     with when("+fft"):
         depends_on("amrex +fft")
+    with when("+petsc"):
+        depends_on("petsc")
+        depends_on("amrex +petsc")
     depends_on("mpi", when="+mpi")
     with when("+mpi"):
         depends_on("amrex +mpi")
@@ -199,6 +203,7 @@ class Warpx(CMakePackage, PythonExtension):
             self.define_from_variant("WarpX_MPI_THREAD_MULTIPLE", "mpithreadmultiple"),
             self.define_from_variant("WarpX_OPENPMD", "openpmd"),
             "-DWarpX_PRECISION={0}".format(spec.variants["precision"].value.upper()),
+            self.define_from_variant("WarpX_PETSC", "petsc"),
             self.define_from_variant("WarpX_PYTHON", "python"),
             self.define_from_variant("WarpX_QED", "qed"),
             self.define_from_variant("WarpX_QED_TABLE_GEN", "qedtablegen"),
