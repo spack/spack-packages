@@ -43,7 +43,7 @@ class PyAse(PythonPackage):
         depends_on("py-scipy@1.8.1:", type=("build", "run"))
         depends_on("py-matplotlib@3.5.2:", type=("build", "run"))
         depends_on("py-setuptools@77.0.3:", type="build")
-    
+
     with when("@3.24.0:3.26.0"):
         depends_on("python@3.9:", type=("build", "run"))
         depends_on("py-numpy@1.19.5:", type=("build", "run"))
