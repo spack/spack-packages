@@ -8,7 +8,7 @@ ci:
       tags: [spack]
   - build-job:
       timeout: 120 minutes
-      tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+      tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
       variables:
         SPACK_GNUPGHOME: ${CI_PROJECT_DIR}/.gpg
       before_script:
