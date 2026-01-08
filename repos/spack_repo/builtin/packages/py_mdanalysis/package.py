@@ -41,7 +41,6 @@ class PyMdanalysis(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-
     depends_on("python@3.11:", type=("build", "run"), when="@2.10.0:")
     depends_on("python@3.10:", type=("build", "run"), when="@2.8.0:")
     depends_on("python@3.9:", type=("build", "run"), when="@2.5.0:")
