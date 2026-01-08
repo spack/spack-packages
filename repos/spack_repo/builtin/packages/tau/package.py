@@ -329,6 +329,9 @@ class Tau(Package):
         # a few #peculiarities# that make this build quite hackish.
         options = ["-prefix=%s" % prefix]
 
+        if "+julia" in spec:
+            options.append("-julia")
+
         if "+craycnl" in spec:
             options.append("-arch=craycnl")
 
