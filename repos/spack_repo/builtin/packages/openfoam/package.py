@@ -244,6 +244,15 @@ def mplib_content(spec, pre=None):
     return info
 
 
+def submodules(package):
+    submodules = []
+    if package.spec.satisfies("plugins=avalanche"):
+        submodules.append("plugins/avalanche")
+    if package.spec.satisfies("plugins=cfmesh"):
+        submodules.append("plugins/cfmesh")
+    return submodules
+
+
 # -----------------------------------------------------------------------------
 
 
@@ -267,7 +276,12 @@ class Openfoam(Package):
 
     version("develop", branch="develop", submodules="True")
     version("master", branch="master", submodules="True")
-    version("2512", sha256="ae9a0a133a2e996b88bd1d0f3cc229e3c49968c368feae61bd3ec63deaf337aa")
+    version(
+        "2512", 
+        tag="OpenFOAM-v2512",
+        commit="87ed40d256d22ea38fcc648dfc82a22162427b18",
+        submodules=submodules
+    )
     version("2506", sha256="63d26f48ae7ee9a7806a0ceb339ef8a0ba485a4714d54fbfb31e78e1a4849965")
     version("2412", sha256="c353930105c39b75dac7fa7cfbfc346390caa633a868130fd8c9816ef5f732cd")
     version("2406", sha256="8d1450fb89eec1e7cecc55c3bb7bc486ccbf63d069379d1d5d7518fa16a4686a")
@@ -355,6 +369,14 @@ class Openfoam(Package):
         description="Precision option",
         values=("sp", "dp", conditional("spdp", when="@1906:")),
         multi=False,
+    )
+
+    variant(
+        "plugins",
+        default="none",
+        description="With optional plugins",
+        values=("none", conditional("avalanche", "cfmesh", when="@2512:")),
+        multi=True,
     )
 
     depends_on("c", type="build")  # generated
