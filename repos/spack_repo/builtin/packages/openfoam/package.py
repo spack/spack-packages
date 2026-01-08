@@ -424,13 +424,13 @@ class Openfoam(Package):
     patch("1612-spack-patches.patch", when="@1612")
     # kahip patch (wmake)
     patch(
-        "https://develop.openfoam.com/Development/openfoam/commit/8831dfc58b0295d0d301a78341dd6f4599073d45.patch",
+        "https://gitlab.com/openfoam/core/openfoam/commit/8831dfc58b0295d0d301a78341dd6f4599073d45.patch",
         when="@1806",
         sha256="531146be868dd0cda70c1cf12a22110a38a30fd93b5ada6234be3d6c9256c6cf",
     )
     # Fix: missing std::array include (searchable sphere)
     patch(
-        "https://develop.openfoam.com/Development/openfoam/commit/b4324b1297761545d5b10f50b60ab29e71c172aa.patch",
+        "https://gitlab.com/openfoam/core/openfoam/commit/b4324b1297761545d5b10f50b60ab29e71c172aa.patch",
         when="@2012_220610",
         sha256="bad4b0e80fd26ea702bce9ccfb925edbbaa3308f70392fe6da2c7671b1d39bea",
     )
@@ -907,7 +907,7 @@ class Openfoam(Package):
 
     # Executables like decomposePar require interface libraries for optional dependencies, but if
     # the dependency is missing, an dummy library is used and put in lib/dummy. Allow this until
-    # the https://develop.openfoam.com/Development/openfoam/-/issues/3283 is resolved.
+    # the https://gitlab.com/openfoam/core/openfoam/-/issues/3283 is resolved.
     unresolved_libraries = [
         "libkahipDecomp.so",
         "libmetisDecomp.so",
