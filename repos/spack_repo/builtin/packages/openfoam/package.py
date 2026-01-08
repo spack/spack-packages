@@ -246,9 +246,9 @@ def mplib_content(spec, pre=None):
 
 def submodules(package):
     submodules = []
-    if package.spec.satisfies("plugins=avalanche"):
+    if package is not None and package.spec.satisfies("plugins=avalanche"):
         submodules.append("plugins/avalanche")
-    if package.spec.satisfies("plugins=cfmesh"):
+    if package is not None and package.spec.satisfies("plugins=cfmesh"):
         submodules.append("plugins/cfmesh")
     return submodules
 
