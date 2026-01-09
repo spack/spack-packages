@@ -46,7 +46,15 @@ class Amdlibm(SConsPackage, CMakePackage):
     variant("verbose", default=False, description="Building with verbosity", when="@:4.1")
 
     # Build system
-    build_system(conditional("cmake", when="@5.1:"), "scons", default="scons")
+    # - For version 5.2: both 'cmake' and 'scons' are supported, with 'cmake' as default.
+    # - For version 5.1: both 'scons' and 'cmake' are supported, with 'scons' as default.
+    # - For versions below 5.1: only 'scons' is supported.
+    with when("@5.2"):
+        build_system("cmake", "scons", default="cmake")
+
+    with when("@:5.1"):
+        build_system("scons", conditional("cmake", when="@5.1:"), default="scons")
+
     # Mandatory dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
