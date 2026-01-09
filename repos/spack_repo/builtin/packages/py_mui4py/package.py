@@ -18,7 +18,7 @@ class PyMui4py(PythonPackage):
 
     maintainers("blairSmcc03")
 
-    license("Apache-2.0", checked_by="blairSmcc03")
+    license("GPLv3 OR Apache v2.0", checked_by="blairSmcc03")
 
     version("2.0", sha256="fdddd4ffe72c22356eb53707567622a9bfb8d17836a9677a980f035e87e1b295")
     version("master", branch="master")
