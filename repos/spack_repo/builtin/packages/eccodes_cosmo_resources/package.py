@@ -11,7 +11,7 @@ class EccodesCosmoResources(Package):
     url = "https://github.com/COSMO-ORG/eccodes-cosmo-resources.git"
     git = "https://github.com/COSMO-ORG/eccodes-cosmo-resources.git"
 
-    maintainers("huppd","lxavier","victoria-cherkas")
+    maintainers("huppd", "lxavier", "victoria-cherkas")
 
     version("2.36.0.3", tag="v2.36.0.3")
     version("2.25.0.3", tag="v2.25.0.3")
@@ -20,21 +20,17 @@ class EccodesCosmoResources(Package):
     version("2.18.0.1", tag="v2.18.0.1")
 
     depends_on("eccodes")
-    depends_on("eccodes@2.36.4",
-               type=("build", "link", "run"),
-               when="@2.36.0.3")
-    depends_on("eccodes@2.25.0",
-               type=("build", "link", "run"),
-               when="@2.25.0.1:2.25.0.3")
-    depends_on("eccodes@2.18.0",
-               type=("build", "link", "run"),
-               when="@2.18.0.1")
+    depends_on("eccodes@2.36.4", type=("build", "link", "run"), when="@2.36.0.3")
+    depends_on("eccodes@2.25.0", type=("build", "link", "run"), when="@2.25.0.1:2.25.0.3")
+    depends_on("eccodes@2.18.0", type=("build", "link", "run"), when="@2.18.0.1")
 
     def setup_run_environment(self, env):
-        eccodes_definition_path = ":".join([
-            self.prefix + "/cosmoDefinitions/definitions/",
-            self.spec["eccodes"].prefix + "/share/eccodes/definitions/"
-        ])
+        eccodes_definition_path = ":".join(
+            [
+                self.prefix + "/cosmoDefinitions/definitions/",
+                self.spec["eccodes"].prefix + "/share/eccodes/definitions/",
+            ]
+        )
         env.prepend_path("GRIB_DEFINITION_PATH", eccodes_definition_path)
         env.prepend_path("ECCODES_DEFINITION_PATH", eccodes_definition_path)
 
