@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class PyDeisa(PythonPackage):
-    """Deisa common library. Contains the definition of a common interface that may be used with Dask and Ray."""
+    """Deisa common library. Contains the definition of a common interface that may be
+    used with Dask and Ray."""
 
     homepage = "https://github.com/deisa-project/deisa"
     pypi = "deisa/deisa-0.3.0.tar.gz"
