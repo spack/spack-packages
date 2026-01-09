@@ -19,7 +19,7 @@ class PyKerchunk(PythonPackage):
     data processing while the data providers still insist on using legacy formats for archival
     storage."""
 
-    homepage = "hhttps://github.com/fsspec/kerchunk"
+    homepage = "https://github.com/fsspec/kerchunk"
     pypi = "kerchunk/kerchunk-0.2.9.tar.gz"
 
     license("MIT", checked_by="Chrismarsh")
