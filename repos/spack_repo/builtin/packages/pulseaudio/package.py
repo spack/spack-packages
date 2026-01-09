@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems import autotools, meson
+import os
+
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
-import os
+
 
 class Pulseaudio(AutotoolsPackage, MesonPackage):
     """PulseAudio is a sound system for POSIX OSes, meaning that it is a proxy
@@ -26,9 +27,7 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
     license("LGPL-2.1-or-later")
 
     build_system(
-        conditional("autotools", when="@:16"),
-        conditional("meson", when="@17:"),
-        default="meson",
+        conditional("autotools", when="@:16"), conditional("meson", when="@17:"), default="meson"
     )
 
     version("17.0", sha256="053794d6671a3e397d849e478a80b82a63cb9d8ca296bd35b73317bb5ceb87b5")
@@ -74,7 +73,7 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
     depends_on("speexdsp@1.2:")
     depends_on("m4", type="build")
 
-#    if spec.satisfies("%gcc@8:"):
+    #    if spec.satisfies("%gcc@8:"):
     os.environ["LDFLAGS"] = "-Wl,--copy-dt-needed-entries"
 
     def configure_args(self):
@@ -117,8 +116,8 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
 
         return args
 
-class MesonBuilder(meson.MesonBuilder):
 
+class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         return [
             "-Ddatabase=gdbm",
@@ -130,15 +129,13 @@ class MesonBuilder(meson.MesonBuilder):
             "-Dprefix={0}".format(self.prefix),
             "-Dlibdir={0}/lib64".format(self.prefix),
             "-Dbashcompletiondir={0}/share/bash-completion/completions".format(self.prefix),
-            "-Dsystemduserunitdir={0}/lib/systemd/user".format(self.prefix)
-]
+            "-Dsystemduserunitdir={0}/lib/systemd/user".format(self.prefix),
+        ]
 
     def setup_build_environment(self, env):
         env.append_flags("CPPFLAGS", "-I{0}".format(self.spec["libiconv"].prefix.include))
         env.append_flags("LDFLAGS", "-L{0} -liconv".format(self.spec["libiconv"].prefix.lib))
 
     def setup_run_environment(self, env):
-        env.prepend_path('ALSA_PLUGIN_DIR', self.prefix.lib.alsa-lib)
-        env.prepend_path('LD_LIBRARY_PATH', self.spec['pulseaudio'].prefix.lib64)
-
-
+        env.prepend_path("ALSA_PLUGIN_DIR", self.prefix.lib.alsa - lib)
+        env.prepend_path("LD_LIBRARY_PATH", self.spec["pulseaudio"].prefix.lib64)
