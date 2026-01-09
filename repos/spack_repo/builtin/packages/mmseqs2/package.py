@@ -38,7 +38,9 @@ class Mmseqs2(CMakePackage, CudaPackage):
     conflicts("@:15 +cuda")
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
     conflicts(
-        "cmake@3.14:,:4", when="@18-8cc5c", msg="CMake >=3.15 and <4 is required to compile MMseqs2"
+        "cmake@3.14:,:4",
+        when="@18-8cc5c",
+        msg="CMake >=3.15 and <4 is required to compile MMseqs2",
     )
 
     # patch to support building with gcc@13:
