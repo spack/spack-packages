@@ -36,6 +36,11 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
     maintainers("amd-toolchain-support")
 
     version(
+        ver="5.1.0",
+        sha256="3ccb56e399c66e10d437feb24b73552bc560210f7606d2609c06a7ef35d22c69",
+        url="https://download.amd.com/developer/eula/aocc/aocc-5-1/aocc-compiler-5.1.0.tar",
+    )
+    version(
         ver="5.0.0",
         sha256="966fac2d2c759e9de6e969c10ada7a7b306c113f7f1e07ea376829ec86380daa",
         url="https://download.amd.com/developer/eula/aocc/aocc-5-0/aocc-compiler-5.0.0.tar",
