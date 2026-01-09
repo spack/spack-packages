@@ -79,3 +79,5 @@ class AmdAocl(BundlePackage):
                 depends_on(f"aocl-libmem@={vers}")
             if Version(vers) >= Version("5.0"):
                 depends_on(f"aocl-da@={vers}")
+            if Version(vers) >= Version("5.2"):
+                depends_on(f"aocl-dlp@={vers}")
