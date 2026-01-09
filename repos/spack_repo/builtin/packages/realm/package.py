@@ -60,8 +60,10 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos@4:", when="+kokkos")
     depends_on("kokkos+openmp", when="+kokkos+openmp")
     depends_on("kokkos~openmp", when="+kokkos~openmp")
-    depends_on("kokkos %gcc", when="+kokkos %gcc")
-    depends_on("kokkos %clang", when="+kokkos %clang")
+
+    # force same compiler as kokkos if static build
+    depends_on("kokkos %gcc", when="+kokkos~shared %gcc")
+    depends_on("kokkos %clang", when="+kokkos~shared %clang")
 
     depends_on("python@3.8:", when="+python")
 
