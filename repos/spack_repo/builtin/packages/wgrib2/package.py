@@ -153,16 +153,10 @@ class Wgrib2(MakefilePackage, CMakePackage):
         when="@:3.1",
     )
     variant(
-        "g2c_low",
-        default=True,
-        description="Include NCEP g2clib (png,jpeg2000)",
-        when="@3.7:",
+        "g2c_low", default=True, description="Include NCEP g2clib (png,jpeg2000)", when="@3.7:"
     )
     variant(
-        "g2c_high",
-        default=False,
-        description="Include NCEP g2clib (add -g2clib 2)",
-        when="@3.7:",
+        "g2c_high", default=False, description="Include NCEP g2clib (add -g2clib 2)", when="@3.7:"
     )
     variant(
         "disable_timezone", default=False, description="Some machines do not support timezones"
@@ -172,18 +166,8 @@ class Wgrib2(MakefilePackage, CMakePackage):
         default=False,
         description="Some machines do not support the alarm to terminate wgrib2",
     )
-    variant(
-        "png",
-        default=True,
-        description="PNG encoding",
-        when="@:3.8"
-    )
-    variant(
-        "jasper",
-        default=True,
-        description="JPEG compression using Jasper",
-        when="@:3.8"
-    )
+    variant("png", default=True, description="PNG encoding", when="@:3.8")
+    variant("jasper", default=True, description="JPEG compression using Jasper", when="@:3.8")
     variant("openmp", default=True, description="OpenMP parallelization")
     variant("wmo_validation", default=False, description="WMO validation")
     #    variant("shared", default=False, description="Enable shared library", when="+lib")
