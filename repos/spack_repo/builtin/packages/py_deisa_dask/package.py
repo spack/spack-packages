@@ -11,7 +11,7 @@ class PyDeisaDask(PythonPackage):
     """Deisa: Dask-Enabled In Situ Analytics."""
 
     homepage = "https://github.com/deisa-project/deisa-dask"
-    pypi = "deisa-dask/deisa-dask-0.3.0.tar.gz"
+    pypi = "deisa_dask/deisa_dask-0.3.0.tar.gz"
 
     version("0.3.0", sha256="615483d3c21e05c1cdf0564db0245f7f6ba979e75c25a0292d3d42fcc4cf6d23")
 
