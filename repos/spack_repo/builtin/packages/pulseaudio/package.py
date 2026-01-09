@@ -116,8 +116,6 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
 
         return args
 
-
-class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         return [
             "-Ddatabase=gdbm",
@@ -133,9 +131,20 @@ class MesonBuilder(meson.MesonBuilder):
         ]
 
     def setup_build_environment(self, env):
-        env.append_flags("CPPFLAGS", "-I{0}".format(self.spec["libiconv"].prefix.include))
-        env.append_flags("LDFLAGS", "-L{0} -liconv".format(self.spec["libiconv"].prefix.lib))
+        if self.spec.satisfies("build_system=meson"):
+            env.append_flags("CPPFLAGS", "-I{0}".format(self.spec["libiconv"].prefix.include))
+            env.append_flags("LDFLAGS", "-L{0} -liconv".format(self.spec["libiconv"].prefix.lib))
 
     def setup_run_environment(self, env):
-        env.prepend_path("ALSA_PLUGIN_DIR", self.prefix.lib.alsa - lib)
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["pulseaudio"].prefix.lib64)
+        # Always add ALSA plugin directory
+        env.prepend_path("ALSA_PLUGIN_DIR", join_path(self.prefix.lib, "alsa-lib"))
+
+        # If pulseaudio is in the spec, make sure its libraries are on the runtime linker path
+        if self.spec.satisfies("^pulseaudio"):
+            # 1️⃣ Standard lib64 dir
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["pulseaudio"].prefix.lib64)
+
+            # 2️⃣ Also check for a pulseaudio subdirectory (some builds install here)
+            pulseaudio_libdir = join_path(self.spec["pulseaudio"].prefix.lib64, "pulseaudio")
+            if os.path.exists(pulseaudio_libdir):
+                env.prepend_path("LD_LIBRARY_PATH", pulseaudio_libdir)
