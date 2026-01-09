@@ -8,10 +8,10 @@ from spack.package import *
 
 
 class AoclDlp(CMakePackage):
-    """AOCL-DLP is a library designed to provide optimized deep learning primitives for AMD processors. 
-    It implements Low Precision GEMM (LPGEMM) and batch GEMM for deep learning applications, supporting 
-    multiple data types as well as pre-operations and post-operations. The library is tailored to leverage 
-    the full potential of AMD hardware, ensuring efficient computation, scalability, and accelerated 
+    """AOCL-DLP is a library designed to provide optimized deep learning primitives for AMD processors.
+    It implements Low Precision GEMM (LPGEMM) and batch GEMM for deep learning applications, supporting
+    multiple data types as well as pre-operations and post-operations. The library is tailored to leverage
+    the full potential of AMD hardware, ensuring efficient computation, scalability, and accelerated
     deep learning workloads."""
 
     _name = "aocl-dlp"
@@ -63,4 +63,3 @@ class AoclDlp(CMakePackage):
         args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
         return args
-
