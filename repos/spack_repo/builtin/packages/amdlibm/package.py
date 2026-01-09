@@ -102,8 +102,8 @@ class Amdlibm(SConsPackage, CMakePackage):
         spec = self.spec
 
         args = [
-            self.define("LIBAOCLUTILS_INCLUDE_PATH", spec["aocl-utils"].prefix.include),
-            f"-DLIBAOCLUTILS_LIBRARY_PATH={spec['aocl-utils'].libs}",
+            self.define("AOCL_UTILS_INCLUDE_DIR", spec["aocl-utils"].prefix.include),
+            f"-DAOCL_UTILS_LIB={spec['aocl-utils'].libs}",
         ]
         return args
 
