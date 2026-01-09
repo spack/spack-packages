@@ -287,6 +287,13 @@ class Openblas(CMakePackage, MakefilePackage):
         when="@0.3.27 %oneapi",
     )
 
+    # Fix arm64 HAVE_SME setting for DYNAMIC_ARCH builds using CMake
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/cdebb4fd4b2bbbf856e5abdcedbe9a5cf348ef8e.patch?full_index=1",
+        sha256="0df81a8f5c1460d3db461e2309e5ac0b70c7745a97a10e617f109b4a5811e043",
+        when="@0.3.30 +dynamic_dispatch target=aarch64:",
+    )
+
     # ilp64 and symbol suffixes are not supported with CMake build system
     requires("~ilp64", when="build_system=cmake")
     requires("symbol_suffix=none", when="build_system=cmake")
