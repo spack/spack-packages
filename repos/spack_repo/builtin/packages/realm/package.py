@@ -55,7 +55,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(
             f"gasnet +rocm amdgpu_target={arch}", when=f"network=gasnet +rocm amdgpu_target={arch}"
         )
-        depends_on(f"kokkos+rocm amdgpu_target={arch}", when=f"+rocm amdgpu_target={arch}")
+        depends_on(f"kokkos+rocm amdgpu_target={arch}", when=f"+kokkos+rocm amdgpu_target={arch}")
 
     depends_on("kokkos@4:", when="+kokkos")
     depends_on("kokkos+openmp", when="+kokkos+openmp")
@@ -70,14 +70,14 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("papi", when="+papi")
 
     # A C++ standard variant to work-around some odd behaviors with apple-clang
-    # but this might be helpful for other use cases down the road. Legion's
-    # current development policy is C++11 or greater so we capture that aspect
+    # but this might be helpful for other use cases down the road. Realm's
+    # current development policy is C++17 or greater so we capture that aspect
     # here.
     cpp_stds = ("17", "20")
     variant("cxxstd", default="17", description="C++ standard", values=cpp_stds, multi=False)
 
     # Network transport layer: the underlying data transport API should be used for
-    # distributed data movement.  For Legion, gasnet is the currently the most
+    # distributed data movement.  For Realm, GASNet and UCX are the most
     # mature.  We have many users that default to using no network layer for
     # day-to-day development thus we default to 'none'.  MPI support is new and
     # should be considered as a beta release.
