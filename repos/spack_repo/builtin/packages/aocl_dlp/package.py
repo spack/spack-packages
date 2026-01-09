@@ -21,7 +21,6 @@ class AoclDlp(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
-
     version("5.2", sha256="1eec26eeaf427cb2377ec21415ddce6e1bc62d4eab8ec51630a9c02711019c1c")
 
     # Feature toggles mapping directly to AOCL-DLP CMake options
