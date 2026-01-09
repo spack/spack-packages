@@ -205,7 +205,9 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
             )
         if spec.satisfies("+rocm"):
             options.append(
-                self.define("CMAKE_HIP_COMPILER", join_path(spec["llvm-amdgpu"].prefix.bin, "amdclang++"))
+                self.define(
+                    "CMAKE_HIP_COMPILER", join_path(spec["llvm-amdgpu"].prefix.bin, "amdclang++")
+                )
             )
             options.append(
                 self.define("CMAKE_HIP_ARCHITECTURES", spec.variants["amdgpu_target"].value)
