@@ -21,6 +21,7 @@ class RocmExamples(CMakePackage):
 
     license("MIT")
 
+    version("7.1.1", sha256="7475c4eaca103395ecae93cc5fa51b77884d06ebe990e71383c53a91bc1b089f")
     version("7.1.0", sha256="d64a82ba472126bb426c54abd1b2516479a375db895171bbc4024a7c8d0f4e94")
     version("7.0.2", sha256="02ca88ec6ce584b6710f295c2ab2df61d38a6a5e4950082863186922be40f062")
     version("7.0.0", sha256="a06dd85c3b55e62626884b9fe477393729ab5cbf7fb45c432df49bb3d918c0fe")
@@ -49,6 +50,7 @@ class RocmExamples(CMakePackage):
     depends_on("mesa", type="build", when="+cuda")
 
     for ver in [
+        "7.1.1",
         "7.1.0",
         "7.0.2",
         "7.0.0",
@@ -87,6 +89,7 @@ class RocmExamples(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hipfft@{ver}", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")

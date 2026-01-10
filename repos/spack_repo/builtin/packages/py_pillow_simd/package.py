@@ -16,6 +16,8 @@ class PyPillowSimd(PyPillowBase):
     homepage = "https://github.com/uploadcare/pillow-simd"
     pypi = "Pillow-SIMD/Pillow-SIMD-7.0.0.post3.tar.gz"
 
+    license("HPND")
+
     version(
         "9.5.0.post1", sha256="8c89b85c4085532752625f2cc066a28547cebb98529acf932d5d84c1a7ab2abc"
     )
