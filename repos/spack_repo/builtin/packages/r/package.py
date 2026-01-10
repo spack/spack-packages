@@ -26,6 +26,8 @@ class R(AutotoolsPackage):
 
     license("GPL-2.0-or-later")
 
+    version("trunk", svn="https://svn.r-project.org/R/trunk")
+    version("4.5.2", sha256="0d71ff7106ec69cd7c67e1e95ed1a3cee355880931f2eb78c530014a9e379f20")
     version("4.5.1", sha256="b42a7921400386645b10105b91c68728787db5c4c83c9f6c30acdce632e1bb70")
     version("4.5.0", sha256="3b33ea113e0d1ddc9793874d5949cec2c7386f66e4abfb1cef9aec22846c3ce1")
     version("4.4.3", sha256="0d93d224442dea253c2b086f088db6d0d3cfd9b592cd5496e8cb2143e90fc9e8")
@@ -76,6 +78,7 @@ class R(AutotoolsPackage):
         depends_on("libx11")
         depends_on("libxmu")
         depends_on("libxt")
+        depends_on("tcl")
         depends_on("tk")
 
     # Make R use a symlink to which in Sys.which, otherwise an absolute path

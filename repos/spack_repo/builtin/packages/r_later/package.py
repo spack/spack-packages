@@ -22,6 +22,9 @@ class RLater(RPackage):
     version("1.1.0.1", sha256="71baa7beae774a35a117e01d7b95698511c3cdc5eea36e29732ff1fe8f1436cd")
     version("0.8.0", sha256="6b2a28b43c619b2c7890840c62145cd3a34a7ed65b31207fdedde52efb00e521")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-rcpp@0.12.9:", type=("build", "run"))
     depends_on("r-rlang", type=("build", "run"))
 

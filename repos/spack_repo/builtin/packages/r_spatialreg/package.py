@@ -44,6 +44,8 @@ class RSpatialreg(RPackage):
     version("1.1-5", sha256="ddbf0773bad2e99b306116ae99a57bf29eecf723d1735820935a6fb7f331b27d")
     version("1.1-3", sha256="7609cdfcdfe427d2643a0db6b5360be3f6d60ede8229436ab52092d1c9cf0480")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r-spdata", type=("build", "run"))
     depends_on("r-spdata@2.3.1:", type=("build", "run"), when="@1.3-4:")

@@ -22,12 +22,18 @@ class Edm4hep(CMakePackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("0.99.4", sha256="34a76e74a3199b96d8108425fdf894cafa7e4a71483d4893537c3026b4e666d6")
+    version("0.99.3", sha256="c89e90085d83c5565b2609a81532af0d631d423fdf6d03396f666ea3a8472429")
     version("0.99.2", sha256="b3e7abb61fd969e4c9aef55dd6839a2186bf0b0d3801174fe6e0b9df8e0ebace")
     version("0.99.1", sha256="84d990f09dbd0ad2198596c0c51238a4b15391f51febfb15dd3d191dc7aae9f4")
     version("0.99", sha256="3636e8c14474237029bf1a8be11c53b57ad3ed438fd70a7e9b87c5d08f1f2ea6")
     version("0.10.5", sha256="003c8e0c8e1d1844592d43d41384f4320586fbfa51d4d728ae0870b9c4f78d81")
 
-    _cxxstd_values = (conditional("17", when="@:0.99.0"), conditional("20", when="@0.10:"))
+    _cxxstd_values = (
+        conditional("17", when="@:0.99.0"),
+        conditional("20", when="@0.10:"),
+        conditional("23", when="@0.99.1:"),
+    )
     variant(
         "cxxstd",
         default="20",
@@ -51,6 +57,7 @@ class Edm4hep(CMakePackage):
     depends_on("root@6.08:")
     depends_on("nlohmann-json@3.10.5:", when="@0.99.2: +json")
     depends_on("nlohmann-json@3.10.5:", when="@:0.99.1")
+    depends_on("podio@1.6:", when="@0.99.3:")
     depends_on("podio@1:", when="@0.99:")
     depends_on("podio@0.15:", when="@:0.10.5")
     depends_on("podio@:1.1", when="@:0.99.0")
@@ -70,6 +77,11 @@ class Edm4hep(CMakePackage):
     extends("python", when="@0.10.6:")
 
     conflicts("%clang@:16", when="@0.99.1:", msg="Incomplete consteval support in clang")
+    conflicts(
+        "^python +freethreading",
+        when="@:0.99.4",
+        msg="python free-threading requires edm4hep@0.99.5:",
+    )
 
     # Fix missing nljson import
     # NOTE that downstream packages (dd4hep) may fail for 0.99 and before

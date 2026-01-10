@@ -75,6 +75,9 @@ spack:
       - "+examples"
       - "~qt ^[virtuals=gl] osmesa" # Headless
       - "target=x86_64_v3 %gcc"
+    boost:
+      require:
+      - cxxstd=17
 
   specs:
   # CPU
@@ -84,6 +87,7 @@ spack:
   - amrex
   - arborx
   - argobots
+  - arkouda
   - axom
   - bolt
   - boost
@@ -111,13 +115,13 @@ spack:
   - fortrilinos
   - fpm
   - gasnet
-  - geopm-runtime
+  - libgeopm
   - ginkgo
   - globalarrays
   - glvis
   - gmp
   - gotcha
-  - gptune ~mpispawn
+  # - gptune ~mpispawn
   - gromacs +cp2k ^cp2k +dlaf build_system=cmake
   - h5bench
   - hdf5-vol-async
@@ -171,6 +175,7 @@ spack:
   - pruners-ninja
   - pumi
   - py-amrex
+  - py-arkouda
   - py-h5py
   - py-jupyterhub
   - py-libensemble
@@ -196,7 +201,7 @@ spack:
   - umap
   - umpire
   - upcxx
-  - variorum
+  - variorum cpu=intel gpu=none
   - wannier90
   - wps
   - wrf

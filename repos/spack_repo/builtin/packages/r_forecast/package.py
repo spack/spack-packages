@@ -28,6 +28,9 @@ class RForecast(RPackage):
     version("8.6", sha256="4279e4f700e26310bae39419ab4a9b5918a850148667a5e577a4807d53eb4d02")
     version("8.2", sha256="eb3fab64ed139d068e7d026cd3880f1b623f4153a832fb71845488fa75e8b812")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.0.2:", type=("build", "run"))
     depends_on("r@3.5.0:", type=("build", "run"), when="@8.18:")
     depends_on("r-colorspace", type=("build", "run"))

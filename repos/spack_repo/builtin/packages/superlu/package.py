@@ -22,6 +22,7 @@ class Superlu(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("7.0.1", sha256="86dcca1e086f8b8079990d07f00eb707fc9ef412cf3b2ce808b37956f0de2cb8")
     version("7.0.0", sha256="d7b91d4e0bb52644ca74c1a4dd466a694ddf1244a7bbf93cb453e8ca1f6527eb")
     version("6.0.1", sha256="6c5a3a9a224cb2658e9da15a6034eed44e45f6963f5a771a6b4562f7afb8f549")
     version("6.0.0", sha256="5c199eac2dc57092c337cfea7e422053e8f8229f24e029825b0950edd1d17e8e")

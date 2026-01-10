@@ -21,6 +21,7 @@ class Podio(CMakePackage):
     tags = ["hep", "key4hep"]
 
     version("master", branch="master")
+    version("1.6", sha256="4a625419bcf9d10b33b9fcf6cacbbebfd24c62e88a9980c5735b011d671397fe")
     version("1.5", sha256="3d316a86420a1e79088488f229bb8d1259244cf17752c40f817abeec2cec89a5")
     version("1.4.1", sha256="d70dad214ac683e76c6e1093804c0f1ec4e7133a704173e2f1777a1279eb1535")
     version("1.4", sha256="f8b7f5ba965ff58270d617f50f168a4683a98fbcd643b66f1852bec960e02bbd")
@@ -31,7 +32,11 @@ class Podio(CMakePackage):
     version("1.0", sha256="491f335e148708e387e90e955a6150e1fc2e01bf6b4980b65e257ab0619559a9")
     version("0.99", sha256="c823918a6ec1365d316e0a753feb9d492e28903141dd124a1be06efac7c1877a")
 
-    _cxxstd_values = (conditional("17", when="@:1.2"), "20")
+    _cxxstd_values = (
+        conditional("17", when="@:1.2"),
+        conditional("20", when="@0.14.1:"),
+        conditional("23", when="@1.3:"),
+    )
     variant(
         "cxxstd",
         default="17",
@@ -65,8 +70,10 @@ class Podio(CMakePackage):
     depends_on("root@6.28.04: +root7", when="+rntuple")
     depends_on("root@6.28:")
     depends_on("root@6.32: +root7", when="@1.3: +rntuple")
-    for cxxstd in ("17", "20"):
-        depends_on("root cxxstd={}".format(cxxstd), when="cxxstd={}".format(cxxstd))
+    for cxxstd in _cxxstd_values:
+        depends_on(
+            "root cxxstd={}".format(cxxstd[0].value), when="cxxstd={}".format(cxxstd[0].value)
+        )
 
     depends_on("cmake@3.12:", type="build")
     depends_on("python", type=("build", "run"))
@@ -78,11 +85,15 @@ class Podio(CMakePackage):
     depends_on("catch2@3.4:", type=("test"), when="cxxstd=20")
     depends_on("catch2@3.3:", type=("test"), when="@1.2: cxxstd=17")
     depends_on("catch2@3.5:", type=("test"), when="@1.5:")
+    depends_on("catch2@3.5:", type=("test"), when="@1.3: cxxstd=23")
     depends_on("py-graphviz", type=("run"))
     depends_on("py-tabulate", type=("run", "test"))
 
     conflicts("+rntuple ^root@6.32:", when="@:0.99", msg="rntuple API change requires podio@1:")
     conflicts("+rntuple ^root@6.34:", when="@:1.1", msg="rntuple API change requires podio@1.2:")
+    conflicts(
+        "^python +freethreading", when="@:1.6", msg="python free-threading requires podio@1.7:"
+    )
 
     # See https://github.com/AIDASoft/podio/pull/600
     patch(
@@ -118,6 +129,10 @@ class Podio(CMakePackage):
 
         # Frame header needs to be available for python bindings
         env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
+
+        # Pythonizations require Python.h accessible for ACLiC
+        if self.spec.satisfies("@1.5:"):
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["python"].headers.directories[0])
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

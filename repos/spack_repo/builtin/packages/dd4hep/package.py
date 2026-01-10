@@ -27,6 +27,7 @@ class Dd4hep(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.33", sha256="23f78163e1371a5f092758cdc60a18906b1b19bbeacdd7c68557ebf71424fc23")
     version("1.32.1", sha256="f47fbede967b609e142c3116d23b4993f9d57fbae28a1739b5333503bc498883")
     version("1.32", sha256="8bde4eab9af9841e040447282ea7df3a16e4bcec587c3a1e32f41987da9b1b4d")
     version("1.31", sha256="9c06a1b4462fc1b51161404889c74b37350162d0b0ac2154db27e3f102670bd1")
@@ -175,6 +176,11 @@ class Dd4hep(CMakePackage):
     # See https://github.com/AIDASoft/DD4hep/issues/1210
     conflicts("^root@6.31.1:", when="@:1.27")
 
+    # See https://github.com/AIDASoft/DD4hep/pull/1547
+    conflicts(
+        "^python +freethreading", when="@:1.34", msg="python free-threading requires dd4hep@1.35:"
+    )
+
     @property
     def libs(self):
         # We need to override libs here, because we don't build a libdd4hep so
@@ -230,7 +236,13 @@ class Dd4hep(CMakePackage):
         env.set("DD4hep_DIR", self.prefix)
         env.set("DD4hep_ROOT", self.prefix)
         if len(self.libs.directories) > 0:
-            env.prepend_path("LD_LIBRARY_PATH", self.libs.directories[0])
+            # Plugin lookup mechanism is system-dependent
+            libvar = (
+                "DYLD_LIBRARY_PATH"
+                if self.spec.satisfies("platform=darwin")
+                else "LD_LIBRARY_PATH"
+            )
+            env.prepend_path(libvar, self.libs.directories[0])
 
     def url_for_version(self, version):
         # dd4hep releases are dashes and padded with a leading zero

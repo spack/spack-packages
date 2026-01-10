@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems import autotools, meson
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
 
 
-class Librsvg(AutotoolsPackage):
+class Librsvg(AutotoolsPackage, MesonPackage):
     """Library to render SVG files using Cairo"""
 
     homepage = "https://wiki.gnome.org/Projects/LibRsvg"
@@ -17,6 +19,15 @@ class Librsvg(AutotoolsPackage):
 
     license("LGPL-2.1-or-later", checked_by="wdconinc")
 
+    build_system(
+        conditional("autotools", when="@:2.58"),
+        conditional("meson", when="@2.59:"),
+        default="meson",
+    )
+
+    version("2.61.0", sha256="dbd0db40a1179a382fbb8cc930837671b973d722ba106a3dee2aad0fd858e2c4")
+    version("2.60.0", sha256="0b6ffccdf6e70afc9876882f5d2ce9ffcf2c713cbaaf1ad90170daa752e1eec3")
+    version("2.59.2", sha256="ecd293fb0cc338c170171bbc7bcfbea6725d041c95f31385dc935409933e4597")
     version("2.58.2", sha256="18e9d70c08cf25f50d610d6d5af571561d67cf4179f962e04266475df6e2e224")
     version("2.57.3", sha256="1b2267082c0b77ef93b15747a5c754584eb5886baf2d5a08011cde0659c2c479")
     version("2.56.4", sha256="ea87fdcf5159348fcb08b14c43e91a9d3d9e45dc2006a875d1711bb65b6740f5")
@@ -32,24 +43,33 @@ class Librsvg(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
 
+    with when("build_system=meson"):
+        depends_on("meson@1.3:", when="@2.61:", type="build")
+        depends_on("meson@1.2:", type="build")
+
     depends_on("gobject-introspection", type="build")
     depends_on("pkgconfig", type="build")
-    # rust minimal version also in `configure` file
+    # minimum supported rust version (MSRV) from `meson.build` or `configure` file
+    depends_on("rust@1.85.1:", when="@2.61:", type="build")
+    depends_on("rust@1.77.2:", when="@2.59:", type="build")
     depends_on("rust@1.70:", when="@2.57:", type="build")
-    # rust minimal version from NEWS file
     depends_on("rust@1.65:", when="@2.56.1:", type="build")
+    depends_on("rust@1.64:", when="@2.56:", type="build")
+    depends_on("rust@1.52:", when="@2.52:", type="build")
+    depends_on("rust@1.51:", when="@2.51.2:", type="build")
     # upper bound because "Unaligned references to packed fields are a hard
     # error" starting from 1.69
     depends_on("rust@1.40:1.68", when="@2.50:2.51", type="build")
     depends_on("rust", when="@2.41:", type="build")
     depends_on("gtk-doc", type="build", when="+doc")
 
-    # requirements according to `configure` file
+    # requirements according to `meson.build` or `configure` file
+    depends_on("cargo-c@0.9.19:", when="@2.59:", type="build")
+    depends_on("cairo@1.18:", when="@2.59:")
     depends_on("cairo@1.17:", when="@2.57:")
     depends_on("cairo@1.16:", when="@2.50:")
     depends_on("cairo@1.15.12:", when="@2.44.14:")
     depends_on("cairo@1.2.0:+gobject+png")
-    depends_on("libcroco@0.6.1:", when="@:2.44.14")
     depends_on("gdk-pixbuf@2.20:")
     depends_on("glib@2.50:", when="@2.50:")
     depends_on("glib@2.48:", when="@2.44.14:")
@@ -64,17 +84,27 @@ class Librsvg(AutotoolsPackage):
     depends_on("shared-mime-info")
     depends_on("py-docutils", type="build")
 
+    # Historical dependencies
+    depends_on("libcroco@0.6.1:", when="@:2.44.14")
+
+    patch("gdk-pixbuf-query-loaders-install.patch", when="@2.59:")
+
     def url_for_version(self, version):
         url = "https://download.gnome.org/sources/librsvg/"
         url += "{0}/librsvg-{1}.tar.xz"
         return url.format(version.up_to(2), version)
 
-    def setup_dependent_build_environment(
+    def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
 
-    def setup_dependent_run_environment(
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
+
+
+class BuildEnvironment:
+    def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
@@ -84,9 +114,18 @@ class Librsvg(AutotoolsPackage):
         # librsvg uses pthread_atfork() but does not use -pthread on Ubuntu 18.04 %gcc@8
         env.append_flags("LDFLAGS", "-pthread")
 
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
 
+class MesonBuilder(meson.MesonBuilder, BuildEnvironment):
+    def meson_args(self):
+        args = []
+        if self.spec.satisfies("+doc"):
+            args.append("-Ddocs=enabled")
+        else:
+            args.append("-Ddocs=disabled")
+        return args
+
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder, BuildEnvironment):
     def configure_args(self):
         args = []
         if self.spec.satisfies("+doc"):

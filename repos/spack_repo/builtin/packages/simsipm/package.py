@@ -43,6 +43,17 @@ class Simsipm(CMakePackage):
     depends_on("python@3.6:", when="+python", type=("build", "run"))
     depends_on("py-pybind11", when="+python", type=("build", "link"))
 
+    conflicts(
+        "arch=aarch64",
+        msg="SimSiPM < 2.1.0 uses x86 internals and does not support aarch64",
+        when="@:2.0",
+    )
+    patch(
+        "https://github.com/EdoPro98/SimSiPM/commit/b08cc27151d70298b43ca7e216add9e46c056b04.patch?full_index=1",
+        sha256="354208cd110976a948e4770d7ae086cff367cef74534d07c22524f107ffbb7fd",
+        when="@2.1.0",
+    )
+
     def cmake_args(self):
         args = [
             self.define("CMAKE_CXX_STANDARD", self.spec.variants["cxxstd"].value),

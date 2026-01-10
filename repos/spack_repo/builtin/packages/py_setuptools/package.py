@@ -17,6 +17,7 @@ class PySetuptools(Package, PythonExtension):
     list_url = "https://pypi.org/simple/setuptools/"
     license("MIT")
 
+    license("MIT")
     maintainers("RobertMaaskant")
 
     tags = ["build-tools"]

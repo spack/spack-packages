@@ -16,6 +16,8 @@ class PyWheel(Package, PythonExtension):
     list_url = "https://pypi.org/simple/wheel/"
     license("MIT")
 
+    license("MIT")
+
     tags = ["build-tools"]
 
     version("0.45.1", sha256="708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248")

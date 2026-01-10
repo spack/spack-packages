@@ -21,6 +21,9 @@ class RocprofilerDev(CMakePackage):
     libraries = ["librocprofiler64"]
     license("MIT")
 
+    version("7.1.1", sha256="db8b3698e3f743f0ce58cc5bc1d2406e77f4ca206f1a6c94b182518492f8af2f")
+    version("7.1.0", sha256="d029f0011092b9cd6bebeec1775d07eb2ae5fa039937db7376f8177b1956b4c6")
+    version("7.0.2", sha256="149557a5db8920e9d003ef7bfc3c5d7580c97c97abada1654a556b2203969124")
     version("7.0.0", sha256="74c305dd270d9644eeab70d985f9195dd0bcd36a0a256c2fbd4f780436efd334")
     version("6.4.3", sha256="b7d5a6848d0bb394bfcb2e667690abf50189010bdc2e6c6ebf401d0ba780c1a0")
     version("6.4.2", sha256="0c7e6e25b1b1bbc33a311c40bc9864cc1d73c1a55ec6616d5a9a14843f9dd836")
@@ -104,12 +107,15 @@ class RocprofilerDev(CMakePackage):
         "6.4.2",
         "6.4.3",
         "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     depends_on("py-lxml")
@@ -122,6 +128,7 @@ class RocprofilerDev(CMakePackage):
     depends_on("py-jinja2")
     depends_on("py-termcolor")
     depends_on("py-pandas", when="@6.0:")
+    depends_on("elfutils", when="@7.1:")
 
     patch("0002-add-fPIC-and-disable-tests-5.7.patch", when="@5.7")
     patch("0003-disable-tests.patch", when="@6.0:")
@@ -154,6 +161,10 @@ class RocprofilerDev(CMakePackage):
             args.append(self.define("ROCM_ROOT_DIR", self.spec["hsakmt-roct"].prefix.include))
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("ROCPROFILER_BUILD_PLUGIN_PERFETTO", "OFF"))
+
+        # libdw related error when building att
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCPROFILER_BUILD_PLUGIN_ATT", "OFF"))
         return args
 
     @run_after("install")

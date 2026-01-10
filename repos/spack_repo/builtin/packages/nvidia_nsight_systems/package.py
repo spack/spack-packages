@@ -106,23 +106,23 @@ class NvidiaNsightSystems(Package):
             shutil.copytree(join_path(base_path, ver, sd), join_path(prefix, sd))
         os.mkdir(join_path(prefix, "bin"))
         if arch == "aarch64":
-            os.symlink(
+            symlink(
                 join_path(prefix, "host-linux-armv8", "nsys-ui"),
                 join_path(prefix, "bin", "nsys-ui"),
             )
-            os.symlink(
+            symlink(
                 join_path(prefix, "target-linux-sbsa-armv8", "nsys"),
                 join_path(prefix, "bin", "nsys"),
             )
         elif arch == "ppc64le":
             # `nsys-ui` is missing in the PowerPC version of the package.
-            os.symlink(
+            symlink(
                 join_path(prefix, "target-linux-ppc64le", "nsys"), join_path(prefix, "bin", "nsys")
             )
         elif arch == "x86_64":
-            os.symlink(
+            symlink(
                 join_path(prefix, "host-linux-x64", "nsys-ui"), join_path(prefix, "bin", "nsys-ui")
             )
-            os.symlink(
+            symlink(
                 join_path(prefix, "target-linux-x64", "nsys"), join_path(prefix, "bin", "nsys")
             )

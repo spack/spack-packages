@@ -19,7 +19,9 @@ class HipTests(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-
+    version("7.1.1", sha256="30b8a449ef6f3d4d037dbc135ed47d178c4c39a29e2e0ae6f0550aa996cab063")
+    version("7.1.0", sha256="15ae5ad99befcf6c96da5c4e85767a2e0abd3d80c72164f3fd61af3c1b642e5c")
+    version("7.0.2", sha256="db64843cbaf07475be89569e9791990eadda73b30c703305e3e1396b08efedac")
     version("7.0.0", sha256="f09760abd2f7f3a296419834096cf4a9e42ce3cbcf5f0efc36e74d0b7eb801eb")
     version("6.4.3", sha256="7e25bb8ae6c707000ae9620cf4cd42ff055223630139d6219b017e5516a42487")
     version("6.4.2", sha256="8a39c8b9fa373636b86dd4c2df758a525de6772f27ee1e8e2c3d84c3f287532a")
@@ -56,6 +58,9 @@ class HipTests(CMakePackage):
         "6.4.2",
         "6.4.3",
         "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")

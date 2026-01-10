@@ -78,7 +78,7 @@ class Geant4(CMakePackage):
     variant("hdf5", default=False, description="Enable HDF5 support", when="@10.4:")
     variant("python", default=False, description="Enable Python bindings", when="@10.6.2:11.0")
     variant("tbb", default=False, description="Use TBB as a tasking backend", when="@11:")
-    variant("timemory", default=False, description="Use TiMemory for profiling", when="@9.5:")
+    variant("timemory", default=False, description="Use TiMemory for profiling", when="@9.5:11.2")
     variant("vtk", default=False, description="Enable VTK support", when="@11:")
 
     # For most users, obtaining the Geant4 data via Spack will be useful; the
