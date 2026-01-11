@@ -247,6 +247,10 @@ class Vasp(MakefilePackage, CudaPackage):
         if spec.satisfies("%gcc@10:"):
             fflags.append("-fallow-argument-mismatch")
 
+        if spec.satisfies("^[virtuals=fftw-api] intel-oneapi-mkl"):
+            mklroot = env["MKLROOT"]
+            incs.append(f" -I{join_path(mklroot, 'include/fftw')}")
+
         filter_file(r"^VASP_TARGET_CPU[ ]{0,}\?=.*", "", make_include)
 
         if spec.satisfies("+fftlib"):
