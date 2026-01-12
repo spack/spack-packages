@@ -33,6 +33,8 @@ class CompilerWrapper(Package):
     # this node from auto-generated rules
     tags = ["runtime"]
 
+    maintainers("haampie")
+    
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
