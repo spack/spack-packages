@@ -52,6 +52,12 @@ class Greenx(CMakePackage):
         when="@:2.3",
     )
 
+    patch(
+        "cmake.patch",
+        sha256="c0810c8f26926f417c62cde9306ed4e869a6e0aa085e4226f853d694a042a25d",
+        when="@:2.3",
+    )
+
     def cmake_args(self):
         args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),

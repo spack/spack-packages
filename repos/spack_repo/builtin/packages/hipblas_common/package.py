@@ -17,6 +17,7 @@ class HipblasCommon(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     license("MIT")
+    version("7.1.1", sha256="1baedf7562c7afdca5f688b9117949941082b30cd5ea8630b30e9ac299cf56ea")
     version("7.1.0", sha256="6c00bb9335ad2ad3d4730eb41ebc704b0207162d5f98da1cdce3eea1087c3944")
     version("7.0.2", sha256="7b8007784831d895fb0a432f366388bc7d212443a25ea9f14eb2aa0a7b4ad5d7")
     version("7.0.0", sha256="a20e4770a5758e931b7a79c5e0f2a061a1b11195217f74d512cdc764124fc564")

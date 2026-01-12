@@ -200,7 +200,10 @@ class Vasp(MakefilePackage, CudaPackage):
 
         if spec.satisfies("+cuda"):
             # openacc
-            cpp_options.extend(["-D_OPENACC", "-DUSENCCL"])
+            if spec.satisfies("@6.5.0:"):
+                cpp_options.extend(["-DACC_OFFLOAD", "-DNVCUDA", "-DUSENCCL"])
+            else:
+                cpp_options.extend(["-D_OPENACC", "-DUSENCCL"])
             llibs.extend(["-cudalib=cublas,cusolver,cufft,nccl", "-cuda"])
             fc.append("-acc")
             fcl.append("-acc")
