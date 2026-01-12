@@ -6,7 +6,13 @@ from spack.package import *
 
 
 class EccodesCosmoResources(Package):
-    """To simplify the usage of the GRIB 2 format within the COSMO Consortium, a COSMO GRIB 2 Policy has been defined. One element of this policy is to define a unified ecCodes system for the COSMO community, which is compatible with all COSMO software. This unified system is split into two parts, the vendor distribution of the ecCodes, available from ECMWF and the modified samples and definitions used by the COSMO consortium, available in the current repository."""
+    """To simplify the usage of the GRIB 2 format within the COSMO Consortium,
+    a COSMO GRIB 2 Policy has been defined. One element of this policy is to
+    define a unified ecCodes system for the COSMO community, which is compatible
+    with all COSMO software. This unified system is split into two parts,
+    the vendor distribution of the ecCodes, available from ECMWF and the modified
+    samples and definitions used by the COSMO consortium, available in the
+    current repository."""
 
     homepage = "https://github.com/COSMO-ORG/eccodes-cosmo-resources.git"
     url = "https://github.com/COSMO-ORG/eccodes-cosmo-resources.git"
