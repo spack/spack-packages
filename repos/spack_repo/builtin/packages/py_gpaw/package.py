@@ -135,6 +135,16 @@ class PyGpaw(PythonPackage, CudaPackage):
             openmp_compile_args = ["-fopenmp"]
             openmp_link_args = ["-fopenmp"]
 
+        if "+cuda" in spec:
+            bools += "gpu = True\n"
+            include_dirs.append(spec["cuda"].prefix.include)
+            libs += spec["cuda"].libs
+            libs += ['cudart', 'cublas']
+            gpu_compile_args = ['-O3', '-g']
+            for f in spec.variants["cuda_arch"].value:
+                gpu_compile_args.append('-gencode')
+                gpu_compile_args.append(f'arch=compute_{f},code=sm_{f}')
+
         lib_dirs = list(libs.directories)
         libs = list(libs.names)
         rpath_str = ":".join(self.rpath)
@@ -155,3 +165,7 @@ class PyGpaw(PythonPackage, CudaPackage):
             if "+openmp" in spec:
                 f.write(f"extra_compile_args += {openmp_compile_args}\n")
                 f.write(f"extra_link_args += {openmp_link_args}\n")
+            if "+cuda" in spec:
+                f.write("gpu_target = 'cuda'\n")
+                f.write("gpu_compiler = 'nvcc'\n")
+                f.write(f"gpu_compile_args = {gpu_compile_args}\n")
