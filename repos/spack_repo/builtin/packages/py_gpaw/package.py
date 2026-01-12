@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
+
 
 from spack.package import *
 
 
-class PyGpaw(PythonPackage):
+class PyGpaw(PythonPackage, CudaPackage):
     """GPAW is a density-functional theory (DFT) Python code based on the
     projector-augmented wave (PAW) method and the atomic simulation environment
     (ASE)."""
@@ -31,6 +33,7 @@ class PyGpaw(PythonPackage):
     variant("libvdwxc", default=True, description="Build with libvdwxc support")
     variant("elpa", default=True, description="Build with ELPA support")
     variant("openmp", default=True, description="Build with OpenMP support")
+    variant("cuda", default=False, description="Build with CUDA GPU support")
 
     # Build dependencies
     depends_on("c", type="build")
