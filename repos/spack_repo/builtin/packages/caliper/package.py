@@ -160,7 +160,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
                 entries.append(cmake_cache_option("WITH_ROCTRACER", True))
                 entries.append(cmake_cache_option("WITH_ROCTX", True))
         else:
-            entries.append(cmake_cache_option("WITH_ROCPROFILER", False))    
+            entries.append(cmake_cache_option("WITH_ROCPROFILER", False))
             entries.append(cmake_cache_option("WITH_ROCTRACER", False))
             entries.append(cmake_cache_option("WITH_ROCTX", False))
 
