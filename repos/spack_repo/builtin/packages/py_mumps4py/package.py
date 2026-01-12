@@ -39,7 +39,7 @@ class PyMumps4py(PythonPackage):
         ]
         return args
 
-    def config_settings(self,spec,prefix):
+    def config_settings(self, spec, prefix):
         return {"--build-option": ["build_ext","--inplace"]}
 
     def setup_build_environment(self, env):
