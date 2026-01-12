@@ -57,6 +57,7 @@ class Mercury(CMakePackage):
     variant(
         "hwloc", default=False, when="@2.2.0:", description="Use hwloc to retrieve NIC information"
     )
+    variant("perf", default=True, when="@2.3.0:", description="Build performance tests")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -106,7 +107,7 @@ class Mercury(CMakePackage):
 
         if "@2.3.0:" in spec:
             cmake_args.append(define("BUILD_TESTING_UNIT", self.run_tests))
-            cmake_args.append(define("BUILD_TESTING_PERF", self.run_tests))
+            cmake_args.append(define_from_variant("BUILD_TESTING_PERF", "perf"))
 
         if "@2.2.0:" in spec:
             cmake_args.extend(
