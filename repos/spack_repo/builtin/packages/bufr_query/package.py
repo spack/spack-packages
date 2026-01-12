@@ -37,12 +37,10 @@ class BufrQuery(CMakePackage, PythonExtension):
     depends_on("eckit@1.24.4:", type=("build", "run"))
     depends_on("eigen@3:", type=("build", "run"))
     depends_on("gsl-lite", type=("build", "run"))
-
-    # If using netcdf-c 4.9.3 or later, you must use bufr-query 0.0.5 or later
+    depends_on("netcdf-c", type=("build", "run"))
+    # bufr-query versions up to 0.0.4 are incompatible with netcdf-c 4.9.3 and later
     # https://github.com/NOAA-EMC/bufr-query/issues/58
-    depends_on("netcdf-c@4.9.3:", when="@0.0.5:", type=("build", "run"))
     depends_on("netcdf-c@:4.9.2", when="@:0.0.4", type=("build", "run"))
-
     depends_on("netcdf-cxx4", type=("build", "run"))
     depends_on("bufr", type=("build", "run"))
 
