@@ -84,12 +84,8 @@ class Grads(AutotoolsPackage):
             if "hdf5" in spec and spec["hdf5"].satisfies("@1.12:"):
                 flags.append("-DH5_USE_110_API")
 
-            if (
-                self.spec.satisfies("%apple-clang@15:")
-                or self.spec.satisfies("%clang@16:")
-                or self.spec.satisfies("%oneapi")
-                or self.spec.satisfies("%gcc@14:")
-            ):
+            strict_compilers = ("%apple-clang@15:", "%clang@16:", "%oneapi", "%gcc@14:")
+            if any(spec.satisfies(s) for s in strict_compilers):
                 flags.append("-Wno-error=implicit-function-declaration")
 
         return (flags, None, None)

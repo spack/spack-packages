@@ -21,6 +21,7 @@ class PyPetsc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.24.3", sha256="62ed68d87fb3485b0b2fb2e9158b88dc56e64cce6bdc511d7f4630741218e868")
     version("3.24.2", sha256="965a4ea86ad718838126bb714f80cb11fd59825bba66048af7e6a2f5e7ade22c")
     version("3.24.1", sha256="94d7ba092b3d690215740b7616d9da52b8351bff3af56213bc5c4eabd7341361")
     version("3.24.0", sha256="3dc92ccb27a80d5bce87e186e5644ec90a3bd91569145ae1908ee6364816911b")
@@ -97,7 +98,6 @@ class PyPetsc4py(PythonPackage):
     patch("ldshared.patch", when="@:3.18")
 
     depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     conflicts("py-cython@3.1:", when="@:3.23.1")
     depends_on("py-cython@3:", when="@3.20:", type="build")

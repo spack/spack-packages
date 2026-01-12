@@ -192,8 +192,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
     depends_on("conduit@0.9.4", when="@0.9.4")
     depends_on("conduit@0.9.5", when="@0.9.5")
-    depends_on("conduit+python", when="+python")
-    depends_on("conduit~python", when="~python")
+    depends_on("conduit+python", when="+python", type=("build", "link", "run"))
     depends_on("conduit+mpi", when="+mpi")
     depends_on("conduit~mpi", when="~mpi")
 
@@ -633,6 +632,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+cuda"):
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "ON"))
+            cfg.write(
+                cmake_cache_entry(
+                    "CMAKE_CUDA_ARCHITECTURES", ";".join(spec.variants["cuda_arch"].values)
+                )
+            )
+
         else:
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "OFF"))
 

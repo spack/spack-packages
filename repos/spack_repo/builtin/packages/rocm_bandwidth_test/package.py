@@ -18,6 +18,13 @@ class RocmBandwidthTest(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     version(
+        "7.1.1",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.1.1",
+        commit="bba00e25cc49f8cda357cfe0439f0e01ba8839bb",
+        submodules=True,
+    )
+    version(
         "7.1.0",
         git="https://github.com/ROCm/rocm_bandwidth_test",
         tag="rocm-7.1.0",
@@ -100,11 +107,12 @@ class RocmBandwidthTest(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
 

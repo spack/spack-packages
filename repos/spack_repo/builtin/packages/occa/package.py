@@ -18,6 +18,7 @@ class Occa(Package):
     """
 
     homepage = "https://libocca.org"
+    url = "https://github.com/libocca/occa/archive/refs/tags/v1.3.0.tar.gz"
     git = "https://github.com/libocca/occa.git"
 
     maintainers("v-dobrev", "dmed256")
@@ -25,6 +26,11 @@ class Occa(Package):
     license("MIT")
 
     version("develop")
+    version("2.0.0", sha256="f2521901fed5d199193d54c7db4186479a974bdae92ac97779c47fa2bb68badd")
+    version("1.6.0", sha256="b863a24171000097121aff5c43dadf22416c143824598a51c653689fd917794f")
+    version("1.5.0", sha256="b939f826f3e970b45aa77089568995399355fcdad3bc787b60cf73eb4962b0b7")
+    version("1.4.0", sha256="5995288615f45dd2cf2f3e13b9e04c3b89edde1e014d36c6da014c11b9adb4a7")
+    version("1.3.0", sha256="1a1214f268969fcb36555c2e3d6ff348a7d2776c4061d4e1a4b01e56f654327f")
     version("1.2.0", tag="v1.2.0", commit="18379073b6497f677a20bfeced95b511f82c3355")
     version("1.1.0", tag="v1.1.0", commit="c8a587666a23e045f25dc871c3257364a5f6a7d5")
     version("1.0.9", tag="v1.0.9", commit="ebdb659c804f91f1e0f32fd700f9fe229458033c")
@@ -48,6 +54,14 @@ class Occa(Package):
 
     conflicts("%gcc@6:", when="^cuda@:8")
     conflicts("%gcc@7:", when="^cuda@:9")
+
+    # add missing header <cstdint>
+    # https://github.com/libocca/occa/pull/684
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/libocca/occa/pull/684.diff?full_index=1",
+        sha256="0acd861f5e3791cbc223efa3004077aef9fc9ae4c39541212b5451fb954fbcb9",
+        when="@1.2.0:1.5.0",
+    )
 
     def install(self, spec, prefix):
         # The build environment is set by the 'setup_build_environment' method.

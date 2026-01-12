@@ -14,13 +14,20 @@ class RocprofilerSystems(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-systems"
     git = "https://github.com/ROCm/rocprofiler-systems.git"
-    url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.3.1.tar.gz"
+    url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.4.3.tar.gz"
     executables = ["rocprof-sys-sample"]
     tags = ["rocm"]
 
     maintainers("dgaliffiAMD", "afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+
+    version(
+        "7.1.1",
+        git="https://github.com/ROCm/rocprofiler-systems",
+        branch="release/rocm-rel-7.1.1",
+        submodules=True,
+    )
     version(
         "7.1.0",
         git="https://github.com/ROCm/rocprofiler-systems",
@@ -158,8 +165,14 @@ class RocprofilerSystems(CMakePackage):
     depends_on("dyninst@:12", when="@6 ~internal-dyninst")
     depends_on("dyninst@13", when="@7 ~internal-dyninst")
     depends_on(
-        "boost+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
-        when="+internal-dyninst",
+        "boost@:1.88"
+        "+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
+        when="@:7.1.0 +internal-dyninst",
+    )
+    depends_on(
+        "boost@:1.88"
+        "+atomic+chrono+date_time+filesystem+system+thread+timer+container+random+exception",
+        when="@7.1.1:",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
     depends_on("intel-tbb@2019:2020.3", when="~internal-tbb")
@@ -176,10 +189,12 @@ class RocprofilerSystems(CMakePackage):
     depends_on("autoconf", when="+rocm")
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
+    depends_on("sqlite", when="@7.1:")
     with when("+rocm"):
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
             depends_on(f"rocprofiler-dev@{ver}", when=f"@{ver}")
+
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
             depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
@@ -195,11 +210,14 @@ class RocprofilerSystems(CMakePackage):
             "7.0.0",
             "7.0.2",
             "7.1.0",
+            "7.1.1",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
-        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
+
+        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
-        for ver in ["7.0.0", "7.0.2", "7.1.0"]:
+
+        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst

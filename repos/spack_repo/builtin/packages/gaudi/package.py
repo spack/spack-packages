@@ -18,6 +18,7 @@ class Gaudi(CMakePackage, CudaPackage):
     tags = ["hep"]
 
     version("master", branch="master")
+    version("40.2", sha256="93bf0ae5e33d7d3a5aa36504840ed62aeab9f6f8ddddd4ea1b23bc5455b51e41")
     version("40.1", sha256="f02010c865717d397b8fc8b8bf5d904e711ee2e416f3d12330cf04deaa7a4343")
     version("40.0", sha256="0cfe696967067b23382968a5c5ab1b4b7f38a7dd3ee2e321d1bff0dd8f99d2f9")
     version("39.4", sha256="dd698e0788811fa8325ed5f37ecf3fd9bde55720489224a517b52360819564d7")
@@ -72,7 +73,7 @@ class Gaudi(CMakePackage, CudaPackage):
     variant("cxxstd", default="20", when="@39:", **_cxxstd_common)
 
     variant("aida", default=False, description="Build AIDA interfaces support")
-    variant("cppunit", default=False, description="Build with CppUnit unit testing")
+    variant("cppunit", default=False, description="Build with CppUnit unit testing", when="@:40.0")
     variant("docs", default=False, description="Build documentation with Doxygen")
     variant("examples", default=False, description="Build examples")
     variant("gaudialg", default=False, description="Build GaudiAlg support", when="@37.0:38")
@@ -175,7 +176,6 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("py-pyyaml", type=("build", "run", "test"))
     depends_on("range-v3")
     depends_on("root +python +root7 +ssl +tbb")
-    requires("^root +threads", when="^root@:6.19.01")
     # force root to have the same cxxstd
     for _cxxstd in _cxxstd_values:
         for _v in _cxxstd:
