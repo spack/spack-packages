@@ -5,7 +5,6 @@
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
-
 from spack.package import *
 
 
@@ -139,11 +138,11 @@ class PyGpaw(PythonPackage, CudaPackage):
             bools += "gpu = True\n"
             include_dirs.append(spec["cuda"].prefix.include)
             libs += spec["cuda"].libs
-            libs += ['cudart', 'cublas']
-            gpu_compile_args = ['-O3', '-g']
+            libs += ["cudart", "cublas"]
+            gpu_compile_args = ["-O3", "-g"]
             for f in spec.variants["cuda_arch"].value:
-                gpu_compile_args.append('-gencode')
-                gpu_compile_args.append(f'arch=compute_{f},code=sm_{f}')
+                gpu_compile_args.append("-gencode")
+                gpu_compile_args.append(f"arch=compute_{f},code=sm_{f}")
 
         lib_dirs = list(libs.directories)
         libs = list(libs.names)
