@@ -101,7 +101,10 @@ class Cantera(SConsPackage):
     variant(
         "blas-lapack",
         default=False,
-        description="Use external blas and lapack installation. Otherwise, linear algebra is done with Eigen.",
+        description=(
+            "Use external blas and lapack installation. "
+            "Otherwise, linear algebra is done with Eigen."
+        ),
     )
     variant("debug", default=True, description="With compiler debugging symbols")
 
