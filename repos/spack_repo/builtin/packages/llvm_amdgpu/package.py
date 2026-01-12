@@ -43,6 +43,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     license("Apache-2.0")
+    version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
     version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
     version("7.0.2", sha256="fd612fa750bebd0c3be0ea642b2cae8ff5c7e00a2280b22b9ea16ee86a11d763")
     version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
@@ -91,7 +92,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     provides("libllvm@17", when="@5.7:6.1")
     provides("libllvm@18", when="@6.2:6.3")
     provides("libllvm@19", when="@6.4")
-    provides("libllvm@20", when="@7.0")
+    provides("libllvm@20", when="@7.0:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -110,7 +111,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("libelf", when="@7.1:")
     depends_on("xxd", when="@7.1:")
 
-    for ver in ["7.1.0"]:
+    for ver in ["7.1.0", "7.1.1"]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
     # This flavour of LLVM doesn't work on MacOS, so we should ensure that it
@@ -171,6 +172,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         )
 
     for d_version, d_shasum in [
+        ("7.1.1", "4c5b58afa1e11461954bd005a10ebf29941c120f1d6a7863954597f5eacfc605"),
         ("7.1.0", "383fa8e1776c3ee527cdddc9f9ac6f7134c3fcd8758eae9be8bd3a8b7fdca9b1"),
         ("7.0.2", "9c2020f7a42d60fe9775865ab58464078007926a3b01f1ca8128557c89e7a566"),
         ("7.0.0", "9ea2cbcf343f643ede6e16d82fbd0303771e1978759b2e546d0efc0df3263e4c"),
