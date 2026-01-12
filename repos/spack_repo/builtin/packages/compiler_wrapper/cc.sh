@@ -296,6 +296,9 @@ fi
 # including version checks (SPACK_XFLAGS variants are not applied
 # for version checks).
 mode=""
+vdep=""
+lang_flags=""
+debug_flags=""
 command="${0##*/}"
 comp="CC"
 vcheck_flags=""
