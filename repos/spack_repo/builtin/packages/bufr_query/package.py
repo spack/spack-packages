@@ -20,6 +20,7 @@ class BufrQuery(CMakePackage, PythonExtension):
 
     license("Apache-2.0", checked_by="srherbener")
 
+    version("0.0.5", sha256="72cb82d3837aac0dbe2c514b9883b4a19aad2ab7c6969c760e1b549ab4ed4831")
     version("0.0.4", sha256="cc21a298c03ee3a8938823301606e91c7b321005da284ebf2c9b25044bfcbad8")
     version("0.0.3", sha256="f2952a190cc1d7714a3bfe481fb1545459639ba304fc31b941062b471dea1d41")
     version("0.0.2", sha256="b87a128246e79e3c76e3158d89823e2ae38e9ee1a5a81b6f7b423837bdb93a1f")
