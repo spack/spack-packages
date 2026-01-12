@@ -217,10 +217,10 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             when="@3.20.2:3.20.4 ^hipsparse@6.0",
         )
 
-    with when("+cuda"):
-        # segmentedmempool.hpp(178): error: expression must be a modifiable lvalue
-        # https://gitlab.com/petsc/petsc/-/merge_requests/8152
-        patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4")
+    # segmentedmempool.hpp(178): error: expression must be a modifiable lvalue
+    # https://gitlab.com/petsc/petsc/-/merge_requests/8152
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+rocm")
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
 
     # These require +mpi
     mpi_msg = "Requires +mpi"
