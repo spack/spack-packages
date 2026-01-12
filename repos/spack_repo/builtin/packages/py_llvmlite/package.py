@@ -58,6 +58,10 @@ class PyLlvmlite(PythonPackage):
     depends_on("llvm@14", when="@0.41:0.43")
     depends_on("llvm@11:14", when="@0.40")
     depends_on("llvm@11", when="@0.37:0.39")
+
+    # py-llvmlite is incompatible with llvm-amdgpu
+    conflicts("^llvm-amdgpu", msg="py-llvmlite is incompatible with llvm-amdgpu (ROCm LLVM fork)")
+
     for t in [
         "arm:",
         "ppc:",
