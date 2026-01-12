@@ -20,15 +20,23 @@ def submodules(package):
         submodules.append("ext/googletest")
     if package is not None and package.spec.satisfies("~external-sundials"):
         submodules.append("ext/sundials")
-    if package is not None and package.spec.satisfies("~external-highfive") and package.spec.satisfies("@3.0.0:"):
+    if (
+        package is not None
+        and package.spec.satisfies("~external-highfive")
+        and package.spec.satisfies("@3.0.0:")
+    ):
         submodules.append("ext/HighFive")
-    if package is not None and package.spec.satisfies("~external-yamlcpp") and package.spec.satisfies("@2.5.1:"):
+    if (
+        package is not None
+        and package.spec.satisfies("~external-yamlcpp")
+        and package.spec.satisfies("@2.5.1:")
+    ):
         submodules.append("ext/yaml-cpp")
     return submodules
 
 
 class Cantera(SConsPackage):
-    """Cantera is an open-source suite of tools for problems involving 
+    """Cantera is an open-source suite of tools for problems involving
     chemical kinetics, thermodynamics, and transport processes."""
 
     homepage = "https://www.cantera.org/docs/sphinx/html/index.html"
@@ -80,23 +88,31 @@ class Cantera(SConsPackage):
         tag="v2.3.0",
         commit="8329edf45fc4a3e0b1a93e882be77ef2fbf9c9c5",
         submodules=submodules,
-        deprecated=True, # python 2.7 required, unsupported
+        deprecated=True,  # python 2.7 required, unsupported
     )
 
     version(
         "2.2.1",
         tag="v2.2.1",
         commit="92d17b5feb98107ac104a7e4deb43fd35748288d",
-        deprecated=True, # python 2.7 required, unsupported
+        deprecated=True,  # python 2.7 required, unsupported
     )
 
-    variant("blas-lapack", default=False, description="Use external blas and lapack installation. Otherwise, linear algebra is done with Eigen.")
+    variant(
+        "blas-lapack",
+        default=False,
+        description="Use external blas and lapack installation. Otherwise, linear algebra is done with Eigen.",
+    )
     variant("debug", default=True, description="With compiler debugging symbols")
 
     variant("hdf5", default=False, description="With HDF5 support")
     conflicts("+hdf5", when="@:2.4.0")
 
-    variant("legacy-clib", default=False, description="Build the legacy CLib instead of the generated CLib.")
+    variant(
+        "legacy-clib",
+        default=False,
+        description="Build the legacy CLib instead of the generated CLib.",
+    )
     conflicts("+legacy-clib", when="@:2.6")
 
     variant("python", default=False, description="With the cantera python module")
@@ -107,7 +123,9 @@ class Cantera(SConsPackage):
     variant("external-fmt", default=False, description="Use external fmt installation")
     conflicts("+external-fmt", when="@:2.2.1")
 
-    variant("external-googletest", default=False, description="Use external googletest installation")
+    variant(
+        "external-googletest", default=False, description="Use external googletest installation"
+    )
     conflicts("+external-googletest", when="@:2.2.1")
 
     variant("external-highfive", default=False, description="Use external highfive installation")
@@ -118,7 +136,11 @@ class Cantera(SConsPackage):
     variant("external-yamlcpp", default=False, description="Use external yaml-cpp installation")
     conflicts("+external-yamlcpp", when="@2.4.0:")
 
-    variant("matlab", default=False, description="Build the Cantera legacy Matlab toolbox (vesion <= 3.0)")
+    variant(
+        "matlab",
+        default=False,
+        description="Build the Cantera legacy Matlab toolbox (vesion <= 3.0)",
+    )
     conflicts("+matlab", when="@3.1.0:")
 
     variant(
@@ -187,9 +209,10 @@ class Cantera(SConsPackage):
         ]
 
         if spec.satisfies("@2.5.1:"):
-            args.extend([
-                "libdirname={0}".format(spec.variants['libdirname'].value),
-                "cc_flags={0}".format(self.compiler.cc_pic_flag),
+            args.extend(
+                [
+                    "libdirname={0}".format(spec.variants["libdirname"].value),
+                    "cc_flags={0}".format(self.compiler.cc_pic_flag),
                 ]
             )
         else:
@@ -237,10 +260,7 @@ class Cantera(SConsPackage):
         # Use external highfive installation
         if spec.satisfies("+external-highfive") and spec.satisfies("@3.0.0:"):
             args.extend(
-                [
-                    "system_highfive=y",
-                    "extra_inc_dirs={0}".format(spec["highfive"].prefix.include),
-                ]
+                ["system_highfive=y", "extra_inc_dirs={0}".format(spec["highfive"].prefix.include)]
             )
 
         # Use external yaml-cpp installation
@@ -262,7 +282,6 @@ class Cantera(SConsPackage):
                     "sundials_libdir={0}".format(spec["sundials"].prefix.libs),
                 ]
             )
- 
 
         # Use external BLAS/LAPACK installations
         if spec.satisfies("+blaslapack"):
