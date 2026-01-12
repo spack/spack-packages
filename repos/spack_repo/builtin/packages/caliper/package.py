@@ -70,7 +70,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("rocprofiler-sdk", when"@2.14: +rocm")
+    depends_on("rocprofiler-sdk", when="@2.14: +rocm")
 
     depends_on("adiak@0.1:0", when="@:2.10 +adiak")
     depends_on("adiak@0.4:0", when="@2.11: +adiak")
