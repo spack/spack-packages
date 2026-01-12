@@ -24,13 +24,11 @@ class AoclDlp(CMakePackage):
     version("5.2", sha256="1eec26eeaf427cb2377ec21415ddce6e1bc62d4eab8ec51630a9c02711019c1c")
 
     # Feature toggles mapping directly to AOCL-DLP CMake options
-    variant("benchmarks", default=True, description="Build benchmarks (BUILD_BENCHMARKS)")
-    variant("tests", default=True, description="Enable tests (BUILD_TESTING)")
-    variant(
-        "ctest", default=False, description="Set DLP_CTEST_DISABLED=ON to skip CTest invocation"
-    )
-    variant("examples", default=True, description="Build examples (BUILD_EXAMPLES)")
-    variant("shared", default=True, description="Build shared libraries (BUILD_SHARED_LIBS)")
+    variant("benchmarks", default=True, description="Build benchmarks")
+    variant("tests", default=True, description="Enable tests")
+    variant("ctest", default=False, description="Enable ctest")
+    variant("examples", default=True, description="Build examples")
+    variant("shared", default=True, description="Build shared libraries")
 
     # Threading model selection (maps to DLP_THREADING_MODEL)
     variant(
