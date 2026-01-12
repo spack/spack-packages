@@ -138,7 +138,6 @@ class Cantera(SConsPackage):
     depends_on("py-packaging", type="build")
     depends_on("python@3.10:", when="@3.0.0:", type="build")
     depends_on("python@:3.10", when="@2.4.0:2.6.0", type="build")
-    depends_on("python@:2", when="@:2.3.0", type="build")
 
     # additional dependencies for version >= 3.2.0
     depends_on("doxygen@1.8:", when="@3.2.0:", type="build")
