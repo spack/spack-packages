@@ -292,7 +292,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     with default_args(multi=False, description="C++ standard"):
         variant("cxxstd", default="17", values=("14", "17", "20"), when="@3")
         variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
-        variant("cxxstd", default="20", values=("20", "23"), when="@5")
+        variant("cxxstd", default="20", values=("20", "23"), when="@5:")
     variant("pic", default=False, description="Build position independent code")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
