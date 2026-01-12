@@ -34,11 +34,13 @@ class PyMumps4py(PythonPackage):
         # Ensure MUMPS include/lib are passed if setup.py needs them
         mumps = spec["mumps"]
         args = [
-            "--inplace",
             "MUMPS_INC={0}".format(mumps.prefix.include),
             "MUMPS_LIB={0}".format(mumps.prefix.lib),
         ]
         return args
+
+    def config_settings(self,spec,prefix):
+        return {"--build-option":["build_ext","--inplace"]}
 
     def setup_build_environment(self, env):
         # Required by mumps4py to specify which MUMPS solvers to use
