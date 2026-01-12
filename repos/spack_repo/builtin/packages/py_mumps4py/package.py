@@ -40,7 +40,7 @@ class PyMumps4py(PythonPackage):
         return args
 
     def config_settings(self, spec, prefix):
-        return {"--build-option": ["build_ext","--inplace"]}
+        return {"--build-option": ["build_ext", "--inplace"]}
 
     def setup_build_environment(self, env):
         # Required by mumps4py to specify which MUMPS solvers to use
