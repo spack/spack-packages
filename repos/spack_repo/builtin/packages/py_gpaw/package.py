@@ -32,7 +32,7 @@ class PyGpaw(PythonPackage, CudaPackage):
     variant("libvdwxc", default=True, description="Build with libvdwxc support")
     variant("elpa", default=True, description="Build with ELPA support")
     variant("openmp", default=True, description="Build with OpenMP support")
-    variant("cuda", default=False, description="Build with CUDA GPU support")
+    variant("cuda", default=False, when="@23.6:", description="Build with CUDA GPU support")
 
     # Build dependencies
     depends_on("c", type="build")
