@@ -34,7 +34,7 @@ class CompilerWrapper(Package):
     tags = ["runtime"]
 
     maintainers("haampie")
-    
+
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
