@@ -1,4 +1,4 @@
-from spack_repo.builtin.build_systems.python import PythonPackage
+from spack_repo.builtin.build_systems.python import PythonPackage, PythonPipBuilder
 
 from spack.package import *
 
@@ -34,11 +34,40 @@ class PyMumps4py(PythonPackage):
         # Ensure MUMPS include/lib are passed if setup.py needs them
         mumps = spec["mumps"]
         args = [
-            "--inplace",
             "MUMPS_INC={0}".format(mumps.prefix.include),
             "MUMPS_LIB={0}".format(mumps.prefix.lib),
         ]
         return args
+
+    def install(self, spec: Spec, prefix: Prefix) -> None:
+        """Install everything from build directory."""
+        pip = spec["python"].command
+        pip.add_default_arg("-m", "pip")
+
+        args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
+
+        config_settings = self.config_settings(spec, prefix)
+        for setting in config_settings:
+            if isinstance(config_settings[setting], list):
+                for value in config_settings[setting]:
+                    args.append(f'--config-settings="{setting}={value}"')
+            else:
+                args.append(f'--config-settings="{setting}={config_settings[setting]}"')
+        for option in self.install_options(spec, prefix):
+            args.append(f"--install-option={option}")
+        for option in self.global_options(spec, prefix):
+            args.append(f"--global-option={option}")
+
+        if pkg.stage.archive_file and pkg.stage.archive_file.endswith(".whl"):
+            args.append(pkg.stage.archive_file)
+        else:
+            args.append(".")
+
+        with working_dir(self.build_directory):
+            pip(*args)
+
+    def config_settings(self, spec, prefix):
+        return {"--build-option": ["build_ext", "--inplace"]}
 
     def setup_build_environment(self, env):
         # Required by mumps4py to specify which MUMPS solvers to use

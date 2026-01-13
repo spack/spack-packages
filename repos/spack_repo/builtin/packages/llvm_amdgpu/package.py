@@ -234,14 +234,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         llvm_runtimes = ["libcxx", "libcxxabi"]
         args = [
             self.define("LLVM_ENABLE_Z3_SOLVER", "OFF"),
-            self.define("LLLVM_ENABLE_ZLIB", "ON"),
+            self.define("LLVM_ENABLE_ZLIB", "ON"),
             self.define("CLANG_DEFAULT_LINKER", "lld"),
-            self.define("LIBCXX_ENABLE_SHARED", "OFF"),
-            self.define("LIBCXX_ENABLE_STATIC", "ON"),
-            self.define("LIBCXX_INSTALL_LIBRARY", "OFF"),
-            self.define("LIBCXX_INSTALL_HEADERS", "OFF"),
-            self.define("LIBCXXABI_ENABLE_SHARED", "OFF"),
-            self.define("LIBCXXABI_ENABLE_STATIC", "ON"),
             self.define("LIBCXXABI_INSTALL_STATIC_LIBRARY", "OFF"),
             self.define("LLVM_ENABLE_RTTI", "ON"),
             self.define("LLVM_AMDGPU_ALLOW_NPI_TARGETS", "ON"),
@@ -314,9 +308,22 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             llvm_projects.extend(["mlir", "flang"])
             args.append(self.define("LIBOMPTARGET_BUILD_DEVICE_FORTRT", "ON"))
             args.append(self.define("FLANG_RUNTIME_F128_MATH_LIB", "libquadmath"))
+        if self.spec.satisfies("@:7.0"):
+            args.append(self.define("LIBCXX_ENABLE_SHARED", "OFF"))
+            args.append(self.define("LIBCXX_ENABLE_STATIC", "ON"))
+            args.append(self.define("LIBCXX_INSTALL_LIBRARY", "OFF"))
+            args.append(self.define("LIBCXX_INSTALL_HEADERS", "OFF"))
+            args.append(self.define("LIBCXXABI_ENABLE_SHARED", "OFF"))
+            args.append(self.define("LIBCXXABI_ENABLE_STATIC", "ON"))
+        else:
+            args.append(self.define("LIBCXX_ENABLE_SHARED", "ON"))
+            args.append(self.define("LIBCXX_ENABLE_STATIC", "OFF"))
+            args.append(self.define("LIBCXX_INSTALL_LIBRARY", "ON"))
+            args.append(self.define("LIBCXX_INSTALL_HEADERS", "ON"))
+            args.append(self.define("LIBCXXABI_ENABLE_SHARED", "ON"))
+            args.append(self.define("LIBCXXABI_ENABLE_STATIC", "OFF"))
         if self.spec.satisfies("@7.1:"):
             llvm_runtimes.extend(["offload", "openmp"])
-            args.append(self.define("LLVM_ENABLE_ZLIB", "ON"))
             args.append(self.define("LLVM_INSTALL_UTILS", "ON"))
             args.append(self.define("OPENMP_ENABLE_LIBOMPTARGET", "ON"))
             args.append(self.define("LLVM_ENABLE_LIBCXX", "ON"))
