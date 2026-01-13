@@ -31,7 +31,11 @@ spack:
       - amdgpu_target=gfx90a
       - ~flash_attention
       - "%c,cxx=gcc"
-
+    py-llvmlite:
+      buildable: false
+      externals:
+      - spec: py-llvmlite@0.46.0
+        prefix: /dev/null  # Dummy path to prevent building
   specs:
     # Hugging Face
     - py-transformers
