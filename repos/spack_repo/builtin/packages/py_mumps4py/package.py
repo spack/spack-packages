@@ -39,12 +39,12 @@ class PyMumps4py(PythonPackage):
         ]
         return args
 
-    def install(self, spec: Spec, prefix: Prefix) -> None:                                                                            
-        """Install everything from build directory."""                                                                                                    
-        pip = spec["python"].command                                                                                                                      
-        pip.add_default_arg("-m", "pip")                                                                                                                  
-                                                                                                                                                          
-        args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]                                                                                    
+    def install(self, spec: Spec, prefix: Prefix) -> None:
+        """Install everything from build directory."""
+        pip = spec["python"].command                  
+        pip.add_default_arg("-m", "pip")
+
+        args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
 
         config_settings = self.config_settings(spec, prefix)
         for setting in config_settings:
@@ -53,16 +53,16 @@ class PyMumps4py(PythonPackage):
                     args.append(f'--config-settings="{setting}={value}"')
             else:
                 args.append(f'--config-settings="{setting}={config_settings[setting]}"')
-        for option in self.install_options(spec, prefix):                                                                                                 
-            args.append(f"--install-option={option}")                                                                                                     
-        for option in self.global_options(spec, prefix):                                                                                                  
-            args.append(f"--global-option={option}")                                                                                                      
-                                                                                                                                                          
-        if pkg.stage.archive_file and pkg.stage.archive_file.endswith(".whl"):                                                                            
-            args.append(pkg.stage.archive_file)                                                                                                           
-        else:                                                                                                                                             
-            args.append(".")                                                                                                                              
-                                                                                                                                                          
+        for option in self.install_options(spec, prefix):
+            args.append(f"--install-option={option}")
+        for option in self.global_options(spec, prefix):
+            args.append(f"--global-option={option}")
+
+        if pkg.stage.archive_file and pkg.stage.archive_file.endswith(".whl"):
+            args.append(pkg.stage.archive_file)
+        else:
+            args.append(".")
+
         with working_dir(self.build_directory):                                                                                                           
             pip(*args)
 
