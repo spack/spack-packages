@@ -4,11 +4,11 @@
 
 import os
 import warnings
+from pathlib import Path
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
-from pathlib import Path
 
 from spack.package import *
 
@@ -32,6 +32,12 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
     supporting a range of platforms. For optimal performance and more
     fine-grained control on a particular target platform, HPC admins can provide an
     external build.
+
+    Note on variant defaults:
+    Many variants default to "auto" to respect GASNet's carefully tuned
+    configure-time auto-detection. The configure script's defaults were
+    chosen over time to balance the needs of multiple clients and target
+    systems. Explicit variant settings override this auto-detection.
     """
 
     homepage = "https://gasnet.lbl.gov"
@@ -78,21 +84,59 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
         + "For detailed recommendations, consult https://gasnet.lbl.gov",
     )
 
-    variant("debug", default=False, description="Enable library debugging mode")
-    variant("pic", default=True, description="Produce position-independent code (for shared libs)")
+    # ============================================================
+    # Threading support variants
+    # ============================================================
 
-    variant("seq", default=True, description="support SEQ-mode single-threaded GASNet clients")
-    variant("par", default=False, description="support PAR-mode pthreaded GASNet clients")
-    variant("parsync", default=False, description="support PARSYNC-mode pthreaded GASNet clients")
-
-    variant("pshm", default=True, description="Enable/disable inter-process shared memory support")
-    variant("pthreads", default=False, description="enable use of pthreads")
     variant(
-        "mpi_compat", default=False, description="Enable/disable MPI compatibility in all conduits"
+        "pthreads",
+        default="auto",
+        values=("auto", "on", "off"),
+        description="Enable use of pthreads (required for PAR/PARSYNC modes)",
     )
 
     variant(
-        "pmi", default="none", values=("none", "x", "1", "2", "cray"), description="PMI version"
+        "par",
+        default="auto",
+        values=("auto", "on", "off"),
+        description="support PAR-mode pthreaded GASNet clients",
+    )
+
+    variant(
+        "parsync",
+        default="auto",
+        values=("auto", "on", "off"),
+        description="support PARSYNC-mode pthreaded GASNet clients",
+    )
+
+    variant("seq", default=True, description="support SEQ-mode single-threaded GASNet clients")
+
+    # ============================================================
+    # Memory and system variants
+    # ============================================================
+
+    variant(
+        "pshm",
+        default="auto",
+        values=("auto", "on", "off"),
+        description="Enable/disable inter-process shared memory support",
+    )
+
+    variant(
+        "pmi",
+        default="auto",
+        values=("auto", "none", "x", "1", "2", "cray"),
+        description="PMI version (auto-detected when needed by conduit)",
+    )
+
+    # ============================================================
+    # True binary choice variants
+    # ============================================================
+
+    variant("debug", default=False, description="Enable library debugging mode")
+
+    variant(
+        "mpi_compat", default=False, description="Enable/disable MPI compatibility in all conduits"
     )
     variant(
         "segment",
@@ -165,6 +209,16 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     depends_on("oneapi-level-zero@1.8.0:", when="+level_zero")
 
+    # ============================================================
+    # Conflicts
+    # ============================================================
+
+    conflicts("par=on", when="pthreads=off", msg="PAR mode requires pthreads")
+    conflicts("parsync=on", when="pthreads=off", msg="PARSYNC mode requires pthreads")
+    conflicts(
+        "pshm=on", when="segment=everything", msg="PSHM not compatible with SEGMENT_EVERYTHING"
+    )
+
     @run_before("configure")
     def bootstrap(self):
         if self.spec.satisfies(self.bootstrap_version):
@@ -177,41 +231,72 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
             except ProcessError:
                 warnings.warn("Omitting version stamp due to git error")
 
+    def enable_disable_or_auto(self, option_name, variant_name=None):
+        """Helper for variants with 'auto', 'on', 'off' values.
+
+        Returns configure flags for the given option.
+        'auto' returns [], 'on' returns ['--enable-{option_name}'],
+        'off' returns ['--disable-{option_name}'].
+
+        Args:
+            option_name: The configure option name (e.g., 'pthreads')
+            variant_name: The variant name (e.g., 'pthreads'). If None, uses option_name.
+        """
+        if variant_name is None:
+            variant_name = option_name
+
+        value = self.spec.variants[variant_name].value
+
+        if value == "on":
+            return [f"--enable-{option_name}"]
+        elif value == "off":
+            return [f"--disable-{option_name}"]
+        return []  # auto
+
     def configure_args(self):
         spec = self.spec
         options = ["--disable-auto-conduit-detect", "--enable-rpath"]
+
+        # ============================================================
+        # Boolean variants - use enable_or_disable helper
+        # ============================================================
+
         options += self.enable_or_disable("debug")
-        options += self.enable_or_disable("par")
         options += self.enable_or_disable("seq")
-        options += self.enable_or_disable("parsync")
-        options += self.enable_or_disable("pshm")
-        options += self.enable_or_disable("pthreads")
         options += self.enable_or_disable("mpi-compat", variant="mpi_compat")
+
+        # ============================================================
+        # String variants with "auto" - use enable_disable_or_auto helper
+        # ============================================================
+
+        options += self.enable_disable_or_auto("pthreads")
+        options += self.enable_disable_or_auto("par")
+        options += self.enable_disable_or_auto("parsync")
+        options += self.enable_disable_or_auto("pshm")
+
+        # PMI
+        pmi_val = spec.variants["pmi"].value
+        if pmi_val == "none":
+            options.append("--disable-pmi")
+        elif pmi_val != "auto":
+            options.append("--enable-pmi")
+            options.append(f"--with-pmi-version={pmi_val}")
+            if pmi_val == "x":
+                options.append(f"--with-pmi-home={spec['pmix'].prefix}")
+            elif pmi_val == "cray":
+                options.append(f"--with-pmi-home={spec['cray-pmi'].prefix}")
+        # else: "auto" - let configure and conduits auto-detect PMI needs
+
+        # ============================================================
+        # Segment configuration
+        # ============================================================
 
         if not spec.satisfies("segment=off"):
             options.append(f"--enable-segment-{spec.variants['segment'].value}")
 
-        flags = {"cflags": [], "cxxflags": [], "mpi-cflags": []}
-
-        if spec.satisfies("+pic"):
-            flags["cflags"].append(self.compiler.cc_pic_flag)
-            flags["mpi-cflags"].append(self.compiler.cc_pic_flag)
-            flags["cxxflags"].append(self.compiler.cxx_pic_flag)
-
-        for key, value in sorted(flags.items()):
-            if value:
-                options.append(f"--with-{key}={' '.join(value)}")
-
-        if not spec.satisfies("pmi=none"):
-            options.append("--enable-pmi")
-            options.append(f"--with-pmi-version={spec.variants['pmi'].value}")
-
-            if spec.satisfies("pmi=x"):
-                options.append(f"--with-pmi-home={spec['pmix'].prefix}")
-            elif spec.satisfies("pmi=cray"):
-                options.append(f"--with-pmi-home={spec['cray-pmi'].prefix}")
-        else:
-            options.append("--disable-pmi")
+        # ============================================================
+        # GPU support (CUDA, ROCm, Level Zero)
+        # ============================================================
 
         if spec.satisfies("+cuda"):
             options.append("--enable-kind-cuda-uva")
@@ -225,8 +310,12 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
             options.append("--enable-kind-ze")
             options.append("--with-ze-home=" + spec["oneapi-level-zero"].prefix)
 
+        # ============================================================
+        # Conduits
+        # ============================================================
+
         for c in spec.variants["conduits"].value:
-            options.append("--enable-" + c)
+            options.append(f"--enable-{c}")
 
         if spec.satisfies("conduits=mpi") or spec.satisfies("+mpi_compat"):
             options.append(f"--with-mpi-cc={spec['mpi'].mpicc}")
@@ -239,14 +328,15 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
                 options.append(f"--with-ofi-provider={spec.variants['ofi_provider'].value}")
             if not spec.satisfies("ofi_spawner=auto"):
                 options.append(f"--with-ofi-spawner={spec.variants['ofi_spawner'].value}")
+
         return options
 
     @run_after("build")
     def build_tests(self):
         if not self.spec.satisfies("conduits=none"):
             for c in self.spec.variants["conduits"].value:
-                make("-C", c + "-conduit", "testgasnet-par")
-                make("-C", c + "-conduit", "testtools-par")
+                make("-C", f"{c}-conduit", "testgasnet-par")
+                make("-C", f"{c}-conduit", "testtools-par")
 
     @run_after("install")
     def install_source(self):
@@ -258,8 +348,8 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
             for c in self.spec.variants["conduits"].value:
                 testdir = join_path(self.prefix.tests, c)
                 mkdirp(testdir)
-                install(c + "-conduit/testgasnet", testdir)
-                install(c + "-conduit/testtools", prefix.tests)
+                install(f"{c}-conduit/testgasnet", testdir)
+                install(f"{c}-conduit/testtools", prefix.tests)
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
@@ -340,12 +430,17 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
             variants = []
             prefix = Path(exe).parent.parent
             config = prefix / "include" / "gasnet_config.h"
+            lib_dir = prefix / "lib"
+
             if config.exists():
-                pshm = False
+                flags = {}
+                conduits = []
+
                 with open(config, "r") as f:
                     for line in f:
                         if line.startswith("#define GASNETI_CONDUITS"):
-                            variants.append("conduits:=" + ",".join(line.split()[3:]).strip().replace('"', ''))
+                            conduits = [x.strip().replace('"', "") for x in line.split()[2:]]
+                            variants.append(f"conduits={','.join(conduits)}")
                         elif line.startswith("#define GASNET_SEGMENT_FAST 1"):
                             variants.append("segment=fast")
                         elif line.startswith("#define GASNET_SEGMENT_LARGE 1"):
@@ -353,7 +448,33 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
                         elif line.startswith("#define GASNET_SEGMENT_EVERYTHING 1"):
                             variants.append("segment=everything")
                         elif line.startswith("#define GASNETI_PSHM_ENABLED 1"):
-                            pshm = True
-                variants.append("+pshm" if pshm else "~pshm")
+                            flags["pshm"] = True
+                        elif line.startswith("#define HAVE_PTHREAD_H 1"):
+                            flags["pthreads"] = True
+                        elif line.startswith("#define GASNET_DEBUG 1"):
+                            flags["debug"] = True
+
+                # Detect threading modes by checking for library files
+                # Check any conduit (use first one found) for mode-specific libraries
+                if lib_dir.exists() and conduits:
+                    conduit = conduits.split(",")
+                    flags["seq"] = (lib_dir / f"libgasnet-{conduit}-seq.a").exists()
+                    flags["par"] = (lib_dir / f"libgasnet-{conduit}-par.a").exists()
+                    flags["parsync"] = (lib_dir / f"libgasnet-{conduit}-parsync.a").exists()
+
+                # Add auto/on/off variants
+                variants.append("pshm=on" if flags.get("pshm") else "pshm=off")
+                variants.append("pthreads=on" if flags.get("pthreads") else "pthreads=off")
+
+                # Infer par and parsync from library existence
+                if flags.get("par") or flags.get("parsync"):
+                    variants.append("par=on" if flags.get("par") else "par=off")
+                    variants.append("parsync=on" if flags.get("parsync") else "parsync=off")
+
+                # Add boolean variants
+                variants.append("+seq" if flags.get("seq") else "~seq")
+                variants.append("+debug" if flags.get("debug") else "~debug")
+                variants.append("+mpi_compat" if flags.get("mpi_compat") else "~mpi_compat")
+
             results.append(" ".join(variants))
         return results
