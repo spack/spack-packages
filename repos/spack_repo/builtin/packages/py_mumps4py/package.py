@@ -41,7 +41,7 @@ class PyMumps4py(PythonPackage):
 
     def install(self, spec: Spec, prefix: Prefix) -> None:
         """Install everything from build directory."""
-        pip = spec["python"].command                  
+        pip = spec["python"].command
         pip.add_default_arg("-m", "pip")
 
         args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
@@ -63,7 +63,7 @@ class PyMumps4py(PythonPackage):
         else:
             args.append(".")
 
-        with working_dir(self.build_directory):                                                                                                           
+        with working_dir(self.build_directory):
             pip(*args)
 
     def config_settings(self, spec, prefix):
