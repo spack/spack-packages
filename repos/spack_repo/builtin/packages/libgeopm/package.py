@@ -9,22 +9,36 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack.package import *
 
 
-class GeopmRuntime(AutotoolsPackage):
+class Libgeopm(AutotoolsPackage):
     """The Global Extensible Open Power Manager (GEOPM) Runtime is designed to
     enhance energy efficiency of applications through active hardware
     configuration."""
 
     homepage = "https://geopm.github.io"
     git = "https://github.com/geopm/geopm.git"
-    url = "https://github.com/geopm/geopm/tarball/v3.2.0"
+    url = "https://github.com/geopm/geopm/tarball/v3.2.2"
 
     maintainers("bgeltz", "cmcantalupo")
     license("BSD-3-Clause")
     tags = ["e4s"]
 
     version("develop", branch="dev", get_full_repo=True)
-    version("3.2.0", sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025")
-    version("3.1.0", sha256="2d890cad906fd2008dc57f4e06537695d4a027e1dc1ed92feed4d81bb1a1449e")
+    version("3.2.2", sha256="715383060187a84b0d4022a823805b158709ec9225d2f35dba94af63cd260afe")
+    version(
+        "3.2.1",
+        sha256="9177da3af335256592c4ea8ae0dd4f8f9c8fb4caf65965af6216e7975d094b99",
+        deprecated=True,
+    )
+    version(
+        "3.2.0",
+        sha256="b708233e1bfda66408c500f2ac0cbaf042140870bffdced12dd7cabbd18e0025",
+        deprecated=True,
+    )
+    version(
+        "3.1.0",
+        sha256="2d890cad906fd2008dc57f4e06537695d4a027e1dc1ed92feed4d81bb1a1449e",
+        deprecated=True,
+    )
 
     variant("debug", default=False, description="Enable debug")
     variant("overhead", default=False, description="Track time spent in GEOPM API calls")
@@ -59,8 +73,8 @@ class GeopmRuntime(AutotoolsPackage):
     depends_on("file")
 
     # Other dependencies
-    for ver in ["3.1.0", "3.2.0", "develop"]:
-        depends_on(f"geopm-service@{ver}", type=("build", "run"), when=f"@{ver}")
+    for ver in ["3.1.0", "3.2.0", "3.2.1", "3.2.2", "develop"]:
+        depends_on(f"libgeopmd@{ver}", type=("build", "run"), when=f"@{ver}")
 
     depends_on("py-setuptools-scm@6.4.2:", when="@develop", type="build")  # Used in autogen.sh
     depends_on("bash-completion")
@@ -92,7 +106,7 @@ class GeopmRuntime(AutotoolsPackage):
             bash("./autogen.sh")
 
     def configure_args(self):
-        args = ["--disable-geopmd-local", f"--with-geopmd={self.spec['geopm-service'].prefix}"]
+        args = ["--disable-geopmd-local", f"--with-geopmd={self.spec['libgeopmd'].prefix}"]
 
         args += self.enable_or_disable("debug")
         args += self.enable_or_disable("overhead")

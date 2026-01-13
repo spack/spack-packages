@@ -91,6 +91,9 @@ class Podio(CMakePackage):
 
     conflicts("+rntuple ^root@6.32:", when="@:0.99", msg="rntuple API change requires podio@1:")
     conflicts("+rntuple ^root@6.34:", when="@:1.1", msg="rntuple API change requires podio@1.2:")
+    conflicts(
+        "^python +freethreading", when="@:1.6", msg="python free-threading requires podio@1.7:"
+    )
 
     # See https://github.com/AIDASoft/podio/pull/600
     patch(
@@ -126,6 +129,10 @@ class Podio(CMakePackage):
 
         # Frame header needs to be available for python bindings
         env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
+
+        # Pythonizations require Python.h accessible for ACLiC
+        if self.spec.satisfies("@1.5:"):
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["python"].headers.directories[0])
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

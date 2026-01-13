@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.8.3": "9b0907f0969bd2139a6ab3614d81faebc7abca102df4127cba9f0521e2e1437d",
     "0.8.2": "60a81ccb5bda11ee173abfecd02a5d126d2788732b2ebb4d701ba0c82c7331a1",
     "0.8.1": "11986d4c2964054baae9fe10ffc36c6a6ba70a78d97b406cb6c2e14e72a0cf72",
     "0.8.0": "240ea8c37328f6bb61ec9f3e482131f0875c73166a0e349a8dd8b85204c58bd7",
@@ -42,7 +43,11 @@ class PyMetatensorTorch(PythonPackage):
     depends_on("python@3.10:", type=("build", "run"), when="@0.8.1:")
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
-    depends_on("cmake@3.16:", type="build")  # metatensor/python/CMakeLists.txt
+    # metatensor/python/CMakeLists.txt
+    depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.22:", type="build", when="@0.8.2:")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("METATENSOR_TORCH_PYTHON_USE_EXTERNAL_LIB", "ON")
