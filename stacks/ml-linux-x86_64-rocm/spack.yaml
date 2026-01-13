@@ -36,6 +36,7 @@ spack:
       externals:
       - spec: py-llvmlite@0.46.0
         prefix: /dev/null  # Dummy path to prevent building
+
   specs:
     # Hugging Face
     - py-transformers
@@ -93,6 +94,8 @@ spack:
         image:
           name: ghcr.io/spack/ubuntu-24.04:v2025-09-15
           entrypoint: ['']
-
+  skip-packages:
+  - py-llvmlite
+  - py-numba  # Also skip numba since it requires llvmlite
   cdash:
     build-group: Machine Learning
