@@ -1,4 +1,4 @@
-from spack_repo.builtin.build_systems.python import PythonPackage,PythonPipBuilder
+from spack_repo.builtin.build_systems.python import PythonPackage, PythonPipBuilder
 
 from spack.package import *
 
@@ -48,11 +48,11 @@ class PyMumps4py(PythonPackage):
 
         config_settings = self.config_settings(spec, prefix)
         for setting in config_settings:
-            if isinstance(config_settings[setting],list):
+            if isinstance(config_settings[setting], list):
                 for value in config_settings[setting]:
-                    args.append(f"--config-settings=\"{setting}={value}\"")
+                    args.append(f'--config-settings="{setting}={value}"')
             else:
-                args.append(f"--config-settings=\"{setting}={config_settings[setting]}\"")
+                args.append(f'--config-settings="{setting}={config_settings[setting]}"')
         for option in self.install_options(spec, prefix):                                                                                                 
             args.append(f"--install-option={option}")                                                                                                     
         for option in self.global_options(spec, prefix):                                                                                                  
