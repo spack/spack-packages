@@ -89,8 +89,5 @@ spack:
         image:
           name: ghcr.io/spack/ubuntu-24.04:v2025-09-15
           entrypoint: ['']
-  skip-packages:
-  - py-llvmlite
-  - py-numba  # Also skip numba since it requires llvmlite
   cdash:
     build-group: Machine Learning

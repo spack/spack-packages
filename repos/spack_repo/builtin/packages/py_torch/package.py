@@ -303,7 +303,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     with when("+rocm"):
         depends_on("hsa-rocr-dev")
         depends_on("hip@7.0:", when="@2.9")
-        depends_on("hip@:6.4", when="@:2.7")
+        depends_on("hip@6.4", when="@:2.7")
         depends_on("rccl", when="+nccl")
         depends_on("rocprim")
         depends_on("hipcub")
