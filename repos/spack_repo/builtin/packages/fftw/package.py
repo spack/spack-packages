@@ -158,7 +158,8 @@ class FftwBase(AutotoolsPackage):
 
         # GCC on apple silicon does not support Neon intrinsics
         if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
-            float_simd_features.remove("neon")
+            if "neon" in float_simd_features:
+                float_simd_features.remove("neon")
 
         simd_options = []
         for feature in simd_features:
