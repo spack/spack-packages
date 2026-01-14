@@ -143,7 +143,7 @@ class Dakota(CMakePackage):
         when="~python-wrapper ~python-direct-interface",
         msg=(
             "Use either +python-wrapper or +python-direct-interface ",
-            "in combination with +python-surrogates."
+            "in combination with +python-surrogates.",
         ),
     )
 
