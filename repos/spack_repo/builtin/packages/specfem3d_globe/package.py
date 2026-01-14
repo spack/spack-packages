@@ -33,7 +33,8 @@ class Specfem3dGlobe(AutotoolsPackage, CudaPackage):
     depends_on("mpi")
     depends_on("opencl", when="+opencl")
 
-    # fix compilation error in MPI calls for gfortran, adding `-fallow-argument-mismatch` and remove `-pedantic`
+    # fix compilation error in MPI calls for gfortran,
+    # adding `-fallow-argument-mismatch` and remove `-pedantic`
     patch("0001-fix-compilation-flags.patch", when="@8.1.0 %fortran=gcc")
 
     # When building with the gcc compiler,'Werror' is added to FFLAGS.
