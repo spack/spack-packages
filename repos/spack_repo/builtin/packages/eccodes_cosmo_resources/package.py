@@ -20,11 +20,11 @@ class EccodesCosmoResources(Package):
 
     maintainers("huppd", "lxavier", "victoria-cherkas")
 
-    version("2.36.0.3", tag="v2.36.0.3")
-    version("2.25.0.3", tag="v2.25.0.3")
-    version("2.25.0.2", tag="v2.25.0.2")
-    version("2.25.0.1", tag="v2.25.0.1")
-    version("2.18.0.1", tag="v2.18.0.1")
+    version("2.36.0.3", sha256="503a1b5f8a0aefc782e0faab52960d957d1d73f042ea4e1ac6e4888e53784125")
+    version("2.25.0.3", sha256="f2ebf768a489c17d6b3fbb49c27b50c2806d48cc03c4aa93a9e9bca0ff44c599")
+    version("2.25.0.2", sha256="1fa3d3734583f98eee1a45e1a3cf9e340b8ca5fbe879dd6992db88e8a4db98a7")
+    version("2.25.0.1", sha256="8e0b6b7bd01a435b2a80da40981425276cae5851923183175935861e2f1f36ec")
+    version("2.18.0.1", sha256="666e14a3841f168a231487a55eea58fa5a6209a65a1f8a6ef02af713fa6fcbe7")
 
     depends_on("eccodes")
     depends_on("eccodes@2.36.4", type=("build", "link", "run"), when="@2.36.0.3")
