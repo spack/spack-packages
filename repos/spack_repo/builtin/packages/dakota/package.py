@@ -141,7 +141,10 @@ class Dakota(CMakePackage):
     conflicts(
         "+python-surrogates",
         when="~python-wrapper ~python-direct-interface",
-        msg="Use either +python-wrapper or +python-direct-interface in combination with +python-surrogates",
+        msg=(
+            "Use either +python-wrapper or +python-direct-interface ",
+            "in combination with +python-surrogates."
+        ),
     )
 
     # enable modern compilers with older versions
