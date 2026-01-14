@@ -22,6 +22,7 @@ class RocmSmiLib(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath")
     libraries = ["librocm_smi64"]
 
+    version("7.1.1", sha256="f47550aeeb2827a3ae857c35e16f5a9042de70d911abab80bebe4840c9ecd4fd")
     version("7.1.0", sha256="eab6c7a85deb992b5cf511cdf7d0a6f8a93e46a0bfb6cf66c73d95c26dc4ce5e")
     version("7.0.2", sha256="cdd7951fb46b79f6791340da21fc47dc3e719f82795f2e1f5546bb7d35db954c")
     version("7.0.0", sha256="c41c5e697d53201108608916c6e495514b0695c0fbbac8d524820f7ae2af3fdb")
@@ -75,6 +76,7 @@ class RocmSmiLib(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -96,6 +98,7 @@ class RocmSmiLib(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 

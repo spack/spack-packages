@@ -459,7 +459,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("podio @0.6:", when="@25: +edm4hep")
     depends_on("podio @0.16:", when="@30.3: +edm4hep")
     depends_on("podio @:0", when="@:35 +edm4hep")
-    depends_on("podio @:1.4", when="@:44 +edm4hep +examples")
+    depends_on("podio @:1.4", when="@:44.1 +edm4hep +examples")
     depends_on("podio @0.16:", when="+podio")
     depends_on("podio @:0", when="@:35 +podio")
     # TODO: Clarify version on next release

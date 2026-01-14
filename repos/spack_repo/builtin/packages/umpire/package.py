@@ -323,7 +323,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     # device allocator exports device code, which requires static libs
     # currently only available for cuda.
-    conflicts("+shared", when="+cuda")
+    conflicts("+shared", when="+cuda +device_alloc")
 
     # https://github.com/LLNL/Umpire/pull/992
     conflicts("^cuda@13:", when="+cuda")

@@ -71,3 +71,10 @@ class Libvdwxc(AutotoolsPackage):
     # The relevant upstream fix for the m4 would be:
     # https://gitlab.com/libvdwxc/libvdwxc/-/commit/9340f857515c4a2e56d2aa7cf3a21c41ba8559c3.diff
     patch("fftw-detection.patch", when="@:0.4.0")
+
+    # fix a mpi detection error
+    patch(
+        "0001-fix-mpi-detection-in-configure.patch",
+        sha256="b1818ef7f984e398ab07f2a693ac7b2488955356645910d74a627159df97b932",
+        when="@0.5.0",
+    )
