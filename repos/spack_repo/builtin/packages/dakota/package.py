@@ -88,9 +88,17 @@ class Dakota(CMakePackage):
     variant("python", default=True, description="Add Python dependency for dakota.interfacing API")
     variant("hdf5", default=False, description="Add hdf5 support")
 
-    variant("python-direct-interface", default=False, description="Activate direct python interace")
-    variant("python-wrapper", default=False, description="Top-level dakota.environment Python wrapper")
-    variant("python-surrogates", default=False, description="Dakota Python interface to surrogate module")
+    variant(
+        "python-direct-interface", default=False, description="Activate direct python interface"
+    )
+    variant(
+        "python-wrapper", default=False, description="Top-level dakota.environment Python wrapper"
+    )
+    variant(
+        "python-surrogates",
+        default=False,
+        description="Dakota Python interface to surrogate module",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -131,28 +139,19 @@ class Dakota(CMakePackage):
 
     # cannot have python surrogates without python direct interface or python wrapper
     conflicts(
-            "+python-surrogates", 
-            when="~python-wrapper ~python-direct-interface",
-            msg="Use either +python-wrapper or +python-direct-interface in combination with +python-surrogates"
+        "+python-surrogates",
+        when="~python-wrapper ~python-direct-interface",
+        msg="Use either +python-wrapper or +python-direct-interface in combination with +python-surrogates",
     )
 
     # enable modern compilers with older versions
-    patch('teuchos_cstdint.patch',
-        when='@:6.21',
-        working_dir='packages/external'
-        )
+    patch('teuchos_cstdint.patch', when='@:6.21', working_dir='packages/external')
 
-    patch('dakota_data_types_cstdint.patch',
-          when='@:6.22'
-          )
+    patch('dakota_data_types_cstdint.patch', when='@:6.22')
 
-    patch('dakota_tolerance_cmath.patch',
-          when='@6.19'
-          )
+    patch('dakota_tolerance_cmath.patch', when='@6.19')
 
-    patch('dakota_6.18_tolerance_cmath.patch',
-          when='@:6.18'
-          )
+    patch('dakota_6.18_tolerance_cmath.patch', when='@:6.18')
 
     def flag_handler(self, name, flags):
         # from gcc@10, dakota@:6.12 need an extra flag
@@ -175,7 +174,6 @@ class Dakota(CMakePackage):
             self.define_from_variant("DAKOTA_PYTHON_SURROGATES", "python-wrapper"),
             "-DBLAS_LIBS:STRING={}/lib64/libblas.so".format(spec["netlib-lapack"].prefix),
             "-DLAPACK_LIBS:STRING={}/lib64/liblapack.so".format(spec["netlib-lapack"].prefix),
-            #"-DBOOST_INCLUDE_DIR:STRING={}".format(spec["boost"].prefix.include),
         ]
 
         if spec.satisfies("+mpi"):
