@@ -610,6 +610,11 @@ class Python(Package):
             else:
                 config_args.append("--with-lto")
             config_args.append("--with-computed-gotos")
+            # Revisit --tail-call-interp when GCC 16 comes out
+            # https://github.com/python/cpython/issues/128563#issuecomment-3501715689
+            if spec.satisfies("@3.14:"):
+                if spec.satisfies("%c=clang@19:") or spec.satisfies("%c=apple-clang@17:"):
+                    config_args.append("--with-tail-call-interp")
 
         if spec.satisfies("@3.7 %intel"):
             config_args.append("--with-icc={0}".format(spack_cc))
