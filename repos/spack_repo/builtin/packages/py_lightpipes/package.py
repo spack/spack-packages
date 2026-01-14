@@ -14,7 +14,6 @@ class PyLightpipes(PythonPackage):
     pypi = "LightPipes/LightPipes-2.1.5-py3-none-any.whl"
     # Work-around URL until the CI version check can rely on the URL related to a PyPi wheel.
     url = "https://pypi.io/packages/py3/l/lightpipes/LightPipes-2.1.5-py3-none-any.whl"
-    
     maintainers("LydDeb")
 
     license("BSD-3-Clause", checked_by="LydDeb")
