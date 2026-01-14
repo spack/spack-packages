@@ -72,10 +72,12 @@ class Simgrid(CMakePackage):
     variant("examples", default=False, description="Install examples")
     variant("mc", default=False, description="Model checker")
     variant("msg", default=False, description="Enables the old MSG interface")
+    variant("python", default=False, description="Enables the Python bindings")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    extends("python", when="+python")  # generated
 
     # does not build correctly with some old compilers -> rely on packages
     depends_on("boost@:1.69.0", when="@:3.21")
@@ -99,7 +101,10 @@ class Simgrid(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        args = []
+        define = self.define
+        args = [
+            define("enable_python", spec.satisfies("+python"))
+        ]
 
         if not spec.satisfies("+doc"):
             args.append("-Denable_documentation=OFF")
