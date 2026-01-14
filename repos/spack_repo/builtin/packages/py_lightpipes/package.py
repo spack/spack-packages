@@ -11,7 +11,7 @@ class PyLightpipes(PythonPackage):
     """LightPipes for Python optical toolbox."""
 
     homepage = "https://github.com/opticspy/lightpipes"
-    url = "https://files.pythonhosted.org/packages/b8/32/01caf8d41cf81087255c6907a5c36e922b57fbaf11d19d50b611d003d60f/LightPipes-2.1.5-py3-none-any.whl"
+    pypi = "LightPipes/LightPipes-2.1.5-py3-none-any.whl"
 
     maintainers("LydDeb")
 
