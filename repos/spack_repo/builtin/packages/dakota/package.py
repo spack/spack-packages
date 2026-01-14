@@ -145,13 +145,13 @@ class Dakota(CMakePackage):
     )
 
     # enable modern compilers with older versions
-    patch('teuchos_cstdint.patch', when='@:6.21', working_dir='packages/external')
+    patch("teuchos_cstdint.patch", when="@:6.21", working_dir="packages/external")
 
-    patch('dakota_data_types_cstdint.patch', when='@:6.22')
+    patch("dakota_data_types_cstdint.patch", when="@:6.22")
 
-    patch('dakota_tolerance_cmath.patch', when='@6.19')
+    patch("dakota_tolerance_cmath.patch", when="@6.19")
 
-    patch('dakota_6.18_tolerance_cmath.patch', when='@:6.18')
+    patch("dakota_6.18_tolerance_cmath.patch", when="@:6.18")
 
     def flag_handler(self, name, flags):
         # from gcc@10, dakota@:6.12 need an extra flag
@@ -194,4 +194,3 @@ class Dakota(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", join_path(self.prefix, "share/dakota/Python"))
-
