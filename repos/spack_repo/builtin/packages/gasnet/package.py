@@ -188,6 +188,8 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@2023.9.0:",
     )
 
+    variant("pic", default=False, description="Produce position-independent code (for shared libs)")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("gmake", type="build")
@@ -256,6 +258,17 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
     def configure_args(self):
         spec = self.spec
         options = ["--disable-auto-conduit-detect", "--enable-rpath"]
+
+        flags = {"cflags": [], "cxxflags": [], "mpi-cflags": []}
+
+        if self.spec.satisfies("+pic"):
+             flags["cflags"].append(self.compiler.cc_pic_flag)
+             flags["mpi-cflags"].append(self.compiler.cc_pic_flag)
+             flags["cxxflags"].append(self.compiler.cxx_pic_flag)
+
+        for key, value in sorted(flags.items()):
+            if value:
+                options.append(f"--with-{key}={' '.join(value)}")
 
         # ============================================================
         # Boolean variants - use enable_or_disable helper
