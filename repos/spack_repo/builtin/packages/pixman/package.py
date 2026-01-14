@@ -52,6 +52,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("libpng")
 
     variant("shared", default=True, description="Build shared library")
+    variant("pic", default=False, description="Enable position-independent code")
 
     # As discussed here:
     # https://bugs.freedesktop.org/show_bug.cgi?id=104886
@@ -126,6 +127,14 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             #  https://gitlab.freedesktop.org/pixman/pixman/-/issues/69
             if self.spec.target.family == "aarch64":
                 args.append("--disable-arm-a64-neon")
+
+        args.extend(self.with_or_without("pic"))
+
+        png = self.spec["libpng"]
+        if png.satisfies("libs=static") and not png.satisfies("libs=shared"):
+            args.append(
+                "LIBS=%s" % which("libpng-config")("--static", "--ldflags", output=str).strip()
+            )
 
         # The Fujitsu compiler does not support assembler macros.
         if self.spec.satisfies("%fj"):
