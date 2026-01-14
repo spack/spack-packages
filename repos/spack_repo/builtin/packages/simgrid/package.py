@@ -102,9 +102,7 @@ class Simgrid(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         define = self.define
-        args = [
-            define("enable_python", spec.satisfies("+python"))
-        ]
+        args = [define("enable_python", spec.satisfies("+python"))]
 
         if not spec.satisfies("+doc"):
             args.append("-Denable_documentation=OFF")
