@@ -155,16 +155,23 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         "or as a project (with the compiler in use)",
     )
 
-    variant("offload", default=True, when="@19:", description="Build the Offload subproject")
-    conflicts("+offload", when="~clang")
-
     # The offload subproject requires lld:
     # https://github.com/llvm/llvm-project/commit/346792aafb483a53fb5e3274298d85bc2dde4a35
-    conflicts("~lld", when="+offload")
+    variant(
+        "offload",
+        default=True,
+        when="@19: +clang +lld",
+        description="Build the Offload subproject",
+    )
 
-    variant("libomptarget", default=True, description="Build the OpenMP offloading library")
-    conflicts("+libomptarget", when="~clang")
-    conflicts("+libomptarget", when="~offload @19:")
+    # See https://github.com/spack/spack/pull/32476#issuecomment-1573770361 for +lld
+    variant(
+        "libomptarget",
+        default=True,
+        when="+clang +lld",
+        description="Build the OpenMP offloading library",
+    )
+    requires("+offload", when="+libomptarget")
     for _p in ["darwin", "windows"]:
         conflicts("+libomptarget", when="platform={0}".format(_p))
     del _p
@@ -172,9 +179,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     variant(
         "libomptarget_debug",
         default=False,
+        when="+libomptarget",
         description="Allow debug output with the environment variable LIBOMPTARGET_DEBUG=1",
     )
-    conflicts("+libomptarget_debug", when="~libomptarget")
 
     variant(
         "compiler-rt",
@@ -258,7 +265,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         description="Enable code-signing on macOS",
     )
     variant("python", default=False, description="Install python bindings")
-    variant("lua", default=True, description="Enable lua scripting inside lldb")
+    variant("lua", default=True, when="@11:+lldb", description="Enable lua scripting inside lldb")
     variant("version_suffix", default="none", description="Add a symbol suffix")
     variant(
         "shlib_symbol_version",
@@ -266,11 +273,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         description="Add shared library symbol version",
         when="@13:",
     )
-    variant("z3", default=False, description="Use Z3 for the clang static analyzer")
-    conflicts("+z3", when="@:7")
-    conflicts("+z3", when="~clang")
-    conflicts("+lua", when="@:10")
-    conflicts("+lua", when="~lldb")
+    variant(
+        "z3", default=False, when="@8:+clang", description="Use Z3 for the clang static analyzer"
+    )
     # Python distutils were removed with 3.12 and are required to build LLVM <= 14
     conflicts("^python@3.12:", when="@:14")
 
@@ -424,8 +429,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         when="+libomptarget",
         msg="Non-host backends needed for offloading, set targets=all",
     )
-    # See https://github.com/spack/spack/pull/32476#issuecomment-1573770361
-    conflicts("~lld", when="+libomptarget")
 
     # cuda_arch value must be specified
     conflicts("cuda_arch=none", when="+cuda", msg="A value for cuda_arch must be specified.")
