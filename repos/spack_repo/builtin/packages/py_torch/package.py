@@ -179,7 +179,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-sympy@1.13.3:", when="@2.7:")
         depends_on("py-sympy@1.13.1", when="@2.5:2.6")
         depends_on("py-sympy", when="@2:")
-        depends_on("py-llvmlite@0.45", when="@2.7 +rocm")
+        depends_on("py-llvmlite@0.44", when="@2.7 +rocm")
         depends_on("py-networkx@2.5.1:", when="@2.9:")
         depends_on("py-networkx", when="@2:")
         depends_on("py-jinja2", when="@2:")
