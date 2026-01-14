@@ -61,6 +61,9 @@ class Pixman(AutotoolsPackage, MesonPackage):
     patch("clang.patch", when="@0.34%apple-clang@9.1.0:")
     patch("clang.patch", when="@0.34%clang@5.0.0:")
 
+    # https://github.com/spack/spack-packages/issues/3032
+    patch("libpng.patch", when="build_system=meson")
+
     @run_before("build")
     def patch_config_h_for_intel(self):
         config_h = join_path(self.stage.source_path, "config.h")
