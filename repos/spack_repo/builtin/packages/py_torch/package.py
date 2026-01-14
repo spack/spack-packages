@@ -180,7 +180,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-sympy@1.13.1", when="@2.5:2.6")
         depends_on("py-sympy", when="@2:")
         depends_on("py-networkx@2.5.1:", when="@2.9:")
-        depends_on("py-networkx", when="@2:")
+        depends_on("py-networkx ^py-pandas@:2.3.2", when="@2:")
         depends_on("py-jinja2", when="@2:")
         depends_on("py-fsspec@0.8.5:", when="@2.9:")
         depends_on("py-fsspec", when="@2.1:")
@@ -303,7 +303,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     with when("+rocm"):
         depends_on("hsa-rocr-dev")
         depends_on("hip@7.0:", when="@2.9")
-        depends_on("hip@6.4", when="@:2.7")
+        depends_on("hip@:6.4", when="@:2.7")
         depends_on("rccl", when="+nccl")
         depends_on("rocprim")
         depends_on("hipcub")
