@@ -22,7 +22,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
 
     license("Apache-2.0")
 
-    maintainers("rbberger")
+    maintainers("elliottslaughter", "rbberger")
 
     version("main", branch="main")
 
