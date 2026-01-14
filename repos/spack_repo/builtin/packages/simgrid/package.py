@@ -96,7 +96,7 @@ class Simgrid(CMakePackage):
     patch(
         "https://github.com/simgrid/simgrid/commit/e4ecb51dcdf597fb02340d7855dafd0da9bd9018.patch?full_index=1",
         sha256="80cbe0eed635ff1864f0c2945763c8561b86c08c0c2b60d2ee5a57e1659ccc3d",
-        when="@3.34"
+        when="@3.34",
     )
 
     def setup_dependent_package(self, module, dep_spec):
