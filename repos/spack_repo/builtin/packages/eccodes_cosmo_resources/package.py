@@ -15,7 +15,7 @@ class EccodesCosmoResources(Package):
     current repository."""
 
     homepage = "https://github.com/COSMO-ORG/eccodes-cosmo-resources.git"
-    url = "https://github.com/COSMO-ORG/eccodes-cosmo-resources.git"
+    url = "https://github.com/COSMO-ORG/eccodes-cosmo-resources/archive/refs/tags/v2.36.0.3.tar.gz"
     git = "https://github.com/COSMO-ORG/eccodes-cosmo-resources.git"
 
     maintainers("huppd", "lxavier", "victoria-cherkas")
