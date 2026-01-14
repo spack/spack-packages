@@ -74,7 +74,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     variant("bzip2", default=True, description="Enable BZip2 compression")
     variant("zfp", default=True, description="Enable ZFP compression")
     variant("png", default=True, description="Enable PNG compression")
-    variant("sz", default=True, description="Enable SZ compression")
+    variant("sz", default=True, description="Enable SZ2 compression")
+    variant("sz3", default=True, when="@2.12:", description="Enable SZ3 compression")
     variant("mgard", default=not IS_WINDOWS, when="@2.8:", description="Enable MGARD compression")
 
     # Rransport engines
@@ -192,6 +193,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libpng@1.6:", when="+png")
     depends_on("zfp@0.5.1:0.5", when="+zfp")
     depends_on("sz@2.0.2.0:", when="+sz")
+    depends_on("sz3", when="+sz3")
     depends_on("mgard@compat-2022-11-18:", when="+mgard")
     depends_on("mgard@compat-2023-01-10:", when="@2.9: +mgard")
 
@@ -253,7 +255,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/ornladios/ADIOS2/commit/0bdda7d4729b898397e024010b1e82cb72921501.patch?full_index=1",
         sha256="c7214845bc9e4262deb901f9d689236e014f5193018617675bea4bed80ca20aa",
-        when="@2.11:",
+        when="@2.11",
     )
 
     @when("%fj")
@@ -279,8 +281,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             from_variant("BUILD_SHARED_LIBS", "shared"),
             from_variant("ADIOS2_USE_AWSSDK", "aws"),
-            from_variant("ADIOS2_USE_Blosc", "blosc"),
             from_variant("ADIOS2_USE_Blosc2", "blosc2"),
+            from_variant("ADIOS2_USE_Blosc", "blosc"),
             from_variant("ADIOS2_USE_BZip2", "bzip2"),
             from_variant("ADIOS2_USE_Campaign", "campaign"),
             from_variant("ADIOS2_USE_DataMan", "dataman"),
@@ -293,6 +295,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_Python", "python"),
             from_variant("ADIOS2_USE_SSC", "ssc"),
             from_variant("ADIOS2_USE_SST", "sst"),
+            from_variant("ADIOS2_USE_SZ3", "sz3"),
             from_variant("ADIOS2_USE_SZ", "sz"),
             from_variant("ADIOS2_USE_ZFP", "zfp"),
             from_variant("ADIOS2_USE_Catalyst", "libcatalyst"),

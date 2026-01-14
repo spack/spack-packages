@@ -56,6 +56,10 @@ class Arkouda(MakefilePackage):
         description="Build Arkouda for multi-locale execution on a cluster or supercomputer",
     )
 
+    variant(
+        "slurm-gasnet_ibv", default=False, description="Configure Chapel for Slurm + GASNet (ibv)"
+    )
+
     depends_on(
         "chapel@2.0:2.4 +hdf5 +zmq",
         when="@2025.07.03:2025.08.20",
@@ -105,6 +109,18 @@ class Arkouda(MakefilePackage):
         "^chapel comm=ofi",
         policy="one_of",
         when="+distributed",
+    )
+
+    # Convenience integration: if the user selects Arkouda's slurm-gasnet_ibv,
+    # force Chapel into a compatible comm/launcher configuration.
+    requires(
+        "+distributed",
+        when="+slurm-gasnet_ibv",
+        msg="slurm-gasnet_ibv requires a distributed Arkouda build (+distributed)",
+    )
+    requires(
+        "^chapel comm=gasnet comm_substrate=ibv launcher=slurm-gasnetrun_ibv",
+        when="+slurm-gasnet_ibv",
     )
 
     # Some systems need explicit -fPIC flag when building the Arrow functions
