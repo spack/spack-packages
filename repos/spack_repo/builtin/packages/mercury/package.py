@@ -91,10 +91,12 @@ class Mercury(CMakePackage):
         spec = self.spec
         define = self.define
         define_from_variant = self.define_from_variant
+        build_tests = self.run_tests or self.spec.satisfies("@2.3.0:+perf")
         parallel_tests = "+mpi" in spec and self.run_tests
 
         cmake_args = [
             define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            define("BUILD_TESTING", build_tests),
             define("MERCURY_USE_BOOST_PP", True),
             define_from_variant("MERCURY_USE_CHECKSUMS", "checksum"),
             define("MERCURY_USE_SYSTEM_MCHECKSUM", False),
@@ -102,7 +104,6 @@ class Mercury(CMakePackage):
             define_from_variant("NA_USE_BMI", "bmi"),
             define_from_variant("NA_USE_MPI", "mpi"),
             define_from_variant("NA_USE_SM", "sm"),
-            define("BUILD_TESTING", self.run_tests),
         ]
 
         if "@2.3.0:" in spec:
