@@ -103,6 +103,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         description="Enable support for in situ visualization plugin using ParaView Catalyst",
     )
 
+    variant("xrootd", default=True, description="Enable the XRootD")
+
     # Optional language bindings, C++11 and C always provided
     variant("kokkos", default=False, when="@2.9:", description="Enable Kokkos support")
     variant("sycl", default=False, when="@2.10:", description="Enable SYCL support")
@@ -210,6 +212,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("aws-sdk-cpp", when="+aws")
     depends_on("libcatalyst@2", when="+libcatalyst")
 
+    depends_on("xrootd~davix", when="+xrootd")
+
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")
 
@@ -297,6 +301,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_SST", "sst"),
             from_variant("ADIOS2_USE_SZ3", "sz3"),
             from_variant("ADIOS2_USE_SZ", "sz"),
+            from_variant("ADIOS2_USE_XRootD", "xrootd"),
             from_variant("ADIOS2_USE_ZFP", "zfp"),
             from_variant("ADIOS2_USE_Catalyst", "libcatalyst"),
             from_variant("ADIOS2_USE_LIBPRESSIO", "libpressio"),
