@@ -50,9 +50,9 @@ class PyMumps4py(PythonPackage):
         for setting in config_settings:
             if isinstance(config_settings[setting], list):
                 for value in config_settings[setting]:
-                    args.append(f'--config-settings="{setting}={value}"')
+                    args.append(f"--config-settings={setting}={value}")
             else:
-                args.append(f'--config-settings="{setting}={config_settings[setting]}"')
+                args.append(f"--config-settings={setting}={config_settings[setting]}")
         for option in self.install_options(spec, prefix):
             args.append(f"--install-option={option}")
         for option in self.global_options(spec, prefix):
@@ -72,6 +72,14 @@ class PyMumps4py(PythonPackage):
     def setup_build_environment(self, env):
         # Required by mumps4py to specify which MUMPS solvers to use
         env.set("MUMPS_SOLVERS", "dmumps,cmumps,zmumps,smumps")
+        env.set("MUMPS_INC", join_path(self.spec["mumps"].prefix, "include"))
+        env.set("MUMPS_LIB", join_path(self.spec["mumps"].prefix, "lib"))
+
+    def setup_run_environment(self, env):
+        # Required by mumps4py to specify which MUMPS solvers to use
+        env.set("MUMPS_SOLVERS", "dmumps,cmumps,zmumps,smumps")
+        env.set("MUMPS_INC", join_path(self.spec["mumps"].prefix, "include"))
+        env.set("MUMPS_LIB", join_path(self.spec["mumps"].prefix, "lib"))
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
