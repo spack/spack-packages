@@ -30,7 +30,7 @@ class PyAccelerate(PythonPackage):
 
     depends_on("py-numpy@1.17:2", when="@:1.10.1", type=("build", "run"))
     depends_on("py-numpy@1.17:", when="@1.12:", type=("build", "run"))
-    
+
     depends_on("py-packaging@20:", type=("build", "run"))
     depends_on("py-psutil", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
