@@ -58,6 +58,7 @@ class NlohmannJson(CMakePackage):
     def patch(self):
         if self.spec.satisfies("@3.11.0:3.12.0"):
             # Ensure no TU-local entities for C++20 modules
+            # (https://github.com/nlohmann/json/pull/4764)
             for f in [
                 "include/nlohmann/detail/input/binary_reader.hpp",
                 "single_include/nlohmann/json.hpp",
