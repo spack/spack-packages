@@ -191,25 +191,27 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
     with when("+cuda"):
         depends_on("umpire+c+cuda", when="@3:")
+        requires("+umpire", when="@3:")
 
         conflicts("@:2.18")
         conflicts("cuda_arch=none")
         conflicts("precision=longdouble")
         conflicts("precision=mixed")
-        conflicts("+shared +umpire")
+        conflicts("+shared +umpire", when="@:2")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+rocm", msg="CUDA and ROCm are mutually exclusive")
         conflicts("+sycl", msg="CUDA and SYCL are mutually exclusive")
         conflicts("cxxstd=11", when="^cuda@13:")
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
-        # https://github.com/hypre-space/hypre/pull/1353
         conflicts("^cuda@13:", when="@:2")
         for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
             requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 
     with when("+rocm"):
         depends_on("umpire+c+rocm", when="@3:")
+        requires("+umpire", when="@3:")
+
         depends_on("rocsparse")
         depends_on("rocthrust")
         depends_on("rocrand")
