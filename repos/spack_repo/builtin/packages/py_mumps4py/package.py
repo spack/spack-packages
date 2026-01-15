@@ -44,7 +44,7 @@ class PyMumps4py(PythonPackage):
         pip = spec["python"].command
         pip.add_default_arg("-m", "pip")
 
-        args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
+        args = PythonPipBuilder.std_args(self) + [f"--prefix={prefix}"]
 
         config_settings = self.config_settings(spec, prefix)
         for setting in config_settings:
@@ -58,8 +58,8 @@ class PyMumps4py(PythonPackage):
         for option in self.global_options(spec, prefix):
             args.append(f"--global-option={option}")
 
-        if pkg.stage.archive_file and pkg.stage.archive_file.endswith(".whl"):
-            args.append(pkg.stage.archive_file)
+        if self.stage.archive_file and self.stage.archive_file.endswith(".whl"):
+            args.append(self.stage.archive_file)
         else:
             args.append(".")
 
@@ -86,7 +86,7 @@ class PyMumps4py(PythonPackage):
                         "MumpsSolver(verbose=False,system='complex64')",
                         "MumpsSolver(verbose=False, system='complex128')",
                         "MumpsSolver(verbose=False, system='double')",
-                        " MumpsSolver(verbose=False, system='single')",
+                        "MumpsSolver(verbose=False, system='single')",
                     ]
                 ),
             )
