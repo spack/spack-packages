@@ -32,3 +32,6 @@ class PyAccelerate(PythonPackage):
     depends_on("py-torch@1.4:", type=("build", "run"))
     depends_on("py-torch@1.10:", when="@0.21:", type=("build", "run"))
     depends_on("py-torch@2:", when="@1.10.1:", type=("build", "run"))
+
+    depends_on("py-huggingface-hub@0.21:", when="@1.10.1:", type=("build", "run"))
+    depends_on("py-safetensors@0.4.3:", when="@1.10.1:", type=("build", "run"))
