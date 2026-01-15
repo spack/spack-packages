@@ -79,7 +79,9 @@ class Warpx(CMakePackage, PythonExtension):
         description="Floating point precision (single/double)",
     )
     variant("fft", default=True, description="Enable support for FFT-based solvers")
-    variant("petsc", default=False, description="Enable PETSc linear/nonlinear solvers", when="@26.01:")
+    variant(
+        "petsc", default=False, description="Enable PETSc linear/nonlinear solvers", when="@26.01:"
+    )
     variant("python", default=False, description="Enable Python bindings")
     variant("qed", default=True, description="Enable QED support")
     variant("simd", default=True, description="Enable SIMD support", when="@25.09:")
