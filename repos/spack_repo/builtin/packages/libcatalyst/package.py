@@ -25,30 +25,39 @@ class Libcatalyst(CMakePackage):
     version("2.0.0", sha256="5842b690bd8afa635414da9b9c5e5d79fa37879b0d382428d0d8e26ba5374828")
 
     variant("mpi", default=False, description="Enable MPI support")
-    variant("conduit", default=False, description="Use external Conduit for Catalyst")
     variant("fortran", default=False, description="Enable Fortran wrapping")
     variant("python", default=False, description="Enable Python wrapping")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
+
+    depends_on("cmake@3.26:", type="build")
     depends_on("pkgconfig", type="build")
 
     depends_on("mpi", when="+mpi")
-    depends_on("conduit", when="+conduit")
-    depends_on("cmake@3.26:", type="build")
-    depends_on("python@3:", when="+python")
-    depends_on("py-numpy", when="+python", type=("build", "link", "run"))
+    depends_on("conduit")
+
+    depends_on("conduit+fortran", when="+fortran")
+
+    with when("+python"):
+        extends("python")
+        depends_on("py-numpy", type=("build", "link", "run"))
+        depends_on("conduit+python", type=("build", "link", "run"))
 
     def cmake_args(self):
         """Populate cmake arguments for libcatalyst."""
         args = [
-            "-DCATALYST_BUILD_TESTING=OFF",
+            self.define("CATALYST_BUILD_TESTING", False),
+            self.define("CATALYST_WITH_EXTERNAL_CONDUIT", True),
             self.define_from_variant("CATALYST_USE_MPI", "mpi"),
-            self.define_from_variant("CATALYST_WITH_EXTERNAL_CONDUIT", "conduit"),
             self.define_from_variant("CATALYST_WRAP_FORTRAN", "fortran"),
             self.define_from_variant("CATALYST_WRAP_PYTHON", "python"),
         ]
+
+        # workaround for hard-coded arch dependent install folder for python module
+        if self.spec.satisfies("+python"):
+            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
 
         return args
 

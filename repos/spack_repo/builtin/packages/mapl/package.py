@@ -39,6 +39,11 @@ class Mapl(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    # Remember if there is a new ESMA_cmake, to update the resources too
+    version("2.64.1", sha256="205eac5600c223aa59e359f5b75a462a03302d58e7294f98fb87f29d544ef5a8")
+    version("2.64.0", sha256="dab66884ca459c56b8bc2199fe334fd5ada131c4f66f48b2ee44965d3dbf90f3")
+    version("2.63.1", sha256="c91cf72bc4bf48a52f12a2356ace0ba59463cbe36060ecacbac9193d99233306")
+    version("2.63.0", sha256="5a170980e114d94cc1249d328b166e2048bfc1081a52323d81e2294fb2f08742")
     version("2.62.1", sha256="6fa0d5eb3d9ea620ca6ed8ad6561b0ea445517c69ad21451137d0bb65c7dbede")
     version("2.62.0", sha256="5973a8cac75c55fcc0f4c5256f7d485ab99d2a52ff42d4359ce8d0f3f94d9133")
     version("2.61.0", sha256="bb768fd60214d5b6fe6120e08a5ebd869f576392a3252a4715fd7c32d0dea97a")
@@ -145,9 +150,17 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v3.68.0",
+        commit="ac3533a11ea5a75afdbaf8b2bb2f69e51bd99edc",
+        when="@2.63:",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.65.0",
         commit="a1e28e6ec25bbbc7397549be73e19fd32cdc2323",
-        when="@2.62:",
+        when="@2.62",
         placement="ESMA_cmake",
     )
     resource(
@@ -319,7 +332,8 @@ class Mapl(CMakePackage):
     depends_on("udunits", when="@2.48:")
 
     # gFTL dependency
-    depends_on("gftl@1.15.2:", when="@2.55:")
+    depends_on("gftl@1.16.0:", when="@2.63:")
+    depends_on("gftl@1.15.2:", when="@2.55:2.62")
     depends_on("gftl@1.14.0:", when="@2.48:2.54")
     depends_on("gftl@1.13.0:", when="@2.45:2.47")
     depends_on("gftl@1.11.0:", when="@2.44")
@@ -327,7 +341,8 @@ class Mapl(CMakePackage):
     depends_on("gftl@1.5.5:1.9", when="@:2.39")
 
     # gFTL-Shared dependency
-    depends_on("gftl-shared@1.10.0:", when="@2.55:")
+    depends_on("gftl-shared@1.11.0:", when="@2.63:")
+    depends_on("gftl-shared@1.10.0:", when="@2.55:2.62")
     depends_on("gftl-shared@1.9.0:", when="@2.48:2.54")
     depends_on("gftl-shared@1.8.0:", when="@2.45:2.47")
     depends_on("gftl-shared@1.7.0:", when="@2.44")
@@ -342,7 +357,8 @@ class Mapl(CMakePackage):
     depends_on("yafyaml@1.0-beta5", when="@:2.22+extdata2g")
 
     # pflogger dependency
-    depends_on("pflogger@1.16.1: +mpi", when="@2.55:+pflogger")
+    depends_on("pflogger@1.17.0: +mpi", when="@2.63:+pflogger")
+    depends_on("pflogger@1.16.1: +mpi", when="@2.55:2.62+pflogger")
     depends_on("pflogger@1.15.0: +mpi", when="@2.48:2.54+pflogger")
     depends_on("pflogger@1.14.0: +mpi", when="@2.45:2.47+pflogger")
     depends_on("pflogger@1.11.0: +mpi", when="@2.44+pflogger")
@@ -351,7 +367,8 @@ class Mapl(CMakePackage):
     depends_on("pflogger@:1.6 +mpi", when="@:2.22+pflogger")
 
     # fargparse dependency
-    depends_on("fargparse@1.9.0:", when="@2.55:+fargparse")
+    depends_on("fargparse@1.10.0:", when="@2.63:+fargparse")
+    depends_on("fargparse@1.9.0:", when="@2.55:2.62+fargparse")
     depends_on("fargparse@1.8.0:", when="@2.48:2.54+fargparse")
     depends_on("fargparse@1.7.0:", when="@2.45:2.47+fargparse")
     depends_on("fargparse@1.6.0:", when="@2.44+fargparse")
@@ -359,7 +376,8 @@ class Mapl(CMakePackage):
     depends_on("fargparse@1.4.1:1.4", when="@:2.39+fargparse")
 
     # pfunit dependency
-    depends_on("pfunit@4.11.1: +mpi +fhamcrest", when="@2.55:+pfunit")
+    depends_on("pfunit@4.13.0: +mpi +fhamcrest", when="@2.63:+pfunit")
+    depends_on("pfunit@4.11.1: +mpi +fhamcrest", when="@2.55:2.62+pfunit")
     depends_on("pfunit@4.10: +mpi +fhamcrest", when="@2.48:2.54+pfunit")
     depends_on("pfunit@4.9: +mpi +fhamcrest", when="@2.45:2.47+pfunit")
     depends_on("pfunit@4.8: +mpi +fhamcrest", when="@2.44+pfunit")

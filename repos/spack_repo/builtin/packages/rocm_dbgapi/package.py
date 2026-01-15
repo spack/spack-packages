@@ -25,6 +25,8 @@ class RocmDbgapi(CMakePackage):
 
     license("MIT")
 
+    version("7.1.1", sha256="4c31da40e6da3c81fea8a8b0757daae3d6e95dc86ba32ff55484e7044aaa094f")
+    version("7.1.0", sha256="334a5bc39f5d1b3e7fe415206f499985156a0f76556b2f91789f528ccbc3e9a2")
     version("7.0.2", sha256="01e154aa8b954beecb420674bc372d6ffe5b252ea393494383a0aad1c928675d")
     version("7.0.0", sha256="f8df0b52e1cd959d2343bbc1eceb18c75d6522e37c125bbf27f89650e55573ff")
     version("6.4.3", sha256="3f0df9d1f350cd6d88ddd41c2e574e4f385c109fcc1524b1de3bd69fce05f5b6")
@@ -80,6 +82,8 @@ class RocmDbgapi(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", type="build", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type=("build", "link"), when=f"@{ver}")

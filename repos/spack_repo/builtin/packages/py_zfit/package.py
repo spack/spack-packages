@@ -47,10 +47,10 @@ class PyZfit(PythonPackage):
     version("0.14.1", sha256="66d1e349403f1d6c6350138d0f2b422046bcbdfb34fd95453dadae29a8b0c98a")
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("python@:3.11", type=("build", "run"), when="@:0.18")
-    depends_on("python@:3.12", type=("build", "run"), when="@0.20:0.26")
     depends_on("python@3.10:", type=("build", "run"), when="@0.27:")
-    depends_on("python@:3.13", type=("build", "run"), when="@0.27:")
+    depends_on("python@:3.11", type=("build", "run"), when="@:0.18")
+    depends_on("python@:3.12", type=("build", "run"), when="@0.20:0.27")
+    depends_on("python@:3.13", type=("build", "run"), when="@0.28:")
 
     depends_on("py-hatch-vcs", type="build", when="@0.26:")
 

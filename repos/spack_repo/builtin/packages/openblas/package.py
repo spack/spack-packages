@@ -287,6 +287,17 @@ class Openblas(CMakePackage, MakefilePackage):
         when="@0.3.27 %oneapi",
     )
 
+    # Fix arm64 HAVE_SME setting for DYNAMIC_ARCH builds using CMake
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/cdebb4fd4b2bbbf856e5abdcedbe9a5cf348ef8e.patch?full_index=1",
+        sha256="0df81a8f5c1460d3db461e2309e5ac0b70c7745a97a10e617f109b4a5811e043",
+        when="@0.3.30 +dynamic_dispatch target=aarch64:",
+    )
+
+    # ilp64 and symbol suffixes are not supported with CMake build system
+    requires("~ilp64", when="build_system=cmake")
+    requires("symbol_suffix=none", when="build_system=cmake")
+
     # Requires support for -mtune=generic
     conflicts("%fortran=clang %llvm@18")
 
@@ -591,6 +602,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # Avoid that NUM_THREADS gets initialized with the host's number of CPUs.
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
             make_defs.append("NUM_THREADS=512")
+
+        # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
+        # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
+        if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
+            make_defs.append("NO_SVE=1")
 
         return make_defs
 

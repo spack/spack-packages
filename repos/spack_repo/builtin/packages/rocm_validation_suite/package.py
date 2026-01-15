@@ -25,6 +25,8 @@ class RocmValidationSuite(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("7.1.1", sha256="eecce5e1597f2da152feffe6ac6aec9234a686f10591c58995e1120d601f3128")
+    version("7.1.0", sha256="ef2ef3a6468e9dc47061afa91d862870c08cbdb7a6c883880d11eb168427bba9")
     version("7.0.2", sha256="c4f2e8732e9f8fcabc925f97a5617fc89f6ae4d872987c34d407ac60c9883efc")
     version("7.0.0", sha256="093951bfe198a47871137329341ca3d0fdb175183fc1121eb80cbac9da542317")
     version("6.4.3", sha256="2ed24ee2a4bd581515fbdea1c182f377b84be15d8a75ad448bafdc3380fe3624")
@@ -64,7 +66,7 @@ class RocmValidationSuite(CMakePackage):
     )
     patch("010-add-drm-include-path.patch", when="@6.4")
     # https://github.com/ROCm/ROCmValidationSuite/pull/998
-    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0")
+    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0:")
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
     depends_on("yaml-cpp~shared")
@@ -134,6 +136,8 @@ class RocmValidationSuite(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
@@ -153,6 +157,8 @@ class RocmValidationSuite(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
@@ -168,10 +174,12 @@ class RocmValidationSuite(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
 
@@ -214,5 +222,11 @@ class RocmValidationSuite(CMakePackage):
         if self.spec.satisfies("@6.3.0:"):
             args.append(self.define("CMAKE_INSTALL_RPATH", self.spec.prefix.lib))
             args.append(self.define("CPACK_PACKAGING_INSTALL_PREFIX", self.spec.prefix))
+
+        if self.spec.satisfies("@7.1:"):
+            # hipblaslt config file no longer sets this
+            args.append(
+                self.define("hipblaslt_INCLUDE_DIR", self.spec["hipblaslt"].prefix.include)
+            )
 
         return args
