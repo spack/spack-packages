@@ -77,6 +77,11 @@ class Edm4hep(CMakePackage):
     extends("python", when="@0.10.6:")
 
     conflicts("%clang@:16", when="@0.99.1:", msg="Incomplete consteval support in clang")
+    conflicts(
+        "^python +freethreading",
+        when="@:0.99.4",
+        msg="python free-threading requires edm4hep@0.99.5:",
+    )
 
     # Fix missing nljson import
     # NOTE that downstream packages (dd4hep) may fail for 0.99 and before

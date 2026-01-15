@@ -75,6 +75,9 @@ spack:
       - "+examples"
       - "~qt ^[virtuals=gl] osmesa" # Headless
       - "target=x86_64_v3 %gcc"
+    boost:
+      require:
+      - cxxstd=17
 
   specs:
   # CPU
@@ -112,7 +115,7 @@ spack:
   - fortrilinos
   - fpm
   - gasnet
-  - geopm-runtime
+  - libgeopm
   - ginkgo
   - globalarrays
   - glvis

@@ -54,8 +54,6 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
     variant("debug", default=False, description="Enable debug info and error messages at run-time")
 
-    variant("cuda", default=False, description="Enable CUDA extension")
-
     variant("regcache", default=True, description="Enable memory registration cache")
 
     # Accepted values are:
@@ -145,7 +143,6 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("libpciaccess", when=(sys.platform != "darwin"))
     depends_on("libxml2")
-    depends_on("cuda", when="+cuda")
     depends_on("psm", when="fabrics=psm")
     depends_on("opa-psm2", when="fabrics=psm2")
     depends_on("rdma-core", when="fabrics=mrail")
@@ -208,11 +205,6 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
                 variants += "+debug"
             else:
                 variants += "~debug"
-
-            if re.search("--enable-cuda", output):
-                variants += "+cuda"
-            else:
-                variants += "~cuda"
 
             if re.search("--enable-registration-cache", output):
                 variants += "+regcache"
@@ -393,6 +385,7 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
             "--disable-silent-rules",
             "--disable-new-dtags",
             "--enable-fortran=all",
+            "--disable-cuda",
             "--enable-threads={0}".format(spec.variants["threads"].value),
             "--with-ch3-rank-bits={0}".format(spec.variants["ch3_rank_bits"].value),
             "--enable-wrapper-rpath={0}".format("no" if "~wrapperrpath" in spec else "yes"),
@@ -413,11 +406,6 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
             )
         else:
             args.append("--enable-fast=all")
-
-        if "+cuda" in self.spec:
-            args.extend(["--enable-cuda", "--with-cuda={0}".format(spec["cuda"].prefix)])
-        else:
-            args.append("--disable-cuda")
         if "~hwloc_graphics" in self.spec:
             args.append("--disable-opencl")
             args.append("--disable-gl")
