@@ -79,10 +79,10 @@ class Warpx(CMakePackage, PythonExtension):
         description="Floating point precision (single/double)",
     )
     variant("fft", default=True, description="Enable support for FFT-based solvers")
-    variant("petsc", default=False, description="Enable PETSc linear/nonlinear solvers")
+    variant("petsc", default=False, description="Enable PETSc linear/nonlinear solvers", when="@26.01:")
     variant("python", default=False, description="Enable Python bindings")
     variant("qed", default=True, description="Enable QED support")
-    variant("simd", default=False, description="Enable SIMD support")
+    variant("simd", default=True, description="Enable SIMD support", when="@25.09:")
     variant("qedtablegen", default=False, description="QED table generation support")
     variant("shared", default=True, description="Build a shared version of the library")
     variant("tprof", default=True, description="Enable tiny profiling features")
@@ -117,7 +117,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("petsc")
         depends_on("amrex +petsc")
     with when("+simd"):
-        depends_on("vir-simd")
+        depends_on("vir-simd", type="build")
         depends_on("amrex +simd")
     depends_on("mpi", when="+mpi")
     with when("+mpi"):
