@@ -53,8 +53,12 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     # other version.
     version("develop", branch="master")
 
-    # TODO: update source after the release
-    version("4.9.0", branch="mfem-4.9-dev")
+    version(
+        "4.9.0",
+        sha256="6904974c8d5a6bcd127419c7b7adff873170d397ed2f0bccdf438e940e713af2",
+        url="https://bit.ly/mfem-4-9",
+        extension="tar.gz",
+    )
 
     version(
         "4.8.0",
@@ -327,14 +331,14 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("blas", when="+lapack")
     depends_on("lapack@3.0:", when="+lapack")
 
-    depends_on("sundials@2.7.0:", when="@3.3.2:+sundials~mpi")
-    depends_on("sundials@2.7.0:+mpi+hypre", when="@3.3.2:+sundials+mpi")
+    depends_on("sundials@2.7.0:", when="@3.3.2:4.0+sundials~mpi")
+    depends_on("sundials@2.7.0:+mpi+hypre", when="@3.3.2:4.0+sundials+mpi")
     depends_on("sundials@5.0.0:5", when="@4.1.0:4.4+sundials~mpi")
     depends_on("sundials@5.0.0:5+mpi+hypre", when="@4.1.0:4.4+sundials+mpi")
     depends_on("sundials@5.0.0:6.7.0", when="@4.5.0:4.6+sundials~mpi")
     depends_on("sundials@5.0.0:6.7.0+mpi+hypre", when="@4.5.0:4.6+sundials+mpi")
     depends_on("sundials@5.0.0:", when="@4.7.0:+sundials~mpi")
-    depends_on("sundials@5.0.0:+mpi+hypre", when="@4.7.0:+sundials+mpi")
+    depends_on("sundials@5.0.0:+mpi", when="@4.7.0:+sundials+mpi")
     conflicts("cxxstd=11", when="^sundials@6.4.0:")
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on(
@@ -548,6 +552,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     patch("mfem-4.7.patch", when="@4.7.0")
     patch("mfem-4.7-sundials-7.patch", when="@4.7.0+sundials ^sundials@7:")
     patch("mfem-4.8-nvcc-c++17.patch", when="@4.8.0+cuda")
+    patch("mfem-4.9.patch", when="@4.9.0")
 
     phases = ["configure", "build", "install"]
 
@@ -757,9 +762,12 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         if "+mpi" in spec:
             options += ["MPICXX=%s" % spec["mpi"].mpicxx]
             hypre = spec["hypre"]
+            all_hypre_headers = hypre.headers
             all_hypre_libs = hypre.libs
             if "+lapack" in hypre:
                 all_hypre_libs += hypre["lapack"].libs + hypre["blas"].libs
+            if "+umpire" in hypre:
+                all_hypre_headers += hypre["umpire"].headers
 
             hypre_gpu_libs = ""
             if "+cuda" in hypre:
@@ -777,7 +785,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                         hypre_rocm_libs += hypre["rocblas"].libs
                 hypre_gpu_libs = " " + ld_flags_from_library_list(hypre_rocm_libs)
             options += [
-                "HYPRE_OPT=-I%s" % hypre.prefix.include,
+                "HYPRE_OPT=%s" % all_hypre_headers.cpp_flags,
                 "HYPRE_LIB=%s%s" % (ld_flags_from_library_list(all_hypre_libs), hypre_gpu_libs),
             ]
 

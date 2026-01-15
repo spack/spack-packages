@@ -67,7 +67,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     version("5.7.0", sha256="4abdf00b297a77c5886cedb37e63acda2ba11cb9f4c0a64e133b05800aadfcf0")
 
     provides("c", "cxx")
-    provides("fortran", when="@7.0:")
+    provides("fortran", when="@6:")
 
     variant(
         "rocm-device-libs",
