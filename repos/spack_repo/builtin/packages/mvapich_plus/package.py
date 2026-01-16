@@ -12,6 +12,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
+
 class MvapichPlus(Package, CudaPackage, ROCmPackage):
     """Mvapich is a High-Performance MPI Library for clusters with diverse
     networks (InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE) and computing
@@ -99,11 +100,11 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    requires("%fortran=gcc", when=f"%c=gcc")
-    requires("%fortran=clang", when=f"%c=clang")
-    requires("%fortran=intel-oneapi-compilers", when=f"%c=intel-oneapi-compilers")
-    requires("%fortran=nvhpc", when=f"%c=nvhpc")
-   
+    requires("%fortran=gcc", when="%c=gcc")
+    requires("%fortran=clang", when="%c=clang")
+    requires("%fortran=intel-oneapi-compilers", when="%c=intel-oneapi-compilers")
+    requires("%fortran=nvhpc", when="%c=nvhpc")
+
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
 
     @classmethod
