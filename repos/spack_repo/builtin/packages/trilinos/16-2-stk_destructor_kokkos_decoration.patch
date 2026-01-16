@@ -24,3 +24,16 @@ index fcd9fe03bcc..9112cbe06c4 100644
  
    FieldDataBytes(const FieldDataBytes& fieldData) = default;
    FieldDataBytes(FieldDataBytes&&) = default;
+diff --git a/packages/stk/stk_mesh/stk_mesh/base/HostMesh.hpp b/packages/stk/stk_mesh/stk_mesh/base/HostMesh.hpp
+index 901e3e1e9cc..eba2caceebe 100644
+--- a/packages/stk/stk_mesh/stk_mesh/base/HostMesh.hpp
++++ b/packages/stk/stk_mesh/stk_mesh/base/HostMesh.hpp
+@@ -88,7 +88,7 @@ public:
+     require_ngp_mesh_rank_limit(bulk->mesh_meta_data());
+   }
+ 
+-  virtual ~HostMeshT() override = default;
++  KOKKOS_FUNCTION virtual ~HostMeshT() override {}
+ 
+   HostMeshT(const HostMeshT &) = default;
+   HostMeshT(HostMeshT &&) = default;
