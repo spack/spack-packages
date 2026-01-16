@@ -12,7 +12,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
-
 class MvapichPlus(Package, CudaPackage, ROCmPackage):
     """Mvapich is a High-Performance MPI Library for clusters with diverse
     networks (InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE) and computing
@@ -100,7 +99,11 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-
+    requires("%fortran=gcc", when=f"%c=gcc")
+    requires("%fortran=clang", when=f"%c=clang")
+    requires("%fortran=intel-oneapi-compilers", when=f"%c=intel-oneapi-compilers")
+    requires("%fortran=nvhpc", when=f"%c=nvhpc")
+   
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
 
     @classmethod
@@ -124,7 +127,7 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
         return find_libraries(libraries, root=self.prefix, shared=True, recursive=True)
 
     def install(self, spec, prefix):
-        runfile = glob(join_path(self.stage.source_path, "*"))[0]
+        runfile = glob(join_path(self.stage.source_path, "mvapich-plus-installer.sh"))[0]
         mvp_ver = str(spec.version)
         gpu = "nogpu"
         gpu_ver = ""
@@ -139,23 +142,18 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
                 apu = ".mi300a"
 
         netmod = "ucx" if spec.satisfies("netmod=ucx") else "ofi"
-        comp = str(spec.compiler)
-        comp = f"{comp[:comp.find('@')]}{comp[comp.find('@')+1:comp.find('/')]}"
-        el = "el8"
-        os = "rhel8"
-        if str(spec.os) == "rocky9" or str(spec.os) == "rhel9":
-
-            el = "el9"
-            os = "rhel9"
+        comp = spec["c"].format("{name}{version}")
+        el = "el9" if spec["glibc"].satisfies("@2.34:") else "el8"
+        rhel = "rh" + el
         ofed = "24.10"
         slurm = ""
         if spec.satisfies("process_managers=slurm"):
             slurm = ".slurm"
-        rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{os}.ofed{ofed}.{netmod}.{comp}\
+        rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{rhel}.ofed{ofed}.{netmod}.{comp}\
 {slurm}{apu}-4.1-1.{el}.x86_64.rpm"
 
         install_shell = which("bash")
-        io = f"{self.spec['rpm'].prefix}/bin/rpm2cpio"
+        io = which("rpm2cpio").path
         arguments = [
             runfile,  # the install script
             "--prefix=%s" % prefix,  # Where to install
