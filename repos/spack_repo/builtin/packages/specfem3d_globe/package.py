@@ -52,7 +52,7 @@ class Specfem3dGlobe(AutotoolsPackage, CudaPackage):
         spec = self.spec
 
         if "+cuda" in spec:
-            args.append("--with-cuda")
+            args.append("--with-cuda=cuda{0}".format(spec["cuda"].version[0]))
             args.append("CUDA_LIB={0}".format(spec["cuda"].libs.directories[0]))
             args.append("CUDA_INC={0}".format(spec["cuda"].prefix.include))
             args.append("MPI_INC={0}".format(spec["mpi"].prefix.include))
