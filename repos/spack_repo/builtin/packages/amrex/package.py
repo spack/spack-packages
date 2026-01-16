@@ -159,7 +159,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=False, description="Enable HDF5-based I/O")
     variant("hypre", default=False, description="Enable Hypre interfaces")
     variant("petsc", default=False, description="Enable PETSc interfaces")
-    variant("simd", default=True, description="Enable SIMD support", when="@25.09:")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("sundials", default=False, description="Enable SUNDIALS interfaces", when="@21:")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")

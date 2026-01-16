@@ -84,7 +84,7 @@ class Warpx(CMakePackage, PythonExtension):
     )
     variant("python", default=False, description="Enable Python bindings")
     variant("qed", default=True, description="Enable QED support")
-    variant("simd", default=True, description="Enable SIMD support", when="@25.09:")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("qedtablegen", default=False, description="QED table generation support")
     variant("shared", default=True, description="Build a shared version of the library")
     variant("tprof", default=True, description="Enable tiny profiling features")

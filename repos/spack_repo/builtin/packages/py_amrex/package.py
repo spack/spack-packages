@@ -50,7 +50,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
         description="Real precision (double/single)",
         values=("single", "double"),
     )
-    variant("simd", default=True, description="Enable SIMD support", when="@25.09:")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("sycl", default=False, description="Enable SYCL backend")
     variant("tiny_profile", default=False, description="Enable tiny profiling")
 
