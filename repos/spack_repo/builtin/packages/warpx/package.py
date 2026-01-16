@@ -121,6 +121,7 @@ class Warpx(CMakePackage, PythonExtension):
     with when("+simd"):
         depends_on("vir-simd", type="build")
         depends_on("amrex +simd")
+        depends_on("py-amrex +simd", when="+python")
     depends_on("mpi", when="+mpi")
     with when("+mpi"):
         depends_on("amrex +mpi")
