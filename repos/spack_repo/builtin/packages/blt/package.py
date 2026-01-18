@@ -24,22 +24,6 @@ def spec_uses_gccname(spec):
 
 
 def llnl_link_helpers(options, spec, compiler):
-    # From local package:
-    if "fortran" in spec:
-        fortran_compilers = ["gfortran", "xlf"]
-        if any(f_comp in compiler.fc for f_comp in fortran_compilers) and (
-            "clang" in compiler.cxx
-        ):
-            # Pass fortran compiler lib as rpath to find missing libstdc++
-            libdir = os.path.join(os.path.dirname(os.path.dirname(compiler.fc)), "lib")
-            flags = ""
-            for _libpath in [libdir, libdir + "64"]:
-                if os.path.exists(_libpath):
-                    flags += " -Wl,-rpath,{0}".format(_libpath)
-            description = "Adds a missing libstdc++ rpath"
-            if flags:
-                options.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags, description))
-
     if "cxx" in spec and spec["cxx"].name == "cce":
         description = "Adds a missing rpath for libraries associated with the fortran compiler"
         # Here is where to find libs that work for fortran
@@ -75,6 +59,7 @@ class Blt(Package):
     #  if you export targets this could cause problems in downstream
     #  projects if not handled properly. More info here:
     #  https://llnl-blt.readthedocs.io/en/develop/tutorial/exporting_targets.html
+    version("0.7.1", sha256="136765087b78da96dff77dfd6eb9a1238dbfb67da9c7474bc8fb8532fc8ee015")
     version("0.7.0", sha256="df8720a9cba1199d21f1d32649cebb9dddf95aa61bc3ac23f6c8a3c6b6083528")
     version("0.6.2", sha256="84b663162957c1fe0e896ac8e94cbf2b6def4a152ccfa12a293db14fb25191c8")
     version("0.6.1", sha256="205540b704b8da5a967475be9e8f2d1a5e77009b950e7fbf01c0edabc4315906")

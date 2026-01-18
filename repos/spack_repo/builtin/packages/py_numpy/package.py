@@ -23,6 +23,11 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.4.1", sha256="a1ceafc5042451a858231588a104093474c6a5c57dcc724841f5c888d237d690")
+    version("2.4.0", sha256="6e504f7b16118198f138ef31ba24d985b124c2c469fe8467007cf30fd992f934")
+    version("2.3.5", sha256="784db1dcdab56bf0517743e746dfb0f885fc68d948aba86eeec2cba234bdf1c0")
+    version("2.3.4", sha256="a7d018bfedb375a8d979ac758b120ba846a7fe764911a64465fd87b8729f4a6a")
+    version("2.3.3", sha256="ddc7c39727ba62b80dfdbedf400d1c10ddfa8eefbd7ec8dcb118be8b56d31029")
     version("2.3.2", sha256="e0486a11ec30cdecb53f184d496d1c6a20786c81e55e41640270130056f8ee48")
     version("2.3.1", sha256="1ec9ae20a4226da374362cca3c62cd753faf2f951440b0e3b98e93c235441d2b")
     version("2.3.0", sha256="581f87f9e9e9db2cba2141400e160e9dd644ee248788d6f90636eeb8fd9260a6")
@@ -99,13 +104,14 @@ class PyNumpy(PythonPackage):
         depends_on("py-pip@23.1:", when="@1.26:")
 
         # Build dependencies (do not include upper bound unless known issues)
+        depends_on("py-meson-python@0.18:", when="@2.4:")
+        depends_on("py-meson-python@0.15:", when="@1.26.4:")
         depends_on("py-cython@3.0.6:", when="@2:")
         depends_on("py-cython@0.29.34:", when="@1.26:")
         depends_on("py-cython@0.29.34:2", when="@1.25")
         depends_on("py-cython@0.29.30:2", when="@1.22.4:1.24")
         depends_on("py-cython@0.29.24:2", when="@1.21.2:1.22.3")
         depends_on("py-cython@0.29.21:2", when="@1.19.1:1.21.1")
-        depends_on("py-meson-python@0.15:", when="@1.26.4:")
 
     depends_on("blas")
     depends_on("lapack")
@@ -174,6 +180,16 @@ class PyNumpy(PythonPackage):
             "https://github.com/numpy/numpy/commit/953cc2dfc0f0e063a01778d1392c931d9031c469.patch?full_index=1",
             sha256="fe42a018a69cfafb7c4efc183a7c73835a298e45a8f9a585cb411170871ff596",
             when="@1.26:1.26.3",
+        )
+
+    # https://github.com/spack/spack-packages/issues/1477
+    @when("@1.26 ^intel-oneapi-compilers@2025.2")
+    def patch(self):
+        filter_file(
+            ".get(compiler_id, ['-O3'])",
+            ".get(compiler_id, ['-O1'])",
+            "./numpy/core/meson.build",
+            string=True,
         )
 
     # meson.build

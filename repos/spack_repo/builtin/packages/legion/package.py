@@ -40,67 +40,11 @@ class Legion(CMakePackage, ROCmPackage):
     version("23.12.0", tag="legion-23.12.0", commit="8fea67ee694a5d9fb27232a7976af189d6c98456")
     version("23.09.0", tag="legion-23.09.0", commit="7304dfcf9b69005dd3e65e9ef7d5bd49122f9b49")
     version("23.06.0", tag="legion-23.06.0", commit="7b5ff2fb9974511c28aec8d97b942f26105b5f6d")
-    version(
-        "23.03.0",
-        tag="legion-23.03.0",
-        commit="12f6051c9d75229d00ac0b31d6be1ff2014f7e6a",
-        deprecated=True,
-    )
-    version(
-        "22.12.0",
-        tag="legion-22.12.0",
-        commit="9ed6f4d6b579c4f17e0298462e89548a4f0ed6e5",
-        deprecated=True,
-    )
-    version(
-        "22.09.0",
-        tag="legion-22.09.0",
-        commit="5b6e013ad74fa6b4c5a24cbb329c676b924550a9",
-        deprecated=True,
-    )
-    version(
-        "22.06.0",
-        tag="legion-22.06.0",
-        commit="f721be968fb969339334b07a3175a0400700eced",
-        deprecated=True,
-    )
-    version(
-        "22.03.0",
-        tag="legion-22.03.0",
-        commit="bf6ce4560c99397da4a5cf61a306b521ec7069d0",
-        deprecated=True,
-    )
-    version(
-        "21.12.0",
-        tag="legion-21.12.0",
-        commit="e1443112edaa574804b3b9d2a24803e937b127fd",
-        deprecated=True,
-    )
-    version(
-        "21.09.0",
-        tag="legion-21.09.0",
-        commit="5a991b714cf55c3eaa513c7a18abb436d86a0a90",
-        deprecated=True,
-    )
-    version(
-        "21.06.0",
-        tag="legion-21.06.0",
-        commit="30e00fa6016527c4cf60025a461fb7865f8def6b",
-        deprecated=True,
-    )
-    version(
-        "21.03.0",
-        tag="legion-21.03.0",
-        commit="0cf9ddd60c227c219c8973ed0580ddc5887c9fb2",
-        deprecated=True,
-    )
     version("stable", branch="stable")
     version("master", branch="master")
 
     # Old control replication commits used by FleCSI releases, prior to 24.03.0
     version("cr-20230307", commit="435183796d7c8b6ac1035a6f7af480ded750f67d", deprecated=True)
-    version("cr-20210122", commit="181e63ad4187fbd9a96761ab3a52d93e157ede20", deprecated=True)
-    version("cr-20191217", commit="572576b312509e666f2d72fafdbe9d968b1a6ac3", deprecated=True)
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -129,21 +73,28 @@ class Legion(CMakePackage, ROCmPackage):
     depends_on("hwloc", when="+hwloc")
     depends_on("libfabric", when="network=gasnet conduit=ofi-slingshot11")
 
+    # Kokkos
+    depends_on("kokkos", when="+kokkos")
+
+    # OpenMP backend
+    depends_on("kokkos+openmp", when="+kokkos+openmp")
+    depends_on("kokkos~openmp", when="+kokkos~openmp")
+
     # cuda-centric
     cuda_arch_list = CudaPackage.cuda_arch_values
     for arch in cuda_arch_list:
+        # UCX transport dependency when using CUDA
         depends_on(f"ucc cuda_arch={arch}", when=f"@25.03.0: network=ucx +cuda cuda_arch={arch}")
+
+        # Kokkos CUDA + compiler-specific wrapper
         depends_on(
-            f"kokkos@3.3.01:+cuda+cuda_lambda+wrapper cuda_arch={arch}",
+            f"kokkos+cuda+cuda_lambda+wrapper cuda_arch={arch}",
             when=f"+kokkos+cuda cuda_arch={arch} %gcc",
         )
         depends_on(
-            f"kokkos@3.3.01:+cuda+cuda_lambda~wrapper cuda_arch={arch}",
+            f"kokkos+cuda+cuda_lambda~wrapper cuda_arch={arch}",
             when=f"+kokkos+cuda cuda_arch={arch} %clang",
         )
-
-    depends_on("kokkos@3.3.01:~cuda", when="+kokkos~cuda")
-    depends_on("kokkos@3.3.01:~cuda+openmp", when="+kokkos+openmp")
 
     # https://github.com/spack/spack/issues/37232#issuecomment-1553376552
     patch("hip-offload-arch.patch", when="@23.03.0 +rocm")
@@ -181,9 +132,9 @@ class Legion(CMakePackage, ROCmPackage):
         depends_on(
             f"ucc amdgpu_target={arch}", when=f"@25.03.0: network=ucx +rocm amdgpu_target={arch}"
         )
-        depends_on(f"kokkos@3.3.01:+rocm amdgpu_target={arch}", when=f"+rocm amdgpu_target={arch}")
+        depends_on(f"kokkos+rocm amdgpu_target={arch}", when=f"+kokkos+rocm amdgpu_target={arch}")
 
-    depends_on("kokkos@3.3.01:+rocm", when="+kokkos+rocm")
+    depends_on("kokkos+rocm", when="+kokkos+rocm")
 
     # https://github.com/StanfordLegion/legion/#dependencies
     depends_on("python@3.8:", when="+python")

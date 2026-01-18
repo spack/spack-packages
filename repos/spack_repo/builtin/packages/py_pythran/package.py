@@ -19,6 +19,8 @@ class PyPythran(PythonPackage):
     license("BSD-3-Clause")
     maintainers("rgommers")
 
+    version("0.18.1", sha256="8803ed948bf841a11bbbb10472a8ff6ea24ebd70e67c3f77b77be3db900eccfe")
+    version("0.18.0", sha256="5c003e8cbedf6dbb68c2869c49fc110ce8b5e8982993078a4a819f1dadc4fc6a")
     version("0.16.1", sha256="861748c0f9c7d422b32724b114b3817d818ed4eab86c09781aa0a3f7ceabb7f9")
     version("0.16.0", sha256="37dcf6aa9713b352b05004e3a20d14b3de7399bb0d7fe2027bd2b9e2833fe65a")
     version("0.15.0", sha256="f9bc61bcb96df2cd4b578abc5a62dfb3fbb0b0ef02c264513dfb615c5f87871c")
@@ -43,7 +45,8 @@ class PyPythran(PythonPackage):
     depends_on("py-setuptools@62:", when="@0.15:", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-ply@3.4:", type=("build", "run"))
-    depends_on("py-gast@0.5", when="@0.15:", type=("build", "run"))
+    depends_on("py-gast@0.6", when="@0.17:", type=("build", "run"))
+    depends_on("py-gast@0.5", when="@0.15:0.16", type=("build", "run"))
     # upper bound due to https://github.com/scipy/scipy/issues/18390
     depends_on("py-gast@0.5:0.5.3", when="@0.9.12:0.12", type=("build", "run"))
     depends_on("py-gast@0.4", when="@0.9.7:0.9.11", type=("build", "run"))
@@ -51,6 +54,8 @@ class PyPythran(PythonPackage):
     depends_on("py-gast@0.3:", when="@0.9.4:0.9.5", type=("build", "run"))
     depends_on("py-gast", when="@:0.9.3", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"))
+    # https://github.com/serge-sans-paille/pythran/issues/2368
+    depends_on("py-numpy@:2.4", when="@:0.18.0", type=("build", "run"))
     # https://github.com/serge-sans-paille/pythran/issues/2189
     depends_on("py-numpy@:1", when="@:0.15", type=("build", "run"))
     depends_on("py-beniget@0.4", when="@0.9.12:", type=("build", "run"))
@@ -82,13 +87,6 @@ class PyPythran(PythonPackage):
     conflicts("^python@3.11:", when="@:0.12.1")
     # from distutils.errors import CompileError in run.py
     conflicts("^python@3.12:", when="@:0.15")
-
-    @property
-    def headers(self):
-        # Pythran is mainly meant to be used as a compiler, so return no headers to
-        # avoid issue https://github.com/spack/spack/issues/33237 This can be refined
-        # later to allow using pythran also as a library.
-        return HeaderList([])
 
     def patch(self):
         # Compiler is used at run-time to determine name of OpenMP library to search for

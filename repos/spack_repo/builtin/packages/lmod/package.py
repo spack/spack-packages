@@ -24,6 +24,7 @@ class Lmod(AutotoolsPackage):
 
     license("MIT")
 
+    version("8.7.67", sha256="50c8d265e47eb6661ebe3af13df819b35db84cda3474ea0a7427c33b5767aaab")
     version("8.7.55", sha256="f85ed9b55c23afb563fa99c7201037628be016e8d88a1aa8dba4632c0ab450bd")
     version("8.7.37", sha256="171529152fedfbb3c45d27937b0eaa1ee62b5e5cdac3086f44a6d56e5d1d7da4")
     version("8.7.24", sha256="8451267652059b6507b652e1b563929ecf9b689ffb20830642085eb6a55bd539")
@@ -65,6 +66,10 @@ class Lmod(AutotoolsPackage):
     depends_on("tcl", type=("build", "link", "run"))
 
     depends_on("bc", type="build", when="@8.7.10:")
+
+    depends_on("pkgconfig", type="build")
+
+    depends_on("procps", type="build")
 
     # GNU sed is required instead of bsd sed on macOS
     depends_on("sed", type="build", when="platform=darwin")

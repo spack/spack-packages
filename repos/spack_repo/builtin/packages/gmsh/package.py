@@ -64,7 +64,6 @@ class Gmsh(CMakePackage):
     variant("mmg", default=True, description="Build with Mmg3d")
     variant("netgen", default=True, description="Build with Netgen (built-in)")
     variant("opencascade", default=False, description="Build with OpenCASCADE")
-    variant("oce", default=False, description="Build with OCE")
     variant("petsc", default=False, description="Build with PETSc")
     variant("slepc", default=False, description="Build with SLEPc (only when PETSc is enabled)")
     variant("tetgen", default=False, description="Build with Tetgen (built-in)")
@@ -97,12 +96,9 @@ class Gmsh(CMakePackage):
     depends_on("glu", when="+fltk")
     depends_on("cairo", when="+cairo")
     depends_on("hdf5", when="+hdf5")
-    depends_on("hdf5", when="+med")
-    depends_on("med", when="+med")
+    depends_on("med@:5", when="+med")
     depends_on("mmg", when="+mmg")
     depends_on("opencascade", when="+opencascade")
-    depends_on("oce", when="+oce")
-    depends_on("freetype", when="+oce")
     depends_on("freetype", when="+opencascade")
     depends_on("slepc", when="+slepc+petsc")
     depends_on("zlib-api", when="+compression")
@@ -120,9 +116,6 @@ class Gmsh(CMakePackage):
     # and https://gitlab.onelab.info/gmsh/gmsh/-/blob/master/Graphics/gl2ps.cpp
 
     conflicts("+slepc", when="~petsc")
-    conflicts("+oce", when="+opencascade")
-    conflicts("+oce", when="^gmsh@4.10:4.10.3")
-    conflicts("+oce", when="@4.10.3:")
     conflicts("+metis", when="+external", msg="External Metis cannot build with GMSH")
 
     def flag_handler(self, name, flags):
@@ -171,9 +164,7 @@ class Gmsh(CMakePackage):
             blas_lapack = spec["lapack"].libs + spec["blas"].libs
             options.append(f"-DBLAS_LAPACK_LIBRARIES={blas_lapack.ld_flags}")
 
-        if spec.satisfies("+oce"):
-            options.append("-DENABLE_OCC=ON")
-        elif spec.satisfies("+opencascade"):
+        if spec.satisfies("+opencascade"):
             options.append("-DENABLE_OCC=ON")
         else:
             options.append("-DENABLE_OCC=OFF")

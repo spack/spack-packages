@@ -21,6 +21,10 @@ class Migraphx(CMakePackage):
     libraries = ["libmigraphx"]
 
     license("MIT")
+    version("7.1.1", sha256="beb9cbf4475d979e8431a983ee0ae8a9f5b75bb24699b7b8dfa2753db9822c4d")
+    version("7.1.0", sha256="ffb6e510420e277e30fc1a58635d568197ab2046784ea0c4740aa79ffb17cb70")
+    version("7.0.2", sha256="33979c1d8f514d65f823f28b2cd2eb11338477403f295e6367244a3abb0abadd")
+    version("7.0.0", sha256="b63634546781af8550395ebc6356e9a3e91a992d82ccb228ea60c719727f5247")
     version("6.4.3", sha256="d3839034d3cbd7762818002e87da730f3c3172cdefca1aab58ade8d2a9889651")
     version("6.4.2", sha256="2c008ce2af0900ce7802ec078c2e69f59d8af980ce5161bee625111aec7d941b")
     version("6.4.1", sha256="25716eb8a7f73cba722cc60ba6a71fbf6459f5491a350c285cf1ec904c339095")
@@ -49,7 +53,7 @@ class Migraphx(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    patch("0005-Adding-half-include-directory-path-migraphx.patch", when="@5.6.0:5.7")
+    patch("0005-Adding-half-include-directory-path-migraphx.patch", when="@5.7")
     patch("0006-add-option-to-turn-off-ck.patch", when="@5.7")
     patch(
         "https://github.com/ROCm/AMDMIGraphX/commit/728bea3489c97c9e1ddda0a0ae527ffd2d70cb97.patch?full_index=1",
@@ -66,10 +70,11 @@ class Migraphx(CMakePackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("protobuf", type="link")
+    depends_on("protobuf", type=("build", "link"), when="@7.1:")
     depends_on("blaze", type="build")
     depends_on("nlohmann-json", type="link")
     depends_on("msgpack-c", type="link")
-    depends_on("half@2:", when="@5.6:6.2")
+    depends_on("half@2:", when="@:6.2")
     depends_on("half")
     depends_on("python@3.5:", type="build")
     depends_on("py-pybind11@2.6:", type="build")
@@ -95,21 +100,21 @@ class Migraphx(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
         depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+
+    for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
+        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
+
     for ver in [
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
         "6.3.0",
         "6.3.1",
         "6.3.2",
@@ -118,10 +123,12 @@ class Migraphx(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
-
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
@@ -175,6 +182,9 @@ class Migraphx(CMakePackage):
                     "CMAKE_CXX_FLAGS", "-fsanitize=address -shared-libasan -I{0}".format(abspath)
                 )
             )
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("PROTOBUF_INCLUDE_DIR", self.spec["protobuf"].prefix.include))
+
         return args
 
     def test_unit_tests(self):

@@ -33,7 +33,10 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     license("BSD-3-Clause", when="@:2024")
 
     version("develop", branch="develop")
+    version("2025.1.stable", branch="release/2025.1")
+    version("2025.1.0", tag="2025.1.0", commit="9f9bdf0885ffc28ab51251bc5359485ff75d2a21")
     version("2025.0.stable", branch="release/2025.0")
+    version("2025.0.1", tag="2025.0.1", commit="ed42fab06e0c4be41fba510f151a5ae153fbd5e5")
     version("2024.01.stable", branch="release/2024.01")
     version("2024.01.1", tag="2024.01.1", commit="0672b9a9a2a1e3846c5e2059fb73a07a129f22cd")
     version("2023.08.stable", branch="release/2023.08")
@@ -41,18 +44,6 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     version("2023.03.stable", branch="release/2023.03")
     version("2023.03.01", commit="9e0daf2ad169f6c7f6c60408475b3c2f71baebbf")
     version("2022.10.01", commit="e8a5cc87e8f5ddfd14338459a4106f8e0d162c83")
-    version("2022.05.15", commit="8ac72d9963c4ed7b7f56acb65feb02fbce353479", deprecated=True)
-    version("2022.04.15", commit="a92fdad29fc180cc522a9087bba9554a829ee002", deprecated=True)
-    version("2022.01.15", commit="0238e9a052a696707e4e65b2269f342baad728ae", deprecated=True)
-    version("2021.10.15", commit="a8f289e4dc87ff98e05cfc105978c09eb2f5ea16", deprecated=True)
-    version("2021.05.15", commit="004ea0c2aea6a261e7d5d216c24f8a703fc6c408", deprecated=True)
-    version("2021.03.01", commit="68a051044c952f0f4dac459d9941875c700039e7", deprecated=True)
-    version("2020.08.03", commit="d9d13c705d81e5de38e624254cf0875cce6add9a", deprecated=True)
-    version("2020.07.21", commit="4e56c780cffc53875aca67d6472a2fb3678970eb", deprecated=True)
-    version("2020.06.12", commit="ac6ae1156e77d35596fea743ed8ae768f7222f19", deprecated=True)
-    version("2020.03.01", commit="94ede4e6fa1e05e6f080be8dc388240ea027f769", deprecated=True)
-    version("2019.12.28", commit="b4e1877ff96069fd8ed0fdf0e36283a5b4b62240", deprecated=True)
-    version("2019.08.14", commit="6ea44ed3f93ede2d0a48937f288a2d41188a277c", deprecated=True)
 
     # Options for MPI and hpcprof-mpi.  We always support profiling
     # MPI applications.  These options add hpcprof-mpi, the MPI
@@ -145,6 +136,8 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("rocm-openmp-extras", when="%llvm-amdgpu", type="build")
+
     with when("@2024.01: build_system=autotools"):
         depends_on("autoconf", type="build")
         depends_on("automake", type="build")
@@ -191,6 +184,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("libunwind@1.4: +xz")
     depends_on("libunwind +pic libs=static", when="@:2023.08")
     depends_on("mbedtls+pic", when="@:2022.03")
+    depends_on("patchelf@0.11:", when="@2025:")
     depends_on("xerces-c transcoder=iconv")
     depends_on("xxhash@0.8.1:", when="@2025:")
     depends_on("xz", type="link")
@@ -202,8 +196,12 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
     depends_on("py-docutils", type="build", when="@2025:")
-    depends_on("py-sphinx", type="build", when="+docs")
-    depends_on("py-myst-parser@0.19:", type="build", when="+docs")
+    depends_on("py-sphinx@6:", type="build", when="+docs")
+    depends_on("py-sphinx@6:8", type="build", when="@2025.0 +docs")
+    depends_on("py-myst-parser@3:", type="build", when="+docs")
+    depends_on("py-myst-parser@3:4", type="build", when="@2025.0 +docs")
+    depends_on("py-sphinx-book-theme@1:", type="build", when="+docs")
+    depends_on("py-sphinx-book-theme@1", type="build", when="@2025.0 +docs")
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
@@ -225,12 +223,25 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         depends_on("intel-xed+pic")
         depends_on("intel-xed+deprecated-includes", when="@:2024.01.1")
 
-    # Avoid 'link' dep, we don't actually link, and that adds rpath
-    # that conflicts with app.
-    depends_on("hip@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("hsa-rocr-dev@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
-    depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
+    with when("@:2024"):
+        # Avoid 'link' dep, we don't actually link, and that adds rpath
+        # that conflicts with app.
+        depends_on("hip@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("hsa-rocr-dev@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
+        depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
+
+    with when("@2025:2025.0"):
+        # The consideration above is no longer needed as of 2025.0.0, we use libdl and
+        # similar tricks to avoid rpath conflicts.
+        depends_on("hip@4.5:", when="+rocm")
+        depends_on("hsa-rocr-dev@4.5:", when="+rocm")
+        depends_on("roctracer-dev@4.5:", when="+rocm")
+        depends_on("rocprofiler-dev@4.5:", when="+rocm")
+
+    with when("@2025.1:"):
+        depends_on("rocprofiler-sdk@6.2:", when="+rocm")
+        depends_on("hip@6.2:", type="test", when="+rocm")
 
     conflicts("%gcc@:7", when="@2022.10:", msg="hpctoolkit requires gnu gcc 8.x or later")
     conflicts("%gcc@:6", when="@2021.00:2022.06", msg="hpctoolkit requires gnu gcc 7.x or later")
@@ -273,6 +284,20 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     # hsa include path is hsa-rocr-dev-prefix-path/include
     patch("correcting-hsa-include-path.patch", when="@2024.01 ^hip@6.0:")
+
+    # Fix +gtpin build for original Meson release
+    patch(
+        "https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/1329.diff",
+        when="@2025.0.1 +gtpin",
+        sha256="ac486278726620ef932c48aef41d5aab6ba0359b5b1eced651724237877f445b",
+    )
+
+    # Fix +docs build for 2025.0.x versions before the fix was merged
+    patch(
+        "https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/1395.diff",
+        when="@2025.0:2025.0.1 +docs",
+        sha256="7954f9286e707832595bb31b19137ea9d5c7e3ef801cb9a69d2e1d78d383fdab",
+    )
 
     # Fix a bug where make would mistakenly overwrite hpcrun-fmt.h.
     # https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/751

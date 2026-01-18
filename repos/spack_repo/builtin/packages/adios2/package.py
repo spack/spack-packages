@@ -18,7 +18,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     """The Adaptable Input Output System version 2,
     developed in the Exascale Computing Program"""
 
-    homepage = "https://csmd.ornl.gov/software/adios2"
+    homepage = "https://adios2.readthedocs.io"
     url = "https://github.com/ornladios/ADIOS2/archive/v2.8.0.tar.gz"
     git = "https://github.com/ornladios/ADIOS2.git"
     test_requires_compiler = True
@@ -31,10 +31,11 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version(
-        "2.10.2",
-        sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e",
+        "2.11.0",
+        sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf",
         preferred=True,
     )
+    version("2.10.2", sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e")
     version("2.10.1", sha256="ce776f3a451994f4979c6bd6d946917a749290a37b7433c0254759b02695ad85")
     version("2.10.0", sha256="e5984de488bda546553dd2f46f047e539333891e63b9fe73944782ba6c2d95e4")
     version("2.9.2", sha256="78309297c82a95ee38ed3224c98b93d330128c753a43893f63bbe969320e4979")
@@ -45,10 +46,6 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     version("2.8.1", sha256="3f515b442bbd52e3189866b121613fe3b59edb8845692ea86fad83d1eba35d93")
     version("2.8.0", sha256="5af3d950e616989133955c2430bd09bcf6bad3a04cf62317b401eaf6e7c2d479")
     version("2.7.1", sha256="c8e237fd51f49d8a62a0660db12b72ea5067512aa7970f3fcf80b70e3f87ca3e")
-    with default_args(deprecated=True):
-        version("2.7.0", sha256="4b5df1a1f92d7ff380416dec7511cfcfe3dc44da27e486ed63c3e6cffb173924")
-        version("2.6.0", sha256="45b41889065f8b840725928db092848b8a8b8d1bfae1b92e72f8868d1c76216c")
-        version("2.5.0", sha256="7c8ff3bf5441dd662806df9650c56a669359cb0185ea232ecb3578de7b065329")
 
     # There's not really any consistency about how static and shared libs are
     # implemented across spack.  What we're trying to support is specifically three
@@ -74,10 +71,11 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("blosc", default=True, when="@2.4:2.8", description="Enable Blosc compression")
     variant("blosc2", default=True, when="@2.9:", description="Enable Blosc2 compression")
-    variant("bzip2", default=True, when="@2.4:", description="Enable BZip2 compression")
+    variant("bzip2", default=True, description="Enable BZip2 compression")
     variant("zfp", default=True, description="Enable ZFP compression")
-    variant("png", default=True, when="@2.4:", description="Enable PNG compression")
-    variant("sz", default=True, when="@2.6:", description="Enable SZ compression")
+    variant("png", default=True, description="Enable PNG compression")
+    variant("sz", default=True, description="Enable SZ2 compression")
+    variant("sz3", default=True, when="@2.12:", description="Enable SZ3 compression")
     variant("mgard", default=not IS_WINDOWS, when="@2.8:", description="Enable MGARD compression")
 
     # Rransport engines
@@ -89,7 +87,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         description="Enable the DataMan engine for WAN transports",
     )
     variant("campaign", default=False, when="@2.10:", description="Enable campaign management")
-    variant("dataspaces", default=False, when="@2.5:", description="Enable support for DATASPACES")
+    variant("dataspaces", default=False, description="Enable support for DATASPACES")
     variant("ssc", default=True, when="@:2.7", description="Enable the SSC staging engine")
     variant("hdf5", default=False, description="Enable the HDF5 engine")
     variant(
@@ -105,6 +103,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         description="Enable support for in situ visualization plugin using ParaView Catalyst",
     )
 
+    variant("xrootd", default=True, description="Enable the XRootD")
+
     # Optional language bindings, C++11 and C always provided
     variant("kokkos", default=False, when="@2.9:", description="Enable Kokkos support")
     variant("sycl", default=False, when="@2.10:", description="Enable SYCL support")
@@ -117,6 +117,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     # ifx does not support submodules in separate files
     conflicts("%oneapi@:2022.1.0", when="+fortran")
+
+    # https://github.com/ornladios/ADIOS2/issues/4620
+    conflicts("^cuda@13:", when="+cuda")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -192,43 +195,27 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libpng@1.6:", when="+png")
     depends_on("zfp@0.5.1:0.5", when="+zfp")
     depends_on("sz@2.0.2.0:", when="+sz")
+    depends_on("sz3", when="+sz3")
     depends_on("mgard@compat-2022-11-18:", when="+mgard")
     depends_on("mgard@compat-2023-01-10:", when="@2.9: +mgard")
 
     extends("python", when="+python")
     depends_on("python", when="+python", type=("build", "run"))
-    depends_on("python@2.7:2.8,3.5:3.10", when="@:2.4.0 +python", type=("build", "run"))
-    depends_on("python@3.5:3.10", when="@2.5.0:2.7 +python", type=("build", "run"))
+    depends_on("python@3.5:3.10", when="@:2.7 +python", type=("build", "run"))
     depends_on("python@3.8:", when="@2.10: +python", type=("build", "run"))
 
     depends_on("python", type="test")
-    depends_on("python@2.7:2.8,3.5:3.10", when="@:2.4.0", type="test")
-    depends_on("python@3.5:3.10", when="@2.5.0:2.7", type="test")
+    depends_on("python@3.5:3.10", when="@:2.7", type="test")
 
     depends_on("py-numpy@1.6.1:", when="+python", type=("build", "run"))
     depends_on("py-mpi4py@2.0.0:", when="+mpi +python", type=("build", "run"))
     depends_on("aws-sdk-cpp", when="+aws")
     depends_on("libcatalyst@2", when="+libcatalyst")
 
+    depends_on("xrootd~davix", when="+xrootd")
+
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")
-
-    # Fix findmpi when called by dependees
-    # See https://github.com/ornladios/ADIOS2/pull/1632
-    patch("cmake-update-findmpi.patch", when="@2.4.0")
-
-    # Fix the signature of the builtin clear_cache function in the
-    # third-party dill library.
-    # See https://github.com/ornladios/ADIOS2/pull/1899
-    patch("2.5-fix-clear_cache.patch", when="@2.5.0")
-
-    # Fix an unnecessary python dependency when testing is disabled
-    # See https://github.com/ornladios/ADIOS2/pull/2596
-    patch("2.7-fix-python-test-deps.patch", when="@2.7.0")
-
-    # Fix unresolved symbols when built with gcc10.
-    # See https://github.com/ornladios/ADIOS2/pull/2714
-    patch("2.6-fix-gcc10-symbols.patch", when="@2.6.0")
 
     # add missing include <cstdint>
     patch("2.7-fix-missing-cstdint-include.patch", when="@2.7")
@@ -237,7 +224,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/ornladios/adios2/pull/2710
     patch(
         "https://github.com/ornladios/adios2/commit/72363a5ed1015c2bbb1c057d4d6b2e5662de12ec.patch?full_index=1",
-        when="@2.5:2.7.1",
+        when="@2.7.1",
         sha256="8221073d1b2f8944395a88a5d60a15c7370646b62f5fc6309867bbb6a8c2096c",
     )
 
@@ -259,6 +246,20 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/ornladios/adios2/commit/b7a5957.patch?full_index=1",
         sha256="d854008ab27d6ebfa66fffb78126b17713cda3234ed19bf331f85a720e599a32",
         when="@2.8:2.10",
+    )
+
+    # https://github.com/ornladios/ADIOS2/pull/4578
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
+        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
+        when="@2.8:2.10",
+    )
+
+    # https://github.com/ornladios/ADIOS2/pull/4729
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/0bdda7d4729b898397e024010b1e82cb72921501.patch?full_index=1",
+        sha256="c7214845bc9e4262deb901f9d689236e014f5193018617675bea4bed80ca20aa",
+        when="@2.11",
     )
 
     @when("%fj")
@@ -284,8 +285,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             from_variant("BUILD_SHARED_LIBS", "shared"),
             from_variant("ADIOS2_USE_AWSSDK", "aws"),
-            from_variant("ADIOS2_USE_Blosc", "blosc"),
             from_variant("ADIOS2_USE_Blosc2", "blosc2"),
+            from_variant("ADIOS2_USE_Blosc", "blosc"),
             from_variant("ADIOS2_USE_BZip2", "bzip2"),
             from_variant("ADIOS2_USE_Campaign", "campaign"),
             from_variant("ADIOS2_USE_DataMan", "dataman"),
@@ -298,7 +299,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_Python", "python"),
             from_variant("ADIOS2_USE_SSC", "ssc"),
             from_variant("ADIOS2_USE_SST", "sst"),
+            from_variant("ADIOS2_USE_SZ3", "sz3"),
             from_variant("ADIOS2_USE_SZ", "sz"),
+            from_variant("ADIOS2_USE_XRootD", "xrootd"),
             from_variant("ADIOS2_USE_ZFP", "zfp"),
             from_variant("ADIOS2_USE_Catalyst", "libcatalyst"),
             from_variant("ADIOS2_USE_LIBPRESSIO", "libpressio"),
@@ -350,22 +353,27 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
         libs_to_seek = set()
 
-        if spec.satisfies("@2.6:"):
-            libs_to_seek.add("libadios2_core")
-            libs_to_seek.add("libadios2_c")
+        libs_to_seek.add("libadios2_core")
+        libs_to_seek.add("libadios2_c")
+        if spec.satisfies("@:2.10"):
             libs_to_seek.add("libadios2_cxx11")
-            if spec.satisfies("+fortran"):
-                libs_to_seek.add("libadios2_fortran")
+        else:
+            libs_to_seek.add("libadios2_cxx")
+        if spec.satisfies("+fortran"):
+            libs_to_seek.add("libadios2_fortran")
 
-            if spec.satisfies("+mpi"):
-                libs_to_seek.add("libadios2_core_mpi")
-                libs_to_seek.add("libadios2_c_mpi")
+        if spec.satisfies("+mpi"):
+            libs_to_seek.add("libadios2_core_mpi")
+            libs_to_seek.add("libadios2_c_mpi")
+            if spec.satisfies("@:2.10"):
                 libs_to_seek.add("libadios2_cxx11_mpi")
-                if spec.satisfies("+fortran"):
-                    libs_to_seek.add("libadios2_fortran_mpi")
+            else:
+                libs_to_seek.add("libadios2_cxx_mpi")
+            if spec.satisfies("+fortran"):
+                libs_to_seek.add("libadios2_fortran_mpi")
 
-            if "@2.7: +shared+hdf5" in spec and "@1.12:" in spec["hdf5"]:
-                libs_to_seek.add("libadios2_h5vol")
+        if "+shared+hdf5" in spec and "@1.12:" in spec["hdf5"]:
+            libs_to_seek.add("libadios2_h5vol")
 
         else:
             libs_to_seek.add("libadios2")

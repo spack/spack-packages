@@ -272,7 +272,7 @@ class OpenfoamOrg(Package):
         with working_dir(parent):
             if original != target and not os.path.lexists(target):
                 os.rename(original, target)
-                os.symlink(target, original)
+                symlink(target, original)
                 tty.info("renamed {0} -> {1}".format(original, target))
 
     def patch(self):
@@ -452,7 +452,7 @@ class OpenfoamOrg(Package):
         """Add symlinks into bin/, lib/ (eg, for other applications)"""
         # Make build log visible - it contains OpenFOAM-specific information
         with working_dir(self.projectdir):
-            os.symlink(
+            symlink(
                 join_path(os.path.relpath(self.install_log_path)),
                 join_path("log." + str(self.foam_arch)),
             )
@@ -463,14 +463,14 @@ class OpenfoamOrg(Package):
         # ln -s platforms/linux64GccXXX/lib lib
         with working_dir(self.projectdir):
             if os.path.isdir(self.archlib):
-                os.symlink(self.archlib, "lib")
+                symlink(self.archlib, "lib")
 
         # (cd bin && ln -s ../platforms/linux64GccXXX/bin/* .)
         with working_dir(join_path(self.projectdir, "bin")):
             for f in [
                 f for f in glob.glob(join_path("..", self.archbin, "*")) if os.path.isfile(f)
             ]:
-                os.symlink(f, os.path.basename(f))
+                symlink(f, os.path.basename(f))
 
 
 # -----------------------------------------------------------------------------

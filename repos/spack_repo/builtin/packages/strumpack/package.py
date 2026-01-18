@@ -94,6 +94,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zfp@0.5.5", when="@:7.0.1 +zfp")
     depends_on("zfp", when="@7.0.2: +zfp")
     depends_on("hipblas", when="+rocm")
+    depends_on("hipblas@:6", when="@:8.0.0 +rocm")
     depends_on("hipsparse", type="link", when="@7.0.1: +rocm")
     depends_on("rocsolver", when="+rocm")
     depends_on("rocthrust", when="+rocm")
@@ -136,6 +137,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("TPL_ENABLE_SCOTCH", "scotch"),
             self.define_from_variant("TPL_ENABLE_BPACK", "butterflypack"),
             self.define_from_variant("TPL_ENABLE_MAGMA", "magma"),
+            self.define_from_variant("TPL_ENABLE_ZFP", "zfp"),
             self.define_from_variant("STRUMPACK_COUNT_FLOPS", "count_flops"),
             self.define_from_variant("STRUMPACK_TASK_TIMERS", "task_timers"),
             "-DTPL_BLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),

@@ -14,12 +14,15 @@ class TinyTensorCompiler(CMakePackage):
     supporting the OpenCL, Level Zero, and SYCL runtime."""
 
     homepage = "https://github.com/intel/tiny-tensor-compiler"
-    url = "https://github.com/intel/tiny-tensor-compiler/archive/refs/tags/v0.3.1.tar.gz"
+    url = "https://github.com/intel/tiny-tensor-compiler/archive/refs/tags/v0.5.0.tar.gz"
+    git = "https://github.com/intel/tiny-tensor-compiler.git"
 
     maintainers("uphoffc")
 
     license("BSD-3-Clause", checked_by="uphoffc")
 
+    version("0.5.0", sha256="14443d6ad36bd4273df494f86889c96e577809422ed5a5cb45e78cc5cd4256d0")
+    version("0.4.0", sha256="cf58fc61cb4948d77e10cd2fe1cdef74b92ae130174aa64a3f1d633acdbf7722")
     version("0.3.1", sha256="e512b92f9ef8f21362ea4a8f2655338769bc7fcf9de543e3dc7db86b696695b3")
 
     variant("shared", default=True, description="Shared library")
@@ -33,7 +36,9 @@ class TinyTensorCompiler(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.23.0:", type="build")
-    depends_on("double-batched-fft-library ~sycl ~level_zero ~opencl@0.5.1:", type="link")
+    depends_on(
+        "double-batched-fft-library ~sycl ~level_zero ~opencl@0.5.1:", type="link", when="@:0.3.1"
+    )
     depends_on("oneapi-level-zero@1.13:", when="+level_zero")
     depends_on("opencl-c-headers@2022.01.04:", when="+opencl")
     depends_on("opencl-icd-loader@2022.01.04:", when="+opencl", type="link")

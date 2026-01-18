@@ -58,7 +58,7 @@ class Slurm(AutotoolsPackage):
     variant("hwloc", default=False, description="Enable hwloc support")
     variant("hdf5", default=False, description="Enable hdf5 support")
     variant("readline", default=True, description="Enable readline support")
-    variant("pmix", default=False, description="Enable PMIx support")
+    variant("pmix", default=False, description="Enable PMIx support", when="@22-05:")
     variant(
         "sysconfdir",
         default="PREFIX/etc",
@@ -98,8 +98,7 @@ class Slurm(AutotoolsPackage):
     depends_on("hwloc", when="+hwloc")
     depends_on("mariadb", when="+mariadb")
 
-    depends_on("pmix@:5", when="@22-05:+pmix")
-    depends_on("pmix@:3", when="@20-11:21-08+pmix")
+    depends_on("pmix@:5", when="+pmix")
 
     depends_on("http-parser", when="+restd")
     depends_on("libyaml", when="+restd")

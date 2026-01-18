@@ -16,9 +16,12 @@ class Nccl(MakefilePackage, CudaPackage):
     homepage = "https://github.com/NVIDIA/nccl"
     url = "https://github.com/NVIDIA/nccl/archive/v2.7.3-1.tar.gz"
 
-    maintainers("adamjstewart")
+    maintainers("msimberg")
     libraries = ["libnccl.so"]
 
+    version("2.29.2-1", sha256="063e20649c4cfa01e789b4dc73514dbb5d73f9518e426823dab53316415e071b")
+    version("2.28.9-1", sha256="f349860336c6b7fb97b22bed9c729142f3531a0e82826c1204d01e44af8b9cb9")
+    version("2.28.7-1", sha256="1d2d1dd53e6c6bb42c200d9b934fa31fd528cbf3c6443581519aa628fcbd618a")
     version("2.28.3-1", sha256="888b305a79954b67022cfdd91aec515e88c9fed7ddbd2fb96af4ee3295853bb0")
     version("2.28.1-1", sha256="4945974609e04ab870a1264acdcc01cef08e6217fd42fd1b13d9b247181473d8")
     version("2.27.7-1", sha256="98e6262bd55932c51e7c8ffc50cc764f019e4b94a8fd6694d839ae828ec8d128")
@@ -71,7 +74,17 @@ class Nccl(MakefilePackage, CudaPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("rdma-core")
+    # Make verbs default but packages like aws-ofi-nccl can be used instead which loads
+    # another library to use instead at runtime.
+    variant(
+        "fabrics",
+        values=disjoint_sets(("auto",), ("verbs",))  # supported transports
+        .with_default("verbs")
+        .with_non_feature_values("auto"),
+        description="List of fabrics that are enabled; 'auto' lets nccl determine at runtime",
+    )
+
+    depends_on("rdma-core", when="fabrics=verbs", type="run")
 
     # https://github.com/NVIDIA/nccl/issues/244
     patch("so_reuseport.patch", when="@2.3.7-1:2.4.8-1")

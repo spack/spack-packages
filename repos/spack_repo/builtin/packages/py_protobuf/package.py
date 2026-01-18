@@ -18,6 +18,7 @@ class PyProtobuf(PythonPackage):
     homepage = "https://developers.google.com/protocol-buffers/"
     pypi = "protobuf/protobuf-3.11.0.tar.gz"
 
+    version("6.32.1", sha256="ee2469e4a021474ab9baafea6cd070e5bf27c7d29433504ddea1a4ee5850f68d")
     version("5.28.2", sha256="59379674ff119717404f7454647913787034f03fe7049cbef1d74a97bb4593f0")
     version("5.27.5", sha256="7fa81bc550201144a32f4478659da06e0b2ebe4d5303aacce9a202a1c3d5178d")
     version("5.26.1", sha256="8ca2a1d97c290ec7b16e4e5dff2e5ae150cc1582f55b5ab300d45cb0dfa90e51")
@@ -72,11 +73,13 @@ class PyProtobuf(PythonPackage):
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-six@1.9:", when="@3.0:3.17", type=("build", "run"))
 
-    # Minor version must match protobuf
-    for ver in range(26, 29):
-        depends_on(f"protobuf@3.{ver}", when=f"@5.{ver}")
+    # https://protobuf.dev/support/version-support/#python
+    for ver in range(30, 33):
+        depends_on(f"protobuf@{ver}", when=f"@6.{ver}")
+    for ver in range(26, 30):
+        depends_on(f"protobuf@{ver}", when=f"@5.{ver}")
     for ver in range(21, 26):
-        depends_on(f"protobuf@3.{ver}", when=f"@4.{ver}")
+        depends_on(f"protobuf@{ver}", when=f"@4.{ver}")
     for ver in range(0, 21):
         depends_on(f"protobuf@3.{ver}", when=f"@3.{ver}")
 

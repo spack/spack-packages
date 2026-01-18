@@ -35,6 +35,7 @@ class Xyce(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("master", branch="master")
+    version("7.10.0", sha256="b5a883196f0a2b3972fd13c541fecf04735bfabc7d124d7c7e17de707204f4e2")
     version("7.9.0", sha256="36ea88736b5e2012f28755588c857c88ed5dab5f4eccd3f59c6f42e6320fee4e")
     version("7.8.0", sha256="f763b7d5ad6defd25d2c7e5cc95155958cd12510a5e22a179daab459b21fa713")
     version("7.7.0", sha256="1b95450e1905c3af3c16b42c41d5ef1f8ab0e640f48086d0cb4d52961a90a175")
@@ -127,7 +128,6 @@ class Xyce(CMakePackage):
         depends_on("openblas~shared", when="^[virtuals=blas] openblas")
         depends_on("netlib-lapack~shared", when="^[virtuals=blas] netlib-lapack~external-blas")
         depends_on("armpl-gcc~shared", when="^[virtuals=blas] armpl-gcc")
-        depends_on("atlas~shared", when="^[virtuals=blas] atlas")
         depends_on("blis libs=static", when="^[virtuals=blas] blis+cblas")
         depends_on("blis libs=static", when="^[virtuals=blas] blis+blas")
         depends_on("clblast~shared", when="^[virtuals=blas] clblast+netlib")

@@ -21,6 +21,7 @@ class Met(AutotoolsPackage):
     maintainers("AlexanderRichert-NOAA", "climbfuji")
 
     version("develop", branch="develop")
+    version("12.1.1", sha256="da242378932f3057a06cf96e53dcdf74612197f70753e4be32c6390c63056031")
     version("12.0.1", sha256="ef396a99ca6c2248855848cd194f9ceaf3b051fb5e8c01a0b0b2a00110b1fcfb")
     version("12.0.0", sha256="9a54275cfefbad6010d4449a8fa756ad40fae03fa62a766cbbfda170c422e5e4")
     version("11.1.1", sha256="d02f9281d46bc45c931ca233a51ce20ba2158c0dd26acac2cb76c5a68788022a")
@@ -41,6 +42,14 @@ class Met(AutotoolsPackage):
     variant("modis", default=False, description="Enable compilation of modis")
     variant("graphics", default=False, description="Enable compilation of mode_graphics")
 
+    variant(
+        "shared-intel",
+        default=False,
+        when="%oneapi",
+        description="Enable linking to shared intel libraries (libintlc instead of libirc)",
+    )
+
+    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
@@ -72,6 +81,11 @@ class Met(AutotoolsPackage):
     patch("apple-clang-string-cast-operator.patch", when="@10.1.1:11.0 %apple-clang@14:")
     patch("apple-clang-no-register.patch", when="@10.1.1:11.0 %apple-clang@14:")
 
+    # https://github.com/spack/spack-packages/issues/1284
+    @when("@11:12.0")
+    def patch(self):
+        filter_file("int errno;", "//int errno;", "src/basic/vx_config/temp_file.cc", string=True)
+
     def url_for_version(self, version):
         if version < Version("11"):
             release_date = {
@@ -90,6 +104,8 @@ class Met(AutotoolsPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
         cppflags = []
+        fflags = []
+        fcflags = []
         ldflags = []
         libs = []
 
@@ -101,10 +117,16 @@ class Met(AutotoolsPackage):
         ldflags.append(netcdfcxx.libs.ld_flags)
         libs.append(netcdfcxx.libs.link_flags)
 
+        if spec.satisfies("%oneapi") and spec.satisfies("+shared-intel"):
+            fflags.append("-shared-intel")
+            fcflags.append("-shared-intel")
+
         netcdfc = spec["netcdf-c"]
         if netcdfc.satisfies("+shared"):
             cppflags.append("-I" + netcdfc.prefix.include)
+            # This returns "/path/to/netcdf-c/lib" but we need ".../lib64"
             ldflags.append("-L" + netcdfc.prefix.lib)
+            ldflags.append("-L" + netcdfc.prefix.lib64)
             libs.append(netcdfc.libs.link_flags)
         else:
             nc_config = which(os.path.join(netcdfc.prefix.bin, "nc-config"), required=True)
@@ -127,7 +149,11 @@ class Met(AutotoolsPackage):
 
         if "+grib2" in spec:
             g2c = spec["g2c"]
-            env.set("MET_GRIB2CLIB", g2c.libs.directories[0])
+            shared_g2c = True if "+shared" in g2c else False
+            g2c_libdir = find_libraries(
+                "libg2c", root=g2c.prefix, shared=shared_g2c, recursive=True
+            ).directories[0]
+            env.set("MET_GRIB2CLIB", g2c_libdir)
             env.set("MET_GRIB2CINC", g2c.prefix.include)
             env.set("GRIB2CLIB_NAME", "-lg2c")
 
@@ -163,6 +189,10 @@ class Met(AutotoolsPackage):
             env.set("MET_FREETYPE", freetype.prefix)
 
         env.set("CPPFLAGS", " ".join(cppflags))
+        if fflags:
+            env.set("FFLAGS", " ".join(fflags))
+        if fcflags:
+            env.set("FCFLAGS", " ".join(fcflags))
         env.set("LIBS", " ".join(libs))
         env.set("LDFLAGS", " ".join(ldflags))
 
@@ -180,6 +210,20 @@ class Met(AutotoolsPackage):
 
         return args
 
+    # Adding the Python rpaths to the MET binaries randomly causes
+    # segmentation faults for different versions of MET and for
+    # different compilers - set LD_LIBRARY_PATH instead below
+    # (https://github.com/JCSDA/spack-stack/issues/1839)
+    # @run_after("install", when="+python platform=linux")
+    # def fixup_rpaths(self):
+    #    # set rpaths of binaries Python's lib directory
+    #    rpaths = self.spec["python"].libs.directories
+    #
+    #    for binary in find(self.prefix.bin, "*"):
+    #        patchelf = Executable("patchelf")
+    #        patchelf("--add-rpath", ":".join(rpaths), binary)
 
-#    def setup_run_environment(self, env: EnvironmentModifications) -> None:
-#        env.set('MET_BASE', self.prefix)
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+python"):
+            for libpath in self.spec["python"].libs.directories:
+                env.append_path("LD_LIBRARY_PATH", libpath)

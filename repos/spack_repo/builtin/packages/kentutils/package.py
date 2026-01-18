@@ -27,13 +27,6 @@ class Kentutils(MakefilePackage):
     version("464", sha256="24e20fe68e2a2894d802c87662f69a62f71b3c15fafb2e4d6c3c425c63638bb2")
     version("460", sha256="b955e56ee880074521ef1ab1371491f47e66dc6fdd93b05328386dd675a635fa")
     version("455", sha256="e458cadad7c4a5c1b8385edafffa1b29380ac725a0c20535bf5a3bab99fe80db")
-    # This version isn't present in the archive any more
-    # Might be worth changing url to: https://github.com/ucscGenomeBrowser/kent-core/tags/...
-    version(
-        "459",
-        sha256="0b6e89a183e6385c713cf010a7aeead9da6626d8d2f78c363a4f1bc56ccccebb",
-        deprecated=True,
-    )
 
     # The bundled version of kentlib has some custom changes that are used by parts of
     # kentlib. See https://github.com/spack/spack/pull/44501#issuecomment-2162789410

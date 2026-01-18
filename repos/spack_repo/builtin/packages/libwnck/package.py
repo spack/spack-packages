@@ -48,7 +48,7 @@ class Libwnck(MesonPackage, AutotoolsPackage):
     )
 
     with default_args(type="build"):
-        depends_on("pkgconfig@0.9.0:")
+        depends_on("pkgconfig")
         depends_on("gettext", when="@3.31:")
         depends_on("intltool@0.40.6:", when="@:3.24")
         depends_on("cmake", when="build_system=meson")

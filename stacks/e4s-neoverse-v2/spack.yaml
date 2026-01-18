@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     reuse: false
@@ -33,7 +33,7 @@ spack:
       variants: +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
         +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
         +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
-        +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+        +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
     mpi:
       require: mpich
     mpich:
@@ -44,6 +44,8 @@ spack:
       require: "+examples target=neoverse_v2 %gcc"
     paraview:
       require: "+examples target=neoverse_v2 %gcc"
+    boost:
+      require: "cxxstd=17"
 
   specs:
   # CPU
@@ -90,6 +92,7 @@ spack:
   - hypre
   - kokkos +openmp
   - kokkos-kernels +openmp
+  - kokkos-fft host_backend=fftw-openmp +tests
   - lammps
   - lbann
   - legion
@@ -177,7 +180,7 @@ spack:
   # - geopm                         # geopm: https://github.com/spack/spack/issues/38795
   # - glvis                         # glvis: https://github.com/spack/spack/issues/42839
   # - libpressio +bitgrooming +bzip2 ~cuda ~cusz +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp # py-numcodecs@0.7.3: gcc: error: unrecognized command-line option '-mno-sse2'
-  # - variorum                      # variorum: https://github.com/spack/spack/issues/38786
+  - variorum cpu=arm gpu=none       # variorum: https://github.com/spack/spack/issues/38786
 
   # CUDA NOARCH
   - flux-core +cuda
@@ -202,6 +205,7 @@ spack:
   - hpx +cuda cuda_arch=90
   - kokkos +wrapper +cuda cuda_arch=90
   - kokkos-kernels +cuda cuda_arch=90 ^kokkos +wrapper +cuda cuda_arch=90
+  - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper +cuda cuda_arch=90
   - libceed +cuda cuda_arch=90
   - magma +cuda cuda_arch=90
   - mfem +cuda cuda_arch=90
