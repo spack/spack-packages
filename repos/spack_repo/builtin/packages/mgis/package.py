@@ -91,7 +91,7 @@ class Mgis(CMakePackage):
 
     with when("@3.1:"):
         depends_on("py-pybind11", when="+python", type=("build", "link", "run"))
-    
+
     # dependencies
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
