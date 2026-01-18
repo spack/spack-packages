@@ -170,6 +170,7 @@ class Cmake(Package):
     # provide Spack's TLS libs anyways, which is not flexible, and actually
     # leads to issues where we have to keep track of the vendored curl version
     # and its conflicts with OpenSSL.
+    depends_on("curl@:8.15", when="@:3.25")
     depends_on("curl")
 
     # When using curl, cmake defaults to using system zlib too, probably because

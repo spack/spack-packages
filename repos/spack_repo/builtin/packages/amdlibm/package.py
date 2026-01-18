@@ -32,6 +32,7 @@ class Amdlibm(SConsPackage, CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("5.2", sha256="5cec8d30dc1083923c332c80808eda637ebd385b02a0cebf65ce72b5c8cbc029")
     version("5.1", sha256="7acf2c98469353b60a59fad167a98e1ae689055a3faf8352a254832145c9d59e")
     version("5.0", sha256="ba1d50c068938c9a927e37e5630f683b6149d7d5a95efffeb76e7c9a8bcb2b5e")
     version("4.2", sha256="58847b942e998b3f52eb41ae26403c7392d244fcafa707cbf23165aac24edd9e")
@@ -45,7 +46,15 @@ class Amdlibm(SConsPackage, CMakePackage):
     variant("verbose", default=False, description="Building with verbosity", when="@:4.1")
 
     # Build system
-    build_system(conditional("cmake", when="@5.1:"), "scons", default="scons")
+    # - For version 5.2: both 'cmake' and 'scons' are supported, with 'cmake' as default.
+    # - For version 5.1: both 'scons' and 'cmake' are supported, with 'scons' as default.
+    # - For versions below 5.1: only 'scons' is supported.
+    with when("@5.2"):
+        build_system("cmake", "scons", default="cmake")
+
+    with when("@:5.1"):
+        build_system("scons", conditional("cmake", when="@5.1:"), default="scons")
+
     # Mandatory dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -54,7 +63,7 @@ class Amdlibm(SConsPackage, CMakePackage):
     depends_on("scons@3.1.2:4.8.1", type=("build"))
     depends_on("cmake@3.26:3.30.6", type="build", when="build_system=cmake")
     depends_on("mpfr", type=("link"))
-    for vers in ["4.1", "4.2", "5.0", "5.1"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 
@@ -63,7 +72,7 @@ class Amdlibm(SConsPackage, CMakePackage):
     # Patch to update the SCons environment with newly introduced
     # Spack build environment variables.
     patch("libm-ose-SconsSpack.patch", when="@3.1:4.2")
-    patch("libm-ose-SconsSpack-5.patch", when="@5.0:")
+    patch("libm-ose-SconsSpack-5.patch", when="@5.0:5.1")
 
     conflicts("%gcc@:9.1.0", msg="Minimum supported GCC version is 9.2.0")
     conflicts("%clang@:11.1", msg="Minimum supported Clang version is 12.0")
@@ -101,8 +110,8 @@ class Amdlibm(SConsPackage, CMakePackage):
         spec = self.spec
 
         args = [
-            self.define("LIBAOCLUTILS_INCLUDE_PATH", spec["aocl-utils"].prefix.include),
-            f"-DLIBAOCLUTILS_LIBRARY_PATH={spec['aocl-utils'].libs}",
+            self.define("AOCL_UTILS_INCLUDE_DIR", spec["aocl-utils"].prefix.include),
+            f"-DAOCL_UTILS_LIB={spec['aocl-utils'].libs}",
         ]
         return args
 
