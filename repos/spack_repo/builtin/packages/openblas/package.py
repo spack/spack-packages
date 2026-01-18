@@ -612,10 +612,16 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def build_targets(self):
-        targets = ["libs", "netlib"]
-        if "+shared" in self.spec:
-            targets.append("shared")
-        return ["-s"] + self.make_defs + targets
+        # Note that building shared simultaneously with libs or netlib seems to
+        # result in errors, so we postpone that to a "run_after".
+        # Also because of the verbosity and number of object files created, we
+        # suppress makefile command echoing via `-s`.
+        return ["-s"] + self.make_defs + ["libs", "netlib"]
+
+    @run_after("build", when="+shared")
+    def build_shared(self):
+        tty.info("Building shared libraries")
+        make("shared", *self.make_defs)
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
@@ -624,8 +630,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def install_targets(self):
-        make_args = [f"PREFIX={self.prefix}", "install"]
-        return make_args + self.make_defs
+        return self.make_defs + [f"PREFIX={self.prefix}", "install"]
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
