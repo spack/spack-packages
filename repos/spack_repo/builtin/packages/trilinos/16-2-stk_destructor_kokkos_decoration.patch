@@ -11,6 +11,37 @@ index 0642a3c3c85..d04e3598cd3 100644
  
    // The AMD ROCm compiler has an "undefined hidden symbol" link error when this copy constructor is defined
    // below, along with all of the other functions.  Not sure why this one is special.
+diff --git a/packages/stk/stk_mesh/stk_mesh/base/FieldData.hpp b/packages/stk/stk_mesh/stk_mesh/base/FieldData.hpp
+index 5bfd29af246..1ef2277eeac 100644
+--- a/packages/stk/stk_mesh/stk_mesh/base/FieldData.hpp
++++ b/packages/stk/stk_mesh/stk_mesh/base/FieldData.hpp
+@@ -99,7 +99,7 @@ public:
+ 
+   FieldData();
+   FieldData(EntityRank entityRank, Ordinal fieldOrdinal, const std::string& fieldName, const DataTraits& dataTraits);
+-  KOKKOS_DEFAULTED_FUNCTION virtual ~FieldData() override = default;
++  KOKKOS_FUNCTION virtual ~FieldData() override {}
+ 
+   FieldData(const FieldData& fieldData, FieldAccessTag accessTag);
+   KOKKOS_DEFAULTED_FUNCTION FieldData(const FieldData& fieldData) = default;
+@@ -147,7 +147,7 @@ public:
+ 
+   FieldData();
+   FieldData(EntityRank entityRank, Ordinal fieldOrdinal, const std::string& fieldName, const DataTraits& dataTraits);
+-  KOKKOS_DEFAULTED_FUNCTION virtual ~FieldData() override = default;
++  KOKKOS_FUNCTION virtual ~FieldData() override {}
+ 
+   FieldData(const FieldData& fieldData, FieldAccessTag accessTag);
+   KOKKOS_DEFAULTED_FUNCTION FieldData(const FieldData& fieldData) = default;
+@@ -195,7 +195,7 @@ public:
+ 
+   FieldData();
+   FieldData(const FieldDataBytes<stk::ngp::HostSpace>& hostFieldBytes, FieldAccessTag accessTag);
+-  KOKKOS_DEFAULTED_FUNCTION virtual ~FieldData() override = default;
++  KOKKOS_FUNCTION virtual ~FieldData() override {}
+ 
+   KOKKOS_DEFAULTED_FUNCTION FieldData(const FieldData& fieldData) = default;
+   KOKKOS_DEFAULTED_FUNCTION FieldData(FieldData&&) = default;
 diff --git a/packages/stk/stk_mesh/stk_mesh/base/FieldDataBytes.hpp b/packages/stk/stk_mesh/stk_mesh/base/FieldDataBytes.hpp
 index fcd9fe03bcc..9112cbe06c4 100644
 --- a/packages/stk/stk_mesh/stk_mesh/base/FieldDataBytes.hpp
