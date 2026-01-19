@@ -51,10 +51,7 @@ class Tfel(CMakePackage):
     version("rliv-1.2", branch="rliv-1.2")
 
     # released versions
-    version(
-        "5.1.0",
-        sha256="1afd98200de332e97e86d109ce0e1aaa8f18cc6c6c81daec3218809509cdfad7",
-    )
+    version("5.1.0", sha256="1afd98200de332e97e86d109ce0e1aaa8f18cc6c6c81daec3218809509cdfad7")
     version("5.0.2", sha256="910612fd9b76d0708a05d2b68a0d83f9f89aecd2127b097e2923083acc504c45")
     version(
         "5.0.1",
@@ -217,8 +214,8 @@ class Tfel(CMakePackage):
         deprecated=True,
     )
     version(
-"3.3.2",
-sha256="17127ffdf92367c10041258f70a88ac3dcb0a7d89c1766a6aa1ebaeb4d03d55d",
+        "3.3.2",
+        sha256="17127ffdf92367c10041258f70a88ac3dcb0a7d89c1766a6aa1ebaeb4d03d55d",
         deprecated=True,
     )
     version(
@@ -329,8 +326,8 @@ sha256="17127ffdf92367c10041258f70a88ac3dcb0a7d89c1766a6aa1ebaeb4d03d55d",
         deprecated=True,
     )
     version(
-"3.1.9",
-sha256="8aeb020beddd125c207271e01d3e7d3985a91268dbf0bbc6132d217cc72b12a8",
+        "3.1.9",
+        sha256="8aeb020beddd125c207271e01d3e7d3985a91268dbf0bbc6132d217cc72b12a8",
         deprecated=True,
     )
     version(
