@@ -54,7 +54,6 @@ class Tfel(CMakePackage):
     version(
         "5.1.0",
         sha256="1afd98200de332e97e86d109ce0e1aaa8f18cc6c6c81daec3218809509cdfad7",
-        preferred=True,
     )
     version("5.0.2", sha256="910612fd9b76d0708a05d2b68a0d83f9f89aecd2127b097e2923083acc504c45")
     version("5.0.1", sha256="820b2f9d54e237b2c2d9d6f06aaf7d4a1d3f34fb373e6549bee4fd8b55ecfad1")

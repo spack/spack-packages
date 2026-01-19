@@ -41,7 +41,6 @@ class Mgis(CMakePackage):
         "3.1.0",
         sha256="61afae1a367dbb150b24ca85f042efb15a77184a54a746f11c08d9b7cb9e94f3",
         url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-3.1.tar.gz",
-        preferred=True,
     )
     version("3.0.2", sha256="189b53789d4e2af3a69970880f5b1e90ff596ad3a71109ace69b2026333a8641")
     version("3.0.1", sha256="fb9a7f5008a43c70bdb1c4b80f32f7fd3e4274c912b93c36af7011d3c4f93039")
