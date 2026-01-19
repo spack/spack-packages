@@ -112,8 +112,6 @@ class ComposableKernel(CMakePackage):
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         else:
             args.append(self.define("INSTANCES_ONLY", "ON"))
-        if self.spec.satisfies("@:6.4"):
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
         if self.run_tests:
             args.append(self.define("BUILD_TESTING", "ON"))
         elif self.spec.satisfies("@:6.1"):
