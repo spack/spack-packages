@@ -610,18 +610,18 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         return make_defs
 
-    @property
-    def build_targets(self):
-        # Note that building shared simultaneously with libs or netlib seems to
-        # result in errors, so we postpone that to a "run_after".
-        # Also because of the verbosity and number of object files created, we
-        # suppress makefile command echoing via `-s`.
-        return ["-s"] + self.make_defs + ["libs", "netlib"]
+    def build(self, pkg: MakefilePackage, spec: Spec, prefix: Prefix) -> None:
+        """Override 'make all' with sequential builds due to race conditions.
+        """
+        make = self.module.make
+        # Due to the verbosity of the command line and number of object files
+        # created, we suppress makefile command echoing via `-s`.
+        args = ["-s"] + self.make_defs
 
-    @run_after("build", when="+shared")
-    def build_shared(self):
-        tty.info("Building shared libraries")
-        make("shared", *self.make_defs)
+        # Make each target sequentially
+        with working_dir(self.build_directory):
+            for target in ["libs", "netlib", "shared"]:
+                make(*(args + [target]))
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
