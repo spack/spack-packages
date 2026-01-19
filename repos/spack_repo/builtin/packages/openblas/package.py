@@ -297,7 +297,7 @@ class Openblas(CMakePackage, MakefilePackage):
     # ilp64 and symbol suffixes are not supported with CMake build system
     requires("~ilp64", when="build_system=cmake")
     requires("symbol_suffix=none", when="build_system=cmake")
-    
+
     # AOCC compiler detection adjustments
     patch("openblas-aocc-0.3.28-plus.patch", when="@0.3.28: %aocc@5.1.0:")
     patch("openblas-0.3.27_aocc.patch", when="@0.3.27 %aocc@5.0.0:")
