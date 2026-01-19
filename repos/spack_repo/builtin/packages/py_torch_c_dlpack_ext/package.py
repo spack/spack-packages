@@ -21,7 +21,5 @@ class PyTorchCDlpackExt(PythonPackage):
 
     with default_args(type="build"):
         depends_on("cxx")
-        depends_on("ninja", when="^py-apache-tvm-ffi@:0.1.3")
-        depends_on("ninja", when="platform=windows")
         depends_on("py-setuptools@61.0:")
         depends_on("py-apache-tvm-ffi@0.1.1:")
