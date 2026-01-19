@@ -65,8 +65,7 @@ class Mgis(CMakePackage):
         sha256="b3776d7b3a534ca626525a42b97665f7660ae2b28ea57b3f53fd7e8538da1ceb",
         deprecated=True,
     )
-    version("2.1.1", sha256="3fb5500cdb855543403028e28b6418913b3067ab2509d254022a234ea59ed4a8"
-    )
+    version("2.1.1", sha256="3fb5500cdb855543403028e28b6418913b3067ab2509d254022a234ea59ed4a8")
     version(
         "2.1.0",
         sha256="f5b556aab130da0c423f395fe4c35d6bf509dd8fc958242f2e37ea788464aea9",
