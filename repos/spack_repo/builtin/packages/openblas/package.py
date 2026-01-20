@@ -9,8 +9,8 @@ from spack_repo.builtin.build_systems import cmake, makefile
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from spack.package import *
 from spack.llnl.util import tty
+from spack.package import *
 
 
 class Openblas(CMakePackage, MakefilePackage):
@@ -622,7 +622,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # created, we suppress makefile command echoing via `-s`.
         args = self.make_defs
         if tty.debug_level() == 0:
-            args = ['-s'] + args
+            args = ["-s"] + args
 
         # Make each target sequentially
         with working_dir(self.build_directory):
