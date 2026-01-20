@@ -51,6 +51,7 @@ class PyPrefect(PythonPackage):
     depends_on("py-humanize@4.9:4", type=("build", "run"))
     depends_on("py-jsonpatch@1.32:1", type=("build", "run"))
     depends_on("py-jsonschema@4.18:4", type=("build", "run"))
+    depends_on("py-opentelemetry-api@1.27:1", type=("build", "run"))
     depends_on("py-orjson@3.7:3", type=("build", "run"))
     depends_on("py-packaging@21.3:25.0", type=("build", "run"))
     depends_on("py-pathspec@0.8:", type=("build", "run"))
