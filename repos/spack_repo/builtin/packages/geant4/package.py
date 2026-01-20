@@ -203,7 +203,6 @@ class Geant4(CMakePackage):
         with when("^[virtuals=qmake] qt"):
             depends_on("qt@5: +opengl")
             depends_on("qt@5.9:", when="@11.2:11.3")
-            depends_on("qt@6:", when="@11.4:")
     conflicts("@:11.1 ^[virtuals=qmake] qt-base", msg="Qt6 not supported before 11.2")
 
     # CMAKE PROBLEMS #
