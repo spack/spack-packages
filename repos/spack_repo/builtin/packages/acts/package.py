@@ -468,18 +468,24 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("python", when="+python")
     depends_on("python@3.8:", when="+python @19.11:19")
     depends_on("python@3.8:", when="+python @21:")
-    depends_on("python@3.12:", when="@44:", type="build")
-    depends_on("py-numpy @2.2", when="@44:", type="build")
+    # NOTE: Python and many of the Python packages we depend on are build
+    # dependencies only, but marking them as such allows Spack to pick up
+    # different Python versions for e.g. the ACTS build and the numpy
+    # installation which, in turn, causes the ACTS build to fail. Until a more
+    # robust solution is available we pretend that these packages are also
+    # run- and link-time dependencies.
+    depends_on("python@3.12:", when="@44:")
+    depends_on("py-numpy @2.2", when="@44:")
     depends_on("py-onnxruntime@:1.12", when="+onnx @:23.2")
     depends_on("py-onnxruntime@1.12:", when="+onnx @23.3:")
-    depends_on("py-particle @0.24", when="@44:", type="build")
+    depends_on("py-particle @0.24", when="@44:")
     depends_on("py-pybind11 @2.6.2:", when="+python @18:")
     depends_on("py-pybind11 @2.13.1:", when="+python @36:")
     depends_on("py-pytest", when="+python +unit_tests")
-    depends_on("py-setuptools", when="@44:44.1.0", type="build")
-    depends_on("py-sympy @1.13", when="@44:", type="build")
+    depends_on("py-setuptools", when="@44:44.1.0")
+    depends_on("py-sympy @1.13", when="@44:")
     # TODO: Clarify version on next release
-    depends_on("py-hatchling", when="@44.1.1:", type="build")
+    depends_on("py-hatchling", when="@44.1.1:")
     depends_on("py-torch", when="+gnn +torch")
 
     with when("+root"):
