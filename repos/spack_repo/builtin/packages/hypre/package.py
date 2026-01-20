@@ -67,9 +67,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     version("2.10.1", sha256="a4a9df645ebdc11e86221b794b276d1e17974887ead161d5050aaf0b43bb183a")
     version("2.10.0b", sha256="b55dbdc692afe5a00490d1ea1c38dd908dae244f7bdd7faaf711680059824c11")
 
-    variant("shared", default=False, description="Build shared library (disables static library)")
+    variant("shared", default=True, description="Build shared library (disables static library)")
     variant(
-        "pic", default=True, when="@2.21: ~shared", description="Build position independent code"
+        "pic", default=False, when="@2.21: ~shared", description="Build position independent code"
     )
     # Use internal SuperLU routines for FEI - version 2.12.1 and below
     variant(
@@ -135,6 +135,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@3.0.0 +rocm",
     )
 
+    # Patch to fix build with TPLs and mixed precision
+    patch("hypre30000-tpls+mixedprec.patch", when="@3.0.0")
+
     # Patch to add gptune hookup codes
     patch("ij_gptune.patch", when="+gptune@2.19.0")
 
@@ -160,9 +163,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Compiler dependencies
     depends_on("c", type="build")
-    depends_on("cxx", type="build", when="+cuda")
-    depends_on("cxx", type="build", when="+rocm")
-    depends_on("cxx", type="build", when="+sycl")
+    for dep in ("cuda", "rocm", "sycl", "caliper"):
+        depends_on("cxx", type="build", when=f"+{dep}")
     depends_on("fortran", type="build", when="+fortran")
 
     # If using CMake, we require at least the following version
@@ -183,31 +185,33 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+shared@:2.12 platform=darwin")
 
     # GPU-related dependencies and conflicts
-    gpu_pkgs = ["magma", "umpire"]
+    gpu_pkgs = ["magma", "umpire", "superlu-dist"]
     conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gpu-profiling", when="~cuda~rocm~sycl")
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
     with when("+cuda"):
         depends_on("umpire+c+cuda", when="@3:")
+        requires("+umpire", when="@3:")
 
         conflicts("@:2.18")
         conflicts("cuda_arch=none")
         conflicts("precision=longdouble")
         conflicts("precision=mixed")
-        conflicts("+shared +umpire")
+        conflicts("+shared +umpire", when="@:2")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+rocm", msg="CUDA and ROCm are mutually exclusive")
         conflicts("+sycl", msg="CUDA and SYCL are mutually exclusive")
         conflicts("cxxstd=11", when="^cuda@13:")
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
-        # https://github.com/hypre-space/hypre/pull/1353
         conflicts("^cuda@13:", when="@:2")
         for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
             requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 
     with when("+rocm"):
         depends_on("umpire+c+rocm", when="@3:")
+        requires("+umpire", when="@3:")
+
         depends_on("rocsparse")
         depends_on("rocthrust")
         depends_on("rocrand")
@@ -359,6 +363,15 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("HYPRE_ENABLE_CALIPER", "caliper"))
         args.append(self.define_from_variant("HYPRE_ENABLE_DSUPERLU", "superlu-dist"))
         args.append(self.define_from_variant("HYPRE_ENABLE_MAGMA", "magma"))
+        if spec.satisfies("+superlu-dist"):
+            inc_list = [self.spec["superlu-dist"].prefix.include]
+            if spec.satisfies("+rocm"):
+                inc_list.append(self.spec["hipblas"].prefix.include)
+            args.append(self.define("TPL_DSUPERLU_INCLUDE_DIRS", ";".join(inc_list)))
+            args.append(self.define("TPL_DSUPERLU_LIBRARIES", self.spec["superlu-dist"].libs))
+        if spec.satisfies("+magma"):
+            args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
+            args.append(self.define("TPL_MAGMA_LIBRARIES", self.spec["magma"].libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)

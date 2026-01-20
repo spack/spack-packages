@@ -31,7 +31,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     A unique design feature of Trilinos is its focus on packages.
     """
 
-    homepage = "https://trilinos.org/"
+    homepage = "https://trilinos.github.io"
     url = "https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-12-12-1.tar.gz"
     git = "https://github.com/trilinos/Trilinos.git"
 
@@ -95,7 +95,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("cuda_rdc", default=False, description="Turn on RDC for CUDA build")
     variant("rocm_rdc", default=False, description="Turn on RDC for ROCm build")
     variant(
-        "cxxstd", default="14", description="C++ standard", values=["11", "14", "17"], multi=False
+        "cxxstd", default="17", description="C++ standard", values=["11", "14", "17"], multi=False
     )
     variant("debug", default=False, description="Enable runtime safety and debug checks")
     variant(
@@ -286,6 +286,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("+dtk")
         conflicts("+ifpack2")
         conflicts("+muelu")
+        conflicts("+shylu")
         conflicts("+teko")
         conflicts("+zoltan2")
 

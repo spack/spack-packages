@@ -29,6 +29,8 @@ class Rocwmma(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("7.1.1", sha256="5a3c22ba75bf8473dc4a008fbff365d0666fc5a49c54e742f7ed4444a2b2d431")
+    version("7.1.0", sha256="96bed5cd6f2d3334cfbd4a9e6dab132cc2ec60150409712661dc69e774427707")
     version("7.0.2", sha256="359604712e6802fbb66ebddf4c337916c5a851bd4302d8c3ab5c31f0d8b7ec7e")
     version("7.0.0", sha256="14e0cec245c7c4827dc5421c9878fab5e1734112933351f8bef3a0d1ed68f6b6")
     version("6.4.3", sha256="34797c458603688748a046b611e14693221843de96740ed3ba5c606d41ab0cdf")
@@ -96,6 +98,8 @@ class Rocwmma(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, type="build", when="@" + ver)
@@ -134,6 +138,9 @@ class Rocwmma(CMakePackage):
         )
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         return args

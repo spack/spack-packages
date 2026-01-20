@@ -40,6 +40,18 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=submodules)
     version("main", branch="main", submodules=submodules)
     version(
+        "2025.09.1",
+        tag="v2025.09.1",
+        commit="1e0756eda3c344da362e483afb9100ebd8137a2c",
+        submodules=submodules,
+    )
+    version(
+        "2025.09.0",
+        tag="v2025.09.0",
+        commit="ca756788dbdd43fec2a3840389126ae94a905d5f",
+        submodules=submodules,
+    )
+    version(
         "2025.03.2",
         tag="v2025.03.2",
         commit="6e36a94380adbe88fed11a3213fc08461428ece0",
@@ -239,9 +251,21 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         description="For developers, lowers optimization level to pass tests with some compilers",
     )
 
+    variant(
+        "cxxstd",
+        default="17",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+    conflicts("cxxstd=11", when="@0.14.0:")
+    conflicts("cxxstd=14", when="@2025.09.0:")
+    conflicts("+sycl cxxstd=14", when="@2024.07.0:")
+
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
 
     depends_on("blt", type="build")
+    depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
     depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.02.1:")
     depends_on("blt@0.6.1", type="build", when="@2024.02.0")
@@ -258,9 +282,10 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
     depends_on("camp@main", when="@develop")
-    depends_on("camp@2025.03.0:", when="@2025.03.0:")
-    depends_on("camp@2024.07.0:", when="@2024.07.0:")
-    depends_on("camp@2024.02.1:", when="@2024.02.1:")
+    depends_on("camp@2025.09:", when="@2025.09:")
+    depends_on("camp@2025.03", when="@2025.03")
+    depends_on("camp@2024.07", when="@2024.07")
+    depends_on("camp@2024.02.1", when="@2024.02.1")
     depends_on("camp@2024.02.0", when="@2024.02.0")
     depends_on("camp@2023.06.0", when="@2023.06.0:2023.06.1")
     depends_on("camp@2022.10.1:2023.06.0", when="@2022.10.3:2022.10.5")
@@ -269,7 +294,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp@0.2.2:0.2.3", when="@0.14.0")
     depends_on("camp@0.1.0", when="@0.10.0:0.13.0")
 
-    depends_on("cmake@3.23:", when="@2024.07.0:", type="build")
+    depends_on("cmake@3.24:", when="@2025.09.0:", type="build")
+    depends_on("cmake@3.23:", when="@2024.07.0:2025.03.2", type="build")
     depends_on("cmake@3.23:", when="@2022.10.0:2024.02.2+rocm", type="build")
     depends_on("cmake@3.20:", when="@2022.10.0:2024.02.2", type="build")
     depends_on("cmake@3.20:", when="@:2022.03+rocm", type="build")
@@ -361,7 +387,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             hipcc_flags = []
             if self.spec.satisfies("^rocprim@7.0"):
                 hipcc_flags.append("-std=c++17")
-            if self.spec.satisfies("@2025.09.0:"):
+            elif self.spec.satisfies("@2025.09.0:"):
                 hipcc_flags.append("-std=c++17")
             elif self.spec.satisfies("@0.14.0:2025.09.0"):
                 hipcc_flags.append("-std=c++14")
@@ -370,6 +396,10 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
         return entries
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
 
     def initconfig_package_entries(self):
         spec = self.spec
@@ -417,20 +447,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+lowopttest"):
             entries.append(cmake_cache_string("CMAKE_CXX_FLAGS_RELEASE", "-O1"))
 
-        # C++17
-        if (
-            spec.satisfies("@2025.09.0:")
-            or (spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl"))
-            or (spec.satisfies("^rocprim@7.0:"))
-        ):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
-        # C++14
-        elif spec.satisfies("@0.14.0:2025.09.0"):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
-
-            if spec.satisfies("+desul"):
-                if spec.satisfies("+cuda"):
-                    entries.append(cmake_cache_string("CMAKE_CUDA_STANDARD", "14"))
+        # C++ standard
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         entries.append(
             cmake_cache_option("RAJA_ENABLE_RUNTIME_PLUGINS", spec.satisfies("+plugins"))

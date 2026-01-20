@@ -22,6 +22,8 @@ class HipifyClang(CMakePackage):
     executables = ["hipify-perl"]
 
     license("MIT")
+    version("7.1.1", sha256="abb80ecc0ea82fd847a95a9c2dd1d182990a7a495f1eab6126e7c5e9dc8b68a7")
+    version("7.1.0", sha256="9fb4e739f116b5a5b8c437808c71c6c1f31dd6184c9be21d67d4b8bf1d91b4f2")
     version("7.0.2", sha256="d6e78b025c2cb36f9470d1ec572adc8abc7f2c79bb9a5e21cf46fabd305c4b9c")
     version("7.0.0", sha256="285c23572087efa55196d65c94714541831090e20427e8281dd44771e6faf1f5")
     version("6.4.3", sha256="00156b62bfe3e8c848fb7e4573e55253ec0c86e663a226e794ff314934060182")
@@ -77,6 +79,8 @@ class HipifyClang(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

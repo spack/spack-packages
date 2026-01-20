@@ -10,7 +10,7 @@ variables:
   PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
   PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
   SPACK_CI_DISABLE_STACKS:
-    value: /^.*cray.*$/
+    value: /^.*(cray|darwin).*$/
     expand: false
 
 default:
@@ -239,7 +239,7 @@ dotenv:
   - export WRITE_DOTENV_SCRIPT_REF="0f92f8bcd4dd94fc7379eef8db5c9ed6f1935402"
   - export WRITE_DOTENV_SCRIPT_SHA256="124d80ef595b9ddc2fca3f202a70ee15378547ad5e887fe7d3b248669c5ee54a"
   - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$WRITE_DOTENV_SCRIPT_REF/.ci/gitlab/scripts/common/write_dotenv.py
-  - echo "$WRITE_DOTENV_SCRIPT_SHA256 write_dotenv.py" | sha256sum --check --status
+  - echo "$WRITE_DOTENV_SCRIPT_SHA256  write_dotenv.py" | sha256sum -c
   - python3 write_dotenv.py .ci/env
   - cat env
 
@@ -481,7 +481,7 @@ radiuss-build:
       job: radiuss-generate
 
 ########################################
-# RADIUSS for AWS
+# RADIUSS for CUDA
 ########################################
 
 .tags-x86_64_v4:
@@ -489,50 +489,50 @@ radiuss-build:
     SPACK_CI_TARGET: "x86_64_v4"
   tags: ["spack", "public", "aws", "medium", "x86_64_v4"]
 
-# Include this AFTER .*-generate in "extends" list
-.radiuss-aws-overrides:
-  # This controls image for generate step; build step is controlled by spack.yaml
-  # Note that generator emits OS info for build so these should be the same.
-  image: { "name": "ghcr.io/spack/e4s-amazonlinux-2:v2023-03-09", "entrypoint": [""] }
-
-.radiuss-aws:
+.radiuss-cuda:
   variables:
-    SPACK_CI_STACK_NAME: radiuss-aws
+    SPACK_CI_STACK_NAME: radiuss-cuda
 
-radiuss-aws-generate:
-  extends: [ ".radiuss-aws", ".generate-x86_64", ".radiuss-aws-overrides", ".tags-x86_64_v4" ]
+radiuss-cuda-generate:
+  extends: [ ".radiuss-cuda", ".generate-x86_64", ".tags-x86_64_v4" ]
+  image:
+    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    entrypoint: ['']
 
-radiuss-aws-build:
-  extends: [ ".radiuss-aws", ".build" ]
+radiuss-cuda-build:
+  extends: [ ".radiuss-cuda", ".build" ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/radiuss-aws/cloud-ci-pipeline.yml
-        job: radiuss-aws-generate
+      - artifact: jobs_scratch_dir/radiuss-cuda/cloud-ci-pipeline.yml
+        job: radiuss-cuda-generate
   needs:
     - artifacts: True
-      job: radiuss-aws-generate
+      job: radiuss-cuda-generate
 
 
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
-.radiuss-aws-aarch64:
+.radiuss-aarch64:
   variables:
-    SPACK_CI_STACK_NAME: radiuss-aws-aarch64
+    SPACK_CI_STACK_NAME: radiuss-aarch64
 
-radiuss-aws-aarch64-generate:
-  extends: [ ".radiuss-aws-aarch64", ".generate-aarch64", ".radiuss-aws-overrides" ]
+radiuss-aarch64-generate:
+  extends: [ ".radiuss-aarch64", ".generate-aarch64" ]
+  image:
+    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    entrypoint: ['']
 
-radiuss-aws-aarch64-build:
-  extends: [ ".radiuss-aws-aarch64", ".build" ]
+radiuss-aarch64-build:
+  extends: [ ".radiuss-aarch64", ".build" ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/radiuss-aws-aarch64/cloud-ci-pipeline.yml
-        job: radiuss-aws-aarch64-generate
+      - artifact: jobs_scratch_dir/radiuss-aarch64/cloud-ci-pipeline.yml
+        job: radiuss-aarch64-generate
   needs:
     - artifacts: True
-      job: radiuss-aws-aarch64-generate
+      job: radiuss-aarch64-generate
 
 ########################################
 # ECP Data & Vis SDK

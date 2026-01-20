@@ -24,8 +24,8 @@ class Pcl(CMakePackage):
     version("1.12.0", sha256="606a2d5c7af304791731d6b8ea79365bc8f2cd75908006484d71ecee01d9b51c")
     version("1.11.1", sha256="19d1a0bee2bc153de47c05da54fc6feb23393f306ab2dea2e25419654000336e")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("cmake@3.10:", when="@1.12.1:", type="build")
@@ -44,6 +44,9 @@ class Pcl(CMakePackage):
             "https://github.com/PointCloudLibrary/pcl/commit/dff16af269fbd2c15772d53064882b2bf8c2ffe9.patch?full_index=1",
             sha256="17a7a7aec8e63701294612cbb25d46ac1ce58f643dbc68e1517329ae0b68956d",
         )
+    # Fix build with Boost 1.87: #49090
+    with when("@1.14.1 ^boost@1.87:"):
+        patch("files/boost187-asio.patch")
 
     # TODO: replace this with an explicit list of components of Boost,
     # for instance depends_on('boost +filesystem')

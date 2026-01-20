@@ -35,3 +35,10 @@ class PyZipp(PythonPackage):
 
     # Historical dependencies
     depends_on("py-more-itertools", type=("build", "run"), when="@0.6.0:2.1.0")
+
+    # py-setuptools@61: supports PEP 621 which recommends the following syntax
+    # license = { text = "MIT" }
+    @when("^py-setuptools@61:")
+    def patch(self):
+        pyproject = "pyproject.toml"
+        filter_file(r'license\s*=\s*"([^"]+)"', r'license = { text = "\1" }', pyproject)

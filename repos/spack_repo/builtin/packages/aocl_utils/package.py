@@ -36,6 +36,7 @@ class AoclUtils(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("5.2", sha256="db0d807170a6eb73fcccd720a65a3e3aa8a787ae656c46479f7d9b4e1f9ed08a")
     version("5.1", sha256="68d75e04013abe90ea8308a9bc99b99532233b6c7f937f35381563f4124c20a5")
     version("5.0", sha256="ee2e5d47f33a3f673b3b6fcb88a7ef1a28648f407485ad07b6e9bf1b86159c59")
     version("4.2", sha256="1294cdf275de44d3a22fea6fc4cd5bf66260d0a19abb2e488b898aaf632486bd")
