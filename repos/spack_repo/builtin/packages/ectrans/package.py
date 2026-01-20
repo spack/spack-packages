@@ -51,6 +51,8 @@ class Ectrans(CMakePackage):
     variant("mkl", default=False, description="Use MKL")
     variant("fftw", default=True, description="Use FFTW")
 
+    variant("etrans", default=False, when="@1.6.0:",
+            description="Compile limited-area-model transform library etrans")
     variant("transi", default=True, description="Compile TransI C-interface to trans")
 
     depends_on("c", type="build")
@@ -92,6 +94,7 @@ class Ectrans(CMakePackage):
             self.define_from_variant("ENABLE_SINGLE_PRECISION", "single_precision"),
             self.define_from_variant("ENABLE_FFTW", "fftw"),
             self.define_from_variant("ENABLE_MKL", "mkl"),
+            self.define_from_variant("ENABLE_ETRANS", "etrans"),
             self.define_from_variant("ENABLE_TRANSI", "transi"),
             # Turn off use of contiguous keyword in Fortran because a number
             # of compilers have issues with it, and the hardcoded list of "bad"
