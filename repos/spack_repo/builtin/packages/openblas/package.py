@@ -611,8 +611,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         return make_defs
 
     def build(self, pkg: MakefilePackage, spec: Spec, prefix: Prefix) -> None:
-        """Override 'make all' with sequential builds due to race conditions.
-        """
+        """Override 'make all' with sequential builds due to race conditions."""
         make = self.module.make
         # Due to the verbosity of the command line and number of object files
         # created, we suppress makefile command echoing via `-s`.
