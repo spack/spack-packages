@@ -50,7 +50,6 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     )
     version(
         "4.10.2",
-        preferred=True,
         sha256="3af87e5f0608a69849c00eb7c73b11f8422fa36903dd14610584506e7f68e638",
         url="https://sd.llnl.gov/sites/sd/files/2021-01/silo-4.10.2.tgz",
     )
