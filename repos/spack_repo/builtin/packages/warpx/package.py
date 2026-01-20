@@ -17,7 +17,7 @@ class Warpx(CMakePackage, PythonExtension):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/25.11.tar.gz"
+    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/25.12.tar.gz"
     git = "https://github.com/BLAST-WarpX/warpx.git"
 
     maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
@@ -26,11 +26,12 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("25.12", sha256="fb59497e8427cf491312f83a72b011281d0aa04f6ebbb59b20afcbe0d86b136c")
     version("25.11", sha256="4e2b4636fee995ad075a907cf216fc089d1220824b8743b62c01e188fa6c23d7")
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
     depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
-    for v in ["25.04", "25.11", "develop"]:
+    for v in ["develop", "25.12", "25.11", "25.04"]:
         depends_on(f"amrex@{v}", when=f"@{v}")
         depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
@@ -94,7 +95,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("ascent +mpi", when="+mpi")
         depends_on("amrex +ascent +conduit")
     with when("+catalyst"):
-        depends_on("libcatalyst@2.0: +conduit")
+        depends_on("libcatalyst@2.0:")
         depends_on("libcatalyst +mpi", when="+mpi")
         depends_on("amrex +catalyst +conduit")
     with when("dims=1"):
@@ -145,10 +146,16 @@ class Warpx(CMakePackage, PythonExtension):
             depends_on("pkgconfig", type="build")
     with when("compute=sycl"):
         depends_on("amrex +sycl")
+        depends_on("intel-oneapi-mkl", when="+fft")
     with when("+fft dims=rz"):
         depends_on("lapackpp")
+        depends_on("lapackpp +cuda", when="compute=cuda")
+        depends_on("lapackpp +rocm", when="compute=hip")
+        depends_on("lapackpp +sycl", when="compute=sycl")
         depends_on("blaspp")
         depends_on("blaspp +cuda", when="compute=cuda")
+        depends_on("blaspp +rocm", when="compute=hip")
+        depends_on("blaspp +sycl", when="compute=sycl")
     with when("+openpmd"):
         depends_on("openpmd-api@0.16.1:")
         depends_on("openpmd-api ~mpi", when="~mpi")
@@ -170,14 +177,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("py-pybind11@3.0.1:", when="@25.08:", type=("build", "link"))
         depends_on("py-wheel@0.40:", type="build")
 
-    conflicts("~qed +qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
-
-    # https://github.com/BLAST-WarpX/warpx/issues/5774
-    conflicts(
-        "compute=sycl dims=rz",
-        when="+fft",
-        msg="WarpX spectral solvers are not yet running on SYCL GPUs for RZ (GH#5774)",
-    )
+    conflicts("~qed", when="+qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
 
     def cmake_args(self):
         spec = self.spec

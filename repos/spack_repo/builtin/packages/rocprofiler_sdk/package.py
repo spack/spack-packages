@@ -23,6 +23,18 @@ class RocprofilerSdk(CMakePackage):
 
     license("MIT")
     version(
+        "7.1.1",
+        tag="rocm-7.1.1",
+        commit="ff4f9a64d386454ed5f1a1360a2a5c14292f36c6",
+        submodules=True,
+    )
+    version(
+        "7.1.0",
+        tag="rocm-7.1.0",
+        commit="d5c0aaae36a6cb348f408c9fde8be435e29981b9",
+        submodules=True,
+    )
+    version(
         "7.0.2",
         tag="rocm-7.0.2",
         commit="19ae05055bee5dab65854b44c047f34db2e8276c",
@@ -92,10 +104,13 @@ class RocprofilerSdk(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("sqlite", when="@7:")
+    depends_on("elfutils")
+    depends_on("libdrm")
+    depends_on("pkgconfig", when="@7.1:")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -110,14 +125,22 @@ class RocprofilerSdk(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"rccl@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
+
+    def cmake_args(self):
+        args = []
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ElfUtils_ROOT_DIR", self.spec["elfutils"].prefix))
+        return args
 
     def setup_run_environment(self, env):
         if not self.spec.external:

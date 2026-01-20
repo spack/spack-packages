@@ -251,6 +251,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     conflicts("+shared", when="@:3.3.2")
     conflicts("~static~shared")
     conflicts("~threadsafe", when="@:3+openmp")
+    requires("+threadsafe", when="+openmp")
 
     conflicts("+cuda", when="@:3")
     conflicts("+rocm", when="@:4.1")
@@ -465,6 +466,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("libceed@0.7:0.8", when="@4.2.0+libceed")
     depends_on("libceed@0.8:0.9", when="@4.3.0+libceed")
     depends_on("libceed@0.10.1:", when="@4.4.0:+libceed")
+
+    depends_on("libceed+openmp", when="+libceed+openmp")
+    depends_on("libceed~openmp", when="+libceed~openmp")
+
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on(
             "libceed+cuda cuda_arch={0}".format(sm_),
@@ -762,6 +767,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     hypre_rocm_libs += hypre["rocsparse"].libs
                 if "^rocrand" in hypre:
                     hypre_rocm_libs += hypre["rocrand"].libs
+                if hypre.satisfies("@2.29.0:"):
+                    if "^rocsolver" in hypre:
+                        hypre_rocm_libs += hypre["rocsolver"].libs
+                    if "^rocblas" in hypre:
+                        hypre_rocm_libs += hypre["rocblas"].libs
                 hypre_gpu_libs = " " + ld_flags_from_library_list(hypre_rocm_libs)
             options += [
                 "HYPRE_OPT=-I%s" % hypre.prefix.include,
@@ -1127,6 +1137,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             umpire_libs = umpire.libs
             if "^camp" in umpire:
                 umpire_opts += umpire["camp"].headers
+                umpire_libs += umpire["camp"].libs
             if "^fmt" in umpire:
                 umpire_opts += umpire["fmt"].headers
                 umpire_libs += umpire["fmt"].libs
@@ -1274,9 +1285,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             with working_dir("config"):
                 os.rename("config.mk", "config.mk.orig")
                 copy(str(self.config_mk), "config.mk")
-                # Add '/mfem' to MFEM_INC_DIR for miniapps that include directly
-                # headers like "general/forall.hpp":
-                filter_file("(MFEM_INC_DIR.*)$", "\\1/mfem", "config.mk")
+                # Replace the definition of MFEM_INC_DIR with '$(MFEM_DIR)' for
+                # miniapps that include directly headers like
+                # "general/forall.hpp" and to avoid mixing source-tree and
+                # install-tree headers that use '#prgma once'.
+                filter_file("(MFEM_INC_DIR.*)=.*$", "\\1= $(MFEM_DIR)", "config.mk")
                 shutil.copystat("config.mk.orig", "config.mk")
                 # TODO: miniapps linking to libmfem-common.* will not work.
 

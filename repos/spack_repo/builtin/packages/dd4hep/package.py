@@ -176,6 +176,11 @@ class Dd4hep(CMakePackage):
     # See https://github.com/AIDASoft/DD4hep/issues/1210
     conflicts("^root@6.31.1:", when="@:1.27")
 
+    # See https://github.com/AIDASoft/DD4hep/pull/1547
+    conflicts(
+        "^python +freethreading", when="@:1.34", msg="python free-threading requires dd4hep@1.35:"
+    )
+
     @property
     def libs(self):
         # We need to override libs here, because we don't build a libdd4hep so
@@ -231,7 +236,13 @@ class Dd4hep(CMakePackage):
         env.set("DD4hep_DIR", self.prefix)
         env.set("DD4hep_ROOT", self.prefix)
         if len(self.libs.directories) > 0:
-            env.prepend_path("LD_LIBRARY_PATH", self.libs.directories[0])
+            # Plugin lookup mechanism is system-dependent
+            libvar = (
+                "DYLD_LIBRARY_PATH"
+                if self.spec.satisfies("platform=darwin")
+                else "LD_LIBRARY_PATH"
+            )
+            env.prepend_path(libvar, self.libs.directories[0])
 
     def url_for_version(self, version):
         # dd4hep releases are dashes and padded with a leading zero

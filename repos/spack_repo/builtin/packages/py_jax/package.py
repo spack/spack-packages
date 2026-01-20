@@ -23,6 +23,8 @@ class PyJax(PythonPackage):
 
     tags = ["e4s"]
 
+    version("0.8.2", sha256="1a685ded06a8223a7b52e45e668e406049dbbead02873f2b5a4d881ba7b421ae")
+    version("0.8.1", sha256="e53f67b15315f5e154851a7fd77a192b59c6c75b3f7ac56e214296765391cca7")
     version("0.8.0", sha256="0ea5a7be7068c25934450dfd87d7d80a18a5d30e0a53454e7aade525b23accd5")
     version("0.7.2", sha256="71a42b964bc6d52e819311429e6c0f5742e2a4650226dab1a1dd26fd986ca70d")
     version("0.7.1", sha256="118f56338c503361d2791f069d24339d8d44a8db442ed851d2e591222fb7a56d")
@@ -104,6 +106,8 @@ class PyJax(PythonPackage):
         # jax/_src/lib/__init__.py
         # https://github.com/google/jax/commit/8be057de1f50756fe7522f7e98b2f30fad56f7e4
         for v in [
+            "0.8.2",
+            "0.8.1",
             "0.8.0",
             "0.7.2",
             "0.7.1",
@@ -155,6 +159,8 @@ class PyJax(PythonPackage):
             depends_on(f"py-jaxlib@:{v}", when=f"@{v}")
 
         # See _minimum_jaxlib_version in jax/version.py
+        depends_on("py-jaxlib@0.8.2:", when="@0.8.2:")
+        depends_on("py-jaxlib@0.8.1:", when="@0.8.1:")
         depends_on("py-jaxlib@0.8.0:", when="@0.8.0:")
         depends_on("py-jaxlib@0.7.2:", when="@0.7.2:")
         depends_on("py-jaxlib@0.7.1:", when="@0.7.1:")

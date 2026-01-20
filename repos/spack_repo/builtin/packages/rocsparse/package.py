@@ -42,6 +42,8 @@ class Rocsparse(CMakePackage):
 
     license("MIT")
 
+    version("7.1.1", sha256="420321039b1471a67318a9bccce749ed2293e4aa4615ef9d1b74ed4e03977ee0")
+    version("7.1.0", sha256="cdad45e7b23e91a9107e512d9205ef58dcdfaea506b6e5fce3701a2b6e96952c")
     version("7.0.2", sha256="26dd7df3c470f877d0f9ab15dccdac1915a3939e2ab9e00a83342c6edf289c8a")
     version("7.0.0", sha256="22aeb42b8c300a40ae29001781a92da8e396a2e42c4dce1abf66276552fca39e")
     version("6.4.3", sha256="fca59e70da33a046be36ea2fe83ba18ea8f0a5c9efd255e0427802ba3a134d0a")
@@ -90,6 +92,8 @@ class Rocsparse(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
@@ -282,7 +286,10 @@ class Rocsparse(CMakePackage):
         ]
 
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
