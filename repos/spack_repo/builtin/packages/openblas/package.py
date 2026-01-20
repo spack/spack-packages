@@ -10,6 +10,7 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
+from spack.llnl.util import tty
 
 
 class Openblas(CMakePackage, MakefilePackage):
@@ -620,12 +621,13 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # Due to the verbosity of the command line and number of object files
         # created, we suppress makefile command echoing via `-s`.
         args = self.make_defs
-        if not tty.is_verbose():
+        if tty.debug_level() == 0:
             args = ['-s'] + args
 
         # Make each target sequentially
         with working_dir(self.build_directory):
             for target in ["libs", "netlib", "shared"]:
+                tty.info("Building target", target)
                 make(*(args + [target]))
 
     @run_after("build")
