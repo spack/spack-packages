@@ -8,11 +8,15 @@ from spack.package import *
 
 
 class Ectrans(CMakePackage):
-    """Ectrans is the global spherical Harmonics transforms library,
-    extracted from the IFS. It is using a hybrid of MPI and OpenMP
-    parallelisation strategies. The package contains both single- and double precision
-    Fortran libraries (trans_sp, trans_dp), as well as a
-    C interface to the double-precision version (transi_dp)."""
+    """ecTrans is a library for performing efficient and scalable spectral transformations. It is
+    used for transforming fields from a grid point space on the sphere (e.g. latitude-longitude) to
+    a spectral space based on spherical harmonics (for global transformations) or bifourier
+    harmonics (for limited area transformations), which constitutes a direct transform. A
+    corresponding inverse transform can also be performed. A transform consists of a Fourier
+    transform in the longitudinal direction and either a Legendre transform (global) or another
+    Fourier transform (limited area) in the latitudinal direction. ecTrans can also operate on
+    fields which are distributed across separate MPI tasks and performs the necessary communication
+    to ensure all data needed for a particular transform are resident on a local task."""
 
     homepage = "https://github.com/ecmwf-ifs/ectrans"
     git = "https://github.com/ecmwf-ifs/ectrans.git"
