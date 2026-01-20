@@ -6,10 +6,10 @@
 import os
 
 from spack.package import *
-import spack_repo.builtin.packages.adiak.package
-
 from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage
 from spack_repo.builtin.build_systems.cached_cmake import cmake_cache_option
+import spack_repo.builtin.packages.adiak.package
+
 
 class Adiak(CachedCMakePackage):
     """Adiak collects metadata about HPC application runs and provides it
@@ -25,7 +25,9 @@ class Adiak(CachedCMakePackage):
     variant("shared", default=True, description="Build dynamic libraries")
 
     license("MIT")
-    version("0.5.0", commit="f08c8375c613e13e9b9c6a1db271cbf8f0d3f3e3", submodules=True, preferred=True)
+    version(
+        "0.5.0", commit="f08c8375c613e13e9b9c6a1db271cbf8f0d3f3e3", submodules=True, preferred=True
+    )
     version(
         "0.4.1", commit="7ac997111785bee6d9391664b1d18ebc2b3c557b", submodules=True, preferred=True
     )
@@ -50,9 +52,9 @@ class Adiak(CachedCMakePackage):
 
     def cmake_args(self):
         args = []
-        
+
         if self.spec.satisfies("+mpi"):
-            args.append("-DENABLE_PYTHON_BINDINGS=ON")            
+            args.append("-DENABLE_PYTHON_BINDINGS=ON")
         if self.spec.satisfies("+shared"):
             args.append("-DBUILD_SHARED_LIBS=ON")
         else:
