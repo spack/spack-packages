@@ -34,6 +34,12 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=False)
     version("master", branch="master", submodules=False)
     version(
+        "0.15.3",
+        tag="v0.15.3",
+        commit="132252376aa460fa900d034f7b018d3a169afce6",
+        submodules=False,
+    )
+    version(
         "0.15.2",
         tag="v0.15.2",
         commit="f61289ab3db627b568e5c211b1ab8e13a3b6d211",
@@ -140,7 +146,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("umpire")
     depends_on("umpire+mpi", when="+mpi")
-    depends_on("umpire@2025.09:", when="@0.15.2:")
+    depends_on("umpire@2025.12:", when="@0.15.3:")
+    depends_on("umpire@2025.09", when="@0.15.2")
     depends_on("umpire@2025.03", when="@0.15.0")
     depends_on("umpire@2024.07.0", when="@0.13.2")
     depends_on("umpire@2024.02.1", when="@0.13.0")
@@ -148,7 +155,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("umpire@2022.10.0", when="@0.10.0")
 
     depends_on("raja")
-    depends_on("raja@2025.09:", when="@0.15.2:")
+    depends_on("raja@2025.12:", when="@0.15.3:")
+    depends_on("raja@2025.09", when="@0.15.2")
     depends_on("raja@2025.03", when="@0.15.0")
     depends_on("raja@2024.07.0", when="@0.13.2")
     depends_on("raja@2024.02.2", when="@0.13.1")
@@ -158,7 +166,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("chai+enable_pick", when="@:0.14.99")
     depends_on("chai+raja")
-    depends_on("chai@2025.09.1:", when="@0.15.2:")
+    depends_on("chai@2025.12:", when="@0.15.3:")
+    depends_on("chai@2025.09.1", when="@0.15.2")
     depends_on("chai@2025.03", when="@0.15.0")
     depends_on("chai@2024.07.0", when="@0.13.2")
     depends_on("chai@2024.02.2", when="@0.13.1")

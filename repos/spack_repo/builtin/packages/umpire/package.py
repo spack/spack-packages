@@ -34,6 +34,12 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", submodules=False)
     version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="0372fbd6e1f17d7e6dd72693f8b857f3ec7559e9",
+        submodules=False,
+    )
+    version(
         "2025.09.0",
         tag="v2025.09.0",
         commit="6b0ea9edbbbc741c8a429768d946549cd3bd7d33",
@@ -274,7 +280,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp~cuda", when="~cuda")
     depends_on("camp~rocm", when="~rocm")
-    depends_on("camp@2025.12:", when="@develop")
+    depends_on("camp@2025.12:", when="@2025.12")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
     depends_on("camp@2024.07", when="@2024.07")

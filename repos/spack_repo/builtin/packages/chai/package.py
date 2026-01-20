@@ -33,6 +33,12 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", submodules=False)
     version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="26d5646707e1848b0524379b12a7716e4a830a27",
+        submodules=False,
+    )
+    version(
         "2025.09.1",
         tag="v2025.09.1",
         commit="51e66b8a5a6caac41aa329c8643180b8e2b33e5f",
@@ -179,7 +185,8 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("^blt@:0.3.6", when="+rocm")
 
     depends_on("umpire")
-    depends_on("umpire@2025.09:", when="@2025.09:")
+    depends_on("umpire@2025.12:", when="@2025.12:")
+    depends_on("umpire@2025.09", when="@2025.09")
     depends_on("umpire@2025.03", when="@2025.03")
     depends_on("umpire@2024.07.0", when="@2024.07.0")
     depends_on("umpire@2024.02.1", when="@2024.02.1")
@@ -209,7 +216,8 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     with when("+raja"):
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+openmp", when="+openmp")
-        depends_on("raja@2025.09:", when="@2025.09.0:")
+        depends_on("raja@2025.12:", when="@2025.12.0:")
+        depends_on("raja@2025.09", when="@2025.09.0")
         depends_on("raja@2025.03.2", when="@2025.03.1")
         depends_on("raja@2025.03.0", when="@2025.03.0")
         depends_on("raja@2024.07.0", when="@2024.07.0")
