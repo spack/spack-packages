@@ -36,6 +36,7 @@ class PySqlalchemy(PythonPackage):
         description="Python modules for database access",
         values=any_combination_of("mysql", "postgresql", "pymysql"),
     )
+    variant("asyncio", default=False, when="@1.4:")
 
     depends_on("py-setuptools@61:", when="@2.0.33:", type="build")
     depends_on("py-setuptools@47:", when="@2:", type="build")
@@ -48,7 +49,7 @@ class PySqlalchemy(PythonPackage):
     depends_on("py-typing-extensions@4.6.0:", when="@2.0.25:", type=("build", "run"))
     depends_on("py-typing-extensions@4.2.0:", when="@2:", type=("build", "run"))
 
-    conflicts("^py-greenlet@0.4.17", when="@1.4.0:2.0.30 ^python@:3.13")
+    conflicts("^py-greenlet@0.4.17", when="@1.4:2.0.30 ^python@:3.13")
 
     # >=1.4.0
     depends_on("py-mysqlclient@1.4:", when="backend=mysql @1.4:", type=("build", "run"))
@@ -59,6 +60,10 @@ class PySqlalchemy(PythonPackage):
     depends_on("py-mysqlclient", when="backend=mysql @:1.3", type=("build", "run"))
     depends_on("py-pymysql", when="backend=pymysql @:1.3", type=("build", "run"))
     depends_on("py-psycopg2", when="backend=postgresql @:1.3", type=("build", "run"))
+
+    depends_on("py-greenlet@1:", when="@2.0.40: +asyncio", type=("build", "run"))
+    depends_on("py-greenlet", when="@:2.0.39 +asyncio", type=("build", "run"))
+    conflicts("^py-greenlet@0.4.17", when="@1.4:2.0.39 +asyncio")
 
     def url_for_version(self, version):
         if self.spec.satisfies("@2.0.33:"):
