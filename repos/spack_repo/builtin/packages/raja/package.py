@@ -401,7 +401,9 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
             # gcc-toolchain support
             gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
-            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
             if using_toolchain:
                 cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
 
@@ -418,15 +420,28 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             # HIP configuration from hip_for_radiuss_projects
             rocm_root = spec["llvm-amdgpu"].prefix
             gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
-            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
             hip_link_flags = ""
 
             if using_toolchain:
                 gcc_prefix = using_toolchain[0]
-                entries.append(cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix)))
-                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix)))
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
             else:
-                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)))
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
 
             hipcc_flags = []
             if self.spec.satisfies("^rocprim@7.0"):

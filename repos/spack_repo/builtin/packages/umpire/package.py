@@ -409,7 +409,9 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
                 entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
 
             gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
-            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
             if using_toolchain:
                 cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
 
@@ -428,13 +430,26 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
             rocm_root = spec["llvm-amdgpu"].prefix
             hip_link_flags = ""
             gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
-            using_toolchain = list(filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"]))
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
             if using_toolchain:
                 gcc_prefix = using_toolchain[0]
-                entries.append(cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix)))
-                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix)))
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
             else:
-                entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)))
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
