@@ -95,7 +95,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("cuda_rdc", default=False, description="Turn on RDC for CUDA build")
     variant("rocm_rdc", default=False, description="Turn on RDC for ROCm build")
     variant(
-        "cxxstd", default="14", description="C++ standard", values=["11", "14", "17"], multi=False
+        "cxxstd", default="17", description="C++ standard", values=["11", "14", "17"], multi=False
     )
     variant("debug", default=False, description="Enable runtime safety and debug checks")
     variant(
@@ -286,6 +286,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("+dtk")
         conflicts("+ifpack2")
         conflicts("+muelu")
+        conflicts("+shylu")
         conflicts("+teko")
         conflicts("+zoltan2")
 

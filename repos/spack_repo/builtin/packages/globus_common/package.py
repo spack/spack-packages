@@ -24,6 +24,7 @@ class GlobusCommon(AutotoolsPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("18.15", sha256="b47485bbf1118976f347dcfe539a2116725f6c202d438c4ef109d282340464d5")
     version("18.14", sha256="22368942a78e608d8fe6d9f7379abc628e2bd7af54a98c7d2bddc265d6f0ba45")
 
     depends_on("c", type="build")

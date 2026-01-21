@@ -22,6 +22,7 @@ class RocmCore(CMakePackage):
     libraries = ["librocm-core"]
 
     license("MIT")
+    version("7.1.1", sha256="0171b82a4d028d57035d0d57a01a058f50f1a23959d230cdeab14972dcd94da8")
     version("7.1.0", sha256="3c7e990ff4da60119c8575982660331bf636f63a9c68c6a344d410b2bdfa5d39")
     version("7.0.2", sha256="2d126d47aa4523d84e5ab026680fa2b1145db332ff5e4aa74b48f8ed0ecd975d")
     version("7.0.0", sha256="d7741e12d184a6553f6d39b3ff4d113a2e7eeb509d5ec08e06cdaf51dcd26f90")
@@ -69,6 +70,7 @@ class RocmCore(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.1",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 

@@ -28,6 +28,9 @@ class Arkouda(MakefilePackage):
     version("main", branch="main")
 
     version(
+        "2025.12.16", sha256="72638e9d8aa1889b6bafa76c6e8060e0c8aab0871be2693f8fb10f57cd4acbfa"
+    )
+    version(
         "2025.09.30", sha256="10f488a3ff3482b66f1b1e8a4235d72e91ad07acb932eca85d1e695f0f6155a2"
     )
     version(
@@ -53,6 +56,18 @@ class Arkouda(MakefilePackage):
         description="Build Arkouda for multi-locale execution on a cluster or supercomputer",
     )
 
+    variant(
+        "array_nd_max",
+        default="1",
+        values=("1", "2", "3"),
+        multi=False,
+        description="Set ARRAY_ND_MAX used by Arkouda build",
+    )
+
+    variant(
+        "slurm-gasnet_ibv", default=False, description="Configure Chapel for Slurm + GASNet (ibv)"
+    )
+
     depends_on(
         "chapel@2.0:2.4 +hdf5 +zmq",
         when="@2025.07.03:2025.08.20",
@@ -75,6 +90,11 @@ class Arkouda(MakefilePackage):
     depends_on("hdf5+hl~mpi", type=("build", "link", "run", "test"))
     depends_on("libiconv", type=("build", "link", "run", "test"))
     depends_on("libidn2", type=("build", "link", "run", "test"))
+    depends_on(
+        "arrow+brotli+bz2+lz4+parquet+snappy+zlib+zstd",
+        type=("build", "link", "run"),
+        when="@2025.12.16:",
+    )
     depends_on(
         "arrow@:19+brotli+bz2+lz4+parquet+snappy+zlib+zstd",
         type=("build", "link", "run"),
@@ -99,9 +119,22 @@ class Arkouda(MakefilePackage):
         when="+distributed",
     )
 
+    # Convenience integration: if the user selects Arkouda's slurm-gasnet_ibv,
+    # force Chapel into a compatible comm/launcher configuration.
+    requires(
+        "+distributed",
+        when="+slurm-gasnet_ibv",
+        msg="slurm-gasnet_ibv requires a distributed Arkouda build (+distributed)",
+    )
+    requires(
+        "^chapel comm=gasnet comm_substrate=ibv launcher=slurm-gasnetrun_ibv",
+        when="+slurm-gasnet_ibv",
+    )
+
     # Some systems need explicit -fPIC flag when building the Arrow functions
     patch("makefile-fpic-2024.06.21.patch", when="@2024.06.21")
-    patch("makefile-fpic-2024.10.02.patch", when="@2024.10.02:")
+    patch("makefile-fpic-2024.10.02.patch", when="@2024.10.02:2025.09.30")
+    patch("makefile-fpic-2025.12.16.patch", when="@2025.12.16")
 
     sanity_check_is_file = [join_path("bin", "arkouda_server")]
 
@@ -124,6 +157,9 @@ class Arkouda(MakefilePackage):
             f.write("$(eval $(call add-path,{0}))\n".format(spec["libidn2"].prefix))
 
     def build(self, spec, prefix):
+        nd = spec.variants["array_nd_max"].value
+        make_args = [f"ARRAY_ND_MAX={nd}"]
+
         # Detect distributed builds and skip the dependency checks built into
         # the Arkouda Makefile. These checks will try to spawn multiple jobs which may
         # cause the build to fail in situations where the user is constrained
@@ -131,9 +167,9 @@ class Arkouda(MakefilePackage):
         if spec.satisfies("+distributed"):
             with set_env(ARKOUDA_SKIP_CHECK_DEPS="1"):
                 tty.warn("Distributed build detected. Skipping dependency checks")
-                make()
+                make(*make_args)
         else:
-            make()
+            make(*make_args)
 
     # Arkouda does not have an install target in its Makefile
     def install(self, spec, prefix):
