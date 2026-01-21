@@ -22,7 +22,7 @@ class Ectrans(CMakePackage):
     git = "https://github.com/ecmwf-ifs/ectrans.git"
     url = "https://github.com/ecmwf-ifs/ectrans/archive/1.1.0.tar.gz"
 
-    maintainers("climbfuji")
+    maintainers("climbfuji", "samhatfield")
 
     license("Apache-2.0")
 
