@@ -23,6 +23,7 @@ class PyPandas(PythonPackage):
 
     tags = ["e4s"]
 
+    version("2.3.3", sha256="e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b")
     version("2.3.2", sha256="ab7b58f8f82706890924ccdfb5f48002b83d2b5a3845976a9fb705d36c34dcdb")
     version("2.3.1", sha256="0a95b9ac964fe83ce317827f80304d37388ea77616b1425f0ae41c9d2d0d7bb2")
     version("2.3.0", sha256="34600ab34ebf1131a7613a260a61dbe8b62c188ec0ea4c296da7c9a06b004133")
@@ -91,11 +92,8 @@ class PyPandas(PythonPackage):
 
     with default_args(type=("build", "run")):
         # Based on PyPI wheel availability
-        depends_on("python@3.10:", when="@2.2:")
-        depends_on("python@3.9:", when="@2.1:")
-        depends_on("python@3.8:", when="@1.4:")
-
-        depends_on("python@:3.13")
+        depends_on("python@:3.14")
+        depends_on("python@:3.13", when="@:2.3.2")
         depends_on("python@:3.12", when="@:2.2.2")
         depends_on("python@:3.11", when="@:2.1.0")
         depends_on("python@:3.10", when="@:1.4")

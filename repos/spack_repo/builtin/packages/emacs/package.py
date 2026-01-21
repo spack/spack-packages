@@ -88,10 +88,13 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # Optional dependencies
     depends_on("gnutls", when="+tls")
-    depends_on("tree-sitter", when="+treesitter")
-    depends_on("gcc@11: +strip languages=jit", when="+native")
+    depends_on("gcc@11: languages=jit", when="+native")
     depends_on("jansson@2.7:", when="+json")
     depends_on("sqlite@3", when="+sqlite")
+
+    with when("+treesitter"):
+        depends_on("tree-sitter")
+        depends_on("tree-sitter@:0.25", when="@:30.2")
 
     # GUI dependencies
     with when("gui=x11"):
@@ -108,6 +111,13 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     conflicts("gui=cocoa", when="platform=cray", msg="Use gui=x11 for Linux/Cray GUI support")
     conflicts("gui=x11", when="platform=darwin", msg="Use gui=cocoa for macOS GUI support")
     conflicts("@:26.3", when="platform=darwin os=catalina")
+
+    # Xcode 26 adds support for `posix_spawn_file_actions_addchdir`, but older
+    # macOS kernels (for example, macOS 15) do not implement it. The newer CLI
+    # tools can therefore appear to support the feature even though the kernel
+    # lacks the required support, causing Emacs to segfault during compilation.
+    patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sequoia")
+    patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sonoma")
 
     def configure_args(self):
         args = []

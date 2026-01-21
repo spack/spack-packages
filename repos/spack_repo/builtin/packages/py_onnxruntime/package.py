@@ -26,6 +26,8 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
 
     license("MIT")
 
+    version("1.22.2", tag="v1.22.2", commit="5630b081cd25e4eccc7516a652ff956e51676794")
+    version("1.21.1", tag="v1.21.1", commit="8f7cce3a49fdbdac96e0868b75b7d0159db7ac7f")
     version("1.21.0", tag="v1.21.0", commit="e0b66cad282043d4377cea5269083f17771b6dfc")
     version("1.20.2", tag="v1.20.2", commit="8608bf02f21774be0388d2aa3a9f886d009d0b4c")
     version("1.19.2", tag="v1.19.2", commit="ffceed9d44f2f3efb9dd69fa75fea51163c91d91")
@@ -38,12 +40,13 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     version("1.10.0", tag="v1.10.0", commit="0d9030e79888d1d5828730b254fedc53c7b640c1")
     version("1.7.2", tag="v1.7.2", commit="5bc92dff16b0ddd5063b717fb8522ca2ad023cb0")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("binutils@2.36:", type="build")
 
     # cmake/CMakeLists.txt
+    depends_on("cmake@3.28:", when="@1.21:", type="build")
     depends_on("cmake@3.26:", when="@1.17:", type="build")
     depends_on("cmake@3.1:", type="build")
 
@@ -145,6 +148,10 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         sha256="fedcf5b0720ebad97d332f440f427a7e9f2fc96ff0a648f7832786ef1a83fe0e",
         when="@1.17:1.20.2",
     )
+
+    # Add back linker flags "-z noexecstack"
+    # https://github.com/microsoft/onnxruntime/pull/25200
+    patch("pr25200-fix-linker-flags.patch", when="@1.21:1.22")
 
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
 

@@ -221,6 +221,7 @@ class Gromacs(CMakePackage, CudaPackage):
 
     depends_on("mpi", when="+mpi")
 
+    # Plumed 2.10.0 needs Gromacs 2025.0, 2024.3, 2023.5, 2022.5
     # Plumed 2.9.0 needs Gromacs 2023,  2022.5, 2021.7, 2020.7
     # Plumed 2.8.3 needs Gromacs        2022.5, 2021.7, 2020.7, 2019.6
     # Plumed 2.8.2 needs Gromacs        2022.5, 2021.7, 2020.7, 2019.6
@@ -258,15 +259,19 @@ class Gromacs(CMakePackage, CudaPackage):
     # see https://github.com/spack/spack/releases/tag/v0.20.0
 
     plumed_patches = {
-        "=2023": "2.9.1",
-        "2022.5": "2.8.2:2.9.1",
+        "2025.0": "2.10.0",
+        "2024.3": "2.9.3:2.10.0",
+        "2024.2": "2.9.2",
+        "2023.5": "2.9.2:2.10.0",
+        "=2023": "2.9.0:2.9.1",
+        "2022.5": "2.8.2:2.10.0",
         "2022.3": "2.8.1",
-        "2021.7": "2.8.2:2.9.1",
+        "2021.7": "2.8.2:2.9.4",
         "2021.6": "2.8.1",
         "2021.5": "2.7.5:2.7.6",
         "2021.4": "2.7.3:2.8.0",
         "=2021": "2.7.1:2.7.2",
-        "2020.7": "2.8.1:2.9.1",
+        "2020.7": "2.8.1:2.9.4",
         "2020.6": "2.7.2:2.8.0",
         "2020.5": "2.7.1",
         "2020.4": "2.6.2:2.7.0",
@@ -334,7 +339,6 @@ class Gromacs(CMakePackage, CudaPackage):
         depends_on("gcc-runtime@9:", when="@2023:2024")
         depends_on("gcc-runtime@11:", when="@2025:")
 
-    depends_on("hwloc@1.0:1", when="+hwloc@2016:2018")
     depends_on("hwloc", when="+hwloc@2019:")
 
     depends_on("cp2k@8.1:", when="+cp2k")
@@ -355,14 +359,15 @@ class Gromacs(CMakePackage, CudaPackage):
     requires("^[virtuals=fftw-api] intel-oneapi-mkl", when="^[virtuals=lapack] intel-oneapi-mkl")
     requires("^[virtuals=lapack] intel-oneapi-mkl", when="^[virtuals=fftw-api] intel-oneapi-mkl")
 
-    patch("gmxDetectCpu-cmake-3.14.patch", when="@2018:2019.3^cmake@3.14.0:")
-    patch("gmxDetectSimd-cmake-3.14.patch", when="@5.0:2017^cmake@3.14.0:")
-    # 2021.2 will always try to build tests (see https://gromacs.bioexcel.eu/t/compilation-failure-for-gromacs-2021-1-and-2021-2-with-cmake-3-20-2/2129)
+    # 2025.0 CMake fix for PLUMED
     patch(
-        "https://gitlab.com/gromacs/gromacs/-/commit/10262892e11a87fda0f59e633c89ed5ab1100509.diff",
-        sha256="2c30d00404b76421c13866cc42afa5e63276f7926c862838751b158df8727b1b",
-        when="@2021.1:2021.2",
+        "https://gitlab.com/gromacs/gromacs/-/merge_requests/4966.diff",
+        sha256="9372c235719ca04d6dd418fb5943f773e03f05246e3e059a8578089b14b2420c",
+        when="@2025.0",
     )
+    # https://gitlab.com/gromacs/gromacs/-/issues/5289
+    # https://gitlab.com/gromacs/gromacs/-/merge_requests/4965
+    patch("pr4965-2025.0.patch", when="@2025.0")
 
     filter_compiler_wrappers(
         "*.cmake", relative_root=os.path.join("share", "cmake", "gromacs_mpi")
@@ -769,9 +774,12 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         # Ensure that the GROMACS log files report how the code was patched
         # during the build, so that any problems are easier to diagnose.
+        # Do not rely on GMX_USE_PLUMED=AUTO
         if self.spec.satisfies("+plumed"):
+            options.append("-DGMX_USE_PLUMED=ON")
             options.append("-DGMX_VERSION_STRING_OF_FORK=PLUMED-spack")
         else:
+            options.append("-DGMX_USE_PLUMED=OFF")
             options.append("-DGMX_VERSION_STRING_OF_FORK=spack")
         return options
 

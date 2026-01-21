@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   packages:
     all:
@@ -30,7 +30,7 @@ spack:
   - direnv
     # runtimes and compilers
   - python
-  - llvm+link_llvm_dylib~lld~lldb~polly+python build_type=MinSizeRel   # for clangd, clang-format
+  - llvm+link_llvm_dylib~lld~offload~lldb~polly+python build_type=MinSizeRel   # for clangd, clang-format
   - node-js   # for editor plugins etc., pyright language server
   - npm
   - cmake

@@ -20,6 +20,8 @@ class PyTorchvision(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.24.1", sha256="071da2078600bfec4886efab77358c9329abfedcf1488b05879b556cb9b84ba7")
+    version("0.24.0", sha256="f799cdd1d67a3edbcdc6af8fb416fe1b019b512fb426c0314302cd81518a0095")
     version("0.23.0", sha256="db5a91569e5eb4a3b02e9eaad6080335f5ae3824890a697f5618541999f04027")
     version("0.22.1", sha256="fa1b0a58e13c08329bcff8d52607b4e25944fd074c01dee1b501c8158fadcdec")
     version("0.22.0", sha256="83ed8855cdfb138aba6f116f8fd8da8b83463170dad67a70f60327915ed12014")
@@ -71,7 +73,8 @@ class PyTorchvision(PythonPackage):
 
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
-        depends_on("python@3.9:3.13", when="@0.21:")
+        depends_on("python@3.10:3.14", when="@0.24:")
+        depends_on("python@3.9:3.13", when="@0.21:0.23")
         depends_on("python@3.8:3.12", when="@0.17:0.20")
         depends_on("python@3.8:3.11", when="@0.15:0.16")
         depends_on("python@:3.10", when="@0.12:0.14")
@@ -79,6 +82,8 @@ class PyTorchvision(PythonPackage):
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.9.1", when="@0.24.1")
+        depends_on("py-torch@2.9.0", when="@0.24.0")
         depends_on("py-torch@2.8.0", when="@0.23.0")
         depends_on("py-torch@2.7.1", when="@0.22.1")
         depends_on("py-torch@2.7.0", when="@0.22.0")

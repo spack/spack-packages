@@ -18,6 +18,8 @@ class PyRuamelYaml(PythonPackage):
 
     license("MIT")
 
+    version("0.18.16", sha256="a6e587512f3c998b2225d68aa1f35111c29fad14aed561a26e73fab729ec5e5a")
+    version("0.18.15", sha256="dbfca74b018c4c3fba0b9cc9ee33e53c371194a9000e694995e620490fd40700")
     version("0.17.32", sha256="ec939063761914e14542972a5cba6d33c23b0859ab6342f61cf070cfc600efc2")
     version("0.17.16", sha256="1a771fc92d3823682b7f0893ad56cb5a5c87c48e62b5399d6f42c8759a583b33")
     version("0.16.10", sha256="099c644a778bf72ffa00524f78dd0b6476bca94a1da344130f4bf3381ce5b954")
@@ -25,12 +27,15 @@ class PyRuamelYaml(PythonPackage):
     version("0.11.7", sha256="c89363e16c9eafb9354e55d757723efeff8682d05e56b0881450002ffb00a344")
 
     # from `supported` in __init__.py
+    depends_on("python@3.8:", when="@0.18.10:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.17.22:", type=("build", "run"))
+    # from ast import Str
+    depends_on("python@:3.13", when="@:0.17", type=("build", "run"))
     # from setup.py
-    depends_on("py-setuptools@28.7:", when="@0.17:", type=("build"))
+    depends_on("py-setuptools@28.7:", when="@0.17:", type="build")
     depends_on("py-setuptools", type="build")
     # from __init__.py
-    depends_on("py-ruamel-yaml-clib@0.2.7:", when="@0.17.23: ^python@:3.11", type=("build", "run"))
+    depends_on("py-ruamel-yaml-clib@0.2.7:", when="@0.17.23: ^python@:3.13", type=("build", "run"))
     depends_on(
         "py-ruamel-yaml-clib@0.1.2:", when="@0.16:0.17.22 ^python@:3.8", type=("build", "run")
     )

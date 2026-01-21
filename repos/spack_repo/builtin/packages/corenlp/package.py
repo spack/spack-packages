@@ -37,6 +37,7 @@ class Corenlp(Package):
     )
 
     depends_on("ant", type="build")
+    depends_on("java@8:", type="build")
 
     def install(self, spec, prefix):
         ant = self.spec["ant"].command

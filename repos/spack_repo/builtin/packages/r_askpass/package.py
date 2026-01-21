@@ -23,6 +23,7 @@ class RAskpass(RPackage):
 
     license("MIT")
 
+    version("1.2.1", sha256="6c2106a74c44a748f2cea795d9686e27a0058a90debcfd8558b62b06aec0c7dd")
     version("1.2.0", sha256="b922369781934d0ffc8d0c0177e8ace56796c2e6a726f65e460c16f792592cef")
     version("1.1", sha256="db40827d1bdbb90c0aa2846a2961d3bf9d76ad1b392302f9dd84cc2fd18c001f")
 

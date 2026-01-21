@@ -2,10 +2,14 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     static_analysis: true
+
+  config:
+    # ROOT fails downloads frequently
+    url_fetch_method: curl --continue-at - --retry 3 --retry-all-errors
 
   packages:
     all:

@@ -20,10 +20,15 @@ class BufrQuery(CMakePackage, PythonExtension):
 
     license("Apache-2.0", checked_by="srherbener")
 
+    version("0.0.5", sha256="72cb82d3837aac0dbe2c514b9883b4a19aad2ab7c6969c760e1b549ab4ed4831")
     version("0.0.4", sha256="cc21a298c03ee3a8938823301606e91c7b321005da284ebf2c9b25044bfcbad8")
     version("0.0.3", sha256="f2952a190cc1d7714a3bfe481fb1545459639ba304fc31b941062b471dea1d41")
     version("0.0.2", sha256="b87a128246e79e3c76e3158d89823e2ae38e9ee1a5a81b6f7b423837bdb93a1f")
     version("0.0.1", sha256="001990d864533c101b93d1c351edf50cf8b5ccc575e442d174735f6c332d3d03")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     # Required dependencies
     depends_on("ecbuild", type=("build"))
@@ -33,6 +38,9 @@ class BufrQuery(CMakePackage, PythonExtension):
     depends_on("eigen@3:", type=("build", "run"))
     depends_on("gsl-lite", type=("build", "run"))
     depends_on("netcdf-c", type=("build", "run"))
+    # bufr-query versions up to 0.0.4 are incompatible with netcdf-c 4.9.3 and later
+    # https://github.com/NOAA-EMC/bufr-query/issues/58
+    depends_on("netcdf-c@:4.9.2", when="@:0.0.4", type=("build", "run"))
     depends_on("netcdf-cxx4", type=("build", "run"))
     depends_on("bufr", type=("build", "run"))
 
@@ -42,6 +50,8 @@ class BufrQuery(CMakePackage, PythonExtension):
     with when("+python"):
         extends("python")
         depends_on("py-pybind11", type="build")
+        # with 0.0.5, we should also add py-wxflow as a dependency
+        depends_on("py-wxflow", type="build", when="@0.0.5:")
 
     # Patches
     patch(
@@ -54,9 +64,18 @@ class BufrQuery(CMakePackage, PythonExtension):
     def cmake_args(self):
         args = [self.define_from_variant("BUILD_PYTHON_BINDINGS", "python")]
 
-        # provide path to netcdf-c include files
-        nc_include_dir = Executable("nc-config")("--includedir", output=str).strip()
-        args.append("-DCMAKE_C_FLAGS=-I" + nc_include_dir)
-        args.append("-DCMAKE_CXX_FLAGS=-I" + nc_include_dir)
+        # Join the include directories from both netcdf-c and netcdf-cxx4
+        # Spack's .headers.include_flags produces strings like "-I/path/to/inc"
+        nc_includes = self.spec["netcdf-c"].headers.include_flags
+        ncxx_includes = self.spec["netcdf-cxx4"].headers.include_flags
+
+        combined_flags = f"{nc_includes} {ncxx_includes}"
+
+        args.extend(
+            [
+                self.define("CMAKE_C_FLAGS", combined_flags),
+                self.define("CMAKE_CXX_FLAGS", combined_flags),
+            ]
+        )
 
         return args

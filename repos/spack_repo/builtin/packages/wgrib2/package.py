@@ -59,6 +59,8 @@ class Wgrib2(MakefilePackage, CMakePackage):
     )
 
     version("develop", branch="develop")
+    version("3.8.0", sha256="39faebada36da5457c75f0980bb68fa299b221b3e6b335bb7d29006a35830c54")
+    version("3.7.0", sha256="b741a07710a8195c99a7d50de05bde90182ab4334f5c4a0d6d057c4e20cc6a75")
     version("3.6.0", sha256="55913cb58f2b329759de17f5a84dd97ad1844d7a93956d245ec94f4264d802be")
     version("3.5.0", sha256="b27b48228442a08bddc3d511d0c6335afca47252ae9f0e41ef6948f804afa3a1")
     version("3.4.0", sha256="ecbce2209c09bd63f1bca824f58a60aa89db6762603bda7d7d3fa2148b4a0536")
@@ -151,6 +153,12 @@ class Wgrib2(MakefilePackage, CMakePackage):
         when="@:3.1",
     )
     variant(
+        "g2c_low", default=True, description="Include NCEP g2clib (png,jpeg2000)", when="@3.7:"
+    )
+    variant(
+        "g2c_high", default=False, description="Include NCEP g2clib (add -g2clib 2)", when="@3.7:"
+    )
+    variant(
         "disable_timezone", default=False, description="Some machines do not support timezones"
     )
     variant(
@@ -158,8 +166,8 @@ class Wgrib2(MakefilePackage, CMakePackage):
         default=False,
         description="Some machines do not support the alarm to terminate wgrib2",
     )
-    variant("png", default=True, description="PNG encoding")
-    variant("jasper", default=True, description="JPEG compression using Jasper")
+    variant("png", default=True, description="PNG encoding", when="@:3.8")
+    variant("jasper", default=True, description="JPEG compression using Jasper", when="@:3.8")
     variant("openmp", default=True, description="OpenMP parallelization")
     variant("wmo_validation", default=False, description="WMO validation")
     #    variant("shared", default=False, description="Enable shared library", when="+lib")
@@ -172,14 +180,20 @@ class Wgrib2(MakefilePackage, CMakePackage):
     conflicts("+netcdf3", when="+netcdf4")
     conflicts("+netcdf3", when="+netcdf")
     conflicts("+openmp", when="%apple-clang")
+    conflicts("~g2c_low", when="+g2c_high")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
-    depends_on("ip@5.1:", when="@3.5: +ipolates")
+    depends_on("ip", when="@3.4: +ipolates")
+    depends_on("ip@5.1:", when="@3.4:3.6 +ipolates")
+    depends_on("ip@5.2:", when="@3.7: +ipolates")
+    depends_on("ip@5.2:", when="@develop +ipolates")
     depends_on("lapack", when="@3.5: +ipolates")
     depends_on("libaec@1.0.6:", when="@3.2: +aec")
-    depends_on("netcdf-c", when="@3.2: +netcdf4")
+    # Options to use netcdf3 or netcdf4 merged into a single option with v3.4.0
+    depends_on("netcdf-c", when="@3.4: +netcdf")
+    depends_on("netcdf-c", when="@3.2:3.3 +netcdf4")
     depends_on("jasper@:2", when="@3.2:3.4 +jasper")
     depends_on("g2c", when="@3.5: +jasper")
     depends_on("zlib-api", when="@3.2: +png")
@@ -258,7 +272,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
     def build(self, pkg, spec, prefix):
         make("-j1")
 
-        # Move wgrib2 executable to a tempoary directory
+        # Move wgrib2 executable to a temporary directory
         mkdir("install")
         mkdir(join_path("install", "bin"))
         move(join_path("wgrib2", "wgrib2"), join_path("install", "bin"))

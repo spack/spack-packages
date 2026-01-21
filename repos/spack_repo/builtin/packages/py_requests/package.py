@@ -16,6 +16,7 @@ class PyRequests(PythonPackage):
 
     license("Apache-2.0")
 
+    version("2.32.5", sha256="dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf")
     version("2.32.3", sha256="55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760")
     version("2.32.2", sha256="dd951ff5ecf3e3b3aa26b40703ba77495dab41da839ae72ef3c8e5d8e2433289")
     version("2.31.0", sha256="942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1")
@@ -37,7 +38,9 @@ class PyRequests(PythonPackage):
 
     variant("socks", default=False, description="SOCKS and HTTP proxy support")
 
-    depends_on("python@3.7:", when="@2.28:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"), when="@2.32.5:")
+    depends_on("python@3.8:", type=("build", "run"), when="@2.32:2.32.4")
+    depends_on("python@3.7:", type=("build", "run"), when="@2.28:2.31")
     depends_on("py-setuptools", type="build")
 
     depends_on("py-charset-normalizer@2:3", when="@2.28.2:", type=("build", "run"))

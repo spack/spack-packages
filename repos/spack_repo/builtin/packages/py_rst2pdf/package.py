@@ -20,18 +20,32 @@ class PyRst2pdf(PythonPackage):
 
     license("MIT")
 
+    version("0.103.1", sha256="3ffe816d4b3275aee21b8ffdd08b2e6be4d7590cd88b189f733cbc6996d63786")
     version("0.100", sha256="664c3c16e6d3dea274e840a436eac4dba6cb50ab6af3162fc9d5716be3cb7b42")
     version("0.99", sha256="8fa23fa93bddd1f52d058ceaeab6582c145546d80f2f8a95974f3703bd6c8152")
 
-    depends_on("python@3.8:", when="@0.100:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"), when="@0.103:")
+    depends_on("python@3.8:", type=("build", "run"), when="@0.100:0.102")
+
+    depends_on("py-setuptools@64:", type="build", when="@0.103:")
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools-scm@8:", type="build", when="@0.103:")
     depends_on("py-setuptools-scm", type="build")
 
+    # ignore upper bound restrictions, because they seem to be too strict
+    depends_on("py-docutils@0.21.2:", type=("build", "run"), when="@0.103:")
     depends_on("py-docutils", type=("build", "run"))
+    depends_on("py-importlib-metadata@8:", type=("build", "run"), when="@0.103:")
     depends_on("py-importlib-metadata", type=("build", "run"))
+    depends_on("py-jinja2@3:", type=("build", "run"), when="@0.103:")
     depends_on("py-jinja2", type=("build", "run"))
+    depends_on("py-packaging@24:", type=("build", "run"), when="@0.103:")
     depends_on("py-packaging", type=("build", "run"))
+    depends_on("py-pygments@2:", type=("build", "run"), when="@0.103:")
     depends_on("py-pygments", type=("build", "run"))
+    depends_on("py-pyyaml@6:", type=("build", "run"), when="@0.103:")
     depends_on("py-pyyaml", type=("build", "run"))
+    depends_on("py-reportlab@4:", type=("build", "run"), when="@0.103:")
     depends_on("py-reportlab", type=("build", "run"))
+    depends_on("py-smartypants@2:", type=("build", "run"), when="@0.103:")
     depends_on("py-smartypants", type=("build", "run"))
