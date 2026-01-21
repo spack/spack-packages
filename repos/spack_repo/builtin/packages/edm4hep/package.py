@@ -62,6 +62,7 @@ class Edm4hep(CMakePackage):
     depends_on("podio@0.15:", when="@:0.10.5")
     depends_on("podio@:1.1", when="@:0.99.0")
     depends_on("podio@1.3:", when="@0.99.2:")
+    depends_on("podio@:1.6", when="@:0.99.4")
     for _std in _cxxstd_values:
         for _v in _std:
             depends_on(f"podio cxxstd={_v.value}", when=f"cxxstd={_v.value}")
@@ -77,6 +78,11 @@ class Edm4hep(CMakePackage):
     extends("python", when="@0.10.6:")
 
     conflicts("%clang@:16", when="@0.99.1:", msg="Incomplete consteval support in clang")
+    conflicts(
+        "^python +freethreading",
+        when="@:0.99.4",
+        msg="python free-threading requires edm4hep@0.99.5:",
+    )
 
     # Fix missing nljson import
     # NOTE that downstream packages (dd4hep) may fail for 0.99 and before

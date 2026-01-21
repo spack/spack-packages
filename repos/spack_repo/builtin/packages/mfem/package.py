@@ -767,7 +767,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     hypre_rocm_libs += hypre["rocsparse"].libs
                 if "^rocrand" in hypre:
                     hypre_rocm_libs += hypre["rocrand"].libs
-                if hypre.satisfies("@2.39.0:"):
+                if hypre.satisfies("@2.29.0:"):
                     if "^rocsolver" in hypre:
                         hypre_rocm_libs += hypre["rocsolver"].libs
                     if "^rocblas" in hypre:
@@ -1137,6 +1137,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             umpire_libs = umpire.libs
             if "^camp" in umpire:
                 umpire_opts += umpire["camp"].headers
+                umpire_libs += umpire["camp"].libs
             if "^fmt" in umpire:
                 umpire_opts += umpire["fmt"].headers
                 umpire_libs += umpire["fmt"].libs

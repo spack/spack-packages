@@ -120,10 +120,20 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("examples", default=False, description="Build examples.")
     variant("docs", default=False, description="Build documentation")
     variant("loop_fuser", default=False, description="Enable loop fusion capability")
+    variant(
+        "legacy_compatibility_mode", default=False, description="Enable legacy compatibility mode"
+    )
+    variant(
+        "cxxstd",
+        default="17",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+    conflicts("cxxstd=11", when="@0.15.2:")
+    conflicts("cxxstd=14", when="@0.15.2:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     depends_on("cmake", type="build")
     depends_on("cmake@3.23:", type="build", when="@0.13.2:")
@@ -218,6 +228,10 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "SYS_TYPE" in env:
             sys_type = env["SYS_TYPE"]
         return sys_type
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
 
     @property
     def cache_name(self):
@@ -353,12 +367,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries.append(cmake_cache_string("CMAKE_BUILD_TYPE", spec.variants["build_type"].value))
 
-        # C++14
-        if spec.satisfies("@:0.14.1"):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
-        # C++17
-        else:
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
+        # C++ standard
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+tests")))
         entries.append(cmake_cache_option("CARE_ENABLE_TESTS", spec.satisfies("+tests")))
@@ -387,6 +397,11 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
 
         entries.append(cmake_cache_option("CARE_ENABLE_LOOP_FUSER", spec.satisfies("+loop_fuser")))
+        entries.append(
+            cmake_cache_option(
+                "CARE_LEGACY_COMPATIBILITY_MODE", spec.satisfies("+legacy_compatibility_mode")
+            )
+        )
 
         return entries
 

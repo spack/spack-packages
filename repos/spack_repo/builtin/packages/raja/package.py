@@ -259,7 +259,18 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         description="For developers, lowers optimization level to pass tests with some compilers",
     )
 
+    variant(
+        "cxxstd",
+        default="17",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+    conflicts("cxxstd=11", when="@0.14.0:")
+    conflicts("cxxstd=14", when="@2025.09.0:")
+    conflicts("+sycl cxxstd=14", when="@2024.07.0:")
+
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
 
     depends_on("blt", type="build")
     depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
@@ -430,6 +441,10 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         return entries
 
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
+
     def initconfig_package_entries(self):
         spec = self.spec
         entries = []
@@ -476,20 +491,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+lowopttest"):
             entries.append(cmake_cache_string("CMAKE_CXX_FLAGS_RELEASE", "-O1"))
 
-        # C++17
-        if (
-            spec.satisfies("@2025.09.0:")
-            or (spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl"))
-            or (spec.satisfies("^rocprim@7.0:"))
-        ):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
-        # C++14
-        elif spec.satisfies("@0.14.0:2025.09.0"):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
-
-            if spec.satisfies("+desul"):
-                if spec.satisfies("+cuda"):
-                    entries.append(cmake_cache_string("CMAKE_CUDA_STANDARD", "14"))
+        # C++ standard
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         entries.append(
             cmake_cache_option("RAJA_ENABLE_RUNTIME_PLUGINS", spec.satisfies("+plugins"))

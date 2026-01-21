@@ -24,22 +24,6 @@ def spec_uses_gccname(spec):
 
 
 def llnl_link_helpers(options, spec, compiler):
-    # From local package:
-    if "fortran" in spec:
-        fortran_compilers = ["gfortran", "xlf"]
-        if any(f_comp in compiler.fc for f_comp in fortran_compilers) and (
-            "clang" in compiler.cxx
-        ):
-            # Pass fortran compiler lib as rpath to find missing libstdc++
-            libdir = os.path.join(os.path.dirname(os.path.dirname(compiler.fc)), "lib")
-            flags = ""
-            for _libpath in [libdir, libdir + "64"]:
-                if os.path.exists(_libpath):
-                    flags += " -Wl,-rpath,{0}".format(_libpath)
-            description = "Adds a missing libstdc++ rpath"
-            if flags:
-                options.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags, description))
-
     if "cxx" in spec and spec["cxx"].name == "cce":
         description = "Adds a missing rpath for libraries associated with the fortran compiler"
         # Here is where to find libs that work for fortran

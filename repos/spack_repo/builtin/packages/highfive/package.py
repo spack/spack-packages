@@ -20,6 +20,7 @@ class Highfive(CMakePackage):
     license("BSL-1.0")
 
     version("develop", branch="master")
+    version("3.3.0", sha256="325cfbcf0c0296a6dd26f3b088801b7ebb8d6f109c0565c11d2d8c4af3253bff")
     version("3.2.0", sha256="01ea2eed7dbce1cf5dfff59476cfa113a7822b641aecbd99c674592fe7a4e630")
     version("3.1.1", sha256="622034f34badda41255d7793e1c5a3046954dcf0875b0bca076e7c77088a8890")
     version("3.0.0", sha256="cf9ad114b79bfa2c1deceefc6d4e710b882451ebaa81c063e2eb1de908e7c989")

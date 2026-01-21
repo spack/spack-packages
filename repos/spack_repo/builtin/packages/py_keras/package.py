@@ -24,6 +24,7 @@ class PyKeras(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("3.13.1", sha256="670c726dfc9c357fe7ae5ef1c15d8f61ee7fbb40ae9a091a458ec6444a772480")
     version("3.13.0", sha256="ec51ad2ffcef086d0e3077ac461fa9e3bc54f91d94b49b7c9a84c9af7f54cf5e")
     version("3.12.0", sha256="536e3f8385a05ae04e82e08715a1a59988578087e187b04cb0a6fad11743f07f")
     version("3.11.3", sha256="efda616835c31b7d916d72303ef9adec1257320bc9fd4b2b0138840fc65fb5b7")
@@ -87,13 +88,12 @@ class PyKeras(PythonPackage):
         when="@3:",
     )
 
+    # pyproject.toml
     with default_args(type="build"):
-        # pyproject.toml
         depends_on("py-setuptools@61:", when="@3.7:")
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
-        # pyproject.toml
         depends_on("python@3.11:", when="@3.13:")
         depends_on("python@3.10:", when="@3.11:")
         depends_on("python@3.9:", when="@3:")
@@ -107,46 +107,37 @@ class PyKeras(PythonPackage):
         depends_on("py-ml-dtypes", when="@3.0.5:")
         depends_on("py-packaging", when="@3.4:")
 
-        # requirements-common.txt
-        # Many more (optional?) dependencies
-
-        # requirements-tensorflow-cuda.txt
+    # Many other places where dependencies are listed:
+    #
+    # * requirements-common.txt: optional developer dependencies
+    # * requirements.txt: CPU requirements
+    # * requirements-{backend}-cuda.txt: GPU requirements
+    # * requirements-{backend}-tpu.txt: TPU requirements
+    #
+    # For now, treat requirements.txt as the source of truth.
+    # Treat pinned versions as minimum bounds unless otherwise known.
+    with default_args(type="run"):
         with when("backend=tensorflow"):
-            depends_on("py-tensorflow@2.20", when="@3.12:")
-            depends_on("py-tensorflow@2.18.1:2.18", when="@3.10:3.11")
-            depends_on("py-tensorflow@2.18", when="@3.7:3.9")
-            depends_on("py-tensorflow@2.17", when="@3.5:3.6")
-            depends_on("py-tensorflow@2.16.1:2.16", when="@3.0:3.4")
+            depends_on("py-tensorflow@2.20.0:", when="@3.13:")
+            depends_on("py-tensorflow@2.18.1:", when="@3.10:")
+            depends_on("py-tensorflow@2.18.0:", when="@3.7:")
+            depends_on("py-tensorflow@2.17.0:", when="@3.5:")
+            depends_on("py-tensorflow@2.16.1:", when="@3.0:")
             # depends_on("py-tf2onnx", when="@3.8:")
+            # depends_on("py-ai-edge-litert@1.3.0:", when="@3.13:")
 
-        # requirements-jax-cuda.txt
-        with when("backend=jax"):
-            depends_on("py-jax@0.6.2", when="@3.11:")
-            depends_on("py-jax@0.6.0", when="@3.10")
-            depends_on("py-jax@0.4.28", when="@3.6:3.9")
-            depends_on("py-jax@0.4.23", when="@3.0.5:3.5")
-            depends_on("py-jax", when="@3:")
-            # depends_on("py-flax", when="@3.2:")
-
-        # requirements-torch-cuda.txt
         with when("backend=torch"):
-            depends_on("py-torch@2.9.0", when="@3.12:")
-            depends_on("py-torch@2.6.0", when="@3.10:3.11")
-            depends_on("py-torch@2.5.1", when="@3.7:3.9")
-            depends_on("py-torch@2.4.1", when="@3.6")
-            depends_on("py-torch@2.4.0", when="@3.5")
-            depends_on("py-torch@2.2.1", when="@3.1:3.4")
-            depends_on("py-torch@2.1.2", when="@3.0.3:3.0.5")
-            depends_on("py-torch@2.1.1", when="@3.0.1:3.0.2")
-            depends_on("py-torch@2.1.0", when="@3.0.0")
-            depends_on("py-torchvision@0.20.1", when="@3.7:3.8")
-            depends_on("py-torchvision@0.19.1", when="@3.6")
-            depends_on("py-torchvision@0.19.0", when="@3.5")
-            depends_on("py-torchvision@0.17.1", when="@3.1:3.4")
-            depends_on("py-torchvision@0.16.2", when="@3.0.3:3.0.5")
-            depends_on("py-torchvision@0.16.1", when="@3.0.1:3.0.2")
-            depends_on("py-torchvision@0.16.0", when="@3.0.0")
-            # depends_on("py-torch-xla", when="@3.8:")
+            depends_on("py-torch@2.6:", when="@3.9:")
+            depends_on("py-torch@2.1:", when="@3.0:")
+            # depends_on("py-torch-xla@2.6:", when="@3.8:")
+            # depends_on("py-torch-xla", when="@3.0:")
+
+        with when("backend=jax"):
+            depends_on("py-jax@0.8.1:", when="@3.13:")
+            depends_on("py-jax@0.5.0:", when="@3.9:")
+            depends_on("py-jax", when="@3:")
+            # depends_on("py-flax@0.12.1:", when="@3.13:")
+            # depends_on("py-flax", when="@3.2:")
 
     # Historical dependencies
     with default_args(type="build"):

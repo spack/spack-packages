@@ -28,7 +28,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/LLNL/Caliper"
     git = "https://github.com/LLNL/Caliper.git"
-    url = "https://github.com/LLNL/Caliper/archive/v2.12.1.tar.gz"
+    url = "https://github.com/LLNL/Caliper/archive/v2.14.0.tar.gz"
     tags = ["e4s", "radiuss"]
 
     maintainers("daboehme", "adrienbernede")
@@ -38,6 +38,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.14.0", sha256="b42c35dfbe485960dd326033893dae37ac00d9807c5c3e6b5b1f396bc4af273f")
     version("2.13.1", sha256="7cef0173e0e0673abb7943a2641b660adfbc3d6bc4b33941ab4f431f92a4d016")
     version("2.13.0", sha256="28c6e8fd940bdee9e80d1e8ae1ce0f76d6a690cbb6242d4eec115d6c0204e331")
     version("2.12.1", sha256="2b5a8f98382c94dc75cc3f4517c758eaf9a3f9cea0a8dbdc7b38506060d6955c")
@@ -72,6 +73,8 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", when="+fortran", type="build")
+
+    depends_on("rocprofiler-sdk", when="@2.14: +rocm")
 
     depends_on("adiak@0.1:0", when="@:2.10 +adiak")
     depends_on("adiak@0.4:0", when="@2.11: +adiak")
@@ -177,9 +180,6 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("WITH_NVTX", False))
 
         if spec.satisfies("+rocm"):
-            entries.append(cmake_cache_option("WITH_ROCTRACER", True))
-            entries.append(cmake_cache_option("WITH_ROCTX", True))
-
             # HIP configuration from hip_for_radiuss_projects
             rocm_root = spec["llvm-amdgpu"].prefix
             gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
@@ -192,7 +192,17 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
                 entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix)))
             else:
                 entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)))
+
+            if spec.satisfies("@2.14:"):
+                entries.append(cmake_cache_option("WITH_ROCPROFILER", True))
+                entries.append(cmake_cache_option("WITH_ROCTRACER", False))
+                entries.append(cmake_cache_option("WITH_ROCTX", False))
+            else:
+                entries.append(cmake_cache_option("WITH_ROCPROFILER", False))
+                entries.append(cmake_cache_option("WITH_ROCTRACER", True))
+                entries.append(cmake_cache_option("WITH_ROCTX", True))
         else:
+            entries.append(cmake_cache_option("WITH_ROCPROFILER", False))
             entries.append(cmake_cache_option("WITH_ROCTRACER", False))
             entries.append(cmake_cache_option("WITH_ROCTX", False))
 
