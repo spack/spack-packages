@@ -96,7 +96,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("rocm_rdc", default=False, description="Turn on RDC for ROCm build")
     variant(
         "cxxstd",
-        default="20",
+        default="17",
         description="C++ standard",
         values=["11", "14", "17", "20"],
         multi=False,
@@ -367,7 +367,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("cxxstd=11", when="@13.2:")
     conflicts("cxxstd=14", when="@14:")
     conflicts("cxxstd=17", when="@:12,17:")
-    conflicts("cxxstd=20", when="@:15")
+    conflicts("cxxstd=20", when="@:16")
     conflicts("cxxstd=11", when="+wrapper ^cuda@6.5.14")
     conflicts("cxxstd=14", when="+wrapper ^cuda@6.5.14:8.0.61")
     conflicts("cxxstd=17", when="+wrapper ^cuda@6.5.14:10.2.89")
