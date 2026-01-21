@@ -41,7 +41,7 @@ class Gnupg(AutotoolsPackage):
         version("2.4.1", sha256="76b71e5aeb443bfd910ce9cbc8281b617c8341687afb67bae455877972b59de8")
         version("2.4.0", sha256="1d79158dd01d992431dd2e3facb89fdac97127f89784ea2cb610c600fb0c1483")
         version("2.3.7", sha256="ee163a5fb9ec99ffc1b18e65faef8d086800c5713d15a672ab57d3799da83669")
-    
+
     depends_on("c", type="build")
 
     depends_on("npth@1.2:")
