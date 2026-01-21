@@ -158,15 +158,9 @@ class Graphviz(AutotoolsPackage):
 
     @classmethod
     def determine_version(cls, exe):
-        print(exe)
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"graphviz\s+version\s+([\d\.]+)", output)
         return match.group(1) if match else None
-
-    @classmethod
-    def determine_variants(cls, exes, version_str):
-        variants = ""
-        return variants
 
     def autoreconf(self, spec, prefix):
         # We need to generate 'configure' when checking out sources from git
