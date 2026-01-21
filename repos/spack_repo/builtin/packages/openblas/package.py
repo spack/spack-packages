@@ -620,9 +620,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         """Override 'make all' with sequential builds due to race conditions."""
         # Due to the verbosity of the command line and number of object files
         # created, we suppress makefile command echoing via `-s`.
-        args = self.make_defs
-        if tty.debug_level() == 0:
-            args = ["-s"] + args
+        args = ["-s"] + self.make_defs
 
         # Make each target sequentially
         with working_dir(self.build_directory):
