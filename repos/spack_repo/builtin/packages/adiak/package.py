@@ -22,7 +22,7 @@ class Adiak(CachedCMakePackage):
     variant("mpi", default=True, description="Build with MPI support")
     variant("shared", default=True, description="Build dynamic libraries")
     variant("python", default=False, when="@0.5.0:", description="Build Python bindings")
-    
+
     license("MIT")
     version("master", branch="master")
     version(
@@ -67,5 +67,5 @@ class Adiak(CachedCMakePackage):
                 self.spec["py-pybind11"].prefix, "pybind11", "share", "cmake", "pybind11"
             )
             args.append(f"-Dpybind11_DIR={pybind11_cmake}")
-            
+
         return args
