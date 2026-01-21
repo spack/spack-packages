@@ -155,6 +155,8 @@ class Dd4hep(CMakePackage):
 
         # Specific version requirements
         depends_on("edm4hep@0.10.5:", when="@1.31:")
+        # Need https://github.com/AIDASoft/DD4hep/pull/1552 to build against edm4hep@1.0
+        depends_on("edm4hep@:0.99.4", when="@:1.34")
         depends_on("podio@:0", when="@:1.29")
         depends_on("podio@0.16:", when="@1.24:")
         depends_on("podio@0.16.3:", when="@1.26:")
