@@ -3,8 +3,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage, cmake_cache_option
+from spack.package import *
 
 
 class Adiak(CachedCMakePackage):
