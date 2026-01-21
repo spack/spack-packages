@@ -7,8 +7,7 @@ import os
 
 import spack_repo.builtin.packages.adiak.package
 from spack.package import *
-from spack_repo.builtin.build_systems.cached_cmake import (CachedCMakePackage,
-                                                           cmake_cache_option)
+from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage, cmake_cache_option
 
 
 class Adiak(CachedCMakePackage):
