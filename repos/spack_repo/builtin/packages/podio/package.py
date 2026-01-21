@@ -77,7 +77,8 @@ class Podio(CMakePackage):
         )
 
     depends_on("cmake@3.12:", type="build")
-    depends_on("python", type=("build", "run"))
+    depends_on("python", type=("build", "run"), when="@:1.6")
+    depends_on("python", type=("build", "link", "run"), when="@1.7:")
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-jinja2@2.10.1:", type=("build", "run"))
     depends_on("sio", type=("build", "link"), when="+sio")
