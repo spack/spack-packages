@@ -44,22 +44,22 @@ class PyMumps4py(PythonPackage):
         pip = spec["python"].command
         pip.add_default_arg("-m", "pip")
 
-        args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
+        args = PythonPipBuilder.std_args(self) + [f"--prefix={prefix}"]
 
         config_settings = self.config_settings(spec, prefix)
         for setting in config_settings:
             if isinstance(config_settings[setting], list):
                 for value in config_settings[setting]:
-                    args.append(f'--config-settings="{setting}={value}"')
+                    args.append(f"--config-settings={setting}={value}")
             else:
-                args.append(f'--config-settings="{setting}={config_settings[setting]}"')
+                args.append(f"--config-settings={setting}={config_settings[setting]}")
         for option in self.install_options(spec, prefix):
             args.append(f"--install-option={option}")
         for option in self.global_options(spec, prefix):
             args.append(f"--global-option={option}")
 
-        if pkg.stage.archive_file and pkg.stage.archive_file.endswith(".whl"):
-            args.append(pkg.stage.archive_file)
+        if self.stage.archive_file and self.stage.archive_file.endswith(".whl"):
+            args.append(self.stage.archive_file)
         else:
             args.append(".")
 
@@ -72,6 +72,14 @@ class PyMumps4py(PythonPackage):
     def setup_build_environment(self, env):
         # Required by mumps4py to specify which MUMPS solvers to use
         env.set("MUMPS_SOLVERS", "dmumps,cmumps,zmumps,smumps")
+        env.set("MUMPS_INC", join_path(self.spec["mumps"].prefix, "include"))
+        env.set("MUMPS_LIB", join_path(self.spec["mumps"].prefix, "lib"))
+
+    def setup_run_environment(self, env):
+        # Required by mumps4py to specify which MUMPS solvers to use
+        env.set("MUMPS_SOLVERS", "dmumps,cmumps,zmumps,smumps")
+        env.set("MUMPS_INC", join_path(self.spec["mumps"].prefix, "include"))
+        env.set("MUMPS_LIB", join_path(self.spec["mumps"].prefix, "lib"))
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
@@ -86,7 +94,7 @@ class PyMumps4py(PythonPackage):
                         "MumpsSolver(verbose=False,system='complex64')",
                         "MumpsSolver(verbose=False, system='complex128')",
                         "MumpsSolver(verbose=False, system='double')",
-                        " MumpsSolver(verbose=False, system='single')",
+                        "MumpsSolver(verbose=False, system='single')",
                     ]
                 ),
             )

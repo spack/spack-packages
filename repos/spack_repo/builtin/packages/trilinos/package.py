@@ -290,6 +290,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("+dtk")
         conflicts("+ifpack2")
         conflicts("+muelu")
+        conflicts("+shylu")
         conflicts("+teko")
         conflicts("+zoltan2")
 
