@@ -93,9 +93,6 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     variant("cuda", default=True, description="Build with CUDA enabled")
     variant("nccl", default=True, description="Build with NCCL enabled", when="+cuda")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     # docs/installation.md (Compatible with)
     with when("+cuda"):
         depends_on("cuda@12.1:", when="@0.4.26:")
@@ -126,6 +123,9 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-nanobind")
 
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+
         # Bazel tends to be backwards-compatible within major versions
         # .bazelversion
         depends_on("bazel@7.7.0:7", when="@0.8.1:")
@@ -139,6 +139,9 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
         # build/build.py
         depends_on("py-build", when="@0.4.14:")
+
+        # XLA requires xxd?
+        depends_on("xxd-standalone", when="@0.9:")
 
     with default_args(type=("build", "run")):
         # Based on PyPI wheels
