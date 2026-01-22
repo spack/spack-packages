@@ -25,6 +25,7 @@ class Ratel(MakefilePackage, CudaPackage, ROCmPackage):
     version("0.1.2", tag="v0.1.2", commit="94ad630bf897d231af7a94bf08257f6067258aae")
 
     depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build") # generated
 
     # development version
     depends_on("libceed@develop", when="@develop")
