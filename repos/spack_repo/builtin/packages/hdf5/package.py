@@ -18,11 +18,11 @@ class Hdf5(CMakePackage):
     flexible and efficient I/O and for high volume and complex data.
     """
 
-    homepage = "https://support.hdfgroup.org"
-    url = "https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz"
+    homepage = "https://www.hdfgroup.org/solutions/hdf5/"
+    url = "https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz"
 
     git = "https://github.com/HDFGroup/hdf5.git"
-    maintainers("lrknox", "brtnfld", "byrnHDF", "gheber", "hyoklee", "lkurz")
+    maintainers("lrknox", "brtnfld", "gheber", "hyoklee", "lkurz")
 
     tags = ["e4s", "windows"]
     executables = ["^h5cc$", "^h5pcc$"]
@@ -39,13 +39,21 @@ class Hdf5(CMakePackage):
     version("develop-1.10", branch="hdf5_1_10")
     version("develop-1.8", branch="hdf5_1_8")
 
-    # Odd versions are considered experimental releases
-    # Even versions are maintenance versions
+    # Beginning with version 2.0.0, the versioning policy follows the MAJOR.MINOR.PATCH
+    # Semantic Versioning Specification. (See https://semver.org/)
+    version(
+        "2.0.0",
+        sha256="f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz",
+        preferred=True,
+    )
+    # For versions 1.x.y:
+    # Odd x versions are development or experimental releases and generally not released.
+    # Even x versions are maintenance versions
     version(
         "1.14.6",
         sha256="e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b",
         url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_6/downloads/hdf5-1.14.6.tar.gz",
-        preferred=True,
     )
     version(
         "1.14.5",
