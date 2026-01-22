@@ -250,7 +250,6 @@ class Lua(LuaImplPackage):
     provides("lua-lang@5.4", when="@5.4:5.4.99")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")
     depends_on("ncurses+termlib")
     depends_on("readline")
 
