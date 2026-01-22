@@ -218,7 +218,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # MPI
     #######################
     depends_on("mpi", when="+mpi")
-    depends_on("py-mpi4py", when="+mpi+python")
+    depends_on("py-mpi4py", when="+mpi+python", type=("build", "link", "run"))
 
     #############################
     # TPLs for Runtime Features
