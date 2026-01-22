@@ -171,10 +171,6 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
             if using_toolchain:
                 cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
 
-            # ppc64le workaround
-            if spec.satisfies("target=ppc64le %gcc@8.1:"):
-                cuda_flags.append("-Xcompiler -mno-float128")
-
             if cuda_flags:
                 entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
@@ -230,29 +226,9 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_option("WITH_MPI", spec.satisfies("+mpi")))
 
         if spec.satisfies("+mpi"):
-            # MPI configuration from mpi_for_radiuss_projects
-            if spec["mpi"].name == "spectrum-mpi" and spec.satisfies("^blt"):
-                entries.append(cmake_cache_string("BLT_MPI_COMMAND_APPEND", "mpibind"))
-
             sys_type = spec.architecture
             if "SYS_TYPE" in env:
                 sys_type = env["SYS_TYPE"]
-
-            # Replace /usr/bin/srun path with srun flux wrapper path on TOSS 4
-            if "toss_4" in sys_type:
-                srun_wrapper = which_string("srun")
-                mpi_exec_index = [
-                    index for index, entry in enumerate(entries) if "MPIEXEC_EXECUTABLE" in entry
-                ]
-                if len(mpi_exec_index) > 0:
-                    del entries[mpi_exec_index[0]]
-                mpi_exec_flag_index = [
-                    index for index, entry in enumerate(entries) if "MPIEXEC_NUMPROC_FLAG" in entry
-                ]
-                if len(mpi_exec_flag_index) > 0:
-                    del entries[mpi_exec_flag_index[0]]
-                entries.append(cmake_cache_path("MPIEXEC_EXECUTABLE", srun_wrapper))
-                entries.append(cmake_cache_string("MPIEXEC_NUMPROC_FLAG", "-n"))
 
         return entries
 
