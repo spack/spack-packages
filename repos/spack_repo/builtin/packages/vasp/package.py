@@ -38,6 +38,7 @@ class Vasp(MakefilePackage, CudaPackage):
 
     variant("shmem", default=True, description="Enable use_shmem build flag")
     variant("hdf5", default=False, description="Enabled HDF5 support")
+    variant("libxc", default=False, description="Enable Libxc support")
     variant("wannier90", default=False, description="Enable wannier90 support")
 
     depends_on("c", type="build")
@@ -59,6 +60,7 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("scalapack")
     depends_on("nccl", when="+cuda")
     depends_on("hdf5+fortran+mpi", when="+hdf5")
+    depends_on("libxc~fhc+fortran", when="+libxc")
     depends_on("wannier90", when="+wannier90")
     # at the very least the nvhpc mpi seems required
     requires("^nvhpc+mpi+lapack+blas", when="%nvhpc")
@@ -226,6 +228,11 @@ class Vasp(MakefilePackage, CudaPackage):
             cpp_options.append("-DVASP_HDF5")
             llibs.append(spec["hdf5:fortran"].libs.ld_flags)
             incs.append(spec["hdf5"].headers.include_flags)
+
+        if spec.satisfies("+libxc"):
+            cpp_options.append("-DUSELIBXC")
+            llibs.append(spec["libxc:fortran"].libs.ld_flags)
+            incs.append(spec["libxc"].headers.include_flags)
 
         if spec.satisfies("+wannier90"):
             cpp_options.append("-DVASP2WANNIER90")
