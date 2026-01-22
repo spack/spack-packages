@@ -49,7 +49,7 @@ class PyDask(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"), when="@:2023.4.1")
 
     # python@3.14 breaks py-dask@:2025.7.0
-    depends_on("py-python@:3.13", type=("build", "run"), when="@:2025.7.0")
+    depends_on("python@:3.13", type=("build", "run"), when="@:2025.7.0")
 
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@62.6:", type="build", when="@2023.4.1:")
