@@ -150,10 +150,10 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(
             "mfem+mpi+metis+lapack cxxstd=17 commit=bf1b25d82e232909e1d3aa1f416dbdae9931a550",
             patches=[
-                "patch_mesh_vis_dev.diff",
-                "patch_par_tet_mesh_fix_dev.diff",
-                "patch_gmsh_parser_performance.diff",
-                "patch_race_condition_fix.diff",
+                patch("patch_mesh_vis_dev.diff"),
+                patch("patch_par_tet_mesh_fix_dev.diff"),
+                patch("patch_gmsh_parser_performance.diff"),
+                patch("patch_race_condition_fix.diff"),
             ],
         )
         depends_on("mfem+shared", when="+shared")
