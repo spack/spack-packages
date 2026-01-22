@@ -20,6 +20,7 @@ class Fiat(CMakePackage):
     license("Apache-2.0")
 
     version("main", branch="main", no_cache=True)
+    version("1.6.2", sha256="772394f531fabc6965997407309074481ff2e2b1bca78da9e041acfe01d3a085")
     version("1.6.1", sha256="fec30ac572d626d8f1a8bd0d03c41aac156e6911f9f822e5f7e5991aff91ba37")
     version("1.5.1", sha256="50834bf5d8cb4bde92df9028f799aeba411a0a16e55ca33da10a329b5d7f55ea")
     version("1.4.1", sha256="7d49316150e59afabd853df0066b457a268731633898ab51f6f244569679c84a")

@@ -25,6 +25,7 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
     )
 
     version("main", branch="main")
+    version("0.22.0", sha256="65d9170e517779beea7ce6f251271602bbee98cc434312336d0dcc8496ffed58")
     version("0.21.0", sha256="d0a527cd0dcbeb9a8f04d090140cdedb66d9a90c6794a046d48d6bc2d11fc278")
     version("0.20.0", sha256="ed19f65c3c0dda42b285904f64508d1997f4b0fcef81cddb011aa9c42381eb2a")
     version("0.19.2", sha256="cfd20117744631779f0e99a0bc0668a1ca4d6d3c89fce5e9926961f830491689")
@@ -106,10 +107,15 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
     depends_on("mercury@1.0.0:", type=("build", "link", "run"), when="@:0.5.1")
     depends_on("mercury@2.0.0:", type=("build", "link", "run"), when="@0.5.2:")
     depends_on("hwloc", when="+hwloc")
+    depends_on("libfabric", when="+hwloc")
 
     # Fix pthread detection
     # https://github.com/mochi-hpc/mochi-margo/pull/177
     patch("mochi-margo-pthreads.patch", when="@0.9:0.9.7")
+
+    def cmake_args(self):
+        args = [self.define_from_variant("ENABLE_PLUMBER", "hwloc")]
+        return args
 
     def autoreconf(self, spec, prefix):
         sh = which("sh")
