@@ -227,11 +227,6 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries.append(cmake_cache_option("WITH_MPI", spec.satisfies("+mpi")))
 
-        if spec.satisfies("+mpi"):
-            sys_type = spec.architecture
-            if "SYS_TYPE" in env:
-                sys_type = env["SYS_TYPE"]
-
         return entries
 
     def initconfig_package_entries(self):
