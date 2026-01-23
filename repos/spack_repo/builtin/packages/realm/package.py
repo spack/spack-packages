@@ -35,6 +35,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
     # layer. At present the MPI layer is still experimental and we discourge its
     # use for general (not legion development) use cases.
     depends_on("mpi", when="network=mpi")
+    depends_on("gasnet", when="network=gasnet")
     depends_on("ucx", when="network=ucx")
     depends_on("ucc", when="network=ucx")
     depends_on("ucc+cuda+nccl", when="network=ucx +cuda")
