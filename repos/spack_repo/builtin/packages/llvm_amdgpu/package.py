@@ -68,6 +68,16 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     provides("c", "cxx")
     provides("fortran", when="@7.0:")
+    provides("fortran", when="+fortran")
+
+    # External instances of this package may include a fortran compiler
+    variant(
+        "fortran",
+        default=False,
+        sticky=True,
+        when="@:6.99",
+        description="External instances of llvm-amdgpu before 7 may provide fortran",
+    )
 
     variant(
         "rocm-device-libs",
@@ -346,7 +356,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     cxx_names = ["amdclang++"]
     fortran_names = ["amdflang"]
     compiler_version_argument = "--version"
-    compiler_version_regex = r"roc-(\d+[._]\d+[._]\d+)"
+    compiler_version_regex = r"rocm?-(\d+[._]\d+[._]\d+)"
 
     # Make sure that the compiler paths are in the LD_LIBRARY_PATH
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
@@ -396,3 +406,11 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     def _fortran_path(self):
         return os.path.join(self.spec.prefix.bin, "amdflang")
+
+    @classmethod
+    def determine_variants(cls, exes, version_str):
+        compilers = cls.determine_compiler_paths(exes=exes)
+        variants = ""
+        if "fortran" in compilers and Version(version_str) < Version("7"):
+            variants = "+fortran"
+        return variants, {"compilers": compilers}
