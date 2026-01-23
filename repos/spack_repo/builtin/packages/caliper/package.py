@@ -98,6 +98,8 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("+rocm+cuda")
     # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
     conflicts("^cuda@12.9:", "@:2.13.1")
+    # rocprofiler-sdk is only supported since rocm@6.2.4.
+    conflicts("^llvm-amdgpu@:6.2.3", "@2.14: +rocm")
 
     patch("libunwind.patch", when="@:2.13")
     patch(
