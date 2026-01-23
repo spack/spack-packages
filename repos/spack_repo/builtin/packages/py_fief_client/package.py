@@ -17,9 +17,9 @@ class PyFiefClient(PythonPackage):
 
     variant("cli", default=False, description="Install the CLI")
 
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-hatchling", type="build")
 
-    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-httpx@0.21.3:0.27", type=("build", "run"))
     depends_on("py-jwcrypto@1.4:1", type=("build", "run"))
 
