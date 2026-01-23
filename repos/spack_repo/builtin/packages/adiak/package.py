@@ -46,6 +46,7 @@ class Adiak(CachedCMakePackage):
         extends("python")
         depends_on("python@3:", type=("build", "link", "run"))
         depends_on("py-pybind11@3.0.0:", type=("build", "link", "run"))
+        depends_on("py-mpi4py", type=("build", "link", "run"), when="+mpi")
 
     def initconfig_mpi_entries(self):
         spec = self.spec
