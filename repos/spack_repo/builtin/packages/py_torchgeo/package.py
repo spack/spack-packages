@@ -154,11 +154,12 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-laspy@2.5.3:", when="@0.7.2:")
         depends_on("py-laspy@2:", when="@0.2:")
         depends_on("py-netcdf4@1.6.1:", when="@0.7:")
-        depends_on("opencv@4.5.5.64:", when="@0.7:")
+        depends_on("opencv@4.5.5.64:", when="@0.7:0.8.0")
         depends_on("opencv@4.5.4:", when="@0.6:")
         depends_on("opencv@4.4.0.46:", when="@0.5:")
-        depends_on("opencv@3.4.2.17:")
-        depends_on("py-pandas@2:+parquet", when="@0.7:")
+        depends_on("opencv@3.4.2.17:", when="@:0.8.0")
+        depends_on("py-pandas@2:+parquet", when="@0.8:")
+        depends_on("py-pandas@2:2+parquet", when="@0.7")
         depends_on("py-pycocotools@2.0.7:", when="@0.6:")
         depends_on("py-pycocotools@2.0.5:", when="@0.5:")
         depends_on("py-pycocotools@2:")
@@ -195,7 +196,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("libtiff+jpeg+libdeflate+zlib+zstd")
         # LandCover.ai dataset requires ability to read .tif and write .jpg and .png files.
         # Doing this from Python requires both imgcodecs and Python bindings.
-        depends_on("opencv+imgcodecs+jpeg+png+python3+tiff")
+        depends_on("opencv+imgcodecs+jpeg+png+python3+tiff", when="@:0.8.0")
 
         # Historical dependencies
         depends_on("open3d@0.11.2:+python", when="@0.2:0.3")
