@@ -18,6 +18,7 @@ class PyTorchgeo(PythonPackage):
     maintainers("adamjstewart", "calebrob6", "ashnair1")
 
     version("main", branch="main")
+    version("0.8.1", sha256="2de05fd510264569f28a8d92737cac85d34dd3c14e01aec99e6f2edb7d297248")
     version("0.8.0", sha256="a367127b8a6b6f94cff979972169271c70ca9d8237d68576c5ec38de34e5cbe7")
     version("0.7.2", sha256="0597455c689c61fd1bdffc79357646292aac98681279a1d05536317a0d094b69")
     version("0.7.1", sha256="05f645868a6dff083d4d0529662bde1b502e1f33ef260ebc735065e05d84176e")
@@ -215,9 +216,12 @@ class PyTorchgeo(PythonPackage):
 
     with when("+docs"), default_args(type="run"):
         depends_on("py-ipywidgets@7:")
+        depends_on("py-myst-parser@0.18:", when="@0.8.1:")
         depends_on("py-nbsphinx@0.8.5:")
-        depends_on("py-pytorch-sphinx-theme")
-        depends_on("py-sphinx@4:5")
+        depends_on("py-pydata-sphinx-theme@0.14:", when="@0.8.1:")
+        depends_on("py-pytorch-sphinx-theme", when="@:0.8.0")
+        depends_on("py-sphinx@5.3:", when="@0.8.1:")
+        depends_on("py-sphinx@4:5", when="@:0.8.0")
         depends_on("pandoc")
 
     with when("+models"), default_args(type="run"):
@@ -225,9 +229,13 @@ class PyTorchgeo(PythonPackage):
 
     with when("+style"), default_args(type="run"):
         depends_on("prettier@3:", when="@0.6:")
-        depends_on("py-mypy@0.900:")
+        depends_on("py-mypy@1.16:", when="@0.8.1:")
+        depends_on("py-mypy@0.900:", when="@:0.8.0")
+        depends_on("py-pandas-stubs@1.5:", when="@0.8.1:")
         depends_on("py-ruff@0.9:", when="@0.7:")
         depends_on("py-ruff@0.2:", when="@0.6:")
+        depends_on("py-types-requests@2.23:", when="@0.8.1:")
+        depends_on("py-types-shapely@2:", when="@0.8.1:")
 
         # Historical dependencies
         depends_on("py-black@21.8:+jupyter", when="@0.3:0.5")
