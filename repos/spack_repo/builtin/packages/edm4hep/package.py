@@ -22,6 +22,7 @@ class Edm4hep(CMakePackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("1.0", sha256="7bb76479883997ba39357b0db65d96d5f1201bc8a79b47866db8b44f76a231be")
     version("0.99.4", sha256="34a76e74a3199b96d8108425fdf894cafa7e4a71483d4893537c3026b4e666d6")
     version("0.99.3", sha256="c89e90085d83c5565b2609a81532af0d631d423fdf6d03396f666ea3a8472429")
     version("0.99.2", sha256="b3e7abb61fd969e4c9aef55dd6839a2186bf0b0d3801174fe6e0b9df8e0ebace")
@@ -63,6 +64,7 @@ class Edm4hep(CMakePackage):
     depends_on("podio@:1.1", when="@:0.99.0")
     depends_on("podio@1.3:", when="@0.99.2:")
     depends_on("podio@:1.6", when="@:0.99.4")
+    depends_on("podio@1.7:", when="@1.0:")
     for _std in _cxxstd_values:
         for _v in _std:
             depends_on(f"podio cxxstd={_v.value}", when=f"cxxstd={_v.value}")

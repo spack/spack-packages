@@ -124,6 +124,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     options_variants = {
         "aggressive_vectorization": [False, None, "Aggressively vectorize loops"],
+        "atomics_bypass": [
+            False,
+            "@4.6: +serial~threads~cuda~rocm~hpx~openmp~sycl~openmptarget",
+            "Make atomics non-atomic for non-threaded MPI-only use cases",
+        ],
         "compiler_warnings": [False, "@:4", "Print all compiler warnings"],
         "complex_align": [True, None, "Align complex numbers"],
         "cuda_constexpr": [False, "+cuda", "Activate experimental constexpr features"],
