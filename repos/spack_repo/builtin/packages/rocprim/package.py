@@ -13,7 +13,13 @@ class Rocprim(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocPRIM"
     git = "https://github.com/ROCm/rocm-libraries.git"
-    url = "https://github.com/ROCm/rocPRIM/archive/rocm-6.4.3.tar.gz"
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocPRIM/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
     tags = ["rocm"]
 
     license("MIT")
