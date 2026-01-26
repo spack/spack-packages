@@ -48,8 +48,11 @@ class TreeSitter(MakefilePackage):
     version("0.20.2", sha256="2a0445f8172bbf83db005aedb4e893d394e2b7b33251badd3c94c2c5cc37c403")
     version("0.20.1", sha256="12a3f7206af3028dbe8a0de50d8ebd6d7010bf762db918acae76fc7585f1258d")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type=["build", "run"])
+    depends_on("cxx", type=["build", "run"])
+    depends_on("rust", type="build")
+
+    depends_on("node-js", type="run")
 
     def edit(self, spec, prefix):
         env["PREFIX"] = prefix
@@ -60,3 +63,24 @@ class TreeSitter(MakefilePackage):
         #   https://www.sourceware.org/glibc/wiki/Release/2.20#Deprecation_of__BSD_SOURCE_and__SVID_SOURCE_feature_macros
         if spec.satisfies("@0.25: ^glibc@:2.19"):
             filter_file("-D_DEFAULT_SOURCE", "-D_BSD_SOURCE", "Makefile")
+
+    def build(self, spec, prefix):
+        super().build(spec, prefix)
+
+        from spack.package import Executable
+
+        cargo = Executable("cargo")
+        cargo("build")
+
+    def install(self, spec, prefix):
+        super().install(spec, prefix)
+
+        from spack.package import Executable
+
+        cargo = Executable("cargo")
+        if spec.satisfies("@0.26:"):
+            crate_cli_path = "crates/cli"
+        else:
+            crate_cli_path = "cli"
+
+        cargo("install", "--root", prefix, "--path", crate_cli_path)
