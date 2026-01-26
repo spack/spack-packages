@@ -24,6 +24,7 @@ class NodeJs(Package):
     license("Unicode-TOU")
 
     # Current (latest features) - odd major number
+    version("25.2.1", sha256="1cbbdb66f99e0c41937eb8763c57e622eab43006742dc4d0856270b17215e376")
     version("23.11.1", sha256="75509306732090bfa99b004d097909315f7789badb4a495e82b5f17b6329247a")
     version("21.7.3", sha256="ce1f61347671ef219d9c2925313d629d3fef98fc8d7f5ef38dd4656f7d0f58e7")
     version("19.2.0", sha256="aac9d1a366fb57d68f4639f9204d1de5d6387656959a97ed929a5ba9e62c033a")
@@ -94,6 +95,7 @@ class NodeJs(Package):
     depends_on("python@:3.13", when="@22.3.0:22.16.0", type="build")
     depends_on("python@3.8:3.13", when="@23.0.0:23", type="build")
     depends_on("python@3.9:3.13", when="@24.3.0:24", type="build")
+    depends_on("python@3.9:3.14", when="@25.0.0:25", type="build")
 
     depends_on("libtool", type="build", when=sys.platform != "darwin")
     depends_on("pkgconfig", type="build")
@@ -107,6 +109,9 @@ class NodeJs(Package):
     conflicts("%gcc@:10.0", when="@20:")
     conflicts("%gcc@:8.2", when="@16:")
     conflicts("%gcc@:6.2", when="@12:")
+    conflicts("%clang@:19.0", when="@25:")
+    conflicts("%apple-clang@:18", when="@25:")
+    conflicts("%apple-clang@:16", when="@24:")
     conflicts("%apple-clang@:11", when="@21:")
     conflicts("%apple-clang@:10", when="@16:")
     conflicts("%apple-clang@:9", when="@13:")

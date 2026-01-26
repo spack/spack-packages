@@ -27,6 +27,7 @@ class Dd4hep(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.34", sha256="1c121f4b3eb14d104b7a7f734e7e52efc4b6e4e5bc74d21d5d2de1b91c8f9f75")
     version("1.33", sha256="23f78163e1371a5f092758cdc60a18906b1b19bbeacdd7c68557ebf71424fc23")
     version("1.32.1", sha256="f47fbede967b609e142c3116d23b4993f9d57fbae28a1739b5333503bc498883")
     version("1.32", sha256="8bde4eab9af9841e040447282ea7df3a16e4bcec587c3a1e32f41987da9b1b4d")
@@ -155,6 +156,8 @@ class Dd4hep(CMakePackage):
 
         # Specific version requirements
         depends_on("edm4hep@0.10.5:", when="@1.31:")
+        # Need https://github.com/AIDASoft/DD4hep/pull/1552 to build against edm4hep@1.0
+        depends_on("edm4hep@:0.99.4", when="@:1.34")
         depends_on("podio@:0", when="@:1.29")
         depends_on("podio@0.16:", when="@1.24:")
         depends_on("podio@0.16.3:", when="@1.26:")
@@ -175,6 +178,11 @@ class Dd4hep(CMakePackage):
 
     # See https://github.com/AIDASoft/DD4hep/issues/1210
     conflicts("^root@6.31.1:", when="@:1.27")
+
+    # See https://github.com/AIDASoft/DD4hep/pull/1547
+    conflicts(
+        "^python +freethreading", when="@:1.34", msg="python free-threading requires dd4hep@1.35:"
+    )
 
     @property
     def libs(self):

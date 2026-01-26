@@ -124,6 +124,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     options_variants = {
         "aggressive_vectorization": [False, None, "Aggressively vectorize loops"],
+        "atomics_bypass": [
+            False,
+            "@4.6: +serial~threads~cuda~rocm~hpx~openmp~sycl~openmptarget",
+            "Make atomics non-atomic for non-threaded MPI-only use cases",
+        ],
         "compiler_warnings": [False, "@:4", "Print all compiler warnings"],
         "complex_align": [True, None, "Align complex numbers"],
         "cuda_constexpr": [False, "+cuda", "Activate experimental constexpr features"],
@@ -289,13 +294,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
 
-    cxxstds = ["11", "14", "17", "20"]
-    variant("cxxstd", default="17", values=cxxstds, multi=False, description="C++ standard")
+    with default_args(multi=False, description="C++ standard"):
+        variant("cxxstd", default="17", values=("14", "17", "20"), when="@3")
+        variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
+        variant("cxxstd", default="20", values=("20", "23"), when="@5:")
     variant("pic", default=False, description="Build position independent code")
-
-    conflicts("cxxstd=11")
-    conflicts("cxxstd=14", when="@4.0:")
-    conflicts("cxxstd=17", when="@5:")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
     conflicts("+cuda", when="cxxstd=20 ^cuda@:11")
@@ -305,19 +308,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant("alloc_async", default=False, description="Use CudaMallocAsync", when="@4.2: +cuda")
 
     # SYCL and OpenMPTarget require C++17 or higher
-    for cxxstdver in cxxstds[: cxxstds.index("17")]:
-        conflicts(
-            "+sycl", when="cxxstd={0}".format(cxxstdver), msg="SYCL requires C++17 or higher"
-        )
-        conflicts(
-            "+openmptarget",
-            when="cxxstd={0}".format(cxxstdver),
-            msg="OpenMPTarget requires C++17 or higher",
-        )
+    conflicts("+sycl", when="cxxstd=14", msg="SYCL requires C++17 or higher")
+    conflicts("+openmptarget", when="cxxstd=14", msg="OpenMPTarget requires C++17 or higher")
 
     # HPX should use the same C++ standard
-    for cxxstd in cxxstds:
-        depends_on("hpx cxxstd={0}".format(cxxstd), when="+hpx cxxstd={0}".format(cxxstd))
+    for cxxstd in ["14", "17", "20", "23"]:
+        depends_on(f"hpx cxxstd={cxxstd}", when=f"+hpx cxxstd={cxxstd}")
 
     # HPX version constraints
     depends_on("hpx@1.7:", when="+hpx")

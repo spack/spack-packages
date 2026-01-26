@@ -384,7 +384,8 @@ class Root(CMakePackage):
     depends_on("ncurses")
     depends_on("nlohmann-json", when="@6.24:")
     depends_on("nlohmann-json@:3.10", when="@6.24:6.26.07")
-    depends_on("pcre")
+    depends_on("pcre", when="@:6.33")
+    depends_on("pcre2", when="@6.34:")
     depends_on("xxhash", when="@6.13.02:")  # See cmake_args, below.
     depends_on("xz")
     depends_on("zlib-api")

@@ -25,7 +25,7 @@ spack:
         before_script:
         - . /etc/profile.d/modules.sh
         - - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$REMOTE_SCRIPT_REF/.ci/gitlab/scripts/common/clone_spack.sh
-          - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256 clone_spack.sh" | sha256sum --check --status
+          - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256  clone_spack.sh" | sha256sum -c
           - sh clone_spack.sh
         - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
           - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH

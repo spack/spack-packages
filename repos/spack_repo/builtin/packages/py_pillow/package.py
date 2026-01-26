@@ -10,7 +10,6 @@ from spack.package import *
 class PyPillowBase(PythonPackage):
     """Base class for Pillow and its fork Pillow-SIMD."""
 
-    license("HPND")
     maintainers("adamjstewart")
     provides("pil")
 
@@ -154,6 +153,9 @@ class PyPillow(PyPillowBase):
 
     homepage = "https://python-pillow.org/"
     pypi = "pillow/pillow-10.2.0.tar.gz"
+
+    license("MIT-CMU", when="@11:")
+    license("HPND", when="@:10")
 
     version("12.1.0", sha256="5c5ae0a06e9ea030ab786b0251b32c7e4ce10e58d983c0d5c56029455180b5b9")
     version("12.0.0", sha256="87d4f8125c9988bfbed67af47dd7a953e2fc7b0cc1e7800ec6d2080d490bb353")

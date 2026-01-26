@@ -52,6 +52,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("libpng")
 
     variant("shared", default=True, description="Build shared library")
+    variant("pic", default=False, description="Enable position-independent code")
 
     # As discussed here:
     # https://bugs.freedesktop.org/show_bug.cgi?id=104886
@@ -60,6 +61,9 @@ class Pixman(AutotoolsPackage, MesonPackage):
     # Patch is obtained from above link.
     patch("clang.patch", when="@0.34%apple-clang@9.1.0:")
     patch("clang.patch", when="@0.34%clang@5.0.0:")
+
+    # https://github.com/spack/spack-packages/issues/3032
+    patch("libpng.patch", when="build_system=meson")
 
     @run_before("build")
     def patch_config_h_for_intel(self):
@@ -123,6 +127,14 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             #  https://gitlab.freedesktop.org/pixman/pixman/-/issues/69
             if self.spec.target.family == "aarch64":
                 args.append("--disable-arm-a64-neon")
+
+        args.extend(self.with_or_without("pic"))
+
+        png = self.spec["libpng"]
+        if not png.satisfies("libs=shared"):
+            args.append(
+                "LIBS=%s" % which("libpng-config")("--static", "--ldflags", output=str).strip()
+            )
 
         # The Fujitsu compiler does not support assembler macros.
         if self.spec.satisfies("%fj"):

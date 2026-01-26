@@ -195,7 +195,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("conduit")
         depends_on("conduit +mpi", when="+mpi")
     with when("+catalyst"):
-        depends_on("libcatalyst@2.0: +conduit")
+        depends_on("libcatalyst@2.0:")
         depends_on("libcatalyst +mpi", when="+mpi")
     with when("+sundials"):
         depends_on("sundials@5.7.0: +ARKODE +CVODE", when="@21.07:22.04")
