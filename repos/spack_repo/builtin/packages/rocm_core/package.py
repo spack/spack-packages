@@ -16,6 +16,7 @@ class RocmCore(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocm-core"
     git = "https://github.com/ROCm/rocm-systems.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocm-core/archive/rocm-{0}.tar.gz"
@@ -101,7 +102,6 @@ class RocmCore(CMakePackage):
             return "."
         else:
             return "projects/rocm-core"
-
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

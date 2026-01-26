@@ -159,7 +159,7 @@ class Rpp(CMakePackage):
         when="@1.0:",
     )
     depends_on("libjpeg-turbo", type=("build", "link"))
-    depends_on("rocm-openmp-extras", when= "@:7.1")
+    depends_on("rocm-openmp-extras", when="@:7.1")
     conflicts("+opencl+hip")
 
     with when("+hip"):

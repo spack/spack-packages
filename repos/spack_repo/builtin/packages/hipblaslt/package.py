@@ -95,7 +95,6 @@ class Hipblaslt(CMakePackage):
     ]:
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
-
     for ver in [
         "6.0.0",
         "6.0.2",

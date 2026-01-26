@@ -14,12 +14,14 @@ class RocprofilerDev(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler"
     git = "https://github.com/ROCm/rocm-systems.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocprofiler/archive/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
+
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")

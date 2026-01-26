@@ -15,6 +15,7 @@ class HipTensor(CMakePackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipTensor"
     git = "https://github.com/ROCm/rocm-libraries.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hipTensor/archive/refs/tags/rocm-{0}.tar.gz"

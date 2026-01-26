@@ -104,6 +104,5 @@ class Rocminfo(CMakePackage):
         else:
             return "."
 
-
     def cmake_args(self):
         return [self.define("ROCM_DIR", self.spec["hsa-rocr-dev"].prefix)]

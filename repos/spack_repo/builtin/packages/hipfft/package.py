@@ -20,12 +20,14 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/ROCm/hipFFT"
     git = "https://github.com/ROCm/rocm-libraries.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hipfft/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
+
     tags = ["rocm"]
     libraries = ["libhipfft"]
 

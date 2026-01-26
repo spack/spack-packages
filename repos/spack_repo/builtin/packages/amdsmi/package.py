@@ -16,6 +16,7 @@ class Amdsmi(CMakePackage):
 
     homepage = "https://github.com/ROCm/amdsmi"
     git = "https://github.com/ROCm/amdsmi.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"

@@ -15,6 +15,7 @@ class Rdc(CMakePackage):
 
     homepage = "https://github.com/ROCm/rdc"
     git = "https://github.com/ROCm/rocm-systems.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rdc/archive/rocm-{0}.tar.gz"
@@ -137,11 +138,11 @@ class Rdc(CMakePackage):
         return None
 
     def cmake_args(self):
-        args = [
-            self.define("GRPC_ROOT", self.spec["grpc"].prefix),
-        ]
+        args = [self.define("GRPC_ROOT", self.spec["grpc"].prefix)]
         if self.spec.satisfies("@:6.1"):
             args.append(self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix))
         if self.spec.satisfies("@:7.1"):
-            args.append(self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/cmake_modules"))
+            args.append(
+                self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/cmake_modules")
+            )
         return args

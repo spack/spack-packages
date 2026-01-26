@@ -8,6 +8,7 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
+
 def submodules(package):
     submodules = [
         "projects/rocprofiler-systems/external/timemory",
@@ -22,9 +23,10 @@ def submodules(package):
         "projects/rocprofiler-systems/examples/openmp/external/ompvv",
         "projects/rocprofiler-systems/external/googletest",
         "projects/rocprofiler-systems/external/filesystem",
-        "projects/rocprofiler-systems/external/spdlog"
+        "projects/rocprofiler-systems/external/spdlog",
     ]
     return submodules
+
 
 class RocprofilerSystems(CMakePackage):
     """Application Profiling, Tracing, and Analysis"""
@@ -239,7 +241,17 @@ class RocprofilerSystems(CMakePackage):
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
 
-        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
+        for ver in [
+            "6.4.0",
+            "6.4.1",
+            "6.4.2",
+            "6.4.3",
+            "7.0.0",
+            "7.0.2",
+            "7.1.0",
+            "7.1.1",
+            "7.2.0",
+        ]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
         for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
@@ -318,9 +330,7 @@ class RocprofilerSystems(CMakePackage):
         if spec.satisfies("+internal-dyninst"):
             args.append(self.define_from_variant("DYNINST_BUILD_TBB", "internal-tbb"))
         if spec.satisfies("@7.2:"):
-            args.append(
-                self.define("libunwind_ROOT", self.spec["libunwind"].prefix)
-            )
+            args.append(self.define("libunwind_ROOT", self.spec["libunwind"].prefix))
         return args
 
     def flag_handler(self, name, flags):

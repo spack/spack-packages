@@ -22,6 +22,7 @@ class Rocwmma(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocWMMA"
     git = "https://github.com/ROCm/rocm-libraries.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocWMMA/archive/refs/tags/rocm-{0}.tar.gz"
@@ -167,14 +168,11 @@ class Rocwmma(CMakePackage):
             self.define("ROCWMMA_BUILD_ASSEMBLY", "OFF"),
             self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
         ]
-        args.extend(
-            [
-                "-DOpenMP_CXX_FLAGS=-fopenmp=libomp",
-                "-DOpenMP_CXX_LIB_NAMES=libomp",
-            ]
-        )
+        args.extend(["-DOpenMP_CXX_FLAGS=-fopenmp=libomp", "-DOpenMP_CXX_LIB_NAMES=libomp"])
         if self.spec.satisfies("@:7.1"):
-            args.append(f"-DOpenMP_libomp_LIBRARY={self.spec['rocm-openmp-extras'].prefix}/lib/libomp.so")
+            args.append(
+                f"-DOpenMP_libomp_LIBRARY={self.spec['rocm-openmp-extras'].prefix}/lib/libomp.so"
+            )
         else:
             args.append(f"-DOpenMP_libomp_LIBRARY={self.spec['llvm-amdgpu'].prefix}/lib/libomp.so")
         tgt = self.spec.variants["amdgpu_target"]

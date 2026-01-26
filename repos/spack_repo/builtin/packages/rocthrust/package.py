@@ -16,6 +16,7 @@ class Rocthrust(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocThrust"
     git = "https://github.com/ROCm/rocm-libraries.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocThrust/archive/refs/tags/rocm-{0}.tar.gz"

@@ -17,6 +17,7 @@ class RocmOpencl(CMakePackage):
     homepage = "https://github.com/ROCm/clr"
     url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/clr.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/clr/archive/rocm-{0}.tar.gz"

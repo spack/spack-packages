@@ -14,6 +14,7 @@ class RocprofilerRegister(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-register"
     git = "https://github.com/ROCm/rocm-systems.git"
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocprofiler-register/archive/rocm-{0}.tar.gz"
@@ -53,7 +54,9 @@ class RocprofilerRegister(CMakePackage):
     depends_on("libunwind")
 
     patch("001-add-cpack-fmt-glog.patch", when="@:7.1")
-    patch("001-add-cpack-fmt-glog.patch", when="@7.2:", working_dir="projects/rocprofiler-register")
+    patch(
+        "001-add-cpack-fmt-glog.patch", when="@7.2:", working_dir="projects/rocprofiler-register"
+    )
 
     @property
     def root_cmakelists_dir(self):
