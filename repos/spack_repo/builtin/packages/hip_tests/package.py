@@ -44,14 +44,6 @@ class HipTests(CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("cmake", type="run")
 
-    amdgpu_targets = ROCmPackage.amdgpu_targets
-    variant(
-        "amdgpu_target",
-        description="AMD GPU architecture",
-        values=auto_or_any_combination_of(*amdgpu_targets),
-        sticky=True,
-    )
-
     for ver in [
         "6.1.0",
         "6.1.1",
