@@ -15,6 +15,26 @@ spack:
         when: '%gcc@10'
     tbb:
       require: intel-tbb
+  toolchains:
+    gcc11:
+    - spec: "%c=gcc@11"
+      when: "%c"
+    - spec: "%cxx=gcc@11"
+      when: "%cxx"
+    - spec: "%fortran=gcc@11"
+      when: "%fortran"
+    gcc12:
+    - spec: "%c=gcc@12"
+      when: "%c"
+    - spec: "%cxx=gcc@12"
+      when: "%cxx"
+    - spec: "%fortran=gcc@12"
+      when: "%fortran"
+    clang14:
+    - spec: "%c=llvm@14"
+      when: "%c"
+    - spec: "%cxx=llvm@14"
+      when: "%cxx"
   definitions:
   - gcc_system_packages:
     - matrix:
@@ -35,22 +55,22 @@ spack:
         - macsio@1.1+scr ^scr@2.0.0~fortran ^silo~fortran ^hdf5~fortran
         - julia@1.9 ^llvm ~clang ~gold ~lldb ~lua ~polly compiler-rt=none libcxx=none libunwind=none targets=x86 ^openblas threads=openmp
         - vim
-      - ['%gcc@11']
+      - ['%gcc11']
   - gcc_old_packages:
     - zlib-ng@2.2.4%gcc@10
   - clang_packages:
     - matrix:
       - [zlib-ng@2.2.4, tcl ^zlib-ng@2.0.7]
-      - ['%clang@14']
+      - ['%clang14']
   - gcc_spack_built_packages:
     - matrix:
       - [netlib-scalapack]
       - [^mpich, ^openmpi]
       - [^openblas, ^netlib-lapack]
-      - ['%gcc@12']
+      - ['%gcc12']
     - matrix:
       - [py-scipy ^openblas, armadillo ^openblas, netlib-lapack, openmpi, mpich, elpa ^mpich]
-      - ['%gcc@12']
+      - ['%gcc12']
   specs:
   - $gcc_system_packages
   - $gcc_old_packages
