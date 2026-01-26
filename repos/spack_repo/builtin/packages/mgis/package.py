@@ -43,70 +43,38 @@ class Mgis(CMakePackage):
         url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-3.1.tar.gz",
     )
     version("3.0.2", sha256="189b53789d4e2af3a69970880f5b1e90ff596ad3a71109ace69b2026333a8641")
-    version(
-        "3.0.1",
-        sha256="fb9a7f5008a43c70bdb1c4b80f32f7fd3e4274c912b93c36af7011d3c4f93039",
-        deprecated=True,
-    )
-    version(
-        "3.0.0",
-        sha256="dae915201fd20848b69745dabda1a334eb242d823af600825b8b010ddc597640",
-        url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-3.0.tar.gz",
-        deprecated=True,
-    )
     version("2.2.2", sha256="cd31a51939c5e15c880563ec738cf6801aa9142d5d2783607eb1400e992ef504")
-    version(
-        "2.2.1",
-        sha256="a0e6af65f5fd2237f39306354ef786eadb0c6bc6868c23e2681e04a83e629ad2",
-        deprecated=True,
-    )
-    version(
-        "2.2.0",
-        sha256="b3776d7b3a534ca626525a42b97665f7660ae2b28ea57b3f53fd7e8538da1ceb",
-        deprecated=True,
-    )
     version("2.1.1", sha256="3fb5500cdb855543403028e28b6418913b3067ab2509d254022a234ea59ed4a8")
-    version(
-        "2.1.0",
-        sha256="f5b556aab130da0c423f395fe4c35d6bf509dd8fc958242f2e37ea788464aea9",
-        deprecated=True,
-    )
     version("2.0.1", sha256="9850aa177d4a6e43faa1434968d2daad65aab2a9b7d64fa4eea51bd25c3d2c5c")
-    version(
-        "2.0.0",
-        sha256="cb427d77f2c79423e969815b948a8b44da33a4370d1760e8c1e22a569f3585e2",
-        url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-2.0.tar.gz",
-        deprecated=True,
-    )
     version("1.2.3", sha256="250bca538ad0806f0d3d3a0ee7410344de2c92f8d038a49f486acb69fa81362d")
-    version(
-        "1.2.2",
-        sha256="dc24e85cc90ec656ed707eef3d511317ad800915014d9e4e9cf8818b406586d5",
-        deprecated=True,
-    )
-    version(
-        "1.2.1",
-        sha256="a2d7cae3a24546adcf1d1bf7f13f012170d359370f5b6b2c1730b19eb507601d",
-        deprecated=True,
-    )
-    version(
-        "1.2.0",
-        sha256="ed82ab91cbe17c00ef36578dbfcb4d1817d4c956619b7cccbea3e3f1a3b31940",
-        deprecated=True,
-    )
     version("1.1.2", sha256="49b6a115f6ca758c1b29aa49e7f9940c36102edc2478c338de5f9fa6a13c0e95")
-    version(
-        "1.1.0",
-        sha256="06593d7a052678deaee87ef60b2213db7545c5be9823f261d3388b3978a0b7a5",
-        deprecated=True,
-    )
     version("1.0.1", sha256="6102621455bc5d9b1591cd33e93b2e15a9572d2ce59ca6dfa30ba57ae1265c08")
-    version(
-        "1.0.0",
-        sha256="279c98da00fa6855edf29c2b8f8bad6e7732298dc62ef67d028d6bbeaac043b3",
-        url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-1.0.tar.gz",
-        deprecated=True,
-    )
+
+    with default_args(deprecated=True):
+
+        version("3.0.1", sha256="fb9a7f5008a43c70bdb1c4b80f32f7fd3e4274c912b93c36af7011d3c4f93039")
+        version(
+            "3.0.0",
+            sha256="dae915201fd20848b69745dabda1a334eb242d823af600825b8b010ddc597640",
+            url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-3.0.tar.gz",
+        )
+        version("2.2.1", sha256="a0e6af65f5fd2237f39306354ef786eadb0c6bc6868c23e2681e04a83e629ad2")
+        version("2.2.0", sha256="b3776d7b3a534ca626525a42b97665f7660ae2b28ea57b3f53fd7e8538da1ceb")
+        version("2.1.0", sha256="f5b556aab130da0c423f395fe4c35d6bf509dd8fc958242f2e37ea788464aea9")
+        version(
+            "2.0.0",
+            sha256="cb427d77f2c79423e969815b948a8b44da33a4370d1760e8c1e22a569f3585e2",
+            url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-2.0.tar.gz",
+        )
+        version("1.2.2", sha256="dc24e85cc90ec656ed707eef3d511317ad800915014d9e4e9cf8818b406586d5")
+        version("1.2.1", sha256="a2d7cae3a24546adcf1d1bf7f13f012170d359370f5b6b2c1730b19eb507601d")
+        version("1.2.0", sha256="ed82ab91cbe17c00ef36578dbfcb4d1817d4c956619b7cccbea3e3f1a3b31940")
+        version("1.1.0", sha256="06593d7a052678deaee87ef60b2213db7545c5be9823f261d3388b3978a0b7a5")
+        version(
+            "1.0.0",
+            sha256="279c98da00fa6855edf29c2b8f8bad6e7732298dc62ef67d028d6bbeaac043b3",
+            url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-1.0.tar.gz",
+        )
 
     # variants
     variant("c", default=True, description="Enables c bindings")
