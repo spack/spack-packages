@@ -154,12 +154,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-laspy@2.5.3:", when="@0.7.2:")
         depends_on("py-laspy@2:", when="@0.2:")
         depends_on("py-netcdf4@1.6.1:", when="@0.7:")
-        depends_on("opencv@4.5.5.64:", when="@0.7:0.8.0")
-        depends_on("opencv@4.5.4:", when="@0.6:")
-        depends_on("opencv@4.4.0.46:", when="@0.5:")
-        depends_on("opencv@3.4.2.17:", when="@:0.8.0")
-        depends_on("py-pandas@2:+parquet", when="@0.8:")
-        depends_on("py-pandas@2:2+parquet", when="@0.7")
+        depends_on("py-pandas@2:+parquet", when="@0.7:")
         depends_on("py-pycocotools@2.0.7:", when="@0.6:")
         depends_on("py-pycocotools@2.0.5:", when="@0.5:")
         depends_on("py-pycocotools@2:")
@@ -194,11 +189,13 @@ class PyTorchgeo(PythonPackage):
         # JPEG required for GDAL to read JPEG files
         # LIBDEFLATE, ZLIB, and ZSTD required for compressed file I/O.
         depends_on("libtiff+jpeg+libdeflate+zlib+zstd")
-        # LandCover.ai dataset requires ability to read .tif and write .jpg and .png files.
-        # Doing this from Python requires both imgcodecs and Python bindings.
-        depends_on("opencv+imgcodecs+jpeg+png+python3+tiff", when="@:0.8.0")
 
         # Historical dependencies
+        depends_on("opencv@4.5.5.64:", when="@0.7:0.8.0")
+        depends_on("opencv@4.5.4:", when="@0.6")
+        depends_on("opencv@4.4.0.46:", when="@0.5")
+        depends_on("opencv@3.4.2.17:", when="@:0.4")
+        depends_on("opencv+imgcodecs+jpeg+png+python3+tiff", when="@:0.8.0")
         depends_on("open3d@0.11.2:+python", when="@0.2:0.3")
         # https://github.com/microsoft/torchgeo/pull/1537
         depends_on("py-pandas@0.23.2:2.0", when="@0.3:0.4")
@@ -272,5 +269,7 @@ class PyTorchgeo(PythonPackage):
     conflicts("py-lightning@2.3")
     # https://github.com/microsoft/torchgeo/pull/2151
     conflicts("py-numpy@2:", when="@:0.5")
+    # https://github.com/torchgeo/torchgeo/pull/3311
+    conflicts("py-pandas@3:", when="@:0.8.0")
     # https://github.com/rasterio/rasterio/issues/3196
     conflicts("py-rasterio@1.4.0:1.4.2")
