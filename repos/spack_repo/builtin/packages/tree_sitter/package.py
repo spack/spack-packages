@@ -68,15 +68,11 @@ class TreeSitter(MakefilePackage):
     def build(self, spec, prefix):
         super().build(spec, prefix)
 
-        from spack.package import Executable
-
         cargo = Executable("cargo")
         cargo("build")
 
     def install(self, spec, prefix):
         super().install(spec, prefix)
-
-        from spack.package import Executable
 
         cargo = Executable("cargo")
         if spec.satisfies("@0.26:"):
