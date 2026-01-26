@@ -82,7 +82,7 @@ class Mgis(CMakePackage):
     variant("python", default=True, description="Enables python bindings")
     variant("static", default=False, description="Enables static libraries")
 
-    with when("@3.1:") or when("rliv-3.1:"):
+    with when("@3.1:,rliv-3.1:"):
         variant("openmp", default=False, description="Enables openmp support")
         variant("mgis-function", default=True, description="Enables MGIS/Function")
         variant(
@@ -145,15 +145,6 @@ class Mgis(CMakePackage):
 
     extends("python", when="+python")
 
-    def patch(self):
-        """Fix the test suite to use the PYTHONPATH provided by the spack buildenv"""
-        filter_file("tests/;", "tests:")
-        if "+python" in self.spec:
-            if when("@3.0.1") or when("@rliv-3.0"):
-                filter_file("tests/;", "bindings/python/boost/tests/CMakeLists.txt")
-            else:
-                filter_file("tests/;", "bindings/python/tests/CMakeLists.txt")
-
     def check(self):
         """skip target 'test' which doesn't build the test programs used by tests"""
         with working_dir(self.build_directory):
@@ -184,21 +175,23 @@ class Mgis(CMakePackage):
             else:
                 args.append("-Denable-{0}-bindings=OFF".format(i))
 
-        if "+python" in self.spec:
-            # adding path to python
-            python = self.spec["python"]
-            args.append("-DPYTHON_LIBRARY={0}".format(python.libs[0]))
-            args.append("-DPYTHON_INCLUDE_DIR={0}".format(python.headers.directories[0]))
-            args.append("-DPython_ADDITIONAL_VERSIONS={0}".format(python.version.up_to(2)))
-
-            if "py-pybind11" in self.spec:
-                args.append("-Dpybind11_DIR={0}".format(self.spec["py-pybind11"].prefix))
-
-            if "boost" in self.spec:
-                # adding path to boost
-                args.append("-DBOOST_ROOT={0}".format(self.spec["boost"].prefix))
-
         if "+static" in self.spec:
             args.append("-Denable-static=ON")
+
+        if not self.spec.satisfies("+python"):
+            return args
+
+        # adding path to python
+        python = self.spec["python"]
+        args.append("-DPYTHON_LIBRARY={0}".format(python.libs[0]))
+        args.append("-DPYTHON_INCLUDE_DIR={0}".format(python.headers.directories[0]))
+        args.append("-DPython_ADDITIONAL_VERSIONS={0}".format(python.version.up_to(2)))
+
+        if "py-pybind11" in self.spec:
+            args.append("-Dpybind11_DIR={0}".format(self.spec["py-pybind11"].prefix))
+
+        if "boost" in self.spec:
+            # adding path to boost
+            args.append("-DBOOST_ROOT={0}".format(self.spec["boost"].prefix))
 
         return args
