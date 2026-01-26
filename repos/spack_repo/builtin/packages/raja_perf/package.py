@@ -119,7 +119,8 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         description="For developers, lowers optimization level to pass tests with some compilers",
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("blt")
     depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
