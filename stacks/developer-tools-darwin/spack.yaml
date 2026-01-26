@@ -72,6 +72,8 @@ spack:
     - py-ruff
     - typos
     - uncrustify
+    - gopls
+    - goimports
 
       # docs tools
     - graphviz
