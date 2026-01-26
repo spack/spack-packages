@@ -24,6 +24,7 @@ class Hip(CMakePackage):
     libraries = ["libamdhip64"]
 
     license("MIT")
+    version("7.2.0", sha256="4a22fcd0baf8df47d2e234f887f5bc03d522ce78928f82d1b0669a55897c4205")
     version("7.1.1", sha256="c64b3219237903d6b27944f236930a1024ed17eb5399165875fbf410fcacf6f4")
     version("7.1.0", sha256="e757a6e4a15d4113cd7cd8a4e9a2a3ff7a6a9ccbc65951179419331214f2784a")
     version("7.0.2", sha256="80486998b115e5f61b72913887ccc0507ac332eda4068879bdfb7e3c8611f666")
@@ -115,6 +116,7 @@ class Hip(CMakePackage):
             "7.0.2",
             "7.1.0",
             "7.1.1",
+            "7.2.0",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -144,6 +146,7 @@ class Hip(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
 
@@ -163,6 +166,7 @@ class Hip(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -218,6 +222,19 @@ class Hip(CMakePackage):
             sha256="7668b2a710baf4cb063e6b00280fb75c4c3e0511575e8298a9c7ae5143f60b33",
             working_dir="clr",
             when="@5.7:6.0",
+        )
+
+    for d_version, d_shasum in [
+        ("7.2.0", "728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    ]:
+        resource(
+            name="rocm-systems",
+            url=f"https://github.com/ROCm/rocm-systems/archive/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            expand=True,
+            destination="",
+            placement="rocm-systems",
+            when=f"@{d_version}",
         )
 
     # Add hipcc sources thru the below
@@ -285,7 +302,10 @@ class Hip(CMakePackage):
 
     @property
     def root_cmakelists_dir(self):
-        return "clr"
+        if self.spec.satisfies("@7.2:"):
+            return "rocm-systems/projects/clr"
+        else:
+            return "clr"
 
     def get_paths(self):
         if self.spec.external:
@@ -490,6 +510,10 @@ class Hip(CMakePackage):
         self.spec.hipcc = join_path(self.prefix.bin, "hipcc")
 
     def patch(self):
+        if self.spec.satisfies("@7.2:"):
+            clr_dir = "rocm-systems/projects/clr"
+        else:
+            clr_dir = "clr"
         if self.spec.satisfies("@5.7:6.2 +rocm"):
             filter_file(
                 '"${ROCM_PATH}/llvm"',
@@ -501,11 +525,11 @@ class Hip(CMakePackage):
             filter_file(
                 '"${ROCM_PATH}/llvm"',
                 self.spec["llvm-amdgpu"].prefix,
-                "clr/hipamd/hip-config-amd.cmake.in",
+                f"{clr_dir}/hipamd/hip-config-amd.cmake.in",
                 string=True,
             )
         perl = self.spec["perl"].command
-        with working_dir("clr/hipamd/bin"):
+        with working_dir(f"{clr_dir}/hipamd/bin"):
             filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
         if self.spec.satisfies("@5.7"):
             with working_dir("hipcc/bin"):
@@ -564,7 +588,11 @@ class Hip(CMakePackage):
 
         if self.spec.satisfies("+cuda"):
             args.append(self.define("HIP_PLATFORM", "nvidia"))
-            args.append(self.define("HIPNV_DIR", self.stage.source_path + "/hipother/hipnv"))
+            if self.spec.satisfies("@:7.2"):
+                hipnv_path = f"{self.stage.source_path}/hipother/hipnv"
+            else:
+                hipnv_path = f"{self.stage.source_path}/rocm-systems/projects/hipother/hipnv"
+            args.append(self.define("HIPNV_DIR", hipnv_path))
 
         args.append(self.define("HIP_COMMON_DIR", self.stage.source_path))
         args.append(self.define("HIP_CATCH_TEST", "OFF"))

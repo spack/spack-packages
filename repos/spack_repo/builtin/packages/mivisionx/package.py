@@ -20,6 +20,7 @@ class Mivisionx(CMakePackage):
     tags = ["rocm"]
 
     license("MIT")
+    version("7.2.0", sha256="188dc225d0813f172521e5a2129af5d917ab9e6616488520c0ef27468cc6d89b")
     version("7.1.1", sha256="7a7bd6ccb67e2b858526667decea938cc80c72d6279e7f6d9f3c0bb89ef823d7")
     version("7.1.0", sha256="2fba3aeb970df06f95d465cc2dd5ba5096ec47966e26f2a4544a719e78d43e37")
     version("7.0.2", sha256="ae4f230890f0ddaf0be5ea9a891843312e44c86bd8697c7e663cea142722c4de")
@@ -200,6 +201,7 @@ class Mivisionx(CMakePackage):
             "7.0.2",
             "7.1.0",
             "7.1.1",
+            "7.2.0",
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")

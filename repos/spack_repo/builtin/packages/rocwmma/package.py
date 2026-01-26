@@ -21,14 +21,21 @@ class Rocwmma(CMakePackage):
     linking to external runtime libraries or having to launch separate kernels."""
 
     homepage = "https://github.com/ROCm/rocWMMA"
-    git = "https://github.com/ROCm/rocWMMA.git"
-    url = "https://github.com/ROCm/rocWMMA/archive/refs/tags/rocm-6.1.2.tar.gz"
+    git = "https://github.com/ROCm/rocm-libraries.git"
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocWMMA/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
     tags = ["rocm"]
 
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="5a3c22ba75bf8473dc4a008fbff365d0666fc5a49c54e742f7ed4444a2b2d431")
     version("7.1.0", sha256="96bed5cd6f2d3334cfbd4a9e6dab132cc2ec60150409712661dc69e774427707")
     version("7.0.2", sha256="359604712e6802fbb66ebddf4c337916c5a851bd4302d8c3ab5c31f0d8b7ec7e")
@@ -100,19 +107,52 @@ class Rocwmma(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, type="build", when="@" + ver)
         depends_on("hip@" + ver, when="@" + ver)
         depends_on("rocblas@" + ver, type="build", when="@" + ver)
-        depends_on("rocm-openmp-extras@" + ver, type="build", when="@" + ver)
         depends_on("rocm-smi-lib@" + ver, when="@" + ver)
+
+    for ver in [
+        "5.7.0",
+        "5.7.1",
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
+        depends_on("rocm-openmp-extras@" + ver, type="build", when="@" + ver)
 
     for tgt in itertools.chain(["auto"], amdgpu_targets):
         depends_on("rocblas amdgpu_target={0}".format(tgt), when="amdgpu_target={0}".format(tgt))
 
     patch("0001-add-rocm-smi-lib-path-for-building-tests.patch", when="@:6.3")
     patch("0002-use-find-package-rocm-smi.patch", when="@6.4")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocwmma"
+        else:
+            return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -131,11 +171,12 @@ class Rocwmma(CMakePackage):
             [
                 "-DOpenMP_CXX_FLAGS=-fopenmp=libomp",
                 "-DOpenMP_CXX_LIB_NAMES=libomp",
-                "-DOpenMP_libomp_LIBRARY={0}/lib/libomp.so".format(
-                    self.spec["rocm-openmp-extras"].prefix
-                ),
             ]
         )
+        if self.spec.satisfies("@:7.1"):
+            args.append(f"-DOpenMP_libomp_LIBRARY={self.spec['rocm-openmp-extras'].prefix}/lib/libomp.so")
+        else:
+            args.append(f"-DOpenMP_libomp_LIBRARY={self.spec['llvm-amdgpu'].prefix}/lib/libomp.so")
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
             if self.spec.satisfies("@7.1:"):

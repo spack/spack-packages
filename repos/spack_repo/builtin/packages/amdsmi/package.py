@@ -15,14 +15,20 @@ class Amdsmi(CMakePackage):
     applications to monitor and control AMD device."""
 
     homepage = "https://github.com/ROCm/amdsmi"
-    url = "https://github.com/ROCm/amdsmi/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/amdsmi.git"
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libamd_smi"]
 
     license("MIT")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="2a9dfafac9593d3093c3f5fc611682e712f08816414f210344ea7b719c085ff5")
     version("7.1.0", sha256="17ccddf8988a5674edb360b9f3b41bf3d94c6f4ba36cf8d84739c6ccdfc87c50")
     version("7.0.2", sha256="6df8d828157124b513f4ffa6c059231398b19120f5b782ec42fc151862e2cf90")

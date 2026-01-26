@@ -36,6 +36,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
     version("7.1.0", sha256="d9e138a15e8195a7e9b5e15240e50c557b830d50a2bafa27db14dad3884dbfd8")
     version("7.0.2", sha256="04bb529fa656624f8875b726aa5ef1699207fdc5de4b3446986eafc4890ef708")
@@ -97,9 +98,33 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
     ]:
+        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}", type="test")
+
+    for ver in [
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipsparse@{ver}", when=f"@{ver}")
-        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}", type="test")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -115,13 +140,14 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
-    for ver in ["7.1.0", "7.1.1"]:
+    for ver in ["7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
 

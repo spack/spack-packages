@@ -16,8 +16,13 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     supported backends"""
 
     homepage = "https://github.com/ROCm/hipBLAS"
-    git = "https://github.com/ROCm/hipBLAS.git"
-    url = "https://github.com/ROCm/hipBLAS/archive/rocm-6.4.3.tar.gz"
+    git = "https://github.com/ROCm/rocm-libraries.git"
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hipBLAS/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
@@ -25,6 +30,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="4a77f19a6229a6135fc9e2ea8e7694efda984c654a11a8c650fa9480aaf1ca84")
     version("7.1.0", sha256="719c27d839d2008be5c5ec270299d98aab820eaf6aee907b7fa12cecd0cea092")
     version("7.0.2", sha256="af179faab4ff5eec5d5ca3af3640644c72c9a9ca676cfab50591e9d9f3fadf80")
@@ -109,10 +115,34 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
+
+    for ver in [
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"+rocm @{ver}")
 
     for tgt in ROCmPackage.amdgpu_targets:
@@ -132,8 +162,16 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hipblas"
+        else:
+            return "."
 
     @classmethod
     def determine_version(cls, lib):
