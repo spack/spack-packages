@@ -69,15 +69,18 @@ class Arkouda(MakefilePackage):
     )
 
     depends_on(
+        "chapel@2.1:2.2 +hdf5 +zmq", when="@:2025.01.13", type=("build", "link", "run", "test")
+    )
+    depends_on(
         "chapel@2.0:2.4 +hdf5 +zmq",
         when="@2025.07.03:2025.08.20",
         type=("build", "link", "run", "test"),
     )
     depends_on(
-        "chapel@2.0:2.5 +hdf5 +zmq", when="@2025.09.30:", type=("build", "link", "run", "test")
+        "chapel@2.0:2.5 +hdf5 +zmq", when="@2025.09.30", type=("build", "link", "run", "test")
     )
     depends_on(
-        "chapel@2.1: +hdf5 +zmq", when="@:2025.01.13", type=("build", "link", "run", "test")
+        "chapel@2.4:2.6 +hdf5 +zmq", when="@2025.12.16:", type=("build", "link", "run", "test")
     )
 
     depends_on("cmake@3.13.4:", type="build")
