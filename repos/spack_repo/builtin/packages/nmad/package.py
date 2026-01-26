@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack.package import *
 from spack_repo.builtin.packages.puk.package import Puk
+
+from spack.package import *
 
 
 class Nmad(AutotoolsPackage):
@@ -31,6 +32,9 @@ class Nmad(AutotoolsPackage):
         return url.format(version)
 
     version("master", branch="master")
+    version(
+        "2026-01-21", sha256="2cd40d7712d78c6c43c510c3ae2bdbc3d539800f6d3926730bddde396e953847"
+    )
     version(
         "2025-03-18", sha256="2d0208809dd17bac4fd7e7f97b22e2240b925d8828b9ab5dc5f435e58ff97010"
     )
