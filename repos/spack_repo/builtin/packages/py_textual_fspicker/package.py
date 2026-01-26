@@ -12,7 +12,7 @@ class PyTextualFspicker(PythonPackage):
     """A Textual widget library for picking things in the filesystem"""
 
     homepage = "https://textual-fspicker.davep.dev/"
-    pypi = "textual-fspicker/0.5.0/textual_fspicker-0.5.0.tar.gz"
+    pypi = "textual-fspicker/textual_fspicker-0.5.0.tar.gz"
 
     version("0.5.0", sha256="a27fc1e616814e99c2dfb5be68df0ee8f7f1d53b8ed552419d542c26b45f6f75")
 
