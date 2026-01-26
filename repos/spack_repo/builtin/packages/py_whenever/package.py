@@ -12,7 +12,7 @@ class PyWhenever(PythonPackage):
 
     homepage = "https://github.com/ariebovenberg/whenever"
     pypi = "whenever/whenever-0.9.5.tar.gz"
-    
+
     license("MIT")
 
     version("0.9.5", sha256="9d8f2fbc70acdab98a99b81a2ac594ebd4cc68d5b3506b990729a5f0b04d0083")

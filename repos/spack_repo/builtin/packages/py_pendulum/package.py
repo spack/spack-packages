@@ -12,7 +12,7 @@ class PyPendulum(PythonPackage):
 
     homepage = "https://pendulum.eustace.io/"
     pypi = "pendulum/pendulum-3.1.0.tar.gz"
-    
+
     license("MIT")
 
     version("3.1.0", sha256="66f96303560f41d097bee7d2dc98ffca716fbb3a832c4b3062034c2d45865015")

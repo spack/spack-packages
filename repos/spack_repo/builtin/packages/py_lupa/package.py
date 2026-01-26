@@ -13,7 +13,6 @@ class PyLupa(PythonPackage):
     homepage = "https://github.com/scoder/lupa"
     pypi = "lupa/lupa-2.6.tar.gz"
 
-
     version("2.6", sha256="9a770a6e89576be3447668d7ced312cd6fd41d3c13c2462c9dc2c2ab570e45d9")
 
     depends_on("py-setuptools", type="build")
