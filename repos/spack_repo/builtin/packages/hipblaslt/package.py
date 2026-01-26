@@ -173,8 +173,8 @@ class Hipblaslt(CMakePackage):
     # https://github.com/ROCm/rocm-libraries/pull/2115
     patch("005-add-roctracer-include-dir.patch", when="@7.1")
     patch(
-        "https://github.com/ROCm/rocm-libraries/commit/841ea340cbf3d7aa0dd37ba2da18a44128602b79.patch",
-        sha256="24d2fd507021667572eef85ff390c95fbb8ad51357523c4fb564608f05b48e7a",
+        "https://github.com/ROCm/rocm-libraries/commit/841ea340cbf3d7aa0dd37ba2da18a44128602b79.patch?full_index=1",
+        sha256="503555b92ccbc33e50a10e2ba1d38e8f3349b93d786c7f6b19aaacb736c9bf7c",
         when="@7.2",
     )
 
