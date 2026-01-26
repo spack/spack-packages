@@ -243,20 +243,10 @@ class Tfel(CMakePackage):
             "comsol",
             "diana-fea",
         ]:
-            if "+" + i in self.spec:
-                args.append("-Denable-{0}=ON".format(i))
-            else:
-                args.append("-Denable-{0}=OFF".format(i))
+            args.append(self.define_from_variant(f"enable-{i}", f"{i}"))
 
-        if "+castem" in self.spec:
-            args.append("-Dlocal-castem-header=ON")
-        else:
-            args.append("-Dlocal-castem-header=OFF")
-
-        if "+python_bindings" in self.spec:
-            args.append("-Denable-python-bindings=ON")
-        else:
-            args.append("-Denable-python-bindings=OFF")
+        args.append(self.define_from_variant("local-castem-header", "castem"))
+        args.append(self.define_from_variant("enable-python-bindings", "python_bindings"))
 
         if ("+python" in self.spec) or ("+python_bindings" in self.spec):
             # Note: calls find_package(PythonLibs) before find_package(PythonInterp), so these

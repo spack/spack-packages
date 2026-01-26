@@ -161,19 +161,12 @@ class Mgis(CMakePackage):
         args.append("-Denable-doxygen-doc=OFF")
         args.append("-DTFEL_DIR={0}/share/tfel/cmake".format(self.spec["tfel"].prefix))
         args.append("-Denable-parallel-stl-algorithms=OFF")
-
-        if "+openmp" in self.spec:
-            args.append("-Denable-openmp=ON")
-        if "~mgis-function" in self.spec:
-            args.append("-Denable-mgis-function=OFF")
-        if "+exception" in self.spec:
-            args.append("-Denable-exception=ON")
+        args.append(self.define_from_variant("enable-openmp", "openmp"))
+        args.append(self.define_from_variant("enable-exception", "exception"))
+        args.append(self.define_from_variant("enable-mgis-function", "mgis-function"))
 
         for i in ["c", "fortran", "python"]:
-            if "+" + i in self.spec:
-                args.append("-Denable-{0}-bindings=ON".format(i))
-            else:
-                args.append("-Denable-{0}-bindings=OFF".format(i))
+            args.append(self.define_from_variant(f"enable-{i}-bindings", f"{i}"))
 
         if "+static" in self.spec:
             args.append("-Denable-static=ON")
