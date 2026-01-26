@@ -139,6 +139,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos@develop", when="@develop")
     depends_on("kokkos@5.0.1", when="@5.0.1")
     depends_on("kokkos@5.0.0", when="@5.0.0")
+    depends_on("kokkos@4.7.02", when="@4.7.02")
     depends_on("kokkos@4.7.01", when="@4.7.01")
     depends_on("kokkos@4.7.00", when="@4.7.00")
     depends_on("kokkos@4.6.02", when="@4.6.02")
