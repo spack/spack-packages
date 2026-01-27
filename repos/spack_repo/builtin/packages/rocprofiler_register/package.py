@@ -54,9 +54,7 @@ class RocprofilerRegister(CMakePackage):
     depends_on("libunwind")
 
     patch("001-add-cpack-fmt-glog.patch", when="@:7.1")
-    patch(
-        "001-add-cpack-fmt-glog.patch", when="@7.2:", working_dir="projects/rocprofiler-register"
-    )
+    patch("001-add-cpack-fmt-glog-7.2.patch", when="@7.2:")
 
     @property
     def root_cmakelists_dir(self):

@@ -141,7 +141,7 @@ class RocprofilerDev(CMakePackage):
 
     patch("0002-add-fPIC-and-disable-tests-5.7.patch", when="@5.7")
     patch("0003-disable-tests.patch", when="@6.0:7.1")
-    patch("0003-disable-tests.patch", when="@7.2:", working_dir="projects/rocprofiler")
+    patch("0003-disable-tests-7.2.patch", when="@7.2:")
 
     @property
     def root_cmakelists_dir(self):
