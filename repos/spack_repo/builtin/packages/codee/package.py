@@ -17,8 +17,8 @@ class Codee(Package):
     making it easier for teams to create high-quality, efficient
     programs that meet industry standards. Codee identifies
     improvement opportunities and provides clear reports to guide
-    both developers and managers in applying the right enhancements. 
-    
+    both developers and managers in applying the right enhancements.
+
     Codee consists of a formatter (Codee Formatter) and a static
     code analyzer (Codee Analyzer). The formatter is, with certain
     limitations (free-form Fortran only), free to use after accepting
@@ -35,13 +35,15 @@ class Codee(Package):
 
     def url_for_version(self, version):
         target = None
-        if sys.platform=="linux":
+        if sys.platform == "linux":
             if platform.machine() == "aarch64":
                 target = "linux-arm64"
             elif platform.machine() == "x86_64":
                 target = "linux-x86_64"
         if not target:
-            raise InstallError(f"Platform {sys.platform}/{platform.machine()} not supported or configured")
+            raise InstallError(
+                f"Platform {sys.platform}/{platform.machine()} not supported or configured"
+            )
         return f"https://codee.com/release/codee-{version}-{target}.tar.gz"
 
     def install(self, spec, prefix):
