@@ -2,10 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 import platform
 import sys
-import tarfile
 
 from spack_repo.builtin.build_systems.generic import Package
 
