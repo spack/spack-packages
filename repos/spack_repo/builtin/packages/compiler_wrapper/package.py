@@ -59,7 +59,7 @@ class CompilerWrapper(Package, NMakePackage):
         version("develop", branch="main")
 
     with when("@develop platform=windows"):
-        patch("rc_updates_11.patch")
+        patch("rc_updates_25.patch")
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
