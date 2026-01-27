@@ -21,6 +21,7 @@ class Fargparse(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("1.10.0", sha256="c2f2b2c2f0dc263e484f7f5f6918d93f40c5b96b8970b5f19426f0a89e14a8f9")
     version("1.9.0", sha256="c83c13fa90b6b45adf8d84fe00571174acfa118d2a0d1e8c467f74bbd7dec49d")
     version("1.8.0", sha256="37108bd3c65d892d8c24611ce4d8e5451767e4afe81445fde67eab652178dd01")
     version("1.7.0", sha256="9889e7eca9c020b742787fba2be0ba16edcc3fcf52929261ccb7d09996a35f89")

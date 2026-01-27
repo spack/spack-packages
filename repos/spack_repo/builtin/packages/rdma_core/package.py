@@ -19,6 +19,9 @@ class RdmaCore(CMakePackage):
 
     license("GPL-2.0-only OR BSD-2-Clause")
 
+    version("59.0", sha256="e2c169b13b318cdc3b5ff957cd8b6dcc8bdf96dd9c5d42324129c163bb057ce5")
+    version("58.0", sha256="88d67897b793f42d2004eec2629ab8464e425e058f22afabd29faac0a2f54ce4")
+    version("57.1", sha256="34ae4e915c8869f42e12896fbf033f9e8d3e7eaa30436c0d011b34ca919f2fbd")
     version("57.0", sha256="5f94c463c931e4a9273f366ca7cb446b54d8bd4732288ade04679886be06862d")
     version("56.1", sha256="63ce7f2baa7242c2dbc76375dac957c420187dd27f8c5e148efc07971ee522a8")
     version("55.1", sha256="4257c3210f5f4753682294d1920e797abdeb91e783ed8e86085de1f946eb0e43")
@@ -79,6 +82,16 @@ class RdmaCore(CMakePackage):
 
     patch("libdrm.patch", when="@34:52")
 
+    def patch(self):
+        if self.spec.satisfies("+pyverbs"):
+            # avoid exceeding shebang length limit during build (in particular in CI)
+            filter_file(
+                r"#!${PYTHON_EXECUTABLE}",
+                "#!/usr/bin/env python",
+                "buildlib/Findcython.cmake",
+                string=True,
+            )
+
     variant(
         "static",
         default=True,
@@ -87,7 +100,12 @@ class RdmaCore(CMakePackage):
     variant("pyverbs", default=True, description="Build with support for pyverbs")
     variant("man_pages", default=True, description="Build with support for man pages")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+
+    with when("+pyverbs"):
+        extends("python")
+        depends_on("python", type="build")
+        depends_on("py-cython@:3.1", type="build")
 
     depends_on("pkgconfig", type="build")
     depends_on("py-docutils", when="+man_pages", type="build")
@@ -117,8 +135,11 @@ class RdmaCore(CMakePackage):
 
         cmake_args.append(self.define_from_variant("ENABLE_STATIC", "static"))
 
-        if self.spec.satisfies("~pyverbs"):
+        if self.spec.satisfies("+pyverbs"):
+            cmake_args.append(self.define("CMAKE_INSTALL_PYTHON_ARCH_LIB", python_platlib))
+        else:
             cmake_args.append("-DNO_PYVERBS=1")
+
         if self.spec.satisfies("~man_pages"):
             cmake_args.append("-DNO_MAN_PAGES=1")
 

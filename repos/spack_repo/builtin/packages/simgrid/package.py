@@ -22,6 +22,7 @@ class Simgrid(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
+    version("4.1", sha256="e16750bd13f5d3c0fb2370d79ba8eee124ee47f9e48c113bd23af9d9782d198b")
     version("4.0", sha256="c9f07122d43f61f1f0a21be2e42ef2cd6290abbf9b697926430f44ca2786bdea")
     version("3.36", sha256="cfdf6b98270c59be5c112457793c540bdd6a10deece91cbdb4793fbda190b95d")
     version("3.35", sha256="b4570d3de18d319cbd2e16c5a669f90760307673c0cc9940d4d11cfc537e69a8")
@@ -71,10 +72,12 @@ class Simgrid(CMakePackage):
     variant("examples", default=False, description="Install examples")
     variant("mc", default=False, description="Model checker")
     variant("msg", default=False, description="Enables the old MSG interface")
+    variant("python", default=False, description="Enables the Python bindings")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    extends("python", when="+python")  # generated
 
     # does not build correctly with some old compilers -> rely on packages
     depends_on("boost@:1.69.0", when="@:3.21")
@@ -89,6 +92,13 @@ class Simgrid(CMakePackage):
 
     conflicts("+msg", when="@3.34:", msg="MSG was removed from SimGrid v3.33.")
 
+    # fix compilation with GCC 14 for v3.34
+    patch(
+        "https://github.com/simgrid/simgrid/commit/e4ecb51dcdf597fb02340d7855dafd0da9bd9018.patch?full_index=1",
+        sha256="80cbe0eed635ff1864f0c2945763c8561b86c08c0c2b60d2ee5a57e1659ccc3d",
+        when="@3.34",
+    )
+
     def setup_dependent_package(self, module, dep_spec):
         if self.spec.satisfies("+smpi"):
             self.spec.smpicc = join_path(self.prefix.bin, "smpicc")
@@ -98,7 +108,7 @@ class Simgrid(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        args = []
+        args = [self.define_from_variant("enable_python", "python")]
 
         if not spec.satisfies("+doc"):
             args.append("-Denable_documentation=OFF")

@@ -22,7 +22,10 @@ class Rocblas(CMakePackage):
     libraries = ["librocblas"]
 
     license("MIT")
-
+    version("7.1.1", sha256="29d43270ccf5d4818d261993f964d4fce4bd0a55c2b6dde60d1529b6c227a873")
+    version("7.1.0", sha256="54f38222d0e58344cf5c86f151d418c071b59145297fd2ed953bb561df1e12c3")
+    version("7.0.2", sha256="8398cda68242db2386abc9eaf00c3588bb27e2b382e29be2bc5624c2d4ac8a99")
+    version("7.0.0", sha256="337a77cec31927e484672002d245d3aebf7a67e95658a8477fc593c95cf281fb")
     version("6.4.3", sha256="754dcc88b30468a2293d2406d7fe40f78dc92dd77c193758f937532217ecdad3")
     version("6.4.2", sha256="703226c458bb3dd1155aad8bdc02cdae2ff789c6b44e41e4a49ae28e40baff98")
     version("6.4.1", sha256="517950ff6b3715dee8b2bcfbdd3968c65e1910e4b8e353e148574ae08aa6dc73")
@@ -79,6 +82,10 @@ class Rocblas(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
@@ -101,6 +108,10 @@ class Rocblas(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", type="build", when=f"@{ver}")
@@ -108,9 +119,23 @@ class Rocblas(CMakePackage):
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("python@3.6:", type="build")
@@ -146,6 +171,10 @@ class Rocblas(CMakePackage):
         ("@6.4.1", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
         ("@6.4.2", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
         ("@6.4.3", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
+        ("@7.0.0", "cca3c8136aa812109629e6291ce9f0ca846b68d3"),
+        ("@7.0.2", "63c27e505cb532ff8e568d737bfdbd9e1d024665"),
+        ("@7.1.0", "0c8314da90fee8cf3b16dcb1bbc75bc1266e123f"),
+        ("@7.1.1", "0c8314da90fee8cf3b16dcb1bbc75bc1266e123f"),
     ]:
         resource(
             name="Tensile",
@@ -156,7 +185,8 @@ class Rocblas(CMakePackage):
 
     patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
-    patch("0009-use-rocm-smi-config.patch", when="@6.4")
+    patch("0009-use-rocm-smi-config.patch", when="@6.4:")
+    patch("0001-remove-blas-override.patch", when="@7.1:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -220,9 +250,11 @@ class Rocblas(CMakePackage):
             # https://github.com/ROCm/Tensile/blob/93e10678a0ced7843d9332b80bc17ebf9a166e8e/Tensile/Parallel.py#L38
             args.append(self.define("Tensile_CPU_THREADS", min(16, make_jobs)))
 
-        # See https://github.com/ROCm/rocBLAS/commit/c1895ba4bb3f4f5947f3818ebd155cf71a27b634
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         # See https://github.com/ROCm/rocBLAS/issues/1196
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
@@ -232,6 +264,8 @@ class Rocblas(CMakePackage):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@6.3:"):
             args.append(self.define_from_variant("BUILD_WITH_HIPBLASLT", "hipblaslt"))
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCTX_PATH", self.spec["roctracer-dev"].prefix))
         return args
 
     @run_after("build")

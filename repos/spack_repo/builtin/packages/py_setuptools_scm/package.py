@@ -18,6 +18,7 @@ class PySetuptoolsScm(PythonPackage):
 
     license("MIT")
 
+    version("9.2.2", sha256="1c674ab4665686a0887d7e24c03ab25f24201c213e82ea689d2f3e169ef7ef57")
     version("8.2.1", sha256="51cfdd1deefc9b8c08d1a61e940a59c4dec39eb6c285d33fa2f1b4be26c7874d")
     version("8.2.0", sha256="a18396a1bc0219c974d1a74612b11f9dce0d5bd8b1dc55c65f6ac7fd609e8c28")
     version("8.1.0", sha256="42dea1b65771cba93b7a515d65a65d8246e560768a66b9106a592c8e7f26c8a7")
@@ -63,7 +64,9 @@ class PySetuptoolsScm(PythonPackage):
         depends_on("py-typing-extensions", when="@8.0.0:8.0.3 ^python@:3.10")
         depends_on("py-typing-extensions", when="@7")
 
-        depends_on("py-packaging@20:", when="@6.3.0:8.0.1")
+        depends_on("py-packaging@20:", when="@6.3.0:6")
+        # https://github.com/pypa/setuptools/issues/4483#issuecomment-2236528158
+        depends_on("py-packaging@22:", when="@7: ^py-setuptools@71:")
 
         depends_on("py-wheel", when="@3.4.0:6.4.2")
 
@@ -74,6 +77,7 @@ class PySetuptoolsScm(PythonPackage):
         depends_on("py-typing-extensions", when="@7:8.0.4")
 
         depends_on("py-packaging@20.0:", when="@6.3:")
+        depends_on("py-packaging@24:", when="@7.1:")
 
         depends_on("py-importlib-metadata", when="@7: ^python@:3.7")
 

@@ -22,7 +22,10 @@ class HipifyClang(CMakePackage):
     executables = ["hipify-perl"]
 
     license("MIT")
-
+    version("7.1.1", sha256="abb80ecc0ea82fd847a95a9c2dd1d182990a7a495f1eab6126e7c5e9dc8b68a7")
+    version("7.1.0", sha256="9fb4e739f116b5a5b8c437808c71c6c1f31dd6184c9be21d67d4b8bf1d91b4f2")
+    version("7.0.2", sha256="d6e78b025c2cb36f9470d1ec572adc8abc7f2c79bb9a5e21cf46fabd305c4b9c")
+    version("7.0.0", sha256="285c23572087efa55196d65c94714541831090e20427e8281dd44771e6faf1f5")
     version("6.4.3", sha256="00156b62bfe3e8c848fb7e4573e55253ec0c86e663a226e794ff314934060182")
     version("6.4.2", sha256="b20623789fcdd21d3fb9d935b8c4c51c12f9b3e444e7e02f29e2869899db2531")
     version("6.4.1", sha256="f22595edb0501bc29aa62263a65333748ebb5a50db80179f6c8e5141697a22ef")
@@ -49,7 +52,7 @@ class HipifyClang(CMakePackage):
 
     patch("0002-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@:6.0")
     patch("0003-install-hipify-clang-in-bin-dir-and-llvm-clangs-head.patch", when="@6.1")
-    patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:")
+    patch("0001-use-source-permission-for-hipify-perl.patch", when="@6.2:6")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -74,6 +77,10 @@ class HipifyClang(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

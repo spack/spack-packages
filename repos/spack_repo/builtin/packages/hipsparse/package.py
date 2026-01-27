@@ -24,7 +24,10 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
     libraries = ["libhipsparse"]
 
     license("MIT")
-
+    version("7.1.1", sha256="b001834d8e65c3878d1a69d08803d5b6ce4fe623e78099fe51cb146d0ffa10e7")
+    version("7.1.0", sha256="1d399d16a388279f71c8de19e6ccfde35a3dedc5ba49858bca7a377aa08198c0")
+    version("7.0.2", sha256="8f2d187ef9a44e58538a7bf3298b245e740066c74e431da01c38ed35fad649fc")
+    version("7.0.0", sha256="09102f4a74cfcffb8371428f70a592a004b72f4f08135d35738b34c4d5a5edba")
     version("6.4.3", sha256="0ac06136778a25e7d38c69d831d169b85ad370d0ae1cd45deb5f63a43797244e")
     version("6.4.2", sha256="e6ed9a0dab093f428418c7914f3d2e1612cafc280cd0ee27ab4df8c93284a5ed")
     version("6.4.1", sha256="cae547776076066c0ee19a7f98516ac2e9a0cf3bb3b0809d7a4e474f9ee4cb90")
@@ -91,6 +94,10 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"rocsparse@{ver}", when=f"+rocm @{ver}")
@@ -122,7 +129,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
 
     def cmake_args(self):
         args = [
-            self.define("CMAKE_CXX_STANDARD", "14"),
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("BUILD_CLIENTS_TESTS", "OFF"),
             self.define("CMAKE_INSTALL_LIBDIR", "lib"),
@@ -135,4 +141,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
         if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
+        if self.spec.satisfies("@:6"):
+            args.append(self.define("CMAKE_CXX_STANDARD", "14"))
         return args

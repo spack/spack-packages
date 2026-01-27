@@ -106,6 +106,13 @@ class FftwBase(AutotoolsPackage):
         options = ["--prefix={0}".format(prefix), "--enable-threads"]
         options.extend(self.enable_or_disable("shared"))
 
+        # On Apple Arm machines, force to use aarch64 rather than arm
+        # to check for NEON due to logic in configure.
+        if self.spec.satisfies("target=m1:"):
+            uname = Executable("uname")
+            uname_r = uname("-r", output=str)
+            options.append("--build=aarch64-apple-darwin{0}".format(uname_r))
+
         if not self.compiler.f77 or not self.compiler.fc:
             options.append("--disable-fortran")
         if spec.satisfies("@:2"):
@@ -121,11 +128,18 @@ class FftwBase(AutotoolsPackage):
         if spec.satisfies("+mpi"):
             options.append("--enable-mpi")
 
+        if spec.satisfies("target=aarch64:"):
+            options.append("--enable-armv8-cntvct-el0")
+
         # Specific SIMD support.
         # all precisions
-        simd_features = ["sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "vsx"]
+        simd_features = ["sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "vsx", "asimd"]
         # float only
         float_simd_features = ["altivec", "sse", "neon"]
+
+        # armv8 introduced asimd to replace neon feature
+        if "asimd" in spec.target:
+            float_simd_features.remove("neon")
 
         # Workaround NVIDIA/PGI compiler bug when avx512 is enabled
         if spec.satisfies("%nvhpc"):
@@ -142,10 +156,21 @@ class FftwBase(AutotoolsPackage):
         if spec.satisfies("%nvhpc") and "neon" in simd_features:
             simd_features.remove("neon")
 
+        # GCC on apple silicon does not support Neon intrinsics
+        if (
+            spec.satisfies("platform=darwin target=aarch64: %gcc")
+            and "neon" in float_simd_features
+        ):
+            float_simd_features.remove("neon")
+
         simd_options = []
         for feature in simd_features:
             msg = "--enable-{0}" if feature in spec.target else "--disable-{0}"
-            simd_options.append(msg.format(feature))
+            feature_opt = feature
+            # CPU feature is asimd but neon used in option.
+            if feature == "asimd":
+                feature_opt = "neon"
+            simd_options.append(msg.format(feature_opt))
 
         # If no features are found, enable the generic ones
         if not any(f in spec.target for f in simd_features + float_simd_features):

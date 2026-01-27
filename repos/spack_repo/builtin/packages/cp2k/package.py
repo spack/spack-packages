@@ -34,7 +34,11 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     periodic, material, crystal, and biological systems
     """
 
-    build_system(conditional("cmake", when="@2023.2:"), "makefile", default="cmake")
+    build_system(
+        conditional("cmake", when="@2023.2:"),
+        conditional("makefile", when="@:2025.2"),
+        default="cmake",
+    )
 
     homepage = "https://www.cp2k.org"
     url = "https://github.com/cp2k/cp2k/releases/download/v2025.2/cp2k-2025.2.tar.bz2"
@@ -47,6 +51,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2026.1", sha256="4364c74bcffaa474bc234e11686b09550e4d06932acf2147a341e4f7679dd88e")
     version("2025.2", sha256="c8392a4e123304644ec8d241443796277c6ed7ae977452317e779f3c387c2e19")
     version("2025.1", sha256="65c8ad5488897b0f995919b9fa77f2aba4b61677ba1e3c19bb093d5c08a8ce1d")
     version("2024.3", sha256="a6eeee773b6b1fb417def576e4049a89a08a0ed5feffcd7f0b33c7d7b48f19ba")
@@ -118,7 +123,13 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         " are enabled",
     )
     variant("pytorch", default=False, description="Enable libtorch support")
-    variant("quip", default=False, description="Enable quip support")
+    variant(
+        "openpmd-api",
+        default=False,
+        description="Enable openPMD support",
+        when="@2026.2: build_system=cmake",
+    )
+    variant("quip", default=False, when="@:2025.2", description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
     variant("smeagol", default=False, description="Enable libsmeagol support", when="@2025.2:")
@@ -383,11 +394,16 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libvori@210412:", when="@8.2:")
         depends_on("libvori@220621:", when="@2023.1:")
 
+    with when("+openpmd-api"):
+        depends_on("openpmd-api@0.16.1:")
+
     # the bundled libcusmm uses numpy in the parameter prediction (v7+)
     # which is written using Python 3
     depends_on("py-numpy", when="@7:+cuda")
     depends_on("python@3.6:", when="@7:+cuda")
     depends_on("py-fypp")
+
+    depends_on("py-torch", when="+pytorch")
 
     depends_on("spglib", when="+spglib")
 
@@ -1136,6 +1152,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_COSMA", "cosma"),
             self.define_from_variant("CP2K_USE_LIBXC", "libxc"),
             self.define_from_variant("CP2K_USE_LIBTORCH", "pytorch"),
+            self.define_from_variant("CP2K_USE_OPENPMD", "openpmd-api"),
             self.define_from_variant("CP2K_USE_METIS", "pexsi"),
             self.define_from_variant("CP2K_USE_SUPERLU", "pexsi"),
             self.define_from_variant("CP2K_USE_PLUMED", "plumed"),

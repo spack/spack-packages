@@ -17,6 +17,10 @@ class Rocpydecode(CMakePackage):
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
+    version("7.1.1", sha256="8946730b6159350b896f9704b3ed485fa376e502d9b68f0cef68d09ab8260fab")
+    version("7.1.0", sha256="7e9feeb0dd7d975f04364730cdf2b194d8e8d6bcc62aa983bc99509d9c6366d1")
+    version("7.0.2", sha256="fa8215316966198086ff24c1ba7646e69d105b8bd1df1f90b829a6ca3b8f383e")
+    version("7.0.0", sha256="f4245da75ba7bd27d3dbd39ecae89255e6d2b8c2096e579f812708f28b08716d")
     version("6.4.3", sha256="d9dc540ab8d6cfd979016abeab9cfc79063e81647a32d9eeffd834a9d008f1e3")
     version("6.4.2", sha256="d51f2dde62c6e581b0d3676fbd74b36802b4f97bbfc3f82baee76097affca685")
     version("6.4.1", sha256="2b74cb18d2f54664dbf1fa2063c7957e3c849fe6673e279d14aefe3712e187ff")
@@ -45,9 +49,16 @@ class Rocpydecode(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+        depends_on(f"rocjpeg@{ver}", when=f"@{ver}")
 
     def patch(self):
         filter_file(
@@ -68,6 +79,13 @@ class Rocpydecode(CMakePackage):
             "CMakeLists.txt",
             string=True,
         )
+        if self.spec.satisfies("@7.0:"):
+            filter_file(
+                r"${ROCM_PATH}/include/rocdecode",
+                self.spec["rocdecode"].prefix.include.rocdecode,
+                "CMakeLists.txt",
+                string=True,
+            )
 
     def cmake_args(self):
         args = [

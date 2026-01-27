@@ -42,3 +42,6 @@ class PyDatashader(PythonPackage):
     depends_on("py-packaging", type="run")
     depends_on("py-xarray", type="run")
     depends_on("py-dask", type="run")
+
+    # https://github.com/holoviz/hvplot/issues/1471
+    depends_on("py-dask@2025.1:", type="run", when="@0.17:")

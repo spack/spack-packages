@@ -18,6 +18,20 @@ from spack.package import *
 #    format returned by platform.system() and 'arch' by platform.machine()
 
 _versions = {
+    "25.0.1_8": {
+        "Linux-x86_64": (
+            "8daf77d1aacffe38c9889689bc224a13557de77559d9a5bb91991e6a298baa0d",
+            "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_x64_linux_hotspot_25.0.1_8.tar.gz",
+        ),
+        "Linux-aarch64": (
+            "5c83b7d2121ed482fd06831a1eba1633dbab818aba6addddf48e075b97e6e9b8",
+            "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_aarch64_linux_hotspot_25.0.1_8.tar.gz",
+        ),
+        "Darwin-arm64": (
+            "964ffce1ff9f24e8d29df4e4201b5b96499026dc8387cf35bb39fe969ffea2bb",
+            "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.1%2B8/OpenJDK25U-jdk_aarch64_mac_hotspot_25.0.1_8.tar.gz",
+        ),
+    },
     "21.0.3_9": {
         "Linux-x86_64": (
             "fffa52c22d797b715a962e6c8d11ec7d79b90dd819b5bc51d62137ea4b22a340",
@@ -393,7 +407,7 @@ class Openjdk(Package):
     """The free and opensource java implementation"""
 
     homepage = "https://openjdk.org/"
-    preferred_prefix = "17."
+    preferred_prefix = "25."
 
     preferred_defined = False
     for ver, packages in _versions.items():
@@ -414,6 +428,7 @@ class Openjdk(Package):
         description=("symlink system certs if requested, otherwise use default package version"),
     )
 
+    provides("java@25", when="@25.0:25")
     provides("java@21", when="@21.0:21")
     provides("java@17", when="@17.0:17")
     provides("java@16", when="@16.0:16")
@@ -516,7 +531,7 @@ class Openjdk(Package):
             if os.path.exists(sys_certs):
                 if os.path.exists(pkg_conf):
                     os.remove(pkg_conf)
-                os.symlink(sys_certs, pkg_conf)
+                symlink(sys_certs, pkg_conf)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         """Set JAVA_HOME."""

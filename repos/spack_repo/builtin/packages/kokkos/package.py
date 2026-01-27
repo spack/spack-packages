@@ -22,12 +22,15 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     test_requires_compiler = True
 
-    maintainers("cedricchevalier19", "nmm0", "lucbv")
+    maintainers("cedricchevalier19", "nmm0", "lucbv", "tpadioleau")
 
     license("Apache-2.0 WITH LLVM-exception")
 
     version("develop", branch="develop")
 
+    version("5.0.1", sha256="cf7d8515ca993229929be9f051aecd8f93cde325adac8a4f82ed6848adace218")
+    version("5.0.0", sha256="c45f3e19c3eb71fc8b7210cb04cac658015fc1839e7cc0571f7406588ff9bcef")
+    version("4.7.02", sha256="a81826ac0a167933d13506bc2a986fb5517038df9abb780fe9bb2c1d4e80803b")
     version("4.7.01", sha256="404cf33e76159e83b8b4ad5d86f6899d442b5da4624820ab457412116cdcd201")
     version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
     version("4.6.02", sha256="baf1ebbe67abe2bbb8bb6aed81b4247d53ae98ab8475e516d9c87e87fa2422ce")
@@ -81,7 +84,22 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
+    with when("@5:"):
+        conflicts("%gcc@:10.3")
+        conflicts("%llvm@:13")
+        conflicts("%llvm@:14", when="+cuda ~wrapper")
+        conflicts("%apple-clang@:7")
+        conflicts("%oneapi@:2021")
+        conflicts("%oneapi@:2024", when="+sycl")
+        depends_on("cuda@12.2:", when="+cuda")
+        depends_on("hip@6.2:", when="+rocm")
+        conflicts("%nvhpc@:22.2")
+        conflicts("%msvc@:19.2")
+        conflicts("%arm@:20")
+
     depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.22:", type="build", when="@5:")
+    depends_on("cmake@3.25.2:", type="build", when="@5: +cuda +cmake_lang")
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
@@ -89,43 +107,49 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "cuda": [False, "Whether to build CUDA backend"],
         "openmp": [False, "Whether to build OpenMP backend"],
         "threads": [False, "Whether to build the C++ threads backend"],
-        "serial": [True, "Whether to build serial backend"],
+        "serial": [False, "Whether to build serial backend"],
         "rocm": [False, "Whether to build HIP backend"],
         "sycl": [False, "Whether to build the SYCL backend"],
         "openmptarget": [False, "Whether to build the OpenMPTarget backend"],
     }
-    conflicts(
-        "".join([f"~{d}" for d in devices_variants]),
-        msg="Kokkos requires at least one active backend",
+    requires(
+        "+serial", when="~hpx ~openmp ~threads", msg="Kokkos requires at least one host backend"
     )
 
     tpls_variants = {
-        "hpx": [False, "Whether to enable the HPX library"],
-        "hwloc": [False, "Whether to enable the HWLOC library"],
-        "numactl": [False, "Whether to enable the LIBNUMA library"],
-        "memkind": [False, "Whether to enable the MEMKIND library"],
+        "hpx": [False, None, "Whether to enable the HPX library"],
+        "hwloc": [False, None, "Whether to enable the HWLOC library"],
+        "numactl": [False, "@:4", "Whether to enable the LIBNUMA library"],
+        "memkind": [False, "@:4", "Whether to enable the MEMKIND library"],
     }
 
     options_variants = {
         "aggressive_vectorization": [False, None, "Aggressively vectorize loops"],
-        "compiler_warnings": [False, None, "Print all compiler warnings"],
+        "atomics_bypass": [
+            False,
+            "@4.6: +serial~threads~cuda~rocm~hpx~openmp~sycl~openmptarget",
+            "Make atomics non-atomic for non-threaded MPI-only use cases",
+        ],
+        "compiler_warnings": [False, "@:4", "Print all compiler warnings"],
         "complex_align": [True, None, "Align complex numbers"],
         "cuda_constexpr": [False, "+cuda", "Activate experimental constexpr features"],
-        "cuda_lambda": [False, "+cuda", "Activate experimental lambda features"],
-        "cuda_ldg_intrinsic": [False, "+cuda", "Use CUDA LDG intrinsics"],
+        "cuda_lambda": [False, "@:4 +cuda", "Activate experimental lambda features"],
+        "cuda_ldg_intrinsic": [False, "@:4 +cuda", "Use CUDA LDG intrinsics"],
         "cuda_relocatable_device_code": [False, "+cuda", "Enable RDC for CUDA"],
         "hip_relocatable_device_code": [False, None, "Enable RDC for HIP"],
         "sycl_relocatable_device_code": [False, "@4.5: +sycl", "Enable RDC for SYCL"],
-        "cuda_uvm": [False, "+cuda", "Enable unified virtual memory (UVM) for CUDA"],
+        "cuda_uvm": [False, "@:4 +cuda", "Enable unified virtual memory (UVM) for CUDA"],
         "debug": [False, None, "Activate extra debug features - may increase compiletimes"],
         "debug_bounds_check": [False, None, "Use bounds checking - will increase runtime"],
-        "debug_dualview_modify_check": [False, None, "Debug check on dual views"],
-        "deprecated_code": [False, None, "Whether to enable deprecated code"],
-        "examples": [False, None, "Whether to build examples"],
-        "hpx_async_dispatch": [False, None, "Whether HPX supports asynchronous dispath"],
+        "debug_dualview_modify_check": [False, "@:4", "Debug check on dual views"],
+        "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
+        "examples": [False, "@:4", "Whether to build examples"],
+        "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
     }
+
+    conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
 
     spack_micro_arch_map = {
         "thunderx2": "THUNDERX2",
@@ -190,6 +214,17 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         when="+cuda",
     )
 
+    # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=("none",) + ROCmPackage.amdgpu_targets,
+        default="none",
+        multi=False,
+        sticky=True,
+        when="+rocm",
+    )
+
     amdgpu_arch_map = {
         "gfx900": "vega900",
         "gfx906": "vega906",
@@ -249,8 +284,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
 
-    for tpl, (dflt, desc) in tpls_variants.items():
-        variant(tpl, default=dflt, description=desc)
+    for tpl, (dflt, when, desc) in tpls_variants.items():
+        variant(tpl, default=dflt, description=desc, when=when)
         depends_on(tpl, when="+%s" % tpl)
 
     variant("wrapper", default=False, description="Use nvcc-wrapper for CUDA build")
@@ -260,12 +295,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
 
-    cxxstds = ["11", "14", "17", "20"]
-    variant("cxxstd", default="17", values=cxxstds, multi=False, description="C++ standard")
+    with default_args(multi=False, description="C++ standard"):
+        variant("cxxstd", default="17", values=("14", "17", "20"), when="@3")
+        variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
+        variant("cxxstd", default="20", values=("20", "23"), when="@5:")
     variant("pic", default=False, description="Build position independent code")
-
-    conflicts("cxxstd=11")
-    conflicts("cxxstd=14", when="@4.0:")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
     conflicts("+cuda", when="cxxstd=20 ^cuda@:11")
@@ -275,19 +309,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant("alloc_async", default=False, description="Use CudaMallocAsync", when="@4.2: +cuda")
 
     # SYCL and OpenMPTarget require C++17 or higher
-    for cxxstdver in cxxstds[: cxxstds.index("17")]:
-        conflicts(
-            "+sycl", when="cxxstd={0}".format(cxxstdver), msg="SYCL requires C++17 or higher"
-        )
-        conflicts(
-            "+openmptarget",
-            when="cxxstd={0}".format(cxxstdver),
-            msg="OpenMPTarget requires C++17 or higher",
-        )
+    conflicts("+sycl", when="cxxstd=14", msg="SYCL requires C++17 or higher")
+    conflicts("+openmptarget", when="cxxstd=14", msg="OpenMPTarget requires C++17 or higher")
 
     # HPX should use the same C++ standard
-    for cxxstd in cxxstds:
-        depends_on("hpx cxxstd={0}".format(cxxstd), when="+hpx cxxstd={0}".format(cxxstd))
+    for cxxstd in ["14", "17", "20", "23"]:
+        depends_on(f"hpx cxxstd={cxxstd}", when=f"+hpx cxxstd={cxxstd}")
 
     # HPX version constraints
     depends_on("hpx@1.7:", when="+hpx")
@@ -378,13 +405,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
         spack_microarches = []
         if spec.satisfies("+cuda"):
-            if isinstance(spec.variants["cuda_arch"].value, str):
-                cuda_arch = spec.variants["cuda_arch"].value
-            else:
-                if len(spec.variants["cuda_arch"].value) > 1:
-                    msg = "Kokkos supports only one cuda_arch at a time."
-                    raise InstallError(msg)
-                cuda_arch = spec.variants["cuda_arch"].value[0]
+            cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch != "none":
                 kokkos_arch_name = self.spack_cuda_arch_map[cuda_arch]
                 spack_microarches.append(kokkos_arch_name)
@@ -394,17 +415,17 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             spack_microarches.append(kokkos_microarch_name)
 
         if spec.satisfies("+rocm"):
-            for amdgpu_target in spec.variants["amdgpu_target"].value:
-                if amdgpu_target != "none":
-                    if amdgpu_target in self.amdgpu_arch_map:
-                        if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
-                            spack_microarches.append(self.amdgpu_apu_arch_map[amdgpu_target])
-                        else:
-                            spack_microarches.append(self.amdgpu_arch_map[amdgpu_target])
+            amdgpu_target = spec.variants["amdgpu_target"].value
+            if amdgpu_target != "none":
+                if amdgpu_target in self.amdgpu_arch_map:
+                    if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
+                        spack_microarches.append(self.amdgpu_apu_arch_map[amdgpu_target])
                     else:
-                        # Note that conflict declarations should prevent
-                        # choosing an unsupported AMD GPU target
-                        raise SpackError("Unsupported target: {0}".format(amdgpu_target))
+                        spack_microarches.append(self.amdgpu_arch_map[amdgpu_target])
+                else:
+                    # Note that conflict declarations should prevent
+                    # choosing an unsupported AMD GPU target
+                    raise SpackError("Unsupported target: {0}".format(amdgpu_target))
 
         if self.spec.variants["intel_gpu_arch"].value != "none":
             spack_microarches.append(self.spec.variants["intel_gpu_arch"].value)
@@ -417,28 +438,46 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         self.append_args("ENABLE", self.tpls_variants.keys(), options)
 
         for tpl in self.tpls_variants:
-            if spec.variants[tpl].value:
+            if spec.satisfies(f"+{tpl}"):
                 options.append(self.define(tpl + "_DIR", spec[tpl].prefix))
 
         if self.spec.satisfies("+wrapper"):
             options.append(self.define("CMAKE_CXX_COMPILER", self.kokkos_cxx))
         elif "+rocm" in self.spec:
             if "+cmake_lang" in self.spec:
+                if self.spec.satisfies("%cxx=clang"):
+                    options.append(self.define("CMAKE_HIP_COMPILER", self.compiler.cxx))
+                else:
+                    options.append(
+                        self.define(
+                            "CMAKE_HIP_COMPILER",
+                            join_path(self.spec["llvm-amdgpu"].prefix.bin, "amdclang++"),
+                        )
+                    )
+                options.append(from_variant("CMAKE_HIP_STANDARD", "cxxstd"))
                 options.append(
                     self.define(
-                        "CMAKE_HIP_COMPILER",
-                        join_path(self.spec["llvm-amdgpu"].prefix.bin, "amdclang++"),
+                        "CMAKE_HIP_ARCHITECTURES", self.spec.variants["amdgpu_target"].value
                     )
                 )
-                options.append(from_variant("CMAKE_HIP_STANDARD", "cxxstd"))
+                options.append(self.define("CMAKE_HIP_EXTENSIONS", False))
             else:
                 options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("Kokkos_ENABLE_ROCTHRUST", True))
         elif "+cuda" in self.spec and "+cmake_lang" in self.spec:
+            if self.spec.satisfies("%cxx=clang"):
+                options.append(self.define("CMAKE_CUDA_COMPILER", self.compiler.cxx))
+            else:
+                options.append(
+                    self.define(
+                        "CMAKE_CUDA_COMPILER", join_path(self.spec["cuda"].prefix.bin, "nvcc")
+                    )
+                )
             options.append(
-                self.define("CMAKE_CUDA_COMPILER", join_path(self.spec["cuda"].prefix.bin, "nvcc"))
+                self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value)
             )
             options.append(from_variant("CMAKE_CUDA_STANDARD", "cxxstd"))
+            options.append(self.define("CMAKE_CUDA_EXTENSIONS", False))
 
         if self.spec.satisfies("%oneapi") or self.spec.satisfies("%intel"):
             options.append(self.define("CMAKE_CXX_FLAGS", "-fp-model=precise"))

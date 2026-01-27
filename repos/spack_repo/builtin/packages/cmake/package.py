@@ -31,12 +31,14 @@ class Cmake(Package):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("4.2.2", sha256="bbda94dd31636e89eb1cc18f8355f6b01d9193d7676549fba282057e8b730f58")
+    version("4.2.0", sha256="4104e94657d247c811cb29985405a360b78130b5d51e7f6daceb2447830bd579")
     version("4.1.2", sha256="643f04182b7ba323ab31f526f785134fb79cba3188a852206ef0473fee282a15")
     version("4.1.1", sha256="b29f6f19733aa224b7763507a108a427ed48c688e1faf22b29c44e1c30549282")
     version("4.0.4", sha256="629be82af0b76e029b675a4a37569e2ddc1769d42a768957c00ec0e98407737e")
     version(
-        "3.31.8",
-        sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa",
+        "3.31.9",
+        sha256="5d4fdec04247ca8a8e8f63692f0d0f1e9d6d082a2bdd008dff8ab3ba7215aa83",
         preferred=True,
     )
     version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")
@@ -75,6 +77,9 @@ class Cmake(Package):
         version("4.1.0", sha256="81ee8170028865581a8e10eaf055afb620fa4baa0beb6387241241a975033508")
         version("4.0.3", sha256="8d3537b7b7732660ea247398f166be892fe6131d63cc291944b45b91279f3ffb")
         version("4.0.0", sha256="ddc54ad63b87e153cf50be450a6580f1b17b4881de8941da963ff56991a4083b")
+        version(
+            "3.31.8", sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa"
+        )
         version(
             "3.31.6", sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0"
         )
@@ -166,7 +171,11 @@ class Cmake(Package):
     # provide Spack's TLS libs anyways, which is not flexible, and actually
     # leads to issues where we have to keep track of the vendored curl version
     # and its conflicts with OpenSSL.
+    depends_on("curl@:8.15", when="@:3.25")
     depends_on("curl")
+
+    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/11134
+    conflicts("curl@8.16:", when="@:3.30")
 
     # When using curl, cmake defaults to using system zlib too, probably because
     # curl already depends on zlib. Therefore, also unconditionaly depend on zlib.
