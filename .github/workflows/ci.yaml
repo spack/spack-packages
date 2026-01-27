@@ -80,12 +80,10 @@ jobs:
     steps:
     - name: Success
       run: |
-        if [ "${{ needs.prechecks.result }}" = "failure" ] || [ "${{ needs.prechecks.result }}" = "cancelled" ]; then
-          echo "GHA checks failed."
-          exit 1
-        else
-          exit 0
-        fi
+        [ "${{ needs.prechecks.result }}" = "success" ] && exit 0
+        [ "${{ needs.prechecks.result }}" = "skipped" ] && exit 0
+        echo "GHA checks failed."
+        exit 1
 
   all:
     needs: [ unit-tests ]
@@ -95,9 +93,7 @@ jobs:
     steps:
     - name: Status summary
       run: |
-        if [ "${{ needs.unit-tests.result }}" = "failure" ] || [ "${{ needs.unit-tests.result }}" = "cancelled" ]; then
-          echo "Unit tests failed."
-          exit 1
-        else
-          exit 0
-        fi
+        [ "${{ needs.unit-tests.result }}" = "success" ] && exit 0
+        [ "${{ needs.unit-tests.result }}" = "skipped" ] && exit 0
+        echo "Unit tests failed."
+        exit 1
