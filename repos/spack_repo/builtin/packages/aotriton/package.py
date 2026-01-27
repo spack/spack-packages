@@ -19,7 +19,10 @@ class Aotriton(CMakePackage):
 
     license("MIT")
     version(
-        "0.11.1b", tag="0.11.1b", commit="98371989e8a23267e284c94e95156a139e4b33c4", submodules=True
+        "0.11.1b",
+        tag="0.11.1b",
+        commit="98371989e8a23267e284c94e95156a139e4b33c4",
+        submodules=True,
     )
     version(
         "0.11b", tag="0.11b", commit="972223c501ffc22068bb035ac5d64cf54318d895", submodules=True
