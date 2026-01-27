@@ -320,20 +320,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocblas")
         depends_on("miopen-hip")
         for target in ROCmPackage.amdgpu_targets:
-            depends_on(
-                f"composable-kernel amdgpu_target={target}",
-                when=f"amdgpu_target={target}"
-            )
+            depends_on(f"composable-kernel amdgpu_target={target}", when=f"amdgpu_target={target}")
             # This constraint applies to ANY hipblaslt in the dependency tree
             # including the one used by miopen-hip
-            depends_on(
-                f"hipblaslt amdgpu_target={target}",
-                when=f"amdgpu_target={target}"
-            )
+            depends_on(f"hipblaslt amdgpu_target={target}", when=f"amdgpu_target={target}")
             # Ensure hipblaslt version for 2.9+
             depends_on(
-                f"hipblaslt@7.0: amdgpu_target={target}",
-                when=f"@2.9 amdgpu_target={target}"
+                f"hipblaslt@7.0: amdgpu_target={target}", when=f"@2.9 amdgpu_target={target}"
             )
         depends_on("rocminfo")
         depends_on("hipsparselt@7.0:", when="@2.9")
