@@ -132,7 +132,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     # Patch to fix GPU+TPLs and freebsd build issues
     patch(
         "https://github.com/hypre-space/hypre/pull/1463.patch?full_index=1",
-        sha256="1259354a44b101efee92b65f40de1d3606891331aa65f18b9dca2a5b75669e85",
+        sha256="a5677bf0638bca1fc9953db5796bb2ad60e4b87345f8f8fce6457d50093927c5",
         when="@3.1.0",
     )
 
