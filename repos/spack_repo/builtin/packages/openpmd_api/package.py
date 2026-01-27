@@ -86,8 +86,10 @@ class OpenpmdApi(CMakePackage):
         depends_on("py-numpy@1.15.1:", type=["test", "run"])
         depends_on("py-mpi4py@2.1.0:", when="+mpi", type=["test", "run"])
         depends_on("python@3.7:", type=["link", "test", "run"])
-        depends_on("python@3.8:", when="@0.15.2:")
-        depends_on("python@3.10:", when="@0.17.0:")
+        with default_args(type=("link", "test", "run")):
+            depends_on("python@3.7:")
+            depends_on("python@3.8:", when="@0.15.2:")
+            depends_on("python@3.10:", when="@0.17.0:")
 
     conflicts("^hdf5 api=v16", msg="openPMD-api requires HDF5 APIs for 1.8+")
 
