@@ -179,7 +179,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-sympy@1.13.3:", when="@2.7:")
         depends_on("py-sympy@1.13.1", when="@2.5:2.6")
         depends_on("py-sympy", when="@2:")
-        depends_on("py-llvmlite@0.44", when="@2.7 +rocm")
+        depends_on("py-llvmlite@0.44", when="@2.5:2.7 +rocm")
         depends_on("py-networkx@2.5.1:", when="@2.9:")
         depends_on("py-networkx", when="@2:")
         depends_on("py-jinja2", when="@2:")
@@ -319,9 +319,23 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocfft")
         depends_on("rocblas")
         depends_on("miopen-hip")
+        for target in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"composable-kernel amdgpu_target={target}",
+                when=f"amdgpu_target={target}"
+            )
+            # This constraint applies to ANY hipblaslt in the dependency tree
+            # including the one used by miopen-hip
+            depends_on(
+                f"hipblaslt amdgpu_target={target}",
+                when=f"amdgpu_target={target}"
+            )
+            # Ensure hipblaslt version for 2.9+
+            depends_on(
+                f"hipblaslt@7.0: amdgpu_target={target}",
+                when=f"@2.9 amdgpu_target={target}"
+            )
         depends_on("rocminfo")
-        depends_on("composable-kernel")
-        depends_on("hipblaslt@7.0:", when="@2.9")
         depends_on("hipsparselt@7.0:", when="@2.9")
         depends_on("aotriton@0.8b", when="@2.5:2.6")
         depends_on("aotriton@0.9.2b", when="@2.7")
