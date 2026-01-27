@@ -6,7 +6,6 @@ from typing import List, Optional
 from spack.package import (
     BuilderWithDefaults,
     EnvironmentModifications,
-    Executable,
     PackageBase,
     Prefix,
     Spec,
@@ -107,4 +106,9 @@ class PipxBuilder(BuilderWithDefaults):
         pipx_env.set("PIPX_MAN_DIR", self.prefix.share.man)
 
         with working_dir(self.build_directory):
-            pipx("install", *self.install_args, pkg.stage.archive_file, extra_env=pipx_env)
+            inspect.getmodule(self.pkg).pipx(
+                "install",
+                *self.install_args,
+                pkg.stage.archive_file,
+                extra_env=pipx_env,
+            )
