@@ -38,12 +38,12 @@ class Cmake(Package):
     version("4.1.1", sha256="b29f6f19733aa224b7763507a108a427ed48c688e1faf22b29c44e1c30549282")
     version("4.0.5", sha256="60037d538b41cb6058deb9511de4fb3c17dfa62d23b1ca9ba96e7162c5b91ba5")
     version("4.0.4", sha256="629be82af0b76e029b675a4a37569e2ddc1769d42a768957c00ec0e98407737e")
-    version("3.31.10", sha256="cf06fadfd6d41fa8e1ade5099e54976d1d844fd1487ab99942341f91b13d3e29")
     version(
-        "3.31.9",
-        sha256="5d4fdec04247ca8a8e8f63692f0d0f1e9d6d082a2bdd008dff8ab3ba7215aa83",
+        "3.31.10",
+        sha256="cf06fadfd6d41fa8e1ade5099e54976d1d844fd1487ab99942341f91b13d3e29",
         preferred=True,
     )
+    version("3.31.9", sha256="5d4fdec04247ca8a8e8f63692f0d0f1e9d6d082a2bdd008dff8ab3ba7215aa83")
     version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")
     version("3.29.6", sha256="1391313003b83d48e2ab115a8b525a557f78d8c1544618b48d1d90184a10f0af")
     version("3.28.6", sha256="c39c733900affc4eb0e9688b4d1a45435a732105d9bf9cc1e75dd2b9b81a36bb")
