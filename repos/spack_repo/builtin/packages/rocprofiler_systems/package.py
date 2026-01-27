@@ -16,14 +16,10 @@ def submodules(package):
         "projects/rocprofiler-systems/external/elfio",
         "projects/rocprofiler-systems/external/dyninst",
         "projects/rocprofiler-systems/external/PTL",
-        "projects/rocprofiler-systems/examples/lulesh/external/kokkos",
         "projects/rocprofiler-systems/external/papi",
         "projects/rocprofiler-systems/external/pybind11",
         "projects/rocprofiler-systems/external/sqlite",
         "projects/rocprofiler-systems/examples/openmp/external/ompvv",
-        "projects/rocprofiler-systems/external/googletest",
-        "projects/rocprofiler-systems/external/filesystem",
-        "projects/rocprofiler-systems/external/spdlog",
     ]
     return submodules
 
