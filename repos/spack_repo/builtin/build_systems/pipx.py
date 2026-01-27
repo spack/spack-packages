@@ -80,10 +80,7 @@ class PipxBuilder(BuilderWithDefaults):
 
     phases = ("install",)
 
-    package_attributes = (
-        "build_directory",
-        "install_args",
-    )
+    package_attributes = ("build_directory", "install_args")
 
     @property
     def build_directory(self) -> str:
@@ -94,11 +91,7 @@ class PipxBuilder(BuilderWithDefaults):
         """Arguments to pipx install"""
         # We default to being very verbose so that a `spack install -v` will show
         # everything that pipx and pip are doing
-        return [
-            "-vv",
-            "--pip-args",
-            "--no-cache-dir -v",
-        ]
+        return ["-vv", "--pip-args", "--no-cache-dir -v"]
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set additional environment variables if desired"""
@@ -114,9 +107,4 @@ class PipxBuilder(BuilderWithDefaults):
         pipx_env.set("PIPX_MAN_DIR", self.prefix.share.man)
 
         with working_dir(self.build_directory):
-            pipx(
-                "install",
-                *self.install_args,
-                pkg.stage.archive_file,
-                extra_env=pipx_env,
-            )
+            pipx("install", *self.install_args, pkg.stage.archive_file, extra_env=pipx_env)
