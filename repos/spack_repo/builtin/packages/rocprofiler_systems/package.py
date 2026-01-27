@@ -18,7 +18,6 @@ def submodules(package):
         "projects/rocprofiler-systems/external/PTL",
         "projects/rocprofiler-systems/external/papi",
         "projects/rocprofiler-systems/external/pybind11",
-        "projects/rocprofiler-systems/external/sqlite",
         "projects/rocprofiler-systems/examples/openmp/external/ompvv",
     ]
     return submodules

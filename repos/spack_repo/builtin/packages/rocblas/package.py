@@ -216,6 +216,7 @@ class Rocblas(CMakePackage):
             name="Tensile",
             git="https://github.com/ROCm/Tensile.git",
             commit=t_commit,
+            placement="Tensile",
             when=f"{t_version} +tensile",
         )
 
