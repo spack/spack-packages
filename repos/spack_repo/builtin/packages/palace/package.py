@@ -16,10 +16,12 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/awslabs/palace"
     git = "https://github.com/awslabs/palace.git"
+    license("Apache-2.0")
 
-    maintainers("hughcars", "simlap", "cameronrutherford")
+    maintainers("hughcars", "simlap", "cameronrutherford", "sbozzolo")
 
     version("develop", branch="main")
+    version("0.15.0", tag="v0.15.0", commit="b6762777d85a06072fdf4cc96e8a365da73df170")
     version("0.14.0", tag="v0.14.0", commit="a428a3a32dbbd6a2a6013b3b577016c3e9425abc")
     version("0.13.0", tag="v0.13.0", commit="a61c8cbe0cacf496cde3c62e93085fae0d6299ac")
     version("0.12.0", tag="v0.12.0", commit="8c192071206466638d5818048ee712e1fada386f")
@@ -81,7 +83,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mumps~openmp", when="~openmp")
 
     with when("+superlu-dist"):
-        depends_on("superlu-dist+parmetis~cuda~rocm")
+        depends_on("superlu-dist+parmetis")
         depends_on("superlu-dist+shared", when="+shared")
         depends_on("superlu-dist~shared", when="~shared")
         depends_on("superlu-dist+int64", when="+int64")
@@ -91,7 +93,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+strumpack"):
         depends_on("fortran", type="build")
-        depends_on("strumpack+butterflypack+zfp+parmetis~cuda~rocm")
+        depends_on("strumpack+butterflypack+zfp+parmetis")
         depends_on("strumpack+shared", when="+shared")
         depends_on("strumpack~shared", when="~shared")
         depends_on("strumpack+openmp", when="+openmp")
@@ -101,8 +103,6 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+slepc"):
         depends_on("slepc~arpack")
-        depends_on("slepc~cuda", when="~cuda")
-        depends_on("slepc~rocm", when="~rocm")
         depends_on("petsc+mpi+double+complex")
         depends_on("petsc+shared", when="+shared")
         depends_on("petsc~shared", when="~shared")
@@ -110,8 +110,6 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("petsc~int64", when="~int64")
         depends_on("petsc+openmp", when="+openmp")
         depends_on("petsc~openmp", when="~openmp")
-        depends_on("petsc~cuda", when="~cuda")
-        depends_on("petsc~rocm", when="~rocm")
 
     with when("+arpack"):
         depends_on("fortran", type="build")
@@ -131,7 +129,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("metis~int64", when="~int64")
 
     conflicts("^hypre+int64", msg="Palace uses HYPRE's mixedint option for 64 bit integers")
-    depends_on("hypre@:2", when="@:0.14.0")  # MFEM 4.8 is incompatible with hypre v3+
+    depends_on("hypre@:2")  # MFEM 4.8 is incompatible with hypre v3+ and we haven't updated yet
     depends_on("hypre~complex")
     depends_on("hypre+shared", when="+shared")
     depends_on("hypre~shared", when="~shared")
@@ -139,8 +137,6 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hypre~mixedint", when="~int64")
     depends_on("hypre+openmp", when="+openmp")
     depends_on("hypre~openmp", when="~openmp")
-    depends_on("hypre~cuda", when="~cuda")
-    depends_on("hypre~rocm", when="~rocm")
 
     with when("+libxsmm"):
         # NOTE: @=main != @main since libxsmm has a version main-2023-22
@@ -159,8 +155,6 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("sundials~shared", when="~shared")
         depends_on("sundials+openmp", when="+openmp")
         depends_on("sundials~openmp", when="~openmp")
-        depends_on("sundials~cuda", when="~cuda")
-        depends_on("sundials~rocm", when="~rocm")
 
     conflicts("+cuda", when="@:0.13", msg="CUDA is only supported for Palace versions after 0.13")
     conflicts("+rocm", when="@:0.13", msg="ROCm is only supported for Palace versions after 0.13")
@@ -193,6 +187,8 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
             depends_on(f"sundials{cuda_variant}", when=f"+sundials{cuda_variant} @0.14:")
             depends_on(f"slepc{cuda_variant}", when=f"+slepc{cuda_variant}")
             depends_on(f"petsc{cuda_variant}", when=f"+slepc{cuda_variant}")
+            depends_on(f"superlu-dist{cuda_variant}", when=f"+superlu-dist{cuda_variant}")
+            depends_on(f"strumpack{cuda_variant}", when=f"+strumpack{cuda_variant}")
 
     with when("+rocm"):
         for arch in ROCmPackage.amdgpu_targets:
@@ -203,6 +199,10 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
             depends_on(f"sundials{rocm_variant}", when=f"+sundials{rocm_variant} @0.14:")
             depends_on(f"slepc{rocm_variant}", when=f"+slepc{rocm_variant}")
             depends_on(f"petsc{rocm_variant}", when=f"+slepc{rocm_variant}")
+            depends_on(f"superlu-dist{rocm_variant}", when=f"+superlu-dist{rocm_variant}")
+            depends_on(f"strumpack{rocm_variant}", when=f"+strumpack{rocm_variant}")
+
+    depends_on("catch2@3:", type="test")
 
     def cmake_args(self):
         args = [
@@ -220,6 +220,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("PALACE_WITH_SUNDIALS", "sundials"),
             self.define_from_variant("PALACE_WITH_SUPERLU", "superlu-dist"),
             self.define("PALACE_BUILD_EXTERNAL_DEPS", False),
+            self.define("PALACE_MFEM_USE_EXCEPTIONS", self.run_tests),
         ]
 
         # We guarantee that there are arch specs with conflicts above
@@ -271,6 +272,13 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
                 args.append(self.define("GSLIB_DIR", self.spec["gslib"].prefix))
 
         return args
+
+    def build(self, spec, prefix):
+        with working_dir(self.build_directory):
+            if self.run_tests:
+                make("palace-tests")
+            else:
+                make()
 
     def install(self, spec, prefix):
         # No install phase for Palace (always performed during build)

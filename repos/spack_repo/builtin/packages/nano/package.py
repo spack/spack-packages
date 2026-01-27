@@ -18,6 +18,11 @@ class Nano(AutotoolsPackage):
     license("GPL-3.0-or-later", checked_by="wdconinc")
 
     # 8.x
+    version("8.7", sha256="afd287aa672c48b8e1a93fdb6c6588453d527510d966822b687f2835f0d986e9")
+    version("8.6", sha256="f7abfbf0eed5f573ab51bd77a458f32d82f9859c55e9689f819d96fe1437a619")
+    version("8.5", sha256="000b011d339c141af9646d43288f54325ff5c6e8d39d6e482b787bbc6654c26a")
+    version("8.4", sha256="5ad29222bbd55624d87ea677928b3106a743114d6c6f9b41f36c97be2a8e628d")
+    version("8.3", sha256="551b717b2e28f7e90f749323686a1b5bbbd84cfa1390604d854a3ca3778f111e")
     version("8.2", sha256="d5ad07dd862facae03051c54c6535e54c7ed7407318783fcad1ad2d7076fffeb")
     version("8.1", sha256="93b3e3e9155ae389fe9ccf9cb7ab380eac29602835ba3077b22f64d0f0cbe8cb")
     version("8.0", sha256="c17f43fc0e37336b33ee50a209c701d5beb808adc2d9f089ca831b40539c9ac4")
@@ -87,7 +92,6 @@ class Nano(AutotoolsPackage):
     version("2.6.1", sha256="45721fa6d6128068895ad71a6967ff7398d11b064b3f888e5073c97a2b6e9a81")
 
     depends_on("c", type="build")
-
     depends_on("pkgconfig", type="build")
     depends_on("gettext@0.18.3:")
     depends_on("gettext@0.20:", when="@8.1:")

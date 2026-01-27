@@ -40,6 +40,7 @@ class Mapl(CMakePackage):
     version("main", branch="main")
 
     # Remember if there is a new ESMA_cmake, to update the resources too
+    version("2.64.2", sha256="8e6ab418d5ab468ab3751dc277351a42ee87f6e0eee3ef13fef29062cd773c2d")
     version("2.64.1", sha256="205eac5600c223aa59e359f5b75a462a03302d58e7294f98fb87f29d544ef5a8")
     version("2.64.0", sha256="dab66884ca459c56b8bc2199fe334fd5ada131c4f66f48b2ee44965d3dbf90f3")
     version("2.63.1", sha256="c91cf72bc4bf48a52f12a2356ace0ba59463cbe36060ecacbac9193d99233306")
@@ -50,6 +51,7 @@ class Mapl(CMakePackage):
     version("2.60.0", sha256="470f4da9cc516fdf8206dbc84ab13f53792f3af5e54cd5315ff70d44e5700788")
     version("2.59.0", sha256="a1137bf62e885256d295c66929cd77658a559f88dbed4f433544f432c5c7a059")
     version("2.58.1", sha256="176c7baccd0182e353184808b1048baa6100d8700ca532e0d02bea6ae5771aba")
+    version("2.57.1", sha256="ba5c2f3e5c084144665bdb883c89a067fe9554a94a5a9918532ce49bc43b008c")
     version("2.57.0", sha256="6991e6b7521842c9c94b549dd0fed778e8b6dad1201708aad3193c274597e36a")
     version("2.56.1", sha256="f2c1f5d9c088fee029fa8358a382544288f3081e922e164feb19e671d106eefd")
     version("2.56.0", sha256="9efdbfb87b7ca8d31f4be241a9db260612310e01930681565bfdaf869090a7e8")

@@ -31,6 +31,7 @@ class Cmake(Package):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("4.2.2", sha256="bbda94dd31636e89eb1cc18f8355f6b01d9193d7676549fba282057e8b730f58")
     version("4.2.0", sha256="4104e94657d247c811cb29985405a360b78130b5d51e7f6daceb2447830bd579")
     version("4.1.2", sha256="643f04182b7ba323ab31f526f785134fb79cba3188a852206ef0473fee282a15")
     version("4.1.1", sha256="b29f6f19733aa224b7763507a108a427ed48c688e1faf22b29c44e1c30549282")
@@ -172,6 +173,9 @@ class Cmake(Package):
     # and its conflicts with OpenSSL.
     depends_on("curl@:8.15", when="@:3.25")
     depends_on("curl")
+
+    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/11134
+    conflicts("curl@8.16:", when="@:3.30")
 
     # When using curl, cmake defaults to using system zlib too, probably because
     # curl already depends on zlib. Therefore, also unconditionaly depend on zlib.
