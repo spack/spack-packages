@@ -415,9 +415,6 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
             if using_toolchain:
                 cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
 
-            if spec.satisfies("target=ppc64le %gcc@8.1:"):
-                cuda_flags.append("-Xcompiler -mno-float128")
-
             entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("ENABLE_CUDA", False))
