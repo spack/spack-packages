@@ -107,5 +107,5 @@ class PipxBuilder(BuilderWithDefaults):
 
         with working_dir(self.build_directory):
             inspect.getmodule(self.pkg).pipx(
-                "install", *self.install_args, pkg.stage.archive_file, extra_env=pipx_env,
+                "install", *self.install_args, pkg.stage.archive_file, extra_env=pipx_env
             )
