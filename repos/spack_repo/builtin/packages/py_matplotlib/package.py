@@ -150,6 +150,8 @@ class PyMatplotlib(PythonPackage):
     depends_on("python@3.10:", when="@3.10:", type=("build", "link", "run"))
     depends_on("python@3.9:", when="@3.8:", type=("build", "link", "run"))
     depends_on("python@3.8:", when="@3.6:", type=("build", "link", "run"))
+    # Some kind of recursion error
+    depends_on("python@:3.13", when="@:3.10.3", type=("build", "link", "run"))
     # Python 3.12 removed SafeConfigParser, which was used up to matplotlib 3.5.0.
     depends_on("python@:3.11", when="@:3.4", type=("build", "link", "run"))
     depends_on("python", type=("build", "link", "run"))
