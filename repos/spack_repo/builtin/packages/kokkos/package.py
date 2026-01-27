@@ -504,11 +504,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         cmake_out_path = join_path(self.test_script_relative_path, "out")
         cmake_args = [
             cmake_source_path,
-            "-DSPACK_PACKAGE_SOURCE_DIR:PATH={0}".format(self.stage.source_path),
-            "-DSPACK_PACKAGE_TEST_ROOT_DIR:PATH={0}".format(
-                join_path(install_test_root(self), cmake_out_path)
+            self.define("SPACK_PACKAGE_SOURCE_DIR", self.stage.source_path),
+            self.define(
+                "SPACK_PACKAGE_TEST_ROOT_DIR", join_path(install_test_root(self), cmake_out_path)
             ),
-            "-DSPACK_PACKAGE_INSTALL_DIR:PATH={0}".format(self.prefix),
+            self.define("SPACK_PACKAGE_INSTALL_DIR", self.prefix),
         ]
         cmake(*cmake_args)
         cache_extra_test_sources(self, cmake_out_path)
@@ -523,12 +523,18 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             raise SkipTest(f"{cmake_path} is missing")
 
         cmake = self.spec["cmake"].command
-        cmake_args = ["-DEXECUTABLE_OUTPUT_PATH=" + cmake_path]
+        cmake_args = []
         if self.spec.satisfies("+rocm"):
             prefix_paths = ";".join(get_cmake_prefix_path(self))
-            cmake_args.append("-DCMAKE_PREFIX_PATH={0}".format(prefix_paths))
+            cmake_args.append(self.define("CMAKE_PREFIX_PATH", prefix_paths))
+
+        if self.spec.satisfies("+wrapper"):
+            cmake_args.append(
+                self.define("CMAKE_CXX_COMPILER", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+            )
+        else:
+            cmake_args.append(self.define("CMAKE_CXX_COMPILER", self["cxx"].cxx))
 
         cmake(cmake_path, *cmake_args)
-        make = which("make")
-        make()
-        make(cmake_path, "test")
+        cmake("--build", ".")
+        cmake("--build", ".", "--target", "test")
