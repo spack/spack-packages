@@ -17,7 +17,7 @@ class Cmake(Package):
     tools designed to build, test and package software.
     """
 
-    homepage = "https://www.cmake.org"  
+    homepage = "https://www.cmake.org"
     url = "https://github.com/Kitware/CMake/releases/download/v3.19.0/cmake-3.19.0.tar.gz"
     git = "https://gitlab.kitware.com/cmake/cmake.git"
     github = "https://github.com/kitware/cmake"
@@ -42,7 +42,7 @@ class Cmake(Package):
     version(
         "3.31.11",
         sha256="c0a3b3f2912b2166f522d5010ffb6029d8454ee635f5ad7a3247e0be7f9a15c9",
-        preferred=True
+        preferred=True,
     )
     version("3.31.9", sha256="5d4fdec04247ca8a8e8f63692f0d0f1e9d6d082a2bdd008dff8ab3ba7215aa83")
     version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")
