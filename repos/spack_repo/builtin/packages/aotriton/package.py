@@ -19,6 +19,12 @@ class Aotriton(CMakePackage):
 
     license("MIT")
     version(
+        "0.11.1b", tag="0.11.1b", commit="98371989e8a23267e284c94e95156a139e4b33c4", submodules=True
+    )
+    version(
+        "0.11b", tag="0.11b", commit="972223c501ffc22068bb035ac5d64cf54318d895", submodules=True
+    )
+    version(
         "0.10b", tag="0.10b", commit="6fca155f4deeb8d9529326f7b69f350aeeb93477", submodules=True
     )
     version(
@@ -94,7 +100,7 @@ class Aotriton(CMakePackage):
                 "third_party/triton/python/setup.py",
                 string=True,
             )
-        if self.spec.satisfies("@10.0"):
+        if self.spec.satisfies("@0.10:"):
             filter_file(
                 r"LLVM_INCLUDE_DIRS",
                 f"{self.spec['aotriton-llvm'].prefix}/include",
