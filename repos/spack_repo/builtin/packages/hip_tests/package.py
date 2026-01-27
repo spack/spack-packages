@@ -20,7 +20,7 @@ class HipTests(CMakePackage):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-{0}.tar.gz"
         else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
     tags = ["rocm"]
