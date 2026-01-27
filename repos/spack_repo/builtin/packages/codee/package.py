@@ -34,15 +34,20 @@ class Codee(Package):
     def url_for_version(self, version):
         target = None
         if sys.platform == "linux":
+            suffix = "tar.gz"
             if platform.machine() == "aarch64":
                 target = "linux-arm64"
             elif platform.machine() == "x86_64":
                 target = "linux-x86_64"
+        elif sys.platform == "win32":
+            suffix = "zip"
+            if platform.machine() == "AMD64":
+                target = "windows-amd64"
         if not target:
             raise InstallError(
                 f"Platform {sys.platform}/{platform.machine()} not supported or configured"
             )
-        return f"https://codee.com/release/codee-{version}-{target}.tar.gz"
+        return f"https://codee.com/release/codee-{version}-{target}.{suffix}"
 
     def install(self, spec, prefix):
         install_tree(self.stage.source_path, prefix)
