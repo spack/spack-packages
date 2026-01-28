@@ -49,6 +49,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.9.0", sha256="8525c72ac7ea01851297df5b25ca4622c65299c265c87dfe78420bb29e7b1bb3")
     version("0.8.2", sha256="f7e5080c97c1aaffb490a17d174cb59a83dd037800d9c41d309287bebd15b0b8")
     version("0.8.1", sha256="38882602112dadfd49a2c74868a0722574ae88e04646a96f32f8c36a7893c548")
     version("0.8.0", sha256="864aa46b5a4475c70195bd3728d32224f5b5ae1c7dd9c70646ef1387b4b0b04b")
@@ -92,9 +93,6 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     variant("cuda", default=True, description="Build with CUDA enabled")
     variant("nccl", default=True, description="Build with NCCL enabled", when="+cuda")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     # docs/installation.md (Compatible with)
     with when("+cuda"):
         depends_on("cuda@12.1:", when="@0.4.26:")
@@ -125,6 +123,9 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-nanobind")
 
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+
         # Bazel tends to be backwards-compatible within major versions
         # .bazelversion
         depends_on("bazel@7.7.0:7", when="@0.8.1:")
@@ -138,6 +139,9 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
         # build/build.py
         depends_on("py-build", when="@0.4.14:")
+
+        # XLA requires xxd?
+        depends_on("xxd-standalone", when="@0.9:")
 
     with default_args(type=("build", "run")):
         # Based on PyPI wheels
@@ -177,7 +181,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/jax-ml/jax/commit/0899e024c68254ec520006f51511f9a5e696dc17.patch?full_index=1",
         sha256="c2509251a8708baf55e56c54fffc1725925720ff2365a0a186764f5dc50e611b",
-        when="@0.8.1:",
+        when="@0.8.1:0.8",
     )
     patch(
         "https://github.com/jax-ml/jax/commit/a24ae9e9d5380d074058fb862043182327f4547f.patch?full_index=1",
