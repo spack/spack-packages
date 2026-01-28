@@ -33,8 +33,8 @@ class PyPygithub(PythonPackage):
     depends_on("py-requests@2.14.0:", type=("build", "run"))
     depends_on("py-pyjwt@2.4.0:", type=("build", "run"))
     depends_on("py-pyjwt@2.4.0: +crypto", type=("build", "run"), when="@1.58.1:")
-    depends_on("py-typing-extensions@4:", type=("build", "run"), when="@2.1.0:")
     depends_on("py-typing-extensions@4.5:", type=("build", "run"), when="@2.8.1:")
+    depends_on("py-typing-extensions@4:", type=("build", "run"), when="@2.1.0:")
     depends_on("py-urllib3@1.26.0:", type=("build", "run"), when="@2.1.0:")
     depends_on("py-deprecated", type=("build", "run"), when="@:2.1.1")
 
