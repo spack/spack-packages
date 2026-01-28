@@ -38,11 +38,6 @@ class PyPygithub(PythonPackage):
     depends_on("py-urllib3@1.26.0:", type=("build", "run"), when="@2.1.0:")
     depends_on("py-deprecated", type=("build", "run"), when="@:2.1.1")
 
-    # DetailedHTTPError: GET
-    # https://files.pythonhosted.org/packages/source/P/PyGithub/PyGithub-2.8.1.tar.gz
-    # returned 404: Not Found
     def url_for_version(self, version):
-        if version == Version("2.8.1"):
-            return "https://files.pythonhosted.org/packages/c1/74/e560bdeffea72ecb26cff27f0fad548bbff5ecc51d6a155311ea7f9e4c4c/pygithub-2.8.1.tar.gz"
-        else:
-            return f"https://files.pythonhosted.org/packages/source/P/PyGithub/PyGithub-{version}.tar.gz"
+        name = "pygithub" if version >= Version("2.4") else "PyGithub"
+        return f"https://files.pythonhosted.org/packages/source/{name[0]}/{name}/{name}-{version}.tar.gz"
