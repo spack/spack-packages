@@ -382,6 +382,7 @@ class PythonPipBuilder(BuilderWithDefaults):
 
     run_after("install")(execute_install_time_tests)
 
+
 class PipxPythonPackage(PythonPackage):
     """Specialized class for packages installed using pipx"""
 
@@ -400,6 +401,7 @@ class PipxPythonPackage(PythonPackage):
         # package, Spack rewrites any paths to the `python` commands and appropriately
         # sets any symlinks to `python` commands
         depends_on("python")
+
 
 @register_builder("python_pipx")
 class PythonPipxBuilder(BuilderWithDefaults):
@@ -465,6 +467,4 @@ class PythonPipxBuilder(BuilderWithDefaults):
             args = args + ["--pip-args", " ".join(self.pip_install_args)]
 
         with working_dir(self.build_directory):
-            inspect.getmodule(self.pkg).pipx(
-                *args, pkg.stage.archive_file, extra_env=pipx_env
-            )
+            inspect.getmodule(self.pkg).pipx(*args, pkg.stage.archive_file, extra_env=pipx_env)
