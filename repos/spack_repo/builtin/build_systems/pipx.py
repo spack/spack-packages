@@ -1,4 +1,6 @@
-# SPDX-License-Identifier: (Sana-Proprietary)
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import inspect
 from typing import List, Optional
