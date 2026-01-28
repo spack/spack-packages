@@ -42,6 +42,7 @@ class Soci(CMakePackage):
     variant("sqlite", default=False, description="Build with SQLite support")
     variant("postgresql", default=False, description="Build with PostgreSQL support")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("boost", when="+boost")
