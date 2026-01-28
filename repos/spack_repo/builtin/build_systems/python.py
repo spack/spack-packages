@@ -391,9 +391,9 @@ class PipxPythonPackage(PythonPackage):
     # build-system class we are using
     build_system_class = "PipxPythonPackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-#    default_buildsystem = "python_pipx"
-#
-#    build_system("python_pipx")
+    default_buildsystem = "python_pipx"
+
+    build_system("python_pipx")
 
     with when("build_system=python_pipx"):
         depends_on("pipx", type="build")
