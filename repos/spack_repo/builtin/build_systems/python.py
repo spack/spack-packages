@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import inspect
 import os
 import re
 import shutil
@@ -380,3 +381,90 @@ class PythonPipBuilder(BuilderWithDefaults):
             pip(*args)
 
     run_after("install")(execute_install_time_tests)
+
+class PipxPythonPackage(PythonPackage):
+    """Specialized class for packages installed using pipx"""
+
+    # To be used in UI queries that require to know which
+    # build-system class we are using
+    build_system_class = "PipxPythonPackage"
+    #: Legacy buildsystem attribute used to deserialize and install old specs
+    default_buildsystem = "python_pipx"
+
+    build_system("python_pipx")
+
+    with when("build_system=python_pipx"):
+        depends_on("pipx", type="build")
+        # Though `pipx` itself has a dependency on `python`, we must explicitly include
+        # `python` as a dependency to ensure that, upon installation of the pipx-built
+        # package, Spack rewrites any paths to the `python` commands and appropriately
+        # sets any symlinks to `python` commands
+        depends_on("python")
+
+@register_builder("python_pipx")
+class PythonPipxBuilder(BuilderWithDefaults):
+    """The python_pipx builder provides the following methods that can be overridden:
+
+    2. :py:meth:`~.PythonPipxBuilder.install`
+
+    For a finer tuning you may override:
+
+        +-------------------------------------------------+---------------------+
+        | **Method**                                      | **Purpose**         |
+        +=================================================+=====================+
+        | :py:meth:`~.PythonPipxBuilder.build_directory`  | Specify the build   |
+        |                                                 | directory           |
+        +-------------------------------------------------+---------------------+
+        | :py:meth:`~.PythonPipxBuilder.pip_install_args` | Specify arguments   |
+        |                                                 | to ``pip install``  |
+        +-------------------------------------------------+---------------------+
+        | :py:meth:`~.PythonPipxBuilder.install_args`     | Specify arguments   |
+        |                                                 | to ``pipx install`` |
+        +-------------------------------------------------+---------------------+
+    """
+
+    phases = ("install",)
+
+    package_attributes = ("build_directory", "pip_install_args", "install_args")
+
+    @property
+    def build_directory(self) -> str:
+        return self.pkg.stage.source_path
+
+    @property
+    def pip_install_args(self) -> List[str]:
+        """Arguments to pip install"""
+        return [
+            "--disable-pip-version-check",
+            "--no-cache-dir",
+            "--no-input",
+            "--no-warn-script-location",
+            "-vvv",
+        ]
+
+    @property
+    def install_args(self) -> List[str]:
+        """Arguments to pipx install"""
+        return ["-vv"]
+
+    def install(self, pkg: PythonPackage, spec: Spec, prefix: Prefix) -> None:
+        """Install pkg via 'pipx install'"""
+        # We must ensure pipx puts everything in the prefix so that it will all be bundled
+        # into the binary package.
+        pipx_env = EnvironmentModifications()
+        pipx_env.set("PIPX_HOME", self.prefix)
+        pipx_env.set("PIPX_BIN_DIR", self.prefix.bin)
+        pipx_env.set("PIPX_MAN_DIR", self.prefix.share.man)
+
+        args = ["install"]
+
+        if self.install_args:
+            args = args + self.install_args
+
+        if self.pip_install_args:
+            args = args + ["--pip-args", " ".join(self.pip_install_args)]
+
+        with working_dir(self.build_directory):
+            inspect.getmodule(self.pkg).pipx(
+                *args, pkg.stage.archive_file, extra_env=pipx_env
+            )

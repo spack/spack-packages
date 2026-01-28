@@ -2,41 +2,40 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.python import PythonPackage
+from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
 
-class Pipx(PythonPackage):
+class Pipx(Package):
     """pipx is a tool to install and run Python applications in isolated environments"""
 
-    homepage = "https://pypa.github.io/pipx/"
-    pypi = "pipx/pipx-1.2.0.tar.gz"
+    homepage = "https://pipx.pypa.io/"
+    url = "https://github.com/pypa/pipx/releases/download/1.8.0/pipx.pyz"
 
     license("MIT")
 
     maintainers("ebagrenrut")
 
-    version("1.8.0", sha256="61a653ef2046de67c3201306b9d07428e93c80e6bebdcbbcb8177ecf3328b403")
-    version("1.7.1", sha256="762de134e16a462be92645166d225ecef446afaef534917f5f70008d63584360")
-    version("1.6.0", sha256="840610e00103e3d49ae24b6b51804b60988851a5dd65468adb71e5a97e2699b2")
-    version("1.4.3", sha256="d214512bccc601b575de096ee84fde8797323717a20752c48f7a55cc1bf062fe")
-    version("1.2.0", sha256="d1908041d24d525cafebeb177efb686133d719499cb55c54f596c95add579286")
+    version("1.8.0", sha256="b9eabd835dffe0677e36bd99416fc9837c592bd8c079235379bed3dfe043c601")
+    version("1.7.1", sha256="1d4f46f86830640f1d7c4e29b280a7a42265d6e8af2c063f40baed4513f03ae8")
+    version("1.6.0", sha256="ae4f39e8916e2a0c3699393b1d9c63947388e11ea438d18f7fc51f55f7de1ded")
+    version("1.5.0", sha256="d307772eb52df8f4dd7b38523adbe2105a61b5e90c1be34e2f8007be9bd4001f")
+    version("1.4.3", sha256="949221fa7128df4641f1e62daff7c85a3dd05e1132a93e53a909e00fc3c9a32c")
+    version("1.3.3", sha256="348b59b82b1ba9032513d36c2ea03ad3a34e45805ef8de7638a047673ee8b4cb")
+    version("1.2.1", sha256="87fcfde6063d74ca0d5df973d3b9486496880747c808f983fb096a29fd9e07d8")
+    version("1.2.0", sha256="93c46f2d254dc17168fa92d413eaabb0fdd050ff04912d8e0f3e03f4bc256b8c")
 
-    depends_on("python@3.8:3.12", when="@1.3:1.7", type=("build", "run"))
-    depends_on("python@3.9:3.13", when="@1.8:", type=("build", "run"))
-    depends_on("python@3.7:", type=("build", "run"))
+    conflicts("platform=windows")
 
-    depends_on("py-argcomplete@1.9.4:", type=("build", "run"))
-    depends_on("py-colorama@0.4.4:", type=("build", "run"), when="platform=windows")
-    depends_on("py-hatch-vcs@0.4:", when="@1.3.2:", type="build")
-    depends_on("py-hatchling@1.18:", when="@1.3.2:", type="build")
-    depends_on("py-hatchling@0.15.0:", type="build")
-    depends_on("py-importlib-metadata@3.3.0:", type=("build", "run"), when="^python@3.7")
-    depends_on("py-packaging@20.0:", type=("build", "run"))
-    depends_on("py-platformdirs@2.1:", when="@1.3.0:", type=("build", "run"))
-    depends_on("py-tomli@2.0:", when="@1.3.0: ^python@:3.10", type=("build", "run"))
-    depends_on("py-userpath@1.6.0:1.8.0,1.9.1:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.8:", type="run")
+    depends_on("python@3.8:", when="@1.3:", type="run")
+    depends_on("python@3.7:", type="run")
+
+    def install(self, spec, prefix):
+        mkdirp(prefix.bin)
+        install(self.stage.archive_file, join_path(prefix.bin, "pipx"))
+        set_executable(join_path(prefix.bin, "pipx"))
 
     # ========================================================================
     # Set up environment to make install easier for pipx-installed packages
