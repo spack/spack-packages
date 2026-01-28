@@ -55,25 +55,34 @@ class TreeSitter(MakefilePackage):
 
     depends_on("node-js", type="run")
 
-    def edit(self, spec, prefix):
-        env["PREFIX"] = prefix
+    # https://github.com/tree-sitter/tree-sitter/pull/5226
+    patch(
+        "https://github.com/tree-sitter/tree-sitter/pull/5226.patch",
+        sha256="4fe83cf4fa00b3a54cd495d4b6a921ae70adc5bc8f49aeaf0c2218ec0e96f6b3",
+        when="@0.26:0.26.3",
+    )
 
-        # Starting from 0.25.0 endianness is taken into account using system headers
+    def setup_build_environment(self, env):
+        env.set("PREFIX", self.prefix)
+
+        # Starting from 0.25 endianness is taken into account using system headers
         #   https://github.com/tree-sitter/tree-sitter/pull/3740
         # but GLIBC provides them according to some defines that changed over time.
         #   https://www.sourceware.org/glibc/wiki/Release/2.20#Deprecation_of__BSD_SOURCE_and__SVID_SOURCE_feature_macros
-        if spec.satisfies("@0.25: ^glibc@:2.19"):
-            filter_file("-D_DEFAULT_SOURCE", "-D_BSD_SOURCE", "Makefile")
+        if self.spec.satisfies("@0.25 ^glibc@:2.19"):
+            env.append_flags("CFLAGS", "-D_BSD_SOURCE")
 
     def build(self, spec, prefix):
         super().build(spec, prefix)
 
+        # tree-sitter-cli
         cargo = Executable("cargo")
         cargo("build")
 
     def install(self, spec, prefix):
         super().install(spec, prefix)
 
+        # tree-sitter-cli
         cargo = Executable("cargo")
         if spec.satisfies("@0.26:"):
             crate_cli_path = "crates/cli"
