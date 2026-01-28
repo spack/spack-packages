@@ -223,9 +223,13 @@ class Rocblas(CMakePackage):
     patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
     patch("0009-use-rocm-smi-config.patch", when="@6.4:7.1")
-    patch("0009-use-rocm-smi-config.patch", when="@7.2", working_dir="projects/rocblas")
     patch("0001-remove-blas-override.patch", when="@7.1")
-    patch("0001-remove-blas-override.patch", when="@7.2:", working_dir="projects/rocblas")
+    patch("0001-remove-blas-override-7.2.patch", when="@7.2:")
+    patch(
+        "https://github.com/ROCm/rocm-libraries/commit/b3b20a3ea53051a14f30c28e577620c0beeea57c.patch?full_index=1",
+        sha256="1f436c5ad03c8fdc021f309a1ad84d4356f30c39c4cc940bb8267841561bf5f1",
+        when="@7.2",
+    )
 
     @property
     def root_cmakelists_dir(self):
@@ -268,14 +272,15 @@ class Rocblas(CMakePackage):
         if self.run_tests:
             args.append(self.define("LINK_BLIS", "ON"))
             args.append(
-                self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
-            )
-            args.append(
                 self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
             )
             args.append(
                 self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")
             )
+            if self.spec.satisfies("@:7.1"):
+                args.append(
+                    self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
+                )
 
         if "+tensile" in self.spec:
             if self.spec.satisfies("@:6.2"):
