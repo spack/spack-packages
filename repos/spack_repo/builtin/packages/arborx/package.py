@@ -96,7 +96,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cuda_arch=none")
     conflicts("^kokkos", when="+trilinos")
-    depends_on("kokkos+cuda_lambda", when="~trilinos+cuda")
+    depends_on("kokkos+cuda_lambda", when="~trilinos+cuda ^kokkos@:4")
 
     # Trilinos with internal Kokkos
     # Notes:

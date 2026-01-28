@@ -168,7 +168,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos+cuda", when="+cuda")
     depends_on("kokkos+openmp", when="+openmp")
     depends_on("kokkos+threads", when="+threads")
-    depends_on("kokkos+cuda_lambda", when="@4.0.00:+cuda")
+    depends_on("kokkos+cuda_lambda", when="@4+cuda")
     depends_on("cmake@3.16:", type="build")
 
     tpls = {
