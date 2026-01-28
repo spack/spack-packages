@@ -55,10 +55,9 @@ class TreeSitter(MakefilePackage):
 
     depends_on("node-js", type="run")
 
-    # https://github.com/tree-sitter/tree-sitter/pull/5226
     patch(
-        "https://github.com/tree-sitter/tree-sitter/pull/5226.patch",
-        sha256="4fe83cf4fa00b3a54cd495d4b6a921ae70adc5bc8f49aeaf0c2218ec0e96f6b3",
+        "https://github.com/tree-sitter/tree-sitter/pull/5226.patch?full_index=1",
+        sha256="f690ba222c524f93f9dd1b679b46384ace53f184f9836d26e028ac6e4087fe8a",
         when="@0.26:0.26.3",
     )
 
