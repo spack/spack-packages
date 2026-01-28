@@ -55,6 +55,10 @@ class TreeSitter(MakefilePackage):
 
     depends_on("node-js", type="run")
 
+    # rust-bindgen is a dependency for tree-sitter rust bindings (used by tree-sitter-cli)
+    # https://github.com/rust-lang/rust-bindgen/blob/main/book/src/requirements.md#clang
+    depends_on("llvm@9: +clang", type="build")
+
     patch(
         "https://github.com/tree-sitter/tree-sitter/pull/5226.patch?full_index=1",
         sha256="f690ba222c524f93f9dd1b679b46384ace53f184f9836d26e028ac6e4087fe8a",
