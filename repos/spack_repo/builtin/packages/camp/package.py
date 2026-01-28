@@ -25,6 +25,7 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main", submodules=False)
+    version("2025.12.0", sha256="e0e89649fc02beda44e28e2a750ecec1751e00f83498fec9762ebcf5ae66a8f7")
     version(
         "2025.09.2",
         tag="v2025.09.2",
