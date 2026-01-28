@@ -25,10 +25,10 @@ index 9be7f37..39d0f24 100644
  endif()
  
 diff --git a/cmake/public/LoadHIP.cmake b/cmake/public/LoadHIP.cmake
-index 1c0d3a2..e0de4b1 100644
+index 1c0d3a2..13f2003 100644
 --- a/cmake/public/LoadHIP.cmake
 +++ b/cmake/public/LoadHIP.cmake
-@@ -167,6 +167,10 @@ if(HIP_FOUND)
+@@ -167,6 +167,11 @@ if(HIP_FOUND)
    find_package_and_print_version(hipsolver REQUIRED)
    find_package_and_print_version(hiprtc REQUIRED)
  
@@ -36,6 +36,7 @@ index 1c0d3a2..e0de4b1 100644
 +  list(APPEND ROCM_INCLUDE ${rocprim_INCLUDE_DIR})
 +  list(APPEND ROCM_INCLUDE ${hipcub_INCLUDE_DIR})
 +  list(APPEND ROCM_INCLUDE ${rocRAND_INCLUDE_DIR})
++  list(APPEND ROCM_INCLUDE_DIRS $ENV{AOTRITON_INSTALLED_PREFIX}/include)
  
    find_library(PYTORCH_HIP_LIBRARIES amdhip64 HINTS ${ROCM_PATH}/lib)
    # TODO: miopen_LIBRARIES should return fullpath to the library file,
