@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack.aliases import BUILTIN_TO_LEGACY_COMPILER
 
 from spack.package import *
 
@@ -138,6 +139,10 @@ class Scorep(AutotoolsPackage):
         ]
 
         cname = self.clean_compiler(spec.compiler.name)
+        # cname must be the legacy name of the compiler:
+        #  --with-nocross-compiler-suite=(gcc|ibm|intel|oneapi|nvhpc|pgi|clang|aocc|amdclang|cray)
+        if cname in BUILTIN_TO_LEGACY_COMPILER.keys():
+            cname = BUILTIN_TO_LEGACY_COMPILER[cname]
         config_args.extend(["--with-nocross-compiler-suite={0}".format(cname)])
 
         if self.version >= Version("4.0"):
