@@ -12,6 +12,7 @@ from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 from spack.package import (
     BuilderWithDefaults,
     ClassProperty,
+    EnvironmentModifications,
     HeaderList,
     LibraryList,
     PackageBase,
