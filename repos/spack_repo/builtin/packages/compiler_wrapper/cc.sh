@@ -357,7 +357,7 @@ esac
 if [ -z "$mode" ] || [ "$mode" = ld ]; then
     for arg in "$@"; do
         case $arg in
-            -v|-V|--version|-dumpversion)
+            -V|--version|-dumpversion)
                 mode=vcheck
                 break
                 ;;
