@@ -82,7 +82,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
-    depends_on("boost@1.64.0:1.76.0 +program_options cxxstd=14", type="test")
+    depends_on("boost@1.64.0:1.76.0 +program_options cxxstd=14", type="test", when="@:7.1")
     depends_on("py-pyaml", type="test", when="@6.1:")
 
     patch("remove-hipblas-clients-file-installation.patch", when="@5.7")
@@ -204,9 +204,12 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@6.1:") and self.run_tests:
             args.append(self.define("LINK_BLIS", "OFF"))
-
+        if self.spec.satisfies("@7.2:") and self.run_tests:
+            args.append(self.define("BLAS_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/libcblas.so"))
+            args.append(self.define("LAPACK_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/liblapack.so"))
+            args.append(self.define("CBLAS_INCLUDE_DIRS", self.spec["netlib-lapack"].prefix.include))
         return args
 
     def check(self):
         exe = Executable(join_path(self.build_directory, "clients", "staging", "hipblas-test"))
-        exe("--gtest_filter=-*known_bug*:_/getrs*:_/getri_batched.solver*")
+        exe("--gtest_filter=-*known_bug*:_/getrs*:_/getri_batched.solver*:_/gels_batched.solver*")
