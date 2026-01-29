@@ -18,7 +18,7 @@ class Cimfomfa(AutotoolsPackage):
     homepage = "https://github.com/micans/cimfomfa"
     url = "https://github.com/micans/cimfomfa/archive/refs/tags/21-361.tar.gz"
 
-    license("GPL-2.0-only", checked_by="emwjacobson")
+    license("GPL-2.0-or-later", checked_by="emwjacobson")
 
     version("21-361", sha256="e554f7838a16dfee79999b28133abf58dce01ac9a18f99c38c4183805b5b19d4")
 
