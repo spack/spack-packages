@@ -7,6 +7,15 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack.package import *
 
 
+def _std_when(values):
+    for v in values:
+        if isinstance(v, str):
+            yield v, ""
+            continue
+        for c in v:
+            yield c.value, c.when
+
+
 class Dd4hep(CMakePackage):
     """DD4hep is a software framework for providing a complete solution for
     full detector description (geometry, materials, visualization, readout,
@@ -113,9 +122,9 @@ class Dd4hep(CMakePackage):
     depends_on("cmake @3.12:", type="build")
     depends_on("cmake @3.14:", type="build", when="@1.26:")
 
-    for _std in _cxxstd_values:
+    for _std, _when in _std_when(_cxxstd_values):
         for _pkg in ["boost", "root"]:
-            depends_on(f"{_pkg} cxxstd={_std}", when=f"cxxstd={_std}")
+            depends_on(f"{_pkg} cxxstd={_std}", when=f"{_when} cxxstd={_std}")
 
     depends_on("boost @1.49:")
     depends_on("boost +system +filesystem", when="%gcc@:7")
