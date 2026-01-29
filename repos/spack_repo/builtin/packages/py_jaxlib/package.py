@@ -209,7 +209,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
             requires("%c,cxx=llvm", when="platform=linux")
             # Order here is important. Place the most common compiler first so that the
             # concretizer will not try to use v0.7.0 to avoid taking a penalty on requirements
-            requires("%c,cxx=apple-clang","%c,cxx=llvm", when="platform=darwin")
+            requires("%c,cxx=apple-clang", "%c,cxx=llvm", when="platform=darwin")
 
     conflicts(
         "cuda_arch=none",
