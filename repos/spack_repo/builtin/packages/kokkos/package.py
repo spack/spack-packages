@@ -28,7 +28,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.0.1", sha256="cf7d8515ca993229929be9f051aecd8f93cde325adac8a4f82ed6848adace218")
     version("5.0.0", sha256="c45f3e19c3eb71fc8b7210cb04cac658015fc1839e7cc0571f7406588ff9bcef")
+    version("4.7.02", sha256="a81826ac0a167933d13506bc2a986fb5517038df9abb780fe9bb2c1d4e80803b")
     version("4.7.01", sha256="404cf33e76159e83b8b4ad5d86f6899d442b5da4624820ab457412116cdcd201")
     version("4.7.00", sha256="126b774a24dde8c1085c4aede7564c0b7492d6a07d85380f2b387a712cea1ff5")
     version("4.6.02", sha256="baf1ebbe67abe2bbb8bb6aed81b4247d53ae98ab8475e516d9c87e87fa2422ce")
@@ -123,6 +125,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     options_variants = {
         "aggressive_vectorization": [False, None, "Aggressively vectorize loops"],
+        "atomics_bypass": [
+            False,
+            "@4.6: +serial~threads~cuda~rocm~hpx~openmp~sycl~openmptarget",
+            "Make atomics non-atomic for non-threaded MPI-only use cases",
+        ],
         "compiler_warnings": [False, "@:4", "Print all compiler warnings"],
         "complex_align": [True, None, "Align complex numbers"],
         "cuda_constexpr": [False, "+cuda", "Activate experimental constexpr features"],
@@ -288,13 +295,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
 
-    cxxstds = ["11", "14", "17", "20"]
-    variant("cxxstd", default="17", values=cxxstds, multi=False, description="C++ standard")
+    with default_args(multi=False, description="C++ standard"):
+        variant("cxxstd", default="17", values=("14", "17", "20"), when="@3")
+        variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
+        variant("cxxstd", default="20", values=("20", "23"), when="@5:")
     variant("pic", default=False, description="Build position independent code")
-
-    conflicts("cxxstd=11")
-    conflicts("cxxstd=14", when="@4.0:")
-    conflicts("cxxstd=17", when="@5:")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
     conflicts("+cuda", when="cxxstd=20 ^cuda@:11")
@@ -304,19 +309,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant("alloc_async", default=False, description="Use CudaMallocAsync", when="@4.2: +cuda")
 
     # SYCL and OpenMPTarget require C++17 or higher
-    for cxxstdver in cxxstds[: cxxstds.index("17")]:
-        conflicts(
-            "+sycl", when="cxxstd={0}".format(cxxstdver), msg="SYCL requires C++17 or higher"
-        )
-        conflicts(
-            "+openmptarget",
-            when="cxxstd={0}".format(cxxstdver),
-            msg="OpenMPTarget requires C++17 or higher",
-        )
+    conflicts("+sycl", when="cxxstd=14", msg="SYCL requires C++17 or higher")
+    conflicts("+openmptarget", when="cxxstd=14", msg="OpenMPTarget requires C++17 or higher")
 
     # HPX should use the same C++ standard
-    for cxxstd in cxxstds:
-        depends_on("hpx cxxstd={0}".format(cxxstd), when="+hpx cxxstd={0}".format(cxxstd))
+    for cxxstd in ["14", "17", "20", "23"]:
+        depends_on(f"hpx cxxstd={cxxstd}", when=f"+hpx cxxstd={cxxstd}")
 
     # HPX version constraints
     depends_on("hpx@1.7:", when="+hpx")
@@ -506,11 +504,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         cmake_out_path = join_path(self.test_script_relative_path, "out")
         cmake_args = [
             cmake_source_path,
-            "-DSPACK_PACKAGE_SOURCE_DIR:PATH={0}".format(self.stage.source_path),
-            "-DSPACK_PACKAGE_TEST_ROOT_DIR:PATH={0}".format(
-                join_path(install_test_root(self), cmake_out_path)
+            self.define("SPACK_PACKAGE_SOURCE_DIR", self.stage.source_path),
+            self.define(
+                "SPACK_PACKAGE_TEST_ROOT_DIR", join_path(install_test_root(self), cmake_out_path)
             ),
-            "-DSPACK_PACKAGE_INSTALL_DIR:PATH={0}".format(self.prefix),
+            self.define("SPACK_PACKAGE_INSTALL_DIR", self.prefix),
         ]
         cmake(*cmake_args)
         cache_extra_test_sources(self, cmake_out_path)
@@ -525,12 +523,18 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             raise SkipTest(f"{cmake_path} is missing")
 
         cmake = self.spec["cmake"].command
-        cmake_args = ["-DEXECUTABLE_OUTPUT_PATH=" + cmake_path]
+        cmake_args = []
         if self.spec.satisfies("+rocm"):
             prefix_paths = ";".join(get_cmake_prefix_path(self))
-            cmake_args.append("-DCMAKE_PREFIX_PATH={0}".format(prefix_paths))
+            cmake_args.append(self.define("CMAKE_PREFIX_PATH", prefix_paths))
+
+        if self.spec.satisfies("+wrapper"):
+            cmake_args.append(
+                self.define("CMAKE_CXX_COMPILER", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+            )
+        else:
+            cmake_args.append(self.define("CMAKE_CXX_COMPILER", self["cxx"].cxx))
 
         cmake(cmake_path, *cmake_args)
-        make = which("make")
-        make()
-        make(cmake_path, "test")
+        cmake("--build", ".")
+        cmake("--build", ".", "--target", "test")

@@ -23,6 +23,8 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.4.1", sha256="a1ceafc5042451a858231588a104093474c6a5c57dcc724841f5c888d237d690")
+    version("2.4.0", sha256="6e504f7b16118198f138ef31ba24d985b124c2c469fe8467007cf30fd992f934")
     version("2.3.5", sha256="784db1dcdab56bf0517743e746dfb0f885fc68d948aba86eeec2cba234bdf1c0")
     version("2.3.4", sha256="a7d018bfedb375a8d979ac758b120ba846a7fe764911a64465fd87b8729f4a6a")
     version("2.3.3", sha256="ddc7c39727ba62b80dfdbedf400d1c10ddfa8eefbd7ec8dcb118be8b56d31029")
@@ -102,13 +104,14 @@ class PyNumpy(PythonPackage):
         depends_on("py-pip@23.1:", when="@1.26:")
 
         # Build dependencies (do not include upper bound unless known issues)
+        depends_on("py-meson-python@0.18:", when="@2.4:")
+        depends_on("py-meson-python@0.15:", when="@1.26.4:")
         depends_on("py-cython@3.0.6:", when="@2:")
         depends_on("py-cython@0.29.34:", when="@1.26:")
         depends_on("py-cython@0.29.34:2", when="@1.25")
         depends_on("py-cython@0.29.30:2", when="@1.22.4:1.24")
         depends_on("py-cython@0.29.24:2", when="@1.21.2:1.22.3")
         depends_on("py-cython@0.29.21:2", when="@1.19.1:1.21.1")
-        depends_on("py-meson-python@0.15:", when="@1.26.4:")
 
     depends_on("blas")
     depends_on("lapack")

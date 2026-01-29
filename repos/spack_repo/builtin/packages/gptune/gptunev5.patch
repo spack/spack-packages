@@ -1,0 +1,8 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -246,6 +246,7 @@
+     GPTune/problem.py
+     GPTune/sample.py
+     GPTune/search.py
++    GPTune/mcmc.py
+ )

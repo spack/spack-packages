@@ -16,12 +16,14 @@ class Mathic(AutotoolsPackage):
     currently works best with dense term representations."""
 
     homepage = "https://github.com/Macaulay2/mathic"
+    url = "https://github.com/Macaulay2/mathic/releases/download/v1.1/mathic-1.1.tar.gz"
     git = "https://github.com/Macaulay2/mathic"
 
     maintainers("d-torrance")
 
     license("LGPL-2.0-or-later", checked_by="d-torrance")
 
+    version("1.1", sha256="2499fb3df3c2f8a201ae5627cad95538aaabee0eee235002b8737bdb842b694a")
     version("1.0.2025.05.13", commit="7abf77e4ce493b3830c7f8cc09722bbd6c03818e")
 
     depends_on("cxx", type="build")

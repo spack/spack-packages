@@ -32,14 +32,21 @@ class Vecgeom(CMakePackage, CudaPackage):
 
     version("master", branch="master", get_full_repo=True)
     version(
+        "2.0.0",
+        url="https://gitlab.cern.ch/-/project/981/uploads/d2ae816669e324d5828c16857b307372/VecGeom-v2.0.0.tar.gz",
+        sha256="f5fb455b2a2a5f386e171a621d0e95908ab6269803c4b186861849e8c88e8350",
+    )
+    version(
         "2.0.0-rc.9",
         url="https://gitlab.cern.ch/-/project/981/uploads/4a8ba32606365d4be04455827ea32c51/VecGeom-v2.0.0-rc.9.tar.gz",
         sha256="cfc0cb86303c1dc475a5dde9022384e2034f789a0908feb007103c1e7cd9aa65",
+        deprecated=True,
     )
     version(
         "2.0.0-rc.7",
         url="https://gitlab.cern.ch/-/project/981/uploads/f1017874e9d138165f221d4b854a39a4/VecGeom-v2.0.0-rc.7.tar.gz",
         sha256="f95eacd7154f7b41950161988465b5c086f80dade91dec8328085949c6f443a0",
+        deprecated=True,
     )
     version(
         "1.2.11",
@@ -64,10 +71,14 @@ class Vecgeom(CMakePackage, CudaPackage):
     )
     variant("gdml", default=True, description="Support native GDML geometry descriptions")
     # TODO: delete geant4/root variants since they don't affect the build
-    variant("geant4", default=False, description="Support Geant4 geometry construction")
-    variant("root", default=False, description="Support ROOT geometry construction")
+    variant(
+        "geant4", default=False, when="@:1", description="Support Geant4 geometry construction"
+    )
+    variant("root", default=False, when="@:1", description="Support ROOT geometry construction")
     variant("shared", default=True, description="Build shared libraries")
-    variant("surface", default=False, when="@2:", description="Use surface frame representation")
+    variant(
+        "surface", default=False, when="@2:", description="Support surface frame representation"
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
