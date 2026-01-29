@@ -50,7 +50,7 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
     depends_on("m4", type="build")
     depends_on("texinfo", when="@4.1.0:", type="build")
     depends_on("gmp@5.0:", when="@4.0.0:")
-    depends_on("gmp@4.1:") # 4.2.3 or higher is recommended
+    depends_on("gmp@4.1:")  # 4.2.3 or higher is recommended
 
     force_autoreconf = True
 
