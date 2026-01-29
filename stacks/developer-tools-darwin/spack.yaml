@@ -16,7 +16,7 @@ spack:
       # editors
     - emacs+json~native+treesitter   # TODO +native not supported until gcc builds on darwin
     - nano
-    - neovim
+    # - neovim
     - py-pynvim
 
       # runtimes and language compilers
@@ -24,16 +24,15 @@ spack:
     - go
     - libtool
     - llvm+link_llvm_dylib+lld~lldb~polly+python
-    - node-js
+    # - node-js # TODO: re-enable after spack/spack-packages#3119 merges
     - npm
     - python
     - rust+dev
-    - zig
 
       # cli dev tools
     - bfs
     - ccache
-    - difftastic
+    # - difftastic # TODO investigate linker error here
     - eza
     - fd
     - flex
@@ -59,7 +58,7 @@ spack:
       # styling and lints
     - aspell
     - astyle
-    # - cppcheck # need to resolve build error in ci context
+    # - cppcheck # TODO: investigate why this is not reproducible outside of runner
     - py-black
     - py-codespell
     - py-flake8
