@@ -30,7 +30,7 @@ spack:
   # - flux-sched
   - hypre
   - lbann
-  - lvarray ~tests  # per Spack issue #23192  # ~examples
+  # - lvarray@develop ~tests #concretization fails for some reason
   - mfem  # does not work with gcc 7
   - py-hatchet
   - py-maestrowf

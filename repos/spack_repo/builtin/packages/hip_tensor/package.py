@@ -21,6 +21,8 @@ class HipTensor(CMakePackage, ROCmPackage):
     libraries = ["libhiptensor"]
 
     maintainers("srekolam", "afzpatel")
+    version("7.1.1", sha256="43976aee80cc9c70024f7b4ef9fc6745a7cd39d3a24fa626b79f00aa2a6ebdd0")
+    version("7.1.0", sha256="bb51a6bb5831646bcee8965da14239542bbd21a1002d07b90d98b5868cebdeed")
     version("7.0.2", sha256="c326190bf711f41b32441fe28bf92a04fb2a1a2af5e9d23bbafaa17a9b3e661f")
     version("7.0.0", sha256="9fb429b9b8bb762f97cae040a33755498147eb29b83702f0159bed8aa576547c")
     version("6.4.3", sha256="2b584559691b710b52447d44da062f29cf4f1151257d8f491875f68107c60f5c")
@@ -68,6 +70,8 @@ class HipTensor(CMakePackage, ROCmPackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"composable-kernel@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")

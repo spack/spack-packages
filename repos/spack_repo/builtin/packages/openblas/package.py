@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems import cmake, makefile
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
+from spack.llnl.util import tty
 from spack.package import *
 
 
@@ -286,6 +287,22 @@ class Openblas(CMakePackage, MakefilePackage):
         sha256="3e165d8cba4023cb2082b241eee41287dd6cbb66078c5e3cb5d246081b361ff3",
         when="@0.3.27 %oneapi",
     )
+
+    # Fix arm64 HAVE_SME setting for DYNAMIC_ARCH builds using CMake
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/cdebb4fd4b2bbbf856e5abdcedbe9a5cf348ef8e.patch?full_index=1",
+        sha256="0df81a8f5c1460d3db461e2309e5ac0b70c7745a97a10e617f109b4a5811e043",
+        when="@0.3.30 +dynamic_dispatch target=aarch64:",
+    )
+
+    # ilp64 and symbol suffixes are not supported with CMake build system
+    requires("~ilp64", when="build_system=cmake")
+    requires("symbol_suffix=none", when="build_system=cmake")
+
+    # AOCC compiler detection adjustments
+    patch("openblas-aocc-0.3.28-plus.patch", when="@0.3.28: %aocc@5.1.0:")
+    patch("openblas-0.3.27_aocc.patch", when="@0.3.27 %aocc@5.0.0:")
+    patch("openblas-0.3.21-0.3.26_aocc.patch", when="@0.3.21:0.3.26 %aocc@5.0.0:")
 
     # Requires support for -mtune=generic
     conflicts("%fortran=clang %llvm@18")
@@ -592,11 +609,24 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
             make_defs.append("NUM_THREADS=512")
 
+        # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
+        # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
+        if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
+            make_defs.append("NO_SVE=1")
+
         return make_defs
 
-    @property
-    def build_targets(self):
-        return ["-s"] + self.make_defs + ["all"]
+    def build(self, pkg: MakefilePackage, spec: Spec, prefix: Prefix) -> None:
+        """Override 'make all' with sequential builds due to race conditions."""
+        # Due to the verbosity of the command line and number of object files
+        # created, we suppress makefile command echoing via `-s`.
+        args = ["-s"] + self.make_defs
+
+        # Make each target sequentially
+        with working_dir(self.build_directory):
+            for target in ["libs", "netlib", "shared"]:
+                tty.info("Building target", target)
+                make(*(args + [target]))
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
@@ -605,8 +635,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def install_targets(self):
-        make_args = ["install", "PREFIX={0}".format(self.prefix)]
-        return make_args + self.make_defs
+        return self.make_defs + [f"PREFIX={self.prefix}", "install"]
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

@@ -18,6 +18,7 @@ class PyRuamelYaml(PythonPackage):
 
     license("MIT")
 
+    version("0.18.16", sha256="a6e587512f3c998b2225d68aa1f35111c29fad14aed561a26e73fab729ec5e5a")
     version("0.18.15", sha256="dbfca74b018c4c3fba0b9cc9ee33e53c371194a9000e694995e620490fd40700")
     version("0.17.32", sha256="ec939063761914e14542972a5cba6d33c23b0859ab6342f61cf070cfc600efc2")
     version("0.17.16", sha256="1a771fc92d3823682b7f0893ad56cb5a5c87c48e62b5399d6f42c8759a583b33")
@@ -28,6 +29,8 @@ class PyRuamelYaml(PythonPackage):
     # from `supported` in __init__.py
     depends_on("python@3.8:", when="@0.18.10:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.17.22:", type=("build", "run"))
+    # from ast import Str
+    depends_on("python@:3.13", when="@:0.17", type=("build", "run"))
     # from setup.py
     depends_on("py-setuptools@28.7:", when="@0.17:", type="build")
     depends_on("py-setuptools", type="build")

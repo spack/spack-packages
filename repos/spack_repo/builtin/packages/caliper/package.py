@@ -26,7 +26,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/LLNL/Caliper"
     git = "https://github.com/LLNL/Caliper.git"
-    url = "https://github.com/LLNL/Caliper/archive/v2.12.1.tar.gz"
+    url = "https://github.com/LLNL/Caliper/archive/v2.14.0.tar.gz"
     tags = ["e4s", "radiuss"]
 
     maintainers("daboehme", "adrienbernede")
@@ -36,6 +36,9 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.14.0", sha256="b42c35dfbe485960dd326033893dae37ac00d9807c5c3e6b5b1f396bc4af273f")
+    version("2.13.1", sha256="7cef0173e0e0673abb7943a2641b660adfbc3d6bc4b33941ab4f431f92a4d016")
+    version("2.13.0", sha256="28c6e8fd940bdee9e80d1e8ae1ce0f76d6a690cbb6242d4eec115d6c0204e331")
     version("2.12.1", sha256="2b5a8f98382c94dc75cc3f4517c758eaf9a3f9cea0a8dbdc7b38506060d6955c")
     version("2.11.0", sha256="b86b733cbb73495d5f3fe06e6a9885ec77365c8aa9195e7654581180adc2217c")
     version("2.10.0", sha256="14c4fb5edd5e67808d581523b4f8f05ace8549698c0e90d84b53171a77f58565")
@@ -65,9 +68,11 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("tools", default=True, description="Enable tools")
     variant("python", default=False, description="Build Python bindings")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", when="+fortran", type="build")
+
+    depends_on("rocprofiler-sdk", when="@2.14: +rocm")
 
     depends_on("adiak@0.1:0", when="@:2.10 +adiak")
     depends_on("adiak@0.4:0", when="@2.11: +adiak")
@@ -92,6 +97,12 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
     conflicts("^cuda@12.9:", "@:2.12.1")
 
+    patch("libunwind.patch", when="@:2.13")
+    patch(
+        "https://github.com/LLNL/Caliper/commit/648f8ab496a4a2c3f38e0cfa572340e429d8c76e.patch?full_index=1",
+        sha256="d947b5df6b68a24f516bb3b4ec04c28d4b8246ac0cbe664cf113dd2b6ca92073",
+        when="@2.12:2.13",
+    )
     patch("for_aarch64.patch", when="@:2.11 target=aarch64:")
     patch(
         "sampler-service-missing-libunwind-include-dir.patch",
@@ -148,9 +159,16 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("WITH_NVTX", False))
 
         if spec.satisfies("+rocm"):
-            entries.append(cmake_cache_option("WITH_ROCTRACER", True))
-            entries.append(cmake_cache_option("WITH_ROCTX", True))
+            if spec.satisfies("@2.14:"):
+                entries.append(cmake_cache_option("WITH_ROCPROFILER", True))
+                entries.append(cmake_cache_option("WITH_ROCTRACER", False))
+                entries.append(cmake_cache_option("WITH_ROCTX", False))
+            else:
+                entries.append(cmake_cache_option("WITH_ROCPROFILER", False))
+                entries.append(cmake_cache_option("WITH_ROCTRACER", True))
+                entries.append(cmake_cache_option("WITH_ROCTX", True))
         else:
+            entries.append(cmake_cache_option("WITH_ROCPROFILER", False))
             entries.append(cmake_cache_option("WITH_ROCTRACER", False))
             entries.append(cmake_cache_option("WITH_ROCTX", False))
 

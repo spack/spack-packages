@@ -93,8 +93,9 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     # Dependencies for subpackages
     depends_on("all-library", when="@0.5.0:+all")
     depends_on("arborx", when="+arborx")
-    depends_on("hypre-cmake@2.22.0:", when="@0.4.0:+hypre")
-    depends_on("hypre-cmake@2.22.1:", when="@0.5.0:+hypre")
+    depends_on("hypre-cmake@2.22.0:", when="@0.4.0 +hypre")
+    depends_on("hypre-cmake@2.22.1:", when="@0.5.0:0.7.0 +hypre")
+    depends_on("hypre@3.0.0:", when="@0.8.0:+hypre")
     depends_on("heffte@2.1.0", when="@0.5.0+heffte")
     depends_on("heffte@2.3.0:", when="@0.6.0:+heffte")
     depends_on("silo", when="@0.5.0:+silo")
@@ -118,6 +119,9 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+sycl", when="@:0.3.0")
     conflicts("+silo", when="@:0.3.0")
     conflicts("+hdf5", when="@:0.5.0")
+
+    # Hypre doesn't support rocm for older versions
+    conflicts("+hypre +rocm", when="@:0.7.0")
 
     @when("+mpi")
     def patch(self):
