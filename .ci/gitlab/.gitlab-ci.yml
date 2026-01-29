@@ -489,28 +489,6 @@ radiuss-build:
     SPACK_CI_TARGET: "x86_64_v4"
   tags: ["spack", "public", "aws", "medium", "x86_64_v4"]
 
-.radiuss-cuda:
-  variables:
-    SPACK_CI_STACK_NAME: radiuss-cuda
-
-radiuss-cuda-generate:
-  extends: [ ".radiuss-cuda", ".generate-x86_64", ".tags-x86_64_v4" ]
-  image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
-    entrypoint: ['']
-
-radiuss-cuda-build:
-  extends: [ ".radiuss-cuda", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/radiuss-cuda/cloud-ci-pipeline.yml
-        job: radiuss-cuda-generate
-  needs:
-    - artifacts: True
-      job: radiuss-cuda-generate
-
-
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
 .radiuss-aarch64:
