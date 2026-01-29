@@ -35,7 +35,7 @@ class Automake(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("c", type="build")
     depends_on("autoconf@2.65:", type="build", when="@1.13.4:")
-    depends_on("autoconf@2.62:", type="build", when="@1.11.6")
+    depends_on("autoconf@2.62:", type="build")
     depends_on("perl+threads", type=("build", "run"))
 
     build_directory = "spack-build"
