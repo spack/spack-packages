@@ -23,12 +23,12 @@ spack:
   - py-transformers
 
   # JAX
-  - 'py-jax@0.8.2:'
-  - 'py-jaxlib@0.8.2:'
+  - py-jax
+  - py-jaxlib
 
   # Keras
   - py-keras backend=tensorflow
-  - 'py-keras@3.13.1: backend=jax'
+  - py-keras backend=jax
   - py-keras backend=torch
 
   # PyTorch
