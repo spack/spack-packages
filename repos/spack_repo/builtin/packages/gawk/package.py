@@ -47,7 +47,7 @@ class Gawk(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("c", type="build")
     depends_on("gettext", when="+nls")
-    depends_on("libsigsegv", when="@:5.2.2")
+    depends_on("libsigsegv", when="@:5.2")
     depends_on("readline")
     depends_on("mpfr")
     depends_on("gmp")
