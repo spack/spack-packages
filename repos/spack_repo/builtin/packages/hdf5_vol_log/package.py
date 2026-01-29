@@ -22,6 +22,8 @@ class Hdf5VolLog(AutotoolsPackage):
 
     version("1.4.0", tag="logvol.1.4.0", commit="786d2cc4da8b4a0827ee00b1b0ab3968ef942f99")
 
+    variant("hdf5_examples", default=True, description="Enable HDF5 examples", when="@1.4.0")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -32,12 +34,18 @@ class Hdf5VolLog(AutotoolsPackage):
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
 
+    # Adds an option to disable examples downloaded during build
+    # https://github.com/HDFGroup/vol-log-based/pull/79
+    patch("hdf5_examples_option.patch", when="@1.4.0")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib)
 
     def configure_args(self):
-        return [
+        args = [
             "--enable-shared",
             "--enable-zlib",
             "--with-mpi={}".format(self.spec["mpi"].prefix),
         ]
+        args.extend(self.enable_or_disable("hdf5-examples", variant="hdf5_examples"))
+        return args
