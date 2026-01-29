@@ -55,8 +55,10 @@ class SalmonTddft(CMakePackage):
     version("2.0.0", sha256="c3bb80bc5d338cba21cd8f345acbf2f2d81ef75af069a0a0ddbdc0acf358456c")
     version("1.2.1", sha256="a5045149e49abe9dd9edefe00cd1508a1323081bc3d034632176b728effdbaeb")
 
+    variant("cuda", default=False, description="Enable CUDA-based optimizations")
     variant("mpi", default=False, description="Enable MPI")
     variant("libxc", default=False, description="Enable libxc")
+    variant("openacc", default=False, description="Enable OpenACC")
     variant("scalapack", default=False, description="Enable scalapack")
     variant("eigenexa", default=False, description="Enable eigenexa")
     variant(
@@ -86,6 +88,9 @@ class SalmonTddft(CMakePackage):
     conflicts("+eigenexa", when="~scalapack")
     conflicts("+manycore", when="@2.0.0:")
     conflicts("+current_processing", when="@2.0.0:")
+    conflicts("+cuda", when="~openacc")
+
+    requires("%nvhpc", when="+cuda")
 
     patch("fjmpi.patch", when="@2.0.0 %fj")
     patch("v2.0.libxc-5.0.patch", when="@2.0.0 +libxc")
@@ -123,12 +128,21 @@ class SalmonTddft(CMakePackage):
                         define("ScaLAPACK_LIBRARIES", math_libs.libraries),
                     ]
                 )
+        if "%nvhpc" in spec:
+            if "+openacc" in spec:
+                if "+cuda" in spec:
+                    args.append(define("CMAKE_TOOLCHAIN_FILE", "nvhpc-openacc-cuda"))
+                else:
+                    args.append(define("CMAKE_TOOLCHAIN_FILE", "nvhpc-openacc"))
+            else:
+                args.append(define("CMAKE_TOOLCHAIN_FILE", "nvhpc-openmp"))
+        elif "%fj" in spec:  #TODO add toolchain files if necessary
+            args.append(self.define("CMAKE_Fortran_MODDIR_FLAG", "-M"))
+        
         if spec.satisfies("^fujitsu-mpi"):
             args.append(define("USE_FJMPI", True))
         else:
             args.append(define("USE_FJMPI", False))
-        if spec.satisfies("%fj"):
-            args.append(self.define("CMAKE_Fortran_MODDIR_FLAG", "-M"))
         return args
 
     def flag_handler(self, name, flags):
