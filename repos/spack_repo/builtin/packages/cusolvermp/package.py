@@ -45,6 +45,7 @@ class Cusolvermp(Package, CudaPackage):
     conflicts("~cuda", msg="cuSOLVERMp requires CUDA")
 
     depends_on("cuda@12:")
+    conflicts("cuda@13", msg="Not yet supported by the spack package.")
     depends_on("nccl@2.18.5:")
 
     for cuda_arch in CudaPackage.cuda_arch_values:
