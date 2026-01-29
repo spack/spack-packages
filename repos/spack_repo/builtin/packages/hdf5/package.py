@@ -7,11 +7,11 @@ import re
 import shutil
 import sys
 
-from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage, cmake_cache_option
+from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage
 
 from spack.package import *
 
-class Hdf5(CachedCMakePackage): 
+class Hdf5(CachedCMakePackage):
     """HDF5 is a data model, library, and file format for storing and managing
     data. It supports an unlimited variety of datatypes, and is designed for
     flexible and efficient I/O and for high volume and complex data.
