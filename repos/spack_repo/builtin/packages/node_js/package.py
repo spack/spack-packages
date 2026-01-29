@@ -33,10 +33,11 @@ class NodeJs(Package):
 
     # LTS (recommended for most users) - even major number
     version(
-        "24.2.0",
-        sha256="da739aedc45729436587cda9f063b28c1d881a32ba149b0a2f4e8aff55a18929",
+        "24.13.0",
+        sha256="54cb58921b4ce2831c6690ee823a3d39cfbf2b75f4e556c4c2bde90f3d8fd1ca",
         preferred=True,
     )
+    version("24.2.0", sha256="da739aedc45729436587cda9f063b28c1d881a32ba149b0a2f4e8aff55a18929")
     version("22.16.0", sha256="108f250ff79cc103b464b3ef41fa60f4866e4e6c962117171adaac7325ebdab2")
     version("20.18.3", sha256="eba088fa562735140b283c7bb33f53e026ccd5febe68c52c5737ef6e577ec874")
     version("20.18.2", sha256="cf3ef49fafbfee3cdcd936a0d6031341b73bfa6b26a484ea0a4936c26d24b829")
@@ -94,8 +95,9 @@ class NodeJs(Package):
     depends_on("python@:3.12", when="@21.2.0:22.2.0", type="build")
     depends_on("python@:3.13", when="@22.3.0:22.16.0", type="build")
     depends_on("python@3.8:3.13", when="@23.0.0:23", type="build")
-    depends_on("python@3.9:3.13", when="@24.3.0:24", type="build")
-    depends_on("python@3.9:3.14", when="@25.0.0:25", type="build")
+    depends_on("python@3.9:3.13", when="@24.0.0:24.2.0", type="build")
+    depends_on("python@3.9:3.14", when="@24.3.0:24", type="build")
+    depends_on("python@3.10:3.14", when="@25.0.0:25", type="build")
 
     depends_on("libtool", type="build", when=sys.platform != "darwin")
     depends_on("pkgconfig", type="build")
