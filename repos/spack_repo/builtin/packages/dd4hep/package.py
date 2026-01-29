@@ -143,7 +143,6 @@ class Dd4hep(CMakePackage):
     with when("+ddg4"):
         depends_on("boost +iostreams")
         depends_on("geant4@10.2.2:")
-        for _std in _cxxstd_values:
         for _std, _when in _std_when(_cxxstd_values):
             depends_on(f"geant4 cxxstd={_std}", when=f"{_when} cxxstd={_std}")
 
