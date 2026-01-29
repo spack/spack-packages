@@ -7,10 +7,7 @@ import re
 import shutil
 import sys
 
-from spack_repo.builtin.build_systems.cached_cmake import (
-    CachedCMakePackage,
-    cmake_cache_option
-)
+from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage, cmake_cache_option
 
 from spack.package import *
 
