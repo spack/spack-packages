@@ -144,7 +144,8 @@ class Dd4hep(CMakePackage):
         depends_on("boost +iostreams")
         depends_on("geant4@10.2.2:")
         for _std in _cxxstd_values:
-            depends_on(f"geant4 cxxstd={_std}", when=f"cxxstd={_std}")
+        for _std, _when in _std_when(_cxxstd_values):
+            depends_on(f"geant4 cxxstd={_std}", when=f"{_when} cxxstd={_std}")
 
     depends_on("imagemagick", when="+doc")
     depends_on("xerces-c", when="+xercesc")
