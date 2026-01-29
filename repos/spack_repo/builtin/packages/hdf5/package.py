@@ -7,8 +7,9 @@ import re
 import shutil
 import sys
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage
+
+from spack.package import *
 
 
 class Hdf5(CachedCMakePackage):
