@@ -13,6 +13,7 @@ from pathlib import Path
 from shutil import copy
 from typing import Dict, List
 
+from spack_repo.builtin.build_systems.cmake import define as cmdefine
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
@@ -1323,6 +1324,14 @@ print(json.dumps(config))
         module.python_include = join_path(dependent_spec.prefix, self.include)
         module.python_platlib = join_path(dependent_spec.prefix, self.platlib)
         module.python_purelib = join_path(dependent_spec.prefix, self.purelib)
+
+    def dependent_cmake_args(self, pkg: PackageBase) -> List[str]:
+        python_executable = pkg.spec["python"].command.path
+        return [
+            cmdefine("PYTHON_EXECUTABLE", python_executable),
+            cmdefine("Python_EXECUTABLE", python_executable),
+            cmdefine("Python3_EXECUTABLE", python_executable),
+        ]
 
     def add_files_to_view(self, view, merge_map, skip_if_exists=True):
         """Make the view a virtual environment if it isn't one already.
