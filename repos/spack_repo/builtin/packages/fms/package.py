@@ -101,10 +101,18 @@ class Fms(CMakePackage):
 
     variant(
         "precision",
+        values=any_combination_of("32", "64")
+        .with_default("none"),
+        description="Build a version of the library with mixed precision ('none'), or 32 and/or 64 bit reals",
+        when="@2025.04:",
+    )
+    variant(
+        "precision",
         values=("32", "64"),
         description="Build a version of the library with default 32 or 64 bit reals or both",
         default="32",
         multi=True,
+        when="@2022.04:2025.03",
     )
     conflicts(
         "precision=32,64",
