@@ -202,9 +202,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     variant(
         "profiled", default=False, description="Use Profile Guided Optimization", when="+bootstrap"
     )
-    variant(
-        "libsanitizer", default=True, description="Use libsanitizer"
-    )
+    variant("libsanitizer", default=True, description="Use libsanitizer")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
