@@ -7,7 +7,7 @@ ci:
   - build-job-remove:
       tags: [spack]
   - build-job:
-      timeout: 120 minutes
+      timeout: 240 minutes
       tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
       variables:
         SPACK_GNUPGHOME: ${CI_PROJECT_DIR}/.gpg
