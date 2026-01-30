@@ -24,6 +24,7 @@ class PyJax(PythonPackage):
     tags = ["e4s"]
 
     version("0.9.0", sha256="e5ce9d6991333aeaad37729dd8315d29c4b094ea9476a32fb49933b556c723fb")
+    version("0.8.3", sha256="cf0569abe750f08a7c06421134576ca292851ab763f16edba719b35269c0ff5e")
     version("0.8.2", sha256="1a685ded06a8223a7b52e45e668e406049dbbead02873f2b5a4d881ba7b421ae")
     version("0.8.1", sha256="e53f67b15315f5e154851a7fd77a192b59c6c75b3f7ac56e214296765391cca7")
     version("0.8.0", sha256="0ea5a7be7068c25934450dfd87d7d80a18a5d30e0a53454e7aade525b23accd5")
@@ -108,6 +109,7 @@ class PyJax(PythonPackage):
         # https://github.com/google/jax/commit/8be057de1f50756fe7522f7e98b2f30fad56f7e4
         for v in [
             "0.9.0",
+            "0.8.3",
             "0.8.2",
             "0.8.1",
             "0.8.0",
