@@ -10,15 +10,13 @@ from spack.package import *
 class PyProxystore(PythonPackage):
     """ProxyStore facilitates efficient data flow management in
     distributed Python applications, such as dynamic task-based
-    orkflows or serverless and edge applications."""
+    workflows or serverless and edge applications."""
 
     homepage = "https://docs.proxystore.dev"
     pypi = "proxystore/proxystore-0.8.3.tar.gz"
     git = "https://github.com/proxystore/proxystore.git"
 
-    # FIXME: Add a list of GitHub accounts to
-    # notify when the package is updated.
-    # maintainers("github_user1", "github_user2")
+    maintainers("gpauloski", "mdorier")
 
     license("MIT", checked_by="mdorier")
 
