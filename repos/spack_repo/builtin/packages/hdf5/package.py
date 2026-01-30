@@ -312,6 +312,12 @@ class Hdf5(CMakePackage):
                 "testpar/CMakeTests.cmake",
             )
 
+        # Remove the java subdirectory from source builds that aren't going to use it.
+        # The Java subdirectory unfortunately looks like a Java browser plugin to Tenable,
+        # and if it sits around it will cause users' machines to be erroneously flagged.
+        if not self.spec.satisfies("+java"):
+            shutil.rmtree("java")
+
     # The parallel compiler wrappers (i.e. h5pcc, h5pfc, etc.) reference MPI
     # compiler wrappers and do not need to be changed.
     # These do not exist on Windows.
