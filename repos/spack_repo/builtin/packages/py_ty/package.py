@@ -16,6 +16,7 @@ class PyTy(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("0.0.14", sha256="a691010565f59dd7f15cf324cdcd1d9065e010c77a04f887e1ea070ba34a7de2")
     version("0.0.13", sha256="7a1d135a400ca076407ea30012d1f75419634160ed3b9cad96607bf2956b23b3")
     version("0.0.12", sha256="cd01810e106c3b652a01b8f784dd21741de9fdc47bd595d02c122a7d5cefeee7")
     version("0.0.11", sha256="ebcbc7d646847cb6610de1da4ffc849d8b800e29fd1e9ebb81ba8f3fbac88c25")
