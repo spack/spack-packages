@@ -25,11 +25,31 @@ class NodeJs(Package):
 
     # Current (latest features) - odd major number
     version("25.2.1", sha256="1cbbdb66f99e0c41937eb8763c57e622eab43006742dc4d0856270b17215e376")
-    version("23.11.1", sha256="75509306732090bfa99b004d097909315f7789badb4a495e82b5f17b6329247a")
-    version("21.7.3", sha256="ce1f61347671ef219d9c2925313d629d3fef98fc8d7f5ef38dd4656f7d0f58e7")
-    version("19.2.0", sha256="aac9d1a366fb57d68f4639f9204d1de5d6387656959a97ed929a5ba9e62c033a")
-    version("17.9.1", sha256="1102f5e0aafaab8014d19c6c57142caf2ba3ef69d88d7a7f0f82798051796027")
-    version("15.3.0", sha256="cadfa384a5f14591b84ce07a1afe529f28deb0d43366fb0ae4e78afba96bfaf2")
+    version(
+        "23.11.1",
+        sha256="75509306732090bfa99b004d097909315f7789badb4a495e82b5f17b6329247a",
+        deprecated=True,
+    )
+    version(
+        "21.7.3",
+        sha256="ce1f61347671ef219d9c2925313d629d3fef98fc8d7f5ef38dd4656f7d0f58e7",
+        deprecated=True,
+    )
+    version(
+        "19.2.0",
+        sha256="aac9d1a366fb57d68f4639f9204d1de5d6387656959a97ed929a5ba9e62c033a",
+        deprecated=True,
+    )
+    version(
+        "17.9.1",
+        sha256="1102f5e0aafaab8014d19c6c57142caf2ba3ef69d88d7a7f0f82798051796027",
+        deprecated=True,
+    )
+    version(
+        "15.3.0",
+        sha256="cadfa384a5f14591b84ce07a1afe529f28deb0d43366fb0ae4e78afba96bfaf2",
+        deprecated=True,
+    )
 
     # LTS (recommended for most users) - even major number
     version(
@@ -47,11 +67,31 @@ class NodeJs(Package):
     version("20.16.0", sha256="8f24bf9abe455a09ab30f9ae8edda1e945ed678a4b1c3b07ee0f901fdc0ff4fd")
     version("20.15.1", sha256="da228a0c27922f02001d9a781793696432096ab2da658eb77d7fc21693f4c5cb")
     version("20.15.0", sha256="01e2c034467a324a33e778c81f2808dff13d289eaa9307d3e9b06c171e4d932d")
-    version("18.12.1", sha256="ba8174dda00d5b90943f37c6a180a1d37c861d91e04a4cb38dc1c0c74981c186")
-    version("16.18.1", sha256="3d24c9c3a953afee43edc44569045eda56cd45cd58b0539922d17da62736189c")
-    version("14.21.1", sha256="76ba961536dc11e4dfd9b198c61ff3399e655eca959ae4b66d926f29bfcce9d3")
-    version("14.16.1", sha256="5f5080427abddde7f22fd2ba77cd2b8a1f86253277a1eec54bc98a202728ce80")
-    version("14.15.1", sha256="a1120472bf55aea745287693a6651e16973e1008c9d6107df350126adf9716fe")
+    version(
+        "18.12.1",
+        sha256="ba8174dda00d5b90943f37c6a180a1d37c861d91e04a4cb38dc1c0c74981c186",
+        deprecated=True,
+    )
+    version(
+        "16.18.1",
+        sha256="3d24c9c3a953afee43edc44569045eda56cd45cd58b0539922d17da62736189c",
+        deprecated=True,
+    )
+    version(
+        "14.21.1",
+        sha256="76ba961536dc11e4dfd9b198c61ff3399e655eca959ae4b66d926f29bfcce9d3",
+        deprecated=True,
+    )
+    version(
+        "14.16.1",
+        sha256="5f5080427abddde7f22fd2ba77cd2b8a1f86253277a1eec54bc98a202728ce80",
+        deprecated=True,
+    )
+    version(
+        "14.15.1",
+        sha256="a1120472bf55aea745287693a6651e16973e1008c9d6107df350126adf9716fe",
+        deprecated=True,
+    )
 
     variant("debug", default=False, description="Include debugger support")
     variant("doc", default=False, description="Compile with documentation")
@@ -94,10 +134,9 @@ class NodeJs(Package):
     depends_on("python@:3.11", when="@21.0.0:21.1.0", type="build")
     depends_on("python@:3.12", when="@21.2.0:22.2.0", type="build")
     depends_on("python@:3.13", when="@22.3.0:22.16.0", type="build")
-    depends_on("python@3.8:3.13", when="@23.0.0:23", type="build")
-    depends_on("python@3.9:3.13", when="@24.0.0:24.2.0", type="build")
-    depends_on("python@3.9:3.14", when="@24.3.0:24", type="build")
-    depends_on("python@3.10:3.14", when="@25.0.0:25", type="build")
+    depends_on("python@:3.13", when="@23", type="build")
+    depends_on("python@:3.13", when="@24.0.0:24.2.0", type="build")
+    depends_on("python@3.10:", when="@24:", type="build")
 
     depends_on("libtool", type="build", when=sys.platform != "darwin")
     depends_on("pkgconfig", type="build")
