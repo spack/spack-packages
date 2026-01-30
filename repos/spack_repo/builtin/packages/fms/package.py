@@ -101,8 +101,7 @@ class Fms(CMakePackage):
 
     variant(
         "precision",
-        values=any_combination_of("32", "64")
-        .with_default("none"),
+        values=any_combination_of("32", "64").with_default("none"),
         description="Build a version of the library with mixed precision ('none'), or 32 and/or 64 bit reals",
         when="@2025.04:",
     )
