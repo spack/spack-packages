@@ -72,7 +72,7 @@ class Pdi(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
 
-    depends_on("cmake@3.22.1:", type=("build"), when='@1.10.0:')
+    depends_on("cmake@3.22.1:", type=("build"), when="@1.10.0:")
     depends_on("cmake@3.16.3:", type=("build"))
     depends_on("doxygen@1.9.1:", type=("build"), when="@1.10.0: +docs")
     depends_on("doxygen@1.8.17:", type=("build"), when="+docs")
