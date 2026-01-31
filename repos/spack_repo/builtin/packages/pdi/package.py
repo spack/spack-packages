@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from glob import glob
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -86,26 +88,27 @@ class Pdi(CMakePackage):
     )  # Needs distutils.
     depends_on("py-pybind11@2.9.1:2", type=("link"), when="@1.10.0: +python")
     depends_on("py-pybind11@2.4.3:2", type=("link"), when="+python")
-    depends_on("py-numpy@1.21.5", type=("run"), when="@1.10.0: +python")
-    depends_on("py-numpy@1.17.4", type=("run"), when="+python")
+    depends_on("py-numpy@1.21.5:1", type=("run"), when="@1.10.0: +python")
+    depends_on("py-numpy@1.17.4:1", type=("run"), when="+python")
     depends_on(
         "py-setuptools", type=("build", "link"), when="@1.8.3: +python^python@3.12:"
     )  # Needs distutils.
-    depends_on("spdlog@1.9.2:", type=("link"), when="@1.10.0:")
-    depends_on("spdlog@1.5:", type=("link"))
+    depends_on("spdlog@1.9.2:1", type=("link"), when="@1.10.0:")
+    depends_on("spdlog@1.5:1", type=("link"))
 
     root_cmakelists_dir = "pdi"
 
     def patch(self):
         # Run before build so that the standard Spack sbang install hook can fix
         # up the path to the python binary the zpp scripts requires. We dont use
-        # filter_shebang("vendor/zpp-1.0.16/bin/zpp.in") because the template is
+        # filter_shebang("vendor/zpp-*/bin/zpp.in") because the template is
         # not yet instantiated and PYTHON_EXECUTABLE is not yet large enough to
         # trigger the replacement via filter_shebang.
+        zpp_in = glob("vendor/zpp-*/bin/zpp.in")[0]
         filter_file(
             r"#!@PYTHON_EXECUTABLE@ -B",
             sbang_shebang_line() + "\n#!@PYTHON_EXECUTABLE@ -B",
-            "vendor/zpp-1.0.16/bin/zpp.in",
+            zpp_in,
         )
 
     @staticmethod
