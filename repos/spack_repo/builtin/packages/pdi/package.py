@@ -28,13 +28,16 @@ class Pdi(CMakePackage):
     # and the last patch version of the previous 2 minors
     # all the rest is marked as deprecated
     version("develop", branch="main", no_cache=True)
-    version("1.9.2", sha256="0430d5898980435e5602b67188264621a27f71969ff886efaa2e6d43a45caac4")
+    version("1.10.0", sha256="8bda1ed83bdb152a047a45a48f896466e7ebf5163030405c15dbfa4e2e788143")
+    version("1.9.3", sha256="ab390e51e3b7298d6b09484a443dc267651aed5978c711f8804848b19ab1527e")
     version(
-        "1.9.1-fixed", sha256="13d052a7d5d53271638382f06e9da0d58b01ed9cfdf9c4fa1e82367b9e1732e1"
+        "1.9.2",
+        sha256="0430d5898980435e5602b67188264621a27f71969ff886efaa2e6d43a45caac4",
+        deprecated=True,
     )
     version(
-        "1.9.1",
-        sha256="5bb6257efb32674db69e2d89a8947015a2f1e284dbe8dcfdc601f6412640b551",
+        "1.9.1-fixed",
+        sha256="13d052a7d5d53271638382f06e9da0d58b01ed9cfdf9c4fa1e82367b9e1732e1",
         deprecated=True,
     )
     version(
@@ -69,21 +72,27 @@ class Pdi(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
 
+    depends_on("cmake@3.22.1:", type=("build"), when='@1.10.0:')
     depends_on("cmake@3.16.3:", type=("build"))
+    depends_on("doxygen@1.9.1:", type=("build"), when="@1.10.0: +docs")
     depends_on("doxygen@1.8.17:", type=("build"), when="+docs")
     depends_on("paraconf@1: +shared", type=("link", "run"))
     depends_on("paraconf +fortran", type=("link", "run"), when="+fortran")
     depends_on("pkgconfig", type=("build"))
+    depends_on("python@3.10.6:3", type=("build", "link", "run"), when="@1.10.0: +python")
     depends_on("python@3.8.2:3", type=("build", "link", "run"), when="+python")
     depends_on(
         "python@3:3.11.9", type=("build", "link", "run"), when="@:1.8.2 +python"
     )  # Needs distutils.
+    depends_on("py-pybind11@2.9.1:2", type=("link"), when="@1.10.0: +python")
     depends_on("py-pybind11@2.4.3:2", type=("link"), when="+python")
-    depends_on("py-numpy", type=("build", "link", "run"), when="+python")
+    depends_on("py-numpy@1.21.5", type=("run"), when="@1.10.0: +python")
+    depends_on("py-numpy@1.17.4", type=("run"), when="+python")
     depends_on(
         "py-setuptools", type=("build", "link"), when="@1.8.3: +python^python@3.12:"
     )  # Needs distutils.
-    depends_on("spdlog@1.5:", type=("link"), when="@1.5:")
+    depends_on("spdlog@1.9.2:", type=("link"), when="@1.10.0:")
+    depends_on("spdlog@1.5:", type=("link"))
 
     root_cmakelists_dir = "pdi"
 
