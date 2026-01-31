@@ -17,7 +17,8 @@ class PyCodecarbon(PythonPackage):
     version("3.2.1", sha256="04571e4d4758936587b7145de557f4aa0f53c83c771318f9a12d67ff039fc95c")
 
     depends_on("python@3.7:", type=("build", "run"))
-    depends_on("py-setuptools@61:", type="build")
+    # PEP639 requires setuptools>77, to be upstreamed in codecarbon
+    depends_on("py-setuptools@77:", type="build")
 
     depends_on("py-pyarrow", type=("build", "run"))
     depends_on("py-click", type=("build", "run"))
