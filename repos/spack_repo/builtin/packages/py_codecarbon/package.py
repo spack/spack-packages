@@ -19,7 +19,7 @@ class PyCodecarbon(PythonPackage):
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("py-setuptools@61:", type="build")
 
-    depends_on("arrow", type=("build", "run"))
+    depends_on("py-pyarrow", type=("build", "run"))
     depends_on("py-click", type=("build", "run"))
     depends_on("py-fief-client +cli", type=("build", "run"))
     depends_on("py-pandas@2.3.3:", when="^python@3.14:", type=("build", "run"))
