@@ -434,6 +434,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("edm4hep @0.4.1:", when="+edm4hep")
     depends_on("edm4hep @0.7:", when="@25: +edm4hep")
     depends_on("edm4hep @0.10.5:", when="@42: +edm4hep")
+    depends_on("edm4hep @:0", when="@:44 +edm4hep")
     depends_on("eigen @3.3.7:3", when="@15.1:")
     depends_on("eigen @3.3.7:3.3", when="@:15.0")
     depends_on("eigen @3.4:3", when="@36.1:")
