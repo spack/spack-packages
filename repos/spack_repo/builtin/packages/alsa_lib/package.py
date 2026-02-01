@@ -18,7 +18,8 @@ class AlsaLib(AutotoolsPackage):
 
     license("LGPL-2.1-or-later")
 
-    version("1.2.15.2", tag="v1.2.15.2", commit="63a981865a1c7d9501ae556e28ae3bb53d015b61")
+    version("1.2.15.3", sha256="7b079d614d582cade7ab8db2364e65271d0877a37df8757ac4ac0c8970be861e")
+    version("1.2.15.2", sha256="637eefd4966ce738da44464494df2b2894e19778fac2f9e7c47277e2af9297f4")
     version("1.2.9", sha256="dc9c643fdc4ccfd0572cc685858dd41e08afb583f30460b317e4188275f615b2")
     version("1.2.8", sha256="1ab01b74e33425ca99c2e36c0844fd6888273193bd898240fe8f93accbcbf347")
     version("1.2.3.2", sha256="e81fc5b7afcaee8c9fd7f64a1e3043e88d62e9ad2c4cff55f578df6b0a9abe15")
@@ -31,9 +32,9 @@ class AlsaLib(AutotoolsPackage):
     patch("python.patch", when="@1.1.4:1.1.5 +python")
 
     depends_on("c", type="build")  # generated
-    depends_on("autoconf", type="build", when="@1.2.15.2 build_system=autotools")
-    depends_on("automake", type="build", when="@1.2.15.2 build_system=autotools")
-    depends_on("libtool", type="build", when="@1.2.15.2 build_system=autotools")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
 
     depends_on("python", type=("link", "run"), when="+python")
 
