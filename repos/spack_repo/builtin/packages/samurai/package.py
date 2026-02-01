@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from curses import version
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -20,6 +21,7 @@ class Samurai(CMakePackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("0.28.0", sha256="94a50fc30714b652157e27ac7870dc8487e1045289d87cb83b28d2c7f6834b94")
     version("0.27.1", sha256="5cb1ffb87a6a3defbde45037bd80e8277c31d577e20559c6cb2853b82bc989ba")
     version("0.27.0", sha256="23d3e6475fbc674a887af84333b49ff6ac68fa8326e9edfdb49fa47491c28f4f")
     version("0.26.1", sha256="07971b2c5359cc33f5e3fb3f4f7d156b6aed91441139a1ae133378ba25e46d7a")
