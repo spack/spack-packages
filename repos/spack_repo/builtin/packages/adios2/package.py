@@ -127,6 +127,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.12.0:", type="build")
 
+    depends_on("yaml-cpp")
+
     # Standalone CUDA support
     depends_on("cuda", when="+cuda ~kokkos")
 
@@ -248,13 +250,6 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         when="@2.8:2.10",
     )
 
-    # https://github.com/ornladios/ADIOS2/pull/4578
-    patch(
-        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
-        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
-        when="@2.8:2.10",
-    )
-
     # https://github.com/ornladios/ADIOS2/pull/4729
     patch(
         "https://github.com/ornladios/ADIOS2/commit/0bdda7d4729b898397e024010b1e82cb72921501.patch?full_index=1",
@@ -314,6 +309,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             self.define("ADIOS2_BUILD_EXAMPLES", False),
             self.define("ADIOS2_USE_Endian_Reverse", True),
             self.define("ADIOS2_USE_IME", False),
+            self.define("ADIOS2_USE_EXTERNAL_YAMLCPP", True),
         ]
 
         if spec.satisfies("+sst"):
