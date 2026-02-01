@@ -31,18 +31,14 @@ class AlsaPlugins(AutotoolsPackage):
     depends_on("alsa-lib")
     depends_on("pulseaudio +alsa", when="+pulseaudio")
 
-    variant("pulseaudio", default=True, description="Enable pulseaudio support")
+    variant("pulseaudio", default=False, description="Enable pulseaudio support")
 
     conflicts("platform=darwin", msg="ALSA (+plugins) only works for Linux")
 
     def configure_args(self):
         args = []
-        if "+pulseaudio" in self.spec:
-            args.append("--enable-pulseaudio")
+        args += self.enable_or_disable("pulseaudio")
         return args
-
-    def setup_build_environment(self, env):
-        env.prepend_path("PKG_CONFIG_PATH", self.spec["alsa-lib"].prefix.lib64.pkgconfig)
 
     def setup_run_environment(self, env):
         # 1. ALSA plugin directory
@@ -52,6 +48,8 @@ class AlsaPlugins(AutotoolsPackage):
 
         # 2. PulseAudio libraries (needed for dlopen dependencies)
         if "pulseaudio" in self.spec:
+            # See PR comment https://github.com/spack/spack-packages/pull/2984 about not setting LD_LIBRARY_PATH
+            # should try to find a better way of setting this up
             pulseaudio_libdir = os.path.join(self.spec["pulseaudio"].prefix.lib64, "pulseaudio")
             if os.path.exists(pulseaudio_libdir):
                 env.prepend_path("LD_LIBRARY_PATH", pulseaudio_libdir)
