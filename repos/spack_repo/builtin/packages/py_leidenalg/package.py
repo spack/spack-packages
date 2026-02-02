@@ -26,13 +26,17 @@ class PyLeidenalg(PythonPackage):
     def patch(self):
         filter_file(
             r"'build-deps/install/include'",
-            f"'{self.spec['igraph'].prefix.include}', '{self.spec['libleidenalg'].prefix.include}'",
+            f"'{self.spec['igraph'].prefix.include}', "
+            f"'{self.spec['libleidenalg'].prefix.include}'",
             "setup.py",
             string=True,
         )
         filter_file(
             r"'build-deps/install/lib'",
-            f"'{self.spec['igraph'].prefix.lib}', '{self.spec['igraph'].prefix.lib64}', '{self.spec['libleidenalg'].prefix.lib}', '{self.spec['libleidenalg'].prefix.lib64}'",
+            f"'{self.spec['igraph'].prefix.lib}', "
+            f"'{self.spec['igraph'].prefix.lib64}', "
+            f"'{self.spec['libleidenalg'].prefix.lib}', "
+            f"'{self.spec['libleidenalg'].prefix.lib64}'",
             "setup.py",
             string=True,
         )
