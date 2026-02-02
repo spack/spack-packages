@@ -2,8 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-
+from spack_repo.builtin.build_systems import autotools, meson
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
@@ -73,64 +72,64 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
     depends_on("speexdsp@1.2:")
     depends_on("m4", type="build")
 
-    #    if spec.satisfies("%gcc@8:"):
-    os.environ["LDFLAGS"] = "-Wl,--copy-dt-needed-entries"
-
-    def configure_args(self):
-        args = [
-            "--disable-systemd-daemon",
-            "--disable-systemd-journal",
-            "--disable-systemd-login",
-            "--disable-udev",
-            "--disable-waveout",
-            "--enable-dbus",
-            "--enable-glib2",
-            "--with-database=gdbm",
-            "--with-systemduserunitdir=no",
-            "CPPFLAGS={0}".format(self.spec["libtool"].headers.cpp_flags),
-            "LDFLAGS={0}".format(self.spec["libtool"].libs.search_flags),
-            "--libdir={0}".format(self.prefix.lib64),
-        ]
-        # toggle based on variants
-        args += self.enable_or_disable("alsa")
-        args += self.enable_or_disable("openssl")
-        args += self.enable_or_disable("x11")
-        args += self.with_or_without("fftw")
-
-        # possible future variants
-        args.extend(
-            [
-                "--disable-asyncns",
-                "--disable-avahi",
-                "--disable-bluez5",
-                "--disable-gcov",
-                "--disable-gsettings",
-                "--disable-gtk3",
-                "--disable-hal-compat",
-                "--disable-jack",
-                "--disable-lirc",
-                "--disable-orc",
-                "--disable-tcpwrap",
+    class AutotoolsBuilder(autotools.AutotoolsBuilder):
+        def configure_args(self):
+            args = [
+                "--disable-systemd-daemon",
+                "--disable-systemd-journal",
+                "--disable-systemd-login",
+                "--disable-udev",
+                "--disable-waveout",
+                "--enable-dbus",
+                "--enable-glib2",
+                "--with-database=gdbm",
+                "--with-systemduserunitdir=no",
+                "CXXFLAGS={0}".format(self.spec["libtool"].headers.cpp_flags),
+                "LDFLAGS={0}".format(self.spec["libtool"].libs.search_flags),
+                "--libdir={0}".format(self.prefix.lib64),
             ]
-        )
+            # toggle based on variants
+            args += self.enable_or_disable("alsa")
+            args += self.enable_or_disable("openssl")
+            args += self.enable_or_disable("x11")
+            args += self.with_or_without("fftw")
 
-        return args
+            # possible future variants
+            args.extend(
+                [
+                    "--disable-asyncns",
+                    "--disable-avahi",
+                    "--disable-bluez5",
+                    "--disable-gcov",
+                    "--disable-gsettings",
+                    "--disable-gtk3",
+                    "--disable-hal-compat",
+                    "--disable-jack",
+                    "--disable-lirc",
+                    "--disable-orc",
+                    "--disable-tcpwrap",
+                ]
+            )
 
-    def meson_args(self):
-        return [
-            "-Ddatabase=gdbm",
-            "-Ddoxygen=false",
-            "-Dbluez5=disabled",
-            "-Dx11=disabled",
-            "-Dtests=false",
-            "-Ddefault_library=shared",
-            "-Dprefix={0}".format(self.prefix),
-            "-Dlibdir={0}/lib64".format(self.prefix),
-            "-Dbashcompletiondir={0}/share/bash-completion/completions".format(self.prefix),
-            "-Dsystemduserunitdir={0}/lib/systemd/user".format(self.prefix),
-        ]
+            return args
+
+    class MesonBuilder(meson.MesonBuilder):
+        def meson_args(self):
+            return [
+                "-Ddatabase=gdbm",
+                "-Ddoxygen=false",
+                "-Dbluez5=disabled",
+                "-Dx11=disabled",
+                "-Dtests=false",
+                "-Ddefault_library=shared",
+                "-Dprefix={0}".format(self.prefix),
+                "-Dlibdir={0}/lib64".format(self.prefix),
+                "-Dbashcompletiondir={0}/share/bash-completion/completions".format(self.prefix),
+                "-Dsystemduserunitdir={0}/lib/systemd/user".format(self.prefix),
+            ]
 
     def setup_build_environment(self, env):
+        env.append_flags("LDFLAGS", "-Wl,--copy-dt-needed-entries")
         if self.spec.satisfies("build_system=meson"):
             env.append_flags("CPPFLAGS", "-I{0}".format(self.spec["libiconv"].prefix.include))
             env.append_flags("LDFLAGS", "-L{0} -liconv".format(self.spec["libiconv"].prefix.lib))
@@ -141,10 +140,11 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
 
         # If pulseaudio is in the spec, make sure its libraries are on the runtime linker path
         if self.spec.satisfies("^pulseaudio"):
-            # 1️⃣ Standard lib64 dir
+            # 1 Standard lib64 dir
             env.prepend_path("LD_LIBRARY_PATH", self.spec["pulseaudio"].prefix.lib64)
 
-            # 2️⃣ Also check for a pulseaudio subdirectory (some builds install here)
-            pulseaudio_libdir = join_path(self.spec["pulseaudio"].prefix.lib64, "pulseaudio")
-            if os.path.exists(pulseaudio_libdir):
-                env.prepend_path("LD_LIBRARY_PATH", pulseaudio_libdir)
+            # 2 Also check for a pulseaudio subdirectory (some builds install here)
+            # pulseaudio_libdir = join_path(self.spec["pulseaudio"].prefix.lib64, "pulseaudio")
+            # This should not be necessary, but left here for future checking/tests
+            # if os.path.exists(pulseaudio_libdir)
+            #    env.prepend_path("LD_LIBRARY_PATH", pulseaudio_libdir)
