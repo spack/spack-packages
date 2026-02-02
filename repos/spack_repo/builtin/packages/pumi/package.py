@@ -124,7 +124,7 @@ class Pumi(CMakePackage):
         try:
             searchpath.insert(0, self.spec["slurm"].prefix.bin)
         except KeyError:
-            print("Slurm not found, ignoring.")
+            tty.debug("Slurm not found, ignoring.")
         commands = ["srun", "mpirun", "mpiexec"]
         return which(*commands, path=searchpath) or which(*commands)
 
@@ -144,7 +144,9 @@ class Pumi(CMakePackage):
         ]
 
         launcher = self.mpi_launcher()
-        assert launcher is not None, "Cannot run tests due to absence of MPI launcher"
+        assert launcher is not None, "Cannot run tests due to absence of MPI
+        launcher (srun, mpirun, mpiexec) in " + [self.spec["mpi"].prefix.bin]
+        + "."
         out = launcher(*options, output=str.split, error=str.split)
         assert "mesh pipe_2_.smb written" in out
         return
