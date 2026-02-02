@@ -35,6 +35,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Package versions
     version("develop", branch="master")
+    version("3.1.0", sha256="a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
     version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")
     version("2.33.0", sha256="0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
     version("2.32.0", sha256="2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
@@ -67,9 +68,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     version("2.10.1", sha256="a4a9df645ebdc11e86221b794b276d1e17974887ead161d5050aaf0b43bb183a")
     version("2.10.0b", sha256="b55dbdc692afe5a00490d1ea1c38dd908dae244f7bdd7faaf711680059824c11")
 
-    variant("shared", default=False, description="Build shared library (disables static library)")
+    variant("shared", default=True, description="Build shared library (disables static library)")
     variant(
-        "pic", default=True, when="@2.21: ~shared", description="Build position independent code"
+        "pic", default=False, when="@2.21: ~shared", description="Build position independent code"
     )
     # Use internal SuperLU routines for FEI - version 2.12.1 and below
     variant(
@@ -128,12 +129,22 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         description="C++ language standard (for GPU builds)",
     )
 
+    # Patch to fix GPU+TPLs and freebsd build issues
+    patch(
+        "https://github.com/hypre-space/hypre/pull/1463.patch?full_index=1",
+        sha256="cd0b67e0c03f9392a305c2263099929898ea7f49bd5006ad69209508e947903b",
+        when="@3.1.0",
+    )
+
     # Patch to fix hip build (+rocm) via CMake for hypre v3.0.0
     patch(
         "https://github.com/hypre-space/hypre/pull/1394.patch?full_index=1",
         sha256="c9a98fb6aa6469c830fa7c12548c3be532d54bee5b7841e1550370ef497c5490",
         when="@3.0.0 +rocm",
     )
+
+    # Patch to fix build with TPLs and mixed precision
+    patch("hypre30000-tpls+mixedprec.patch", when="@3.0.0")
 
     # Patch to add gptune hookup codes
     patch("ij_gptune.patch", when="+gptune@2.19.0")
@@ -160,9 +171,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Compiler dependencies
     depends_on("c", type="build")
-    depends_on("cxx", type="build", when="+cuda")
-    depends_on("cxx", type="build", when="+rocm")
-    depends_on("cxx", type="build", when="+sycl")
+    for dep in ("cuda", "rocm", "sycl", "caliper"):
+        depends_on("cxx", type="build", when=f"+{dep}")
     depends_on("fortran", type="build", when="+fortran")
 
     # If using CMake, we require at least the following version
@@ -183,29 +193,33 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+shared@:2.12 platform=darwin")
 
     # GPU-related dependencies and conflicts
-    gpu_pkgs = ["magma", "umpire"]
+    gpu_pkgs = ["magma", "umpire", "superlu-dist"]
     conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gpu-profiling", when="~cuda~rocm~sycl")
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
     with when("+cuda"):
         depends_on("umpire+c+cuda", when="@3:")
+        requires("+umpire", when="@3:")
 
         conflicts("@:2.18")
         conflicts("cuda_arch=none")
         conflicts("precision=longdouble")
         conflicts("precision=mixed")
-        conflicts("+shared +umpire")
+        conflicts("+shared +umpire", when="@:2")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+rocm", msg="CUDA and ROCm are mutually exclusive")
         conflicts("+sycl", msg="CUDA and SYCL are mutually exclusive")
         conflicts("cxxstd=11", when="^cuda@13:")
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
+        conflicts("^cuda@13:", when="@:2")
         for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
             requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 
     with when("+rocm"):
         depends_on("umpire+c+rocm", when="@3:")
+        requires("+umpire", when="@3:")
+
         depends_on("rocsparse")
         depends_on("rocthrust")
         depends_on("rocrand")
@@ -346,6 +360,10 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("HYPRE_ENABLE_SYCL", "sycl"))
         if spec.satisfies("+cuda"):
             args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
+        if spec.satisfies("+rocm"):
+            args.append(
+                self.define("CMAKE_HIP_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
+            )
 
         # GPU auxiliary options
         args.append(self.define_from_variant("HYPRE_ENABLE_GPU_AWARE_MPI", "gpu-aware-mpi"))
@@ -357,6 +375,15 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("HYPRE_ENABLE_CALIPER", "caliper"))
         args.append(self.define_from_variant("HYPRE_ENABLE_DSUPERLU", "superlu-dist"))
         args.append(self.define_from_variant("HYPRE_ENABLE_MAGMA", "magma"))
+        if spec.satisfies("+superlu-dist"):
+            inc_list = [self.spec["superlu-dist"].prefix.include]
+            if spec.satisfies("+rocm"):
+                inc_list.append(self.spec["hipblas"].prefix.include)
+            args.append(self.define("TPL_DSUPERLU_INCLUDE_DIRS", ";".join(inc_list)))
+            args.append(self.define("TPL_DSUPERLU_LIBRARIES", self.spec["superlu-dist"].libs))
+        if spec.satisfies("+magma"):
+            args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
+            args.append(self.define("TPL_MAGMA_LIBRARIES", self.spec["magma"].libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)

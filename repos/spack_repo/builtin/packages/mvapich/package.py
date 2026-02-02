@@ -28,7 +28,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     license("Unlicense")
 
     # Prefer the latest stable release
-    version("4.1", sha256="a36c459befd5b0d1b66e4a217250d89d9f77b903fcc4a050efddb1c475b8dcab")
+    version("4.1", sha256="25a53d3725b669e2c648158fb7c9fc5b1388953f3a2f949748586c447d0e43ee")
     version("4.0", sha256="c532f7bdd5cca71f78c12e0885c492f6e276e283711806c84d0b0f80bb3e3b74")
     with default_args(deprecated=True):
         version("3.0", sha256="ee076c4e672d18d6bf8dd2250e4a91fa96aac1db2c788e4572b5513d86936efb")
@@ -38,8 +38,6 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
 
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
     variant("debug", default=False, description="Enable debug info and error messages at run-time")
-
-    variant("cuda", default=False, description="Enable CUDA extension")
 
     variant("regcache", default=True, description="Enable memory registration cache")
 
@@ -97,7 +95,6 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("libpciaccess", when=(sys.platform != "darwin"))
     depends_on("libxml2")
-    depends_on("cuda", when="+cuda")
     depends_on("libfabric", when="netmod=ofi")
     depends_on("slurm", when="process_managers=slurm")
     depends_on("ucx", when="netmod=ucx")
@@ -200,17 +197,13 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             "--disable-silent-rules",
             "--disable-new-dtags",
             "--enable-fortran=all",
+            "--disable-cuda",
+            "--disable-hip",
             "--enable-threads={0}".format(spec.variants["threads"].value),
-            "--with-ch3-rank-bits={0}".format(spec.variants["ch3_rank_bits"].value),
             "--enable-wrapper-rpath={0}".format("no" if "~wrapperrpath" in spec else "yes"),
         ]
 
         args.extend(self.enable_or_disable("alloca"))
-        if not spec.satisfies("pmi_version=none"):
-            args.append("--with-pmi=" + spec.variants["pmi_version"].value)
-        if "pmi_version=pmix" in spec:
-            args.append("--with-pmix={0}".format(spec["pmix"].prefix))
-
         if "+debug" in self.spec:
             args.extend(
                 [
@@ -223,12 +216,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
                 ]
             )
         else:
-            args.append("--enable-fast=all")
-
-        if "+cuda" in self.spec:
-            args.extend(["--enable-cuda", "--with-cuda={0}".format(spec["cuda"].prefix)])
-        else:
-            args.append("--disable-cuda")
+            args.append("--enable-fast=O3,ndebug")
 
         if "+regcache" in self.spec:
             args.append("--enable-registration-cache")

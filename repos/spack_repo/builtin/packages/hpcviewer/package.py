@@ -4,6 +4,7 @@
 
 import os
 import platform
+import shlex
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -13,7 +14,7 @@ from spack.package import *
 class Hpcviewer(Package):
     """Binary distribution of hpcviewer and integrated hpctraceviewer for
     the Rice HPCToolkit (Linux x86_64, ppc64le and aarch64, and MacOSX
-    x86_64 and M1/M2).
+    x86_64 and Apple M-series).
 
     Note: hpctoolkit databases are platform independent, so you don't
     need to install hpctoolkit to run the viewers and it's common to
@@ -27,10 +28,10 @@ class Hpcviewer(Package):
 
     darwin_sha = {
         (
-            "2025.2.0",
+            "2025.3.1",
             "aarch64",
-        ): "76da2fb0d371be29ee9f4dc090021b095e23ae6851079b5a9d4161401d8c1170",
-        ("2025.2.0", "x86_64"): "7cbb01281b32c7c2b44713c3434d24f0b3c166ba9ae53434b233a150eccd19ab",
+        ): "c87d29f70bc39c23926c001d8393d48d2fdf1ae41da8096a5f2ab40b18d20105",
+        ("2025.3.1", "x86_64"): "6b0f3d8e77fe4e0a7b6a97d022fba5671bc94762ff2d3c71ea4a3ab377d8fff2",
         ("2025.01", "aarch64"): "8884c60a972f864bd43fcf1933be5ec2095427de12394c96b943d2064dab044d",
         ("2025.01", "x86_64"): "2959313d5603ca9b14da04f3e5d51b19fc21c374eb3d5cc687d3f77f67bbf8b9",
         ("2024.09", "aarch64"): "f2e5b516105fe99315950ac4cc3bce120afadeca57cfaa16d58684756950d373",
@@ -59,6 +60,15 @@ class Hpcviewer(Package):
     }
 
     viewer_sha = {
+        (
+            "2025.3.1",
+            "aarch64",
+        ): "bf9d519cb679bf1ee49da46a6eb3c5f1f223f58e3228c53b9c13d6368dcc16dd",
+        (
+            "2025.3.1",
+            "ppc64le",
+        ): "89752d321e2a9001db171145dd724962a3881443dd62445f13ffd1a2e9c38f4f",
+        ("2025.3.1", "x86_64"): "3ad32708332fc61d53c67d93c17eeec3659e127df14552665f5689ad62773145",
         (
             "2025.2.0",
             "aarch64",
@@ -190,12 +200,15 @@ class Hpcviewer(Package):
                         when=f"@{ver}",
                     )
 
-    depends_on("java@17:", type=("build", "run"), when="@2024.09:")
+    depends_on("java@17:", type=("build", "run"), when="@2024.09:2025.2")
     depends_on("java@11:", type=("build", "run"), when="@2021.0:2024.02")
     depends_on("java@8", type=("build", "run"), when="@:2020")
 
+    # Eclipse requires a newer glibc on powerpc, but not x86.
+    depends_on("glibc@2.34:", when="@2025.3: target=ppc64le:")
+
     # Install for MacOSX / Darwin
-    @when("platform=darwin")
+    @when("platform=darwin @:2025.2")
     def install(self, spec, prefix):
         # Add path to java binary to hpcviewer.ini file.
         ini_file = join_path("Contents", "Eclipse", "hpcviewer.ini")
@@ -215,12 +228,26 @@ class Hpcviewer(Package):
             file.write("open " + app_dir + "\n")
         os.chmod(viewer_file, 0o755)
 
-    @when("platform=linux")
+    @when("platform=darwin @2025.3:")
     def install(self, spec, prefix):
-        self.linux_install(spec, prefix)
+        # Install the bundle as prefix/lib/hpcviewer.app
+        bundle_dir = join_path(prefix, "lib", "hpcviewer.app")
+        install_tree(".", bundle_dir)
 
-    # Both hpcviewer and trace viewer have an install script.
-    def linux_install(self, spec, prefix):
+        # Add launch script to open the app
+        mkdirp(prefix.bin)
+        wrapper = join_path(prefix.bin, "hpcviewer")
+        with open(wrapper, "w") as wrapperf:
+            wrapperf.write(
+                f"""\
+#!/bin/sh
+open {shlex.quote(str(bundle_dir))}
+"""
+            )
+        set_executable(wrapper)
+
+    @when("platform=linux @:2025.2")
+    def install(self, spec, prefix):
         args = ["--java", spec["java"].home, prefix]
 
         # Sometimes the script is install.sh, sometimes install.
@@ -236,3 +263,13 @@ class Hpcviewer(Package):
             cd("TRACE")
             inst = Executable(inst_path)
             inst(*args)
+
+    @when("platform=linux @2025.3:")
+    def install(self, spec, prefix):
+        # Install the bundle as prefix/lib/hpcviewer
+        bundle_dir = join_path(prefix, "lib", "hpcviewer")
+        install_tree(".", bundle_dir)
+
+        # Expose a `hpcviewer` symlink to the launcher
+        mkdirp(prefix.bin)
+        symlink(join_path(bundle_dir, "hpcviewer"), join_path(prefix.bin, "hpcviewer"))

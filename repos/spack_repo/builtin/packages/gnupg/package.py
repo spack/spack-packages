@@ -19,6 +19,7 @@ class Gnupg(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.5.16", sha256="05144040fedb828ced2a6bafa2c4a0479ee4cceacf3b6d68ccc75b175ac13b7e")
     version("2.5.12", sha256="48d7b15474d330c571128a49eb32ae2332c086ce7945fb94d4c5491b07985e09")
     version("2.5.11", sha256="5f765ec1eb605dce9e9c48679cd43b5818d4d4b84c8ea4c0c60eb5dca13c405c")
     version("2.5.6", sha256="377f9d79af0ce494c0946dbe7c92197425bb522d7edd6f54acbc9869695131a8")
@@ -26,19 +27,22 @@ class Gnupg(AutotoolsPackage):
     version("2.5.2", sha256="7f404ccc6a58493fedc15faef59f3ae914831cff866a23f0bf9d66cfdd0fea29")
     version("2.5.1", sha256="8a34bb318499867962c939e156666ada93ed81f01926590ac68f3ff79178375e")
     version("2.5.0", sha256="2222c827d4e7087f15e7f72739d004abc1d05c6c5f0a5a12b24c6a6cc5d173fb")
-    version("2.4.7", sha256="7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46")
-    version("2.4.6", sha256="95acfafda7004924a6f5c901677f15ac1bda2754511d973bb4523e8dd840e17a")
-    version("2.4.5", sha256="f68f7d75d06cb1635c336d34d844af97436c3f64ea14bcb7c869782f96f44277")
-    version("2.4.4", sha256="67ebe016ca90fa7688ce67a387ebd82c6261e95897db7b23df24ff335be85bc6")
-    version("2.4.3", sha256="a271ae6d732f6f4d80c258ad9ee88dd9c94c8fdc33c3e45328c4d7c126bd219d")
-    version("2.4.2", sha256="97eb47df8ae5a3ff744f868005a090da5ab45cb48ee9836dbf5ee739a4e5cf49")
-    version("2.4.1", sha256="76b71e5aeb443bfd910ce9cbc8281b617c8341687afb67bae455877972b59de8")
-    version("2.4.0", sha256="1d79158dd01d992431dd2e3facb89fdac97127f89784ea2cb610c600fb0c1483")
+    version("2.4.9", sha256="dd17ab2e9a04fd79d39d853f599cbc852062ddb9ab52a4ddeb4176fd8b302964")
     version("2.3.8", sha256="540b7a40e57da261fb10ef521a282e0021532a80fd023e75fb71757e8a4969ed")
-    version("2.3.7", sha256="ee163a5fb9ec99ffc1b18e65faef8d086800c5713d15a672ab57d3799da83669")
     version("2.2.40", sha256="1164b29a75e8ab93ea15033300149e1872a7ef6bdda3d7c78229a735f8204c28")
 
-    depends_on("c", type="build")  # generated
+    with default_args(deprecated=True):
+        version("2.4.7", sha256="7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46")
+        version("2.4.6", sha256="95acfafda7004924a6f5c901677f15ac1bda2754511d973bb4523e8dd840e17a")
+        version("2.4.5", sha256="f68f7d75d06cb1635c336d34d844af97436c3f64ea14bcb7c869782f96f44277")
+        version("2.4.4", sha256="67ebe016ca90fa7688ce67a387ebd82c6261e95897db7b23df24ff335be85bc6")
+        version("2.4.3", sha256="a271ae6d732f6f4d80c258ad9ee88dd9c94c8fdc33c3e45328c4d7c126bd219d")
+        version("2.4.2", sha256="97eb47df8ae5a3ff744f868005a090da5ab45cb48ee9836dbf5ee739a4e5cf49")
+        version("2.4.1", sha256="76b71e5aeb443bfd910ce9cbc8281b617c8341687afb67bae455877972b59de8")
+        version("2.4.0", sha256="1d79158dd01d992431dd2e3facb89fdac97127f89784ea2cb610c600fb0c1483")
+        version("2.3.7", sha256="ee163a5fb9ec99ffc1b18e65faef8d086800c5713d15a672ab57d3799da83669")
+
+    depends_on("c", type="build")
 
     depends_on("npth@1.2:")
 

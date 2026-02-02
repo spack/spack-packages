@@ -20,6 +20,7 @@ class G4particlexs(Package):
     maintainers("drbenmorgan")
 
     # Only versions relevant to Geant4 releases built by spack are added
+    version("4.2", sha256="c52bbf86aaa589b78aba80b16ab0adf1041ea300de5395865b97fcee6eb55851")
     version("4.1", sha256="07ae1e048e9ac8e7f91f6696497dd55bd50ccc822d97af1a0b9e923212a6d7d1")
     version("4.0", sha256="9381039703c3f2b0fd36ab4999362a2c8b4ff9080c322f90b4e319281133ca95")
     version("3.1.1", sha256="66c17edd6cb6967375d0497add84c2201907a25e33db782ebc26051d38f2afda")

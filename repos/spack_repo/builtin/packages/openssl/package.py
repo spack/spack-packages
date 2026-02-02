@@ -205,14 +205,14 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
             sys_conf = join_path(directory, "openssl.cnf")
             pkg_conf = join_path(pkg_dir, "openssl.cnf")
             if os.path.exists(sys_conf) and not os.path.exists(pkg_conf):
-                os.symlink(sys_conf, pkg_conf)
+                symlink(sys_conf, pkg_conf)
 
             sys_cert = join_path(directory, "cert.pem")
             pkg_cert = join_path(pkg_dir, "cert.pem")
             # If a bundle exists, use it. This is the preferred way on Fedora,
             # where the certs directory does not work.
             if os.path.exists(sys_cert) and not os.path.exists(pkg_cert):
-                os.symlink(sys_cert, pkg_cert)
+                symlink(sys_cert, pkg_cert)
 
             sys_certs = join_path(directory, "certs")
             pkg_certs = join_path(pkg_dir, "certs")
@@ -222,7 +222,7 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
             if os.path.isdir(sys_certs) and not os.path.islink(pkg_certs):
                 if os.path.isdir(pkg_certs):
                     os.rmdir(pkg_certs)
-                os.symlink(sys_certs, pkg_certs)
+                symlink(sys_certs, pkg_certs)
 
     @run_after("install")
     def copy_mozilla_certs(self):

@@ -15,10 +15,11 @@ class StressNg(MakefilePackage):
     kernel interfaces."""
 
     homepage = "https://github.com/ColinIanKing/stress-ng"
-    url = "https://github.com/ColinIanKing/stress-ng/archive/refs/tags/V0.12.06.tar.gz"
+    url = "https://github.com/ColinIanKing/stress-ng/archive/refs/tags/V0.19.04.tar.gz"
 
     license("GPL-2.0-or-later")
 
+    version("0.19.04", sha256="3761ae901b2a81dcdb3f5363b8d98f288c03ae320a697b6d7ffef01a48845f05")
     version("0.12.06", sha256="ad15205e7e57cec0b00643a17329d74fe75055bb76267558830b32e31d0a584f")
 
     depends_on("libaio")

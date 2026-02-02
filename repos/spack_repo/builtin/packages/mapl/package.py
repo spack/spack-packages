@@ -39,12 +39,19 @@ class Mapl(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    # Remember if there is a new ESMA_cmake, to update the resources too
+    version("2.64.2", sha256="8e6ab418d5ab468ab3751dc277351a42ee87f6e0eee3ef13fef29062cd773c2d")
+    version("2.64.1", sha256="205eac5600c223aa59e359f5b75a462a03302d58e7294f98fb87f29d544ef5a8")
+    version("2.64.0", sha256="dab66884ca459c56b8bc2199fe334fd5ada131c4f66f48b2ee44965d3dbf90f3")
+    version("2.63.1", sha256="c91cf72bc4bf48a52f12a2356ace0ba59463cbe36060ecacbac9193d99233306")
+    version("2.63.0", sha256="5a170980e114d94cc1249d328b166e2048bfc1081a52323d81e2294fb2f08742")
     version("2.62.1", sha256="6fa0d5eb3d9ea620ca6ed8ad6561b0ea445517c69ad21451137d0bb65c7dbede")
     version("2.62.0", sha256="5973a8cac75c55fcc0f4c5256f7d485ab99d2a52ff42d4359ce8d0f3f94d9133")
     version("2.61.0", sha256="bb768fd60214d5b6fe6120e08a5ebd869f576392a3252a4715fd7c32d0dea97a")
     version("2.60.0", sha256="470f4da9cc516fdf8206dbc84ab13f53792f3af5e54cd5315ff70d44e5700788")
     version("2.59.0", sha256="a1137bf62e885256d295c66929cd77658a559f88dbed4f433544f432c5c7a059")
     version("2.58.1", sha256="176c7baccd0182e353184808b1048baa6100d8700ca532e0d02bea6ae5771aba")
+    version("2.57.1", sha256="ba5c2f3e5c084144665bdb883c89a067fe9554a94a5a9918532ce49bc43b008c")
     version("2.57.0", sha256="6991e6b7521842c9c94b549dd0fed778e8b6dad1201708aad3193c274597e36a")
     version("2.56.1", sha256="f2c1f5d9c088fee029fa8358a382544288f3081e922e164feb19e671d106eefd")
     version("2.56.0", sha256="9efdbfb87b7ca8d31f4be241a9db260612310e01930681565bfdaf869090a7e8")
@@ -145,9 +152,18 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v3.68.0",
+        commit="ac3533a11ea5a75afdbaf8b2bb2f69e51bd99edc",
+        when="@2.63:",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.65.0",
         commit="a1e28e6ec25bbbc7397549be73e19fd32cdc2323",
-        when="@2.62:",
+        when="@2.62",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -162,6 +178,7 @@ class Mapl(CMakePackage):
         tag="v3.62.1",
         commit="e08e8804bcf081bd690d484e010bb6c865ef547f",
         when="@2.56:2.59",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -169,6 +186,7 @@ class Mapl(CMakePackage):
         tag="v3.58.1",
         commit="16805723f4c7a9449c429e955d74f4f2f7ee41a4",
         when="@2.55",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -176,6 +194,7 @@ class Mapl(CMakePackage):
         tag="v3.55.0",
         commit="ee49277f13b9b223cd86129a0c7094a359cbc4db",
         when="@2.51:2.54",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -183,6 +202,7 @@ class Mapl(CMakePackage):
         tag="v3.51.0",
         commit="53fae1237c88f9a6e60393dc6e4781555786b659",
         when="@2.48:2.50",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -190,6 +210,7 @@ class Mapl(CMakePackage):
         tag="v3.46.0",
         commit="00bfd6ce4d7d8152433b2b1ad2cbb6d6f6c7066a",
         when="@2.47",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -197,6 +218,7 @@ class Mapl(CMakePackage):
         tag="v3.45.2",
         commit="0f40e433189902d30af15fc92ace18dbf950d273",
         when="@2.45:2.46",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -204,6 +226,7 @@ class Mapl(CMakePackage):
         tag="v3.40.0",
         commit="92e9910b1f70d6ea75e9f552fd672001b740b15b",
         when="@2.44",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -211,6 +234,7 @@ class Mapl(CMakePackage):
         tag="v3.36.0",
         commit="e69296a5955ccc08618673125fccda0d0ca979ea",
         when="@2.42.0:2.43",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -218,6 +242,7 @@ class Mapl(CMakePackage):
         tag="v3.31.0",
         commit="7dc4c819dc5169e6b887374aa0fa0a8f71846832",
         when="@2.40.0:2.41",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -225,6 +250,7 @@ class Mapl(CMakePackage):
         tag="v3.28.0",
         commit="cb919eaea9489a2852d830a1eebf45b3c6acd223",
         when="@2.36.0:2.39",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -232,6 +258,7 @@ class Mapl(CMakePackage):
         tag="v3.24.0",
         commit="5664d95fddff4afd01a2d7388a8bd99123d65e7d",
         when="@2.34.0:2.35",
+        placement="ESMA_cmake",
     )
     resource(
         name="esma_cmake",
@@ -239,6 +266,7 @@ class Mapl(CMakePackage):
         tag="v3.21.0",
         commit="6df72eb873659eb55bc119f320a6e6e7bd23f5b1",
         when="@2.22.0:2.33",
+        placement="ESMA_cmake",
     )
 
     # MAPL only compiles with MPICH from version 2.42.0 and higher so we conflict
@@ -306,7 +334,8 @@ class Mapl(CMakePackage):
     depends_on("udunits", when="@2.48:")
 
     # gFTL dependency
-    depends_on("gftl@1.15.2:", when="@2.55:")
+    depends_on("gftl@1.16.0:", when="@2.63:")
+    depends_on("gftl@1.15.2:", when="@2.55:2.62")
     depends_on("gftl@1.14.0:", when="@2.48:2.54")
     depends_on("gftl@1.13.0:", when="@2.45:2.47")
     depends_on("gftl@1.11.0:", when="@2.44")
@@ -314,7 +343,8 @@ class Mapl(CMakePackage):
     depends_on("gftl@1.5.5:1.9", when="@:2.39")
 
     # gFTL-Shared dependency
-    depends_on("gftl-shared@1.10.0:", when="@2.55:")
+    depends_on("gftl-shared@1.11.0:", when="@2.63:")
+    depends_on("gftl-shared@1.10.0:", when="@2.55:2.62")
     depends_on("gftl-shared@1.9.0:", when="@2.48:2.54")
     depends_on("gftl-shared@1.8.0:", when="@2.45:2.47")
     depends_on("gftl-shared@1.7.0:", when="@2.44")
@@ -329,7 +359,8 @@ class Mapl(CMakePackage):
     depends_on("yafyaml@1.0-beta5", when="@:2.22+extdata2g")
 
     # pflogger dependency
-    depends_on("pflogger@1.16.1: +mpi", when="@2.55:+pflogger")
+    depends_on("pflogger@1.17.0: +mpi", when="@2.63:+pflogger")
+    depends_on("pflogger@1.16.1: +mpi", when="@2.55:2.62+pflogger")
     depends_on("pflogger@1.15.0: +mpi", when="@2.48:2.54+pflogger")
     depends_on("pflogger@1.14.0: +mpi", when="@2.45:2.47+pflogger")
     depends_on("pflogger@1.11.0: +mpi", when="@2.44+pflogger")
@@ -338,7 +369,8 @@ class Mapl(CMakePackage):
     depends_on("pflogger@:1.6 +mpi", when="@:2.22+pflogger")
 
     # fargparse dependency
-    depends_on("fargparse@1.9.0:", when="@2.55:+fargparse")
+    depends_on("fargparse@1.10.0:", when="@2.63:+fargparse")
+    depends_on("fargparse@1.9.0:", when="@2.55:2.62+fargparse")
     depends_on("fargparse@1.8.0:", when="@2.48:2.54+fargparse")
     depends_on("fargparse@1.7.0:", when="@2.45:2.47+fargparse")
     depends_on("fargparse@1.6.0:", when="@2.44+fargparse")
@@ -346,7 +378,8 @@ class Mapl(CMakePackage):
     depends_on("fargparse@1.4.1:1.4", when="@:2.39+fargparse")
 
     # pfunit dependency
-    depends_on("pfunit@4.11.1: +mpi +fhamcrest", when="@2.55:+pfunit")
+    depends_on("pfunit@4.13.0: +mpi +fhamcrest", when="@2.63:+pfunit")
+    depends_on("pfunit@4.11.1: +mpi +fhamcrest", when="@2.55:2.62+pfunit")
     depends_on("pfunit@4.10: +mpi +fhamcrest", when="@2.48:2.54+pfunit")
     depends_on("pfunit@4.9: +mpi +fhamcrest", when="@2.45:2.47+pfunit")
     depends_on("pfunit@4.8: +mpi +fhamcrest", when="@2.44+pfunit")
