@@ -5,6 +5,7 @@
 import itertools
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -60,11 +61,7 @@ class Rocwmma(CMakePackage):
     version("5.7.1", sha256="a998a1385e6ad7062707ddb9ff82bef727ca48c39a10b4d861667024e3ffd2a3")
     version("5.7.0", sha256="a8f1b090e9e504a149a924c80cfb6aca817359b43833a6512ba32e178245526f")
 
-    # gfx908:xnack-;gfx90a:xnack-;gfx90a:xnack+
-    # are only targets currently supported for @5.2.0
-    # releases
-
-    amdgpu_targets = ("gfx908:xnack-", "gfx90a", "gfx90a:xnack-", "gfx90a:xnack+")
+    amdgpu_targets = ROCmPackage.amdgpu_targets
     variant(
         "amdgpu_target",
         description="AMD GPU architecture",
@@ -147,6 +144,7 @@ class Rocwmma(CMakePackage):
 
     patch("0001-add-rocm-smi-lib-path-for-building-tests.patch", when="@:6.3")
     patch("0002-use-find-package-rocm-smi.patch", when="@6.4")
+    patch("0004-add-rocm-smi-link-dir.patch", when="@7.2")
 
     @property
     def root_cmakelists_dir(self):
@@ -181,5 +179,4 @@ class Rocwmma(CMakePackage):
                 args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
             else:
                 args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
-
         return args

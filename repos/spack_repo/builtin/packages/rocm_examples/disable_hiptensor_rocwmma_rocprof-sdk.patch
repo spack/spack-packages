@@ -19,5 +19,5 @@ index 8e94f20..cff7bc8 100644
      add_subdirectory(rocSPARSE)
      add_subdirectory(rocThrust)
 -    add_subdirectory(rocWMMA)
-+    # add_subdirectory(rocWMMA)
++    add_subdirectory(rocWMMA)
  endif()

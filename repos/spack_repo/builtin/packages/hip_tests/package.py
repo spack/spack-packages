@@ -219,7 +219,13 @@ class HipTests(CMakePackage):
 
         if self.spec.satisfies("@6.2:"):
             sample_test_binaries.append("2_Cookbook/22_cmake_hip_lang/square2")
-        test_dir = join_path(self.test_suite.current_test_cache_dir, "samples")
+
+        if self.spec.satisfies("@7.2:"):
+            hip_tests_dir = "projects/hip-tests/"
+        else:
+            hip_tests_dir = ""
+
+        test_dir = join_path(self.test_suite.current_test_cache_dir, hip_tests_dir, "samples")
         prefix_paths = ";".join(get_cmake_prefix_path(self))
         clang_cpp_path = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang++")
         clang_path = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang")

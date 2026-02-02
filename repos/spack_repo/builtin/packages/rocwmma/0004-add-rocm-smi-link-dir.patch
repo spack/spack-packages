@@ -1,0 +1,12 @@
+diff --git a/projects/rocwmma/CMakeLists.txt b/projects/rocwmma/CMakeLists.txt
+index be44651..911bd72 100644
+--- a/projects/rocwmma/CMakeLists.txt
++++ b/projects/rocwmma/CMakeLists.txt
+@@ -166,6 +166,7 @@ endif()
+ 
+ add_library(rocwmma INTERFACE)
+ target_link_libraries(rocwmma INTERFACE hip::device hip::host OpenMP::OpenMP_CXX ${ROCM_SMI_LIBRARY})
++target_link_directories(rocwmma INTERFACE ${ROCM_SMI_LIB_DIR})
+ 
+ rocm_install_targets(
+   TARGETS rocwmma
