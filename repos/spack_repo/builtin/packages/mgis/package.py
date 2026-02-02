@@ -145,14 +145,6 @@ class Mgis(CMakePackage):
 
     extends("python", when="+python")
 
-    def check(self):
-        """skip target 'test' which doesn't build the test programs used by tests"""
-        with working_dir(self.build_directory):
-            if self.generator == "Unix Makefiles":
-                self._if_make_target_execute("check")
-            elif self.generator == "Ninja":
-                self._if_ninja_target_execute("check")
-
     def cmake_args(self):
         args = []
 
@@ -188,3 +180,15 @@ class Mgis(CMakePackage):
             args.append("-DBOOST_ROOT={0}".format(self.spec["boost"].prefix))
 
         return args
+
+    def check(self):
+        """skip target 'test' which doesn't build the test programs used by tests"""
+        with working_dir(self.build_directory):
+            if self.generator == "Unix Makefiles":
+                self._if_make_target_execute("check")
+            elif self.generator == "Ninja":
+                self._if_ninja_target_execute("check")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Requested by some users whose build system do not rely on RPATH
+        env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
