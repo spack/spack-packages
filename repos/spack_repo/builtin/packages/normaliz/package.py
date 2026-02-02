@@ -23,6 +23,8 @@ class Normaliz(AutotoolsPackage):
 
     license("GPL-3.0-or-later", checked_by="d-torrance")
 
+    version("3.11.1", sha256="9a00d590f0fdcad847e2189696d2842d97ed896ed36c22421874a364047f76e8")
+    version("3.11.0", sha256="14441981afce3546c1c0f12b490714da3564af7a60d12ac0a494f9d2382d1a01")
     version("3.10.5", sha256="58492cfbfebb2ee5702969a03c3c73a2cebcbca2262823416ca36e7b77356a44")
 
     depends_on("c", type="build")
