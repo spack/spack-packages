@@ -78,6 +78,8 @@ class HipTests(CMakePackage):
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
+    patch("0001_link_numa.patch", when="@7.2")
+
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@7.2:"):
@@ -153,6 +155,10 @@ class HipTests(CMakePackage):
         ]
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
+        if self.spec.satisfies("@7.2:"):
+            args.append(
+                self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/projects/hip-tests/catch/perftests/memory")
+            )
         return args
 
     def build(self, spec, prefix):

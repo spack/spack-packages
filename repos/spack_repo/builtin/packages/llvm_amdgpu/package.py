@@ -208,13 +208,27 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             when=f"@{d_version}",
         )
 
-    resource(
-        name="rocm-systems",
-        placement="rocm-systems",
-        git="https://github.com/ROCm/rocm-systems/",
-        branch="release/rocm-rel-7.2",
-        when="@7.2",
-    )
+    for d_version, d_shasum in [
+        ("7.2.0", "728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    ]:
+        resource(
+            name="rocm-systems",
+            placement="rocm-systems",
+            url=f"https://github.com/ROCm/rocm-systems/archive/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
+        ("7.2.0", "b003b608df470d88ad0a636581e134b05b8aee586b0332c545280e6c6366d121")
+    ]:
+        resource(
+            name="spirv-llvm-translator",
+            placement="llvm/projects/spirv-llvm-translator",
+            url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            when=f"@{d_version}",
+        )
 
     for d_version, d_shasum in [
         ("6.0.2", "737b110d9402509db200ee413fb139a78369cf517453395b96bda52d0aa362b9"),
@@ -356,6 +370,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"))
             args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES=openmp")
             args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON")
+            spirv_dir = os.path.join(self.stage.source_path, "llvm/projects/spirv-llvm-translator")
+            args.append(self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir))
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
         return args
