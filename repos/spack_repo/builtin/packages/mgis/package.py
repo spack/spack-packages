@@ -82,7 +82,7 @@ class Mgis(CMakePackage):
     variant("python", default=True, description="Enables python bindings")
     variant("static", default=False, description="Enables static libraries")
 
-    with when("@3.1:,rliv-3.1:"):
+    with when("@3.1:,rliv-3.1"):
         variant("openmp", default=False, description="Enables openmp support")
         variant("mgis-function", default=True, description="Enables MGIS/Function")
         variant(

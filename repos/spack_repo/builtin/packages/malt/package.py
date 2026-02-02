@@ -22,6 +22,7 @@ class Malt(CMakePackage):
     license("CECILL-C")
 
     # Versions XZ
+    version("1.6.0", sha256="61a4a9f0c61057eb91ef4bca9f461469c2a8a57010c2e5011b321fcc8632fc73")
     version("1.5.0", sha256="da41f80855578d219079b8f0a7b333085706129e8310d8ad3f9c5b5721839bbc")
 
     # Version BZ2

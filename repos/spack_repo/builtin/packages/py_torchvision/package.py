@@ -20,6 +20,7 @@ class PyTorchvision(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.25.0", sha256="a7ac1b3ab489d71f6e27edfad1e27616e4b8a9b1517e60fce4a950600d3510e8")
     version("0.24.1", sha256="071da2078600bfec4886efab77358c9329abfedcf1488b05879b556cb9b84ba7")
     version("0.24.0", sha256="f799cdd1d67a3edbcdc6af8fb416fe1b019b512fb426c0314302cd81518a0095")
     version("0.23.0", sha256="db5a91569e5eb4a3b02e9eaad6080335f5ae3824890a697f5618541999f04027")
@@ -82,6 +83,7 @@ class PyTorchvision(PythonPackage):
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.10.0", when="@0.25.0")
         depends_on("py-torch@2.9.1", when="@0.24.1")
         depends_on("py-torch@2.9.0", when="@0.24.0")
         depends_on("py-torch@2.8.0", when="@0.23.0")
@@ -147,6 +149,8 @@ class PyTorchvision(PythonPackage):
     depends_on("py-six", when="@:0.5", type=("build", "run"))
     depends_on("py-typing-extensions", when="@0.12:0.14", type=("build", "run"))
 
+    # https://github.com/pytorch/vision/issues/9307
+    conflicts("^python@3.14.1")
     # https://github.com/pytorch/vision/pull/5898
     conflicts("^pil@10:", when="@:0.12")
     # https://github.com/pytorch/vision/issues/4146
