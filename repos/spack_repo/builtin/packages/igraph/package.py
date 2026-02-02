@@ -30,15 +30,21 @@ class Igraph(CMakePackage, AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    
+    # Not strictly a requirement. igraph does check for it in CMakeLists.txt
+    depends_on("python", type="build")
 
-    with when("build_system=cmake"):
-        depends_on("arpack-ng")
-        depends_on("blas")
-        depends_on("glpk+gmp@4.57:")
-        depends_on("gmp")
-        depends_on("lapack")
+    # with when("build_system=cmake"):
+    depends_on("arpack-ng")
+    depends_on("blas")
+    depends_on("glpk+gmp@4.57:")
+    depends_on("gmp")
+    
+    # igraph needs blas and lapack
+    depends_on("openblas")
 
-    depends_on("libxml2")
+    depends_on("libxml2 +shared")
+    patch("fix_libxml2.patch", when="@0.10.0:0.10.8 ^libxml2@2.12:")
 
     def cmake_args(self):
         args = [
