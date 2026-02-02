@@ -33,7 +33,7 @@ class PyHdf5plugin(PythonPackage):
 
     maintainers("Markus92")
 
-    license("UNKNOWN", checked_by="github_user1")
+    license("MIT", checked_by="Markus92")
 
     version("6.0.0", sha256="847ed9e96b451367a110f0ba64a3b260d38d64bbf3f25751858d3b56e094cfe0")
 
