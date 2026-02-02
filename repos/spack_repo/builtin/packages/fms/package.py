@@ -103,11 +103,20 @@ class Fms(CMakePackage):
     # and allow back specified precision variants for 2026.0x and later.
     # variant(
     # "precision",
-    # values=any_combination_of("32", "64").with_default("none"),
-    # description="Build a version of the library with mixed precision ('none'), or 32 and/or 64 bit reals",
+    # values=any_combination_of("32", "64", "mixed").with_default("mixed"),
+    # description="Build a version of the library with mixed precision ('mixed' or 'none'), or 32 and/or 64 bit reals",
     # when="@2026.0x:",
     # )
 
+    variant(
+        "precision",
+        values=("mixed",),
+        description="Build a version of the library with mixed precision (both 32 and 64 bit reals). "
+        "NOTE: This is the only supported precision variant for FMS versions 2025.04 to 2026.01",
+        default="mixed",
+        multi=True,
+        when="@2025.04:2026.01",
+    )
     # NOTE: For FMS 2025.04 to 2026.01, only mixed precision ('none') is supported.
     # Since a single variant is no variant, we do not have a precision variant for these versions.
     variant(
