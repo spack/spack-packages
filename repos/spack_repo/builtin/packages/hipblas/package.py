@@ -205,9 +205,19 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         if self.spec.satisfies("@6.1:") and self.run_tests:
             args.append(self.define("LINK_BLIS", "OFF"))
         if self.spec.satisfies("@7.2:") and self.run_tests:
-            args.append(self.define("BLAS_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/libcblas.so"))
-            args.append(self.define("LAPACK_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/liblapack.so"))
-            args.append(self.define("CBLAS_INCLUDE_DIRS", self.spec["netlib-lapack"].prefix.include))
+            args.append(
+                self.define(
+                    "BLAS_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/libcblas.so"
+                )
+            )
+            args.append(
+                self.define(
+                    "LAPACK_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/liblapack.so"
+                )
+            )
+            args.append(
+                self.define("CBLAS_INCLUDE_DIRS", self.spec["netlib-lapack"].prefix.include)
+            )
         return args
 
     def check(self):

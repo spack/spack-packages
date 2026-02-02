@@ -157,7 +157,10 @@ class HipTests(CMakePackage):
             args.append(self.define("__skip_rocmclang", "ON"))
         if self.spec.satisfies("@7.2:"):
             args.append(
-                self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/projects/hip-tests/catch/perftests/memory")
+                self.define(
+                    "CMAKE_MODULE_PATH",
+                    f"{self.stage.source_path}/projects/hip-tests/catch/perftests/memory",
+                )
             )
         return args
 
