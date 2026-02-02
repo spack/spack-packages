@@ -135,6 +135,7 @@ class Pythia6(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
+    depends_on("patch", type="build")
 
     def patch(self):
         # Use our provided CMakeLists.txt. The Makefile provided with
