@@ -27,7 +27,7 @@ class Libleidenalg(CMakePackage):
 
     # Cherry-pick Patch for wrong includes
     patch(
-        "https://github.com/vtraag/libleidenalg/commit/cfee16027c47318a849deafbead412afd265feb0.patch",
+        "https://github.com/vtraag/libleidenalg/commit/cfee16027c47318a849deafbead412afd265feb0.patch?full_index=1",
         sha256="f4cb80b7e56502825981768919db8c25238552372d9f414ccaa393c437954bdf",
         when="@:0.10",
     )
