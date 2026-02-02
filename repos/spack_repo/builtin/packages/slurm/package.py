@@ -172,7 +172,7 @@ class Slurm(AutotoolsPackage):
             args.append(f"--with-rsmi={spec['rocm-smi-lib'].prefix}")
 
         if spec.satisfies("+multiple_slurmd"):
-            args.append(f"--enable-multiple-slurmd")
+            args.append("--enable-multiple-slurmd")
 
         sysconfdir = spec.variants["sysconfdir"].value
         if sysconfdir != "PREFIX/etc":
