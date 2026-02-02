@@ -202,6 +202,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     variant(
         "profiled", default=False, description="Use Profile Guided Optimization", when="+bootstrap"
     )
+    variant("libsanitizer", default=True, description="Use libsanitizer")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -895,6 +896,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             options.extend(["--enable-bootstrap"])
         else:
             options.extend(["--disable-bootstrap"])
+
+        # enable_libsanitizer
+        if spec.satisfies("+libsanitizer"):
+            options.extend(["--enable-libsanitizer"])
+        else:
+            options.extend(["--disable-libsanitizer"])
 
         # Configure include and lib directories explicitly for these
         # dependencies since the short GCC option assumes that libraries
