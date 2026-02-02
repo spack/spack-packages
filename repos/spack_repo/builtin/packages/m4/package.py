@@ -58,6 +58,18 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
     depends_on("diffutils", type="build")
     depends_on("libsigsegv", when="+sigsegv")
 
+    # Older versions require too many patches for newer compilers
+    with when("@:1.4.18"):
+        conflicts("%gcc@14:", msg="This version is incompatible with gcc@14:")
+        conflicts("%clang@16:", msg="This version is incompatible with clang@16")
+
+    # Fix c++17 '[[nodiscard]]' attribute ordering (fixed in 1.4.20)
+    patch(
+        "nodiscard.patch",
+        when="@1.4.19",
+        sha256="5c4071ae35e6ecf7f683ad714558a0030f21cc2b0673dde2ca6ca753cd0dbb2e",
+    )
+
     build_directory = "spack-build"
 
     tags = ["build-tools"]
@@ -115,6 +127,10 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
 
         if spec.satisfies("%intel@:18"):
             args.append("CFLAGS=-no-gcc")
+
+        # Use C11 std to ensure two-arg static_assert (no C23 for Intel Classic)
+        if spec.satisfies("@1.4.10: %intel"):
+            args.append("CFLAGS=-std=c11")
 
         if "+sigsegv" in spec:
             args.append("--with-libsigsegv-prefix={0}".format(spec["libsigsegv"].prefix))

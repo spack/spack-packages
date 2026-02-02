@@ -65,36 +65,46 @@ class Vtk(CMakePackage):
     depends_on("pkgconfig", type="build", when="platform=linux")
 
     # VTK7 defaults to OpenGL2 rendering backend
-    variant("opengl2", default=True, description="Enable OpenGL2 backend")
+    variant("opengl2", default=True, description="Enable OpenGL2 backend", when="@:9.4")
     variant("python", default=False, description="Enable Python support", when="@9.0.2:")
     variant("qt", default=False, description="Build with support for Qt")
-    variant("xdmf", default=False, description="Build XDMF file support")
-    variant("ffmpeg", default=False, description="Build with FFMPEG support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("examples", default=False, description="Enable building & installing the VTK examples")
     variant("versioned_install", default=True, description="Include version in library filenames")
+    variant("shared", default=True, description="Builds a shared version of the library")
+    variant("kits", default=False, description="Use module kits")
+
+    variant(
+        "io",
+        values=any_combination_of(
+            "adios2", "cgns", "exodusii", "ffmpeg", "fides", "ioss", "netcdf", "xdmf"
+        ).with_default("cgns,exodusii,ioss,netcdf"),
+        description="Enable IO modules",
+    )
+    requires("io=adios2", when="io=fides")
+
+    variant(
+        "raytracing",
+        values=any_combination_of("ospray").with_default("none"),
+        description="Enable raytracing support",
+    )
+    variant("advanced_debug", default=False, description="Enable the VTK_DEBUG_LEAKS flag")
 
     patch("gcc.patch", when="@6.1.0")
 
     # Fix missing standard includes that lead to build errors on newer compilers
     # Patch for <limits>
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c.diff",
-        when="@9:9.0",
-        sha256="0546696bd02f3a99fccb9b7c49533377bf8179df16d901cefe5abf251173716d",
-    )
+    # https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c
+    patch("vtk_9_include_missing_limits.patch", when="@9:9.0")
     # Patch for <cstdint>
     # See https://gitlab.kitware.com/vtk/vtk/-/issues/18782
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
-        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
-        when="@9.1:9.2",
-    )
+
+    patch("vtk_9_1_2_improve_cstdint_includes.patch", when="@9.1:9.2")
 
     # Patch for paraview 5.10: +hdf5 ^hdf5@1.13.2:
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9690
     # patch seems to effectively been added to vtk@9.2.3 (e81a2fe)
-    patch("xdmf2-hdf51.13.2.patch", when="@9:9.2.2 +xdmf")
+    patch("xdmf2-hdf51.13.2.patch", when="@9:9.2.2 io=xdmf")
 
     # We cannot build with both osmesa and qt in spack
     conflicts("^osmesa", when="+qt")
@@ -160,6 +170,15 @@ class Vtk(CMakePackage):
     # a patch with the same name is also applied to paraview
     # the two patches are the same but for the path to the files they patch
     patch("vtk_alias_hdf5.patch", when="@9:")
+    # VTK 9.5 adds linkage to inonit when using an external IOSS
+    # backport that to 9.4
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/12279
+    patch("vtk_9.4_external_ioss_linkage.patch", when="@9.4")
+    # Linking against an external gl2ps causes linker errors due to a lack of
+    # glgetdoublev on macos. Vtk provides an alias for this, us it
+    # Upstream issue: https://gitlab.kitware.com/vtk/vtk/-/issues/19561
+    patch("vtk-alias-gldoublev.patch", when="platform=darwin @9.4:")
+
     # VTK 9.0 on Windows uses dll instead of lib for hdf5-hl target, which fails linking. Can't
     # be fixed by bumping CMake lower bound, because VTK vendors FindHDF5.cmake. Various other
     # patches to FindHDF5.cmake are missing, so add conflict instead of a series of patches.
@@ -169,22 +188,25 @@ class Vtk(CMakePackage):
     # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
     depends_on("qt+opengl", when="+qt")
 
-    depends_on("boost", when="+xdmf")
-    depends_on("boost+mpi", when="+xdmf +mpi")
+    depends_on("boost", when="io=xdmf")
+    depends_on("boost+mpi", when="io=xdmf +mpi")
 
     # TODO: replace this with an explicit list of components of Boost,
     # for instance depends_on('boost +filesystem')
     # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="+xdmf")
-    depends_on("ffmpeg", when="+ffmpeg")
+    depends_on(Boost.with_default_variants, when="io=xdmf")
+    depends_on("ffmpeg", when="io=ffmpeg")
     depends_on("mpi", when="+mpi")
 
+    depends_on("adios2+mpi", when="io=adios2 +mpi")
+    depends_on("adios2~mpi", when="io=adios2 ~mpi")
     depends_on("expat")
     # See <https://gitlab.kitware.com/vtk/vtk/-/issues/18033> for why vtk doesn't
     # work yet with freetype 2.10.3 (including possible patches)
     depends_on("freetype @:2.10.2", when="@:9.0.1")
     depends_on("freetype")
     depends_on("glew")
+    depends_on("hdf5+hl")
     depends_on("hdf5~mpi", when="~mpi")
     depends_on("hdf5+mpi", when="+mpi")
     depends_on("hdf5@1.8:", when="@8:9.0")
@@ -193,13 +215,14 @@ class Vtk(CMakePackage):
     depends_on("jsoncpp")
     depends_on("libxml2")
     depends_on("lz4")
-    depends_on("netcdf-c~mpi", when="~mpi")
-    depends_on("netcdf-c+mpi", when="+mpi")
-    depends_on("netcdf-cxx4", when="@:8.1.2")
+    depends_on("netcdf-c@:4.9.2", when="io=exodusii")
+    depends_on("netcdf-c@:4.9.2~mpi", when="io=netcdf ~mpi")
+    depends_on("netcdf-c@:4.9.2+mpi", when="io=netcdf +mpi")
+    depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("zlib-api")
-    depends_on("eigen", when="@8.2.0:")
+    depends_on("eigen@:3", when="@8.2.0:")
     depends_on("double-conversion", when="@8.2.0:")
     depends_on("sqlite", when="@8.2.0:")
     depends_on("pugixml", when="@8.3.0:")
@@ -211,11 +234,14 @@ class Vtk(CMakePackage):
     # "8.2.1a" uses an internal proj so this special cases 8.2.1a
     depends_on("proj@4:7", when="@:8.2.0, 9:9.1")
     depends_on("proj@8:", when="@9.2:")
-    depends_on("cgns@4.1.1:+mpi", when="@9.1: +mpi")
-    depends_on("cgns@4.1.1:~mpi", when="@9.1: ~mpi")
+    depends_on("cgns@4.1.1:+mpi", when="@9.1: io=cgns +mpi")
+    depends_on("cgns@4.1.1:~mpi", when="@9.1: io=cgns ~mpi")
+    depends_on("ospray@2.1:2", when="raytracing=ospray")
+    depends_on("openimagedenoise", when="raytracing=ospray")
+    depends_on("ospray +mpi", when="raytracing=ospray +mpi")
 
     # VTK introduced Seacas IOSS dependency on 9.1
-    with when("@9.1:"):
+    with when("@9.1: io=ioss"):
         depends_on("seacas+mpi", when="+mpi")
         depends_on("seacas~mpi", when="~mpi")
         depends_on("seacas@2021-05-12:2022-10-14", when="@9.1")
@@ -231,31 +257,15 @@ class Vtk(CMakePackage):
     # Freetype@2.10.3 no longer exports FT_CALLBACK_DEF, this
     # patch replaces FT_CALLBACK_DEF with simple extern "C"
     # See https://gitlab.kitware.com/vtk/vtk/-/issues/18033
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/uploads/c6fa799a1a028b8f8a728a40d26d3fec/vtk-freetype-2.10.3-replace-FT_CALLBACK_DEF.patch",
-        sha256="eefda851f844e8a1dfb4ebd8a9ff92d2b78efc57f205774052c5f4c049cc886a",
-        when="@:9.0.1 ^freetype@2.10.3:",
-    )
+    patch("vtk_freetype_2.10.3_replace_FT_CALLBACK_DEF.patch", when="@:9.0.1 ^freetype@2.10.3:")
 
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/5a1c96e12e9b4a660d326be3bed115a2ceadb573.diff",
-        sha256="c446a90459b108082db5b28d9aeda99d030e636325e01929beba062cafb16b76",
-        when="@9.1",
-    )
+    patch("vtk_module_skip_argless_target_calls.patch", when="@9.1")
 
     # SEACAS >= 2024-06-27 needs c++17 which is already required in VTK master.
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/00afe3ae0def6c2d0a6f7cb497c8d55874127820.diff",
-        sha256="1e5fb55b14ba6455a1891d27aa4a0506f47e3155014af06f97633ae1ef6e9cc2",
-        when="@9.4",
-    )
+    patch("vtk_minimum_version_cpp_17.patch", when="@9.4")
 
     # Needed to build VTK with external SEACAS.
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/e98526813691e527fff7d5df6a1641ae36c0cf4f.diff",
-        sha256="174930dde06828ead84c68b1a192202766f6297a60f0c54eef6cab2605a466ef",
-        when="@9.4",
-    )
+    patch("vtk_ioss_transform_2d_elem_block_to_3d.patch", when="@9.4")
 
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
     #  incorrect member accesses fixed in 9.4
@@ -269,21 +279,20 @@ class Vtk(CMakePackage):
     patch("vtk_clang19_size_t.patch", when="@9.2:9.4.2")
 
     def patch(self):
-        if self.spec.satisfies("@9.2:"):
+        if self.spec.satisfies("@9.2: io=ioss"):
             # provide definition for Ioss::Init::Initializer::Initializer(),
             # required on macOS, as "-undefined error" is the default,
             # but not on Linux, as undefined symbols are tolerated
             filter_file("TARGETS Ioss", "TARGETS Ioss Ionit", "ThirdParty/ioss/CMakeLists.txt")
 
-        if self.spec.satisfies("@9.4:"):
+        if self.spec.satisfies("@9.4: io=ioss"):
             # Needed to build VTK with external SEACAS >= 2022-10-14
             filter_file(
                 "^.*USE_VARIABLES SEACASIoss_INCLUDE_DIRS.*$", "", "ThirdParty/ioss/CMakeLists.txt"
             )
 
     def url_for_version(self, version):
-        url = "http://www.vtk.org/files/release/{0}/VTK-{1}.tar.gz"
-        return url.format(version.up_to(2), version)
+        return f"http://www.vtk.org/files/release/{version.up_to(2)}/VTK-{version}.tar.gz"
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # VTK has some trouble finding freetype unless it is set in
@@ -291,28 +300,68 @@ class Vtk(CMakePackage):
         env.set("FREETYPE_DIR", self.spec["freetype"].prefix)
 
         # Force API compatibility with HDF5
-        if "+hdf5" in self.spec:
-            if "@9.1:" in self.spec:
-                env.append_flags("CFLAGS", "-DH5_USE_110_API")
-                env.append_flags("CXXFLAGS", "-DH5_USE_110_API")
-            elif "@8:" in self.spec:
-                env.append_flags("CFLAGS", "-DH5_USE_18_API")
-                env.append_flags("CXXFLAGS", "-DH5_USE_18_API")
+        if self.spec.satisfies("@9.1:"):
+            env.append_flags("CFLAGS", "-DH5_USE_110_API")
+            env.append_flags("CXXFLAGS", "-DH5_USE_110_API")
+        elif self.spec.satisfies("@8:"):
+            env.append_flags("CFLAGS", "-DH5_USE_18_API")
+            env.append_flags("CXXFLAGS", "-DH5_USE_18_API")
 
     def cmake_args(self):
         spec = self.spec
 
-        opengl_ver = "OpenGL{0}".format("2" if "+opengl2" in spec else "")
-
         cmake_args = [
-            "-DBUILD_SHARED_LIBS=ON",
-            "-DVTK_RENDERING_BACKEND:STRING={0}".format(opengl_ver),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("VTK_ENABLE_KITS", "kits"),
             # prevents installation into lib64 which might not be in the path
             # (solves #26314)
             "-DCMAKE_INSTALL_LIBDIR:PATH=lib",
             # Allow downstream codes (e.g. VisIt) to override VTK's classes
             "-DVTK_ALL_NEW_OBJECT_FACTORY:BOOL=ON",
         ]
+
+        def module_variant(feature, on="YES", off="NO"):
+            """Ternary for spec variant to YES/NO string"""
+            if spec.satisfies(feature):
+                return on
+            return off
+
+        adios2_enabled = module_variant("io=adios2")
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IOADIOS2", adios2_enabled))
+
+        cgns_enabled = module_variant("io=cgns")
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_cgns", cgns_enabled))
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IOCGNSReader", cgns_enabled))
+
+        exodusii_enabled = module_variant("io=exodusii")
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_exodusII", exodusii_enabled))
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IOExodus", exodusii_enabled))
+
+        fides_enabled = module_variant("io=fides")
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_fides", fides_enabled))
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IOFides", fides_enabled))
+
+        ioss_enabled = module_variant("io=ioss")
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_ioss", ioss_enabled))
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IOIOSS", ioss_enabled))
+
+        netcdf_enabled = module_variant("io=netcdf")
+        cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_IONetCDF", netcdf_enabled))
+
+        # Needed by netcdf and exodusii io modules
+        cmake_args.append(
+            self.define("VTK_MODULE_ENABLE_VTK_netcdf", "YES" if "netcdf-c" in spec else "NO")
+        )
+
+        if spec.satisfies("+mpi"):
+            cmake_args.append(
+                self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
+            )
+
+        if spec.satisfies("raytracing=ospray"):
+            cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_RenderingRayTracing", "YES"))
+            cmake_args.append("-DVTK_ENABLE_OSPRAY:BOOL=ON")
+            cmake_args.append("-DVTKOSPRAY_ENABLE_DENOISER:BOOL=ON")
 
         # Version 8.2.1a using internal libproj/pugixml for compatability
         if spec.satisfies("@8.2.1a"):
@@ -340,7 +389,7 @@ class Vtk(CMakePackage):
                     "-DVTK_MODULE_USE_EXTERNAL_VTK_libharu:BOOL=OFF",
                     "-DVTK_MODULE_USE_EXTERNAL_VTK_pegtl:BOOL=OFF",
                     "-DVTK_MODULE_USE_EXTERNAL_VTK_token:BOOL=OFF",
-                    "-DHDF5_ROOT={0}".format(spec["hdf5"].prefix),
+                    f"-DHDF5_ROOT={spec['hdf5'].prefix}",
                 ]
             )
             if spec.satisfies("@9.1:"):
@@ -353,6 +402,8 @@ class Vtk(CMakePackage):
                 )
             if spec.satisfies("@9.2:"):
                 cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
+            if spec.satisfies("@9.5:"):
+                cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF")
 
         # Some variable names have changed
         if spec.satisfies("@8.2.0"):
@@ -361,7 +412,7 @@ class Vtk(CMakePackage):
             cmake_args.extend(
                 [
                     "-DVTK_USE_SYSTEM_LIBPROJ4:BOOL=OFF",
-                    "-DNETCDF_CXX_ROOT={0}".format(spec["netcdf-cxx"].prefix),
+                    f"-DNETCDF_CXX_ROOT={spec['netcdf-cxx'].prefix}",
                 ]
             )
 
@@ -373,7 +424,7 @@ class Vtk(CMakePackage):
         else:
             cmake_args.append("-DVTK_USE_MPI=OFF")
 
-        if "+ffmpeg" in spec:
+        if spec.satisfies("io=ffmpeg"):
             if spec.satisfies("@:8"):
                 cmake_args.append("-DModule_vtkIOFFMPEG:BOOL=ON")
             else:
@@ -403,8 +454,8 @@ class Vtk(CMakePackage):
             if spec.satisfies("@:8"):
                 cmake_args.extend(
                     [
-                        "-DVTK_QT_VERSION:STRING={0}".format(qt_ver),
-                        "-DQT_QMAKE_EXECUTABLE:PATH={0}".format(qmake_exe),
+                        f"-DVTK_QT_VERSION:STRING={qt_ver}",
+                        f"-DQT_QMAKE_EXECUTABLE:PATH={qmake_exe}",
                         "-DVTK_Group_Qt:BOOL=ON",
                     ]
                 )
@@ -436,7 +487,7 @@ class Vtk(CMakePackage):
                         ]
                     )
 
-        if "+xdmf" in spec:
+        if spec.satisfies("io=xdmf"):
             if spec.satisfies("^cmake@3.12:"):
                 # This policy exists only for CMake >= 3.12
                 cmake_args.extend(["-DCMAKE_POLICY_DEFAULT_CMP0074=NEW"])
@@ -447,9 +498,9 @@ class Vtk(CMakePackage):
                         # Enable XDMF Support here
                         "-DModule_vtkIOXdmf2:BOOL=ON",
                         "-DModule_vtkIOXdmf3:BOOL=ON",
-                        "-DBOOST_ROOT={0}".format(spec["boost"].prefix),
-                        "-DBOOST_LIBRARY_DIR={0}".format(spec["boost"].prefix.lib),
-                        "-DBOOST_INCLUDE_DIR={0}".format(spec["boost"].prefix.include),
+                        f"-DBOOST_ROOT={spec['boost'].prefix}",
+                        f"-DBOOST_LIBRARY_DIR={spec['boost'].prefix.lib}",
+                        f"-DBOOST_INCLUDE_DIR={spec['boost'].prefix.include}",
                         "-DBOOST_NO_SYSTEM_PATHS:BOOL=ON",
                         # This is needed because VTK has multiple FindBoost
                         # and they stick to system boost if there's a system boost
@@ -476,7 +527,9 @@ class Vtk(CMakePackage):
                 else:
                     cmake_args.append("-DVTK_MODULE_ENABLE_VTK_IOParallelXdmf3:STRING=YES")
 
-        cmake_args.append("-DVTK_RENDERING_BACKEND:STRING=" + opengl_ver)
+        if spec.satisfies("@:9.4"):
+            opengl_ver = "OpenGL2" if "+opengl2" in spec else "OpenGL"
+            cmake_args.append(self.define("VTK_RENDERING_BACKEND", opengl_ver))
 
         if spec.satisfies("^[virtuals=gl] osmesa"):
             cmake_args.extend(
@@ -508,13 +561,14 @@ class Vtk(CMakePackage):
             # NETCDF_CXX_ROOT to detect NetCDF C++ bindings, so
             # NETCDF_CXX_INCLUDE_DIR and NETCDF_CXX_LIBRARY must be
             # used instead to detect these bindings
-            netcdf_cxx_lib = spec["netcdf-cxx"].libs.joined()
-            cmake_args.extend(
-                [
-                    "-DNETCDF_CXX_INCLUDE_DIR={0}".format(spec["netcdf-cxx"].prefix.include),
-                    "-DNETCDF_CXX_LIBRARY={0}".format(netcdf_cxx_lib),
-                ]
-            )
+            if spec.satisfies("io=netcdf"):
+                netcdf_cxx_lib = spec["netcdf-cxx"].libs.joined()
+                cmake_args.extend(
+                    [
+                        f"NETCDF_CXX_INCLUDE_DIR={spec['netcdf-cxx'].prefix.include}",
+                        f"NETCDF_CXX_LIBRARY={netcdf_cxx_lib}",
+                    ]
+                )
 
             # Garbage collection is unsupported in Xcode starting with
             # version 5.1; if the Apple clang version of the compiler
@@ -541,16 +595,15 @@ class Vtk(CMakePackage):
         if compile_flags:
             compile_flags = " ".join(compile_flags)
             cmake_args.extend(
-                [
-                    "-DCMAKE_C_FLAGS={0}".format(compile_flags),
-                    "-DCMAKE_CXX_FLAGS={0}".format(compile_flags),
-                ]
+                [f"-DCMAKE_C_FLAGS={compile_flags}", f"-DCMAKE_CXX_FLAGS={compile_flags}"]
             )
         if spec.satisfies("@:8"):
             vtk_example_arg = "BUILD_EXAMPLES"
         else:
             vtk_example_arg = "VTK_BUILD_EXAMPLES"
         cmake_args.append(self.define_from_variant(f"{vtk_example_arg}", "examples"))
+
+        cmake_args.append(self.define_from_variant("VTK_DEBUG_LEAKS", "advanced_debug"))
 
         return cmake_args
 

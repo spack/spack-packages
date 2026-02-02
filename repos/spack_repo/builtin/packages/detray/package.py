@@ -21,6 +21,19 @@ class Detray(CMakePackage):
 
     license("MPL-2.0", checked_by="stephenswat")
 
+    version("0.109.2", sha256="512975a20524b24d3d84aa536b950bacba66aa1fee5213b2d92f35e8dd090ae4")
+    version("0.109.1", sha256="bb5f1285f5ca0c465f7ca13609348f849d57628dc7bfa5558b184cabc485f57e")
+    version("0.109.0", sha256="84e26928e17cf7c503920fe3502d38ad94684d9481fd11918a730df6eecc29fb")
+    version("0.108.0", sha256="e4ac45df0ae0dc9f10eb0d178a699afeb5e1b67834bed6017d57660fe4cd5f8a")
+    version("0.107.0", sha256="7764bfc27521965b28c28b65b5f099266b4ae355cd0f4a9944e47fea143dc35c")
+    version("0.106.0", sha256="9695430a1537e86c06b1423054dfd3b5ae717c9b84e1b233ae48fc3fd859b27a")
+    version("0.105.1", sha256="100f5954560426a14258a5debe1c1f25ae491611eec557d6733fa821889abbb7")
+    version("0.105.0", sha256="a2c5758420a1544a745e58cb2aa0eaac02cd4548a9a527b8b58d94759e5d38c7")
+    version("0.104.1", sha256="b75b3f2a27d4a03a69e66815b34ef2e7f6973919c8d9b1daff32d1135a28c0c6")
+    version("0.104.0", sha256="b11b98e32fbae972ae065d71ab70fcccfee1a83d7f71e611d4cfe2fce4bce6d8")
+    version("0.103.0", sha256="7b3d3c94cf42be7450e9fe008b567a2f425e6f1986b61d8a3a66814383599043")
+    version("0.102.0", sha256="534848b5d5d25c33dffd35a48cda04b24aea03c7c13d0c1240ad73ef06765368")
+    version("0.101.0", sha256="f13db54da9b888258ab73a963d5a4bc08b655cc4aef47935e486b7cbe43e0965")
     version("0.100.1", sha256="5e68986889ae083503b3506015c649a0dcf1eadbeec642bb7749ee91c9fca201")
     version("0.100.0", sha256="a34686403807db822dc71f2bc61b9d72e9837a525b22c0b86c6452bf9ec7b0e4")
     version("0.99.0", sha256="86baa957ec55e8eecb5a9dffe135b88265dd0f88f75bf0068c9068ea304c0fb5")
@@ -51,14 +64,31 @@ class Detray(CMakePackage):
     version("0.76.0", sha256="affa0e28ca96d168e377ba33642e0b626aacdc79f9436233f5561006018f9b9e")
     version("0.75.3", sha256="1249d7398d1e534bd36b6f5a7d06a5e67adf6adeb8bca188d7e35490a675de7a")
     version("0.75.2", sha256="249066c138eac4114032e8d558f3a05885140a809332a347c7667978dbff54ee")
-    version("0.74.2", sha256="9fd14cf1ec30477d33c530670e9fed86b07db083912fe51dac64bf2453b321e8")
-    version("0.73.0", sha256="f574016bc7515a34a675b577e93316e18cf753f1ab7581dcf1c8271a28cb7406")
-    version("0.72.1", sha256="6cc8d34bc0d801338e9ab142c4a9884d19d9c02555dbb56972fab86b98d0f75b")
-    version("0.71.0", sha256="2be2b3dac6f77aa8cea033eba841378dc3703ff93c99e4d05ea03df685e6d508")
-    version("0.70.0", sha256="14fa1d478d44d5d987caea6f4b365bce870aa8e140c21b802c527afa3a5db869")
-    version("0.69.1", sha256="7100ec86a47458a35f5943cd6c7da07c68b8c1c2f62d36d13b8bb50568d0abe5")
-    version("0.68.0", sha256="6d57835f22ced9243fbcc29b84ea4c01878a46bfa5910e320c933e9bf8e96612")
-    version("0.67.0", sha256="87b1b29f333c955ea6160f9dda89628490d85a9e5186c2f35f57b322bbe27e18")
+    with default_args(deprecated=True):
+        version(
+            "0.74.2", sha256="9fd14cf1ec30477d33c530670e9fed86b07db083912fe51dac64bf2453b321e8"
+        )
+        version(
+            "0.73.0", sha256="f574016bc7515a34a675b577e93316e18cf753f1ab7581dcf1c8271a28cb7406"
+        )
+        version(
+            "0.72.1", sha256="6cc8d34bc0d801338e9ab142c4a9884d19d9c02555dbb56972fab86b98d0f75b"
+        )
+        version(
+            "0.71.0", sha256="2be2b3dac6f77aa8cea033eba841378dc3703ff93c99e4d05ea03df685e6d508"
+        )
+        version(
+            "0.70.0", sha256="14fa1d478d44d5d987caea6f4b365bce870aa8e140c21b802c527afa3a5db869"
+        )
+        version(
+            "0.69.1", sha256="7100ec86a47458a35f5943cd6c7da07c68b8c1c2f62d36d13b8bb50568d0abe5"
+        )
+        version(
+            "0.68.0", sha256="6d57835f22ced9243fbcc29b84ea4c01878a46bfa5910e320c933e9bf8e96612"
+        )
+        version(
+            "0.67.0", sha256="87b1b29f333c955ea6160f9dda89628490d85a9e5186c2f35f57b322bbe27e18"
+        )
 
     variant("csv", default=True, description="Enable the CSV IO plugin")
     _cxxstd_values = (
@@ -89,7 +119,9 @@ class Detray(CMakePackage):
     depends_on("cmake@3.21:", type="build", when="@0.95:")
     depends_on("vecmem@1.6.0:")
     depends_on("vecmem@1.8.0:", when="@0.76:")
+    depends_on("vecmem@1.18.0:", when="@0.102:")
     depends_on("covfie@0.10.0:")
+    depends_on("covfie@0.15.3:", when="@0.102:")
     depends_on("nlohmann-json@3.11.0:", when="+json")
     depends_on("dfelibs@20211029:", when="@:0.88")
     depends_on("acts-algebra-plugins@0.18.0: +vecmem")
@@ -99,6 +131,7 @@ class Detray(CMakePackage):
     # The version number of algebra plugins was not correct before v0.28.0.
     depends_on("acts-algebra-plugins@0.28.0:", when="@0.87:")
     depends_on("acts-algebra-plugins@0.28.0: +vecmem", when="@0.95:")
+    depends_on("acts-algebra-plugins@0.30.0: +vecmem", when="@0.103:")
 
     # Detray imposes requirements on the C++ standard values used by Algebra
     # Plugins.

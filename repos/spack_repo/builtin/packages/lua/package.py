@@ -218,8 +218,11 @@ class Lua(LuaImplPackage):
     """The Lua programming language interpreter and library."""
 
     homepage = "https://www.lua.org"
-    url = "https://www.lua.org/ftp/lua-5.3.4.tar.gz"
+    url = "https://www.lua.org/ftp/lua-5.4.8.tar.gz"
 
+    license("MIT")
+
+    version("5.4.8", sha256="4f18ddae154e793e46eeab727c59ef1c0c0c2b744e7b94219710d76f530629ae")
     version("5.4.6", sha256="7d5ea1b9cb6aa0b59ca3dde1c6adcb57ef83a1ba8e5432c0ecd06bf439b3ad88")
     version("5.4.4", sha256="164c7849653b80ae67bec4b7473b884bf5cc8d2dca05653475ec2ed27b9ebf61")
     version("5.4.3", sha256="f8612276169e3bfcbcfb8f226195bfc6e466fe13042f1076cbde92b7ec96bbfb")
@@ -241,9 +244,6 @@ class Lua(LuaImplPackage):
     version("5.1.4", sha256="b038e225eaf2a5b57c9bcc35cd13aa8c6c8288ef493d52970c9545074098af3a")
     version("5.1.3", sha256="6b5df2edaa5e02bf1a2d85e1442b2e329493b30b0c0780f77199d24f087d296d")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
     variant("shared", default=True, description="Builds a shared version of the library")
 
     provides("lua-lang@5.1", when="@5.1:5.1.99")
@@ -251,6 +251,7 @@ class Lua(LuaImplPackage):
     provides("lua-lang@5.3", when="@5.3:5.3.99")
     provides("lua-lang@5.4", when="@5.4:5.4.99")
 
+    depends_on("c", type="build")
     depends_on("ncurses+termlib")
     depends_on("readline")
 
@@ -297,7 +298,7 @@ class Lua(LuaImplPackage):
                 for version_str in version_formats:
                     for joiner in ["", "-"]:
                         dest_path = "liblua{0}{1}.{2}".format(joiner, version_str, dso_suffix)
-                        os.symlink(src_path, dest_path)
+                        symlink(src_path, dest_path)
 
     @run_after("install")
     def generate_pkg_config(self):

@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import sys
 
-from spack_repo.builtin.build_systems import autotools, meson
+from spack_repo.builtin.build_systems import autotools, cmake, meson
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
@@ -12,7 +13,7 @@ from spack.package import *
 IS_WINDOWS = sys.platform == "win32"
 
 
-class Harfbuzz(MesonPackage, AutotoolsPackage):
+class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
     """The Harfbuzz package contains an OpenType text shaping engine."""
 
     homepage = "https://github.com/harfbuzz/harfbuzz"
@@ -20,13 +21,18 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     git = "https://github.com/harfbuzz/harfbuzz.git"
 
     build_system(
-        conditional("autotools", when="@:2.9"), conditional("meson", when="@3:"), default="meson"
+        conditional("autotools", when="@:2.9"),
+        conditional("meson", when="@3:"),
+        conditional("cmake", when="@10:"),
+        default="meson" if not IS_WINDOWS else "cmake",
     )
 
     # HarfBuzz is licensed under the so-called "Old MIT" license,
     # for which no SPDX identifier is listed at https://spdx.org/licenses/
     # Ref: https://github.com/harfbuzz/harfbuzz/blob/main/COPYING
     license("MIT-old", checked_by="wdconinc")
+
+    maintainers("AlexanderRichert-NOAA")
 
     version("11.5.1", sha256="972a60a8d274d49e70361da6920c3a73dfb0fb4387f6c6811906a47ba634d8a1")
     version("11.4.1", sha256="7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698")
@@ -59,6 +65,11 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
     version("3.3.2", sha256="1c13bca136c4f66658059853e2c1253f34c88f4b5c5aba6050aba7b5e0ce2503")
     version("3.2.0", sha256="0ada50a1c199bb6f70843ab893c55867743a443b84d087d54df08ad883ebc2cd")
     version("3.1.2", sha256="4056b1541dd8bbd8ec29207fe30e568805c0705515632d7fec53a94399bc7945")
+    version(
+        "2.9.1",
+        sha256="0edcc980f526a338452180e701d6aba6323aef457b6686976a7d17ccbddc51cf",
+        deprecated=True,
+    )
 
     variant("graphite2", default=False, description="enable support for graphite2 font engine")
     variant(
@@ -67,6 +78,26 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         when="platform=darwin",
         description="Enable CoreText shaper backend on macOS",
     )
+    variant("shared", default=True, when="build_system=cmake", description="Build shared harfbuzz")
+
+    with when("build_system=cmake"):
+        with when("platform=windows"):
+            variant(
+                "uniscribe",
+                default=False,
+                description="Enable Uniscribe shaper backend on Windows",
+            )
+            variant(
+                "directwrite",
+                default=False,
+                description="Enable directwrite shaper backend on Windows",
+            )
+            variant("gdi", default=False, description="Enable GDI integration helpers on Windows")
+        # CMake system dropped a number of source files
+        # they're correctly added as of 11.5
+        patch("harfbuzz_10_0_cmake_add_missing_table_sources.patch", when="@10:11.1")
+        patch("harfbuzz_11_2_cmake_add_missing_table_sources.patch", when="@11.2:11.3")
+        patch("harfbuzz_11_4_cmake_add_missing_table_sources.patch", when="@11.4")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -75,16 +106,20 @@ class Harfbuzz(MesonPackage, AutotoolsPackage):
         depends_on("meson@0.60:", when="@11.1:")
         depends_on("meson@0.55:", when="@3.2.1:")
         depends_on("meson@0.52:")
-
-        # As of 11.5.0 Harfbuzz made the decision to drop
-        # support for CMake build freetype
-        # backport the old support
-        patch(
-            "harfbuzz_11.5.0_support_cmake_freetype.patch", when="@5: ^freetype build_system=cmake"
-        )
+        # harfbuzz's Meson only supports autotools based
+        # freetype
+        depends_on("freetype build_system=autotools")
+        depends_on("cairo build_system=meson")
 
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
+            variant("gobject", default=False, description="Enable GObject introspection")
+            variant(
+                "utils",
+                default=False,
+                when="build_system=cmake",
+                description="Build harfbuzz utils",
+            )
             depends_on("pkgconfig", type="build")
             depends_on("glib")
             depends_on("gobject-introspection")
@@ -133,12 +168,14 @@ class MesonBuilder(meson.MesonBuilder, SetupEnvironment):
     def meson_args(self):
         graphite2 = "enabled" if self.pkg.spec.satisfies("+graphite2") else "disabled"
         coretext = "enabled" if self.pkg.spec.satisfies("+coretext") else "disabled"
+        introspection = "enabled" if self.pkg.spec.satisfies("+gobject") else "disabled"
         config_args = [
             # disable building of gtk-doc files following #9885 and #9771
             "-Ddocs=disabled",
             "-Dfreetype=enabled",
             f"-Dgraphite2={graphite2}",
             f"-Dcoretext={coretext}",
+            f"-Dintrospection={introspection}",
         ]
         if IS_WINDOWS:
             config_args.extend(["-Dcairo=disabled", "-Dglib=disabled"])
@@ -158,5 +195,28 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
         args.append(f"GTKDOC_REBASE={true}")
         args.extend(self.with_or_without("graphite2"))
         args.extend(self.with_or_without("coretext"))
+        args.extend(self.with_or_without("gobject"))
+
+        return args
+
+
+class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
+    def cmake_args(self):
+        use_gobject = self.spec.satisfies("+gobject")
+        args = [
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define("HB_HAVE_FREETYPE", True),
+            self.define("HB_HAVE_ICU", True),
+            self.define_from_variant("HB_HAVE_GRAPHITE2", "graphite2"),
+            self.define_from_variant("HB_HAVE_UNISCRIBE", "uniscribe"),
+            self.define_from_variant("HB_HAVE_GDI", "gdi"),
+            self.define_from_variant("HB_HAVE_DIRECTWRITE", "directwrite"),
+            self.define_from_variant("HB_HAVE_CORETEXT", "coretext"),
+            self.define("HB_HAVE_GLIB", use_gobject),
+            self.define("HB_HAVE_CAIRO", use_gobject),
+            self.define("HB_BUILD_UTILS", use_gobject and self.spec.satisfies("+utils")),
+            self.define("HB_HAVE_GOBJECT", use_gobject),
+            self.define("HB_HAVE_INTROSPECTION", use_gobject),
+        ]
 
         return args

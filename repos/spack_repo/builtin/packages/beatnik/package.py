@@ -35,14 +35,13 @@ class Beatnik(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
     with when("+cuda"):
         depends_on("mpich +cuda", when="^[virtuals=mpi] mpich")
-        depends_on("mvapich +cuda", when="^[virtuals=mpi] mvapich")
-        depends_on("mvapich2 +cuda", when="^[virtuals=mpi] mvapich2")
-        depends_on("mvapich2-gdr +cuda", when="^[virtuals=mpi] mvapich2-gdr")
+        depends_on("mvapich-plus +cuda", when="^[virtuals=mpi] mvapich-plus")
         depends_on("openmpi +cuda", when="^[virtuals=mpi] openmpi")
 
     with when("+rocm"):
         depends_on("mpich +rocm", when="^[virtuals=mpi] mpich")
-        depends_on("mvapich2-gdr +rocm", when="^[virtuals=mpi] mvapich2-gdr")
+        depends_on("mvapich-plus +rocm", when="^[virtuals=mpi] mvapich-plus")
+        depends_on("openmpi +rocm", when="^[virtuals=mpi] openmpi@5:")
 
     # Kokkos dependencies
     depends_on("kokkos @4:")

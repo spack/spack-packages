@@ -133,7 +133,7 @@ class Rstudio(CMakePackage):
         pandoc_dir = join_path(self.prefix.tools, "pandoc", self.spec["pandoc"].version)
         os.makedirs(pandoc_dir)
         with working_dir(pandoc_dir):
-            os.symlink(self.spec["pandoc"].prefix.bin.pandoc, "pandoc")
-            os.symlink(
+            symlink(self.spec["pandoc"].prefix.bin.pandoc, "pandoc")
+            symlink(
                 os.path.join(self.spec["pandoc"].prefix.bin, "pandoc-citeproc"), "pandoc-citeproc"
             )

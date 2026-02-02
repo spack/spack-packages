@@ -46,7 +46,7 @@ class Python(Package):
     list_depth = 1
     tags = ["windows", "build-tools"]
 
-    maintainers("adamjstewart", "skosukhin", "scheibelp")
+    maintainers("adamjstewart", "scheibelp")
 
     phases = ["configure", "build", "install"]
 
@@ -56,14 +56,23 @@ class Python(Package):
 
     license("0BSD")
 
-    version("3.13.7", sha256="6c9d80839cfa20024f34d9a6dd31ae2a9cd97ff5e980e969209746037a5153b2")
-    version("3.12.11", sha256="7b8d59af8216044d2313de8120bfc2cc00a9bd2e542f15795e1d616c51faf3d6")
-    version("3.11.13", sha256="0f1a22f4dfd34595a29cf69ee7ea73b9eff8b1cc89d7ab29b3ab0ec04179dad8")
-    version("3.10.18", sha256="1b19ab802518eb36a851f5ddef571862c7a31ece533109a99df6d5af0a1ceb99")
-    version("3.9.23", sha256="9a69aad184dc1d06f6819930741da3a328d34875a41f8ba33875774dbfc51b51")
+    version("3.14.2", sha256="c609e078adab90e2c6bacb6afafacd5eaf60cd94cf670f1e159565725fcd448d")
+    version("3.13.11", sha256="03cfedbe06ce21bc44ce09245e091a77f2fee9ec9be5c52069048a181300b202")
+    version("3.12.12", sha256="487c908ddf4097a1b9ba859f25fe46d22ccaabfb335880faac305ac62bffb79b")
+    version("3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182")
+    version("3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec")
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
+        version(
+            "3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851"
+        )
+        version(
+            "3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f"
+        )
+        version(
+            "3.13.7", sha256="6c9d80839cfa20024f34d9a6dd31ae2a9cd97ff5e980e969209746037a5153b2"
+        )
         version(
             "3.13.5", sha256="e6190f52699b534ee203d9f417bdbca05a92f23e35c19c691a50ed2942835385"
         )
@@ -83,6 +92,9 @@ class Python(Package):
             "3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4"
         )
         version(
+            "3.12.11", sha256="7b8d59af8216044d2313de8120bfc2cc00a9bd2e542f15795e1d616c51faf3d6"
+        )
+        version(
             "3.12.9", sha256="45313e4c5f0e8acdec9580161d565cf5fea578e3eabf25df7cc6355bf4afa1ee"
         )
         version(
@@ -92,10 +104,22 @@ class Python(Package):
             "3.12.7", sha256="73ac8fe780227bf371add8373c3079f42a0dc62deff8d612cd15a618082ab623"
         )
         version(
+            "3.11.13", sha256="0f1a22f4dfd34595a29cf69ee7ea73b9eff8b1cc89d7ab29b3ab0ec04179dad8"
+        )
+        version(
             "3.11.11", sha256="883bddee3c92fcb91cf9c09c5343196953cbb9ced826213545849693970868ed"
         )
         version(
+            "3.10.18", sha256="1b19ab802518eb36a851f5ddef571862c7a31ece533109a99df6d5af0a1ceb99"
+        )
+        version(
             "3.10.16", sha256="f2e22ed965a93cfeb642378ed6e6cdbc127682664b24123679f3d013fafe9cd0"
+        )
+        version(
+            "3.9.24", sha256="9a32cfc683aecaadbd9ed891ac2af9451ff37f48a00a2d8e1f4ecd9c2a1ffdcb"
+        )
+        version(
+            "3.9.23", sha256="9a69aad184dc1d06f6819930741da3a328d34875a41f8ba33875774dbfc51b51"
         )
         version(
             "3.9.21", sha256="667c3ba2ca98d39ead1162f6548c3475768582e2ff89e0821d25eb956ac09944"
@@ -103,6 +127,9 @@ class Python(Package):
 
     # EOL versions we still want to be able to install
     with default_args(deprecated=True):
+        version(
+            "3.9.25", sha256="a7438eabd3a48139f42d4e058096af8d880b0bb6e8fb8c78838892e4ce5583f2"
+        )
         version(
             "3.8.20", sha256="9f2d5962c2583e67ef75924cd56d0c1af78bf45ec57035cf8a2cc09f74f4bf78"
         )
@@ -144,6 +171,7 @@ class Python(Package):
     variant("zlib", default=True, description="Build zlib module")
     variant("bz2", default=True, description="Build bz2 module")
     variant("lzma", default=True, description="Build lzma module")
+    variant("zstd", default=True, description="Build zstd module", when="@3.14:")
     variant("pyexpat", default=True, description="Build pyexpat module")
     variant("ctypes", default=True, description="Build ctypes module")
     variant("tkinter", default=False, description="Build tkinter module")
@@ -151,6 +179,12 @@ class Python(Package):
     variant("tix", default=False, description="Build Tix module", when="+tkinter")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=linux")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=darwin")
+    variant(
+        "freethreading",
+        default=False,
+        description="Removes the Global Interpreter Lock",
+        when="@3.13:",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -159,7 +193,8 @@ class Python(Package):
         depends_on("gmake", type="build")
         depends_on("pkgconfig", type="build")
         depends_on("gettext +libxml2", when="+libxml2")
-        depends_on("gettext ~libxml2", when="~libxml2")
+        depends_on("iconv", when="~libxml2")
+        depends_on("gettext ~libxml2", when="~libxml2 ^[virtuals=iconv]gettext")
 
         # Optional dependencies
         # See detect_modules() in setup.py for details
@@ -177,6 +212,7 @@ class Python(Package):
         depends_on("zlib-api", when="+zlib")
         depends_on("bzip2", when="+bz2")
         depends_on("xz libs=shared", when="+lzma")
+        depends_on("zstd libs=shared", when="+zstd")
         depends_on("expat", when="+pyexpat")
         depends_on("libffi", when="+ctypes")
         # https://docs.python.org/3/whatsnew/3.11.html#build-changes
@@ -270,6 +306,14 @@ class Python(Package):
         else:
             variants += "~pythoncmd"
 
+        if Version(version_str) >= Version("3.13"):
+            for exe in exes:
+                if exe.endswith("t"):
+                    variants += "+freethreading"
+                    break
+            else:
+                variants += "~freethreading"
+
         for module in [
             "readline",
             "sqlite3",
@@ -309,6 +353,13 @@ class Python(Package):
                 variants += "+tix"
             except ProcessError:
                 variants += "~tix"
+
+        if Version(version_str) >= Version("3.14"):
+            try:
+                python("-c", "import compression.zstd", error=os.devnull)
+                variants += "+zstd"
+            except ProcessError:
+                variants += "~zstd"
 
         # Some modules are platform-dependent
         if sys.platform != "win32" and Version(version_str) < Version("3.13"):
@@ -462,7 +513,7 @@ class Python(Package):
         # install headers
         include_dir = proj_root / "Include"
         copy_tree(str(include_dir), prefix.include)
-        if self.spec.satisfies("@3.13:"):
+        if self.spec.satisfies("@3.13"):  # reverted in 3.14
             pyconfig = pcbuild_root / platform.machine().lower() / "pyconfig.h"
         else:
             pyconfig = proj_root / "PC" / "pyconfig.h"
@@ -559,6 +610,11 @@ class Python(Package):
             else:
                 config_args.append("--with-lto")
             config_args.append("--with-computed-gotos")
+            # Revisit --tail-call-interp when GCC 16 comes out
+            # https://github.com/python/cpython/issues/128563#issuecomment-3501715689
+            if spec.satisfies("@3.14:"):
+                if spec.satisfies("%c=clang@19:") or spec.satisfies("%c=apple-clang@17:"):
+                    config_args.append("--with-tail-call-interp")
 
         if spec.satisfies("@3.7 %intel"):
             config_args.append("--with-icc={0}".format(spack_cc))
@@ -609,6 +665,13 @@ class Python(Package):
                     ),
                 ]
             )
+
+        if "+freethreading" in spec:
+            config_args.append("--disable-gil")
+
+        # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
+        if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
+            config_args.append("py_cv_module__tkinter=n/a")
 
         # Disable the nis module in the configure script for Python 3.11 and 3.12. It is deleted
         # in Python 3.13. See ``def patch`` for disabling the nis module in Python 3.10 and older.
@@ -706,8 +769,8 @@ class Python(Package):
         prefix = self.prefix
 
         if spec.satisfies("+pythoncmd"):
-            os.symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
-            os.symlink(
+            symlink(os.path.join(prefix.bin, "python3"), os.path.join(prefix.bin, "python"))
+            symlink(
                 os.path.join(prefix.bin, "python3-config"),
                 os.path.join(prefix.bin, "python-config"),
             )
@@ -807,12 +870,18 @@ class Python(Package):
         # installed python, several different commands could be located
         # in the same directory. Be as specific as possible. Search for:
         #
-        # * python3.11
+        # * python3.14t
+        # * python3.14
         # * python3
         # * python
         #
-        # in that order if using python@3.11.0, for example.
-        suffixes = [self.spec.version.up_to(2), self.spec.version.up_to(1), ""]
+        # in that order if using python@3.14.0, for example.
+        suffixes = [
+            str(self.spec.version.up_to(2)) + "t",
+            str(self.spec.version.up_to(2)),
+            str(self.spec.version.up_to(1)),
+            "",
+        ]
         ext = "" if sys.platform != "win32" else ".exe"
         filenames = [f"python{ver}{ext}" for ver in suffixes]
         root = self.prefix.bin if sys.platform != "win32" else self.prefix

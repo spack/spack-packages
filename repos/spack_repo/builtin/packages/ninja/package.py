@@ -38,7 +38,10 @@ class Ninja(Package):
     version("1.7.2", sha256="2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9")
     version("1.6.0", sha256="b43e88fb068fe4d92a3dfd9eb4d19755dae5c33415db2e9b7b61b4659009cde7")
     version(
-        "kitware", branch="kitware-staged-features", git="https://github.com/Kitware/ninja.git"
+        "kitware",
+        branch="kitware-staged-features",
+        git="https://github.com/Kitware/ninja.git",
+        deprecated=True,
     )
 
     # ninja@1.12: needs googletest source, but 1.12 itself needs a patch to use it
@@ -112,5 +115,5 @@ class Ninja(Package):
         module.ninja = MakeExecutable(
             which_string(name, path=[self.spec.prefix.bin], required=True),
             jobs=determine_number_of_jobs(parallel=dspec.package.parallel),
-            supports_jobserver=self.spec.version == ver("kitware"),
+            supports_jobserver=self.spec.satisfies("@kitware,1.13:"),
         )

@@ -26,6 +26,8 @@ class Fzf(GoPackage):
 
     # Versions from newest to oldest
     version("master", branch="master")
+    version("0.67.0", sha256="da72936dd23045346769dbf233a7a1fa6b4cfe4f0e856b279821598ce8f692af")
+    version("0.66.0", sha256="576659beee244b4ecccf45f1c576340143d8ce6d97fa053e6cbdd3f75c66b351")
     version("0.65.2", sha256="53b7e0077833f96ae04fd1e312ed65b2d5c427422b652dd3ce6c2d1702f8ce56")
     version("0.65.1", sha256="82fa35dc3ba5d716db26a507f90bb0e724f586123c28ad3fb376bd8384669abf")
     version("0.64.0", sha256="e990529375a75e9be03b58b6a136573b9fd1189c1223aaa760e47fcb94812172")
@@ -52,7 +54,8 @@ class Fzf(GoPackage):
     variant("vim", default=False, description="Install vim plugins for fzf")
 
     # Build dependencies
-    depends_on("go@1.20:", type="build", when="@0.49.0:")
+    depends_on("go@1.23:", type="build", when="@0.66:")
+    depends_on("go@1.20:", type="build", when="@0.49:")
     depends_on("go@1.17:", type="build")
 
     executables = ["^fzf$"]

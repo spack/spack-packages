@@ -18,6 +18,8 @@ class Gaudi(CMakePackage, CudaPackage):
     tags = ["hep"]
 
     version("master", branch="master")
+    version("40.2", sha256="93bf0ae5e33d7d3a5aa36504840ed62aeab9f6f8ddddd4ea1b23bc5455b51e41")
+    version("40.1", sha256="f02010c865717d397b8fc8b8bf5d904e711ee2e416f3d12330cf04deaa7a4343")
     version("40.0", sha256="0cfe696967067b23382968a5c5ab1b4b7f38a7dd3ee2e321d1bff0dd8f99d2f9")
     version("39.4", sha256="dd698e0788811fa8325ed5f37ecf3fd9bde55720489224a517b52360819564d7")
     version("39.3", sha256="009a306a7413f3207f0d5fa19034186c0bb3c8de0c807d38f515338a41a8a0bc")
@@ -71,15 +73,21 @@ class Gaudi(CMakePackage, CudaPackage):
     variant("cxxstd", default="20", when="@39:", **_cxxstd_common)
 
     variant("aida", default=False, description="Build AIDA interfaces support")
-    variant("cppunit", default=False, description="Build with CppUnit unit testing")
+    variant("cppunit", default=False, description="Build with CppUnit unit testing", when="@:40.0")
     variant("docs", default=False, description="Build documentation with Doxygen")
     variant("examples", default=False, description="Build examples")
     variant("gaudialg", default=False, description="Build GaudiAlg support", when="@37.0:38")
-    variant("gperftools", default=False, description="Build with Google PerfTools support")
+    variant(
+        "gperftools", default=False, description="Build with Google PerfTools support", when="@:39"
+    )
     variant("heppdt", default=False, description="Build with HEP Particle Data Table support")
-    variant("jemalloc", default=False, description="Build with jemalloc allocator support")
-    variant("unwind", default=False, description="Build with unwind call-chains")
-    variant("vtune", default=False, description="Build with Intel VTune profiler support")
+    variant(
+        "jemalloc", default=False, description="Build with jemalloc allocator support", when="@:39"
+    )
+    variant("unwind", default=False, description="Build with unwind call-chains", when="@:39")
+    variant(
+        "vtune", default=False, description="Build with Intel VTune profiler support", when="@:39"
+    )
     variant("xercesc", default=False, description="Build with Xerces-C XML support")
 
     patch("fmt_fix.patch", when="@36.6:36.12 ^fmt@10:")
@@ -144,13 +152,20 @@ class Gaudi(CMakePackage, CudaPackage):
     )
     depends_on(f"boost@1.70: +{boost_libs}", when="@35:")
     depends_on(f"boost@1.70: +{boost_libs}+fiber", when="@39:")
+    # Until gaudi@40.0, there is a build dependency on boost::system, removed in boost@1.89.
+    # Ref: https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1809
+    conflicts("^boost@1.89:", when="@:40.0", msg="Boost@1.89: requires Gaudi@40.1:")
 
     depends_on("clhep")
     depends_on("cmake", type="build")
-    depends_on("cmake@3.19:", type="build", when="@39:")
+    depends_on("cmake@3.19:", type="build", when="@39:40.0")
+    depends_on("cmake@3.29:", type="build", when="@40.1:")
     depends_on("cppgsl")
+    depends_on("fmt")
     depends_on("fmt@:8", when="@:36.9")
-    depends_on("fmt@:10")
+    depends_on("fmt@:10", when="@:38")
+    depends_on("fmt@:11", when="@:39")
+    depends_on("fmt@:10", type="test")  # https://gitlab.cern.ch/gaudi/Gaudi/-/issues/345
     depends_on("intel-tbb@:2020.3", when="@:37.0")
     depends_on("tbb", when="@37.1:")
     depends_on("uuid")
@@ -161,7 +176,6 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("py-pyyaml", type=("build", "run", "test"))
     depends_on("range-v3")
     depends_on("root +python +root7 +ssl +tbb")
-    requires("^root +threads", when="^root@:6.19.01")
     # force root to have the same cxxstd
     for _cxxstd in _cxxstd_values:
         for _v in _cxxstd:

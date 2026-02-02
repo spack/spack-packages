@@ -21,6 +21,12 @@ class PyPetsc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.24.4", sha256="21280b81aa536ff46176374b8f8a71b4d9fe061b1e8f2eef78f498473ae80a3b")
+    version("3.24.3", sha256="62ed68d87fb3485b0b2fb2e9158b88dc56e64cce6bdc511d7f4630741218e868")
+    version("3.24.2", sha256="965a4ea86ad718838126bb714f80cb11fd59825bba66048af7e6a2f5e7ade22c")
+    version("3.24.1", sha256="94d7ba092b3d690215740b7616d9da52b8351bff3af56213bc5c4eabd7341361")
+    version("3.24.0", sha256="3dc92ccb27a80d5bce87e186e5644ec90a3bd91569145ae1908ee6364816911b")
+    version("3.23.7", sha256="9b2a667922683b176ca8a80ada365c69b01093f0aa5b095fd594e15a5ae2552c")
     version("3.23.6", sha256="2f122b79c84c728702e3367e0d72e4ccf16cdf25aa200148018b4e7864e431e8")
     version("3.23.5", sha256="2d4d5c98d86c4d9f2e6d811a3ba85d2be8a2af7153db446b6e411eb2a2e35a18")
     version("3.23.4", sha256="e91a7020873131eb3afdd108ab6b523e1d136e67a3283a703f9bf330ae9eaccd")
@@ -93,7 +99,6 @@ class PyPetsc4py(PythonPackage):
     patch("ldshared.patch", when="@:3.18")
 
     depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     conflicts("py-cython@3.1:", when="@:3.23.1")
     depends_on("py-cython@3:", when="@3.20:", type="build")
@@ -107,7 +112,7 @@ class PyPetsc4py(PythonPackage):
     depends_on("petsc+mpi", when="+mpi")
     depends_on("petsc~mpi", when="~mpi")
     depends_on("petsc@main", when="@main")
-    for ver in ["3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15"]:
+    for ver in ["3.24", "3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15"]:
         depends_on(f"petsc@{ver}", when=f"@{ver}")
     depends_on("petsc@3.14.2:3.14", when="@3.14.1:3.14")
     depends_on("petsc@3.14.0:3.14.1", when="@3.14.0")

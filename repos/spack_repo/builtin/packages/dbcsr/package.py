@@ -24,6 +24,8 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     license("GPL-2.0-or-later")
 
     version("develop", branch="develop")
+    version("2.9.1", sha256="fa5a4aeba0a07761511af2c26c779bd811b5ea0ef06a5d94535b6dd7b2e0ce59")
+    version("2.9.0", sha256="a04cacd2203bd97a31ac993f9ab84237a48191140bba29efadbc27db544bbcd6")
     version("2.8.0", sha256="d55e4f052f28d1ed0faeaa07557241439243287a184d1fd27f875c8b9ca6bd96")
     version("2.7.0", sha256="25c367b49fb108c5230bcfb127f05fc16deff2bb467f437023dfa6045aff66f6")
     version("2.6.0", sha256="c67b02ff9abc7c1f529af446a9f01f3ef9e5b0574f220259128da8d5ca7e9dc6")
@@ -60,7 +62,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     variant("opencl", default=False, description="Enable OpenCL backend")
     variant("mpi_f08", default=False, when="@2.6:", description="Use mpi F08 module")
 
-    variant("g2g", default=False, description="GPU-aware MPI with CUDA/HIP")
+    variant("g2g", default=False, when="@:2.8", description="GPU-aware MPI with CUDA/HIP")
     conflicts("+g2g", when="~cuda ~rocm", msg="GPU-aware MPI requires +cuda or +rocm")
 
     depends_on("c", type="build")  # generated
@@ -108,7 +110,15 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cuda_arch=none", msg=cuda_msg)
 
-    dbcsr_amdgpu_targets = ("gfx906", "gfx910", "gfx90a", "gfx90a:xnack-", "gfx90a:xnack+")
+    dbcsr_amdgpu_targets = (
+        "gfx906",
+        "gfx910",
+        "gfx90a",
+        "gfx90a:xnack-",
+        "gfx90a:xnack+",
+        "gfx942",
+        "gfx950",
+    )
     amd_msg = f"""DBCSR supports these AMD gpu targets:  {', '.join(dbcsr_amdgpu_targets)}.
                   Set amdgpu_target explicitly to one of the supported targets"""
 
@@ -177,7 +187,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
         lapack, blas = spec["lapack"], spec["blas"]
         if blas.name != "intel-oneapi-mkl":
-            args = [
+            args += [
                 "-DBLAS_FOUND=true",
                 "-DBLAS_LIBRARIES=%s" % (blas.libs.joined(";")),
                 "-DLAPACK_FOUND=true",
@@ -210,6 +220,8 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
                 "gfx90a": "Mi250",
                 "gfx90a:xnack-": "Mi250",
                 "gfx90a:xnack+": "Mi250",
+                "gfx942": "Mi300",
+                "gfx950": "Mi350",
             }[amd_arch]
 
             args += [f"-DWITH_GPU={gpuver}", "-DUSE_ACCEL=hip"]
