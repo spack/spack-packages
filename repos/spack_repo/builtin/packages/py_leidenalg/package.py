@@ -36,12 +36,3 @@ class PyLeidenalg(PythonPackage):
             "setup.py",
             string=True,
         )
-
-#     # Below shamelessly taken from py-pyside2
-#     def install_options(self, spec, prefix):
-#         # fix rpaths
-#         args = ["--rpath={0}".format(":".join(self.rpath))]
-# 
-#         return args
-#     def install(self, spec, prefix):
-#         python("setup.py", "install", "--prefix=" + prefix, *self.install_options(spec, prefix))
