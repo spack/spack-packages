@@ -99,12 +99,17 @@ class Fms(CMakePackage):
         when="@2024.02",
     )
 
-    variant(
-        "precision",
-        values=any_combination_of("32", "64").with_default("none"),
-        description="Build a version of the library with mixed precision ('none'), or 32 and/or 64 bit reals",
-        when="@2025.04:",
-    )
+    # When https://github.com/NOAA-GFDL/FMS/pull/1787 is merged, we can uncomment the following
+    # and allow back specified precision variants for 2026.0x and later.
+    # variant(
+    # "precision",
+    # values=any_combination_of("32", "64").with_default("none"),
+    # description="Build a version of the library with mixed precision ('none'), or 32 and/or 64 bit reals",
+    # when="@2026.0x:",
+    # )
+
+    # NOTE: For FMS 2025.04 to 2026.01, only mixed precision ('none') is supported.
+    # Since a single variant is no variant, we do not have a precision variant for these versions.
     variant(
         "precision",
         values=("32", "64"),
