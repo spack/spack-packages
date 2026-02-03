@@ -82,7 +82,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos@4.2.00:", when="@1.7")
     depends_on("kokkos@4.5.00:", when="@2.0:")
     for backend in kokkos_backends:
-        depends_on("kokkos+%s" % backend.lower(), when="~trilinos+%s" % backend.lower())
+        depends_on(f"kokkos+{backend.lower()}", when=f"~trilinos+{backend.lower()}")
 
     for arch in CudaPackage.cuda_arch_values:
         cuda_dep = f"+cuda cuda_arch={arch}"
@@ -96,7 +96,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cuda_arch=none")
     conflicts("^kokkos", when="+trilinos")
-    depends_on("kokkos+cuda_lambda", when="~trilinos+cuda ^kokkos@:4")
+    requires("^kokkos+cuda_lambda", when="~trilinos+cuda ^kokkos@:4")
 
     # Trilinos with internal Kokkos
     # Notes:
