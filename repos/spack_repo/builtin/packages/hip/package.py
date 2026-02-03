@@ -588,7 +588,7 @@ class Hip(CMakePackage):
 
         if self.spec.satisfies("+cuda"):
             args.append(self.define("HIP_PLATFORM", "nvidia"))
-            if self.spec.satisfies("@:7.2"):
+            if self.spec.satisfies("@:7.1"):
                 hipnv_path = f"{self.stage.source_path}/hipother/hipnv"
             else:
                 hipnv_path = f"{self.stage.source_path}/rocm-systems/projects/hipother/hipnv"
