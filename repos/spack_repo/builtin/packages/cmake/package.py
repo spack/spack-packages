@@ -260,6 +260,16 @@ class Cmake(Package):
 
     phases = ["bootstrap", "build", "install"]
 
+    def patch(self):
+        # https://github.com/Kitware/CMake/commit/c8143074cf3954b1e169904eb9d843cfbe14acc3
+        if self.spec.satisfies("@2.8,3.2:3.31.8,4.0:4.0.3,4.1:4.1.1"):
+            filter_file(
+                "curl_proxytype HTTPProxyType;",
+                "long HTTPProxyType;",
+                "Source/CTest/cmCTestCurl.h",
+                string=True,
+            )
+
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)
