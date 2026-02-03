@@ -6,8 +6,8 @@ import os
 import warnings
 from pathlib import Path
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
@@ -278,7 +278,7 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
 
             flags = {"cflags": [], "cxxflags": [], "mpi-cflags": []}
 
-            if self.spec.satisfies("+pic"):
+            if spec.satisfies("+pic"):
                 flags["cflags"].append(self.compiler.cc_pic_flag)
                 flags["mpi-cflags"].append(self.compiler.cc_pic_flag)
                 flags["cxxflags"].append(self.compiler.cxx_pic_flag)
@@ -362,7 +362,7 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
             make()
             make("install")
 
-            for c in self.spec.variants["conduits"].value:
+            for c in spec.variants["conduits"].value:
                 testdir = join_path(self.prefix.tests, c)
                 mkdirp(testdir)
                 make("-C", f"{c}-conduit", "testgasnet-par")
