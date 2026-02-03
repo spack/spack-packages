@@ -109,6 +109,8 @@ class Geomodel(CMakePackage):
         depends_on("qmake")
         with when("^[virtuals=qmake] qt"):
             depends_on("qt +gui +opengl +sql")
+            # https://gitlab.cern.ch/GeoModelDev/GeoModel/-/merge_requests/567
+            conflicts("@6.23:")
         with when("^[virtuals=qmake] qt-base"):
             depends_on("qt-base +gui +opengl +sql +widgets")
             depends_on("qt-5compat", when="@6.22:")
@@ -116,8 +118,6 @@ class Geomodel(CMakePackage):
         depends_on("soqt")
         depends_on("gl")
         depends_on("egl", when="@6.11:")
-        # https://gitlab.cern.ch/GeoModelDev/GeoModel/-/merge_requests/567
-        conflicts("qt", when="@6.23:")
 
     depends_on("googletest", when="@6.11", type="build")
     depends_on("googletest", when="@6.12:", type="test")
