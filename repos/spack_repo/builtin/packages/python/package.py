@@ -1329,9 +1329,9 @@ print(json.dumps(config))
         # ref. https://github.com/spack/spack/pull/40773
         python_executable = pkg.spec["python"].command.path
         return [
-            f"-DPYTHON_EXECUTABLE:PATH={python_executable}"),
-            f"-DPython_EXECUTABLE:PATH={python_executable}"),
-            f"-DPython3_EXECUTABLE:PATH={python_executable}"),
+            f"-DPYTHON_EXECUTABLE:PATH={python_executable}",
+            f"-DPython_EXECUTABLE:PATH={python_executable}",
+            f"-DPython3_EXECUTABLE:PATH={python_executable}",
         ]
 
     def add_files_to_view(self, view, merge_map, skip_if_exists=True):
