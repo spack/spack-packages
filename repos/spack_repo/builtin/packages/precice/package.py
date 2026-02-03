@@ -125,6 +125,7 @@ class Precice(CMakePackage):
     conflicts("%apple-clang@:5")
     conflicts("%clang@:3.7")
     conflicts("%intel@:16")
+    conflicts("%gcc@:9.2", when="@3.0.0:")
 
     # Fixes missing #include<array> in src/mesh/Edge.hpp
     patch(
