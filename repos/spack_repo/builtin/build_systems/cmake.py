@@ -385,8 +385,14 @@ class CMakeBuilder(BuilderWithDefaults):
         _conditional_cmake_defaults(pkg, args)
 
         # Append extra hint/option arguments from dependencies
+        # TODO: Consider properties from virtual packages like Mpi
         disable_cmake_hints_from = getattr(pkg, "disable_cmake_hints_from", [])
         for dep in pkg.spec.edges_to_dependencies():
+            # Skip packages without the callback
+            dep_pkg = dep.spec.package
+            if not hasattr(dep_pkg, "dependent_cmake_args"):
+                continue
+
             # Skip disabled dependency cmake args
             # Consider virtual names as well package names
             disabled_for_pkg = dep.spec.package.name in disable_cmake_hints_from
@@ -397,20 +403,7 @@ class CMakeBuilder(BuilderWithDefaults):
             if disabled_for_pkg or disabled_for_virtual:
                 continue
 
-            # TODO: Consider properties from virtual packages like Mpi
-            packages = [dep.spec.package]
-            for dep_pkg in packages:
-                if not hasattr(dep_pkg, "dependent_cmake_args"):
-                    continue
-                try:
-                    # Try calling as a function first
-                    args.extend(dep_pkg.dependent_cmake_args(pkg))
-                except TypeError:
-                    # Fallback to calling as a str/list attribute
-                    dep_args = dep_pkg.dependent_cmake_args
-                    if isinstance(dep_args, str):
-                        dep_args = [dep_args]
-                    args.extend(dep_args)
+            args.extend(dep_pkg.dependent_cmake_args(pkg))
 
         return args
 
