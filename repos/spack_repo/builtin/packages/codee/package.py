@@ -34,10 +34,7 @@ class Codee(Package):
     conflicts("platform=darwin", msg="Codee is not supported on Darwin platforms")
 
     # Licensing
-    license_required = True
-    license_comment = ""
-    license_files = ["codee.lic"]
-    license_vars = ["CODEE_LICENSE_PATH"]
+    license_required = False
     license_url = "https://www.codee.com/pricing"
 
     def url_for_version(self, version):
