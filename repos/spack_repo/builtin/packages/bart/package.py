@@ -18,9 +18,7 @@ class Bart(MakefilePackage, CudaPackage, PythonExtension):
 
     license("BSD-3-Clause")
 
-    version(
-        "0.9.00", sha256="86668e4d56460a5f5def2d01fba2b5143830f34028f09cad42c099d862bd892d"
-    )
+    version("0.9.00", sha256="86668e4d56460a5f5def2d01fba2b5143830f34028f09cad42c099d862bd892d")
     version("0.7.00", sha256="a16afc4b632c703d95b5c34e47acd82fafc19f51f9aff442373eecfef08bfc41")
     version("0.6.00", sha256="dbbd33d1e3ed3324fe21f90a3b62cb51765fe369f21df100b46a32004928f18d")
     version("0.5.00", sha256="30eedcda0f0ef3808157542e0d67df5be49ee41e4f41487af5c850632788f643")
@@ -74,7 +72,7 @@ class Bart(MakefilePackage, CudaPackage, PythonExtension):
             env.set("MKL_BASE", spec["mkl"].prefix.mkl)
         else:
             env.set("BLAS_BASE", spec["blas"].prefix)
-        
+
         if self.spec.satisfies("@:0.7.00"):
             if "^netlib-lapack+lapacke" not in self.spec:
                 env.set("NOLAPACKE", "1")
