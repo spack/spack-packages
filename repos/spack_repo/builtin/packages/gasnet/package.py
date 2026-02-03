@@ -351,6 +351,15 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
                 make("-C", f"{c}-conduit", "testgasnet-par")
                 make("-C", f"{c}-conduit", "testtools-par")
 
+    # The GASNet-EX library has a highly multi-dimensional configure space,
+    # to accomodate the varying behavioral requirements of each client runtime.
+    # The library's ABI/link compatibility is strongly dependent on these
+    # client-specific build-time settings, and that variability not fully
+    # encoded in the variants of this package. The recommended way to build/deploy
+    # GASNet is as an EMBEDDED library within the build of the client package
+    # (e.g., UPC++, Chapel, etc), some of which provide build-time
+    # selection of the GASNet library sources. This spack package provides
+    # the GASNet-EX sources, for use by appropriate client packages.
     @run_after("install")
     def install_source(self):
         install_tree(self.stage.source_path, self.prefix + "/src")
