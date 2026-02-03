@@ -304,8 +304,7 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
         # Segment configuration
         # ============================================================
 
-        if not spec.satisfies("segment=off"):
-            options.append(f"--enable-segment-{spec.variants['segment'].value}")
+        options.append(f"--enable-segment-{spec.variants['segment'].value}")
 
         # ============================================================
         # GPU support (CUDA, ROCm, Level Zero)
