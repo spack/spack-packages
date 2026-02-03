@@ -40,16 +40,19 @@ class AlsaPlugins(AutotoolsPackage):
         args += self.enable_or_disable("pulseaudio")
         return args
 
+    # to get plugins to load without the user manually entering env vars for paths
     def setup_run_environment(self, env):
-        # 1. ALSA plugin directory
+        # 1. ALSA plugin directory in ALSA_PLUGIN_DIR
         alsa_plugin_dir = os.path.join(self.prefix.lib, "alsa-lib")
         if os.path.exists(alsa_plugin_dir):
             env.prepend_path("ALSA_PLUGIN_DIR", alsa_plugin_dir)
 
-        # 2. PulseAudio libraries (needed for dlopen dependencies)
-        if "pulseaudio" in self.spec:
-            # See PR comment https://github.com/spack/spack-packages/pull/2984 about not setting LD_LIBRARY_PATH
-            # should try to find a better way of setting this up
-            pulseaudio_libdir = os.path.join(self.spec["pulseaudio"].prefix.lib64, "pulseaudio")
-            if os.path.exists(pulseaudio_libdir):
-                env.prepend_path("LD_LIBRARY_PATH", pulseaudio_libdir)
+        # 2. ALSA lib directory in LD_LIBRARY_PATH
+        alsa_lib_libdir = self.spec["alsa-lib"].prefix.lib
+        if os.path.exists(alsa_lib_libdir):
+            env.prepend_path("LD_LIBRARY_PATH", alsa_lib_libdir)
+
+        # 2. Pulseaudio lib directory in LD_LIBRARY_PATH
+        pulseaudio_libdir = os.path.join(self.spec["pulseaudio"].prefix.lib64, "pulseaudio")
+        if os.path.exists(pulseaudio_libdir):
+            env.prepend_path("LD_LIBRARY_PATH", pulseaudio_libdir)
