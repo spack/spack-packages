@@ -41,7 +41,6 @@ class PyScikitBuildCore(PythonPackage):
 
     # Build system
     depends_on("py-hatchling", type="build")
-    depends_on("py-hatchling@1.26:", when="@0.11.3:", type="build")
     depends_on("py-hatch-vcs", type="build")
 
     # Dependencies
