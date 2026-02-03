@@ -245,7 +245,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("backtrace", default=False, description="Enable backtrace tools")
     variant("dev_benchmarks", default=False, description="Enable developer benchmarks")
     variant("device_alloc", default=False, description="Enable DeviceAllocator")
-    variant("werror", default=True, description="Enable warnings as errors")
+    variant("werror", default=False, description="Enable warnings as errors")
     variant("asan", default=False, description="Enable ASAN")
     variant("sanitizer_tests", default=False, description="Enable address sanitizer tests")
     variant("fmt_header_only", default=True, description="Link to header-only fmt target")
