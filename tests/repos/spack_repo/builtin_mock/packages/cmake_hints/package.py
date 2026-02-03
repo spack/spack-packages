@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import PackageBase, Package, version
-
 from typing import List
+
+from spack.package import Package, PackageBase, version
 
 
 def check(condition, msg):
@@ -21,6 +21,4 @@ class CmakeHints(Package):
     version("1.0", md5="4cb3ff35b2472aae70f542116d616e63")
 
     def dependent_cmake_args(self, pkg: PackageBase) -> List[str]:
-        return [
-            "-DCMAKE_HINTS_ARG:STRING=\"Foo\""
-        ]
+        return ['-DCMAKE_HINTS_ARG:STRING="Foo"']
