@@ -1324,10 +1324,10 @@ print(json.dumps(config))
         module.python_platlib = join_path(dependent_spec.prefix, self.platlib)
         module.python_purelib = join_path(dependent_spec.prefix, self.purelib)
 
-    def dependent_cmake_args(self, pkg: PackageBase) -> List[str]:
+    def dependent_cmake_args(self, dependent_spec: Spec) -> List[str]:
         # pkg.spec["python"] can re-direct to python-venv if pkg extends python
         # ref. https://github.com/spack/spack/pull/40773
-        python_executable = pkg.spec["python"].command.path
+        python_executable = dependent_spec["python"].command.path
         return [
             f"-DPYTHON_EXECUTABLE:PATH={python_executable}",
             f"-DPython_EXECUTABLE:PATH={python_executable}",

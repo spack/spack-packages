@@ -403,7 +403,7 @@ class CMakeBuilder(BuilderWithDefaults):
             if disabled_for_pkg or disabled_for_virtual:
                 continue
 
-            args.extend(dep_pkg.dependent_cmake_args(pkg))
+            args.extend(dep_pkg.dependent_cmake_args(pkg.spec))
 
         return args
 
