@@ -31,6 +31,15 @@ class Codee(Package):
     version("2025.4.5", sha256="42688ec4214270da59da365ba054d1cbf744cb30593542d6d1e04c26e90bcb14")
     version("2025.4.4", sha256="764bc109945561192c386c080d5359f3faa96f06d0a0b52de0f9064cbbf2799a")
 
+    conflicts("platform=darwin", msg="Codee is not supported on Darwin platforms")
+
+    # Licensing
+    license_required = True
+    license_comment = ""
+    license_files = ["codee.lic"]
+    license_vars = ["CODEE_LICENSE_PATH"]
+    license_url = "https://www.codee.com/pricing"
+
     def url_for_version(self, version):
         target = None
         if sys.platform == "linux":
