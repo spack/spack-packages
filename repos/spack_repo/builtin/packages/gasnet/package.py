@@ -140,8 +140,8 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
     )
     variant(
         "segment",
-        default="off",
-        values=("off", "fast", "large", "everything"),
+        default="fast",
+        values=("fast", "large", "everything"),
         description="Build GASNet in the FAST/LARGE/EVERYTHING shared segment configuration",
     )
 
