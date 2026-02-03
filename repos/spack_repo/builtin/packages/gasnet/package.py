@@ -149,7 +149,7 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
         variant(
             "ofi_provider",
             default="auto",
-            values=("auto", "cxi"),
+            values=("auto", "generic", "cxi", "psm2", "verbs", "gni", "efa", "sockets", "udp"),
             description="Statically configure ofi-conduit for the given provider",
         )
         variant(
