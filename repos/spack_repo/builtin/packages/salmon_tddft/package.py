@@ -138,7 +138,7 @@ class SalmonTddft(CMakePackage):
                 args.append(define("CMAKE_TOOLCHAIN_FILE", "nvhpc-openmp"))
         elif "%fj" in spec:  # TODO add toolchain files if necessary
             args.append(self.define("CMAKE_Fortran_MODDIR_FLAG", "-M"))
-        
+
         if spec.satisfies("^fujitsu-mpi"):
             args.append(define("USE_FJMPI", True))
         else:
