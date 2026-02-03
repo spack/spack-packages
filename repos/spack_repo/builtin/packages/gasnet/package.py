@@ -163,7 +163,7 @@ class Gasnet(AutotoolsPackage, CudaPackage, ROCmPackage):
         variant(
             "ibv_max_hcas",
             default="1",
-            values=(str(x) for x in range(9)),
+            values=lambda x: (x.isdigit() and int(x) > 0),
             description="Maximum number of IBV HCAs to open",
         )
 
