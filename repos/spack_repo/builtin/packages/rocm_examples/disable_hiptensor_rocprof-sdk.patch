@@ -1,8 +1,8 @@
 diff --git a/Libraries/CMakeLists.txt b/Libraries/CMakeLists.txt
-index 8e94f20..cff7bc8 100644
+index 8e94f20..0b87266 100644
 --- a/Libraries/CMakeLists.txt
 +++ b/Libraries/CMakeLists.txt
-@@ -44,15 +44,15 @@ if(
+@@ -44,12 +44,12 @@ if(
      add_subdirectory(hipSOLVER)
      add_subdirectory(hipSPARSE)
      add_subdirectory(hipSPARSELt)
@@ -17,7 +17,3 @@ index 8e94f20..cff7bc8 100644
      add_subdirectory(rocRAND)
      add_subdirectory(rocSOLVER)
      add_subdirectory(rocSPARSE)
-     add_subdirectory(rocThrust)
--    add_subdirectory(rocWMMA)
-+    add_subdirectory(rocWMMA)
- endif()
