@@ -135,7 +135,8 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+netloc")
 
     with when("+rocm"):
-        depends_on("rocm-smi-lib")
+        depends_on("rocm-smi-lib@7.0:", when="@2.12.2:")
+        depends_on("rocm-smi-lib@:6.4", when="@:2.11.1")
         depends_on("rocm-opencl", when="+opencl")
         # Avoid a circular dependency since the openmp
         # variant of llvm-amdgpu depends on hwloc.
