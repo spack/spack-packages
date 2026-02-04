@@ -94,18 +94,12 @@ class Vtk(CMakePackage):
 
     # Fix missing standard includes that lead to build errors on newer compilers
     # Patch for <limits>
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c.diff",
-        when="@9:9.0",
-        sha256="0546696bd02f3a99fccb9b7c49533377bf8179df16d901cefe5abf251173716d",
-    )
+    # https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c
+    patch("vtk_9_include_missing_limits.patch", when="@9:9.0")
     # Patch for <cstdint>
     # See https://gitlab.kitware.com/vtk/vtk/-/issues/18782
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
-        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
-        when="@9.1:9.2",
-    )
+
+    patch("vtk_9_1_2_improve_cstdint_includes.patch", when="@9.1:9.2")
 
     # Patch for paraview 5.10: +hdf5 ^hdf5@1.13.2:
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9690
@@ -212,6 +206,7 @@ class Vtk(CMakePackage):
     depends_on("freetype @:2.10.2", when="@:9.0.1")
     depends_on("freetype")
     depends_on("glew")
+    depends_on("hdf5+hl")
     depends_on("hdf5~mpi", when="~mpi")
     depends_on("hdf5+mpi", when="+mpi")
     depends_on("hdf5@1.8:", when="@8:9.0")
@@ -262,31 +257,15 @@ class Vtk(CMakePackage):
     # Freetype@2.10.3 no longer exports FT_CALLBACK_DEF, this
     # patch replaces FT_CALLBACK_DEF with simple extern "C"
     # See https://gitlab.kitware.com/vtk/vtk/-/issues/18033
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/uploads/c6fa799a1a028b8f8a728a40d26d3fec/vtk-freetype-2.10.3-replace-FT_CALLBACK_DEF.patch",
-        sha256="eefda851f844e8a1dfb4ebd8a9ff92d2b78efc57f205774052c5f4c049cc886a",
-        when="@:9.0.1 ^freetype@2.10.3:",
-    )
+    patch("vtk_freetype_2.10.3_replace_FT_CALLBACK_DEF.patch", when="@:9.0.1 ^freetype@2.10.3:")
 
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/5a1c96e12e9b4a660d326be3bed115a2ceadb573.diff",
-        sha256="c446a90459b108082db5b28d9aeda99d030e636325e01929beba062cafb16b76",
-        when="@9.1",
-    )
+    patch("vtk_module_skip_argless_target_calls.patch", when="@9.1")
 
     # SEACAS >= 2024-06-27 needs c++17 which is already required in VTK master.
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/00afe3ae0def6c2d0a6f7cb497c8d55874127820.diff",
-        sha256="1e5fb55b14ba6455a1891d27aa4a0506f47e3155014af06f97633ae1ef6e9cc2",
-        when="@9.4",
-    )
+    patch("vtk_minimum_version_cpp_17.patch", when="@9.4")
 
     # Needed to build VTK with external SEACAS.
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/e98526813691e527fff7d5df6a1641ae36c0cf4f.diff",
-        sha256="174930dde06828ead84c68b1a192202766f6297a60f0c54eef6cab2605a466ef",
-        when="@9.4",
-    )
+    patch("vtk_ioss_transform_2d_elem_block_to_3d.patch", when="@9.4")
 
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
     #  incorrect member accesses fixed in 9.4

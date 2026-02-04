@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
@@ -18,6 +17,9 @@ class AutoconfArchive(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version(
+        "2024.10.16", sha256="7bcd5d001916f3a50ed7436f4f700e3d2b1bade3ed803219c592d62502a57363"
+    )
     version(
         "2023.02.20", sha256="71d4048479ae28f1f5794619c3d72df9c01df49b1c628ef85fde37596dc31a33"
     )

@@ -18,6 +18,7 @@ class Geant4Data(BundlePackage):
 
     tags = ["hep"]
 
+    version("11.4.0")
     version("11.3.0")
     version("11.2.2")
     version("11.2.0")
@@ -45,6 +46,20 @@ class Geant4Data(BundlePackage):
     # they generally don't change on the patch level
     # Can move to declaring on a dataset basis if needed
     _datasets = {
+        "11.4.0:11.4": [
+            "g4ndl@4.7.1",
+            "g4emlow@8.8",
+            "g4photonevaporation@6.1.2",
+            "g4radioactivedecay@6.1.2",
+            "g4particlexs@4.2",
+            "g4pii@1.3",
+            "g4realsurface@2.2",
+            "g4saiddata@2.0",
+            "g4abla@3.3",
+            "g4incl@1.3",
+            "g4ensdfstate@3.0",
+            "g4channeling@2.0",
+        ],
         "11.3.0:11.3": [
             "g4ndl@4.7.1",
             "g4emlow@8.6.1",
@@ -196,7 +211,7 @@ class Geant4Data(BundlePackage):
             depends_on(_d, type=("build", "run"), when=_vers)
 
     _datasets_tendl = {
-        "11.0:11.3": "g4tendl@1.4",
+        "11.0:11.4": "g4tendl@1.4",
         "10.4:10.7": "g4tendl@1.3.2",
         "10.3:10.3": "g4tendl@1.3",
     }
@@ -205,10 +220,10 @@ class Geant4Data(BundlePackage):
     with when("+tendl"):
         for _vers, _d in _datasets_tendl.items():
             depends_on(_d, type=("build", "run"), when="@" + _vers)
-    variant("nudexlib", default=True, when="@11.3.0:11.3", description="Enable G4NUDEXLIB")
+    variant("nudexlib", default=True, when="@11.3:", description="Enable G4NUDEXLIB")
     with when("+nudexlib"):
         depends_on("g4nudexlib@1.0", type=("build", "run"))
-    variant("urrpt", default=True, when="@11.3.0:11.3", description="Enable G4URRPT")
+    variant("urrpt", default=True, when="@11.3:", description="Enable G4URRPT")
     with when("+urrpt"):
         depends_on("g4urrpt@1.1", type=("build", "run"))
 
@@ -227,4 +242,4 @@ class Geant4Data(BundlePackage):
                     raise InstallError(f"Dependency `{s.name}` does not expose `g4datasetname`")
 
                 d = "{0}/data/{1}".format(s.prefix.share, s.package.g4datasetname)
-                os.symlink(d, os.path.basename(d))
+                symlink(d, os.path.basename(d))

@@ -33,3 +33,12 @@ class SingularFactory(AutotoolsPackage):
     depends_on("flint")
     depends_on("gmp")
     depends_on("ntl+shared")
+
+    # fix for building w/ flint >= 3.3.0 (backwards compatible w/ older flint)
+    # https://github.com/Singular/Singular/pull/1278
+    patch(
+        "https://github.com/Singular/Singular/commit/05f5116e13c8a4f5f820c78c35944dd6d197d442.patch?full_index=1",
+        sha256="20d4472a394fbb6559fdf07113b6a4693aa225e8ac484df72c3badbcd405c318",
+        level=2,
+        when="@:4.4.1",
+    )
