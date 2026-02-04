@@ -170,6 +170,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     # Fix issue with delimiter char in constant nameschemes
     patch("const-namescheme-delim-char-4.12.0.patch", when="@4.12.0")
 
+
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
     def flag_handler(self, name, flags):
