@@ -20,6 +20,7 @@ class Rocmlir(CMakePackage):
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
 
+    version("7.1.1", sha256="e5fb89f55b6d5abf1be85cc35a68bc496d908fdf9b9c51ad44ac3cbf67aa35ee")
     version(
         "7.1.0",
         url="https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-7.1.tar.gz",

@@ -4,12 +4,12 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cached_cmake import CachedCMakePackage, cmake_cache_option
 
 from spack.package import *
 
 
-class Adiak(CMakePackage):
+class Adiak(CachedCMakePackage):
     """Adiak collects metadata about HPC application runs and provides it
     to tools."""
 
@@ -22,9 +22,9 @@ class Adiak(CMakePackage):
     variant("mpi", default=True, description="Build with MPI support")
     variant("shared", default=True, description="Build dynamic libraries")
     variant("python", default=False, when="@0.5.0:", description="Build Python bindings")
+    variant("tests", default=False, description="Build tests")
 
     license("MIT")
-
     version("master", branch="master")
     version(
         "0.5.0", commit="f08c8375c613e13e9b9c6a1db271cbf8f0d3f3e3", submodules=True, preferred=True
@@ -35,6 +35,7 @@ class Adiak(CMakePackage):
     version("0.2.1", commit="950e3bfb91519ecb7b7ee7fa3063bfab23c0e2c9", submodules=True)
     version("0.1.1", sha256="438e4652e15e206cd0019423d829fd4f2329323ff0c8861d9586bae051d9624b")
 
+    depends_on("blt", type="build")
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -45,15 +46,17 @@ class Adiak(CMakePackage):
         extends("python")
         depends_on("python@3:", type=("build", "link", "run"))
         depends_on("py-pybind11@3.0.0:", type=("build", "link", "run"))
+        depends_on("py-mpi4py", type=("build", "link", "run"), when="+mpi")
+
+    def initconfig_mpi_entries(self):
+        spec = self.spec
+
+        entries = super().initconfig_mpi_entries()
+        entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
+        return entries
 
     def cmake_args(self):
         args = []
-        if self.spec.satisfies("+mpi"):
-            args.append(f"-DMPI_CXX_COMPILER={self.spec['mpi'].mpicxx}")
-            args.append(f"-DMPI_C_COMPILER={self.spec['mpi'].mpicc}")
-            args.append("-DENABLE_MPI=ON")
-        else:
-            args.append("-DENABLE_MPI=OFF")
 
         if self.spec.satisfies("+shared"):
             args.append("-DBUILD_SHARED_LIBS=ON")
@@ -67,5 +70,6 @@ class Adiak(CMakePackage):
             )
             args.append(f"-Dpybind11_DIR={pybind11_cmake}")
 
-        args.append("-DENABLE_TESTS=OFF")
+        args.append(self.define_from_variant("ENABLE_TESTS", "tests"))
+
         return args

@@ -19,6 +19,7 @@ class PyPydantic(PythonPackage):
     version("2.10.1", sha256="a4daca2dc0aa429555e0656d6bf94873a7dc5f54ee42b1f5873d666fb3f35560")
     version("2.9.0", sha256="c7a8a9fdf7d100afa49647eae340e2d23efa382466a8d177efcd1381e9be5598")
     version("2.7.4", sha256="0c84efd9548d545f63ac0060c1e4d39bb9b14db8b3c0652338aecc07b5adec52")
+    version("1.10.26", sha256="8c6aa39b494c5af092e690127c283d84f363ac36017106a9e66cb33a22ac412e")
     version("1.10.19", sha256="fea36c2065b7a1d28c6819cc2e93387b43dd5d3cf5a1e82d8132ee23f36d1f10")
     version("1.10.9", sha256="95c70da2cd3b6ddf3b9645ecaa8d98f3d80c606624b6d245558d202cd23ea3be")
     version("1.10.2", sha256="91b8e218852ef6007c2b98cd861601c6a09f1aa32bbbb74fab5b1c33d4a1e410")
@@ -29,7 +30,9 @@ class PyPydantic(PythonPackage):
 
     depends_on("python@3.8:", type="build", when="@2")
     depends_on("python@3.9:", type="build", when="@2.11.0:")
+    depends_on("py-setuptools@68:", type="build", when="@1.10.20:1")
     depends_on("py-setuptools", type="build", when="@1")
+    depends_on("py-cython@3:", type="build", when="@1.10.20:1")
     depends_on("py-hatchling", type="build", when="@2")
     depends_on("py-hatch-fancy-pypi-readme@22.5.0:", type="build", when="@2")
     depends_on("py-typing-extensions@4.14.1:", when="@2.12:", type=("build", "run"))

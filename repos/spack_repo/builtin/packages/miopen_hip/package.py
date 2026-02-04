@@ -22,6 +22,7 @@ class MiopenHip(CMakePackage):
     libraries = ["libMIOpen"]
 
     license("MIT")
+    version("7.1.1", sha256="98c72a2b5ca541d6c172facdf0f15729207ab52ca9af36c00e2480c5b27c5b99")
     version("7.1.0", sha256="3fa0a7c8ef959ad889aac0109e6bf74de2a54f7e3ab057f98e2dc4fb65eb1599")
     version("7.0.2", sha256="f8e0fbc7e007d8b37b47a9369a9f849ab708d4fd8681a70c4f545d7ed1aa3ba0")
     version("7.0.0", sha256="f835c204deaf299ee9525b9a77be329d6f4f0cdf808a1c39bb3c461b12ff1b53")
@@ -121,6 +122,7 @@ class MiopenHip(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -142,6 +144,7 @@ class MiopenHip(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
