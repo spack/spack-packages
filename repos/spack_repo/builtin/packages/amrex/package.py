@@ -24,11 +24,12 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["ecp", "e4s", "hpsf"]
 
-    maintainers("WeiqunZhang", "asalmgren", "atmyers")
+    maintainers("WeiqunZhang", "asalmgren", "atmyers", "ax3l")
 
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("26.02", sha256="7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
     version("26.01", sha256="b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
     version("25.12", sha256="60a788cf398563cdf25438a3bbe597fe1f3b18f359b30fb3c0f568dd62908f1a")
     version("25.11", sha256="be9e5f04e1f3e2252a14e5bb817fb4f2c231e0901ef85ee4e14341616f6b1ba6")
@@ -195,7 +196,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("conduit")
         depends_on("conduit +mpi", when="+mpi")
     with when("+catalyst"):
-        depends_on("libcatalyst@2.0: +conduit")
+        depends_on("libcatalyst@2.0:")
         depends_on("libcatalyst +mpi", when="+mpi")
     with when("+sundials"):
         depends_on("sundials@5.7.0: +ARKODE +CVODE", when="@21.07:22.04")

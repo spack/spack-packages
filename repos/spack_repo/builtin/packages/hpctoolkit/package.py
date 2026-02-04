@@ -136,6 +136,8 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("rocm-openmp-extras", when="%llvm-amdgpu", type="build")
+
     with when("@2024.01: build_system=autotools"):
         depends_on("autoconf", type="build")
         depends_on("automake", type="build")

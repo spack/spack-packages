@@ -403,6 +403,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     # Vtk's findpegtl's include search is wrong: https://gitlab.kitware.com/vtk/vtk/-/issues/17876
     patch("pegtl_tao_find.patch", when="platform=windows")
 
+    # https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7593
+    patch("paraview-cdireader-lazy.patch", when="@:6.0 +cdi")
+
     generator("ninja", "make", default="ninja")
     # https://gitlab.kitware.com/paraview/paraview/-/issues/21223
     conflicts("generator=ninja", when="%xl")

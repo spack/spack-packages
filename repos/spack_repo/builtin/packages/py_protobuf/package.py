@@ -70,6 +70,8 @@ class PyProtobuf(PythonPackage):
     depends_on("c", type="build")
 
     depends_on("python", type=("build", "link", "run"))
+    # https://github.com/protocolbuffers/protobuf/issues/12186
+    depends_on("python@:3.13", when="@:5.26", type=("build", "link", "run"))
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-six@1.9:", when="@3.0:3.17", type=("build", "run"))
 
