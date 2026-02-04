@@ -97,7 +97,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm+cuda")
     # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
-    depends_on("cuda@:12.8", when="@:2.13.1 ^cuda")
+    depends_on("cuda@:12.8", when="@:2.13.1 +cuda")
     # rocprofiler-sdk is only supported since rocm@6.2.4.
     depends_on("llvm-amdgpu@6.2.4:", when="@2.14: +rocm")
 
