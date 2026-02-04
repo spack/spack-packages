@@ -19,6 +19,9 @@ class Geomodel(CMakePackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("6.23.0", sha256="f39f2d1dc62693fd8358d0ca54716a5123bfa844458eb61f182a09dee292305a")
+    version("6.22.0", sha256="6e23db099c3c7603d13c13dfac1152db484a69c0b9b962ec0ab495ae3299f2cd")
+    version("6.21.0", sha256="44712cbe821eadfd74b187906686b52cf16d824c330d93a98d00f29c3e683314")
     version("6.20.0", sha256="e8ecb860658d94a6582be4b607111d9b81f3c38c9e46b8d6f4aae88573b5b878")
     version("6.19.0", sha256="d78e9035bd520c5aae007ee5806116ac0a9077b99927bd8810ced49295e1f44d")
     version("6.18.0", sha256="c32a7e1946bc7710f873e0e64b977cd3aad49e480833c728592428fd6aab34e4")
@@ -90,7 +93,8 @@ class Geomodel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@:3", when="@:6.10", type="build")
 
-    depends_on("eigen@3.2.9:3")
+    depends_on("eigen@3.2.9:3", when="@:6.20")
+    depends_on("eigen@3.2.9:5", when="@6.21:")
     depends_on("nlohmann-json@3.6.1:")
     depends_on("sqlite@3.7.17:")
     depends_on("xerces-c@3.2.3:")
@@ -105,9 +109,11 @@ class Geomodel(CMakePackage):
         depends_on("qmake")
         with when("^[virtuals=qmake] qt"):
             depends_on("qt +gui +opengl +sql")
+            # https://gitlab.cern.ch/GeoModelDev/GeoModel/-/merge_requests/567
+            conflicts("@6.23:")
         with when("^[virtuals=qmake] qt-base"):
             depends_on("qt-base +gui +opengl +sql +widgets")
-            depends_on("qt-5compat")
+            depends_on("qt-5compat", when="@6.22:")
         depends_on("coin3d")
         depends_on("soqt")
         depends_on("gl")

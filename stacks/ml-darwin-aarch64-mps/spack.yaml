@@ -6,9 +6,7 @@ spack:
 
   packages:
     all:
-      target: ["aarch64"]
       require:
-      - target=aarch64
       - +mps
       - ~cuda
       - ~rocm
@@ -17,21 +15,20 @@ spack:
     openblas:
       require:
       - ~fortran
-      - target=aarch64
+    python:
+      require: "@3.13:"
 
   specs:
   # Hugging Face
   - py-transformers
 
   # JAX
-  # Bazel codesign issues
-  # - py-jax
-  # - py-jaxlib
+  - py-jax
+  - py-jaxlib
 
   # Keras
-  # Bazel codesign issues
-  # - py-keras backend=tensorflow
-  # - py-keras backend=jax
+  - py-keras backend=tensorflow
+  - py-keras backend=jax
   - py-keras backend=torch
 
   # PyTorch
@@ -60,11 +57,10 @@ spack:
   - py-tensorboardx
 
   # TensorFlow
-  # Bazel codesign issues
-  # - py-tensorflow
-  # - py-tensorflow-datasets
-  # - py-tensorflow-metadata
-  # - py-tensorflow-probability
+  - py-tensorflow
+  - py-tensorflow-datasets
+  - py-tensorflow-metadata
+  - py-tensorflow-probability
 
   # XGBoost
   - py-xgboost

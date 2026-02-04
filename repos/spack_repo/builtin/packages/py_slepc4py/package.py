@@ -19,6 +19,8 @@ class PySlepc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.24.2", sha256="cbcff24004e35cdb17587c534d68329b6467574df93028d04596bfaf3baccbb7")
+    version("3.24.1", sha256="ce798d38355127bee3416bab2975d5fb51df0c3e124b73ba13225ff6311d966e")
     version("3.24.0", sha256="50c9b6a75f47db8131c690b1cda07a15bf532cb79a3e645a0b08d7941f6738f2")
     version("3.23.3", sha256="aa00f90939c4b312b9efe041e4f50f8f7947f50cb8c0d8f6ca60d4d78dda92c9")
     version("3.23.2", sha256="6c98e6c728b9d440d1680047f623aead03d9870c0c4d2ea97c754bab291d1fb5")
@@ -52,6 +54,8 @@ class PySlepc4py(PythonPackage):
     version("3.15.0", sha256="2f5f5cc25ab4dd3782046c65e97265b39be0cf9cc74c5c0100c3c580c3c32395")
 
     patch("ldshared.patch", when="@:3.18")
+
+    depends_on("c", type="build")
 
     depends_on("py-cython@3:", when="@3.20:", type="build")
     depends_on("py-cython@0.29.32:", when="^python@3.11:", type="build")

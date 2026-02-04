@@ -25,6 +25,9 @@ class RMcmcpack(RPackage):
     version("1.6-0", sha256="b5b9493457d11d4dca12f7732bd1b3eb1443852977c8ee78393126f13deaf29b")
     version("1.5-0", sha256="795ffd3d62bf14d3ecb3f5307bd329cd75798cf4b270ff0e768bc71a35de0ace")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.6:", type=("build", "run"))
     depends_on("r-coda@0.11-3:", type=("build", "run"))
     depends_on("r-lattice", type=("build", "run"))

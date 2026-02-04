@@ -19,7 +19,8 @@ class Gadap(AutotoolsPackage):
 
     version("2.0", sha256="ae9a989ca00ec29fb40616383d170883f07c022456db338399982a8a94ec0100")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("curl@7.18.0:")
     depends_on("libdap4")

@@ -32,13 +32,12 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("release", branch="release")
-    version("1.1.0-rc1", sha256="cdf04a193798e284bf71dc7e22868c531f11e158431c19deae016565f450550d")
     version(
-        "1.0.0",
-        sha256="5bff5bbd747b7662bb4630889960371d06fcc5e5a962d974a898d1883f196eba",
+        "1.1.0",
+        sha256="24eb77decff0370789594a8064060d64b51ba0b9ae9d78c882daada4d8f19a20",
         preferred=True,
     )
-
+    version("1.0.0", sha256="5bff5bbd747b7662bb4630889960371d06fcc5e5a962d974a898d1883f196eba")
     variant("shared", default=True, description="build shared libs")
     variant("doubleprecision", default=True, description="enable double precision")
     variant("logging", default=True, description="build logging support")

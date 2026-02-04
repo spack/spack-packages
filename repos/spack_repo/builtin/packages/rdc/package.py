@@ -28,6 +28,8 @@ class Rdc(CMakePackage):
         return url.format(version)
 
     license("MIT")
+    version("7.1.1", sha256="d16c63fe6609d82d0fcd65e9953f60318d015275b8752d052a6ae20cd634c3e1")
+    version("7.1.0", sha256="a77b6ad33dc41917f6b0ed2a26085b96fc7222cf507adb9b90d2eb7976fae5a5")
     version("7.0.2", sha256="1184ef89435063a1d63d6c2d8b6d4f99bb6d5f4d65c241c405b6e550fe285a08")
     version("7.0.0", sha256="2045ed1c57019edc6dd468f7dc092426e4587a413da6ecbff5ccdf45f9a19a0f")
     version("6.4.3", sha256="1a4ba522b780375c8a8b24ceba34d5021d2255dc09fa7f841ae0249eeb96dea1")
@@ -56,7 +58,7 @@ class Rdc(CMakePackage):
     depends_on("grpc@1.55.0+shared", when="@:6.0")
     depends_on("grpc@1.59.1+shared", when="@6.1")
     depends_on("grpc@1.61.2+shared", when="@6.2:6.4")
-    depends_on("grpc@1.67.1+shared", when="@7.0:")
+    depends_on("grpc@1.67.1 cxxstd=17 +shared", when="@7.0:")
     depends_on("protobuf")
     depends_on("libcap")
     for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
@@ -83,6 +85,8 @@ class Rdc(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -101,10 +105,12 @@ class Rdc(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
     def patch(self):
