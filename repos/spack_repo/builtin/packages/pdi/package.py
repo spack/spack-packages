@@ -79,6 +79,7 @@ class Pdi(CMakePackage):
         "python@3:3.11.9", type=("build", "link", "run"), when="@:1.8.2 +python"
     )  # Needs distutils.
     depends_on("py-pybind11@2.4.3:2", type=("link"), when="+python")
+    depends_on("py-numpy", type=("build", "link", "run"), when="+python")
     depends_on(
         "py-setuptools", type=("build", "link"), when="@1.8.3: +python^python@3.12:"
     )  # Needs distutils.

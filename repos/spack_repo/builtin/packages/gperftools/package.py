@@ -24,6 +24,7 @@ class Gperftools(AutotoolsPackage, CMakePackage):
 
     build_system(conditional("cmake", when="@2.8.1:"), "autotools", default="cmake")
 
+    version("2.18", sha256="a64c8873b63ebf631a5fc05af7f81f3ddf550c3bde37245e10311c7ae7a0c718")
     version("2.17.2", sha256="bb172a54312f623b53d8b94cab040248c559decdb87574ed873e80b516e6e8eb")
     version("2.17.1", sha256="7c0e083a4d321c25d8122ba35baa16e9dcd75ffd93e88002f6fb9664a19a9bda")
     version("2.17", sha256="9661218de70c933dd8b296c6fd0f7c3993baa205ac5026961c1ed31716b79ae4")
