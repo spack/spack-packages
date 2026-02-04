@@ -4,6 +4,17 @@ ci:
   - openmpi
   - py-mpi4py
   pipeline-gen:
+  - match_behavior: first
+    submapping:
+    - match:
+      - bazel
+      - llvm
+      - py-jaxlib
+      - py-tensorflow
+      - py-torch
+      - rust
+      build-job:
+        tags: [ "huge" ]
   - build-job-remove:
       tags: [spack]
   - build-job:
