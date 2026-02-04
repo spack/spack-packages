@@ -51,6 +51,12 @@ class Opam(AutotoolsPackage):
     depends_on("ocaml@:4.09.0", type="build", when="@:1.2.2")
     depends_on("ocaml", type="build", when="@2.0.0:")
 
+    # This code assumes __APPLE__ means apple-clang, require apple-clang for ocaml
+    depends_on("ocaml%c=apple-clang", type="build", when="platform=darwin")
+
+    # Ocaml stores its compiler which isnt easy to override so lets match here.
+    requires("%c=apple-clang", when="platform=darwin")
+
     # While this package is a makefile package, 'make' is really only used to
     # call the locally built copy of dune, which is itself parallel, so there's
     # no sense in calling make with >1 job.
