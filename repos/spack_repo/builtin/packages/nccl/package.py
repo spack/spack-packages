@@ -98,6 +98,12 @@ class Nccl(MakefilePackage, CudaPackage):
     # https://github.com/NVIDIA/nccl/issues/1743
     conflicts("%gcc@14:", msg="Compilation issue with gcc 14", when="@:2.27.5-1")
 
+    depends_on("cuda@12:13", when="@2.27:")
+    depends_on("cuda@12", when="@2.22:2.26")
+    depends_on("cuda@11:12", when="@2.16:2.21")
+    depends_on("cuda@10:11", when="@2.7:2.15")
+    depends_on("cuda@9:11", when="@:2.6")
+
     @classmethod
     def determine_version(cls, lib):
         match = re.search(r"lib\S*\.so\.(\d+\.\d+\.\d+)", lib)
