@@ -22,6 +22,7 @@ class SalmonTddft(CMakePackage):
     maintainers("syamada0", "freifrauvonbleifrei")
     license("Apache-2.0")
 
+    version("develop", branch="develop-2.0.0")
     version(
         "2.2.2",
         url="http://salmon-tddft.jp/download/SALMON-v.2.2.2.tar.gz",
