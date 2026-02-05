@@ -20,7 +20,8 @@ class Cpuinfo(CMakePackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
-    version("2025-03-21", commit="5e3d2445e6a84d9599bee2bf78edbb4d80865e1d")  # py-torch@2.8:
+    version("2025-11-14", commit="f858c30bcb16f8effd5ff46996f0514539e17abc")  # py-torch@2.10:
+    version("2025-03-21", commit="5e3d2445e6a84d9599bee2bf78edbb4d80865e1d")  # py-torch@2.8:2.9
     version("2024-09-26", commit="1e83a2fdd3102f65c6f1fb602c1b320486218a99")  # py-torch@2.6:2.7
     version("2024-09-06", commit="094fc30b9256f54dad5ad23bcbfb5de74781422f")  # py-torch@2.5.1
     version("2024-08-30", commit="fa1c679da8d19e1d87f20175ae1ec10995cd3dd3")  # py-torch@2.5.0
@@ -35,11 +36,13 @@ class Cpuinfo(CMakePackage):
     version("2018-05-13", commit="1e6c8c99d27f2b5eb9d2e6231055c6a4115b85e5")  # py-torch@0.4.1
     version("2018-04-04", commit="831dc28341b5f20d13e840caf87eaba644d82643")  # py-torch@:0.4.0
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     generator("ninja")
-    depends_on("cmake@3.5:", type="build")
+
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("cmake@3.18:", when="@2025-09-06:")
+        depends_on("cmake@3.5:")
 
     def cmake_args(self):
         # cpuinfo cannot produce a shared build with MSVC because it does not export

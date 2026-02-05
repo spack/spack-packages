@@ -24,6 +24,7 @@ class Memtailor(AutotoolsPackage):
 
     license("BSD-3-Clause", checked_by="d-torrance")
 
+    version("1.2", sha256="86cd8f888d23f53256937b47cebe8430daeb8146ca9816c4d3aef0fc5ebc702b")
     version("1.1", sha256="ce0dc2e5befd1e1f65c99510bc68ddc5b60f13066eac12ec5ce4e1da822e44eb")
     version("1.0.2025.05.13", commit="07c84a6852212495182ec32c3bdb589579e342b5")
 
@@ -34,9 +35,9 @@ class Memtailor(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
 
-    # googletest 1.17.0 requires C++17 support, which wasn't added until 1.1
-    depends_on("googletest@:1.16.0", when="@:1.0.2025.05.13")
-    depends_on("googletest", when="@1.1:")
+    # googletest 1.17.0 requires C++17 support, which wasn't added until 1.2
+    depends_on("googletest@:1.16.0", when="@:1.1")
+    depends_on("googletest", when="@1.2:")
 
     def configure_args(self):
         return ["--enable-shared"]
