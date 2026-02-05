@@ -17,6 +17,7 @@ class RRlang(RPackage):
 
     license("MIT")
 
+    version("1.1.7", sha256="123c91e7eaacd3514a368a31c30617d36a874def37f6cafdacc0c7d1409be373")
     version("1.1.4", sha256="f2d74527508bf3287102470beb27de0d234c3cbba399c28d3312f2c83c64a6e1")
     version("1.1.2", sha256="2a0ee1dc6e5c59b283c32db5e74e869922a336197cb406fe92622b6ec66f8092")
     version("1.1.1", sha256="5e5ec9a7796977216c39d94b1e342e08f0681746657067ba30de11b8fa8ada99")
@@ -45,3 +46,4 @@ class RRlang(RPackage):
     depends_on("r@3.3.0:", type=("build", "run"), when="@0.4.10:")
     depends_on("r@3.4.0:", type=("build", "run"), when="@1.0.2:")
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.1.0:")
+    depends_on("r@4.0.0:", type=("build", "run"), when="@1.1.7:")

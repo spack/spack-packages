@@ -235,6 +235,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             "--disable-dependency-tracking",
             "--disable-werror",
             "--enable-64-bit-bfd",
+            "--enable-deterministic-archives",
             "--enable-multilib",
             "--enable-pic",
             "--enable-targets={}".format(targets),

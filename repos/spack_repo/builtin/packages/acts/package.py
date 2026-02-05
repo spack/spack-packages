@@ -50,6 +50,7 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("45.0.0", commit="92ab57740f8e875555ea28f542844ac1eb5db65b")
     version("44.4.0", commit="a05c35a14b39a461925d11de12ccd2da5e38b3d1")
     version("44.3.0", commit="d4c630145d5050dd2edc58f1de0c872caff23dd8")
     version("44.2.0", commit="c3d440eb1e441fcd15995b8af87ea1497e0cc126")
@@ -420,6 +421,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("boost @1.62:1.69 +program_options +test", when="@:0.10.3")
     depends_on("boost @1.71: +filesystem +program_options +test", when="@0.10.4:")
     depends_on("boost @1.77: +filesystem +program_options +test", when="@42:")
+    depends_on("boost @1.78: +filesystem +program_options +test", when="@45:")
     depends_on("cmake @3.14:", type="build")
     depends_on("covfie @0.10:", when="+traccc")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
@@ -455,6 +457,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("mlpack@3.1.1:", when="+mlpack")
     depends_on("nlohmann-json @3.9.1:", when="@0.14: +json")
     depends_on("nlohmann-json @3.10.5:", when="@37: +json")
+    depends_on("nlohmann-json @3.11.3:", when="@45: +json")
     depends_on("torch-scatter", when="+gnn")
     depends_on("torch-scatter +cuda", when="+cuda")
     depends_on("podio @0.6:", when="@25: +edm4hep")
