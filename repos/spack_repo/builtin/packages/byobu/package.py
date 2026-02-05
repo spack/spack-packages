@@ -13,7 +13,7 @@ class Byobu(AutotoolsPackage):
 
     homepage = "https://www.byobu.org/"
 
-    maintainers("matthiasdiener")
+    maintainers("ebagrenrut")
 
     license("GPL-3.0-or-later")
 
