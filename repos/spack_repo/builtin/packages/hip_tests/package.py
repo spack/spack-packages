@@ -14,7 +14,7 @@ class HipTests(CMakePackage):
     """This repository provides unit tests for HIP implementation."""
 
     homepage = "https://github.com/ROCm/hip-tests"
-    git = "https://github.com/ROCm/rocm-libraries.git"
+    git = "https://github.com/ROCm/rocm-systems.git"
 
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
