@@ -310,6 +310,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     depends_on("hipsparse", when="@4.4.0:+rocm")
     depends_on("hipblas", when="@4.8.0:+rocm")
+    depends_on("hipcub", when="@4.9.0:+rocm")
 
     with when("+mpi"):
         depends_on("hypre")
@@ -1061,6 +1062,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 hipblas = spec["hipblas"]
                 hip_headers += self.all_headers(hipblas)
                 hip_libs += hipblas.libs
+            if "^hipcub" in spec:  # hipcub is needed @4.9.0:+rocm
+                hipcub = spec["hipcub"]
+                hip_headers += self.all_headers(hipcub)
             if "%cce" in spec:
                 # We assume the proper Cray CCE module (cce) is loaded:
                 proc = str(spec.target.family)
