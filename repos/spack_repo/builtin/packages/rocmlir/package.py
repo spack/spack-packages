@@ -96,6 +96,7 @@ class Rocmlir(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
