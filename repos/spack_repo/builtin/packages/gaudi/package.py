@@ -176,7 +176,6 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("py-pyyaml", type=("build", "run", "test"))
     depends_on("range-v3")
     depends_on("root +python +root7 +ssl +tbb")
-    requires("^root +threads", when="^root@:6.19.01")
     # force root to have the same cxxstd
     for _cxxstd in _cxxstd_values:
         for _v in _cxxstd:

@@ -51,6 +51,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2026.1", sha256="4364c74bcffaa474bc234e11686b09550e4d06932acf2147a341e4f7679dd88e")
     version("2025.2", sha256="c8392a4e123304644ec8d241443796277c6ed7ae977452317e779f3c387c2e19")
     version("2025.1", sha256="65c8ad5488897b0f995919b9fa77f2aba4b61677ba1e3c19bb093d5c08a8ce1d")
     version("2024.3", sha256="a6eeee773b6b1fb417def576e4049a89a08a0ed5feffcd7f0b33c7d7b48f19ba")
@@ -126,9 +127,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         "openpmd-api",
         default=False,
         description="Enable openPMD support",
-        when="@2026.1: build_system=cmake",
+        when="@2026.2: build_system=cmake",
     )
-    variant("quip", default=False, description="Enable quip support")
+    variant("quip", default=False, when="@:2025.2", description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
     variant("smeagol", default=False, description="Enable libsmeagol support", when="@2025.2:")

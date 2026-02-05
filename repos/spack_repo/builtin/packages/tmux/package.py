@@ -21,6 +21,8 @@ class Tmux(AutotoolsPackage):
 
     license("ISC")
 
+    version("master", branch="master")
+    version("3.6a", sha256="b6d8d9c76585db8ef5fa00d4931902fa4b8cbe8166f528f44fc403961a3f3759")
     version("3.6", sha256="136db80cfbfba617a103401f52874e7c64927986b65b1b700350b6058ad69607")
     version("3.5a", sha256="16216bd0877170dfcc64157085ba9013610b12b082548c7c9542cc0103198951")
     version("3.5", sha256="2fe01942e7e7d93f524a22f2c883822c06bc258a4d61dba4b407353d7081950f")
@@ -46,7 +48,6 @@ class Tmux(AutotoolsPackage):
     version("2.2", sha256="bc28541b64f99929fe8e3ae7a02291263f3c97730781201824c0f05d7c8e19e4")
     version("2.1", sha256="31564e7bf4bcef2defb3cb34b9e596bd43a3937cad9e5438701a81a5a9af6176")
     version("1.9a", sha256="c5e3b22b901cf109b20dab54a4a651f0471abd1f79f6039d79b250d21c2733f5")
-    version("master", branch="master")
 
     variant(
         "utf8proc", default=False, description="Build with UTF-8 support from utf8proc library"
@@ -56,20 +57,15 @@ class Tmux(AutotoolsPackage):
         "jemalloc", default=False, description="Use jemalloc for memory allocation", when="@3.5:"
     )
 
-    depends_on("c", type="build")  # generated
-
-    # used by configure to e.g. find libtinfo
+    depends_on("c", type="build")
     depends_on("pkgconfig", type="build")
+    depends_on("automake", type="build", when="@master")
+    depends_on("autoconf", type="build", when="@master")
+    depends_on("yacc", type="build", when="@3:")
     depends_on("libevent")
     depends_on("ncurses")
-
     depends_on("utf8proc", when="+utf8proc")
     depends_on("jemalloc", when="+jemalloc")
-
-    depends_on("automake", when="@master")
-    depends_on("autoconf", when="@master")
-
-    depends_on("yacc", type="build", when="@3:")
 
     conflicts("+static", when="platform=darwin", msg="Static build not supported on MacOS")
 
@@ -86,10 +82,8 @@ class Tmux(AutotoolsPackage):
             sh("autogen.sh")
 
     def configure_args(self):
-        options = []
-
-        options.extend(self.enable_or_disable("utf8proc"))
-        options.extend(self.enable_or_disable("static"))
-        options.extend(self.enable_or_disable("jemalloc"))
-
-        return options
+        args = []
+        args.extend(self.enable_or_disable("utf8proc"))
+        args.extend(self.enable_or_disable("static"))
+        args.extend(self.enable_or_disable("jemalloc"))
+        return args

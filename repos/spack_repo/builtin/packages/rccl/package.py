@@ -23,6 +23,7 @@ class Rccl(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librccl"]
+    version("7.1.1", sha256="eaa60bcf62feb3198553f2bcf6dcbfdfcecd0fdfabda41f1dae7d3f15fadbd68")
     version("7.1.0", sha256="50ba486bc8a466a68bff9d6c9d7b3ebf8de9426906720fa44023b5390602b3b8")
     version("7.0.2", sha256="3e4363163f5de772707c8deea349a00744200733693c76a07ac842e55b6ad19e")
     version("7.0.0", sha256="b55ecb07e82b130c9ce4fe9c969c2192a18b462f0e87ac70386e01341af6a98f")
@@ -132,6 +133,7 @@ class Rccl(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -140,7 +142,7 @@ class Rccl(CMakePackage):
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 

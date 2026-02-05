@@ -24,6 +24,7 @@ class Rocrand(CMakePackage):
 
     license("MIT")
 
+    version("7.1.1", sha256="15c33c595aa8e4de1d8b3736df9eaf2ceba7914ffebe718f0997b0da28215d9e")
     version("7.1.0", sha256="616c2f61a4e05d8f07e4f95a26c1f031e66092cbf45354fe64c62becc9dcb751")
     version("7.0.2", sha256="ee0fee0ee7d3b59aafba8f9935c28c528363f941b42eea05045023c27e61938d")
     version("7.0.0", sha256="b8539339d1538d1aae69b7b77e62eee00c8586001b996f1c8af0c7579e85a9a6")
@@ -89,6 +90,7 @@ class Rocrand(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")

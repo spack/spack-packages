@@ -128,6 +128,10 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
         if spec.satisfies("%intel@:18"):
             args.append("CFLAGS=-no-gcc")
 
+        # Use C11 std to ensure two-arg static_assert (no C23 for Intel Classic)
+        if spec.satisfies("@1.4.10: %intel"):
+            args.append("CFLAGS=-std=c11")
+
         if "+sigsegv" in spec:
             args.append("--with-libsigsegv-prefix={0}".format(spec["libsigsegv"].prefix))
         else:

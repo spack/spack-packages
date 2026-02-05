@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
 
 
-class Libvips(AutotoolsPackage):
+class Libvips(MesonPackage, AutotoolsPackage):
     """libvips is a demand-driven, horizontally threaded image processing
     library. Compared to similar libraries, libvips runs quickly and uses
     little memory."""
@@ -18,6 +19,7 @@ class Libvips(AutotoolsPackage):
 
     license("LGPL-2.1-or-later", checked_by="wdconinc")
 
+    version("8.18.0", sha256="b85ab92280c30d22f5c8fe2f68b809cddb7eaac437d8c33474475dac84ddc574")
     version("8.15.3", sha256="3e27d9f536eafad64013958fe9e8a1964c90b564c731d49db7c1a1c11b1052a0")
     version("8.13.3", sha256="4eff5cdc8dbe1a05a926290a99014e20ba386f5dcca38d9774bef61413435d4c")
     version("8.10.5", sha256="a4eef2f5334ab6dbf133cd3c6d6394d5bdb3e76d5ea4d578b02e1bc3d9e1cfd8")
@@ -42,10 +44,19 @@ class Libvips(AutotoolsPackage):
 
     # TODO: Add more variants!
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("pkgconfig", type="build")
+
+    with when("build_system=meson"):
+        depends_on("meson", type="build")
+        depends_on("ninja", type="build")
+
+    with when("build_system=autotools"):
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
+
     depends_on("glib")
     depends_on("expat")
 

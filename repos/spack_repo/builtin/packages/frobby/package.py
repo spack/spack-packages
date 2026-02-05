@@ -17,12 +17,14 @@ class Frobby(MakefilePackage):
     Frobenius problems with very large numbers."""
 
     homepage = "https://github.com/Macaulay2/frobby"
+    url = "https://github.com/Macaulay2/frobby/releases/download/v0.9.7/frobby_v0.9.7.tar.gz"
     git = "https://github.com/Macaulay2/frobby"
 
     maintainers("d-torrance")
 
     license("GPL-2.0-or-later", checked_by="d-torrance")
 
+    version("0.9.7", sha256="efd0a825b67731aa5fb4ea8d2e1004830cc11685be3e09f5401612c411214a96")
     version("0.9.5", tag="v0.9.5", commit="cbda56e8bb0d706f8cd7e6594a8a034797f53eb5")
 
     depends_on("cxx", type="build")
@@ -34,6 +36,11 @@ class Frobby(MakefilePackage):
         make("library", "RANLIB=ranlib")  # static library
         make("library", "MODE=shared")
 
+    @when("@0.9.7:")
+    def install(self, spec, prefix):
+        make("install", f"PREFIX={prefix}")
+
+    @when("@:0.9.5")
     def install(self, spec, prefix):
         make("install", f"PREFIX={prefix}", f"BIN_INSTALL_DIR={prefix.bin}")
         mkdirp(prefix.lib)

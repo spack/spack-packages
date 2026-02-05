@@ -36,9 +36,14 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     version("20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e")
     version("20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c")
     version(
+        "20250722.3",
+        sha256="07f487cc33fc8f2ec4a449b7bce570e52b5a46608075e0276d26e0e232511bef",
+        preferred=True,
+    )
+    version(
         "20250722.2",
         sha256="fede484269cdb22f1cb738b4cd118a9bf9cb4bd3c85667f1e6a73a9fa5c2de6b",
-        preferred=True,
+        deprecated=True,
     )
     version(
         "20250722.1",
@@ -88,6 +93,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20250722.3",
         "20250722.2",
         "20250722.1",
         "20250722",

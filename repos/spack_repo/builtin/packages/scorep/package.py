@@ -16,6 +16,7 @@ class Scorep(AutotoolsPackage):
     homepage = "https://www.vi-hps.org/projects/score-p"
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-7.1/scorep-7.1.tar.gz"
     maintainers("wrwilliams")
+    version("9.4", sha256="bea58d8c47a7512eca0a5858179377f3f0861f30eafb342a29aa97c05de8f623")
     version("9.3", sha256="5498b31b1d6c04b08a9d408320a7515e884538d248de58b6dd11b48c8f364112")
     version("9.2", sha256="be3eaee99cdd0145e518c1aa959126df45e25b61579a007d062748b2844c499c")
     version("8.4", sha256="7bbde9a0721d27cc6205baf13c1626833bcfbabb1f33b325a2d67976290f7f8a")

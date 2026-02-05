@@ -30,6 +30,7 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
 
     license("curl")
 
+    version("8.17.0", sha256="230032528ce5f85594d4f3eace63364c4244ccc3c801b7f8db1982722f2761f4")
     version("8.15.0", sha256="699a6d2192322792c88088576cff5fe188452e6ea71e82ca74409f07ecc62563")
     version("8.14.1", sha256="5760ed3c1a6aac68793fc502114f35c3e088e8cd5c084c2d044abdf646ee48fb")
 
@@ -92,6 +93,7 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     depends_on("cmake@:3", when="build_system=cmake @:7.63")
 
     depends_on("gnutls", when="tls=gnutls")
+    depends_on("mbedtls@3: +pic", when="tls=mbedtls @8.17:")
     depends_on("mbedtls@2: +pic", when="tls=mbedtls")
     depends_on("openssl", when="tls=openssl")
 
