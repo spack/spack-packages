@@ -40,6 +40,7 @@ class Codee(Package):
 
     def url_for_version(self, version):
         target = None
+        suffix = None
         if sys.platform == "linux":
             suffix = "tar.gz"
             if platform.machine() == "aarch64":
