@@ -24,6 +24,7 @@ class Codee(Package):
     to all features of the formatter and to the static code analyzer."""
 
     homepage = "https://www.codee.com"
+    url = "https://codee.com/release/codee-2025.4.6-linux-x86_64.tar.gz"
 
     maintainers("climbfuji")
 
@@ -49,10 +50,6 @@ class Codee(Package):
             suffix = "zip"
             if platform.machine() == "AMD64":
                 target = "windows-amd64"
-        if not target:
-            raise InstallError(
-                f"Platform {sys.platform}/{platform.machine()} not supported or configured"
-            )
         return f"https://codee.com/release/codee-{version}-{target}.{suffix}"
 
     def install(self, spec, prefix):
