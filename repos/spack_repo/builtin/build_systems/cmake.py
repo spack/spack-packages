@@ -228,7 +228,7 @@ class CMakePackage(PackageBase):
         # must conflict.
         # this should be updated to reflect a oneapi fortran provider
         # once oneapi is usable with fortran on Windows
-        conflicts("cmake@:4.0", when="%cxx=msvc %fortran=msvc")
+        depends_on("cmake@4.1:", type="build", when="%cxx=msvc %fortran=msvc")
 
     def flags_to_build_system_args(self, flags):
         """Return a list of all command line arguments to pass the specified
