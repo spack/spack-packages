@@ -47,8 +47,8 @@ class Gsibec(CMakePackage):
     depends_on("jedi-cmake", type="build")
 
     # sp is used in 1.3.x and earlier and ip in 1.4.x and later
-    depends_on("ip", when="@1.4:", type="build")
-    depends_on("sp", when="@:1.3", type="build")
+    depends_on("ip@5", when="@1.4:", type=("build", "run"))
+    depends_on("sp", when="@:1.3", type=("build", "run"))
 
     def cmake_args(self):
         return [
