@@ -60,4 +60,4 @@ class Byobu(AutotoolsPackage):
 
     @when("+python")
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.set("BYOBU_PYTHON", f"{self.spec['python'].command}") 
+        env.set("BYOBU_PYTHON", f"{self.spec['python'].command}")
