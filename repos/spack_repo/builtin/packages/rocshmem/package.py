@@ -18,6 +18,7 @@ class Rocshmem(CMakePackage):
 
     license("MIT")
 
+    version("7.1.1", sha256="610018ac57b5b56954da3ae0d6b5a64fb72fc3228f2e69085c4cd61f901820a8")
     version("7.1.0", sha256="6092bd05976e73262cbb7f48dc55718db389100ad1b36e3baa01db401f0ca222")
     version("7.0.2", sha256="63f5bb31e969c0d38f331e992e7cfd130802a8f66cec9d1fc6bfa73b282ed06a")
     version("7.0.0", sha256="90d9a9915b0ba069b7b6f00b05525c476fa6c4942e4f53d0ba16d911ec68ff94")
@@ -29,13 +30,13 @@ class Rocshmem(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocthrust@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2", "7.1.0"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
     depends_on("ucx@1.17: +rocm")

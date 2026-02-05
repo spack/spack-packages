@@ -22,6 +22,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
     application."""
 
     homepage = "https://www.swig.org"
+    git = "https://github.com/swig/swig.git"
     sourceforge_mirror_path = "swig/swig-3.0.12.tar.gz"
     maintainers("sethrj")
 
@@ -31,7 +32,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
 
     license("GPL-3.0-only")
 
-    version("master", git="https://github.com/swig/swig.git")
+    version("master")
     version(
         "4.1.1",
         sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b",

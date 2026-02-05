@@ -95,7 +95,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("ascent +mpi", when="+mpi")
         depends_on("amrex +ascent +conduit")
     with when("+catalyst"):
-        depends_on("libcatalyst@2.0: +conduit")
+        depends_on("libcatalyst@2.0:")
         depends_on("libcatalyst +mpi", when="+mpi")
         depends_on("amrex +catalyst +conduit")
     with when("dims=1"):
