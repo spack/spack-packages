@@ -77,6 +77,7 @@ class SalmonTddft(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("cmake@3.14:", type="build")
+    depends_on("cuda", when="+cuda")
     depends_on("mpi", type="link", when="+mpi")
     depends_on("scalapack", type="link", when="+scalapack")
     depends_on("eigenexa", type="link", when="+eigenexa")
