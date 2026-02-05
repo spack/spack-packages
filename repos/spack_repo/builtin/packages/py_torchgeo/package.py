@@ -18,6 +18,7 @@ class PyTorchgeo(PythonPackage):
     maintainers("adamjstewart", "calebrob6", "ashnair1")
 
     version("main", branch="main")
+    version("0.8.1", sha256="2de05fd510264569f28a8d92737cac85d34dd3c14e01aec99e6f2edb7d297248")
     version("0.8.0", sha256="a367127b8a6b6f94cff979972169271c70ca9d8237d68576c5ec38de34e5cbe7")
     version("0.7.2", sha256="0597455c689c61fd1bdffc79357646292aac98681279a1d05536317a0d094b69")
     version("0.7.1", sha256="05f645868a6dff083d4d0529662bde1b502e1f33ef260ebc735065e05d84176e")
@@ -153,10 +154,6 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-laspy@2.5.3:", when="@0.7.2:")
         depends_on("py-laspy@2:", when="@0.2:")
         depends_on("py-netcdf4@1.6.1:", when="@0.7:")
-        depends_on("opencv@4.5.5.64:", when="@0.7:")
-        depends_on("opencv@4.5.4:", when="@0.6:")
-        depends_on("opencv@4.4.0.46:", when="@0.5:")
-        depends_on("opencv@3.4.2.17:")
         depends_on("py-pandas@2:+parquet", when="@0.7:")
         depends_on("py-pycocotools@2.0.7:", when="@0.6:")
         depends_on("py-pycocotools@2.0.5:", when="@0.5:")
@@ -192,11 +189,13 @@ class PyTorchgeo(PythonPackage):
         # JPEG required for GDAL to read JPEG files
         # LIBDEFLATE, ZLIB, and ZSTD required for compressed file I/O.
         depends_on("libtiff+jpeg+libdeflate+zlib+zstd")
-        # LandCover.ai dataset requires ability to read .tif and write .jpg and .png files.
-        # Doing this from Python requires both imgcodecs and Python bindings.
-        depends_on("opencv+imgcodecs+jpeg+png+python3+tiff")
 
         # Historical dependencies
+        depends_on("opencv@4.5.5.64:", when="@0.7:0.8.0")
+        depends_on("opencv@4.5.4:", when="@0.6")
+        depends_on("opencv@4.4.0.46:", when="@0.5")
+        depends_on("opencv@3.4.2.17:", when="@:0.4")
+        depends_on("opencv+imgcodecs+jpeg+png+python3+tiff", when="@:0.8.0")
         depends_on("open3d@0.11.2:+python", when="@0.2:0.3")
         # https://github.com/microsoft/torchgeo/pull/1537
         depends_on("py-pandas@0.23.2:2.0", when="@0.3:0.4")
@@ -215,9 +214,12 @@ class PyTorchgeo(PythonPackage):
 
     with when("+docs"), default_args(type="run"):
         depends_on("py-ipywidgets@7:")
+        depends_on("py-myst-parser@0.18:", when="@0.8.1:")
         depends_on("py-nbsphinx@0.8.5:")
-        depends_on("py-pytorch-sphinx-theme")
-        depends_on("py-sphinx@4:5")
+        depends_on("py-pydata-sphinx-theme@0.14:", when="@0.8.1:")
+        depends_on("py-pytorch-sphinx-theme", when="@:0.8.0")
+        depends_on("py-sphinx@5.3:", when="@0.8.1:")
+        depends_on("py-sphinx@4:5", when="@:0.8.0")
         depends_on("pandoc")
 
     with when("+models"), default_args(type="run"):
@@ -225,9 +227,13 @@ class PyTorchgeo(PythonPackage):
 
     with when("+style"), default_args(type="run"):
         depends_on("prettier@3:", when="@0.6:")
-        depends_on("py-mypy@0.900:")
+        depends_on("py-mypy@1.16:", when="@0.8.1:")
+        depends_on("py-mypy@0.900:", when="@:0.8.0")
+        depends_on("py-pandas-stubs@1.5:", when="@0.8.1:")
         depends_on("py-ruff@0.9:", when="@0.7:")
         depends_on("py-ruff@0.2:", when="@0.6:")
+        depends_on("py-types-requests@2.23:", when="@0.8.1:")
+        depends_on("py-types-shapely@2:", when="@0.8.1:")
 
         # Historical dependencies
         depends_on("py-black@21.8:+jupyter", when="@0.3:0.5")
@@ -263,5 +269,7 @@ class PyTorchgeo(PythonPackage):
     conflicts("py-lightning@2.3")
     # https://github.com/microsoft/torchgeo/pull/2151
     conflicts("py-numpy@2:", when="@:0.5")
+    # https://github.com/torchgeo/torchgeo/pull/3311
+    conflicts("py-pandas@3:", when="@:0.8.0")
     # https://github.com/rasterio/rasterio/issues/3196
     conflicts("py-rasterio@1.4.0:1.4.2")
