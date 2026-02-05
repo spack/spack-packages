@@ -47,6 +47,8 @@ class Hugo(GoPackage):
     depends_on("go@1.20:", type="build", when="@0.123:")
     depends_on("go@1.18:", type="build", when="@0.106:")
     depends_on("go@1.11:", type="build", when="@0.48:")
+    depends_on("c", type="build", when="+extended")
+    depends_on("cxx", type="build", when="+extended")
 
     variant("extended", default=False, description="Enable extended features")
 

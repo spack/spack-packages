@@ -24,6 +24,7 @@ class OptixDev(Package):
     maintainers("plexoos")
     build_system("generic")
 
+    version("9.1.0", sha256="3a29b2254107fdfbb5e6bbad3ec154dd682149121f61e9c406607ac7b52a6ba6")
     version("9.0.0", sha256="069a5860040ea611e7eb6317f8e3bb0f0d54a5acac744568f7290d7cb8711c05")
     version("8.1.0", sha256="aa32dfb55f37ff92964a5545b056094d86635441b3513e1d45a9410404b6d7c2")
     version("8.0.0", sha256="b32e74c9f5c13549ff3a9760076271b5b6ec28f93fe6a8dd0bde74d7e5c58e05")

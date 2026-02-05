@@ -38,6 +38,7 @@ class AoclCrypto(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("5.2", sha256="a08da78287a05b6e48fc2870ef15053bb67d539ba83cf233ad8dcdc65f892d89")
     version("5.1", sha256="a2f768b7d37516c5c29cca0034aba90b91d02e477c762f2fa0fe4b1c30613973")
     version("5.0", sha256="b15e609943f9977e13f2d5839195bb7411c843839a09f0ad47f78f57e8821c23")
     version("4.2", sha256="2bdbedd8ab1b28632cadff237f4abd776e809940ad3633ad90fc52ce225911fe")
@@ -59,7 +60,7 @@ class AoclCrypto(CMakePackage):
     depends_on("openssl@3.1.5:")
     depends_on("intel-oneapi-ippcp@2021.12.0:", when="+ipp")
     depends_on("p7zip", type="build")
-    for vers in ["4.2", "5.0", "5.1"]:
+    for vers in ["4.2", "5.0", "5.1", "5.2"]:
         with when(f"@={vers}"):
             depends_on(f"aocl-utils@={vers}")
 

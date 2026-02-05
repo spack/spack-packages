@@ -8,17 +8,21 @@ from spack.package import *
 
 
 class Ectrans(CMakePackage):
-    """Ectrans is the global spherical Harmonics transforms library,
-    extracted from the IFS. It is using a hybrid of MPI and OpenMP
-    parallelisation strategies. The package contains both single- and double precision
-    Fortran libraries (trans_sp, trans_dp), as well as a
-    C interface to the double-precision version (transi_dp)."""
+    """ecTrans is a library for performing efficient and scalable spectral transformations. It is
+    used for transforming fields from a grid point space on the sphere (e.g. latitude-longitude) to
+    a spectral space based on spherical harmonics (for global transformations) or bifourier
+    harmonics (for limited area transformations), which constitutes a direct transform. A
+    corresponding inverse transform can also be performed. A transform consists of a Fourier
+    transform in the longitudinal direction and either a Legendre transform (global) or another
+    Fourier transform (limited area) in the latitudinal direction. ecTrans can also operate on
+    fields which are distributed across separate MPI tasks and performs the necessary communication
+    to ensure all data needed for a particular transform are resident on a local task."""
 
     homepage = "https://github.com/ecmwf-ifs/ectrans"
     git = "https://github.com/ecmwf-ifs/ectrans.git"
     url = "https://github.com/ecmwf-ifs/ectrans/archive/1.1.0.tar.gz"
 
-    maintainers("climbfuji")
+    maintainers("climbfuji", "samhatfield")
 
     license("Apache-2.0")
 
@@ -47,6 +51,12 @@ class Ectrans(CMakePackage):
     variant("mkl", default=False, description="Use MKL")
     variant("fftw", default=True, description="Use FFTW")
 
+    variant(
+        "etrans",
+        default=False,
+        when="@1.6.0:",
+        description="Compile limited-area-model transform library etrans",
+    )
     variant("transi", default=True, description="Compile TransI C-interface to trans")
 
     depends_on("c", type="build")
@@ -88,6 +98,7 @@ class Ectrans(CMakePackage):
             self.define_from_variant("ENABLE_SINGLE_PRECISION", "single_precision"),
             self.define_from_variant("ENABLE_FFTW", "fftw"),
             self.define_from_variant("ENABLE_MKL", "mkl"),
+            self.define_from_variant("ENABLE_ETRANS", "etrans"),
             self.define_from_variant("ENABLE_TRANSI", "transi"),
             # Turn off use of contiguous keyword in Fortran because a number
             # of compilers have issues with it, and the hardcoded list of "bad"
