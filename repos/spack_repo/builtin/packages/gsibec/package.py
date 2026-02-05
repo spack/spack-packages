@@ -12,15 +12,17 @@ class Gsibec(CMakePackage):
     capabilities from the Gridpoint Statistical Interpolation (GSI)
     atmospheric analysis system into a library of its own."""
 
-    homepage = "https://github.com/GEOS-ESM/gsibec"
-    git = "https://github.com/GEOS-ESM/gsibec.git"
-    url = "https://github.com/GEOS-ESM/gsibec/archive/refs/tags/1.0.2.tar.gz"
+    homepage = "https://github.com/GEOS-ESM/GSIbec"
+    git = "https://github.com/GEOS-ESM/GSIbec.git"
+    url = "https://github.com/GEOS-ESM/GSIbec/archive/refs/tags/v1.4.1.tar.gz"
+    list_url = "https://github.com/GEOS-ESM/GSIbec/tags"
 
     maintainers("mathomp4", "danholdaway")
 
     license("Apache-2.0")
 
     version("develop", branch="develop")
+    version("1.4.1", sha256="f624c1af36b5023fc35f5a5b0cec4b5649f6a7df933148da432a25b53e5b5c87")
     version("1.4.0", sha256="aa512995c32bd4a9998584a62707abed299fe34af4e9dbf5b44aebd335376e54")
     version("1.3.1", sha256="fe7dbe7d170b47dbacc3febc42fc9877c118860b1532d70246bc73934e548185")
     version("1.2.2", sha256="c15e6a2e75e6b4b0727490bff6a52c02c7309cc48a202e393009074ecf33b06a")
@@ -33,6 +35,17 @@ class Gsibec(CMakePackage):
     version("1.0.4", sha256="6460e221f2a45640adab016336c070fbe3e7c4b6fc55257945bf5cdb38d5d3e2")
     version("1.0.3", sha256="f104daf55705c5093a3d984073f082017bc9166f51ded36c7f7bb8adf233c916")
     version("1.0.2", sha256="7dc02f1f499e0d9f2843440f517d6c8e5d10ea084cbb2567ec198ba06816bc8b")
+
+    def url_for_version(self, version):
+        url_base = "https://github.com/GEOS-ESM/GSIbec/archive/refs/tags/"
+        # Version 1.4.1+ has a v...
+        if version >= Version("1.4.1"):
+            url = url_base + "v{0}.tar.gz"
+        # older do not
+        else:
+            url = url_base + "{0}.tar.gz"
+
+        return url.format(version)
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
