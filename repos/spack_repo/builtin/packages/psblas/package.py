@@ -19,7 +19,7 @@ class Psblas(AutotoolsPackage):
     url = "https://github.com/sfilippone/psblas3/archive/refs/tags/v3.9.0.tar.gz"
 
     # List of GitHub accounts to notify when the package is updated.
-    maintainers("cirdans-home", "sfilippone")
+    maintainers("cirdans-home")
 
     # SPDX identifier of the project's license below.
     license("BSD-3-Clause", checked_by="cirdans-home")
