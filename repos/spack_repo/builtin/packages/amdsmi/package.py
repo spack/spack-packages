@@ -78,6 +78,13 @@ class Amdsmi(CMakePackage):
             ver = None
         return ver
 
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/amdsmi"
+        else:
+            return "."
+
     def cmake_args(self):
         args = []
         args.append(self.define("BUILD_TESTS", "ON"))
