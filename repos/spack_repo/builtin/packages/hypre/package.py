@@ -35,6 +35,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Package versions
     version("develop", branch="master")
+    version("3.1.0", sha256="a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
     version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")
     version("2.33.0", sha256="0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
     version("2.32.0", sha256="2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
@@ -126,6 +127,13 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         values=("11", "14", "17", "20", "23"),
         multi=False,
         description="C++ language standard (for GPU builds)",
+    )
+
+    # Patch to fix GPU+TPLs and freebsd build issues
+    patch(
+        "https://github.com/hypre-space/hypre/pull/1463.patch?full_index=1",
+        sha256="cd0b67e0c03f9392a305c2263099929898ea7f49bd5006ad69209508e947903b",
+        when="@3.1.0",
     )
 
     # Patch to fix hip build (+rocm) via CMake for hypre v3.0.0
@@ -352,6 +360,10 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("HYPRE_ENABLE_SYCL", "sycl"))
         if spec.satisfies("+cuda"):
             args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
+        if spec.satisfies("+rocm"):
+            args.append(
+                self.define("CMAKE_HIP_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
+            )
 
         # GPU auxiliary options
         args.append(self.define_from_variant("HYPRE_ENABLE_GPU_AWARE_MPI", "gpu-aware-mpi"))

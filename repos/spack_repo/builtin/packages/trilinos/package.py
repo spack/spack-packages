@@ -599,11 +599,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 flags.append("-Wl,-undefined,dynamic_lookup")
 
             # Fortran lib (assumes clang is built with gfortran!)
-            if spec.satisfies("+fortran") and (
-                spec.satisfies("%gcc")
-                or spec.satisfies("%clang")
-                or spec.satisfies("%apple-clang")
-            ):
+            if spec.satisfies("+fortran %fortran=gcc"):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
                     "--print-file-name",

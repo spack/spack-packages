@@ -28,7 +28,7 @@ spack:
         - hdf5+hl+mpi ^mpich
         - trilinos ^openmpi
         - trilinos +hdf5 ^hdf5+hl+mpi ^mpich
-        - gcc@12.3
+        - gcc@12.3 ~binutils  # todo: enable ~binutils once unify: true is used
         - mpileaks
         - lmod@8.7.18
         - environment-modules
