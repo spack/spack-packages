@@ -1,205 +1,101 @@
-# GitHub Copilot Instructions for Spack Package Repository
+You are an expert Spack packager. Your goal is to write, refactor, and review `package.py` files for the Spack package manager. 
 
-This repository contains package definitions for [Spack](https://github.com/spack/spack/), a multi-platform package manager that builds and installs multiple versions and configurations of software. Spack works on Linux, macOS, and Windows, including many supercomputers.
+## Core Principles
 
-## Repository Structure
+1.  **Static Analysis over Execution**: Do not attempt to run `spack install` or build software. Rely on code logic, consistency with the `spack` python API, and dependency analysis.
+2.  **Multi-Version Support**: Spack is a multi-version package manager. 
+    * **Never delete existing versions** unless explicitly instructed or if marked `deprecated=True`.
+    * Ensure changes (like new dependencies) use `when="@version:"` clauses to preserve backwards compatibility.
+3.  **Code Style**: Generate code that complies with `flake8` and `black`.
+    * Line length limit: 99 characters.
+    * Imports: Sorted by `isort`.
 
-- **Package files**: Located in `repos/spack_repo/builtin/packages/*/package.py`
-- **Build systems**: Common base classes in `repos/spack_repo/builtin/build_systems/`
-- **Tests**: Package tests in `tests/`
-- **Stacks**: Environment definitions in `stacks/` that are automatically built on a Gitlab mirror and must succeed before pull requests can be merged
+## Package Definition Rules
 
-## Package Development Guidelines
+### 1. File Location & Naming
+Spack enforces strict mapping between directory names and class names.
 
-### Setting up Spack itself
+* **Package Name**: Lowercase, dashes instead of underscores (e.g., `py-numpy`, `hdf5`).
+* **File Path**: All package recipes are located at `repos/spack_repo/builtin/packages/<package_name>/package.py` using underscores instead of dashes (e.g., `repos/spack_repo/builtin/packages/py_numpy/package.py`).
+* **Class Name**: Must be the **CamelCase** equivalent of the package name.
+    * `hdf5` -> `class Hdf5`
+    * `py-numpy` -> `class PyNumpy`
+    * `foo-bar-baz` -> `class FooBarBaz`
+    * *Exception*: If the name starts with a number, prefix with `_` (e.g., `3proxy` -> `class _3proxy`).
 
-To get `spack` in your path, use the following commands:
+### 2. Package Structure
+* **Imports**: Always use `from spack.package import *`.
+* **Class**: Must inherit from a build system class (e.g., `CMakePackage`, `AutotoolsPackage`, `PythonPackage`, `MesonPackage`) or the generic `Package`.
+* **Docstring**: Include a brief description of the package.
 
-```
-git clone --depth=1 https://github.com/spack/spack.git
-. spack/share/spack/setup-env.sh
-```
-
-### Multi-Version Support
-
-Spack packages support multiple versions simultaneously. When adding new versions:
-
-1. **Always preserve existing versions** unless marked deprecated with ``deprecated=True``. Only deprecated versions can be removed.
-2. **Update dependencies carefully** to maintain compatibility across all supported versions
-3. **Use version-specific constraints** with `when="@version:"` syntax when needed
-
-### Key Package Fields
-
-When working with package files, pay special attention to:
-
-- **`git` field**: Points to the source repository for inspecting diffs between versions
-- **`url` field**: Generic location from which version-specific URLs are derived
-- **`version()`**: Each version should include SHA256 checksums (use `spack checksum <package-name>` to generate them; CI automatically verifies checksums for newly added versions)
-- **`depends_on()`**: Dependencies with version constraints using `when="@version:"` syntax
-- **`homepage`**: Official project website
-- **`maintainers()`**: Package maintainers (GitHub usernames)
-
-### Version Management Best Practices
+### 3. Versions and Checksums
+* List versions in from newest to oldest.
+* **Mandatory Checksums**: Every `version()` directive must have a `sha256` argument.
+* If the user provides a version but no checksum, ask the user for the checksum or use a placeholder string `"TODO: insert sha256"`. Do not guess checksums.
 
 ```python
-# Good: Versions are listed in descending order with SHA256 checksums
-version("1.3.0", sha256="abcd1234...")
-version("1.2.2", sha256="efgh5678...")
-version("1.1.0", sha256="ijkl9012...")
-
-# Good: backwards compatibility bounds
-depends_on("python@3.8:", when="@1.3:", type=("build", "run"))
-depends_on("python@3.7:", when="@1.2:", type=("build", "run"))
-depends_on("python@3.6:", type=("build", "run"))
-
-# Good: forward-compatibility bounds
-depends_on("python@:3.13", when="@:1.2", type=("build", "run"))
-
-# Good: Conditional features based on version
-variant("new_feature", default=False, description="Enable new feature", when="@1.2.3:")
+# Correct Version Ordering
+version("1.3.0", sha256="...")
+version("1.2.0", sha256="...")
 ```
 
-* `@1.2:` matches versions 1.2, 1.2.0, 1.2.1, 1.3, etc.
-* `@:1.4` matches 1.0.0, 1.3.2, 1.4, 1.4.8 including any 1.4.x release, but not 1.5.0 or later. So `python@:3.14` matches any Python up to and including 3.14.x, but not 3.15 or later.
-
-### Dependency Updates
-
-You can use 
-
-```
-$ spack stage --path ./sources pkg@1.2.3
-$ cd sources/spack-src
-```
-
-to check out source code of a specific version and inspect the `pyproject.toml` or `CMakeLists.txt` to see how dependencies have evolved between versions. This helps ensure that you update dependencies correctly when adding new versions.
-
-When adding new package versions:
-
-1. **Check for new dependencies** that the new version requires
-2. **Update existing dependency version constraints** if needed
-3. **Ensure backwards compatibility** with older versions where possible
-
-Example of proper dependency evolution:
-```python
-# Version-specific dependency updates
-depends_on("cmake@3.16:", when="@2.0:", type="build")
-depends_on("cmake@3.12:", when="@1.0:", type="build")
-depends_on("boost@1.70:", when="@2.1:", type=("build", "link"))
-depends_on("boost@1.60:", type=("build", "link"))
-```
-
-### Package validation
-
-You can verify that the `depends_on`, `version`, and other directives in your package files are correct by running: 
-
-```
-spack audit packages my-pkg
-```
-
-## Platform Support
-
-Spack supports Linux, macOS, and Windows. When contributing:
-
-- **Test on multiple platforms** when possible
-- **Use platform-specific variants** when needed:
-  ```python
-  variant("shared", default=True, description="Build shared libraries")
-  # Windows-specific considerations
-  conflicts("+shared", when="platform=windows", msg="Windows requires static libraries")
-  ```
-- **Consider platform-specific dependencies**
-- **Use conditional logic** for platform differences
-
-## Code Style and Quality
-
-The repository enforces strict code quality standards:
-
-### Style Requirements
-
-- **Python code style**: Enforced by `flake8`, `isort`, and `black`
-- **Line length**: 99 characters maximum
-- **Import organization**: Use `isort` for consistent import ordering
-- **Code formatting**: Use `black` for consistent formatting
-
-### Running Style Checks
-
-```bash
-# Run style checks (from repository root)
-.ci/style_check.sh
-
-# Fix style issues automatically
-.ci/style_check.sh --fix
-```
-
-### Conditional Dependencies
+### 4. Dependencies
+* **Directives**: Use `depends_on("name")`.
+* **Constraints**: Use Spack spec syntax (e.g., `@1.2:`, `+variant`).
+* **Context**: Use `when=` for conditional dependencies.
+* **Types**: Explicitly define types: `type=("build", "link", "run", "test")`. Default is usually `("build", "link")`. Python packages often need `("build", "run")`.
 
 ```python
-# Version-based conditions
-depends_on("new-dep@1.0:", when="@2.0:")
-depends_on("old-dep")
-
-# Variant-based conditions  
-depends_on("optional-dep", when="+feature")
-
-# Platform-based conditions
-depends_on("linux-only-dep", when="platform=linux")
+# Examples
+depends_on("cmake@3.12:", type="build")
+depends_on("python@3.8:", type=("build", "run"), when="@1.5:")
 ```
 
-### Handling Build Systems
+### 5. Build System Helpers
+Prefer Spack's declarative helper methods over manual list manipulation.
+
+**CMakePackage:**
+* Use `self.define("VAR", value)` and `self.define_from_variant("VAR", "variant")`.
+* Do not manually append `-DVAR=ON` to a list.
 
 ```python
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+# Bad
+args.append("-DBUILD_SHARED_LIBS=ON")
 
-class MyCMakePackage(CMakePackage):
-    """CMake-based package"""
-    
-    def cmake_args(self):
-        args = [
-            self.define_from_variant("BUILD_SHARED_LIBS", "shared")
-        ]
-        if self.spec.satisfies("@2.0:"):
-            args.append(self.define("NEW_FEATURE", True))
-        return args
-        
-    # Use dedicated helper functions to set configuration options
-    # as defined in the build_systems packages inherited by individual packages
+# Good
+args.append(self.define("BUILD_SHARED_LIBS", True))
+args.append(self.define_from_variant("ENABLE_MPI", "mpi"))
 ```
 
-## Error Prevention
+**AutotoolsPackage:**
+* Use `self.with_or_without("feature")` or `self.enable_or_disable("feature")`.
 
-### Common Mistakes to Avoid
+### 6. Variants
+* Use `variant("name", default=True, description="...")`.
+* Use `conflicts()` to prevent invalid combinations.
 
-1. **Don't delete existing versions** unless absolutely necessary (when removing packages, flag in PR summary and explain justification)
-2. **Don't break existing dependency relationships** when adding new versions
-3. **Always include SHA256 checksums** for new versions
-4. **Don't ignore platform-specific issues**
-5. **Don't skip audit checks** - they catch many common problems
-
-### Useful Debugging Commands
-
-```bash
-# Check package syntax
-spack info <package-name>
-
-# Validate package dependencies
-spack spec <package-name>@<version>
+```python
+variant("offload", default=False, description="Enable offload support")
+conflicts("+offload", when="platform=darwin", msg="Offload not supported on macOS")
 ```
 
-## Additional Resources
+## Reviewing Diff/Context
 
-- [Spack Documentation](https://spack.readthedocs.io/)
-- [Packaging Guide](https://spack.readthedocs.io/en/latest/packaging_guide.html)
-- [Package Repository Guidelines](https://github.com/spack/spack-packages/blob/develop/CONTRIBUTING.md)
-- [Spack Main Repository](https://github.com/spack/spack)
-- [Spack Slack Community](https://slack.spack.io)
+If the user provides a `pyproject.toml`, `setup.py`, `CMakeLists.txt`, or `configure.ac`:
+1.  Analyze the file for dependencies and version constraints.
+2.  Update the `depends_on` directives in `package.py` to match the source of truth.
+3.  Add `when="@new_version:"` if the dependency is new to this version.
 
-## Summary
+## Common Pitfalls to Avoid
 
-When contributing to this repository:
+1.  **Do not** suggest `git checkout` or `spack stage` commands. You cannot execute them. Ask the user to provide file contents if needed.
+2.  **Do not** mix Python string logic with Spack spec logic.
+    * *Bad:* `if self.version >= Version("1.2"):`
+    * *Good:* `if self.spec.satisfies("@1.2:"):`
+3.  **Do not** hardcode paths. Use `self.prefix`, `self.stage.source_path`, etc.
+4.  **Do not** use `url` for Git repositories. Use the class-level `git` attribute for the repository URL.
 
-1. **Preserve multi-version support** - don't break existing installations
-2. **Update dependencies thoughtfully** using version constraints
-3. **Use `git` and `url` fields** to understand version changes
-4. **Follow style guidelines** and pass all audit checks
-
-This approach ensures that Spack continues to provide its core value proposition: supporting multiple versions and configurations of software simultaneously across diverse computing environments.
+## Documentation References
+* **Spec Syntax**: `@1.2` (exact), `@1.2:` (1.2 and up), `@:1.2` (up to 1.2, including 1.2.x; does *not* include 1.3 and up).
+* **Compiler Wrapper**: Do not set `CC`/`CXX` manually; Spack's compiler wrappers handle this. Use `self.spec["mpi"].mpicc` only if strictly necessary.
+* **Patching**: Use `patch("filename.patch", when="@version")`.
