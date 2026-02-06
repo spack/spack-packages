@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -32,6 +33,12 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", submodules=False)
     version("master", branch="master", submodules=False)
+    version(
+        "0.15.3",
+        tag="v0.15.3",
+        commit="132252376aa460fa900d034f7b018d3a169afce6",
+        submodules=False,
+    )
     version(
         "0.15.2",
         tag="v0.15.2",
@@ -149,7 +156,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("umpire")
     depends_on("umpire+mpi", when="+mpi")
-    depends_on("umpire@2025.09:", when="@0.15.2:")
+    depends_on("umpire@2025.12:", when="@0.15.3:")
+    depends_on("umpire@2025.09", when="@0.15.2")
     depends_on("umpire@2025.03", when="@0.15.0")
     depends_on("umpire@2024.07.0", when="@0.13.2")
     depends_on("umpire@2024.02.1", when="@0.13.0")
@@ -157,7 +165,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("umpire@2022.10.0", when="@0.10.0")
 
     depends_on("raja")
-    depends_on("raja@2025.09:", when="@0.15.2:")
+    depends_on("raja@2025.12:", when="@0.15.3:")
+    depends_on("raja@2025.09", when="@0.15.2")
     depends_on("raja@2025.03", when="@0.15.0")
     depends_on("raja@2024.07.0", when="@0.13.2")
     depends_on("raja@2024.02.2", when="@0.13.1")
@@ -167,7 +176,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("chai+enable_pick", when="@:0.14.99")
     depends_on("chai+raja")
-    depends_on("chai@2025.09.1:", when="@0.15.2:")
+    depends_on("chai@2025.12:", when="@0.15.3:")
+    depends_on("chai@2025.09.1", when="@0.15.2")
     depends_on("chai@2025.03", when="@0.15.0")
     depends_on("chai@2024.07.0", when="@0.13.2")
     depends_on("chai@2024.02.2", when="@0.13.1")
@@ -260,11 +270,54 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("CUDA_SEPARABLE_COMPILATION", True))
             entries.append(cmake_cache_string("NVTOOLSEXT_DIR", spec["cuda"].prefix))
             entries.append(cmake_cache_string("CUB_DIR", spec["cub"].prefix))
+
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("ENABLE_CUDA", False))
 
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
+            else:
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
@@ -272,8 +325,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def initconfig_mpi_entries(self):
         spec = self.spec
-
         entries = super(Care, self).initconfig_mpi_entries()
+
         entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
 
         return entries

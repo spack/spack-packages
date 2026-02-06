@@ -50,6 +50,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     maintainers("adamjstewart", "jonas-eschle")
 
     version("0.9.0", sha256="8525c72ac7ea01851297df5b25ca4622c65299c265c87dfe78420bb29e7b1bb3")
+    version("0.8.3", sha256="fad6506b91b761842263dc6a9691ecc4f584b313a214ed6c89b6e5d899a69a3d")
     version("0.8.2", sha256="f7e5080c97c1aaffb490a17d174cb59a83dd037800d9c41d309287bebd15b0b8")
     version("0.8.1", sha256="38882602112dadfd49a2c74868a0722574ae88e04646a96f32f8c36a7893c548")
     version("0.8.0", sha256="864aa46b5a4475c70195bd3728d32224f5b5ae1c7dd9c70646ef1387b4b0b04b")
@@ -208,12 +209,12 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     # backports https://github.com/abseil/abseil-cpp/pull/1732
     patch("jaxxlatsl.patch", when="@0.4.28:0.4.32 target=aarch64:")
 
-    requires(
-        "%c,cxx=llvm",
-        "%c,cxx=apple-clang",
-        when="@0.7.1:",
-        msg="Clang is the only acceptable compiler.",
-    )
+    with when("@0.7.1:"):
+        with default_args(msg="Clang is the only acceptable compiler."):
+            requires("%c,cxx=llvm", when="platform=linux")
+            # Order here is important. Place the most common compiler first so that the
+            # concretizer will not try to use v0.7.0 to avoid taking a penalty on requirements
+            requires("%c,cxx=apple-clang", "%c,cxx=llvm", when="platform=darwin")
 
     conflicts(
         "cuda_arch=none",
