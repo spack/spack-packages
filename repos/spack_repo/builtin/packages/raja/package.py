@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -39,6 +40,24 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", submodules=submodules)
     version("main", branch="main", submodules=submodules)
+    version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="e827035c630e71a9358e2f21c2f3cf6fd5fb6605",
+        submodules=submodules,
+    )
+    version(
+        "2025.09.1",
+        tag="v2025.09.1",
+        commit="1e0756eda3c344da362e483afb9100ebd8137a2c",
+        submodules=submodules,
+    )
+    version(
+        "2025.09.0",
+        tag="v2025.09.0",
+        commit="ca756788dbdd43fec2a3840389126ae94a905d5f",
+        submodules=submodules,
+    )
     version(
         "2025.03.2",
         tag="v2025.03.2",
@@ -209,7 +228,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Build OpenMP backend")
     variant("shared", default=False, description="Build shared libs")
     variant("desul", default=False, description="Build desul atomics backend")
-    variant("vectorization", default=False, description="Build SIMD/SIMT intrinsics support")
+    variant("vectorization", default=True, description="Build SIMD/SIMT intrinsics support")
     variant(
         "omptask", default=False, description="Build OpenMP task variants of internal algorithms"
     )
@@ -218,6 +237,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("gpu-profiling", default=False, description="Enable GPU profiling")
 
     variant("plugins", default=False, description="Enable runtime plugins")
+    variant("caliper", default=False, description="Enable caliper support")
     variant("examples", default=True, description="Build examples.")
     variant("exercises", default=True, description="Build exercises.")
     # TODO: figure out gtest dependency and then set this default True
@@ -239,9 +259,21 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         description="For developers, lowers optimization level to pass tests with some compilers",
     )
 
+    variant(
+        "cxxstd",
+        default="17",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+    conflicts("cxxstd=11", when="@0.14.0:")
+    conflicts("cxxstd=14", when="@2025.09.0:")
+    conflicts("+sycl cxxstd=14", when="@2024.07.0:")
+
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
 
     depends_on("blt", type="build")
+    depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
     depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.02.1:")
     depends_on("blt@0.6.1", type="build", when="@2024.02.0")
@@ -257,10 +289,11 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
-    depends_on("camp@main", when="@develop")
-    depends_on("camp@2025.03.0:", when="@2025.03.0:")
-    depends_on("camp@2024.07.0:", when="@2024.07.0:")
-    depends_on("camp@2024.02.1:", when="@2024.02.1:")
+    depends_on("camp@2025.12:", when="@2025.12:")
+    depends_on("camp@2025.09", when="@2025.09")
+    depends_on("camp@2025.03", when="@2025.03")
+    depends_on("camp@2024.07", when="@2024.07")
+    depends_on("camp@2024.02.1", when="@2024.02.1")
     depends_on("camp@2024.02.0", when="@2024.02.0")
     depends_on("camp@2023.06.0", when="@2023.06.0:2023.06.1")
     depends_on("camp@2022.10.1:2023.06.0", when="@2022.10.3:2022.10.5")
@@ -269,13 +302,16 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp@0.2.2:0.2.3", when="@0.14.0")
     depends_on("camp@0.1.0", when="@0.10.0:0.13.0")
 
-    depends_on("cmake@3.23:", when="@2024.07.0:", type="build")
+    depends_on("cmake@3.24:", when="@2025.09.0:", type="build")
+    depends_on("cmake@3.23:", when="@2024.07.0:2025.03.2", type="build")
     depends_on("cmake@3.23:", when="@2022.10.0:2024.02.2+rocm", type="build")
     depends_on("cmake@3.20:", when="@2022.10.0:2024.02.2", type="build")
     depends_on("cmake@3.20:", when="@:2022.03+rocm", type="build")
     depends_on("cmake@3.14:", when="@:2022.03", type="build")
 
     depends_on("llvm-openmp", when="+openmp %apple-clang")
+
+    depends_on("caliper", when="+caliper")
 
     depends_on("rocprim", when="+rocm")
     with when("+rocm @0.12.0:"):
@@ -356,8 +392,53 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_option("ENABLE_OPENMP", spec.satisfies("+openmp")))
         entries.append(cmake_cache_option("ENABLE_CUDA", spec.satisfies("+cuda")))
 
+        if spec.satisfies("+cuda"):
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
+
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
+            else:
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
+
             hipcc_flags = []
             if self.spec.satisfies("^rocprim@7.0"):
                 hipcc_flags.append("-std=c++17")
@@ -370,6 +451,10 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
         return entries
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
 
     def initconfig_package_entries(self):
         spec = self.spec
@@ -417,20 +502,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+lowopttest"):
             entries.append(cmake_cache_string("CMAKE_CXX_FLAGS_RELEASE", "-O1"))
 
-        # C++17
-        if (
-            spec.satisfies("@2025.09.0:")
-            or (spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl"))
-            or (spec.satisfies("^rocprim@7.0:"))
-        ):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
-        # C++14
-        elif spec.satisfies("@0.14.0:2025.09.0"):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
-
-            if spec.satisfies("+desul"):
-                if spec.satisfies("+cuda"):
-                    entries.append(cmake_cache_string("CMAKE_CUDA_STANDARD", "14"))
+        # C++ standard
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         entries.append(
             cmake_cache_option("RAJA_ENABLE_RUNTIME_PLUGINS", spec.satisfies("+plugins"))

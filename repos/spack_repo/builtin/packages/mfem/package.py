@@ -54,6 +54,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     version("develop", branch="master")
 
     version(
+        "4.9.0",
+        sha256="6904974c8d5a6bcd127419c7b7adff873170d397ed2f0bccdf438e940e713af2",
+        url="https://bit.ly/mfem-4-9",
+        extension="tar.gz",
+    )
+
+    version(
         "4.8.0",
         sha256="49bd2a076b0d87863092cb55f8524b5292d9afb2e48c19f80222ada367819016",
         url="https://bit.ly/mfem-4-8",
@@ -303,6 +310,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     depends_on("hipsparse", when="@4.4.0:+rocm")
     depends_on("hipblas", when="@4.8.0:+rocm")
+    depends_on("hipcub", when="@4.9.0:+rocm")
 
     with when("+mpi"):
         depends_on("hypre")
@@ -324,14 +332,14 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("blas", when="+lapack")
     depends_on("lapack@3.0:", when="+lapack")
 
-    depends_on("sundials@2.7.0:", when="@3.3.2:+sundials~mpi")
-    depends_on("sundials@2.7.0:+mpi+hypre", when="@3.3.2:+sundials+mpi")
+    depends_on("sundials@2.7.0:", when="@3.3.2:4.0+sundials~mpi")
+    depends_on("sundials@2.7.0:+mpi+hypre", when="@3.3.2:4.0+sundials+mpi")
     depends_on("sundials@5.0.0:5", when="@4.1.0:4.4+sundials~mpi")
     depends_on("sundials@5.0.0:5+mpi+hypre", when="@4.1.0:4.4+sundials+mpi")
     depends_on("sundials@5.0.0:6.7.0", when="@4.5.0:4.6+sundials~mpi")
     depends_on("sundials@5.0.0:6.7.0+mpi+hypre", when="@4.5.0:4.6+sundials+mpi")
     depends_on("sundials@5.0.0:", when="@4.7.0:+sundials~mpi")
-    depends_on("sundials@5.0.0:+mpi+hypre", when="@4.7.0:+sundials+mpi")
+    depends_on("sundials@5.0.0:+mpi", when="@4.7.0:+sundials+mpi")
     conflicts("cxxstd=11", when="^sundials@6.4.0:")
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on(
@@ -545,6 +553,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     patch("mfem-4.7.patch", when="@4.7.0")
     patch("mfem-4.7-sundials-7.patch", when="@4.7.0+sundials ^sundials@7:")
     patch("mfem-4.8-nvcc-c++17.patch", when="@4.8.0+cuda")
+    patch("mfem-4.9.patch", when="@4.9.0")
 
     phases = ["configure", "build", "install"]
 
@@ -754,9 +763,12 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         if "+mpi" in spec:
             options += ["MPICXX=%s" % spec["mpi"].mpicxx]
             hypre = spec["hypre"]
+            all_hypre_headers = hypre.headers
             all_hypre_libs = hypre.libs
             if "+lapack" in hypre:
                 all_hypre_libs += hypre["lapack"].libs + hypre["blas"].libs
+            if "+umpire" in hypre:
+                all_hypre_headers += hypre["umpire"].headers
 
             hypre_gpu_libs = ""
             if "+cuda" in hypre:
@@ -767,14 +779,14 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     hypre_rocm_libs += hypre["rocsparse"].libs
                 if "^rocrand" in hypre:
                     hypre_rocm_libs += hypre["rocrand"].libs
-                if hypre.satisfies("@2.39.0:"):
+                if hypre.satisfies("@2.29.0:"):
                     if "^rocsolver" in hypre:
                         hypre_rocm_libs += hypre["rocsolver"].libs
                     if "^rocblas" in hypre:
                         hypre_rocm_libs += hypre["rocblas"].libs
                 hypre_gpu_libs = " " + ld_flags_from_library_list(hypre_rocm_libs)
             options += [
-                "HYPRE_OPT=-I%s" % hypre.prefix.include,
+                "HYPRE_OPT=%s" % all_hypre_headers.cpp_flags,
                 "HYPRE_LIB=%s%s" % (ld_flags_from_library_list(all_hypre_libs), hypre_gpu_libs),
             ]
 
@@ -1050,6 +1062,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 hipblas = spec["hipblas"]
                 hip_headers += self.all_headers(hipblas)
                 hip_libs += hipblas.libs
+            if "^hipcub" in spec:  # hipcub is needed @4.9.0:+rocm
+                hipcub = spec["hipcub"]
+                hip_headers += self.all_headers(hipcub)
             if "%cce" in spec:
                 # We assume the proper Cray CCE module (cce) is loaded:
                 proc = str(spec.target.family)
@@ -1137,6 +1152,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             umpire_libs = umpire.libs
             if "^camp" in umpire:
                 umpire_opts += umpire["camp"].headers
+                umpire_libs += umpire["camp"].libs
             if "^fmt" in umpire:
                 umpire_opts += umpire["fmt"].headers
                 umpire_libs += umpire["fmt"].libs

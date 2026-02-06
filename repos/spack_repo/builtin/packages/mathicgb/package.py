@@ -14,12 +14,15 @@ class Mathicgb(AutotoolsPackage):
     computational algebra tasks."""
 
     homepage = "https://github.com/Macaulay2/mathicgb"
+    url = "https://github.com/Macaulay2/mathicgb/releases/download/v1.1/mathicgb-1.1.tar.gz"
     git = "https://github.com/Macaulay2/mathicgb"
 
     maintainers("d-torrance")
 
     license("GPL-2.0-or-later", checked_by="d-torrance")
 
+    version("1.2", sha256="5052ea8b175658a018d51cecef6c8d31f103ca3a7254b3690b4dbf80cbf0322e")
+    version("1.1", sha256="c756c2265df23fb7417f073cf09d63f05e093eb8136bf33904cec04eac24d5b3")
     version("1.0.2025.05.13", commit="de139564927563afef383174fd3cf8c93ee18ab3")
 
     depends_on("autoconf", type="build")

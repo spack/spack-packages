@@ -20,6 +20,7 @@ class Btop(MakefilePackage, CMakePackage):
 
     license("Apache-2.0")
 
+    version("1.4.6", sha256="4beb90172c6acaac08c1b4a5112fb616772e214a7ef992bcbd461453295a58be")
     version("1.4.4", sha256="98d464041015c888c7b48de14ece5ebc6e410bc00ca7bb7c5a8010fe781f1dd8")
     version("1.4.3", sha256="81b133e59699a7fd89c5c54806e16452232f6452be9c14b3a634122e3ebed592")
     version("1.4.0", sha256="ac0d2371bf69d5136de7e9470c6fb286cbee2e16b4c7a6d2cd48a14796e86650")

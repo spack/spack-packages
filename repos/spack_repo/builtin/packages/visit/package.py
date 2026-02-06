@@ -191,6 +191,7 @@ class Visit(CMakePackage):
     depends_on("conduit~mpi", when="+conduit~mpi")
 
     depends_on("mfem@4.4:", when="+mfem")
+    depends_on("mfem@:4.8", when="@:3.4.1+mfem")  # mfem v4.9 requires c++17
     depends_on("mfem+shared+exceptions+fms+conduit", when="+mfem")
     depends_on("libfms@0.2:", when="+mfem")
 
