@@ -80,7 +80,7 @@ class Psblas(AutotoolsPackage):
         "extraopenacc",
         default="none",
         description="Additional EXTRAOPENACC flags",
-        when="+openacc"
+        when="+openacc",
     )
     variant("ccopenacc", default="none", description="Additional CCOPENACC flags", when="+openacc")
     variant(
