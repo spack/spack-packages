@@ -19,12 +19,12 @@ class Psblas(AutotoolsPackage):
     url = "https://github.com/sfilippone/psblas3/archive/refs/tags/v3.9.0.tar.gz"
 
     # List of GitHub accounts to notify when the package is updated.
-    maintainers("cirdans-home")
+    maintainers("cirdans-home","sfilippone")
 
     # SPDX identifier of the project's license below.
     license("BSD-3-Clause", checked_by="cirdans-home")
 
-    version("development", branch="development")
+    version("develop", branch="development")
     version(
         "3.9.0",
         sha256="ce523ed2d266fb6dc8723c45a2bcbf40a1c67b7ca61cd9408032a73af7cf8605",
@@ -52,7 +52,7 @@ class Psblas(AutotoolsPackage):
     variant("mpi", default=True, description="Activates MPI support")
     # CUDA
     variant(
-        "cuda", default=False, description="Activate CUDA support", when="@development,3.9.0-rc1:"
+        "cuda", default=False, description="Activate CUDA support", when="@3.9.0-rc1:"
     )
     variant(
         "cudacc",
@@ -70,14 +70,14 @@ class Psblas(AutotoolsPackage):
         "openmp",
         default=False,
         description="Activates OpenMP support",
-        when="@development,3.9.0-rc1,3.9.0-rc3,3.9.0",
+        when="@3.9.0-rc1:",
     )
     # OpenACC support (requires GCC >= 14.2.0)
     variant(
         "openacc",
         default=False,
         description="Activate OpenACC support",
-        when="@development,3.9.0-rc1,3.9.0-rc3,3.9.0",
+        when="@3.9.0-rc1:",
     )
     # Additional configure options
     variant("ccopt", default="none", description="Additional CCOPT flags")
@@ -179,7 +179,7 @@ class Psblas(AutotoolsPackage):
         fileread = prefix.samples.fileread
         if spec.satisfies("@3.8.0-2:3.9.0-rc1"):
             pargen = prefix.samples.pargen
-        elif spec.satisfies("@3.9.0-rc3:") or spec.satisfies("@development"):
+        elif spec.satisfies("@3.9.0-rc3:"):
             pargen = prefix.samples.pdegen
         else:
             raise InstallError("Unsupported version layout")
