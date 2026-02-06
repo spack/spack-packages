@@ -145,7 +145,8 @@ class Openblas(CMakePackage, MakefilePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", when="+fortran", type="build")
+    depends_on("fortran", when="@:0.3.20", type="build")
     depends_on("perl", when="@:0.3.20", type="build")
 
     # https://github.com/OpenMathLib/OpenBLAS/pull/4879
