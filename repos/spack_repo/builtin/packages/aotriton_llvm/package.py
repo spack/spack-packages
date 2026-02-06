@@ -16,6 +16,10 @@ class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
     git = "https://github.com/llvm/llvm-project"
     url = "https://github.com/llvm/llvm-project/archive/llvmorg-7.1.0.tar.gz"
 
+    maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+
+    license("Apache-2.0")
+
     version("main", commit="b5cc222d7429fe6f18c787f633d5262fac2e676f")
     version("0.10", commit="3c709802d31b5bc5ed3af8284b40593ff39b9eec")
     version("0.9", commit="86b69c31642e98f8357df62c09d118ad1da4e16a")
