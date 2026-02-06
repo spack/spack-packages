@@ -1,25 +1,32 @@
 # GitHub Copilot Instructions for Spack Package Repository
 
-This repository contains package definitions for [Spack](https://spack.io/), a multi-platform package manager that builds and installs multiple versions and configurations of software. Spack works on Linux, macOS, and Windows, including many supercomputers.
+This repository contains package definitions for [Spack](https://github.com/spack/spack/), a multi-platform package manager that builds and installs multiple versions and configurations of software. Spack works on Linux, macOS, and Windows, including many supercomputers.
 
 ## Repository Structure
 
 - **Package files**: Located in `repos/spack_repo/builtin/packages/*/package.py`
 - **Build systems**: Common base classes in `repos/spack_repo/builtin/build_systems/`
 - **Tests**: Package tests in `tests/`
-- **CI/CD**: GitHub Actions workflows in `.github/workflows/`
-- **Stacks**: Environment definitions in `stacks/` that are automatically built outside of GitHub Actions and must succeed before pull requests can be merged
+- **Stacks**: Environment definitions in `stacks/` that are automatically built on a Gitlab mirror and must succeed before pull requests can be merged
 
 ## Package Development Guidelines
 
+### Setting up Spack itself
+
+To get `spack` in your path, use the following commands:
+
+```
+git clone --depth=1 https://github.com/spack/spack.git
+. spack/share/spack/setup-env.sh
+```
+
 ### Multi-Version Support
 
-Unlike many package managers, **Spack packages support multiple versions simultaneously**. When adding new versions:
+Spack packages support multiple versions simultaneously. When adding new versions:
 
-1. **Always preserve existing versions** unless they are broken or deprecated
+1. **Always preserve existing versions** unless marked deprecated with ``deprecated=True``. Only deprecated versions can be removed.
 2. **Update dependencies carefully** to maintain compatibility across all supported versions
 3. **Use version-specific constraints** with `when="@version:"` syntax when needed
-4. **Test against multiple versions** to ensure broad compatibility
 
 ### Key Package Fields
 
@@ -35,29 +42,42 @@ When working with package files, pay special attention to:
 ### Version Management Best Practices
 
 ```python
-# Good: Preserve existing versions and add new ones
-version("1.2.3", sha256="abcd1234...")
+# Good: Versions are listed in descending order with SHA256 checksums
+version("1.3.0", sha256="abcd1234...")
 version("1.2.2", sha256="efgh5678...")
-version("1.2.1", sha256="ijkl9012...")
+version("1.1.0", sha256="ijkl9012...")
 
-# Good: Version-specific dependencies
-depends_on("python@3.8:", when="@1.2.3:", type=("build", "run"))
-depends_on("python@3.7:", when="@1.2.2:", type=("build", "run"))
+# Good: backwards compatibility bounds
+depends_on("python@3.8:", when="@1.3:", type=("build", "run"))
+depends_on("python@3.7:", when="@1.2:", type=("build", "run"))
 depends_on("python@3.6:", type=("build", "run"))
+
+# Good: forward-compatibility bounds
+depends_on("python@:3.13", when="@:1.2", type=("build", "run"))
 
 # Good: Conditional features based on version
 variant("new_feature", default=False, description="Enable new feature", when="@1.2.3:")
 ```
 
+* `@1.2:` matches versions 1.2, 1.2.0, 1.2.1, 1.3, etc.
+* `@:1.4` matches 1.0.0, 1.3.2, 1.4, 1.4.8 including any 1.4.x release, but not 1.5.0 or later. So `python@:3.14` matches any Python up to and including 3.14.x, but not 3.15 or later.
+
 ### Dependency Updates
+
+You can use 
+
+```
+$ spack stage --path ./sources pkg@1.2.3
+$ cd sources/spack-src
+```
+
+to check out source code of a specific version and inspect the `pyproject.toml` or `CMakeLists.txt` to see how dependencies have evolved between versions. This helps ensure that you update dependencies correctly when adding new versions.
 
 When adding new package versions:
 
 1. **Check for new dependencies** that the new version requires
 2. **Update existing dependency version constraints** if needed
-3. **Use the `git` field** to inspect upstream changes between versions
-4. **Compare `url` patterns** between versions for consistency
-5. **Ensure backwards compatibility** with older versions where possible
+3. **Ensure backwards compatibility** with older versions where possible
 
 Example of proper dependency evolution:
 ```python
@@ -66,6 +86,14 @@ depends_on("cmake@3.16:", when="@2.0:", type="build")
 depends_on("cmake@3.12:", when="@1.0:", type="build")
 depends_on("boost@1.70:", when="@2.1:", type=("build", "link"))
 depends_on("boost@1.60:", type=("build", "link"))
+```
+
+### Package validation
+
+You can verify that the `depends_on`, `version`, and other directives in your package files are correct by running: 
+
+```
+spack audit packages my-pkg
 ```
 
 ## Platform Support
@@ -103,62 +131,6 @@ The repository enforces strict code quality standards:
 .ci/style_check.sh --fix
 ```
 
-### Audit Requirements
-
-All packages must pass Spack's audit checks:
-
-- **Package audits**: `spack audit packages`
-- **Config audits**: `spack audit configs`  
-- **External audits**: `spack audit externals`
-
-## Testing and Validation
-
-### GitHub Actions Workflows
-
-The repository runs several automated checks:
-
-1. **Style checks**: Python code formatting and linting
-2. **Audit checks**: Spack-specific package validation on Linux, macOS, and Windows
-3. **Checksum verification**: Validates SHA256 checksums for new versions
-4. **Canonicalization**: Ensures package files work across Python versions
-5. **Unit tests**: Comprehensive test suite
-
-### Manual Testing
-
-Before submitting changes:
-
-```bash
-# Test package installation
-spack install <package-name>@<version>
-
-# Run package-specific tests
-spack test <package-name>
-
-# Audit your changes
-spack audit packages <package-name>
-```
-
-## Common Patterns
-
-### Adding a New Version
-
-```python
-class MyPackage(Package):
-    """Package description"""
-    
-    homepage = "https://example.com"
-    url = "https://example.com/releases/mypackage-1.0.0.tar.gz"
-    git = "https://github.com/example/mypackage.git"
-    
-    # Always add new versions at the top
-    version("1.2.3", sha256="new_checksum_here")
-    version("1.2.2", sha256="existing_checksum")
-    
-    # Update dependencies for new versions
-    depends_on("python@3.9:", when="@1.2.3:", type=("build", "run"))
-    depends_on("python@3.7:", type=("build", "run"))
-```
-
 ### Conditional Dependencies
 
 ```python
@@ -177,13 +149,14 @@ depends_on("linux-only-dep", when="platform=linux")
 
 ```python
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.python import PythonPackage
 
 class MyCMakePackage(CMakePackage):
     """CMake-based package"""
     
     def cmake_args(self):
-        args = []
+        args = [
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared")
+        ]
         if self.spec.satisfies("@2.0:"):
             args.append(self.define("NEW_FEATURE", True))
         return args
@@ -210,9 +183,6 @@ spack info <package-name>
 
 # Validate package dependencies
 spack spec <package-name>@<version>
-
-# Debug installation issues
-spack install --verbose <package-name>@<version>
 ```
 
 ## Additional Resources
@@ -230,8 +200,6 @@ When contributing to this repository:
 1. **Preserve multi-version support** - don't break existing installations
 2. **Update dependencies thoughtfully** using version constraints
 3. **Use `git` and `url` fields** to understand version changes
-4. **Test across platforms** when possible
-5. **Follow style guidelines** and pass all audit checks
-6. **Consider the impact** on existing users and installations
+4. **Follow style guidelines** and pass all audit checks
 
 This approach ensures that Spack continues to provide its core value proposition: supporting multiple versions and configurations of software simultaneously across diverse computing environments.
