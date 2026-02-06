@@ -8,6 +8,7 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
+import spack.util.environment as envutil
 from spack.package import *
 
 _is_macos = sys.platform == "darwin"
@@ -166,6 +167,13 @@ class Root(CMakePackage):
         "https://github.com/root-project/root/commit/37f59306938f91f3ff2cce963ecbb041591dff43.patch?full_index=1",
         sha256="a530978b5a9e9aa4a58958aed5b1d7c7d5e91f949ea04254bf0afa2000e1eee9",
         when="@6.32.0:6.32.02",
+    )
+
+    # Fix cppyy double-install overwriting rpath
+    patch(
+        "https://github.com/root-project/root/commit/5b09965c2acf098f0bfba465c395a2ce23f276b5.patch?full_index=1",
+        sha256="131ab40a3be20b14929327bf9fc0a4c5e2da7d56aa1ad6f8bd39c7826038da81",
+        when="@6.38.0 +python",
     )
 
     if _is_macos:
@@ -376,7 +384,8 @@ class Root(CMakePackage):
     depends_on("ncurses")
     depends_on("nlohmann-json", when="@6.24:")
     depends_on("nlohmann-json@:3.10", when="@6.24:6.26.07")
-    depends_on("pcre")
+    depends_on("pcre", when="@:6.33")
+    depends_on("pcre2", when="@6.34:")
     depends_on("xxhash", when="@6.13.02:")  # See cmake_args, below.
     depends_on("xz")
     depends_on("zlib-api")
@@ -609,7 +618,8 @@ class Root(CMakePackage):
         _add_variant(v, f, "roofit", "+roofit")
         # webui feature renamed to webgui in 6.18
         _add_variant(v, f, ("root7", "webgui"), "+webgui")
-        _add_variant(v, f, "rpath", "+rpath")
+        if Version(version_str) < Version("6.38"):
+            _add_variant(v, f, "rpath", "+rpath")
         _add_variant(v, f, "runtime_cxxmodules", "+cxxmodules")
         _add_variant(v, f, "shadowpw", "+shadow")
         _add_variant(v, f, "spectrum", "+spectrum")
@@ -876,7 +886,7 @@ class Root(CMakePackage):
         # system/compiler combinations don't like having -I/usr/include around.
         def add_include_path(dep_name):
             include_path = spec[dep_name].prefix.include
-            if not is_system_path(include_path):
+            if not envutil.is_system_path(include_path):
                 env.append_path("SPACK_INCLUDE_DIRS", include_path)
 
         # With that done, let's go fixing those deps
@@ -898,6 +908,8 @@ class Root(CMakePackage):
     @property
     def root_library_path(self):
         # The ROOT_LIBRARY_PATH environment variable was added to ROOT 6.26.
+        # For previous versions (no longer supported by Spack) it was
+        # LD_LIBRARY_PATH.
         return "ROOT_LIBRARY_PATH"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
@@ -908,8 +920,8 @@ class Root(CMakePackage):
         env.set("CLING_STANDARD_PCH", "none")
         env.set("CPPYY_API_PATH", "none")
         env.set("CPPYY_BACKEND_LIBRARY", self.prefix.lib.root.libcppyy_backend)
-        if "+rpath" not in self.spec:
-            env.prepend_path(self.root_library_path, self.prefix.lib.root)
+        # Always define ROOT's library path for downstream usage
+        env.prepend_path(self.root_library_path, self.prefix.lib.root)
 
         # https://github.com/root-project/root/issues/18949
         if "+cxxmodules" in self.spec and "+vc" in self.spec:
@@ -921,19 +933,21 @@ class Root(CMakePackage):
         env.prepend_path("PYTHONPATH", self.prefix.lib.root)
         env.prepend_path("PATH", self.prefix.bin)
         env.append_path("CMAKE_MODULE_PATH", self.prefix.cmake)
-        env.prepend_path("ROOT_INCLUDE_PATH", dependent_spec.prefix.include)
-        if "+rpath" not in self.spec:
-            env.prepend_path(self.root_library_path, self.prefix.lib.root)
         if "platform=darwin" in self.spec:
             # Newer deployment targets cause fatal errors in rootcling
             env.unset("MACOSX_DEPLOYMENT_TARGET")
+
+        # Note that setup_dependent_run_environment will add include and
+        # library path
 
         # https://github.com/root-project/root/issues/18949
         if "+cxxmodules" in self.spec and "+vc" in self.spec:
             env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec):
+        # Set up runtime dependencies *of downstream packages* that use ROOT
         env.prepend_path("ROOT_INCLUDE_PATH", dependent_spec.prefix.include)
+
         # For dependents that build dictionaries, ROOT needs to know where the
         # dictionaries have been installed.  This can be facilitated by
         # automatically prepending dependent package library paths to

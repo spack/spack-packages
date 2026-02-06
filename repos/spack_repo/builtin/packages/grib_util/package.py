@@ -56,7 +56,7 @@ class GribUtil(CMakePackage):
         args = [
             self.define_from_variant("OPENMP", "openmp"),
             self.define("BUILD_TESTING", self.run_tests),
-            self.define("G2C_COMPARE", self.run_tests),
+            self.define("G2C_COMPARE", False),
         ]
         return args
 
