@@ -305,7 +305,7 @@ class Openblas(CMakePackage, MakefilePackage):
     patch("openblas-0.3.21-0.3.26_aocc.patch", when="@0.3.21:0.3.26 %aocc@5.0.0:")
 
     # Requires support for -mtune=generic
-    conflicts("%fortran=clang %llvm@18")
+    conflicts("%fortran=llvm@18")
 
     # See https://github.com/spack/spack/issues/19932#issuecomment-733452619
     # Notice: fixed on Amazon Linux GCC 7.3.1 (which is an unofficial version
