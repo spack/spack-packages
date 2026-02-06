@@ -306,7 +306,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("valgrind", when="+valgrind")
     with when("+rocm"):
         depends_on("hsa-rocr-dev")
-        depends_on("hip@7.0:", when="@2.9")
+        depends_on("hip@7.0:", when="@2.9:")
         depends_on("hip@:6.4", when="@:2.7")
         depends_on("rccl", when="+nccl")
         depends_on("rocprim")
@@ -329,10 +329,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             depends_on(f"hipblaslt amdgpu_target={target}", when=f"amdgpu_target={target}")
             # Ensure hipblaslt version for 2.9+
             depends_on(
-                f"hipblaslt@7.0: amdgpu_target={target}", when=f"@2.9 amdgpu_target={target}"
+                f"hipblaslt@7.0: amdgpu_target={target}", when=f"@2.9: amdgpu_target={target}"
             )
         depends_on("rocminfo")
-        depends_on("hipsparselt@7.0:", when="@2.9")
+        depends_on("hipsparselt@7.0:", when="@2.9:")
         depends_on("aotriton@0.8b", when="@2.5:2.6")
         depends_on("aotriton@0.9.2b", when="@2.7")
         depends_on("aotriton@0.10b", when="@2.8:")
