@@ -1,5 +1,5 @@
 diff --git a/caffe2/CMakeLists.txt b/caffe2/CMakeLists.txt
-index d2d23b7..620a89f 100644
+index d2d23b7ab65..620a89f65cb 100644
 --- a/caffe2/CMakeLists.txt
 +++ b/caffe2/CMakeLists.txt
 @@ -1379,13 +1379,6 @@ if(USE_ROCM)
@@ -26,7 +26,7 @@ index d2d23b7..620a89f 100644
  endif()
  
 diff --git a/cmake/public/LoadHIP.cmake b/cmake/public/LoadHIP.cmake
-index 58c74dd..d3e1ad4 100644
+index 58c74ddda35..54f96871372 100644
 --- a/cmake/public/LoadHIP.cmake
 +++ b/cmake/public/LoadHIP.cmake
 @@ -26,12 +26,6 @@ else()
@@ -78,7 +78,15 @@ index 58c74dd..d3e1ad4 100644
    find_package_and_print_version(amd_comgr REQUIRED)
    find_package_and_print_version(rocrand REQUIRED)
    find_package_and_print_version(hiprand REQUIRED)
-@@ -171,7 +168,11 @@ if(HIP_FOUND)
+@@ -157,6 +154,7 @@ if(HIP_FOUND)
+   find_package_and_print_version(hipcub REQUIRED)
+   find_package_and_print_version(rocthrust REQUIRED)
+   find_package_and_print_version(hipsolver REQUIRED)
++  list(APPEND ROCM_INCLUDE_DIRS $ENV{AOTRITON_INSTALLED_PREFIX}/include)
+   # workaround cmake 4 build issue
+   if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0.0")
+     message(WARNING "Work around hiprtc cmake failure for cmake >= 4")
+@@ -171,7 +169,11 @@ if(HIP_FOUND)
    if(UNIX)
      find_package_and_print_version(rccl)
      find_package_and_print_version(hsa-runtime64 REQUIRED)
