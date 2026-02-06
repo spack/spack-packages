@@ -19,7 +19,7 @@ class Psblas(AutotoolsPackage):
     url = "https://github.com/sfilippone/psblas3/archive/refs/tags/v3.9.0.tar.gz"
 
     # List of GitHub accounts to notify when the package is updated.
-    maintainers("cirdans-home","sfilippone")
+    maintainers("cirdans-home", "sfilippone")
 
     # SPDX identifier of the project's license below.
     license("BSD-3-Clause", checked_by="cirdans-home")
@@ -51,9 +51,7 @@ class Psblas(AutotoolsPackage):
     # MPI
     variant("mpi", default=True, description="Activates MPI support")
     # CUDA
-    variant(
-        "cuda", default=False, description="Activate CUDA support", when="@3.9.0-rc1:"
-    )
+    variant("cuda", default=False, description="Activate CUDA support", when="@3.9.0-rc1:")
     variant(
         "cudacc",
         default="70,75,80,86,89,90",
@@ -66,19 +64,9 @@ class Psblas(AutotoolsPackage):
     # SuiteSparse: Enable AMD library support via SuiteSparse
     variant("amd", default=False, description="Activate AMD support via SuiteSparse")
     # OpenMP
-    variant(
-        "openmp",
-        default=False,
-        description="Activates OpenMP support",
-        when="@3.9.0-rc1:",
-    )
+    variant("openmp", default=False, description="Activates OpenMP support", when="@3.9.0-rc1:")
     # OpenACC support (requires GCC >= 14.2.0)
-    variant(
-        "openacc",
-        default=False,
-        description="Activate OpenACC support",
-        when="@3.9.0-rc1:",
-    )
+    variant("openacc", default=False, description="Activate OpenACC support", when="@3.9.0-rc1:")
     # Additional configure options
     variant("ccopt", default="none", description="Additional CCOPT flags")
     variant("cxxopt", default="none", description="Additional CXXOPT flags")
@@ -92,7 +80,7 @@ class Psblas(AutotoolsPackage):
         "extraopenacc",
         default="none",
         description="Additional EXTRAOPENACC flags",
-        when="+openacc",
+        when="+openacc"
     )
     variant("ccopenacc", default="none", description="Additional CCOPENACC flags", when="+openacc")
     variant(
