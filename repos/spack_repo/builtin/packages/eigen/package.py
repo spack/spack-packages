@@ -47,6 +47,8 @@ class Eigen(CMakePackage, ROCmPackage):
     version("3.2.6", sha256="e097b8dcc5ad30d40af4ad72d7052e3f78639469baf83cffaadc045459cda21f")
     version("3.2.5", sha256="8068bd528a2ff3885eb55225c27237cf5cda834355599f05c2c85345db8338b4")
 
+    variant("blas", description="Build BLAS implementation", when="@3.4.1:", default=False)
+    variant("lapack", description="Build LAPACK implementation", when="@3.4.1: +blas", default=False)
     variant("nightly", description="run Nightly test", default=False)
 
     # TODO: https://eigen.tuxfamily.org/dox/TopicUsingBlasLapack.html
@@ -88,7 +90,8 @@ class Eigen(CMakePackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build", when="@3.4.1:")
+    depends_on("fortran", type="build", when="@3.4.1: +lapack")
+    depends_on("fortran", type="build", when="@3.4.1:3 +blas")
 
     depends_on("cmake@3.10:", when="@3.4.1:", type="build")
     depends_on("cmake@3.5:", when="@3.4.0", type="build")
@@ -105,6 +108,8 @@ class Eigen(CMakePackage, ROCmPackage):
         args = [
             self.define("EIGEN_BUILD_TESTING", self.run_tests),
             self.define("EIGEN_LEAVE_TEST_IN_ALL_TARGET", self.run_tests),
+            self.define_from_variant("EIGEN_BUILD_BLAS", "blas"),
+            self.define_from_variant("EIGEN_BUILD_LAPACK", "lapack"),
         ]
 
         if self.spec.satisfies("@:3.4"):
