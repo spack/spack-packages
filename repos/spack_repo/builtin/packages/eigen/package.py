@@ -48,7 +48,9 @@ class Eigen(CMakePackage, ROCmPackage):
     version("3.2.5", sha256="8068bd528a2ff3885eb55225c27237cf5cda834355599f05c2c85345db8338b4")
 
     variant("blas", description="Build BLAS implementation", when="@3.4.1:", default=False)
-    variant("lapack", description="Build LAPACK implementation", when="@3.4.1: +blas", default=False)
+    variant(
+        "lapack", description="Build LAPACK implementation", when="@3.4.1: +blas", default=False
+    )
     variant("nightly", description="run Nightly test", default=False)
 
     # TODO: https://eigen.tuxfamily.org/dox/TopicUsingBlasLapack.html
