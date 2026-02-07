@@ -47,10 +47,9 @@ class Eigen(CMakePackage, ROCmPackage):
     version("3.2.6", sha256="e097b8dcc5ad30d40af4ad72d7052e3f78639469baf83cffaadc045459cda21f")
     version("3.2.5", sha256="8068bd528a2ff3885eb55225c27237cf5cda834355599f05c2c85345db8338b4")
 
-    variant("blas", description="Build BLAS implementation", when="@3.4.1:", default=False)
-    variant(
-        "lapack", description="Build LAPACK implementation", when="@3.4.1: +blas", default=False
-    )
+    variant("blas", description="Build eigen-based BLAS", when="@3.4.1:", default=False)
+    variant("lapack", description="Build eigen-based LAPACK", when="@3.4.1:", default=False)
+
     variant("nightly", description="run Nightly test", default=False)
 
     # TODO: https://eigen.tuxfamily.org/dox/TopicUsingBlasLapack.html
@@ -83,6 +82,9 @@ class Eigen(CMakePackage, ROCmPackage):
         sha256="5d4521e391a4e62e1ee7a98df5dbb20f67c4a1210863babfdbfec0466c8d2b13",
         when="@5.0.0 platform=windows",
     )
+
+    # Building eigen-based LAPACK implementation requires to also build BLAS
+    conflicts("~blas", when="+lapack")
 
     conflicts("platform=windows", when="@3.4.1")
 
