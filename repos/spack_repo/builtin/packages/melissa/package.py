@@ -23,36 +23,31 @@ class Melissa(CMakePackage):
         sha256="6ba042244962bc8154881ac17258d4197de46d5ff06bc254fdd8ff5973fc5341",
         preferred=True,
     )
-    version(
-        "2.3.0",
-        sha256="f356e05082e4bb26a210cd11ccfa78a783ebe07be2bd75d5e51ed10da3b58997",
-        deprecated=True,
-    )
-    version(
-        "2.2.0",
-        sha256="e805c9ac08de5aa666768d5d92bfc680f064bd9108415a911dfd08ad7b0a3cf3",
-        deprecated=True,
-    )
-    version(
-        "2.1.1",
-        sha256="6b92852429f13b144860edc37c7914723addabb0ec0bd108929ff567334d3f71",
-        deprecated=True,
-    )
-    version(
-        "2.1.0",
-        sha256="cf0f105ed5b1da260cc7476aec23df084470b50a61df997c0e457c38948bed93",
-        deprecated=True,
-    )
-    version(
-        "2.0.1",
-        sha256="a7ff4df75ea09af435b0c28c3fa3cab9335c1c76e1c48757facce36786b4962c",
-        deprecated=True,
-    )
-    version(
-        "2.0.0",
-        sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
-        deprecated=True,
-    )
+    with default_args(deprecated=True):
+        version(
+            "2.3.0",
+            sha256="f356e05082e4bb26a210cd11ccfa78a783ebe07be2bd75d5e51ed10da3b58997",
+        )
+        version(
+            "2.2.0",
+            sha256="e805c9ac08de5aa666768d5d92bfc680f064bd9108415a911dfd08ad7b0a3cf3",
+        )
+        version(
+            "2.1.1",
+            sha256="6b92852429f13b144860edc37c7914723addabb0ec0bd108929ff567334d3f71",
+        )
+        version(
+            "2.1.0",
+            sha256="cf0f105ed5b1da260cc7476aec23df084470b50a61df997c0e457c38948bed93",
+        )
+        version(
+            "2.0.1",
+            sha256="a7ff4df75ea09af435b0c28c3fa3cab9335c1c76e1c48757facce36786b4962c",
+        )
+        version(
+            "2.0.0",
+            sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
+        )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")
