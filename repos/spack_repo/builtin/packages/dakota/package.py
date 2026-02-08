@@ -89,16 +89,16 @@ class Dakota(CMakePackage):
     variant("hdf5", default=False, description="Add hdf5 support")
 
     variant(
-        "python-direct-interface", 
-        default=False, 
+        "python-direct-interface",
+        default=False,
         when="+python",
-        description="Activate direct python interface"
+        description="Activate direct python interface",
     )
     variant(
-        "python-wrapper", 
-        default=False, 
+        "python-wrapper",
+        default=False,
         when="+python",
-        description="Top-level dakota.environment Python wrapper"
+        description="Top-level dakota.environment Python wrapper",
     )
     variant(
         "python-surrogates",
