@@ -79,6 +79,7 @@ class Mpich(MpichEnvironmentModifications, AutotoolsPackage, CudaPackage, ROCmPa
     license("mpich2")
 
     version("develop", submodules=True)
+    version("5.0.0", sha256="e9350e32224283e95311f22134f36c98e3cd1c665d17fae20a6cc92ed3cffe11")
     version("4.3.2", sha256="47d774587a7156a53752218c811c852e70ac44db9c502dc3f399b4cb817e3818")
     version("4.3.1", sha256="acc11cb2bdc69678dc8bba747c24a28233c58596f81f03785bf2b7bb7a0ef7dc")
     version("4.3.0", sha256="5e04132984ad83cab9cc53f76072d2b5ef5a6d24b0a9ff9047a8ff96121bcc63")
@@ -213,7 +214,8 @@ supported, and netmod is ignored if device is ch3:sock.""",
     conflicts("+rocm", when="device=ch3:sock")
     conflicts("+cuda", when="+rocm", msg="CUDA must be disabled to support ROCm")
 
-    provides("mpi@:4.0")
+    provides("mpi@:5.0", when="@5:")
+    provides("mpi@:4.0", when="@:4.3")
     provides("mpi@:3.1", when="@:3.2")
     provides("mpi@:3.0", when="@:3.1")
     provides("mpi@:2.2", when="@:1.2")
@@ -355,7 +357,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
     depends_on("autoconf@2.67:", when="@3.3 +hwloc", type="build")
 
     # MPICH's Yaksa submodule requires python to configure
-    depends_on("python@3.0:", when="@develop", type="build")
+    depends_on("python@3.0:", when="@5:", type="build")
 
     depends_on("cray-pmi", when="pmi=cray")
     depends_on("oneapi-level-zero", when="+level_zero")
