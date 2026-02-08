@@ -13,10 +13,11 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
     the official extension language for the GNU operating system."""
 
     homepage = "https://www.gnu.org/software/guile/"
-    gnu_mirror_path = "guile/guile-3.0.10.tar.gz"
+    gnu_mirror_path = "guile/guile-3.0.11.tar.gz"
 
     license("LGPL-3.0-or-later AND GPL-3.0-or-later")
 
+    version("3.0.11", sha256="3c9c16972a73bb792752f2e4f1cce7212d7638d5494b5f7e8e19f3819dbf3a19")
     version("3.0.10", sha256="2dbdbc97598b2faf31013564efb48e4fed44131d28e996c26abe8a5b23b56c2a")
     version("2.2.6", sha256="08c0e7487777740b61cdd97949b69e8a5e2997d8c2fe6c7e175819eb18444506")
     version("2.2.5", sha256="c3c7a2f6ae0d8321a240c7ebc532a1d47af8c63214157a73789e2b2305b4c927")
