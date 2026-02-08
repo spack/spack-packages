@@ -89,14 +89,21 @@ class Dakota(CMakePackage):
     variant("hdf5", default=False, description="Add hdf5 support")
 
     variant(
-        "python-direct-interface", default=False, description="Activate direct python interface"
+        "python-direct-interface", 
+        default=False, 
+        when="+python",
+        description="Activate direct python interface"
     )
     variant(
-        "python-wrapper", default=False, description="Top-level dakota.environment Python wrapper"
+        "python-wrapper", 
+        default=False, 
+        when="+python",
+        description="Top-level dakota.environment Python wrapper"
     )
     variant(
         "python-surrogates",
         default=False,
+        when="+python",
         description="Dakota Python interface to surrogate module",
     )
 
@@ -129,9 +136,6 @@ class Dakota(CMakePackage):
 
     # dakota@:6.18 has broken pybind11/CMake support
     conflicts("+python", when="@:6.18")
-    conflicts("+python-direct-interface", when="@:6.18")
-    conflicts("+python-surrogates", when="@:6.18")
-    conflicts("+python-wrapper", when="@:6.18")
     # dakota@:6.12 does not compile with gcc@12:
     conflicts("%gcc@12:", when="@:6.12")
     # dakota@:6.9 does not compile with gcc@11:
