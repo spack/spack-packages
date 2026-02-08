@@ -5,28 +5,21 @@ spack:
   - ../../.ci/gitlab/
   packages:
     all:
-      require:
-      - target=x86_64_v3
-      - spec: '%gcc-runtime@12'
-        when: '%gcc@12'
-      - spec: '%gcc-runtime@11'
-        when: '%gcc@11'
-      - spec: '%gcc-runtime@10'
-        when: '%gcc@10'
+      require: target=x86_64_v3
     tbb:
       require: intel-tbb
   definitions:
   - gcc_system_packages:
     - matrix:
-      - - zlib-ng@2.2.4
+      - - zlib-ng
         - zlib-ng@2.0.7
         - zlib-ng@2.0.7 cflags=-O3
-        - tcl ^zlib-ng@2.2.4
+        - tcl
         - tcl ^zlib-ng@2.0.7 cflags=-O3
-        - hdf5+mpi^openmpi
+        - hdf5
         - hdf5~mpi
         - hdf5+hl+mpi ^mpich
-        - trilinos ^openmpi
+        - trilinos
         - trilinos +hdf5 ^hdf5+hl+mpi ^mpich
         - gcc@12.3 ~binutils  # todo: enable ~binutils once unify: true is used
         - mpileaks
@@ -37,10 +30,10 @@ spack:
         - vim
       - ['%gcc@11']
   - gcc_old_packages:
-    - zlib-ng@2.2.4%gcc@10
+    - zlib-ng%gcc@10
   - clang_packages:
     - matrix:
-      - [zlib-ng@2.2.4, tcl ^zlib-ng@2.0.7]
+      - [zlib-ng, tcl ^zlib-ng@2.0.7]
       - ['%clang@14']
   - gcc_spack_built_packages:
     - matrix:
@@ -56,15 +49,12 @@ spack:
   - $gcc_old_packages
   - $clang_packages
   - $gcc_spack_built_packages
-  concretizer:
-    # Hacky way to allow bootstrapping the compiler
-    unify: when_possible
-    compiler_mixing: false
+
   ci:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/tutorial-ubuntu-22.04:main
+          name: ghcr.io/spack/tutorial-ubuntu-22.04:v2023-10-30
           entrypoint: ['']
   cdash:
     build-group: Spack Tutorial

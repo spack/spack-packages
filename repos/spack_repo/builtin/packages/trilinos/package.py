@@ -428,13 +428,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos-kernels~shared", when="+rocm_rdc")
         depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=4.7.01", when="@master:")
+        depends_on("kokkos@=5.0.2", when="@master:")
         depends_on("kokkos@=4.7.01", when="@16.2")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=4.7.01", when="@master:")
+        depends_on("kokkos-kernels@=5.0.2", when="@master:")
         depends_on("kokkos-kernels@=4.7.01", when="@16.2")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
@@ -599,11 +599,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 flags.append("-Wl,-undefined,dynamic_lookup")
 
             # Fortran lib (assumes clang is built with gfortran!)
-            if spec.satisfies("+fortran") and (
-                spec.satisfies("%gcc")
-                or spec.satisfies("%clang")
-                or spec.satisfies("%apple-clang")
-            ):
+            if spec.satisfies("+fortran %fortran=gcc"):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
                     "--print-file-name",
