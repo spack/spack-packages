@@ -135,7 +135,7 @@ class Warp(CMakePackage, CudaPackage):
                 "/p:PublishSingleFile=true",
                 "/p:DebugType=None",
                 "-o",
-                f"{self.spec.prefix}/bin",
+                self.spec.prefix.bin,
                 tool,
             )
 
