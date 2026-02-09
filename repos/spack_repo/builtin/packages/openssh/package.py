@@ -26,6 +26,7 @@ class Openssh(AutotoolsPackage):
 
     license("SSH-OpenSSH")
 
+    version("10.2p1", sha256="ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2")
     version("9.9p1", sha256="b343fbcdbff87f15b1986e6e15d6d4fc9a7d36066be6b7fb507087ba8f966c02")
     version("9.8p1", sha256="dd8bd002a379b5d499dfb050dd1fa9af8029e80461f4bb6c523c49973f5a39f3")
     version("9.7p1", sha256="490426f766d82a2763fcacd8d83ea3d70798750c7bd2aff2e57dc5660f773ffd")
@@ -38,8 +39,8 @@ class Openssh(AutotoolsPackage):
         "gssapi", default=True, description="Enable authentication via Kerberos through GSSAPI"
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("krb5+shared", when="+gssapi")
     depends_on("openssl")
