@@ -84,9 +84,8 @@ class Warp(CMakePackage, CudaPackage):
         )
 
     def cmake_args(self):
-        spec = self.spec
         args = []
-        args.append(f"-DTorch_DIR=f{join_path(self['py-torch'].cmake_prefix_paths[0], 'Torch')}")
+        args.append(f"-DTorch_DIR=f{join_path(self['py-torch'].cmake_prefix_paths[0], 'Torch)}")
         return args
 
     @property
