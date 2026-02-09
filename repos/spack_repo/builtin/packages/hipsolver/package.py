@@ -30,7 +30,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
     version("7.1.1", sha256="bd664e3cd43bfcc7e94d5a387c27262c4b218d6d2e71e086992b174349dd1c10")
-    version("7.1.0", sha256="9871239c16b7b4e997c95239e2d54a3f50040e35be24a89867e4672c925fbfd2")
+    version("7.1.0", sha256="19b87cd27b9048964e94a77bb8c07a23ecfd5f96a73a91eebd1d365487bad2bf")
     version("7.0.2", sha256="eac1a691bdc00ceb50580c1dab6cbffd6c7d579ebbad145857f58c4de84a3cae")
     version("7.0.0", sha256="5ea1e0250651da458158432409bd4c06a53224902e17ea26f3b941aed15ee8aa")
     version("6.4.3", sha256="403c2d0aacc3ea2dea5f6d61aca058337d448a224891b887ae1601ce68af8d15")
