@@ -9,7 +9,8 @@
     }
   ],
   "onCreateCommand": {
-    "setup-spack": "echo '. /opt/spack/share/spack/setup-env.sh' >> /etc/profile",
+    "setup-spack-bashrc": "echo '. /opt/spack/share/spack/setup-env.sh' >> /root/.bashrc",
+    "setup-spack-profile": "echo '. /opt/spack/share/spack/setup-env.sh' >> /etc/profile",
     "add-workspace-as-repo": "/opt/spack/bin/spack repo add --scope site ${containerWorkspaceFolder}/repos/spack_repo/builtin",
     "compile-for-generic-arch": "/opt/spack/bin/spack config --scope site add \"concretizer:targets:granularity:generic\"",
     "stage-in-var-tmp": "/opt/spack/bin/spack config --scope site add \"config:build_stage:/var/tmp/spack-stage\""
