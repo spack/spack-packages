@@ -41,12 +41,7 @@ class Hdf5(CMakePackage):
 
     # Beginning with version 2.0.0, the versioning policy follows the MAJOR.MINOR.PATCH
     # Semantic Versioning Specification. (See https://semver.org/)
-    version(
-        "2.0.0",
-        sha256="f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed",
-        url="https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz",
-        preferred=True,
-    )
+    version("2.0.0", sha256="f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed")
     # For versions 1.x.y:
     # Odd x versions are development or experimental releases and generally not released.
     # Even x versions are maintenance versions
