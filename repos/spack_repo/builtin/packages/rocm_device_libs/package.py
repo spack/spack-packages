@@ -14,16 +14,15 @@ class RocmDeviceLibs(CMakePackage):
     homepage = "https://github.com/ROCm/llvm-project"
     git = "https://github.com/ROCm/llvm-project.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
+
     def url_for_version(self, version):
         if version <= Version("6.0.2"):
             url = "https://github.com/ROCm/ROCm-Device-Libs/archive/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
     version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")

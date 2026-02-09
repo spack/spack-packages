@@ -16,6 +16,10 @@ class ComposableKernel(CMakePackage):
     homepage = "https://github.com/ROCm/composable_kernel"
     git = "https://github.com/ROCm/composable_kernel.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "afzpatel")
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-{0}.tar.gz"
@@ -23,10 +27,6 @@ class ComposableKernel(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-    maintainers("srekolam", "afzpatel")
-
-    license("MIT")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="e1174a4b6faa12ef31dac0324547fd49aca09fee380bd89ecd49a44bb34b72cc")
     version("7.1.0", sha256="03c7fffcad2aed373486315266fdf9dd400a280d383b543ff48ebd3acb3f985f")

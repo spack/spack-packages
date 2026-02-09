@@ -20,17 +20,17 @@ class Rocsparse(CMakePackage):
     homepage = "https://github.com/ROCm/rocSPARSE"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["librocsparse"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocSPARSE/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["librocsparse"]
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -46,8 +46,6 @@ class Rocsparse(CMakePackage):
     conflicts("+asan", when="os=rhel9")
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
-
-    license("MIT")
 
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="420321039b1471a67318a9bccce749ed2293e4aa4615ef9d1b74ed4e03977ee0")

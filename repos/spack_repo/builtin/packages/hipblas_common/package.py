@@ -14,6 +14,10 @@ class HipblasCommon(CMakePackage):
     url = "https://github.com/ROCm/hipBLAS-common/archive/refs/tags/rocm-6.3.0.tar.gz"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hipBLAS-common/archive/refs/tags/rocm-{0}.tar.gz"
@@ -21,11 +25,6 @@ class HipblasCommon(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-
-    license("MIT")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="1baedf7562c7afdca5f688b9117949941082b30cd5ea8630b30e9ac299cf56ea")
     version("7.1.0", sha256="6c00bb9335ad2ad3d4730eb41ebc704b0207162d5f98da1cdce3eea1087c3944")

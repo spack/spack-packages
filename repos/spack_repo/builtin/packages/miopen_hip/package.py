@@ -16,6 +16,11 @@ class MiopenHip(CMakePackage):
     homepage = "https://github.com/ROCm/MIOpen"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libMIOpen"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/MIOpen/archive/refs/tags/rocm-{0}.tar.gz"
@@ -23,12 +28,6 @@ class MiopenHip(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libMIOpen"]
-
-    license("MIT")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="98c72a2b5ca541d6c172facdf0f15729207ab52ca9af36c00e2480c5b27c5b99")
     version("7.1.0", sha256="3fa0a7c8ef959ad889aac0109e6bf74de2a54f7e3ab057f98e2dc4fb65eb1599")

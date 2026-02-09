@@ -18,19 +18,17 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/ROCm/hipBLAS"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
+    libraries = ["libhipblas"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hipBLAS/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
-    libraries = ["libhipblas"]
-
-    license("MIT")
 
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="4a77f19a6229a6135fc9e2ea8e7694efda984c654a11a8c650fa9480aaf1ca84")

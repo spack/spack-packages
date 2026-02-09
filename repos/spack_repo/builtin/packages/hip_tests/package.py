@@ -16,6 +16,9 @@ class HipTests(CMakePackage):
     homepage = "https://github.com/ROCm/hip-tests"
     git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-{0}.tar.gz"
@@ -23,9 +26,6 @@ class HipTests(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="30b8a449ef6f3d4d037dbc135ed47d178c4c39a29e2e0ae6f0550aa996cab063")
     version("7.1.0", sha256="15ae5ad99befcf6c96da5c4e85767a2e0abd3d80c72164f3fd61af3c1b642e5c")

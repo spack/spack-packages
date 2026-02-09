@@ -16,6 +16,11 @@ class Rdc(CMakePackage):
     homepage = "https://github.com/ROCm/rdc"
     git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["librdc"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rdc/archive/rocm-{0}.tar.gz"
@@ -23,12 +28,6 @@ class Rdc(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["librdc"]
-
-    license("MIT")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="d16c63fe6609d82d0fcd65e9953f60318d015275b8752d052a6ae20cd634c3e1")
     version("7.1.0", sha256="a77b6ad33dc41917f6b0ed2a26085b96fc7222cf507adb9b90d2eb7976fae5a5")

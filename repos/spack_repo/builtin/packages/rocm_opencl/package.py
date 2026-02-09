@@ -18,19 +18,17 @@ class RocmOpencl(CMakePackage):
     url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/clr.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libamdocl64"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/clr/archive/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libamdocl64"]
-
-    license("MIT")
 
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="b09539ef53a775c03352f9843f3a346e4f2ad3941c1954e953d352e4984ee708")

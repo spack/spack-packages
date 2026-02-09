@@ -16,6 +16,11 @@ class Rocblas(CMakePackage):
     homepage = "https://github.com/ROCm/rocBLAS/"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
+    libraries = ["librocblas"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocBLAS/archive/refs/tags/rocm-{0}.tar.gz"
@@ -23,12 +28,6 @@ class Rocblas(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
-    libraries = ["librocblas"]
-
-    license("MIT")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="29d43270ccf5d4818d261993f964d4fce4bd0a55c2b6dde60d1529b6c227a873")
     version("7.1.0", sha256="54f38222d0e58344cf5c86f151d418c071b59145297fd2ed953bb561df1e12c3")

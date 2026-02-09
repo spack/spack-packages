@@ -18,17 +18,16 @@ class Rpp(CMakePackage):
     git = "https://github.com/ROCm/rpp.git"
     url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-6.4.3.tar.gz"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "afzpatel")
+    license("MIT")
+
     def url_for_version(self, version):
         if version >= Version("5.7.0"):
             url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("srekolam", "afzpatel")
-    license("MIT")
 
     version("7.2.0", sha256="9240e325cd5adf7aa9842851d638394a25d3a784a6a206e8e96d7ae4d59b8d35")
     version("7.1.1", sha256="3a13444acc86d307ff559b0282f11ec57ae5c89dec52a2f9f85e3757d9e66e35")

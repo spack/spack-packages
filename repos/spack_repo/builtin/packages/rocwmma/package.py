@@ -24,18 +24,16 @@ class Rocwmma(CMakePackage):
     homepage = "https://github.com/ROCm/rocWMMA"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocWMMA/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    license("MIT")
-
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="5a3c22ba75bf8473dc4a008fbff365d0666fc5a49c54e742f7ed4444a2b2d431")

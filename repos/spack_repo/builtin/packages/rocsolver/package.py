@@ -18,17 +18,17 @@ class Rocsolver(CMakePackage):
     homepage = "https://github.com/ROCm/rocSOLVER"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
+    libraries = ["librocsolver"]
+    license("BSD-2-Clause")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocSOLVER/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
-    libraries = ["librocsolver"]
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -50,8 +50,6 @@ class Rocsolver(CMakePackage):
     conflicts("+asan", when="os=rhel9")
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
-
-    license("BSD-2-Clause")
 
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="15a29454239dbbac34219d484247f5721d4af08ca1b1f3973ebcbd7895184ae6")

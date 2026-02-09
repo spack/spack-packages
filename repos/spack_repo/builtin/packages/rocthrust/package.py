@@ -17,16 +17,15 @@ class Rocthrust(CMakePackage):
     homepage = "https://github.com/ROCm/rocThrust"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocThrust/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
 
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="995f9498402f207d04aac1edeb845abea295f6f132151ae1e04a6f0d0dc5edf5")

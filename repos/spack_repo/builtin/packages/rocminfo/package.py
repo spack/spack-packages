@@ -14,16 +14,15 @@ class Rocminfo(CMakePackage):
     homepage = "https://github.com/ROCm/rocminfo"
     git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "haampie")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocminfo/archive/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "haampie")
 
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="a1ff6d08e0c7ff653bb323964ff2badf6aa1d75aeb2d69248599b0133370fa7e")

@@ -22,11 +22,8 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     git = "https://github.com/ROCm/hipsparseLt.git"
 
     tags = ["rocm"]
-
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
-
     libraries = ["libhipsparselt"]
-
     license("MIT")
 
     def url_for_version(self, version):

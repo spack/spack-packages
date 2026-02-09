@@ -18,19 +18,17 @@ class RoctracerDev(CMakePackage, ROCmPackage):
     homepage = "https://github.com/ROCm/roctracer"
     git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libroctracer64"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/roctracer/archive/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
-
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libroctracer64"]
-
-    license("MIT")
 
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="dec80803c6d2d684759172145177849efda65672645b95a2f2ad1a84335043bb")

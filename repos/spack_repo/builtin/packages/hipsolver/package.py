@@ -23,6 +23,11 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/ROCm/hipSOLVER"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libhipsolver"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hipSOLVER/archive/refs/tags/rocm-{0}.tar.gz"
@@ -30,12 +35,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libhipsolver"]
-
-    license("MIT")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="bd664e3cd43bfcc7e94d5a387c27262c4b218d6d2e71e086992b174349dd1c10")
     version("7.1.0", sha256="9871239c16b7b4e997c95239e2d54a3f50040e35be24a89867e4672c925fbfd2")

@@ -21,6 +21,11 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/ROCm/hipFFT"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("renjithravindrankannath", "srekolam", "afzpatel")
+    libraries = ["libhipfft"]
+    license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hipfft/archive/refs/tags/rocm-{0}.tar.gz"
@@ -28,12 +33,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-    libraries = ["libhipfft"]
-
-    maintainers("renjithravindrankannath", "srekolam", "afzpatel")
-
-    license("MIT")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="c86e34055576a662bfcb5897a4fe4ab1a4e350b1c4f35b3262b5112c5c640163")
     version("7.1.0", sha256="94d8d901fdec2a41957f83139dea125bda4127af40d47f03b637a7920d73db50")
