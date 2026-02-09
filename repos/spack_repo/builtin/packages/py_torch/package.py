@@ -322,15 +322,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocfft")
         depends_on("rocblas")
         depends_on("miopen-hip")
-        for target in ROCmPackage.amdgpu_targets:
-            depends_on(f"composable-kernel amdgpu_target={target}", when=f"amdgpu_target={target}")
-            # This constraint applies to ANY hipblaslt in the dependency tree
-            # including the one used by miopen-hip
-            depends_on(f"hipblaslt amdgpu_target={target}", when=f"amdgpu_target={target}")
-            # Ensure hipblaslt version for 2.9+
-            depends_on(
-                f"hipblaslt@7.0: amdgpu_target={target}", when=f"@2.9: amdgpu_target={target}"
-            )
+        depends_on("composable-kernel")
+        depends_on("hipblaslt")
+        # Ensure hipblaslt version for 2.9+
+        depends_on("hipblaslt@7.0:", when="@2.9:")
         depends_on("rocminfo")
         depends_on("hipsparselt@7.0:", when="@2.9:")
         depends_on("aotriton@0.8b", when="@2.5:2.6")
@@ -776,10 +771,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             env.set("BLAS", "FLAME")
             env.set("WITH_BLAS", "FLAME")
         elif self.spec["blas"].name == "intel-oneapi-mkl":
-            if "+mkldnn" in self.spec:
-                env.set("BLAS", "MKL")
-                env.set("WITH_BLAS", "mkl")
-                env.set("INTEL_MKL_DIR", self.spec["mkl"].prefix.mkl.latest)
+            env.set("BLAS", "MKL")
+            env.set("WITH_BLAS", "mkl")
+            env.set("INTEL_MKL_DIR", self.spec["mkl"].prefix.mkl.latest)
         elif self.spec["blas"].name == "openblas":
             env.set("BLAS", "OpenBLAS")
             env.set("WITH_BLAS", "open")

@@ -43,7 +43,7 @@ spack:
     # Keras
     - py-keras backend=tensorflow
     # - py-keras backend=jax
-    # - py-keras backend=torch
+    - py-keras backend=torch
 
     # PyTorch
     - py-botorch
