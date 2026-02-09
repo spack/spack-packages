@@ -16,8 +16,8 @@ class PyLeidenalg(PythonPackage):
 
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-setuptools@45:", type=("build"))
-    depends_on("py-igraph@0.10.0:0.10", type=("build", "run"))
-    depends_on("igraph@0.10.0:0.10", type=("build"))
+    depends_on("py-igraph@0.10", type=("build", "run"))
+    depends_on("igraph@0.10", type=("build"))
     depends_on("py-setuptools-scm", type=("build"))
 
     # Add to this if new versions is released, they must amtch
