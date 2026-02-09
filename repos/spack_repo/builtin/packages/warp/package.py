@@ -31,17 +31,13 @@ class Warp(CMakePackage, CudaPackage):
     conflicts("target=:k10")  # last AMD processor not to support avx
     conflicts("target=:westmere")  # last Intel processor not to support avx
     conflicts("target=:x86_64_v2")  # last generic architecture not to support avx
+    requires("target=x86_64:")  # Block non-x86_64 targets
 
     variant("cuda", default=True, description="Build with CUDA")
     conflicts("~cuda", msg="Cuda is required.")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    # Upstream builds with gcc@9.5.0; The d_ValueFill function (in NativeAcceleration)
-    # is templated but not explicitly instantiated. This leads to unknown symbols in gcc 10+
-    # Cause is the removal of '-frepo' in gcc 10+
-    # conflicts("%gcc@10:", msg="gcc 10+ no longer supports -frepo")
-    # conflicts("%llvm", msg="gcc < 10 is required")
 
     depends_on("cmake@3.18:", type="build")
     depends_on("gmake", type="build")
@@ -51,7 +47,6 @@ class Warp(CMakePackage, CudaPackage):
     depends_on("cuda@11.8:11", type=("build", "link"))
     depends_on("fftw@3 ~mpi precision=float", type=("build", "link"))
     depends_on("libtiff +shared")
-    # depends_on("intel-oneapi-mkl@2024: +shared")
     depends_on("python@3.11")
     depends_on("cudnn@8.7.0")
     depends_on("py-torch@2.0.1 +cuda")
@@ -91,11 +86,7 @@ class Warp(CMakePackage, CudaPackage):
     def cmake_args(self):
         spec = self.spec
         args = []
-        args.append(
-            "-DTorch_DIR={0}/lib/python{1}/site-packages/torch/share/cmake/Torch".format(
-                spec["py-torch"].prefix, spec["python"].version.up_to(2)
-            )
-        )
+        args.append(f"-DTorch_DIR=f{join_path(self["py-torch"].cmake_prefix_paths[0], "Torch")}")
         return args
 
     @property
