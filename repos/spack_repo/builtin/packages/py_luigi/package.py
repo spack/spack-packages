@@ -15,6 +15,7 @@ class PyLuigi(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.2.1", sha256="54a2932d0682c15d93695473ba115157a40f503f54e5c5714997e4b68a5e625c")
     version("3.2.0", sha256="5ef267ebfbbd5747576821b6835e08e956e24055841dee0ef7b1319b4e9d4740")
     version("3.1.1", sha256="29961582db2704d8df4ec01f6b8f7f0d529cc8f27cff67733ccd809299771218")
     version("3.1.0", sha256="1ae7d76e6f8889e9ed40c699891f990eb6697c974eeaf8ab010f0dfc3766adf1")

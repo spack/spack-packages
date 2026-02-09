@@ -16,6 +16,7 @@ class PyThinc(PythonPackage):
 
     license("MIT")
 
+    version("7.4.6", sha256="6e592a21382287114b5ba412a2d2b8c20d73989fec78edea82e7151d03e4f627")
     version("7.4.1", sha256="0139fa84dc9b8d88af15e648fc4ae13d899b8b5e49cb26a8f4a0604ee9ad8a9e")
     version("7.4.0", sha256="523e9be1bfaa3ed1d03d406ce451b6b4793a9719d5b83d2ea6b3398b96bc58b8")
 

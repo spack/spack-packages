@@ -16,6 +16,7 @@ class PyQuart(PythonPackage):
 
     license("MIT")
 
+    version("0.19.9", sha256="30a61a0d7bae1ee13e6e99dc14c929b3c945e372b9445d92d21db053e91e95a5")
     version("0.19.8", sha256="ef567d0be7677c99890d5c6ff30e679699fe7e5fca1a90fa3b6974edd8421794")
     version("0.16.3", sha256="16521d8cf062461b158433d820fff509f98fb997ae6c28740eda061d9cba7d5e")
 

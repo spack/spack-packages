@@ -13,6 +13,7 @@ class PyGrpcioTools(PythonPackage):
     homepage = "https://grpc.io/"
     pypi = "grpcio-tools/grpcio-tools-1.42.0.tar.gz"
 
+    version("1.62.3", sha256="7c7136015c3d62c3eef493efabaf9e3380e3e66d24ee8e94c01cb71377f57833")
     version("1.62.2", sha256="5fd5e1582b678e6b941ee5f5809340be5e0724691df5299aae8226640f94e18f")
     version("1.56.2", sha256="82af2f4040084141a732f0ef1ecf3f14fdf629923d74d850415e4d09a077e77a")
     version("1.48.2", sha256="8902a035708555cddbd61b5467cea127484362decc52de03f061a1a520fe90cd")

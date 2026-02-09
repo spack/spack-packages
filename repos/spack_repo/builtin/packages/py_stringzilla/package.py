@@ -15,6 +15,7 @@ class PyStringzilla(PythonPackage):
 
     license("Apache-2.0")
 
+    version("4.2.3", sha256="7557b395729228c4c8f13bca01a4958dc7adaf1f5ea2a812b78d265ec9c0ab14")
     version("4.2.1", sha256="fd15835ab3b78b09dba678c66b36715bcf7f9e550994ea09abcc8eb7a5e1c9f7")
 
     depends_on("c", type="build")

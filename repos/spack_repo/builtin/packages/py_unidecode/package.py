@@ -14,6 +14,7 @@ class PyUnidecode(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.1.2", sha256="a039f89014245e0cad8858976293e23501accc9ff5a7bdbc739a14a2b7b85cdc")
     version("1.1.1", sha256="2b6aab710c2a1647e928e36d69c21e76b453cd455f4e2621000e54b2a9b8cce8")
     version("0.04.21", sha256="280a6ab88e1f2eb5af79edff450021a0d3f0448952847cd79677e55e58bad051")
 

@@ -20,6 +20,7 @@ class PyDeepspeed(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.16.9", sha256="88dc08986cd321047c37c2d0f1edd6faac498a1b52eb486d559164362c6b9011")
     version("0.16.4", sha256="495febfb6dd20423f44b1c4a1bb6da2cadbcaf9b07962e17f87d52edfeec9bba")
     version("0.15.4", sha256="60e7c044b7fc386cdad1206212d22b6963ea551f656ed51f7cb34b299459bf2c")
     version("0.13.5", sha256="05404e083b5df36dcfe36884565dcb1d9fd1165e443a82c1c09370293943f6d1")

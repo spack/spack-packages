@@ -15,6 +15,7 @@ class PyOps(PythonPackage):
 
     license("Apache-2.0", checked_by="qwertos")
 
+    version("2.16.1", sha256="64315cd114cd5f445ce0f382ecebe431dd05620a7917f76eb2d77632fdea8cbb")
     version("2.16.0", sha256="c4405185744c82589fca4752a76cd7eabd667cf2d3f07d2700b82777186b8de9")
     version("1.4.0", sha256="6bb7c8d8cd3eb1da99469564e37a04f9677205c4c07ef97167e0b93a17ccb59a")
 

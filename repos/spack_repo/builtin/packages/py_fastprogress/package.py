@@ -14,6 +14,7 @@ class PyFastprogress(PythonPackage):
     homepage = "https://github.com/fastai/fastprogress"
     pypi = "fastprogress/fastprogress-1.0.0.tar.gz"
 
+    version("1.0.5", sha256="58ca16a981f0292804d905f2e0042ad608d788bf6cbe6ab96b71ec4b20453aef")
     version("1.0.0", sha256="89e28ac1d2a5412aab18ee3f3dfd1ee8b5c1f2f7a44d0add0d0d4f69f0191bfe")
 
     depends_on("python@3.6:", type=("build", "run"))

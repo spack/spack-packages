@@ -15,6 +15,7 @@ class PySymfit(PythonPackage):
 
     license("MIT")
 
+    version("0.3.7", sha256="f16bffcf6171ba9b3883426ceed72fb2ccef915c324856aa3fc1de4ccc786ece")
     version("0.3.5", sha256="24c66305895c590249da7e61f62f128ee1c0c43c0a8c8e33b8abd3e0931f0881")
 
     depends_on("py-setuptools@17.1:", type="build")

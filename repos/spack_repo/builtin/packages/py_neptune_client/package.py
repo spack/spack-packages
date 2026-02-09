@@ -16,6 +16,7 @@ class PyNeptuneClient(PythonPackage):
     homepage = "https://neptune.ai/"
     pypi = "neptune-client/neptune-client-0.16.7.tar.gz"
 
+    version("0.16.9", sha256="d893af6280f3a7f07d64ff2eb7080cf3c7f3fdbab98217cbe53e081b4be2aee2")
     version("0.16.7", sha256="9b8bf2f59cb6b7ed6d96ea221b68ea20d9d481a1a4672d8173648ef998134454")
     version("0.16.1", sha256="821238f510486feacd87c745f4646916259a416545ab678b47195729c071f249")
 

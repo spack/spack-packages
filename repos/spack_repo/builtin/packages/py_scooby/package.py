@@ -15,6 +15,7 @@ class PyScooby(PythonPackage):
 
     license("MIT")
 
+    version("0.10.2", sha256="974e115877f3dde8f2bbfd68734d761c629f1b27f54cc29aaede1c8303e85379")
     version("0.10.0", sha256="7ea33c262c0cc6a33c6eeeb5648df787be4f22660e53c114e5fff1b811a8854f")
     version("0.5.7", sha256="ae2c2b6f5f5d10adf7aaab32409028f1e28d3ce833664bdd1e8c2072e8da169a")
 

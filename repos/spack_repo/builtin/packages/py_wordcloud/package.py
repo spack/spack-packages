@@ -15,6 +15,7 @@ class PyWordcloud(PythonPackage):
 
     license("MIT")
 
+    version("1.8.2.2", sha256="523db887e47e840eb5c2e60428243bb1d7439fdc60f89626b17bafa1be64459c")
     version("1.8.1", sha256="e6ef771aac17c1cf8558c8d5ef025796184066d7b78f8118aefe011fb0d22952")
 
     depends_on("c", type="build")  # generated

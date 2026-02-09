@@ -14,6 +14,7 @@ class PyGenshi(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.7.9", sha256="c76170a8b2dc18944e0915103c284cb889dfcee34e0e140ba3363c80f7541ad2")
     version("0.7.7", sha256="c100520862cd69085d10ee1a87e91289e7f59f6b3d9bd622bf58b2804e6b9aab")
 
     depends_on("c", type="build")  # generated

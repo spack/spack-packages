@@ -15,6 +15,7 @@ class PyPymysql(PythonPackage):
 
     license("MIT")
 
+    version("0.9.3", sha256="d8c059dcd81dedb85a9f034d5e22dcb4442c0b201908bede99e306d65ea7c8e7")
     version("0.9.2", sha256="9ec760cbb251c158c19d6c88c17ca00a8632bac713890e465b2be01fdc30713f")
 
     depends_on("py-setuptools", type="build")

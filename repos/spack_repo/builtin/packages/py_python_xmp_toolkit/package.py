@@ -15,6 +15,7 @@ class PyPythonXmpToolkit(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.0.2", sha256="3a88431bb8222e9723da688b3ead50506f3ed3002749362845745dd995a7a68b")
     version("2.0.1", sha256="f8d912946ff9fd46ed5c7c355aa5d4ea193328b3f200909ef32d9a28a1419a38")
 
     depends_on("python@2.6:2.7,3.3:", type=("build", "run"))

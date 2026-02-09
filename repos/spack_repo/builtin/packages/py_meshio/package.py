@@ -15,6 +15,7 @@ class PyMeshio(PythonPackage):
 
     license("MIT")
 
+    version("5.0.6", sha256="2a47b09e27425f8c87e916c46385bc6525eaa1139a616a021eaf68cba5a9e5a1")
     version("5.0.1", sha256="e283f40b5fb68fc5c232829c33c086789661438960762b22dc2823571a089a8b")
     version("5.0.0", sha256="f6327c06d6171d30e0991d3dcb048751035f9cfac1f19e2444971275fd971188")
     version("4.4.6", sha256="be352a0924c9eff99768a6f402b7558dbb280bbf1e7bf43f18cef92db418684f")

@@ -15,6 +15,7 @@ class PyPathml(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2.1.1", sha256="151534376179334ca59e17a7e9a324471d1b081bdb28aa3b76eb18e3478c77ba")
     version("2.1.0", sha256="462bb2f16452dddad310c30f62678a1336ce492263355fd6722c07ee4840ea6a")
 
     depends_on("py-setuptools@42:", type="build")

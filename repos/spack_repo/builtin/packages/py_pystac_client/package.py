@@ -15,6 +15,7 @@ class PyPystacClient(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.8.6", sha256="83d4f4420c14b8dbb3e39ab0da00e72639903912942075d42e06737d61ab3e7d")
     version("0.8.5", sha256="7fba8d4f3c641ff7e840084fc3a53c96443a227f8a5889ae500fc38183ccd994")
 
     with default_args(type="build"):

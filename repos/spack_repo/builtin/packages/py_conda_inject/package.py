@@ -15,6 +15,7 @@ class PyCondaInject(PythonPackage):
 
     license("MIT")
 
+    version("1.3.2", sha256="0b8cde8c47998c118d8ff285a04977a3abcf734caf579c520fca469df1cd0aac")
     version("1.3.1", sha256="9e8d902230261beba74083aae12c2c5a395e29b408469fefadc8aaf51ee441e5")
 
     depends_on("py-pyyaml@6", type=("build", "run"))

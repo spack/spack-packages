@@ -18,6 +18,7 @@ class PyGriffe(PythonPackage):
 
     license("ISC")
 
+    version("0.22.2", sha256="1408e336a4155392bbd81eed9f2f44bf144e71b9c664e905630affe83bbc088e")
     version("0.22.0", sha256="a3c25a2b7bf729ecee7cd455b4eff548f01c620b8f58a8097a800caad221f12e")
 
     depends_on("python@3.7:", type=("build", "run"))

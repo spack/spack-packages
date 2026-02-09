@@ -17,6 +17,7 @@ class PyBsddb3(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.2.9", sha256="70d05ec8dc568f42e70fc919a442e0daadc2a905a1cfb7ca77f549d49d6e7801")
     version("6.2.5", sha256="784bf40ad935258507594a89b32ea11f362cde120751c8b96de163955ced7db8")
 
     depends_on("c", type="build")  # generated

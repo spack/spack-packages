@@ -20,6 +20,7 @@ class PyOpenpmdValidator(PythonPackage):
 
     license("ISC")
 
+    version("1.1.0.6", sha256="6ac3c744b2e0f5cdb6d89ee265b8c5d33bc2bf0fcbbd71a75dfd1d82f5d292ca")
     version("1.1.0.3", sha256="b2e57123c1dc09cdc121011d007e30fab82b3d21732d02e4f1ba919b24345810")
     version("1.1.0.2", sha256="6ac6e2860351d9940821ca6f3b44ab63629e0bd06f6984225c55830c3e58b83c")
     version("1.1.0.1", sha256="7585abbd32523ae6b8065772e1cc27a45e232c526a9fc0bd8ce85182d1b4b325")

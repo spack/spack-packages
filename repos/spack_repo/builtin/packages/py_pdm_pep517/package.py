@@ -16,6 +16,7 @@ class PyPdmPep517(PythonPackage):
 
     license("MIT")
 
+    version("1.0.6", sha256="a4407703d50fa4d671383a354868b05a13060c1bf38264cbb5ddc9a73e4a1dc5")
     version("1.0.4", sha256="392f8c2b47c6ec20550cb8e19e24b9dbd27373413f067b56ecd75f9767f93015")
 
     depends_on("c", type="build")  # generated

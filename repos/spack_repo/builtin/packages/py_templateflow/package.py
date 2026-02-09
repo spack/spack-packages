@@ -15,6 +15,7 @@ class PyTemplateflow(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.7.2", sha256="f5cf0a796afa17e8ac384de10635ea63a6049c7741fc8111fd7b7807ea244482")
     version("0.7.1", sha256="c6e8282d1ffbb5dca7bd704a12e02bd00021860b71a043c35716861910c7187f")
     version("0.4.2", sha256="5585f3e7ccaa756f811aafb526ed6b2c79aabfd012477129af9c6038d7686f84")
 

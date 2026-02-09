@@ -17,6 +17,7 @@ class PyMapclassify(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.4.3", sha256="51b81e1f1ee7f64a4ca1e9f61f01216c364a3f086a48b1be38eb057199cb19bf")
     version("2.4.2", sha256="bc20954aa433466f5fbc572e3f23b05f9606b59209f40b0ded93ac1ca983d24e")
 
     depends_on("py-setuptools", type="build")

@@ -15,6 +15,7 @@ class PyCherrypy(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("18.1.2", sha256="48de31ba3db04c5354a0fcf8acf21a9c5190380013afca746d50237c9ebe70f0")
     version("18.1.1", sha256="6585c19b5e4faffa3613b5bf02c6a27dcc4c69a30d302aba819639a2af6fa48b")
 
     depends_on("py-setuptools", type="build")

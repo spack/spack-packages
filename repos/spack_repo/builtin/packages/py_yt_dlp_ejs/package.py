@@ -15,6 +15,7 @@ class PyYtDlpEjs(PythonPackage):
 
     license("Unlicense AND MIT AND ISC")
 
+    version("0.3.2", sha256="31a41292799992bdc913e03c9fac2a8c90c82a5cbbc792b2e3373b01da841e3e")
     version("0.3.1", sha256="7f2119eb02864800f651fa33825ddfe13d152a1f730fa103d9864f091df24227")
 
     with default_args(type="build"):

@@ -15,6 +15,7 @@ class PyHatch(PythonPackage):
 
     license("MIT")
 
+    version("1.14.2", sha256="b522c7463198c6e24bd9d9c83252327502e3cc3509844141de0aad7b0aa1967d")
     version("1.14.1", sha256="ca1aff788f8596b0dd1f8f8dfe776443d2724a86b1976fabaf087406ba3d0713")
     version("1.13.0", sha256="5e1a75770cfe8f3ebae3abfded3a976238b0acefd19cdabc5245597525b8066f")
     version("1.12.0", sha256="ae80478d10312df2b44d659c93bc2ed4d33aecddce4b76378231bdf81c8bf6ad")

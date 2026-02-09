@@ -16,6 +16,7 @@ class PyEmcee(PythonPackage):
 
     license("MIT")
 
+    version("3.1.6", sha256="11af4daf6ab8f9ca69681e3c29054665db7bbd87fd4eb8e437d2c3a1248c637d")
     version("3.1.1", sha256="48ffc6a7f5c51760b7a836056184c7286a9959ef81b45b977b02794f1210fb5c")
     version("3.0.2", sha256="035a44d7594fdd03efd10a522558cdfaa080e046ad75594d0bf2aec80ec35388")
     version("2.2.1", sha256="b83551e342b37311897906b3b8acf32979f4c5542e0a25786ada862d26241172")

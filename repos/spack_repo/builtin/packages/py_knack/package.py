@@ -16,6 +16,7 @@ class PyKnack(PythonPackage):
 
     license("MIT")
 
+    version("0.7.2", sha256="dfc6aef6760ea9a9620577e01540617678d78cab3111a0f03e8b9f987d0f08ca")
     version("0.7.1", sha256="fcef6040164ebe7d69629e4e089b398c9b980791446496301befcf8381dba0fc")
 
     depends_on("py-setuptools", type="build")

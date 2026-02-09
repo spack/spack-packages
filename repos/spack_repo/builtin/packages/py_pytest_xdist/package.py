@@ -15,6 +15,7 @@ class PyPytestXdist(PythonPackage):
 
     license("MIT")
 
+    version("3.2.1", sha256="1849bd98d8b242b948e472db7478e090bf3361912a8fed87992ed94085f54727")
     version("3.2.0", sha256="fa10f95a2564cd91652f2d132725183c3b590d9fdcdec09d3677386ecf4c1ce9")
     version("1.30.0", sha256="5d1b1d4461518a6023d56dab62fb63670d6f7537f23e2708459a557329accf48")
     version("1.29.0", sha256="3489d91516d7847db5eaecff7a2e623dba68984835dbe6cedb05ae126c4fb17f")

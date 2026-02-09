@@ -18,6 +18,7 @@ class PyElasticsearchDsl(PythonPackage):
 
     license("Apache-2.0")
 
+    version("7.4.1", sha256="07ee9c87dc28cc3cae2daa19401e1e18a172174ad9e5ca67938f752e3902a1d5")
     version("7.4.0", sha256="c4a7b93882918a413b63bed54018a1685d7410ffd8facbc860ee7fd57f214a6d")
 
     depends_on("py-setuptools", type="build")

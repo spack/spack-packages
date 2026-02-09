@@ -16,6 +16,7 @@ class PyCheroot(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("8.3.1", sha256="7076d5845f64d729e4155ec2650ad24ee70209340d11b9e619a82e9210a579b8")
     version("8.3.0", sha256="a0577e1f28661727d472671a7cc4e0c12ea0cbc5220265e70f00a8b8cb628931")
     version("6.5.5", sha256="f6a85e005adb5bc5f3a92b998ff0e48795d4d98a0fbb7edde47a7513d4100601")
 

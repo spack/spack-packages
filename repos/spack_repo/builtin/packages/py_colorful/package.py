@@ -16,6 +16,7 @@ class PyColorful(PythonPackage):
 
     license("MIT")
 
+    version("0.5.8", sha256="bb16502b198be2f1c42ba3c52c703d5f651d826076817185f0294c1a549a7445")
     version("0.5.4", sha256="86848ad4e2eda60cd2519d8698945d22f6f6551e23e95f3f14dfbb60997807ea")
 
     depends_on("python@2.7:2.8,3.4:", type=("build", "run"))

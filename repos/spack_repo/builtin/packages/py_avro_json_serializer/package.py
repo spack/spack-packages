@@ -15,6 +15,7 @@ class PyAvroJsonSerializer(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.4.1", sha256="53cf797f8d828831bb5a77b1e2e950aee0568a2c7271d865ff8d8af6bfc9d138")
     version("0.4", sha256="f9dac2dac92036c5dd5aba8c716545fc0a0630cc365a51ab15bc2ac47eac28f1")
 
     depends_on("py-setuptools", type="build")

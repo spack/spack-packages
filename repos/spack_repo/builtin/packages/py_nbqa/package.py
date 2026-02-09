@@ -15,6 +15,7 @@ class PyNbqa(PythonPackage):
 
     license("MIT")
 
+    version("1.6.4", sha256="1fbcbe37ef530495bd7f08e53bb838a869b074a0fbef5785ed270d370a613eb0")
     version("1.6.3", sha256="5394a29fc6d27b9a950c0a36d2d9de25de980be9acfe2a3f3aea0d27b5f7fec1")
 
     depends_on("python@3.8:", type=("build", "run"))

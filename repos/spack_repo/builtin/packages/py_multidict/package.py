@@ -16,6 +16,7 @@ class PyMultidict(PythonPackage):
 
     license("Apache-2.0")
 
+    version("6.7.1", sha256="ec6652a1bee61c53a3e5776b6049172c53b6aaba34f18c9ad04f82712bac623d")
     version("6.7.0", sha256="c6e99d9a65ca282e578dfea819cfa9c0a62b2499d8677392e09feaf305e9e6f5")
     version("6.6.4", sha256="d2d4e4787672911b48350df02ed3fa3fffdc2f2e8ca06dd6afdf34189b76a9dd")
     version("6.1.0", sha256="22ae2ebf9b0c69d206c003e2f6a914ea33f0a932d4aa16f236afc049d9958f4a")

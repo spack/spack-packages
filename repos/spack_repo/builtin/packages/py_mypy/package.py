@@ -18,6 +18,7 @@ class PyMypy(PythonPackage):
 
     license("MIT AND PSF-2.0", checked_by="tgamblin")
 
+    version("1.19.1", sha256="19d88bb05303fe63f71dd2c6270daca27cb9401c4ca8255fe50d1d920e0eb9ba")
     version("1.19.0", sha256="f6b874ca77f733222641e5c46e4711648c4037ea13646fd0cdc814c2eaec2528")
     version("1.16.0", sha256="84b94283f817e2aa6350a14b4a8fb2a35a53c286f97c9d30f53b63620e7af8ab")
     version("1.15.0", sha256="404534629d51d3efea5c800ee7c42b72a6554d6c400e6a79eafe15d11341fd43")

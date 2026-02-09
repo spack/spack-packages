@@ -15,6 +15,7 @@ class PySuperqt(PythonPackage):
 
     license("BSD-3-Clause", checked_by="A-N-Other")
 
+    version("0.7.8", sha256="799c76d780ad9ca289a6a87d481686e28d85e47e2383d1579f57a02b572392a8")
     version("0.7.6", sha256="822fdba71dc391929c9d3db839f78ca2a861e2f2876926f969a288dfb2a9787e")
     version("0.6.1", sha256="f1a9e0499c4bbcef34b6f895eb57cd41301b3799242cd030029238124184dade")
 

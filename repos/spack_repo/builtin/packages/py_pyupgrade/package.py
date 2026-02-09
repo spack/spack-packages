@@ -15,6 +15,7 @@ class PyPyupgrade(PythonPackage):
 
     license("MIT")
 
+    version("3.3.2", sha256="bcfed63d38811809f179fd269dec246680b0aaa5bbe662b535826e5fa2275219")
     version("3.3.1", sha256="f88bce38b0ba92c2a9a5063c8629e456e8d919b67d2d42c7ecab82ff196f9813")
     version("2.31.1", sha256="22e0ad6dd39c4381805cb059f1e691b6315c62c0ebcec98a5f29d22cd186a72a")
 

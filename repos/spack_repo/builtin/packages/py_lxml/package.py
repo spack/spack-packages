@@ -17,6 +17,7 @@ class PyLxml(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.0.2", sha256="cd79f3367bd74b317dda655dc8fcfa304d9eb6e4fb06b7168c5cf27f96e0cd62")
     version("6.0.1", sha256="2b3a882ebf27dd026df3801a87cf49ff791336e0f94b0fad195db77e01240690")
     version("5.3.0", sha256="4e109ca30d1edec1ac60cdbe341905dc3b8f55b16855e03a54aaf59e51ec8c6f")
     version("5.2.2", sha256="bb2dc4898180bea79863d5487e5f9c7c34297414bad54bcd0f0852aee9cfdb87")

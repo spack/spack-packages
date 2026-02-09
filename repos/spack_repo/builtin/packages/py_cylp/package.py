@@ -20,6 +20,7 @@ class PyCylp(PythonPackage):
 
     license("EPL-2.0")
 
+    version("0.91.6", sha256="f026abc29c67a998264db8aa9653fc98c0c38661da68f80ef4b6a0edc117bec0")
     version("0.91.5", sha256="d68ab1dde125be60abf45c8fd9edd24ab880c8144ad881718ddfa01ff6674c77")
 
     depends_on("cxx", type="build")  # generated

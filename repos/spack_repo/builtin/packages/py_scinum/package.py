@@ -16,6 +16,7 @@ class PyScinum(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.4.7", sha256="3e1c60fa7cd316278bba76cb34c6ea43d0b85d40b36046c42f7ed03d8c1e0869")
     version("1.4.3", sha256="c8144b6a2ed5cb58b2c26a8151752b6f5f5ea460678a9e092015b91da926c443")
     version("1.2.0", sha256="31802d9b580f3a89c0876f34432851bc4def9cb2844d6f3c8e044480f2dd2f91")
 

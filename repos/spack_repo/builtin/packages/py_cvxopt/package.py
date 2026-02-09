@@ -16,6 +16,7 @@ class PyCvxopt(PythonPackage):
 
     license("GPL-3.0-only")
 
+    version("1.2.7", sha256="3f9db1f4d4e820aaea81d6fc21054c89dc6327c84f935dd5a1eda1af11e1d504")
     version("1.2.5", sha256="94ec8c36bd6628a11de9014346692daeeef99b3b7bae28cef30c7490bbcb2d72")
 
     variant(

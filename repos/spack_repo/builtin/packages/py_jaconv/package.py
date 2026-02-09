@@ -17,6 +17,7 @@ class PyJaconv(PythonPackage):
 
     license("MIT")
 
+    version("0.3.4", sha256="9e7c55f3f0b0e2dbad62f6c9fa0c30fc6fffdbb78297955509d90856b3a31d6d")
     version("0.3", sha256="cc70c796c19a6765598c03eac59d1399a555a9a8839cc70e540ec26f0ec3e66e")
 
     depends_on("py-setuptools", type="build")

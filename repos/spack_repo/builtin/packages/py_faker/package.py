@@ -19,6 +19,7 @@ class PyFaker(PythonPackage):
 
     license("MIT")
 
+    version("9.8.4", sha256="b0cee4dbe737fcb86f6b3f2aa2803c83264c7763e52185ccee9f85f638b43877")
     version("9.8.2", sha256="393bd1b5becf3ccbc04a4f0f13da7e437914b24cafd1a4d8b71b5fecff54fb34")
 
     depends_on("python@3.6:", type=("build", "run"))

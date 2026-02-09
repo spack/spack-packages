@@ -15,6 +15,7 @@ class PyFrozendict(PythonPackage):
 
     license("LGPL-3.0-only")
 
+    version("2.4.7", sha256="e478fb2a1391a56c8a6e10cc97c4a9002b410ecd1ac28c18d780661762e271bd")
     version("2.4.6", sha256="df7cd16470fbd26fc4969a208efadc46319334eb97def1ddf48919b351192b8e")
     version("2.3.10", sha256="aadc83510ce82751a0bb3575231f778bc37cbb373f5f05a52b888e26cbb92f79")
     version("2.3.4", sha256="15b4b18346259392b0d27598f240e9390fafbff882137a9c48a1e0104fb17f78")

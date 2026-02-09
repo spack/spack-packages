@@ -18,6 +18,7 @@ class PyObspy(PythonPackage):
 
     license("LGPL-3.0-only", checked_by="snehring")
 
+    version("1.4.2", sha256="dd93a17cda32be057937b551f096df07def6aa61ccf26558ce9cd1866a70397c")
     version("1.4.1", sha256="9cf37b0ce03de43d80398703c006bfddbd709f32e8460a9404b27df998d3f747")
     version("1.4.0", sha256="336a6e1d9a485732b08173cb5dc1dd720a8e53f3b54c180a62bb8ceaa5fe5c06")
 

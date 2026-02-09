@@ -18,6 +18,7 @@ class PyOsloSerialization(PythonPackage):
 
     maintainers("haampie")
 
+    version("4.1.1", sha256="05995169131f5e82ce9af8bbef99ada5ca457c9a60f979590bbe5f1a414368cd")
     version("4.1.0", sha256="cecc7794df806c85cb70dbd6c2b3af19bc68047ad29e3c6442be90a0a4de5379")
 
     depends_on("python@3.6:", type=("build", "run"))

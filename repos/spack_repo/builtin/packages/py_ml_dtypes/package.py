@@ -18,6 +18,7 @@ class PyMlDtypes(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.5.4", sha256="8ab06a50fb9bf9666dd0fe5dfb4676fa2b0ac0f31ecff72a6c3af8e22c063453")
     version("0.5.1", tag="v0.5.1", commit="560866cfbb44990c9c68b82e878bf8ee7972a595")
     version("0.4.0", tag="v0.4.0", commit="9fc7e6773acb66fa496ed8d476a008a489a4da49")
     version("0.3.1", tag="v0.3.1", commit="bbeedd470ecac727c42e97648c0f27bfc312af30")

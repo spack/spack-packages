@@ -20,6 +20,7 @@ class PyBiopandas(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.2.9", sha256="417e84bac4dddf6728a4c1960efef35f7bdb72da5688317e23c0bcd964645f83")
     version("0.2.5", branch="v0.2.5")
 
     depends_on("python@3.5:", type=("build", "run"))

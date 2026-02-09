@@ -18,6 +18,7 @@ class PyBdbag(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.6.4", sha256="bd6fb725bf32cf8dc82ec95dd4aaec57b5615452b611447aefbd325a9583228e")
     version("1.6.3", sha256="1ad2e4956045cb3d43a6276391ad919e42a90a2443727dbc5b1ac6eeb6d6e3c9")
 
     depends_on("python@2.7:2,3.5:3", type=("build", "run"))

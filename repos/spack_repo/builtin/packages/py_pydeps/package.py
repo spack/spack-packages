@@ -13,6 +13,7 @@ class PyPydeps(PythonPackage):
 
     pypi = "pydeps/pydeps-1.7.1.tar.gz"
 
+    version("1.9.9", sha256="dceb972167db9cba4ee626f68783f3c25d13e903aef0eaa0ee278c856efb61cd")
     version("1.9.0", sha256="ba9b8c7d72cb4dfd3f4dd6b8a250c240d15824850a415fd428f2660ed371361f")
     version("1.7.1", sha256="7eeb8d0ec2713befe81dd0d15eac540e843b1daae13613df1c572528552d6340")
 

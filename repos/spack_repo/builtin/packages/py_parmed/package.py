@@ -18,6 +18,7 @@ class PyParmed(PythonPackage):
 
     license("MIT")
 
+    version("3.4.4", sha256="96dd9e4d7de413d83b18a85c971dd1ea957077d435e4b9041f3b160a666f8647")
     version("3.4.3", sha256="90afb155e3ffe69230a002922b28968464126d4450059f0bd97ceca679c6627c")
 
     depends_on("cxx", type="build")  # generated

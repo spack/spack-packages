@@ -15,6 +15,7 @@ class PyPyinstrumentCext(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.2.4", sha256="79b29797209eebd441a8596accfa8b617445d9252fbf7ce75d3a4a0eb46cb877")
     version("0.2.2", sha256="f29e25f71d74c0415ca9310e5567fff0f5d29f4240a09a885abf8b0eed71cc5b")
 
     depends_on("c", type="build")  # generated

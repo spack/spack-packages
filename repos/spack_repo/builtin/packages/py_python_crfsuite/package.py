@@ -15,6 +15,7 @@ class PyPythonCrfsuite(PythonPackage):
 
     license("MIT")
 
+    version("0.9.9", sha256="caa6261d6955466756f986b7fcfbd4fd50622963e3bdb5cc180c129c62b3a76d")
     version("0.9.7", sha256="3b4538d2ce5007e4e42005818247bf43ade89ef08a66d158462e2f7c5d63cee7")
 
     depends_on("c", type="build")  # generated

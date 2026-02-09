@@ -16,6 +16,7 @@ class PyPythonLevenshtein(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("0.12.2", sha256="dc2395fbd148a1ab31090dd113c366695934b9e85fe5a4b2a032745efd0346f6")
     version("0.12.0", sha256="033a11de5e3d19ea25c9302d11224e1a1898fe5abd23c61c7c360c25195e3eb1")
 
     depends_on("c", type="build")  # generated

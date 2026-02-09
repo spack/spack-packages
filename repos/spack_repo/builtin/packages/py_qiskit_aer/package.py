@@ -18,6 +18,7 @@ class PyQiskitAer(PythonPackage, CudaPackage):
 
     license("Apache-2.0")
 
+    version("0.11.2", sha256="1bc1d3b46f7fc8976084a900cb9a2a80e8b25df6e59a88fd11136f24e1297fc1")
     version("0.11.1", sha256="ff136a086d0473346e5f5309ae34cc78b103dcd8a898344c6e5f86de91af41a1")
     version("0.9.1", sha256="3bf5f615aaae7cc5f816c39a4e9108aabaed0cc894fb6f841e48ffd56574e7eb")
 

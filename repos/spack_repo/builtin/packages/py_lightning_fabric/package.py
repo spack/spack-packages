@@ -15,6 +15,9 @@ class PyLightningFabric(PythonPackage):
 
     license("Apache-2.0")
 
+    version(
+        "2.0.9.post0", sha256="542b28fc73119c6d54114e666157efed8f9f808bca5c72b4408e6911575bfcd0"
+    )
     version("2.0.0", sha256="56ecf23e2857f76cc1ca4528cc314b884fed1541182d4e8b130e3c2efd39c896")
 
     # src/lightning_fabric/__setup__.py

@@ -16,6 +16,7 @@ class PyPyqt6(SIPPackage):
 
     license("GPL-3.0-or-later")
 
+    version("6.10.2", sha256="6c0db5d8cbb9a3e7e2b5b51d0ff3f283121fa27b864db6d2f35b663c9be5cc83")
     version("6.10.0", sha256="710ecfd720d9a03b2c684881ae37f528e11d17e8f1bf96431d00a6a73f308e36")
     version("6.9.1", sha256="50642be03fb40f1c2111a09a1f5a0f79813e039c15e78267e6faaf8a96c1c3a6")
     version("6.7.0", sha256="3d31b2c59dc378ee26e16586d9469842483588142fc377280aad22aaf2fa6235")

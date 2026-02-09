@@ -15,6 +15,7 @@ class PyPythonSlugify(PythonPackage):
 
     license("MIT")
 
+    version("4.0.1", sha256="69a517766e00c1268e5bbfc0d010a0a8508de0b18d30ad5a1ff357f8ae724270")
     version("4.0.0", sha256="a8fc3433821140e8f409a9831d13ae5deccd0b033d4744d94b31fea141bdd84c")
 
     depends_on("python@2.7:2.8,3.5:", type=("build", "run"))

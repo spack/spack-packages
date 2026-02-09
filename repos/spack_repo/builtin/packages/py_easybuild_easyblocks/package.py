@@ -18,6 +18,7 @@ class PyEasybuildEasyblocks(PythonPackage):
 
     license("GPL-2.0-only")
 
+    version("4.7.2", sha256="6347aac95c56a5172688db98fd2cad3e348df206dd2a9c0389adab3208046699")
     version("4.7.0", sha256="c23e81cbaa3e4fa5ab1bb8b2db759332867d61110bf4ec34763ea170780f0655")
     version("4.0.0", sha256="a0fdef6c33c786e323bde1b28bab942fd8e535c26842877d705e692e85b31b07")
 

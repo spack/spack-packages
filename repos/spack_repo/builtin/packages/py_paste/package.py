@@ -16,6 +16,7 @@ class PyPaste(PythonPackage):
 
     license("MIT")
 
+    version("3.5.3", sha256="fa093f46a4d1ea3898a849c8ce1d2a425c2bed5fc06b36384fe3ffaa652c081b")
     version("3.5.2", sha256="d5a7340c30bcdf3023dd0106c8a5c430dd8fe84aeb8113bc7b93f8dd729f4af6")
 
     depends_on("python@3:", type=("build", "run"))

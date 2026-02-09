@@ -16,6 +16,7 @@ class PyPyuwsgi(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2.0.30", sha256="1c9f226a9278f8a2ecc08d4445a7eb776bda53f44721c565c499131ebe5ff0ce")
     version("2.0.21", sha256="211e8877f5191e347ba905232d04ab30e05ce31ba7a6dac4bfcb48de9845bb52")
 
     depends_on("c", type="build")  # generated

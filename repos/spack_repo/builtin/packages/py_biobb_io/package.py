@@ -16,6 +16,7 @@ class PyBiobbIo(PythonPackage):
     maintainers("d-beltran")
 
     # Versions
+    version("4.1.1", sha256="2bccb966ab28bc6f63d1f09309c1a300392643fbfaf66ca690f8f7fad7abe516")
     version("4.1.0", sha256="074ea97a3682731e13d559b7f91b04e4a3f0f02ee798503089e4af79a730bf72")
 
     # Dependencies

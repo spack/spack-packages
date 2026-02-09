@@ -19,6 +19,7 @@ class PySnakemakeExecutorPluginClusterSync(PythonPackage):
 
     license("MIT")
 
+    version("0.1.5", sha256="f34b8cbc282d926ecfc7443257cb1845fc7965b92ef303c4ae7c342a4c99c5d7")
     version("0.1.4", sha256="6a6dcb2110d4c2ee74f9a48ea68e0fd7ddd2800672ebef00a01faa4affa835ad")
     version("0.1.3", sha256="c30fca6ccb98a3f7ca52ca8a95414c71360a3d4a835bd4a097a13445d6fce2ac")
 

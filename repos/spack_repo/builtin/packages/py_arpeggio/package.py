@@ -15,6 +15,7 @@ class PyArpeggio(PythonPackage):
 
     license("MIT")
 
+    version("2.0.3", sha256="9e85ad35cfc6c938676817c7ae9a1000a7c72a34c71db0c687136c460d12b85e")
     version("2.0.2", sha256="c790b2b06e226d2dd468e4fbfb5b7f506cec66416031fde1441cf1de2a0ba700")
 
     depends_on("py-setuptools", type="build")

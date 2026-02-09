@@ -16,6 +16,7 @@ class PyCymem(PythonPackage):
 
     license("MIT")
 
+    version("2.0.8", sha256="8fb09d222e21dcf1c7e907dc85cf74501d4cea6c4ed4ac6c9e016f98fb59cbbf")
     version("2.0.7", sha256="e6034badb5dd4e10344211c81f16505a55553a7164adc314c75bd80cf07e57a8")
     version("2.0.3", sha256="5083b2ab5fe13ced094a82e0df465e2dbbd9b1c013288888035e24fd6eb4ed01")
 

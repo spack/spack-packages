@@ -17,6 +17,7 @@ class PyRichClick(PythonPackage):
 
     license("MIT")
 
+    version("1.8.9", sha256="fd98c0ab9ddc1cf9c0b7463f68daf28b4d0033a74214ceb02f761b3ff2af3136")
     version("1.8.5", sha256="a3eebe81da1c9da3c32f3810017c79bd687ff1b3fa35bfc9d8a3338797f1d1a1")
     version("1.7.4", sha256="7ce5de8e4dc0333aec946113529b3eeb349f2e5d2fafee96b9edf8ee36a01395")
     version("1.6.1", sha256="f8ff96693ec6e261d1544e9f7d9a5811c5ef5d74c8adb4978430fc0dac16777e")

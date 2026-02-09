@@ -15,6 +15,7 @@ class PyTypedAst(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.5.5", sha256="94282f7a354f36ef5dbce0ef3467ebf6a258e370ab33d5b40c249fa996e590dd")
     version("1.5.4", sha256="39e21ceb7388e4bb37f4c679d72707ed46c2fbf2a5609b8b8ebc4b067d977df2")
     version("1.4.3", sha256="fb1bbeac803adea29cedd70781399c99138358c26d05fcbd23c13016b7f5ec65")
     version("1.4.2", sha256="9fc0b3cb5d1720e7141d103cf4819aea239f7d136acf9ee4a69b047b7986175a")

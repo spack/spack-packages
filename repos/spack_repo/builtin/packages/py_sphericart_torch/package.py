@@ -16,6 +16,7 @@ class PySphericartTorch(PythonPackage, CudaPackage):
 
     maintainers("RMeli", "luthaf", "HaoZeke", "rubber-duck-debug")
 
+    version("1.0.6", sha256="e601371962f5f97afd3a39e5eefa6daf06d4653e6b0104d37932954223960ccf")
     version("1.0.5", sha256="d58c372395236b339837ee35b19933fca0c9803dcecabb213bedc51178e764a3")
 
     depends_on("c", type="build")

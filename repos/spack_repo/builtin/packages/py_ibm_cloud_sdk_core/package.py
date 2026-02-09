@@ -17,6 +17,7 @@ class PyIbmCloudSdkCore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.10.1", sha256="f807853ce3b861b428e60b3c3dad96818342b155f5fb41e8d2e8fd356e8257cc")
     version("3.10.0", sha256="ab9520be99066ec41a24e31ac653c28953adc8fc349f0fa53a598e1802a79cd6")
     version("3.9.0", sha256="51403f33003254d83d5028d8cebd7617f5cca82af85b6e9c4ad553eccd079dbf")
 

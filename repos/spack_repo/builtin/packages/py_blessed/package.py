@@ -17,6 +17,7 @@ class PyBlessed(PythonPackage):
 
     license("MIT")
 
+    version("1.19.1", sha256="9a0d099695bf621d4680dd6c73f6ad547f6a3442fbdbe80c4b1daa1edbc492fc")
     version("1.19.0", sha256="4db0f94e5761aea330b528e84a250027ffe996b5a94bf03e502600c9a5ad7a61")
     version("1.18.1", sha256="8b09936def6bc06583db99b65636b980075733e13550cb6af262ce724a55da23")
     version("1.18.0", sha256="1312879f971330a1b7f2c6341f2ae7e2cbac244bfc9d0ecfbbecd4b0293bc755")

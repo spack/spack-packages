@@ -16,6 +16,7 @@ class PyConsolekit(PythonPackage):
 
     license("MIT")
 
+    version("1.5.2", sha256="bc0cbcab4a40abbc3dbd8fa7058bc4c7fa4181d55a2adbfaa854d41f1a16db87")
     version("1.5.1", sha256="55ea43e226863e1d618ec9b860c9842d84249d895c3376c03b158d8f3a335626")
 
     depends_on("py-flit-core@3.2:3", type="build")

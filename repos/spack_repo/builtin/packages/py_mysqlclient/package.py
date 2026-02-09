@@ -18,6 +18,7 @@ class PyMysqlclient(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2.2.7", sha256="24ae22b59416d5fcce7e99c9d37548350b4565baac82f95e149cac6ce4163845")
     version("2.2.4", sha256="33bc9fb3464e7d7c10b1eaf7336c5ff8f2a3d3b88bab432116ad2490beb3bf41")
     version("1.4.6", sha256="f3fdaa9a38752a3b214a6fe79d7cae3653731a53e577821f9187e67cbecb2e16")
     version("1.4.5", sha256="e80109b0ae8d952b900b31b623181532e5e89376d707dcbeb63f99e69cefe559")

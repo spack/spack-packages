@@ -16,6 +16,7 @@ class PyPebble(PythonPackage):
 
     license("LGPL-3.0-only")
 
+    version("5.0.7", sha256="2784c147766f06388cea784084b14bec93fdbaa793830f1983155aa330a2a6e4")
     version("5.0.3", sha256="bdcfd9ea7e0aedb895b204177c19e6d6543d9962f4e3402ebab2175004863da8")
 
     depends_on("python@3.6:", type=("build", "run"))

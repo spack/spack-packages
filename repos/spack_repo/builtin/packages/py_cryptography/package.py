@@ -16,6 +16,7 @@ class PyCryptography(PythonPackage):
 
     license("Apache-2.0")
 
+    version("46.0.4", sha256="bfd019f60f8abc2ed1b9be4ddc21cfef059c841d86d710bb69909a688cbb8f59")
     version("46.0.3", sha256="a8b17438104fed022ce745b362294d9ce35b4c2e45c1d958ad4a4b019285f4a1")
     version("45.0.5", sha256="72e76caa004ab63accdf26023fccd1d087f6d90ec6048ff33ad0445abf7f605a")
     version("43.0.3", sha256="315b9001266a492a6ff443b61238f956b214dbec9910a081ba5b6646a055a805")

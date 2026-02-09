@@ -16,6 +16,7 @@ class PyMkdocstrings(PythonPackage):
 
     license("ISC")
 
+    version("0.19.1", sha256="d1037cacb4b522c1e8c164ed5d00d724a82e49dcee0af80db8fb67b384faeef9")
     version("0.19.0", sha256="efa34a67bad11229d532d89f6836a8a215937548623b64f3698a1df62e01cc3e")
 
     depends_on("python@3.7:", type=("build", "run"))

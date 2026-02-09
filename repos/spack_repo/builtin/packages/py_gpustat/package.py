@@ -16,6 +16,7 @@ class PyGpustat(PythonPackage):
 
     license("MIT")
 
+    version("1.0.0", sha256="581e8ff858c32c95a322bb8f03f1d9dc3d177b4ecb33ddcbed2c373c67f4e3f1")
     version("1.0.0b1", sha256="a25c460c5751180265814f457249ba5100baf7a055b23ad762a4e3ab3f6496dd")
     version(
         "0.6.0",

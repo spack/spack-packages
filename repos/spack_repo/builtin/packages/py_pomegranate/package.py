@@ -15,6 +15,7 @@ class PyPomegranate(PythonPackage):
 
     license("MIT")
 
+    version("0.12.2", sha256="942a7bd3b3d5a540a00edc7a12166b37384a068cc4b2f1fdb10f3afeeb6e9eeb")
     version("0.12.0", sha256="8b00c88f7cf9cad8d38ea00ea5274821376fefb217a1128afe6b1fcac54c975a")
 
     depends_on("c", type="build")  # generated

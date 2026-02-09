@@ -16,6 +16,7 @@ class PyPipdeptree(PythonPackage):
 
     license("MIT")
 
+    version("2.13.2", sha256="1237791977ef61602dc967b287167c1a6b058501afbc145a04e835c622355e6f")
     version("2.13.0", sha256="ff71a48abd0b1ab810c23734b47de6ebd93270857d6665e21ed5ef6136fcba6e")
 
     depends_on("python@3.8:", type=("build", "run"))

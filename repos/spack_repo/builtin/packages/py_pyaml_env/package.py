@@ -15,6 +15,7 @@ class PyPyamlEnv(PythonPackage):
 
     license("MIT", checked_by="A_N_Other")
 
+    version("1.2.2", sha256="f83502516b6f1561ba7c2db9ced939a7a9933a66702d8071e98ad07da49a4bb4")
     version("1.2.1", sha256="6d5dc98c8c82df743a132c196e79963050c9feb05b0a6f25f3ad77771d3d95b0")
 
     depends_on("py-setuptools", type="build")

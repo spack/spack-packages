@@ -19,6 +19,7 @@ class PyToytree(PythonPackage):
 
     maintainers("snehring")
 
+    version("2.0.5", sha256="7be04ca310067e0e9737449700d6ab1b68b4379b64e2d22f2f7697a70030ceb0")
     version("2.0.1", sha256="4f1452a76441857a13f72c99bf7d9f0a394cd8eae7fc02ee5349d946f2507101")
 
     depends_on("py-setuptools", type="build")

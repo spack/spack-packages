@@ -19,6 +19,7 @@ class PyIntbitset(PythonPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("3.0.2", sha256="a300b2d5a4989857ff1d0c3971624766a89a751e315aa080c07865031ae637a7")
     version("3.0.1", sha256="f1e6d03c6729922a223c51849df65b9e916e625aefb911784e7f9acd4c207d53")
 
     depends_on("c", type="build")  # generated

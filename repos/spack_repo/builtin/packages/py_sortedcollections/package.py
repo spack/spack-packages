@@ -16,6 +16,7 @@ class PySortedcollections(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.2.3", sha256="34934caf3142268cd6792bd5af9c269e5b1dfdd27f815965b973c6473edf2c45")
     version("1.2.1", sha256="58c31f35e3d052ada6a1fbfc235a408e9ec5e2cfc64a02731cf97cac4afd306a")
 
     depends_on("py-setuptools", type="build")

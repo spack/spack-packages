@@ -15,6 +15,7 @@ class PyQtconsole(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("5.2.2", sha256="8f9db97b27782184efd0a0f2d57ea3bd852d053747a2e442a9011329c082976d")
     version("5.2.0", sha256="6bb4df839609f240194213407872076f871e3a3884cf8e785068e8c7f39344c6")
     version("4.5.1", sha256="4af84facdd6f00a6b9b2927255f717bb23ae4b7a20ba1d9ef0a5a5a8dbe01ae2")
     version("4.2.1", sha256="25ec7d345528b3e8f3c91be349dd3c699755f206dc4b6ec668e2e5dd60ea18ef")

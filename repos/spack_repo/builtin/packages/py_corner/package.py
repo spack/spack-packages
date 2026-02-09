@@ -17,6 +17,7 @@ class PyCorner(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("2.2.3", sha256="471b7b63395d8f1dee176bb779348ade38d56abd23404a48802a593607745e1c")
     version("2.2.2", sha256="4bc79f3b6778c270103f0926e64ef2606c48c3b6f92daf5382fc4babf5d608d1")
 
     depends_on("python@3.9:", type=("build", "run"))

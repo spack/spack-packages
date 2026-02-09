@@ -17,6 +17,7 @@ class PyMinio(PythonPackage):
 
     license("Apache-2.0")
 
+    version("7.1.9", sha256="a711f3e6961ef083c161cee79f42a01d73369fc9111ccf76a74fb8d58b41d00a")
     version("7.1.2", sha256="40d0cdb4dba5d5610d6599ea740cf827102db5bfa71279fc220c3cf7305bedc1")
 
     depends_on("py-setuptools", type="build")

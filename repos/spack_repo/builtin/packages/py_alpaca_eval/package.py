@@ -19,6 +19,7 @@ class PyAlpacaEval(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.2.9", sha256="31196aa288b37ca8356cf95a1b760a6e7cc1fe4045ebf779044b5ffe0f704aa6")
     version("0.2.8", sha256="5b21b74d7362ee229481b6a6d826dd620b2ef6b82e4f5470645e0a4b696a31e6")
 
     depends_on("py-setuptools", type="build")

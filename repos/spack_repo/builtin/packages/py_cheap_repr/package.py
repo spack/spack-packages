@@ -15,6 +15,7 @@ class PyCheapRepr(PythonPackage):
 
     license("MIT", checked_by="jmlapre")
 
+    version("0.5.2", sha256="001a5cf8adb0305c7ad3152c5f776040ac2a559d97f85770cebcb28c6ca5a30f")
     version("0.5.1", sha256="31ec63b9d8394aa23d746c8376c8307f75f9fca0b983566b8bcf13cc661fe6dd")
 
     depends_on("py-setuptools", type="build")

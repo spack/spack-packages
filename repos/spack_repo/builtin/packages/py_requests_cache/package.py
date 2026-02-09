@@ -18,6 +18,7 @@ class PyRequestsCache(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.9.8", sha256="eaed4eb5fd5c392ba5e7cfa000d4ab96b1d32c1a1620f37aa558c43741ac362b")
     version("0.9.7", sha256="b7c26ea98143bac7058fad6e773d56c3442eabc0da9ea7480af5edfc134ff515")
 
     depends_on("python@3.7:3", type=("build", "run"))

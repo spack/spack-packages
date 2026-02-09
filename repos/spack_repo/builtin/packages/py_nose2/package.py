@@ -15,6 +15,7 @@ class PyNose2(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.9.2", sha256="8762f77925bbafcdf38331e0e2ee718756fb75ff74b1f9097cd08731ad59ab5e")
     version("0.9.1", sha256="0ede156fd7974fa40893edeca0b709f402c0ccacd7b81b22e76f73c116d1b999")
     version("0.6.0", sha256="daa633e92a52e0db60ade7e105a2ba5cad7ac819f3608740dcfc6140b9fd0a94")
 

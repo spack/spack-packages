@@ -21,6 +21,7 @@ class PyEfel(PythonPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("5.2.9", sha256="1065a48eb83d8e99a98a11cf3dc935381468b2fc4831c62907124db3b39ebfcb")
     version("5.2.0", sha256="ed2c5efe22a4c703a4d9e47775b939009e1456713ac896898ebabf177c60b1dc")
 
     depends_on("cxx", type="build")  # generated

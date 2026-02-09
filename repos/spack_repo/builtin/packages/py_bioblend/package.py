@@ -16,6 +16,7 @@ class PyBioblend(PythonPackage):
 
     license("MIT")
 
+    version("1.0.1", sha256="2b2213c2ed785edfe2a5673499cf24f85b2df0daf9fbdb498fa1f79d4e4367b5")
     version("1.0.0", sha256="3794288bbf891ae6edc1bcdd9618a3ae16b6ed4a04c946505f7e29f2f28898a5")
 
     depends_on("python@3.7:", type=("build", "run"))

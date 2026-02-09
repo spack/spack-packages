@@ -15,6 +15,7 @@ class PyNumpyStl(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.0.1", sha256="dd4da1a379d2632f168518be8dcd9cddd7edc6c3238094fd8d21476b3586a0bc")
     version("3.0.0", sha256="578b78eacb0529ac9aba2f17dcc363d58c7c3c5708710c18f8c1e9965f2e81ac")
     version("2.10.1", sha256="f6b529b8a8112dfe456d4f7697c7aee0aca62be5a873879306afe4b26fca963c")
 

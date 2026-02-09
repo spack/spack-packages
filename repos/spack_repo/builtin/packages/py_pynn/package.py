@@ -18,6 +18,7 @@ class PyPynn(PythonPackage):
 
     license("CECILL-2.0")
 
+    version("0.10.1", sha256="03fbafeddd64ae7163e2b557b2760380b6eceb52469f1b3f4cc203bbb80f0cde")
     version("0.10.0", sha256="04120fe0e03260d664b337e0ac29d985c3fb3684ef35b1add93a66739891c98f")
     version("0.9.1", sha256="bbc60fea3235427191feb2daa0e2fa07eb1c3946104c068ac8a2a0501263b0b1")
     version("0.8.3", sha256="9d59e6cffa4714f0c892ec6b32d1f5f8f75ba3a20d8635bac50c047aa6f2537e")

@@ -17,6 +17,7 @@ class PyF90wrap(PythonPackage):
 
     license("LGPL-3.0-only")
 
+    version("0.2.9", sha256="030ad9aeac934b8fa2d07b1f2eef2b6875a44141866e9a16bccefc18cc8d88ca")
     version("0.2.6", sha256="e0748eb5e288be7f47829a272fc230373469fb40afccddf91e9973c56da43dd4")
     version("0.2.3", sha256="5577ea92934c5aad378df21fb0805b5fb433d6f2b8b9c1bf1a9ec1e3bf842cff")
 

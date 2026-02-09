@@ -15,6 +15,7 @@ class PyDynaconf(PythonPackage):
 
     license("MIT")
 
+    version("3.2.9", sha256="a612a05c0307b826193b9f7e738f9497c537d5b2668aa2979da3538d7dcdd400")
     version("3.2.2", sha256="2f98ec85a2b8edb767b3ed0f82c6d605d30af116ce4622932a719ba70ff152fc")
 
     depends_on("python@3.8:", type=("build", "run"))

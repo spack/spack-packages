@@ -15,6 +15,7 @@ class PyComm(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.2.3", sha256="2dc8048c10962d55d7ad693be1e7045d891b7ce8d999c97963a5e3e99c055971")
     version("0.2.2", sha256="3fd7a84065306e07bea1773df6eb8282de51ba82f77c72f9c85716ab11fe980e")
     version("0.1.4", sha256="354e40a59c9dd6db50c5cc6b4acc887d82e9603787f83b68c01a80a923984d15")
     version("0.1.3", sha256="a61efa9daffcfbe66fd643ba966f846a624e4e6d6767eda9cf6e993aadaab93e")

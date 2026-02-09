@@ -17,6 +17,7 @@ class PyMotmetrics(PythonPackage):
 
     license("MIT")
 
+    version("1.2.5", sha256="3a777d5ab611cee008ae2c1acc39c7048d2b0b2eafed0f0f1ae473f35ebe34b9")
     version("1.2.0", sha256="7328d8468c948400b38fcc212f3e448bc1f2fdfc727e170d85a029e49f1cdbc6")
 
     depends_on("py-setuptools", type="build")

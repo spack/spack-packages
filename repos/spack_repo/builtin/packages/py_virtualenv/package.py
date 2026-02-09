@@ -16,6 +16,7 @@ class PyVirtualenv(PythonPackage):
 
     license("MIT")
 
+    version("20.35.4", sha256="643d3914d73d3eeb0c552cbb12d7e82adf0e504dbf86a3182f8771a153a1971c")
     version("20.35.3", sha256="4f1a845d131133bdff10590489610c98c168ff99dc75d6c96853801f7f67af44")
     version("20.26.6", sha256="280aede09a2a5c317e409a00102e7077c6432c5a38f0ef938e643805a7ad2c48")
     version("20.26.5", sha256="ce489cac131aa58f4b25e321d6d186171f78e6cb13fafbf32a840cee67733ff4")

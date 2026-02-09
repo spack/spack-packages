@@ -20,6 +20,7 @@ class PyPyvista(PythonPackage):
 
     license("MIT")
 
+    version("0.46.5", sha256="b637bfa32136b95e5e5a6d972871606a68e3c625fc652ff5d9f00390294e99c0")
     version("0.46.3", sha256="1f8e6e39516d24d93bc227f278841a0d72ec3722959f612cf4616d2720a8afe1")
     version("0.45.3", sha256="bca39f5ea17e45f40070ab45423dfd2c4fc81c33e0fb565bafded81c024fd04f")
     version("0.44.1", sha256="63976f5d57d151b3f7e1616dde40dcf56a66d1f37f6db067087fa9cc9667f512")

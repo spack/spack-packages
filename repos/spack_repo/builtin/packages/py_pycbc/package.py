@@ -20,6 +20,7 @@ class PyPycbc(PythonPackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.14.4", sha256="99741c702982b7b782c926055a418a27df3c27357c460551751b111084687a45")
     version("1.14.1", sha256="4b0a309cb6209837aaebbd691413a286dd7200ccf4b977ffed1462a65ac35dc0")
 
     depends_on("py-setuptools", type="build")

@@ -15,6 +15,7 @@ class PyColorclass(PythonPackage):
 
     license("MIT")
 
+    version("2.2.2", sha256="6d4fe287766166a98ca7bc6f6312daf04a0481b1eda43e7173484051c0ab4366")
     version("2.2.0", sha256="b05c2a348dfc1aff2d502527d78a5b7b7e2f85da94a96c5081210d8e9ee8e18b")
 
     depends_on("python@3.3.0:")

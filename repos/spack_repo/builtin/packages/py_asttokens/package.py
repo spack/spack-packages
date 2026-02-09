@@ -15,6 +15,7 @@ class PyAsttokens(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.0.1", sha256="71a4ee5de0bde6a31d64f6b13f2293ac190344478f081c3d1bccfcf5eacb0cb7")
     version("3.0.0", sha256="0dcd8baa8d62b0c1d118b399b2ddba3c4aff271d0d7a9e0d4c1681c79035bbc7")
     version("2.4.0", sha256="2e0171b991b2c959acc6c49318049236844a5da1d65ba2672c4880c1c894834e")
     version("2.2.1", sha256="4622110b2a6f30b77e1473affaa97e711bc2f07d3f10848420ff1898edbe94f3")

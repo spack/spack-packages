@@ -16,6 +16,7 @@ class PyMpld3(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.5.9", sha256="d8d228b2911132fd0154e2a49543b7f97247f9851cfe468c6b616f452c676158")
     version("0.5.8", sha256="1a167dbef836dd7c66d8aa71c06a32d50bffa18725f304d93cb74fdb3545043b")
     version("0.5.5", sha256="b080f3535238a71024c0158280ab4f6091717c45347c41c907012f8dd6da1bd5")
     version("0.3", sha256="4d455884a211bf99b37ecc760759435c7bb6a5955de47d8daf4967e301878ab7")

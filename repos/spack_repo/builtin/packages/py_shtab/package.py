@@ -15,6 +15,7 @@ class PyShtab(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.3.9", sha256="3d99abe5398c73c94644d4cbefb4bf44a145d0b8440e902b0d9dc02bff653543")
     version("1.3.4", sha256="353f2a3a5178cd2df8eb746e7ab26a5039a9989e4386de8fd239d8c1653a8887")
     version("1.3.3", sha256="1f7f263631acdf0a9e685bbf7126a0fa711c2d663db12441670b1cea3fa431d4")
 

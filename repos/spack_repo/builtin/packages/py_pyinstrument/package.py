@@ -15,6 +15,7 @@ class PyPyinstrument(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("5.1.2", sha256="af149d672da9493fa37334a1cc68f7b80c3e6cb9fd99b9e426c447db5c650bf0")
     version("5.1.1", sha256="bc401cda990b3c1cfe8e0e0473cbd605df3c63b73478a89ac4ab108f2184baa8")
     version("4.4.0", sha256="be34a2e8118c14a616a64538e02430d9099d5d67d8a370f2888e4ac71e52bbb7")
     version("4.0.3", sha256="08caf41d21ae8f24afe79c664a34af1ed1e17aa5d4441cd9b1dc15f87bbbac95")

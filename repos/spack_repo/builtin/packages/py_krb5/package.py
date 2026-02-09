@@ -17,6 +17,7 @@ class PyKrb5(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("0.7.1", sha256="ed5f13d5031489b10d8655c0ada28a81c2391b3ecb8a08c6d739e1e5835bc450")
     version("0.7.0", sha256="6a308f2e17d151c395b24e6aec7bdff6a56fe3627a32042fc86d412398a92ddd")
     version("0.6.0", sha256="712ba092fbe3a28ec18820bb1b1ed2cc1037b75c5c7033f970c6a8c97bbd1209")
 

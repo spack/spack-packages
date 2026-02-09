@@ -15,6 +15,7 @@ class PyFlake8ImportOrder(PythonPackage):
 
     license("LGPL-3.0-only")
 
+    version("0.18.2", sha256="e23941f892da3e0c09d711babbb0c73bc735242e9b216b726616758a920d900e")
     version("0.18.1", sha256="a28dc39545ea4606c1ac3c24e9d05c849c6e5444a50fb7e9cdd430fc94de6e92")
 
     depends_on("py-pycodestyle", type=("build", "run"))

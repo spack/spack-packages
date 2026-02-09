@@ -19,6 +19,7 @@ class PyNuitka(PythonPackage):
 
     license("Apache-2.0")
 
+    version("2.2.3", sha256="aa78f838c2b5d165e2c071e9a9e705b2ac77506d24e91121321fa4b9740bba88")
     version("2.2.1", sha256="7bf67e80f94c93017fbaacfe1e277b92422d234a3c849a1555e43848f5fb27a1")
 
     depends_on("c", type="build")  # generated

@@ -16,6 +16,7 @@ class PyImportlibMetadata(PythonPackage):
 
     license("Apache-2.0")
 
+    version("8.7.1", sha256="49fef1ae6440c182052f407c8d34a68f72efc36db9ca90dc0113398f2fdde8bb")
     version("8.7.0", sha256="d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000")
     version("7.0.1", sha256="f238736bb06590ae52ac1fab06a3a9ef1d8dce2b7a35b5ab329371d6c8f5d2cc")
     version("6.6.0", sha256="92501cdf9cc66ebd3e612f1b4f0c0765dfa42f0fa38ffb319b6bd84dd675d705")

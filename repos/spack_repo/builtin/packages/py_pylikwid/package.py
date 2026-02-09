@@ -21,6 +21,7 @@ class PyPylikwid(PythonPackage):
 
     license("GPL-2.0-only")
 
+    version("0.4.2", sha256="6b275d1adb58586749e26675c9181866b885eb88a70c033e7b82475325e70cb4")
     version("0.4.0", sha256="f7894a6d7ebcea7da133ef639599a314f850f55cd6c5ffdd630bb879bd2aa0b8")
 
     variant("cuda", default=False, description="with Nvidia GPU profiling support")

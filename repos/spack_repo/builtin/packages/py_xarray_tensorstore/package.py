@@ -17,6 +17,7 @@ class PyXarrayTensorstore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.1.5", sha256="a8e17c08df6b32875e50f7b9278a64bbd9156b660d2245153abba4b2a9b30e9c")
     version("0.1.1", sha256="2ee6f164c9f1bc43328245b8d06c21863204fcd4e6159ddd6d8867c313c1d9b4")
 
     depends_on("py-setuptools", type="build")

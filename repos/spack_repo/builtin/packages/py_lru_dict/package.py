@@ -16,6 +16,7 @@ class PyLruDict(PythonPackage):
 
     license("MIT")
 
+    version("1.1.8", sha256="878bc8ef4073e5cfb953dfc1cf4585db41e8b814c0106abde34d00ee0d0b3115")
     version("1.1.6", sha256="365457660e3d05b76f1aba3e0f7fedbfcd6528e97c5115a351ddd0db488354cc")
 
     depends_on("c", type="build")  # generated

@@ -21,6 +21,7 @@ class PyReacton(PythonPackage):
 
     maintainers("jeremyfix")
 
+    version("1.8.3", sha256="db0b42242746c902a31220a52efcb8964ba4e1e0cff2c5145b75569547811bff")
     version("1.8.2", sha256="eaa4eeeffd11688d2b60a49a9895fd299f2ecbe8614f1ad61d144c56edaf7304")
 
     depends_on("py-hatchling", type="build")

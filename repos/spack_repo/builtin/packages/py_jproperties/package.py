@@ -18,6 +18,7 @@ class PyJproperties(PythonPackage):
 
     license("BSD", checked_by="teaguesterling")
 
+    version("2.1.2", sha256="036fcd52c10a8a1c21e6fa2a1c292c93892e759b76490acc4809213a36ddc329")
     version("2.1.1", sha256="40b71124e8d257e8954899a91cd2d5c0f72e0f67f1b72048a5ba264567604f29")
     version("2.1.0", sha256="504d7b8d3b2f5f0f52c22c1f72bd50576dca17b01b4cd00d4359c6b0607a59ce")
     version("2.0.0", sha256="b6709652f5c602e5271f519cf14cb9bf5d5a101df06e6c1d300123477a239588")

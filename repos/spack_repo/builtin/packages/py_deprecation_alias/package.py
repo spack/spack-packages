@@ -16,6 +16,7 @@ class PyDeprecationAlias(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.3.3", sha256="e73266d4c866c040079d7a047f92ac2cd468b4608032486df1ffd7ef147e6515")
     version("0.3.2", sha256="1c9e1a5ddd0a276a1a18e7a4f9d56b53232217491c4549eaa45e51753013ce76")
 
     depends_on("py-wheel@0.34.2:", type="build")

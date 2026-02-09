@@ -15,6 +15,7 @@ class PyCdo(PythonPackage):
 
     maintainers("Try2Code", "skosukhin")
 
+    version("1.5.7", sha256="898c2b0ff97ec494569e5d94302350538efa898d42998bfed76b4f52c6c16f3c")
     version("1.5.6", sha256="fec1a75382f01b3c9c368e8f143d98b12323e06975663f87d9b60c739ae1d335")
 
     depends_on("python@2.7:", type=("build", "run"))

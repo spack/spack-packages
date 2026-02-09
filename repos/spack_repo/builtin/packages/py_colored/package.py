@@ -18,6 +18,7 @@ class PyColored(PythonPackage):
     homepage = "https://gitlab.com/dslackw/colored"
     pypi = "colored/colored-1.4.2.tar.gz"
 
+    version("2.2.5", sha256="60cc61ea656cd3e753380fbc19fc62b0f65b60b2a096ba01bc476d6738ace441")
     version("2.2.4", sha256="595e1dd7f3b472ea5f12af21d2fec8a2ea2cf8f9d93e67180197330b26df9b61")
     version("1.4.2", sha256="056fac09d9e39b34296e7618897ed1b8c274f98423770c2980d829fd670955ed")
 

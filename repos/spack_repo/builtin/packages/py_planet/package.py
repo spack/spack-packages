@@ -15,6 +15,7 @@ class PyPlanet(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.4.9", sha256="c779bb923fa3ddbfb271de40d925b2370663588575e6f829ab1a63119817fa7b")
     version("1.4.6", sha256="43ff6a765f465302f500aaf65b81a46ac6aad7bb42899e4a7543bdc293d4ca0d")
 
     depends_on("py-setuptools", type="build")

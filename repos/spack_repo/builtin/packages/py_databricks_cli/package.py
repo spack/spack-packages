@@ -13,6 +13,7 @@ class PyDatabricksCli(PythonPackage):
     homepage = "https://pypi.org/project/databricks-cli/"
     pypi = "databricks-cli/databricks-cli-0.17.4.tar.gz"
 
+    version("0.17.8", sha256="1d5ef6520ea3ed403d58f24538641bd8eeb163621f5054205fcf643578698579")
     version("0.17.4", sha256="bc0c4dd082f033cb6d7978cacaca5261698efe3a4c70f52f98762c38db925ce0")
     version("0.14.3", sha256="bdf89a3917a3f8f8b99163e38d40e66dc478c7408954747f145cd09816b05e2c")
 

@@ -16,6 +16,7 @@ class PySnakemakeInterfaceReportPlugins(PythonPackage):
 
     license("MIT")
 
+    version("1.1.2", sha256="3d1218c5897345632f138a3f02794dfef7e59e407100c2a87313307a2da63c5b")
     version("1.1.0", sha256="b1ee444b2fca51225cf8a102f8e56633791d01433cd00cf07a1d9713a12313a5")
     version("1.0.0", sha256="02311cdc4bebab2a1c28469b5e6d5c6ac6e9c66998ad4e4b3229f1472127490f")
 

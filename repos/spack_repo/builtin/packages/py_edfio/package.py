@@ -16,6 +16,7 @@ class PyEdfio(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.4.9", sha256="c072c37f62ec994e277bfa60200805a9cec1e0f2f8bc15c40af692d3902f891c")
     version("0.4.3", sha256="9250e67af190379bb3432356b23c441a99682e97159ea58d4507b0827175b487")
 
     depends_on("python@3.9:3", type=("build", "run"))

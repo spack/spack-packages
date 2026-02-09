@@ -17,6 +17,7 @@ class PyLineProfiler(PythonPackage):
 
     license("PSF-2.0")
 
+    version("4.1.3", sha256="e5f1123c3672c3218ba063c23bd64a51159e44649fed6780b993c781fb5ed318")
     version("4.1.2", sha256="aa56578b0ff5a756fe180b3fda7bd67c27bbd478b3d0124612d8cf00e4a21df2")
     version("3.5.1", sha256="77400208bfbd5d4341938a9a3a4fb5194f5af7fc23b2d496c913755f8310e8b8")
     version("2.1.2", sha256="efa66e9e3045aa7cb1dd4bf0106e07dec9f80bc781a993fbaf8162a36c20af5c")

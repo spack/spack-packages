@@ -17,6 +17,7 @@ class PyKeyring(PythonPackage):
 
     license("MIT")
 
+    version("24.3.1", sha256="c3327b6ffafc0e8befbdb597cacdb4928ffe5c1212f7645f186e6d9957a898db")
     version("24.3.0", sha256="e730ecffd309658a08ee82535a3b5ec4b4c8669a9be11efb66249d8e0aeb9a25")
     version("23.13.1", sha256="ba2e15a9b35e21908d0aaf4e0a47acc52d6ae33444df0da2b49d41a46ef6d678")
     version("23.9.1", sha256="39e4f6572238d2615a82fcaa485e608b84b503cf080dc924c43bbbacb11c1c18")

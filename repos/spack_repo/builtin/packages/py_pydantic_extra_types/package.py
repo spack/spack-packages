@@ -16,6 +16,7 @@ class PyPydanticExtraTypes(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("2.10.6", sha256="c63d70bf684366e6bbe1f4ee3957952ebe6973d41e7802aea0b770d06b116aeb")
     version("2.10.0", sha256="552c47dd18fe1d00cfed75d9981162a2f3203cf7e77e55a3d3e70936f59587b9")
 
     depends_on("python@3.8:", type=("build", "run"))

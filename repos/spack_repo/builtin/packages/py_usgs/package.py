@@ -17,6 +17,7 @@ class PyUsgs(PythonPackage):
 
     license("MIT")
 
+    version("0.2.8", sha256="69c837666b9403cf482a657849263a9104a93e0750ac7318163670ce39db4044")
     version("0.2.7", sha256="484e569ea1baf9574e11ccf15219957364690dcf06ee3d09afef030df944e79b")
 
     depends_on("py-setuptools", type="build")

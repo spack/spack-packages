@@ -17,6 +17,7 @@ class PySphericart(PythonPackage):
 
     maintainers("RMeli", "luthaf", "HaoZeke", "rubber-duck-debug")
 
+    version("1.0.6", sha256="faebf5bd9ab83fd0a511b17c8a2461bb1ee892f0c8ce14866f81a9c66dddb5a4")
     version("1.0.5", sha256="b1e424d85f2460bf1884f0e42355af7c846e23c4a8789a0aca545e8117edbc6e")
 
     depends_on("c", type="build")

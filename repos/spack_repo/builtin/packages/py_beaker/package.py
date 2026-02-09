@@ -18,6 +18,7 @@ class PyBeaker(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.12.1", sha256="57770b40956e6c5cf1d8221dc59519029e470080ed8d3065c4e6ab36ce7e3c81")
     version("1.12.0", sha256="2d5f427e3b13259c98c934cab0e428fc1c18a4c4b94acbdae930df7e7f51d1ec")
     version("1.11.0", sha256="ad5d1c05027ee3be3a482ea39f8cb70339b41e5d6ace0cb861382754076d187e")
 

@@ -15,6 +15,7 @@ class PyDatrie(PythonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("0.8.3", sha256="ea021ad4c8a8bf14e08a71c7872a622aa399a510f981296825091c7ca0436e80")
     version("0.8.2", sha256="525b08f638d5cf6115df6ccd818e5a01298cd230b2dac91c8ff2e6499d18765d")
 
     depends_on("c", type="build")  # generated

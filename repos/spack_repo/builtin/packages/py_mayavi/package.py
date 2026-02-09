@@ -16,6 +16,7 @@ class PyMayavi(PythonPackage):
 
     license("EPL-1.0")
 
+    version("4.7.4", sha256="ec50e7ec6afb0f9224ad1863d104a0d1ded6c8deb13e720652007aaca2303332")
     version("4.7.3", sha256="670d0023b9cd2d2346c451db9ba2f61da23a5df5033b25aea89cb6d81b9464f0")
     version(
         "4.7.1",

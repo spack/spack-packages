@@ -15,6 +15,7 @@ class PySubmitit(PythonPackage):
 
     license("MIT")
 
+    version("1.4.6", sha256="6f27037e8beacf744e372efa3998dada9f937f375f23e98a24a1207559a665a7")
     version("1.4.5", sha256="d12cbbfc98a8c1777c4f6e87f73f063dafdba15653bca2984223b038d41f8223")
     version("1.3.3", sha256="efaa77b2df9ea9ee02545478cbfc377853ddf8016bff59df6988bebcf51ffa7e")
 

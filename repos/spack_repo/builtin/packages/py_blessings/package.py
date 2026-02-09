@@ -15,6 +15,7 @@ class PyBlessings(PythonPackage):
 
     license("MIT")
 
+    version("1.6.1", sha256="74919575885552e14bc24a68f8b539690bd1b5629180faa830b1a25b8c7fb6ea")
     version("1.6", sha256="edc5713061f10966048bf6b40d9a514b381e0ba849c64e034c4ef6c1847d3007")
 
     # Needs 2to3

@@ -15,6 +15,7 @@ class PyPathy(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.10.3", sha256="b45185d06f9b18c6d3346d3aab881ab96874553f661ee88ccd2e60246e103c22")
     version("0.10.1", sha256="4cd6e71b4cd5ff875cfbb949ad9fa5519d8d1dbe69d5fc1d1b23aa3cb049618b")
 
     depends_on("py-setuptools", type="build")

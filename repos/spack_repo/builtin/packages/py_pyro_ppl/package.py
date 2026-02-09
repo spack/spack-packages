@@ -17,6 +17,7 @@ class PyPyroPpl(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.8.6", sha256="00d2f4dda8a53e66d955124dc6e49e92dcf570cd3bd706825091db764d93cd07")
     version("1.8.4", sha256="766fad61e52df48885de96d41213da1f8e8c1b79ecf308ad53189fcd15c1cb41")
     version("1.8.1", sha256="d7c049eb2e7485a612b4dd99c24c309cc860c7cbc6b1973387034f5436d1c8d6")
     version("1.8.0", sha256="68e4ea30f219227dd88e55de2550d3f8c20a20adbdb67ad1e13b50868bb2ac0c")

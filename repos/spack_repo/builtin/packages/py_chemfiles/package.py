@@ -17,6 +17,7 @@ class PyChemfiles(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.10.4", sha256="f9e5ece3fcc8b63fdc2708d4ecc2ba5862ae2ab6790447bffc10c1b34ef2f445")
     version("0.10.3", sha256="4bbb8b116492a57dbf6ddb4c84aad0133cd782e0cc0e53e4b957f2d93e6806ea")
 
     depends_on("c", type="build")  # generated

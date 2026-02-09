@@ -18,6 +18,7 @@ class PyJsonpathNg(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.6.1", sha256="086c37ba4917304850bd837aeab806670224d3f038fe2833ff593a672ef0a5fa")
     version("1.6.0", sha256="5483f8e9d74c39c9abfab554c070ae783c1c8cbadf5df60d561bc705ac68a07e")
     version("1.5.3", sha256="a273b182a82c1256daab86a313b937059261b5c5f8c4fa3fc38b882b344dd567")
     version("1.5.2", sha256="144d91379be14d9019f51973bd647719c877bfc07dc6f3f5068895765950c69d")

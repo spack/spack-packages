@@ -49,6 +49,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.9.0.1", sha256="5da025820419009fe0e40f5ffb503015b4fff12d212afc6252ebcd37bf6f611e")
     version("0.9.0", sha256="8525c72ac7ea01851297df5b25ca4622c65299c265c87dfe78420bb29e7b1bb3")
     version("0.8.3", sha256="fad6506b91b761842263dc6a9691ecc4f584b313a214ed6c89b6e5d899a69a3d")
     version("0.8.2", sha256="f7e5080c97c1aaffb490a17d174cb59a83dd037800d9c41d309287bebd15b0b8")

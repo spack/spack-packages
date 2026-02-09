@@ -15,6 +15,7 @@ class PyTreelib(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.7.1", sha256="a2b57ba38290f7da6af97b41de8ff7be98e7a8c00815f95d0782241f77503952")
     version("1.7.0", sha256="9bff1af416b9e642a6cd0e0431d15edf26a24b8d0c8ae68afbd3801b5e30fb61")
 
     depends_on("py-setuptools", type="build")

@@ -16,6 +16,7 @@ class PyFluiddyn(PythonPackage):
 
     license("CECILL-B", checked_by="paugier")
 
+    version("0.6.6", sha256="1b6aa7e8c79cb9cac302809333c38506629a32dca58e6ea9c13f7039611644b8")
     version("0.6.5", sha256="ad0df4c05855bd2ae702731983d310bfbb13802874ce83e2da6454bb7100b5df")
     version("0.6.4", sha256="576eb0fa50012552b3a68dd17e81ce4f08ddf1e276812b02316016bb1c3a1342")
     version("0.6.3", sha256="3c4c57ac8e48c55498aeafaf8b26daecefc03e6ac6e2c03a591e0f7fec13bb69")

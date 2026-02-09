@@ -16,6 +16,7 @@ class PyLws(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.2.8", sha256="aaaf86c4f040bc33f81981333fb37c280cd82ec338b8a421a5f74ba3c6f64d06")
     version("1.2.6", sha256="ac94834832aadfcd53fcf4a77e1d95155063b39adbce14c733f8345bdac76e87")
 
     depends_on("cxx", type="build")  # generated

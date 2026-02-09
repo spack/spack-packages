@@ -15,6 +15,7 @@ class PyPathPy(PythonPackage):
 
     license("MIT")
 
+    version("12.0.2", sha256="45556ae7d59268a7d41ce5c43d53dc0fc7aab3f1028895003a8831d151a96f19")
     version("12.0.1", sha256="9f2169633403aa0423f6ec000e8701dd1819526c62465f5043952f92527fea0f")
     version("5.2", sha256="9916ae9aa603ce7e131e4ac76c25bcdbf6208f8fe5cc565a5022b85dc9d7022c")
 

@@ -14,6 +14,7 @@ class PySupervisor(PythonPackage):
     homepage = "http://supervisord.org"
     pypi = "supervisor/supervisor-4.2.4.tar.gz"
 
+    version("4.2.5", sha256="34761bae1a23c58192281a5115fb07fbf22c9b0133c08166beffc70fed3ebc12")
     version("4.2.4", sha256="40dc582ce1eec631c3df79420b187a6da276bbd68a4ec0a8f1f123ea616b97a2")
 
     depends_on("python@3.4:", type=("build", "run"))

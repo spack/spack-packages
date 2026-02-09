@@ -15,6 +15,7 @@ class PyBranca(PythonPackage):
 
     license("MIT")
 
+    version("0.7.2", sha256="ca4c94643ef31b819987ca5bd19c6009ea17b440baa3aac04628545f7a4da023")
     version("0.7.1", sha256="e6b6f37a37bc0abffd960c68c045a7fe025d628eff87fedf6ab6ca814812110c")
 
     depends_on("python@3.7:", type=("build", "run"))

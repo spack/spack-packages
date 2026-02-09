@@ -20,6 +20,7 @@ class PyXgboost(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("2.1.4", sha256="ab84c4bbedd7fae1a26f61e9dd7897421d5b08454b51c6eb072abc1d346d08d7")
     version("2.1.1", sha256="4b1729837f9f1ba88a32ef1be3f8efb860fee6454a68719b196dc88032c23d97")
     version("2.1.0", sha256="7144980923e76ce741c7b03a14d3bd7514db6de5c7cabe96ba95b229d274f5ca")
     version("1.7.6", sha256="1c527554a400445e0c38186039ba1a00425dcdb4e40b37eed0e74cb39a159c47")

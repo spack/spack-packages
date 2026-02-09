@@ -16,6 +16,7 @@ class PyStarlette(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.41.3", sha256="0e4ab3d16522a255be6b28260b938eae2482f98ce5cc934cb08dce8dc3ba5835")
     version("0.41.2", sha256="9834fd799d1a87fd346deb76158668cfa0b0d56f85caefe8268e2d97c3468b62")
     version("0.37.2", sha256="9af890290133b79fc3db55474ade20f6220a364a0402e0b556e7cd5e1e093823")
     version("0.36.3", sha256="90a671733cfb35771d8cc605e0b679d23b992f8dcfad48cc60b38cb29aeb7080")

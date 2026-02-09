@@ -15,6 +15,7 @@ class PySetupmeta(PythonPackage):
 
     license("MIT")
 
+    version("3.4.1", sha256="f0818ae2bd0adbc36d34141d6afb5542e68f49aee0c89bb0c77b1faae2109c33")
     version("3.4.0", sha256="f986a1d9c5b595a840d71d888950c7cc6bbb586b4145d04e7992501e280e07c3")
     version("3.3.2", sha256="221463a64d2528ba558f14b087410e05a7ef0dab17d19004f124a262d6e007f5")
     version("3.3.0", sha256="32914af4eeffb8bf1bd45057254d9dff4d16cb7ae857141e07698f7ac19dc960")

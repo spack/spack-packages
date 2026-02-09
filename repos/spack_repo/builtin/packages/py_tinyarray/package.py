@@ -25,6 +25,7 @@ class PyTinyarray(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("1.2.5", sha256="5d47b3d475a30478ee72d6afe238c3d3683b3a3f9d425bb2f6384270b2c8799b")
     version("1.2.4", sha256="ecd3428fd8a48b61fc5f0a413ede03e27db3a1dd53fcd49e24a36d11a8a29aba")
     version("1.2.3", sha256="47a06f801ed4b3d438f4f7098e244cd0c6d7db09428b1bc5ee813e52234dee9f")
     version("1.2.2", sha256="660d6d8532e1db5efbebae2861e5733a7082486fbdeb47d57d84b8f477d697e4")

@@ -13,6 +13,7 @@ class PyBrian(PythonPackage):
     homepage = "https://www.briansimulator.org"
     pypi = "brian/brian-1.4.3.tar.gz"
 
+    version("1.4.4", sha256="72937607ac7207056f21b87bad3ca439e536ce4dbf8051f43f8681f99af97ce2")
     version("1.4.3", sha256="c881dcfcd1a21990f9cb3cca76cdd868111cfd9e227ef5c1b13bb372d2efeaa4")
 
     depends_on("c", type="build")  # generated

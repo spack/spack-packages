@@ -25,6 +25,7 @@ class PyNumpyGroupies(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.11.3", sha256="aed4afdad55e856b9e737fe4b4673c77e47c2f887c3663a18baaa200407c23e0")
     version("0.11.2", sha256="2fda978c4d28d2f1633a63972f425d0a7f2f12a75505d215b41b6de712e2ec4b")
     version("0.9.20", sha256="923a382d6bc6876384b58a9c0503b05b9d36a660f329695c2d33e4f93fcbbe3d")
 

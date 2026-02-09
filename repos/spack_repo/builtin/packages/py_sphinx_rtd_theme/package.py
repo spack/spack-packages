@@ -15,6 +15,7 @@ class PySphinxRtdTheme(PythonPackage):
 
     license("MIT")
 
+    version("3.0.2", sha256="b7457bc25dda723b20b086a670b9953c859eab60a2a03ee8eb2bb23e176e5f85")
     version("3.0.0", sha256="905d67de03217fd3d76fbbdd992034ac8e77044ef8063a544dda1af74d409e08")
     version("2.0.0", sha256="bd5d7b80622406762073a04ef8fadc5f9151261563d47027de09910ce03afe6b")
     version("1.2.2", sha256="01c5c5a72e2d025bd23d1f06c59a4831b06e6ce6c01fdd5ebfe9986c0a880fc7")

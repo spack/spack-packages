@@ -15,6 +15,7 @@ class PyLoky(PythonPackage):
 
     license("BSD-3-Clause", checked_by="RobertMaaskant")
 
+    version("3.5.6", sha256="d96935ed689aa53eeb7b329769544950fa10a52706968f5d0af3d9c33a761e77")
     version("3.5.1", sha256="bcd1d718f005d06b099da856305cb337be36f552d49794f0b86df628a885eefe")
 
     depends_on("py-setuptools", type="build")

@@ -19,6 +19,7 @@ class PyPycortex(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("1.2.9", sha256="1b290a292ceb47208a578c5fad0e46bd4373024953067248b0d1c8e43d0ac58b")
     version("1.2.2", sha256="ac46ed6a1dc727c3126c2b5d7916fc0ac21a6510c32a5edcd3b8cfb7b2128414")
 
     depends_on("c", type="build")  # generated

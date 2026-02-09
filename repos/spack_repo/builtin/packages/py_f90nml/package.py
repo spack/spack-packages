@@ -14,6 +14,7 @@ class PyF90nml(PythonPackage):
     homepage = "https://github.com/marshallward/f90nml"
     pypi = "f90nml/f90nml-1.4.3.tar.gz"
 
+    version("1.4.5", sha256="132ed8d72543e121de4f154fd7f0052f567401901ef9e8a0992f044b9d21c907")
     version("1.4.3", sha256="e2f3cd23d821ebcaef66ce406485b35aa08aae0df92c4bece76e227e5bd146e1")
     version("1.4.1", sha256="9df312aa13b9c21936f059cab9ab40afebc280f1ab54e6854c3873d0b7b7865c")
     version("1.3.1", sha256="145c1f2c55bad628d225af22fc9bf06347eb0d33e7bae8a05869a68274b8fb2d")

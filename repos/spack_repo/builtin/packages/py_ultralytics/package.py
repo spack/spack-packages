@@ -19,6 +19,7 @@ class PyUltralytics(PythonPackage):
 
     license("AGPL-3.0")
 
+    version("8.0.99", sha256="b648c423410373a5db8339f9482ef1f10559e7964c90ccc498f46f0d9576702c")
     version("8.0.50", sha256="fdcb22300b63b72aa52da1713c33c01741aca031a61f15327eb6f02615bb4b97")
 
     depends_on("py-setuptools", type=("build", "run"))

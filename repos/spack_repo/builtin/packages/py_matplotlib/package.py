@@ -27,6 +27,7 @@ class PyMatplotlib(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "rgommers")
 
+    version("3.10.8", sha256="2299372c19d56bcd35cf05a2738308758d32b9eaed2371898d8f5bd33f084aa3")
     version("3.10.7", sha256="a06ba7e2a2ef9131c79c49e63dad355d2d878413a0376c1727c8b9335ff731c7")
     version("3.10.6", sha256="ec01b645840dd1996df21ee37f208cd8ba57644779fa20464010638013d3203c")
     version("3.10.5", sha256="352ed6ccfb7998a00881692f38b4ca083c691d3e275b4145423704c34c909076")
