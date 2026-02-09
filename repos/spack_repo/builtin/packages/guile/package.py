@@ -87,7 +87,7 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
         else:
             config_args.append("--without-libreadline-prefix")
 
-        if not spec.satisfies("+readline"):
+        if not spec.satisfies("+gmp"):
             config_args.append("--enable-mini-gmp")
 
         if spec.satisfies("+shared"):
