@@ -19,7 +19,6 @@ class PyOrbaxCheckpoint(PythonPackage):
 
     license("Apache-2.0")
 
-    version("0.5.9", sha256="1fde8891433723157bf6e75d341094d1dabed1dbcfc7cfcfb381de088b468b60")
     version("0.5.3", sha256="1572904cbbfe8513927e0d80f80b730e0ef2f680332d3c2810d8443532938b45")
 
     depends_on("py-flit-core@3.5:3", type="build")

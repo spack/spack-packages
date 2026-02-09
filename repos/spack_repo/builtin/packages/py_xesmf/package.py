@@ -15,7 +15,7 @@ class PyXesmf(PythonPackage):
 
     license("MIT")
 
-    version("0.8.9", sha256="5ecb5276f94137eba8d5ce532c3757a07df4e19d2fdf974289d4651c173c914e")
+    version("0.8.10", sha256="6f924cfd16e40e9adaad80af26fd1f26e509e66b177ea80ae45c3ef1ed56f5fd")
     version("0.8.8", sha256="8588f83007ce7011379991f516be3691df6fb30486741f0e1c33aa962056ea33")
     version("0.8.4", sha256="c5a2c4b3e8dbbc9fccd5772a940f9067d68e824215ef87ba222b06718c4eeb56")
 

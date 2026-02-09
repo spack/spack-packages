@@ -17,7 +17,7 @@ class PyNapariPluginManager(PythonPackage):
 
     license("BSD-3-Clause", checked_by="Markus92")
 
-    version("0.1.9", sha256="d1d599e32b8dbf665e33e59cee58bce138a163f58252e32db255ec72a3141df1")
+    version("0.1.10", sha256="8e6ddbe642f44b79a0b3ffb8e4ebf8fc0962cecef4998a483a97b8b1196202cb")
     version("0.1.7", sha256="858adeacfc65bb8ed92e875659999a51c06188a6c813ebef54f5248e27dd5a74")
 
     depends_on("python@3.10:", type=("build", "run"))

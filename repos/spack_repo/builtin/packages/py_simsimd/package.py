@@ -15,7 +15,7 @@ class PySimsimd(PythonPackage):
 
     license("Apache-2.0")
 
-    version("6.5.8", sha256="0c78cedddf85e9ffa7bc4fdb2e57ebae89ed55367f05acb2c7e1b9c3db6e2ff7")
+    version("6.5.12", sha256="c9b8720c9bc9dcfc36f570c2f96bfd74d1c9e1d0ebeecafc7a130ad3f0affe41")
     version("6.5.3", sha256="5ff341e84fe1c46e7268ee9e31f885936b29c38ce59f423433aef5f4bb5bfd18")
 
     depends_on("c", type="build")

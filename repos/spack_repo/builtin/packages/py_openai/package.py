@@ -21,7 +21,7 @@ class PyOpenai(PythonPackage):
 
     license("MIT")
 
-    version("0.27.9", sha256="b687761c82f5ebb6f61efc791b2083d2d068277b94802d4d1369efe39851813d")
+    version("0.27.10", sha256="60e09edf7100080283688748c6803b7b3b52d5a55d21890f3815292a0552d83b")
     version("0.27.8", sha256="2483095c7db1eee274cebac79e315a986c4e55207bb4fa7b82d185b3a2ed9536")
 
     variant("datalib", default=False, description="facilities for data loading")

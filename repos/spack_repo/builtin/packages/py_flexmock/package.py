@@ -23,7 +23,7 @@ class PyFlexmock(PythonPackage):
 
     license("BSD-2-Clause")
 
-    version("0.10.9", sha256="9c128b7cf31fac5340062c9c2cf1e0b12c601ee2d5c10ef39cc191036fb2e688")
+    version("0.10.10", sha256="8bb073f4b7b590672e8c312e73d6a14f88ae624a867b691462f9e8c24b9f19d1")
     version("0.10.4", sha256="5033ceb974d6452cf8716c2ff5059074b77e546df5c849fb44a53f98dfe0d82c")
 
     depends_on("py-setuptools", type="build")

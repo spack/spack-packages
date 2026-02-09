@@ -16,7 +16,6 @@ class PyPynndescent(PythonPackage):
 
     license("BSD-2-Clause")
 
-    version("0.5.9", sha256="bacf78d914f44724528adcfea9681ddd6c873d14f4b0526c0ff6b9f243338042")
     version("0.5.7", sha256="ecb395255fa36a748b5870b4ba0300ea0f7da8b1964864b8edd62577a84dfd7d")
 
     depends_on("py-setuptools", type="build")
