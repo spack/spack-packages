@@ -50,41 +50,13 @@ class Hdf5(CMakePackage):
     # For versions 1.x.y:
     # Odd x versions are development or experimental releases and generally not released.
     # Even x versions are maintenance versions
-    version(
-        "1.14.6",
-        sha256="e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_6/downloads/hdf5-1.14.6.tar.gz",
-    )
-    version(
-        "1.14.5",
-        sha256="ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz",
-    )
-    version(
-        "1.14.4-3",
-        sha256="019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_4/downloads/hdf5-1.14.4-3.tar.gz",
-    )
-    version(
-        "1.14.3",
-        sha256="09cdb287aa7a89148c1638dd20891fdbae08102cf433ef128fd345338aa237c7",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_3/downloads/hdf5-1.14.3.tar.gz",
-    )
-    version(
-        "1.14.2",
-        sha256="1c342e634008284a8c2794c8e7608e2eaf26d01d445fb3dfd7f33cb2fb51ac53",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_2/downloads/hdf5-1.14.2.tar.gz",
-    )
-    version(
-        "1.14.1-2",
-        sha256="cbe93f275d5231df28ced9549253793e40cd2b555e3d288df09d7b89a9967b07",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_1/downloads/hdf5-1.14.1-2.tar.gz",
-    )
-    version(
-        "1.14.0",
-        sha256="a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_0/downloads/hdf5-1.14.0.tar.gz",
-    )
+    version("1.14.6", sha256="e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b")
+    version("1.14.5", sha256="ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44")
+    version("1.14.4-3", sha256="019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
+    version("1.14.3", sha256="09cdb287aa7a89148c1638dd20891fdbae08102cf433ef128fd345338aa237c7")
+    version("1.14.2", sha256="1c342e634008284a8c2794c8e7608e2eaf26d01d445fb3dfd7f33cb2fb51ac53")
+    version("1.14.1-2", sha256="cbe93f275d5231df28ced9549253793e40cd2b555e3d288df09d7b89a9967b07")
+    version("1.14.0", sha256="a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4")
     version("1.12.3", sha256="c15adf34647918dd48150ea1bd9dffd3b32a3aec5298991d56048cc3d39b4f6f")
     version("1.12.2", sha256="2a89af03d56ce7502dcae18232c241281ad1773561ec00c0f0e8ee2463910f14")
     version("1.12.1", sha256="79c66ff67e666665369396e9c90b32e238e501f345afd2234186bfb8331081ca")
@@ -331,8 +303,12 @@ class Hdf5(CMakePackage):
         )
 
     def url_for_version(self, version):
-        url = "https://support.hdfgroup.org/archive/support/ftp/HDF5/releases/hdf5-{0}/hdf5-{1}/src/hdf5-{1}.tar.gz"
-        return url.format(version.up_to(2), version)
+        if version >= Version("2.0.0"):
+            return f"https://github.com/HDFGroup/hdf5/releases/download/{version}/hdf5-{version}.tar.gz"
+        elif version >= Version("1.14.0"):
+            return f"https://support.hdfgroup.org/releases/hdf5/v{version.up_to_2.underscored}/v{version.underscored}/downloads/hdf5-{version}.tar.gz"
+        else:
+            return f"https://support.hdfgroup.org/archive/support/ftp/HDF5/releases/hdf5-{version.up_to_2}/hdf5-{version}/src/hdf5-{version}.tar.gz"
 
     def flag_handler(self, name, flags):
         spec = self.spec
