@@ -14,7 +14,7 @@ class ComposableKernel(CMakePackage):
     for Machine Learning Tensor Operators."""
 
     homepage = "https://github.com/ROCm/composable_kernel"
-    git = "https://github.com/ROCm/composable_kernel.git"
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
     tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
