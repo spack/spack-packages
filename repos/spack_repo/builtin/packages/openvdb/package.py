@@ -3,10 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import sys
 import shutil
-from spack.package import *
+import sys
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
+from spack.package import *
 
 class Openvdb(CMakePackage):
     """OpenVDB - a sparse volume data format."""
