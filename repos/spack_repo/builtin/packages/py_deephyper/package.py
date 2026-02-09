@@ -79,21 +79,7 @@ class PyDeephyper(PythonPackage):
         depends_on("py-tqdm@4.64.0:", when="@0.8:")
 
     with when("+dev"), default_args(type=("build", "run")):
-        depends_on("py-pybuild", when="@0.13.2:")
         depends_on("py-pytest")
-        depends_on("py-pytwine", when="@0.13.2:")
-        depends_on("py-ruff", when="@0.13.2:")
-        depends_on("py-gitpython", when="@0.13.2:")
-        depends_on("py-ipython", when="@0.13.2:")
-        depends_on("py-sphinx@5:", when="@0.13.2:")
-        depends_on("py-sphinx-book-theme@1.1.4", when="@0.13.2:")
-        depends_on("py-pydata-sphinx-theme@0.15.4", when="@0.13.2:")
-        depends_on("py-sphinx-copybutton", when="@0.13.2:")
-        depends_on("py-sphinx-design@0.6.1", when="@0.13.2:")
-        # depends_on("py-sphinx-lfs-content", when="@0.13.2:")
-        # depends_on("py-sphinx-tofflebutton", when="@0.13.2:")
-        # TODO: the two dependencies above don't yet have a spack package
-        # so they will be missing when installing py-deephyper+dev
 
     # Jax for GPU is not currently available on Spack
     # with when("+jax-cpu"), default_args(type=("build", "run")):
@@ -113,4 +99,3 @@ class PyDeephyper(PythonPackage):
 
     with when("+redis"), default_args(type=("build", "run")):
         depends_on("py-redis")
-        # depends_on("redisjson", when="@0.8:0.9")
