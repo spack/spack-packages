@@ -27,7 +27,7 @@ class PyBrotli(PythonPackage):
         env.set("USE_SYSTEM_BROTLI", "1")
 
     with when("@1.2:"):
-        depends_on("brotli", type="link")
+        depends_on("brotli@1.2:", type="link")
         depends_on("py-pkgconfig", type="build")
 
     depends_on("python", type=("build", "link", "run"))
