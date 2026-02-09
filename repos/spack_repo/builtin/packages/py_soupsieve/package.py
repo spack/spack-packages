@@ -31,6 +31,7 @@ class PySoupsieve(PythonPackage):
     depends_on("python@3.8:", when="@2.5:", type=("build", "run"))
     depends_on("python@3.7:", when="@2.4:", type=("build", "run"))
     depends_on("py-hatchling@0.21.1:", when="@2.3.2:", type="build")
+    depends_on("py-hatchling@1.26:", when="@2.8:", type="build")
 
     # Historical dependencies
     depends_on("py-setuptools@42:", when="@2.2", type="build")
