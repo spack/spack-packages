@@ -139,14 +139,12 @@ class Openvdb(CMakePackage):
         if os.path.isdir(old_path):
             shutil.rmtree(old_path, ignore_errors=True)
 
-    def test(self):
-        """Perform smoke tests on the installed package."""
-        # Only run the python test if the +python variant was enabled
-        if "+python" in self.spec:
-            self.test_python_import()
-
     def test_python_import(self):
         """Verify that OpenVDB can create and manipulate a grid."""
+
+        if "+python" not in self.spec:
+            return
+
         python_exe = self.spec["python"].command.path
         py = Executable(python_exe)
 
