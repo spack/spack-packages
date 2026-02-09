@@ -33,14 +33,14 @@ class Openvdb(CMakePackage):
     variant("vdb_print", default=False, description="Build the vdb_print tool.")
     variant("vdb_lod", default=False, description="Build the vdb_lod tool.")
     variant("vdb_render", default=False, description="Build the vdb_render tool.")
-    #variant("ax", default=False, description="Build the AX extension.")
+    # variant("ax", default=False, description="Build the AX extension.")
 
     depends_on("cxx", type="build")
-    depends_on("cmake@3.18:", type="build") # VDB 10+ needs newer cmake.
+    depends_on("cmake@3.18:", type="build")  # VDB 10+ needed newer cmake.
     depends_on("cmake@3.24:", type="build", when="@13:")
     depends_on("git", type="build", when="@develop")
 
-    depends_on("ilmbase", when="@8:9") # note: ilmbase has been rolled into OpenEXR 3
+    depends_on("ilmbase", when="@8:9")  # note: ilmbase has been rolled into OpenEXR 3
     depends_on("imath@3.1:", when="@13:")
 
     depends_on("openexr")
@@ -57,17 +57,17 @@ class Openvdb(CMakePackage):
     depends_on("zlib-api")
     depends_on("c-blosc@1.17:")
 
-    depends_on("boost+iostreams+system@1.82:", type=("build","link"), when="@:10")
-    depends_on("boost+iostreams@1.82:", type=("build","link"), when="@13:")
+    depends_on("boost+iostreams+system@1.82:", type=("build", "link"), when="@:10")
+    depends_on("boost+iostreams@1.82:", type=("build", "link"), when="@13:")
 
     with when("+python"):
         extends("python")
-        depends_on("py-numpy", type=("build","link"))
+        depends_on("py-numpy", type=("build", "link"))
         with when("@13:"):
-            depends_on("python@3.11", type=("build","link"))
+            depends_on("python@3.11", type=("build", "link"))
             depends_on("py-nanobind", type=("build"))
         with when("@:10"):
-            depends_on("python@3.10", type=("build","link"))
+            depends_on("python@3.10", type=("build", "link"))
             # pre py-nanobind they used boost python
             depends_on("boost+python+numpy")
 
@@ -92,8 +92,8 @@ class Openvdb(CMakePackage):
             self.define_from_variant("OPENVDB_BUILD_VDB_RENDER", "vdb_render"),
             self.define_from_variant("OPENVDB_BUILD_PYTHON_MODULE", "python"),
             # AX removed for the time being
-            #self.define_from_variant("OPENVDB_BUILD_AX", "ax"),
-            #self.define_from_variant("OPENVDB_BUILD_AX_BINARIES", "ax"),
+            # self.define_from_variant("OPENVDB_BUILD_AX", "ax"),
+            # self.define_from_variant("OPENVDB_BUILD_AX_BINARIES", "ax"),
         ]
 
         if self.spec.satisfies("+python"):
