@@ -30,7 +30,7 @@ class PyMui4py(PythonPackage):
 
     depends_on("py-pybind11", type=("build"))
     depends_on("py-numpy@1.21:", type=("build", "run"))
-    depends_on("py-mpi4py@3.0.0", type=("build", "run"))
+    depends_on("py-mpi4py", type=("build", "run"))
     depends_on("cmake@3.27:", type=("build"))
 
     def setup_build_environment(self, env):
