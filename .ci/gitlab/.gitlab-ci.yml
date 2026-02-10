@@ -603,49 +603,27 @@ ml-linux-x86_64-build:
     - artifacts: True
       job: ml-linux-x86_64-generate
 
-########################################
-# Machine Learning - Linux aarch64 (CPU)
-########################################
-.ml-linux-aarch64-cpu:
+##################################
+# Machine Learning - Linux aarch64
+##################################
+.ml-linux-aarch64:
   variables:
-    SPACK_CI_STACK_NAME: ml-linux-aarch64-cpu
+    SPACK_CI_STACK_NAME: ml-linux-aarch64
 
-ml-linux-aarch64-cpu-generate:
-  extends: [ ".generate-aarch64", .ml-linux-aarch64-cpu ]
+ml-linux-aarch64-generate:
+  extends: [ ".generate-aarch64", .ml-linux-aarch64 ]
   image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
-ml-linux-aarch64-cpu-build:
-  extends: [ ".build", ".ml-linux-aarch64-cpu" ]
+ml-linux-aarch64-build:
+  extends: [ ".build", ".ml-linux-aarch64" ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/ml-linux-aarch64-cpu/cloud-ci-pipeline.yml
-        job: ml-linux-aarch64-cpu-generate
+      - artifact: jobs_scratch_dir/ml-linux-aarch64/cloud-ci-pipeline.yml
+        job: ml-linux-aarch64-generate
   needs:
     - artifacts: True
-      job: ml-linux-aarch64-cpu-generate
-
-#########################################
-# Machine Learning - Linux aarch64 (CUDA)
-#########################################
-.ml-linux-aarch64-cuda:
-  variables:
-    SPACK_CI_STACK_NAME: ml-linux-aarch64-cuda
-
-ml-linux-aarch64-cuda-generate:
-  extends: [ ".generate-aarch64", .ml-linux-aarch64-cuda ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
-
-ml-linux-aarch64-cuda-build:
-  extends: [ ".build", ".ml-linux-aarch64-cuda" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/ml-linux-aarch64-cuda/cloud-ci-pipeline.yml
-        job: ml-linux-aarch64-cuda-generate
-  needs:
-    - artifacts: True
-      job: ml-linux-aarch64-cuda-generate
+      job: ml-linux-aarch64-generate
 
 #########################################
 # Machine Learning - Darwin aarch64 (MPS)
