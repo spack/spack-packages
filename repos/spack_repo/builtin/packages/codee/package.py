@@ -51,6 +51,8 @@ class Codee(Package):
             suffix = "zip"
             if platform.machine() == "AMD64":
                 target = "windows-amd64"
+        if not target:
+            return None
         return f"https://codee.com/release/codee-{version}-{target}.{suffix}"
 
     def install(self, spec, prefix):
