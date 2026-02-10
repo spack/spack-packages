@@ -122,7 +122,7 @@ class RocmBandwidthTest(CMakePackage):
 
     for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        depends_on(f"hip@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver} +rocm", when=f"@{ver}")
 
     patch("add_numa_hsa.patch", when="@7.0.0")
     patch("modify_hsa_include.patch", when="@7.0.2:")

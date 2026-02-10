@@ -81,6 +81,9 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hip +cuda", when="+cuda")
 
+    # CUFFT_INCOMPLETE_PARAMETER_LIST has been removed
+    depends_on("cuda@:12", when="+cuda")
+
     for ver in [
         "5.7.0",
         "5.7.1",
