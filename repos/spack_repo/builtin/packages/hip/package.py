@@ -493,7 +493,6 @@ class Hip(CMakePackage):
                 if "none" not in arch and "auto" not in arch:
                     env.set("HCC_AMDGPU_TARGET", ",".join(arch))
 
-
         if self.spec.external and self.spec.satisfies("%gcc"):
             # This is picked up by hipcc.
             env.append_path(
