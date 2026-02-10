@@ -49,7 +49,6 @@ class PyDmTree(CMakePackage, PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("python@3.10:", when="@0.1.9:")
         # Based on PyPI wheel availability
-        depends_on("python@:3.13", when="@:0.1.9")
         depends_on("python@:3.11", when="@:0.1.8")
         depends_on("python@:3.10", when="@:0.1.7")
 
@@ -67,6 +66,12 @@ class PyDmTree(CMakePackage, PythonPackage):
 
     conflicts("%gcc@13:", when="@:0.1.7")
 
+    def url_for_version(self, version):
+        if version <= Version("0.1.8"):
+            return super().url_for_version(version).replace("_", "-")
+        else:
+            return super().url_for_version(version)
+
     # This is set later
     tmp_path = None
 
@@ -74,14 +79,9 @@ class PyDmTree(CMakePackage, PythonPackage):
     def clean(self):
         remove_linked_tree(PyDmTree.tmp_path)
 
-    def url_for_version(self, version):
-        if version <= Version("0.1.8"):
-            return super().url_for_version(version).replace("_", "-")
-        else:
-            return super().url_for_version(version)
-
-    @when("@:0.1.8")
     def patch(self):
+        if self.spec.satisfies("@:0.1.8"):
+            return
         PyDmTree.tmp_path = tempfile.mkdtemp(prefix="spack")
         env["TEST_TMPDIR"] = PyDmTree.tmp_path
         env["HOME"] = PyDmTree.tmp_path
@@ -111,10 +111,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define("USE_SYSTEM_PYBIND11", True),
             self.define("PYTHON_INSTALL_DIR", join_path(python_platlib, "tree")),
         ]
-
-    @run_before("build")
-    def make_tree_dir(self):
-        mkdir(join_path(self.build_directory, "tree"))
 
     @property
     def root_cmakelists_dir(self):
