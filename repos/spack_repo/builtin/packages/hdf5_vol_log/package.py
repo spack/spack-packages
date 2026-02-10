@@ -26,6 +26,8 @@ class Hdf5VolLog(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("hdf5@1.14.0:", when="@1.4.0:")
+    # H5VLfinish_lib_state was removed
+    depends_on("hdf5@:1", when="@:1.4")
     depends_on("mpi")
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
