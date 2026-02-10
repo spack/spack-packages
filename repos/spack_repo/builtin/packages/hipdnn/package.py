@@ -10,8 +10,8 @@ from spack.package import *
 
 class Hipdnn(CMakePackage):
     """hipDNN is a graph-based deep learning library for AMD GPUs that leverages a flexible
-       plugin architecture to provide optimized implementations and utilities
-       for various routines"""
+    plugin architecture to provide optimized implementations and utilities
+    for various routines"""
 
     homepage = "https://github.com/ROCm/hipDNN"
     url = "https://github.com/ROCm/hipDNN/archive/refs/tags/rocm-7.1.1.tar.gz"
@@ -67,7 +67,7 @@ class Hipdnn(CMakePackage):
             "cmake/ClangToolChain.cmake",
             string=True,
         )
-   
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@7.1:"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
@@ -77,13 +77,20 @@ class Hipdnn(CMakePackage):
             env.set("CFLAGS", "-fsanitize=address -shared-libasan")
             env.set("CXXFLAGS", "-fsanitize=address -shared-libasan")
             env.set("LDFLAGS", "-fuse-ld=lld")
-    
+
     def cmake_args(self):
         spec = self.spec
         args = [
             self.define_from_variant("BUILD_ADDRESS_SANITIZER", "asan"),
             self.define_from_variant("HIP_DNN_BUILD_PLUGINS", "plugins"),
             self.define_from_variant("HIP_DNN_BUILD_FRONTEND", "frontend"),
+            self.define(
+                "HIP_DNN_NLOHMANN_JSON_INCLUDE_DIR",
+                "{0}/include".format(spec["nlohmann-json"].prefix),
+            ),
+            self.define(
+                "HIP_DNN_FLATBUFFERS_INCLUDE_DIR", "{0}/include".format(spec["flatbuffers"].prefix)
+            ),
             self.define("HIP_DNN_NLOHMANN_JSON_INCLUDE_DIR", "{0}/include".format(spec["nlohmann-json"].prefix)),
             self.define("HIP_DNN_FLATBUFFERS_INCLUDE_DIR", "{0}/include".format(spec["flatbuffers"].prefix)),
             self.define("HIP_DNN_SPDLOG_INCLUDE_DIR", "{0}/include".format(spec["spdlog"].prefix)),
