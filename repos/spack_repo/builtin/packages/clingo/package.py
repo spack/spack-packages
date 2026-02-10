@@ -64,6 +64,8 @@ class Clingo(CMakePackage):
 
     with when("@5.6:5.8,master"):
         depends_on("re2c@1.1.1:", type="build")
+        # forward compat issue: reference to undefined condition 'aspif'
+        depends_on("re2c@:3", type="build")
         depends_on("bison@2.5:", type="build", when="platform=linux")
         depends_on("bison@2.5:", type="build", when="platform=darwin")
         depends_on("bison@2.5:", type="build", when="platform=freebsd")
