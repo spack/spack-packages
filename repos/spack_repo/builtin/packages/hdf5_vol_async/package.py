@@ -38,6 +38,8 @@ class Hdf5VolAsync(CMakePackage):
     depends_on("mpi")
     depends_on("argobots@1.1:")
     depends_on("hdf5@1.14.0: +mpi +threadsafe")
+    # H5VLfinish_lib_state was removed
+    depends_on("hdf5@:1", when="@:1.7")
 
     # Require MPI_THREAD_MULTIPLE.
     depends_on("openmpi +thread_multiple", when="^[virtuals=mpi] openmpi@:2")
