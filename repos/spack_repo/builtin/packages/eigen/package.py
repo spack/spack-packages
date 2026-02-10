@@ -86,7 +86,7 @@ class Eigen(CMakePackage, ROCmPackage):
     # Building eigen-based LAPACK implementation requires to also build BLAS
     conflicts("~blas", when="+lapack")
 
-    conflicts("platform=windows", when="@3.4.1")
+    conflicts("platform=windows", when="@3.4.1 +blas")
 
     # there is a bug in 3.3.4 that provokes a compile error with the xl compiler
     # See https://gitlab.com/libeigen/eigen/-/issues/1555
