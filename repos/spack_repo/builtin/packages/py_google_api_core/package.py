@@ -11,7 +11,7 @@ class PyGoogleApiCore(PythonPackage):
     """Google API client core library."""
 
     homepage = "https://github.com/googleapis/python-api-core"
-    pypi = "google-api-core/google-api-core-2.17.0.tar.gz"
+    pypi = "google-api-core/google_api_core-2.17.0.tar.gz"
 
     # 'google.api_core.operations_v1' and 'google.api_core.gapic_v1' require 'grpc'.
     # Leave them out of 'import_modules' to avoid optional dependency.
@@ -19,6 +19,7 @@ class PyGoogleApiCore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("2.29.0", sha256="84181be0f8e6b04006df75ddfe728f24489f0af57c96a529ff7cf45bc28797f7")
     version("2.17.0", sha256="de7ef0450faec7c75e0aea313f29ac870fdc44cfaec9d6499a9a17305980ef66")
     version("2.16.2", sha256="032d37b45d1d6bdaf68fb11ff621e2593263a239fa9246e2e94325f9c47876d2")
     version("2.15.0", sha256="abc978a72658f14a2df1e5e12532effe40f94f868f6e23d95133bd6abcca35ca")
@@ -36,17 +37,19 @@ class PyGoogleApiCore(PythonPackage):
     )
 
     with when("@2:"):
-        depends_on("py-setuptools", type=("build", "run"))
+        depends_on("py-setuptools", when="@2.29:", type="build")
+        depends_on("py-setuptools", when="@:2.17", type=("build", "run"))
         depends_on("py-googleapis-common-protos@1.56.2:1", type=("build", "run"))
-        depends_on("py-protobuf@3.19.5:3.19,3.20.2:4.20,4.21.6:4", type=("build", "run"))
+        depends_on("py-protobuf@3.19.5:6", when="@2.29:", type=("build", "run"))
+        depends_on("py-protobuf@3.19.5:4", when="@:2.17", type=("build", "run"))
         depends_on("py-google-auth@2.14.1:2", type=("build", "run"))
         depends_on("py-requests@2.18:2", type=("build", "run"))
 
+        conflicts("py-protobuf@3.20.0:3.20.1,4.21.0:4.21.5")
+
         with when("+grpc"):
-            depends_on("py-grpcio-status@1.49.1:1", when="^python@3.11:", type="run")
-            depends_on("py-grpcio-status@1.33.2:1", when="@2.2.0:", type="run")
-            depends_on("py-grpcio@1.49.1:1", when="^python@3.11:", type="run")
             depends_on("py-grpcio@1.33.2:1", type="run")
+            depends_on("py-grpcio-status@1.33.2:1", when="@2.2.0:", type="run")
 
     with when("@:1"):
         depends_on("py-googleapis-common-protos@1.6:1", type=("build", "run"))
@@ -62,3 +65,11 @@ class PyGoogleApiCore(PythonPackage):
             depends_on("py-grpcio@1.33.2:1", when="@1.33:", type="run")
             depends_on("py-grpcio@1.29.0:1", when="@1.19.1", type="run")
             depends_on("py-grpcio@1.8.2:1", type="run")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/g/google-api-core/{}-{}.tar.gz"
+        if version >= Version("2.19.2"):
+            name = "google_api_core"
+        else:
+            name = "google-api-core"
+        return url.format(name, version)
