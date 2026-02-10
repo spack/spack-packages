@@ -37,3 +37,7 @@ class PyApacheTvmFfi(PythonPackage):
         # https://github.com/apache/tvm-ffi/blob/v0.1.0/CMakeLists.txt#L18
         depends_on("cmake@3.18:")
         depends_on("ninja@1.11:")
+
+    with default_args(type="run"):
+        depends_on("ninja", when="@:0.1.3")
+        depends_on("ninja", when="platform=windows")

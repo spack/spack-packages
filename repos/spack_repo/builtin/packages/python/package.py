@@ -150,6 +150,8 @@ class Python(Package):
     )
 
     variant("shared", default=True, description="Enable shared libraries")
+    variant("static", default=False, description="Enable static libraries")
+    variant("tests", default=False, description="Build and install tests")
     variant("pic", default=True, description="Produce position-independent code (for shared libs)")
     variant(
         "optimizations",
@@ -610,6 +612,11 @@ class Python(Package):
             else:
                 config_args.append("--with-lto")
             config_args.append("--with-computed-gotos")
+            # Revisit --tail-call-interp when GCC 16 comes out
+            # https://github.com/python/cpython/issues/128563#issuecomment-3501715689
+            if spec.satisfies("@3.14:"):
+                if spec.satisfies("%c=clang@19:") or spec.satisfies("%c=apple-clang@17:"):
+                    config_args.append("--with-tail-call-interp")
 
         if spec.satisfies("@3.7 %intel"):
             config_args.append("--with-icc={0}".format(spack_cc))
@@ -623,6 +630,12 @@ class Python(Package):
             config_args.append("--enable-shared")
         else:
             config_args.append("--disable-shared")
+
+        if "~static" in spec:
+            config_args.append("--without-static-libpython")
+
+        if "~tests" in spec:
+            config_args.append("--disable-test-modules")
 
         config_args.append("--without-ensurepip")
 
