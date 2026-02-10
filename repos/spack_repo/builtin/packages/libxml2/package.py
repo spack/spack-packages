@@ -46,6 +46,9 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
     conflicts("~pic+shared")
 
+    # Build system changed in 2.14, and isn't yet implemented in Spack.
+    conflicts("@2.14: platform=windows")
+
     depends_on("c", type="build")
 
     depends_on("pkgconfig", type="build", when="build_system=autotools")
