@@ -18,7 +18,7 @@ class Eigen(CMakePackage, ROCmPackage):
     git = "https://gitlab.com/libeigen/eigen.git"
     url = "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz"
 
-    maintainers("HaoZeke")
+    maintainers("HaoZeke", "jcortial-safran")
 
     license("MPL-2.0")
 
