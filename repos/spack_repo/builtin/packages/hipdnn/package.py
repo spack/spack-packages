@@ -91,8 +91,6 @@ class Hipdnn(CMakePackage):
             self.define(
                 "HIP_DNN_FLATBUFFERS_INCLUDE_DIR", "{0}/include".format(spec["flatbuffers"].prefix)
             ),
-            self.define("HIP_DNN_NLOHMANN_JSON_INCLUDE_DIR", "{0}/include".format(spec["nlohmann-json"].prefix)),
-            self.define("HIP_DNN_FLATBUFFERS_INCLUDE_DIR", "{0}/include".format(spec["flatbuffers"].prefix)),
             self.define("HIP_DNN_SPDLOG_INCLUDE_DIR", "{0}/include".format(spec["spdlog"].prefix)),
             self.define("HIPDNN_NO_DOWNLOAD", "ON"),
             self.define("HIP_DNN_SKIP_TESTS", "ON"),
