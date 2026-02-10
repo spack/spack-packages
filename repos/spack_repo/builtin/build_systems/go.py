@@ -103,7 +103,7 @@ class GoBuilder(BuilderWithDefaults):
         return []
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CGO_ENABLED", f"{'1' if self.cgo_enabled else '0'}")
+        env.set("CGO_ENABLED", "1" if self.cgo_enabled else "0")
         env.set("GO111MODULE", "on")
         env.set("GOTOOLCHAIN", "local")
         env.set("GOPATH", join_path(self.pkg.stage.path, "go"))
