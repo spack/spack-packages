@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 import socket
 import sys
 
@@ -10,6 +11,7 @@ from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakePackage,
     cmake_cache_option,
     cmake_cache_path,
+    cmake_cache_string,
 )
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -95,7 +97,9 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm+cuda")
     # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
-    conflicts("^cuda@12.9:", "@:2.12.1")
+    depends_on("cuda@:12.8", when="@:2.13.1 +cuda")
+    # rocprofiler-sdk is only supported since rocm@6.2.4.
+    depends_on("llvm-amdgpu@6.2.4:", when="@2.14: +rocm")
 
     patch("libunwind.patch", when="@:2.13")
     patch(
@@ -154,11 +158,54 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("WITH_NVTX", True))
             entries.append(cmake_cache_path("CUDA_TOOLKIT_ROOT_DIR", spec["cuda"].prefix))
             entries.append(cmake_cache_path("CUPTI_PREFIX", spec["cuda"].prefix))
+
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("WITH_CUPTI", False))
             entries.append(cmake_cache_option("WITH_NVTX", False))
 
         if spec.satisfies("+rocm"):
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
+            else:
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
+
             if spec.satisfies("@2.14:"):
                 entries.append(cmake_cache_option("WITH_ROCPROFILER", True))
                 entries.append(cmake_cache_option("WITH_ROCTRACER", False))

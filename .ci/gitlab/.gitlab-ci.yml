@@ -10,7 +10,7 @@ variables:
   PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
   PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
   SPACK_CI_DISABLE_STACKS:
-    value: /^.*(cray|darwin|tutorial).*$/
+    value: /^.*(cray|darwin).*$/
     expand: false
 
 default:
@@ -590,7 +590,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:main
+  image: ghcr.io/spack/tutorial-ubuntu-22.04:v2023-10-30
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]

@@ -18,6 +18,7 @@ class Libarchive(AutotoolsPackage):
 
     license("BSD-2-Clause AND BSD-3-Clause AND Public-Domain")
 
+    version("3.8.5", sha256="8a60f3a7bfd59c54ce82ae805a93dba65defd04148c3333b7eaa2102f03b7ffd")
     version("3.8.0", sha256="191b5b24811499d5c2e5efa3248975fa6daa5e6a227700cc7b8e54d6d7c06eef")
     version("3.7.9", sha256="aa90732c5a6bdda52fda2ad468ac98d75be981c15dde263d7b5cf6af66fd009f")
     version("3.7.8", sha256="a123d87b1bd8adb19e8c187da17ae2d957c7f9596e741b929e6b9ceefea5ad0f")

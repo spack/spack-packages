@@ -51,8 +51,9 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
         description="Real precision (double/single)",
         values=("single", "double"),
     )
-    variant("tiny_profile", default=False, description="Enable tiny profiling")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("sycl", default=False, description="Enable SYCL backend")
+    variant("tiny_profile", default=False, description="Enable tiny profiling")
 
     extends("python")
 
@@ -70,6 +71,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     depends_on("py-pybind11@2.12.0:", type=("build", "link"))
     depends_on("py-pybind11@3.0.1:", type=("build", "link"), when="@25.08:")
     depends_on("py-wheel@0.40:", type="build")
+    depends_on("vir-simd", type="build", when="+simd")
 
     # AMReX options
     #   required variants
@@ -101,6 +103,10 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
         # todo: how to forward amdgpu_target?
     with when("~rocm"):
         depends_on("amrex ~rocm")
+    with when("+simd"):
+        depends_on("amrex +simd")
+    with when("~simd"):
+        depends_on("amrex ~simd")
     with when("+sycl"):
         depends_on("amrex +sycl")
     with when("~sycl"):
