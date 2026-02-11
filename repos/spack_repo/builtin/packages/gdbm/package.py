@@ -57,7 +57,7 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
     def flag_handler(self, name, flags):
         if name == "cflags":
             # See https://src.fedoraproject.org/rpms/gdbm/blob/44ea7380c69b1c139fe385bc1c5940070b36c626/f/gdbm.spec#_62
-            if self.spec.satisfies("@:1.24 %gcc@15:"):
+            if self.spec.satisfies("@:1.23 %gcc@15:"):
                 flags.append("-std=gnu11")
 
         return (flags, None, None)
