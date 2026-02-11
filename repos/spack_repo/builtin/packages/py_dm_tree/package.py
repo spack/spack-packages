@@ -53,9 +53,7 @@ class PyDmTree(CMakePackage):
     )
     # Add missing an install(...) to CMakeLists.txt
     # https://github.com/google-deepmind/tree/pull/136
-    patch("add-cmake-install-0.1.9.patch", when="@0.1.9")
-    patch("add-cmake-install-0.1.8.patch", when="@0.1.8")
-    patch("add-cmake-install-0.1.7.patch", when="@0.1.7")
+    patch("add-cmake-install.patch")
 
     conflicts("%gcc@13:", when="@:0.1.7")
 
