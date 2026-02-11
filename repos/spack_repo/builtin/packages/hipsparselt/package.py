@@ -181,6 +181,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.2.patch", when="@6.2")
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.3.patch", when="@6.3")
     patch("0002-add-hipsparse-include.patch", when="@6.4")
+    patch("0003-add-roctracer-inc-dir.patch", when="@7.2")
 
     @classmethod
     def determine_version(cls, lib):
@@ -255,7 +256,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
 
     @property
     def root_cmakelists_dir(self):
-        if self.spec.satisfies("@7.1"):
+        if self.spec.satisfies("@7.1:"):
             return "projects/hipsparselt"
         else:
             return "."
@@ -265,9 +266,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             self.define("Tensile_CODE_OBJECT_VERSION", "default"),
             self.define("MSGPACK_DIR", self.spec["msgpack-c"].prefix),
             self.define_from_variant("BUILD_ADDRESS_SANITIZER", "asan"),
-            self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("BUILD_SHARED_LIBS", "ON"),
-            self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
@@ -286,4 +285,12 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("BUILD_USE_LOCAL_TENSILE", "OFF"))
+        if self.spec.satisfies("@7.2:"):
+            args.append(self.define("BUILD_TESTING",  self.run_tests))
+            args.append(self.define("HIPSPARSELT_ENABLE_CLIENT", self.run_tests))
+            args.append(self.define("HIPSPARSELT_ENABLE_SAMPLES", "OFF"))
+            args.append(self.define("HIPSPARSELT_ENABLE_BENCHMARKS", "OFF"))
+        else:
+            args.append(self.define("BUILD_CLIENTS_TESTS", self.run_tests))
+            args.append(self.define("BUILD_CLIENTS_SAMPLES", "OFF"))
         return args
