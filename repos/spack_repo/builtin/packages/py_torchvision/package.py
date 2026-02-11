@@ -197,6 +197,18 @@ class PyTorchvision(PythonPackage):
             query = self.spec[dep.name]
             include.extend(query.headers.directories)
             library.extend(query.libs.directories)
+        # PyTorch headers include rocthrust, rocprim, hipsparse, hipblas, hipblas-common,
+        # hipblaslt and hipsolver headers; when building with ROCm we need these headers
+        # in the include path (py-torch depends on these headers, but it is not a direct
+        # link dep of torchvision).
+        if "^py-torch+rocm" in self.spec:
+            include.extend(self.spec["rocthrust"].headers.directories)
+            include.extend(self.spec["rocprim"].headers.directories)
+            include.extend(self.spec["hipsparse"].headers.directories)
+            include.extend(self.spec["hipblas"].headers.directories)
+            include.extend(self.spec["hipblas-common"].headers.directories)
+            include.extend(self.spec["hipblaslt"].headers.directories)
+            include.extend(self.spec["hipsolver"].headers.directories)
 
         # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
         # these do not work for older releases. Build uses a mix of Spack's compiler wrapper
