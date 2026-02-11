@@ -10,7 +10,7 @@ from spack.package import *
 class PyFiefClient(PythonPackage):
     """Fief Client for Python."""
 
-    homepage = "https://docs.fief.dev/integrate/python/"
+    homepage = "https://github.com/fief-dev/fief-python"
     pypi = "fief_client/fief_client-0.20.0.tar.gz"
 
     version("0.20.0", sha256="dbfb906d03c4a5402ceac5c843aa4708535fb6f5d5c1c4e263ec06fbbbc434d7")
