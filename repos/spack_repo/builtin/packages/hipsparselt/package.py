@@ -286,7 +286,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("BUILD_USE_LOCAL_TENSILE", "OFF"))
         if self.spec.satisfies("@7.2:"):
-            args.append(self.define("BUILD_TESTING",  self.run_tests))
+            args.append(self.define("BUILD_TESTING", self.run_tests))
             args.append(self.define("HIPSPARSELT_ENABLE_CLIENT", self.run_tests))
             args.append(self.define("HIPSPARSELT_ENABLE_SAMPLES", "OFF"))
             args.append(self.define("HIPSPARSELT_ENABLE_BENCHMARKS", "OFF"))
