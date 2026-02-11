@@ -14,6 +14,7 @@ class PyCodecarbon(PythonPackage):
     homepage = "https://mlco2.github.io/codecarbon/"
     pypi = "codecarbon/codecarbon-3.2.1.tar.gz"
 
+    version("3.2.2", sha256="a848c3960d48312fb527c9565c7dc6264035dc104eb40007564ef0ed4479bb22")
     version("3.2.1", sha256="04571e4d4758936587b7145de557f4aa0f53c83c771318f9a12d67ff039fc95c")
 
     depends_on("python@3.7:", type=("build", "run"))
