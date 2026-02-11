@@ -110,7 +110,7 @@ class Neovim(CMakePackage):
         depends_on("tree-sitter@0.20.9:0.25")
     with when("@0.11:"):
         depends_on("cmake@3.16:", type="build")
-        depends_on("utf8proc", type="link")
+        depends_on("utf8proc@2.10.0", type="link")
         depends_on("tree-sitter@0.25", type="link", when="@:0.11.5")
         depends_on("tree-sitter@0.25:", type="link")
 

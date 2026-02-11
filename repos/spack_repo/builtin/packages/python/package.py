@@ -150,6 +150,8 @@ class Python(Package):
     )
 
     variant("shared", default=True, description="Enable shared libraries")
+    variant("static", default=False, description="Enable static libraries")
+    variant("tests", default=False, description="Build and install tests")
     variant("pic", default=True, description="Produce position-independent code (for shared libs)")
     variant(
         "optimizations",
@@ -628,6 +630,12 @@ class Python(Package):
             config_args.append("--enable-shared")
         else:
             config_args.append("--disable-shared")
+
+        if "~static" in spec:
+            config_args.append("--without-static-libpython")
+
+        if "~tests" in spec:
+            config_args.append("--disable-test-modules")
 
         config_args.append("--without-ensurepip")
 

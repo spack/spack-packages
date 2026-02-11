@@ -160,6 +160,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=False, description="Enable HDF5-based I/O")
     variant("hypre", default=False, description="Enable Hypre interfaces")
     variant("petsc", default=False, description="Enable PETSc interfaces")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("sundials", default=False, description="Enable SUNDIALS interfaces", when="@21:")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
@@ -244,6 +245,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("hypre@2.19.0:", type="link", when="@21.03: ~cuda")
         depends_on("hypre@2.20.0:", type="link", when="@21.03: +cuda")
     depends_on("petsc", type="link", when="+petsc")
+    depends_on("vir-simd", type="build", when="+simd")
     depends_on("intel-oneapi-mkl", type=("build", "link"), when="+sycl")
 
     # these versions of gcc have lambda function issues
@@ -359,6 +361,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("AMReX_HDF5", "hdf5"),
             self.define_from_variant("AMReX_HYPRE", "hypre"),
             self.define_from_variant("AMReX_PETSC", "petsc"),
+            self.define_from_variant("AMReX_SIMD", "simd"),
             self.define_from_variant("AMReX_SUNDIALS", "sundials"),
             self.define_from_variant("AMReX_PIC", "pic"),
         ]
