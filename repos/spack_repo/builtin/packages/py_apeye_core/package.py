@@ -16,6 +16,7 @@ class PyApeyeCore(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.1.5", sha256="5de72ed3d00cc9b20fea55e54b7ab8f5ef8500eb33a5368bc162a5585e238a55")
     version("1.1.4", sha256="72bb89fed3baa647cb81aa28e1d851787edcbf9573853b5d2b5f87c02f50eaf5")
 
     depends_on("py-hatch-requirements-txt", type="build")

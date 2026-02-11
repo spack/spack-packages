@@ -18,6 +18,7 @@ class PyPygame(PythonPackage):
 
     license("LGPL-2.1-only")
 
+    version("2.6.1", sha256="9c640260c0817e72f2a8da236a2f8c506a839294fcd4cadbe471ca5259f488ea")
     version("2.5.2", sha256="c1b89eb5d539e7ac5cf75513125fb5f2f0a2d918b1fd6e981f23bf0ac1b1c24a")
 
     depends_on("py-setuptools", type="build")
