@@ -30,3 +30,4 @@ class PyTiktoken(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-regex@2022.1.18:", type=("build", "run"))
     depends_on("py-requests@2.26.0:", type=("build", "run"))
+    depends_on("rust", type="build")
