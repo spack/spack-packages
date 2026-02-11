@@ -1,30 +1,30 @@
-From aab6943d7f79aedc36c7d477f7f5cba6bd361c3c Mon Sep 17 00:00:00 2001
-From: Sreenivasa Murthy Kolam <sreenivasamurthy.kolam@amd.com>
-Date: Tue, 10 Feb 2026 14:41:12 +0530
-Subject: [PATCH] Change the install prefix path for spack
+From ea46de7344846a1bde96ef6cc9437e18b3e9ddf3 Mon Sep 17 00:00:00 2001
+From: sreenivasa murthy kolam <sreenivasamurthy.kolam@amd.com>
+Date: Wed, 11 Feb 2026 09:52:31 +0000
+Subject: [PATCH] change the install prefix of hipdnn for spack builds
 
 ---
- CMakeLists.txt     | 2 +-
- sdk/CMakeLists.txt | 6 +++---
+ projects/hipdnn/CMakeLists.txt     | 2 +-
+ projects/hipdnn/sdk/CMakeLists.txt | 6 +++---
  2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 7c6df64..c0fd4d3 100644
---- a/CMakeLists.txt
-+++ b/CMakeLists.txt
+diff --git a/projects/hipdnn/CMakeLists.txt b/projects/hipdnn/CMakeLists.txt
+index 7c6df64..4e6284f 100644
+--- a/projects/hipdnn/CMakeLists.txt
++++ b/projects/hipdnn/CMakeLists.txt
 @@ -29,7 +29,7 @@ project(
      LANGUAGES CXX)
  
  if(NOT WIN32)
 -    set(CMAKE_INSTALL_PREFIX "${ROCM_PATH}" CACHE PATH "Install path prefix" FORCE)
-+    set(CMAKE_INSTALL_PREFIX "/opt/rocm" CACHE PATH "")
++    set(CMAKE_INSTALL_PREFIX "${ROCM_PATH}" CACHE PATH "")
      message(STATUS "Setting CMAKE_INSTALL_PREFIX to ${CMAKE_INSTALL_PREFIX}")
  endif()
  
-diff --git a/sdk/CMakeLists.txt b/sdk/CMakeLists.txt
+diff --git a/projects/hipdnn/sdk/CMakeLists.txt b/projects/hipdnn/sdk/CMakeLists.txt
 index db7efc4..a10600a 100644
---- a/sdk/CMakeLists.txt
-+++ b/sdk/CMakeLists.txt
+--- a/projects/hipdnn/sdk/CMakeLists.txt
++++ b/projects/hipdnn/sdk/CMakeLists.txt
 @@ -59,7 +59,7 @@ set_target_properties(flatc PROPERTIES COMPILE_FLAGS "-w")
  _restore_var(FLATBUFFERS_FLATC_SCHEMA_EXTRA_ARGS)
  
@@ -50,5 +50,5 @@ index db7efc4..a10600a 100644
  )
  
 -- 
-2.43.0
+2.43.5
 

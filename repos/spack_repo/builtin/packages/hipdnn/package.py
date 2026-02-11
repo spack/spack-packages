@@ -14,7 +14,7 @@ class Hipdnn(CMakePackage):
     for various routines"""
 
     homepage = "https://github.com/ROCm/hipDNN"
-    url = "https://github.com/ROCm/hipDNN/archive/refs/tags/rocm-7.1.1.tar.gz"
+    url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/rocm-7.1.1.tar.gz"
     git = "https://github.com/ROCm/hipDNN.git"
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
@@ -23,7 +23,7 @@ class Hipdnn(CMakePackage):
 
     license("MIT")
 
-    version("7.1.1", sha256="a32e08a510079cd818645f1acdb9e784192f8b89dff925645ed4db15ae4686c9")
+    version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
     variant(
@@ -52,21 +52,36 @@ class Hipdnn(CMakePackage):
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
 
-    patch("0001-Change-the-install-prefix-path-for-spack.patch", when="@7.1")
+    patch("0001-change-the-install-prefix-of-hipdnn-for-spack-builds.patch", when="@7.1")
 
     def patch(self):
         filter_file(
             r"${ROCM_PATH}/llvm/bin",
             "{0}/bin".format(self.spec["llvm-amdgpu"].prefix),
-            "cmake/ClangToolChain.cmake",
+            "projects/hipdnn/cmake/ClangToolChain.cmake",
             string=True,
         )
         filter_file(
             r"${ROCM_PATH}/llvm/lib",
             "{0}/lib".format(self.spec["llvm-amdgpu"].prefix),
-            "cmake/ClangToolChain.cmake",
+            "projects/hipdnn/cmake/ClangToolChain.cmake",
             string=True,
         )
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
+
+    @property
+    def root_cmakelists_dir(self):
+        return "projects/hipdnn"
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@7.1:"):
