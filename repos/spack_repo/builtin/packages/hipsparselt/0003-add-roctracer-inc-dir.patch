@@ -1,0 +1,29 @@
+diff --git a/projects/hipsparselt/CMakeLists.txt b/projects/hipsparselt/CMakeLists.txt
+index b11b01c..dddda1c 100644
+--- a/projects/hipsparselt/CMakeLists.txt
++++ b/projects/hipsparselt/CMakeLists.txt
+@@ -120,6 +120,12 @@ if(HIPSPARSELT_ENABLE_MARKER)
+         message(FATAL_ERROR "rocTracer marker is not supported with CUDA backend.")
+     else()
+         find_library(ROCTX64_LIBRARY REQUIRED HINTS lib NAMES roctx64 libroctx64)
++        get_filename_component(ROCTRACER_LIB_DIR ${ROCTX64_LIBRARY} DIRECTORY)
++        get_filename_component(ROCTRACER_ROOT_DIR ${ROCTRACER_LIB_DIR} DIRECTORY)
++        find_path(ROCTRACER_INCLUDE_DIR "roctracer/roctx.h"
++            HINTS ${ROCTRACER_ROOT_DIR}
++            PATH_SUFFIXES include
++            REQUIRED)
+     endif()
+ endif()
+ 
+diff --git a/projects/hipsparselt/library/CMakeLists.txt b/projects/hipsparselt/library/CMakeLists.txt
+index 7513bb6..3660170 100644
+--- a/projects/hipsparselt/library/CMakeLists.txt
++++ b/projects/hipsparselt/library/CMakeLists.txt
+@@ -40,6 +40,7 @@ endif()
+ 
+ if(HIPSPARSELT_ENABLE_MARKER)
+     target_compile_definitions(hipsparselt PRIVATE HIPSPARSELT_ENABLE_MARKER)
++    target_include_directories(hipsparselt PRIVATE ${ROCTRACER_INCLUDE_DIR})
+     target_link_libraries(hipsparselt PRIVATE ${ROCTX64_LIBRARY})
+ else()
+     target_compile_definitions(hipsparselt PRIVATE DISABLE_ROCTX)
