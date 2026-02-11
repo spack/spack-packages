@@ -19,3 +19,4 @@ class PyNh3(PythonPackage):
 
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-maturin@1", type="build")
+    depends_on("rust", type="build")

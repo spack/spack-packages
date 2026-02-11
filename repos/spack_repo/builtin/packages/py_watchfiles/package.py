@@ -20,4 +20,5 @@ class PyWatchfiles(PythonPackage):
 
     depends_on("py-maturin@0.13", type="build", when="@0.18.1")
     depends_on("py-maturin@0.14:2", type="build", when="@1:")
+    depends_on("rust", type="build")
     depends_on("py-anyio@3:", type=("build", "run"))

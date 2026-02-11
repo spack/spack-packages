@@ -17,6 +17,7 @@ class PyVlConvertPython(PythonPackage):
 
     # TODO: This package currently requires internet access to install.
     depends_on("py-maturin@1.1:1", type="build")
+    depends_on("rust", type="build")
 
     depends_on("cmake", type="build")  # some rust dependencies need this
     depends_on("protobuf", type="build")  # rust dependency prost need this
