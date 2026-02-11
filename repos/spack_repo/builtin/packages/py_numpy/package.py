@@ -105,14 +105,15 @@ class PyNumpy(PythonPackage):
         depends_on("py-pip@23.1:", when="@1.26:")
 
         # Build dependencies (do not include upper bound unless known issues)
-        depends_on("py-meson-python@0.18:", when="@2.4:", type=("build","run"))
-        depends_on("py-meson-python@0.15:", when="@1.26.4:", type=("build","run"))
         depends_on("py-cython@3.0.6:", when="@2:")
         depends_on("py-cython@0.29.34:", when="@1.26:")
         depends_on("py-cython@0.29.34:2", when="@1.25")
         depends_on("py-cython@0.29.30:2", when="@1.22.4:1.24")
         depends_on("py-cython@0.29.24:2", when="@1.21.2:1.22.3")
         depends_on("py-cython@0.29.21:2", when="@1.19.1:1.21.1")
+
+    depends_on("py-meson-python@0.18:", when="@2.4:", type=("build","run"))
+    depends_on("py-meson-python@0.15:", when="@1.26.4:", type=("build","run"))
 
     depends_on("blas")
     depends_on("lapack")
