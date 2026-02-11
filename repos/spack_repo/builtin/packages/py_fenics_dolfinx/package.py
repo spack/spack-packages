@@ -78,6 +78,10 @@ class PyFenicsDolfinx(PythonPackage):
     depends_on("py-mpi4py", type=("build", "run"))
 
     conflicts("~petsc4py", when="+slepc4py", msg="+slepc4py requires +petsc4py")
+    # petsc4py only an optional dependency 0.9 and later.
+    with when("@:0.8"):
+        depends_on("fenics-dolfinx +petsc")
+        depends_on("py-petsc4py", type=("build", "run"))
     with when("+petsc4py"):
         depends_on("fenics-dolfinx +petsc")
         depends_on("py-petsc4py", type=("build", "run"))
@@ -85,7 +89,6 @@ class PyFenicsDolfinx(PythonPackage):
         depends_on("fenics-dolfinx +petsc +slepc")
         depends_on("py-petsc4py", type=("build", "run"))
         depends_on("py-slepc4py", type=("build", "run"))
-    depends_on("py-petsc4py", type=("build", "run"), when="@:0.8")
 
     depends_on("py-cffi", type=("build", "run"))
 
