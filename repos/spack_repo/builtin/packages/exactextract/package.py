@@ -7,6 +7,7 @@ from spack_repo.builtin.build_systems.python import PythonExtension, PythonPipBu
 
 from spack.package import *
 
+
 class Exactextract(CMakePackage, PythonExtension):
     """exactextract is a library for extracting and summarizing the
     values in the portion of a raster dataset that is covered by a polygon,
@@ -35,7 +36,6 @@ class Exactextract(CMakePackage, PythonExtension):
     depends_on("geos@3.5:", type=("build", "run"))
     depends_on("gdal@2:", type=("build", "run"))
     depends_on("intel-oneapi-tbb", type=("build", "run"), when="+tbb")
-
 
     with when("+python"):
         extends("python", type=("build", "link", "run"))
