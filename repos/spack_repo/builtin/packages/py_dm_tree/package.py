@@ -3,17 +3,18 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.python import PythonExtension
 
 from spack.package import *
 
 
-class PyDmTree(CMakePackage):
+class PyDmTree(CMakePackage, PythonExtension):
     """tree is a library for working with nested data structures. In a way, tree generalizes the
     builtin map() function which only supports flat sequences, and allows to apply a function to
     each leaf preserving the overall structure."""
 
     homepage = "https://github.com/deepmind/tree"
-    url = "https://files.pythonhosted.org/packages/source/d/dm_tree/dm-tree-0.1.8.tar.gz"
+    url = "https://files.pythonhosted.org/packages/source/d/dm-tree/dm_tree-0.1.9.tar.gz"
     root_cmakelists_dir = "tree"
 
     maintainers("aweits")
@@ -25,8 +26,6 @@ class PyDmTree(CMakePackage):
     with default_args(deprecated=True):
         version("0.1.8", sha256="0fcaabbb14e7980377439e7140bd05552739ca5e515ecb3119f234acee4b9430")
         version("0.1.7", sha256="30fec8aca5b92823c0e796a2f33b875b4dccd470b57e91e6c542405c5f77fd2a")
-
-    extends("python")
 
     with default_args(type="build"):
         depends_on("cxx")
@@ -42,8 +41,8 @@ class PyDmTree(CMakePackage):
         depends_on("python@:3.10", when="@:0.1.7")
 
     depends_on("abseil-cpp cxxstd=14", type="link", when="@0.1.8:")
-    depends_on("py-attrs@18.2.0:", type="run", when="@0.1.9:")
-    depends_on("py-wrapt@1.11.2:", type="run", when="@0.1.9:")
+    depends_on("py-attrs@18.2.0:", type=("build", "run"), when="@0.1.9:")
+    depends_on("py-wrapt@1.11.2:", type=("build", "run"), when="@0.1.9:")
 
     # Avoid FetchContent for pybind11 and abseil-cpp in 0.1.8.
     patch(
@@ -58,10 +57,9 @@ class PyDmTree(CMakePackage):
     conflicts("%gcc@13:", when="@:0.1.7")
 
     def url_for_version(self, version):
-        if version <= Version("0.1.8"):
-            return super().url_for_version(version).replace("_", "-")
-        else:
+        if version >= Version("0.1.9"):
             return super().url_for_version(version)
+        return f"https://files.pythonhosted.org/packages/source/d/dm_tree/dm-tree-{version}.tar.gz"
 
     def cmake_args(self):
         return [
