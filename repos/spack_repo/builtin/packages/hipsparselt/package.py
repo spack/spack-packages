@@ -158,6 +158,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("py-joblib")
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("amdblis", type="test", when="@7.2:")
     depends_on("python-venv", when="@7.0:")
     depends_on("py-pyyaml+libyaml", when="@7.1:")
     depends_on("py-packaging", when="@7.1:")
@@ -198,7 +199,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         purelib = self.spec["python"].package.purelib
         joblib_path = os.path.join(self.spec["py-joblib"].prefix, purelib)
         if not self.spec["hip"].external:
-            if self.spec.satisfies("@6.4:") and self.run_tests:
+            if self.spec.satisfies("@6.4:7.1") and self.run_tests:
                 filter_file(
                     r"${HIP_CLANG_ROOT}/lib",
                     "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
@@ -270,10 +271,6 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
-        if self.run_tests:
-            args.append(
-                self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
-            )
         if self.spec.satisfies("@7.0"):
             args.append(
                 self.define(
@@ -283,14 +280,19 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         if self.spec.satisfies("@7.0:"):
             args.append(self.define("Python_EXECUTABLE", self.spec["python"].prefix.bin.python3))
             args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
-        if self.spec.satisfies("@7.1:"):
+        if self.spec.satisfies("@7.1"):
             args.append(self.define("BUILD_USE_LOCAL_TENSILE", "OFF"))
         if self.spec.satisfies("@7.2:"):
             args.append(self.define("BUILD_TESTING", self.run_tests))
             args.append(self.define("HIPSPARSELT_ENABLE_CLIENT", self.run_tests))
             args.append(self.define("HIPSPARSELT_ENABLE_SAMPLES", "OFF"))
             args.append(self.define("HIPSPARSELT_ENABLE_BENCHMARKS", "OFF"))
+            args.append(self.define("HIPSPARSELT_ENABLE_BLIS", self.run_tests))
         else:
             args.append(self.define("BUILD_CLIENTS_TESTS", self.run_tests))
             args.append(self.define("BUILD_CLIENTS_SAMPLES", "OFF"))
+            if self.run_tests:
+                args.append(
+                    self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
+                )
         return args
