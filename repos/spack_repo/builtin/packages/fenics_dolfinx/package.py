@@ -17,30 +17,16 @@ class FenicsDolfinx(CMakePackage):
 
     version("main", branch="main", no_cache=True)
     version(
-        "0.10.0.post4",
-        sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605",
+        "0.10.0.post4", sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605"
     )
     version(
-        "0.10.0.post2",
-        sha256="eae83794fee8141c80c59c03a2f4ac208af2b62c8f36e5d19c93e0d279029f52",
+        "0.10.0.post2", sha256="eae83794fee8141c80c59c03a2f4ac208af2b62c8f36e5d19c93e0d279029f52"
     )
-    version(
-        "0.9.0",
-        sha256="b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1",
-    )
-    version(
-        "0.8.0",
-        sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9",
-    )
+    version("0.9.0", sha256="b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1")
+    version("0.8.0", sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9")
     with default_args(deprecated=True):
-        version(
-            "0.7.2",
-            sha256="7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b",
-        )
-        version(
-            "0.6.0",
-            sha256="eb8ac2bb2f032b0d393977993e1ab6b4101a84d54023a67206e3eac1a8d79b80",
-        )
+        version("0.7.2", sha256="7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b")
+        version("0.6.0", sha256="eb8ac2bb2f032b0d393977993e1ab6b4101a84d54023a67206e3eac1a8d79b80")
 
     patch("0.8-boost-filesystem.patch", when="@0.8")
 
@@ -74,9 +60,7 @@ class FenicsDolfinx(CMakePackage):
     variant("slepc", default=False, description="SLEPc support")
     variant("adios2", default=False, description="ADIOS2 support")
     variant("petsc", default=False, description="PETSc support")
-    variant(
-        "superlu-dist", default=False, description="SuperLU_DIST support", when="@main"
-    )
+    variant("superlu-dist", default=False, description="SuperLU_DIST support", when="@main")
 
     conflicts("~petsc", when="+slepc", msg="+slepc requires +petsc")
 
@@ -118,9 +102,7 @@ class FenicsDolfinx(CMakePackage):
             self.define_from_variant("DOLFINX_ENABLE_ADIOS2", "adios2"),
             self.define("DOLFINX_UFCX_PYTHON", False),
             self.define("DOLFINX_ENABLE_KAHIP", "partitioners=kahip" in self.spec),
-            self.define(
-                "DOLFINX_ENABLE_PARMETIS", "partitioners=parmetis" in self.spec
-            ),
+            self.define("DOLFINX_ENABLE_PARMETIS", "partitioners=parmetis" in self.spec),
             self.define("DOLFINX_ENABLE_SCOTCH", "partitioners=scotch" in self.spec),
             self.define("DOLFINX_ENABLE_SUPERLU_DIST", "superlu-dist" in self.spec),
         ]
