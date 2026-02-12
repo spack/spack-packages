@@ -274,8 +274,8 @@ class Openfoam(Package):
 
     license("GPL-3.0-or-later")
 
-    version("develop", branch="develop", submodules="True")
-    version("master", branch="master", submodules="True")
+    version("develop", branch="develop", submodules=True)
+    version("master", branch="master", submodules=True)
     version(
         "2512",
         tag="OpenFOAM-v2512",
