@@ -43,7 +43,7 @@ class ScitokensCpp(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@2.6:", type="build")
-    depends_on("cmake@3.10:", when="@0.7.1:", type="build")
+    depends_on("cmake@3.10:", type="build", when="@0.7.1:")
     depends_on("openssl")
     depends_on("sqlite")
     depends_on("curl")
