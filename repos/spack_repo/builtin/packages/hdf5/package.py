@@ -512,10 +512,7 @@ class Hdf5(CMakePackage):
         env.set("SZIP_INSTALL", self.spec["szip"].prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        # According to related github posts and problems running test_install
-        # as a stand-alone test, it appears the lib path must be added to
-        # LD_LIBRARY_PATH.
-        env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
+        pass
 
     def cmake_args(self):
         spec = self.spec
