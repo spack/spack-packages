@@ -64,7 +64,7 @@ def _supports_compilation_databases(pkg: PackageBase) -> bool:
     """Check if this package (and CMake) can support compilation databases."""
 
     # CMAKE_EXPORT_COMPILE_COMMANDS only exists for CMake >= 3.5
-    if not pkg.spec.satisfies("^cmake@3.5:"):
+    if not pkg.spec.satisfies("%cmake@3.5:"):
         return False
 
     # CMAKE_EXPORT_COMPILE_COMMANDS is only implemented for Makefile and Ninja generators
@@ -205,7 +205,7 @@ class CMakePackage(PackageBase):
         variant(
             "ipo",
             default=False,
-            when="^cmake@3.9:",
+            when="%cmake@3.9:",
             description="CMake interprocedural optimization",
         )
 
@@ -611,7 +611,7 @@ def define_hip_architectures(pkg: PackageBase) -> str:
     not set.
 
     """
-    if "amdgpu_target" in pkg.spec.variants and pkg.spec.satisfies("^cmake@3.21:"):
+    if "amdgpu_target" in pkg.spec.variants and pkg.spec.satisfies("%cmake@3.21:"):
         return define("CMAKE_HIP_ARCHITECTURES", pkg.spec.variants["amdgpu_target"].value)
 
     return ""
@@ -626,6 +626,6 @@ def define_cuda_architectures(pkg: PackageBase) -> str:
     This method is no-op for cmake<3.18 and when ``cuda_arch`` variant is not set.
 
     """
-    if "cuda_arch" in pkg.spec.variants and pkg.spec.satisfies("^cmake@3.18:"):
+    if "cuda_arch" in pkg.spec.variants and pkg.spec.satisfies("%cmake@3.18:"):
         return define("CMAKE_CUDA_ARCHITECTURES", pkg.spec.variants["cuda_arch"].value)
     return ""
