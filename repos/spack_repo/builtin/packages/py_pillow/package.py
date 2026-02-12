@@ -10,7 +10,6 @@ from spack.package import *
 class PyPillowBase(PythonPackage):
     """Base class for Pillow and its fork Pillow-SIMD."""
 
-    license("HPND")
     maintainers("adamjstewart")
     provides("pil")
 
@@ -39,14 +38,15 @@ class PyPillowBase(PythonPackage):
     variant("webp", default=False, description="WebP format")
     variant("webpmux", when="@:10+webp", default=False, description="WebP metadata")
     variant("jpeg2000", default=False, description="JPEG 2000 functionality")
-    variant("imagequant", when="@3.3:", default=False, description="Improved color quantization")
-    variant("xcb", when="@7.1:", default=False, description="X11 screengrab support")
+    variant("imagequant", default=False, description="Improved color quantization")
+    variant("xcb", default=False, description="X11 screengrab support")
     variant("avif", when="@11.2:", default=False, description="Support for the AVIF format")
 
     # Required dependencies
     # https://pillow.readthedocs.io/en/stable/installation/python-support.html
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.9:3.14", when="@11.3:")
+        depends_on("python@3.10:3.14", when="@12:")
+        depends_on("python@3.9:3.14", when="@11.3")
         depends_on("python@3.9:3.13", when="@11.0:11.2")
         depends_on("python@3.8:3.13", when="@10.4")
         depends_on("python@3.8:3.12", when="@10.1:10.3")
@@ -55,12 +55,11 @@ class PyPillowBase(PythonPackage):
         depends_on("python@3.7:3.10", when="@9.0:9.2")
         depends_on("python@3.6:3.10", when="@8.3.2:8.4")
         depends_on("python@3.6:3.9", when="@8:8.3.1")
-        depends_on("python@3.5:3.8", when="@7.0:7.2")
-        depends_on("python@2.7:2.8,3.5:3.8", when="@6.2.1:6.2.2")
 
     # pyproject.toml
     with default_args(type="build"):
         depends_on("py-pip@22.1:", when="@10:")
+        depends_on("py-pybind11", when="@12:")
         depends_on("py-setuptools@77:", when="@11.2:")
         depends_on("py-setuptools@67.8:", when="@10:")
         depends_on("py-setuptools")
@@ -70,15 +69,16 @@ class PyPillowBase(PythonPackage):
     depends_on("zlib-api", when="+zlib")
     depends_on("jpeg", when="+jpeg")
     depends_on("libtiff", when="+tiff")
+    depends_on("freetype@2.9.1:", when="@12:+freetype")
     depends_on("freetype", when="+freetype")
     depends_on("libraqm", when="+raqm")
     depends_on("lcms@2:", when="+lcms")
     depends_on("libwebp", when="+webp")
     depends_on("libwebp+libwebpmux+libwebpdemux", when="+webpmux")
-    depends_on("openjpeg", when="+jpeg2000")
+    depends_on("openjpeg@2:", when="+jpeg2000")
     depends_on("libimagequant", when="+imagequant")
     depends_on("libxcb", when="+xcb")
-    depends_on("libavif", when="+avif")
+    depends_on("libavif@1:", when="+avif")
 
     patch(
         "https://github.com/python-pillow/Pillow/commit/1c11d4581c5705dfa21bc5a4f3b6980c556978bf.patch?full_index=1",
@@ -154,6 +154,12 @@ class PyPillow(PyPillowBase):
     homepage = "https://python-pillow.org/"
     pypi = "pillow/pillow-10.2.0.tar.gz"
 
+    license("MIT-CMU", when="@11:")
+    license("HPND", when="@:10")
+
+    version("12.1.1", sha256="9ad8fa5937ab05218e2b6a4cff30295ad35afd2f83ac592e68c0d871bb0fdbc4")
+    version("12.1.0", sha256="5c5ae0a06e9ea030ab786b0251b32c7e4ce10e58d983c0d5c56029455180b5b9")
+    version("12.0.0", sha256="87d4f8125c9988bfbed67af47dd7a953e2fc7b0cc1e7800ec6d2080d490bb353")
     version("11.3.0", sha256="3828ee7586cd0b2091b6209e5ad53e20d0649bbe87164a459d0676e035e8f523")
     version("11.2.1", sha256="a64dd61998416367b7ef979b73d3a85853ba9bec4c2925f74e588879a58716b6")
     version("11.1.0", sha256="368da70808b36d73b4b390a8ffac11069f8a5c85f29eff1f1b01bcf3ef5b2a20")
@@ -174,30 +180,13 @@ class PyPillow(PyPillowBase):
     version("9.0.0", sha256="ee6e2963e92762923956fe5d3479b1fdc3b76c83f290aad131a2f98c3df0593e")
     version("8.4.0", sha256="b8e2f83c56e141920c39464b852de3719dfbfb6e3c99a2d8da0edf4fb33176ed")
     version("8.0.0", sha256="59304c67d12394815331eda95ec892bf54ad95e0aa7bc1ccd8e0a4a5a25d4bf3")
-    version(
-        "7.2.0",
-        sha256="97f9e7953a77d5a70f49b9a48da7776dc51e9b738151b22dacf101641594a626",
-        deprecated=True,
-    )
-    version(
-        "7.0.0",
-        sha256="4d9ed9a64095e031435af120d3c910148067087541131e82b3e8db302f4c8946",
-        deprecated=True,
-    )
-    version(
-        "6.2.2",
-        sha256="db9ff0c251ed066d367f53b64827cc9e18ccea001b986d08c265e53625dab950",
-        deprecated=True,
-    )
-    version(
-        "6.2.1",
-        sha256="bf4e972a88f8841d8fdc6db1a75e0f8d763e66e3754b03006cbc3854d89f1cb1",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
 
     for ver in [
+        "12.1.1",
+        "12.1.0",
+        "12.0.0",
         "11.3.0",
         "11.2.1",
         "11.1.0",
@@ -218,10 +207,6 @@ class PyPillow(PyPillowBase):
         "9.0.0",
         "8.4.0",
         "8.0.0",
-        "7.2.0",
-        "7.0.0",
-        "6.2.2",
-        "6.2.1",
     ]:
         provides("pil@" + ver, when="@" + ver)
 

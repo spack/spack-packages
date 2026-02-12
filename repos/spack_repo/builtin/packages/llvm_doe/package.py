@@ -5,7 +5,7 @@ import os
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, generator, get_cmake_prefix_path
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
@@ -53,7 +53,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
     variant(
         "polly",
         default=True,
-        description="Build the LLVM polyhedral optimization plugin, " "only builds for 3.7.0+",
+        description="Build the LLVM polyhedral optimization plugin, only builds for 3.7.0+",
     )
     variant("libcxx", default=True, description="Build the LLVM C++ standard library")
     variant(
@@ -290,7 +290,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
     @classmethod
     def validate_detected_spec(cls, spec, extra_attributes):
         # For LLVM 'compilers' is a mandatory attribute
-        msg = 'the extra attribute "compilers" must be set for ' 'the detected spec "{0}"'.format(
+        msg = 'the extra attribute "compilers" must be set for the detected spec "{0}"'.format(
             spec
         )
         assert "compilers" in extra_attributes, msg
@@ -385,7 +385,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
                 sym = os.path.join(self.stage.path, "ld.lld")
                 if os.path.exists(bin) and not os.path.exists(sym):
                     mkdirp(self.stage.path)
-                    os.symlink(bin, sym)
+                    symlink(bin, sym)
             env.prepend_path("PATH", self.stage.path)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

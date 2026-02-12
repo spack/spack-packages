@@ -19,6 +19,10 @@ class PySlepc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.24.2", sha256="cbcff24004e35cdb17587c534d68329b6467574df93028d04596bfaf3baccbb7")
+    version("3.24.1", sha256="ce798d38355127bee3416bab2975d5fb51df0c3e124b73ba13225ff6311d966e")
+    version("3.24.0", sha256="50c9b6a75f47db8131c690b1cda07a15bf532cb79a3e645a0b08d7941f6738f2")
+    version("3.23.3", sha256="aa00f90939c4b312b9efe041e4f50f8f7947f50cb8c0d8f6ca60d4d78dda92c9")
     version("3.23.2", sha256="6c98e6c728b9d440d1680047f623aead03d9870c0c4d2ea97c754bab291d1fb5")
     version("3.23.1", sha256="da3ac9854ad120699359c112be857298bd3e4b62c0cecee752f34ad2dec81cd9")
     version("3.23.0", sha256="cc00cfd02bf302363adf03404bdcf6d8d4f1b9448cb28d4305eef3e88ddd9059")
@@ -48,23 +52,10 @@ class PySlepc4py(PythonPackage):
     version("3.15.2", sha256="c87135989c4d95b9c92a5b615a95eddc34b69dad9cc28b27d3cb7dfaec46177b")
     version("3.15.1", sha256="bcdab6d2101ae00e189f4b33072805358cee2dda806a6b6a8e3c2f1b9f619dfd")
     version("3.15.0", sha256="2f5f5cc25ab4dd3782046c65e97265b39be0cf9cc74c5c0100c3c580c3c32395")
-    version(
-        "3.13.0",
-        sha256="780eff0eea1a5217642d23cd563786ef22df27e1d772a1b0bb4ccc5701df5ea5",
-        deprecated=True,
-    )
-    version(
-        "3.12.0",
-        sha256="d8c06953b7d00f529a9a7fd016dfa8efdf1d05995baeea7688d1d59611f424f7",
-        deprecated=True,
-    )
-    version(
-        "3.11.0",
-        sha256="1e591056beee209f585cd781e5fe88174cd2a61215716a71d9eaaf9411b6a775",
-        deprecated=True,
-    )
 
     patch("ldshared.patch", when="@:3.18")
+
+    depends_on("c", type="build")
 
     depends_on("py-cython@3:", when="@3.20:", type="build")
     depends_on("py-cython@0.29.32:", when="^python@3.11:", type="build")
@@ -74,20 +65,7 @@ class PySlepc4py(PythonPackage):
 
     depends_on("py-petsc4py@main", when="@main", type=("build", "run"))
     depends_on("slepc@main", when="@main")
-    for ver in [
-        "3.23",
-        "3.22",
-        "3.21",
-        "3.20",
-        "3.19",
-        "3.18",
-        "3.17",
-        "3.16",
-        "3.15",
-        "3.13",
-        "3.12",
-        "3.11",
-    ]:
+    for ver in ["3.24", "3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15"]:
         depends_on(f"py-petsc4py@{ver}", when=f"@{ver}", type=("build", "run"))
         depends_on(f"slepc@{ver}", when=f"@{ver}")
 

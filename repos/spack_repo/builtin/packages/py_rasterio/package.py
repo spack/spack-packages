@@ -22,7 +22,8 @@ class PyRasterio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
-    version("master", branch="master", deprecated=True)
+    version("1.5.0", sha256="1e0ea56b02eea4989b36edf8e58a5a3ef40e1b7edcb04def2603accd5ab3ee7b")
+    version("1.4.4", sha256="c95424e2c7f009b8f7df1095d645c52895cd332c0c2e1b4c2e073ea28b930320")
     version("1.4.3", sha256="201f05dbc7c4739dacb2c78a1cf4e09c0b7265b0a4d16ccbd1753ce4f2af350a")
     version("1.4.2", sha256="1be35ccb4d998a4c48fa51bbee9e37927ecd9b9e954a2b2581b8f3e9bb165332")
     version("1.4.1", sha256="d750362bb792d2311f94803ff309baec48486ecba75c9b905ea9b1f5eb06ef9f")
@@ -41,35 +42,26 @@ class PyRasterio(PythonPackage):
     version("1.3.0", sha256="90171035e5b201cdb85a9abd60181426366040d4ca44706958db982a030f8dc4")
     version("1.2.10", sha256="6062456047ba6494fe18bd0da98a383b6fad5306b16cd52a22e76c59172a2b5f")
     version("1.2.3", sha256="d8c345e01052b70ac3bbbe100c83def813c0ab19f7412c2c98e553d03720c1c5")
-    version(
-        "1.1.8",
-        sha256="f7cac7e2ecf65b4b1eb78c994c63bd429b67dc679b0bc0ecfe487d3d5bf88fd5",
-        deprecated=True,
-    )
-    version(
-        "1.1.5",
-        sha256="ebe75c71f9257c780615caaec8ef81fa4602702cf9290a65c213e1639284acc9",
-        deprecated=True,
-    )
 
-    # From pyproject.toml
     with default_args(type="build"):
+        depends_on("py-setuptools@77.0.3:", when="@1.5:")
         depends_on("py-setuptools@67.8:", when="@1.3.9:")
-        depends_on("py-cython@3.0.2:3", when="@1.3.10:")
+        depends_on("py-cython@3.1:3", when="@1.4.4:")
+        depends_on("py-cython@3.0.2:3", when="@1.3.10:1.4.3")
         depends_on("py-cython@0.29.29:", when="@1.3.3:1.3.9")
         depends_on("py-cython@0.29.24:0.29", when="@1.3.0:1.3.2")
 
-    # From setup.py
     with default_args(type=("build", "link", "run")):
+        depends_on("python@3.12:", when="@1.5:")
+        depends_on("python@3.10:", when="@1.4.4:")
         depends_on("python@3.9:", when="@1.4:")
         depends_on("python@3.8:", when="@1.3:")
         depends_on("python@3.6:3.9", when="@1.2")
-        depends_on("python@2.7:2.8,3.5:3.8", when="@1.1")
 
+        depends_on("py-numpy@2:", when="@1.5:")
         depends_on("py-numpy@1.24:", when="@1.4:")
         depends_on("py-numpy@1.18:", when="@1.3:")
         depends_on("py-numpy@1.15:", when="@1.2:")
-        depends_on("py-numpy")
         # https://github.com/rasterio/rasterio/issues/3024
         depends_on("py-numpy@:1", when="@:1.3.9")
 
@@ -80,20 +72,30 @@ class PyRasterio(PythonPackage):
         depends_on("py-click@4:", when="@1.2.4:")
         depends_on("py-click@4:7", when="@:1.2.3")
         depends_on("py-cligj@0.5:")
-        depends_on("py-importlib-metadata", when="@1.3.10: ^python@:3.9")
-        depends_on("py-click-plugins")
         depends_on("py-pyparsing")
 
         # Historical dependencies
+        depends_on("py-click-plugins", when="@:1.4")
+        depends_on("py-importlib-metadata", when="@1.3.10: ^python@:3.9")
         depends_on("py-setuptools", when="@:1.3.9")
         depends_on("py-snuggs@1.4.1:", when="@:1.3")
 
     # From README.rst and setup.py
+    depends_on("gdal@3.8:", when="@1.5:")
+    depends_on("gdal@3.6:", when="@1.4.4:")
     depends_on("gdal@3.5:", when="@1.4:")
     depends_on("gdal@3.1:", when="@1.3:")
     depends_on("gdal@2.4:3.3", when="@1.2.7:1.2")
     depends_on("gdal@2.3:3.2", when="@1.2.0:1.2.6")
-    depends_on("gdal@1.11:3.2", when="@1.1.0:1.1")
 
+    # https://github.com/rasterio/rasterio/issues/3371
+    conflicts("^gdal@3.11:", when="@:1.4.3")
     # https://github.com/rasterio/rasterio/pull/3212
     conflicts("^gdal@3.10:", when="@:1.4.1")
+
+    # ensure cython absolutely gets the right gdal and embeds the correct rpaths
+    def setup_build_environment(self, env):
+        gdal = self.spec["gdal"]
+        # looks for this envar in setup.py
+        env.set("GDAL_CONFIG", join_path(gdal.prefix.bin, "gdal-config"))
+        env.prepend_path("LDFLAGS", f"-Wl,-rpath,{gdal.libs.directories[0]}")

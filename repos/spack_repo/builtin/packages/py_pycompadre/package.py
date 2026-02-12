@@ -22,6 +22,7 @@ class PyPycompadre(PythonPackage):
     maintainers("kuberry")
 
     version("master", branch="master")
+    version("1.6.2", sha256="ad4122feed81e9f661ee86e73ad4bf53dbfb2470b389a4ea31e6c8d727c8bec8")
     version("1.6.0", sha256="5d937f85c2e64b50955beab1ac9f1083162f5239a5f13a40ef9a9c0e6ad216c9")
     version("1.5.0", sha256="b7dd6020cc5a7969de817d5c7f6c5acceaad0f08dcfd3d7cacfa9f42e4c8b335")
     version("1.4.1", sha256="2e1e7d8e30953f76b6dc3a4c86ec8103d4b29447194cb5d5abb74b8e4099bdd9")
@@ -49,6 +50,7 @@ class PyPycompadre(PythonPackage):
     depends_on("python@3.6:", type=("build", "link", "run"), when="@1.6:")
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.23:", type="build")
+    depends_on("py-pybind11", type="build")
 
     # fixes duplicate symbol issue with static library build
     patch(

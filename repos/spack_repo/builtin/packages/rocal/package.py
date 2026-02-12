@@ -12,11 +12,18 @@ class Rocal(CMakePackage):
     of storage formats and modify them through a processing graph programmable by the user."""
 
     homepage = "https://github.com/ROCm/rocAL"
-    url = "https://github.com/ROCm/rocAL/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rocAL/archive/refs/tags/rocm-6.4.3.tar.gz"
+    tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("7.1.1", sha256="e1ce21471a3f91eb26245daf0720e8ac52c95a382cbc6918b90cc1721c881f5f")
+    version("7.1.0", sha256="670ef46f6b39311cdba7752069fd831c9146c88636a9c185dfa10cdc304b9682")
+    version("7.0.2", sha256="ae9cde0d4bd4bb1d32899ac7f47679ec1b5ff5719dc91206f1911b4957b3f115")
+    version("7.0.0", sha256="f971874b0f2f552a15482a3714c8cca335996e5a747c25f9c19d50a4d2304b3c")
+    version("6.4.3", sha256="b25798a37372e671fa8e73a6c0ca651ccec8231ef71441b24614f0aa157811ff")
+    version("6.4.2", sha256="0ec6508d95fe1dbe5b711e6c0ee226790ca7245640fa0702f1ddc76f8981f691")
     version("6.4.1", sha256="9ed8949b7a0c588b6ab8b804e353819314659cedfecfdf91fffc1c73f33d3014")
     version("6.4.0", sha256="6239caa398c2779c1c7ecff3cebe7d206cd2fa591c1800f6f2ae16329876dd4a")
     version("6.3.3", sha256="aaccd951f176356561d8ab8210696d80a94553fd48ace72993a7cfac4b98d6cf")
@@ -34,7 +41,23 @@ class Rocal(CMakePackage):
     depends_on("ffmpeg@4.4:")
     depends_on("abseil-cpp", when="@6.3:")
 
-    for ver in ["6.2.0", "6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in [
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
         depends_on(f"mivisionx@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rpp@{ver}", when=f"@{ver}")
@@ -42,7 +65,7 @@ class Rocal(CMakePackage):
     patch(
         "https://github.com/ROCm/rocAL/commit/357dfcb25b9ff959615efa45736d4368cf7b51fd.patch?full_index=1",
         sha256="5df45c3a0e870d6e6310a23071e05f1795a450eef5fde6445cb37caf2653a86f",
-        when="@6.4:",
+        when="@6.4",
     )
 
     def patch(self):

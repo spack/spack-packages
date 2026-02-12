@@ -18,6 +18,7 @@ class PythonVenv(Package):
 
     tags = ["build-tools"]
 
+    license("0BSD")
     maintainers("haampie")
 
     version("1.0")
@@ -58,6 +59,7 @@ class PythonVenv(Package):
         python_name = "python" if self.spec.satisfies("platform=windows") else "python3"
         return which(python_name, path=self.bindir, required=True)
 
+    @memoized
     def _get_path(self, name) -> str:
         return self.command(
             "-Ec", f"import sysconfig; print(sysconfig.get_path('{name}'))", output=str

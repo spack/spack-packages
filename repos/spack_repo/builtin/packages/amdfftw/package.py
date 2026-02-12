@@ -39,11 +39,9 @@ class Amdfftw(FftwBase):
 
     license("GPL-2.0-only")
 
-    version(
-        "5.0",
-        sha256="bead6c08309a206f8a6258971272affcca07f11eb57b5ecd8496e2e7e3ead877",
-        preferred=True,
-    )
+    version("5.2", sha256="143c7a936fd197a94551aa1c67d7ae7cbf7d96338947aa21d3007df7aea46c78")
+    version("5.1", sha256="4cc0d6985afc5ce14cafc195ad46d9876ac4f35b959861b41a3b681385d7320d")
+    version("5.0", sha256="bead6c08309a206f8a6258971272affcca07f11eb57b5ecd8496e2e7e3ead877")
     version("4.2", sha256="391ef7d933e696762e3547a35b58ab18d22a6cf3e199c74889bcf25a1d1fc89b")
     version("4.1", sha256="f1cfecfcc0729f96a5bd61c6b26f3fa43bb0662d3fff370d4f73490c60cf4e59")
     version("4.0", sha256="5f02cb05f224bd86bd88ec6272b294c26dba3b1d22c7fb298745fd7b9d2271c0")

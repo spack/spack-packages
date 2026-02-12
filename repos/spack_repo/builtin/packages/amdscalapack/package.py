@@ -33,11 +33,10 @@ class Amdscalapack(ScalapackBase):
     tags = ["e4s"]
 
     license("BSD-3-Clause-Open-MPI")
-    version(
-        "5.0",
-        sha256="a33cf16c51cfd65c7acb5fbdb8884a5c147cdefea73931b07863c56d54f812cc",
-        preferred=True,
-    )
+
+    version("5.2", sha256="ff01f0f39c9e6d44fa493e1c68d9862d2600f425e9caaec1fe5179c10debf1d9")
+    version("5.1", sha256="92f6f6b2081e27731c8b9e96c742203777cc7f2a848b96ca7511f4d259142b37")
+    version("5.0", sha256="a33cf16c51cfd65c7acb5fbdb8884a5c147cdefea73931b07863c56d54f812cc")
     version("4.2", sha256="c6e9a846c05cdc05252b0b5f264164329812800bf13f9d97c77114dc138e6ccb")
     version("4.1", sha256="b2e51c3604e5869d1faaef2e52c92071fcb3de1345aebb2ea172206622067ad9")
     version("4.0", sha256="f02913b5984597b22cdb9a36198ed61039a1bf130308e778dc31b2a7eb88b33b")

@@ -48,6 +48,7 @@ class Nlcglib(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.23:", type="build")
     depends_on("mpi")
     depends_on("lapack")
+    depends_on("fmt", when="@1.3:")
 
     requires(
         "^[virtuals=lapack] openblas",

@@ -26,6 +26,7 @@ class Geant4(CMakePackage):
 
     maintainers("drbenmorgan", "sethrj")
 
+    version("11.4.0", sha256="a6d78cf70ba46902cb74ff65d09dc2d1e46b4ab9325862f84e439f0d4ec329fb")
     version("11.3.2", sha256="077edca6aa3b3940f351cf9a948457cad3fb117f215b88c52cce315e1a07fd7a")
     version("11.3.1", sha256="9059da076928f25cab1ff1f35e0f611a4d7fe005e374e9b8d7f3ff2434b7af54")
     version("11.3.0", sha256="d9d71daff8890a7b5e0e33ea9a65fe6308ad6713000b43ba6705af77078e7ead")
@@ -70,7 +71,7 @@ class Geant4(CMakePackage):
     )
 
     variant("threads", default=True, description="Build with multithreading")
-    variant("vecgeom", default=False, description="Enable vecgeom support", when="@10.4:")
+    variant("vecgeom", default=False, description="Enable vecgeom support", when="@10.7:")
     variant("opengl", default=False, description="Optional OpenGL support")
     variant("x11", default=False, description="Optional X11 support")
     variant("motif", default=False, description="Optional motif support")
@@ -78,7 +79,7 @@ class Geant4(CMakePackage):
     variant("hdf5", default=False, description="Enable HDF5 support", when="@10.4:")
     variant("python", default=False, description="Enable Python bindings", when="@10.6.2:11.0")
     variant("tbb", default=False, description="Use TBB as a tasking backend", when="@11:")
-    variant("timemory", default=False, description="Use TiMemory for profiling", when="@9.5:")
+    variant("timemory", default=False, description="Use TiMemory for profiling", when="@9.5:11.2")
     variant("vtk", default=False, description="Enable VTK support", when="@11:")
 
     # For most users, obtaining the Geant4 data via Spack will be useful; the
@@ -141,7 +142,8 @@ class Geant4(CMakePackage):
         "11.1",
         "11.2.0:11.2.1",
         "11.2.2:11.2",
-        "11.3:",
+        "11.3",
+        "11.4:",
     ]:
         depends_on("geant4-data@" + _vers, type="run", when="+data @" + _vers)
 
@@ -157,6 +159,7 @@ class Geant4(CMakePackage):
     extends("python", when="+python")
 
     # CLHEP version requirements to be reviewed
+    depends_on("clhep@2.4.7.2:", when="@11.4:")
     depends_on("clhep@2.4.7.1:", when="@11.3:")
     depends_on("clhep@2.4.6.0:", when="@11.1:")
     depends_on("clhep@2.4.5.1:", when="@11.0.0:")
@@ -166,14 +169,10 @@ class Geant4(CMakePackage):
 
     # Vecgeom specific versions for each Geant4 version
     with when("+vecgeom"):
-        depends_on("vecgeom@1.2.8:", when="@11.3:")
         depends_on("vecgeom@1.2.6:", when="@11.2:")
         depends_on("vecgeom@1.2.0:", when="@11.1")
         depends_on("vecgeom@1.1.18:1.1", when="@11.0.0:11.0")
         depends_on("vecgeom@1.1.8:1.1", when="@10.7.0:10.7")
-        depends_on("vecgeom@1.1.5", when="@10.6.0:10.6")
-        depends_on("vecgeom@1.1.0", when="@10.5.0:10.5")
-        depends_on("vecgeom@0.5.2", when="@10.4.0:10.4")
 
     with when("+hdf5"):
         depends_on("hdf5 +threadsafe")
@@ -201,7 +200,8 @@ class Geant4(CMakePackage):
             depends_on("qt-base +accessibility +gui +opengl")
         with when("^[virtuals=qmake] qt"):
             depends_on("qt@5: +opengl")
-            depends_on("qt@5.9:", when="@11.2:")
+            depends_on("qt@5.9:", when="@11.2:11.3")
+    conflicts("@11.4: ^[virtuals=qmake] qt", msg="Qt5 not supported in 11.4 and later")
     conflicts("@:11.1 ^[virtuals=qmake] qt-base", msg="Qt6 not supported before 11.2")
 
     # CMAKE PROBLEMS #

@@ -8,6 +8,14 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack.package import *
 
 
+# Submodules are only required for ODD
+def submodules(package):
+    submodules = []
+    if package is None or package.spec.satisfies("+odd"):
+        submodules.append("thirdparty/OpenDataDetector")
+    return submodules
+
+
 class Acts(CMakePackage, CudaPackage):
     """
     A Common Tracking Software (Acts)
@@ -26,7 +34,7 @@ class Acts(CMakePackage, CudaPackage):
     measurements.
 
     Key features of this project include: tracking geometry description which
-    can be constructed from TGeo, DD4Hep, or GDML input, simple and efficient
+    can be constructed from ROOT, DD4Hep, or GDML input, simple and efficient
     event data model, performant and highly flexible algorithms for track
     propagation and fitting, basic seed finding algorithms.
     """
@@ -42,162 +50,176 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
-    version("master", branch="main", deprecated=True)  # For compatibility
-    version("39.2.0", commit="94cf48783efd713f38106b18211d1c59f4e8cdec", submodules=True)
-    version("39.1.0", commit="09225b0d0bba24d57a696e347e3027b39404bb75", submodules=True)
-    version("39.0.0", commit="b055202e2fbdd509bc186eb4782714bc46f38f3f", submodules=True)
-    version("38.2.0", commit="9cb8f4494656553fd9b85955938b79b2fac4c9b0", submodules=True)
-    version("38.1.0", commit="8a20c88808f10bf4fcdfd7c6e077f23614c3ab90", submodules=True)
-    version("38.0.0", commit="0a6b5155e29e3b755bf351b8a76067fff9b4214b", submodules=True)
-    version("37.4.0", commit="4ae9a44f54c854599d1d753222ec36e0b5b4e9c7", submodules=True)
-    version("37.3.0", commit="b3e856d4dadcda7d1a88a9b846ce5a7acd8410c4", submodules=True)
-    version("37.2.0", commit="821144dc40d35b44aee0d7857a0bd1c99e4a3932", submodules=True)
-    version("37.1.0", commit="fa6ad4d52e0bd09cf8c78507fcbb18e9ac2c87a3", submodules=True)
-    version("37.0.1", commit="998b9c9dd42d5160c2540f8fa820505869bfdb79", submodules=True)
-    version("37.0.0", commit="117feaaadc7a2336755274e0cd70ba58a047a1de", submodules=True)
-    version("36.3.2", commit="01e124d253a3c9c9b9f5d2fde16682ce9d4599cd", submodules=True)
-    version("36.3.1", commit="b58e5b0c33fb8423ce60a6a45f333edd0d178acd", submodules=True)
-    version("36.3.0", commit="3b875cebabdd10462e224279558429f49ed75945", submodules=True)
-    version("36.2.0", commit="e2fb53da911dc481969e56d635898a46b8d78df9", submodules=True)
-    version("36.1.0", commit="3f19d1a0eec1d11937d66d0ef603f0b25b9b4e96", submodules=True)
-    version("36.0.0", commit="6eca77c45b136861272694edbb61bb77200948a5", submodules=True)
-    version("35.2.0", commit="b3b09f46d064c43050dd3d21cdf51d7a412134fc", submodules=True)
-    version("35.1.0", commit="9dfb47b8edeb8b9c75115462079bcb003dd3f031", submodules=True)
-    version("35.0.0", commit="352b423ec31934f825deb9897780246d60ffc44e", submodules=True)
-    version("34.1.0", commit="8e1b7a659d912cd98db9d700906ff59e708da574", submodules=True)
-    version("34.0.0", commit="daafd83adf0ce50f9667f3c9d4791a459e39fd1b", submodules=True)
-    version("33.1.0", commit="00591a593a648430820e980b031301d25c18f1c7", submodules=True)
-    version("33.0.0", commit="f6ed9013e76120137ae456583a04b554d88d9452", submodules=True)
-    version("32.1.0", commit="5333c67b49b4bfcd45558090e4ba37b4f86b82db", submodules=True)
-    version("32.0.2", commit="3d23e16a2d0ba68ce5a596ced16883f90de1fae4", submodules=True)
-    version("32.0.1", commit="6317634ec16eb40e52ca85445a014e378c9a4829", submodules=True)
-    version("32.0.0", commit="9385e36691bb2687437c39ad02ddb2ac21acccdc", submodules=True)
-    version("31.2.0", commit="1d2e90f534ff2c9bf1c40914980b426f4b5d3096", submodules=True)
-    version("31.1.0", commit="95c3ceef79a7b68fcfc7fd558c3134d0c7529dac", submodules=True)
-    version("31.0.0", commit="2cf3fe0254d2bf9434899fdcfbe316366a970956", submodules=True)
-    version("30.3.2", commit="76826f208f5929d8326798c87263f2563d0ae7e9", submodules=True)
-    version("30.3.1", commit="bbee459dd93855417d5717d53cbbb2bace7de2bb", submodules=True)
-    version("30.3.0", commit="311acb9ab41c2d79a4b90b193e5b25297182d670", submodules=True)
-    version("30.2.0", commit="264b0a3214cbf8ca013623fc196e2d90d647c58f", submodules=True)
-    version("30.1.1", commit="3d43492b2775e62051e9ad31f06b91d6e2357ab9", submodules=True)
-    version("30.1.0", commit="60d9eec916f6c81373858c8d99d821861d7efeb8", submodules=True)
-    version("30.0.0", commit="00fa3fabac86a1e65198d4b94dd263b1c731a84c", submodules=True)
-    version("29.2.0", commit="b2d65308399d8f653fa8bdd73a2a203c58608358", submodules=True)
-    version("29.1.0", commit="4681c3b142db469b00ca03e92e6b237f7c89d141", submodules=True)
-    version("29.0.0", commit="9c6e4597af39f826e17d46850fdb407a48817ba6", submodules=True)
-    version("28.2.0", commit="c612e7c625f961330e383fb7856cc7398dd82881", submodules=True)
-    version("28.1.0", commit="08e51b5f93c0d09f2d1e7e4f062e715072ec3e9b", submodules=True)
-    version("28.0.0", commit="0d8aa418c00e8f79bab2cf88234f3433670b447c", submodules=True)
-    version("27.1.0", commit="219480220738318fbedb943cac85415687d75b66", submodules=True)
-    version("27.0.0", commit="4d7029bd4e9285fcda2770aef6d78a7f833cb14f", submodules=True)
-    version("26.0.0", commit="d43af5c3bcf44f593721940e569ba267579e0334", submodules=True)
-    version("25.0.1", commit="1772d2a1a96acfd918a538c14a9e24fe7ce7f50b", submodules=True)
-    version("25.0.0", commit="c7b538d7b92fe6bffd619de7885b7ea97ddcd26a", submodules=True)
-    version("24.0.0", commit="4da149cd27ae3802a54f21a48e1757e475aa8189", submodules=True)
-    version("23.5.0", commit="8fad985ab78ceb9aaec25d1f658197833e4586fa", submodules=True)
-    version("23.4.0", commit="52723f7e7a2e6f9f59d6d7ca1cf183ca1cd43380", submodules=True)
-    version("23.3.0", commit="ec3e69da90b9dff52bdbe30cb7953417b6184d4b", submodules=True)
-    version("23.2.1", commit="a9fe5167d4d3b6b53b28d3b17060a5f3e380cf3a", submodules=True)
-    version("23.2.0", commit="bc3120d23a72cfdd0ea8f9a0997f59caf311672b", submodules=True)
-    version("23.1.0", commit="4479f182a37650a538344f749b967d6f757bdf60", submodules=True)
-    version("23.0.0", commit="5af1b1b5feb8ca8f4c2c69106a1b9ef612c70d9c", submodules=True)
-    version("22.0.1", commit="a4ac99dd72828c5eb3fac06e146f3391958fca8c", submodules=True)
-    version("22.0.0", commit="0fb6f8d2ace65338915451201e9ceb6cee11fb5e", submodules=True)
-    version("21.1.1", commit="8ae825de246e8e574d05d9eaf05ba4a937c69aa9", submodules=True)
-    version("21.1.0", commit="3b4b5c741c8541491d496a36b917b00b344d52d1", submodules=True)
-    version("21.0.0", commit="d8cb0fac3a44e1d44595a481f977df9bd70195fb", submodules=True)
-    version("20.3.0", commit="b1859b322744cb033328fd57d9e74fb5326aa56b", submodules=True)
-    version("20.2.0", commit="7750c1d24714314e8de716b92ebcd4a92cc4e303", submodules=True)
-    version("20.1.0", commit="be36226fb1be88d7be7c9b17a1c1f6e76ff0e006", submodules=True)
-    version("20.0.0", commit="3740e6cdbfb1f75d8e481686acdfa5b16d3c41a3", submodules=True)
-    version("19.11.0", commit="d56ca2583e55b48e77c853b7c567070d07fc1cae", submodules=True)
-    version("19.10.0", commit="2d07f60eb2280a46af1085600ec8327679bbb630", submodules=True)
-    version("19.9.0", commit="b655e18929ae0ccb6926d8e217b1b3fc02978d35", submodules=True)
-    version("19.8.0", commit="7582072dbaa70802264f20b392de4313afd25667", submodules=True)
-    version("19.7.0", commit="03cf7a3ae74b632b3f89416dc27cc993c9ae4628", submodules=True)
-    version("19.6.0", commit="333082914e6a51b381abc1cf52856829e3eb7890", submodules=True)
-    version("19.5.0", commit="bf9f0270eadd8e78d283557b7c9070b80dece4a7", submodules=True)
-    version("19.4.0", commit="498af243755219486c26d32fb125b7ebf2557166", submodules=True)
-    version("19.3.0", commit="747053f60254c5ad3aa1fe7b18ae89c19029f4a6", submodules=True)
-    version("19.2.0", commit="adf079e0f7e278837093bf53988da73730804e22", submodules=True)
-    version("19.1.0", commit="82f42a2cc80d4259db251275c09b84ee97a7bd22", submodules=True)
-    version("19.0.0", commit="1ce9c583150060ba8388051685433899713d56d9", submodules=True)
-    version("18.0.0", commit="fe03b5af6ca2b092dec87c4cef77dd552bbbe719", submodules=True)
-    version("17.1.0", commit="0d9c3a6da022da48d6401e10c273896a1f775a9e", submodules=True)
-    version("17.0.0", commit="ccbf4c7d4ec3698bac4db9687fab2455a3f9c203", submodules=True)
-    version("16.0.0", commit="9bd86921155e708189417b5a8019add10fd5b273", submodules=True)
-    version("15.1.0", commit="a96e6db7de6075e85b6d5346bc89845eeb89b324", submodules=True)
-    version("15.0.1", commit="b9469b8914f6a1bc47af0998eb7c9e8e20e4debc", submodules=True)
-    version("15.0.0", commit="0fef9e0831a90e946745390882aac871b211eaac", submodules=True)
-    version("14.1.0", commit="e883ab6acfe5033509ad1c27e8e2ba980dfa59f6", submodules=True)
-    version("14.0.0", commit="f902bef81b60133994315c13f7d32d60048c79d8", submodules=True)
-    version("13.0.0", commit="ad05672e48b693fd37156f1ad62ed57aa82f858c", submodules=True)
-    version("12.0.1", commit="a80d1ef995d8cdd4190cc09cb249276a3e0161f4", submodules=True)
-    version("12.0.0", commit="e0aa4e7dcb70df025576e050b6e652a2f736454a", submodules=True)
-    version("11.0.0", commit="eac3def261f65b343af6d8ce4bc40443ac57b57e")
-    version("10.0.0", commit="9bfe0b83f277f686408b896a84d2b9b53610f623")
-    version("9.02.0", commit="c438ee490e94eaf1c854a336ef54f398da637a48")
-    version("9.01.0", commit="bf8fd4c03dd94f497d8501df510d8f6a48434afd")
-    version("9.00.1", commit="7d59bc508d898d2cb67ba05a7150a978b9fcc32d")
-    version("9.00.0", commit="e6e3092bf3a9411aac7c11a24d7586abddb75d59")
-    version("8.03.0", commit="601c0a18b6738cae81c3e23422cfeb3ec7bddce9")
-    version("8.02.0", commit="f25cf639915fc2ac65b03882ad3eb11fb037ed00")
-    version("8.01.0", commit="ccc8c77bbc011f3adc020c565a509815be0ea029")
-    version("8.00.0", commit="50c972823144c007b406ae12d7ca25a1e0c35532")
-    version("7.00.0", commit="e663df7ab023bdb5ef206202efc2e54ccb71d416")
-    version("6.00.0", commit="a5cf04acd4b1a2c625e0826189109472a3392558")
-    version("5.00.0", commit="df77b91a7d37b8db6ed028a4d737014b5ad86bb7")
-    version("4.01.0", commit="c383bf434ef69939b47e840e0eac0ba632e6af9f")
-    version("4.00.0", commit="ed64b4b88d366b63adc4a8d1afe5bc97aa5751eb")
-    version("3.00.0", commit="e20260fccb469f4253519d3f0ddb3191b7046db3")
-    version("2.00.0", commit="8708eae2b2ccdf57ab7b451cfbba413daa1fc43c")
-    version("1.02.1", commit="f6ebeb9a28297ba8c54fd08b700057dd4ff2a311")
-    version("1.02.0", commit="e69b95acc9a264e63aded7d1714632066e090542")
-    version("1.01.0", commit="836fddd02c3eff33825833ff97d6abda5b5c20a0")
-    version("1.00.0", commit="ec9ce0bcdc837f568d42a12ddf3fc9c80db62f5d")
-    version("0.32.0", commit="a4cedab7e727e1327f2835db29d147cc86b21054")
-    version("0.31.0", commit="cfbd901555579a2f32f4efe2b76a7048442b42c3")
-    version("0.30.0", commit="a71ef0a9c742731611645214079884585a92b15e")
-    version("0.29.0", commit="33aa3e701728112e8908223c4a7fd521907c8ea4")
-    version("0.28.0", commit="55626b7401eeb93fc562e79bcf385f0ad0ac48bf")
-    version("0.27.1", commit="8ba3010a532137bc0ab6cf83a38b483cef646a01")
-    version("0.27.0", commit="f7b1a1c27d5a95d08bb67236ad0e117fcd1c679f")
-    version("0.26.0", commit="cf542b108b31fcc349fc18fb0466f889e4e42aa6")
-    version("0.25.2", commit="76bf1f3e4be51d4d27126b473a2caa8d8a72b320")
-    version("0.25.1", commit="6e8a1ea6d2c7385a78e3e190efb2a8a0c1fa957f")
-    version("0.25.0", commit="0aca171951a214299e8ff573682b1c5ecec63d42")
-    version("0.24.0", commit="ef4699c8500bfea59a5fe88bed67fde2f00f0adf")
-    version("0.23.0", commit="dc443dd7e663bc4d7fb3c1e3f1f75aaf57ffd4e4")
-    version("0.22.1", commit="ca1b8b1645db6b552f44c48d2ff34c8c29618f3a")
-    version("0.22.0", commit="2c8228f5843685fc0ae69a8b95dd8fc001139efb")
-    version("0.21.0", commit="10b719e68ddaca15b28ac25b3daddce8c0d3368d")
-    version("0.20.0", commit="1d37a849a9c318e8ca4fa541ef8433c1f004637b")
-    version("0.19.0", commit="408335636486c421c6222a64372250ef12544df6")
-    version("0.18.0", commit="d58a68cf75b52a5e0f563bc237f09250aa9da80c")
-    version("0.17.0", commit="0789f654ff484b013fd27e5023cf342785ea8d97")
-    version("0.16.0", commit="b3d965fe0b8ae335909d79114ef261c6b996773a")
-    version("0.15.0", commit="267c28f69c561e64369661a6235b03b5a610d6da")
-    version("0.14.0", commit="38d678fcb205b77d60326eae913fbb1b054acea1")
-    version("0.13.0", commit="b33f7270ddbbb33050b7ec60b4fa255dc2bfdc88")
-    version("0.12.1", commit="a8b3d36e7c6cb86487637589e0eff7bbe626054a")
-    version("0.12.0", commit="f9cda77299606d78c889fb1db2576c1971a271c4")
-    version("0.11.1", commit="c21196cd6c3ecc6da0f14d0a9ef227a274be584b")
-    version("0.11.0", commit="22bcea1f19adb0021ca61b843b95cfd2462dd31d")
-    version("0.10.5", commit="b6f7234ca8f18ee11e57709d019c14bf41cf9b19")
-    version("0.10.4", commit="42cbc359c209f5cf386e620b5a497192c024655e")
-    version("0.10.3", commit="a3bb86b79a65b3d2ceb962b60411fd0df4cf274c")
-    version("0.10.2", commit="64cbf28c862d8b0f95232b00c0e8c38949d5015d")
-    version("0.10.1", commit="0692dcf7824efbc504fb16f7aa00a50df395adbc")
-    version("0.10.0", commit="30ef843cb00427f9959b7de4d1b9843413a13f02")
-    version("0.09.5", commit="12b11fe8b0d428ccb8e92dda7dc809198f828672")
-    version("0.09.4", commit="e5dd9fbe179201e70347d1a3b9fa1899c226798f")
-    version("0.09.3", commit="a8f31303ee8720ed2946bfe2d59e81d0f70e307e")
-    version("0.09.2", commit="4e1f7fa73ffe07457080d787e206bf6466fe1680")
-    version("0.09.1", commit="69c451035516cb683b8f7bc0bab1a25893e9113d")
-    version("0.09.0", commit="004888b0a412f5bbaeef2ffaaeaf2aa182511494")
-    version("0.08.2", commit="c5d7568714e69e7344582b93b8d24e45d6b81bf9")
-    version("0.08.1", commit="289bdcc320f0b3ff1d792e29e462ec2d3ea15df6")
-    version("0.08.0", commit="99eedb38f305e3a1cd99d9b4473241b7cd641fa9")
+    version("45.0.0", commit="92ab57740f8e875555ea28f542844ac1eb5db65b")
+    version("44.4.0", commit="a05c35a14b39a461925d11de12ccd2da5e38b3d1")
+    version("44.3.0", commit="d4c630145d5050dd2edc58f1de0c872caff23dd8")
+    version("44.2.0", commit="c3d440eb1e441fcd15995b8af87ea1497e0cc126")
+    version("44.1.0", commit="9c79dd801e4ab1e2485c3198cc6b987ec1369e5b", submodules=submodules)
+    version("44.0.1", commit="404f40aaa6211231b6c6726a364b08134a2e3fa4", submodules=submodules)
+    version("44.0.0", commit="d5d65c794d3676034f37d89e555c131b5b7ad807", submodules=submodules)
+    # NOTE: Versions between 39.2.0 and 44.0.0 are not available via Spack,
+    # as they cannot be built without downloading third-party dependencies
+    # from remote, non-Spack sources.
+    version("39.2.0", commit="94cf48783efd713f38106b18211d1c59f4e8cdec", submodules=submodules)
+    version("39.1.0", commit="09225b0d0bba24d57a696e347e3027b39404bb75", submodules=submodules)
+    version("39.0.0", commit="b055202e2fbdd509bc186eb4782714bc46f38f3f", submodules=submodules)
+    version("38.2.0", commit="9cb8f4494656553fd9b85955938b79b2fac4c9b0", submodules=submodules)
+    version("38.1.0", commit="8a20c88808f10bf4fcdfd7c6e077f23614c3ab90", submodules=submodules)
+    version("38.0.0", commit="0a6b5155e29e3b755bf351b8a76067fff9b4214b", submodules=submodules)
+    with default_args(deprecated=True):
+        version("37.4.0", commit="4ae9a44f54c854599d1d753222ec36e0b5b4e9c7", submodules=submodules)
+        version("37.3.0", commit="b3e856d4dadcda7d1a88a9b846ce5a7acd8410c4", submodules=submodules)
+        version("37.2.0", commit="821144dc40d35b44aee0d7857a0bd1c99e4a3932", submodules=submodules)
+        version("37.1.0", commit="fa6ad4d52e0bd09cf8c78507fcbb18e9ac2c87a3", submodules=submodules)
+        version("37.0.1", commit="998b9c9dd42d5160c2540f8fa820505869bfdb79", submodules=submodules)
+        version("37.0.0", commit="117feaaadc7a2336755274e0cd70ba58a047a1de", submodules=submodules)
+        version("36.3.2", commit="01e124d253a3c9c9b9f5d2fde16682ce9d4599cd", submodules=submodules)
+        version("36.3.1", commit="b58e5b0c33fb8423ce60a6a45f333edd0d178acd", submodules=submodules)
+        version("36.3.0", commit="3b875cebabdd10462e224279558429f49ed75945", submodules=submodules)
+        version("36.2.0", commit="e2fb53da911dc481969e56d635898a46b8d78df9", submodules=submodules)
+        version("36.1.0", commit="3f19d1a0eec1d11937d66d0ef603f0b25b9b4e96", submodules=submodules)
+        version("36.0.0", commit="6eca77c45b136861272694edbb61bb77200948a5", submodules=submodules)
+        version("35.2.0", commit="b3b09f46d064c43050dd3d21cdf51d7a412134fc", submodules=submodules)
+        version("35.1.0", commit="9dfb47b8edeb8b9c75115462079bcb003dd3f031", submodules=submodules)
+        version("35.0.0", commit="352b423ec31934f825deb9897780246d60ffc44e", submodules=submodules)
+        version("34.1.0", commit="8e1b7a659d912cd98db9d700906ff59e708da574", submodules=submodules)
+        version("34.0.0", commit="daafd83adf0ce50f9667f3c9d4791a459e39fd1b", submodules=submodules)
+        version("33.1.0", commit="00591a593a648430820e980b031301d25c18f1c7", submodules=submodules)
+        version("33.0.0", commit="f6ed9013e76120137ae456583a04b554d88d9452", submodules=submodules)
+        version("32.1.0", commit="5333c67b49b4bfcd45558090e4ba37b4f86b82db", submodules=submodules)
+        version("32.0.2", commit="3d23e16a2d0ba68ce5a596ced16883f90de1fae4", submodules=submodules)
+        version("32.0.1", commit="6317634ec16eb40e52ca85445a014e378c9a4829", submodules=submodules)
+        version("32.0.0", commit="9385e36691bb2687437c39ad02ddb2ac21acccdc", submodules=submodules)
+        version("31.2.0", commit="1d2e90f534ff2c9bf1c40914980b426f4b5d3096", submodules=submodules)
+        version("31.1.0", commit="95c3ceef79a7b68fcfc7fd558c3134d0c7529dac", submodules=submodules)
+        version("31.0.0", commit="2cf3fe0254d2bf9434899fdcfbe316366a970956", submodules=submodules)
+        version("30.3.2", commit="76826f208f5929d8326798c87263f2563d0ae7e9", submodules=submodules)
+        version("30.3.1", commit="bbee459dd93855417d5717d53cbbb2bace7de2bb", submodules=submodules)
+        version("30.3.0", commit="311acb9ab41c2d79a4b90b193e5b25297182d670", submodules=submodules)
+        version("30.2.0", commit="264b0a3214cbf8ca013623fc196e2d90d647c58f", submodules=submodules)
+        version("30.1.1", commit="3d43492b2775e62051e9ad31f06b91d6e2357ab9", submodules=submodules)
+        version("30.1.0", commit="60d9eec916f6c81373858c8d99d821861d7efeb8", submodules=submodules)
+        version("30.0.0", commit="00fa3fabac86a1e65198d4b94dd263b1c731a84c", submodules=submodules)
+        version("29.2.0", commit="b2d65308399d8f653fa8bdd73a2a203c58608358", submodules=submodules)
+        version("29.1.0", commit="4681c3b142db469b00ca03e92e6b237f7c89d141", submodules=submodules)
+        version("29.0.0", commit="9c6e4597af39f826e17d46850fdb407a48817ba6", submodules=submodules)
+        version("28.2.0", commit="c612e7c625f961330e383fb7856cc7398dd82881", submodules=submodules)
+        version("28.1.0", commit="08e51b5f93c0d09f2d1e7e4f062e715072ec3e9b", submodules=submodules)
+        version("28.0.0", commit="0d8aa418c00e8f79bab2cf88234f3433670b447c", submodules=submodules)
+        version("27.1.0", commit="219480220738318fbedb943cac85415687d75b66", submodules=submodules)
+        version("27.0.0", commit="4d7029bd4e9285fcda2770aef6d78a7f833cb14f", submodules=submodules)
+        version("26.0.0", commit="d43af5c3bcf44f593721940e569ba267579e0334", submodules=submodules)
+        version("25.0.1", commit="1772d2a1a96acfd918a538c14a9e24fe7ce7f50b", submodules=submodules)
+        version("25.0.0", commit="c7b538d7b92fe6bffd619de7885b7ea97ddcd26a", submodules=submodules)
+        version("24.0.0", commit="4da149cd27ae3802a54f21a48e1757e475aa8189", submodules=submodules)
+        version("23.5.0", commit="8fad985ab78ceb9aaec25d1f658197833e4586fa", submodules=submodules)
+        version("23.4.0", commit="52723f7e7a2e6f9f59d6d7ca1cf183ca1cd43380", submodules=submodules)
+        version("23.3.0", commit="ec3e69da90b9dff52bdbe30cb7953417b6184d4b", submodules=submodules)
+        version("23.2.1", commit="a9fe5167d4d3b6b53b28d3b17060a5f3e380cf3a", submodules=submodules)
+        version("23.2.0", commit="bc3120d23a72cfdd0ea8f9a0997f59caf311672b", submodules=submodules)
+        version("23.1.0", commit="4479f182a37650a538344f749b967d6f757bdf60", submodules=submodules)
+        version("23.0.0", commit="5af1b1b5feb8ca8f4c2c69106a1b9ef612c70d9c", submodules=submodules)
+        version("22.0.1", commit="a4ac99dd72828c5eb3fac06e146f3391958fca8c", submodules=submodules)
+        version("22.0.0", commit="0fb6f8d2ace65338915451201e9ceb6cee11fb5e", submodules=submodules)
+        version("21.1.1", commit="8ae825de246e8e574d05d9eaf05ba4a937c69aa9", submodules=submodules)
+        version("21.1.0", commit="3b4b5c741c8541491d496a36b917b00b344d52d1", submodules=submodules)
+        version("21.0.0", commit="d8cb0fac3a44e1d44595a481f977df9bd70195fb", submodules=submodules)
+        version("20.3.0", commit="b1859b322744cb033328fd57d9e74fb5326aa56b", submodules=submodules)
+        version("20.2.0", commit="7750c1d24714314e8de716b92ebcd4a92cc4e303", submodules=submodules)
+        version("20.1.0", commit="be36226fb1be88d7be7c9b17a1c1f6e76ff0e006", submodules=submodules)
+        version("20.0.0", commit="3740e6cdbfb1f75d8e481686acdfa5b16d3c41a3", submodules=submodules)
+        version(
+            "19.11.0", commit="d56ca2583e55b48e77c853b7c567070d07fc1cae", submodules=submodules
+        )
+        version(
+            "19.10.0", commit="2d07f60eb2280a46af1085600ec8327679bbb630", submodules=submodules
+        )
+        version("19.9.0", commit="b655e18929ae0ccb6926d8e217b1b3fc02978d35", submodules=submodules)
+        version("19.8.0", commit="7582072dbaa70802264f20b392de4313afd25667", submodules=submodules)
+        version("19.7.0", commit="03cf7a3ae74b632b3f89416dc27cc993c9ae4628", submodules=submodules)
+        version("19.6.0", commit="333082914e6a51b381abc1cf52856829e3eb7890", submodules=submodules)
+        version("19.5.0", commit="bf9f0270eadd8e78d283557b7c9070b80dece4a7", submodules=submodules)
+        version("19.4.0", commit="498af243755219486c26d32fb125b7ebf2557166", submodules=submodules)
+        version("19.3.0", commit="747053f60254c5ad3aa1fe7b18ae89c19029f4a6", submodules=submodules)
+        version("19.2.0", commit="adf079e0f7e278837093bf53988da73730804e22", submodules=submodules)
+        version("19.1.0", commit="82f42a2cc80d4259db251275c09b84ee97a7bd22", submodules=submodules)
+        version("19.0.0", commit="1ce9c583150060ba8388051685433899713d56d9", submodules=submodules)
+        version("18.0.0", commit="fe03b5af6ca2b092dec87c4cef77dd552bbbe719", submodules=submodules)
+        version("17.1.0", commit="0d9c3a6da022da48d6401e10c273896a1f775a9e", submodules=submodules)
+        version("17.0.0", commit="ccbf4c7d4ec3698bac4db9687fab2455a3f9c203", submodules=submodules)
+        version("16.0.0", commit="9bd86921155e708189417b5a8019add10fd5b273", submodules=submodules)
+        version("15.1.0", commit="a96e6db7de6075e85b6d5346bc89845eeb89b324", submodules=submodules)
+        version("15.0.1", commit="b9469b8914f6a1bc47af0998eb7c9e8e20e4debc", submodules=submodules)
+        version("15.0.0", commit="0fef9e0831a90e946745390882aac871b211eaac", submodules=submodules)
+        version("14.1.0", commit="e883ab6acfe5033509ad1c27e8e2ba980dfa59f6", submodules=submodules)
+        version("14.0.0", commit="f902bef81b60133994315c13f7d32d60048c79d8", submodules=submodules)
+        version("13.0.0", commit="ad05672e48b693fd37156f1ad62ed57aa82f858c", submodules=submodules)
+        version("12.0.1", commit="a80d1ef995d8cdd4190cc09cb249276a3e0161f4", submodules=submodules)
+        version("12.0.0", commit="e0aa4e7dcb70df025576e050b6e652a2f736454a", submodules=submodules)
+        version("11.0.0", commit="eac3def261f65b343af6d8ce4bc40443ac57b57e")
+        version("10.0.0", commit="9bfe0b83f277f686408b896a84d2b9b53610f623")
+        version("9.02.0", commit="c438ee490e94eaf1c854a336ef54f398da637a48")
+        version("9.01.0", commit="bf8fd4c03dd94f497d8501df510d8f6a48434afd")
+        version("9.00.1", commit="7d59bc508d898d2cb67ba05a7150a978b9fcc32d")
+        version("9.00.0", commit="e6e3092bf3a9411aac7c11a24d7586abddb75d59")
+        version("8.03.0", commit="601c0a18b6738cae81c3e23422cfeb3ec7bddce9")
+        version("8.02.0", commit="f25cf639915fc2ac65b03882ad3eb11fb037ed00")
+        version("8.01.0", commit="ccc8c77bbc011f3adc020c565a509815be0ea029")
+        version("8.00.0", commit="50c972823144c007b406ae12d7ca25a1e0c35532")
+        version("7.00.0", commit="e663df7ab023bdb5ef206202efc2e54ccb71d416")
+        version("6.00.0", commit="a5cf04acd4b1a2c625e0826189109472a3392558")
+        version("5.00.0", commit="df77b91a7d37b8db6ed028a4d737014b5ad86bb7")
+        version("4.01.0", commit="c383bf434ef69939b47e840e0eac0ba632e6af9f")
+        version("4.00.0", commit="ed64b4b88d366b63adc4a8d1afe5bc97aa5751eb")
+        version("3.00.0", commit="e20260fccb469f4253519d3f0ddb3191b7046db3")
+        version("2.00.0", commit="8708eae2b2ccdf57ab7b451cfbba413daa1fc43c")
+        version("1.02.1", commit="f6ebeb9a28297ba8c54fd08b700057dd4ff2a311")
+        version("1.02.0", commit="e69b95acc9a264e63aded7d1714632066e090542")
+        version("1.01.0", commit="836fddd02c3eff33825833ff97d6abda5b5c20a0")
+        version("1.00.0", commit="ec9ce0bcdc837f568d42a12ddf3fc9c80db62f5d")
+        version("0.32.0", commit="a4cedab7e727e1327f2835db29d147cc86b21054")
+        version("0.31.0", commit="cfbd901555579a2f32f4efe2b76a7048442b42c3")
+        version("0.30.0", commit="a71ef0a9c742731611645214079884585a92b15e")
+        version("0.29.0", commit="33aa3e701728112e8908223c4a7fd521907c8ea4")
+        version("0.28.0", commit="55626b7401eeb93fc562e79bcf385f0ad0ac48bf")
+        version("0.27.1", commit="8ba3010a532137bc0ab6cf83a38b483cef646a01")
+        version("0.27.0", commit="f7b1a1c27d5a95d08bb67236ad0e117fcd1c679f")
+        version("0.26.0", commit="cf542b108b31fcc349fc18fb0466f889e4e42aa6")
+        version("0.25.2", commit="76bf1f3e4be51d4d27126b473a2caa8d8a72b320")
+        version("0.25.1", commit="6e8a1ea6d2c7385a78e3e190efb2a8a0c1fa957f")
+        version("0.25.0", commit="0aca171951a214299e8ff573682b1c5ecec63d42")
+        version("0.24.0", commit="ef4699c8500bfea59a5fe88bed67fde2f00f0adf")
+        version("0.23.0", commit="dc443dd7e663bc4d7fb3c1e3f1f75aaf57ffd4e4")
+        version("0.22.1", commit="ca1b8b1645db6b552f44c48d2ff34c8c29618f3a")
+        version("0.22.0", commit="2c8228f5843685fc0ae69a8b95dd8fc001139efb")
+        version("0.21.0", commit="10b719e68ddaca15b28ac25b3daddce8c0d3368d")
+        version("0.20.0", commit="1d37a849a9c318e8ca4fa541ef8433c1f004637b")
+        version("0.19.0", commit="408335636486c421c6222a64372250ef12544df6")
+        version("0.18.0", commit="d58a68cf75b52a5e0f563bc237f09250aa9da80c")
+        version("0.17.0", commit="0789f654ff484b013fd27e5023cf342785ea8d97")
+        version("0.16.0", commit="b3d965fe0b8ae335909d79114ef261c6b996773a")
+        version("0.15.0", commit="267c28f69c561e64369661a6235b03b5a610d6da")
+        version("0.14.0", commit="38d678fcb205b77d60326eae913fbb1b054acea1")
+        version("0.13.0", commit="b33f7270ddbbb33050b7ec60b4fa255dc2bfdc88")
+        version("0.12.1", commit="a8b3d36e7c6cb86487637589e0eff7bbe626054a")
+        version("0.12.0", commit="f9cda77299606d78c889fb1db2576c1971a271c4")
+        version("0.11.1", commit="c21196cd6c3ecc6da0f14d0a9ef227a274be584b")
+        version("0.11.0", commit="22bcea1f19adb0021ca61b843b95cfd2462dd31d")
+        version("0.10.5", commit="b6f7234ca8f18ee11e57709d019c14bf41cf9b19")
+        version("0.10.4", commit="42cbc359c209f5cf386e620b5a497192c024655e")
+        version("0.10.3", commit="a3bb86b79a65b3d2ceb962b60411fd0df4cf274c")
+        version("0.10.2", commit="64cbf28c862d8b0f95232b00c0e8c38949d5015d")
+        version("0.10.1", commit="0692dcf7824efbc504fb16f7aa00a50df395adbc")
+        version("0.10.0", commit="30ef843cb00427f9959b7de4d1b9843413a13f02")
+        version("0.09.5", commit="12b11fe8b0d428ccb8e92dda7dc809198f828672")
+        version("0.09.4", commit="e5dd9fbe179201e70347d1a3b9fa1899c226798f")
+        version("0.09.3", commit="a8f31303ee8720ed2946bfe2d59e81d0f70e307e")
+        version("0.09.2", commit="4e1f7fa73ffe07457080d787e206bf6466fe1680")
+        version("0.09.1", commit="69c451035516cb683b8f7bc0bab1a25893e9113d")
+        version("0.09.0", commit="004888b0a412f5bbaeef2ffaaeaf2aa182511494")
+        version("0.08.2", commit="c5d7568714e69e7344582b93b8d24e45d6b81bf9")
+        version("0.08.1", commit="289bdcc320f0b3ff1d792e29e462ec2d3ea15df6")
+        version("0.08.0", commit="99eedb38f305e3a1cd99d9b4473241b7cd641fa9")
 
     # Variants that affect the core Acts library
     variant(
@@ -219,19 +241,19 @@ class Acts(CMakePackage, CudaPackage):
         "examples",
         default=False,
         description="Build the examples",
-        when="@0.23:16 +digitization +fatras +identification +json +tgeo",
+        when="@0.23:16 +digitization +fatras +identification +json +root",
     )
     variant(
         "examples",
         default=False,
         description="Build the examples",
-        when="@17:34 +fatras +identification +json +tgeo",
+        when="@17:34 +fatras +identification +json +root",
     )
     variant(
         "examples",
         default=False,
         description="Build the examples",
-        when="@35: +fatras +json +tgeo",
+        when="@35: +fatras +json +root",
     )
     variant("integration_tests", default=False, description="Build the integration tests")
     variant("unit_tests", default=False, description="Build the unit tests")
@@ -258,7 +280,7 @@ class Acts(CMakePackage, CudaPackage):
         description="Build the auto-differentiation plugin",
         when="@1.2:32",
     )
-    variant("dd4hep", default=False, description="Build the DD4hep plugin", when="+tgeo")
+    variant("dd4hep", default=False, description="Build the DD4hep plugin", when="+root")
     variant(
         "digitization",
         default=False,
@@ -266,7 +288,7 @@ class Acts(CMakePackage, CudaPackage):
         when="@:16",
     )
     variant("edm4hep", default=False, description="Build EDM4hep plugin", when="@25:")
-    # FIXME: Can't build Exa.TrkX plugin+examples yet, missing cuGraph dep
+    variant("gnn", default=False, description="Build the GNN plugin", when="@44:")
     variant(
         "fatras",
         default=False,
@@ -282,6 +304,12 @@ class Acts(CMakePackage, CudaPackage):
     variant("legacy", default=False, description="Build the Legacy package")
     variant("mlpack", default=False, description="Build MLpack plugin", when="@25:31")
     variant("onnx", default=False, description="Build ONNX plugin")
+    variant(
+        "torch",
+        default=False,
+        description="Build the torch based parts of the GNN plugin",
+        when="@44: +gnn",
+    )
     variant("odd", default=False, description="Build the Open Data Detector", when="@19.1:")
     variant("podio", default=False, description="Build Podio plugin", when="@30.3:")
     variant(
@@ -297,10 +325,28 @@ class Acts(CMakePackage, CudaPackage):
         when="@19.3:",
     )
     variant("sycl", default=False, description="Build the SyCL plugin", when="@1:34")
+
+    # The TGeo and ROOT variants are synonyms, and the goal is to slowly phase
+    # out the TGeo name. The plan for this is as follow. First, we use both
+    # names as synonyms, ensuring that both must be true at the same time. We
+    # also enforce that nothing explicitly relies on the TGeo naming anymore,
+    # and we use ROOT instead. We then "deprecate" the TGeo naming by
+    # eliminating it in ACTS release 45. Finally, we retain the TGeo naming
+    # until version 44 of ACTS is removed due to deprecation.
     variant(
         "tgeo", default=False, description="Build the TGeo plugin", when="@:34 +identification"
     )
-    variant("tgeo", default=False, description="Build the TGeo plugin", when="@35:")
+    variant("tgeo", default=False, description="Build the TGeo plugin", when="@35:44")
+    variant(
+        "root", default=False, description="Build the ROOT plugin", when="@:34 +identification"
+    )
+    variant("root", default=False, description="Build the ROOT plugin", when="@35:")
+    # Establish a mutual implication between the tgeo and root variants; if
+    # one is enabled, so must be the other.
+    with when("@:44"):
+        conflicts("~root", when="+tgeo")
+        conflicts("+root", when="~tgeo")
+
     variant("traccc", default=False, description="Build the Traccc plugin", when="@35.1:")
 
     # Variants that only affect Acts examples for now
@@ -374,62 +420,93 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("autodiff @0.5.11:0.5.99", when="@1.2:16 +autodiff")
     depends_on("boost @1.62:1.69 +program_options +test", when="@:0.10.3")
     depends_on("boost @1.71: +filesystem +program_options +test", when="@0.10.4:")
+    depends_on("boost @1.77: +filesystem +program_options +test", when="@42:")
+    depends_on("boost @1.78: +filesystem +program_options +test", when="@45:")
     depends_on("cmake @3.14:", type="build")
     depends_on("covfie @0.10:", when="+traccc")
+    depends_on("covfie @0.13.0:", when="+traccc @42:")
     depends_on("cuda @12:", when="+traccc")
     depends_on("dd4hep @1.11: +dddetectors +ddrec", when="+dd4hep")
     depends_on("dd4hep @1.21: +dddetectors +ddrec", when="@20: +dd4hep")
+    depends_on("dd4hep @1.26: +dddetectors +ddrec", when="@42: +dd4hep")
     depends_on("dd4hep +ddg4", when="+dd4hep +geant4 +examples")
     depends_on("detray @0.72.1:", when="+traccc")
     depends_on("detray @0.75.3:", when="@37: +traccc")
+    depends_on("detray @0.101.0:", when="@42.1: +traccc")
     depends_on("edm4hep @0.4.1:", when="+edm4hep")
     depends_on("edm4hep @0.7:", when="@25: +edm4hep")
-    depends_on("eigen @3.3.7:", when="@15.1:")
-    depends_on("eigen @3.3.7:3.3.99", when="@:15.0")
-    depends_on("eigen @3.4:", when="@36.1:")
+    depends_on("edm4hep @0.10.5:", when="@42: +edm4hep")
+    depends_on("edm4hep @:0", when="@:44 +edm4hep")
+    depends_on("eigen @3.3.7:3", when="@15.1:")
+    depends_on("eigen @3.3.7:3.3", when="@:15.0")
+    depends_on("eigen @3.4:3", when="@36.1:")
     depends_on("geant4", when="+fatras_geant4")
     depends_on("geant4", when="+geant4")
     depends_on("geomodel +geomodelg4", when="+geomodel")
     depends_on("geomodel @4.6.0:", when="+geomodel")
     depends_on("geomodel @6.3.0:", when="+geomodel @36.1:")
+    depends_on("geomodel @6.8.0:", when="+geomodel @43.1:")
     depends_on("git-lfs", when="@12.0.0:")
     depends_on("gperftools", when="+profilecpu")
     depends_on("gperftools", when="+profilemem")
     depends_on("hepmc3 @3.2.1:", when="+hepmc3")
+    depends_on("hepmc3 @3.2.4:", when="@42: +hepmc3")
     depends_on("heppdt", when="+hepmc3 @:4.0")
     depends_on("intel-tbb @2020.1:", when="+examples +tbb")
     depends_on("intel-tbb @2020.1:", when="+examples @37.3:")
     depends_on("mlpack@3.1.1:", when="+mlpack")
     depends_on("nlohmann-json @3.9.1:", when="@0.14: +json")
     depends_on("nlohmann-json @3.10.5:", when="@37: +json")
+    depends_on("nlohmann-json @3.11.3:", when="@45: +json")
+    depends_on("torch-scatter", when="+gnn")
+    depends_on("torch-scatter +cuda", when="+cuda")
     depends_on("podio @0.6:", when="@25: +edm4hep")
     depends_on("podio @0.16:", when="@30.3: +edm4hep")
     depends_on("podio @:0", when="@:35 +edm4hep")
+    depends_on("podio @:1.4", when="@:44.1 +edm4hep +examples")
     depends_on("podio @0.16:", when="+podio")
     depends_on("podio @:0", when="@:35 +podio")
+    # TODO: Clarify version on next release
+    depends_on("podio @:1.4.1", when="@:44.1.0")
     depends_on("pythia8", when="+pythia8")
     depends_on("python", when="+python")
     depends_on("python@3.8:", when="+python @19.11:19")
     depends_on("python@3.8:", when="+python @21:")
+    # NOTE: Python and many of the Python packages we depend on are build
+    # dependencies only, but marking them as such allows Spack to pick up
+    # different Python versions for e.g. the ACTS build and the numpy
+    # installation which, in turn, causes the ACTS build to fail. Until a more
+    # robust solution is available we pretend that these packages are also
+    # run- and link-time dependencies.
+    depends_on("python@3.12:", when="@44:")
+    depends_on("py-numpy @2.2", when="@44:")
     depends_on("py-onnxruntime@:1.12", when="+onnx @:23.2")
     depends_on("py-onnxruntime@1.12:", when="+onnx @23.3:")
+    depends_on("py-particle @0.24", when="@44:")
     depends_on("py-pybind11 @2.6.2:", when="+python @18:")
     depends_on("py-pybind11 @2.13.1:", when="+python @36:")
     depends_on("py-pytest", when="+python +unit_tests")
+    depends_on("py-setuptools", when="@44:44.1.0")
+    depends_on("py-sympy @1.13", when="@44:")
+    # TODO: Clarify version on next release
+    depends_on("py-hatchling", when="@44.1.1:")
+    depends_on("py-torch", when="+gnn +torch")
 
-    with when("+tgeo"):
+    with when("+root"):
         depends_on("root @6.10:")
         depends_on("root @6.20:", when="@0.8.1:")
+        depends_on("root @6.28:", when="@42:")
 
     depends_on("sycl", when="+sycl")
     depends_on("vecmem@0.4: +sycl", when="+sycl")
+    depends_on("vecmem@1.17.0:", when="@42: +traccc")
 
     # ACTS imposes requirements on the C++ standard values used by ROOT
     for _cxxstd in _cxxstd_values:
         for _v in _cxxstd:
             depends_on(f"geant4 cxxstd={_v.value}", when=f"cxxstd={_v.value} +geant4")
             depends_on(f"geant4 cxxstd={_v.value}", when=f"cxxstd={_v.value} +fatras_geant4")
-            depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value} +tgeo")
+            depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value} +root")
 
     # When the traccc plugin is enabled, detray should match the Acts scalars
     with when("+traccc"):
@@ -450,6 +527,12 @@ class Acts(CMakePackage, CudaPackage):
     conflicts("^boost@1.85.0")
     # See https://github.com/acts-project/acts/pull/3921
     conflicts("^edm4hep@0.99:", when="@:37")
+    # See https://github.com/acts-project/acts/pull/4631
+    conflicts("+gnn ~cuda", when="@:44.0")
+
+    # The ODD package is fetched via the internet by the build system, which
+    # cannot be disabled.
+    conflicts("+odd", when="@44.2.0:")
 
     def cmake_args(self):
         spec = self.spec
@@ -502,6 +585,7 @@ class Acts(CMakePackage, CudaPackage):
             example_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEANT4", "geant4"),
             plugin_cmake_variant("GEOMODEL", "geomodel"),
+            plugin_cmake_variant("GNN", "gnn"),
             example_cmake_variant("HEPMC3", "hepmc3"),
             plugin_cmake_variant("IDENTIFICATION", "identification"),
             cmake_variant(integration_tests_label, "integration_tests"),
@@ -518,7 +602,7 @@ class Acts(CMakePackage, CudaPackage):
             self.define_from_variant("ACTS_CUSTOM_SCALARTYPE", "scalar"),
             plugin_cmake_variant("ACTSVG", "svg"),
             plugin_cmake_variant("SYCL", "sycl"),
-            plugin_cmake_variant("TGEO", "tgeo"),
+            plugin_cmake_variant("TGEO", "root"),
             example_cmake_variant("TBB", "tbb", "USE"),
             plugin_cmake_variant("TRACCC", "traccc"),
             cmake_variant(unit_tests_label, "unit_tests"),
@@ -561,6 +645,10 @@ class Acts(CMakePackage, CudaPackage):
                 args.append(f"-DCUDA_FLAGS=-arch=sm_{cuda_arch[0]}")
                 arch_str = ";".join(self.spec.variants["cuda_arch"].value)
                 args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
+
+        if spec.satisfies("+gnn"):
+            args.append(self.define("ACTS_GNN_ENABLE_ONNX", self.spec.satisfies("+onnx")))
+            args.append(self.define("ACTS_GNN_ENABLE_TORCH", self.spec.satisfies("+torch")))
 
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 

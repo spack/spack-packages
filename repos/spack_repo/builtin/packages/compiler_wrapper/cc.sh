@@ -64,7 +64,7 @@ SPACK_MANAGED_DIRS"
 # die MESSAGE
 # Print a message and exit with error code 1.
 die() {
-    echo "[spack cc] ERROR: $*"
+    echo "[spack cc]: Error: $*"
     exit 1
 }
 
@@ -282,7 +282,6 @@ fi
 # Figure out the type of compiler, the language, and the mode so that
 # the compiler script knows what to do.
 #
-# Possible languages are C, C++, Fortran 77, and Fortran 90.
 # 'command' is set based on the input command to $SPACK_[CC|CXX|F77|F90]
 #
 # 'mode' is set to one of:
@@ -296,6 +295,10 @@ fi
 # Note. SPACK_ALWAYS_XFLAGS are applied for all compiler invocations,
 # including version checks (SPACK_XFLAGS variants are not applied
 # for version checks).
+mode=""
+vdep=""
+lang_flags=""
+debug_flags=""
 command="${0##*/}"
 comp="CC"
 vcheck_flags=""
@@ -307,7 +310,7 @@ case "$command" in
         ;;
     cc|c89|c99|gcc|clang|armclang|icc|icx|pgcc|nvc|xlc|xlc_r|fcc|amdclang|cl.exe|craycc)
         command="$SPACK_CC"
-        language="C"
+        vdep=c
         comp="CC"
         lang_flags=C
         debug_flags="-g"
@@ -315,7 +318,7 @@ case "$command" in
         ;;
     c++|CC|g++|clang++|armclang++|icpc|icpx|pgc++|nvc++|xlc++|xlc++_r|FCC|amdclang++|crayCC)
         command="$SPACK_CXX"
-        language="C++"
+        vdep=cxx
         comp="CXX"
         lang_flags=CXX
         debug_flags="-g"
@@ -323,7 +326,7 @@ case "$command" in
         ;;
     ftn|f90|fc|f95|gfortran|flang|armflang|ifort|ifx|pgfortran|nvfortran|xlf90|xlf90_r|nagfor|frt|amdflang|crayftn)
         command="$SPACK_FC"
-        language="Fortran 90"
+        vdep=fortran
         comp="FC"
         lang_flags=F
         debug_flags="-g"
@@ -331,7 +334,7 @@ case "$command" in
         ;;
     f77|xlf|xlf_r|pgf77)
         command="$SPACK_F77"
-        language="Fortran 77"
+        vdep=fortran
         comp="F77"
         lang_flags=F
         debug_flags="-g"
@@ -397,12 +400,11 @@ fi
 dtags_to_add="${SPACK_DTAGS_TO_ADD}"
 dtags_to_strip="${SPACK_DTAGS_TO_STRIP}"
 
-linker_arg="ERROR: LINKER ARG WAS NOT SET, MAYBE THE PACKAGE DOES NOT DEPEND ON ${comp}?"
-eval "linker_arg=\${SPACK_${comp}_LINKER_ARG:?${linker_arg}}"
-
-# Set up rpath variable according to language.
-rpath="ERROR: RPATH ARG WAS NOT SET, MAYBE THE PACKAGE DOES NOT DEPEND ON ${comp}?"
-eval "rpath=\${SPACK_${comp}_RPATH_ARG:?${rpath}}"
+eval "linker_arg=\"\$SPACK_${comp}_LINKER_ARG\""
+eval "rpath=\"\$SPACK_${comp}_RPATH_ARG\""
+if [ -z "$linker_arg" ] || [ -z "$rpath" ]; then
+    die "SPACK_${comp}_* variables not set: this usually means a missing \`depends_on(\"$vdep\", type=\"build\")\` in package.py"
+fi
 
 # Dump the mode and exit if the command is dump-mode.
 if [ "$SPACK_TEST_COMMAND" = "dump-mode" ]; then
@@ -620,7 +622,7 @@ categorize_arguments() {
                 # library. Filter it out.
                 # TODO: generalize filtering of args with an env var, so that
                 # TODO: we do not have to special case this here.
-                if { [ "$mode" = "ccld" ] || [ $mode = "ld" ]; } \
+                if { [ "$mode" = "ccld" ] || [ "$mode" = "ld" ]; } \
                     && [ "$1" != "${1#-loopopt}" ]; then
                     shift
                     continue

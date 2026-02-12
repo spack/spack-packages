@@ -37,8 +37,8 @@ jobs:
           on_develop: false
 
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install System packages
@@ -49,38 +49,30 @@ jobs:
               coreutils cvs gfortran graphviz gnupg2 mercurial ninja-build \
               cmake bison libbison-dev subversion
     - name: Install Python packages
-      run: |
-          pip install --upgrade pip setuptools pytest pytest-xdist clingo
+      run: pip install --upgrade pytest clingo
     - uses: ./.github/actions/checkout-spack
-    - name: Run unit tests (without coverage)
-      run: |
-        . ./spack-core/share/spack/setup-env.sh
-        PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
+    - name: Run unit tests
+      run: PYTHONPATH="$PWD/spack-core/lib/spack" python3 -m pytest -v --exitfirst
 
   # Run unit tests on MacOS
   macos:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [macos-13, macos-14]
+        os: ["macos-15", "macos-15-intel"]
         python-version: ["3.11"]
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Python packages
-      run: |
-          pip install --upgrade pip setuptools
-          pip install --upgrade pytest pytest-xdist clingo
+      run: pip install --upgrade pytest clingo
     - name: Setup Homebrew packages
-      run: |
-        brew install dash fish gcc gnupg
+      run: brew install dash fish gcc gnupg
     - uses: ./.github/actions/checkout-spack
-    - name: Run unit tests (without coverage)
-      run: |
-        . ./spack-core/share/spack/setup-env.sh
-        PYTHONPATH=${SPACK_ROOT}/lib/spack:${SPACK_ROOT}/lib/spack/external:${PYTHONPATH} python3 -m pytest -v --exitfirst
+    - name: Run unit tests
+      run: PYTHONPATH="$PWD/spack-core/lib/spack" python3 -m pytest -v --exitfirst
 
   # Run unit tests on Windows
   windows:
@@ -90,21 +82,18 @@ jobs:
           powershell Invoke-Expression -Command "./.ci/windows_test_setup.ps1"; {0}
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
       with:
         python-version: 3.9
     - name: Install Python packages
-      run: |
-          python -m pip install --upgrade pip pywin32 setuptools pytest clingo
+      run: python -m pip install --upgrade pywin32 pytest clingo
     #- name: Create local develop
     #  run: |
     #    ./.github/workflows/bin/setup_git.ps1
     - uses: ./.github/actions/checkout-spack
-    - name: Run unit tests (without coverage)
+    - name: Run unit tests
       run: |
-        $new = "$Env:SPACK_ROOT\lib\spack;$Env:SPACK_ROOT\lib\spack\external"
-        $current = [Environment]::GetEnvironmentVariable("PYTHONPATH", "User")
-        $Env:PYTHONPATH = "$new;$current"
+        $Env:PYTHONPATH = "$Env:SPACK_ROOT\lib\spack;$Env:PYTHONPATH"
         python3 -m pytest -v --exitfirst
         ./.ci/validate_last_exit.ps1

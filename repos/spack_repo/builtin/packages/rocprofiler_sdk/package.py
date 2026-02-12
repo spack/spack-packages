@@ -22,7 +22,42 @@ class RocprofilerSdk(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
-
+    version(
+        "7.1.1",
+        tag="rocm-7.1.1",
+        commit="ff4f9a64d386454ed5f1a1360a2a5c14292f36c6",
+        submodules=True,
+    )
+    version(
+        "7.1.0",
+        tag="rocm-7.1.0",
+        commit="d5c0aaae36a6cb348f408c9fde8be435e29981b9",
+        submodules=True,
+    )
+    version(
+        "7.0.2",
+        tag="rocm-7.0.2",
+        commit="19ae05055bee5dab65854b44c047f34db2e8276c",
+        submodules=True,
+    )
+    version(
+        "7.0.0",
+        tag="rocm-7.0.0",
+        commit="18af6a58b74558c91ba09376d86d2401da2cf76f",
+        submodules=True,
+    )
+    version(
+        "6.4.3",
+        tag="rocm-6.4.3",
+        commit="fb30388fd30c073ac7baf3dad775f37c51aafcc8",
+        submodules=True,
+    )
+    version(
+        "6.4.2",
+        tag="rocm-6.4.2",
+        commit="e8e49fe76971000a42a5a177d9a727d16dd0ebcf",
+        submodules=True,
+    )
     version(
         "6.4.1",
         tag="rocm-6.4.1",
@@ -68,15 +103,48 @@ class RocprofilerSdk(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    depends_on("sqlite", when="@7:")
+    depends_on("elfutils")
+    depends_on("libdrm")
+    depends_on("pkgconfig", when="@7.1:")
+
+    for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+        depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
+
+    for ver in [
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
-        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
         depends_on(f"rccl@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
 
+    def cmake_args(self):
+        args = []
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ElfUtils_ROOT_DIR", self.spec["elfutils"].prefix))
+        return args
+
     def setup_run_environment(self, env):
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["aqlprofile"].prefix.lib)
+        if not self.spec.external:
+            if self.spec.satisfies("@7:"):
+                env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-amd-aqlprofile"].prefix.lib)
+            else:
+                env.prepend_path("LD_LIBRARY_PATH", self.spec["aqlprofile"].prefix.lib)

@@ -5,7 +5,7 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, get_cmake_prefix_path
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
@@ -14,12 +14,17 @@ class HipTests(CMakePackage):
     """This repository provides unit tests for HIP implementation."""
 
     homepage = "https://github.com/ROCm/hip-tests"
-    url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/hip-tests.git"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-
+    version("7.1.1", sha256="30b8a449ef6f3d4d037dbc135ed47d178c4c39a29e2e0ae6f0550aa996cab063")
+    version("7.1.0", sha256="15ae5ad99befcf6c96da5c4e85767a2e0abd3d80c72164f3fd61af3c1b642e5c")
+    version("7.0.2", sha256="db64843cbaf07475be89569e9791990eadda73b30c703305e3e1396b08efedac")
+    version("7.0.0", sha256="f09760abd2f7f3a296419834096cf4a9e42ce3cbcf5f0efc36e74d0b7eb801eb")
+    version("6.4.3", sha256="7e25bb8ae6c707000ae9620cf4cd42ff055223630139d6219b017e5516a42487")
+    version("6.4.2", sha256="8a39c8b9fa373636b86dd4c2df758a525de6772f27ee1e8e2c3d84c3f287532a")
     version("6.4.1", sha256="81614a66fc4dd97a0b6948d067f9423116ca852725074c4deecf549d379b2680")
     version("6.4.0", sha256="bf609b7b4c7a567ed265d3cb305510321a47c5f311a80ae8d1beed1f4891c070")
     version("6.3.3", sha256="7c8ccc78bdc7d684f2bc55ef1affa64e7ddad4b2bf28f12a5aede079002b8a12")
@@ -50,6 +55,12 @@ class HipTests(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -93,12 +104,20 @@ class HipTests(CMakePackage):
             "samples/2_Cookbook/19_cmake_lang/CMakeLists.txt",
             string=True,
         )
-        filter_file(
-            "${CMAKE_PREFIX_PATH}/bin/hipify-perl",
-            f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
-            "samples/0_Intro/square/CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("@:6.4"):
+            filter_file(
+                "${CMAKE_PREFIX_PATH}/bin/hipify-perl",
+                f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
+                "samples/0_Intro/square/CMakeLists.txt",
+                string=True,
+            )
+        if self.spec.satisfies("@7.0:"):
+            filter_file(
+                "${ROCM_PATH}/bin/hipify-perl",
+                f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
+                "samples/0_Intro/square/CMakeLists.txt",
+                string=True,
+            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -122,6 +141,8 @@ class HipTests(CMakePackage):
         """Copy the tests source files after the package is installed to an
         install test subdirectory for use during `spack test run`."""
         cache_extra_test_sources(self, "samples")
+        if self.spec.satisfies("@7.0:"):
+            cache_extra_test_sources(self, "catch")
 
     def test_samples(self):
         """build and run all hip samples"""

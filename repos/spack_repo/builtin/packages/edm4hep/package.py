@@ -22,37 +22,19 @@ class Edm4hep(CMakePackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("1.0", sha256="7bb76479883997ba39357b0db65d96d5f1201bc8a79b47866db8b44f76a231be")
+    version("0.99.4", sha256="34a76e74a3199b96d8108425fdf894cafa7e4a71483d4893537c3026b4e666d6")
+    version("0.99.3", sha256="c89e90085d83c5565b2609a81532af0d631d423fdf6d03396f666ea3a8472429")
     version("0.99.2", sha256="b3e7abb61fd969e4c9aef55dd6839a2186bf0b0d3801174fe6e0b9df8e0ebace")
     version("0.99.1", sha256="84d990f09dbd0ad2198596c0c51238a4b15391f51febfb15dd3d191dc7aae9f4")
     version("0.99", sha256="3636e8c14474237029bf1a8be11c53b57ad3ed438fd70a7e9b87c5d08f1f2ea6")
     version("0.10.5", sha256="003c8e0c8e1d1844592d43d41384f4320586fbfa51d4d728ae0870b9c4f78d81")
-    version(
-        "0.10.4",
-        sha256="76d51947525bc8a27b62f567033255da2e632d42d07a32ff578887948d56bd6f",
-        deprecated=True,
-    )
-    version(
-        "0.10.3",
-        sha256="0ba5e4e90376f750f9531831909160e3d7b9c2d1f020d7556f0d3977b7eaafcc",
-        deprecated=True,
-    )
-    version(
-        "0.10.2",
-        sha256="c22c5c2f0fd1d09da9b734c1fa7ee546675fd2b047406db6ab8266e7657486d2",
-        deprecated=True,
-    )
-    version(
-        "0.10.1",
-        sha256="28a3bd4df899309b14ec0d441f8b6ed0065206a08a0018113bb490e9d008caed",
-        deprecated=True,
-    )
-    version(
-        "0.10",
-        sha256="a95c917c19793cfad6b0959854a653c5ce698c965598cabd649d544da07712c0",
-        deprecated=True,
-    )
 
-    _cxxstd_values = (conditional("17", when="@:0.99.0"), conditional("20", when="@0.10:"))
+    _cxxstd_values = (
+        conditional("17", when="@:0.99.0"),
+        conditional("20", when="@0.10:"),
+        conditional("23", when="@0.99.1:"),
+    )
     variant(
         "cxxstd",
         default="20",
@@ -70,17 +52,19 @@ class Edm4hep(CMakePackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@3.3:", type="build")
-    depends_on("cmake@3.23:", type="build", when="@0.10.3:")
+    depends_on("cmake@3.23:", type="build")
     depends_on("python", type="build")
 
     depends_on("root@6.08:")
     depends_on("nlohmann-json@3.10.5:", when="@0.99.2: +json")
     depends_on("nlohmann-json@3.10.5:", when="@:0.99.1")
+    depends_on("podio@1.6:", when="@0.99.3:")
     depends_on("podio@1:", when="@0.99:")
     depends_on("podio@0.15:", when="@:0.10.5")
     depends_on("podio@:1.1", when="@:0.99.0")
     depends_on("podio@1.3:", when="@0.99.2:")
+    depends_on("podio@:1.6", when="@:0.99.4")
+    depends_on("podio@1.7:", when="@1.0:")
     for _std in _cxxstd_values:
         for _v in _std:
             depends_on(f"podio cxxstd={_v.value}", when=f"cxxstd={_v.value}")
@@ -96,6 +80,11 @@ class Edm4hep(CMakePackage):
     extends("python", when="@0.10.6:")
 
     conflicts("%clang@:16", when="@0.99.1:", msg="Incomplete consteval support in clang")
+    conflicts(
+        "^python +freethreading",
+        when="@:0.99.4",
+        msg="python free-threading requires edm4hep@0.99.5:",
+    )
 
     # Fix missing nljson import
     # NOTE that downstream packages (dd4hep) may fail for 0.99 and before

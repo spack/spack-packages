@@ -12,11 +12,14 @@ class PyCartopy(PythonPackage):
 
     homepage = "https://scitools.org.uk/cartopy/docs/latest/"
     pypi = "Cartopy/cartopy-0.20.2.tar.gz"
+    git = "https://github.com/SciTools/cartopy.git"
     skip_modules = ["cartopy.tests"]
 
     license("LGPL-3.0-or-later")
     maintainers("adamjstewart")
 
+    version("main", branch="main")
+    version("0.25.0", sha256="55f1a390e5f3f075b221c7d91fb10258ad978db786c7930eba06eb45d28753fe")
     version("0.24.1", sha256="01c910d5634c69a7efdec46e0a17d473d2328767f001d4dc0b5c4b48e585c8bd")
     version("0.24.0", sha256="e044e0e0fa76bb7afde937bec541743dcbf6b6f23b933a21ebddcd20cfffb755")
     version("0.23.0", sha256="231f37b35701f2ba31d94959cca75e6da04c2eea3a7f14ce1c75ee3b0eae7676")
@@ -42,11 +45,12 @@ class PyCartopy(PythonPackage):
     )
     variant("plotting", default=False, description="Add plotting functionality")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     # Based on wheel availability on PyPI
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.13", when="@0.24.1:")
+        depends_on("python@3.10:3.14", when="@0.24.1:0.25.0")
         depends_on("python@3.10:3.12", when="@0.24.0")
         depends_on("python@3.9:3.12", when="@0.23")
         depends_on("python@3.9:3.11", when="@0.22")
@@ -56,6 +60,7 @@ class PyCartopy(PythonPackage):
         depends_on("python@:3.9", when="@:0.18")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@77.0.3:", when="@0.25:")
         depends_on("py-setuptools@40.6:", when="@0.19:")
         depends_on("py-setuptools@0.7.2:")
         depends_on("py-cython@0.29.24:", when="@0.22:")
@@ -64,6 +69,7 @@ class PyCartopy(PythonPackage):
         depends_on("py-cython@0.28:", when="@0.18:")
         depends_on("py-cython@0.15.1:", when="@0.17:")
         depends_on("py-cython")
+        depends_on("py-setuptools-scm@8:", when="@0.25:")
         depends_on("py-setuptools-scm@7:", when="@0.20.3:")
         depends_on("py-setuptools-scm", when="@0.19:")
 
@@ -84,6 +90,7 @@ class PyCartopy(PythonPackage):
         depends_on("py-matplotlib@3.1:", when="@0.21")
         # https://github.com/SciTools/cartopy/issues/2086
         depends_on("py-matplotlib@3.1:3.5", when="@0.20")
+        depends_on("py-shapely@2.0:", when="@0.25:")
         depends_on("py-shapely@1.8:", when="@0.24:")
         depends_on("py-shapely@1.7:", when="@0.22:")
         depends_on("py-shapely@1.6.4:", when="@0.21.1:0.21")

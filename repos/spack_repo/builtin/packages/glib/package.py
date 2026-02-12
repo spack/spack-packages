@@ -8,7 +8,6 @@ from spack_repo.builtin.build_systems import meson
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
-from spack.util.environment import is_system_path
 
 
 class Glib(MesonPackage):
@@ -30,13 +29,12 @@ class Glib(MesonPackage):
     license("LGPL-2.1-or-later")
 
     # Even minor versions are stable, odd minor versions are development, only add even numbers
+    version("2.86.1", sha256="119d1708ca022556d6d2989ee90ad1b82bd9c0d1667e066944a6d0020e2d5e57")
+    version("2.84.4", sha256="8a9ea10943c36fc117e253f80c91e477b673525ae45762942858aef57631bb90")
     version("2.82.5", sha256="05c2031f9bdf6b5aba7a06ca84f0b4aced28b19bf1b50c6ab25cc675277cbc3f")
     version("2.82.2", sha256="ab45f5a323048b1659ee0fbda5cecd94b099ab3e4b9abf26ae06aeb3e781fd63")
-    version(
-        "2.78.3",
-        sha256="609801dd373796e515972bf95fc0b2daa44545481ee2f465c4f204d224b2bc21",
-        preferred=True,
-    )
+    version("2.80.5", sha256="9f23a9de803c695bbfde7e37d6626b18b9a83869689dd79019bf3ae66c3e6771")
+    version("2.78.3", sha256="609801dd373796e515972bf95fc0b2daa44545481ee2f465c4f204d224b2bc21")
     version("2.78.0", sha256="44eaab8b720877ce303c5540b657b126f12dc94972d9880b52959f43fb537b30")
     version("2.76.6", sha256="1136ae6987dcbb64e0be3197a80190520f7acab81e2bfb937dc85c11c8aa9f04")
     version("2.76.4", sha256="5a5a191c96836e166a7771f7ea6ca2b0069c603c7da3cba1cd38d1694a395dda")
@@ -79,6 +77,12 @@ class Glib(MesonPackage):
         values=any_combination_of("dtrace", "systemtap"),
         description="Enable tracing support",
     )
+    variant(
+        "introspection",
+        default=True,
+        description="Build with introspection support",
+        when="@2.79:",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -90,7 +94,8 @@ class Glib(MesonPackage):
         depends_on("meson@0.52.0:", when="@2.71:")
         depends_on("meson@0.49.2:", when="@2.61.2:")
         depends_on("meson@0.48.0:")
-        depends_on("pkgconfig", type="build")
+        depends_on("pkgconfig")
+        depends_on("gobject-introspection@1.80:", when="+introspection")
 
     depends_on("libffi")
     depends_on("zlib-api")
@@ -125,8 +130,17 @@ class Glib(MesonPackage):
         gio_tests.filter("'file' : {},", "")
         gio_tests.filter("'gdbus-peer'", "'file'")
         gio_tests.filter("'gdbus-address-get-session' : {},", "")
-        filter_file("'mkenums.py'( : {})*,*", "", "gobject/tests/meson.build")
+        filter_file("'mkenums.py' : {},", "", "gobject/tests/meson.build")
         filter_file("'fileutils' : {},", "", "glib/tests/meson.build")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.prepend_path("GI_TYPELIB_PATH", join_path(self.prefix.lib, "girepository-1.0"))
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
+        env.prepend_path("GI_TYPELIB_PATH", join_path(self.prefix.lib, "girepository-1.0"))
 
     @property
     def libs(self):
@@ -134,7 +148,6 @@ class Glib(MesonPackage):
 
 
 class MesonBuilder(meson.MesonBuilder):
-
     @property
     def dtrace_copy_path(self):
         return join_path(self.stage.source_path, "dtrace-copy")
@@ -204,8 +217,18 @@ class MesonBuilder(meson.MesonBuilder):
                 join_path(self.spec["glib"].libs.directories[0], "pkgconfig", "glib-2.0.pc"),
             )
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
+        env.prepend_path("GI_TYPELIB_PATH", join_path(self.prefix.lib, "girepository-1.0"))
+
     def meson_args(self):
         args = []
+        if self.spec.satisfies("+introspection"):
+            args.append("-Dintrospection=enabled")
+        else:
+            args.append("-Dintrospection=disabled")
         if self.spec.satisfies("@2.63.5:"):
             if self.spec.satisfies("+libmount"):
                 args.append("-Dlibmount=enabled")

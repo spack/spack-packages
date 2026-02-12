@@ -21,6 +21,8 @@ class Pixman(AutotoolsPackage, MesonPackage):
 
     license("MIT")
 
+    version("0.46.4", sha256="d09c44ebc3bd5bee7021c79f922fe8fb2fb57f7320f55e97ff9914d2346a591c")
+    version("0.44.2", sha256="6349061ce1a338ab6952b92194d1b0377472244208d47ff25bef86fc71973466")
     version("0.44.0", sha256="89a4c1e1e45e0b23dffe708202cb2eaffde0fe3727d7692b2e1739fec78a7dac")
     version("0.42.2", sha256="ea1480efada2fd948bc75366f7c349e1c96d3297d09a3fe62626e38e234a625e")
     version("0.42.0", sha256="07f74c8d95e4a43eb2b08578b37f40b7937e6c5b48597b3a0bb2c13a53f46c13")
@@ -42,6 +44,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("c", type="build")
     with when("build_system=meson"):
         depends_on("meson@0.52:", type="build")
+        depends_on("meson@1.3:", type="build", when="@0.44.2:")
     depends_on("pkgconfig", type="build")
     depends_on("flex", type="build")
     depends_on("bison@3:", type="build")
@@ -49,6 +52,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("libpng")
 
     variant("shared", default=True, description="Build shared library")
+    variant("pic", default=False, description="Enable position-independent code")
 
     # As discussed here:
     # https://bugs.freedesktop.org/show_bug.cgi?id=104886
@@ -57,6 +61,9 @@ class Pixman(AutotoolsPackage, MesonPackage):
     # Patch is obtained from above link.
     patch("clang.patch", when="@0.34%apple-clang@9.1.0:")
     patch("clang.patch", when="@0.34%clang@5.0.0:")
+
+    # https://github.com/spack/spack-packages/issues/3032
+    patch("libpng.patch", when="build_system=meson")
 
     @run_before("build")
     def patch_config_h_for_intel(self):
@@ -120,6 +127,14 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             #  https://gitlab.freedesktop.org/pixman/pixman/-/issues/69
             if self.spec.target.family == "aarch64":
                 args.append("--disable-arm-a64-neon")
+
+        args.extend(self.with_or_without("pic"))
+
+        png = self.spec["libpng"]
+        if not png.satisfies("libs=shared"):
+            args.append(
+                "LIBS=%s" % which("libpng-config")("--static", "--ldflags", output=str).strip()
+            )
 
         # The Fujitsu compiler does not support assembler macros.
         if self.spec.satisfies("%fj"):

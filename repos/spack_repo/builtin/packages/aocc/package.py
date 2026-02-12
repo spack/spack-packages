@@ -1,7 +1,8 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-import os.path
+import glob
+import os
 
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.generic import Package
@@ -34,6 +35,11 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
 
     maintainers("amd-toolchain-support")
 
+    version(
+        ver="5.1.0",
+        sha256="3ccb56e399c66e10d437feb24b73552bc560210f7606d2609c06a7ef35d22c69",
+        url="https://download.amd.com/developer/eula/aocc/aocc-5-1/aocc-compiler-5.1.0.tar",
+    )
     version(
         ver="5.0.0",
         sha256="966fac2d2c759e9de6e969c10ada7a7b306c113f7f1e07ea376829ec86380daa",
@@ -69,6 +75,8 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
+    depends_on("patchelf@:0.17", when="@:5 %gcc", type="build")
 
     depends_on("libxml2")
     depends_on("zlib-api")
@@ -118,6 +126,33 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
             for compiler in ["clang", "clang++"]:
                 with open(join_path(self.prefix.bin, "{}.cfg".format(compiler)), "w") as f:
                     f.write(compiler_options)
+
+        # help flang find gcc
+        if self.spec.satisfies("@:5 %gcc") and self.compiler.prefix != "/usr":
+            # help flang{1,2} find libquadmath
+            libdir = self._libquadmath_dir()
+            patchelf = which("patchelf")
+            patchelf.add_default_arg("--set-rpath", libdir)
+            patchelf(join_path(self.prefix.bin, "flang1"))
+            patchelf(join_path(self.prefix.bin, "flang2"))
+
+            # pass --gcc-toolchain & -Wl,-rpath to flang
+            # flang.cfg is ignored, so replace the flang symlink with a wrapper script
+            compiler_options += ' -Wno-unused-command-line-argument "-Wl,-rpath,{libdir}"'
+            clang = join_path(self.prefix.bin, "clang")
+            flang = join_path(self.prefix.bin, "flang")
+            assert os.path.islink(flang)
+            os.unlink(flang)
+            with open(flang, "x") as f:
+                f.write(f'#!/bin/sh\nexec -a "$0" "{clang}" {compiler_options} "$@"\n')
+            set_executable(flang)
+
+    def _libquadmath_dir(self):
+        for lib in ["lib64", "lib"]:
+            libdir = join_path(self.compiler.prefix, lib)
+            if glob.glob(join_path(libdir, "libquadmath.*")):
+                return libdir
+        return None
 
     def _cc_path(self):
         return os.path.join(self.spec.prefix.bin, "clang")

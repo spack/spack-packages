@@ -19,6 +19,9 @@ class RExomedepth(RPackage):
     version("1.1.16", sha256="7ba6b51e7ea435a2799b25d99bb9f48e2b1e99e15e47f88e514e98120b4cebe4")
     version("1.1.15", sha256="112bcb536f5766d9d0b55e064feedd6727ccab14cb1edfdba1f0d7b890e55ad2")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.4.0:", type=("build", "run"))
     depends_on("r-biostrings", type=("build", "run"))
     depends_on("r-iranges", type=("build", "run"))

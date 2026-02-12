@@ -22,6 +22,7 @@ class Fairmq(CMakePackage):
         # depends on the git metadata, see also
         # https://github.com/spack/spack/issues/19972
         # https://github.com/spack/spack/issues/14344
+        version("1.10.1", tag="v1.10.1", commit="fa64faf3f755e9b00e0af738826718bf5117c8ea")
         version("1.9.2", tag="v1.9.2", commit="24e7a5b8d01aa30c51820f67c13a2cb7bc1ac7da")
         version("1.9.1", tag="v1.9.1", commit="c11506e95878a39837c5af92dc99b4a1248c13ac")
         version("1.8.1", tag="v1.8.1", commit="961eca52761a31a0200c567b44e2b2d6d6e50df3")
@@ -58,7 +59,8 @@ class Fairmq(CMakePackage):
         depends_on("git")
 
     depends_on("boost@1.66: +container+program_options+filesystem+date_time+regex")
-    conflicts("^boost@1.88:")
+    conflicts("^boost@1.88")
+    conflicts("^boost@1.89:", when="@:1.10.0")
     depends_on("fairlogger@1.6: +pretty")
     depends_on("libzmq@4.1.4:")
 

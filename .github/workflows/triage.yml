@@ -1,0 +1,54 @@
+#-----------------------------------------------------------------------
+# DO NOT modify unless you really know what you are doing.
+#
+# See https://stackoverflow.com/a/74959635 for more info.
+# Talk to @alecbcs if you have questions/are not sure of a change's
+# possible impact to security.
+#-----------------------------------------------------------------------
+name: triage
+on:
+  pull_request_target:
+    branches:
+      - develop
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          ref: develop # DO NOT CHANGE
+
+      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf
+        id: generate-spackbot-token
+        with:
+          app-id: ${{ secrets.SPACKBOT_TRIAGE_APP_ID }}
+          private-key: ${{ secrets.SPACKBOT_TRIAGE_PRIVATE_KEY }}
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+      - uses: ./.github/actions/checkout-spack
+
+      - name: Install Python dependencies
+        run: pip install -r .github/workflows/requirements/triage/requirements.txt
+
+      - name: Label PR
+        run: |
+          python3 .github/workflows/bin/spack-labeler.py
+        env:
+          GH_PR_NUMBER: ${{ github.event.number }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}
+          LABELS_CONFIG: .github/labels.yml
+
+      - name: Tag Maintainers on PR
+        run: |
+          . spack-core/share/spack/setup-env.sh
+          spack-python .github/workflows/bin/spack-reviewers.py
+        env:
+          GH_PR_NUMBER: ${{ github.event.number }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}

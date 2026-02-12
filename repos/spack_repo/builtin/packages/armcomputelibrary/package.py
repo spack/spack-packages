@@ -56,7 +56,7 @@ class Armcomputelibrary(SConsPackage):
     variant(
         "multi_isa",
         default=False,
-        description="Build Multi ISA binary version of library." " Note works only for armv8.2-a.",
+        description="Build Multi ISA binary version of library. Note works only for armv8.2-a.",
     )
     variant(
         "target_arch",
@@ -67,7 +67,7 @@ class Armcomputelibrary(SConsPackage):
     )
     variant("sve", default=False, description="Build for SVE.")
     variant("sve2", default=False, description="Build for SVE2.")
-    variant("neon", default=True, description="Enable Arm® Neon™ support")
+    variant("neon", default=True, description="Enable Arm Neon support")
     variant(
         "experimental_dynamic_fusion",
         default=False,

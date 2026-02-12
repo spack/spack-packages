@@ -22,12 +22,6 @@ class XcbUtilWm(AutotoolsPackage, XorgPackage):
     license("MIT")
 
     version("0.4.2", sha256="62c34e21d06264687faea7edbf63632c9f04d55e72114aa4a57bb95e4f888a0b")
-    version(
-        "0.4.1",
-        sha256="038b39c4bdc04a792d62d163ba7908f4bb3373057208c07110be73c1b04b8334",
-        url="https://xcb.freedesktop.org/dist/xcb-util-wm-0.4.1.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 

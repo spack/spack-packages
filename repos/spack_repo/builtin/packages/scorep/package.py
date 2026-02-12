@@ -16,8 +16,9 @@ class Scorep(AutotoolsPackage):
     homepage = "https://www.vi-hps.org/projects/score-p"
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-7.1/scorep-7.1.tar.gz"
     maintainers("wrwilliams")
-    version("9.1", sha256="a6593716e62c751937f3be78782bf09b3737a68c46cdbeabec7cff80d2fdc7c8")
-    version("9.0", sha256="5d0a5db4cc6f31c30ae03c7e6f6245e83667b0ff38a7041ffe8b2e8e581e0997")
+    version("9.4", sha256="bea58d8c47a7512eca0a5858179377f3f0861f30eafb342a29aa97c05de8f623")
+    version("9.3", sha256="5498b31b1d6c04b08a9d408320a7515e884538d248de58b6dd11b48c8f364112")
+    version("9.2", sha256="be3eaee99cdd0145e518c1aa959126df45e25b61579a007d062748b2844c499c")
     version("8.4", sha256="7bbde9a0721d27cc6205baf13c1626833bcfbabb1f33b325a2d67976290f7f8a")
     version("8.3", sha256="76c914e6319221c059234597a3bc53da788ed679179ac99c147284dcefb1574a")
     # version 8.2 was immediately superseded before it hit Spack
@@ -25,64 +26,7 @@ class Scorep(AutotoolsPackage):
     version("8.0", sha256="4c0f34f20999f92ebe6ca1ff706d0846b8ce6cd537ffbedb49dfaef0faa66311")
     version("7.1", sha256="98dea497982001fb82da3429ca55669b2917a0858c71abe2cfe7cd113381f1f7")
     version("7.0", sha256="68f24a68eb6f94eaecf500e17448f566031946deab74f2cba072ee8368af0996")
-    version(
-        "6.0",
-        sha256="5dc1023eb766ba5407f0b5e0845ec786e0021f1da757da737db1fb71fc4236b8",
-        deprecated="true",
-    )
-    version(
-        "5.0",
-        sha256="0651614eacfc92ffbe5264a3efebd0803527ae6e8b11f7df99a56a02c37633e1",
-        deprecated="true",
-    )
-    version(
-        "4.1",
-        sha256="7bb6c1eecdd699b4a3207caf202866778ee01f15ff39a9ec198fcd872578fe63",
-        deprecated="true",
-    )
-    version(
-        "4.0",
-        sha256="c050525606965950ad9b35c14077b88571bcf9bfca08599279a3d8d1bb00e655",
-        deprecated="true",
-    )
-    version(
-        "3.1",
-        sha256="49efe8a4e02afca752452809e1b21cba42e8ccb0a0772f936d4459d94e198540",
-        deprecated="true",
-    )
-    version(
-        "3.0",
-        sha256="c9e7fe0a8239b3bbbf7628eb15f7e90de9c36557818bf3d01aecce9fec2dc0be",
-        deprecated="true",
-    )
-    version(
-        "2.0.2",
-        sha256="d19498408781048f0e9039a1a245bce6b384f09fbe7d3643105b4e2981ecd610",
-        deprecated="true",
-    )
-    version(
-        "1.4.2",
-        sha256="d7f3fcca2efeb2f5d5b5f183b3b2c4775e66cbb3400ea2da841dd0428713ebac",
-        deprecated="true",
-    )
-    version(
-        "1.3",
-        sha256="dcfd42bd05f387748eeefbdf421cb3cd98ed905e009303d70b5f75b217fd1254",
-        deprecated="true",
-    )
 
-    def url_for_version(self, version):
-        if version < Version("7.0"):
-            return "https://www.vi-hps.org/cms/upload/packages/scorep/scorep-{0}.tar.gz".format(
-                version
-            )
-
-        return "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-{0}/scorep-{0}.tar.gz".format(
-            version
-        )
-
-    patch("gcc7.patch", when="@1.4:3")
-    patch("gcc10.patch", when="@3.1:6.0")
     patch(
         "https://gitlab.com/score-p/scorep/-/commit/093ff84f0e155ac1db99bbaa312e028f89affddb.diff",
         when="@7:8.4 +gcc-plugin",
@@ -107,21 +51,24 @@ class Scorep(AutotoolsPackage):
         description="Enable debug info lookup via binutils",
         when="^binutils",
     )
-    # Putting this in as preparation. F08 support exists in 9.0 but configure does not respect
-    # --enable-mpi-f08 and will not until 9.1.
-    variant("mpi_f08", default=True, description="Enable MPI F08 support", when="@9.1: +mpi")
+    variant("fortran", default=True, description="Enable fortran support")
+    variant(
+        "mpi_f08", default=True, description="Enable MPI F08 support", when="@9.1: +mpi +fortran"
+    )
+    variant(
+        "gotcha", default=True, description="Enable library wrapping with libgotcha", when="@9:"
+    )
     # Dependencies for SCORE-P are quite tight. See the homepage for more
     # information. Starting with scorep 4.0 / cube 4.4, Score-P only depends on
     # two components of cube -- cubew and cubelib.
 
     # Language dependencies
-    # TODO: we could allow a +fortran variant here.
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type=("build", "run"))
+    depends_on("cxx", type=("build", "run"))
+    depends_on("fortran", type=("build", "run"), when="+fortran")
 
     # SCOREP 9
-    depends_on("gotcha@1.0.8:", type="link", when="@9:")
+    depends_on("gotcha@1.0.8:", type="link", when="+gotcha")
     depends_on("otf2@3.1:", when="@9:")
     depends_on("cubew@4.9:", when="@9:")
     depends_on("cubelib@4.9:", when="@9:")
@@ -140,32 +87,10 @@ class Scorep(AutotoolsPackage):
     depends_on("cubew@4.6:4.7.99", when="@7.0:7")
     depends_on("cubelib@4.6:4.7.99", when="@7.0:7")
     depends_on("opari2@2.0.6:", when="@7:")
-    # SCOREP 6
-    depends_on("otf2@2.2:", when="@6.0:6")
-    # SCOREP 4 and 5
-    depends_on("otf2@2.1:", when="@4:5")
-    depends_on("cubew@4.4:4.5", when="@4:6")
-    depends_on("cubelib@4.4:4.5", when="@4:6")
-    # SCOREP 3
-    depends_on("otf2@2:", when="@3.0:3")
-    depends_on("opari2@2.0:2.0.5", when="@3:6")
-    depends_on("cube@4.3:4.3.5", when="@3.0:3")
-    # SCOREP 2.0.2
-    depends_on("otf2@2.0", when="@2.0.2")
-    depends_on("opari2@2.0", when="@2.0.2")
-    depends_on("cube@4.3:4.3.5", when="@2.0.2")
-    # SCOREP 1.4.2
-    depends_on("otf2@1.5:1.6", when="@1.4.2")
-    depends_on("opari2@1.1.4", when="@1.4.2")
-    depends_on("cube@4.2.3:4.3.5", when="@1.4.2")
-    # SCOREP 1.3
-    depends_on("otf2@1.4", when="@1.3")
-    depends_on("opari2@1.1.4", when="@1.3")
-    depends_on("cube@4.2.3", when="@1.3")
 
     # Conditional dependencies for variants
-    depends_on("mpi@2.2:", when="@7.0:+mpi")
-    depends_on("mpi", when="+mpi")
+    depends_on("mpi@2.2:", type=("build", "run"), when="+mpi")
+    depends_on("mpi", type=("build", "run"), when="+mpi")
     depends_on("papi", when="+papi")
     depends_on("pdt", when="+pdt")
     depends_on("llvm", when="+unwind")
@@ -181,7 +106,7 @@ class Scorep(AutotoolsPackage):
     # https://github.com/spack/spack/issues/1609
     conflicts("platform=darwin")
     # Score-P first has support for ROCm 6.x as of v8.4
-    conflicts("hip@6.0:", when="@1.0:8.3+hip")
+    conflicts("hip@6.0:", when="@:8.3+hip")
 
     # Utility function: extract the first directory in `root` where
     # we find `libname`. Used to handle CUDA irregular layouts.
@@ -194,7 +119,12 @@ class Scorep(AutotoolsPackage):
     # Handle any mapping of Spack compiler names to Score-P args
     # This should continue to exist for backward compatibility
     def clean_compiler(self, compiler):
-        renames = {"cce": "cray", "rocmcc": "amdclang"}
+        renames = {
+            "cce": "cray",
+            "rocmcc": "amdclang",
+            "intel-oneapi-compilers": "oneapi",
+            "llvm": "clang",
+        }
         if compiler in renames:
             return renames[compiler]
         return compiler
@@ -235,9 +165,17 @@ class Scorep(AutotoolsPackage):
                 "rocm", activation_value=lambda _: self.spec["hip"].prefix, variant="hip"
             )
         )
+        config_args.extend(
+            self.with_or_without(
+                "libgotcha",
+                activation_value=lambda _: self.spec["gotcha"].prefix,
+                variant="gotcha",
+            )
+        )
         config_args.extend(self.enable_or_disable("llvm-plugin"))
         config_args.extend(self.enable_or_disable("gcc-plugin"))
         config_args.extend(self.enable_or_disable("mpi_f08"))
+        config_args.extend(self.enable_or_disable("fortran"))
 
         if "~shmem" in spec:
             config_args.append("--without-shmem")
@@ -276,13 +214,6 @@ class Scorep(AutotoolsPackage):
                 variant="binutils",
             )
         )
-
-        # when you build with gcc, you usually want to use the gcc-plugin!
-        # see, e.g., GNU Compiler Plug-In in https://scorepci.pages.jsc.fz-juelich.de/scorep-pipelines/docs/scorep-5.0/html/installationfile.html
-        if "+gcc-plugin" in spec:
-            config_args.append("--enable-gcc-plugin")
-        else:
-            config_args.append("--disable-gcc-plugin")
 
         config_args.extend(
             [

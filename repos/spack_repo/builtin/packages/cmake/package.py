@@ -7,10 +7,8 @@ import pathlib
 import re
 import sys
 
-from spack_repo.builtin.build_systems.cmake import get_cmake_prefix_path
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.build_environment
 from spack.package import *
 
 
@@ -22,6 +20,7 @@ class Cmake(Package):
     homepage = "https://www.cmake.org"
     url = "https://github.com/Kitware/CMake/releases/download/v3.19.0/cmake-3.19.0.tar.gz"
     git = "https://gitlab.kitware.com/cmake/cmake.git"
+    github = "https://github.com/kitware/cmake"
 
     maintainers("alalazo", "johnwparent")
 
@@ -32,16 +31,21 @@ class Cmake(Package):
     license("BSD-3-Clause")
 
     version("master", branch="master")
-    version("4.0.3", sha256="8d3537b7b7732660ea247398f166be892fe6131d63cc291944b45b91279f3ffb")
-    version("4.0.0", sha256="ddc54ad63b87e153cf50be450a6580f1b17b4881de8941da963ff56991a4083b")
+    version("4.2.3", sha256="7efaccde8c5a6b2968bad6ce0fe60e19b6e10701a12fce948c2bf79bac8a11e9")
+    version("4.2.2", sha256="bbda94dd31636e89eb1cc18f8355f6b01d9193d7676549fba282057e8b730f58")
+    version("4.2.0", sha256="4104e94657d247c811cb29985405a360b78130b5d51e7f6daceb2447830bd579")
+    version("4.1.5", sha256="50ce77215cf266630fa5de97c360f4c313bb79f94b35236b63c1216de3196356")
+    version("4.1.2", sha256="643f04182b7ba323ab31f526f785134fb79cba3188a852206ef0473fee282a15")
+    version("4.1.1", sha256="b29f6f19733aa224b7763507a108a427ed48c688e1faf22b29c44e1c30549282")
+    version("4.0.6", sha256="9ebe11be8d304336d62a3e71ca36c18f0a4e40036b97c533d63cf730364b6528")
+    version("4.0.4", sha256="629be82af0b76e029b675a4a37569e2ddc1769d42a768957c00ec0e98407737e")
     version(
-        "3.31.8",
-        sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa",
-        preferred=True
+        "3.31.11",
+        sha256="c0a3b3f2912b2166f522d5010ffb6029d8454ee635f5ad7a3247e0be7f9a15c9",
+        preferred=True,
     )
-    version("3.31.6", sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0")
+    version("3.31.9", sha256="5d4fdec04247ca8a8e8f63692f0d0f1e9d6d082a2bdd008dff8ab3ba7215aa83")
     version("3.30.9", sha256="65f765bb87c8019316cabe67cbe5e8f45ede334eeb5afd161ca6874d17994e0d")
-    version("3.30.8", sha256="10434223a40531b4d6bd77f8ffc471f1714029f4e6d2c83c499187a940276720")
     version("3.29.6", sha256="1391313003b83d48e2ab115a8b525a557f78d8c1544618b48d1d90184a10f0af")
     version("3.28.6", sha256="c39c733900affc4eb0e9688b4d1a45435a732105d9bf9cc1e75dd2b9b81a36bb")
     version("3.27.9", sha256="609a9b98572a6a5ea477f912cffb973109ed4d0a6a6b3f9e2353d2cdc048708e")
@@ -74,53 +78,14 @@ class Cmake(Package):
     version("2.8.10.2", sha256="ce524fb39da06ee6d47534bbcec6e0b50422e18b62abc4781a4ba72ea2910eb1")
 
     with default_args(deprecated=True):
+        version("4.1.0", sha256="81ee8170028865581a8e10eaf055afb620fa4baa0beb6387241241a975033508")
+        version("4.0.3", sha256="8d3537b7b7732660ea247398f166be892fe6131d63cc291944b45b91279f3ffb")
+        version("4.0.0", sha256="ddc54ad63b87e153cf50be450a6580f1b17b4881de8941da963ff56991a4083b")
         version(
-            "3.31.5", sha256="66fb53a145648be56b46fa9e8ccade3a4d0dfc92e401e52ce76bdad1fea43d27"
+            "3.31.8", sha256="e3cde3ca83dc2d3212105326b8f1b565116be808394384007e7ef1c253af6caa"
         )
         version(
-            "3.31.4", sha256="a6130bfe75f5ba5c73e672e34359f7c0a1931521957e8393a5c2922c8b0f7f25"
-        )
-        version(
-            "3.31.3", sha256="fac45bc6d410b49b3113ab866074888d6c9e9dc81a141874446eb239ac38cb87"
-        )
-        version(
-            "3.31.2", sha256="42abb3f48f37dbd739cdfeb19d3712db0c5935ed5c2aef6c340f9ae9114238a2"
-        )
-        version(
-            "3.31.1", sha256="c4fc2a9bd0cd5f899ccb2fb81ec422e175090bc0de5d90e906dd453b53065719"
-        )
-        version(
-            "3.31.0", sha256="300b71db6d69dcc1ab7c5aae61cbc1aa2778a3e00cbd918bc720203e311468c3"
-        )
-        version(
-            "3.30.7", sha256="470e44d9c7caa3bd869ef953071b84f565b5d378d0a9eccbbbcd72031f21b9de"
-        )
-        version(
-            "3.30.6", sha256="a7aa25cdd8545156fe0fec95ebbd53cb2b5173a8717e227f6e8a755185c168cf"
-        )
-        version(
-            "3.30.5", sha256="9f55e1a40508f2f29b7e065fa08c29f82c402fa0402da839fffe64a25755a86d"
-        )
-        version(
-            "3.30.4", sha256="c759c97274f1e7aaaafcb1f0d261f9de9bf3a5d6ecb7e2df616324a46fe704b2"
-        )
-        version(
-            "3.30.3", sha256="6d5de15b6715091df7f5441007425264bdd477809f80333fdf95f846aaff88e4"
-        )
-        version(
-            "3.30.2", sha256="46074c781eccebc433e98f0bbfa265ca3fd4381f245ca3b140e7711531d60db2"
-        )
-        version(
-            "3.30.1", sha256="df9b3c53e3ce84c3c1b7c253e5ceff7d8d1f084ff0673d048f260e04ccb346e1"
-        )
-        version(
-            "3.30.0", sha256="157e5be6055c154c34f580795fe5832f260246506d32954a971300ed7899f579"
-        )
-        version(
-            "3.29.5", sha256="dd63da7d763c0db455ca232f2c443f5234fe0b11f8bd6958a81d29cc987dfd6e"
-        )
-        version(
-            "3.29.4", sha256="b1b48d7100bdff0b46e8c8f6a3c86476dbe872c8df39c42b8d104298b3d56a2c"
+            "3.31.6", sha256="653427f0f5014750aafff22727fb2aa60c6c732ca91808cfb78ce22ddd9e55f0"
         )
 
     depends_on("c", type="build")
@@ -169,6 +134,12 @@ class Cmake(Package):
     # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/9623
     patch("mr-9623.patch", when="@3.22.0:3.30")
 
+    patch(
+        f"{github}/commit/1b0c92a3a1b782ff3e1c4499b6ab8db614d45bcd.patch?full_index=1",
+        sha256="fdea723be9713f3ed4624055bf21ef5876647d63c151b91006608ec44a912ae1",
+        when="@3.11:3.31.6",
+    )
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -204,7 +175,11 @@ class Cmake(Package):
     # provide Spack's TLS libs anyways, which is not flexible, and actually
     # leads to issues where we have to keep track of the vendored curl version
     # and its conflicts with OpenSSL.
+    depends_on("curl@:8.15", when="@:3.25")
     depends_on("curl")
+
+    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/11134
+    conflicts("curl@8.16:", when="@:3.30")
 
     # When using curl, cmake defaults to using system zlib too, probably because
     # curl already depends on zlib. Therefore, also unconditionaly depend on zlib.
@@ -285,6 +260,16 @@ class Cmake(Package):
 
     phases = ["bootstrap", "build", "install"]
 
+    def patch(self):
+        # https://github.com/Kitware/CMake/commit/c8143074cf3954b1e169904eb9d843cfbe14acc3
+        if self.spec.satisfies("@2.8,3.2:3.31.8,4.0:4.0.3,4.1:4.1.1"):
+            filter_file(
+                "curl_proxytype HTTPProxyType;",
+                "long HTTPProxyType;",
+                "Source/CTest/cmCTestCurl.h",
+                string=True,
+            )
+
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)
@@ -310,7 +295,7 @@ class Cmake(Package):
         if not sys.platform == "win32":
             args.append("--prefix={0}".format(self.prefix))
 
-            jobs = spack.build_environment.get_effective_jobs(
+            jobs = get_effective_jobs(
                 make_jobs,
                 parallel=self.parallel,
                 supports_jobserver=self.generator.supports_jobserver,
@@ -442,7 +427,7 @@ class Cmake(Package):
         """Runs and checks output of the installed binary."""
         exe_path = join_path(self.prefix.bin, bin)
         if not os.path.exists(exe_path):
-            raise SkipTest(f"{exe} is not installed")
+            raise SkipTest(f"{exe_path} is not installed")
 
         exe = which(exe_path)
         out = exe("--version", output=str.split, error=str.split)

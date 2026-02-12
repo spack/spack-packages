@@ -15,6 +15,7 @@ class PyPythonSwiftclient(PythonPackage):
 
     maintainers("ajkotobi")
 
+    version("4.7.0", sha256="afd7575753d8e49617adcb11550187fd0b120fcd819f1e782c0b538f2d093773")
     version("4.6.0", sha256="d4d18540413893fc16ad87791d740f823f763435e8212e68eb53d60da2638233")
     version("3.12.0", sha256="313b444a14d0f9b628cbf3e8c52f2c4271658f9e8a33d4222851c2e4f0f7b7a0")
     version("3.11.1", sha256="06919d59676d3e215f4da4f3f930d71880dda3528289842b25199509df712411")
@@ -37,3 +38,9 @@ class PyPythonSwiftclient(PythonPackage):
     depends_on("py-python-keystoneclient@0.7.0:", when="+keystone", type=("build", "run"))
 
     depends_on("py-six@1.9:", type=("build", "run"), when="@:3")
+
+    def url_for_version(self, version):
+        if version < Version("4.7.0"):
+            return f"https://files.pythonhosted.org/packages/source/p/python-swiftclient/python-swiftclient-{version}.tar.gz"
+        else:
+            return f"https://files.pythonhosted.org/packages/source/p/python-swiftclient/python_swiftclient-{version}.tar.gz"

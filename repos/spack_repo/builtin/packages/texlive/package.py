@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import platform
 import re
 
@@ -28,6 +29,12 @@ class Texlive(AutotoolsPackage):
 
     # Add information for new versions below.
     releases = [
+        {
+            "version": "20250308",
+            "year": "2025",
+            "sha256_source": "fffdb1a3d143c177a4398a2229a40d6a88f18098e5f6dcfd57648c9f2417490f",
+            "sha256_texmf": "08dcda7430bf0d2f6ebb326f1e197e1473d3f7cc0984a2adb7236df45316c7cf",
+        },
         {
             "version": "20240312",
             "year": "2024",
@@ -109,6 +116,9 @@ class Texlive(AutotoolsPackage):
 
     build_directory = "spack-build"
 
+    variant("doc", default=False, description="Install the documentation files")
+    variant("src", default=False, description="Install the source files")
+
     def tex_arch(self):
         tex_arch = "{0}-{1}".format(platform.machine(), platform.system().lower())
         return tex_arch
@@ -149,7 +159,18 @@ class Texlive(AutotoolsPackage):
         with working_dir("spack-build"):
             make("texlinks")
 
-        copy_tree("texlive-{0}-texmf".format(self.version.string), self.prefix)
+        ignore_doc = "~doc" in self.spec
+        ignore_src = "~src" in self.spec
+
+        ignore = lambda f: (
+            len(f.split(os.sep)) > 1
+            and (
+                (ignore_doc and f.split(os.sep)[1] == "doc")
+                or (ignore_src and f.split(os.sep)[1] == "source")
+            )
+        )
+
+        copy_tree("texlive-{0}-texmf".format(self.version.string), self.prefix, ignore=ignore)
 
         # Create and run setup utilities
         fmtutil_sys = Executable(join_path(self.prefix.bin, self.tex_arch(), "fmtutil-sys"))

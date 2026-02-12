@@ -23,6 +23,7 @@ class Pflogger(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("1.17.0", sha256="44dd57fd63a9036dc3ca0dee6847042468e5f39f776188a1d140847005e4f828")
     version("1.16.1", sha256="82ae8d008dda3984e12df3e92a61486a8f5c0b87182d54087f1d004ecc141fff")
     version("1.15.0", sha256="454f05731a3ba50c7ae3ef9463b642c53248ae84ccb3b93455ef2ae2b6858235")
     version("1.14.0", sha256="63422493136f66f61d5148b7b1d278b1e5ca76bd37c578e45e4ae0e967351823")
@@ -75,6 +76,23 @@ class Pflogger(CMakePackage):
         when="@:1.12",
         msg="pFlogger only works with the Fujitsu compiler from version 1.13.0 onwards",
     )
+
+    # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
+    conflicts(
+        "%oneapi@2025.2",
+        when="@:1.16.0",
+        msg="oneAPI 2025.2 only works with pflogger 1.16.1 onwards",
+    )
+
+    # This is needed because for ifx 2025.2, we need to use cpp from GNU as fpp from oneapi
+    # is broken. To pull that in, we need to say pflogger depends on C, even though it really
+    # doesn't.
+    depends_on("c", when="^intel-oneapi-compilers@2025.2", type="build")
+    depends_on("gcc", when="^intel-oneapi-compilers@2025.2", type="build")
+
+    @when("@1.16.1 ^intel-oneapi-compilers@2025.2")
+    def patch(self):
+        filter_file("_RC)", "rc=status); _VERIFY(status,'',rc)", "src/Config.F90", string=True)
 
     depends_on("cmake@3.12:3", type="build", when="@:1.16")
     depends_on("cmake@3.24:", type="build", when="@1.17:")

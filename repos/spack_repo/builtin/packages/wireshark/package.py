@@ -100,7 +100,7 @@ class Wireshark(CMakePackage):
     @run_after("install")
     def symlink(self):
         if self.spec.satisfies("platform=darwin"):
-            link(
+            symlink(
                 join_path(self.prefix, "Wireshark.app/Contents/MacOS/Wireshark"),
                 self.prefix.bin.wireshark,
             )

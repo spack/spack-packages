@@ -52,6 +52,10 @@ class Spfft(CMakePackage, CudaPackage, ROCmPackage):
         description="CMake build type",
         values=("Debug", "Release", "RelWithDebInfo"),
     )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
     depends_on("fftw-api@3")
     depends_on("mpi", when="+mpi")
     depends_on("cmake@3.11:", type="build")
@@ -88,9 +92,9 @@ class Spfft(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("SPFFT_STATIC", "static"),
             self.define("SPFFT_FFTW_LIB", "FFTW"),
             self.define("FFTW_INCLUDE_DIRS", spec["fftw-api"].prefix.include),
-            self.define("FFTWF_INCLUDE_DIRS", spec["fftw-api"].prefix.include),
+            self.define("FFTWF_INCLUDE_DIRS", spec["fftw-api:float"].prefix.include),
             self.define("FFTW_LIBRARIES", spec["fftw-api"].libs.ld_flags),
-            self.define("FFTWF_LIBRARIES", spec["fftw-api"].libs.ld_flags),
+            self.define("FFTWF_LIBRARIES", spec["fftw-api:float"].libs.ld_flags),
         ]
 
         if spec.satisfies("+cuda"):

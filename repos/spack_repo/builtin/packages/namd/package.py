@@ -10,7 +10,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -28,38 +27,6 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("3.0.1", sha256="3be0854545c45e58afb439a96708e127aef435d30113cc89adbab8f4b6888733")
-    version(
-        "3.0",
-        sha256="301c64f0f1db860f7336efdb26223ccf66b5ab42bfc9141df8d81ec1e20bf472",
-        deprecated=True,
-    )
-    version(
-        "3.0b7",
-        sha256="b18ff43b0f55ec59e137c62eba1812589dd88b2122c3a05ea652781667f438b4",
-        deprecated=True,
-    )
-    version(
-        "3.0b6",
-        sha256="8b5fb1dc8d5b5666c6a45d20ee7e8c9d1f5c186578e2cf148b68ba421d43b850",
-        deprecated=True,
-    )
-    version(
-        "3.0b3",
-        sha256="20c32b6161f9c376536e3cb97c3bfe5367e1baaaace3c716ff79831fc2eb8199",
-        deprecated=True,
-    )
-    version(
-        "2.15a2",
-        sha256="8748cbaa93fc480f92fc263d9323e55bce6623fc693dbfd4a40f59b92669713e",
-        deprecated=True,
-    )
-    version("2.15a1", branch="master", tag="release-2-15-alpha-1", deprecated=True)
-    # Same as above, but lets you use a local file instead of git
-    version(
-        "2.15a1.manual",
-        sha256="474006e98e32dddae59616b3b75f13a2bb149deaf7a0d617ce7fb9fd5a56a33a",
-        deprecated=True,
-    )
     version(
         "2.14",
         sha256="34044d85d9b4ae61650ccdba5cda4794088c3a9075932392dd0752ef8c049235",
@@ -183,14 +150,14 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                 # this options are take from the default provided
                 # configuration files
                 # https://github.com/UIUC-PPL/charm/pull/2778
-                archopt = optimization_flags(self.compiler, spec.target)
+                archopt = microarchitecture_flags(self.spec, "c")
 
                 if self.spec.satisfies("^charmpp@:6.10.1"):
                     optims_opts = {
                         "gcc": m64
                         + "-O3 -fexpensive-optimizations -ffast-math -lpthread "
                         + archopt,
-                        "intel": "-O2 -ip -qopenmp-simd" + archopt,
+                        "intel": "-O2 -ip -qopenmp-simd " + archopt,
                         "clang": m64 + "-O3 -ffast-math -fopenmp " + archopt,
                         "aocc": m64 + "-O3 -ffp-contract=fast -ffast-math -fopenmp " + archopt,
                     }
@@ -203,7 +170,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                         "clang": m64 + "-O3 -ffast-math -fopenmp " + archopt,
                         "aocc": m64 + "-O3 -ffp-contract=fast -ffast-math " + archopt,
                         "intel-oneapi-compilers": m64
-                        + "-O3 -ffp-contract=fast -ffast-math"
+                        + "-O3 -ffp-contract=fast -ffast-math "
                         + archopt,
                     }
 
@@ -268,7 +235,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                     tty.info("Building binaries with AVX512-tile optimization")
                     copy("Linux-AVX512-icc.arch", arch_filename)
                 elif spec.version >= Version("2.14") and os.path.exists("Linux-SKX-icc.arch"):
-                    tty.info("Building binaries with Skylake-X" "AVX512 optimization")
+                    tty.info("Building binaries with Skylake-X AVX512 optimization")
                     copy("Linux-SKX-icc.arch", arch_filename)
                 else:
                     return False
@@ -356,13 +323,6 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                 "CHARM = $(CHARMBASE)",
                 join_path(self.build_directory, "Make.config"),
             )
-
-    @when("@3.0b3")
-    def build(self, spec, prefix):
-        # Disable parallel build
-        # https://github.com/spack/spack/pull/43215
-        with working_dir(self.build_directory):
-            make(parallel=False)
 
     def install(self, spec, prefix):
         with working_dir(self.build_directory):

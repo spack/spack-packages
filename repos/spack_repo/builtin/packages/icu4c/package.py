@@ -40,7 +40,7 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
         with when(f"platform={plat}"):
             variant(
                 "cxxstd",
-                default="11",
+                default="17",
                 values=(conditional("11", "14", when="@:74"), "17"),
                 multi=False,
                 description="Use the specified C++ standard when building",
@@ -55,8 +55,9 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
         depends_on("automake", type="build")
         depends_on("libtool", type="build")
 
-    with when("build_system=msbuild"):
+    with when("build_system=msbuild platform=windows"):
         patch("ICU4C_NMAKE_NO_DOUBLE_QUOTE_VARS.patch", when="@64.1:")
+        patch("Quote_datagen.patch", when="@64.1:")
 
     conflicts(
         "%intel@:16",
@@ -89,7 +90,6 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
-
     configure_directory = "source"
 
     # Need to make sure that locale is UTF-8 in order to process source files in UTF-8.

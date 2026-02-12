@@ -16,6 +16,7 @@ class PyGevent(PythonPackage):
 
     license("MIT")
 
+    version("25.5.1", sha256="582c948fa9a23188b890d0bc130734a506d039a2e5ad87dae276a456cc683e61")
     version("24.11.1", sha256="8bd1419114e9e4a3ed33a5bad766afff9a3cf765cb440a582a1b3a9bc80c1aca")
     version("24.10.3", sha256="aa7ee1bd5cabb2b7ef35105f863b386c8d5e332f754b60cfc354148bd70d35d1")
     version("24.2.1", sha256="432fc76f680acf7cf188c2ee0f5d3ab73b63c1f03114c7cd8a34cebbe5aa2056")
@@ -42,7 +43,7 @@ class PyGevent(PythonPackage):
     depends_on("py-cython@0.29.14:", when="@1.5:", type="build")
     depends_on("py-cffi@1.17.1:", when="@24.10.1:", type=("build", "run"))
     depends_on("py-cffi@1.12.3:", type=("build", "run"))
-    depends_on("py-greenlet@3.1.1:", when="@24.10.1:", type=("build", "run"))  # setup.py
+    depends_on("py-greenlet@3.2.2:", when="@25.5.1:", type=("build", "run"))  # setup.py
     depends_on("py-greenlet@3.0.3:", when="@24.2.1:", type=("build", "run"))
     depends_on("py-greenlet@3:", when="@23.7: ^python@3.12:", type=("build", "run"))
     depends_on("py-greenlet@2:", when="@22.10.2: ^python@:3.11", type=("build", "run"))
@@ -52,6 +53,8 @@ class PyGevent(PythonPackage):
     depends_on("py-zope-event", when="@20.5.1:", type=("build", "run"))
     depends_on("py-zope-interface", when="@20.5.1:", type=("build", "run"))
 
+    # https://github.com/gevent/gevent/issues/2076
+    conflicts("^py-cython@3.1:", when="@:24.10.3")
     # https://github.com/gevent/gevent/issues/1599
     conflicts("^py-cython@3:", when="@:20.5.0")
 

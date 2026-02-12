@@ -23,6 +23,12 @@ class Eigen(CMakePackage, ROCmPackage):
     license("MPL-2.0")
 
     version("master", branch="master")
+    version("5.0.1", sha256="e9c326dc8c05cd1e044c71f30f1b2e34a6161a3b6ecf445d56b53ff1669e3dec")
+    version("5.0.0", sha256="315c881e19e17542a7d428c5aa37d113c89b9500d350c433797b730cd449c056")
+    version("3.4.1", sha256="b93c667d1b69265cdb4d9f30ec21f8facbbe8b307cf34c0b9942834c6d4fdbe2")
+    version(
+        "3.4.0-44-ge7248b26a", commit="e7248b26a1ed53fa030c5c459f7ea095dfd276ac", deprecated=True
+    )
     version("3.4.0", sha256="8586084f71f9bde545ee7fa6d00288b264a2b7ac3607b974e54d13e7162c1c72")
     version("3.3.9", sha256="7985975b787340124786f092b3a07d594b2e9cd53bbfe5f3d9b1daee7d55f56f")
     version("3.3.8", sha256="146a480b8ed1fb6ac7cd33fec9eb5e8f8f62c3683b3f850094d9d5c35a92419a")
@@ -40,6 +46,9 @@ class Eigen(CMakePackage, ROCmPackage):
     version("3.2.7", sha256="0ea9df884873275bf39c2965d486fa2d112f3a64b97b60b45b8bc4bb034a36c1")
     version("3.2.6", sha256="e097b8dcc5ad30d40af4ad72d7052e3f78639469baf83cffaadc045459cda21f")
     version("3.2.5", sha256="8068bd528a2ff3885eb55225c27237cf5cda834355599f05c2c85345db8338b4")
+
+    variant("blas", description="Build eigen-based BLAS", when="@3.4.1:", default=False)
+    variant("lapack", description="Build eigen-based LAPACK", when="@3.4.1:", default=False)
 
     variant("nightly", description="run Nightly test", default=False)
 
@@ -62,22 +71,35 @@ class Eigen(CMakePackage, ROCmPackage):
         sha256="b8877a84c4338f08ab8a6bb8b274c768e93d36ac05b733b078745198919a74bf",
     )
 
+    patch(
+        "https://gitlab.com/libeigen/eigen/-/merge_requests/2017.diff",
+        sha256="89b31dd7a28764b95758c9777f9084cacede084e87d5d2623efc754dc1987864",
+        when="@5.0.0 platform=windows",
+    )
+
+    patch(
+        "https://gitlab.com/libeigen/eigen/-/merge_requests/2019.diff",
+        sha256="5d4521e391a4e62e1ee7a98df5dbb20f67c4a1210863babfdbfec0466c8d2b13",
+        when="@5.0.0 platform=windows",
+    )
+
+    # Building eigen-based LAPACK implementation requires to also build BLAS
+    conflicts("~blas", when="+lapack")
+
+    conflicts("platform=windows", when="@3.4.1")
+
     # there is a bug in 3.3.4 that provokes a compile error with the xl compiler
     # See https://gitlab.com/libeigen/eigen/-/issues/1555
     patch("xlc-compilation-3.3.4.patch", when="@3.3.4%xl_r")
 
-    # From http://eigen.tuxfamily.org/index.php?title=Main_Page#Requirements
-    # "Eigen doesn't have any dependencies other than the C++ standard
-    # library."
-    variant(
-        "build_type",
-        default="RelWithDebInfo",
-        description="The build type to build",
-        values=("Debug", "Release", "RelWithDebInfo"),
-    )
-
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="@3.4.1: +lapack")
+    depends_on("fortran", type="build", when="@3.4.1:3 +blas")
+
+    depends_on("cmake@3.10:", when="@3.4.1:", type="build")
+    depends_on("cmake@3.5:", when="@3.4.0", type="build")
+    depends_on("cmake@:3", when="@:3.3", type="build")
 
     depends_on("boost@1.53:", when="@master", type="test")
     # TODO: latex and doxygen needed to produce docs with make doc
@@ -90,6 +112,8 @@ class Eigen(CMakePackage, ROCmPackage):
         args = [
             self.define("EIGEN_BUILD_TESTING", self.run_tests),
             self.define("EIGEN_LEAVE_TEST_IN_ALL_TARGET", self.run_tests),
+            self.define_from_variant("EIGEN_BUILD_BLAS", "blas"),
+            self.define_from_variant("EIGEN_BUILD_LAPACK", "lapack"),
         ]
 
         if self.spec.satisfies("@:3.4"):

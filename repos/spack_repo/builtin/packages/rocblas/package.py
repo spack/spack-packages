@@ -15,16 +15,19 @@ class Rocblas(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocBLAS/"
     git = "https://github.com/ROCm/rocBLAS.git"
-    url = "https://github.com/ROCm/rocBLAS/archive/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rocBLAS/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocblas"]
 
     license("MIT")
-
-    version("develop", branch="develop", deprecated=True)
-    version("master", branch="master", deprecated=True)
+    version("7.1.1", sha256="29d43270ccf5d4818d261993f964d4fce4bd0a55c2b6dde60d1529b6c227a873")
+    version("7.1.0", sha256="54f38222d0e58344cf5c86f151d418c071b59145297fd2ed953bb561df1e12c3")
+    version("7.0.2", sha256="8398cda68242db2386abc9eaf00c3588bb27e2b382e29be2bc5624c2d4ac8a99")
+    version("7.0.0", sha256="337a77cec31927e484672002d245d3aebf7a67e95658a8477fc593c95cf281fb")
+    version("6.4.3", sha256="754dcc88b30468a2293d2406d7fe40f78dc92dd77c193758f937532217ecdad3")
+    version("6.4.2", sha256="703226c458bb3dd1155aad8bdc02cdae2ff789c6b44e41e4a49ae28e40baff98")
     version("6.4.1", sha256="517950ff6b3715dee8b2bcfbdd3968c65e1910e4b8e353e148574ae08aa6dc73")
     version("6.4.0", sha256="ab8e75c9f98d17817a650aa4f06ff1e6c6af92cd143079e361cb6a0c96676aaa")
     version("6.3.3", sha256="73e91bd50c920b818742fa5bf9990c0676be5bfbafe321d5781607dc2ce27060")
@@ -41,15 +44,6 @@ class Rocblas(CMakePackage):
     version("6.0.0", sha256="befa4a75f1de0ea37f2358d4c2de5406d7bce671ca9936e2294b64d3b3bafb60")
     version("5.7.1", sha256="2984a5ed0ea5a05d40996ee3fddecb24399cbe8ea3e4921fc254e54d8f52fe4f")
     version("5.7.0", sha256="024edd98de9687ee5394badc4dd4c543eef4eb3f71c96ff64100705d851e1744")
-    version("5.6.1", sha256="73896ebd445162a69af97f9fd462684609b4e0cf617eab450cd4558b4a23941e")
-    version("5.6.0", sha256="6a70b27eede02c45f46095a6ce8421af9a774a565e39f5e1074783ecf00c1ea7")
-    version("5.5.1", sha256="7916a8d238d51cc239949d799f0b61c9d5cd63c6ccaed0e16749489b89ca8ff3")
-    version("5.5.0", sha256="b5260517f199e806ae18f2c4495f163884e0d7a0a7c67af0770f7428ea50f898")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="d82cd334b7a9b40d16ec4f4bb1fb5662382dcbfc86ee5e262413ed63d9e6a701")
-        version("5.4.0", sha256="261e05375024a01e68697c5d175210a07f0f5fc63a756234d996ddedffde78a2")
-        version("5.3.3", sha256="62a3b5f415bd8e0dcd0d68233d379f1a928ec0349977c32b4eea72ae5004e805")
-        version("5.3.0", sha256="8ea7269604cba949a6ea84b78dc92a44fa890427db88334da6358813f6512e34")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -61,15 +55,11 @@ class Rocblas(CMakePackage):
     )
     variant("tensile", default=True, description="Use Tensile as a backend")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
+    variant("hipblaslt", default=True, when="@6.3:", description="Build with hipblaslt")
 
     conflicts("+asan", when="os=rhel9")
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
-
-    # https://reviews.llvm.org/D124866
-    # https://github.com/ROCm/HIP/issues/2678
-    # https://github.com/ROCm/hipamd/blob/rocm-5.2.x/include/hip/amd_detail/host_defines.h#L50
-    conflicts("%gcc@12", when="@5.2")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -81,15 +71,6 @@ class Rocblas(CMakePackage):
     depends_on("amdblis", type="test")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
-        "5.7.0",
-        "5.7.1",
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
         "6.2.0",
         "6.2.1",
         "6.2.4",
@@ -99,23 +80,16 @@ class Rocblas(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
-        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
-
-    for ver in ["6.2.0", "6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
-    depends_on("rocm-cmake@master", type="build", when="@master:")
-
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -132,15 +106,36 @@ class Rocblas(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
+        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("python@3.6:", type="build")
@@ -154,18 +149,10 @@ class Rocblas(CMakePackage):
         depends_on("py-wheel", type="build")
         depends_on("py-msgpack", type="build")
         depends_on("py-pip", type="build")
-        depends_on("py-joblib", type="build", when="@5.6:")
-        depends_on("procps", type="build", when="@5.6:")
+        depends_on("py-joblib", type="build")
+        depends_on("procps", type="build")
 
     for t_version, t_commit in [
-        ("@5.3.0", "b33ca97af456cda14f7b1ec9bcc8aeab3ed6dd08"),
-        ("@5.3.3", "006a5d653ce0d82fecb05d5e215d053749b57c04"),
-        ("@5.4.0", "5aec08937473b27865fa969bb38a83bcf9463c2b"),
-        ("@5.4.3", "5aec08937473b27865fa969bb38a83bcf9463c2b"),
-        ("@5.5.0", "38d444a9f2b6cddfeaeedcb39a5688150fa27093"),
-        ("@5.5.1", "38d444a9f2b6cddfeaeedcb39a5688150fa27093"),
-        ("@5.6.0", "7d0a9d040c3bbae893df7ecef6a19d9cd1c304aa"),
-        ("@5.6.1", "7d0a9d040c3bbae893df7ecef6a19d9cd1c304aa"),
         ("@5.7.0", "97e0cfc2c8cb87a1e38901d99c39090dc4181652"),
         ("@5.7.1", "97e0cfc2c8cb87a1e38901d99c39090dc4181652"),
         ("@6.0.0", "17df881bde80fc20f997dfb290f4bb4b0e05a7e9"),
@@ -182,6 +169,12 @@ class Rocblas(CMakePackage):
         ("@6.3.3", "aca95d1743c243dd0dd0c8b924608bc915ce1ae7"),
         ("@6.4.0", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
         ("@6.4.1", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
+        ("@6.4.2", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
+        ("@6.4.3", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
+        ("@7.0.0", "cca3c8136aa812109629e6291ce9f0ca846b68d3"),
+        ("@7.0.2", "63c27e505cb532ff8e568d737bfdbd9e1d024665"),
+        ("@7.1.0", "0c8314da90fee8cf3b16dcb1bbc75bc1266e123f"),
+        ("@7.1.1", "0c8314da90fee8cf3b16dcb1bbc75bc1266e123f"),
     ]:
         resource(
             name="Tensile",
@@ -190,20 +183,10 @@ class Rocblas(CMakePackage):
             when=f"{t_version} +tensile",
         )
 
-    for ver in ["master", "develop"]:
-        resource(
-            name="Tensile",
-            git="https://github.com/ROCm/Tensile.git",
-            branch=ver,
-            when=f"@{ver} +tensile",
-        )
-
-    # Finding Python package and set command python as python3
-    patch("0004-Find-python.patch", when="@5.2.0:5.4")
-    patch("0006-Guard-use-of-OpenMP-to-make-it-optional-5.4.patch", when="@5.4")
-    patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.6:5.7")
+    patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
-    patch("0009-use-rocm-smi-config.patch", when="@6.4")
+    patch("0009-use-rocm-smi-config.patch", when="@6.4:")
+    patch("0001-remove-blas-override.patch", when="@7.1:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -233,19 +216,20 @@ class Rocblas(CMakePackage):
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("RUN_HEADER_TESTING", "OFF"),
             self.define_from_variant("BUILD_WITH_TENSILE", "tensile"),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
+            self.define("Tensile_CODE_OBJECT_VERSION", "default"),
         ]
         if self.run_tests:
             args.append(self.define("LINK_BLIS", "ON"))
-            if self.spec.satisfies("@5.6.0:"):
-                args.append(
-                    self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
-                )
-                args.append(
-                    self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
-                )
-                args.append(
-                    self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")
-                )
+            args.append(
+                self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
+            )
+            args.append(
+                self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
+            )
+            args.append(
+                self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")
+            )
 
         if "+tensile" in self.spec:
             tensile_path = join_path(self.stage.source_path, "Tensile")
@@ -266,22 +250,22 @@ class Rocblas(CMakePackage):
             # https://github.com/ROCm/Tensile/blob/93e10678a0ced7843d9332b80bc17ebf9a166e8e/Tensile/Parallel.py#L38
             args.append(self.define("Tensile_CPU_THREADS", min(16, make_jobs)))
 
-        # See https://github.com/ROCm/rocBLAS/commit/c1895ba4bb3f4f5947f3818ebd155cf71a27b634
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         # See https://github.com/ROCm/rocBLAS/issues/1196
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.2.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.3.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
-        if self.spec.satisfies("@:5.4"):
-            args.append(self.define("Tensile_CODE_OBJECT_VERSION", "V3"))
-        else:
-            args.append(self.define("Tensile_CODE_OBJECT_VERSION", "default"))
+        if self.spec.satisfies("@6.3:"):
+            args.append(self.define_from_variant("BUILD_WITH_HIPBLASLT", "hipblaslt"))
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCTX_PATH", self.spec["roctracer-dev"].prefix))
         return args
 
     @run_after("build")

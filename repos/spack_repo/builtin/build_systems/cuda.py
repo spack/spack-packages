@@ -53,6 +53,9 @@ class CudaPackage(PackageBase):
         "103",
         "103a",
         "103f",
+        "110",
+        "110a",
+        "110f",
         "120",
         "120a",
         "120f",
@@ -89,8 +92,8 @@ class CudaPackage(PackageBase):
     def compute_capabilities(arch_list: Iterable[str]) -> List[str]:
         """Adds a decimal place to each CUDA arch.
 
-        >>> compute_capabilities(['90', '90a'])
-        ['9.0', '9.0a']
+        >>> compute_capabilities(['90', '90a', '100f'])
+        ['9.0', '9.0a', '10.0f']
 
         Args:
             arch_list: A list of integer strings, optionally followed by a suffix.
@@ -128,17 +131,18 @@ class CudaPackage(PackageBase):
     depends_on("cuda@6.5:11.8", when="cuda_arch=37")
 
     # Maxwell support:
-    depends_on("cuda@6.0:", when="cuda_arch=50")
-    depends_on("cuda@6.5:", when="cuda_arch=52")
-    depends_on("cuda@6.5:", when="cuda_arch=53")
+    depends_on("cuda@6.0:12.9", when="cuda_arch=50")
+    depends_on("cuda@6.5:12.9", when="cuda_arch=52")
+    depends_on("cuda@6.5:12.9", when="cuda_arch=53")
 
     # Pascal support:
-    depends_on("cuda@8.0:", when="cuda_arch=60")
-    depends_on("cuda@8.0:", when="cuda_arch=61")
-    depends_on("cuda@8.0:", when="cuda_arch=62")
+    depends_on("cuda@8.0:12.9", when="cuda_arch=60")
+    depends_on("cuda@8.0:12.9", when="cuda_arch=61")
+    depends_on("cuda@8.0:12.9", when="cuda_arch=62")
 
     # Volta support:
-    depends_on("cuda@9.0:", when="cuda_arch=70")
+    depends_on("cuda@9.0:12.9", when="cuda_arch=70")
+
     # Turing support:
     depends_on("cuda@9.0:", when="cuda_arch=72")
     depends_on("cuda@10.0:", when="cuda_arch=75")
@@ -157,16 +161,21 @@ class CudaPackage(PackageBase):
     # Blackwell support:
     depends_on("cuda@12.8:", when="cuda_arch=100")
     depends_on("cuda@12.8:", when="cuda_arch=100a")
-    depends_on("cuda@12.8:", when="cuda_arch=101")
-    depends_on("cuda@12.8:", when="cuda_arch=101a")
-    depends_on("cuda@12.8:", when="cuda_arch=120")
-    depends_on("cuda@12.8:", when="cuda_arch=120a")
     depends_on("cuda@12.9:", when="cuda_arch=100f")
-    depends_on("cuda@12.9:", when="cuda_arch=101f")
-    depends_on("cuda@12.9:", when="cuda_arch=120f")
     depends_on("cuda@12.9:", when="cuda_arch=103")
     depends_on("cuda@12.9:", when="cuda_arch=103a")
     depends_on("cuda@12.9:", when="cuda_arch=103f")
+    # Compute Capability 101 was renamed to 110 in CUDA 13
+    depends_on("cuda@12.8:12.9", when="cuda_arch=101")
+    depends_on("cuda@12.8:12.9", when="cuda_arch=101a")
+    depends_on("cuda@12.9", when="cuda_arch=101f")
+    depends_on("cuda@13.0:", when="cuda_arch=110")
+    depends_on("cuda@13.0:", when="cuda_arch=110a")
+    depends_on("cuda@13.0:", when="cuda_arch=110f")
+
+    depends_on("cuda@12.8:", when="cuda_arch=120")
+    depends_on("cuda@12.8:", when="cuda_arch=120a")
+    depends_on("cuda@12.9:", when="cuda_arch=120f")
     depends_on("cuda@12.9:", when="cuda_arch=121")
     depends_on("cuda@12.9:", when="cuda_arch=121a")
     depends_on("cuda@12.9:", when="cuda_arch=121f")
@@ -202,6 +211,8 @@ class CudaPackage(PackageBase):
         conflicts("%gcc@13:", when="+cuda ^cuda@:12.3")
         conflicts("%gcc@14:", when="+cuda ^cuda@:12.6")
         conflicts("%gcc@15:", when="+cuda ^cuda@:12.9")
+        conflicts("%gcc@16:", when="+cuda ^cuda@:13.1")
+        conflicts("%gcc@15:", when="+cuda ^cuda@13.1:")
         conflicts("%clang@12:", when="+cuda ^cuda@:11.4.0")
         conflicts("%clang@13:", when="+cuda ^cuda@:11.5")
         conflicts("%clang@14:", when="+cuda ^cuda@:11.7")
@@ -211,6 +222,8 @@ class CudaPackage(PackageBase):
         conflicts("%clang@18:", when="+cuda ^cuda@:12.5")
         conflicts("%clang@19:", when="+cuda ^cuda@:12.6")
         conflicts("%clang@20:", when="+cuda ^cuda@:12.9")
+        conflicts("%clang@21:", when="+cuda ^cuda@:13.1")
+        conflicts("%clang@20:", when="+cuda ^cuda@13.1:")
 
         # https://gist.github.com/ax3l/9489132#gistcomment-3860114
         conflicts("%gcc@10", when="+cuda ^cuda@:11.4.0")
@@ -269,6 +282,7 @@ class CudaPackage(PackageBase):
         conflicts("%intel@19.1:", when="+cuda ^cuda@:10.1")
         conflicts("%intel@19.2:", when="+cuda ^cuda@:11.1.0")
         conflicts("%intel@2021:", when="+cuda ^cuda@:11.4.0")
+        conflicts("%intel", when="+cuda ^cuda@13.0:")
 
         # ARM
         # https://github.com/spack/spack/pull/39666#issuecomment-2377609263

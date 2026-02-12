@@ -29,38 +29,27 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
 
     license("Apache-2.0")
 
-    version("3.4.1", sha256="002a2d6b30b58bf4bea46c43bdd96365aaf8daa6c428782aa4feee06da197df3")
-    version("3.3.3", sha256="712590fd20aaa60ec75d778fe5b810d6b829ca7fb1e530577917a131f9105539")
-    version("3.2.4", sha256="b23ad7fd9f73e43ad1767e636040e88ba7c9e5775bfa5618436a0dd2c17c3716")
-    version("3.1.8", sha256="d319da6aecde3aa6f426b44bbf997406d95275c5c59ab6f6ef53caaa079f456f")
-    version("3.0.16", sha256="57e03c50feab5d31b152af2b764f10379aecd8ee92f16c985983ce4a99f7ef86")
+    version("3.6.1", sha256="b1bfedcd5b289ff22aee87c9d600f515767ebf45f77168cb6d64f231f518a82e")
+    version("3.5.5", sha256="b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89")
+    version("3.4.4", sha256="7bdf55ac20f2779e99e5eca306f824fad2b37dee5a06cc35ed5a8b85a6060010")
+    version("3.3.6", sha256="22db04f3c8f9a808c9795dcf7d2713ff40c12c410ea2d1f6435c6c9c8558958b")
+    version("3.2.6", sha256="89681a9ddaa9ed7cf25ea8ef61338db805200bae47d00510490623547380c148")
+    version("3.0.19", sha256="fa5a4143b8aae18be53ef2f3caf29a2e0747430b8bc74d32d88335b94ab63072")
 
     with default_args(deprecated=True):
-        version("3.4.0", sha256="e15dda82fe2fe8139dc2ac21a36d4ca01d5313c75f99f46c4e8a27709b7294bf")
-        version("3.3.1", sha256="777cd596284c883375a2a7a11bf5d2786fc5413255efab20c50d6ffe6d020b7e")
-        version("3.3.2", sha256="2e8a40b01979afe8be0bbfb3de5dc1c6709fedb46d6c89c10da114ab5fc3d281")
-        version("3.3.0", sha256="53e66b043322a606abf0087e7699a0e033a37fa13feb9742df35c3a33b18fb02")
-        version("3.2.3", sha256="52b5f1c6b8022bc5868c308c54fb77705e702d6c6f4594f99a0df216acf46239")
-        version("3.2.2", sha256="197149c18d9e9f292c43f0400acaba12e5f52cacfe050f3d199277ea738ec2e7")
-        version("3.2.1", sha256="83c7329fe52c850677d75e5d0b0ca245309b97e8ecbcfdc1dfdc4ab9fac35b39")
-        version("3.1.7", sha256="053a31fa80cf4aebe1068c987d2ef1e44ce418881427c4464751ae800c31d06c")
-        version("3.1.6", sha256="5d2be4036b478ef3cb0a854ca9b353072c3a0e26d8a56f8f0ab9fb6ed32d38d7")
-        version("3.1.5", sha256="6ae015467dabf0469b139ada93319327be24b98251ffaeceda0221848dc09262")
+        version("3.6.0", sha256="b6a5f44b7eb69e3fa35dbf15524405b44837a481d43d81daddde3ff21fcbb8e9")
+        version("3.5.4", sha256="967311f84955316969bdb1d8d4b983718ef42338639c621ec4c34fddef355e99")
+        version("3.4.3", sha256="fa727ed1399a64e754030a033435003991aee36bda9a5b080995cb2ac5cf7f37")
+        version("3.4.1", sha256="002a2d6b30b58bf4bea46c43bdd96365aaf8daa6c428782aa4feee06da197df3")
+        version("3.3.5", sha256="9d62c00a5a6903740c8703f0e006257f429d565d3b91ac1a9bd4a4c700002e01")
+        version("3.3.3", sha256="712590fd20aaa60ec75d778fe5b810d6b829ca7fb1e530577917a131f9105539")
+        version("3.2.4", sha256="b23ad7fd9f73e43ad1767e636040e88ba7c9e5775bfa5618436a0dd2c17c3716")
+        version("3.1.8", sha256="d319da6aecde3aa6f426b44bbf997406d95275c5c59ab6f6ef53caaa079f456f")
         version(
-            "3.0.15", sha256="23c666d0edf20f14249b3d8f0368acaee9ab585b09e1de82107c66e1f3ec9533"
+            "3.0.18", sha256="d80c34f5cf902dccf1f1b5df5ebb86d0392e37049e5d73df1b3abae72e4ffe8b"
         )
         version(
-            "3.0.14", sha256="eeca035d4dd4e84fc25846d952da6297484afa0650a6f84c682e39df3a4123ca"
-        )
-        version(
-            "3.0.13", sha256="88525753f79d3bec27d2fa7c66aa0b92b3aa9498dafd93d7cfa4b3780cdae313"
-        )
-
-        version(
-            "1.1.1w", sha256="cf3098950cb4d853ad95c0841f1f9c6d3dc102dccfcacd521d93925208b76ac8"
-        )
-        version(
-            "1.0.2u", sha256="ecd0c6ffb493dd06707d38b14bb4d8c2288bb7033735606569d8f90f89669d16"
+            "3.0.16", sha256="57e03c50feab5d31b152af2b764f10379aecd8ee92f16c985983ce4a99f7ef86"
         )
 
     # On Cray DVS mounts, we can't make symlinks to /etc/ssl/openssl.cnf,
@@ -130,8 +119,6 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
             env["KERNEL_BITS"] = "64"
 
         options = ["zlib"]
-        if spec.satisfies("@1.0"):
-            options.append("no-krb5")
         # clang does not support the .arch directive in assembly files.
         if "clang" in self["c"].cc and spec.target.family == "aarch64":
             options.append("no-asm")
@@ -140,7 +127,7 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
             # nvhpc segfaults NVC++-F-0000-Internal compiler error.
             # gen_llvm_expr(): unknown opcode       0  (crypto/rsa/rsa_oaep.c: 248)
             options.append("no-asm")
-        elif spec.satisfies("@3: %oneapi"):
+        elif spec.satisfies("%oneapi"):
             # Last tested on oneapi@2023.1.0 for x86_64:
             # crypto/md5/md5-x86_64.s:684:31: error: expected string
             options.append("no-asm")
@@ -156,11 +143,7 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
             "--openssldir=%s" % join_path(prefix, "etc", "openssl"),
         ]
         if spec.satisfies("platform=windows"):
-            if spec.satisfies("@:1"):
-                base_args.extend([f'CC="{self.compiler.cc}"', f'CXX="{self.compiler.cxx}"'])
-            else:
-                base_args.extend([f"CC={self.compiler.cc}", f"CXX={self.compiler.cxx}"])
-            base_args.append("VC-WIN64A")
+            base_args.extend([f"CC={self.compiler.cc}", f"CXX={self.compiler.cxx}", "VC-WIN64A"])
         else:
             base_args.extend(
                 [
@@ -229,14 +212,14 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
             sys_conf = join_path(directory, "openssl.cnf")
             pkg_conf = join_path(pkg_dir, "openssl.cnf")
             if os.path.exists(sys_conf) and not os.path.exists(pkg_conf):
-                os.symlink(sys_conf, pkg_conf)
+                symlink(sys_conf, pkg_conf)
 
             sys_cert = join_path(directory, "cert.pem")
             pkg_cert = join_path(pkg_dir, "cert.pem")
             # If a bundle exists, use it. This is the preferred way on Fedora,
             # where the certs directory does not work.
             if os.path.exists(sys_cert) and not os.path.exists(pkg_cert):
-                os.symlink(sys_cert, pkg_cert)
+                symlink(sys_cert, pkg_cert)
 
             sys_certs = join_path(directory, "certs")
             pkg_certs = join_path(pkg_dir, "certs")
@@ -246,7 +229,7 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
             if os.path.isdir(sys_certs) and not os.path.islink(pkg_certs):
                 if os.path.isdir(pkg_certs):
                     os.rmdir(pkg_certs)
-                os.symlink(sys_certs, pkg_certs)
+                symlink(sys_certs, pkg_certs)
 
     @run_after("install")
     def copy_mozilla_certs(self):

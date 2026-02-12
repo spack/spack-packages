@@ -4,14 +4,9 @@
 import pathlib
 import shutil
 import sys
-from typing import List
 
-import _vendoring.archspec.cpu
 from spack_repo.builtin.build_systems.generic import Package
 
-from llnl.util import lang
-
-import spack.compilers.libraries
 from spack.package import *
 
 
@@ -38,12 +33,14 @@ class CompilerWrapper(Package):
     # this node from auto-generated rules
     tags = ["runtime"]
 
+    maintainers("haampie")
+
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
         version(
             "1.0",
-            sha256="c65a9d2b2d4eef67ab5cb0684d706bb9f005bb2be94f53d82683d7055bdb837c",
+            sha256="c7b816479554fd32f677db15ceec6627b91c86074a5d65498688afcbe2796188",
             expand=False,
         )
     else:
@@ -186,14 +183,7 @@ class CompilerWrapper(Package):
             env.set(wrapper_var_name, str(wrapper_path))
             env.set(f"SPACK_{wrapper_var_name}_RPATH_ARG", compiler_pkg.rpath_arg)
 
-            uarch = dependent_spec.architecture.target
-            version_number, _ = _vendoring.archspec.cpu.version_components(
-                compiler_pkg.spec.version.dotted_numeric_string
-            )
-            try:
-                isa_arg = uarch.optimization_flags(compiler_pkg.archspec_name(), version_number)
-            except (ValueError, _vendoring.archspec.cpu.UnsupportedMicroarchitecture):
-                isa_arg = ""
+            isa_arg = microarchitecture_flags(dependent_spec, language)
 
             if isa_arg:
                 env.set(f"SPACK_TARGET_ARGS_{attr_name.upper()}", isa_arg)
@@ -221,7 +211,7 @@ class CompilerWrapper(Package):
             env.set(f"SPACK_{wrapper_var_name}_LINKER_ARG", compiler_pkg.linker_arg)
 
             # Check if this compiler has implicit rpaths
-            implicit_rpaths.extend(_implicit_rpaths(pkg=compiler_pkg))
+            implicit_rpaths.extend(CompilerPropertyDetector(compiler_pkg.spec).implicit_rpaths())
 
             # Add extra rpaths, if they are defined in an external spec
             extra_rpaths.extend(
@@ -231,11 +221,11 @@ class CompilerWrapper(Package):
         if implicit_rpaths:
             # Implicit rpaths are accumulated across all compilers so, whenever they are mixed,
             # the compiler used in ccld mode will account for rpaths from other compilers too.
-            implicit_rpaths = lang.dedupe(implicit_rpaths)
+            implicit_rpaths = dedupe(implicit_rpaths)
             env.set("SPACK_COMPILER_IMPLICIT_RPATHS", ":".join(implicit_rpaths))
 
         if extra_rpaths:
-            extra_rpaths = lang.dedupe(extra_rpaths)
+            extra_rpaths = dedupe(extra_rpaths)
             env.set("SPACK_COMPILER_EXTRA_RPATHS", ":".join(extra_rpaths))
 
         env.set("SPACK_ENABLE_NEW_DTAGS", self.enable_new_dtags)
@@ -280,9 +270,3 @@ class CompilerWrapper(Package):
         if self.spec.satisfies("platform=darwin"):
             return ""
         return "--enable-new-dtags"
-
-
-def _implicit_rpaths(pkg: PackageBase) -> List[str]:
-    detector = spack.compilers.libraries.CompilerPropertyDetector(pkg.spec)
-    paths = detector.implicit_rpaths()
-    return paths

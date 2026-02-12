@@ -12,6 +12,7 @@ class RocmExamples(CMakePackage):
     """A collection of examples for the ROCm software stack"""
 
     homepage = "https://github.com/ROCm/rocm-examples"
+    git = "https://github.com/ROCm/rocm-examples.git"
     url = "https://github.com/ROCm/rocm-examples/archive/refs/tags/rocm-6.2.1.tar.gz"
 
     tags = ["rocm"]
@@ -19,6 +20,13 @@ class RocmExamples(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     license("MIT")
+
+    version("7.1.1", sha256="7475c4eaca103395ecae93cc5fa51b77884d06ebe990e71383c53a91bc1b089f")
+    version("7.1.0", sha256="d64a82ba472126bb426c54abd1b2516479a375db895171bbc4024a7c8d0f4e94")
+    version("7.0.2", sha256="02ca88ec6ce584b6710f295c2ab2df61d38a6a5e4950082863186922be40f062")
+    version("7.0.0", sha256="a06dd85c3b55e62626884b9fe477393729ab5cbf7fb45c432df49bb3d918c0fe")
+    version("6.4.3", sha256="febace4c74256c9dc29b3ef71227dad615701263aa4825fd4b1bb00145e59122")
+    version("6.4.2", sha256="c9aa4d24a7542d029185fe382a0382bd208b2984813ebb854c352b78daf9fb80")
     version("6.4.1", sha256="ceece00ac0cb3431e032ce52eb660667fdfdcc64c1c7e9bb15ac1177fa20db83")
     version("6.4.0", sha256="af2be5806982a72c726cf052c512493cc004bfa98d0136fbf8fed2754a4f4b80")
     version("6.3.3", sha256="5e5bdffb4bf56d30c5f8dd8fda95d162362d17e446396e6b6a3afe8d293039f3")
@@ -41,7 +49,23 @@ class RocmExamples(CMakePackage):
     depends_on("glfw", type="build")
     depends_on("mesa", type="build", when="+cuda")
 
-    for ver in ["6.4.1", "6.4.0", "6.3.3", "6.3.2", "6.3.1", "6.3.0", "6.2.4", "6.2.1", "6.2.0"]:
+    for ver in [
+        "7.1.1",
+        "7.1.0",
+        "7.0.2",
+        "7.0.0",
+        "6.4.3",
+        "6.4.2",
+        "6.4.1",
+        "6.4.0",
+        "6.3.3",
+        "6.3.2",
+        "6.3.1",
+        "6.3.0",
+        "6.2.4",
+        "6.2.1",
+        "6.2.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
         depends_on(f"hipcub@{ver}", when=f"@{ver}")
@@ -53,7 +77,20 @@ class RocmExamples(CMakePackage):
         depends_on(f"rocsparse@{ver}", when=f"@{ver} +rocm")
         depends_on(f"rocsolver@{ver}", when=f"@{ver} +rocm")
 
-    for ver in ["6.4.1", "6.4.0", "6.3.3", "6.3.2", "6.3.1", "6.3.0"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
         depends_on(f"hipfft@{ver}", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
 
@@ -81,7 +118,7 @@ class RocmExamples(CMakePackage):
 
     def cmake_args(self):
         args = []
-        if self.spec.satisfies("+cuda"):
+        if self.spec.satisfies("+rocm"):
             args.append(
                 self.define(
                     "OFFLOAD_BUNDLER_COMMAND",

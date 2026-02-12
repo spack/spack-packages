@@ -25,6 +25,9 @@ class Blaspp(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version(
+        "2025.05.28", sha256="c54a302c78676e611e18339cab388992ef02d3fb323a6bae7a0df54643245629"
+    )
+    version(
         "2024.10.26", sha256="c15ae19dbed1be35e8258048a044d3104da59e7e52b4fe7fe7ea5032708a8d2c"
     )
     version(
@@ -66,6 +69,7 @@ class Blaspp(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.15.0:", type="build")
     depends_on("blas")
+    depends_on("lapack")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
     depends_on("rocblas", when="+rocm")
     depends_on("intel-oneapi-mkl", when="+sycl")
@@ -111,6 +115,7 @@ class Blaspp(CMakePackage, CudaPackage, ROCmPackage):
             "-DBUILD_SHARED_LIBS=%s" % ("+shared" in spec),
             backend_config,
             "-DBLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),
+            "-DLAPACK_LIBRARIES=%s" % spec["lapack"].libs.joined(";"),
         ]
 
         if spec["blas"].name == "cray-libsci":

@@ -22,6 +22,11 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "11.0.0-scorec",
+        commit="fbe1cc131fb1b5ac840129ecd8bd7b42ab244000",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "10.8.6-scorec",
         commit="a730c78e516d7f6cca4f8b4e4e0a5eb8020f9ad9",
         git="https://github.com/SCOREC/omega_h.git",
@@ -70,6 +75,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("warnings", default=False, description="Compile C++ with warnings")
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
+    variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
@@ -90,6 +96,9 @@ class OmegaH(CMakePackage, CudaPackage):
 
         # Single, broken CUDA version.
         conflicts("^cuda@11.2", msg="See https://github.com/sandialabs/omega_h/issues/366")
+
+        # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+        conflicts("^cuda@13:")
 
     # https://github.com/SCOREC/omega_h/pull/118
     conflicts("@10.5:10.8.5 +cuda~kokkos")
@@ -125,17 +134,18 @@ class OmegaH(CMakePackage, CudaPackage):
                 args.append("-DCMAKE_CXX_COMPILER:FILEPATH={0}".format(self.spec["mpi"].mpicxx))
         else:
             args.append("-DOmega_h_USE_MPI:BOOL=OFF")
-        if "+cuda" in self.spec:
-            args.append("-DOmega_h_USE_CUDA:BOOL=ON")
-            cuda_arch_list = self.spec.variants["cuda_arch"].value
-            cuda_arch = cuda_arch_list[0]
-            if cuda_arch != "none":
-                if self.spec.satisfies("@10:"):
-                    args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
-                else:
-                    args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
-        else:
-            args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
+        if self.spec.satisfies("@:10.10.0"):
+            if "+cuda" in self.spec:
+                args.append("-DOmega_h_USE_CUDA:BOOL=ON")
+                cuda_arch_list = self.spec.variants["cuda_arch"].value
+                cuda_arch = cuda_arch_list[0]
+                if cuda_arch != "none":
+                    if self.spec.satisfies("@10:"):
+                        args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
+                    else:
+                        args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
+            else:
+                args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
         if "+trilinos" in self.spec:
             args.append("-DOmega_h_USE_Trilinos:BOOL=ON")
         if "+gmsh" in self.spec:

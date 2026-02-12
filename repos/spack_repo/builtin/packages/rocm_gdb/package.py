@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
@@ -13,13 +14,20 @@ class RocmGdb(AutotoolsPackage):
     based on GDB, the GNU source-level debugger."""
 
     homepage = "https://github.com/ROCm/ROCgdb"
-    url = "https://github.com/ROCm/ROCgdb/archive/rocm-6.2.4.tar.gz"
+    url = "https://github.com/ROCm/ROCgdb/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
+    executables = ["rocgdb"]
 
     license("LGPL-2.0-or-later")
 
     maintainers("srekolam", "renjithravindrankannath")
 
+    version("7.1.1", sha256="4369b0dc0bea6c371872d517c43867fdfba3f12af7d5ae3900d4a4311bd49e30")
+    version("7.1.0", sha256="33833597801680b76639b0cc97113da17ab3cad3167bf06419e838c9e2ae8113")
+    version("7.0.2", sha256="1b06122860b9036ecdab4ba2ff2f3cab4707ad01941513aa23543962308c0e9e")
+    version("7.0.0", sha256="a65824bb2f8d67eab9e3823da06638b4c015ba3342400159eed76ca2e7c48b25")
+    version("6.4.3", sha256="7cb8a1c3554284b735232c2fa917315ac72421f11cc8156476003f0c3f1c3086")
+    version("6.4.2", sha256="787128a11805891b2ecef3014bc36cc33e08e008e6e882982a410c60efd0335e")
     version("6.4.1", sha256="e8f80ed022af7ce9b4f59ebb352d6b2b5af7b6a4179023b24f89215e65bc4527")
     version("6.4.0", sha256="ef32529b2e3799dd8ab15647701063fcdcadd6d043a0d376a98c3ca10813817a")
     version("6.3.3", sha256="51678b588f65f92f50c2336707322cf4973fa96d03e268ec5956ac1a9f2ebaa3")
@@ -36,15 +44,6 @@ class RocmGdb(AutotoolsPackage):
     version("6.0.0", sha256="0db4ab32ca729e69688cdb238df274ce5cf58b5cb2538584662cca4358708c2b")
     version("5.7.1", sha256="5cd150b5796aea9d77efd43b89d30a34fa4125338179eb87c6053abcac9f3c62")
     version("5.7.0", sha256="94fba57b2f17b593de61f7593b404fabc00b054d38567be57d12cf7654b7969a")
-    version("5.6.1", sha256="d2b40d4c5aa41a6ce2a84307627b30d16a458672e03e13f9d27c12f2dc3f21d6")
-    version("5.6.0", sha256="997ef1883aac2769552bc7082c70b837f4e98b57d24c133cea52b9c92fb0dee1")
-    version("5.5.1", sha256="359258548bc7e6abff16bb13c301339fb96560b2b961433c9e0712e4aaf2d9e1")
-    version("5.5.0", sha256="d3b100e332facd9635e328f5efd9f0565250edbe05be986baa2e0470a19bcd79")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="28c1ce39fb1fabe61f86f6e3c6940c10f9a8b8de77f7bb4fdd73b04e172f85f6")
-        version("5.4.0", sha256="7ee984d99818da04733030b140c1f0929639bc719a5e418d53cc2c2a8cbc9a79")
-        version("5.3.3", sha256="9fc3ccd9378ad40f2f0c9577bc400cc9a202d0ae4656378813b67653b9023c46")
-        version("5.3.0", sha256="402537baf0779cae586d608505e81173ba85f976fe993f1633e3afe81669350f")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -64,14 +63,6 @@ class RocmGdb(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -88,32 +79,15 @@ class RocmGdb(AutotoolsPackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-dbgapi@{ver}", type="link", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type="link", when=f"@{ver}")
-
-    for ver in [
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
-        "5.7.0",
-        "5.7.1",
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
-        "6.3.0",
-        "6.3.1",
-        "6.3.2",
-        "6.3.3",
-        "6.4.0",
-        "6.4.1",
-    ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
     build_directory = "spack-build"
@@ -135,12 +109,22 @@ class RocmGdb(AutotoolsPackage):
             "--disable-gdbtk",
             "--disable-shared",
             "--with-expat",
-            "--with-system-zlib" "--without-guile",
+            "--with-system-zlib",
+            "--without-guile",
             "--with-babeltrace",
             "--with-lzma",
             "--with-python",
             "--with-rocm-dbgapi={0}".format(self.spec["rocm-dbgapi"].prefix),
+            "--disable-gprofng",
         ]
-        if self.spec.satisfies("@5.2.0:"):
-            options.append("--disable-gprofng")
         return options
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"rocm-rel-(\d+)\.(\d+)", output)
+        if match:
+            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+        else:
+            ver = None
+        return ver

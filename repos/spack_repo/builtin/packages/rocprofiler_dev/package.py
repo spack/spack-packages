@@ -14,13 +14,19 @@ class RocprofilerDev(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler"
     git = "https://github.com/ROCm/rocprofiler.git"
-    url = "https://github.com/ROCm/rocprofiler/archive/refs/tags/rocm-6.2.4.tar.gz"
+    url = "https://github.com/ROCm/rocprofiler/archive/refs/tags/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocprofiler64"]
     license("MIT")
 
+    version("7.1.1", sha256="db8b3698e3f743f0ce58cc5bc1d2406e77f4ca206f1a6c94b182518492f8af2f")
+    version("7.1.0", sha256="d029f0011092b9cd6bebeec1775d07eb2ae5fa039937db7376f8177b1956b4c6")
+    version("7.0.2", sha256="149557a5db8920e9d003ef7bfc3c5d7580c97c97abada1654a556b2203969124")
+    version("7.0.0", sha256="74c305dd270d9644eeab70d985f9195dd0bcd36a0a256c2fbd4f780436efd334")
+    version("6.4.3", sha256="b7d5a6848d0bb394bfcb2e667690abf50189010bdc2e6c6ebf401d0ba780c1a0")
+    version("6.4.2", sha256="0c7e6e25b1b1bbc33a311c40bc9864cc1d73c1a55ec6616d5a9a14843f9dd836")
     version("6.4.1", sha256="d816f6d7bd138c15d68bceb111847a12ecff5efb50831bb4c3e02fab102ab471")
     version("6.4.0", sha256="c605bdbf5245f46267d4a422746fc941213beae494cd3f902b67fc5423979a57")
     version("6.3.3", sha256="7ca6900b4a81f9dc0d7cdfe3be39372b3bf25f3c8304256705003294772890bd")
@@ -37,15 +43,6 @@ class RocprofilerDev(CMakePackage):
     version("6.0.0", sha256="6aca327a6ba302b5957002e55ac640dd185d51a354da3859e957448a5fc36b14")
     version("5.7.1", sha256="2fb7158592d89312ba419a272d907d8849373c0a676a83dd03c32b9942dfd27a")
     version("5.7.0", sha256="003af33db5585e71823b2b58618d795df926f6bd25943f2add388db23f2bf377")
-    version("5.6.1", sha256="3e5eecce216418e61ffee893cbc8611e38305ee472d0e10d579eb74e287c8e1b")
-    version("5.6.0", sha256="ff811bd91580f60b6b4d397b6fce38d96f07debc6fd8a631b81d1b266cc9542d")
-    version("5.5.1", sha256="f5dbece5c205e37383fed4a2bd6042ff1c11f11f64dfbf65d7e23c0af6889a5a")
-    version("5.5.0", sha256="d9dd38c42b4b12d4149f1cc3fca1af5bec69c72f455653a8f4fd8195b3b95703")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="86c3f43ee6cb9808796a21409c853cc8fd496578b9eef4de67ca77830229cac1")
-        version("5.4.0", sha256="0322cbe5d1d3182e616f472da31f0707ad6040833c38c28f2b39381a85210f43")
-        version("5.3.3", sha256="07ee28f3420a07fc9d45910e78ad7961b388109cfc0e74cfdf2666789e6af171")
-        version("5.3.0", sha256="b0905a329dc1c97a362b951f3f8ef5da9d171cabb001ed4253bd59a2742e7d39")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -53,14 +50,6 @@ class RocprofilerDev(CMakePackage):
     depends_on("cmake@3:", type="build")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -75,14 +64,6 @@ class RocprofilerDev(CMakePackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -101,6 +82,10 @@ class RocprofilerDev(CMakePackage):
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"roctracer-dev-api@{ver}", when=f"@{ver}")
+        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
+
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
+        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
 
     for ver in [
         "5.7.0",
@@ -119,52 +104,32 @@ class RocprofilerDev(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
+        depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in [
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
-        "5.7.0",
-        "5.7.1",
-        "6.0.0",
-        "6.0.2",
-        "6.1.0",
-        "6.1.1",
-        "6.1.2",
-        "6.2.0",
-        "6.2.1",
-        "6.2.4",
-        "6.3.0",
-        "6.3.1",
-        "6.3.2",
-        "6.3.3",
-        "6.4.0",
-        "6.4.1",
-    ]:
-        depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-        depends_on(f"comgr@{ver}", when=f"@{ver}")
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+        depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
-    depends_on("numactl", type="link", when="@4.3.1")
-    depends_on("py-lxml", when="@5.5:")
-    depends_on("py-cppheaderparser", when="@5.5:")
-    depends_on("googletest@1.10.0:", when="@5.5:")
-    depends_on("py-pyyaml", when="@5.5:")
-    depends_on("py-barectf", when="@5.5:")
-    depends_on("py-setuptools", when="@5.5:")
-    depends_on("py-jsonschema", when="@5.5:")
-    depends_on("py-jinja2", when="@5.5:")
-    depends_on("py-termcolor", when="@5.5:")
+    depends_on("py-lxml")
+    depends_on("py-cppheaderparser")
+    depends_on("googletest@1.10.0:")
+    depends_on("py-pyyaml")
+    depends_on("py-barectf")
+    depends_on("py-setuptools")
+    depends_on("py-jsonschema@4:")
+    depends_on("py-jinja2")
+    depends_on("py-termcolor")
     depends_on("py-pandas", when="@6.0:")
+    depends_on("elfutils", when="@7.1:")
 
-    # See https://github.com/ROCm/rocprofiler/pull/50
-    patch("fix-includes.patch", when="@:5.4")
-    patch("0001-Continue-build-in-absence-of-aql-profile-lib.patch", when="@5.3:5.4")
-    patch("0002-add-fPIC-and-disable-tests.patch", when="@5.5")
-    patch("0002-add-fPIC-and-disable-tests-5.6.patch", when="@5.6")
     patch("0002-add-fPIC-and-disable-tests-5.7.patch", when="@5.7")
     patch("0003-disable-tests.patch", when="@6.0:")
 
@@ -196,6 +161,10 @@ class RocprofilerDev(CMakePackage):
             args.append(self.define("ROCM_ROOT_DIR", self.spec["hsakmt-roct"].prefix.include))
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("ROCPROFILER_BUILD_PLUGIN_PERFETTO", "OFF"))
+
+        # libdw related error when building att
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCPROFILER_BUILD_PLUGIN_ATT", "OFF"))
         return args
 
     @run_after("install")

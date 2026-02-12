@@ -23,6 +23,43 @@ class Totalview(Package):
     # As the install of Totalview is via multiple tarballs, the base install
     # will be the documentation.  The architecture-specific tarballs are added
     # as resources dependent on the specific architecture used.
+
+    version(
+        "2025.4-x86-64",
+        sha256="ef4e510f73ae2fec1584d7a70552d2113a5d9827f510b96a1a8d5325b28790ac",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.4/totalview_2025.4.3_linux_x86-64.tar",
+    )
+
+    version(
+        "2025.4-powerle",
+        sha256="48dab22dc25ad1b576fbd60f0a81d498a26af713cc43ba0257f768d5e3b4880f",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.4/totalview_2025.4.3_linux_powerle.tar",
+    )
+
+    version(
+        "2025.4-linux-arm64",
+        sha256="8aa777d0795ed36a8a74e6fd1fec195d66f712539c132ba97eb0ddd633cf5d1a",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.4/totalview_2025.4.3_linux_arm64.tar",
+    )
+
+    version(
+        "2025.3-x86-64",
+        sha256="64014770970bc6cb42a4cb1455cea95d4609964a38de0ecdc6713d4d5ee8bcdc",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.3/totalview_2025.3.4_linux_x86-64.tar",
+    )
+
+    version(
+        "2025.3-powerle",
+        sha256="dfdedbe0004ae4ee5926671165a94575c575e5c1a559cb44e4720b920948667a",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.3/totalview_2025.3.4_linux_powerle.tar",
+    )
+
+    version(
+        "2025.3-linux-arm64",
+        sha256="229592fddf989857cfcab89436cec4718308d7cbd6f3c3167be26b2cbf5d411f",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.3/totalview_2025.3.4_linux_arm64.tar",
+    )
+
     version(
         "2025.2-x86-64",
         sha256="4f017ea4aad111dd118d5442c86c33e37fdd63aa368d62ba2821cbbba472b5fe",

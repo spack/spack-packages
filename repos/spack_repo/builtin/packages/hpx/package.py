@@ -47,8 +47,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     generator("ninja")
 
-    map_cxxstd = lambda cxxstd: "2a" if cxxstd == "20" else cxxstd
-    cxxstds = ("11", "14", "17", "20")
+    cxxstds = ("11", "14", "17", "20", "23")
     variant(
         "cxxstd",
         default="17",
@@ -79,7 +78,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     variant(
         "networking",
-        values=any_combination_of("tcp", "mpi").with_default("tcp"),
+        values=any_combination_of("tcp", "mpi", "lci").with_default("tcp"),
         description="Support for networking through parcelports",
     )
 
@@ -111,11 +110,8 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     depends_on(Boost.with_default_variants)
     depends_on("boost +context", when="+generic_coroutines")
     for cxxstd in cxxstds:
-        depends_on("boost cxxstd={0}".format(map_cxxstd(cxxstd)), when="cxxstd={0}".format(cxxstd))
-
-    with when("@1.7:"):
-        for cxxstd in cxxstds:
-            depends_on(f"asio cxxstd={map_cxxstd(cxxstd)}", when=f"cxxstd={cxxstd}")
+        depends_on(f"boost cxxstd={cxxstd}", when=f"cxxstd={cxxstd}")
+        depends_on(f"asio cxxstd={cxxstd}", when=f"@1.7: cxxstd={cxxstd}")
 
     depends_on("gperftools", when="malloc=tcmalloc")
     depends_on("jemalloc", when="malloc=jemalloc")
@@ -124,6 +120,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi", when="networking=mpi")
     depends_on("mpi", when="+async_mpi")
+    depends_on("lci", when="networking=lci")
 
     depends_on("cuda", when="+async_cuda")
 
@@ -250,6 +247,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
             self.define("HPX_WITH_NETWORKING", "networking=none" not in spec),
             self.define("HPX_WITH_PARCELPORT_TCP", spec.satisfies("networking=tcp")),
             self.define("HPX_WITH_PARCELPORT_MPI", spec.satisfies("networking=mpi")),
+            self.define("HPX_WITH_PARCELPORT_LCI", spec.satisfies("networking=lci")),
             self.define(
                 "HPX_WITH_MAX_CPU_COUNT",
                 format_max_cpu_count(spec.variants["max_cpu_count"].value),

@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -14,13 +15,20 @@ class Amdsmi(CMakePackage):
     applications to monitor and control AMD device."""
 
     homepage = "https://github.com/ROCm/amdsmi"
-    url = "https://github.com/ROCm/amdsmi/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/amdsmi/archive/refs/tags/rocm-6.4.3.tar.gz"
+    git = "https://github.com/ROCm/amdsmi.git"
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libamd_smi"]
 
     license("MIT")
+    version("7.1.1", sha256="2a9dfafac9593d3093c3f5fc611682e712f08816414f210344ea7b719c085ff5")
+    version("7.1.0", sha256="17ccddf8988a5674edb360b9f3b41bf3d94c6f4ba36cf8d84739c6ccdfc87c50")
+    version("7.0.2", sha256="6df8d828157124b513f4ffa6c059231398b19120f5b782ec42fc151862e2cf90")
+    version("7.0.0", sha256="5a126721473859afc687bd5f00bf480cffc76c2aed2bfa0b74dfbc87d93037a2")
+    version("6.4.3", sha256="a850125bf33402cad6e57d2130e32d8b37bfc315a6dcfddd90fb593fea1f0e46")
+    version("6.4.2", sha256="194652d8d6fa8acfdd638ae1d474647ea057441e139971d366a24cbb265722f9")
     version("6.4.1", sha256="5e1030cebacf2c92e63a555db6433ce7bb4f91409910ec98947e459d36630401")
     version("6.4.0", sha256="6f0200ba7305171e9dadbfcd41ff00c194b98d2b88e0555c57739ef01c767233")
     version("6.3.3", sha256="e23abc65a1cd75764d7da049b91cce2a095b287279efcd4f90b4b9b63b974dd5")
@@ -36,9 +44,6 @@ class Amdsmi(CMakePackage):
     version("6.0.2", sha256="aeadf07750def0325a0eaa29e767530b2ec94f3d45dc3b7452fd7a2493769428")
     version("6.0.0", sha256="2626e3af9d60dec245c61af255525a0c0841a73fb7ec2836477c0ce5793de39c")
     version("5.7.0", sha256="144391d537710dafa9ef69571dd76203e56db6142ab61a1375346b5733137e23")
-    version("5.6.0", sha256="595c9d6d79d9071290b2f19ab4ef9222c8d2983b4322b3143fcd9d0b1ce0f6d8")
-    version("5.5.1", sha256="b794c7fd562fd92f2c9f2bbdc2d5dded7486101fcd4598f2e8c3484c9a939281")
-    version("5.5.0", sha256="dcfbd96e93afcf86b1261464e008e9ef7e521670871a1885e6eaffc7cdc8f555")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated

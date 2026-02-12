@@ -18,22 +18,17 @@ class PyMelissaCore(PythonPackage, CudaPackage):
     homepage = "https://gitlab.inria.fr/melissa/melissa"
     git = "https://gitlab.inria.fr/melissa/melissa.git"
     url = "https://gitlab.inria.fr/melissa/melissa/-/archive/v2.0.0/melissa-v2.0.0.tar.gz"
-    maintainers("abhishek1297", "viperML", "raffino")
+    maintainers("abhishek1297", "raffino")
 
     license("BSD-3-Clause")
 
-    version(
-        "2.0.0",
-        sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd",
-        preferred=True,
-    )
-    version("develop", branch="develop")
-
-    # DEPRECATED VERSIONS
-    version(
-        "joss", tag="JOSS_v2", commit="20bbe68c1a7b73aa2ea3ad35681c332c7a5fc516", deprecated=True
-    )
-    version("sc23", tag="SC23", commit="8bb5b6817d4abe4eaa5893552d711150e53535f3", deprecated=True)
+    version("develop", branch="develop", preferred=True)
+    version("2.3.0", sha256="f356e05082e4bb26a210cd11ccfa78a783ebe07be2bd75d5e51ed10da3b58997")
+    version("2.2.0", sha256="e805c9ac08de5aa666768d5d92bfc680f064bd9108415a911dfd08ad7b0a3cf3")
+    version("2.1.1", sha256="6b92852429f13b144860edc37c7914723addabb0ec0bd108929ff567334d3f71")
+    version("2.1.0", sha256="cf0f105ed5b1da260cc7476aec23df084470b50a61df997c0e457c38948bed93")
+    version("2.0.1", sha256="a7ff4df75ea09af435b0c28c3fa3cab9335c1c76e1c48757facce36786b4962c")
+    version("2.0.0", sha256="75957d1933cd9c228a6e8643bc855587162c31f3b0ca94c3f5e0e380d01775dd")
 
     # define variants for the deep learning server (torch, tf)
     variant(
@@ -45,67 +40,63 @@ class PyMelissaCore(PythonPackage, CudaPackage):
         when="~torch",
         description="Install Deep Learning requirements with TensorFlow only",
     )
-    # ==============================
-    #       Base dependencies
-    # ==============================
+
+    # ============================================================
+    #                     Base dependencies
+    # ============================================================
+
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")
     depends_on("fortran", type="build")  # generated
-
-    depends_on("python@3.9:3.12", type=("build", "run"))
     depends_on("py-setuptools@46.4:", type="build")
-    depends_on("py-pyzmq@22.3.0:", type="run")
-    depends_on("py-mpi4py@3.1.3:3", type="run")
-    depends_on("py-numpy@1.21:1", type="run")
-    depends_on("py-jsonschema@4.5:", type="run")
-    depends_on("py-python-rapidjson@1.8:", type="run")
-    depends_on("py-scipy@1.10.0:1", type="run")
-    depends_on("py-plotext@5.2.8:", type="run")
-    depends_on("py-cloudpickle@2.2.0:", type="run")
-    depends_on("py-iterative-stats@0.1:", type="run")
-    depends_on("py-psutil@5:", type="run")
-    # ==============================
-    #       DL dependencies
-    # ==============================
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:3.12", when="@:2.1.0")
+        depends_on("python@3.11:3.12", when="@2.1.1:")
+
+    with default_args(type="run"):
+        depends_on("py-pyzmq@22.3.0:")
+        depends_on("py-mpi4py@3.1.3:3")
+        depends_on("py-numpy@1.21:1")
+        depends_on("py-jsonschema@4.5:")
+        depends_on("py-python-rapidjson@1.8:")
+        depends_on("py-scipy@1.10.0:1")
+        depends_on("py-plotext@5.2.8:")
+        depends_on("py-cloudpickle@2.2.0:")
+        depends_on("py-iterative-stats@0.1:")
+        depends_on("py-psutil@5:")
+
+    # ============================================================
+    #                       DL dependencies
+    # ============================================================
+
     for framework in ["+tf", "+torch"]:
-        conflicts(
-            "%gcc@:9",
-            when=framework,
-            msg=f"GCC must be greater than version 9 when using {framework}",
-        )
-        depends_on("py-tensorboard@2.10.0:2", type="run", when=framework)
-        depends_on("py-matplotlib", type="run", when=framework)
-        depends_on("py-pandas", type="run", when=framework)
-        # WARNING: If using a gcc compiler, then support with AVX512-VNNI is
-        # expected for bazel source builds.
-        # The instruction set comes with binutils. If you are installing a gcc
-        # through spack then do spack install `gcc+binutils`
-        depends_on("binutils@2.29:", type="build", when=f"{framework} %gcc")
+        with when(framework):
+            conflicts("%gcc@:9", msg=f"GCC must be greater than version 9 when using {framework}")
 
-    # WARNING: do not change the upper limit for tensorflow beyond 2.17, which requires
-    # AVX-VNNI-INT8 support.
-    # Check cpu flags to ensure if avxvnniint8 is available on your machine,
-    # if you want to increase the upper limit.
-    depends_on("py-tensorflow@2.8.0:2.17 ~cuda", type="run", when="+tf ~cuda")
-    depends_on("py-torch@1.12.1:2.6 ~cuda", type="run", when="+torch ~cuda")
+            with default_args(type="run"):
+                depends_on("py-tensorboard@2.10.0:2")
+                depends_on("py-matplotlib")
+                depends_on("py-pandas")
 
-    # ==============================
-    #       CUDA dependencies
-    # ==============================
-    for arch in CudaPackage.cuda_arch_values:
-        # Support beyond ampere (A100) GPUs hasn't been tested yet.
-        # FIXME: free to modify and test
-        if arch.isdigit() and 60 <= int(arch) <= 80:
+            depends_on("binutils@2.29:", type="build", when="%gcc")
+
+    # ============================================================
+    #                   Frameworks with/out CUDA
+    # ============================================================
+
+    with default_args(type="run"):
+        # Without CUDA
+        with when("~cuda"):
+            # WARNING: Do not set tensorflow upper limit above 2.17.
+            # Versions >2.17 require AVX-VNNI-INT8 CPU support.
+            # Check your CPU flags for 'avxvnniint8' before increasing.
+            depends_on("py-tensorflow@2.8.0:2.17 ~cuda", when="+tf")
+            depends_on("py-torch@1.12.1:2 ~cuda", when="+torch")
+
+        # With CUDA
+        for arch in CudaPackage.cuda_arch_values:
             cuda_specs = f"+cuda cuda_arch={arch}"
-            depends_on(f"nccl {cuda_specs}", when=cuda_specs)  # it is set by default
-            depends_on(
-                f"py-tensorflow@2.8.0:2.17 {cuda_specs}", type="run", when=f"+tf {cuda_specs}"
-            )
-            depends_on(
-                f"py-torch@1.12.1:2.6 {cuda_specs}", type="run", when=f"+torch {cuda_specs}"
-            )
-        else:
-            conflicts(
-                f"+cuda cuda_arch={arch}",
-                msg="Support beyond Ampere GPUs has not been tested yet. "
-                "Accepted values are between 60 and 80 inclusive.",
-            )
+            with when(cuda_specs):
+                depends_on(f"py-tensorflow@2.8.0:2.17+nccl{cuda_specs}", when="+tf")
+                depends_on(f"py-torch@1.12.1:2+cudnn+nccl{cuda_specs}", when="+torch")

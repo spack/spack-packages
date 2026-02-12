@@ -6,7 +6,6 @@ import glob
 import os
 import shutil
 import socket
-from os import environ as env
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -45,6 +44,7 @@ class Conduit(CMakePackage):
     # is to bridge any spack dependencies that are still using the name master
     version("master", branch="develop", submodules=True)
     # note: 2021-05-05 latest tagged release is now preferred instead of develop
+    version("0.9.5", sha256="d93294efbf0936da5a27941e13486aa1a04a74a59285786a2303eed19a24265a")
     version("0.9.4", sha256="c9edfb2ff09890084313ad9c2d83bfb7c10e70b696980762d1ae1488f9f08e6c")
     version("0.9.3", sha256="2968fa8df6e6c43800c019a008ef064ee9995dc2ff448b72dc5017c188a2e6d4")
     version("0.9.2", sha256="45d5a4eccd0fc978d153d29c440c53c483b8f29dfcf78ddcc9aa15c59b257177")
@@ -147,6 +147,8 @@ class Conduit(CMakePackage):
     depends_on("py-numpy", when="+python", type=("build", "run"))
     depends_on("py-mpi4py", when="+python+mpi", type=("build", "run"))
     depends_on("py-pip", when="+python", type="build")
+    depends_on("py-wheel", when="+python", type="build")
+    depends_on("py-setuptools", when="+python", type="build")
 
     #######################
     # I/O Packages
@@ -247,7 +249,6 @@ class Conduit(CMakePackage):
             return "https://github.com/LLNL/conduit/releases/download/v{0}/conduit-v{1}-src-with-blt.tar.gz".format(
                 v, v
             )
-        return url
 
     ####################################################################
     # Note: cmake, build, and install stages are handled by CMakePackage
@@ -263,7 +264,7 @@ class Conduit(CMakePackage):
     @run_after("build")
     @on_package_attributes(run_tests=True)
     def build_test(self):
-        with working_dir("spack-build"):
+        with working_dir(self.build_directory):
             print("Running Conduit Unit Tests...")
             make("test")
 
@@ -310,7 +311,7 @@ class Conduit(CMakePackage):
 
         compiler_str = f"{self['c'].name}-{self['c'].version}"
         host_config_path = (
-            f"{socket.gethostname()}-{sys_type}-{compiler_str}" f"-conduit-{spec.dag_hash()}.cmake"
+            f"{socket.gethostname()}-{sys_type}-{compiler_str}-conduit-{spec.dag_hash()}.cmake"
         )
         dest_dir = self.stage.source_path
         host_config_path = os.path.abspath(join_path(dest_dir, host_config_path))

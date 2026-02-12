@@ -6,8 +6,6 @@ import os
 
 from spack_repo.builtin.packages.clingo.package import Clingo
 
-import spack.paths
-import spack.user_environment
 from spack.package import *
 
 
@@ -17,6 +15,7 @@ class ClingoBootstrap(Clingo):
     maintainers("alalazo")
 
     variant("build_type", default="Release", values=("Release",), description="CMake build type")
+    variant("apps", default=False, description="build command line applications")
 
     variant(
         "static_libstdcpp",
@@ -70,12 +69,7 @@ class ClingoBootstrap(Clingo):
     # Clingo needs the Python module to be usable by Spack
     conflicts("~python", msg="Python support is required to bootstrap Spack")
 
-    @property
-    def cmake_py_shared(self):
-        return self.define("CLINGO_BUILD_PY_SHARED", "OFF")
-
-    def cmake_args(self):
-        return [*super().cmake_args(), self.define("CLINGO_BUILD_APPS", False)]
+    cmake_py_shared = False
 
     @run_before("cmake", when="+optimized")
     def pgo_train(self):
@@ -108,13 +102,11 @@ class ClingoBootstrap(Clingo):
         # Run spack solve --fresh hdf5 with instrumented clingo.
         python_runtime_env = EnvironmentModifications()
         python_runtime_env.extend(
-            spack.user_environment.environment_modifications_for_specs(
-                self.spec, set_package_py_globals=False
-            )
+            environment_modifications_for_specs(self.spec, set_package_py_globals=False)
         )
         python_runtime_env.unset("SPACK_ENV")
         python_runtime_env.unset("SPACK_PYTHON")
-        python(spack.paths.spack_script, "solve", "--fresh", "hdf5", extra_env=python_runtime_env)
+        python(spack_script, "solve", "--fresh", "hdf5", extra_env=python_runtime_env)
 
         # Clean the build dir.
         rmtree(self.build_directory, ignore_errors=True)

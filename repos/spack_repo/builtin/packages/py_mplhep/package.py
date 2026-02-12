@@ -15,6 +15,8 @@ class PyMplhep(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("0.4.1", sha256="86e2d99680bdb19598e847ff5b24f3bf1c63f164b99f076be98255acd738ee48")
+    version("0.4.0", sha256="485d67db2dd7a1091eee86580fe46cf32dd0b0fc34d6db6246b1ef59346a810c")
     version("0.3.59", sha256="06f4b3a799e92fe6982ed3939dd648d0f972781aca3dc814a83e5bbd970649fe")
     version("0.3.58", sha256="fed8b5d5fee92c7aa40cfe70e5b8d2b2bb8ed7aeb7a2c272d73b241279e1adba")
     version("0.3.57", sha256="3b04a91f75889e31c0d7a5e520dd092f2fd29fb6000418c26cf4e497cc977541")
@@ -33,6 +35,9 @@ class PyMplhep(PythonPackage):
         depends_on("py-setuptools@42:", when="@0.3.26:", type="build")
         depends_on("py-setuptools-scm@3.4:+toml", when="@0.3.2:", type="build")
     depends_on("py-matplotlib@3.4:", type=("build", "run"))
+    # properly handle docstring -> _docstring transition in mplhep#443 and mplhep#455
+    depends_on("py-matplotlib@3.6:", type=("build", "run"), when="@0.3.29:")
+    depends_on("py-matplotlib@:3.8", type=("build", "run"), when="@:0.3.28")
     depends_on("py-mplhep-data", type=("build", "run"))
     depends_on("py-mplhep-data@0.0.4:", type=("build", "run"), when="@0.3.54:")
     depends_on("py-numpy@1.16.0:", type=("build", "run"))

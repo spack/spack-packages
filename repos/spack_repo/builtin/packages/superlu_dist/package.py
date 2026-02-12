@@ -23,6 +23,8 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="master")
     version("amd", branch="amd")
+    version("9.2.1", sha256="c80a1c2edaaa451ee9a54e005e5f3f56dc55cabe2b0a8d7acf5a1447a648157a")
+    version("9.2.0", sha256="d1df0e53d269cfc17379bb358e1b2b566d2807cb4a680b2ec1e4f35a77f707d1")
     version("9.1.0", sha256="1cb2c6dc7e8231b2ec30c1266e55e440ffca9f55527771d8df28f900dd179f9d")
     version("9.0.0", sha256="aa43d33d4b1b0f5f7b5ad7685e9a6bc25088832c6c74d2ab8f75a2c9f4e9e955")
     version("8.2.1", sha256="b77d065cafa6bc1a1dcc15bf23fd854f54b05762b165badcffc195835ad2bddf")
@@ -76,17 +78,25 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("parmetis ~int64", when="~int64")
     depends_on("cmake@3.18.1:", type="build", when="@7.1.0:")
     depends_on("hipblas", when="+rocm")
+    depends_on("hipblas@:6", when="@:9.1.0 +rocm")
     depends_on("rocsolver", when="+rocm")
 
     conflicts("+rocm", when="+cuda")
     conflicts("+cuda", when="@:6.3")
     # See https://github.com/xiaoyeli/superlu_dist/issues/87
     conflicts("^cuda@11.5.0:", when="@7.1.0:7.1 +cuda")
+    # https://github.com/xiaoyeli/superlu_dist/pull/193
+    conflicts("^cuda@13:", when="@:9.1 +cuda")
 
     patch("xl-611.patch", when="@:6.1.1 %xl")
     patch("xl-611.patch", when="@:6.1.1 %xl_r")
     patch("superlu-cray-ftn-case.patch", when="@7.1.1 %cce")
     patch("CMAKE_INSTALL_LIBDIR.patch", when="@7.0.0:7.2.0")
+    patch(
+        "https://github.com/xiaoyeli/superlu_dist/commit/5a1946f347e6d813a250af874dee0942f4fdfc44.patch?full_index=1",
+        sha256="6472c192f6d24d4d762193385c5a46a536282cae786c13354a5e80f5ebfac64c",
+        when="@9.0:9.1",
+    )
 
     def cmake_args(self):
         spec = self.spec
@@ -129,6 +139,8 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch[0] != "none":
                 append_define("CMAKE_CUDA_ARCHITECTURES", cuda_arch[0])
+            if spec.satisfies("^cuda@13:"):
+                append_define("CMAKE_CXX_STANDARD", "17")
 
         if "+rocm" in spec and (spec.satisfies("@amd") or spec.satisfies("@8:")):
             append_define("TPL_ENABLE_HIPLIB", True)

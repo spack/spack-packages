@@ -16,7 +16,7 @@ class Qgis(CMakePackage):
     homepage = "https://qgis.org"
     url = "https://qgis.org/downloads/qgis-3.8.1.tar.bz2"
 
-    maintainers("adamjstewart", "Sinan81")
+    maintainers("adamjstewart", "Sinan81", "Chrismarsh")
 
     license("GPL-2.0-or-later")
 
@@ -27,12 +27,6 @@ class Qgis(CMakePackage):
         preferred=True,
     )
     version("3.40.1", sha256="53110464c9f5ba5562c437e1563ab36dad2f218e6e7d1c0cfbe5b6effe241c8e")
-    #  version 3.36 isn't building right now.
-    version(
-        "3.36.0",
-        sha256="1b64bc92660bf07edc6b6478fc6a13656149e87d92eabe5c3db9493072506e2c",
-        deprecated=True,
-    )
     version("3.34.15", sha256="afb0bed05ffbc7bcb6d27dd1a8644b1e63ac2cb322baa058ff65b848c760efc2")
     version("3.34.13", sha256="a8873ca9bae346bae48ef3fe3eed702ef1f06d951201464464a64019302ba50b")
     version("3.34.4", sha256="7d1c5fafff13f508a9bcf6244c9666f891351deb1ace2aedcc63504f070c5ce4")
@@ -161,7 +155,7 @@ class Qgis(CMakePackage):
     depends_on("sqlite@3.0.0: +column_metadata")
     depends_on("pdal", when="+pdal")
     depends_on("protobuf", when="@3.16.4:")
-    depends_on("protobuf@:3.21", when="@:3.28")
+    depends_on("protobuf@:21", when="@:3.28")
     depends_on("zstd", when="@3.22:")
 
     # Runtime python dependencies, not mentioned in install instructions
@@ -199,6 +193,13 @@ class Qgis(CMakePackage):
     patch("pyqt5.patch", when="@:3.14 ^qt@5")
     patch("pyqt5_3165x.patch", when="@3.16.5:3.21 ^qt@5 ^py-sip@4")
     patch("pyqt5_322x.patch", when="@3.22: ^qt@5 ^py-sip@4")
+
+    # https://github.com/qgis/QGIS/pull/62142
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/qgis/QGIS/pull/62142.patch?full_index=1",
+        when="@3.40 ^py-sip@6.11:",
+        sha256="edb2c149f88c1adfee3791f1928c5119301900541cb40a6d1cc5b68d8aa3b688",
+    )
 
     @run_before("cmake", when="^py-pyqt5")
     def fix_pyqt5_cmake(self):

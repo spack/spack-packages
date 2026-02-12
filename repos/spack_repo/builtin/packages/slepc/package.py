@@ -25,6 +25,10 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("main", branch="main")
+    version("3.24.2", sha256="6f1f7e45b9bbd15631562f193284832ae4e9655eb3af7f1ba59bdf8bdaefb638")
+    version("3.24.1", sha256="b07e1c335eb620dfc50a2b8d4fb12db03c6929ae624f0338ff8acf879a072abf")
+    version("3.24.0", sha256="6e2d14c98aa9138ac698a2a04a7c6a9f9569988f570b2cfbe4935d32364cb4e9")
+    version("3.23.3", sha256="6b0c4f706bdfca46f00b30026b4d92a4eb68faa03e40cbcbfeadb89999653621")
     version("3.23.2", sha256="3060a95692151ef0f9ba4ca11da18d5dcd86697b59f6aeee723de92d7bd465a1")
     version("3.23.1", sha256="c2fde066521bbccfbc80aa15182bca69ffaf00a7de648459fd04b81589896238")
     version("3.23.0", sha256="78252f7b2f540c5fdadadee0fd21f3e6eff810f82cb45482f327b524c8db63d0")
@@ -57,61 +61,6 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     version("3.14.2", sha256="3e54578dda1f4c54d35ac27d02f70a43f6837906cb7604dbcec0e033cfb264c8")
     version("3.14.1", sha256="cc78a15e34d26b3e6dde003d4a30064e595225f6185c1975bbd460cb5edd99c7")
     version("3.14.0", sha256="37f8bb270169d1d3f5d43756ac8929d56204e596bd7a78a7daff707513472e46")
-    version(
-        "3.13.4",
-        sha256="ddc9d58e1a4413218f4e67ea3b255b330bd389d67f394403a27caedf45afa496",
-        deprecated=True,
-    )
-    version(
-        "3.13.3",
-        sha256="23d179c22b4b2f22d29fa0ac0a62f5355a964d3bc245a667e9332347c5aa8f81",
-        deprecated=True,
-    )
-    version(
-        "3.13.2",
-        sha256="04cb8306cb5d4d990509710d7f8ae949bdc2c7eb850930b8d0b0b5ca99f6c70d",
-        deprecated=True,
-    )
-    version(
-        "3.13.1",
-        sha256="f4a5ede4ebdee5e15153ce31c1421209c7b794bd94be1430018615fb0838b879",
-        deprecated=True,
-    )
-    version(
-        "3.13.0",
-        sha256="f1f3c2d13a1a6914e7bf4746d38761e107ea866f50927b639e4ad5918dd1e53b",
-        deprecated=True,
-    )
-    version(
-        "3.12.2",
-        sha256="a586ce572a928ed87f04961850992a9b8e741677397cbaa3fb028323eddf4598",
-        deprecated=True,
-    )
-    version(
-        "3.12.1",
-        sha256="a1cc2e93a81c9f6b86abd81022c9d64b0dc2161e77fb54b987f963bc292e286d",
-        deprecated=True,
-    )
-    version(
-        "3.12.0",
-        sha256="872831d961cf76389fafb7553231ae1a6676555850c98ea0e893c06f596b2e9e",
-        deprecated=True,
-    )
-    version(
-        "3.11.2",
-        sha256="cd6a73ac0c9f689c12f2987000a7a28fa7df53fdc069fb59a2bb148699e741dd",
-        deprecated=True,
-    )
-    version(
-        "3.11.1",
-        sha256="4816070d4ecfeea6212c6944cee22dc7b4763df1eaf6ab7847cc5ac5132608fb",
-        deprecated=True,
-    )
-    version(
-        "3.11.0",
-        sha256="bf29043c311fe2c549a25e2b0835095723a3eebc1dff288a233b32913b5762a2",
-        deprecated=True,
-    )
 
     variant("arpack", default=True, description="Enables Arpack wrappers")
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
@@ -128,6 +77,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     # Cannot mix release and development versions of SLEPc and PETSc:
     depends_on("petsc@main", when="@main")
     for ver in [
+        "3.24",
         "3.23",
         "3.22",
         "3.21",
@@ -138,9 +88,6 @@ class Slepc(Package, CudaPackage, ROCmPackage):
         "3.16",
         "3.15",
         "3.14",
-        "3.13",
-        "3.12",
-        "3.11",
     ]:
         depends_on(f"petsc@{ver}", when=f"@{ver}")
     depends_on("petsc+cuda", when="+cuda")
@@ -151,28 +98,17 @@ class Slepc(Package, CudaPackage, ROCmPackage):
         rocm_dep = "+rocm amdgpu_target={0}".format(arch)
         depends_on("petsc {0}".format(rocm_dep), when=rocm_dep)
 
-    patch("install_name_371.patch", when="@3.7.1")
-
     # Arpack can not be used with 64bit integers.
-    conflicts("+arpack", when="@:3.12 ^petsc+int64")
     conflicts("+blopex", when="^petsc+int64")
     # HPDDM cannot be used in both PETSc and SLEPc prior to 3.19.0
     conflicts("+hpddm", when="@:3.18 ^petsc+hpddm")
 
     resource(
         name="blopex",
-        url="https://slepc.upv.es/download/external/blopex-1.1.2.tar.gz",
-        sha256="0081ee4c4242e635a8113b32f655910ada057c59043f29af4b613508a762f3ac",
-        destination=join_path("installed-arch-" + sys.platform + "-c-opt", "externalpackages"),
-        when="@:3.12+blopex",
-    )
-
-    resource(
-        name="blopex",
         git="https://github.com/lobpcg/blopex",
         commit="6eba31f0e071f134a6e4be8eccfb8d9d7bdd5ac7",
         destination=join_path("installed-arch-" + sys.platform + "-c-opt", "externalpackages"),
-        when="@3.13.0:+blopex",
+        when="+blopex",
     )
 
     def revert_kokkos_nvcc_wrapper(self):
@@ -206,10 +142,6 @@ class Slepc(Package, CudaPackage, ROCmPackage):
                     ]
                 )
             else:
-                if spec.satisfies("@:3.12"):
-                    arpackopt = "--with-arpack-flags"
-                else:
-                    arpackopt = "--with-arpack-lib"
                 if "arpack-ng~mpi" in spec:
                     arpacklib = "-larpack"
                 else:
@@ -217,7 +149,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
                 options.extend(
                     [
                         "--with-arpack-dir=%s" % spec["arpack-ng"].prefix,
-                        "%s=%s" % (arpackopt, arpacklib),
+                        "--with-arpack-lib=%s" % arpacklib,
                     ]
                 )
 

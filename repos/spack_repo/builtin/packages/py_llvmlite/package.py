@@ -16,6 +16,13 @@ class PyLlvmlite(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.46.0", sha256="227c9fd6d09dce2783c18b754b7cd9d9b3b3515210c46acc2d3c5badd9870ceb")
+    version("0.45.1", sha256="09430bb9d0bb58fc45a45a57c7eae912850bedc095cd0810a57de109c69e1c32")
+    version(
+        "0.45.0rc2",
+        sha256="c264f8ac7ffc139d66cd243f6369d71c164098cc4fdf4e0af90dde004ba39fc1",
+        deprecated=True,
+    )
     version("0.44.0", sha256="07667d66a5d150abed9157ab6c0b9393c9356f229784a4385c02f99e94fc94d4")
     version("0.43.0", sha256="ae2b5b5c3ef67354824fb75517c8db5fbe93bc02cd9671f3c62271626bc041d5")
     version("0.42.0", sha256="f92b09243c0cc3f457da8b983f67bd8e1295d0f5b3746c7a1861d7a99403854a")
@@ -28,33 +35,26 @@ class PyLlvmlite(PythonPackage):
     version("0.38.1", sha256="0622a86301fcf81cc50d7ed5b4bebe992c030580d413a8443b328ed4f4d82561")
     version("0.38.0", sha256="a99d166ccf3b116f3b9ed23b9b70ba2415640a9c978f3aaa13fad49c58f4965c")
     version("0.37.0", sha256="6392b870cd018ec0c645d6bbb918d6aa0eeca8c62674baaee30862d6b6865b15")
-    version(
-        "0.34.0",
-        sha256="f03ee0d19bca8f2fe922bb424a909d05c28411983b0c2bc58b020032a0d11f63",
-        deprecated=True,
-    )
-    version(
-        "0.33.0",
-        sha256="9c8aae96f7fba10d9ac864b443d1e8c7ee4765c31569a2b201b3d0b67d8fc596",
-        deprecated=True,
-    )
-    version(
-        "0.31.0",
-        sha256="22ab2b9d7ec79fab66ac8b3d2133347de86addc2e2df1b3793e523ac84baa3c8",
-        deprecated=True,
-    )
 
-    depends_on("cxx", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("cmake")
+        depends_on("binutils", when="platform=linux")
+        depends_on("py-setuptools")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("python@3.9:3.12", when="@0.42:", type=("build", "run"))
-    depends_on("python@3.8:3.11", when="@0.40:0.41", type=("build", "run"))
-    depends_on("python@:3.10", when="@0.38:0.39", type=("build", "run"))
-    depends_on("python@:3.9", when="@0.36:0.37", type=("build", "run"))
-    depends_on("python@:3.8", when="@0.31:0.35", type=("build", "run"))
+    # Based on PyPI wheel availability
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:3.14", when="@0.46:")
+        depends_on("python@3.10:3.13", when="@0.44:0.45")
+        depends_on("python@3.9:3.12", when="@0.42:0.43")
+        depends_on("python@3.8:3.11", when="@0.40:0.41")
+        depends_on("python@:3.10", when="@0.38:0.39")
+        depends_on("python@:3.9", when="@0.36:0.37")
 
     # https://github.com/numba/llvmlite#compatibility
-    depends_on("llvm@15", when="@0.44:")
+    depends_on("llvm@20", when="@0.45:")
+    depends_on("llvm@15:16", when="@0.44")
     depends_on("llvm@14", when="@0.41:0.43")
     depends_on("llvm@11:14", when="@0.40")
     depends_on("llvm@11", when="@0.37:0.39")
@@ -70,14 +70,6 @@ class PyLlvmlite(PythonPackage):
         "x86_64:",
     ]:
         depends_on("llvm@10.0", when=f"@0.34:0.36 target={t}")
-
-    depends_on("llvm@9.0", when="@0.34:0.36 target=aarch64:")
-    depends_on("llvm@9.0", when="@0.33")
-    depends_on("llvm@7.0:7.1,8.0", when="@0.29:0.32")
-    depends_on("binutils", type="build")
-
-    # TODO: investigate
-    conflicts("%apple-clang@15:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%fj"):

@@ -41,13 +41,6 @@ class GromacsSwaxs(Gromacs):
     )
 
     version(
-        "2021.4-0.1",
-        sha256="eda1c8a7aae6001ef40480addf9fff9cdccc7e2b80480e36d069f50d6f2be26e",
-        deprecated=True,
-        url="https://gitlab.com/cbjh/gromacs-swaxs/-/archive/release-2021.swaxs-0.1/gromacs-swaxs-release-2021.swaxs-0.1.tar.bz2",
-    )
-
-    version(
         "2020.7-0.4",
         sha256="3eb0975ec92a89f6a3be548896307376974805ac685a9f776b0131a449a6b8a4",
         url="https://gitlab.com/cbjh/gromacs-swaxs/-/archive/release-2020.swaxs-0.4/gromacs-swaxs-release-2020.swaxs-0.4.tar.bz2",
@@ -66,23 +59,9 @@ class GromacsSwaxs(Gromacs):
     )
 
     version(
-        "2020.6-0.1",
-        sha256="3d8360a3cc9144772786bddaa11e3dbc37d6a466b99f3314bf3928261c2fddcf",
-        deprecated=True,
-        url="https://gitlab.com/cbjh/gromacs-swaxs/-/archive/release-2020.swaxs-0.1/gromacs-swaxs-release-2020.swaxs-0.1.tar.bz2",
-    )
-
-    version(
         "2019.6-0.3",
         sha256="1cf81592813333954bb1051321543f211d81f120a821a0c9386081e4cd367e84",
         url="https://gitlab.com/cbjh/gromacs-swaxs/-/archive/release-2019.swaxs-0.3/gromacs-swaxs-release-2019.swaxs-0.3.tar.bz2",
-    )
-
-    version(
-        "2019.6-0.2",
-        sha256="a45eeee3983a4443d3a40ea417770f3abd93f43eb80e021fd9d6830e414565cb",
-        deprecated=True,
-        url="https://gitlab.com/cbjh/gromacs-swaxs/-/archive/release-2019.swaxs-0.2/gromacs-swaxs-release-2019.swaxs-0.2.tar.bz2",
     )
 
     version(
@@ -95,13 +74,6 @@ class GromacsSwaxs(Gromacs):
         "2018.8-0.4",
         sha256="465bbd234b6805209cf39c6bfa4f482c367b947742bb2b9a3d535d362f254dcb",
         url="https://gitlab.com/cbjh/gromacs-swaxs/-/archive/release-2018.swaxs-0.4/gromacs-swaxs-release-2018.swaxs-0.4.tar.bz2",
-    )
-
-    version(
-        "2018.8-0.3",
-        sha256="5e94d636fda28e81ff1f3cff2c9f6e7f458bf496f4d1ed7bc10e911bd98b303c",
-        deprecated=True,
-        url="https://gitlab.com/cbjh/gromacs-swaxs/-/archive/release-2018.swaxs-0.3/gromacs-swaxs-release-2018.swaxs-0.3.tar.bz2",
     )
 
     version(

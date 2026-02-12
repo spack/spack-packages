@@ -20,6 +20,9 @@ class Pfunit(CMakePackage):
 
     maintainers("mathomp4", "tclune")
 
+    version("4.15.0", sha256="8c9cb7f7275802c5169b16dd511209b15ccde3a0e2fb3ed9007a0ab9acf4abb1")
+    version("4.14.0", sha256="3f5fcc79cf5f12ed08eb8e49aff23e0826243b14d4b2b2efee91ce823ac1749d")
+    version("4.13.0", sha256="f4f894faea5cc591f05e071a2bb16ddf613c3c22f88a6dc3b8149f5c4f159548")
     version("4.12.0", sha256="facbef73b3e225ca552a376d0ec4502881ad0876f706cd0b5cffed8a089b92e4")
     version("4.11.1", sha256="db954ce44e857fe17cf4212f91223d2ab73248de0c3af405e2e1224f92ed8d42")
     version("4.10.0", sha256="ee5e899dfb786bac46e3629b272d120920bafdb7f6a677980fc345f6acda0f99")
@@ -50,44 +53,8 @@ class Pfunit(CMakePackage):
     version("4.1.12", sha256="7d71b0fb996497fe9a20eb818d02d596cd0d3cded1033a89a9081fbd925c68f2")
     version("4.1.11", sha256="16160bac223aaa3ed2b27e30287d25fdaec3cf6f2c570ebd8d61196e6aa6180f")
     version("4.1.10", sha256="051c35ad9678002943f4a4f2ab532a6b44de86ca414751616f93e69f393f5373")
-    version(
-        "3.3.3",
-        sha256="9f673b58d20ad23148040a100227b4f876458a9d9aee0f0d84a5f0eef209ced5",
-        deprecated=True,
-    )
-    version(
-        "3.3.2",
-        sha256="b1cc2e109ba602ea71bccefaa3c4a06e7ab1330db9ce6c08db89cfde497b8ab8",
-        deprecated=True,
-    )
-    version(
-        "3.3.1",
-        sha256="f8f4bea7de991a518a0371b4c70b19e492aa9a0d3e6715eff9437f420b0cdb45",
-        deprecated=True,
-    )
-    version(
-        "3.3.0",
-        sha256="4036ab448b821b500fbe8be5e3d5ab3e419ebae8be82f7703bcf84ab1a0ff862",
-        deprecated=True,
-    )
-    version(
-        "3.2.10",
-        sha256="b9debba6d0e31b682423ffa756531e9728c10acde08c4d8e1609b4554f552b1a",
-        deprecated=True,
-    )
-    version(
-        "3.2.9",
-        sha256="403f9a150865700c8b4240fd033162b8d3e8aeefa265c50c5a6fe14c455fbabc",
-        deprecated=True,
-    )
 
     variant("mpi", default=False, description="Enable MPI")
-    variant(
-        "use_comm_world",
-        default=False,
-        description="Enable MPI_COMM_WORLD for testing",
-        when="@:3 +mpi",
-    )
     variant("openmp", default=False, description="Enable OpenMP")
     variant("fhamcrest", default=False, description="Enable hamcrest support")
     variant("esmf", default=False, description="Enable esmf support")
@@ -127,9 +94,9 @@ class Pfunit(CMakePackage):
     depends_on("python", type=("build", "run"))
     depends_on("mpi", when="+mpi")
     depends_on("esmf", when="+esmf")
-    depends_on("m4", when="@4.1.5:", type="build")
+    depends_on("m4", type="build")
     depends_on("fargparse@1.8.0:", when="@4.10.0:")
-    depends_on("fargparse", when="@4:")
+    depends_on("fargparse")
 
     depends_on("cmake@3.12:3", type="build", when="@:4.11")
     depends_on("cmake@3.12:", type="build", when="@4.12")
@@ -138,12 +105,10 @@ class Pfunit(CMakePackage):
     # CMake 3.25.0 has an issue with pFUnit
     # https://gitlab.kitware.com/cmake/cmake/-/issues/24203
     conflicts(
-        "^cmake@3.25.0",
-        when="@4.0.0:",
-        msg="CMake 3.25.0 has a bug with pFUnit. Please use another version.",
+        "^cmake@3.25.0", msg="CMake 3.25.0 has a bug with pFUnit. Please use another version."
     )
 
-    conflicts("%gcc@:8.3.9", when="@4.0.0:", msg="pFUnit requires GCC 8.4.0 or newer")
+    conflicts("%gcc@:8.3.9", msg="pFUnit requires GCC 8.4.0 or newer")
 
     # pfunit only works with the Fujitsu compiler from 4.9.0 onwards
     conflicts(
@@ -181,31 +146,12 @@ class Pfunit(CMakePackage):
             self.define("CMAKE_Fortran_MODULE_DIRECTORY", spec.prefix.include),
             self.define_from_variant("ENABLE_BUILD_DOXYGEN", "docs"),
             self.define("ENABLE_TESTS", self.run_tests),
+            self.define("SKIP_MPI", self.spec.satisfies("~mpi")),
+            self.define("SKIP_OPENMP", self.spec.satisfies("~openmp")),
+            self.define("SKIP_FHAMCREST", self.spec.satisfies("~fhamcrest")),
+            self.define("SKIP_ESMF", self.spec.satisfies("~esmf")),
+            self.define_from_variant("MAX_ASSERT_RANK", "max_array_rank"),
         ]
-
-        if spec.satisfies("@4.0.0:"):
-            args.extend(
-                [
-                    self.define("SKIP_MPI", self.spec.satisfies("~mpi")),
-                    self.define("SKIP_OPENMP", self.spec.satisfies("~openmp")),
-                    self.define("SKIP_FHAMCREST", self.spec.satisfies("~fhamcrest")),
-                    self.define("SKIP_ESMF", self.spec.satisfies("~esmf")),
-                    self.define_from_variant("MAX_ASSERT_RANK", "max_array_rank"),
-                ]
-            )
-        else:
-            if spec.satisfies("%gcc@10:"):
-                args.append(
-                    self.define("CMAKE_Fortran_FLAGS_DEBUG", "-g -O2 -fallow-argument-mismatch")
-                )
-
-            args.extend(
-                [
-                    self.define_from_variant("MPI", "mpi"),
-                    self.define_from_variant("OPENMP", "openmp"),
-                    self.define_from_variant("MAX_RANK", "max_array_rank"),
-                ]
-            )
 
         if spec.satisfies("@:4.2.1") and spec.satisfies("%gcc@5:"):
             # prevents breakage when max_array_rank is larger than default. Note
@@ -249,7 +195,3 @@ class Pfunit(CMakePackage):
             if self.spec.satisfies(key):
                 return value
         raise InstallError("Unsupported compiler.")
-
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("@:3"):
-            env.set("F90_VENDOR", self.compiler_vendor())
