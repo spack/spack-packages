@@ -4,6 +4,7 @@
 
 import os
 import platform
+from pathlib import Path
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -369,6 +370,8 @@ class Cudnn(Package):
                 cuda_ver = cuda_ver.up_to(1)
             depends_on(f"cuda@{cuda_ver}", when=f"@{long_ver}")
 
+    depends_on("patchelf", type="build", when="@8")
+
     def url_for_version(self, version):
         # Get the system and machine arch for building the file path
         sys = "{0}-{1}".format(platform.system(), platform.machine())
@@ -444,6 +447,20 @@ class Cudnn(Package):
             target_include = os.path.join(prefix, "targets", "ppc64le-linux", "include")
             if os.path.isdir(target_include) and not os.path.isdir(prefix.include):
                 symlink(target_include, prefix.include)
+
+    # CuDNN 8 does not have rpaths set in the helper libraries, which can cause
+    # issues if the LD_LIBRARY_PATH is not set at runtime.
+    # This is not an issue in cudnn@:7 as those only have one libcudnn.so file,
+    # and also not an issue in cudnn@9 comes with RPATH set to $ORIGIN
+    # in all those helper libraries.
+    # Note that libcudnn.so does come with the RPATH set.
+    @run_after("install")
+    def ensure_rpaths(self):
+        if self.spec.satisfies("@8"):
+            patchelf = which("patchelf")
+            for path in Path(self.prefix).rglob("*.so.*"):
+                if not path.is_symlink() and not path.name.startswith("libcudnn.so"):
+                    patchelf("--set-rpath", "$ORIGIN", str(path))
 
     # contains precompiled binaries without rpaths
     unresolved_libraries = ["*"]
