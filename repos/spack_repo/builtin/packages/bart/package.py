@@ -41,7 +41,7 @@ class Bart(MakefilePackage, CudaPackage, PythonExtension):
 
     # patch to set path to bart
     patch("bart_path-0.5.00.patch", when="@0.5.00")
-    patch("bart_path-0.6.00.patch", when="@0.6.00")
+    patch("bart_path-0.6.00.patch", when="@0.6.00:0.7")
     patch("bart_path-0.9.00.patch", when="@0.9.00")
 
     depends_on("libpng")
@@ -51,11 +51,6 @@ class Bart(MakefilePackage, CudaPackage, PythonExtension):
     depends_on("py-numpy", type="run")
     depends_on("py-matplotlib", type="run")
     extends("python")
-
-    # New for v0.9.00
-    # Tensorflow ?
-    # CuDNN ?
-    # MPI ?
 
     conflicts("^atlas", msg="BART does not currently support atlas")
 
