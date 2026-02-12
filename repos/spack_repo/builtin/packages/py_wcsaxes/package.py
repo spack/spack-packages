@@ -16,6 +16,7 @@ class PyWcsaxes(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.9", sha256="be1a90457c93d18e24da1983c9cd8905260153b1abf0f7a38c0ce3c5fe8905ef")
     version("0.8", sha256="9c6addc1ec04cc99617850354b2c03dbd4099d2e43b45a81f8bc3069de9c8e83")
 
     depends_on("py-setuptools", type="build")

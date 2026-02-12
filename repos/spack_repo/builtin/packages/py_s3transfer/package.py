@@ -15,6 +15,7 @@ class PyS3transfer(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.16.0", sha256="8e990f13268025792229cd52fa10cb7163744bf56e719e0b9cb925ab79abf920")
     version("0.14.0", sha256="eff12264e7c8b4985074ccce27a3b38a485bb7f7422cc8046fee9be4983e4125")
     version("0.10.0", sha256="d0c8bbf672d5eebbe4e57945e23b972d963f07d82f661cabf678a5c88831595b")
     version("0.9.0", sha256="9e1b186ec8bb5907a1e82b51237091889a9973a2bb799a924bcd9f301ff79d3d")

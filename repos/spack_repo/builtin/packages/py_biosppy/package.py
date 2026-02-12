@@ -15,6 +15,7 @@ class PyBiosppy(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.2.4", sha256="0b52eb27a410fe24c01bd15dd4a85149d20ac0026f73e03b9c61bf99577dcca5")
     version("2.2.3", sha256="2c4b84c98c71e3e84b43bf09a855414c31f534a8aed84e59fb05bbc3c36d9aa9")
 
     depends_on("py-setuptools", type="build")

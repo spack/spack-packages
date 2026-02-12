@@ -16,6 +16,7 @@ class PyPreshed(PythonPackage):
 
     license("MIT")
 
+    version("4.0.0", sha256="5e2b0b2a07dd1a8deeaad6612019845c602ee24907f6936eaaf17aabd56e544c")
     version("3.0.8", sha256="6c74c70078809bfddda17be96483c41d06d717934b07cab7921011d81758b357")
     version("3.0.2", sha256="61d73468c97c1d6d5a048de0b01d5a6fd052123358aca4823cdb277e436436cb")
 
