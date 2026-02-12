@@ -70,5 +70,5 @@ class PyThinc(PythonPackage):
         depends_on("py-contextvars@2.4:2", when="@8.1.10:^python@3.6")
 
         # Historical
-        depends_on("py-plac@0.9.6:1.1")
-        depends_on("py-tqdm@4.10:4")
+        depends_on("py-plac@0.9.6:1.1", when="@:7.4.1")
+        depends_on("py-tqdm@4.10:4", when="@:7.4.1")
