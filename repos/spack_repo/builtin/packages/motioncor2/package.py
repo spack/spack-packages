@@ -39,21 +39,13 @@ class Motioncor2(Package):
         depends_on("cuda@10.1:10.2,11.1:11.6", when="@1.5.0")
         depends_on("cuda@10.2,11.1:11.5", when="@1.4.7")
         depends_on("cuda@10.0:10.2,11.1:11.3", when="@1.4.4:1.4.5")
-        depends_on("cuda@10.0:10.2,11.1", when="@1.4.2")
-        depends_on("cuda@9.2,10.0:10.2,11.0", when="@1.4.0")
-        depends_on("cuda@8.0,9.2,10.0:10.2", when="@1.3.2")
-        depends_on("cuda@9.2,10.1:10.2", when="@1.3.1")
-        depends_on("cuda@8.0,9.2,10.1", when="@1.2.6:1.3.0")
-        depends_on("cuda@8.0,9.1:9.2,10.0", when="@1.2.3")
-        depends_on("cuda@8.0,9.1:9.2", when="@1.2.1")
-        depends_on("cuda@8.0,9.0:9.1", when="@1.1.0")
         depends_on("cuda@8.0,9.1", when="@1.0.5")
 
     depends_on("libtiff", type="run")
 
     def install(self, spec, prefix):
         spec_version = (
-            spec.version if spec.version not in ("1.0.5", "1.3.1") else "v{0}".format(spec.version)
+            spec.version if spec.version not in ("1.0.5") else "v{0}".format(spec.version)
         )
         cuda_version = (
             spec["cuda"].version.up_to(2).joined
@@ -66,11 +58,6 @@ class Motioncor2(Package):
         if spec.satisfies("@1.0.5"):
             install(
                 "bin/MotionCor2_Cuda{0}_{1}".format(cuda_version, spec_version),
-                join_path(prefix.bin, "MotionCor2"),
-            )
-        elif spec.satisfies("@1.1.0:1.3.2"):
-            install(
-                "bin/MotionCor2_{0}-Cuda{1}".format(spec_version, cuda_version),
                 join_path(prefix.bin, "MotionCor2"),
             )
         else:
