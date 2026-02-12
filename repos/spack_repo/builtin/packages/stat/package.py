@@ -21,7 +21,7 @@ class Stat(AutotoolsPackage):
     version("develop", branch="develop")
     version(
         "4.2.3",
-        sha256="0269bfdd42c0adef15a27ce88a1af64834bb74750cba94ad0ec4d6ea7ff87a93",
+        sha256="cec7824e43d4c1f2cd24bdf074ef27b47d89ce9abda2b5bc37eed6396c4adf37",
         url="https://github.com/LLNL/STAT/releases/download/v4.2.3/stat-4.2.3.tar.gz",
     )
     version(
@@ -75,6 +75,8 @@ class Stat(AutotoolsPackage):
     depends_on("mrnet")
     depends_on("python@:3.11")
     depends_on("py-xdot@1.0", when="+gui")
+    depends_on("py-pygments", when="+gui")
+    depends_on("pango", when="+gui")
     depends_on("swig")
     depends_on("mpi", when="+examples")
 
