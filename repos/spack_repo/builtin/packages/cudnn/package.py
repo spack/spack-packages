@@ -454,13 +454,12 @@ class Cudnn(Package):
     # and also not an issue in cudnn@9 comes with RPATH set to $ORIGIN
     # in all those helper libraries.
     # Note that libcudnn.so does come with the RPATH set.
-    @run_after("install")
+    @run_after("install", when="@8")
     def ensure_rpaths(self):
-        if self.spec.satisfies("@8"):
-            patchelf = which("patchelf")
-            for path in Path(self.prefix).rglob("*.so.*"):
-                if not path.is_symlink() and not path.name.startswith("libcudnn.so"):
-                    patchelf("--set-rpath", "$ORIGIN", str(path))
+        patchelf = which("patchelf")
+        for path in Path(self.prefix.lib).rglob("lib*.so.*"):
+            if not path.is_symlink() and not path.name.startswith("libcudnn.so"):
+                patchelf("--set-rpath", "$ORIGIN", str(path))
 
     # contains precompiled binaries without rpaths
     unresolved_libraries = ["*"]
