@@ -18,6 +18,11 @@ class Launchmon(AutotoolsPackage):
 
     version("master", branch="master")
     version(
+        "1.2.1",
+        sha256="dcd5744b34076c009d6e9436c7b858eb862542eab558ce47e474c18079f510d9",
+        url="https://github.com/LLNL/LaunchMON/releases/download/v1.2.1/launchmon-1.2.1.tar.gz",
+    )
+    version(
         "1.2.0",
         sha256="edba70b8a283337dd4fda64192ba4fa36b7ada3f150340349b8681bcddcebda4",
         url="https://github.com/LLNL/LaunchMON/releases/download/v1.2.0/launchmon-v1.2.0.tar.gz",
