@@ -19,7 +19,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     Currently, hipSPARSELt supports rocSPARSELt and cuSPARSELt v0.4 as backends."""
 
     homepage = "https://github.com/ROCm/hipsparselt"
-    git = "https://github.com/ROCm/hipsparseLt.git"
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
     tags = ["rocm"]
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")

@@ -15,7 +15,7 @@ class Amdsmi(CMakePackage):
     applications to monitor and control AMD device."""
 
     homepage = "https://github.com/ROCm/amdsmi"
-    git = "https://github.com/ROCm/amdsmi.git"
+    git = "https://github.com/ROCm/rocm-systems.git"
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
