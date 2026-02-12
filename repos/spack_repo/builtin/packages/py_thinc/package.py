@@ -24,7 +24,9 @@ class PyThinc(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("python@3.6:", type=("build", "run"), when="@8.1.10")
+    # @8.1.10 minimum python version is 3.6. Set minimum version to 3.7 due to spack missing
+    # py-contextvars and 3.6 being deprecated in spack.
+    depends_on("python@3.7:", type=("build", "run"), when="@8.1.10")
     depends_on("python@3.10:3.14", type=("build", "run"), when="@8.3.10:")
 
     depends_on("py-setuptools", type="build")
@@ -65,9 +67,9 @@ class PyThinc(PythonPackage):
 
         depends_on("py-packaging@20:", when="@8.1.10:")
 
-        depends_on("py-dataclasses@0.6:0", when="@8.1.10:^python@:3.6")
+        # depends_on("py-dataclasses@0.6:0", when="@8.1.10:^python@:3.6")
         depends_on("py-typing-extensions@3.7.4.1:4.4", when="@8.1.10:^python@:3.7")
-        depends_on("py-contextvars@2.4:2", when="@8.1.10:^python@3.6")
+        # depends_on("py-contextvars@2.4:2", when="@8.1.10:^python@3.6")
 
         # Historical
         depends_on("py-plac@0.9.6:1.1", when="@:7.4.1")
