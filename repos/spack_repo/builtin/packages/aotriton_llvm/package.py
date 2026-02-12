@@ -15,7 +15,6 @@ class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
     homepage = "https://github.com/llvm/llvm-project"
     git = "https://github.com/llvm/llvm-project"
     url = "https://github.com/llvm/llvm-project/archive/llvmorg-7.1.0.tar.gz"
-
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
