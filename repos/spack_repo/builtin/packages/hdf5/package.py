@@ -511,9 +511,6 @@ class Hdf5(CMakePackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("SZIP_INSTALL", self.spec["szip"].prefix)
 
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        pass
-
     def cmake_args(self):
         spec = self.spec
 
