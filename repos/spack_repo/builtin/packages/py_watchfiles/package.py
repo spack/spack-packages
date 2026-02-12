@@ -15,6 +15,7 @@ class PyWatchfiles(PythonPackage):
 
     license("MIT")
 
+    version("1.1.1", sha256="a173cb5c16c4f40ab19cecf48a534c409f7ea983ab8fed0741304a1c0a31b3f2")
     version("1.0.5", sha256="b7529b5dcc114679d43827d8c35a07c493ad6f083633d573d81c660abc5979e9")
     version("0.18.1", sha256="4ec0134a5e31797eb3c6c624dbe9354f2a8ee9c720e0b46fc5b7bab472b7c6d4")
 

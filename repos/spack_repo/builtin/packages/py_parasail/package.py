@@ -19,6 +19,7 @@ class PyParasail(PythonPackage):
 
     license("LiLiQ-R-1.1")
 
+    version("1.3.4", sha256="d6a7035dfae3ef5aafdd7e6915711214c22b572ea059fa69d9d7ecbfb9b61b0f")
     version("1.3.3", sha256="06f05066d9cf624c0b043f51a1e9d2964154e1edd0f9843e0838f32073e576f8")
 
     depends_on("perl", type="build")
