@@ -71,5 +71,6 @@ class PyXdot(PythonPackage):
             "GI_TYPELIB_PATH", join_path(spec["gtkplus"].prefix.lib, "girepository-1.0")
         )
         env.prepend_path(
-            "GI_TYPELIB_PATH", join_path(spec["gobject-introspection"].prefix.lib, "girepository-1.0")
+            "GI_TYPELIB_PATH",
+            join_path(spec["gobject-introspection"].prefix.lib, "girepository-1.0"),
         )

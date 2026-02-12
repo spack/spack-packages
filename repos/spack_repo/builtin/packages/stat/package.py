@@ -99,7 +99,10 @@ class Stat(AutotoolsPackage):
             "--with-boost=%s" % spec["boost"].prefix,
         ]
         if self.spec.satisfies("@4.2.2:") and spec["glib"].satisfies("@2.0:2.99"):
-            args.append("STAT_GSETTINGS_SCHEMA_DIR=%s" % spec["gtkplus"].prefix.join("share/glib-2.0/schemas"))
+            args.append(
+                "STAT_GSETTINGS_SCHEMA_DIR=%s"
+                % spec["gtkplus"].prefix.join("share/glib-2.0/schemas")
+            )
 
         if "+fgfs" in spec:
             args.append("--with-fgfs=%s" % spec["fast-global-file-status"].prefix)
