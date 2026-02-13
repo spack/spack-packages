@@ -32,7 +32,7 @@ class PrunersNinja(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
 
-    patch("pruners-mutli-def-a-pr3-fix.patch")
+    patch("pruners-mutli-def-a-pr3-fix.patch", when="@:1.0.1")
 
     def flag_handler(self, name, flags):
         if name == "cflags":
