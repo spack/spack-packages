@@ -246,7 +246,7 @@ class Julia(MakefilePackage):
     # patchelf 0.18 breaks (at least) libjulia-internal.so
     depends_on("patchelf@0.13:0.17", type="build")
     depends_on("perl", type="build")
-    depends_on("libwhich", type="build")
+    depends_on("libwhich@1.3:", type="build")
     depends_on("which", type="build")  # for detecting 7z, lld, dsymutil
     depends_on("python", type="build")
     depends_on("binutils", type="build")  # for readelf
