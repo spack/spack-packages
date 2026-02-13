@@ -218,6 +218,18 @@ class CMakePackage(PackageBase):
         depends_on("gmake", type="build", when="generator=make")
         depends_on("ninja", type="build", when="generator=ninja")
 
+        # CMake earlier than 4.1 improperly handles arguments provided to
+        # the linker when using msvc as a c/cxx compiler and oneapi as a
+        # fortran compiler https://gitlab.kitware.com/cmake/cmake/-/issues/26005
+        #
+        # Currently in Spack msvc is modeled as both the fortran/cxx compiler
+        # due to restrictions w/ oneapi on Windows, but in reality, when msvc
+        # is the fortran compiler, it is utilizing oneapi, and this
+        # must conflict.
+        # this should be updated to reflect a oneapi fortran provider
+        # once oneapi is usable with fortran on Windows
+        depends_on("cmake@4.1:", type="build", when="%cxx=msvc %fortran=msvc")
+
     def flags_to_build_system_args(self, flags):
         """Return a list of all command line arguments to pass the specified
         compiler flags to cmake. Note CMAKE does not have a cppflags option,
