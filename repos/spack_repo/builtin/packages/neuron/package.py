@@ -23,19 +23,19 @@ class Neuron(CMakePackage):
 
     license("BSD-3-Clause")
 
-    version("develop", branch="master", submodules="True")
+    version("develop", branch="master", submodules=True)
 
     version(
-        "8.2.3", tag="8.2.3", commit="f0ed3701059aa53ce93387f3d73d13c45de6d87f", submodules="True"
+        "8.2.3", tag="8.2.3", commit="f0ed3701059aa53ce93387f3d73d13c45de6d87f", submodules=True
     )
     version(
-        "8.1.0", tag="8.1.0", commit="047dd8240c2badadf5ea154b563b29369db1303f", submodules="True"
+        "8.1.0", tag="8.1.0", commit="047dd8240c2badadf5ea154b563b29369db1303f", submodules=True
     )
     version(
-        "8.0.0", tag="8.0.0", commit="429d11ef34b1d860b3ddbfffc9f7960acb399b0c", submodules="True"
+        "8.0.0", tag="8.0.0", commit="429d11ef34b1d860b3ddbfffc9f7960acb399b0c", submodules=True
     )
     version(
-        "7.8.2", tag="7.8.2", commit="09b151ecb2b3984335c265932dc6ba3e4fcb318e", submodules="True"
+        "7.8.2", tag="7.8.2", commit="09b151ecb2b3984335c265932dc6ba3e4fcb318e", submodules=True
     )
 
     variant("backtrace", default=False, description="Enable printing backtraces on failure")

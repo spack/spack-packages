@@ -15,6 +15,7 @@ class PyPoxy(PythonPackage):
 
     license("MIT", checked_by="pranav-sivaraman")
 
+    version("0.20.1", sha256="3d4f3b6b924e28fa0a47e63fb68636c1183f1852db52313651f89fa96580d4fe")
     version("0.18.0", sha256="f5da8ff04ec08859bfd1c8ec6ef61b70e3af630915a4cce6a3e377eec3bcd3d4")
 
     depends_on("py-setuptools", type="build")

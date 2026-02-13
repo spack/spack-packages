@@ -11,10 +11,11 @@ class PyUv(PythonPackage):
     """An extremely fast Python package and project manager, written in Rust."""
 
     homepage = "https://github.com/astral-sh/uv"
-    pypi = "uv/uv-0.4.15.tar.gz"
+    pypi = "uv/uv-0.10.1.tar.gz"
 
     license("APACHE 2.0 or MIT")
 
+    version("0.10.1", sha256="c89e7fd708fb3474332d6fc54beb2ea48313ebdc82c6931df92a884fcb636d9d")
     version("0.7.22", sha256="f5cf159907d594e33433f14737d1ee843dc8799edfcf57b5b8c0f282d1117051")
     version("0.7.15", sha256="c608cd2d89db7482ab40fc6e7de27afc87b20595e145ed81a2a8702e9a0d7e2d")
     version("0.7.5", sha256="ae2192283eb645ccab189b1dfd8b13d3264eae631469a903c0e0f2dffce65e3b")
