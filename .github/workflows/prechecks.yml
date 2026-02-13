@@ -17,8 +17,8 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
-    - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
       with:
         python-version: '3.13'
     - name: Install Python Packages
@@ -32,10 +32,10 @@ jobs:
   style:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         fetch-depth: 2
-    - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
       with:
         python-version: '3.13'
     - name: Install Python packages
@@ -62,7 +62,7 @@ jobs:
       ${{ inputs.with_packages == 'true' }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         # Depth 2 is required for this check
         fetch-depth: 2
@@ -81,7 +81,7 @@ jobs:
       image: ghcr.io/spack/all-pythons:2025-10-10
 
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
       - uses: ./.github/actions/checkout-spack

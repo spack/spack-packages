@@ -20,6 +20,7 @@ class PyJoblib(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.5.3", sha256="8561a3269e6801106863fd0d6d84bb737be9e7631e33aaed3fb9ce5953688da3")
     version("1.5.2", sha256="3faa5c39054b2f03ca547da9b2f52fde67c06240c31853f306aea97f13647b55")
     version("1.4.2", sha256="2382c5816b2636fbd20a09e0f4e9dad4736765fdfb7dca582943b9c1366b3f0e")
     version("1.2.0", sha256="e1cee4a79e4af22881164f218d4311f60074197fb707e082e803b61f6d137018")

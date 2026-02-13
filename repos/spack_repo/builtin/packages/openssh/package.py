@@ -26,6 +26,7 @@ class Openssh(AutotoolsPackage):
 
     license("SSH-OpenSSH")
 
+    version("10.2p1", sha256="ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2")
     version("9.9p1", sha256="b343fbcdbff87f15b1986e6e15d6d4fc9a7d36066be6b7fb507087ba8f966c02")
     version("9.8p1", sha256="dd8bd002a379b5d499dfb050dd1fa9af8029e80461f4bb6c523c49973f5a39f3")
     version("9.7p1", sha256="490426f766d82a2763fcacd8d83ea3d70798750c7bd2aff2e57dc5660f773ffd")
@@ -38,8 +39,8 @@ class Openssh(AutotoolsPackage):
         "gssapi", default=True, description="Enable authentication via Kerberos through GSSAPI"
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("krb5+shared", when="+gssapi")
     depends_on("openssl")
@@ -65,7 +66,7 @@ class Openssh(AutotoolsPackage):
     patch(
         "https://raw.githubusercontent.com/Homebrew/patches/1860b0a745f1fe726900974845d1b0dd3c3398d6/openssh/patch-sandbox-darwin.c-apple-sandbox-named-external.diff",
         sha256="d886b98f99fd27e3157b02b5b57f3fb49f43fd33806195970d4567f12be66e71",
-        when="platform=darwin",
+        when="@:9 platform=darwin",
     )
 
     # https://github.com/Homebrew/homebrew-core/blob/7aabdeb30506be9b01708793ae553502c115dfc8/Formula/o/openssh.rb#L48-L52C6
@@ -78,7 +79,7 @@ class Openssh(AutotoolsPackage):
     patch(
         "https://raw.githubusercontent.com/Homebrew/patches/aa6c71920318f97370d74f2303d6aea387fb68e4/openssh/patch-sshd.c-apple-sandbox-named-external.diff",
         sha256="3f06fc03bcbbf3e6ba6360ef93edd2301f73efcd8069e516245aea7c4fb21279",
-        when="@9.8p1: platform=darwin",
+        when="@9.8p1:9 platform=darwin",
     )
 
     @classmethod

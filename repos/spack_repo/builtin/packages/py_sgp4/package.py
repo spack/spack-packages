@@ -15,6 +15,7 @@ class PySgp4(PythonPackage):
 
     license("MIT")
 
+    version("2.25", sha256="e19edc6dcc25d69fb8fde0a267b8f0c44d7e915c7bcbeacf5d3a8b595baf0674")
     version("1.4", sha256="1fb3cdbc11981a9ff34a032169f83c1f4a2877d1b6c295aed044e1d890b73892")
 
     depends_on("python@2.6:2.8,3.3:", type=("build", "run"))

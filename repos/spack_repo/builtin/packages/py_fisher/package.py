@@ -17,6 +17,7 @@ class PyFisher(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.1.14", sha256="3594e247f28be0e7716e7ff7e420583ddb2eab9e5732dc86514b1ff78c3000b9")
     version("0.1.10", sha256="0ec89019e814cf102f33be5674a6205af433711ecb742a7ed5b48896af243523")
     version("0.1.9", sha256="d378b3f7e488e2a679c6d0e5ea1bce17bc931c2bfe8ec8424ee47a74f251968d")
 
