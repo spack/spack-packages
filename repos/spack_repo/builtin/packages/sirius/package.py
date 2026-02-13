@@ -203,6 +203,9 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
 
     patch("fj.patch", when="@7.3.2: %fj")
 
+    # Workaround for hipDeviceProp_t::uuid not available in ROCm < 6.0
+    patch("deviceprop-uuid.patch", when="@:7.10.0 +rocm")
+
     def cmake_args(self):
         spec = self.spec
 
