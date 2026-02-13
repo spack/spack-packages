@@ -179,7 +179,10 @@ class Rccl(CMakePackage):
             self.define("BUILD_TESTS", self.run_tests),
             self.define("ENABLE_MSCCLPP", False),
             self.define("ENABLE_MSCCL_KERNEL", False),
-            self.define("RCCL_MAX_MEMORY", "128"),
+            # Anecdotally, memory usage is about ~8GB per job per GPU arch. The value could be
+            # computed from amd_gpu_targets, except in the case of auto. Leave constant for now.
+            self.define("RCCL_MAX_MEMORY", "32"),
+            self.define("RCCL_MEMORY_PER_LINK_JOB", "8"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             if self.spec.satisfies("@7.1:"):
