@@ -179,7 +179,7 @@ class Rccl(CMakePackage):
             self.define("BUILD_TESTS", self.run_tests),
             self.define("ENABLE_MSCCLPP", False),
             self.define("ENABLE_MSCCL_KERNEL", False),
-            self.define("RCCL_MAX_MEMORY", "32"),
+            self.define("RCCL_MAX_MEMORY", "128"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             if self.spec.satisfies("@7.1:"):
