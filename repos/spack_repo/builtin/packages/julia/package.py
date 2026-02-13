@@ -92,9 +92,9 @@ class Julia(MakefilePackage):
     )
     depends_on("libuv-julia@1.42.0", when="@1.8.0:1.8.1")
     depends_on("libuv-julia@1.44.2", when="@1.8.2:1.9")
-    depends_on("libuv-julia@1.44.3", when="@1.10.0:1.10")
-    depends_on("libuv-julia@1.48.0", when="@1.11.0:1.11")
-    depends_on("libuv-julia@1.48.1rc1", when="@1.12.0:")
+    depends_on("libuv-julia@1.44.3", when="@1.10")
+    depends_on("libuv-julia@1.48.0", when="@1.11")
+    depends_on("libuv-julia@1.48.1rc1", when="@1.12:")
 
     depends_on("suite-sparse@5.4:5.10", when="@:1.9")
 
