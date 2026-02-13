@@ -343,6 +343,15 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+phalanx", when="~sacado")
     conflicts("+stokhos", when="~kokkos")
 
+    # TRIbits dependencies only relied on by testing are invoked regardless,
+    # whether +test or ~test. see https://github.com/TriBITSPub/TriBITS/issues/56
+    with when("~gtest"):
+        conflicts("+minitensor")
+        conflicts("+rol")
+        conflicts("+stk")
+    # this does alleviate needing: conflicts("+test", when="@17: ~gtest")
+    # see https://github.com/spack/spack-packages/pull/3361 for explanation
+
     # Only allow DTK with Trilinos 12.14, 12.18
     conflicts("+dtk", when="~boost")
     conflicts("+dtk", when="~intrepid2")
@@ -464,6 +473,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("boost+graph+math+exception+stacktrace", when="@:13.4.0 +stk")
     depends_on("cgns", when="+exodus")
     depends_on("cmake@3.23:", type="build", when="@14.0.0:")
+    depends_on("googletest", when="@17: +gtest")
     depends_on("hdf5+hl", when="+hdf5")
     for plat in ["darwin", "linux"]:
         depends_on("hypre~int64", when="+hypre platform=%s" % plat)
@@ -779,7 +789,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 define_trilinos_enable("Epetra"),
                 define_trilinos_enable("EpetraExt"),
                 define_trilinos_enable("FEI", False),
-                define_trilinos_enable("Gtest"),
                 define_trilinos_enable("Ifpack"),
                 define_trilinos_enable("Ifpack2"),
                 define_trilinos_enable("Intrepid"),
@@ -994,6 +1003,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                     ),
                 ]
             )
+
+        if spec.satisfies("@17: +gtest"):
+            options.append(define_tpl_enable("gtest", True))
+            options.append(define("GTEST_ROOT", spec["googletest"].prefix))
+        else:
+            options.append(define_trilinos_enable("Gtest"))
 
         if spec.satisfies("^superlu-dist@4.0:"):
             options.extend([define("HAVE_SUPERLUDIST_LUSTRUCTINIT_2ARG", True)])
