@@ -1,0 +1,41 @@
+diff --git a/libwhich.c b/libwhich.c
+index 8454a65..e11deb9 100644
+--- a/libwhich.c
++++ b/libwhich.c
+@@ -133,8 +133,16 @@ int mainCRTStartup(void) // actually is WINAPI without mangling (but ABI is the
+ #else
+ #include <dlfcn.h>
+ #include <stdio.h>
++#include <unistd.h>
+ typedef char WCHAR;
+ #define T(str) str
++
++#if defined(__APPLE__)
++#define LIBWHICH_LD_LIBRARY_PATH "DYLD_LIBRARY_PATH"
++#else
++#define LIBWHICH_LD_LIBRARY_PATH "LD_LIBRARY_PATH"
++#endif
++
+ #endif
+ 
+ #ifndef RTLD_LAZY
+@@ -336,6 +344,19 @@ int main(int argc, STR *argv)
+         fputs(T(")\n"), stdout);
+         return 1;
+     }
++#ifndef _WIN32
++    // If LIBWHICH_LIBRARY_PATH is set, re-run the program with LD_LIBRARY_PATH
++    // or DYLD_LIBRARY_PATH set instead, so dlopen picks up these library paths.
++    const char *libwhich_path = getenv("LIBWHICH_LIBRARY_PATH");
++    if (libwhich_path) {
++        setenv(LIBWHICH_LD_LIBRARY_PATH, libwhich_path, 1);
++        unsetenv("LIBWHICH_LIBRARY_PATH");
++        if (execvp(argv[0], (char **)argv) == -1) {
++            perror("libwhich: execvp");
++            return 1;
++        }
++    }
++#endif
+     struct vector_t before = dllist();
+     void *lib = dlopen(libname, RTLD_LAZY);
+     if (!lib) {
