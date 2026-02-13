@@ -223,6 +223,7 @@ class Julia(MakefilePackage):
     depends_on("libwhich", type="build")
     depends_on("which", type="build")  # for detecting 7z, lld, dsymutil
     depends_on("python", type="build")
+    depends_on("binutils", type="build")  # for readelf
 
     depends_on("blas")  # note: for now openblas is fixed...
     depends_on("curl tls=mbedtls +nghttp2 +libssh2")
