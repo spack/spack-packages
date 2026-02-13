@@ -154,7 +154,7 @@ class CMakePackage(PackageBase):
     https://cmake.org/cmake/help/latest/
     """
 
-    #: Disable adding extra CMake args provided by listed depenedencies
+    #: List of package names for which CMake argument injection should be disabled
     disable_cmake_hints_from: List[str] = []
 
     #: This attribute is used in UI queries that need to know the build
@@ -394,13 +394,11 @@ class CMakeBuilder(BuilderWithDefaults):
                 continue
 
             # Skip disabled dependency cmake args
-            # Consider virtual names as well package names
-            disabled_for_pkg = dep.spec.package.name in disable_cmake_hints_from
-            disabled_for_virtual = False
-            if dep.virtuals:
-                disabled_for_virtual = any((v in disable_cmake_hints_from for v in dep.virtuals))
+            if dep_pkg.name in disable_cmake_hints_from:
+                continue
 
-            if disabled_for_pkg or disabled_for_virtual:
+            # Skip disabled virtual dependency cmake args
+            if any(v in disable_cmake_hints_from for v in dep.virtuals):
                 continue
 
             args.extend(dep_pkg.dependent_cmake_args(pkg.spec))
