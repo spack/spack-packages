@@ -2,7 +2,7 @@
 name = "spack-repo-builtin"
 description = "The builtin repository of the Spack package manager"
 requires-python = ">=3.6"
-version = "0.1.0"  # todo: determine versioning scheme
+version = "2026.5.0.dev0"  # note: leading zeros are normalized away, so use single digit months.
 
 [project.optional-dependencies]
 dev = [
