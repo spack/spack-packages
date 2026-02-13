@@ -21,3 +21,4 @@ class PySetuptoolsCpp(PythonPackage):
 
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-pybind11", type=("build", "run"))
+    depends_on("cxx", type="build")

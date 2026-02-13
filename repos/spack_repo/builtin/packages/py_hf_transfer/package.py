@@ -20,6 +20,7 @@ class PyHfTransfer(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-maturin@1.4:1")
+        depends_on("rust")
 
     # https://github.com/huggingface/hf_transfer/pull/74
     depends_on("python@:3.13", when="@:0.1.8", type=("build", "run"))
