@@ -30,5 +30,4 @@ class Sessreg(AutotoolsPackage, XorgPackage):
     depends_on("util-macros", type="build")
 
     def patch(self):
-        kwargs = {"string": True}
-        filter_file("$(CPP) $(DEFS)", "$(CPP) -P $(DEFS)", "man/Makefile.in", **kwargs)
+        filter_file("$(CPP) $(DEFS)", "$(CPP) -P $(DEFS)", "man/Makefile.in", string=True)

@@ -36,9 +36,8 @@ class Varscan(Package):
         set_executable(script)
 
         java = join_path(self.spec["java"].prefix, "bin", "java")
-        kwargs = {"ignore_absent": False, "backup": False, "string": False}
-        filter_file("^java", java, script, **kwargs)
-        filter_file("varscan.jar", join_path(prefix.jar, jar_file), script, **kwargs)
+        filter_file("^java", java, script)
+        filter_file("varscan.jar", join_path(prefix.jar, jar_file), script)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("VARSCAN_HOME", self.prefix.jar)

@@ -357,8 +357,6 @@ class Cantera(SConsPackage):
         If this isn't done, they'll have CC, CXX, F77, and FC set to Spack's
         generic cc, c++, f77, and f90. We want them to be bound to whatever
         compiler they were built with."""
-
-        kwargs = {"ignore_absent": True, "backup": False, "string": True}
         dirname = os.path.join(self.prefix, "share/cantera/samples")
 
         cc_files = [
@@ -384,20 +382,36 @@ class Cantera(SConsPackage):
 
         for filename in cc_files:
             filter_file(
-                os.environ["CC"], self.compiler.cc, os.path.join(dirname, filename), **kwargs
+                os.environ["CC"],
+                self.compiler.cc,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
             )
 
         for filename in cxx_files:
             filter_file(
-                os.environ["CXX"], self.compiler.cxx, os.path.join(dirname, filename), **kwargs
+                os.environ["CXX"],
+                self.compiler.cxx,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
             )
 
         for filename in f77_files:
             filter_file(
-                os.environ["F77"], self.compiler.f77, os.path.join(dirname, filename), **kwargs
+                os.environ["F77"],
+                self.compiler.f77,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
             )
 
         for filename in fc_files:
             filter_file(
-                os.environ["FC"], self.compiler.fc, os.path.join(dirname, filename), **kwargs
+                os.environ["FC"],
+                self.compiler.fc,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
             )

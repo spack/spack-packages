@@ -553,7 +553,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
 
         spec = self.spec
 
-        kwargs = {"ignore_absent": True, "backup": False, "string": True}
         dirname = os.path.join(self.prefix, "examples")
 
         cc_files = [
@@ -643,36 +642,68 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
 
         for filename in cc_files:
             filter_file(
-                os.environ["CC"], self.compiler.cc, os.path.join(dirname, filename), **kwargs
+                os.environ["CC"],
+                self.compiler.cc,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
             )
 
         for filename in cc_files:
-            filter_file(r"^CPP\s*=.*", self.compiler.cc, os.path.join(dirname, filename), **kwargs)
-
-        for filename in cxx_files:
             filter_file(
-                os.environ["CXX"], self.compiler.cxx, os.path.join(dirname, filename), **kwargs
+                r"^CPP\s*=.*",
+                self.compiler.cc,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
             )
 
         for filename in cxx_files:
-            filter_file(r"^CPP\s*=.*", self.compiler.cc, os.path.join(dirname, filename), **kwargs)
+            filter_file(
+                os.environ["CXX"],
+                self.compiler.cxx,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
+            )
+
+        for filename in cxx_files:
+            filter_file(
+                r"^CPP\s*=.*",
+                self.compiler.cc,
+                os.path.join(dirname, filename),
+                ignore_absent=True,
+                string=True,
+            )
 
         if ("+fcmix" in spec) and ("+examples" in spec):
             for filename in f77_files:
                 filter_file(
-                    os.environ["F77"], self.compiler.f77, os.path.join(dirname, filename), **kwargs
+                    os.environ["F77"],
+                    self.compiler.f77,
+                    os.path.join(dirname, filename),
+                    ignore_absent=True,
+                    string=True,
                 )
 
         if ("+fcmix" in spec) and ("+examples" in spec):
             for filename in f90_files:
                 filter_file(
-                    os.environ["FC"], self.compiler.fc, os.path.join(dirname, filename), **kwargs
+                    os.environ["FC"],
+                    self.compiler.fc,
+                    os.path.join(dirname, filename),
+                    ignore_absent=True,
+                    string=True,
                 )
 
         if ("+f2003" in spec) and ("+examples" in spec):
             for filename in f2003_files:
                 filter_file(
-                    os.environ["FC"], self.compiler.fc, os.path.join(dirname, filename), **kwargs
+                    os.environ["FC"],
+                    self.compiler.fc,
+                    os.path.join(dirname, filename),
+                    ignore_absent=True,
+                    string=True,
                 )
 
     @property

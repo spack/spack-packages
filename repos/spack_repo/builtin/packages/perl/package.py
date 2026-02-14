@@ -358,7 +358,6 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         """
         if sys.platform == "win32":
             return
-        kwargs = {"ignore_absent": True, "backup": False, "string": False}
 
         # Find the actual path to the installed Config.pm file.
         config_dot_pm = self.command(
@@ -369,7 +368,7 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         with self.make_briefly_writable(config_dot_pm):
             match = "cc *=>.*"
             substitute = "cc => '{cc}',".format(cc=c_compiler)
-            filter_file(match, substitute, config_dot_pm, **kwargs)
+            filter_file(match, substitute, config_dot_pm, ignore_absent=True)
 
         # And the path Config_heavy.pl
         d = os.path.dirname(config_dot_pm)
@@ -378,15 +377,15 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         with self.make_briefly_writable(config_heavy):
             match = "^cc=.*"
             substitute = "cc='{cc}'".format(cc=c_compiler)
-            filter_file(match, substitute, config_heavy, **kwargs)
+            filter_file(match, substitute, config_heavy, ignore_absent=True)
 
             match = "^ld=.*"
             substitute = "ld='{ld}'".format(ld=c_compiler)
-            filter_file(match, substitute, config_heavy, **kwargs)
+            filter_file(match, substitute, config_heavy, ignore_absent=True)
 
             match = "^ccflags='"
             substitute = "ccflags='%s " % " ".join(self.spec.compiler_flags["cflags"])
-            filter_file(match, substitute, config_heavy, **kwargs)
+            filter_file(match, substitute, config_heavy, ignore_absent=True)
 
     @contextmanager
     def make_briefly_writable(self, path):

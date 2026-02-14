@@ -763,13 +763,12 @@ class Python(Package):
         they were built with."""
         if sys.platform == "win32":
             return
-        kwargs = {"ignore_absent": True, "backup": False, "string": True}
 
         filenames = [self.get_sysconfigdata_name(), self.config_vars["makefile_filename"]]
 
-        filter_file(spack_cc, self["c"].cc, *filenames, **kwargs)
+        filter_file(spack_cc, self["c"].cc, *filenames, ignore_absent=True, string=True)
         if spack_cxx:
-            filter_file(spack_cxx, self["cxx"].cxx, *filenames, **kwargs)
+            filter_file(spack_cxx, self["cxx"].cxx, *filenames, ignore_absent=True, string=True)
 
     @run_after("install")
     def symlink(self):

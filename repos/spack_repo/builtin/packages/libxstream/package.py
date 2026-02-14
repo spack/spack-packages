@@ -24,12 +24,10 @@ class Libxstream(Package):
     depends_on("gmake", type="build")
 
     def patch(self):
-        kwargs = {"ignore_absent": False, "backup": True, "string": True}
         makefile = FileFilter("Makefile.inc")
-
-        makefile.filter("CC =", "CC ?=", **kwargs)
-        makefile.filter("CXX =", "CXX ?=", **kwargs)
-        makefile.filter("FC =", "FC ?=", **kwargs)
+        makefile.filter("CC =", "CC ?=", backup=True, string=True)
+        makefile.filter("CXX =", "CXX ?=", backup=True, string=True)
+        makefile.filter("FC =", "FC ?=", backup=True, string=True)
 
     def install(self, spec, prefix):
         make()

@@ -76,8 +76,7 @@ class Mono(AutotoolsPackage):
             before = 'return "/usr/share";'
             after = 'return "{0}";'.format(self.prefix.share)
             f = "mcs/class/corlib/System/Environment.cs"
-            kwargs = {"ignore_absent": False, "backup": True, "string": True}
-            filter_file(before, after, f, **kwargs)
+            filter_file(before, after, f, backup=True, string=True)
 
     def configure_args(self):
         args = []
