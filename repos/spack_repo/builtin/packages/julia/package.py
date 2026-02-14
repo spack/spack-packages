@@ -334,8 +334,12 @@ class Julia(MakefilePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Assemble search paths for libwhich
-        link_deps = sorted(dep.name for dep in self.spec.dependencies(deptype="link"))
-        libdirs = [dir for dep in link_deps for dir in self.spec[dep].libs.directories]
+        libdirs = []
+        for dep in sorted(dep.name for dep in self.spec.dependencies(deptype="link")):
+            try:
+                libdirs.extend(self.spec[dep].libs.directories)
+            except Exception:
+                continue
         env.set("LIBWHICH_LIBRARY_PATH", ":".join(libdirs))
 
     def edit(self, spec, prefix):
