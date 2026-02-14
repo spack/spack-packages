@@ -17,7 +17,7 @@ class PyTorchCDlpackExt(PythonPackage):
 
     version("0.1.5", sha256="d06f0357d575d22a168cc77acb9020fc4bae30968ceb6718a055dcbe92bacabe")
 
-    depends_on("py-torch", type=["build", "link", "run"])
+    depends_on("py-torch", type=("build", "link", "run"))
 
     with default_args(type="build"):
         depends_on("cxx")
