@@ -39,7 +39,7 @@ class Vc(CMakePackage):
         to set those up only as needed.
         """
         if self.run_tests and self.spec.satisfies("@1.4.0:"):
-            git = which("git")
+            git = which("git", required=True)
             with working_dir(join_path(self.stage.source_path, "tests/testdata")):
                 git("clone", "--filter=tree:0", "https://github.com/VcDevel/vc-testdata", ".")
                 # NOTE to maintainers: when adding new versions,

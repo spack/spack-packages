@@ -33,7 +33,7 @@ class Exmcutils(AutotoolsPackage):
             return "."
 
     def autoreconf(self, spec, prefix):
-        which("bash")("bootstrap")
+        which("bash", required=True)("bootstrap")
 
     depends_on("m4", when="@master")
     depends_on("autoconf", when="@master")

@@ -46,5 +46,5 @@ class Fastqc(Package):
             install("htsjdk.jar", prefix.lib)
         for d in ["Configuration", "net", "org", "Templates", "uk"]:
             install_tree(d, join_path(prefix.lib, d))
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", prefix.bin.fastqc)

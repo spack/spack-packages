@@ -111,7 +111,7 @@ class SstCore(AutotoolsPackage):
     # that cannot be easily circumvented with `touch`.
     @when("@develop,master,14.0.0")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autogen.sh")
 
     def configure_args(self):

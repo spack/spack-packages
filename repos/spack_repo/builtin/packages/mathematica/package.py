@@ -56,7 +56,7 @@ class Mathematica(Package):
         # Backup .spack because Mathematica moves it but never restores it
         copy_tree(join_path(prefix, ".spack"), join_path(self.stage.path, ".spack"))
 
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh(
             self.stage.archive_file,
             "--",
@@ -70,7 +70,7 @@ class Mathematica(Package):
         # does not symlink it
         ws_link_path = os.path.join(prefix.bin, "wolframscript")
         if not os.path.exists(ws_link_path):
-            ln = which("ln")
+            ln = which("ln", required=True)
             ws_path = os.path.join(prefix, "Executables", "wolframscript")
             ln("-s", ws_path, ws_link_path)
 

@@ -232,5 +232,5 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
     @run_before("cmake")
     def add_submodules(self):
         if self.run_tests or self.spec.satisfies("+wind-utils"):
-            git = which("git")
+            git = which("git", required=True)
             git("submodule", "update", "--init", "--recursive")

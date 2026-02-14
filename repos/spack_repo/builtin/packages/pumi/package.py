@@ -136,7 +136,7 @@ class Pumi(CMakePackage):
             tty.info(f"Attempting to build and launch with {os.path.basename(mpiexe)}")
             try:
                 options = ["--immediate=30"] + options if mpiexe == "srun" else options
-                exe = which(mpiexe)
+                exe = which(mpiexe, required=True)
                 out = exe(*options, output=str.split, error=str.split)
                 assert "mesh pipe_2_.smb written" in out
                 return
@@ -154,6 +154,6 @@ class Pumi(CMakePackage):
             join_path(self.prefix.share.testdata, "pipe.smb"),
             "pipe_unif.smb",
         ]
-        exe = which(self.prefix.bin.uniform)
+        exe = which(self.prefix.bin.uniform, required=True)
         out = exe(*options, output=str.split, error=str.split)
         assert "mesh pipe_unif.smb written" in out

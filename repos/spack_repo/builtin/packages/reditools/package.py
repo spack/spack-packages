@@ -67,11 +67,11 @@ class Reditools(PythonPackage):
     def p2_to_p3(self):
         if "^python@3:" in self.spec:
             # clean up space/tab mixing
-            reindent = which("reindent")
+            reindent = which("reindent", required=True)
             reindent("--nobackup", "--recurse", ".")
 
             # convert to be python3 compatible
-            p2_to_p3 = which("2to3")
+            p2_to_p3 = which("2to3", required=True)
             p2_to_p3("--nobackups", "--write", ".")
 
     @run_after("install")

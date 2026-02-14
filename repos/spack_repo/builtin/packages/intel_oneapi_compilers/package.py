@@ -625,7 +625,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             return
 
         # 2024 fixed all but these 2
-        patchelf = which("patchelf")
+        patchelf = which("patchelf", required=True)
         if self.spec.satisfies("@2024:"):
             patchelf.add_default_arg("--set-rpath", self.component_prefix.lib)
             patchelf(self.component_prefix.bin.join("sycl-post-link"))

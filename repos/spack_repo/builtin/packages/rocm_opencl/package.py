@@ -185,7 +185,7 @@ class RocmOpencl(CMakePackage):
 
         os.environ["LD_LIBRARY_PATH"] += os.pathsep + join_path(self.prefix, test_dir)
 
-        ocltst = which(join_path(self.prefix, test_dir, "ocltst"))
+        ocltst = which(join_path(self.prefix, test_dir, "ocltst"), required=True)
         with test_part(self, "test_ocltst_runtime", purpose="check runtime"):
             ocltst("-m", "liboclruntime.so", "-A", "oclruntime.exclude")
 

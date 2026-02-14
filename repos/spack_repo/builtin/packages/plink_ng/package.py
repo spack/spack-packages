@@ -34,5 +34,5 @@ class PlinkNg(Package):
     def install(self, spec, prefix):
         ld_flags = [spec["lapack"].libs.ld_flags, spec["blas"].libs.ld_flags]
         filter_file("-llapack -lcblas -lblas", " ".join(ld_flags), "build.sh", string=True)
-        which("sh")("build.sh")
+        which("sh", required=True)("build.sh")
         install_tree(".", prefix)

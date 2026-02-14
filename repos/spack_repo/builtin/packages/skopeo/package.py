@@ -33,7 +33,7 @@ class Skopeo(MakefilePackage):
     depends_on("lvm2")
 
     def edit(self, spec, prefix):
-        grep = which("grep")
+        grep = which("grep", required=True)
         files = grep(
             "-lR",
             "/etc/containers/",

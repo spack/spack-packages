@@ -31,7 +31,7 @@ class TestsSos(AutotoolsPackage):
     depends_on("sos", type=("build", "run"))
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

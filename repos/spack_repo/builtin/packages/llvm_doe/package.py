@@ -346,7 +346,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
     @run_before("cmake")
     def codesign_check(self):
         if self.spec.satisfies("+code_signing"):
-            codesign = which("codesign")
+            codesign = which("codesign", required=True)
             mkdir("tmp")
             llvm_check_file = join_path("tmp", "llvm_check")
             copy("/usr/bin/false", llvm_check_file)

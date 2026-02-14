@@ -731,17 +731,19 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         env["PETSC_DIR"] = self.prefix
         env["PETSC_ARCH"] = ""
         if "+mpi" in spec:
-            runexe = which(spec["mpi"].prefix.bin.mpiexec)
+            runexe = which(spec["mpi"].prefix.bin.mpiexec, required=True)
             runopt = ["-n", "4"]
         else:
-            runexe = which(join_path(self.prefix.lib.petsc.bin, "petsc-mpiexec.uni"))
+            runexe = which(
+                join_path(self.prefix.lib.petsc.bin, "petsc-mpiexec.uni"), required=True
+            )
             runopt = ["-n", "1"]
         return runexe, runopt
 
     def test_ex50(self):
         """build and run ex50 to solve Poisson equation in 2D"""
         # solve Poisson equation in 2D to make sure nothing is broken:
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.ksp.ksp.tutorials
@@ -767,7 +769,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+cuda" not in self.spec:
             raise SkipTest("Package must be built with +cuda")
 
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.ksp.ksp.tutorials
@@ -794,7 +796,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+kokkos" not in self.spec:
             raise SkipTest("Package must be built with +kokkos")
 
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.snes.tutorials

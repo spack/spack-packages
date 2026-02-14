@@ -43,6 +43,6 @@ class Grnboost(Package):
         env.set("XGBOOST_JAR", xgboost_jar)
 
     def install(self, spec, prefix):
-        sbt = which("sbt")
+        sbt = which("sbt", required=True)
         sbt("assembly")
         install_tree("target", prefix.target)

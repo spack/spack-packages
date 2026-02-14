@@ -48,7 +48,7 @@ class Tempo(AutotoolsPackage):
         # Copy some files over needed by TEMPO, again only for the master version
         if "master" in str(self.version):
             cd(self.stage.source_path)
-            cp = which("cp")
+            cp = which("cp", required=True)
 
             cp("obsys.dat", join_path(self.prefix, "obsys.dat"))
             cp("tempo.hlp", join_path(self.prefix, "tempo.hlp"))

@@ -24,5 +24,5 @@ class Routinator(Package):
     depends_on("rust@1.70:", when="@0.13.0:")
 
     def install(self, spec, prefix):
-        cargo = which("cargo")
+        cargo = which("cargo", required=True)
         cargo("install", "--root", prefix, "--path", ".")

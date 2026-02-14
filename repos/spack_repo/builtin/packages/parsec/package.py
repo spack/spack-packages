@@ -128,7 +128,7 @@ class Parsec(CMakePackage, CudaPackage):
 
             for name in ["dtd_test_allreduce", "write_check"]:
                 with test_part(self, f"test_contrib_{name}", f"run {name}"):
-                    exe = which(name)
+                    exe = which(name, required=True)
                     exe()
 
     @run_after("install")

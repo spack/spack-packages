@@ -99,9 +99,9 @@ class Fortrilinos(CMakePackage):
             self.define("CMAKE_Fortran_COMPILER", self.compiler.fc),
             self.cached_tests_work_dir,
         ]
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
-        ctest = which("ctest")
-        make = which("make")
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
+        ctest = which("ctest", required=True)
+        make = which("make", required=True)
 
         with working_dir(self.cached_tests_work_dir, create=True):
             cmake(*cmake_args)

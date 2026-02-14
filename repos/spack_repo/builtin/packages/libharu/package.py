@@ -61,7 +61,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def autoreconf(self, spec, prefix):
         """execute their autotools wrapper script"""
         if os.path.exists("./buildconf.sh"):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./buildconf.sh", "--force")
 
     def configure_args(self):

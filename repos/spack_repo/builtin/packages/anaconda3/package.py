@@ -219,7 +219,7 @@ class Anaconda3(Package):
 
     def install(self, spec, prefix):
         dir, anaconda_script = split(self.stage.archive_file)
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash(anaconda_script, "-b", "-f", "-p", self.prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

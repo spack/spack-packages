@@ -32,7 +32,7 @@ class Kmod(AutotoolsPackage):
     depends_on("xz")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autogen.sh")
 
     def configure_args(self):

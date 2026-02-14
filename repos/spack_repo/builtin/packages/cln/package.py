@@ -60,7 +60,7 @@ class Cln(AutotoolsPackage):
         for pkg in aclocal_pkg_list:
             autoreconf_args += ["-I", os.path.join(spec[pkg].prefix, aclocal_path)]
 
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         autoreconf(*autoreconf_args)
 
     @run_before("autoreconf")
@@ -68,10 +68,10 @@ class Cln(AutotoolsPackage):
         source_directory = self.stage.source_path
         build_aux_directory = os.path.join(source_directory, "build-aux")
 
-        mkdir = which("mkdir")
+        mkdir = which("mkdir", required=True)
         mkdir(build_aux_directory)
 
-        touch = which("touch")
+        touch = which("touch", required=True)
         touch(os.path.join(build_aux_directory, "config.rpath"))
 
     def configure_args(self):

@@ -129,7 +129,7 @@ class MesonBuilder(BuildEnvironment, meson.MesonBuilder):
 
 class AutotoolsBuilder(BuildEnvironment, autotools.AutotoolsBuilder):
     def configure_args(self):
-        true = which("true")
+        true = which("true", required=True)
         args = [
             "--prefix={0}".format(self.prefix),
             # disable building of gtk-doc files following #9771

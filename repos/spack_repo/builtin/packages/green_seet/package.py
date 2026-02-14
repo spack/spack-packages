@@ -54,7 +54,7 @@ class GreenSeet(CMakePackage):
         # ---------- Step 1: Build green-seet-solvrs ----------
         # NOTE: green-seet-solvers will be merged into green-mbpt for next SEET release
         seet_solvers_src_dir = join_path(self.stage.source_path, "seet_solvers_src")
-        git = which("git")
+        git = which("git", required=True)
         git("clone", "https://github.com/Green-Phys/green-seet-solvers.git", seet_solvers_src_dir)
 
         seet_solvers_build_dir = join_path(seet_solvers_src_dir, "spack-build")

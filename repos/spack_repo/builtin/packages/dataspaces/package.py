@@ -45,7 +45,7 @@ class Dataspaces(AutotoolsPackage):
     depends_on("mpi", when="+mpi")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

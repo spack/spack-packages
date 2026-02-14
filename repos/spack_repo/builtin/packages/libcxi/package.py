@@ -60,7 +60,7 @@ class Libcxi(AutotoolsPackage):
         )
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

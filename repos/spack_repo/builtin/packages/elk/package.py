@@ -189,7 +189,7 @@ class Elk(MakefilePackage):
             config["SRC_FFT"] = "mkl_dfti.f90 zfftifc_mkl.f90"
             if spec.satisfies("@8.6:"):
                 config["SRC_FFT"] += " cfftifc_mkl.f90"
-            cp = which("cp")
+            cp = which("cp", required=True)
             mkl_prefix = spec["mkl"].prefix
             cp(
                 join_path(mkl_prefix.include, "mkl_dfti.f90"),
@@ -245,5 +245,5 @@ class Elk(MakefilePackage):
     @on_package_attributes(run_tests=True)
     def check(self):
         with working_dir("{0}/tests".format(self.build_directory)):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./test.sh")

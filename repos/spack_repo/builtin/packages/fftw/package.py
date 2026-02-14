@@ -78,7 +78,7 @@ class FftwBase(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         if spec.satisfies("+pfft_patches"):
-            autoreconf = which("autoreconf")
+            autoreconf = which("autoreconf", required=True)
             autoreconf("-ifv")
 
     @property

@@ -1126,14 +1126,14 @@ with '-Wl,-commons,use_dylibs' and without
 
     @when("@main")
     def autoreconf(self, spec, prefix):
-        perl = which("perl")
+        perl = which("perl", required=True)
         perl("autogen.pl")
         if spec.satisfies("+two_level_namespace platform=darwin"):
             filter_file(r"-flat_namespace", "-commons,use_dylibs", "configure")
 
     @when("@5.0.0:5.0.1")
     def autoreconf(self, spec, prefix):
-        perl = which("perl")
+        perl = which("perl", required=True)
         perl("autogen.pl", "--force")
         if spec.satisfies("+two_level_namespace platform=darwin"):
             filter_file(r"-flat_namespace", "-commons,use_dylibs", "configure")
@@ -1394,7 +1394,7 @@ with '-Wl,-commons,use_dylibs' and without
         if not os.path.exists(exe_path):
             raise SkipTest(f"{bin} is not installed")
 
-        exe = which(exe_path)
+        exe = which(exe_path, required=True)
         out = exe(*options, output=str.split, error=str.split)
         check_outputs(expected, out)
 

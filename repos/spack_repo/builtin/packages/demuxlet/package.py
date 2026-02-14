@@ -50,4 +50,4 @@ class Demuxlet(AutotoolsPackage):
             filter_file("-lcrypto", "", "Makefile.am", string=True)
 
     def autoreconf(self, spec, prefix):
-        which("autoreconf")("-vfi")
+        which("autoreconf", required=True)("-vfi")

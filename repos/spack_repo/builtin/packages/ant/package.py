@@ -25,5 +25,5 @@ class Ant(Package):
 
     def install(self, spec, prefix):
         env["ANT_HOME"] = self.prefix
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./build.sh", "install-lite")

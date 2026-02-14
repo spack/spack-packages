@@ -189,6 +189,5 @@ class Migraphx(CMakePackage):
 
     def test_unit_tests(self):
         """Run installed UnitTests"""
-        unit_tests = which(self.prefix.bin.UnitTests)
-        assert unit_tests is not None, "UnitTests is not installed!"
+        unit_tests = which(self.prefix.bin.UnitTests, required=True)
         unit_tests()

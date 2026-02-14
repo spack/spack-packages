@@ -70,11 +70,11 @@ class ImprovedRdock(MakefilePackage):
         copy(join_path(self.prefix.example, "1sj0", "*"), ".")
 
         with test_part(self, "test_rdock_rbcavity", purpose="Check rbcavity"):
-            rbcavity = which("rbcavity")
+            rbcavity = which("rbcavity", required=True)
             rbcavity("-r", "1sj0_rdock.prm", "-was")
 
         with test_part(self, "test_rdock_rbdock", purpose="Use mpirun to run rbdock in parallel"):
-            mpiexe = which(str(self.spec["mpi"].prefix.bin.mpirun))
+            mpiexe = which(str(self.spec["mpi"].prefix.bin.mpirun), required=True)
             opts = [
                 self.prefix.bin.rbdock,
                 "-r",
@@ -93,12 +93,12 @@ class ImprovedRdock(MakefilePackage):
             mpiexe(*opts)
 
         with test_part(self, "test_rdock_test_sh", purpose="Sort the output"):
-            bash = which("bash")
+            bash = which("bash", required=True)
             opts = [join_path(self.test_suite.current_test_data_dir, "test.sh")]
             bash(*opts)
 
         with test_part(self, "test_rdock_sdrmsd", purpose="Check sdrmsd calculations"):
-            pythonexe = which(str(self.spec["python"].command.path))
+            pythonexe = which(str(self.spec["python"].command.path), required=True)
             opts = [self.spec.prefix.bin.sdrmsd, "1sj0_ligand.sd", "1sj0_docking_out_sorted.sd"]
             expected = ["1\t0.55", "100\t7.91"]
             out = pythonexe(*opts, out=str.split, error=str.split)

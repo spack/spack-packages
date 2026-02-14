@@ -30,7 +30,7 @@ class Cgdcbxd(AutotoolsPackage):
     depends_on("libmnl")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./bootstrap.sh")
 
     @property

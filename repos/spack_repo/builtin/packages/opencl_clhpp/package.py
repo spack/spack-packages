@@ -36,5 +36,5 @@ class OpenclClhpp(CMakePackage):
     @run_after("install")
     def post_install(self):
         if sys.platform == "darwin":
-            ln = which("ln")
+            ln = which("ln", required=True)
             ln("-s", prefix.include.CL, prefix.include.OpenCL)

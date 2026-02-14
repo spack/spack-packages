@@ -57,7 +57,7 @@ class Miniforge3(Package):
 
     def install(self, spec, prefix):
         dir, script = split(self.stage.archive_file)
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash(script, "-b", "-f", "-p", self.prefix)
 
     @run_after("install")

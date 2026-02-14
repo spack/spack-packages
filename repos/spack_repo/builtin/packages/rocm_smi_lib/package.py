@@ -149,5 +149,7 @@ class RocmSmiLib(CMakePackage):
     @run_after("build")
     @on_package_attributes(run_tests=True)
     def check_build(self):
-        exe = which(join_path(self.build_directory, "tests", "rocm_smi_test", "rsmitst"))
+        exe = which(
+            join_path(self.build_directory, "tests", "rocm_smi_test", "rsmitst"), required=True
+        )
         exe()

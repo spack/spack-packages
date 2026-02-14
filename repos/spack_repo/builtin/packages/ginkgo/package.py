@@ -272,12 +272,12 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
             cmakelists.write(data)
             cmakelists.close()
 
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
-        make = which("make")
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
+        make = which("make", required=True)
         with working_dir(src_dir):
             cmake(*cmake_args)
             make()
-            exe = which(script)
+            exe = which(script, required=True)
             output = exe(output=str.split, error=str.split)
             assert "correctly detected and is complete" in output
 

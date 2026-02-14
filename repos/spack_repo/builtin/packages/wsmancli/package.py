@@ -28,5 +28,5 @@ class Wsmancli(AutotoolsPackage):
     depends_on("openwsman")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./bootstrap")

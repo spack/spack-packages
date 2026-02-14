@@ -100,7 +100,7 @@ class Sos(AutotoolsPackage):
             if spec.satisfies("@1.5.3:"):
                 branch_name = "v" + branch_name
             try:
-                git = which("git")
+                git = which("git", required=True)
                 git(
                     "clone",
                     "--depth",

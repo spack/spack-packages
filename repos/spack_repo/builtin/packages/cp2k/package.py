@@ -563,7 +563,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
 class MakefileBuilder(makefile.MakefileBuilder):
     def edit(self, pkg, spec, prefix):
-        pkgconf = which("pkg-config")
+        pkgconf = which("pkg-config", required=True)
 
         fftw = spec["fftw-api:openmp" if "+openmp" in spec else "fftw-api"]
         fftw_header_dir = fftw.headers.directories[0]

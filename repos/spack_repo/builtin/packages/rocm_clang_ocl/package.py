@@ -47,5 +47,5 @@ class RocmClangOcl(CMakePackage):
         with working_dir(test_dir):
             cmake = self.spec["cmake"].command
             cmake(f"-DCMAKE_PREFIX_PATH={self.prefix}", ".")
-            make = which("make")
+            make = which("make", required=True)
             make()

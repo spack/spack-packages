@@ -425,7 +425,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
                 f"test_run_executables_{cmd}",
                 purpose=f"run installed adios2 executable {cmd}",
             ):
-                exe = which(join_path(self.prefix.bin, cmd))
+                exe = which(join_path(self.prefix.bin, cmd), required=True)
                 exe(*opts)
 
     def test_python(self):

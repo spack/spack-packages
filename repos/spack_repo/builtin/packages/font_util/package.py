@@ -252,7 +252,7 @@ class FontUtil(AutotoolsPackage, XorgPackage):
         p = join_path(self.spec.prefix, "share", "aclocal")
         autoconf_args.append(f"--include={p}")
         fonts = self.spec.variants["fonts"].value
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
 
         for font in fonts:
             fontroot = find(font, "*", recursive=False)

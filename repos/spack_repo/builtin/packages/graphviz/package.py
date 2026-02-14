@@ -168,7 +168,7 @@ class Graphviz(AutotoolsPackage):
         if os.path.exists(self.configure_abs_path):
             return
         # Else bootstrap (disabling auto-configure with NOCONFIG)
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh", "NOCONFIG")
 
     @property

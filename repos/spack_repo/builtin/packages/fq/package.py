@@ -23,5 +23,5 @@ class Fq(Package):
     depends_on("rust")
 
     def install(self, spec, prefix):
-        cargo = which("cargo")
+        cargo = which("cargo", required=True)
         cargo("install", "--root", prefix, "--path", ".")

@@ -41,7 +41,7 @@ class PyTensorboardDataServer(PythonPackage):
 
     def install(self, spec, prefix):
         with working_dir(join_path("tensorboard", "data", "server")):
-            cargo = which("cargo")
+            cargo = which("cargo", required=True)
             cargo("build", "--release")
 
         with working_dir(join_path("tensorboard", "data", "server", "pip_package")):

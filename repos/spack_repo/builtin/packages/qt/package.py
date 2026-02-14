@@ -773,7 +773,7 @@ class Qt(Package):
             config_args.extend(["-nomake", "demos"])
 
         if MACOS_VERSION:
-            sdkpath = which("xcrun")("--show-sdk-path", output=str).strip()
+            sdkpath = which("xcrun", required=True)("--show-sdk-path", output=str).strip()
             config_args.extend(["-cocoa", "-sdk", sdkpath])
 
         if IS_WINDOWS:

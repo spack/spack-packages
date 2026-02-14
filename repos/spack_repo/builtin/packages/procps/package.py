@@ -56,7 +56,7 @@ class Procps(AutotoolsPackage):
     patch("libintl-4.0.1.patch", when="@4.0.1:4.0.3")
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")
 
     def configure_args(self):

@@ -143,7 +143,7 @@ class VepCache(Package):
 
     def install_with_installer(self):
         vep = self.spec["vep"].package
-        installer = which(vep.vep_installer_path)
+        installer = which(vep.vep_installer_path, required=True)
         installer(*self.installer_args())
 
     def install(self, spec, prefix):

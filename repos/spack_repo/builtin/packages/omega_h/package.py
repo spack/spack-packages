@@ -187,14 +187,14 @@ class OmegaH(CMakePackage, CudaPackage):
             raise SkipTest("Package must be installed as version 9.34.1 or later")
 
         with test_part(self, "test_mesh_create", purpose="mesh construction"):
-            exe = which(self.prefix.bin.osh_box)
+            exe = which(self.prefix.bin.osh_box, required=True)
             exe("1", "1", "1", "2", "2", "2", "box.osh")
 
         with test_part(self, "test_mesh_adapt", purpose="mesh adaptation"):
-            exe = which(self.prefix.bin.osh_scale)
+            exe = which(self.prefix.bin.osh_scale, required=True)
             actual = exe("box.osh", "100", "box_100.osh", output=str.split, error=str.split)
             assert "adapting took" in actual
 
         with test_part(self, "test_mesh_convert", purpose="mesh to vtu conversion"):
-            exe = which(self.prefix.bin.osh2vtk)
+            exe = which(self.prefix.bin.osh2vtk, required=True)
             exe("box_100.osh", "box_100_vtk")

@@ -78,7 +78,7 @@ class Cpmd(MakefilePackage):
 
         # create Makefile
         os.chmod("./scripts/configure.sh", 0o755)
-        bash = which("bash")
+        bash = which("bash", required=True)
         if spec.satisfies("+omp"):
             bash("./configure.sh", "-omp", cbase)
         else:
@@ -100,7 +100,7 @@ class Cpmd(MakefilePackage):
             exe_name = "cpmd.x"
         opts.append(test_file)
         opts.append(test_dir)
-        cpmd = which(exe_name)
+        cpmd = which(exe_name, required=True)
         out = cpmd(*opts, output=str.split, error=str.split)
 
         expected = [

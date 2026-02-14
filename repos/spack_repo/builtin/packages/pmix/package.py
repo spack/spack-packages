@@ -101,7 +101,7 @@ class Pmix(AutotoolsPackage):
         if os.path.exists(self.configure_abs_path):
             return
         # Else bootstrap with autotools
-        perl = which("perl")
+        perl = which("perl", required=True)
         perl("./autogen.pl")
 
     def find_external_lib_path(self, pkg_name, path_match_str=""):

@@ -214,7 +214,7 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
                 if not os.path.exists(installed_exe):
                     raise SkipTest("{0} is not installed".format(_bin))
 
-                exe = which(installed_exe)
+                exe = which(installed_exe, required=True)
                 out = exe("--version", output=str.split, error=str.split)
                 assert version in out
 

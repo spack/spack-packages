@@ -94,6 +94,6 @@ class PyRay(PythonPackage):
     @run_before("install")
     def build_dashboard(self):
         with working_dir(join_path("python", "ray", "dashboard", "client")):
-            npm = which("npm")
+            npm = which("npm", required=True)
             npm("ci")
             npm("run", "build")

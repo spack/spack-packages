@@ -25,7 +25,7 @@ class BeastTracer(Package):
     depends_on("java", type=("build", "run"))
 
     def install(self, spec, prefix):
-        ant = which("ant")
+        ant = which("ant", required=True)
         ant("dist")
 
         mkdirp(prefix.bin)

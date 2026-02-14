@@ -128,7 +128,7 @@ class Pgplot(MakefilePackage):
             env.append_flags("LIBS", self.spec["libpng"].libs.ld_flags)
 
     def build(self, spec, prefix):
-        makemake = which("./makemake")
+        makemake = which("./makemake", required=True)
         makemake(self.build_directory, "linux", "g77_gcc")
         make()
         make("clean")

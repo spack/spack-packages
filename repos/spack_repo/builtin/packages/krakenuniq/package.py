@@ -35,7 +35,7 @@ class Krakenuniq(Package):
     depends_on("wget", when="+jellyfish")
 
     def install(self, spec, prefix):
-        local_script = which("./install_krakenuniq.sh")
+        local_script = which("./install_krakenuniq.sh", required=True)
         if self.spec.satisfies("+jellyfish"):
             local_script("-j", prefix.bin)
         else:

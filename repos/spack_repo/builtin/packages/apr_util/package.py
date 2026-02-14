@@ -91,7 +91,7 @@ class AprUtil(AutotoolsPackage):
         if spec.satisfies("+crypto ^openssl~shared"):
             # Need pkg-config to get zlib and -ldl flags
             # (see https://dev.apr.apache.narkive.com/pNnO9F1S/configure-bug-openssl)
-            pkgconf = which("pkg-config")
+            pkgconf = which("pkg-config", required=True)
             ssl_libs = pkgconf("--libs", "--static", "openssl", output=str)
             args.append(f"LIBS={ssl_libs}")
 

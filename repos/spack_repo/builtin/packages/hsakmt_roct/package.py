@@ -92,10 +92,10 @@ class HsakmtRoct(CMakePackage):
             ]
             cmake = self.spec["cmake"].command
             cmake(*cc_options)
-            make = which("make")
+            make = which("make", required=True)
             make()
             os.environ["LD_LIBRARY_PATH"] = hsakmt_path
             os.environ["BIN_DIR"] = os.getcwd()
-            run_kfdtest = which(join_path("scripts", "run_kfdtest.sh"))
+            run_kfdtest = which(join_path("scripts", "run_kfdtest.sh"), required=True)
             run_kfdtest()
             make("clean")

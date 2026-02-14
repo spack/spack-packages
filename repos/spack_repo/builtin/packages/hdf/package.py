@@ -242,7 +242,7 @@ class Hdf(AutotoolsPackage):
         if not os.path.isfile(path):
             raise SkipTest(f"{exe} is not installed")
 
-        exe = which(path)
+        exe = which(path, required=True)
         out = exe("-V", output=str.split, error=str.split)
         vers = f"Version {self.spec.version.up_to(2)}"
         assert vers in out
@@ -281,19 +281,19 @@ class Hdf(AutotoolsPackage):
         with test_part(
             self, "test_gif_converters_hdf2gif", purpose=f"convert {base_name} hdf-to-gif"
         ):
-            hdf2gif = which(self.prefix.bin.hdf2gif)
+            hdf2gif = which(self.prefix.bin.hdf2gif, required=True)
             hdf2gif(storm_fn, gif_fn)
 
         with test_part(
             self, "test_gif_converters_gif2hdf", purpose=f"convert {base_name} gif-to-hdf"
         ):
-            gif2hdf = which(self.prefix.bin.gif2hdf)
+            gif2hdf = which(self.prefix.bin.gif2hdf, required=True)
             gif2hdf(gif_fn, new_hdf_fn)
 
         with test_part(
             self, "test_gif_converters_hdiff", purpose=f"compare new and orig {base_name} hdf"
         ):
-            hdiff = which(self.prefix.bin.hdiff)
+            hdiff = which(self.prefix.bin.hdiff, required=True)
             hdiff(new_hdf_fn, storm_fn)
 
     def test_list(self):
@@ -308,6 +308,6 @@ class Hdf(AutotoolsPackage):
 
         storm_fn = os.path.join(self.cached_tests_work_dir, f"{base_name}.hdf")
 
-        hdfls = which(self.prefix.bin.hdfls)
+        hdfls = which(self.prefix.bin.hdfls, required=True)
         out = hdfls(storm_fn, output=str.split, error=str.split)
         check_outputs(expected, out)

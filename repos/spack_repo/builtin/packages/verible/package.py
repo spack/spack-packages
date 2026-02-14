@@ -152,6 +152,6 @@ class Verible(Package):
     def install(self, spec, prefix):
         """Install method for versions 0.0.3841 and newer."""
         mkdirp(prefix.bin)
-        bash = which("bash")
+        bash = which("bash", required=True)
         bazel("build", "-c", "opt", ":install-binaries")
         bash(".github/bin/simple-install.sh", prefix.bin)

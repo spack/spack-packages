@@ -71,11 +71,11 @@ class Formetis(CMakePackage):
         if self.spec.satisfies("+mpi"):
             cmake_args.append(self.define("ParMETIS_ROOT", self.spec["parmetis"].prefix))
         cmake_args.append(self.cached_tests_work_dir)
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
-        make = which("make")
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
+        make = which("make", required=True)
 
         with working_dir(self.cached_tests_work_dir):
             cmake(*cmake_args)
             make()
-            metis = which("metis")
+            metis = which("metis", required=True)
             metis()

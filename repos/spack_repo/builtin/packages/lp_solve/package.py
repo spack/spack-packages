@@ -20,12 +20,12 @@ class LpSolve(Package):
     def install(self, spec, prefix):
         with working_dir("lpsolve55"):
             mkdir(prefix.lib)
-            sh = which("sh")
+            sh = which("sh", required=True)
             sh("-x", "ccc")
             install_tree("bin/ux64", prefix.lib)
         with working_dir("lp_solve"):
             mkdir(prefix.bin)
-            sh = which("sh")
+            sh = which("sh", required=True)
             sh("-x", "ccc")
             install_tree("bin/ux64", prefix.bin)
 

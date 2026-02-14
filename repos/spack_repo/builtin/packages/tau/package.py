@@ -594,13 +594,13 @@ class Tau(Package):
             cache_extra_test_sources(self, self.python_test)
 
     def _run_python_test(self, test_name, purpose, work_dir):
-        tau_python = which(self.prefix.bin.tau_python)
+        tau_python = which(self.prefix.bin.tau_python, required=True)
         tau_py_inter = "-tau-python-interpreter=" + self.spec["python"].prefix.bin.python
-        pprof = which(self.prefix.bin.pprof)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             if "+mpi" in self.spec:
                 flag = "mpi"
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun(
                     "-np",
                     "4",
@@ -616,13 +616,13 @@ class Tau(Package):
             pprof()
 
     def _run_default_test(self, test_name, purpose, work_dir):
-        tau_exec = which(self.prefix.bin.tau_exec)
-        pprof = which(self.prefix.bin.pprof)
+        tau_exec = which(self.prefix.bin.tau_exec, required=True)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             make("all")
             if "+mpi" in self.spec:
                 flags = ["-T", "mpi"]
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun("-np", "4", self.prefix.bin.tau_exec, *flags, "./matmult")
             else:
                 flags = ["-T", "serial"]
@@ -630,13 +630,13 @@ class Tau(Package):
             pprof()
 
     def _run_ompt_test(self, test_name, purpose, work_dir):
-        tau_exec = which(self.prefix.bin.tau_exec)
-        pprof = which(self.prefix.bin.pprof)
+        tau_exec = which(self.prefix.bin.tau_exec, required=True)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             make("all")
             if "+mpi" in self.spec:
                 flags = ["-T", "mpi", "-ompt"]
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun("-np", "4", self.prefix.bin.tau_exec, *flags, "./mandel")
             else:
                 flags = ["-T", "serial", "-ompt"]
@@ -644,13 +644,13 @@ class Tau(Package):
             pprof()
 
     def _run_rocm_test(self, test_name, purpose, work_dir):
-        tau_exec = which(self.prefix.bin.tau_exec)
-        pprof = which(self.prefix.bin.pprof)
+        tau_exec = which(self.prefix.bin.tau_exec, required=True)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             make("all")
             if "+mpi" in self.spec:
                 flags = ["-T", "mpi", "-rocm"]
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun("-np", "4", self.prefix.bin.tau_exec, *flags, "./gpu-stream-hip")
             else:
                 flags = ["-T", "serial", "-rocm"]

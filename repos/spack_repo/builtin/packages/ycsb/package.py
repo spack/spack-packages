@@ -40,7 +40,7 @@ class Ycsb(MavenPackage):
     # depends_on("mongodb-async-driver", type="build")
 
     def build(self, spec, prefix):
-        mvn = which("mvn")
+        mvn = which("mvn", required=True)
         # jar_name = (
         #     "target/mongodb-async-driver-" + spec["mongodb-async-driver"].version.string + ".jar"
         # )
@@ -63,5 +63,5 @@ class Ycsb(MavenPackage):
         distribution = "distribution/target/ycsb-*.tar.gz"
         with working_dir(self.build_directory):
             dist_file = glob(distribution)[0]
-        tar = which("tar")
+        tar = which("tar", required=True)
         tar("xf", dist_file, "-C", prefix, "--strip-components=1")

@@ -89,4 +89,4 @@ class PyScikitBuildCore(PythonPackage):
     @on_package_attributes(run_tests=True)
     def install_test(self):
         with working_dir("tests"):
-            which("pytest")()
+            which("pytest", required=True)()

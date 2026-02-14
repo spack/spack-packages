@@ -135,7 +135,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
 
     def check(self):
         """Checks after the build phase"""
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         pytest(join_path(self.stage.source_path, self.tests_src_dir))
 
     @run_after("install")
@@ -148,7 +148,5 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
         """Perform smoke tests on the installed package."""
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.tests_src_dir)
         with working_dir(test_dir):
-            pytest = which("pytest")
-            # TODO: Remove once test dependencies made available
-            assert pytest is not None, "Make sure a suitable 'pytest' is in your path"
+            pytest = which("pytest", required=True)
             pytest()

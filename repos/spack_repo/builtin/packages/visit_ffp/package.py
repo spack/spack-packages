@@ -68,7 +68,7 @@ class VisitFfp(CMakePackage):
             # Regenerate the public cmake files
             if os.path.exists("CMakeLists.txt"):
                 os.unlink("CMakeLists.txt")
-            which("xml2cmake")(*args)
+            which("xml2cmake", required=True)(*args)
             # spack extension activate : alter VISIT_PLUGIN_DIR ;
             # xml2cmake should have set it to visit prefix but it can
             # happen the directory is an alias.

@@ -113,7 +113,7 @@ class N2p2(MakefilePackage):
         if not os.path.exists(result_check_script):
             raise SkipTest("Required result-check.sh is missing from the repository directory")
 
-        make = which("make")
+        make = which("make", required=True)
         with working_dir(self.test_suite.current_test_cache_dir.test):
             make("clean")
 
@@ -152,5 +152,5 @@ class N2p2(MakefilePackage):
             make("python", parallel=False)
             assert os.path.isfile(python_output), f"{python_output} was not produced"
 
-            result_check = which(result_check_script)
+            result_check = which(result_check_script, required=True)
             result_check(cpp_output, python_output, expected_file)

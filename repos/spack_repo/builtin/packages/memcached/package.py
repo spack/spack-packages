@@ -36,7 +36,7 @@ class Memcached(AutotoolsPackage):
     depends_on("libevent", type="build")
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("./autogen.sh")
         autoreconf("--install", "--verbose", "--force")
 

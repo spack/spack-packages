@@ -38,5 +38,5 @@ class PyIterativeStats(PythonPackage):
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def install_test(self):
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         pytest()

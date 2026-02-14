@@ -96,7 +96,7 @@ class Charliecloud(AutotoolsPackage):
         return self.spec.satisfies("@0.39:")
 
     def autoreconf(self, spec, prefix):
-        which("bash")("autogen.sh")
+        which("bash", required=True)("autogen.sh")
 
     def configure_args(self):
         args = ["--with-python=/usr/bin/env python3"]

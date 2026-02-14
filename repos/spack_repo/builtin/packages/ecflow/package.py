@@ -125,7 +125,7 @@ class Ecflow(CMakePackage):
 
     @when("+ssl ^openssl~shared")
     def patch(self):
-        pkgconf = which("pkg-config")
+        pkgconf = which("pkg-config", required=True)
         liblist_l = pkgconf("--libs-only-l", "--static", "openssl", output=str).split()
         liblist = " ".join([ll.replace("-l", "") for ll in liblist_l])
         for sdir in ["Client", "Server"]:

@@ -29,5 +29,5 @@ class Ctpl(AutotoolsPackage):
     depends_on("glib@2.10:")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

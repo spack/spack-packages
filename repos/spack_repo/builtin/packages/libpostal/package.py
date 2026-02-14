@@ -36,7 +36,7 @@ class Libpostal(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     def autoreconf(self, spec, prefix):
-        which("sh")("bootstrap.sh")
+        which("sh", required=True)("bootstrap.sh")
 
     def configure_args(self):
         args = ["--datadir={0}".format(self.prefix.share)]

@@ -82,7 +82,7 @@ class NvidiaNsightSystems(Package):
         return match.group(1) if match else None
 
     def install(self, spec, prefix):
-        bsdtar = which("bsdtar")
+        bsdtar = which("bsdtar", required=True)
         rpm_file = glob(join_path(self.stage.source_path, "nsight-systems*.rpm"))[0]
         params = ["-x", "-f", rpm_file]
         ver = prefix.split("/")[-1].split("-")[-2]

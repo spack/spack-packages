@@ -45,5 +45,5 @@ class Teckit(AutotoolsPackage):
         return args
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("./autogen.sh")

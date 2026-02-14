@@ -43,7 +43,7 @@ class Aretomo(Package):
 
     @run_after("install")
     def ensure_rpaths(self):
-        patchelf = which("patchelf")
+        patchelf = which("patchelf", required=True)
         patchelf(
             "--set-rpath", self.spec["cuda"].prefix.lib64, join_path(self.prefix.bin, "AreTomo")
         )

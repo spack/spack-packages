@@ -43,5 +43,5 @@ class PyWxflow(PythonPackage):
         env["PYTHONPATH"] = ":".join(
             (join_path(self.build_directory, "build/lib"), env["PYTHONPATH"])
         )
-        pytest = which(join_path(self.spec["py-pytest"].prefix.bin, "pytest"))
+        pytest = which(join_path(self.spec["py-pytest"].prefix.bin, "pytest"), required=True)
         pytest("-v", self.build_directory)

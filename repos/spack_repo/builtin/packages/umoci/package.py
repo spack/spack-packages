@@ -34,7 +34,7 @@ class Umoci(MakefilePackage):
 
         mkdirp(join_path(self.stage.source_path, "src", provider, project))
 
-        ln = which("ln")
+        ln = which("ln", required=True)
         ln("-s", self.stage.source_path, join_path("src", provider, project, repo))
 
         make("GOPATH={0}".format(self.stage.source_path))

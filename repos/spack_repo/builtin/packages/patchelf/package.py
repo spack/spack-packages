@@ -76,7 +76,7 @@ class Patchelf(AutotoolsPackage):
     def test_version(self):
         """ensure patchelf version match"""
         # Check patchelf in prefix and reports the correct version
-        patchelf = which(self.prefix.bin.patchelf)
+        patchelf = which(self.prefix.bin.patchelf, required=True)
         out = patchelf("--version", output=str.split, error=str.split)
         expected = f"patchelf {self.spec.version}"
         assert expected in out, f"Expected '{expected}' in output"
@@ -86,7 +86,7 @@ class Patchelf(AutotoolsPackage):
         currdir = os.getcwd()
         hello_file = self.test_suite.current_test_data_dir.join("hello")
 
-        patchelf = which(self.prefix.bin.patchelf)
+        patchelf = which(self.prefix.bin.patchelf, required=True)
         patchelf("--set-rpath", currdir, hello_file)
         out = patchelf("--print-rpath", hello_file, output=str.split, error=str.split)
         assert currdir in out, f"Expected '{currdir}' in output"

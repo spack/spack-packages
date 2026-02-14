@@ -201,7 +201,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         # spack-v0.17.2$ octopus --version
         # octopus 11.3 (git commit )
 
-        exe = which(self.spec.prefix.bin.octopus)
+        exe = which(self.spec.prefix.bin.octopus, required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert "octopus " in out
 
@@ -229,7 +229,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         with working_dir("example-recipe", create=True):
             print("Current working directory (in example-recipe)")
             copy(join_path(os.path.dirname(__file__), "test", "recipe.inp"), "inp")
-            exe = which(self.spec.prefix.bin.octopus)
+            exe = which(self.spec.prefix.bin.octopus, required=True)
             out = exe(output=str.split, error=str.split)
             check_outputs(expected, out)
 
@@ -258,7 +258,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         with working_dir("example-he", create=True):
             print("Current working directory (in example-he)")
             copy(join_path(os.path.dirname(__file__), "test", "he.inp"), "inp")
-            exe = which(self.spec.prefix.bin.octopus)
+            exe = which(self.spec.prefix.bin.octopus, required=True)
             out = exe(output=str.split, error=str.split)
             check_outputs(expected, out)
 

@@ -112,7 +112,7 @@ class Wps(Package):
             Executable("./configure")(input=fp)
 
     def build(self, spec, prefix):
-        csh = which("csh")
+        csh = which("csh", required=True)
         csh("./compile")
 
     def install(self, spec, prefix):

@@ -203,7 +203,7 @@ class DarshanRuntime(AutotoolsPackage):
             cc(*(link_opt))
 
             # run test program and intercept
-            mpi_io_test = which(join_path(".", testexe))
+            mpi_io_test = which(join_path(".", testexe), required=True)
             out = mpi_io_test("-f", "tmp.dat", output=str.split, error=str.split)
             env.pop("LD_PRELOAD")
 

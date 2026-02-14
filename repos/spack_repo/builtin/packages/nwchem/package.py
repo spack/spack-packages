@@ -250,7 +250,7 @@ class Nwchem(Package):
             install_tree(join_path("nwpw", "libraryps"), join_path(share_path, "libraryps"))
 
             b_path = join_path(self.stage.source_path, "bin", target, "nwchem")
-            chmod = which("chmod")
+            chmod = which("chmod", required=True)
             chmod("+x", b_path)
             install(b_path, prefix.bin)
 

@@ -330,15 +330,15 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         cxx = Executable(self["cxx"].cxx)
         cxx(self.test_suite.current_test_data_dir.join("sort.cpp"), "-o", exe)
 
-        hpcrun = which("hpcrun")
+        hpcrun = which("hpcrun", required=True)
         meas = "tst-sort.m"
         hpcrun("-e", "REALTIME@5000", "-t", "-o", meas, "./" + exe)
 
-        hpcstruct = which("hpcstruct")
+        hpcstruct = which("hpcstruct", required=True)
         struct = "tst-sort.hpcstruct"
         hpcstruct("-j", "4", "--time", "-o", struct, "./" + exe)
 
-        hpcprof = which("hpcprof")
+        hpcprof = which("hpcprof", required=True)
         db = "tst-sort.d"
         hpcprof("-S", struct, "-o", db, meas)
 

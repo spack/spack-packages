@@ -42,5 +42,5 @@ class Tpm2Tss(AutotoolsPackage):
         env.prepend_path("ACLOCAL_PATH", self.spec["autoconf-archive"].prefix.share.aclocal)
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("./bootstrap")

@@ -124,7 +124,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
 
     def check(self):
         exe = join_path(self.build_directory, "clients", "staging", "hipsolver-test")
-        exe = which(exe)
+        exe = which(exe, required=True)
         exe(["--gtest_filter=-*known_bug*"])
 
     @classmethod

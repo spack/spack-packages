@@ -317,7 +317,7 @@ class Hiop(CMakePackage, CudaPackage, ROCmPackage):
             ["400", "100", "0", "-empty_sp_row", "-selfcheck"],
         ]
 
-        exe = which(exe)
+        exe = which(exe, required=True)
 
         for i, args in enumerate(options):
             with test_part(self, f"test_{exName}_{i + 1}", purpose=" ".join(args)):

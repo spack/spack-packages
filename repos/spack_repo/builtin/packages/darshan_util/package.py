@@ -131,6 +131,6 @@ class DarshanUtil(AutotoolsPackage):
             r"STDIO\s+0\s+\w+\s+STDIO_OPENS\s+\d+",
         ]
         logname = self.test_suite.current_test_cache_dir.join(self.tests_log_path)
-        parser = which(join_path(self.prefix.bin, "darshan-parser"))
+        parser = which(join_path(self.prefix.bin, "darshan-parser"), required=True)
         out = parser(logname, output=str.split, error=str.split)
         check_outputs(expected_output, out)

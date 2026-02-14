@@ -36,7 +36,7 @@ class AsperaCli(Package):
             stop_at="__ARCHIVE_FOLLOWS__",
         )
         # Install
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", runfile)
-        runfile = which(runfile)
+        runfile = which(runfile, required=True)
         runfile()

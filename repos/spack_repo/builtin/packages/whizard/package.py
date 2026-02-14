@@ -158,7 +158,7 @@ class Whizard(AutotoolsPackage):
         # As described in the manual (SVN Repository version)
         # https://whizard.hepforge.org/manual/manual003.html#sec%3Aprerequisites
         if not os.path.exists("configure.ac"):
-            shell = which("sh")
+            shell = which("sh", required=True)
             shell("build_master.sh")
 
     def configure_args(self):

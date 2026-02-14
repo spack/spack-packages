@@ -82,7 +82,7 @@ class Vizglow(Package):
 
         installer = glob.glob("VizGlow*Install")[0]
 
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", installer)
 
         installer = Executable(installer)

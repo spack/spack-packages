@@ -131,7 +131,7 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
         if self.spec.satisfies("@:5 %gcc") and self.compiler.prefix != "/usr":
             # help flang{1,2} find libquadmath
             libdir = self._libquadmath_dir()
-            patchelf = which("patchelf")
+            patchelf = which("patchelf", required=True)
             patchelf.add_default_arg("--set-rpath", libdir)
             patchelf(join_path(self.prefix.bin, "flang1"))
             patchelf(join_path(self.prefix.bin, "flang2"))

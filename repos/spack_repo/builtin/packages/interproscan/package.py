@@ -114,11 +114,11 @@ class Interproscan(Package):
     def install(self, spec, prefix):
         with working_dir("core"):
             if self.run_tests:
-                which("mvn")("verify")
+                which("mvn", required=True)("verify")
             else:
-                which("mvn")("clean", "install", "-DskipTests")
+                which("mvn", required=True)("clean", "install", "-DskipTests")
                 with working_dir("jms-implementation"):
-                    which("mvn")("clean", "package", "-DskipTests")
+                    which("mvn", required=True)("clean", "package", "-DskipTests")
 
         target = join_path("core", "jms-implementation", "target", "interproscan-5-dist")
         install_tree(target, prefix)
@@ -132,7 +132,7 @@ class Interproscan(Package):
 
     @when("@:4.8")
     def install(self, spec, prefix):
-        perl = which("perl")
+        perl = which("perl", required=True)
 
         src = join_path(self.stage.source_path, "iprscan", "bin", "Linux")
         dst = join_path(self.stage.source_path, "bin", "binaries")

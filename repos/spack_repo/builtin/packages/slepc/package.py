@@ -215,10 +215,10 @@ class Slepc(Package, CudaPackage, ROCmPackage):
             join_path(test_dir, f"{test_exe}.c"),
         ]
 
-        cc = which(os.environ["CC"])
+        cc = which(os.environ["CC"], required=True)
         with working_dir(test_dir):
             cc(*options)
 
-            hello = which(test_exe)
+            hello = which(test_exe, required=True)
             out = hello(output=str.split, error=str.split)
             assert "Hello world" in out

@@ -57,8 +57,8 @@ class Dock(Package):
                     r"(-fno-second-underscore)", r"\1 -fallow-argument-mismatch", config_source
                 )
 
-            which("sh")(*sh_args)
-            which("make")("YACC=bison -o y.tab.c")
+            which("sh", required=True)(*sh_args)
+            which("make", required=True)("YACC=bison -o y.tab.c")
 
         mkdirp(prefix.bin)
         install_tree("bin", prefix.bin)

@@ -82,7 +82,7 @@ class Zoltan(AutotoolsPackage):
         return not self.spec.satisfies("@:3.6+fortran")
 
     def autoreconf(self, spec, prefix):
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         with working_dir(self.configure_directory):
             autoreconf("-ivf")
 

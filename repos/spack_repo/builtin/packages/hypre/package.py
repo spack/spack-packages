@@ -290,7 +290,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
         # build and run cached examples
         with working_dir(self._cached_tests_work_dir):
-            make = which("make")
+            make = which("make", required=True)
             make("bigint")
 
             for name in ["ex5big", "ex15big"]:

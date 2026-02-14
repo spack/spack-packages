@@ -118,5 +118,5 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
         return args
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("./prepare.sh")

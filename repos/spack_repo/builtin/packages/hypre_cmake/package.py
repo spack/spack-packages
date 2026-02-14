@@ -128,12 +128,12 @@ class HypreCmake(CMakePackage, CudaPackage):
 
         # Build and run cached examples
         with working_dir(self._cached_tests_work_dir):
-            make = which("make")
+            make = which("make", required=True)
             make("bigint")
 
             for exe_name in ["ex5big", "ex15big"]:
                 with test_part(self, f"test_bigint_{exe_name}", purpose=f"Ensure {exe_name} runs"):
-                    program = which(exe_name)
+                    program = which(exe_name, required=True)
                     if program is None:
                         raise SkipTest(f"{exe_name} does not exist in version {self.version}")
 

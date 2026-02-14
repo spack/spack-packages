@@ -62,7 +62,7 @@ class Fontconfig(AutotoolsPackage):
         if self.spec["libxml2"].satisfies("~shared"):
             deps.append("libxml-2.0")
         if deps:
-            pc = which("pkg-config")
+            pc = which("pkg-config", required=True)
             for lib in deps:
                 ldflags.append(pc(lib, "--static", "--libs-only-L", output=str).strip())
                 libs.append(pc(lib, "--static", "--libs-only-l", output=str).strip())

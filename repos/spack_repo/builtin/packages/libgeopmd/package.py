@@ -101,7 +101,7 @@ class Libgeopmd(AutotoolsPackage):
     configure_directory = "libgeopmd"
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         with working_dir(self.configure_directory):
             if not spec.version.isdevelop():
                 version_file = "VERSION"

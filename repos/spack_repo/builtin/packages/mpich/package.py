@@ -513,7 +513,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
         if os.path.exists(self.configure_abs_path) and not spec.satisfies("@3.3 +hwloc"):
             return
         # Else bootstrap with autotools
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def configure_args(self):
@@ -670,7 +670,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
         ]
         if "+slurm" in self.spec:
             commands.insert(0, join_path(self.spec["slurm"].prefix.bin))
-        return which(*commands)
+        return which(*commands, required=True)
 
     def run_mpich_test(self, subdir, exe, num_procs=1):
         """Compile and run the test program."""
@@ -680,7 +680,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
             if not os.path.isfile(src):
                 raise SkipTest(f"{src} is missing")
 
-            mpicc = which(os.environ["MPICC"])
+            mpicc = which(os.environ["MPICC"], required=True)
             mpicc("-Wall", "-g", "-o", exe, src)
             if num_procs > 1:
                 launcher = self.mpi_launcher()
@@ -688,7 +688,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
                     launcher("-n", str(num_procs), exe)
                     return
 
-            test_exe = which(exe)
+            test_exe = which(exe, required=True)
             test_exe()
 
     def test_cpi(self):

@@ -74,15 +74,17 @@ class H5bench(CMakePackage):
     def mpi_launcher(self):
         commands = ["mpirun", "mpiexec"]
 
-        return which(*commands, path=[self.spec["mpi"].prefix.bin]) or which(*commands)
+        return which(*commands, path=[self.spec["mpi"].prefix.bin]) or which(
+            *commands, required=True
+        )
 
     def test_help(self):
         """Run h5bench help."""
-        h5bench = which(self.prefix.bin.h5bench)
+        h5bench = which(self.prefix.bin.h5bench, required=True)
         h5bench("-h")
 
     def test_h5bench(self):
         """Run h5bench synchronous write test."""
         with working_dir(self.test_suite.current_test_cache_dir):
-            h5bench = which(self.prefix.bin.h5bench)
+            h5bench = which(self.prefix.bin.h5bench, required=True)
             h5bench("--debug", "--abort", "samples/sync-write-1d-contig-contig.json")

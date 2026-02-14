@@ -33,7 +33,7 @@ class Dropwatch(AutotoolsPackage):
     depends_on("readline")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def check(self):

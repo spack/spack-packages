@@ -337,7 +337,7 @@ class Warpx(CMakePackage, PythonExtension):
         dim_arg = f"{dim}d" if dim.isdigit() else dim
         exe = find(self.prefix.bin, f"warpx.{dim_arg}.*", recursive=False)[0]
         cli_args = self._get_input_options(dim, True)
-        warpx = which(exe)
+        warpx = which(exe, required=True)
         warpx(*cli_args)
 
     def test_warpx_1d(self):

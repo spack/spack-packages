@@ -860,7 +860,7 @@ class Cuda(Package):
             os.makedirs(os.path.join(prefix, "src"))
             symlink(includedir, os.path.join(prefix, "include"))
 
-        install_shell = which("sh")
+        install_shell = which("sh", required=True)
 
         if self.spec.satisfies("@:8.0.61"):
             # Perl 5.26 removed current directory from module search path.

@@ -196,7 +196,7 @@ class HipTests(CMakePackage):
             ".",
         ]
 
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         with working_dir(test_dir, create=True):
             cmake(*cc_options)
             make("build_samples")

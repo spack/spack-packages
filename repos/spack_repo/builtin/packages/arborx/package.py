@@ -156,9 +156,9 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
         ]
         if self.spec.satisfies("+mpi"):
             cmake_args.append(self.define("MPI_HOME", self.spec["mpi"].prefix))
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
-        make = which("make")
-        ctest = which("ctest")
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
+        make = which("make", required=True)
+        ctest = which("ctest", required=True)
 
         with working_dir(self.cached_tests_work_dir):
             cmake(*cmake_args)

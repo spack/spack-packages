@@ -102,10 +102,10 @@ class Mptensor(CMakePackage):
         math_libs = self.spec["scalapack"].libs + self.spec["lapack"].libs + self.spec["blas"].libs
 
         with working_dir(self.test_suite.current_test_cache_dir.tests):
-            make = which("make")
+            make = which("make", required=True)
             make(f"LDFLAGS={math_libs.ld_flags}")
 
-            mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+            mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
             mpirun("-n", "1", "tensor_test.out")
 
             # Test of mptensor has checker

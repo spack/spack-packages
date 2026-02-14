@@ -158,4 +158,4 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
     @when(Swig.AUTOCONF_VERSIONS)
     def autoreconf(self, pkg, spec, prefix):
-        which("sh")("./autogen.sh")
+        which("sh", required=True)("./autogen.sh")

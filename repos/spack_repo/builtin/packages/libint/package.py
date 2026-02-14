@@ -99,7 +99,7 @@ class Libint(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         if self.spec.satisfies("@2:"):
-            which("bash")("autogen.sh")
+            which("bash", required=True)("autogen.sh")
         else:
             # Fall back since autogen is not available
             libtoolize()

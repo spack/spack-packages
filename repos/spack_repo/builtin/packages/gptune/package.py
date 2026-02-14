@@ -217,7 +217,7 @@ class Gptune(CMakePackage):
             )
 
         # copy the environment configuration to the python install directory
-        cp = which("cp")
+        cp = which("cp", required=True)
         platlib = self.spec["python"].package.platlib
         cp(script_path, join_path(self.prefix, platlib, "run_env.sh"))
         cp(
@@ -231,7 +231,12 @@ class Gptune(CMakePackage):
         gptune_path = join_path(self.prefix, self.spec["python"].package.platlib, "GPTune")
         env.prepend_path("PYTHONPATH", gptune_path)
 
-    cmd = {"bash": which("bash"), "cp": which("cp"), "git": which("git"), "rm": which("rm")}
+    cmd = {
+        "bash": which("bash", required=True),
+        "cp": which("cp", required=True),
+        "git": which("git", required=True),
+        "rm": which("rm", required=True),
+    }
 
     def test_hypre(self):
         """set up and run hypre example"""

@@ -42,5 +42,5 @@ class Blast2go(Package):
             f.writelines(config_input_data)
 
         with open(config_input_file, "r") as f:
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("Blast2GO_unix_%s.sh" % self.version.underscored, input=f)

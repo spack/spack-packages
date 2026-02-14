@@ -153,8 +153,8 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
         rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{rhel}.ofed{ofed}.{netmod}.{comp}\
 {slurm}{apu}-4.1-1.{el}.x86_64.rpm"
 
-        install_shell = which("bash")
-        io = which("rpm2cpio").path
+        install_shell = which("bash", required=True)
+        io = which("rpm2cpio", required=True).path
         arguments = [
             runfile,  # the install script
             "--prefix=%s" % prefix,  # Where to install

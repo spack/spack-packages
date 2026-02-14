@@ -80,7 +80,7 @@ class Astra(Package):
             install("lineplot/lineplot", prefix.bin)
             install("pgxwin_server/pgxwin_server", prefix.bin)
 
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", join_path(prefix.bin, "Astra"))
         chmod("+x", join_path(prefix.bin, "generator"))
         if spec.satisfies("+gui"):

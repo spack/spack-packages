@@ -28,5 +28,5 @@ class Enca(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

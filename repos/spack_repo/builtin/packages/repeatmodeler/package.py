@@ -142,7 +142,7 @@ class Repeatmodeler(Package):
             f.write("\n".join(config_answers))
 
         with open(config_filename, "r") as f:
-            perl = which("perl")
+            perl = which("perl", required=True)
             perl("configure", input=f)
 
         install_tree(".", prefix.bin)

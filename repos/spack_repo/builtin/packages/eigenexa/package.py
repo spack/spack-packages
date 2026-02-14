@@ -97,6 +97,6 @@ class Eigenexa(AutotoolsPackage):
                 join_path(test_cache_dir, "IN"),
             ]
             env["OMP_NUM_THREADS"] = "1"
-            sh = which("sh")
+            sh = which("sh", required=True)
             out = sh(*opts, output=str.split, error=str.split)
             assert "EigenExa Test Passed !" in out

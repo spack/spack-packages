@@ -21,8 +21,8 @@ class Mpi(Package):
             filename = self.test_suite.current_test_data_dir.join("mpi_hello." + lang)
 
             compiler_var = "MPICC" if lang == "c" else "MPIF90"
-            compiler = which(os.environ[compiler_var])
-            mpirun = which(self.prefix.bin.mpirun)
+            compiler = which(os.environ[compiler_var], required=True)
+            mpirun = which(self.prefix.bin.mpirun, required=True)
 
             exe_name = "mpi_hello_%s" % lang
 

@@ -39,7 +39,7 @@ class DocbookXsl(Package):
         catalog = self.catalog
         version = self.version
         xml_xsd = join_path(prefix, "slides", "schema", "xsd", "xml.xsd")
-        xmlcatalog = which("xmlcatalog")
+        xmlcatalog = which("xmlcatalog", required=True)
 
         # create catalog
         xmlcatalog("--noout", "--create", catalog)

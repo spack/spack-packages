@@ -66,7 +66,7 @@ class Libbeagle(AutotoolsPackage, CudaPackage):
             )
 
     def autoreconf(self, spec, prefix):
-        which("bash")("autogen.sh")
+        which("bash", required=True)("autogen.sh")
 
     def configure_args(self):
         args = [
