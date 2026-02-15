@@ -103,7 +103,7 @@ class Xyce(CMakePackage):
     depends_on("trilinos+isorropia+zoltan", when="+mpi")
 
     # Currently supported versions of Xyce
-    depends_on("trilinos@15.0.0:develop", when="@7.8.0:")
+    depends_on("trilinos@15:16", when="@7.8.0:")
     depends_on("trilinos+rol", when="@7.7.0:")
 
     # tested versions of Trilinos against older versions of Xyce

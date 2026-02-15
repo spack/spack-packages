@@ -260,7 +260,8 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("symengine@0.6:", when="@9.2:+symengine")
     depends_on("tbb", when="+threads")
     # do not require +rol to make concretization of xsdk possible
-    depends_on("trilinos+amesos+aztec+epetra+ifpack+ml+muelu+sacado", when="+trilinos")
+    # Trilinos no longer has epetra from 17 onward
+    depends_on("trilinos+amesos+aztec+epetra+ifpack+ml+muelu+sacado@:16", when="+trilinos")
     depends_on("trilinos~hypre", when="+trilinos+int64")
     for _arch in CudaPackage.cuda_arch_values:
         arch_str = f"+cuda cuda_arch={_arch}"
