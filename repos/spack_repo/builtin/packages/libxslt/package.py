@@ -59,11 +59,11 @@ class Libxslt(CMakePackage, AutotoolsPackage):
     depends_on("python+shared", when="+python")
     extends("python", when="+python")
 
-    def url_for_version(self, v):
-        if v > Version("1.1.34"):
-            return f"https://download.gnome.org/sources/libxslt/{v.up_to(2)}/libxslt-{v}.tar.xz"
+    def url_for_version(self, version):
+        if version > Version("1.1.34"):
+            return f"https://download.gnome.org/sources/libxslt/{version.up_to(2)}/libxslt-{version}.tar.xz"
         else:
-            return f"http://xmlsoft.org/sources/libxslt-{v}.tar.gz"
+            return f"http://xmlsoft.org/sources/libxslt-{version}.tar.gz"
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

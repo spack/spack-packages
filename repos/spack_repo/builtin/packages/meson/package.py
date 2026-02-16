@@ -67,5 +67,5 @@ class Meson(PythonPackage):
             bin_dir = self.spec.prefix.scripts
         return bin_dir
 
-    def setup_dependent_package(self, module, dspec):
+    def setup_dependent_package(self, module, dependent_spec):
         module.meson = Executable(self._meson_bin_dir().meson)

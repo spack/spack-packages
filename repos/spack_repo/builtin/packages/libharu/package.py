@@ -58,7 +58,7 @@ class Libharu(autotools.AutotoolsPackage, cmake.CMakePackage):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
-    def autoreconf(self, spec, prefix):
+    def autoreconf(self, pkg, spec, prefix):
         """execute their autotools wrapper script"""
         if os.path.exists("./buildconf.sh"):
             bash = which("bash")

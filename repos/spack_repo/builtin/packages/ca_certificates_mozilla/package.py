@@ -21,11 +21,10 @@ class CaCertificatesMozilla(Package):
         expand=False,
     )
 
-    # Make spack checksum work
     def url_for_version(self, version):
-        return "https://curl.se/ca/cacert-{0}.pem".format(version)
+        return f"https://curl.se/ca/cacert-{version}.pem"
 
-    def setup_dependent_package(self, module, dep_spec):
+    def setup_dependent_package(self, module, dependent_spec):
         """Returns the absolute path to the bundled certificates"""
         self.spec.pem_path = join_path(self.prefix.share, "cacert.pem")
 
@@ -34,4 +33,4 @@ class CaCertificatesMozilla(Package):
         share = join_path(prefix, "share")
         # https://github.com/spack/spack/issues/32948
         mkdirp(share)
-        install("cacert-{0}.pem".format(spec.version), join_path(share, "cacert.pem"))
+        install(f"cacert-{spec.version}.pem", join_path(share, "cacert.pem"))

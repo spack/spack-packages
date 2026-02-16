@@ -23,9 +23,8 @@ class PlinkNg(Package):
 
     conflicts("%gcc@:4")
 
-    def url_for_version(self, ver):
-        template = "https://www.cog-genomics.org/static/bin/plink2_src_{0}.zip"
-        return template.format(ver)
+    def url_for_version(self, version):
+        return f"https://www.cog-genomics.org/static/bin/plink2_src_{version}.zip"
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         zlib = join_path(self.spec["zlib-api"].prefix.lib, "libz.a")

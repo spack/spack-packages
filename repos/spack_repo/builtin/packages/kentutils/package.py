@@ -121,7 +121,7 @@ class Kentutils(MakefilePackage):
     # Packages that link to kentlib (and potential, htslib) often have
     # idiosyncratic ways of setting up their includes and linker paths.
     # Having these paths available will make things cleaner downstream.
-    def setup_dependent_package(self, module, dep_spec):
+    def setup_dependent_package(self, module, dependent_spec):
         setattr(module, "kentutils_include_dir", self.prefix.inc)
         setattr(module, "kentutils_lib_dir", self.lib_dir)
         setattr(module, "kentutils_htslib_include_dir", self.htslib_include_dir)
