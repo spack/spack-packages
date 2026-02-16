@@ -18,6 +18,7 @@ class PySoupsieve(PythonPackage):
     # Circular dependency on beautifulsoup4
     skip_modules = ["soupsieve"]
 
+    version("2.8.3", sha256="3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349")
     version("2.8", sha256="e2dd4a40a628cb5f28f6d4b0db8800b8f581b65bb380b97de22ba5ca8d72572f")
     version("2.4.1", sha256="89d12b2d5dfcd2c9e8c22326da9d9aa9cb3dfab0a83a024f05704076ee8d35ea")
     version(

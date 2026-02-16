@@ -13,13 +13,13 @@ spack:
     mpi:
       require: openmpi
     python:
-      require: "@3.13:"
+      require: "@3.13: target=x86_64_v3"
     py-jaxlib:
-      require: "%c,cxx=clang"
+      require: "target=x86_64_v3 %c,cxx=clang"
     py-tensorflow:
-      require: "%c,cxx=clang"
+      require: "target=x86_64_v3 %c,cxx=clang"
     py-torch:
-      require: "%c,cxx=gcc"
+      require: "target=x86_64_v3 %c,cxx=gcc"
 
   specs:
     # Hugging Face

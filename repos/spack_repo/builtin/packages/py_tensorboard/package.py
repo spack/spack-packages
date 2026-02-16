@@ -76,7 +76,8 @@ class PyTensorboard(PythonPackage):
         depends_on("py-protobuf@3.9.2:3", when="@2.11")
         depends_on("py-protobuf@3.9.2:3.19", when="@2.9:2.10")
         depends_on("py-protobuf@3.6.0:3.19", when="@:2.8")
-        depends_on("py-setuptools@41:")
+        # https://github.com/tensorflow/tensorboard/issues/7003
+        depends_on("py-setuptools@41:81")
         depends_on("py-tensorboard-data-server@0.7", when="@2.12:")
         depends_on("py-tensorboard-data-server@0.6", when="@2.5:2.11")
         depends_on("py-werkzeug@1.0.1:", when="@2.9:")

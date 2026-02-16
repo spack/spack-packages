@@ -16,6 +16,7 @@ class PyTuswsgi(PythonPackage):
 
     license("MIT")
 
+    version("0.5.5", sha256="10dddb1ae8ee5faa65069a9d6f178c08551fad45cf17c158df6c7d1e19f964c4")
     version("0.5.4", sha256="f681a386254a161a97301a67c01ee7da77419c007d9bc43dbd48d5a987491a5e")
 
     depends_on("python@3.6:", type=("build", "run"))

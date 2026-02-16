@@ -18,6 +18,7 @@ class PyCiSdr(PythonPackage):
 
     license("MIT")
 
+    version("0.0.2", sha256="3f9d4c205b9b7c5c3239a90400b81f1f26ecb38484a46150d2677ff646a13465")
     version("0.0.0", sha256="a1387f39ccd55cce034e2c01000a0a337b3729d8a5010b42c5381d8c820fa4bb")
 
     depends_on("python@3.6:3", type=("build", "run"))

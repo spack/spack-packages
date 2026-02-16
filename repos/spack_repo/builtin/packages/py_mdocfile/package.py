@@ -16,6 +16,7 @@ class PyMdocfile(PythonPackage):
 
     license("BSD-3-Clause", checked_by="Markus92")
 
+    version("0.2.3", sha256="7cb9a4e14719fe76524a064209b0acc7ca9272781ae04ed03dceac7b23151c64")
     version("0.2.2", sha256="74d2dbe55ffda288f61cfac82aaf0052e1365a65c5acc1ed93e3c86e1457e5b0")
     version("0.0.8", sha256="61e352b569128fdeaff9f639e6aa3d46c8f8c3b8fe36627461ba0153f46f103d")
 

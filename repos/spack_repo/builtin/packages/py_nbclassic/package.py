@@ -15,6 +15,7 @@ class PyNbclassic(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.3.3", sha256="434228763f8cee754318cd6dfa42370db191af630dabab8e30bafc8c1aa3eee6")
     version("1.3.1", sha256="4c52da8fc88f9f73ef512cc305091d5ce726bdca19f44ed697cb5ba12dcaad3c")
     version("1.1.0", sha256="77b77ba85f9e988f9bad85df345b514e9e64c7f0e822992ab1df4a78ac64fc1e")
     version("1.0.0", sha256="0ae11eb2319455d805596bf320336cda9554b41d99ab9a3c31bf8180bffa30e3")
