@@ -15,6 +15,7 @@ class PyLogistro(PythonPackage):
 
     license("MIT")
 
+    version("2.0.1", sha256="8446affc82bab2577eb02bfcbcae196ae03129287557287b6a070f70c1985047")
     version("1.1.0", sha256="ad51f0efa2bc705bea7c266e8a759cf539457cf7108202a5eec77bdf6300d774")
 
     depends_on("python@3.8:", type=("build", "run"))

@@ -15,6 +15,7 @@ class PyPygdbmi(PythonPackage):
 
     license("MIT")
 
+    version("0.11.0.0", sha256="7a286be2fcf25650d9f66e11adc46e972cf078a466864a700cd44739ad261fb0")
     version("0.9.0.3", sha256="5bdf2f072e8f2f6471f19f8dcd87d6425c5d8069d47c0a5ffe8d0eff48cb171e")
 
     depends_on("python@3.5:", type=("build", "run"))

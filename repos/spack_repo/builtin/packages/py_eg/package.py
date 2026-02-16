@@ -15,6 +15,7 @@ class PyEg(PythonPackage):
 
     license("MIT")
 
+    version("1.2.3", sha256="936d9ef89f62053df7f9a0b97cc13577bf5ae876b02c6c1dd499873a926d9504")
     version("1.2.0", sha256="dfeff9f8c16afec1b621c9484c8cdb670dbc69ab40590d16a9becb740ea289f3")
     version("1.1.1", sha256="99020af6ff24742b3eb93a15a289f36156fdb93abdbec50b614b982b1ba9c399")
     version("1.1.0", sha256="41316c79e8f7a999e82057ac54c6d57c58a50cd37dc91e172b634998f61b1b86")

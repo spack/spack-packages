@@ -115,12 +115,13 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6:", when="@0.4.28:")
             depends_on(f"{pkg_dep}@6.3:", when="@0.6:")
-            depends_on(f"{pkg_dep}@:6")
+            depends_on(f"{pkg_dep}@:6", when="@:0.7")
             depends_on(pkg_dep)
         depends_on("rocprofiler-register", when="^hip@6.2:")
         depends_on("hipblas-common", when="^hip@6.3:")
         depends_on("hsakmt-roct", when="^hip@:6.2")
         depends_on("llvm-amdgpu")
+        depends_on("rocprofiler-sdk", when="@0.8.1:")
         depends_on("py-nanobind")
 
     with default_args(type="build"):
@@ -260,6 +261,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 rocm_dependencies.append("hipblas-common")
             else:
                 rocm_dependencies.append("hsakmt-roct")
+            if spec.satisfies("@0.8.1:"):
+                rocm_dependencies.append("rocprofiler-sdk")
             env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
             for pkg_dep in rocm_dependencies:
                 env.prepend_path("TF_ROCM_MULTIPLE_PATHS", spec[pkg_dep].prefix)
@@ -330,6 +333,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 args.append(
                     f"--bazel_options=--override_repository=xla={self.stage.source_path}/xla"
                 )
+            amdgpu_targets = ",".join(self.spec.variants["amdgpu_target"].value)
+            args.append(f"--rocm_amdgpu_target={amdgpu_targets}")
 
         args.extend(
             [

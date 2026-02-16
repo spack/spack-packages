@@ -15,6 +15,7 @@ class PyPyprojectMetadata(PythonPackage):
 
     license("MIT")
 
+    version("0.11.0", sha256="c72fa49418bb7c5a10f25e050c418009898d1c051721d19f98a6fb6da59a66cf")
     version("0.10.0", sha256="7f5bd0ef398b60169556cb17ea261d715caf7f8561238151f51b2305084ba8d4")
     version("0.9.1", sha256="b8b2253dd1b7062b78cf949a115f02ba7fa4114aabe63fa10528e9e1a954a816")
     version("0.7.1", sha256="0a94f18b108b9b21f3a26a3d541f056c34edcb17dc872a144a15618fed7aef67")

@@ -15,6 +15,7 @@ class PyHstspreload(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2025.1.1", sha256="346552a807b3a1762376de8ecce097544e7fcd64fb64231b4652da52f86fa6f1")
     version("2020.9.23", sha256="35822733ba67cfb4efc6cd7d1230b509f0bd42c90eeb329faf2fe679f801e40f")
 
     depends_on("py-setuptools", type="build")

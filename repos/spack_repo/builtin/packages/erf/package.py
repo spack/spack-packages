@@ -72,7 +72,7 @@ class Erf(CMakePackage, CudaPackage):
         depends_on("c")
         depends_on("cxx")
         depends_on("fortran")
-        depends_on("pkgconf")
+        depends_on("pkgconfig")
 
     with default_args(type=("build", "link")):
         for v in ("mpi", "openmp", "cuda", "particles"):

@@ -312,14 +312,17 @@ supported, and netmod is ignored if device is ch3:sock.""",
     depends_on("pkgconfig", type="build")
 
     depends_on("hwloc@2.0.0:", when="@3.3: +hwloc")
+    depends_on("hwloc@2.0.0: +cuda", when="@3.3: +cuda+hwloc")
 
     depends_on("libfabric", when="netmod=ofi")
+    depends_on("libfabric+cuda", when="+cuda netmod=ofi")
     # The ch3 ofi netmod results in crashes with libfabric 1.7
     # See https://github.com/pmodels/mpich/issues/3665
     depends_on("libfabric@:1.6", when="device=ch3 netmod=ofi")
     depends_on("libfabric@1.5:", when="@3.4: device=ch4 netmod=ofi")
 
     depends_on("ucx", when="netmod=ucx")
+    depends_on("ucx+cuda", when="+cuda netmod=ucx")
     depends_on("mxm", when="netmod=mxm")
 
     # The dependencies on libpciaccess and libxml2 come from the embedded

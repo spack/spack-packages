@@ -15,6 +15,7 @@ class PyPdf2image(PythonPackage):
 
     license("MIT")
 
+    version("1.17.0", sha256="eaa959bc116b420dd7ec415fcae49b98100dda3dd18cd2fdfa86d09f112f6d57")
     version("1.16.3", sha256="74208810c2cef4d9e347769b8e62a52303982ddb4f2dfd744c7ab4b940ae287e")
     version("1.12.1", sha256="a0d9906f5507192210a8d5d7ead63145e9dec4bccc4564b1fb644e923913c31c")
 

@@ -28,7 +28,7 @@ class EaUtils(MakefilePackage):
     depends_on("zlib-api")
     depends_on("gsl")
     depends_on("bamtools")
-    depends_on("perl", type=["build", "run"])
+    depends_on("perl", type=("build", "run"))
 
     build_directory = "clipper"
 

@@ -60,7 +60,7 @@ spack:
   - py-tensorflow
   - py-tensorflow-datasets
   - py-tensorflow-metadata
-  - py-tensorflow-probability
+  # - py-tensorflow-probability # conflict with macos tahoe
 
   # XGBoost
   - py-xgboost
