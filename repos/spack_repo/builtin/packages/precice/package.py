@@ -120,10 +120,17 @@ class Precice(CMakePackage):
     depends_on("py-numpy@1.17:", when="+python", type=("build", "run"))
     depends_on("py-numpy@1.21.5:", when="+python@3.2:", type=("build", "run"))
 
-    # We require C++14 compiler support
     conflicts("%gcc@:4")
-    conflicts("%apple-clang@:5")
+    conflicts("%gcc@:9.2.99", when="@1.4:")
+    conflicts("%gcc@:11.1.99", when="@2.4:")
+    conflicts("%gcc@:13.1.99", when="@3.2:")
+
     conflicts("%clang@:3.7")
+    conflicts("%clang@:9.99", when="@1.4:")
+    conflicts("%clang@:13.99", when="@2.4:")
+    conflicts("%clang@:17.99", when="@3.2:")
+
+    conflicts("%apple-clang@:5")
     conflicts("%intel@:16")
     conflicts("%gcc@:9.2", when="@3.0.0:")
 
