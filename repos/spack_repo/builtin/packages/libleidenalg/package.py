@@ -23,6 +23,7 @@ class Libleidenalg(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("igraph")
     depends_on("igraph@0.10", when="@0.10:0.11")
 
     # Cherry-pick Patch for wrong includes
