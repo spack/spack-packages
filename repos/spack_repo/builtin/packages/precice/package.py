@@ -76,6 +76,11 @@ class Precice(CMakePackage):
             when=f"@2.4: build_type={build_type}",
         )
 
+    # Baseline version lifts
+    # version 1.4.0 to Ubuntu 18.04 LTS
+    # version 2.4.0 to Ubuntu 20.04 LTS
+    # version 3.2.0 to Ubuntu 22.04 LTS
+
     depends_on("cmake@3.5:", type="build")
     depends_on("cmake@3.10.2:", type="build", when="@1.4:")
     depends_on("cmake@3.16.3:", type="build", when="@2.4:")
