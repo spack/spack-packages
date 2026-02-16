@@ -61,7 +61,8 @@ class PyMelissaCore(PythonPackage, CudaPackage):
 
     with default_args(type="run"):
         depends_on("py-pyzmq@22.3.0:")
-        depends_on("py-mpi4py@3.1.3:")
+        depends_on("py-mpi4py@3.1.3:3", when="@:2.3.0")
+        depends_on("py-mpi4py@3.1.3:", when="@2.4.0")
         depends_on("py-numpy@1.21:1")
         depends_on("py-jsonschema@4.5:")
         depends_on("py-python-rapidjson@1.8:")
