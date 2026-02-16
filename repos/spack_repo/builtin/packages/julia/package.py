@@ -246,7 +246,7 @@ class Julia(MakefilePackage):
     # patchelf 0.18 breaks (at least) libjulia-internal.so
     depends_on("patchelf@0.13:0.17", type="build")
     depends_on("perl", type="build")
-    depends_on("libwhich", type="build")
+    depends_on("libwhich@1.3:", type="build")
     depends_on("which", type="build")  # for detecting 7z, lld, dsymutil
     depends_on("python", type="build")
     depends_on("binutils", type="build")  # for readelf
@@ -333,37 +333,14 @@ class Julia(MakefilePackage):
             os.utime(os.path.join("base", "Makefile"), time)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # this is a bit ridiculous, but we are setting runtime linker paths to
-        # dependencies so that libwhich can locate them.
-        if self.spec.satisfies("platform=linux"):
-            linker_var = "LD_LIBRARY_PATH"
-        elif self.spec.satisfies("platform=darwin"):
-            linker_var = "DYLD_FALLBACK_LIBRARY_PATH"
-        else:
-            return
-        pkgs = [
-            "curl",
-            "dsfmt",
-            "gmp",
-            "libblastrampoline",
-            "libgit2",
-            "libssh2",
-            "libunwind",
-            "mbedtls",
-            "mpfr",
-            "nghttp2",
-            "openblas",
-            "pcre2",
-            "suite-sparse",
-            "utf8proc",
-        ]
-        if "+openlibm" in self.spec:
-            pkgs.append("openlibm")
-        for pkg in pkgs:
-            for dir in self.spec[pkg].libs.directories:
-                env.prepend_path(linker_var, dir)
-        for dir in self.spec["zlib-api"].libs.directories:
-            env.prepend_path(linker_var, dir)
+        # Assemble search paths for libwhich
+        libdirs = []
+        for dep in sorted(dep.name for dep in self.spec.dependencies(deptype="link")):
+            try:
+                libdirs.extend(self.spec[dep].libs.directories)
+            except Exception:
+                continue
+        env.set("LIBWHICH_LIBRARY_PATH", ":".join(libdirs))
 
     def edit(self, spec, prefix):
         # TODO: use a search query for blas / lapack?
