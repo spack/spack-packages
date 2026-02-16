@@ -56,9 +56,9 @@ class Zlib(MakefilePackage, Package):
                     pattern = re.compile(rf"{library}\.(\d+\.\d+\.\d+)\.{ext}")
                 else:
                     pattern = re.compile(rf"{library}\.{ext}\.(\d+\.\d+\.\d+)")
-                    match = re.search(pattern, lib)
-                    if match:
-                        return match.group(1)
+                match = re.search(pattern, lib)
+                if match:
+                    return match.group(1)
 
     @property
     def libs(self):
