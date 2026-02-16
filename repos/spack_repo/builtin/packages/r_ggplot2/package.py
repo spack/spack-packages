@@ -19,6 +19,7 @@ class RGgplot2(RPackage):
 
     license("MIT")
 
+    version("3.5.2", sha256="0a30024a2ff3e569412223c8f14563ed504f3e0851de03e42d1b5f73fe1f06bf")
     version("3.5.1", sha256="7c58b424f99b3634038e6f6d1fe4b0241b8aecb50e9c50466d5590f7e3144721")
     version("3.5.0", sha256="07fa1cd4e02d409ade32e69a9088d9209f864c6ddd70fa2f904769dec21090e2")
     version("3.4.4", sha256="2d76ec065d3e604d019506f45b3b713ae20f38e47dbebfb5ba1648b47fe63e46")
