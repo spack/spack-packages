@@ -54,7 +54,7 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
         "convergence_order",
         default="4",
         description="polynomial degree plus one",
-        values=(str(v) for v in range(2, 9)),
+        values=tuple(str(v) for v in range(2, 9)),
         multi=False,
     )
     variant(
