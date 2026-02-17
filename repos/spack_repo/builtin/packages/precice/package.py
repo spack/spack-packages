@@ -242,7 +242,7 @@ class Precice(CMakePackage):
         )
 
         # PETSc
-        if "+petsc" in spec:
+        if spec.satisfies("@:2 +petsc"):
             cmake_args.extend(["-DPETSC_DIR=%s" % spec["petsc"].prefix, "-DPETSC_ARCH=."])
 
         # Python
