@@ -190,12 +190,8 @@ class Xyce(CMakePackage):
         if name == "cxxflags":
             flags.append("-DXyce_INTRUSIVE_PCE -Wreorder")
         elif name == "ldflags":
-            # Fortran lib (assumes clang is built with gfortran!)
-            if (
-                spec.satisfies("%gcc")
-                or spec.satisfies("%clang")
-                or spec.satisfies("%apple-clang")
-            ):
+            # Fortran lib
+            if spec.satisfies("+fortran %fortran=gcc"):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
                     "--print-file-name", "libgfortran." + dso_suffix, output=str

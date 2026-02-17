@@ -22,6 +22,9 @@ class Interproscan(Package):
 
     license("Apache-2.0")
 
+    version(
+        "5.76-107.0", sha256="4ffd493776993cdebcc7e4c90d6595a53d55f83bbd961b30e9e314b190318e69"
+    )
     version("5.63-95.0", sha256="3d7babd09e64da3d7104c58f1e5104a298d69425e3210952331bc3f1ddf89ca6")
     version("5.61-93.0", sha256="70aca3b14983733fe5119b6978cb707156d006d7f737aa60ce6c9addd6c288e4")
     version("5.56-89.0", sha256="75e6a8f86ca17356a2f77f75b07d6d8fb7b397c9575f6e9716b64983e490b230")
@@ -33,6 +36,12 @@ class Interproscan(Package):
         url="ftp://ftp.ebi.ac.uk/pub/software/unix/iprscan/4/RELEASE/4.8/iprscan_v4.8.tar.gz",
     )
 
+    resource(
+        when="@5.76-107.0 +databases",
+        name="databases",
+        url="https://ftp.ebi.ac.uk/pub/databases/interpro/iprscan/5/5.76-107.0/alt/interproscan-data-5.76-107.0.tar.gz",
+        sha256="606f7ffb1f131a52307674241501dd6104c9f96824b3817e7a5ed6304c55c729",
+    )
     resource(
         when="@5.63-95.0 +databases",
         name="databases",
@@ -100,7 +109,7 @@ class Interproscan(Package):
     patch("large-gid.patch", when="@5:")
     patch("non-interactive.patch", when="@:4.8")
     patch("ps_scan.patch", when="@:4.8")
-    patch("web-pom.patch", when="@5:")
+    patch("web-pom.patch", when="@5:5.63-95.0")
 
     def install(self, spec, prefix):
         with working_dir("core"):

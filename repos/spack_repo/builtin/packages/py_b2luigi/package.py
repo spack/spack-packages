@@ -24,6 +24,7 @@ class PyB2luigi(PythonPackage):
     # maintainers("github_user1", "github_user2")
 
     # We start at 1.2.6 as this was the change from retry2->tenacity dependency
+    version("1.2.7", sha256="9f2622bb5f8f8645a0ef2546c3125164e3d5ab167c1e2519b1593e930733df40")
     version("1.2.6", sha256="9f3be756f0961ca2241d36d9a9174ea5a23ebd7787cbfa78632047aae25f1202")
 
     depends_on("python@3.8:", type=("build", "run"))

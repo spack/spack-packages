@@ -40,6 +40,7 @@ class Libtiff(CMakePackage, AutotoolsPackage):
 
     license("libtiff")
 
+    version("4.7.1", sha256="f698d94f3103da8ca7438d84e0344e453fe0ba3b7486e04c5bf7a9a3fabe9b69")
     version("4.7.0", sha256="67160e3457365ab96c5b3286a0903aa6e78bdc44c4bc737d2e486bcecb6ba976")
 
     # GUI

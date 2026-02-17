@@ -17,6 +17,7 @@ class PyAddict(PythonPackage):
 
     license("MIT")
 
+    version("2.4.0", sha256="8eb5674667e39549e7e5534b98d7c942ec4a4195b76bdb748739eac5d3861bc1")
     version("2.2.1", sha256="398bba9e7fa25e2ce144c5c4b8ec6208e89b9445869403dfa88ab66ec110fa12")
 
     depends_on("py-setuptools", type="build")

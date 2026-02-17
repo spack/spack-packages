@@ -17,6 +17,7 @@ class Nettle(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-2.0-or-later OR LGPL-3.0-or-later")
 
+    version("4.0", sha256="3addbc00da01846b232fb3bc453538ea5468da43033f21bb345cb1e9073f5094")
     version("3.9.1", sha256="ccfeff981b0ca71bbd6fbcb054f407c60ffb644389a5be80d6716d5b550c6ce3")
     version("3.8.1", sha256="364f3e2b77cd7dcde83fd7c45219c834e54b0c75e428b6f894a23d12dd41cbfe")
     version("3.4.1", sha256="f941cf1535cd5d1819be5ccae5babef01f6db611f9b5a777bae9c7604b8a92ad")

@@ -23,6 +23,7 @@ class PyReferencing(PythonPackage):
     depends_on("python@3.9:", type=("build", "run"), when="@0.36:")
     depends_on("python@3.8:", type=("build", "run"), when="@:0.35")
     depends_on("py-hatchling", type="build")
+    depends_on("py-hatchling@1.26:", when="@0.36:", type="build")
     depends_on("py-hatch-vcs", type="build")
 
     depends_on("py-attrs@22.2.0:", type=("build", "run"))

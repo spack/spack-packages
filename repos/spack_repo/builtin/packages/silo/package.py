@@ -167,6 +167,13 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         default="cmake",
     )
 
+    # Fix issue with delimiter char in constant nameschemes
+    patch(
+        "https://github.com/llnl/Silo/commit/43a52d788a3c15bee3b9391906e8ed276c5a456c.patch?full_index=1",
+        sha256="4626644778c634518ee9d08815bfe757bf54e77621865c0b4effea0c122ca69b",
+        when="@4.12.0",
+    )
+
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
 

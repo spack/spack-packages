@@ -16,6 +16,7 @@ class PyAnyio(PythonPackage):
 
     license("MIT")
 
+    version("4.12.1", sha256="41cfcc3a4c85d3f05c932da7c26d0201ac36f72abd4435ba90d0464a3ffed703")
     version("4.9.0", sha256="673c0c244e15788651a4ff38710fea9675823028a6f08a5eda409e0c9840a028")
     version("4.0.0", sha256="f7ed51751b2c2add651e5747c891b47e26d2a21be5d32d9311dfe9692f3e5d7a")
     version("3.6.2", sha256="25ea0d673ae30af41a0c442f81cf3b38c7e79fdc7b60335a4c14e05eb0947421")
@@ -24,19 +25,20 @@ class PyAnyio(PythonPackage):
     version("3.3.4", sha256="67da67b5b21f96b9d3d65daa6ea99f5d5282cb09f50eb4456f8fb51dffefc3ff")
     version("3.2.1", sha256="07968db9fa7c1ca5435a133dc62f988d84ef78e1d9b22814a59d1c62618afbc5")
 
-    depends_on("python@3.9:", when="@4.6:", type=("build", "run"))
-    depends_on("python@3.8:", when="@4:", type=("build", "run"))
-    depends_on("python@3.6.2:", type=("build", "run"))
-    depends_on("py-setuptools@64:", when="@3.7:", type="build")
-    depends_on("py-setuptools@42:", type="build")
-    depends_on("py-setuptools-scm@6.4:", when="@3.7:", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@77:", when="@4.12:")
+        depends_on("py-setuptools@64:", when="@3.7:")
+        depends_on("py-setuptools@42:")
+        depends_on("py-setuptools-scm@6.4:", when="@3.7:")
+        depends_on("py-setuptools-scm+toml@3.4:", when="@:3.6")
 
-    depends_on("py-exceptiongroup@1.0.2:", when="@4: ^python@:3.10", type=("build", "run"))
-    depends_on("py-idna@2.8:", type=("build", "run"))
-    depends_on("py-sniffio@1.1:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.5:", when="@4.7: ^python@:3.12", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-wheel@0.29:", when="@:3.6")
 
-    # Historical dependencies
-    depends_on("py-wheel@0.29:", when="@:3.6", type="build")
-    depends_on("py-setuptools-scm+toml@3.4:", when="@:3.6", type="build")
-    depends_on("py-typing-extensions", when="^python@:3.7", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("py-exceptiongroup@1.0.2:", when="@4: ^python@:3.10")
+        depends_on("py-idna@2.8:")
+        depends_on("py-typing-extensions@4.5:", when="@4.7: ^python@:3.12")
+
+        # Historical dependencies
+        depends_on("py-sniffio@1.1:", when="@:4.9")

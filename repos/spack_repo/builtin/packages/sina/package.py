@@ -21,6 +21,7 @@ class Sina(CachedCMakePackage):
 
     maintainers("estebanpauli", "HaluskaR", "murray55")
 
+    version("1.14.0", sha256="a9154c02de4f32759af4d7225df962820432aeba3abd683ddaed02de2e2534b2")
     version("1.13.0", sha256="4087fc63ea054fd5d6cfcd2223d33edcb910df1fad5936301591e1a9aa4d6bac")
     version("1.11.0", sha256="a080f6583101696a6354940f00646ef892e1b2f8fc3f1b1907ba1c3ade6d4b47")
     version("1.10.0", sha256="b34379ce8cc5eca5a0f16893053fac75be14c2109d1beed4c6d48e11f9b281c7")
@@ -36,6 +37,7 @@ class Sina(CachedCMakePackage):
     depends_on("adiak", when="+adiak")
     depends_on("doxygen", type="build", when="+docs")
     depends_on("conduit")
+    depends_on("blt", type="build", when="@1.14.0:")
 
     def cmake_args(self):
         return [
@@ -55,6 +57,10 @@ class Sina(CachedCMakePackage):
         if use_adiak:
             adiak_dir = self.spec["adiak"].prefix
             entries.append(cmake_cache_path("adiak_DIR", "%s/lib/cmake/adiak/" % adiak_dir))
+
+        use_blt = self.spec.satisfies("^blt")
+        if use_blt:
+            entries.append(cmake_cache_path("BLT_SOURCE_DIR", self.spec["blt"].prefix))
 
         entries.append("#" + 78 * "-")
         entries.append("# Devtools")

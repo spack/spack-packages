@@ -355,6 +355,9 @@ class Wrf(Package):
 
         zen_conf = (Path(__file__).parent / "aocc_config.inc").read_text().format(**param)
 
+        if self.spec.satisfies("%aocc@5.1:"):
+            zen_conf = zen_conf.replace("-finline-aggressive ", "")  # removed flag in AOCC 5.1+
+
         if self.spec.satisfies("@4.0:"):
             filter_file("#insert new stanza here", zen_conf, "arch/configure.defaults")
         else:

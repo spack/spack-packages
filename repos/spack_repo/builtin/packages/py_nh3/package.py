@@ -15,7 +15,9 @@ class PyNh3(PythonPackage):
 
     license("MIT")
 
+    version("0.3.2", sha256="f394759a06df8b685a4ebfb1874fb67a9cbfd58c64fc5ed587a663c0e63ec376")
     version("0.3.0", sha256="d8ba24cb31525492ea71b6aac11a4adac91d828aadeff7c4586541bf5dc34d2f")
 
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-maturin@1", type="build")
+    depends_on("rust", type="build")

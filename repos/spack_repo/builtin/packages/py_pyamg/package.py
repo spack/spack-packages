@@ -34,3 +34,5 @@ class PyPyamg(PythonPackage):
     depends_on("py-setuptools-scm@7.1:+toml", type="build", when="@5.0.0:")
     depends_on("py-setuptools-scm@5:+toml", type="build", when="@4.2.0:")
     depends_on("py-pybind11@2.8.0:", type=("build", "link"), when="@4.2.0:")
+
+    depends_on("cxx", type="build")

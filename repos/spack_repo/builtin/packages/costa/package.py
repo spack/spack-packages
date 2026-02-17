@@ -14,7 +14,7 @@ class Costa(CMakePackage):
     Based on the paper: https://arxiv.org/abs/2106.06601
     """
 
-    maintainers("haampie", "kabicm", "RMeli", "mtaillefumier")
+    maintainers("kabicm", "RMeli", "mtaillefumier", "simonpintarelli")
     homepage = "https://github.com/eth-cscs/COSTA"
     url = "https://github.com/eth-cscs/COSTA/archive/refs/tags/v2.2.4.tar.gz"
     git = "https://github.com/eth-cscs/COSTA.git"
