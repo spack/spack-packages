@@ -53,6 +53,6 @@ class AlsaPlugins(AutotoolsPackage):
             env.prepend_path("LD_LIBRARY_PATH", alsa_lib_libdir)
 
         # 2. Pulseaudio lib directory in LD_LIBRARY_PATH
-        pulseaudio_libdir = os.path.join(self.spec["pulseaudio"].prefix.lib64, "pulseaudio")
+        pulseaudio_libdir = os.path.join(self.spec["pulseaudio"].prefix.lib, "pulseaudio")
         if os.path.exists(pulseaudio_libdir):
             env.prepend_path("LD_LIBRARY_PATH", pulseaudio_libdir)
