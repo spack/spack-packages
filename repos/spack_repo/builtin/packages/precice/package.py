@@ -168,15 +168,6 @@ class Precice(CMakePackage):
         sha256="6a38783eec984a59991f0895d411212e0ba1ebd2ec2c8f53f962df8facbc0344",
     )
 
-    def xsdk_tpl_args(self):
-        return [
-            "-DTPL_ENABLE_BOOST:BOOL=ON",
-            "-DTPL_ENABLE_EIGEN3:BOOL=ON",
-            "-DTPL_ENABLE_LIBXML2:BOOL=ON",
-            self.define_from_variant("TPL_ENABLE_PETSC", "petsc"),
-            self.define_from_variant("TPL_ENABLE_PYTHON", "python"),
-        ]
-
     def cmake_args(self):
         """Populate cmake arguments for precice."""
         spec = self.spec
@@ -209,7 +200,13 @@ class Precice(CMakePackage):
         # The xSDK installation policies were implemented after 1.5.2.
         # The TPL arguments were removed in 3.0.0.
         if spec.satisfies("@1.6:3"):
-            cmake_args.extend(self.xsdk_tpl_args())
+            cmake_args.extend([
+                "-DTPL_ENABLE_BOOST:BOOL=ON",
+                "-DTPL_ENABLE_EIGEN3:BOOL=ON",
+                "-DTPL_ENABLE_LIBXML2:BOOL=ON",
+                self.define_from_variant("TPL_ENABLE_PETSC", "petsc"),
+                self.define_from_variant("TPL_ENABLE_PYTHON", "python")
+            ])
 
         # Release options
         if spec.satisfies("@2.4:"):
