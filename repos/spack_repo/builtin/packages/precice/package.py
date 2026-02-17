@@ -155,6 +155,8 @@ class Precice(CMakePackage):
     conflicts("%intel@:16")
     conflicts("%gcc@:9.2", when="@3.0.0:")
 
+    conflicts("-shared", when="@3:", msg="The shared library version is unsupported since 3.0.0")
+
     # Fixes missing #include<array> in src/mesh/Edge.hpp
     patch(
         "edge-incomplete-type.patch",
@@ -186,10 +188,13 @@ class Precice(CMakePackage):
             python_option = "PRECICE_FEATURE_PYTHON_ACTIONS"
 
         cmake_args = [
-            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant(mpi_option, "mpi"),
             self.define_from_variant(petsc_option, "petsc"),
         ]
+
+        # Use the shared variant prior to version 3
+        if not spec.satisfies("@3:"):
+            cmake_args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
         # Python 3 is only supported after version 2
         if spec.satisfies("@2:"):
