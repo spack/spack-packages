@@ -152,12 +152,6 @@ class MesonBuilder(meson.MesonBuilder):
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def configure_args(self):
-        ar_args = ["-ivf"]
-        for dep in self.spec.dependencies(deptype="build"):
-            if os.path.exists(dep.prefix.share.aclocal):
-                ar_args.extend(["-I", dep.prefix.share.aclocal])
-        autoreconf(*ar_args)
-
         args = [
             "MOUNT_FUSE_PATH={0}".format(self.prefix.sbin),
             "UDEV_RULES_PATH={0}".format(self.prefix.etc),
