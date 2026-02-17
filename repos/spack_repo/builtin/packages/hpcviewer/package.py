@@ -28,6 +28,11 @@ class Hpcviewer(Package):
 
     darwin_sha = {
         (
+            "2026.0.0",
+            "aarch64",
+        ): "fc0a131c791112a33bc48501b864fa49ab41fbd8819218f6d1ff223da443fcaf",
+        ("2026.0.0", "x86_64"): "d2329843a618d235b9db2795aa726ceb3561d586c8997a336e96c00eb1c1d8b6",
+        (
             "2025.3.1",
             "aarch64",
         ): "c87d29f70bc39c23926c001d8393d48d2fdf1ae41da8096a5f2ab40b18d20105",
@@ -60,6 +65,15 @@ class Hpcviewer(Package):
     }
 
     viewer_sha = {
+        (
+            "2026.0.0",
+            "aarch64",
+        ): "878b8df17ddc1e9acda37066a09f73b7bd58523e26bd2d06ca3550ed850fddec",
+        (
+            "2026.0.0",
+            "ppc64le",
+        ): "814a6bd45aa938bf76bc5c83c35bdc0b9e2f72f8bab9035cd29a8dc96dc10aac",
+        ("2026.0.0", "x86_64"): "308fe3e066bf0da56de6a38aaf5b4a01ab77af3265b0257c3dd72f640689bc60",
         (
             "2025.3.1",
             "aarch64",

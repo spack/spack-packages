@@ -32,6 +32,7 @@ ci:
 
     - match:
       - py-tensorflow
+      - rccl
       build-job:
         tags: [ "spack", "huge" ]
         variables:

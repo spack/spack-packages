@@ -18,6 +18,7 @@ class PyPy4j(PythonPackage):
 
     maintainers("teaguesterling")
 
+    version("0.10.9.9", sha256="f694cad19efa5bd1dee4f3e5270eb406613c974394035e5bfc4ec1aba870b879")
     version("0.10.9.7", sha256="0b6e5315bb3ada5cf62ac651d107bb2ebc02def3dee9d9548e3baac644ea8dbb")
     version("0.10.9.5", sha256="276a4a3c5a2154df1860ef3303a927460e02e97b047dc0a47c1c3fb8cce34db6")
     version("0.10.9.3", sha256="0d92844da4cb747155b9563c44fc322c9a1562b3ef0979ae692dbde732d784dd")

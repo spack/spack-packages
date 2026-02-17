@@ -36,3 +36,5 @@ class PyRustworkx(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools-rust", type="build")
     depends_on("py-numpy@1.16:", type=("build", "run"))
+
+    depends_on("rust", type="build")

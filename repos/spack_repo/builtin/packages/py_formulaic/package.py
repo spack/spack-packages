@@ -14,6 +14,7 @@ class PyFormulaic(PythonPackage):
     homepage = "https://github.com/matthewwardrop/formulaic"
     pypi = "formulaic/formulaic-0.2.4.tar.gz"
 
+    version("1.2.1", sha256="dc79476baa2d811b35798893eb2f2c1e51edee8d7a9c1429b400e56f4e0beccc")
     version("1.2.0", sha256="ab5c43a5b107d1b1e87f55cf0a01245531cce793d3dcab433dae12053c3cb2d6")
     version("0.6.1", sha256="5b20b2130436dc8bf5ea604e69d88d44b3be4d8ea20bfea96d982fa1f6bb762b")
     version("0.5.2", sha256="25b1e1c8dff73f0b11c0028a6ab350222de6bbc47b316ccb770cec16189cef53")
