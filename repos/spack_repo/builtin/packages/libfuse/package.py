@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 import re
 
 from spack_repo.builtin.build_systems import autotools, meson
@@ -60,9 +59,7 @@ class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
     variant("utils", default=True, description="Build and install helper and example programs.")
 
     build_system(
-        conditional("meson", when="@3:"),
-        conditional("autotools", when="@:2"),
-        default="meson",
+        conditional("meson", when="@3:"), conditional("autotools", when="@:2"), default="meson"
     )
 
     depends_on("c", type="build")  # generated
