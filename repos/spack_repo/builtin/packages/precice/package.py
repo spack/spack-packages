@@ -129,13 +129,13 @@ class Precice(CMakePackage):
 
     depends_on("mpi", when="+mpi")
 
-    when("+petsc"):
+    with when("+petsc"):
         depends_on("petsc@3.6:")
         depends_on("petsc@3.12:", when="@2.1.0:")
         # Ubuntu baselines
         depends_on("petsc@3.15:", when="@3.2:")
 
-    when("+python"):
+    with when("+python"):
         depends_on("python@3:", type=("build", "run"))
         depends_on("py-numpy@1.17:", type=("build", "run"))
         # Ubuntu baselines
