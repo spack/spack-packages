@@ -105,8 +105,11 @@ class Rccl(CMakePackage):
         sha256="a747b2f76acf938860b4319cafb90426506d5b931ca776d094fd0eb9580ef785",
         when="@7.1",
     )
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    # See https://github.com/ROCm/rocm-systems/pull/3231
+    patch("memory-3231.patch", when="@7.1:")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("numactl@2:")
@@ -176,6 +179,10 @@ class Rccl(CMakePackage):
             self.define("BUILD_TESTS", self.run_tests),
             self.define("ENABLE_MSCCLPP", False),
             self.define("ENABLE_MSCCL_KERNEL", False),
+            # Anecdotally, memory usage is about ~8GB per job per GPU arch. The value could be
+            # computed from amd_gpu_targets, except in the case of auto. Leave constant for now.
+            self.define("RCCL_MAX_MEMORY", "32"),
+            self.define("RCCL_MEMORY_PER_LINK_JOB", "8"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             if self.spec.satisfies("@7.1:"):
