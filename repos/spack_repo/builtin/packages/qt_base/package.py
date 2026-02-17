@@ -55,17 +55,15 @@ class QtPackage(CMakePackage):
                     if dep in vendor_deps_to_remove:
                         shutil.rmtree(dep)
 
+    @staticmethod
+    def _qt_feature_flag(feature):
+        return f"FEATURE_{feature}"
+
+    def define_qt_feature_from_variant(self, feature, variant=None):
+        return self.define_from_variant(QtPackage._qt_feature_flag(feature), variant or feature)
+
     def define_qt_feature(self, feature, value=None):
-        assert type(value) in (type(None), str, bool)
-
-        if value is None:
-            value = feature
-
-        flag = f"FEATURE_{feature}"
-        if isinstance(value, str):
-            return self.define_from_variant(flag, value)
-        else:
-            return self.define(flag, value)
+        return self.define(QtPackage._qt_feature_flag(feature), value)
 
     def cmake_args(self):
         # Start with upstream cmake_args
@@ -302,16 +300,16 @@ class QtBase(QtPackage):
             [
                 self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
                 self.define_qt_feature("optimize_size", spec.satisfies("build_type=MinSizeRel")),
-                self.define_qt_feature("accessibility"),
+                self.define_qt_feature_from_variant("accessibility"),
                 # concurrent: default to on
-                self.define_qt_feature("dbus"),
-                self.define_qt_feature("framework"),
-                self.define_qt_feature("gui"),
-                self.define_qt_feature("network"),  # note: private feature
+                self.define_qt_feature_from_variant("dbus"),
+                self.define_qt_feature_from_variant("framework"),
+                self.define_qt_feature_from_variant("gui"),
+                self.define_qt_feature_from_variant("network"),  # note: private feature
                 # testlib: default to on
                 # thread: default to on
-                self.define_qt_feature("widgets"),  # note: private feature
-                self.define_qt_feature("sql"),  # note: private feature
+                self.define_qt_feature_from_variant("widgets"),  # note: private feature
+                self.define_qt_feature_from_variant("sql"),  # note: private feature
                 # xml: default to on
             ]
         )

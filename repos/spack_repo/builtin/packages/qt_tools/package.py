@@ -74,10 +74,10 @@ class QtTools(QtPackage):
     def cmake_args(self):
         return super().cmake_args() + [
             self.define_qt_feature("fullqthelp", True),
-            self.define_qt_feature("qdoc"),
-            self.define_qt_feature("clang", "qdoc"),
-            self.define_qt_feature("assistant"),
-            self.define_qt_feature("designer"),
-            self.define_qt_feature("zstd", "designer"),
-            self.define_qt_feature("linguist"),
+            self.define_qt_feature_from_variant("qdoc"),
+            self.define_qt_feature_from_variant("clang", "qdoc"),
+            self.define_qt_feature_from_variant("assistant"),
+            self.define_qt_feature_from_variant("designer"),
+            self.define_qt_feature_from_variant("zstd", "designer"),
+            self.define_qt_feature_from_variant("linguist"),
         ]
