@@ -202,15 +202,13 @@ class Precice(CMakePackage):
         else:
             cmake_args.append("-DPYTHON=OFF")
 
-        # The xSDK installation policies were implemented after 1.5.2.
-        # The TPL arguments were removed in 3.0.0.
+        # The xSDK installation policies were implemented after 1.5.2 and removed in 3.0.0
         if spec.satisfies("@1.6:3"):
             cmake_args.extend([
                 "-DTPL_ENABLE_BOOST:BOOL=ON",
                 "-DTPL_ENABLE_EIGEN3:BOOL=ON",
                 "-DTPL_ENABLE_LIBXML2:BOOL=ON",
                 self.define_from_variant("TPL_ENABLE_PETSC", "petsc"),
-                self.define_from_variant("TPL_ENABLE_PYTHON", "python")
             ])
 
         # Release options
