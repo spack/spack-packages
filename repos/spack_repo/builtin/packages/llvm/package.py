@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
 import re
-import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
@@ -194,8 +193,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     )
     variant(
         "gold",
-        default=(sys.platform != "darwin"),
-        description="Add support for LTO with the gold linker plugin",
+        default=False,
+        description="Add support for LTO with the gold linker plugin (deprecated)",
     )
     variant("split_dwarf", default=False, description="Build with split dwarf information")
     variant(
