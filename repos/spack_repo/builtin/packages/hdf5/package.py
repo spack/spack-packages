@@ -575,11 +575,11 @@ class Hdf5(CMakePackage):
         # breaks CMake's mpi detection for MSMPI.
         if spec.satisfies("+mpi") and "msmpi" not in spec:
             if spec.satisfies("+cxx"):
-                args.append("-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx)
-            args.append("-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc)
+                args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
+            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
             if spec.satisfies("+fortran"):
-                args.extend(["-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
+                args.append(self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc))
 
         # work-around for https://github.com/HDFGroup/hdf5/issues/1320
         if spec.satisfies("@1.10.8,1.13.0"):
