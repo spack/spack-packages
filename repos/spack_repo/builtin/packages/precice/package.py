@@ -192,6 +192,9 @@ class Precice(CMakePackage):
             self.define_from_variant(petsc_option, "petsc"),
         ]
 
+        if not self.run_tests:
+            cmake_args.append(f"-DBUILD_TESTING=OFF")
+
         # Use the shared variant prior to version 3
         if not spec.satisfies("@3:"):
             cmake_args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
