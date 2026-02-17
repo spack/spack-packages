@@ -17,7 +17,6 @@ class PySnakemakeInterfaceCommon(PythonPackage):
 
     license("MIT")
 
-    version("1.21.0", sha256="0b6f0ef2c1a19fa8c20d676f4e355b8ba7058e142640a1c3c36fd1b9e110ef53")
     version("1.17.4", sha256="c2142e1b93cbc18c2cf41d15968ba8688f60b077c8284e5de057cccfc215d4d3")
     version("1.17.3", sha256="cca6e2c728072a285a8e750f00fdd98d9c50063912184c41f8b89e4cab66c7b0")
     version("1.17.1", sha256="555c8218d9b68ddc1046f94a517e7d0f22e15bdc839d6ce149608d8ec137b9ae")
@@ -27,4 +26,3 @@ class PySnakemakeInterfaceCommon(PythonPackage):
 
     depends_on("python@:3", type=("build", "run"))
     depends_on("py-poetry-core", type="build")
-    depends_on("py-setuptools@42:", type=("build","run"), when="@1.18:")
