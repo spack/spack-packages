@@ -13,7 +13,7 @@ class Cosma(CMakePackage):
     Distributed Communication-Optimal Matrix-Matrix Multiplication Library
     """
 
-    maintainers("haampie", "kabicm", "teonnik", "simonpintarelli", "mtaillefumier")
+    maintainers("haampie", "kabicm", "simonpintarelli", "mtaillefumier")
     homepage = "https://github.com/eth-cscs/COSMA"
     url = "https://github.com/eth-cscs/COSMA/archive/refs/tags/v2.6.6.tar.gz"
     git = "https://github.com/eth-cscs/COSMA.git"
@@ -23,6 +23,7 @@ class Cosma(CMakePackage):
     # note: The default archives produced with github do not have the archives
     #       of the submodules.
     version("master", branch="master", submodules=False)
+    version("2.7.1", sha256="ef9acaecf0c073cb3358ea6fed07388811ba2f47469ba3803eefff956403f50e")
     version("2.7.0", sha256="f4775d18379539d7bb5053bff8acb4e13d6ed31a9677f498d9099a7500488789")
     version("2.6.6", sha256="1604be101e77192fbcc5551236bc87888d336e402f5409bbdd9dea900401cc37")
     version("2.6.5", sha256="10d9b7ecc1ce44ec5b9e0c0bf89278a63029912ec3ea99661be8576b553ececf")
