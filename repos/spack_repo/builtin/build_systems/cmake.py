@@ -42,24 +42,6 @@ def _extract_primary_generator(generator):
     return _primary_generator_extractor.match(generator).group(1)
 
 
-def _maybe_set_python_hints(pkg: PackageBase, args: List[str]) -> None:
-    """Set the PYTHON_EXECUTABLE, Python_EXECUTABLE, and Python3_EXECUTABLE CMake variables
-    if the package has Python as build or link dep and ``find_python_hints`` is set to True. See
-    ``find_python_hints`` for context."""
-    if not getattr(pkg, "find_python_hints", False) or not pkg.spec.dependencies(
-        "python", deptype=("build", "link")
-    ):
-        return
-    python_executable = pkg.spec["python"].command.path
-    args.extend(
-        [
-            define("PYTHON_EXECUTABLE", python_executable),
-            define("Python_EXECUTABLE", python_executable),
-            define("Python3_EXECUTABLE", python_executable),
-        ]
-    )
-
-
 def _supports_compilation_databases(pkg: PackageBase) -> bool:
     """Check if this package (and CMake) can support compilation databases."""
 
@@ -172,19 +154,15 @@ class CMakePackage(PackageBase):
     https://cmake.org/cmake/help/latest/
     """
 
+    #: List of package names for which CMake argument injection should be disabled
+    disable_cmake_hints_from: List[str] = []
+
     #: This attribute is used in UI queries that need to know the build
     #: system base class
     build_system_class = "CMakePackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
     default_buildsystem = "cmake"
-
-    #: When this package depends on Python and ``find_python_hints`` is set to True, pass the
-    #: defines {Python3,Python,PYTHON}_EXECUTABLE explicitly, so that CMake locates the right
-    #: Python in its builtin FindPython3, FindPython, and FindPythonInterp modules. Spack does
-    #: CMake's job because CMake's modules by default only search for Python versions known at the
-    #: time of release.
-    find_python_hints = True
 
     build_system("cmake")
 
@@ -407,7 +385,25 @@ class CMakeBuilder(BuilderWithDefaults):
             )
 
         _conditional_cmake_defaults(pkg, args)
-        _maybe_set_python_hints(pkg, args)
+
+        # Append extra hint/option arguments from dependencies
+        # TODO: Consider properties from virtual packages like Mpi
+        disable_cmake_hints_from = getattr(pkg, "disable_cmake_hints_from", [])
+        for dep in pkg.spec.edges_to_dependencies():
+            # Skip packages without the callback
+            dep_pkg = dep.spec.package
+            if not hasattr(dep_pkg, "dependent_cmake_args"):
+                continue
+
+            # Skip disabled dependency cmake args
+            if dep_pkg.name in disable_cmake_hints_from:
+                continue
+
+            # Skip disabled virtual dependency cmake args
+            if any(v in disable_cmake_hints_from for v in dep.virtuals):
+                continue
+
+            args.extend(dep_pkg.dependent_cmake_args(pkg.spec))
 
         return args
 
