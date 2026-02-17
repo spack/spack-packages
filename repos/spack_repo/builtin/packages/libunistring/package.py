@@ -20,6 +20,7 @@ class Libunistring(AutotoolsPackage, GNUMirrorPackage):
     license("GPL-2.0-or-later OR LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.4.1", sha256="67d88430892527861903788868c77802a217b0959990f7449f2976126a307763")
     version("1.2", sha256="632bd65ed74a881ca8a0309a1001c428bd1cbd5cd7ddbf8cedcd2e65f4dcdc44")
     version("1.1", sha256="827c1eb9cb6e7c738b171745dac0888aa58c5924df2e59239318383de0729b98")
     version("1.0", sha256="5bab55b49f75d77ed26b257997e919b693f29fd4a1bc22e0e6e024c246c72741")
@@ -29,7 +30,7 @@ class Libunistring(AutotoolsPackage, GNUMirrorPackage):
     version("0.9.7", sha256="2e3764512aaf2ce598af5a38818c0ea23dedf1ff5460070d1b6cee5c3336e797")
     version("0.9.6", sha256="2df42eae46743e3f91201bf5c100041540a7704e8b9abfd57c972b2d544de41b")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("iconv")
     with when("@master"):
