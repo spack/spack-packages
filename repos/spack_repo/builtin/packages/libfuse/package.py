@@ -158,15 +158,4 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             "INIT_D_PATH={0}".format(self.prefix.etc),
         ]
 
-        args.append(
-            "--enable-static"
-            if self.spec.satisfies("default_library=static")
-            else "--disable-static"
-        )
-        args.append(
-            "--enable-shared"
-            if self.spec.satisfies("default_library=shared")
-            else "--disable-shared"
-        )
-
         return args
