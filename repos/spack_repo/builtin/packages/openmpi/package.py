@@ -1199,13 +1199,13 @@ with '-Wl,-commons,use_dylibs' and without
 
         # Package dependencies
         for dep in ["lustre", "valgrind"]:
-            if spec.satisfies(f"^{dep}"):
+            if spec.satisfies(f"%{dep}"):
                 config_args.append(f"--with-{dep}={spec[dep].prefix}")
 
         # libevent support
         if spec.satisfies("+internal-libevent"):
             config_args.append("--with-libevent=internal")
-        elif spec.satisfies("^libevent"):
+        elif spec.satisfies("%libevent"):
             config_args.append(f"--with-libevent={spec['libevent'].prefix}")
 
         # PMIx/PRRTE support
@@ -1213,18 +1213,18 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.append("--with-pmix=internal")
             config_args.append("--with-prrte=internal")
         else:
-            if spec.satisfies("^pmix"):
+            if spec.satisfies("%pmix"):
                 config_args.append(f"--with-pmix={spec['pmix'].prefix}")
-            if spec.satisfies("^prrte"):
+            if spec.satisfies("%prrte"):
                 config_args.append(f"--with-prrte={spec['prrte'].prefix}")
 
-        if spec.satisfies("^zlib-api"):
+        if spec.satisfies("%zlib-api"):
             config_args.append(f"--with-zlib={spec['zlib-api'].prefix}")
 
         # Hwloc support
         if spec.satisfies("+internal-hwloc"):
             config_args.append("--with-hwloc=internal")
-        elif spec.satisfies("^hwloc"):
+        elif spec.satisfies("%hwloc"):
             config_args.append(f"--with-hwloc={spec['hwloc'].prefix}")
 
         # Java support
