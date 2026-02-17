@@ -15,10 +15,13 @@ class PyConfection(PythonPackage):
 
     license("MIT")
 
+    version("0.1.5", sha256="8e72dd3ca6bd4f48913cd220f10b8275978e740411654b6e8ca6d7008c590f0e")
     version("0.0.4", sha256="b1ddf5885da635f0e260a40b339730806dfb1bd17d30e08764f35af841b04ecf")
 
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-pydantic@1.7.4:1.7,1.9:1.10", type=("build", "run"))
-    depends_on("py-typing-extensions@3.7.4.1:4.4", type=("build", "run"), when="^python@3.7")
+    depends_on("py-pydantic@1.7.4:1.7,1.9:1.10", type=("build", "run"), when="@0.0.4")
+    depends_on("py-pydantic@1.7.4:1.7,1.9:2", type=("build", "run"), when="@0.1.5:")
+    depends_on("py-typing-extensions@3.7.4.1:4.4", type=("build", "run"), when="@0.0.4^python@3.7")
+    depends_on("py-typing-extensions@3.7.4.1:4", type=("build", "run"), when="@0.1.5:^python@3.7")
     depends_on("py-srsly@2.4:2", type=("build", "run"))

@@ -17,6 +17,7 @@ class PyQuantiphy(PythonPackage):
 
     license("MIT", checked_by="ax3l")
 
+    version("2.21", sha256="bf8d06ffa7150f69a5c7e3fb4a7a0a535109df85e7c0ab0f39fb317c5c9cafe0")
     version("2.20", sha256="ba5375ac55c3b90077a793588dd5a88aaf81b2c3b0fc9c9359513ac39f6ed84d")
 
     depends_on("python@3.6:", type=("build", "run"))

@@ -21,6 +21,7 @@ class GprofngGui(AutotoolsPackage, GNUMirrorPackage):
     license("GPL-3.0-only", checked_by="pramodk")
 
     version("develop", branch="master")
+    version("2.2", sha256="4a974d82f9e360bc442a4b548f170f92f4845b28e17e831007542b7dddfd1d95")
     version("1.1", sha256="94fa577b856f00b89a2832771a265e221818b88dc0b36d8bca365efe6f08e12a")
     version("1.0", sha256="c88da8ec91a9943636301fb7da9d337fe0851d874f8f7a4d2169bd859ee72dbc")
 

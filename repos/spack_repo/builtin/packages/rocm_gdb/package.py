@@ -22,6 +22,7 @@ class RocmGdb(AutotoolsPackage):
 
     maintainers("srekolam", "renjithravindrankannath")
 
+    version("7.1.1", sha256="4369b0dc0bea6c371872d517c43867fdfba3f12af7d5ae3900d4a4311bd49e30")
     version("7.1.0", sha256="33833597801680b76639b0cc97113da17ab3cad3167bf06419e838c9e2ae8113")
     version("7.0.2", sha256="1b06122860b9036ecdab4ba2ff2f3cab4707ad01941513aa23543962308c0e9e")
     version("7.0.0", sha256="a65824bb2f8d67eab9e3823da06638b4c015ba3342400159eed76ca2e7c48b25")
@@ -83,6 +84,7 @@ class RocmGdb(AutotoolsPackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-dbgapi@{ver}", type="link", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type="link", when=f"@{ver}")

@@ -15,6 +15,7 @@ class PyCloudpickle(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.1.2", sha256="7fda9eb655c9c230dab534f1983763de5835249750e85fbcef43aaa30a9a2414")
     version("3.0.0", sha256="996d9a482c6fb4f33c1a35335cf8afd065d2a56e973270364840712d9131a882")
     version("2.2.1", sha256="d89684b8de9e34a2a43b3460fbca07d09d6e25ce858df4d5a44240403b6178f5")
     version("2.2.0", sha256="3f4219469c55453cfe4737e564b67c2a149109dabf7f242478948b895f61106f")

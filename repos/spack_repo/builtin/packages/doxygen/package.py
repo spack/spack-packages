@@ -21,6 +21,8 @@ class Doxygen(CMakePackage):
 
     license("GPL-2.0", checked_by="mcmehrtens")
 
+    version("1.16.1", sha256="cdf9d614ee8ed6a939ad12ab31a6aaa1b0c089dff2a4ce20aa008893b686d636")
+    version("1.16.0", sha256="329ece14a718852e22bf9e9cc5cf0b2df20b70a6853417e818e80a6ea78ea6ac")
     version("1.15.0", sha256="b2a79d92a934d4dcda2bb0006e65adbabfcfe83343e024d5f598ff3a62c23dda")
     version("1.14.0", sha256="5663bf33e979381f470c2f4055c3b162e0abe41bdd6c5dccefd8d8775780bcc3")
     version("1.13.2", sha256="4c9d9c8e95c2af4163ee92bcb0f3af03b2a4089402a353e4715771e8d3701c48")

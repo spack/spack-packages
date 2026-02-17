@@ -15,6 +15,7 @@ class PyPdmBackend(PythonPackage):
 
     license("MIT", checked_by="matz-e")
 
+    version("2.4.7", sha256="a509d083850378ce919d41e7a2faddfc57a1764d376913c66731125d6b14110f")
     version("2.4.5", sha256="56c019c440308adad5d057c08cbb777e65f43b991a3b0920749781258972fe5b")
     version("2.4.3", sha256="dbd9047a7ac10d11a5227e97163b617ad5d665050476ff63867d971758200728")
     version("2.3.0", sha256="e39ed2da206d90d4a6e9eb62f6dce54ed4fa65ddf172a7d5700960d0f8a09e09")

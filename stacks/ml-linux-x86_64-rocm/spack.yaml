@@ -12,19 +12,17 @@ spack:
       - +rocm
       - amdgpu_target=gfx90a
     eigen:
-      require: ~rocm
+      require: ~rocm target=x86_64_v3
     gl:
       require: "osmesa"
-    miopen-hip:
-      require: ~ck
     mpi:
       require: openmpi
     python:
-      require: "@3.13:"
+      require: "@3.13: target=x86_64_v3"
     py-jaxlib:
-      require: "%c,cxx=clang"
+      require: "target=x86_64_v3 %c,cxx=clang"
     py-tensorflow:
-      require: "%c,cxx=clang"
+      require: "target=x86_64_v3 %c,cxx=clang"
     py-torch:
       require:
       - target=x86_64_v3

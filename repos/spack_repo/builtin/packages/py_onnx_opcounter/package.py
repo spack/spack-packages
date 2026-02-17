@@ -15,6 +15,7 @@ class PyOnnxOpcounter(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.0.4", sha256="b12ace32c4f953dd2232ebf901131af55eb8a4ebf6abf877a5af38cc1cc845f2")
     version("0.0.3", sha256="c75e76d066eb777e4855c486beb402b1fef83783a6634237b8ca20eb75cce8c9")
 
     depends_on("py-setuptools", type="build")

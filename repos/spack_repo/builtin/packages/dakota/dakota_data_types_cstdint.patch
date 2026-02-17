@@ -1,0 +1,12 @@
+diff --git a/src/dakota_data_types.hpp b/src/dakota_data_types.hpp
+index e770d180e..a45b518f0 100644
+--- a/src/dakota_data_types.hpp
++++ b/src/dakota_data_types.hpp
+@@ -22,6 +22,7 @@
+ #include <map>
+ #include <memory>
+ #include <set>
++#include <cstdint>
+ 
+ namespace Dakota {
+ 

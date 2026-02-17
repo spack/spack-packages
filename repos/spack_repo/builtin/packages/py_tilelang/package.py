@@ -47,6 +47,8 @@ class PyTilelang(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("patchelf", when="@:0.1.5")
 
     with default_args(type=["build", "run"]):
+        # https://github.com/tile-ai/tilelang/pull/1403
+        depends_on("py-torch-c-dlpack-ext", when="@0.1.7:")
         # https://github.com/tile-ai/tilelang/blob/v0.1.7/pyproject.toml
         depends_on("py-apache-tvm-ffi@:0.1.1", when="@0.1.7:")
         depends_on("py-tqdm@4.62.3:", when="@0.1.7:")

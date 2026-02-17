@@ -16,6 +16,7 @@ class PyBottle(PythonPackage):
 
     license("MIT")
 
+    version("0.13.4", sha256="807c789c3184d7070010dbdf1339ee46ff9fb9b6694d7caa3047f975f8a7df60")
     version("0.12.23", sha256="f38c26395736ae4653cbeb94087d3bd1d2e1ad0c29b1d3e5384f5db20b63bc98")
     version("0.12.19", sha256="b97277f8e87d452a0aa5fbcd16cd604a189e2cc17fdb2d4eaf6baa732f8d111b")
     version("0.12.18", sha256="176721f1e26082c66fd4df76f31800933e4bb36de6814b0fda3851cb409a95e6")

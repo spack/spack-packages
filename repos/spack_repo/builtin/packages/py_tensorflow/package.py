@@ -688,7 +688,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 cuda_paths.append(spec["tensorrt"].prefix)
 
                 # Please specify the TensorRT version you want to use
-                env.set("TF_TENSORRT_VERSION", spec["tensorrt"].version.up_to(1))
+                env.set("TF_TENSORRT_VERSION", str(spec["tensorrt"].version.up_to(1)))
 
                 # Please specify the location where TensorRT is installed
                 env.set("TENSORRT_INSTALL_PATH", spec["tensorrt"].prefix)
@@ -697,16 +697,16 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 env.unset("TF_TENSORRT_VERSION")
 
             # Please specify the CUDA SDK version you want to use
-            env.set("TF_CUDA_VERSION", spec["cuda"].version.up_to(2))
+            env.set("TF_CUDA_VERSION", str(spec["cuda"].version.up_to(2)))
 
             # Please specify the cuDNN version you want to use
-            env.set("TF_CUDNN_VERSION", spec["cudnn"].version.up_to(1))
+            env.set("TF_CUDNN_VERSION", str(spec["cudnn"].version.up_to(1)))
 
             if "+nccl" in spec:
                 cuda_paths.append(spec["nccl"].prefix)
 
                 # Please specify the locally installed NCCL version to use
-                env.set("TF_NCCL_VERSION", spec["nccl"].version.up_to(1))
+                env.set("TF_NCCL_VERSION", str(spec["nccl"].version.up_to(1)))
 
                 # Please specify the location where NCCL is installed
                 env.set("NCCL_INSTALL_PATH", spec["nccl"].prefix)

@@ -49,6 +49,10 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.9.0", sha256="8525c72ac7ea01851297df5b25ca4622c65299c265c87dfe78420bb29e7b1bb3")
+    version("0.8.3", sha256="fad6506b91b761842263dc6a9691ecc4f584b313a214ed6c89b6e5d899a69a3d")
+    version("0.8.2", sha256="f7e5080c97c1aaffb490a17d174cb59a83dd037800d9c41d309287bebd15b0b8")
+    version("0.8.1", sha256="38882602112dadfd49a2c74868a0722574ae88e04646a96f32f8c36a7893c548")
     version("0.8.0", sha256="864aa46b5a4475c70195bd3728d32224f5b5ae1c7dd9c70646ef1387b4b0b04b")
     version("0.7.2", sha256="56d92604f1bb60bb3dbd7dc7c7dc21502d10b3474b8b905ce29ce06db6a26e45")
     version("0.7.1", sha256="8b866b775106c712a0c5532775a00941d293a4807cffae8dbcca1e03f54ce1ff")
@@ -90,9 +94,6 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     variant("cuda", default=True, description="Build with CUDA enabled")
     variant("nccl", default=True, description="Build with NCCL enabled", when="+cuda")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     # docs/installation.md (Compatible with)
     with when("+cuda"):
         depends_on("cuda@12.1:", when="@0.4.26:")
@@ -114,18 +115,23 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6:", when="@0.4.28:")
             depends_on(f"{pkg_dep}@6.3:", when="@0.6:")
-            depends_on(f"{pkg_dep}@:6")
+            depends_on(f"{pkg_dep}@:6", when="@:0.7")
             depends_on(pkg_dep)
         depends_on("rocprofiler-register", when="^hip@6.2:")
         depends_on("hipblas-common", when="^hip@6.3:")
         depends_on("hsakmt-roct", when="^hip@:6.2")
         depends_on("llvm-amdgpu")
+        depends_on("rocprofiler-sdk", when="@0.8.1:")
         depends_on("py-nanobind")
 
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+
         # Bazel tends to be backwards-compatible within major versions
         # .bazelversion
-        depends_on("bazel@7.4.1:7", when="@0.5.3:")
+        depends_on("bazel@7.7.0:7", when="@0.8.1:")
+        depends_on("bazel@7.4.1:7", when="@0.5.3:0.8.0")
         depends_on("bazel@6.5.0:6", when="@0.4.28:0.5.2")
         depends_on("bazel@6.1.2:6", when="@0.4.11:0.4.27")
         depends_on("bazel@5.1.1:5", when="@0.3.7:0.4.10")
@@ -135,6 +141,9 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
         # build/build.py
         depends_on("py-build", when="@0.4.14:")
+
+        # XLA requires xxd?
+        depends_on("xxd-standalone", when="@0.9:")
 
     with default_args(type=("build", "run")):
         # Based on PyPI wheels
@@ -172,6 +181,11 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-ml-dtypes@0.0.3:", when="@0.4.7:")
 
     patch(
+        "https://github.com/jax-ml/jax/commit/0899e024c68254ec520006f51511f9a5e696dc17.patch?full_index=1",
+        sha256="c2509251a8708baf55e56c54fffc1725925720ff2365a0a186764f5dc50e611b",
+        when="@0.8.1:0.8",
+    )
+    patch(
         "https://github.com/jax-ml/jax/commit/a24ae9e9d5380d074058fb862043182327f4547f.patch?full_index=1",
         sha256="2455043e7a412f5c661dfa6a55f145addbe6b0ad53f385a72caee59a4bd1ef72",
         when="@0.7.0",
@@ -196,12 +210,12 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     # backports https://github.com/abseil/abseil-cpp/pull/1732
     patch("jaxxlatsl.patch", when="@0.4.28:0.4.32 target=aarch64:")
 
-    requires(
-        "%c,cxx=llvm",
-        "%c,cxx=apple-clang",
-        when="@0.7.1:",
-        msg="Clang is the only acceptable compiler.",
-    )
+    with when("@0.7.1:"):
+        with default_args(msg="Clang is the only acceptable compiler."):
+            requires("%c,cxx=llvm", when="platform=linux")
+            # Order here is important. Place the most common compiler first so that the
+            # concretizer will not try to use v0.7.0 to avoid taking a penalty on requirements
+            requires("%c,cxx=apple-clang", "%c,cxx=llvm", when="platform=darwin")
 
     conflicts(
         "cuda_arch=none",
@@ -247,6 +261,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 rocm_dependencies.append("hipblas-common")
             else:
                 rocm_dependencies.append("hsakmt-roct")
+            if spec.satisfies("@0.8.1:"):
+                rocm_dependencies.append("rocprofiler-sdk")
             env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
             for pkg_dep in rocm_dependencies:
                 env.prepend_path("TF_ROCM_MULTIPLE_PATHS", spec[pkg_dep].prefix)
@@ -317,6 +333,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 args.append(
                     f"--bazel_options=--override_repository=xla={self.stage.source_path}/xla"
                 )
+            amdgpu_targets = ",".join(self.spec.variants["amdgpu_target"].value)
+            args.append(f"--rocm_amdgpu_target={amdgpu_targets}")
 
         args.extend(
             [

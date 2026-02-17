@@ -32,6 +32,8 @@ class Hdf5VolCache(CMakePackage):
         if name == "cflags":
             if self.spec.satisfies("%oneapi") or self.spec.satisfies("%cce"):
                 flags.append("-Wno-error=incompatible-function-pointer-types")
+            if self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=incompatible-pointer-types")
         return (flags, None, None)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

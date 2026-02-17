@@ -5,7 +5,6 @@
 from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -19,6 +18,8 @@ class Coin3d(AutotoolsPackage, CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("4.0.6", sha256="e04a600809593feb2acbec4282803d1673926ddfa1d9fcd402f35ec26fc52e7e")
+    version("4.0.5", sha256="0abc591cb49cbb8d97eb70251340f61cc1bd75a3ac1fa7c23907af6671c1079a")
     version("4.0.4", sha256="80efd056a445050939a265db307d106ac7524105774d4be924a71b0cff23a719")
     version("4.0.0", sha256="e4f4bd57804b8ed0e017424ad2e45c112912a928b83f86c89963df9015251476")
     version("3.1.0", sha256="70dd5ef39406e1d9e05eeadd54a5b51884a143e127530876a97744ca54173dc3")
@@ -35,11 +36,7 @@ class Coin3d(AutotoolsPackage, CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("boost@1.45.0:", type="build")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, type="build")
+    depends_on("boost@:1.89", type="build", when="@:4.0.6")
     depends_on("doxygen", when="+html", type="build")
     depends_on("perl", when="+html", type="build")
     depends_on("glu", type="link")

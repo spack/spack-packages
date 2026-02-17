@@ -74,7 +74,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     variant("bzip2", default=True, description="Enable BZip2 compression")
     variant("zfp", default=True, description="Enable ZFP compression")
     variant("png", default=True, description="Enable PNG compression")
-    variant("sz", default=True, description="Enable SZ compression")
+    variant("sz", default=True, description="Enable SZ2 compression")
+    variant("sz3", default=True, when="@2.12:", description="Enable SZ3 compression")
     variant("mgard", default=not IS_WINDOWS, when="@2.8:", description="Enable MGARD compression")
 
     # Rransport engines
@@ -101,6 +102,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         when="@2.9:",
         description="Enable support for in situ visualization plugin using ParaView Catalyst",
     )
+
+    variant("xrootd", default=True, description="Enable the XRootD")
 
     # Optional language bindings, C++11 and C always provided
     variant("kokkos", default=False, when="@2.9:", description="Enable Kokkos support")
@@ -192,6 +195,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libpng@1.6:", when="+png")
     depends_on("zfp@0.5.1:0.5", when="+zfp")
     depends_on("sz@2.0.2.0:", when="+sz")
+    depends_on("sz3", when="+sz3")
     depends_on("mgard@compat-2022-11-18:", when="+mgard")
     depends_on("mgard@compat-2023-01-10:", when="@2.9: +mgard")
 
@@ -208,8 +212,17 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("aws-sdk-cpp", when="+aws")
     depends_on("libcatalyst@2", when="+libcatalyst")
 
+    depends_on("xrootd~davix", when="+xrootd")
+
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")
+
+    # cmake build race condition
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/16869cf18cb4bd07d500c3048c3d34d1611674c7.patch?full_index=1",
+        when="@2.11.0",
+        sha256="3af07961975ec6c9023dca182ed19458c021cdf1812d34d9a9e9dad1da60ae75",
+    )
 
     # add missing include <cstdint>
     patch("2.7-fix-missing-cstdint-include.patch", when="@2.7")
@@ -253,7 +266,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/ornladios/ADIOS2/commit/0bdda7d4729b898397e024010b1e82cb72921501.patch?full_index=1",
         sha256="c7214845bc9e4262deb901f9d689236e014f5193018617675bea4bed80ca20aa",
-        when="@2.11:",
+        when="@2.11",
     )
 
     @when("%fj")
@@ -279,8 +292,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             from_variant("BUILD_SHARED_LIBS", "shared"),
             from_variant("ADIOS2_USE_AWSSDK", "aws"),
-            from_variant("ADIOS2_USE_Blosc", "blosc"),
             from_variant("ADIOS2_USE_Blosc2", "blosc2"),
+            from_variant("ADIOS2_USE_Blosc", "blosc"),
             from_variant("ADIOS2_USE_BZip2", "bzip2"),
             from_variant("ADIOS2_USE_Campaign", "campaign"),
             from_variant("ADIOS2_USE_DataMan", "dataman"),
@@ -293,7 +306,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_Python", "python"),
             from_variant("ADIOS2_USE_SSC", "ssc"),
             from_variant("ADIOS2_USE_SST", "sst"),
+            from_variant("ADIOS2_USE_SZ3", "sz3"),
             from_variant("ADIOS2_USE_SZ", "sz"),
+            from_variant("ADIOS2_USE_XRootD", "xrootd"),
             from_variant("ADIOS2_USE_ZFP", "zfp"),
             from_variant("ADIOS2_USE_Catalyst", "libcatalyst"),
             from_variant("ADIOS2_USE_LIBPRESSIO", "libpressio"),

@@ -24,11 +24,13 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["ecp", "e4s", "hpsf"]
 
-    maintainers("WeiqunZhang", "asalmgren", "atmyers")
+    maintainers("WeiqunZhang", "asalmgren", "atmyers", "ax3l")
 
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("26.02", sha256="7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
+    version("26.01", sha256="b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
     version("25.12", sha256="60a788cf398563cdf25438a3bbe597fe1f3b18f359b30fb3c0f568dd62908f1a")
     version("25.11", sha256="be9e5f04e1f3e2252a14e5bb817fb4f2c231e0901ef85ee4e14341616f6b1ba6")
     version("25.10", sha256="3c3e9e239b42a5c73e72a418bd29cf6bb7660646ee62f5e11ff131eaaa04fa16")
@@ -158,6 +160,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=False, description="Enable HDF5-based I/O")
     variant("hypre", default=False, description="Enable Hypre interfaces")
     variant("petsc", default=False, description="Enable PETSc interfaces")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("sundials", default=False, description="Enable SUNDIALS interfaces", when="@21:")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
@@ -194,7 +197,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("conduit")
         depends_on("conduit +mpi", when="+mpi")
     with when("+catalyst"):
-        depends_on("libcatalyst@2.0: +conduit")
+        depends_on("libcatalyst@2.0:")
         depends_on("libcatalyst +mpi", when="+mpi")
     with when("+sundials"):
         depends_on("sundials@5.7.0: +ARKODE +CVODE", when="@21.07:22.04")
@@ -242,6 +245,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("hypre@2.19.0:", type="link", when="@21.03: ~cuda")
         depends_on("hypre@2.20.0:", type="link", when="@21.03: +cuda")
     depends_on("petsc", type="link", when="+petsc")
+    depends_on("vir-simd", type="build", when="+simd")
     depends_on("intel-oneapi-mkl", type=("build", "link"), when="+sycl")
 
     # these versions of gcc have lambda function issues
@@ -357,6 +361,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("AMReX_HDF5", "hdf5"),
             self.define_from_variant("AMReX_HYPRE", "hypre"),
             self.define_from_variant("AMReX_PETSC", "petsc"),
+            self.define_from_variant("AMReX_SIMD", "simd"),
             self.define_from_variant("AMReX_SUNDIALS", "sundials"),
             self.define_from_variant("AMReX_PIC", "pic"),
         ]

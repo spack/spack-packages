@@ -23,6 +23,7 @@ class PyNumcodecs(PythonPackage):
     license("MIT")
 
     version("main", branch="main", submodules=True)
+    version("0.16.5", sha256="0d0fb60852f84c0bd9543cc4d2ab9eefd37fc8efcc410acd4777e62a1d300318")
     version("0.16.2", sha256="9922dae0c3b01b5bed3b4bae239f4787e891daa3262c27971298669d029d10e9")
     version("0.15.0", sha256="52fb0c20d99845ef600eb3f8c8ad3e22fe2cb4f2a53394d331210af7cc3375ca")
     version("0.13.0", sha256="ba4fac7036ea5a078c7afe1d4dffeb9685080d42f19c9c16b12dad866703aa2e")
@@ -67,6 +68,9 @@ class PyNumcodecs(PythonPackage):
         depends_on("py-msgpack", when="+msgpack")
 
     patch("apple-clang-12.patch", when="@:0.13 %apple-clang@12:")
+
+    # https://github.com/zarr-developers/numcodecs/releases/tag/v0.16.3
+    requires("@0.16.3:", when="%gcc@15:")
 
     # TODO: this package should really depend on blosc, zstd, lz4, zlib, but right now it vendors
     # those libraries without any way to use the system versions.
