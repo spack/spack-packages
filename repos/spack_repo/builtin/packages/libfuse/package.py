@@ -5,12 +5,12 @@
 import os
 import re
 
-from spack_repo.builtin.build_systems.meson import MesonPackage
+from spack_repo.builtin.build_systems import autotools, meson
 
 from spack.package import *
 
 
-class Libfuse(MesonPackage):
+class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
     """The reference implementation of the Linux FUSE (Filesystem in
     Userspace) interface"""
 
@@ -59,13 +59,21 @@ class Libfuse(MesonPackage):
     )
     variant("utils", default=True, description="Build and install helper and example programs.")
 
+    build_system(
+        conditional("meson", when="@3:"),
+        conditional("autotools", when="@:2"),
+        default="meson",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("autoconf", type="build", when="@:2")
-    depends_on("automake", type="build", when="@:2")
-    depends_on("libtool", type="build", when="@:2")
-    depends_on("gettext", type="build", when="@:2")
+    with when("build_system=autotools"):
+        depends_on("autoconf", type="build", when="@:2")
+        depends_on("automake", type="build", when="@:2")
+        depends_on("libtool", type="build", when="@:2")
+        depends_on("gettext", type="build", when="@:2")
+
     depends_on("gmake", type="build")
 
     provides("fuse")
@@ -112,6 +120,8 @@ class Libfuse(MesonPackage):
         match = re.search(r"^fusermount.*version: (\S+)", output)
         return match.group(1) if match else None
 
+
+class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         args = []
 
@@ -139,9 +149,9 @@ class Libfuse(MesonPackage):
 
         return args
 
-    # Before libfuse 3.x this was an autotools package
-    @when("@:2")
-    def meson(self, spec, prefix):
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder):
+    def configure_args(self):
         ar_args = ["-ivf"]
         for dep in self.spec.dependencies(deptype="build"):
             if os.path.exists(dep.prefix.share.aclocal):
@@ -149,7 +159,6 @@ class Libfuse(MesonPackage):
         autoreconf(*ar_args)
 
         args = [
-            "--prefix={0}".format(prefix),
             "MOUNT_FUSE_PATH={0}".format(self.prefix.sbin),
             "UDEV_RULES_PATH={0}".format(self.prefix.etc),
             "INIT_D_PATH={0}".format(self.prefix.etc),
@@ -166,12 +175,4 @@ class Libfuse(MesonPackage):
             else "--disable-shared"
         )
 
-        configure(*args)
-
-    @when("@:2")
-    def build(self, spec, prefix):
-        make()
-
-    @when("@:2")
-    def install(self, spec, prefix):
-        make("install")
+        return args
