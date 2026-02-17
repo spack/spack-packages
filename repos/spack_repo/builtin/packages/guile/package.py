@@ -50,6 +50,7 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
     depends_on("libtool@1.5.6:", type="link")  # links to libltdl.so
     depends_on("libunistring@0.9.3:")
     depends_on("libffi")
+    depends_on("libxcrypt", type="link")
     depends_on("readline", when="+readline")
     depends_on("pkgconfig", type="build")
     depends_on("gperf", when="@3:")
