@@ -472,6 +472,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("boost+graph+math+exception+stacktrace", when="+boost")
     depends_on("boost+graph+math+exception+stacktrace", when="@:13.4.0 +stk")
     depends_on("cgns", when="+exodus")
+    depends_on("cmake@3.27:", type="build", when="@17.0.0:")
     depends_on("cmake@3.23:", type="build", when="@14.0.0:")
     depends_on("googletest", when="@17: +gtest")
     depends_on("hdf5+hl", when="+hdf5")
