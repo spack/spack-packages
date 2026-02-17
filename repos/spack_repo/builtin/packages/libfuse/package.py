@@ -69,10 +69,10 @@ class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
     depends_on("cxx", type="build")  # generated
 
     with when("build_system=autotools"):
-        depends_on("autoconf", type="build", when="@:2")
-        depends_on("automake", type="build", when="@:2")
-        depends_on("libtool", type="build", when="@:2")
-        depends_on("gettext", type="build", when="@:2")
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
+        depends_on("gettext", type="build")
 
     depends_on("gmake", type="build")
 
