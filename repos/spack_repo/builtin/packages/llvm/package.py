@@ -211,7 +211,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     )
     variant(
         "targets",
-        default="all",
+        default="aarch64,amdgpu,nvptx,x86",
         description=(
             "What targets to build. Spack's target family is always added "
             "(e.g. X86 is automatically enabled when targeting znver2)."
