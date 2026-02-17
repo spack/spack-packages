@@ -60,7 +60,7 @@ spack:
     - py-torchdata
     - py-torchgeo
     - py-torchmetrics
-    # - py-torchvision
+    - py-torchvision
     - py-vector-quantize-pytorch
 
     # scikit-learn
