@@ -86,7 +86,7 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
                 "--with-systemduserunitdir=no",
                 "CXXFLAGS={0}".format(self.spec["libtool"].headers.cpp_flags),
                 "LDFLAGS={0}".format(self.spec["libtool"].libs.search_flags),
-                "--libdir={0}".format(self.prefix.lib64),
+                "--libdir={0}".format(self.prefix.lib),
             ]
             # toggle based on variants
             args += self.enable_or_disable("alsa")
@@ -123,9 +123,10 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
                 "-Dtests=false",
                 "-Ddefault_library=shared",
                 "-Dprefix={0}".format(self.prefix),
-                "-Dlibdir={0}/lib64".format(self.prefix),
+                "-Dlibdir={0}".format(self.prefix.lib),
                 "-Dbashcompletiondir={0}/share/bash-completion/completions".format(self.prefix),
-                "-Dsystemduserunitdir={0}/lib/systemd/user".format(self.prefix),
+                "-Dsystemduserunitdir={0}systemd/user".format(self.prefix.lib),
+                "-Dudevrulesdir={0}udev/rules.d".format(self.prefix.lib),
             ]
 
     def setup_build_environment(self, env):
