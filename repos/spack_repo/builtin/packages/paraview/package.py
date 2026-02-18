@@ -128,6 +128,11 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant("x", default=True, description="Enable X11 support")
     variant("examples", default=False, description="Build examples")
     variant("hdf5", default=False, description="Use external HDF5")
+    variant(
+        "hdf5_extra",
+        default=False,
+        description="Enable extra HDF5 based readers (AMR, CGNS, H5Part, H5Rage, PIO)",
+    )
     variant("shared", default=True, description="Builds a shared version of the library")
     variant("kits", default=True, description="Use module kits")
     variant("pagosa", default=False, description="Build the pagosa adaptor")
@@ -177,6 +182,11 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         ' "on" or "off" will always override the build_edition.',
     )
 
+    # Some IO modules require canonical build edition to enable
+    requires("build_edition=canonical", when="+adios2")
+    requires("build_edition=canonical", when="+fides")
+    requires("build_edition=canonical", when="+visitbridge")
+
     conflicts("~hdf5", when="+visitbridge")
     conflicts("+adios2", when="@:5.10 ~mpi")
     conflicts("+fides", when="~adios2", msg="Fides needs ADIOS2")
@@ -206,6 +216,14 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         "paraview@:5.8",
         when="%xl_r",
         msg="Use paraview@5.9.0 with %xl_r. Earlier versions are not able to build with xl.",
+    )
+    # Require HDF5 and MPI for the extra HDF5 based readers
+    conflicts("+hdf5_extra", when="~hdf5")
+    conflicts("+hdf5_extra", when="~mpi")
+    conflicts(
+        "+hdf5_extra",
+        when="@:5.12",
+        msg="hdf5_extra is not implemented for older versions of ParaView",
     )
 
     depends_on("c", type="build")  # generated
@@ -356,8 +374,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("eigen@3")
     depends_on("freetype")
     depends_on("freetype@:2.10.2", when="@:5.8")
-    # depends_on('hdf5+mpi', when='+mpi')
-    # depends_on('hdf5~mpi', when='~mpi')
     depends_on("hdf5+hl+mpi", when="+hdf5+mpi")
     depends_on("hdf5+hl~mpi", when="+hdf5~mpi")
     depends_on("hdf5@1.10:", when="+hdf5 @5.10:")
@@ -642,10 +658,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("@5.10:"):
             cmake_args.extend(
                 [
-                    "-DVTK_MODULE_USE_EXTERNAL_ParaView_vtkcatalyst:BOOL=OFF",
-                    "-DVTK_MODULE_USE_EXTERNAL_VTK_ioss:BOOL=OFF",
                     "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
                     "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
+                    "-DVTK_MODULE_USE_EXTERNAL_ParaView_vtkcatalyst:BOOL=OFF",
+                    "-DVTK_MODULE_USE_EXTERNAL_VTK_ioss:BOOL=OFF",
                 ]
             )
 
@@ -710,7 +726,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         # so explicitly specify which QT major version is actually being used
         if spec.satisfies("+qt"):
             if spec.satisfies("^qt"):
-                cmake_args.extend(["-DPARAVIEW_QT_VERSION=%s" % spec["qt"].version[0]])
+                cmake_args.append("-DPARAVIEW_QT_VERSION=%s" % spec["qt"].version[0])
             else:
                 cmake_args.extend(["-DPARAVIEW_QT_VERSION=%s" % spec["qt-base"].version[0]])
                 cmake_args.extend(["-DVTK_QT_VERSION=%s" % spec["qt-base"].version[0]])
@@ -718,6 +734,18 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             if IS_WINDOWS:
                 # Windows does not currently support Qt Quick
                 cmake_args.append("-DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=NO")
+
+        if "+hdf5_extra" in spec and spec.satisfies("@5.13:"):
+            cmake_args.extend([
+                # CGNS Reader and/or Writer is required to enable HDF5 when building non-canonical.
+                # CGNS is enabled by default for canonical build edition where this is a noop.
+                self.define("PARAVIEW_ENABLE_CGNS_READER", "YES"),
+                # TODO: Add extra hdf5 based readers using an `io` variant as is done in VTK
+                self.define("VTK_MODULE_ENABLE_VTK_IOPIO", "YES"),
+                self.define("VTK_MODULE_ENABLE_VTK_IOH5Rage", "YES"),
+                self.define("VTK_MODULE_ENABLE_VTK_IOH5Part", "YES"),
+                self.define("VTK_MODULE_ENABLE_VTK_IOAMR", "YES"),
+            ])
 
         if "+fortran" in spec:
             cmake_args.append("-DPARAVIEW_USE_FORTRAN:BOOL=ON")
@@ -876,13 +904,15 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             cmake_args.append("-DPARAVIEW_ENABLE_CATALYST=YES")
 
         cmake_args.append(self.define_from_variant("PARAVIEW_ENABLE_RAYTRACING", "raytracing"))
-        # Currently only support OSPRay ray tracing
-        cmake_args.append(self.define_from_variant("VTK_ENABLE_OSPRAY", "raytracing"))
-        cmake_args.append(self.define_from_variant("VTKOSPRAY_ENABLE_DENOISER", "raytracing"))
+        if "+raytracing" in spec:
+            # Currently only support OSPRay ray tracing
+            cmake_args.append(self.define("VTK_ENABLE_OSPRAY", True))
+            cmake_args.append(self.define("VTKOSPRAY_ENABLE_DENOISER", True))
 
         # CDI
         cmake_args.append(self.define_from_variant("PARAVIEW_PLUGIN_ENABLE_CDIReader", "cdi"))
-        cmake_args.append(self.define_from_variant("PARAVIEW_PLUGIN_AUTOLOAD_CDIReader", "cdi"))
+        if "+cdi" in spec:
+            cmake_args.append(self.define_from_variant("PARAVIEW_PLUGIN_AUTOLOAD_CDIReader", True))
 
         return cmake_args
 
