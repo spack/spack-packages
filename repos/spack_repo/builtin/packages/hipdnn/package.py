@@ -76,7 +76,6 @@ class Hipdnn(CMakePackage):
                 string=True,
             )
 
-
     @classmethod
     def determine_version(cls, lib):
         match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
