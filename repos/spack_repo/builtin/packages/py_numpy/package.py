@@ -299,7 +299,7 @@ class PyNumpy(PythonPackage):
         if spec["lapack"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
             lapack = self._blas_lapack_pkg_config_mkl(spec["lapack"])
 
-        if spec["blas"].name == ["blis"]:
+        if spec["blas"].name == "blis":
             blas = "blis"
 
         # Handle AMD BLIS: use multithreaded pkg-config name for @5.1: when threading is enabled
