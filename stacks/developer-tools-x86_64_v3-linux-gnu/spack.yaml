@@ -78,6 +78,13 @@ spack:
   - graphviz
   - doxygen
   - meson
+  # dev bootstrap
+  - py-ruff@0.15.0
+  - py-ty@0.0.15
+  - py-black
+  - py-flake8
+  - py-mpypy
+  - py-isort
 
   ci:
     pipeline-gen:
