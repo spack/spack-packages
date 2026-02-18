@@ -227,7 +227,6 @@ class PyScipy(PythonPackage):
 
         return {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 # http://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dfortran_std": fortran_std,

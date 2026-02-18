@@ -337,7 +337,6 @@ class PyNumpy(PythonPackage):
 
         settings = {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 # https://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dblas": blas,

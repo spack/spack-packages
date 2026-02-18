@@ -300,7 +300,6 @@ class PyMatplotlib(PythonPackage):
     def config_settings(self, spec, prefix):
         return {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 "-Dsystem-freetype": True,
                 "-Dsystem-qhull": True,
