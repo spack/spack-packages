@@ -30,6 +30,9 @@ class Nep(CMakePackage):
     variant("bzip2", default=True, description="Enable BZIP2 compression support")
     variant("fortran", default=True, description="Build Fortran wrappers")
 
+    depends_on("c", type="build")
+    depends_on("fortran", when="+fortran", type="build")
+
     depends_on("netcdf-c@4.9:", type=("build", "link"))
     depends_on("hdf5@1.12:+hl~mpi", type=("build", "link"))
     depends_on("lz4", when="+lz4", type=("build", "link"))
