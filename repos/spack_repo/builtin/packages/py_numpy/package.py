@@ -302,10 +302,13 @@ class PyNumpy(PythonPackage):
         if spec["blas"].name == ["blis"]:
             blas = "blis"
 
-        # Handle AMD BLIS: use multithreaded pkg-config name for @5.1: when OpenMP is enabled
+        # Handle AMD BLIS: use multithreaded pkg-config name for @5.1: when threading is enabled
         if spec["blas"].name == "amdblis":
             blas = "blis"
-            if spec["amdblis"].satisfies("@5.1: threads=openmp"):
+            if spec["amdblis"].satisfies('@5.1:') and (
+                spec["amdblis"].satisfies('threads=openmp') or
+                spec["amdblis"].satisfies('threads=pthreads')
+            ):
                 blas = "blis-mt"
 
         if spec["blas"].name == "cray-libsci":
