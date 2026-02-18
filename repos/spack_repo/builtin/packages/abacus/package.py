@@ -16,11 +16,11 @@ class Abacus(MakefilePackage):
     for large-scale electronic-structure simulations
     from first principles"""
 
-    maintainers("bitllion")
-
     homepage = "http://abacus.ustc.edu.cn/"
-    git = "https://github.com/abacusmodeling/abacus-develop.git"
     url = "https://github.com/abacusmodeling/abacus-develop/archive/refs/tags/v2.2.1.tar.gz"
+    git = "https://github.com/abacusmodeling/abacus-develop.git"
+
+    maintainers("bitllion")
 
     license("LGPL-3.0-or-later")
 
@@ -74,13 +74,13 @@ NP      = 14
             spec["cereal"].prefix,
         )
 
-        with open(self.build_directory + "/Makefile.vars", "w") as f:
+        with open(join_path(self.build_directory, "Makefile.vars"), "w") as f:
             f.write(tempInc)
 
         lineList = []
         Pattern1 = re.compile("^ELPA_INCLUDE_DIR")
         Pattern2 = re.compile("^ELPA_LIB\\s*= ")
-        with open(self.build_directory + "/Makefile.system", "r") as f:
+        with open(join_path(self.build_directory, "Makefile.system"), "r") as f:
             while True:
                 line = f.readline()
                 if not line:
@@ -91,11 +91,11 @@ NP      = 14
                     pass
                 else:
                     lineList.append(line)
-        with open(self.build_directory + "/Makefile.system", "w") as f:
+        with open(join_path(self.build_directory, "Makefile.system"), "w") as f:
             for i in lineList:
                 f.write(i)
 
-        with open(self.build_directory + "/Makefile.system", "a") as f:
+        with open(join_path(self.build_directory, "Makefile.system"), "a") as f:
             f.write(system_var)
 
     def install(self, spec, prefix):
