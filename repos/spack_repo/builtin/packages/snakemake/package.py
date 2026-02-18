@@ -16,13 +16,16 @@ class Snakemake(PythonPackage):
 
     license("MIT")
 
+    version("9.14.0", sha256="d1126fe73cd182c6810a7981130c197ce8b707122ab3aa30b510eaa69f6dec06")
+    version("9.13.7", sha256="c9e64fe5b8b57330680d4acc7ffd4e3d78c053379f940942dd3016281bc05383")
+    version("9.12.0", sha256="7d479110bc05eb68bf4bb9caa2dcb231ceb1b0c0967180fd2f37574962a8dc24")
+    version("9.11.9", sha256="dfebcc7fb1bbbcdf1a9aa6507c1c7cbeb77e906ac4214c9d47e1db12d53a5abd")
+    version("9.10.1", sha256="538308d13c0848c3d1a8b166f3a608d7a4800c3bac2313bd02b29fdf8c5a2c9f")
+    version("9.9.0", sha256="38b5e1a39d4f6eee361c9e30da1de5ec629ff67581e6ac3497e415d92f02961d")
+    version("9.8.1", sha256="2b2e5b6bac1078e38a0cc1b995e6c10f283a7270e2537520cd6afa73d1c0c961")
+    version("9.7.1", sha256="f3dacd42f6b38493c1a1faf2d851fd01af8b8167c82120b4cb48604331b0d3be")
     version("9.6.3", sha256="0ab3710d7782749eda5dc1af7f06b75d041172a1abdab31fc5c2ed78ec4f39cd")
-    # FIXME the necessary dependencies for versions @9: have not been added below
-    version(
-        "8.25.2",
-        sha256="d5103ba37d9747bfea584b43ddcbe7255ab3f8e2aeb222e89bcb9a40c80ae603",
-        preferred=True,
-    )
+    version("8.25.2", sha256="d5103ba37d9747bfea584b43ddcbe7255ab3f8e2aeb222e89bcb9a40c80ae603")
     version("8.18.2", sha256="7dc8cdc3c836444c2bc3d67a4a7f4d703557c1bf96a90da18f312f4df9daefc4")
     version("8.5.2", sha256="cc94876263182277e4a429e5d371c867400eeddc791c114dfd090d1bb3158975")
     version("7.32.4", sha256="fdc3f15dd7b06fabb7da30d460e0a3b1fba08e4ea91f9c32c47a83705cdc7b6e")
@@ -56,19 +59,26 @@ class Snakemake(PythonPackage):
     depends_on("py-immutables", type=("build", "run"), when="@8:")
     depends_on("py-configargparse", type=("build", "run"))
     depends_on("py-connectionpool@0.0.3:", type=("build", "run"))
-    depends_on("py-datrie", type=("build", "run"))
+    depends_on("py-datrie", type=("build", "run"), when="@:8.29.0")
     depends_on("py-docutils", type=("build", "run"))
     depends_on("py-gitpython", type=("build", "run"))
     depends_on("py-humanfriendly", type=("build", "run"), when="@7.20.0:")
     depends_on("py-jinja2@3", type=("build", "run"), when="@7:")
     depends_on("py-jsonschema", type=("build", "run"))
     depends_on("py-nbformat", type=("build", "run"))
+    depends_on("py-packaging@24.0:", type=("build", "run"), when="@9.7:")
+    depends_on("py-packaging@24.2:", type=("build", "run"), when="@9.7: ^py-setuptools@77:")
     depends_on("py-packaging", type=("build", "run"), when="@7.29.0:")
     depends_on("py-psutil", type=("build", "run"))
-    depends_on("py-pulp@2.3.1:2.9", type=("build", "run"), when="@8.22.0:")
+    depends_on("py-pulp@2.3.1:3.3", type=("build", "run"), when="@9.11.5:")
+    depends_on("py-pulp@2.3.1:3.2", type=("build", "run"), when="@9.6:9.11.4")
+    depends_on("py-pulp@2.3.1:3.1", type=("build", "run"), when="@9.3.1:9.5.1")
+    depends_on("py-pulp@2.3.1:3.0", type=("build", "run"), when="@9.1:9.3.0")
+    depends_on("py-pulp@2.3.1:2.9", type=("build", "run"), when="@8.22.0:9.0")
     depends_on("py-pulp@2.3.1:2.8", type=("build", "run"), when="@8.1.2:8.21")
     depends_on("py-pulp@2:", type=("build", "run"), when="@:8.1.1")
     depends_on("py-pyyaml", type=("build", "run"))
+    depends_on("py-referencing", type=("build", "run"), when="@9.6:")
 
     depends_on("py-requests@2.8.1:2", type=("build", "run"), when="@8.4.12")
     depends_on("py-requests", type=("build", "run"))
@@ -97,23 +107,45 @@ class Snakemake(PythonPackage):
         "py-snakemake-interface-executor-plugins@8.1.3:8", type=("build", "run"), when="@8:8.5"
     )
 
+    depends_on("py-snakemake-interface-common@1.20.1:1", type=("build", "run"), when="@9.7:")
+    depends_on("py-snakemake-interface-common@1.20.0:1", type=("build", "run"), when="@9.6.3:9.6")
     depends_on("py-snakemake-interface-common@1.17:1", type=("build", "run"), when="@8.4.10:")
     depends_on("py-snakemake-interface-common@1.15:1", type=("build", "run"), when="@8:")
 
     depends_on(
-        "py-snakemake-interface-storage-plugins@3.2.3:3", type=("build", "run"), when="@8.15.1:"
+        "py-snakemake-interface-storage-plugins@4.1.0:4", type=("build", "run"), when="@9.1:"
     )
     depends_on(
-        "py-snakemake-interface-storage-plugins@3.1:3", type=("build", "run"), when="@8.4.10:"
+        "py-snakemake-interface-storage-plugins@3.5:3", type=("build", "run"), when="@9.0:9.0.1"
     )
-    depends_on("py-snakemake-interface-storage-plugins@3", type=("build", "run"), when="@8:")
+    depends_on(
+        "py-snakemake-interface-storage-plugins@3.2.3:3", type=("build", "run"), when="@8.15.1:8"
+    )
+    depends_on(
+        "py-snakemake-interface-storage-plugins@3.1:3",
+        type=("build", "run"),
+        when="@8.4.10:8.15.0",
+    )
 
+    depends_on("py-snakemake-interface-storage-plugins@3", type=("build", "run"), when="@8:9.0")
+
+    depends_on("py-snakemake-interface-report-plugins@1.2:1", type=("build", "run"), when="@9.11:")
     depends_on("py-snakemake-interface-report-plugins@1.1:1", type=("build", "run"), when="@8.22:")
     depends_on("py-snakemake-interface-report-plugins@1", type=("build", "run"), when="@8.5:")
+    depends_on(
+        "py-snakemake-interface-logger-plugins@1.1.0:2", type=("build", "run"), when="@9.11.7:"
+    )
+    depends_on(
+        "py-snakemake-interface-logger-plugins@1.1.0:1", type=("build", "run"), when="@9:9.11.6"
+    )
+    depends_on(
+        "py-snakemake-interface-scheduler-plugins@2.0.0:2", type=("build", "run"), when="@9.10:"
+    )
     depends_on("py-tabulate", type=("build", "run"))
     depends_on("py-throttler", type=("build", "run"), when="@7:")
     depends_on("py-wrapt", type=("build", "run"))
-    depends_on("py-yte@1.5.1:1", type=("build", "run"), when="@7.28.1:")
+    depends_on("py-yte@1.5.5:1", type=("build", "run"), when="@8.26.0:")
+    depends_on("py-yte@1.5.1:1", type=("build", "run"), when="@7.28.1:8.25.5")
     depends_on("py-yte@1", type=("build", "run"), when="@7:7.28.0")
     depends_on("py-dpath@2.1.6:2", type=("build", "run"), when="@8.3:")
     depends_on("py-conda-inject@1.3.1:1", type=("build", "run"), when="@8:")

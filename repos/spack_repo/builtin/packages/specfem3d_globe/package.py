@@ -18,6 +18,7 @@ class Specfem3dGlobe(AutotoolsPackage, CudaPackage):
 
     license("GPL-3.0-only")
 
+    version("8.1.0", sha256="6492d02067e78c549ee688488f39c1ec659f0468572ecd6753dbd40e08dc17f4")
     version("8.0.0", sha256="3e234e66fce4cc5484c651584187b255f951ee6cd1ec057e6aa6d42aced9052d")
     version("7.0.2", sha256="78b4cfbe4e5121927ab82a8c2e821b65cdfff3e94d017303bf21af7805186d9b")
 
@@ -31,6 +32,10 @@ class Specfem3dGlobe(AutotoolsPackage, CudaPackage):
 
     depends_on("mpi")
     depends_on("opencl", when="+opencl")
+
+    # fix compilation error in MPI calls for gfortran,
+    # adding `-fallow-argument-mismatch` and remove `-pedantic`
+    patch("0001-fix-compilation-flags.patch", when="@8.1.0 %fortran=gcc")
 
     # When building with the gcc compiler,'Werror' is added to FFLAGS.
     # In the case of using the gcc compiler and the default simulation
@@ -47,7 +52,7 @@ class Specfem3dGlobe(AutotoolsPackage, CudaPackage):
         spec = self.spec
 
         if "+cuda" in spec:
-            args.append("--with-cuda")
+            args.append("--with-cuda=cuda{0}".format(spec["cuda"].version[0]))
             args.append("CUDA_LIB={0}".format(spec["cuda"].libs.directories[0]))
             args.append("CUDA_INC={0}".format(spec["cuda"].prefix.include))
             args.append("MPI_INC={0}".format(spec["mpi"].prefix.include))

@@ -29,7 +29,10 @@ class PyJedi(PythonPackage):
         depends_on("python@:3.10", when="@:0.18.1")
         depends_on("python@:3.11", when="@:0.19.0")
         depends_on("python@:3.12", when="@:0.19.1")
-        depends_on("python@:3.13", when="@0.19.2:")
+        # Although v0.19.2 does not explicitly support Python v3.14, it does work well enough
+        # according to the project maintainer that we've chosen to drop the upperbound constraint
+        # https://github.com/ipython/ipython/issues/15117#issuecomment-3799451766
+        # depends_on("python@:3.13", when="@0.19.2:")
 
         depends_on("py-setuptools")
 

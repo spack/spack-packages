@@ -21,3 +21,4 @@ class PyHfXet(PythonPackage):
 
     # https://github.com/huggingface/xet-core/blob/v1.1.5/hf_xet/pyproject.toml
     depends_on("py-maturin@1.7:1", type="build")
+    depends_on("rust", type="build")

@@ -1,0 +1,248 @@
+diff --git a/commands/sub b/commands/sub
+index 6038e58e..0d39b56d 100755
+--- a/commands/sub
++++ b/commands/sub
+@@ -1,9 +1,9 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ set -e
+ 
+-if [ ! -f ${BART_TOOLBOX_PATH}/bart ] ; then
++if [ ! -f ${BART_TOOLBOX_PATH}/bin/bart ] ; then
+ 
+-	if [ -f ${TOOLBOX_PATH}/bart ] ; then
++	if [ -f ${TOOLBOX_PATH}/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH=${TOOLBOX_PATH}
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!"
+@@ -18,5 +18,5 @@ if [ $# -lt 3 ] ; then
+ 	exit 1
+ fi
+ 
+-${BART_TOOLBOX_PATH}/bart saxpy -- -1. $1 $2 $3
++bart saxpy -- -1. $1 $2 $3
+ 
+diff --git a/matlab/get_bart_path.m b/matlab/get_bart_path.m
+index 8874a675..e491e41f 100644
+--- a/matlab/get_bart_path.m
++++ b/matlab/get_bart_path.m
+@@ -7,7 +7,7 @@ function [bart_path, isWSL] = get_bart_path()
+ % 2022 Jon Tamir <jtamir.utexas.edu>
+ 
+ 	% Check bart toolbox path
+-	bart_path = getenv('BART_TOOLBOX_PATH');
++	bart_path = [getenv('BART_TOOLBOX_PATH') '/bin'];
+ 	isWSL = false;
+ 	if isempty(bart_path)
+ 		if ~isempty(getenv('TOOLBOX_PATH'))
+diff --git a/python/bart.py b/python/bart.py
+index c777e20a..943bb1b7 100644
+--- a/python/bart.py
++++ b/python/bart.py
+@@ -19,7 +19,7 @@ def bart(nargout, cmd, *args, **kwargs):
+         return
+ 
+     try:
+-        bart_path = os.environ['BART_TOOLBOX_PATH']
++        bart_path = os.path.join(os.environ['BART_TOOLBOX_PATH'], 'bin')
+     except:
+         bart_path = None
+     # support old environment variable:
+diff --git a/python/splines_from_svg.py b/python/splines_from_svg.py
+index d08370cd..744fa08b 100755
+--- a/python/splines_from_svg.py
++++ b/python/splines_from_svg.py
+@@ -20,12 +20,12 @@ import numpy as np
+ import argparse
+ 
+ import sys
+-if 'BART_TOOLBOX_PATH' in os.environ and os.path.exists(os.environ['BART_TOOLBOX_PATH']):
+-    sys.path.insert(0, os.path.join(os.environ['BART_TOOLBOX_PATH'], 'python'))
+-elif 'TOOLBOX_PATH' in os.environ and os.path.exists(os.environ['TOOLBOX_PATH']):
+-    sys.path.insert(0, os.path.join(os.environ['TOOLBOX_PATH'], 'python'))
+-else:
+-    raise RuntimeError("BART_TOOLBOX_PATH is not set correctly!")
++#if 'BART_TOOLBOX_PATH' in os.environ and os.path.exists(os.environ['BART_TOOLBOX_PATH']):
++#    sys.path.insert(0, os.path.join(os.environ['BART_TOOLBOX_PATH'], 'python'))
++#elif 'TOOLBOX_PATH' in os.environ and os.path.exists(os.environ['TOOLBOX_PATH']):
++#    sys.path.insert(0, os.path.join(os.environ['TOOLBOX_PATH'], 'python'))
++#else:
++#    raise RuntimeError("BART_TOOLBOX_PATH is not set correctly!")
+ import cfl
+ 
+ DBLEVEL = 0
+diff --git a/scripts/espirit_econ.sh b/scripts/espirit_econ.sh
+index 07140d97..5075ea7d 100644
+--- a/scripts/espirit_econ.sh
++++ b/scripts/espirit_econ.sh
+@@ -56,15 +56,15 @@ if [ $# -lt 2 ] ; then
+ fi
+ 
+ 
+-if [ ! -e "$BART_TOOLBOX_PATH"/bart ] ; then
+-	if [ -e "$TOOLBOX_PATH"/bart ] ; then
++if [ ! -e "$BART_TOOLBOX_PATH"/bin/bart ] ; then
++	if [ -e "$TOOLBOX_PATH"/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH="$TOOLBOX_PATH"
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+ 		exit 1
+ 	fi
+ fi
+-export PATH="$BART_TOOLBOX_PATH:$PATH"
++
+ 
+ input=$(readlink -f "$1")
+ output=$(readlink -f "$2")
+@@ -75,7 +75,7 @@ if [ ! -e $input.cfl ] ; then
+ 	exit 1
+ fi
+ 
+-if [ ! -e $TOOLBOX_PATH/bart ] ; then
++if [ ! -e $TOOLBOX_PATH/bin ] ; then
+         echo "\$TOOLBOX_PATH is not set correctly!" >&2
+ 	exit 1
+ fi
+diff --git a/scripts/grasp.sh b/scripts/grasp.sh
+index 7fc4db1c..a685d4d5 100644
+--- a/scripts/grasp.sh
++++ b/scripts/grasp.sh
+@@ -90,15 +90,14 @@ if [ $# -lt 2 ] ; then
+ fi
+ 
+ 
+-if [ ! -e "$BART_TOOLBOX_PATH"/bart ] ; then
+-	if [ -e "$TOOLBOX_PATH"/bart ] ; then
++if [ ! -e "$BART_TOOLBOX_PATH"/bin/bart ] ; then
++	if [ -e "$TOOLBOX_PATH"/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH="$TOOLBOX_PATH"
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+ 		exit 1
+ 	fi
+ fi
+-export PATH="$BART_TOOLBOX_PATH:$PATH"
+ 
+ input=$(readlink -f "$1")
+ output=$(readlink -f "$2")
+@@ -109,8 +108,8 @@ if [ ! -e $input ] ; then
+ 	exit 1
+ fi
+ 
+-if [ ! -e $TOOLBOX_PATH/bart ] ; then
+-        echo "\$TOOLBOX_PATH is not set correctly!" >&2
++if [ ! -e $BART_TOOLBOX_PATH/bin/bart ] ; then
++        echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+ 	exit 1
+ fi
+ 
+diff --git a/scripts/kspace_precond.sh b/scripts/kspace_precond.sh
+index 59cb1b2b..3d076abe 100755
+--- a/scripts/kspace_precond.sh
++++ b/scripts/kspace_precond.sh
+@@ -56,15 +56,14 @@ if [ $# -lt 3 ] ; then
+         exit 1
+ fi
+ 
+-if [ ! -e "$BART_TOOLBOX_PATH"/bart ] ; then
+-	if [ -e "$TOOLBOX_PATH"/bart ] ; then
++if [ ! -e "$BART_TOOLBOX_PATH"/bin/bart ] ; then
++	if [ -e "$TOOLBOX_PATH"/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH="$TOOLBOX_PATH"
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+ 		exit 1
+ 	fi
+ fi
+-export PATH="$BART_TOOLBOX_PATH:$PATH"
+ 
+ ones=$(readlink -f "$1")
+ traj=$(readlink -f "$2")
+diff --git a/scripts/life.sh b/scripts/life.sh
+index 35de1750..36590ec6 100644
+--- a/scripts/life.sh
++++ b/scripts/life.sh
+@@ -1,14 +1,13 @@
+ #!/bin/bash
+ 
+-if [ ! -e "$BART_TOOLBOX_PATH"/bart ] ; then
+-	if [ -e "$TOOLBOX_PATH"/bart ] ; then
++if [ ! -e "$BART_TOOLBOX_PATH"/bin/bart ] ; then
++	if [ -e "$TOOLBOX_PATH"/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH="$TOOLBOX_PATH"
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+ 		exit 1
+ 	fi
+ fi
+-export PATH="$BART_TOOLBOX_PATH:$PATH"
+ 
+ 
+ #bart vec 0 0 1 0 v1
+diff --git a/scripts/phantom.sh b/scripts/phantom.sh
+index 8a1c4ada..3f6aa0bf 100755
+--- a/scripts/phantom.sh
++++ b/scripts/phantom.sh
+@@ -86,15 +86,14 @@ if [ $# != 1 ] ; then
+ fi
+ 
+ 
+-if [ ! -e "$BART_TOOLBOX_PATH"/bart ] ; then
+-	if [ -e "$TOOLBOX_PATH"/bart ] ; then
++if [ ! -e "$BART_TOOLBOX_PATH"/bin/bart ] ; then
++	if [ -e "$TOOLBOX_PATH"/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH="$TOOLBOX_PATH"
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+ 		exit 1
+ 	fi
+ fi
+-export PATH="$BART_TOOLBOX_PATH:$PATH"
+ 
+ 
+ output=$(readlink -f "$1")
+diff --git a/scripts/profile.sh b/scripts/profile.sh
+index 2245ba4d..580367c2 100644
+--- a/scripts/profile.sh
++++ b/scripts/profile.sh
+@@ -45,8 +45,8 @@ if [ ! -e $input ] ; then
+         exit 1
+ fi
+ 
+-if [ ! -e "$BART_TOOLBOX_PATH"/bart ] ; then
+-	if [ -e "$TOOLBOX_PATH"/bart ] ; then
++if [ ! -e "$BART_TOOLBOX_PATH"/bin/bart ] ; then
++	if [ -e "$TOOLBOX_PATH"/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH="$TOOLBOX_PATH"
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+@@ -61,7 +61,7 @@ trap 'rm -rf "$WORKDIR"' EXIT
+ cd $WORKDIR
+ 
+ 
+-nm --defined-only "$BART_TOOLBOX_PATH"/bart | cut -c11-16,19- | sort > bart.syms
++nm --defined-only "$BART_TOOLBOX_PATH"/bin/bart | cut -c11-16,19- | sort > bart.syms
+ 
+ 
+ cat $in	| grep "^TRACE" \
+diff --git a/scripts/radial_dcf.sh b/scripts/radial_dcf.sh
+index 8ec2323e..dc0939fb 100644
+--- a/scripts/radial_dcf.sh
++++ b/scripts/radial_dcf.sh
+@@ -1,14 +1,13 @@
+ #!/bin/bash
+ 
+-if [ ! -e "$BART_TOOLBOX_PATH"/bart ] ; then
+-	if [ -e "$TOOLBOX_PATH"/bart ] ; then
++if [ ! -e "$BART_TOOLBOX_PATH"/bin/bart ] ; then
++	if [ -e "$TOOLBOX_PATH"/bin/bart ] ; then
+ 		BART_TOOLBOX_PATH="$TOOLBOX_PATH"
+ 	else
+ 		echo "\$BART_TOOLBOX_PATH is not set correctly!" >&2
+ 		exit 1
+ 	fi
+ fi
+-export PATH="$BART_TOOLBOX_PATH:$PATH"
+ 
+ # oversampled radial trajectory
+ bart traj -r -y55 -x256 traj_tmp

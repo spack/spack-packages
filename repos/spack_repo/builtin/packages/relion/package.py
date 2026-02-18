@@ -87,6 +87,8 @@ class Relion(CMakePackage, CudaPackage):
         description="Have external motioncor2 available in addition to Relion builtin",
     )
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("mpi")
     depends_on("cmake@3:", type="build")
     depends_on("binutils@2.32:", type="build")
@@ -188,3 +190,6 @@ class Relion(CMakePackage, CudaPackage):
                 r'\1 "{0}"'.format(join_path(self.spec["motioncor2"].prefix.bin, "MotionCor2")),
                 join_path("src", "pipeline_jobs.h"),
             )
+
+    def setup_run_environment(self, env):
+        env.set("RELION_CTFFIND_EXECUTABLE", self.spec["ctffind"].prefix.bin.ctffind)

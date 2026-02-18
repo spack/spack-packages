@@ -17,7 +17,7 @@ class Warpx(CMakePackage, PythonExtension):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/25.11.tar.gz"
+    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.01.tar.gz"
     git = "https://github.com/BLAST-WarpX/warpx.git"
 
     maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
@@ -26,11 +26,13 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("26.01", sha256="c3b34a93e350e068c07e3107784885562cfa5c93ce3fd65fed002e5a6353d63d")
+    version("25.12", sha256="fb59497e8427cf491312f83a72b011281d0aa04f6ebbb59b20afcbe0d86b136c")
     version("25.11", sha256="4e2b4636fee995ad075a907cf216fc089d1220824b8743b62c01e188fa6c23d7")
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
     depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
-    for v in ["25.04", "25.11", "develop"]:
+    for v in ["develop", "26.01", "25.12", "25.11", "25.04"]:
         depends_on(f"amrex@{v}", when=f"@{v}")
         depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
@@ -77,8 +79,12 @@ class Warpx(CMakePackage, PythonExtension):
         description="Floating point precision (single/double)",
     )
     variant("fft", default=True, description="Enable support for FFT-based solvers")
+    variant(
+        "petsc", default=False, description="Enable PETSc linear/nonlinear solvers", when="@26.01:"
+    )
     variant("python", default=False, description="Enable Python bindings")
     variant("qed", default=True, description="Enable QED support")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("qedtablegen", default=False, description="QED table generation support")
     variant("shared", default=True, description="Build a shared version of the library")
     variant("tprof", default=True, description="Enable tiny profiling features")
@@ -94,7 +100,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("ascent +mpi", when="+mpi")
         depends_on("amrex +ascent +conduit")
     with when("+catalyst"):
-        depends_on("libcatalyst@2.0: +conduit")
+        depends_on("libcatalyst@2.0:")
         depends_on("libcatalyst +mpi", when="+mpi")
         depends_on("amrex +catalyst +conduit")
     with when("dims=1"):
@@ -109,6 +115,13 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("amrex +eb")
     with when("+fft"):
         depends_on("amrex +fft")
+    with when("+petsc"):
+        depends_on("petsc")
+        depends_on("amrex +petsc")
+    with when("+simd"):
+        depends_on("vir-simd", type="build")
+        depends_on("amrex +simd")
+        depends_on("py-amrex +simd", when="+python")
     depends_on("mpi", when="+mpi")
     with when("+mpi"):
         depends_on("amrex +mpi")
@@ -197,9 +210,11 @@ class Warpx(CMakePackage, PythonExtension):
             self.define_from_variant("WarpX_MPI_THREAD_MULTIPLE", "mpithreadmultiple"),
             self.define_from_variant("WarpX_OPENPMD", "openpmd"),
             "-DWarpX_PRECISION={0}".format(spec.variants["precision"].value.upper()),
+            self.define_from_variant("WarpX_PETSC", "petsc"),
             self.define_from_variant("WarpX_PYTHON", "python"),
             self.define_from_variant("WarpX_QED", "qed"),
             self.define_from_variant("WarpX_QED_TABLE_GEN", "qedtablegen"),
+            self.define_from_variant("WarpX_SIMD", "simd"),
         ]
 
         args.append("-DWarpX_amrex_internal=OFF")

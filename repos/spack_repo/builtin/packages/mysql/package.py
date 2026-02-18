@@ -73,7 +73,7 @@ class Mysql(CMakePackage):
     depends_on("rpcsvc-proto")
     depends_on("ncurses")
     depends_on("libtirpc", when="platform=linux")
-    depends_on("libedit", type=["build", "run"])
+    depends_on("libedit", type=("build", "run"))
     depends_on("bison@2.1:", type="build")
     depends_on("m4", type="build", when="@develop platform=solaris")
 

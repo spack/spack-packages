@@ -17,7 +17,7 @@ class FenicsUfcx(CMakePackage):
     url = "https://github.com/FEniCS/ffcx/archive/v0.4.2.tar.gz"
     maintainers("ma595", "jhale", "garth-wells", "chrisrichardson")
 
-    license("LGPL-3.0-or-later")
+    license("Unlicense")
 
     version("main", branch="main", no_cache=True)
     version("0.10.0", sha256="fa27e2dc68988cbf9aca537eb5a58483f75cc719c1a383713b7f8cca49844ff9")
@@ -28,5 +28,6 @@ class FenicsUfcx(CMakePackage):
         version("0.6.0", sha256="076fad61d406afffd41019ae1abf6da3f76406c035c772abad2156127667980e")
 
     depends_on("cmake@3.19:", type="build")
+    depends_on("c", type="build")
 
     root_cmakelists_dir = "cmake"

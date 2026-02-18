@@ -16,6 +16,7 @@ class PyBqplot(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.12.45", sha256="cf2e046adb401670902ab53a18d9f63540091279bc45c4ef281bfdadf6e7e92c")
     version("0.12.44", sha256="cad65bf5c4ce7ea7b03e1c674340f9274c0975941e63057831b29f7c2c37f144")
 
     with default_args(type=("build", "run")):

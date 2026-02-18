@@ -33,7 +33,7 @@ spack:
       variants: +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
         +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
         +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
-        +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+        +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
     mpi:
       require: mpich
     mpich:
@@ -45,7 +45,7 @@ spack:
     paraview:
       require: "+examples target=neoverse_v2 %gcc"
     boost:
-      require: "cxxstd=17"
+      require: "cxxstd=17 target=neoverse_v2 %gcc"
 
   specs:
   # CPU

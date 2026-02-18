@@ -19,10 +19,11 @@ class Krb5(AutotoolsPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("1.22.2", sha256="3243ffbc8ea4d4ac22ddc7dd2a1dc54c57874c40648b60ff97009763554eaf13")
     version("1.21.3", sha256="b7a4cd5ead67fb08b980b21abd150ff7217e85ea320c9ed0c6dadd304840ad35")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("diffutils", type="build")
     depends_on("bison", type="build")
