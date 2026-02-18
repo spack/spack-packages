@@ -70,7 +70,7 @@ class Hipdnn(CMakePackage):
         )
         if self.spec.satisfies("@7.2:"):
             filter_file(
-                 r"${ROCM_PATH}${DEFAULT_ROCM_LLVM_ROOT}",
+                r"${ROCM_PATH}${DEFAULT_ROCM_LLVM_ROOT}",
                 self.spec["llvm-amdgpu"].prefix,
                 "projects/hipdnn/cmake/ClangToolChain.cmake",
                 string=True,
