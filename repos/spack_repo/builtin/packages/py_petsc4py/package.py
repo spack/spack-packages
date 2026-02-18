@@ -109,6 +109,9 @@ class PyPetsc4py(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-mpi4py", when="+mpi", type=("build", "run"))
 
+    # https://github.com/pypa/distutils/pull/335
+    depends_on("py-setuptools@:80", type="build")
+
     depends_on("petsc+mpi", when="+mpi")
     depends_on("petsc~mpi", when="~mpi")
     depends_on("petsc@main", when="@main")

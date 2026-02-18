@@ -75,6 +75,9 @@ class PyProtobuf(PythonPackage):
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-six@1.9:", when="@3.0:3.17", type=("build", "run"))
 
+    # https://github.com/protocolbuffers/protobuf/pull/22447
+    depends_on("py-setuptools@:81", when="@:6.31", type=("build", "run"))
+
     # https://protobuf.dev/support/version-support/#python
     for ver in range(30, 33):
         depends_on(f"protobuf@{ver}", when=f"@6.{ver}")

@@ -53,6 +53,9 @@ class PyGevent(PythonPackage):
     depends_on("py-zope-event", when="@20.5.1:", type=("build", "run"))
     depends_on("py-zope-interface", when="@20.5.1:", type=("build", "run"))
 
+    # https://github.com/pypa/distutils/pull/335
+    depends_on("py-setuptools@:80", type=("build", "run"))
+
     # https://github.com/gevent/gevent/issues/2076
     conflicts("^py-cython@3.1:", when="@:24.10.3")
     # https://github.com/gevent/gevent/issues/1599
