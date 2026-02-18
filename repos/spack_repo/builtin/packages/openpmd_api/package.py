@@ -124,6 +124,13 @@ class OpenpmdApi(CMakePackage):
         when="@0.16.0",
     )
 
+    # Python property lifetime fix & pybind11 3.0.2 support
+    patch(
+        "https://github.com/openPMD/openPMD-api/pull/1849.patch?full_index=1",
+        sha256="0fda91f9f1227832766dadacf12bfb5119cd179e60a73ccff15ac8c77b86b7ec",
+        when="@0.17.0 +python",
+    )
+
     extends("python", when="+python")
 
     def cmake_args(self):
