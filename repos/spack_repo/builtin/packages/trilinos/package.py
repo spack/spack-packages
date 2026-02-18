@@ -586,6 +586,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/spack/spack-packages/pull/2931#issuecomment-3756434768
     patch("16-2-stk_destructor_kokkos_decoration.patch", when="@=16.2.0 +stk")
 
+    # https://github.com/spack/spack-packages/pull/3361
+    patch(
+        "https://github.com/trilinos/Trilinos/commit/b36622c86f3adfef3ec4cf6e40f9645099e11a18.patch?full_index=1",
+        sha256="7a07f769aedf6433e440e0ce666c66d2721bfa8b99b18d8e3e95e1303878778d",
+        when="@=17.0.0 +stk",
+    )
+
     def flag_handler(self, name, flags):
         spec = self.spec
         is_cce = spec.satisfies("%cce")
