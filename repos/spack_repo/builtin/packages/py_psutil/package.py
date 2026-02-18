@@ -17,6 +17,7 @@ class PyPsutil(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("7.2.2", sha256="0746f5f8d406af344fd547f1c8daa5f5c33dbc293bb8d6a16d80b4bb88f59372")
     version("7.1.0", sha256="655708b3c069387c8b77b072fc429a57d0e214221d01c0a772df7dfedcb3bcd2")
     version("6.1.1", sha256="cf8496728c18f2d0b45198f06895be52f36611711746b7f30c464b422b50e2f5")
     version("5.9.5", sha256="5410638e4df39c54d957fc51ce03048acd8e6d60abc0f5107af51e5fb566eb3c")
