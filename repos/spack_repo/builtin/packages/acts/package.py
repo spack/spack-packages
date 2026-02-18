@@ -238,11 +238,12 @@ class Acts(CMakePackage, CudaPackage):
     variant("cxxstd", default="17", when="@:35", **_cxxstd_common)
     variant("cxxstd", default="20", when="@36:", **_cxxstd_common)
     variant("examples", default=False, description="Build the examples", when="@0.23:")
-    requires("+digitization", when="@:16 +examples")
-    requires("+identification", when="@:34 +examples")
-    requires("+root", when="+examples")
-    requires("+fatras", when="+examples")
-    requires("+json", when="+examples")
+    with when("+examples"):
+        requires("+digitization", when="@:16")
+        requires("+identification", when="@:34")
+        requires("+root")
+        requires("+fatras")
+        requires("+json")
     variant("integration_tests", default=False, description="Build the integration tests")
     variant("unit_tests", default=False, description="Build the unit tests")
     variant(
