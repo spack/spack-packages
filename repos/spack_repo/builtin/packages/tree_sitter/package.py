@@ -49,19 +49,21 @@ class TreeSitter(MakefilePackage):
     version("0.20.2", sha256="2a0445f8172bbf83db005aedb4e893d394e2b7b33251badd3c94c2c5cc37c403")
     version("0.20.1", sha256="12a3f7206af3028dbe8a0de50d8ebd6d7010bf762db918acae76fc7585f1258d")
 
+    variant("cli", default=False, description="Build CLI tool")
+
     depends_on("c", type="build")
 
-    # tree-sitter-cli needs rust-bindings
-    depends_on("rust", type="build")
+    with when("+cli"):
+        depends_on("rust", type="build", when="+cli")
 
-    # tree-sitter-cli needs a c compiler and a javascript runtime
-    # https://tree-sitter.github.io/tree-sitter/creating-parsers/1-getting-started.html#dependencies
-    depends_on("c", type="run")
-    depends_on("node-js", type="run")
+        # tree-sitter-cli needs a c compiler and a javascript runtime
+        # https://tree-sitter.github.io/tree-sitter/creating-parsers/1-getting-started.html#dependencies
+        depends_on("c", type="run")
+        depends_on("node-js", type="run")
 
-    # tree-sitter-cli depends on rust-bindgen, which needs libclang (transitive dependency)
-    # https://github.com/rust-lang/rust-bindgen/blob/main/book/src/requirements.md#clang
-    depends_on("llvm@9: +clang", type="build")
+        # tree-sitter-cli depends on rust-bindgen, which needs libclang (transitive dependency)
+        # https://github.com/rust-lang/rust-bindgen/blob/main/book/src/requirements.md#clang
+        depends_on("llvm@9: +clang", type="build")
 
     patch(
         "https://github.com/tree-sitter/tree-sitter/pull/5226.patch?full_index=1",
@@ -82,18 +84,18 @@ class TreeSitter(MakefilePackage):
     def build(self, spec, prefix):
         super().build(spec, prefix)
 
-        # tree-sitter-cli
-        cargo = Executable("cargo")
-        cargo("build")
+        if spec.satisfies("+cli"):
+            cargo = Executable("cargo")
+            cargo("build")
 
     def install(self, spec, prefix):
         super().install(spec, prefix)
 
-        # tree-sitter-cli
-        cargo = Executable("cargo")
-        if spec.satisfies("@0.26:"):
-            crate_cli_path = "crates/cli"
-        else:
-            crate_cli_path = "cli"
+        if spec.satisfies("+cli"):
+            cargo = Executable("cargo")
+            if spec.satisfies("@0.26:"):
+                crate_cli_path = "crates/cli"
+            else:
+                crate_cli_path = "cli"
 
-        cargo("install", "--root", prefix, "--path", crate_cli_path)
+            cargo("install", "--root", prefix, "--path", crate_cli_path)
