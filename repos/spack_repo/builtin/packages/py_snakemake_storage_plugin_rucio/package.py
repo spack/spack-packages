@@ -25,4 +25,4 @@ class PySnakemakeStoragePluginRucio(PythonPackage):
     depends_on("py-rucio-clients@36:", type=("build", "run"))
     depends_on("snakemake@9.5.1:", type=("build", "run"))
     depends_on("py-snakemake-interface-common@1.18:1", type=("build", "run"))
-    depends_on("py-snakemake-interface-storage-plugins@4.2.1", type=("build", "run"))
+    depends_on("py-snakemake-interface-storage-plugins@4.2.1:", type=("build", "run"))
