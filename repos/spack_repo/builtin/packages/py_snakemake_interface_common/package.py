@@ -27,4 +27,4 @@ class PySnakemakeInterfaceCommon(PythonPackage):
 
     depends_on("python@:3", type=("build", "run"))
     depends_on("py-poetry-core", type="build")
-    depends_on("py-setuptools@42:", type=("build","run"), when="@1.18:")
+    depends_on("py-setuptools@42:", type=("build", "run"), when="@1.18:")
