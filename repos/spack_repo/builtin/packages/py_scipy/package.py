@@ -225,9 +225,8 @@ class PyScipy(PythonPackage):
         else:
             fortran_std = "legacy"
 
-        return {
+        settings = {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 # http://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dfortran_std": fortran_std,
@@ -235,6 +234,13 @@ class PyScipy(PythonPackage):
                 "-Dlapack": lapack,
             },
         }
+
+        # Do not pass -jN if we're running under a jobserver
+        jobs = get_effective_jobs(make_jobs, supports_jobserver=True)
+        if jobs is not None:
+            settings["compile-args"] = f"-j{jobs}"
+
+        return settings
 
     @run_before("install", when="@:1.8")
     def set_blas_lapack(self):
