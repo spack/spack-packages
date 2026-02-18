@@ -72,65 +72,71 @@ class Pulseaudio(AutotoolsPackage, MesonPackage):
     depends_on("speexdsp@1.2:")
     depends_on("m4", type="build")
 
-    class AutotoolsBuilder(autotools.AutotoolsBuilder):
-        def configure_args(self):
-            args = [
-                "--disable-systemd-daemon",
-                "--disable-systemd-journal",
-                "--disable-systemd-login",
-                "--disable-udev",
-                "--disable-waveout",
-                "--enable-dbus",
-                "--enable-glib2",
-                "--with-database=gdbm",
-                "--with-systemduserunitdir=no",
-                "CXXFLAGS={0}".format(self.spec["libtool"].headers.cpp_flags),
-                "LDFLAGS={0}".format(self.spec["libtool"].libs.search_flags),
-                "--libdir={0}".format(self.prefix.lib),
-            ]
-            # toggle based on variants
-            args += self.enable_or_disable("alsa")
-            args += self.enable_or_disable("openssl")
-            args += self.enable_or_disable("x11")
-            args += self.with_or_without("fftw")
+    patch("atomic.patch", when="@13")
 
-            # possible future variants
-            args.extend(
-                [
-                    "--disable-asyncns",
-                    "--disable-avahi",
-                    "--disable-bluez5",
-                    "--disable-gcov",
-                    "--disable-gsettings",
-                    "--disable-gtk3",
-                    "--disable-hal-compat",
-                    "--disable-jack",
-                    "--disable-lirc",
-                    "--disable-orc",
-                    "--disable-tcpwrap",
-                ]
-            )
 
-            return args
-
-    class MesonBuilder(meson.MesonBuilder):
-        def meson_args(self):
-            return [
-                "-Ddatabase=gdbm",
-                "-Ddoxygen=false",
-                "-Dbluez5=disabled",
-                "-Dx11=disabled",
-                "-Dtests=false",
-                "-Ddefault_library=shared",
-                "-Dprefix={0}".format(self.prefix),
-                "-Dlibdir={0}".format(self.prefix.lib),
-                "-Dbashcompletiondir={0}/share/bash-completion/completions".format(self.prefix),
-                "-Dsystemduserunitdir={0}systemd/user".format(self.prefix.lib),
-                "-Dudevrulesdir={0}udev/rules.d".format(self.prefix.lib),
-            ]
-
-    def setup_build_environment(self, env):
+class SetupEnvironment:
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.append_flags("LDFLAGS", "-Wl,--copy-dt-needed-entries")
         if self.spec.satisfies("build_system=meson"):
             env.append_flags("CPPFLAGS", "-I{0}".format(self.spec["libiconv"].prefix.include))
             env.append_flags("LDFLAGS", "-L{0} -liconv".format(self.spec["libiconv"].prefix.lib))
+
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
+    def configure_args(self):
+        args = [
+            "--disable-systemd-daemon",
+            "--disable-systemd-journal",
+            "--disable-systemd-login",
+            "--disable-udev",
+            "--disable-waveout",
+            "--enable-dbus",
+            "--enable-glib2",
+            "--with-database=gdbm",
+            "--with-systemduserunitdir=no",
+            "CXXFLAGS={0}".format(self.spec["libtool"].headers.cpp_flags),
+            "LDFLAGS={0}".format(self.spec["libtool"].libs.search_flags),
+            "--libdir={0}".format(self.prefix.lib),
+        ]
+        # toggle based on variants
+        args += self.enable_or_disable("alsa")
+        args += self.enable_or_disable("openssl")
+        args += self.enable_or_disable("x11")
+        args += self.with_or_without("fftw")
+
+        # possible future variants
+        args.extend(
+            [
+                "--disable-asyncns",
+                "--disable-avahi",
+                "--disable-bluez5",
+                "--disable-gcov",
+                "--disable-gsettings",
+                "--disable-gtk3",
+                "--disable-hal-compat",
+                "--disable-jack",
+                "--disable-lirc",
+                "--disable-orc",
+                "--disable-tcpwrap",
+            ]
+        )
+
+        return args
+
+
+class MesonBuilder(meson.MesonBuilder, SetupEnvironment):
+    def meson_args(self):
+        return [
+            "-Ddatabase=gdbm",
+            "-Ddoxygen=false",
+            "-Dbluez5=disabled",
+            "-Dx11=disabled",
+            "-Dtests=false",
+            "-Ddefault_library=shared",
+            "-Dprefix={0}".format(self.prefix),
+            "-Dlibdir={0}".format(self.prefix.lib),
+            "-Dbashcompletiondir={0}/share/bash-completion/completions".format(self.prefix),
+            "-Dsystemduserunitdir={0}systemd/user".format(self.prefix.lib),
+            "-Dudevrulesdir={0}udev/rules.d".format(self.prefix.lib),
+        ]
