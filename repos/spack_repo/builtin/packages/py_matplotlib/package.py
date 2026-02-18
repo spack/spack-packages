@@ -298,8 +298,9 @@ class PyMatplotlib(PythonPackage):
 
     @when("@3.9:")
     def config_settings(self, spec, prefix):
-        settings = {
+        return {
             "builddir": "build",
+            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 "-Dsystem-freetype": True,
                 "-Dsystem-qhull": True,
@@ -308,11 +309,6 @@ class PyMatplotlib(PythonPackage):
                 "-Db_lto": not (self.spec.satisfies("%clang") or self.spec.satisfies("%oneapi")),
             },
         }
-        # Do not pass -jN if we're running under a jobserver
-        jobs = get_effective_jobs(make_jobs, supports_jobserver=True)
-        if jobs is not None:
-            settings["compile-args"] = f"-j{jobs}"
-        return settings
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

@@ -337,6 +337,7 @@ class PyNumpy(PythonPackage):
 
         settings = {
             "builddir": "build",
+            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 # https://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dblas": blas,
@@ -348,11 +349,6 @@ class PyNumpy(PythonPackage):
                 # "-Dcpu-dispatch": "none",
             },
         }
-
-        # Do not pass -jN if we're running under a jobserver
-        jobs = get_effective_jobs(make_jobs, supports_jobserver=True)
-        if jobs is not None:
-            settings["compile-args"] = f"-j{jobs}"
 
         # Disable AVX512 features for Intel Classic compilers
         # https://numpy.org/doc/stable/reference/simd/build-options.html
