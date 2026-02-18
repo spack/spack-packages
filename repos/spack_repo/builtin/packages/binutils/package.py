@@ -127,6 +127,7 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
             when="@2.37:2.40,2.42:",
             msg="https://github.com/spack/spack/issues/35817",
         )
+    conflicts("+gold", when="@2.44:", msg="Gold was removed")
 
     conflicts(
         "~lto", when="+pgo", msg="Profile-guided optimization enables link-time optimization"
