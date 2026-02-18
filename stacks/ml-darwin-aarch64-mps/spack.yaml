@@ -10,13 +10,19 @@ spack:
       - +mps
       - ~cuda
       - ~rocm
+      - target=m1
     mpi:
-      require: mpich
+      require:
+      - mpich
+      - target=m1
     openblas:
       require:
       - ~fortran
+      - target=m1
     python:
-      require: "@3.13:"
+      require:
+      - "@3.13:"
+      - target=m1
 
   specs:
   # Hugging Face
