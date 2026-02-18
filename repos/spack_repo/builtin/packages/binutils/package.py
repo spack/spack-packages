@@ -53,7 +53,8 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
     variant("plugins", default=True, description="enable plugins, needed for gold linker")
     # When you build ld.gold you automatically get ld, even when you add the
     # --disable-ld flag
-    variant("gold", default=False, when="+ld", description="build the gold linker")
+    # The gold linker was removed in v2.44.
+    variant("gold", default=False, when="@:2.43 +ld", description="Build the gold linker.")
     variant("libiberty", default=False, description="Also install libiberty.")
     variant("nls", default=False, description="Enable Native Language Support")
     variant("headers", default=False, description="Install extra headers (e.g. ELF)")
@@ -127,7 +128,6 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
             when="@2.37:2.40,2.42:",
             msg="https://github.com/spack/spack/issues/35817",
         )
-    conflicts("+gold", when="@2.44:", msg="Gold was removed")
 
     conflicts(
         "~lto", when="+pgo", msg="Profile-guided optimization enables link-time optimization"
