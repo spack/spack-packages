@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.8.4": "0b2e158e8b31f12735bf2db391257296a5ef0b802512f2d2db8e0c5ee028a192",
     "0.8.3": "9b0907f0969bd2139a6ab3614d81faebc7abca102df4127cba9f0521e2e1437d",
     "0.8.2": "60a81ccb5bda11ee173abfecd02a5d126d2788732b2ebb4d701ba0c82c7331a1",
     "0.8.1": "11986d4c2964054baae9fe10ffc36c6a6ba70a78d97b406cb6c2e14e72a0cf72",
