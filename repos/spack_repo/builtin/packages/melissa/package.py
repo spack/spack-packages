@@ -19,8 +19,8 @@ class Melissa(CMakePackage):
     maintainers("abhishek1297", "raffino")
 
     version(
-        "2.4.0",
-        sha256="932d09a94c1794911683b027b817370c84a122cfa04765ab082488704b689962",
+        "2.4.1",
+        sha256="92a8c7f823ef79c8a5eb05b67120e130c9b03bf7fecd635b4ae9501eb32b2fd7",
         preferred=True,
     )
     with default_args(deprecated=True):

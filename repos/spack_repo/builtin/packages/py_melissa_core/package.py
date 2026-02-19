@@ -23,8 +23,8 @@ class PyMelissaCore(PythonPackage, CudaPackage):
     license("BSD-3-Clause")
 
     version(
-        "2.4.0",
-        sha256="932d09a94c1794911683b027b817370c84a122cfa04765ab082488704b689962",
+        "2.4.1",
+        sha256="92a8c7f823ef79c8a5eb05b67120e130c9b03bf7fecd635b4ae9501eb32b2fd7",
         preferred=True,
     )
     with default_args(deprecated=True):
@@ -62,7 +62,7 @@ class PyMelissaCore(PythonPackage, CudaPackage):
     with default_args(type="run"):
         depends_on("py-pyzmq@22.3.0:")
         depends_on("py-mpi4py@3.1.3:3", when="@:2.3.0")
-        depends_on("py-mpi4py@3.1.3:", when="@2.4.0")
+        depends_on("py-mpi4py@3.1.3:", when="@2.4:")
         depends_on("py-numpy@1.21:1")
         depends_on("py-jsonschema@4.5:")
         depends_on("py-python-rapidjson@1.8:")
