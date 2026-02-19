@@ -69,15 +69,14 @@ class GoBuilder(BuilderWithDefaults):
         "check_args",
         "build_directory",
         "install_time_test_callbacks",
+        "cgo_enabled",
     )
 
     #: Callback names for install-time test
     install_time_test_callbacks = ["check"]
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GO111MODULE", "on")
-        env.set("GOTOOLCHAIN", "local")
-        env.set("GOPATH", join_path(self.pkg.stage.path, "go"))
+    # Enable or Disable CGO functionality in builds. (Disabled by default)
+    cgo_enabled = False
 
     @property
     def build_directory(self):
@@ -102,6 +101,12 @@ class GoBuilder(BuilderWithDefaults):
     def check_args(self):
         """Argument for ``go test`` during check phase"""
         return []
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        env.set("CGO_ENABLED", "1" if self.cgo_enabled else "0")
+        env.set("GO111MODULE", "on")
+        env.set("GOTOOLCHAIN", "local")
+        env.set("GOPATH", join_path(self.pkg.stage.path, "go"))
 
     def build(self, pkg: GoPackage, spec: Spec, prefix: Prefix) -> None:
         """Runs ``go build`` in the source directory"""

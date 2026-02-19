@@ -21,14 +21,21 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     and cuSOLVER as backends."""
 
     homepage = "https://github.com/ROCm/hipSOLVER"
-    git = "https://github.com/ROCm/hipSOLVER.git"
-    url = "https://github.com/ROCm/hipSOLVER/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libhipsolver"]
-
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hipSOLVER/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="bd664e3cd43bfcc7e94d5a387c27262c4b218d6d2e71e086992b174349dd1c10")
     version("7.1.0", sha256="19b87cd27b9048964e94a77bb8c07a23ecfd5f96a73a91eebd1d365487bad2bf")
     version("7.0.2", sha256="eac1a691bdc00ceb50580c1dab6cbffd6c7d579ebbad145857f58c4de84a3cae")
@@ -108,6 +115,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
@@ -121,6 +129,13 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("netlib-lapack@3.7.1:", type="test")
     patch("001-suite-sparse-include-path.patch", when="@6.1.0")
     patch("0001-suite-sparse-include-path-6.1.1.patch", when="@6.1.1:6.2")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hipsolver"
+        else:
+            return "."
 
     def check(self):
         exe = join_path(self.build_directory, "clients", "staging", "hipsolver-test")

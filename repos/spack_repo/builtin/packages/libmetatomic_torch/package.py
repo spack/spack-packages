@@ -17,6 +17,7 @@ class LibmetatomicTorch(CMakePackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.1.8", sha256="358e426e762a45b3def076183bf6e1ecadbbd9089a9d6ddc5576907dbf5594fd")
     version("0.1.7", sha256="726f5711b70c4b8cc80d9bc6c3ce6f3449f31d20acc644ab68dab083aa4ea572")
     version("0.1.6", sha256="4cb9b7bb530a98119186167c31fb00ea7ef3bcc45d593e449e7670e9313e5327")
     version("0.1.5", sha256="8ecd1587797fe1cf6b2162ddc10cc84c558fdfd55ab225bc5de4fe15ace8fc3d")
