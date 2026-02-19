@@ -230,12 +230,12 @@ class Amber(Package, CudaPackage):
             filter_file(
                 f"cmake \$AMBER_PREFIX/amber{self.version}_src",
                 "cmake $AMBER_PREFIX/spack-src",
-                "build/run_cmake"
+                "build/run_cmake",
             )
             filter_file(
                 f"-DCMAKE_INSTALL_PREFIX=\$AMBER_PREFIX/amber{self.version}",
                 f"-DCMAKE_INSTALL_PREFIX={prefix}",
-                "build/run_cmake"
+                "build/run_cmake",
             )
 
             # CUDA
@@ -251,7 +251,6 @@ class Amber(Package, CudaPackage):
                 run_cmake = Executable("./run_cmake")
                 run_cmake()
                 make("-j1", "install")
-
 
     def setup_run_environment(self, env):
         env.set("AMBER_PREFIX", self.prefix)
