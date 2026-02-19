@@ -141,6 +141,7 @@ class Bazel(Package):
     patch("gcc11_3.patch", when="@:4 %gcc@11:")
     patch("gcc11_4.patch", when="@4.1:4 %gcc@11:")
 
+    # https://github.com/bazelbuild/bazel/pull/27001
     patch("missing-headers-gcc15.patch", when="@:7.6 %gcc@15:")
 
     # Bazel-4.0.0 does not compile with gcc-11
