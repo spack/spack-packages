@@ -207,12 +207,14 @@ class Precice(CMakePackage):
 
         # The xSDK installation policies were implemented after 1.5.2 and removed in 3.0.0
         if spec.satisfies("@1.6:2"):
-            cmake_args.extend([
-                "-DTPL_ENABLE_BOOST:BOOL=ON",
-                "-DTPL_ENABLE_EIGEN3:BOOL=ON",
-                "-DTPL_ENABLE_LIBXML2:BOOL=ON",
-                self.define_from_variant("TPL_ENABLE_PETSC", "petsc"),
-            ])
+            cmake_args.extend(
+                [
+                    "-DTPL_ENABLE_BOOST:BOOL=ON",
+                    "-DTPL_ENABLE_EIGEN3:BOOL=ON",
+                    "-DTPL_ENABLE_LIBXML2:BOOL=ON",
+                    self.define_from_variant("TPL_ENABLE_PETSC", "petsc"),
+                ]
+            )
 
         # Release options
         if spec.satisfies("@2.4:"):
