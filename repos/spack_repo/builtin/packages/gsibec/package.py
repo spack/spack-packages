@@ -48,6 +48,9 @@ class Gsibec(CMakePackage):
 
         return url.format(version)
 
+    # GSIbec 1.4.1 does not compile with gcc@10 and later, 1.4.2 fixes this
+    conflicts("%gcc@10:", when="@1.4.1")
+
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
