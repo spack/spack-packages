@@ -30,11 +30,13 @@ class Amber(Package, CudaPackage):
 
     maintainers("hseara")
 
+    version("24", sha256="74a7dbc4530f6302ae1efe723ba54d0fcdb03bce2b7231663ce5afc2c5660076")
     version("20", sha256="a4c53639441c8cc85adee397933d07856cc4a723c82c6bea585cd76c197ead75")
     version("18", sha256="2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277")
 
     for ver, ambertools_ver, ambertools_checksum in (
         # (version amber, version ambertools, sha256sum)
+        ("24", "24", "52fb4fb3370a89b7ce738a2dc3e513c2fc1943fde4b4381846d9e75cc48d840f"),
         ("20", "21", "f55fa930598d5a8e9749e8a22d1f25cab7fcf911d98570e35365dd7f262aaafd"),
         ("18", "19", "0c86937904854b64e4831e047851f504ec45b42e593db4ded92c1bee5973e699"),
     ):
@@ -116,7 +118,8 @@ class Amber(Package, CudaPackage):
 
     # Cuda dependencies
     # /AmberTools/src/configure2:1329
-    depends_on("cuda@:11.1", when="@20:+cuda")  # when='AmberTools@21:'
+    depends_on("cuda@:12", when="@24:+cuda")
+    depends_on("cuda@:11.1", when="@20:23+cuda")  # when='AmberTools@21:'
     depends_on("cuda@:10.2.89", when="@18+cuda")
     depends_on("gmake", type="build")
 
@@ -174,53 +177,75 @@ class Amber(Package, CudaPackage):
             string=True,
         )
 
-        # Base configuration
-        conf = Executable("./configure")
-        base_args = ["--skip-python", "--with-netcdf", self.spec["netcdf-fortran"].prefix]
-        if self.spec.satisfies("~x11"):
-            base_args += ["-noX11"]
+        # Installation until version 20 used configure script
+        if self.version <= Version("20"):
+            # Base configuration
+            conf = Executable("./configure")
+            base_args = ["--skip-python", "--with-netcdf", self.spec["netcdf-fortran"].prefix]
+            if self.spec.satisfies("~x11"):
+                base_args += ["-noX11"]
 
-        # Update the sources: Apply all upstream patches
-        if self.spec.satisfies("+update"):
-            update = Executable("./update_amber")
-            update(*(["--update"]))
+            # Update the sources: Apply all upstream patches
+            if self.spec.satisfies("+update"):
+                update = Executable("./update_amber")
+                update(*(["--update"]))
+            else:
+                base_args += ["--no-updates"]
+
+            # Non-x86 architecture
+            if self.spec.target.family != "x86_64":
+                base_args += ["-nosse"]
+
+            # Single core
+            conf(*(base_args + [compiler]))
+            make("install")
+
+            # CUDA
+            if self.spec.satisfies("+cuda"):
+                conf(*(base_args + ["-cuda", compiler]))
+                make("install")
+
+            # MPI
+            if self.spec.satisfies("+mpi"):
+                conf(*(base_args + ["-mpi", compiler]))
+                make("install")
+
+            # Openmp
+            if self.spec.satisfies("+openmp"):
+                make("clean")
+                conf(*(base_args + ["-openmp", compiler]))
+                make("openmp")
+
+            # CUDA + MPI
+            if self.spec.satisfies("+cuda") and self.spec.satisfies("+mpi"):
+                make("clean")
+                conf(*(base_args + ["-cuda", "-mpi", compiler]))
+                make("install")
+
+            # just install everything that was built
+            install_tree(".", prefix)
+
+        # Installation from version 24 use cmake
         else:
-            base_args += ["--no-updates"]
+            filter_file(f"cmake \$AMBER_PREFIX/amber{self.version}_src", "cmake $AMBER_PREFIX/spack-src", "build/run_cmake")
+            filter_file(f"-DCMAKE_INSTALL_PREFIX=\$AMBER_PREFIX/amber{self.version}", f"-DCMAKE_INSTALL_PREFIX={prefix}", "build/run_cmake")
 
-        # Non-x86 architecture
-        if self.spec.target.family != "x86_64":
-            base_args += ["-nosse"]
+            # CUDA
+            if self.spec.satisfies("+cuda"):
+                filter_file("-DCUDA=FALSE","-DCUDA=TRUE","build/run_cmake")
 
-        # Single core
-        conf(*(base_args + [compiler]))
-        make("install")
+            # MPI
+            if self.spec.satisfies("+mpi"):
+                filter_file("-DMPI=FALSE","-DMPI=TRUE","build/run_cmake")
 
-        # CUDA
-        if self.spec.satisfies("+cuda"):
-            conf(*(base_args + ["-cuda", compiler]))
-            make("install")
+            # Build
+            with working_dir("./build"):
+                run_cmake = Executable("./run_cmake")
+                run_cmake()
+                make("-j1", "install")
 
-        # MPI
-        if self.spec.satisfies("+mpi"):
-            conf(*(base_args + ["-mpi", compiler]))
-            make("install")
 
-        # Openmp
-        if self.spec.satisfies("+openmp"):
-            make("clean")
-            conf(*(base_args + ["-openmp", compiler]))
-            make("openmp")
-
-        # CUDA + MPI
-        if self.spec.satisfies("+cuda") and self.spec.satisfies("+mpi"):
-            make("clean")
-            conf(*(base_args + ["-cuda", "-mpi", compiler]))
-            make("install")
-
-        # just install everything that was built
-        install_tree(".", prefix)
-
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+    def setup_run_environment(self, env):
         env.set("AMBER_PREFIX", self.prefix)
         env.set("AMBERHOME", self.prefix)
         # CUDA
