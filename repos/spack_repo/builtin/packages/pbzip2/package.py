@@ -24,7 +24,7 @@ class Pbzip2(MakefilePackage):
     version("1.1.13", sha256="8fd13eaaa266f7ee91f85c1ea97c86d9c9cc985969db9059cdebcb1e1b7bdbe6")
 
     depends_on("cxx", type="build")
-    depends_on("bzip2 +shared", type=("build", "run"))
+    depends_on("bzip2")
 
     def edit(self, spec, prefix):
         makefile = FileFilter("Makefile")

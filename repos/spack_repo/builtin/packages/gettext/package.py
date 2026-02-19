@@ -69,6 +69,9 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
     depends_on("libunistring", when="+libunistring")
     # depends_on('cvs')
 
+    depends_on("curl", when="@1:")
+    depends_on("json-c", when="@1:")
+
     conflicts("+shared~pic")
     # https://savannah.gnu.org/bugs/?65811
     conflicts("%gcc@:5", when="@0.22:")

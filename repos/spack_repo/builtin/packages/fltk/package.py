@@ -56,11 +56,19 @@ class Fltk(Package):
     variant("gl", default=True, description="Enables opengl support")
 
     variant("xft", default=False, description="Enables Anti-Aliased Fonts")
+    variant("xcursor", default=True, description="Enables custom cursor shapes")
+    variant("xfixes", default=True, description="Enables clipboard management")
+    variant("xinerama", default=True, description="Enables multi-monitor support")
+    variant("xrender", default=True, description="Enables advanced image scaling")
 
     # variant dependencies
     depends_on("gl", when="+gl")
 
     depends_on("libxft", when="+xft")
+    depends_on("libxcursor", when="+xcursor")
+    depends_on("libxfixes", when="+xfixes")
+    depends_on("libxinerama", when="+xinerama")
+    depends_on("libxrender", when="+xrender")
 
     def install(self, spec, prefix):
         options = [
@@ -78,6 +86,12 @@ class Fltk(Package):
             options.append("--enable-xft")
         else:
             options.append("--disable-xft")
+
+        for option in ["xcursor", "xfixes", "xinerama", "xrender"]:
+            if spec.satisfies(f"+{option}"):
+                options.append(f"--enable-{option}")
+            else:
+                options.append(f"--disable-{option}")
 
         if spec.satisfies("~gl"):
             options.append("--disable-gl")

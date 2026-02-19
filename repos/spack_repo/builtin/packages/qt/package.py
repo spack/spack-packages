@@ -68,6 +68,9 @@ class Qt(Package):
     )
     variant("gtk", default=False, description="Build with gtkplus.")
     variant("gui", default=True, description="Build the Qt GUI module and dependencies")
+    variant("cups", default=True, description="Build with printer support")
+    variant("gssapi", default=False, description="Build with Kerberos support")
+
     # Desktop only on Windows
     variant("opengl", default=False, description="Build with OpenGL support")
     for plat in ["linux", "darwin", "freebsd"]:
@@ -276,6 +279,8 @@ class Qt(Package):
     depends_on("pcre2+multibyte", when="@5.9:")
     depends_on("llvm", when="@5.11: +doc")
     depends_on("zstd@1.3:", when="@5.13:")
+    depends_on("cups", when="+cups")
+    depends_on("krb5", when="+gssapi")
 
     with when("+webkit"):
         patch(
@@ -700,6 +705,14 @@ class Qt(Package):
             use_spack_dep("libpng")
             use_spack_dep("jpeg", "libjpeg")
             use_spack_dep("zlib-api", "zlib")
+
+        if "+cups" in spec:
+            config_args.append("-cups")
+        else:
+            config_args.append('QMAKE_LIBS_CUPS=""')
+
+        if "+gssapi" not in spec:
+            config_args.append("-no-feature-gssapi")
 
         if "@:5.5" in spec:
             config_args.extend(

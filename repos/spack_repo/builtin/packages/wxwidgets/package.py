@@ -36,6 +36,7 @@ class Wxwidgets(AutotoolsPackage):
 
     variant("opengl", default=False, description="Enable OpenGL support")
     variant("gui", default=True, description="Enable GUI support.")
+    variant("tiff", default=True, description="Enable TIFF support.")
 
     patch("math_include.patch", when="@3.0.1:3.0.2")
 
@@ -45,6 +46,7 @@ class Wxwidgets(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
     depends_on("gtkplus", when="+gui")
     depends_on("mesa-glu", when="+opengl")
+    depends_on("libtiff", when="+tiff")
 
     @when("@:3.0.2")
     def build(self, spec, prefix):
@@ -58,6 +60,9 @@ class Wxwidgets(AutotoolsPackage):
             options.append("--with-opengl")
         if not self.spec.satisfies("+gui"):
             options.append("--disable-gui")
+
+        if self.spec.satisfies("+tiff"):
+            options.append("--with-libtiff")
 
         # see https://trac.wxwidgets.org/ticket/17639
         if spec.satisfies("@:3.1.0") and sys.platform == "darwin":
