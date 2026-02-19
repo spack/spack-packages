@@ -216,6 +216,14 @@ class PyTorchvision(PythonPackage):
                 if pkg in self.spec:
                     include.extend(self.spec[pkg].headers.directories)
 
+            # At build time, torchvision's setup imports torch; libtorch_hip.so then
+            # needs aotriton and hip libs at runtime. Add their lib dirs so the loader
+            # can resolve undefined symbols (e.g. aotriton::v2::flash::attn_bwd_fused).
+            for pkg in ["aotriton", "hip"]:
+                if pkg in self.spec:
+                    for lib_dir in self.spec[pkg].libs.directories:
+                        env.prepend_path("LD_LIBRARY_PATH", lib_dir)
+
         # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
         # these do not work for older releases. Build uses a mix of Spack's compiler wrapper
         # and the actual compiler, so this is needed to get parts of the build working.
