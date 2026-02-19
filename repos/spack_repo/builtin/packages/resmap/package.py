@@ -5,8 +5,9 @@ from spack.package import *
 
 
 class Resmap(Package):
-    """ResMap (Resolution Map) is an easy to use software package for computing the local resolution of
-    3D density maps studied in structural biology, primarily electron cryo-microscopy (cryo-EM)."""
+    """ResMap (Resolution Map) is an easy to use software package for computing the
+    local resolution of 3D density maps studied in structural biology, primarily
+    electron cryo-microscopy (cryo-EM)."""
 
     homepage = "https://resmap.sourceforge.net/"
     url = "https://sourceforge.net/projects/resmap/files/ResMap-1.1.4-linux64/download"
