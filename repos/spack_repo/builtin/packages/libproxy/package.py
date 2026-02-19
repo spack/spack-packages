@@ -55,13 +55,20 @@ class Libproxy(CMakePackage, MesonPackage):
 
     extends("python", when="+python")
 
+    @property
+    def libs(self):
+        return find_libraries(
+            ["libproxy", "libpxbackend*"], root=self.prefix, shared=True, recursive=True
+        )
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("+python"):
-            libs = self.spec["libproxy"].libs.directories[0]
-            if self.spec.satisfies("platform=darwin"):
-                env.prepend_path("DYLD_FALLBACK_LIBRARY_PATH", libs)
-            else:
-                env.prepend_path("LD_LIBRARY_PATH", libs)
+        libs = self.spec["libproxy"].libs.directories[0]
+        if self.spec.satisfies("platform=darwin"):
+            env.prepend_path("DYLD_FALLBACK_LIBRARY_PATH", join_path(libs, "libproxy"))
+            env.prepend_path("DYLD_FALLBACK_LIBRARY_PATH", libs)
+        else:
+            env.prepend_path("LD_LIBRARY_PATH", join_path(libs, "libproxy"))
+            env.prepend_path("LD_LIBRARY_PATH", libs)
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
