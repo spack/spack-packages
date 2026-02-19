@@ -227,16 +227,24 @@ class Amber(Package, CudaPackage):
 
         # Installation from version 24 use cmake
         else:
-            filter_file(f"cmake \$AMBER_PREFIX/amber{self.version}_src", "cmake $AMBER_PREFIX/spack-src", "build/run_cmake")
-            filter_file(f"-DCMAKE_INSTALL_PREFIX=\$AMBER_PREFIX/amber{self.version}", f"-DCMAKE_INSTALL_PREFIX={prefix}", "build/run_cmake")
+            filter_file(
+                f"cmake \$AMBER_PREFIX/amber{self.version}_src",
+                "cmake $AMBER_PREFIX/spack-src",
+                "build/run_cmake"
+            )
+            filter_file(
+                f"-DCMAKE_INSTALL_PREFIX=\$AMBER_PREFIX/amber{self.version}",
+                f"-DCMAKE_INSTALL_PREFIX={prefix}",
+                "build/run_cmake"
+            )
 
             # CUDA
             if self.spec.satisfies("+cuda"):
-                filter_file("-DCUDA=FALSE","-DCUDA=TRUE","build/run_cmake")
+                filter_file("-DCUDA=FALSE", "-DCUDA=TRUE", "build/run_cmake")
 
             # MPI
             if self.spec.satisfies("+mpi"):
-                filter_file("-DMPI=FALSE","-DMPI=TRUE","build/run_cmake")
+                filter_file("-DMPI=FALSE", "-DMPI=TRUE", "build/run_cmake")
 
             # Build
             with working_dir("./build"):
