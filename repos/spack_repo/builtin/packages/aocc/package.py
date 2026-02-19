@@ -44,7 +44,6 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
         ver="5.0.0",
         sha256="966fac2d2c759e9de6e969c10ada7a7b306c113f7f1e07ea376829ec86380daa",
         url="https://download.amd.com/developer/eula/aocc/aocc-5-0/aocc-compiler-5.0.0.tar",
-        preferred=True,
     )
     version(
         ver="4.2.0",
