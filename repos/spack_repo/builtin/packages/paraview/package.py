@@ -310,16 +310,11 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     with when("@6:"):
         # ParaView 6 and later will not support Spack builds with Qt5.
         with when("+qt"):
-            # https://discourse.paraview.org/t/paraview-5-9-and-minimum-recommended-qt-version/5333
-            depends_on("qt@5.12: +sql+opengl", when="@6:")
-
-            # TODO: qt-tools creates an unconcretizable environment with openfoam %oneapi
-            #       These dependencies otherwise are correct
-            # depends_on("qt-base@6.9.0 +accessibility+gui+opengl+sql+network")
-            # depends_on("qt-tools+assistant")
-            # depends_on("qt-5compat")
-            # depends_on("qt-svg")
-            # depends_on("libxslt")
+            depends_on("qt-base@6.9.0 +accessibility+gui+opengl+sql+network")
+            depends_on("qt-tools+assistant")
+            depends_on("qt-5compat")
+            depends_on("qt-svg")
+            depends_on("libxslt")
 
         # ParaView@6: and later will depend on OSMesa as a fallback for
         # OpenGL.

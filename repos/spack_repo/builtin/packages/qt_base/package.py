@@ -255,7 +255,7 @@ class QtBase(QtPackage):
     with when("+network"):
         depends_on("openssl")
         with when("platform=linux"):
-            depends_on("libproxy")
+            depends_on("libproxy", type=("link", "run"))
 
     # Qt6 requires newer compilers: see https://github.com/spack/spack/issues/34418
     conflicts("%gcc@:7")
