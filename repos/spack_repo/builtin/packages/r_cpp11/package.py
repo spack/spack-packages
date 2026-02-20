@@ -19,6 +19,7 @@ class RCpp11(RPackage):
 
     license("MIT")
 
+    version("0.5.2", sha256="0e8ac07f9d599b82e7a811f9d084e5125ae787b1ba04e5ba57f79e2642af091b")
     version("0.4.7", sha256="801d1266824c3972642bce2db2a5fd0528a65ec845c58eb5a886edf082264344")
     version("0.4.3", sha256="f1a60e4971a86dbbcf6a16bbd739b59bb66d9c45d93cfd8dedc2a87e302598f1")
     version("0.4.2", sha256="403ce0bf82358d237176053b0fb1e958cb6bfa4d0fb3555bf5801db6a6939b99")
@@ -27,4 +28,5 @@ class RCpp11(RPackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("r@3.5.0:", when="@0.4.6:", type=("build", "run"))
+    depends_on("r@3.5.0:", when="@0.4.6:0.4", type=("build", "run"))
+    depends_on("r@4.0.0:", when="@0.5.1:", type=("build", "run"))

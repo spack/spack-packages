@@ -19,6 +19,18 @@ class Aotriton(CMakePackage):
 
     license("MIT")
     version(
+        "0.11.1b",
+        tag="0.11.1b",
+        commit="98371989e8a23267e284c94e95156a139e4b33c4",
+        submodules=True,
+    )
+    version(
+        "0.11b", tag="0.11b", commit="972223c501ffc22068bb035ac5d64cf54318d895", submodules=True
+    )
+    version(
+        "0.10b", tag="0.10b", commit="6fca155f4deeb8d9529326f7b69f350aeeb93477", submodules=True
+    )
+    version(
         "0.9.2b", tag="0.9.2b", commit="b388d223d8c7213545603e00f6f3148c54d1f525", submodules=True
     )
     version(
@@ -41,12 +53,21 @@ class Aotriton(CMakePackage):
     depends_on("py-filelock", type=("build", "run"))
 
     depends_on("cmake@3.26:", type="build")
-    depends_on("python@:3.11", type="build")
+    depends_on("python", type="build")
     depends_on("z3", type="link")
     depends_on("zlib-api", type="link")
     depends_on("xz", type="link")
     depends_on("pkgconfig", type="build")
+
+    # build llvm version with mlir with the commit that matches inside the llvm-hash.txt
+    depends_on("aotriton-llvm@0.10", when="@0.10b")
+    depends_on("aotriton-llvm@0.9", when="@0.9b")
+    depends_on("aotriton-llvm@0.8", when="@0.8b")
+
     conflicts("^openssl@3.3.0")
+
+    # https://github.com/ROCm/aotriton/blob/main/README.md?plain=1#L24
+    conflicts("%gcc@:11.3", when="@0.9b:", msg="The binary delivery is compiled with gcc13")
 
     # ROCm dependencies
     depends_on("hip", type="build")
@@ -63,6 +84,45 @@ class Aotriton(CMakePackage):
                 string=True,
             )
 
+        if self.spec.satisfies("@:0.9"):
+            filter_file(
+                r"LLVM_INCLUDE_DIRS",
+                f"{self.spec['aotriton-llvm'].prefix}/include",
+                "third_party/triton/python/setup.py",
+                string=True,
+            )
+            filter_file(
+                r"LLVM_LIBRARY_DIR",
+                f"{self.spec['aotriton-llvm'].prefix}/lib",
+                "third_party/triton/python/setup.py",
+                string=True,
+            )
+            filter_file(
+                r"LLVM_SYSPATH",
+                f"{self.spec['aotriton-llvm'].prefix}",
+                "third_party/triton/python/setup.py",
+                string=True,
+            )
+        if self.spec.satisfies("@0.10:"):
+            filter_file(
+                r"LLVM_INCLUDE_DIRS",
+                f"{self.spec['aotriton-llvm'].prefix}/include",
+                "third_party/triton/setup.py",
+                string=True,
+            )
+            filter_file(
+                r"LLVM_LIBRARY_DIR",
+                f"{self.spec['aotriton-llvm'].prefix}/lib",
+                "third_party/triton/setup.py",
+                string=True,
+            )
+            filter_file(
+                r"LLVM_SYSPATH",
+                f"{self.spec['aotriton-llvm'].prefix}",
+                "third_party/triton/setup.py",
+                string=True,
+            )
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set environment variables used to control the build"""
         if self.spec.satisfies("%clang"):
@@ -73,4 +133,5 @@ class Aotriton(CMakePackage):
     def cmake_args(self):
         args = []
         args.append(self.define("AOTRITON_GPU_BUILD_TIMEOUT", 0))
+        args.append(self.define("AOTRITON_NOIMAGE_MODE", "ON"))
         return args

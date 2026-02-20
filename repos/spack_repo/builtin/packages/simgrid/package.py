@@ -72,10 +72,12 @@ class Simgrid(CMakePackage):
     variant("examples", default=False, description="Install examples")
     variant("mc", default=False, description="Model checker")
     variant("msg", default=False, description="Enables the old MSG interface")
+    variant("python", default=False, description="Enables the Python bindings")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    extends("python", when="+python")  # generated
 
     # does not build correctly with some old compilers -> rely on packages
     depends_on("boost@:1.69.0", when="@:3.21")
@@ -90,6 +92,13 @@ class Simgrid(CMakePackage):
 
     conflicts("+msg", when="@3.34:", msg="MSG was removed from SimGrid v3.33.")
 
+    # fix compilation with GCC 14 for v3.34
+    patch(
+        "https://github.com/simgrid/simgrid/commit/e4ecb51dcdf597fb02340d7855dafd0da9bd9018.patch?full_index=1",
+        sha256="80cbe0eed635ff1864f0c2945763c8561b86c08c0c2b60d2ee5a57e1659ccc3d",
+        when="@3.34",
+    )
+
     def setup_dependent_package(self, module, dep_spec):
         if self.spec.satisfies("+smpi"):
             self.spec.smpicc = join_path(self.prefix.bin, "smpicc")
@@ -99,7 +108,7 @@ class Simgrid(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        args = []
+        args = [self.define_from_variant("enable_python", "python")]
 
         if not spec.satisfies("+doc"):
             args.append("-Denable_documentation=OFF")

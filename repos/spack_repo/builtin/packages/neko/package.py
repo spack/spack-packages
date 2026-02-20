@@ -18,8 +18,11 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
     git = "https://github.com/ExtremeFLOW/neko.git"
     url = "https://github.com/ExtremeFLOW/neko/releases/download/v0.3.2/neko-0.3.2.tar.gz"
     maintainers("njansson")
+    license("BSD-3-Clause", checked_by="njansson")
 
     version("develop", branch="develop")
+    version("1.0.1", sha256="d5ca4fba615c2f48a667f8e15b0d0acef725f741d8293b617d451200a07e88a8")
+    version("1.0.0", sha256="2a62c5fb961155c1aa185a6d605af8cd3bba9f922f3ff32e855d3e6cc91d9eac")
     version("0.9.1", sha256="098bee5cb807d10cdf2fb56111ba8cbc592882a87e4dae18caf9dbda894611ef")
     version("0.9.0", sha256="3cffe629ada1631d8774fa51d8bb14b95dc0cea21578c0e07e70deb611a5091a")
     version("0.8.1", sha256="ac8162bc18e7112fd21b49c5a9c36f45c7b84896e90738be36a182990798baec")
@@ -30,8 +33,11 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     variant("parmetis", default=False, description="Build with support for parmetis")
     variant("xsmm", default=False, description="Build with support for libxsmm")
-    variant("gslib", default=False, description="Build with support for gslib")
+    variant("gslib", default=False, when="@:0.9.1", description="Build with support for gslib")
     variant("hdf5", default=False, when="@0.9.0:", description="Build with support for HDF5")
+
+    # Requires cuda or rocm enabled MPI
+    variant("device-mpi", default=False, description="Build with support for device-aware MPI")
     variant(
         "shared",
         default=False,
@@ -39,11 +45,8 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
         description="Builds a shared version of the library",
     )
 
-    # Requires cuda or rocm enabled MPI
-    variant("device-mpi", default=False, description="Build with support for device-aware MPI")
-
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")

@@ -137,6 +137,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("TPL_ENABLE_SCOTCH", "scotch"),
             self.define_from_variant("TPL_ENABLE_BPACK", "butterflypack"),
             self.define_from_variant("TPL_ENABLE_MAGMA", "magma"),
+            self.define_from_variant("TPL_ENABLE_ZFP", "zfp"),
             self.define_from_variant("STRUMPACK_COUNT_FLOPS", "count_flops"),
             self.define_from_variant("STRUMPACK_TASK_TIMERS", "task_timers"),
             "-DTPL_BLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),

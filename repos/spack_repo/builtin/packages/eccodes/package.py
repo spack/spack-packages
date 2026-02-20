@@ -51,6 +51,7 @@ class Eccodes(CMakePackage):
     license("Apache-2.0")
 
     version("develop", branch="develop")
+    version("2.45.0", sha256="6c84b39d7cc5e3b8330eeabe880f3e337f9b2ee1ebce20ea03eecd785f6c39a1")
     version("2.41.0", sha256="a1467842e11ed7f62a2f5cc1982e04eec62398f4962e6ba03ace7646f32cf270")
     version("2.40.0", sha256="f58d5d7390fce86c62b26d76b9bc3c4d7d9a6cf2e5f8145d1d598089195e51ff")
     version("2.38.0", sha256="96a21fbe8ca3aa4c31bb71bbd378b7fd130cbc0f7a477567d70e66a000ff68d9")

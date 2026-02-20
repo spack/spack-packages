@@ -53,4 +53,6 @@ class PyRpy2(PythonPackage):
     depends_on("py-pandas", type=("build", "run"), when="+pandas ^python@:3.9")
     depends_on("py-pandas@1.3.5:", type=("build", "run"), when="+pandas ^python@3.10:")
 
+    # not explicitly listed but required
     depends_on("iconv")
+    depends_on("zstd")

@@ -18,6 +18,7 @@ class Yq(GoPackage):
 
     license("MIT", checked_by="teaguesterling")
 
+    version("4.49.2", sha256="648d96cc490a4e08edb6bf8ff9498360b405263e202663cd9c92322b3aa557ef")
     version("4.45.4", sha256="e06b9b219ad885b08cf983a7ce5ff6d946587ab4ffc62de4538655bb50e39111")
     version("4.45.3", sha256="e3edb61a80691d05f4e6286cf68b0f9e8eba120f1f7326b80b9e17fbed25d49e")
     version("4.45.2", sha256="7ae8f8a4acc78dba5ab3a4bb004d390bbf6fe1cd1fc5746ff7db19f8e627b84f")

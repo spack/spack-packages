@@ -19,6 +19,7 @@ class PyTorchaudio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("2.10.0", tag="v2.10.0", commit="27b7ebdebd2d2e4d34a2f5c05b0fb26efbd1da63")
     version("2.9.1", tag="v2.9.1", commit="a224ab24a7f4797f6707051257265e223e12576f")
     version("2.9.0", tag="v2.9.0", commit="eaa9e4e4dd413dca1084116581dc84fad403db3b")
     version("2.8.0", tag="v2.8.0", commit="6e1c7fe9ff6d82b8665d0a46d859d3357d2ebaaa")
@@ -59,7 +60,8 @@ class PyTorchaudio(PythonPackage):
 
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
-        depends_on("python@3.10:3.14", when="@2.9:")
+        depends_on("python@3.10:", when="@2.10:")
+        depends_on("python@3.10:3.14", when="@2.9")
         depends_on("python@3.9:3.13", when="@2.6:2.8")
         depends_on("python@3.9:3.12", when="@2.5")
         depends_on("python@3.8:3.12", when="@2.2:2.4")
@@ -68,6 +70,7 @@ class PyTorchaudio(PythonPackage):
         depends_on("python@:3.9", when="@0.7.2:0.11")
 
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.10:", when="@2.10.0")
         depends_on("py-torch@2.9.1", when="@2.9.1")
         depends_on("py-torch@2.9.0", when="@2.9.0")
         depends_on("py-torch@2.8.0", when="@2.8.0")

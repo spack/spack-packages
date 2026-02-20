@@ -55,7 +55,7 @@ def ensure_configuration_fixture_run_before(request):
 @pytest.fixture(autouse=True)
 def clear_recorded_monkeypatches():
     yield
-    spack.subprocess_context.clear_patches()
+    spack.subprocess_context.MONKEYPATCHES.clear()
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -65,7 +65,7 @@ def record_monkeypatch_setattr():
     saved_setattr = _pytest.monkeypatch.MonkeyPatch.setattr
 
     def record_setattr(cls, target, name, value, *args, **kwargs):
-        spack.subprocess_context.append_patch((target, name, value))
+        spack.subprocess_context.MONKEYPATCHES.append((target, name))
         saved_setattr(cls, target, name, value, *args, **kwargs)
 
     _pytest.monkeypatch.MonkeyPatch.setattr = record_setattr
@@ -373,26 +373,10 @@ def mutable_config(tmp_path_factory: pytest.TempPathFactory, configuration_dir):
         yield cfg
 
 
-# From  https://github.com/pytest-dev/pytest/issues/363#issuecomment-1335631998
-# Current suggested implementation from issue compatible with pytest >= 6.2
-# this may be subject to change as new versions of Pytest are released
-# and update the suggested solution
-@pytest.fixture(scope="session")
-def monkeypatch_session():
-    with pytest.MonkeyPatch.context() as monkeypatch:
-        yield monkeypatch
-
-
-@pytest.fixture(scope="session", autouse=True)
-def mock_wsdk_externals(monkeypatch_session):
-    """Skip check for required external packages on Windows during testing
-    Note: In general this should cover this behavior for all tests,
-    however any session scoped fixture involving concretization should
-    include this fixture
-    """
-    monkeypatch_session.setattr(
-        spack.bootstrap.core, "ensure_winsdk_external_or_raise", _return_none
-    )
+@pytest.fixture(autouse=True)
+def mock_wsdk_externals(monkeypatch):
+    """Skip check for required external packages on Windows during testing."""
+    monkeypatch.setattr(spack.bootstrap, "ensure_winsdk_external_or_raise", _return_none)
 
 
 def _populate(mock_db):
@@ -441,7 +425,6 @@ def _store_dir_and_cache(tmp_path_factory: pytest.TempPathFactory):
 @pytest.fixture(scope="session")
 def mock_store(
     tmp_path_factory: pytest.TempPathFactory,
-    mock_wsdk_externals,
     mock_packages_repo,
     mock_configuration_scopes,
     _store_dir_and_cache: Tuple[Path, Path],
@@ -456,6 +439,7 @@ def mock_store(
 
     """
     store_path, store_cache = _store_dir_and_cache
+    _mock_wsdk_externals = spack.bootstrap.ensure_winsdk_external_or_raise
 
     # Make the DB filesystem read-only to ensure constructors don't modify anything in it.
     # We want Spack to be able to point to a DB on a read-only filesystem easily.
@@ -468,7 +452,11 @@ def mock_store(
                 with use_repositories(mock_packages_repo):
                     # make the DB filesystem writable only while we populate it
                     _recursive_chmod(store_path, 0o755)
-                    _populate(store.db)
+                    try:
+                        spack.bootstrap.ensure_winsdk_external_or_raise = _return_none
+                        _populate(store.db)
+                    finally:
+                        spack.bootstrap.ensure_winsdk_external_or_raise = _mock_wsdk_externals
                     _recursive_chmod(store_path, 0o555)
 
         _recursive_chmod(store_cache, 0o755)

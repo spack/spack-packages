@@ -16,12 +16,13 @@ class P7zip(MakefilePackage):
 
     license("DOC")
 
+    version("17.06", sha256="c35640020e8f044b425d9c18e1808ff9206dc7caf77c9720f57eb0849d714cd1")
     version("17.05", sha256="d2788f892571058c08d27095c22154579dfefb807ebe357d145ab2ddddefb1a6")
     version("17.04", sha256="ea029a2e21d2d6ad0a156f6679bd66836204aa78148a4c5e498fe682e77127ef")
     version("16.02", sha256="5eb20ac0e2944f6cb9c2d51dd6c4518941c185347d4089ea89087ffdd6e2341f")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     patch(
         "gcc10.patch",

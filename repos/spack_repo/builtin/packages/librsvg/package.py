@@ -64,6 +64,7 @@ class Librsvg(AutotoolsPackage, MesonPackage):
     depends_on("gtk-doc", type="build", when="+doc")
 
     # requirements according to `meson.build` or `configure` file
+    depends_on("cargo-c@0.9.19:", when="@2.59:", type="build")
     depends_on("cairo@1.18:", when="@2.59:")
     depends_on("cairo@1.17:", when="@2.57:")
     depends_on("cairo@1.16:", when="@2.50:")
@@ -85,6 +86,8 @@ class Librsvg(AutotoolsPackage, MesonPackage):
 
     # Historical dependencies
     depends_on("libcroco@0.6.1:", when="@:2.44.14")
+
+    patch("gdk-pixbuf-query-loaders-install.patch", when="@2.59:")
 
     def url_for_version(self, version):
         url = "https://download.gnome.org/sources/librsvg/"

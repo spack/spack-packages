@@ -31,7 +31,7 @@ spack:
     - rust+dev   # fd, ripgrep, hyperfine, exa, rust-analyzer
       # styling and lints
     - astyle
-    - cppcheck
+    # - cppcheck # need to resolve build error in ci context
     - uncrustify
     - py-fprettify
     - py-fortran-language-server

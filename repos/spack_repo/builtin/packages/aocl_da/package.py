@@ -34,6 +34,7 @@ class AoclDa(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("5.2", sha256="faaa250de44d0b7d15a75b26121d457ac895b5cddd87ae1d81882a685ca81eb9")
     version("5.1", sha256="93cdb789c948bf750e531f95618bae4370d53eddc88960744ff02c9acbfe9ef5")
     version("5.0", sha256="3458adc7be39c78a08232c887f32838633149df0a69ccea024327c3edc5a5c1d")
 
@@ -61,7 +62,7 @@ class AoclDa(CMakePackage):
     depends_on("cmake@3.22:", when="@:5.0", type="build")
     depends_on("cmake@3.26:", when="@5.1:", type="build")
     depends_on("boost@1.66.0:", when="@5.1:", type="build")
-    for vers in ["5.0", "5.1"]:
+    for vers in ["5.0", "5.1", "5.2"]:
         with when(f"@={vers}"):
             depends_on(f"aocl-utils@={vers} +shared", when="+shared")
             depends_on(f"aocl-utils@={vers} ~shared", when="~shared")

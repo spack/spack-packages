@@ -5,15 +5,15 @@
 import os.path
 import re
 import sys
+from glob import glob
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
+class MvapichPlus(Package, CudaPackage, ROCmPackage):
     """Mvapich is a High-Performance MPI Library for clusters with diverse
     networks (InfiniBand, Omni-Path, Ethernet/iWARP, and RoCE) and computing
     platforms (x86 (Intel and AMD), ARM and OpenPOWER)"""
@@ -29,14 +29,20 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("Unlicense")
 
     # Prefer the latest stable release
-    version("4.1", sha256="be0a60f342cb94b6719799077072d87aa6e306f21e2c4a09eba6c581f83d4619")
-    version("4.0", sha256="942156804425752ab8b7884a6995581d7d9e93f58025ca71b58e6412eb766eae")
+
+    version(
+        "4.1",
+        sha256="891b98563216222bd12171ec9ace4a831eef73094f3705a4635bb6104cdfb465",
+        url="https://mvapich.cse.ohio-state.edu/download/mvapich/plus/4.1/mvapich-plus-installer.sh",
+        expand=False,
+    )
 
     provides("mpi")
     provides("mpi@:4.1")
 
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
     variant("debug", default=False, description="Enable debug info and error messages at run-time")
+    variant("apu", default=False, description="Enable APU enhancements")
 
     variant("regcache", default=True, description="Enable memory registration cache")
 
@@ -84,19 +90,20 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
         values=auto_or_any_combination_of("lustre", "gpfs", "nfs", "ufs"),
     )
 
-    depends_on("findutils", type="build")
-    depends_on("bison", type="build")
-    depends_on("pkgconfig", type="build")
     depends_on("zlib-api")
+    depends_on("rpm")
     depends_on("libpciaccess", when=(sys.platform != "darwin"))
     depends_on("libxml2")
-    depends_on("rccl", when="^hip")
     depends_on("libfabric", when="netmod=ofi")
     depends_on("slurm", when="process_managers=slurm")
     depends_on("ucx", when="netmod=ucx")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+    requires("%fortran=gcc", when="%c=gcc")
+    requires("%fortran=clang", when="%c=clang")
+    requires("%fortran=intel-oneapi-compilers", when="%c=intel-oneapi-compilers")
+    requires("%fortran=nvhpc", when="%c=nvhpc")
 
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
 
@@ -120,87 +127,42 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         return find_libraries(libraries, root=self.prefix, shared=True, recursive=True)
 
-    @property
-    def process_manager_options(self):
-        spec = self.spec
+    def install(self, spec, prefix):
+        runfile = glob(join_path(self.stage.source_path, "mvapich-plus-installer.sh"))[0]
+        mvp_ver = str(spec.version)
+        gpu = "nogpu"
+        gpu_ver = ""
+        apu = ""
+        if spec.satisfies("^cuda"):
+            gpu = "cuda"
+            gpu_ver = str(spec["cuda"].version)[:4]
+        elif spec.satisfies("+rocm"):
+            gpu = "rocm"
+            gpu_ver = spec["hip"].version
+            if spec.satisfies("+apu"):
+                apu = ".mi300a"
 
-        other_pms = []
-        for x in ("hydra", "gforker", "remshell"):
-            if spec.satisfies(f"process_managers={x}"):
-                other_pms.append(x)
-
-        opts = []
-        if len(other_pms) > 0:
-            opts = ["--with-pm=%s" % ":".join(other_pms)]
+        netmod = "ucx" if spec.satisfies("netmod=ucx") else "ofi"
+        comp = spec["c"].format("{name}{version}")
+        el = "el9" if spec["glibc"].satisfies("@2.34:") else "el8"
+        rhel = "rh" + el
+        ofed = "24.10"
+        slurm = ""
         if spec.satisfies("process_managers=slurm"):
-            opts = ["--with-pm=none", "--with-pmi=slurm"]
-        if spec.satisfies("process_managers=cray"):
-            opts = ["--with-pm=none", "--with-pmi=pmi2", "--with-pmi2=/opt/cray/pe/pmi/default"]
-        if "none" in spec.variants["process_managers"].value:
-            opts = ["--with-pm=none"]
+            slurm = ".slurm"
+        rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{rhel}.ofed{ofed}.{netmod}.{comp}\
+{slurm}{apu}-4.1-1.{el}.x86_64.rpm"
 
-        return opts
+        install_shell = which("bash")
+        io = which("rpm2cpio").path
+        arguments = [
+            runfile,  # the install script
+            "--prefix=%s" % prefix,  # Where to install
+            "--io=%s" % io,  # rpm2cpio
+            "--rpm=%s" % rpm,  # rpm name
+        ]
 
-    @property
-    def network_options(self):
-        opts = []
-        # From here on I can suppose that only one variant has been selected
-        if self.spec.satisfies("netmod=ofi"):
-            opts = ["--with-device=ch4:ofi"]
-        elif self.spec.satisfies("netmod=ucx"):
-            opts = ["--with-device=ch4:ucx"]
-        return opts
-
-    @property
-    def file_system_options(self):
-        spec = self.spec
-
-        fs = []
-        for x in ("lustre", "gpfs", "nfs", "ufs"):
-            if spec.satisfies(f"file_systems={x}"):
-                fs.append(x)
-
-        opts = []
-        if len(fs) > 0:
-            opts.append("--with-file-system=%s" % "+".join(fs))
-
-        return opts
-
-    def flag_handler(self, name, flags):
-        if name == "fflags":
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1795817
-            if self.spec.satisfies("%gcc@10:"):
-                if flags is None:
-                    flags = []
-                flags.append("-fallow-argument-mismatch")
-        return (None, flags, None)
-
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # mvapich2 configure fails when F90 and F90FLAGS are set
-        env.unset("F90")
-        env.unset("F90FLAGS")
-        if self.spec.satisfies("^cuda"):
-            env.prepend_path("PATH", self.spec["cuda"].prefix + "/bin")
-            env.prepend_path("LIBRARY_PATH", self.spec["cuda"].prefix + "/lib")
-            env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix + "/lib")
-            env.prepend_path("LIBRARY_PATH", self.spec["cuda"].prefix + "/lib64")
-            env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix + "/lib64")
-            env.prepend_path("C_INCLUDE_PATH", self.spec["cuda"].prefix + "/include")
-            env.append_path("CPATH", self.spec["cuda"].prefix + "/include")
-            env.prepend_path("CPLUS_INCLUDE_PATH", self.spec["cuda"].prefix + "/include")
-            env.set("CUDA_HOME", self.spec["cuda"].prefix)
-            env.set("CUDA_ROOT", self.spec["cuda"].prefix)
-        if self.spec.satisfies("^hip"):
-            env.prepend_path("PATH", self.spec["hip"].prefix + "/bin")
-            env.prepend_path("LIBRARY_PATH", self.spec["hip"].prefix + "/lib")
-            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix + "/lib")
-            env.prepend_path("LIBRARY_PATH", self.spec["hip"].prefix + "/lib64")
-            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix + "/lib64")
-            env.prepend_path("C_INCLUDE_PATH", self.spec["hip"].prefix + "/include")
-            env.append_path("CPATH", self.spec["hip"].prefix + "/include")
-            env.prepend_path("CPLUS_INCLUDE_PATH", self.spec["hip"].prefix + "/include")
-            env.set("CUDA_HOME", self.spec["hip"].prefix)
-            env.set("CUDA_ROOT", self.spec["hip"].prefix)
+        install_shell(*arguments)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("MPI_ROOT", self.prefix)
@@ -253,49 +215,3 @@ class MvapichPlus(AutotoolsPackage, CudaPackage, ROCmPackage):
             os.path.join(self.prefix.lib, f"libmpicxx.{dso_suffix}"),
             os.path.join(self.prefix.lib, f"libmpi.{dso_suffix}"),
         ]
-
-    def configure_args(self):
-        spec = self.spec
-        args = [
-            "--disable-silent-rules",
-            "--disable-new-dtags",
-            "--disable-cl",
-            "--disable-opencl",
-            "--disable-gl",
-            "--enable-fortran=all",
-            "--disable-omb",
-            f"--enable-wrapper-rpath={'no' if spec.satisfies('~wrapperrpath') else 'yes'}",
-        ]
-
-        args.extend(self.enable_or_disable("alloca"))
-
-        if self.spec.satisfies("+debug"):
-            args.extend(
-                [
-                    "--disable-fast",
-                    "--enable-error-checking=runtime",
-                    "--enable-error-messages=all",
-                    # Permits debugging with TotalView
-                    "--enable-g=all",
-                    "--enable-debuginfo",
-                ]
-            )
-        else:
-            args.append("--enable-fast=all")
-        if self.spec.satisfies("+cuda"):
-            args.extend([f"--with-cuda={(spec['cuda'].prefix)}"])
-            # args.extend(["--with-cuda"])
-        if self.spec.satisfies("+rocm"):
-            args.extend([f"--with-rocm={spec['hip'].prefix}"])
-
-        # no longer supported
-        if self.spec.satisfies("+regcache"):
-            args.append("--enable-registration-cache")
-        else:
-            args.append("--disable-registration-cache")
-
-        # probably don't want to do this
-        args.extend(self.process_manager_options)
-        args.extend(self.network_options)
-        args.extend(self.file_system_options)
-        return args

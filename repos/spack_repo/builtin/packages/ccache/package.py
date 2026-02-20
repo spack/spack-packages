@@ -78,6 +78,10 @@ class Ccache(CMakePackage):
     depends_on("zlib-api", when="@:3")
 
     depends_on("zstd", when="@4.0:")
+    depends_on("fmt@8:", when="@4.10:")
+    depends_on("xxhash@0.8:", when="@4.10:")
+    depends_on("span-lite@0.10.3:", when="@4.10:")
+    # NOTE: blake3, cpphttplib, tlexpected are all automatically vendored
 
     depends_on("hiredis@0.13.3:", when="@4.4: +redis")
     depends_on("pkgconfig", type="build", when="@4.4:")
@@ -90,15 +94,25 @@ class Ccache(CMakePackage):
     patch("fix-gcc-12.patch", when="@4.8:4.8.2 %gcc@12")
 
     def cmake_args(self):
-        return [
+        args = [
             # The test suite does not support the compiler being a wrapper script
             # https://github.com/ccache/ccache/issues/914#issuecomment-922521690
             self.define("ENABLE_TESTING", False),
             self.define("ENABLE_DOCUMENTATION", False),
             self.define_from_variant("REDIS_STORAGE_BACKEND", "redis"),
-            self.define("ZSTD_FROM_INTERNET", False),
-            self.define("HIREDIS_FROM_INTERNET", False),
         ]
+
+        if self.spec.satisfies("@4.10:"):
+            args.extend([self.define("DEPS", "LOCAL")])
+        else:
+            args.extend(
+                [
+                    self.define("ZSTD_FROM_INTERNET", False),
+                    self.define("HIREDIS_FROM_INTERNET", False),
+                ]
+            )
+
+        return args
 
     # Before 4.0 this was an Autotools package
     @when("@:3")

@@ -19,6 +19,7 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("4.2.2", sha256="9ad62c7dc910303cd384ff8f1f4767a655124980bb6d8650fe62c815a231bb7b")
     version("4.2.1", sha256="b9df93635b20e4089c29623b19420c4ac848a1b29df1cfd59f26cab0d2666aa0")
     version("4.2.0", sha256="691db39178e36fc460c046591e4b0f2a52c8f2b3ee6d750cc2eab25f1eaa999d")
     version("4.1.1", sha256="85fdf11614cc08e3545386d6b9c8c9035e3db1e506211a45f4e108117fe3c951")

@@ -105,7 +105,7 @@ class RdmaCore(CMakePackage):
     with when("+pyverbs"):
         extends("python")
         depends_on("python", type="build")
-        depends_on("py-cython", type="build")
+        depends_on("py-cython@:3.1", type="build")
 
     depends_on("pkgconfig", type="build")
     depends_on("py-docutils", when="+man_pages", type="build")

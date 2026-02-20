@@ -19,7 +19,7 @@ class Tau(Package):
     Java, Python.
     """
 
-    maintainers("wspear", "eugeneswalker", "khuck", "sameershende")
+    maintainers("wspear", "eugeneswalker", "sameershende")
     homepage = "https://www.cs.uoregon.edu/research/tau"
     url = "https://www.cs.uoregon.edu/research/tau/tau_releases/tau-2.30.tar.gz"
     git = "https://github.com/UO-OACISS/tau2"
@@ -29,6 +29,7 @@ class Tau(Package):
     license("MIT")
 
     version("master", branch="master")
+    version("2.35.1", sha256="fee7c0ae49c370c23489b7c14b312af4611bb06cdb212464a2b0798721e9811f")
     version("2.35", sha256="b13c6a0579da59853f8e6482d5f3aaed482bc1306c4eb91411c1568f647bf348")
     version("2.34.1", sha256="0e90726372fa1b6f726eb62b0840350070a00215144853ee07a852a99458c619")
     version("2.34", sha256="229ab425e0532e635a0be76d60b8aa613adf7596d15a9ced0b87e7f243bb2132")
@@ -65,6 +66,7 @@ class Tau(Package):
     darwin_default = not _is_darwin
     libunwind_darwin_default = "none" if _is_darwin else "shared"
 
+    variant("julia", default=False, description="Activate Julia support", when="@2.35.1:")
     variant("scorep", default=False, description="Activates SCOREP support")
     variant("openmp", default=False, description="Use OpenMP threads")
     variant("pthreads", default=True, description="Use POSIX threads")
@@ -211,6 +213,13 @@ class Tau(Package):
     depends_on("java", type="run")  # for paraprof
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("dyninst@12.3.0:", when="+dyninst")
+    depends_on("julia@1.6:", when="+julia")
+
+    conflicts(
+        "+julia",
+        when="~pthreads ~ittnotify",
+        msg="Julia support requires +pthreads and +ittnotify",
+    )
 
     conflicts("+comm", when="@:2.34 +python", msg="Bug in +comm with +python up to @2.34")
 
@@ -224,6 +233,7 @@ class Tau(Package):
     conflicts("+dyninst", when="@:2.32.1")
     conflicts("+disable-no-pie", when="@:2.33.2")
     patch("unwind.patch", when="@2.29.0")
+    patch("pycuda.patch", when="@2.33:2.35.0")
 
     conflicts("+rocprofiler", when="+rocprofv2", msg="Use either rocprofiler or rocprofv2")
     conflicts(
@@ -318,6 +328,9 @@ class Tau(Package):
         # written script (nothing related to autotools).  As such it has
         # a few #peculiarities# that make this build quite hackish.
         options = ["-prefix=%s" % prefix]
+
+        if "+julia" in spec:
+            options.append("-julia")
 
         if "+craycnl" in spec:
             options.append("-arch=craycnl")

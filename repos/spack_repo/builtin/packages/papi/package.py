@@ -92,6 +92,8 @@ class Papi(AutotoolsPackage, ROCmPackage):
     conflicts("^cuda", when="@:5", msg="CUDA support for versions < 6.0.0 not implemented")
     # https://github.com/icl-utk-edu/papi/pull/205
     conflicts("^cuda@12.4:", when="@:7.1")
+    # https://github.com/spack/spack-packages/pull/3028#issuecomment-3749940489
+    conflicts("^cuda@13.1:")
     conflicts("%cce", when="@7.1:", msg="-ffree-form flag not recognized")
 
     conflicts("@=6.0.0", when="+static_tools", msg="Static tools cannot build on version 6.0.0")

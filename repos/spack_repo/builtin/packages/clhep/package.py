@@ -11,48 +11,47 @@ from spack.package import *
 class Clhep(CMakePackage):
     """CLHEP is a C++ Class Library for High Energy Physics."""
 
-    homepage = "https://proj-clhep.web.cern.ch/proj-clhep/"
-    url = "https://proj-clhep.web.cern.ch/proj-clhep/dist1/clhep-2.4.1.3.tgz"
-    list_url = "https://proj-clhep.web.cern.ch/proj-clhep/"
-    list_depth = 1
+    homepage = "https://gitlab.cern.ch/CLHEP/CLHEP"
+    git = "https://gitlab.cern.ch/CLHEP/CLHEP.git"
 
     tags = ["hep"]
 
     maintainers("drbenmorgan")
 
-    version("2.4.7.1", sha256="1c8304a7772ac6b99195f1300378c6e3ddf4ad07c85d64a04505652abb8a55f9")
-    version("2.4.7.0", sha256="7fa460030bc1a804ea7da8cce7611b93261493bbb66c3cfd3ceec935d7e1b8d3")
-    version("2.4.6.4", sha256="49c89330f1903ef707d3c5d79c16a7c5a6f2c90fc290e2034ee3834809489e57")
-    version("2.4.6.3", sha256="fcd007f11b10ba4af28d027222b63148d0eb44ff7a082eee353bdf921f9c684a")
-    version("2.4.6.2", sha256="aded73e49bac85a5b4e86f64a0ee3d6f3cfe5551b0f7731c78b6d8f9dac6e8dc")
-    version("2.4.6.0", sha256="e8d16debb84ced28e40e9ae84789cf5a0adad45f9213fbac3ce7583e06caa7b1")
-    version("2.4.5.4", sha256="983fb4ea1fe423217fe9debc709569495a62a3b4540eb790d557c5a34dffbbb6")
-    version("2.4.5.3", sha256="45f63eeb097f02fe67b86a7dadbf10d409b401c28a1a3e172db36252c3097c13")
-    version("2.4.5.1", sha256="2517c9b344ad9f55974786ae6e7a0ef8b22f4abcbf506df91194ea2299ce3813")
-    version("2.4.4.0", sha256="5df78c11733a091da9ae5a24ce31161d44034dd45f20455587db85f1ca1ba539")
-    version("2.4.1.3", sha256="27c257934929f4cb1643aa60aeaad6519025d8f0a1c199bc3137ad7368245913")
-    version("2.4.1.2", sha256="ff96e7282254164380460bc8cf2dff2b58944084eadcd872b5661eb5a33fa4b8")
-    version("2.4.1.0", sha256="d14736eb5c3d21f86ce831dc1afcf03d423825b35c84deb6f8fd16773528c54d")
-    version("2.4.0.4", sha256="eb013841c57990befa1e977a11a552ab8328733c1c3b6cecfde86da40dc22113")
-    version("2.4.0.2", sha256="1e9891c5badb718c24933e7a5c6ee4d64fd4d5cf3a40c150ad18e864ec86b8a4")
-    version("2.4.0.1", sha256="4c7e2c6ac63e0237100e4ddcbfdc3d7e7dc6592f95bdbdcc0e43a6892b9fd6e0")
-    version("2.4.0.0", sha256="5e5cf284323898b4c807db6e684d65d379ade65fe0e93f7b10456890a6dee8cc")
-    version("2.3.4.6", sha256="3e53947036f8570c7a08bed670a862426dbca17328afcecd6c875d8487fef204")
-    version("2.3.4.5", sha256="1199d04626cb8bc1307e282b143018691077cc61fe2f286a382030262eda8764")
-    version("2.3.4.4", sha256="e54de15ffa5108a1913c4910845436345c89ddb83480cd03277a795fafabfb9d")
-    version("2.3.4.3", sha256="1019479265f956bd660c11cb439e1443d4fd1655e8d51accf8b1e703e4262dff")
-    version("2.3.4.2", sha256="6d1e15ccbe1ca6e71d541e78ca7e8c9f3d986ee0da5177a4b8cda00c619dc691")
-    version("2.3.3.2", sha256="4e69a5afb1b7ecc435395195140afc85bbbb9f4d3572f59451c3882f3015a7c1")
-    version("2.3.3.1", sha256="cd74bfae4773620dd0c7cc9c1696a08386931d7e47a3906aa632cc5cb44ed6bd")
-    version("2.3.3.0", sha256="0bcae1bed8d3aa4256e3a553a4f60484312f2121dcc83492a40f08a70881c8c0")
-    version("2.3.2.2", sha256="885481ae32c2f31c3b7f14a5e5d68bc56dc3df0c597be464d7ffa265b8a5a1af")
-    version("2.3.1.1", sha256="0e2b170df99176feb0aa4f20ea3b33463193c086682749790c5b9b79388d0ff4")
-    version("2.3.1.0", sha256="66272ae3100d3aec096b1298e1e24ec25b80e4dac28332b45ec3284023592963")
-    version("2.3.0.0", sha256="63e77f4f34baa5eaa0adb1ca2438734f2d6f5ca112d830650dd005a6109f2397")
-    version("2.2.0.8", sha256="f735e236b1f023ba7399269733b2e84eaed4de615081555b1ab3af25a1e92112")
-    version("2.2.0.5", sha256="92e8b5d32ae96154edd27d0c641ba048ad33cb69dd4f1cfb72fc578770a34818")
-    version("2.2.0.4", sha256="9bf7fcd9892313c8d1436bc4a4a285a016c4f8e81e1fc65bdf6783207ae57550")
-    version("2.1.2.3", sha256="4353231be09c134507092161cd3ced27a065ca0ebb31ee0256e60a8163c47c3b")
+    version("2.4.7.2", sha256="c40c239fa2c5810b60f4e9ddd6a8cc2ce81b962aa170994748cd2a2b5ac87f84")
+    version("2.4.7.1", sha256="6c39dfecfb8369c4ba9d353471fa7cc818116f9c4dfef35bb5a086a9b2ccd40b")
+    version("2.4.7.0", sha256="6705da2fa08db9b8ad16cff6687932f3135d402c28ee48f23ee7e7297f9fab91")
+    version("2.4.6.4", sha256="df94daccadc422dda70162c71103c963581f258c7d160f4e20fce26fc1949f4a")
+    version("2.4.6.3", sha256="6c24d015e8dfaf81112c79ce7ebcf1ce1273e014c980917a9225b9664d27ff28")
+    version("2.4.6.2", sha256="97bf944d672e10fdd1824a2b27cf99f26f4868593e31b14af510fd36230955a3")
+    version("2.4.6.0", sha256="f2dffc46d4221276b396fbb1ab5b2dff1e62215a231426b5396c5ba5daca0cb3")
+    version("2.4.5.4", sha256="d00cb79f3902a12ec573219e6590725afc0e77176e4e5096c4de4c51a20ba47d")
+    version("2.4.5.3", sha256="3d5df7e4dce698ff401c2744c5dcdf24796d25894443339e2426ae7eb62b8feb")
+    version("2.4.5.1", sha256="8729e1c0fe545f2c1b631b3a0bfaa6edb3880c4d401ec638db98a8f63b136bc4")
+    version("2.4.4.0", sha256="b9d9364fe0f3fbc03e0f0cf53b81e8190dae38f81cc854b6b712e1b85d472752")
+    version("2.4.1.3", sha256="aa2725db049c455d8e3c78678889c013deef83bcba0146bdf04e859c38054d52")
+    version("2.4.1.2", sha256="bb6e36dc1ab055d0b47bb24377b570b100b37ace402cbc0d858e49be0a1b72c6")
+    version("2.4.1.0", sha256="21b6823c8f859f2e042c71032cc23ddcca22a98186a374f0bde4ed54683a649b")
+    version("2.4.0.4", sha256="058cf042fedc5ac21c59a4acb2b5af2c56bf4a310456ada4ecf590dd8ac7b444")
+    version("2.4.0.2", sha256="d459681835ecfa272dfe48d42667f25fb2cb480981c0df381b4c051f26504b80")
+    version("2.4.0.1", sha256="1370a036ca8530df97d0c20722f26ace7c34b34070a5d3bf892feeb9d4f83756")
+    version("2.4.0.0", sha256="e205c51b7b8e5109d30a55d72570c65440ebf670d43063b729264a4dc69c9645")
+    version("2.3.4.6", sha256="ef12c4e0e0452d07f4a5e6370c747589b8bc1ed5001507ccd17685aab4728752")
+    version("2.3.4.5", sha256="4ed1b18a0c146a915cbc44b8f6b2b8289c99bf9e9a538bf4db9f7b3bbe3d762e")
+    version("2.3.4.4", sha256="f7228b83396ee34e6ab12538c470a3f6bd4d657158dd362bee443a29f1d4abe6")
+    version("2.3.4.3", sha256="91eaaaad6c60f58a9bb71ea525259f81829d0f47384a61ca07f8d3920ebb3540")
+    version("2.3.4.2", sha256="deaa9396b23779f185eead508fa156637d4c85abfdb3dfb8a673436fa05ad562")
+    version("2.3.3.2", sha256="3dd41587ac99b27c6aa4ca3dd6204ba96b774627f3f28079cf0f01663340a811")
+    version("2.3.3.1", sha256="fc837873e4172497f97b8d3e77c7508d6c554320465da73cf6b0bea8a2aae993")
+    version("2.3.3.0", sha256="aacf0fdbdd6f38f485533e1b92d383a1eb6252dab8e5644694580cc7121ffe06")
+    version("2.3.2.2", sha256="9a9b6ac3e6c6c9dcd29e528a3ac3371a67223c75fb8898770d36d0ae4a222ace")
+    version("2.3.1.1", sha256="6300568a5fbdf0bd3c051349bee11aca8d95993921ecf01147ce298db58a30b4")
+    version("2.3.1.0", sha256="68863cfa89d15c7ca026524b67f5ab663c9a737ed3b9927dfbc732379a1937d0")
+    version("2.3.0.0", sha256="b3d1d81bacc0997ca9bcf730e0d6046b3759d9573ade0d89d24afeca15a51836")
+    version("2.2.0.8", sha256="ad3fcd9a5c650b8eb7b5a78ae2016d64066ca451adda774afef46da497a116ea")
+    version("2.2.0.5", sha256="97d6e08c1e6b6cfc89cc6b98c2b49f35cdfe338e71cd6a85f0ae2aa1d5995b7e")
+    version("2.2.0.4", sha256="2d98542c26e077eb54909c625b448c9adb2726e27b23f5e027f43da5e9789ecd")
+    version("2.1.2.3", sha256="a3fb65bb4ded5271db889e07a42cd988ae928216f0758a27a52772d243efa07f")
 
     variant(
         "cxxstd",
@@ -75,8 +74,6 @@ class Clhep(CMakePackage):
 
     variant("cms", default=False, description="Apply CMS-specific changes")
 
-    root_cmakelists_dir = "CLHEP"  # Extra directory layer.
-
     patch("clhep-cms.patch", when="+cms", level=0)
 
     def patch(self):
@@ -96,3 +93,7 @@ class Clhep(CMakePackage):
             "-DCLHEP_BUILD_CXXSTD=-std=c++{0}".format(self.spec.variants["cxxstd"].value)
         ]
         return cmake_args
+
+    def url_for_version(self, version):
+        url = "https://gitlab.cern.ch/CLHEP/CLHEP/-/archive/CLHEP_{0}/CLHEP-CLHEP_{0}.tar.gz"
+        return url.format(version.underscored)

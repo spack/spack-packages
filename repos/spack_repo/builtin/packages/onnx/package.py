@@ -75,7 +75,7 @@ class Onnx(CMakePackage):
     patch("OpSchemaRegisterOnce.patch", when="@1.18.0:1.19")
 
     def patch(self):
-        if self.spec.satisfies("@1.13:1.14 ^protobuf@3.22:"):
+        if self.spec.satisfies("@1.13:1.14 ^protobuf@22:"):
             # CMAKE_CXX_STANDARD is overridden in CMakeLists.txt until 1.14
             cxxstd = self.spec["abseil-cpp"].variants["cxxstd"].value
             filter_file("CMAKE_CXX_STANDARD 11", f"CMAKE_CXX_STANDARD {cxxstd}", "CMakeLists.txt")
@@ -92,7 +92,7 @@ class Onnx(CMakePackage):
                 "ONNX_USE_PROTOBUF_SHARED_LIBS", self.spec["protobuf"].variants["shared"].value
             ),
         ]
-        if self.spec.satisfies("@1.15: ^protobuf@3.22:"):
+        if self.spec.satisfies("@1.15: ^protobuf@22:"):
             # CMAKE_CXX_STANDARD can be set on command line as of 1.15
             cxxstd = self.spec["abseil-cpp"].variants["cxxstd"].value
             args.append(self.define("CMAKE_CXX_STANDARD", cxxstd))

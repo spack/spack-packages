@@ -15,12 +15,13 @@ class SstCore(AutotoolsPackage):
 
     homepage = "https://github.com/sstsimulator"
     git = "https://github.com/sstsimulator/sst-core.git"
-    url = "https://github.com/sstsimulator/sst-core/releases/download/v15.0.0_Final/sstcore-15.0.0.tar.gz"
+    url = "https://github.com/sstsimulator/sst-core/releases/download/v15.1.0_Final/sstcore-15.1.0.tar.gz"
 
     maintainers("berquist", "jmlapre", "naromero77")
 
     license("BSD-3-Clause")
 
+    version("15.1.0", sha256="ec3d9e733bcf99283b526cfb4a853787d303a8d55b2a42d5102b0f4f4a4feb81")
     version("15.0.0", sha256="ca2875fb36be069e34b10fd9b0ad756dd4c707795f824346aff9523a56f3840c")
     version("14.1.0", sha256="9d17c37d1ebdff8d8eb10ab0084eb901c78a7c5a76db15189e3d7fc318fd6f9d")
     version("14.0.0", sha256="fadc7ee99472ff3ac5d4b3f3e507123e32bd9fb89c4c6b48fbd2dca8aeb8b8d6")
@@ -126,10 +127,6 @@ class SstCore(AutotoolsPackage):
 
         if self.spec.satisfies("+pdes_mpi"):
             args.append("--enable-mpi")
-            env["CC"] = self.spec["mpi"].mpicc
-            env["CXX"] = self.spec["mpi"].mpicxx
-            env["F77"] = self.spec["mpi"].mpif77
-            env["FC"] = self.spec["mpi"].mpifc
         else:
             args.append("--disable-mpi")
 

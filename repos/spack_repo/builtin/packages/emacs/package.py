@@ -88,10 +88,13 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # Optional dependencies
     depends_on("gnutls", when="+tls")
-    depends_on("tree-sitter", when="+treesitter")
     depends_on("gcc@11: languages=jit", when="+native")
     depends_on("jansson@2.7:", when="+json")
     depends_on("sqlite@3", when="+sqlite")
+
+    with when("+treesitter"):
+        depends_on("tree-sitter")
+        depends_on("tree-sitter@:0.25", when="@:30.2")
 
     # GUI dependencies
     with when("gui=x11"):

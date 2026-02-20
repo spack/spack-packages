@@ -24,6 +24,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.24.4", sha256="772bb47638f8335e4a5982c48947af250e58061100a817c9e1e2fdc50de2ce95")
+    version("3.24.3", sha256="dde6f6ef2c5ef8c473a831d56a2e3192b5304c50c4cc5ded7f296ef6d86aaf13")
     version("3.24.2", sha256="105c77cbc7361c078e013448bcad2c57ce8081377e5a8e49b3cc213f1a0a4a63")
     version("3.24.1", sha256="d77f3fd5187a72ce5b68a056aa8fcccd37b6dc7a388991d1d8fa0bde32b0abc8")
     version("3.24.0", sha256="cc9063d80cae3ca87dd34586a92bac49613818a0689d9eac1bd91a799c5d0983")
@@ -318,7 +320,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre~fortran", when="+hypre~fortran")
     depends_on("hypre+complex", when="+hypre+complex")
     depends_on("hypre~complex", when="+hypre~complex")
-    depends_on("hypre+int64", when="+hypre+int64")
+    depends_on("hypre+mixedint+cuda", when="+hypre+int64+cuda")
+    depends_on("hypre+mixedint+rocm", when="+hypre+int64+rocm")
+    depends_on("hypre+mixedint", when="+hypre+int64")
     depends_on("hypre~int64", when="+hypre~int64")
     depends_on("hypre+mpi", when="+hypre")
     depends_on("hypre@2.14:2.22.0", when="@3.14:3.15+hypre")

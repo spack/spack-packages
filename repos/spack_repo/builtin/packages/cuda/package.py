@@ -23,6 +23,26 @@ from spack.package import *
 #    format returned by platform.system() and 'arch' by platform.machine()
 
 _versions = {
+    "13.1.1": {
+        "Linux-aarch64": (
+            "8adcd5d4b3e1e70f7420959b97514c0c97ec729da248d54902174c4d229bfd2c",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.1/local_installers/cuda_13.1.1_590.48.01_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "24ff323723722781436804b392a48f691cb40de9808095d3e2192d0db6dfb8e4",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.1/local_installers/cuda_13.1.1_590.48.01_linux.run",
+        ),
+    },
+    "13.1.0": {
+        "Linux-aarch64": (
+            "06cda49a7031b1c99f784237be5c852619379cbba9555036045044b9ddc99240",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.0/local_installers/cuda_13.1.0_590.44.01_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "6b4fdf2694b3d7afbc526f26412b4cf4f050b202324455053307310f53b323a7",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.0/local_installers/cuda_13.1.0_590.44.01_linux.run",
+        ),
+    },
     "13.0.2": {
         "Linux-aarch64": (
             "93ab4c77ae2bc0f1f600ef48ccd3ff25a3203a6a6161a84511a33cbf5b5621fc",
