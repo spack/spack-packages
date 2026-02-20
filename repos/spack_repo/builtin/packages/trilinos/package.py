@@ -342,6 +342,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+minitensor", when="~boost")
     conflicts("+phalanx", when="~sacado")
     conflicts("+stokhos", when="~kokkos")
+    conflicts("+rocm~rocm_rdc", when="@:16 +stk")
+    conflicts("+rocm~rocm_rdc", when="@17: +stk ^hip@:6.2")
 
     # TRIbits dependencies only relied on by testing are invoked regardless,
     # whether +test or ~test. see https://github.com/TriBITSPub/TriBITS/issues/56
