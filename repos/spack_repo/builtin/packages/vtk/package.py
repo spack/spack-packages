@@ -404,10 +404,12 @@ class Vtk(CMakePackage):
             if spec.satisfies("@9.2:"):
                 cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
             if spec.satisfies("@9.5:"):
-                cmake_args.extend([
-                    "-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF",
-                    "-DVTK_MODULE_USE_EXTERNAL_VTK_scn:BOOL=ON",
-                ])
+                cmake_args.extend(
+                    [
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF",
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_scn:BOOL=ON",
+                    ]
+                )
 
         # Some variable names have changed
         if spec.satisfies("@8.2.0"):
