@@ -35,8 +35,9 @@ class PyIterativeStats(PythonPackage):
     with default_args(type=("test")):
         depends_on("py-pytest@6.2.1:6")
         depends_on("py-autopep8@1.6.0")
-        depends_on("openturns@1.25:2", when="@0.1.2:")
-        depends_on("openturns@1.19+python+libxml2", when="@:0.1.1")
+        depends_on("openturns@1.26", when="@0.1.2:")
+        depends_on("openturns@1.19", when="@:0.1.1")
+        depends_on("openturns+python+libxml2")
         depends_on("py-scipy@1.16.1:1", when="@0.1.2:")
         depends_on("py-scipy@1.8:1", when="@:0.1.1")
 
