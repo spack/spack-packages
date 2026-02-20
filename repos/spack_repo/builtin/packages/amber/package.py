@@ -228,12 +228,12 @@ class Amber(Package, CudaPackage):
         # Installation from version 24 use cmake
         else:
             filter_file(
-                f"cmake \$AMBER_PREFIX/amber{self.version}_src",
+                rf"cmake \$AMBER_PREFIX/amber{self.version}_src",
                 "cmake $AMBER_PREFIX/spack-src",
                 "build/run_cmake",
             )
             filter_file(
-                f"-DCMAKE_INSTALL_PREFIX=\$AMBER_PREFIX/amber{self.version}",
+                rf"-DCMAKE_INSTALL_PREFIX=\$AMBER_PREFIX/amber{self.version}",
                 f"-DCMAKE_INSTALL_PREFIX={prefix}",
                 "build/run_cmake",
             )
