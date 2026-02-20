@@ -221,7 +221,7 @@ class PyTorchvision(PythonPackage):
             # can resolve undefined symbols (e.g. aotriton::v2::flash::attn_bwd_fused).
             for pkg in ["aotriton", "hip"]:
                 if pkg in self.spec:
-                    for lib_dir in self.spec[pkg].libs.directories:
+                    for lib_dir in self.spec[pkg].prefix.lib:
                         env.prepend_path("LD_LIBRARY_PATH", lib_dir)
 
         # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
