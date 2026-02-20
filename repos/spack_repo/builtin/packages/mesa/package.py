@@ -224,7 +224,7 @@ class MesonBuilder(meson.MesonBuilder):
         args_dri_drivers = []
 
         # swrast includes softpipe and llvmpipe
-        if spec.satisfied("+llvm"):
+        if spec.satisfies("+llvm"):
             args_gallium_drivers = ["swrast"]
         else:
             args_gallium_drivers = ["softpipe"]
