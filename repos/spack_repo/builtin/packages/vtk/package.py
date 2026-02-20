@@ -223,6 +223,7 @@ class Vtk(CMakePackage):
         depends_on("seacas@2024-06-27", when="@9.4:")
 
     depends_on("nlohmann-json", when="@9.2:")
+    depends_on("scnlib", when="@9.5:")
 
     # Freetype@2.10.3 no longer exports FT_CALLBACK_DEF, this
     # patch replaces FT_CALLBACK_DEF with simple extern "C"
@@ -387,7 +388,21 @@ class Vtk(CMakePackage):
                     f"-DHDF5_ROOT={spec['hdf5'].prefix}",
                 ]
             )
-            cmake_args.append(self.define_from_variant("VTK_USE_MPI", "mpi"))
+            if spec.satisfies("@9.1:"):
+                cmake_args.extend(
+                    [
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
+                        # uses an unreleased version of fmt
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
+                    ]
+                )
+            if spec.satisfies("@9.2:"):
+                cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
+            if spec.satisfies("@9.5:"):
+                cmake_args.extend([
+                    "-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF",
+                    "-DVTK_MODULE_USE_EXTERNAL_VTK_scn:BOOL=ON",
+                ])
 
         if spec.satisfies("@9.1:"):
             cmake_args.extend(
