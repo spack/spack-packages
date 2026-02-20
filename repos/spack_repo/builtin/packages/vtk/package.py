@@ -251,6 +251,7 @@ class Vtk(CMakePackage):
         depends_on("seacas@2024-06-27", when="@9.4:")
 
     depends_on("nlohmann-json", when="@9.2:")
+    depends_on("scnlib", when="@9.5:")
 
     # For finding Fujitsu-MPI wrapper commands
     patch("find_fujitsu_mpi.patch", when="@:8.2.0%fj")
@@ -403,7 +404,10 @@ class Vtk(CMakePackage):
             if spec.satisfies("@9.2:"):
                 cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
             if spec.satisfies("@9.5:"):
-                cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF")
+                cmake_args.extend([
+                    "-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF",
+                    "-DVTK_MODULE_USE_EXTERNAL_VTK_scn:BOOL=ON",
+                ])
 
         # Some variable names have changed
         if spec.satisfies("@8.2.0"):
