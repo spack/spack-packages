@@ -155,8 +155,8 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     ) -> None:
         self.set_variables(env)
 
-    def setup_dependent_package(self, module, dep_spec):
-        dep_spec.upcxx = self.prefix.bin.upcxx
+    def setup_dependent_package(self, module, dependent_spec):
+        dependent_spec.upcxx = self.prefix.bin.upcxx
 
     def install(self, spec, prefix):
         env = os.environ
