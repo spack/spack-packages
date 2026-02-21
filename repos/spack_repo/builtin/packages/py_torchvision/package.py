@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 
 from spack_repo.builtin.build_systems.python import PythonPackage
 
@@ -220,11 +221,21 @@ class PyTorchvision(PythonPackage):
             # needs aotriton and hip libs at runtime. Add their lib dirs so the loader
             # can resolve undefined symbols (e.g. aotriton::v2::flash::attn_bwd_fused).
             for pkg in ["aotriton", "hip"]:
-                if pkg in self.spec:
-                    for lib_dir in self.spec[pkg].prefix.lib:
+                if pkg not in self.spec:
+                    continue
+                try:
+                    for lib_dir in self.spec[pkg].libs.directories:
                         env.prepend_path("LD_LIBRARY_PATH", lib_dir)
+                except NoLibrariesError:
+                    # Package may not declare 'libraries' (e.g. aotriton), so Spack
+                    # cannot recursively locate libs. Add prefix lib dirs when they
+                    # exist so the loader can find .so files (lib, lib64, or both).
+                    for sub in ("lib", "lib64"):
+                        lib_dir = os.path.join(self.spec[pkg].prefix, sub)
+                        if os.path.isdir(lib_dir):
+                            env.prepend_path("LD_LIBRARY_PATH", lib_dir)
 
-        # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
+       # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
         # these do not work for older releases. Build uses a mix of Spack's compiler wrapper
         # and the actual compiler, so this is needed to get parts of the build working.
         # See https://github.com/pytorch/vision/issues/2591
