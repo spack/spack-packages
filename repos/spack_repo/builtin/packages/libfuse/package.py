@@ -70,8 +70,7 @@ class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
         depends_on("automake", type="build")
         depends_on("libtool", type="build")
         depends_on("gettext", type="build")
-
-    depends_on("gmake", type="build")
+        depends_on("gmake", type="build")
 
     provides("fuse")
     conflicts("+useroot", when="~system_install", msg="useroot requires system_install")
