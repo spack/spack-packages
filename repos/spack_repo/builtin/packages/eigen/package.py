@@ -14,7 +14,7 @@ class Eigen(CMakePackage, ROCmPackage):
     vectors, numerical solvers, and related algorithms.
     """
 
-    homepage = "https://eigen.tuxfamily.org/"
+    homepage = "https://libeigen.gitlab.io/"
     git = "https://gitlab.com/libeigen/eigen.git"
     url = "https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.gz"
 
