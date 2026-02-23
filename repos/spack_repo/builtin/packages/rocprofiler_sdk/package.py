@@ -139,6 +139,9 @@ class RocprofilerSdk(CMakePackage):
         commit="03fe8df3622a97161699439dfe933ef8e9e7db8a",
         submodules=True,
     )
+
+    variant("internal-fmt", default=False, description="build internal fmt")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -146,6 +149,10 @@ class RocprofilerSdk(CMakePackage):
     depends_on("elfutils")
     depends_on("libdrm")
     depends_on("pkgconfig", when="@7.1:")
+    depends_on("py-pybind11", when="@7.2:")
+    depends_on("gotcha", when="@7.2:")
+    depends_on("fmt@:10", when="@7.2: ~internal-fmt")
+    depends_on("glog", when="@7.2:")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
@@ -176,6 +183,8 @@ class RocprofilerSdk(CMakePackage):
     for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
 
+    patch("add_cpack.patch", when="@7.2:")
+
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@:7.1"):
@@ -187,6 +196,11 @@ class RocprofilerSdk(CMakePackage):
         args = []
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("ElfUtils_ROOT_DIR", self.spec["elfutils"].prefix))
+        if self.spec.satisfies("@7.2:"):
+            args.append(self.define("ROCPROFILER_BUILD_PYBIND11", "OFF"))
+            args.append(self.define_from_variant("ROCPROFILER_BUILD_FMT", "internal-fmt"))
+            args.append(self.define("ROCPROFILER_BUILD_GLOG", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_GOTCHA", "OFF"))
         return args
 
     def setup_run_environment(self, env):
