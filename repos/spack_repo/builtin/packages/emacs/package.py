@@ -118,7 +118,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sequoia")
     patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sonoma")
 
-    def configure_args(self) -> list:
+    def configure_args(self):
         args = []
 
         gui = self.spec.variants["gui"].value
