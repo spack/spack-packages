@@ -2,12 +2,12 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
 
 
-class Fltk(Package):
+class Fltk(AutotoolsPackage):
     """FLTK (pronounced "fulltick") is a cross-platform C++ GUI toolkit for
     UNIX/Linux (X11), Microsoft Windows, and MacOS X. FLTK provides
     modern GUI functionality without the bloat and supports 3D
@@ -56,13 +56,14 @@ class Fltk(Package):
     variant("gl", default=True, description="Enables opengl support")
 
     variant("xft", default=False, description="Enables Anti-Aliased Fonts")
-    variant("xcursor", default=True, description="Enables custom cursor shapes")
-    variant("xfixes", default=True, description="Enables clipboard management")
-    variant("xinerama", default=True, description="Enables multi-monitor support")
-    variant("xrender", default=True, description="Enables advanced image scaling")
+    variant("xcursor", default=False, description="Enables custom cursor shapes")
+    variant("xfixes", default=False, description="Enables clipboard management")
+    variant("xinerama", default=False, description="Enables multi-monitor support")
+    variant("xrender", default=False, description="Enables advanced image scaling")
 
     # variant dependencies
     depends_on("gl", when="+gl")
+    depends_on("glu", when="+gl")
 
     depends_on("libxft", when="+xft")
     depends_on("libxcursor", when="+xcursor")
@@ -70,38 +71,30 @@ class Fltk(Package):
     depends_on("libxinerama", when="+xinerama")
     depends_on("libxrender", when="+xrender")
 
-    def install(self, spec, prefix):
+    @run_before("autoreconf")
+    def autogen(self):
+        autogen = Executable("./autogen.sh")
+        autogen()
+
+    def configure_args(self):
         options = [
-            "--prefix=%s" % prefix,
             "--enable-localjpeg",
             "--enable-localpng",
             "--enable-localzlib",
         ]
 
-        if spec.satisfies("+shared"):
+        if self.spec.satisfies("+shared"):
             options.append("--enable-shared")
 
-        if spec.satisfies("+xft"):
+        if self.spec.satisfies("+xft"):
             # https://www.fltk.org/articles.php?L374+I0+TFAQ+P1+Q
             options.append("--enable-xft")
         else:
             options.append("--disable-xft")
+        for x in ["xcursor", "xfixes", "xinerama", "xrender", "gl"]:
+            options.extend(self.enable_or_disable(x))
 
-        for option in ["xcursor", "xfixes", "xinerama", "xrender"]:
-            if spec.satisfies(f"+{option}"):
-                options.append(f"--enable-{option}")
-            else:
-                options.append(f"--disable-{option}")
-
-        if spec.satisfies("~gl"):
-            options.append("--disable-gl")
-
-        # FLTK needs to be built in-source
-        autogen = Executable("./autogen.sh")
-        autogen()
-        configure(*options)
-        make()
-        make("install")
+        return options
 
     def patch(self):
         # Remove flags not recognized by the NVIDIA compiler
