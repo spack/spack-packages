@@ -11,14 +11,14 @@ class ClaudeCode(Package):
     """Claude Code is an agentic coding tool that lives in your terminal,
     understands your codebase, and helps you code faster by executing routine
     tasks, explaining complex code, and handling git workflows -- all through
-    natural language commands.."""
+    natural language commands."""
 
     homepage = "https://github.com/anthropics/claude-code"
     url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-2.0.36.tgz"
     git = "https://github.com/anthropics/claude-code.git"
 
     maintainers("wdconinc")
-    license("Antropic-Claude")
+    license("Anthropic-Claude")
 
     version("2.1.50", sha256="4d7ab6b04c666ebf2c966a9d22e5b8f57706c0d5a5941523b9b02af9f84e45d5")
     version("2.0.36", sha256="42095aacc8e39d8b7d5c0162fb44d873a1cc39430681269bac492c004cfd0e13")
