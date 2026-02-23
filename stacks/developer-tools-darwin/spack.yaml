@@ -24,7 +24,7 @@ spack:
     - go
     - libtool
     - llvm+link_llvm_dylib+lld~lldb~polly+python
-    # - node-js # TODO: re-enable after spack/spack-packages#3119 merges
+    - node-js
     - npm
     - python
     - rust+dev
