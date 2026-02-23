@@ -786,7 +786,7 @@ class Cuda(Package):
     )
 
     # depends on libxml2.so.2
-    depends_on("libxml2@:2.13", type=("build", "run"), when="@10.1.243:")
+    depends_on("libxml2@:2.13", when="@10.1.243:")
     # cuda-gdb needed libncurses.so.5 before 11.4.0
     # see https://docs.nvidia.com/cuda/archive/11.3.1/cuda-gdb/index.html#common-issues-oss
     # see https://docs.nvidia.com/cuda/archive/11.4.0/cuda-gdb/index.html#release-notes
