@@ -77,7 +77,7 @@ class Abyss(AutotoolsPackage):
         if maxk:
             args.append(f"--enable-maxk={maxk}")
 
-        if self.spec.satisfies("%mpich"):
+        if self.spec.satisfies("%mpi=mpich"):
             args.append("--enable-mpich")
 
         return args
