@@ -32,5 +32,6 @@ class PySentencepiece(PythonPackage):
     depends_on("sentencepiece@0.2.1", when="@0.2.1")
     depends_on("pkgconfig", type="build")
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@61:", when="@0.2.1:", type="build")
 
     build_directory = "python"
