@@ -20,6 +20,7 @@ class ClaudeCode(Package):
     maintainers("wdconinc")
     license("Antropic-Claude")
 
+    version("2.1.50", sha256="4d7ab6b04c666ebf2c966a9d22e5b8f57706c0d5a5941523b9b02af9f84e45d5")
     version("2.0.36", sha256="42095aacc8e39d8b7d5c0162fb44d873a1cc39430681269bac492c004cfd0e13")
 
     depends_on("node-js@18:", type=("build", "run"))
