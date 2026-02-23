@@ -70,8 +70,6 @@ class Fontconfig(AutotoolsPackage):
 
         if self.spec.satisfies("+pic"):
             args.append(f"CFLAGS={self.compiler.cc_pic_flag}")
-            # fontconfig is C-only; use cc_pic_flag (f77_pic_flag required fortran dep)
-            # args.append(f"FFLAGS={self.compiler.cc_pic_flag}")
 
         return args
 
