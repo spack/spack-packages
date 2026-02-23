@@ -27,5 +27,6 @@ class Sentencepiece(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@3.10:", type="build")
+    depends_on("cmake@3.10:", when="@0.2.1:", type="build")
+    depends_on("cmake@3.1:", type="build")
     depends_on("gperftools")  # optional, 10-40% performance improvement
