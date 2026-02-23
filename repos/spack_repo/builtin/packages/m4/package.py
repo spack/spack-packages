@@ -147,7 +147,7 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
 
     def test_version(self):
         """ensure m4 version matches installed spec"""
-        m4 = which(self.prefix.bin.m4)
+        m4 = which(self.prefix.bin.m4, required=True)
         out = m4("--version", output=str.split, error=str.split)
         assert str(self.spec.version) in out
 
@@ -155,7 +155,7 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
         """ensure m4 hello example runs"""
         test_data_dir = self.test_suite.current_test_data_dir
         hello_file = test_data_dir.join("hello.m4")
-        m4 = which(self.prefix.bin.m4)
+        m4 = which(self.prefix.bin.m4, required=True)
         out = m4(hello_file, output=str.split, error=str.split)
 
         expected = get_escaped_text_output(test_data_dir.join("hello.out"))

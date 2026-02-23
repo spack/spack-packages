@@ -796,7 +796,7 @@ int main(int argc, char **argv) {{
                 if not os.path.isfile(path):
                     raise SkipTest(f"{path} is not installed")
 
-                prog = which(path)
+                prog = which(path, required=True)
                 output = prog(option, output=str.split, error=str.split)
                 assert expected in output
 
@@ -805,15 +805,15 @@ int main(int argc, char **argv) {{
         test_data_dir = self.test_suite.current_test_data_dir
         with working_dir(test_data_dir, create=True):
             filename = "spack.h5"
-            h5dump = which(self.prefix.bin.h5dump)
+            h5dump = which(self.prefix.bin.h5dump, required=True)
             out = h5dump(filename, output=str.split, error=str.split)
             expected = get_escaped_text_output("dump.out")
             check_outputs(expected, out)
 
-            h5copy = which(self.prefix.bin.h5copy)
+            h5copy = which(self.prefix.bin.h5copy, required=True)
             copyname = "test.h5"
             options = ["-i", filename, "-s", "Spack", "-o", copyname, "-d", "Spack"]
             h5copy(*options)
 
-            h5diff = which(self.prefix.bin.h5diff)
+            h5diff = which(self.prefix.bin.h5diff, required=True)
             h5diff(filename, copyname)

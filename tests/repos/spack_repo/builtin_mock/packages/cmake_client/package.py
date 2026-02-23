@@ -112,7 +112,7 @@ class CmakeClient(CMakePackage):
         check(cmake is not None, "No cmake was in environment!")
 
         # check that which('cmake') returns the right one.
-        cmake = which("cmake")
+        cmake = which("cmake", required=True)
         print(cmake)
         print(cmake.exe)
         check(

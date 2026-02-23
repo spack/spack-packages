@@ -459,13 +459,13 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         args.append("-DCMAKE_PREFIX_PATH=" + ";".join(get_cmake_prefix_path(self)))
 
         args.extend(self.cmake_args())
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         cmake(*args)
 
-        make = which("make")
+        make = which("make", required=True)
         make()
 
-        install_test = which("install_test")
+        install_test = which("install_test", required=True)
         inputs_path = join_path(
             ".", "cache", "amrex", "Tests", "Amr", "Advection_AmrCore", "Exec", "inputs-ci"
         )

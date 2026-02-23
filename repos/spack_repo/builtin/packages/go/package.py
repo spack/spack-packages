@@ -108,7 +108,7 @@ class Go(Package):
 
     def build(self, spec, prefix):
         # Build script depend on bash
-        bash = which("bash")
+        bash = which("bash", required=True)
 
         with working_dir("src"):
             bash(f"{'all' if self.run_tests else 'make'}.bash")

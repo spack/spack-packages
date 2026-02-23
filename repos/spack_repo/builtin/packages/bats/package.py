@@ -24,5 +24,5 @@ class Bats(Package):
     )
 
     def install(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./install.sh", prefix)

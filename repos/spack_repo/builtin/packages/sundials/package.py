@@ -739,9 +739,9 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
                 cmake = self.spec["cmake"].command
                 cmake("-DCMAKE_PREFIX_PATH=" + prefixes, ".")
 
-            make = which("make")
+            make = which("make", required=True)
             make()
-            exe = which(basename)
+            exe = which(basename, required=True)
             exe(*opts)
             make("clean")
 
