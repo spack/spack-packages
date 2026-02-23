@@ -40,7 +40,6 @@ class PyDeephyper(PythonPackage):
     # Variants for developers
     variant("dev", default=False, description="Build with dev dependencies")
 
-
     # Build backend
     with default_args(type="build"):
         depends_on("py-hatchling@1.25:", when="@0.9:")
