@@ -11,10 +11,11 @@ class Fontconfig(AutotoolsPackage):
     """Fontconfig is a library for configuring/customizing font access"""
 
     homepage = "https://www.freedesktop.org/wiki/Software/fontconfig/"
-    url = "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.12.3.tar.gz"
+    url = "https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/2.17.1/fontconfig-2.17.1.tar.xz"
 
     license("MIT")
 
+    version("2.17.1", sha256="9f5cae93f4fffc1fbc05ae99cdfc708cd60dfd6612ffc0512827025c026fa541")
     version("2.15.0", sha256="f5f359d6332861bd497570848fcb42520964a9e83d5e3abe397b6b6db9bcaaf4")
     version("2.14.2", sha256="3ba2dd92158718acec5caaf1a716043b5aa055c27b081d914af3ccb40dce8a55")
     version("2.13.94", sha256="246d1640a7e54fba697b28e4445f4d9eb63dda1b511d19986249368ee7191882")
@@ -24,8 +25,7 @@ class Fontconfig(AutotoolsPackage):
     version("2.12.1", sha256="a9f42d03949f948a3a4f762287dbc16e53a927c91a07ee64207ebd90a9e5e292")
     version("2.11.1", sha256="b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d")
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")
+    depends_on("c", type="build")
 
     # freetype2 21.0.15+ provided by freetype 2.8.1+
     depends_on("freetype@2.8.1:", when="@2.13:")
@@ -38,6 +38,12 @@ class Fontconfig(AutotoolsPackage):
     depends_on("python@3:", type="build", when="@2.13.93:")
 
     variant("pic", default=False, description="Enable position-independent code (PIC)")
+
+    def url_for_version(self, version):
+        if version >= Version("2.16"):
+            return f"https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/{version}/fontconfig-{version}.tar.xz"
+        else:
+            return f"https://www.freedesktop.org/software/fontconfig/release/fontconfig-{version}.tar.gz"
 
     def patch(self):
         """Make test/run-test.sh compatible with dash"""
