@@ -236,7 +236,7 @@ class PyTorchvision(PythonPackage):
                         if os.path.isdir(lib_dir):
                             env.prepend_path("LD_LIBRARY_PATH", lib_dir)
 
-       # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
+        # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
         # these do not work for older releases. Build uses a mix of Spack's compiler wrapper
         # and the actual compiler, so this is needed to get parts of the build working.
         # See https://github.com/pytorch/vision/issues/2591
