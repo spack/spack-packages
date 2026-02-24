@@ -15,6 +15,7 @@ class Mojitos(Package):
 
     homepage = "https://gitlab.irit.fr/sepia-pub/mojitos"
     git = "https://gitlab.irit.fr/sepia-pub/mojitos.git"
+    url = "https://gitlab.irit.fr/sepia-pub/mojitos/-/archive/v2.0.2/mojitos-v2.0.2.tar.gz?ref_type=tags"
     maintainers("georges-da-costa")
     license("GPL-3.0-or-later", checked_by="georges-da-costa")
 
