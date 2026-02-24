@@ -14,7 +14,7 @@ class Mojitos(Package):
     MojitO/S runs on GNU/Linux"""
 
     homepage = "https://gitlab.irit.fr/sepia-pub/mojitos"
-    git = "https://gitlab.irit.fr/sepia-pub/mojitos"
+    git = "https://gitlab.irit.fr/sepia-pub/mojitos.git"
     version("2.0.2", branch="main")
     maintainers("georges-da-costa")
     license("GPL-3.0-or-later", checked_by="georges-da-costa")
