@@ -27,7 +27,7 @@ class PyTrameClient(PythonPackage):
 
     depends_on("python@3.9:", type=("build", "run"), when="@3.11.2")
     depends_on("py-setuptools@42:", type="build")
-    depends_on("py-trame-common@0.2.0:", type=("build", "run"), when="@3.11.2")
+    depends_on("py-trame-common@0.2:", type=("build", "run"), when="@3.11.2")
 
     def url_for_version(self, version):
         sep = "_" if version >= Version("3.5.1") else "-"
