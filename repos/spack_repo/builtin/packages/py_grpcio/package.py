@@ -116,13 +116,12 @@ class PyGrpcio(PythonPackage):
                 "setup.py",
             )
         if "abseil-cpp" in self.spec:
-            filter_file(
-                r"(\s+ABSL_INCLUDE = ).*",
-                r"\1('{0}',)".format(self.spec["abseil-cpp"].prefix.include),
-                "setup.py",
-            )
+            absl_path = self.spec["abseil-cpp"].prefix
+            absl_include = self.spec["abseil-cpp"].prefix.include
+            filter_file(r"(\s+ABSL_INCLUDE = ).*", r"\1('{0}',)".format(absl_include), "setup.py")
             filter_file(
                 r"pathlib\.Path\(\"/usr\"\)\.glob\(\"lib\*/libabsl_\*\.so\"\)",
-                self.spec["abseil-cpp"].libs[0],
+                rf'list(pathlib.Path("{absl_path}").glob("lib*/libabsl_*.so")) + '
+                rf'list(pathlib.Path("{absl_path}").glob("lib*/libabsl_*.dylib"))',
                 "setup.py",
             )
