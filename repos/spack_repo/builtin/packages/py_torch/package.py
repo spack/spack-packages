@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.10.0", tag="v2.10.0", commit="449b1768410104d3ed79d3bcfe4ba1d65c7f22c0")
     version("2.9.1", tag="v2.9.1", commit="d38164a545b4a4e4e0cf73ce67173f70574890b6")
     version("2.9.0", tag="v2.9.0", commit="0fabc3ba44823f257e70ce397d989c8de5e362c1")
     version("2.8.0", tag="v2.8.0", commit="ba56102387ef21a3b04b357e5b183d48f0afefc7")
@@ -185,9 +186,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-fsspec", when="@2.1:")
 
         # pyproject.toml
+        depends_on("py-setuptools@70.1:", when="@2.10:")
         depends_on("py-setuptools@70.1:79", when="@2.9:")
         depends_on("py-setuptools@62.3:79", when="@2.8")
-        depends_on("py-setuptools")
+        depends_on("py-setuptools@:79", when="@:2.7")
         depends_on("py-numpy")
         # https://github.com/pytorch/pytorch/issues/107302
         depends_on("py-numpy@:1", when="@:2.2")
@@ -204,7 +206,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # third_party
     depends_on("fp16@2020-05-14")
     depends_on("fxdiv@2020-04-17")
-    depends_on("nvtx@3.2.1", when="@2.8:")
+    depends_on("nvtx@3.3.0", when="@2.10:")
+    depends_on("nvtx@3.2.1", when="@2.8:2.9")
     depends_on("nvtx@3.1.0", when="@2.6:2.7")
     # https://github.com/pytorch/pytorch/issues/60332
     # depends_on("xnnpack@2024-12-03", when="@2.7:+xnnpack")
@@ -216,7 +219,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # depends_on("xnnpack@2021-02-22", when="@1.8:1.9+xnnpack")
     # depends_on("xnnpack@2020-03-23", when="@1.6:1.7+xnnpack")
     depends_on("benchmark", when="@1.6:+test")
-    depends_on("cpuinfo@2025-03-21", when="@2.8:")
+    depends_on("cpuinfo@2025-11-14", when="@2.10:")
+    depends_on("cpuinfo@2025-03-21", when="@2.8:2.9")
     depends_on("cpuinfo@2024-09-26", when="@2.6:2.7")
     depends_on("cpuinfo@2024-09-06", when="@2.5.1")
     depends_on("cpuinfo@2024-08-30", when="@2.5.0")

@@ -72,21 +72,19 @@ class GenericBuilder(generic.GenericBuilder):
     def is_64bit(self):
         return "64" in str(self.pkg.spec.target.family)
 
-    def build(self, spec, prefix):
+    def build(self, pkg, spec, prefix):
         if spec.satisfies("%msvc"):
-            plat_tools = self.pkg.compiler.msvc_version
+            plat_tools = pkg.compiler.msvc_version
         else:
             raise RuntimeError("Package does not support non MSVC compilers on Windows")
         ms_build_args = ["libogg_static.vcxproj", "/p:PlatformToolset=v%s" % plat_tools]
         msbuild(*ms_build_args)
 
-    def install(self, spec, prefix):
+    def install(self, pkg, spec, prefix):
         mkdirp(prefix.include.ogg)
         mkdirp(prefix.lib)
         mkdirp(prefix.share)
-        install(
-            os.path.join(self.pkg.stage.source_path, "include", "ogg", "*.h"), prefix.include.ogg
-        )
+        install(os.path.join(pkg.stage.source_path, "include", "ogg", "*.h"), prefix.include.ogg)
         plat_prefix = "x64" if self.is_64bit() else "x86"
         install(os.path.join(plat_prefix, "Debug", "*.lib"), prefix.lib)
         install_tree(os.path.join(self.pkg.stage.source_path, "doc"), prefix.share)

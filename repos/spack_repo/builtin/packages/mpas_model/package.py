@@ -64,6 +64,7 @@ class MpasModel(MakefilePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("mpi")
+    depends_on("metis", type="run")
     depends_on("parallelio")
 
     conflicts(

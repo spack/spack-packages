@@ -36,7 +36,7 @@ class Icarus(AutotoolsPackage):
     patch("fix-gcc-10.patch", when="@v10_3")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autoconf.sh")
 
     @run_before("install")

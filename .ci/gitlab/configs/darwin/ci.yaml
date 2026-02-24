@@ -4,11 +4,22 @@ ci:
   - openmpi
   - py-mpi4py
   pipeline-gen:
+  - match_behavior: first
+    submapping:
+    - match:
+      - bazel
+      - llvm
+      - py-jaxlib
+      - py-tensorflow
+      - py-torch
+      - rust
+      build-job:
+        tags: [ "huge" ]
   - build-job-remove:
       tags: [spack]
   - build-job:
-      timeout: 120 minutes
-      tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+      timeout: 240 minutes
+      tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
       variables:
         SPACK_GNUPGHOME: ${CI_PROJECT_DIR}/.gpg
       before_script:

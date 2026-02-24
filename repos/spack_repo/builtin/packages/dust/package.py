@@ -25,7 +25,7 @@ class Dust(Package):
     sanity_check_is_file = [join_path("bin", "dust")]
 
     def install(self, spec, prefix):
-        cargo = which("cargo")
+        cargo = which("cargo", required=True)
         cargo("install", "--root", prefix, "--path", ".")
 
     @run_after("install")
@@ -36,6 +36,6 @@ class Dust(Package):
 
     def test_run(self):
         """check dust can execute (with option '--version')"""
-        dust = which(self.prefix.bin.dust)
+        dust = which(self.prefix.bin.dust, required=True)
         out = dust("--version", output=str.split, error=str.split)
         assert "Dust " in out

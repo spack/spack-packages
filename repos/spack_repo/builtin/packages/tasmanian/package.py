@@ -148,10 +148,10 @@ class Tasmanian(CMakePackage, CudaPackage, ROCmPackage):
         if "+mpi" in self.spec:
             options.append("-DMPI_HOME=" + self.spec["mpi"].prefix)
 
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         cmake(*options)
 
-        make = which("make")
+        make = which("make", required=True)
         make()
 
         make("test")

@@ -12,10 +12,11 @@ class PyRuamelYamlClib(PythonPackage):
     """C version of reader, parser and emitter for ruamel.yaml derived from libyaml."""
 
     homepage = "https://sourceforge.net/p/ruamel-yaml-clib/code/ci/default/tree/"
-    pypi = "ruamel.yaml.clib/ruamel.yaml.clib-0.2.0.tar.gz"
+    pypi = "ruamel.yaml.clib/ruamel_yaml_clib-0.2.0.tar.gz"
 
     license("MIT")
 
+    version("0.2.15", sha256="46e4cc8c43ef6a94885f72512094e482114a8a706d3c555a34ed4b0d20200600")
     version("0.2.14", sha256="803f5044b13602d58ea378576dd75aa759f52116a0232608e8fdada4da33752e")
     version("0.2.12", sha256="6c8fbb13ec503f99a91901ab46e0b07ae7941cd527393187039aec586fdfd36f")
     version("0.2.7", sha256="1f08fd5a2bea9c4180db71678e850b995d2a5f4537be0e94557668cf0f5f9497")
@@ -39,3 +40,11 @@ class PyRuamelYamlClib(PythonPackage):
             if self.spec.satisfies("%oneapi") or self.spec.satisfies("%apple-clang@15:"):
                 flags.append("-Wno-error=incompatible-function-pointer-types")
         return (flags, None, None)
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/r/ruamel.yaml.clib/{}-{}.tar.gz"
+        if version >= Version("0.2.15"):
+            name = "ruamel_yaml_clib"
+        else:
+            name = "ruamel.yaml.clib"
+        return url.format(name, version)

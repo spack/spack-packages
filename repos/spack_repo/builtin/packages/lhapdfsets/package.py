@@ -39,8 +39,8 @@ class Lhapdfsets(BundlePackage):
 
     def install(self, spec, prefix):
         mkdirp(self.prefix.share.lhapdfsets)
-        tar = which("tar")
-        curl = which("curl")
+        tar = which("tar", required=True)
+        curl = which("curl", required=True)
         sets = self.spec.variants["sets"].value
         if len(sets) == 1:
             if sets[0] == "all":

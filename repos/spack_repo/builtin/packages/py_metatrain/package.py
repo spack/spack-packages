@@ -17,6 +17,7 @@ class PyMetatrain(PythonPackage):
 
     license("BSD-3-Clause", checked_by="RMeli")
 
+    version("2026.1", sha256="a86e2eb8d63e4a3c667ff783eb68f1a1dce6b2f204820d4bc7fabbbb165508df")
     version("2025.12", sha256="d0634934cc33d23189a9ef99f8c27e2e81cdfc248cf110d8df6c48255cb78765")
     version("2025.11", sha256="4c1a78feb359885f29d659f97ccf0e0676892ba1aa120cf58d0c7a0442161255")
 
@@ -40,6 +41,7 @@ class PyMetatrain(PythonPackage):
         depends_on("py-metatensor-torch@0.8.2:0.8", when="@2025.12:")
         depends_on("py-metatomic-torch@0.1.5:0.1", when="@2025.11")
         depends_on("py-metatomic-torch@0.1.6:0.1", when="@2025.12:")
+        depends_on("py-metatomic-torch@0.1.7:0.1", when="@2026.1:")
         depends_on("py-jsonschema")
         depends_on("py-pydantic@2.12:", when="@2025.12:")
         depends_on("py-typing-extensions", when="@2025.12:")
@@ -51,5 +53,5 @@ class PyMetatrain(PythonPackage):
     # soap-bpnn
     # pyproject.toml [project.optional-dependencies] soap-bpnn
     with default_args(type=("build", "run"), when="+soap_bpnn"):
+        depends_on("py-torch-spex@0.1")
         depends_on("py-wigners")
-        depends_on("py-torch-spex")

@@ -24,22 +24,6 @@ def spec_uses_gccname(spec):
 
 
 def llnl_link_helpers(options, spec, compiler):
-    # From local package:
-    if "fortran" in spec:
-        fortran_compilers = ["gfortran", "xlf"]
-        if any(f_comp in compiler.fc for f_comp in fortran_compilers) and (
-            "clang" in compiler.cxx
-        ):
-            # Pass fortran compiler lib as rpath to find missing libstdc++
-            libdir = os.path.join(os.path.dirname(os.path.dirname(compiler.fc)), "lib")
-            flags = ""
-            for _libpath in [libdir, libdir + "64"]:
-                if os.path.exists(_libpath):
-                    flags += " -Wl,-rpath,{0}".format(_libpath)
-            description = "Adds a missing libstdc++ rpath"
-            if flags:
-                options.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags, description))
-
     if "cxx" in spec and spec["cxx"].name == "cce":
         description = "Adds a missing rpath for libraries associated with the fortran compiler"
         # Here is where to find libs that work for fortran
@@ -91,6 +75,14 @@ class Blt(Package):
     version("0.3.0", sha256="bb917a67cb7335d6721c997ba9c5dca70506006d7bba5e0e50033dd0836481a5")
     version("0.2.5", sha256="3a000f60194e47b3e5623cc528cbcaf88f7fea4d9620b3c7446ff6658dc582a5")
     version("0.2.0", sha256="c0cadf1269c2feb189e398a356e3c49170bc832df95e5564e32bdbb1eb0fa1b3")
+
+    # https://github.com/google/googletest/pull/4798
+    # Make BLT compatible with OpenAPI 2025.2
+    patch(
+        "https://github.com/LLNL/blt/commit/5ff55b519fc8d5216b07edaf301e2d2bf328021e.patch?full_index=1",
+        sha256="116702b89d01e022546911fe0b823afa99a6b37a35077055141ad5d480508422",
+        when="@0.7.1",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
