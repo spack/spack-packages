@@ -56,5 +56,5 @@ class Libunistring(AutotoolsPackage, GNUMirrorPackage):
 
     @when("@master")
     def autoreconf(self, spec, prefix):
-        which("./gitsub.sh")("pull")
-        which("./autogen.sh")()
+        which("./gitsub.sh", required=True)("pull")
+        which("./autogen.sh", required=True)()

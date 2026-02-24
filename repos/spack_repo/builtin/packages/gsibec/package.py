@@ -22,6 +22,7 @@ class Gsibec(CMakePackage):
     license("Apache-2.0")
 
     version("develop", branch="develop")
+    version("1.4.2", sha256="b17bc0b32c8f0f8b36dcf2fea94915841d52baa7e68119d56f0729f7709f7163")
     version("1.4.1", sha256="f624c1af36b5023fc35f5a5b0cec4b5649f6a7df933148da432a25b53e5b5c87")
     version("1.4.0", sha256="aa512995c32bd4a9998584a62707abed299fe34af4e9dbf5b44aebd335376e54")
     version("1.3.1", sha256="fe7dbe7d170b47dbacc3febc42fc9877c118860b1532d70246bc73934e548185")
@@ -46,6 +47,9 @@ class Gsibec(CMakePackage):
             url = url_base + "{0}.tar.gz"
 
         return url.format(version)
+
+    # GSIbec 1.4.1 does not compile with gcc@10 and later, 1.4.2 fixes this
+    conflicts("%gcc@10:", when="@1.4.1")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")

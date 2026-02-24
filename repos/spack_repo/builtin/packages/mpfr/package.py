@@ -33,19 +33,6 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
     version("3.1.3", sha256="f63bb459157cacd223caac545cb816bcdb5a0de28b809e7748b82e9eb89b0afd")
     version("3.1.2", sha256="79c73f60af010a30a5c27a955a1d2d01ba095b72537dab0ecaad57f5a7bb1b6b")
 
-    depends_on("c", type="build")  # generated
-
-    # mpir is a drop-in replacement for gmp
-    depends_on("gmp@4.1:")  # 4.2.3 or higher is recommended
-    depends_on("gmp@5.0:", when="@4.0.0:")  # https://www.mpfr.org/mpfr-4.0.0/
-
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("m4", type="build")
-    depends_on("autoconf-archive", when="@4.0.0:", type="build")
-    depends_on("texinfo", when="@4.1.0:", type="build")
-
     variant(
         "libs",
         default="shared,static",
@@ -53,6 +40,17 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
         multi=True,
         description="Build shared libs, static libs or both",
     )
+
+    depends_on("c", type="build")
+    depends_on("autoconf", type="build")
+    depends_on("autoconf-archive", when="@4.0.0:", type="build")
+    depends_on("automake@1.13:", when="@4.0.0:", type="build")
+    depends_on("automake@1.11:", type="build")
+    depends_on("libtool", type="build")
+    depends_on("m4", type="build")
+    depends_on("texinfo", when="@4.1.0:", type="build")
+    depends_on("gmp@5.0:", when="@4.0.0:")
+    depends_on("gmp@4.1:")  # 4.2.3 or higher is recommended
 
     force_autoreconf = True
 

@@ -23,6 +23,7 @@ class Rccl(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librccl"]
+    version("7.2.0", sha256="c884d730711e433b9df88af3cdf003eeeb3df6d98e93a09475f760a2aa017078")
     version("7.1.1", sha256="eaa60bcf62feb3198553f2bcf6dcbfdfcecd0fdfabda41f1dae7d3f15fadbd68")
     version("7.1.0", sha256="50ba486bc8a466a68bff9d6c9d7b3ebf8de9426906720fa44023b5390602b3b8")
     version("7.0.2", sha256="3e4363163f5de772707c8deea349a00744200733693c76a07ac842e55b6ad19e")
@@ -137,6 +138,7 @@ class Rccl(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -145,7 +147,7 @@ class Rccl(CMakePackage):
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -194,11 +196,11 @@ class Rccl(CMakePackage):
             args.append(self.define("__skip_rocmclang", True))
         if self.spec.satisfies("@7.0"):
             args.append(self.define("EXPLICIT_ROCM_VERSION", self.version))
-        if self.spec.satisfies("@7.1"):
+        if self.spec.satisfies("@7.1:"):
             args.append(self.define("ROCMCORE_PATH", self.spec["rocm-core"].prefix))
         return args
 
     def test_unit(self):
         """Run unit tests"""
-        unit_tests = which(join_path(self.prefix.bin, "rccl-UnitTests"))
+        unit_tests = which(join_path(self.prefix.bin, "rccl-UnitTests"), required=True)
         unit_tests()

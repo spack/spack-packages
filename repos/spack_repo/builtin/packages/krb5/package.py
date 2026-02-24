@@ -79,7 +79,7 @@ class Krb5(AutotoolsPackage):
             args.append("CFLAGS=-fcommon")
 
         if spec["openssl"].satisfies("~shared"):
-            pkgconf = which("pkg-config")
+            pkgconf = which("pkg-config", required=True)
             ssllibs = pkgconf("--static", "--libs", "openssl", output=str)
             args.append(f"LDFLAGS={ssllibs}")
 

@@ -9,11 +9,25 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack.package import *
 
 
+def submodules(package):
+    submodules = [
+        "projects/rocprofiler-systems/external/timemory",
+        "projects/rocprofiler-systems/external/perfetto",
+        "projects/rocprofiler-systems/external/elfio",
+        "projects/rocprofiler-systems/external/dyninst",
+        "projects/rocprofiler-systems/external/PTL",
+        "projects/rocprofiler-systems/external/papi",
+        "projects/rocprofiler-systems/external/pybind11",
+        "projects/rocprofiler-systems/examples/openmp/external/ompvv",
+    ]
+    return submodules
+
+
 class RocprofilerSystems(CMakePackage):
     """Application Profiling, Tracing, and Analysis"""
 
     homepage = "https://github.com/ROCm/rocprofiler-systems"
-    git = "https://github.com/ROCm/rocprofiler-systems.git"
+    git = "https://github.com/ROCm/rocm-systems.git"
     url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.4.3.tar.gz"
     executables = ["rocprof-sys-sample"]
     tags = ["rocm"]
@@ -22,6 +36,13 @@ class RocprofilerSystems(CMakePackage):
 
     license("MIT")
 
+    version(
+        "7.2.0",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="rocm-7.2.0",
+        commit="fc0010cf6a5a972d42b276df946510f30343d493",
+        submodules=submodules,
+    )
     version(
         "7.1.1",
         git="https://github.com/ROCm/rocprofiler-systems",
@@ -176,6 +197,7 @@ class RocprofilerSystems(CMakePackage):
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
     depends_on("intel-tbb@2019:2020.3", when="~internal-tbb")
+    depends_on("sqlite", when="@7.1:")
     depends_on("elfutils")
     depends_on("m4")
     depends_on("texinfo")
@@ -211,13 +233,24 @@ class RocprofilerSystems(CMakePackage):
             "7.0.2",
             "7.1.0",
             "7.1.1",
+            "7.2.0",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
 
-        for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+        for ver in [
+            "6.4.0",
+            "6.4.1",
+            "6.4.2",
+            "6.4.3",
+            "7.0.0",
+            "7.0.2",
+            "7.1.0",
+            "7.1.1",
+            "7.2.0",
+        ]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
-        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
@@ -233,6 +266,13 @@ class RocprofilerSystems(CMakePackage):
         when="%rocmcc",
         working_dir="external/timemory",
     )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@:7.1"):
+            return "."
+        else:
+            return "projects/rocprofiler-systems"
 
     def cmake_args(self):
         spec = self.spec
@@ -285,6 +325,8 @@ class RocprofilerSystems(CMakePackage):
             args.append(self.define_from_variant("ROCPROFSYS_BUILD_TBB", "internal-tbb"))
         if spec.satisfies("+internal-dyninst"):
             args.append(self.define_from_variant("DYNINST_BUILD_TBB", "internal-tbb"))
+        if spec.satisfies("@7.2:"):
+            args.append(self.define("libunwind_ROOT", self.spec["libunwind"].prefix))
         return args
 
     def flag_handler(self, name, flags):

@@ -184,7 +184,7 @@ class MesonBuilder(meson.MesonBuilder):
         # '/usr/bin/python' in the shebang. To work around that
         # we copy the original script into a temporary folder, and
         # change the shebang to '/usr/bin/env python'
-        dtrace = which("dtrace").path
+        dtrace = which("dtrace", required=True).path
         dtrace_copy = join_path(self.dtrace_copy_path, "dtrace")
 
         with working_dir(self.dtrace_copy_path, create=True):

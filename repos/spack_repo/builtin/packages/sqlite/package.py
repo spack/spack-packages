@@ -239,7 +239,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
         db_filename = test_data_dir.join("packages.db")
 
         # Ensure the database only contains one table
-        sqlite3 = which(self.prefix.bin.sqlite3)
+        sqlite3 = which(self.prefix.bin.sqlite3, required=True)
         out = sqlite3(db_filename, ".tables", output=str.split, error=str.split)
         assert "packages" in out
 

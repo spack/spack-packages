@@ -16,11 +16,12 @@ class PyPyomo(PythonPackage):
     pypi = "pyomo/pyomo-5.6.6.tar.gz"
     git = "https://github.com/Pyomo/pyomo.git"
 
-    # Maintainer accurate as of 2025-10-17
+    # Maintainer accurate as of 2026-02-20
     maintainers("mrmundt")
 
     license("BSD-3-Clause")
 
+    version("6.10.0", sha256="672fac375e57e121ca935adcc16a1cd118be8afa1a3e5608161fb86220c3a577")
     version("6.9.5", sha256="0734020fcd5cc03ee200fd3f79d143fbfc14e6be116e0d16bab79f3f89609879")
     version("6.9.4", sha256="34ad22cd6bf9956de9c0d3842d01c1f92dee0515b25aa3e8f113b326549b1231")
     version("6.9.3", sha256="54ec698bb31f78460e1627cbfa90cb2741b629c1ecaca7035bd2e340351a47f7")
@@ -70,6 +71,7 @@ class PyPyomo(PythonPackage):
     ############################
 
     # python_requires
+    depends_on("python@3.10:3.14", when="@6.10", type=("build", "run"))
     depends_on("python@3.9:3.14", when="@6.9.5", type=("build", "run"))
     depends_on("python@3.9:3.13", when="@6.9", type=("build", "run"))
     depends_on("python@3.8:3.13", when="@6.8.1:6.8.2", type=("build", "run"))
@@ -81,7 +83,8 @@ class PyPyomo(PythonPackage):
 
     # universally required
     depends_on("py-setuptools@77:", type="build")
-    depends_on("py-ply", type=("build", "run"))
+    # ply was removed as a required dependency in 6.10.0
+    depends_on("py-ply", when="@:6.9.5", type=("build", "run"))
 
     # required for pre-6 series
     depends_on("py-pyutilib@6.0.0", when="@5", type=("build", "run"))

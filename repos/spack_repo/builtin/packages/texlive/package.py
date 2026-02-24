@@ -183,7 +183,7 @@ class Texlive(AutotoolsPackage):
             mtxrun_lua = join_path(
                 self.prefix, "texmf-dist", "scripts", "context", "lua", "mtxrun.lua"
             )
-            chmod = which("chmod")
+            chmod = which("chmod", required=True)
             chmod("+x", mtxrun_lua)
             mtxrun = Executable(mtxrun_lua)
         mtxrun("--generate")

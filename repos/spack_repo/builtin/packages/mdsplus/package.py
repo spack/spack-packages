@@ -56,7 +56,7 @@ class Mdsplus(AutotoolsPackage):
         return self.enable_or_disable("java")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./bootstrap")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

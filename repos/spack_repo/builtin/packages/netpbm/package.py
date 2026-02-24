@@ -148,7 +148,7 @@ class Netpbm(MakefilePackage):
             config.append("JBIGLIB={0}".format(spec["jbigkit"].libs.ld_flags))
             config.append("JBIGHDR_DIR={0}".format(spec["jbigkit"].headers.directories[0]))
         if "+X" in spec:
-            pkg_config = which("pkg-config")
+            pkg_config = which("pkg-config", required=True)
             if not pkg_config("x11", "--exists"):
                 config.append("X11LIB={0}".format(spec["libx11"].libs.ld_flags))
                 config.append("X11HDR_DIR={0}".format(spec["libx11"].headers.directories[0]))

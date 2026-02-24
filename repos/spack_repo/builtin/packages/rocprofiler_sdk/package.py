@@ -8,13 +8,33 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack.package import *
 
 
+def submodules(package):
+    submodules = [
+        "projects/rocprofiler-sdk/external/googletest",
+        "projects/rocprofiler-sdk/external/glog",
+        "projects/rocprofiler-sdk/external/fmt",
+        "projects/rocprofiler-sdk/external/doxygen-awesome-css",
+        "projects/rocprofiler-sdk/external/ptl",
+        "projects/rocprofiler-sdk/external/cereal",
+        "projects/rocprofiler-sdk/external/filesystem",
+        "projects/rocprofiler-sdk/external/perfetto",
+        "projects/rocprofiler-sdk/external/elfio",
+        "projects/rocprofiler-sdk/external/yaml-cpp",
+        "projects/rocprofiler-sdk/external/json",
+        "projects/rocprofiler-sdk/external/sqlite",
+        "projects/rocprofiler-sdk/external/pybind11",
+        "projects/rocprofiler-sdk/external/gotcha",
+    ]
+    return submodules
+
+
 class RocprofilerSdk(CMakePackage):
     """ROCProfiler-SDK is AMD’s new and improved tooling infrastructure, providing a
     hardware-specific low-level performance analysis interface for profiling and
     tracing GPU compute applications."""
 
     homepage = "https://github.com/ROCm/rocprofiler-sdk"
-    git = "https://github.com/ROCm/rocprofiler-sdk.git"
+    git = "https://github.com/ROCm/rocm-systems.git"
     url = "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-6.3.2.tar.gz"
 
     tags = ["rocm"]
@@ -23,79 +43,98 @@ class RocprofilerSdk(CMakePackage):
 
     license("MIT")
     version(
+        "7.2.0",
+        tag="rocm-7.2.0",
+        commit="fc0010cf6a5a972d42b276df946510f30343d493",
+        submodules=submodules,
+    )
+    version(
         "7.1.1",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-7.1.1",
         commit="ff4f9a64d386454ed5f1a1360a2a5c14292f36c6",
         submodules=True,
     )
     version(
         "7.1.0",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-7.1.0",
         commit="d5c0aaae36a6cb348f408c9fde8be435e29981b9",
         submodules=True,
     )
     version(
         "7.0.2",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-7.0.2",
         commit="19ae05055bee5dab65854b44c047f34db2e8276c",
         submodules=True,
     )
     version(
         "7.0.0",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-7.0.0",
         commit="18af6a58b74558c91ba09376d86d2401da2cf76f",
         submodules=True,
     )
     version(
         "6.4.3",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.4.3",
         commit="fb30388fd30c073ac7baf3dad775f37c51aafcc8",
         submodules=True,
     )
     version(
         "6.4.2",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.4.2",
         commit="e8e49fe76971000a42a5a177d9a727d16dd0ebcf",
         submodules=True,
     )
     version(
         "6.4.1",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.4.1",
         commit="e8e49fe76971000a42a5a177d9a727d16dd0ebcf",
         submodules=True,
     )
     version(
         "6.4.0",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.4.0",
         commit="e8e49fe76971000a42a5a177d9a727d16dd0ebcf",
         submodules=True,
     )
     version(
         "6.3.3",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.3.3",
         commit="95a3964ee26ac45618517f24669858bdb39ea7d2",
         submodules=True,
     )
     version(
         "6.3.2",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.3.2",
         commit="f5d3fd3d3460c74cb8935f0021e31f0bff5cb305",
         submodules=True,
     )
     version(
         "6.3.1",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.3.1",
         commit="38ac1c8f7d62cbb702f53c7085be16bf1943369a",
         submodules=True,
     )
     version(
         "6.3.0",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.3.0",
         commit="38ac1c8f7d62cbb702f53c7085be16bf1943369a",
         submodules=True,
     )
     version(
         "6.2.4",
+        git="https://github.com/ROCm/rocprofiler-sdk.git",
         tag="rocm-6.2.4",
         commit="03fe8df3622a97161699439dfe933ef8e9e7db8a",
         submodules=True,
@@ -110,7 +149,7 @@ class RocprofilerSdk(CMakePackage):
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -127,14 +166,22 @@ class RocprofilerSdk(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"rccl@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@:7.1"):
+            return "."
+        else:
+            return "projects/rocprofiler-sdk"
 
     def cmake_args(self):
         args = []

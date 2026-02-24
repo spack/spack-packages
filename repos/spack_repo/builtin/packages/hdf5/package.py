@@ -575,11 +575,11 @@ class Hdf5(CMakePackage):
         # breaks CMake's mpi detection for MSMPI.
         if spec.satisfies("+mpi") and "msmpi" not in spec:
             if spec.satisfies("+cxx"):
-                args.append("-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx)
-            args.append("-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc)
+                args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
+            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
             if spec.satisfies("+fortran"):
-                args.extend(["-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
+                args.append(self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc))
 
         # work-around for https://github.com/HDFGroup/hdf5/issues/1320
         if spec.satisfies("@1.10.8,1.13.0"):
@@ -796,7 +796,7 @@ int main(int argc, char **argv) {{
                 if not os.path.isfile(path):
                     raise SkipTest(f"{path} is not installed")
 
-                prog = which(path)
+                prog = which(path, required=True)
                 output = prog(option, output=str.split, error=str.split)
                 assert expected in output
 
@@ -805,15 +805,15 @@ int main(int argc, char **argv) {{
         test_data_dir = self.test_suite.current_test_data_dir
         with working_dir(test_data_dir, create=True):
             filename = "spack.h5"
-            h5dump = which(self.prefix.bin.h5dump)
+            h5dump = which(self.prefix.bin.h5dump, required=True)
             out = h5dump(filename, output=str.split, error=str.split)
             expected = get_escaped_text_output("dump.out")
             check_outputs(expected, out)
 
-            h5copy = which(self.prefix.bin.h5copy)
+            h5copy = which(self.prefix.bin.h5copy, required=True)
             copyname = "test.h5"
             options = ["-i", filename, "-s", "Spack", "-o", copyname, "-d", "Spack"]
             h5copy(*options)
 
-            h5diff = which(self.prefix.bin.h5diff)
+            h5diff = which(self.prefix.bin.h5diff, required=True)
             h5diff(filename, copyname)

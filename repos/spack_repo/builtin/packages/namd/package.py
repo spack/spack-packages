@@ -26,6 +26,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     maintainers("jcphill")
 
     version("master", branch="master")
+    version("3.0.2", sha256="0916700dec3342165b7ba2c3b5f99dcff767879d2a4931b5028dba47acd68bd5")
     version("3.0.1", sha256="3be0854545c45e58afb439a96708e127aef435d30113cc89adbab8f4b6888733")
     version(
         "2.14",
@@ -74,6 +75,10 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     patch("inherited-member-2.14.patch", when="@2.14")
     # Handle change in python-config for python@3.8:
     patch("namd-python38.patch", when="interface=python ^python@3.8:")
+    # Allow Spack to drive HIP offload targets via HIPARCH.
+    patch("namd-hiparch-override.patch", when="@3.0.2: +rocm")
+    # Fix missing CudaLocalRecord::num_inline_peer symbol with C++11 HIP builds.
+    patch("namd-cudalocalrecord-link-fix.patch", when="@3.0.2: +rocm")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -254,6 +259,16 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
         """Try to use target base arch file, if not make generic"""
         if not self._edit_arch_target_based(spec, prefix):
             self._edit_arch_generic(spec, prefix)
+
+    def setup_build_environment(self, env):
+        if self.spec.satisfies("@3.0.2: +rocm"):
+            # Avoid leaking external PLATFORM into NAMD's HIP make logic.
+            # A leaked PLATFORM (e.g. linux) can bypass AMD autodetection and
+            # incorrectly inject CUDA defines/headers in ROCm-only builds.
+            env.unset("PLATFORM")
+            rocm_archs = self.spec.variants["amdgpu_target"].value
+            if "none" not in rocm_archs:
+                env.set("HIPARCH", ",".join(rocm_archs))
 
     def edit(self, spec, prefix):
         self._edit_arch(spec, prefix)

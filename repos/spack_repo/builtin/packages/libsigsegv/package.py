@@ -57,10 +57,10 @@ class Libsigsegv(AutotoolsPackage, GNUMirrorPackage):
             "{0}{1}".format(self.compiler.cc_rpath_arg, self.prefix.lib),
         ]
 
-        cc = which(os.environ["CC"])
+        cc = which(os.environ["CC"], required=True)
         cc(*options)
 
-        exe = which(prog)
+        exe = which(prog, required=True)
         out = exe(output=str.split, error=str.split)
         expected = get_escaped_text_output(data_dir.join("smoke_test.out"))
         check_outputs(expected, out)
