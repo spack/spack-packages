@@ -15,21 +15,21 @@ class Alps(CMakePackage):
     """
 
     homepage = "https://github.com/ALPSim/ALPS"
-    url = "https://github.com/ALPSim/ALPS/archive/refs/tags/v2.3.4.tar.gz"
 
     maintainers("Ooolab","egull")
 
     license("MIT", checked_by="Ooolab")
 
-    version("2.3.4", sha256="bc65453bb88cc42de77c2963a44966fb3c92e80ff8e8e29e80fb87694fba41d7")
-    version("2.3.3-beta.6", sha256="eb0c8115b034dd7a9dd585d277c4f86904ba374cdbdd130545aca1c432583b68")
+    version(
+        "2.3.4-beta.2", sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c", url = "https://github.com/ALPSim/ALPS/archive/refs/tags/v2.3.4-beta.2.tar.gz"
+    )
+    version(
+        "2.3.3", sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f", url = "https://github.com/ALPSim/ALPS/archive/refs/tags/v2.3.3.tar.gz"
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-
-    # update version constraint on every boost release after providing version & checksum info
-    # in resources dictionary below
     depends_on("boost@1.80:")  # Just for headers. Note that the checksums are listed below
     depends_on("fftw")
     depends_on("hdf5 ~mpi+hl")
@@ -39,13 +39,9 @@ class Alps(CMakePackage):
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("mpi")
+    depends_on("zlib")
     
     extends("python")
-
-    # https://github.com/ALPSim/ALPS/issues/9
-    #conflicts(
-    #    "%gcc@14", when="@:2.3.3-beta.6", msg="use gcc older than version 14 or else build fails"
-    #)
 
     # See https://github.com/ALPSim/ALPS/issues/6#issuecomment-2604912169
     # for why this is needed
@@ -122,6 +118,7 @@ class Alps(CMakePackage):
                     'std::add_const',
                     'src/alps/numeric/matrix/matrix_element_iterator.hpp'
                 )
+                
 
     def cmake_args(self):
         args = []
@@ -163,6 +160,13 @@ class Alps(CMakePackage):
             "-DMPI_C_COMPILER={0}".format(self.spec['mpi'].mpicc)
         )
         
+        # Preserve link paths as RPATH in the installed binary
+        args.append("-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON")
+        args.append("-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON")
+        
+        # Tell CMake to use Spack’s HDF5 explicitly
+        args.append("-DHDF5_DIR={0}".format(self.spec['hdf5'].prefix))
+
         # Add Python support
         args.append(
             "-DPYTHON_EXECUTABLE={0}".format(self.spec['python'].command.path)
@@ -206,14 +210,3 @@ class Alps(CMakePackage):
         env.append_flags('CXXFLAGS', '-DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF')
         env.append_flags('CXXFLAGS', '-DBOOST_TIMER_ENABLE_DEPRECATED')
         env.append_flags('CXXFLAGS', self.compiler.cxx14_flag)
-
-
-    @run_after("install")
-    def relocate_python_stuff(self):
-        pyalps_dir = join_path(python_platlib, "pyalps")
-        with working_dir(self.prefix):
-            copy_tree("pyalps", pyalps_dir)
-        with working_dir(self.prefix.lib):
-            copy_tree("pyalps", pyalps_dir)
-            # in pip installed pyalps package, xml dir is provided under platlib/pyalps
-            copy_tree("xml", join_path(pyalps_dir, "xml"))
