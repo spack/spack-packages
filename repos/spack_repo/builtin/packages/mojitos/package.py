@@ -21,7 +21,7 @@ class Mojitos(Package):
     version(
         "2.0.2",
         tag="v2.0.2",
-        sha256="3213353199a7d42f0e75a5c2d8680782f6e646147d10d0c7a10f700707b87d82"
+        sha256="3213353199a7d42f0e75a5c2d8680782f6e646147d10d0c7a10f700707b87d82",
     )
     
     depends_on("c", type="build")
