@@ -116,6 +116,7 @@ class Exodusii(CMakePackage):
                 from_variant(project_name_base + "_ENABLE_SEACASExodus_for", "fortran"),
                 from_variant(project_name_base + "_ENABLE_SEACASExoIIv2for32", "fortran"),
                 define(project_name_base + "_HIDE_DEPRECATED_CODE", False),
+                define("BUILD_TESTING", False),
                 from_variant("CMAKE_INSTALL_RPATH_USE_LINK_PATH", "shared"),
                 from_variant("BUILD_SHARED_LIBS", "shared"),
                 from_variant("SEACASExodus_ENABLE_THREADSAFE", "thread_safe"),
