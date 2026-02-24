@@ -19,7 +19,7 @@ class PyTrameVtk(PythonPackage):
 
     license("BSD License")
 
-    version("2.11.1", sha256="ea75073c04c871a96ad51634ff7fc0b36242f62aab7ddfaac55e961c9ea46f90")
+    version("2.11.1", sha256="db1f316ba69c29b9292775c3f73567604aa366742c06030d8507d5bd56424492")
     version("2.10.0", sha256="0e4cabd78c1e8b67da857ba5c3a404a2195cb3e849a252bae51575291bef01ad")
 
     depends_on("python@3.9:", type=("build", "run"))
