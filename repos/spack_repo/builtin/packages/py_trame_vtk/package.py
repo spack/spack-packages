@@ -26,4 +26,3 @@ class PyTrameVtk(PythonPackage):
     depends_on("py-hatchling", type="build")
     depends_on("py-setuptools@42:", type="build")
     depends_on("py-trame-client@3.4:3", type=("build", "run"))
-    depends_on("py-trame-server", type=("build", "run"))
