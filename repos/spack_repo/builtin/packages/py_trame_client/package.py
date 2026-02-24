@@ -6,11 +6,6 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
-BLAKE2b256 = {
-    "3.11.2": "aea5febe01d66c7524882c5f4f3e75affbf112896b660a8a53ddc505eeaa57f7",
-    "2.17.1": "a2c7a968cc21feeac7ec8603304a217bad04fe40101bb3786f99454d5e808706",
-}
-
 
 class PyTrameClient(PythonPackage):
     """Internal client side implementation of trame"""
