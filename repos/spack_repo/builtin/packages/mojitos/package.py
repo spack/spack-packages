@@ -15,12 +15,13 @@ class Mojitos(Package):
 
     homepage = "https://gitlab.irit.fr/sepia-pub/mojitos"
     git = "https://gitlab.irit.fr/sepia-pub/mojitos.git"
-    version("2.0.2", branch="main")
     maintainers("georges-da-costa")
     license("GPL-3.0-or-later", checked_by="georges-da-costa")
 
-    depends_on("gcc")
-    depends_on("gmake")
+    version("2.0.2", tag="v2.0.2", sha256="3213353199a7d42f0e75a5c2d8680782f6e646147d10d0c7a10f700707b87d82")
+    
+    depends_on("c", type="build")
+    depends_on("gmake", type="build")
     depends_on("libmicrohttpd")
 
     def install(self, spec, prefix):
