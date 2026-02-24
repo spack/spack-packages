@@ -11,7 +11,6 @@ from spack.package import *
 def submodules(package):
     submodules = [
         "projects/rocprofiler-sdk/external/googletest",
-        "projects/rocprofiler-sdk/external/glog",
         "projects/rocprofiler-sdk/external/fmt",
         "projects/rocprofiler-sdk/external/doxygen-awesome-css",
         "projects/rocprofiler-sdk/external/ptl",
@@ -21,9 +20,6 @@ def submodules(package):
         "projects/rocprofiler-sdk/external/elfio",
         "projects/rocprofiler-sdk/external/yaml-cpp",
         "projects/rocprofiler-sdk/external/json",
-        "projects/rocprofiler-sdk/external/sqlite",
-        "projects/rocprofiler-sdk/external/pybind11",
-        "projects/rocprofiler-sdk/external/gotcha",
     ]
     return submodules
 
@@ -201,6 +197,7 @@ class RocprofilerSdk(CMakePackage):
             args.append(self.define_from_variant("ROCPROFILER_BUILD_FMT", "internal-fmt"))
             args.append(self.define("ROCPROFILER_BUILD_GLOG", "OFF"))
             args.append(self.define("ROCPROFILER_BUILD_GOTCHA", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_SQLITE3", "OFF"))
         return args
 
     def setup_run_environment(self, env):
