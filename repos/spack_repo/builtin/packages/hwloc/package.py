@@ -131,6 +131,13 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("ncurses ~termlib", when="@2.0:2.2")
     depends_on("ncurses ~termlib", when="@1.0:1.11.12")
 
+    # Removes unnecessary refresh call that fails linking with ^ncurses+termlib
+    patch(
+        "https://github.com/open-mpi/hwloc/commit/f7f1f76573ce505dae73568c912d2b2efdbf0f71.patch?full_index=1",
+        sha256="b4db98b39733435273e57b8229ee834ce50d2785641d1587d8039598752b1a3d",
+        when="@2.13.0",
+    )
+
     # When mpi=openmpi, this introduces an unresolvable dependency.
     # See https://github.com/spack/spack/issues/15836 for details
     depends_on("mpi", when="+netloc")
