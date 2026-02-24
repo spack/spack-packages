@@ -160,6 +160,8 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     variant("blosc", default=True, description="Enable Blosc compression plugin")
     variant("zstd", default=True, description="Enable Zstandard compression plugin")
 
+    variant("doc", default=True, description="build documentation man files")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="build_system=cmake")
 
@@ -193,10 +195,10 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
             # It is possible to install the package with CMake and without M4 on a non-Windows
             # platform but some of the man files will not be installed in that case (even if they
             # are in the release tarball):
-            depends_on("m4", type="build", when="build_system=cmake")
+            depends_on("m4", type="build", when="+doc build_system=cmake")
             # Apart from the redundant configure-time check, which we suppress below, M4 is not
             # needed when building with Autotools if the man files are in the release tarball:
-            depends_on("m4", type="build", when="@:4.4 build_system=autotools")
+            depends_on("m4", type="build", when="@:4.4 +doc build_system=autotools")
     del __p
 
     depends_on("hdf~netcdf", when="+hdf4")
@@ -374,9 +376,13 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define(nc + "ENABLE_NETCDF_4", True),
             self.define_from_variant(nc + "ENABLE_DAP", "dap"),
             self.define_from_variant(nc + "ENABLE_HDF4", "hdf4"),
+            self.define("ENABLE_EXAMPLES", False),
+            self.define("ENABLE_TESTS", False),
+            self.define("ENABLE_FILTER_TESTING", False),
             self.define(nc + "ENABLE_PARALLEL_TESTS", False),
             self.define_from_variant(nc + "ENABLE_FSYNC", "fsync"),
             self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
+            self.define_from_variant("ENABLE_NCZARR", "nczarr_zip"),
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
         ]
         if "+parallel-netcdf" in self.pkg.spec:
