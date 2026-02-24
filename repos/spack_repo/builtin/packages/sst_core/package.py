@@ -111,7 +111,7 @@ class SstCore(AutotoolsPackage):
     # that cannot be easily circumvented with `touch`.
     @when("@develop,master,14.0.0")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autogen.sh")
 
     def configure_args(self):
@@ -127,10 +127,6 @@ class SstCore(AutotoolsPackage):
 
         if self.spec.satisfies("+pdes_mpi"):
             args.append("--enable-mpi")
-            env["CC"] = self.spec["mpi"].mpicc
-            env["CXX"] = self.spec["mpi"].mpicxx
-            env["F77"] = self.spec["mpi"].mpif77
-            env["FC"] = self.spec["mpi"].mpifc
         else:
             args.append("--disable-mpi")
 

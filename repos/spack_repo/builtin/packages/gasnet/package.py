@@ -117,7 +117,7 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
             bootstrapsh()
             # Record git-describe when fetched from git:
             try:
-                git = which("git")
+                git = which("git", required=True)
                 git("describe", "--long", "--always", output="version.git")
             except ProcessError:
                 warnings.warn("Omitting version stamp due to git error")

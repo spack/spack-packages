@@ -37,5 +37,5 @@ class Mark(Package):
         mkdir(prefix.bin)
         install("mark", prefix.bin)
 
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", prefix.bin.mark)

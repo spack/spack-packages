@@ -69,7 +69,7 @@ class Prrte(AutotoolsPackage):
 
     variant(
         "schedulers",
-        values=disjoint_sets(("none"), SCHEDULERS).with_non_feature_values("none"),
+        values=disjoint_sets(("none",), SCHEDULERS).with_non_feature_values("none"),
         description="List of schedulers for which support is enabled",
     )
     depends_on("lsf", when="schedulers=lsf")

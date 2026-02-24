@@ -19,12 +19,13 @@ spack:
     mpi:
       require: openmpi
     python:
-      require: "@3.13:"
+      require: "@3.13: target=aarch64"
     py-jaxlib:
-      require: "%c,cxx=clang"
+      require: "target=aarch64 %c,cxx=clang"
     py-tensorflow:
       require:
         - any_of: ["@:2.18 %c,cxx=gcc", "@2.19: %c,cxx=clang"]
+        - target=aarch64
     py-torch:
       require:
       - target=aarch64

@@ -233,7 +233,7 @@ class Bazel(Package):
 
     @run_before("install")
     def bootstrap(self):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./compile.sh")
 
     def install(self, spec, prefix):

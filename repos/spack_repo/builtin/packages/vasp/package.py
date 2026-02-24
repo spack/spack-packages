@@ -26,7 +26,9 @@ class Vasp(MakefilePackage, CudaPackage):
     version("6.5.1", sha256="a53fd9dd2a66472a4aa30074dbda44634fc663ea2628377fc01d870e37136f61")
     version("6.5.0", sha256="7836f0fd2387a6768be578f1177e795dc625f36f19015e31cab0e81154a24196")
     version("6.4.3", sha256="fe30e773f2a3e909b5e0baa9654032dfbdeff7ec157bc348cee7681a7b6c24f4")
+    version("6.4.2", sha256="b704637f7384673f91adfbc803edc5cc7fe736d9623453461f7cdc29b123410e")
     version("6.3.2", sha256="f7595221b0f9236a324ea8afe170637a578cdd5a837cc7679e7f7812f6edf25a")
+    version("6.3.1", sha256="113db53c4346287c89982f52887a65d12d246e38de7ccd024e44499c4774dc66")
     version("6.3.0", sha256="adcf83bdfd98061016baae31616b54329563aa2739573f069dd9df19c2071ad3")
 
     variant("openmp", default=False, description="Enable openmp build")
@@ -36,6 +38,9 @@ class Vasp(MakefilePackage, CudaPackage):
 
     variant("shmem", default=True, description="Enable use_shmem build flag")
     variant("hdf5", default=False, description="Enabled HDF5 support")
+    variant("libbeef", default=False, description="Enable Libbeef support")
+    variant("libxc", default=False, description="Enable Libxc support")
+    variant("wannier90", default=False, description="Enable wannier90 support")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -56,6 +61,9 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("scalapack")
     depends_on("nccl", when="+cuda")
     depends_on("hdf5+fortran+mpi", when="+hdf5")
+    depends_on("libbeef", when="+libbeef")
+    depends_on("libxc~fhc+fortran", when="+libxc")
+    depends_on("wannier90", when="+wannier90")
     # at the very least the nvhpc mpi seems required
     requires("^nvhpc+mpi+lapack+blas", when="%nvhpc")
 
@@ -222,6 +230,19 @@ class Vasp(MakefilePackage, CudaPackage):
             cpp_options.append("-DVASP_HDF5")
             llibs.append(spec["hdf5:fortran"].libs.ld_flags)
             incs.append(spec["hdf5"].headers.include_flags)
+
+        if spec.satisfies("+libbeef"):
+            cpp_options.append("-Dlibbeef")
+            llibs.append(spec["libbeef"].libs.ld_flags)
+
+        if spec.satisfies("+libxc"):
+            cpp_options.append("-DUSELIBXC")
+            llibs.append(spec["libxc:fortran"].libs.ld_flags)
+            incs.append(spec["libxc"].headers.include_flags)
+
+        if spec.satisfies("+wannier90"):
+            cpp_options.append("-DVASP2WANNIER90")
+            llibs.append(spec["wannier90"].libs.ld_flags)
 
         if spec.satisfies("%gcc@10:"):
             fflags.append("-fallow-argument-mismatch")

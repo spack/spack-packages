@@ -15,6 +15,7 @@ class PyUcMicroPy(PythonPackage):
 
     license("MIT")
 
+    version("1.0.3", sha256="d321b92cff673ec58027c04015fcaa8bb1e005478643ff4a500882eaab88c48a")
     version("1.0.2", sha256="30ae2ac9c49f39ac6dce743bd187fcd2b574b16ca095fa74cd9396795c954c54")
 
     depends_on("python@3.7:", type=("build", "run"))

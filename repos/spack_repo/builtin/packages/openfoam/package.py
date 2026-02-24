@@ -244,6 +244,15 @@ def mplib_content(spec, pre=None):
     return info
 
 
+def submodules(package):
+    submodules = []
+    if package is not None and package.spec.satisfies("plugins=avalanche"):
+        submodules.append("plugins/avalanche")
+    if package is not None and package.spec.satisfies("plugins=cfmesh"):
+        submodules.append("plugins/cfmesh")
+    return submodules
+
+
 # -----------------------------------------------------------------------------
 
 
@@ -259,14 +268,20 @@ class Openfoam(Package):
     maintainers("olesenm")
     homepage = "https://www.openfoam.com/"
     url = "https://sourceforge.net/projects/openfoam/files/v1906/OpenFOAM-v1906.tgz"
-    git = "https://develop.openfoam.com/Development/openfoam.git"
+    git = "https://gitlab.com/openfoam/core/openfoam.git"
     list_url = "https://sourceforge.net/projects/openfoam/files/"
     list_depth = 2
 
     license("GPL-3.0-or-later")
 
-    version("develop", branch="develop", submodules="True")
-    version("master", branch="master", submodules="True")
+    version("develop", branch="develop", submodules=True)
+    version("master", branch="master", submodules=True)
+    version(
+        "2512",
+        tag="OpenFOAM-v2512",
+        commit="87ed40d256d22ea38fcc648dfc82a22162427b18",
+        submodules=submodules,
+    )
     version("2506", sha256="63d26f48ae7ee9a7806a0ceb339ef8a0ba485a4714d54fbfb31e78e1a4849965")
     version("2412", sha256="c353930105c39b75dac7fa7cfbfc346390caa633a868130fd8c9816ef5f732cd")
     version("2406", sha256="8d1450fb89eec1e7cecc55c3bb7bc486ccbf63d069379d1d5d7518fa16a4686a")
@@ -356,6 +371,14 @@ class Openfoam(Package):
         multi=False,
     )
 
+    variant(
+        "plugins",
+        default="none",
+        description="With optional plugins",
+        values=("none", conditional("avalanche", "cfmesh", when="@2512:")),
+        multi=True,
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -423,13 +446,13 @@ class Openfoam(Package):
     patch("1612-spack-patches.patch", when="@1612")
     # kahip patch (wmake)
     patch(
-        "https://develop.openfoam.com/Development/openfoam/commit/8831dfc58b0295d0d301a78341dd6f4599073d45.patch",
+        "https://gitlab.com/openfoam/core/openfoam/commit/8831dfc58b0295d0d301a78341dd6f4599073d45.patch",
         when="@1806",
         sha256="531146be868dd0cda70c1cf12a22110a38a30fd93b5ada6234be3d6c9256c6cf",
     )
     # Fix: missing std::array include (searchable sphere)
     patch(
-        "https://develop.openfoam.com/Development/openfoam/commit/b4324b1297761545d5b10f50b60ab29e71c172aa.patch",
+        "https://gitlab.com/openfoam/core/openfoam/commit/b4324b1297761545d5b10f50b60ab29e71c172aa.patch",
         when="@2012_220610",
         sha256="bad4b0e80fd26ea702bce9ccfb925edbbaa3308f70392fe6da2c7671b1d39bea",
     )
@@ -906,7 +929,7 @@ class Openfoam(Package):
 
     # Executables like decomposePar require interface libraries for optional dependencies, but if
     # the dependency is missing, an dummy library is used and put in lib/dummy. Allow this until
-    # the https://develop.openfoam.com/Development/openfoam/-/issues/3283 is resolved.
+    # the https://gitlab.com/openfoam/core/openfoam/-/issues/3283 is resolved.
     unresolved_libraries = [
         "libkahipDecomp.so",
         "libmetisDecomp.so",

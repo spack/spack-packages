@@ -57,19 +57,30 @@ class Arkouda(MakefilePackage):
     )
 
     variant(
+        "array_nd_max",
+        default="1",
+        values=("1", "2", "3"),
+        multi=False,
+        description="Set ARRAY_ND_MAX used by Arkouda build",
+    )
+
+    variant(
         "slurm-gasnet_ibv", default=False, description="Configure Chapel for Slurm + GASNet (ibv)"
     )
 
+    depends_on(
+        "chapel@2.1:2.2 +hdf5 +zmq", when="@:2025.01.13", type=("build", "link", "run", "test")
+    )
     depends_on(
         "chapel@2.0:2.4 +hdf5 +zmq",
         when="@2025.07.03:2025.08.20",
         type=("build", "link", "run", "test"),
     )
     depends_on(
-        "chapel@2.0:2.5 +hdf5 +zmq", when="@2025.09.30:", type=("build", "link", "run", "test")
+        "chapel@2.0:2.5 +hdf5 +zmq", when="@2025.09.30", type=("build", "link", "run", "test")
     )
     depends_on(
-        "chapel@2.1: +hdf5 +zmq", when="@:2025.01.13", type=("build", "link", "run", "test")
+        "chapel@2.4:2.6 +hdf5 +zmq", when="@2025.12.16:", type=("build", "link", "run", "test")
     )
 
     depends_on("cmake@3.13.4:", type="build")
@@ -149,6 +160,9 @@ class Arkouda(MakefilePackage):
             f.write("$(eval $(call add-path,{0}))\n".format(spec["libidn2"].prefix))
 
     def build(self, spec, prefix):
+        nd = spec.variants["array_nd_max"].value
+        make_args = [f"ARRAY_ND_MAX={nd}"]
+
         # Detect distributed builds and skip the dependency checks built into
         # the Arkouda Makefile. These checks will try to spawn multiple jobs which may
         # cause the build to fail in situations where the user is constrained
@@ -156,9 +170,9 @@ class Arkouda(MakefilePackage):
         if spec.satisfies("+distributed"):
             with set_env(ARKOUDA_SKIP_CHECK_DEPS="1"):
                 tty.warn("Distributed build detected. Skipping dependency checks")
-                make()
+                make(*make_args)
         else:
-            make()
+            make(*make_args)
 
     # Arkouda does not have an install target in its Makefile
     def install(self, spec, prefix):

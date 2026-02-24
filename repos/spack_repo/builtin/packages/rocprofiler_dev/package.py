@@ -13,14 +13,21 @@ class RocprofilerDev(CMakePackage):
     """ROCPROFILER library for AMD HSA runtime API extension support"""
 
     homepage = "https://github.com/ROCm/rocprofiler"
-    git = "https://github.com/ROCm/rocprofiler.git"
-    url = "https://github.com/ROCm/rocprofiler/archive/refs/tags/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocprofiler64"]
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocprofiler/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="db8b3698e3f743f0ce58cc5bc1d2406e77f4ca206f1a6c94b182518492f8af2f")
     version("7.1.0", sha256="d029f0011092b9cd6bebeec1775d07eb2ae5fa039937db7376f8177b1956b4c6")
     version("7.0.2", sha256="149557a5db8920e9d003ef7bfc3c5d7580c97c97abada1654a556b2203969124")
@@ -110,12 +117,13 @@ class RocprofilerDev(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     depends_on("py-lxml")
@@ -131,15 +139,24 @@ class RocprofilerDev(CMakePackage):
     depends_on("elfutils", when="@7.1:")
 
     patch("0002-add-fPIC-and-disable-tests-5.7.patch", when="@5.7")
-    patch("0003-disable-tests.patch", when="@6.0:")
+    patch("0003-disable-tests.patch", when="@6.0:7.1")
+    patch("0003-disable-tests-7.2.patch", when="@7.2:")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@:7.1"):
+            return "."
+        else:
+            return "projects/rocprofiler"
 
     def patch(self):
-        filter_file(
-            "${HSA_RUNTIME_LIB_PATH}/../include",
-            "${HSA_RUNTIME_LIB_PATH}/../include ${HSA_KMT_LIB_PATH}/../include",
-            "test/CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("@:7.1"):
+            filter_file(
+                "${HSA_RUNTIME_LIB_PATH}/../include",
+                "${HSA_RUNTIME_LIB_PATH}/../include ${HSA_KMT_LIB_PATH}/../include",
+                "test/CMakeLists.txt",
+                string=True,
+            )
 
     @classmethod
     def determine_version(cls, lib):

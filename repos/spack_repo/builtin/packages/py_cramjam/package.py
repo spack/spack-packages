@@ -18,5 +18,5 @@ class PyCramjam(PythonPackage):
     version("2.11.0", sha256="5c82500ed91605c2d9781380b378397012e25127e89d64f460fea6aeac4389b4")
 
     depends_on("c", type="build")
-
+    depends_on("rust", type="build")
     depends_on("py-maturin@0.14:", type="build")
