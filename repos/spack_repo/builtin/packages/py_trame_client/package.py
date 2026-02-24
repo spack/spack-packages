@@ -21,7 +21,7 @@ class PyTrameClient(PythonPackage):
     version("3.11.2", sha256="98b3f09d0fbdb09cd29eac61c945a76dcad4a08cfb4843abce5a148fd6fc7316")
     version("2.17.1", sha256="0841e569d0792c7fc218a502663c814ad69e318d2885cec82a7fe1d07fdf0bf4")
 
-    depends_on("python@3.9:", type=("build", "run"), when="@3.11.2")
+    depends_on("python@3.9:", type=("build", "run"), when="@3.11.2:")
     depends_on("py-setuptools@42:", type="build")
     depends_on("py-trame-common@0.2:", type=("build", "run"), when="@3.11.2")
 
