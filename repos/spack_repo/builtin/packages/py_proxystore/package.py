@@ -32,6 +32,7 @@ class PyProxystore(PythonPackage):
     depends_on("python@3.9:")
     depends_on("python@3.10:", when="@0.8.4:")
     depends_on("py-setuptools@64.0:", type="build")
+    depends_on("py-setuptools-scm", type="build")
     depends_on("py-click@:8.1.3,8.1.5:")
     depends_on("py-cloudpickle@3:")
     depends_on("py-cryptography@39.0.1:")
