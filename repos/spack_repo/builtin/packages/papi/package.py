@@ -146,7 +146,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
 
     @when("@6.0.0:%oneapi")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("-c", "cd src && autoreconf -ivf")
 
     def configure_args(self):
@@ -242,7 +242,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
             with set_env(PAPIROOT=self.prefix):
                 make = self.spec["gmake"].command
                 make()
-                exe_simple = which("simple")
+                exe_simple = which("simple", required=True)
                 exe_simple()
-                exe_threads = which("threads")
+                exe_threads = which("threads", required=True)
                 exe_threads()

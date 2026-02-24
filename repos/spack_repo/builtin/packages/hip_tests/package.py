@@ -14,11 +14,19 @@ class HipTests(CMakePackage):
     """This repository provides unit tests for HIP implementation."""
 
     homepage = "https://github.com/ROCm/hip-tests"
-    url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-6.4.3.tar.gz"
-    git = "https://github.com/ROCm/hip-tests.git"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="30b8a449ef6f3d4d037dbc135ed47d178c4c39a29e2e0ae6f0550aa996cab063")
     version("7.1.0", sha256="15ae5ad99befcf6c96da5c4e85767a2e0abd3d80c72164f3fd61af3c1b642e5c")
     version("7.0.2", sha256="db64843cbaf07475be89569e9791990eadda73b30c703305e3e1396b08efedac")
@@ -61,6 +69,7 @@ class HipTests(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -69,58 +78,74 @@ class HipTests(CMakePackage):
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    root_cmakelists_dir = "catch"
+    patch("0001_link_numa.patch", when="@7.2")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hip-tests/catch"
+        else:
+            return "catch"
 
     def patch(self):
+        if self.spec.satisfies("@7.2:"):
+            hip_tests_dir = "projects/hip-tests/"
+        else:
+            hip_tests_dir = ""
+
         filter_file(
             "${ROCM_PATH}/bin/rocm_agent_enumerator",
             f"{self.spec['rocminfo'].prefix}/bin/rocm_agent_enumerator",
-            "catch/CMakeLists.txt",
+            f"{hip_tests_dir}catch/CMakeLists.txt",
             string=True,
         )
         filter_file(
             "/opt/rocm/bin/rocm_agent_enumerator",
             f"{self.spec['rocminfo'].prefix}/bin/rocm_agent_enumerator",
-            "catch/hipTestMain/hip_test_context.cc",
+            f"{hip_tests_dir}catch/hipTestMain/hip_test_context.cc",
             string=True,
         )
         filter_file(
             "${HIP_PATH}/llvm",
             self.spec["llvm-amdgpu"].prefix,
-            "samples/2_Cookbook/17_llvm_ir_to_executable/CMakeLists.txt",
-            "samples/2_Cookbook/16_assembly_to_executable/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/17_llvm_ir_to_executable/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/16_assembly_to_executable/CMakeLists.txt",
             string=True,
         )
         filter_file(
             "${ROCM_PATH}/llvm",
             self.spec["llvm-amdgpu"].prefix,
-            "catch/CMakeLists.txt",
-            "samples/2_Cookbook/16_assembly_to_executable/CMakeLists.txt",
-            "samples/2_Cookbook/21_cmake_hip_cxx_clang/CMakeLists.txt",
-            "samples/2_Cookbook/18_cmake_hip_device/CMakeLists.txt",
-            "samples/2_Cookbook/17_llvm_ir_to_executable/CMakeLists.txt",
-            "samples/2_Cookbook/23_cmake_hiprtc/CMakeLists.txt",
-            "samples/2_Cookbook/22_cmake_hip_lang/CMakeLists.txt",
-            "samples/2_Cookbook/19_cmake_lang/CMakeLists.txt",
+            f"{hip_tests_dir}catch/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/16_assembly_to_executable/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/21_cmake_hip_cxx_clang/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/18_cmake_hip_device/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/17_llvm_ir_to_executable/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/23_cmake_hiprtc/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/22_cmake_hip_lang/CMakeLists.txt",
+            f"{hip_tests_dir}samples/2_Cookbook/19_cmake_lang/CMakeLists.txt",
             string=True,
         )
         if self.spec.satisfies("@:6.4"):
             filter_file(
                 "${CMAKE_PREFIX_PATH}/bin/hipify-perl",
                 f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
-                "samples/0_Intro/square/CMakeLists.txt",
+                f"{hip_tests_dir}samples/0_Intro/square/CMakeLists.txt",
                 string=True,
             )
         if self.spec.satisfies("@7.0:"):
             filter_file(
                 "${ROCM_PATH}/bin/hipify-perl",
                 f"{self.spec['hipify-clang'].prefix.bin}/hipify-perl",
-                "samples/0_Intro/square/CMakeLists.txt",
+                f"{hip_tests_dir}samples/0_Intro/square/CMakeLists.txt",
                 string=True,
             )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("@:7.1"):
+            env.set("CXX", self.spec["hip"].hipcc)
+        else:
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
+            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
 
     def cmake_args(self):
         args = [
@@ -130,6 +155,13 @@ class HipTests(CMakePackage):
         ]
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
+        if self.spec.satisfies("@7.2:"):
+            args.append(
+                self.define(
+                    "CMAKE_MODULE_PATH",
+                    f"{self.stage.source_path}/projects/hip-tests/catch/perftests/memory",
+                )
+            )
         return args
 
     def build(self, spec, prefix):
@@ -140,9 +172,14 @@ class HipTests(CMakePackage):
     def cache_test_sources(self):
         """Copy the tests source files after the package is installed to an
         install test subdirectory for use during `spack test run`."""
-        cache_extra_test_sources(self, "samples")
+        if self.spec.satisfies("@7.2:"):
+            hip_tests_dir = "projects/hip-tests/"
+        else:
+            hip_tests_dir = ""
+
+        cache_extra_test_sources(self, f"{hip_tests_dir}samples")
         if self.spec.satisfies("@7.0:"):
-            cache_extra_test_sources(self, "catch")
+            cache_extra_test_sources(self, f"{hip_tests_dir}catch")
 
     def test_samples(self):
         """build and run all hip samples"""
@@ -182,7 +219,13 @@ class HipTests(CMakePackage):
 
         if self.spec.satisfies("@6.2:"):
             sample_test_binaries.append("2_Cookbook/22_cmake_hip_lang/square2")
-        test_dir = join_path(self.test_suite.current_test_cache_dir, "samples")
+
+        if self.spec.satisfies("@7.2:"):
+            hip_tests_dir = "projects/hip-tests/"
+        else:
+            hip_tests_dir = ""
+
+        test_dir = join_path(self.test_suite.current_test_cache_dir, hip_tests_dir, "samples")
         prefix_paths = ";".join(get_cmake_prefix_path(self))
         clang_cpp_path = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang++")
         clang_path = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang")
@@ -196,7 +239,7 @@ class HipTests(CMakePackage):
             ".",
         ]
 
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         with working_dir(test_dir, create=True):
             cmake(*cc_options)
             make("build_samples")

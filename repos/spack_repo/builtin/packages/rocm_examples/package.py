@@ -21,6 +21,7 @@ class RocmExamples(CMakePackage):
 
     license("MIT")
 
+    version("7.2.0", sha256="74c516f08cc0067c85ac5c29f25831a6e74c0cc0f0c07e80798dc827efefbde5")
     version("7.1.1", sha256="7475c4eaca103395ecae93cc5fa51b77884d06ebe990e71383c53a91bc1b089f")
     version("7.1.0", sha256="d64a82ba472126bb426c54abd1b2516479a375db895171bbc4024a7c8d0f4e94")
     version("7.0.2", sha256="02ca88ec6ce584b6710f295c2ab2df61d38a6a5e4950082863186922be40f062")
@@ -50,6 +51,7 @@ class RocmExamples(CMakePackage):
     depends_on("mesa", type="build", when="+cuda")
 
     for ver in [
+        "7.2.0",
         "7.1.1",
         "7.1.0",
         "7.0.2",
@@ -90,9 +92,16 @@ class RocmExamples(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hipfft@{ver}", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
+
+    for ver in ["7.2.0"]:
+        depends_on(f"hipsparse@{ver}", when=f"@{ver}")
+        depends_on(f"hip-tensor@{ver}", when=f"@{ver}")
+        depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
+        depends_on(f"rocwmma@{ver}", when=f"@{ver}")
 
     depends_on("hip+cuda", when="+cuda")
     depends_on("hipcub+cuda", when="+cuda")
@@ -107,6 +116,7 @@ class RocmExamples(CMakePackage):
     )
     patch("add_hip_include_cuda.patch", when="@6.4+cuda")
     patch("add_mesa_include.patch", when="@6.4+cuda")
+    patch("disable_hiptensor_rocprof-sdk.patch", when="@7.2")
 
     def patch(self):
         filter_file(

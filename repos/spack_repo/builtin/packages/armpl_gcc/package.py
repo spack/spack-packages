@@ -430,7 +430,7 @@ class ArmplGcc(Package):
     # Run the installer with the desired install directory
     def install(self, spec, prefix):
         if spec.platform == "darwin":
-            hdiutil = which("hdiutil")
+            hdiutil = which("hdiutil", required=True)
             # Mount image
             mountpoint = os.path.join(self.stage.path, "mount")
             if spec.satisfies("@:23"):

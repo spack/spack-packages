@@ -188,7 +188,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
 
         # disable building of gtk-doc files following #9771
         args.append("--disable-gtk-doc-html")
-        true = which("true")
+        true = which("true", required=True)
         args.append(f"GTKDOC_CHECK={true}")
         args.append(f"GTKDOC_CHECK_PATH={true}")
         args.append(f"GTKDOC_MKPDF={true}")

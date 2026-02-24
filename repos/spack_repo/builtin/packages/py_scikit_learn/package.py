@@ -119,8 +119,9 @@ class PyScikitLearn(PythonPackage):
         return url.format(name, version)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # Enable parallel builds of the sklearn backend
-        env.append_flags("SKLEARN_BUILD_PARALLEL", str(make_jobs))
+        if self.spec.satisfies("@:1.4"):
+            # Enable parallel builds for the pre py-meson-python build system
+            env.append_flags("SKLEARN_BUILD_PARALLEL", str(make_jobs))
 
         # https://scikit-learn.org/stable/developers/advanced_installation.html#macos
         if self.spec.satisfies("%apple-clang"):
