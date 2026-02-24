@@ -123,8 +123,6 @@ class PyGrpcio(PythonPackage):
             )
             filter_file(
                 r"pathlib\.Path\(\"/usr\"\)\.glob\(\"lib\*/libabsl_\*\.so\"\)",
-                r"pathlib.Path('{}').glob('libabsl_*.so')".format(
-                    self.spec["abseil-cpp"].prefix.lib
-                ),
+                self.spec["abseil-cpp"].libs[0],
                 "setup.py",
             )
