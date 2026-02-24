@@ -106,7 +106,7 @@ class Sz(CMakePackage, AutotoolsPackage):
         """Run simple 2D compression/decompression"""
         test_data_dir = self.test_suite.current_test_data_dir
 
-        exe = which(self.prefix.bin.sz)
+        exe = which(self.prefix.bin.sz, required=True)
         if exe is None:
             raise SkipTest(f"sz is not installed for version {self.version}")
 
@@ -132,7 +132,7 @@ class Sz(CMakePackage, AutotoolsPackage):
         """Run simple 3D compression/decompression"""
         test_data_dir = self.test_suite.current_test_data_dir
 
-        exe = which(self.prefix.bin.sz)
+        exe = which(self.prefix.bin.sz, required=True)
         if exe is None:
             raise SkipTest(f"sz is not installed for version {self.version}")
 

@@ -15,6 +15,8 @@ class Soci(CMakePackage):
 
     license("BSL-1.0")
 
+    version("4.1.2", sha256="c0974067e57242f21d9a85677c5f6cc7848fba3cbd5ec58d76c95570a5a7a15b")
+    version("4.1.1", sha256="a8a3111b1a09b5ff527d3def2f6e973e6454bb99e389834cc1e2f1d9aebf0744")
     version("4.0.3", sha256="4b1ff9c8545c5d802fbe06ee6cd2886630e5c03bf740e269bb625b45cf934928")
     version("4.0.2", sha256="f293192a412ed82693d17dfe46e2734b140bff835bc3259e3cbd7c315e5e2d74")
     version("4.0.0", sha256="359b988d8cbe81357835317821919f7e270c0705e41951a92ac1627cb9fe8faf")
@@ -42,6 +44,7 @@ class Soci(CMakePackage):
     variant("sqlite", default=False, description="Build with SQLite support")
     variant("postgresql", default=False, description="Build with PostgreSQL support")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("boost", when="+boost")

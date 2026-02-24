@@ -75,7 +75,7 @@ class Ompss2(Package):
     def install_mcxx(self, spec, prefix):
         os.chdir(glob.glob("./mcxx-*").pop())
 
-        reconf = which("autoreconf")
+        reconf = which("autoreconf", required=True)
         reconf("-fiv")
 
         configure("--prefix=%s" % prefix, "--with-nanos6=%s" % prefix, "--enable-ompss-2")
@@ -88,7 +88,7 @@ class Ompss2(Package):
         mkdirp("./build")
         os.chdir("./build")
 
-        cmake = which("cmake")
+        cmake = which("cmake", required=True)
         cmake(
             "../llvm",
             "-G Unix Makefiles",

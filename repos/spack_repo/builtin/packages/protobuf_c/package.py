@@ -26,5 +26,5 @@ class ProtobufC(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("protobuf@:3.21.12")
+    depends_on("protobuf@:21.12")
     depends_on("pkgconfig", type="build")

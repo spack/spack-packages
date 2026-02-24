@@ -25,6 +25,7 @@ class Libxslt(CMakePackage, AutotoolsPackage):
 
     build_system(conditional("cmake", when="@1.1.35:"), "autotools", default="cmake")
 
+    version("1.1.45", sha256="9acfe68419c4d06a45c550321b3212762d92f41465062ca4ea19e632ee5d216e")
     version("1.1.42", sha256="85ca62cac0d41fc77d3f6033da9df6fd73d20ea2fc18b0a3609ffb4110e1baeb")
     version("1.1.41", sha256="3ad392af91115b7740f7b50d228cc1c5fc13afc1da7f16cb0213917a37f71bda")
     version("1.1.40", sha256="194715db023035f65fb566402f2ad2b5eab4c29d541f511305c40b29b1f48d13")
@@ -58,11 +59,11 @@ class Libxslt(CMakePackage, AutotoolsPackage):
     depends_on("python+shared", when="+python")
     extends("python", when="+python")
 
-    def url_for_version(self, v):
-        if v > Version("1.1.34"):
-            return f"https://download.gnome.org/sources/libxslt/{v.up_to(2)}/libxslt-{v}.tar.xz"
+    def url_for_version(self, version):
+        if version > Version("1.1.34"):
+            return f"https://download.gnome.org/sources/libxslt/{version.up_to(2)}/libxslt-{version}.tar.xz"
         else:
-            return f"http://xmlsoft.org/sources/libxslt-{v}.tar.gz"
+            return f"http://xmlsoft.org/sources/libxslt-{version}.tar.gz"
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

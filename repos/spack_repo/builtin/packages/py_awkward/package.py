@@ -101,6 +101,9 @@ class PyAwkward(PythonPackage):
     depends_on("py-importlib-metadata@4.13.0:", when="@2.4.0:", type=("build", "run"))
     depends_on("py-fsspec@2022.11.0:", when="@2.6.0:", type=("build", "run"))
 
+    depends_on("cxx", type="build")
+    depends_on("c", type="build")
+
     @when("@1.9.0:")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CMAKE_ARGS", "-DAWKWARD_EXTERNAL_PYBIND11=TRUE")

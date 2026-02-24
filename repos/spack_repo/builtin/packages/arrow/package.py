@@ -79,8 +79,7 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("re2+shared", when="+compute")
     depends_on("re2+shared", when="+gandiva")
     depends_on("re2+shared", when="+python")
-    depends_on("snappy~shared", when="+snappy @9:")
-    depends_on("snappy~shared", when="@8:")
+    depends_on("snappy", when="+snappy @8:")
     # thrift isn't found if it is built with autotools
     depends_on("thrift@0.11:+cpp build_system=cmake", when="+parquet")
     depends_on("utf8proc@2.7.0: +shared", when="+compute")

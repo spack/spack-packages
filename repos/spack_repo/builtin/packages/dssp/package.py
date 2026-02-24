@@ -59,6 +59,6 @@ class Dssp(AutotoolsPackage):
     def test_mkdssp(self):
         """calculate structure for example"""
         pdb_path = self.test_suite.current_test_cache_dir.pdb
-        mkdssp = which(self.prefix.bin.mkdssp)
+        mkdssp = which(self.prefix.bin.mkdssp, required=True)
         with working_dir(pdb_path):
             mkdssp("1ALK.pdb", "1alk.dssp")

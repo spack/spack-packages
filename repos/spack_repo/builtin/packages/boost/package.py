@@ -320,6 +320,9 @@ class Boost(Package):
     # (https://github.com/spack/spack/pull/32879#issuecomment-1265933265)
     conflicts("%oneapi", when="@1.80")
 
+    # Boost did not support the oneapi compilers prior to 1.76
+    conflicts("%oneapi@2023:", when="@:1.75")
+
     # Boost 1.85.0 stacktrace added a hard compilation error that has to
     # explicitly be suppressed on some platforms:
     # https://github.com/boostorg/stacktrace/pull/150. This conflict could be
@@ -465,6 +468,13 @@ class Boost(Package):
 
     # https://www.intel.com/content/www/us/en/developer/articles/technical/building-boost-with-oneapi.html
     patch("intel-oneapi-linux-jam.patch", when="@1.76: %oneapi")
+
+    # https://github.com/spack/spack/issues/44003
+    patch(
+        "oneapi_pthread.patch",
+        sha256="7845717c5d916fabc0e62eb6e1f5ad8f13baaf4a4b71b99b19847703386064c4",
+        when="@1.76: %oneapi@2022:",
+    )
 
     # https://github.com/boostorg/phoenix/issues/111
     patch("boost_phoenix_1.81.0.patch", level=2, when="@1.81.0:1.82.0")
