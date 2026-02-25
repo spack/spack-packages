@@ -37,7 +37,7 @@ class PyMetatomicTorch(PythonPackage):
     depends_on("python@3.10:", type=("build", "run"), when="@0.1.6:")
     # python/metatomic_torch/setup.py
     depends_on("py-torch@2.1:", type=("build", "run"))
-    depends_on("py-vesin", type=("build", "run"), when="@:0.1.9")
+    depends_on("py-vesin", type=("build", "run"))
     depends_on("py-vesin@0.5.1:", type=("build", "run"), when="@0.1.10:")
     depends_on("py-metatensor-torch@0.8.0:0.8", type=("build", "run"), when="@0.1.4:")
     depends_on("py-metatensor-torch@0.7.0:0.7", type=("build", "run"), when="@0.1.3")
