@@ -32,6 +32,12 @@ class Exodusii(CMakePackage):
 
     version("master", branch="master")
     version(
+        "2025-10-14", sha256="d2442cff8ba963cd538f75fb4d7eb50b3f5c75cb01c8603af8185481f25db042"
+    )
+    version(
+        "2025-08-28", sha256="7a8092dec82af8c5074911ce1d156176948addf7ccf34362c16bba99eff0ee72"
+    )
+    version(
         "2025-08-19", sha256="cdd571a26e77f7a0053c1c5638fed19a111f43f82b8a4c0f7e7b3339dc4cd401"
     )
     version(
