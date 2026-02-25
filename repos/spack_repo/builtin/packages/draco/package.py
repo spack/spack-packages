@@ -165,7 +165,7 @@ class Draco(CMakePackage, CudaPackage, ROCmPackage):
             # Known issues with oneapi+IPO for packages that depend on draco.
             options.extend(["-DUSE_IPO=OFF"])
         # "rocm" mixed-builds barf when IPO/LTO is on.
-        if spec.satisfies("@7.20.0:") and spec.satisfies("+rocm"):
+        if spec.satisfies("@7.20.0: +rocm"):
             options.extend(["-DUSE_IPO=OFF"])
         return options
 
