@@ -3,8 +3,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
+
 
 class Alps(CMakePackage):
     """
@@ -43,7 +46,8 @@ class Alps(CMakePackage):
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("mpi")
     depends_on("zlib")
-    
+
+
     extends("python")
 
     # See https://github.com/ALPSim/ALPS/issues/6#issuecomment-2604912169
@@ -71,7 +75,8 @@ class Alps(CMakePackage):
             destination="",
             placement="boost_source_files",
         )
-        
+
+
     # Patch for >=Boost 1.88.0 compatibility
     def patch(self):
         # Only apply patch for Boost versions greater than 1.87
