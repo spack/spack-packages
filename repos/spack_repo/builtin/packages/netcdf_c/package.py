@@ -407,14 +407,10 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
                 [
                     self.define("ENABLE_PLUGIN_INSTALL", True),
                     self.define("NETCDF_WITH_PLUGIN_DIR", self.prefix.plugins),
-                    self.define("ENABLE_FILTER_TESTING", self.run_tests),
                 ]
             )
         elif self.spec.satisfies("@4.9.0:+shared"):
             base_cmake_args.append(self.define("PLUGIN_INSTALL_DIR", self.prefix.plugins))
-            base_cmake_args.append(self.define("ENABLE_FILTER_TESTING", self.run_tests))
-        else:
-            base_cmake_args.append(self.define("ENABLE_FILTER_TESTING", False))
         return base_cmake_args
 
     @run_after("install")
