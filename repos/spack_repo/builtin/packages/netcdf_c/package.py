@@ -161,7 +161,6 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     variant("zstd", default=True, description="Enable Zstandard compression plugin")
 
     variant("doc", default=True, description="build documentation man files")
-    variant("examples", default=False, description="build examples")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="build_system=cmake")
@@ -377,7 +376,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define(nc + "ENABLE_NETCDF_4", True),
             self.define_from_variant(nc + "ENABLE_DAP", "dap"),
             self.define_from_variant(nc + "ENABLE_HDF4", "hdf4"),
-            self.define_from_variant("ENABLE_EXAMPLES", "examples"),
+            self.define("ENABLE_EXAMPLES", self.run_tests),
             self.define("ENABLE_TESTS", False),
             self.define("ENABLE_FILTER_TESTING", False),
             self.define(nc + "ENABLE_PARALLEL_TESTS", False),
