@@ -219,6 +219,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             when="@3.20.2:3.20.4 ^hipsparse@6.0",
         )
 
+    # segmentedmempool.hpp(178): error: expression must be a modifiable lvalue
+    # https://gitlab.com/petsc/petsc/-/merge_requests/8152
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+rocm")
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
+
     # These require +mpi
     mpi_msg = "Requires +mpi"
     conflicts("+cgns", when="~mpi", msg=mpi_msg)
@@ -320,7 +325,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre~fortran", when="+hypre~fortran")
     depends_on("hypre+complex", when="+hypre+complex")
     depends_on("hypre~complex", when="+hypre~complex")
-    depends_on("hypre+int64", when="+hypre+int64")
+    depends_on("hypre+mixedint+cuda", when="+hypre+int64+cuda")
+    depends_on("hypre+mixedint+rocm", when="+hypre+int64+rocm")
+    depends_on("hypre+mixedint", when="+hypre+int64")
     depends_on("hypre~int64", when="+hypre~int64")
     depends_on("hypre+mpi", when="+hypre")
     depends_on("hypre@2.14:2.22.0", when="@3.14:3.15+hypre")
@@ -614,11 +621,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 options.append("--with-hip-arch={0}".format(hip_arch[0]))
             hip_pkgs = ["hipsparse", "hipblas", "hipsolver", "rocsparse", "rocsolver", "rocblas"]
             hip_ipkgs = hip_pkgs + ["rocthrust", "rocprim", "rocm-core"]
-            hip_lpkgs = hip_pkgs
+            hip_lpkgs = hip_pkgs + ["rocrand"]
             if spec.satisfies("^rocrand@5.1:"):
                 hip_ipkgs.extend(["rocrand"])
-            else:
-                hip_lpkgs.extend(["rocrand"])
             if spec.satisfies("^hipblas-common"):
                 hip_ipkgs.extend(["hipblas-common"])
             hip_inc = ""
@@ -731,17 +736,19 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         env["PETSC_DIR"] = self.prefix
         env["PETSC_ARCH"] = ""
         if "+mpi" in spec:
-            runexe = which(spec["mpi"].prefix.bin.mpiexec)
+            runexe = which(spec["mpi"].prefix.bin.mpiexec, required=True)
             runopt = ["-n", "4"]
         else:
-            runexe = which(join_path(self.prefix.lib.petsc.bin, "petsc-mpiexec.uni"))
+            runexe = which(
+                join_path(self.prefix.lib.petsc.bin, "petsc-mpiexec.uni"), required=True
+            )
             runopt = ["-n", "1"]
         return runexe, runopt
 
     def test_ex50(self):
         """build and run ex50 to solve Poisson equation in 2D"""
         # solve Poisson equation in 2D to make sure nothing is broken:
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.ksp.ksp.tutorials
@@ -767,7 +774,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+cuda" not in self.spec:
             raise SkipTest("Package must be built with +cuda")
 
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.ksp.ksp.tutorials
@@ -794,7 +801,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+kokkos" not in self.spec:
             raise SkipTest("Package must be built with +kokkos")
 
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.snes.tutorials

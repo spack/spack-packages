@@ -20,6 +20,7 @@ class Rocmlir(CMakePackage):
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
 
+    version("7.2.0", sha256="7349cf8ccf7bb612e24168b4be2e7312f243e1603907613edf6d2ec8e71f7801")
     version("7.1.1", sha256="e5fb89f55b6d5abf1be85cc35a68bc496d908fdf9b9c51ad44ac3cbf67aa35ee")
     version(
         "7.1.0",
@@ -97,6 +98,7 @@ class Rocmlir(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")

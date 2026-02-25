@@ -41,6 +41,7 @@ class PyJupyterCore(PythonPackage):
 
     depends_on("python@3.8:", when="@5:", type=("build", "run"))
     depends_on("py-hatchling@1.4:", when="@4.11.1:", type="build")
+    depends_on("py-hatchling@1.26:", when="@5.8.1:", type="build")
 
     depends_on("py-platformdirs@2.5:", when="@5.1:", type=("build", "run"))
     depends_on("py-traitlets@5.3:", when="@5.1:", type=("build", "run"))

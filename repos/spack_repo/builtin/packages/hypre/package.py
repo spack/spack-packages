@@ -187,6 +187,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("superlu-dist", when="+superlu-dist+mpi")
     depends_on("caliper", when="+caliper")
     conflicts("+gptune", when="~mpi")
+    conflicts(
+        "+lapack", when="+int64", msg="64-bit integers + external lapack work only with +mixedint"
+    )
 
     # Patch to build shared libraries on Darwin does not apply to
     # versions before 2.13.0
@@ -290,7 +293,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
         # build and run cached examples
         with working_dir(self._cached_tests_work_dir):
-            make = which("make")
+            make = which("make", required=True)
             make("bigint")
 
             for name in ["ex5big", "ex15big"]:

@@ -228,11 +228,11 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
             cmake = self.spec["cmake"].command
             cmake(*opts)
 
-            make = which("make")
+            make = which("make", required=True)
             make(test_prog)
 
             with set_env(OMP_NUM_THREADS="1"):
-                exe = which(test_cmd)
+                exe = which(test_cmd, required=True)
                 test_args = pre_args + [join_path("..", self.test_data_dir, "pde900.mtx")]
                 exe(*test_args)
 

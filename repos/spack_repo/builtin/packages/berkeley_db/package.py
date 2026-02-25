@@ -108,7 +108,7 @@ class BerkeleyDb(AutotoolsPackage):
         if not os.path.exists(installed_exe):
             raise SkipTest(f"{exe} is not installed")
 
-        exe = which(installed_exe)
+        exe = which(installed_exe, required=True)
         out = exe("-V", output=str.split, error=str.split)
         assert self.spec.version.string in out
 

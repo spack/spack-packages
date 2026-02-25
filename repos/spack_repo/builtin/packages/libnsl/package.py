@@ -38,5 +38,5 @@ class Libnsl(AutotoolsPackage):
     depends_on("libtirpc")
 
     def autoreconf(self, spec, prefix):
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         autoreconf("-fi")

@@ -29,6 +29,7 @@ class Glib(MesonPackage):
     license("LGPL-2.1-or-later")
 
     # Even minor versions are stable, odd minor versions are development, only add even numbers
+    version("2.86.3", sha256="b3211d8d34b9df5dca05787ef0ad5d7ca75dec998b970e1aab0001d229977c65")
     version("2.86.1", sha256="119d1708ca022556d6d2989ee90ad1b82bd9c0d1667e066944a6d0020e2d5e57")
     version("2.84.4", sha256="8a9ea10943c36fc117e253f80c91e477b673525ae45762942858aef57631bb90")
     version("2.82.5", sha256="05c2031f9bdf6b5aba7a06ca84f0b4aced28b19bf1b50c6ab25cc675277cbc3f")
@@ -183,7 +184,7 @@ class MesonBuilder(meson.MesonBuilder):
         # '/usr/bin/python' in the shebang. To work around that
         # we copy the original script into a temporary folder, and
         # change the shebang to '/usr/bin/env python'
-        dtrace = which("dtrace").path
+        dtrace = which("dtrace", required=True).path
         dtrace_copy = join_path(self.dtrace_copy_path, "dtrace")
 
         with working_dir(self.dtrace_copy_path, create=True):

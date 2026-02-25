@@ -300,6 +300,14 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         variant("cxxstd", default="17", values=("14", "17", "20"), when="@3")
         variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
         variant("cxxstd", default="20", values=("20", "23"), when="@5:")
+
+    variant(
+        "deprecated_code",
+        default=True,
+        when="@5:",
+        description="Whether to enable deprecated code",
+    )
+
     variant("pic", default=False, description="Build position independent code")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
@@ -403,6 +411,16 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("BUILD_SHARED_LIBS", "shared"),
             from_variant("Kokkos_ENABLE_COMPILE_AS_CMAKE_LANGUAGE", "cmake_lang"),
         ]
+
+        if spec.satisfies("@5:"):
+            if spec.version == Version("develop"):
+                highest = max(v for v in self.versions if not v.isdevelop())
+                major_version = int(str(highest.up_to(1)))
+            else:
+                major_version = int(str(spec.version.up_to(1)))
+            options.append(
+                from_variant(f"Kokkos_ENABLE_DEPRECATED_CODE_{major_version}", "deprecated_code")
+            )
 
         spack_microarches = []
         if spec.satisfies("+cuda"):

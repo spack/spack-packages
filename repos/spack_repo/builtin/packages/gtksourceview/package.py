@@ -75,5 +75,5 @@ class Gtksourceview(MesonPackage, AutotoolsPackage):
     # TODO: If https://github.com/spack/spack/pull/12344 is merged, this
     # method is unnecessary.
     def autoreconf(self, spec, prefix):
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         autoreconf("-ifv")

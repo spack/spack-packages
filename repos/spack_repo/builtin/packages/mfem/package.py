@@ -1344,10 +1344,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         test_exe = "ex10p" if ("+mpi" in self.spec) else "ex10"
 
         with working_dir(test_dir):
-            make = which("make")
+            make = which("make", required=True)
             make(f"CONFIG_MK={self.config_mk}", test_exe, "parallel=False")
 
-            ex10 = which(test_exe)
+            ex10 = which(test_exe, required=True)
             ex10("--mesh", mesh)
 
     # this patch is only needed for mfem 4.1, where a few

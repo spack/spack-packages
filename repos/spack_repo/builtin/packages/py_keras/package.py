@@ -109,37 +109,19 @@ class PyKeras(PythonPackage):
         depends_on("py-ml-dtypes", when="@3.0.5:")
         depends_on("py-packaging", when="@3.4:")
 
-    # Many other places where dependencies are listed:
-    #
-    # * requirements-common.txt: optional developer dependencies
-    # * requirements.txt: CPU requirements
-    # * requirements-{backend}-cuda.txt: GPU requirements
-    # * requirements-{backend}-tpu.txt: TPU requirements
-    #
-    # For now, treat requirements.txt as the source of truth.
-    # Treat pinned versions as minimum bounds unless otherwise known.
+    # https://github.com/keras-team/keras#backend-compatibility-table
     with default_args(type="run"):
         with when("backend=tensorflow"):
-            depends_on("py-tensorflow@2.20.0:", when="@3.13:")
-            depends_on("py-tensorflow@2.18.1:", when="@3.10:")
-            depends_on("py-tensorflow@2.18.0:", when="@3.7:")
-            depends_on("py-tensorflow@2.17.0:", when="@3.5:")
             depends_on("py-tensorflow@2.16.1:", when="@3.0:")
-            # depends_on("py-tf2onnx", when="@3.8:")
-            # depends_on("py-ai-edge-litert@1.3.0:", when="@3.13:")
 
         with when("backend=torch"):
-            depends_on("py-torch@2.6:", when="@3.9:")
             depends_on("py-torch@2.1:", when="@3.0:")
-            # depends_on("py-torch-xla@2.6:", when="@3.8:")
-            # depends_on("py-torch-xla", when="@3.0:")
 
         with when("backend=jax"):
-            depends_on("py-jax@0.8.1:", when="@3.13:")
-            depends_on("py-jax@0.5.0:", when="@3.9:")
-            depends_on("py-jax", when="@3:")
-            # depends_on("py-flax@0.12.1:", when="@3.13:")
-            # depends_on("py-flax", when="@3.2:")
+            depends_on("py-jax@0.4.20:", when="@3.0:")
+
+        # with when("backend=openvino"):
+        #     depends_on("openvino@2025.3:", when="@3.8:")
 
     # Historical dependencies
     with default_args(type="build"):

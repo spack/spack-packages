@@ -32,7 +32,7 @@ class Xdelta(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         with working_dir(self.build_directory):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash(
                 "-c",
                 "aclocal && autoreconf --install && libtoolize && autoconf && "

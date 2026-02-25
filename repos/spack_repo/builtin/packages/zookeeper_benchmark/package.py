@@ -23,5 +23,5 @@ class ZookeeperBenchmark(MavenPackage):
 
     def build(self, spec, prefix):
         zookeeper_version = self.spec["zookeeper"].version.string
-        mvn = which("mvn")
+        mvn = which("mvn", required=True)
         mvn("-DZooKeeperVersion=" + zookeeper_version, "package")
