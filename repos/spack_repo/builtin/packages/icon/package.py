@@ -25,6 +25,9 @@ class Icon(AutotoolsPackage):
     license("BSD-3-Clause", checked_by="skosukhin")
 
     version(
+        "2025.10-2", tag="icon-2025.10-public", commit="69ef5cda9b81f5947e30d1016f41e7b37012f5de"
+    )
+    version(
         "2025.04", tag="icon-2025.04-public", commit="1be2ca66ea0de149971d2e77e88a9f11c764bd22"
     )
     version("2024.10", sha256="5c461c783eb577c97accd632b18140c3da91c1853d836ca2385f376532e9bad1")
