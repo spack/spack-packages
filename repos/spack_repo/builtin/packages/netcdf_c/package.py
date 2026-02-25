@@ -377,8 +377,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define_from_variant(nc + "ENABLE_DAP", "dap"),
             self.define_from_variant(nc + "ENABLE_HDF4", "hdf4"),
             self.define("ENABLE_EXAMPLES", self.run_tests),
-            self.define("ENABLE_TESTS", False),
-            self.define("ENABLE_FILTER_TESTING", False),
+            self.define("ENABLE_TESTS", self.run_tests),
             self.define(nc + "ENABLE_PARALLEL_TESTS", False),
             self.define_from_variant(nc + "ENABLE_FSYNC", "fsync"),
             self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
@@ -408,10 +407,14 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
                 [
                     self.define("ENABLE_PLUGIN_INSTALL", True),
                     self.define("NETCDF_WITH_PLUGIN_DIR", self.prefix.plugins),
+                    self.define("ENABLE_FILTER_TESTING", self.run_tests),
                 ]
             )
         elif self.spec.satisfies("@4.9.0:+shared"):
             base_cmake_args.append(self.define("PLUGIN_INSTALL_DIR", self.prefix.plugins))
+            base_cmake_args.append(self.define("ENABLE_FILTER_TESTING", self.run_tests))
+        else:
+            base_cmake_args.append(self.define("ENABLE_FILTER_TESTING", False))
         return base_cmake_args
 
     @run_after("install")
