@@ -164,6 +164,11 @@ class Rocwmma(CMakePackage):
             self.define("ROCWMMA_BUILD_ASSEMBLY", "OFF"),
             self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
         ]
+        if self.spec.satisfies("@:7.0"):
+            args.extend(["-DOpenMP_CXX_FLAGS=-fopenmp=libomp", "-DOpenMP_CXX_LIB_NAMES=libomp"])
+            args.append(
+                f"-DOpenMP_libomp_LIBRARY={self.spec['rocm-openmp-extras'].prefix}/lib/libomp.so"
+            )
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
             if self.spec.satisfies("@7.1:"):
