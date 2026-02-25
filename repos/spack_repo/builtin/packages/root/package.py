@@ -437,7 +437,8 @@ class Root(CMakePackage):
 
     # Optional dependencies
     depends_on("arrow", when="+arrow")
-    depends_on("civetweb +shared", when="+http")
+    # Commented out until it is fixed and builtin_civetweb can be turned off
+    # depends_on("civetweb +shared", when="+http")
     depends_on("cuda", when="+cuda")
     depends_on("cuda", when="+cudnn")
     depends_on("cudnn", when="+cudnn")
@@ -687,7 +688,7 @@ class Root(CMakePackage):
 
         options += [
             define("builtin_cfitsio", False),
-            define("builtin_civetweb", False),
+            define("builtin_civetweb", True),
             define("builtin_davix", False),
             define("builtin_fftw3", False),
             define("builtin_freetype", False),
