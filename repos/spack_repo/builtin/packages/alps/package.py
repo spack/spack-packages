@@ -47,7 +47,6 @@ class Alps(CMakePackage):
     depends_on("mpi")
     depends_on("zlib")
 
-
     extends("python")
 
     # See https://github.com/ALPSim/ALPS/issues/6#issuecomment-2604912169
@@ -75,7 +74,6 @@ class Alps(CMakePackage):
             destination="",
             placement="boost_source_files",
         )
-
 
     # Patch for >=Boost 1.88.0 compatibility
     def patch(self):
