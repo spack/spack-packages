@@ -596,6 +596,11 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         sha256="7a07f769aedf6433e440e0ce666c66d2721bfa8b99b18d8e3e95e1303878778d",
         when="@=17.0.0 +stk",
     )
+    patch(
+        "https://github.com/trilinos/Trilinos/commit/cb633c33a7d77667ca71a537c6ecf3a322a69b33.patch?full_index=1",
+        sha256="0536a8d412ac38c3d3cf25ff9a5d22916ff6ba439cf52e59e6bd1b2815b8681e",
+        when="@=17.0.0 +stk",
+    )
 
     def flag_handler(self, name, flags):
         spec = self.spec
