@@ -257,6 +257,12 @@ class TestCMakePackage:
         s = default_mock_concretization("mpich")
         assert cmake.CMakeBuilder.std_args(s.package)
 
+    def test_cmake_dependent_args(self, default_mock_concretization):
+        # Call the function on a CMakePackage instance
+        s = default_mock_concretization("cmake-client +cmake_hints")
+        args = cmake.CMakeBuilder.std_args(s.package)
+        assert '-DCMAKE_HINTS_ARG:STRING="Foo"' in args
+
     def test_cmake_bad_generator(self, default_mock_concretization):
         s = default_mock_concretization("cmake-client")
         with pytest.raises(InstallError):

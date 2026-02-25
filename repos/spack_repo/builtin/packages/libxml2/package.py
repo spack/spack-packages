@@ -119,7 +119,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
         if not os.path.exists(path):
             raise SkipTest("xmlcatalog is not installed")
 
-        xmlcatalog = which(path)
+        xmlcatalog = which(path, required=True)
         out = xmlcatalog("--create", output=str.split, error=str.split)
 
         expected = [r"<catalog xmlns", r'catalog"/>']
@@ -131,7 +131,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
         if not os.path.exists(path):
             raise SkipTest("xml2-config is not installed")
 
-        xml2_config = which(path)
+        xml2_config = which(path, required=True)
         out = xml2_config("--version", output=str.split, error=str.split)
         assert str(self.spec.version) in out
 
@@ -142,7 +142,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
             raise SkipTest("xmllint is not installed")
 
         test_filename = "test.xml"
-        xmllint = which(path)
+        xmllint = which(path, required=True)
 
         with test_part(self, "test_xmllint_auto", purpose="generate {0}".format(test_filename)):
             xmllint("--auto", "-o", test_filename)

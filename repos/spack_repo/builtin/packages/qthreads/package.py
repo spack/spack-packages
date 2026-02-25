@@ -130,10 +130,10 @@ class Qthreads(AutotoolsPackage):
             "-lqthread",
             f"{self.compiler.cc_rpath_arg}{self.prefix.lib}",
         ]
-        cc = which(os.environ["CC"])
+        cc = which(os.environ["CC"], required=True)
         cc(*options)
 
-        exe = which(join_path(".", test))
+        exe = which(join_path(".", test), required=True)
         exe()
 
     def test_hello_world(self):

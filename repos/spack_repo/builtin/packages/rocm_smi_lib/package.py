@@ -15,13 +15,20 @@ class RocmSmiLib(CMakePackage):
     for applications to monitor and control GPU applications."""
 
     homepage = "https://github.com/ROCm/rocm_smi_lib"
-    git = "https://github.com/ROCm/rocm_smi_lib.git"
-    url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath")
     libraries = ["librocm_smi64"]
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="f47550aeeb2827a3ae857c35e16f5a9042de70d911abab80bebe4840c9ecd4fd")
     version("7.1.0", sha256="eab6c7a85deb992b5cf511cdf7d0a6f8a93e46a0bfb6cf66c73d95c26dc4ce5e")
     version("7.0.2", sha256="cdd7951fb46b79f6791340da21fc47dc3e719f82795f2e1f5546bb7d35db954c")
@@ -77,6 +84,7 @@ class RocmSmiLib(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -99,6 +107,7 @@ class RocmSmiLib(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 
@@ -117,6 +126,13 @@ class RocmSmiLib(CMakePackage):
         when="@6.4.0",
     )
     patch("0001-add-libdrm-include-dir.patch", when="@6.4")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocm-smi-lib"
+        else:
+            return "."
 
     def cmake_args(self):
         args = [
@@ -149,5 +165,7 @@ class RocmSmiLib(CMakePackage):
     @run_after("build")
     @on_package_attributes(run_tests=True)
     def check_build(self):
-        exe = which(join_path(self.build_directory, "tests", "rocm_smi_test", "rsmitst"))
+        exe = which(
+            join_path(self.build_directory, "tests", "rocm_smi_test", "rsmitst"), required=True
+        )
         exe()

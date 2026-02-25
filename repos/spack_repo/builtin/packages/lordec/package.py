@@ -29,13 +29,13 @@ class Lordec(MakefilePackage):
         if version == Version("0.9"):
             return "https://gite.lirmm.fr/lordec/lordec-releases/uploads/800a96d81b3348e368a0ff3a260a88e1/lordec-src_0.9.tar.bz2"
 
-    depends_on("boost@1.48.0:1.64.0", type=["build", "link"])
+    depends_on("boost@1.48.0:1.64.0", type=("build", "link"))
     # TODO: replace this with an explicit list of components of Boost,
     # for instance depends_on('boost +filesystem')
     # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants)
-    depends_on("gatb-core@1.4.1:", type=["build", "link", "run"])
-    depends_on("zlib-api", type=["build", "link"])
+    depends_on("gatb-core@1.4.1:", type=("build", "link", "run"))
+    depends_on("zlib-api", type=("build", "link"))
 
     build_targets = ["clean", "all"]
 

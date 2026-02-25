@@ -25,6 +25,6 @@ class Cxx(Package):
             with test_part(self, f"test_cxx_{test}", f"build and run {exe_name}"):
                 filepath = join_path(test_source, test)
                 cxx("-o", exe_name, filepath)
-                exe = which(exe_name)
+                exe = which(exe_name, required=True)
                 out = exe(output=str.split, error=str.split)
                 check_outputs(expected, out)

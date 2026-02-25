@@ -14,14 +14,21 @@ class Rocfft(CMakePackage):
     """Radeon Open Compute FFT library"""
 
     homepage = "https://github.com/ROCm/rocFFT/"
-    git = "https://github.com/ROCm/rocFFT.git"
-    url = "https://github.com/ROCm/rocfft/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocfft"]
-
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocFFT/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="047e4e93e0b12869bf42136b5eb683df3a1635b01a58bbb25c8861df291ab285")
     version("7.1.0", sha256="8cd4fcca0b8b730135f76bb34f95965348b1809061af65ff6bfbd4ad2ac85e0d")
     version("7.0.2", sha256="05ccbdcb9d2860c72ff9665670aac44286aaaeabd4fb4e9530e7f4f1b5b01c71")
@@ -75,7 +82,7 @@ class Rocfft(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
     depends_on("fftw@3.3.8:", type="test")
     depends_on("boost@1.64.0: +program_options", type="test")
-    depends_on("rocm-openmp-extras", type="test")
+    depends_on("rocm-openmp-extras", type="test", when="@:7.1")
     depends_on("hiprand", type="test")
     depends_on("rocrand", type="test")
 
@@ -102,6 +109,7 @@ class Rocfft(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
@@ -122,6 +130,13 @@ class Rocfft(CMakePackage):
         sha256="bac7873185ac60f2aaa50e278f0b8d52b4d79d586bf7f52db1da33559569ba54",
         when="@6.0.0",
     )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocfft"
+        else:
+            return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)

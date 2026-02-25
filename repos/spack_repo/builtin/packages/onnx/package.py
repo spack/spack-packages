@@ -24,6 +24,7 @@ class Onnx(CMakePackage):
 
     version("main", branch="main")
     version("master", branch="master", deprecated=True)
+    version("1.20.0", sha256="e9e9273cd39d460348aa3e2eb370a444b510e138c5f45dfa86ce50461901257b")
     version("1.19.1", sha256="ce9d2569a61d64e8a3d05b92194f60ffb7c868dbb754a71f5b4d992273a9413d")
     version("1.19.0", sha256="2c2ac5a078b0350a0723fac606be8cd9e9e8cbd4c99bab1bffe2623b188fd236")
     version("1.18.0", sha256="b466af96fd8d9f485d1bb14f9bbdd2dfb8421bc5544583f014088fb941a1d21e")
@@ -64,10 +65,20 @@ class Onnx(CMakePackage):
     depends_on("cxx", type="build")
 
     generator("ninja")
+
+    # CMakeLists.txt
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.14:", type="build", when="@1.17:")
+    depends_on("cmake@3.18:", type="build", when="@1.18:")
+    depends_on("cmake@3.24:", type="build", when="@1.19:")
     depends_on("cmake@3.26:", type="build", when="@1.20:")
+
+    # pyproject.toml assumed to apply to CMake build as well
     depends_on("python", type="build")
+    depends_on("python@3.8:", when="@1.15:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.18:", type=("build", "run"))
+    depends_on("python@3.10:", when="@1.20:", type=("build", "run"))
+
     depends_on("protobuf")
 
     # Allow conversion from OpSchema to OpSchemaRegisterOnce (needed for onnxruntime)

@@ -176,6 +176,9 @@ class Mesa(MesonPackage):
                 flags.append("-std=c99")
         return super().flag_handler(name, flags)
 
+    def dependent_cmake_args(self, dependent_spec: Spec) -> List[str]:
+        return ["-DOpenGL_GL_PREFERENCE:STRING=LEGACY"]
+
     @property
     def libglx_headers(self):
         return find_headers("GL/glx", root=self.spec.prefix.include, recursive=False)

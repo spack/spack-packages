@@ -18,6 +18,10 @@ class Rpp(CMakePackage):
     git = "https://github.com/ROCm/rpp.git"
     url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-6.4.3.tar.gz"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "afzpatel")
+    license("MIT")
+
     def url_for_version(self, version):
         if version >= Version("5.7.0"):
             url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
@@ -25,11 +29,7 @@ class Rpp(CMakePackage):
             url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "afzpatel")
-    license("MIT")
-
+    version("7.2.0", sha256="9240e325cd5adf7aa9842851d638394a25d3a784a6a206e8e96d7ae4d59b8d35")
     version("7.1.1", sha256="3a13444acc86d307ff559b0282f11ec57ae5c89dec52a2f9f85e3757d9e66e35")
     version("7.1.0", sha256="65d815f4957b27c1f994d4d905a107536fe90ffa4c229c015c241687f11fe2c0")
     version("7.0.2", sha256="0836daecfde5dd7daa4269baae32d996d40ab6864622ad16000d00cf2aeac676")
@@ -158,7 +158,7 @@ class Rpp(CMakePackage):
         when="@1.0:",
     )
     depends_on("libjpeg-turbo", type=("build", "link"))
-    depends_on("rocm-openmp-extras")
+    depends_on("rocm-openmp-extras", when="@:7.1")
     conflicts("+opencl+hip")
 
     with when("+hip"):
@@ -186,6 +186,7 @@ class Rpp(CMakePackage):
                 "7.0.2",
                 "7.1.0",
                 "7.1.1",
+                "7.2.0",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):
@@ -211,7 +212,8 @@ class Rpp(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         args = []
-        args.append(self.define("ROCM_OPENMP_EXTRAS_DIR", spec["rocm-openmp-extras"].prefix))
+        if self.spec.satisfies("@:7.1"):
+            args.append(self.define("ROCM_OPENMP_EXTRAS_DIR", spec["rocm-openmp-extras"].prefix))
         if self.spec.satisfies("+opencl"):
             args.append(self.define("BACKEND", "OPENCL"))
         if self.spec.satisfies("+cpu"):

@@ -15,13 +15,21 @@ class RocmCore(CMakePackage):
     getROCmVersion function provides the ROCm version."""
 
     homepage = "https://github.com/ROCm/rocm-core"
-    url = "https://github.com/ROCm/rocm-core/archive/refs/tags/rocm-6.4.2.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocm-core"]
-
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocm-core/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="0171b82a4d028d57035d0d57a01a058f50f1a23959d230cdeab14972dcd94da8")
     version("7.1.0", sha256="3c7e990ff4da60119c8575982660331bf636f63a9c68c6a344d410b2bdfa5d39")
     version("7.0.2", sha256="2d126d47aa4523d84e5ab026680fa2b1145db332ff5e4aa74b48f8ed0ecd975d")
@@ -70,7 +78,9 @@ class RocmCore(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 
@@ -84,6 +94,13 @@ class RocmCore(CMakePackage):
         else:
             ver = None
         return ver
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@:7.1"):
+            return "."
+        else:
+            return "projects/rocm-core"
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

@@ -127,6 +127,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.12.0:", type="build")
 
+    depends_on("yaml-cpp")
+
     # Standalone CUDA support
     depends_on("cuda", when="+cuda ~kokkos")
 
@@ -217,6 +219,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")
 
+    # cmake build race condition
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/16869cf18cb4bd07d500c3048c3d34d1611674c7.patch?full_index=1",
+        when="@2.11.0",
+        sha256="3af07961975ec6c9023dca182ed19458c021cdf1812d34d9a9e9dad1da60ae75",
+    )
+
     # add missing include <cstdint>
     patch("2.7-fix-missing-cstdint-include.patch", when="@2.7")
 
@@ -245,13 +254,6 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/ornladios/adios2/commit/b7a5957.patch?full_index=1",
         sha256="d854008ab27d6ebfa66fffb78126b17713cda3234ed19bf331f85a720e599a32",
-        when="@2.8:2.10",
-    )
-
-    # https://github.com/ornladios/ADIOS2/pull/4578
-    patch(
-        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
-        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
         when="@2.8:2.10",
     )
 
@@ -314,6 +316,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             self.define("ADIOS2_BUILD_EXAMPLES", False),
             self.define("ADIOS2_USE_Endian_Reverse", True),
             self.define("ADIOS2_USE_IME", False),
+            self.define("ADIOS2_USE_EXTERNAL_YAMLCPP", True),
         ]
 
         if spec.satisfies("+sst"):
@@ -418,7 +421,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
                 f"test_run_executables_{cmd}",
                 purpose=f"run installed adios2 executable {cmd}",
             ):
-                exe = which(join_path(self.prefix.bin, cmd))
+                exe = which(join_path(self.prefix.bin, cmd), required=True)
                 exe(*opts)
 
     def test_python(self):
