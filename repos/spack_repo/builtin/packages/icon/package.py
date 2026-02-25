@@ -105,9 +105,10 @@ class Icon(AutotoolsPackage):
 
     # Optimization Features:
     variant("mixed-precision", default=False, description="Enable mixed-precision dynamical core")
-    variant("single-precision", default=False, description="Enable single-precision")
+    variant("single-precision", default=False, description="Enable single-precision", when="@2025.04:")
     variant(
-        "single-precision-ecrad", default=False, description="Enable single-precision for ecRad"
+        "single-precision-ecrad", default=False, description="Enable single-precision for ecRad",
+        when="@2025.10:"
     )
 
     depends_on("c", type="build")
