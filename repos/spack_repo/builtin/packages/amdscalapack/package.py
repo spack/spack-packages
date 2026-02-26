@@ -63,7 +63,7 @@ class Amdscalapack(ScalapackBase):
             filter_file("-cpp", "", "CMakeLists.txt")
         # remove the C-style comments in header file that cause issues with flang
         if self.spec.satisfies("@4.2: %clang@18:"):
-            which("sed")(
+            which("sed", required=True)(
                 "-i",
                 "1,23d",
                 join_path(self.stage.source_path, "FRAMEWORK", "SL_Context_fortran_include.h"),

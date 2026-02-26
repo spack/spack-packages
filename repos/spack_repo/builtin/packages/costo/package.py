@@ -26,8 +26,8 @@ class Costo(CMakePackage):
     variant("shared", default=True, description="Build shared library")
     variant("tests", default=False, description="Enable testing")
 
-    depends_on("mpi", type=all)
-    depends_on("python@3.10:", type=all)
+    depends_on("mpi", type=("build", "link", "run"))
+    depends_on("python@3.10:", type=("build", "link", "run"))
 
     depends_on("py-non-regression-test-tools", type="build")
     depends_on("py-pyvista", type=("build", "run"))

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
 import re
-import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
@@ -194,8 +193,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     )
     variant(
         "gold",
-        default=(sys.platform != "darwin"),
-        description="Add support for LTO with the gold linker plugin",
+        default=False,
+        description="Add support for LTO with the gold linker plugin (deprecated)",
     )
     variant("split_dwarf", default=False, description="Build with split dwarf information")
     variant(
@@ -211,7 +210,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     )
     variant(
         "targets",
-        default="all",
+        default="aarch64,amdgpu,nvptx,x86",
         description=(
             "What targets to build. Spack's target family is always added "
             "(e.g. X86 is automatically enabled when targeting znver2)."
@@ -852,7 +851,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     @run_before("cmake")
     def codesign_check(self):
         if self.spec.satisfies("+code_signing"):
-            codesign = which("codesign")
+            codesign = which("codesign", required=True)
             mkdir("tmp")
             llvm_check_file = join_path("tmp", "llvm_check")
             copy("/usr/bin/false", llvm_check_file)

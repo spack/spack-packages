@@ -46,6 +46,9 @@ class PyRpy2(PythonPackage):
     # optional variant
     depends_on("py-ipython", type=("build", "run"), when="+ipython")
 
+    # https://github.com/rpy2/rpy2/issues/1173#issuecomment-2844717767
+    depends_on("py-ipython@:8", type=("build", "run"), when="+ipython @3.5.17")
+
     # optional variant
     depends_on("py-numpy@1.26:", type=("build", "run"), when="+numpy ^python@3.9:")
 

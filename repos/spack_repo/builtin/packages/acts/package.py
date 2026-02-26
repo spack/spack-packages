@@ -50,6 +50,10 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("45.2.0", commit="c476557b74ccc8369fe1ef2c1f2e27cca4a356b6")
+    version("45.1.1", commit="da50efc7b15cad8fdc5e194719c72d7d8b706823")
+    version("45.1.0", commit="061a9d87b0fc07b554ec0b3849e875cf964f8323")
+    version("45.0.0", commit="92ab57740f8e875555ea28f542844ac1eb5db65b")
     version("44.4.0", commit="a05c35a14b39a461925d11de12ccd2da5e38b3d1")
     version("44.3.0", commit="d4c630145d5050dd2edc58f1de0c872caff23dd8")
     version("44.2.0", commit="c3d440eb1e441fcd15995b8af87ea1497e0cc126")
@@ -236,24 +240,13 @@ class Acts(CMakePackage, CudaPackage):
     }
     variant("cxxstd", default="17", when="@:35", **_cxxstd_common)
     variant("cxxstd", default="20", when="@36:", **_cxxstd_common)
-    variant(
-        "examples",
-        default=False,
-        description="Build the examples",
-        when="@0.23:16 +digitization +fatras +identification +json +root",
-    )
-    variant(
-        "examples",
-        default=False,
-        description="Build the examples",
-        when="@17:34 +fatras +identification +json +root",
-    )
-    variant(
-        "examples",
-        default=False,
-        description="Build the examples",
-        when="@35: +fatras +json +root",
-    )
+    variant("examples", default=False, description="Build the examples", when="@0.23:")
+    with when("+examples"):
+        requires("+digitization", when="@:16")
+        requires("+identification", when="@:34")
+        requires("+root")
+        requires("+fatras")
+        requires("+json")
     variant("integration_tests", default=False, description="Build the integration tests")
     variant("unit_tests", default=False, description="Build the unit tests")
     variant(
@@ -307,8 +300,9 @@ class Acts(CMakePackage, CudaPackage):
         "torch",
         default=False,
         description="Build the torch based parts of the GNN plugin",
-        when="@44: +gnn",
+        when="@44:",
     )
+    requires("+gnn", when="+torch")
     variant("odd", default=False, description="Build the Open Data Detector", when="@19.1:")
     variant("podio", default=False, description="Build Podio plugin", when="@30.3:")
     variant(
@@ -332,14 +326,10 @@ class Acts(CMakePackage, CudaPackage):
     # and we use ROOT instead. We then "deprecate" the TGeo naming by
     # eliminating it in ACTS release 45. Finally, we retain the TGeo naming
     # until version 44 of ACTS is removed due to deprecation.
-    variant(
-        "tgeo", default=False, description="Build the TGeo plugin", when="@:34 +identification"
-    )
-    variant("tgeo", default=False, description="Build the TGeo plugin", when="@35:44")
-    variant(
-        "root", default=False, description="Build the ROOT plugin", when="@:34 +identification"
-    )
-    variant("root", default=False, description="Build the ROOT plugin", when="@35:")
+    variant("tgeo", default=False, description="Build the TGeo plugin", when="@:44")
+    requires("+identification", when="@:34 +tgeo")
+    variant("root", default=False, description="Build the ROOT plugin")
+    requires("+identification", when="@:34 +root")
     # Establish a mutual implication between the tgeo and root variants; if
     # one is enabled, so must be the other.
     with when("@:44"):
@@ -347,6 +337,8 @@ class Acts(CMakePackage, CudaPackage):
         conflicts("+root", when="~tgeo")
 
     variant("traccc", default=False, description="Build the Traccc plugin", when="@35.1:")
+    requires("+svg", when="+traccc")
+    requires("+json", when="+traccc")
 
     # Variants that only affect Acts examples for now
     variant(
@@ -420,6 +412,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("boost @1.62:1.69 +program_options +test", when="@:0.10.3")
     depends_on("boost @1.71: +filesystem +program_options +test", when="@0.10.4:")
     depends_on("boost @1.77: +filesystem +program_options +test", when="@42:")
+    depends_on("boost @1.78: +filesystem +program_options +test", when="@45:")
     depends_on("cmake @3.14:", type="build")
     depends_on("covfie @0.10:", when="+traccc")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
@@ -455,6 +448,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("mlpack@3.1.1:", when="+mlpack")
     depends_on("nlohmann-json @3.9.1:", when="@0.14: +json")
     depends_on("nlohmann-json @3.10.5:", when="@37: +json")
+    depends_on("nlohmann-json @3.11.3:", when="@45: +json")
     depends_on("torch-scatter", when="+gnn")
     depends_on("torch-scatter +cuda", when="+cuda")
     depends_on("podio @0.6:", when="@25: +edm4hep")
@@ -509,10 +503,6 @@ class Acts(CMakePackage, CudaPackage):
     with when("+traccc"):
         for _scalar in _scalar_values:
             depends_on(f"detray scalar={_scalar}", when=f"scalar={_scalar}")
-
-    # ACTS enables certain options anyway based on other options
-    conflicts("~svg", when="+traccc")
-    conflicts("~json", when="+traccc")
 
     # ACTS has been using C++17 for a while, which precludes use of old GCC
     conflicts("%gcc@:7", when="@0.23:")

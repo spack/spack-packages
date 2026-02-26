@@ -36,7 +36,7 @@ class Openrasmol(MakefilePackage):
     def edit(self, spec, prefix):
         with working_dir("src"):
             # Imakefile
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./rasmol_build_options.sh")
             # host.def
             with open("host.def", "w") as f:
@@ -53,14 +53,14 @@ class Openrasmol(MakefilePackage):
 
     def build(self, spec, prefix):
         with working_dir("src"):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./build_all.sh")
 
     def install(self, spec, prefix):
         install_tree("./data", prefix.sample)
         install_tree("./doc", prefix.doc)
         with working_dir("src"):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./rasmol_install.sh", "--prefix={0}".format(prefix))
 
     def test_rasmol(self):
@@ -71,5 +71,5 @@ class Openrasmol(MakefilePackage):
             join_path(self.test_suite.current_test_data_dir, "test.rsc"),
             join_path(self.prefix.sample, "1crn.pdb"),
         ]
-        rasmol = which(self.prefix.bin.rasmol)
+        rasmol = which(self.prefix.bin.rasmol, required=True)
         rasmol(*opts)

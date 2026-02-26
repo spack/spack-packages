@@ -43,7 +43,7 @@ class Hdfview(Package):
     depends_on("hdf5@1.14:", when="@3.3:")
 
     def install(self, spec, prefix):
-        ant = which("ant")
+        ant = which("ant", required=True)
         ant("-Dbuild.debug=false", "deploy")
 
         dir_version = os.listdir("build/HDF_Group/HDFView/")[0]
@@ -64,7 +64,7 @@ class Hdfview(Package):
 
         mkdirp(prefix.bin)
         install(hdfview, prefix.bin.hdfview)
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", self.prefix.bin.hdfview)
         install_tree(path, prefix)
 

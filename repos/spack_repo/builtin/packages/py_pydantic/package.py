@@ -15,6 +15,7 @@ class PyPydantic(PythonPackage):
 
     license("MIT")
 
+    version("2.12.5", sha256="4d351024c75c0f085a9febbb665ce8c0c6ec5d30e903bdb6394b7ede26aebb49")
     version("2.12.4", sha256="0f8cb9555000a4b5b617f66bfd2566264c4984b27589d3b845685983e8ea85ac")
     version("2.10.1", sha256="a4daca2dc0aa429555e0656d6bf94873a7dc5f54ee42b1f5873d666fb3f35560")
     version("2.9.0", sha256="c7a8a9fdf7d100afa49647eae340e2d23efa382466a8d177efcd1381e9be5598")

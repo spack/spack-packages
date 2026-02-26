@@ -19,6 +19,7 @@ class PyUxarray(PythonPackage):
 
     maintainers("Chrismarsh")
 
+    version("2025.12.0", sha256="0be5ad31f916253d6a3167dd42b0f6ccea754443aace90ddf0e36cc16407a6d5")
     version("2025.11.0", sha256="a1976851451d3729f86e9fe9a8a899c4bf338b84af8dc265298f5a16a6400bb9")
     version("2025.10.0", sha256="b25b8e13c7f041cb4c094ad7de0addd49acd0baae18da2a75a278c3c411ca20d")
     version("2025.9.0", sha256="cdbeef657bb75518a9c4a1880ac2e2d446b1c2bdaacf15e6ce45654a2ed47f34")

@@ -1,0 +1,23 @@
+diff --git a/projects/hip-tests/catch/unit/memory/CMakeLists.txt b/projects/hip-tests/catch/unit/memory/CMakeLists.txt
+index 788b060..af51f33 100644
+--- a/projects/hip-tests/catch/unit/memory/CMakeLists.txt
++++ b/projects/hip-tests/catch/unit/memory/CMakeLists.txt
+@@ -135,12 +135,14 @@ hip_add_exe_to_target(NAME MemoryTest1
+ 
+ if(UNIX)
+   # link libnuma for numa_available(), numa_max_node(), move_pages(), etc.
+-  find_library(NUMA_LIB numa)
+-  if(NUMA_LIB)
+-    target_link_libraries(MemoryTest1 ${NUMA_LIB})
++  find_package(NUMA QUIET)
++  if(NUMA_FOUND)
++    set(NUMA "${NUMA_LIBRARIES}")
++    target_include_directories(MemoryTest1 PRIVATE ${NUMA_INCLUDE_DIR})
+   else()
+-    message(WARNING "libnuma not found; HostNuma tests will fail to link")
++    find_library(NUMA NAMES numa REQUIRED)
+   endif()
++  target_link_libraries(MemoryTest1 ${NUMA})
+ endif()
+ 
+ if(HIP_PLATFORM MATCHES "amd")

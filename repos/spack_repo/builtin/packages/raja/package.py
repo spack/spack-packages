@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -39,6 +40,12 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", submodules=submodules)
     version("main", branch="main", submodules=submodules)
+    version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="e827035c630e71a9358e2f21c2f3cf6fd5fb6605",
+        submodules=submodules,
+    )
     version(
         "2025.09.1",
         tag="v2025.09.1",
@@ -124,76 +131,55 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         submodules=submodules,
     )
     version(
-        "0.14.0",
-        tag="v0.14.0",
-        commit="357933a42842dd91de5c1034204d937fce0a2a44",
-        submodules="True",
+        "0.14.0", tag="v0.14.0", commit="357933a42842dd91de5c1034204d937fce0a2a44", submodules=True
     )
     version(
-        "0.13.0",
-        tag="v0.13.0",
-        commit="3047fa720132d19ee143b1fcdacaa72971f5988c",
-        submodules="True",
+        "0.13.0", tag="v0.13.0", commit="3047fa720132d19ee143b1fcdacaa72971f5988c", submodules=True
     )
     version(
-        "0.12.1",
-        tag="v0.12.1",
-        commit="9cb6370bb2868e35ebba23cdce927f5f7f9da530",
-        submodules="True",
+        "0.12.1", tag="v0.12.1", commit="9cb6370bb2868e35ebba23cdce927f5f7f9da530", submodules=True
     )
     version(
-        "0.12.0",
-        tag="v0.12.0",
-        commit="32d92e38da41cc8d4db25ec79b9884a73a0cb3a1",
-        submodules="True",
+        "0.12.0", tag="v0.12.0", commit="32d92e38da41cc8d4db25ec79b9884a73a0cb3a1", submodules=True
     )
     version(
-        "0.11.0",
-        tag="v0.11.0",
-        commit="0502b9b69c4cb60aa0afbdf699b555c76cb18f22",
-        submodules="True",
+        "0.11.0", tag="v0.11.0", commit="0502b9b69c4cb60aa0afbdf699b555c76cb18f22", submodules=True
     )
     version(
-        "0.10.1",
-        tag="v0.10.1",
-        commit="be91e040130678b1350dbda56cc352433db758bd",
-        submodules="True",
+        "0.10.1", tag="v0.10.1", commit="be91e040130678b1350dbda56cc352433db758bd", submodules=True
     )
     version(
-        "0.10.0",
-        tag="v0.10.0",
-        commit="53cb89cf788d28bc4ed2b4e6f75483fdd26024aa",
-        submodules="True",
+        "0.10.0", tag="v0.10.0", commit="53cb89cf788d28bc4ed2b4e6f75483fdd26024aa", submodules=True
     )
     version(
-        "0.9.0", tag="v0.9.0", commit="df7ca1fa892b6ac4147c614d2d739d5022f63fc7", submodules="True"
+        "0.9.0", tag="v0.9.0", commit="df7ca1fa892b6ac4147c614d2d739d5022f63fc7", submodules=True
     )
     version(
-        "0.8.0", tag="v0.8.0", commit="8d19a8c2cbac611de6f92ad8852b9f3454b27e63", submodules="True"
+        "0.8.0", tag="v0.8.0", commit="8d19a8c2cbac611de6f92ad8852b9f3454b27e63", submodules=True
     )
     version(
-        "0.7.0", tag="v0.7.0", commit="caa33b371b586dfae3d8569caee91c5eddfd7b31", submodules="True"
+        "0.7.0", tag="v0.7.0", commit="caa33b371b586dfae3d8569caee91c5eddfd7b31", submodules=True
     )
     version(
-        "0.6.0", tag="v0.6.0", commit="cc7a97e8b4e52c3de820c9dfacd358822a147871", submodules="True"
+        "0.6.0", tag="v0.6.0", commit="cc7a97e8b4e52c3de820c9dfacd358822a147871", submodules=True
     )
     version(
-        "0.5.3", tag="v0.5.3", commit="1ca35c0ed2a43a3fa9c6cd70c5d25f16d88ecd8c", submodules="True"
+        "0.5.3", tag="v0.5.3", commit="1ca35c0ed2a43a3fa9c6cd70c5d25f16d88ecd8c", submodules=True
     )
     version(
-        "0.5.2", tag="v0.5.2", commit="4d5c3d5d7f311838855f7010810610349e729f64", submodules="True"
+        "0.5.2", tag="v0.5.2", commit="4d5c3d5d7f311838855f7010810610349e729f64", submodules=True
     )
     version(
-        "0.5.1", tag="v0.5.1", commit="bf340abe5199d7e051520913c9a7a5de336b5820", submodules="True"
+        "0.5.1", tag="v0.5.1", commit="bf340abe5199d7e051520913c9a7a5de336b5820", submodules=True
     )
     version(
-        "0.5.0", tag="v0.5.0", commit="9b539d84fdad049f65caeba836f41031f5baf4cc", submodules="True"
+        "0.5.0", tag="v0.5.0", commit="9b539d84fdad049f65caeba836f41031f5baf4cc", submodules=True
     )
     version(
-        "0.4.1", tag="v0.4.1", commit="3618cfe95d6a442fa50fbe7bfbcf654cf9f800b9", submodules="True"
+        "0.4.1", tag="v0.4.1", commit="3618cfe95d6a442fa50fbe7bfbcf654cf9f800b9", submodules=True
     )
     version(
-        "0.4.0", tag="v0.4.0", commit="31b2a48192542c2da426885baa5af0ed57606b78", submodules="True"
+        "0.4.0", tag="v0.4.0", commit="31b2a48192542c2da426885baa5af0ed57606b78", submodules=True
     )
 
     # export targets when building pre-2.4.0 release with BLT 0.4.0+
@@ -221,7 +207,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Build OpenMP backend")
     variant("shared", default=False, description="Build shared libs")
     variant("desul", default=False, description="Build desul atomics backend")
-    variant("vectorization", default=False, description="Build SIMD/SIMT intrinsics support")
+    variant("vectorization", default=True, description="Build SIMD/SIMT intrinsics support")
     variant(
         "omptask", default=False, description="Build OpenMP task variants of internal algorithms"
     )
@@ -230,6 +216,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("gpu-profiling", default=False, description="Enable GPU profiling")
 
     variant("plugins", default=False, description="Enable runtime plugins")
+    variant("caliper", default=False, description="Enable caliper support")
     variant("examples", default=True, description="Build examples.")
     variant("exercises", default=True, description="Build exercises.")
     # TODO: figure out gtest dependency and then set this default True
@@ -281,8 +268,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
-    depends_on("camp@main", when="@develop")
-    depends_on("camp@2025.09:", when="@2025.09:")
+    depends_on("camp@2025.12:", when="@2025.12:")
+    depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
     depends_on("camp@2024.07", when="@2024.07")
     depends_on("camp@2024.02.1", when="@2024.02.1")
@@ -302,6 +289,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.14:", when="@:2022.03", type="build")
 
     depends_on("llvm-openmp", when="+openmp %apple-clang")
+
+    depends_on("caliper", when="+caliper")
 
     depends_on("rocprim", when="+rocm")
     with when("+rocm @0.12.0:"):
@@ -382,12 +371,57 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_option("ENABLE_OPENMP", spec.satisfies("+openmp")))
         entries.append(cmake_cache_option("ENABLE_CUDA", spec.satisfies("+cuda")))
 
+        if spec.satisfies("+cuda"):
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
+
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
+            else:
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
+
             hipcc_flags = []
             if self.spec.satisfies("^rocprim@7.0"):
                 hipcc_flags.append("-std=c++17")
-            elif self.spec.satisfies("@2025.09.0:"):
+            if self.spec.satisfies("@2025.09.0:"):
                 hipcc_flags.append("-std=c++17")
             elif self.spec.satisfies("@0.14.0:2025.09.0"):
                 hipcc_flags.append("-std=c++14")

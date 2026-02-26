@@ -78,7 +78,7 @@ class Tmux(AutotoolsPackage):
     @run_before("autoreconf")
     def autogen(self):
         if self.spec.satisfies("@master"):
-            sh = which("sh")
+            sh = which("sh", required=True)
             sh("autogen.sh")
 
     def configure_args(self):

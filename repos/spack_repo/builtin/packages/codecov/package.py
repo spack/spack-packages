@@ -41,7 +41,7 @@ class Codecov(Package):
 
     def install(self, spec, prefix):
         codecov = self.stage.archive_file
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", codecov)
         mkdirp(prefix.bin)
         install(codecov, prefix.bin.codecov)

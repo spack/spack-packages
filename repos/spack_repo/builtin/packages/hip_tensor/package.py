@@ -14,13 +14,20 @@ class HipTensor(CMakePackage, ROCmPackage):
     """AMD’s C++ library for accelerating tensor primitives"""
 
     homepage = "https://github.com/ROCm/hipTensor"
-    git = "https://github.com/ROCm/hipTensor.git"
-    url = "https://github.com/ROCm/hipTensor/archive/refs/tags/rocm-6.4.2.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "afzpatel")
     libraries = ["libhiptensor"]
 
-    maintainers("srekolam", "afzpatel")
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hipTensor/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="43976aee80cc9c70024f7b4ef9fc6745a7cd39d3a24fa626b79f00aa2a6ebdd0")
     version("7.1.0", sha256="bb51a6bb5831646bcee8965da14239542bbd21a1002d07b90d98b5868cebdeed")
     version("7.0.2", sha256="c326190bf711f41b32441fe28bf92a04fb2a1a2af5e9d23bbafaa17a9b3e661f")
@@ -72,10 +79,19 @@ class HipTensor(CMakePackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"composable-kernel@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver}", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hiptensor"
+        else:
+            return "."
 
     @classmethod
     def determine_version(cls, lib):
@@ -93,5 +109,7 @@ class HipTensor(CMakePackage, ROCmPackage):
             env.set("CXX", self.spec["hipcc"].prefix.bin.hipcc)
         else:
             env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("@7.2:"):
+            env.set("CC", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
             self.asan_on(env)

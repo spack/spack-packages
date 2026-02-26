@@ -14,14 +14,21 @@ class Rocblas(CMakePackage):
     """Radeon Open Compute BLAS library"""
 
     homepage = "https://github.com/ROCm/rocBLAS/"
-    git = "https://github.com/ROCm/rocBLAS.git"
-    url = "https://github.com/ROCm/rocBLAS/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocblas"]
-
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocBLAS/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="29d43270ccf5d4818d261993f964d4fce4bd0a55c2b6dde60d1529b6c227a873")
     version("7.1.0", sha256="54f38222d0e58344cf5c86f151d418c071b59145297fd2ed953bb561df1e12c3")
     version("7.0.2", sha256="8398cda68242db2386abc9eaf00c3588bb27e2b382e29be2bc5624c2d4ac8a99")
@@ -86,6 +93,7 @@ class Rocblas(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
@@ -113,11 +121,37 @@ class Rocblas(CMakePackage):
         "7.1.0",
         "7.1.1",
     ]:
+        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
+
+    for ver in [
+        "5.7.0",
+        "5.7.1",
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
-        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
     for ver in [
         "6.3.0",
@@ -132,10 +166,11 @@ class Rocblas(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("python@3.6:", type="build")
@@ -180,13 +215,27 @@ class Rocblas(CMakePackage):
             name="Tensile",
             git="https://github.com/ROCm/Tensile.git",
             commit=t_commit,
+            placement="Tensile",
             when=f"{t_version} +tensile",
         )
 
     patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
-    patch("0009-use-rocm-smi-config.patch", when="@6.4:")
-    patch("0001-remove-blas-override.patch", when="@7.1:")
+    patch("0009-use-rocm-smi-config.patch", when="@6.4:7.1")
+    patch("0001-remove-blas-override.patch", when="@7.1")
+    patch("0001-remove-blas-override-7.2.patch", when="@7.2:")
+    patch(
+        "https://github.com/ROCm/rocm-libraries/commit/b3b20a3ea53051a14f30c28e577620c0beeea57c.patch?full_index=1",
+        sha256="1f436c5ad03c8fdc021f309a1ad84d4356f30c39c4cc940bb8267841561bf5f1",
+        when="@7.2",
+    )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocblas"
+        else:
+            return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -211,7 +260,7 @@ class Rocblas(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define("BUILD_CLIENTS_TESTS", self.run_tests and "@4.2.0:" in self.spec),
+            self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("BUILD_CLIENTS_BENCHMARKS", "OFF"),
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
             self.define("RUN_HEADER_TESTING", "OFF"),
@@ -222,28 +271,30 @@ class Rocblas(CMakePackage):
         if self.run_tests:
             args.append(self.define("LINK_BLIS", "ON"))
             args.append(
-                self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
-            )
-            args.append(
                 self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
             )
             args.append(
                 self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")
             )
+            if self.spec.satisfies("@:7.1"):
+                args.append(
+                    self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
+                )
 
         if "+tensile" in self.spec:
-            tensile_path = join_path(self.stage.source_path, "Tensile")
             if self.spec.satisfies("@:6.2"):
                 tensile_compiler = "hipcc"
             else:
                 tensile_compiler = "amdclang++"
             args += [
-                self.define("Tensile_TEST_LOCAL_PATH", tensile_path),
                 self.define("Tensile_COMPILER", tensile_compiler),
                 self.define("Tensile_LOGIC", "asm_full"),
                 self.define("BUILD_WITH_TENSILE_HOST", "@3.7.0:" in self.spec),
                 self.define("Tensile_LIBRARY_FORMAT", "msgpack"),
             ]
+            if self.spec.satisfies("@:7.1"):
+                tensile_path = join_path(self.stage.source_path, "Tensile")
+                args.append(self.define("Tensile_TEST_LOCAL_PATH", tensile_path))
             # Restrict the number of jobs Tensile can spawn.
             # If we don't specify otherwise, Tensile creates a job per available core,
             # and that consumes a lot of system memory.
