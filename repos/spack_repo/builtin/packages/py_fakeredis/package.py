@@ -25,6 +25,6 @@ class PyFakeredis(PythonPackage):
     depends_on("py-redis@4.3:", when="^python@3.8:", type=("build", "run"))
     depends_on("py-redis@4:", when="^python@:3.7", type=("build", "run"))
     depends_on("py-sortedcontainers@2:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.7", when="^python@:3.10", type=("build", "run"))
+    depends_on("py-typing-extensions@4.7", when="^python@:3.10", type=("build", "run"))  # exact versions
 
     depends_on("py-lupa@2.1:", when="+lua", type=("build", "run"))

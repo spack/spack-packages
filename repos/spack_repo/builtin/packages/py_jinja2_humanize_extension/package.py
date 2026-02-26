@@ -17,7 +17,7 @@ class PyJinja2HumanizeExtension(PythonPackage):
     version("0.4.0", sha256="e7d69b1c20f32815bbec722330ee8af14b1287bb1c2b0afa590dbf031cadeaa0")
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("setuptools", when="^python@3.11:", type="build")
+    depends_on("py-setuptools", when="^python@3.11:", type="build")
 
     depends_on("py-jinja2", type=("build", "run"))
     depends_on("py-humanize@3.14:", type=("build", "run"))
