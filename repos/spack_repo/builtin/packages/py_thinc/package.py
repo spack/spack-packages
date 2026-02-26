@@ -59,8 +59,8 @@ class PyThinc(PythonPackage):
         depends_on("py-confection@0.0.1:0", when="@8.1.10:")
 
         depends_on("py-numpy@1.7:", when="@:7.4.1")
-        depends_on("py-numpy@1.15:", when="@8.1.10:")
-        depends_on("py-numpy@2:", when="@8.1.10:")
+        depends_on("py-numpy@1.15:", when="@8.1.10")
+        depends_on("py-numpy@2:", when="@8.3.10:")
 
         depends_on("py-pydantic@1.7.4:1.7,1.9:1.10", when="@8.1.10")
         depends_on("py-pydantic@2", when="@8.3.10:")
