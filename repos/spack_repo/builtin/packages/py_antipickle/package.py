@@ -10,7 +10,7 @@ from spack.package import *
 class PyAntipickle(PythonPackage):
     """Like pickle. But different."""
 
-    homepage = "https://github.com/arogozhnikov/antipickle"
+    homepage = "https://pypi.org/project/antipickle"
     pypi = "antipickle/antipickle-0.2.0.tar.gz"
 
     maintainers("LydDeb")
