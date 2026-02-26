@@ -44,6 +44,6 @@ class PyNvidiaPhysicsnemo(PythonPackage):
         platform_tag = "any"
         name = "nvidia-physicsnemo"
         filename = (
-            f"{name.replace('-','_')}-{version.string}-{python_tag}-{abi_tag}-{platform_tag}.whl"
+            f"{name.replace('-', '_')}-{version.string}-{python_tag}-{abi_tag}-{platform_tag}.whl"
         )
         return f"{host}/packages/{python_tag}/{name[0]}/{filename}"
