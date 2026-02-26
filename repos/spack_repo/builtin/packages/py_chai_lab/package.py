@@ -22,9 +22,11 @@ class PyChaiLab(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    # pyproject.toml
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-hatchling@1.20:", type="build")
     depends_on("py-hatch-requirements-txt", type="build")
+    # requirements.in
     depends_on("py-typer@0.12", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("py-tqdm@4.66:4", type=("build", "run"))
