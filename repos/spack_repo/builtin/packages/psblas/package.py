@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
-# flake8: noqa: F401,F403
 from spack.package import *
 
 
