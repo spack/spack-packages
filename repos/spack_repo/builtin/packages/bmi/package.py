@@ -25,11 +25,14 @@ class Bmi(AutotoolsPackage):
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
+    depends_on("perl", type="build")
 
     # need to override 'autoreconf' so we can run BMI's 'prepare' script
     def autoreconf(self, spec, prefix):
         Executable("./prepare")()
 
     def configure_args(self):
-        args = ["--enable-shared", "--enable-bmi-only"]
+        args = ["--enable-shared",
+                "--enable-bmi-only",
+                "--enable-epoll"]
         return args
