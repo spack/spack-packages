@@ -18,5 +18,5 @@ class PyLanguageData(PythonPackage):
     version("1.3.0", sha256="7600ef8aa39555145d06c89f0c324bf7dab834ea0b0a439d8243762e3ebad7ec")
 
     depends_on("py-setuptools@60:", type="build")
-    depends_on("py-setuptools@8:", type="build")
+    depends_on("py-setuptools-scm@8:", type="build")
     depends_on("py-marisa-trie@1.1:", type=("build", "run"))
