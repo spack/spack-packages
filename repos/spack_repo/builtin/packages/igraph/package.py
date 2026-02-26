@@ -41,7 +41,8 @@ class Igraph(CMakePackage, AutotoolsPackage):
     depends_on("gmp")
 
     # igraph needs blas and lapack
-    depends_on("openblas")
+    depends_on("blas")
+    depends_on("lapack")
 
     depends_on("libxml2 +shared")
     patch("fix_libxml2.patch", when="@0.10.0:0.10.8 ^libxml2@2.12:")
@@ -57,7 +58,6 @@ class Igraph(CMakePackage, AutotoolsPackage):
             "-DIGRAPH_USE_INTERNAL_GMP=OFF",
             "-DIGRAPH_USE_INTERNAL_LAPACK=OFF",
             "-DIGRAPH_USE_INTERNAL_PLFIT=ON",
-            "-DBLA_VENDOR=OpenBLAS",
         ]
 
         if self.spec.satisfies("+shared"):
