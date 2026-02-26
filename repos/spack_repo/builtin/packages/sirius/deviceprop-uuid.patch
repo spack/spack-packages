@@ -1,8 +1,10 @@
 diff --git a/src/core/acc/acc.hpp b/src/core/acc/acc.hpp
-index 134a9bfc4..96981bf76 100644
+index 134a9bfc4..029ff48ed 100644
 --- a/src/core/acc/acc.hpp
 +++ b/src/core/acc/acc.hpp
-@@ -337,10 +337,11 @@ get_uuid(int device_id__)
+@@ -335,23 +335,21 @@ get_uuid(int device_id__)
+ {
+ #if defined(SIRIUS_CUDA)
      cudaDeviceProp devprop;
 +    CALL_DEVICE_API(GetDeviceProperties, (&devprop, device_id__));
 +    auto const& uuid_bytes = devprop.uuid.bytes;
@@ -17,8 +19,10 @@ index 134a9bfc4..96981bf76 100644
 -
      std::stringstream s;
 -#if defined(SIRIUS_CUDA)
++#if defined(SIRIUS_CUDA) || defined(SIRIUS_ROCM)
      for (int i = 0; i < 16; i++) {
-@@ -349,9 +350,4 @@ get_uuid(int device_id__)
+         if (i == 4 || i == 6 || i == 8 || i == 10) {
+             s << '-';
          }
 -        s << std::hex << std::setw(2) << std::setfill('0') << (int)devprop.uuid.bytes[i];
 -    }
@@ -27,5 +31,5 @@ index 134a9bfc4..96981bf76 100644
 -        s << std::hex << devprop.uuid.bytes[i];
 +        s << std::hex << std::setw(2) << std::setfill('0') << (int)uuid_bytes[i];
      }
--#endif
+ #endif
      return s.str();
