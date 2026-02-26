@@ -77,11 +77,7 @@ class Fltk(AutotoolsPackage):
         autogen()
 
     def configure_args(self):
-        options = [
-            "--enable-localjpeg",
-            "--enable-localpng",
-            "--enable-localzlib",
-        ]
+        options = ["--enable-localjpeg", "--enable-localpng", "--enable-localzlib"]
 
         if self.spec.satisfies("+shared"):
             options.append("--enable-shared")
