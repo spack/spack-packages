@@ -36,7 +36,12 @@ class PySqlalchemy(PythonPackage):
         description="Python modules for database access",
         values=any_combination_of("mysql", "postgresql", "pymysql"),
     )
-    variant("asyncio", default=False, description="asyncio drivers to interface with the database backend", when="@1.4:")
+    variant(
+        "asyncio",
+        default=False,
+        description="asyncio drivers to interface with the database backend",
+        when="@1.4:",
+    )
 
     depends_on("py-setuptools@61:", when="@2.0.33:", type="build")
     depends_on("py-setuptools@47:", when="@2:", type="build")
