@@ -23,10 +23,12 @@ class Alps(CMakePackage):
 
     license("MIT", checked_by="Ooolab")
 
-    version("2.3.4-beta.2", sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c")
+    version(
+        "2.3.4-beta.2", sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c"
+    )
     version("2.3.3", sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f")
 
-    variant("mpi", default=True,  description="Build with MPI support")
+    variant("mpi", default=True, description="Build with MPI support")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
