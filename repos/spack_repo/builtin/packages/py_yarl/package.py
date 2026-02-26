@@ -31,6 +31,9 @@ class PyYarl(PythonPackage):
         depends_on("py-setuptools@40:", when="@1.7.2:")
         depends_on("py-setuptools")
         depends_on("py-tomli", when="@1.9.3: ^python@:3.10")
+        # The freethreading_compatible directive is supported only by Cython >= 3.1
+        # cf. PEP 703 and https://docs.python.org/3/howto/free-threading-python.html
+        depends_on("py-cython@3.1:", when="@1.21:")
         # requires https://github.com/cython/cython/commit/ea38521bf59edef9e6d22cbabf44229848091a76
         depends_on("py-cython@3:", when="@1.15.4:")
         depends_on("py-cython")
