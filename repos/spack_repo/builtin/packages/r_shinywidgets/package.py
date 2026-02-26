@@ -28,6 +28,7 @@ class RShinywidgets(RPackage):
     version("0.7.6", sha256="637a10bd3ffabc4f82a19556aafb0d2778b13cdd66e84e5b7384c5c6eb94be1c")
 
     depends_on("r@3.1.0:", type=("build", "run"))
+    depends_on("r-anytime", type=("build", "run"), when="@0.7.6:0.8.6")
     depends_on("r-bslib", type=("build", "run"))
     depends_on("r-sass", type=("build", "run"))
     depends_on("r-shiny@1.6.0:", type=("build", "run"))
