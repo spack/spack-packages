@@ -72,7 +72,6 @@ class ComposableKernel(CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     generator("ninja")
-    depends_on("ninja", type="build")
 
     for ver in [
         "7.2.0",
