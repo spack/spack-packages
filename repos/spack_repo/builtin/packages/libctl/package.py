@@ -26,7 +26,8 @@ class Libctl(AutotoolsPackage):
         url="http://ab-initio.mit.edu/libctl/libctl-3.2.2.tar.gz",
     )
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("guile")
 

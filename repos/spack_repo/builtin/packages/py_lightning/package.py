@@ -15,11 +15,13 @@ class PyLightning(PythonPackage):
     git = "https://github.com/Lightning-AI/pytorch-lightning.git"
     skip_modules = ["lightning.app", "lightning.data", "lightning.store"]
 
+    license("Apache-2.0")
     maintainers("adamjstewart")
 
-    license("Apache-2.0")
-
     version("master", branch="master")
+    version("2.6.1", sha256="859104b98c61add6fe60d0c623abf749baf25f2950a66ebdfb4bd18aa7decba9")
+    version("2.6.0", sha256="881841716b59c1837ae0c562c2e64fea9bcf49ef9de3867bd1f868557ec23d04")
+    version("2.5.6", sha256="57b6abe87080895bc237fb7f36b7b4abaa2793760cbca00e3907e56607e0ed27")
     version("2.5.5", sha256="4d3d66c5b1481364a7e6a1ce8ddde1777a04fa740a3145ec218a9941aed7dd30")
     version("2.5.4", sha256="cec9459a356117f11c501b591fe80f327947614fc345dc6b6c9f8d4d373f214e")
     version("2.5.3", sha256="4ed3e12369a1e0f928beecf5c9f5efdabda60a9216057954851e2d89f1abecde")
@@ -42,24 +44,22 @@ class PyLightning(PythonPackage):
     version("2.1.2", sha256="3b2599a8a719916cb03526e6570356809729680c6cda09391232e2aba0a4ed4b")
     version("2.1.1", sha256="865491940d20a9754eac7494aa18cab893e0c2b31e83743349eeeaf31dfb52db")
     version("2.1.0", sha256="1f78f5995ae7dcffa1edf34320db136902b73a0d1b304404c48ec8be165b3a93")
-    version("2.0.9", sha256="2395ece6e29e12064718ff16b8edec5685df7f7095d4fee78edb0a654f5cd7eb")
-    version("2.0.8", sha256="db914e211b5c3b079a821be6e4344e72d0a729163676a65c4e00aae98390ae7b")
-    version("2.0.7", sha256="f05acd4ba846505d40125b4f9f0bda0804b2b0356e2ad2fd4e4bf7d1c61c8cc6")
-    version("2.0.6", sha256="bff959f65eed2f626dd65e7b2cfd0d3ddcd0c4ca19ffc8f5f49a4ba4494ca528")
-    version("2.0.5", sha256="77df233129b29c11df7b5e071e24e29420d5efbdbbac9cb6fb4602b7b5afce8a")
-    version("2.0.4", sha256="f5f5ed75a657caa8931051590ed000d46bf1b8311ae89bb17a961c3f299dbf33")
+    with default_args(deprecated=True):
+        version("2.0.9", sha256="2395ece6e29e12064718ff16b8edec5685df7f7095d4fee78edb0a654f5cd7eb")
+        version("2.0.8", sha256="db914e211b5c3b079a821be6e4344e72d0a729163676a65c4e00aae98390ae7b")
+        version("2.0.7", sha256="f05acd4ba846505d40125b4f9f0bda0804b2b0356e2ad2fd4e4bf7d1c61c8cc6")
+        version("2.0.6", sha256="bff959f65eed2f626dd65e7b2cfd0d3ddcd0c4ca19ffc8f5f49a4ba4494ca528")
+        version("2.0.5", sha256="77df233129b29c11df7b5e071e24e29420d5efbdbbac9cb6fb4602b7b5afce8a")
+        version("2.0.4", sha256="f5f5ed75a657caa8931051590ed000d46bf1b8311ae89bb17a961c3f299dbf33")
 
     depends_on("py-setuptools", type="build")
 
     with default_args(type=("build", "run")):
-        # src/lightning/__setup__.py
-        depends_on("python@3.9:", when="@2.4:")
-        depends_on("python@3.8:", when="@2:")
-
         # src/lightning.egg-info/requires.txt
         depends_on("py-pyyaml@5.4.1:7", when="@2.5.3:")
         depends_on("py-pyyaml@5.4:7", when="@:2.5.2")
-        depends_on("py-fsspec@2022.5:2026+http", when="@2.5.3:")
+        depends_on("py-fsspec@2022.5:2027+http", when="@2.6.1:")
+        depends_on("py-fsspec@2022.5:2026+http", when="@2.5.3:2.6.0")
         depends_on("py-fsspec@2022.5:2025+http", when="@2.3:2.5.2")
         depends_on("py-fsspec@2022.5:2024+http", when="@2.1.3:2.2")
         depends_on("py-fsspec@2021.6.1:2024+http", when="@2.1.0:2.1.2")
@@ -68,7 +68,8 @@ class PyLightning(PythonPackage):
         depends_on("py-lightning-utilities@0.10:1", when="@2.4:")
         depends_on("py-lightning-utilities@0.8:1", when="@2.1:2.3")
         depends_on("py-lightning-utilities@0.7:1", when="@2.0")
-        depends_on("py-packaging@20:26", when="@2.5.3:")
+        depends_on("py-packaging@23:26", when="@2.6.1:")
+        depends_on("py-packaging@20:26", when="@2.5.3:2.6.0")
         depends_on("py-packaging@20:24", when="@2.1:2.5.2")
         depends_on("py-packaging@17.1:24", when="@:2.0")
         depends_on("py-torch@2.1:3", when="@2.4:")

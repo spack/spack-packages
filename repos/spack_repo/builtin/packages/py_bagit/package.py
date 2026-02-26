@@ -18,6 +18,7 @@ class PyBagit(PythonPackage):
 
     license("CC0-1.0")
 
+    version("1.9.0", sha256="9455006c2d1df88be95ec1fccabc5ea623389589ea4c85b3d85bd256f29d7656")
     version("1.8.1", sha256="37df1330d2e8640c8dee8ab6d0073ac701f0614d25f5252f9e05263409cee60c")
 
     depends_on("python@2.7:", type=("build", "run"))

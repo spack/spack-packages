@@ -24,7 +24,7 @@ class PyImgaug(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-imageio", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("py-numpy@1.15:", type=("build", "run"))
+    depends_on("py-numpy@1.15:1", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-shapely", type=("build", "run"))
     depends_on("py-six", type=("build", "run"))

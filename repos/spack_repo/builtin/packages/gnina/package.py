@@ -59,7 +59,7 @@ class Gnina(CMakePackage, CudaPackage):
 
     depends_on("zlib-api")
     depends_on("boost@:1.79" + _boost_extensions)
-    depends_on("protobuf@:3.21.12")
+    depends_on("protobuf@:21.12")
 
     depends_on("libmolgrid")
 

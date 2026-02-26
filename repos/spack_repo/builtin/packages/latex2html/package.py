@@ -118,7 +118,7 @@ class Latex2html(AutotoolsPackage):
             else:
                 # This should be the only needed code if texlive where
                 # to set its proper dependent_build_environment
-                exe = which(p)
+                exe = which(p, required=True)
                 if exe:
                     args.append("--with-{0}={1}".format(p, str(exe)))
         if spec.satisfies("+svg"):
@@ -127,7 +127,7 @@ class Latex2html(AutotoolsPackage):
             if os.path.exists(exe):
                 args.append("--with-{0}={1}".format(p, exe))
             else:
-                exe = which(p)
+                exe = which(p, required=True)
                 if exe:
                     args.append("--with-{0}={1}".format(p, str(exe)))
 

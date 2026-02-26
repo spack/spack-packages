@@ -40,7 +40,7 @@ class NvidiaContainerToolkit(Package):
             version(ver, sha256=pkg[0], url=pkg[1], expand=False)
 
     def install(self, spec, prefix):
-        bsdtar = which("bsdtar")
+        bsdtar = which("bsdtar", required=True)
         tar_file = glob(join_path(self.stage.source_path, "nvidia-container-toolkit*.tar.gz"))[0]
         tar_params = ["-x", "-f", tar_file]
         bsdtar(*tar_params)

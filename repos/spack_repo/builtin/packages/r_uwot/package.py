@@ -31,6 +31,8 @@ class RUwot(RPackage):
     version("0.1.10", sha256="6ee1b6027bce679cd5a35f647f516a5b327632234bcf323c7f3d5b5e10807d23")
     version("0.1.3", sha256="4936e6922444cae8a71735e945b6bb0828a1012232eb94568054f78451c406d7")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-matrix", type=("build", "run"))
     depends_on("r-rcpp", type=("build", "run"))
     depends_on("r-fnn", type=("build", "run"))

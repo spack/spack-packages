@@ -32,6 +32,8 @@ class RErgm(RPackage):
     version("3.10.1", sha256="a2ac249ff07ba55b3359242f20389a892543b4fff5956d74143d2d41fa6d4beb")
     version("3.7.1", sha256="91dd011953b93ecb2b84bb3ababe7bddae25d9d86e69337156effd1da84b54c3")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.5:", type=("build", "run"), when="@4.1.2:")
     depends_on("r@4.0:", type=("build", "run"), when="@4.2.1:")
     depends_on("r@4.1:", type=("build", "run"), when="@4.4.0:")

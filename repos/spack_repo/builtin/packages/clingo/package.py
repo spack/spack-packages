@@ -58,21 +58,20 @@ class Clingo(CMakePackage):
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.18:", type="build", when="@5.5:")
 
-    # 5.7.1 and lower incompatible with cmake 4.0 due to cmake_minimum_required version 3.1
-    depends_on("cmake@:3", type="build", when="@:5.7")
-
     depends_on("doxygen", type="build", when="+docs")
 
     depends_on("re2c@0.13:", type="build")
 
     with when("@5.6:5.8,master"):
         depends_on("re2c@1.1.1:", type="build")
+        # forward compat issue: reference to undefined condition 'aspif'
+        depends_on("re2c@:3", type="build")
         depends_on("bison@2.5:", type="build", when="platform=linux")
         depends_on("bison@2.5:", type="build", when="platform=darwin")
         depends_on("bison@2.5:", type="build", when="platform=freebsd")
 
-    with when("@develop"):
-        depends_on("re2c@2:", type="build")
+    with when("@6:"):
+        depends_on("re2c@3:", type="build")
         depends_on("cmake@3.22.1:", type="build")
 
     with when("@spack"):
@@ -102,7 +101,7 @@ class Clingo(CMakePackage):
     def patch(self):
         # In bootstrap/prototypes/*.json we don't want to have specs that work for any python
         # version, so this conditional patch lives here instead of being its own directive.
-        if self.spec.satisfies("@spack,5.3:5.4 ^python@3.9:"):
+        if self.spec.satisfies("@spack,5.3:5.4 %python@3.9:"):
             filter_file(
                 "if (!PyEval_ThreadsInitialized()) { PyEval_InitThreads(); }",
                 "",
@@ -123,31 +122,46 @@ class Clingo(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define_from_variant("CLINGO_BUILD_APPS", "apps"),
-            self.define("CLINGO_BUILD_WITH_LUA", False),
             self.define("CLASP_INSTALL_LIB", True),
-            self.define("CLASP_WITH_THREADS", True),
+            self.define("CLASP_BUILD_WITH_THREADS", True),
+            self.define("CLINGO_BUILD_TESTS", False),
+            self.define("CLINGO_BUILD_EXAMPLES", False),
         ]
-        if self.spec.satisfies("+python"):
-            suffix = python(
-                "-c", "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))", output=str
-            ).strip()
-            args += [
-                self.define("CLINGO_REQUIRE_PYTHON", True),
-                self.define("CLINGO_BUILD_WITH_PYTHON", True),
-                self.define("PYCLINGO_USER_INSTALL", False),
-                self.define("PYCLINGO_USE_INSTALL_PREFIX", True),
-                self.define("PYCLINGO_INSTALL_DIR", python_platlib),
-                self.define("PYCLINGO_SUFFIX", suffix),
-                self.define("CLINGO_BUILD_PY_SHARED", self.cmake_py_shared),
-            ]
-        else:
-            args += [self.define("CLINGO_BUILD_WITH_PYTHON", False)]
 
-        # Use LTO also for non-Intel compilers please. This can be removed when they
-        # bump cmake_minimum_required to VERSION 3.9.
-        if self.spec.satisfies("+ipo"):
-            args.append(self.define("CMAKE_POLICY_DEFAULT_CMP0069", "NEW"))
+        if self.spec.satisfies("@:5"):
+            # Use LTO also for non-Intel compilers please. This can be removed when they
+            # bump cmake_minimum_required to VERSION 3.9.
+            if self.spec.satisfies("+ipo"):
+                args.append(self.define("CMAKE_POLICY_DEFAULT_CMP0069", "NEW"))
+
+            args += [
+                self.define_from_variant("CLINGO_BUILD_APPS", "apps"),
+                self.define("CLINGO_BUILD_WITH_LUA", False),
+            ]
+
+            if self.spec.satisfies("+python"):
+                suffix = python(
+                    "-c",
+                    "import sysconfig; print(sysconfig.get_config_var('EXT_SUFFIX'))",
+                    output=str,
+                ).strip()
+                args += [
+                    self.define("CLINGO_REQUIRE_PYTHON", True),
+                    self.define("CLINGO_BUILD_WITH_PYTHON", True),
+                    self.define("PYCLINGO_USER_INSTALL", False),
+                    self.define("PYCLINGO_USE_INSTALL_PREFIX", True),
+                    self.define("PYCLINGO_INSTALL_DIR", python_platlib),
+                    self.define("PYCLINGO_SUFFIX", suffix),
+                    self.define("CLINGO_BUILD_PY_SHARED", self.cmake_py_shared),
+                ]
+            else:
+                args.append(self.define("CLINGO_BUILD_WITH_PYTHON", False))
+
+        elif self.spec.satisfies("@6:"):
+            args += [
+                self.define_from_variant("CLINGO_BUILD_APP", "apps"),
+                self.define_from_variant("CLINGO_BUILD_PYTHON", "python"),
+            ]
 
         return args
 

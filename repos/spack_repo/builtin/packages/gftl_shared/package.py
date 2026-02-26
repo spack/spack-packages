@@ -26,6 +26,7 @@ class GftlShared(CMakePackage):
 
     version("main", branch="main")
 
+    version("1.11.0", sha256="785f3ccae7a28a3060c2155d67754379991e60cde19b1b238f77ef68dc2ad022")
     version("1.10.0", sha256="42158fe75fa6bee336516c7531b4c6c4e7252dee2fed541eec740209a07ceafe")
     version("1.9.0", sha256="a3291ce61b512fe88628cc074b02363c2ba3081e7b453371089121988482dd6f")
     version("1.8.0", sha256="3450161508c573ea053b2a23cdbf2a1d6fd6fdb78c162d31fc0019da0f8dd03c")

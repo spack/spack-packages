@@ -1,7 +1,7 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-from spack_repo.builtin.build_systems import autotools
+from spack_repo.builtin.build_systems import autotools, meson
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.meson import MesonPackage
 
@@ -21,6 +21,10 @@ class GobjectIntrospection(MesonPackage, AutotoolsPackage):
 
     license("LGPL-2.0-or-later AND GPL-2.0-or-later AND MIT")
 
+    version("1.86.0", sha256="920d1a3fcedeadc32acff95c2e203b319039dd4b4a08dd1a2dfd283d19c0b9ae")
+    version("1.84.0", sha256="945b57da7ec262e5c266b89e091d14be800cc424277d82a02872b7d794a84779")
+    version("1.82.0", sha256="0f5a4c1908424bf26bc41e9361168c363685080fbdb87a196c891c8401ca2f09")
+    version("1.80.1", sha256="a1df7c424e15bda1ab639c00e9051b9adf5cea1a9e512f8a603b53cd199bc6d8")
     version("1.78.1", sha256="bd7babd99af7258e76819e45ba4a6bc399608fe762d83fde3cac033c50841bb4")
     version("1.76.1", sha256="196178bf64345501dcdc4d8469b36aa6fe80489354efe71cb7cb8ab82a3738bf")
     version("1.72.1", sha256="012e313186e3186cf0fde6decb57d970adf90e6b1fac5612fe69cbb5ba99543a")
@@ -45,7 +49,9 @@ class GobjectIntrospection(MesonPackage, AutotoolsPackage):
     # Does not build with sed from Darwin
     depends_on("sed", when="platform=darwin", type="build")
 
-    depends_on("cairo+gobject")
+    depends_on("cairo+gobject", when="@:1.78")
+    depends_on("glib-bootstrap@2.82:", when="@1.82:")
+    depends_on("glib-bootstrap@2.80:", when="@1.80")
     depends_on("glib@2.78:", when="@1.78")
     depends_on("glib@2.76:", when="@1.76")
     depends_on("glib@2.58:", when="@1.60:1.72")
@@ -124,21 +130,8 @@ class GobjectIntrospection(MesonPackage, AutotoolsPackage):
         url = "https://download.gnome.org/sources/gobject-introspection/{0}/gobject-introspection-{1}.tar.xz"
         return url.format(version.up_to(2), version)
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # Only needed for sbang.patch above
-        if self.spec.satisfies("@:1.60"):
-            env.set("SPACK_SBANG", sbang_install_path())
-        env.set("GI_SCANNER_DISABLE_CACHE", "1")
-
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("GI_TYPELIB_PATH", join_path(self.prefix.lib, "girepository-1.0"))
-
-    def setup_dependent_build_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
-        env.prepend_path("GI_TYPELIB_PATH", join_path(self.prefix.lib, "girepository-1.0"))
-        env.set("GI_SCANNER_DISABLE_CACHE", "1")
 
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
@@ -151,8 +144,38 @@ class GobjectIntrospection(MesonPackage, AutotoolsPackage):
         return not self.spec.satisfies("%fj")
 
 
-class AutotoolsBuilderPackage(autotools.AutotoolsBuilder):
+class BuildEnvironment:
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Only needed for sbang.patch above
+        if self.spec.satisfies("@:1.60"):
+            env.set("SPACK_SBANG", sbang_install_path())
+        env.set("GI_SCANNER_DISABLE_CACHE", "1")
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
+        env.prepend_path("GI_TYPELIB_PATH", join_path(self.prefix.lib, "girepository-1.0"))
+        env.set("GI_SCANNER_DISABLE_CACHE", "1")
+
+        if self.spec.satisfies("^glib-bootstrap"):
+            env.append_path("PKG_CONFIG_PATH", self.spec["glib-bootstrap"].prefix.lib.pkgconfig)
+
+
+class AutotoolsBuilder(BuildEnvironment, autotools.AutotoolsBuilder):
     @run_before("build")
     def filter_file_to_avoid_overly_long_shebangs(self):
-        # we need to filter this file to avoid an overly long hashbang line
-        filter_file("#!/usr/bin/env @PYTHON@", "#!@PYTHON@", "tools/g-ir-tool-template.in")
+        filter_file(
+            "#!/usr/bin/env @PYTHON@", "#!@PYTHON@", "tools/g-ir-tool-template.in", string=True
+        )
+
+
+class MesonBuilder(BuildEnvironment, meson.MesonBuilder):
+    @run_before("build")
+    def filter_file_to_avoid_overly_long_shebangs(self):
+        filter_file(
+            "#!@PYTHON_CMD@",
+            f"{sbang_shebang_line()}\n#!@PYTHON_CMD@",
+            "tools/g-ir-tool-template.in",
+            string=True,
+        )

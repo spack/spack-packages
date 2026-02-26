@@ -1,0 +1,26 @@
+From 3e6663f2ae073d1d978fab72e5792ef6fd08ec64 Mon Sep 17 00:00:00 2001
+From: Arne Juul <arnej@vespa.ai>
+Date: Fri, 27 Jun 2025 16:31:45 +0000
+Subject: [PATCH] add back linker flags "-z noexecstack" that were lost by
+ accident
+
+Note by spack maintainers: This patch was modified in white space
+to match the surrounding lines in the file being patched.
+
+---
+ cmake/onnxruntime.cmake | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/cmake/onnxruntime.cmake b/cmake/onnxruntime.cmake
+index c4a8641e02444b29dd9231036d271501fb971fa8..ae6684b0618838346800214205fdb4114c640f01 100644
+--- a/cmake/onnxruntime.cmake
++++ b/cmake/onnxruntime.cmake
+@@ -148,7 +148,7 @@ if(onnxruntime_BUILD_SHARED_LIB)
+   if (APPLE)
+     target_link_options(onnxruntime PRIVATE "LINKER:-dead_strip")
+   elseif(NOT CMAKE_SYSTEM_NAME MATCHES "AIX")
+-    target_link_options(onnxruntime PRIVATE  "LINKER:--version-script=${SYMBOL_FILE}" "LINKER:--no-undefined" "LINKER:--gc-sections")
++    target_link_options(onnxruntime PRIVATE  "LINKER:--version-script=${SYMBOL_FILE}" "LINKER:--no-undefined" "LINKER:--gc-sections" "LINKER:-z,noexecstack")
+   endif()
+ else()
+   target_link_options(onnxruntime PRIVATE  "-DEF:${SYMBOL_FILE}")

@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     reuse: false
@@ -12,7 +12,6 @@ spack:
   packages:
     all:
       require:
-      - "%gcc"
       - target=x86_64_v3
       variants: +mpi
     c:
@@ -32,14 +31,6 @@ spack:
       - openblas
     binutils:
       variants: +ld +gold +headers +libiberty ~nls
-    cmake:
-      require:
-      - "~qtgui"
-      - 'target=x86_64_v3 %gcc'
-    gmake:
-      require:
-      - "~guile"
-      - 'target=x86_64_v3 %gcc'
     hdf5:
       variants: +fortran +hl +shared
     libfabric:
@@ -48,33 +39,40 @@ spack:
       variants: +pic +xz
     openblas:
       variants: threads=openmp
+    rccl:
+      variants: amdgpu_target=gfx90a
     rocblas:
       require: ~hipblaslt #hangs in ci
     trilinos:
       variants: +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
         +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
         +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
-        +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+        +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
     mpich:
       require:
       - '~wrapperrpath ~hwloc'
-      - 'target=x86_64_v3 %gcc'
+      - target=x86_64_v3 %gcc
     tbb:
       require:
       - intel-tbb
     vtk-m:
       require:
-      - "+examples"
-      - 'target=x86_64_v3 %gcc'
+      - +examples
+      - target=x86_64_v3 %gcc
     visit:
       require:
-      - "~gui target=x86_64_v3"
+      - "~gui"
+      - target=x86_64_v3 %gcc
     paraview:
       # Don't build GUI support or GLX rendering for HPC/container deployments
       require:
-      - "+examples"
+      - +examples
       - "~qt ^[virtuals=gl] osmesa" # Headless
-      - "target=x86_64_v3 %gcc"
+      - target=x86_64_v3 %gcc
+    boost:
+      require:
+      - cxxstd=17
+      - target=x86_64_v3 %gcc
 
   specs:
   # CPU
@@ -84,6 +82,7 @@ spack:
   - amrex
   - arborx
   - argobots
+  - arkouda
   - axom
   - bolt
   - boost
@@ -111,13 +110,13 @@ spack:
   - fortrilinos
   - fpm
   - gasnet
-  - geopm-runtime
+  - libgeopm
   - ginkgo
   - globalarrays
   - glvis
   - gmp
   - gotcha
-  - gptune ~mpispawn
+  # - gptune ~mpispawn
   - gromacs +cp2k ^cp2k +dlaf build_system=cmake
   - h5bench
   - hdf5-vol-async
@@ -171,6 +170,7 @@ spack:
   - pruners-ninja
   - pumi
   - py-amrex
+  - py-arkouda
   - py-h5py
   - py-jupyterhub
   - py-libensemble
@@ -196,7 +196,7 @@ spack:
   - umap
   - umpire
   - upcxx
-  - variorum
+  - variorum cpu=intel gpu=none
   - wannier90
   - wps
   - wrf

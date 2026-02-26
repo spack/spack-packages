@@ -97,8 +97,9 @@ class UfsWeatherModel(CMakePackage):
 
     variant("app", default="ATM", description="UFS application", when="@develop")
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("bacio")
     depends_on("mpi", when="+mpi")
@@ -108,7 +109,7 @@ class UfsWeatherModel(CMakePackage):
     depends_on("w3emc")
     depends_on("nemsio", when="@:2.0.0")
     depends_on("w3nco", when="@:2.0.0")
-    depends_on("bacio@2.4.0:", when="@develop")
+    depends_on("bacio@2.4.0:2.4.1", when="@develop")
     depends_on("crtm", when="@develop")
     depends_on("esmf@8.3.0:", when="@develop")
     depends_on("fms@2022.04: +deprecated_io precision=32,64 constants=GFS", when="@develop")
@@ -131,7 +132,7 @@ class UfsWeatherModel(CMakePackage):
         "HAFS-ALL",
         "LND",
     ]:
-        depends_on("parallelio@2.5.3: +fortran~pnetcdf~shared", when="@develop app=%s" % app)
+        depends_on("parallelio@2.5.3: +fortran~pnetcdf", when="@develop app=%s" % app)
     depends_on("python@3.6:", type="build", when="@develop")
     depends_on("sp@2.3.3:", when="@develop")
     depends_on("w3emc@2.9.2:", when="@develop")
@@ -163,14 +164,14 @@ class UfsWeatherModel(CMakePackage):
 
         env.set("CCPP_SUITES", ",".join([x for x in spec.variants["ccpp_suites"].value if x]))
 
-        if spec.platform == "linux" and spec.satisfies("%intel"):
+        if spec.platform == "linux" and (spec.satisfies("%intel") or spec.satisfies("%oneapi")):
             env.set("CMAKE_Platform", "linux.intel")
         elif spec.platform == "linux" and spec.satisfies("%gcc"):
             env.set("CMAKE_Platform", "linux.gnu")
         elif spec.platform == "darwin" and spec.satisfies("%gcc"):
             env.set("CMAKE_Platform", "macosx.gnu")
         else:
-            msg = "The host system {0} and compiler {0} "
+            msg = "The host system {0} and compiler {1} "
             msg += "are not supported by UFS."
             raise InstallError(msg.format(spec.platform, self.compiler.name))
 
@@ -202,6 +203,8 @@ class UfsWeatherModel(CMakePackage):
         if self.spec.satisfies("@:2.0.0"):
             args.append(self.define_from_variant("CCPP", "ccpp"))
             args.append(self.define_from_variant("QUAD_PRECISION", "quad_precision"))
+
+        args.append(self.define("CMAKE_MODULE_PATH", self.spec["esmf"].prefix.cmake))
 
         return args
 

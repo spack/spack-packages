@@ -15,6 +15,7 @@ class PyTzdata(PythonPackage):
 
     license("Apache-2.0")
 
+    version("2025.3", sha256="de39c2ca5dc7b0344f2eba86f49d614019d29f060fc4ebc8a417896a620b56a7")
     version("2025.2", sha256="b60a638fcc0daffadf82fe0f57e53d06bdec2f36c4df66280ae79bce6bd6f2b9")
     version("2023.3", sha256="11ef1e08e54acb0d4f95bdb1be05da659673de4acbd21bf9c69e94cc5e907a3a")
 

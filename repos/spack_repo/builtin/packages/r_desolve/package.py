@@ -35,6 +35,9 @@ class RDesolve(RPackage):
     version("1.21", sha256="45c372d458fe4c7c11943d4c409517849b1be6782dc05bd9a74b066e67250c63")
     version("1.20", sha256="56e945835b0c66d36ebc4ec8b55197b616e387d990788a2e52e924ce551ddda2")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@2.15.0:", type=("build", "run"))
     depends_on("r@3.3.0:", type=("build", "run"), when="@1.28:")
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.32:")

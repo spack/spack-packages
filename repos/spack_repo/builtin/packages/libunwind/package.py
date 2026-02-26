@@ -136,6 +136,11 @@ class Libunwind(AutotoolsPackage):
 
         return (wrapper_flags, None, flags)
 
+    # The master/stable branches don't have an m4 directory.
+    @run_before("autoreconf")
+    def make_m4_dir(self):
+        mkdirp("m4")
+
     def configure_args(self):
         spec = self.spec
         args = []

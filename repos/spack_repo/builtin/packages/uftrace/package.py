@@ -57,7 +57,7 @@ class Uftrace(AutotoolsPackage):
 
     def test_uftrace(self):
         """Perform stand-alone/smoke tests using the installed package."""
-        uftrace = which(self.prefix.bin.uftrace)
+        uftrace = which(self.prefix.bin.uftrace, required=True)
         options = (["-A", ".", "-R", ".", "-P", "main", uftrace, "-V"],)
         expected = [
             r"dwarf",

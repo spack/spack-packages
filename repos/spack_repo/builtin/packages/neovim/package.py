@@ -20,6 +20,9 @@ class Neovim(CMakePackage):
 
     version("master", branch="master")
     version("stable", tag="stable")
+    version("0.11.6", sha256="d1c8e3f484ed1e231fd5f48f53b7345b628e52263d5eef489bb8b73ca8d90fca")
+    version("0.11.5", sha256="c63450dfb42bb0115cd5e959f81c77989e1c8fd020d5e3f1e6d897154ce8b771")
+    version("0.11.4", sha256="83cf9543bedab8bec8c11cd50ccd9a4bf1570420a914b9a28f83ad100ca6d524")
     version("0.11.3", sha256="7f1ce3cc9fe6c93337e22a4bc16bee71e041218cc9177078bd288c4a435dbef0")
     version("0.11.2", sha256="324759a1bcd1a80b32a7eae1516ee761ec3e566d08284a24c4c7ca59079aabfa")
     version("0.10.1", sha256="edce96e79903adfcb3c41e9a8238511946325ea9568fde177a70a614501af689")
@@ -69,19 +72,12 @@ class Neovim(CMakePackage):
     depends_on("lua-lpeg")
     depends_on("lua-mpack", when="@:0.10")
     depends_on("iconv", type="link")
-    depends_on("libtermkey", type="link", when="@:0.9")
-    depends_on("libuv", type="link")
-    depends_on("libluv", type="link", when="@:0.9")
-    depends_on("libvterm", type="link", when="@:0.10")
-    depends_on("msgpack-c", type="link", when="@:0.10")
-    depends_on("unibilium", type="link")
-    depends_on("libuv@1.28:", type="link")
+    depends_on("libuv@1.42:", type="link")
     depends_on("libluv@1.30.0:", type="link")
     depends_on("libtermkey@0.18:", type="link", when="@:0.9")
     depends_on("libvterm@0.1:", type="link", when="@:0.10")
     depends_on("unibilium@2.0:", type="link")
     depends_on("msgpack-c@1.0.0:", type="link", when="@:0.10")
-    depends_on("libuv@1.42:", type="link")
     depends_on("tree-sitter")
 
     # versions
@@ -100,20 +96,24 @@ class Neovim(CMakePackage):
     with when("@0.8:"):
         depends_on("libvterm@0.3:", type="link", when="@:0.10")
     with when("@0.9:"):
-        depends_on("tree-sitter@0.20.8:")
+        depends_on("tree-sitter@0.20.8", when="@0.9")
     with when("@0.10:"):
         depends_on("cmake@3.13:", type="build")
-        depends_on("libvterm@0.3.3:", when="@:0.10")
-        depends_on("tree-sitter@0.20.9:")
+        depends_on("libvterm@0.3.3:", type="link", when="@:0.10")
+        depends_on("tree-sitter@0.20.9", when="@0.10")
     with when("@0.11:"):
         depends_on("cmake@3.16:", type="build")
-        depends_on("utf8proc", type="link")
-        depends_on("tree-sitter@0.25:", type="link")
+        depends_on("utf8proc@2.10.0", type="link")
 
     # Support for `libvterm@0.2:` has been added in neovim@0.8.0
     # term: Add support for libvterm >= 0.2 (https://github.com/neovim/neovim/releases/tag/v0.8.0)
     # https://github.com/neovim/neovim/issues/16217#issuecomment-958590493
     conflicts("libvterm@0.2:", when="@:0.7")
+
+    # ts_parser_timeout_micros and ts_parser_set_timeout_micros not anymore in API
+    # https://github.com/neovim/neovim/pull/33141
+    # https://github.com/tree-sitter/tree-sitter/pull/4814
+    conflicts("tree-sitter@0.26:", when="@:0.11.6")
 
     @when("^lua")
     def cmake_args(self):
