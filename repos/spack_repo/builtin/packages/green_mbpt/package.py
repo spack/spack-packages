@@ -26,7 +26,7 @@ class GreenMbpt(CMakePackage, CudaPackage):
     version(
         "0.3.0",
         sha256="181873fa442831d21662cf38c15f30ae97d89c07c5256d45232774a5c072574d",
-        deprecated=True
+        deprecated=True,
     )  # Known issues, use v0.3.1+
 
     # Variant for CUDA Kernels
