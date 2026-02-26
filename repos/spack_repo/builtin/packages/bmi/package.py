@@ -32,7 +32,5 @@ class Bmi(AutotoolsPackage):
         Executable("./prepare")()
 
     def configure_args(self):
-        args = ["--enable-shared",
-                "--enable-bmi-only",
-                "--enable-epoll"]
+        args = ["--enable-shared", "--enable-bmi-only", "--enable-epoll"]
         return args
