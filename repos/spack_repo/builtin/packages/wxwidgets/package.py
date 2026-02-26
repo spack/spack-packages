@@ -36,7 +36,8 @@ class Wxwidgets(AutotoolsPackage):
 
     variant("opengl", default=False, description="Enable OpenGL support")
     variant("gui", default=True, description="Enable GUI support.")
-    variant("tiff", default=True, description="Enable TIFF support.")
+    variant("libtiff", default=True, description="Enable TIFF support.")
+    variant("zlib", default=True, description="Enable zlib support.")
 
     patch("math_include.patch", when="@3.0.1:3.0.2")
 
@@ -46,7 +47,8 @@ class Wxwidgets(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
     depends_on("gtkplus", when="+gui")
     depends_on("mesa-glu", when="+opengl")
-    depends_on("libtiff", when="+tiff")
+    depends_on("libtiff", when="+libtiff")
+    depends_on("zlib-api", when="+zlib")
 
     @when("@:3.0.2")
     def build(self, spec, prefix):
@@ -67,5 +69,8 @@ class Wxwidgets(AutotoolsPackage):
         # see https://trac.wxwidgets.org/ticket/17639
         if spec.satisfies("@:3.1.0") and sys.platform == "darwin":
             options.extend(["--disable-qtkit", "--disable-mediactrl"])
+
+        options.extend(self.with_or_without("zlib"))
+        options.extend(self.with_or_without("libtiff"))
 
         return options
