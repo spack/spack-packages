@@ -17,34 +17,36 @@ class Alps(CMakePackage):
     """
 
     homepage = "https://github.com/ALPSim/ALPS"
+    url = "https://github.com/ALPSim/ALPS/archive/refs/tags/v2.3.4-beta.2.tar.gz"
 
-    maintainers("Ooolab", "egull")
+    maintainers("Ooolab", "egull", "Sinan81")
 
     license("MIT", checked_by="Ooolab")
 
     version(
         "2.3.4-beta.2",
-        sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c",
-        url="https://github.com/ALPSim/ALPS/archive/refs/tags/v2.3.4-beta.2.tar.gz",
+        sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c"
     )
     version(
         "2.3.3",
-        sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f",
-        url="https://github.com/ALPSim/ALPS/archive/refs/tags/v2.3.3.tar.gz",
+        sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f"
     )
+
+    variant("mpi", default=True,  description="Build with MPI support")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("boost@1.80:")  # Just for headers. Note that the checksums are listed below
     depends_on("fftw")
-    depends_on("hdf5 ~mpi+hl")
     depends_on("lapack")
     depends_on("python", type=("build", "link", "run"))
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("mpi")
+    depends_on("mpi", when="+mpi")
+    depends_on("hdf5+mpi+hl", when="+mpi")
+    depends_on("hdf5~mpi+hl", when="~mpi")
     depends_on("zlib")
 
     extends("python")
@@ -151,9 +153,11 @@ class Alps(CMakePackage):
         args.append("-DBoost_USE_STATIC_RUNTIME=OFF")
 
         # Add MPI support - just specify compilers (minimal change)
-        args.append("-DMPI_CXX_COMPILER={0}".format(self.spec["mpi"].mpicxx))
-
-        args.append("-DMPI_C_COMPILER={0}".format(self.spec["mpi"].mpicc))
+        if "+mpi" in self.spec:
+            args.append("-DMPI_CXX_COMPILER={0}".format(self.spec["mpi"].mpicxx))
+            args.append("-DMPI_C_COMPILER={0}".format(self.spec["mpi"].mpicc))
+        else:
+            args.append("-DENABLE_MPI=OFF")
 
         # Preserve link paths as RPATH in the installed binary
         args.append("-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON")
@@ -181,9 +185,10 @@ class Alps(CMakePackage):
         env.append_path("CPLUS_INCLUDE_PATH", self.spec["python"].headers.directories[0])
 
         # For MPI - set compiler wrappers
-        env.set("MPI_CXX", self.spec["mpi"].mpicxx)
-        env.set("MPI_CC", self.spec["mpi"].mpicc)
-        env.set("MPICXX", self.spec["mpi"].mpicxx)
+        if "+mpi" in self.spec:
+            env.set("MPI_CXX", self.spec["mpi"].mpicxx)
+            env.set("MPI_CC", self.spec["mpi"].mpicc)
+            env.set("MPICXX", self.spec["mpi"].mpicxx)
 
         # Add MPI include path if available
         if hasattr(self.spec["mpi"], "headers"):
