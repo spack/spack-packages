@@ -2,11 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 
 from spack_repo.builtin.build_systems.python import PythonPackage
 
-from spack.error import NoLibrariesError
 from spack.package import *
 
 
@@ -199,42 +197,6 @@ class PyTorchvision(PythonPackage):
             query = self.spec[dep.name]
             include.extend(query.headers.directories)
             library.extend(query.libs.directories)
-
-        # PyTorch headers include rocthrust, rocprim, hipsparse, hipblas, hipblas-common,
-        # hipblaslt and hipsolver headers; when building with ROCm we need these in the
-        # include path (py-torch depends on them, but they are not direct link deps of
-        # torchvision). Only add paths for packages that are in the spec to avoid KeyError.
-        if "^py-torch+rocm" in self.spec:
-            rocm_include_pkgs = [
-                "rocthrust",
-                "rocprim",
-                "hipsparse",
-                "hipblas",
-                "hipblas-common",
-                "hipblaslt",
-                "hipsolver",
-            ]
-            for pkg in rocm_include_pkgs:
-                if pkg in self.spec:
-                    include.extend(self.spec[pkg].headers.directories)
-
-            # At build time, torchvision's setup imports torch; libtorch_hip.so then
-            # needs aotriton and hip libs at runtime. Add their lib dirs so the loader
-            # can resolve undefined symbols (e.g. aotriton::v2::flash::attn_bwd_fused).
-            for pkg in ["aotriton", "hip"]:
-                if pkg not in self.spec:
-                    continue
-                try:
-                    for lib_dir in self.spec[pkg].libs.directories:
-                        env.prepend_path("LD_LIBRARY_PATH", lib_dir)
-                except NoLibrariesError:
-                    # Package may not declare 'libraries' (e.g. aotriton), so Spack
-                    # cannot recursively locate libs. Add prefix lib dirs when they
-                    # exist so the loader can find .so files (lib, lib64, or both).
-                    for sub in ("lib", "lib64"):
-                        lib_dir = os.path.join(self.spec[pkg].prefix, sub)
-                        if os.path.isdir(lib_dir):
-                            env.prepend_path("LD_LIBRARY_PATH", lib_dir)
 
         # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
         # these do not work for older releases. Build uses a mix of Spack's compiler wrapper
