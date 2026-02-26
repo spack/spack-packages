@@ -35,3 +35,13 @@ class PyNvidiaPhysicsnemo(PythonPackage):
     depends_on("py-treelib@1.2.5:", type=("build", "run"))
     depends_on("py-xarray@2023.1.0:", type=("build", "run"))
     depends_on("py-zarr@2.14.2:", type=("build", "run"))
+
+    def url_for_version(self, version):
+        #ref: https://docs.pypi.org/api/#querying-pypi-for-package-urls
+        host = 'https://files.pythonhosted.org'
+        python_tag = "py3"
+        abi_tag = "none"
+        platform_tag = "any"
+        name = "nvidia-physicsnemo"
+        filename = f"{name.replace('-','_')}-{version.string}-{python_tag}-{abi_tag}-{platform_tag}.whl"
+        return f"{host}/packages/{python_tag}/{name[0]}/{filename}"
