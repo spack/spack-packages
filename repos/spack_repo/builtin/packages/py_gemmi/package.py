@@ -23,7 +23,7 @@ class PyGemmi(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("python@3.8:3.10", type=("build", "run"), when="@0.7.1")
+    depends_on("python@3.8:3.10", type=("build", "run"), when="@0.7.1:")
     depends_on("python@3.7:", type=("build", "run"), when="@0.6.7")
     depends_on("py-scikit-build-core@0.11.1:0.11", type=("build", "run"), when="@0.7.1:")
     depends_on("py-scikit-build-core@0.10.5:0.10", type=("build", "run"), when="@0.6.7")
