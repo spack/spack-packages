@@ -43,3 +43,5 @@ class PyChaiLab(PythonPackage):
     depends_on("py-numba@0.59:", type=("build", "run"))
     depends_on("py-einops@0.8", type=("build", "run"))
     depends_on("py-jaxtyping@0.2.25:", type=("build", "run"))
+    depends_on("py-beartype@0.18:", type=("build", "run"))
+    depends_on("py-torch@:2.6,2.3.1:", type=("build", "run"))
