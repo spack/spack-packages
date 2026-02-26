@@ -252,7 +252,7 @@ class Qt(Package):
     depends_on("python", when="@5.7.0:", type="build")
 
     # Dependencies, then variant- and version-specific dependencies
-    depends_on("icu4c")
+    depends_on("icu4c@:74")  # @75: requires cxxstd 17 which is not modelled here
     depends_on("jpeg")
     depends_on("libtiff")
     depends_on("libxml2")
