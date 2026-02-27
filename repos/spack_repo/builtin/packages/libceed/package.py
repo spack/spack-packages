@@ -124,6 +124,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
             if spec.satisfies("@:0.7") and "avx" in self.spec.target:
                 makeopts.append("AVX=1")
 
+        if spec.satisfies("@0.4:"):
             if spec.satisfies("+cuda"):
                 makeopts += ["CUDA_DIR=%s" % spec["cuda"].prefix]
                 makeopts += ["CUDA_ARCH=sm_%s" % spec.variants["cuda_arch"].value]

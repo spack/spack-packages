@@ -47,6 +47,8 @@ class Hugo(GoPackage):
     depends_on("go@1.20:", type="build", when="@0.123:")
     depends_on("go@1.18:", type="build", when="@0.106:")
     depends_on("go@1.11:", type="build", when="@0.48:")
+    depends_on("c", type="build", when="+extended")
+    depends_on("cxx", type="build", when="+extended")
 
     variant("extended", default=False, description="Enable extended features")
 
@@ -57,6 +59,13 @@ class Hugo(GoPackage):
         output = Executable(exe)("version", output=str, error=str)
         match = re.search(r"Hugo Static Site Generator v(\S+)", output)
         return match.group(1) if match else None
+
+    @property
+    def cgo_enabled(self):
+        if self.spec.satisfies("+extended"):
+            return True
+        else:
+            return False
 
     @property
     def build_args(self):

@@ -149,6 +149,10 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         when="@1.17:1.20.2",
     )
 
+    # Add back linker flags "-z noexecstack"
+    # https://github.com/microsoft/onnxruntime/pull/25200
+    patch("pr25200-fix-linker-flags.patch", when="@1.21:1.22")
+
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
 
     variant(

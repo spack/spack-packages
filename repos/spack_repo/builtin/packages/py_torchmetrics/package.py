@@ -63,7 +63,8 @@ class PyTorchmetrics(PythonPackage):
     variant("image", default=False, description="image support", when="@0.11.2:")
 
     # setup.py
-    depends_on("py-setuptools", type="build")
+    # https://github.com/Lightning-AI/torchmetrics/pull/3324
+    depends_on("py-setuptools@:81", type="build")
 
     # requirements/base.txt (upper bound is removed during processing)
     with default_args(type=("build", "run")):

@@ -187,7 +187,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
         lapack, blas = spec["lapack"], spec["blas"]
         if blas.name != "intel-oneapi-mkl":
-            args = [
+            args += [
                 "-DBLAS_FOUND=true",
                 "-DBLAS_LIBRARIES=%s" % (blas.libs.joined(";")),
                 "-DLAPACK_FOUND=true",

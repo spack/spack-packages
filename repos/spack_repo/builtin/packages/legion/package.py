@@ -456,7 +456,7 @@ class Legion(CMakePackage, ROCmPackage):
         super().build(spec, prefix)
         if spec.satisfies("+prof"):
             with working_dir(join_path(self.stage.source_path, "tools", "legion_prof_rs")):
-                cargo = which("cargo")
+                cargo = which("cargo", required=True)
                 cargo("install", "--root", "out", "--path", ".", "--all-features", "--locked")
 
     def install(self, spec, prefix):
@@ -491,8 +491,8 @@ class Legion(CMakePackage, ROCmPackage):
             cmake = self.spec["cmake"].command
             cmake(*cmake_args)
 
-            make = which("make")
+            make = which("make", required=True)
             make()
 
-            exe = which("local_function_tasks")
+            exe = which("local_function_tasks", required=True)
             exe()

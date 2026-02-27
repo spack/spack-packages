@@ -89,10 +89,10 @@ class Bricks(CMakePackage):
             raise SkipTest("{0} is missing".format(source_dir))
 
         with working_dir(source_dir):
-            cmake = which(self.spec["cmake"].prefix.bin.cmake)
+            cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
             cmake(".")
 
             cmake("--build", ".")
 
-            example = which("example")
+            example = which("example", required=True)
             example()
