@@ -29,7 +29,6 @@ class Amg4psblas(AutotoolsPackage):
     version(
         "1.2.0",
         sha256="971cac9917a84dad97eccef76feb89b5ea66afa0b80d13f45a62dd5685c01878",
-        preferred=True,
     )
     version("1.2.0-rc3", sha256="589e23829ea569b984db964b0c40fdf2ae7165290c9118da45b0418514b5cf3a")
 
