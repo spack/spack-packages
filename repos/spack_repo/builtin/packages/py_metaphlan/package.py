@@ -40,4 +40,3 @@ class PyMetaphlan(PythonPackage):
     depends_on("blast-plus@2.6:", type=("build", "run"))
     depends_on("raxml@8.2.10:", type=("build", "run"))
     depends_on("samtools@1.9:", type=("build", "run"))
-
