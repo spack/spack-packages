@@ -11,6 +11,7 @@ class PyChaiLab(PythonPackage):
     """Chai Discovery tools for AI + protein research."""
 
     homepage = "https://www.chaidiscovery.com/"
+    git = "https://github.com/chaidiscovery/chai-lab.git"
     pypi = "chai_lab/chai_lab-0.6.1.tar.gz"
 
     maintainers("LydDeb")
