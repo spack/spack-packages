@@ -12,6 +12,9 @@ class PyNvidiaPhysicsnemo(PythonPackage):
 
     homepage = "https://github.com/NVIDIA/physicsnemo"
     pypi = "nvidia-physicsnemo/nvidia_physicsnemo-1.3.0-py3-none-any.whl"
+    # Work-around URL until the CI version check can rely on the URL related to a PyPi wheel.
+    # ref. https://github.com/spack/spack-packages/pull/2400/changes/a3e13de4f218e3fb6951e8b89dfa914be704313f
+    url = "https://pypi.io/packages/py3/n/nvidia-physicsnemo/nvidia_physicsnemo-1.3.0-py3-none-any.whl"
 
     maintainers("LydDeb")
 
