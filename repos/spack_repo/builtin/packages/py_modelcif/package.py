@@ -11,6 +11,7 @@ class PyModelcif(PythonPackage):
     """Package for handling ModelCIF mmCIF and BinaryCIF files."""
 
     homepage = "https://github.com/ihmwg/python-modelcif"
+    git = "https://github.com/ihmwg/python-modelcif.git"
     pypi = "modelcif/modelcif-1.4.tar.gz"
 
     maintainers("LydDeb")
