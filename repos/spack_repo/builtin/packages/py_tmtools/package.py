@@ -11,6 +11,7 @@ class PyTmtools(PythonPackage):
     """Python bindings around the TM-align code for structural alignment of proteins."""
 
     homepage = "https://github.com/jvkersch/tmtools"
+    git = "https://github.com/jvkersch/tmtools.git"
     pypi = "tmtools/tmtools-0.2.0.tar.gz"
 
     maintainers("LydDeb")
