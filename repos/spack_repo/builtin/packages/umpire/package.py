@@ -342,7 +342,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("+shared", when="+cuda +device_alloc")
 
     # https://github.com/LLNL/Umpire/pull/992
-    conflicts("^cuda@13:", when="+cuda")
+    conflicts("^cuda@13:", when="@:2025.09.0 +cuda")
 
     def _get_sys_type(self, spec):
         sys_type = spec.architecture
