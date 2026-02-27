@@ -25,7 +25,7 @@ class Amg4psblas(AutotoolsPackage):
     # SPDX identifier of the project's license below.
     license("BSD-3-Clause", checked_by="cirdans-home")
 
-    version("development", branch="development")
+    version("develop", branch="development")
     version(
         "1.2.0",
         sha256="971cac9917a84dad97eccef76feb89b5ea66afa0b80d13f45a62dd5685c01878",
@@ -65,7 +65,7 @@ class Amg4psblas(AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     # psblas
-    depends_on("psblas@development", when="@development")
+    depends_on("psblas@develop", when="@develop")
     depends_on("psblas@3.9.0", when="@1.2.0")
     depends_on("psblas@3.9.0-rc3", when="@1.2.0-rc3")
     depends_on("psblas@:+mpi", when="+mpi")
