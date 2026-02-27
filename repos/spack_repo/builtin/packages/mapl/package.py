@@ -40,6 +40,7 @@ class Mapl(CMakePackage):
     version("main", branch="main")
 
     # Remember if there is a new ESMA_cmake, to update the resources too
+    version("2.67.0", sha256="fb8899c13fdf5145f16745a8ca6f88807c7a39423e17f745663d719348fc05e5")
     version("2.66.0", sha256="2b64472177119bcf91e3f39ebc3f253b3de54ea10b687e58d3fb0f9b2db1ed86")
     version("2.65.0", sha256="94cb2fd2432aea4e6a7231a02efd89f85928c52e3fd17ce7db4a359952899935")
     version("2.64.2", sha256="8e6ab418d5ab468ab3751dc277351a42ee87f6e0eee3ef13fef29062cd773c2d")
