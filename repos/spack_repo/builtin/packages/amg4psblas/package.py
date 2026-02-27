@@ -26,15 +26,8 @@ class Amg4psblas(AutotoolsPackage):
     license("BSD-3-Clause", checked_by="cirdans-home")
 
     version("develop", branch="development")
-    version(
-        "1.2.0",
-        sha256="971cac9917a84dad97eccef76feb89b5ea66afa0b80d13f45a62dd5685c01878",
-    )
+    version("1.2.0", sha256="971cac9917a84dad97eccef76feb89b5ea66afa0b80d13f45a62dd5685c01878")
     version("1.2.0-rc3", sha256="589e23829ea569b984db964b0c40fdf2ae7165290c9118da45b0418514b5cf3a")
-
-    # Explicit phases: autoreconf, configure, build, install, and post_install
-    # which compiles the examples in the prefix/samples folder
-    phases = ["autoreconf", "configure", "build", "install", "samples"]
 
     # Variants for third-party libraries
     variant("mumps", default=False, description="Activates mumps interface")
@@ -68,18 +61,18 @@ class Amg4psblas(AutotoolsPackage):
     depends_on("psblas@3.9.0", when="@1.2.0")
     depends_on("psblas@3.9.0-rc3", when="@1.2.0-rc3")
     depends_on("psblas+mpi", when="+mpi")
-    depends_on("psblas@:~mpi", when="~mpi")
+    depends_on("psblas:~mpi", when="~mpi")
     depends_on("psblas+cuda", when="+cuda")
     depends_on("psblas~cuda", when="~cuda")
-    depends_on("psblas@:+openmp", when="+openmp")
-    depends_on("psblas@:~openmp", when="~openmp")
+    depends_on("psblas:+openmp", when="+openmp")
+    depends_on("psblas:~openmp", when="~openmp")
     # third-party libraries
-    depends_on("mumps@:+openmp", when="+openmp+mumps")
-    depends_on("mumps@:~openmp", when="~openmp+mumps")
+    depends_on("mumps:+openmp", when="+openmp+mumps")
+    depends_on("mumps:~openmp", when="~openmp+mumps")
     depends_on("superlu", when="+superlu")
     depends_on("psblas+metis", when="+superlu")
-    depends_on("superlu-dist@:+openmp", when="+openmp+superlu_dist")
-    depends_on("superlu-dist@:~openmp", when="~openmp+superlu_dist")
+    depends_on("superlu-dist:+openmp", when="+openmp+superlu_dist")
+    depends_on("superlu-dist:~openmp", when="~openmp+superlu_dist")
     depends_on("suite-sparse", when="+umfpack")
     # Conflicts
     conflicts("~mpi", when="+mumps", msg="MUMPS requires MPI support")
@@ -92,19 +85,19 @@ class Amg4psblas(AutotoolsPackage):
         if "+mumps" in self.spec:
             args.append(f"--with-mumpsdir={self.spec['mumps'].prefix}")
             args.append(f"--with-mumpsincdir={self.spec['mumps'].prefix.include}")
-            args.append(f"--with-mumpslibdir={self.spec['mumps'].prefix.lib}")
+            args.append(f"--with-mumpslibdir={self.spec['mumps'].libs.directories[0]}")
         if "+umfpack" in self.spec:
             args.append(f"--with-umfpackdir={self.spec['suite-sparse'].prefix}")
             args.append(f"--with-umfpackincdir={self.spec['suite-sparse'].prefix.include}")
-            args.append(f"--with-umfpacklibdir={self.spec['suite-sparse'].prefix.lib}")
+            args.append(f"--with-umfpacklibdir={self.spec['suite-sparse'].libs.directories[0]}")
         if "+superlu" in self.spec:
             args.append(f"--with-superludir={self.spec['superlu'].prefix}")
             args.append(f"--with-superluincdir={self.spec['superlu'].prefix.include}")
-            args.append(f"--with-superlulibdir={self.spec['superlu'].prefix.lib}")
+            args.append(f"--with-superlulibdir={self.spec['superlu'].libs.directories[0]}")
         if "+superlu_dist" in self.spec:
             args.append(f"--with-superludistdir={self.spec['superlu-dist'].prefix}")
             args.append(f"--with-superludistincdir={self.spec['superlu-dist'].prefix.include}")
-            args.append(f"--with-superludistlibdir={self.spec['superlu-dist'].prefix.lib}")
+            args.append(f"--with-superludistlibdir={self.spec['superlu-dist'].libs.directories[0]}")
         # All the other options
         for opt in ["ccopt", "cxxopt", "fcopt", "extra_opt", "libs", "clibs", "flibs"]:
             val = self.spec.variants[opt].value
@@ -112,16 +105,7 @@ class Amg4psblas(AutotoolsPackage):
                 args.append(f"--with-{opt.replace('_', '-')}={val}")
         return args
 
-    def configure(self, spec, prefix):
-        configure = Executable("./configure")
-        configure(*self.configure_args())
-
-    def build(self, spec, prefix):
-        make()
-
-    def install(self, spec, prefix):
-        make("install")
-
+    @run_after("install")
     def samples(self, spec, prefix):
         with working_dir(prefix.samples.advanced.fileread):
             make()
