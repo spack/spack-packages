@@ -11,6 +11,7 @@ class PyIhm(PythonPackage):
     """Package for handling IHM mmCIF and BinaryCIF files."""
 
     homepage = "https://github.com/ihmwg/python-ihm"
+    git = "https://github.com/ihmwg/python-ihm.git"
     pypi = "ihm/ihm-2.7.tar.gz"
 
     maintainers("LydDeb")
