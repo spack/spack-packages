@@ -61,18 +61,18 @@ class Amg4psblas(AutotoolsPackage):
     depends_on("psblas@3.9.0", when="@1.2.0")
     depends_on("psblas@3.9.0-rc3", when="@1.2.0-rc3")
     depends_on("psblas+mpi", when="+mpi")
-    depends_on("psblas:~mpi", when="~mpi")
+    depends_on("psblas~mpi", when="~mpi")
     depends_on("psblas+cuda", when="+cuda")
     depends_on("psblas~cuda", when="~cuda")
-    depends_on("psblas:+openmp", when="+openmp")
-    depends_on("psblas:~openmp", when="~openmp")
+    depends_on("psblas+openmp", when="+openmp")
+    depends_on("psblas~openmp", when="~openmp")
     # third-party libraries
-    depends_on("mumps:+openmp", when="+openmp+mumps")
-    depends_on("mumps:~openmp", when="~openmp+mumps")
+    depends_on("mumps+openmp", when="+openmp+mumps")
+    depends_on("mumps~openmp", when="~openmp+mumps")
     depends_on("superlu", when="+superlu")
     depends_on("psblas+metis", when="+superlu")
-    depends_on("superlu-dist:+openmp", when="+openmp+superlu_dist")
-    depends_on("superlu-dist:~openmp", when="~openmp+superlu_dist")
+    depends_on("superlu-dist+openmp", when="+openmp+superlu_dist")
+    depends_on("superlu-dist~openmp", when="~openmp+superlu_dist")
     depends_on("suite-sparse", when="+umfpack")
     # Conflicts
     conflicts("~mpi", when="+mumps", msg="MUMPS requires MPI support")
@@ -97,7 +97,9 @@ class Amg4psblas(AutotoolsPackage):
         if "+superlu_dist" in self.spec:
             args.append(f"--with-superludistdir={self.spec['superlu-dist'].prefix}")
             args.append(f"--with-superludistincdir={self.spec['superlu-dist'].prefix.include}")
-            args.append(f"--with-superludistlibdir={self.spec['superlu-dist'].libs.directories[0]}")
+            args.append(
+                f"--with-superludistlibdir={self.spec['superlu-dist'].libs.directories[0]}"
+            )
         # All the other options
         for opt in ["ccopt", "cxxopt", "fcopt", "extra_opt", "libs", "clibs", "flibs"]:
             val = self.spec.variants[opt].value
