@@ -22,5 +22,5 @@ class PyIhm(PythonPackage):
 
     depends_on("c", type="build")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@42:", type="build")
     depends_on("py-msgpack", type=("build", "run"))
