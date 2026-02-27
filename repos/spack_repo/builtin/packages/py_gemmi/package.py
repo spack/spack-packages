@@ -22,6 +22,7 @@ class PyGemmi(PythonPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("cmake@3.15:3.22", type="build")
 
     depends_on("python@3.8:3.10", type=("build", "run"), when="@0.7.1:")
     depends_on("python@3.7:", type=("build", "run"), when="@0.6.7")
