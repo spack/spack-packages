@@ -67,7 +67,7 @@ class Amg4psblas(AutotoolsPackage):
     depends_on("psblas@develop", when="@develop")
     depends_on("psblas@3.9.0", when="@1.2.0")
     depends_on("psblas@3.9.0-rc3", when="@1.2.0-rc3")
-    depends_on("psblas@:+mpi", when="+mpi")
+    depends_on("psblas+mpi", when="+mpi")
     depends_on("psblas@:~mpi", when="~mpi")
     depends_on("psblas+cuda", when="+cuda")
     depends_on("psblas~cuda", when="~cuda")
