@@ -20,9 +20,6 @@ class PyChaiLab(PythonPackage):
 
     version("0.6.1", sha256="a4ef9737bbb9abfa1dbbd5e059b899fb3b48d6b916f4bf104f5325e1f224e238")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     # pyproject.toml
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-hatchling@1.20:", type="build")
