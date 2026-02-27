@@ -25,6 +25,9 @@ class PyChaiLab(PythonPackage):
     depends_on("py-hatchling@1.20:", type="build")
     depends_on("py-hatch-requirements-txt", type="build")
     # requirements.in
+    # The dependence named "typer-slime" appears in the requirement.in file, but the PyPI page
+    # for this package specifies not to install it.
+    # Indeed, it does nothing more than depend on "typer".
     depends_on("py-typer@0.12", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("py-tqdm@4.66:4", type=("build", "run"))
