@@ -158,9 +158,6 @@ class BuildEnvironment:
         env.prepend_path("GI_TYPELIB_PATH", join_path(self.prefix.lib, "girepository-1.0"))
         env.set("GI_SCANNER_DISABLE_CACHE", "1")
 
-        if self.spec.satisfies("^glib-bootstrap"):
-            env.append_path("PKG_CONFIG_PATH", self.spec["glib-bootstrap"].prefix.lib.pkgconfig)
-
 
 class AutotoolsBuilder(BuildEnvironment, autotools.AutotoolsBuilder):
     @run_before("build")
