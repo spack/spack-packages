@@ -93,7 +93,6 @@ spack:
         - $tensorflow_specs
         # xgboost requires older cuda, which doesn't support newer GCC
         # - $xgboost_specs
-
       override:
         packages:
           all:
