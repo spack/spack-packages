@@ -74,6 +74,50 @@ spack:
       - cxxstd=17
       - target=x86_64_v3 %gcc
 
+  definitions:
+  - cuda_specs:
+    - amrex
+    - arborx ^kokkos +wrapper
+    - axom
+    - cabana ^kokkos +wrapper +cuda_lambda
+    - caliper
+    - chai ^umpire ~shared
+    - chapel
+    - cusz
+    - dealii
+    - ecp-data-vis-sdk  +adios2 ~ascent +hdf5 +vtkm +zfp ~paraview
+    - exago +mpi +python +raja +hiop  ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja
+    - fftx
+    - flecsi
+    - ginkgo
+    - gromacs
+    - heffte
+    - hpx
+    - hypre
+    - kokkos +wrapper
+    - kokkos-kernels ^kokkos +wrapper
+    - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper
+    - libceed
+    - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard ^cusz
+    - magma
+    - mfem
+    - mgard +serial +openmp +timing +unstructured
+    - omega-h
+    - parsec
+    - petsc
+    - py-torch
+    - raja
+    - slate
+    - slepc
+    - strumpack ~slate
+    - sundials
+    - superlu-dist
+    - tasmanian
+    - trilinos
+    - umpire ~shared
+    - adios2
+    - vtk-m
+    - zfp
   specs:
   # CPU
   - adios
@@ -252,58 +296,9 @@ spack:
   - papi +cuda
   - tau +mpi +cuda +syscall
 
-  # CUDA 80
   - group: "cuda-80"
     specs:
-    - amrex
-    - arborx ^kokkos +wrapper
-    - axom
-    - cabana ^kokkos +wrapper +cuda_lambda +cuda cuda_arch=80
-    - caliper
-    - chai ^umpire ~shared
-    - chapel
-    - cusz
-    - dealii
-    - ecp-data-vis-sdk ~rocm +adios2 ~ascent +hdf5 +vtkm +zfp ~paraview # +paraview: FAILED: VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/vtkm/filter/flow/CMakeFiles/vtkm_filter_flow.dir/StreamSurface.cxx.o
-    - exago +mpi +python +raja +hiop ~rocm ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja ~rocm
-    - fftx
-    - flecsi
-    - ginkgo
-    - gromacs
-    - heffte
-    - hpx
-    - hypre
-    - kokkos +wrapper
-    - kokkos-kernels ^kokkos +wrapper
-    - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper
-    - libceed
-    - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard ^cusz
-    - magma
-    - mfem
-    - mgard +serial +openmp +timing +unstructured
-    - omega-h
-    - parsec
-    - petsc
-    - py-torch
-    - raja
-    - slate
-    - slepc
-    - strumpack ~slate
-    - sundials
-    - superlu-dist
-    - tasmanian
-    - trilinos
-    - umpire ~shared
-    # INCLUDED IN ECP DAV CUDA
-    - adios2
-    # - ascent +cuda cuda_arch=80     # ascent: https://github.com/spack/spack/issues/38045
-    # - paraview +cuda cuda_arch=80   # paraview: FAILED: VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/vtkm/filter/flow/CMakeFiles/vtkm_filter_flow.dir/StreamSurface.cxx.o
-    - vtk-m
-    - zfp
-    # --
-    # - lammps +cuda cuda_arch=80     # lammps: needs NVIDIA driver
-    # - lbann +cuda cuda_arch=80      # dihydrogen: hydrogen/device/gpu/CUB.hpp:41:5: error: reference to 'CachingDeviceAllocator' is ambiguous
-    # - upcxx +cuda cuda_arch=80      # upcxx: needs NVIDIA driver
+    - $cuda_specs
     override:
       packages:
         all:
@@ -314,55 +309,7 @@ spack:
 
   - group: "cuda-90"
     specs:
-    # CUDA 90
-    - amrex
-    - arborx ^kokkos +wrapper
-    - axom
-    - cabana ^kokkos +wrapper +cuda_lambda
-    - caliper
-    - chai ^umpire ~shared
-    - chapel
-    - cusz
-    - ecp-data-vis-sdk ~rocm +adios2 ~ascent +hdf5 +vtkm +zfp ~paraview # +paraview: issue with cuda@12; +ascent: # ascent: https://github.com/spack/spack/issues/38045; +paraview: VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/vtkm/exec/cuda/internal/ExecutionPolicy.h(121): error: namespace "thrust" has no member "sort"
-    - fftx
-    - flecsi
-    - ginkgo
-    - gromacs
-    - heffte
-    - hpx
-    - hypre
-    - kokkos +wrapper
-    - kokkos-kernels ^kokkos +wrapper
-    - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper
-    - libceed
-    - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard ^cusz
-    - magma
-    - mfem
-    - mgard +serial +openmp +timing +unstructured
-    - omega-h
-    - parsec
-    - petsc
-    - py-torch
-    - raja
-    - slate
-    - slepc
-    - strumpack ~slate
-    - sundials
-    - superlu-dist
-    - tasmanian
-    - trilinos
-    - umpire ~shared
-    # INCLUDED IN ECP DAV CUDA
-    - adios2
-    # - ascent       # ascent: https://github.com/spack/spack/issues/38045
-    # - paraview     # paraview: Cannot satisfy 'cuda@:11' and 'cuda@12.0:
-    - vtk-m
-    - zfp
-    # --
-    # - dealii       # dealii: conflicts with '+cuda ^cuda@12:'; dealii: https://github.com/spack/spack/issues/39532
-    # - lammps       # lammps: needs NVIDIA driver
-    # - lbann       # dihydrogen: hydrogen/device/gpu/CUB.hpp:41:5: error: reference to 'CachingDeviceAllocator' is ambiguous
-    # - upcxx        # upcxx: needs NVIDIA driver
+      - $cuda_specs
     override:
       packages:
         all:
