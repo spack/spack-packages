@@ -39,10 +39,7 @@ def main():
     pr_number = os.environ["GH_PR_NUMBER"]
     token = os.environ.get("GH_TOKEN", "")
 
-    headers = {
-        "Accept": "application/vnd.github+json",
-        "User-Agent": "spack-labeler"
-    }
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": "spack-labeler"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
