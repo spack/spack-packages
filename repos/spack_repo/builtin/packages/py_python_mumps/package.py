@@ -14,7 +14,7 @@ class PyPythonMumps(PythonPackage):
     """Python wrapper for the MUMPS solver (python_mumps)."""
 
     homepage = "https://gitlab.kwant-project.org/kwant/python-mumps"
-    url = "https://pypi.org/packages/source/p/python-mumps/python_mumps-0.0.6.tar.gz"
+    pypi = "python-mumps/python_mumps-0.0.6.tar.gz"
 
     maintainers = ["williampiat3"]
 
@@ -24,18 +24,18 @@ class PyPythonMumps(PythonPackage):
 
     # build dependencies
     with default_args(type="build"):
-        depends_on("meson")
+        depends_on("meson@1.8:")
         depends_on("ninja")
-        depends_on("py-meson-python")
+        depends_on("py-meson-python@0.18:")
         depends_on("py-setuptools")
         depends_on("py-setuptools-scm")
-        depends_on("py-cython")
+        depends_on("py-cython@3.1.1:")
 
     # Python dependencies
     with default_args(type=("build", "run")):
-        depends_on("py-numpy")
-        depends_on("py-mpi4py", when="+mpi")
-        depends_on("py-scipy")
+        depends_on("py-numpy@2:")
+        depends_on("py-mpi4py@4.1:4", when="+mpi")
+        depends_on("py-scipy@1.13:")
 
     # Optional/test deps
     depends_on("py-pytest", type="test")
