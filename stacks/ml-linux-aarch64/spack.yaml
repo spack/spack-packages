@@ -34,7 +34,7 @@ spack:
     - py-keras backend=tensorflow
     - py-keras backend=jax
     - py-keras backend=torch
-  - py_torch_specs:
+  - torch_specs:
     - py-botorch
     - py-gpytorch
     - py-kornia
@@ -70,7 +70,7 @@ spack:
       - $hugging_face_specs
       - $jax_specs
       - $keras_specs
-      - $py_torch_specs
+      - $torch_specs
       - $scikit_learn_specs
       - $tensorboard_specs
       - $tensorflow_specs
@@ -87,7 +87,7 @@ spack:
         - $hugging_face_specs
         - $jax_specs
         - $keras_specs
-        - $py_torch_specs
+        - $torch_specs
         - $scikit_learn_specs
         - $tensorboard_specs
         - $tensorflow_specs
