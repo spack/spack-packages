@@ -87,7 +87,6 @@ spack:
     - $tensorflow_specs
     # xgboost requires older cuda, which doesn't support newer GCC
     # - $xgboost_specs
-
     override:
       packages:
         all:
@@ -116,7 +115,6 @@ spack:
     - matrix:
       - [$keras_specs]
       exclude:
-      - py-keras backend=jax
       - py-keras backend=torch
     # Does not yet support Spack-installed ROCm
     # - $torch_specs
@@ -125,7 +123,6 @@ spack:
     - $tensorflow_specs
     # Does not yet support Spack-installed ROCm
     # - $xgboost_specs
-
     override:
       packages:
         all:
