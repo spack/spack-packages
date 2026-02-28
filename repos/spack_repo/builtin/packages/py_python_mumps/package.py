@@ -33,6 +33,7 @@ class PyPythonMumps(PythonPackage):
 
     # Python dependencies
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:")
         depends_on("py-numpy@2:")
         depends_on("py-mpi4py@4.1:4", when="+mpi")
         depends_on("py-scipy@1.13:")
