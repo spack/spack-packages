@@ -24,8 +24,3 @@ class CargoC(CargoPackage):
     depends_on("openssl")
     depends_on("rust@1.89:", type="build", when="@0.10.17:")
     depends_on("rust@1.88:", type="build", when="@0.10.16:")
-
-    def setup_dependent_build_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["openssl"].libs.directories[0])
