@@ -140,7 +140,6 @@ spack:
             - target=x86_64_v3
             - ~cuda
             - +rocm
-            - ~distributed
             - amdgpu_target=gfx90a
             - ~flash_attention
             - "%c,cxx=gcc"
