@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
 from pathlib import Path
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -236,9 +235,10 @@ class Qgis(CMakePackage):
         sip_inc_dir = join_path(self["qscintilla"].module.python_platlib, pyqtx, "bindings")
         sip_line = f'sip-include-dirs = ["{sip_inc_dir}"]'
 
-        # Recent QGis have added a @sipabi@ that expands to the [tool.sip.project] header. The simple patch to add the path
-        # results in a duplicate header which causes a build failure. The middle case is probably overkill but it is
-        # kept as a just in (edge) case
+        # Recent QGis have added a @sipabi@ that expands to the [tool.sip.project] header. 
+        # The simple patch append approach  results in a duplicate header which causes a 
+        # build failure. The middle case is probably overkill but it is  kept as a just
+        # in (edge) case
 
         # if it's already there, do nothing
         if sip_line not in txt:
