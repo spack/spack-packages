@@ -324,6 +324,14 @@ spack:
           - +cuda +wrapper
           - cuda_arch=80
           - target=x86_64_v3
+        flecsi:
+          # TODO: currently fails to build with CUDA
+          # /tmp/root/spack-stage/spack-stage-flecsi-2.4.1-6i3755bbt2hvmwj6soljqedj2t7jvwzm/spack-src/flecsi/exec/kernel.hh(111): error: init-captures are not allowed for extended __host__ __device__ lambdas
+          # [c = std::forward<C>(c), f = std::forward<F>(f)] __attribute__((device)) __attribute__((host))(
+          require:
+          - ~rocm
+          - ~cuda
+          - target=x86_64_v3
 
   - group: "cuda-90"
     specs:
@@ -334,12 +342,20 @@ spack:
           prefer:
           - ~rocm
           - +cuda
-          - cuda_arch=80
+          - cuda_arch=90
         kokkos:
           require:
           - ~rocm
           - +cuda +wrapper
           - cuda_arch=90
+          - target=x86_64_v3
+        flecsi:
+          # TODO: currently fails to build with CUDA
+          # /tmp/root/spack-stage/spack-stage-flecsi-2.4.1-6i3755bbt2hvmwj6soljqedj2t7jvwzm/spack-src/flecsi/exec/kernel.hh(111): error: init-captures are not allowed for extended __host__ __device__ lambdas
+          # [c = std::forward<C>(c), f = std::forward<F>(f)] __attribute__((device)) __attribute__((host))(
+          require:
+          - ~rocm
+          - ~cuda
           - target=x86_64_v3
 
   - group: rocm
