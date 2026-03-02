@@ -6,6 +6,8 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
+from pathlib import Path
+import re
 
 class Qgis(CMakePackage):
     """QGIS is a free and open-source cross-platform desktop geographic
@@ -14,12 +16,13 @@ class Qgis(CMakePackage):
     """
 
     homepage = "https://qgis.org"
-    url = "https://qgis.org/downloads/qgis-3.8.1.tar.bz2"
+    url = "https://qgis.org/downloads/qgis-3.44.7.tar.bz2"
 
     maintainers("adamjstewart", "Sinan81", "Chrismarsh")
 
     license("GPL-2.0-or-later")
 
+    version("3.44.7", sha256="1ab06f40600c84e928b4fe22a66997d80973201b10769e7a636e5be83459b814")
     # Prefer latest LTR
     version(
         "3.40.6",
@@ -122,7 +125,9 @@ class Qgis(CMakePackage):
     depends_on("gdal@2.1.0: +python", type=("build", "link", "run"))
     depends_on("gdal@3.2.0: +python", type=("build", "link", "run"), when="@3.28:")
     depends_on("geos@3.4.0:")
-    depends_on("libspatialindex")
+
+    # https://github.com/libspatialindex/libspatialindex/issues/276
+    depends_on("libspatialindex@:2.0.0")
     depends_on("libspatialite@4.2.0:")
     depends_on("libzip")
     depends_on("libtasn1")
@@ -163,6 +168,8 @@ class Qgis(CMakePackage):
     depends_on("py-owslib", type="run")
     depends_on("py-jinja2", type="run")
     depends_on("py-pygments", type="run")
+    depends_on("py-packaging", type="run", when="@3.44:")
+
 
     # optionals
     depends_on("postgresql@8:", when="+postgresql")  # for PostGIS support
@@ -223,9 +230,34 @@ class Qgis(CMakePackage):
         elif "^py-pyqt6" in self.spec:
             pyqtx = "PyQt6"
 
+        pp = Path("python/gui/pyproject.toml.in")
+        txt = pp.read_text(encoding="utf-8")
+
         sip_inc_dir = join_path(self["qscintilla"].module.python_platlib, pyqtx, "bindings")
-        with open(join_path("python", "gui", "pyproject.toml.in"), "a") as tomlfile:
-            tomlfile.write(f'\n[tool.sip.project]\nsip-include-dirs = ["{sip_inc_dir}"]\n')
+        sip_line = f'sip-include-dirs = ["{sip_inc_dir}"]'
+
+        # Recent QGis have added a @sipabi@ that expands to the [tool.sip.project] header. The simple patch to add the path
+        # results in a duplicate header which causes a build failure. The middle case is probably overkill but it is 
+        # kept as a just in (edge) case
+
+        # if it's already there, do nothing
+        if sip_line not in txt:
+            if "@sipabi@" in txt:
+                # @sipabi@ expands to the [tool.sip.project] table + abi-version,
+                # add just the key immediately after it
+                txt = txt.replace("@sipabi@", "@sipabi@\n" + sip_line, 1)
+
+            elif "[tool.sip.project]" in txt:
+                # insert right after the first header occurrence
+                txt = txt.replace("[tool.sip.project]", "[tool.sip.project]\n" + sip_line, 1)
+
+            else:
+                # no macro + no table, append a new table
+                if not txt.endswith("\n"):
+                    txt += "\n"
+                txt += "\n[tool.sip.project]\n" + sip_line + "\n"
+
+        pp.write_text(txt, encoding="utf-8")
 
     def cmake_args(self):
         spec = self.spec
