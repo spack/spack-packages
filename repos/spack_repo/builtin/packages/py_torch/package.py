@@ -141,6 +141,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     conflicts("+gloo+rocm")
     conflicts("+rocm", when="@2.3", msg="Rocm doesn't support py-torch 2.3 release")
     conflicts("+rocm", when="@2.4", msg="Rocm doesn't support py-torch 2.4 release")
+    conflicts("+rocm", when="@2.8", msg="Rocm doesn't support py-torch 2.8 release")
     conflicts("+tensorpipe", when="+rocm ^hip@:5.1", msg="TensorPipe not supported until ROCm 5.2")
     conflicts("+breakpad", when="target=ppc64:")
     conflicts("+breakpad", when="target=ppc64le:")
@@ -328,7 +329,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("valgrind", when="+valgrind")
     with when("+rocm"):
         depends_on("hsa-rocr-dev")
-        depends_on("hip")
+        depends_on("hip@7.0:", when="@2.9:")
+        depends_on("hip@:6.4", when="@:2.7")
         depends_on("rccl", when="+nccl")
         depends_on("rocprim")
         depends_on("hipcub")
@@ -343,11 +345,15 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocfft")
         depends_on("rocblas")
         depends_on("miopen-hip")
+        depends_on("composable-kernel")
+        depends_on("hipblaslt")
+        # Ensure hipblaslt version for 2.9+
+        depends_on("hipblaslt@7.0:", when="@2.9:")
         depends_on("rocminfo")
-        depends_on("aotriton@0.8.1b", when="@2.5:2.6")
-        depends_on("aotriton@0.9.1b", when="@2.7:")
-        depends_on("composable-kernel@:6.3.2", when="@2.5")
-        depends_on("composable-kernel@6.3.2:", when="@2.6:")
+        depends_on("hipsparselt@7.0:", when="@2.9:")
+        depends_on("aotriton@0.8b", when="@2.5:2.6")
+        depends_on("aotriton@0.9.2b", when="@2.7")
+        depends_on("aotriton@0.10b", when="@2.8:")
     depends_on("mpi", when="+mpi")
     depends_on("ucc", when="+ucc")
     depends_on("ucx", when="+ucc")
@@ -591,6 +597,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             "torch_global_deps PROPERTIES LINKER_LANGUAGE CXX",
             "caffe2/CMakeLists.txt",
         )
+        if self.spec.satisfies("@2.5:+rocm"):
+            filter_file(
+                "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)",
+                "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)\n"
+                "set(ROCTRACER_INCLUDE_DIR $ENV{ROCTRACER_INCLUDE_DIR})",
+                "cmake/public/LoadHIP.cmake",
+                string=True,
+            )
         if self.spec.satisfies("@2.1:2.7+rocm"):
             filter_file(
                 "${ROCM_INCLUDE_DIRS}/rocm-core/rocm_version.h",
