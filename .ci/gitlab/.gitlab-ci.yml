@@ -489,6 +489,28 @@ radiuss-build:
     SPACK_CI_TARGET: "x86_64_v4"
   tags: ["spack", "public", "aws", "medium", "x86_64_v4"]
 
+.radiuss-cuda:
+  variables:
+    SPACK_CI_STACK_NAME: radiuss-cuda
+
+radiuss-cuda-generate:
+  extends: [ ".radiuss-cuda", ".generate-x86_64", ".tags-x86_64_v4" ]
+  image:
+    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    entrypoint: ['']
+
+radiuss-cuda-build:
+  extends: [ ".radiuss-cuda", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/radiuss-cuda/cloud-ci-pipeline.yml
+        job: radiuss-cuda-generate
+  needs:
+    - artifacts: True
+      job: radiuss-cuda-generate
+
+
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
 .radiuss-aarch64:
@@ -568,7 +590,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:main
+  image: ghcr.io/spack/tutorial-ubuntu-22.04:v2023-10-30
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
@@ -581,49 +603,115 @@ tutorial-build:
     - artifacts: True
       job: tutorial-generate
 
-#################################
-# Machine Learning - Linux x86_64
-#################################
-.ml-linux-x86_64:
+#######################################
+# Machine Learning - Linux x86_64 (CPU)
+#######################################
+.ml-linux-x86_64-cpu:
   variables:
-    SPACK_CI_STACK_NAME: ml-linux-x86_64
+    SPACK_CI_STACK_NAME: ml-linux-x86_64-cpu
 
-ml-linux-x86_64-generate:
-  extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4" ]
+ml-linux-x86_64-cpu-generate:
+  extends: [ ".generate-x86_64", .ml-linux-x86_64-cpu, ".tags-x86_64_v4" ]
   image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
-ml-linux-x86_64-build:
-  extends: [ ".build", ".ml-linux-x86_64" ]
+ml-linux-x86_64-cpu-build:
+  extends: [ ".build", ".ml-linux-x86_64-cpu" ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/ml-linux-x86_64/cloud-ci-pipeline.yml
-        job: ml-linux-x86_64-generate
+      - artifact: jobs_scratch_dir/ml-linux-x86_64-cpu/cloud-ci-pipeline.yml
+        job: ml-linux-x86_64-cpu-generate
   needs:
     - artifacts: True
-      job: ml-linux-x86_64-generate
+      job: ml-linux-x86_64-cpu-generate
 
-##################################
-# Machine Learning - Linux aarch64
-##################################
-.ml-linux-aarch64:
+########################################
+# Machine Learning - Linux x86_64 (CUDA)
+########################################
+.ml-linux-x86_64-cuda:
   variables:
-    SPACK_CI_STACK_NAME: ml-linux-aarch64
+    SPACK_CI_STACK_NAME: ml-linux-x86_64-cuda
 
-ml-linux-aarch64-generate:
-  extends: [ ".generate-aarch64", .ml-linux-aarch64 ]
+ml-linux-x86_64-cuda-generate:
+  extends: [ ".generate-x86_64", .ml-linux-x86_64-cuda, ".tags-x86_64_v4" ]
   image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
-ml-linux-aarch64-build:
-  extends: [ ".build", ".ml-linux-aarch64" ]
+ml-linux-x86_64-cuda-build:
+  extends: [ ".build", ".ml-linux-x86_64-cuda"  ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/ml-linux-aarch64/cloud-ci-pipeline.yml
-        job: ml-linux-aarch64-generate
+      - artifact: jobs_scratch_dir/ml-linux-x86_64-cuda/cloud-ci-pipeline.yml
+        job: ml-linux-x86_64-cuda-generate
   needs:
     - artifacts: True
-      job: ml-linux-aarch64-generate
+      job: ml-linux-x86_64-cuda-generate
+
+########################################
+# Machine Learning - Linux x86_64 (ROCm)
+########################################
+.ml-linux-x86_64-rocm:
+  variables:
+    SPACK_CI_STACK_NAME: ml-linux-x86_64-rocm
+
+ml-linux-x86_64-rocm-generate:
+  extends: [ ".generate-x86_64", .ml-linux-x86_64-rocm, ".tags-x86_64_v4" ]
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+
+ml-linux-x86_64-rocm-build:
+  extends: [ ".build", ".ml-linux-x86_64-rocm" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/ml-linux-x86_64-rocm/cloud-ci-pipeline.yml
+        job: ml-linux-x86_64-rocm-generate
+  needs:
+    - artifacts: True
+      job: ml-linux-x86_64-rocm-generate
+
+########################################
+# Machine Learning - Linux aarch64 (CPU)
+########################################
+.ml-linux-aarch64-cpu:
+  variables:
+    SPACK_CI_STACK_NAME: ml-linux-aarch64-cpu
+
+ml-linux-aarch64-cpu-generate:
+  extends: [ ".generate-aarch64", .ml-linux-aarch64-cpu ]
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+
+ml-linux-aarch64-cpu-build:
+  extends: [ ".build", ".ml-linux-aarch64-cpu" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/ml-linux-aarch64-cpu/cloud-ci-pipeline.yml
+        job: ml-linux-aarch64-cpu-generate
+  needs:
+    - artifacts: True
+      job: ml-linux-aarch64-cpu-generate
+
+#########################################
+# Machine Learning - Linux aarch64 (CUDA)
+#########################################
+.ml-linux-aarch64-cuda:
+  variables:
+    SPACK_CI_STACK_NAME: ml-linux-aarch64-cuda
+
+ml-linux-aarch64-cuda-generate:
+  extends: [ ".generate-aarch64", .ml-linux-aarch64-cuda ]
+  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+
+ml-linux-aarch64-cuda-build:
+  extends: [ ".build", ".ml-linux-aarch64-cuda" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/ml-linux-aarch64-cuda/cloud-ci-pipeline.yml
+        job: ml-linux-aarch64-cuda-generate
+  needs:
+    - artifacts: True
+      job: ml-linux-aarch64-cuda-generate
 
 #########################################
 # Machine Learning - Darwin aarch64 (MPS)
