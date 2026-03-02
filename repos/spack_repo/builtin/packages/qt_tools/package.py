@@ -57,8 +57,8 @@ class QtTools(QtPackage):
     # use of relative path in https://github.com/qt/qttools/blob/6.8.2/.gitmodules
     conflicts("+assistant", when="@6.8.2", msg="Incorrect git submodule prevents +assistant")
 
-    depends_on("c")
-    depends_on("cxx")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("llvm +clang", when="+qdoc")
 
