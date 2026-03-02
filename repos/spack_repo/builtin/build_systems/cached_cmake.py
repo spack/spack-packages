@@ -280,7 +280,7 @@ class CachedCMakeBuilder(CMakeBuilder):
         ]
 
         # Provide standard CMake arguments for dependent CachedCMakePackages
-        if spec.satisfies("^cuda"):
+        if spec.satisfies("%cuda"):
             entries.append("#------------------{0}".format("-" * 30))
             entries.append("# Cuda")
             entries.append("#------------------{0}\n".format("-" * 30))
