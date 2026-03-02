@@ -302,7 +302,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         lib_dir = self.prefix.lib if os.path.exists(self.prefix.lib) else self.prefix.lib64
 
-        cxx = which(os.environ["CXX"])
+        cxx = which(os.environ["CXX"], required=True)
         test_dir = os.path.dirname(source_path)
         with working_dir(test_dir):
             cxx(
@@ -316,5 +316,5 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
                 "-lstdc++",
             )
 
-            cxx_example = which(exe)
+            cxx_example = which(exe, required=True)
             cxx_example()

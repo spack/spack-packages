@@ -899,9 +899,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
                 path = join_path(self.prefix.bin, exe)
                 if not os.path.isfile(path):
                     raise SkipTest(f"{path} is not installed")
-                prog = which(path)
-                if prog is None:
-                    raise RuntimeError(f"Could not find {path}")
+                prog = which(path, required=True)
                 output = prog("--version", output=str.split, error=str.split)
                 assert expected in output
 

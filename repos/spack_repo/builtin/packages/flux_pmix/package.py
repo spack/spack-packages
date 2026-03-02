@@ -41,7 +41,7 @@ class FluxPmix(AutotoolsPackage):
     def autoreconf(self, spec, prefix):
         if not os.path.exists("configure"):
             # Bootstrap with autotools
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./autogen.sh")
 
     @run_after("install")

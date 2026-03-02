@@ -19,14 +19,11 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     Currently, hipSPARSELt supports rocSPARSELt and cuSPARSELt v0.4 as backends."""
 
     homepage = "https://github.com/ROCm/hipsparselt"
-    git = "https://github.com/ROCm/hipsparseLt.git"
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
     tags = ["rocm"]
-
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
-
     libraries = ["libhipsparselt"]
-
     license("MIT")
 
     def url_for_version(self, version):
@@ -36,6 +33,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
     version("7.1.0", sha256="d9e138a15e8195a7e9b5e15240e50c557b830d50a2bafa27db14dad3884dbfd8")
     version("7.0.2", sha256="04bb529fa656624f8875b726aa5ef1699207fdc5de4b3446986eafc4890ef708")
@@ -97,9 +95,33 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
     ]:
+        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}", type="test")
+
+    for ver in [
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipsparse@{ver}", when=f"@{ver}")
-        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}", type="test")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -115,13 +137,14 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
-    for ver in ["7.1.0", "7.1.1"]:
+    for ver in ["7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
 
@@ -135,6 +158,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("py-joblib")
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("amdblis", type="test", when="@7.2:")
     depends_on("python-venv", when="@7.0:")
     depends_on("py-pyyaml+libyaml", when="@7.1:")
     depends_on("py-packaging", when="@7.1:")
@@ -158,6 +182,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.2.patch", when="@6.2")
     patch("0001-update-llvm-path-add-hipsparse-include-dir-for-spack-6.3.patch", when="@6.3")
     patch("0002-add-hipsparse-include.patch", when="@6.4")
+    patch("0003-add-roctracer-inc-dir.patch", when="@7.2")
 
     @classmethod
     def determine_version(cls, lib):
@@ -174,7 +199,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         purelib = self.spec["python"].package.purelib
         joblib_path = os.path.join(self.spec["py-joblib"].prefix, purelib)
         if not self.spec["hip"].external:
-            if self.spec.satisfies("@6.4:") and self.run_tests:
+            if self.spec.satisfies("@6.4:7.1") and self.run_tests:
                 filter_file(
                     r"${HIP_CLANG_ROOT}/lib",
                     "{0}/lib".format(self.spec["rocm-openmp-extras"].prefix),
@@ -232,7 +257,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
 
     @property
     def root_cmakelists_dir(self):
-        if self.spec.satisfies("@7.1"):
+        if self.spec.satisfies("@7.1:"):
             return "projects/hipsparselt"
         else:
             return "."
@@ -242,16 +267,10 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             self.define("Tensile_CODE_OBJECT_VERSION", "default"),
             self.define("MSGPACK_DIR", self.spec["msgpack-c"].prefix),
             self.define_from_variant("BUILD_ADDRESS_SANITIZER", "asan"),
-            self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("BUILD_SHARED_LIBS", "ON"),
-            self.define("BUILD_CLIENTS_SAMPLES", "OFF"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
-        if self.run_tests:
-            args.append(
-                self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
-            )
         if self.spec.satisfies("@7.0"):
             args.append(
                 self.define(
@@ -261,6 +280,19 @@ class Hipsparselt(CMakePackage, ROCmPackage):
         if self.spec.satisfies("@7.0:"):
             args.append(self.define("Python_EXECUTABLE", self.spec["python"].prefix.bin.python3))
             args.append(self.define("Python_ROOT", self.spec["python"].prefix.bin))
-        if self.spec.satisfies("@7.1:"):
+        if self.spec.satisfies("@7.1"):
             args.append(self.define("BUILD_USE_LOCAL_TENSILE", "OFF"))
+        if self.spec.satisfies("@7.2:"):
+            args.append(self.define("BUILD_TESTING", self.run_tests))
+            args.append(self.define("HIPSPARSELT_ENABLE_CLIENT", self.run_tests))
+            args.append(self.define("HIPSPARSELT_ENABLE_SAMPLES", "OFF"))
+            args.append(self.define("HIPSPARSELT_ENABLE_BENCHMARKS", "OFF"))
+            args.append(self.define("HIPSPARSELT_ENABLE_BLIS", self.run_tests))
+        else:
+            args.append(self.define("BUILD_CLIENTS_TESTS", self.run_tests))
+            args.append(self.define("BUILD_CLIENTS_SAMPLES", "OFF"))
+            if self.run_tests:
+                args.append(
+                    self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix)
+                )
         return args

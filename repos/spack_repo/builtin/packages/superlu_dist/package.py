@@ -200,5 +200,5 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
             # Smoke test input parameters: -r 2 -c 2 g20.rua
             test_args = ["-n", "4", superludriver, "-r", "2", "-c", "2", "g20.rua"]
             # Find the correct mpirun command
-            mpiexe_f = which("srun", "mpirun", "mpiexec")
+            mpiexe_f = which("srun", "mpirun", "mpiexec", required=True)
             mpiexe_f(*test_args)

@@ -48,5 +48,6 @@ class PyJoblib(PythonPackage):
         depends_on("python@:3.11", when="@:1.2")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@77.0.3:", when="@1.5.3:")
         depends_on("py-setuptools@61.2:", when="@1.4:")
         depends_on("py-setuptools")

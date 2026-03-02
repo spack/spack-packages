@@ -99,7 +99,7 @@ class Simgrid(CMakePackage):
         when="@3.34",
     )
 
-    def setup_dependent_package(self, module, dep_spec):
+    def setup_dependent_package(self, module, dependent_spec):
         if self.spec.satisfies("+smpi"):
             self.spec.smpicc = join_path(self.prefix.bin, "smpicc")
             self.spec.smpicxx = join_path(self.prefix.bin, "smpicxx")

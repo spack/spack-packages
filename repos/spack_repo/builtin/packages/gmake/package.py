@@ -92,10 +92,10 @@ class Gmake(Package, GNUMirrorPackage):
             install("make", prefix.bin)
             symlink("make", prefix.bin.gmake)
 
-    def setup_dependent_package(self, module, dspec):
+    def setup_dependent_package(self, module, dependent_spec):
         module.make = MakeExecutable(
             self.spec.prefix.bin.make,
-            jobs=determine_number_of_jobs(parallel=dspec.package.parallel),
+            jobs=determine_number_of_jobs(parallel=dependent_spec.package.parallel),
         )
 
     @property

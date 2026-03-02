@@ -24,9 +24,7 @@
 /stacks/tools-sdk/                            @kwryankrattiger
 /stacks/tutorial/                             @alecbcs @becker33 @tldahlgren @tgamblin
 /stacks/windows-vis/                          @johnwparent @kwryankrattiger @scheibelp
-/stacks/radiuss/                              @adrienbernede @davidbeckingsale
-/stacks/radiuss-cuda/                         @adrienbernede @davidbeckingsale
-/stacks/radiuss-aarch64/                      @adrienbernede @davidbeckingsale
+/stacks/radiuss*/                             @adrienbernede @davidbeckingsale
 
 ###
 # CI Components maintained by Kitware

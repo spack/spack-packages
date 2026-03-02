@@ -87,7 +87,7 @@ class Libcatalyst(CMakePackage):
             # for the current package being tested, including the package
             # itself
             make_package_test_rpath(self, adapter0_test_path)
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
 
         with working_dir(testdir, create=True):
             cmake(*cmake_args)

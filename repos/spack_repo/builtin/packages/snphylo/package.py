@@ -32,7 +32,7 @@ class Snphylo(Package):
         with open(install_answer_input, "w") as f:
             f.writelines(install_answer)
         with open(install_answer_input, "r") as f:
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./setup.sh", input=f)
             install_tree(".", prefix)
 

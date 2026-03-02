@@ -429,7 +429,7 @@ class Cmake(Package):
         if not os.path.exists(exe_path):
             raise SkipTest(f"{exe_path} is not installed")
 
-        exe = which(exe_path)
+        exe = which(exe_path, required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert f"version {self.spec.version}" in out
 

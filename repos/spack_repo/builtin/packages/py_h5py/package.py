@@ -97,6 +97,9 @@ class PyH5py(PythonPackage):
             if self.spec.satisfies("%oneapi@2023.0.0:"):
                 flags.append("-Wno-error=incompatible-function-pointer-types")
                 flags.append("-Wno-error=incompatible-pointer-types-discards-qualifiers")
+            elif self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=incompatible-pointer-types")
+                flags.append("-Wno-error=discarded-qualifiers")
         return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

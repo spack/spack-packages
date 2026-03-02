@@ -30,6 +30,7 @@ class Metkit(CMakePackage):
     variant("odb", default=False, description="Enable support for ODB data")
 
     depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("cmake@3.12:", type="build")
     depends_on("ecbuild@3.4:", type="build")
