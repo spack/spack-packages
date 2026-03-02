@@ -64,31 +64,6 @@ class Detray(CMakePackage):
     version("0.76.0", sha256="affa0e28ca96d168e377ba33642e0b626aacdc79f9436233f5561006018f9b9e")
     version("0.75.3", sha256="1249d7398d1e534bd36b6f5a7d06a5e67adf6adeb8bca188d7e35490a675de7a")
     version("0.75.2", sha256="249066c138eac4114032e8d558f3a05885140a809332a347c7667978dbff54ee")
-    with default_args(deprecated=True):
-        version(
-            "0.74.2", sha256="9fd14cf1ec30477d33c530670e9fed86b07db083912fe51dac64bf2453b321e8"
-        )
-        version(
-            "0.73.0", sha256="f574016bc7515a34a675b577e93316e18cf753f1ab7581dcf1c8271a28cb7406"
-        )
-        version(
-            "0.72.1", sha256="6cc8d34bc0d801338e9ab142c4a9884d19d9c02555dbb56972fab86b98d0f75b"
-        )
-        version(
-            "0.71.0", sha256="2be2b3dac6f77aa8cea033eba841378dc3703ff93c99e4d05ea03df685e6d508"
-        )
-        version(
-            "0.70.0", sha256="14fa1d478d44d5d987caea6f4b365bce870aa8e140c21b802c527afa3a5db869"
-        )
-        version(
-            "0.69.1", sha256="7100ec86a47458a35f5943cd6c7da07c68b8c1c2f62d36d13b8bb50568d0abe5"
-        )
-        version(
-            "0.68.0", sha256="6d57835f22ced9243fbcc29b84ea4c01878a46bfa5910e320c933e9bf8e96612"
-        )
-        version(
-            "0.67.0", sha256="87b1b29f333c955ea6160f9dda89628490d85a9e5186c2f35f57b322bbe27e18"
-        )
 
     variant("csv", default=True, description="Enable the CSV IO plugin")
     _cxxstd_values = (
