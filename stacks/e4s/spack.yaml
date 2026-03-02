@@ -29,6 +29,8 @@ spack:
     lapack:
       require:
       - openblas
+    opengl:
+      buildable: false
     binutils:
       variants: +ld +gold +headers +libiberty ~nls
     hdf5:
