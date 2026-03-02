@@ -45,7 +45,6 @@ class Libxslt(CMakePackage, AutotoolsPackage):
     variant("python", default=False, description="Build Python bindings")
 
     depends_on("c", type="build")
-    depends_on("cmake@3.18:", when="@1.1.38:", type="build")
 
     depends_on("pkgconfig", type="build")
     depends_on("iconv")
