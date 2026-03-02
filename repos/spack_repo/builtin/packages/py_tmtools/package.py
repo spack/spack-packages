@@ -22,5 +22,5 @@ class PyTmtools(PythonPackage):
 
     depends_on("cxx", type="build")
     depends_on("py-setuptools@42:", type="build")
-    depends_on("py-pybind11@2.10.4:", type=("build", "run"))
+    depends_on("py-pybind11@2.10.4:2.10", type="build")
     depends_on("py-numpy", type=("build", "run"))
