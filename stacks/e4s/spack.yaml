@@ -87,9 +87,9 @@ spack:
   definitions:
   - cuda_specs:
     - amrex
-    - arborx ^kokkos +wrapper
+    - arborx ^kokkos
     - axom
-    - cabana ^kokkos +wrapper +cuda_lambda
+    - cabana ^kokkos +cuda_lambda
     - caliper
     - chai ^umpire ~shared
     - chapel
@@ -104,9 +104,9 @@ spack:
     - heffte
     - hpx
     - hypre
-    - kokkos +wrapper
-    - kokkos-kernels ^kokkos +wrapper
-    - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper
+    - kokkos
+    - kokkos-kernels
+    - kokkos-fft device_backend=cufft +tests
     - libceed
     - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard ^cusz
     - magma
@@ -316,6 +316,12 @@ spack:
           - ~rocm
           - +cuda
           - cuda_arch=80
+        kokkos:
+          require:
+          - ~rocm
+          - +cuda +wrapper
+          - cuda_arch=80
+          - target=x86_64_v3
 
   - group: "cuda-90"
     specs:
@@ -329,9 +335,9 @@ spack:
           - cuda_arch=80
         kokkos:
           require:
-          # TODO: CUDA build needs +wrapper, recipe fails at runtime raising InstallErrorr
           - ~rocm
-          - ~cuda
+          - +cuda +wrapper
+          - cuda_arch=90
           - target=x86_64_v3
 
   - group: rocm
