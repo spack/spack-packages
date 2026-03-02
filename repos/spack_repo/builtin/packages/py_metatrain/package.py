@@ -51,7 +51,7 @@ class PyMetatrain(PythonPackage):
         depends_on("py-python-hostlist")
         depends_on("py-tqdm")
         depends_on("py-vesin")
-        depends_on("py-vesin@0.5.2:", when="@2026.2")
+        depends_on("py-vesin@0.5.2:", when="@2026.2:")
 
     # soap-bpnn
     # pyproject.toml [project.optional-dependencies] soap-bpnn
