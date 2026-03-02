@@ -69,7 +69,7 @@ class Apptainer(SingularityBase):
     depends_on("go@1.20:", when="@1.3:")
     depends_on("go@1.22.7:", when="@1.4:")
     depends_on("go@1.23.6:", when="@1.4.1:")
-    depends_on("gocryptfs@2.4:", type="run", when="@1.3:")
+    depends_on("gocryptfs@2.6.1:", type="run", when="@1.3:")
     depends_on("squashfuse", type="run")
     depends_on("squashfuse@0.5.1:", type="run", when="@1.3:")
     depends_on("fuse-overlayfs", type="run")
