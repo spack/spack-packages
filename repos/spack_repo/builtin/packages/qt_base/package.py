@@ -39,6 +39,8 @@ class QtPackage(CMakePackage):
     # Default dependencies for all qt-* components
     generator("ninja")
     depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.19:", when="@6.8.1:", type="build")
+    depends_on("cmake@3.22:", when="@6.9.0:", type="build")
     depends_on("pkgconfig", type="build", when="platform=linux")
     depends_on("python", type="build")
 
