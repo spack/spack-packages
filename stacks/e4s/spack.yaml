@@ -34,7 +34,12 @@ spack:
     hdf5:
       variants: +fortran +hl +shared
     libfabric:
-      variants: fabrics=sockets,tcp,udp,rxm
+      require:
+      # TODO: libfabric needs to build on a GPU node with CUDA runtime available to build +cuda
+      # configure: error: CUDA support requested but CUDA runtime not available.
+      - ~cuda
+      - fabrics=sockets,tcp,udp,rxm
+      - target=x86_64_v3
     libunwind:
       variants: +pic +xz
     openblas:
@@ -51,28 +56,28 @@ spack:
     mpich:
       require:
       - '~wrapperrpath ~hwloc'
-      - target=x86_64_v3 %gcc
+      - target=x86_64_v3
     tbb:
       require:
       - intel-tbb
     vtk-m:
       require:
       - +examples
-      - target=x86_64_v3 %gcc
+      - target=x86_64_v3
     visit:
       require:
       - "~gui"
-      - target=x86_64_v3 %gcc
+      - target=x86_64_v3
     paraview:
       # Don't build GUI support or GLX rendering for HPC/container deployments
       require:
       - +examples
       - "~qt ^[virtuals=gl] osmesa" # Headless
-      - target=x86_64_v3 %gcc
+      - target=x86_64_v3
     boost:
       require:
       - cxxstd=17
-      - target=x86_64_v3 %gcc
+      - target=x86_64_v3
 
   definitions:
   - cuda_specs:
