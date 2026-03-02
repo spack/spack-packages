@@ -1,7 +1,4 @@
-# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
-#
-# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
@@ -32,7 +29,7 @@ class FastqScan(MakefilePackage):
 
     @property
     def build_targets(self):
-        return ["CXX={0}".format(self.compiler.cxx), "all"]
+        return [f"CXX={self.compiler.cxx}", "all"]
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
