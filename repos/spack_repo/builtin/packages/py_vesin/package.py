@@ -18,6 +18,7 @@ class PyVesin(PythonPackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.5.1", sha256="86afd7641319b21187155a8d9585bc134e79536897f28c62b69476627c1020ae")
     version("0.5.0", sha256="432322e51b214d6e13b056677424f54b250fb181bd726afb9b2d5b1b6fdbdb84")
     version("0.4.2", sha256="46bcfdc4d56490d43a6d8c5882b900b5cf49cff68b6ffb78d442ff85d0104d4f")
     version("0.3.7", sha256="52c11ac0ba775c228f06779877cf8641854edab7ea59036093ef5e8447379de0")
