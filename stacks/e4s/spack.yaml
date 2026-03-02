@@ -57,6 +57,11 @@ spack:
       require:
       - '~wrapperrpath ~hwloc'
       - target=x86_64_v3
+    suite-sparse:
+      require:
+        # TODO: CUDA build is broken as of 9be63a7775253884e12c9f3b6c0cec3ca86d252e
+        # make: *** SuiteSparse_GPURuntime: No such file or directory.  Stop
+        - ~cuda
     tbb:
       require:
       - intel-tbb
