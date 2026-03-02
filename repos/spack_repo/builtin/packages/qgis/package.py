@@ -237,7 +237,7 @@ class Qgis(CMakePackage):
         sip_line = f'sip-include-dirs = ["{sip_inc_dir}"]'
 
         # Recent QGis have added a @sipabi@ that expands to the [tool.sip.project] header. The simple patch to add the path
-        # results in a duplicate header which causes a build failure. The middle case is probably overkill but it is 
+        # results in a duplicate header which causes a build failure. The middle case is probably overkill but it is
         # kept as a just in (edge) case
 
         # if it's already there, do nothing
