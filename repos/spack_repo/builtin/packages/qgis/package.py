@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+from pathlib import Path
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
-from pathlib import Path
-import re
 
 class Qgis(CMakePackage):
     """QGIS is a free and open-source cross-platform desktop geographic
@@ -169,7 +170,6 @@ class Qgis(CMakePackage):
     depends_on("py-jinja2", type="run")
     depends_on("py-pygments", type="run")
     depends_on("py-packaging", type="run", when="@3.44:")
-
 
     # optionals
     depends_on("postgresql@8:", when="+postgresql")  # for PostGIS support
