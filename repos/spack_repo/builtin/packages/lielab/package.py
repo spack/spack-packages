@@ -15,6 +15,7 @@ class Lielab(CMakePackage):
     maintainers("msparapa")
     license("MIT")
 
+    version("0.5.2", sha256="D98DDF93FA317165891B69944C5FFAB48C3955FD7C1C9428B06A0452F8FCA453")
     version("0.5.1", sha256="5a7545a675f630418634d9827e8db5035949bf8ae165f17600c03bf5a6da35af")
 
     def url_for_version(self, version):
@@ -23,6 +24,9 @@ class Lielab(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.23:", type="build")
     depends_on("eigen@5.0.0:6.0.0", type="build")
+    depends_on("fmt@12.1.0:", type="build", when="@0.5.2:")
+
+    conflicts("%gcc@:10.2") # Fails on 8.5, works on 10.3.
 
     variant("pic", default=True, description="Position independent code (-fPIC)")
     variant(
@@ -33,12 +37,14 @@ class Lielab(CMakePackage):
         sticky=True,
         description="C++ standard",
     )
+    variant("with_assertions", default=True, descriptions="Build with assertions included.")
 
     def cmake_args(self):
         args = []
         args.append("-DLIELAB_INSTALL_LIBRARY=TRUE")
         args.append("-DLIELAB_BUILD_TESTS=FALSE")
         args.append("-DLIELAB_BUILD_PYTHON=FALSE")
+        args.append(self.define_from_variant("LIELAB_WITH_ASSERTIONS", "with_assertions"))
 
         args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
