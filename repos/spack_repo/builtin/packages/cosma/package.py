@@ -23,7 +23,7 @@ class Cosma(CMakePackage):
     # note: The default archives produced with github do not have the archives
     #       of the submodules.
     version("master", branch="master", submodules=False)
-    version("2.8.1", sha256="c8b39d0a08178c3a55824fff6e37084dff3115dbcc8a64467fb0173580b1bf67")
+    version("2.8.1", sha256="563bb0785dca32ede780a05ad424db9b6d7f473a909ca423931b96204e2b5d9c")
     version("2.8.0", sha256="fd5a0b64c2858858eac46d1a897d51d844cf68f303b480f2e2b3f5a04eb83b5c")
     version("2.7.1", sha256="ef9acaecf0c073cb3358ea6fed07388811ba2f47469ba3803eefff956403f50e")
     version("2.7.0", sha256="f4775d18379539d7bb5053bff8acb4e13d6ed31a9677f498d9099a7500488789")
