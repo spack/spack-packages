@@ -137,6 +137,7 @@ class Mvapich2(MpichEnvironmentModifications, AutotoolsPackage):
     depends_on("fortran", type="build")
 
     depends_on("automake@1.15", type="build")  # needed for torque patch
+    depends_on("autoconf", type="build")
     depends_on("findutils", type="build")
     depends_on("bison", type="build")
     depends_on("pkgconfig", type="build")

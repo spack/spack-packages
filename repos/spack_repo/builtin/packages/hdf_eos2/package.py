@@ -17,48 +17,46 @@ class HdfEos2(AutotoolsPackage):
     """
 
     homepage = "https://hdfeos.org"
-    # Starting with @3, download requires authentication.  So reverting
-    # to a manual download
-    url = "file://{0}/hdf-eos2-3.0-src.tar.gz".format(os.getcwd())
-    manual_download = True
+    url = "https://git.earthdata.nasa.gov/projects/DAS/repos/hdfeos"
 
-    # The download URLs for @2 versions are messing, and include sha256 checksum.
-    # Templates for url_for_version. 0 is sha256 checksum, 1 is filename
-    # This is just a template.  See version_list and url_for_version below
-    v2url = "https://git.earthdata.nasa.gov/rest/git-lfs/storage/DAS/hdfeos/{0}?response-content-disposition=attachment%3B%20filename%3D%22{1}%22%3B%20filename*%3Dutf-8%27%27{1}"
+    maintainers("climbfuji", "danrosen25")
 
-    maintainers("climbfuji")
-
-    # Crazy URL scheme, differing with each version, and including the
-    # sha256 checksum in the URL.  Yuck
-    # The data in version_list is used to generate versions and urls
-    # In basename expansions, 0 is raw version,
-    # 1 is for version with dots => underscores
+    # Archives are committed to a branch related to the version
+    # but the branch name and archive name are subject to change
+    # from version to version
     version_list = [
         {
             "version": "3.0",
-            "basename": "hdf-eos2-{0}-src.tar.gz",
+            "branch": "HDFEOS2_3.0",
+            "archive": "hdf-eos2-3.0-src.tar.gz",
             "sha256": "3a5564b4d69b541139ff7dfdad948696cf31d9d1a6ea8af290c91a4c0ee37188",
-            "can_auto_download": False,
         },
         {
             "version": "2.20v1.00",
+            "branch": "HDFEOS2.20",
+            "archive": "HDF-EOS2.20v1.00.tar.Z",
             "sha256": "cb0f900d2732ab01e51284d6c9e90d0e852d61bba9bce3b43af0430ab5414903",
-            "basename": "HDF-EOS{0}.tar.Z",
-            "can_auto_download": True,
+        },
+        {
+            "version": "2.19v1.00",
+            "branch": "HDFEOS2.19",
+            "archive": "HDF-EOS2.19v1.00.tar.Z",
+            "sha256": "3fffa081466e85d2b9436d984bc44fe97bbb33ad9d8b7055a322095dc4672e31",
         },
         {
             "version": "2.19b",
+            "branch": "HDFEOS2.19",
+            "archive": "hdfeos2_19b.zip",
             "sha256": "a69993508dbf5fa6120bac3c906ab26f1ad277348dfc2c891305023cfdf5dc9d",
-            "basename": "hdfeos{1}.zip",
-            "can_auto_download": True,
+            "deprecated": True,
         },
     ]
 
     for vrec in version_list:
         ver = vrec["version"]
         sha256 = vrec["sha256"]
-        version(ver, sha256=sha256)
+        deprecated = vrec.get("deprecated", False)
+        version(ver, sha256=sha256, deprecated=deprecated)
 
     variant(
         "shared", default=True, description="Build shared libraries (can be used with +static)"
@@ -66,17 +64,20 @@ class HdfEos2(AutotoolsPackage):
     variant(
         "static", default=True, description="Build static libraries (can be used with +shared)"
     )
+    variant("fortran", default=False, description="Enable Fortran support")
 
     conflicts("~static", when="~shared", msg="At least one of +static or +shared must be set")
+    conflicts("%gcc@14:", when="@:2", msg="GCC 14+ is only supported for version 3.0+")
 
     depends_on("c", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     # Build dependencies
     depends_on("hdf")
     # Because hdf always depends on zlib and jpeg in spack, the tests below in configure_args
     # (if self.spec.satisfies("^jpeg"):) always returns true and hdf-eos2 wants zlib and jpeg, too.
-    depends_on("zlib-api")
-    depends_on("jpeg")
+    depends_on("zlib-api", when="^hdf")
+    depends_on("jpeg", when="^hdf")
     depends_on("szip", when="^hdf +szip")
 
     # Fix some problematic logic in stock configure script
@@ -93,13 +94,9 @@ class HdfEos2(AutotoolsPackage):
     def url_for_version(self, version):
         vrec = [x for x in self.version_list if x["version"] == version.dotted.string]
         if vrec:
-            fname = vrec[0]["basename"].format(version.dotted, version.underscored)
-            sha256 = vrec[0]["sha256"]
-            can_auto_download = vrec[0].get("can_auto_download", False)
-            if can_auto_download:
-                myurl = self.v2url.format(sha256, fname)
-            else:
-                myurl = self.url
+            branch = vrec[0]["branch"]
+            archive = vrec[0]["archive"]
+            myurl = f"{self.url}/raw/{archive}?at=refs%2Fheads%2F{branch}"
             return myurl
         else:
             sys.exit(
@@ -125,7 +122,12 @@ class HdfEos2(AutotoolsPackage):
     def flag_handler(self, name, flags):
         if name == "cflags":
             flags.append(self.compiler.cc_pic_flag)
-            if self.spec.compiler.name in ["apple-clang", "oneapi"]:
+            if (
+                self.spec.satisfies("%clang@16:")
+                or self.spec.satisfies("%apple-clang@15:")
+                or self.spec.satisfies("%oneapi")
+                or self.spec.satisfies("%gcc@14:")
+            ):
                 flags.append("-Wno-error=implicit-function-declaration")
                 flags.append("-Wno-error=implicit-int")
 
@@ -140,6 +142,18 @@ class HdfEos2(AutotoolsPackage):
             extra_ldflags.append(tmp)
         # Set LDFLAGS
         env.set("LDFLAGS", " ".join(extra_ldflags))
+        # Use h4cc compiler wrapper and flags
+        if self.spec.satisfies("^hdf"):
+            env.set("CC", os.path.join(self.spec["hdf"].prefix.bin, "h4cc"))
+            if (
+                self.spec.satisfies("%clang@16:")
+                or self.spec.satisfies("%apple-clang@15:")
+                or self.spec.satisfies("%oneapi")
+                or self.spec.satisfies("%gcc@14:")
+            ):
+                env.set(
+                    "CFLAGS", "-Wno-error=implicit-function-declaration -Wno-error=implicit-int"
+                )
 
     def configure_args(self):
         extra_args = []
@@ -152,17 +166,27 @@ class HdfEos2(AutotoolsPackage):
         extra_args.extend(self.enable_or_disable("shared"))
         extra_args.extend(self.enable_or_disable("static"))
 
+        # Set fortran
+        extra_args.extend(self.enable_or_disable("fortran"))
+
         # Provide config args for dependencies
-        extra_args.append("--with-hdf4={0}".format(self.spec["hdf"].prefix))
+        if self.spec.satisfies("^hdf"):
+            tmp = self.spec["hdf"].libs.directories
+            if tmp:
+                extra_args.append("--with-hdf4={0}".format(tmp[0]))
         if self.spec.satisfies("^jpeg"):
             # Allow handling whatever provider of jpeg are using
             tmp = self.spec["jpeg"].libs.directories
             if tmp:
-                tmp = tmp[0]
-                extra_args.append("--with-jpeg={0}".format(tmp))
+                extra_args.append("--with-jpeg={0}".format(tmp[0]))
         if self.spec.satisfies("^szip"):
-            extra_args.append("--with-szlib={0}".format(self.spec["szip"].prefix))
-        if self.spec.satisfies("^zlib"):
-            extra_args.append("--with-zlib={0}".format(self.spec["zlib-api"].prefix))
+            tmp = self.spec["szip"].libs.directories
+            if tmp:
+                extra_args.append("--with-szlib={0}".format(tmp[0]))
+        if self.spec.satisfies("^zlib-api"):
+            # Allow handling whatever provider of zlib-api are using
+            tmp = self.spec["zlib-api"].libs.directories
+            if tmp:
+                extra_args.append("--with-zlib={0}".format(tmp[0]))
 
         return extra_args

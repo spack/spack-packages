@@ -28,6 +28,8 @@ class PyTensorflowMetadata(PythonPackage):
     version("1.5.0", sha256="f0ec8aaf62fd772ef908efe4ee5ea3bc0d67dcbf10ae118415b7b206a1d61745")
 
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
         depends_on("bazel@6.5:", when="@1.17.1:")
         depends_on("bazel@0.24.1:")
         depends_on("py-setuptools")

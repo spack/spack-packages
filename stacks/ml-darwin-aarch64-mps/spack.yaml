@@ -6,20 +6,22 @@ spack:
 
   packages:
     all:
-      target: ["aarch64"]
       require:
-      - target=aarch64
       - +mps
       - ~cuda
       - ~rocm
+      - target=m1
     mpi:
-      require: mpich
+      require:
+      - mpich
     openblas:
       require:
       - ~fortran
-      - target=aarch64
+      - target=m1
     python:
-      require: "@3.13:"
+      require:
+      - "@3.13:"
+      - target=m1
 
   specs:
   # Hugging Face
@@ -30,7 +32,7 @@ spack:
   - py-jaxlib
 
   # Keras
-  # - py-keras backend=tensorflow
+  - py-keras backend=tensorflow
   - py-keras backend=jax
   - py-keras backend=torch
 
@@ -60,10 +62,10 @@ spack:
   - py-tensorboardx
 
   # TensorFlow
-  # - py-tensorflow
-  # - py-tensorflow-datasets
-  # - py-tensorflow-metadata
-  # - py-tensorflow-probability
+  - py-tensorflow
+  - py-tensorflow-datasets
+  - py-tensorflow-metadata
+  # - py-tensorflow-probability # conflict with macos tahoe
 
   # XGBoost
   - py-xgboost

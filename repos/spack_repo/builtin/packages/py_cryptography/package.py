@@ -16,6 +16,7 @@ class PyCryptography(PythonPackage):
 
     license("Apache-2.0")
 
+    version("46.0.3", sha256="a8b17438104fed022ce745b362294d9ce35b4c2e45c1d958ad4a4b019285f4a1")
     version("45.0.5", sha256="72e76caa004ab63accdf26023fccd1d087f6d90ec6048ff33ad0445abf7f605a")
     version("43.0.3", sha256="315b9001266a492a6ff443b61238f956b214dbec9910a081ba5b6646a055a805")
     version("43.0.1", sha256="203e92a75716d8cfb491dc47c79e17d0d9207ccffcbcb35f598fbe463ae3444d")
@@ -32,11 +33,13 @@ class PyCryptography(PythonPackage):
     depends_on("python@:3.12", when="@:42", type=("build", "run"))
     # distutils required in version <= 40
     depends_on("python@:3.11", when="@:40", type=("build", "run"))
+
+    depends_on("py-maturin@1.9.4:1", when="@46:", type="build")
+    depends_on("py-maturin@1.8.6:1", when="@45", type="build")
+    depends_on("py-maturin@1", when="@43:44", type="build")
     depends_on("py-setuptools@61.0:", when="@41:", type="build")
     depends_on("py-setuptools@40.6:60.8,60.9.1:", when="@37:", type="build")
     depends_on("py-setuptools@40.6:", when="@:36", type="build")
-    depends_on("py-maturin@1.8.6:1", when="@45:", type="build")
-    depends_on("py-maturin@1", when="@43:44", type="build")
     with when("@:42"):
         depends_on("py-setuptools-rust@1.7.0:", when="@42", type=("build", "run"))
         depends_on("py-setuptools-rust@0.11.4:", type="build")
@@ -52,6 +55,7 @@ class PyCryptography(PythonPackage):
 
     depends_on("py-cffi@1.14:", when="@45:", type=("build", "run"))
     depends_on("py-cffi@1.12:", type=("build", "run"))
+    depends_on("py-typing-extensions@4.13.2:", when="@46: ^python@:3.10", type=("build", "run"))
 
     # from https://cryptography.io/en/latest/installation/
     depends_on("openssl@3:", when="@42:")

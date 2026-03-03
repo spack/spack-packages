@@ -22,13 +22,6 @@ class Relion(CMakePackage, CudaPackage):
     license("GPL-2.0-only")
 
     version("5.0.1", sha256="3253230cd4b3d9633a5cac906937039b9971eb9430c3e2d838473777fb811f4c")
-    # The 5.0.0 has a few bugs causing it not to fully function in Spack
-    version(
-        "5.0.0",
-        sha256="800ad0c0aa778cbf584fcf8986976645f2b25d677a80f168e5397975b9db6e47",
-        deprecated=True,
-    )
-
     version("4.0.1", sha256="7e0d56fd4068c99f943dc309ae533131d33870392b53a7c7aae7f65774f667be")
     version("4.0.0", sha256="0987e684e9d2dfd630f1ad26a6847493fe9fcd829ec251d8bc471d11701d51dd")
 
@@ -87,6 +80,8 @@ class Relion(CMakePackage, CudaPackage):
         description="Have external motioncor2 available in addition to Relion builtin",
     )
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("mpi")
     depends_on("cmake@3:", type="build")
     depends_on("binutils@2.32:", type="build")
@@ -188,3 +183,6 @@ class Relion(CMakePackage, CudaPackage):
                 r'\1 "{0}"'.format(join_path(self.spec["motioncor2"].prefix.bin, "MotionCor2")),
                 join_path("src", "pipeline_jobs.h"),
             )
+
+    def setup_run_environment(self, env):
+        env.set("RELION_CTFFIND_EXECUTABLE", self.spec["ctffind"].prefix.bin.ctffind)

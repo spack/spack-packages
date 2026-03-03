@@ -80,7 +80,7 @@ class PyPsyclone(PythonPackage):
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def check_build(self):
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         # Limit pytest to search inside the build tree
         with working_dir("src"):
             pytest()

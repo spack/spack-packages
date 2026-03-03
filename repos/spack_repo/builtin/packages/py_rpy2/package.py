@@ -46,6 +46,9 @@ class PyRpy2(PythonPackage):
     # optional variant
     depends_on("py-ipython", type=("build", "run"), when="+ipython")
 
+    # https://github.com/rpy2/rpy2/issues/1173#issuecomment-2844717767
+    depends_on("py-ipython@:8", type=("build", "run"), when="+ipython @3.5.17")
+
     # optional variant
     depends_on("py-numpy@1.26:", type=("build", "run"), when="+numpy ^python@3.9:")
 
@@ -53,4 +56,6 @@ class PyRpy2(PythonPackage):
     depends_on("py-pandas", type=("build", "run"), when="+pandas ^python@:3.9")
     depends_on("py-pandas@1.3.5:", type=("build", "run"), when="+pandas ^python@3.10:")
 
+    # not explicitly listed but required
     depends_on("iconv")
+    depends_on("zstd")

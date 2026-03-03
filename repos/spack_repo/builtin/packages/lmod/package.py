@@ -1,6 +1,7 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from glob import glob
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -19,11 +20,12 @@ class Lmod(AutotoolsPackage):
     library and header files can be found.
     """
 
-    homepage = "https://www.tacc.utexas.edu/research-development/tacc-projects/lmod"
-    url = "https://github.com/TACC/Lmod/archive/8.5.6.tar.gz"
+    homepage = "https://tacc.utexas.edu/research/tacc-research/lmod"
+    url = "https://github.com/TACC/Lmod/archive/9.0.5.tar.gz"
 
     license("MIT")
 
+    version("9.0.5", sha256="7d5b5db9f252dff7469d3a5369b7b58dbbfd4b3a879a97ee21954f26e04b13e3")
     version("8.7.67", sha256="50c8d265e47eb6661ebe3af13df819b35db84cda3474ea0a7427c33b5767aaab")
     version("8.7.55", sha256="f85ed9b55c23afb563fa99c7201037628be016e8d88a1aa8dba4632c0ab450bd")
     version("8.7.37", sha256="171529152fedfbb3c45d27937b0eaa1ee62b5e5cdac3086f44a6d56e5d1d7da4")
@@ -58,26 +60,20 @@ class Lmod(AutotoolsPackage):
     version("6.4.1", sha256="a260b4e42269a80b517c066ba8484658362ea095e80767a2376bbe33d9b070a5")
     version("6.3.7", sha256="55ddb52cbdc0e2e389b3405229336df9aabfa582c874f5df2559ea264e2ee4ae")
 
-    depends_on("c", type="build")  # generated
-
-    depends_on("lua+shared@5.1:")
-    depends_on("lua-luaposix", type=("build", "run"))
-    depends_on("lua-luafilesystem", type=("build", "run"))
-    depends_on("tcl", type=("build", "link", "run"))
-
-    depends_on("bc", type="build", when="@8.7.10:")
-
-    depends_on("pkgconfig", type="build")
-
-    depends_on("procps", type="build")
-
-    # GNU sed is required instead of bsd sed on macOS
-    depends_on("sed", type="build", when="platform=darwin")
-
     variant("auto_swap", default=True, description="Auto swapping of compilers, etc.")
     variant(
         "redirect", default=False, description="Redirect messages to stdout (instead of stderr)"
     )
+
+    depends_on("c", type="build")
+    depends_on("pkgconfig", type="build")
+    depends_on("procps", type="build", when="platform=linux")
+    depends_on("sed", type="build")
+    depends_on("bc", type="build", when="@8.7.10:")
+    depends_on("tcl", type=("build", "link", "run"))
+    depends_on("lua+shared@5.1:")
+    depends_on("lua-luaposix", type=("build", "run"))
+    depends_on("lua-luafilesystem", type=("build", "run"))
 
     patch("fix_tclsh_paths.patch", when="@:6.4.3")
     patch("0001-fix-problem-with-MODULESHOME-and-issue-271.patch", when="@7.3.28:7.4.10")

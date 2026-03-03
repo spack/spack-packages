@@ -48,12 +48,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
     variant("java", default=False, description="Build support for java")
     variant("javascript", default=False, description="Build Javascript library")
     variant("nodejs", default=False, description="Build NodeJS library")
-    variant(
-        "python",
-        default=True,
-        description="Build support for python",
-        when="build_system=autotools",
-    )
+    variant("python", default=True, description="Build support for python")
 
     build_system("cmake", "autotools", default="autotools")
 

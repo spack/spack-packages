@@ -144,12 +144,19 @@ class PyMatplotlib(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    # This is required for the gcc lto wrapper which calls gmake
+    # Without this the spack installer doesn't know what to pass
+    # when building with the gnu jobserver
+    depends_on("gmake", type="build", when="%gcc")
+
     # https://matplotlib.org/stable/install/dependencies.html
     # Runtime dependencies
     # Mandatory dependencies
     depends_on("python@3.10:", when="@3.10:", type=("build", "link", "run"))
     depends_on("python@3.9:", when="@3.8:", type=("build", "link", "run"))
     depends_on("python@3.8:", when="@3.6:", type=("build", "link", "run"))
+    # Some kind of recursion error
+    depends_on("python@:3.13", when="@:3.10.3", type=("build", "link", "run"))
     # Python 3.12 removed SafeConfigParser, which was used up to matplotlib 3.5.0.
     depends_on("python@:3.11", when="@:3.4", type=("build", "link", "run"))
     depends_on("python", type=("build", "link", "run"))
@@ -247,12 +254,13 @@ class PyMatplotlib(PythonPackage):
 
     # Dependencies for building matplotlib
     # Setup dependencies
-    depends_on("py-meson-python@0.13.1:0.16", when="@3.9:", type="build")
+    depends_on("py-meson-python@0.13.1:", when="@3.9:", type="build")
     depends_on("ninja@1.8.2:", when="@3.9:", type="build")
     depends_on("py-pybind11@2.13.2:", when="@3.10:", type=("build", "link"))
     depends_on("py-pybind11@2.6:", when="@3.7:", type=("build", "link"))
     depends_on("py-setuptools-scm@7:", when="@3.6:", type="build")
     depends_on("py-setuptools-scm@4:6", when="@3.5", type="build")
+    conflicts("py-meson-python@0.17")
 
     # Historical dependencies
     depends_on("py-certifi@2020.6.20:", when="@3.3.1:3.8", type="build")
@@ -297,7 +305,6 @@ class PyMatplotlib(PythonPackage):
     def config_settings(self, spec, prefix):
         return {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 "-Dsystem-freetype": True,
                 "-Dsystem-qhull": True,
