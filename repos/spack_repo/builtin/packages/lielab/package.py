@@ -15,7 +15,7 @@ class Lielab(CMakePackage):
     maintainers("msparapa")
     license("MIT")
 
-    version("0.5.2", sha256="D98DDF93FA317165891B69944C5FFAB48C3955FD7C1C9428B06A0452F8FCA453")
+    version("0.5.2", sha256="d98ddf93fa317165891b69944c5ffab48c3955fd7c1c9428b06a0452f8fca453")
     version("0.5.1", sha256="5a7545a675f630418634d9827e8db5035949bf8ae165f17600c03bf5a6da35af")
 
     def url_for_version(self, version):
