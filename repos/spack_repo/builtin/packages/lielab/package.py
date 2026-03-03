@@ -26,7 +26,7 @@ class Lielab(CMakePackage):
     depends_on("eigen@5.0.0:6.0.0", type="build")
     depends_on("fmt@12.1.0:", type="build", when="@0.5.2:")
 
-    conflicts("%gcc@:10.2") # Fails on 8.5, works on 10.3.
+    conflicts("%gcc@:10.2")  # Fails on 8.5, works on 10.3.
 
     variant("pic", default=True, description="Position independent code (-fPIC)")
     variant(
