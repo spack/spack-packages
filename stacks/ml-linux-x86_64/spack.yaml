@@ -113,7 +113,6 @@ spack:
     - $jax_specs
     - matrix:
       - [$keras_specs]
-      exclude:
       - py-keras backend=torch
     - $torch_specs
     - $scikit_learn_specs
