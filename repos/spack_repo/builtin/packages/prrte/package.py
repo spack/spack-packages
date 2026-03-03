@@ -24,7 +24,10 @@ class Prrte(AutotoolsPackage):
     license("BSD-3-Clause-Open-MPI")
 
     version("develop", branch="master")
+    version("4.1.0", sha256="285ad62b670075708b9fcfe14c54baa599733bc274d10502a82e8eebba0b7c70")
     version("4.0.0", sha256="3c2ec961e0ba0c99128c7bf3545f4789d55a85a70ce958e868ae5e3db6ed4de4")
+    version("3.0.13", sha256="635a546b3d3cfa587f4122bfaa0038df07b56381ffd649e57b089893712fa231")
+    version("3.0.12", sha256="5ee344c1ef915e48d93c5c7bb77f0a7d47f3e4aec9bc5069e67d1dccadd91968")
     version("3.0.11", sha256="37af5a82d333a54c0bac358f06c194427b7dbfa7b8b85f2ddd1145acf71cfdd4")
     version("3.0.10", sha256="f5525d88937a5664ab5248a7c05e9ee51389937cd0993398e8270ed5cf53d638")
     version("3.0.9", sha256="29766b5c81faa6320625ab0670a0b24b2b75f5cf1abe4aa7f3bad56487a6a7e1")
@@ -45,6 +48,7 @@ class Prrte(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("pmix")
+    depends_on("pmix@6.1:", when="@4.1:")
     depends_on("pmix@6:", when="@4:")
     depends_on("pmix@:5", when="@:3")
     # NOTE: prrte 3.0.1 requires pmix 4.2.4

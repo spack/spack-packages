@@ -7,6 +7,8 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.1.10": "a221154d789d7c03ba2e06da9653301fb1954f92d9c2608e8c19fd33dde84d2d",
+    # 0.1.9 is skipped because it is partially broken
     "0.1.8": "8bb19a487d112ca6fe73a75fd28440e35b29f1d599a36fc41dc0f05fca783353",
     "0.1.7": "bd8cc1638e5e2bb14f9db57c634bb9794b6530796041a698cb8b47d7ad67c9ab",
     "0.1.6": "cb1a966bd69e13234b02289f984705ecdbf5eb3cbcb050c1e103741adc708d50",
@@ -36,6 +38,7 @@ class PyMetatomicTorch(PythonPackage):
     # python/metatomic_torch/setup.py
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("py-vesin", type=("build", "run"))
+    depends_on("py-vesin@0.5.1:", type=("build", "run"), when="@0.1.10:")
     depends_on("py-metatensor-torch@0.8.0:0.8", type=("build", "run"), when="@0.1.4:")
     depends_on("py-metatensor-torch@0.7.0:0.7", type=("build", "run"), when="@0.1.3")
     depends_on("py-metatensor-operations@0.4.0:0.4", type=("build", "run"), when="@0.1.6:")

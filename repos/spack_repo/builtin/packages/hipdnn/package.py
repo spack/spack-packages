@@ -23,6 +23,7 @@ class Hipdnn(CMakePackage):
 
     license("MIT")
 
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -46,7 +47,7 @@ class Hipdnn(CMakePackage):
     depends_on("spdlog")
     depends_on("googletest")
 
-    for ver in ["7.1.1"]:
+    for ver in ["7.1.1", "7.2.0"]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -67,6 +68,13 @@ class Hipdnn(CMakePackage):
             "projects/hipdnn/cmake/ClangToolChain.cmake",
             string=True,
         )
+        if self.spec.satisfies("@7.2:"):
+            filter_file(
+                r"${ROCM_PATH}${DEFAULT_ROCM_LLVM_ROOT}",
+                self.spec["llvm-amdgpu"].prefix,
+                "projects/hipdnn/cmake/ClangToolChain.cmake",
+                string=True,
+            )
 
     @classmethod
     def determine_version(cls, lib):
@@ -108,8 +116,12 @@ class Hipdnn(CMakePackage):
             ),
             self.define("HIP_DNN_SPDLOG_INCLUDE_DIR", "{0}/include".format(spec["spdlog"].prefix)),
             self.define("HIPDNN_NO_DOWNLOAD", "ON"),
-            self.define("HIP_DNN_SKIP_TESTS", "ON"),
+            self.define("HIP_DNN_SKIP_TESTS", not self.run_tests),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+        if spec.satisfies("@7.2:"):
+            args.append(self.define("CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT", "OFF"))
+            args.append(self.define("CMAKE_MAKE_PROGRAM", spec["ninja"].prefix.bin.ninja))
+            args.append(self.define("ROCM_LLVM_BIN_DIR", spec["llvm-amdgpu"].prefix.bin))
         return args

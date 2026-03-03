@@ -79,6 +79,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi@3.1:", when="+mpi")
 
     depends_on("rocthrust", when="+rocm")
+    # https://github.com/ginkgo-project/ginkgo/issues/1983
+    depends_on("rocthrust@:7.1", when="@:1.11 +rocm")
     depends_on("hipsparse", when="+rocm")
     depends_on("hipblas", when="+rocm")
     depends_on("rocrand", when="+rocm")
@@ -89,8 +91,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("rocprim", when="+rocm")
     depends_on("hip", when="+rocm")
     depends_on("hwloc@2.1:", when="+hwloc")
-    depends_on("papi@master+sde", when="+sde @:1.10.0")
-    depends_on("papi@7.1.0: +sde", when="+sde @1.11.0:")
+    depends_on("papi@7.1.0: +sde", when="+sde")
 
     depends_on("googletest", type="test")
     depends_on("numactl", type="test", when="+hwloc")

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
@@ -71,6 +71,8 @@ class ComposableKernel(CMakePackage):
     depends_on("pkgconfig", type="build")
     depends_on("cmake@3.16:", type="build")
 
+    generator("ninja")
+
     for ver in [
         "7.2.0",
         "7.1.1",
@@ -137,11 +139,3 @@ class ComposableKernel(CMakePackage):
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("BUILD_DEV", "OFF"))
         return args
-
-    def build(self, spec, prefix):
-        with working_dir(self.build_directory):
-            # only instances is necessary to build and install
-            if self.spec.satisfies("@5.6.0:"):
-                make()
-            else:
-                make("instances")
