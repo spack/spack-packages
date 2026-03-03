@@ -37,7 +37,7 @@ class Lielab(CMakePackage):
         sticky=True,
         description="C++ standard",
     )
-    variant("with_assertions", default=True, descriptions="Build with assertions included.")
+    variant("with_assertions", default=True, description="Build with assertions included.")
 
     def cmake_args(self):
         args = []
