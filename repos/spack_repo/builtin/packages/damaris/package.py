@@ -1,9 +1,8 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
-from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
@@ -19,9 +18,10 @@ class Damaris(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.13.0", tag="v1.13.0", commit="22cea534be36d49e68c78f553d72426bdc8da013")
     version("1.12.1", tag="v1.12.1", commit="34473ed117445f97a26091890f8ffd111a1d8b9c")
     version("1.12.0", tag="v1.12.0", commit="62599496ea208788530a952fdf0037495a6b6270")
-    version("1.11.1", tag="v1.11.1", commit="a7954bbeed999bbf04305e2f6855bc7ddade78fd")
+    version("1.11.0", tag="v1.11.1", commit="a7954bbeed999bbf04305e2f6855bc7ddade78fd")
     version("1.11.0", tag="v1.11.0", commit="1aee2a8971584712d81323d77f9805448fe54947")
     version("1.10.0", tag="v1.10.0", commit="4e6b2641be1f7ded379312a8e7f4644ebe009ec9")
     version("1.9.2", tag="v1.9.2", commit="22c146b4b4ca047d4d36fd904d248e0280b3c0ea")
@@ -65,10 +65,6 @@ class Damaris(CMakePackage):
         description="Enables building of Python enabled Damaris library using Boost::python",
     )
     extends("python", when="+python")
-
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     depends_on("xsd")
     depends_on("xerces-c")
