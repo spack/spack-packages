@@ -184,11 +184,11 @@ class Vasp(MakefilePackage, CudaPackage):
                 make_include = join_path("arch", f"{include_string}{spec.compiler.name}_omp")
                 # if the above doesn't work, fallback to gnu
                 if not os.path.exists(make_include):
-                    make_include = join_path("arch", f"{include_string}.gnu_omp")
+                    make_include = join_path("arch", f"{include_string}gnu_omp")
             else:
                 make_include = join_path("arch", include_string + spec.compiler.name)
                 if not os.path.exists(make_include):
-                    make_include = join_path("arch", f"{include_string}.gnu")
+                    make_include = join_path("arch", f"{include_string}gnu")
             cpp_options.append('-DHOST=\\"LinuxGNU\\"')
 
         if spec.satisfies("+openmp"):
