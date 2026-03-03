@@ -2,9 +2,8 @@ spack:
   view: false
   include:
   - ../../.ci/gitlab/
-   #- path: https://raw.githubusercontent.com/DAV-SDK/davsdk/refs/tags/v0.2.0/spack/configs/packages.yaml
-  - path: https://raw.githubusercontent.com/DAV-SDK/davsdk/refs/pull/14/head/spack/configs/packages.yaml
-    sha256: "c59aa27f28151c163686f0825122ed63714e5bb9abf9cc4d824b6a0aafee1229"
+  - path: https://raw.githubusercontent.com/DAV-SDK/davsdk/refs/tags/v0.2.0/spack/configs/packages.yaml
+    sha256: "2da821c1b275912b16fbe7870d821345254ee8daebd3e0c490d9a8e0043c40d4"
 
   packages:
     all:
