@@ -65,7 +65,7 @@ class Vecgeom(CMakePackage, CudaPackage):
         conditional("11", "14", when="@:1.1"),
         "17",
         conditional("20", when="@1.2:"),
-        conditional("23", when="@2.0:"),
+        "23",
     )
     variant(
         "cxxstd",
