@@ -14,6 +14,9 @@ class Compadre(CMakePackage):
     which requires the inversion of small dense matrices. The result is a set
     of weights that provide the information needed for remap or entries that
     constitute the rows of some globally sparse matrix.
+
+    This recipe for the Compadre Toolkit does not allow for building
+    pycompadre, which is the purpose of the package py-pycompadre.
     """
 
     homepage = "https://github.com/sandialabs/compadre"
@@ -22,6 +25,7 @@ class Compadre(CMakePackage):
     maintainers("kuberry")
 
     version("master", branch="master")
+    version("1.7.0", sha256="00a70012927af21223fa1d760c80879f3bcab1a267098da6e95bc1bfe935260c")
     version("1.6.2", sha256="ad4122feed81e9f661ee86e73ad4bf53dbfb2470b389a4ea31e6c8d727c8bec8")
     version("1.6.0", sha256="5d937f85c2e64b50955beab1ac9f1083162f5239a5f13a40ef9a9c0e6ad216c9")
     version("1.5.0", sha256="b7dd6020cc5a7969de817d5c7f6c5acceaad0f08dcfd3d7cacfa9f42e4c8b335")
@@ -40,10 +44,12 @@ class Compadre(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.10:", type="build", when="@:1.4")
-    depends_on("cmake@3.16:", type="build", when="@1.5:")
+    depends_on("cmake@3.16:", type="build", when="@1.5:1.6")
+    depends_on("cmake@3.24:", type="build", when="@1.7:")
 
     depends_on("kokkos-kernels@3.3.01:4", when="@:1.5")
-    depends_on("kokkos-kernels@4:", when="@1.6:")
+    depends_on("kokkos-kernels@4:", when="@1.6")
+    depends_on("kokkos-kernels@4.5.1:", when="@1.7:")
 
     variant("mpi", default=False, description="Enable MPI support")
     depends_on("mpi", when="+mpi")
@@ -68,22 +74,25 @@ class Compadre(CMakePackage):
             [
                 "-DKokkosCore_PREFIX={0}".format(kokkos.prefix),
                 "-DKokkosKernels_PREFIX={0}".format(kokkos_kernels.prefix),
-                "-DCMAKE_CXX_COMPILER:STRING={0}".format(self["kokkos"].kokkos_cxx),
                 # Compadre_USE_PYTHON is OFF by default
                 "-DCompadre_USE_PYTHON=OFF",
             ]
         )
 
         if spec.variants["debug"].value == "0":
-            if spec.satisfies("^kokkos~cuda"):
-                options.append(
-                    "-DCMAKE_CXX_FLAGS:STRING=%s"
-                    % "' -Ofast -funroll-loops -march=native -mtune=native '"
-                )
+            if spec.satisfies("@:1.6"):
+                if spec.satisfies("^kokkos~cuda"):
+                    options.append(
+                        "-DCMAKE_CXX_FLAGS:STRING=%s"
+                        % "' -Ofast -funroll-loops -march=native -mtune=native '"
+                    )
+            else:
+                options.append("-DCMAKE_BUILD_TYPE:STRING=Release")
             options.append("-DCompadre_DEBUG:BOOL=OFF")
         else:
-            options.append("-DCMAKE_CXX_FLAGS:STRING='-g -O0'")
-            options.append("-DCMAKE_BUILD_TYPE:STRING=DEBUG")
+            if spec.satisfies("@:1.6"):
+                options.append("-DCMAKE_CXX_FLAGS:STRING='-g -O0'")
+            options.append("-DCMAKE_BUILD_TYPE:STRING=Debug")
             options.append("-DCompadre_DEBUG:BOOL=ON")
             if spec.variants["debug"].value == "2":
                 options.append("-DCompadre_EXTREME_DEBUG:BOOL=ON")
