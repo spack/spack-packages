@@ -60,7 +60,7 @@ class Ddc(CMakePackage):
 
     with when("+splines"):
         depends_on("ginkgo@1.8:1")
-        depends_on("kokkos-kernels@4.5.1:5", when="@:0.8")
+        depends_on("kokkos-kernels@4.5.1:4", when="@:0.8")
         depends_on("kokkos-kernels@4.5.1:5", when="@0.9:")
         depends_on("lapack")
 
