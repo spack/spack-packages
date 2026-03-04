@@ -16,7 +16,7 @@ class PyGestApi(PythonPackage):
 
     maintainers("shudson")
 
-    version("0.1.0", sha256="c5712721072fab8fdef7e976d4140db99729245f34ff36eefc0737c5197d25a8")
+    version("0.1", sha256="c5712721072fab8fdef7e976d4140db99729245f34ff36eefc0737c5197d25a8")
 
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-pydantic@2:", type=("build", "run"))
