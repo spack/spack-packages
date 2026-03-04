@@ -11,7 +11,7 @@ class PyGestApi(PythonPackage):
     """Standardized interface for generators in optimization libraries"""
 
     homepage = "https://gest-api.readthedocs.io"
-    pypi = "https://pypi.org/project/gest-api/"
+    pypi = "gest-api/gest_api-0.1.tar.gz"
     git = "https://github.com/campa-consortium/gest-api"
 
     maintainers("shudson")
