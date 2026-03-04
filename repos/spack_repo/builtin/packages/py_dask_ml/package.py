@@ -15,21 +15,31 @@ class PyDaskMl(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2025.1.0", sha256="b31caeb5f603f9537ffa34bd247e0e1fcefda7c007631260f8abdee49f89b1e1")
     version("1.8.0", sha256="8fc4ac3ec1915e382fb8cae9ff1ec9b5ac1bee0b6f4c6975d6e6cb7191a4a815")
 
     variant("docs", default=False, description="Build HTML documentation")
     variant("xgboost", default=False, description="Deploys XGBoost alongside Dask")
 
+    depends_on("python@3.10:", when="@2025.1.0:", type=("build", "run"))
     depends_on("python@3.6:", type=("build", "run"))
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools-scm", type="build")
+    depends_on("py-hatchling", when="@2024.4.1:", type="build")
+    depends_on("py-hatchling-vcs", when="@2024.4.1:", type="build")
+    depends_on("py-setuptools", when="@:2024.3.20", type="build")
+    depends_on("py-setuptools-scm", when="@:2024.3.20", type="build")
 
+    depends_on("py-dask+array+dataframe@2025.1.0:", when="@2025.1.0:", type=("build", "run"))
     depends_on("py-dask+array+dataframe@2.4.0:", type=("build", "run"))
+    depends_on("py-distributed@2025.1.0:", when="@2025.1.0:", type=("build", "run"))
     depends_on("py-distributed@2.4.0:", type=("build", "run"))
+    depends_on("py-numba@0.51:", when="@1.9:", type=("build", "run"))
     depends_on("py-numba", type=("build", "run"))
+    depends_on("py-numpy@1.24:", when="@2025.1.0:", type=("build", "run"))
     depends_on("py-numpy@1.17.3:", type=("build", "run"))
+    depends_on("py-pandas@2:", when="@2025.1.0:", type=("build", "run"))
     depends_on("py-pandas@0.24.2:", type=("build", "run"))
+    depends_on("py-scikit-learn@1.6.1:", when="@2025.1.0:", type=("build", "run"))
     depends_on("py-scikit-learn@0.23:", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-dask-glm@0.2.0:", type=("build", "run"))
@@ -57,9 +67,18 @@ class PyDaskMl(PythonPackage):
     depends_on("py-xgboost+dask", type=("build", "run"), when="+xgboost")
     depends_on("gmake", type="build")
 
-    patch("xgboost_dependency.patch")
+    patch("xgboost_dependency_v2024.3.20.patch", when="@2024.3.20:")
+    patch("xgboost_dependency.patch", when="@:2023.3.24")
 
     conflicts("+docs", when="target=aarch64: %gcc")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/d/dask-ml/dask{0}ml-{1}.tar.gz"
+        if version > Version("2024.4.3"):
+            sep = "_"
+        else:
+            sep = "-"
+        return url.format(sep, version)
 
     @run_after("install")
     def install_docs(self):
