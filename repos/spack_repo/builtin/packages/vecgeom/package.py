@@ -61,7 +61,12 @@ class Vecgeom(CMakePackage, CudaPackage):
     )
     version("1.1.20", sha256="e1c75e480fc72bca8f8072ea00320878a9ae375eed7401628b15cddd097ed7fd")
 
-    _cxxstd_values = (conditional("11", "14", when="@:1.1"), "17", conditional("20", when="@1.2:"))
+    _cxxstd_values = (
+        conditional("11", "14", when="@:1.1"),
+        "17",
+        conditional("20", when="@1.2:"),
+        conditional("23", when="@2.0:"),
+    )
     variant(
         "cxxstd",
         default="17",

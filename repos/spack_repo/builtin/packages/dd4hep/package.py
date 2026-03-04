@@ -107,7 +107,12 @@ class Dd4hep(CMakePackage):
         " some places in addtion to the debug build type",
     )
 
-    _cxxstd_values = (conditional("14", when="@:1.34"), "17", "20")
+    _cxxstd_values = (
+        conditional("14", when="@:1.34"),
+        "17",
+        "20",
+        conditional("23", when="@1.35:"),
+    )
     variant(
         "cxxstd",
         default="20",
