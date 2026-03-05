@@ -78,7 +78,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     sanity_check_is_dir = ["bin", join_path("lib", "chapel"), join_path("share", "chapel")]
     sanity_check_is_file = [join_path("bin", "chpl")]
 
-    patch("fix_spack_cc_wrapper_in_cray_prgenv.patch", when="@2.0.0:")
+    patch("fix_spack_cc_wrapper_in_cray_prgenv.patch", when="@2.0.0:2.7")
+    patch("fix_spack_cc_wrapper_in_cray_prgenv_2.8.patch", when="@2.8:")
     patch("fix_chpl_shared_lib_path.patch", when="@2.1.1:2.2 +python-bindings")  # PR 26388
     patch("fix_chpl_shared_lib_path_2.3.patch", when="@2.2.1:2.3 +python-bindings")  # PR 26388
     patch("fix_chpl_line_length.patch", when="@:2.3.0")  # PRs 26357, 26381, 26491
@@ -579,7 +580,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         depends_on("llvm@11:18", when="@2.1:2.2")
         depends_on("llvm@11:19", when="@2.3:2.4")
         depends_on("llvm@11:20", when="@2.5")
-        depends_on("llvm@14:20", when="@2.6:")
+        depends_on("llvm@14:20", when="@2.6:2.7")
+        depends_on("llvm@14:21", when="@2.8:")
 
     # Based on docs https://chapel-lang.org/docs/technotes/gpu.html#requirements
     depends_on("llvm@16:", when="llvm=spack +cuda ^cuda@12:")
