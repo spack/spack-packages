@@ -1,0 +1,58 @@
+Subject: [PATCH] remove_finding_thrust
+---
+Index: cuda/CMakeLists.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/cuda/CMakeLists.txt b/cuda/CMakeLists.txt
+--- a/cuda/CMakeLists.txt	(revision 4c77a5d826bd1597fd093f39c47688f8cc735690)
++++ b/cuda/CMakeLists.txt	(date 1770048537701)
+@@ -156,9 +156,6 @@
+         CUDA::cufft
+         nvtx::nvtx
+ )
+-if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 13)
+-    target_link_libraries(ginkgo_cuda PRIVATE Thrust)
+-endif()
+ # NVTX3 is header-only and requires dlopen/dlclose in static builds
+ target_link_libraries(ginkgo_cuda PUBLIC ginkgo_device ${CMAKE_DL_LIBS})
+ 
+Index: benchmark/CMakeLists.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/benchmark/CMakeLists.txt b/benchmark/CMakeLists.txt
+--- a/benchmark/CMakeLists.txt	(revision 4c77a5d826bd1597fd093f39c47688f8cc735690)
++++ b/benchmark/CMakeLists.txt	(date 1770048537691)
+@@ -40,9 +40,6 @@
+         cusparse_linops_${type}
+         PRIVATE Ginkgo::ginkgo CUDA::cudart CUDA::cublas CUDA::cusparse
+     )
+-    if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 13)
+-        target_link_libraries(cusparse_linops_${type} PRIVATE Thrust)
+-    endif()
+     ginkgo_compile_features(cusparse_linops_${type})
+ endfunction()
+ 
+Index: cmake/cuda.cmake
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/cmake/cuda.cmake b/cmake/cuda.cmake
+--- a/cmake/cuda.cmake	(revision 4c77a5d826bd1597fd093f39c47688f8cc735690)
++++ b/cmake/cuda.cmake	(date 1770048537709)
+@@ -14,11 +14,6 @@
+ 
+ find_package(NVTX REQUIRED)
+ 
+-if(CUDAToolkit_VERSION VERSION_GREATER_EQUAL 13)
+-    find_package(Thrust REQUIRED)
+-    thrust_create_target(Thrust)
+-endif()
+-
+ if(
+     CMAKE_CUDA_HOST_COMPILER
+     AND NOT CMAKE_CXX_COMPILER STREQUAL CMAKE_CUDA_HOST_COMPILER

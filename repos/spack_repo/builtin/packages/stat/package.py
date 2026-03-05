@@ -20,6 +20,16 @@ class Stat(AutotoolsPackage):
 
     version("develop", branch="develop")
     version(
+        "4.2.3",
+        sha256="cec7824e43d4c1f2cd24bdf074ef27b47d89ce9abda2b5bc37eed6396c4adf37",
+        url="https://github.com/LLNL/STAT/releases/download/v4.2.3/stat-4.2.3.tar.gz",
+    )
+    version(
+        "4.2.2",
+        sha256="e12b5d1d0be1e7e485b5a4baba901ce508102a63deb5d2c9ca045b63bf6463d6",
+        url="https://github.com/LLNL/STAT/releases/download/v4.2.2/stat-4.2.2.tar.gz",
+    )
+    version(
         "4.2.1",
         sha256="137529889ec5b5f9b9bae3a0864a385c5814e989d0074228dd3500e3e713801d",
         url="https://github.com/LLNL/STAT/releases/download/v4.2.1/stat-4.2.1.tar.gz",
@@ -63,8 +73,10 @@ class Stat(AutotoolsPackage):
     # we depend on mpa@master for bug fixes since launchmon 1.0.2
     depends_on("launchmon@1.2.0:")
     depends_on("mrnet")
-    depends_on("python")
+    depends_on("python@:3.11")
     depends_on("py-xdot@1.0", when="+gui")
+    depends_on("py-pygments", when="+gui")
+    depends_on("pango", when="+gui")
     depends_on("swig")
     depends_on("mpi", when="+examples")
 
@@ -86,6 +98,12 @@ class Stat(AutotoolsPackage):
             "--with-python=%s" % spec["python"].command.path,
             "--with-boost=%s" % spec["boost"].prefix,
         ]
+        if self.spec.satisfies("@4.2.2:") and spec["glib"].satisfies("@2.0:2.99"):
+            args.append(
+                "STAT_GSETTINGS_SCHEMA_DIR=%s"
+                % spec["gtkplus"].prefix.join("share/glib-2.0/schemas")
+            )
+
         if "+fgfs" in spec:
             args.append("--with-fgfs=%s" % spec["fast-global-file-status"].prefix)
         if "+dysect" in spec:

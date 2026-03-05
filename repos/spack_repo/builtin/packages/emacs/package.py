@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
@@ -131,7 +130,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
             args.append("--disable-ns-self-contained")
         else:
             args.append("--without-x")
-            if sys.platform == "darwin":
+            if self.spec.satisfies("platform=darwin"):
                 args.append("--without-ns")
 
         args.extend(self.with_or_without("native-compilation", variant="native"))

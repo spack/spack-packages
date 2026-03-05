@@ -27,6 +27,8 @@ class Garfieldpp(CMakePackage):
     variant("examples", default=False, description="Build garfield examples")
 
     version("master", branch="master")
+    version("2025.12", sha256="51b66fdd2bada636c4f586a08a1795aadf65de57a387970a5735945bca0bd394")
+    version("2025.01", sha256="0343aa4a5984ecfc52561c931c844658494afe768fbfedab65e7bfd7a7b503b3")
     version("5.0", sha256="453e83c2829f57046c471a691e7cd9630650a3c6a696f3be6e86bf2d5159e7b3")
     version("4.0", sha256="82bc1f0395213bd30a7cd854426e6757d0b4155e99ffd4405355c9648fa5ada3")
     version("3.0", sha256="c1282427a784658bc38b71c8e8cfc8c9f5202b185f0854d85f7c9c5a747c5406")
@@ -38,6 +40,12 @@ class Garfieldpp(CMakePackage):
     depends_on("root")
     depends_on("gsl")
     depends_on("geant4", when="+examples")
+
+    conflicts(
+        "^root@6.38:",
+        when="@:2025.01",
+        msg="Garfield++ <= 2025.01 is not compatible with ROOT >= 6.38",
+    )
 
     def cmake_args(self):
         args = [

@@ -24,6 +24,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.24.5", sha256="b538efa53ebfa5c7a1c3ac9783a57852a74ce4fb436f0ee4802564503c67269f")
     version("3.24.4", sha256="772bb47638f8335e4a5982c48947af250e58061100a817c9e1e2fdc50de2ce95")
     version("3.24.3", sha256="dde6f6ef2c5ef8c473a831d56a2e3192b5304c50c4cc5ded7f296ef6d86aaf13")
     version("3.24.2", sha256="105c77cbc7361c078e013448bcad2c57ce8081377e5a8e49b3cc213f1a0a4a63")
@@ -218,6 +219,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             "0001-Handle-the-hipsparse-api-changes-for-rocm-6.0.patch",
             when="@3.20.2:3.20.4 ^hipsparse@6.0",
         )
+
+    # segmentedmempool.hpp(178): error: expression must be a modifiable lvalue
+    # https://gitlab.com/petsc/petsc/-/merge_requests/8152
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+rocm")
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
 
     # These require +mpi
     mpi_msg = "Requires +mpi"
@@ -616,11 +622,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 options.append("--with-hip-arch={0}".format(hip_arch[0]))
             hip_pkgs = ["hipsparse", "hipblas", "hipsolver", "rocsparse", "rocsolver", "rocblas"]
             hip_ipkgs = hip_pkgs + ["rocthrust", "rocprim", "rocm-core"]
-            hip_lpkgs = hip_pkgs
+            hip_lpkgs = hip_pkgs + ["rocrand"]
             if spec.satisfies("^rocrand@5.1:"):
                 hip_ipkgs.extend(["rocrand"])
-            else:
-                hip_lpkgs.extend(["rocrand"])
             if spec.satisfies("^hipblas-common"):
                 hip_ipkgs.extend(["hipblas-common"])
             hip_inc = ""

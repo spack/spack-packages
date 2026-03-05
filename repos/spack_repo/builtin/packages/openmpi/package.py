@@ -77,6 +77,9 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Current
     version(
+        "5.0.10", sha256="0acecc4fc218e5debdbcb8a41d182c6b0f1d29393015ed763b2a91d5d7374cc6"
+    )  # libmpi.so.40.40.7
+    version(
         "5.0.9", sha256="dfb72762531170847af3e4a0f21d77d7b23cf36f67ce7ce9033659273677d80b"
     )  # libmpi.so.40.40.7
     version(
@@ -455,6 +458,9 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("configure.patch", when="@1.10.1")
     patch("fix_multidef_pmi_class.patch", when="@2.0.0:2.0.1")
     patch("fix-ucx-1.7.0-api-instability.patch", when="@4.0.0:4.0.2")
+    # see issue with gpfs #13313 on https://github.com/open-mpi/ompi and
+    # commit https://github.com/open-mpi/ompi/commit/556014c
+    patch("fix_fs_gpfs_file_set_info.patch", when="@4.1 +gpfs")
 
     # Vader Bug: https://github.com/open-mpi/ompi/issues/5375
     # Haven't release fix for 2.1.x

@@ -11,6 +11,124 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
+    # cuDNN 9.17.0
+    "9.17.0.29-13": {
+        "Linux-x86_64": "455f15075493c82a1a8850aae6120f3fa6f7e457cbef56c1cb2e0a618b5b509e",
+        "Linux-aarch64": "19be6d8f2b63a459e6758185c1e8feeddecdb4b56717dc4e4bbcfe30a0619b7d",
+    },
+    "9.17.0.29-12": {
+        "Linux-x86_64": "595de8d82e979beee74b079ca1249c6292f643f6543ee7f2df8499d51da159f0",
+        "Linux-aarch64": "8b6a90133a06e0b25bcdcd806a86f23a94b99837e2b8b46e3c8eddfdc1ff06cb",
+    },
+    # cuDNN 9.16.0
+    "9.16.0.29-13": {
+        "Linux-x86_64": "b524133292dd0a8ea0899a468005ea6332154929fffce337f8ea53b7bd217cfc",
+        "Linux-aarch64": "da7a66fbdb3c780b2e9e5dbcb4a15aa83f17030bf848daf98e6247e7982234cb",
+    },
+    "9.16.0.29-12": {
+        "Linux-x86_64": "d0cd6f0ef099b0ca1e667239e8e83559ab9814a6a5e454ee737517ddd0a37b10",
+        "Linux-aarch64": "cd5576183668b6e3eb8e7825b477a97dd5cb309065e42b507f293703b26e39d1",
+    },
+    # cuDNN 9.15.1
+    "9.15.1.9-13": {
+        "Linux-x86_64": "cb3434657f66dd548ee71b5646a7451b3a4be197caecbebae8c18f8ffba22666",
+        "Linux-aarch64": "4e8bcd859105d4b9749a16c88cfbe177611e60ae88cd0d0ed04412ccb9822897",
+    },
+    "9.15.1.9-12": {
+        "Linux-x86_64": "4bd08d37ef761af423714adfd1d8107bdd2581a55136f8d70d15560f7330b194",
+        "Linux-aarch64": "7301d4c76d016350b86747907e45228354fe6939e317ead501420e3db04b9e6b",
+    },
+    # cuDNN 9.15.0
+    "9.15.0.58-13": {
+        "Linux-x86_64": "6ddfeaa00ba534c7917f15666d7fc1e8f05f822a7681eb9adbe4b86beaebe8bc",
+        "Linux-aarch64": "ea86b8270cb31c397425d123d0d64ab483e695a81155e798ad9324024bcfa0ed",
+    },
+    "9.15.0.57-12": {
+        "Linux-x86_64": "183cb46b7b6d5d7c70258ce674cf795611a59a32c220d25e4f772f9f07f77e29",
+        "Linux-aarch64": "dbc46d54aab04b04885c6df344373e5879366b6c066856cafb0cfc2707842595",
+    },
+    # cuDNN 9.14.0
+    "9.14.0.64-13": {
+        "Linux-x86_64": "75b8c5feb7e65107dc8881af2cf245f9be77274f607c019a966347e36d1526e7",
+        "Linux-aarch64": "79b052a3c78784b7010fe07ffa56c86f731abe365678851dc92a6ee1c1ee5452",
+    },
+    "9.14.0.64-12": {
+        "Linux-x86_64": "fcaf904938b5bab4e782f4d064dd5b5fca7d9872a7f21a9491cf145634be4473",
+        "Linux-aarch64": "971edb53eb694fc94d3d167d5332ac9e79a6eefb85b1668b21c070940da353e5",
+    },
+    # cuDNN 9.13.1
+    "9.13.1.26-13": {
+        "Linux-x86_64": "114cdfd8173bc49449a4b570323e4a9a9bc2ad2766abc4cd3d63f5cd208e3804",
+        "Linux-aarch64": "258590df03a98c3f812d7d32e41bba52919765ba730de8693036c711b265d930",
+    },
+    "9.13.1.26-12": {
+        "Linux-x86_64": "f922c5d77939a0a2db9d0e3440749c532830b7a03e2657947ae75291165e6dee",
+        "Linux-aarch64": "56249ac2777b61ee70bb56b01e9b9eaf53fdc9be50fc2540d9a290df2dc4cd53",
+    },
+    # cuDNN 9.13.0
+    "9.13.0.50-13": {
+        "Linux-x86_64": "02f47d9456773c80d97ed245efd9eb22bb985dcfdb74559213536035291e7a01",
+        "Linux-aarch64": "78931057322ab87b72b0a988462568412edfed5bdef1eaf717961351b53cb3d0",
+    },
+    "9.13.0.50-12": {
+        "Linux-x86_64": "28c5c59316464434eb7bafe75fc36285160c28d559a50056ded13394955d1f7d",
+        "Linux-aarch64": "28f3f86aa102870c5d6804bca1bb1a0dcc1df69d0235c0a4120ae0aa6d14ffc7",
+    },
+    # cuDNN 9.12.0
+    "9.12.0.46-13": {
+        "Linux-x86_64": "ce92b4058d95c85959b822baa56389126a31678f5068b486523d1aa7f6490fcb",
+        "Linux-aarch64": "27d9e9c70a5f464ddbacd4fdd433f4e736d6f4b32387c111d77d33b583c46f26",
+    },
+    "9.12.0.46-12": {
+        "Linux-x86_64": "21fad1b3a8a3db018868184b2082bd492633ae5101752432d655782bd108b19e",
+        "Linux-aarch64": "af8c670f221bd0837c27452c1a88d31384b459e9dd0947818a06fbafdbef7f69",
+    },
+    # cuDNN 9.11.1
+    "9.11.1.4-12": {
+        "Linux-x86_64": "609ac48a448e4533287a4d7c62056bf130fae8c3b1eb2a218080e29e0026ec18",
+        "Linux-aarch64": "e7a65ea73f65ee9ec9cc73bfaa5441d06a1116f62943d01b8dad02f4b51b177c",
+    },
+    # cuDNN 9.11.0
+    "9.11.0.98-12": {
+        "Linux-x86_64": "b60c8fad01fa1521d2e71ed38887b90478d7f07b3da49fd68ab118a9fee4da48",
+        "Linux-aarch64": "5fcd6451d88a9d3b7facbc00481fa5e2bb15f2ca6dc6f86e0b2b201bc42ecd56",
+    },
+    # cuDNN 9.10.2
+    "9.10.2.21-12": {
+        "Linux-x86_64": "d0defcbc4c6dad711ff4cb66d254036a300c9071b07c7b64199aacab534313c1",
+        "Linux-aarch64": "4d57dceba3be27a68b078ce8630525bf40ab7f1b546eb45d0b363c3eeb55f8fa",
+    },
+    "9.10.2.21-11": {
+        "Linux-x86_64": "ab05bc70a120425b8b811544a6bc6458ca1f3cc54a8ccc51a1113749ecab1442",
+        "Linux-aarch64": "6461e6037a3b8ab5a9c17f527877d493f7cde9eb855fadf686140c7e3fb41aaf",
+    },
+    # cuDNN 9.10.1
+    "9.10.1.4-12": {
+        "Linux-x86_64": "be759754e5bd1fcd9b490e224796c87f093c1e92b2b6357854d5371b6aeeb8be",
+        "Linux-aarch64": "d5cd68d4d09a151ad839a352f6fa01c3f86ccfb498704456892b992c3d8e4c88",
+    },
+    "9.10.1.4-11": {
+        "Linux-x86_64": "f92286c1e84792759c39dc4d79db21ede2f96bf939f6a2f355e7e607e2184a37",
+        "Linux-aarch64": "04b93f4ddb010cde223aeb7713209f37a7bda0b56d72740bc819310876f0d329",
+    },
+    # cuDNN 9.10.0
+    "9.10.0.56-12": {
+        "Linux-x86_64": "cc0ad9eaaf6ef6569b20250111f9df0569816c17076c58aad8aea1661e2fc781",
+        "Linux-aarch64": "83ccb2a039f266e3aedc4ac6b186ded5f49d1be67e82b445f595eb2ec3cc17eb",
+    },
+    "9.10.0.56-11": {
+        "Linux-x86_64": "a0579702b538378243795328c186bb37199618494b498f1b74a5b61304861733",
+        "Linux-aarch64": "b1a5cfd60c96ce8a09d0c7dc5c5427d874e08cc8813f5bad29755d674c8b0374",
+    },
+    # cuDNN 9.9.0
+    "9.9.0.52-12": {
+        "Linux-x86_64": "73f99e9c5d39cb7799dfe0f7b42d09a0bf6e3f5a90dbd16d570438daa1daea18",
+        "Linux-aarch64": "f0faeee9eff3d77d0e8a3c55ce6a096ee6050f7da4e54e1ff541e9fa31820bbd",
+    },
+    "9.9.0.52-11": {
+        "Linux-x86_64": "5696665117d87f112024ec47d7d3a90f5f338d13226dd6ea50e5b24d6163872f",
+        "Linux-aarch64": "564323790e3c9f9b4ebcbbf7624cac8c0f8f6b1c8da42efcd0bd5087ed9bcd8c",
+    },
     # cuDNN 9.8.0
     "9.8.0.87-12": {
         "Linux-x86_64": "321b9b33bb1287404d93d5672d352f16feabc4b220ac6ae0b86e4b27f257dcf4",

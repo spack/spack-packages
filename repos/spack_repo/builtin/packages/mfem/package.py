@@ -553,6 +553,12 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     patch("mfem-4.7.patch", when="@4.7.0")
     patch("mfem-4.7-sundials-7.patch", when="@4.7.0+sundials ^sundials@7:")
     patch("mfem-4.8-nvcc-c++17.patch", when="@4.8.0+cuda")
+
+    # Backport fix for potential leak (redundant allocation) in
+    # FiniteElement::GetDofToQuad. PR: https://github.com/mfem/mfem/pull/5155
+    # The PR introduces compilation errors for GCC with OpenMP, so a second
+    # patch is applied on top of it to fix that.
+    # PR: https://github.com/mfem/mfem/pull/5224
     patch("mfem-4.9.patch", when="@4.9.0")
 
     phases = ["configure", "build", "install"]

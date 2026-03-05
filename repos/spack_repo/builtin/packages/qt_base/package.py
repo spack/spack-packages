@@ -39,6 +39,8 @@ class QtPackage(CMakePackage):
     # Default dependencies for all qt-* components
     generator("ninja")
     depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.19:", when="@6.8.1:", type="build")
+    depends_on("cmake@3.22:", when="@6.9.0:", type="build")
     depends_on("pkgconfig", type="build", when="platform=linux")
     depends_on("python", type="build")
 
@@ -158,6 +160,7 @@ class QtBase(QtPackage):
 
     license("BSD-3-Clause")
 
+    version("6.10.2", sha256="95271bc1f32db239723f597ab1899e624e3b22a16678b88520dee51ad5035faa")
     version("6.10.1", sha256="088c248d7dfbcba1e60fc4fa7a46406c6c638687cd3dbd412cdd13fc21198df9")
     version("6.10.0", sha256="6bc0cab63e70ef9634825de47790409079e00da77bad18d036b7ab83c5618346")
     version("6.9.3", sha256="4b31f7501613a45a2ad26f30b09127287edf525387865754e5edd5ba4f8c4b32")
@@ -253,7 +256,7 @@ class QtBase(QtPackage):
     with when("+network"):
         depends_on("openssl")
         with when("platform=linux"):
-            depends_on("libproxy")
+            depends_on("libproxy", type=("link", "run"))
 
     # Qt6 requires newer compilers: see https://github.com/spack/spack/issues/34418
     conflicts("%gcc@:7")

@@ -97,6 +97,10 @@ class Glib(MesonPackage):
         depends_on("meson@0.48.0:")
         depends_on("pkgconfig")
         depends_on("gobject-introspection@1.80:", when="+introspection")
+        # glib-bootstrap is needed in the PKG_CONFIG_PATH during build to
+        # configure gobject-instrospection. After that glib itself can be
+        # used as the glib implementation.
+        depends_on("glib-bootstrap", type="build", when="%gobject-introspection@1.80:")
 
     depends_on("libffi")
     depends_on("zlib-api")

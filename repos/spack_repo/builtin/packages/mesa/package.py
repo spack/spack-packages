@@ -221,8 +221,13 @@ class MesonBuilder(meson.MesonBuilder):
             args.append("-Dgallium-omx=disabled")
 
         args_platforms = []
-        args_gallium_drivers = ["swrast"]
         args_dri_drivers = []
+
+        # swrast includes softpipe and llvmpipe
+        if spec.satisfies("+llvm"):
+            args_gallium_drivers = ["swrast"]
+        else:
+            args_gallium_drivers = ["softpipe"]
 
         opt_enable = lambda c, o: "-D%s=%sabled" % (o, "en" if c else "dis")
         opt_bool = lambda c, o: "-D%s=%s" % (o, str(c).lower())
