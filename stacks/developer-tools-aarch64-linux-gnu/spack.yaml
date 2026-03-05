@@ -86,7 +86,6 @@ spack:
   - py-ruff@0.15.0
   - py-ty@0.0.15
 
-
   ci:
     pipeline-gen:
     - build-job:
