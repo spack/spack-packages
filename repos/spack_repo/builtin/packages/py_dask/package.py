@@ -136,6 +136,8 @@ class PyDask(PythonPackage):
             # starting with 2025.7 needs py-arrow
             depends_on("py-pyarrow@16.0:", when="@2026.1.0:")
             depends_on("py-pyarrow@14.0.1:", when="@2025.1.0:2025")
+            with when("@2025.1.0:"):
+                depends_on("arrow+parquet", type=("build", "run"))
 
             # The dependency on py-toolz is non-optional starting version 2021.3.1
             depends_on("py-toolz@0.8.2:", when="@:2021.3.0")
