@@ -40,15 +40,19 @@ class Ddc(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.22:3", type="build", when="@:0.8")
-    depends_on("cmake@3.25:4", type="build", when="@0.9:")
+    depends_on("cmake@3.25:", type="build", when="@0.9:")
+    depends_on("cmake@3.22:", type="build")
+    depends_on("cmake@:4", type="build")
+    depends_on("cmake@:3", type="build", when="@:0.8")
 
-    depends_on("kokkos@4.4.1:4", when="@:0.8")
-    depends_on("kokkos@4.4.1:5", when="@0.9:")
+    depends_on("kokkos@4.4.1:")
+    depends_on("kokkos@:5")
+    depends_on("kokkos@:4", when="@:0.8")
 
     with when("+fft"):
-        depends_on("kokkos-fft@0.3:0", when="@:0.10")
-        depends_on("kokkos-fft@0.3:1", when="@0.11:")
+        depends_on("kokkos-fft@0.3:")
+        depends_on("kokkos-fft@:1")
+        depends_on("kokkos-fft@:0", when="@:0.10")
         for variant, backend in [
             ("~openmp", "host_backend=fftw-serial"),
             ("+openmp", "host_backend=fftw-openmp"),
@@ -59,9 +63,11 @@ class Ddc(CMakePackage):
             depends_on(f"kokkos-fft {backend}", when=f"^kokkos {variant}")
 
     with when("+splines"):
-        depends_on("ginkgo@1.8:1")
-        depends_on("kokkos-kernels@4.5.1:4", when="@:0.8")
-        depends_on("kokkos-kernels@4.5.1:5", when="@0.9:")
+        depends_on("ginkgo@1.8:")
+        depends_on("ginkgo@:1")
+        depends_on("kokkos-kernels@4.5.1:")
+        depends_on("kokkos-kernels@:5")
+        depends_on("kokkos-kernels@:4", when="@:0.8")
         depends_on("lapack")
 
         for arch in CudaPackage.cuda_arch_values:
@@ -79,12 +85,15 @@ class Ddc(CMakePackage):
         requires("^ginkgo +openmp", when="^kokkos +openmp")
 
     with when("+pdi"):
-        depends_on("pdi@1.6:1", when="@:0.10")
-        depends_on("pdi@1.10.1:1", when="@0.11:")
+        depends_on("pdi@1.10.1:", when="@0.11:")
+        depends_on("pdi@1.6:")
+        depends_on("pdi@:1")
 
     with when("+tests"):
-        depends_on("googletest@1.14:1 +gmock")
-        depends_on("pdiplugin-user-code@1.6:1", type=("build", "test"), when="+pdi")
+        depends_on("googletest@1.14: +gmock")
+        depends_on("googletest@:1 +gmock")
+        depends_on("pdiplugin-user-code@1.6:", type=("build", "test"), when="+pdi")
+        depends_on("pdiplugin-user-code@:1", type=("build", "test"), when="+pdi")
 
     conflicts(
         "^kokkos@4.5.0", msg="DDC is not compatible with the embedded mdspan of Kokkos 4.5.0."
