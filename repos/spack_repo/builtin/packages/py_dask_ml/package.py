@@ -25,7 +25,7 @@ class PyDaskMl(PythonPackage):
     depends_on("python@3.6:", type=("build", "run"))
 
     depends_on("py-hatchling", when="@2024.4.1:", type="build")
-    depends_on("py-hatchling-vcs", when="@2024.4.1:", type="build")
+    depends_on("py-hatch-vcs", when="@2024.4.1:", type="build")
     depends_on("py-setuptools", when="@:2024.3.20", type="build")
     depends_on("py-setuptools-scm", when="@:2024.3.20", type="build")
 
