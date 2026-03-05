@@ -4,7 +4,7 @@
 
 import itertools
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
@@ -79,6 +79,8 @@ class Rocwmma(CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
+
+    generator("ninja")
 
     for ver in [
         "5.7.0",
@@ -171,6 +173,10 @@ class Rocwmma(CMakePackage):
             )
         else:
             args.append(f"-DOpenMP_libomp_LIBRARY={self.spec['llvm-amdgpu'].prefix}/lib/libomp.so")
+
+        if self.spec.satisfies("@:7.1"):
+            args.append(self.define("CMAKE_BUILD_WITH_INSTALL_RPATH", "ON"))
+
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
             if self.spec.satisfies("@7.1:"):
