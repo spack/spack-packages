@@ -148,7 +148,7 @@ class Opencascade(CMakePackage):
             args.append("-DUSE_{}={}".format(feature.upper(), enabled))
             if enabled:
                 args.append(
-                    "-D3RDPARTY_{}_INCLUDE_DIR={}".format(feature.upper(), spec[depends_on].prefix)
+                    "-D3RDPARTY_{}_DIR={}".format(feature.upper(), spec[depends_on].prefix)
                 )
                 for dir in extra_dirs:
                     args.append(
