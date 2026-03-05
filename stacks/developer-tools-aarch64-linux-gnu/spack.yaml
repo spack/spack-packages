@@ -78,10 +78,11 @@ spack:
   # spack developer tools
   # style
   - py-isort@5
-  - "py-mypy@0.900: ^py-mypy-extensions@:1.0"
-  - py-black@:25.1.0
-  - "py-flake8@3.8.2:"
-  - "py-pytest@6.2.4:"
+  - py-mypy-extensions@1.0
+  - py-mypy@1.19
+  - py-black@25.1.0
+  - py-flake8@7.3.0
+  - py-pytest@9.0.2
   - py-ruff@0.15.0
   - py-ty@0.0.15
 
