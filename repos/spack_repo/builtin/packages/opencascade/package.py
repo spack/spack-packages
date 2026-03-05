@@ -26,7 +26,7 @@ class Opencascade(CMakePackage):
 
     version("7.9.1", sha256="de442298cd8860f5580b01007f67f0ecd0b8900cfa4da467fa3c823c2d1a45df")
     version("7.9.0", sha256="151b7a522ba8220aed3009e440246abbaf2ffec42672c37e9390096f7f2c098d")
-     with default_args(extension="tar.gz"):
+    with default_args(extension="tar.gz"):
         version("7.8.1", sha256="33f2bdb67e3f6ae469f3fa816cfba34529a23a9cb736bf98a32b203d8531c523")
         version("7.8.0", sha256="b9c8f0a9d523ac1a606697f95fc39d8acf1140d3728561b8010a604431b4e9cf")
         version("7.7.2", sha256="2fb23c8d67a7b72061b4f7a6875861e17d412d524527b2a96151ead1d9cfa2c1")
