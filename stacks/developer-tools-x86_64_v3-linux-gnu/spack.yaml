@@ -69,9 +69,6 @@ spack:
   - libtree
   - patchelf
   - sed
-
-
-
   - which
   - elfutils
   - fontconfig
