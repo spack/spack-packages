@@ -157,7 +157,7 @@ spack:
   # - veloc
   - wannier90
   - warpx +python
-  - xyce +mpi +shared +pymi +pymi_static_tpls
+  - xyce +mpi +shared +pymi ~pymi_static_tpls
   # INCLUDED IN ECP DAV CPU
   # - adios2
   # - darshan-runtime
