@@ -25,10 +25,10 @@ spack:
       - mpich
     blas:
       require:
-      - openblas
+      - openblas +shared
     lapack:
       require:
-      - openblas
+      - openblas +shared
     opengl:
       buildable: false
     binutils:
