@@ -260,7 +260,7 @@ spack:
   - wannier90
   - wps
   - wrf
-  - xyce +mpi +shared +pymi +pymi_static_tpls
+  - xyce +mpi +shared +pymi ~pymi_static_tpls
   # INCLUDED IN ECP DAV CPU
   - adios2
   - ascent
