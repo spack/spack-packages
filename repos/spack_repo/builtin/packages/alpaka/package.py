@@ -52,13 +52,13 @@ class Alpaka(CMakePackage, CudaPackage):
     depends_on("cxx", type="build")  # generated
 
     variant(
-        "boost_atomic_ref", 
-        default=False, 
-        when="@2:", 
-        description="To use atomic ref from boost, if C++20 std::atomic_ref is not available"
+        "boost_atomic_ref",
+        default=False,
+        when="@2:",
+        description="To use atomic ref from boost, if C++20 std::atomic_ref is not available",
     )
     depends_on("boost@1.74:")
-    depends_on("boost@1.78:", when="@2: +boost_atomic_ref")   
+    depends_on("boost@1.78:", when="@2: +boost_atomic_ref")
 
     depends_on("cmake@3.18:")
     depends_on("cmake@3.22:", when="@1:")
