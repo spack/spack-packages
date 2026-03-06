@@ -42,6 +42,11 @@ spack:
   - py-fprettify
   - py-fortran-language-server
   - py-python-lsp-server
+  - py-isort
+  - py-mypy-extensions
+  - py-mypy
+  - py-black
+  - py-flake8
     # cli dev tools
   - ripgrep
   - gh
@@ -77,11 +82,6 @@ spack:
   - meson
   # spack developer tools
   # style
-  - py-isort@5
-  - py-mypy-extensions@1.0
-  - py-mypy@1.19
-  - py-black@25.1.0
-  - py-flake8@7.3.0
   - py-pytest@9.0.2
   - py-ruff@0.15.0
   - py-ty@0.0.15
