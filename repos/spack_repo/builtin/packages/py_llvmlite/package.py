@@ -64,7 +64,7 @@ class PyLlvmlite(PythonPackage):
     # When the spec has both llvm@20 and hwloc+rocm (e.g. llvm build-depends on hwloc),
     # require llvm-amdgpu@7.0: so that any hwloc+opencl uses libllvm@20 and linking
     # does not conflict with older llvm-amdgpu (e.g. 6.4 providing libllvm@19).
-    depends_on("llvm-amdgpu@7.0:", when="^llvm@20: ^hwloc +rocm")
+    depends_on("llvm-amdgpu@7.0:", when="@0.45: ^hwloc +rocm")
     for t in [
         "arm:",
         "ppc:",
