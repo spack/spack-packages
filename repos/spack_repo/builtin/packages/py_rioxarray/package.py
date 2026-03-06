@@ -14,7 +14,7 @@ class PyRioxarray(PythonPackage):
     pypi = "rioxarray/rioxarray-0.4.1.post0.tar.gz"
 
     license("Apache-2.0")
-    maintainers("adamjstewart")
+    maintainers("adamjstewart", "Chrismarsh")
 
     version("0.22.0", sha256="3f55f23a632ffd9eff13463634227f4afbbcf298947536e161f6cf2ce88d4373")
     version("0.21.0", sha256="a292d96f4d6412c05ff09629b72523ae2e9c42598183f5e9c555fc368f867c0f")
