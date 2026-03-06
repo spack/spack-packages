@@ -64,7 +64,7 @@ class PyXarray(PythonPackage):
         depends_on("py-setuptools-scm@3.4:+toml", when="@0.17:2022.3.0")
         depends_on("py-setuptools-scm-git-archive", when="@0.17:2022.3.0")
 
-    # pyproject.toml 
+    # pyproject.toml
     with default_args(type=("build", "run")):
         depends_on("python@2.7,3.5:", when="@0.11:")
         depends_on("python@3.5:", when="@0.12")
@@ -155,7 +155,7 @@ class PyXarray(PythonPackage):
 
         # +accel
         with when("+accel"):
-            depends_on("py-scipy@1.13:", when="@2025.7.1:" )
+            depends_on("py-scipy@1.13:", when="@2025.7.1:")
             depends_on("py-bottleneck", when="@2025.7.1:")
             depends_on("py-numbagg@0.8:", when="@2025.7.1:")
             depends_on("py-numba@0.59:", when="@2025.7.1:")
