@@ -56,7 +56,7 @@ spack:
       - +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
         +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
         +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
-        +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+        +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
       - target=x86_64_v3
     mpich:
       require:
@@ -337,6 +337,13 @@ spack:
           - ~rocm
           - ~cuda
           - target=x86_64_v3
+        hdf5:
+          prefer:
+          - ~rocm +cuda cuda_arch=80
+        trilinos:
+          prefer:
+          - ~rocm +cuda cuda_arch=80
+          - ~superlu-dist
 
   - group: "cuda-90"
     specs:
@@ -362,6 +369,13 @@ spack:
           - ~rocm
           - ~cuda
           - target=x86_64_v3
+        hdf5:
+          prefer:
+          - ~rocm +cuda cuda_arch=90
+        trilinos:
+          prefer:
+          - ~rocm +cuda cuda_arch=90
+          - ~superlu-dist
 
   - group: rocm
     specs:
