@@ -22,8 +22,7 @@ class PyDocket(PythonPackage):
 
     depends_on("py-cloudpickle@3.1.1:", type=("build", "run"))
     depends_on("py-exceptiongroup@1.2:", when="^python@3.10:", type=("build", "run"))
-    # todo(tbouvier): fakeredis has a strong dep on typing-extensions@4.7
-    # depends_on("py-fakeredis@2.32.1: +lua", type=("build", "run"))
+    depends_on("py-fakeredis@2.32.1: +lua", type=("build", "run"))
     depends_on("py-prometheus-client@0.21.1:", type=("build", "run"))
     depends_on("py-key-value-aio@0.3: +memory +redis", type=("build", "run"))
     depends_on("py-python-json-logger@2.0.7:", type=("build", "run"))
