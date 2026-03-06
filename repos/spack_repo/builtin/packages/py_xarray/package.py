@@ -26,13 +26,27 @@ class PyXarray(PythonPackage):
     version("2023.7.0", sha256="dace2fdbf1b7ff185d9c1226a24bf83c2ae52f3253dbfe80e17d1162600d055c")
     version("2022.3.0", sha256="398344bf7d170477aaceff70210e11ebd69af6b156fe13978054d25c48729440")
     with default_args(deprecated=True):
-        version("0.18.2", sha256="5d2e72a228286fcf60f66e16876bd27629a1a70bf64822c565f16515c4d10284")
-        version("0.17.0", sha256="9c2edad2a4e588f9117c666a4249920b9717fb75703b96998cf65fcd4f60551f")
-        version("0.16.2", sha256="38e8439d6c91bcd5b7c0fca349daf8e0643ac68850c987262d53526e9d7d01e4")
-        version("0.14.0", sha256="a8b93e1b0af27fa7de199a2d36933f1f5acc9854783646b0f1b37fed9b4da091")
-        version("0.13.0", sha256="80e5746ffdebb96b997dba0430ff02d98028ef3828e6db6106cbbd6d62e32825")
-        version("0.12.0", sha256="856fd062c55208a248ac3784cac8d3524b355585387043efc92a4188eede57f3")
-        version("0.11.0", sha256="636964baccfca0e5d69220ac4ecb948d561addc76f47704064dcbe399e03a818")
+        version(
+            "0.18.2", sha256="5d2e72a228286fcf60f66e16876bd27629a1a70bf64822c565f16515c4d10284"
+        )
+        version(
+            "0.17.0", sha256="9c2edad2a4e588f9117c666a4249920b9717fb75703b96998cf65fcd4f60551f"
+        )
+        version(
+            "0.16.2", sha256="38e8439d6c91bcd5b7c0fca349daf8e0643ac68850c987262d53526e9d7d01e4"
+        )
+        version(
+            "0.14.0", sha256="a8b93e1b0af27fa7de199a2d36933f1f5acc9854783646b0f1b37fed9b4da091"
+        )
+        version(
+            "0.13.0", sha256="80e5746ffdebb96b997dba0430ff02d98028ef3828e6db6106cbbd6d62e32825"
+        )
+        version(
+            "0.12.0", sha256="856fd062c55208a248ac3784cac8d3524b355585387043efc92a4188eede57f3"
+        )
+        version(
+            "0.11.0", sha256="636964baccfca0e5d69220ac4ecb948d561addc76f47704064dcbe399e03a818"
+        )
         version("0.9.1", sha256="89772ed0e23f0e71c3fb8323746374999ecbe79c113e3fadc7ae6374e6dc0525")
 
     variant("accel", default=False, when="@2025.7:", description="Accerlators, e.g., numba")
@@ -123,8 +137,7 @@ class PyXarray(PythonPackage):
                 when="@2022.6:",
             )
             depends_on(
-                "py-dask@:2021 +array+dataframe+distributed+diagnostics+delayed",
-                when="@:2022.5",
+                "py-dask@:2021 +array+dataframe+distributed+diagnostics+delayed", when="@:2022.5"
             )
 
         with when("+viz"):
