@@ -102,7 +102,8 @@ spack:
     - cusz
     - dealii
     - ecp-data-vis-sdk  +adios2 ~ascent +hdf5 +vtkm +zfp ~paraview
-    - exago +mpi +python +raja +hiop  ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja
+    # Exago still requires an old version of Raja that doesn't support the CUDA arch we want to build for
+    - exago +mpi +python +raja +hiop  ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja ^raja~cuda
     - fftx
     - flecsi
     - ginkgo
