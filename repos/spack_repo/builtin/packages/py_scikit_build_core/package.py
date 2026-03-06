@@ -20,6 +20,10 @@ class PyScikitBuildCore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.12.2", sha256="562e0bbc9de1a354c87825ccf732080268d6582a0200f648e8c4a2dcb1e3736d")
+    version("0.12.1", sha256="bb663e71116bcd23d208ef30e5b94aa14f225f3704794d9429017ea9b461b0da")
+    version("0.12.0", sha256="1314e683adc6f6b7186f154f120f85f113544c4f7c0bffcd7be3afe6377a3e26")
+    version("0.11.6", sha256="5982ccd839735be99cfd3b92a8847c6c196692f476c215da84b79d2ad12f9f1b")
     version("0.11.5", sha256="8f0a1edb86cb087876f3c699d2a2682012efd8867b390ed37355f13949d0628e")
     version("0.11.1", sha256="4e5988df5cd33f0bdb9967b72663ca99f50383c9bc21d8b24fa40c0661ae72b7")
     version("0.10.7", sha256="04cbb59fe795202a7eeede1849112ee9dcbf3469feebd9b8b36aa541336ac4f8")
@@ -42,6 +46,8 @@ class PyScikitBuildCore(PythonPackage):
     # Build system
     depends_on("py-hatchling", type="build")
     depends_on("py-hatch-vcs", type="build")
+    depends_on("py-hatchling@1.24:", when="@0.12:", type=("build", "test"))
+    depends_on("py-hatch-vcs@0.4:", when="@0.12:", type=("build", "test"))
 
     # Dependencies
     depends_on("py-exceptiongroup@1:", when="@0.9: ^python@:3.10", type=("build", "run"))
@@ -52,9 +58,12 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("py-packaging@23.2:", type=("build", "run"), when="@0.10:")
     depends_on("py-packaging@21.3:", type=("build", "run"), when="@0.9")
     depends_on("py-packaging@20.9:", type=("build", "run"))
+    depends_on("py-pathspec@0.12.0:", type=("build", "run"), when="@0.12.2:")
     depends_on("py-pathspec@0.10.1:", type=("build", "run"), when="@0.9:")
     depends_on("py-tomli@1.2.2:", when="@0.9: ^python@:3.10", type=("build", "run"))
     depends_on("py-tomli@1.1:", when="^python@:3.10", type=("build", "run"))
+    depends_on("py-typing-extensions@4:", when="@0.12: ^python@:3.11", type=("build", "run"))
+    depends_on("py-typing-extensions@3.10:", when="@0.11: ^python@:3.10", type=("build", "run"))
     depends_on("py-typing-extensions@3.10:", when="@0.8: ^python@:3.8", type=("build", "run"))
     depends_on("py-typing-extensions@3.10:", when="@:0.7 ^python@:3.7", type=("build", "run"))
     depends_on("cmake@3.15:", type=("build", "run"))
@@ -67,6 +76,7 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("py-build@0.8:", when="@0.9:", type="test")
     depends_on("py-build +virtualenv", when="@:0.8", type="test")
     depends_on("py-cattrs@22.2:", type="test")
+    depends_on("py-filelock@3.8:", when="@0.12:", type="test")
     depends_on("py-importlib-metadata", when="^python@:3.7", type="test")
     depends_on("py-pybind11@2.12:", when="@0.9:", type="test")
     depends_on("py-pathspec@0.10.1:", when="@:0.8", type="test")
@@ -74,7 +84,9 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("py-pybind11", type="test")
     depends_on("py-pyproject-metadata@0.5:", when="@:0.8", type="test")
     depends_on("py-pytest@7:", type="test")
+    depends_on("py-pytest-xdist@3.1:", when="@0.11.4:", type="test")
     depends_on("py-pytest-subprocess@1.5:", type="test")
+    depends_on("py-setuptools-scm@5:", when="@0.12:", type="test")
     depends_on("py-setuptools@43:", when="@0.9: ^python@:3.8", type="test")
     depends_on("py-setuptools@45:", when="@0.9: ^python@3.9", type="test")
     depends_on("py-setuptools@49:", when="@0.9: ^python@3.10:3.11", type="test")
@@ -84,6 +96,10 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("py-virtualenv", when="@0.6:", type="test")
     depends_on("py-wheel@0.40:", when="@0.9:", type="test")
     depends_on("py-wheel", type="test")
+    depends_on("py-typing-extensions@3.10:", when="@0.12: ^python@:3.10", type="test")
+    depends_on("py-hatch-fancy-pypi-readme@23.2:", when="@0.12:", type="test")
+    depends_on("py-fastjsonschema@2.16.2:", when="@0.12:", type="test")
+    depends_on("py-validate-pyproject@0.21:", when="@0.12:", type="test")
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
