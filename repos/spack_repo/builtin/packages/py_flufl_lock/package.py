@@ -11,7 +11,7 @@ from spack.package import *
 class PyFluflLock(PythonPackage):
     """NFS-safe file locking with timeouts for POSIX and Windows"""
 
-    homepage = "https://fluflock.readthedocs.io"
+    homepage = "https://flufllock.readthedocs.io"
     pypi = "flufl.lock/flufl_lock-9.0.0.tar.gz"
 
     license("Apache-2.0")
