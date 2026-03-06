@@ -15,6 +15,7 @@ class PyLangcodes(PythonPackage):
 
     license("MIT")
 
+    version("3.5.1", sha256="40bff315e01b01d11c2ae3928dd4f5cbd74dd38f9bd912c12b9a3606c143f731")
     version("3.5.0", sha256="1eef8168d07e51e131a2497ffecad4b663f6208e7c3ae3b8dc15c51734a6f801")
     version("3.3.0", sha256="794d07d5a28781231ac335a1561b8442f8648ca07cd518310aeb45d6f0807ef6")
 
