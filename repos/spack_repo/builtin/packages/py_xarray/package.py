@@ -24,8 +24,11 @@ class PyXarray(PythonPackage):
         "xarray.coding",
     ]
 
+    maintainers("Chrismarsh")
+
     license("Apache-2.0")
 
+    version("2026.2.0", sha256="978b6acb018770554f8fd964af4eb02f9bcc165d4085dbb7326190d92aa74bcf")
     version("2025.7.1", sha256="2884bf5672b540fcc6ff8c20a3196bda0d78fbfb4d67398d60526e97c2faceef")
     version("2024.7.0", sha256="4cae512d121a8522d41e66d942fb06c526bc1fd32c2c181d5fe62fe65b671638")
     version("2023.7.0", sha256="dace2fdbf1b7ff185d9c1226a24bf83c2ae52f3253dbfe80e17d1162600d055c")
@@ -46,105 +49,116 @@ class PyXarray(PythonPackage):
     variant("accel", default=False, when="@2025.7.1:", description="Accerlators, e.g., numba")
 
     # pyproject.toml
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools@38.4:", when="@0.16", type=("build", "run"))
-    depends_on("py-setuptools@42:", when="@0.17:0.19", type=("build", "run"))
-    # only a build dep since 0.20
-    # https://github.com/pydata/xarray/pull/5845
-    depends_on("py-setuptools@42:", when="@0.20:", type="build")
-    depends_on("py-setuptools@77:", when="@2025.6.0:", type="build")
+    with default_args(type=("build")):
+        depends_on("py-setuptools")
+        # these are build,run @:0.20
+        depends_on("py-setuptools@38.4:", when="@0.16", type=("build", "run"))
+        depends_on("py-setuptools@42:", when="@0.17:0.19", type=("build", "run"))
+        # only a build dep since 0.20
+        # https://github.com/pydata/xarray/pull/5845
+        depends_on("py-setuptools@42:", when="@0.20:")
+        depends_on("py-setuptools@77:", when="@2025.6.0:")
 
-    depends_on("py-setuptools-scm", when="@0.15:", type="build")
-    depends_on("py-setuptools-scm@7:", when="@2023.7.0:", type="build")
-    depends_on("py-setuptools-scm@3.4:+toml", when="@0.17:2022.3.0", type="build")
-    depends_on("py-setuptools-scm-git-archive", when="@0.17:2022.3.0", type="build")
+        depends_on("py-setuptools-scm", when="@0.15:")
+        depends_on("py-setuptools-scm@7:", when="@2023.7.0:")
+        depends_on("py-setuptools-scm@3.4:+toml", when="@0.17:2022.3.0")
+        depends_on("py-setuptools-scm-git-archive", when="@0.17:2022.3.0")
 
-    # setup.cfg
-    depends_on("python@2.7,3.5:", when="@0.11:", type=("build", "run"))
-    depends_on("python@3.5:", when="@0.12", type=("build", "run"))
-    depends_on("python@3.5.3:", when="@0.13", type=("build", "run"))
-    depends_on("python@3.6:", when="@0.14:", type=("build", "run"))
-    depends_on("python@3.7:", when="@0.17:", type=("build", "run"))
-    depends_on("python@3.8:", when="@0.21:", type=("build", "run"))
-    depends_on("python@3.9:", when="@2023.7.0:", type=("build", "run"))
-    depends_on("python@3.10:", when="@2024.9.0:", type=("build", "run"))
-    depends_on("python@3.11:", when="@2025.7.1:", type=("build", "run"))
+    # pyproject.toml 
+    with default_args(type=("build", "run")):
+        depends_on("python@2.7,3.5:", when="@0.11:")
+        depends_on("python@3.5:", when="@0.12")
+        depends_on("python@3.5.3:", when="@0.13")
+        depends_on("python@3.6:", when="@0.14:")
+        depends_on("python@3.7:", when="@0.17:")
+        depends_on("python@3.8:", when="@0.21:")
+        depends_on("python@3.9:", when="@2023.7.0:")
+        depends_on("python@3.10:", when="@2024.9.0:")
+        depends_on("python@3.11:", when="@2025.7.1:")
 
-    depends_on("py-numpy@1.7:", when="@0.9.1", type=("build", "run"))
-    depends_on("py-numpy@1.12:", when="@0.11:0.13", type=("build", "run"))
-    depends_on("py-numpy@1.14:", when="@0.14.0", type=("build", "run"))
-    depends_on("py-numpy@1.15:", when="@0.15:", type=("build", "run"))
-    depends_on("py-numpy@1.17:", when="@0.18:", type=("build", "run"))
-    depends_on("py-numpy@1.18:", when="@0.20:", type=("build", "run"))
-    depends_on("py-numpy@1.21:", when="@2023.7.0:", type=("build", "run"))
-    depends_on("py-numpy@1.23:", when="@2024.7.0:", type=("build", "run"))
-    depends_on("py-numpy@1.26:", when="@2025.7.1:", type=("build", "run"))
-    # numpy@2 starts with v2024.06.0
-    # https://github.com/pydata/xarray/releases/tag/v2024.06.0
-    depends_on("py-numpy@:1", when="@:2024.05", type=("build", "run"))
+        depends_on("py-numpy@1.7:", when="@0.9.1")
+        depends_on("py-numpy@1.12:", when="@0.11:0.13")
+        depends_on("py-numpy@1.14:", when="@0.14.0")
+        depends_on("py-numpy@1.15:", when="@0.15:")
+        depends_on("py-numpy@1.17:", when="@0.18:")
+        depends_on("py-numpy@1.18:", when="@0.20:")
+        depends_on("py-numpy@1.21:", when="@2023.7.0:")
+        depends_on("py-numpy@1.23:", when="@2024.7.0:")
+        depends_on("py-numpy@1.26:", when="@2025.7.1:")
+        # numpy@2 starts with v2024.06.0
+        # https://github.com/pydata/xarray/releases/tag/v2024.06.0
+        depends_on("py-numpy@:1", when="@:2024.05")
 
-    depends_on("py-pandas@0.15.0:", when="@0.9.1", type=("build", "run"))
-    depends_on("py-pandas@0.19.2:", when="@0.11:0.13", type=("build", "run"))
-    depends_on("py-pandas@0.24:", when="@0.14.0", type=("build", "run"))
-    depends_on("py-pandas@0.25:", when="@0.15:", type=("build", "run"))
-    depends_on("py-pandas@1:", when="@0.18:", type=("build", "run"))
-    depends_on("py-pandas@1.1:", when="@0.20:", type=("build", "run"))
-    depends_on("py-pandas@1.4:", when="@2023.7.0:", type=("build", "run"))
-    depends_on("py-pandas@2.0:", when="@2024.7.0:", type=("build", "run"))
-    depends_on("py-pandas@2.2:", when="@2025.7.1:", type=("build", "run"))
+        depends_on("py-pandas@0.15.0:", when="@0.9.1")
+        depends_on("py-pandas@0.19.2:", when="@0.11:0.13")
+        depends_on("py-pandas@0.24:", when="@0.14.0")
+        depends_on("py-pandas@0.25:", when="@0.15:")
+        depends_on("py-pandas@1:", when="@0.18:")
+        depends_on("py-pandas@1.1:", when="@0.20:")
+        depends_on("py-pandas@1.4:", when="@2023.7.0:")
+        depends_on("py-pandas@2.0:", when="@2024.7.0:")
+        depends_on("py-pandas@2.2:", when="@2025.7.1:")
 
-    depends_on("py-packaging@20:", when="@0.21:", type=("build", "run"))
-    depends_on("py-packaging@21.3:", when="@2023.7.0:", type=("build", "run"))
-    depends_on("py-packaging@23.1:", when="@2024.7.0:", type=("build", "run"))
-    depends_on("py-packaging@24.1:", when="@2025.7.1:", type=("build", "run"))
+        depends_on("py-packaging@20:", when="@0.21:")
+        depends_on("py-packaging@21.3:", when="@2023.7.0:")
+        depends_on("py-packaging@23.1:", when="@2024.7.0:")
+        depends_on("py-packaging@24.1:", when="@2025.7.1:")
 
-    # +io
-    depends_on("py-netcdf4@1.6.0:", when="@2025.7.1: +io", type=("build", "run"))
-    depends_on("py-netcdf4", when="+io", type=("build", "run"))
-    depends_on("py-h5netcdf", when="+io", type=("build", "run"))
-    depends_on("py-scipy", when="+io", type=("build", "run"))
-    depends_on("py-scipy@1.13:", when="@2025.7.1: +io", type=("build", "run"))
-    # py-pydap@3.5: for numpy@2:
-    # https://github.com/pydata/xarray/pull/9391
-    depends_on("py-pydap@3.5:", when="+io ^numpy@2:", type=("build", "run"))
-    depends_on("py-pydap", when="+io", type=("build", "run"))
-    depends_on("py-zarr@2.18:", when="+io ^numpy@2:", type=("build", "run"))
-    depends_on("py-zarr", when="+io", type=("build", "run"))
-    depends_on("py-fsspec", when="+io", type=("build", "run"))
-    depends_on("py-cftime", when="+io", type=("build", "run"))
-    depends_on("py-rasterio", when="@:2022.3.0 +io", type=("build", "run"))
-    depends_on("py-cfgrib", when="@:2022.3.0 +io", type=("build", "run"))
-    depends_on("py-pooch", when="+io", type=("build", "run"))
+        # +io
+        with when("+io"):
+            depends_on("py-netcdf4@1.6.0:", when="@2025.7.1:")
+            depends_on("py-netcdf4")
+            depends_on("py-h5netcdf")
+            depends_on("py-h5netcdf@1.4.0:", when="@2026:")
+            depends_on("py-scipy")
+            depends_on("py-scipy@1.13:", when="@2025.7.1:")
+            # py-pydap@3.5: for numpy@2:
+            # https://github.com/pydata/xarray/pull/9391
+            depends_on("py-pydap@3.5:", when="^numpy@2:")
+            depends_on("py-pydap")
+            depends_on("py-zarr")
+            depends_on("py-zarr@2.18:", when="^numpy@2:")
+            depends_on("py-fsspec")
+            depends_on("py-cftime")
+            depends_on("py-pooch")
 
-    # +parallel
-    depends_on(
-        "py-dask@:2021 +array+dataframe+distributed+diagnostics+delayed",
-        when="@:2022.05.0 +parallel",
-        type=("build", "run"),
-    )
+            # legacy
+            depends_on("py-rasterio", when="@:2022.3.0")
+            depends_on("py-cfgrib", when="@:2022.3.0")
 
-    # xarray uses inline_array starting in v2022.06.0 which only exists
-    # since dask 2021.01.0
-    depends_on(
-        # +delayed is :2021.3.0
-        "py-dask@2022: +array+dataframe+distributed+diagnostics",
-        when="@2022.06.0: +parallel",
-        type=("build", "run"),
-    )
+        # +parallel
+        with when("+parallel"):
+            depends_on(
+                "py-dask@:2021 +array+dataframe+distributed+diagnostics+delayed",
+                when="@:2022.05.0",
+            )
 
-    # +viz
-    depends_on("py-matplotlib", when="@2024.7.0: +viz", type=("build", "run"))
-    depends_on("py-seaborn", when="@2024.7.0: +viz", type=("build", "run"))
-    depends_on("py-nc-time-axis", when="@2024.7.0: +viz", type=("build", "run"))
-    depends_on("py-cartopy@0.23:", when="@2025.7.1: +viz", type=("build", "run"))
+            # xarray uses inline_array starting in v2022.06.0 which only exists
+            # since dask 2021.01.0
+            depends_on(
+                # +delayed is :2021.3.0
+                "py-dask@2022: +array+dataframe+distributed+diagnostics",
+                when="@2022.06.0:",
+            )
 
-    # +etc
-    depends_on("py-sparse@0.15:", when="@2025.7.1: +etc", type=("build", "run"))
+        # +viz
+        with when("+viz"):
+            depends_on("py-cartopy@0.23:", when="@2025.7.1:")
+            depends_on("py-matplotlib", when="@2024.7.0:")
+            depends_on("py-matplotlib@3.8:", when="@2026:")
+            depends_on("py-nc-time-axis", when="@2024.7.0:")
+            depends_on("py-seaborn", when="@2024.7.0:")
 
-    # +accel
-    depends_on("py-scipy@1.13:", when="@2025.7.1: +accel", type=("build", "run"))
-    depends_on("py-bottleneck", when="@2025.7.1: +accel", type=("build", "run"))
-    depends_on("py-numbagg@0.8:", when="@2025.7.1: +accel", type=("build", "run"))
-    depends_on("py-numba@0.59:", when="@2025.7.1: +accel", type=("build", "run"))
-    depends_on("py-flox@0.9:", when="@2025.7.1: +accel", type=("build", "run"))
-    depends_on("py-opt-einsum", when="@2025.7.1: +accel", type=("build", "run"))
+        # +etc
+        with when("+etc"):
+            depends_on("py-sparse@0.15:", when="@2025.7.1:")
+
+        # +accel
+        with when("+accel"):
+            depends_on("py-scipy@1.13:", when="@2025.7.1:" )
+            depends_on("py-bottleneck", when="@2025.7.1:")
+            depends_on("py-numbagg@0.8:", when="@2025.7.1:")
+            depends_on("py-numba@0.59:", when="@2025.7.1:")
+            depends_on("py-numba@0.62:", when="@2026:")
+            depends_on("py-flox@0.9:", when="@2025.7.1:")
+            depends_on("py-opt-einsum", when="@2025.7.1:")
