@@ -46,7 +46,7 @@ class GreenMbpt(CMakePackage, CudaPackage):
 
     # Other dependencies
     depends_on("mpi")
-    depends_on("eigen")
+    depends_on("eigen@:4.9.0")
     depends_on("hdf5@1.10.0: ~mpi+hl")
     depends_on("blas")
 
