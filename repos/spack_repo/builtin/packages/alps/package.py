@@ -171,7 +171,6 @@ class Alps(CMakePackage):
 
         return args
 
-
     def setup_build_environment(self, env):
         # Set up environment for boost source compilation
         boost_src_dir = os.path.join(self.stage.source_path, "boost_source_files")
