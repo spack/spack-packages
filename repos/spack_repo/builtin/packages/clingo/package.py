@@ -39,14 +39,6 @@ class Clingo(CMakePackage):
     version("5.5.2", sha256="a2a0a590485e26dce18860ac002576232d70accc5bfcb11c0c22e66beb23baa6")
     version("5.4.1", sha256="ac6606388abfe2482167ce8fd4eb0737ef6abeeb35a9d3ac3016c6f715bfee02")
 
-    with default_args(deprecated=True):
-        version("5.7.0", sha256="ed5401bda54315184697fd69ff0f15389c62779e812058a5f296ba587ed9c10b")
-        version("5.5.1", sha256="b9cf2ba2001f8241b8b1d369b6f353e628582e2a00f13566e51c03c4dd61f67e")
-        version("5.5.0", sha256="c9d7004a0caec61b636ad1c1960fbf339ef8fdee9719321fc1b6b210613a8499")
-        version("5.4.0", sha256="e2de331ee0a6d254193aab5995338a621372517adcf91568092be8ac511c18f3")
-        version("5.3.0", sha256="b0d406d2809352caef7fccf69e8864d55e81ee84f4888b0744894977f703f976")
-        version("5.2.2", sha256="da1ef8142e75c5a6f23c9403b90d4f40b9f862969ba71e2aaee9a257d058bfcf")
-
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 

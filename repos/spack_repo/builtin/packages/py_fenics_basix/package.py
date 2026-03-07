@@ -24,15 +24,12 @@ class PyFenicsBasix(PythonPackage):
     version("0.10.0", sha256="b93221dac7d3fea8c10e77617f6201036de35d0c5437440b718de69a28c3773f")
     version("0.9.0", sha256="60e96b2393084729b261cb10370f0e44d12735ab3dbd1f15890dec23b9e85329")
     version("0.8.0", sha256="b299af82daf8fa3e4845e17f202491fe71b313bf6ab64c767a5287190b3dd7fe")
-    with default_args(deprecated=True):
-        version("0.7.0", sha256="9bee81b396ee452eec8d9735f278cb44cb6994c6bc30aec8ed9bb4b12d83fa7f")
-        version("0.6.0", sha256="687ae53153c98facac4080dcdc7081701db1dcea8c5e7ae3feb72aec17f83304")
 
     variant("ufl", default=False, description="UFL support")
 
     depends_on("cxx", type="build")
 
-    for ver in ("main", "0.10.0.post0", "0.10.0", "0.9.0", "0.8.0", "0.7.0", "0.6.0"):
+    for ver in ("main", "0.10.0.post0", "0.10.0", "0.9.0", "0.8.0"):
         depends_on(f"fenics-basix@{ver}", type=("build", "run"), when=f"@{ver}")
 
     # See python/CMakeLists.txt
@@ -59,8 +56,6 @@ class PyFenicsBasix(PythonPackage):
             ("2025.2", "0.10"),
             ("2024.2", "0.9"),
             ("2024.1", "0.8"),
-            ("2023.2", "0.7"),
-            ("2023.1", "0.6"),
         ]:
             depends_on(f"py-fenics-ufl@{ufl_ver}", type="run", when=f"@{ver}")
 

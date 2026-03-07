@@ -67,7 +67,7 @@ class Lmod(AutotoolsPackage):
 
     depends_on("c", type="build")
     depends_on("pkgconfig", type="build")
-    depends_on("procps", type="build")
+    depends_on("procps", type="build", when="platform=linux")
     depends_on("sed", type="build")
     depends_on("bc", type="build", when="@8.7.10:")
     depends_on("tcl", type=("build", "link", "run"))
