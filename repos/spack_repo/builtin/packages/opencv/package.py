@@ -29,7 +29,9 @@ class Opencv(CMakePackage, CudaPackage):
     version("4.12.0", sha256="44c106d5bb47efec04e531fd93008b3fcd1d27138985c5baf4eafac0e1ec9e9d")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2025-53644/
-        version("4.10.0", sha256="b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9")
+        version(
+            "4.10.0", sha256="b2171af5be6b26f7a06b1229948bbb2bdaa74fcf5cd097e0af6378fce50a6eb9"
+        )
     version("4.9.0", sha256="ddf76f9dffd322c7c3cb1f721d0887f62d747b82059342213138dc190f28bc6c")
     version("4.8.1", sha256="62f650467a60a38794d681ae7e66e3e8cfba38f445e0bf87867e2f2cdc8be9d5")
     version("4.8.0", sha256="cbf47ecc336d2bff36b0dcd7d6c179a9bb59e805136af6b9670ca944aef889bd")
@@ -56,7 +58,9 @@ class Opencv(CMakePackage, CudaPackage):
         version("4.1.0", sha256="8f6e4ab393d81d72caae6e78bd0fd6956117ec9f006fba55fcdb88caf62989b7")
         version("4.0.1", sha256="7b86a0ee804244e0c407321f895b15e4a7162e9c5c0d2efc85f1cadec4011af4")
         version("4.0.0", sha256="3787b3cc7b21bba1441819cb00c636911a846c0392ddf6211d398040a1e4886c")
-        version("3.4.12", sha256="c8919dfb5ead6be67534bf794cb0925534311f1cd5c6680f8164ad1813c88d13")
+        version(
+            "3.4.12", sha256="c8919dfb5ead6be67534bf794cb0925534311f1cd5c6680f8164ad1813c88d13"
+        )
         version("3.4.6", sha256="e7d311ff97f376b8ee85112e2b536dbf4bdf1233673500175ed7cf21a0089f6d")
         version("3.4.5", sha256="0c57d9dd6d30cbffe68a09b03f4bebe773ee44dc8ff5cd6eaeb7f4d5ef3b428e")
         version("3.4.4", sha256="a35b00a71d77b484f73ec485c65fe56c7a6fa48acd5ce55c197aef2e13c78746")
