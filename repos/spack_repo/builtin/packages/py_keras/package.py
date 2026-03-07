@@ -27,22 +27,40 @@ class PyKeras(PythonPackage):
     version("3.13.2", sha256="62f0123488ac87c929c988617e14f293f7bc993811837d08bb37eff77adc85a9")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2026-1669/
-        version("3.13.1", sha256="670c726dfc9c357fe7ae5ef1c15d8f61ee7fbb40ae9a091a458ec6444a772480")
+        version(
+            "3.13.1", sha256="670c726dfc9c357fe7ae5ef1c15d8f61ee7fbb40ae9a091a458ec6444a772480"
+        )
         # https://www.cvedetails.com/cve/CVE-2026-0897/
-        version("3.13.0", sha256="ec51ad2ffcef086d0e3077ac461fa9e3bc54f91d94b49b7c9a84c9af7f54cf5e")
-        version("3.12.1", sha256="3cb760b3fec105db4d893dd717daafdd0e35457a8201502c1ba8bedfaf334a71")
-        version("3.12.0", sha256="536e3f8385a05ae04e82e08715a1a59988578087e187b04cb0a6fad11743f07f")
+        version(
+            "3.13.0", sha256="ec51ad2ffcef086d0e3077ac461fa9e3bc54f91d94b49b7c9a84c9af7f54cf5e"
+        )
+        version(
+            "3.12.1", sha256="3cb760b3fec105db4d893dd717daafdd0e35457a8201502c1ba8bedfaf334a71"
+        )
+        version(
+            "3.12.0", sha256="536e3f8385a05ae04e82e08715a1a59988578087e187b04cb0a6fad11743f07f"
+        )
         # https://www.cvedetails.com/cve/CVE-2025-12060/
         # https://www.cvedetails.com/cve/CVE-2025-12058/
-        version("3.11.3", sha256="efda616835c31b7d916d72303ef9adec1257320bc9fd4b2b0138840fc65fb5b7")
+        version(
+            "3.11.3", sha256="efda616835c31b7d916d72303ef9adec1257320bc9fd4b2b0138840fc65fb5b7"
+        )
         # https://www.cvedetails.com/cve/CVE-2025-49655/
         # https://www.cvedetails.com/cve/CVE-2025-9905/
-        version("3.11.2", sha256="b78a4af616cbe119e88fa973d2b0443b70c7f74dd3ee888e5026f0b7e78a2801")
-        version("3.11.1", sha256="7a27f384467fa8d0b0281665b52efd6bd948f20854099e35929786ce44d847f0")
-        version("3.11.0", sha256="f5dfeaf4fcaea180e032f7c1e373f1868961e2940dcfcaaf9a5b711baf41bd60")
+        version(
+            "3.11.2", sha256="b78a4af616cbe119e88fa973d2b0443b70c7f74dd3ee888e5026f0b7e78a2801"
+        )
+        version(
+            "3.11.1", sha256="7a27f384467fa8d0b0281665b52efd6bd948f20854099e35929786ce44d847f0"
+        )
+        version(
+            "3.11.0", sha256="f5dfeaf4fcaea180e032f7c1e373f1868961e2940dcfcaaf9a5b711baf41bd60"
+        )
         # https://www.cvedetails.com/cve/CVE-2025-9906/
         # https://www.cvedetails.com/cve/CVE-2025-8747/
-        version("3.10.0", sha256="6e9100bf66eaf6de4b7f288d34ef9bb8b5dcdd62f42c64cfd910226bb34ad2d2")
+        version(
+            "3.10.0", sha256="6e9100bf66eaf6de4b7f288d34ef9bb8b5dcdd62f42c64cfd910226bb34ad2d2"
+        )
         version("3.9.2", sha256="322aab6418ee3de1e2bd0871b60a07f0e444e744a7e8cba79af8b42408879ecf")
         version("3.9.1", sha256="1ba893820258d4eab9a5a94a6faae2d8f4b134019d0bfa19868606b6381502ff")
         version("3.9.0", sha256="b5bf04e7c64c3176eda5124d035005bb7a676fb505f42496c7b03a99d5683652")
@@ -69,13 +87,25 @@ class PyKeras(PythonPackage):
         version("3.0.1", sha256="d993721510fa654582132192193f69b1b3165418a6e00a73c3edce615b3cc672")
         version("3.0.0", sha256="82a9fa4b32a049b38151d11188ed15d74f21f853f163e78da0950dce1f244ccc")
         # Technically no CVEs, just deprecated due to age
-        version("2.15.0", sha256="b281ce09226576e0593b8dab0d9e5d42c334e053ce6f4f154dc6cd745ab93d2f")
-        version("2.14.0", sha256="a845d446b6ae626f61dde5ab2fa952530b6c17b4f9ed03e9362bd20172d00cca")
-        version("2.13.1", sha256="b3591493cce75a69adef7b192cec6be222e76e2386d132cd4e34aa190b0ecbd5")
+        version(
+            "2.15.0", sha256="b281ce09226576e0593b8dab0d9e5d42c334e053ce6f4f154dc6cd745ab93d2f"
+        )
+        version(
+            "2.14.0", sha256="a845d446b6ae626f61dde5ab2fa952530b6c17b4f9ed03e9362bd20172d00cca"
+        )
+        version(
+            "2.13.1", sha256="b3591493cce75a69adef7b192cec6be222e76e2386d132cd4e34aa190b0ecbd5"
+        )
         # https://www.cvedetails.com/cve/CVE-2024-3660/
-        version("2.12.0", sha256="6336cebb6b2b0a91f7efd3ff3a9db3a94f2abccf07a40323138afb80826aec62")
-        version("2.11.0", sha256="e7a7c4199ac76ea750d145c1d84ae1b932e68b9bca34e83596bd66b2fc2ad79e")
-        version("2.10.0", sha256="b1d8d9358700f4a585455854a142d88cc987419c1638ef935b440842d593ad04")
+        version(
+            "2.12.0", sha256="6336cebb6b2b0a91f7efd3ff3a9db3a94f2abccf07a40323138afb80826aec62"
+        )
+        version(
+            "2.11.0", sha256="e7a7c4199ac76ea750d145c1d84ae1b932e68b9bca34e83596bd66b2fc2ad79e"
+        )
+        version(
+            "2.10.0", sha256="b1d8d9358700f4a585455854a142d88cc987419c1638ef935b440842d593ad04"
+        )
         version("2.9.0", sha256="90226eaa0337573304f3e5ab44d4d9e3a65fe002776c5cbd0f65b738152c1084")
         version("2.8.0", sha256="5e777b0101d8385d3a90fc9056f1b2f6313f2c830d2e8181828b300c9229ec0c")
         version("2.7.0", sha256="7502746467ab15184e2e267f13fbb2c3f33ba24f8e02a097d229ba376dabaa04")
