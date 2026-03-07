@@ -375,14 +375,15 @@ spack:
     specs:
     # ROCM NOARCH
     #- hpctoolkit +rocm
-    - tau +mpi +rocm +syscall           # tau: has issue with `spack env depfile` build
+    # - tau +mpi +rocm +syscall           # tau: has issue with `spack env depfile` build
 
     # ROCM 90a
     - adios2 +kokkos
     - amrex
     - arborx
     - cabana
-    - caliper
+    # Can't build one of its dependencies (py-llvmlite)
+    # - caliper
     - chai
     - ecp-data-vis-sdk ~paraview +vtkm # +paraview: CMake Error at VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/CMakeLists.txt:272 (find_package): Could not find a package configuration file provided by "rocthrust" with any of the following names: rocthrustConfig.cmake rocthrust-config.cmake
     - gasnet
