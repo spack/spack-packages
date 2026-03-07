@@ -433,7 +433,10 @@ spack:
             - ~cuda
             - +rocm
             - amdgpu_target=gfx90a
-
+        trilinos:
+          prefer:
+          - +rocm amdgpu_target=gfx90a ~cuda
+          - ~superlu-dist
 
   ci:
     pipeline-gen:
