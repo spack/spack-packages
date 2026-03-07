@@ -59,6 +59,7 @@ class GreenMbpt(CMakePackage, CudaPackage):
         mpi = self.spec["mpi"]
         args.append(self.define("CMAKE_C_COMPILER", mpi.mpicc))
         args.append(self.define("CMAKE_CXX_COMPILER", mpi.mpicxx))
+        args.append(self.define("Build_Tests", "OFF"))  # Disable building tests by default
         if "+cuda" in self.spec:
             args.append(self.define("CUSTOM_KERNELS", "https://github.com/Green-Phys/green-gpu"))
             args.append(self.define("GPU_ARCHS", self.spec.variants["cuda_arch"].value[0]))
