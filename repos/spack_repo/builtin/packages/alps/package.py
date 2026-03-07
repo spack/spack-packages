@@ -24,7 +24,8 @@ class Alps(CMakePackage):
     license("MIT", checked_by="Ooolab")
 
     version(
-        "2.3.4-beta.2", sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c", preferred=True
+        "2.3.4-beta.2", sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c", 
+        preferred=True,
     )
     version("2.3.3", sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f")
 
@@ -33,7 +34,9 @@ class Alps(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    depends_on("boost@1.80:", type="build")  # Just for headers. Note that the checksums are listed below
+    depends_on(
+        "boost@1.80:", type="build"
+    )  # Just for headers. Note that the checksums are listed below
     depends_on("fftw")
     depends_on("lapack")
     depends_on("python", type=("build", "link", "run"))
@@ -101,9 +104,7 @@ class Alps(CMakePackage):
 
             # Now replace boost::is_same with std::is_same
             filter_file(
-                "boost::is_same",
-                "std::is_same",
-                "src/alps/numeric/matrix/strided_iterator.hpp",
+                "boost::is_same", "std::is_same", "src/alps/numeric/matrix/strided_iterator.hpp"
             )
 
             filter_file(
@@ -141,29 +142,31 @@ class Alps(CMakePackage):
             + cstdlibstr
         )
 
-        args.append(self.define('CMAKE_CXX_FLAGS', cxx_flags))
+        args.append(self.define("CMAKE_CXX_FLAGS", cxx_flags))
 
         # Boost source directory
         boost_src_dir = os.path.join(self.stage.source_path, "boost_source_files")
-        args.append(self.define('Boost_SRC_DIR', boost_src_dir))
+        args.append(self.define("Boost_SRC_DIR", boost_src_dir))
 
         # Boost linking options
-        args.append(self.define('Boost_USE_STATIC_LIBS', True))        # → -DBoost_USE_STATIC_LIBS=ON
-        args.append(self.define('Boost_USE_STATIC_RUNTIME', False))    # → -DBoost_USE_STATIC_RUNTIME=OFF
+        args.append(self.define("Boost_USE_STATIC_LIBS", True))        # → -DBoost_USE_STATIC_LIBS=ON
+        args.append(self.define(
+            "Boost_USE_STATIC_RUNTIME", False)
+        )    # → -DBoost_USE_STATIC_RUNTIME=OFF
 
         # MPI support
         if self.spec.satisfies("+mpi"):
-            args.append(self.define('MPI_CXX_COMPILER', self.spec["mpi"].mpicxx))
-            args.append(self.define('MPI_C_COMPILER', self.spec["mpi"].mpicc))
+            args.append(self.define("MPI_CXX_COMPILER", self.spec["mpi"].mpicxx))
+            args.append(self.define("MPI_C_COMPILER", self.spec["mpi"].mpicc))
         else:
-            args.append(self.define('ENABLE_MPI', False))
+            args.append(self.define("ENABLE_MPI", False))
 
         # RPATH settings
-        args.append(self.define('CMAKE_INSTALL_RPATH_USE_LINK_PATH', True))
-        args.append(self.define('CMAKE_BUILD_WITH_INSTALL_RPATH', True))
+        args.append(self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True))
+        args.append(self.define("CMAKE_BUILD_WITH_INSTALL_RPATH", True))
 
         # Point to Spack's HDF5
-        args.append(self.define('HDF5_DIR', self.spec["hdf5"].prefix))
+        args.append(self.define("HDF5_DIR", self.spec["hdf5"].prefix))
 
         return args
 
