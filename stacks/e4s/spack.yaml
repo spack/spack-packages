@@ -12,7 +12,6 @@ spack:
   packages:
     all:
       require:
-      - +shared
       - target=x86_64_v3
       variants: +mpi
     c:
