@@ -337,9 +337,6 @@ spack:
           - ~rocm
           - ~cuda
           - target=x86_64_v3
-        hdf5:
-          prefer:
-          - ~rocm +cuda cuda_arch=80
         trilinos:
           prefer:
           - ~rocm +cuda cuda_arch=80
@@ -369,9 +366,6 @@ spack:
           - ~rocm
           - ~cuda
           - target=x86_64_v3
-        hdf5:
-          prefer:
-          - ~rocm +cuda cuda_arch=90
         trilinos:
           prefer:
           - ~rocm +cuda cuda_arch=90
