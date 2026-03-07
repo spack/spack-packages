@@ -24,8 +24,8 @@ class Alps(CMakePackage):
     license("MIT", checked_by="Ooolab")
 
     version(
-        "2.3.4-beta.2", 
-        sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c", 
+        "2.3.4-beta.2",
+        sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c",
         preferred=True,
     )
     version("2.3.3", sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f")
@@ -150,10 +150,10 @@ class Alps(CMakePackage):
         args.append(self.define("Boost_SRC_DIR", boost_src_dir))
 
         # Boost linking options
-        args.append(self.define("Boost_USE_STATIC_LIBS", True)) # → -DBoost_USE_STATIC_LIBS=ON
+        args.append(self.define("Boost_USE_STATIC_LIBS", True))  # → -DBoost_USE_STATIC_LIBS=ON
         args.append(
             self.define("Boost_USE_STATIC_RUNTIME", False)
-        ) # → -DBoost_USE_STATIC_RUNTIME=OFF
+        )  # → -DBoost_USE_STATIC_RUNTIME=OFF
 
         # MPI support
         if self.spec.satisfies("+mpi"):
