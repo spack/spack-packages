@@ -23,7 +23,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
 
     homepage = "https://www.swig.org"
     git = "https://github.com/swig/swig.git"
-    sourceforge_mirror_path = "swig/swig-3.0.12.tar.gz"
+    sourceforge_mirror_path = "swig/swig-4.4.1.tar.gz"
     maintainers("sethrj")
 
     tags = ["e4s", "build-tools"]
@@ -33,10 +33,10 @@ class Swig(AutotoolsPackage, SourceforgePackage):
     license("GPL-3.0-only")
 
     version("master")
+    version("4.4.1", sha256="40162a706c56f7592d08fd52ef5511cb7ac191f3593cf07306a0a554c6281fcf")
     version(
         "4.1.1",
         sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b",
-        preferred=True,
     )
     version("4.1.0", sha256="d6a9a8094e78f7cfb6f80a73cc271e1fe388c8638ed22668622c2c646df5bb3d")
     version("4.0.2", sha256="d53be9730d8d58a16bf0cbd1f8ac0c0c3e1090573168bfa151b01eb47fa906fc")
