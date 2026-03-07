@@ -374,7 +374,7 @@ spack:
   - group: rocm
     specs:
     # ROCM NOARCH
-    - hpctoolkit +rocm
+    #- hpctoolkit +rocm
     - tau +mpi +rocm +syscall           # tau: has issue with `spack env depfile` build
 
     # ROCM 90a
