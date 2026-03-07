@@ -12,6 +12,7 @@ spack:
   packages:
     all:
       require:
+      - +shared
       - target=x86_64_v3
       variants: +mpi
     c:
@@ -97,13 +98,13 @@ spack:
     - axom
     - cabana ^kokkos +cuda_lambda
     - caliper
-    - chai ^umpire ~shared
+    - chai ^umpire
     - chapel
     - cusz
     - dealii cxxstd=17 ^arborx@1.5 cxxstd=17
     - ecp-data-vis-sdk  +adios2 ~ascent +hdf5 +vtkm +zfp ~paraview
     # Exago still requires an old version of Raja that doesn't support the CUDA arch we want to build for
-    - exago +mpi +python +raja +hiop  ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja ^raja~cuda
+    # - exago +mpi +python +raja +hiop  ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja ^raja~cuda
     - fftx
     - flecsi
     - ginkgo
