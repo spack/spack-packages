@@ -131,7 +131,7 @@ spack:
     - superlu-dist
     - tasmanian
     - trilinos
-    - umpire ~shared
+    - umpire
     - adios2
     - vtk-m
     - zfp
