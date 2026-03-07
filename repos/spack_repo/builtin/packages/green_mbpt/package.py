@@ -51,7 +51,7 @@ class GreenMbpt(CMakePackage, CudaPackage):
     depends_on("blas")
 
     # CUDA variant dependency
-    depends_on("cuda@12:", when="+cuda")
+    depends_on("cuda@12:12.9", when="+cuda")
 
     def cmake_args(self):
         args = []
