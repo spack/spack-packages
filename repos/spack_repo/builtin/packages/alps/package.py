@@ -24,7 +24,7 @@ class Alps(CMakePackage):
     license("MIT", checked_by="Ooolab")
 
     version(
-        "2.3.4-beta.2", sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c"
+        "2.3.4-beta.2", sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c", preferred=True
     )
     version("2.3.3", sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f")
 
@@ -33,7 +33,7 @@ class Alps(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    depends_on("boost@1.80:")  # Just for headers. Note that the checksums are listed below
+    depends_on("boost@1.80:", type="build")  # Just for headers. Note that the checksums are listed below
     depends_on("fftw")
     depends_on("lapack")
     depends_on("python", type=("build", "link", "run"))
@@ -43,7 +43,7 @@ class Alps(CMakePackage):
     depends_on("mpi", when="+mpi")
     depends_on("hdf5+mpi+hl", when="+mpi")
     depends_on("hdf5~mpi+hl", when="~mpi")
-    depends_on("zlib")
+    depends_on("zlib-api")
 
     extends("python")
 
@@ -77,99 +77,96 @@ class Alps(CMakePackage):
     def patch(self):
         # Only apply patch for Boost versions greater than 1.87
         # Check if boost dependency is specified and get its version
-        if "boost" in self.spec:
-            boost_spec = self.spec["boost"]
-            # Compare versions: only apply patch if boost version > 1.87
-            if boost_spec.version > Version("1.87"):
-                # Fix boost::is_same and boost::add_const for >=Boost 1.88.0 compatibility
-                # These type traits were moved to std:: in >=Boost 1.88.0
+        if "boost" not in self.spec:
+            return
 
-                # First, let's add necessary includes
-                filter_file(
-                    "#include <boost/type_traits.hpp>",
-                    "#include <boost/type_traits.hpp>\n#include <type_traits>",
-                    "src/alps/numeric/matrix/strided_iterator.hpp",
-                )
+        boost_spec = self.spec["boost"]
+        # Compare versions: only apply patch if boost version > 1.87
+        if boost_spec.version > Version("1.87"):
+            # Fix boost::is_same and boost::add_const for >=Boost 1.88.0 compatibility
+            # These type traits were moved to std:: in >=Boost 1.88.0
 
-                filter_file(
-                    "#include <boost/type_traits.hpp>",
-                    "#include <boost/type_traits.hpp>\n#include <type_traits>",
-                    "src/alps/numeric/matrix/matrix_element_iterator.hpp",
-                )
+            # First, let's add necessary includes
+            filter_file(
+                "#include <boost/type_traits.hpp>",
+                "#include <boost/type_traits.hpp>\n#include <type_traits>",
+                "src/alps/numeric/matrix/strided_iterator.hpp",
+            )
 
-                # Now replace boost::is_same with std::is_same
-                filter_file(
-                    "boost::is_same",
-                    "std::is_same",
-                    "src/alps/numeric/matrix/strided_iterator.hpp",
-                )
+            filter_file(
+                "#include <boost/type_traits.hpp>",
+                "#include <boost/type_traits.hpp>\n#include <type_traits>",
+                "src/alps/numeric/matrix/matrix_element_iterator.hpp",
+            )
 
-                filter_file(
-                    "boost::is_same",
-                    "std::is_same",
-                    "src/alps/numeric/matrix/matrix_element_iterator.hpp",
-                )
+            # Now replace boost::is_same with std::is_same
+            filter_file(
+                "boost::is_same",
+                "std::is_same",
+                "src/alps/numeric/matrix/strided_iterator.hpp",
+            )
 
-                # Replace boost::add_const with std::add_const
-                filter_file(
-                    "boost::add_const",
-                    "std::add_const",
-                    "src/alps/numeric/matrix/strided_iterator.hpp",
-                )
+            filter_file(
+                "boost::is_same",
+                "std::is_same",
+                "src/alps/numeric/matrix/matrix_element_iterator.hpp",
+            )
 
-                filter_file(
-                    "boost::add_const",
-                    "std::add_const",
-                    "src/alps/numeric/matrix/matrix_element_iterator.hpp",
-                )
+            # Replace boost::add_const with std::add_const
+            filter_file(
+                "boost::add_const",
+                "std::add_const",
+                "src/alps/numeric/matrix/strided_iterator.hpp",
+            )
+
+            filter_file(
+                "boost::add_const",
+                "std::add_const",
+                "src/alps/numeric/matrix/matrix_element_iterator.hpp",
+            )
 
     def cmake_args(self):
         args = []
-        # This will ensure availability of the cstddef header on darwin (mac)
+
+        # Platform-specific C++ flags (e.g., -stdlib=libc++ on macOS)
         cstdlibstr = ""
         if self.spec.satisfies("platform=darwin"):
             cstdlibstr = " -stdlib=libc++"
 
-        args.append(
-            "-DCMAKE_CXX_FLAGS={0}".format(
-                self.compiler.cxx14_flag
-                + " -fpermissive -DBOOST_NO_AUTO_PTR -DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF"
-                + " -DBOOST_TIMER_ENABLE_DEPRECATED"
-                + cstdlibstr
-            )
+        # Assemble the full C++ flags string
+        cxx_flags = (
+            self.compiler.cxx14_flag
+            + " -fpermissive -DBOOST_NO_AUTO_PTR -DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF"
+            + " -DBOOST_TIMER_ENABLE_DEPRECATED"
+            + cstdlibstr
         )
 
-        # Point to boost source files that need to be compiled
+        args.append(self.define('CMAKE_CXX_FLAGS', cxx_flags))
+
+        # Boost source directory
         boost_src_dir = os.path.join(self.stage.source_path, "boost_source_files")
-        args.append("-DBoost_SRC_DIR={0}".format(boost_src_dir))
+        args.append(self.define('Boost_SRC_DIR', boost_src_dir))
 
-        # Tell CMake to compile boost from source
-        args.append("-DBoost_USE_STATIC_LIBS=ON")
+        # Boost linking options
+        args.append(self.define('Boost_USE_STATIC_LIBS', True))        # → -DBoost_USE_STATIC_LIBS=ON
+        args.append(self.define('Boost_USE_STATIC_RUNTIME', False))    # → -DBoost_USE_STATIC_RUNTIME=OFF
 
-        args.append("-DBoost_USE_STATIC_RUNTIME=OFF")
-
-        # Add MPI support - just specify compilers (minimal change)
-        if "+mpi" in self.spec:
-            args.append("-DMPI_CXX_COMPILER={0}".format(self.spec["mpi"].mpicxx))
-            args.append("-DMPI_C_COMPILER={0}".format(self.spec["mpi"].mpicc))
+        # MPI support
+        if self.spec.satisfies("+mpi"):
+            args.append(self.define('MPI_CXX_COMPILER', self.spec["mpi"].mpicxx))
+            args.append(self.define('MPI_C_COMPILER', self.spec["mpi"].mpicc))
         else:
-            args.append("-DENABLE_MPI=OFF")
+            args.append(self.define('ENABLE_MPI', False))
 
-        # Preserve link paths as RPATH in the installed binary
-        args.append("-DCMAKE_INSTALL_RPATH_USE_LINK_PATH=ON")
-        args.append("-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON")
+        # RPATH settings
+        args.append(self.define('CMAKE_INSTALL_RPATH_USE_LINK_PATH', True))
+        args.append(self.define('CMAKE_BUILD_WITH_INSTALL_RPATH', True))
 
-        # Tell CMake to use Spack’s HDF5 explicitly
-        args.append("-DHDF5_DIR={0}".format(self.spec["hdf5"].prefix))
-
-        # Add Python support
-        args.append("-DPYTHON_EXECUTABLE={0}".format(self.spec["python"].command.path))
-
-        args.append("-DPYTHON_INCLUDE_DIR={0}".format(self.spec["python"].headers.directories[0]))
-
-        args.append("-DPYTHON_LIBRARY={0}".format(self.spec["python"].libs[0]))
+        # Point to Spack's HDF5
+        args.append(self.define('HDF5_DIR', self.spec["hdf5"].prefix))
 
         return args
+
 
     def setup_build_environment(self, env):
         # Set up environment for boost source compilation
