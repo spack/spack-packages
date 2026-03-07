@@ -182,6 +182,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("patchelf", when="@2.13: platform=linux")
         # https://github.com/tensorflow/tensorflow/issues/60179#issuecomment-1491238631
         depends_on("coreutils", when="@2.13: platform=darwin")
+        # XLA requires xxd now
+        depends_on("xxd-standalone", when="@2.21:")
 
         depends_on("swig")
         depends_on("py-pip")
