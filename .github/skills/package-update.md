@@ -348,13 +348,61 @@ Before removing the draft status from any PR, verify:
    at least one `version(...)` with a correct checksum.
 7. CI or the binary cache provides coverage for at least the most commonly used versions.
 
+#### Run style and audit checks locally before pushing
+
+Run the style checker against the `develop` base to catch formatting issues before CI sees them.
+The repository uses `flake8`, `isort`, and `black` via a wrapper script:
+
+```sh
+# Check only (shows what would be fixed):
+.ci/style_check.sh develop
+
+# Auto-fix formatting issues:
+.ci/style_check.sh --fix develop
+```
+
+The script requires a `spack-core` directory (a clone of `spack/spack`) to be present in the
+repository root. Create it if absent:
+
+```sh
+git clone https://github.com/spack/spack spack-core
+```
+
+After fixing, verify the checks pass cleanly:
+
+```sh
+.ci/style_check.sh develop   # should print "style checks passed"
+```
+
+Run the package audit to catch semantic errors (missing dependencies, invalid version specs, etc.):
+
+```sh
+. spack-core/share/spack/setup-env.sh
+spack audit packages
+spack audit configs
+spack audit externals
+```
+
+The audit output is per-repository (not per-PR), so filter results to only the packages you
+changed. Pre-existing errors in unmodified packages can be ignored.
+
+If style or audit issues are found after a commit has already been pushed, fix them and amend:
+
+```sh
+# Fix, then amend the branch's commit:
+.ci/style_check.sh --fix develop
+git add -u
+git commit --amend --no-edit
+git push <fork-remote> <branch> --force-with-lease
+```
+
 #### CI timing
 
 After a PR is pushed, two rounds of CI feedback are available:
 
 | Stage | When results appear | What is checked |
 |---|---|---|
-| First-stage checks (GitHub Actions) | ~10 minutes | Style (`spack style`), audit (`spack audit`), license headers, package naming conventions |
+| First-stage checks (GitHub Actions) | ~10 minutes | Style (`flake8`/`isort`/`black` via `.ci/style_check.sh`), audit (`spack audit`), license headers, package naming conventions |
 | Full pipeline (GitLab CI at `gitlab.spack.io/spack/spack-packages`) | up to 1 hour | Package builds across all supported compilers and platforms; any build failures are visible here |
 
 Wait for first-stage results before asking a reviewer to look at the PR — style and audit
