@@ -47,7 +47,7 @@ class Opencv(CMakePackage, CudaPackage):
     version("4.2.0", sha256="9ccb2192d7e8c03c58fee07051364d94ed7599363f3b0dce1c5e6cc11c1bb0ec")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2019-5064/
-        # https://www.cvedetails.com/cve/CVE-2019-5064/
+        # https://www.cvedetails.com/cve/CVE-2019-5063/
         version("4.1.2", sha256="385dd0a9c25e67ef0dd60e022d2a2d7b17e2f36819cf3cb46aa8cdff5c5282c9")
         # https://www.cvedetails.com/cve/CVE-2019-16249/
         version("4.1.1", sha256="5de5d96bdfb9dad6e6061d70f47a0a91cee96bb35afb9afb9ecb3d43e243d217")
@@ -96,7 +96,6 @@ class Opencv(CMakePackage, CudaPackage):
         "4.8.1",
         "4.9.0",
         "4.10.0",
-        "4.12.0",
     ]
     for cv in contrib_vers:
         resource(
