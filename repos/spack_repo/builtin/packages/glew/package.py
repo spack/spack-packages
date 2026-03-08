@@ -11,6 +11,7 @@ class Glew(CMakePackage):
 
     homepage = "https://glew.sourceforge.net/"
     url = "https://github.com/nigels-com/glew/releases/download/glew-2.1.0/glew-2.1.0.tgz"
+    git = "https://github.com/nigels-com/glew.git"
     root_cmakelists_dir = "build/cmake"
 
     maintainers("biddisco")
@@ -24,6 +25,7 @@ class Glew(CMakePackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("cmake@3.16:", type="build", when="@2.3:")
     depends_on("gl")
     depends_on("libx11", when="^[virtuals=gl] glx")
     depends_on("xproto", when="^[virtuals=gl] glx")

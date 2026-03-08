@@ -16,6 +16,7 @@ class Libxmu(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXmu"
     xorg_mirror_path = "lib/libXmu-1.1.2.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXmu.git"
 
     license("MIT")
 

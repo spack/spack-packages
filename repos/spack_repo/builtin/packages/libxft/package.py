@@ -17,6 +17,7 @@ class Libxft(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXft"
     xorg_mirror_path = "lib/libXft-2.3.2.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXft.git"
 
     license("MIT")
 
@@ -37,6 +38,7 @@ class Libxft(AutotoolsPackage, XorgPackage):
     depends_on("fontconfig@2.5.92:")
     depends_on("libx11")
     depends_on("libxrender@0.8.2:")
+    depends_on("xproto@7.0.22:", type="build", when="@2.3.3:")
 
     depends_on("pkgconfig", type="build")
     depends_on("util-macros", type="build")

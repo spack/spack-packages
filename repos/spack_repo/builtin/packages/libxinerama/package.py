@@ -13,6 +13,7 @@ class Libxinerama(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXinerama"
     xorg_mirror_path = "lib/libXinerama-1.1.3.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXinerama.git"
 
     license("MIT")
 

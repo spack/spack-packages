@@ -13,6 +13,7 @@ class Libxxf86dga(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXxf86dga"
     xorg_mirror_path = "lib/libXxf86dga-1.1.4.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXxf86dga.git"
 
     license("MIT")
 

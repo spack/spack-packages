@@ -18,6 +18,7 @@ class Xkbcomp(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/app/xkbcomp"
     xorg_mirror_path = "app/xkbcomp-1.3.1.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/app/xkbcomp.git"
 
     license("MIT")
 

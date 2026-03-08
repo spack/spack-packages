@@ -18,6 +18,7 @@ class XcbUtilCursor(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libxcb-cursor"
     xorg_mirror_path = "lib/xcb-util-cursor-0.1.4.tar.xz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libxcb-cursor.git"
 
     license("MIT")
 

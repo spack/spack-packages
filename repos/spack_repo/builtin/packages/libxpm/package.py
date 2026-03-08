@@ -13,6 +13,7 @@ class Libxpm(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXpm"
     xorg_mirror_path = "lib/libXpm-3.5.12.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXpm.git"
 
     license("X11")
 

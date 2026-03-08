@@ -14,6 +14,7 @@ class Libxfixes(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXfixes"
     xorg_mirror_path = "lib/libXfixes-5.0.2.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXfixes.git"
 
     license("MIT")
 

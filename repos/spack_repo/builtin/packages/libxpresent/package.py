@@ -14,6 +14,7 @@ class Libxpresent(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXpresent/"
     xorg_mirror_path = "lib/libXpresent-1.0.0.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXpresent.git"
 
     license("MIT")
 

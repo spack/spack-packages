@@ -13,6 +13,7 @@ class Libxxf86vm(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXxf86vm"
     xorg_mirror_path = "lib/libXxf86vm-1.1.4.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXxf86vm.git"
 
     license("MIT")
 

@@ -13,6 +13,7 @@ class Libxres(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXRes"
     xorg_mirror_path = "lib/libXres-1.0.7.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXRes.git"
 
     license("custom")
 

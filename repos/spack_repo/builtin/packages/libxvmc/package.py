@@ -13,6 +13,7 @@ class Libxvmc(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXvMC"
     xorg_mirror_path = "lib/libXvMC-1.0.9.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXvMC.git"
 
     license("MIT")
 

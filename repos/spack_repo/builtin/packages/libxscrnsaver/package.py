@@ -13,6 +13,7 @@ class Libxscrnsaver(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXScrnSaver"
     xorg_mirror_path = "lib/libXScrnSaver-1.2.2.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXScrnSaver.git"
 
     license("MIT")
 
