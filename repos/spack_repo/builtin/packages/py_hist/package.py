@@ -12,6 +12,7 @@ class PyHist(PythonPackage):
 
     homepage = "https://github.com/scikit-hep/hist"
     pypi = "hist/hist-2.5.2.tar.gz"
+    git = "https://github.com/scikit-hep/hist.git"
 
     maintainers("wdconinc")
 

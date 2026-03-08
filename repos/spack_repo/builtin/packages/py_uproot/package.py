@@ -77,6 +77,7 @@ class PyUproot(PythonPackage):
     depends_on("python@3.7:", type=("build", "run"), when="@5.0:")
     depends_on("python@3.8:", type=("build", "run"), when="@5.1:")
     depends_on("python@3.9:", type=("build", "run"), when="@5.5:")
+    depends_on("python@3.10:", type=("build", "run"), when="@5.7:")
     depends_on("py-hatchling", when="@5:", type="build")
     depends_on("py-hatch-vcs", when="@5.2:", type="build")
     depends_on("py-setuptools", when="@:4", type=("build", "run"))
