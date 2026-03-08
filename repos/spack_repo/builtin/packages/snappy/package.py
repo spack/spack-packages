@@ -25,6 +25,7 @@ class Snappy(CMakePackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("pic", default=True, description="Build position independent code")
 
+    depends_on("cmake@3.10:", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 

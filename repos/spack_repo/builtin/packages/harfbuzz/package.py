@@ -100,6 +100,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         patch("harfbuzz_10_0_cmake_add_missing_table_sources.patch", when="@10:11.1")
         patch("harfbuzz_11_2_cmake_add_missing_table_sources.patch", when="@11.2:11.3")
         patch("harfbuzz_11_4_cmake_add_missing_table_sources.patch", when="@11.4")
+        depends_on("cmake@3.14:", type="build")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")

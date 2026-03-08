@@ -29,7 +29,7 @@ class Bandicoot(CMakePackage, CudaPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.5:", type="build")
+    depends_on("cmake@3.6:", type="build")
 
     depends_on("opencl", when="+clblast")
     depends_on("clblast", when="+clblast")
