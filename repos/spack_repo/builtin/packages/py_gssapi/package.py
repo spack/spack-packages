@@ -16,6 +16,9 @@ class PyGssapi(PythonPackage):
 
     maintainers("wdconinc")
 
+    version("1.11.1", sha256="2049ee4b1d0c363163a1344b7282a363f9f4094e51d2c36de0cf01d4735e0ae2")  # FIXME
+    version("1.10.1", sha256="7b54335dc9a3c55d564624fb6e25fcf9cfc0b80296a5c51e9c7cf9781c7d295b")  # FIXME
+    version("1.10.0", sha256="f1495e0dc20bee3ad2839724d98ae723c7dae78c1ddea37a7c861c3c4bd77763")  # FIXME
     version("1.9.0", sha256="f468fac8f3f5fca8f4d1ca19e3cd4d2e10bd91074e7285464b22715d13548afe")
     version("1.8.3", sha256="aa3c8d0b1526f52559552bb2c9d2d6be013d76a8e5db00b39a1db5727e93b0b0")
     version("1.8.2", sha256="b78e0a021cc91158660e4c5cc9263e07c719346c35a9c0f66725e914b235c89a")
@@ -25,5 +28,6 @@ class PyGssapi(PythonPackage):
     depends_on("py-cython@3.0.3:3", type="build", when="@1.9.0:")
     depends_on("py-setuptools@40.6.0:", type="build")
 
+    depends_on("python@3.9:", when="@1.10:", type=("build", "run"))
     depends_on("py-decorator", type=("build", "run"))
     depends_on("krb5", type=("build", "link"))
