@@ -348,6 +348,20 @@ Before removing the draft status from any PR, verify:
    at least one `version(...)` with a correct checksum.
 7. CI or the binary cache provides coverage for at least the most commonly used versions.
 
+#### CI timing
+
+After a PR is pushed, two rounds of CI feedback are available:
+
+| Stage | When results appear | What is checked |
+|---|---|---|
+| First-stage checks (GitHub Actions) | ~10 minutes | Style (`spack style`), audit (`spack audit`), license headers, package naming conventions |
+| Full pipeline (GitLab CI at `gitlab.spack.io/spack/spack-packages`) | up to 1 hour | Package builds across all supported compilers and platforms; any build failures are visible here |
+
+Wait for first-stage results before asking a reviewer to look at the PR — style and audit
+failures are quick to fix and should be resolved before human review. Wait for (or note the
+status of) the full GitLab pipeline before marking the PR ready for review, so that build
+failures from the new versions are visible and can be addressed.
+
 ---
 
 ## Conventions Reference
