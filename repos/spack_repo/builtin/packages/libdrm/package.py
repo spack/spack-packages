@@ -23,12 +23,6 @@ class Libdrm(AutotoolsPackage, MesonPackage):
     license("MIT")
 
     version("2.4.131", sha256="45ba9983b51c896406a3d654de81d313b953b76e6391e2797073d543c5f617d5")
-    version("2.4.130", sha256="a5c585ba8484c85fa8029bc8d0aad2af814e800b36e0f67150971b5037716ea5")
-    version("2.4.129", sha256="5978183f978d697e26a50ba066174964efb0ab97caa1ecaa1b861fbe5ddf77dc")
-    version("2.4.128", sha256="3bb35db8700c2a0b569f2c6729a53f5495786856b310854c8de57782a22bddac")
-    version("2.4.127", sha256="051aeb3e542a57621018ffc443fb088dd69b78eef0ce4808b604ce0feac9f47f")
-    version("2.4.126", sha256="6cab16d4d259b6abc9f485233863454114a3c307eca806679aad3edbe967bf42")
-    version("2.4.125", sha256="d4bae92797a50f81a93524762e0410a49cd84cfa0f997795bc0172ac8fb1d96a")
     version("2.4.124", sha256="ac36293f61ca4aafaf4b16a2a7afff312aa4f5c37c9fbd797de9e3c0863ca379")
     version("2.4.123", sha256="a2b98567a149a74b0f50e91e825f9c0315d86e7be9b74394dae8b298caadb79e")
     version("2.4.122", sha256="d9f5079b777dffca9300ccc56b10a93588cdfbc9dde2fae111940dfb6292f251")

@@ -17,7 +17,6 @@ class PyCoverage(PythonPackage):
     maintainers("adamjstewart")
 
     version("7.13.1", sha256="b7593fe7eb5feaa3fbb461ac79aac9f9fc0387a5ca8080b0c6fe2ca27b091afd")
-    version("7.13.0", sha256="a394aa27f2d7ff9bc04cf703817773a59ad6dfbd577032e690f961d2460ee936")
     version("7.12.0", sha256="fc11e0a4e372cb5f282f16ef90d4a585034050ccda536451901abfb19a57f40c")
     version("7.10.7", sha256="f4ab143ab113be368a3e9b795f9cd7906c5ef407d6173fe9675a902e1fffc239")
     version("7.10.0", sha256="2768885aef484b5dcde56262cbdfba559b770bfc46994fe9485dc3614c7a5867")

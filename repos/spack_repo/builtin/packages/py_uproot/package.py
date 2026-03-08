@@ -27,7 +27,6 @@ class PyUproot(PythonPackage):
     license("BSD-3-Clause")
 
     version("5.6.9", sha256="0f019088f0f6f0d6e9e6cbc7ec158515d26f0dfed029f32e8b8faf041a507d3d")
-    version("5.6.4", sha256="4a14d81466398dbc89d809520b5ec600ab725307f4c2ee60e15634c6e52c9308")
     version("5.6.3", sha256="47f2aefcdcae503c9a21900381ac42a7bc3274cd0c52cd0686700d282ad0f46b")
     version("5.5.2", sha256="d765be4bea1df58cc237672fe4e8a10a2f7a40a2c7a8cf643333af48def07f5c")
     version("5.4.2", sha256="53b245baf27067efd86fb92bd11d0efb12e8aff8b7455c85b27807e24e31d99b")

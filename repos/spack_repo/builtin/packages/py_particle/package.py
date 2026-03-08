@@ -24,7 +24,6 @@ class PyParticle(PythonPackage):
 
     version("master", branch="master")
     version("0.26.1", sha256="107698d0ad8d56d6568ef97367f424e5d672a14087a5de31539d6218257590c7")
-    version("0.26.0", sha256="11c869465f5467efb975dcc77e2327e2c4e3691de755ebcf853f504b2974ba16")
     version("0.25.4", sha256="bfa77d8aa073e6b498f1ae2d4d4926b707662b060fb23eb986a7cdb4931f58af")
     version("0.25.3", sha256="78cf7e56e9e2118385fbfb8908d8395e7a267ab5f0596aaafebadb08cb04452b")
     version("0.25.2", sha256="1fa4bbee38bfeaef08a40b2779b4c30c5ce4fa2865a10c02acfe90679b4e61e9")

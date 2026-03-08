@@ -35,8 +35,6 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
     maintainers("AlexanderRichert-NOAA")
 
     version("12.3.2", sha256="6f6db164359a2da5a84ef826615b448b33e6306067ad829d85d5b0bf936f1bb8")
-    version("12.3.1", sha256="3ee7133f7f160b27bc34c058e147a559bb781c2b8208bc760db9fa9fa69cea07")
-    version("12.3.0", sha256="8660ebd3c27d9407fc8433b5d172bafba5f0317cb0bb4339f28e5370c93d42b7")
     version("12.2.0", sha256="ecb603aa426a8b24665718667bda64a84c1504db7454ee4cadbd362eea64e545")
     version("11.5.1", sha256="972a60a8d274d49e70361da6920c3a73dfb0fb4387f6c6811906a47ba634d8a1")
     version("11.4.1", sha256="7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698")

@@ -19,11 +19,7 @@ class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
     keep_werror = "all"
 
     version("3.18.1", sha256="adb6b7eed09331d72cbbe6d5ef3597024ab46a1d61c6ca7cdd495e51600f8957")
-    version("3.18.0", sha256="354b001b112bafa956005d242f6fca9c3a2a03433eeea874e8a44fe2a4a36e7c")
     version("3.17.4", sha256="dd21d1545c05e73ada594b93fe593351b7dbf10940fd93b934b9395513108b34")
-    version("3.17.3", sha256="99dcab8a4be0e5d3c44f882ab9d4a711533f8cb4a4298e41175ff9bb63770fe5")
-    version("3.17.2", sha256="9d34adf5bd979cd62479340d9854e6a424a7ead7ee632e4a6da104ec0796f923")
-    version("3.17.1", sha256="b81027fc8f444fb574de7f13edf0cf9810643d2935670c4fe19f140354241208")
     version("3.16.2", sha256="1bc306be1a1f4f6c8965fbdd79c9ccca021fdc4b277d501483a711cbd7dbcd6c")
     version("3.11.0", sha256="25a00226d2d449c15b2f08467d6d5ebbb2a428260c4ab773721c32adbc6da072")
     version("3.10.5", sha256="e73f75e58da59a0e333d337c105093c496c0fd7356ef3a5a540f560697c9c4e6")

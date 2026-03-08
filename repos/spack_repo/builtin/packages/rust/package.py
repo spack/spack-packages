@@ -42,7 +42,6 @@ class Rust(Package):
     version("1.86.0", sha256="022a27286df67900a044d227d9db69d4732ec3d833e4ffc259c4425ed71eed80")
     version("1.85.0", sha256="2f4f3142ffb7c8402139cfa0796e24baaac8b9fd3f96b2deec3b94b4045c6a8a")
     version("1.84.1", sha256="5e2fb5d49628a549f7671b2ccf9855ab379fd442831a7c2af16e0cdcc31bb375")
-    version("1.84.0", sha256="15cee7395b07ffde022060455b3140366ec3a12cbbea8f1ef2ff371a9cca51bf")
     version("1.83.0", sha256="722d773bd4eab2d828d7dd35b59f0b017ddf9a97ee2b46c1b7f7fac5c8841c6e")
     version("1.81.0", sha256="872448febdff32e50c3c90a7e15f9bb2db131d13c588fe9071b0ed88837ccfa7")
     version("1.78.0", sha256="ff544823a5cb27f2738128577f1e7e00ee8f4c83f2a348781ae4fc355e91d5a9")

@@ -22,7 +22,6 @@ class Libxmu(AutotoolsPackage, XorgPackage):
     maintainers("wdconinc")
 
     version("1.3.1", sha256="5c8f44e26ccc9b14188599524e67ce788a205b38e297834babdeb12090be835b")
-    version("1.3.0", sha256="195125c08d23bfdc84e6f6a9f66b19d5cb38cd1564a704accaa3bf6131660f99")
     version("1.2.1", sha256="bf0902583dd1123856c11e0a5085bd3c6e9886fbbd44954464975fd7d52eb599")
     version("1.2.0", sha256="b4686c4b4570044bcfc35bfaa3edbe68185ddf8e3250387f74a140c8e45afb2f")
     version("1.1.4", sha256="3091d711cdc1d8ea0f545a13b90d1464c3c3ab64778fd121f0d789b277a80289")

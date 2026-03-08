@@ -16,9 +16,7 @@ class PyWrapt(PythonPackage):
     license("BSD-2-Clause")
 
     version("2.1.1", sha256="5fdcb09bf6db023d88f312bd0767594b414655d58090fc1c46b3414415f67fac")
-    version("2.1.0", sha256="757ff1de7e1d8db1839846672aaecf4978af433cc57e808255b83980e9651914")
     version("2.0.1", sha256="9c9c635e78497cacb81e84f8b11b23e0aacac7a136e73b8e5b2109a1d9fc468f")
-    version("2.0.0", sha256="35a542cc7a962331d0279735c30995b024e852cf40481e384fd63caaa391cbb9")
     version("1.17.3", sha256="f66eb08feaa410fe4eebd17f2a2c8e2e46d3476e9f8c783daa8e09e0faa666d0")
     version("1.15.0", sha256="d06730c6aed78cee4126234cf2d071e01b44b915e725a6cb439a879ec9754a3a")
     version("1.14.1", sha256="380a85cf89e0e69b7cfbe2ea9f765f004ff419f34194018a6827ac0e3edfed4d")

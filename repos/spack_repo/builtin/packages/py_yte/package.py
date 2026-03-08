@@ -18,7 +18,6 @@ class PyYte(PythonPackage):
     license("MIT")
 
     version("1.9.4", sha256="86a47e6d722cec9419a7ac88be57d0d6c4ce28f02860393b71a66f2c674069f6")
-    version("1.9.0", sha256="d259548aa46c5d5ff318f3ecb1732918d1ac3c6708798767ce3823192ce1ba21")
     version("1.8.1", sha256="6eefbdceae56e156ba9881ecb63f3c9217cfe5d5cc6f85fdb061c266a8eff112")
     version("1.7.0", sha256="d9cadcb597128490356a8260842fd71bf3145fa4ee633ecc4023f53a6b3f646d")
     version("1.6.0", sha256="d901d4cc0ead79c1c72a8fe9960fb4102d1c6d29d3c5e344f0ce7b6f64cf01e8")

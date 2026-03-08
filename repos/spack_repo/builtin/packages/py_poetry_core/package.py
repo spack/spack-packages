@@ -16,7 +16,6 @@ class PyPoetryCore(PythonPackage):
     license("MIT")
 
     version("2.3.1", sha256="96f791d5d7d4e040f3983d76779425cf9532690e2756a24fd5ca0f86af19ef82")
-    version("2.3.0", sha256="f6da8f021fe380d8c9716085f4dcc5d26a5120a2452e077196333892af5de307")
     version("2.2.1", sha256="97e50d8593c8729d3f49364b428583e044087ee3def1e010c6496db76bd65ac5")
     version("2.2.0", sha256="b4033b71b99717a942030e074fec7e3082e5fde7a8ed10f02cd2413bdf940b1f")
     version("2.1.2", sha256="f9dbbbd0ebf9755476a1d57f04b30e9aecf71ca9dc2fcd4b17aba92c0002aa04")

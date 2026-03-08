@@ -25,7 +25,6 @@ class NodeJs(Package):
 
     # Current (latest features) - odd major number
     version("25.6.1", sha256="a72bb2b274e8ddf3c933ea7a73d5ac4fce7503e45edc9d541fc75d104fa848c3")
-    version("25.6.0", sha256="4f9567884d604f900c13cf83919654a55e6808538ed88f25cc9cdfc84ebb70ea")
     version("25.5.0", sha256="334569dc43eb427af5ca97e330ab8752cbac19a2a70d476a97aa194f79010b07")
     version("25.4.0", sha256="aa85eaa3c2c81c8b755039018d725bc140c409c2100508785bc8275e610b0e81")
     version("25.3.0", sha256="36cf586c51f20832ad27790f278f89f98a8dd957c4d6593d4f34e492249b3352")

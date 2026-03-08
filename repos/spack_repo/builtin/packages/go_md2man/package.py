@@ -16,8 +16,6 @@ class GoMd2man(GoPackage):
     license("MIT")
 
     version("2.0.7", sha256="ca3a5b57e2c01759f5a00ad2a578d034c5370fae9aa7a6c3af5648b2fc802a92")
-    version("2.0.6", sha256="5fa29154237bc840a10a06231c066f9ddbe06bb31d1c3372eab12e1ed977271f")
-    version("2.0.5", sha256="6bb799e8fff06d82ca4617190157338d336e2361aa6c5b1786f763a684ffc3f2")
     version("2.0.4", sha256="b0a4c7c077ede56967deef6ab7e7696c0f46124b0b3360fd05564ec5a536f11f")
     version("2.0.3", sha256="7ca3a04bb4ab83387538235decc42a535097a05d2fb9f2266d0c47b33119501f")
     version("2.0.2", sha256="2f52e37101ea2734b02f2b54a53c74305b95b3a9a27792fdac962b5354aa3e4a")

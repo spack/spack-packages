@@ -23,7 +23,6 @@ class GithubCopilot(Package):
     license("GitHub-Pre-Release")
 
     version("0.0.414", sha256="f268a57fbaf19be20ad985c860c59e9b259edd23a81c3d8416af6ffa7e8d7c62")
-    version("0.0.354", sha256="cc61ad9201c75b0ba3442d32861ddba876cd7cd780c94fc64e5fab50c51c0bcb")
 
     depends_on("node-js@22:", type=("build", "run"))
     depends_on("npm@10:", type="build")

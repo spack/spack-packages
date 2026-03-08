@@ -19,7 +19,6 @@ class PyHist(PythonPackage):
 
     version("2.10.1", sha256="dec8e6ac79a6d64ec8873cf36b3ef0394c79aff3b0e8abed71fdc77fdc421b2e")
     version("2.9.2", sha256="67bf80e15bb1ab99f89ccf6588efa357d16826d691043b726165c78334a9067b")
-    version("2.9.0", sha256="16d48f221a1e122f81df3da3d6fb763bdd82388768e03fc55dc19261906c74eb")
     version("2.8.1", sha256="7da7c900e2ef6d425793da1a9adac424ebc013a8eabf29b24301f70898218d9d")
     version("2.7.3", sha256="f9f9b56809b190bb546698789cc0d7d040934fc5141d2763c6e49d65e81dbc0b")
     version("2.6.3", sha256="dede097733d50b273af9f67386e6dcccaab77e900ae702e1a9408a856e217ce9")

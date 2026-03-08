@@ -16,9 +16,6 @@ class PyShellingham(PythonPackage):
     license("0BSD")
 
     version("1.5.4", sha256="8dbca0739d487e5bd35ab3ca4b36e11c4078f3a234bfce294b0a0291363404de")
-    version("1.5.3", sha256="cb4a6fec583535bc6da17b647dd2330cf7ef30239e05d547d99ae3705fd0f7f8")
-    version("1.5.2", sha256="95946024df2db98c83382606a9ae875f613b15c950c980a3bf7a5adde40e7720")
-    version("1.5.1", sha256="41bc81fa8d74afb04338e0398f9732ee2217407ade778ae1e2709bde89d85c45")
     version(
         "1.5.0.post1", sha256="823bc5fb5c34d60f285b624e7264f4dda254bc803a3774a147bf99c0e3004a28"
     )
