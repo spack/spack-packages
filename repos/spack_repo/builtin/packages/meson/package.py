@@ -23,6 +23,9 @@ class Meson(PythonPackage):
 
     version("1.10.1", sha256="3d4768a76fc63dc4c562edc7892de17b54dfaa7309d148e805b0d763bc085e00")
     version("1.8.5", sha256="1cd0b5b013b4208ab450f5aca93b592b707f3fb2afe96b101dc710e6e5a8245c")
+    version("1.8.4", sha256="57dfa56ead471eec31d624d76c819e743a4dd0f6e8b4cd503e63d97604d11c2c")
+    version("1.8.3", sha256="bda9d0cea7bec46b244534264d47bab86eb30e233f7ab6ec3e14c7380fd4bfc3")
+    version("1.8.2", sha256="6b878fb0f6f0318cbd54e13539f89a1a8305791668e8e93ffd59d82722888dac")
     version("1.7.2", sha256="3640ef596523393100df31ba790bc5fe732215e9711a66b673a21c4eb39bc8f1")
     version("1.6.1", sha256="4889795777b536ea1a351982f3ef7c7b06a786ccb47036daba63cc5757c59edb")
     version("1.5.2", sha256="fb41882bef26ffc02647d9978cba502a4accdf2e94c0a6dc9cc498dd7463381e")

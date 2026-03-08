@@ -51,7 +51,6 @@ class Mbedtls(CMakePackage, MakefilePackage):
     )
 
     depends_on("c", type="build")
-
     # See https://github.com/Mbed-TLS/mbedtls/issues/4917
     # Only 2.16.12, 2.28.0 and 3.1.0 support clang 12.
     conflicts("%clang@12:", when="@:2.16.11,2.17:2.27,2.29:3.0")

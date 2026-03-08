@@ -15,6 +15,9 @@ class PerlHttpMessage(PerlPackage):
 
     license("GPL-1.0-or-later OR Artistic-1.0-Perl")
 
+    version("7.01", sha256="82b79ce680251045c244ee059626fecbf98270bed1467f0175ff5ea91071437e")  # FIXME
+    version("7.00", sha256="5afa95eb6ed1c632e81656201a2738e2c1bc6cbfae2f6d82728e2bb0b519c1dc")  # FIXME
+    version("6.46", sha256="e27443434150d2d1259bb1e5c964429f61559b0ae34b5713090481994936e2a5")  # FIXME
     version("6.45", sha256="01cb8406612a3f738842d1e97313ae4d874870d1b8d6d66331f16000943d4cbe")
     version("6.44", sha256="398b647bf45aa972f432ec0111f6617742ba32fc773c6612d21f64ab4eacbca1")
     version("6.13", sha256="f25f38428de851e5661e72f124476494852eb30812358b07f1c3a289f6f5eded")

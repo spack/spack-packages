@@ -17,6 +17,12 @@ class Shadow(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("4.18.0", sha256="ae486ce4c0bce55c42d76d8478e428c41586f1da2f89fbf5228243fb4d849db4")  # FIXME
+    version("4.17.4", sha256="0a288c251f339846af6bdfd4447b196153204deba42407bce5b0917998322e9b")  # FIXME
+    version("4.17.3", sha256="2a029091d2c2f116f51b3a817ec16e7da22310a6c8116394457483c668c84b36")  # FIXME
+    version("4.17.2", sha256="064a7c048e613ef5b5f3613e137d79d35d062ab434e89020f743e90844ec5c4f")  # FIXME
+    version("4.17.1", sha256="51a946bbce141c5de14b6d47cab167206cd685d2307e917611dbc1be46c84a18")  # FIXME
+    version("4.17.0", sha256="05afd78c6e57ef62c0198ccab220d554c06b2e26b54f3fed5f0253109a158368")  # FIXME
     version("4.16.0", sha256="1744f339e07a2b41056347ddd612839762ff565d7e9494fb049428002fa2e7e0")
     version("4.15.1", sha256="b34686b89b279887ffbf1f33128902ccc0fa1a998a3add44213bb12d7385b218")
     version("4.13", sha256="813057047499c7fe81108adcf0cffa3ad4ec75e19a80151f9cbaa458ff2e86cd")

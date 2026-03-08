@@ -19,6 +19,11 @@ class PyMaturin(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.12.3", sha256="ce94585e2e1f61eedd51cdc5f0cb3f3aa79bf6f107422e58d56ec9e29761e07f")  # FIXME
+    version("1.12.2", sha256="d6253079f53dbb692395a13abddc0f2d3d96af32f8c0b32e2912849713c55794")  # FIXME
+    version("1.12.1", sha256="494a17ba5e0ac45210604bb0e3a024661f16c2271ddb87a203ea6b7cbd278288")  # FIXME
+    version("1.12.0", sha256="170e695ead35d33fa537078deea2a91dead31ee909fac454079a5df006786e01")  # FIXME
+    version("1.11.5", sha256="7579cf47640fb9595a19fe83a742cbf63203f0343055c349c1cab39045a30c29")
     version("1.10.2", sha256="259292563da89850bf8f7d37aa4ddba22905214c1e180b1c8f55505dfd8c0e81")
     version("1.9.6", sha256="2c2ae37144811d365509889ed7220b0598487f1278c2441829c3abf56cc6324a")
     version("1.9.1", sha256="97b52fb19d20c1fdc70e4efdc05d79853a4c9c0051030c93a793cd5181dc4ccd")
@@ -34,8 +39,11 @@ class PyMaturin(PythonPackage):
     with default_args(type="build"):
         depends_on("py-setuptools@77:", when="@1.9.6:")
         depends_on("py-setuptools")
-        depends_on("py-setuptools-rust@1.11:", when="@1.8.6:")
         depends_on("py-setuptools-rust@1.4:")
+        depends_on("py-setuptools-rust@1.11:", when="@1.8.4:")
+
+        # Historical build dependencies
+        depends_on("py-wheel@0.36.2:1.8.3")
 
         depends_on("py-wheel@0.36.2:", when="@:1.8.3")
 
@@ -43,6 +51,8 @@ class PyMaturin(PythonPackage):
         depends_on("py-tomli@1.1:", when="^python@:3.10")
         # from Cargo.toml
         for rust, maturin in [
+            ("1.88", "1.12.0"),
+            ("1.85", "1.11.0"),
             ("1.83", "1.10.2"),
             ("1.74", "1.7.0"),
             ("1.70", "1.5.0"),

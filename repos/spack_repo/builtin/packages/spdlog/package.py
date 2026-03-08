@@ -15,6 +15,7 @@ class Spdlog(CMakePackage):
 
     license("MIT")
 
+    version("1.17.0", sha256="d8862955c6d74e5846b3f580b1605d2428b11d97a410d86e2fb13e857cd3a744")  # FIXME
     version("1.16.0", sha256="8741753e488a78dd0d0024c980e1fb5b5c85888447e309d9cb9d949bdb52aa3e")
     version("1.15.3", sha256="15a04e69c222eb6c01094b5c7ff8a249b36bb22788d72519646fb85feb267e67")
     version("1.15.2", sha256="7a80896357f3e8e920e85e92633b14ba0f229c506e6f978578bdc35ba09e9a5d")
@@ -93,7 +94,10 @@ class Spdlog(CMakePackage):
     depends_on("fmt@11.2.0:11", when="@1.15.3")
 
     # https://github.com/gabime/spdlog/releases/tag/v1.16.0
-    depends_on("fmt@12.0.0:12", when="@1.16.0:")
+    depends_on("fmt@12.0.0:12", when="@1.16.0:1.16")
+
+    # https://github.com/gabime/spdlog/releases/tag/v1.17.0
+    depends_on("fmt@12.1.0:12", when="@1.17.0:")
 
     # spdlog@1.11.0 with fmt@10  https://github.com/gabime/spdlog/pull/2694
     patch(

@@ -16,6 +16,7 @@ class Form(AutotoolsPackage):
 
     license("GPL-3.0-only")
 
+    version("5.0.0", sha256="10d22acf2f0acf831b494e6a73682828980b9054ea8ec2b5dc46677dca8d6518")  # FIXME
     version("4.3.1", sha256="f1f512dc34fe9bbd6b19f2dfef05fcb9912dfb43c8368a75b796ec472ee8bbce")
     version("4.3.0", sha256="b234e0d095f73ecb0904cdc3b0d8d8323a9fa7f46770a52fb22267c624aafbf6")
     version("4.2.1", sha256="f2722d6d4ccb034e01cf786d55342e1c21ff55b182a4825adf05d50702ab1a28")

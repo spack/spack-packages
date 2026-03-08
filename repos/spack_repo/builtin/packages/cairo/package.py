@@ -55,6 +55,8 @@ class Cairo(AutotoolsPackage, MesonPackage):
     variant("ft", default=True, description="Enable cairo's FreeType font backend feature")
     variant("fc", default=True, description="Enable cairo's Fontconfig font backend feature")
 
+    variant("lzo", default=False, description="Enable cairo's LZO support", when="@1.18.4:")
+
     # variants and build system depends for the autotools builds
     with when("build_system=autotools"):
         variant("pic", default=True, description="Enable position-independent code (PIC)")
@@ -122,10 +124,11 @@ class Cairo(AutotoolsPackage, MesonPackage):
         depends_on("pixman@0.40.0:")
         depends_on("fontconfig@2.13.0:", when="+fc")
 
-        # lzo is not strictly required, but cannot be disabled and may be pulled in accidentally
+        # lzo is not strictly required, but may be pulled in accidentally
         # https://github.com/mesonbuild/meson/issues/8224
         # https://github.com/microsoft/vcpkg/pull/38313
-        depends_on("lzo")
+        depends_on("lzo", when="@:1.18.2")
+        depends_on("lzo", when="+lzo")
 
     # needed for both meson and autotools builds when including X
     with when("+X"):
@@ -172,6 +175,8 @@ class MesonBuilder(meson.MesonBuilder):
             "-Dspectre=disabled",
             "-Dsymbol-lookup=disabled",
         ]
+        if self.spec.satisfies("@1.18.4:"):
+            args.append(self.enable_or_disable("lzo"))
         return args
 
 

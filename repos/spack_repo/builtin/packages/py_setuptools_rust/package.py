@@ -26,6 +26,7 @@ class PySetuptoolsRust(PythonPackage):
     version("1.2.0", sha256="0a4ada479e8c7e3d8bd7cb56e1a29acc2b2bb98c2325051b0cdcb57d7f056de8")
     version("0.12.1", sha256="647009e924f0ae439c7f3e0141a184a69ad247ecb9044c511dabde232d3d570e")
 
+    depends_on("python@3.9:", when="@1.11:", type=("build", "run"))
     depends_on("py-setuptools@62.4:", when="@1.4.0:", type=("build", "run"))
     depends_on("py-setuptools@46.1:", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))

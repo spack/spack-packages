@@ -115,6 +115,7 @@ class Podio(CMakePackage):
             self.define("PODIO_SET_RPATH", True),
             self.define("CMAKE_CXX_STANDARD", self.spec.variants["cxxstd"].value),
             self.define("BUILD_TESTING", self.run_tests),
+            self.define("PODIO_ENABLE_CXX_MODULES", True),
         ]
         return args
 

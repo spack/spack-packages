@@ -16,6 +16,7 @@ class PyCerberus(PythonPackage):
 
     license("0BSD")
 
+    version("1.3.5", sha256="81011e10266ef71b6ec6d50e60171258a5b134d69f8fb387d16e4936d0d47642")  # FIXME
     version("1.3.4", sha256="d1b21b3954b2498d9a79edf16b3170a3ac1021df88d197dc2ce5928ba519237c")
 
     depends_on("python@2.7:", type=("build", "run"))

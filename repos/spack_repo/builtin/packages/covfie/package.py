@@ -35,11 +35,15 @@ class Covfie(CMakePackage, CudaPackage, ROCmPackage):
     version("0.11.0", sha256="39fcd0f218d3b4f3aacc6af497a8cda8767511efae7a72b47781f10fd4340f4f")
     version("0.10.0", sha256="d44142b302ffc193ad2229f1d2cc6d8d720dd9da8c37989ada4f23018f86c964")
 
+    variant("examples", default=False, description="Build example executables.")
+
     depends_on("c", type="build", when="@:0.13")
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.21:", type="build", when="@0.11:")
     depends_on("cmake@3.18:", type="build")
+
+    depends_on("boost@1.71: +log +program_options", when="+examples")
 
     def cmake_args(self):
         args = [
@@ -47,6 +51,7 @@ class Covfie(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("COVFIE_PLATFORM_CUDA", "cuda"),
             self.define_from_variant("COVFIE_PLATFORM_HIP", "rocm"),
             self.define("COVFIE_QUIET", True),
+            self.define_from_variant("COVFIE_BUILD_EXAMPLES", "examples"),
             self.define("COVFIE_BUILD_TESTS", self.run_tests),
         ]
 

@@ -21,6 +21,7 @@ class Mlpack(CMakePackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
+    version("4.7.0", sha256="a3f0fb530e51d51f8d7eceb7998b4699906d628000b158ada80541465595324e")
     version("4.6.2", sha256="2fe772da383a935645ced07a07b51942ca178d38129df3bf685890bc3c1752cf")
     version("4.5.1", sha256="58059b911a78b8bda91eef4cfc6278383b24e71865263c2e0569cf5faa59dda3")
     version("4.5.0", sha256="aab70aee10c134ef3fe568843fe4b3bb5e8901af30ea666f57462ad950682317")
@@ -64,6 +65,7 @@ class Mlpack(CMakePackage):
         depends_on("py-numpy")
         depends_on("py-numpy@:1", when="@:4.4.0")
         depends_on("py-pandas@0.15.0:")
+        depends_on("py-packaging", type=("build", "run"))  # For CMake version checks with Python 3.12+
         # ref: src/mlpack/bindings/python/PythonInstall.cmake
         depends_on("py-pip")
         depends_on("py-wheel")
@@ -84,6 +86,29 @@ class Mlpack(CMakePackage):
         sha256="bd726818a8932888f8d38548cab7f8dde15bacfbd8c58a36ce6a3be8d459578d",
         when="@4:4.2.0",
     )
+
+    def patch(self):
+        # Fix distutils removal in Python 3.12+
+        if "+python" in self.spec:
+            filter_file(
+                r"from distutils\.version import StrictVersion",
+                "from packaging.version import Version",
+                "CMake/FindPythonModule.cmake",
+            )
+            filter_file(
+                r"StrictVersion\(",
+                "Version(",
+                "CMake/FindPythonModule.cmake",
+            )
+
+    def setup_build_environment(self, env):
+        # Ensure py-packaging is in PYTHONPATH for CMake's Python version checks
+        if "+python" in self.spec:
+            python_ver = self.spec["python"].version.up_to(2)
+            py_pkg_path = join_path(
+                self.spec["py-packaging"].prefix.lib, f"python{python_ver}", "site-packages"
+            )
+            env.prepend_path("PYTHONPATH", py_pkg_path)
 
     def cmake_args(self):
         args = [

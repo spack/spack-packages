@@ -16,6 +16,9 @@ class Libzip(CMakePackage):
     license("BSD-3-Clause")
 
     # current versions are released on GitHub
+    version("1.11.4", sha256="82e9f2f2421f9d7c2466bbc3173cd09595a88ea37db0d559a9d0a2dc60dc722e")
+    version("1.11.3", sha256="76653f135dde3036036c500e11861648ffbf9e1fc5b233ff473c60897d9db0ea")
+    version("1.11.2", sha256="6b2a43837005e1c23fdfee532b78f806863e412d2089b9c42b49ab08cbcd7665")
     version("1.11.1", sha256="c0e6fa52a62ba11efd30262290dc6970947aef32e0cc294ee50e9005ceac092a")
     version("1.10.1", sha256="9669ae5dfe3ac5b3897536dc8466a874c8cf2c0e3b1fdd08d75b273884299363")
     version("1.9.2", sha256="fd6a7f745de3d69cf5603edc9cb33d2890f0198e415255d0987a0cf10d824c6f")

@@ -22,6 +22,7 @@ class Libunwind(AutotoolsPackage):
     license("MIT")
 
     version("master", branch="master")
+    version("1.70", sha256="c24c913d2337d6eff851b6ab32aadfb683a86fee48d28fe1fc9cd56c8e9dfa58", deprecated=True)
     version("1.8-stable", branch="v1.8-stable")
     version("1.8.3", sha256="be30d910e67f58d82e753231f1357f326a1a088acf126b21ff77e60aab19b90b")
     version("1.8.2", sha256="7f262f1a1224f437ede0f96a6932b582c8f5421ff207c04e3d9504dfa04c8b82")

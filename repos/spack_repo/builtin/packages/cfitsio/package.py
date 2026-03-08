@@ -17,6 +17,9 @@ class Cfitsio(AutotoolsPackage):
 
     license("custom")
 
+    version("4.6.3", sha256="fad44fff274fdda5ffcc0c0fff3bc3c596362722b9292fc8944db91187813600")  # FIXME
+    version("4.6.2", sha256="66fd078cc0bea896b0d44b120d46d6805421a5361d3a5ad84d9f397b1b5de2cb")  # FIXME
+    version("4.6.0", sha256="7c372fdb4e6cf530fc12294ae0b7f1fdd0ed85062790277a60aea56c97b0d3e7")  # FIXME
     version("4.5.0", sha256="e4854fc3365c1462e493aa586bfaa2f3d0bb8c20b75a524955db64c27427ce09")
     version("4.4.1", sha256="66a1dc3f21800f9eeabd9eac577b91fcdd9aabba678fbba3b8527319110d1d25")
     version("4.4.0", sha256="95900cf95ae760839e7cb9678a7b2fad0858d6ac12234f934bd1cb6bfc246ba9")

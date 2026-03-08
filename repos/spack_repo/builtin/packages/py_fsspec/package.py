@@ -18,6 +18,10 @@ class PyFsspec(PythonPackage):
     # Requires pytest
     skip_modules = ["fsspec.tests"]
 
+    version("2026.2.0", sha256="6544e34b16869f5aacd5b90bdf1a71acb37792ea3ddf6125ee69a22a53fb8bff")  # FIXME
+    version("2026.1.0", sha256="e987cb0496a0d81bba3a9d1cee62922fb395e7d4c3b575e57f547953334fe07b")  # FIXME
+    version("2025.12.0", sha256="c505de011584597b1060ff778bb664c1bc022e87921b0e4f10cc9c44f9635973")  # FIXME
+    version("2025.10.0", sha256="b6789427626f068f9a83ca4e8a3cc050850b6c0f71f99ddb4f542b8266a26a59")  # FIXME
     version("2025.9.0", sha256="19fd429483d25d28b65ec68f9f4adc16c17ea2c7c7bf54ec61360d478fb19c19")
     version("2024.10.0", sha256="eda2d8a4116d4f2429db8550f2457da57279247dd930bb12f821b58391359493")
     version("2024.5.0", sha256="1d021b0b0f933e3b3029ed808eb400c08ba101ca2de4b3483fbc9ca23fcee94a")
@@ -34,6 +38,9 @@ class PyFsspec(PythonPackage):
     version("0.4.4", sha256="97697a46e8bf8be34461c2520d6fc4bfca0ed749b22bb2b7c21939fd450a7d63")
 
     variant("http", default=False, description="HTTPFileSystem support", when="@0.8.1:")
+
+    depends_on("python@3.10:", type=("build", "run"), when="@2025.12.0:")
+    depends_on("python@3.9:", type=("build", "run"), when="@2025.10.0:2025.11")
 
     depends_on("py-hatchling", type="build", when="@2024.5:")
     depends_on("py-hatch-vcs", type="build", when="@2024.5:")

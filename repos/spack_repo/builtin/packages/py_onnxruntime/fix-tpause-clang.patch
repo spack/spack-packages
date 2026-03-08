@@ -1,0 +1,48 @@
+From: Spack Project <spack@llnl.gov>
+Subject: Fix __builtin_ia32_tpause for both GCC and Clang
+
+The __builtin_ia32_tpause intrinsic has different signatures between GCC and Clang:
+
+GCC (gcc/x86_64-linux-gnu/*/include/waitpkgintrin.h):
+  __builtin_ia32_tpause(unsigned int control, unsigned long long counter)
+
+LLVM/Clang (clang/lib/Headers/waitpkgintrin.h):
+  __builtin_ia32_tpause(unsigned int control, unsigned int edx, unsigned int eax)
+
+GCC accepts the 64-bit counter directly, while Clang requires it to be split
+into EDX:EAX (high:low 32-bit parts) to match Intel's TPAUSE instruction encoding.
+
+Clang's _tpause() wrapper performs this splitting:
+  _tpause(unsigned int __control, unsigned long long __counter)
+  {
+    return __builtin_ia32_tpause(__control,
+      (unsigned int)(__counter >> 32), (unsigned int)__counter);
+  }
+
+But GCC's _tpause() wrapper passes the 64-bit value directly.
+
+Onnxruntime PR #24524 (merged 2025-05-31) bypassed the _tpause() wrapper
+and called __builtin_ia32_tpause() directly with 2 arguments, which works
+with GCC but fails with Clang.
+
+This patch uses the portable _tpause() wrapper that works with both compilers,
+as it's already included via <immintrin.h>.
+
+References:
+- Intel SDM Vol. 2B: TPAUSE instruction (EDX:EAX = 64-bit TSC value)
+- https://github.com/microsoft/onnxruntime/pull/24524
+- llvm-project/clang/lib/Headers/waitpkgintrin.h
+- gcc x86_64-linux-gnu/*/include/waitpkgintrin.h
+
+--- a/onnxruntime/core/common/spin_pause.cc
++++ b/onnxruntime/core/common/spin_pause.cc
+@@ -35,7 +35,8 @@ void SpinPause() {
+ #if defined(_WIN32)
+     _tpause(0x0, __rdtsc() + tpause_spin_delay_cycles);
+ #elif defined(__linux__)
+-    __builtin_ia32_tpause(0x0, __rdtsc() + tpause_spin_delay_cycles);
++    // Use portable _tpause() wrapper that works with both GCC and Clang
++    _tpause(0x0, __rdtsc() + tpause_spin_delay_cycles);
+ #else
+     _mm_pause();
+ #endif

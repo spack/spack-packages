@@ -22,6 +22,7 @@ class Libproxy(CMakePackage, MesonPackage):
         conditional("meson", when="@0.5:"), conditional("cmake", when="@:0.4"), default="meson"
     )
 
+    version("0.5.12", sha256="a1fa55991998b80a567450a9e84382421a7176a84446c95caaa8b72cf09fa86f")
     version("0.5.11", sha256="b364f4dbbffc5bdf196330cb76b48abcb489f38b1543e67595ca6cb7ec45d265")
     version("0.5.10", sha256="84734a0b89c95f4834fd55c26b362be2fb846445383e37f5209691694ad2b5de")
     version("0.5.9", sha256="a1976c3ac4affedc17e6d40cf78c9d8eca6751520ea3cbbec1a8850f7ded1565")

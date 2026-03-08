@@ -17,6 +17,7 @@ class JwtCpp(CMakePackage):
 
     license("MIT")
 
+    version("0.7.2", sha256="6e815d86c168eb521a27937d603747dec0ca3c39ffc12d6fa72e2cf78a5b02d2")
     version("0.7.1", sha256="e52f247d5e62fac5da6191170998271a70ce27f747f2ce8fde9b09f96a5375a4")
     version("0.7.0", sha256="b9eb270e3ba8221e4b2bc38723c9a1cb4fa6c241a42908b9a334daff31137406")
     version("0.6.0", sha256="0227bd6e0356b211341075c7997c837f0b388c01379bd256aa525566a5553f03")

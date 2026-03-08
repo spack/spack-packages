@@ -16,6 +16,7 @@ class PyDeprecated(PythonPackage):
 
     license("MIT")
 
+    version("1.2.14", sha256="e5323eb936458dccc2582dc6f9c322c852a775a27065ff2b0c4970b9d53d01b3")  # FIXME
     version("1.2.13", sha256="43ac5335da90c31c24ba028af536a91d41d53f9e6901ddb021bcc572ce44e38d")
     version("1.2.7", sha256="408038ab5fdeca67554e8f6742d1521cd3cd0ee0ff9d47f29318a4f4da31c308")
 

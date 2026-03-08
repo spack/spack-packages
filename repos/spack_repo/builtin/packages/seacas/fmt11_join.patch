@@ -1,0 +1,10 @@
+--- a/packages/seacas/libraries/ioss/src/Ioss_Decomposition.C  2024-08-02 18:58:10.253054354 -0500
++++ b/packages/seacas/libraries/ioss/src/Ioss_Decomposition.C  2024-08-02 18:58:22.172273799 -0500
+@@ -15,6 +15,7 @@
+ #include <algorithm>
+ #include <cassert>
+ #include <fmt/ostream.h>
++#include <fmt/ranges.h>
+ #include <numeric>
+ 
+ #if !defined(NO_ZOLTAN_SUPPORT)

@@ -26,6 +26,7 @@ class PyUv(PythonPackage):
     version("0.4.15", sha256="8e36b8e07595fc6216d01e729c81a0b4ff029a93cc2ef987a73d3b650d6d559c")
 
     # from Cargo.toml
+    depends_on("rust@1.91:", type=("build", "run"), when="@0.9.27:")
     depends_on("rust@1.86:", type=("build", "run"), when="@0.7.16:")
     depends_on("rust@1.85:", type=("build", "run"), when="@0.7.6:")
     depends_on("rust@1.84:", type=("build", "run"), when="@0.6.13:")

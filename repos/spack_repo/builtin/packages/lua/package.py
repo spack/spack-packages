@@ -82,6 +82,16 @@ class LuaImplPackage(MakefilePackage):
         sha256="c3fb3d960dffb2b2fe9de7e3cb004dc4d0b34bb3d342578af84f84325c669102",
         destination="luarocks",
         placement="luarocks",
+        when="@:5.4",
+    )
+
+    resource(
+        name="luarocks",
+        url="https://luarocks.github.io/luarocks/releases/luarocks-3.13.0.tar.gz",
+        sha256="245bf6ec560c042cb8948e3d661189292587c5949104677f1eecddc54dbe7e37",
+        destination="luarocks",
+        placement="luarocks",
+        when="@5.5:",
     )
 
     def symlink_luajit(self):
@@ -222,6 +232,7 @@ class Lua(LuaImplPackage):
 
     license("MIT")
 
+    version("5.5.0", sha256="57ccc32bbbd005cab75bcc52444052535af691789dba2b9016d5c50640d68b3d")
     version("5.4.8", sha256="4f18ddae154e793e46eeab727c59ef1c0c0c2b744e7b94219710d76f530629ae")
     version("5.4.6", sha256="7d5ea1b9cb6aa0b59ca3dde1c6adcb57ef83a1ba8e5432c0ecd06bf439b3ad88")
     version("5.4.4", sha256="164c7849653b80ae67bec4b7473b884bf5cc8d2dca05653475ec2ed27b9ebf61")
@@ -250,6 +261,7 @@ class Lua(LuaImplPackage):
     provides("lua-lang@5.2", when="@5.2:5.2.99")
     provides("lua-lang@5.3", when="@5.3:5.3.99")
     provides("lua-lang@5.4", when="@5.4:5.4.99")
+    provides("lua-lang@5.5", when="@5.5:5.5.99")
 
     depends_on("c", type="build")
     depends_on("ncurses+termlib")

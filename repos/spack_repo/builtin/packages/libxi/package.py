@@ -19,8 +19,10 @@ class Libxi(AutotoolsPackage, XorgPackage):
     maintainers("wdconinc")
 
     # Newer versions are blocked by https://github.com/spack/spack/issues/41688
+    # version("1.8.2", sha256="5542daec66febfeb6f51d57abfa915826efe2e3af57534f4105b82240ea3188d")
     # version("1.8.1", sha256="3b5f47c223e4b63d7f7fe758886b8bf665b20a7edb6962c423892fd150e326ea")
     # version("1.8", sha256="c80fd200a1190e4406bb4cc6958839d9651638cb47fa546a595d4bebcd3b9e2d")
+    # version("1.7.99.2", sha256="991d212bb9583b1dbe429e2c8fc510fcab3c820b3d7fba07e1e8b9fefcf9ac76")
     version("1.7.10", sha256="b51e106c445a49409f3da877aa2f9129839001b24697d75a54e5c60507e9a5e3")
     version("1.7.9", sha256="463cc5370191404bc0f8a450fdbf6d9159efbbf274e5e0f427a60191fed9cf4b")
     version("1.7.8", sha256="7466d0c626a9cc2e53fd78c811815e82924cd7582236a82401df3d282a9c2889")

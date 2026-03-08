@@ -16,6 +16,9 @@ class PySqlalchemy(PythonPackage):
 
     license("MIT")
 
+    version("2.0.46", sha256="cf36851ee7219c170bb0793dbc3da3e80c582e04a5437bc601bfe8c85c9216d7")  # FIXME
+    version("2.0.45", sha256="1632a4bda8d2d25703fdad6363058d882541bdaaee0e5e3ddfa0cd3229efce88")  # FIXME
+    version("2.0.44", sha256="0ae7454e1ab1d780aee69fd2aae7d6b8670a581d8847f2d1e0f7ddfbf47e5a22")  # FIXME
     version("2.0.43", sha256="788bfcef6787a7764169cfe9859fe425bf44559619e1d9f56f5bddf2ebf6f417")
     version("2.0.19", sha256="77a14fa20264af73ddcdb1e2b9c5a829b8cc6b8304d0f093271980e36c200a3f")
     version("1.4.54", sha256="4470fbed088c35dc20b78a39aaf4ae54fe81790c783b3264872a0224f437c31a")
