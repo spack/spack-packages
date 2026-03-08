@@ -16,7 +16,14 @@ class Clamav(AutotoolsPackage):
 
     license("GPL-2.0-only")
 
-    version("0.101.2", sha256="0a12ebdf6ff7a74c0bde2bdc2b55cae33449e6dd953ec90824a9e01291277634")
+    # clamav 0.101.2 is affected by multiple HIGH CVEs:
+    # - CVE-2019-12625 (CVSS 7.5 HIGH): Zip bomb causes unauthenticated remote DoS
+    # - CVE-2020-3341 (CVSS 7.5 HIGH): PDF parser flaw causes unauthenticated DoS
+    # - CVE-2022-20770 (CVSS 8.6 HIGH): CHM file parsing allows unauthenticated DoS
+    # Fixed in 0.103.x+. Note: clamav 0.103.x and later use CMake; this package
+    # needs a build system update to support versions beyond 0.101.x.
+    with default_args(deprecated=True):
+        version("0.101.2", sha256="0a12ebdf6ff7a74c0bde2bdc2b55cae33449e6dd953ec90824a9e01291277634")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

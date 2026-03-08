@@ -21,8 +21,17 @@ class Cups(AutotoolsPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
-    version("2.4.11", sha256="9a88fe1da3a29a917c3fc67ce6eb3178399d68e1a548c6d86c70d9b13651fd71")
-    version("2.4.10", sha256="d75757c2bc0f7a28b02ee4d52ca9e4b1aa1ba2affe16b985854f5336940e5ad7")
+    version("2.4.15", sha256="eff0bbd48ff1abcbb8e46e28e85aefaffa391a1d9c4d8dc92ab3822a13008d7f")
+
+    # cups 2.4.10 and 2.4.11 are affected by:
+    # - CVE-2025-58060 (CVSS 8.0 HIGH): AuthType Basic bypass when Negotiate auth used
+    # - CVE-2025-58364 (MEDIUM): unsafe deserialization in OpenPrinting CUPS
+    # - CVE-2025-61915 (MEDIUM): lpadmin can bypass auth to modify printer configs
+    # - CVE-2025-58436 (MEDIUM): DoS via malicious client connection handling
+    # Fixed in 2.4.13+ (HIGH CVE), 2.4.15 (all CVEs).
+    with default_args(deprecated=True):
+        version("2.4.11", sha256="9a88fe1da3a29a917c3fc67ce6eb3178399d68e1a548c6d86c70d9b13651fd71")
+        version("2.4.10", sha256="d75757c2bc0f7a28b02ee4d52ca9e4b1aa1ba2affe16b985854f5336940e5ad7")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
