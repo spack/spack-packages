@@ -173,8 +173,9 @@ mergeable.
 - **Size**: aim for 5–25 packages per PR. Fewer is better when the changes are structural or
   involve new build-system classes.
 
-#### 4b. Branch naming
+#### 4b. Branch naming and PR title
 
+**Branch name:**
 ```
 pr<NN>-<short-descriptor>
 ```
@@ -182,6 +183,29 @@ pr<NN>-<short-descriptor>
 Examples: `pr01-xorg-x11-libs`, `pr12-python-packaging-infra`, `pr07-hep-generators`.
 
 Use zero-padded two-digit PR numbers for lexicographic ordering.
+
+**PR title** — prefer the canonical form:
+
+```
+<pkgname>: add v<version>
+```
+
+For a single package: `py-dask: add v2025.7.0`
+
+When multiple packages in the same ecosystem are updated together, name the PR after the
+root/primary package:
+
+```
+<root-pkg>: add v<version>
+<root-pkg>, <pkg2>, <pkg3>: add v<version>
+<root-pkg> and related packages: add v<version>
+```
+
+Examples:
+- `py-awkward: add v2.9.0` (even though awkward-cpp is also bumped)
+- `py-boto3, py-botocore, py-s3transfer: add v1.42.x`
+- `boost: add v1.90.0`
+- `harfbuzz, cairo, pango: add v<version>` (rendering stack, listed dependency-first)
 
 #### 4c. Staging branch
 
