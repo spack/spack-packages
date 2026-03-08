@@ -17,6 +17,9 @@ class PySmmap(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.0.0", sha256="8d79028ea6cc131da5eab099a5d95a998d43c6779956fffe3b455040911076da")  # FIXME
+    version("5.0.2", sha256="26ea65a03958fa0c8a1c7e8c7a58fdc77221b8910f6be2131affade476898ad5")  # FIXME
+    version("5.0.1", sha256="dceeb6c0028fdb6734471eb07c0cd2aae706ccaecab45965ee83f11c8d3b1f62")  # FIXME
     version("5.0.0", sha256="c840e62059cd3be204b0c9c9f74be2c09d5648eddd4580d9314c3ecde0b30936")
     version("4.0.0", sha256="7e65386bd122d45405ddf795637b7f7d2b532e7e401d46bbe3fb49b9986d5182")
     version("3.0.5", sha256="84c2751ef3072d4f6b2785ec7ee40244c6f45eb934d9e543e2c51f1bd3d54c50")

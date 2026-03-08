@@ -15,6 +15,12 @@ class PyDeepdiff(PythonPackage):
 
     license("MIT")
 
+    version("8.6.1", sha256="ec56d7a769ca80891b5200ec7bd41eec300ced91ebcc7797b41eb2b3f3ff643a")  # FIXME
+    version("8.6.0", sha256="6197216c2d777c3106a9989055c230e25848e599b26dcbcdc66226bd8d7fe901")  # FIXME
+    version("8.5.0", sha256="a4dd3529fa8d4cd5b9cbb6e3ea9c95997eaa919ba37dac3966c1b8f872dc1cd1")
+    version("8.4.2", sha256="5c741c0867ebc7fcb83950ad5ed958369c17f424e14dee32a11c56073f4ee92a")
+    version("8.3.0", sha256="92a8d7c75a4b26b385ec0372269de258e20082307ccf74a4314341add3d88391")
+    version("8.2.0", sha256="6ec78f65031485735545ffbe7a61e716c3c2d12ca6416886d5e9291fc76c46c3")
     version("8.1.1", sha256="dd7bc7d5c8b51b5b90f01b0e2fe23c801fd8b4c6a7ee7e31c5a3c3663fcc7ceb")
     version("8.0.1", sha256="245599a4586ab59bb599ca3517a9c42f3318ff600ded5e80a3432693c8ec3c4b")
     version("7.0.1", sha256="260c16f052d4badbf60351b4f77e8390bee03a0b516246f6839bc813fb429ddf")
@@ -26,7 +32,11 @@ class PyDeepdiff(PythonPackage):
     version("6.3.0", sha256="6a3bf1e7228ac5c71ca2ec43505ca0a743ff54ec77aa08d7db22de6bc7b2b644")
     version("5.6.0", sha256="e3f1c3a375c7ea5ca69dba6f7920f9368658318ff1d8a496293c79481f48e649")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-flit-core@3.11:3", type="build", when="@8.5:")
+    depends_on("py-setuptools", type="build", when="@:8.4")
+
+    depends_on("py-orderly-set@5.4.1:5", when="@8.5.0:", type=("build", "run"))
+    depends_on("py-orderly-set@5.3.0:5", when="@8.2.0:", type=("build", "run"))
     depends_on("py-orderly-set@5.2.3:5", when="@8.1.0:", type=("build", "run"))
     depends_on("py-orderly-set@5.2.2", when="@8.0.1", type=("build", "run"))
     depends_on("py-orderly-set@5.2.1", when="@8.0.0", type=("build", "run"))

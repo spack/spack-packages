@@ -16,6 +16,9 @@ class PyGitdb(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("4.0.12", sha256="5ef71f855d191a3326fcfbc0d5da835f26b13fbcba60c32c21091c349ffdb571")  # FIXME
+    version("4.0.11", sha256="bf5421126136d6d0af55bc1e7c1af1c397a34f5b7bd79e776cd3e89785c2b04b")  # FIXME
+    version("4.0.10", sha256="6eb990b69df4e15bad899ea868dc46572c3f75339735663b81de79b06f17eb9a")  # FIXME
     version("4.0.9", sha256="bac2fd45c0a1c9cf619e63a90d62bdc63892ef92387424b855792a6cabe789aa")
     version("4.0.8", sha256="858966a9310649cb24a387c101429bb5a1110068a312517722b0281077e78bc6")
     version("4.0.7", sha256="96bf5c08b157a666fec41129e6d327235284cca4c81e92109260f353ba138005")

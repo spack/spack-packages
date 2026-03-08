@@ -15,6 +15,7 @@ class PyBeniget(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.5.0", sha256="e7af11fa8ec7de3d3eb3d98b1e722d15d44017d8b35d8aa11d54f6719b312f22")  # FIXME
     version(
         "0.4.2.post1", sha256="a0258537e65e7e14ec33a86802f865a667f949bb6c73646d55e42f7c45a052ae"
     )
@@ -25,7 +26,8 @@ class PyBeniget(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     # https://github.com/serge-sans-paille/beniget/issues/108
-    depends_on("py-gast@0.5.4:", when="@0.4.2:", type=("build", "run"))
+    depends_on("py-gast@0.7.0:", when="@0.5:", type=("build", "run"))
+    depends_on("py-gast@0.5.4:", when="@0.4.2:0.4", type=("build", "run"))
     depends_on("py-gast@0.5", when="@0.4.0:0.4.1", type=("build", "run"))
     depends_on("py-gast@0.4", when="@0.3", type=("build", "run"))
     depends_on("py-gast@0.3.3:0.3", when="@:0.2", type=("build", "run"))

@@ -18,6 +18,7 @@ class PyGreenlet(PythonPackage):
 
     license("MIT AND PSF-2.0", checked_by="tgamblin")
 
+    version("3.2.4", sha256="0dca0d95ff849f9a364385f36ab49f50065d76964944638be9691e1832e9f86d")
     version("3.2.2", sha256="ad053d34421a2debba45aa3cc39acf454acbcd025b3fc1a9f8a0dee237abd485")
     version("3.1.1", sha256="4ce3ac6cdb6adf7946475d7ef31777c26d94bccc377e070a7986bd2d5c515467")
     version("3.0.3", sha256="43374442353259554ce33599da8b692d5aa96f8976d567d4badf263371fbe491")
