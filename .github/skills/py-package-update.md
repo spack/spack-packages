@@ -175,14 +175,15 @@ Make the following changes to each package file:
 
 ### Step 7 — Search for existing PRs
 
-Before opening a new PR, search for open or recently closed PRs that may overlap:
+Before opening a new PR, search for open PRs that may overlap:
 
 ```sh
 gh pr list --repo spack/spack-packages --state open --search "<package-name>" --limit 20
 ```
 
-If an overlapping PR exists, follow the coordination guidelines in
-[`package-update`](package-update.md) Phase 6 (supersede, coordinate, or mark as prerequisite).
+**Existing PRs that already include any of the same version upgrades take priority.** Remove
+those packages from your PR and list the existing PR as a `Needs:` dependency (see Step 8d).
+Follow the full coordination rules in [`package-update`](package-update.md) Phase 6.
 Do not close another author's PR — post a comment instead.
 
 ### Step 8 — Group packages and open a draft PR
@@ -250,9 +251,14 @@ commits. If the upstream changelog was consulted, quote the most relevant line(s
 **In CI stacks (binary cache available):** <list, or check cache.spack.io>
 **Not in any CI stack (will trigger new builds):** <list, or "N/A">
 
+## Needs
+
+<List prerequisite PRs that must be merged before this one. If none, omit this section.>
+- [ ] #<PR-number>
+
 ## Related PRs
 
-<List any superseded, coordinating, or prerequisite PRs. If none, write "None.">
+<List any coordinating PRs with partial overlap. If none, write "None.">
 
 ---
 > ⚠️ This PR was prepared with AI assistance from GitHub Copilot.

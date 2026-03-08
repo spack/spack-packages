@@ -268,29 +268,42 @@ know there is no automated build verification available for them.
 
 ### Phase 6 — Search for existing PRs
 
-Before opening new PRs, search for open or recently closed PRs that overlap with your changes:
+Before opening new PRs, search for open PRs that overlap with your changes:
 
 ```sh
 gh pr list --repo spack/spack-packages --state open --search "<package-name>" --limit 20
 ```
 
-For each overlapping PR found:
+**Existing PRs that include any of the same version upgrades take priority.** For each
+overlapping PR found, apply the following rules:
 
-- **Our PR is a strict superset of theirs**: note it in your PR description ("Supersedes #NNNN").
-  **Do not close the existing PR yourself.** Post a comment in the existing PR pointing to the
-  new PR number:
+- **An existing PR already upgrades some of the same packages**: those packages belong to that
+  PR. **Remove them from your PR** and instead list the existing PR as a dependency using the
+  `Needs:` block in your PR description (see template in Phase 7). Your PR must not be merged
+  before the dependency PR is merged.
+
+  Example `Needs:` block:
+  ```markdown
+  ## Needs
+  - [ ] #1234
   ```
-  This work has been superseded by #<new-PR>. Please see that PR for the same and additional changes.
+
+  Post a comment in the existing PR to signal awareness:
   ```
-  Let the maintainers or the existing PR author decide whether to close it.
-- **Our PR has partial overlap**: note it as a related PR ("Coordinates with #NNNN") and describe
-  which packages overlap, so maintainers can sequence the merges.
-- **Their PR introduces new packages or constraints we depend on**: mark it as a prerequisite
-  ("Requires #NNNN to be merged first") and coordinate with the author.
+  This PR (#<new-PR>) depends on your work here. I've removed the overlapping packages
+  from my PR and listed this one as a prerequisite.
+  ```
+
+- **An existing PR introduces new packages or constraints our new `depends_on` entries
+  reference**: mark it as a prerequisite with the same `Needs:` block and coordinate with the
+  author so both PRs can be merged in the correct order.
+
+- **The overlap is only incidental** (same package, different version ranges that do not
+  conflict): note it as a related PR in the "Related PRs" section and describe the relationship
+  so maintainers can sequence the merges.
 
 > **Do not close other authors' PRs.** Even for your own previous PRs, prefer posting a comment
-> rather than closing them, unless you are certain the newer PR is a complete and correct
-> replacement. Human reviewers make the final call.
+> rather than closing them. Human reviewers make the final call on which PR to merge.
 
 ---
 
@@ -336,9 +349,15 @@ If `n_new > 1` (multiple intermediate versions were skipped), add a note like `(
 **In CI stacks (binary cache available):** <list>
 **Not in any CI stack (will trigger new builds):** <list, or "N/A">
 
+## Needs
+
+<List prerequisite PRs that must be merged before this one, using unchecked task items.
+If none, omit this section entirely.>
+- [ ] #<PR-number>
+
 ## Related PRs
 
-<List any superseded, coordinating, or prerequisite PRs. If none, write "None.">
+<List any coordinating PRs that partially overlap but are not strict prerequisites. If none, write "None.">
 
 ---
 > ⚠️ This PR was prepared with AI assistance from GitHub Copilot.
