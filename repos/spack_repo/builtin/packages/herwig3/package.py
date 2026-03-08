@@ -87,6 +87,12 @@ class Herwig3(AutotoolsPackage):
 
         return args
 
+    def flag_handler(self, name, flags):
+        if name == "fflags":
+            flags.append("-std=legacy")
+            return (flags, None, None)
+        return (flags, None, None)
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         thepeg_home = self.spec["thepeg"].prefix
         env.prepend_path("LD_LIBRARY_PATH", thepeg_home.lib.ThePEG)

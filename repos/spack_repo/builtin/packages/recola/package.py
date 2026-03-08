@@ -18,6 +18,7 @@ class Recola(CMakePackage):
 
     homepage = "https://recola.gitlab.io/recola2/"
     url = "https://gitlab.com/recola/recola2/-/archive/2.2.4/recola2-2.2.4.tar.gz"
+    git = "https://gitlab.com/recola/recola2.git"
 
     maintainers("vvolkl")
 
@@ -25,6 +26,7 @@ class Recola(CMakePackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.3.0", sha256="e979c38edad4cab68338751e860ee238292ec0a4e14e67861175612542c6fdcd")
     version("2.2.5", sha256="c5100055db3c2738596bc014a4d2893cfc33cbc7a5fd4b2846160fdff75c00af")
     version("2.2.4", sha256="212ae6141bc5de38c50be3e0c6947a3b0752aeb463cf850c22cfed5e61b1a64b")
     version("2.2.3", sha256="8dc25798960c272434fcde93817ed92aad82b2a7cf07438bb4deb5688d301086")

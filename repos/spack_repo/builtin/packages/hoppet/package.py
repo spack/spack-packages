@@ -14,6 +14,7 @@ class Hoppet(AutotoolsPackage, CMakePackage):
 
     homepage = "https://hoppet.hepforge.org/"
     url = "https://github.com/gavinsalam/hoppet/archive/refs/tags/hoppet-1.2.0.tar.gz"
+    git = "https://github.com/gavinsalam/hoppet.git"
 
     tags = ["hep"]
     maintainers("haralmha")
@@ -23,6 +24,7 @@ class Hoppet(AutotoolsPackage, CMakePackage):
         conditional("autotools", when="@:1"), conditional("cmake", when="@2:"), default="cmake"
     )
 
+    version("2.2.1", sha256="0df2796d93a76acfb3e22ddda8d4fb2b410052bae19248398b0a739dbf2f31ea")
     version("2.1.4", sha256="5b363c4ce97f39cbfd558280412a6f9268624067059005d1f12ab14582fcf813")
     version("2.0.1", sha256="c95a47a4d9cdf241126614ab3f330e84a2ede7288eb3599bf2fef6b80be98030")
     version("1.2.0", sha256="6e00eb56a4f922d03dfceba7b389a3aaf51f277afa46d7b634d661e0797e8898")

@@ -51,6 +51,7 @@ class Delphes(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake", type="build")
+    depends_on("cmake@3.5:", type="build", when="@3.5.1:")
     depends_on("root +geom +opengl")
     depends_on("pythia8", when="+pythia8")
 
