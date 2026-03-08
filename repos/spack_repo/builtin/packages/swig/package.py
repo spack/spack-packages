@@ -33,31 +33,20 @@ class Swig(AutotoolsPackage, SourceforgePackage):
     license("GPL-3.0-only")
 
     version("master")
-    with default_args(preferred=True):
-        version("4.4.1", sha256="40162a706c56f7592d08fd52ef5511cb7ac191f3593cf07306a0a554c6281fcf")
-        version("4.1.1", sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b")
-        version("4.1.0", sha256="d6a9a8094e78f7cfb6f80a73cc271e1fe388c8638ed22668622c2c646df5bb3d")
-        version("4.0.2", sha256="d53be9730d8d58a16bf0cbd1f8ac0c0c3e1090573168bfa151b01eb47fa906fc")
-        version("4.0.1", sha256="7a00b4d0d53ad97a14316135e2d702091cd5f193bb58bcfcd8bc59d41e7887a9")
-        version("4.0.0", sha256="e8a39cd6437e342cdcbd5af27a9bf11b62dc9efec9248065debcb8276fcbb925")
-        version(
-            "3.0.12", sha256="7cf9f447ae7ed1c51722efc45e7f14418d15d7a1e143ac9f09a668999f4fc94d"
-        )
-        version(
-            "3.0.11", sha256="d9031d531d7418829a54d0d51c4ed9007016b213657ec70be44031951810566e"
-        )
-        version(
-            "3.0.10", sha256="2939aae39dec06095462f1b95ce1c958ac80d07b926e48871046d17c0094f44c"
-        )
-        version("3.0.8", sha256="58a475dbbd4a4d7075e5fe86d4e54c9edde39847cdb96a3053d87cb64a23a453")
-        version("3.0.2", sha256="a2669657cabcedc371f63c0457407a183e0b6b2ef4e7e303c1ec9a3964cc7813")
-        version(
-            "2.0.12", sha256="65e13f22a60cecd7279c59882ff8ebe1ffe34078e85c602821a541817a4317f7"
-        )
-        version("2.0.2", sha256="6e6b5e8db2bbf2761ff789a3109e4f12ca664ec178d3a164ed0dc273d346c11f")
-        version(
-            "1.3.40", sha256="1945b3693bcda6777bd05fef1015a0ad1a4604cde4a4a0a368b61ccfd143ac09"
-        )
+    version("4.4.1", sha256="40162a706c56f7592d08fd52ef5511cb7ac191f3593cf07306a0a554c6281fcf")
+    version("4.1.1", sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b")
+    version("4.1.0", sha256="d6a9a8094e78f7cfb6f80a73cc271e1fe388c8638ed22668622c2c646df5bb3d")
+    version("4.0.2", sha256="d53be9730d8d58a16bf0cbd1f8ac0c0c3e1090573168bfa151b01eb47fa906fc")
+    version("4.0.1", sha256="7a00b4d0d53ad97a14316135e2d702091cd5f193bb58bcfcd8bc59d41e7887a9")
+    version("4.0.0", sha256="e8a39cd6437e342cdcbd5af27a9bf11b62dc9efec9248065debcb8276fcbb925")
+    version("3.0.12", sha256="7cf9f447ae7ed1c51722efc45e7f14418d15d7a1e143ac9f09a668999f4fc94d")
+    version("3.0.11", sha256="d9031d531d7418829a54d0d51c4ed9007016b213657ec70be44031951810566e")
+    version("3.0.10", sha256="2939aae39dec06095462f1b95ce1c958ac80d07b926e48871046d17c0094f44c")
+    version("3.0.8", sha256="58a475dbbd4a4d7075e5fe86d4e54c9edde39847cdb96a3053d87cb64a23a453")
+    version("3.0.2", sha256="a2669657cabcedc371f63c0457407a183e0b6b2ef4e7e303c1ec9a3964cc7813")
+    version("2.0.12", sha256="65e13f22a60cecd7279c59882ff8ebe1ffe34078e85c602821a541817a4317f7")
+    version("2.0.2", sha256="6e6b5e8db2bbf2761ff789a3109e4f12ca664ec178d3a164ed0dc273d346c11f")
+    version("1.3.40", sha256="1945b3693bcda6777bd05fef1015a0ad1a4604cde4a4a0a368b61ccfd143ac09")
     version("fortran", branch="master", git="https://github.com/swig-fortran/swig.git")
     version(
         "4.1.1-fortran",
@@ -73,6 +62,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
         "4.1.dev1-fortran",
         sha256="d9020319771879b41f9545e95f9d252a3ffc379832dded14c385e5cd823e526d",
         url="https://github.com/swig-fortran/swig/archive/refs/tags/v4.1.0-dev1+fortran.tar.gz",
+        deprecated=True,
     )
     version(
         "4.0.2-fortran",
