@@ -57,6 +57,11 @@ class RustBootstrap(Package):
                 "powerpc64le": "d0761bf0e1786a46dddfe60cc9397b899f680b86e6aebd7ca16b2a70a9dd631b",
             },
         },
+        "1.84.0": {
+            "linux": {
+                "x86_64": "de2b041a6e62ec2c37c517eb58518f68fde5fc2f076218393ae06145d92a5682",
+            },
+        },
         "1.82.0": {
             "darwin": {
                 "x86_64": "b1a289cabc523f259f65116a41374ac159d72fbbf6c373bd5e545c8e835ceb6a",

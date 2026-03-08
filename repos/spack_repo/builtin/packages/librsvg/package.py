@@ -15,7 +15,7 @@ class Librsvg(AutotoolsPackage, MesonPackage):
     homepage = "https://wiki.gnome.org/Projects/LibRsvg"
     url = "https://download.gnome.org/sources/librsvg/2.44/librsvg-2.44.14.tar.xz"
     list_url = "https://download.gnome.org/sources/librsvg"
-    list_depth = 1
+    list_depth = 2
 
     license("LGPL-2.1-or-later", checked_by="wdconinc")
 
@@ -111,6 +111,7 @@ class BuildEnvironment:
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("XDG_DATA_DIRS", self.prefix.share)
+        env.prepend_path("PKG_CONFIG_PATH", self.spec["gdk-pixbuf"].prefix.lib.pkgconfig)
         # librsvg uses pthread_atfork() but does not use -pthread on Ubuntu 18.04 %gcc@8
         env.append_flags("LDFLAGS", "-pthread")
 
