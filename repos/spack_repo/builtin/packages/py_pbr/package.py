@@ -16,7 +16,9 @@ class PyPbr(PythonPackage):
     # Skip 'pbr.tests' imports
     import_modules = ["pbr", "pbr.cmd", "pbr.hooks"]
 
-    version("7.0.3", sha256="b46004ec30a5324672683ec848aed9e8fc500b0d261d40a3229c2d2bbfcedc29")  # FIXME
+    version(
+        "7.0.3", sha256="b46004ec30a5324672683ec848aed9e8fc500b0d261d40a3229c2d2bbfcedc29"
+    )  # FIXME
     version("7.0.2", sha256="2a598b3d930f260576888932969b3b7dbcaa1d86505f9317dbd34b4a83eaf7ad")
     version("7.0.1", sha256="3ecbcb11d2b8551588ec816b3756b1eb4394186c3b689b17e04850dfc20f7e57")
     version("7.0.0", sha256="cf4127298723dafbce3afd13775ccf3885be5d3c8435751b867f9a6a10b71a39")

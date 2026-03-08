@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
@@ -23,7 +23,7 @@ class Syscalc(MakefilePackage, CMakePackage):
     version(
         "1.1.7.paulgessinger.p1-4-gd62edf9",
         commit="d62edf92b04a6cf89cde6837b0a999bc79601e8f",
-        git = "https://github.com/paulgessinger/SysCalc.git",
+        git="https://github.com/paulgessinger/SysCalc.git",
     )
     version(
         "1.1.7",

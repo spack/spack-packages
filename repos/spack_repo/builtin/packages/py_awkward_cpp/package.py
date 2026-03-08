@@ -19,8 +19,12 @@ class PyAwkwardCpp(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("52", sha256="ef141eb20544df261b973c986cfae57be329022061be86817506add676597275")  # FIXME
-    version("51", sha256="8c74e8f9fb2501766d1b0f9f2eb8777e384411d33534a8fa667d56599223a04b")  # FIXME
+    version(
+        "52", sha256="ef141eb20544df261b973c986cfae57be329022061be86817506add676597275"
+    )  # FIXME
+    version(
+        "51", sha256="8c74e8f9fb2501766d1b0f9f2eb8777e384411d33534a8fa667d56599223a04b"
+    )  # FIXME
     version("50", sha256="264b6fb4e82acc1057b5b2ff0d33fabc361032528e233815cd2224c6dbc96d8e")
     version("49", sha256="cb84e0f484453a580682731ae3058e6f3aac066558ddf015e67fd9515717e1de")
     version("48", sha256="368a9f7d317e7da42d291f51b814e9580825db7d3eb7026b0d47427bfad23e2f")

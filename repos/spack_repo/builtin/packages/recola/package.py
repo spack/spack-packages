@@ -25,7 +25,9 @@ class Recola(CMakePackage):
 
     license("GPL-3.0-or-later")
 
-    version("2.2.5", sha256="c5100055db3c2738596bc014a4d2893cfc33cbc7a5fd4b2846160fdff75c00af")  # FIXME
+    version(
+        "2.2.5", sha256="c5100055db3c2738596bc014a4d2893cfc33cbc7a5fd4b2846160fdff75c00af"
+    )  # FIXME
     version("2.2.4", sha256="212ae6141bc5de38c50be3e0c6947a3b0752aeb463cf850c22cfed5e61b1a64b")
     version("2.2.3", sha256="8dc25798960c272434fcde93817ed92aad82b2a7cf07438bb4deb5688d301086")
     version("2.2.2", sha256="a64cf2b4aa213289dfab6e2255a77264f281cd0ac85f5e9770c82b815272c5c9")

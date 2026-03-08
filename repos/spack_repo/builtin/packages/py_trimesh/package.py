@@ -15,11 +15,21 @@ class PyTrimesh(PythonPackage):
 
     license("MIT")
 
-    version("4.11.2", sha256="30fbde5b8dd7c157e7ff4d54286cb35291844fd3f4d0364e8b2727f1b308fb06")  # FIXME
-    version("4.11.1", sha256="9a10040ca5d1c4438e0b7af94433edf6b043f5204393fc97bb85c9159a8bf21e")  # FIXME
-    version("4.11.0", sha256="0b4acdcf28f21013385ccf81619a9dce703af348f69b198180a2212b1bc67821")  # FIXME
-    version("4.10.1", sha256="2067ebb8dcde0d7f00c2a85bfcae4aa891c40898e5f14232592429025ee2c593")  # FIXME
-    version("4.10.0", sha256="502710a0b1f0317816507828a41e0cb1c595b895e344567fa42cd47388c2b72b")  # FIXME
+    version(
+        "4.11.2", sha256="30fbde5b8dd7c157e7ff4d54286cb35291844fd3f4d0364e8b2727f1b308fb06"
+    )  # FIXME
+    version(
+        "4.11.1", sha256="9a10040ca5d1c4438e0b7af94433edf6b043f5204393fc97bb85c9159a8bf21e"
+    )  # FIXME
+    version(
+        "4.11.0", sha256="0b4acdcf28f21013385ccf81619a9dce703af348f69b198180a2212b1bc67821"
+    )  # FIXME
+    version(
+        "4.10.1", sha256="2067ebb8dcde0d7f00c2a85bfcae4aa891c40898e5f14232592429025ee2c593"
+    )  # FIXME
+    version(
+        "4.10.0", sha256="502710a0b1f0317816507828a41e0cb1c595b895e344567fa42cd47388c2b72b"
+    )  # FIXME
     version("4.9.0", sha256="ad907a223867f614ef1598d85a4c978845f39365cb7ccc93fa5800901fba3ef9")
     version("4.8.3", sha256="d2a1974efccb0737a1faac14d69740c644bb6738a99c790c1df752fe72c2a759")
     version("4.8.2", sha256="1b9e50feb77dac820428b7408f6cea707577342cd37a493e4491765bd5a67da3")

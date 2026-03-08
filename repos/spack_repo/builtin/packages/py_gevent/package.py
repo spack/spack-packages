@@ -16,9 +16,15 @@ class PyGevent(PythonPackage):
 
     license("MIT")
 
-    version("25.9.1", sha256="adf9cd552de44a4e6754c51ff2e78d9193b7fa6eab123db9578a210e657235dd")  # FIXME
-    version("25.8.2", sha256="0cfab118ad5dcc55d7847dd9dccd560d9015fe671f42714b6f1ac97e3b2b9a3a")  # FIXME
-    version("25.8.1", sha256="9fd0203718232a9b799657ebba72cd416807a370ac7bd2eea6ce52d322381e14")  # FIXME
+    version(
+        "25.9.1", sha256="adf9cd552de44a4e6754c51ff2e78d9193b7fa6eab123db9578a210e657235dd"
+    )  # FIXME
+    version(
+        "25.8.2", sha256="0cfab118ad5dcc55d7847dd9dccd560d9015fe671f42714b6f1ac97e3b2b9a3a"
+    )  # FIXME
+    version(
+        "25.8.1", sha256="9fd0203718232a9b799657ebba72cd416807a370ac7bd2eea6ce52d322381e14"
+    )  # FIXME
     version("25.5.1", sha256="582c948fa9a23188b890d0bc130734a506d039a2e5ad87dae276a456cc683e61")
     version("24.11.1", sha256="8bd1419114e9e4a3ed33a5bad766afff9a3cf765cb440a582a1b3a9bc80c1aca")
     version("24.10.3", sha256="aa7ee1bd5cabb2b7ef35105f863b386c8d5e332f754b60cfc354148bd70d35d1")

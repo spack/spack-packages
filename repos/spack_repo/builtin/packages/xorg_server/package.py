@@ -17,9 +17,15 @@ class XorgServer(AutotoolsPackage, XorgPackage):
 
     license("MIT")
 
-    version("21.1.21", sha256="952444a35ce6a720c3e978d3bad2b683bacb648cceedc03e3600f6fb170071d2")  # FIXME
-    version("21.1.20", sha256="a51aea1cbb29cb8122e39c1c8728469d4fd8db71a538565fbf017df11841bf04")  # FIXME
-    version("21.1.19", sha256="d99934e82dc8f0f4b4ffca1831e49a3ed5c0ab20488b3c31757443ac71af9f32")  # FIXME
+    version(
+        "21.1.21", sha256="952444a35ce6a720c3e978d3bad2b683bacb648cceedc03e3600f6fb170071d2"
+    )  # FIXME
+    version(
+        "21.1.20", sha256="a51aea1cbb29cb8122e39c1c8728469d4fd8db71a538565fbf017df11841bf04"
+    )  # FIXME
+    version(
+        "21.1.19", sha256="d99934e82dc8f0f4b4ffca1831e49a3ed5c0ab20488b3c31757443ac71af9f32"
+    )  # FIXME
     version("21.1.18", sha256="c8591ceb70b177440062406542fe52ba60212f217f27f8f802dd20373ca9e74b")
     version("21.1.17", sha256="5b808335c09026a88dafd08e7e513b47e68183e3d6bd35d63db8cedaaa23af4b")
     version("21.1.16", sha256="59fa52b63f6f8747ee2c4716decb29ced249c4c574e2a18c96b7d3b1420f7fd9")
@@ -39,8 +45,12 @@ class XorgServer(AutotoolsPackage, XorgPackage):
     version("21.1.2", sha256="cc6ef34db47cc402af2a597301c625f71c142a1423aaf16fde257cce7d924bf3")
     version("21.1.1", sha256="bd809c59e3f887eb75c8ba9e0160a234a8cee87145771158907ad5ae2ec80b1a")
     version("21.1.0", sha256="133ec56ebb576803ebb917c85506f7ad3e2e0fa6ca32ee7dd382bf513c8e5097")
-    version("21.0.99.902", sha256="11d8f4bb405bfb0ebed23fb524ff355dcc9fa5013fcb32557eb733b09297ce51")
-    version("21.0.99.901", sha256="7b3a05a9a77961466518f44a989a0909b382237f1145d46b3d6dc67d4137c099")
+    version(
+        "21.0.99.902", sha256="11d8f4bb405bfb0ebed23fb524ff355dcc9fa5013fcb32557eb733b09297ce51"
+    )
+    version(
+        "21.0.99.901", sha256="7b3a05a9a77961466518f44a989a0909b382237f1145d46b3d6dc67d4137c099"
+    )
     version("21.0.99.1", sha256="8d7c7de272a8e6b457a8358c6a9240ba4a4c798a041833006c6cec75d3abc533")
     version("1.20.14", sha256="54b199c9280ff8bf0f73a54a759645bd0eeeda7255d1c99310d5b7595f3ac066")
     version("1.20.13", sha256="26f801f4d92216995f389873cf3b4e90069cf63e94bc5dd09ebbf7fd7e1ddcc2")
@@ -57,11 +67,21 @@ class XorgServer(AutotoolsPackage, XorgPackage):
     version("1.20.2", sha256="a560c199fdf5a6f99578627cf524933d6140a8cc04054cecb1443eabcd306530")
     version("1.20.1", sha256="dc02dd7fc55ae7422bb2c96be8b8e211f5adb1f3deea3ded1afcee14c5f59f1b")
     version("1.20.0", sha256="6f55004082f9b9c3304037ae78bc5969889d066cf06c0f3130393fef79942ed1")
-    version("1.19.99.905", sha256="0df18d38805a8e1735480cbe6479193dbb221e66b5f766461fca160ebaf18ac9")
-    version("1.19.99.904", sha256="f1fe5e27d0eab494a4eea11a075f8f6d3989c3683c22e0bdf5c060e57d351c0f")
-    version("1.19.99.903", sha256="9cfcb585a8b84b657456d445f1c5ad521fa461bdcf06e009f1ae4e625eba6529")
-    version("1.19.99.902", sha256="e7a4a3bb289dfca9dd8cd478682f686e5d04fee46e6ff59eb3f2fb11c0b84ad3")
-    version("1.19.99.901", sha256="8c620b5b88e81a545c272e73dbcfff4b789ded432b6a1caa478a3476c00677e3")
+    version(
+        "1.19.99.905", sha256="0df18d38805a8e1735480cbe6479193dbb221e66b5f766461fca160ebaf18ac9"
+    )
+    version(
+        "1.19.99.904", sha256="f1fe5e27d0eab494a4eea11a075f8f6d3989c3683c22e0bdf5c060e57d351c0f"
+    )
+    version(
+        "1.19.99.903", sha256="9cfcb585a8b84b657456d445f1c5ad521fa461bdcf06e009f1ae4e625eba6529"
+    )
+    version(
+        "1.19.99.902", sha256="e7a4a3bb289dfca9dd8cd478682f686e5d04fee46e6ff59eb3f2fb11c0b84ad3"
+    )
+    version(
+        "1.19.99.901", sha256="8c620b5b88e81a545c272e73dbcfff4b789ded432b6a1caa478a3476c00677e3"
+    )
     version("1.19.7", sha256="5f6d3da0d1e341f27a7706779a24a5fa7174d5f161b5f8530f103753f0152de7")
     version("1.19.6", sha256="3c0e4a354a6b1d5d357b121357946ee8ffdb2f52158b2e63e105be9cef013168")
     version("1.19.5", sha256="1818068b6b86387ee0e392cbe28208ff949d253a1611d17bf2908961f3669b1c")

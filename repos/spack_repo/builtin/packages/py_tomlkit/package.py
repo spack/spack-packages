@@ -15,7 +15,9 @@ class PyTomlkit(PythonPackage):
 
     license("MIT")
 
-    version("0.14.0", sha256="cf00efca415dbd57575befb1f6634c4f42d2d87dbba376128adb42c121b87064")  # FIXME
+    version(
+        "0.14.0", sha256="cf00efca415dbd57575befb1f6634c4f42d2d87dbba376128adb42c121b87064"
+    )  # FIXME
     version("0.13.3", sha256="430cf247ee57df2b94ee3fbe588e71d362a941ebb545dec29b53961d61add2a1")
     version("0.12.1", sha256="38e1ff8edb991273ec9f6181244a6a391ac30e9f5098e7535640ea6be97a7c86")
     version("0.11.8", sha256="9330fc7faa1db67b541b28e62018c17d20be733177d290a13b24c62d1614e0c3")

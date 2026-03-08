@@ -17,7 +17,9 @@ class PyWebsockets(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("16.0", sha256="5f6261a5e56e8d5c42a4497b364ea24d94d9563e8fbd44e78ac40879c60179b5")  # FIXME
+    version(
+        "16.0", sha256="5f6261a5e56e8d5c42a4497b364ea24d94d9563e8fbd44e78ac40879c60179b5"
+    )  # FIXME
     version("15.0.1", sha256="82544de02076bafba038ce055ee6412d68da13ab47f0c60cab827346de828dee")
     version("10.4", sha256="eef610b23933c54d5d921c92578ae5f89813438fded840c2e9809d378dc765d3")
     version("10.3", sha256="fc06cc8073c8e87072138ba1e431300e2d408f054b27047d047b549455066ff4")

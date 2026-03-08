@@ -18,7 +18,9 @@ class PyJupyterlab(PythonPackage):
 
     license("BSD-3-Clause", checked_by="lgarrison")
 
-    version("4.5.0", sha256="aec33d6d8f1225b495ee2cf20f0514f45e6df8e360bdd7ac9bace0b7ac5177ea")  # FIXME
+    version(
+        "4.5.0", sha256="aec33d6d8f1225b495ee2cf20f0514f45e6df8e360bdd7ac9bace0b7ac5177ea"
+    )  # FIXME
     version("4.4.10", sha256="521c017508af4e1d6d9d8a9d90f47a11c61197ad63b2178342489de42540a615")
     version("4.4.7", sha256="8c8e225492f4513ebde9bbbc00a05b651ab9a1f5b0013015d96fabf671c37188")
     version("4.3.5", sha256="c779bf72ced007d7d29d5bcef128e7fdda96ea69299e19b04a43635a7d641f9d")

@@ -93,9 +93,7 @@ class PyPyyaml(PythonPackage):
         else:
             global_options += "--without-libyaml"
 
-        return {
-            "--global-option": global_options,
-        }
+        return {"--global-option": global_options}
 
     def setup_build_environment(self, env):
         if "+libyaml" in self.spec:

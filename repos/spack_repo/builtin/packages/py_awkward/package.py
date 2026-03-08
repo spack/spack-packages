@@ -19,9 +19,15 @@ class PyAwkward(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
-    version("2.9.0", sha256="0ebe50ca872a8790d4148c0f6f0844fb0c345a6ff3840c1611065ef27e8b6e1b")  # FIXME
-    version("2.8.12", sha256="90ffe41d081b10ab24337c76537aa9a25920e6653d1ae562b1537dc1934223f4")  # FIXME
-    version("2.8.11", sha256="0b184bc84da849af1aa2228937a80065018b49419815a0e6da37655b91178a8a")  # FIXME
+    version(
+        "2.9.0", sha256="0ebe50ca872a8790d4148c0f6f0844fb0c345a6ff3840c1611065ef27e8b6e1b"
+    )  # FIXME
+    version(
+        "2.8.12", sha256="90ffe41d081b10ab24337c76537aa9a25920e6653d1ae562b1537dc1934223f4"
+    )  # FIXME
+    version(
+        "2.8.11", sha256="0b184bc84da849af1aa2228937a80065018b49419815a0e6da37655b91178a8a"
+    )  # FIXME
     version("2.8.10", sha256="b7ec3213ac4176a5117bd6d62d3bb6c7ac7874a26aabd29356b9f9439c24f6e0")
     version("2.8.9", sha256="1dcaaacd359e695cadb8a34e598a0bf100b660561da4fbc3f1d45bf0bf6a6e51")
     version("2.8.8", sha256="417f7580be397e989c0fee51b7fc6f97fb6844219525d9f1f39f3ccbab045b96")

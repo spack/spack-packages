@@ -15,7 +15,9 @@ class PyWebcolors(PythonPackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
-    version("25.10.0", sha256="62abae86504f66d0f6364c2a8520de4a0c47b80c03fc3a5f1815fedbef7c19bf")  # FIXME
+    version(
+        "25.10.0", sha256="62abae86504f66d0f6364c2a8520de4a0c47b80c03fc3a5f1815fedbef7c19bf"
+    )  # FIXME
     version("24.11.1", sha256="ecb3d768f32202af770477b8b65f318fa4f566c22948673a977b00d589dd80f6")
     version("24.8.0", sha256="08b07af286a01bcd30d583a7acadf629583d1f79bfef27dd2c2c5c263817277d")
     version("24.6.0", sha256="1d160d1de46b3e81e58d0a280d0c78b467dc80f47294b91b1ad8029d2cedb55b")

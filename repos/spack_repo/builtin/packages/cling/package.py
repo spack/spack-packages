@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
 
 
@@ -21,7 +22,9 @@ class Cling(CMakePackage):
     license("LGPL-2.1 OR NCSA", checked_by="wdconinc")
 
     version("master", branch="master")
-    version("1.3", sha256="ca81f3bc952338beffba178633d77f5b3e1f1f180cbe2bb9f2713c06f410fd18")  # FIXME
+    version(
+        "1.3", sha256="ca81f3bc952338beffba178633d77f5b3e1f1f180cbe2bb9f2713c06f410fd18"
+    )  # FIXME
     version("1.2", sha256="beee8e461424d267ee2dec88b3de57326bc8e3470b4ceae2744de7d3d3aba1eb")
 
     depends_on("c", type="build")

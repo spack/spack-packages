@@ -19,9 +19,15 @@ class Pcre2(AutotoolsPackage, CMakePackage):
 
     license("BSD-3-Clause AND PCRE2-exception", when="@10:", checked_by="wdconinc")
 
-    version("10.47", sha256="47fe8c99461250d42f89e6e8fdaeba9da057855d06eb7fc08d9ca03fd08d7bc7")  # FIXME
-    version("10.46", sha256="15fbc5aba6beee0b17aecb04602ae39432393aba1ebd8e39b7cabf7db883299f")  # FIXME
-    version("10.45", sha256="21547f3516120c75597e5b30a992e27a592a31950b5140e7b8bfde3f192033c4")  # FIXME
+    version(
+        "10.47", sha256="47fe8c99461250d42f89e6e8fdaeba9da057855d06eb7fc08d9ca03fd08d7bc7"
+    )  # FIXME
+    version(
+        "10.46", sha256="15fbc5aba6beee0b17aecb04602ae39432393aba1ebd8e39b7cabf7db883299f"
+    )  # FIXME
+    version(
+        "10.45", sha256="21547f3516120c75597e5b30a992e27a592a31950b5140e7b8bfde3f192033c4"
+    )  # FIXME
     version("10.44", sha256="d34f02e113cf7193a1ebf2770d3ac527088d485d4e047ed10e5d217c6ef5de96")
     version("10.43", sha256="e2a53984ff0b07dfdb5ae4486bbb9b21cca8e7df2434096cc9bf1b728c350bcb")
     version("10.42", sha256="8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840")

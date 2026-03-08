@@ -19,8 +19,12 @@ class PyPulp(PythonPackage):
 
     license("MIT")
 
-    version("2.8.0", sha256="4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125")  # FIXME
-    version("2.7.0", sha256="e73ee6b32d639c9b8cf4b4aded334ba158be5f8313544e056f796ace0a10ae63")  # FIXME
+    version(
+        "2.8.0", sha256="4903bf96110bbab8ed2c68533f90565ebb76aa367d9e4df38e51bf727927c125"
+    )  # FIXME
+    version(
+        "2.7.0", sha256="e73ee6b32d639c9b8cf4b4aded334ba158be5f8313544e056f796ace0a10ae63"
+    )  # FIXME
     version("2.6.0", sha256="4b4f7e1e954453e1b233720be23aea2f10ff068a835ac10c090a93d8e2eb2e8d")
 
     depends_on("python@2.7:2.8,3.4:", type=("build", "run"))

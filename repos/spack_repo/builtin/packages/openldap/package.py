@@ -22,9 +22,15 @@ class Openldap(AutotoolsPackage):
 
     license("OLDAP-2.8")
 
-    version("2.6.12", sha256="1716ad779e85d743694c3e3b05277fb71b6a5eadca43c7a958aa62683b22208e")  # FIXME
-    version("2.6.10", sha256="c065f04aad42737aebd60b2fe4939704ac844266bc0aeaa1609f0cad987be516")  # FIXME
-    version("2.6.9", sha256="2cb7dc73e9c8340dff0d99357fbaa578abf30cc6619f0521972c555681e6b2ff")  # FIXME
+    version(
+        "2.6.12", sha256="1716ad779e85d743694c3e3b05277fb71b6a5eadca43c7a958aa62683b22208e"
+    )  # FIXME
+    version(
+        "2.6.10", sha256="c065f04aad42737aebd60b2fe4939704ac844266bc0aeaa1609f0cad987be516"
+    )  # FIXME
+    version(
+        "2.6.9", sha256="2cb7dc73e9c8340dff0d99357fbaa578abf30cc6619f0521972c555681e6b2ff"
+    )  # FIXME
     version("2.6.8", sha256="48969323e94e3be3b03c6a132942dcba7ef8d545f2ad35401709019f696c3c4e")
     version("2.6.4", sha256="d51704e50178430c06cf3d8aa174da66badf559747a47d920bb54b2d4aa40991")
     version("2.6.0", sha256="b71c580eac573e9aba15d95f33dd4dd08f2ed4f0d7fc09e08ad4be7ed1e41a4f")

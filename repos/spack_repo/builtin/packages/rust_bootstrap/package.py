@@ -58,9 +58,7 @@ class RustBootstrap(Package):
             },
         },
         "1.84.0": {
-            "linux": {
-                "x86_64": "de2b041a6e62ec2c37c517eb58518f68fde5fc2f076218393ae06145d92a5682",
-            },
+            "linux": {"x86_64": "de2b041a6e62ec2c37c517eb58518f68fde5fc2f076218393ae06145d92a5682"}
         },
         "1.82.0": {
             "darwin": {

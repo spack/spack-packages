@@ -15,7 +15,9 @@ class PyBleach(PythonPackage):
 
     license("Apache-2.0")
 
-    version("6.3.0", sha256="6f3b91b1c0a02bb9a78b5a454c92506aa0fdf197e1d5e114d2e00c6f64306d22")  # FIXME
+    version(
+        "6.3.0", sha256="6f3b91b1c0a02bb9a78b5a454c92506aa0fdf197e1d5e114d2e00c6f64306d22"
+    )  # FIXME
     version("6.2.0", sha256="123e894118b8a599fd80d3ec1a6d4cc7ce4e5882b1317a7e1ba69b56e95f991f")
     version("6.0.0", sha256="1a1a85c1595e07d8db14c5f09f09e6433502c51c595970edc090551f0db99414")
     version("5.0.1", sha256="0d03255c47eb9bd2f26aa9bb7f2107732e7e8fe195ca2f64709fcf3b0a4a085c")

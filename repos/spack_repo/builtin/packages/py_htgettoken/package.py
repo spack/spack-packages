@@ -23,8 +23,12 @@ class PyHtgettoken(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("2.6", sha256="d553d40b8b1ad794d4fa36e4a88e4c6343f12bc4498b3143d297d1c60d1877b4")  # FIXME
-    version("2.5", sha256="a5fd9d81883d7bc3bcd192ee5e0e477e71b3297a25da063b97bc6779309eb67a")  # FIXME
+    version(
+        "2.6", sha256="d553d40b8b1ad794d4fa36e4a88e4c6343f12bc4498b3143d297d1c60d1877b4"
+    )  # FIXME
+    version(
+        "2.5", sha256="a5fd9d81883d7bc3bcd192ee5e0e477e71b3297a25da063b97bc6779309eb67a"
+    )  # FIXME
     version("2.4", sha256="0178e6ae14a9768c981f66bc9e68b99164a094ecf3120854eb23a5a9cef1763d")
     version("2.3", sha256="73f7be0bca09c668928286c05d6786e841783ee87cdede5111bf0445620fd30a")
     version("2.2-2", sha256="47fc2a416f4cca97546d4faa3b471a162692c274ab126ceb05dc4982cd4e6bf7")

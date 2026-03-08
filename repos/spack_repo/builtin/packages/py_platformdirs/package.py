@@ -17,15 +17,33 @@ class PyPlatformdirs(PythonPackage):
 
     license("MIT")
 
-    version("4.9.2", sha256="9a33809944b9db043ad67ca0db94b14bf452cc6aeaac46a88ea55b26e2e9d291")  # FIXME
-    version("4.9.1", sha256="f310f16e89c4e29117805d8328f7c10876eeff36c94eac879532812110f7d39f")  # FIXME
-    version("4.9.0", sha256="d8c98e89c427a101947441c7e77b4cd1c8ea717de6f3885e2aa9c73fce276207")  # FIXME
-    version("4.8.0", sha256="c1d4a51ab04087041dd602707fbe7ee8b62b64e590f30e336e5c99c2d0c542d2")  # FIXME
-    version("4.7.1", sha256="6f4ff8472e482af4b7e67a183fbe63da846a9b34f57d5019c4d112a181003d82")  # FIXME
-    version("4.7.0", sha256="fd1a5f8599c85d49b9ac7d6e450bc2f1aaf4a23f1fe86d09952fe20ad365cf36")  # FIXME
-    version("4.6.0", sha256="4a13c2db1071e5846c3b3e04e5b095c0de36b2a24be9a3bc0145ca66fce4e328")  # FIXME
-    version("4.5.1", sha256="61d5cdcc6065745cdd94f0f878977f8de9437be93de97c1c12f853c9c0cdcbda")  # FIXME
-    version("4.5.0", sha256="70ddccdd7c99fc5942e9fc25636a8b34d04c24b335100223152c2803e4063312")  # FIXME
+    version(
+        "4.9.2", sha256="9a33809944b9db043ad67ca0db94b14bf452cc6aeaac46a88ea55b26e2e9d291"
+    )  # FIXME
+    version(
+        "4.9.1", sha256="f310f16e89c4e29117805d8328f7c10876eeff36c94eac879532812110f7d39f"
+    )  # FIXME
+    version(
+        "4.9.0", sha256="d8c98e89c427a101947441c7e77b4cd1c8ea717de6f3885e2aa9c73fce276207"
+    )  # FIXME
+    version(
+        "4.8.0", sha256="c1d4a51ab04087041dd602707fbe7ee8b62b64e590f30e336e5c99c2d0c542d2"
+    )  # FIXME
+    version(
+        "4.7.1", sha256="6f4ff8472e482af4b7e67a183fbe63da846a9b34f57d5019c4d112a181003d82"
+    )  # FIXME
+    version(
+        "4.7.0", sha256="fd1a5f8599c85d49b9ac7d6e450bc2f1aaf4a23f1fe86d09952fe20ad365cf36"
+    )  # FIXME
+    version(
+        "4.6.0", sha256="4a13c2db1071e5846c3b3e04e5b095c0de36b2a24be9a3bc0145ca66fce4e328"
+    )  # FIXME
+    version(
+        "4.5.1", sha256="61d5cdcc6065745cdd94f0f878977f8de9437be93de97c1c12f853c9c0cdcbda"
+    )  # FIXME
+    version(
+        "4.5.0", sha256="70ddccdd7c99fc5942e9fc25636a8b34d04c24b335100223152c2803e4063312"
+    )  # FIXME
     version("4.4.0", sha256="ca753cf4d81dc309bc67b0ea38fd15dc97bc30ce419a7f58d13eb3bf14c4febf")
     version("3.10.0", sha256="b45696dab2d7cc691a3226759c0d3b00c47c8b6e293d96f6436f733303f77f6d")
     version("3.5.3", sha256="e48fabd87db8f3a7df7150a4a5ea22c546ee8bc39bc2473244730d4b56d2cc4e")

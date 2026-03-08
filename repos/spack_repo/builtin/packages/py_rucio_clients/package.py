@@ -17,18 +17,42 @@ class PyRucioClients(PythonPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
-    version("39.3.0", sha256="e6890df6b25785a3ff2006774fceeafd9541e6b710b288efaf72ff1f598213eb")  # FIXME
-    version("39.2.0", sha256="830d232928b10aad2aa471ec2ea71023b930a3b73d4c7e895f79f1cba101af27")  # FIXME
-    version("39.1.0", sha256="5c83a6c0b1c0823e7b95f6569c6478698c433db1901d8398d3844f48a2728aca")  # FIXME
-    version("39.0.0", sha256="a83632897cfc2cc9052848b1b795fb71b2cf8d0a7920a6cff1f7367874bac72a")  # FIXME
-    version("38.5.3", sha256="7457d8d91e4b33bc760495974bc160b2e823f217f5cfaa98034e9bd644d8950b")  # FIXME
-    version("38.5.2", sha256="d3ef7f2a834df762aa28c6535ace4ee575b8096952f9d446f2d15da43a294507")  # FIXME
-    version("38.5.1", sha256="3cfe97c5e5996cfc5861b259ff0bed3369e7379bcaa826b6d181ee5b939ac401")  # FIXME
-    version("38.5.0", sha256="f0379a3efc9ba948ecbc8bf96d6c325aa79156b344a95b7f2358b43371792e9f")  # FIXME
-    version("38.4.0", sha256="bf4bbb21f514156f6ca975f981583a1f8f8af9ca7e41b77ae20c10147fc5d3fb")  # FIXME
-    version("38.3.0", sha256="49f8809b5378d1c9e9edc5f1a74fbf7eebe45db27084945f748b2c73a841efed")  # FIXME
-    version("38.2.0", sha256="7495d7274e17e4099f9ccd2672667236e17f806292954387145e99c7c688414a")  # FIXME
-    version("38.1.0", sha256="69a4197fdad548671a3ab8322f181f62b13d8aaa3e2e96ebdbc6d3a434fd0062")  # FIXME
+    version(
+        "39.3.0", sha256="e6890df6b25785a3ff2006774fceeafd9541e6b710b288efaf72ff1f598213eb"
+    )  # FIXME
+    version(
+        "39.2.0", sha256="830d232928b10aad2aa471ec2ea71023b930a3b73d4c7e895f79f1cba101af27"
+    )  # FIXME
+    version(
+        "39.1.0", sha256="5c83a6c0b1c0823e7b95f6569c6478698c433db1901d8398d3844f48a2728aca"
+    )  # FIXME
+    version(
+        "39.0.0", sha256="a83632897cfc2cc9052848b1b795fb71b2cf8d0a7920a6cff1f7367874bac72a"
+    )  # FIXME
+    version(
+        "38.5.3", sha256="7457d8d91e4b33bc760495974bc160b2e823f217f5cfaa98034e9bd644d8950b"
+    )  # FIXME
+    version(
+        "38.5.2", sha256="d3ef7f2a834df762aa28c6535ace4ee575b8096952f9d446f2d15da43a294507"
+    )  # FIXME
+    version(
+        "38.5.1", sha256="3cfe97c5e5996cfc5861b259ff0bed3369e7379bcaa826b6d181ee5b939ac401"
+    )  # FIXME
+    version(
+        "38.5.0", sha256="f0379a3efc9ba948ecbc8bf96d6c325aa79156b344a95b7f2358b43371792e9f"
+    )  # FIXME
+    version(
+        "38.4.0", sha256="bf4bbb21f514156f6ca975f981583a1f8f8af9ca7e41b77ae20c10147fc5d3fb"
+    )  # FIXME
+    version(
+        "38.3.0", sha256="49f8809b5378d1c9e9edc5f1a74fbf7eebe45db27084945f748b2c73a841efed"
+    )  # FIXME
+    version(
+        "38.2.0", sha256="7495d7274e17e4099f9ccd2672667236e17f806292954387145e99c7c688414a"
+    )  # FIXME
+    version(
+        "38.1.0", sha256="69a4197fdad548671a3ab8322f181f62b13d8aaa3e2e96ebdbc6d3a434fd0062"
+    )  # FIXME
     version("38.0.0", sha256="d49f912f2f98870cab2227e0464129ba0954e99b975d0225126cca1b9d9c983c")
     version("37.3.0", sha256="b4bca8d451bc34528797ca188884a0c8b5ddfef2d32803765e6333455879f819")
     version(

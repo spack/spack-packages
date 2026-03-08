@@ -239,8 +239,8 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     @property
     def python_lib_dir(self):
         python_vers_phrase = "python{0}".format(self.spec["python"].version.up_to(2))
-        if 'freethreading' in self.spec['python'].variants:
-            if self.spec['python'].variants['freethreading'].value:
+        if "freethreading" in self.spec["python"].variants:
+            if self.spec["python"].variants["freethreading"].value:
                 python_vers_phrase += "t"
         return join_path("lib", python_vers_phrase)
 
@@ -264,7 +264,9 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
             define("onnxruntime_USE_FULL_PROTOBUF", True),
             define("onnxruntime_DISABLE_CONTRIB_OPS", False),
             # Point to py-onnx for proto files (not in C++ onnx installation)
-            define("onnx_SOURCE_DIR", join_path(self.spec["py-onnx"].prefix, self.site_packages_dir)),
+            define(
+                "onnx_SOURCE_DIR", join_path(self.spec["py-onnx"].prefix, self.site_packages_dir)
+            ),
         ]
 
         if self.spec.satisfies("+cuda"):

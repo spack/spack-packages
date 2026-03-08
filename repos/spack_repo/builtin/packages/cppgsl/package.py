@@ -17,7 +17,9 @@ class Cppgsl(CMakePackage):
     license("MIT")
 
     version("main", branch="main")
-    version("4.2.1", sha256="d959f1cb8bbb9c94f033ae5db60eaf5f416be1baa744493c32585adca066fe1f")  # FIXME
+    version(
+        "4.2.1", sha256="d959f1cb8bbb9c94f033ae5db60eaf5f416be1baa744493c32585adca066fe1f"
+    )  # FIXME
     version("4.2.0", sha256="2c717545a073649126cb99ebd493fa2ae23120077968795d2c69cbab821e4ac6")
     version("4.1.0", sha256="0a227fc9c8e0bf25115f401b9a46c2a68cd28f299d24ab195284eb3f1d7794bd")
     version("4.0.0", sha256="f0e32cb10654fea91ad56bde89170d78cfbf4363ee0b01d8f097de2ba49f6ce9")

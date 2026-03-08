@@ -19,7 +19,9 @@ class PyIdentify(PythonPackage):
 
     license("MIT")
 
-    version("2.6.16", sha256="846857203b5511bbe94d5a352a48ef2359532bc8f6727b5544077a0dcfb24980")  # FIXME
+    version(
+        "2.6.16", sha256="846857203b5511bbe94d5a352a48ef2359532bc8f6727b5544077a0dcfb24980"
+    )  # FIXME
     version("2.6.15", sha256="e4f4864b96c6557ef2a1e1c951771838f4edc9df3a72ec7118b338801b11c7bf")
     version("2.5.24", sha256="0aac67d5b4812498056d28a9a512a483f5085cc28640b02b258a59dac34301d4")
     version("2.5.5", sha256="322a5699daecf7c6fd60e68852f36f2ecbb6a36ff6e6e973e0d2bb6fca203ee6")

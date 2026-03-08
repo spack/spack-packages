@@ -17,7 +17,9 @@ class PyRich(PythonPackage):
 
     license("MIT")
 
-    version("14.3.3", sha256="b8daa0b9e4eef54dd8cf7c86c03713f53241884e814f4e2f5fb342fe520f639b")  # FIXME
+    version(
+        "14.3.3", sha256="b8daa0b9e4eef54dd8cf7c86c03713f53241884e814f4e2f5fb342fe520f639b"
+    )  # FIXME
     version("14.3.2", sha256="e712f11c1a562a11843306f5ed999475f09ac31ffb64281f73ab29ffdda8b3b8")
     version("14.1.0", sha256="e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8")
     version("13.9.4", sha256="439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098")

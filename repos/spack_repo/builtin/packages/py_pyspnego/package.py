@@ -17,8 +17,12 @@ class PyPyspnego(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
-    version("0.12.0", sha256="e1d9cd3520a87a1d6db8d68783b17edc4e1464eae3d51ead411a51c82dbaae67")  # FIXME
-    version("0.11.2", sha256="994388d308fb06e4498365ce78d222bf4f3570b6df4ec95738431f61510c971b")  # FIXME
+    version(
+        "0.12.0", sha256="e1d9cd3520a87a1d6db8d68783b17edc4e1464eae3d51ead411a51c82dbaae67"
+    )  # FIXME
+    version(
+        "0.11.2", sha256="994388d308fb06e4498365ce78d222bf4f3570b6df4ec95738431f61510c971b"
+    )  # FIXME
     version("0.11.1", sha256="e92ed8b0a62765b9d6abbb86a48cf871228ddb97678598dc01c9c39a626823f6")
 
     variant("kerberos", default=False, description="Enable Kerberos authentication on Linux")

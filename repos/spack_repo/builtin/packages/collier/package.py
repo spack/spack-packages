@@ -21,7 +21,9 @@ class Collier(CMakePackage):
 
     license("GPL-3.0-only")
 
-    version("1.2.9", sha256="98d14f638d6dda826303f24720715af8c23f1185ddaffd46533c61a92a7fcb54")  # FIXME
+    version(
+        "1.2.9", sha256="98d14f638d6dda826303f24720715af8c23f1185ddaffd46533c61a92a7fcb54"
+    )  # FIXME
     version("1.2.8", sha256="5cb24ce24ba1f62b7a96c655b31e9fddccc603eff31e60f9033b16354a6afd89")
     version("1.2.7", sha256="fde4b144a17c1bf5aa2ceaa86c71c79da10c9de8fec7bd33c8bffb4198acd5ca")
     version("1.2.6", sha256="b0d517868c71d2d1b8b6d3e0c370a43c9eb18ea8393a6e80070a5a2206f7de36")

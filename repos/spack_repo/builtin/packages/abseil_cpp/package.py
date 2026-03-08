@@ -18,9 +18,15 @@ class AbseilCpp(CMakePackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
-    version("20260107.1", sha256="4314e2a7cbac89cac25a2f2322870f343d81579756ceff7f431803c2c9090195")  # FIXME
-    version("20260107.0", sha256="4c124408da902be896a2f368042729655709db5e3004ec99f57e3e14439bc1b2")  # FIXME
-    version("20250814.2", sha256="f9148fb00ec98a2396bdf875c99a78e6a70afa662b107862d92b285d857a8320")  # FIXME
+    version(
+        "20260107.1", sha256="4314e2a7cbac89cac25a2f2322870f343d81579756ceff7f431803c2c9090195"
+    )  # FIXME
+    version(
+        "20260107.0", sha256="4c124408da902be896a2f368042729655709db5e3004ec99f57e3e14439bc1b2"
+    )  # FIXME
+    version(
+        "20250814.2", sha256="f9148fb00ec98a2396bdf875c99a78e6a70afa662b107862d92b285d857a8320"
+    )  # FIXME
     version(
         "20250814.1", sha256="1692f77d1739bacf3f94337188b78583cf09bab7e420d2dc6c5605a4f86785a1"
     )
@@ -101,7 +107,12 @@ class AbseilCpp(CMakePackage):
 
     variant(
         "cxxstd",
-        values=(conditional("11", when="@:2022"), conditional("14", when="@:20250127.1"), "17", "20"),
+        values=(
+            conditional("11", when="@:2022"),
+            conditional("14", when="@:20250127.1"),
+            "17",
+            "20",
+        ),
         default="14",
         description="C++ standard used during compilation",
     )

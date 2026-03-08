@@ -16,8 +16,12 @@ class PyUhi(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("1.0.0", sha256="331188949b1a49c8db9ef9d50b7c4d4df4606115d147ded97c4f050da8270e74")  # FIXME
-    version("0.5.0", sha256="9559bbf2f38f18a2fc1d8f73139396068f88f898d6a9afc833207ec0fd59a31c")  # FIXME
+    version(
+        "1.0.0", sha256="331188949b1a49c8db9ef9d50b7c4d4df4606115d147ded97c4f050da8270e74"
+    )  # FIXME
+    version(
+        "0.5.0", sha256="9559bbf2f38f18a2fc1d8f73139396068f88f898d6a9afc833207ec0fd59a31c"
+    )  # FIXME
     version("0.4.0", sha256="0dcb6b19775087d38a31ee388cb2c70f2ecfe04c4ffe2ca63223410cae5beefa")
     version("0.3.3", sha256="800caf3a5f1273b08bcc3bb4b49228fe003942e23423812b0110546aad9a24be")
     version("0.3.2", sha256="fd6ed2ae8ce68ba6be37b872de86e7775b45d54f858768c8fdaba162b6452ab2")

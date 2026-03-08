@@ -13,75 +13,213 @@ class PyBotocore(PythonPackage):
     homepage = "https://github.com/boto/botocore"
     pypi = "botocore/botocore-1.13.44.tar.gz"
 
-    version("1.42.52", sha256="3bdef10aee4cee13ff019b6a1423a2ce3ca17352328d9918157a1829e5cc9be1")  # FIXME
-    version("1.42.51", sha256="d7b03905b8066c25dd5bde1b7dc4af15ebdbaa313abbb2543db179b1d5efae3d")  # FIXME
-    version("1.42.50", sha256="de1e128e4898f4e66877bfabbbb03c61f99366f27520442539339e8a74afe3a5")  # FIXME
-    version("1.42.49", sha256="333115a64a507697b0c450ade7e2d82bc8b4e21c0051542514532b455712bdcc")  # FIXME
-    version("1.42.48", sha256="970983e520de6d85981379efd44dbf293dbc6288d376169787b3b23ea8cd6163")  # FIXME
-    version("1.42.47", sha256="c26e190c1b4d863ba7b44dc68cc574d8eb862ddae5f0fe3472801daee12a0378")  # FIXME
-    version("1.42.46", sha256="fc290b33aba6e271f627c4f46b8bcebfa1a94e19157d396732da417404158c01")  # FIXME
-    version("1.42.45", sha256="40b577d07b91a0ed26879da9e4658d82d3a400382446af1014d6ad3957497545")  # FIXME
-    version("1.42.44", sha256="47ba27360f2afd2c2721545d8909217f7be05fdee16dd8fc0b09589535a0701c")  # FIXME
-    version("1.42.43", sha256="41d04ead0b0862eec21f841811fb5764fe370a2df9b319e0d5297325c50fba1b")  # FIXME
-    version("1.42.42", sha256="cb75639f5ba7bf73b83ac18bcd87f07b7f484f302748da974dad2801a83a1d60")  # FIXME
-    version("1.42.41", sha256="0698967741d873d819134bea1ffe9c35decc00c741f49a42885dbd7ad8198fbc")  # FIXME
-    version("1.42.40", sha256="6cfa07cf35ad477daef4920324f6d81b8d3a10a35baeafaa5fca22fb3ad225e2")  # FIXME
-    version("1.42.39", sha256="0f00355050821e91a5fe6d932f7bf220f337249b752899e3e4cf6ed54326249e")  # FIXME
-    version("1.42.38", sha256="eb36d09b5c61b3ede6129f7b54630049f3eeeccf1327a32cf8944563027a4002")  # FIXME
-    version("1.42.37", sha256="3ec58eb98b0857f67a2ae6aa3ded51597e7335f7640be654e0e86da4f173b5b2")  # FIXME
-    version("1.42.36", sha256="2ebd89cc75927944e2cee51b7adce749f38e0cb269a758a6464a27f8bcca65fb")  # FIXME
-    version("1.42.35", sha256="40a6e0f16afe9e5d42e956f0b6d909869793fadb21780e409063601fc3d094b8")  # FIXME
-    version("1.42.34", sha256="92e44747da7890270d8dcc494ecc61fc315438440c55e00dc37a57d402b1bb66")  # FIXME
-    version("1.42.33", sha256="ecf48db73605a592b6c7f8f29e517d9eb6cf0c7e004a1fdbd9c192afc7b42b03")  # FIXME
-    version("1.42.32", sha256="4c0a9fe23e060c019e327cd5e4ea1976a1343faba74e5301ebfc9549cc584ccb")  # FIXME
-    version("1.42.31", sha256="62f2c31e229df625612dd4d7c72618948e4064436d71a647102f36fcddfa0f4d")  # FIXME
-    version("1.42.30", sha256="9bf1662b8273d5cc3828a49f71ca85abf4e021011c1f0a71f41a2ea5769a5116")  # FIXME
-    version("1.42.29", sha256="0fe869227a1dfe818f691a31b8c1693e39be8056a6dff5d6d4b3fc5b3a5e7d42")  # FIXME
-    version("1.42.28", sha256="0c15e78d1accf97df691083331f682e97b1bef73ef12dcdaadcf652abf9c182c")  # FIXME
-    version("1.42.27", sha256="c8e1e3ffb6c871622b1c8054f064d60cbc786aa5ca1f97f5f9fd5fa0a9d82d05")  # FIXME
-    version("1.42.26", sha256="1c8855e3e811f015d930ccfe8751d4be295aae0562133d14b6f0b247cd6fd8d3")  # FIXME
-    version("1.42.25", sha256="7ae79d1f77d3771e83e4dd46bce43166a1ba85d58a49cffe4c4a721418616054")  # FIXME
-    version("1.42.24", sha256="be8d1bea64fb91eea08254a1e5fea057e4428d08e61f4e11083a02cafc1f8cc6")  # FIXME
-    version("1.42.23", sha256="453ce449bd1021acd67e75c814aae1b132b1ab3ee0ecff248de863bf19e58be8")  # FIXME
-    version("1.42.22", sha256="635c9213a448885a1cf735f1a950b83adaced0860b8159fc26d1242abc042443")  # FIXME
-    version("1.42.21", sha256="db8f99d186156da42feb4fd2098017383d9b155097290cc53da7258f6e652c39")  # FIXME
-    version("1.42.20", sha256="5cea428aba9ccc9f6d496e66c5acbd07eb98e95bacc85ddc8153a01caf2cd64a")  # FIXME
-    version("1.42.19", sha256="8d38f30de983720303e95951380a2c9ac515159636ee6b5ba4227d65f14551a4")  # FIXME
-    version("1.42.18", sha256="49fe04e25ec90e516a1399aceee2a38ebf63e183d25e4823a8d8e01349589742")  # FIXME
-    version("1.42.17", sha256="d73fe22c8e1497e4d59ff7dc68eb05afac68a4a6457656811562285d6132bc04")  # FIXME
-    version("1.42.16", sha256="29ee8555cd5d5023350405387cedcf3fe1c7f02fcb8060bf9e01602487482c25")  # FIXME
-    version("1.42.15", sha256="504c548aa333728c99a692908d3e6acb718983585ad7a836d2fab9604518a636")  # FIXME
-    version("1.42.14", sha256="cf5bebb580803c6cfd9886902ca24834b42ecaa808da14fb8cd35ad523c9f621")  # FIXME
-    version("1.42.13", sha256="7e4cf14bd5719b60600fb45d2bb3ae140feb3c182a863b93093aafce7f93cfee")  # FIXME
-    version("1.42.12", sha256="1f9f63c3d6bb1f768519da30d6018706443c5d8af5472274d183a4945f3d81f8")  # FIXME
-    version("1.42.11", sha256="4c5278b9e0f6217f428aade811d409e321782bd14f0a202ff95a298d841be1f7")  # FIXME
-    version("1.42.10", sha256="84312c37ddc34cd0cce25436f26370af1edb9e1b1944359ee15350239537cdaa")  # FIXME
-    version("1.42.9", sha256="74f69bfd116cc7c8215481284957eecdb48580e071dd50cb8c64356a866abd8c")  # FIXME
-    version("1.42.8", sha256="4921aa454f82fed0880214eab21126c98a35fe31ede952693356f9c85ce3574b")  # FIXME
-    version("1.42.7", sha256="cc401b4836eae2a781efa1d1df88b2e92f9245885a6ae1bf9a6b26bc97b3efd2")  # FIXME
-    version("1.42.6", sha256="ab389c6874dfbdc4c18de9b4a02d300cb6c7f6f2d4622c73e5965aeef80e570d")  # FIXME
-    version("1.42.5", sha256="37bfc487f14286d9795920807fcb8318b940835b18fff6bec5253449f377136f")  # FIXME
-    version("1.42.4", sha256="d4816023492b987a804f693c2d76fb751fdc8755d49933106d69e2489c4c0f98")  # FIXME
-    version("1.42.3", sha256="6bad2e512ab85926bbfb391a9486bb3120f4be71419e2f70b556d99783dcb1ce")  # FIXME
-    version("1.42.2", sha256="3dbeba76168764219cbe392aa67cbc9265cfa05b09970ed5f2e0c786b8ac5010")  # FIXME
-    version("1.42.1", sha256="3337df815c69dd87c314ee29329b8ea411ad3562fb6563d139bbe085dac14ce0")  # FIXME
-    version("1.41.6", sha256="08fe47e9b306f4436f5eaf6a02cb6d55c7745d13d2d093ce5d917d3ef3d3df75")  # FIXME
-    version("1.41.5", sha256="0367622b811597d183bfcaab4a350f0d3ede712031ce792ef183cabdee80d3bf")  # FIXME
-    version("1.41.4", sha256="45c78f07b53a64cbe55e5d60297958f151bd4a2c6acb944a8bb65874bc2fd953")  # FIXME
-    version("1.41.3", sha256="1c6ad338f445c9bf02e231bfa302239d60520ec6dd88ded3206b34dca100103c")  # FIXME
-    version("1.41.2", sha256="49a3e8f4c1a1759a687941fef8b36efd7bafcf63c1ef74aa75d6497eb4887c9c")  # FIXME
-    version("1.41.1", sha256="e98095492ef8f18d0d6a02ba87d9135c663d4627322e049228143b3a4ef4c2a3")  # FIXME
-    version("1.41.0", sha256="555afbf86a644bfa4ebd7bd98d717b53b792e6bbb2c49f2b308fb06964cf1655")  # FIXME
-    version("1.40.76", sha256="2b16024d68b29b973005adfb5039adfe9099ebe772d40a90ca89f2e165c495dc")  # FIXME
-    version("1.40.75", sha256="bf8b067209fee5a9738800d41852e113b8ebdb01bd7f1e8b4541d55ecdbdb8f3")  # FIXME
-    version("1.40.74", sha256="57de0b9ffeada06015b3c7e5186c77d0692b210d9e5efa294f3214df97e2f8ee")  # FIXME
-    version("1.40.73", sha256="0650ceada268824282da9af8615f3e4cf2453be8bf85b820f9207eff958d56d0")  # FIXME
-    version("1.40.72", sha256="f69199ff6570695556e733fa052f2739e01e0c592c9b60f843f84c77ba3bcdf3")  # FIXME
-    version("1.40.71", sha256="7ed28c2e092fc0d67fbfba818fbdccc92426b452cc936bf034db6de717e0d068")  # FIXME
-    version("1.40.70", sha256="61b1f2cecd54d1b28a081116fa113b97bf4e17da57c62ae2c2751fe4c528af1f")  # FIXME
-    version("1.40.69", sha256="df310ddc4d2de5543ba3df4e4b5f9907a2951896d63a9fbae115c26ca0976951")  # FIXME
-    version("1.40.68", sha256="28f41b463d9f012a711ee8b61d4e26cd14ee3b450b816d5dee849aa79155e856")  # FIXME
-    version("1.40.67", sha256="cc086f39c877aee0ea8dc88ef69062c9f395b9d30d49bfcfac7b8b7e61864b3a")  # FIXME
+    version(
+        "1.42.52", sha256="3bdef10aee4cee13ff019b6a1423a2ce3ca17352328d9918157a1829e5cc9be1"
+    )  # FIXME
+    version(
+        "1.42.51", sha256="d7b03905b8066c25dd5bde1b7dc4af15ebdbaa313abbb2543db179b1d5efae3d"
+    )  # FIXME
+    version(
+        "1.42.50", sha256="de1e128e4898f4e66877bfabbbb03c61f99366f27520442539339e8a74afe3a5"
+    )  # FIXME
+    version(
+        "1.42.49", sha256="333115a64a507697b0c450ade7e2d82bc8b4e21c0051542514532b455712bdcc"
+    )  # FIXME
+    version(
+        "1.42.48", sha256="970983e520de6d85981379efd44dbf293dbc6288d376169787b3b23ea8cd6163"
+    )  # FIXME
+    version(
+        "1.42.47", sha256="c26e190c1b4d863ba7b44dc68cc574d8eb862ddae5f0fe3472801daee12a0378"
+    )  # FIXME
+    version(
+        "1.42.46", sha256="fc290b33aba6e271f627c4f46b8bcebfa1a94e19157d396732da417404158c01"
+    )  # FIXME
+    version(
+        "1.42.45", sha256="40b577d07b91a0ed26879da9e4658d82d3a400382446af1014d6ad3957497545"
+    )  # FIXME
+    version(
+        "1.42.44", sha256="47ba27360f2afd2c2721545d8909217f7be05fdee16dd8fc0b09589535a0701c"
+    )  # FIXME
+    version(
+        "1.42.43", sha256="41d04ead0b0862eec21f841811fb5764fe370a2df9b319e0d5297325c50fba1b"
+    )  # FIXME
+    version(
+        "1.42.42", sha256="cb75639f5ba7bf73b83ac18bcd87f07b7f484f302748da974dad2801a83a1d60"
+    )  # FIXME
+    version(
+        "1.42.41", sha256="0698967741d873d819134bea1ffe9c35decc00c741f49a42885dbd7ad8198fbc"
+    )  # FIXME
+    version(
+        "1.42.40", sha256="6cfa07cf35ad477daef4920324f6d81b8d3a10a35baeafaa5fca22fb3ad225e2"
+    )  # FIXME
+    version(
+        "1.42.39", sha256="0f00355050821e91a5fe6d932f7bf220f337249b752899e3e4cf6ed54326249e"
+    )  # FIXME
+    version(
+        "1.42.38", sha256="eb36d09b5c61b3ede6129f7b54630049f3eeeccf1327a32cf8944563027a4002"
+    )  # FIXME
+    version(
+        "1.42.37", sha256="3ec58eb98b0857f67a2ae6aa3ded51597e7335f7640be654e0e86da4f173b5b2"
+    )  # FIXME
+    version(
+        "1.42.36", sha256="2ebd89cc75927944e2cee51b7adce749f38e0cb269a758a6464a27f8bcca65fb"
+    )  # FIXME
+    version(
+        "1.42.35", sha256="40a6e0f16afe9e5d42e956f0b6d909869793fadb21780e409063601fc3d094b8"
+    )  # FIXME
+    version(
+        "1.42.34", sha256="92e44747da7890270d8dcc494ecc61fc315438440c55e00dc37a57d402b1bb66"
+    )  # FIXME
+    version(
+        "1.42.33", sha256="ecf48db73605a592b6c7f8f29e517d9eb6cf0c7e004a1fdbd9c192afc7b42b03"
+    )  # FIXME
+    version(
+        "1.42.32", sha256="4c0a9fe23e060c019e327cd5e4ea1976a1343faba74e5301ebfc9549cc584ccb"
+    )  # FIXME
+    version(
+        "1.42.31", sha256="62f2c31e229df625612dd4d7c72618948e4064436d71a647102f36fcddfa0f4d"
+    )  # FIXME
+    version(
+        "1.42.30", sha256="9bf1662b8273d5cc3828a49f71ca85abf4e021011c1f0a71f41a2ea5769a5116"
+    )  # FIXME
+    version(
+        "1.42.29", sha256="0fe869227a1dfe818f691a31b8c1693e39be8056a6dff5d6d4b3fc5b3a5e7d42"
+    )  # FIXME
+    version(
+        "1.42.28", sha256="0c15e78d1accf97df691083331f682e97b1bef73ef12dcdaadcf652abf9c182c"
+    )  # FIXME
+    version(
+        "1.42.27", sha256="c8e1e3ffb6c871622b1c8054f064d60cbc786aa5ca1f97f5f9fd5fa0a9d82d05"
+    )  # FIXME
+    version(
+        "1.42.26", sha256="1c8855e3e811f015d930ccfe8751d4be295aae0562133d14b6f0b247cd6fd8d3"
+    )  # FIXME
+    version(
+        "1.42.25", sha256="7ae79d1f77d3771e83e4dd46bce43166a1ba85d58a49cffe4c4a721418616054"
+    )  # FIXME
+    version(
+        "1.42.24", sha256="be8d1bea64fb91eea08254a1e5fea057e4428d08e61f4e11083a02cafc1f8cc6"
+    )  # FIXME
+    version(
+        "1.42.23", sha256="453ce449bd1021acd67e75c814aae1b132b1ab3ee0ecff248de863bf19e58be8"
+    )  # FIXME
+    version(
+        "1.42.22", sha256="635c9213a448885a1cf735f1a950b83adaced0860b8159fc26d1242abc042443"
+    )  # FIXME
+    version(
+        "1.42.21", sha256="db8f99d186156da42feb4fd2098017383d9b155097290cc53da7258f6e652c39"
+    )  # FIXME
+    version(
+        "1.42.20", sha256="5cea428aba9ccc9f6d496e66c5acbd07eb98e95bacc85ddc8153a01caf2cd64a"
+    )  # FIXME
+    version(
+        "1.42.19", sha256="8d38f30de983720303e95951380a2c9ac515159636ee6b5ba4227d65f14551a4"
+    )  # FIXME
+    version(
+        "1.42.18", sha256="49fe04e25ec90e516a1399aceee2a38ebf63e183d25e4823a8d8e01349589742"
+    )  # FIXME
+    version(
+        "1.42.17", sha256="d73fe22c8e1497e4d59ff7dc68eb05afac68a4a6457656811562285d6132bc04"
+    )  # FIXME
+    version(
+        "1.42.16", sha256="29ee8555cd5d5023350405387cedcf3fe1c7f02fcb8060bf9e01602487482c25"
+    )  # FIXME
+    version(
+        "1.42.15", sha256="504c548aa333728c99a692908d3e6acb718983585ad7a836d2fab9604518a636"
+    )  # FIXME
+    version(
+        "1.42.14", sha256="cf5bebb580803c6cfd9886902ca24834b42ecaa808da14fb8cd35ad523c9f621"
+    )  # FIXME
+    version(
+        "1.42.13", sha256="7e4cf14bd5719b60600fb45d2bb3ae140feb3c182a863b93093aafce7f93cfee"
+    )  # FIXME
+    version(
+        "1.42.12", sha256="1f9f63c3d6bb1f768519da30d6018706443c5d8af5472274d183a4945f3d81f8"
+    )  # FIXME
+    version(
+        "1.42.11", sha256="4c5278b9e0f6217f428aade811d409e321782bd14f0a202ff95a298d841be1f7"
+    )  # FIXME
+    version(
+        "1.42.10", sha256="84312c37ddc34cd0cce25436f26370af1edb9e1b1944359ee15350239537cdaa"
+    )  # FIXME
+    version(
+        "1.42.9", sha256="74f69bfd116cc7c8215481284957eecdb48580e071dd50cb8c64356a866abd8c"
+    )  # FIXME
+    version(
+        "1.42.8", sha256="4921aa454f82fed0880214eab21126c98a35fe31ede952693356f9c85ce3574b"
+    )  # FIXME
+    version(
+        "1.42.7", sha256="cc401b4836eae2a781efa1d1df88b2e92f9245885a6ae1bf9a6b26bc97b3efd2"
+    )  # FIXME
+    version(
+        "1.42.6", sha256="ab389c6874dfbdc4c18de9b4a02d300cb6c7f6f2d4622c73e5965aeef80e570d"
+    )  # FIXME
+    version(
+        "1.42.5", sha256="37bfc487f14286d9795920807fcb8318b940835b18fff6bec5253449f377136f"
+    )  # FIXME
+    version(
+        "1.42.4", sha256="d4816023492b987a804f693c2d76fb751fdc8755d49933106d69e2489c4c0f98"
+    )  # FIXME
+    version(
+        "1.42.3", sha256="6bad2e512ab85926bbfb391a9486bb3120f4be71419e2f70b556d99783dcb1ce"
+    )  # FIXME
+    version(
+        "1.42.2", sha256="3dbeba76168764219cbe392aa67cbc9265cfa05b09970ed5f2e0c786b8ac5010"
+    )  # FIXME
+    version(
+        "1.42.1", sha256="3337df815c69dd87c314ee29329b8ea411ad3562fb6563d139bbe085dac14ce0"
+    )  # FIXME
+    version(
+        "1.41.6", sha256="08fe47e9b306f4436f5eaf6a02cb6d55c7745d13d2d093ce5d917d3ef3d3df75"
+    )  # FIXME
+    version(
+        "1.41.5", sha256="0367622b811597d183bfcaab4a350f0d3ede712031ce792ef183cabdee80d3bf"
+    )  # FIXME
+    version(
+        "1.41.4", sha256="45c78f07b53a64cbe55e5d60297958f151bd4a2c6acb944a8bb65874bc2fd953"
+    )  # FIXME
+    version(
+        "1.41.3", sha256="1c6ad338f445c9bf02e231bfa302239d60520ec6dd88ded3206b34dca100103c"
+    )  # FIXME
+    version(
+        "1.41.2", sha256="49a3e8f4c1a1759a687941fef8b36efd7bafcf63c1ef74aa75d6497eb4887c9c"
+    )  # FIXME
+    version(
+        "1.41.1", sha256="e98095492ef8f18d0d6a02ba87d9135c663d4627322e049228143b3a4ef4c2a3"
+    )  # FIXME
+    version(
+        "1.41.0", sha256="555afbf86a644bfa4ebd7bd98d717b53b792e6bbb2c49f2b308fb06964cf1655"
+    )  # FIXME
+    version(
+        "1.40.76", sha256="2b16024d68b29b973005adfb5039adfe9099ebe772d40a90ca89f2e165c495dc"
+    )  # FIXME
+    version(
+        "1.40.75", sha256="bf8b067209fee5a9738800d41852e113b8ebdb01bd7f1e8b4541d55ecdbdb8f3"
+    )  # FIXME
+    version(
+        "1.40.74", sha256="57de0b9ffeada06015b3c7e5186c77d0692b210d9e5efa294f3214df97e2f8ee"
+    )  # FIXME
+    version(
+        "1.40.73", sha256="0650ceada268824282da9af8615f3e4cf2453be8bf85b820f9207eff958d56d0"
+    )  # FIXME
+    version(
+        "1.40.72", sha256="f69199ff6570695556e733fa052f2739e01e0c592c9b60f843f84c77ba3bcdf3"
+    )  # FIXME
+    version(
+        "1.40.71", sha256="7ed28c2e092fc0d67fbfba818fbdccc92426b452cc936bf034db6de717e0d068"
+    )  # FIXME
+    version(
+        "1.40.70", sha256="61b1f2cecd54d1b28a081116fa113b97bf4e17da57c62ae2c2751fe4c528af1f"
+    )  # FIXME
+    version(
+        "1.40.69", sha256="df310ddc4d2de5543ba3df4e4b5f9907a2951896d63a9fbae115c26ca0976951"
+    )  # FIXME
+    version(
+        "1.40.68", sha256="28f41b463d9f012a711ee8b61d4e26cd14ee3b450b816d5dee849aa79155e856"
+    )  # FIXME
+    version(
+        "1.40.67", sha256="cc086f39c877aee0ea8dc88ef69062c9f395b9d30d49bfcfac7b8b7e61864b3a"
+    )  # FIXME
     version("1.40.66", sha256="e49a55ad54426c4ea853a59ff9d8243023a90c935782d4c287e9b3424883c3fa")
     version("1.40.65", sha256="cdbbf9d90a9e9c4a6000055013d98b92efc4ceb1bce0d9bcd70e14461dc22ab3")
     version("1.40.64", sha256="a13af4009f6912eafe32108f6fa584fb26e24375149836c2bcaaaaec9a7a9e58")

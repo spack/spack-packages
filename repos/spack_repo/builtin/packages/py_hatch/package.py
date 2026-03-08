@@ -15,12 +15,24 @@ class PyHatch(PythonPackage):
 
     license("MIT")
 
-    version("1.16.2", sha256="f288938da85b4b90e47d94788e19e9976dcd6fd53b48343ea251a2a37256a980")  # FIXME
-    version("1.16.1", sha256="87df6a17a0f8dc6f9a8ae459b742cb32ccc844a79634f9072797a2e38af1280f")  # FIXME
-    version("1.16.0", sha256="bcbf7548a6bab3526ae222f91381d76adccfb5acc656dc09e527621a83e1c02b")  # FIXME
-    version("1.15.1", sha256="444a78123c9837e8c9f5adfbf2b8b0a72139587eb49d6b368038b0521136fc43")  # FIXME
-    version("1.15.0", sha256="c687fb8ab2a9fa2ebdb4689823e6ab9f6eb21943426310cad60f650cec14acd9")  # FIXME
-    version("1.14.2", sha256="b522c7463198c6e24bd9d9c83252327502e3cc3509844141de0aad7b0aa1967d")  # FIXME
+    version(
+        "1.16.2", sha256="f288938da85b4b90e47d94788e19e9976dcd6fd53b48343ea251a2a37256a980"
+    )  # FIXME
+    version(
+        "1.16.1", sha256="87df6a17a0f8dc6f9a8ae459b742cb32ccc844a79634f9072797a2e38af1280f"
+    )  # FIXME
+    version(
+        "1.16.0", sha256="bcbf7548a6bab3526ae222f91381d76adccfb5acc656dc09e527621a83e1c02b"
+    )  # FIXME
+    version(
+        "1.15.1", sha256="444a78123c9837e8c9f5adfbf2b8b0a72139587eb49d6b368038b0521136fc43"
+    )  # FIXME
+    version(
+        "1.15.0", sha256="c687fb8ab2a9fa2ebdb4689823e6ab9f6eb21943426310cad60f650cec14acd9"
+    )  # FIXME
+    version(
+        "1.14.2", sha256="b522c7463198c6e24bd9d9c83252327502e3cc3509844141de0aad7b0aa1967d"
+    )  # FIXME
     version("1.14.1", sha256="ca1aff788f8596b0dd1f8f8dfe776443d2724a86b1976fabaf087406ba3d0713")
     version("1.13.0", sha256="5e1a75770cfe8f3ebae3abfded3a976238b0acefd19cdabc5245597525b8066f")
     version("1.12.0", sha256="ae80478d10312df2b44d659c93bc2ed4d33aecddce4b76378231bdf81c8bf6ad")

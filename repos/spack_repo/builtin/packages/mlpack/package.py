@@ -65,7 +65,9 @@ class Mlpack(CMakePackage):
         depends_on("py-numpy")
         depends_on("py-numpy@:1", when="@:4.4.0")
         depends_on("py-pandas@0.15.0:")
-        depends_on("py-packaging", type=("build", "run"))  # For CMake version checks with Python 3.12+
+        depends_on(
+            "py-packaging", type=("build", "run")
+        )  # For CMake version checks with Python 3.12+
         # ref: src/mlpack/bindings/python/PythonInstall.cmake
         depends_on("py-pip")
         depends_on("py-wheel")
@@ -95,11 +97,7 @@ class Mlpack(CMakePackage):
                 "from packaging.version import Version",
                 "CMake/FindPythonModule.cmake",
             )
-            filter_file(
-                r"StrictVersion\(",
-                "Version(",
-                "CMake/FindPythonModule.cmake",
-            )
+            filter_file(r"StrictVersion\(", "Version(", "CMake/FindPythonModule.cmake")
 
     def setup_build_environment(self, env):
         # Ensure py-packaging is in PYTHONPATH for CMake's Python version checks
