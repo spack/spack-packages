@@ -18,6 +18,7 @@ class Nano(AutotoolsPackage):
     license("GPL-3.0-or-later", checked_by="wdconinc")
 
     # 8.x
+    version("8.7.1", sha256="76f0dcb248f2e2f1251d4ecd20fd30fb400a360a3a37c6c340e0a52c2d1cdedf")
     version("8.7", sha256="afd287aa672c48b8e1a93fdb6c6588453d527510d966822b687f2835f0d986e9")
     version("8.6", sha256="f7abfbf0eed5f573ab51bd77a458f32d82f9859c55e9689f819d96fe1437a619")
     version("8.5", sha256="000b011d339c141af9646d43288f54325ff5c6e8d39d6e482b787bbc6654c26a")

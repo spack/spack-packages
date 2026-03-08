@@ -24,6 +24,11 @@ class NodeJs(Package):
     license("Unicode-TOU")
 
     # Current (latest features) - odd major number
+    version("25.6.1", sha256="a72bb2b274e8ddf3c933ea7a73d5ac4fce7503e45edc9d541fc75d104fa848c3")  # FIXME
+    version("25.6.0", sha256="4f9567884d604f900c13cf83919654a55e6808538ed88f25cc9cdfc84ebb70ea")  # FIXME
+    version("25.5.0", sha256="334569dc43eb427af5ca97e330ab8752cbac19a2a70d476a97aa194f79010b07")  # FIXME
+    version("25.4.0", sha256="aa85eaa3c2c81c8b755039018d725bc140c409c2100508785bc8275e610b0e81")  # FIXME
+    version("25.3.0", sha256="36cf586c51f20832ad27790f278f89f98a8dd957c4d6593d4f34e492249b3352")  # FIXME
     version("25.2.1", sha256="1cbbdb66f99e0c41937eb8763c57e622eab43006742dc4d0856270b17215e376")
     version(
         "23.11.1",
@@ -52,6 +57,18 @@ class NodeJs(Package):
     )
 
     # LTS (recommended for most users) - even major number
+    version("24.11.0", sha256="2f7bddb50c5ab526c2896817652f80cc200c6b647edbdb75293d58b422cdb71f")
+    version("24.10.0", sha256="fb9aa1938aa8d7b53e437184e4c5b26823db0afb5ac1cbfe6559176531e900e6")
+    version("24.9.0", sha256="3c868d88377cb05ed87674a6af6add3e04733dd429c3370620a5a6c547fe6460")
+    version("24.8.0", sha256="6e9e8c931b5028a755e6c4e1edaf14296001ae8bbb35976a3896f59e7fd797c7")
+    version("24.7.0", sha256="5ce2df7022d027d439b289e7393e04c494e92dec53aba212781b5f792015138a")
+    version("24.6.0", sha256="eba12bb7a8bcd8d5e0bebb9d7733f34d3e4854db4e890702c32f1060151097ed")
+    version("24.5.0", sha256="27a05a6925c1d9f023856513c93e4b4d34344fe95e19e0204d182f903fb120dc")
+    version("24.4.1", sha256="f5d4525390f67bd2ba91efe2ad94722f570a9a4fd18756ab420cb5885d0f6c10")
+    version("24.3.0", sha256="f8cc1dcde9b76fa380765204fefbb98e51123e52c919ba4adcf4ccd235bbf70b")
+    version("24.2.0", sha256="da739aedc45729436587cda9f063b28c1d881a32ba149b0a2f4e8aff55a18929")
+    version("24.1.0", sha256="b565cba1dd8f2eb3db7c95e0c3a87ecc5e77f079611ea6a3688531511383ec72")
+    version("24.0.2", sha256="db699b535192419b02f35668aadd48f4d80e99b8ef807997df159bcf15a5e6b9")
     version(
         "24.13.0",
         sha256="54cb58921b4ce2831c6690ee823a3d39cfbf2b75f4e556c4c2bde90f3d8fd1ca",
