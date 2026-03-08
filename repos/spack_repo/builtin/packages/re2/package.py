@@ -16,6 +16,19 @@ class Re2(CMakePackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
+    version("2025-11-05", sha256="87f6029d2f6de8aa023654240a03ada90e876ce9a4676e258dd01ea4c26ffd67")  # FIXME
+    version(
+        "2025-08-12", sha256="2f3bec634c3e51ea1faf0d441e0a8718b73ef758d7020175ed7e352df3f6ae12"
+    )
+    version(
+        "2025-08-05", sha256="b5708d8388110624c85f300e7e9b39c4ed5469891eb1127dd7f9d61272d04907"
+    )
+    version(
+        "2025-07-22", sha256="f54c29f1c3e13e12693e3d6d1230554df3ab3a1066b2e1f28c5330bfbf6db1e3"
+    )
+    version(
+        "2025-07-17", sha256="41bea2a95289d112e7c2ccceeb60ee03d54269e7fe53e3a82bab40babdfa51ef"
+    )
     version(
         "2024-07-02", sha256="eb2df807c781601c14a260a507a5bb4509be1ee626024cb45acbd57cb9d4032b"
     )
@@ -60,6 +73,8 @@ class Re2(CMakePackage):
     variant("pic", default=True, description="Enable position independent code")
 
     depends_on("cxx", type="build")
+
+    depends_on("cmake@3.22:", type="build", when="@2025-08-05:")
 
     depends_on("abseil-cpp", when="@2023-09-01:")
 

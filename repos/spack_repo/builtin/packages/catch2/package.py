@@ -23,6 +23,13 @@ class Catch2(CMakePackage):
     version("develop", branch="devel")
 
     # Releases
+    version("3.13.0", sha256="650795f6501af514f806e78c554729847b98db6935e69076f36bb03ed2e985ef")  # FIXME
+    version("3.12.0", sha256="e077079f214afc99fee940d91c14cf1a8c1d378212226bb9f50efff75fe07b23")  # FIXME
+    version("3.11.0", sha256="82fa1cb59dc28bab220935923f7469b997b259eb192fb9355db62da03c2a3137")  # FIXME
+    version("3.10.0", sha256="fc4303a5c2738beaa727066e126b5a28837a812230a3c5826caa38e7ab99ca48")  # FIXME
+    version("3.9.1", sha256="a215c2a723bd7483efd236dc86066842a389cb4e344c61119c978acdf24d39be")  # FIXME
+    version("3.9.0", sha256="8061daf97429621bc62096841af02fc40070fad26cd04c93ee0b5a825cedb122")  # FIXME
+    version("3.8.1", sha256="18b3f70ac80fccc340d8c6ff0f339b2ae64944782f8d2fca2bd705cf47cadb79")  # FIXME
     version("3.8.0", sha256="1ab2de20460d4641553addfdfe6acd4109d871d5531f8f519a52ea4926303087")
     version("3.7.1", sha256="c991b247a1a0d7bb9c39aa35faf0fe9e19764213f28ffba3109388e62ee0269c")
     version("3.6.0", sha256="485932259a75c7c6b72d4b874242c489ea5155d17efa345eb8cc72159f49f356")

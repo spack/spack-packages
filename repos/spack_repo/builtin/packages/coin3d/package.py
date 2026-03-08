@@ -14,7 +14,7 @@ class Coin3d(AutotoolsPackage, CMakePackage):
     Open Inventor 2.1 API, which Coin still is compatible with."""
 
     homepage = "https://github.com/coin3d/coin"
-    url = "https://github.com/coin3d/coin/releases/download/Coin-4.0.0/coin-4.0.0-src.tar.gz"
+    url = "https://github.com/coin3d/coin/releases/download/v4.0.4/coin-4.0.4-src.tar.gz"
 
     license("BSD-3-Clause")
 
