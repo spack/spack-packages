@@ -24,6 +24,7 @@ class GlobusGsiProxyCore(AutotoolsPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("9.9", sha256="cf6898ca9fc16fe7f93c9b0aaaff5d4470e075d752f3861042e99d9df8f21387")
     version("9.8", sha256="b0865b298d96ffbf6963c0fcb14eb7fd311de67fb25890a677bd6ace13475da3")
 
     depends_on("c", type="build")
