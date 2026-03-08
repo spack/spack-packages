@@ -46,7 +46,7 @@ class PyHist(PythonPackage):
     depends_on("py-boost-histogram@1.3.1:1.4", when="@2.7.2:2.7", type=("build", "run"))
     depends_on("py-boost-histogram@1.3.1:1.5", when="@2.8", type=("build", "run"))
     depends_on("py-boost-histogram@1.5:1.6", when="@2.9", type=("build", "run"))
-    depends_on("py-boost-histogram@1.6:1.7", when="@2.10.0:", type=("build", "run"))
+    depends_on("py-boost-histogram@1.6:1.7", when="@2.10:", type=("build", "run"))
     depends_on("py-histoprint@2.2.0:", type=("build", "run"))
     depends_on("py-numpy@1.19.3:", type=("build", "run"), when="@2.9:")
     depends_on("py-numpy@1.14.5:", type=("build", "run"), when="@:2.7.1,2.7.3:")

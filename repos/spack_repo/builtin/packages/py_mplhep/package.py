@@ -12,6 +12,7 @@ class PyMplhep(PythonPackage):
 
     homepage = "https://github.com/scikit-hep/mplhep"
     pypi = "mplhep/mplhep-0.3.15.tar.gz"
+    git = "https://github.com/scikit-hep/mplhep.git"
 
     license("MIT", checked_by="wdconinc")
 
@@ -29,6 +30,7 @@ class PyMplhep(PythonPackage):
 
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("python@3.8:", type=("build", "run"), when="@0.3.29:")
+    depends_on("python@3.9:", type=("build", "run"), when="@1:")
     with when("@0.3.53:"):
         depends_on("py-hatchling", type="build")
         depends_on("py-hatch-vcs", type="build")
@@ -39,7 +41,10 @@ class PyMplhep(PythonPackage):
     depends_on("py-matplotlib@3.4:", type=("build", "run"))
     # properly handle docstring -> _docstring transition in mplhep#443 and mplhep#455
     depends_on("py-matplotlib@3.6:", type=("build", "run"), when="@0.3.29:")
+    depends_on("py-matplotlib@:3.9", type=("build", "run"), when="@1: ^python@:3.9")
+    depends_on("py-matplotlib@3.10.8:", type=("build", "run"), when="@1: ^python@3.10:")
     depends_on("py-matplotlib@:3.8", type=("build", "run"), when="@:0.3.28")
+    depends_on("py-pyparsing@:3.2", type=("build", "run"), when="@1: ^python@:3.9")
     depends_on("py-mplhep-data", type=("build", "run"))
     depends_on("py-mplhep-data@0.0.4:", type=("build", "run"), when="@0.3.54:")
     depends_on("py-numpy@1.16.0:", type=("build", "run"))

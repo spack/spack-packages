@@ -38,6 +38,7 @@ class PyHepunits(PythonPackage):
     depends_on("python@3.6:", when="@2.2:", type=("build", "run"))
     depends_on("python@3.7:", when="@2.3:", type=("build", "run"))
     depends_on("python@3.8:", when="@2.3.4:", type=("build", "run"))
+    depends_on("python@3.9:", when="@2.4.3:", type=("build", "run"))
     depends_on("py-setuptools", when="@:2.2", type="build")
     depends_on("py-setuptools-scm +toml", when="@:2.2", type="build")
     depends_on("py-hatchling", when="@2.3:", type="build")

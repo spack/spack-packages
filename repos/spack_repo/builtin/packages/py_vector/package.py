@@ -12,6 +12,7 @@ class PyVector(PythonPackage):
 
     homepage = "https://github.com/scikit-hep/vector"
     pypi = "vector/vector-0.8.4.tar.gz"
+    git = "https://github.com/scikit-hep/vector.git"
 
     maintainers("wdconinc")
 
@@ -52,7 +53,9 @@ class PyVector(PythonPackage):
         depends_on("py-setuptools-scm@3.4: +toml", type="build")
         depends_on("py-wheel", type="build")
     depends_on("py-numpy@1.13.3:", type=("build", "run"))
+    depends_on("py-numpy@1.19.3:", type=("build", "run"), when="@1.7:")
     depends_on("py-packaging@19.0:", type=("build", "run"))
+    depends_on("py-packaging@20:", type=("build", "run"), when="@1.7:")
     depends_on("py-importlib-metadata@0.22:", type=("build", "run"), when="@:1.0 ^python@:3.7")
     depends_on("py-typing-extensions", type=("build", "run"), when="@:1.0 ^python@:3.7")
 

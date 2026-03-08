@@ -51,6 +51,7 @@ class PyParticle(PythonPackage):
     depends_on("python@3.6:", when="@0.20:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.21:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.24:", type=("build", "run"))
+    depends_on("python@3.9:", when="@0.26:", type=("build", "run"))
     depends_on("py-setuptools", when="@:0.20", type="build")
     depends_on("py-setuptools-scm@3.4:+toml", when="@:0.20", type="build")
     depends_on("py-hatchling", when="@0.21:", type="build")
@@ -58,8 +59,11 @@ class PyParticle(PythonPackage):
     depends_on("py-importlib-resources@2:", when="@0.16: ^python@:3.8", type=("build", "run"))
     depends_on("py-typing-extensions@4.5:", when="@0.23.1: ^python@:3.12", type=("build", "run"))
     depends_on("py-typing-extensions", when="@0.16:0.23.0 ^python@:3.7", type=("build", "run"))
-    depends_on("py-deprecated", when="@0.22.0:0.23.0", type=("build", "run"))
-
     depends_on("py-attrs@19.2.0:", type=("build", "run"))
-    depends_on("py-hepunits@1.2.0:", when="@:0.12", type=("build", "run"))
+    depends_on("py-attrs@22.2.0:", when="@0.26.1:", type=("build", "run"))
     depends_on("py-hepunits@2.0.0:", when="@0.13:", type=("build", "run"))
+    depends_on("py-hepunits@2.4:", when="@0.26:", type=("build", "run"))
+
+    # Historical dependencies
+    depends_on("py-deprecated", when="@0.22.0:0.23.0", type=("build", "run"))
+    depends_on("py-hepunits@1.2.0:", when="@:0.12", type=("build", "run"))

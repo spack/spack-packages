@@ -12,6 +12,7 @@ class PyHepdataValidator(PythonPackage):
 
     homepage = "https://github.com/hepdata/hepdata-validator"
     pypi = "hepdata_validator/hepdata_validator-0.1.16.tar.gz"
+    git = "https://github.com/hepdata/hepdata-validator.git"
 
     tags = ["hep"]
 

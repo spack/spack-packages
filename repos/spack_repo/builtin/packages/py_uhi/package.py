@@ -11,8 +11,9 @@ class PyUhi(PythonPackage):
     """Unified Histogram Interface:
     tools to help library authors work with histograms"""
 
-    homepage = "https://github.com/Scikit-HEP/uhi"
+    homepage = "https://github.com/scikit-hep/uhi"
     pypi = "uhi/uhi-0.3.0.tar.gz"
+    git = "https://github.com/scikit-hep/uhi.git"
 
     license("BSD-3-Clause")
 
@@ -33,6 +34,7 @@ class PyUhi(PythonPackage):
     depends_on("py-boost-histogram@1.4:", type=("build", "run"), when="@1.0:")
     depends_on("py-boost-histogram@1:", type=("build", "run"))
     depends_on("py-typing-extensions@3.7:", type=("build", "run"), when="^python@:3.7")
+    depends_on("py-typing-extensions@4:", type=("build", "run"), when="@1: ^python@:3.10")
     depends_on("py-hatchling", when="@0.3.2:", type="build")
     depends_on("py-hatch-vcs", when="@0.3.3:", type="build")
     depends_on("py-flit-core@3.2:", when="@0.3.1", type="build")

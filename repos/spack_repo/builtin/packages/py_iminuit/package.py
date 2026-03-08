@@ -12,6 +12,7 @@ class PyIminuit(PythonPackage):
 
     homepage = "http://github.com/scikit-hep/iminuit"
     pypi = "iminuit/iminuit-1.2.tar.gz"
+    git = "http://github.com/scikit-hep/iminuit.git"
 
     tags = ["hep"]
 
