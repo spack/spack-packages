@@ -21,6 +21,8 @@ class Conmon(MakefilePackage):
     sanity_check_is_file = ["bin/conmon"]
 
     version("main", branch="main")
+    version("2.2.1", sha256="814fb5979a3a4b8576b1f901e606b482bebb41cb7e57926e6d5765ee786b96d3")  # FIXME
+    version("2.2.0", sha256="300d21c2244e1b5e90cc62d796da3e94812bec281bae6868d6e738432155319d")  # FIXME
     version("2.1.13", sha256="350992cb2fe4a69c0caddcade67be20462b21b4078dae00750e8da1774926d60")
     version("2.1.12", sha256="842f0b5614281f7e35eec2a4e35f9f7b9834819aa58ecdad8d0ff6a84f6796a6")
     version("2.1.7", sha256="7d0f9a2f7cb8a76c51990128ac837aaf0cc89950b6ef9972e94417aa9cf901fe")

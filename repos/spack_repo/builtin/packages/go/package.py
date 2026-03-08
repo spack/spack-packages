@@ -41,6 +41,7 @@ class Go(Package):
 
     license("BSD-3-Clause")
 
+    version("1.26.0", sha256="c9132a8a1f6bd2aa4aad1d74b8231d95274950483a4950657ee6c56e6e817790")
     version("1.25.7", sha256="178f2832820274b43e177d32f06a3ebb0129e427dd20a5e4c88df2c1763cf10a")
     version("1.25.6", sha256="58cbf771e44d76de6f56d19e33b77d745a1e489340922875e46585b975c2b059")
     version("1.25.5", sha256="22a5fd0a91efcd28a1b0537106b9959b2804b61f59c3758b51e8e5429c1a954f")
@@ -81,6 +82,7 @@ class Go(Package):
     depends_on("grep", type="build")
     depends_on("sed", type="build")
 
+    depends_on("go-or-gccgo-bootstrap@1.24.6:", type="build", when="@1.26:")
     depends_on("go-or-gccgo-bootstrap@1.22.6:", type="build", when="@1.24:")
     depends_on("go-or-gccgo-bootstrap@1.20.6:", type="build")
     depends_on("go-or-gccgo-bootstrap", type="build")
