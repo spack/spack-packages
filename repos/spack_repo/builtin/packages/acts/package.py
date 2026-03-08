@@ -204,7 +204,6 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("hepmc3 @3.2.4:", when="@42: +hepmc3")
     depends_on("intel-tbb @2020.1:", when="+examples")
     depends_on("nlohmann-json @3.10.5:", when="+json")
-    depends_on("nlohmann-json @3.10.5:", when="@37: +json")
     depends_on("nlohmann-json @3.11.3:", when="@45: +json")
     depends_on("torch-scatter", when="+gnn")
     depends_on("torch-scatter +cuda", when="+cuda")
@@ -223,7 +222,7 @@ class Acts(CMakePackage, CudaPackage):
     # robust solution is available we pretend that these packages are also
     # run- and link-time dependencies.
     depends_on("python@3.12:", when="@44:")
-    depends_on("py-numpy @2.2:", when="@44:")
+    depends_on("py-numpy @2.2", when="@44:")
     depends_on("py-onnxruntime@1.12:", when="+onnx")
     depends_on("py-particle @0.24", when="@44:")
     depends_on("py-pybind11 @2.13.1:", when="+python")

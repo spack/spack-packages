@@ -235,12 +235,6 @@ class Gaudi(CMakePackage, CudaPackage):
             # todo:
             self.define("GAUDI_USE_INTELAMPLIFIER", False),
         ]
-        # Release nots for v40.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v40r0
-        # Cleanup remaining Python2 support
-        if self.spec.satisfies("@:39"):
-            args.append(
-                self.define("GAUDI_USE_PYTHON_MAJOR", str(self.spec["python"].version.up_to(1)))
-            )
         # Release notes for v39.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v39r0
         # Gaudi@39: needs C++ >= 20, and we need to force CMake to use C++ 20 with old gcc:
         args.append(self.define_from_variant("GAUDI_CXX_STANDARD", "cxxstd"))
