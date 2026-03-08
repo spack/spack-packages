@@ -37,6 +37,7 @@ class Prmon(CMakePackage):
 
     depends_on("nlohmann-json")
     depends_on("cmake@3.3:", type="build")
+    depends_on("cmake@3.10:", type="build", when="@3.2:")
     depends_on("spdlog", when="@3.0.0:")
     depends_on("py-matplotlib", type="run", when="+plot")
     depends_on("py-matplotlib@:3.5", type="run", when="@:3.1.0 +plot")
