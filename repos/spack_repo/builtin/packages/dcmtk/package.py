@@ -16,7 +16,14 @@ class Dcmtk(CMakePackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
-    version("3.6.8", sha256="fca429a215739702fe8d96178964036246a35e2ea8adb12da33851e2be8e9a07")
+    version("3.6.9", sha256="7f240eac06c45af5b17a6d2f7e41c54269274646aa348f44809e805ceef5d2e9")
+
+    # dcmtk 3.6.8 is affected by:
+    # - CVE-2024-47796 (CVSS 8.4 HIGH): out-of-bounds write in nowindow via crafted DICOM file
+    # - CVE-2024-52333 (CVSS 8.4 HIGH): out-of-bounds write in determineMinMax via crafted DICOM file
+    # Fixed in 3.6.9.
+    with default_args(deprecated=True):
+        version("3.6.8", sha256="fca429a215739702fe8d96178964036246a35e2ea8adb12da33851e2be8e9a07")
     version("3.6.7", sha256="17705dcdb2047d1266bb4e92dbf4aa6d4967819e8e3e94f39b7df697661b4860")
     version("3.6.6", sha256="117097da6d50ddbad0e48bb1e6cdc61468e82ba1d32001dd8e2366b445133a8c")
     version("3.6.5", sha256="37dad355d5513b4de4a86b5b7b0c3e9ec059860d88781b80916bba2a04e6d5b8")

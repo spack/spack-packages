@@ -20,8 +20,14 @@ class Exiv2(CMakePackage):
     version("0.27.6", sha256="f16ee5ff08b6994c66106109417857f13e711fca100ac43c6a403d4f02b59602")
     version("0.27.5", sha256="1da1721f84809e4d37b3f106adb18b70b1b0441c860746ce6812bb3df184ed6c")
     version("0.27.4", sha256="9fb2752c92f63c9853e0bef9768f21138eeac046280f40ded5f37d06a34880d9")
-    version("0.27.3", sha256="6398bc743c32b85b2cb2a604273b8c90aa4eb0fd7c1700bf66cbb2712b4f00c1")
-    version("0.27.2", sha256="3dbcaf01fbc5b98d42f091d1ff0d4b6cd9750dc724de3d9c0d113948570b2934")
+
+    # exiv2 0.27.2 and 0.27.3 are affected by:
+    # - CVE-2021-29457 (CVSS 7.8 HIGH): heap buffer overflow when writing metadata (code execution)
+    # - CVE-2021-31292 (CVSS 7.5 HIGH, 0.27.3 only): integer overflow in CrwMap::encode0x1810
+    # Fixed in 0.27.4.
+    with default_args(deprecated=True):
+        version("0.27.3", sha256="6398bc743c32b85b2cb2a604273b8c90aa4eb0fd7c1700bf66cbb2712b4f00c1")
+        version("0.27.2", sha256="3dbcaf01fbc5b98d42f091d1ff0d4b6cd9750dc724de3d9c0d113948570b2934")
 
     depends_on("cxx", type="build")  # generated
 
