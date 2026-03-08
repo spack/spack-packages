@@ -24,6 +24,7 @@ class Onnx(CMakePackage):
 
     version("main", branch="main")
     version("master", branch="master", deprecated=True)
+    version("1.20.1", sha256="9bcd6473c689b1ac3aeba8df572891756e01c1a151ae788df5cbc7a4499e5db5")  # FIXME
     version("1.20.0", sha256="e9e9273cd39d460348aa3e2eb370a444b510e138c5f45dfa86ce50461901257b")
     version("1.19.1", sha256="ce9d2569a61d64e8a3d05b92194f60ffb7c868dbb754a71f5b4d992273a9413d")
     version("1.19.0", sha256="2c2ac5a078b0350a0723fac606be8cd9e9e8cbd4c99bab1bffe2623b188fd236")
@@ -84,6 +85,15 @@ class Onnx(CMakePackage):
     # Allow conversion from OpSchema to OpSchemaRegisterOnce (needed for onnxruntime)
     # Ref: https://github.com/onnx/onnx/pull/7390
     patch("OpSchemaRegisterOnce.patch", when="@1.18.0:1.19")
+    
+    # Export shape inference functions needed by onnxruntime
+    # These are static in 1.18.0 but made public in 1.19+
+    # Ref: https://github.com/onnx/onnx/pull/7091
+    patch(
+        "https://github.com/onnx/onnx/commit/6769c41ad64ebca0358da8c7211d2c6d0e627b2b.patch",
+        sha256="5f0edb9a44363ae742d7f711d9aa451c6df90512e6fedd0d2e8b58d2dce53533",
+        when="@1.18.0",
+    )
 
     def patch(self):
         if self.spec.satisfies("@1.13:1.14 ^protobuf@22:"):

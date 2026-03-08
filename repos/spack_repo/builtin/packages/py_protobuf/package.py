@@ -18,6 +18,12 @@ class PyProtobuf(PythonPackage):
     homepage = "https://developers.google.com/protocol-buffers/"
     pypi = "protobuf/protobuf-3.11.0.tar.gz"
 
+    version("6.33.5", sha256="6ddcac2a081f8b7b9642c09406bc6a4290128fce5f471cddd165960bb9119e5c")  # FIXME
+    version("6.33.4", sha256="dc2e61bca3b10470c1912d166fe0af67bfc20eb55971dcef8dfa48ce14f0ed91")  # FIXME
+    version("6.33.3", sha256="c8794debeb402963fddff41a595e1f649bcd76616ba56c835645cab4539e810e")  # FIXME
+    version("6.33.2", sha256="56dc370c91fbb8ac85bc13582c9e373569668a290aa2e66a590c2a0d35ddb9e4")  # FIXME
+    version("6.33.1", sha256="97f65757e8d09870de6fd973aeddb92f85435607235d20b2dfed93405d00c85b")  # FIXME
+    version("6.33.0", sha256="140303d5c8d2037730c548f8c7b93b20bb1dc301be280c378b82b8894589c954")
     version("6.32.1", sha256="ee2469e4a021474ab9baafea6cd070e5bf27c7d29433504ddea1a4ee5850f68d")
     version("5.28.2", sha256="59379674ff119717404f7454647913787034f03fe7049cbef1d74a97bb4593f0")
     version("5.27.5", sha256="7fa81bc550201144a32f4478659da06e0b2ebe4d5303aacce9a202a1c3d5178d")
@@ -79,7 +85,7 @@ class PyProtobuf(PythonPackage):
     depends_on("py-setuptools@:81", when="@:6.31", type=("build", "run"))
 
     # https://protobuf.dev/support/version-support/#python
-    for ver in range(30, 33):
+    for ver in range(30, 34):
         depends_on(f"protobuf@{ver}", when=f"@6.{ver}")
     for ver in range(26, 30):
         depends_on(f"protobuf@{ver}", when=f"@5.{ver}")
