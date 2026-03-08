@@ -16,9 +16,13 @@ class Imagemagick(AutotoolsPackage):
 
     license("ImageMagick")
 
-    version("7.1.1-39", sha256="b2eb652d9221bdeb65772503891d8bfcfc36b3b1a2c9bb35b9d247a08965fd5d")
-    version("7.1.1-29", sha256="27bd25f945efdd7e38f6f9845a7c0a391fdb732f652dda140b743769c5f106e8")
-    version("7.1.1-11", sha256="98bb2783da7d5b06e7543529bd07b50d034fba611ff15e8817a0f4f73957d934")
+    version("7.1.2-16", sha256="aadfa67a104d14a35339de0f2cc286c973a0f43329770c69e9667a22208750fb")
+
+    # CVE-2025-43965 (HIGH 7.5), CVE-2024-41817 (HIGH 7.8), and many others affect <7.1.1-44
+    with default_args(deprecated=True):
+        version("7.1.1-39", sha256="b2eb652d9221bdeb65772503891d8bfcfc36b3b1a2c9bb35b9d247a08965fd5d")
+        version("7.1.1-29", sha256="27bd25f945efdd7e38f6f9845a7c0a391fdb732f652dda140b743769c5f106e8")
+        version("7.1.1-11", sha256="98bb2783da7d5b06e7543529bd07b50d034fba611ff15e8817a0f4f73957d934")
 
     variant("ghostscript", default=False, description="Compile with Ghostscript support")
     variant("rsvg", default=False, description="Enable RSVG support")
