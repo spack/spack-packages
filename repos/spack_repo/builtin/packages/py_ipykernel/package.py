@@ -18,6 +18,10 @@ class PyIpykernel(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("7.1.0", sha256="58a3fc88533d5930c3546dc7eac66c6d288acde4f801e2001e65edc5dc9cf0db")  # FIXME
+    version("7.0.1", sha256="2d3fd7cdef22071c2abbad78f142b743228c5d59cd470d034871ae0ac359533c")  # FIXME
+    version("7.0.0", sha256="06aef83f27adbce00b23345aa70f749f907dc4ac6f4a41fe7bf5f780dc506225")  # FIXME
+    version("6.31.0", sha256="2372ce8bc1ff4f34e58cafed3a0feb2194b91fc7cad0fc72e79e47b45ee9e8f6")  # FIXME
     version("6.30.1", sha256="6abb270161896402e76b91394fcdce5d1be5d45f456671e5080572f8505be39b")
     version("6.29.5", sha256="f093a22c4a40f8828f8e330a9c297cb93dcab13bd9678ded6de8e5cf81c56215")
     version("6.29.4", sha256="3d44070060f9475ac2092b760123fadf105d2e2493c24848b6691a7c4f42af5c")
@@ -39,9 +43,11 @@ class PyIpykernel(PythonPackage):
     version("5.5.5", sha256="e976751336b51082a89fc2099fb7f96ef20f535837c398df6eab1283c2070884")
 
     depends_on("py-hatchling@1.4:", when="@6.13.1:", type="build")
+    depends_on("py-hatchling@1.22:", when="@7.1:", type="build")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.9:", when="@6.30:")
+        depends_on("python@3.10:", when="@7:")
+        depends_on("python@3.9:", when="@6.30:6")
         depends_on("python@3.8:", when="@6.11:")
         depends_on("python@3.8:3.11", when="@6:6.10")
         depends_on("python@3.6:3.9", when="@5.5:5")

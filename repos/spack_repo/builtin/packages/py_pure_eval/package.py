@@ -17,6 +17,7 @@ class PyPureEval(PythonPackage):
     license("MIT")
 
     version("master", branch="master")
+    version("0.2.3", sha256="5f4e983f40564c576c7c8635ae88db5956bb2229d7e9237d03b3c0b0190eaf42")  # FIXME
     version("0.2.2", sha256="2b45320af6dfaa1750f543d714b6d1c520a1688dec6fd24d339063ce0aaa9ac3")
 
     depends_on("python@3.5:", type=("build", "run"))
