@@ -34,24 +34,12 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     # explanation of version numbering scheme
 
     # Maintenance releases (even numbers)
-    version(
-        "5.43.7", sha256="d8aa3057fab477b779f6658e42471836cc05f6bcbfd8416959e2f8d177a47d0b"
-    )  # FIXME
-    version(
-        "5.43.6", sha256="c93a24d245b9f8e2a5bee6bc17d670f556ba3e75a3e090728b2210ec3323f136"
-    )  # FIXME
-    version(
-        "5.43.5", sha256="4232e7a164873e687df929152ee7bbbf075c1d547bccba3d50353f81a897c259"
-    )  # FIXME
-    version(
-        "5.43.4", sha256="75676cc02c1d4d6f4577f7fd953e07ab5d06f71cf4201753ab6e2b0ddb5a4931"
-    )  # FIXME
-    version(
-        "5.43.3", sha256="318651ee5bd94acb6a2d9ab925f3d43fe2192c9c691160d76b65071fad8c9acd"
-    )  # FIXME
-    version(
-        "5.43.2", sha256="202dc989a29e461bef175dc23ac0ba0d7eef49ea10e1fefe696f19ede210dc29"
-    )  # FIXME
+    version("5.43.7", sha256="d8aa3057fab477b779f6658e42471836cc05f6bcbfd8416959e2f8d177a47d0b")
+    version("5.43.6", sha256="c93a24d245b9f8e2a5bee6bc17d670f556ba3e75a3e090728b2210ec3323f136")
+    version("5.43.5", sha256="4232e7a164873e687df929152ee7bbbf075c1d547bccba3d50353f81a897c259")
+    version("5.43.4", sha256="75676cc02c1d4d6f4577f7fd953e07ab5d06f71cf4201753ab6e2b0ddb5a4931")
+    version("5.43.3", sha256="318651ee5bd94acb6a2d9ab925f3d43fe2192c9c691160d76b65071fad8c9acd")
+    version("5.43.2", sha256="202dc989a29e461bef175dc23ac0ba0d7eef49ea10e1fefe696f19ede210dc29")
     version("5.43.1", sha256="5221ebf5badfbb943d168ff589ce93456a11f219105c930cc01e8a82a62adb65")
     version(
         "5.42.0",

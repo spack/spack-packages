@@ -18,35 +18,35 @@ class PyTypesSetuptools(PythonPackage):
     version(
         "82.0.0.20260210",
         sha256="d9719fbbeb185254480ade1f25327c4654f8c00efda3fec36823379cebcdee58",
-    )  # FIXME
+    )
     version(
         "81.0.0.20260209",
         sha256="2c2eb64499b41b672c387f6f45678a28d20a143a81b45a5c77acbfd4da0df3e1",
-    )  # FIXME
+    )
     version(
         "80.10.0.20260124",
         sha256="1b86d9f0368858663276a0cbe5fe5a9722caf94b5acde8aba0399a6e90680f20",
-    )  # FIXME
+    )
     version(
         "80.9.0.20251223",
         sha256="d3411059ae2f5f03985217d86ac6084efea2c9e9cacd5f0869ef950f308169b2",
-    )  # FIXME
+    )
     version(
         "80.9.0.20251221",
         sha256="05da599f5a062bbee3e83d60318576ba23111a768b7a2e46aa11644109c5d17f",
-    )  # FIXME
+    )
     version(
         "80.9.0.20250822",
         sha256="070ea7716968ec67a84c7f7768d9952ff24d28b65b6594797a464f1b3066f965",
-    )  # FIXME
+    )
     version(
         "80.9.0.20250809",
         sha256="e986ba37ffde364073d76189e1d79d9928fb6f5278c7d07589cde353d0218864",
-    )  # FIXME
+    )
     version(
         "80.9.0.20250801",
         sha256="e1e92682fa07226415396bb4e2d31f116a16ffbe583b05b01f9910fcdea3b7e8",
-    )  # FIXME
+    )
     version(
         "80.9.0.20250822",
         sha256="070ea7716968ec67a84c7f7768d9952ff24d28b65b6594797a464f1b3066f965",

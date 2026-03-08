@@ -15,9 +15,7 @@ class PyIdna(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "3.11", sha256="795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902"
-    )  # FIXME
+    version("3.11", sha256="795dafcc9c04ed0c1fb032c2aa73654d8e8c5023a7df64a53f39190ada629902")
     version("3.10", sha256="12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9")
     version("3.4", sha256="814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4")
     version("3.3", sha256="9d643ff0a55b762d5cdb124b8eaa99c66322e2157b69160bc32796e824360e6d")

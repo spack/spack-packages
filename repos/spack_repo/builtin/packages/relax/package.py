@@ -16,21 +16,11 @@ class Relax(CMakePackage):
 
     tags = ["hep"]
 
-    version(
-        "6.1.2", sha256="f91b81404c13da7d8ae92f2720f1b2ef0170116f16bc89a2bfd49179f7d33251"
-    )  # FIXME
-    version(
-        "6.1.1", sha256="cabb0f293cf1feed98e7713f53abe6795c1d319392b6479f813466937c4b0414"
-    )  # FIXME
-    version(
-        "6.1.0", sha256="f756a5a770ca5aee97e6e23e5f463b1aa1acab9e00140e0e8c04fd5f757af856"
-    )  # FIXME
-    version(
-        "6.0.1", sha256="531480aae6f3ae193d780429743b237115da2784378b3aa58e5c1fc48d370b29"
-    )  # FIXME
-    version(
-        "1_4_2", sha256="40cf761b2ab951b287af5903db0baca297633746374ccf27f612e94336478e40"
-    )  # FIXME
+    version("6.1.2", sha256="f91b81404c13da7d8ae92f2720f1b2ef0170116f16bc89a2bfd49179f7d33251")
+    version("6.1.1", sha256="cabb0f293cf1feed98e7713f53abe6795c1d319392b6479f813466937c4b0414")
+    version("6.1.0", sha256="f756a5a770ca5aee97e6e23e5f463b1aa1acab9e00140e0e8c04fd5f757af856")
+    version("6.0.1", sha256="531480aae6f3ae193d780429743b237115da2784378b3aa58e5c1fc48d370b29")
+    version("1_4_2", sha256="40cf761b2ab951b287af5903db0baca297633746374ccf27f612e94336478e40")
     version("root6", sha256="1d24b1a0884bbe99d60f7d02fea45d59695c158ab5e53516ac3fb780eb460bb4")
 
     depends_on("cxx", type="build")  # generated

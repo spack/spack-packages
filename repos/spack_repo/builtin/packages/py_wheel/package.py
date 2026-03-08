@@ -19,18 +19,10 @@ class PyWheel(Package, PythonExtension):
 
     tags = ["build-tools"]
 
-    version(
-        "0.46.3", sha256="4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d"
-    )  # FIXME
-    version(
-        "0.46.2", sha256="33ae60725d69eaa249bc1982e739943c23b34b58d51f1cb6253453773aca6e65"
-    )  # FIXME
-    version(
-        "0.46.1", sha256="f796f65d72750ccde090663e466d0ca37cd72b62870f7520b96d34cdc07d86d8"
-    )  # FIXME
-    version(
-        "0.46.0", sha256="8c1909305dc5a40979693cece1ec872eed10cc49af2038201213461b0688b7b4"
-    )  # FIXME
+    version("0.46.3", sha256="4b399d56c9d9338230118d705d9737a2a468ccca63d5e813e2a4fc7815d8bc4d")
+    version("0.46.2", sha256="33ae60725d69eaa249bc1982e739943c23b34b58d51f1cb6253453773aca6e65")
+    version("0.46.1", sha256="f796f65d72750ccde090663e466d0ca37cd72b62870f7520b96d34cdc07d86d8")
+    version("0.46.0", sha256="8c1909305dc5a40979693cece1ec872eed10cc49af2038201213461b0688b7b4")
     version("0.45.1", sha256="708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248")
     version("0.45.0", sha256="52f0baa5e6522155090a09c6bd95718cc46956d1b51d537ea5454249edb671c7")
     version("0.44.0", sha256="2376a90c98cc337d18623527a97c31797bd02bad0033d41547043a1cbfbe448f")

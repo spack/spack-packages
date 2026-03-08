@@ -19,48 +19,20 @@ class PyFilelock(PythonPackage):
 
     license("Unlicense")
 
-    version(
-        "3.24.3", sha256="011a5644dc937c22699943ebbfc46e969cdde3e171470a6e40b9533e5a72affa"
-    )  # FIXME
-    version(
-        "3.24.2", sha256="c22803117490f156e59fafce621f0550a7a853e2bbf4f87f112b11d469b6c81b"
-    )  # FIXME
-    version(
-        "3.24.1", sha256="3440181dd03f8904c108c8e9f5b11d1663e9fc960f1c837586a11f1c5c041e54"
-    )  # FIXME
-    version(
-        "3.24.0", sha256="aeeab479339ddf463a1cdd1f15a6e6894db976071e5883efc94d22ed5139044b"
-    )  # FIXME
-    version(
-        "3.23.0", sha256="f64442f6f4707b9385049bb490be0bc48e3ab8e74ad27d4063435252917f4d4b"
-    )  # FIXME
-    version(
-        "3.22.0", sha256="61eb14cc8775af91381024c7282e3f526e1fb27f42bfdde706113c7e01a5544b"
-    )  # FIXME
-    version(
-        "3.21.2", sha256="cfd218cfccf8b947fce7837da312ec3359d10ef2a47c8602edd59e0bacffb708"
-    )  # FIXME
-    version(
-        "3.21.1", sha256="fd13d64b92f79605f30ffaa0a2accb793f178b8aebcf56be8f1cad922fd278ad"
-    )  # FIXME
-    version(
-        "3.21.0", sha256="48c739c73c6fcacd381ed532226991150947c4a76dcd674f84d6807fd55dbaf2"
-    )  # FIXME
-    version(
-        "3.20.4", sha256="92b98bb6be1a4e6c1b00f8aedae011c6e2d367c195000a049daa34f554af3d94"
-    )  # FIXME
-    version(
-        "3.20.3", sha256="18c57ee915c7ec61cff0ecf7f0f869936c7c30191bb0cf406f1341778d0834e1"
-    )  # FIXME
-    version(
-        "3.20.2", sha256="a2241ff4ddde2a7cebddf78e39832509cb045d18ec1a09d7248d6bfc6bfbbe64"
-    )  # FIXME
-    version(
-        "3.20.1", sha256="b8360948b351b80f420878d8516519a2204b07aefcdcfd24912a5d33127f188c"
-    )  # FIXME
-    version(
-        "3.20.0", sha256="711e943b4ec6be42e1d4e6690b48dc175c822967466bb31c0c293f34334c13f4"
-    )  # FIXME
+    version("3.24.3", sha256="011a5644dc937c22699943ebbfc46e969cdde3e171470a6e40b9533e5a72affa")
+    version("3.24.2", sha256="c22803117490f156e59fafce621f0550a7a853e2bbf4f87f112b11d469b6c81b")
+    version("3.24.1", sha256="3440181dd03f8904c108c8e9f5b11d1663e9fc960f1c837586a11f1c5c041e54")
+    version("3.24.0", sha256="aeeab479339ddf463a1cdd1f15a6e6894db976071e5883efc94d22ed5139044b")
+    version("3.23.0", sha256="f64442f6f4707b9385049bb490be0bc48e3ab8e74ad27d4063435252917f4d4b")
+    version("3.22.0", sha256="61eb14cc8775af91381024c7282e3f526e1fb27f42bfdde706113c7e01a5544b")
+    version("3.21.2", sha256="cfd218cfccf8b947fce7837da312ec3359d10ef2a47c8602edd59e0bacffb708")
+    version("3.21.1", sha256="fd13d64b92f79605f30ffaa0a2accb793f178b8aebcf56be8f1cad922fd278ad")
+    version("3.21.0", sha256="48c739c73c6fcacd381ed532226991150947c4a76dcd674f84d6807fd55dbaf2")
+    version("3.20.4", sha256="92b98bb6be1a4e6c1b00f8aedae011c6e2d367c195000a049daa34f554af3d94")
+    version("3.20.3", sha256="18c57ee915c7ec61cff0ecf7f0f869936c7c30191bb0cf406f1341778d0834e1")
+    version("3.20.2", sha256="a2241ff4ddde2a7cebddf78e39832509cb045d18ec1a09d7248d6bfc6bfbbe64")
+    version("3.20.1", sha256="b8360948b351b80f420878d8516519a2204b07aefcdcfd24912a5d33127f188c")
+    version("3.20.0", sha256="711e943b4ec6be42e1d4e6690b48dc175c822967466bb31c0c293f34334c13f4")
     version("3.19.1", sha256="66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58")
     version("3.12.4", sha256="2e6f249f1f3654291606e046b09f1fd5eac39b360664c27f5aad072012f8bcbd")
     version("3.12.0", sha256="fc03ae43288c013d2ea83c8597001b1129db351aad9c57fe2409327916b8e718")

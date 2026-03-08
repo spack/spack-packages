@@ -16,9 +16,7 @@ class PyHatchling(PythonPackage):
 
     license("MIT", checked_by="tgamblin")
 
-    version(
-        "1.28.0", sha256="4d50b02aece6892b8cd0b3ce6c82cb218594d3ec5836dbde75bf41a21ab004c8"
-    )  # FIXME
+    version("1.28.0", sha256="4d50b02aece6892b8cd0b3ce6c82cb218594d3ec5836dbde75bf41a21ab004c8")
     version("1.27.0", sha256="971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6")
     version("1.25.0", sha256="7064631a512610b52250a4d3ff1bd81551d6d1431c4eb7b72e734df6c74f4262")
     version("1.24.2", sha256="41ddc27cdb25db9ef7b68bef075f829c84cb349aa1bff8240797d012510547b0")

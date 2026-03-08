@@ -20,21 +20,11 @@ class PyBeautifulsoup4(PythonPackage):
     # Requires pytest
     skip_modules = ["bs4.tests"]
 
-    version(
-        "4.14.3", sha256="6292b1c5186d356bba669ef9f7f051757099565ad9ada5dd630bd9de5fa7fb86"
-    )  # FIXME
-    version(
-        "4.14.2", sha256="2a98ab9f944a11acee9cc848508ec28d9228abfd522ef0fad6a02a72e0ded69e"
-    )  # FIXME
-    version(
-        "4.14.1", sha256="0c19f5b801d51cb13bd4c16ec697fa013209a3a88043c8ac3453144faf90b9b4"
-    )  # FIXME
-    version(
-        "4.14.0", sha256="e6150e53c8a52fd4f3b9b28839f8f0fb7c7f029d3c953a50b1762b0947c3cf85"
-    )  # FIXME
-    version(
-        "4.13.5", sha256="5e70131382930e7c3de33450a2f54a63d5e4b19386eab43a5b34d594268f3695"
-    )  # FIXME
+    version("4.14.3", sha256="6292b1c5186d356bba669ef9f7f051757099565ad9ada5dd630bd9de5fa7fb86")
+    version("4.14.2", sha256="2a98ab9f944a11acee9cc848508ec28d9228abfd522ef0fad6a02a72e0ded69e")
+    version("4.14.1", sha256="0c19f5b801d51cb13bd4c16ec697fa013209a3a88043c8ac3453144faf90b9b4")
+    version("4.14.0", sha256="e6150e53c8a52fd4f3b9b28839f8f0fb7c7f029d3c953a50b1762b0947c3cf85")
+    version("4.13.5", sha256="5e70131382930e7c3de33450a2f54a63d5e4b19386eab43a5b34d594268f3695")
     version("4.13.4", sha256="dbb3c4e1ceae6aefebdaf2423247260cd062430a410e38c66f2baa50a8437195")
     version("4.12.3", sha256="74e3d1928edc070d21748185c46e3fb33490f22f52a3addee9aee0f4f7781051")
     version("4.12.2", sha256="492bbc69dca35d12daac71c4db1bfff0c876c00ef4a2ffacce226d4638eb72da")

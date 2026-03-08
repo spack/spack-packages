@@ -18,9 +18,7 @@ class Dlpack(CMakePackage):
     license("Apache-2.0")
 
     version("master", branch="master")
-    version(
-        "1.3", sha256="f3d567f885f6c142183afc91a58873b31d0e0b36faa2e45c232b98c74596404f"
-    )  # FIXME
+    version("1.3", sha256="f3d567f885f6c142183afc91a58873b31d0e0b36faa2e45c232b98c74596404f")
     version("1.2", sha256="58284a3b004a48450c958a23b30274527ebaf35a061124bbd4193fffa45efbd6")
     version("1.1", sha256="2e3b94b55825c240cc58e6721e15b449978cbae21a2a4caa23058b0157ee2fb3")
     version("1.0", sha256="f8cfdcb634ff3cf0e3d9a3426e019e1c6469780a3b0020c9bc4ecc09cf9abcb1")

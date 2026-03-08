@@ -15,18 +15,10 @@ class PyPyjwt(PythonPackage):
 
     license("MIT")
 
-    version(
-        "2.8.0", sha256="57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de"
-    )  # FIXME
-    version(
-        "2.7.0", sha256="bd6ca4a3c4285c1a2d4349e5a035fdf8fb94e04ccd0fcbe6ba289dae9cc3e074"
-    )  # FIXME
-    version(
-        "2.6.0", sha256="69285c7e31fc44f68a1feb309e948e0df53259d579295e6cfe2b1792329f05fd"
-    )  # FIXME
-    version(
-        "2.5.0", sha256="e77ab89480905d86998442ac5788f35333fa85f65047a534adc38edf3c88fc3b"
-    )  # FIXME
+    version("2.8.0", sha256="57e28d156e3d5c10088e0c68abb90bfac3df82b40a71bd0daa20c65ccd5c23de")
+    version("2.7.0", sha256="bd6ca4a3c4285c1a2d4349e5a035fdf8fb94e04ccd0fcbe6ba289dae9cc3e074")
+    version("2.6.0", sha256="69285c7e31fc44f68a1feb309e948e0df53259d579295e6cfe2b1792329f05fd")
+    version("2.5.0", sha256="e77ab89480905d86998442ac5788f35333fa85f65047a534adc38edf3c88fc3b")
     version("2.4.0", sha256="d42908208c699b3b973cbeb01a969ba6a96c821eefb1c5bfe4c390c01d67abba")
     version("2.1.0", sha256="fba44e7898bbca160a2b2b501f492824fc8382485d3a6f11ba5d0c1937ce6130")
     version("1.7.1", sha256="8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96")

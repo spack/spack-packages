@@ -19,15 +19,9 @@ class PySmartOpen(PythonPackage):
 
     license("MIT")
 
-    version(
-        "7.5.0", sha256="f394b143851d8091011832ac8113ea4aba6b92e6c35f6e677ddaaccb169d7cb9"
-    )  # FIXME
-    version(
-        "7.4.4", sha256="2c264f43c55c2fcdea37b1752dcd06bb152afd514490a0aee5d21db0424b0669"
-    )  # FIXME
-    version(
-        "7.4.3", sha256="f32839234a287e2cb2ecdccc5b315de34a8e79db4db729e1a864ab3b359f9fee"
-    )  # FIXME
+    version("7.5.0", sha256="f394b143851d8091011832ac8113ea4aba6b92e6c35f6e677ddaaccb169d7cb9")
+    version("7.4.4", sha256="2c264f43c55c2fcdea37b1752dcd06bb152afd514490a0aee5d21db0424b0669")
+    version("7.4.3", sha256="f32839234a287e2cb2ecdccc5b315de34a8e79db4db729e1a864ab3b359f9fee")
     version("7.4.2", sha256="648b5619297cb32720cdfed4ffbcb15209defb531e0904497721a9b24fdcdcac")
     version("7.4.1", sha256="5c20f09026875e6dec708e9610e0cd13d24d91f0a2c12e6511b9e478a566b4a0")
     version("7.4.0", sha256="cb989a38db774c5aadc416020dff21da6cea11059309f50e237d6520d6636247")

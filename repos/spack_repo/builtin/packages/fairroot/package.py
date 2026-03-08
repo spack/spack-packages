@@ -17,9 +17,7 @@ class Fairroot(CMakePackage):
 
     tags = ["hep"]
     version("develop", branch="dev")
-    version(
-        "19.0.0", sha256="6ad650ece4b673f72f4ddfe2bffeb671239c775b672b4e99673e7145ea6d8ab2"
-    )  # FIXME
+    version("19.0.0", sha256="6ad650ece4b673f72f4ddfe2bffeb671239c775b672b4e99673e7145ea6d8ab2")
     version("18.8.2", sha256="0bc9bafd9583f8a4c92977647c1eb360d66f45fbc6c81a15c5a1613640934684")
 
     variant(

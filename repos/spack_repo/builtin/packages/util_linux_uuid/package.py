@@ -19,15 +19,9 @@ class UtilLinuxUuid(AutotoolsPackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
-    version(
-        "2.41.3", sha256="24160e7c3bfc6feecb9076706437fdb1212817549aaf9b4408f5a8e0b94e3eca"
-    )  # FIXME
-    version(
-        "2.41.2", sha256="42dca7775e39f3eef6a5234f79a8e8b4c62cc94fb85c71ecd09af809e77c266b"
-    )  # FIXME
-    version(
-        "2.41.1", sha256="c756213ed3f17b74c1525fc0ed839d6d09f1731ee443e2415c42071afed58ff9"
-    )  # FIXME
+    version("2.41.3", sha256="24160e7c3bfc6feecb9076706437fdb1212817549aaf9b4408f5a8e0b94e3eca")
+    version("2.41.2", sha256="42dca7775e39f3eef6a5234f79a8e8b4c62cc94fb85c71ecd09af809e77c266b")
+    version("2.41.1", sha256="c756213ed3f17b74c1525fc0ed839d6d09f1731ee443e2415c42071afed58ff9")
     version("2.41", sha256="c014b5861695b603d0be2ad1e6f10d5838b9d7859e1dd72d01504556817d8a87")
     version("2.40.4", sha256="5b3b1435c02ba201ebaa5066bb391965a614b61721155dfb7f7b6569e95b0627")
     version("2.40.3", sha256="6d72589a24b7feccdf8db20336bb984f64c7cfc2ceb044ef01cac5dce480284e")

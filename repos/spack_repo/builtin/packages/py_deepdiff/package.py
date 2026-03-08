@@ -15,12 +15,8 @@ class PyDeepdiff(PythonPackage):
 
     license("MIT")
 
-    version(
-        "8.6.1", sha256="ec56d7a769ca80891b5200ec7bd41eec300ced91ebcc7797b41eb2b3f3ff643a"
-    )  # FIXME
-    version(
-        "8.6.0", sha256="6197216c2d777c3106a9989055c230e25848e599b26dcbcdc66226bd8d7fe901"
-    )  # FIXME
+    version("8.6.1", sha256="ec56d7a769ca80891b5200ec7bd41eec300ced91ebcc7797b41eb2b3f3ff643a")
+    version("8.6.0", sha256="6197216c2d777c3106a9989055c230e25848e599b26dcbcdc66226bd8d7fe901")
     version("8.5.0", sha256="a4dd3529fa8d4cd5b9cbb6e3ea9c95997eaa919ba37dac3966c1b8f872dc1cd1")
     version("8.4.2", sha256="5c741c0867ebc7fcb83950ad5ed958369c17f424e14dee32a11c56073f4ee92a")
     version("8.3.0", sha256="92a8d7c75a4b26b385ec0372269de258e20082307ccf74a4314341add3d88391")

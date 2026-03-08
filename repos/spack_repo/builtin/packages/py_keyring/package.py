@@ -17,9 +17,7 @@ class PyKeyring(PythonPackage):
 
     license("MIT")
 
-    version(
-        "25.7.0", sha256="fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b"
-    )  # FIXME
+    version("25.7.0", sha256="fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b")
     version("25.6.0", sha256="0b39998aa941431eb3d9b0d4b2460bc773b9df6fed7621c2dfb291a7e0187a66")
     version("25.5.0", sha256="4c753b3ec91717fe713c4edd522d625889d8973a349b0e582622f49766de58e6")
     version("25.4.1", sha256="b07ebc55f3e8ed86ac81dd31ef14e81ace9dd9c3d4b5d77a6e9a2016d0d71a1b")

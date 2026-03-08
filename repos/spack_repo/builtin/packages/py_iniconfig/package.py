@@ -16,12 +16,8 @@ class PyIniconfig(PythonPackage):
 
     license("MIT")
 
-    version(
-        "2.3.0", sha256="c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730"
-    )  # FIXME
-    version(
-        "2.2.0", sha256="1807d2bc2eb4231a5e40e2ecee093fc25fc0eb0e2840f01ea50a1d15380adbff"
-    )  # FIXME
+    version("2.3.0", sha256="c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730")
+    version("2.2.0", sha256="1807d2bc2eb4231a5e40e2ecee093fc25fc0eb0e2840f01ea50a1d15380adbff")
     version("2.1.0", sha256="3abbd2e30b36733fee78f9c7f7308f2d0050e88f0087fd25c2645f63c773e1c7")
     version("2.0.0", sha256="2d91e135bf72d31a410b17c16da610a82cb55f6b0477d1a902134b24a455b8b3")
     version("1.1.1", sha256="bc3af051d7d14b2ee5ef9969666def0cd1a000e121eaea580d4a313df4b37f32")

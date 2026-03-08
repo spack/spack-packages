@@ -17,15 +17,9 @@ class PyDask(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "2026.1.2", sha256="1136683de2750d98ea792670f7434e6c1cfce90cab2cc2f2495a9e60fd25a4fc"
-    )  # FIXME
-    version(
-        "2026.1.1", sha256="12b1dbb0d6e92f287feb4076871600b2fba3a843d35ff214776ada5e9e7a1529"
-    )  # FIXME
-    version(
-        "2026.1.0", sha256="760dc0b7a7b58724aecb0db8880186ee218385fd6fa5d1945026caadd67a40ba"
-    )  # FIXME
+    version("2026.1.2", sha256="1136683de2750d98ea792670f7434e6c1cfce90cab2cc2f2495a9e60fd25a4fc")
+    version("2026.1.1", sha256="12b1dbb0d6e92f287feb4076871600b2fba3a843d35ff214776ada5e9e7a1529")
+    version("2026.1.0", sha256="760dc0b7a7b58724aecb0db8880186ee218385fd6fa5d1945026caadd67a40ba")
     version("2025.12.0", sha256="8d478f2aabd025e2453cf733ad64559de90cf328c20209e4574e9543707c3e1b")
     version("2025.11.0", sha256="23d59e624b80ee05b7cc8df858682cca58262c4c3b197ccf61da0f6543c8f7c3")
     version("2025.10.0", sha256="fd3159c319c27cea39b891c0f22d60056a33575fb4906618eab0aeeb5dcd0cbc")

@@ -20,9 +20,7 @@ class Dpmjet(MakefilePackage):
 
     license("BSD-3-Clause AND Pythia6", checked_by="wdconinc")
 
-    version(
-        "19.3.8", sha256="e32074f43459946a61fe60b48e6935a8a334ee04878af2a2bcc7d8aa251ba4ac"
-    )  # FIXME
+    version("19.3.8", sha256="e32074f43459946a61fe60b48e6935a8a334ee04878af2a2bcc7d8aa251ba4ac")
     version("19.3.7", sha256="4ab22fa9925031a11cf3b82fff73226011da2cf6b2662f10523bc9850f85b8a5")
     version("19.3.6", sha256="9453f1428eb41d59f0c951a48763b8f386eece39c4a73bdb07e759b2c5fdd4f5")
     version("19.3.5", sha256="5a546ca20f86abaecda1828eb5b577aee8a532dffb2c5e7244667d5f25777909")

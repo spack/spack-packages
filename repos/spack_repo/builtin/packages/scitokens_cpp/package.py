@@ -20,12 +20,8 @@ class ScitokensCpp(CMakePackage):
     license("Apache-2.0")
 
     version("master", branch="master")
-    version(
-        "1.3.0", sha256="571e946ac05b5d61ff358d27666eda3e7a27d59c2b79a90f195ed372d5433a85"
-    )  # FIXME
-    version(
-        "1.2.0", sha256="d60ac5c6aad8813e4e4c94a4f0003c322f6e233603ff9dd430b14e3fdb9b779d"
-    )  # FIXME
+    version("1.3.0", sha256="571e946ac05b5d61ff358d27666eda3e7a27d59c2b79a90f195ed372d5433a85")
+    version("1.2.0", sha256="d60ac5c6aad8813e4e4c94a4f0003c322f6e233603ff9dd430b14e3fdb9b779d")
     version("1.1.3", sha256="eeaeb06da74cae92bd03d6be4c407e4855db023f409c59540b3143069407be1f")
     version("1.1.2", sha256="07d33cb51a3ccd8460f2acebb15b35393aeccfc70e3554a73c9e5cffed6edb39")
     version("1.1.1", sha256="a9091b888fc778282caf2a6808c86f685d2411557673152d58fe53932a6c7212")

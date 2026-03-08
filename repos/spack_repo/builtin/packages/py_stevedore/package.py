@@ -15,15 +15,9 @@ class PyStevedore(PythonPackage):
 
     license("Apache-2.0")
 
-    version(
-        "5.6.0", sha256="f22d15c6ead40c5bbfa9ca54aa7e7b4a07d59b36ae03ed12ced1a54cf0b51945"
-    )  # FIXME
-    version(
-        "5.5.0", sha256="d31496a4f4df9825e1a1e4f1f74d19abb0154aff311c3b376fcc89dae8fccd73"
-    )  # FIXME
-    version(
-        "5.4.1", sha256="3135b5ae50fe12816ef291baff420acb727fcd356106e3e9cbfa9e5985cd6f4b"
-    )  # FIXME
+    version("5.6.0", sha256="f22d15c6ead40c5bbfa9ca54aa7e7b4a07d59b36ae03ed12ced1a54cf0b51945")
+    version("5.5.0", sha256="d31496a4f4df9825e1a1e4f1f74d19abb0154aff311c3b376fcc89dae8fccd73")
+    version("5.4.1", sha256="3135b5ae50fe12816ef291baff420acb727fcd356106e3e9cbfa9e5985cd6f4b")
     version("5.4.0", sha256="79e92235ecb828fe952b6b8b0c6c87863248631922c8e8e0fa5b17b232c4514d")
     version("5.3.0", sha256="9a64265f4060312828151c204efbe9b7a9852a0d9228756344dbc7e4023e375a")
     version("5.2.0", sha256="46b93ca40e1114cea93d738a6c1e365396981bb6bb78c27045b7587c9473544d")

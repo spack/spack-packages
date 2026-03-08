@@ -26,9 +26,7 @@ class PyOnnx(PythonPackage):
     maintainers("wdconinc")
 
     version("main", branch="main")
-    version(
-        "1.20.1", sha256="ded16de1df563d51fbc1ad885f2a426f814039d8b5f4feb77febe09c0295ad67"
-    )  # FIXME
+    version("1.20.1", sha256="ded16de1df563d51fbc1ad885f2a426f814039d8b5f4feb77febe09c0295ad67")
     version("1.20.0", sha256="1a93ec69996b4556062d552ed1aa0671978cfd3c17a40bf4c89a1ae169c6a4ad")
     version("1.19.1", sha256="737524d6eb3907d3499ea459c6f01c5a96278bb3a0f2ff8ae04786fb5d7f1ed5")
     version("1.19.0", sha256="aa3f70b60f54a29015e41639298ace06adf1dd6b023b9b30f1bca91bb0db9473")

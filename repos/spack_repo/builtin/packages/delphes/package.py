@@ -23,9 +23,7 @@ class Delphes(CMakePackage):
     license("CC-BY-SA-4.0")
 
     version("master", branch="master")
-    version(
-        "3.5.1", sha256="a7cbf34fb682050b85306c3e520517fd36725089329234b34338208fe8ad4b30"
-    )  # FIXME
+    version("3.5.1", sha256="a7cbf34fb682050b85306c3e520517fd36725089329234b34338208fe8ad4b30")
     version("3.5.0", sha256="37685b945ef43aab09217d70b0ac7f9c5d3c2c27cf3b3f8d64c4e6eb5c5fd9aa")
     version("3.4.2", sha256="d46a7c5474de650befdb89377115feee31f1743107ceb3d8da699be9d48c097b")
     version("3.4.1", sha256="4b5a2aeac326643f45b6d45c39ba2302e323eeb86d8cb58843c6e73949b1208a")

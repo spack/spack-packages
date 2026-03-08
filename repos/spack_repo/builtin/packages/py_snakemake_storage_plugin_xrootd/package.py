@@ -18,9 +18,7 @@ class PySnakemakeStoragePluginXrootd(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
-    version(
-        "1.0.0", sha256="1f7675f6259b3aace99023b3cf65cbb62e00935b76cf10b6dbdbcbe35b6fbfff"
-    )  # FIXME
+    version("1.0.0", sha256="1f7675f6259b3aace99023b3cf65cbb62e00935b76cf10b6dbdbcbe35b6fbfff")
     version("0.4.1", sha256="ccad9b12ae1ca73d858e0767cfb62c48fa21b6300a89da50337e38b7d632359c")
     version("0.4.0", sha256="f221ba5e8e83fe08248c1b9c0a8d202d159d3d4e3efd68d6ad054b93e56c6b55")
     version("0.3.2", sha256="1898d436b1f2c967d46304a708e271bac46e8b3e4b24d5fdba7cae2a8dee41ce")

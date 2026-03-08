@@ -23,21 +23,11 @@ class PyIpython(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "9.10.0", sha256="cd9e656be97618a0676d058134cd44e6dc7012c0e5cb36a9ce96a8c904adaf77"
-    )  # FIXME
-    version(
-        "9.9.0", sha256="48fbed1b2de5e2c7177eefa144aba7fcb82dac514f09b57e2ac9da34ddb54220"
-    )  # FIXME
-    version(
-        "9.8.0", sha256="8e4ce129a627eb9dd221c41b1d2cdaed4ef7c9da8c17c63f6f578fe231141f83"
-    )  # FIXME
-    version(
-        "9.7.0", sha256="5f6de88c905a566c6a9d6c400a8fed54a638e1f7543d17aae2551133216b1e4e"
-    )  # FIXME
-    version(
-        "9.6.0", sha256="5603d6d5d356378be5043e69441a072b50a5b33b4503428c77b04cb8ce7bc731"
-    )  # FIXME
+    version("9.10.0", sha256="cd9e656be97618a0676d058134cd44e6dc7012c0e5cb36a9ce96a8c904adaf77")
+    version("9.9.0", sha256="48fbed1b2de5e2c7177eefa144aba7fcb82dac514f09b57e2ac9da34ddb54220")
+    version("9.8.0", sha256="8e4ce129a627eb9dd221c41b1d2cdaed4ef7c9da8c17c63f6f578fe231141f83")
+    version("9.7.0", sha256="5f6de88c905a566c6a9d6c400a8fed54a638e1f7543d17aae2551133216b1e4e")
+    version("9.6.0", sha256="5603d6d5d356378be5043e69441a072b50a5b33b4503428c77b04cb8ce7bc731")
     version("9.5.0", sha256="129c44b941fe6d9b82d36fc7a7c18127ddb1d6f02f78f867f402e2e3adde3113")
     version("8.28.0", sha256="0d0d15ca1e01faeb868ef56bc7ee5a0de5bd66885735682e8a322ae289a13d1a")
     version("8.27.0", sha256="0b99a2dc9f15fd68692e898e5568725c6d49c527d36a9fb5960ffbdeaa82ff7e")

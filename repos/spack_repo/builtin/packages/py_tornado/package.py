@@ -16,12 +16,8 @@ class PyTornado(PythonPackage):
 
     license("Apache-2.0")
 
-    version(
-        "6.5.4", sha256="a22fa9047405d03260b483980635f0b041989d8bcc9a313f8fe18b411d84b1d7"
-    )  # FIXME
-    version(
-        "6.5.3", sha256="16abdeb0211796ffc73765bc0a20119712d68afeeaf93d1a3f2edf6b3aee8d5a"
-    )  # FIXME
+    version("6.5.4", sha256="a22fa9047405d03260b483980635f0b041989d8bcc9a313f8fe18b411d84b1d7")
+    version("6.5.3", sha256="16abdeb0211796ffc73765bc0a20119712d68afeeaf93d1a3f2edf6b3aee8d5a")
     version("6.5.2", sha256="ab53c8f9a0fa351e2c0741284e06c7a45da86afb544133201c5cc8578eb076a0")
     version("6.3.3", sha256="e7d8db41c0181c80d76c982aacc442c0783a2c54d6400fe028954201a2e032fe")
     version("6.2", sha256="9b630419bde84ec666bfd7ea0a4cb2a8a651c2d5cccdbdd1972a0c859dfc3c13")

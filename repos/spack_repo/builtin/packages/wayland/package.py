@@ -33,18 +33,10 @@ class Wayland(MesonPackage, AutotoolsPackage):
 
     license("MIT")
 
-    version(
-        "1.24.0", sha256="7800858844751fc7113d7df3678dc6b58b26a056176a65c49a059763045bffd5"
-    )  # FIXME
-    version(
-        "1.23.93", sha256="2d4b9d0b758cb41d7036cafc4039cbbd851c0f2ccc585fbbd7d43566ad37ca83"
-    )  # FIXME
-    version(
-        "1.23.92", sha256="780f37b9e840d8e0f811199d52a8ad4185054d8f4eb6ccc8fdd6e35a06691f44"
-    )  # FIXME
-    version(
-        "1.23.91", sha256="4d4e3baba8f5c6761444056893246a9273631fdf4655c7dcb60cc5a63f68c76e"
-    )  # FIXME
+    version("1.24.0", sha256="7800858844751fc7113d7df3678dc6b58b26a056176a65c49a059763045bffd5")
+    version("1.23.93", sha256="2d4b9d0b758cb41d7036cafc4039cbbd851c0f2ccc585fbbd7d43566ad37ca83")
+    version("1.23.92", sha256="780f37b9e840d8e0f811199d52a8ad4185054d8f4eb6ccc8fdd6e35a06691f44")
+    version("1.23.91", sha256="4d4e3baba8f5c6761444056893246a9273631fdf4655c7dcb60cc5a63f68c76e")
     version("1.23.1", sha256="158ec49af498f2558c7fbf7e8b070d010d4e270cc6076003a18a6c813f87e244")
     version("1.23.0", sha256="7c5c28fa73f22d1c5021e17e1148f29ab17bf8b776a406f1c4489d3e2992ec3a")
     version("1.22.0", sha256="bbca9c906a8fb8992409ebf51812f19e2a784b2c169d4b784cdd753b4bb448ef")

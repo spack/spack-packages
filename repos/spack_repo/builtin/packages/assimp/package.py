@@ -20,12 +20,8 @@ class Assimp(CMakePackage):
     license("BSD-3-Clause", checked_by="wdconinc")
 
     version("master", branch="master")
-    version(
-        "6.0.4", sha256="afa5487efdd285661afa842c85187cd8c541edad92e8d4aa85be4fca7476eccc"
-    )  # FIXME
-    version(
-        "6.0.3", sha256="9be912589023c7d5a6f2b1db8858b689ce815d5eacf0fea82f869708479b1e51"
-    )  # FIXME
+    version("6.0.4", sha256="afa5487efdd285661afa842c85187cd8c541edad92e8d4aa85be4fca7476eccc")
+    version("6.0.3", sha256="9be912589023c7d5a6f2b1db8858b689ce815d5eacf0fea82f869708479b1e51")
     version("6.0.2", sha256="d1822d9a19c9205d6e8bc533bf897174ddb360ce504680f294170cc1d6319751")
     version("5.4.3", sha256="66dfbaee288f2bc43172440a55d0235dfc7bf885dda6435c038e8000e79582cb")
     version("5.4.2", sha256="7414861a7b038e407b510e8b8c9e58d5bf8ca76c9dfe07a01d20af388ec5086a")

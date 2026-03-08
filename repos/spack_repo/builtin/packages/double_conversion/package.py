@@ -24,12 +24,8 @@ class DoubleConversion(CMakePackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "3.4.0", sha256="effee857e20e86e32f125205c2be1374e748f5516a5519434bece0db56d6e581"
-    )  # FIXME
-    version(
-        "3.3.1", sha256="8ad368fd434d558605a9fff6d14b881753dc5c81911055600151b74f85aa0e2a"
-    )  # FIXME
+    version("3.4.0", sha256="effee857e20e86e32f125205c2be1374e748f5516a5519434bece0db56d6e581")
+    version("3.3.1", sha256="8ad368fd434d558605a9fff6d14b881753dc5c81911055600151b74f85aa0e2a")
     version("3.3.0", sha256="4080014235f90854ffade6d1c423940b314bbca273a338235f049da296e47183")
     version("3.2.1", sha256="55aa41b463346b1032585c04fe7d0adec9db56598d8d699841cdadeb3597e909")
     version("3.1.5", sha256="72c0e3925a1214095afc6f1c214faecbec20e8526cf6b8a541cf72195a11887f")

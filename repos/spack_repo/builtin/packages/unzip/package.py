@@ -15,9 +15,7 @@ class Unzip(MakefilePackage):
 
     license("custom")
 
-    version(
-        "60", sha256="036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37"
-    )  # FIXME
+    version("60", sha256="036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37")
     version("6.0", sha256="036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37")
 
     depends_on("c", type="build")  # See the logs: unzip's build only runs cc.

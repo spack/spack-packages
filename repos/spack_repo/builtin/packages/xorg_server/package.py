@@ -17,15 +17,9 @@ class XorgServer(AutotoolsPackage, XorgPackage):
 
     license("MIT")
 
-    version(
-        "21.1.21", sha256="952444a35ce6a720c3e978d3bad2b683bacb648cceedc03e3600f6fb170071d2"
-    )  # FIXME
-    version(
-        "21.1.20", sha256="a51aea1cbb29cb8122e39c1c8728469d4fd8db71a538565fbf017df11841bf04"
-    )  # FIXME
-    version(
-        "21.1.19", sha256="d99934e82dc8f0f4b4ffca1831e49a3ed5c0ab20488b3c31757443ac71af9f32"
-    )  # FIXME
+    version("21.1.21", sha256="952444a35ce6a720c3e978d3bad2b683bacb648cceedc03e3600f6fb170071d2")
+    version("21.1.20", sha256="a51aea1cbb29cb8122e39c1c8728469d4fd8db71a538565fbf017df11841bf04")
+    version("21.1.19", sha256="d99934e82dc8f0f4b4ffca1831e49a3ed5c0ab20488b3c31757443ac71af9f32")
     version("21.1.18", sha256="c8591ceb70b177440062406542fe52ba60212f217f27f8f802dd20373ca9e74b")
     version("21.1.17", sha256="5b808335c09026a88dafd08e7e513b47e68183e3d6bd35d63db8cedaaa23af4b")
     version("21.1.16", sha256="59fa52b63f6f8747ee2c4716decb29ced249c4c574e2a18c96b7d3b1420f7fd9")

@@ -19,18 +19,10 @@ class Parallel(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later", checked_by="wdconinc")
 
-    version(
-        "20260122", sha256="831f78e01f3f28ac2441e66b10171562c71a0300353893aa05bbc277f13cc596"
-    )  # FIXME
-    version(
-        "20251222", sha256="b56b5388da0f2cadff6f70c6e9e69f8af9516eb2665ada24d3472d596592c275"
-    )  # FIXME
-    version(
-        "20251122", sha256="368d1982cfd9dbebb8cd0e444de6199559df94ac2dd1edf95f74350f0af1e84d"
-    )  # FIXME
-    version(
-        "20251022", sha256="474326d59688d2fc078cf89a7b0b4a11cc9684229b3fa0158fe8bc03f1b69ee1"
-    )  # FIXME
+    version("20260122", sha256="831f78e01f3f28ac2441e66b10171562c71a0300353893aa05bbc277f13cc596")
+    version("20251222", sha256="b56b5388da0f2cadff6f70c6e9e69f8af9516eb2665ada24d3472d596592c275")
+    version("20251122", sha256="368d1982cfd9dbebb8cd0e444de6199559df94ac2dd1edf95f74350f0af1e84d")
+    version("20251022", sha256="474326d59688d2fc078cf89a7b0b4a11cc9684229b3fa0158fe8bc03f1b69ee1")
     version("20250922", sha256="ee3ddc3125ef7ddcd97dde5ba64ab7f71874faa2f5d7720acdd3e4bf5265a32b")
     version("20250822", sha256="019d328722867cffe918c449364308c0df048456c69299b91451a3e6fac9167a")
     version("20250722", sha256="91a81ff4129cdf5ad3c3c45ec033e75f2bbea5447f4b6813a0d8cfe8e5c7843b")

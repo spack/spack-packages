@@ -21,21 +21,11 @@ class PyHepunits(PythonPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
-    version(
-        "2.4.4", sha256="1846e729fa3e4fb36bff599ed7b8bd2cdc4abdc02906830fb75c205fd54905eb"
-    )  # FIXME
-    version(
-        "2.4.3", sha256="9f06591d7c6384d9c20d61d74e8767fe16650298c8e97434162d9190d366a878"
-    )  # FIXME
-    version(
-        "2.4.2", sha256="5afc20abbf13d23e45e3f05a19c1e5978d38ab28c5db07f86828e04b93ecf6cb"
-    )  # FIXME
-    version(
-        "2.4.1", sha256="141ef23efedc5bb05c03411a3584cbfd3c7e76a1f378498cba4401dda82f69fc"
-    )  # FIXME
-    version(
-        "2.4.0", sha256="c46378964cb8c053363be779ff5498b01a722b42c6d6511326c2957b8f79bacb"
-    )  # FIXME
+    version("2.4.4", sha256="1846e729fa3e4fb36bff599ed7b8bd2cdc4abdc02906830fb75c205fd54905eb")
+    version("2.4.3", sha256="9f06591d7c6384d9c20d61d74e8767fe16650298c8e97434162d9190d366a878")
+    version("2.4.2", sha256="5afc20abbf13d23e45e3f05a19c1e5978d38ab28c5db07f86828e04b93ecf6cb")
+    version("2.4.1", sha256="141ef23efedc5bb05c03411a3584cbfd3c7e76a1f378498cba4401dda82f69fc")
+    version("2.4.0", sha256="c46378964cb8c053363be779ff5498b01a722b42c6d6511326c2957b8f79bacb")
     version("2.3.6", sha256="cffc1c82040b15bb530542ec97f3c1f83aae6050caa4cc5c1a03097bebe34932")
     version("2.3.2", sha256="8a3366fa5d72c16af1166ed579cdaa81edd2676acb8f6a1fe7da290cefca3b08")
     version("2.3.1", sha256="b1174bba4d575b9939c01f341e24d9bdbe0e0cd4cc4ce2e7d77692da19145cfb")

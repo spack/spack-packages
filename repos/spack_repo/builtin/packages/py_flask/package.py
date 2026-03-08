@@ -16,9 +16,7 @@ class PyFlask(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "3.1.3", sha256="0ef0e52b8a9cd932855379197dd8f94047b359ca0a78695144304cb45f87c9eb"
-    )  # FIXME
+    version("3.1.3", sha256="0ef0e52b8a9cd932855379197dd8f94047b359ca0a78695144304cb45f87c9eb")
     version("3.1.2", sha256="bf656c15c80190ed628ad08cdfd3aaa35beb087855e2f494910aa3774cc4fd87")
     version("3.0.3", sha256="ceb27b0af3823ea2737928a4d99d125a06175b8512c445cbd9a9ce200ef76842")
     version("2.3.2", sha256="8c2f9abd47a9e8df7f0c3f091ce9497d011dc3b31effcf4c85a6e2b50f4114ef")

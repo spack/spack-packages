@@ -18,18 +18,10 @@ class PyIpykernel(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "7.1.0", sha256="58a3fc88533d5930c3546dc7eac66c6d288acde4f801e2001e65edc5dc9cf0db"
-    )  # FIXME
-    version(
-        "7.0.1", sha256="2d3fd7cdef22071c2abbad78f142b743228c5d59cd470d034871ae0ac359533c"
-    )  # FIXME
-    version(
-        "7.0.0", sha256="06aef83f27adbce00b23345aa70f749f907dc4ac6f4a41fe7bf5f780dc506225"
-    )  # FIXME
-    version(
-        "6.31.0", sha256="2372ce8bc1ff4f34e58cafed3a0feb2194b91fc7cad0fc72e79e47b45ee9e8f6"
-    )  # FIXME
+    version("7.1.0", sha256="58a3fc88533d5930c3546dc7eac66c6d288acde4f801e2001e65edc5dc9cf0db")
+    version("7.0.1", sha256="2d3fd7cdef22071c2abbad78f142b743228c5d59cd470d034871ae0ac359533c")
+    version("7.0.0", sha256="06aef83f27adbce00b23345aa70f749f907dc4ac6f4a41fe7bf5f780dc506225")
+    version("6.31.0", sha256="2372ce8bc1ff4f34e58cafed3a0feb2194b91fc7cad0fc72e79e47b45ee9e8f6")
     version("6.30.1", sha256="6abb270161896402e76b91394fcdce5d1be5d45f456671e5080572f8505be39b")
     version("6.29.5", sha256="f093a22c4a40f8828f8e330a9c297cb93dcab13bd9678ded6de8e5cf81c56215")
     version("6.29.4", sha256="3d44070060f9475ac2092b760123fadf105d2e2493c24848b6691a7c4f42af5c")
