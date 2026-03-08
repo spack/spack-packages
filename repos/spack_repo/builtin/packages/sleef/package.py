@@ -19,6 +19,7 @@ class Sleef(CMakePackage):
     license("BSL-1.0")
 
     version("master", branch="master")
+    version("3.9.0", sha256="af60856abac08a3b5e72a8d156dd71fec1f7ac23de8ee67793f45f9edcdf0908")
     version(
         "3.8", sha256="a12ccd50f57083c530e1c76f10d52865defbd19fc9e2c85b483493065709874a"
     )  # py-torch@2.8:
@@ -38,6 +39,7 @@ class Sleef(CMakePackage):
     )  # py-torch@1.3:1.7
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@3.9:")
 
     generator("ninja")
     depends_on("cmake@3.18:", type="build")
