@@ -23,5 +23,5 @@ class PyLangcodes(PythonPackage):
     depends_on("python@3.9:", type=("build", "run"), when="@3.5:")
     depends_on("py-setuptools@60:", type="build", when="@3.5:")
     depends_on("py-setuptools-scm@8:", type="build", when="@3.5:")
-    depends_on("py-poetry-core@1:", type="build", when="@3.3.0")
+    depends_on("py-poetry-core@1:", type="build", when="@:3.4")
     depends_on("py-language-data@1.2:", type=("build", "run"), when="@3.5:")
