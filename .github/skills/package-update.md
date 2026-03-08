@@ -118,7 +118,15 @@ Make all edits directly in the local `package.py` files (and add any patch files
 
 #### 3a. Adding new versions
 
-Add `version(...)` lines **above** the currently highest version, maintaining newest-first order.
+**Add only the latest upstream release** — do not add every intermediate patch release.
+For example, if the current highest version in `package.py` is `1.2.3` and upstream has released
+`1.2.4`, `1.2.5`, and `1.3.0`, add only `1.3.0`. Keeping a long list of patch versions adds
+maintenance burden and slows resolution without benefiting users, who can always use the latest.
+
+**Do not remove existing versions.** Removing versions breaks users who have pinned an older
+release in their `spack.yaml`. Only add the new entry.
+
+Add the `version(...)` line **above** the currently highest version, maintaining newest-first order.
 Obtain SHA256 checksums using `spack checksum`:
 
 ```sh
@@ -327,6 +335,8 @@ Before removing the draft status from any PR, verify:
 | Python deps | Always use `py-` prefix in `depends_on()` |
 | `type=` on all deps | Required; never omit |
 | Version ordering | Newest first |
+| New versions to add | Latest release only — do not add every intermediate patch |
+| Old versions | Never remove existing versions |
 | Version upper bounds | Inclusive form: `:3.10`, `:1`, never `:3.10.99` |
 | PR state | Always open as draft; human removes draft status |
 | Closing PRs | Never close another author's PR; post a comment instead |
@@ -336,6 +346,11 @@ Before removing the draft status from any PR, verify:
 
 ## Common Pitfalls
 
+- **Do not add every patch version** — add only the latest upstream release. If upstream has
+  released `1.2.4`, `1.2.5`, and `1.3.0` and the repo has `1.2.3`, add only `1.3.0`. Users
+  who need a specific patch can pin it themselves; listing every patch clutters the file.
+- **Do not remove old versions** — removing a version breaks users who have pinned it. Only
+  add; never subtract.
 - **Do not compute SHA256 manually** — always use `spack checksum`. Manual checksums are
   error-prone.
 - **Do not add an upper bound speculatively** — e.g., do not write `@1.5:2` just because version
