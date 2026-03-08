@@ -20,6 +20,11 @@ class GdkPixbuf(MesonPackage):
 
     license("LGPL-2.1-or-later", checked_by="wdconinc")
 
+    version("2.44.4", sha256="93a1aac3f1427ae73457397582a2c38d049638a801788ccbd5f48ca607bdbd17")  # FIXME
+    version("2.44.3", sha256="40a92dcc237ff94b63a80c159a3f6f22cd59f6fb4961f201c78799fa2c8ac0a6")  # FIXME
+    version("2.44.2", sha256="ea4ed9930b10db0655fb24f7c35b3375a65c58afbc9d3eb7417a0fd112bb6b08")  # FIXME
+    version("2.44.1", sha256="4eec84cfc55979045b3e0fca72c3cc081d556952ad33b30c7d29c0474db48a28")  # FIXME
+    version("2.44.0", sha256="31d65c2db14d321b9d862a323fc63002179cf3cc0b10d04db6ed55ffaed00db3")  # FIXME
     version("2.42.12", sha256="b9505b3445b9a7e48ced34760c3bcb73e966df3ac94c95a148cb669ab748e3c7")
 
     variant("tiff", default=False, description="Enable TIFF support(partially broken)")
@@ -30,6 +35,7 @@ class GdkPixbuf(MesonPackage):
 
     with default_args(type="build"):
         depends_on("meson@0.55.3:")
+        depends_on("meson@1.5:", when="@2.44:")
         depends_on("pkgconfig")
         depends_on("libxslt", when="+man")
         depends_on("docbook-xsl@1.79.2:", when="+man")
@@ -37,6 +43,7 @@ class GdkPixbuf(MesonPackage):
     depends_on("shared-mime-info", when="platform=linux")
     depends_on("gettext")
     depends_on("glib@2.38.0:")
+    depends_on("glib@2.56.0:", when="@2.44:")
     depends_on("jpeg")
     depends_on("libpng")
     depends_on("zlib-api")

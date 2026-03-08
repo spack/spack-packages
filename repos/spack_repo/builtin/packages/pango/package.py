@@ -23,6 +23,7 @@ class Pango(MesonPackage):
     # Do not upgrade to v1.90.x. It is a development release in preparation for
     # v2.0 that will break API and ABI compatibility. For more information see
     # https://download.gnome.org/sources/pango/1.90/pango-1.90.0.news
+    version("1.56.4", sha256="17065e2fcc5f5a5bdbffc884c956bfc7c451a96e8c4fb2f8ad837c6413cb5a01")
     version("1.54.0", sha256="8a9eed75021ee734d7fc0fdf3a65c3bba51dfefe4ae51a9b414a60c70b2d1ed8")
     version("1.52.2", sha256="d0076afe01082814b853deec99f9349ece5f2ce83908b8e58ff736b41f78a96b")
     version("1.50.13", sha256="5cdcf6d761d26a3eb9412b6cb069b32bd1d9b07abf116321167d94c2189299fd")
@@ -43,6 +44,7 @@ class Pango(MesonPackage):
     depends_on("meson@0.55.3:", type="build", when="@1.48.1:")
     depends_on("meson@0.60:", type="build", when="@1.50.13:")
     depends_on("meson@0.63:", type="build", when="@1.54:")
+    depends_on("meson@1.2.0:", type="build", when="@1.56:")
     depends_on("pkgconfig", type="build")
     depends_on("harfbuzz")
     for plat in ["linux", "darwin", "freebsd"]:
@@ -70,6 +72,9 @@ class Pango(MesonPackage):
     depends_on("fontconfig@2.13.0:", when="@1.49:")
     depends_on("fribidi@1.0.6:", when="@1.49:")
     depends_on("harfbuzz@2.6.0:", when="@1.49:")
+    depends_on("harfbuzz@8.4.0:", when="@1.56:")
+    depends_on("fontconfig@2.15.0:", when="@1.56:")
+    depends_on("cairo@1.18.0:", when="@1.56:")
     depends_on("json-glib@1.6.0:", when="@1.49:")
     depends_on("gmake", type="build")
 

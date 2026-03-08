@@ -21,6 +21,7 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
 
     license("Unicode-TOU")
 
+    version("77_1", sha256="588e431f77327c39031ffbb8843c0e3bc122c211374485fa87dc5f3faff24061")
     version("76.1", sha256="dfacb46bfe4747410472ce3e1144bf28a102feeaa4e3875bac9b4c6cf30f4f3e")
     version("75.1", sha256="cb968df3e4d2e87e8b11c49a5d01c787bd13b9545280fc6642f826527618caef")
     version("74.2", sha256="68db082212a96d6f53e35d60f47d38b962e9f9d207a74cfac78029ae8ff5e08c")
