@@ -57,9 +57,10 @@ to understand what changed between the current packaged version and the new vers
 If the latest stable release on PyPI (or git) matches the highest version already listed in
 `package.py`, log "already up to date" and skip that package. Do not open a PR for it.
 
-**Add only the latest upstream release** — do not add every intermediate patch release. For
-example, if `package.py` currently has `1.2.3` and upstream has released `1.2.4`, `1.2.5`, and
-`1.3.0`, add only `1.3.0`. Listing every patch version adds maintenance burden without benefit.
+Follow the version-selection rules from [`package-update`](package-update.md) Phase 3a: add the
+latest patch release for each supported minor series, not every intermediate patch. For example,
+if `package.py` currently has `1.2.3` and upstream has released `1.2.4`, `1.2.5`, and `1.3.0`,
+add `1.2.5` and `1.3.0`; you do not need to add `1.2.4`.
 
 ### Step 3 — Fetch the new release artifact and compute SHA256
 
@@ -319,7 +320,7 @@ version("2025.7.0", sha256="c3a0d4e78882e85ea81dbc71e6459713e45676e2d17e776c2f3f
 version("2024.12.1", sha256="bac809af21c2dd7eb06827bccbfc612504f3ee6435580e548af912828f823195")
 ```
 
-If `pyproject.toml` for `2025.7.0` tightens `py-packaging` from `>=20` to `>=21:`:
+If `pyproject.toml` for `2025.7.0` tightens `py-packaging` from `>=20` to `>=21`:
 
 ```python
 depends_on("py-packaging@20:", type="build", when="@2022.10.2:2024.12.1")

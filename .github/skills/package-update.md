@@ -494,18 +494,9 @@ failures from the new versions are visible and can be addressed.
   only the highest patch release. If upstream released `1.2.4`, `1.2.5`, `1.3.0`, `1.3.1`,
   and the repo has `1.2.3`, add only `1.2.5` (if a 1.2.x entry is needed) and `1.3.1`. In
   most cases only the single overall latest version is required. If you used `spack checksum`
-  and inadvertently generated a long list of patch versions, run the following to keep only
-  the highest per minor series before committing:
-  ```python
-  # For each (major, minor) group of newly-added versions, keep only the max patch.
-  # Pre-existing versions in the file are never removed.
-  import re, subprocess
-  from collections import defaultdict
-  def ver_tuple(v):
-      try: return tuple(int(x) for x in v.split("."))
-      except ValueError: return None
-  # see scripts/fix_patch_versions.py for a complete implementation
-  ```
+  and inadvertently generated a long list of patch versions, run the helper script
+  `scripts/fix_patch_versions.py` to keep only the highest patch per minor series before
+  committing.
 - **Do not remove old versions** — removing a version breaks users who have pinned it. Only
   add; never subtract.
 - **Do not compute SHA256 manually** — always use `spack checksum`. Manual checksums are
