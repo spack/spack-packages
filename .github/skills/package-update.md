@@ -314,6 +314,23 @@ Updated the following packages to their latest upstream releases:
 <List each change: package, what changed, which version introduced the change.
 If none, write "No dependency changes.">
 
+## Version diff links
+
+For packages whose source is hosted on GitHub or GitLab, include a comparison link
+from the previous Spack version to the newly added version. This greatly aids reviewers
+in assessing the scope of changes without leaving the PR:
+
+- [pkg-name: old → new](https://github.com/org/repo/compare/old-tag...new-tag)
+
+To generate these links automatically, inspect the `git =` and `url =` attributes in
+`package.py` to determine:
+1. The hosting service (GitHub → `/compare/`, GitLab → `/-/compare/`)
+2. The tag format (inferred from the `url` pattern: `v{ver}`, `{ver}`, or `prefix-{ver}`)
+3. The previous Spack version (highest version in `develop` strictly below the new one)
+
+For packages hosted elsewhere (SourceForge, custom tarballs without a `git =`) omit the link.
+If `n_new > 1` (multiple intermediate versions were skipped), add a note like `(+N intermediate)`.
+
 ## CI build status
 
 **In CI stacks (binary cache available):** <list>
