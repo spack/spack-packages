@@ -118,13 +118,16 @@ Make all edits directly in the local `package.py` files (and add any patch files
 
 #### 3a. Adding new versions
 
-**Add only the latest upstream release** — do not add every intermediate patch release.
-For example, if the current highest version in `package.py` is `1.2.3` and upstream has released
-`1.2.4`, `1.2.5`, and `1.3.0`, add only `1.3.0`. Keeping a long list of patch versions adds
-maintenance burden and slows resolution without benefiting users, who can always use the latest.
+**Add only the latest patch release per minor series** — do not add every intermediate patch
+release. For each `major.minor` series, add only the highest patch version. For example, if
+`package.py` currently has `1.2.3` and upstream has released `1.2.4`, `1.2.5`, and `1.3.0`,
+add `1.2.5` (latest of the 1.2.x series, if you need the 1.2.x entry at all) and `1.3.0`
+(latest of the new 1.3.x series). In most cases you only need the single latest release.
+Keeping a long list of patch versions adds maintenance burden and slows resolution without
+benefiting users, who can always use the latest.
 
 **Do not remove existing versions.** Removing versions breaks users who have pinned an older
-release in their `spack.yaml`. Only add the new entry.
+release in their `spack.yaml`. Only add new entries.
 
 Add the `version(...)` line **above** the currently highest version, maintaining newest-first order.
 Obtain SHA256 checksums using `spack checksum`:
@@ -132,6 +135,25 @@ Obtain SHA256 checksums using `spack checksum`:
 ```sh
 spack checksum <package-name> <new-version>
 ```
+
+> **Remove `# FIXME` comments from version lines.** `spack checksum` appends `# FIXME` to
+> `version(...)` lines when it cannot immediately verify the checksum against an existing entry.
+> These comments must be removed before committing — they are not informative once checksums are
+> confirmed and will be flagged as noise in review. After running `spack checksum`, strip any
+> trailing `# FIXME` from every version line you add:
+>
+> ```python
+> # Wrong — do not commit this:
+> version("1.3.0", sha256="abc123...")  # FIXME
+>
+> # Correct:
+> version("1.3.0", sha256="abc123...")
+> ```
+>
+> A quick way to remove all such comments in bulk before committing:
+> ```sh
+> sed -i 's/  # FIXME$//' repos/spack_repo/builtin/packages/<pkg>/package.py
+> ```
 
 Do not manually compute checksums. Do not modify `url`, `homepage`, `pypi`, `git`, `maintainers`,
 or the copyright header unless the upstream release requires it.
@@ -432,13 +454,29 @@ failures from the new versions are visible and can be addressed.
 
 ## Common Pitfalls
 
-- **Do not add every patch version** — add only the latest upstream release. If upstream has
-  released `1.2.4`, `1.2.5`, and `1.3.0` and the repo has `1.2.3`, add only `1.3.0`. Users
-  who need a specific patch can pin it themselves; listing every patch clutters the file.
+- **Add only the latest patch per minor series** — for each `major.minor` series, include
+  only the highest patch release. If upstream released `1.2.4`, `1.2.5`, `1.3.0`, `1.3.1`,
+  and the repo has `1.2.3`, add only `1.2.5` (if a 1.2.x entry is needed) and `1.3.1`. In
+  most cases only the single overall latest version is required. If you used `spack checksum`
+  and inadvertently generated a long list of patch versions, run the following to keep only
+  the highest per minor series before committing:
+  ```python
+  # For each (major, minor) group of newly-added versions, keep only the max patch.
+  # Pre-existing versions in the file are never removed.
+  import re, subprocess
+  from collections import defaultdict
+  def ver_tuple(v):
+      try: return tuple(int(x) for x in v.split("."))
+      except ValueError: return None
+  # see scripts/fix_patch_versions.py for a complete implementation
+  ```
 - **Do not remove old versions** — removing a version breaks users who have pinned it. Only
   add; never subtract.
 - **Do not compute SHA256 manually** — always use `spack checksum`. Manual checksums are
   error-prone.
+- **Remove `# FIXME` from version lines** — `spack checksum` appends `# FIXME` to lines whose
+  checksums it cannot verify inline. Always strip these before committing. The style checker
+  does not catch them, but they clutter the diff and confuse reviewers.
 - **Do not add an upper bound speculatively** — e.g., do not write `@1.5:2` just because version
   3 of a dep hasn't been tested. Only add upper bounds when the upstream package declares a
   strict incompatibility.
