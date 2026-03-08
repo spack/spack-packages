@@ -17,6 +17,7 @@ class PyReferencing(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("0.37.0", sha256="44aefc3142c5b842538163acb373e24cce6632bd54bdb01b21ad5863489f50d8")
     version("0.36.2", sha256="df2e89862cd09deabbdba16944cc3f10feb6b3e6f18e902f7cc25609a34775aa")
     version("0.35.1", sha256="25b42124a6c8b632a425174f24087783efb348a6f1e0008e63cd4466fedf703c")
 

@@ -16,6 +16,7 @@ class PyAttrs(PythonPackage):
 
     license("MIT")
 
+    version("25.4.0", sha256="16d5969b87f0859ef33a48b35d55ac1be6e42ae49d5e853b597db70c35c57e11")  # FIXME
     version("25.3.0", sha256="75d7cefc7fb576747b2c81b4442d4d4a1ce0900973527c011d1030fd3bf4af1b")
     version("23.1.0", sha256="6279836d581513a26f1bf235f9acd333bc9115683f14f7e8fae46c98fc50e015")
     version("22.2.0", sha256="c9227bfc2f01993c03f68db37d1d15c9690188323c067c641f1a35ca58185f99")
@@ -31,6 +32,9 @@ class PyAttrs(PythonPackage):
     version("18.1.0", sha256="e0d0eb91441a3b53dab4d9b743eafc1ac44476296a2053b6ca3af0b139faf87b")
     version("17.4.0", sha256="1c7960ccfd6a005cd9f7ba884e6316b5e430a3f1a6c37c5f87d8b43f83b54ec9")
     version("16.3.0", sha256="80203177723e36f3bbe15aa8553da6e80d47bfe53647220ccaa9ad7a5e473ccc")
+
+    depends_on("python@3.8:", when="@25.3:25.3", type=("build", "run"))
+    depends_on("python@3.9:", when="@25.4:", type=("build", "run"))
 
     depends_on("py-hatchling", when="@23.1:", type="build")
     depends_on("py-hatch-vcs", when="@23.1:", type="build")

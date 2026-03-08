@@ -18,6 +18,8 @@ class PyTinycss2(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.5.1", sha256="d339d2b616ba90ccce58da8495a78f46e55d4d25f9fd71dfd526f07e7d53f957")  # FIXME
+    version("1.5.0", sha256="6a7be7a654f38a2a55b61d2d97b1f65a7eb40d1cb4057ac37145f675f16efdf9")  # FIXME
     version("1.4.0", sha256="10c0972f6fc0fbee87c3edb76549357415e94548c1ae10ebccdea16fb404a9b7")
     version("1.2.1", sha256="8cff3a8f066c2ec677c06dbc7b45619804a6938478d9d73c284b29d14ecb0627")
     version("1.1.1", sha256="b2e44dd8883c360c35dd0d1b5aad0b610e5156c2cb3b33434634e539ead9d8bf")
