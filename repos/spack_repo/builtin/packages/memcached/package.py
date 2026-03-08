@@ -18,14 +18,21 @@ class Memcached(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
-    version("1.5.20", sha256="ee93aff47123e0b464e9f007b651b14c89c19e0c20352d8d1c399febbb038cb6")
-    version("1.5.19", sha256="7af7a2e9b1f468d7f6056f23ce21c04936ce6891f8cb8cd54e133f489a8226e8")
-    version("1.5.18", sha256="0bf8154f53d2781164421acd195a1665ac2f77316263c3526206c38e402c4b0d")
-    version("1.5.17", sha256="cb30ad851e95c0190e6b7e59695f1ed2e51d65a9e6c82c893e043dc066053377")
-    version("1.5.16", sha256="a0c1a7e72186722d7c0e9d5527a63beb339b933d768687f183e163adf935c662")
-    version("1.5.15", sha256="4ef8627308e99bdd4200ef4f260fbcdd65a4ba634bd593ca02dbbfd71222e9f7")
-    version("1.5.14", sha256="ae8ed2ed853b840a8430d8575d4e91b87c550b111874b416c551001403ac6a74")
-    version("1.5.13", sha256="ae59a8b49be17afb344e57c8a8d64f9ae38b6efbc3f9115a422dbcb2b23795fc")
+    version("1.6.41", sha256="c0772ab998a3ed542124fc81873a40f5652d268532417277276a80b3f4ffffc7")
+
+    # All 1.5.x versions are affected by:
+    # - CVE-2023-46852 (CVSS 7.5 HIGH): buffer overflow in proxy mode multiget requests
+    # - CVE-2023-46853 (CVSS 7.5 HIGH): buffer overflow in proxy mode multi-packet requests
+    # Fixed in 1.6.22+.
+    with default_args(deprecated=True):
+        version("1.5.20", sha256="ee93aff47123e0b464e9f007b651b14c89c19e0c20352d8d1c399febbb038cb6")
+        version("1.5.19", sha256="7af7a2e9b1f468d7f6056f23ce21c04936ce6891f8cb8cd54e133f489a8226e8")
+        version("1.5.18", sha256="0bf8154f53d2781164421acd195a1665ac2f77316263c3526206c38e402c4b0d")
+        version("1.5.17", sha256="cb30ad851e95c0190e6b7e59695f1ed2e51d65a9e6c82c893e043dc066053377")
+        version("1.5.16", sha256="a0c1a7e72186722d7c0e9d5527a63beb339b933d768687f183e163adf935c662")
+        version("1.5.15", sha256="4ef8627308e99bdd4200ef4f260fbcdd65a4ba634bd593ca02dbbfd71222e9f7")
+        version("1.5.14", sha256="ae8ed2ed853b840a8430d8575d4e91b87c550b111874b416c551001403ac6a74")
+        version("1.5.13", sha256="ae59a8b49be17afb344e57c8a8d64f9ae38b6efbc3f9115a422dbcb2b23795fc")
 
     depends_on("c", type="build")  # generated
 

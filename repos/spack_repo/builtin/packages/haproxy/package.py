@@ -16,9 +16,16 @@ class Haproxy(MakefilePackage):
     homepage = "https://www.haproxy.org"
     url = "https://www.haproxy.org/download/2.1/src/haproxy-2.1.0.tar.gz"
 
-    version("2.1.12", sha256="acebbf932f2703ee287d6e945bd845cde8c9db9a13f7cbb2a99671499c558056")
-    version("2.1.1", sha256="57e75c1a380fc6f6aa7033f71384370899443c7f4e8a4ba289b5d4350bc76d1a")
-    version("2.1.0", sha256="f268efb360a0e925137b4b8ed431f2f8f3b68327efb2c418b266e535d8e335a0")
+    version("3.0.17", sha256="58492710f8c82d81988e94f1188afc84eafd05d77393732241b252a8d14bd8a3")
+
+    # All 2.1.x versions are affected by:
+    # - CVE-2023-25725 (CVSS 9.1 CRITICAL): HTTP request smuggling via empty header field names
+    # - CVE-2023-45539 (CVSS 8.2 HIGH): URI path confusion via '#' in URI component
+    # Fixed in 2.2.29+, 2.4.22+, 2.7.3+, 2.8.2+, 3.0.x.
+    with default_args(deprecated=True):
+        version("2.1.12", sha256="acebbf932f2703ee287d6e945bd845cde8c9db9a13f7cbb2a99671499c558056")
+        version("2.1.1", sha256="57e75c1a380fc6f6aa7033f71384370899443c7f4e8a4ba289b5d4350bc76d1a")
+        version("2.1.0", sha256="f268efb360a0e925137b4b8ed431f2f8f3b68327efb2c418b266e535d8e335a0")
 
     depends_on("c", type="build")  # generated
 
