@@ -1,0 +1,12 @@
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -49,5 +49,5 @@ omit = ["tests.py"]
+ fail_under = 100
+ 
+ [build-system]
+-requires = ["uv_build"]
+-build-backend = "uv_build"
+\ No newline at end of file
++requires = ["hatchling"]
++build-backend = "hatchling.build"
+\ No newline at end of file
