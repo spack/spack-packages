@@ -29,3 +29,8 @@ class PerlTk(PerlPackage):
     depends_on("jpeg")
     depends_on("libpng")
     depends_on("freetype")
+
+    def flag_handler(self, name, flags):
+        if self.spec.satisfies("%gcc@14:") and name == "cflags":
+            flags.append("-Wno-implicit-int -Wno-incompatible-pointer-types")
+        return (None, flags, None)
