@@ -11,11 +11,13 @@ class Form(AutotoolsPackage):
     """FORM is a Symbolic Manipulation System."""
 
     homepage = "https://www.nikhef.nl/~form/"
-    url = "https://github.com/vermaseren/form/releases/download/v4.2.1/form-4.2.1.tar.gz"
+    url = "https://github.com/form-dev/form/releases/download/v4.2.1/form-4.2.1.tar.gz"
+    git = "https://github.com/form-dev/form.git"
     maintainers("tueda")
 
     license("GPL-3.0-only")
 
+    version("5.0.0", sha256="10d22acf2f0acf831b494e6a73682828980b9054ea8ec2b5dc46677dca8d6518")
     version("4.3.1", sha256="f1f512dc34fe9bbd6b19f2dfef05fcb9912dfb43c8368a75b796ec472ee8bbce")
     version("4.3.0", sha256="b234e0d095f73ecb0904cdc3b0d8d8323a9fa7f46770a52fb22267c624aafbf6")
     version("4.2.1", sha256="f2722d6d4ccb034e01cf786d55342e1c21ff55b182a4825adf05d50702ab1a28")
@@ -29,10 +31,18 @@ class Form(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("gmp", type="link", when="+gmp")
+    depends_on("mpfr", type="link", when="+mpfr")
+    depends_on("zstd", type="link", when="+zstd")
+    depends_on("flint", type="link", when="+flint")
     depends_on("zlib-api", type="link", when="+zlib")
     depends_on("mpi", type="link", when="+parform")
 
     variant("gmp", default=True, description="Use GMP for long integer arithmetic")
+    variant(
+        "mpfr", default=True, description="Use MPFR for multi-precision floating point", when="@5:"
+    )
+    variant("zstd", default=True, description="Use zstd for compression", when="@5:")
+    variant("flint", default=True, description="Use FLINT for fast number theory", when="@5:")
     variant("zlib", default=True, description="Use zlib for compression")
     variant("scalar", default=True, description="Build scalar version (form)")
     variant("threaded", default=True, description="Build threaded version (tform)")
@@ -45,6 +55,10 @@ class Form(AutotoolsPackage):
             args.append("--with-zlib=%s" % self.spec["zlib-api"].prefix)
         else:
             args.append("--without-zlib")
+        if self.spec.satisfies("@5:"):
+            args += self.with_or_without("mpfr", "prefix")
+            args += self.with_or_without("zstd", "prefix")
+            args += self.with_or_without("flint", "prefix")
         args += self.enable_or_disable("scalar")
         args += self.enable_or_disable("threaded")
         args += self.enable_or_disable("parform")
