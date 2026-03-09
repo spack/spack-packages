@@ -16,10 +16,7 @@ class Libcroco(AutotoolsPackage):
 
     license("LGPL-2.0-or-later")
 
-    # All libcroco versions are affected by:
-    # - CVE-2020-12825 (CVSS 7.1 HIGH): stack exhaustion via excessive recursion
-    #   in cr_parser_parse_any_core (cr-parser.c)
-    # Project is abandoned; no upstream fix exists.
+    # CVE-2020-12825
     with default_args(deprecated=True):
         version("0.6.13", sha256="767ec234ae7aa684695b3a735548224888132e063f92db585759b422570621d4")
         version("0.6.12", sha256="ddc4b5546c9fb4280a5017e2707fbd4839034ed1aba5b7d4372212f34f84f860")

@@ -20,7 +20,7 @@ class Libsndfile(AutotoolsPackage):
 
     license("LGPL-2.1-or-later")
 
-    # CVE-2025-52194 (HIGH 7.5) affects <=1.2.2; no fix released (project unmaintained)
+    # CVE-2025-52194
     with default_args(deprecated=True):
         version("1.2.2", sha256="3799ca9924d3125038880367bf1468e53a1b7e3686a934f098b7e1d286cdb80e")
 

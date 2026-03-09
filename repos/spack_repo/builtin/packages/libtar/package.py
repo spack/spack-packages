@@ -14,7 +14,7 @@ class Libtar(AutotoolsPackage):
     homepage = "https://repo.or.cz/libtar.git"
     url = "https://github.com/tklauser/libtar/archive/v1.2.20.tar.gz"
 
-    # CVE-2021-33643 (CRITICAL 9.1), CVE-2021-33644 (HIGH 8.1) affect all versions; no fix released
+    # CVE-2021-33643, CVE-2021-33644
     with default_args(deprecated=True):
         version("1.2.20", sha256="3152fc61cf03c82efbf99645596efdadba297eac3e85a52ae189902a072c9a16")
         version("1.2.19", sha256="5fea7152106b1b8cda109da27f505439865dd196da94f503fab18264591ddf64")

@@ -15,13 +15,7 @@ class Freeimage(MakefilePackage):
     homepage = "https://freeimage.sourceforge.net/"
 
     # FreeImage 3.18.0 is the final release (project abandoned ~2020) and is affected by:
-    # - CVE-2019-12211 (CVSS 7.5 HIGH): heap buffer overflow in PluginTIFF.cpp
-    # - CVE-2019-12212 (CVSS 7.5 HIGH): infinite recursion in JXRMeta.c (stack overflow)
-    # - CVE-2020-21426 (CVSS 7.8 HIGH): buffer overflow in PluginEXR.cpp (code execution)
-    # - CVE-2020-21428 (CVSS 7.8 HIGH): buffer overflow in PluginDDS.cpp (code execution)
-    # - CVE-2023-47992 (CVSS 8.8 HIGH): integer overflow in FreeImageIO.cpp (RCE)
-    # - CVE-2023-47994 (CVSS 8.8 HIGH): integer overflow in PluginBMP.cpp (code execution)
-    # No upstream fix available; project is unmaintained.
+    # CVE-2019-12211, CVE-2019-12212, CVE-2020-21426, CVE-2020-21428, CVE-2023-47992, CVE-2023-47994
     with default_args(deprecated=True):
         version("3.18.0", sha256="f41379682f9ada94ea7b34fe86bf9ee00935a3147be41b6569c9605a53e438fd")
 

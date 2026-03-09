@@ -21,9 +21,7 @@ class Memcached(AutotoolsPackage):
     version("1.6.41", sha256="c0772ab998a3ed542124fc81873a40f5652d268532417277276a80b3f4ffffc7")
 
     # All 1.5.x versions are affected by:
-    # - CVE-2023-46852 (CVSS 7.5 HIGH): buffer overflow in proxy mode multiget requests
-    # - CVE-2023-46853 (CVSS 7.5 HIGH): buffer overflow in proxy mode multi-packet requests
-    # Fixed in 1.6.22+.
+    # CVE-2023-46852, CVE-2023-46853
     with default_args(deprecated=True):
         version("1.5.20", sha256="ee93aff47123e0b464e9f007b651b14c89c19e0c20352d8d1c399febbb038cb6")
         version("1.5.19", sha256="7af7a2e9b1f468d7f6056f23ce21c04936ce6891f8cb8cd54e133f489a8226e8")

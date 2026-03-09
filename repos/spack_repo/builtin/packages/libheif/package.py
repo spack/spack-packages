@@ -18,7 +18,7 @@ class Libheif(CMakePackage):
     version("1.21.2", sha256="79996de959d28ca82ef070c382304683f5cdaf04cbe2953a74587160a3710a36")
     version("1.19.8", sha256="0d67481c2b3d855b27b162e21b39152100346098f75cb5da31db4003d9077680")
 
-    # CVE-2024-25269 (HIGH 7.5), CVE-2025-43966 (HIGH 7.5), CVE-2025-68431 (HIGH 7.1) affect <1.17.6
+    # CVE-2024-25269, CVE-2025-43966, CVE-2025-68431
     with default_args(deprecated=True):
         version("1.12.0", sha256="086145b0d990182a033b0011caadb1b642da84f39ab83aa66d005610650b3c65")
 
