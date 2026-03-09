@@ -781,7 +781,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         if "~static" in spec:
             options += ["STATIC=NO"]
         if "+shared" in spec:
-            options += ["SHARED=YES", "PICFLAG=%s" % (xcompiler + self["cxx"].cxx_pic_flag)]
+            options += ["SHARED=YES", f"PICFLAG={xcompiler + self['cxx'].pic_flag}"]
 
         if "+mpi" in spec:
             options += ["MPICXX=%s" % spec["mpi"].mpicxx]
