@@ -24,9 +24,9 @@ class PyPyspnego(PythonPackage):
 
     variant("kerberos", default=False, description="Enable Kerberos authentication on Linux")
 
+    depends_on("python@3.9:", type=("build", "run"), when="@0.12:")
     depends_on("py-setuptools@61:", type="build")
     depends_on("py-setuptools@77.0.3:", type="build", when="@0.12:")
-    depends_on("python@3.9:", type=("build", "run"), when="@0.12:")
     depends_on("py-cryptography", type=("build", "run"))
     depends_on("py-sspilib@0.1.0:", type=("build", "run"), when="@:0.11 platform=windows")
     depends_on("py-sspilib@0.3.0:", type=("build", "run"), when="@0.12: platform=windows")
