@@ -94,7 +94,7 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("py-virtualenv", when="@0.6:", type="test")
     depends_on("py-wheel@0.40:", when="@0.9:", type="test")
     depends_on("py-wheel", type="test")
-    depends_on("py-typing-extensions@3.10:", when="@0.12: ^python@:3.10", type="test")
+    depends_on("py-typing-extensions@3.10:", when="@0.12: ^python@:3.9", type="test")
     depends_on("py-hatch-fancy-pypi-readme@23.2:", when="@0.12:", type="test")
     depends_on("py-fastjsonschema@2.16.2:", when="@0.12:", type="test")
     depends_on("py-validate-pyproject@0.21:", when="@0.12:", type="test")
