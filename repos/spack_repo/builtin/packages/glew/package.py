@@ -35,7 +35,7 @@ class Glew(CMakePackage):
     patch("remove-pkgconfig-glu-dep.patch")
     # Define APIENTRY in osmesa build if not defined, see
     # https://github.com/nigels-com/glew/pull/407
-    patch("mesa-24.0.0-osmesa.patch", when="^mesa@24.0.0:")
+    patch("mesa-24.0.0-osmesa.patch", when="@:2.2 ^mesa@24.0.0:")
 
     def cmake_args(self):
         spec = self.spec
