@@ -1351,7 +1351,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
         with working_dir(test_dir):
             make = which("make", required=True)
-            make(f"CONFIG_MK={self.config_mk}", test_exe, "parallel=False")
+            make(f"CONFIG_MK={self.config_mk}", test_exe, parallel=False)
 
             ex10 = which(test_exe, required=True)
             ex10("--mesh", mesh)
