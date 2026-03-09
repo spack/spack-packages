@@ -41,5 +41,13 @@ include:
   - path: configs/linux
     when: platform == "linux"
 
+  # === Per-package resource requests (Only used for Linux on Kubernetes) ===
+  - when: platform == "linux"
+    git: https://gitlab.spack.io/spack/resource-requests
+    branch: main
+    paths:
+    - ci.yaml
+    optional: true
+
   # === Generic ===
   - configs

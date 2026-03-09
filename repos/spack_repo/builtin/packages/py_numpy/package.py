@@ -127,7 +127,7 @@ class PyNumpy(PythonPackage):
     with default_args(type="build"):
         depends_on("py-pyproject-metadata@0.7.1:", when="@1.26.0:1.26.3")
         depends_on("py-tomli@1:", when="@1.26.0:1.26.3 ^python@:3.10")
-        depends_on("py-setuptools@60:", when="@1.26.0:1.26.3 ^python@3.12:")
+        depends_on("py-setuptools@60:67", when="@1.26.0:1.26.3 ^python@3.12:")
         depends_on("py-colorama", when="@1.26.0:1.26.3 platform=windows")
         depends_on("ninja@1.8.2:", when="@1.26.0:1.26.3")
         depends_on("pkgconfig", when="@1.26.0:1.26.3")
