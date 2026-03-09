@@ -21,6 +21,7 @@ class PySspilib(PythonPackage):
     version("0.5.0", sha256="b62f7f2602aa1add0505eee2417e2df24421224cb411e53bf3ae42a71b62fe98")
     version("0.1.0", sha256="58b5291553cf6220549c0f855e0e6973f4977375d8236ce47bb581efb3e9b1cf")
 
+    depends_on("python@3.9:", type=("build", "run"), when="@0.3:")
     depends_on("py-setuptools@61:", type="build")
     depends_on("py-setuptools@77:", type="build", when="@0.3.1:")
     depends_on("py-setuptools@77.0.3:", type="build", when="@0.4:")
