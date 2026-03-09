@@ -14,8 +14,6 @@ class PyValidatePyproject(PythonPackage):
     homepage = "https://github.com/abravalheri/validate-pyproject"
     pypi = "validate-pyproject/validate_pyproject-0.25.tar.gz"
 
-    # maintainers("github_user1", "github_user2")
-
     license("MPL-2.0", checked_by="abhishek1297")
 
     version("0.25", sha256="e68c12d1cb0d8ddc269ffc42875a81727ddb7865000aa6d2f77d833b55c53f0b")
