@@ -155,7 +155,7 @@ class Precice(CMakePackage):
     conflicts("%intel@:16")
     conflicts("%gcc@:9.2", when="@3.0.0:")
 
-    conflicts("-shared", when="@3:", msg="The shared library version is unsupported since 3.0.0")
+    conflicts("-shared", when="@3:", msg="Since v3.0.0, only shared library builds are supported.")
 
     # Fixes missing #include<array> in src/mesh/Edge.hpp
     patch(
