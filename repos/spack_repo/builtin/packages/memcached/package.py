@@ -42,7 +42,7 @@ class Memcached(AutotoolsPackage):
     depends_on("libevent", type="build")
 
     def url_for_version(self, version):
-        if self.satisfies("@:1.5"):
+        if self.spec.satisfies("@:1.5"):
             return f"https://github.com/memcached/memcached/archive/{version}.tar.gz"
         else:
             return f"https://www.memcached.org/files/memcached-{version}.tar.gz"
@@ -50,7 +50,6 @@ class Memcached(AutotoolsPackage):
     @when("@:1.5")
     def autoreconf(self, spec, prefix):
         sh = which("sh", required=True)
-        if self.satisfies("1.6:"):
         sh("./autogen.sh")
         autoreconf("--install", "--verbose", "--force")
 
