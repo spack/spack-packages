@@ -113,6 +113,18 @@ class Hdf5(CMakePackage):
 
     variant("hl", default=False, description="Enable the high-level library")
     variant("cxx", default=False, description="Enable C++ support")
+    variant(
+        "cxxstd",
+        default="98",
+        values=(
+            "98",
+            "11",
+            "14",
+            "17"
+        ),
+        multi=False,
+        description="Use the specified C++ standard when building.",
+    )
     variant("map", when="@1.14:", default=False, description="Enable MAP API support")
     variant(
         "subfiling", when="@1.14: +mpi", default=False, description="Enable Subfiling VFD support"
@@ -518,6 +530,7 @@ class Hdf5(CMakePackage):
             tty.warn("hdf5@:1.8.15+shared does not produce static libraries")
 
         args = [
+            self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             # Speed-up the building by skipping the examples:
             self.define("HDF5_BUILD_EXAMPLES", False),
             self.define(
