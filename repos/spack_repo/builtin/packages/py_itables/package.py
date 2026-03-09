@@ -10,7 +10,8 @@ from spack.package import *
 class PyItables(PythonPackage):
     """Python DataFrames as interactive DataTables."""
 
-    homepage = "https://www.example.com"
+    homepage = "https://github.com/mwouts/itables"
+    git = "https://github.com/mwouts/itables.git"
     pypi = "itables/itables-2.7.1.tar.gz"
 
     maintainers("LydDeb")
