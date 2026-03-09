@@ -22,16 +22,16 @@ class PyHorovod(PythonPackage, CudaPackage):
 
     tags = ["e4s"]
 
-    version("master", branch="master")
-    version("0.28.1", tag="v0.28.1", commit="1d217b59949986d025f6db93c49943fb6b6cc78f")
-    version("0.28.0", tag="v0.28.0", commit="587d72004736209a93ebda8cec0acdb7870db583")
-    version("0.27.0", tag="v0.27.0", commit="bfaca90d5cf66780a97d8799d4e1573855b64560")
-    version("0.26.1", tag="v0.26.1", commit="34604870eabd9dc670c222deb1da9acc6b9d7c03")
-    version("0.26.0", tag="v0.26.0", commit="c638dcec972750d4a75b229bc208cff9dc76b00a")
-    version("0.25.0", tag="v0.25.0", commit="48e0affcba962831668cd1222866af2d632920c2")
-    version("0.24.3", tag="v0.24.3", commit="a2d9e280c1210a8e364a7dc83ca6c2182fefa99d")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2024-10190/
+        version("master", branch="master")
+        version("0.28.1", tag="v0.28.1", commit="1d217b59949986d025f6db93c49943fb6b6cc78f")
+        version("0.28.0", tag="v0.28.0", commit="587d72004736209a93ebda8cec0acdb7870db583")
+        version("0.27.0", tag="v0.27.0", commit="bfaca90d5cf66780a97d8799d4e1573855b64560")
+        version("0.26.1", tag="v0.26.1", commit="34604870eabd9dc670c222deb1da9acc6b9d7c03")
+        version("0.26.0", tag="v0.26.0", commit="c638dcec972750d4a75b229bc208cff9dc76b00a")
+        version("0.25.0", tag="v0.25.0", commit="48e0affcba962831668cd1222866af2d632920c2")
+        version("0.24.3", tag="v0.24.3", commit="a2d9e280c1210a8e364a7dc83ca6c2182fefa99d")
         version("0.24.2", tag="v0.24.2", commit="b4c191c8d05086842517b3836285a85c6f96ab22")
         version("0.24.1", tag="v0.24.1", commit="ebd135098571722469bb6290a6d098a9e1c96574")
         version("0.24.0", tag="v0.24.0", commit="b089df66a29d3ba6672073eef3d42714d9d3626b")
