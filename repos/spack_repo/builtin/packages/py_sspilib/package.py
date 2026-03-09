@@ -10,7 +10,7 @@ from spack.package import *
 class PySspilib(PythonPackage):
     """SSPI API bindings for Python."""
 
-    homepage = "https://github.com/jborean93/sspilibi"
+    homepage = "https://github.com/jborean93/sspilib"
     pypi = "sspilib/sspilib-0.1.0.tar.gz"
     git = "https://github.com/jborean93/sspilib.git"
 
