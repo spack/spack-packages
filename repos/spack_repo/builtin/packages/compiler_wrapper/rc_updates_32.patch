@@ -253,7 +253,7 @@ index 54646df..e5111b4 100644
  
  clean : clean-test clean-cl
 diff --git a/src/coff_parser.cxx b/src/coff_parser.cxx
-index 25f4b28..4c1fb4d 100644
+index 25f4b28..4cee1f0 100644
 --- a/src/coff_parser.cxx
 +++ b/src/coff_parser.cxx
 @@ -46,8 +46,9 @@ CoffParser::CoffParser(CoffReaderWriter* coff_reader)
@@ -268,19 +268,23 @@ index 25f4b28..4c1fb4d 100644
          return false;
      }
      int const invalid_valid_sig =
-@@ -578,6 +579,28 @@ void CoffParser::ReportLongName(const char* data) {
+@@ -578,6 +579,40 @@ void CoffParser::ReportLongName(const char* data) {
      std::cout << "DLL: " << data << "\n";
  }
  
-+std::string CoffParser::GetLongName() {
++std::string CoffParser::GetLongName() const {
++    // TODO(johnwparent): I think we can access the
++    // 2nd index of the members vec to get the long
++    // name
 +    for (auto mem : this->coff_.members) {
 +        if (mem.member->is_longname) {
 +            return std::string(mem.member->data);
 +        }
 +    }
++    return std::string();
 +}
 +
-+std::string CoffParser::GetShortName() {
++std::string CoffParser::GetShortName() const {
 +    for (auto mem : this->coff_.members) {
 +        if (mem.header->Name[0] != '/') {
 +            int i = 0;
@@ -294,19 +298,28 @@ index 25f4b28..4c1fb4d 100644
 +    return std::string();
 +}
 +
++std::string CoffParser::GetName() const {
++    std::string maybe_name = this->GetLongName();
++    if (maybe_name.empty()) {
++        maybe_name = this->GetShortName();
++    }
++    return maybe_name;
++}
++
  void CoffParser::Report() {
      for (auto mem : this->coff_.members) {
          if (mem.member->is_longname) {
 diff --git a/src/coff_parser.h b/src/coff_parser.h
-index 6cf7728..4efe78e 100644
+index 6cf7728..e485af0 100644
 --- a/src/coff_parser.h
 +++ b/src/coff_parser.h
-@@ -43,6 +43,8 @@ class CoffParser {
+@@ -43,6 +43,9 @@ class CoffParser {
      bool NormalizeName(std::string& name);
      void Report();
      int Verify();
-+    std::string GetLongName();
-+    std::string GetShortName();
++    std::string GetLongName() const;
++    std::string GetShortName() const;
++    std::string GetName() const;
      static int Validate(std::string& coff);
  };
  
@@ -458,7 +471,7 @@ index b00bf1d..b4f8376 100644
  }
  
 diff --git a/src/ld.cxx b/src/ld.cxx
-index 5cc0683..2f4bc79 100644
+index 5cc0683..a9f45ae 100644
 --- a/src/ld.cxx
 +++ b/src/ld.cxx
 @@ -6,6 +6,9 @@
@@ -490,9 +503,6 @@ index 5cc0683..2f4bc79 100644
 +        return ExitConditions::TOOLCHAIN_FAILURE;
 +    }
 +
-+    // We're creating a PE, we need to create an appropriate import lib
-+    std::string const imp_lib_name = link_run.get_implib_name();
-+
 +    // Add produced RC file to linker CLI to inject ID
 +    // This needs to be at the end of either libs or objs or rsp files
 +    // so long as this RC file is not the first binary
@@ -506,6 +516,9 @@ index 5cc0683..2f4bc79 100644
      if (ret_code != 0) {
          return ret_code;
      }
++
++    // We're creating a PE, we need to create an appropriate import lib
++    std::string const imp_lib_name = link_run.get_implib_name();
 +
      // Next we want to construct the proper commmand line to
      // recreate the import library from the same set of obj files
@@ -529,14 +542,14 @@ index 5cc0683..2f4bc79 100644
      // If there is no implib, we don't need to bother
      // trying to rename
      if (!fileExists(imp_lib_name)) {
-@@ -43,6 +76,31 @@ DWORD LdInvocation::InvokeToolchain() {
+@@ -43,6 +76,35 @@ DWORD LdInvocation::InvokeToolchain() {
          // the concern of this wrapper
          return 0;
      }
 +    // There is an imp lib, so
 +    // Check if the imp lib is associated with the link command
 +    // we just ran, if we cannot process the coff file
-+    // we should exit
++    // we should exit with failure since something is unexpected
 +    {
 +        // Create temp scope to ensure all handles are appropriately deallocated
 +        // since the Coff readers use RAII
@@ -547,11 +560,15 @@ index 5cc0683..2f4bc79 100644
 +                      << " unable to determine import library provenance\n";
 +            return ExitConditions::COFF_PARSE_FAILURE;
 +        }
-+        std::string const short_name = existing_coff.GetShortName();
++        std::string const shorter_name = existing_coff.GetName();
 +        std::string const link_name = basename(link_run.get_out());
++        if (shorter_name.empty() || link_name.empty()) {
++            debug("Cannot determine either PE or COFF names (Pe: " + link_name +
++                  "; Coff: " + shorter_name + ") skipping absolute rename\n");
++        }
 +
-+        if (short_name != link_name) {
-+            debug("internal lib name: " + short_name +
++        if (shorter_name != link_name) {
++            debug("internal lib name: " + shorter_name +
 +                  " Pe name: " + link_name + " are not equivalent");
 +            return 0;
 +        }
@@ -561,7 +578,7 @@ index 5cc0683..2f4bc79 100644
      std::string pe_name;
      try {
          pe_name = link_run.get_mangled_out();
-@@ -52,20 +110,15 @@ DWORD LdInvocation::InvokeToolchain() {
+@@ -52,20 +114,15 @@ DWORD LdInvocation::InvokeToolchain() {
          return ExitConditions::NORMALIZE_NAME_FAILURE;
      }
      std::string const abs_out_imp_lib_name = imp_lib_name + ".pe-abs.lib";
@@ -589,7 +606,7 @@ index 5cc0683..2f4bc79 100644
      this->rpath_executor.Execute();
      DWORD const err_code = this->rpath_executor.Join();
      if (err_code != 0) {
-@@ -73,10 +126,13 @@ DWORD LdInvocation::InvokeToolchain() {
+@@ -73,10 +130,13 @@ DWORD LdInvocation::InvokeToolchain() {
      }
      CoffReaderWriter coff_reader(abs_out_imp_lib_name);
      CoffParser coff(&coff_reader);
@@ -603,7 +620,7 @@ index 5cc0683..2f4bc79 100644
      if (!coff.NormalizeName(pe_name)) {
          debug("Failed to normalize name for COFF file: " +
                abs_out_imp_lib_name);
-@@ -99,3 +155,48 @@ DWORD LdInvocation::InvokeToolchain() {
+@@ -99,3 +159,48 @@ DWORD LdInvocation::InvokeToolchain() {
      }
      return ret_code;
  }
@@ -672,7 +689,7 @@ index a9f3a82..191aaba 100644
 +    static std::string createRC(LinkerInvocation& link_run);
  };
 diff --git a/src/linker_invocation.cxx b/src/linker_invocation.cxx
-index 4ed82be..328c489 100644
+index 4ed82be..1933591 100644
 --- a/src/linker_invocation.cxx
 +++ b/src/linker_invocation.cxx
 @@ -3,14 +3,19 @@
@@ -734,7 +751,7 @@ index 4ed82be..328c489 100644
          } else if (startswith(normal_token, "def")) {
              this->def_file_ = strip(split(*token, ":", 1)[1], "\"");
          } else if (this->piped_args_.find(normal_token) !=
-@@ -68,24 +83,37 @@ void LinkerInvocation::Parse() {
+@@ -68,29 +83,109 @@ void LinkerInvocation::Parse() {
              this->piped_args_.at(normal_token).emplace_back(*token);
          }
      }
@@ -786,10 +803,11 @@ index 4ed82be..328c489 100644
      }
      if (this->implibname_.empty()) {
          std::string const name = strip(this->output_, ext);
-@@ -93,6 +121,72 @@ void LinkerInvocation::Parse() {
+         this->implibname_ = name + ".lib";
      }
- }
- 
++    this->makeRsp();
++}
++
 +void LinkerInvocation::processInputFiles() {
 +    StrList new_input_files;
 +    for (auto input = this->input_files_.begin();
@@ -846,20 +864,18 @@ index 4ed82be..328c489 100644
 +            throw FileIOError("Unable to open lib rsp file");
 +        }
 +        for (const auto& line : this->input_files_) {
-+            rsp_out << line << "\n";
++            rsp_out << escape_backslash(line) << "\n";
 +        }
 +        rsp_out.close();
-+        this->input_files_ = {rsp_name};
-+        this->rsp_files_ = {rsp_name};
++        this->input_files_ = {"@" + rsp_name};
++        this->rsp_files_ = {"@" + rsp_name};
 +        return true;
 +    }
 +    return false;
-+}
-+
+ }
+ 
  /**
-  * processDefFile reads a def file passed to the linker
-  *  looking for either LIBRARY or NAME keywords
-@@ -104,11 +198,15 @@ void LinkerInvocation::Parse() {
+@@ -104,11 +199,15 @@ void LinkerInvocation::Parse() {
   */
  void LinkerInvocation::processDefFile() {
  
@@ -875,7 +891,7 @@ index 4ed82be..328c489 100644
      }
  
      std::string line;
-@@ -131,18 +229,22 @@ void LinkerInvocation::processDefFile() {
+@@ -131,18 +230,22 @@ void LinkerInvocation::processDefFile() {
          if (keyword == "NAME") {
              this->is_exe_ = true;
              def_line >> this->pe_name_;
@@ -900,7 +916,7 @@ index 4ed82be..328c489 100644
          const std::string def_name = stem(this->def_file_);
          const std::string def_path =
              this->def_file_.substr(0, this->def_file_.find(def_name));
-@@ -152,6 +254,7 @@ void LinkerInvocation::processDefFile() {
+@@ -152,6 +255,7 @@ void LinkerInvocation::processDefFile() {
          if (!def_out) {
              std::cerr << "Error: could not open output def file: " << rename_def
                        << "\n";
@@ -908,7 +924,7 @@ index 4ed82be..328c489 100644
          }
          for (const auto& line : exports) {
              def_out << line << "\n";
-@@ -162,11 +265,11 @@ void LinkerInvocation::processDefFile() {
+@@ -162,11 +266,11 @@ void LinkerInvocation::processDefFile() {
      def_in.close();
  }
  
@@ -922,7 +938,7 @@ index 4ed82be..328c489 100644
      std::string lib_link_line;
      for (const auto& var_args : this->piped_args_) {
          // Most of these should be single arguments
-@@ -182,22 +285,30 @@ std::string LinkerInvocation::get_lib_link_args() {
+@@ -182,22 +286,30 @@ std::string LinkerInvocation::get_lib_link_args() {
      return lib_link_line;
  }
  
@@ -1154,10 +1170,10 @@ index ec80e2b..c702420 100644
      ExecuteCommand executor;
  };
 diff --git a/src/utils.cxx b/src/utils.cxx
-index 6bb8c6c..71941bf 100644
+index 6bb8c6c..4f83780 100644
 --- a/src/utils.cxx
 +++ b/src/utils.cxx
-@@ -4,6 +4,8 @@
+@@ -4,14 +4,20 @@
   * SPDX-License-Identifier: (Apache-2.0 OR MIT)
   */
  #include "utils.h"
@@ -1165,8 +1181,9 @@ index 6bb8c6c..71941bf 100644
 +#include <accctrl.h>
  #include <errhandlingapi.h>
  #include <fileapi.h>
++#include <cstdio>
  #include <fstream>
-@@ -11,7 +13,10 @@
+ #include <handleapi.h>
  #include <minwinbase.h>
  #include <minwindef.h>
  #include <processenv.h>
@@ -1177,7 +1194,7 @@ index 6bb8c6c..71941bf 100644
  #include <winbase.h>
  #include <winerror.h>
  #include <winnls.h>
-@@ -27,12 +32,17 @@
+@@ -27,12 +33,17 @@
  #include <iostream>
  #include <limits>
  #include <map>
@@ -1195,7 +1212,7 @@ index 6bb8c6c..71941bf 100644
  
  //////////////////////////////////////////////////////////
  // String helper methods adding cxx20 features to cxx14 //
-@@ -181,6 +191,17 @@ std::string lstrip(const std::string& str, const std::string& substr) {
+@@ -181,6 +192,17 @@ std::string lstrip(const std::string& str, const std::string& substr) {
      return str.substr(substr.size(), str.size());
  }
  
@@ -1213,7 +1230,16 @@ index 6bb8c6c..71941bf 100644
  /**
   * combines list of strings into one string joined on join_char
   */
-@@ -529,7 +550,8 @@ void replace_path_characters(char* path, size_t len) {
+@@ -337,7 +359,7 @@ std::string regexMatch(
+     if (!std::regex_match(searchDomain, match, reg, flag)) {
+         result_str = std::string();
+     } else {
+-        result_str = match.str();
++        result_str = match.str(1);
+     }
+     return result_str;
+ }
+@@ -529,7 +551,8 @@ void replace_path_characters(char* path, size_t len) {
   *                  null terminators.
   * \param bsize the lengh of the padding to add
   */
@@ -1223,7 +1249,7 @@ index 6bb8c6c..71941bf 100644
      // If str_size > bsize we get inappropriate conversion
      // from signed to unsigned
      if (str_size > bsize) {
-@@ -543,13 +565,26 @@ char* pad_path(const char* pth, DWORD str_size, DWORD bsize) {
+@@ -543,13 +566,26 @@ char* pad_path(const char* pth, DWORD str_size, DWORD bsize) {
              padded_path[i] = pth[j];
              ++j;
          } else {
@@ -1251,7 +1277,57 @@ index 6bb8c6c..71941bf 100644
  /**
   * Given a padded library path, return how much the path
   *  has been padded
-@@ -623,6 +658,44 @@ std::string short_name(const std::string& path) {
+@@ -591,11 +627,38 @@ std::string getSFN(const std::string& path) {
+     // Use "disable string parsing" prefix in case
+     // the path is too long
+     std::string const escaped = R"(\\?\)" + path;
++    // We cannot get the sfn for a path that doesn't exist
++    // if we find that the sfn we're looking for doesn't exist
++    // create a stub of the file, and allow the subsequent
++    // commands to overwrite it
++    if (!PathFileExistsA(path.c_str())) {
++        HANDLE h_file = CreateFileA(path.c_str(), GENERIC_WRITE, 0, nullptr,
++                                    CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
++        if (h_file == INVALID_HANDLE_VALUE) {
++            debug("File " + path +
++                  " does not exist, nor can it be created, unable to "
++                  "compute SFN\n");
++            CloseHandle(h_file);
++            return std::string();
++        }
++        CloseHandle(h_file);
++    }
+     // Get SFN length so we can create buffer
+     DWORD const sfn_size =
+         GetShortPathNameA(escaped.c_str(), NULL, 0);  //NOLINT
+     char* sfn = new char[sfn_size + 1];
+-    GetShortPathNameA(escaped.c_str(), sfn, escaped.length());
++    DWORD const res = GetShortPathNameA(escaped.c_str(), sfn, escaped.length());
++    if (!res) {
++
++        std::cerr << "Failed to process short name for " << path
++                  << " Error: " << reportLastError() << "\n";
++    }
++    if (!sfn && res) {
++        // buffer was too small
++        debug("buffer too small; had: " + std::to_string(sfn_size) +
++              " needed: " + std::to_string(res));
++    }
++    printf("SFN: %s\n", sfn);
+     // sfn is null terminated per win32 api
+     // Ensure we strip out the disable string parsing prefix
+     std::string s_sfn = lstrip(sfn, R"(\\?\)");
+@@ -611,7 +674,9 @@ std::string getSFN(const std::string& path) {
+  */
+ std::string short_name(const std::string& path) {
+     // Get SFN for path to name
++    debug("path: " + path);
+     std::string const new_abs_out = getSFN(path);
++    debug("New abs out: " + new_abs_out);
+     if (new_abs_out.length() > MAX_NAME_LEN) {
+         std::cerr << "DLL path " << path << " too long to relocate.\n";
+         std::cerr << "Shortened DLL path " << new_abs_out
+@@ -623,6 +688,45 @@ std::string short_name(const std::string& path) {
      return new_abs_out;
  }
  
@@ -1287,6 +1363,7 @@ index 6bb8c6c..71941bf 100644
 +    if (path.length() > MAX_NAME_LEN) {
 +        // Name is too long we need to attempt to shorten
 +        std::string const short_path = short_name(path);
++        debug("short path" + short_path);
 +        // If new, shortened path is too long, bail
 +        proper_length_path = short_path;
 +    }
@@ -1296,7 +1373,7 @@ index 6bb8c6c..71941bf 100644
  /**
   * Mangles a string representing a path to have no path characters
   *  instead path characters (i.e. \\, :, etc) are replaced with
-@@ -633,19 +706,10 @@ std::string short_name(const std::string& path) {
+@@ -633,19 +737,10 @@ std::string short_name(const std::string& path) {
  std::string mangle_name(const std::string& name) {
      std::string abs_out;
      std::string mangled_abs_out;
@@ -1319,7 +1396,7 @@ index 6bb8c6c..71941bf 100644
      char* chr_abs_out = new char[abs_out.length() + 1];
      strcpy(chr_abs_out, abs_out.c_str());
      replace_path_characters(chr_abs_out, abs_out.length());
-@@ -688,7 +752,7 @@ bool SpackInstalledLib(const std::string& lib) {
+@@ -688,7 +783,7 @@ bool SpackInstalledLib(const std::string& lib) {
          return false;
      }
      std::string const stripped_lib = strip_padding(lib);
@@ -1328,7 +1405,7 @@ index 6bb8c6c..71941bf 100644
  }
  
  LibraryFinder::LibraryFinder() : search_vars{"SPACK_RELOCATE_PATH"} {}
-@@ -786,13 +850,74 @@ std::string LibraryFinder::Finder(const std::string& pth,
+@@ -786,13 +881,74 @@ std::string LibraryFinder::Finder(const std::string& pth,
      return std::string();
  }
  
@@ -1404,7 +1481,7 @@ index 6bb8c6c..71941bf 100644
  }
  
  bool LibraryFinder::IsSystem(const std::string& pth) {
-@@ -841,9 +966,230 @@ char* findstr(char* search_str, const char* substr, size_t size) {
+@@ -841,9 +997,230 @@ char* findstr(char* search_str, const char* substr, size_t size) {
      return nullptr;
  }
  
@@ -1809,7 +1886,7 @@ index b04d929..8ded476 100644
 +
  static bool DEBUG = false;
 diff --git a/src/winrpath.cxx b/src/winrpath.cxx
-index f98e063..32da29c 100644
+index f98e063..76566eb 100644
 --- a/src/winrpath.cxx
 +++ b/src/winrpath.cxx
 @@ -4,7 +4,6 @@
@@ -1965,7 +2042,18 @@ index f98e063..32da29c 100644
      std::string const coff_path = stem(this->coff);
      this->tmp_def_file = coff_path + "-tmp.def";
      this->def_file = coff_path + ".def";
-@@ -357,7 +315,7 @@ bool LibRename::ExecuteRename() {
+@@ -322,7 +280,9 @@ bool LibRename::ComputeDefFile() {
+                 npos) {  // Skip header in export block if still present
+             break;
+         }
+-        output_file << "    " << regexReplace(line, R"(\s+)", "") << '\n';
++        output_file << "    "
++                    << regexMatch(line, R"(^.*?(\S+)(?:\s+\(.*\))?\s*$)")
++                    << '\n';
+     }
+     input_file.close();
+     output_file.close();
+@@ -357,7 +317,7 @@ bool LibRename::ExecuteRename() {
      // exes
      // We do not bother with defs for things that don't have
      // import libraries
@@ -1974,7 +2062,7 @@ index f98e063..32da29c 100644
          // Extract DLL
          if (!this->ComputeDefFile()) {
              debug("Failed to compute def file");
-@@ -439,15 +397,23 @@ bool LibRename::ExecutePERename() {
+@@ -439,15 +399,23 @@ bool LibRename::ExecutePERename() {
          std::cerr << e.what() << "\n";
          return false;
      }
@@ -1995,7 +2083,7 @@ index f98e063..32da29c 100644
 +                      << reportLastError() << "\n";
 +            return false;
 +        }
-+        return this->FindDllAndRename(pe_handle);
++        return LibRename::FindDllAndRename(pe_handle);
 +    } catch (const std::system_error& e) {
 +        std::cerr << "Could not obtain write access: " << e.what()
 +                  << " (Error Code: " << e.code().value() << ")" << '\n';

@@ -253,7 +253,7 @@ index 54646df..e5111b4 100644
  
  clean : clean-test clean-cl
 diff --git a/src/coff_parser.cxx b/src/coff_parser.cxx
-index 25f4b28..dbcb708 100644
+index 25f4b28..4cee1f0 100644
 --- a/src/coff_parser.cxx
 +++ b/src/coff_parser.cxx
 @@ -46,8 +46,9 @@ CoffParser::CoffParser(CoffReaderWriter* coff_reader)
@@ -268,8 +268,63 @@ index 25f4b28..dbcb708 100644
          return false;
      }
      int const invalid_valid_sig =
+@@ -578,6 +579,40 @@ void CoffParser::ReportLongName(const char* data) {
+     std::cout << "DLL: " << data << "\n";
+ }
+ 
++std::string CoffParser::GetLongName() const {
++    // TODO(johnwparent): I think we can access the
++    // 2nd index of the members vec to get the long
++    // name
++    for (auto mem : this->coff_.members) {
++        if (mem.member->is_longname) {
++            return std::string(mem.member->data);
++        }
++    }
++    return std::string();
++}
++
++std::string CoffParser::GetShortName() const {
++    for (auto mem : this->coff_.members) {
++        if (mem.header->Name[0] != '/') {
++            int i = 0;
++            while (mem.header->Name[i] != '/') {
++                ++i;
++            }
++            return std::string(reinterpret_cast<const char*>(mem.header->Name),
++                               i);
++        }
++    }
++    return std::string();
++}
++
++std::string CoffParser::GetName() const {
++    std::string maybe_name = this->GetLongName();
++    if (maybe_name.empty()) {
++        maybe_name = this->GetShortName();
++    }
++    return maybe_name;
++}
++
+ void CoffParser::Report() {
+     for (auto mem : this->coff_.members) {
+         if (mem.member->is_longname) {
+diff --git a/src/coff_parser.h b/src/coff_parser.h
+index 6cf7728..e485af0 100644
+--- a/src/coff_parser.h
++++ b/src/coff_parser.h
+@@ -43,6 +43,9 @@ class CoffParser {
+     bool NormalizeName(std::string& name);
+     void Report();
+     int Verify();
++    std::string GetLongName() const;
++    std::string GetShortName() const;
++    std::string GetName() const;
+     static int Validate(std::string& coff);
+ };
+ 
 diff --git a/src/coff_reader_writer.cxx b/src/coff_reader_writer.cxx
-index cbab86f..dda65fa 100644
+index cbab86f..6e34736 100644
 --- a/src/coff_reader_writer.cxx
 +++ b/src/coff_reader_writer.cxx
 @@ -6,6 +6,7 @@
@@ -280,7 +335,7 @@ index cbab86f..dda65fa 100644
  
  #include <winnt.h>
  #include <cstdlib>
-@@ -13,13 +14,28 @@
+@@ -13,16 +14,31 @@
  #include <ios>
  #include <iosfwd>
  #include <iostream>
@@ -293,6 +348,9 @@ index cbab86f..dda65fa 100644
      : file_(std::move(file)) {}
  
  bool CoffReaderWriter::Open() {
+-    this->pe_stream_.open(this->file_,
+-                          std::ios::in | std::ios::out | std::ios::binary);
+-    return this->pe_stream_.is_open();
 +    std::wstring coff_file;
 +    try {
 +        coff_file = ConvertASCIIToWide(this->file_);
@@ -301,14 +359,17 @@ index cbab86f..dda65fa 100644
 +    }
 +    try {
 +        ScopedFileAccess const obtain_write(coff_file, GENERIC_ALL);
++        this->pe_stream_.open(this->file_,
++                              std::ios::in | std::ios::out | std::ios::binary);
++        return this->pe_stream_.is_open();
 +    } catch (std::system_error& e) {
 +        std::cerr << "Could not obtain write access: " << e.what()
 +                  << " (Error Code: " << e.code().value() << ")" << '\n';
 +        return false;
 +    }
-     this->pe_stream_.open(this->file_,
-                           std::ios::in | std::ios::out | std::ios::binary);
-     return this->pe_stream_.is_open();
+ }
+ 
+ bool CoffReaderWriter::Close() {
 diff --git a/src/commandline.cxx b/src/commandline.cxx
 index 38bd760..df2bff1 100644
 --- a/src/commandline.cxx
@@ -410,7 +471,7 @@ index b00bf1d..b4f8376 100644
  }
  
 diff --git a/src/ld.cxx b/src/ld.cxx
-index 5cc0683..9229bb5 100644
+index 5cc0683..a9f45ae 100644
 --- a/src/ld.cxx
 +++ b/src/ld.cxx
 @@ -6,6 +6,9 @@
@@ -423,7 +484,7 @@ index 5cc0683..9229bb5 100644
  #include <iostream>
  #include "coff_parser.h"
  #include "coff_reader_writer.h"
-@@ -19,19 +22,40 @@ void LdInvocation::LoadToolchainDependentSpackVars(SpackEnvState& spackenv) {
+@@ -19,21 +22,51 @@ void LdInvocation::LoadToolchainDependentSpackVars(SpackEnvState& spackenv) {
  }
  
  DWORD LdInvocation::InvokeToolchain() {
@@ -431,9 +492,7 @@ index 5cc0683..9229bb5 100644
 +
 +    // First parse the linker command line to
 +    // understand what we'll be doing
-+    LinkerInvocation link_run(LdInvocation::ComposeCommandLists(
-+        {this->command_args, this->include_args, this->lib_dir_args,
-+         this->input_files}));
++    LinkerInvocation link_run(this->inputs);
 +    link_run.Parse();
 +    std::string rc_file;
 +    try {
@@ -443,19 +502,23 @@ index 5cc0683..9229bb5 100644
 +    } catch (const RCCompilerFailure& e) {
 +        return ExitConditions::TOOLCHAIN_FAILURE;
 +    }
++
 +    // Add produced RC file to linker CLI to inject ID
 +    // This needs to be at the end of either libs or objs or rsp files
 +    // so long as this RC file is not the first binary
 +    // file the linker sees (or is referenced in the case of an rsp)
 +    // otherwise this resource file will dictate the binairies
 +    // name, which will break client expectations
-+    this->input_files.push_back(rc_file);
++    this->inputs.push_back(rc_file);
      // Run base linker invocation to produce initial
      // dll and import library
      DWORD const ret_code = ToolChainInvocation::InvokeToolchain();
      if (ret_code != 0) {
          return ret_code;
      }
++
++    // We're creating a PE, we need to create an appropriate import lib
++    std::string const imp_lib_name = link_run.get_implib_name();
 +
      // Next we want to construct the proper commmand line to
      // recreate the import library from the same set of obj files
@@ -464,11 +527,58 @@ index 5cc0683..9229bb5 100644
 -        {this->command_args, this->include_args, this->lib_args,
 -         this->lib_dir_args, this->obj_args}));
 -    link_run.Parse();
+-    // We're creating a PE, we need to create an appropriate import lib
+-    std::string const imp_lib_name = link_run.get_implib_name();
 +
-     // We're creating a PE, we need to create an appropriate import lib
-     std::string const imp_lib_name = link_run.get_implib_name();
++    // first determine if this link run created the import library
++    // check if the import library that *might* be produced
++    // by this run (given input argument construction)
++    // exists. Multiple link runs could in theory produce the name
++    // imp lib (or at least with the same name)
++    // i.e. link /out:perl.exe perl.lib
++    // and link /out:perl.dll perl.lib /DLL could both in theory
++    // produce the same import library
++
      // If there is no implib, we don't need to bother
-@@ -52,18 +76,16 @@ DWORD LdInvocation::InvokeToolchain() {
+     // trying to rename
+     if (!fileExists(imp_lib_name)) {
+@@ -43,6 +76,35 @@ DWORD LdInvocation::InvokeToolchain() {
+         // the concern of this wrapper
+         return 0;
+     }
++    // There is an imp lib, so
++    // Check if the imp lib is associated with the link command
++    // we just ran, if we cannot process the coff file
++    // we should exit with failure since something is unexpected
++    {
++        // Create temp scope to ensure all handles are appropriately deallocated
++        // since the Coff readers use RAII
++        CoffReaderWriter existing_coff_reader(imp_lib_name);
++        CoffParser existing_coff(&existing_coff_reader);
++        if (!existing_coff.Parse()) {
++            std::cerr << "Unable to parse coff file: " << imp_lib_name
++                      << " unable to determine import library provenance\n";
++            return ExitConditions::COFF_PARSE_FAILURE;
++        }
++        std::string const shorter_name = existing_coff.GetName();
++        std::string const link_name = basename(link_run.get_out());
++        if (shorter_name.empty() || link_name.empty()) {
++            debug("Cannot determine either PE or COFF names (Pe: " + link_name +
++                  "; Coff: " + shorter_name + ") skipping absolute rename\n");
++        }
++
++        if (shorter_name != link_name) {
++            debug("internal lib name: " + shorter_name +
++                  " Pe name: " + link_name + " are not equivalent");
++            return 0;
++        }
++        existing_coff_reader.Close();
++    }
++
+     std::string pe_name;
+     try {
+         pe_name = link_run.get_mangled_out();
+@@ -52,20 +114,15 @@ DWORD LdInvocation::InvokeToolchain() {
          return ExitConditions::NORMALIZE_NAME_FAILURE;
      }
      std::string const abs_out_imp_lib_name = imp_lib_name + ".pe-abs.lib";
@@ -479,19 +589,24 @@ index 5cc0683..9229bb5 100644
 +    std::string const def = "-def" + (def_file.empty() ? " " : ":" + def_file);
      std::string piped_args = link_run.get_lib_link_args();
      // create command line to generate new import lib
-     this->rpath_executor =
-         ExecuteCommand("lib.exe", LdInvocation::ComposeCommandLists({
-                                       {def, piped_args, "-name:" + pe_name,
-                                        "-out:" + abs_out_imp_lib_name},
+-    this->rpath_executor =
+-        ExecuteCommand("lib.exe", LdInvocation::ComposeCommandLists({
+-                                      {def, piped_args, "-name:" + pe_name,
+-                                       "-out:" + abs_out_imp_lib_name},
 -                                      {link_run.get_rsp_file()},
 -                                      this->obj_args,
 -                                      this->lib_args,
-+                                      {link_run.get_rsp_files()},
-+                                      this->input_files,
-                                       this->lib_dir_args,
-                                   }));
+-                                      this->lib_dir_args,
+-                                  }));
++    this->rpath_executor = ExecuteCommand(
++        "lib.exe",
++        LdInvocation::ComposeCommandLists({{def, piped_args, "-name:" + pe_name,
++                                            "-out:" + abs_out_imp_lib_name},
++                                           link_run.get_input_files()}));
      this->rpath_executor.Execute();
-@@ -73,10 +95,13 @@ DWORD LdInvocation::InvokeToolchain() {
+     DWORD const err_code = this->rpath_executor.Join();
+     if (err_code != 0) {
+@@ -73,10 +130,13 @@ DWORD LdInvocation::InvokeToolchain() {
      }
      CoffReaderWriter coff_reader(abs_out_imp_lib_name);
      CoffParser coff(&coff_reader);
@@ -505,7 +620,7 @@ index 5cc0683..9229bb5 100644
      if (!coff.NormalizeName(pe_name)) {
          debug("Failed to normalize name for COFF file: " +
                abs_out_imp_lib_name);
-@@ -99,3 +124,48 @@ DWORD LdInvocation::InvokeToolchain() {
+@@ -99,3 +159,48 @@ DWORD LdInvocation::InvokeToolchain() {
      }
      return ret_code;
  }
@@ -517,7 +632,7 @@ index 5cc0683..9229bb5 100644
 +        "BEGIN\n";
 +    const std::string template_end = "END\n";
 +    const std::string pe_name = stripLastExt(basename(pe_stage_name));
-+    const std::string rc_file_name = pe_name + ".rc";
++    const std::string rc_file_name = "spack-" + pe_name + ".rc";
 +    // This res file name needs to mirror the PE name _exactly_
 +    // Otherwise the RC file will override the default
 +    // or user set name, violating user expectation
@@ -574,7 +689,7 @@ index a9f3a82..191aaba 100644
 +    static std::string createRC(LinkerInvocation& link_run);
  };
 diff --git a/src/linker_invocation.cxx b/src/linker_invocation.cxx
-index 4ed82be..2b4b1b0 100644
+index 4ed82be..1933591 100644
 --- a/src/linker_invocation.cxx
 +++ b/src/linker_invocation.cxx
 @@ -3,14 +3,19 @@
@@ -597,7 +712,7 @@ index 4ed82be..2b4b1b0 100644
  /**
   * Parses the command line of a given linker invocation and stores information
   * about that command line and its associated behavior
-@@ -46,21 +51,30 @@ void LinkerInvocation::Parse() {
+@@ -46,21 +51,31 @@ void LinkerInvocation::Parse() {
              // len 2
              StrList implib_line = split(*token, ":");
              this->implibname_ = implib_line[1];
@@ -612,7 +727,8 @@ index 4ed82be..2b4b1b0 100644
 -        } else if (startswith(normal_token, "@") &&
 -                   endswith(normal_token, ".rsp")) {
 +        } else if (endswith(normal_token, ".obj") ||
-+                   endswith(normal_token, ".lib")) {
++                   endswith(normal_token, ".lib") ||
++                   endswith(normal_token, ".lo")) {
 +            this->input_files_.push_back(*token);
 +        } else if (startswith(normal_token, "@")) {
              // RSP files are used to describe object files, libraries, other CLI
@@ -635,7 +751,7 @@ index 4ed82be..2b4b1b0 100644
          } else if (startswith(normal_token, "def")) {
              this->def_file_ = strip(split(*token, ":", 1)[1], "\"");
          } else if (this->piped_args_.find(normal_token) !=
-@@ -68,24 +82,37 @@ void LinkerInvocation::Parse() {
+@@ -68,29 +83,109 @@ void LinkerInvocation::Parse() {
              this->piped_args_.at(normal_token).emplace_back(*token);
          }
      }
@@ -687,10 +803,11 @@ index 4ed82be..2b4b1b0 100644
      }
      if (this->implibname_.empty()) {
          std::string const name = strip(this->output_, ext);
-@@ -93,6 +120,70 @@ void LinkerInvocation::Parse() {
+         this->implibname_ = name + ".lib";
      }
- }
- 
++    this->makeRsp();
++}
++
 +void LinkerInvocation::processInputFiles() {
 +    StrList new_input_files;
 +    for (auto input = this->input_files_.begin();
@@ -740,25 +857,25 @@ index 4ed82be..2b4b1b0 100644
 +        this->input_files_.begin(), this->input_files_.end(), 0,
 +        [](size_t sum, const std::string& s) { return sum + s.size(); });
 +    if (total_length > MaxProcessCommandLength) {
-+        std::ofstream rsp_out("spack-build.rsp");
++        std::string const rsp_name = "spack-build.rsp";
++        std::ofstream rsp_out(rsp_name);
 +        if (!rsp_out) {
 +            std::cerr << "Unable to open rsp out file: spack-build.rsp\n";
 +            throw FileIOError("Unable to open lib rsp file");
 +        }
 +        for (const auto& line : this->input_files_) {
-+            rsp_out << line << "\n";
++            rsp_out << escape_backslash(line) << "\n";
 +        }
 +        rsp_out.close();
-+        this->input_files_ = {"spack-build.rsp"};
++        this->input_files_ = {"@" + rsp_name};
++        this->rsp_files_ = {"@" + rsp_name};
 +        return true;
 +    }
 +    return false;
-+}
-+
+ }
+ 
  /**
-  * processDefFile reads a def file passed to the linker
-  *  looking for either LIBRARY or NAME keywords
-@@ -104,11 +195,15 @@ void LinkerInvocation::Parse() {
+@@ -104,11 +199,15 @@ void LinkerInvocation::Parse() {
   */
  void LinkerInvocation::processDefFile() {
  
@@ -774,7 +891,7 @@ index 4ed82be..2b4b1b0 100644
      }
  
      std::string line;
-@@ -131,18 +226,22 @@ void LinkerInvocation::processDefFile() {
+@@ -131,18 +230,22 @@ void LinkerInvocation::processDefFile() {
          if (keyword == "NAME") {
              this->is_exe_ = true;
              def_line >> this->pe_name_;
@@ -799,7 +916,7 @@ index 4ed82be..2b4b1b0 100644
          const std::string def_name = stem(this->def_file_);
          const std::string def_path =
              this->def_file_.substr(0, this->def_file_.find(def_name));
-@@ -152,6 +251,7 @@ void LinkerInvocation::processDefFile() {
+@@ -152,6 +255,7 @@ void LinkerInvocation::processDefFile() {
          if (!def_out) {
              std::cerr << "Error: could not open output def file: " << rename_def
                        << "\n";
@@ -807,7 +924,7 @@ index 4ed82be..2b4b1b0 100644
          }
          for (const auto& line : exports) {
              def_out << line << "\n";
-@@ -162,11 +262,11 @@ void LinkerInvocation::processDefFile() {
+@@ -162,11 +266,11 @@ void LinkerInvocation::processDefFile() {
      def_in.close();
  }
  
@@ -821,7 +938,7 @@ index 4ed82be..2b4b1b0 100644
      std::string lib_link_line;
      for (const auto& var_args : this->piped_args_) {
          // Most of these should be single arguments
-@@ -182,22 +282,26 @@ std::string LinkerInvocation::get_lib_link_args() {
+@@ -182,22 +286,30 @@ std::string LinkerInvocation::get_lib_link_args() {
      return lib_link_line;
  }
  
@@ -838,6 +955,10 @@ index 4ed82be..2b4b1b0 100644
 +
 +StrList LinkerInvocation::get_rc_files() const {
 +    return this->rc_files_;
++}
++
++StrList LinkerInvocation::get_input_files() const {
++    return this->input_files_;
  }
  
 -std::string LinkerInvocation::get_out() {
@@ -856,10 +977,10 @@ index 4ed82be..2b4b1b0 100644
      return this->is_exe_ || endswith(this->get_out(), ".exe");
  }
 diff --git a/src/linker_invocation.h b/src/linker_invocation.h
-index a92a538..0008731 100644
+index a92a538..207feb0 100644
 --- a/src/linker_invocation.h
 +++ b/src/linker_invocation.h
-@@ -15,25 +15,30 @@ class LinkerInvocation {
+@@ -15,25 +15,31 @@ class LinkerInvocation {
      explicit LinkerInvocation(const StrList& linkline);
      ~LinkerInvocation() = default;
      void Parse();
@@ -877,6 +998,7 @@ index a92a538..0008731 100644
 +    std::string get_def_file() const;
 +    StrList get_rsp_files() const;
 +    StrList get_rc_files() const;
++    StrList get_input_files() const;
 +    std::string get_lib_link_args() const;
 +    bool makeRsp();
  
@@ -942,7 +1064,7 @@ index 1fb0b63..7fa7708 100644
              } catch (const NameTooLongError& e) {
                  std::cerr
 diff --git a/src/toolchain.cxx b/src/toolchain.cxx
-index a1c103f..87be08e 100644
+index a1c103f..1d3318e 100644
 --- a/src/toolchain.cxx
 +++ b/src/toolchain.cxx
 @@ -15,7 +15,7 @@
@@ -954,47 +1076,54 @@ index a1c103f..87be08e 100644
      this->ParseCommandArgs(cli);
  }
  
-@@ -26,7 +26,7 @@ void ToolChainInvocation::InterpolateSpackEnv(SpackEnvState& spackenv) {
-         this->include_args.insert(this->include_args.begin(), inc_arg);
+@@ -23,10 +23,10 @@ void ToolChainInvocation::InterpolateSpackEnv(SpackEnvState& spackenv) {
+     // inject Spack includes before the default includes
+     for (auto& include : spackenv.SpackIncludeDirs) {
+         auto inc_arg = ToolChainInvocation::ComposeIncludeArg(include);
+-        this->include_args.insert(this->include_args.begin(), inc_arg);
++        this->inputs.push_back(inc_arg);
      }
      for (auto& lib : spackenv.SpackLdLibs) {
 -        this->lib_args.push_back(lib);
-+        this->input_files.push_back(lib);
++        this->inputs.push_back(lib);
      }
      this->AddExtraLibPaths(spackenv.SpackLinkDirs);
      this->AddExtraLibPaths(spackenv.SpackRPathDirs);
-@@ -37,8 +37,8 @@ void ToolChainInvocation::InterpolateSpackEnv(SpackEnvState& spackenv) {
+@@ -36,10 +36,8 @@ void ToolChainInvocation::InterpolateSpackEnv(SpackEnvState& spackenv) {
+ }
  
  DWORD ToolChainInvocation::InvokeToolchain() {
-     StrList const command_line(ToolChainInvocation::ComposeCommandLists(
+-    StrList const command_line(ToolChainInvocation::ComposeCommandLists(
 -        {this->command_args, this->include_args, this->lib_args,
 -         this->lib_dir_args, this->obj_args}));
-+        {this->command_args, this->include_args, this->lib_dir_args,
-+         this->input_files}));
-     this->executor = ExecuteCommand(this->command, command_line);
+-    this->executor = ExecuteCommand(this->command, command_line);
++    quoteList(this->inputs);
++    this->executor = ExecuteCommand(this->command, this->inputs);
      debug("Setting up executor for " + std::string(typeid(*this).name()) +
            "toolchain");
-@@ -55,6 +55,16 @@ DWORD ToolChainInvocation::InvokeToolchain() {
+     debug("Toolchain: " + this->command);
+@@ -53,38 +51,9 @@ DWORD ToolChainInvocation::InvokeToolchain() {
+ }
+ 
  void ToolChainInvocation::ParseCommandArgs(char const* const* cli) {
-     // Collect include args as we need to ensure Spack
-     // Includes come first
-+
-+    // Collect all CLI args
-+    // certain args have implications when defined in certain orders on
-+    // the command line
-+    // so we need supply those to the linker exactly as they were
-+    // we also need to know where we can inject spack libraries and the resource
-+    // where they come first but also do not impact binary naming
-+    // Command args will impact naming if they contain a def file or /out
-+    // regardless of ordering, otherwise naming is determined by
-+    // input file order, preserve that
+-    // Collect include args as we need to ensure Spack
+-    // Includes come first
      for (char const* const* co = cli; *co; co++) {
-         std::string norm_arg = std::string(*co);
+-        std::string norm_arg = std::string(*co);
          const std::string arg = std::string(*co);
-@@ -71,18 +81,16 @@ void ToolChainInvocation::ParseCommandArgs(char const* const* cli) {
-                 this->include_args.push_back(arg);
-                 this->include_args.emplace_back(*(++co));
-             }
+-        lower(norm_arg);
+-        if (isCommandArg(norm_arg, "i")) {
+-            // We have an include arg
+-            // can have an optional space
+-            // check if there are characters after
+-            // "/I" and if not we consider the next
+-            // argument to be the include
+-            if (arg.size() > 2)
+-                this->include_args.push_back(arg);
+-            else {
+-                this->include_args.push_back(arg);
+-                this->include_args.emplace_back(*(++co));
+-            }
 -        } else if (endswith(norm_arg, ".lib") &&
 -                   (norm_arg.find("implib:") == std::string::npos))
 -            // Lib args are just libraries
@@ -1007,37 +1136,44 @@ index a1c103f..87be08e 100644
 -        else if (endswith(norm_arg, ".obj"))
 -            this->obj_args.push_back(arg);
 -        else {
-+        } else if ((endswith(norm_arg, ".lib") &&
-+                    (norm_arg.find("implib:") == std::string::npos)) ||
-+                   (endswith(norm_arg, ".obj")) ||
-+                   (endswith(norm_arg, ".res")) ||
-+                   (startswith(norm_arg, "@"))) {
-+            // Capture all lib, obj, resource, and rsp files
-+            // in the order they're specified since all have binary
-+            // naming implications and we don't need finer granularity
-+            this->input_files.push_back(arg);
-+        } else {
-             this->command_args.push_back(arg);
-         }
+-            this->command_args.push_back(arg);
+-        }
++        this->inputs.push_back(arg);
      }
+ }
+ 
+@@ -98,8 +67,7 @@ std::string ToolChainInvocation::ComposeLibPathArg(std::string& libPath) {
+ 
+ void ToolChainInvocation::AddExtraLibPaths(StrList paths) {
+     for (auto& lib_dir : paths) {
+-        this->lib_dir_args.push_back(
+-            ToolChainInvocation::ComposeLibPathArg(lib_dir));
++        this->inputs.push_back(ToolChainInvocation::ComposeLibPathArg(lib_dir));
+     }
+ }
+ 
 diff --git a/src/toolchain.h b/src/toolchain.h
-index ec80e2b..5360ead 100644
+index ec80e2b..c702420 100644
 --- a/src/toolchain.h
 +++ b/src/toolchain.h
-@@ -35,7 +35,6 @@ class ToolChainInvocation {
-     StrList command_args;
-     StrList include_args;
-     StrList lib_dir_args;
+@@ -32,10 +32,7 @@ class ToolChainInvocation {
+ 
+     std::string command;
+     std::string lang;
+-    StrList command_args;
+-    StrList include_args;
+-    StrList lib_dir_args;
 -    StrList lib_args;
 -    StrList obj_args;
-+    StrList input_files;
++    StrList inputs;
++
      ExecuteCommand executor;
  };
 diff --git a/src/utils.cxx b/src/utils.cxx
-index 6bb8c6c..d7dad08 100644
+index 6bb8c6c..8596808 100644
 --- a/src/utils.cxx
 +++ b/src/utils.cxx
-@@ -4,6 +4,8 @@
+@@ -4,14 +4,20 @@
   * SPDX-License-Identifier: (Apache-2.0 OR MIT)
   */
  #include "utils.h"
@@ -1045,8 +1181,9 @@ index 6bb8c6c..d7dad08 100644
 +#include <accctrl.h>
  #include <errhandlingapi.h>
  #include <fileapi.h>
++#include <cstdio>
  #include <fstream>
-@@ -11,7 +13,10 @@
+ #include <handleapi.h>
  #include <minwinbase.h>
  #include <minwindef.h>
  #include <processenv.h>
@@ -1057,7 +1194,7 @@ index 6bb8c6c..d7dad08 100644
  #include <winbase.h>
  #include <winerror.h>
  #include <winnls.h>
-@@ -27,12 +32,17 @@
+@@ -27,12 +33,17 @@
  #include <iostream>
  #include <limits>
  #include <map>
@@ -1075,7 +1212,7 @@ index 6bb8c6c..d7dad08 100644
  
  //////////////////////////////////////////////////////////
  // String helper methods adding cxx20 features to cxx14 //
-@@ -181,6 +191,17 @@ std::string lstrip(const std::string& str, const std::string& substr) {
+@@ -181,6 +192,17 @@ std::string lstrip(const std::string& str, const std::string& substr) {
      return str.substr(substr.size(), str.size());
  }
  
@@ -1093,7 +1230,16 @@ index 6bb8c6c..d7dad08 100644
  /**
   * combines list of strings into one string joined on join_char
   */
-@@ -529,7 +550,8 @@ void replace_path_characters(char* path, size_t len) {
+@@ -337,7 +359,7 @@ std::string regexMatch(
+     if (!std::regex_match(searchDomain, match, reg, flag)) {
+         result_str = std::string();
+     } else {
+-        result_str = match.str();
++        result_str = match.str(1);
+     }
+     return result_str;
+ }
+@@ -529,7 +551,8 @@ void replace_path_characters(char* path, size_t len) {
   *                  null terminators.
   * \param bsize the lengh of the padding to add
   */
@@ -1103,7 +1249,7 @@ index 6bb8c6c..d7dad08 100644
      // If str_size > bsize we get inappropriate conversion
      // from signed to unsigned
      if (str_size > bsize) {
-@@ -543,13 +565,26 @@ char* pad_path(const char* pth, DWORD str_size, DWORD bsize) {
+@@ -543,13 +566,26 @@ char* pad_path(const char* pth, DWORD str_size, DWORD bsize) {
              padded_path[i] = pth[j];
              ++j;
          } else {
@@ -1131,7 +1277,46 @@ index 6bb8c6c..d7dad08 100644
  /**
   * Given a padded library path, return how much the path
   *  has been padded
-@@ -623,6 +658,44 @@ std::string short_name(const std::string& path) {
+@@ -591,11 +627,37 @@ std::string getSFN(const std::string& path) {
+     // Use "disable string parsing" prefix in case
+     // the path is too long
+     std::string const escaped = R"(\\?\)" + path;
++    // We cannot get the sfn for a path that doesn't exist
++    // if we find that the sfn we're looking for doesn't exist
++    // create a stub of the file, and allow the subsequent
++    // commands to overwrite it
++    if (!PathFileExistsA(path.c_str())) {
++        HANDLE h_file = CreateFileA(path.c_str(), GENERIC_WRITE, 0, nullptr,
++                                    CREATE_NEW, FILE_ATTRIBUTE_NORMAL, nullptr);
++        if (h_file == INVALID_HANDLE_VALUE) {
++            debug("File " + path +
++                  " does not exist, nor can it be created, unable to "
++                  "compute SFN\n");
++            CloseHandle(h_file);
++            return std::string();
++        }
++        CloseHandle(h_file);
++    }
+     // Get SFN length so we can create buffer
+     DWORD const sfn_size =
+         GetShortPathNameA(escaped.c_str(), NULL, 0);  //NOLINT
+     char* sfn = new char[sfn_size + 1];
+-    GetShortPathNameA(escaped.c_str(), sfn, escaped.length());
++    DWORD const res = GetShortPathNameA(escaped.c_str(), sfn, escaped.length());
++    if (!res) {
++
++        std::cerr << "Failed to process short name for " << path
++                  << " Error: " << reportLastError() << "\n";
++    }
++    if (!sfn && res) {
++        // buffer was too small
++        debug("buffer too small; had: " + std::to_string(sfn_size) +
++              " needed: " + std::to_string(res));
++    }
+     // sfn is null terminated per win32 api
+     // Ensure we strip out the disable string parsing prefix
+     std::string s_sfn = lstrip(sfn, R"(\\?\)");
+@@ -623,6 +685,44 @@ std::string short_name(const std::string& path) {
      return new_abs_out;
  }
  
@@ -1176,7 +1361,7 @@ index 6bb8c6c..d7dad08 100644
  /**
   * Mangles a string representing a path to have no path characters
   *  instead path characters (i.e. \\, :, etc) are replaced with
-@@ -633,19 +706,10 @@ std::string short_name(const std::string& path) {
+@@ -633,19 +733,10 @@ std::string short_name(const std::string& path) {
  std::string mangle_name(const std::string& name) {
      std::string abs_out;
      std::string mangled_abs_out;
@@ -1199,7 +1384,7 @@ index 6bb8c6c..d7dad08 100644
      char* chr_abs_out = new char[abs_out.length() + 1];
      strcpy(chr_abs_out, abs_out.c_str());
      replace_path_characters(chr_abs_out, abs_out.length());
-@@ -688,7 +752,7 @@ bool SpackInstalledLib(const std::string& lib) {
+@@ -688,7 +779,7 @@ bool SpackInstalledLib(const std::string& lib) {
          return false;
      }
      std::string const stripped_lib = strip_padding(lib);
@@ -1208,7 +1393,7 @@ index 6bb8c6c..d7dad08 100644
  }
  
  LibraryFinder::LibraryFinder() : search_vars{"SPACK_RELOCATE_PATH"} {}
-@@ -786,13 +850,74 @@ std::string LibraryFinder::Finder(const std::string& pth,
+@@ -786,13 +877,74 @@ std::string LibraryFinder::Finder(const std::string& pth,
      return std::string();
  }
  
@@ -1284,7 +1469,7 @@ index 6bb8c6c..d7dad08 100644
  }
  
  bool LibraryFinder::IsSystem(const std::string& pth) {
-@@ -841,9 +966,237 @@ char* findstr(char* search_str, const char* substr, size_t size) {
+@@ -841,9 +993,230 @@ char* findstr(char* search_str, const char* substr, size_t size) {
      return nullptr;
  }
  
@@ -1427,7 +1612,6 @@ index 6bb8c6c..d7dad08 100644
 +      original_attributes_(0),
 +      attributes_changed_(false) {
 +
-+    // --- PHASE 1: ACL HANDLING ---
 +    // We must ensure we have permissions *first* before we try to
 +    // change the file attributes in Phase 2.
 +
@@ -1449,10 +1633,6 @@ index 6bb8c6c..d7dad08 100644
 +        }
 +        acl_needs_revert_ = true;
 +    }
-+
-+    // --- PHASE 2: ATTRIBUTE HANDLING ---
-+    // Now that we (presumably) have write access from Phase 1,
-+    // we check for the Read-Only bit.
 +
 +    if (FileSecurity::GetAttributes(file_path_, &original_attributes_)) {
 +        if (original_attributes_ & FILE_ATTRIBUTE_READONLY) {
@@ -1478,7 +1658,6 @@ index 6bb8c6c..d7dad08 100644
 +}
 +
 +ScopedFileAccess::~ScopedFileAccess() {
-+    // --- REVERT PHASE 1: Restore Attributes ---
 +    // We must restore attributes *before* we revert ACLs, because reverting ACLs
 +    // might remove our permission to write attributes.
 +    if (attributes_changed_) {
@@ -1486,7 +1665,6 @@ index 6bb8c6c..d7dad08 100644
 +        FileSecurity::SetAttributes(file_path_, original_attributes_);
 +    }
 +
-+    // --- REVERT PHASE 2: Restore ACLs ---
 +    if (acl_needs_revert_ && original_sd_) {
 +        FileSecurity::ApplyDescriptor(file_path_, original_sd_);
 +        ::LocalFree(original_sd_);
@@ -1696,7 +1874,7 @@ index b04d929..8ded476 100644
 +
  static bool DEBUG = false;
 diff --git a/src/winrpath.cxx b/src/winrpath.cxx
-index f98e063..32da29c 100644
+index f98e063..24198a9 100644
 --- a/src/winrpath.cxx
 +++ b/src/winrpath.cxx
 @@ -4,7 +4,6 @@
@@ -1739,7 +1917,7 @@ index f98e063..32da29c 100644
  }
  
  /*
-@@ -66,58 +53,27 @@ bool LibRename::SpackCheckForDll(const std::string& dll_path) const {
+@@ -66,58 +53,36 @@ bool LibRename::SpackCheckForDll(const std::string& dll_path) const {
   *                  the dll name found at `name_loc` to the absolute path of
   * 
  */
@@ -1790,26 +1968,34 @@ index f98e063..32da29c 100644
 -            return false;
 -        }
 -        replace_special_characters(new_lib_pth, MAX_NAME_LEN);
--
--        // c_str returns a proper (i.e. null terminated) value, so we dont need to worry about
--        // size differences w.r.t the path to the new library
--        snprintf(name_loc, MAX_NAME_LEN + 1, "%s", new_lib_pth);
 +bool LibRename::RenameDll(char* name_loc, const std::string& dll_path) {
 +    if (SpackInstalledLib(dll_path)) {
 +        return true;
-     }
++    }
 +    PathRelocator relocator;
-+    std::string const new_loc = relocator.getRelocation(dll_path);
++    std::string new_loc = relocator.getRelocation(dll_path);
 +    if (new_loc.empty()) {
 +        std::cerr << "Cannot find relocation mapping for library " << dll_path
 +                  << "\n";
 +        return false;
 +    }
++    try {
++        new_loc =
++            EnsureValidLengthPath(CannonicalizePath(MakePathAbsolute(new_loc)));
++    } catch (NameTooLongError& e) {
++        std::cerr << "Cannot relocate path " << new_loc
++                  << "it is too long to be relocated safely.\n";
++        return false;
++    }
+ 
+-        // c_str returns a proper (i.e. null terminated) value, so we dont need to worry about
+-        // size differences w.r.t the path to the new library
+-        snprintf(name_loc, MAX_NAME_LEN + 1, "%s", new_lib_pth);
 +    char* new_lib_pth =
 +        pad_path(new_loc.c_str(), static_cast<DWORD>(new_loc.size()));
 +    if (!new_lib_pth) {
 +        return false;
-+    }
+     }
 +    replace_special_characters(new_lib_pth, MAX_NAME_LEN);
 +
 +    // c_str returns a proper (i.e. null terminated) value, so we dont need to worry about
@@ -1818,7 +2004,7 @@ index f98e063..32da29c 100644
      return true;
  }
  
-@@ -206,8 +162,8 @@ bool LibRename::FindDllAndRename(HANDLE& pe_in) {
+@@ -206,8 +171,8 @@ bool LibRename::FindDllAndRename(HANDLE& pe_in) {
              import_table_offset +
              (import_image_descriptor->Name - rva_import_directory);
          std::string const str_dll_name = std::string(imported_dll);
@@ -1829,7 +2015,7 @@ index f98e063..32da29c 100644
                  std::cerr << "Unable to relocate DLL reference: "
                            << str_dll_name << "\n";
                  return false;
-@@ -244,16 +200,18 @@ bool LibRename::FindDllAndRename(HANDLE& pe_in) {
+@@ -244,16 +209,18 @@ bool LibRename::FindDllAndRename(HANDLE& pe_in) {
   * \param replace a flag indicating if we're replacing the renamed import lib or making a copy with absolute dll names
   * \param report a flag indicating if we should be reporting the contents of the PE/COFF file we're parsing to stdout
  */
@@ -1852,7 +2038,18 @@ index f98e063..32da29c 100644
      std::string const coff_path = stem(this->coff);
      this->tmp_def_file = coff_path + "-tmp.def";
      this->def_file = coff_path + ".def";
-@@ -357,7 +315,7 @@ bool LibRename::ExecuteRename() {
+@@ -322,7 +289,9 @@ bool LibRename::ComputeDefFile() {
+                 npos) {  // Skip header in export block if still present
+             break;
+         }
+-        output_file << "    " << regexReplace(line, R"(\s+)", "") << '\n';
++        output_file << "    "
++                    << regexMatch(line, R"(^.*?(\S+)(?:\s+\(.*\))?\s*$)")
++                    << '\n';
+     }
+     input_file.close();
+     output_file.close();
+@@ -357,7 +326,7 @@ bool LibRename::ExecuteRename() {
      // exes
      // We do not bother with defs for things that don't have
      // import libraries
@@ -1861,7 +2058,7 @@ index f98e063..32da29c 100644
          // Extract DLL
          if (!this->ComputeDefFile()) {
              debug("Failed to compute def file");
-@@ -439,15 +397,23 @@ bool LibRename::ExecutePERename() {
+@@ -439,15 +408,23 @@ bool LibRename::ExecutePERename() {
          std::cerr << e.what() << "\n";
          return false;
      }
@@ -1882,7 +2079,7 @@ index f98e063..32da29c 100644
 +                      << reportLastError() << "\n";
 +            return false;
 +        }
-+        return this->FindDllAndRename(pe_handle);
++        return LibRename::FindDllAndRename(pe_handle);
 +    } catch (const std::system_error& e) {
 +        std::cerr << "Could not obtain write access: " << e.what()
 +                  << " (Error Code: " << e.code().value() << ")" << '\n';
