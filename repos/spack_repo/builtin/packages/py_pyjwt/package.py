@@ -11,7 +11,7 @@ class PyPyjwt(PythonPackage):
     """JSON Web Token implementation in Python"""
 
     homepage = "https://github.com/jpadilla/pyjwt"
-    pypi = "PyJWT/PyJWT-1.7.1.tar.gz"
+    pypi = "pyjwt/pyjwt-1.7.1.tar.gz"
     git = "https://github.com/jpadilla/pyjwt.git"
 
     license("MIT")
@@ -32,3 +32,12 @@ class PyPyjwt(PythonPackage):
     depends_on("py-cryptography@1.4:", when="+crypto", type=("build", "run"))
     depends_on("py-cryptography@3.3.1:", when="@2.4: +crypto", type=("build", "run"))
     depends_on("py-cryptography@3.4.0:", when="@2.10: +crypto", type=("build", "run"))
+
+    # With PyJWT 2.5.0, the tarfile changed from PyJWT-2.4.0.tar.gz to pyjwt-2.5.0.tar.gz
+    def url_for_version(self, version):
+        if version >= Version("2.5.0"):
+            url = "https://pypi.io/packages/source/p/pyjwt/pyjwt-{0}.tar.gz"
+        else:
+            url = "https://pypi.io/packages/source/P/PyJWT/PyJWT-{0}.tar.gz"
+        return url.format(version.dotted)
+
