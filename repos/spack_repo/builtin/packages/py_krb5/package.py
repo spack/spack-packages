@@ -12,15 +12,21 @@ class PyKrb5(PythonPackage):
 
     homepage = "https://github.com/jborean93/pykrb5"
     pypi = "krb5/krb5-0.6.0.tar.gz"
+    git = "https://github.com/jborean93/pykrb5.git"
 
     maintainers("wdconinc")
 
     license("MIT", checked_by="wdconinc")
 
+    version("0.9.0", sha256="4cdd2c85ff4770108edaf48fedf19888cf956ff374e2e97e40f8412b048caee6")
+    version("0.8.0", sha256="daaf580cf563a2435cc889d4a0692e02c5788e1eb91f0246d56114cf4f08ba1c")
+    version("0.7.1", sha256="ed5f13d5031489b10d8655c0ada28a81c2391b3ecb8a08c6d739e1e5835bc450")
     version("0.7.0", sha256="6a308f2e17d151c395b24e6aec7bdff6a56fe3627a32042fc86d412398a92ddd")
     version("0.6.0", sha256="712ba092fbe3a28ec18820bb1b1ed2cc1037b75c5c7033f970c6a8c97bbd1209")
 
-    depends_on("python@3.8:", type=("build", "run"), when="@0.7.0:")
+    depends_on("python@3.8:", type=("build", "run"), when="@0.7.0:0.8")
+    depends_on("python@3.9:", type=("build", "run"), when="@0.9:")
     depends_on("py-setuptools@42:", type="build")
-    depends_on("py-cython@0.29.32:3", type=("build", "run"))
+    depends_on("py-cython@0.29.32:3", type="build", when="@:0.8")
+    depends_on("py-cython@3.2.1", type="build", when="@0.9:")
     depends_on("krb5", type=("build", "run"))
