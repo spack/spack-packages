@@ -33,9 +33,13 @@ class PyOpenai(PythonPackage):
     )
     variant("embeddings", default=False, description="represents a text string vector", when="@:0")
     variant("voice", default=False, description="library for proceeding sound", when="@1.68.1:")
-    variant("aiohttp", default=False, description="aiohttp backend for improved concurrency performance", when="@1.89.0:")
+    variant(
+        "aiohttp",
+        default=False,
+        description="aiohttp backend for improved concurrency performance",
+        when="@1.89.0:"
+    )
     variant("realtime", default=False, description="support for Realtime API", when="@1.58:")
-
 
     depends_on("python@3.7.1:", type=("build", "run"))
     depends_on("python@3.9:", type=("build", "run"), when="@2.7.2:")

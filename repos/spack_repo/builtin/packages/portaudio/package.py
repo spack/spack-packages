@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class Portaudio(AutotoolsPackage):
-    """PortAudio is a free, cross-platform, open-source, audio I/O library.  It lets you write simple audio programs in 'C' or C++ that will compile and run on many platforms including Windows, Macintosh OS X, and Unix (OSS/ALSA). """
+    """PortAudio is a free, cross-platform, open-source, audio I/O library.  It lets you write
+    simple audio programs in 'C' or C++ that will compile and run on many platforms including
+    Windows, Macintosh OS X, and Unix (OSS/ALSA). """
 
     homepage = "https://www.portaudio.com/"
     url = "https://github.com/PortAudio/portaudio/archive/refs/tags/v19.7.0.tar.gz"
@@ -22,6 +24,5 @@ class Portaudio(AutotoolsPackage):
     depends_on("alsa-lib", type="link")
 
     def configure_args(self):
-        spec = self.spec
         args = ["--with-alsa"]
         return args
