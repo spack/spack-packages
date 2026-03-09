@@ -31,11 +31,12 @@ class PyParamiko(PythonPackage):
     version("2.9.2", sha256="944a9e5dbdd413ab6c7951ea46b0ab40713235a9c4c5ca81cfe45c6f14fa677b")
     version("2.7.1", sha256="920492895db8013f6cc0179293147f830b8c7b21fdfc839b6bad760c27459d9f")
 
-    depends_on("python@3.9:", when="@4:", type=("build", "run"))
-
     variant("invoke", default=False, description="Enable invoke support")
+    conflicts("~invoke", when="@4:", msg="invoke is in core as of 4.0.0")
 
-    depends_on("py-setuptools", when="@:3", type="build")
+    depends_on("python@3.9:", when="@4:", type=("build", "run"))
+    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@77:", when="@4:", type="build")
     depends_on("py-bcrypt@3.2:", when="@3:", type=("build", "run"))
     depends_on("py-cryptography@3.3:", when="@3:", type=("build", "run"))
     depends_on("py-pynacl@1.5:", when="@3:", type=("build", "run"))
