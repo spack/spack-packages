@@ -16,6 +16,9 @@ class Qgis(CMakePackage):
     """
 
     homepage = "https://qgis.org"
+
+    # the downloads are listed via json, so the spack checksum crawler won't find them
+    # spack checksum qgis x.y.z will provide the new checksum
     url = "https://qgis.org/downloads/qgis-3.44.7.tar.bz2"
 
     maintainers("adamjstewart", "Sinan81", "Chrismarsh")
