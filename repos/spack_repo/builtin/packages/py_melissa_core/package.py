@@ -12,7 +12,10 @@ class PyMelissaCore(PythonPackage, CudaPackage):
     """Melissa is a file-avoiding, adaptive, fault-tolerant and elastic
     framework, to run large-scale sensitivity analysis or deep-surrogate
     training on supercomputers.
+
     This package builds the launcher and server modules.
+
+    **Note:** This package is now unified as `py-melissa-online` from version 3+.
     """
 
     homepage = "https://gitlab.inria.fr/melissa/melissa"

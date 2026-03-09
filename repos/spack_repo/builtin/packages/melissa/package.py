@@ -10,6 +10,8 @@ from spack.package import *
 class Melissa(CMakePackage):
     """Melissa is a file-avoiding, adaptive, fault-tolerant and elastic
     framework, to run large-scale sensitivity analysis on supercomputers.
+
+    **Note:** This package is now unified as `py-melissa-online` from version 3+.
     """
 
     homepage = "https://gitlab.inria.fr/melissa/melissa"
