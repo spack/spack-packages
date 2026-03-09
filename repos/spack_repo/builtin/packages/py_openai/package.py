@@ -29,7 +29,7 @@ class PyOpenai(PythonPackage):
         "wandb",
         default=False,
         description="keeps track of hyperparameters, system metrics, and predictions",
-        when="@:0"
+        when="@:0",
     )
     variant("embeddings", default=False, description="represents a text string vector", when="@:0")
     variant("voice", default=False, description="library for proceeding sound", when="@1.68.1:")
@@ -37,7 +37,7 @@ class PyOpenai(PythonPackage):
         "aiohttp",
         default=False,
         description="aiohttp backend for improved concurrency performance",
-        when="@1.89.0:"
+        when="@1.89.0:",
     )
     variant("realtime", default=False, description="support for Realtime API", when="@1.58:")
 
