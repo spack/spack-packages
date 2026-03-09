@@ -22,4 +22,8 @@ class PySspilib(PythonPackage):
     version("0.1.0", sha256="58b5291553cf6220549c0f855e0e6973f4977375d8236ce47bb581efb3e9b1cf")
 
     depends_on("py-setuptools@61:", type="build")
-    depends_on("py-cython@3", type=("build", "run"))
+    depends_on("py-setuptools@77:", type="build", when="@0.3.1:")
+    depends_on("py-setuptools@77.0.3:", type="build", when="@0.4:")
+    depends_on("py-cython@3", type="build")
+    depends_on("py-cython@3.1.3", type="build", when="@0.4")
+    depends_on("py-cython@3.2.4", type="build", when="@0.5")
