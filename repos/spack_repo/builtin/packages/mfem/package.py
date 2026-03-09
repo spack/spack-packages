@@ -721,7 +721,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             if using_nvcc:
                 cxxstd_flag = "-std=c++" + cxxstd
             else:
-                cxxstd_flag = getattr(self.compiler, "cxx" + cxxstd + "_flag")
+                cxxstd_flag = getattr(self["cxx"], "cxx" + cxxstd + "_flag")
 
         cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
 
@@ -781,7 +781,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         if "~static" in spec:
             options += ["STATIC=NO"]
         if "+shared" in spec:
-            options += ["SHARED=YES", "PICFLAG=%s" % (xcompiler + self.compiler.cxx_pic_flag)]
+            options += ["SHARED=YES", "PICFLAG=%s" % (xcompiler + self["cxx"].cxx_pic_flag)]
 
         if "+mpi" in spec:
             options += ["MPICXX=%s" % spec["mpi"].mpicxx]
@@ -870,7 +870,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 # OpenMP; if not found, we should not add any flags -- how do
                 # we figure out if strumpack found OpenMP?
                 if not self.spec.satisfies("%apple-clang"):
-                    sp_opt += [xcompiler + self.compiler.openmp_flag]
+                    sp_opt += [xcompiler + self["cxx"].openmp_flag]
             if "^parmetis" in strumpack:
                 parmetis = strumpack["parmetis"]
                 sp_opt += [parmetis.headers.cpp_flags]
@@ -992,7 +992,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             ]
 
         if "+zlib" in spec:
-            if "@:3.3.2" in spec:
+            if spec.satisfies("@:3.3.2"):
                 options += ["ZLIB_DIR=%s" % spec["zlib-api"].prefix]
             else:
                 options += [
@@ -1025,7 +1025,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             ]
 
         if "+openmp" in spec:
-            options += ["OPENMP_OPT=%s" % (xcompiler + self.compiler.openmp_flag)]
+            options += ["OPENMP_OPT=%s" % (xcompiler + self["cxx"].openmp_flag)]
 
         if "+cuda" in spec:
             if using_nvcc:
@@ -1278,7 +1278,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             mumps_opt = ["-I%s" % mumps.prefix.include]
             if "+openmp" in mumps:
                 if not self.spec.satisfies("%apple-clang"):
-                    mumps_opt += [xcompiler + self.compiler.openmp_flag]
+                    mumps_opt += [xcompiler + self["cxx"].openmp_flag]
             options += [
                 "MUMPS_OPT=%s" % " ".join(mumps_opt),
                 "MUMPS_LIB=%s" % ld_flags_from_library_list(mumps.libs),
@@ -1326,7 +1326,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 # Replace the definition of MFEM_INC_DIR with '$(MFEM_DIR)' for
                 # miniapps that include directly headers like
                 # "general/forall.hpp" and to avoid mixing source-tree and
-                # install-tree headers that use '#prgma once'.
+                # install-tree headers that use '#pragma once'.
                 filter_file("(MFEM_INC_DIR.*)=.*$", "\\1= $(MFEM_DIR)", "config.mk")
                 shutil.copystat("config.mk.orig", "config.mk")
                 # TODO: miniapps linking to libmfem-common.* will not work.
