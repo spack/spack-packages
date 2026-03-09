@@ -19,6 +19,7 @@ class Roms(MakefilePackage):
     url = "https://github.com/myroms/roms/archive/refs/tags/roms-4.2.tar.gz"
 
     maintainers("rsoutelino")
+    
     license("MIT", checked_by="rsoutelino")
 
     version("4.2", sha256="5035d72f708dfcdbc00b243a1782bc43b99c8c8a2f65881a13d38d5baaaf289b")
