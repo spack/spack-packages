@@ -721,7 +721,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             if using_nvcc:
                 cxxstd_flag = "-std=c++" + cxxstd
             else:
-                cxxstd_flag = getattr(self["cxx"], "cxx" + cxxstd + "_flag")
+                cxxstd_flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
 
         cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
 
