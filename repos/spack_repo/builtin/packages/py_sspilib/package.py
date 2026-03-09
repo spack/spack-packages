@@ -27,4 +27,4 @@ class PySspilib(PythonPackage):
     depends_on("py-setuptools@77.0.3:", type="build", when="@0.4:")
     depends_on("py-cython@3", type="build")
     depends_on("py-cython@3.1.3", type="build", when="@0.4")
-    depends_on("py-cython@3.2.4", type="build", when="@0.5")
+    depends_on("py-cython@3.2.1", type="build", when="@0.5")
