@@ -14,7 +14,8 @@ class Memcached(AutotoolsPackage):
     """
 
     homepage = "https://github.com/memcached/memcached"
-    url = "https://www.memcached.org/files/memcached-1.5.20.tar.gz"
+    url = "https://www.memcached.org/files/memcached-1.6.41.tar.gz"
+    git = "https://github.com/memcached/memcached.git"
 
     license("BSD-3-Clause")
 
@@ -58,7 +59,7 @@ class Memcached(AutotoolsPackage):
     depends_on("libevent", type="build")
 
     def url_for_version(self, version):
-        if self.spec.satisfies("@:1.5"):
+        if version <= Version("1.5"):
             return f"https://github.com/memcached/memcached/archive/{version}.tar.gz"
         else:
             return f"https://www.memcached.org/files/memcached-{version}.tar.gz"
