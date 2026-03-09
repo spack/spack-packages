@@ -29,5 +29,3 @@ class PyValidatePyproject(PythonPackage):
     depends_on("py-tomli", type=("build", "run"))
     depends_on("py-tomli@1.2.1:", when="^python@3.11", type=("build", "run"))
     depends_on("py-trove-classifiers@2021.10.20:", type=("build", "run"))
-
-    # depends_on("py-pytest", type="test")
