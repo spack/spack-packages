@@ -13,6 +13,7 @@ class PyGssapi(PythonPackage):
 
     homepage = "https://github.com/pythongssapi/python-gssapi"
     pypi = "gssapi/gssapi-1.8.2.tar.gz"
+    git = "https://github.com/pythongssapi/python-gssapi.git"
 
     maintainers("wdconinc")
 
