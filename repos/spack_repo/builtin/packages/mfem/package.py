@@ -255,42 +255,62 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         description="C++ language standard",
     )
 
-    conflicts("+shared", when="@:3.3.2")
     conflicts("~static~shared")
     conflicts("~threadsafe", when="@:3+openmp")
     requires("+threadsafe", when="+openmp")
 
-    conflicts("+cuda", when="@:3")
-    conflicts("+rocm", when="@:4.1")
     conflicts("+cuda+rocm")
-    conflicts("+netcdf", when="@:3.1")
-    conflicts("+superlu-dist", when="@:3.1")
-    # STRUMPACK support was added in mfem v3.3.2, however, here we allow only
-    # strumpack v3+ support for which is available starting with mfem v4.0:
-    conflicts("+strumpack", when="@:3")
-    conflicts("+gnutls", when="@:3.1")
-    conflicts("+zlib", when="@:3.2")
-    conflicts("+mpfr", when="@:3.2")
-    conflicts("+petsc", when="@:3.2")
-    conflicts("+slepc", when="@:4.1")
-    conflicts("+sundials", when="@:3.2")
-    conflicts("+pumi", when="@:3.3.2")
-    conflicts("+gslib", when="@:4.0")
-    conflicts("timer=mac", when="@:3.3.0")
-    conflicts("timer=mpi", when="@:3.3.0")
-    conflicts("~metis+mpi", when="@:3.3.0")
-    conflicts("+metis~mpi", when="@:3.3.0")
-    conflicts("+conduit", when="@:3.3.2")
-    conflicts("+occa", when="@:3")
-    conflicts("+raja", when="@:3")
-    conflicts("+libceed", when="@:4.0")
-    conflicts("+umpire", when="@:4.0")
-    conflicts("+amgx", when="@:4.1")
     conflicts("+amgx", when="~cuda")
     conflicts("+mpi~cuda ^hypre+cuda")
-    conflicts("+mpi ^hypre+cuda", when="@:4.2")
     conflicts("+mpi~rocm ^hypre+rocm")
-    conflicts("+mpi ^hypre+rocm", when="@:4.3")
+
+    with when("@:3"):
+        conflicts("+cuda")
+        # STRUMPACK support was added in mfem v3.3.2, however, here we allow only
+        # strumpack v3+ support for which is available starting with mfem v4.0:
+        conflicts("+strumpack")
+        conflicts("+occa")
+        conflicts("+raja")
+
+    with when("@:3.1"):
+        conflicts("+netcdf")
+        conflicts("+superlu-dist")
+        conflicts("+gnutls")
+
+    with when("@:3.2"):
+        conflicts("+zlib")
+        conflicts("+mpfr")
+        conflicts("+petsc")
+        conflicts("+sundials")
+
+    with when("@:3.3.0"):
+        conflicts("timer=mac")
+        conflicts("timer=mpi")
+        conflicts("~metis+mpi")
+        conflicts("+metis~mpi")
+
+    with when("@:3.3.2"):
+        conflicts("+shared")
+        conflicts("+pumi")
+        conflicts("+conduit")
+
+    with when("@:4.0"):
+        conflicts("+gslib")
+        conflicts("+libceed")
+        conflicts("+umpire")
+
+    with when("@:4.1"):
+        conflicts("+rocm")
+        conflicts("+amgx")
+        conflicts("+slepc")
+
+    with when("@:4.2"):
+        conflicts("+mpi ^hypre+cuda")
+
+    with when("@:4.3"):
+        conflicts("+mpi ^hypre+rocm")
+        # See https://github.com/mfem/mfem/issues/2957
+        conflicts("^mpich@4:", when="+mpi")
 
     conflicts("+superlu-dist", when="~mpi")
     conflicts("+strumpack", when="~mpi")
@@ -299,9 +319,6 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     conflicts("+pumi", when="~mpi")
     conflicts("timer=mpi", when="~mpi")
     conflicts("+mumps", when="~mpi")
-
-    # See https://github.com/mfem/mfem/issues/2957
-    conflicts("^mpich@4:", when="@:4.3+mpi")
 
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+strumpack")
@@ -442,11 +459,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     # The MFEM 4.0.0 SuperLU interface fails when using hypre@2.16.0 and
     # superlu-dist@6.1.1. See https://github.com/mfem/mfem/issues/983.
     # This issue was resolved in v4.1.
-    conflicts("+superlu-dist", when="mfem@:4.0 ^hypre@2.16.0: ^superlu-dist@6:")
+    conflicts("+superlu-dist", when="@:4.0 ^hypre@2.16.0: ^superlu-dist@6:")
     # The STRUMPACK v3 interface in MFEM seems to be broken as of MFEM v4.1
     # when using hypre version >= 2.16.0.
     # This issue is resolved in v4.2.
-    conflicts("+strumpack", when="mfem@4.0.0:4.1 ^hypre@2.16.0:")
+    conflicts("+strumpack", when="@4.0.0:4.1 ^hypre@2.16.0:")
     conflicts("+strumpack ^strumpack+cuda", when="~cuda")
 
     depends_on("occa@1.0.8:", when="@:4.1+occa")
