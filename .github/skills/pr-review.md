@@ -46,7 +46,7 @@ For every package version being added or updated:
 ### 4. Dependency Completeness
 
 For each changed package, examine the upstream build configuration to verify that all dependency
-changes are reflected in `package.py`.
+changes are reflected in `package.py`. Use links to the commit that introduced the dependency change to allow reviewers to validate the changes, or justify by quoting the release notes if the package has no git attribute.
 
 #### 4a. Locate the upstream build spec
 

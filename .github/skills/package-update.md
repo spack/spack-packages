@@ -323,7 +323,7 @@ Updated the following packages to their latest upstream releases:
 
 ## Dependency changes
 
-<List each change: package, what changed, which version introduced the change.
+<List and justify each change: package, what changed, which version introduced the change. Always include links to the commit that introduced the dependency change to allow reviewers to validate, or justify by quoting the release notes if the package has no git attribute.
 If none, write "No dependency changes.">
 
 ## Version diff links
