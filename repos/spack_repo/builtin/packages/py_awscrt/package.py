@@ -31,7 +31,7 @@ class PyAwscrt(PythonPackage):
     depends_on("openssl", type=("build"), when="platform=linux")
     depends_on("py-setuptools", type=("build"))
     # awscrt>=0.29 requires setuptools.command.bdist_wheel introduced in v71.
-    depends_on("py-setuptools@71:", when="@0.29:", type=("build"))
+    depends_on("py-setuptools@75.3.1:", when="@0.29:", type=("build"))
 
     # On Linux, tell aws-crt-python to use libcrypto from spack (openssl)
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
