@@ -25,13 +25,13 @@ class Qgis(CMakePackage):
 
     license("GPL-2.0-or-later")
 
-    version("3.44.7", sha256="1ab06f40600c84e928b4fe22a66997d80973201b10769e7a636e5be83459b814")
     # Prefer latest LTR
-    version(
-        "3.40.6",
-        sha256="dd68d39a2a29326031195bed2125e8b0fa7112fe9ee74d5f9850d06b02cef6a8",
+    version("3.44.8",
+        sha256="146e197f34f1f9ede8cfdf5b9cc4d76667771720a302172c32d4117367356e96",
         preferred=True,
     )
+    version("3.44.7", sha256="1ab06f40600c84e928b4fe22a66997d80973201b10769e7a636e5be83459b814")
+    version("3.40.6", sha256="dd68d39a2a29326031195bed2125e8b0fa7112fe9ee74d5f9850d06b02cef6a8")
     version("3.40.1", sha256="53110464c9f5ba5562c437e1563ab36dad2f218e6e7d1c0cfbe5b6effe241c8e")
     version("3.34.15", sha256="afb0bed05ffbc7bcb6d27dd1a8644b1e63ac2cb322baa058ff65b848c760efc2")
     version("3.34.13", sha256="a8873ca9bae346bae48ef3fe3eed702ef1f06d951201464464a64019302ba50b")
