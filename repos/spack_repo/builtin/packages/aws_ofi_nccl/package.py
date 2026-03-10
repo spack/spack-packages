@@ -64,6 +64,7 @@ class AwsOfiNccl(AutotoolsPackage):
     depends_on("cuda", when="+cuda")
     depends_on("nccl fabrics=auto", when="+cuda")
     depends_on("hip", when="+rocm")
+    depends_on("rccl", when="+rocm")
     depends_on("mpi")
     depends_on("hwloc", when="@1.7:")
     depends_on("autoconf", type="build")
