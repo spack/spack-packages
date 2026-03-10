@@ -59,11 +59,12 @@ class PyGeopandas(PythonPackage):
         version("0.3.0", sha256="e63bb32a3e516d8c9bcd149c22335575defdc5896c8bdf15c836608f152a920b")
 
     with default_args(type="build"):
-        depends_on("py-hatchling", when="@1.2:")
+        # https://github.com/geopandas/geopandas/pull/3747
+        depends_on("py-hatchling@1.5:", when="@1.2:")
         depends_on("py-hatch-vcs", when="@1.2:")
 
         # Historical dependencies
-        # https://github.com/geopandas/geopandas/pull/3603
+        # https://github.com/geopandas/geopandas/pull/3746
         depends_on("py-setuptools@77:", when="@1.1.3:1.1")
         depends_on("py-setuptools@61:", when="@0.14:1.1")
         depends_on("py-setuptools", when="@:1.1")
