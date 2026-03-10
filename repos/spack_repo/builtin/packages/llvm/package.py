@@ -698,6 +698,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
                 return None
             if "AMD" in output:
                 return None
+            if "Arm Toolchain for Linux" in output:
+                return None
             match = re.search(cls.compiler_version_regex, output)
             if match:
                 return match.group(match.lastindex)

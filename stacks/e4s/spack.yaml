@@ -56,7 +56,7 @@ spack:
       - +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
         +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
         +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
-        +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+        +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
       - target=x86_64_v3
     mpich:
       require:
@@ -97,12 +97,13 @@ spack:
     - axom
     - cabana ^kokkos +cuda_lambda
     - caliper
-    - chai ^umpire ~shared
+    - chai ^umpire
     - chapel
     - cusz
-    - dealii
+    #- dealii~arborx~kokkos~vtk cxxstd=17
     - ecp-data-vis-sdk  +adios2 ~ascent +hdf5 +vtkm +zfp ~paraview
-    - exago +mpi +python +raja +hiop  ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja
+    # Exago still requires an old version of Raja that doesn't support the CUDA arch we want to build for
+    # - exago +mpi +python +raja +hiop  ~ipopt ^hiop@1.0.0 ~sparse +mpi +raja ^raja~cuda
     - fftx
     - flecsi
     - ginkgo
@@ -130,7 +131,7 @@ spack:
     - superlu-dist
     - tasmanian
     - trilinos
-    - umpire ~shared
+    - umpire
     - adios2
     - vtk-m
     - zfp
@@ -156,7 +157,7 @@ spack:
   - conduit
   - cp2k +mpi
   - datatransferkit
-  - dealii ~vtk # https://github.com/spack/spack/pull/45554#issuecomment-2457255720
+  #- dealii ~arborx ~kokkos ~vtk cxxstd=17 # https://github.com/spack/spack/pull/45554#issuecomment-2457255720
   - drishti
   - dxt-explorer
   - dyninst
@@ -336,6 +337,10 @@ spack:
           - ~rocm
           - ~cuda
           - target=x86_64_v3
+        trilinos:
+          prefer:
+          - ~rocm +cuda cuda_arch=80
+          - ~superlu-dist
 
   - group: "cuda-90"
     specs:
@@ -361,19 +366,24 @@ spack:
           - ~rocm
           - ~cuda
           - target=x86_64_v3
+        trilinos:
+          prefer:
+          - ~rocm +cuda cuda_arch=90
+          - ~superlu-dist
 
   - group: rocm
     specs:
     # ROCM NOARCH
-    - hpctoolkit +rocm
-    - tau +mpi +rocm +syscall           # tau: has issue with `spack env depfile` build
+    #- hpctoolkit +rocm
+    # - tau +mpi +rocm +syscall           # tau: has issue with `spack env depfile` build
 
     # ROCM 90a
     - adios2 +kokkos
     - amrex
     - arborx
     - cabana
-    - caliper
+    # Can't build one of its dependencies (py-llvmlite)
+    # - caliper
     - chai
     - ecp-data-vis-sdk ~paraview +vtkm # +paraview: CMake Error at VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/CMakeLists.txt:272 (find_package): Could not find a package configuration file provided by "rocthrust" with any of the following names: rocthrustConfig.cmake rocthrust-config.cmake
     - gasnet
@@ -393,7 +403,7 @@ spack:
     - sundials
     - superlu-dist
     - tasmanian ~openmp
-    - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack ~ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+    - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack ~ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
     - umpire
     - upcxx
     # INCLUDED IN ECP DAV ROCM
@@ -424,7 +434,10 @@ spack:
             - ~cuda
             - +rocm
             - amdgpu_target=gfx90a
-
+        trilinos:
+          prefer:
+          - +rocm amdgpu_target=gfx90a ~cuda
+          - ~superlu-dist
 
   ci:
     pipeline-gen:
