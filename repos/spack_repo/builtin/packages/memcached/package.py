@@ -59,7 +59,7 @@ class Memcached(AutotoolsPackage):
     depends_on("libevent", type="build")
 
     def url_for_version(self, version):
-        if version <= Version("1.5"):
+        if version < Version("1.6"):
             return f"https://github.com/memcached/memcached/archive/{version}.tar.gz"
         else:
             return f"https://www.memcached.org/files/memcached-{version}.tar.gz"
