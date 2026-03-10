@@ -838,6 +838,22 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.torch_cuda_arch_list(env)
+        if "+rocm" in self.spec:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix.lib)
+
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        if "+rocm" in self.spec:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix.lib)
+            # PyTorch headers (e.g. c10/util/complex.h) include <thrust/complex.h>;
+            # dependents need rocthrust include so HIP device builds can find it.
+            env.set("THRUST_PATH", self.spec["rocthrust"].prefix)
+            env.prepend_path("CPATH", self.spec["rocthrust"].prefix.include)
+
+    def setup_dependent_run_environment(self, env, dependent_spec):
+        """So dependents (e.g. py-torch-nvidia-apex, py-torchaudio) can find
+        libamdhip64.so when importing torch or running code that uses ROCm."""
+        if "+rocm" in self.spec:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix.lib)
 
     @run_before("install")
     def build_amd(self):
