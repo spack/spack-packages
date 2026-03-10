@@ -134,6 +134,7 @@ class Qgis(CMakePackage):
     depends_on("libspatialite@4.2.0:")
     depends_on("libzip")
     depends_on("libtasn1")
+
     depends_on("proj@4.4.0:")
     depends_on("proj@4.9.3:", when="@3.8.2:")
     depends_on("proj@7.2:", when="@3.28:")
@@ -141,6 +142,8 @@ class Qgis(CMakePackage):
     # fails to build with proj 9.4+ until the backported patch in 3.34.5
     # https://github.com/qgis/QGIS/pull/56761
     depends_on("proj@:9.3", when="@:3.34.4")
+    depends_on("proj@:9.5", when="@3.34.5:3.34.15")
+
     depends_on("py-psycopg2", type=("build", "run"))  # TODO: is build dependency necessary?
     depends_on("py-pyqt4", when="@2")
     depends_on("py-pyqt5@5.3:", when="@3")
