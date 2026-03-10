@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-
 import platform
 
 from spack_repo.builtin.build_systems.generic import Package
@@ -12,39 +11,29 @@ from spack.package import *
 
 _versions = {
     "avx2-6.1.1": {
-        "Linux-x86_64": "5eaf676f9711a38835d609264321a30266b487b65477547802dedee982bc82d5",
+        "Linux-x86_64": "5eaf676f9711a38835d609264321a30266b487b65477547802dedee982bc82d5"
     },
     "6.1.1": {
         "Linux-aarch64": "927c9f165ac6ec7547d543215a5d02c662c691c1659ba5bcd3d687817e8a6757",
         "Linux-x86_64": "a0bc1d6d2c3c00620367bbc5dbf2b3a7018abc92d1ff65f06cec46f75350b9be",
     },
     "avx2-6.0.1": {
-        "Linux-x86_64": "f31f98256a0c6727b6ddfe50aa3ac64c45549981138d670a57e90114b4b9c9d2",
+        "Linux-x86_64": "f31f98256a0c6727b6ddfe50aa3ac64c45549981138d670a57e90114b4b9c9d2"
     },
     "6.0.1": {
         "Linux-aarch64": "0699cbccb6dbee66e14e69c4bb1300b35820b4222afdd7371e50aa23fe28be48",
         "Linux-x86_64": "5e9b49588375e0ce5bc32767127cc725f5425917804042cdecdfd5c6b965ef61",
     },
     "avx2-6.0.0": {
-        "Linux-x86_64": "02c21294efe7b1b721e26cb90f98ee15ad682d02807201b7d217dfe67905a2fd",
+        "Linux-x86_64": "02c21294efe7b1b721e26cb90f98ee15ad682d02807201b7d217dfe67905a2fd"
     },
-    "6.0.0": {
-        "Linux-x86_64": "219bd1deb6d64a63cb72471926cb81665cbbcdec19f9c9549761be67d49a29c6",
-    },
-    "5.0.4": {
-        "Linux-x86_64": "c4ea5aea60da7bcb18a6b7042609206fbeb2a765c6fa958c5689d450b588b036",
-    },
-    "5.0.3": {
-        "Linux-x86_64": "b8b9076d1711150a6d6cb3eb30b18e2782fa847c5a86d8404b9339faef105043",
-    },
-    "4.2.1": {
-        "Linux-x86_64": "a84b6d2706f0ddb2f3750951864502a5c49d081836b00164448b1d81c577f51a",
-    },
-    "4.2.0": {
-        "Linux-x86_64": "01096466e41a5232e5a18af7400e48c02a6e489f0d5d668a90cdd2746e8e22e2",
-    },
-    
+    "6.0.0": {"Linux-x86_64": "219bd1deb6d64a63cb72471926cb81665cbbcdec19f9c9549761be67d49a29c6"},
+    "5.0.4": {"Linux-x86_64": "c4ea5aea60da7bcb18a6b7042609206fbeb2a765c6fa958c5689d450b588b036"},
+    "5.0.3": {"Linux-x86_64": "b8b9076d1711150a6d6cb3eb30b18e2782fa847c5a86d8404b9339faef105043"},
+    "4.2.1": {"Linux-x86_64": "a84b6d2706f0ddb2f3750951864502a5c49d081836b00164448b1d81c577f51a"},
+    "4.2.0": {"Linux-x86_64": "01096466e41a5232e5a18af7400e48c02a6e489f0d5d668a90cdd2746e8e22e2"},
 }
+
 
 class Orca(Package):
     """An ab initio, DFT and semiempirical SCF-MO package
