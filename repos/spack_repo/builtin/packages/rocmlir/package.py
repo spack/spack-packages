@@ -64,6 +64,7 @@ class Rocmlir(CMakePackage):
             "external/llvm-project/mlir/lib/ExecutionEngine/CMakeLists.txt",
             string=True,
         )
+
     generator("ninja")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
