@@ -25,10 +25,11 @@ class Vtk(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("9.6.0", sha256="d77d180694faafdc816578b9a53651f6790e799615811bfbb91018661a3bb8f2")
     version(
         "9.5.1",
         sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f",
-        preferred=True,
+        # preferred=True,
     )
     version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
@@ -110,7 +111,8 @@ class Vtk(CMakePackage):
 
     # Based on PyPI wheel availability
     with when("+python"), default_args(type=("build", "link", "run")):
-        extends("python@:3.13")
+        extends("python@:3.14")
+        extends("python@:3.13", when="@:9.5")
         extends("python@:3.12", when="@:9.3")
         extends("python@:3.11", when="@:9.2")
         extends("python@:3.10", when="@:9.2.2")
