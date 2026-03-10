@@ -107,10 +107,7 @@ class AwsOfiNccl(AutotoolsPackage):
                 "--with-nccl={0}".format(spec["nccl"].prefix),
             )
         if spec.satisfies("+rocm"):
-            args.extend(
-                "--with-rocm={0}".format(spec["hip"].prefix),
-                "--with-rccl={0}".format(spec["rccl"].prefix),
-            )
+            args.extend("--with-rocm={0}".format(spec["hip"].prefix))
         if spec.satisfies("@1.7:"):
             args.extend(["--with-hwloc={0}".format(spec["hwloc"].prefix)])
 
