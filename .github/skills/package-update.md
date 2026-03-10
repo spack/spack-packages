@@ -155,7 +155,7 @@ spack checksum <package-name> <new-version>
 > sed -i 's/  # FIXME$//' repos/spack_repo/builtin/packages/<pkg>/package.py
 > ```
 
-Do not manually compute checksums. Do not modify `url`, `homepage`, `pypi`, `git`, `maintainers`,
+Do not manually compute checksums. Do not modify `url`, `homepage`, `pypi`, `git`, `maintainers`, `license`
 or the copyright header unless the upstream release requires it.
 
 #### 3b. Structural changes
@@ -173,9 +173,8 @@ Keep both base classes active so existing older versions continue to build.
 
 #### 3c. New packages
 
-If a new upstream dependency does not yet exist in the repository, create its `package.py` before
-adding the `depends_on(...)` reference. Follow the [`py-package-update`](py-package-update.md)
-conventions for Python packages.
+If an upstream dependency does not yet exist in the repository, create the package before adding the `depends_on(...)` reference.
+The `spack create` command will generate a recipe scaffold.
 
 ---
 
