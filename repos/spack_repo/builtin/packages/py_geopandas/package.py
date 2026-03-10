@@ -66,7 +66,7 @@ class PyGeopandas(PythonPackage):
         # https://github.com/geopandas/geopandas/pull/3603
         depends_on("py-setuptools@77:", when="@1.1.3:1.1")
         depends_on("py-setuptools@61:", when="@0.14:1.1")
-        depends_on("py-setuptools@:1.1")
+        depends_on("py-setuptools", when="@:1.1")
 
     with default_args(type=("build", "run")):
         depends_on("py-numpy@2.0:", when="@1.2:")
