@@ -186,13 +186,15 @@ class Vtk(CMakePackage):
     depends_on("hdf5+mpi", when="+mpi")
     depends_on("hdf5@1.8:", when="@8:9.0")
     depends_on("hdf5@1.10:", when="@9.1:")
+    depends_on("hdf5@1.14.6:", when="@9.6:")
     depends_on("jpeg")
     depends_on("jsoncpp")
     depends_on("libxml2")
     depends_on("lz4")
-    depends_on("netcdf-c@:4.9.2", when="io=exodusii")
-    depends_on("netcdf-c@:4.9.2~mpi", when="io=netcdf ~mpi")
-    depends_on("netcdf-c@:4.9.2+mpi", when="io=netcdf +mpi")
+    depends_on("netcdf-c@:4.9.3", when="io=exodusii")
+    depends_on("netcdf-c@:4.9.3~mpi", when="io=netcdf ~mpi")
+    depends_on("netcdf-c@:4.9.3+mpi", when="io=netcdf +mpi")
+    depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("zlib-api")
@@ -221,6 +223,7 @@ class Vtk(CMakePackage):
         # and to be safe against other issues, make them build with this version only:
         depends_on("seacas@2022-10-14", when="@9.2:9.3")
         depends_on("seacas@2024-06-27", when="@9.4:")
+        depends_on("seacas@2025-08-28", when="@9.6:")
 
     depends_on("nlohmann-json", when="@9.2:")
 
