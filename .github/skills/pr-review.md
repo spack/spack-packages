@@ -38,11 +38,8 @@ Check that the PR description adequately justifies the changes:
 
 For every package version being added or updated:
 
-- Query PyPI (`https://pypi.org/pypi/<package-name>/json`) to retrieve the current latest stable
-  release. Compare it to the version being added. If the PR adds version X but PyPI already shows
-  a newer stable release Y, flag this.
-- If the package uses a non-PyPI source (e.g., a GitHub `url` or `git` attribute), check the
-  upstream repository's tags or releases page to verify the submitted version is the latest.
+- If the package uses a non-PyPI source (e.g., a GitHub `url` or `git` attribute), check the upstream repository's tags or releases page to verify the submitted version is the latest.
+- Query PyPI (`https://pypi.org/pypi/<package-name>/json`) to retrieve the current latest stable release. Compare it to the version being added. If the PR adds version X but PyPI already shows a newer stable release Y, flag this.
 - Do **not** flag pre-releases (alpha, beta, rc) as missing unless the PR explicitly targets
   pre-releases.
 
