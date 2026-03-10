@@ -178,7 +178,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     ###########################################################################
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", type="build", when="+fortran")
 
     # Certain CMake versions have been found to break for our use cases
     depends_on("cmake@3.14.1:3.14,3.18.2:", type="build")
