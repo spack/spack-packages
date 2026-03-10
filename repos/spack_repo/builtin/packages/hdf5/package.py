@@ -116,14 +116,7 @@ class Hdf5(CMakePackage):
     variant(
         "cxxstd",
         default="98",
-        values=(
-            "98",
-            "11",
-            "14",
-            "17",
-            "20",
-            "23"
-        ),
+        values=("98", "11", "14", "17", "20", "23"),
         multi=False,
         description="Use the specified C++ standard when building.",
     )
