@@ -20,6 +20,10 @@ class PyTorchvision(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.25.0", sha256="a7ac1b3ab489d71f6e27edfad1e27616e4b8a9b1517e60fce4a950600d3510e8")
+    version("0.24.1", sha256="071da2078600bfec4886efab77358c9329abfedcf1488b05879b556cb9b84ba7")
+    version("0.24.0", sha256="f799cdd1d67a3edbcdc6af8fb416fe1b019b512fb426c0314302cd81518a0095")
+    version("0.23.0", sha256="db5a91569e5eb4a3b02e9eaad6080335f5ae3824890a697f5618541999f04027")
     version("0.22.1", sha256="fa1b0a58e13c08329bcff8d52607b4e25944fd074c01dee1b501c8158fadcdec")
     version("0.22.0", sha256="83ed8855cdfb138aba6f116f8fd8da8b83463170dad67a70f60327915ed12014")
     version("0.21.0", sha256="0a4a967bbb7f9810f792cd0289a07fb98c8fb5d1303fae8b63e3a6b05d720058")
@@ -52,13 +56,6 @@ class PyTorchvision(PythonPackage):
     version("0.9.1", sha256="79964773729880e0eee0e6af13f336041121d4cc8491a3e2c0e5f184cac8a718")
     version("0.9.0", sha256="9351ed92aded632f8c7f59dfadac13c191a834babe682f5785ea47e6fcf6b472")
     version("0.8.2", sha256="9a866c3c8feb23b3221ce261e6153fc65a98ce9ceaa71ccad017016945c178bf")
-    with default_args(deprecated=True):
-        version("0.8.1", sha256="c46734c679c99f93e5c06654f4295a05a6afe6c00a35ebd26a2cce507ae1ccbd")
-        version("0.8.0", sha256="b5f040faffbfc7bac8d4687d8665bd1196937334589b3fb5fcf15bb69ca25391")
-        version("0.7.0", sha256="fa0a6f44a50451115d1499b3f2aa597e0092a07afce1068750260fa7dd2c85cb")
-        version("0.6.1", sha256="8173680a976c833640ecbd0d7e6f0a11047bf8833433e2147180efc905e48656")
-        version("0.6.0", sha256="02de11b3abe6882de4032ce86dab9c7794cbc84369b44d04e667486580f0f1f7")
-        version("0.5.0", sha256="eb9afc93df3d174d975ee0914057a9522f5272310b4d56c150b955c287a4d74d")
 
     desc = "Enable support for native encoding/decoding of {} formats in torchvision.io"
     variant("png", default=True, description=desc.format("PNG"))
@@ -77,15 +74,19 @@ class PyTorchvision(PythonPackage):
 
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
-        depends_on("python@3.9:3.13", when="@0.21:")
+        depends_on("python@3.10:3.14", when="@0.24:")
+        depends_on("python@3.9:3.13", when="@0.21:0.23")
         depends_on("python@3.8:3.12", when="@0.17:0.20")
         depends_on("python@3.8:3.11", when="@0.15:0.16")
         depends_on("python@:3.10", when="@0.12:0.14")
         depends_on("python@:3.9", when="@0.8.2:0.11")
-        depends_on("python@:3.8", when="@0.5:0.8.1")
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.10.0", when="@0.25.0")
+        depends_on("py-torch@2.9.1", when="@0.24.1")
+        depends_on("py-torch@2.9.0", when="@0.24.0")
+        depends_on("py-torch@2.8.0", when="@0.23.0")
         depends_on("py-torch@2.7.1", when="@0.22.1")
         depends_on("py-torch@2.7.0", when="@0.22.0")
         depends_on("py-torch@2.6.0", when="@0.21.0")
@@ -118,12 +119,6 @@ class PyTorchvision(PythonPackage):
         depends_on("py-torch@1.8.1", when="@0.9.1")
         depends_on("py-torch@1.8.0", when="@0.9.0")
         depends_on("py-torch@1.7.1", when="@0.8.2")
-        depends_on("py-torch@1.7.0", when="@0.8.1")
-        depends_on("py-torch@1.7.0", when="@0.8.0")
-        depends_on("py-torch@1.6.0", when="@0.7.0")
-        depends_on("py-torch@1.5.1", when="@0.6.1")
-        depends_on("py-torch@1.5.0", when="@0.6.0")
-        depends_on("py-torch@1.4.1", when="@0.5.0")
 
     depends_on("ninja", type="build")
 
@@ -154,6 +149,8 @@ class PyTorchvision(PythonPackage):
     depends_on("py-six", when="@:0.5", type=("build", "run"))
     depends_on("py-typing-extensions", when="@0.12:0.14", type=("build", "run"))
 
+    # https://github.com/pytorch/vision/issues/9307
+    conflicts("^python@3.14.1")
     # https://github.com/pytorch/vision/pull/5898
     conflicts("^pil@10:", when="@:0.12")
     # https://github.com/pytorch/vision/issues/4146

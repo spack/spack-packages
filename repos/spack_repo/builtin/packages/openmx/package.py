@@ -40,10 +40,28 @@ class Openmx(MakefilePackage):
         when="@3.9",
     )
 
+    # Custom patch for clang: override Set_ProExpn_VNA.c
+    # See https://www.openmx-square.org/forum/patio.cgi?mode=view&no=2955
+    resource(
+        name="set_proexpn_patch",
+        url="https://gist.githubusercontent.com/Ncmexp2717/aaffd91eb1bc15e1909b057cc2e83c1f/raw/4e7dfd4a9346b82de69ce9b1d270042bebcd1610/Set_ProExpn_VNA.c",
+        sha256="d33de4cbae9af19f39bdf880d33a487cb8fb65beb9fbaa40f4202315dc6ec87b",
+        placement="set_proexpn_patch",
+        when="@3.9",
+        expand=False,
+    )
+
     depends_on("mpi")
     depends_on("fftw-api@3")
+    depends_on("blas")
+    depends_on("lapack")
     depends_on("scalapack")
     depends_on("sse2neon", when="target=aarch64:")
+
+    # Need OpenMP threaded BLAS libraries
+    requires("^openblas threads=openmp", when="^[virtuals=blas] openblas")
+    requires("^amdblis threads=openmp", when="^[virtuals=blas] amdblis")
+    requires("^intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
 
     patch("for_aarch64.patch", when="@3.8 target=aarch64:")
 
@@ -59,6 +77,9 @@ class Openmx(MakefilePackage):
         # http://www.openmx-square.org/bugfixed/21Oct17/README.txt
         if spec.satisfies("@3.9"):
             copy(join_path("source", "kpoint.in"), "work")
+            if "%aocc" in spec or "%llvm" in spec:
+                copy("set_proexpn_patch/Set_ProExpn_VNA.c", "source/Set_ProExpn_VNA.c")
+        filter_file(r"\bgcc\b", "$(CC)", "source/makefile")
         makefile = FileFilter("./source/makefile")
         makefile.filter("^DESTDIR.*$", "DESTDIR = {0}/bin".format(prefix))
         mkdirp(prefix.bin)
@@ -72,8 +93,13 @@ class Openmx(MakefilePackage):
             self.compiler.openmp_flag,
             spec["fftw-api"].headers.include_flags,
         ]
-        fc_option = [spec["mpi"].mpifc]
-        lib_option = [spec["fftw-api"].libs.ld_flags, lapack_blas_libs.ld_flags, "-lmpi_mpifh"]
+        fc_option = [spec["mpi"].mpifc, self.compiler.openmp_flag]
+        lib_option = [
+            spec["fftw-api"].libs.ld_flags,
+            lapack_blas_libs.ld_flags,
+            "-lmpi_mpifh",
+            self.compiler.openmp_flag,
+        ]
         if spec.satisfies("@3.8"):
             cc_option.append("-I$(LIBERIDIR)")
         if spec.satisfies("@3.9"):
@@ -86,11 +112,17 @@ class Openmx(MakefilePackage):
             fc_option.extend([self.compiler.openmp_flag, "-Ccpp"])
         else:
             common_option.append("-O3")
+            cc_option.extend(
+                ["-Wno-error=implicit-function-declaration", "-Wno-error=implicit-int", "-fcommon"]
+            )
             if "%gcc" in spec:
                 lib_option.append("-lgfortran")
                 if spec.satisfies("%gcc@10:"):
                     fc_option.append("-fallow-argument-mismatch")
-                    cc_option.append("-fcommon")
+            if "%llvm" in spec or "%aocc" in spec:
+                lib_option.extend(["-lflang", "-lpgmath", "-lflangrti"])
+            if "%oneapi" in spec:
+                lib_option.extend(["-lifcore"])
 
         return [
             "CC={0} -Dscalapack {1} ".format(" ".join(cc_option), " ".join(common_option)),

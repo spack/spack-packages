@@ -302,5 +302,5 @@ class PyHorovod(PythonPackage, CudaPackage):
 
     def test_check_build(self):
         """run horovodrun --check-build"""
-        horovodrun = which(self.prefix.bin.horovodrun)
+        horovodrun = which(self.prefix.bin.horovodrun, required=True)
         horovodrun("--check-build")

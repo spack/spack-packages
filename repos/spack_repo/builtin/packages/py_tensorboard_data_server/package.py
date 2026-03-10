@@ -22,6 +22,7 @@ class PyTensorboardDataServer(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("rust+dev", type="build")
+    depends_on("rust@:1.89+dev", type="build", when="@:0.6")
 
     # https://github.com/tensorflow/tensorboard/issues/5713
     patch(
@@ -40,7 +41,7 @@ class PyTensorboardDataServer(PythonPackage):
 
     def install(self, spec, prefix):
         with working_dir(join_path("tensorboard", "data", "server")):
-            cargo = which("cargo")
+            cargo = which("cargo", required=True)
             cargo("build", "--release")
 
         with working_dir(join_path("tensorboard", "data", "server", "pip_package")):

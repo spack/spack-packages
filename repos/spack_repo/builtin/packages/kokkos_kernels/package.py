@@ -24,7 +24,13 @@ class KokkosKernels(CMakePackage, CudaPackage):
     license("Apache-2.0 WITH LLVM-exception")
 
     version("develop", branch="develop")
-    version("master", branch="master")
+
+    version("5.0.2", sha256="7c7af2c3659ecc620cc7b7016876330d9f288e8c6fd7b70b70907687df823b43")
+    version("5.0.1", sha256="c9d0b507ab754b347b71b530683e9dea8dbf4d2e3cdadb863dcb494b07bbf0b2")
+    version("5.0.0", sha256="e1d7e7040b86f141004126c3fa5711f28697803d921c3558d82192a32156b1b2")
+    version("4.7.02", sha256="2d3b3e10ac112e382b88c50d66e4222ce543fca5d42be6d8376a684b82b8b238")
+    version("4.7.01", sha256="f3e1452db0e182c8e32c61632465e3a829159b9ae0645d9e4cd97b4fa09c36e1")
+    version("4.7.00", sha256="5c7c8c8f91817ab22dbc50ea72f02292bbd6c5b412d6f1588b27574600c478ef")
     version("4.6.02", sha256="a953f445660ed5aaab10e18fc4a90c4c178291e9d9d97d20abd4e6027f1193ec")
     version("4.6.01", sha256="95b9357f37ab3b9c3913c00741acb2501831c28ea8664de67818ae79c69c5908")
     version("4.6.00", sha256="f2b18f3df78c3c8dd970fe8ead54e05c8c09c8ac6d1893655c2a1769d33aa364")
@@ -71,84 +77,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
         "3.7.02",
         sha256="43b1d4f726bccd8d7d632ae8b81c8edc7d7afa347fbab0654f7ca0c664edf05c",
         url="https://github.com/kokkos/kokkos-kernels/archive/3.7.02.tar.gz",
-    )
-    version(
-        "3.7.01",
-        sha256="b2060f5894bdaf7f7d4793b90444fac260460cfa80595afcbcb955518864b446",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.7.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.7.00",
-        sha256="51bc6db3995392065656848e2b152cfd1c3a95a951ab18a3934278113d59f32b",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.7.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.6.01",
-        sha256="f000b156c8c0b80e85d38587907c11d9479aaf362408b812effeda5e22b24d0d",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.6.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.6.00",
-        sha256="2753643fd643b9eed9f7d370e0ff5fa957211d08a91aa75398e31cbc9e5eb0a5",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.6.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.5.00",
-        sha256="a03a41a047d95f9f07cd1e1d30692afdb75b5c705ef524e19c1d02fe60ccf8d1",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.5.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.4.01",
-        sha256="f504aa4afbffb58fa7c4430d0fdb8fd5690a268823fa15eb0b7d58dab9d351e6",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.4.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.4.00",
-        sha256="07ba11869e686cb0d47272d1ef494ccfbcdef3f93ff1c8b64ab9e136a53a227a",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.4.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.3.01",
-        sha256="0f21fe6b5a8b6ae7738290e293aa990719aefe88b32f84617436bfd6074a8f77",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.3.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.3.00",
-        sha256="8d7f78815301afb90ddba7914dce5b718cea792ac0c7350d2f8d00bd2ef1cece",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.3.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.2.01",
-        sha256="c486e5cac19e354a517498c362838619435734d64b44f44ce909b0531c21d95c",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.2.01.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.2.00",
-        sha256="8ac20ee28ae7813ce1bda461918800ad57fdbac2af86ef5d1ba74e83e10956de",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.2.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.1.00",
-        sha256="27fea241ae92f41bd5b070b1a590ba3a56a06aca750207a98bea2f64a4a40c89",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.1.00.tar.gz",
-        deprecated=True,
-    )
-    version(
-        "3.0.00",
-        sha256="e4b832aed3f8e785de24298f312af71217a26067aea2de51531e8c1e597ef0e6",
-        url="https://github.com/kokkos/kokkos-kernels/archive/3.0.00.tar.gz",
-        deprecated=True,
     )
 
     variant("shared", default=True, description="Build shared libraries")
@@ -210,8 +138,14 @@ class KokkosKernels(CMakePackage, CudaPackage):
         depends_on("c", type="build", when=f"+{tpl}")
         depends_on("fortran", type="build", when=f"+{tpl}")
     depends_on("kokkos")
-    depends_on("kokkos@master", when="@master")
     depends_on("kokkos@develop", when="@develop")
+    depends_on("kokkos@5.0.2", when="@5.0.2")
+    depends_on("kokkos@5.0.1", when="@5.0.1")
+    depends_on("kokkos@5.0.0", when="@5.0.0")
+    depends_on("kokkos@4.7.02", when="@4.7.02")
+    depends_on("kokkos@4.7.01", when="@4.7.01")
+    depends_on("kokkos@4.7.00", when="@4.7.00")
+    depends_on("kokkos@4.6.02", when="@4.6.02")
     depends_on("kokkos@4.6.01", when="@4.6.01")
     depends_on("kokkos@4.6.00", when="@4.6.00")
     depends_on("kokkos@4.5.01", when="@4.5.01")
@@ -226,19 +160,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos@4.0.01", when="@4.0.01")
     depends_on("kokkos@4.0.00", when="@4.0.00")
     depends_on("kokkos@3.7.02", when="@3.7.02")
-    depends_on("kokkos@3.7.01", when="@3.7.01")
-    depends_on("kokkos@3.7.00", when="@3.7.00")
-    depends_on("kokkos@3.6.01", when="@3.6.01")
-    depends_on("kokkos@3.6.00", when="@3.6.00")
-    depends_on("kokkos@3.5.00", when="@3.5.00")
-    depends_on("kokkos@3.4.01", when="@3.4.01")
-    depends_on("kokkos@3.4.00", when="@3.4.00")
-    depends_on("kokkos@3.3.01", when="@3.3.01")
-    depends_on("kokkos@3.3.00", when="@3.3.00")
-    depends_on("kokkos@3.2.01", when="@3.2.01")
-    depends_on("kokkos@3.2.00", when="@3.2.00")
-    depends_on("kokkos@3.1.00", when="@3.1.00")
-    depends_on("kokkos@3.0.00", when="@3.0.00")
     depends_on("kokkos+pic", when="+shared")
     depends_on("kokkos+cuda", when="+execspace_cuda")
     depends_on("kokkos+openmp", when="+execspace_openmp")
@@ -250,7 +171,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos+cuda", when="+cuda")
     depends_on("kokkos+openmp", when="+openmp")
     depends_on("kokkos+threads", when="+threads")
-    depends_on("kokkos+cuda_lambda", when="@4.0.00:+cuda")
+    depends_on("kokkos+cuda_lambda", when="@4+cuda")
     depends_on("cmake@3.16:", type="build")
 
     tpls = {
@@ -273,6 +194,9 @@ class KokkosKernels(CMakePackage, CudaPackage):
         deflt_bool, spackname, rootname, condition, descr = tpls[tpl]
         variant(tpl, default=deflt_bool, when=f"{condition}", description=descr)
         depends_on(spackname, when=f"+{tpl}")
+
+    # lapack TPL depends on blas TPL
+    conflicts("+lapack", when="~blas")
 
     patch("pr_2296_430.patch", when="@4.3.00:4.4.00")
     patch("pr_2296_400.patch", when="@4.0.00:4.2.01")
@@ -297,9 +221,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
             ),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
-
-        if spec.satisfies("+diy"):
-            options.append(self.define("Spack_WORKAROUND", True))
 
         options.append(self.define("Kokkos_ROOT", spec["kokkos"].prefix))
         if spec.satisfies("^kokkos+rocm"):

@@ -153,4 +153,4 @@ class Systemd(MesonPackage):
             for lib_path in glob.glob("lib*/systemd/lib*.so*"):
                 lib_name = os.path.basename(lib_path)
                 lib_dir = os.path.dirname(os.path.dirname(lib_path))
-                os.symlink(os.path.relpath(lib_path, lib_dir), os.path.join(lib_dir, lib_name))
+                symlink(os.path.relpath(lib_path, lib_dir), os.path.join(lib_dir, lib_name))

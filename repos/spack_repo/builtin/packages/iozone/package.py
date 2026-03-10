@@ -44,3 +44,17 @@ class Iozone(MakefilePackage):
 
         with working_dir(self.build_directory):
             install_tree(".", prefix.bin)
+
+    def flag_handler(self, name, flags):
+        # Suppress some standard checks to allow compiling with
+        # newer gcc.
+        if name == "cflags":
+            if self.spec.satisfies("%gcc@10:"):
+                flags.append("-fcommon")
+            if self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=implicit-int")
+                flags.append("-Wno-error=implicit-function-declaration")
+            if self.spec.satisfies("%gcc@15:"):
+                # Work around compilation errors with the default gnu23.
+                flags.append("-std=gnu17")
+        return (flags, None, None)

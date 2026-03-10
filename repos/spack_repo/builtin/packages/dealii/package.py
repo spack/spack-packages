@@ -32,6 +32,8 @@ class Dealii(CMakePackage, CudaPackage):
     generator("make")
 
     version("master", branch="master")
+    version("9.7.1", sha256="0f2096ef83db54fdcebe9f3d148fa713f63f1c3f567941b53bcb4a1a8ea7de43")
+    version("9.7.0", sha256="398ffbb5de1ea52b88a47aaa54a253ad58ee4e810a8c5aa0a0f549ecb1bc4c6c")
     version("9.6.2", sha256="1051e332de3822488e91c2b0460681052a3c4c5ac261cdd7a6af784869a25523")
     version("9.6.1", sha256="9fcaa3968ac2eab41573b3614756a898a3ea91afcd9f3477ab2f30bb19aa669a")
     version("9.6.0", sha256="675323f0eb8eed2cfc93e2ced07a0ec5727c6a566ff9e7786c01a2ddcde17bed")
@@ -84,7 +86,10 @@ class Dealii(CMakePackage, CudaPackage):
     variant("doc", default=False, description="Compile with documentation")
     variant("examples", default=True, description="Install source files of tutorial programs")
     variant(
-        "examples_compile", default=True, description="Install binary files of tutorial programs"
+        "examples_compile",
+        default=True,
+        when="@:9.6",
+        description="Install binary files of tutorial programs",
     )
     variant("int64", default=False, description="Compile with 64 bit indices support")
     variant("mpi", default=True, description="Compile with MPI")
@@ -110,12 +115,11 @@ class Dealii(CMakePackage, CudaPackage):
     variant("muparser", default=True, description="Compile with muParser")
     variant("nanoflann", default=False, description="Compile with Nanoflann")
     variant("netcdf", default=False, description="Compile with Netcdf (only with MPI)")
-    variant("oce", default=False, description="Compile with OCE")
     variant("opencascade", default=True, description="Compile with OPENCASCADE")
     variant("p4est", default=True, description="Compile with P4est (only with MPI)")
     variant("petsc", default=True, description="Compile with Petsc (only with MPI)")
     variant("scalapack", default=True, description="Compile with ScaLAPACK (only with MPI)")
-    variant("sundials", default=True, description="Compile with Sundials")
+    variant("sundials", default=True, description="Compile with Sundials", when="@9.3:")
     variant("slepc", default=True, description="Compile with Slepc (only with Petsc and MPI)")
     variant("symengine", default=True, description="Compile with SymEngine")
     variant("simplex", default=True, description="Compile with Simplex support")
@@ -193,6 +197,7 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("adol-c@2.6.4:", when="@9.0:+adol-c")
     depends_on("arborx", when="@9.3:+arborx")
     depends_on("arborx+trilinos", when="@9.3:+arborx+trilinos")
+    depends_on("arborx@1.5:", when="@9.7:+arborx")
     depends_on("arpack-ng+mpi", when="+arpack+mpi")
     depends_on("assimp", when="@9.0:+assimp")
     # cgal 6 not yet supported: https://github.com/spack/spack/pull/47285#issuecomment-2455403447
@@ -202,9 +207,8 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("graphviz", when="+doc")
     depends_on("ginkgo", when="@9.1:+ginkgo")
     depends_on("ginkgo@1.4.0:", when="@9.4:+ginkgo")
-    depends_on("gmsh+oce", when="@9.0:+gmsh+oce", type=("build", "run"))
     depends_on("gmsh+opencascade", when="@9.0:+gmsh+opencascade", type=("build", "run"))
-    depends_on("gmsh", when="@9.0:+gmsh~opencascade~oce", type=("build", "run"))
+    depends_on("gmsh", when="@9.0:+gmsh~opencascade", type=("build", "run"))
     depends_on("gsl", when="@8.5.0:+gsl")
     # TODO: next line fixes concretization with petsc
     depends_on("hdf5+mpi+hl+fortran", when="+hdf5+mpi+petsc")
@@ -223,7 +227,6 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("nanoflann", when="@9.0:9.2+nanoflann")
     depends_on("netcdf-c+mpi", when="+netcdf+mpi")
     depends_on("netcdf-cxx", when="+netcdf+mpi")
-    depends_on("oce", when="+oce")
     depends_on("opencascade", when="+opencascade")
     depends_on("p4est", when="+p4est+mpi")
     depends_on("petsc+mpi~int64", when="+petsc+mpi~int64")
@@ -231,10 +234,10 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("scalapack", when="@9.0:+scalapack")
     depends_on("slepc", when="+slepc+petsc+mpi")
     depends_on("slepc~arpack", when="+slepc+petsc+mpi+int64")
-    depends_on("sundials@:3~pthread", when="@9.0:9.2+sundials")
     depends_on("sundials@5:5.8", when="@9.3:9.3.3+sundials")
     depends_on("sundials@5:6.7", when="@9.3.4:+sundials")
     depends_on("taskflow@3.4:", when="@9.6:+taskflow")
+    depends_on("taskflow@3.10:", when="@9.7:+taskflow")
     depends_on("trilinos gotype=int", when="+trilinos@12.18.1:")
     depends_on("trilinos+cuda+cuda_constexpr", when="@9.6:+trilinos+cuda")
     # TODO: next line fixes concretization with trilinos and adol-c
@@ -341,8 +344,6 @@ class Dealii(CMakePackage, CudaPackage):
         msg="Deal.II 9.6 onwards requires the C++ standard to be set to 17 or later.",
     )
 
-    conflicts("oce", when="+opencascade", msg="Only one among OCE or OPENCASCADE can be selected.")
-
     # Interfaces added in 8.5.0:
     for _package in ["gsl", "python"]:
         conflicts(
@@ -354,7 +355,7 @@ class Dealii(CMakePackage, CudaPackage):
         )
 
     # Interfaces added in 9.0.0:
-    for _package in ["assimp", "gmsh", "nanoflann", "scalapack", "sundials", "adol-c"]:
+    for _package in ["assimp", "gmsh", "nanoflann", "scalapack", "adol-c"]:
         conflicts(
             "+{0}".format(_package),
             when="@:8.5.1",
@@ -497,8 +498,7 @@ class Dealii(CMakePackage, CudaPackage):
 
         # Enforce the specified C++ standard
         if spec.variants["cxxstd"].value != "default":
-            cxxstd = spec.variants["cxxstd"].value
-            cxx_flags.extend(["-std=c++{0}".format(cxxstd)])
+            options.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 
         # Performance
         # Set recommended flags for maximum (matrix-free) performance, see
@@ -659,11 +659,6 @@ class Dealii(CMakePackage, CudaPackage):
                     self.define("SCALAPACK_LIBRARY", scalapack_libs.joined(";")),
                 ]
             )
-
-        # Open Cascade -- OCE
-        if "+oce" in spec:
-            options.append(self.define_from_variant("DEAL_II_WITH_OPENCASCADE", "oce"))
-            options.append(self.define("OPENCASCADE_DIR", spec["oce"].prefix))
 
         # Open Cascade -- OpenCascade
         if "+opencascade" in spec:

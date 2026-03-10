@@ -15,30 +15,31 @@ class Mumps(Package):
     """MUMPS: a MUltifrontal Massively Parallel sparse direct Solver"""
 
     homepage = "https://mumps-solver.org/index.php"
-    url = "https://mumps-solver.org/MUMPS_5.5.1.tar.gz"
+    url = "https://mumps-solver.org/MUMPS_5.8.2.tar.gz"
 
     maintainers("jcortial-safran")
 
+    version("5.8.2", sha256="eb515aa688e6dbab414bb6e889ff4c8b23f1691a843c68da5230a33ac4db7039")
+    version("5.8.1", sha256="e91b6dcd93597a34c0d433b862cf303835e1ea05f12af073b06c32f652f3edd8")
     version("5.8.0", sha256="d762eb8b1d9843a0993b8cfc137d043d04c7c51877ad37c94560433a474340a0")
     version("5.7.3", sha256="84a47f7c4231b9efdf4d4f631a2cae2bdd9adeaabc088261d15af040143ed112")
     version("5.7.2", sha256="1362d377ce7422fc886c55212b4a4d2c381918b5ca4478f682a22d0627a8fbf8")
     version("5.6.2", sha256="13a2c1aff2bd1aa92fe84b7b35d88f43434019963ca09ef7e8c90821a8f1d59a")
-    version("5.6.1", sha256="1920426d543e34d377604070fde93b8d102aa38ebdf53300cbce9e15f92e2896")
-    version("5.6.0", sha256="3e08c1bdea7aaaba303d3cf03059f3b4336fa49bef93f4260f478f067f518289")
     version("5.5.1", sha256="1abff294fa47ee4cfd50dfd5c595942b72ebfcedce08142a75a99ab35014fa15")
-    version("5.5.0", sha256="e54d17c5e42a36c40607a03279e0704d239d71d38503aab68ef3bfe0a9a79c13")
     version("5.4.1", sha256="93034a1a9fe0876307136dcde7e98e9086e199de76f1c47da822e7d4de987fa8")
-    version("5.4.0", sha256="c613414683e462da7c152c131cebf34f937e79b30571424060dd673368bbf627")
     version("5.3.5", sha256="e5d665fdb7043043f0799ae3dbe3b37e5b200d1ab7a6f7b2a4e463fd89507fa4")
-    version("5.3.3", sha256="27e7749ac05006bf8e81a457c865402bb72a42bf3bc673da49de1020f0f32011")
     version("5.2.0", sha256="41f2c7cb20d69599fb47e2ad6f628f3798c429f49e72e757e70722680f70853f")
     version("5.1.2", sha256="eb345cda145da9aea01b851d17e54e7eef08e16bfa148100ac1f7f046cd42ae9")
-    version("5.1.1", sha256="a2a1f89c470f2b66e9982953cbd047d429a002fab9975400cef7190d01084a06")
     version("5.0.2", sha256="77292b204942640256097a3da482c2abcd1e0d5a74ecd1d4bab0f5ef6e60fe45")
-    # Alternate location if main server is down.
-    # version('5.0.1', sha256='50355b2e67873e2239b4998a46f2bbf83f70cdad6517730ab287ae3aae9340a0',
-    #         url='http://pkgs.fedoraproject.org/repo/pkgs/MUMPS/MUMPS_5.0.1.tar.gz/md5/b477573fdcc87babe861f62316833db0/MUMPS_5.0.1.tar.gz')
-    version("5.0.1", sha256="50355b2e67873e2239b4998a46f2bbf83f70cdad6517730ab287ae3aae9340a0")
+
+    with default_args(deprecated=True):
+        version("5.6.1", sha256="1920426d543e34d377604070fde93b8d102aa38ebdf53300cbce9e15f92e2896")
+        version("5.6.0", sha256="3e08c1bdea7aaaba303d3cf03059f3b4336fa49bef93f4260f478f067f518289")
+        version("5.5.0", sha256="e54d17c5e42a36c40607a03279e0704d239d71d38503aab68ef3bfe0a9a79c13")
+        version("5.4.0", sha256="c613414683e462da7c152c131cebf34f937e79b30571424060dd673368bbf627")
+        version("5.3.3", sha256="27e7749ac05006bf8e81a457c865402bb72a42bf3bc673da49de1020f0f32011")
+        version("5.1.1", sha256="a2a1f89c470f2b66e9982953cbd047d429a002fab9975400cef7190d01084a06")
+        version("5.0.1", sha256="50355b2e67873e2239b4998a46f2bbf83f70cdad6517730ab287ae3aae9340a0")
 
     variant("mpi", default=True, description="Compile MUMPS with MPI support")
     variant("scotch", default=False, description="Activate Scotch as a possible ordering library")

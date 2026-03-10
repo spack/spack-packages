@@ -64,11 +64,15 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
 
     version(
-        "0.9.4",
-        tag="v0.9.4",
-        commit="02e7f79d53db77b6af923bfa105840f574195474",
+        "0.9.5",
+        tag="v0.9.5",
+        commit="1c32d88b01439263cb4e473756a222824bb75abb",
         submodules=True,
         preferred=True,
+    )
+
+    version(
+        "0.9.4", tag="v0.9.4", commit="02e7f79d53db77b6af923bfa105840f574195474", submodules=True
     )
 
     version(
@@ -126,7 +130,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("raja", default=True, description="Build with RAJA support")
     variant("umpire", default=True, description="Build with Umpire support")
     variant("mfem", default=False, description="Build MFEM filter support")
-    variant("dray", default=False, description="Build with Devil Ray support")
+    variant("dray", default=False, when="@0.8.1:", description="Build with Devil Ray support")
     variant("adios2", default=False, description="Build Adios2 filter support")
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
@@ -185,9 +189,11 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@:0.7.2", when="@:0.7.1")
     depends_on("conduit@0.8.2:", when="@0.8:")
     depends_on("conduit@0.8.6:", when="@0.9:")
-    depends_on("conduit@0.9.1:0.9.3", when="@0.9.3:")
-    depends_on("conduit+python", when="+python")
-    depends_on("conduit~python", when="~python")
+    depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
+    depends_on("conduit@0.9.4", when="@0.9.4")
+    depends_on("conduit@0.9.5", when="@0.9.5")
+    depends_on("conduit+fortran", when="+fortran")
+    depends_on("conduit+python", when="+python", type=("build", "link", "run"))
     depends_on("conduit+mpi", when="+mpi")
     depends_on("conduit~mpi", when="~mpi")
 
@@ -197,17 +203,22 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # we need a shared version of python b/c linking with static python lib
     # causes duplicate state issues when running compiled python modules.
     with when("+python"):
-        depends_on("python+shared")
+        depends_on("python+shared", type=("build", "link", "run"))
+
+        # https://github.com/Alpine-DAV/ascent/issues/1628
+        depends_on("python@:3.11", type=("build", "link", "run"))
+
         extends("python")
         depends_on("py-numpy", type=("build", "link", "run"))
-        depends_on("py-pip")
-        depends_on("py-wheel", when="@0.9.4:")
+        depends_on("py-pip", type="build")
+        depends_on("py-wheel", when="@0.9.4:", type="build")
+        depends_on("py-setuptools", type="build")
 
     #######################
     # MPI
     #######################
     depends_on("mpi", when="+mpi")
-    depends_on("py-mpi4py", when="+mpi+python")
+    depends_on("py-mpi4py", when="+mpi+python", type=("build", "link", "run"))
 
     #############################
     # TPLs for Runtime Features
@@ -219,7 +230,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     #######################
     with when("+raja"):
         depends_on("raja")
-        depends_on("raja@2024.02.1:2024.02.99", when="@0.9.3:")
+        depends_on("raja@2024.02.1:2025.03.1", when="@0.9.3:")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+rocm", when="+rocm")
@@ -227,8 +238,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+umpire"):
         depends_on("umpire")
+        depends_on("umpire@:6", when="@:0.8")
         depends_on("umpire@:2023.06.0", when="@:0.9.2")
-        depends_on("umpire@2024.02.1:2024.02.99", when="@0.9.3:")
+        depends_on("umpire@2024.02.1:2025.03.1", when="@0.9.3:")
 
     #######################
     # BabelFlow
@@ -297,26 +309,6 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     # fides
     depends_on("fides", when="+fides")
-
-    #######################
-    # Devil Ray
-    #######################
-    # Ascent 0.9.0 includes Devil Ray, prior to 0.9.0
-    # Devil Ray was developed externally
-    # devil ray variants with mpi
-    # we have to specify both because mfem makes us
-    depends_on("dray~test~utils", when="@:0.8.0  +dray")
-    depends_on("dray@0.1.8:", when="@:0.8.0 +dray")
-    # propagate relevent variants to dray
-    depends_on("dray+cuda", when="@:0.8.0 +dray+cuda")
-    depends_on("dray~cuda", when="@:0.8.0 +dray~cuda")
-    propagate_cuda_arch("dray", "@:0.8.0 +dray")
-    depends_on("dray+mpi", when="@:0.8.0 +dray+mpi")
-    depends_on("dray~mpi", when="@:0.8.0 +dray~mpi")
-    depends_on("dray+shared", when="@:0.8.0 +dray+shared")
-    depends_on("dray~shared", when="@:0.8.0 +dray~shared")
-    depends_on("dray+openmp", when="@:0.8.0 +dray+openmp")
-    depends_on("dray~openmp", when="@:0.8.0 +dray~openmp")
 
     # Adios2
     depends_on("adios2", when="+adios2")
@@ -641,6 +633,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+cuda"):
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "ON"))
+            cfg.write(
+                cmake_cache_entry(
+                    "CMAKE_CUDA_ARCHITECTURES", ";".join(spec.variants["cuda_arch"].values)
+                )
+            )
+
         else:
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "OFF"))
 
@@ -764,19 +762,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         #######################
         if spec.satisfies("+dray"):
             cfg.write("# devil ray\n")
-            if self.spec.satisfies("@0.8.1:"):
-                cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
-                cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
-            else:
-                cfg.write("# devil ray from spack \n")
-                cfg.write(cmake_cache_entry("DRAY_DIR", spec["dray"].prefix))
-        else:
-            if self.spec.satisfies("@0.8.1:"):
-                cfg.write("# devil ray\n")
-                cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
-                cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
-            else:
-                cfg.write("# devil ray not build by spack\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "ON"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "ON"))
+        elif spec.satisfies("~dray"):
+            cfg.write("# devil ray\n")
+            cfg.write(cmake_cache_entry("ENABLE_DRAY", "OFF"))
+            cfg.write(cmake_cache_entry("ENABLE_APCOMP", "OFF"))
 
         #######################
         # Adios2

@@ -21,6 +21,7 @@ class Hepmc3(CMakePackage):
 
     license("LGPL-3.0-or-later")
 
+    version("3.3.1", sha256="08240160b0f28dc3293aa4d61ce65e2d67cd597acf6faca439f2e46625f7e793")
     version("3.3.0", sha256="6f876091edcf7ee6d0c0db04e080056e89efc1a61abe62355d97ce8e735769d6")
     version("3.2.7", sha256="587faa6556cc54ccd89ad35421461b4761d7809bc17a2e72f5034daea142232b")
     version("3.2.6", sha256="248f3b5b36dd773844cbe73d51f60891458334b986b259754c59dbf4bbf1d525")
@@ -45,9 +46,8 @@ class Hepmc3(CMakePackage):
         description="Install interfaces for some Monte-Carlo Event Gens",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build", when="@:3.2")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@2.8.9:", type="build")
     with when("+rootio"):
@@ -57,6 +57,7 @@ class Hepmc3(CMakePackage):
     depends_on("python", when="+python")
 
     conflicts("%gcc@9.3.0", when="@:3.1.1")
+    # See https://gitlab.cern.ch/hepmc/HepMC3/-/merge_requests/58.diff
     patch("ba38f14d8f56c16cc4105d98f6d4540c928c6150.patch", when="@3.1.2:3.2.1 %gcc@9.3.0")
 
     extends("python", when="+python")

@@ -19,6 +19,7 @@ class G4channeling(Package):
     maintainers("drbenmorgan")
 
     # Only versions relevant to Geant4 releases built by spack are added
+    version("2.0", sha256="662159288644e07b79d7fe091efbebba52b59546b3dc6f5d285b976ad12f2d06")
     version("1.0", sha256="203e3c69984ca09acd181a1d31a9b0efafad4bc12e6c608f0b05e695120d67f2")
 
     def install(self, spec, prefix):

@@ -12,11 +12,13 @@ class PyCartopy(PythonPackage):
 
     homepage = "https://scitools.org.uk/cartopy/docs/latest/"
     pypi = "Cartopy/cartopy-0.20.2.tar.gz"
+    git = "https://github.com/SciTools/cartopy.git"
     skip_modules = ["cartopy.tests"]
 
     license("LGPL-3.0-or-later")
     maintainers("adamjstewart")
 
+    version("main", branch="main")
     version("0.25.0", sha256="55f1a390e5f3f075b221c7d91fb10258ad978db786c7930eba06eb45d28753fe")
     version("0.24.1", sha256="01c910d5634c69a7efdec46e0a17d473d2328767f001d4dc0b5c4b48e585c8bd")
     version("0.24.0", sha256="e044e0e0fa76bb7afde937bec541743dcbf6b6f23b933a21ebddcd20cfffb755")
@@ -43,11 +45,12 @@ class PyCartopy(PythonPackage):
     )
     variant("plotting", default=False, description="Add plotting functionality")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     # Based on wheel availability on PyPI
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.13", when="@0.24.1:")
+        depends_on("python@3.10:3.14", when="@0.24.1:0.25.0")
         depends_on("python@3.10:3.12", when="@0.24.0")
         depends_on("python@3.9:3.12", when="@0.23")
         depends_on("python@3.9:3.11", when="@0.22")

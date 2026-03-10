@@ -4,11 +4,12 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Affinity(CMakePackage, CudaPackage):
+class Affinity(CMakePackage, CudaPackage, ROCmPackage):
     """Simple applications for determining Linux thread and gpu affinity."""
 
     homepage = "https://github.com/bcumming/affinity"
@@ -20,9 +21,21 @@ class Affinity(CMakePackage, CudaPackage):
     license("BSD-3-Clause", checked_by="nhanford")
 
     variant("mpi", default=False, description="Build MPI support")
-    variant("rocm", default=False, description="Build ROCm Support")
 
+    conflicts("+rocm", when="+cuda")
+    conflicts("+cuda", when="+rocm")
+
+    depends_on("cmake@3.21:", type="build")
     depends_on("mpi", when="+mpi")
-    depends_on("hip", when="+rocm")
-    depends_on("mpi", when="+mpi")
-    depends_on("mpi", when="+cuda")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    def cmake_args(self):
+        args = [self.define_from_variant("AFFINITY_MPI", "mpi")]
+        args += [
+            self.define("AFFINITY_GPU_BACKEND", v)
+            for v in ["cuda", "rocm"]
+            if self.spec.satisfies(f"+{v}")
+        ]
+        return args

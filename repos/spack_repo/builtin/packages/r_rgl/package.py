@@ -33,6 +33,9 @@ class RRgl(RPackage):
     version("0.99.16", sha256="692a545ed2ff0f5e15289338736f0e3c092667574c43ac358d8004901d7a1a61")
     version("0.98.1", sha256="5f49bed9e092e672f73c8a1a5365cdffcda06db0315ac087e95ab9c9c71a6986")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r+X", type=("build", "run"))
     depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r@3.3.0:", type=("build", "run"), when="@0.108.3:")

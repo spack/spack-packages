@@ -20,6 +20,12 @@ class RocmDebugAgent(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocm-debug-agent"]
 
+    version("7.2.0", sha256="42b7e7afe16913e67b7af1358ddbe7772bff1ffe61f4d60960062288b6287c2c")
+    version("7.1.1", sha256="2e8ab39ab68fe6eccaa9494b984faa7fb7edfb12e3f7e1b38dfe146e5b914d10")
+    version("7.1.0", sha256="21224ffe5019f1e2a160cad587b0448e550954accce9fd051a915c3f95b54e5b")
+    version("7.0.2", sha256="72ef89af0ec15edf43a99a3e76a420d501fa0871825c9baecd9dff1fc4d021dd")
+    version("7.0.0", sha256="5d822964855979c5063e0ec9554596463d37cdf5f3501550887c034beb3adcc8")
+    version("6.4.3", sha256="4be5783e3df89e8c3e35c5690d9414ca8a0b695081352bb945bb533e01de1d65")
     version("6.4.2", sha256="8b42dee486f959795acbac7f8bf287718edbb14393e6262c3dcec97f0697d949")
     version("6.4.1", sha256="0e9fc4626e16eea1c701b5206349fceab4ec596a1d22738977e779f673a26769")
     version("6.4.0", sha256="699af72a1ff7edf3cff6ef293469345538da06aaedefb3540dd61f55ea862330")
@@ -37,9 +43,6 @@ class RocmDebugAgent(CMakePackage):
     version("6.0.0", sha256="705be2c2bd0f5c7d1e286eb9b94045b2bd017ff323f07bca9aa7c81f2d168524")
     version("5.7.1", sha256="3b8d2835935da98f41e7cfc5b808c596ac06dd705b9a07bb70283e002f8dea6a")
     version("5.7.0", sha256="d9344ed02e82a01140f2162e901e6a519e5fee6b498e2f49417730ee2660c5c1")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="d3b1d5d757489ed3cc66d351cec56b7b850aaa7ecf6a55b0350b89c3dee3153a")
-        version("5.6.0", sha256="0bed788f07906afeb9092d0bec184a7963233ac9d8ccd20b4afeb624a1d20698")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -54,8 +57,6 @@ class RocmDebugAgent(CMakePackage):
     depends_on("elfutils@0.188:", type="link")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -70,8 +71,6 @@ class RocmDebugAgent(CMakePackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -89,6 +88,12 @@ class RocmDebugAgent(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-dbgapi@{ver}", when=f"@{ver}")

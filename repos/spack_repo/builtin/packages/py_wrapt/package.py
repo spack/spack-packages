@@ -15,6 +15,7 @@ class PyWrapt(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("1.17.3", sha256="f66eb08feaa410fe4eebd17f2a2c8e2e46d3476e9f8c783daa8e09e0faa666d0")
     version("1.15.0", sha256="d06730c6aed78cee4126234cf2d071e01b44b915e725a6cb439a879ec9754a3a")
     version("1.14.1", sha256="380a85cf89e0e69b7cfbe2ea9f765f004ff419f34194018a6827ac0e3edfed4d")
     version("1.13.3", sha256="1fea9cd438686e6682271d36f3481a9f3636195578bab9ca3382e2f5f01fc185")
@@ -25,4 +26,5 @@ class PyWrapt(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("python@3.8:", type=("build", "run"), when="@1.17:")
     depends_on("py-setuptools@38.3:", type="build")

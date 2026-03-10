@@ -28,6 +28,12 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     version("master", branch="master")
 
     version(
+        "2025.06.001", sha256="feeb1fea1ab4a8670b8d3240765ef0ada828062ef7ec9b735eecba2848515c94"
+    )
+    version(
+        "2025.01.002", sha256="8febe408c590ba9b44bd8bce04605fd1b7da964afcd8fd5f1ce9edecb3d0b65d"
+    )
+    version(
         "2025.01.001", sha256="3ef0c6aed9a3e05db6efafe6e14d66eb88b2a1354d61e765b7cde0d3d5f3951e"
     )
     version(
@@ -68,6 +74,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         variant(
             "gpu_streams", default=True, when="+cuda", description="Activates GPU streams support"
         )
+        variant(
+            "gpu_streams", default=True, when="+rocm", description="Activates GPU streams support"
+        )
 
     patch("fujitsu.patch", when="%fj")
     # wrong filename handling in elpa's custom preprocessor
@@ -76,6 +85,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         sha256="90f18c84e740a35d726e44078a111fac3b6278a0e750ce1f3ea154ee78e93298",
         when="@:2025.01.001",
     )
+    patch("hipcc.patch", when="+rocm @2025.01.001:2025.06.001")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -89,6 +99,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     depends_on("scalapack", when="+mpi")
     depends_on("rocblas", when="+rocm")
+    # elpa 2024.05.001 enables rocsolver by default
+    # https://github.com/marekandreas/elpa/commit/de90ce3d634be468e71c2827d788de52ceb606bf#diff-49473dca262eeab3b4a43002adb08b4db31020d190caaad1594b47f1d5daa810R2635-R2638
+    depends_on("rocsolver", when="+rocm @2024.05.001:")
     depends_on("libtool", type="build")
     depends_on("python@3:", type="build")
     depends_on("scalapack", when="+autotune")
@@ -107,7 +120,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@2021.05.001: %gcc@:7",
         msg="ELPA-2021.05.001+ requires GCC-8+ for OpenMP support",
     )
-    conflicts("+mpi", when="+rocm", msg="ROCm support and MPI are not yet compatible")
+    conflicts("+mpi", when="+rocm @:2024", msg="ROCm support and MPI are not yet compatible")
     conflicts(
         "+gpu_streams",
         when="@:2023.11.001-patched +openmp",
@@ -145,7 +158,30 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         return hlist
 
     build_directory = "spack-build"
-    parallel = False
+    # parallel = False
+
+    def flag_handler(self, name, flags):
+        spec = self.spec
+        if name == "cflags":
+            if spec.satisfies("^[virtuals=c] gcc") or spec.satisfies("^[virtuals=c] aocc"):
+                flags.append("-O3")
+        if name == "fflags":
+            if spec.satisfies("^[virtuals=fortran] aocc"):
+                flags.append("-O3")
+            elif spec.satisfies("^[virtuals=fortran] gcc"):
+                flags.append("-O3 -ffree-line-length-none")
+                if spec.satisfies("+autotune"):
+                    flags.append("-fallow-argument-mismatch")
+            elif spec.satisfies("^[virtuals=fortran] fj") and spec.satisfies("+openmp"):
+                flags.append("-Kparallel")
+        if name == "ldflags":
+            flags += [spec["blas"].libs.search_flags, spec["lapack"].libs.search_flags, "-lstdc++"]
+            flags += [spec["lapack"].libs.link_flags, spec["blas"].libs.link_flags]
+            if self.spec.satisfies("@2024.05.001,2025.01.001 %aocc"):
+                # fix an issue where main library and test suite containing duplicate symbols
+                flags.append("-Wl,--allow-multiple-definition")
+
+        return (flags, None, None)
 
     def configure_args(self):
         spec = self.spec
@@ -176,17 +212,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         if not any(f in spec.target for f in simd_features):
             options.append("--enable-generic" + kernels)
 
-        if self.compiler.name == "gcc":
-            options.extend(["CFLAGS=-O3", "FCFLAGS=-O3 -ffree-line-length-none"])
-
-        if spec.satisfies("%aocc"):
-            options.extend(["FCFLAGS=-O3", "CFLAGS=-O3"])
-
         if spec.satisfies("%fj"):
             options.append("--disable-Fortran2008-features")
             options.append("--enable-FUGAKU")
-            if spec.satisfies("+openmp"):
-                options.extend(["FCFLAGS=-Kparallel"])
 
         cuda_flag = "nvidia-gpu"
         if spec.satisfies("+cuda"):
@@ -213,7 +241,16 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             # Can't yet be changed to the new option --enable-amd-gpu-kernels
             # https://github.com/marekandreas/elpa/issues/55
             options.append("--enable-amd-gpu")
-            options.append("CXX={0}".format(self.spec["hip"].hipcc))
+            if spec.satisfies("@2025.01.001:"):
+                options.append(
+                    "HIPCC={0} {1} {2}".format(
+                        spec["hip"].hipcc,
+                        spec["rocblas"].headers.include_flags,
+                        spec["rocsolver"].headers.include_flags,
+                    )
+                )
+            else:
+                options.append("CXX={0}".format(spec["hip"].hipcc))
 
             if spec.satisfies("+gpu_streams"):
                 options.append("--enable-gpu-streams=amd")
@@ -222,12 +259,6 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
             options.append("--disable-amd-gpu" + kernels)
 
         options += self.enable_or_disable("openmp")
-
-        # Additional linker search paths and link libs
-        ldflags = [spec["blas"].libs.search_flags, spec["lapack"].libs.search_flags, "-lstdc++"]
-        libs = [spec["lapack"].libs.link_flags, spec["blas"].libs.link_flags]
-
-        options += [f"LDFLAGS={' '.join(ldflags)}", f"LIBS={' '.join(libs)}"]
 
         if self.spec.satisfies("+mpi"):
             options += [
@@ -244,5 +275,8 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         options.append("--disable-silent-rules")
         options.append("--without-threading-support-check-during-build")
+        options.append("--disable-c-tests")
+        options.append("--disable-cpp-tests")
+        options.append("--disable-Fortran-tests")
 
         return options

@@ -31,6 +31,8 @@ class PyQiskitTerra(PythonPackage):
     depends_on("py-stevedore@3.0.0:", type=("build", "run"))
     depends_on("py-psutil@5:", type=("build", "run"))
 
+    depends_on("rust", type="build", when="@0.22:")
+
     with when("@0.18.3"):
         depends_on("python@3.6:", type=("build", "run"))
         depends_on("py-cython@0.27.1:", type="build")

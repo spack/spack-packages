@@ -20,6 +20,7 @@ class Poppler(CMakePackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("25.08.0", sha256="425ed4d4515a093bdcdbbaac6876f20617451edc710df6a4fd6c45dd67eb418d")
     version("23.04.0", sha256="b6d893dc7dcd4138b9e9df59a13c59695e50e80dc5c2cacee0674670693951a1")
     version("21.09.0", sha256="5a47fef738c2b99471f9b459a8bf8b40aefb7eed92caa4861c3798b2e126d05b")
     version("21.07.0", sha256="e26ab29f68065de4d6562f0a3e2b5435a83ca92be573b99a1c81998fa286a4d4")
@@ -54,26 +55,38 @@ class Poppler(CMakePackage):
     depends_on("pkgconfig", type="build")
     depends_on("poppler-data", type=("build", "run"))
     depends_on("fontconfig")
+    depends_on("fontconfig@2.13:", when="@25.08.0:")
     depends_on("freetype")
+    depends_on("freetype@2.11:", when="@25.08.0:")
 
     depends_on("boost@1.58.0:", when="+boost")
+    depends_on("boost@1.74.0:", when="@25.0.8.0: +boost")
     depends_on("lcms", when="+cms")
+    depends_on("lcms@2.12:", when="@25.08.0: +cms")
     depends_on("glib@2.41:", when="+glib")
+    depends_on("glib@2.72:", when="@25.08.0: +glib")
     depends_on("gobject-introspection", when="+gobject")
     depends_on("curl", when="+libcurl")
+    depends_on("curl@7.81:", when="@25.0.8.0: +libcurl")
     depends_on("openjpeg", when="+openjpeg")
     depends_on("qt@4.0:", when="+qt")
     depends_on("zlib-api", when="+zlib")
     depends_on("cairo+ft@1.10.0:", when="+glib")
+    depends_on("cairo@1.16.0:", when="@25.08.0: +glib")
     depends_on("iconv", when="+cpp")
     depends_on("jpeg", when="+jpeg")
     depends_on("libpng", when="+png")
     depends_on("libtiff", when="+tiff")
+    depends_on("libtiff@4.3:", when="@25.08.0: +tiff")
     depends_on("nss@3.73:", when="+nss")
     depends_on("gpgme", when="+gpgme")
+    depends_on("gpgme@1.19:", when="@25.08.0: +gpgme")
 
     depends_on("qt@5.0:", when="@0.62.0:+qt")
     depends_on("qt@4.0:4.8.6", when="@:0.61+qt")
+    depends_on("qt@5.15:", when="@25.08.0:+qt")
+
+    conflicts("%gcc@:9", when="@25.08.0:", msg="poppler@25.08.0: requires at least gcc 10")
 
     # Splash is unconditionally disabled. Unfortunately there's
     # a small section of code in the QT5 wrappers that expects it
@@ -83,7 +96,7 @@ class Poppler(CMakePackage):
 
     # Only needed to run `make test`
     resource(
-        name="test", git="git://git.freedesktop.org/git/poppler/test.git", placement="testdata"
+        name="test", git="https://gitlab.freedesktop.org/poppler/test.git", placement="testdata"
     )
 
     def cmake_args(self):
@@ -99,10 +112,13 @@ class Poppler(CMakePackage):
         args.append("-DENABLE_UNSTABLE_API_ABI_HEADERS=ON")
 
         args.append(self.define_from_variant("ENABLE_BOOST", "boost"))
-        if spec.satisfies("+cms"):
-            args.append("-DENABLE_CMS=lcms2")
+        if spec.satisfies("@23.10.0:"):
+            args.append(self.define_from_variant("ENABLE_LCMS", "cms"))
         else:
-            args.append("-DENABLE_CMS=none")
+            if spec.satisfies("+cms"):
+                args.append("-DENABLE_CMS=lcms2")
+            else:
+                args.append("-DENABLE_CMS=none")
 
         args.append(self.define_from_variant("ENABLE_CPP", "cpp"))
         if spec.satisfies("+cpp"):

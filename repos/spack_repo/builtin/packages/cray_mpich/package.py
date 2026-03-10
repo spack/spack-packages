@@ -105,11 +105,14 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
         spec = self.spec
         if spec.satisfies("+wrappers"):
             MpichEnvironmentModifications.setup_dependent_package(self, module, dependent_spec)
-        elif spack_cc is not None:
-            spec.mpicc = spack_cc
-            spec.mpicxx = spack_cxx
-            spec.mpifc = spack_fc
-            spec.mpif77 = spack_f77
+        else:
+            if "c" in dependent_spec:
+                spec.mpicc = dependent_spec["c"].package.cc
+            if "cxx" in dependent_spec:
+                spec.mpicxx = dependent_spec["cxx"].package.cxx
+            if "fortran" in dependent_spec:
+                spec.mpifc = dependent_spec["fortran"].package.fortran
+                spec.mpif77 = dependent_spec["fortran"].package.fortran
 
     @property
     def headers(self):

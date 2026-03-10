@@ -15,6 +15,7 @@ class PyNotebookShim(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.2.4", sha256="b4b2cfa1b65d98307ca24361f5b30fe785b53c3fd07b7a47e89acb5e6ac638cb")
     version("0.2.3", sha256="f69388ac283ae008cd506dda10d0288b09a017d822d5e8c7129a152cbd3ce7e9")
     version("0.2.2", sha256="090e0baf9a5582ff59b607af523ca2db68ff216da0c69956b62cab2ef4fc9c3f")
 

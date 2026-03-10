@@ -1,0 +1,123 @@
+spack:
+  view: false
+
+  include:
+  - ../../.ci/gitlab/
+
+  packages:
+    all:
+      target: ["aarch64"]
+      require:
+      - target=aarch64
+    mpi:
+      require: openmpi
+    python:
+      require:
+      - "@3.13: target=aarch64"
+    py-jaxlib:
+      require:
+      - "target=aarch64 %c,cxx=clang"
+    py-tensorflow:
+      require:
+      - "@2.19: target=aarch64 %c,cxx=clang"
+    py-torch:
+      require:
+      - "target=aarch64 %c,cxx=gcc"
+
+  definitions:
+  - hugging_face_specs:
+    - py-transformers
+  - jax_specs:
+    - py-jax
+    - py-jaxlib
+  - keras_specs:
+    - py-keras backend=tensorflow
+    - py-keras backend=jax
+    - py-keras backend=torch
+  - torch_specs:
+    - py-botorch
+    - py-gpytorch
+    - py-kornia
+    - py-lightning
+    - py-pytorch-lightning
+    - py-segmentation-models-pytorch
+    - py-timm
+    - py-torch
+    - py-torch-geometric
+    - py-torch-nvidia-apex
+    - py-torchaudio
+    - py-torchdata
+    - py-torchgeo
+    - py-torchmetrics
+    - py-torchvision
+    - py-vector-quantize-pytorch
+  - scikit_learn_specs:
+    - py-scikit-learn
+  - tensorboard_specs:
+    - py-tensorboard
+    - py-tensorboardx
+  - tensorflow_specs:
+    - py-tensorflow
+    - py-tensorflow-datasets
+    - py-tensorflow-metadata
+    - py-tensorflow-probability
+  - xgboost_specs:
+    - py-xgboost
+
+  specs:
+    - group: ml-linux-aarch64-cpu
+      specs:
+      - $hugging_face_specs
+      - $jax_specs
+      - $keras_specs
+      - $torch_specs
+      - $scikit_learn_specs
+      - $tensorboard_specs
+      - $tensorflow_specs
+      - $xgboost_specs
+      override:
+        packages:
+          all:
+            require:
+              - ~cuda
+              - ~rocm
+
+    - group: ml-linux-aarch64-cuda
+      specs:
+        - $hugging_face_specs
+        - $jax_specs
+        - $keras_specs
+        - $torch_specs
+        - $scikit_learn_specs
+        - $tensorboard_specs
+        - $tensorflow_specs
+        # xgboost requires older cuda, which doesn't support newer GCC
+        # - $xgboost_specs
+      override:
+        packages:
+          all:
+            require:
+              - ~rocm
+              - +cuda
+              - cuda_arch=80
+          llvm:
+            # https://github.com/spack/spack/issues/27999
+            require:
+              - ~cuda
+              - target=aarch64
+          py-torch:
+            require:
+              - ~rocm
+              - +cuda
+              - cuda_arch=80
+              - ~flash_attention
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image:
+          name: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+          entrypoint: ['']
+
+  cdash:
+    build-group: Machine Learning

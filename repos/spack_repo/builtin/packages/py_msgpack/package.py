@@ -17,6 +17,7 @@ class PyMsgpack(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.1.1", sha256="77b79ce34a2bdab2594f490c8e80dd62a02d650b91a75159a63ec413b8d104cd")
     version("1.0.5", sha256="c075544284eadc5cddc70f4757331d99dcbc16b2bbd4849d15f8aae4cf36d31c")
     version("1.0.4", sha256="f5d869c18f030202eb412f08b28d2afeea553d6613aee89e200d7aca7ef01f5f")
     version("1.0.3", sha256="51fdc7fb93615286428ee7758cecc2f374d5ff363bdd884c7ea622a7a327a81e")
@@ -29,6 +30,10 @@ class PyMsgpack(PythonPackage):
 
     depends_on("cxx", type="build")  # generated
 
+    depends_on("python@3.8:", type="build", when="@1.0.6:")
     depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools@35.0.2:", when="@1.0.4:", type="build")
-    depends_on("py-cython@0.29.30:0.29", when="@1.0.4:", type="build")
+    depends_on("py-setuptools@75.3:", type="build", when="@1.1.1:")
+    depends_on("py-setuptools@35.0.2:", type="build", when="@1.0.4:")
+    # in requirements.txt
+    depends_on("py-cython@3.1.1:3.1", type="build", when="@1.1.1:")
+    depends_on("py-cython@0.29.30:0.29", type="build", when="@1.0.4:1.0.5")

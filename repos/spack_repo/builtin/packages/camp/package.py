@@ -26,6 +26,24 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main", submodules=False)
     version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="a8caefa9f4c811b1a114b4ed2c9b681d40f12325",
+        submodules=False,
+    )
+    version(
+        "2025.09.2",
+        tag="v2025.09.2",
+        commit="4070ce93a802849d61037310a87c50cc24c9e498",
+        submodules=False,
+    )
+    version(
+        "2025.09.0",
+        tag="v2025.09.0",
+        commit="b642f29b9d0eee9113bea2791958c29243063e5c",
+        submodules=False,
+    )
+    version(
         "2025.03.0",
         tag="v2025.03.0",
         commit="ee0a3069a7ae72da8bcea63c06260fad34901d43",
@@ -77,6 +95,8 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cub", when="^cuda@:10")
 
     depends_on("blt", type="build")
+    depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
+    depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.02.1:")
     depends_on("blt@0.6.1", type="build", when="@2024.02.0")
     depends_on("blt@0.5.0:0.5.3", type="build", when="@2022.03.0:2023.06.0")
@@ -117,7 +137,8 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
 
         options.append(self.define_from_variant("ENABLE_HIP", "rocm"))
         if spec.satisfies("+rocm"):
-            options.append("-DHIP_ROOT_DIR={0}".format(spec["hip"].prefix))
+            rocm_root = spec["llvm-amdgpu"].prefix
+            options.append(self.define("ROCM_PATH", rocm_root))
 
             archs = ";".join(self.spec.variants["amdgpu_target"].value)
             options.append("-DCMAKE_HIP_ARCHITECTURES={0}".format(archs))

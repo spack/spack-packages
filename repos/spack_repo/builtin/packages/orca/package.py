@@ -25,6 +25,10 @@ class Orca(Package):
     license("LGPL-2.1-or-later")
 
     version(
+        "avx2-6.1.1", sha256="5eaf676f9711a38835d609264321a30266b487b65477547802dedee982bc82d5"
+    )
+    version("6.1.1", sha256="a0bc1d6d2c3c00620367bbc5dbf2b3a7018abc92d1ff65f06cec46f75350b9be")
+    version(
         "avx2-6.0.1", sha256="f31f98256a0c6727b6ddfe50aa3ac64c45549981138d670a57e90114b4b9c9d2"
     )
     version("6.0.1", sha256="5e9b49588375e0ce5bc32767127cc725f5425917804042cdecdfd5c6b965ef61")
@@ -49,8 +53,10 @@ class Orca(Package):
         "5.0.4": "4.1.2",
         "6.0.0": "4.1.6",
         "6.0.1": "4.1.6",
+        "6.1.1": "4.1.8",
         "avx2-6.0.0": "4.1.6",
         "avx2-6.0.1": "4.1.6",
+        "avx2-6.1.1": "4.1.8",
     }
     for orca_version, openmpi_version in openmpi_versions.items():
         depends_on(
@@ -64,12 +70,10 @@ class Orca(Package):
 
         ver_parts = version.string.split("-")
         ver_underscored = ver_parts[-1].replace(".", "_")
-        features = ver_parts[:-1] + ["shared"]
-        feature_text = "_".join(features)
 
-        url = f"file://{os.getcwd()}/orca_{ver_underscored}_linux_x86-64_{feature_text}_openmpi{openmpi_version}.tar.xz"
-        if self.spec.satisfies("@=avx2-6.0.1"):
-            url = f"file://{os.getcwd()}/orca_{ver_underscored}_linux_x86-64_shared_openmpi{openmpi_version}_avx2.tar.xz"
+        url = f"file://{os.getcwd()}/orca_{ver_underscored}_linux_x86-64_shared_openmpi{openmpi_version}{'_avx2' if 'avx2' in ver_parts else ''}.tar.xz"
+        if self.spec.satisfies("@=avx2-6.0.0"):
+            url = f"file://{os.getcwd()}/orca_{ver_underscored}_linux_x86-64_avx2_shared_openmpi{openmpi_version}.tar.xz"
 
         return url
 

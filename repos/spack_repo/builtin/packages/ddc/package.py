@@ -14,13 +14,15 @@ class Ddc(CMakePackage):
 
     homepage = "https://github.com/CExA-project/ddc"
     git = "https://github.com/CExA-project/ddc.git"
-    url = "https://github.com/CExA-project/ddc/archive/refs/tags/v0.4.2.tar.gz"
+    url = "https://github.com/CExA-project/ddc/archive/refs/tags/v0.7.0.tar.gz"
 
     maintainers("tpadioleau", "tretre91")
 
     license("MIT", checked_by="tpadioleau")
 
     version("main", branch="main", no_cache=True)
+    version("0.10.0", sha256="0ab717a21c641b59af8119ff665c0322498fcccf5f49b2c3a2746eecbf1a4964")
+    version("0.9.0", sha256="e975a19f2d8e4fc668ab7628e145b927987812496c94b384ee9e72d054711078")
     version("0.8.0", sha256="6c6d28f1d406e1417021f88d748829cae0afce2cb3714cf82fd3f4cd3b7b91b4")
     version("0.7.0", sha256="128dd93d0021da35dcd62db7eabab3136c826a924dbe90368361d347e6bd3111")
 
@@ -37,7 +39,9 @@ class Ddc(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.22:3", type="build")
+    depends_on("cmake@3.22:3", type="build", when="@:0.8")
+    depends_on("cmake@3.25:4", type="build", when="@0.9:")
+
     depends_on("kokkos@4.4.1:4")
 
     with when("+fft"):
@@ -48,7 +52,7 @@ class Ddc(CMakePackage):
             ("+rocm", "device_backend=hipfft"),
             ("+sycl", "device_backend=onemkl"),
         ]:
-            depends_on(f"kokkos-fft@0.3.0 {backend}", when=f"^kokkos {variant}")
+            depends_on(f"kokkos-fft@0.3:0 {backend}", when=f"^kokkos {variant}")
 
     with when("+splines"):
         depends_on("ginkgo@1.8:1")
@@ -135,7 +139,7 @@ class Ddc(CMakePackage):
             args.append(self.define("DDC_GTest_DEPENDENCY_POLICY", "INSTALLED"))
 
         if self.spec.satisfies("^kokkos+rocm"):
-            args.append(self.define("CMAKE_CXX_COMPILER", self["hip"].hipcc))
+            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
         else:
             args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
 

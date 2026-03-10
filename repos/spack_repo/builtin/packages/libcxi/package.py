@@ -16,8 +16,12 @@ class Libcxi(AutotoolsPackage):
 
     license("LGPL-2.1-or-later or BSD-3-Clause")
 
-    # no releases, tags: see https://github.com/HewlettPackard/shs-libcxi/issues/2
     version("main", branch="main")
+    version("13.1.0", tag="release/shs-13.1.0")
+    version("13.0.0", tag="release/shs-13.0.0")
+    version("12.0.2", tag="release/shs-12.0.2")
+    version("12.0.1", tag="release/shs-12.0.1")
+    version("12.0.0", tag="release/shs-12.0.0")
 
     variant("level_zero", default=False, description="Enable level zero support")
     variant("cuda", default=False, description="Build with CUDA support")
@@ -25,7 +29,7 @@ class Libcxi(AutotoolsPackage):
 
     depends_on("c", type="build")
 
-    with default_args(type="build", when="@main"):
+    with default_args(type="build"):
         depends_on("autoconf")
         depends_on("automake")
         depends_on("libtool")
@@ -57,9 +61,8 @@ class Libcxi(AutotoolsPackage):
             string=True,
         )
 
-    @when("@main")
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

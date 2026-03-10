@@ -26,6 +26,7 @@ class Freeipmi(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.6.16", sha256="5bcef6bb9eb680e49b4a3623579930ace7899f53925b2045fe9f91ad6904111d")
     version("1.6.9", sha256="f25e1c35f3d0f1b5a99cc31ecc2353ca83ed46a15163842fba870127dc9c8206")
     version("1.6.4", sha256="65dfbb95a30438ba247f01a58498862a37d2e71c8c950bcfcee459d079241a3c")
 

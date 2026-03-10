@@ -75,10 +75,10 @@ class Dsqss(CMakePackage):
             exe_name = "dla"
         opts.append("param.in")
         with test_part(self, "test_dla_run", purpose="run dla"):
-            exe = which(exe_name)
+            exe = which(exe_name, required=True)
             exe(*opts)
 
         with test_part(self, "test_dla_results", purpose="confirming dla results"):
-            cat = which("cat")
+            cat = which("cat", required=True)
             out = cat("sample.log", output=str.split, error=str.split)
             assert "R ene = -3.74300000e-01 2.96344394e-03" in out

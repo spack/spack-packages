@@ -80,9 +80,9 @@ class Flibcpp(CMakePackage):
             self.define("CMAKE_Fortran_COMPILER", self.compiler.fc),
         ]
         cmake_args.append(self.cached_tests_work_dir)
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
-        make = which("make")
-        sh = which("sh")
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
+        make = which("make", required=True)
+        sh = which("sh", required=True)
 
         with working_dir(self.cached_tests_work_dir):
             cmake(*cmake_args)

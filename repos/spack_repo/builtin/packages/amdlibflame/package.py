@@ -48,11 +48,9 @@ class Amdlibflame(CMakePackage, LibflameBase):
 
     license("BSD-3-Clause")
 
-    version(
-        "5.0",
-        sha256="3bee3712459a8c5bd728a521d8a4c8f46735730bf35d48c878d2fc45fc000918",
-        preferred=True,
-    )
+    version("5.2", sha256="fb5fe5128f718050c9911443fcf7ed91b60538a40d57084ed0124bb91afabb9b")
+    version("5.1", sha256="25524ba78b5952303369fa0859d217e44071144fd122a9dc3f72ed0bd73e3b2d")
+    version("5.0", sha256="3bee3712459a8c5bd728a521d8a4c8f46735730bf35d48c878d2fc45fc000918")
     version("4.2", sha256="93a433c169528ffba74a99df0ba3ce3d5b1fab9bf06ce8d2fd72ee84768ed84c")
     version("4.1", sha256="8aed69c60d11cc17e058cabcb8a931cee4f343064ade3e73d3392b7214624b61")
     version("4.0", sha256="bcb05763aa1df1e88f0da5e43ff86d956826cbea1d9c5ff591d78a3e091c66a4")
@@ -83,7 +81,8 @@ class Amdlibflame(CMakePackage, LibflameBase):
     # Required dependencies
     with when("build_system=cmake"):
         generator("make")
-        depends_on("cmake@3.22:", type="build")
+        depends_on("cmake@3.22:", when="@:5.0", type="build")
+        depends_on("cmake@3.26:", when="@5.1:", type="build")
 
     conflicts("threads=pthreads", msg="pthread is not supported")
     conflicts("threads=openmp", when="@:3", msg="openmp is not supported by amdlibflame < 4.0")
@@ -103,7 +102,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
     depends_on("python+pythoncmd", type="build")
     depends_on("gmake@4:", when="@3.0.1,3.1:", type="build")
 
-    for vers in ["4.1", "4.2", "5.0"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 

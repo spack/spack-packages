@@ -17,7 +17,8 @@ class PyTables(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("master", branch="master")
+    version("master", branch="master", submodules=True)
+    version("3.10.2", sha256="2544812a7186fadba831d6dd34eb49ccd788d6a83f4e4c2b431b835b6796c910")
     version("3.9.0", sha256="27c9ca14c359d875caf945a6a527c12690e017650402dd17d8eb8b6caf6687d5")
     version("3.8.0", sha256="34f3fa2366ce20b18f1df573a77c1d27306ce1f2a41d9f9eff621b5192ea8788")
     version("3.7.0", sha256="e92a887ad6f2a983e564a69902de4a7645c30069fc01abd353ec5da255c5e1fe")
@@ -50,8 +51,10 @@ class PyTables(PythonPackage):
     depends_on("py-numpy@1.19:", when="@3.8:", type=("build", "run"))
     depends_on("py-numpy@1.9.3:", type=("build", "run"))
     # https://github.com/PyTables/PyTables/issues/1083
-    depends_on("py-numpy@:1", type=("build", "run"))
+    depends_on("py-numpy@:1", type=("build", "run"), when="@:3.9")
+    depends_on("py-numpy@1.25:", type=("build", "run"), when="@3.10:")
     depends_on("py-numexpr@2.6.2:", type=("build", "run"))
+    depends_on("py-numexpr@2.10.2:", type=("build", "run"), when="@3.10:")
     depends_on("py-packaging", when="@3.7:", type=("build", "run"))
     depends_on("py-py-cpuinfo", when="@3.8:", type=("build", "run"))
     depends_on("py-blosc2@2.2.8:", when="@3.9:", type=("build", "run"))

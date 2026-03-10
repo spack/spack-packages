@@ -24,6 +24,9 @@ class Nvshmem(MakefilePackage, CMakePackage, CudaPackage):
 
     license("BSD-3-Clause-Open-MPI")
 
+    version("3.4.5", sha256="40c1d4c255dd7395e04df41b181c4afdf2e0724c06b6fabde58bf2f8f532b0e5")
+    version("3.3.24", sha256="3210e6ed0f010991af3c9f31266b4149a15bc1d560f98951c234f25e2076507e")
+    version("3.3.20", sha256="96ec9620e82ec90de92c7d61a7ba03c0eba05075bf10e1fc4a066d45e7f7d21f")
     version("3.3.9", sha256="ba41e9ad6650cf99c1a60a3e47c19d1d97d814add7d35ea72337520ae13eeb59")
     version("3.2.5-1", sha256="eb2c8fb3b7084c2db86bd9fd905387909f1dfd483e7b45f7b3c3d5fcf5374b5a")
     version("2.7.0-6", sha256="23ed9b0187104dc87d5d2bc1394b6f5ff29e8c19138dc019d940b109ede699df")

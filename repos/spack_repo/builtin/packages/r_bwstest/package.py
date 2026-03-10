@@ -21,5 +21,7 @@ class RBwstest(RPackage):
     version("0.2.3", sha256="4bc4cc27fcf0aa60c6497048b74528923aae852c98480900204835a8ebd714b2")
     version("0.2.2", sha256="faff1dd698f1673a6befacb94d14281077d4c19be035a0a3bf85d77c1dfd5509")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-memoise", type=("build", "run"))
     depends_on("r-rcpp@0.12.3:", type=("build", "run"))

@@ -20,6 +20,18 @@ class Ack(Package):
     license("Artistic-2.0")
 
     version(
+        "3.9.0",
+        sha256="b8916abc9d42ebe8cc82264e047ccff5cbc976401e32a3dc6fc01c551c0cb5f8",
+        url="https://beyondgrep.com/ack-v3.9.0",
+        expand=False,
+    )
+    version(
+        "2.28",
+        sha256="0ab3df19513a2c71aa7901f7f522a5baf72ce69e6e0e34879979f157210734f6",
+        expand=False,
+    )
+
+    version(
         "2.22",
         sha256="fd0617585b88517a3d41d3d206c1dc38058c57b90dfd88c278049a41aeb5be38",
         expand=False,
@@ -45,6 +57,8 @@ class Ack(Package):
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
         ack_source = f"ack-{self.version}-single-file"
+        if spec.satisfies("@3.0.0:"):
+            ack_source = f"ack-v{self.version}"
         ack_installed = join_path(prefix.bin, "ack")
 
         # install source

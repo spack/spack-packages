@@ -29,6 +29,7 @@ class Jellyfish(AutotoolsPackage):
         url="https://www.cbcb.umd.edu/software/jellyfish/jellyfish-1.1.11.tar.gz",
     )
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("perl", when="@2.2.7:", type=("build", "run"))

@@ -50,6 +50,7 @@ class PyPycompadre(PythonPackage):
     depends_on("python@3.6:", type=("build", "link", "run"), when="@1.6:")
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.23:", type="build")
+    depends_on("py-pybind11", type="build")
 
     # fixes duplicate symbol issue with static library build
     patch(

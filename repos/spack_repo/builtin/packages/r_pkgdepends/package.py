@@ -29,6 +29,8 @@ class RPkgdepends(RPackage):
     version("0.3.1", sha256="8e4263a1792871ee9629b0d6a8caeb53b77012db3b5be91b432f3553cd2a80be")
     version("0.2.0", sha256="59afdbe0e59663088ba4facac5cd011a0a05b0b9c540103fb8b9f0a673bf4d94")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.4:", type=("build", "run"), when="@0.3.1:")
     depends_on("r@3.5:", type=("build", "run"), when="@0.7.0:")
     depends_on("r-callr@3.3.1:", type=("build", "run"))

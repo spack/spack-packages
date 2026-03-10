@@ -37,11 +37,6 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     version("1.2", sha256="ed1939110b2330b7994dcbba649b100c241a2353ed2624e627a200a398096c20")
     version("1.1", sha256="2b5f2d2d5cec57c52f470c2bf4f42621b40271f870b4f80cb57e52df1acd90ce")
     version("1.0", sha256="9b5f45c8180622c907ef0b7cc27cb18ba272ac6558725d9e460c3f3e764f1075")
-    version(
-        "0.9-beta",
-        sha256="b349b5708d1aa00e8c20c209ac75dc2d164ff9bf1b85adb5437346d194ba6c0d",
-        deprecated=True,
-    )
 
     # Allowed C++ standard
     variant(
@@ -66,13 +61,12 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     variant("mpi", default=True, description="enable MPI")
     for backend in kokkos_backends:
         deflt, descr = kokkos_backends[backend]
-        variant(backend.lower(), default=deflt, description=descr)
+        variant(backend, default=deflt, description=descr)
     variant("trilinos", default=False, when="@:1.5", description="use Kokkos from Trilinos")
 
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.12:", type="build")
-    depends_on("cmake@3.16:", type="build", when="@1.0:")
+    depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@2.0:")
     depends_on("mpi", when="+mpi")
     depends_on("rocthrust", when="+rocm")
@@ -88,7 +82,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos@4.2.00:", when="@1.7")
     depends_on("kokkos@4.5.00:", when="@2.0:")
     for backend in kokkos_backends:
-        depends_on("kokkos+%s" % backend.lower(), when="~trilinos+%s" % backend.lower())
+        depends_on(f"kokkos+{backend}", when=f"~trilinos+{backend}")
 
     for arch in CudaPackage.cuda_arch_values:
         cuda_dep = f"+cuda cuda_arch={arch}"
@@ -102,7 +96,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cuda_arch=none")
     conflicts("^kokkos", when="+trilinos")
-    depends_on("kokkos+cuda_lambda", when="~trilinos+cuda")
+    requires("^kokkos+cuda_lambda", when="~trilinos+cuda ^kokkos@:4")
 
     # Trilinos with internal Kokkos
     # Notes:
@@ -162,9 +156,9 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
         ]
         if self.spec.satisfies("+mpi"):
             cmake_args.append(self.define("MPI_HOME", self.spec["mpi"].prefix))
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
-        make = which("make")
-        ctest = which("ctest")
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
+        make = which("make", required=True)
+        ctest = which("ctest", required=True)
 
         with working_dir(self.cached_tests_work_dir):
             cmake(*cmake_args)

@@ -18,6 +18,7 @@ class PyJupyterCore(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("5.8.1", sha256="0a5f9706f70e64786b75acba995988915ebd4601c8a52e534a40b51c95f59941")
     version("5.3.0", sha256="6db75be0c83edbf1b7c9f91ec266a9a24ef945da630f3120e1a0046dc13713fc")
     version("5.1.0", sha256="a5ae7c09c55c0b26f692ec69323ba2b62e8d7295354d20f6cd57b749de4a05bf")
     version("4.11.1", sha256="2e5f244d44894c4154d06aeae3419dd7f1b0ef4494dc5584929b398c61cfd314")
@@ -40,6 +41,7 @@ class PyJupyterCore(PythonPackage):
 
     depends_on("python@3.8:", when="@5:", type=("build", "run"))
     depends_on("py-hatchling@1.4:", when="@4.11.1:", type="build")
+    depends_on("py-hatchling@1.26:", when="@5.8.1:", type="build")
 
     depends_on("py-platformdirs@2.5:", when="@5.1:", type=("build", "run"))
     depends_on("py-traitlets@5.3:", when="@5.1:", type=("build", "run"))

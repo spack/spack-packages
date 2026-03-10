@@ -15,6 +15,7 @@ class PyPuremagic(PythonPackage):
 
     license("MIT")
 
+    version("1.30", sha256="f9ff7ac157d54e9cf3bff1addfd97233548e75e685282d84ae11e7ffee1614c9")
     version("1.14", sha256="3d5df26cc7ec9aebbf842a09115a2fa85dc59ea6414fa568572c44775d796cbc")
     version("1.10", sha256="6ffea02b80ceec1381f9df513e0120b701a74b6efad92311ea80281c7081b108")
 

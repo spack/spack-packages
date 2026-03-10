@@ -11,10 +11,11 @@ class PyPyqt5Sip(PythonPackage):
     """The sip module support for PyQt5."""
 
     homepage = "https://www.riverbankcomputing.com/software/sip/"
-    pypi = "PyQt5-sip/PyQt5_sip-12.9.0.tar.gz"
+    pypi = "PyQt5-sip/pyqt5_sip-12.9.0.tar.gz"
 
     license("GPL-2.0-only")
 
+    version("12.17.0", sha256="682dadcdbd2239af9fdc0c0628e2776b820e128bec88b49b8d692fe682f90b4f")
     version("12.13.0", sha256="7f321daf84b9c9dbca61b80e1ef37bdaffc0e93312edae2cd7da25b953971d91")
     version("12.12.1", sha256="8fdc6e0148abd12d977a1d3828e7b79aae958e83c6cb5adae614916d888a6b10")
     version("12.9.0", sha256="d3e4489d7c2b0ece9d203ae66e573939f7f60d4d29e089c9f11daa17cfeaae32")
@@ -27,5 +28,14 @@ class PyPyqt5Sip(PythonPackage):
     patch(
         "https://src.fedoraproject.org/rpms/python-pyqt5-sip/raw/841f58ce66df4dfcf11713e7adb6bd301403d5a8/f/afc99fa84d0d.patch",
         sha256="82a326749b145b30eda3f0040cd7099c4c06a57a5e9626687b0a983de1ebfc3e",
-        when="@12.12: %gcc@14:",
+        when="@12.12:12.13 %gcc@14:",
     )
+
+    def url_for_version(self, version):
+        if version >= Version("12.17.0"):
+            name = "pyqt5-sip"
+        else:
+            name = "PyQt5-sip"
+        return (
+            f"https://files.pythonhosted.org/packages/source/P/PyQt5-sip/{name}-{version}.tar.gz"
+        )
