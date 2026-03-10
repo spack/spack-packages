@@ -120,7 +120,9 @@ class Hdf5(CMakePackage):
             "98",
             "11",
             "14",
-            "17"
+            "17",
+            "20",
+            "23"
         ),
         multi=False,
         description="Use the specified C++ standard when building.",
