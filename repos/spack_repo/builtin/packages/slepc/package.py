@@ -63,7 +63,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     version("3.14.1", sha256="cc78a15e34d26b3e6dde003d4a30064e595225f6185c1975bbd460cb5edd99c7")
     version("3.14.0", sha256="37f8bb270169d1d3f5d43756ac8929d56204e596bd7a78a7daff707513472e46")
 
-    variant("arpack", default=True, description="Enables Arpack wrappers")
+    variant("arpack", default=False, description="Enables Arpack wrappers")
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
     variant("hpddm", default=False, description="Enables HPDDM wrappers")
 
