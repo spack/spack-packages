@@ -134,6 +134,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("adios2", default=False, description="Build Adios2 filter support")
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
+    variant("catalyst", default=False, description="Build with Catalyst support")
 
     # caliper
     variant("caliper", default=False, description="Build Caliper support")
@@ -317,6 +318,13 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("adios2~mpi", when="+adios2~mpi")
     depends_on("adios2+shared", when="+adios2+shared")
     depends_on("adios2~shared", when="+adios2~shared")
+
+    # Catalyst
+    with when("+catalyst"):
+        depends_on("libcatalyst")
+        depends_on("libcatalyst+mpi", when="+mpi")
+        depends_on("libcatalyst+python", when="+python")
+        depends_on("libcatalyst+fortran", when="+fortran")
 
     #######################
     # Caliper
@@ -798,6 +806,16 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_entry("ADIAK_DIR", spec["adiak"].prefix))
         else:
             cfg.write("# caliper not built by spack \n")
+
+        #######################
+        # Catalyst
+        #######################
+        cfg.write("# Catalyst support\n")
+
+        if spec.satisfies("+catalyst"):
+            cfg.write(cmake_cache_entry("CATALYST_DIR", spec["libcatalyst"].prefix))
+        else:
+            cfg.write("# libcatalyst not built by spack \n")
 
         #######################
         # Finish host-config
