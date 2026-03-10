@@ -26,7 +26,8 @@ class Qgis(CMakePackage):
     license("GPL-2.0-or-later")
 
     # Prefer latest LTR
-    version("3.44.8",
+    version(
+        "3.44.8",
         sha256="146e197f34f1f9ede8cfdf5b9cc4d76667771720a302172c32d4117367356e96",
         preferred=True,
     )
