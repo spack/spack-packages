@@ -58,7 +58,7 @@ class Alpaka(CMakePackage, CudaPackage):
         description="To use atomic ref from boost, if C++20 std::atomic_ref is not available",
     )
     depends_on("boost@1.74:")
-    depends_on("boost@1.78:", when="@2: +boost_atomic_ref")
+    depends_on("boost@1.78:+atomic", when="@2: +boost_atomic_ref")
 
     depends_on("cmake@3.18:")
     depends_on("cmake@3.22:", when="@1:")
