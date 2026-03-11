@@ -115,7 +115,7 @@ class Hdf5(CMakePackage):
     variant("cxx", default=False, description="Enable C++ support")
     variant(
         "cxxstd",
-        default="98",
+        default="11",
         values=("98", "11", "14", "17", "20", "23"),
         multi=False,
         description="Use the specified C++ standard when building.",
