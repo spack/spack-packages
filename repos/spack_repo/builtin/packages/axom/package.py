@@ -53,6 +53,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
     version("develop", branch="develop")
+    version("0.13.0", tag="v0.13.0", commit="d00f6c66ef390ad746ae840f1074d982513611ac")    
     version("0.12.0", tag="v0.12.0", commit="297544010a3dfb98145a1a85f09f9c648c00a18c")
     version("0.11.0", tag="v0.11.0", commit="685960486aa55d3a74a821ee02f6d9d9a3e67ab1")
     version("0.10.1", tag="v0.10.1", commit="6626ee1c5668176fb64dd9a52dec3e8596b3ba6b")
@@ -101,7 +102,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "profiling",
         default=False,
-        when="@develop",
         description="Build with hooks for Adiak/Caliper performance analysis",
     )
 
@@ -117,6 +117,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     varmsg = "Build development tools (such as Sphinx, Doxygen, etc...)"
     variant("devtools", default=False, description=varmsg)
+
+    variant("longid", default=True, when="@0.13.0:", description="Build with 64-bit index type")
 
     # -----------------------------------------------------------------------
     # Dependencies
@@ -647,6 +649,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         options.append(self.define_from_variant("AXOM_ENABLE_TUTORIALS", "tutorials"))
         if self.spec.satisfies("~raja") or self.spec.satisfies("+umpire"):
             options.append("-DAXOM_ENABLE_MIR:BOOL=OFF")
+
+        options.append(self.define_from_variant("AXOM_USE_64BIT_INDEXTYPE", "longid"))
 
         return options
 
