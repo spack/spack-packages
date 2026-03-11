@@ -28,20 +28,6 @@ class Kubernetes(Package):
     version("1.30.14", sha256="ad003cc133346d20ae091a540a42bf9adbcf124ec2959004a636fd1e9694f534")
     version("1.30.11", sha256="f30e4082b6a554d4a2bfedd8b2308a5e6012287e15bec94f72987f717bab4133")
 
-    with default_args(deprecated=True):
-        version(
-            "1.32.0", sha256="3793859c53f09ebc92e013ea858b8916cc19d7fe288ec95882dada4e5a075d08"
-        )
-        version(
-            "1.27.2", sha256="c6fcfddd38f877ce49c49318973496f9a16672e83a29874a921242950cd1c5d2"
-        )
-        version(
-            "1.27.1", sha256="3a3f7c6b8cf1d9f03aa67ba2f04669772b1205b89826859f1636062d5f8bec3f"
-        )
-        version(
-            "1.27.0", sha256="536025dba2714ee5e940bb0a6b1df9ca97c244fa5b00236e012776a69121c323"
-        )
-
     depends_on("c", type="build")
 
     with default_args(type="build"):

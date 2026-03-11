@@ -20,11 +20,6 @@ class EaUtils(MakefilePackage):
     maintainers("snehring")
 
     version("2021-10-20", commit="10c21926a4dce4289d5052acfd73b8e744d4fede")
-    version(
-        "1.04.807",
-        sha256="aa09d25e6aa7ae71d2ce4198a98e58d563f151f8ff248e4602fa437f12b8d05f",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -33,7 +28,7 @@ class EaUtils(MakefilePackage):
     depends_on("zlib-api")
     depends_on("gsl")
     depends_on("bamtools")
-    depends_on("perl", type=["build", "run"])
+    depends_on("perl", type=("build", "run"))
 
     build_directory = "clipper"
 

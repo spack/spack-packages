@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -18,14 +19,26 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     inputs into the backend and results back to the application."""
 
     homepage = "https://github.com/ROCm/hipFFT"
-    git = "https://github.com/ROCm/hipFFT.git"
-    url = "https://github.com/ROCm/hipfft/archive/rocm-6.1.0.tar.gz"
+    git = "https://github.com/ROCm/rocm-libraries.git"
+
     tags = ["rocm"]
-
     maintainers("renjithravindrankannath", "srekolam", "afzpatel")
-
+    libraries = ["libhipfft"]
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hipfft/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="c86e34055576a662bfcb5897a4fe4ab1a4e350b1c4f35b3262b5112c5c640163")
+    version("7.1.0", sha256="94d8d901fdec2a41957f83139dea125bda4127af40d47f03b637a7920d73db50")
+    version("7.0.2", sha256="78b929e2ecafceb996f94132ad19091d98da2967a0cddc24be964cefd6719ec5")
+    version("7.0.0", sha256="2ee108f05d508ce56a805e0c39b691a9f6c0712ef596c95a7558cf32a9201105")
+    version("6.4.3", sha256="3850864e40005c2a9ea7aa17680235137837b3eea544a32895639a7be160e631")
     version("6.4.2", sha256="a4330e0ede640b40fcda6dd690e7037b11f3f2fc532400620a5f8a7cc58c291e")
     version("6.4.1", sha256="4f29b1d5cfb31bcc7fe9357b1d0e323fff9064fd0ee503fd116665c6dc24e8a4")
     version("6.4.0", sha256="f16859ba3823f8b29f2aac120cef3395109babf93a0a5069c3b4c7c67ef35e96")
@@ -43,9 +56,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     version("6.0.0", sha256="44f328b7862c066459089dfe62833cb7d626c6ceb71c57d8c7d6bba45dad491e")
     version("5.7.1", sha256="33452576649df479f084076c47d0b30f6f1da34864094bce767dd9bf609f04aa")
     version("5.7.0", sha256="daa5dc44580145e85ff8ffa7eb40a3d1ef41f3217549c01281715ff696a31588")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="d2ae36b8eacd39b865e8a7972b8eb86bcea2de4ac90711bba7e29b39b01eaa74")
-        version("5.6.0", sha256="c7f425b693caf9371b42226d86392335d993a117d23219b6ba1fd13523cb8261")
 
     # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -71,9 +81,10 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hip +cuda", when="+cuda")
 
+    # CUFFT_INCOMPLETE_PARAMETER_LIST has been removed
+    depends_on("cuda@:12", when="+cuda")
+
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -91,6 +102,12 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"+rocm @{ver}")
@@ -99,6 +116,24 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"rocfft amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
     # https://github.com/ROCm/rocFFT/pull/85)
     patch("001-remove-submodule-and-sync-shared-files-from-rocFFT.patch", when="@6.0.0")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hipfft"
+        else:
+            return "."
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):
@@ -114,6 +149,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("BUILD_WITH_LIB", "ROCM"))
         elif self.spec.satisfies("+cuda"):
             args.append(self.define("BUILD_WITH_LIB", "CUDA"))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         return args

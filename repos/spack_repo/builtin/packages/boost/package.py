@@ -31,6 +31,7 @@ class Boost(Package):
     license("BSL-1.0")
 
     version("develop", branch="develop", submodules=True)
+    version("1.89.0", sha256="85a33fa22621b4f314f8e85e1a5e2a9363d22e4f4992925d4bb3bc631b5a0c7a")
     version("1.88.0", sha256="46d9d2c06637b219270877c9e16155cbd015b6dc84349af064c088e9b5b12f7b")
     version("1.87.0", sha256="af57be25cb4c4f4b413ed692fe378affb4352ea50fbe294a11ef548f4d527d89")
     version("1.86.0", sha256="1bed88e40401b2cb7a1f76d4bab499e352fa4d0c5f31c0dbae64e24d34d7513b")
@@ -123,6 +124,7 @@ class Boost(Package):
         "container",
         "context",
         "contract",
+        "conversion",
         "coroutine",
         "date_time",
         "exception",
@@ -159,6 +161,7 @@ class Boost(Package):
     # signals library was removed from boost in 1.69
     # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
     all_libs_opts = {
+        "conversion": {"when": "@1.87.0:"},
         "charconv": {"when": "@1.85.0:"},
         "cobalt": {"when": "@1.84.0:"},
         "signals": {"when": "@:1.68"},
@@ -317,6 +320,9 @@ class Boost(Package):
     # (https://github.com/spack/spack/pull/32879#issuecomment-1265933265)
     conflicts("%oneapi", when="@1.80")
 
+    # Boost did not support the oneapi compilers prior to 1.76
+    conflicts("%oneapi@2023:", when="@:1.75")
+
     # Boost 1.85.0 stacktrace added a hard compilation error that has to
     # explicitly be suppressed on some platforms:
     # https://github.com/boostorg/stacktrace/pull/150. This conflict could be
@@ -374,6 +380,14 @@ class Boost(Package):
         "https://482372.bugs.gentoo.org/attachment.cgi?id=356970",
         when="@1.53.0:1.54",
         sha256="b6f6ce68282159d46c716a1e6c819c815914bdb096cddc516fa48134209659f2",
+    )
+
+    # Fix: "Compile issue with flat_tree insert"
+    # See: https://github.com/boostorg/container/pull/101
+    patch(
+        "container_PR101.patch",
+        when="@1.66.0:1.69.0",
+        sha256="d216bf7c826c577912aa518c76c17697898483f95336cc035ae9ed16b12dc2b0",
     )
 
     # Fix: "Unable to compile code using boost/process.hpp"
@@ -454,6 +468,13 @@ class Boost(Package):
 
     # https://www.intel.com/content/www/us/en/developer/articles/technical/building-boost-with-oneapi.html
     patch("intel-oneapi-linux-jam.patch", when="@1.76: %oneapi")
+
+    # https://github.com/spack/spack/issues/44003
+    patch(
+        "oneapi_pthread.patch",
+        sha256="7845717c5d916fabc0e62eb6e1f5ad8f13baaf4a4b71b99b19847703386064c4",
+        when="@1.76: %oneapi@2022:",
+    )
 
     # https://github.com/boostorg/phoenix/issues/111
     patch("boost_phoenix_1.81.0.patch", level=2, when="@1.81.0:1.82.0")

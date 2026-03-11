@@ -19,12 +19,6 @@ class Hapcut2(MakefilePackage):
     license("BSD-2-Clause")
 
     version("v1.3.1", commit="c6481d5fd0618dc3e82b2eb8c2b4835d9a4f6da7")
-    version(
-        "2017-07-10",
-        commit="2966b94c2c2f97813b757d4999b7a6471df1160e",
-        submodules=True,
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 
@@ -35,7 +29,6 @@ class Hapcut2(MakefilePackage):
     depends_on("bzip2")
     depends_on("zlib-api")
 
-    @when("@v1.3.1:")
     def edit(self, spec, prefix):
         filter_file("CC=.*$", "", "Makefile")
         filter_file("CFLAGS=.*$", "CFLAGS=-Wall -g -O3 -D_GNU_SOURCE", "Makefile")

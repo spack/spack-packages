@@ -15,10 +15,12 @@ class PyVcrpy(PythonPackage):
 
     license("MIT")
 
+    version("7.0.0", sha256="176391ad0425edde1680c5b20738ea3dc7fb942520a48d2993448050986b3a50")
     version("5.1.0", sha256="bbf1532f2618a04f11bce2a99af3a9647a32c880957293ff91e0a5f187b6b3d2")
     version("4.2.1", sha256="7cd3e81a2c492e01c281f180bcc2a86b520b173d2b656cb5d89d99475423e013")
     version("4.1.1", sha256="57095bf22fc0a2d99ee9674cdafebed0f3ba763018582450706f7d3a74fff599")
 
+    depends_on("python@3.9:", when="@7:", type=("build", "run"))
     depends_on("python@3.8:", when="@5:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 

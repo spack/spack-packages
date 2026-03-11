@@ -11,8 +11,11 @@ from spack.package import *
 class RocmDeviceLibs(CMakePackage):
     """set of AMD specific device-side language runtime libraries"""
 
-    homepage = "https://github.com/ROCm/ROCm-Device-Libs"
-    git = "https://github.com/ROCm/ROCm-Device-Libs.git"
+    homepage = "https://github.com/ROCm/llvm-project"
+    git = "https://github.com/ROCm/llvm-project.git"
+
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     def url_for_version(self, version):
         if version <= Version("6.0.2"):
@@ -21,11 +24,12 @@ class RocmDeviceLibs(CMakePackage):
             url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
-
-    version("master", branch="amd-stg-open", deprecated=True)
+    version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
+    version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
+    version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
+    version("7.0.2", sha256="fd612fa750bebd0c3be0ea642b2cae8ff5c7e00a2280b22b9ea16ee86a11d763")
+    version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
+    version("6.4.3", sha256="7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7")
     version("6.4.2", sha256="9f42cb73d90bd4561686c0366f60f6e58cfd32ff24b094c69e8259fb5d177457")
     version("6.4.1", sha256="460ad28677092b9eb86ffdc49bcb4d01035e32b4f05161d85f90c9fa80239f50")
     version("6.4.0", sha256="dca1c145a23f05229d5d646241f9d1d3c5dbf1d745b338ae020eabe33beb965c")
@@ -43,9 +47,6 @@ class RocmDeviceLibs(CMakePackage):
     version("6.0.0", sha256="198df4550d4560537ba60ac7af9bde31d59779c8ec5d6309627f77a43ab6ef6f")
     version("5.7.1", sha256="703de8403c0bd0d80f37c970a698f10f148daf144d34f982e4484d04f7c7bbef")
     version("5.7.0", sha256="0f8780b9098573f1c456bdc84358de924dcf00604330770a383983e1775bf61e")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="f0dfab272ff936225bfa1e9dabeb3c5d12ce08b812bf53ffbddd2ddfac49761c")
-        version("5.6.0", sha256="efb5dcdca9b3a9fbe408d494fb4a23e0b78417eb5fa8eebd4a5d226088f28921")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -63,8 +64,6 @@ class RocmDeviceLibs(CMakePackage):
     depends_on("llvm-amdgpu ~rocm-device-libs")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -82,6 +81,12 @@ class RocmDeviceLibs(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

@@ -24,7 +24,10 @@ class Prrte(AutotoolsPackage):
     license("BSD-3-Clause-Open-MPI")
 
     version("develop", branch="master")
+    version("4.1.0", sha256="285ad62b670075708b9fcfe14c54baa599733bc274d10502a82e8eebba0b7c70")
     version("4.0.0", sha256="3c2ec961e0ba0c99128c7bf3545f4789d55a85a70ce958e868ae5e3db6ed4de4")
+    version("3.0.13", sha256="635a546b3d3cfa587f4122bfaa0038df07b56381ffd649e57b089893712fa231")
+    version("3.0.12", sha256="5ee344c1ef915e48d93c5c7bb77f0a7d47f3e4aec9bc5069e67d1dccadd91968")
     version("3.0.11", sha256="37af5a82d333a54c0bac358f06c194427b7dbfa7b8b85f2ddd1145acf71cfdd4")
     version("3.0.10", sha256="f5525d88937a5664ab5248a7c05e9ee51389937cd0993398e8270ed5cf53d638")
     version("3.0.9", sha256="29766b5c81faa6320625ab0670a0b24b2b75f5cf1abe4aa7f3bad56487a6a7e1")
@@ -45,6 +48,7 @@ class Prrte(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("pmix")
+    depends_on("pmix@6.1:", when="@4.1:")
     depends_on("pmix@6:", when="@4:")
     depends_on("pmix@:5", when="@:3")
     # NOTE: prrte 3.0.1 requires pmix 4.2.4
@@ -63,6 +67,18 @@ class Prrte(AutotoolsPackage):
     depends_on("flex", type=("build"))
     depends_on("pkgconfig", type="build")
     depends_on("python@3.7:", type="build", when="@develop")
+
+    # https://github.com/openpmix/openpmix/blob/master/docs/installing-pmix/configure-cli-options/runtime.rst
+    SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
+
+    variant(
+        "schedulers",
+        values=disjoint_sets(("none",), SCHEDULERS).with_non_feature_values("none"),
+        description="List of schedulers for which support is enabled",
+    )
+    depends_on("lsf", when="schedulers=lsf")
+    depends_on("pbs", when="schedulers=tm")
+    depends_on("slurm", when="schedulers=slurm")
 
     def url_for_version(self, version):
         if version <= Version("3"):
@@ -89,5 +105,24 @@ class Prrte(AutotoolsPackage):
         config_args.append("--with-hwloc={0}".format(spec["hwloc"].prefix))
         # pmix
         config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+
+        # schedulers
+        # see prte_check_X.m4 files in
+        # https://github.com/openpmix/prrte/tree/master/config
+        if spec.satisfies("schedulers=alps"):
+            config_args.append("--with-alps")
+
+        if spec.satisfies("schedulers=lsf"):
+            config_args.append(f"--with-lsf={self.spec['lsf'].prefix}")
+            config_args.append(f"--with-lsf-libdir={spec['lsf'].libs.directories[0]}")
+
+        if spec.satisfies("schedulers=sge"):
+            config_args.append("--with-sge")
+
+        if spec.satisfies("schedulers=tm"):
+            config_args.append(f"--with-tm={self.spec['pbs'].prefix}")
+
+        if spec.satisfies("schedulers=slurm"):
+            config_args.append("--with-slurm")
 
         return config_args

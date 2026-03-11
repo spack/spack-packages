@@ -63,9 +63,6 @@ class EcpProxyApps(BundlePackage):
     depends_on("amg2013@1.1", when="@2.0")
     depends_on("miniamr@1.4.1", when="@2.0:2.1")
 
-    # Added with release 1.1
-    depends_on("examinimd@1.0", when="@1.1:")
-
     depends_on("nekbone@17.0", when="@1.0:")
     depends_on("swfft@1.0", when="@1.0:")
 

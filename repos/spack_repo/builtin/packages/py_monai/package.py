@@ -21,7 +21,7 @@ class PyMonai(PythonPackage):
 
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("python@3.8:", when="@1.2:", type=("build", "run"))
-    depends_on("py-ninja", type="build")
+    depends_on("ninja", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-torch@1.6:", type=("build", "run"))

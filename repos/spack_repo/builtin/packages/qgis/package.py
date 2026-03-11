@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from pathlib import Path
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -14,25 +16,24 @@ class Qgis(CMakePackage):
     """
 
     homepage = "https://qgis.org"
-    url = "https://qgis.org/downloads/qgis-3.8.1.tar.bz2"
 
-    maintainers("adamjstewart", "Sinan81")
+    # the downloads are listed via json, so the spack checksum crawler won't find them
+    # spack checksum qgis x.y.z will provide the new checksum
+    url = "https://qgis.org/downloads/qgis-3.44.7.tar.bz2"
+
+    maintainers("adamjstewart", "Sinan81", "Chrismarsh")
 
     license("GPL-2.0-or-later")
 
     # Prefer latest LTR
     version(
-        "3.40.6",
-        sha256="dd68d39a2a29326031195bed2125e8b0fa7112fe9ee74d5f9850d06b02cef6a8",
+        "3.44.8",
+        sha256="146e197f34f1f9ede8cfdf5b9cc4d76667771720a302172c32d4117367356e96",
         preferred=True,
     )
+    version("3.44.7", sha256="1ab06f40600c84e928b4fe22a66997d80973201b10769e7a636e5be83459b814")
+    version("3.40.6", sha256="dd68d39a2a29326031195bed2125e8b0fa7112fe9ee74d5f9850d06b02cef6a8")
     version("3.40.1", sha256="53110464c9f5ba5562c437e1563ab36dad2f218e6e7d1c0cfbe5b6effe241c8e")
-    #  version 3.36 isn't building right now.
-    version(
-        "3.36.0",
-        sha256="1b64bc92660bf07edc6b6478fc6a13656149e87d92eabe5c3db9493072506e2c",
-        deprecated=True,
-    )
     version("3.34.15", sha256="afb0bed05ffbc7bcb6d27dd1a8644b1e63ac2cb322baa058ff65b848c760efc2")
     version("3.34.13", sha256="a8873ca9bae346bae48ef3fe3eed702ef1f06d951201464464a64019302ba50b")
     version("3.34.4", sha256="7d1c5fafff13f508a9bcf6244c9666f891351deb1ace2aedcc63504f070c5ce4")
@@ -128,10 +129,13 @@ class Qgis(CMakePackage):
     depends_on("gdal@2.1.0: +python", type=("build", "link", "run"))
     depends_on("gdal@3.2.0: +python", type=("build", "link", "run"), when="@3.28:")
     depends_on("geos@3.4.0:")
-    depends_on("libspatialindex")
+
+    # https://github.com/libspatialindex/libspatialindex/issues/276
+    depends_on("libspatialindex@:2.0.0")
     depends_on("libspatialite@4.2.0:")
     depends_on("libzip")
     depends_on("libtasn1")
+
     depends_on("proj@4.4.0:")
     depends_on("proj@4.9.3:", when="@3.8.2:")
     depends_on("proj@7.2:", when="@3.28:")
@@ -139,6 +143,8 @@ class Qgis(CMakePackage):
     # fails to build with proj 9.4+ until the backported patch in 3.34.5
     # https://github.com/qgis/QGIS/pull/56761
     depends_on("proj@:9.3", when="@:3.34.4")
+    depends_on("proj@:9.5", when="@3.34.5:3.34.15")
+
     depends_on("py-psycopg2", type=("build", "run"))  # TODO: is build dependency necessary?
     depends_on("py-pyqt4", when="@2")
     depends_on("py-pyqt5@5.3:", when="@3")
@@ -161,7 +167,7 @@ class Qgis(CMakePackage):
     depends_on("sqlite@3.0.0: +column_metadata")
     depends_on("pdal", when="+pdal")
     depends_on("protobuf", when="@3.16.4:")
-    depends_on("protobuf@:3.21", when="@:3.28")
+    depends_on("protobuf@:21", when="@:3.28")
     depends_on("zstd", when="@3.22:")
 
     # Runtime python dependencies, not mentioned in install instructions
@@ -169,6 +175,7 @@ class Qgis(CMakePackage):
     depends_on("py-owslib", type="run")
     depends_on("py-jinja2", type="run")
     depends_on("py-pygments", type="run")
+    depends_on("py-packaging", type="run", when="@3.44:")
 
     # optionals
     depends_on("postgresql@8:", when="+postgresql")  # for PostGIS support
@@ -200,6 +207,13 @@ class Qgis(CMakePackage):
     patch("pyqt5_3165x.patch", when="@3.16.5:3.21 ^qt@5 ^py-sip@4")
     patch("pyqt5_322x.patch", when="@3.22: ^qt@5 ^py-sip@4")
 
+    # https://github.com/qgis/QGIS/pull/62142
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/qgis/QGIS/pull/62142.patch?full_index=1",
+        when="@3.40 ^py-sip@6.11:",
+        sha256="edb2c149f88c1adfee3791f1928c5119301900541cb40a6d1cc5b68d8aa3b688",
+    )
+
     @run_before("cmake", when="^py-pyqt5")
     def fix_pyqt5_cmake(self):
         cmfile = FileFilter(join_path("cmake", "FindPyQt5.cmake"))
@@ -222,9 +236,35 @@ class Qgis(CMakePackage):
         elif "^py-pyqt6" in self.spec:
             pyqtx = "PyQt6"
 
+        pp = Path("python/gui/pyproject.toml.in")
+        txt = pp.read_text(encoding="utf-8")
+
         sip_inc_dir = join_path(self["qscintilla"].module.python_platlib, pyqtx, "bindings")
-        with open(join_path("python", "gui", "pyproject.toml.in"), "a") as tomlfile:
-            tomlfile.write(f'\n[tool.sip.project]\nsip-include-dirs = ["{sip_inc_dir}"]\n')
+        sip_line = f'sip-include-dirs = ["{sip_inc_dir}"]'
+
+        # QGis 3.42.0 added a @sipabi@ that expands to the [tool.sip.project] header.
+        # The simple patch append approach  results in a duplicate header which causes a
+        # build failure. The middle case is probably overkill but it is  kept as a just
+        # in (edge) case
+
+        # if it's already there, do nothing
+        if sip_line not in txt:
+            if "@sipabi@" in txt:
+                # @sipabi@ expands to the [tool.sip.project] table + abi-version,
+                # add just the key immediately after it
+                txt = txt.replace("@sipabi@", "@sipabi@\n" + sip_line, 1)
+
+            elif "[tool.sip.project]" in txt:
+                # insert right after the first header occurrence
+                txt = txt.replace("[tool.sip.project]", "[tool.sip.project]\n" + sip_line, 1)
+
+            else:
+                # no macro + no table, append a new table
+                if not txt.endswith("\n"):
+                    txt += "\n"
+                txt += "\n[tool.sip.project]\n" + sip_line + "\n"
+
+        pp.write_text(txt, encoding="utf-8")
 
     def cmake_args(self):
         spec = self.spec

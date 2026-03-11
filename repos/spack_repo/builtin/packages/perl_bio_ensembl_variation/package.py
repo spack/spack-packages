@@ -58,12 +58,12 @@ class PerlBioEnsemblVariation(Package):
 
     def build(self, spec, prefix):
         if spec.satisfies("+ld"):
-            make = which("make")
+            make = which("make", required=True)
             with working_dir("C_code"):
                 make()
         if spec.satisfies("+tools"):
             # Fix the fact that phenotype_annotation isn't executable
-            chmod = which("chmod")
+            chmod = which("chmod", required=True)
             chmod("+x", "tools/phenotype_annotation/phenotype_annotation")
 
     def install(self, spec, prefix):

@@ -13,8 +13,13 @@ class Comgr(CMakePackage):
     """This provides various Lightning Compiler related services. It currently
     contains one library, the Code Object Manager (Comgr)"""
 
-    homepage = "https://github.com/ROCm/ROCm-CompilerSupport"
-    git = "https://github.com/ROCm/ROCm-CompilerSupport.git"
+    homepage = "https://github.com/ROCm/llvm-project"
+    git = "https://github.com/ROCm/llvm-project.git"
+
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
+    libraries = ["libamd_comgr"]
+    license("NCSA")
 
     def url_for_version(self, version):
         if version <= Version("6.0.2"):
@@ -23,12 +28,12 @@ class Comgr(CMakePackage):
             url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
-    libraries = ["libamd_comgr"]
-
-    license("NCSA")
+    version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
+    version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
+    version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
+    version("7.0.2", sha256="fd612fa750bebd0c3be0ea642b2cae8ff5c7e00a2280b22b9ea16ee86a11d763")
+    version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
+    version("6.4.3", sha256="7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7")
     version("6.4.2", sha256="9f42cb73d90bd4561686c0366f60f6e58cfd32ff24b094c69e8259fb5d177457")
     version("6.4.1", sha256="460ad28677092b9eb86ffdc49bcb4d01035e32b4f05161d85f90c9fa80239f50")
     version("6.4.0", sha256="dca1c145a23f05229d5d646241f9d1d3c5dbf1d745b338ae020eabe33beb965c")
@@ -46,9 +51,6 @@ class Comgr(CMakePackage):
     version("6.0.0", sha256="04353d27a512642a5e5339532a39d0aabe44e0964985de37b150a2550385800a")
     version("5.7.1", sha256="3b9433b4a0527167c3e9dfc37a3c54e0550744b8d4a8e1be298c8d4bcedfee7c")
     version("5.7.0", sha256="e234bcb93d602377cfaaacb59aeac5796edcd842a618162867b7e670c3a2c42c")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="0a85d84619f98be26ca7a32c71f94ed3c4e9866133789eabb451be64ce739300")
-        version("5.6.0", sha256="9396a7238b547ee68146c669b10b9d5de8f1d76527c649133c75d8076a185a72")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -63,8 +65,6 @@ class Comgr(CMakePackage):
     depends_on("ncurses", type="link")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -82,6 +82,12 @@ class Comgr(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         # llvm libs are linked statically, so this *could* be a build dep
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -105,6 +111,7 @@ class Comgr(CMakePackage):
         return args
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        env.prepend_path("CMAKE_MODULE_PATH", self.spec["llvm-amdgpu"].prefix.lib.cmake.clang)
         if self.spec.satisfies("@5.7: +asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")

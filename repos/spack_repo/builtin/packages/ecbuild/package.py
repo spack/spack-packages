@@ -18,6 +18,11 @@ class Ecbuild(CMakePackage):
 
     license("Apache-2.0")
 
+    version("3.12.0", sha256="70c7fc9b17f736a3312167c2c36d13b3b5833a255fe2b168b2886ad7c743ffdf")
+    version("3.11.0", sha256="38a96bdeb38feb65446b6f95b35492232abd188c41b8a28fd128f9f88e00b05d")
+    version("3.10.0", sha256="7065e1725584b507517cbfc456299ff588e20adf37bc6210ce89fb65a1ad08d0")
+    version("3.9.1", sha256="48c2dbd342865049cc39afd7fe886fce9ce162105ca72b8aef9a09c21d9655ba")
+    version("3.8.5", sha256="aa0c44cab0fffec4c0b3542e91ebcc736b3d41b68a068d30c023ec0df5f93425")
     version("3.7.2", sha256="7a2d192cef1e53dc5431a688b2e316251b017d25808190faed485903594a3fb9")
     version("3.6.5", sha256="98bff3d3c269f973f4bfbe29b4de834cd1d43f15b1c8d1941ee2bfe15e3d4f7f")
     version("3.6.1", sha256="796ccceeb7af01938c2f74eab0724b228e9bf1978e32484aa3e227510f69ac59")
@@ -27,6 +32,7 @@ class Ecbuild(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("cmake@3.11:", type=("build", "run"))
+    depends_on("cmake@3.18:", type=("build", "run"), when="@3.11:")
 
     # See https://github.com/ecmwf/ecbuild/issues/35
     depends_on("cmake@:3.19", type=("build", "run"), when="@:3.6.1")

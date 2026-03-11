@@ -44,7 +44,7 @@ class PyCudf(PythonPackage):
 
     @run_before("install")
     def cmake(self):
-        cmake = which("cmake")
+        cmake = which("cmake", required=True)
 
         build_dir = os.path.join(self.stage.source_path, "cpp", "build")
 

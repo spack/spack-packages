@@ -15,6 +15,7 @@ class PyJupyterLeaflet(PythonPackage):
 
     license("MIT")
 
+    version("0.20.0", sha256="ad826dd7976a2b6d8b91d762c25a69a44f123b7b3bd1acaba236bd9af8e68cb4")
     version("0.19.2", sha256="b09b5ba48b1488cb61da37a6f558347269eb53ff6d64dc1a73e005ffc4420063")
 
     with default_args(type="build"):

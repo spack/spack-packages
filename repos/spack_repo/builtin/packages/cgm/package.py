@@ -21,14 +21,12 @@ class Cgm(AutotoolsPackage):
     version("13.1", sha256="985aa6c5db4257999af6f2bdfcb24f2bce74191cdcd98e937700db7fd9f6b549")
 
     variant("mpi", default=True, description="enable mpi support")
-    variant("oce", default=False, description="enable oce geometry kernel")
     variant("debug", default=False, description="enable debug symbols")
     variant("shared", default=False, description="enable shared builds")
 
     depends_on("cxx", type="build")  # generated
 
     depends_on("mpi", when="+mpi")
-    depends_on("oce+X11", when="+oce")
 
     def configure_args(self):
         spec = self.spec
@@ -45,10 +43,7 @@ class Cgm(AutotoolsPackage):
         else:
             args.append("--without-mpi")
 
-        if spec.satisfies("+oce"):
-            args.append("--with-occ={0}".format(spec["oce"].prefix))
-        else:
-            args.append("--without-occ")
+        args.append("--without-occ")
 
         if spec.satisfies("+debug"):
             args.append("--enable-debug")

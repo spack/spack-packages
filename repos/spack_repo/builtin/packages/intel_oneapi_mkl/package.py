@@ -30,6 +30,18 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
     )
 
     version(
+        "2025.3.1",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/6a17080f-f0de-41b9-b587-52f92512c59a/intel-onemkl-2025.3.1.11_offline.sh",
+        sha256="89753ce0be82d31669172c08c6b6b863f2e25558d775496349473b3299240a01",
+        expand=False,
+    )
+    version(
+        "2025.3.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/2ad98b49-1fb2-4294-ab3d-6889b434ebd3/intel-onemkl-2025.3.0.462_offline.sh",
+        sha256="6d0152abbfb85c51abb47bbf8d21711cb43c409a0e673d67970dbe6cf20c1970",
+        expand=False,
+    )
+    version(
         "2025.2.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/47c7d946-fca1-441a-b0df-b094e3f045ea/intel-onemkl-2025.2.0.629_offline.sh",
         sha256="7bfdde1379a9cd3c2784af4352931a0527a5c483c9da71e851a3f06e055af7c7",
@@ -58,7 +70,6 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/89a381f6-f85d-4dda-ae62-30d51470f53c/l_onemkl_p_2024.2.2.17_offline.sh",
         sha256="6b64ab95567bee53d6cf7e78f9f7b15695902fb9da0d20c29e638ad001b6b348",
         expand=False,
-        preferred=True,
     )
     version(
         "2024.2.1",
@@ -242,6 +253,12 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
             return libs + system_libs
         else:
             return IntelOneApiStaticLibraryList(libs, system_libs)
+
+    @property
+    def headers(self):
+        headers = find_all_headers(self.component_prefix.include)
+        headers.directories = [self.component_prefix.include, self.component_prefix.include.fftw]
+        return headers
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

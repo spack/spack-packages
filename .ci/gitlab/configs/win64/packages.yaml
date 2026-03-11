@@ -23,3 +23,8 @@ packages:
     - spec: win-sdk@10.0.22621 plat=x64
       prefix: "C:\\Program Files (x86)\\Windows Kits\\10"
     buildable: False
+  win-wdk:
+    externals:
+    - spec: win-wdk@10.0.22621 plat=x64
+      prefix: "C:\\Program Files (x86)\\Windows Kits\\10"
+    buildable: False

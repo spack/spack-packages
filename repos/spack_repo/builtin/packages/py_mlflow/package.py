@@ -46,7 +46,6 @@ class PyMlflow(PythonPackage):
     depends_on("py-sqlalchemy@1.4.0:1", type=("build", "run"))
     for platform in ["linux", "darwin"]:
         depends_on("py-gunicorn@:20", type=("build", "run"), when=f"platform={platform}")
-    depends_on("py-waitress@:2", type=("build", "run"), when="platform=windows")
     depends_on("py-scikit-learn@:1", type=("build", "run"))
     depends_on("py-pyarrow@4.0.0:10", type=("build", "run"))
     depends_on("py-shap@0.40:0", type=("build", "run"))

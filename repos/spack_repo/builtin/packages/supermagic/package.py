@@ -27,7 +27,7 @@ class Supermagic(AutotoolsPackage):
 
     @when("@master")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen")
 
     def configure_args(self):

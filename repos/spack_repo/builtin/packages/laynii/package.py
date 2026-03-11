@@ -17,11 +17,15 @@ class Laynii(MakefilePackage):
 
     license("BSD-3-Clause")
 
+    version("2.8.0", sha256="b0747dd86744ee94970a4bc64448f1216dfc98714f064d46773aa6c34b81b305")
     version("2.7.0", sha256="f0f45c6e80afaca1d89a4721dda70f152c175434e19358974a221ef9c713826b")
 
     depends_on("cxx", type="build")
 
     depends_on("zlib")
+
+    # Add missing limits header
+    patch("limits.patch", when="@2.8")
 
     def edit(self, spec, prefix):
         pass

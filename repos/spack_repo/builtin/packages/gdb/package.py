@@ -23,6 +23,7 @@ class Gdb(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later AND LGPL-3.0-or-later")
 
+    version("17.1", sha256="2b93c4c9726a4b8cfe771036e155377405dfa41c483d90945481319c5663c120")
     version("16.2", sha256="bdc1da4a033280ac752e7d34b0418efaa45bed093235cb88e62ea961752a37f8")
     version("15.2", sha256="9d16bc2539a2a20dc3ef99b48b8414d51c51305c8577eb7a1da00996f6dea223")
     version("14.2", sha256="2de5174762e959a5e529e20c20d88a04735469d8fffd98f61664e70b341dc47c")
@@ -47,7 +48,7 @@ class Gdb(AutotoolsPackage, GNUMirrorPackage):
     version("7.11.1", sha256="57e9e9aa3172ee16aa1e9c66fef08b4393b51872cc153e3f1ffdf18a57440586")
     version("7.10.1", sha256="ff14f8050e6484508c73cbfa63731e57901478490ca1672dc0b5e2b03f6af622")
 
-    variant("python", default=True, description="Compile with Python support", when="@8.2:")
+    variant("python", default=True, description="Compile with Python support", when="@9.3:")
     variant("xz", default=True, description="Compile with lzma support")
     variant("source-highlight", default=False, description="Compile with source-highlight support")
     variant("lto", default=False, description="Enable lto")
@@ -89,9 +90,6 @@ class Gdb(AutotoolsPackage, GNUMirrorPackage):
     # Optional dependencies
     with when("+python"), default_args(type=("build", "link", "run")):
         depends_on("python")
-        # gdb@9.2 will segmentation fault if it builds with python@3.9.
-        # https://bugzilla.redhat.com/show_bug.cgi?id=1829702
-        depends_on("python@:3.8", when="@:9.2")
         # pyOS_ReadlineTState became private API in cpython commit
         # d228825e08883fc13f35eb91435f95d32524931c
         depends_on("python@:3.12", when="@:14.2")

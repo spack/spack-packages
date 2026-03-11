@@ -15,6 +15,8 @@ class PyMistune(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.2.0", sha256="708487c8a8cdd99c9d90eb3ed4c3ed961246ff78ac82f03418f5183ab70e398a")
+    version("3.1.4", sha256="b5a7f801d389f724ec702840c11d8fc48f2b33519102fc7ee739e8177b672164")
     version("2.0.5", sha256="0246113cb2492db875c6be56974a7c893333bf26cd92891c85f63151cee09d34")
     version("2.0.4", sha256="9ee0a66053e2267aba772c71e06891fa8f1af6d4b01d5e84e267b4570d4d9808")
     version("2.0.2", sha256="6fc88c3cb49dba8b16687b41725e661cf85784c12e8974a29b9d336dd596c3a1")
@@ -32,4 +34,8 @@ class PyMistune(PythonPackage):
     version("0.5.1", sha256="cc66489a28845c0e1848ae290af5b555074eb76185136ca058e8eed1faa89692")
     version("0.5", sha256="d53d868cfd10cf757160e88adb5760fce95f7026a243f15a02b7c604238e5869")
 
+    depends_on("python@3.8:", type=("build", "run"), when="@3.1:")
+    depends_on("python@3.7:", type=("build", "run"), when="@3:")
     depends_on("py-setuptools", type="build")
+
+    depends_on("py-typing-extensions", type="build", when="@3.1: ^python@:3.10")

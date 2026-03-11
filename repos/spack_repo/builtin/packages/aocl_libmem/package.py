@@ -34,11 +34,9 @@ class AoclLibmem(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
-    version(
-        "5.0",
-        sha256="d3148db1a57fec4f3468332c775cade356e8133bf88385991964edd7534b7e22",
-        preferred=True,
-    )
+    version("5.2", sha256="06b56596fe32a4528a93d18a827bd5cbd814115d16390c6f2ae93d6b5715d41d")
+    version("5.1", sha256="e03bc712a576b3e14ae433a696558e121dc67aac7fc1b4dca9b727605784e994")
+    version("5.0", sha256="d3148db1a57fec4f3468332c775cade356e8133bf88385991964edd7534b7e22")
     version("4.2", sha256="4ff5bd8002e94cc2029ef1aeda72e7cf944b797c7f07383656caa93bcb447569")
 
     variant("logging", default=False, description="Enable/Disable logger")
@@ -47,8 +45,26 @@ class AoclLibmem(CMakePackage):
     variant(
         "vectorization",
         default="auto",
+        when="@:5.0",
         description="Use hardware vectorization support",
         values=("avx2", "avx512", "auto"),
+        multi=False,
+    )
+
+    # Add new variant for dynamic dispatcher support
+    variant(
+        "dynamic-dispatch",
+        default=False,
+        when="@5.1:",
+        description="Single portable optimized library"
+        " to execute on different x86 CPU architectures",
+    )
+    variant(
+        "vectorization",
+        default="none",
+        when="@5.1:",
+        description="Use hardware vectorization support",
+        values=("avx2", "avx512", "auto", "none"),
         multi=False,
     )
 
@@ -59,10 +75,29 @@ class AoclLibmem(CMakePackage):
         when="@5.0",
     )
 
+    # vectorization or ISA has precedence over +dynamic-dispatch and tunables
+    requires(
+        "vectorization=none",
+        when="+dynamic-dispatch",
+        msg=(
+            "+dynamic-dispatch requires vectorization=none. Set vectorization to 'none' "
+            "when enabling dynamic-dispatch."
+        ),
+    )
+    requires(
+        "vectorization=none",
+        when="+tunables",
+        msg=(
+            "+tunables requires vectorization=none. Set vectorization to 'none' when "
+            "enabling tunables."
+        ),
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@3.22:", type="build")
+    depends_on("cmake@3.22:", when="@:5.0", type="build")
+    depends_on("cmake@3.26:", when="@5.1:", type="build")
 
     @property
     def libs(self):
@@ -79,13 +114,31 @@ class AoclLibmem(CMakePackage):
         args.append(self.define_from_variant("ENABLE_TUNABLES", "tunables"))
         args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
-        if spec.satisfies("vectorisation=auto"):
-            if "avx512" in self.spec.target:
-                args.append("-ALMEM_ARCH=avx512")
-            elif "avx2" in self.spec.target:
-                args.append("-ALMEM_ARCH=avx2")
+        if spec.satisfies("@:5.0"):
+            vectorization = spec.variants["vectorization"].value
+            if vectorization == "auto":
+                target = spec.target
+                if "avx512" in target:
+                    args.append("-DALMEM_ARCH=avx512")
+                elif "avx2" in target:
+                    args.append("-DALMEM_ARCH=avx2")
+                else:
+                    args.append("-DALMEM_ARCH=none")
             else:
-                args.append("-ALMEM_ARCH=none")
-        else:
-            args.append(self.define("ALMEM_ARCH", spec.variants["vectorization"].value))
+                args.append(self.define("ALMEM_ARCH", vectorization))
+
+        # Managing Renamed CMake Option Values
+        if self.spec.satisfies("@5.1:"):
+            args.append(self.define_from_variant("ALMEM_LOGGING", "logging"))
+            args.append(self.define_from_variant("ALMEM_TUNABLES", "tunables"))
+            args.append(self.define_from_variant("ALMEM_DYN_DISPATCH", "dynamic-dispatch"))
+
+            if self.spec.satisfies("vectorisation=auto"):
+                if "avx512" in self.spec.target:
+                    args.append("-DALMEM_ISA=avx512")
+                elif "avx2" in self.spec.target:
+                    args.append("-DALMEM_ISA=avx2")
+            else:
+                args.append(self.define("ALMEM_ISA", self.spec.variants["vectorization"].value))
+
         return args

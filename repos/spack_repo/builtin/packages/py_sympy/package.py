@@ -10,10 +10,13 @@ from spack.package import *
 class PySympy(PythonPackage):
     """SymPy is a Python library for symbolic mathematics."""
 
+    homepage = "https://www.sympy.org"
     pypi = "sympy/sympy-0.7.6.tar.gz"
+    git = "https://github.com/sympy/sympy.git"
 
     license("BSD-3-Clause")
 
+    version("1.14.0", sha256="d3d3fe8df1e5a0b42f0e7bdf50541697dbe7d23746e894990c030e2b05e72517")
     version("1.13.3", sha256="b27fd2c6530e0ab39e275fc9b683895367e51d5da91baa8d3d64db2565fec4d9")
     version("1.13.1", sha256="9cebf7e04ff162015ce31c9c6c9144daa34a93bd082f54fd8f12deca4f47515f")
     version("1.13.0", sha256="3b6af8f4d008b9a1a6a4268b335b984b23835f26d1d60b0526ebc71d48a25f57")
@@ -38,6 +41,7 @@ class PySympy(PythonPackage):
     depends_on("python@3.5:", when="@1.6", type=("build", "run"))
     depends_on("python@3.6:", when="@1.7:", type=("build", "run"))
     depends_on("python@3.8:", when="@1.11.1:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.14:", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
     depends_on("py-mpmath@0.19:", when="@1.0:1.12", type=("build", "run"))

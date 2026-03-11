@@ -24,6 +24,7 @@ class PyGeoviews(PythonPackage):
     depends_on("py-hatchling", type="build")
     depends_on("py-hatch-vcs", type="build")
     depends_on("py-bokeh@3.5", type=("build", "run"))
+    depends_on("py-bokeh@3.6:", type=("build", "run"), when="@1.14:")
 
     # nodejs and npm are not explicitly listed but to build geoviews, py-bokeh needs them.
     # Setting as a dep in py-bokeh is not sufficient
@@ -36,6 +37,7 @@ class PyGeoviews(PythonPackage):
     depends_on("py-packaging", type="run")
     depends_on("py-panel@1:", type="run")
     depends_on("py-param", type="run")
+    depends_on("py-param@1.9.3:2", type="run", when="@1.14.0")
     depends_on("py-pyproj", type="run")
     depends_on("py-shapely", type="run")
     depends_on("py-xyzservices", type="run")

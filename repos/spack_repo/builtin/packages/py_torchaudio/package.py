@@ -19,6 +19,10 @@ class PyTorchaudio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("2.10.0", tag="v2.10.0", commit="27b7ebdebd2d2e4d34a2f5c05b0fb26efbd1da63")
+    version("2.9.1", tag="v2.9.1", commit="a224ab24a7f4797f6707051257265e223e12576f")
+    version("2.9.0", tag="v2.9.0", commit="eaa9e4e4dd413dca1084116581dc84fad403db3b")
+    version("2.8.0", tag="v2.8.0", commit="6e1c7fe9ff6d82b8665d0a46d859d3357d2ebaaa")
     version("2.7.1", tag="v2.7.1", commit="95c61b4168fc5133be8dd8c1337d929d066ae6cf")
     version("2.7.0", tag="v2.7.0", commit="654fee8fd17784271be1637eac1293fd834b4e9a")
     version("2.6.0", tag="v2.6.0", commit="d8831425203385077a03c1d92cfbbe3bf2106008")
@@ -50,36 +54,26 @@ class PyTorchaudio(PythonPackage):
     version("0.8.1", tag="v0.8.1", commit="e4e171a51714b2b2bd79e1aea199c3f658eddf9a")
     version("0.8.0", tag="v0.8.0", commit="099d7883c6b7af1d1c3b416191e5f3edf492e104")
     version("0.7.2", tag="v0.7.2", commit="a853dff25de36cc637b1f02029343790d2dd0199")
-    version(
-        "0.7.0", tag="v0.7.0", commit="ac17b64f4daedd45d0495e2512e22eaa6e5b7eeb", deprecated=True
-    )
-    version(
-        "0.6.0", tag="v0.6.0", commit="f17ae39ff9da0df8f795fef2fcc192f298f81268", deprecated=True
-    )
-    version(
-        "0.5.1", tag="v0.5.1", commit="71434798460a4ceca9d42004567ef419c62a612e", deprecated=True
-    )
-    version(
-        "0.5.0", tag="v0.5.0", commit="09494ea545738538f9db2dceeffe10d421060ee5", deprecated=True
-    )
-    version(
-        "0.4.0", tag="v0.4.0", commit="8afed303af3de41f3586007079c0534543c8f663", deprecated=True
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
-        depends_on("python@3.9:3.13", when="@2.6:")
+        depends_on("python@3.10:", when="@2.10:")
+        depends_on("python@3.10:3.14", when="@2.9")
+        depends_on("python@3.9:3.13", when="@2.6:2.8")
         depends_on("python@3.9:3.12", when="@2.5")
         depends_on("python@3.8:3.12", when="@2.2:2.4")
         depends_on("python@3.8:3.11", when="@2.0:2.1")
         depends_on("python@:3.10", when="@0.12:0")
         depends_on("python@:3.9", when="@0.7.2:0.11")
-        depends_on("python@:3.8", when="@:0.7.0")
 
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.10:", when="@2.10.0")
+        depends_on("py-torch@2.9.1", when="@2.9.1")
+        depends_on("py-torch@2.9.0", when="@2.9.0")
+        depends_on("py-torch@2.8.0", when="@2.8.0")
         depends_on("py-torch@2.7.1", when="@2.7.1")
         depends_on("py-torch@2.7.0", when="@2.7.0")
         depends_on("py-torch@2.6.0", when="@2.6.0")
@@ -111,25 +105,21 @@ class PyTorchaudio(PythonPackage):
         depends_on("py-torch@1.8.1", when="@0.8.1")
         depends_on("py-torch@1.8.0", when="@0.8.0")
         depends_on("py-torch@1.7.1", when="@0.7.2")
-        depends_on("py-torch@1.7.0", when="@0.7.0")
-        depends_on("py-torch@1.6.0", when="@0.6.0")
-        depends_on("py-torch@1.5.1", when="@0.5.1")
-        depends_on("py-torch@1.5.0", when="@0.5.0")
-        depends_on("py-torch@1.4.1", when="@0.4.0")
 
     # CMakelists.txt
     depends_on("cmake@3.18:", when="@0.10:", type="build")
     depends_on("cmake@3.5:", when="@0.8:", type="build")
     depends_on("ninja", when="@0.8:", type="build")
 
-    # prior to 2.1 ffmpeg was vendored
-    depends_on("ffmpeg@:6", when="@2.1:")
-
     # setup.py
     depends_on("py-setuptools", type="build")
     depends_on("py-pybind11", when="@0.12:", type=("build", "link"))
     depends_on("pkgconfig", type="build")
-    depends_on("sox")
+
+    # Historical dependencies
+    # prior to 2.1 ffmpeg was vendored
+    depends_on("ffmpeg@:6", when="@2.1:2.8")
+    depends_on("sox", when="@:2.8")
 
     # https://github.com/pytorch/audio/pull/3811
     patch(
@@ -156,12 +146,13 @@ class PyTorchaudio(PythonPackage):
             )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # tools/setup_helpers/extension.py
-        env.set("BUILD_SOX", "0")
+        if self.spec.satisfies("@:2.8"):
+            # tools/setup_helpers/extension.py
+            env.set("BUILD_SOX", "0")
 
-        if self.spec.satisfies("@2.1:"):
+        if self.spec.satisfies("@2.1:2.8"):
             env.set("FFMPEG_ROOT", self.spec["ffmpeg"].prefix)
-        else:
+        elif self.spec.satisfies("@:2.0"):
             # a specific ffmpeg is built but not installed, so just disable
             env.set("USE_FFMPEG", "0")
 

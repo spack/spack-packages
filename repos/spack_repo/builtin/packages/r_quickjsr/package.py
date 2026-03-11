@@ -17,4 +17,8 @@ class RQuickjsr(RPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    version("1.8.1", sha256="dd4cf107016d659991cdbd313908209e3998ea8b093f3632d8b3a84dea435e0f")
     version("1.3.1", sha256="10559d6e84a838ec97acdbc6028a59e2121811d4a20e83c95cdb8fb4ce208fd1")

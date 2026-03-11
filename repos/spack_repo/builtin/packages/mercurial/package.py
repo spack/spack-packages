@@ -16,31 +16,45 @@ class Mercurial(PythonPackage):
 
     license("GPL-2.0-or-later")
 
-    version("6.7.3", sha256="00196944ea92738809317dc7a8ed7cb21287ca0a00a85246e66170955dcd9031")
+    version("7.1.2", sha256="ce27b9a4767cf2ea496b51468bae512fa6a6eaf0891e49f8961dc694b4dc81ca")
+    version("7.0.3", sha256="59fc84640524da6f1938ea7e4eb0cd579fc7fedaaf563a916cb4f9dac0eacf6c")
+    version("6.9.5", sha256="d3f22aeef9e9dcd6e562132950226c2c955d35271bd00a01481efca2b1cc65fd")
+    version("6.8.2", sha256="aac618106768ad1ed976c3fe7c8659fec99e6f0b5337ea6ea554fae8490c4f4e")
+    version("6.7.4", sha256="74708f873405c12272fec116c6dd52862e8ed11c10011c7e575f5ea81263ea5e")
     version("6.6.3", sha256="f75d6a4a75823a1b7d713a4967eca2f596f466e58fc6bc06d72642932fd7e307")
-    version("6.4.5", sha256="b0b4b00b8b2639c8be387394796f0425beb339314df7e72937f8ddd2a41b1b8a")
-    version("6.3.3", sha256="13c97ff589c7605e80a488f336852ce1d538c5d4143cfb33be69bdaddd9157bd")
-    version("6.2.3", sha256="98d1ae002f68adf53d65c5947fe8b7a379f98cf05d9b8ea1f4077d2ca5dce9db")
-    version("6.1.4", sha256="f361f9802b36e357ac019ceb712ca11de8332b07deadeed8dfa904f05bf7ca78")
-    version("6.0.3", sha256="67f13647a46517a2b567cdcb73c98721d75d36a0432debb15022b77f9c138333")
-    version("5.8", sha256="fc5d6a8f6478d88ef83cdd0ab6d86ad68ee722bbdf4964e6a0b47c3c6ba5309f")
-    version("5.7.1", sha256="cb5139144ccb2ef648f36963c8606d47dea1cb0e22aa2c055d6f860ce3fde7b0")
-    version("5.7", sha256="609c3e7c9276dd75b03b713eccc10f5e0553001f35ae21600bcea1509699c601")
-    version("5.6.1", sha256="e55c254f4904c45226a106780e57f4279aee03368f6ff6a981d5d2a38243ffad")
-    version("5.3", sha256="e57ff61d6b67695149dd451922b40aa455ab02e01711806a131a1e95c544f9b9")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    with default_args(deprecated=True):
+        version("6.7.3", sha256="00196944ea92738809317dc7a8ed7cb21287ca0a00a85246e66170955dcd9031")
+        version("6.4.5", sha256="b0b4b00b8b2639c8be387394796f0425beb339314df7e72937f8ddd2a41b1b8a")
+        version("6.3.3", sha256="13c97ff589c7605e80a488f336852ce1d538c5d4143cfb33be69bdaddd9157bd")
+        version("6.2.3", sha256="98d1ae002f68adf53d65c5947fe8b7a379f98cf05d9b8ea1f4077d2ca5dce9db")
+        version("6.1.4", sha256="f361f9802b36e357ac019ceb712ca11de8332b07deadeed8dfa904f05bf7ca78")
+        version("6.0.3", sha256="67f13647a46517a2b567cdcb73c98721d75d36a0432debb15022b77f9c138333")
+        version("5.8", sha256="fc5d6a8f6478d88ef83cdd0ab6d86ad68ee722bbdf4964e6a0b47c3c6ba5309f")
+        version("5.7.1", sha256="cb5139144ccb2ef648f36963c8606d47dea1cb0e22aa2c055d6f860ce3fde7b0")
+        version("5.7", sha256="609c3e7c9276dd75b03b713eccc10f5e0553001f35ae21600bcea1509699c601")
+        version("5.6.1", sha256="e55c254f4904c45226a106780e57f4279aee03368f6ff6a981d5d2a38243ffad")
+        version("5.3", sha256="e57ff61d6b67695149dd451922b40aa455ab02e01711806a131a1e95c544f9b9")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("python+bz2+ssl+zlib", type=("build", "run"))
     depends_on("python@3.5:", when="@5.2:", type=("build", "run"))
     depends_on("python@3.6:", when="@6.2:", type=("build", "run"))
+    depends_on("python@3.8:", when="@6.9:", type=("build", "run"))
+    depends_on("python@3.9:", when="@7.1:", type=("build", "run"))
     # Upperbounds because of forward compat issues.
     depends_on("python@:3.9", when="@:6.0.0", type=("build", "run"))
     depends_on("python@:3.10", when="@:6.3.0", type=("build", "run"))
+    depends_on("python@:3.11", when="@:6.7", type=("build", "run"))
+    depends_on("python@:3.13", when="@:7.1", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@64:", type="build", when="@7.0:")
+    depends_on("py-setuptools-scm@8.1.0:", type="build", when="@7.0:")
     depends_on("py-docutils", type="build")
+    depends_on("py-docutils@:0.21", type="build", when="@:7.1.1")
     depends_on("py-pygments", type=("build", "run"))
     depends_on("py-certifi", type=("build", "run"))
 

@@ -43,9 +43,9 @@ class Libevent(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
 
-    # Versions before 2.1 do not build with OpenSSL 1.1
-    depends_on("openssl@:1.0", when="@:2.0+openssl")
     depends_on("openssl", when="+openssl")
+
+    conflicts("+openssl", when="@:2.0")
 
     def url_for_version(self, version):
         if version >= Version("2.0.22"):

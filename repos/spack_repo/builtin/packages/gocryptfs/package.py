@@ -19,6 +19,7 @@ class Gocryptfs(GoPackage):
 
     license("MIT", checked_by="snehring")
 
+    version("2.6.1", sha256="ebb45acdaa3e980f466a189fc1bce909822e3091383878d07b4eaa524689c250")
     version("2.5.1", sha256="b2e69d382caef598ffa1071b8d5f6e9df30d38fe2f9e9b0bee0d2e7436654f6d")
     version("2.4.0", sha256="26a93456588506f4078f192b70e7816b6a4042a14b748b28a50d2b6c9b10e2ec")
 
@@ -29,3 +30,5 @@ class Gocryptfs(GoPackage):
 
     depends_on("openssl")
     depends_on("pkgconfig", type="build")
+
+    cgo_enabled = True

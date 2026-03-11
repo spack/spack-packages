@@ -30,6 +30,10 @@ class PyBoostHistogram(PythonPackage):
     with when("@1.5:"):
         depends_on("py-scikit-build-core@0.11:", type="build")
         depends_on("py-pybind11@2.13.3:", type="build")
+        # pyproject.toml:
+        # [tool.scikit-build]
+        # metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+        depends_on("py-setuptools-scm", type="build")
     with when("@:1.4"):
         depends_on("py-setuptools@45:", type="build")
         depends_on("py-setuptools-scm@4.1.2:+toml", type="build")

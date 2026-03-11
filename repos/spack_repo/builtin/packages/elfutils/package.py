@@ -28,6 +28,8 @@ class Elfutils(AutotoolsPackage, SourcewarePackage):
 
     license("GPL-3.0-or-later AND ( GPL-2.0-or-later OR LGPL-3.0-or-later )")
 
+    version("0.194", sha256="09e2ff033d39baa8b388a2d7fbc5390bfde99ae3b7c67c7daaf7433fbcf0f01e")
+    version("0.193", sha256="7857f44b624f4d8d421df851aaae7b1402cfe6bcdd2d8049f15fc07d3dde7635")
     version("0.192", sha256="616099beae24aba11f9b63d86ca6cc8d566d968b802391334c91df54eab416b4")
     version("0.191", sha256="df76db71366d1d708365fc7a6c60ca48398f14367eb2b8954efc8897147ad871")
     version("0.190", sha256="8e00a3a9b5f04bc1dc273ae86281d2d26ed412020b391ffcc23198f10231d692")
@@ -81,7 +83,7 @@ class Elfutils(AutotoolsPackage, SourcewarePackage):
     depends_on("gettext", when="+nls")
     depends_on("iconv")
     depends_on("m4", type="build")
-    depends_on("pkgconfig@0.9.0:", type=("build", "link"))
+    depends_on("pkgconfig", type=("build", "link"))
 
     # debuginfod has extra dependencies
     with when("+debuginfod"), default_args(type="link"):

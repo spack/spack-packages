@@ -18,11 +18,14 @@ class RCatools(RPackage):
 
     cran = "caTools"
 
+    version("1.18.3", sha256="e71b3942a7a239779028b1104c262ec5f70183128638ac7fb649c8d62c0468d8")
     version("1.18.2", sha256="75d61115afec754b053ed1732cc034f2aeb27b13e6e1932aa0f26bf590cf0293")
     version("1.18.1", sha256="ffeba4ffbeed5d491bf79b1fde3477f413341e412f77316af20439f54447c9f9")
     version("1.17.1.2", sha256="69cc542fab5677462b1a768709d0c4a0a0790f5db53e1fe9ae7123787c18726b")
     version("1.17.1.1", sha256="d53e2c5c77f1bd4744703d7196dbc9b4671a120bbb5b9b3edc45fc57c0650c06")
     version("1.17.1", sha256="d32a73febf00930355cc00f3e4e71357412e0f163faae6a4bf7f552cacfe9af4")
+
+    conflicts("r@4.5.0:", when="@:1.18.2")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

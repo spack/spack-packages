@@ -83,6 +83,7 @@ class PyUproot(PythonPackage):
     depends_on("py-cramjam@2.5.0:", type=("build", "run"), when="@5.3:")
     depends_on("py-xxhash", type=("build", "run"), when="@5.4:")
     depends_on("py-numpy", type=("build", "run"))
+    depends_on("py-numpy@:1", type=("build", "run"), when="@:5.3.2")
     depends_on("py-fsspec", type=("build", "run"))
     depends_on("py-packaging", when="@5:", type=("build", "run"))
     depends_on("py-typing-extensions@4.1:", when="@5.1: ^python@:3.10", type=("build", "run"))

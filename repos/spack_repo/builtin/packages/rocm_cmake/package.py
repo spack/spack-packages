@@ -20,7 +20,12 @@ class RocmCmake(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     license("MIT")
-
+    version("7.2.0", sha256="3f3899e84d78a0fecab62a35eed0014bb503c04d2cf76d263b29daf17f178636")
+    version("7.1.1", sha256="4ef6bbe518a3d4670272203c83f98b2a7135ad570a13498f871efda2320b698e")
+    version("7.1.0", sha256="d17a109b3ade999926f5b25ce25082b378399654e3b2234cad5f83cdd00a2f32")
+    version("7.0.2", sha256="79c40408be17f7c73105e281154267fcc6851e1db8b6be01a411ef1d8050bc71")
+    version("7.0.0", sha256="16b220cb10c8ebe438c1ba3b9de014abcd782fd0b0bcffb39d3d2d1ff6957f2a")
+    version("6.4.3", sha256="a2a29d5d5b6fcf01af8a662c2453c8c1bfc647fbcbfcbe86fc87d6af17287d24")
     version("6.4.2", sha256="61e0217a453e30a68e0a42cba61e7181b07ef0be72d19a1133f8f24cedebddf1")
     version("6.4.1", sha256="d6dfa862009d593f4d334e0c6da9ac52b228e52bb3b38b53405975f28087ca2f")
     version("6.4.0", sha256="be8109c52e9309d1ae9553e067346ecdf1a25f653cc21974ddc542f31ce54615")
@@ -38,17 +43,12 @@ class RocmCmake(CMakePackage):
     version("6.0.0", sha256="82bd97ba23d1883ef38bb667e92f7367fedc50d6c11c82f54cced4ab04b0412d")
     version("5.7.1", sha256="4a4c6aa09576ccb834f869bdcb49e98cc0f0bac3678b802358065d1179a9d6f1")
     version("5.7.0", sha256="93b98144201a1143eeca32744a9927d063f4685189f132ba52a6f3bba158a86b")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="98bf5fe2e6e12f55d122807d0060f1bb19c80d63d2c2f6fee579c40bfd244fa6")
-        version("5.6.0", sha256="a118ca937856a4d0039955a8aef2466ef1fd1f08f7f7221cda53e1b5d02e476a")
 
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.6:", type="build")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -66,6 +66,11 @@ class RocmCmake(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 

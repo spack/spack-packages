@@ -31,6 +31,9 @@ class Prmon(CMakePackage):
 
     variant("plot", default=False, description="Make use of plotting scripts")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     depends_on("nlohmann-json")
     depends_on("cmake@3.3:", type="build")
     depends_on("spdlog", when="@3.0.0:")

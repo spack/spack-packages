@@ -64,6 +64,11 @@ class Openglu(Package):
     def fetcher(self):
         _ = self.fetcher
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ):
+        env.prepend_path("OpenGL_ROOT", self.prefix)
+
     @property
     def libs(self):
         return find_libraries("libGLU", self.prefix, shared=True, recursive=True)

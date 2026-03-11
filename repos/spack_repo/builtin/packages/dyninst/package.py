@@ -13,7 +13,7 @@ class Dyninst(CMakePackage):
     """API for dynamic binary instrumentation.  Modify programs while they
     are executing without recompiling, re-linking, or re-executing."""
 
-    homepage = "https://dyninst.org"
+    homepage = "https://paradyn.org"
     url = "https://github.com/dyninst/dyninst/archive/refs/tags/v12.2.0.tar.gz"
     git = "https://github.com/dyninst/dyninst.git"
     maintainers("hainest")
@@ -52,6 +52,8 @@ class Dyninst(CMakePackage):
     depends_on("boost@1.67.0:", when="@11.0.0:")
     depends_on("boost@1.70.0:", when="@12:12.3.0")
     depends_on("boost@1.71.0:", when="@13:")
+
+    depends_on("rocm-openmp-extras", when="+openmp %llvm-amdgpu", type="build")
 
     depends_on("libiberty+pic")
 
@@ -110,7 +112,7 @@ class Dyninst(CMakePackage):
 
     def test_ptls(self):
         """Run parseThat on /bin/ls to rewrite with basic instrumentation"""
-        parseThat = which(self.prefix.bin.parseThat)
+        parseThat = which(self.prefix.bin.parseThat, required=True)
         os.environ["DYNINSTAPI_RT_LIB"] = join_path(self.prefix.lib, "libdyninstAPI_RT.so")
         parseThat(
             "--binary-edit={0:s}".format(join_path(self.test_suite.stage, "ls.rewritten")),

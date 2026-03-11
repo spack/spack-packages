@@ -18,11 +18,23 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     homepage = "https://github.com/ROCm/llvm-project"
     git = "https://github.com/ROCm/llvm-project.git"
-    url = "https://github.com/ROCm/llvm-project/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/llvm-project/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm", "compiler"]
-    executables = [r"amdclang", r"amdclang\+\+", r"clang.*", "llvm-.*"]
+    executables = [
+        r"amdclang",
+        r"amdclang\+\+",
+        r"amdflang",
+        r"clang.*",
+        r"flang.*",
+        "llvm-.*",
+        "amdldd",
+    ]
 
-    compiler_wrapper_link_paths = {"c": "rocmcc/amdclang", "cxx": "rocmcc/amdclang++"}
+    compiler_wrapper_link_paths = {
+        "c": "rocmcc/amdclang",
+        "cxx": "rocmcc/amdclang++",
+        "fortran": "rocmcc/amdflang",
+    }
 
     stdcxx_libs = ("-lstdc++",)
 
@@ -31,7 +43,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     license("Apache-2.0")
-
+    version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
+    version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
+    version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
+    version("7.0.2", sha256="fd612fa750bebd0c3be0ea642b2cae8ff5c7e00a2280b22b9ea16ee86a11d763")
+    version("7.0.0", sha256="3d479a2aa615b6bb35cd3521122fbff34188dc0cc52d8b0acda59f9f55198211")
+    version("6.4.3", sha256="7a484b621d568eef000ee8c4d2d46d589e5682b950f1f410ce7215031f1f3ad7")
     version("6.4.2", sha256="9f42cb73d90bd4561686c0366f60f6e58cfd32ff24b094c69e8259fb5d177457")
     version("6.4.1", sha256="460ad28677092b9eb86ffdc49bcb4d01035e32b4f05161d85f90c9fa80239f50")
     version("6.4.0", sha256="dca1c145a23f05229d5d646241f9d1d3c5dbf1d745b338ae020eabe33beb965c")
@@ -49,11 +66,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     version("6.0.0", sha256="c673708d413d60ca8606ee75c77e9871b6953c59029c987b92f2f6e85f683626")
     version("5.7.1", sha256="6b54c422e45ad19c9bf5ab090ec21753e7f7d854ca78132c30eb146657b168eb")
     version("5.7.0", sha256="4abdf00b297a77c5886cedb37e63acda2ba11cb9f4c0a64e133b05800aadfcf0")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="045e43c0c4a3f4f2f1db9fb603a4f1ea3d56e128147e19ba17909eb57d7f08e5")
-        version("5.6.0", sha256="e922bd492b54d99e56ed88c81e2009ed6472059a180b10cc56ce1f9bd2d7b6ed")
 
     provides("c", "cxx")
+    provides("fortran", when="@7.0:")
 
     variant(
         "rocm-device-libs",
@@ -75,14 +90,14 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         description="Link LLVM tools against the LLVM shared library",
     )
 
-    provides("libllvm@16", when="@5.6")
     provides("libllvm@17", when="@5.7:6.1")
     provides("libllvm@18", when="@6.2:6.3")
-    provides("libllvm@19", when="@6.4:")
+    provides("libllvm@19", when="@6.4")
+    provides("libllvm@20", when="@7.0:7.1")
+    provides("libllvm@22", when="@7.2")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.13.4:", type="build")
     depends_on("python", type="build")
@@ -92,35 +107,36 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("libxml2", type="link")
     depends_on("pkgconfig", type="build")
 
+    depends_on("numactl", when="@7.1:")
+    depends_on("libdrm", when="@7.1:")
+    depends_on("libelf", when="@7.1:")
+    depends_on("xxd", when="@7.1:")
+
     # This flavour of LLVM doesn't work on MacOS, so we should ensure that it
     # isn't used to satisfy any of the libllvm dependencies on the Darwin
     # platform.
     conflicts("platform=darwin")
 
-    # OpenMP clang toolchain looks for bitcode files in llvm/bin/../lib
-    # as per 5.2.0 llvm code. It used to be llvm/bin/../lib/libdevice.
-    # Below patch is to look in the old path.
-    patch("adjust-openmp-bitcode-directory-for-llvm-link.patch", when="@:5.6")
-    patch("0001-update-HIP_PATH-deduction-for-5.7.0.patch", when="@5.7.0:6.0")
+    patch("0001-update-HIP_PATH-deduction-for-5.7.0.patch", when="@:6.0")
 
     # Below patch is to set the flag -mcode-object-version=none until
     # the below fix is available in device-libs release code.
     # https://github.com/ROCm/ROCm-Device-Libs/commit/f0356159dbdc93ea9e545f9b61a7842f9c881fdf
-    patch("patch-llvm-5.5.0.patch", when="@5.6:5.7 +rocm-device-libs")
+    patch("patch-llvm-5.5.0.patch", when="@5.7 +rocm-device-libs")
 
     # i1 muls can sometimes happen after SCEV.
     # They resulted in ISel failures because we were missing the patterns for them.
     # This fix is targeting 6.1 rocm release.
     # Need patch until https://github.com/llvm/llvm-project/pull/67291 is merged.
-    patch("001-Add-i1-mul-patterns.patch", when="@5.6")
     patch("001-Add-i1-mul-patterns-5.7.patch", when="@5.7")
 
     # fixes the libamdhip64.so not found in some ROCm math lib tests
     patch(
         "https://github.com/ROCm/llvm-project/commit/444d1d12bbc0269fed5451fb1a9110a049679ca5.patch?full_index=1",
         sha256="b4774ca19b030890d7b276d12c446400ccf8bc3aa724c7f2e9a73531a7400d69",
-        when="@6.0:",
+        when="@6",
     )
+    patch("002-Add-rpath-to-hiprt.patch", when="@7.0:")
 
     # Fix for https://github.com/llvm/llvm-project/issues/78530
     # Patch from https://github.com/llvm/llvm-project/pull/80071
@@ -128,6 +144,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         "https://github.com/ROCm/llvm-project/commit/c651b2b0d9d1393fb5191ac3acfe96e5ecc94bbc.patch?full_index=1",
         sha256="eaf700a5b51d53324a93e5c951bc08b6311ce2053c44c1edfff5119f472d8080",
         when="@:6.2",
+    )
+
+    patch(
+        "https://github.com/ROCm/llvm-project/commit/97301a5390f841241e5ed88e26c218882e018cc4.patch?full_index=1",
+        sha256="74471ee320c4d839a433c04b9d35db868f2a13c08183297d1a09ec580ca1d7e9",
+        when="@7.2",
     )
 
     conflicts("^cmake@3.19.0")
@@ -144,8 +166,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         ("6.0.0", "198df4550d4560537ba60ac7af9bde31d59779c8ec5d6309627f77a43ab6ef6f"),
         ("5.7.1", "703de8403c0bd0d80f37c970a698f10f148daf144d34f982e4484d04f7c7bbef"),
         ("5.7.0", "0f8780b9098573f1c456bdc84358de924dcf00604330770a383983e1775bf61e"),
-        ("5.6.1", "f0dfab272ff936225bfa1e9dabeb3c5d12ce08b812bf53ffbddd2ddfac49761c"),
-        ("5.6.0", "efb5dcdca9b3a9fbe408d494fb4a23e0b78417eb5fa8eebd4a5d226088f28921"),
     ]:
         resource(
             name="rocm-device-libs",
@@ -156,6 +176,11 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         )
 
     for d_version, d_shasum in [
+        ("7.1.1", "4c5b58afa1e11461954bd005a10ebf29941c120f1d6a7863954597f5eacfc605"),
+        ("7.1.0", "383fa8e1776c3ee527cdddc9f9ac6f7134c3fcd8758eae9be8bd3a8b7fdca9b1"),
+        ("7.0.2", "9c2020f7a42d60fe9775865ab58464078007926a3b01f1ca8128557c89e7a566"),
+        ("7.0.0", "9ea2cbcf343f643ede6e16d82fbd0303771e1978759b2e546d0efc0df3263e4c"),
+        ("6.4.3", "3b23bed04cbed72304d31d69901eb76afa2099c7ac37f055348dfcda2d25e41a"),
         ("6.4.2", "8ad5dbf7cb0f728b8e515f46a41db24ed3b99ca894ccdd9f4d9bac969e9e35bb"),
         ("6.4.1", "f72d100a46a2dd9f4c870cef156604777f1bdb1841df039d14bf37b19814b9da"),
         ("6.4.0", "ff740e8c8f2229c6dc47577363f707b1a44ea4254f8ad74f8f0a669998829535"),
@@ -173,8 +198,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         ("6.0.0", "99e8fa1af52d0bf382f28468e1a345af1ff3452c35914a6a7b5eeaf69fc568db"),
         ("5.7.1", "655e9bfef4b0b6ad3f9b89c934dc0a8377273bb0bccbda6c399ac5d5d2c1c04c"),
         ("5.7.0", "2c56ec5c78a36f2b847afd4632cb25dbf6ecc58661eb2ae038c2552342e6ce23"),
-        ("5.6.1", "4de9a57c2092edf9398d671c8a2c60626eb7daf358caf710da70d9c105490221"),
-        ("5.6.0", "30875d440df9d8481ffb24d87755eae20a0efc1114849a72619ea954f1e9206c"),
     ]:
         resource(
             name="hsa-runtime",
@@ -185,12 +208,36 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         )
 
     for d_version, d_shasum in [
+        ("7.2.0", "728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    ]:
+        resource(
+            name="rocm-systems",
+            placement="rocm-systems",
+            url=f"https://github.com/ROCm/rocm-systems/archive/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
+        ("7.1.0", "e6ef3e62eb0626765c55084c9de5fd19f9b216b11577e71ef36046c0081f1102"),
+        ("7.1.1", "b02e7a2b38c408067f3713ff47fe620059a8fe5f47110ab343116448625b7448"),
+        ("7.2.0", "b003b608df470d88ad0a636581e134b05b8aee586b0332c545280e6c6366d121"),
+    ]:
+        resource(
+            name="spirv-llvm-translator",
+            url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/refs/tags/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            expand=True,
+            destination="llvm/projects",
+            placement="spirv-llvm-translator",
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
         ("6.0.2", "737b110d9402509db200ee413fb139a78369cf517453395b96bda52d0aa362b9"),
         ("6.0.0", "04353d27a512642a5e5339532a39d0aabe44e0964985de37b150a2550385800a"),
         ("5.7.1", "3b9433b4a0527167c3e9dfc37a3c54e0550744b8d4a8e1be298c8d4bcedfee7c"),
         ("5.7.0", "e234bcb93d602377cfaaacb59aeac5796edcd842a618162867b7e670c3a2c42c"),
-        ("5.6.1", "0a85d84619f98be26ca7a32c71f94ed3c4e9866133789eabb451be64ce739300"),
-        ("5.6.0", "9396a7238b547ee68146c669b10b9d5de8f1d76527c649133c75d8076a185a72"),
     ]:
         resource(
             name="comgr",
@@ -202,7 +249,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     def _standard_flag(self, *, language, standard):
         flags = {
-            "cxx": {"11": "-std=c++11", "14": "-std=c++14", "17": "-std=c++17"},
+            "cxx": {
+                "11": "-std=c++11",
+                "14": "-std=c++14",
+                "17": "-std=c++17",
+                "20": "-std=c++20",
+            },
             "c": {"99": "-std=c99", "11": "-std=c1x"},
         }
         return flags[language][standard]
@@ -212,14 +264,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         llvm_runtimes = ["libcxx", "libcxxabi"]
         args = [
             self.define("LLVM_ENABLE_Z3_SOLVER", "OFF"),
-            self.define("LLLVM_ENABLE_ZLIB", "ON"),
+            self.define("LLVM_ENABLE_ZLIB", "ON"),
             self.define("CLANG_DEFAULT_LINKER", "lld"),
-            self.define("LIBCXX_ENABLE_SHARED", "OFF"),
-            self.define("LIBCXX_ENABLE_STATIC", "ON"),
-            self.define("LIBCXX_INSTALL_LIBRARY", "OFF"),
-            self.define("LIBCXX_INSTALL_HEADERS", "OFF"),
-            self.define("LIBCXXABI_ENABLE_SHARED", "OFF"),
-            self.define("LIBCXXABI_ENABLE_STATIC", "ON"),
             self.define("LIBCXXABI_INSTALL_STATIC_LIBRARY", "OFF"),
             self.define("LLVM_ENABLE_RTTI", "ON"),
             self.define("LLVM_AMDGPU_ALLOW_NPI_TARGETS", "ON"),
@@ -242,12 +288,18 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             elif self.spec.satisfies("@6.1:"):
                 dir = os.path.join(self.stage.source_path, "amd/device-libs")
 
-            args.extend(
-                [
-                    self.define("LLVM_EXTERNAL_PROJECTS", "device-libs"),
-                    self.define("LLVM_EXTERNAL_DEVICE_LIBS_SOURCE_DIR", dir),
-                ]
-            )
+            if self.spec.satisfies("@:7.0"):
+                args.extend(
+                    [
+                        self.define("LLVM_EXTERNAL_PROJECTS", "device-libs"),
+                        self.define("LLVM_EXTERNAL_DEVICE_LIBS_SOURCE_DIR", dir),
+                    ]
+                )
+            else:
+                args.append(self.define("ROCM_DEVICE_LIBS_INSTALL_PREFIX_PATH", self.prefix))
+                args.append(
+                    self.define("ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC", "lib/clang/20/lib/amdgcn")
+                )
 
         if self.spec.satisfies("+llvm_dylib"):
             args.append(self.define("LLVM_BUILD_LLVM_DYLIB", True))
@@ -259,34 +311,72 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         # Get the GCC prefix for LLVM.
         if self.compiler.name == "gcc" and self.spec.satisfies("@:6.3"):
             args.append(self.define("GCC_INSTALL_PREFIX", self.compiler.prefix))
-        if self.spec.satisfies("@5.6.0:6.0"):
+        if self.spec.satisfies("@:6.0"):
             comgrinc_path = os.path.join(self.stage.source_path, "comgr/lib/comgr/include")
         elif self.spec.satisfies("@6.1:"):
             comgrinc_path = os.path.join(self.stage.source_path, "amd/comgr/include")
-        if self.spec.satisfies("@5.6.0:6.2"):
-            hsainc_path = os.path.join(self.stage.source_path, "hsa-runtime/src/inc")
+
+        if self.spec.satisfies("@7.2:"):
+            hsa_path = os.path.join(self.stage.source_path, "rocm-systems/projects/rocr-runtime")
+        else:
+            hsa_path = os.path.join(self.stage.source_path, "hsa-runtime")
+
+        if self.spec.satisfies("@:6.2"):
+            hsainc_path = os.path.join(hsa_path, "src/inc")
         if self.spec.satisfies("@6.3:"):
-            hsainc_path = os.path.join(
-                self.stage.source_path, "hsa-runtime/runtime/hsa-runtime/inc"
-            )
-        if self.spec.satisfies("@5.6.0:"):
-            args.append("-DSANITIZER_HSA_INCLUDE_PATH={0}".format(hsainc_path))
-            args.append("-DSANITIZER_COMGR_INCLUDE_PATH={0}".format(comgrinc_path))
-            args.append("-DSANITIZER_AMDGPU:Bool=ON")
-        if self.spec.satisfies("@:6.0"):
-            args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
-            args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
-        elif self.spec.satisfies("@6.1:"):
+            hsainc_path = os.path.join(hsa_path, "runtime/hsa-runtime/inc")
+        args.append("-DSANITIZER_HSA_INCLUDE_PATH={0}".format(hsainc_path))
+        args.append("-DSANITIZER_COMGR_INCLUDE_PATH={0}".format(comgrinc_path))
+        args.append("-DSANITIZER_AMDGPU:Bool=ON")
+        if self.spec.satisfies("@6.1:7.0"):
+            args.append(self.define("LLVM_ENABLE_LIBCXX", "OFF"))
+        if self.spec.satisfies("@6.1:"):
             llvm_projects.remove("compiler-rt")
             llvm_runtimes.extend(["compiler-rt", "libunwind"])
-            args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
-            args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
-            args.append(self.define("LLVM_ENABLE_LIBCXX", "OFF"))
             args.append(self.define("CLANG_LINK_FLANG_LEGACY", True))
             args.append(self.define("CMAKE_CXX_STANDARD", 17))
             args.append(self.define("FLANG_INCLUDE_DOCS", False))
             args.append(self.define("LLVM_BUILD_DOCS", "ON"))
             args.append(self.define("CLANG_DEFAULT_PIE_ON_LINUX", "OFF"))
+        if self.spec.satisfies("@7.0:"):
+            llvm_projects.extend(["mlir", "flang"])
+            args.append(self.define("LIBOMPTARGET_BUILD_DEVICE_FORTRT", "ON"))
+            args.append(self.define("FLANG_RUNTIME_F128_MATH_LIB", "libquadmath"))
+        if self.spec.satisfies("@:7.0"):
+            args.append(self.define("LIBCXX_ENABLE_SHARED", "OFF"))
+            args.append(self.define("LIBCXX_ENABLE_STATIC", "ON"))
+            args.append(self.define("LIBCXX_INSTALL_LIBRARY", "OFF"))
+            args.append(self.define("LIBCXX_INSTALL_HEADERS", "OFF"))
+            args.append(self.define("LIBCXXABI_ENABLE_SHARED", "OFF"))
+            args.append(self.define("LIBCXXABI_ENABLE_STATIC", "ON"))
+        else:
+            args.append(self.define("LIBCXX_ENABLE_SHARED", "ON"))
+            args.append(self.define("LIBCXX_ENABLE_STATIC", "OFF"))
+            args.append(self.define("LIBCXX_INSTALL_LIBRARY", "ON"))
+            args.append(self.define("LIBCXX_INSTALL_HEADERS", "ON"))
+            args.append(self.define("LIBCXXABI_ENABLE_SHARED", "ON"))
+            args.append(self.define("LIBCXXABI_ENABLE_STATIC", "OFF"))
+        if self.spec.satisfies("@7.1:"):
+            llvm_runtimes.extend(["offload", "openmp"])
+            args.append(self.define("LLVM_INSTALL_UTILS", "ON"))
+            args.append(self.define("OPENMP_ENABLE_LIBOMPTARGET", "ON"))
+            args.append(self.define("LLVM_ENABLE_LIBCXX", "ON"))
+            args.append(self.define("LIBOMPTARGET_ENABLE_DEBUG", "ON"))
+            args.append(self.define("LIBOMPTARGET_NO_SANITIZER_AMDGPU", "ON"))
+            args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH", hsa_path))
+            args.append(self.define("OFFLOAD_EXTERNAL_PROJECT_UNIFIED_ROCR", "ON"))
+            devlibs_dir = os.path.join(self.stage.source_path, "amd/device-libs")
+            args.append(
+                self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", devlibs_dir)
+            )
+        if self.spec.satisfies("@7.2:"):
+            args.append(self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"))
+            args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES=openmp")
+            args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON")
+            spirv_dir = os.path.join(self.stage.source_path, "llvm/projects/spirv-llvm-translator")
+            args.append(self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir))
+        args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
+        args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
         return args
 
     compiler_languages = ["c", "cxx", "fortran"]
@@ -313,7 +403,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     @run_after("install")
     def post_install(self):
-        if self.spec.satisfies("@6.1: +rocm-device-libs"):
+        if self.spec.satisfies("@6.1:7.0 +rocm-device-libs"):
             exe = self.prefix.bin.join("llvm-config")
             output = Executable(exe)("--version", output=str, error=str)
             version = re.split("[.]", output)[0]
@@ -322,7 +412,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                 self.prefix.amdgcn, join_path(self.prefix.lib.clang, version, "lib", "amdgcn")
             )
             shutil.rmtree(self.prefix.amdgcn)
-            os.symlink(
+            symlink(
                 join_path(self.prefix.lib.clang, version, "lib", "amdgcn"),
                 os.path.join(self.prefix, "amdgcn"),
             )
@@ -341,3 +431,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     def _cxx_path(self):
         return os.path.join(self.spec.prefix.bin, "amdclang++")
+
+    def _fortran_path(self):
+        return os.path.join(self.spec.prefix.bin, "amdflang")

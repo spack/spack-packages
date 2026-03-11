@@ -15,6 +15,7 @@ class PyFlaskRestful(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.3.10", sha256="fe4af2ef0027df8f9b4f797aba20c5566801b6ade995ac63b588abf1a59cec37")
     version("0.3.9", sha256="ccec650b835d48192138c85329ae03735e6ced58e9b2d9c2146d6c84c06fa53e")
 
     depends_on("py-setuptools", type="build")

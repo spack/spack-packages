@@ -44,11 +44,9 @@ class AoclCompression(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
-    version(
-        "5.0",
-        sha256="50bfb2c4a4738b96ed6d45627062b17bb9d0e1787c7d83ead2841da520327fa4",
-        preferred=True,
-    )
+    version("5.2", sha256="93a4eddd0a70e6d8701ecf2c55a06ab341d987ccd2e87c50a5c7e1efb37e033e")
+    version("5.1", sha256="9462c6898350d66a5d9ce0236c432c94b4c9393b638ddf6511628b784eb02720")
+    version("5.0", sha256="50bfb2c4a4738b96ed6d45627062b17bb9d0e1787c7d83ead2841da520327fa4")
     version("4.2", sha256="a18b3e7f64a8105c1500dda7b4c343e974b5e26bfe3dd838a1c1acf82a969c6f")
 
     variant("shared", default=True, description="Build shared library")
@@ -76,7 +74,8 @@ class AoclCompression(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@3.22:", type="build")
+    depends_on("cmake@3.22:", when="@:5.0", type="build")
+    depends_on("cmake@3.26:", when="@5.1:", type="build")
 
     def cmake_args(self):
         """Runs ``cmake`` in the build directory"""

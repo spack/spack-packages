@@ -19,6 +19,13 @@ then
     ./Allwmake-spack $@   # Pass arguments
 else
     ./Allwmake $@         # Pass arguments
+
+    # Build any additional plugins (if the sources exist)
+    if [ -x ./Allwmake-plugins ]
+    then
+        ./Allwmake-plugins -k $@  # Pass arguments
+    fi
+
     ##echo "Disabled build of openfoam"   # When testing environment only
 
     # Generate manpages

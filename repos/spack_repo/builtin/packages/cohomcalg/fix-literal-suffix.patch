@@ -1,0 +1,29 @@
+From 47fac28e47b59d50aa3e219c6cd57c50fb422f20 Mon Sep 17 00:00:00 2001
+From: Doug Torrance <dtorrance@piedmont.edu>
+Date: Wed, 24 Sep 2025 03:19:46 +0000
+Subject: [PATCH] Fix C++11 literal-suffix warning by adding spaces around
+ format macro
+
+Add spaces between string literals and P_VALUE_FMT in value_print calls
+so that the macro expansion concatenates properly. This avoids the
+invalid suffix warning under C++11 and ensures portable compilation.
+---
+ source/polylib_mod/matrix.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/source/polylib_mod/matrix.c b/source/polylib_mod/matrix.c
+index 1d84800..6afc1f6 100644
+--- a/source/polylib_mod/matrix.c
++++ b/source/polylib_mod/matrix.c
+@@ -150,7 +150,7 @@ void Matrix_Print(FILE *Dst, const char *Format, Matrix *Mat)
+     p=*(Mat->p+i);
+     for (j=0;j<NbColumns;j++) {
+       if (!Format) {
+-	value_print(Dst," "P_VALUE_FMT" ",*p++);
++	value_print(Dst," " P_VALUE_FMT " ",*p++);
+       }
+       else { 
+ 	value_print(Dst,Format,*p++);
+-- 
+2.51.0
+

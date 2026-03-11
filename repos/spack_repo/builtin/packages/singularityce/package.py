@@ -14,6 +14,7 @@ from spack.package import *
 class SingularityBase(MakefilePackage):
     variant("suid", default=False, description="install SUID binary")
     variant("network", default=True, description="install network plugins")
+    variant("libsubid", default=True, when="@4.3:", description="Enable libsubid support")
 
     depends_on("pkgconfig", type="build")
     depends_on("conmon", type=("build", "run"))
@@ -25,6 +26,7 @@ class SingularityBase(MakefilePackage):
     depends_on("squashfs", type="run")
     depends_on("git", when="@develop")  # mconfig uses it for version info
     depends_on("shadow", type="run", when="@3.3:")
+    depends_on("shadow", type=("build", "link", "run"), when="@4.3: +libsubid")
     depends_on("cryptsetup", type=("build", "run"), when="@3.4:")
     depends_on("libfuse", type=("build", "run"), when="@4.0:")
     depends_on("autoconf", type="build", when="@4.0:")
@@ -77,8 +79,16 @@ class SingularityBase(MakefilePackage):
     # Allow overriding config options
     @property
     def config_options(self):
-        # Using conmon from spack
-        return ["--without-conmon"]
+        options = []
+        if self.spec.satisfies("@:4.2"):
+            # Using conmon from spack
+            # Singularity doesn't package conmon from 4.3 onward
+            options.append("--without-conmon")
+
+        if self.spec.satisfies("@4.3: ~libsubid"):
+            options.append("--without-libsubid")
+
+        return options
 
     # Hijack the edit stage to run mconfig.
     def edit(self, spec, prefix):
@@ -189,6 +199,7 @@ class Singularityce(SingularityBase):
     maintainers("alalazo")
     version("master", branch="master")
 
+    version("4.3.3", sha256="cd0bef984270040b71bf43e517ff08e92e9cb474b71286e7274d8e5348e3ff7d")
     version("4.1.0", sha256="119667f18e76a750b7d4f8612d7878c18a824ee171852795019aa68875244813")
     version("4.0.3", sha256="b3789c9113edcac62032ce67cd1815cab74da6c33c96da20e523ffb54cdcedf3")
     version("3.11.5", sha256="5acfbb4a109d9c63a25c230e263f07c1e83f6c726007fbcd97a533f03d33a86a")
