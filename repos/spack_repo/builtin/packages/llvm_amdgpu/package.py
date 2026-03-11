@@ -247,6 +247,31 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             when=f"@{d_version}",
         )
 
+    @classmethod
+    def determine_version(cls, exe):
+        try:
+            compiler = Executable(exe)
+            output = compiler(cls.compiler_version_argument, output=str, error=str)
+            # Reject if the executable is not under the InstalledDir reported
+            # by the compiler (e.g. /usr/bin is not valid).
+            installed_dir_match = re.search(cls.installed_dir_regex, output)
+            if installed_dir_match:
+                installed_dir = os.path.normpath(installed_dir_match.group(1).strip())
+                exe_dir = os.path.normpath(os.path.dirname(os.path.abspath(str(exe))))
+                if exe_dir != installed_dir:
+                    return None
+            else:
+                return None
+            match = re.search(cls.compiler_version_regex, output)
+            if match:
+                version_str = match.group(1)
+                return version_str
+        except ProcessError:
+            pass
+        except Exception as e:
+            tty.debug(e)
+        return None
+
     def _standard_flag(self, *, language, standard):
         flags = {
             "cxx": {
