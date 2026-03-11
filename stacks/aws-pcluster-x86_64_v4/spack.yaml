@@ -99,6 +99,10 @@ spack:
           externals:
           - prefix: /opt/amazon/efa/
             spec: libfabric@1.17.0 fabrics:=shm,efa target=x86_64_v3
+        wrf:
+          require:
+          - target=x86_64_v3
+          - "%c,fortran=oneapi"
 
   - group: apps_x86_64_v4
     needs: [oneapi2024]
@@ -119,6 +123,10 @@ spack:
           externals:
           - prefix: /opt/amazon/efa/
             spec: libfabric@1.17.0 fabrics:=shm,efa target=x86_64_v4
+        wrf:
+          require:
+          - target=x86_64_v4
+          - "%c,fortran=oneapi"
 
   ci:
     pipeline-gen:
