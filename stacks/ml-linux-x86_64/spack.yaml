@@ -29,12 +29,12 @@ spack:
     - py-keras backend=torch
   - torch_specs:
     - py-botorch
-    - py-gpytorch
+    #- py-gpytorch
     #- py-kornia
-    - py-lightning
-    - py-pytorch-lightning
-    - py-segmentation-models-pytorch
-    - py-timm
+    #- py-lightning
+    #- py-pytorch-lightning
+    #- py-segmentation-models-pytorch
+    #- py-timm
     - py-torch
     #- py-torch-geometric
     #- py-torch-nvidia-apex
