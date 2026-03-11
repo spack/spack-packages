@@ -29,7 +29,7 @@ spack:
     - py-keras backend=torch
   - torch_specs:
     #- py-botorch
-    - py-gpytorch
+    #- py-gpytorch
     #- py-kornia
     #- py-lightning
     #- py-pytorch-lightning
