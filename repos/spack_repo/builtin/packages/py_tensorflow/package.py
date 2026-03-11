@@ -273,13 +273,14 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-h5py~mpi", when="~mpi")
         depends_on("hdf5+mpi", when="+mpi")
         depends_on("hdf5~mpi", when="~mpi")
-        depends_on("py-ml-dtypes@0.5.1:0", when="@2.19:")
-        depends_on("py-ml-dtypes@0.4:0", when="@2.18.1")
-        depends_on("py-ml-dtypes@0.4", when="@2.18.0")
-        depends_on("py-ml-dtypes@0.3.1:0.4", when="@2.17")
-        depends_on("py-ml-dtypes@0.3.1:0.3", when="@2.15.1:2.16")
-        depends_on("py-ml-dtypes@0.2", when="@2.15.0")
-        depends_on("py-ml-dtypes@0.2.0", when="@2.14")
+        with default_args(type=("build", "link", "run")):
+            depends_on("py-ml-dtypes@0.5.1:0", when="@2.19:")
+            depends_on("py-ml-dtypes@0.4:0", when="@2.18.1")
+            depends_on("py-ml-dtypes@0.4", when="@2.18.0")
+            depends_on("py-ml-dtypes@0.3.1:0.4", when="@2.17")
+            depends_on("py-ml-dtypes@0.3.1:0.3", when="@2.15.1:2.16")
+            depends_on("py-ml-dtypes@0.2", when="@2.15.0")
+            depends_on("py-ml-dtypes@0.2.0", when="@2.14")
 
         # Historical dependencies
         depends_on("py-jax@0.3.15:", when="@2.12")
