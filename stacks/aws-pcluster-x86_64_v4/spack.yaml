@@ -12,7 +12,7 @@ spack:
     # earliest oneapi version with fix does not run on AmazonLinux2, see https://github.com/spack/spack/pull/46457
     - gromacs +intel_provided_gcc ^intel-oneapi-mkl
     - lammps lammps_sizes=bigbig +molecule +kspace +rigid +asphere +opt +openmp +openmp-package fft=mkl ^intel-oneapi-mkl
-    - palace ^fmt@9.1.0
+    - palace
     - "openmpi@4:"
     - wrf@4 build_type=dm+sm
 
