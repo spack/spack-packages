@@ -59,7 +59,7 @@ class Veclibfort(Package):
         make(*make_args)
 
         # test
-        fc = which("fc")
+        fc = which("fc", required=True)
         flags = ["-o", "tester", "-O", "tester.f90"]
         flags.extend(self.libs.ld_flags.split())
         fc(*flags)

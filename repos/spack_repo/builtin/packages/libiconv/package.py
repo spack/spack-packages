@@ -36,6 +36,15 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
     # We cannot set up a warning for gets(), since gets() is not part
     # of C11 any more and thus might not exist.
     patch("gets.patch", when="@1.14")
+
+    # Error for declaration of mbrtowc without a prototype.
+    # https://gitweb.git.savannah.gnu.org/gitweb/?p=libiconv.git;a=commit;h=e46dee2f581c11
+    patch(
+        "loop_wchar_9eb508.patch",
+        when="@:1.17",
+        sha256="e0145a14e9fed1d9f07003a4772db916faa8cbb7c5273880a38d7c2e64d4103c",
+    )
+
     provides("iconv")
 
     conflicts("@1.14", when="%gcc@5:")

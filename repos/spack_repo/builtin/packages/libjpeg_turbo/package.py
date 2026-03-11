@@ -4,14 +4,12 @@
 
 import sys
 
-from spack_repo.builtin.build_systems import cmake
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class LibjpegTurbo(CMakePackage, AutotoolsPackage):
+class LibjpegTurbo(CMakePackage):
     """libjpeg-turbo is a fork of the original IJG libjpeg which uses SIMD to
     accelerate baseline JPEG compression and decompression.
 
@@ -45,29 +43,8 @@ class LibjpegTurbo(CMakePackage, AutotoolsPackage):
     version("2.0.3", sha256="a69598bf079463b34d45ca7268462a18b6507fdaa62bb1dfd212f02041499b5d")
     version("2.0.2", sha256="b45255bd476c19c7c6b198c07c0487e8b8536373b82f2b38346b32b4fa7bb942")
     version("1.5.90", sha256="cb948ade92561d8626fd7866a4a7ba3b952f9759ea3dd642927bc687470f60b7")
-    version(
-        "1.5.3",
-        sha256="1a17020f859cb12711175a67eab5c71fc1904e04b587046218e36106e07eabde",
-        deprecated=True,
-    )
-    version(
-        "1.5.0",
-        sha256="232280e1c9c3e6a1de95fe99be2f7f9c0362ee08f3e3e48d50ee83b9a2ed955b",
-        deprecated=True,
-    )
-    version(
-        "1.3.1",
-        sha256="5008aeeac303ea9159a0ec3ccff295434f4e63b05aed4a684c9964d497304524",
-        deprecated=True,
-    )
 
     provides("jpeg")
-
-    build_system(
-        conditional("autotools", when="@:1.5.3"),
-        conditional("cmake", when="@1.5.90:"),
-        default="cmake",
-    )
 
     variant(
         "libs",
@@ -107,34 +84,16 @@ class LibjpegTurbo(CMakePackage, AutotoolsPackage):
     # depends_on('yasm', type='build')
     depends_on("nasm", type="build")
 
-    with when("build_system=autotools"):
-        depends_on("autoconf", type="build")
-        depends_on("automake", type="build")
-        depends_on("libtool", type="build")
-
-    with when("build_system=cmake"):
-        depends_on("cmake", type="build", when="@1.5.90:")
-
     @property
     def libs(self):
         shared = self.spec.satisfies("libs=shared")
         name = "jpeg" if sys.platform == "win32" else "libjpeg*"
         return find_libraries(name, root=self.prefix, shared=shared, recursive=True, runtime=False)
 
-
-class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        args = [
+        return [
             self.define("ENABLE_SHARED", self.spec.satisfies("libs=shared")),
             self.define("ENABLE_STATIC", self.spec.satisfies("libs=static")),
             self.define_from_variant("WITH_JPEG8", "jpeg8"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
-
-        return args
-
-    @run_after("install")
-    def darwin_fix(self):
-        # The shared library is not installed correctly on Darwin; fix this
-        if self.spec.satisfies("platform=darwin") and self.spec.satisfies("+shared"):
-            fix_darwin_install_name(self.prefix.lib)

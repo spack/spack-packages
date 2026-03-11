@@ -16,7 +16,6 @@ class ChezScheme(AutotoolsPackage):
     git = "https://github.com/cisco/ChezScheme.git"
 
     license("Apache-2.0", checked_by="Buldram")
-    maintainers("Buldram")
 
     version("main", branch="main", submodules=True)
     version("10.1.0", sha256="9181a6c8c4ab5e5d32d879ff159d335a50d4f8b388611ae22a263e932c35398b")

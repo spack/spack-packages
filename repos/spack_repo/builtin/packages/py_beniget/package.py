@@ -24,7 +24,8 @@ class PyBeniget(PythonPackage):
     version("0.2.3", sha256="350422b0598c92fcc5f8bcaf77f2a62f6744fb8f2fb495b10a50176c1283639f")
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-gast@0.5.0:", when="@0.4.2:", type=("build", "run"))
-    depends_on("py-gast@0.5.0:0.5", when="@0.4.0:", type=("build", "run"))
-    depends_on("py-gast@0.4.0:0.4", when="@0.3.0:0.3", type=("build", "run"))
+    # https://github.com/serge-sans-paille/beniget/issues/108
+    depends_on("py-gast@0.5.4:", when="@0.4.2:", type=("build", "run"))
+    depends_on("py-gast@0.5", when="@0.4.0:0.4.1", type=("build", "run"))
+    depends_on("py-gast@0.4", when="@0.3", type=("build", "run"))
     depends_on("py-gast@0.3.3:0.3", when="@:0.2", type=("build", "run"))

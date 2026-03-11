@@ -19,7 +19,12 @@ class EpicsBase(MakefilePackage):
 
     maintainers("glenn-horton-smith")
 
+    version("7.0.9", sha256="acd62c9b97b60caea9303cc3aab922dbf2bc3bfb3d20e0027110ffe4c906a6c7")
+    version("7.0.8.1", sha256="6c93a5e09b21392adbb3de423605d428ee4ddb1272fc708a251b082272fa73f5")
+    version("7.0.8", sha256="9232b53afa617d0b95cfcb93952fde100342f2e29e829d34fa66ed61410439d4")
+    version("7.0.7", sha256="44d6980e19c7ad097b9e3d20c3401fb20699ed346afc307c8d1b44cf7109d475")
     version("7.0.6.1", sha256="8ff318f25e2b70df466f933636a2da85e4b0c841504b9e89857652a4786b6387")
+    version("3.15.9", sha256="93fcc2f19102d6d211ddc706812391b221267e526f114386ed1e3097c9354c8d")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

@@ -21,6 +21,16 @@ class Tecplot(Package):
     maintainers("LRWeber")
 
     version(
+        "2025r2",
+        sha256="640e85cf9037c437f071265a8424291096095d823ee0a2af1245747b31dcc1e1",
+        expand=False,
+    )
+    version(
+        "2025r1",
+        sha256="1927ebe5d5ca6445940bfaa2bd55de48c75f7a339f1e3fb2d502796855ec0432",
+        expand=False,
+    )
+    version(
         "2024r1",
         sha256="46012aab7e3f18d77344448d1e1a8d43a58f5e35fb0a296c593199810df4bc8e",
         expand=False,
@@ -35,9 +45,6 @@ class Tecplot(Package):
         sha256="e30cb7bf894e7cd568a2b24beb4bf667f1781ae27b59bb73410fafe12ddfdcdf",
         expand=False,
     )
-    # Deprecated versions
-    version("2018r2", md5="d3cf54a7555e0259b7ba0d82fef23bc3", expand=False, deprecated=True)
-    version("2017r1", md5="06a8057d33a519607720d4c621cd3f50", expand=False, deprecated=True)
 
     # Licensing
     license_required = True

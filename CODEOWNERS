@@ -7,9 +7,6 @@
 # Stacks without maintainers will ping infrastructure maintainers
 # /stacks/aws-pcluster-neoverse_v1/
 # /stacks/aws-pcluster-x86_64_v4/
-# /stacks/radiuss/
-# /stacks/radiuss-aws/
-# /stacks/radiuss-aws-aarch64/
 
 ###
 # Stacks with maintainers
@@ -27,6 +24,7 @@
 /stacks/tools-sdk/                            @kwryankrattiger
 /stacks/tutorial/                             @alecbcs @becker33 @tldahlgren @tgamblin
 /stacks/windows-vis/                          @johnwparent @kwryankrattiger @scheibelp
+/stacks/radiuss*/                             @adrienbernede @davidbeckingsale
 
 ###
 # CI Components maintained by Kitware
@@ -46,10 +44,11 @@
 
 ###
 # GitHub project maintainers
+.ci/env                   @spack/spack-releasers
 .github/*.md              @spack/spack-releasers
 .github/*.yml             @spack/spack-releasers
 /.github/ISSUE_TEMPLATE/  @spack/spack-releasers
-CODEOWNERS               @spack/spack-releasers
+CODEOWNERS                @spack/spack-releasers
 LICENSE*                  @spack/spack-releasers
 NOTICE                    @spack/spack-releasers
 README.md                 @spack/spack-releasers

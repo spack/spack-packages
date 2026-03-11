@@ -28,13 +28,12 @@ class Vmc(CMakePackage):
     patch("dict_fixes_101.patch", when="@1-0-p1")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.3:", type="build")
     depends_on("cmake@3.16:", type="build", when="@2-1:")
 
-    depends_on("root@6.18.04:")
-    requires("^root~vmc", when="^root@:6.25")
+    depends_on("root")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("platform=darwin"):

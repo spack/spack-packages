@@ -16,11 +16,6 @@ class Snphylo(Package):
     license("GPL-2.0-only")
 
     version("20180901", sha256="46273bcafc8f6cc2465fc524926af7dd122bcc7b7ce1b7c3f5c278111c3a9ddd")
-    version(
-        "2016-02-04",
-        sha256="d9e144021c83dbef97bebf743b92109ad0afcfe70f37c244059b43f11b8a50da",
-        deprecated=True,
-    )
 
     depends_on("python", type=("build", "run"))
     depends_on("r", type=("build", "run"))
@@ -37,7 +32,7 @@ class Snphylo(Package):
         with open(install_answer_input, "w") as f:
             f.writelines(install_answer)
         with open(install_answer_input, "r") as f:
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./setup.sh", input=f)
             install_tree(".", prefix)
 

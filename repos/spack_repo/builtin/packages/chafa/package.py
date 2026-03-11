@@ -17,7 +17,6 @@ class Chafa(AutotoolsPackage):
     git = "https://github.com/hpjansson/chafa.git"
 
     license("LGPL-3.0-or-later", checked_by="Buldram")
-    maintainers("Buldram")
 
     version("master", branch="master")
     version("1.16.2", sha256="657898dd9a89b45130a44c1efe1fc03e2c7bd00c2f543ed7111613cb9e7861df")

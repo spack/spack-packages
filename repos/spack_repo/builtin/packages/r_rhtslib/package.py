@@ -28,6 +28,7 @@ class RRhtslib(RPackage):
     #             branches.
     #             Aborting
     # version("1.28.0", commit='214fde2218bdbca89f1e12a30d2e081e76915aef')
+    version("3.4.0", commit="2779f264713fa4bb06811a220fb00bda155d9dc1")
     version("2.0.0", commit="1757333eb88625158505e5fa47840081110cf8a4")
     version("1.28.0", branch="RELEASE_3_15")
     version("1.26.0", commit="f5b20e97b283942877529f750b28398782552655")
@@ -51,6 +52,8 @@ class RRhtslib(RPackage):
     # directory in the htslib shared object. R will fix this if patchelf is
     # available
     depends_on("patchelf", type="build", when="@1.12:1.14")
+
+    conflicts("r@4.5.0:", when="@:3.3")
 
     patch("use_spack_Makeconf.patch", when="@1.12:1.28.0")
     patch("find_deps-1.12.patch", when="@1.12:1.14")

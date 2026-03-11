@@ -30,7 +30,7 @@ class Tophat(AutotoolsPackage):
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
 
-    depends_on("boost@1.47:+exception+chrono+system+random+atomic+thread")
+    depends_on("boost@1.47:+exception+chrono+system+random+atomic+thread cxxstd=98")
     depends_on("bowtie2", type="run")
 
     parallel = False

@@ -17,6 +17,7 @@ class PyMicrosoftAurora(PythonPackage):
 
     license("MIT")
 
+    version("1.8.0", sha256="2557523e880b9754ced6a535e8861ad6bc0b29c26c5c7f62ce4e625b3d1f7d16")
     version("1.7.0", sha256="1c285f5b39e7f5f47f7dc11c5c4f16edb63998179141a4ee27e66ce4b764d0ba")
 
     with default_args(type="build"):

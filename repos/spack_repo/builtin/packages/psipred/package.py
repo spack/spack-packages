@@ -20,12 +20,9 @@ class Psipred(MakefilePackage):
 
     version("4.02", sha256="b4009b6a5f8b76c6d60ac91c4a743512d844864cf015c492fb6d1dc0d092c467")
 
-    variant("blast-plus", default=False, description="Use blast-plus in place of blast-legacy")
-
     depends_on("c", type="build")  # generated
 
-    depends_on("blast-legacy", type="run", when="~blast-plus")
-    depends_on("blast-plus", type="run", when="+blast-plus")
+    depends_on("blast-plus", type="run")
 
     build_directory = "src"
 
@@ -58,17 +55,10 @@ class Psipred(MakefilePackage):
         install_tree("data", prefix.data)
         # modify and install the relevant helper script examples
         mkdir(self.prefix.scripts)
-        if self.spec.satisfies("~blast-plus"):
-            script = FileFilter("runpsipred")
-            blast_location = self.spec["blast-legacy"].prefix.bin
-        else:  # +blast-plus
-            script = FileFilter(join_path("BLAST+", "runpsipredplus"))
-            blast_location = self.spec["blast-plus"].prefix.bin
+        script = FileFilter(join_path("BLAST+", "runpsipredplus"))
+        blast_location = self.spec["blast-plus"].prefix.bin
         script.filter("set dbname .*", "set dbname = ")
         script.filter("set ncbidir .*", f"set ncbidir = {blast_location}")
         script.filter("set execdir .*", f"set execdir = {self.prefix.bin}")
         script.filter("set datadir .*", f"set datadir = {self.prefix.data}")
-        if self.spec.satisfies("~blast-plus"):
-            install("runpsipred", self.prefix.scripts)
-        else:  # +blast-plus
-            install(join_path("BLAST+", "runpsipredplus"), self.prefix.scripts)
+        install(join_path("BLAST+", "runpsipredplus"), self.prefix.scripts)

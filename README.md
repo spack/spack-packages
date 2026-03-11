@@ -50,7 +50,7 @@ The new repository structure is designed around several goals:
 1. Make it easy to add the repository to `PYTHONPATH`;
 2. Allow common python code like `build_systems` to live in the package repo, not core
    Spack; and
-3. Allow multiple reositories (e.g. something in addition to `builtin` to live in the
+3. Allow multiple repositories (e.g. something in addition to `builtin`) to live in the
    same git repository.
 
 If you use an editor like vscode, you should be able to point it directly to the `repos/`
@@ -71,7 +71,7 @@ spack repo set --destination /path/to/local/spack-packages builtin
 `$spack` can be used to form a relative path to your Spack root directory.
 
 If you are migrating your pull requests from
-[github.com/spack/spack](https://github.com/spack/spack), it is recommended to use the [the migration tool](https://github.com/spack/migrate-package-prs).
+[github.com/spack/spack](https://github.com/spack/spack), it is recommended to use the [migration tool](https://github.com/spack/migrate-package-prs).
 
 ## Searching Spack packages
 

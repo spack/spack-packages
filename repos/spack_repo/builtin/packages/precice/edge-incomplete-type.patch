@@ -1,0 +1,4 @@
+--- a/src/mesh/Edge.hpp
++++ b/src/mesh/Edge.hpp
+@@ -4,0 +5 @@
++#include <array>

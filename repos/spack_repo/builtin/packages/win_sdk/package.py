@@ -25,6 +25,7 @@ class WinSdk(Package):
     # The sdk has many libraries and executables. Record one for detection purposes
     libraries = ["rcdll.dll"]
 
+    version("10.0.26100")
     version("10.0.22621")
     version("10.0.19041")
     version("10.0.18362")
@@ -45,6 +46,8 @@ class WinSdk(Package):
     # we can ensure that requirment here
     # WinSDK is very backwards compatible, however older
     # MSVC editions may have problems with newer SDKs
+    conflicts("%msvc@:19.16.00000", when="@10.0.26100")
+    conflicts("%msvc@:19.16.00000", when="@10.0.22621")
     conflicts("%msvc@:19.16.00000", when="@10.0.19041")
     conflicts("%msvc@:19.16.00000", when="@10.0.18362")
     conflicts("%msvc@:19.15.00000", when="@10.0.17763")

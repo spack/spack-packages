@@ -15,6 +15,8 @@ class PyGast(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.7.0", sha256="0bb14cd1b806722e91ddbab6fb86bba148c22b40e7ff11e248974e04c8adfdae")
+    version("0.6.0", sha256="88fc5300d32c7ac6ca7b515310862f71e6fdf2c029bbec7c66c0f5dd47b6b1fb")
     version("0.5.4", sha256="9c270fe5f4b130969b54174de7db4e764b09b4f7f67ccfc32480e29f78348d97")
     version("0.5.3", sha256="cfbea25820e653af9c7d1807f659ce0a0a9c64f2439421a7bba4f0983f532dea")
     version("0.5.2", sha256="f81fcefa8b982624a31c9e4ec7761325a88a0eba60d36d1da90e47f8fe3c67f7")

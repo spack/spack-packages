@@ -33,12 +33,14 @@ class CompilerWrapper(Package):
     # this node from auto-generated rules
     tags = ["runtime"]
 
+    maintainers("haampie")
+
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
         version(
             "1.0",
-            sha256="c65a9d2b2d4eef67ab5cb0684d706bb9f005bb2be94f53d82683d7055bdb837c",
+            sha256="c7b816479554fd32f677db15ceec6627b91c86074a5d65498688afcbe2796188",
             expand=False,
         )
     else:

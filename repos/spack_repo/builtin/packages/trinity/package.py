@@ -104,6 +104,12 @@ class Trinity(MakefilePackage):
         make()
         make("trinity_essentials")
         make("plugins")
+        # Remove recursive symlink
+        force_remove(
+            join_path(
+                self.build_directory, "trinity-plugins", "Trimmomatic-0.36", "Trimmomatic-0.36"
+            )
+        )
 
     def install(self, spec, prefix):
         install_tree(".", prefix.bin)

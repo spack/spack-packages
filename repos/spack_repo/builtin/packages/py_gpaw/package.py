@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class PyGpaw(PythonPackage):
+class PyGpaw(PythonPackage, CudaPackage):
     """GPAW is a density-functional theory (DFT) Python code based on the
     projector-augmented wave (PAW) method and the atomic simulation environment
     (ASE)."""
@@ -24,19 +25,6 @@ class PyGpaw(PythonPackage):
     version("24.6.0", sha256="fb48ef0db48c0e321ce5967126a47900bba20c7efb420d6e7b5459983bd8f6f6")
     version("23.9.1", sha256="19a24840b876003528864b7a0b38fc0d456800b83b8666b1f724273660745b47")
     version("23.6.1", sha256="ff56d323a499972c8991770a6ab0334a6dd18df36e9c94360e0aa1ddf8867dfd")
-    with default_args(deprecated=True):
-        version(
-            "21.1.0", sha256="96843b68e04bd1c12606036c9f99b0ddfa5e6ee08ce46835e6bb347a6bd560a3"
-        )
-        version(
-            "20.10.0", sha256="77c3d3918f5cc118e448f8063af4807d163b31d502067f5cbe31fc756eb3971d"
-        )
-        version(
-            "20.1.0", sha256="c84307eb9943852d78d966c0c8856fcefdefa68621139906909908fb641b8421"
-        )
-        version(
-            "19.8.1", sha256="79dee367d695d68409c4d69edcbad5c8679137d6715da403f6c2500cb2178c2a"
-        )
 
     variant("mpi", default=True, description="Build with MPI support")
     variant("scalapack", default=True, description="Build with ScaLAPACK support")
@@ -44,6 +32,7 @@ class PyGpaw(PythonPackage):
     variant("libvdwxc", default=True, description="Build with libvdwxc support")
     variant("elpa", default=True, description="Build with ELPA support")
     variant("openmp", default=True, description="Build with OpenMP support")
+    variant("cuda", default=False, when="@23.6:", description="Build with CUDA GPU support")
 
     # Build dependencies
     depends_on("c", type="build")
@@ -60,8 +49,9 @@ class PyGpaw(PythonPackage):
         depends_on("py-ase@3.25.0:", type=("build", "run"))
         depends_on("py-numpy", type=("build", "run"))
         depends_on("py-scipy@1.6.0:", type=("build", "run"))
+        depends_on("py-gpaw-data", type=("run"))
 
-    with when("@25.1.0:"):
+    with when("@25.1.0"):
         depends_on("libxc")
         depends_on("python@3.9:", type=("build", "run"))
         depends_on("py-ase@3.23.0:", type=("build", "run"))
@@ -82,39 +72,16 @@ class PyGpaw(PythonPackage):
         depends_on("py-numpy@1.17:1.26.4", type=("build", "run"))
         depends_on("py-scipy@1.6.0:", type=("build", "run"))
 
-    with when("@21.1.0"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.6:3.11", type=("build", "run"))
-        depends_on("py-ase@3.21.0:", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:", type=("build", "run"))
-
-    with when("@20.10.0"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.6:3.11", type=("build", "run"))
-        depends_on("py-ase@3.20.1:", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:1.6.3", type=("build", "run"))
-
-    with when("@20.1.0"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.6:3.11", type=("build", "run"))
-        depends_on("py-ase@3.19.0:3.20.1", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:1.6.3", type=("build", "run"))
-
-    with when("@19.8.1"):
-        depends_on("libxc@3:4.3.4")
-        depends_on("python@3.5:3.11", type=("build", "run"))
-        depends_on("py-ase@3.18.0:3.19.0", type=("build", "run"))
-        depends_on("py-numpy@:1.26.4", type=("build", "run"))
-        depends_on("py-scipy@1.2.0:1.6.3", type=("build", "run"))
-
-    # Variant dependencies
+    # Variant dependencies and conflicts
     depends_on("mpi", when="+mpi", type=("build", "link", "run"))
     depends_on("fftw-api", when="+fftw")
     depends_on("scalapack", when="+scalapack")
     depends_on("libvdwxc", when="+libvdwxc")
+    depends_on("cuda", when="+cuda")
+    depends_on("py-cupy +cuda", when="+cuda")
+    depends_on("openmpi +cuda", when="+cuda +mpi", type=("build", "link", "run"))
+    conflicts("cuda_arch=none", when="+cuda", msg="CUDA arch required when building cuda variant.")
+    conflicts("elpa", when="+cuda", msg="CUDA and ELPA have not been tested together.")
     # Fixed elpa version due to compilation/linking errors on older and newer versions.
     # Tested for versions @23.6.1:25.1.0
     depends_on("elpa@2022.11.001", when="+elpa")
@@ -130,12 +97,6 @@ class PyGpaw(PythonPackage):
         libs = blas.libs + lapack.libs + libxc.libs
 
         include_dirs = [blas.prefix.include, lapack.prefix.include, libxc.prefix.include]
-
-        if spec.satisfies("@:19.8.1"):
-            numpy_include = join_path(
-                self["py-numpy"].module.python_platlib, "numpy", "core", "include"
-            )
-            include_dirs += [numpy_include]
 
         runtime_library_dirs = []
 
@@ -173,16 +134,21 @@ class PyGpaw(PythonPackage):
             openmp_compile_args = ["-fopenmp"]
             openmp_link_args = ["-fopenmp"]
 
+        if "+cuda" in spec:
+            bools += "gpu = True\n"
+            include_dirs.append(spec["cuda"].prefix.include)
+            libs += spec["cuda"].libs
+            libs += ["cudart", "cublas"]
+            gpu_compile_args = ["-O3", "-g"]
+            for f in spec.variants["cuda_arch"].value:
+                gpu_compile_args.append("-gencode")
+                gpu_compile_args.append(f"arch=compute_{f},code=sm_{f}")
+
         lib_dirs = list(libs.directories)
         libs = list(libs.names)
         rpath_str = ":".join(self.rpath)
 
-        if spec.satisfies("@:19.8.1"):
-            cfgfile = "customize.py"
-        else:
-            cfgfile = "siteconfig.py"
-
-        with open(cfgfile, "w") as f:
+        with open("siteconfig.py", "w") as f:
             f.write(bools)
             f.write(f"libraries = {repr(libs)}\n")
             f.write(f"include_dirs = {repr(include_dirs)}\n")
@@ -198,3 +164,7 @@ class PyGpaw(PythonPackage):
             if "+openmp" in spec:
                 f.write(f"extra_compile_args += {openmp_compile_args}\n")
                 f.write(f"extra_link_args += {openmp_link_args}\n")
+            if "+cuda" in spec:
+                f.write("gpu_target = 'cuda'\n")
+                f.write("gpu_compiler = 'nvcc'\n")
+                f.write(f"gpu_compile_args = {gpu_compile_args}\n")

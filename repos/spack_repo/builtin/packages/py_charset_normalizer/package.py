@@ -16,6 +16,7 @@ class PyCharsetNormalizer(PythonPackage):
 
     license("MIT")
 
+    version("3.4.4", sha256="94537985111c35f28720e43603b8e7b43a6ecfb2ce1d3058bbe955b73404e21a")
     version("3.4.2", sha256="5baececa9ecba31eff645232d59845c07aa030f0c81ee70184a90d35099a0e63")
     version("3.3.0", sha256="63563193aec44bce707e0c5ca64ff69fa72ed7cf34ce6e11d5127555756fd2f6")
     version("3.1.0", sha256="34e0a2f9c370eb95597aae63bf85eb5e96826d81e3dcf88b8886012906f509b5")
@@ -24,12 +25,18 @@ class PyCharsetNormalizer(PythonPackage):
     version("2.0.7", sha256="e019de665e2bcf9c2b64e2e5aa025fa991da8720daa3c1138cadd2fd1856aed0")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@68:81", when="@3.4.4:")
         depends_on("py-setuptools")
-        depends_on("py-setuptools-scm", when="@3.4.2:")
-        depends_on("py-mypy@1.4.1:1.15.0", when="@3.4.2:")
 
+        # Historical dependencies
+        depends_on("py-setuptools-scm", when="@3.4.1:3.4.3")
+        depends_on("py-mypy@1.4.1:1.15.0", when="@3.4.2")
+        depends_on("py-mypy@1.4.1:1.14.0", when="@3.4.1")
+
+    # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
-        depends_on("python@3.7:3.13", when="@3.4:")
+        depends_on("python@3.8:3.14", when="@3.4.3:")
+        depends_on("python@3.7:3.13", when="@3.4.0:3.4.2")
         depends_on("python@3.7:3.12", when="@3.2:3.3")
         depends_on("python@3.7:3.11", when="@3.1")
         depends_on("python@3.6:3.11", when="@2.1:3.0")

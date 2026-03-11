@@ -25,13 +25,9 @@ class RAsreml(RPackage):
     license("UNKNOWN", checked_by="snehring")
 
     version(
-        "4.2.0.302_R42", sha256="93196b68a987fd0a8d26fa7463cab60bd35c7be750c4832332945d71907425cd"
-    )
-    version(
         "4.2.0.302_R43", sha256="0a685521c80e3263ebb852886d3e1bd31213bd83507e7fffca34261ae18523f9"
     )
 
-    depends_on("r@4.2.0:4.2", type=("build", "run"), when="@4.2.0.302_R42")
     depends_on("r@4.3.0:4.3", type=("build", "run"), when="@4.2.0.302_R43")
     depends_on("r-data-table", type=("build", "run"))
     depends_on("r-ggplot2", type=("build", "run"))

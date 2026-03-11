@@ -21,10 +21,6 @@ class Mamba(CMakePackage):
 
     version("2.3.0", sha256="671432a2b64719baba54c9efda3662d321a1cc9ff3eba49047b83ffda9acf661")
 
-    with default_args(deprecated=True):
-        version("1.4.2", sha256="dce034908d02d991c5e9aadeb9d01f139d027ba199aaeb1d47d543e3f24895d1")
-        version("1.1.0", sha256="e2392cd90221234ae8ea92b37f40829fbe36d80278056269aa1994a5efe7f530")
-
     # micromamba is mamba but statically linked
     # however there is some nuance in that statement
     # https://github.com/mamba-org/mamba/issues/3295
@@ -46,17 +42,14 @@ class Mamba(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("cmake", type="build")
-    depends_on("cmake@3.2:", when="@1.1.0:", type="build")
-    depends_on("cmake@3.16:", when="@1.4:", type="build")
+    depends_on("cmake@3.16:", type="build")
 
     depends_on("pkgconfig", type="build")
 
     # deps taken from
     # https://github.com/mamba-org/mamba/blob/main/libmamba/CMakeLists.txt#L423
 
-    depends_on("libsolv+conda")
-    depends_on("libsolv@0.7.34:+conda", when="@2.3:")
+    depends_on("libsolv@0.7.34:+conda")
 
     depends_on("curl@7.66.0: libs=shared")
     depends_on("libarchive crypto=mbedtls xar=libxml2")
@@ -67,17 +60,14 @@ class Mamba(CMakePackage):
 
     # spdlog will determine the exact version of fmt used,
     depends_on("spdlog")
-    depends_on("fmt@11:", when="@2.3:")
-
-    depends_on("spdlog@1.11.0", when="@1")
-    depends_on("fmt@9.1.0", when="@1")
+    depends_on("fmt@11:")
 
     depends_on("nlohmann-json")
     depends_on("cpp-termcolor")
     depends_on("cli11@2.2:")
 
-    depends_on("zstd build_system=cmake", when="@1.4:")
-    depends_on("simdjson +shared", when="@2.3:")
+    depends_on("zstd build_system=cmake")
+    depends_on("simdjson +shared")
 
     # 1.4.2 made the static build the old "full_static" build and it needs some work.
     # Only shared or full static exist now https://github.com/mamba-org/mamba/pull/2342

@@ -2,14 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
 
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.scons import SConsPackage
 
 from spack.package import *
 
 
-class Amdlibm(SConsPackage):
+class Amdlibm(SConsPackage, CMakePackage):
     """AMD LibM is a software library containing a collection of basic math
     functions optimized for x86-64 processor-based machines. It provides
     many routines from the list of standard C99 math functions.
@@ -32,11 +32,9 @@ class Amdlibm(SConsPackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "5.0",
-        sha256="ba1d50c068938c9a927e37e5630f683b6149d7d5a95efffeb76e7c9a8bcb2b5e",
-        preferred=True,
-    )
+    version("5.2", sha256="5cec8d30dc1083923c332c80808eda637ebd385b02a0cebf65ce72b5c8cbc029")
+    version("5.1", sha256="7acf2c98469353b60a59fad167a98e1ae689055a3faf8352a254832145c9d59e")
+    version("5.0", sha256="ba1d50c068938c9a927e37e5630f683b6149d7d5a95efffeb76e7c9a8bcb2b5e")
     version("4.2", sha256="58847b942e998b3f52eb41ae26403c7392d244fcafa707cbf23165aac24edd9e")
     version("4.1", sha256="5bbbbc6bc721d9a775822eab60fbc11eb245e77d9f105b4fcb26a54d01456122")
     version("4.0", sha256="038c1eab544be77598eccda791b26553d3b9e2ee4ab3f5ad85fdd2a77d015a7d")
@@ -47,14 +45,25 @@ class Amdlibm(SConsPackage):
 
     variant("verbose", default=False, description="Building with verbosity", when="@:4.1")
 
+    # Build system
+    # - For version 5.2: both 'cmake' and 'scons' are supported, with 'cmake' as default.
+    # - For version 5.1: both 'scons' and 'cmake' are supported, with 'scons' as default.
+    # - For versions below 5.1: only 'scons' is supported.
+    with when("@5.2"):
+        build_system("cmake", "scons", default="cmake")
+
+    with when("@:5.1"):
+        build_system("scons", conditional("cmake", when="@5.1:"), default="scons")
+
     # Mandatory dependencies
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     depends_on("python@3.6.1:", type=("build", "run"))
     depends_on("scons@3.1.2:4.8.1", type=("build"))
+    depends_on("cmake@3.26:3.30.6", type="build", when="build_system=cmake")
     depends_on("mpfr", type=("link"))
-    for vers in ["4.1", "4.2", "5.0"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 
@@ -63,12 +72,10 @@ class Amdlibm(SConsPackage):
     # Patch to update the SCons environment with newly introduced
     # Spack build environment variables.
     patch("libm-ose-SconsSpack.patch", when="@3.1:4.2")
-    patch("libm-ose-SconsSpack-5.patch", when="@5.0")
+    patch("libm-ose-SconsSpack-5.patch", when="@5.0:5.1")
 
     conflicts("%gcc@:9.1.0", msg="Minimum supported GCC version is 9.2.0")
-    conflicts("%clang@:9.0", msg="Minimum supported Clang version is 9")
-    conflicts("%clang@17.0.0:", msg="Maximum supported Clang version is 17.0.0")
-    conflicts("%gcc@14.3.0:", msg="Maximum supported GCC version is 14.2.0")
+    conflicts("%clang@:11.1", msg="Minimum supported Clang version is 12.0")
     conflicts("%aocc@3.2.0", msg="dependency on python@3.6.2")
 
     def patch(self):
@@ -98,12 +105,22 @@ class Amdlibm(SConsPackage):
 
     install_args = build_args
 
+    def cmake_args(self):
+        """Setting build arguments for amdlibm when using CMake"""
+        spec = self.spec
+
+        args = [
+            self.define("AOCL_UTILS_INCLUDE_DIR", spec["aocl-utils"].prefix.include),
+            f"-DAOCL_UTILS_LIB={spec['aocl-utils'].libs}",
+        ]
+        return args
+
     @run_after("install")
     def create_symlink(self):
         """Symbolic link for backward compatibility"""
         with working_dir(self.prefix.lib):
-            os.symlink("libalm.a", "libamdlibm.a")
-            os.symlink("libalm.so", "libamdlibm.so")
+            symlink("libalm.a", "libamdlibm.a")
+            symlink("libalm.so", "libamdlibm.so")
             if self.spec.satisfies("@4.0:"):
-                os.symlink("libalmfast.a", "libamdlibmfast.a")
-                os.symlink("libalmfast.so", "libamdlibmfast.so")
+                symlink("libalmfast.a", "libamdlibmfast.a")
+                symlink("libalmfast.so", "libamdlibmfast.so")

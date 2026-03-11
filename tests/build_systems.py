@@ -4,24 +4,21 @@
 
 import os
 import pathlib
+import platform
 import shutil
 
 import pytest
 from spack_repo.builtin.build_systems import autotools, cmake
 
-import spack
-import spack.concretize
-import spack.environment
-import spack.paths
-import spack.platforms
 import spack.platforms.test
-from spack.build_environment import ChildError, setup_package
+from spack.build_environment import setup_package
+from spack.concretize import concretize_one
+from spack.environment import Environment
 from spack.installer import PackageInstaller
 from spack.package import (
     FileList,
     InstallError,
     MakeExecutable,
-    Spec,
     create_builder,
     find,
     which,
@@ -141,7 +138,7 @@ class TestAutotoolsPackage:
 
     def test_libtool_archive_files_are_deleted_by_default(self, mutable_database):
         # Install a package that creates a mock libtool archive
-        s = spack.concretize.concretize_one("libtool-deletion")
+        s = concretize_one("libtool-deletion")
         PackageInstaller([s.package], explicit=True).install()
 
         # Assert the libtool archive is not there and we have
@@ -156,7 +153,7 @@ class TestAutotoolsPackage:
     ):
         # Install a package that creates a mock libtool archive,
         # patch its package to preserve the installation
-        s = spack.concretize.concretize_one("libtool-deletion")
+        s = concretize_one("libtool-deletion")
         monkeypatch.setattr(type(create_builder(s.package)), "install_libtool_archives", True)
         PackageInstaller([s.package], explicit=True).install()
 
@@ -168,9 +165,7 @@ class TestAutotoolsPackage:
         Tests whether only broken config.sub and config.guess are replaced with
         files from working alternatives from the gnuconfig package.
         """
-        s = spack.concretize.concretize_one(
-            Spec("autotools-config-replacement +patch_config_files +gnuconfig")
-        )
+        s = concretize_one("autotools-config-replacement +patch_config_files +gnuconfig")
         PackageInstaller([s.package]).install()
 
         with open(os.path.join(s.prefix.broken, "config.sub"), encoding="utf-8") as f:
@@ -189,9 +184,7 @@ class TestAutotoolsPackage:
         """
         Tests whether disabling patch_config_files
         """
-        s = spack.concretize.concretize_one(
-            Spec("autotools-config-replacement ~patch_config_files +gnuconfig")
-        )
+        s = concretize_one("autotools-config-replacement ~patch_config_files +gnuconfig")
         PackageInstaller([s.package]).install()
 
         with open(os.path.join(s.prefix.broken, "config.sub"), encoding="utf-8") as f:
@@ -208,8 +201,7 @@ class TestAutotoolsPackage:
 
     @pytest.mark.disable_clean_stage_check
     @pytest.mark.skipif(
-        str(spack.vendor.archspec.cpu.host().family) != "x86_64",
-        reason="test data is specific for x86_64",
+        platform.machine() not in ("AMD64", "x86_64"), reason="test data is specific for x86_64"
     )
     def test_autotools_gnuconfig_replacement_no_gnuconfig(self, mutable_database, monkeypatch):
         """
@@ -217,12 +209,10 @@ class TestAutotoolsPackage:
         enabled, but gnuconfig is not listed as a direct build dependency.
         """
         monkeypatch.setattr(spack.platforms.test.Test, "default", "x86_64")
-        s = spack.concretize.concretize_one(
-            Spec("autotools-config-replacement +patch_config_files ~gnuconfig")
-        )
+        s = concretize_one("autotools-config-replacement +patch_config_files ~gnuconfig")
 
         msg = "Cannot patch config files: missing dependencies: gnuconfig"
-        with pytest.raises(ChildError, match=msg):
+        with pytest.raises(Exception, match=msg):
             PackageInstaller([s.package]).install()
 
     @pytest.mark.disable_clean_stage_check
@@ -249,9 +239,9 @@ spack:
         )
 
         msg = "Spack could not find `config.guess`.*misconfigured as an external package"
-        with spack.environment.Environment(str(tmp_path / "env")) as e:
+        with Environment(str(tmp_path / "env")) as e:
             e.concretize()
-            with pytest.raises(ChildError, match=msg):
+            with pytest.raises(Exception, match=msg):
                 e.install_all()
 
 
@@ -266,6 +256,12 @@ class TestCMakePackage:
         # Call it on another kind of package
         s = default_mock_concretization("mpich")
         assert cmake.CMakeBuilder.std_args(s.package)
+
+    def test_cmake_dependent_args(self, default_mock_concretization):
+        # Call the function on a CMakePackage instance
+        s = default_mock_concretization("cmake-client +cmake_hints")
+        args = cmake.CMakeBuilder.std_args(s.package)
+        assert '-DCMAKE_HINTS_ARG:STRING="Foo"' in args
 
     def test_cmake_bad_generator(self, default_mock_concretization):
         s = default_mock_concretization("cmake-client")
@@ -292,7 +288,7 @@ class TestCMakePackage:
         assert define("SINGLE", "red") == "-DSINGLE:STRING=red"
 
     def test_define_from_variant(self):
-        s = spack.concretize.concretize_one("cmake-client multi=up,right ~truthy single=red")
+        s = concretize_one("cmake-client multi=up,right ~truthy single=red")
 
         arg = s.package.define_from_variant("MULTI")
         assert arg == "-DMULTI:STRING=right;up"

@@ -17,6 +17,9 @@ class PyDask(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2025.7.0", sha256="c3a0d4e78882e85ea81dbc71e6459713e45676e2d17e776c2f3f19848039e4cf")
+    version("2025.3.0", sha256="322834f44ebc24abeb564c56ccb817c97d6e7af6be71ad0ad96b78b51f2e0e85")
+    version("2024.12.1", sha256="bac809af21c2dd7eb06827bccbfc612504f3ee6435580e548af912828f823195")
     version("2024.7.1", sha256="dbaef2d50efee841a9d981a218cfeb50392fc9a95e0403b6d680450e4f50d531")
     version("2023.4.1", sha256="9dc72ebb509f58f3fe518c12dd5a488c67123fdd66ccb0b968b34fd11e512153")
     version("2022.10.2", sha256="42cb43f601709575fa46ce09e74bea83fdd464187024f56954e09d9b428ceaab")
@@ -41,7 +44,9 @@ class PyDask(PythonPackage):
 
     conflicts("~array", when="@2023.8: +dataframe", msg="From 2023.8, +dataframe requires +array")
 
-    depends_on("python@3.8:", type=("build", "run"), when="@2022.10.2:")
+    depends_on("python@3.8:", type=("build", "run"), when="@:2023.4.1")
+    depends_on("python@3.9:", type=("build", "run"), when="@2024.7.1")
+    depends_on("python@3.10:", type=("build", "run"), when="@2024.8.1:")
 
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@62.6:", type="build", when="@2023.4.1:")
@@ -54,6 +59,7 @@ class PyDask(PythonPackage):
     depends_on("py-pyyaml@5.3.1:", type=("build", "run"), when="@2022.10.2:")
     depends_on("py-cloudpickle@1.1.1:", type=("build", "run"), when="@2021.3.1:")
     depends_on("py-cloudpickle@1.5.0:", type=("build", "run"), when="@2023.4.1:")
+    depends_on("py-cloudpickle@3.0.0:", type=("build", "run"), when="@2024.8.1:")
     depends_on("py-fsspec@0.6.0:", type=("build", "run"), when="@2021.3.1:")
     depends_on("py-fsspec@2021.09.0:", type=("build", "run"), when="@2023.4.1:")
     depends_on("py-toolz@0.8.2:", type=("build", "run"), when="@2021.3.1:")
@@ -64,13 +70,17 @@ class PyDask(PythonPackage):
     depends_on("py-click@7.0:", type=("build", "run"), when="@2022.10.2:")
     depends_on("py-click@8.0:", type=("build", "run"), when="@2023.4.1:")
     depends_on("py-click@8.1:", type=("build", "run"), when="@2023.11.0:")
-    depends_on("py-importlib-metadata@4.13.0:", type=("build", "run"), when="@2023.4.0:")
+    depends_on("py-importlib-metadata@4.13.0:", type=("build", "run"), when="@2023.4.0:2024.2")
+    depends_on(
+        "py-importlib-metadata@4.13.0:", type=("build", "run"), when="@2024.3.0: ^python@:3.11"
+    )
 
     # Requirements for dask.array
     depends_on("py-numpy@1.15.1:", type=("build", "run"), when="@2020.12.0: +array")
     depends_on("py-numpy@1.16.0:", type=("build", "run"), when="@2021.3.1: +array")
     depends_on("py-numpy@1.18.0:", type=("build", "run"), when="@2022.10.2: +array")
     depends_on("py-numpy@1.21.0:", type=("build", "run"), when="@2023.4.0: +array")
+    depends_on("py-numpy@1.24.0:", type=("build", "run"), when="@2024.8.2: +array")
     # https://github.com/dask/dask/issues/11066
     depends_on("py-numpy@:1", when="@:2024.5.0+array", type=("build", "run"))
     # The dependency on py-toolz is non-optional starting version 2021.3.1
@@ -88,12 +98,14 @@ class PyDask(PythonPackage):
     depends_on("py-partd@0.3.10:", type=("build", "run"), when="@:2021.3.0 +bag")
 
     # Requirements for dask.dataframe
+    # +dataframe stopped requiring numpy from 2023.8.0:, but now requires dask[array]
+    # see the conflict() at the top of package that ensures +dataframe +array
     depends_on("py-numpy@1.15.1:", type=("build", "run"), when="@2020.12.0: +dataframe")
     depends_on("py-numpy@1.16.0:", type=("build", "run"), when="@2021.3.1: +dataframe")
     depends_on("py-numpy@1.18.0:", type=("build", "run"), when="@2022.10.2: +dataframe")
-    depends_on("py-numpy@1.21.0:", type=("build", "run"), when="@2023.4.0: +dataframe")
+    depends_on("py-numpy@1.21.0:", type=("build", "run"), when="@2023.4.0:2023.7.0 +dataframe")
     # https://github.com/dask/dask/issues/11066
-    depends_on("py-numpy@:1", when="@:2024.5.0+dataframe", type=("build", "run"))
+    depends_on("py-numpy@:1", type=("build", "run"), when="@:2023.4.0 +dataframe")
 
     depends_on("py-pandas@0.25.0:", type=("build", "run"), when="@2020.12.0: +dataframe")
     depends_on("py-pandas@1.0:", type=("build", "run"), when="@2022.10.2: +dataframe")
@@ -106,8 +118,9 @@ class PyDask(PythonPackage):
     # The dependency on py-fsspec is non-optional starting version 2021.3.1
     depends_on("py-fsspec@0.6.0:", type=("build", "run"), when="@:2021.3.0 +dataframe")
     # Starting with version 2024.3.0, dataframe requires a separate package py-dask-expr
-    depends_on("py-dask-expr", type=("build", "run"), when="@2024.3: +dataframe")
-    depends_on("py-dask-expr@1.1.9", type=("build", "run"), when="@2024.7.1 +dataframe")
+    depends_on("py-dask-expr@1.1", type=("build", "run"), when="@2024.7.1 +dataframe")
+    # starting with 2025.7 needs py-arrow
+    depends_on("py-pyarrow@14.0.1:", type=("build", "run"), when="@2025.1.0: +dataframe")
 
     # Requirements for dask.distributed
     depends_on(
@@ -117,11 +130,15 @@ class PyDask(PythonPackage):
     depends_on("py-distributed@2022.10.2", type=("build", "run"), when="@2022.10.2 +distributed")
     depends_on("py-distributed@2023.4.1", type=("build", "run"), when="@2023.4.1 +distributed")
     depends_on("py-distributed@2024.7.1", type=("build", "run"), when="@2024.7.1 +distributed")
+    depends_on("py-distributed@2024.12.1", type=("build", "run"), when="@2024.12.1 +distributed")
+    depends_on("py-distributed@2025.3.0", type=("build", "run"), when="@2025.3.0 +distributed")
+    depends_on("py-distributed@2025.7.0", type=("build", "run"), when="@2025.7.0 +distributed")
 
     # Requirements for dask.diagnostics
     depends_on("py-bokeh@1.0.0:1,2.0.1:", type=("build", "run"), when="+diagnostics")
     depends_on("py-bokeh@2.4.2:2", type=("build", "run"), when="@2022.10.2:2023.3 +diagnostics")
     depends_on("py-bokeh@2.4.2:", type=("build", "run"), when="@2023.4.0: +diagnostics")
+    depends_on("py-bokeh@3.1.0:", type=("build", "run"), when="@2024.9.0: +diagnostics")
     depends_on("py-jinja2", type=("build", "run"), when="@2022.10.2: +diagnostics")
     depends_on("py-jinja2@2.10.3:", type=("build", "run"), when="@2023.4.0: +diagnostics")
 

@@ -22,12 +22,6 @@ class XcbUtilRenderutil(AutotoolsPackage, XorgPackage):
     license("MIT")
 
     version("0.3.10", sha256="3e15d4f0e22d8ddbfbb9f5d77db43eacd7a304029bf25a6166cc63caa96d04ba")
-    version(
-        "0.3.9",
-        sha256="55eee797e3214fe39d0f3f4d9448cc53cffe06706d108824ea37bb79fcedcad5",
-        url="https://xcb.freedesktop.org/dist/xcb-util-renderutil-0.3.9.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 

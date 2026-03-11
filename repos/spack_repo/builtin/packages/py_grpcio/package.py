@@ -15,23 +15,14 @@ class PyGrpcio(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.75.0", sha256="b989e8b09489478c2d19fecc744a298930f40d8b27c3638afbfe84d22f36ce4e")
     version("1.71.0", sha256="2b85f7820475ad3edec209d3d89a7909ada16caab05d3f2e08a7e8ae3200a55c")
     version("1.64.0", sha256="257baf07f53a571c215eebe9679c3058a313fd1d1f7c4eede5a8660108c52d9c")
     version("1.63.0", sha256="f3023e14805c61bc439fb40ca545ac3d5740ce66120a678a3c6c2c55b70343d1")
     version("1.62.2", sha256="c77618071d96b7a8be2c10701a98537823b9c65ba256c0b9067e0594cdbd954d")
     version("1.60.1", sha256="dd1d3a8d1d2e50ad9b59e10aa7f07c7d1be2b367f3f2d33c5fade96ed5460962")
     version("1.56.2", sha256="0ff789ae7d8ddd76d2ac02e7d13bfef6fc4928ac01e1dcaa182be51b6bcc0aaa")
-    version(
-        "1.52.0",
-        sha256="a5d4a83d29fc39af429c10b9b326c174fec49b73398e4a966a1f2a4f30aa4fdb",
-        deprecated=True,  # https://github.com/grpc/grpc/issues/32306
-    )
     version("1.48.2", sha256="90e5da224c6b9b23658adf6f36de6f435ef7dbcc9c5c12330314d70d6f8de1f7")
-    version(
-        "1.48.1",
-        sha256="660217eccd2943bf23ea9a36e2a292024305aec04bf747fbcff1f5032b83610e",
-        deprecated=True,  # https://github.com/grpc/grpc/issues/30372
-    )
     version("1.43.0", sha256="735d9a437c262ab039d02defddcb9f8f545d7009ae61c0114e19dda3843febe5")
     version("1.42.0", sha256="4a8f2c7490fe3696e0cdd566e2f099fb91b51bc75446125175c55581c2f7bc11")
     version("1.39.0", sha256="57974361a459d6fe04c9ae0af1845974606612249f467bbd2062d963cb90f407")
@@ -51,38 +42,30 @@ class PyGrpcio(PythonPackage):
     version("1.28.1", sha256="cbc322c5d5615e67c2a15be631f64e6c2bab8c12505bc7c150948abdaa0bdbac")
     version("1.27.2", sha256="5ae532b93cf9ce5a2a549b74a2c35e3b690b171ece9358519b3039c7b84c887e")
     version("1.25.0", sha256="c948c034d8997526011960db54f512756fb0b4be1b81140a15b4ef094c6594a4")
-    version(
-        "1.16.0",
-        sha256="0cc5f2d3ee21c642d8982f197c83053fd3a8cbcd6a60240d8c87c6c256b10d57",
-        deprecated=True,
-        # Released 6ish years ago and does not install for python 3.8 with gcc11
-    )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("python", type=("build", "link", "run"))
+
+    with default_args(type="build"):
+        depends_on("py-setuptools")
+        depends_on("py-cython@3.1.1:", when="@1.75:")
+        depends_on("py-cython@3.0.0:", when="@1.63:1.71")
+        depends_on("py-cython@0.23:2", when="@:1.62")
+
     with default_args(type=("build", "run")):
-        depends_on("py-coverage@4:")
-        depends_on("py-wheel@0.29:")
+        depends_on("py-typing-extensions@4.12:4", when="@1.75:")
 
-        depends_on("py-cython@3:", when="@1.63.0:")
-        depends_on("py-cython@0.29.8:2", when="@1.56.0:1.62")
-        depends_on("py-cython@0.29.8:", when="@1.49.0:1.55")
-        # States dependency in setup.py >=0.23
-        # Package states >=0.23 but doesn't compile w/ >=3
-        depends_on("py-cython@0.23:2", when="@:1.48")
+        # Historical dependencies
+        depends_on("py-six@1.5.2:", when="@:1.48")
 
-        depends_on("py-protobuf@5.26.1:5", when="@1.63.0:")
-        depends_on("py-protobuf@4.21.3:4", when="@1.49.0:1.62")
-        depends_on("py-protobuf@3.5.0:3", when="@:1.48")
-
-        depends_on("py-six@1.10:", when="@:1.48")
-
-    depends_on("openssl")
-    depends_on("zlib-api")
-    depends_on("c-ares")
-    depends_on("re2+shared")
+    depends_on("openssl+shared", when="@1.33.1:")
+    depends_on("zlib-api", when="@1.33.1:")
+    depends_on("c-ares", when="@1.33.1:")
+    depends_on("re2+shared", when="@1.34:")
+    depends_on("abseil-cpp+shared cxxstd=17", when="@1.71:")
+    depends_on("abseil-cpp+shared cxxstd=14", when="@1.47:1.64")
 
     patch("30522.diff", when="@1.48")  # https://github.com/grpc/grpc/issues/30372
 
@@ -92,6 +75,7 @@ class PyGrpcio(PythonPackage):
         env.set("GRPC_PYTHON_BUILD_SYSTEM_ZLIB", "True")
         env.set("GRPC_PYTHON_BUILD_SYSTEM_CARES", "True")
         env.set("GRPC_PYTHON_BUILD_SYSTEM_RE2", "True")
+        env.set("GRPC_PYTHON_BUILD_SYSTEM_ABSL", "True")
         # https://github.com/grpc/grpc/pull/24449
         env.set("GRPC_BUILD_WITH_BORING_SSL_ASM", "")
         env.set("GRPC_PYTHON_BUILD_EXT_COMPILER_JOBS", str(make_jobs))
@@ -107,23 +91,33 @@ class PyGrpcio(PythonPackage):
         filter_file("-std=gnu99", "", "setup.py")
 
         # use the spack packages
-        filter_file(
-            r"(\s+SSL_INCLUDE = ).*",
-            r"\1('{0}',)".format(self.spec["openssl"].prefix.include),
-            "setup.py",
-        )
-        filter_file(
-            r"(\s+ZLIB_INCLUDE = ).*",
-            r"\1('{0}',)".format(self.spec["zlib-api"].prefix.include),
-            "setup.py",
-        )
-        filter_file(
-            r"(\s+CARES_INCLUDE = ).*",
-            r"\1('{0}',)".format(self.spec["c-ares"].prefix.include),
-            "setup.py",
-        )
-        filter_file(
-            r"(\s+RE2_INCLUDE = ).*",
-            r"\1('{0}',)".format(self.spec["re2"].prefix.include),
-            "setup.py",
-        )
+        if "openssl" in self.spec:
+            filter_file(
+                r"(\s+SSL_INCLUDE = ).*",
+                r"\1('{0}',)".format(self.spec["openssl"].prefix.include),
+                "setup.py",
+            )
+        if "zlib-api" in self.spec:
+            filter_file(
+                r"(\s+ZLIB_INCLUDE = ).*",
+                r"\1('{0}',)".format(self.spec["zlib-api"].prefix.include),
+                "setup.py",
+            )
+        if "c-ares" in self.spec:
+            filter_file(
+                r"(\s+CARES_INCLUDE = ).*",
+                r"\1('{0}',)".format(self.spec["c-ares"].prefix.include),
+                "setup.py",
+            )
+        if "re2" in self.spec:
+            filter_file(
+                r"(\s+RE2_INCLUDE = ).*",
+                r"\1('{0}',)".format(self.spec["re2"].prefix.include),
+                "setup.py",
+            )
+        if "abseil-cpp" in self.spec:
+            filter_file(
+                r"(\s+ABSL_INCLUDE = ).*",
+                r"\1('{0}',)".format(self.spec["abseil-cpp"].prefix.include),
+                "setup.py",
+            )

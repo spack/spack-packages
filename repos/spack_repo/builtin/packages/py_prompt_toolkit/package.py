@@ -19,6 +19,7 @@ class PyPromptToolkit(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.0.52", sha256="28cde192929c8e7321de85de1ddbe736f1375148b02f2e17edd840042b1be855")
     version("3.0.43", sha256="3527b7af26106cbc65a040bcc84839a3566ec1b051bb0bfe953631e704b0ff7d")
     version("3.0.38", sha256="23ac5d50538a9a38c8bde05fecb47d0b403ecd0662857a86f886f798563d5b9b")
     version("3.0.31", sha256="9ada952c9d1787f52ff6d5f3484d0b4df8952787c087edf6a1f7c2cb1ea88148")
@@ -32,11 +33,13 @@ class PyPromptToolkit(PythonPackage):
     version("1.0.16", sha256="c1cedd626e08b8ee830ee65897de754113ff3f3035880030c08b01674d85c5b4")
     version("1.0.9", sha256="cd6523b36adc174cc10d54b1193eb626b4268609ff6ea92c15bcf1996609599c")
 
+    depends_on("python@3.8:", when="@3.0.49:", type=("build", "run"))
     depends_on("python@3.7:", when="@3.0.37:", type=("build", "run"))
     depends_on("python@3.6.2:", when="@3.0.24:", type=("build", "run"))
     depends_on("python@3.6.1:", when="@3:3.0.17", type=("build", "run"))
     # collections.Mapping was removed in python@3.10
     depends_on("python@:3.9", when="@1.0.9", type=("build", "run"))
+    depends_on("py-setuptools@68:", when="@3.0.51:", type="build")
     depends_on("py-setuptools", type="build")
 
     depends_on("py-wcwidth", type=("build", "run"))

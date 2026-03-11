@@ -113,7 +113,7 @@ class PerlFth(Package):
             for exe in checks:
                 fic = exe + ".pl"
                 if os.path.exists(fic):
-                    dos2unix = which("dos2unix")
+                    dos2unix = which("dos2unix", required=True)
                     dos2unix(fic)
                     fthfile = FileFilter(fic)
                     fthfile.filter("#!/usr/bin/perl", mstr, backup=False)

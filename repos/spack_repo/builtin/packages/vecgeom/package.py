@@ -32,9 +32,20 @@ class Vecgeom(CMakePackage, CudaPackage):
 
     version("master", branch="master", get_full_repo=True)
     version(
-        "2.0.0-rc.5",
-        url="https://gitlab.cern.ch/-/project/981/uploads/4659be05698738691ebd4b66da8d97c4/VecGeom-v2.0.0-rc.5.tar.gz",
-        sha256="6805cf9157b1931aac74c77386f4f94dd1966a0286749db385fd2ba469070724",
+        "2.0.0",
+        url="https://gitlab.cern.ch/-/project/981/uploads/d2ae816669e324d5828c16857b307372/VecGeom-v2.0.0.tar.gz",
+        sha256="f5fb455b2a2a5f386e171a621d0e95908ab6269803c4b186861849e8c88e8350",
+    )
+    version(
+        "2.0.0-rc.9",
+        url="https://gitlab.cern.ch/-/project/981/uploads/4a8ba32606365d4be04455827ea32c51/VecGeom-v2.0.0-rc.9.tar.gz",
+        sha256="cfc0cb86303c1dc475a5dde9022384e2034f789a0908feb007103c1e7cd9aa65",
+        deprecated=True,
+    )
+    version(
+        "2.0.0-rc.7",
+        url="https://gitlab.cern.ch/-/project/981/uploads/f1017874e9d138165f221d4b854a39a4/VecGeom-v2.0.0-rc.7.tar.gz",
+        sha256="f95eacd7154f7b41950161988465b5c086f80dade91dec8328085949c6f443a0",
         deprecated=True,
     )
     version(
@@ -48,55 +59,15 @@ class Vecgeom(CMakePackage, CudaPackage):
         url="https://gitlab.cern.ch/-/project/981/uploads/8e0a94013efdd1b2d4f44c3fbb10bcdf/VecGeom-v1.2.10.tar.gz",
         sha256="3e0934842694452e4cb4a265428cb99af1ecc45f0e2d28a32dfeaa0634c21e2a",
     )
-    version(
-        "1.2.9",
-        url="https://gitlab.cern.ch/-/project/981/uploads/55a89cafbf48a418bec68be42867d4bf/VecGeom-v1.2.9.tar.gz",
-        sha256="93ee9ce6f7b2d704e9b9db22fad68f81b8eaf17453452969fc47e93dba4bfaf4",
-        deprecated=True,
-    )
-    version(
-        "1.2.8",
-        url="https://gitlab.cern.ch/VecGeom/VecGeom/uploads/db11697eb81d6f369e9ded1078de946b/VecGeom-v1.2.8.tar.gz",
-        sha256="769f59e8377f8268e253a9b2a3eee86868a9ebc1fa66c968b96e19c31440c12b",
-        deprecated=True,
-    )
-    version(
-        "1.2.7",
-        url="https://gitlab.cern.ch/VecGeom/VecGeom/uploads/e4172cca4f6f731ef15e2780ecbb1645/VecGeom-v1.2.7.tar.gz",
-        sha256="d264c69b78bf431b9542be1f1af087517eac629da03cf2da62eb1e433fe06021",
-        deprecated=True,
-    )
-    version(
-        "1.2.6",
-        url="https://gitlab.cern.ch/VecGeom/VecGeom/uploads/0b16aed9907cea62aa5f5914bec99a90/VecGeom-v1.2.6.tar.gz",
-        sha256="337f8846491930f3d8bfa4b45a1589d46e5d1d87f2d38c8f7006645c3aa90df8",
-        deprecated=True,
-    )
-    version(
-        "1.2.5",
-        url="https://gitlab.cern.ch/VecGeom/VecGeom/uploads/33b93e656c5bc49d81cfcba291f5be51/VecGeom-v1.2.5.tar.gz",
-        sha256="d79ea05125e4d03c5605e5ea232994c500841d207b4543ac3d84758adddc15a9",
-        deprecated=True,
-    )
     version("1.1.20", sha256="e1c75e480fc72bca8f8072ea00320878a9ae375eed7401628b15cddd097ed7fd")
-    version(
-        "1.1.5",
-        sha256="da674f3bbc75c30f56c1a2d251fa8930c899f27fa64b03a36569924030d87b95",
-        deprecated=True,
-    )
-    version(
-        "1.1.0",
-        sha256="e9d1ef83ff591fe4f9ef744a4d3155a3dc7e90ddb6735b24f3afe4c2dc3f7064",
-        deprecated=True,
-    )
-    version(
-        "0.5.2",
-        tag="v00.05.02",
-        commit="a7e0828c915ff936a79e672d1dd84b087a323b51",
-        deprecated=True,
-    )
 
-    _cxxstd_values = (conditional("11", "14", when="@:1.1"), "17", conditional("20", when="@1.2:"))
+    _cxxstd_values = (
+        conditional("11", "14", when="@:1.1"),
+        "17",
+        conditional("20", when="@1.2:"),
+        # Assuming versions not supporting C++20 do not support C++23
+        conditional("23", when="@1.2:"),
+    )
     variant(
         "cxxstd",
         default="17",
@@ -106,10 +77,14 @@ class Vecgeom(CMakePackage, CudaPackage):
     )
     variant("gdml", default=True, description="Support native GDML geometry descriptions")
     # TODO: delete geant4/root variants since they don't affect the build
-    variant("geant4", default=False, description="Support Geant4 geometry construction")
-    variant("root", default=False, description="Support ROOT geometry construction")
+    variant(
+        "geant4", default=False, when="@:1", description="Support Geant4 geometry construction"
+    )
+    variant("root", default=False, when="@:1", description="Support ROOT geometry construction")
     variant("shared", default=True, description="Build shared libraries")
-    variant("surface", default=False, when="@2:", description="Use surface frame representation")
+    variant(
+        "surface", default=False, when="@2:", description="Support surface frame representation"
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -117,13 +92,8 @@ class Vecgeom(CMakePackage, CudaPackage):
     depends_on("veccore")
     depends_on("veccore@0.8.1:", when="+cuda")
     depends_on("veccore@0.8.0:0.8", when="@1.1.18:")
-    depends_on("veccore@0.5.2:", when="@1.1.0:")
-    depends_on("veccore@0.4.2", when="@:1.0")
 
     conflicts("+cuda", when="@:1.1.5")
-
-    # NOTE: surface branch doesn't yet compile with volume
-    conflicts("~surface", when="@=2.0.0-surfacedev.1")
 
     # Fix empty -Xcompiler= with nvcc
     patch(
@@ -197,8 +167,5 @@ class Vecgeom(CMakePackage, CudaPackage):
                     define("GDMLTESTING", build_tests and "+gdml" in spec),
                 ]
             )
-
-        if spec.satisfies("@:0.5.2"):
-            args.extend([define("USOLIDS", True), define("USOLIDS_VECGEOM", True)])
 
         return args

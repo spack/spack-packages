@@ -27,32 +27,15 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", get_full_repo=True)
 
+    version("0.6.3", sha256="c87910acd0bb9dc85c53e2e4d9958f36d3bb1e5975f0e08fe7274b332a2ccf27")
+    version("0.6.2", sha256="efca5a7f4797cd29d2b4e0b2251896b9fe4253ed95ff5c18f4d0476d4c34b48d")
+    version("0.6.1", sha256="fe97cdb87e579559c29a0366058327243945bf2a0e25aac4d562c8fe0c672c2a")
     version("0.6.0", sha256="c776dee357ecff42f85ed02c328f24b092400af28e67af2c0e195ce8f67613b0")
     version("0.5.3", sha256="4d1fe1f34e899c3599898fb6d44686d2582a41b0872784514aa8c562597b3ee6")
     version("0.5.2", sha256="46311c096b271d0331b82c02485ac6bf650d5b0f7bd948fb01aef5058f8824e3")
     version("0.5.1", sha256="182d5466fbd98ba9400b343b55f6a06e03b77daed4de1dd16f632ac0a3620249")
     version("0.5.0", sha256="4a8834224d96fd01897e5872ac109f60d91ef0bd7b63fac05a73dcdb61a5530e")
     version("0.4.4", sha256="8b5ae63aa2d50c2ecf48d752424e4a33c50c07d9f0f5ca5448246de3286fd836")
-    version(
-        "0.4.3",
-        sha256="b4f603dce1dc9c4894ea4c86f6574026ea8536714982e7dc6dff7472c925c892",
-        deprecated=True,
-    )
-    version(
-        "0.4.2",
-        sha256="eeca9705413f5e16e0fb81154e042600c8df125af7049912757feb01d43730e2",
-        deprecated=True,
-    )
-    version(
-        "0.4.1",
-        sha256="24e5c15eb9eec45f52d94a6719ae3505388b49d409cb7e26c875c70ac409bd2c",
-        deprecated=True,
-    )
-    version(
-        "0.4.0",
-        sha256="8b8eaef84641eeca0fc40321d358205fc9d51e3c6dc7bd1bf03218c1919c774e",
-        deprecated=True,
-    )
 
     _cxxstd_values = ("17", "20")
 
@@ -81,11 +64,11 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.13:", type="build")
     depends_on("cmake@3.18:", type="build", when="+cuda+vecgeom")
     depends_on("cmake@3.22:", type="build", when="+rocm")
+    depends_on("cmake@3.27:", type="build", when="+covfie")
 
     depends_on("cli11", when="@0.6:")
     depends_on("nlohmann-json")
     depends_on("covfie@0.13:", when="+covfie")
-    depends_on("geant4@10.5:11.1", when="@0.3.1:0.4.1 +geant4")
     depends_on("geant4@10.5:11.2", when="@0.4.2:0.4 +geant4")
     depends_on("geant4@10.5:", when="@0.5: +geant4")
     depends_on("g4vg@1.0.2:", when="@0.6: +geant4 +vecgeom")
@@ -133,6 +116,12 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/celeritas-project/celeritas/commit/3c8ed9614fc695fba35e8a058bedb7bc1556f71c.patch?full_index=1",
         sha256="1161c4f1166860d35d2a3f103236a63acd6a35aee2d2c27561cb929941d1c170",
         when="@0.5.0 +geant4 ^geant4@11.3.0:",
+    )
+    # CUDA 13 API change: removed clockRate and memoryClockRate
+    patch(
+        "https://github.com/celeritas-project/celeritas/commit/71221336cc3fc4232eda4b5b96fc5079a4193d86.patch?full_index=1",
+        sha256="cc44c5d6d8fb371ff3d42e13521eb0752780715e9d070b46699633ca3cd7e995",
+        when="@:0.6.2 +cuda ^cuda@13:",
     )
 
     def cmake_args(self):

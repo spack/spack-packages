@@ -1,0 +1,110 @@
+From 4fc309ed9c98274a66f548c4e8d93c9f4dfcda11 Mon Sep 17 00:00:00 2001
+From: opaL1022 <whitestoneabc123@gmail.com>
+Date: Sat, 13 Sep 2025 07:40:57 +0800
+Subject: [PATCH] Boost 1.87 Asio: io_context, make_address, resolver and
+ io_context::restart()
+
+---
+ io/include/pcl/io/hdl_grabber.h       | 2 +-
+ io/include/pcl/io/robot_eye_grabber.h | 2 +-
+ io/include/pcl/io/tim_grabber.h       | 2 +-
+ io/src/hdl_grabber.cpp                | 2 +-
+ io/src/robot_eye_grabber.cpp          | 2 +-
+ io/src/tim_grabber.cpp                | 2 +-
+ io/src/vlp_grabber.cpp                | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/io/include/pcl/io/hdl_grabber.h b/io/include/pcl/io/hdl_grabber.h
+index f149346..233ff26 100644
+--- a/io/include/pcl/io/hdl_grabber.h
++++ b/io/include/pcl/io/hdl_grabber.h
+@@ -274,7 +274,7 @@ namespace pcl
+       boost::asio::ip::udp::endpoint udp_listener_endpoint_;
+       boost::asio::ip::address source_address_filter_;
+       std::uint16_t source_port_filter_;
+-      boost::asio::io_service hdl_read_socket_service_;
++      boost::asio::io_context hdl_read_socket_service_;
+       boost::asio::ip::udp::socket *hdl_read_socket_;
+       std::string pcap_file_name_;
+       std::thread *queue_consumer_thread_;
+diff --git a/io/include/pcl/io/robot_eye_grabber.h b/io/include/pcl/io/robot_eye_grabber.h
+index 5248504..4ed975d 100644
+--- a/io/include/pcl/io/robot_eye_grabber.h
++++ b/io/include/pcl/io/robot_eye_grabber.h
+@@ -131,7 +131,7 @@ namespace pcl
+ 
+       boost::asio::ip::address sensor_address_;
+       boost::asio::ip::udp::endpoint sender_endpoint_;
+-      boost::asio::io_service io_service_;
++      boost::asio::io_context io_service_;
+       std::shared_ptr<boost::asio::ip::udp::socket> socket_;
+       std::shared_ptr<std::thread> socket_thread_;
+       std::shared_ptr<std::thread> consumer_thread_;
+diff --git a/io/include/pcl/io/tim_grabber.h b/io/include/pcl/io/tim_grabber.h
+index 786e501..91d8148 100644
+--- a/io/include/pcl/io/tim_grabber.h
++++ b/io/include/pcl/io/tim_grabber.h
+@@ -128,7 +128,7 @@ class PCL_EXPORTS TimGrabber : public Grabber
+     std::vector<float> distances_;
+ 
+     boost::asio::ip::tcp::endpoint tcp_endpoint_;
+-    boost::asio::io_service tim_io_service_;
++    boost::asio::io_context tim_io_service_;
+     boost::asio::ip::tcp::socket tim_socket_;
+     //// wait time for receiving data (on the order of milliseconds)
+     unsigned int wait_time_milliseconds_ = 0;
+diff --git a/io/src/hdl_grabber.cpp b/io/src/hdl_grabber.cpp
+index c54f68e..adce104 100644
+--- a/io/src/hdl_grabber.cpp
++++ b/io/src/hdl_grabber.cpp
+@@ -287,7 +287,7 @@ pcl::HDLGrabber::loadHDL32Corrections ()
+ boost::asio::ip::address
+ pcl::HDLGrabber::getDefaultNetworkAddress ()
+ {
+-  return (boost::asio::ip::address::from_string ("192.168.3.255"));
++  return (boost::asio::ip::make_address ("192.168.3.255"));
+ }
+ 
+ /////////////////////////////////////////////////////////////////////////////
+diff --git a/io/src/robot_eye_grabber.cpp b/io/src/robot_eye_grabber.cpp
+index 2db6da1..22574a2 100644
+--- a/io/src/robot_eye_grabber.cpp
++++ b/io/src/robot_eye_grabber.cpp
+@@ -269,7 +269,7 @@ void
+ pcl::RobotEyeGrabber::socketThreadLoop ()
+ {
+   asyncSocketReceive();
+-  io_service_.reset();
++  io_service_.restart();
+   io_service_.run();
+ }
+ 
+diff --git a/io/src/tim_grabber.cpp b/io/src/tim_grabber.cpp
+index a97b9e3..5bfedcc 100644
+--- a/io/src/tim_grabber.cpp
++++ b/io/src/tim_grabber.cpp
+@@ -184,7 +184,7 @@ pcl::TimGrabber::start ()
+ 
+   try {
+     boost::asio::ip::tcp::resolver resolver (tim_io_service_);
+-    tcp_endpoint_ = *resolver.resolve (tcp_endpoint_);
++    tcp_endpoint_ = ((*resolver.resolve(tcp_endpoint_).begin())).endpoint();
+     tim_socket_.connect (tcp_endpoint_);
+   }
+   catch (std::exception& e)
+diff --git a/io/src/vlp_grabber.cpp b/io/src/vlp_grabber.cpp
+index b35087b..8e95b98 100644
+--- a/io/src/vlp_grabber.cpp
++++ b/io/src/vlp_grabber.cpp
+@@ -92,7 +92,7 @@ pcl::VLPGrabber::loadVLP16Corrections ()
+ boost::asio::ip::address
+ pcl::VLPGrabber::getDefaultNetworkAddress ()
+ {
+-  return (boost::asio::ip::address::from_string ("255.255.255.255"));
++  return (boost::asio::ip::make_address ("255.255.255.255"));
+ }
+ 
+ /////////////////////////////////////////////////////////////////////////////
+-- 
+2.27.0
+

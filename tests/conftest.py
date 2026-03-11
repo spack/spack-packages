@@ -15,23 +15,25 @@ import pytest
 
 import spack.bootstrap.core
 import spack.caches
-import spack.concretize
-import spack.config
-import spack.environment as ev
-import spack.error
 import spack.package_base
-import spack.paths
-import spack.platforms
-import spack.repo
-import spack.spec
+import spack.solver.asp
 import spack.stage
-import spack.store
 import spack.subprocess_context
-import spack.vendor.archspec.cpu
+from spack.concretize import concretize_one
+from spack.config import (
+    CONFIG_DEFAULTS,
+    DirectoryConfigScope,
+    InternalConfigScope,
+    use_configuration,
+)
 from spack.enums import ConfigScopePriority
 from spack.installer import PackageInstaller
-from spack.llnl.util.filesystem import copy_tree, mkdirp, remove_linked_tree, touchp
-from spack.package import host_platform
+from spack.package import copy_tree, host_platform, mkdirp, remove_linked_tree
+from spack.platforms import Test as TestPlatform
+from spack.platforms import use_platform
+from spack.repo import from_path, use_repositories
+from spack.store import use_store
+from spack.vendor.archspec.cpu import host as host_cpu
 
 
 @pytest.fixture(autouse=True)
@@ -53,7 +55,7 @@ def ensure_configuration_fixture_run_before(request):
 @pytest.fixture(autouse=True)
 def clear_recorded_monkeypatches():
     yield
-    spack.subprocess_context.clear_patches()
+    spack.subprocess_context.MONKEYPATCHES.clear()
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -63,7 +65,7 @@ def record_monkeypatch_setattr():
     saved_setattr = _pytest.monkeypatch.MonkeyPatch.setattr
 
     def record_setattr(cls, target, name, value, *args, **kwargs):
-        spack.subprocess_context.append_patch((target, name, value))
+        spack.subprocess_context.MONKEYPATCHES.append((target, name))
         saved_setattr(cls, target, name, value, *args, **kwargs)
 
     _pytest.monkeypatch.MonkeyPatch.setattr = record_setattr
@@ -71,27 +73,6 @@ def record_monkeypatch_setattr():
         yield
     finally:
         _pytest.monkeypatch.MonkeyPatch.setattr = saved_setattr
-
-
-#
-# Disable any active Spack environment BEFORE all tests
-#
-@pytest.fixture(scope="session", autouse=True)
-def clean_user_environment():
-    spack_env_value = os.environ.pop(ev.spack_env_var, None)
-    with ev.no_active_environment():
-        yield
-    if spack_env_value:
-        os.environ[ev.spack_env_var] = spack_env_value
-
-
-#
-# Make sure global state of active env does not leak between tests.
-#
-@pytest.fixture(scope="function", autouse=True)
-def clean_test_environment():
-    yield
-    ev.deactivate()
 
 
 #
@@ -230,7 +211,7 @@ class MockCache:
 
 class MockCacheFetcher:
     def fetch(self):
-        raise spack.error.FetchError("Mock cache always fails for tests")
+        raise Exception("Mock cache always fails for tests")
 
     def __str__(self):
         return "[mock fetch cache]"
@@ -238,23 +219,16 @@ class MockCacheFetcher:
 
 @pytest.fixture(autouse=True)
 def mock_fetch_cache(monkeypatch):
-    """Substitutes spack.paths.FETCH_CACHE with a mock object that does nothing
-    and raises on fetch.
-    """
+    """Substitutes FETCH_CACHE that raises on fetch."""
     monkeypatch.setattr(spack.caches, "FETCH_CACHE", MockCache())
 
 
-@pytest.fixture(scope="session")
-def test_platform():
-    return spack.platforms.Test()
-
-
 @pytest.fixture(autouse=True, scope="session")
-def _use_test_platform(test_platform):
+def _use_test_platform():
     # This is the only context manager used at session scope (see note
     # below for more insight) since we want to use the test platform as
     # a default during tests.
-    with spack.platforms.use_platform(test_platform):
+    with use_platform(TestPlatform()):
         yield
 
 
@@ -286,16 +260,16 @@ def _use_test_platform(test_platform):
 #
 @pytest.fixture(scope="session")
 def mock_packages_repo():
-    yield spack.repo.from_path(
-        os.path.join(os.path.dirname(__file__), "repos", "spack_repo", "builtin_mock")
-    )
+    yield from_path(os.path.join(os.path.dirname(__file__), "repos", "spack_repo", "builtin_mock"))
 
 
 def _pkg_install_fn(pkg, spec, prefix):
     # sanity_check_prefix requires something in the install directory
     mkdirp(prefix.bin)
-    if not os.path.exists(spec.package.install_log_path):
-        touchp(spec.package.install_log_path)
+    path = Path(spec.package.install_log_path)
+    if not path.exists():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.touch()
 
 
 @pytest.fixture
@@ -307,7 +281,7 @@ def mock_pkg_install(monkeypatch):
 def mock_packages(mock_packages_repo, mock_pkg_install, request):
     """Use the 'builtin_mock' repository instead of 'builtin'"""
     ensure_configuration_fixture_run_before(request)
-    with spack.repo.use_repositories(mock_packages_repo) as mock_repo:
+    with use_repositories(mock_packages_repo) as mock_repo:
         yield mock_repo
 
 
@@ -347,7 +321,7 @@ def configuration_dir(tmp_path_factory: pytest.TempPathFactory, linux_os):
     config_template = test_config / "config.yaml"
     config.write_text(config_template.read_text().format(install_tree_root, locks))
 
-    target = str(spack.vendor.archspec.cpu.host().family)
+    target = str(host_cpu().family)
     compilers = tmp_path / "site" / "packages.yaml"
     compilers_template = test_config / "packages.yaml"
     compilers.write_text(compilers_template.read_text().format(linux_os=linux_os, target=target))
@@ -358,23 +332,20 @@ def configuration_dir(tmp_path_factory: pytest.TempPathFactory, linux_os):
 def _create_mock_configuration_scopes(configuration_dir):
     """Create the configuration scopes used in `config` and `mutable_config`."""
     return [
+        (ConfigScopePriority.DEFAULTS, InternalConfigScope("_builtin", CONFIG_DEFAULTS)),
         (
-            ConfigScopePriority.BUILTIN,
-            spack.config.InternalConfigScope("_builtin", spack.config.CONFIG_DEFAULTS),
+            ConfigScopePriority.CONFIG_FILES,
+            DirectoryConfigScope("site", str(configuration_dir / "site")),
         ),
         (
             ConfigScopePriority.CONFIG_FILES,
-            spack.config.DirectoryConfigScope("site", str(configuration_dir / "site")),
+            DirectoryConfigScope("system", str(configuration_dir / "system")),
         ),
         (
             ConfigScopePriority.CONFIG_FILES,
-            spack.config.DirectoryConfigScope("system", str(configuration_dir / "system")),
+            DirectoryConfigScope("user", str(configuration_dir / "user")),
         ),
-        (
-            ConfigScopePriority.CONFIG_FILES,
-            spack.config.DirectoryConfigScope("user", str(configuration_dir / "user")),
-        ),
-        (ConfigScopePriority.COMMAND_LINE, spack.config.InternalConfigScope("command_line")),
+        (ConfigScopePriority.COMMAND_LINE, InternalConfigScope("command_line")),
     ]
 
 
@@ -387,7 +358,7 @@ def mock_configuration_scopes(configuration_dir):
 @pytest.fixture(scope="function")
 def config(mock_configuration_scopes):
     """This fixture activates/deactivates the mock configuration."""
-    with spack.config.use_configuration(*mock_configuration_scopes) as config:
+    with use_configuration(*mock_configuration_scopes) as config:
         yield config
 
 
@@ -398,30 +369,14 @@ def mutable_config(tmp_path_factory: pytest.TempPathFactory, configuration_dir):
     shutil.copytree(configuration_dir, mutable_dir)
 
     scopes = _create_mock_configuration_scopes(mutable_dir)
-    with spack.config.use_configuration(*scopes) as cfg:
+    with use_configuration(*scopes) as cfg:
         yield cfg
 
 
-# From  https://github.com/pytest-dev/pytest/issues/363#issuecomment-1335631998
-# Current suggested implementation from issue compatible with pytest >= 6.2
-# this may be subject to change as new versions of Pytest are released
-# and update the suggested solution
-@pytest.fixture(scope="session")
-def monkeypatch_session():
-    with pytest.MonkeyPatch.context() as monkeypatch:
-        yield monkeypatch
-
-
-@pytest.fixture(scope="session", autouse=True)
-def mock_wsdk_externals(monkeypatch_session):
-    """Skip check for required external packages on Windows during testing
-    Note: In general this should cover this behavior for all tests,
-    however any session scoped fixture involving concretization should
-    include this fixture
-    """
-    monkeypatch_session.setattr(
-        spack.bootstrap.core, "ensure_winsdk_external_or_raise", _return_none
-    )
+@pytest.fixture(autouse=True)
+def mock_wsdk_externals(monkeypatch):
+    """Skip check for required external packages on Windows during testing."""
+    monkeypatch.setattr(spack.bootstrap, "ensure_winsdk_external_or_raise", _return_none)
 
 
 def _populate(mock_db):
@@ -447,7 +402,7 @@ def _populate(mock_db):
     """
 
     def _install(spec):
-        s = spack.concretize.concretize_one(spec)
+        s = concretize_one(spec)
         PackageInstaller([s.package], fake=True, explicit=True).install()
 
     _install("mpileaks ^mpich")
@@ -470,10 +425,10 @@ def _store_dir_and_cache(tmp_path_factory: pytest.TempPathFactory):
 @pytest.fixture(scope="session")
 def mock_store(
     tmp_path_factory: pytest.TempPathFactory,
-    mock_wsdk_externals,
     mock_packages_repo,
     mock_configuration_scopes,
     _store_dir_and_cache: Tuple[Path, Path],
+    glibc_compatibility,
 ):
     """Creates a read-only mock database with some packages installed note
     that the ref count for dyninst here will be 3, as it's recycled
@@ -484,6 +439,7 @@ def mock_store(
 
     """
     store_path, store_cache = _store_dir_and_cache
+    _mock_wsdk_externals = spack.bootstrap.ensure_winsdk_external_or_raise
 
     # Make the DB filesystem read-only to ensure constructors don't modify anything in it.
     # We want Spack to be able to point to a DB on a read-only filesystem easily.
@@ -491,12 +447,16 @@ def mock_store(
 
     # If the cache does not exist populate the store and create it
     if not os.path.exists(str(store_cache / ".spack-db")):
-        with spack.config.use_configuration(*mock_configuration_scopes):
-            with spack.store.use_store(str(store_path)) as store:
-                with spack.repo.use_repositories(mock_packages_repo):
+        with use_configuration(*mock_configuration_scopes):
+            with use_store(str(store_path)) as store:
+                with use_repositories(mock_packages_repo):
                     # make the DB filesystem writable only while we populate it
                     _recursive_chmod(store_path, 0o755)
-                    _populate(store.db)
+                    try:
+                        spack.bootstrap.ensure_winsdk_external_or_raise = _return_none
+                        _populate(store.db)
+                    finally:
+                        spack.bootstrap.ensure_winsdk_external_or_raise = _mock_wsdk_externals
                     _recursive_chmod(store_path, 0o555)
 
         _recursive_chmod(store_cache, 0o755)
@@ -509,7 +469,7 @@ def mock_store(
 @pytest.fixture(scope="function")
 def database_mutable_config(mock_store, mock_packages, mutable_config, monkeypatch):
     """This activates the mock store, packages, AND config."""
-    with spack.store.use_store(str(mock_store)) as store:
+    with use_store(str(mock_store)) as store:
         yield store.db
         store.db.last_seen_verifier = ""
 
@@ -554,9 +514,7 @@ def default_mock_concretization(config, mock_packages, concretized_specs_cache):
     def _func(spec_str, tests=False):
         key = spec_str, tests
         if key not in concretized_specs_cache:
-            concretized_specs_cache[key] = spack.concretize.concretize_one(
-                spack.spec.Spec(spec_str), tests=tests
-            )
+            concretized_specs_cache[key] = concretize_one(spec_str, tests=tests)
         return concretized_specs_cache[key].copy()
 
     return _func
@@ -582,3 +540,33 @@ def _recursive_chmod(path: Path, mode: int):
             os.chmod(os.path.join(root, file), mode)
         for dir in dirs:
             os.chmod(os.path.join(root, dir), mode)
+
+
+@pytest.fixture(autouse=True, scope="session")
+def _c_compiler_always_exists():
+    fn = spack.solver.asp.c_compiler_runs
+    spack.solver.asp.c_compiler_runs = _true
+    mthd = spack.compilers.libraries.CompilerPropertyDetector.default_libc
+    spack.compilers.libraries.CompilerPropertyDetector.default_libc = _libc_from_python
+    yield
+    spack.solver.asp.c_compiler_runs = fn
+    spack.compilers.libraries.CompilerPropertyDetector.default_libc = mthd
+
+
+def _libc_from_python(self):
+    return spack.spec.Spec("glibc@=2.28", external_path="/some/path")
+
+
+def _true(x):
+    return True
+
+
+@pytest.fixture(scope="session", autouse=True)
+def glibc_compatibility():
+    """Selects whether we use OS compatibility for binaries, or libc compatibility."""
+    if spack.platforms.real_host().name != "linux":
+        return
+
+    spack.solver.core.using_libc_compatibility = lambda: True
+    spack.solver.runtimes.using_libc_compatibility = spack.solver.core.using_libc_compatibility
+    spack.solver.asp.using_libc_compatibility = spack.solver.core.using_libc_compatibility

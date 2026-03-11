@@ -15,6 +15,7 @@ class PyPandocfilters(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.5.1", sha256="002b4a555ee4ebc03f8b66307e287fa492e4a77b4ea14d3f934328297bb4939e")
     version("1.5.0", sha256="0b679503337d233b4339a817bfc8c50064e2eff681314376a47cb582305a7a38")
     version("1.4.2", sha256="b3dd70e169bb5449e6bc6ff96aea89c5eea8c5f6ab5e207fc2f521a2cf4a0da9")
 

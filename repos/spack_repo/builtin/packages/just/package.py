@@ -11,7 +11,7 @@ class Just(CargoPackage):
     """just is a handy way to save and run project-specific commands"""
 
     homepage = "https://github.com/casey/just"
-    url = "https://github.com/casey/just/archive/refs/tags/1.42.2.tar.gz"
+    url = "https://github.com/casey/just/archive/refs/tags/1.46.0.tar.gz"
     git = "https://github.com/casey/just.git"
 
     maintainers("Dando18")
@@ -19,6 +19,7 @@ class Just(CargoPackage):
     license("CC0-1.0", checked_by="Dando18")
 
     version("master", branch="master")
+    version("1.46.0", sha256="f60a578502d0b29eaa2a72c5b0d91390b2064dfd8d1a1291c3b2525d587fd395")
     version("1.42.2", sha256="9929acc303b881106d2bf2d3440d44f413372c14b0e44bf47cda8ada8801553a")
     version("1.42.1", sha256="6a6ec94ae02791c2101fd65201032d7c1929fc6294e4deebc92d0e846882fe15")
     version("1.42.0", sha256="6fdbd6199b5469c70762a4991ae03d88fae42b99b48124ad7ad84808b67cdfb8")
@@ -32,5 +33,6 @@ class Just(CargoPackage):
 
     depends_on("c", type="build")
 
+    depends_on("rust@1.82:", type="build", when="@1.46.0:")
     depends_on("rust@1.77:", type="build", when="@1.41.0:")
     depends_on("rust@1.74:", type="build", when="@1.35.0:")

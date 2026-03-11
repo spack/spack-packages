@@ -17,8 +17,8 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
       with:
         python-version: '3.13'
     - name: Install Python Packages
@@ -32,10 +32,10 @@ jobs:
   style:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         fetch-depth: 2
-    - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
       with:
         python-version: '3.13'
     - name: Install Python packages
@@ -62,7 +62,7 @@ jobs:
       ${{ inputs.with_packages == 'true' }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
       with:
         # Depth 2 is required for this check
         fetch-depth: 2
@@ -78,10 +78,10 @@ jobs:
     name: package.py canonicalization
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/spack/all-pythons:2025-07-25
+      image: ghcr.io/spack/all-pythons:2025-10-10
 
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         with:
           fetch-depth: 0
       - uses: ./.github/actions/checkout-spack
@@ -89,6 +89,6 @@ jobs:
       - name: Test package.py canonicalization
         run: .github/workflows/bin/canonicalize.py
           --spack $PWD/spack-core
-          --python python3.6 python3.7 python3.8 python3.9 python3.10 python3.11 python3.12 python3.13
+          --python python3.6 python3.7 python3.8 python3.9 python3.10 python3.11 python3.12 python3.13 python3.14
           --input-dir repos/spack_repo/builtin/packages/
           --output-dir canonicalized
