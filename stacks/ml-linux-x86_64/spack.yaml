@@ -30,7 +30,7 @@ spack:
   - torch_specs:
     - py-botorch
     - py-gpytorch
-    - py-kornia
+    #- py-kornia
     - py-lightning
     - py-pytorch-lightning
     - py-segmentation-models-pytorch
