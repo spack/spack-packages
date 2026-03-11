@@ -41,13 +41,6 @@ spack:
     boost:
       require:
       - "%gcc"
-    libfabric:
-      buildable: true
-      externals:
-      - prefix: /opt/amazon/efa/
-        spec: libfabric@1.17.0 fabrics=shm,efa
-      require:
-      - fabrics=shm,efa
     mpas-model:
       require:
       - spec: precision=single ^parallelio+pnetcdf
@@ -98,7 +91,11 @@ spack:
         fortran: {require: [intel-oneapi-compilers]}
         # Older gettext versions do not build correctly with oneapi.
         gettext: {require:: '%oneapi'}
-
+        libfabric:
+          buildable: false
+          externals:
+          - prefix: /opt/amazon/efa/
+            spec: libfabric@1.17.0 fabrics:=shm,efa target=x86_64_v3
 
   - group: apps_x86_64_v4
     needs: [oneapi2024]
@@ -114,6 +111,11 @@ spack:
         # Older gettext versions do not build correctly with oneapi.
         gettext: {require:: '%oneapi'}
         lammps: { require: [+intel] }
+        libfabric:
+          buildable: false
+          externals:
+          - prefix: /opt/amazon/efa/
+            spec: libfabric@1.17.0 fabrics:=shm,efa target=x86_64_v4
 
   ci:
     pipeline-gen:
