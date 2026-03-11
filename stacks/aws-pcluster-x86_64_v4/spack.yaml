@@ -33,6 +33,9 @@ spack:
       # Older gettext versions do not build correctly with oneapi.
       require:
       - '@:0.20 %gcc'
+    mpi:
+      require:
+      - intel-oneapi-mpi
     intel-oneapi-mpi:
       variants: +external-libfabric generic-names=True
     bison:
