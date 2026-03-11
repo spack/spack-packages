@@ -252,8 +252,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         try:
             compiler = Executable(exe)
             output = compiler(cls.compiler_version_argument, output=str, error=str)
-            # Reject if the executable is not under the InstalledDir reported
-            # by the compiler (e.g. /usr/bin is not valid).
+            # Reject if the compiler is not under the InstalledDir
+            # reported by --version (e.g. /usr/bin is not valid).
             installed_dir_match = re.search(cls.installed_dir_regex, output)
             if installed_dir_match:
                 installed_dir = os.path.normpath(installed_dir_match.group(1).strip())
