@@ -201,7 +201,7 @@ class Hdf5(CMakePackage):
 
     # https://github.com/HDFGroup/hdf5/pull/6267
     patch(
-        "https://github.com/HDFGroup/hdf5/commit/84e5adf753cdd97a807df2da6338bb0e0cdf9862.patch",
+        "https://github.com/HDFGroup/hdf5/commit/84e5adf753cdd97a807df2da6338bb0e0cdf9862.patch?full_index=1",
         sha256="f52187754844009d4fbde07a3f885e8ad9bf33abc255edb08b1a659efd03d5ba",
         when="@2.1.0",
     )
