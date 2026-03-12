@@ -18,24 +18,6 @@
                 "url": "https://files.pythonhosted.org/packages/31/d7/ba5ca7aeb719f4b23e3532185cc1f1f94e97acfa45966635d72bc1043b9e/ovito-3.13.0-cp310-cp310-manylinux1_x86_64.whl"
             }
         },
-        "Windows-amd64": {
-            "cp313": {
-                "sha256": "73f750bacb84fc6bc3850b656d624d68e2c1ee36397dcad8c3b741f3db1712e6",
-                "url": "https://files.pythonhosted.org/packages/20/a9/97cb7b6e02375673d415de0e14e35ce2fa0f2a649c3abd84a6f91d9479e5/ovito-3.13.0-cp313-cp313-win_amd64.whl"
-            },
-            "cp312": {
-                "sha256": "992ac1bbdd8b37ae623df10e6b17695b3ef8cff7f9b920b552c93cb5c52117a1",
-                "url": "https://files.pythonhosted.org/packages/7b/15/d361fdc21f3b1ea7e69f6ef3061b11ebf5528d4b5d0413a62c96c22e5796/ovito-3.13.0-cp312-cp312-win_amd64.whl"
-            },
-            "cp311": {
-                "sha256": "fbc640d89aca1c9cb2db2fb3a1e09f7b9fc963767152d9901b2189916248dfe4",
-                "url": "https://files.pythonhosted.org/packages/05/32/bfdd41cbd329bb7d24c890b33a1610b235b00c3fe85e9f7eb28b6dcd541f/ovito-3.13.0-cp311-cp311-win_amd64.whl"
-            },
-            "cp310": {
-                "sha256": "eeda1826387a69ef6d008396a65029b78fe2bccdf6ff98b7c57f3261e7fb88b3",
-                "url": "https://files.pythonhosted.org/packages/c1/c4/e601854f3aa7e3457f866a6dc4354306a9adb1b3bc913572bba8c4823cb2/ovito-3.13.0-cp310-cp310-win_amd64.whl"
-            }
-        },
         "Darwin-arm64": {
             "cp313": {
                 "sha256": "ed1ebf4b6130fdcc6b5d391dc258579edb9d2cc6ed04592b0d8207bc2de00fd6",
