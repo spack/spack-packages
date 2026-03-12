@@ -60,6 +60,7 @@ class Nlopt(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("NLOPT_OCTAVE", "octave"),
             self.define_from_variant("NLOPT_CXX", "cxx"),
+            self.define_from_variant("NLOPT_PYTHON", "python"),
         ]
 
         if spec.satisfies("+matlab"):
