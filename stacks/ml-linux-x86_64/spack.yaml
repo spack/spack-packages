@@ -28,8 +28,8 @@ spack:
     - py-keras backend=jax
     - py-keras backend=torch
   - torch_specs:
-    - py-botorch
-    #- py-gpytorch
+    #- py-botorch
+    - py-gpytorch
     #- py-kornia
     #- py-lightning
     #- py-pytorch-lightning
