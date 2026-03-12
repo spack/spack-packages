@@ -21,7 +21,7 @@ class PyOvito(PythonPackage):
     homepage = "https://www.ovito.org"
 
     for _version, packages in _versions.items():
-        key = "{0}-{1}".format(platform.system(), platform.machine())
+        key = "{0}-{1}".format(platform.system(), platform.machine().lower())
         pkg = packages.get(key)
         if pkg:
             for cp_version, sha_url in pkg.items():
