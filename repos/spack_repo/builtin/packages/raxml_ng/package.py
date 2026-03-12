@@ -49,5 +49,5 @@ class RaxmlNg(CMakePackage):
     def cmake_args(self):
         return [
             self.define_from_variant("USE_MPI", "mpi"),
-            self.define_from_variant("USE_VCF", "vcf")
+            self.define_from_variant("USE_VCF", "vcf"),
         ]
