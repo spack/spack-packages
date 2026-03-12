@@ -85,12 +85,16 @@ class Orca(Package):
 
         ver_parts = version.string.split("-")
         ver_underscored = ver_parts[-1].replace(".", "_")
-        features = ver_parts[:-1] + ["shared"]
-        feature_text = "_".join(features)
+        features = ver_parts[:-1]
         orca_arch = "linux_x86-64"
         if platform.system() == "Linux" and platform.machine() == "aarch64":
             orca_arch = "linux_arm64"
-        return f"file://{os.getcwd()}/orca_{ver_underscored}_{orca_arch}_{feature_text}_openmpi{openmpi_version}.tar.xz"
+        url = f"file://{os.getcwd()}/orca_{ver_underscored}_{orca_arch}_shared_openmpi{openmpi_version}{'_avx2' if 'avx2' in features else ''}.tar.xz"
+
+        if self.spec.satisfies("@=avx2-6.0.0"):
+            url = f"file://{os.getcwd()}/orca_{ver_underscored}_{orca_arch}_avx2_shared_openmpi{openmpi_version}.tar.xz"
+
+        return url
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
