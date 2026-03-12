@@ -136,8 +136,6 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
     requires(
         "^cray-mpich +cuda",
         "^mpich +cuda",
-        "^mvapich +cuda",
-        "^mvapich2 +cuda",
         "^openmpi+cuda",
         when="+gpu_aware_mpi+cuda",
         policy="one_of",
