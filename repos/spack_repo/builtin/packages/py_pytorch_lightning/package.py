@@ -57,7 +57,9 @@ class PyPytorchLightning(PythonPackage):
         version("1.4.1", sha256="1d1128aeb5d0e523d2204c4d9399d65c4e5f41ff0370e96d694a823af5e8e6f3")
         version("1.4.0", sha256="6529cf064f9dc323c94f3ce84b56ee1a05db1b0ab17db77c4d15aa36e34da81f")
         version("1.3.8", sha256="60b0a3e464d394864dae4c8d251afa7aa453644a19bb7672f5ee400343cdf7b0")
-        version("1.2.10", sha256="2d8365e30ded0c20e73ce6e5b6028478ae460b8fd33727df2275666df005a301")
+        version(
+            "1.2.10", sha256="2d8365e30ded0c20e73ce6e5b6028478ae460b8fd33727df2275666df005a301"
+        )
 
     with default_args(type="build"):
         depends_on("py-setuptools")
