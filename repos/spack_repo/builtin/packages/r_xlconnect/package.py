@@ -37,4 +37,3 @@ class RXlconnect(RPackage):
     depends_on("java@6:")
     depends_on("java@8:11", when="@1.0.1:")
     depends_on("java@8:17", when="@1.0.5:")
-
