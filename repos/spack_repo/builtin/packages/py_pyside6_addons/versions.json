@@ -23,6 +23,18 @@
         "url": "https://files.pythonhosted.org/packages/66/f2/66da0d8ba8e4eb934d2bb042f2199664d2366c121844e36376f724b53fd9/pyside6_addons-6.9.3-cp39-abi3-manylinux_2_39_aarch64.whl",
         "sha256": "61f4f4859bd1711eea2202fe364a701597140ed4f3900ddf1f90d91ae631fdf9"
       }
+    },
+    "Windows-amd64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/d7/fb/849599666942ce35e9f250bce1abc7b1248eccdcbe8b3fe697a0f98a1326/pyside6_addons-6.9.3-cp39-abi3-win_amd64.whl",
+        "sha256": "0aece2a81ccf16ef9b750b09601b6876aa116bbc700e848ce82df42906f04c5c"
+      }
+    },
+    "Windows-arm64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/b1/2d/e71face0149519d6ded4e77b5c5e266c094ce5ef8c5c96c2af2f0afadf3c/pyside6_addons-6.9.3-cp39-abi3-win_arm64.whl",
+        "sha256": "3b8749c9c2b297f53c980192e89ce38ac59019f290a2669fe1abb3128f9a09d9"
+      }
     }
   }
 }
