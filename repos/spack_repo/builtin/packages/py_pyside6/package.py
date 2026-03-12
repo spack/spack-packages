@@ -55,3 +55,5 @@ class PyPyside6(PythonPackage):
     depends_on("py-shiboken6@6.9.3", type=("build", "run"), when="@6.9.3")
     depends_on("py-pyside6-essentials@6.9.3", type=("build", "run"), when="@6.9.3")
     depends_on("py-pyside6-addons@6.9.3", type=("build", "run"), when="@6.9.3")
+
+    conflicts("platform=windows")

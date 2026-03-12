@@ -52,3 +52,5 @@ class PyShiboken6(PythonPackage):
                     )
 
     depends_on("py-wheel", type="build")
+
+    conflicts("platform=windows")
