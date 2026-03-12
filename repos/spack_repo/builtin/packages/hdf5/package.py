@@ -118,6 +118,7 @@ class Hdf5(CMakePackage):
         default="11",
         values=("98", "11", "14", "17", "20", "23"),
         multi=False,
+        when="+cxx",
         description="Use the specified C++ standard when building.",
     )
     variant("map", when="@1.14:", default=False, description="Enable MAP API support")
