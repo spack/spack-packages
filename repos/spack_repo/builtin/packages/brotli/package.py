@@ -24,6 +24,9 @@ class Brotli(CMakePackage):
 
     depends_on("c", type="build")
 
+    depends_on("cmake@3.15:", type="build", when="@1.1.0:")
+    depends_on("cmake@2.8.6:", type="build", when="@1.0.7:")
+
     @run_after("install", when="@:1.0")
     def darwin_fix(self):
         # cmake_minimum_required(VERSION 2.8.6) issue related to install name. Fixed in v1.1+
