@@ -24,7 +24,7 @@ spack:
       variants: +mpi
 
     elfutils:
-      variants: +bzip2 ~nls +xz
+      variants: ~nls
     hdf5:
       variants: +fortran +hl +shared
     libfabric:
