@@ -68,7 +68,12 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
     variant("trilinos", default=True, description="Use Teuchos and Kokkos")
-    variant("exodus", default=False, description="Enable use of ExodusII meshes", when="@10.8.6-scorec:")
+    variant(
+        "exodus",
+        default=False,
+        description="Enable use of ExodusII meshes",
+        when="@10.8.6-scorec:",
+    )
     variant("throw", default=False, description="Errors throw exceptions instead of abort")
     variant("examples", default=False, description="Compile examples")
     variant("optimize", default=True, description="Compile C++ with optimization")
