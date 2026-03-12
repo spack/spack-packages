@@ -89,8 +89,8 @@ class Pdi(CMakePackage):
     )  # Needs distutils.
     depends_on("py-pybind11@2.9.1:2", type=("link"), when="@1.10.0: +python")
     depends_on("py-pybind11@2.4.3:2", type=("link"), when="+python")
-    depends_on("py-numpy@1.21.5:1", type=("run"), when="@1.10.0: +python")
-    depends_on("py-numpy@1.17.4:1", type=("run"), when="+python")
+    depends_on("py-numpy@1.21.5:2", type=("run"), when="@1.10.0: +python")
+    depends_on("py-numpy@1.17.4:2", type=("run"), when="+python")
     depends_on(
         "py-setuptools", type=("build", "link"), when="@1.8.3: +python^python@3.12:"
     )  # Needs distutils.

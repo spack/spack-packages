@@ -60,6 +60,8 @@ class Gnupg(AutotoolsPackage):
     depends_on("libgpg-error@1.50:", when="@2.5:")
     # https://github.com/gpg/gnupg/commit/c3bab200d97460028d842d76484b4c08fb947fef
     depends_on("libgpg-error@1.51:", when="@2.5.2:")
+    # https://github.com/gpg/gnupg/commit/39cc15029017ba5fd6d04f710e5a3125ed3b30a8
+    depends_on("libgpg-error@1.56:", when="@2.5.13:")
 
     depends_on("libgcrypt@1.7.0:")
     depends_on("libgcrypt@1.9.1:", when="@2.3:")

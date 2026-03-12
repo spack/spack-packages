@@ -62,12 +62,13 @@ spack:
     - py-black
     - py-codespell
     - py-flake8
+    - py-isort
+    - py-mypy-extensions
     - py-fortran-language-server
     - py-fprettify
     - py-mypy
     - py-python-lsp-ruff
     - py-python-lsp-server
-    - py-ruff
     - typos
     - uncrustify
     - gopls
@@ -91,6 +92,11 @@ spack:
     - gmake
     - ninja
     - meson
+    # spack developer tools
+    # style
+    - py-pytest@9.0.2
+    - py-ruff@0.15.0
+    - py-ty@0.0.20
 
   ci:
     pipeline-gen:

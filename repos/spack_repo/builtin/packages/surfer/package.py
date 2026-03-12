@@ -21,6 +21,9 @@ class Surfer(CargoPackage):
     version("main", branch="main", submodules=True)
 
     version(
+        "0.6.0", tag="v0.6.0", commit="78e71f1e7761750a68fd94c128dd60ad00b220bc", submodules=True
+    )
+    version(
         "0.5.0", tag="v0.5.0", commit="0be6f8ad869060791ad0864d77f2f842cd27ee65", submodules=True
     )
     version(

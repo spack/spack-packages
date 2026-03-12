@@ -906,6 +906,10 @@ class Root(CMakePackage):
             # warnings when building against ROOT
             env.unset("MACOSX_DEPLOYMENT_TARGET")
 
+        # https://github.com/root-project/root/issues/18949
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
+
     @property
     def root_library_path(self):
         # The ROOT_LIBRARY_PATH environment variable was added to ROOT 6.26.

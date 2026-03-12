@@ -72,9 +72,8 @@ class Rocwmma(CMakePackage):
         values=("Release", "Debug", "RelWithDebInfo"),
         description="CMake build type",
     )
-
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.16:", type="build")
 
@@ -142,7 +141,8 @@ class Rocwmma(CMakePackage):
 
     patch("0001-add-rocm-smi-lib-path-for-building-tests.patch", when="@:6.3")
     patch("0002-use-find-package-rocm-smi.patch", when="@6.4")
-    patch("0004-add-rocm-smi-link-dir.patch", when="@7.2")
+    patch("0003-Fix-libomp.so-and-libamdhip64.so-not-found-error.patch", when="@7.1")
+    patch("0003-Fix-libopenmp.so-and-libamdhip64.so-not-found-error-7.2.patch", when="@7.2")
 
     @property
     def root_cmakelists_dir(self):
@@ -164,13 +164,11 @@ class Rocwmma(CMakePackage):
             self.define("ROCWMMA_BUILD_ASSEMBLY", "OFF"),
             self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
         ]
-        args.extend(["-DOpenMP_CXX_FLAGS=-fopenmp=libomp", "-DOpenMP_CXX_LIB_NAMES=libomp"])
-        if self.spec.satisfies("@:7.1"):
+        if self.spec.satisfies("@:7.0"):
+            args.extend(["-DOpenMP_CXX_FLAGS=-fopenmp=libomp", "-DOpenMP_CXX_LIB_NAMES=libomp"])
             args.append(
                 f"-DOpenMP_libomp_LIBRARY={self.spec['rocm-openmp-extras'].prefix}/lib/libomp.so"
             )
-        else:
-            args.append(f"-DOpenMP_libomp_LIBRARY={self.spec['llvm-amdgpu'].prefix}/lib/libomp.so")
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
             if self.spec.satisfies("@7.1:"):

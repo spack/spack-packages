@@ -23,6 +23,8 @@ class Cosma(CMakePackage):
     # note: The default archives produced with github do not have the archives
     #       of the submodules.
     version("master", branch="master", submodules=False)
+    version("2.8.1", sha256="563bb0785dca32ede780a05ad424db9b6d7f473a909ca423931b96204e2b5d9c")
+    version("2.8.0", sha256="fd5a0b64c2858858eac46d1a897d51d844cf68f303b480f2e2b3f5a04eb83b5c")
     version("2.7.1", sha256="ef9acaecf0c073cb3358ea6fed07388811ba2f47469ba3803eefff956403f50e")
     version("2.7.0", sha256="f4775d18379539d7bb5053bff8acb4e13d6ed31a9677f498d9099a7500488789")
     version("2.6.6", sha256="1604be101e77192fbcc5551236bc87888d336e402f5409bbdd9dea900401cc37")
@@ -84,6 +86,8 @@ class Cosma(CMakePackage):
         depends_on("cxxopts", when="+tests")
         depends_on("semiprof", when="+profiling")
         depends_on("costa+profiling", when="+profiling")
+
+    depends_on("costa@2.3:", when="@2.8:")
 
     patch("fj-ssl2.patch", when="^fujitsu-ssl2")
 
