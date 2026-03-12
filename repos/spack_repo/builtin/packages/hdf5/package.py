@@ -39,6 +39,12 @@ class Hdf5(CMakePackage):
     version("develop-1.10", branch="hdf5_1_10")
     version("develop-1.8", branch="hdf5_1_8")
 
+    version(
+        "2.1.0",
+        sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964",
+        url="https://support.hdfgroup.org/releases/hdf5/2.1.0/downloads/hdf5-2.1.0.tar.gz",
+    )
+
     # Odd versions are considered experimental releases
     # Even versions are maintenance versions
     version(
