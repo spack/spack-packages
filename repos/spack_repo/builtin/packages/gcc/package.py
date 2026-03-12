@@ -1059,8 +1059,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     @property
     def spec_dir(self):
         # e.g. lib/gcc/x86_64-unknown-linux-gnu/4.9.2
-        spec_dir = glob.glob(f"{self.prefix.lib}/gcc/*/*")
-        return spec_dir[0] if spec_dir else None
+        # Other lib directories might exist, so detect based on the existence of the libgcc.
+        spec_dir = glob.glob(f"{self.prefix.lib}/gcc/*/*/libgcc.a")
+        if spec_dir:
+            return spec_dir[0].rsplit('/', 1)[0]
+        else:
+            return None
 
     @run_after("install")
     def write_specs_file(self):
