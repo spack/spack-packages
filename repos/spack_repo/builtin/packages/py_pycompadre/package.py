@@ -22,7 +22,7 @@ class PyPycompadre(PythonPackage):
     maintainers("kuberry")
 
     version("master", branch="master")
-    version("1.7.0", sha256="00a70012927af21223fa1d760c80879f3bcab1a267098da6e95bc1bfe935260c")
+    version("1.7.2", sha256="4b7c2944300fd025957be44a1114177dfa0aafcf9e613d830a94e020b2f1751e")
     version(
         "1.6.2",
         sha256="ad4122feed81e9f661ee86e73ad4bf53dbfb2470b389a4ea31e6c8d727c8bec8",
@@ -59,6 +59,7 @@ class PyPycompadre(PythonPackage):
     depends_on("kokkos-kernels@3.3.01:4", when="@:1.5")
     depends_on("kokkos-kernels@4:", when="@1.6")
     depends_on("kokkos-kernels@4.5.1:", when="@1.7:")
+    requires("%clang", when="^kokkos+cuda~wrapper")
 
     variant(
         "build_type",
@@ -90,12 +91,31 @@ class PyPycompadre(PythonPackage):
         when="@1.5.0",
     )
 
+    # logic borrowed from Trilinos recipe
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        spec = self.spec
+        if "^kokkos+cuda+wrapper" in spec:
+            if "+mpi" in spec:
+                env.set("OMPI_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+                env.set("MPICH_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+                env.set("MPICXX_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+            else:
+                env.set("CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+
+        if "^kokkos+rocm" in spec:
+            if "+mpi" in spec:
+                env.set("OMPI_CXX", self.spec["hip"].hipcc)
+                env.set("MPICH_CXX", self.spec["hip"].hipcc)
+                env.set("MPICXX_CXX", self.spec["hip"].hipcc)
+            else:
+                env.set("CXX", self.spec["hip"].hipcc)
+
     @run_before("install")
     def set_cmake_from_variants(self):
         spec = self.spec
         with open("cmake_opts.txt", "w") as f:
-            f.write("KokkosCore_PREFIX:PATH=%s\n" % spec["kokkos"].prefix)
-            f.write("KokkosKernels_PREFIX:PATH=%s\n" % spec["kokkos-kernels"].prefix)
+            f.write("Kokkos_ROOT:PATH=%s\n" % spec["kokkos"].prefix)
+            f.write("KokkosKernels_ROOT:PATH=%s\n" % spec["kokkos-kernels"].prefix)
 
             # Compadre_DEBUG is default OFF and handled from CMAKE_BUILD_TYPE beginning in v1.7.0
             f.write("CMAKE_BUILD_TYPE:STRING=%s\n" % spec.variants["build_type"].value)
