@@ -59,6 +59,7 @@ class Compadre(CMakePackage):
     depends_on("kokkos-kernels@3.3.01:4", when="@:1.5")
     depends_on("kokkos-kernels@4:", when="@1.6")
     depends_on("kokkos-kernels@4.5.1:", when="@1.7:")
+    requires("%clang", when="^kokkos+cuda~wrapper")
 
     variant(
         "build_type",
@@ -81,6 +82,30 @@ class Compadre(CMakePackage):
         sha256="e267b74f8ecb8dd23970848ed919d29b7d442f619ce80983e02a19f1d9582c61",
         when="@1.5.0",
     )
+    patch(
+        "https://github.com/sandialabs/compadre/commit/18820e6933aeb10c82ec3e97132eeb0507c4ace7.patch",
+        sha256="b84f24e82b90620208e3c03498656b99d25e610e692c3719ed052665a03b0c91",
+        when="@1.7.0",
+    )
+
+    # logic borrowed from Trilinos recipe
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        spec = self.spec
+        if "^kokkos+cuda+wrapper" in spec:
+            if "+mpi" in spec:
+                env.set("OMPI_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+                env.set("MPICH_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+                env.set("MPICXX_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+            else:
+                env.set("CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+
+        if "^kokkos+rocm" in spec:
+            if "+mpi" in spec:
+                env.set("OMPI_CXX", self.spec["hip"].hipcc)
+                env.set("MPICH_CXX", self.spec["hip"].hipcc)
+                env.set("MPICXX_CXX", self.spec["hip"].hipcc)
+            else:
+                env.set("CXX", self.spec["hip"].hipcc)
 
     def cmake_args(self):
         spec = self.spec
@@ -91,8 +116,8 @@ class Compadre(CMakePackage):
         options = []
         options.extend(
             [
-                "-DKokkosCore_PREFIX={0}".format(kokkos.prefix),
-                "-DKokkosKernels_PREFIX={0}".format(kokkos_kernels.prefix),
+                "-DKokkos_ROOT={0}".format(kokkos.prefix),
+                "-DKokkosKernels_ROOT={0}".format(kokkos_kernels.prefix),
                 "-DCompadre_USE_PYTHON=OFF",
             ]
         )
