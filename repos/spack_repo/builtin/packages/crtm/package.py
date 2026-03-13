@@ -138,8 +138,6 @@ class Crtm(CMakePackage):
             os.symlink(srcpath, join_path(self.prefix, "cmake", os.path.basename(srcpath)))
 
     def check(self):
-        # Until issues with fixed data organization are resolved, just run the basic test
-        # see https://github.com/JCSDA/spack-stack/issues/1910
         ctest = Executable(self.spec["cmake"].prefix.bin.ctest)
         with working_dir(self.build_directory):
             ctest("--timeout", "120")
