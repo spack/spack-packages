@@ -14,7 +14,7 @@ class Cfitsio(AutotoolsPackage):
 
     homepage = "https://heasarc.gsfc.nasa.gov/fitsio/"
     url = "https://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio-3.49.tar.gz"
-git = "https://github.com/HEASARC/cfitsio.git"
+    git = "https://github.com/HEASARC/cfitsio.git"
 
     license("custom")
 
