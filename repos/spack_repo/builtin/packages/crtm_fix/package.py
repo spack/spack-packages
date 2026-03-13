@@ -29,12 +29,31 @@ class CrtmFix(Package):
 
     # All of these are legacy settings. Linking files from subdirectories
     # to the top-level directory will be removed in the near future
-    variant("link-big-endian", default=True, description="Link big endian fix files to top-level 'fix' dir")
-    variant("link-little-endian", default=False, description="Link little endian fix files to top-level 'fix' dir")
-    variant("link-netcdf", default=True, description="Link netcdf fix files to top-level 'fix' dir")
-    variant("link-testfiles", default=False, description="Link test files to top-level 'fix' dir", when="@3:")
+    variant(
+        "link-big-endian",
+        default=True,
+        description="Link big endian fix files to top-level 'fix' dir",
+    )
+    variant(
+        "link-little-endian",
+        default=False,
+        description="Link little endian fix files to top-level 'fix' dir",
+    )
+    variant(
+        "link-netcdf", default=True, description="Link netcdf fix files to top-level 'fix' dir"
+    )
+    variant(
+        "link-testfiles",
+        default=False,
+        description="Link test files to top-level 'fix' dir",
+        when="@3:",
+    )
 
-    conflicts("+link-big-endian", when="+link-little-endian", msg="Cannot link both litte endian and big endian fix files to top-level 'fix' dir")
+    conflicts(
+        "+link-big-endian",
+        when="+link-little-endian",
+        msg="Cannot link both litte endian and big endian fix files to top-level 'fix' dir",
+    )
 
     def url_for_version(self, version):
         if version == Version("2.4.0.1_emc"):
@@ -93,7 +112,7 @@ class CrtmFix(Package):
             for f in fix_files:
                 target = f.replace(self.prefix.fix, "").lstrip("/")
                 link = os.path.split(f)[1]
-                if amc_sc_bad_target and amc_sc_bad_target==target:
+                if amc_sc_bad_target and amc_sc_bad_target == target:
                     symlink(amc_sc_bad_target, amc_sc_bad_link)
                     symlink(amc_sc_good_target, amc_sc_good_link)
                 else:
