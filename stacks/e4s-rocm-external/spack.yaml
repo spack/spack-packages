@@ -37,11 +37,11 @@ spack:
       buildable: false
       externals:
       - spec: llvm-amdgpu@7.2.0
-        prefix: /opt/rocm
+        prefix: /opt/rocm/lib/llvm
         extra_attributes:
           compilers:
-            c: /opt/rocm/bin/amdclang
-            cxx: /opt/rocm/bin/amdclang++
+            c: /opt/rocm/lib/llvm/bin/amdclang
+            cxx: /opt/rocm/lib/llvm/bin/amdclang++
     gcc:
       externals:
       - spec: gcc@13.3.0 languages:='c,c++,fortran'
