@@ -22,7 +22,7 @@ class Compadre(CMakePackage):
     maintainers("kuberry")
 
     version("master", branch="master")
-    version("1.7.0", sha256="00a70012927af21223fa1d760c80879f3bcab1a267098da6e95bc1bfe935260c")
+    version("1.7.2", sha256="4b7c2944300fd025957be44a1114177dfa0aafcf9e613d830a94e020b2f1751e")
     version(
         "1.6.2",
         sha256="ad4122feed81e9f661ee86e73ad4bf53dbfb2470b389a4ea31e6c8d727c8bec8",
@@ -81,11 +81,6 @@ class Compadre(CMakePackage):
         "https://github.com/sandialabs/Compadre/commit/af91a6ee3831dc951445df76053ec6315c58cb45.patch?full_index=1",
         sha256="e267b74f8ecb8dd23970848ed919d29b7d442f619ce80983e02a19f1d9582c61",
         when="@1.5.0",
-    )
-    patch(
-        "https://github.com/sandialabs/compadre/commit/18820e6933aeb10c82ec3e97132eeb0507c4ace7.patch",
-        sha256="b84f24e82b90620208e3c03498656b99d25e610e692c3719ed052665a03b0c91",
-        when="@1.7.0",
     )
 
     # logic borrowed from Trilinos recipe
