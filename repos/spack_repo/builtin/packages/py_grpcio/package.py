@@ -94,7 +94,7 @@ class PyGrpcio(PythonPackage):
         if "openssl" in self.spec:
             filter_file(
                 r"(\s+SSL_INCLUDE = ).*",
-                r"\1('{0}',)".format(self.spec["openssl"].prefix.include),
+                r"\1('{0}',)".format(self.spec["openssl"].prefix.include.openssl),
                 "setup.py",
             )
         if "zlib-api" in self.spec:
@@ -112,7 +112,7 @@ class PyGrpcio(PythonPackage):
         if "re2" in self.spec:
             filter_file(
                 r"(\s+RE2_INCLUDE = ).*",
-                r"\1('{0}',)".format(self.spec["re2"].prefix.include),
+                r"\1('{0}',)".format(self.spec["re2"].prefix.include.re2),
                 "setup.py",
             )
         if "abseil-cpp" in self.spec:
