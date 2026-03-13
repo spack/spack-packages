@@ -53,6 +53,7 @@ class Parallelio(CMakePackage):
     # This patch addresses an issue when compiling pio2.6.0 with a serial netcdf library.
     # netcdf4 filters are only available with the parallel build of netcdf.
     patch("pio_260.patch", when="@2.6.0")
+    patch("cmake-libfind-arch.patch", when="@2.6.0:2.6.6")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -66,6 +67,12 @@ class Parallelio(CMakePackage):
     depends_on("netcdf-fortran", type="link", when="+fortran")
     depends_on("parallel-netcdf", type="link", when="+pnetcdf")
     depends_on("netcdf-c ~parallel-netcdf", type="link", when="~pnetcdf")
+
+    conflicts(
+        "^netcdf-c@4.9.3:",
+        when="@:2.6.4",
+        msg="netcdf-c@4.9.3+ is incompatible with parallelio versions prior to 2.6.5",
+    )
 
     resource(
         name="genf90",
