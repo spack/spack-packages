@@ -24,6 +24,8 @@ class UnitsLlnl(CMakePackage):
     variant("extra_standards", default=True, description="Enable extra unit standards (X12, R20)")
 
     depends_on("cmake@3.22:", type="build")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     def cmake_args(self):
         args = [
