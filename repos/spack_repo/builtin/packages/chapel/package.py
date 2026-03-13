@@ -512,17 +512,33 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     with when("+rocm"):
         conflicts("llvm=none", msg="ROCm support requires building with LLVM")
 
-        # Chapel restricts the allowable ROCm versions
-        depends_on("hsa-rocr-dev@6.0:6.2")
-        depends_on("hip@6.0:6.2")
-
         conflicts("@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
 
-        # This is the case because the package only supports ROCm 6, and Chapel
-        # requires bundled LLVM for that version.
-        # TODO: Modify this constrant and message if/when Chapel supports an
-        # additional ROCm version without tht requirement.
-        requires("llvm=bundled", msg="Chapel ROCm support requires llvm=bundled")
+        # Chapel restricts the allowable ROCm versions
+        with when("@:2.7"):
+            depends_on("hsa-rocr-dev@6.0:6.2")
+            depends_on("hip@6.0:6.2")
+        with when("@2.8:"):
+            depends_on("hsa-rocr-dev@6.0:6.3,7")
+            depends_on("hip@6.0:6.3,7")
+
+        # Chapel requires using the (patched) bundled LLVM for some versions
+        # of ROCm.
+        # Switching off of hsa-rocr-dev version rather than both it and hip,
+        # with the assumption they will always be the same, but if that changes
+        # this will need to be adjusted.
+        with when("^hsa-rocr-dev@6.0:6.2"):
+            requires("llvm=bundled", msg="Chapel ROCm 6.0-6.2 support requires llvm=bundled")
+        with when("^hsa-rocr-dev@6.3:6"):
+            # For 6.3-6.x, either bundled LLVM or system LLVM >= 21 is allowed.
+            depends_on("llvm@21:", when="llvm=spack")
+        with when("^hsa-rocr-dev@7"):
+            # For 7.x, we require LLVM >= 21, and as of release 2.8 the bundled
+            # LLVM is 19, so effectively we require _system_ LLVM >= 21.
+            # TODO: Modify this constraint and message when Chapel releases
+            # with a bundled LLVM >= 21.
+            requires("llvm=spack", msg="Chapel ROCm 7 support currently requires llvm=spack")
+            depends_on("llvm@21:")
 
         # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
         # provides %rocmcc, which we don't want to use.
