@@ -220,22 +220,15 @@ spack:
   - cabana +rocm amdgpu_target=gfx90a ^kokkos +rocm amdgpu_target=gfx90a
   - caliper +rocm amdgpu_target=gfx90a
   - chai tests=none +rocm amdgpu_target=gfx90a
-  - cp2k +mpi +rocm amdgpu_target=gfx90a
-  - fftx +rocm amdgpu_target=gfx90a
   - gasnet +rocm amdgpu_target=gfx90a
   - heffte +rocm amdgpu_target=gfx90a
-  - hpx +rocm amdgpu_target=gfx90a
-  - hypre +rocm amdgpu_target=gfx90a
   - kokkos +rocm amdgpu_target=gfx90a
   - legion +rocm amdgpu_target=gfx90a
   - libceed +rocm amdgpu_target=gfx90a
   - mfem +rocm amdgpu_target=gfx90a
   - papi +rocm amdgpu_target=gfx90a
-  - paraview ~qt +rocm amdgpu_target=gfx90a ^llvm~lldb~lld~libomptarget~polly~gold libunwind=none compiler-rt=none # builds ok, installed w/ ecp-dav
-  - petsc +rocm amdgpu_target=gfx90a
   - raja ~openmp +rocm amdgpu_target=gfx90a
   - slate +rocm amdgpu_target=gfx90a
-  - slepc +rocm amdgpu_target=gfx90a ^petsc +rocm amdgpu_target=gfx90a
   - sundials +rocm amdgpu_target=gfx90a
   - superlu-dist +rocm amdgpu_target=gfx90a
   - tasmanian ~openmp +rocm amdgpu_target=gfx90a
@@ -246,11 +239,18 @@ spack:
 
   # Errors
   # - chapel +rocm amdgpu_target=gfx90a           # rocm version constrained, 7.2 not allowed
+  # - cp2k +mpi +rocm amdgpu_target=gfx90a        # /opt/rocm-7.2.0/include/hip/hip_runtime_api.h:813:29: error: expected unqualified-id before numeric constant
+  # - exago +mpi +python +raja +hiop +rocm amdgpu_target=gfx90a ~ipopt cxxflags="-Wno-error=non-pod-varargs" ^hiop@1.0.0 ~sparse +mpi +raja +rocm amdgpu_target=gfx90a # hiop-1.0.0: hiopVectorHip.hpp:68:10: fatal error: 'hipblas.h' file not found
+  # - fftx +rocm amdgpu_target=gfx90a             # examples/rconv/testrconv.cpp:37:14: error: use of undeclared identifier 'strlen'
   # - ginkgo +rocm amdgpu_target=gfx90a           # rocm version constrained, 7.2 not allowed
+  # - hpx +rocm amdgpu_target=gfx90a              # CMake Error at cmake/HPX_Message.cmake:51 (message): ERROR: HPX needs support for C++11 std::atomic
+  # - hypre +rocm amdgpu_target=gfx90a            # CMake Error at config/cmake/HYPRE_SetupHIPToolkit.cmake:36 (enable_language): The CMAKE_HIP_COMPILER: /opt/rocm/bin/clang++ is not a full path to an existing compiler tool.
   # - lbann ~cuda +rocm amdgpu_target=gfx90a      # rocm version constrained, 7.2 not allowed
   # - magma ~cuda +rocm amdgpu_target=gfx90a      # rocm version constrained, 7.2 not allowed
+  # - paraview ~qt +rocm amdgpu_target=gfx90a ^llvm~lldb~lld~libomptarget~polly~gold libunwind=none compiler-rt=none # ??
+  # - petsc +rocm amdgpu_target=gfx90a            # petsc: Could not find a HIP compiler. Please set with the option --with-hipc or -HIPC and load
+  # - slepc +rocm amdgpu_target=gfx90a ^petsc +rocm amdgpu_target=gfx90a # petsc: Could not find a HIP compiler. Please set with the option --with-hipc or -HIPC and load
   # - strumpack ~slate +rocm amdgpu_target=gfx90a # rocm version constrained, 7.2 not allowed
-  # - exago +mpi +python +raja +hiop +rocm amdgpu_target=gfx90a ~ipopt cxxflags="-Wno-error=non-pod-varargs" ^hiop@1.0.0 ~sparse +mpi +raja +rocm amdgpu_target=gfx90a # hiop-1.0.0: hiopVectorHip.hpp:68:10: fatal error: 'hipblas.h' file not found
 
   ci:
     pipeline-gen:
