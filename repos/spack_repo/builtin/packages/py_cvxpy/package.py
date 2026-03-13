@@ -28,7 +28,7 @@ class PyCvxpy(PythonPackage):
     depends_on("python@3.11:", type=("build", "run"), when="@1.8:")
     depends_on("python@3.6:", type=("build", "run"), when="@1.1.13:")
     depends_on("python@3.4:", type=("build", "run"), when="@1.1:")
-    depends_on("setuptools@68.1:", type="build", when="@1.8:")
+    depends_on("py-setuptools@68.1:", type="build", when="@1.8:")
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy@2:", type=("build", "run"), when="@1.8:")
     depends_on("py-numpy@1.15:", type=("build", "run"))
