@@ -126,6 +126,6 @@ class PyGrpcio(PythonPackage):
                 'pathlib.Path("{}").glob("lib*/libabsl_*.{}")'.format(
                     self.spec["abseil-cpp"].prefix, dso_suffix
                 ),
-                'setup.py',
+                "setup.py",
                 string=True,
             )
