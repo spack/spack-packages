@@ -20,7 +20,6 @@ git = "https://github.com/HEASARC/cfitsio.git"
 
     version("4.6.3", sha256="fad44fff274fdda5ffcc0c0fff3bc3c596362722b9292fc8944db91187813600")
     version("4.5.0", sha256="e4854fc3365c1462e493aa586bfaa2f3d0bb8c20b75a524955db64c27427ce09")
-    version("4.5.0", sha256="e4854fc3365c1462e493aa586bfaa2f3d0bb8c20b75a524955db64c27427ce09")
     version("4.4.1", sha256="66a1dc3f21800f9eeabd9eac577b91fcdd9aabba678fbba3b8527319110d1d25")
     version("4.4.0", sha256="95900cf95ae760839e7cb9678a7b2fad0858d6ac12234f934bd1cb6bfc246ba9")
     version("4.3.0", sha256="fdadc01d09cf9f54253802c5ec87eb10de51ce4130411415ae88c30940621b8b")
