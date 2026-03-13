@@ -19,7 +19,9 @@ class Meshoptimizer(CMakePackage):
 
     variant("shared", default=False, description="Build shared libraries")
     variant("gltfpack", default=False, description="Build gltfpack")
-    variant("stable_exports", default=False, description="Only export stable APIs from shared library")
+    variant(
+        "stable_exports", default=False, description="Only export stable APIs from shared library"
+    )
 
     depends_on("cmake@3.5:", type="build")
 
