@@ -1,0 +1,26 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 7024b8c..0de9aa2 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -30,7 +30,7 @@ else()
+ endif()
+ 
+ # 2. HDF5
+-find_package(HDF5 REQUIRED COMPONENTS C HL)
++find_package(HDF5 REQUIRED COMPONENTS C)
+ 
+ if(ENABLE_MPI AND NOT HDF5_IS_PARALLEL)
+   message(FATAL_ERROR "Parallel HDF5 is required when MPI is enabled, but only serial HDF5 was found.")
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index c6ff646..95df5b7 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -95,7 +95,7 @@ file(WRITE "${CONFIG_FILE}.in" "
+ include(CMakeFindDependencyMacro)
+ 
+ # Always require HDF5
+-find_dependency(HDF5 COMPONENTS C HL)
++find_dependency(HDF5 COMPONENTS C)
+ 
+ # Capture build state
+ set(fVTKHDF_MPI_SUPPORT @ENABLE_MPI@)
