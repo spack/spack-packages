@@ -486,36 +486,51 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
 
-    # CUDA conflicts and dependencies
-    conflicts(
-        "^llvm@20",
-        when="@:2.5 +cuda",
-        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see "
-        "https://github.com/chapel-lang/chapel/issues/27273",
-    )
+    # GPU requirements should encode the requirements documented at:
+    # https://chapel-lang.org/docs/technotes/gpu.html#requirements
 
-    conflicts("cuda@12.9:", when="+cuda")  # deprecation warnings otherwise
+    # CUDA conflicts and dependencies
+    with when("+cuda"):
+        conflicts("llvm=none", msg="Cuda support requires building with LLVM")
+
+        depends_on("llvm@16:", when="llvm=spack ^cuda@12:")
+        requires(
+            "^llvm targets=all",
+            msg="llvm=spack +cuda requires LLVM support the nvptx target",
+            when="llvm=spack",
+        )
+        conflicts(
+            "^llvm@20",
+            when="@:2.5",
+            msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see "
+            "https://github.com/chapel-lang/chapel/issues/27273",
+        )
+
+        conflicts("cuda@12.9:")  # deprecation warnings otherwise
 
     # ROCm conflicts and dependencies
-    conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
-    # Chapel restricts the allowable ROCm versions
-    with when("@2.2: +rocm"):
+    with when("+rocm"):
+        conflicts("llvm=none", msg="ROCm support requires building with LLVM")
+
+        # Chapel restricts the allowable ROCm versions
         depends_on("hsa-rocr-dev@6.0:6.2")
         depends_on("hip@6.0:6.2")
-    # This is the case because the package only supports ROCm 6, and Chapel
-    # requires bundled LLVM for that version.
-    # TODO: Modify this constrant and message if/when Chapel supports an
-    # additional ROCm version without that requirement.
-    requires("llvm=bundled", when="+rocm", msg="Chapel ROCm support requires llvm=bundled")
 
-    # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
-    # provides %rocmcc, which we don't want to use.
-    requires(
-        *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
-        policy="any_of",  # any to ensure %clang works
-        when="+rocm",
-        msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
-    )
+        conflicts("@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
+
+        # This is the case because the package only supports ROCm 6, and Chapel
+        # requires bundled LLVM for that version.
+        # TODO: Modify this constrant and message if/when Chapel supports an
+        # additional ROCm version without tht requirement.
+        requires("llvm=bundled", msg="Chapel ROCm support requires llvm=bundled")
+
+        # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
+        # provides %rocmcc, which we don't want to use.
+        requires(
+            *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
+            policy="any_of",  # any to ensure %clang works
+            msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
+        )
 
     conflicts(
         "comm_substrate=unset",
@@ -553,14 +568,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "https://chapel-lang.org/docs/usingchapel/chplenv.html#chpl-host-jemalloc",
     )
 
-    with when("llvm=none"):
-        conflicts("+cuda", msg="Cuda support requires building with LLVM")
-        conflicts("+rocm", msg="ROCm support requires building with LLVM")
-        conflicts(
-            "+python-bindings",
-            msg="Python bindings require building with LLVM, see "
-            "https://chapel-lang.org/docs/tools/chapel-py/chapel-py.html#installation",
-        )
+    conflicts(
+        "+python-bindings",
+        when="llvm=none",
+        msg="Python bindings require building with LLVM, see "
+        "https://chapel-lang.org/docs/tools/chapel-py/chapel-py.html#installation",
+    )
 
     # Add dependencies
     depends_on("c", type="build")  # generated
@@ -583,14 +596,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         depends_on("llvm@11:20", when="@2.5")
         depends_on("llvm@14:20", when="@2.6:2.7")
         depends_on("llvm@14:21", when="@2.8:")
-
-    # Based on docs https://chapel-lang.org/docs/technotes/gpu.html#requirements
-    depends_on("llvm@16:", when="llvm=spack +cuda ^cuda@12:")
-    requires(
-        "^llvm targets=all",
-        msg="llvm=spack +cuda requires LLVM support the nvptx target",
-        when="llvm=spack +cuda",
-    )
 
     # This is because certain systems have binutils installed as a system package
     # but do not include the headers. Spack incorrectly supplies those external
