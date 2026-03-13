@@ -13,7 +13,7 @@ class CrtmFix(Package):
     """CRTM coefficient files"""
 
     homepage = "https://github.com/NOAA-EMC/crtm"
-    url = "ftp://ftp.ssec.wisc.edu/pub/s4/CRTM/fix_REL-2.3.0_emc.tgz"
+    url = "ftp://ftp.ssec.wisc.edu/pub/s4/CRTM/fix_REL-2.4.0_emc.tgz"
 
     maintainers(
         "BenjaminTJohnson", "edwardhartnett", "AlexanderRichert-NOAA", "Hang-Lei-NOAA", "climbfuji"
@@ -26,14 +26,15 @@ class CrtmFix(Package):
         "2.4.0.1_emc", sha256="6e4005b780435c8e280d6bfa23808d8f12609dfd72f77717d046d4795cac0457"
     )
     version("2.4.0_emc", sha256="d0f1b2ae2905457f4c3731746892aaa8f6b84ee0691f6228dfbe48917df1e85e")
-    version("2.3.0_emc", sha256="1452af2d1d11d57ef3c57b6b861646541e7042a9b0f3c230f9a82854d7e90924")
 
-    variant("big_endian", default=True, description="Install big_endian fix files")
-    variant("little_endian", default=False, description="Install little endian fix files")
-    variant("netcdf", default=True, description="Install netcdf fix files")
-    variant("testfiles", default=False, description="Install test files", when="@3:")
+    # All of these are legacy settings. Linking files from subdirectories
+    # to the top-level directory will be removed in the near future
+    variant("link-big-endian", default=True, description="Link big endian fix files to top-level 'fix' dir")
+    variant("link-little-endian", default=False, description="Link little endian fix files to top-level 'fix' dir")
+    variant("link-netcdf", default=True, description="Link netcdf fix files to top-level 'fix' dir")
+    variant("link-testfiles", default=False, description="Link test files to top-level 'fix' dir", when="@3:")
 
-    conflicts("+big_endian", when="+little_endian", msg="big_endian and little_endian conflict")
+    conflicts("+link-big-endian", when="+link-little-endian", msg="Cannot link both litte endian and big endian fix files to top-level 'fix' dir")
 
     def url_for_version(self, version):
         if version == Version("2.4.0.1_emc"):
@@ -44,54 +45,62 @@ class CrtmFix(Package):
 
     def install(self, spec, prefix):
         spec = self.spec
-        mkdir(self.prefix.fix)
+        if spec.version in [Version("2.4.0.1_emc")]:
+            fix_source_dir = self.stage.source_path
+        else:
+            fix_source_dir = join_path(self.stage.source_path, "fix")
+        install_tree(fix_source_dir, self.prefix.fix)
 
+        # Everything below is legacy code that will be deprecated (removed)
+        # by the end of 2026: symlink certain versions of files to the
+        # top-level "fix" directory in the install prefix.
         endian_dirs = []
-        if spec.satisfies("+big_endian"):
+        if spec.satisfies("+link-big-endian"):
             endian_dirs.append("Big_Endian")
-        elif spec.satisfies("+little_endian"):
+        elif spec.satisfies("+link-little-endian"):
             endian_dirs.append("Little_Endian")
 
-        if spec.satisfies("+netcdf"):
+        if spec.satisfies("+link-netcdf"):
             endian_dirs.extend(["netcdf", "netCDF"])
 
-        fix_files = []
-        for d in endian_dirs:
-            fix_files = fix_files + find(".", "*/{}/*".format(d), recursive=False)
-            fix_files = fix_files + find(".", "*/*/{}/*".format(d), recursive=False)
-            fix_files = fix_files + find(".", "*/*/*/{}/*".format(d), recursive=False)
-        if self.spec.satisfies("~testfiles"):
-            fix_files = [f for f in fix_files if "/fix/test_data/" not in f]
-        fix_files = [f for f in fix_files if os.path.isfile(f)]
+        with working_dir(self.prefix.fix):
+            fix_files = []
+            for d in endian_dirs:
+                fix_files = fix_files + find(".", "*/{}/*".format(d), recursive=False)
+                fix_files = fix_files + find(".", "*/*/{}/*".format(d), recursive=False)
+                fix_files = fix_files + find(".", "*/*/*/{}/*".format(d), recursive=False)
+            if self.spec.satisfies("~link-testfiles"):
+                fix_files = [f for f in fix_files if "test_data/" not in f]
+            fix_files = [f for f in fix_files if os.path.isfile(f)]
 
-        # Big_Endian amsua_metop-c.SpcCoeff.bin is incorrect
-        # Little_Endian amsua_metop-c_v2.SpcCoeff.bin is what it's supposed to be.
-        # Remove the incorrect file, and install it as noACC,, then install
-        # correct file under new name.
-        if "+big_endian" in spec and (
-            spec.version in [Version("2.4.0_emc"), Version("2.4.0.1_emc")]
-        ):
-            amc_sc_path = join_path("SpcCoeff", "Big_Endian", "amsua_metop-c.SpcCoeff.bin")
-            amc_sc_v2_path = join_path(
-                "SpcCoeff", "Little_Endian", "amsua_metop-c_v2.SpcCoeff.bin"
-            )
-            # In 2.4.0_emc, the path is prefixed by 'fix/'
-            if spec.version == Version("2.4.0_emc"):
-                amc_sc_path = join_path("fix", amc_sc_path)
-                amc_sc_v2_path = join_path("fix", amc_sc_v2_path)
+            # Big_Endian amsua_metop-c.SpcCoeff.bin is incorrect
+            # Little_Endian amsua_metop-c_v2.SpcCoeff.bin is what it's supposed to be.
+            # Link the incorrect file as noACC (DH 2026/02/19 why???),
+            # then link the correct file under the original name.
+            amc_sc_bad_target = None
+            if "+link-big-endian" in spec and (
+                spec.version in [Version("2.4.0_emc"), Version("2.4.0.1_emc")]
+            ):
+                amc_sc_bad_target = join_path(
+                    "SpcCoeff", "Big_Endian", "amsua_metop-c.SpcCoeff.bin"
+                )
+                amc_sc_good_target = join_path(
+                    "SpcCoeff", "Little_Endian", "amsua_metop-c_v2.SpcCoeff.bin"
+                )
+                amc_sc_bad_link = "amsua_metop-c.SpcCoeff.noACC.bin"
+                amc_sc_good_link = "amsua_metop-c.SpcCoeff.bin"
 
-            remove_path = join_path(os.getcwd(), amc_sc_path)
-
-            fix_files.remove(remove_path)
-
-            # This file is incorrect, install it as a different name.
-            install(amc_sc_path, join_path(self.prefix.fix, "amsua_metop-c.SpcCoeff.noACC.bin"))
-
-            # This "Little_Endian" file is actually the correct one.
-            install(amc_sc_v2_path, join_path(self.prefix.fix, "amsua_metop-c.SpcCoeff.bin"))
-
-        for f in fix_files:
-            install(f, self.prefix.fix)
+            for f in fix_files:
+                target = f.replace(self.prefix.fix, "").lstrip("/")
+                link = os.path.split(f)[1]
+                if amc_sc_bad_target and amc_sc_bad_target==target:
+                    symlink(amc_sc_bad_target, amc_sc_bad_link)
+                    symlink(amc_sc_good_target, amc_sc_good_link)
+                else:
+                    # https://github.com/JCSDA/spack-stack/issues/1910#issuecomment-3930004524
+                    if os.path.islink(link):
+                        os.remove(link)
+                    symlink(target, link)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("CRTM_FIX", self.prefix.fix)
