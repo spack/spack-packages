@@ -760,11 +760,15 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
 
         # If the compiler depends on gcc@X.Y, the runtime must depend on gcc-runtime@X.Y
         if spec.satisfies("%gcc"):
-            gcc = spec["gcc"]
-            pkg("intel-oneapi-runtime").requires(
-                f"@{spec.versions} %gcc-runtime@{gcc.version}",
-                when=f"%[deptypes=build] {spec.name}/{spec.dag_hash()}",
-            )
+            try:
+                gcc = spec["gcc"]
+                pkg("intel-oneapi-runtime").requires(
+                    f"@{spec.versions} %gcc-runtime@{gcc.version}",
+                    when=f"%[deptypes=build] {spec.name}/{spec.dag_hash()}",
+                )
+            except (RuntimeError, KeyError):
+                # Externals may not have gcc as a dependency, but still satisfy %gcc
+                pass
 
         # If a node used %intel-oneapi-runtime@X.Y its dependencies must use @:X.Y
         # (technically @:X is broader than ... <= @=X but this should work in practice)
