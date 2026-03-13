@@ -52,6 +52,6 @@ class PyOvito(PythonPackage):
                     )
 
     depends_on("py-wheel", type="build")
-    depends_on("py-numpy@1.23:", type=("build", "run"), when="@3.13.0")
-    depends_on("py-traits@6.3:", type=("build", "run"), when="@3.13.0")
-    depends_on("py-pyside6@6.8.3:", type=("build", "run"), when="@3.13.0")
+    depends_on("py-numpy@1.23:", type=("build", "run"), when="@3.13.0:")
+    depends_on("py-traits@6.3:", type=("build", "run"), when="@3.13.0:")
+    depends_on("py-pyside6@6.8.3:", type=("build", "run"), when="@3.13.0:")

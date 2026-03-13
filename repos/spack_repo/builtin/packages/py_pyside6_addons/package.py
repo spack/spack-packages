@@ -51,5 +51,6 @@ class PyPyside6Addons(PythonPackage):
                         when=f"@{_version}-{cp_version}",
                     )
 
-    depends_on("py-shiboken6@6.9.3", type=("build", "run"), when="@6.9.3")
-    depends_on("py-pyside6-essentials@6.9.3", type=("build", "run"), when="@6.9.3")
+    for _version in _versions.keys():
+        depends_on(f"py-shiboken6@{_version}", type=("build", "run"), when=f"@{_version}")
+        depends_on(f"py-pyside6-essentials@{_version}", type=("build", "run"), when=f"@{_version}")

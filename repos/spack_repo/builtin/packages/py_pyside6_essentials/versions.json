@@ -36,5 +36,43 @@
         "sha256": "2e34081933e005686d79265cc04370a28fea3844ab63d432e493adcd4465070c"
       }
     }
+  },
+  "6.10.2": {
+    "Darwin-x86_64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/1d/2e/5f18a77f5e0bd730bacec93a690d0ef3c96a9711d213653eacecbf241b8d/pyside6_essentials-6.10.2-cp39-abi3-macosx_13_0_universal2.whl",
+        "sha256": "1dee2cb9803ff135f881dadeb5c0edcef793d1ec4f8a9140a1348cecb71074e1"
+      }
+    },
+    "Darwin-arm64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/1d/2e/5f18a77f5e0bd730bacec93a690d0ef3c96a9711d213653eacecbf241b8d/pyside6_essentials-6.10.2-cp39-abi3-macosx_13_0_universal2.whl",
+        "sha256": "1dee2cb9803ff135f881dadeb5c0edcef793d1ec4f8a9140a1348cecb71074e1"
+      }
+    },
+    "Linux-x86_64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/99/20/3a6ca95052e1744b5a3eba164e2dd451d358a3dcaf78179de4b45c8e3f47/pyside6_essentials-6.10.2-cp39-abi3-manylinux_2_34_x86_64.whl",
+        "sha256": "660aea45bfa36f1e06f799b934c2a7df963bd31abc5083e8bb8a5bfaef45686b"
+      }
+    },
+    "Linux-aarch64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/93/a6/6073e4ddc2a5c7b3941606e4bc8bbaadcf0737f57450620b0793041c8d22/pyside6_essentials-6.10.2-cp39-abi3-manylinux_2_39_aarch64.whl",
+        "sha256": "c2b028e4c6f8047a02c31f373408e23b4eedfd405f56c6aba8d0525c29472835"
+      }
+    },
+    "Windows-amd64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/22/a8/616bbbd009efd3e17bf9a2db09d90c6764c010565cd2bdea2a240bfd18f7/pyside6_essentials-6.10.2-cp39-abi3-win_amd64.whl",
+        "sha256": "0741018c2b6395038cad4c41775cfae3f13a409e87995ac9f7d89e5b1fb6b22a"
+      }
+    },
+    "Windows-arm64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/b9/f9/c9757a984c4ffb6d12fab69e966d95dfc862a5d44e12b7900f3a03780b76/pyside6_essentials-6.10.2-cp39-abi3-win_arm64.whl",
+        "sha256": "db5f4913648bb6afddb8b347edae151ee2378f12bceb03c8b2515a530a4b38d9"
+      }
+    }
   }
 }
