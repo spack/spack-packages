@@ -42,7 +42,7 @@ class Covfie(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.18:", type="build")
 
     # requirements for examples
-    depends_on("boost@1.71: +log +program_options", when="+test")
+    depends_on("boost@1.71: +log +program_options", type="test")
 
     def cmake_args(self):
         args = [
