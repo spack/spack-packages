@@ -22,26 +22,68 @@ class PyGrpcio(PythonPackage):
     version("1.62.2", sha256="c77618071d96b7a8be2c10701a98537823b9c65ba256c0b9067e0594cdbd954d")
     version("1.60.1", sha256="dd1d3a8d1d2e50ad9b59e10aa7f07c7d1be2b367f3f2d33c5fade96ed5460962")
     version("1.56.2", sha256="0ff789ae7d8ddd76d2ac02e7d13bfef6fc4928ac01e1dcaa182be51b6bcc0aaa")
-    version("1.48.2", sha256="90e5da224c6b9b23658adf6f36de6f435ef7dbcc9c5c12330314d70d6f8de1f7")
-    version("1.43.0", sha256="735d9a437c262ab039d02defddcb9f8f545d7009ae61c0114e19dda3843febe5")
-    version("1.42.0", sha256="4a8f2c7490fe3696e0cdd566e2f099fb91b51bc75446125175c55581c2f7bc11")
-    version("1.39.0", sha256="57974361a459d6fe04c9ae0af1845974606612249f467bbd2062d963cb90f407")
-    version("1.38.1", sha256="1f79d8a24261e3c12ec3a6c25945ff799ae09874fd24815bc17c2dc37715ef6c")
-    version("1.38.0", sha256="abbf9c8c3df4d5233d5888c6cfa85c1bb68a6923749bd4dd1abc6e1e93986f17")
-    version("1.37.1", sha256="df8305806311d3fe913d4f7eb3ef28e2072159ea12f95baab5d447f1380a71e3")
-    version("1.37.0", sha256="b3ce16aa91569760fdabd77ca901b2288152eb16941d28edd9a3a75a0c4a8a85")
-    version("1.36.0", sha256="70b11805bc9385fcd24e15bcdc5bd8bed463026cd2227d9fdd1ebda612ba0cd9")
-    version("1.35.0", sha256="7bd0ebbb14dde78bf66a1162efd29d3393e4e943952e2f339757aa48a184645c")
-    version("1.34.1", sha256="1c746a3cd8a830d8d916a9d0476a786aaa98c5cc2a096344af2be955e439f8ac")
-    version("1.34.0", sha256="f98f746cacbaa681de0bcd90d7aa77b440e3e1327a9988f6a2b580d54e27d4c3")
-    version("1.33.2", sha256="21265511880056d19ce4f809ce3fbe2a3fa98ec1fc7167dbdf30a80d3276202e")
-    version("1.33.1", sha256="f19782ec5104599382a0f73f2dfea465d0e65f6818bb3c49ca672b97034c64c3")
-    version("1.32.0", sha256="01d3046fe980be25796d368f8fc5ff34b7cf5e1444f3789a017a7fe794465639")
-    version("1.30.0", sha256="e8f2f5d16e0164c415f1b31a8d9a81f2e4645a43d1b261375d6bab7b0adf511f")
-    version("1.29.0", sha256="a97ea91e31863c9a3879684b5fb3c6ab4b17c5431787548fc9f52b9483ea9c25")
-    version("1.28.1", sha256="cbc322c5d5615e67c2a15be631f64e6c2bab8c12505bc7c150948abdaa0bdbac")
-    version("1.27.2", sha256="5ae532b93cf9ce5a2a549b74a2c35e3b690b171ece9358519b3039c7b84c887e")
-    version("1.25.0", sha256="c948c034d8997526011960db54f512756fb0b4be1b81140a15b4ef094c6594a4")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2023-4785/
+        version(
+            "1.48.2", sha256="90e5da224c6b9b23658adf6f36de6f435ef7dbcc9c5c12330314d70d6f8de1f7"
+        )
+        version(
+            "1.43.0", sha256="735d9a437c262ab039d02defddcb9f8f545d7009ae61c0114e19dda3843febe5"
+        )
+        version(
+            "1.42.0", sha256="4a8f2c7490fe3696e0cdd566e2f099fb91b51bc75446125175c55581c2f7bc11"
+        )
+        version(
+            "1.39.0", sha256="57974361a459d6fe04c9ae0af1845974606612249f467bbd2062d963cb90f407"
+        )
+        version(
+            "1.38.1", sha256="1f79d8a24261e3c12ec3a6c25945ff799ae09874fd24815bc17c2dc37715ef6c"
+        )
+        version(
+            "1.38.0", sha256="abbf9c8c3df4d5233d5888c6cfa85c1bb68a6923749bd4dd1abc6e1e93986f17"
+        )
+        version(
+            "1.37.1", sha256="df8305806311d3fe913d4f7eb3ef28e2072159ea12f95baab5d447f1380a71e3"
+        )
+        version(
+            "1.37.0", sha256="b3ce16aa91569760fdabd77ca901b2288152eb16941d28edd9a3a75a0c4a8a85"
+        )
+        version(
+            "1.36.0", sha256="70b11805bc9385fcd24e15bcdc5bd8bed463026cd2227d9fdd1ebda612ba0cd9"
+        )
+        version(
+            "1.35.0", sha256="7bd0ebbb14dde78bf66a1162efd29d3393e4e943952e2f339757aa48a184645c"
+        )
+        version(
+            "1.34.1", sha256="1c746a3cd8a830d8d916a9d0476a786aaa98c5cc2a096344af2be955e439f8ac"
+        )
+        version(
+            "1.34.0", sha256="f98f746cacbaa681de0bcd90d7aa77b440e3e1327a9988f6a2b580d54e27d4c3"
+        )
+        version(
+            "1.33.2", sha256="21265511880056d19ce4f809ce3fbe2a3fa98ec1fc7167dbdf30a80d3276202e"
+        )
+        version(
+            "1.33.1", sha256="f19782ec5104599382a0f73f2dfea465d0e65f6818bb3c49ca672b97034c64c3"
+        )
+        version(
+            "1.32.0", sha256="01d3046fe980be25796d368f8fc5ff34b7cf5e1444f3789a017a7fe794465639"
+        )
+        version(
+            "1.30.0", sha256="e8f2f5d16e0164c415f1b31a8d9a81f2e4645a43d1b261375d6bab7b0adf511f"
+        )
+        version(
+            "1.29.0", sha256="a97ea91e31863c9a3879684b5fb3c6ab4b17c5431787548fc9f52b9483ea9c25"
+        )
+        version(
+            "1.28.1", sha256="cbc322c5d5615e67c2a15be631f64e6c2bab8c12505bc7c150948abdaa0bdbac"
+        )
+        version(
+            "1.27.2", sha256="5ae532b93cf9ce5a2a549b74a2c35e3b690b171ece9358519b3039c7b84c887e"
+        )
+        version(
+            "1.25.0", sha256="c948c034d8997526011960db54f512756fb0b4be1b81140a15b4ef094c6594a4"
+        )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")

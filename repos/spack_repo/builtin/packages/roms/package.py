@@ -16,8 +16,13 @@ class Roms(MakefilePackage):
     the scientific community for a diverse range of applications"""
 
     homepage = "https://www.myroms.org/"
-    url = "https://github.com/myroms/roms/archive/refs/tags/roms-4.1.tar.gz"
+    url = "https://github.com/myroms/roms/archive/refs/tags/roms-4.2.tar.gz"
 
+    maintainers("rsoutelino")
+
+    license("MIT", checked_by="rsoutelino")
+
+    version("4.2", sha256="5035d72f708dfcdbc00b243a1782bc43b99c8c8a2f65881a13d38d5baaaf289b")
     version("4.1", sha256="cf25625066be3ea40fdd7bbe361f830d4415170636163b05bd338ac299809d4e")
     version("4.0", sha256="d14b4920e791ad24684f439c4751c2f1c38dbf9b82aa0d4d57def93e50a5a747")
     version("3.9", sha256="8e93f6ed40040e3f1b88d456ea9411ed3c06f280dc50b2787d6e5f793f58f1bc")

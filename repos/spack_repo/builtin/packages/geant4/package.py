@@ -61,6 +61,7 @@ class Geant4(CMakePackage):
         conditional("11", "14", when="@:10"),
         conditional("17", when="@10.4.1:"),
         conditional("20", when="@10.7.0:"),
+        conditional("23", when="@11:"),
     )
     variant(
         "cxxstd",

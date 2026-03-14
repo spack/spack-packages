@@ -61,6 +61,8 @@ class Clhep(CMakePackage):
             "14",
             conditional("17", when="@2.3.4.3:"),
             conditional("20", when="@2.4.6.4:"),
+            # Assuming versions not supporting C++20 do not support C++23
+            conditional("23", when="@2.4.6.4:"),
         ),
         multi=False,
         description="Use the specified C++ standard when building.",
