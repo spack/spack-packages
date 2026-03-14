@@ -1,4 +1,4 @@
-# Copyright 2022 Lawrence Livermore National Security, LLC
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
