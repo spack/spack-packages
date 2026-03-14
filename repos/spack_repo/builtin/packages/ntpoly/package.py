@@ -27,7 +27,7 @@ class Ntpoly(CMakePackage):
 
     variant("shared", default=True, description="Build shared libraries.")
 
-    depends_on("c", type="build")
+    depends_on("c", type="build")  # required: CMake performs C compiler ABI/sanity checks
 
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
