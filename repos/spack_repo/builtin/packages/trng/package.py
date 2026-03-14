@@ -12,6 +12,8 @@ class Trng(CMakePackage):
     homepage = "https://www.numbercrunch.de/trng/"
     git = "https://github.com/rabauke/trng4.git"
 
+    maintainers("chapman39")
+
     version("4.28",
         commit="691817a4a0331421776e7f00efa9fbe81554da86",
         submodules=True)
