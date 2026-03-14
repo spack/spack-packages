@@ -13,14 +13,12 @@ class Fvtkhdf(CMakePackage):
     maintainers("nncarlson")
 
     homepage = "https://github.com/nncarlson/fvtkhdf"
-    url = "https://github.com/nncarlson/fvtkhdf/releases/download/v0.5.0/fvtkhdf-0.5.0.tar.gz"
+    url = "https://github.com/nncarlson/fvtkhdf/releases/download/v0.5.1/fvtkhdf-0.5.1.tar.gz"
     git = "https://github.com/nncarlson/fvtkhdf.git"
 
     license("BSD-2-Clause")
 
-    version("0.5.0", sha256="01e2f26a495570418f5d53dc5577eedb74969c7837fe53f6e749522d5f4b58e3")
-
-    patch("remove-unneeded-hdf5-hl.patch", when="@0.5.0")
+    version("0.5.1", sha256="e7bf499335a2f29a44b34b0c833fb19574a934702eaa6bc6b38e82fc443bf50a")
 
     variant("shared", default=True, description="Build shared libraries")
 
