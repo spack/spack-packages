@@ -148,6 +148,11 @@ class Protobuf(CMakePackage):
 
     patch("msvc-abseil-target-namespace.patch", when="@22 %msvc")
 
+    # Missing #include <cstring> in third_party/utf8_range/utf8_validity.cc; memcpy was
+    # previously available transitively via absl/strings/string_view.h, which was removed
+    # in abseil-cpp@20260107.1. Fixed upstream by deleting the file in v26+.
+    patch("utf8-range-missing-cstring.patch", when="@22:25 ^abseil-cpp@20260107:")
+
     # Misisng #include "absl/container/internal/layout.h"
     # See https://github.com/protocolbuffers/protobuf/pull/14042
     patch(
