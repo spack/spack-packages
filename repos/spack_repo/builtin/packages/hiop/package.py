@@ -106,6 +106,8 @@ class Hiop(CMakePackage, CudaPackage, ROCmPackage):
         description="Enable/disable cuSovler LU refactorization",
     )
 
+    patch("log-barrier-weighted.patch", when="@1.2.0")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
