@@ -46,7 +46,6 @@ spack:
     - py-torch-geometric
     - py-torch-nvidia-apex
     - py-torchaudio
-    - py-torchdata
     - py-torchgeo
     - py-torchmetrics
     - py-torchvision
