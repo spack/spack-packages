@@ -57,12 +57,17 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     version("2.19.1", sha256="fcfb3e88ab3eebdbab98a03c869a4d2616d52ea166c8d8021de1ef921b47be8d")
     version("2.19.0", sha256="4691b18e8c914cdf6759b80f1b3b7f3e17be41099607ed0143134f38836d058e")
     version("2.18.1", sha256="467c512b631e72ad5c9d5c16b23669bcf89675de630cfbb58f9dde746d34afa8")
-    version(
-        "2.18.0-rocm-enhanced",
-        sha256="85f44bed166927b2e22db28f5c4e4538da22221fedd9c2f47c763c52a0e40814",
-        url="https://github.com/ROCm/tensorflow-upstream/archive/refs/tags/v2.18.0-rocm-enhanced.tar.gz",
-    )
-    version("2.18.0", sha256="d7876f4bb0235cac60eb6316392a7c48676729860da1ab659fb440379ad5186d")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2025-55559/
+        # https://www.cvedetails.com/cve/CVE-2025-55556/
+        version(
+            "2.18.0-rocm-enhanced",
+            sha256="85f44bed166927b2e22db28f5c4e4538da22221fedd9c2f47c763c52a0e40814",
+            url="https://github.com/ROCm/tensorflow-upstream/archive/refs/tags/v2.18.0-rocm-enhanced.tar.gz",
+        )
+        version(
+            "2.18.0", sha256="d7876f4bb0235cac60eb6316392a7c48676729860da1ab659fb440379ad5186d"
+        )
     version("2.17.1", sha256="2d3cfb48510f92f3a52fb05b820481c6f066a342a9f5296fe26d72c4ea757700")
     version("2.17.0", sha256="9cc4d5773b8ee910079baaecb4086d0c28939f024dd74b33fc5e64779b6533dc")
     version("2.16.2", sha256="023849bf253080cb1e4f09386f5eb900492da2288274086ed6cfecd6d99da9eb")
@@ -83,46 +88,70 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     version("2.14.0", sha256="ce357fd0728f0d1b0831d1653f475591662ec5bca736a94ff789e6b1944df19f")
     version("2.13.1", sha256="89c07aebd4f41fbe0d08cc88aef00305542134f2f16d3b62918dc3c1182f33e2")
     version("2.13.0", sha256="e58c939079588623e6fa1d054aec2f90f95018266e0a970fd353a5244f5173dc")
-    version("2.12.1", sha256="6bc4600cc0b88e9e40f1800096f5bddbbd3b6e5527a030dea631b87f2ae46b5b")
-    version("2.12.0", sha256="c030cb1905bff1d2446615992aad8d8d85cbe90c4fb625cee458c63bf466bc8e")
-    version("2.11.1", sha256="624ed1cc170cdcc19e8a15d8cdde989a9a1c6b0534c90b38a6b2f06fb2963e5f")
-    version(
-        "2.11.0-rocm-enhanced",
-        sha256="0c4ee8d83bc72215cbc1a5cd3e88cde1a9cf7304237d3e3d8d105ff09827d903",
-        url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.11.0-rocm-enhanced.tar.gz",
-    )
-    version("2.11.0", sha256="99c732b92b1b37fc243a559e02f9aef5671771e272758aa4aec7f34dc92dac48")
-    version("2.10.1", sha256="622a92e22e6f3f4300ea43b3025a0b6122f1cc0e2d9233235e4c628c331a94a3")
-    version("2.10.0", sha256="b5a1bb04c84b6fe1538377e5a1f649bb5d5f0b2e3625a3c526ff3a8af88633e8")
-    version("2.9.3", sha256="59d09bd00eef6f07477eea2f50778582edd4b7b2850a396f1fd0c646b357a573")
-    version("2.9.2", sha256="8cd7ed82b096dc349764c3369331751e870d39c86e73bbb5374e1664a59dcdf7")
-    version("2.9.1", sha256="6eaf86ead73e23988fe192da1db68f4d3828bcdd0f3a9dc195935e339c95dbdc")
-    version("2.9.0", sha256="8087cb0c529f04a4bfe480e49925cd64a904ad16d8ec66b98e2aacdfd53c80ff")
-    version("2.8.4", sha256="c08a222792bdbff9da299c7885561ee27b95d414d1111c426efac4ccdce92cde")
-    version("2.8.3", sha256="4b7ecbe50b36887e1615bc2a582cb86df1250004d8bb540e18336d539803b5a7")
-    version("2.8.2", sha256="b3f860c02c22a30e9787e2548ca252ab289a76b7778af6e9fa763d4aafd904c7")
-    version("2.8.1", sha256="4b487a63d6f0c1ca46a2ac37ba4687eabdc3a260c222616fa414f6df73228cec")
-    version("2.8.0", sha256="66b953ae7fba61fd78969a2e24e350b26ec116cf2e6a7eb93d02c63939c6f9f7")
-    version(
-        "2.7.4-rocm-enhanced",
-        sha256="45b79c125edfdc008274f1b150d8b5a53b3ff4713fd1ad1ff4738f515aad8191",
-        url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.7.4-rocm-enhanced.tar.gz",
-    )
-    version("2.7.4", sha256="75b2e40a9623df32da16d8e97528f5e02e4a958e23b1f2ee9637be8eec5d021b")
-    version("2.7.3", sha256="b576c2e124cd6d4d04cbfe985430a0d955614e882172b2258217f0ec9b61f39b")
-    version("2.7.2", sha256="b3c8577f3b7cc82368ff7f9315821d506abd2f716ea6692977d255b7d8bc54c0")
-    version("2.7.1", sha256="abebe2cf5ca379e18071693ca5f45b88ade941b16258a21cc1f12d77d5387a21")
-    version("2.7.0", sha256="bb124905c7fdacd81e7c842b287c169bbf377d29c74c9dacc04f96c9793747bb")
-    version("2.6.5", sha256="305da42845ac584a42494e521c92a88ce92ee47d93022d4c0bb45180b5c19a8c")
-    version("2.6.4", sha256="6a9e54f46039ef0a6f0a1adf19befa510044d3203d1e124dba8318ec4b1e0210")
-    version("2.6.3", sha256="7a71dde0987677b9512b202eb6ae119e0e308b1ea15b66dcfce001a44873997b")
-    version("2.6.2", sha256="e68c1d346fc3d529653530ca346b2c62f5b31bd4fcca7ffc9c65bb39ab2f6ed3")
-    version("2.6.1", sha256="8e457f617bc2eb43de2a51900e7922b60a8107e2524b2576438f1acccee1d043")
-    version("2.6.0", sha256="41b32eeaddcbc02b0583660bcf508469550e4cd0f86b22d2abe72dfebeacde0f")
-    version("2.5.3", sha256="58d69b7163f7624debc243750976d27fa7dddbc6fb7c5215aec94732bcc670e1")
-    version("2.5.2", sha256="bcccc6ba0b8ac1d10d3302f766eed71911acecc0bc43d0bd27d97a1e7ce275a8")
-    version("2.5.1", sha256="8d2728e155a3aa6befd9cb3d0980fabd25e2142d124f8f6b6c78cdf17ff79da5")
-    version("2.5.0", sha256="233875ea27fc357f6b714b2a0de5f6ff124b50c1ee9b3b41f9e726e9e677b86c")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2024-3660/
+        # https://www.cvedetails.com/cve/CVE-2023-33976/
+        version(
+            "2.12.1", sha256="6bc4600cc0b88e9e40f1800096f5bddbbd3b6e5527a030dea631b87f2ae46b5b"
+        )
+        version(
+            "2.12.0", sha256="c030cb1905bff1d2446615992aad8d8d85cbe90c4fb625cee458c63bf466bc8e"
+        )
+        version(
+            "2.11.1", sha256="624ed1cc170cdcc19e8a15d8cdde989a9a1c6b0534c90b38a6b2f06fb2963e5f"
+        )
+        # https://www.cvedetails.com/cve/CVE-2023-27579/
+        # https://www.cvedetails.com/cve/CVE-2023-25801/
+        # https://www.cvedetails.com/cve/CVE-2023-25676/
+        # https://www.cvedetails.com/cve/CVE-2023-25675/
+        # https://www.cvedetails.com/cve/CVE-2023-25674/
+        # https://www.cvedetails.com/cve/CVE-2023-25673/
+        # https://www.cvedetails.com/cve/CVE-2023-25672/
+        # https://www.cvedetails.com/cve/CVE-2023-25671/
+        # and many, many more...
+        version(
+            "2.11.0-rocm-enhanced",
+            sha256="0c4ee8d83bc72215cbc1a5cd3e88cde1a9cf7304237d3e3d8d105ff09827d903",
+            url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.11.0-rocm-enhanced.tar.gz",
+        )
+        version(
+            "2.11.0", sha256="99c732b92b1b37fc243a559e02f9aef5671771e272758aa4aec7f34dc92dac48"
+        )
+        version(
+            "2.10.1", sha256="622a92e22e6f3f4300ea43b3025a0b6122f1cc0e2d9233235e4c628c331a94a3"
+        )
+        version(
+            "2.10.0", sha256="b5a1bb04c84b6fe1538377e5a1f649bb5d5f0b2e3625a3c526ff3a8af88633e8"
+        )
+        version("2.9.3", sha256="59d09bd00eef6f07477eea2f50778582edd4b7b2850a396f1fd0c646b357a573")
+        version("2.9.2", sha256="8cd7ed82b096dc349764c3369331751e870d39c86e73bbb5374e1664a59dcdf7")
+        version("2.9.1", sha256="6eaf86ead73e23988fe192da1db68f4d3828bcdd0f3a9dc195935e339c95dbdc")
+        version("2.9.0", sha256="8087cb0c529f04a4bfe480e49925cd64a904ad16d8ec66b98e2aacdfd53c80ff")
+        version("2.8.4", sha256="c08a222792bdbff9da299c7885561ee27b95d414d1111c426efac4ccdce92cde")
+        version("2.8.3", sha256="4b7ecbe50b36887e1615bc2a582cb86df1250004d8bb540e18336d539803b5a7")
+        version("2.8.2", sha256="b3f860c02c22a30e9787e2548ca252ab289a76b7778af6e9fa763d4aafd904c7")
+        version("2.8.1", sha256="4b487a63d6f0c1ca46a2ac37ba4687eabdc3a260c222616fa414f6df73228cec")
+        version("2.8.0", sha256="66b953ae7fba61fd78969a2e24e350b26ec116cf2e6a7eb93d02c63939c6f9f7")
+        version(
+            "2.7.4-rocm-enhanced",
+            sha256="45b79c125edfdc008274f1b150d8b5a53b3ff4713fd1ad1ff4738f515aad8191",
+            url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.7.4-rocm-enhanced.tar.gz",
+        )
+        version("2.7.4", sha256="75b2e40a9623df32da16d8e97528f5e02e4a958e23b1f2ee9637be8eec5d021b")
+        version("2.7.3", sha256="b576c2e124cd6d4d04cbfe985430a0d955614e882172b2258217f0ec9b61f39b")
+        version("2.7.2", sha256="b3c8577f3b7cc82368ff7f9315821d506abd2f716ea6692977d255b7d8bc54c0")
+        version("2.7.1", sha256="abebe2cf5ca379e18071693ca5f45b88ade941b16258a21cc1f12d77d5387a21")
+        version("2.7.0", sha256="bb124905c7fdacd81e7c842b287c169bbf377d29c74c9dacc04f96c9793747bb")
+        version("2.6.5", sha256="305da42845ac584a42494e521c92a88ce92ee47d93022d4c0bb45180b5c19a8c")
+        version("2.6.4", sha256="6a9e54f46039ef0a6f0a1adf19befa510044d3203d1e124dba8318ec4b1e0210")
+        version("2.6.3", sha256="7a71dde0987677b9512b202eb6ae119e0e308b1ea15b66dcfce001a44873997b")
+        version("2.6.2", sha256="e68c1d346fc3d529653530ca346b2c62f5b31bd4fcca7ffc9c65bb39ab2f6ed3")
+        version("2.6.1", sha256="8e457f617bc2eb43de2a51900e7922b60a8107e2524b2576438f1acccee1d043")
+        version("2.6.0", sha256="41b32eeaddcbc02b0583660bcf508469550e4cd0f86b22d2abe72dfebeacde0f")
+        version("2.5.3", sha256="58d69b7163f7624debc243750976d27fa7dddbc6fb7c5215aec94732bcc670e1")
+        version("2.5.2", sha256="bcccc6ba0b8ac1d10d3302f766eed71911acecc0bc43d0bd27d97a1e7ce275a8")
+        version("2.5.1", sha256="8d2728e155a3aa6befd9cb3d0980fabd25e2142d124f8f6b6c78cdf17ff79da5")
+        version("2.5.0", sha256="233875ea27fc357f6b714b2a0de5f6ff124b50c1ee9b3b41f9e726e9e677b86c")
 
     variant("mkl", default=False, description="Build with MKL support")
     variant("jemalloc", default=False, description="Build with jemalloc as malloc support")

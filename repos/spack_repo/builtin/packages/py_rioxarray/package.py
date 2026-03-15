@@ -14,8 +14,9 @@ class PyRioxarray(PythonPackage):
     pypi = "rioxarray/rioxarray-0.4.1.post0.tar.gz"
 
     license("Apache-2.0")
-    maintainers("adamjstewart")
+    maintainers("adamjstewart", "Chrismarsh")
 
+    version("0.22.0", sha256="3f55f23a632ffd9eff13463634227f4afbbcf298947536e161f6cf2ce88d4373")
     version("0.21.0", sha256="a292d96f4d6412c05ff09629b72523ae2e9c42598183f5e9c555fc368f867c0f")
     version("0.20.0", sha256="8bfc7e979edc7e30b4671d638a9be0e5a7d673dab2ea88e2445d3c7745599c02")
     version("0.19.0", sha256="7819a0036fd874c8c8e280447cbbe43d8dc72fc4a14ac7852a665b1bdb7d4b04")
@@ -36,9 +37,10 @@ class PyRioxarray(PythonPackage):
         depends_on("py-rasterio@1.4.3:", when="@0.19:")
         depends_on("py-rasterio@1.3:", when="@0.16:")
         depends_on("py-rasterio")
-        depends_on("py-xarray@2024.7:2025.11", when="@0.19:")
-        depends_on("py-xarray@2022.3:2025.11", when="@0.16:")
-        depends_on("py-xarray@0.17:2025.11")
+        depends_on("py-xarray@2026.2:", when="@0.22:")
+        depends_on("py-xarray@2024.7:2025.11", when="@0.19:0.21")
+        depends_on("py-xarray@2022.3:2025.11", when="@0.16:0.18")
+        depends_on("py-xarray@0.17:2025.11", when="@:0.15")
         depends_on("py-pyproj@3.3:", when="@0.16:")
         depends_on("py-pyproj@2.2:")
         depends_on("py-numpy@2:", when="@0.20:")

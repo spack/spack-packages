@@ -15,6 +15,7 @@ class PyHypothesis(PythonPackage):
 
     license("MPL-2.0")
 
+    version("6.114.0", sha256="cdded8b9e3f8a8088a444ad525c06ac67a4d4f6605f672535c41fd9a49cd128f")
     version("6.96.2", sha256="524a0ac22c8dfff640f21f496b85ee193a470e8570ab7707b8e3bfccd7da34a6")
     version("6.23.1", sha256="23a1b0488aec5719e2f9e399342e10f30d497cbb9fd39470ef0975c1b502ae35")
     version("5.3.0", sha256="c9fdb53fe3bf1f8e7dcca1a7dd6e430862502f088aca2903d141511212e79429")
