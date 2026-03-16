@@ -163,3 +163,11 @@ class PyGrpcio(PythonPackage):
                 r"\1('{0}',)".format(self.spec["abseil-cpp"].prefix.include),
                 "setup.py",
             )
+            filter_file(
+                'pathlib.Path("/usr").glob("lib*/libabsl_*.so")',
+                'pathlib.Path("{}").glob("lib*/libabsl_*.{}")'.format(
+                    self.spec["abseil-cpp"].prefix, dso_suffix
+                ),
+                "setup.py",
+                string=True,
+            )
