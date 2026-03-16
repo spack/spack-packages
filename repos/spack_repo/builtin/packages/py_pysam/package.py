@@ -27,7 +27,7 @@ class PyPysam(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
-    # pysam requries pkg-resources which is removed from setuptools in
+    # pysam requires pkg-resources which is removed from setuptools in
     # version 82.0.0
     depends_on("py-setuptools@:81", when="@:0.21.0", type="build")
     depends_on("py-setuptools@59.0:", when="@0.21:", type="build")
