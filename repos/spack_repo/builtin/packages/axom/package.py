@@ -122,7 +122,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         default=False,
         when="@:0.12.0",
         description="Build with hooks for Adiak/Caliper performance analysis. "
-        "Deprecated -- use the adiak and/or caliper variants directly.",
+        "Deprecated -- use the adiak and/or caliper variants directly "
+        "versions 0.13.0 and onwards.",
     )
 
     # variant for Axom components
@@ -140,8 +141,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("int64", default=True, description="Use 64bit integers for IndexType")
 
     # variants for package dependencies
-    variant("adiak", default=False, description="Build with adiak")
-    variant("caliper", default=False, description="Build with caliper")
+    variant("adiak", default=False, when="@0.13.0:", description="Build with adiak")
+    variant("caliper", default=False, when="@0.13.0:", description="Build with caliper")
     variant("conduit", default=True, description="Build with conduit")
 
     variant("opencascade", default=False, description="Build with opencascade")
@@ -228,11 +229,23 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         depends_on("adiak")
         depends_on("caliper+adiak~papi")
 
-    with when("^adiak"):
+        depends_on("caliper+cuda", when="+cuda")
+        depends_on("caliper~cuda", when="~cuda")
+
+        depends_on("caliper+rocm", when="+rocm")
+        depends_on("caliper~rocm", when="~rocm")
+
+        for dep in ["adiak", "caliper"]:
+            depends_on(f"{dep}+mpi", when="+mpi")
+            depends_on(f"{dep}~mpi", when="~mpi")
+            depends_on(f"{dep}+shared", when="+shared")
+            depends_on(f"{dep}~shared", when="~shared")
+
+    with when("+adiak"):
         for fwd in ("mpi", "shared"):
             depends_on(f"adiak+{fwd}", when=f"+{fwd}")
 
-    with when("^caliper"):
+    with when("+caliper"):
         for fwd in ("cuda", "rocm", "mpi", "shared"):
             depends_on(f"caliper+{fwd}", when=f"+{fwd}")
 
@@ -240,14 +253,16 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         ext_cuda_dep = f"+cuda cuda_arch={val}"
         depends_on(f"raja {ext_cuda_dep}", when=f"+raja {ext_cuda_dep}")
         depends_on(f"umpire {ext_cuda_dep}", when=f"+umpire {ext_cuda_dep}")
-        depends_on(f"caliper {ext_cuda_dep}", when=f"{ext_cuda_dep} ^caliper")
+        depends_on(f"caliper {ext_cuda_dep}", when=f"+caliper {ext_cuda_dep}")
+        depends_on(f"caliper {ext_cuda_dep}", when=f"+profiling {ext_cuda_dep}")
         depends_on(f"mfem {ext_cuda_dep}", when=f"+mfem {ext_cuda_dep}")
 
     for val in ROCmPackage.amdgpu_targets:
         ext_rocm_dep = f"+rocm amdgpu_target={val}"
         depends_on(f"raja {ext_rocm_dep}", when=f"+raja {ext_rocm_dep}")
         depends_on(f"umpire {ext_rocm_dep}", when=f"+umpire {ext_rocm_dep}")
-        depends_on(f"caliper {ext_rocm_dep}", when=f"{ext_rocm_dep} ^caliper")
+        depends_on(f"caliper {ext_rocm_dep}", when=f"+caliper {ext_rocm_dep}")
+        depends_on(f"caliper {ext_rocm_dep}", when=f"+profiling {ext_rocm_dep}")
         depends_on(f"mfem {ext_rocm_dep}", when=f"+mfem {ext_rocm_dep}")
 
     depends_on("rocprim", when="+rocm")
@@ -280,8 +295,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     # -----------------------------------------------------------------------
     # Hard inter-component dependencies taken from Axom's dependency graph.
     requires(f"components={','.join(_AXOM_COMPONENTS)}", when="components=all")
-    for c in _AXOM_COMPONENTS:
-        conflicts(f"components={c}", when="components=none")
 
     requires("components=slic,spin,primal", when="components=bump")
     requires("components=sidre,slic,primal", when="components=inlet")
@@ -321,10 +334,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("~raja", when="+rocm")
     conflicts("~umpire", when="+cuda")
     conflicts("~umpire", when="+rocm")
-
-    # The 'profiling' variant is deprecated after v0.12, but spack doesn't
-    # give a reasonable error/warning message if it is set
-    conflicts("+profiling", when="@develop")
 
     conflicts("^blt@:0.3.6", when="+rocm")
 
