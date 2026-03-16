@@ -157,11 +157,10 @@ class Hiop(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("raja+openmp", when="+raja~cuda~rocm")
 
     # RAJA > 0.14 and Umpire > 6.0 require c++ std 14
-    # We are working on supporting newer Umpire/RAJA versions
-    depends_on("raja@2024.07.0", when="@1.1.1:+raja")
+    depends_on("raja@2024.07.0:", when="@1.1.1:+raja")
     depends_on("raja@0.14", when="@0.5:1.1.0+raja")
     depends_on("raja@:0.13", when="@0.3.99:0.4+raja")
-    depends_on("umpire@2024.07.0", when="@1.1.1:+raja")
+    depends_on("umpire@2024.07.0:", when="@1.1.1:+raja")
     depends_on("umpire@6", when="@0.5:1.1.0+raja")
     depends_on("umpire@:5", when="@0.3.99:0.4+raja")
     depends_on("camp@0.2.3:0.2", when="@0.3.99:1.1.0+raja")
