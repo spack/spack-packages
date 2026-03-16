@@ -23,7 +23,7 @@ ci:
       script::
       - - if [ -n "$SPACK_EXTRA_MIRROR" ]; then spack mirror add local "${SPACK_EXTRA_MIRROR}/${SPACK_CI_STACK_NAME}"; fi
         - spack config blame mirrors
-      - - spack --color=always --backtrace ci rebuild -j ${SPACK_BUILD_JOBS} --tests --timeout 300 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_err.txt >&2)
+      - - spack --color=always --backtrace ci rebuild -j ${SPACK_BUILD_JOBS} --timeout 300 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_err.txt >&2)
       after_script:
       - - cat /proc/loadavg || true
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
@@ -56,6 +56,36 @@ ci:
           - unmet_prerequisites
           - scheduler_failure
           - data_integrity_failure
+
+  - test-job:
+      before_script-:
+      - - spack env activate --without-view ${SPACK_CONCRETE_ENV_DIR}
+        - spack compiler list
+      - - mkdir -p ${SPACK_ARTIFACTS_ROOT}/user_data
+        # AWS runners mount E4S public key (verification), UO runners mount public/private (signing/verification)
+      - - k=$CI_GPG_KEY_ROOT/e4s.gpg; [[ -r $k ]] && spack gpg trust $k
+        # UO runners mount intermediate ci public key (verification), AWS runners mount public/private (signing/verification)
+        - k=$CI_GPG_KEY_ROOT/intermediate_ci_signing_key.gpg; [[ -r $k ]] && spack gpg trust $k
+        - k=$CI_GPG_KEY_ROOT/spack_public_key.gpg; [[ -r $k ]] && spack gpg trust $k
+      # TODO: Need to be able to make sure using the PR's mirror
+      script::
+      - - if [ -n "$SPACK_EXTRA_MIRROR" ]; then spack mirror add local "${SPACK_EXTRA_MIRROR}/${SPACK_CI_STACK_NAME}"; fi
+        - spack config blame mirrors
+      - - spack --color=always --backtrace ci test -j ${SPACK_BUILD_JOBS} --timeout 60 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/test_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/test_err.txt >&2)
+         # TBD: The timeout should account for building from cache PLUS testing
+      after_script: []
+         # TBD: Make sure the test artifacts are already made available
+      interruptible: true
+      variables:
+        CI_JOB_SIZE: "default"
+        SPACK_BUILD_JOBS: "4"
+        KUBERNETES_CPU_REQUEST: "4000m"
+        KUBERNETES_MEMORY_REQUEST: "16G"
+        CI_GPG_KEY_ROOT: /mnt/key
+        SPACK_VERBOSE_SCRIPT: "1"
+      id_tokens:
+        GITLAB_OIDC_TOKEN:
+          aud: "${OIDC_TOKEN_AUDIENCE}"
 
   - signing-job:
       image:
