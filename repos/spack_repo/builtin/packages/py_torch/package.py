@@ -354,6 +354,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("aotriton@0.8b", when="@2.5:2.6")
         depends_on("aotriton@0.9.2b", when="@2.7")
         depends_on("aotriton@0.10b", when="@2.8:")
+
     depends_on("mpi", when="+mpi")
     depends_on("ucc", when="+ucc")
     depends_on("ucx", when="+ucc")
@@ -702,6 +703,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         enable_or_disable("rocm")
         if "+rocm" in self.spec:
+            # So libtorch_hip.so and aotriton libs find libamdhip64.so at runtime and
+            # during binary cache relocation (avoids "libamdhip64.so.6 => not found").
+            env.append_flags("LDFLAGS", "-Wl,-rpath," + self.spec["hip"].prefix.lib)
             env.set("PYTORCH_ROCM_ARCH", ";".join(self.spec.variants["amdgpu_target"].value))
             env.set("HSA_PATH", self.spec["hsa-rocr-dev"].prefix)
             env.set("ROCBLAS_PATH", self.spec["rocblas"].prefix)

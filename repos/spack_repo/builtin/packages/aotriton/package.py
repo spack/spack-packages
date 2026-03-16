@@ -134,4 +134,8 @@ class Aotriton(CMakePackage):
         args = []
         args.append(self.define("AOTRITON_GPU_BUILD_TIMEOUT", 0))
         args.append(self.define("AOTRITON_NOIMAGE_MODE", "ON"))
+        # So libaotriton_v2.so and extensions find libamdhip64.so at runtime and
+        # during binary cache relocation (avoids "libamdhip64.so.6 => not found").
+        args.append(self.define("CMAKE_INSTALL_RPATH", self.spec["hip"].prefix.lib))
+        args.append(self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True))
         return args
