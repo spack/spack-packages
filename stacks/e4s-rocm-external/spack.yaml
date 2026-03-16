@@ -42,6 +42,7 @@ spack:
           compilers:
             c: /opt/rocm/lib/llvm/bin/amdclang
             cxx: /opt/rocm/lib/llvm/bin/amdclang++
+            fortran: /opt/rocm/lib/llvm/bin/amdflang
     gcc:
       externals:
       - spec: gcc@13.3.0 languages:='c,c++,fortran'
@@ -52,6 +53,11 @@ spack:
             cxx: /usr/bin/g++
             fortran: /usr/bin/gfortran
 
+    amdsmi:
+      buildable: false
+      externals:
+      - spec: amdsmi@7.2.0
+        prefix: /opt/rocm-7.2.0/
     comgr:
       buildable: false
       externals:
@@ -71,6 +77,11 @@ spack:
       buildable: false
       externals:
       - spec: hipfft@7.2.0
+        prefix: /opt/rocm-7.2.0/
+    hiprand:
+      buildable: false
+      externals:
+      - spec: hiprand@7.2.0
         prefix: /opt/rocm-7.2.0/
     hipsparse:
       buildable: false
@@ -132,6 +143,11 @@ spack:
       externals:
       - spec: rocm-smi-lib@7.2.0
         prefix: /opt/rocm-7.2.0/
+    rocprofiler-systems:
+      buildable: false
+      externals:
+      - spec: rocprofiler-systems@7.2.0
+        prefix: /opt/rocm-7.2.0/
     hip:
       buildable: false
       require: ["@7.2.0"]
@@ -143,6 +159,11 @@ spack:
       externals:
       - spec: hipify-clang@7.2.0
         prefix: /opt/rocm-7.2.0
+    hsa-amd-aqlprofile:
+      buildable: false
+      externals:
+      - spec: hsa-amd-aqlprofile@7.2.0
+        prefix: /opt/rocm-7.2.0/
     hsa-rocr-dev:
       buildable: false
       externals:
