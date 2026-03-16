@@ -24,6 +24,7 @@ class PyPybind11(CMakePackage, PythonExtension):
     homepage = "https://pybind11.readthedocs.io"
     url = "https://github.com/pybind/pybind11/archive/refs/tags/v2.10.1.tar.gz"
     git = "https://github.com/pybind/pybind11.git"
+    license("BSD-3-Clause")
 
     maintainers("ax3l")
 

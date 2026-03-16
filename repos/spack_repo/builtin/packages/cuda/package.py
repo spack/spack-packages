@@ -752,6 +752,7 @@ class Cuda(Package):
     homepage = "https://developer.nvidia.com/cuda-zone"
 
     maintainers("ax3l", "Rombur", "pauleonix")
+    license("LicenseRef-NVIDIA-End-User-License-Agreement")
     executables = ["^nvcc$"]
 
     skip_version_audit = ["platform=darwin", "platform=windows"]
