@@ -16,15 +16,21 @@ class RoctracerDev(CMakePackage, ROCmPackage):
     specific runtime profiler to trace API and asyncronous activity."""
 
     homepage = "https://github.com/ROCm/roctracer"
-    git = "https://github.com/ROCm/roctracer.git"
-    url = "https://github.com/ROCm/roctracer/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libroctracer64"]
-
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/roctracer/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="dec80803c6d2d684759172145177849efda65672645b95a2f2ad1a84335043bb")
     version("7.1.0", sha256="a90077e2080531803dac154e64d6d481289a5839493ce131c4edc8b5ac1bc294")
     version("7.0.2", sha256="c9dc54fc8b68a7598b3e9453f7962a87cb02e86d64e5681452ebafd62fb85e96")
@@ -94,11 +100,12 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
-        depends_on(f"hip@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver} +rocm", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     @classmethod
@@ -127,6 +134,13 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("Clang_DIR", self.spec["llvm-amdgpu"].prefix.lib.cmake.clang))
         return args
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/roctracer"
+        else:
+            return "."
 
     @run_after("install")
     def post_install(self):

@@ -25,6 +25,7 @@ class RocmValidationSuite(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
+    version("7.2.0", sha256="d4c7252104431542fb748afd2e17eb9d86ad87f490b19a3fa343721222d67910")
     version("7.1.1", sha256="eecce5e1597f2da152feffe6ac6aec9234a686f10591c58995e1120d601f3128")
     version("7.1.0", sha256="ef2ef3a6468e9dc47061afa91d862870c08cbdb7a6c883880d11eb168427bba9")
     version("7.0.2", sha256="c4f2e8732e9f8fcabc925f97a5617fc89f6ae4d872987c34d407ac60c9883efc")
@@ -138,6 +139,7 @@ class RocmValidationSuite(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
@@ -159,6 +161,7 @@ class RocmValidationSuite(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
@@ -176,12 +179,15 @@ class RocmValidationSuite(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
     for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
-        depends_on(f"amdsmi@{ver}", when=f"@{ver}")
         depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
+
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
+        depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     def patch(self):
         if self.spec.satisfies("@:5.7"):

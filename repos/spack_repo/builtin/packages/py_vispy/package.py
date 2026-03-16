@@ -19,6 +19,7 @@ class PyVispy(PythonPackage):
 
     license("BSD-3-Clause", checked_by="Markus92")
 
+    version("0.16.1", sha256="b93c32c85d08c06ae8f5e3177f9cfd6c495e1745f2120b777830adee5d9c3648")
     version("0.15.2", sha256="d52d10c0697f48990555cea2a2bad3f9f5a772391856fda364ea4bbc69fd075c")
     version("0.12.2", sha256="141c2ddccc1158555bc89f09010c4b1d754487e816357333f31e795a7146a024")
 

@@ -45,7 +45,7 @@ spack:
     paraview:
       require: "+examples target=neoverse_v2 %gcc"
     boost:
-      require: "cxxstd=17"
+      require: "cxxstd=17 target=neoverse_v2 %gcc"
 
   specs:
   # CPU
@@ -157,7 +157,7 @@ spack:
   # - veloc
   - wannier90
   - warpx +python
-  - xyce +mpi +shared +pymi +pymi_static_tpls
+  - xyce +mpi +shared +pymi ~pymi_static_tpls
   # INCLUDED IN ECP DAV CPU
   # - adios2
   # - darshan-runtime

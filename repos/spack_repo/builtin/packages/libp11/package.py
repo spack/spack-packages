@@ -37,5 +37,5 @@ class Libp11(AutotoolsPackage):
     depends_on("openssl")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./bootstrap")

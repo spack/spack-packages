@@ -13,7 +13,7 @@ class Spglib(CMakePackage):
     homepage = "https://spglib.readthedocs.io/"
     url = "https://github.com/spglib/spglib/archive/v2.0.2.tar.gz"
 
-    maintainers("RMeli")
+    maintainers("RMeli", "mkrack")
 
     patch("fix_cmake_install.patch", when="@:1.10.3")
     # patch by Krishnendu Ghosh
@@ -21,6 +21,8 @@ class Spglib(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("2.7.0", sha256="b22fc9abae9716c574fbc6d55cfc53ed654a714fccc5657a26ff5d18114bd8bd")
+    version("2.6.0", sha256="c65af71136c915352eb82444b165ec83289877eb8e46593033f199801b43dbf7")
     version("2.5.0", sha256="b6026f5e85106c0c9ee57e54b9399890d0f29982e20e96ede0428b3efbe6b914")
     version("2.4.0", sha256="e33694b189c6864f719a59c31e2af55301a524fb68ba9fb65f08e95af471847d")
     version("2.3.1", sha256="c295dbea7d2fc9e50639aa14331fef277878c35f00ef0766e688bfbb7b17d44c")
@@ -61,6 +63,7 @@ class Spglib(CMakePackage):
 
     variant("openmp", default=True, description="Build with OpenMP support", when="@1.16.2:")
     variant("fortran", default=True, description="Build Fortran interface", when="@1.16.4:")
+    variant("shared", default=True, description="Build shared libraries", when="@2.1.0:")
     variant("tests", default=False, description="Build with tests", when="@2.1.0:")
 
     depends_on("cmake@3.15:", type="build", when="@2.1.0:")
@@ -73,6 +76,7 @@ class Spglib(CMakePackage):
     def cmake_args(self):
         pfx = "SPGLIB_" if self.spec.satisfies("@2.1.0:") else ""
         return [
+            self.define_from_variant(pfx + "SHARED_LIBS", "shared"),
             self.define_from_variant(pfx + "USE_OMP", "openmp"),
             self.define_from_variant(pfx + "WITH_Fortran", "fortran"),
             self.define_from_variant(pfx + "WITH_TESTS", "tests"),

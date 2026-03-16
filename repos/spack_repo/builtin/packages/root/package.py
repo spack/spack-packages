@@ -56,6 +56,8 @@ class Root(CMakePackage):
 
     # Supported STS release series
     # 6.38 (through 2026-06-30)
+    version("6.38.04", sha256="1ca561d03b3addae00cb76af57f8c75d3c229e8bd6939bdd408ec33fda9d3487")
+    version("6.38.02", sha256="77d34d2bca0ea720acfd43798bcb5d09a28584013b4d0a2910823c867d4bfa42")
     version("6.38.00", sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc")
 
     # 6.34 (through 2025-06-30)
@@ -904,6 +906,10 @@ class Root(CMakePackage):
             # override with an empty value even though it may lead to link
             # warnings when building against ROOT
             env.unset("MACOSX_DEPLOYMENT_TARGET")
+
+        # https://github.com/root-project/root/issues/18949
+        if "+cxxmodules" in self.spec and "+vc" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.spec["vc"].prefix.include)
 
     @property
     def root_library_path(self):

@@ -17,6 +17,7 @@ class PyDaskAwkward(PythonPackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
+    version("2025.9.0", sha256="46712213abc0546bfd1941c4137ded185ade669a96ec6d0b6a2061219e802269")
     version("2025.5.0", sha256="2e6e71562055b9b7eadaab5e66b23a78d23274487ebf38669bfd82e7346f3659")
     version("2024.12.2", sha256="13c5ef32c5489e9e32e9f9163eb13e045f722ed6ed0f17ce1e07f892fc77a547")
 

@@ -18,5 +18,6 @@ class PyPyvips(PythonPackage):
     depends_on("py-setuptools@61:", type="build")
     depends_on("py-pkgconfig@1.5:", type="build")  # needed to enable API mode
     depends_on("py-cffi@1:", type=("build", "run"))
+    depends_on("c", type="build")
 
     depends_on("libvips +fftw +jpeg +tiff +png +poppler", type=("run", "build", "link"))
