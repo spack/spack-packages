@@ -703,9 +703,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         enable_or_disable("rocm")
         if "+rocm" in self.spec:
-            # So libtorch_hip.so and aotriton libs find libamdhip64.so at runtime and
-            # during binary cache relocation (avoids "libamdhip64.so.6 => not found").
-            env.append_flags("LDFLAGS", "-Wl,-rpath," + self.spec["hip"].prefix.lib)
+            # So libtorch_hip.so and dependents find ROCm/runtime libs at runtime and
+            # during binary cache relocation (avoids "=> not found" for e.g.
+            # libamdhip64.so.6, libhsa-runtime64.so.1).
+            for lib_dir in [
+                self.spec["hip"].prefix.lib,
+                self.spec["hsa-rocr-dev"].prefix.lib,
+            ]:
+            env.append_flags("LDFLAGS", "-Wl,-rpath," + lib_dir)
             env.set("PYTORCH_ROCM_ARCH", ";".join(self.spec.variants["amdgpu_target"].value))
             env.set("HSA_PATH", self.spec["hsa-rocr-dev"].prefix)
             env.set("ROCBLAS_PATH", self.spec["rocblas"].prefix)
@@ -726,6 +731,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             if self.spec.satisfies("@2.5:"):
                 env.set("TORCHINDUCTOR_CK_DIR", self.spec["composable-kernel"].prefix)
                 env.set("AOTRITON_INSTALLED_PREFIX", self.spec["aotriton"].prefix)
+                env.prepend_path("CPATH", self.spec["aotriton"].prefix.include)
             if self.spec.satisfies("^hip@5.2.0:"):
                 env.set("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip)
 

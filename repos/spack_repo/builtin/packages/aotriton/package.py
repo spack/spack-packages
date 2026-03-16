@@ -138,4 +138,15 @@ class Aotriton(CMakePackage):
         # during binary cache relocation (avoids "libamdhip64.so.6 => not found").
         args.append(self.define("CMAKE_INSTALL_RPATH", self.spec["hip"].prefix.lib))
         args.append(self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True))
+        # So libaotriton_v2.so and extensions find shared libs at runtime and
+        # during binary cache relocation (avoids "=> not found" for e.g.
+        # libamdhip64.so.6, libz.so.1, libhsa-runtime64.so.1, libc++abi.so.1,
+        # libunwind.so.1).
+        rpath_dirs = [
+            self.spec["hip"].prefix.lib,
+            self.spec["hsa-rocr-dev"].prefix.lib,
+            self.spec["zlib-api"].prefix.lib,
+            self.spec["aotriton-llvm"].prefix.lib,
+        ]
+        args.append(self.define("CMAKE_INSTALL_RPATH", rpath_dirs))
         return args
