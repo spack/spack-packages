@@ -186,10 +186,7 @@ class R(AutotoolsPackage):
             config_args.append("--without-tcltk")
             config_args.append("--without-x")
 
-        if "+java" in spec:
-            config_args.append("--enable-java")
-        else:
-            config_args.append("--disable-java")
+        config_args.extend(self.enable_or_disable("java"))
 
         if "+memory_profiling" in spec:
             config_args.append("--enable-memory-profiling")
