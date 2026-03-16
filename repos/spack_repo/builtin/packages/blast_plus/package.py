@@ -172,7 +172,7 @@ class BlastPlus(AutotoolsPackage):
             config_args.append("--without-python")
 
         with when("@2.15:"):
-            config_args.append(f"--with-sqlite={self.spec['sqlite'].prefix}")
+            config_args.append(f"--with-sqlite3={self.spec['sqlite'].prefix}")
 
         with when("@2.17:"):
             config_args.append(f"--with-zstd={self.spec['zstd'].prefix}")
