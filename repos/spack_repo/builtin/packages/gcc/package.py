@@ -1062,7 +1062,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # Other lib directories might exist, so detect based on the existence of the libgcc.
         spec_dir = glob.glob(f"{self.prefix.lib}/gcc/*/*/libgcc.a")
         if spec_dir:
-            return spec_dir[0].rsplit('/', 1)[0]
+            return spec_dir[0].rsplit("/", 1)[0]
         else:
             return None
 
