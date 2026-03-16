@@ -41,12 +41,16 @@ class Covfie(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.21:", type="build", when="@0.11:")
     depends_on("cmake@3.18:", type="build")
 
+    # requirements for examples
+    depends_on("boost@1.71: +log +program_options", type="test")
+
     def cmake_args(self):
         args = [
             self.define("COVFIE_PLATFORM_CPU", True),
             self.define_from_variant("COVFIE_PLATFORM_CUDA", "cuda"),
             self.define_from_variant("COVFIE_PLATFORM_HIP", "rocm"),
             self.define("COVFIE_QUIET", True),
+            self.define("COVFIE_BUILD_EXAMPLES", self.run_tests),
             self.define("COVFIE_BUILD_TESTS", self.run_tests),
         ]
 
