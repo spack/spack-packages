@@ -24,6 +24,7 @@ class Elbencho(MakefilePackage):
 
     version("master", branch="master")
 
+    version("3.0-37", sha256="9d877d5e8d3d035d447a46e0d4f4b335e9d9834592dfb83d86dbb5ab1ed1bd76")
     version("3.0-35", sha256="0a1b4128d71ac3e972a0875f601530760d7d3ab1ecbe998558c5c425d668366b")
     version("3.0-3", sha256="5769abcdaebefe2984ac3053fb6e91a54e1863d5ea8f72daea830e10b27c0eaf")
     version("3.0-1", sha256="19dad85e1fc74419dcdf740f11a47d3f6d566770a06e40976755a3404566c11d")
