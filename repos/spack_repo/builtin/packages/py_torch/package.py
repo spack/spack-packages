@@ -710,7 +710,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                 self.spec["hip"].prefix.lib,
                 self.spec["hsa-rocr-dev"].prefix.lib,
             ]:
-            env.append_flags("LDFLAGS", "-Wl,-rpath," + lib_dir)
+                env.append_flags("LDFLAGS", "-Wl,-rpath," + lib_dir)
             env.set("PYTORCH_ROCM_ARCH", ";".join(self.spec.variants["amdgpu_target"].value))
             env.set("HSA_PATH", self.spec["hsa-rocr-dev"].prefix)
             env.set("ROCBLAS_PATH", self.spec["rocblas"].prefix)
