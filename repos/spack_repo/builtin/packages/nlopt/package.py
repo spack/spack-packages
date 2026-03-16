@@ -61,7 +61,7 @@ class Nlopt(CMakePackage):
             self.define_from_variant("NLOPT_OCTAVE", "octave"),
             self.define_from_variant("NLOPT_CXX", "cxx"),
             self.define_from_variant("NLOPT_PYTHON", "python"),
-            self.define_from_variant("NLOPT_GUILE", "guile")
+            self.define_from_variant("NLOPT_GUILE", "guile"),
         ]
 
         if spec.satisfies("+matlab"):
