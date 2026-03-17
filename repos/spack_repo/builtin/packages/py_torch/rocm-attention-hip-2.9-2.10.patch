@@ -1,5 +1,5 @@
 diff --git a/aten/src/ATen/native/transformers/cuda/attention.cu b/aten/src/ATen/native/transformers/cuda/attention.cu
-index c2193f2..dc1ee16 100644
+index c2193f2..675eed5 100644
 --- a/aten/src/ATen/native/transformers/cuda/attention.cu
 +++ b/aten/src/ATen/native/transformers/cuda/attention.cu
 @@ -95,6 +95,19 @@
@@ -26,7 +26,7 @@ index c2193f2..dc1ee16 100644
          dummy_attn_bias); // Not used in flash attention
    }
  #endif
-+#ifndef DISABLE_AOTRITON
++#if defined(USE_MEM_EFF_ATTENTION) && !defined(DISABLE_AOTRITON)
    return mha_fwd_aot(
        q,
        k,
@@ -36,7 +36,7 @@ index c2193f2..dc1ee16 100644
        gen_);
 +#else
 +  TORCH_CHECK(false,
-+    "ROCm flash/mem_eff attention requires AOTriton. Rebuild without DISABLE_AOTRITON.");
++    "ROCm flash/mem_eff attention requires AOTriton (USE_MEM_EFF_ATTENTION and not DISABLE_AOTRITON).");
 +  return std::make_tuple(
 +    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor(),
 +    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor());

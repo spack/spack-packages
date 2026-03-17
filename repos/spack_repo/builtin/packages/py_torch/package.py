@@ -450,8 +450,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("PR152569-Update-spack-includes-2.6.patch", when="@2.6+rocm")
     patch("PR152569-Update-spack-includes-2.7.patch", when="@2.7+rocm")
     # Fix ROCm HIP build: define CHECK_NOSPARSE_* for HIP and guard mha_fwd_aot
-    # when DISABLE_AOTRITON is set (avoids undeclared identifier errors in
-    # attention.hip). See https://github.com/spack/spack-packages/pull/3630
+    # so it is only called when USE_MEM_EFF_ATTENTION is set and DISABLE_AOTRITON
+    # is not (avoids undeclared identifier errors when aotriton headers are not
+    # included). See https://github.com/spack/spack-packages/pull/3630
     patch("rocm-attention-hip-2.9-2.10.patch", when="@2.9:+rocm")
 
     # https://github.com/pytorch/pytorch/pull/147993
@@ -606,7 +607,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             filter_file(
                 "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)",
                 "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)\n"
-                "set(ROCTRACER_INCLUDE_DIR $ENV{ROCTRACER_INCLUDE_DIR})",
+                "if(DEFINED ENV{ROCTRACER_INCLUDE_DIR})\n"
+                "  set(ROCTRACER_INCLUDE_DIR $ENV{ROCTRACER_INCLUDE_DIR} CACHE PATH "
+                '"Roctracer include directory" FORCE)\n'
+                "endif()",
                 "cmake/public/LoadHIP.cmake",
                 string=True,
             )
