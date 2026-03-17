@@ -13,6 +13,8 @@ class UnitsLlnl(CMakePackage):
     homepage = "https://github.com/LLNL/units"
     git = "https://github.com/LLNL/units.git"
 
+    maintainers("phlptp")
+
     license("BSD-3-Clause", checked_by="cmelone")
 
     version("main", branch="main")
