@@ -170,12 +170,7 @@ class Blis(BlisBase):
         multi=False,
     )
 
-    variant(
-        "scalapack",
-        default=False,
-        description="ScaLAPACK compatibility",
-        when="@2.0:",
-    )
+    variant("scalapack", default=False, description="ScaLAPACK compatibility", when="@2.0:")
 
     # Problems with permissions on installed libraries:
     # https://github.com/flame/blis/issues/343
