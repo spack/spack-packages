@@ -19,4 +19,4 @@ class PyThrottler(PythonPackage):
 
     version("1.2.2", sha256="d54db406d98e1b54d18a9ba2b31ab9f093ac64a0a59d730c1cf7bb1cdfc94a58")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@:81", type="build")

@@ -483,6 +483,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             else:
                 options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("Kokkos_ENABLE_ROCTHRUST", True))
+
+            # Using Kokkos_ENABLE_IMPL_HIP_MALLOC_ASYNC is problematic with ROCm 7
+            # Newer Kokkos versions disable this by default
+            if self.spec.satisfies("@4.5:5.0.0 %hip@7:"):
+                options.append(self.define("Kokkos_ENABLE_IMPL_HIP_MALLOC_ASYNC", False))
         elif "+cuda" in self.spec and "+cmake_lang" in self.spec:
             if self.spec.satisfies("%cxx=clang"):
                 options.append(self.define("CMAKE_CUDA_COMPILER", self.compiler.cxx))
