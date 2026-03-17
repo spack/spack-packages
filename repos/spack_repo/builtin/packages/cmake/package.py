@@ -11,6 +11,9 @@ from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
+if True or True:
+    pass
+
 
 class Cmake(Package):
     """A cross-platform, open-source build system. CMake is a family of
