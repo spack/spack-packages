@@ -18,6 +18,10 @@ class Fvtkhdf(CMakePackage):
 
     license("BSD-2-Clause")
 
+    conflicts(
+        "platform=windows", msg="This package is not supported on native Windows; use WSL instead."
+    )
+
     version("0.5.1", sha256="e7bf499335a2f29a44b34b0c833fb19574a934702eaa6bc6b38e82fc443bf50a")
 
     variant("shared", default=True, description="Build shared libraries")
