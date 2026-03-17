@@ -120,7 +120,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "profiling",
         default=False,
-        when="@:0.12.0",
+        when="@:0.12",
         description="Build with hooks for Adiak/Caliper performance analysis. "
         "Deprecated -- use the adiak and/or caliper variants directly "
         "versions 0.13.0 and onwards.",
