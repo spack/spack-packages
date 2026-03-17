@@ -1,0 +1,43 @@
+--- a/aten/src/ATen/native/transformers/cuda/attention.cu
++++ b/aten/src/ATen/native/transformers/cuda/attention.cu
+@@ -95,6 +95,19 @@
+ #endif
+ #endif
+ 
++#ifdef __HIP_PLATFORM_AMD__
++#ifndef CHECK_NOSPARSE_CONTIGUOUS_CUDA
++#define CHECK_NOSPARSE_CONTIGUOUS_CUDA(t) \
++  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \
++  TORCH_CHECK((t).is_contiguous(), "Expected contiguous tensor")
++#endif
++#ifndef CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA
++#define CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA(t) \
++  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \
++  TORCH_CHECK((t).is_contiguous(), "Expected last-dim contiguous tensor")
++#endif
++#endif
++
+ #if defined(USE_ROCM) && (defined(USE_FLASH_ATTENTION) || defined(USE_MEM_EFF_ATTENTION))
+ namespace pytorch_flash
+ {
+@@ -143,7 +156,17 @@ mha_fwd(
+  dummy_attn_bias); // Not used in flash attention
+  }
+ #endif
++#ifndef DISABLE_AOTRITON
+  return mha_fwd_aot(
+  q,
+  k,
+@@ -157,6 +180,13 @@ mha_fwd(
+  return_softmax,
+  gen_);
++#else
++  TORCH_CHECK(false,
++    "ROCm flash/mem_eff attention requires AOTriton. Rebuild without DISABLE_AOTRITON.");
++  return std::make_tuple(
++    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor(),
++    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor());
++#endif
+ }
+ }
+ #endif

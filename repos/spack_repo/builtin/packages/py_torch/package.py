@@ -449,6 +449,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("PR152569-Update-spack-includes-2.5.patch", when="@2.5+rocm")
     patch("PR152569-Update-spack-includes-2.6.patch", when="@2.6+rocm")
     patch("PR152569-Update-spack-includes-2.7.patch", when="@2.7+rocm")
+    # Fix ROCm HIP build: define CHECK_NOSPARSE_* for HIP and guard mha_fwd_aot
+    # when DISABLE_AOTRITON is set (avoids undeclared identifier errors in
+    # attention.hip). See https://github.com/spack/spack-packages/pull/3630
+    patch("rocm-attention-hip-2.9-2.10.patch", when="@2.9:+rocm")
 
     # https://github.com/pytorch/pytorch/pull/147993
     # prevents pytorch from potentially using system version of config.h
