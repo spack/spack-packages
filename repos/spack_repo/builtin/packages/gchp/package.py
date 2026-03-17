@@ -39,7 +39,7 @@ class Gchp(CMakePackage):
     depends_on("esmf@8.0.1", when="@13.0.0:")
     depends_on("mpi@3")
     depends_on("netcdf-fortran")
-    depends_on("cmake@3.13:")
+    depends_on("cmake@3.24:")
     depends_on("libfabric", when="+ofi")
     depends_on("m4")
 
