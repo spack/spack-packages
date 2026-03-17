@@ -69,7 +69,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
         config_args = ["CC=%s" % spec["mpi"].mpicc, "CXX=%s" % spec["mpi"].mpicxx]
 
         if "+cuda" in spec:
-            config_args.extend(["--enable-cuda","--with-cuda=%s" % spec["cuda"].prefix])
+            config_args.extend(["--enable-cuda", "--with-cuda=%s" % spec["cuda"].prefix])
             if spec.satisfies("+xccl"):
                 config_args.extend(["--enable-ncclomb", "--with-nccl=%s" % spec["nccl"].prefix])
             cuda_arch = spec.variants["cuda_arch"].value
@@ -77,7 +77,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
                 config_args.append("NVCCFLAGS=" + " ".join(self.cuda_flags(cuda_arch)))
 
         if "+rocm" in spec:
-            config_args.extend([ "--with-rocm=%s" % spec["hip"].prefix])
+            config_args.extend(["--with-rocm=%s" % spec["hip"].prefix])
             if spec.satisfies("+xccl"):
                 config_args.extend(["--enable-rcclomb", "--with-rccl=%s" % spec["rccl"].prefix])
             rocm_arch = spec.variants["amdgpu_target"].value
@@ -98,9 +98,10 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
         if not sys.platform == "darwin":
             config_args.append("LDFLAGS=-lrt")
         return config_args
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if "+cuda" in self.spec:
-            env.prepend_path('LD_LIBRARY_PATH',self.spec["cuda"].prefix.lib64.stubs)
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix.lib64.stubs)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         mpidir = join_path(self.prefix.libexec, "osu-micro-benchmarks", "mpi")
