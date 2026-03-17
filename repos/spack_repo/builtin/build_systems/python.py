@@ -187,17 +187,15 @@ class PythonExtension(PackageBase):
         # Make sure we are importing the installed modules,
         # not the ones in the source directory
         python = self.module.python
-        with test_part(
-            self,
-            f"test_imports",
-            purpose=f"checking imports",
-            work_dir="spack-test",
-        ):
-            python("-c", f"""
+        with test_part(self, f"test_imports", purpose=f"checking imports", work_dir="spack-test"):
+            python(
+                "-c",
+                f"""
 import importlib
 for module in {self.import_modules}:
     importlib.import_module(module)
-""")
+""",
+            )
 
 
 def _homepage(cls: "PythonPackage") -> Optional[str]:
