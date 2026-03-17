@@ -11,10 +11,11 @@ class PyGrpcio(PythonPackage):
     """HTTP/2-based RPC framework."""
 
     homepage = "https://grpc.io/"
-    pypi = "grpcio/grpcio-1.32.0.tar.gz"
+    pypi = "grpcio/grpcio-1.78.1.tar.gz"
 
     license("Apache-2.0")
 
+    version("1.78.1", sha256="27c625532d33ace45d57e775edf1982e183ff8641c72e4e91ef7ba667a149d72")
     version("1.75.0", sha256="b989e8b09489478c2d19fecc744a298930f40d8b27c3638afbfe84d22f36ce4e")
     version("1.71.0", sha256="2b85f7820475ad3edec209d3d89a7909ada16caab05d3f2e08a7e8ae3200a55c")
     version("1.64.0", sha256="257baf07f53a571c215eebe9679c3058a313fd1d1f7c4eede5a8660108c52d9c")
@@ -92,6 +93,7 @@ class PyGrpcio(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-setuptools")
+        depends_on("py-setuptools@77.0.1:", when="@1.78:")
         depends_on("py-cython@3.1.1:", when="@1.75:")
         depends_on("py-cython@3.0.0:", when="@1.63:1.71")
         depends_on("py-cython@0.23:2", when="@:1.62")
@@ -110,6 +112,13 @@ class PyGrpcio(PythonPackage):
     depends_on("abseil-cpp+shared cxxstd=14", when="@1.47:1.64")
 
     patch("30522.diff", when="@1.48")  # https://github.com/grpc/grpc/issues/30372
+
+    # Fix missing includes exposed by abseil-cpp 20260107+. See https://github.com/grpc/grpc/pull/41351
+    patch(
+        "https://github.com/grpc/grpc/commit/223be6932adb00d085149c53167c1b0318745f6c.patch?full_index=1",
+        when="@1.71:1.76",
+        sha256="50e41d42bf3d5b8b5edf131ff5f232079b79fe25c567fbf8a70e73b9ecfa5008",
+    )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("GRPC_PYTHON_BUILD_WITH_CYTHON", "True")
@@ -136,7 +145,7 @@ class PyGrpcio(PythonPackage):
         if "openssl" in self.spec:
             filter_file(
                 r"(\s+SSL_INCLUDE = ).*",
-                r"\1('{0}',)".format(self.spec["openssl"].prefix.include),
+                r"\1('{0}',)".format(self.spec["openssl"].prefix.include.openssl),
                 "setup.py",
             )
         if "zlib-api" in self.spec:
@@ -154,7 +163,7 @@ class PyGrpcio(PythonPackage):
         if "re2" in self.spec:
             filter_file(
                 r"(\s+RE2_INCLUDE = ).*",
-                r"\1('{0}',)".format(self.spec["re2"].prefix.include),
+                r"\1('{0}',)".format(self.spec["re2"].prefix.include.re2),
                 "setup.py",
             )
         if "abseil-cpp" in self.spec:
