@@ -187,7 +187,6 @@ class PythonExtension(PackageBase):
         # Make sure we are importing the installed modules,
         # not the ones in the source directory
         python = self.module.python
-        tty.debug(self.import_modules)
         with test_part(
             self,
             f"test_imports",
@@ -197,7 +196,6 @@ class PythonExtension(PackageBase):
             python("-c", f"""
 import importlib
 for module in {self.import_modules}:
-    print(module)
     importlib.import_module(module)
 """)
 
