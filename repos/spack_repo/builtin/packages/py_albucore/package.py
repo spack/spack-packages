@@ -33,3 +33,6 @@ class PyAlbucore(PythonPackage):
     depends_on("py-simsimd@5.9.2:", type=("build", "run"), when="@:0.0.41")
     depends_on("py-typing-extensions@4.9:", type=("build", "run"), when="@:0.0.33 ^python@:3.9")
     depends_on("opencv@4.9.0.80:+python3+contrib", type=("build", "run"), when="@:0.0.34")
+
+    # pkg_resources removal from py-setuptools
+    conflicts("^py-setuptools@81:")
