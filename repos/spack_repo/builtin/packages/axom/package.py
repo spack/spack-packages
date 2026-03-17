@@ -141,8 +141,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("int64", default=True, description="Use 64bit integers for IndexType")
 
     # variants for package dependencies
-    variant("adiak", default=False, when="@0.13.0:", description="Build with adiak")
-    variant("caliper", default=False, when="@0.13.0:", description="Build with caliper")
+    variant("adiak", default=False, when="@0.13:", description="Build with adiak")
+    variant("caliper", default=False, when="@0.13:", description="Build with caliper")
     variant("conduit", default=True, description="Build with conduit")
 
     variant("opencascade", default=False, description="Build with opencascade")
