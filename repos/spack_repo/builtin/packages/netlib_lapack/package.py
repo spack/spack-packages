@@ -96,7 +96,12 @@ class NetlibLapack(CMakePackage):
 
     variant("shared", default=True, description="Build shared library version")
     variant("pic", default=True, description="Produce position-independent code")
-    variant("external-blas", default=False, description="Build lapack with an external blas")
+    variant(
+        "external-blas",
+        default=False,
+        sticky=True,
+        description="Build lapack with an external blas",
+    )
     variant("lapacke", default=True, description="Activates the build of the LAPACKE C interface")
     variant("xblas", default=False, description="Builds extended precision routines using XBLAS")
 
