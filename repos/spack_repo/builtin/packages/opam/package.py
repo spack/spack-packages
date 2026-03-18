@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -17,8 +19,9 @@ class Opam(AutotoolsPackage):
     homepage = "https://opam.ocaml.org/"
     url = "https://github.com/ocaml/opam/releases/download/1.2.2/opam-full-1.2.2.tar.gz"
 
-    maintainers("scemama")
+    maintainers("green-br")
 
+    version("2.4.1", sha256="c4d053029793c714e4e7340b1157428c0f90783585fb17f35158247a640467d9")
     version("2.2.1", sha256="07ad3887f61e0bc61a0923faae16fcc141285ece5b248a9e2cd4f902523cc121")
     version("2.2.0", sha256="39334f36adbe280683487cf204b7b0642080fc5965747f7d6f7cc7b83cd7a192")
     version("2.1.6", sha256="d2af5edc85f552e0cf5ec0ddcc949d94f2dc550dc5df595174a06a4eaf8af628")
@@ -35,12 +38,24 @@ class Opam(AutotoolsPackage):
     version("1.2.2", sha256="15e617179251041f4bf3910257bbb8398db987d863dd3cfc288bdd958de58f00")
     version("1.2.1", sha256="f210ece7a2def34b486c9ccfb75de8febd64487b2ea4a14a7fa0358f37eacc3b")
 
+    variant("user", default=False, description="User-supplied environment.")
+    variant("sandbox", default=True, description="Use sandbox feature.")
+
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
+    depends_on("bubblewrap", type=("build", "run"), when="@2: +sandbox platform=linux")
 
     # OCaml 4.10.0 has removed the -safe-string flag, which is necessary
     # for OPAM 1i (see docstring of setup_build_environment).
     depends_on("ocaml@:4.09.0", type="build", when="@:1.2.2")
     depends_on("ocaml", type="build", when="@2.0.0:")
+
+    # This code assumes __APPLE__ means apple-clang, require apple-clang for ocaml
+    depends_on("ocaml%c=apple-clang", type="build", when="platform=darwin")
+
+    # Ocaml stores its compiler which isnt easy to override so lets match here.
+    requires("%c=apple-clang", when="platform=darwin")
 
     # While this package is a makefile package, 'make' is really only used to
     # call the locally built copy of dune, which is itself parallel, so there's
@@ -50,9 +65,21 @@ class Opam(AutotoolsPackage):
 
     sanity_check_is_file = ["bin/opam"]
 
-    @property
-    def build_directory(self):
-        return self.stage.source_path
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec
+    ) -> None:
+        if self.spec.satisfies("+user"):
+            # User supplied environment
+            return
+        else:
+            rootdir = os.path.join(self.spec.prefix, "root", "default")
+
+        env.set("OPAM_SWITCH_PREFIX", rootdir)
+        env.set("OCAMLTOP_INCLUDE_PATH", os.path.join(rootdir, "lib", "toplevel"))
+        env.set("CAML_LD_LIBRARY_PATH", os.path.join(rootdir, "lib", "stublibs"))
+        env.append_path("CAML_LD_LIBRARY_PATH", os.path.join(rootdir, "lib", "ocaml"))
+        env.set("OCAML_TOPLEVEL_PATH", os.path.join(rootdir, "lib", "toplevel"))
+        env.prepend_path("PATH", os.path.join(rootdir, "bin"))
 
     @when("@:1.2.2")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
@@ -90,3 +117,8 @@ class Opam(AutotoolsPackage):
 
     def install(self, spec, prefix):
         make("install")
+        opam = Executable(prefix + "/bin/opam")
+        if spec.satisfies("~user +sandbox"):
+            opam("init", "--root={0}/root".format(prefix), "-n")
+        if spec.satisfies("~user ~sandbox"):
+            opam("init", "--root={0}/root".format(prefix), "-n", "--disable-sandboxing", "-y")
