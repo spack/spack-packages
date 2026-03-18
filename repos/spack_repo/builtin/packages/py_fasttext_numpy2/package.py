@@ -22,3 +22,5 @@ class PyFasttextNumpy2(PythonPackage):
     depends_on("py-setuptools@0.7:", type="build")
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-pybind11@2.2:", type=("build", "run"))
+
+    depends_on("cxx", type="build")

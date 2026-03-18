@@ -17,7 +17,9 @@ class Libcxi(AutotoolsPackage):
     license("LGPL-2.1-or-later or BSD-3-Clause")
 
     version("main", branch="main")
+    version("13.1.0", tag="release/shs-13.1.0")
     version("13.0.0", tag="release/shs-13.0.0")
+    version("12.0.2", tag="release/shs-12.0.2")
     version("12.0.1", tag="release/shs-12.0.1")
     version("12.0.0", tag="release/shs-12.0.0")
 
@@ -60,7 +62,7 @@ class Libcxi(AutotoolsPackage):
         )
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

@@ -15,6 +15,7 @@ class PyVscBase(PythonPackage):
 
     license("LGPL-2.0-only")
 
+    version("3.6.1", sha256="8e6a14431d3ebd19c4746a77398510fa8bdd985db5d192cc50785995b72e656e")
     version("2.5.8", sha256="7fcd300f842edf4baade7d0b7a3b462ca7dfb2a411a7532694a90127c6646ee2")
 
     depends_on("py-setuptools", type=("build", "run"))

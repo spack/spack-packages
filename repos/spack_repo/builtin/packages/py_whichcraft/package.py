@@ -15,6 +15,7 @@ class PyWhichcraft(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.6.1", sha256="bfa077578261e8bce72ebd44025a2ac196f943123e551589bd5f1c25af9f0085")
     version("0.4.1", sha256="66875022b3b9da8ddf7ab236c15670a782094550d07daeb51ceba4bc61b6b4aa")
 
     depends_on("py-setuptools", type="build")

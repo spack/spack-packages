@@ -13,12 +13,13 @@ class Mozjpeg(CMakePackage):
     smaller file sizes at the same time"""
 
     homepage = "https://github.com/mozilla/mozjpeg"
-    url = "https://github.com/mozilla/mozjpeg/archive/refs/tags/v4.1.1.tar.gz"
+    url = "https://github.com/mozilla/mozjpeg/archive/refs/tags/v4.1.5.tar.gz"
 
     maintainers("RemiLacroix-IDRIS")
 
     license("Zlib")
 
+    version("4.1.5", sha256="9fcbb7171f6ac383f5b391175d6fb3acde5e64c4c4727274eade84ed0998fcc1")
     version("4.1.1", sha256="66b1b8d6b55d263f35f27f55acaaa3234df2a401232de99b6d099e2bb0a9d196")
 
     provides("jpeg")

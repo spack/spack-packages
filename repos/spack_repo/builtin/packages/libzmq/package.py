@@ -105,7 +105,7 @@ class Libzmq(AutotoolsPackage):
 
     @when("@master")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def configure_args(self):

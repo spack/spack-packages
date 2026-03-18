@@ -200,16 +200,10 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             "--disable-cuda",
             "--disable-hip",
             "--enable-threads={0}".format(spec.variants["threads"].value),
-            "--with-ch3-rank-bits={0}".format(spec.variants["ch3_rank_bits"].value),
             "--enable-wrapper-rpath={0}".format("no" if "~wrapperrpath" in spec else "yes"),
         ]
 
         args.extend(self.enable_or_disable("alloca"))
-        if not spec.satisfies("pmi_version=none"):
-            args.append("--with-pmi=" + spec.variants["pmi_version"].value)
-        if "pmi_version=pmix" in spec:
-            args.append("--with-pmix={0}".format(spec["pmix"].prefix))
-
         if "+debug" in self.spec:
             args.extend(
                 [
@@ -222,7 +216,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
                 ]
             )
         else:
-            args.append("--enable-fast=all")
+            args.append("--enable-fast=O3,ndebug")
 
         if "+regcache" in self.spec:
             args.append("--enable-registration-cache")

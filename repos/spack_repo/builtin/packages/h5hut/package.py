@@ -52,7 +52,7 @@ class H5hut(AutotoolsPackage):
         return flags, None, build_system_flags
 
     def autoreconf(self, spec, prefix):
-        which("bash")("autogen.sh")
+        which("bash", required=True)("autogen.sh")
 
     def configure_args(self):
         spec = self.spec

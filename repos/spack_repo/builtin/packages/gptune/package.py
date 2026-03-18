@@ -217,7 +217,7 @@ class Gptune(CMakePackage):
             )
 
         # copy the environment configuration to the python install directory
-        cp = which("cp")
+        cp = which("cp", required=True)
         platlib = self.spec["python"].package.platlib
         cp(script_path, join_path(self.prefix, platlib, "run_env.sh"))
         cp(
@@ -231,8 +231,6 @@ class Gptune(CMakePackage):
         gptune_path = join_path(self.prefix, self.spec["python"].package.platlib, "GPTune")
         env.prepend_path("PYTHONPATH", gptune_path)
 
-    cmd = {"bash": which("bash"), "cp": which("cp"), "git": which("git"), "rm": which("rm")}
-
     def test_hypre(self):
         """set up and run hypre example"""
         spec = self.spec
@@ -243,13 +241,17 @@ class Gptune(CMakePackage):
         if not self.spec["hypre"].satisfies("@2.19.0"):
             raise SkipTest("Package test only works for hypre@2.19.0")
 
+        rm = which("rm", required=True)
+        cp = which("cp", required=True)
+        git = which("git", required=True)
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         # copy hypre executables to the correct place
         wd = join_path(test_dir, "Hypre")
         with working_dir(wd):
-            self.cmd["rm"]("-rf", "hypre")
-            self.cmd["git"](
+            rm("-rf", "hypre")
+            git(
                 "clone",
                 "--depth",
                 "1",
@@ -260,12 +262,12 @@ class Gptune(CMakePackage):
 
         hypre_test_dir = join_path(wd, "hypre", "src", "test")
         mkdirp(hypre_test_dir)
-        self.cmd["cp"]("-r", self.spec["hypre"].prefix.bin.ij, hypre_test_dir)
+        cp("-r", self.spec["hypre"].prefix.bin.ij, hypre_test_dir)
 
         # now run the test example
         with working_dir(join_path(test_dir, "Hypre")):
             terminate_bash_failures(".")
-            self.cmd["bash"]("run_examples.sh")
+            bash("run_examples.sh")
 
     def test_superlu(self):
         """set up and run superlu tests"""
@@ -276,18 +278,22 @@ class Gptune(CMakePackage):
         if self.spec["superlu-dist"].version < Version("7.1"):
             raise SkipTest("Package must be installed with superlu-dist@:7.1")
 
+        rm = which("rm", required=True)
+        cp = which("cp", required=True)
+        git = which("git", required=True)
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         # copy only works for-dist executables to the correct place
         wd = join_path(test_dir, "SuperLU_DIST")
         with working_dir(wd):
-            self.cmd["rm"]("-rf", "superlu_dist")
+            rm("-rf", "superlu_dist")
             version = self.spec["superlu-dist"].version.string
             tag = f"v{version}" if version.replace(".", "").isdigit() else version
             # TODO: Replace this IF/when superlu-dist renames its "master"
             # branch's version from "develop" to "master".
             tag = "master" if tag == "develop" else tag
-            self.cmd["git"](
+            git(
                 "clone",
                 "--depth",
                 "1",
@@ -299,7 +305,7 @@ class Gptune(CMakePackage):
         superludriver = self.spec["superlu-dist"].prefix.lib.EXAMPLE.pddrive_spawn
         example_dir = join_path(wd, "superlu_dist", "build", "EXAMPLE")
         mkdirp(example_dir)
-        self.cmd["cp"]("-r", superludriver, example_dir)
+        cp("-r", superludriver, example_dir)
 
         apps = ["SuperLU_DIST", "SuperLU_DIST_RCI"]
         for app in apps:
@@ -308,21 +314,23 @@ class Gptune(CMakePackage):
                     raise SkipTest("Package must be installed with +superlu+mpispawn")
                 with working_dir(join_path(test_dir, app)):
                     terminate_bash_failures(".")
-                    self.cmd["bash"]("run_examples.sh")
+                    bash("run_examples.sh")
 
     def test_demo(self):
         """Run the demo test"""
         if self.spec.satisfies("~mpispawn"):
             raise SkipTest("Package must be installed with +mpispawn")
 
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         with working_dir(join_path(test_dir, "GPTune-Demo")):
             terminate_bash_failures(".")
-            self.cmd["bash"]("run_examples.sh")
+            bash("run_examples.sh")
 
     def test_scalapack(self):
         """Run scalapack tests"""
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         apps = ["Scalapack-PDGEQRF", "Scalapack-PDGEQRF_RCI"]
@@ -332,4 +340,4 @@ class Gptune(CMakePackage):
                     raise SkipTest("Package must be installed with +superlu+mpispawn")
                 with working_dir(join_path(test_dir, app)):
                     terminate_bash_failures(".")
-                    self.cmd["bash"]("run_examples.sh")
+                    bash("run_examples.sh")

@@ -176,7 +176,6 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("py-pyyaml", type=("build", "run", "test"))
     depends_on("range-v3")
     depends_on("root +python +root7 +ssl +tbb")
-    requires("^root +threads", when="^root@:6.19.01")
     # force root to have the same cxxstd
     for _cxxstd in _cxxstd_values:
         for _v in _cxxstd:
@@ -185,10 +184,11 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("py-pytest-cov", when="@39:")
 
     # Testing dependencies
-    # Note: gaudi only builds examples when testing enabled
     for pv in (["catch2", "@36.8:"], ["py-nose", "@35:37"], ["py-pytest", "@36.2:"]):
         depends_on(pv[0], when=pv[1], type="test")
-        depends_on(pv[0], when=pv[1] + " +examples")
+        with when("@:38.1"):
+            # Note: until 38.1 gaudi only builds examples when testing enabled
+            depends_on(pv[0], when=pv[1] + " +examples")
 
     # Adding these dependencies triggers the build of most optional components
     depends_on("cppunit", when="+cppunit")
@@ -215,8 +215,10 @@ class Gaudi(CMakePackage, CudaPackage):
 
     def cmake_args(self):
         args = [
-            # Note: gaudi only builds examples when testing enabled
-            self.define("BUILD_TESTING", self.run_tests or self.spec.satisfies("+examples")),
+            # Note: until 38.1, gaudi only builds examples when testing enabled
+            self.define(
+                "BUILD_TESTING", self.run_tests or self.spec.satisfies("@:38.1 +examples")
+            ),
             self.define_from_variant("GAUDI_BUILD_EXAMPLES", "examples"),
             self.define_from_variant("GAUDI_USE_AIDA", "aida"),
             self.define_from_variant("GAUDI_USE_CPPUNIT", "cppunit"),

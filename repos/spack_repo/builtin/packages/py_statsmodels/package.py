@@ -70,5 +70,5 @@ class PyStatsmodels(PythonPackage):
     def build_test(self):
         dirs = glob.glob("build/lib*")  # There can be only one...
         with working_dir(dirs[0]):
-            pytest = which("pytest")
+            pytest = which("pytest", required=True)
             pytest("statsmodels")

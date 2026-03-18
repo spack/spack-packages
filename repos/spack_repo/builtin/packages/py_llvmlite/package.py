@@ -43,6 +43,9 @@ class PyLlvmlite(PythonPackage):
         depends_on("binutils", when="platform=linux")
         depends_on("py-setuptools")
 
+        # https://github.com/numba/llvmlite/pull/1400
+        depends_on("py-setuptools@:80", when="@:0.46")
+
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
         depends_on("python@3.10:3.14", when="@0.46:")

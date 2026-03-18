@@ -50,10 +50,14 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("cmake@3.26:", when="@1.17:", type="build")
     depends_on("cmake@3.1:", type="build")
 
-    depends_on("abseil-cpp@20240722.0: cxxstd=17", when="@1.20:")
-    # Needs absl/strings/has_absl_stringify.h
-    # cxxstd=20 may also work, but cxxstd=14 does not
-    depends_on("abseil-cpp@20240116.0: cxxstd=17", when="@1.17:1.19.2")
+    with when("@1.17:"):
+        # Needs absl/strings/has_absl_stringify.h
+        # cxxstd=20 may also work, but cxxstd=14 does not
+        depends_on("abseil-cpp@20240116.0: cxxstd=17")
+        depends_on("abseil-cpp@20240722.0:", when="@1.20:")
+
+        # abseil 20250814+ lacks absl::low_level_hash: https://github.com/microsoft/onnxruntime/issues/25815
+        depends_on("abseil-cpp@:20250512")
 
     extends("python")
     depends_on("python", type=("build", "run"))
@@ -148,6 +152,10 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         sha256="fedcf5b0720ebad97d332f440f427a7e9f2fc96ff0a648f7832786ef1a83fe0e",
         when="@1.17:1.20.2",
     )
+
+    # Add back linker flags "-z noexecstack"
+    # https://github.com/microsoft/onnxruntime/pull/25200
+    patch("pr25200-fix-linker-flags.patch", when="@1.21:1.22")
 
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
 

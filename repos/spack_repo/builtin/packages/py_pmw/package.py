@@ -13,6 +13,7 @@ class PyPmw(PythonPackage):
 
     pypi = "Pmw/Pmw-2.0.0.tar.gz"
 
+    version("2.1.1", sha256="948412457cfccf0c775dd08e0913fb00f90896a33c79737d571c7312aeaf55c6")
     version("2.0.1", sha256="0b9d28f52755a7a081b44591c3dd912054f896e56c9a627db4dd228306ad1120")
     version("2.0.0", sha256="2babb2855feaabeea1003c6908b61c9d39cff606d418685f0559952714c680bb")
 
