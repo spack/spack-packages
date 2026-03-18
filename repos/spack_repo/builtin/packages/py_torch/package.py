@@ -449,11 +449,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("PR152569-Update-spack-includes-2.5.patch", when="@2.5+rocm")
     patch("PR152569-Update-spack-includes-2.6.patch", when="@2.6+rocm")
     patch("PR152569-Update-spack-includes-2.7.patch", when="@2.7+rocm")
-    # Fix ROCm HIP build: define CHECK_NOSPARSE_* for HIP and guard mha_fwd_aot
-    # so it is only called when USE_MEM_EFF_ATTENTION is set and DISABLE_AOTRITON
-    # is not (avoids undeclared identifier errors when aotriton headers are not
-    # included). See https://github.com/spack/spack-packages/pull/3630
-    patch("rocm-attention-hip-2.9-2.10.patch", when="@2.9:+rocm")
 
     # https://github.com/pytorch/pytorch/pull/147993
     # prevents pytorch from potentially using system version of config.h
@@ -642,6 +637,51 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                 "__HIP_PLATFORM_HCC__",
                 "__HIP_PLATFORM_AMD__",
                 "caffe2/CMakeLists.txt",
+                string=True,
+            )
+
+        # Fix ROCm HIP build for 2.9+: define CHECK_NOSPARSE_* for HIP and guard
+        # mha_fwd_aot so it is only called when USE_MEM_EFF_ATTENTION and not
+        # DISABLE_AOTRITON (avoids undeclared identifier in attention.hip).
+        if self.spec.satisfies("@2.9:+rocm"):
+            attention_cu = "aten/src/ATen/native/transformers/cuda/attention.cu"
+            # Add CHECK_NOSPARSE_* macros for HIP after the ROCm flash/mem_eff block
+            filter_file(
+                "#if defined(USE_ROCM) && (defined(USE_FLASH_ATTENTION) || defined(USE_MEM_EFF_ATTENTION))\nnamespace pytorch_flash",
+                "#if defined(USE_ROCM) && (defined(USE_FLASH_ATTENTION) || defined(USE_MEM_EFF_ATTENTION))\n"
+                "#ifdef __HIP_PLATFORM_AMD__\n"
+                "#ifndef CHECK_NOSPARSE_CONTIGUOUS_CUDA\n"
+                "#define CHECK_NOSPARSE_CONTIGUOUS_CUDA(t) \\\n"
+                "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
+                "  TORCH_CHECK((t).is_contiguous(), \"Expected contiguous tensor\")\n"
+                "#endif\n"
+                "#ifndef CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA\n"
+                "#define CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA(t) \\\n"
+                "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
+                "  TORCH_CHECK((t).is_contiguous(), \"Expected last-dim contiguous tensor\")\n"
+                "#endif\n"
+                "#endif\n\n"
+                "namespace pytorch_flash",
+                attention_cu,
+                string=True,
+            )
+            # Guard mha_fwd_aot so it is only used when AOTriton is enabled
+            filter_file(
+                "  return mha_fwd_aot(",
+                "#if defined(USE_MEM_EFF_ATTENTION) && !defined(DISABLE_AOTRITON)\n  return mha_fwd_aot(",
+                attention_cu,
+                string=True,
+            )
+            filter_file(
+                "  gen_);\n  }",
+                "  gen_);\n#else\n"
+                "  TORCH_CHECK(false,\n"
+                '    "ROCm flash/mem_eff attention requires AOTriton (USE_MEM_EFF_ATTENTION and not DISABLE_AOTRITON).");\n'
+                "  return std::make_tuple(\n"
+                "    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor(),\n"
+                "    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor());\n"
+                "#endif\n  }",
+                attention_cu,
                 string=True,
             )
 
