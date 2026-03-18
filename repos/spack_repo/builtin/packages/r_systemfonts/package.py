@@ -22,6 +22,7 @@ class RSystemfonts(RPackage):
 
     license("MIT")
 
+    version("1.3.1", sha256="4392cbf7f97d335b61f7a70257faead2d45a3beeb76249d75a41e9ed82e4456d")
     version("1.1.0", sha256="1941069bd20320284ec026a38c53cb736be60bda431303ceaf8fd27ae13fb644")
     version("1.0.4", sha256="ef766c75b942f147d382664a00d6a4930f1bfe0cce9d88943f571682a85a84c0")
     version("1.0.3", sha256="647c99d5ea6f90a49768ea7b10b39816af6be85168475273369fd973a20dbbba")
@@ -31,7 +32,9 @@ class RSystemfonts(RPackage):
     depends_on("cxx", type="build")
 
     depends_on("r@3.2.0:", type=("build", "run"))
+    depends_on("r-base64enc", type=("build", "run"), when="@1.2.3:")
+    depends_on("r-jsonlite", type=("build", "run"), when="@1.2:")
+    depends_on("r-lifecycle", type=("build", "run"), when="@1.1:")
     depends_on("r-cpp11@0.2.1:", type=("build", "run"))
-    depends_on("r-lifecycle", type=("build", "run"), when="@1.1.0:")
     depends_on("fontconfig")
     depends_on("freetype")

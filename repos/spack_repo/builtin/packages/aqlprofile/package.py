@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -270,7 +271,11 @@ class Aqlprofile(Package):
     Provides AQL packets helper methods for perfcounters (PMC) and SQ threadtraces (SQTT).
     """
 
+    tags = ["rocm"]
+
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+
+    libraries = ["libhsa-amd-aqlprofile64"]
 
     spack_os = host_platform().default_os
     if "rhel" in spack_os or "centos" in spack_os:
@@ -322,6 +327,17 @@ class Aqlprofile(Package):
 
         install_tree(f"opt/rocm-{spec.version}/share/", prefix.share)
         install_tree(f"opt/rocm-{spec.version}/lib/", prefix.lib)
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if not self.spec.external:

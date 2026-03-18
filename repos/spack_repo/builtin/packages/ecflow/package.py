@@ -70,7 +70,7 @@ class Ecflow(CMakePackage):
 
     depends_on("openssl@1:", when="@5:")
     depends_on("pkgconfig", type="build", when="+ssl ^openssl ~shared")
-    depends_on("qt@5:", when="+ui")
+    depends_on("qt@5: +gui", when="+ui")
     # Requirement to use the Python3_EXECUTABLE variable
     depends_on("cmake@3.16:", type="build")
 
@@ -125,7 +125,7 @@ class Ecflow(CMakePackage):
 
     @when("+ssl ^openssl~shared")
     def patch(self):
-        pkgconf = which("pkg-config")
+        pkgconf = which("pkg-config", required=True)
         liblist_l = pkgconf("--libs-only-l", "--static", "openssl", output=str).split()
         liblist = " ".join([ll.replace("-l", "") for ll in liblist_l])
         for sdir in ["Client", "Server"]:

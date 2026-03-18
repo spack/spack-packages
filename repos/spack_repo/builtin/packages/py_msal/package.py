@@ -33,7 +33,3 @@ class PyMsal(PythonPackage):
     depends_on("py-cryptography@0.6:43", type=("build", "run"), when="@1.24:")
     depends_on("py-cryptography@0.6:42", type=("build", "run"), when="@1.22:1.23")
     depends_on("py-cryptography@0.6:40", type=("build", "run"), when="@1.19:1.21")
-    depends_on("py-cryptography@0.6:39", type=("build", "run"), when="@1.18")
-    depends_on("py-cryptography@0.6:38", type=("build", "run"), when="@1.17")
-    depends_on("py-cryptography@0.6:37", type=("build", "run"), when="@1.15:1.16")
-    depends_on("py-cryptography@0.6:3", type=("build", "run"), when="@1.6:1.14")

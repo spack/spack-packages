@@ -1,0 +1,13 @@
+diff --git a/clang/lib/Driver/ToolChains/Linux.cpp b/clang/lib/Driver/ToolChains/Linux.cpp
+index ea628647d6ac..72a6b2bdfdc8 100644
+--- a/clang/lib/Driver/ToolChains/Linux.cpp
++++ b/clang/lib/Driver/ToolChains/Linux.cpp
+@@ -985,7 +985,7 @@ void Linux::AddHIPRuntimeLibArgs(const ArgList &Args,
+       Args.MakeArgString(StringRef("-L") + RocmInstallation->getLibPath()));
+ 
+   if (Args.hasFlag(options::OPT_frtlib_add_rpath,
+-                   options::OPT_fno_rtlib_add_rpath, false)) {
++                   options::OPT_fno_rtlib_add_rpath, true)) {
+     SmallString<0> p = RocmInstallation->getLibPath();
+     llvm::sys::path::remove_dots(p, true);
+     CmdArgs.append({"-rpath", Args.MakeArgString(p)});

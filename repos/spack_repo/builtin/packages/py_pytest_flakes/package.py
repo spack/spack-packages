@@ -16,6 +16,7 @@ class PyPytestFlakes(PythonPackage):
 
     license("MIT")
 
+    version("4.0.5", sha256="953134e97215ae31f6879fbd7368c18d43f709dc2fab5b7777db2bb2bac3a924")
     version("4.0.3", sha256="bf070c5485dad82d5b5f5d0eb08d269737e378492d9a68f5223b0a90924c7754")
     version("4.0.2", sha256="6733db47937d9689032876359e5ee0ee6926e3638546c09220e2f86b3581d4c1")
 

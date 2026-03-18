@@ -29,11 +29,13 @@ class PdipluginSetValue(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("cmake@3.22.1:", type=("build"), when="@1.10.0:")
     depends_on("cmake@3.16.3:", type=("build"))
     for v in Pdi.versions:
         depends_on("pdi@" + str(v), type=("link", "run"), when="@" + str(v))
     depends_on("pkgconfig", type=("build"))
-    depends_on("spdlog@1.5:", type=("link"))
+    depends_on("spdlog@1.9.2:1", type=("link"), when="@1.10.0:")
+    depends_on("spdlog@1.5:1", type=("link"))
 
     root_cmakelists_dir = "plugins/set_value"
 

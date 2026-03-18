@@ -25,6 +25,7 @@ class Ninja(Package):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("1.13.2", sha256="974d6b2f4eeefa25625d34da3cb36bdcebe7fbce40f4c16ac0835fd1c0cbae17")
     version("1.13.0", sha256="f08641d00099a9e40d44ec0146f841c472ae58b7e6dd517bee3945cfd923cedf")
     version("1.12.1", sha256="821bdff48a3f683bc4bb3b6f0b5fe7b2d647cf65d52aeb63328c91a6c6df285a")
     version("1.12.0", sha256="8b2c86cd483dc7fcb7975c5ec7329135d210099a89bc7db0590a07b0bbfe49a5")
@@ -39,7 +40,7 @@ class Ninja(Package):
     version("1.6.0", sha256="b43e88fb068fe4d92a3dfd9eb4d19755dae5c33415db2e9b7b61b4659009cde7")
     version(
         "kitware",
-        branch="features-for-fortran",
+        branch="kitware-staged-features",
         git="https://github.com/Kitware/ninja.git",
         deprecated=True,
     )
@@ -109,11 +110,11 @@ class Ninja(Package):
         with working_dir(prefix.bin):
             symlink("ninja", "ninja-build")
 
-    def setup_dependent_package(self, module, dspec):
+    def setup_dependent_package(self, module, dependent_spec):
         name = "ninja"
 
         module.ninja = MakeExecutable(
             which_string(name, path=[self.spec.prefix.bin], required=True),
-            jobs=determine_number_of_jobs(parallel=dspec.package.parallel),
-            supports_jobserver=self.spec.version == ver("kitware"),
+            jobs=determine_number_of_jobs(parallel=dependent_spec.package.parallel),
+            supports_jobserver=self.spec.satisfies("@kitware,1.13:"),
         )

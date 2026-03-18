@@ -17,6 +17,11 @@ class Wi4mpi(CMakePackage):
 
     license("CECILL-B")
 
+    version("4.0.1", sha256="7bbbce936345058e0494e1bcf903e222dd8dc368ad50d69f00d9b5186f5958f2")
+    version("4.0.0", sha256="fcfd1febea92941d95f61b894cfdb8c1d915dd2574308e1f9e58590cc90b554e")
+    version("3.7.1", sha256="1944d012853c7fccd7245d31fbaaff00da71be9e7381350abc4fd3e2e262f927")
+    version("3.7.0", sha256="d7cb73c2d0f070bd20c5b6e159375bd55673eaf9135a60843cc2110d02f2a9dd")
+    version("3.6.5", sha256="400e45a3c611e2d9e7f9514b9b925294674ef8bdbad6e57dc3ed344e9d5852c1")
     version("3.6.4", sha256="be1732a1aed1e2946873951a344b572f11f2a55cd06c634580a9398b5877e22a")
     version("3.6.3", sha256="c327babc892cc3c2bdddfacf3011e6fcb7e00a04e814de31f5e707cba3199c5c")
     version("3.6.2", sha256="4b784d27decfff9cbd29f072ba75bb0f6c471d6edc7f1037df1ab7ccbcceffba")

@@ -30,6 +30,8 @@ class Gnutls(AutotoolsPackage):
 
     # Version definitions
     version("master", branch="master")
+    version("3.8.12", sha256="a7b341421bfd459acf7a374ca4af3b9e06608dcd7bd792b2bf470bea012b8e51")
+    version("3.8.10", sha256="db7fab7cce791e7727ebbef2334301c821d79a550ec55c9ef096b610b03eb6b7")
     version("3.8.9", sha256="69e113d802d1670c4d5ac1b99040b1f2d5c7c05daec5003813c049b5184820ed")
     version("3.8.8", sha256="ac4f020e583880b51380ed226e59033244bc536cad2623f2e26f5afa2939d8fb")
     version("3.8.4", sha256="2bea4e154794f3f00180fa2a5c51fe8b005ac7a31cd58bd44cdfa7f36ebc3a9b")
@@ -74,11 +76,17 @@ class Gnutls(AutotoolsPackage):
 
     # Required dependencies
     depends_on("gettext")
-    depends_on("libidn2@:2.0", when="@:3.5")
+    # backward compat
     depends_on("libidn2")
+    depends_on("libidn2@2.0:", when="@3.6.14:")
+    depends_on("nettle")
+    depends_on("nettle@3.10:", when="@3.8.11:")
+    depends_on("nettle@3.6:", when="@3.7:")
     depends_on("nettle@3.4.1:", when="@3.6.7.1:")
-    depends_on("nettle@:2.9", when="@3.3.9")
-    depends_on("nettle", when="@3.5:")
+    # forward compat
+    depends_on("libidn2@:2.0", when="@:3.5")
+    depends_on("nettle@:3", when="@:3.8")
+    depends_on("nettle@:2.9", when="@:3.3.9")
 
     # Optional dependencies
     depends_on("guile", when="+guile")

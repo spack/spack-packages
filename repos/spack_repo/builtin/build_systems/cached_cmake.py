@@ -280,7 +280,7 @@ class CachedCMakeBuilder(CMakeBuilder):
         ]
 
         # Provide standard CMake arguments for dependent CachedCMakePackages
-        if spec.satisfies("^cuda"):
+        if spec.satisfies("%cuda"):
             entries.append("#------------------{0}".format("-" * 30))
             entries.append("# Cuda")
             entries.append("#------------------{0}\n".format("-" * 30))
@@ -309,7 +309,7 @@ class CachedCMakeBuilder(CMakeBuilder):
             entries.append("# ROCm")
             entries.append("#------------------{0}\n".format("-" * 30))
 
-            rocm_root = os.path.dirname(spec["llvm-amdgpu"].prefix)
+            rocm_root = spec["llvm-amdgpu"].prefix
             entries.append(cmake_cache_path("ROCM_PATH", rocm_root))
 
             archs = self.spec.variants["amdgpu_target"].value
@@ -322,7 +322,7 @@ class CachedCMakeBuilder(CMakeBuilder):
                 cmake_cache_filepath("CMAKE_HIP_COMPILER", os.path.join(llvm_bin, "amdclang++"))
             )
 
-            if spec.satisfies("%gcc"):
+            if spec.satisfies("%cxx=gcc"):
                 entries.append(
                     cmake_cache_string(
                         "CMAKE_HIP_FLAGS", f"--gcc-toolchain={self.pkg.compiler.prefix}"

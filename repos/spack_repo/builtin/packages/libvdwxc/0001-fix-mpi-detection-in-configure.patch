@@ -1,0 +1,25 @@
+From 8b46c6b74753fbe8596e65bf29d24b15e561ca70 Mon Sep 17 00:00:00 2001
+From: Simon Pintarelli <simon.pintarelli@cscs.ch>
+Date: Thu, 8 Jan 2026 17:24:09 +0100
+Subject: [PATCH] fix mpi detection in configure
+
+---
+ configure | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure b/configure
+index 7305e6d..4b1b697 100755
+--- a/configure
++++ b/configure
+@@ -21917,7 +21917,7 @@ main (void)
+ 
+       int *argc;
+       char **argv;
+-      MPI_Init(argc, argv);
++      MPI_Init(argc, &argv);
+ 
+   ;
+   return 0;
+-- 
+2.52.0
+

@@ -24,6 +24,11 @@ class Fish(CMakePackage):
     license("GPL-2.0-only")
 
     version("master", branch="master")
+    version("4.2.0", sha256="6c43be5a9274963c06ba4cd55a109dfcc4d5d3a8054ed0e0a3666388581ec252")
+    version("4.1.2", sha256="52873934fc1ee21a1496e9f4521409013e540f77cbf29142a1b17ab93ffaafac")
+    version("4.1.1", sha256="aaf567cac98aa92fed9db3280801e2de45306169c8915e0fff1a61c07e56d2c1")
+    version("4.1.0", sha256="07a76c67e161b9edc772e6f1d66ebead85d7056e86631d61577f9f9a529c4d9c")
+    version("4.0.9", sha256="3decb552c93a2abbba7e43211a33b6c2ec2aeaf285b738fe4b50f9013f8551f6")
     version("4.0.2", sha256="6e1ecdb164285fc057b2f35acbdc20815c1623099e7bb47bbfc011120adf7e83")
     version("4.0.1", sha256="4ed63a70207283e15cf21fc5f21db4230421e4f98d4826b5b1c8254d69c762b5")
     version("4.0.0", sha256="2fda5bd970357064d8d4c896e08285ba59965ca2a8c4829ca8a82bf3b89c69f3")
@@ -44,6 +49,7 @@ class Fish(CMakePackage):
     variant("docs", default=False, description="Build documentation")
 
     # https://github.com/fish-shell/fish-shell#dependencies-1
+    depends_on("rust@1.85:", when="@4.2:")
     depends_on("rust@1.70:", when="@4:")
     depends_on("cmake@3.15:", when="@4:", type="build")
     depends_on("cmake@3.5:", when="@3.4:", type="build")

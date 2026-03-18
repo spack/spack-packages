@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     reuse: false
@@ -91,6 +91,7 @@ spack:
   - hypre
   - kokkos +openmp
   - kokkos-kernels +openmp
+  - kokkos-fft host_backend=fftw-openmp +tests
   - lammps
   - legion
   - libnrm

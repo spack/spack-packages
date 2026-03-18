@@ -17,10 +17,13 @@ class Gopls(GoPackage):
 
     license("BSD-3-Clause", checked_by="alecbcs")
 
+    version("0.20.0", sha256="1ff2a83be8be5a61b97fc5d72eab66f368ec20b52c513cc6656fc2e502e46f19")
     version("0.18.1", sha256="e49fae5dd964432a0ea1661868e858acd2aa66aaf7e1c1d646fb8506f15c8e52")
     version("0.17.1", sha256="5794ebd3302ef4fd08de284834b22810dbb17b7e08efeeaa9b96d5c94eb90d6d")
     version("0.16.2", sha256="be68b3159fcb8cde9ebb8b468f67f03531c58be2de33edbac69e5599f2d4a2c1")
 
+    depends_on("go@1.24.2:", type="build", when="@0.19:")
+    depends_on("go@1.23.4:", type="build", when="@0.18:")
     depends_on("go@1.23.1:", type="build", when="@0.17:")
 
     build_directory = "gopls"

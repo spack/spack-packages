@@ -18,6 +18,8 @@ class Git(AutotoolsPackage):
 
     homepage = "https://git-scm.com"
     url = "https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.12.0.tar.gz"
+    git = "https://github.com/git/git.git"
+
     maintainers("jennfshr")
 
     tags = ["build-tools"]
@@ -26,9 +28,22 @@ class Git(AutotoolsPackage):
 
     license("GPL-2.0-only")
 
+    sanity_check_is_file = ["bin/git"]
+
     # Every new git release comes with a corresponding manpage resource:
     # https://www.kernel.org/pub/software/scm/git/git-manpages-{version}.tar.gz
     # https://mirrors.edge.kernel.org/pub/software/scm/git/sha256sums.asc
+    version("master", branch="master")
+    version("2.53.0", sha256="429dc0f5fe5f14109930cdbbb588c5d6ef5b8528910f0d738040744bebdc6275")
+    version("2.52.0", sha256="6880cb1e737e26f81cf7db9957ab2b5bb2aa1490d87619480b860816e0c10c32")
+    version("2.51.2", sha256="9b44c2b337ec838e10aad42439d390963904449710d30c9e7e4ba449f45da98f")
+    version("2.51.1", sha256="b049d79e6a6cb3d81334bf689af6301f4d4c884191dfae65d2bb314a90384831")
+    version("2.51.0", sha256="3d531799d2cf2cac8e294ec6e3229e07bfca60dc6c783fe69e7712738bef7283")
+    version("2.50.1", sha256="522d1635f8b62b484b0ce24993818aad3cab8e11ebb57e196bda38a3140ea915")
+    version("2.50.0", sha256="920f8ca563d16a7d4fdecb44349cbffbc5cb814a8b36c96028463478197050da")
+    version("2.49.1", sha256="84a8383ffc77146133bc128a544450cf8ce5166cbea5056c98033d2f0c454794")
+    version("2.49.0", sha256="f8047f572f665bebeb637fd5f14678f31b3ca5d2ff9a18f20bd925bd48f75d3c")
+    version("2.48.2", sha256="e7f32466e7316431d472b014c344a80e68d92ba6b3aa069f64499bbe605e2383")
     version("2.48.1", sha256="51b4d03b1e311ba673591210f94f24a4c5781453e1eb188822e3d9cdc04c2212")
     version("2.47.2", sha256="a5d26bf7b01b2f0571b5a99300c256e556bd89b2a03088accf7b81bfa4f8f2fd")
     version("2.46.3", sha256="f7ae38b1d2c4724cd9088575da470229b3360903a17b531f2e86967d856ed7ed")
@@ -39,107 +54,28 @@ class Git(AutotoolsPackage):
     version("2.41.3", sha256="2bf6589869f59b9c06e7b71ff8da3d7bb67b75549ca42c6f0ec81ab5e4570aa8")
     version("2.40.4", sha256="796993ef502481acbeb7caa22ffbf5f22daf8b273ab6d8dafc0ed178337d2659")
 
-    # Deprecated versions (https://groups.google.com/g/git-packagers/c/zxdH4LPix3U)
-    with default_args(deprecated=True):
-        version(
-            "2.47.0", sha256="a84a7917e0ab608312834413f01fc01edc7844f9f9002ba69f3b4f4bcb8d937a"
-        )
-        version(
-            "2.46.2", sha256="65c5689fd44f1d09de7fd8c44de7fef074ddd69dda8b8503d44afb91495ecbce"
-        )
-        version(
-            "2.45.2", sha256="98b26090ed667099a3691b93698d1e213e1ded73d36a2fde7e9125fce28ba234"
-        )
-        version(
-            "2.44.2", sha256="f0655e81c5ecfeef7440aa4fcffa1c1a77eaccf764d6fe29579e9a06eac2cd04"
-        )
-        version(
-            "2.43.5", sha256="324c3b85d668e6afe571b3502035848e4b349dead35188e2b8ab1b96c0cd45ff"
-        )
-        version(
-            "2.42.3", sha256="f42a8e8f6c0add4516f9e4607554c8ad698161b7d721b82073fe315a59621961"
-        )
-        version(
-            "2.41.2", sha256="481aa0a15aa37802880a6245b96c1570d7337c44700d5d888344cd6d43d85306"
-        )
-        version(
-            "2.40.3", sha256="b3dc96b20edcdbe6bea7736ea55bb80babf683d126cc7f353ed4e3bc304cd7da"
-        )
-        version(
-            "2.39.5", sha256="ca0ec03fb2696f552f37135a56a0242fa062bd350cb243dc4a15c86f1cafbc99"
-        )
-
-    # Deprecated versions (https://groups.google.com/g/git-packagers/c/x6-nKLV20aE)
-    with default_args(deprecated=True):
-        version(
-            "2.45.1", sha256="10acb581993061e616be9c5674469335922025a666318e0748cb8306079fef24"
-        )
-        version(
-            "2.44.1", sha256="118214bb8d7ba971a62741416e757562b8f5451cefc087a407e91857897c92cc"
-        )
-        version(
-            "2.43.4", sha256="bfd717dc31922f718232a25a929d199e26146df5e876fdf0ff90a7cc95fa06e2"
-        )
-        version(
-            "2.42.2", sha256="3b24b712fa6e9a3da5b7d3e68b1854466905aadb93a43088a38816bcc3b9d043"
-        )
-        version(
-            "2.41.1", sha256="06d2a681aa7f1bdb6e7f7101631407e7412faa534e1fa0eb6fdcb9975d867d31"
-        )
-        version(
-            "2.40.2", sha256="1dcdfbb4eeb3ef2c2d9154f888d4a6f0cf19f19acad76f0d32e725e7bc147753"
-        )
-        version(
-            "2.39.4", sha256="b895ed2b5d98fd3dcfde5807f16d5fb17c4f83044e7d08e597ae13de222f0d26"
-        )
-
-    # Deprecated versions (see https://github.blog/2024-05-14-securing-git-addressing-5-new-vulnerabilities/).
-    with default_args(deprecated=True):
-        version(
-            "2.42.0", sha256="34aedd54210d7216a55d642bbb4cfb22695b7610719a106bf0ddef4c82a8beed"
-        )
-        version(
-            "2.41.0", sha256="c4a6a3dd1827895a80cbd824e14d94811796ae54037549e0da93f7b84cb45b9f"
-        )
-        version(
-            "2.40.1", sha256="55511f10f3b1cdf5db4e0e3dea61819dfb67661b0507a5a2b061c70e4f87e14c"
-        )
-        version(
-            "2.39.3", sha256="2f9aa93c548941cc5aff641cedc24add15b912ad8c9b36ff5a41b1a9dcad783e"
-        )
-
     depends_on("c", type="build")  # generated
 
     for _version, _sha256_manpage in {
+        "2.53.0": "4954390466c125e82dce4a978dd1dadda13a916564d908cfdbd319f2e174a8ae",
+        "2.52.0": "14426e66b5a12c188e44f53f89282bc586b34ebc3a22fafa8eb80d0bbe370f10",
+        "2.51.2": "811aa98750c6d5e4c67848c9991f3d0cbe6cb109da5aefaf4a08c1d760533410",
+        "2.51.1": "7c4568091b95af3a52508be4e988da4fbe194f4f410024d6af3f1af3735e3b08",
+        "2.51.0": "c0e5d07f0051454df2cbdfac78e22e961e15ed5b09f10c6e58e315ca303492c2",
+        "2.50.1": "96088c583129c97ed9a2b01771b8b28ad79d9f2997b46786616df3e34b180ee4",
+        "2.50.0": "2e5485302a60c691e7ceb8fd994d80b04fcc9bd92daac050bf063f9a0974cfa6",
+        "2.49.1": "81ec532662884778c5c48ba024e539ea6f00b1d7ae60a7b83fd1b951bfbaae1a",
+        "2.49.0": "b561252841ead1e32d87dbec8f257399ea08f759c98df62c3bafa5a658f2f8ac",
+        "2.48.2": "b7c274da7097844fb87d6dd0f9a2073c801bd856141c8af5ae9e56ba9686d3b3",
         "2.48.1": "88742466926d3d682be5214470ae92b79a68796a9d171d393763a5767de5a581",
         "2.47.2": "8a36a81ee3a031acbfc831a0972d849aa8777926a6c49c76141b0e0e4744dcb3",
-        "2.47.0": "1a6f1e775dfe324a9b521793cbd2b3bba546442cc2ac2106d4df33dea9005038",
         "2.46.3": "5744ca6fd3ef39d0390400a47f2d7208668433af3d599cfbec7bb1c7140efe79",
-        "2.46.2": "4bc3774ee4597098977befa4ec30b0f2cbed3b59b756e7cbb59ce1738682d43a",
         "2.45.3": "eae81e0d8b00f19c47d7efecfa04642e06e777dd44e3e87ef2b192ba617cddaa",
-        "2.45.2": "48c1e2e3ecbb2ce9faa020a19fcdbc6ce64ea25692111b5930686bc0bb4f0e7f",
-        "2.45.1": "d9098fd93a3c0ef242814fc856a99886ce31dae2ba457afc416ba4e92af8f8f5",
         "2.44.3": "0f76464bbf8c0f5ccccfbacbd58d121376ff1e5147c4e0753b1ab1d578b9371e",
-        "2.44.2": "ee6a7238d5ede18fe21c0cc2131c7fbff1f871c25e2848892ee864d40baf7218",
-        "2.44.1": "8d80359e44cbcce256c1eb1389cb8e15ccfcd267fbb8df567d5ce19ce006eb42",
         "2.43.6": "ce364c74d475d321acc8b710558647ee8177876ee529456bd7f92cbb9f6961d8",
-        "2.43.5": "df3c3d0f0834959aa33005e6f8134c1e56ab01f34d1497ceb34b2dd8ec7d4de4",
-        "2.43.4": "99d3a0394a6093237123237fd6c0d3de1041d5ceaedc3bfc016807914275d3e2",
         "2.42.4": "6d207f38158d9f01c26feccb99af5a65ed3df20a18451649ce1ee718aabc331d",
-        "2.42.3": "3c8c55dcbc3f59560c63e6ced400f7251e9a00d876d365cb4fe9be6b3c3e3713",
-        "2.42.2": "2ddfa2187fdaf9ab2b27c0ab043e46793127c26c82a824ffe980f006be049286",
-        "2.42.0": "51643c53d70ce15dde83b6da2bad76ba0c7bbcd4f944d7c378f03a15b9f2e1de",
         "2.41.3": "4f373c1f3d35e8f22f0920928f3d9968aa99a2a5a2673a8ed9964b96c8ee10bf",
-        "2.41.2": "a758988c81478a942e1593ecf11568b962506bff1119061bad04bd4149b40c2c",
-        "2.41.1": "7093ef7dacfa8cdb3c4689d8bc1f06186d9b2420bec49087a3a6a4dee26ddcec",
-        "2.41.0": "7b77c646b36d33c5c0f62677a147142011093270d6fd628ca38c42d5301f3888",
         "2.40.4": "4a03ec30184aa27f5cf4123c532590be42d80e4b4797ad096f00b82109de1486",
-        "2.40.3": "fa9b837e1e161ebdbbbfde27a883a90fe5f603ce1618086a384bccda59c47de5",
-        "2.40.2": "2c71f3f3e4801176f97708f2093756bce672ef260c6d95c255046e6727b3a031",
-        "2.40.1": "6bbde434121bd0bf8aa574c60fd9a162388383679bd5ddd99921505149ffd4c2",
-        "2.39.5": "16aac22749bd55d845c422068702781a9c89e6cdde7de1c3aa1dd0fb41aeae39",
-        "2.39.4": "fedd01dd22a15b84bcbcad68c1b37113ba2c64381c19b6c9f3aa9b2818e126dc",
-        "2.39.3": "c8377b5a3ff497d7e6377363c270931496e982509ff27a1e46956d6637671642",
     }.items():
         resource(
             name="git-manpages",
@@ -150,7 +86,6 @@ class Git(AutotoolsPackage):
         )
 
     variant("tcltk", default=False, description="Gitk: provide Tcl/Tk in the run environment")
-    variant("svn", default=False, description="Provide SVN Perl dependency in run environment")
     variant("perl", default=True, description="Do not use Perl scripts or libraries at all")
     variant("nls", default=True, description="Enable native language support")
     variant("man", default=True, description="Install manual pages")
@@ -161,6 +96,7 @@ class Git(AutotoolsPackage):
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
     depends_on("curl")
+    depends_on("curl@7.61.0:", when="@2.48:")
     depends_on("expat")
     depends_on("gettext", when="+nls")
     depends_on("iconv")
@@ -168,13 +104,20 @@ class Git(AutotoolsPackage):
     depends_on("openssl")
     depends_on("pcre2")
     depends_on("perl", when="+perl")
+    depends_on("perl@5.26.0:", when="@2.48: +perl")
     depends_on("zlib-api")
     depends_on("openssh", type="run")
-    depends_on("perl-alien-svn", type="run", when="+svn")
     depends_on("tk", type=("build", "link"), when="+tcltk")
     depends_on("diffutils", type="build", when="@2.48:")
 
-    conflicts("+svn", when="~perl")
+    # v2.53.0 made a lot of improvements to the makefile, but caused a bug with the git
+    # osxcredentialhelper sub component
+    # https://lore.kernel.org/git/pull.2046.v4.git.1771551540816.gitgitgadget@gmail.com/
+    patch(
+        "https://github.com/gitgitgadget/git/commit/3e9cc24e68ef311500406ef4d170be30e36e1231.patch?full_index=1",
+        sha256="67fa97142eed2ab2b0e9385b233254adb4bdf4dd42addf966d6ece3fd2a3c294",
+        when="@2.53.0 platform=darwin",
+    )
 
     @classmethod
     def determine_version(cls, exe):
@@ -195,6 +138,20 @@ class Git(AutotoolsPackage):
     # See the comment in setup_build_environment re EXTLIBS.
     def patch(self):
         filter_file(r"^EXTLIBS =$", "#EXTLIBS =", "Makefile")
+
+        custom_lines = []
+
+        # https://github.com/git/git/commit/cdda67de0316ec29dfc1e290bb7f2154b7b95ee8
+        if self.spec.satisfies("platform=linux"):
+            if self.spec.satisfies("@2.50:"):
+                if self.spec.satisfies("^glibc@:2.24"):
+                    custom_lines.append("CSPRNG_METHOD=")
+                if self.spec.satisfies("^glibc@2.36:"):
+                    custom_lines.append("CSPRNG_METHOD=arc4random")
+
+        with open("config.mak", "w") as config_file:
+            for entry in custom_lines:
+                config_file.write(entry + "\n")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # We use EXTLIBS rather than LDFLAGS so that git's Makefile
@@ -233,24 +190,21 @@ class Git(AutotoolsPackage):
         spec = self.spec
 
         configure_args = [
-            "--with-curl={0}".format(spec["curl"].prefix),
-            "--with-expat={0}".format(spec["expat"].prefix),
-            "--with-openssl={0}".format(spec["openssl"].prefix),
-            "--with-zlib={0}".format(spec["zlib-api"].prefix),
+            f"--with-curl={spec['curl'].prefix}",
+            f"--with-expat={spec['expat'].prefix}",
+            f"--with-openssl={spec['openssl'].prefix}",
+            f"--with-libpcre2={spec['pcre2'].prefix}",
+            f"--with-zlib={spec['zlib-api'].prefix}",
         ]
 
         if self.spec["iconv"].name == "libiconv":
             configure_args.append(f"--with-iconv={self.spec['iconv'].prefix}")
 
         if self.spec.satisfies("+perl"):
-            configure_args.append("--with-perl={0}".format(spec["perl"].command.path))
+            configure_args.append(f"--with-perl={spec['perl'].command.path}")
 
-        if self.spec.satisfies("^pcre"):
-            configure_args.append("--with-libpcre={0}".format(spec["pcre"].prefix))
-        if self.spec.satisfies("^pcre2"):
-            configure_args.append("--with-libpcre2={0}".format(spec["pcre2"].prefix))
         if self.spec.satisfies("+tcltk"):
-            configure_args.append("--with-tcltk={0}".format(self.spec["tk"].prefix.bin.wish))
+            configure_args.append(f"--with-tcltk={self.spec['tk'].prefix.bin.wish}")
         else:
             configure_args.append("--without-tcltk")
 
@@ -322,22 +276,8 @@ class Git(AutotoolsPackage):
     def install_subtree(self):
         if self.spec.satisfies("+subtree"):
             with working_dir("contrib/subtree"):
-                make_args = ["V=1", "prefix={}".format(self.prefix.bin)]
+                make_args = ["V=1", f"prefix={self.prefix.bin}"]
                 make(" ".join(make_args))
-                install_args = ["V=1", "prefix={}".format(self.prefix.bin), "install"]
+                install_args = ["V=1", f"prefix={self.prefix.bin}", "install"]
                 make(" ".join(install_args))
                 install("git-subtree", self.prefix.bin)
-
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        # Setup run environment if using SVN extension
-        # Libs from perl-alien-svn and apr-util are required in
-        # LD_LIBRARY_PATH
-        # TODO: extend to other platforms
-        if self.spec.satisfies("+svn platform=linux"):
-            perl_svn = self.spec["perl-alien-svn"]
-            env.prepend_path(
-                "LD_LIBRARY_PATH",
-                join_path(
-                    perl_svn.prefix, "lib", "perl5", "x86_64-linux-thread-multi", "Alien", "SVN"
-                ),
-            )

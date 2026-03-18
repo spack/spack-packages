@@ -2,7 +2,7 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     static_analysis: true
@@ -116,6 +116,7 @@ spack:
   - hypre
   - kokkos +openmp
   - kokkos-kernels +openmp
+  - kokkos-fft host_backend=fftw-openmp +tests
   - legion
   - libnrm
   - libquo

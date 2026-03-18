@@ -15,6 +15,8 @@ class Spdlog(CMakePackage):
 
     license("MIT")
 
+    version("1.16.0", sha256="8741753e488a78dd0d0024c980e1fb5b5c85888447e309d9cb9d949bdb52aa3e")
+    version("1.15.3", sha256="15a04e69c222eb6c01094b5c7ff8a249b36bb22788d72519646fb85feb267e67")
     version("1.15.2", sha256="7a80896357f3e8e920e85e92633b14ba0f229c506e6f978578bdc35ba09e9a5d")
     version("1.15.1", sha256="25c843860f039a1600f232c6eb9e01e6627f7d030a2ae5e232bdd3c9205d26cc")
     version("1.15.0", sha256="9962648c9b4f1a7bbc76fd8d9172555bad1871fdb14ff4f842ef87949682caa5")
@@ -82,7 +84,16 @@ class Spdlog(CMakePackage):
     depends_on("fmt@11.0.2:11", when="@1.15.0")
 
     # https://github.com/gabime/spdlog/releases/tag/v1.15.1
-    depends_on("fmt@11.1.3:11", when="@1.15.1:")
+    depends_on("fmt@11.1.3:11", when="@1.15.1")
+
+    # https://github.com/gabime/spdlog/releases/tag/v1.15.2
+    depends_on("fmt@11.1.4:11", when="@1.15.2")
+
+    # https://github.com/gabime/spdlog/releases/tag/v1.15.3
+    depends_on("fmt@11.2.0:11", when="@1.15.3")
+
+    # https://github.com/gabime/spdlog/releases/tag/v1.16.0
+    depends_on("fmt@12.0.0:12", when="@1.16.0:")
 
     # spdlog@1.11.0 with fmt@10  https://github.com/gabime/spdlog/pull/2694
     patch(
@@ -113,6 +124,13 @@ class Spdlog(CMakePackage):
 
     conflicts("^fmt@11.1:", when="@:1.12")
 
+    variant(
+        "cxxstd",
+        values=("11", "14", "17", "20"),
+        default="14",
+        description="C++ standard used during compilation",
+    )
+
     def cmake_args(self):
         args = []
 
@@ -121,6 +139,7 @@ class Spdlog(CMakePackage):
                 [
                     self.define_from_variant("SPDLOG_BUILD_SHARED", "shared"),
                     self.define("SPDLOG_FMT_EXTERNAL", True),
+                    self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
                     # tests and examples
                     self.define("SPDLOG_BUILD_TESTS", self.run_tests),
                     self.define("SPDLOG_BUILD_EXAMPLE", self.run_tests),

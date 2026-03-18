@@ -58,7 +58,7 @@ class Slurm(AutotoolsPackage):
     variant("hwloc", default=False, description="Enable hwloc support")
     variant("hdf5", default=False, description="Enable hdf5 support")
     variant("readline", default=True, description="Enable readline support")
-    variant("pmix", default=False, description="Enable PMIx support")
+    variant("pmix", default=False, description="Enable PMIx support", when="@22-05:")
     variant(
         "sysconfdir",
         default="PREFIX/etc",
@@ -70,6 +70,11 @@ class Slurm(AutotoolsPackage):
     variant("cgroup", default=False, description="Enable cgroup plugin")
     variant("pam", default=False, description="Enable PAM support")
     variant("rsmi", default=False, description="Enable ROCm SMI support")
+    variant(
+        "multiple_slurmd",
+        default=False,
+        description="Enable support for multiple slurmd instances",
+    )
 
     # TODO: add variant for BG/Q and Cray support
 
@@ -98,8 +103,7 @@ class Slurm(AutotoolsPackage):
     depends_on("hwloc", when="+hwloc")
     depends_on("mariadb", when="+mariadb")
 
-    depends_on("pmix@:5", when="@22-05:+pmix")
-    depends_on("pmix@:3", when="@20-11:21-08+pmix")
+    depends_on("pmix@:5", when="+pmix")
 
     depends_on("http-parser", when="+restd")
     depends_on("libyaml", when="+restd")
@@ -166,6 +170,9 @@ class Slurm(AutotoolsPackage):
 
         if spec.satisfies("+rsmi"):
             args.append(f"--with-rsmi={spec['rocm-smi-lib'].prefix}")
+
+        if spec.satisfies("+multiple_slurmd"):
+            args.append("--enable-multiple-slurmd")
 
         sysconfdir = spec.variants["sysconfdir"].value
         if sysconfdir != "PREFIX/etc":

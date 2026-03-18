@@ -51,9 +51,11 @@ class Eccodes(CMakePackage):
     license("Apache-2.0")
 
     version("develop", branch="develop")
+    version("2.45.0", sha256="6c84b39d7cc5e3b8330eeabe880f3e337f9b2ee1ebce20ea03eecd785f6c39a1")
     version("2.41.0", sha256="a1467842e11ed7f62a2f5cc1982e04eec62398f4962e6ba03ace7646f32cf270")
     version("2.40.0", sha256="f58d5d7390fce86c62b26d76b9bc3c4d7d9a6cf2e5f8145d1d598089195e51ff")
     version("2.38.0", sha256="96a21fbe8ca3aa4c31bb71bbd378b7fd130cbc0f7a477567d70e66a000ff68d9")
+    version("2.36.4", sha256="adec6188dfd1d6ef71d86736d66f6b26486c188c3f37e8dcc016dc713ae482e6")
     version("2.34.0", sha256="3cd208c8ddad132789662cf8f67a9405514bfefcacac403c0d8c84507f303aba")
     version("2.33.0", sha256="bdcec8ce63654ec6803400c507f01220a9aa403a45fa6b5bdff7fdcc44fd7daf")
     version("2.32.1", sha256="ad2ac1bf36577b1d35c4a771b4d174a06f522a1e5ef6c1f5e53a795fb624863e")
@@ -99,7 +101,7 @@ class Eccodes(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", when="+fortran", type="build")
 
     depends_on("netcdf-c", when="+netcdf")
     # Cannot be built with openjpeg@2.0.x.

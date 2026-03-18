@@ -20,6 +20,8 @@ class PyAstropy(PythonPackage):
 
     license("BSD-3-Clause", checked_by="lgarrison")
 
+    version("7.1.1", sha256="6d128f0005e2c34f70113484468bf9d0e4ca1ee15a279cfd08bdd979d38db0f8")
+    version("7.1.0", sha256="c8f254322295b1b8cf24303d6f155bf7efdb6c1282882b966ce3040eff8c53c5")
     version("7.0.1", sha256="392feeb443b2437cd4c2e0641a65e0f15ba791e148e9b1e5ed7de7dfcb38e460")
     version("6.1.0", sha256="6c3b915f10b1576190730ddce45f6245f9927dda3de6e3f692db45779708950f")
     version("5.1", sha256="1db1b2c7eddfc773ca66fa33bd07b25d5b9c3b5eee2b934e0ca277fa5b1b7b7e")
@@ -40,11 +42,12 @@ class PyAstropy(PythonPackage):
     depends_on("python@3.10:", when="@6.1.0:", type=("build", "run"))
     depends_on("python@3.8:", when="@5.1:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@77.0.0:", when="@7.1.0:", type="build")
+    depends_on("py-setuptools-scm@8:", when="@7.1.0:", type="build")
     depends_on("py-cython@0.29.13:", type="build")
     depends_on("py-cython@0.29.30", when="@5.1:6.0", type="build")
     depends_on("py-cython@3.0", when="@6.1.0:6", type="build")
     depends_on("py-cython@3", when="@7.0.1:", type="build")
-    depends_on("py-numpy@2", when="@7.0.1:", type="build")
     depends_on("py-setuptools-scm@6.2:", when="@5.1:", type="build")
     depends_on("py-extension-helpers", when="@5.1:", type="build")
     depends_on("py-extension-helpers@1", when="@7.0.1:", type="build")
@@ -53,9 +56,11 @@ class PyAstropy(PythonPackage):
     # in newer pip versions --install-option does not exist
     depends_on("py-pip@:23.0", when="@:4.0", type="build")
 
+    depends_on("py-astropy-iers-data@0.2025.9.29.0.35.48:", when="@7.1.1:", type=("build", "run"))
     depends_on("py-astropy-iers-data@0.2025.1.31.12.41.4:", when="@7.0.1:", type=("build", "run"))
+    depends_on("py-astropy-iers-data@0.2025.4.28.0.37.27:", when="@7.1.0:", type=("build", "run"))
     depends_on("py-astropy-iers-data", when="@6:", type=("build", "run"))
-    depends_on("py-numpy@1.23.2:", when="@7.0.1:", type="run")
+    depends_on("py-numpy@1.23.2:", when="@7.0.1:", type=("build", "run"))
     depends_on("py-numpy@1.23:", when="@6.1:", type=("build", "run"))
     depends_on("py-numpy@1.18:", when="@5.1:", type=("build", "run"))
     depends_on("py-numpy@1.16:", when="@4.0:", type=("build", "run"))
@@ -74,8 +79,10 @@ class PyAstropy(PythonPackage):
     depends_on("py-pyerfa@2.0.1.1:", when="@6.1.0:", type=("build", "run"))
 
     depends_on("py-coverage@6.4.4:", when="@7.0.1:", type="test")
+    depends_on("py-pytest@8:", when="@7.1.0:", type="test")
     depends_on("py-pytest@7.3:", when="@7.0.1:", type="test")
     depends_on("py-pytest@7:", type="test")
+    depends_on("py-pytest-doctestplus@1.4.0:", when="@7.1.0:", type="test")
     depends_on("py-pytest-doctestplus@0.12:", type="test")
     depends_on("py-pytest-astropy-header@0.2.1:", type="test")
     depends_on("py-pytest-astropy@0.10:", type="test")
@@ -111,8 +118,11 @@ class PyAstropy(PythonPackage):
         depends_on("py-pandas-stubs@2.0:", when="@7.0.1:", type=("build", "run"))
         depends_on("py-pandas@2:", when="@7.0.1:", type=("build", "run"))
         depends_on("py-pandas", type=("build", "run"))
+        depends_on("py-sortedcontainers@1.5.7:", when="@7.1.0:", type=("build", "run"))
         depends_on("py-sortedcontainers", type=("build", "run"))
+        depends_on("py-pytz@2016.10:", when="@7.1.0:", type=("build", "run"))
         depends_on("py-pytz", type=("build", "run"))
+        depends_on("py-jplephem@2.6:", when="@7.1.0:", type=("build", "run"))
         depends_on("py-jplephem", type=("build", "run"))
         depends_on("py-mpmath@1.2.1:", when="@7.0.1:", type=("build", "run"))
         depends_on("py-mpmath", type=("build", "run"))
@@ -123,7 +133,9 @@ class PyAstropy(PythonPackage):
         depends_on("py-asdf@2.3:", type=("build", "run"))
         depends_on("py-bottleneck@1.3.3:", when="@7.0.1:", type=("build", "run"))
         depends_on("py-bottleneck", type=("build", "run"))
+        depends_on("py-ipywidgets@7.7.3:", when="@7.1.0:", type=("build", "run"))
         depends_on("py-ipywidgets", when="@7.0.1:", type=("build", "run"))
+        depends_on("py-ipykernel@6.16.0:", when="@7.1.0:", type=("build", "run"))
         depends_on("py-ipykernel", when="@7.0.1:", type=("build", "run"))
         # depends_on("py-ipydatagrid", when="@7.0.1:", type=("build", "run"))
         depends_on("py-ipython@8:", when="@7.0.1:", type=("build", "run"))
@@ -133,6 +145,7 @@ class PyAstropy(PythonPackage):
         depends_on("py-pytest", when="@:6", type=("build", "run"))
         depends_on("py-fsspec+http@2023.4:", when="@6.1:", type=("build", "run"))
         depends_on("py-s3fs@2023.4:", when="@6.1:", type=("build", "run"))
+        # depends_on("py-uncompresspy@0.4:", type=("build", "run"))
         depends_on("py-typing-extensions@3.10.0.1:", when="@5.0.2:6", type=("build", "run"))
 
         # Historical optional dependencies
@@ -187,3 +200,10 @@ class PyAstropy(PythonPackage):
             modules.append("astropy.visualization.wcsaxes")
 
         return modules
+
+    def flag_handler(self, name, flags):
+        (flags, _, _) = super().flag_handler(name, flags)
+        if name == "cflags":
+            if self.spec.satisfies("@:6.1.0") and self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-incompatible-pointer-types")
+        return (flags, None, None)

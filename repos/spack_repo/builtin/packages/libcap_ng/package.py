@@ -10,22 +10,19 @@ from spack.package import *
 class LibcapNg(AutotoolsPackage):
     """Libcap-ng is a library that makes using posix capabilities easier"""
 
-    homepage = "https://github.com/stevegrubb/libcap-ng/"
-    url = "https://github.com/stevegrubb/libcap-ng/archive/v0.8.tar.gz"
+    homepage = "https://people.redhat.com/sgrubb/libcap-ng/"
+    url = "https://people.redhat.com/sgrubb/libcap-ng/libcap-ng-0.8.5.tar.gz"
 
     license("GPL-2.0-or-later AND LGPL-2.1-or-later")
 
-    version("0.8.3", sha256="e542e9139961f0915ab5878427890cdc7762949fbe216bd0cb4ceedb309bb854")
-    version("0.8", sha256="836ea8188ae7c658cdf003e62a241509dd542f3dec5bc40c603f53a5aadaa93f")
-    version("0.7.11", sha256="78f32ff282b49b7b91c56d317fb6669df26da332c6fc9462870cec2573352222")
-    version("0.7.10", sha256="c3c156a215e5be5430b2f3b8717bbd1afdabe458b6068a8d163e71cefe98fc32")
+    version("0.8.5", sha256="3ba5294d1cbdfa98afaacfbc00b6af9ed2b83e8a21817185dfd844cc8c7ac6ff")
+    version("0.8.3", sha256="bed6f6848e22bb2f83b5f764b2aef0ed393054e803a8e3a8711cb2a39e6b492d")
+    version("0.8", sha256="f14d23b60ae1465b032e4e8cbd4112006572c69a6017d55d5d3c6aad622a9e21")
+    version("0.7.11", sha256="85815c711862d01a440db471f12fba462c9949e923966f5859607e652d9c0ae9")
+    version("0.7.10", sha256="a84ca7b4e0444283ed269b7a29f5b6187f647c82e2b876636b49b9a744f0ffbf")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("m4", type="build")
     depends_on("attr", type="build")
     depends_on("swig", type="build")
     depends_on("python@2.7:", type=("build", "link", "run"), when="+python")
