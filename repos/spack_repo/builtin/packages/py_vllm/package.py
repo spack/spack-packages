@@ -52,7 +52,7 @@ class PyVllm(PythonPackage):
     depends_on("py-pydantic@2.12:", type=("build", "run"))
     depends_on("py-prometheus-client@0.18:", type=("build", "run"))
     depends_on("pil", type=("build", "run"))
-    depends_on("py-prometheus-fastapi-instrumentator@7:", type=("build", "run"))  # to be added
+    depends_on("py-prometheus-fastapi-instrumentator@7:", type=("build", "run"))
     depends_on("py-tiktoken@0.6:", type=("build", "run"))
     depends_on("py-lm-format-enforcer@0.11.3", type=("build", "run"))
     depends_on("py-llguidance@1.3:", type=("build", "run"))
@@ -66,12 +66,12 @@ class PyVllm(PythonPackage):
     depends_on("py-pyzmq", type=("build", "run"))
     depends_on("py-msgspec", type=("build", "run"))
     depends_on("py-gguf@0.17:", type=("build", "run"))  # to be added
-    depends_on("py-mistral-common@1.8.8: +image", type=("build", "run"))  # to be added
+    depends_on("py-mistral-common@1.8.8: +image", type=("build", "run"))
     depends_on("py-opencv-python@4.13: +headless", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-six@1.16:", when="^python@3.12:", type=("build", "run"))
     depends_on("py-einops", type=("build", "run"))
-    depends_on("py-compressed-tensors@0.13.0", type=("build", "run"))  # to be added, exact version
+    depends_on("py-compressed-tensors@0.13.0", type=("build", "run"))
     depends_on("py-depyf@0.20.0", type=("build", "run"))
     depends_on("py-cloudpickle", type=("build", "run"))
     depends_on("py-watchfiles", type=("build", "run"))
@@ -80,12 +80,12 @@ class PyVllm(PythonPackage):
     depends_on("py-cbor2", type=("build", "run"))
     depends_on("py-ijson", type=("build", "run"))  # not sure
     depends_on("py-setproctitle", type=("build", "run"))
-    depends_on("py-openai-harmony@0.0.3:", type=("build", "run"))  # to be added
-    depends_on("py-anthropic@0.71:", type=("build", "run"))  # to be added
+    depends_on("py-openai-harmony@0.0.3:", type=("build", "run"))
+    depends_on("py-anthropic@0.71:", type=("build", "run"))
     depends_on("py-model-hosting-container-standards@0.1.13:0", type=("build", "run"))
     depends_on("py-mcp", type=("build", "run"))
     depends_on("py-grpcio", type=("build", "run"))
-    depends_on("py-grpcio-reflection", type=("build", "run"))  # to be added
+    depends_on("py-grpcio-reflection", type=("build", "run"))
 
     # Optional dependencies
     with default_args(type=("build", "link", "run")):
