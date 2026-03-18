@@ -33,7 +33,7 @@ class PyVllm(PythonPackage):
     depends_on("py-grpcio-tools@1.78.0", type="build")  # exact version
     depends_on("py-torch@2.10.0", when="@0.15.1", type="build")  # exact version
 
-    # Common deps https://github.com/vllm-project/vllm/blob/main/requirements/common.txt
+    # Common deps https://github.com/vllm-project/vllm/blob/v0.15.1/requirements/common.txt
     depends_on("py-regex", type=("build", "run"))
     depends_on("py-cachetools", type=("build", "run"))
     depends_on("py-psutil", type=("build", "run"))
@@ -54,35 +54,35 @@ class PyVllm(PythonPackage):
     depends_on("pil", type=("build", "run"))
     depends_on("py-prometheus-fastapi-instrumentator@7:", type=("build", "run"))  # to be added
     depends_on("py-tiktoken@0.6:", type=("build", "run"))
-    depends_on("py-lm-format-enforcer@0.11.3", type=("build", "run"))  # to be added, exact version
-    depends_on("py-llguidance@1.3:", type=("build", "run"))  # to be added
-    depends_on("py-outlines-core@0.2.11", type=("build", "run"))  # to be added, exact version
+    depends_on("py-lm-format-enforcer@0.11.3", type=("build", "run"))
+    depends_on("py-llguidance@1.3:", type=("build", "run"))
+    depends_on("py-outlines-core@0.2.11", type=("build", "run"))
     depends_on("py-diskcache@5.6.3", type=("build", "run"))
     depends_on("py-lark@1.2.2", type=("build", "run"))
-    depends_on("py-xgrammar@0.1.29", type=("build", "run"))  # to be added
+    depends_on("py-xgrammar@0.1.29", type=("build", "run"))
     depends_on("py-typing-extensions@4.10:", type=("build", "run"))
     depends_on("py-filelock@3.16.1:", type=("build", "run"))
-    depends_on("py-partial-json-parser", type=("build", "run"))  # to be added
+    depends_on("py-partial-json-parser", type=("build", "run"))
     depends_on("py-pyzmq", type=("build", "run"))
-    depends_on("py-msgspec", type=("build", "run"))  # to be added
+    depends_on("py-msgspec", type=("build", "run"))
     depends_on("py-gguf@0.17:", type=("build", "run"))  # to be added
     depends_on("py-mistral-common@1.8.8: +image", type=("build", "run"))  # to be added
-    depends_on("py-opencv-python-headless@4.13:", type=("build", "run"))  # to be added
+    depends_on("py-opencv-python@4.13: +headless", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-six@1.16:", when="^python@3.12:", type=("build", "run"))
     depends_on("py-einops", type=("build", "run"))
     depends_on("py-compressed-tensors@0.13.0", type=("build", "run"))  # to be added, exact version
-    depends_on("py-depyf@0.20.0", type=("build", "run"))  # to be added, exact version
+    depends_on("py-depyf@0.20.0", type=("build", "run"))
     depends_on("py-cloudpickle", type=("build", "run"))
     depends_on("py-watchfiles", type=("build", "run"))
     depends_on("py-python-json-logger", type=("build", "run"))
-    depends_on("py-pybase64", type=("build", "run"))  # to be added
+    depends_on("py-pybase64", type=("build", "run"))  # not sure
     depends_on("py-cbor2", type=("build", "run"))
-    depends_on("py-ijson", type=("build", "run"))  # to be added
+    depends_on("py-ijson", type=("build", "run"))  # not sure
     depends_on("py-setproctitle", type=("build", "run"))
     depends_on("py-openai-harmony@0.0.3:", type=("build", "run"))  # to be added
     depends_on("py-anthropic@0.71:", type=("build", "run"))  # to be added
-    depends_on("py-model-hosting-container-standards@0.1.13:0", type=("build", "run"))  # to be added
+    depends_on("py-model-hosting-container-standards@0.1.13:0", type=("build", "run"))
     depends_on("py-mcp", type=("build", "run"))
     depends_on("py-grpcio", type=("build", "run"))
     depends_on("py-grpcio-reflection", type=("build", "run"))  # to be added
