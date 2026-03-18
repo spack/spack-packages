@@ -112,6 +112,7 @@ class Openblas(CMakePackage, MakefilePackage):
     variant("ilp64", default=False, description="Force 64-bit Fortran native integers")
     variant("pic", default=True, description="Build position independent code")
     variant("shared", default=True, description="Build shared libraries")
+    variant("static", default=False, description="Build static libraries")
     variant(
         "dynamic_dispatch",
         default=True,
@@ -684,6 +685,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if "+shared" in self.spec:
             cmake_defs += [self.define("BUILD_SHARED_LIBS", "ON")]
+
+        if "+static" in self.spec:
+            cmake_defs += [self.define("BUILD_STATIC_LIBS", "ON")]
 
         if self.spec.satisfies("threads=openmp"):
             cmake_defs += [self.define("USE_OPENMP", "ON"), self.define("USE_THREAD", "ON")]
