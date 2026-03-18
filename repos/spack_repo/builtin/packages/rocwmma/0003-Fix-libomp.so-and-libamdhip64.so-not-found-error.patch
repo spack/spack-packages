@@ -1,0 +1,82 @@
+From dfeda07ccdf41fc5f566e5f1039d60b7c71a835e Mon Sep 17 00:00:00 2001
+From: Sreenivasa Murthy Kolam <sreenivasamurthy.kolam@amd.com>
+Date: Tue, 24 Feb 2026 12:03:57 +0530
+Subject: [PATCH] Link with openmp correctly.Fixes libomp.so and libamdhip64.so
+ not found error for the binaries
+
+---
+ CMakeLists.txt         | 19 +++++++++++++++++--
+ samples/CMakeLists.txt |  4 +++-
+ test/CMakeLists.txt    |  4 +++-
+ 3 files changed, 23 insertions(+), 4 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 81b0050..baab45f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -141,7 +141,22 @@ message(STATUS "GPU_TARGETS=${GPU_TARGETS}")
+ 
+ find_package( hip REQUIRED )
+ find_package( hiprtc REQUIRED )
+-find_package( OpenMP REQUIRED )
++set(ROCWMMA_USE_OPENMP   ON CACHE BOOL "Use OpenMP to improve performance.")
++set(ROCWMMA_USE_HIP      ON CACHE BOOL "Use the Hip runtime.")
++
++if(ROCWMMA_USE_OPENMP)
++    # Workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/21787
++    # ensures we link to HIP's libomp and get an rpath to it.
++    add_library(custom_openmp_cxx INTERFACE)
++
++    if(ROCWMMA_USE_HIP)
++        target_compile_options(custom_openmp_cxx INTERFACE "-fopenmp")
++        target_link_options(custom_openmp_cxx INTERFACE "-fopenmp")
++    else ()
++       find_package(OpenMP REQUIRED)
++       target_link_libraries(custom_openmp_cxx INTERFACE OpenMP::OpenMP_CXX)
++    endif ()
++endif()
+ 
+ ## Check for ROCM-smi
+ find_package(rocm_smi PATHS ${ROCM_PATH}/lib/cmake/rocm_smi)
+@@ -154,7 +169,7 @@ else()
+ endif()
+ 
+ add_library(rocwmma INTERFACE)
+-target_link_libraries(rocwmma INTERFACE hip::device hip::host OpenMP::OpenMP_CXX ${ROCM_SMI_LIBRARY})
++target_link_libraries(rocwmma INTERFACE hip::device hip::host custom_openmp_cxx ${ROCM_SMI_LIBRARY})
+ 
+ rocm_install_targets(
+   TARGETS rocwmma
+diff --git a/samples/CMakeLists.txt b/samples/CMakeLists.txt
+index 655f0a1..da3e44c 100644
+--- a/samples/CMakeLists.txt
++++ b/samples/CMakeLists.txt
+@@ -40,7 +40,9 @@ function(add_rocwmma_sample TEST_TARGET TEST_SOURCE)
+ 
+   list(APPEND TEST_SOURCE ${ARGN})
+   add_executable(${TEST_TARGET} ${TEST_SOURCE})
+-  target_link_libraries(${TEST_TARGET} OpenMP::OpenMP_CXX "-L${HIP_CLANG_ROOT}/lib" "-Wl,-rpath=$ORIGIN/../llvm/lib"  "-fno-rtlib-add-rpath")
++  if(ROCWMMA_USE_HIP)
++      target_link_libraries(${TEST_TARGET} custom_openmp_cxx)
++  endif()
+   target_link_libraries(${TEST_TARGET} rocwmma hiprtc::hiprtc)
+   target_include_directories(${TEST_TARGET} PRIVATE
+                              ${CMAKE_CURRENT_SOURCE_DIR}
+diff --git a/test/CMakeLists.txt b/test/CMakeLists.txt
+index 7d055d5..fae4b98 100644
+--- a/test/CMakeLists.txt
++++ b/test/CMakeLists.txt
+@@ -88,7 +88,9 @@ function(add_rocwmma_test TEST_TARGET TEST_SOURCE)
+   list(APPEND TEST_SOURCE ${ARGN})
+   add_executable(${TEST_TARGET} ${TEST_SOURCE})
+   target_link_libraries(${TEST_TARGET} rocwmma gtest)
+-  target_link_libraries(${TEST_TARGET} OpenMP::OpenMP_CXX "-L${HIP_CLANG_ROOT}/lib" "-Wl,-rpath=$ORIGIN/../llvm/lib"  "-fno-rtlib-add-rpath")
++  if(ROCWMMA_USE_HIP)
++      target_link_libraries(${TEST_TARGET} custom_openmp_cxx)
++  endif()
+   target_include_directories(${TEST_TARGET} PRIVATE
+                              ${CMAKE_CURRENT_SOURCE_DIR}
+                              ${ROCWMMA_TEST_INCLUDE_DIRS})
+-- 
+2.43.0
+

@@ -244,9 +244,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     depends_on("diffutils", type="build")
     depends_on("iconv", when="platform=darwin")
     depends_on("gnat", when="languages=ada")
-    depends_on(
-        "binutils+gas+ld+plugins~libiberty", when="+binutils", type=("build", "link", "run")
-    )
+    # For binutils we use `link` because we don't rely on `PATH`, but on the
+    # automatic `-B` flag
+    depends_on("binutils+gas+ld+plugins~libiberty", when="+binutils", type=("build", "link"))
     depends_on("mold", when="+mold")
     depends_on("zip", type="build", when="languages=java")
 
@@ -423,14 +423,16 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # has been backported. The patch is not applied to GCC 11 since the "fixinclude"
     # is in fact needed for that version (see GCC commit description). Older versions
     # have not been checked or tested.
-    patch(
-        "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
-        sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
-        when="@15:15.2",
-    )
-    patch("fixincludes-gcc-13-14.patch", when="@13:14")
-    patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
-    patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
+    # This patchset conflicts with Iain's Darwin patches and is not needed on Darwin
+    with when("platform=linux"):
+        patch(
+            "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
+            sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
+            when="@15:15.2",
+        )
+        patch("fixincludes-gcc-13-14.patch", when="@13:14")
+        patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
+        patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
 
     if sys.platform == "darwin":
         # Fix parallel build on APFS filesystem

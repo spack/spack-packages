@@ -62,4 +62,5 @@ class PyPolars(PythonPackage):
         env.prepend_path("MATURIN_PEP517_ARGS", "--no-default-features --features all")
 
         # https://github.com/pola-rs/polars/issues/26503#issuecomment-3874046239
-        env.prepend_path("RUSTFLAGS", "--cap-lints warn", when="@1.29.0 ^rust@1.89:")
+        if self.spec.satisfies("@1.29.0 ^rust@1.89:"):
+            env.prepend_path("RUSTFLAGS", "--cap-lints warn")

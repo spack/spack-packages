@@ -385,6 +385,32 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     fortran_names = ["amdflang"]
     compiler_version_argument = "--version"
     compiler_version_regex = r"roc-(\d+[._]\d+[._]\d+)"
+    installed_dir_regex = r"InstalledDir:\s*(.+)"
+
+    @classmethod
+    def determine_version(cls, exe):
+        try:
+            compiler = Executable(exe)
+            output = compiler(cls.compiler_version_argument, output=str, error=str)
+            # Reject if the compiler is not under the InstalledDir
+            # reported by --version (e.g. /usr/bin is not valid).
+            installed_dir_match = re.search(cls.installed_dir_regex, output)
+            if installed_dir_match:
+                installed_dir = os.path.normpath(installed_dir_match.group(1).strip())
+                exe_dir = os.path.normpath(os.path.dirname(os.path.abspath(str(exe))))
+                if exe_dir != installed_dir:
+                    return None
+            else:
+                return None
+            match = re.search(cls.compiler_version_regex, output)
+            if match:
+                version_str = match.group(1)
+                return version_str
+        except ProcessError:
+            pass
+        except Exception as e:
+            tty.debug(e)
+        return None
 
     # Make sure that the compiler paths are in the LD_LIBRARY_PATH
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

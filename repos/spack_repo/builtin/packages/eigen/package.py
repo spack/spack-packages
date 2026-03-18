@@ -31,7 +31,6 @@ class Eigen(CMakePackage, ROCmPackage):
     version("3.2.10", sha256="0920cb60ec38de5fb509650014eff7cc6d26a097c7b38c7db4b1aa5df5c85042")
 
     with default_args(deprecated=True):
-        version("3.4.0-44-ge7248b26a", commit="e7248b26a1ed53fa030c5c459f7ea095dfd276ac")
         version("3.3.8", sha256="146a480b8ed1fb6ac7cd33fec9eb5e8f8f62c3683b3f850094d9d5c35a92419a")
         version("3.3.7", sha256="d56fbad95abf993f8af608484729e3d87ef611dd85b3380a8bad1d5cbc373a57")
         version("3.3.6", sha256="e7cd8c94d6516d1ada9893ccc7c9a400fcee99927c902f15adba940787104dba")

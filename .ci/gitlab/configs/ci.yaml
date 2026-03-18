@@ -23,7 +23,7 @@ ci:
       script::
       - - if [ -n "$SPACK_EXTRA_MIRROR" ]; then spack mirror add local "${SPACK_EXTRA_MIRROR}/${SPACK_CI_STACK_NAME}"; fi
         - spack config blame mirrors
-      - - spack --color=always --backtrace ci rebuild -j ${SPACK_BUILD_JOBS} --tests --timeout 300 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_err.txt >&2)
+      - - spack --color=always ci rebuild -j ${SPACK_BUILD_JOBS} --tests --timeout 300 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_err.txt >&2)
       after_script:
       - - cat /proc/loadavg || true
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
@@ -124,7 +124,7 @@ ci:
           aud: "${OIDC_TOKEN_AUDIENCE}"
 
   - noop-job:
-      tags: ["service"]
+      tags: ["service_noop"]
       image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
       variables:
         CI_OIDC_REQUIRED: 0
