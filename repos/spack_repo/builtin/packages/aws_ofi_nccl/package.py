@@ -56,7 +56,7 @@ class AwsOfiNccl(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
     conflicts("~cuda ~rocm", msg="Either CUDA or ROCm support must be enabled")
-    conflicts("+rocm", when="@:1.17", description="ROCm support was added in 1.18")
+    conflicts("+rocm", when="@:1.17", msg="ROCm support was added in 1.18")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="@1.15:")
