@@ -76,3 +76,6 @@ class Gchp(CMakePackage):
         # messages that point to specific modules / lines of the source code.
         # Including source code thus facilitates runtime debugging.
         shutil.move(self.stage.source_path, join_path(prefix, "source_code"))
+
+        # Ensure that the bin directory gets installed
+        install_tree(join_path(self.build_directory,"bin"), prefix.bin)
