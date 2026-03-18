@@ -7,6 +7,8 @@ packages:
     externals:
     - spec: cmake@3.28.0-msvc1
       prefix: "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake"
+    - spec: cmake@4.2.3
+      prefix: "C:\\cmake\\4\\cmake-4.2.3-windows-x86_64"
     buildable: False
   ninja:
     externals:
