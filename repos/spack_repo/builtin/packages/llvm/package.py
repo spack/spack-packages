@@ -901,6 +901,18 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             env.set("FC", join_path(self.spec.prefix.bin, "flang"))
             env.set("F77", join_path(self.spec.prefix.bin, "flang"))
 
+    @classmethod
+    def runtime_constraints(cls, *, spec, pkg):
+        if spec.satisfies("%gcc"):
+            gcc = spec["gcc"]
+            for language in ("c", "cxx", "fortran"):
+                pkg("*").depends_on(
+                    f"gcc-runtime@{gcc.version}:",
+                    when=f"%[deptypes=build virtuals={language}] {spec.name}/{spec.dag_hash()}",
+                    type="link",
+                    description=f"Inject gcc-runtime when llvm is used as a {language} compiler",
+                )
+
     root_cmakelists_dir = "llvm"
 
     def cmake_args(self):
