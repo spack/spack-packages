@@ -466,6 +466,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # make sure LLVM prefers binutils prefix over system default
+                    if self.spec.satisfies("^binutils"):
+                        print(f"-B{self.spec['binutils'].prefix.bin}", file=f)
 
     # Required for enabling asan on dependent packages
     def setup_dependent_build_environment(

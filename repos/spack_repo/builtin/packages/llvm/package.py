@@ -1225,6 +1225,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # make sure LLVM prefers binutils prefix over system default
+                    if self.spec.satisfies("^binutils"):
+                        print(f"-B{self.spec['binutils'].prefix.bin}", file=f)
 
     def llvm_config(self, *args, result=None, **kwargs):
         lc = Executable(self.prefix.bin.join("llvm-config"))
