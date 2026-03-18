@@ -26,7 +26,7 @@ include:
     when: platform == "linux" and not env.get("CRAYPE_VERSION") and env.get("SPACK_CI_TARGET") == "x86_64_v3"
 
   # === Cray ===
-  - path: configs/cray-slex/zen4
+  - path: configs/cray-sles/x86_64_v3
     when: '"sles" in os and env.get("CRAYPE_VERSION")'
   - path: configs/cray-sles
     when: '"sles" in os and env.get("CRAYPE_VERSION")'
