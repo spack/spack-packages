@@ -36,9 +36,6 @@ class PyTensorboardDataServer(PythonPackage):
         when="@0.6.1",
     )
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CARGO_HOME", self.stage.source_path)
-
     def install(self, spec, prefix):
         with working_dir(join_path("tensorboard", "data", "server")):
             cargo = which("cargo", required=True)
