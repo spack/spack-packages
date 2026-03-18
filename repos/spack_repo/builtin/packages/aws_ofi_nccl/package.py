@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class AwsOfiNccl(AutotoolsPackage):
+class AwsOfiNccl(AutotoolsPackage, CudaPackage, ROCmPackage):
     """AWS OFI NCCL is a plug-in which enables EC2 developers to use
     libfabric as a network provider while running NVIDIA's NCCL based
     applications."""
