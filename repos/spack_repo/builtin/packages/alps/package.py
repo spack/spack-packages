@@ -21,7 +21,8 @@ class Alps(CMakePackage):
 
     maintainers("Ooolab", "egull", "Sinan81")
 
-    license("MIT", checked_by="Ooolab")
+    license("BSL-1.0", when="@:2.3.3", checked_by="Sinan81")
+    license("MIT", when="@2.3.4:", checked_by="Ooolab")
 
     version(
         "2.3.4-beta.2",
