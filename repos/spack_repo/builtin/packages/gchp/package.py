@@ -78,4 +78,4 @@ class Gchp(CMakePackage):
         shutil.move(self.stage.source_path, join_path(prefix, "source_code"))
 
         # Ensure that the bin directory gets installed
-        install_tree(join_path(self.build_directory,"bin"), prefix.bin)
+        install_tree(join_path(self.build_directory, "bin"), prefix.bin)
