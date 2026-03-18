@@ -500,9 +500,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             when="llvm=spack",
         )
         conflicts(
-            "^llvm@20",
+            "^llvm@20:",
             when="@:2.5",
-            msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see "
+            msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20+, see "
             "https://github.com/chapel-lang/chapel/issues/27273",
         )
 
