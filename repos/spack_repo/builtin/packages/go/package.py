@@ -117,6 +117,12 @@ class Go(Package):
         install_tree(".", prefix.go)
         symlink(prefix.go.bin, prefix.bin)
 
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        env.set("GO111MODULE", "on")
+        env.set("GOTOOLCHAIN", "local")
+        env.set("GOMAXPROCS", str(make_jobs))
+        env.set("GOPATH", join_path(dependent_spec.package.stage.path, "go"))
+
     def setup_dependent_package(self, module, dependent_spec):
         """Called before go modules' build(), install() methods.
 
