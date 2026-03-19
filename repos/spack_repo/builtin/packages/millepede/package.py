@@ -81,6 +81,7 @@ class CMakeBuilder(CMakeBuilder):
             self.define("LAPACK_MKL", self.spec.satisfies("+mkl")),
             self.define_from_variant("SUPPORT_ZLIB", "zlib"),
             self.define_from_variant("SUPPORT_ROOT", "root"),
+            self.define_from_variant("SUPPORT_OPENMP", "openmp"),
             self.define_from_variant("PARDISO", "pardiso"),
             self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
         ]
