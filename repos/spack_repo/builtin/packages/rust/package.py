@@ -185,7 +185,7 @@ class Rust(Package):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        env.set("CARGO_HOME", dependent_spec.package.stage.path)
+        env.set("CARGO_HOME", join_path(dependent_spec.package.stage.path, "cargo"))
 
     def configure(self, spec, prefix):
         opts = []
