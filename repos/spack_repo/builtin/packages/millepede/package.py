@@ -17,22 +17,21 @@ class Millepede(MakefilePackage, CMakePackage):
         conditional("cmake", when="@5:"), conditional("makefile", when="@:4"), default="cmake"
     )
 
-    homepage = "https://gitlab.desy.de/claus.kleinwort/millepede-ii"
-    url = "https://gitlab.desy.de/millepede/millepede-ii/-/archive/V04-11-01/millepede-ii-V04-11-01.tar.gz"
+    homepage = "https://gitlab.desy.de/millepede/millepede-ii"
+    url = "https://gitlab.desy.de/millepede/millepede-ii/-/archive/V05-00-00/millepede-ii-V05-00-00.tar.gz"
     git = "https://gitlab.desy.de/millepede/millepede-ii.git"
 
     license("LGPL-2.0-only")
 
     version("main", branch="main")
+    version("05-01-00", sha256="fec88805d33004f9ca03733dc14f7b30f888cd3a48e3cdf4333d74b42242d3d3")
     version("05-00-00", sha256="df8ffb2ffae3c4f32177824026f79ed3b824536f5ef581643aaae09da308aca6")
-    version("04-13-03", sha256="669a6e46a6f02ba3c78b2760e2ffb2c90d25b582ccd1a5c0770eef81c7bcbbe9")
-    version("04-11-01", sha256="9869eb84d8d07cecfab15c396f3faa36aef10906e39f8641c48b58e0325b3205")
 
     # Fix LAPACK handling
     patch(
         "https://gitlab.desy.de/millepede/millepede-ii/-/merge_requests/48.diff",
         sha256="4b151e220012b53bf3ae2c82cd5f736df870b2332e7cfdec60ce13e6788af86a",
-        when="@05-00-00",
+        when="@5.0.0",
     )
 
     variant("zlib", default=True, description="Enable zlib support")

@@ -20,9 +20,14 @@ class Generalbrokenlines(CMakePackage):
     license("LGPL-2.0-only", checked_by="paulgessinger")
 
     version("main", branch="main")
+    version("04-00-01", sha256="d3ab79babd953a8cffd7fca6a3753be923dd64d28e50eae89ee2b910c3d9d599")
     version("04-00-00", sha256="ac2818cd7b8f84cb75c721521320f6c85ff8423bcf9b6be6d2bfee6e205a07db")
 
-    patch("cmake.patch", when="@4.0.0")
+    patch(
+        "https://gitlab.desy.de/millepede/general-broken-lines/-/merge_requests/2.diff",
+        sha256="9578a86fcbb4dcd6bca14e9d6531c545b1ea798944b8d47d858ca20d58f6bd64",
+        when="@4.0.0",
+    )
 
     variant("root", default=False, description="Enable ROOT support")
 
