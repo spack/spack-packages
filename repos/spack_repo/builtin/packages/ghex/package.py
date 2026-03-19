@@ -19,8 +19,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     maintainers = ["boeschf", "msimberg"]
 
     version("master", branch="master")
-    # TODO: No submodules?
-    version("0.5.0", tag="v0.5.0", submodules=False)
+    version("0.5.0", sha256="b2324441c2210783a90e83439e0d5c8e0aa462a7797ebbc6e48a47dfcada4848")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
