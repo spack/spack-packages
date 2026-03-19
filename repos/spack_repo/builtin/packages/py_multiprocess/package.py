@@ -70,7 +70,7 @@ class PyMultiprocess(PythonPackage):
     depends_on("py-dill@0.2.2:", type=("build", "run"), when="@0.70.1")
 
     def url_for_version(self, version):
-        url = "https://pypi.io/packages/source/p/multiprocess/multiprocess-{0}.{1}"
+        url = "https://pypi.io/packages/source/m/multiprocess/multiprocess-{0}.{1}"
         zip_versions = [
             Version("0.70.12.2"),
             Version("0.70.12.1"),
