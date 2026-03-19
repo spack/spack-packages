@@ -198,7 +198,7 @@ for module in sys.argv[1:]:
     print(module)
     importlib.import_module(module)
 """,
-                *self.import_modules
+                *self.import_modules,
             )
 
 
