@@ -59,8 +59,7 @@ class Aretomo3(MakefilePackage, CudaPackage):
 
         # Replace CUFLAG gencode block
         makefile.filter(
-            r"CUFLAG = -Xptxas -dlcm=ca -O2 \\",
-            f"CUFLAG = -Xptxas -dlcm=ca -O2 {cuda_gencode}",
+            r"CUFLAG = -Xptxas -dlcm=ca -O2 \\", f"CUFLAG = -Xptxas -dlcm=ca -O2 {cuda_gencode}"
         )
         # Remove all old gencode continuation lines
         makefile.filter(r"\s*-gencode arch=compute_\d+,code=sm_\d+.*", "")
@@ -71,19 +70,13 @@ class Aretomo3(MakefilePackage, CudaPackage):
             r"^CFLAG = -c -g -pthread -m64",
             f"CFLAG = -c -g -pthread -m64 -I{tiff.prefix.include} -I{cuda.prefix.include}",
         )
-        makefile.filter(
-            r"^CUFLAG = (.*)",
-            f"CUFLAG = \\1 -I{tiff.prefix.include}",
-        )
+        makefile.filter(r"^CUFLAG = (.*)", f"CUFLAG = \\1 -I{tiff.prefix.include}")
 
         # Add stubs path for -lcuda (driver lib not in build container)
         makefile.filter("-lcuda", f"-L{stubs} -lcuda")
 
         # Fix hardcoded g++ in link line
-        makefile.filter(
-            r"\t@g\+\+ -g -pthread -m64 \$\(OBJS\)",
-            "\t@c++ -g -pthread -m64 $(OBJS)",
-        )
+        makefile.filter(r"\t@g\+\+ -g -pthread -m64 \$\(OBJS\)", "\t@c++ -g -pthread -m64 $(OBJS)")
 
     def build(self, spec, prefix):
         make("-f", "makefile11", "exe")
