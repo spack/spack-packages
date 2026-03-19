@@ -34,6 +34,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     variant("python", default=True, description="Build Python bindings")
 
     depends_on("cmake@3.21:", type="build")
+    depends_on("googletest", type="test")
     depends_on("mpi")
     depends_on("boost")
     depends_on("xpmem", when="+xpmem", type=("build", "run"))
@@ -62,10 +63,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
 
         args = [
-            self.define("GHEX_USE_BUNDLED_LIBS", True),
-            self.define("GHEX_USE_BUNDLED_GRIDTOOLS", False),
-            self.define("GHEX_USE_BUNDLED_GTEST", self.run_tests),
-            self.define("GHEX_USE_BUNDLED_OOMPH", False),
+            self.define("GHEX_USE_BUNDLED_LIBS", False),
             self.define("GHEX_TRANSPORT_BACKEND", spec.variants["backend"].value.upper()),
             self.define_from_variant("GHEX_USE_XPMEM", "xpmem"),
             self.define_from_variant("GHEX_BUILD_PYTHON_BINDINGS", "python"),
