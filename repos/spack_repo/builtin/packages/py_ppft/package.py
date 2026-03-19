@@ -15,6 +15,8 @@ class PyPpft(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.7.8", sha256="5f696d4f397ae9b0af39b1faffb31957c51dfbc5a3815856472d4f4e872937ee")
+    version("1.7.7", sha256="f3f77448cfe24c2b8d2296b6d8732280b25041a3f3e1f551856c6451d3e01b96")    
     version("1.7.6.9", sha256="73161c67474ea9d81d04bcdad166d399cff3f084d5d2dc21ebdd46c075bbc265")
     version("1.7.6.8", sha256="76a429a7d7b74c4d743f6dba8351e58d62b6432ed65df9fe204790160dab996d")
     version("1.7.6.7", sha256="ab34436814e2f18238f35688fd869b2641b2d2d8dca22b8d246f6701dfc954c8")
@@ -26,18 +28,39 @@ class PyPpft(PythonPackage):
     version("1.6.4.6", sha256="92d09061f5425634c43dbf99c5558f2cf2a2e1e351929f8da7e85f4649c11095")
     version("1.6.4.5", sha256="d47da9d2e553848b75727ce7c510f9e149965d5c68f9fc56c774a7c6a3d18214")
 
-    depends_on("python@2.5:2.8,3.1:", type=("build", "run"))
-    depends_on("python@2.7:2.8,3.6:", when="@1.6.6.4:", type=("build", "run"))
-
     depends_on("py-setuptools@0.6:", type="build")
+
+    # Python
+    depends_on("python@3.9:", when="@1.7.8:")
+    depends_on("python@3.8:", when="@1.7.6.8:1.7.7")
+    depends_on("python@3.7:", when="@1.7.6.6:1.7.6.7")
+    depends_on("python@2.7,3.7:", when="@1.7.6.5")
+    depends_on("python@2.7,3.6:", when="@1.6.6.4")
+    depends_on("python@2.7,3.5:", when="@1.6.6.2:1.6.6.3")
+    depends_on("python@2.7,3.5:", when="@1.6.6.2:1.6.6.3")
+    depends_on("python@2.6:,3.1:", when="@1.6.6.1")
+    depends_on("python@2.5:,3.1:", when="@1.6.4.5:1.6.4.9")
+
+    # six
     depends_on("py-six@1.7.3:", type=("build", "run"), when="@:1.7.6.5")
-    depends_on("py-dill@0.2.6:", type=("build", "run"))
-    depends_on("py-dill@0.3.4:", type=("build", "run"), when="@1.6.6.4:")
+    
+    # dill
+    depends_on("py-dill@0.2.2:", type=("build", "run"), when="@1.6.4.5")
+    depends_on("py-dill@0.2.5:", type=("build", "run"), when="@1.6.4.6")
+    depends_on("py-dill@0.2.6:", type=("build", "run"), when="@1.6.4.7.1")
+    depends_on("py-dill@0.2.8.1:", type=("build", "run"), when="@1.6.4.8")
+    depends_on("py-dill@0.2.9:", type=("build", "run"), when="@1.6.4.9")
+    depends_on("py-dill@0.3.0:", type=("build", "run"), when="@1.6.6.1")
+    depends_on("py-dill@0.3.2:", type=("build", "run"), when="@1.6.6.2")
+    depends_on("py-dill@0.3.3:", type=("build", "run"), when="@1.6.6.3")
+    depends_on("py-dill@0.3.4:", type=("build", "run"), when="@1.6.6.4")
     depends_on("py-dill@0.3.5:", type=("build", "run"), when="@1.7.6.5")
     depends_on("py-dill@0.3.6:", type=("build", "run"), when="@1.7.6.6")
     depends_on("py-dill@0.3.7:", type=("build", "run"), when="@1.7.6.7")
     depends_on("py-dill@0.3.8:", type=("build", "run"), when="@1.7.6.8")
     depends_on("py-dill@0.3.9:", type=("build", "run"), when="@1.7.6.9")
+    depends_on("py-dill@0.4.0:", type=("build", "run"), when="@1.7.7")
+    depends_on("py-dill@0.4.1:", type=("build", "run"), when="@1.7.8")
 
     def url_for_version(self, version):
         url = "https://pypi.io/packages/source/p/ppft/"
