@@ -18,9 +18,9 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/ghex-org/GHEX.git"
     maintainers = ["boeschf", "msimberg"]
 
-    version("master", branch="master", submodules=True)
+    version("master", branch="master")
     # TODO: No submodules?
-    version("0.5.0", tag="v0.5.0", submodules=True)
+    version("0.5.0", tag="v0.5.0", submodules=False)
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -39,6 +39,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("boost")
     depends_on("xpmem", when="+xpmem", type=("build", "run"))
 
+    depends_on("gridtools")
     depends_on("oomph")
     for backend in backends:
         depends_on(f"oomph backend={backend}", when=f"backend={backend}")
@@ -63,7 +64,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
 
         args = [
             self.define("GHEX_USE_BUNDLED_LIBS", True),
-            self.define("GHEX_USE_BUNDLED_GRIDTOOLS", True),
+            self.define("GHEX_USE_BUNDLED_GRIDTOOLS", False),
             self.define("GHEX_USE_BUNDLED_GTEST", self.run_tests),
             self.define("GHEX_USE_BUNDLED_OOMPH", False),
             self.define("GHEX_TRANSPORT_BACKEND", spec.variants["backend"].value.upper()),
