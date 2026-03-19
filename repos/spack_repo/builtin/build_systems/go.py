@@ -12,7 +12,6 @@ from spack.package import (
     depends_on,
     execute_install_time_tests,
     install,
-    join_path,
     mkdirp,
     register_builder,
     run_after,
