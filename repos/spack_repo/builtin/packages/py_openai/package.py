@@ -48,7 +48,7 @@ class PyOpenai(PythonPackage):
     depends_on("py-anyio@3.5:3", when="@:1.3", type=("build", "run"))
     depends_on("py-distro@1.7:1", when="@1:", type=("build", "run"))
     depends_on("py-sniffio", when="@1.4:", type=("build", "run"))
-    depends_on("py-tqdm@5:", when="@1:", type=("build", "run"))
+    depends_on("py-tqdm@4:", when="@1:", type=("build", "run"))  # the repo says tqdm>4, impossible
     depends_on("py-tqdm", type=("build", "run"))
     depends_on("py-jiter@0.10:0", when="@2.3:", type=("build", "run"))
     depends_on("py-jiter@0.4:0", when="@1.40:", type=("build", "run"))
