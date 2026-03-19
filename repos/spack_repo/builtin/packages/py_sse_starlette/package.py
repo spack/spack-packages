@@ -16,6 +16,7 @@ class PySseStarlette(PythonPackage):
     license("BSD-3-Clause", checked_by="aprozo")
 
     version("3.4.8", sha256="ed89ffbb75cbf78a5fe2f2109cd584792ee7f9dfac96f791db546df8f15f3f9c")
+    version("3.3.3", sha256="72a95d7575fd5129bd0ae15275ac6432bb35ac542fdebb82889c24bb9f3f4049")
 
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-setuptools", type="build")

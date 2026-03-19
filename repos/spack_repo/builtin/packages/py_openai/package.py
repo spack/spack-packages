@@ -42,21 +42,19 @@ class PyOpenai(PythonPackage):
     )
     variant("realtime", default=False, description="support for Realtime API", when="@1.58:")
 
+    depends_on("python@3.9:", type=("build", "run"), when="@2.7.2:")
     depends_on("python@3.8:", when="@1.54:", type=("build", "run"))
     depends_on("python@3.7.1:", type=("build", "run"))
-
-    # ==================================================
-    depends_on("python@3.9:", type=("build", "run"), when="@2.7.2:")
     depends_on("py-httpx@0.23.0:0", type=("build", "run"), when="@1:")
     depends_on("py-pydantic@1.9.0:2", type=("build", "run"), when="@1:")
-    depends_on("py-tqdm@5:", when="@1:", type=("build", "run"))
+    depends_on("py-tqdm@4:", when="@1:", type=("build", "run"))  # the repo says tqdm>4, impossible
     depends_on("py-tqdm", type=("build", "run"))
     depends_on("py-typing-extensions@4.11:4", type=("build", "run"), when="@1.40:")
-    depends_on("py-typing-extensions@4.7:4", when="@1.6:1.39", type=("build", "run"))
-    depends_on("py-typing-extensions@4.5:4", when="@:1.5", type=("build", "run"))
-    depends_on("py-typing-extensions", when="^python@3.7", type=("build", "run"))
+    depends_on("py-typing-extensions@4.7:4", type=("build", "run"), when="@1.6:1.39")
+    depends_on("py-typing-extensions@4.5:4", type=("build", "run"), when="@:1.5")
+    depends_on("py-typing-extensions", type=("build", "run"), when="^python@3.7")
     depends_on("py-anyio@3.5:4", type=("build", "run"), when="@1.3.8:")
-    depends_on("py-anyio@3.5:3", when="@:1.3.7", type=("build", "run"))
+    depends_on("py-anyio@3.5:3", type=("build", "run"), when="@:1.3.7")
     depends_on("py-distro@1.7.0:1", type=("build", "run"), when="@1:")
     depends_on("py-sniffio", type=("build", "run"), when="@1.3.6:")
     depends_on("py-jiter@0.10:0", type=("build", "run"), when="@2.3.0:")
@@ -70,8 +68,6 @@ class PyOpenai(PythonPackage):
     depends_on("py-setuptools", when="@0", type="build")
     depends_on("py-requests@2.20:", when="@0", type=("build", "run"))
     depends_on("py-aiohttp", when="@0", type=("build", "run"))
-
-    #==============================================================
 
     with when("+datalib"):
         depends_on("py-numpy", type=("build", "run"))
