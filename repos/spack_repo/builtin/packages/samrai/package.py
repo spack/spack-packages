@@ -12,7 +12,7 @@ from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakePackage,
     CachedCMakeBuilder,
     cmake_cache_option,
-    cmake_cache_string
+    cmake_cache_string,
 )
 
 from spack.package import *
@@ -20,23 +20,24 @@ from spack.package import *
 
 class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     """SAMRAI (Structured Adaptive Mesh Refinement Application Infrastructure)
-       is an object-oriented C++ software library enables exploration of
-       numerical, algorithmic, parallel computing, and software issues
-       associated with applying structured adaptive mesh refinement
-       (SAMR) technology in large-scale parallel application development.
+    is an object-oriented C++ software library enables exploration of
+    numerical, algorithmic, parallel computing, and software issues
+    associated with applying structured adaptive mesh refinement
+    (SAMR) technology in large-scale parallel application development.
 
     """
+
     homepage = "https://computing.llnl.gov/projects/samrai"
-    url      = "https://github.com/LLNL/SAMRAI/archive/refs/tags/v-3-15-0.tar.gz"
+    url = "https://github.com/LLNL/SAMRAI/archive/refs/tags/v-3-15-0.tar.gz"
     list_url = homepage
-    git      = 'https://github.com/LLNL/SAMRAI.git'
+    git = "https://github.com/LLNL/SAMRAI.git"
 
     # using build_system 'cached_cmake'
-    version('4.5.0',  tag='v-4-5-0', submodules=True)    
-    version('4.3.0',  tag='v-4-3-0')
-    version('2022.2.9',  commit='dc87a7a05cd5edccdb417a0796a5f6a4f68cd9f0')
-    version('2021.11.4', commit='e600573bf774022126a7539240a6a6c2e44b8e64')
-    version('2021.2.16', commit='39017121bda44fff713fe3b01cb1e063be93023b')
+    version("4.5.0", tag="v-4-5-0", submodules=True)
+    version("4.3.0", tag="v-4-3-0")
+    version("2022.2.9", commit="dc87a7a05cd5edccdb417a0796a5f6a4f68cd9f0")
+    version("2021.11.4", commit="e600573bf774022126a7539240a6a6c2e44b8e64")
+    version("2021.2.16", commit="39017121bda44fff713fe3b01cb1e063be93023b")
 
     # using build_system 'autotools'
     version("3.12.0", sha256="b8334aa22330a7c858e09e000dfc62abbfa3c449212b4993ec3c4035bed6b832")
@@ -74,19 +75,24 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
         if version >= Version("4.3.0"):
             url = f"https://github.com/LLNL/SAMRAI/archive/refs/tags/v-3-15-0.tar.gz"
         else:
-            url = (
-                f"https://computing.llnl.gov/projects/samrai/download/SAMRAI-v3.11.2.tar.gz"
-            )
+            url = f"https://computing.llnl.gov/projects/samrai/download/SAMRAI-v3.11.2.tar.gz"
         return url
 
     # Debug mode reduces optimization, includes assertions, debug symbols
     # and more print statements
-    variant('debug', default=False,
-            description='Compile with reduced optimization and debugging on')
-    variant('silo', default=False,
-            description='Compile with support for silo')
-    variant('mpi', default=True, description="Build with MPI", when="@4:")
-    variant("cxxstd", default="14", values=("11", "14", "17"), multi=False, description="C++ standard", when="@4:")
+    variant(
+        "debug", default=False, description="Compile with reduced optimization and debugging on"
+    )
+    variant("silo", default=False, description="Compile with support for silo")
+    variant("mpi", default=True, description="Build with MPI", when="@4:")
+    variant(
+        "cxxstd",
+        default="14",
+        values=("11", "14", "17"),
+        multi=False,
+        description="C++ standard",
+        when="@4:",
+    )
     variant("tests", default=False, description="Build tests", when="@4:")
     variant("docs", default=False, description="Build docs", when="@4:")
     variant("tools", default=False, description="Build tools", when="@4:")
@@ -100,48 +106,47 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     depends_on("fortran", type="build")
 
     build_system(
-        conditional("cmake", when="@4:"),
-        conditional("autotools", when="@:3"), default="cmake"
+        conditional("cmake", when="@4:"), conditional("autotools", when="@:3"), default="cmake"
     )
-    
-    with when("build_system=cmake"):
-        depends_on('mpi', when="+mpi")
-        depends_on('zlib')
-        depends_on('hdf5')  # This used to be hdf5+mpi
-        depends_on('blt')
 
-        depends_on('raja')  # TODO: check if this is only for +cuda
-        depends_on('umpire')  # Umpire is needed when building with Raja
+    with when("build_system=cmake"):
+        depends_on("mpi", when="+mpi")
+        depends_on("zlib")
+        depends_on("hdf5")  # This used to be hdf5+mpi
+        depends_on("blt")
+
+        depends_on("raja")  # TODO: check if this is only for +cuda
+        depends_on("umpire")  # Umpire is needed when building with Raja
 
         # Miranda needs SAMRAI with conduit
-        depends_on('conduit')
+        depends_on("conduit")
 
-    depends_on('m4', type='build')
-    depends_on('boost@:1.64.0', when='@3.0.0:3.11.99', type='build')
-    depends_on('silo+mpi', when='+silo')
+    depends_on("m4", type="build")
+    depends_on("boost@:1.64.0", when="@3.0.0:3.11.99", type="build")
+    depends_on("silo+mpi", when="+silo")
 
     with when("build_system=autotools"):
         depends_on("mpi")
         depends_on("zlib-api")
-        depends_on("hdf5+mpi")        
+        depends_on("hdf5+mpi")
         # TODO: replace this with an explicit list of components of Boost,
         # for instance depends_on('boost +filesystem')
         # See https://github.com/spack/spack/pull/22303 for reference
         depends_on(Boost.with_default_variants, when="@3.0.0:3.11.99", type="build")
-    
+
     # don't build SAMRAI 3+ with tools with gcc
     # 23/01/12: this causes issues with out version+gcc
     patch("no-tool-build.patch", when="@3.0.0:3.12.0%gcc")
 
     def flag_handler(self, name, flags):
-        if name == 'ldflags':
-            flags.append('-lz')
+        if name == "ldflags":
+            flags.append("-lz")
         return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
-        if '+cuda' in spec:
-            env.set('CUDAHOSTCXX', spack_cxx)
+        if "+cuda" in spec:
+            env.set("CUDAHOSTCXX", spack_cxx)
 
     def check(self):
         if self.spec.satisfies("+tests"):
@@ -151,9 +156,10 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
 
     def cmake_args(self):
         return []
-                
+
+
 class CachedCMakeBuilder(cached_cmake.CachedCMakeBuilder):
-            
+
     @property
     def libs(self):
         libs = [
@@ -166,11 +172,11 @@ class CachedCMakeBuilder(cached_cmake.CachedCMakeBuilder):
             "SAMRAI_pdat",
             "SAMRAI_xfer",
             "SAMRAI_hier",
-            "SAMRAI_tbox"
+            "SAMRAI_tbox",
         ]
-        libs = [('lib' + x) for x in libs]
+        libs = [("lib" + x) for x in libs]
         return find_libraries(libs, self.spec.prefix, shared=False, recursive=True)
-    
+
     def initconfig_mpi_entries(self):
         spec = self.spec
         entries = super().initconfig_mpi_entries()
@@ -191,35 +197,44 @@ class CachedCMakeBuilder(cached_cmake.CachedCMakeBuilder):
             entries.append(cmake_cache_option("ENABLE_SAMRAI_TESTS", False))
             entries.append(cmake_cache_option("ENABLE_TESTS", False))
 
-        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.spec.variants['cxxstd'].value}"))
+        entries.append(
+            cmake_cache_string("BLT_CXX_STD", f"c++{self.spec.variants['cxxstd'].value}")
+        )
         entries.append(cmake_cache_option("ENABLE_DOCS", spec.satisfies("+docs")))
         entries.append(cmake_cache_option("ENABLE_TOOLS", spec.satisfies("+tools")))
         entries.append(cmake_cache_option("ENABLE_FORTRAN", spec.satisfies("+fortran")))
         entries.append(cmake_cache_option("ENABLE_OPENMP", spec.satisfies("+openmp")))
         entries.append(cmake_cache_option("ENABLE_CONDUIT", spec.satisfies("+conduit")))
         entries.append(cmake_cache_option("ENABLE_RAJA", spec.satisfies("+raja")))
-        
+
         # Warning (KW 6/2024) -- setting the CMAKE_Fortran_COMPILER to the default (env['FC'])
         # produced lots of weird errors. Seems like it was related to Samrai's use
         # of FIXED formatting for its Fortran (rather than FREE formatting)
-        entries.insert(0, cmake_cache_path("CMAKE_C_COMPILER", env['CC']))
-        entries.insert(0, cmake_cache_path("CMAKE_CXX_COMPILER", env['CXX']))
-        entries.insert(0, cmake_cache_path("CMAKE_Fortran_COMPILER", env['SPACK_FC']))
-        
+        entries.insert(0, cmake_cache_path("CMAKE_C_COMPILER", env["CC"]))
+        entries.insert(0, cmake_cache_path("CMAKE_CXX_COMPILER", env["CXX"]))
+        entries.insert(0, cmake_cache_path("CMAKE_Fortran_COMPILER", env["SPACK_FC"]))
+
         if self.spec.satisfies("+conduit"):
-            entries.append(cmake_cache_string("CONDUIT_DIR", spec['conduit'].prefix))
+            entries.append(cmake_cache_string("CONDUIT_DIR", spec["conduit"].prefix))
 
         if self.spec.satisfies("+raja"):
-            entries.append(cmake_cache_string("RAJA_DIR", spec['raja'].prefix))
-            entries.append(cmake_cache_string("umpire_DIR", join_path(spec['umpire'].prefix,
-                                                                      'share/umpire/cmake')))
+            entries.append(cmake_cache_string("RAJA_DIR", spec["raja"].prefix))
+            entries.append(
+                cmake_cache_string(
+                    "umpire_DIR", join_path(spec["umpire"].prefix, "share/umpire/cmake")
+                )
+            )
 
         entries.append(cmake_cache_option("ENABLE_CUDA", spec.satisfies("+cuda")))
         if self.spec.satisfies("+cuda"):
-            entries.append(cmake_cache_string("CMAKE_CUDA_STANDARD", spec.variants['cxxstd'].value))
+            entries.append(
+                cmake_cache_string("CMAKE_CUDA_STANDARD", spec.variants["cxxstd"].value)
+            )
             entries.append(cmake_cache_string("CMAKE_CUDA_EXTENSIONS", False))
-            entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", spec.variants['cuda_arch'].value))
-        
+            entries.append(
+                cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value)
+            )
+
         return entries
 
 
@@ -240,11 +255,11 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
                 "--with-petsc=no",
             ]
         )
-        
+
         # SAMRAI 2 used templates; enable implicit instantiation
         if self.spec.satisfies("@:3"):
             options.append("--enable-implicit-template-instantiation")
-                
+
         if "+debug" in self.spec:
             options.extend(["--disable-opt", "--enable-debug"])
         else:
@@ -262,8 +277,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         return options
 
     def setup_dependent_build_environment(
-            self, env: EnvironmentModifications, dependent_spec: Spec
+        self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         if self.spec.satisfies("@3.12:"):
             env.append_flags("CXXFLAGS", self.compiler.cxx11_flag)
-
