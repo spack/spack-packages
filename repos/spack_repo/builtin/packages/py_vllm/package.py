@@ -45,10 +45,10 @@ class PyVllm(PythonPackage):
     depends_on("py-py-cpuinfo", type=("build", "run"))
     depends_on("py-transformers@4.56:4", type=("build", "run"))
     depends_on("py-tokenizers@0.21.1:", type=("build", "run"))
-    depends_on("py-protobuf@6.33.5:", type=("build", "run"))  # to be updated
-    depends_on("py-fastapi@0.115: +standard", type=("build", "run"))  # missing variant
-    depends_on("py-aiohttp@3.13.3:", type=("build", "run"))  # to be updated
-    depends_on("py-openai@1.99.1:", type=("build", "run"))  # to be updated
+    depends_on("py-protobuf@6.33.5:", type=("build", "run"))
+    depends_on("py-fastapi@0.115: +standard", type=("build", "run"))
+    depends_on("py-aiohttp@3.13.3:", type=("build", "run"))
+    depends_on("py-openai@1.99.1:", type=("build", "run"))
     depends_on("py-pydantic@2.12:", type=("build", "run"))
     depends_on("py-prometheus-client@0.18:", type=("build", "run"))
     depends_on("pil", type=("build", "run"))
@@ -65,7 +65,7 @@ class PyVllm(PythonPackage):
     depends_on("py-partial-json-parser", type=("build", "run"))
     depends_on("py-pyzmq", type=("build", "run"))
     depends_on("py-msgspec", type=("build", "run"))
-    depends_on("py-gguf@0.17:", type=("build", "run"))  # to be added
+    depends_on("py-gguf@0.17:", type=("build", "run"))
     depends_on("py-mistral-common@1.8.8: +image", type=("build", "run"))
     depends_on("py-opencv-python@4.13: +headless", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))

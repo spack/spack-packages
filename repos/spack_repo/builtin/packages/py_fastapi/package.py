@@ -21,6 +21,7 @@ class PyFastapi(PythonPackage):
     version("0.110.2", sha256="b53d673652da3b65e8cd787ad214ec0fe303cad00d2b529b86ce7db13f17518d")
     version("0.109.2", sha256="f3817eac96fe4f65a2ebb4baa000f394e55f5fccdaf7f75250804bc58f354f73")
 
+    variant("standard", default=False, description="Install standard dependencies")
     variant("all", default=False, description="Build all optional dependencies")
 
     depends_on("python@3.8:", when="@0.104:", type=("build", "run"))
@@ -39,6 +40,16 @@ class PyFastapi(PythonPackage):
     depends_on("py-typing-extensions@4.8.0:", when="@0.104:", type=("build", "run"))
 
     conflicts("^py-pydantic@1.7.0:1.7.3,1.8.0:1.8.1,2.0,2.1.0")
+    conflicts("+all+standard")
+
+    with when("+standard"):
+        depends_on("py-httpx@0.23:", type=("build", "run"))
+        depends_on("py-jinja2@3.1.5:", when="@0.115.12:", type=("build", "run"))
+        depends_on("py-jinja2@2.11.2:", type=("build", "run"))
+        depends_on("py-python-multipart@0.0.18:", when="@0.115.12:", type=("build", "run"))
+        depends_on("py-python-multipart@0.0.7:", when="@0.109.1:", type=("build", "run"))
+        depends_on("py-email-validator@2.0.0:", when="@0.100:", type=("build", "run"))
+        depends_on("py-uvicorn@0.12:+standard", type=("build", "run"))
 
     with when("+all"):
         depends_on("py-httpx@0.23:", type=("build", "run"))
