@@ -83,6 +83,8 @@ class Dyninst(CMakePackage):
         when="@10.0.0:12.2.0",
         sha256="0064d8d51bd01bd0035e1ebc49276f627ce6366d4524c92cf47d3c09b0031f96",
     )
+    # missing <cstdint> include
+    patch("include_cstdint.patch", when="@13.0.0")
 
     requires("%gcc", when="@:12", msg="dyninst builds only with GCC")
 

@@ -125,7 +125,6 @@ default:
     KUBERNETES_MEMORY_REQUEST: 16G
     # avoid moving targets like branches and tags
     SPACK_CONCRETIZER_REQUIRE_CHECKSUM: 1
-    SPACK_BACKTRACE: 1
   interruptible: true
   timeout: 60 minutes
   # Retry for everything but "legitimate build failures" (script_failure)
@@ -354,7 +353,7 @@ e4s-rocm-external-build:
 
 e4s-oneapi-generate:
   extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.2-1759968993
+  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
 
 e4s-oneapi-build:
   extends: [ ".e4s-oneapi", ".build" ]
