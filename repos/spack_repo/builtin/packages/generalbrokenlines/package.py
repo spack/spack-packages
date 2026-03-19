@@ -39,6 +39,8 @@ class Generalbrokenlines(CMakePackage):
     version("main", branch="main")
     version("04-00-00", sha256="ac2818cd7b8f84cb75c721521320f6c85ff8423bcf9b6be6d2bfee6e205a07db")
 
+    patch("cmake.patch", when="@4.0.0")
+
     variant("root", default=False, description="Enable ROOT support")
 
     _cxxstd_values = ["17", "20", "23"]
