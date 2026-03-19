@@ -29,7 +29,7 @@ class PyMistralCommon(PythonPackage):
     depends_on("py-jsonschema@4.21.1:", type=("build", "run"))
     depends_on("py-typing-extensions@4.11.0:", type=("build", "run"))
     depends_on("py-tiktoken@0.12.0:", when="^python@3.14:", type=("build", "run"))
-    depends_on("py-titkoken@0.7.0:", when="^python@:3.13", type=("build", "run"))
+    depends_on("py-tiktoken@0.7.0:", when="^python@:3.13", type=("build", "run"))
     depends_on("pil@10.3.0:", type=("build", "run"))
     depends_on("py-requests@2:", type=("build", "run"))
     depends_on("py-numpy@1.25:", when="^python@3.13:", type=("build", "run"))

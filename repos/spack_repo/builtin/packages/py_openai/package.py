@@ -21,6 +21,7 @@ class PyOpenai(PythonPackage):
 
     license("MIT")
 
+    version("2.29.0", sha256="32d09eb2f661b38d3edd7d7e1a2943d1633f572596febe64c0cd370c86d52bec")
     version("2.26.0", sha256="b41f37c140ae0034a6e92b0c509376d907f3a66109935fba2c1b471a7c05a8fb")
     version("0.27.8", sha256="2483095c7db1eee274cebac79e315a986c4e55207bb4fa7b82d185b3a2ed9536")
 
@@ -41,23 +42,36 @@ class PyOpenai(PythonPackage):
     )
     variant("realtime", default=False, description="support for Realtime API", when="@1.58:")
 
+    depends_on("python@3.8:", when="@1.54:", type=("build", "run"))
     depends_on("python@3.7.1:", type=("build", "run"))
+
+    # ==================================================
     depends_on("python@3.9:", type=("build", "run"), when="@2.7.2:")
-    depends_on("py-setuptools", type="build", when="@:0")
-    depends_on("py-hatchling@1.26.3", type="build", when="@1:2")
-    depends_on("py-hatch-fancy-pypi-readme", type="build", when="@1:2")
-    depends_on("py-requests@2.20:", type=("build", "run"), when="@:0")
     depends_on("py-httpx@0.23.0:0", type=("build", "run"), when="@1:")
     depends_on("py-pydantic@1.9.0:2", type=("build", "run"), when="@1:")
+    depends_on("py-tqdm@5:", when="@1:", type=("build", "run"))
     depends_on("py-tqdm", type=("build", "run"))
-    depends_on("py-tqdm@4:", type=("build", "run"), when="@1.40:")
-    depends_on("py-typing-extensions", when="^python@3.7", type=("build", "run"))
     depends_on("py-typing-extensions@4.11:4", type=("build", "run"), when="@1.40:")
-    depends_on("py-anyio@3.5.0:4", type=("build", "run"), when="@1.3.8:")
+    depends_on("py-typing-extensions@4.7:4", when="@1.6:1.39", type=("build", "run"))
+    depends_on("py-typing-extensions@4.5:4", when="@:1.5", type=("build", "run"))
+    depends_on("py-typing-extensions", when="^python@3.7", type=("build", "run"))
+    depends_on("py-anyio@3.5:4", type=("build", "run"), when="@1.3.8:")
+    depends_on("py-anyio@3.5:3", when="@:1.3.7", type=("build", "run"))
     depends_on("py-distro@1.7.0:1", type=("build", "run"), when="@1:")
-    depends_on("py-sniffio", type=("build", "run"), when="@1:")
+    depends_on("py-sniffio", type=("build", "run"), when="@1.3.6:")
     depends_on("py-jiter@0.10:0", type=("build", "run"), when="@2.3.0:")
+    depends_on("py-jiter@0.4:0", when="@1.40:", type=("build", "run"))
     depends_on("py-aiohttp", type=("build", "run"), when="@:0")
+    depends_on("py-hatchling@1.26.3", when="@1.66.4:", type="build")
+    depends_on("py-hatchling", when="@1:", type="build")
+    depends_on("py-hatch-fancy-pypi-readme", when="@1:", type="build")
+
+    # Historical dependencies
+    depends_on("py-setuptools", when="@0", type="build")
+    depends_on("py-requests@2.20:", when="@0", type=("build", "run"))
+    depends_on("py-aiohttp", when="@0", type=("build", "run"))
+
+    #==============================================================
 
     with when("+datalib"):
         depends_on("py-numpy", type=("build", "run"))
