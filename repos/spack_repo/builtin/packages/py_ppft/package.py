@@ -16,7 +16,7 @@ class PyPpft(PythonPackage):
     license("BSD-3-Clause")
 
     version("1.7.8", sha256="5f696d4f397ae9b0af39b1faffb31957c51dfbc5a3815856472d4f4e872937ee")
-    version("1.7.7", sha256="f3f77448cfe24c2b8d2296b6d8732280b25041a3f3e1f551856c6451d3e01b96")    
+    version("1.7.7", sha256="f3f77448cfe24c2b8d2296b6d8732280b25041a3f3e1f551856c6451d3e01b96")
     version("1.7.6.9", sha256="73161c67474ea9d81d04bcdad166d399cff3f084d5d2dc21ebdd46c075bbc265")
     version("1.7.6.8", sha256="76a429a7d7b74c4d743f6dba8351e58d62b6432ed65df9fe204790160dab996d")
     version("1.7.6.7", sha256="ab34436814e2f18238f35688fd869b2641b2d2d8dca22b8d246f6701dfc954c8")
@@ -43,7 +43,7 @@ class PyPpft(PythonPackage):
 
     # six
     depends_on("py-six@1.7.3:", type=("build", "run"), when="@:1.7.6.5")
-    
+
     # dill
     depends_on("py-dill@0.2.2:", type=("build", "run"), when="@1.6.4.5")
     depends_on("py-dill@0.2.5:", type=("build", "run"), when="@1.6.4.6")
