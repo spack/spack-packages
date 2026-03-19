@@ -5,14 +5,12 @@
 
 from spack_repo.builtin.build_systems import autotools, cached_cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-
 from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakeBuilder,
     CachedCMakePackage,
     cmake_cache_option,
     cmake_cache_string,
 )
-
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
