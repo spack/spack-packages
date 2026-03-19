@@ -190,11 +190,15 @@ class PythonExtension(PackageBase):
         with test_part(self, "test_imports", purpose="checking imports", work_dir="spack-test"):
             python(
                 "-c",
-                f"""
+                """
 import importlib
-for module in {self.import_modules}:
+import sys
+
+for module in sys.argv[1:]:
+    print(module)
     importlib.import_module(module)
 """,
+                *self.import_modules
             )
 
 
