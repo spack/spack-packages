@@ -187,7 +187,7 @@ class PythonExtension(PackageBase):
         # Make sure we are importing the installed modules,
         # not the ones in the source directory
         python = self.module.python
-        with test_part(self, f"test_imports", purpose=f"checking imports", work_dir="spack-test"):
+        with test_part(self, "test_imports", purpose="checking imports", work_dir="spack-test"):
             python(
                 "-c",
                 f"""
