@@ -1,12 +1,6 @@
-# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
-from spack_repo.builtin.build_systems import autotools, cached_cmake
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakePackage,
@@ -14,6 +8,11 @@ from spack_repo.builtin.build_systems.cached_cmake import (
     cmake_cache_option,
     cmake_cache_string,
 )
+
+from spack_repo.builtin.build_systems import autotools, cached_cmake
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
