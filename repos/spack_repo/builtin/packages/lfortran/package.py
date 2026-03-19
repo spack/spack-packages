@@ -58,6 +58,7 @@ class Lfortran(CMakePackage):
             self.define_from_variant("WITH_KOKKOS", "kokkos"),
         ]
 
+        # Only call bootstrap script for git checkout
         if self.spec.satisfies("@main"):
             args.append("-DLFORTRAN_BUILD_ALL=yes")
 
