@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems import cmake, makefile
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
+from spack.llnl.util import tty
 from spack.package import *
 
 
@@ -144,7 +145,8 @@ class Openblas(CMakePackage, MakefilePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", when="+fortran", type="build")
+    depends_on("fortran", when="@:0.3.20", type="build")
     depends_on("perl", when="@:0.3.20", type="build")
 
     # https://github.com/OpenMathLib/OpenBLAS/pull/4879
@@ -304,7 +306,7 @@ class Openblas(CMakePackage, MakefilePackage):
     patch("openblas-0.3.21-0.3.26_aocc.patch", when="@0.3.21:0.3.26 %aocc@5.0.0:")
 
     # Requires support for -mtune=generic
-    conflicts("%fortran=clang %llvm@18")
+    conflicts("%fortran=llvm@18")
 
     # See https://github.com/spack/spack/issues/19932#issuecomment-733452619
     # Notice: fixed on Amazon Linux GCC 7.3.1 (which is an unofficial version
@@ -615,9 +617,17 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         return make_defs
 
-    @property
-    def build_targets(self):
-        return ["-s"] + self.make_defs + ["all"]
+    def build(self, pkg: MakefilePackage, spec: Spec, prefix: Prefix) -> None:
+        """Override 'make all' with sequential builds due to race conditions."""
+        # Due to the verbosity of the command line and number of object files
+        # created, we suppress makefile command echoing via `-s`.
+        args = ["-s"] + self.make_defs
+
+        # Make each target sequentially
+        with working_dir(self.build_directory):
+            for target in ["libs", "netlib", "shared"]:
+                tty.info("Building target", target)
+                make(*(args + [target]))
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
@@ -626,8 +636,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def install_targets(self):
-        make_args = ["install", "PREFIX={0}".format(self.prefix)]
-        return make_args + self.make_defs
+        return self.make_defs + [f"PREFIX={self.prefix}", "install"]
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

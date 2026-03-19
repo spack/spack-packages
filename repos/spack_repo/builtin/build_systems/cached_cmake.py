@@ -280,7 +280,7 @@ class CachedCMakeBuilder(CMakeBuilder):
         ]
 
         # Provide standard CMake arguments for dependent CachedCMakePackages
-        if spec.satisfies("^cuda"):
+        if spec.satisfies("%cuda"):
             entries.append("#------------------{0}".format("-" * 30))
             entries.append("# Cuda")
             entries.append("#------------------{0}\n".format("-" * 30))
@@ -322,7 +322,7 @@ class CachedCMakeBuilder(CMakeBuilder):
                 cmake_cache_filepath("CMAKE_HIP_COMPILER", os.path.join(llvm_bin, "amdclang++"))
             )
 
-            if spec.satisfies("%gcc"):
+            if spec.satisfies("%cxx=gcc"):
                 entries.append(
                     cmake_cache_string(
                         "CMAKE_HIP_FLAGS", f"--gcc-toolchain={self.pkg.compiler.prefix}"

@@ -11,12 +11,13 @@ class PyPythonLspServer(PythonPackage):
     """A Python 3.7+ implementation of the Language Server Protocol."""
 
     homepage = "https://github.com/python-lsp/python-lsp-server"
-    pypi = "python-lsp-server/python-lsp-server-1.6.0.tar.gz"
+    pypi = "python_lsp_server/python_lsp_server-1.13.0.tar.gz"
 
     maintainers("alecbcs")
 
     license("MIT")
 
+    version("1.13.2", sha256="d507fc6be69861740827f4e4dffa1c9b1dec97c0ead859cfef86aa342a4c7904")
     version("1.11.0", sha256="89edd6fb3f7852e4bf5a3d1d95ea41484d1a28fa94b6e3cbff12b9db123b8e86")
     version("1.10.0", sha256="0c9a52dcc16cd0562404d529d50a03372db1ea6fb8dfcc3792b3265441c814f4")
     version("1.7.1", sha256="67473bb301f35434b5fa8b21fc5ed5fac27dc8a8446ccec8bae456af52a0aef6")
@@ -26,8 +27,13 @@ class PyPythonLspServer(PythonPackage):
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("python@3.8:", type=("build", "run"), when="@1.8.0:")
     depends_on("py-setuptools@61.2.0:", type=("build", "run"), when="@:1.7")
-    depends_on("py-setuptools@61.2.0:", type="build", when="@1.8.0:")
+    depends_on("py-setuptools@61.2.0:", type="build", when="@1.8.0:1.12")
+    depends_on("py-setuptools@69:", type="build", when="@1.13:")
     depends_on("py-setuptools-scm@3.4.3:+toml", type="build")
+
+    variant(
+        "formatter", values=any_combination_of("black", "ruff"), description="Formatter to use"
+    )
 
     with default_args(type=("build", "run")):
         depends_on("py-docstring-to-markdown")
@@ -38,4 +44,14 @@ class PyPythonLspServer(PythonPackage):
         depends_on("py-python-lsp-jsonrpc@1.0.0:1")
         depends_on("py-python-lsp-jsonrpc@1.1.0:1", when="@1.8.0:")
         depends_on("py-ujson@3.0.0:")
+        depends_on("py-black", when="@1.13: formatter=black")
+        depends_on("py-ruff", when="@1.13: formatter=ruff")
         depends_on("py-importlib-metadata@4.8.3:", when="^python@:3.9")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/p/"
+        if self.spec.satisfies("@1.13:"):
+            url += "python_lsp_server/python_lsp_server-{0}.tar.gz"
+        else:
+            url += "python-lsp-server/python-lsp-server-{0}.tar.gz"
+        return url.format(version)

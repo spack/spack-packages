@@ -40,6 +40,7 @@ class R(AutotoolsPackage):
     version("4.3.0", sha256="45dcc48b6cf27d361020f77fde1a39209e997b81402b3663ca1c010056a6a609")
 
     variant("X", default=False, description="Enable X11 support (TCLTK, PNG, JPEG, TIFF, CAIRO)")
+    variant("java", default=False, description="Enable Java support")
     variant("memory_profiling", default=False, description="Enable memory profiling")
     variant("rmath", default=False, description="Build standalone Rmath library")
 
@@ -55,7 +56,7 @@ class R(AutotoolsPackage):
     depends_on("bzip2")
     depends_on("curl+libidn2")
     depends_on("icu4c")
-    depends_on("java")
+    depends_on("java", when="+java", type=("build", "run"))
     depends_on("libtirpc")
     depends_on("ncurses")
     depends_on("pcre2")
@@ -184,6 +185,8 @@ class R(AutotoolsPackage):
             config_args.append("--without-libtiff")
             config_args.append("--without-tcltk")
             config_args.append("--without-x")
+
+        config_args.extend(self.enable_or_disable("java"))
 
         if "+memory_profiling" in spec:
             config_args.append("--enable-memory-profiling")

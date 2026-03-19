@@ -1,0 +1,2 @@
+config:
+  misc_cache: "$user_cache_path/cache"

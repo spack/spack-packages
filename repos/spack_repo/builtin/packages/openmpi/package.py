@@ -77,6 +77,9 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Current
     version(
+        "5.0.10", sha256="0acecc4fc218e5debdbcb8a41d182c6b0f1d29393015ed763b2a91d5d7374cc6"
+    )  # libmpi.so.40.40.7
+    version(
         "5.0.9", sha256="dfb72762531170847af3e4a0f21d77d7b23cf36f67ce7ce9033659273677d80b"
     )  # libmpi.so.40.40.7
     version(
@@ -455,6 +458,9 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("configure.patch", when="@1.10.1")
     patch("fix_multidef_pmi_class.patch", when="@2.0.0:2.0.1")
     patch("fix-ucx-1.7.0-api-instability.patch", when="@4.0.0:4.0.2")
+    # see issue with gpfs #13313 on https://github.com/open-mpi/ompi and
+    # commit https://github.com/open-mpi/ompi/commit/556014c
+    patch("fix_fs_gpfs_file_set_info.patch", when="@4.1 +gpfs")
 
     # Vader Bug: https://github.com/open-mpi/ompi/issues/5375
     # Haven't release fix for 2.1.x
@@ -1126,14 +1132,14 @@ with '-Wl,-commons,use_dylibs' and without
 
     @when("@main")
     def autoreconf(self, spec, prefix):
-        perl = which("perl")
+        perl = which("perl", required=True)
         perl("autogen.pl")
         if spec.satisfies("+two_level_namespace platform=darwin"):
             filter_file(r"-flat_namespace", "-commons,use_dylibs", "configure")
 
     @when("@5.0.0:5.0.1")
     def autoreconf(self, spec, prefix):
-        perl = which("perl")
+        perl = which("perl", required=True)
         perl("autogen.pl", "--force")
         if spec.satisfies("+two_level_namespace platform=darwin"):
             filter_file(r"-flat_namespace", "-commons,use_dylibs", "configure")
@@ -1150,7 +1156,7 @@ with '-Wl,-commons,use_dylibs' and without
         config_args.extend(self.enable_or_disable("builtin-atomics", variant="atomics"))
 
         if spec.satisfies("+pmi"):
-            config_args.append("--with-pmi={0}".format(spec["slurm"].prefix))
+            config_args.append(f"--with-pmi={spec['slurm'].prefix}")
         else:
             config_args.extend(self.with_or_without("pmi"))
 
@@ -1191,7 +1197,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.extend(self.with_or_without("schedulers"))
 
         if spec.satisfies("schedulers=lsf"):
-            config_args.append("--with-lsf-libdir={0}".format(spec["lsf"].libs.directories[0]))
+            config_args.append(f"--with-lsf-libdir={spec['lsf'].libs.directories[0]}")
 
         config_args.extend(self.enable_or_disable("memchecker"))
         if spec.satisfies("+memchecker"):
@@ -1199,44 +1205,44 @@ with '-Wl,-commons,use_dylibs' and without
 
         # Package dependencies
         for dep in ["lustre", "valgrind"]:
-            if "^" + dep in spec:
-                config_args.append("--with-{0}={1}".format(dep, spec[dep].prefix))
+            if spec.satisfies(f"%{dep}"):
+                config_args.append(f"--with-{dep}={spec[dep].prefix}")
 
         # libevent support
         if spec.satisfies("+internal-libevent"):
             config_args.append("--with-libevent=internal")
-        elif "^libevent" in spec:
-            config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
+        elif spec.satisfies("%libevent"):
+            config_args.append(f"--with-libevent={spec['libevent'].prefix}")
 
         # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):
             config_args.append("--with-pmix=internal")
             config_args.append("--with-prrte=internal")
         else:
-            if "^pmix" in spec:
-                config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
-            if "^prrte" in spec:
-                config_args.append("--with-prrte={0}".format(spec["prrte"].prefix))
+            if spec.satisfies("%pmix"):
+                config_args.append(f"--with-pmix={spec['pmix'].prefix}")
+            if spec.satisfies("%prrte"):
+                config_args.append(f"--with-prrte={spec['prrte'].prefix}")
 
-        if "^zlib-api" in spec:
-            config_args.append("--with-zlib={0}".format(spec["zlib-api"].prefix))
+        if spec.satisfies("%zlib-api"):
+            config_args.append(f"--with-zlib={spec['zlib-api'].prefix}")
 
         # Hwloc support
         if spec.satisfies("+internal-hwloc"):
             config_args.append("--with-hwloc=internal")
-        elif "^hwloc" in spec:
-            config_args.append("--with-hwloc=" + spec["hwloc"].prefix)
+        elif spec.satisfies("%hwloc"):
+            config_args.append(f"--with-hwloc={spec['hwloc'].prefix}")
 
         # Java support
-        if "+java" in spec:
+        if spec.satisfies("+java"):
             config_args.extend(
-                ["--enable-java", "--enable-mpi-java", "--with-jdk-dir=" + spec["java"].home]
+                ["--enable-java", "--enable-mpi-java", f"--with-jdk-dir={spec['java'].home}"]
             )
         elif spec.satisfies("@1.7.4:"):
             config_args.extend(["--disable-java", "--disable-mpi-java"])
 
         # Romio
-        if "~romio" in spec:
+        if spec.satisfies("~romio"):
             config_args.append("--disable-io-romio")
 
         if not spec.satisfies("romio-filesystem=none"):
@@ -1394,7 +1400,7 @@ with '-Wl,-commons,use_dylibs' and without
         if not os.path.exists(exe_path):
             raise SkipTest(f"{bin} is not installed")
 
-        exe = which(exe_path)
+        exe = which(exe_path, required=True)
         out = exe(*options, output=str.split, error=str.split)
         check_outputs(expected, out)
 

@@ -37,7 +37,7 @@ class Iegenlib(CMakePackage):
 
     @run_before("cmake")
     def make_dirs(self):
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         with working_dir("lib/isl"):
             autoreconf("-i")
         mkdirp("spack-build/bin")

@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class KokkosFft(CMakePackage):
-    """FFT interfaces for Kokkos C++ Performance Portability Programming EcoSystem"""
+    """Kokkos-FFT: FFT interfaces for Kokkos C++ Performance Portability Programming EcoSystem"""
 
     homepage = "https://github.com/kokkos/kokkos-fft"
     url = "https://github.com/kokkos/kokkos-fft/archive/refs/tags/v0.3.0.tar.gz"
@@ -17,6 +17,7 @@ class KokkosFft(CMakePackage):
 
     license("Apache-2.0 WITH LLVM-exception OR MIT", checked_by="cedricchevalier19")
 
+    version("1.0.0", sha256="626c8eec4bd0675a13ccbbffccde0984d8b9ded18809ca8223370b51a0bbfc82")
     version("0.4.0", sha256="c51d37b8c06d74bdb2af0fa4e1eae40104c23ae0dae17c795bce55dbda6ab0d6")
     version("0.3.0", sha256="a13c423775afec5f9f79fa9a23dd6001d3d63bae9f4786b1e0cd3ed65b3993a3")
 
@@ -41,8 +42,9 @@ class KokkosFft(CMakePackage):
 
     depends_on("kokkos +complex_align")
     depends_on("kokkos@4.4:4", when="@0.3")
-    depends_on("kokkos@4.5:4", when="@0.4:")
-    # kokkos-fft currently only supports compilation with the Kokkos nvcc wrapper
+    depends_on("kokkos@4.5:4", when="@0.4")
+    depends_on("kokkos@4.6:5", when="@1.0:")
+    # Kokkos-FFT currently only supports compilation with the Kokkos nvcc wrapper
     requires("^kokkos +serial", when="host_backend=fftw-serial")
     requires("^kokkos +openmp", when="host_backend=fftw-openmp")
     requires("^kokkos +cuda +wrapper", when="device_backend=cufft")

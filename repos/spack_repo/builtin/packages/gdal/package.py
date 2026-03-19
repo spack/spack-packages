@@ -31,6 +31,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.12.2", sha256="21c5e0f91974383b4c5692b7103650f176f2f54f1b0d449787f444b89881e9b4")
     version("3.12.1", sha256="2a4fd3170ff81def93db60f7f61f2842a2ae7ad0335e4ed4ba305252f05835de")
     version("3.12.0", sha256="428c19fff818bbb4136766cfee86fae2eebd3620806aa40af21844f4f0b2dbcf")
     version("3.11.5", sha256="79f66756f1c843b5ee52c8482d4f6bd2a8b7706d6161cc11f0b27c83d638796a")
@@ -362,6 +363,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("poppler@:21", when="@:3.4.1+poppler")
     depends_on("poppler@:25.01", when="@:3.10.1+poppler")
     depends_on("poppler@:25.09", when="@:3.11.4+poppler")
+    depends_on("poppler@:26.00", when="@:3.12.1+poppler")
     depends_on("poppler", when="+poppler")
     depends_on("postgresql", when="+postgresql")
     depends_on("qhull", when="+qhull")

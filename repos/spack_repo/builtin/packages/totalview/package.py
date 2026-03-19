@@ -198,7 +198,7 @@ class Totalview(Package):
 
     def install(self, spec, prefix):
         # Assemble install line
-        install_cmd = which("./Install")
+        install_cmd = which("./Install", required=True)
         arg_list = ["-agree", "-nosymlink", "-directory", "{0}".format(prefix)]
 
         # Platform specification.
@@ -214,7 +214,7 @@ class Totalview(Package):
         install_cmd.exe.extend(arg_list)
 
         # Run install script for totalview (which automatically installs memoryscape)
-        install_cmd = which("./Install")
+        install_cmd = which("./Install", required=True)
         arg_list.extend(["-install", "totalview"])
         install_cmd.exe.extend(arg_list)
         install_cmd()

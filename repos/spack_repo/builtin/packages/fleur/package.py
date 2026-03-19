@@ -88,7 +88,7 @@ class Fleur(Package):
     @run_before("install")
     def configure(self):
         spec = self.spec
-        sh = which("bash")
+        sh = which("bash", required=True)
 
         options = {
             "-link": [],

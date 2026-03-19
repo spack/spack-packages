@@ -48,6 +48,9 @@ class PySetuptoolsScm(PythonPackage):
         depends_on("py-setuptools@42:", when="@5:")
         depends_on("py-setuptools@34.4:")
 
+        # use of vendored pkg_resources
+        depends_on("py-setuptools@:80", when="@:6")
+
         depends_on("py-tomli@1:2.0.2", when="@8.2.0: ^python@:3.10")
         depends_on("py-tomli@1:", when="@7.1.0:8.1.0 ^python@:3.10")
         depends_on("py-tomli@1:", when="@7.0.0:7.0.5")

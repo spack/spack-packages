@@ -10,16 +10,21 @@ from spack.package import *
 class RocprofilerCompute(CMakePackage):
     """Advanced Profiling and Analytics for AMD Hardware"""
 
-    homepage = "https://github.com/ROCm/rocprofiler-compute"
-    git = "https://github.com/ROCm/rocprofiler-compute.git"
-    url = "https://github.com/ROCm/rocprofiler-compute/archive/refs/tags/rocm-6.4.3.tar.gz"
+    homepage = "https://github.com/ROCm/rocm-systems"
+    git = "https://github.com/ROCm/rocm-systems.git"
 
     tags = ["rocm"]
-
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
-
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocprofiler-compute/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="cf5d577edc1bed185f9c424868ec42952ccd2f9c2679e6daeb3bc788536cf182")
     version("7.1.0", sha256="11a65dac6e4099b4f2bb438320ef8206bb130a8a31bba52e90b594cdc235969b")
     version("7.0.2", sha256="b56ab5c57883e2c3d75b7cc584279eb91157de195722f90c09cad51701ef4650")
@@ -50,6 +55,14 @@ class RocprofilerCompute(CMakePackage):
     depends_on("py-textual", when="@7.0:")
     depends_on("py-textual-plotext", when="@7.0:")
     depends_on("py-sqlalchemy@2.0.42:", when="@7.1:")
+    depends_on("py-textual-fspicker@0.4.3:", when="@7.2:")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@:7.1"):
+            return "."
+        else:
+            return "projects/rocprofiler-compute"
 
     def cmake_args(self):
         args = [self.define("ENABLE_TESTS", self.run_tests)]
@@ -57,4 +70,5 @@ class RocprofilerCompute(CMakePackage):
 
     @run_before("cmake")
     def before_cmake(self):
-        touch(join_path(self.stage.source_path, "VERSION.sha"))
+        if self.spec.satisfies("@:7.1"):
+            touch(join_path(self.stage.source_path, "VERSION.sha"))

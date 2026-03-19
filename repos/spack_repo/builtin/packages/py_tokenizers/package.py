@@ -27,6 +27,7 @@ class PyTokenizers(PythonPackage):
 
     # TODO: This package currently requires internet access to install.
     depends_on("py-maturin@1:", when="@0.14:", type="build")
+    depends_on("rust", when="@0.14:", type="build")
     depends_on("py-huggingface-hub@0.16.4:0", when="@0.15:0.21.0", type=("build", "run"))
     depends_on("py-huggingface-hub@0.16.4:1", when="@0.22.1:", type=("build", "run"))
 

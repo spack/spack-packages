@@ -22,8 +22,8 @@ class Erf(CMakePackage, CudaPackage):
     url = "https://github.com/erf-model/ERF/archive/refs/tags/25.10.tar.gz"
     git = "https://github.com/erf-model/ERF.git"
 
-    def url_for_version(self, v):
-        return f"https://github.com/erf-model/ERF/archive/refs/tags/{v}.tar.gz"
+    def url_for_version(self, version):
+        return f"https://github.com/erf-model/ERF/archive/refs/tags/{version}.tar.gz"
 
     test_requires_compiler = True
 
@@ -72,7 +72,7 @@ class Erf(CMakePackage, CudaPackage):
         depends_on("c")
         depends_on("cxx")
         depends_on("fortran")
-        depends_on("pkgconf")
+        depends_on("pkgconfig")
 
     with default_args(type=("build", "link")):
         for v in ("mpi", "openmp", "cuda", "particles"):

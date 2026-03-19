@@ -18,8 +18,6 @@ class PyGpawData(PythonPackage):
     license("GPL-3.0-or-later", checked_by="alikhamze")
 
     version("1.0.1", sha256="28212110aa04daae333ef1260b281d70b818ad9cf4282078624ee3fc7a8fc05c")
-    with default_args(deprecated=True):
-        version("1.0.0", sha256="dabcdc4bb29450b37ed8bece6161d42da4ff609f05e0067a35c7811849e64223")
 
     depends_on("python@3.9:", type=("build", "run"))
 

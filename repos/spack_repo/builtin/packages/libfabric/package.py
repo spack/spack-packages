@@ -235,7 +235,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     @when("@main")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def configure_args(self):
