@@ -35,6 +35,7 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
 
     homepage = "https://computing.llnl.gov/projects/samrai"
     url = "https://github.com/llnl/SAMRAI/releases/download/v-4-5-0/SAMRAI-v4.5.0.tar.gz"
+
     list_url = homepage
     git = "https://github.com/LLNL/SAMRAI.git"
 
@@ -301,4 +302,3 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     ) -> None:
         if self.spec.satisfies("@3.12:"):
             env.append_flags("CXXFLAGS", self.compiler.cxx11_flag)
-
