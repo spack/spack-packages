@@ -4,7 +4,6 @@
 
 from spack.package import (
     BuilderWithDefaults,
-    EnvironmentModifications,
     PackageBase,
     Prefix,
     Spec,
