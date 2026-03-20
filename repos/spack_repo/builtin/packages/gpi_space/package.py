@@ -75,35 +75,14 @@ class GpiSpace(CMakePackage):
     depends_on("chrpath@0.13:", type=("build", "run"))
     depends_on("pkgconfig", type="build")
     depends_on(
-        "boost@1.62.0:1.63.0"
-        "+atomic +chrono +coroutine +context +date_time +iostreams"
-        " +program_options +random +regex +serialization +test +timer cxxstd=17",
-        when="@26.3:",
+        "boost+atomic +chrono +date_time +iostreams +program_options +random +regex +serialization"
+        "+test +timer"
     )
-    depends_on(
-        "boost@1.62.0:1.63.0"
-        "+atomic +chrono +date_time +filesystem +iostreams"
-        " +program_options +random +regex +serialization +test +timer cxxstd=17",
-        when="@24.12 ^openssl@1.1:",
-    )
-    depends_on(
-        "boost@1.61.0:1.63.0"
-        "+atomic +chrono +date_time +filesystem +iostreams"
-        " +program_options +random +regex +serialization +test +timer cxxstd=17",
-        when="@24.12 ^openssl@:1.0",
-    )
-    depends_on(
-        "boost@1.62.0:1.63.0"
-        "+atomic +chrono +date_time +filesystem +iostreams"
-        " +program_options +random +regex +serialization +test +timer cxxstd=14",
-        when="@:23.06 ^openssl@1.1:",
-    )
-    depends_on(
-        "boost@1.61.0:1.63.0"
-        "+atomic +chrono +date_time +filesystem +iostreams"
-        " +program_options +random +regex +serialization +test +timer cxxstd=14",
-        when="@:23.06 ^openssl@:1.0",
-    )
+    depends_on("boost@1.62.0:1.63.0+coroutine +context cxxstd=17", when="@26.3:")
+    depends_on("boost@1.62.0:1.63.0+filesystem cxxstd=17", when="@24.12 ^openssl@1.1:")
+    depends_on("boost@1.61.0:1.63.0+filesystem cxxstd=17", when="@24.12 ^openssl@:1.0")
+    depends_on("boost@1.62.0:1.63.0+filesystem cxxstd=14", when="@:23.06 ^openssl@1.1:")
+    depends_on("boost@1.61.0:1.63.0+filesystem cxxstd=14", when="@:23.06 ^openssl@:1.0")
     depends_on("hwloc@1.10: +libudev ~libxml2 libs=static")
     depends_on("libssh2@1.7:", when="^openssl@:1.0")
     depends_on("libssh2@1.8:", when="^openssl@1.1:")
