@@ -841,6 +841,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         self.unset_chpl_env_vars(env)
         self.setup_env_vars(env)
 
+    @run_before("configure")
+    def print_configuration(self):
+        # print all the explicitly set CHPL_* config variables to assist in debugging
+        for var in self.chpl_env_vars:
+            tty.info(var + "=" + os.getenv(var, "<unset>"))
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.setup_env_vars(env)
         chpl_home = join_path(self.prefix.share, "chapel", self._output_version_short)
