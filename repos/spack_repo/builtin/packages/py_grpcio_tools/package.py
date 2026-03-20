@@ -30,8 +30,9 @@ class PyGrpcioTools(PythonPackage):
     depends_on("py-setuptools", type="build")
     # https://github.com/grpc/grpc/blob/v1.73.1/tools/distrib/python/grpcio_tools/setup.py
     depends_on("py-protobuf@6.31.1:6", when="@1.74.0:", type=("build", "run"))
-    depends_on("py-protobuf@3.12.0:3", when="@1.48.1:", type=("build", "run"))
-    depends_on("py-protobuf@3.5.0.post1:3", type=("build", "run"))
+    depends_on("py-protobuf@4.21.6:4", when="@1.50:1.62", type=("build", "run"))
+    depends_on("py-protobuf@3.12.0:3", when="@1.46:1.48", type=("build", "run"))
+    depends_on("py-protobuf@3.5.0.post1:3", when="@:1.45", type=("build", "run"))
     # https://github.com/grpc/grpc/blob/v1.78.0/tools/distrib/python/grpcio_tools/grpc_version.py
     depends_on("py-grpcio@1.78.0:", when="@1.78.0:", type=("build", "run"))
     depends_on("py-grpcio@1.62.2:", when="@1.62.2:", type=("build", "run"))
