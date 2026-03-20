@@ -3,13 +3,11 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class AwsOfiNccl(AutotoolsPackage, CudaPackage, ROCmPackage):
+class AwsOfiNccl(AutotoolsPackage):
     """AWS OFI NCCL is a plug-in which enables EC2 developers to use
     libfabric as a network provider while running NVIDIA's NCCL based
     applications."""
@@ -51,18 +49,21 @@ class AwsOfiNccl(AutotoolsPackage, CudaPackage, ROCmPackage):
     version("1.7.1", sha256="d50a160c7aba76445e5c895fba0f3dbfdec51f702d218168a5e5017806cf0fb0")
     version("1.6.0", sha256="19a6fc91afe9a317fd3154c897fa219eab48fcdddefa66d881f1843c1165f7ee")
 
+    variant("cuda", default=True, description="Enable CUDA support")
+    variant("rocm", default=False, description="Enable ROCm support", when="@1.18:")
     variant("trace", default=False, description="Enable printing trace messages")
     variant("tests", default=False, description="Build tests")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
     conflicts("~cuda ~rocm", msg="Either CUDA or ROCm support must be enabled")
-    conflicts("+rocm", when="@:1.17", msg="ROCm support was added in 1.18")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="@1.15:")
 
     depends_on("libfabric")
+    depends_on("cuda", when="+cuda")
     depends_on("nccl fabrics=auto", when="+cuda")
+    depends_on("hip", when="+rocm")
     depends_on("mpi")
     depends_on("hwloc", when="@1.7:")
     depends_on("autoconf", type="build")
