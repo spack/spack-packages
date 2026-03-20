@@ -1,4 +1,5 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -12,6 +13,13 @@ from spack_repo.builtin.build_systems.cached_cmake import (
 )
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.packages.boost.package import Boost
+
+from spack_repo.builtin.build_systems.cached_cmake import (
+    CachedCMakePackage,
+    CachedCMakeBuilder,
+    cmake_cache_option,
+    cmake_cache_string,
+)
 
 from spack.package import *
 
@@ -43,6 +51,7 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     version("3.12.0", sha256="3b02915bc3edc63da8960109e74ca7e61a1ca729d7631fa7a3635c7ca29c8266")
     version("3.11.5", sha256="22a6216ad451efeccaabfe9f37bd0364841f3e50cdc0e7829afc0ecaf81c6fba")
     version("3.11.4", sha256="a91884a89bd240c97f5f989b0decb7917a738e33c32a27795ba16b3cbe21bd76")
+
     # Version 3.11.3 permissions don't allow downloading
     version("3.11.2", sha256="b0889efe25f21becda48fe42ccbcccf12bcacf56f638e171db705f135c5550ae")
     version("3.11.1", sha256="8a02d51df50d0fdf4bc7ecc6dedc13b5d360bdd1f9a511264535a85cedd725e7")
@@ -71,6 +80,13 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     )
     version("2.4.4", sha256="300998d26f21b206de392baff316b31aa3d6926bfed85c7f0ca94cb12fb03be0")
 
+    def url_for_version(self, version):
+        if version >= Version("4.3.0"):
+            url = f"https://github.com/LLNL/SAMRAI/archive/refs/tags/v-3-15-0.tar.gz"
+        else:
+            url = f"https://computing.llnl.gov/projects/samrai/download/SAMRAI-v3.11.2.tar.gz"
+        return url
+
     # Debug mode reduces optimization, includes assertions, debug symbols
     # and more print statements
     variant(
@@ -80,8 +96,8 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     variant("mpi", default=True, description="Build with MPI", when="@4:")
     variant(
         "cxxstd",
-        default="14",
-        values=("11", "14", "17"),
+        default="20",
+        values=("11", "14", "17", "20"),
         multi=False,
         description="C++ standard",
         when="@4:",
