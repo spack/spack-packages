@@ -11,7 +11,8 @@ from spack.package import *
 
 
 class Hwmalloc(CMakePackage, CudaPackage, ROCmPackage):
-    """hwmalloc provides a thread-safe heap class for allocating memory on given numa nodes and devices (GPUs) with memory registration"""
+    """hwmalloc provides a thread-safe heap class for allocating memory on given
+    numa nodes and devices (GPUs) with memory registration"""
 
     homepage = "https://github.com/ghex-org/hwmalloc"
     url = "https://github.com/ghex-org/hwmalloc/archive/refs/tags/v0.0.0.tar.gz"

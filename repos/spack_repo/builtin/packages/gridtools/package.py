@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class Gridtools(CMakePackage):
-    """Libraries and utilities to develop performance portable applications for weather and climate"""
+    """Libraries and utilities to develop performance portable applications for
+    weather and climate"""
 
     homepage = "https://gridtools.github.io"
     url = "https://github.com/GridTools/gridtools/archive/refs/tags/v0.0.0.tar.gz"

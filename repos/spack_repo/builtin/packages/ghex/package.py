@@ -11,7 +11,8 @@ from spack.package import *
 
 
 class Ghex(CMakePackage, CudaPackage, ROCmPackage):
-    """Generic exascale-ready library for halo-exchange operations on variety of grids/meshes"""
+    """Generic exascale-ready library for halo-exchange operations on variety of
+    grids/meshes"""
 
     homepage = "https://ghex-org.github.io/GHEX"
     url = "https://github.com/ghex-org/GHEX/archive/refs/tags/v0.0.0.tar.gz"

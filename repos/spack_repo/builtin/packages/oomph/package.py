@@ -11,7 +11,8 @@ from spack.package import *
 
 
 class Oomph(CMakePackage, CudaPackage, ROCmPackage):
-    """Oomph is a library for enabling high performance point-to-point, asynchronous communication over different fabrics"""
+    """Oomph is a library for enabling high performance point-to-point,
+    asynchronous communication over different fabrics"""
 
     homepage = "https://github.com/ghex-org/oomph"
     url = "https://github.com/ghex-org/oomph/archive/refs/tags/v0.0.0.tar.gz"
