@@ -190,10 +190,23 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
         entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
         return entries
 
+    def initconfig_compiler_entries(self):
+        spec = self.spec
+        entries = super().initconfig_compiler_entries()
+
+        # Warning (KW 6/2024) -- setting the CMAKE_Fortran_COMPILER to the default (env['FC'])
+        # produced lots of weird errors. Seems like it was related to Samrai's use
+        # of FIXED formatting for its Fortran (rather than FREE formatting)
+        entries.insert(0, cmake_cache_path("CMAKE_C_COMPILER", env["CC"]))
+        entries.insert(0, cmake_cache_path("CMAKE_CXX_COMPILER", env["CXX"]))
+        entries.insert(0, cmake_cache_path("CMAKE_Fortran_COMPILER", env["SPACK_FC"]))
+
+        return entries
+        
     def initconfig_package_entries(self):
         spec = self.spec
         entries = super().initconfig_package_entries()
-        # entries = []
+
         entries.append(cmake_cache_path("BLT_SOURCE_DIR", spec["blt"].prefix))
 
         if spec.satisfies("+tests"):
@@ -213,12 +226,6 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
         entries.append(cmake_cache_option("ENABLE_CONDUIT", spec.satisfies("+conduit")))
         entries.append(cmake_cache_option("ENABLE_RAJA", spec.satisfies("+raja")))
 
-        # Warning (KW 6/2024) -- setting the CMAKE_Fortran_COMPILER to the default (env['FC'])
-        # produced lots of weird errors. Seems like it was related to Samrai's use
-        # of FIXED formatting for its Fortran (rather than FREE formatting)
-        entries.insert(0, cmake_cache_path("CMAKE_C_COMPILER", env["CC"]))
-        entries.insert(0, cmake_cache_path("CMAKE_CXX_COMPILER", env["CXX"]))
-        entries.insert(0, cmake_cache_path("CMAKE_Fortran_COMPILER", env["SPACK_FC"]))
 
         if self.spec.satisfies("+conduit"):
             entries.append(cmake_cache_string("CONDUIT_DIR", spec["conduit"].prefix))
@@ -232,6 +239,13 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
             )
 
         entries.append(cmake_cache_option("ENABLE_CUDA", spec.satisfies("+cuda")))
+
+        return entries
+    
+    def initconfig_hardware_entries(self):
+        spec = self.spec
+        entries = super().initconfig_hardware_entries()
+        
         if self.spec.satisfies("+cuda"):
             entries.append(
                 cmake_cache_string("CMAKE_CUDA_STANDARD", spec.variants["cxxstd"].value)
