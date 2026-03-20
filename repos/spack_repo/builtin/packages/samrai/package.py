@@ -5,6 +5,7 @@
 from spack_repo.builtin.build_systems import autotools, cached_cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cached_cmake import (
+    CachedCMakeBuilder,
     CachedCMakePackage,
     cmake_cache_option,
     cmake_cache_string,
@@ -37,35 +38,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     version("2021.2.16", commit="39017121bda44fff713fe3b01cb1e063be93023b")
 
     # using build_system 'autotools'
-    version("3.12.0", sha256="b8334aa22330a7c858e09e000dfc62abbfa3c449212b4993ec3c4035bed6b832")
-    version("3.11.5", sha256="6ec1f4cf2735284fe41f74073c4f1be87d92184d79401011411be3c0671bd84c")
-    version("3.11.4", sha256="fa87f6cc1cb3b3c4856bc3f4d7162b1f9705a200b68a5dc173484f7a71c7ea0a")
-    # Version 3.11.3 permissions don't allow downloading
-    version("3.11.2", sha256="fd9518cc9fd8c8f6cdd681484c6eb42114aebf2a6ba4c8e1f12b34a148dfdefb")
-    version("3.11.1", sha256="14317938e55cb7dc3eca21d9b7667a256a08661c6da988334f7af566a015b327")
-    version("3.10.0", sha256="8d6958867f7165396459f4556e439065bc2cd2464bcfe16195a2a68345d56ea7")
-    version("3.9.1", sha256="ce0aa9bcb3accbd39c09dd32cbc9884dc00e7a8d53782ba46b8fe7d7d60fc03f")
-    version("3.8.0", sha256="0fc811ca83bd72d238f0efb172d466e80e5091db0b78ad00ab6b93331a1fe489")
-    version("3.7.3", sha256="19eada4f351a821abccac0779fde85e2ad18b931b6a8110510a4c21707c2f5ce")
-    version("3.7.2", sha256="c20c5b12576b73a1a095d8ef54536c4424517adaf472d55d48e57455eda74f2d")
-    version(
-        "3.6.3-beta", sha256="7d9202355a66b8850333484862627f73ea3d7620ca84cde757dee629ebcb61bb"
-    )
-    version(
-        "3.5.2-beta", sha256="9a591fc962edd56ea073abd13d03027bd530f1e61df595fae42dd9a7f8b9cc3a"
-    )
-    version(
-        "3.5.0-beta", sha256="3e10c55d7b652b6feca902ce782751d4b16c8ad9d4dd8b9e2e9ec74dd64f30da"
-    )
-    version(
-        "3.4.1-beta", sha256="5aadc813b75b65485f221372e174a2691e184e380f569129e7aa4484ca4047f8"
-    )
-    version(
-        "3.3.3-beta", sha256="c07b5dc8d56a8f310239d1ec6be31182a6463fea787a0e10b54a3df479979cac"
-    )
-    version(
-        "3.3.2-beta", sha256="430ea1a77083c8990a3c996572ed15663d9b31c0f8b614537bd7065abd6f375f"
-    )
     version("3.12.0", sha256="3b02915bc3edc63da8960109e74ca7e61a1ca729d7631fa7a3635c7ca29c8266")
     version("3.11.5", sha256="22a6216ad451efeccaabfe9f37bd0364841f3e50cdc0e7829afc0ecaf81c6fba")
     version("3.11.4", sha256="a91884a89bd240c97f5f989b0decb7917a738e33c32a27795ba16b3cbe21bd76")
@@ -96,17 +68,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
         "3.3.2-beta", sha256="57d71e6848183786d65fb008d82aad62b4856caf5a043d243a0616c58f500296"
     )
     version("2.4.4", sha256="300998d26f21b206de392baff316b31aa3d6926bfed85c7f0ca94cb12fb03be0")
-
-    def url_for_version(self, version):
-        if version >= Version("4.1.0"):
-            url = super().url_for_version(version)
-            return url
-
-        base_url = "https://github.com/llnl/SAMRAI/archive/refs/tags"
-        if version >= Version("3.11.1"):
-            return f"{base_url}/v-{version.dashed}.tar.gz"
-
-        return f"{base_url}/{version}.tar.gz"
 
     # Debug mode reduces optimization, includes assertions, debug symbols
     # and more print statements
@@ -168,6 +129,17 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     # 23/01/12: this causes issues with out version+gcc
     patch("no-tool-build.patch", when="@3.0.0:3.12.0%gcc")
 
+    def url_for_version(self, version):
+        if version >= Version("4.1.0"):
+            url = super().url_for_version(version)
+            return url
+
+        base_url = "https://github.com/llnl/SAMRAI/archive/refs/tags"
+        if version >= Version("3.11.1"):
+            return f"{base_url}/v-{version.dashed}.tar.gz"
+
+        return f"{base_url}/{version}.tar.gz"
+
     def flag_handler(self, name, flags):
         if name == "ldflags":
             flags.append("-lz")
@@ -188,7 +160,7 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
         return []
 
 
-class CachedCMakeBuilder(cached_cmake.CachedCMakeBuilder):
+class CachedCMakeBuilder(CachedCMakeBuilder):
 
     @property
     def libs(self):
