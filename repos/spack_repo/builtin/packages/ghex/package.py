@@ -54,8 +54,12 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("oomph~rocm~cuda", when="~rocm~cuda")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
-    conflicts("cuda_arch=none", when="+cuda", msg="CUDA support requires at least one architecture")
-    conflicts("amdgpu_target=none", when="+rocm", msg="ROCm support requires at least one architecture")
+    conflicts(
+        "cuda_arch=none", when="+cuda", msg="CUDA support requires at least one architecture"
+    )
+    conflicts(
+        "amdgpu_target=none", when="+rocm", msg="ROCm support requires at least one architecture"
+    )
 
     with when("+python"):
         extends("python")

@@ -28,7 +28,7 @@ class Oomph(CMakePackage):
     depends_on("fortran", type="build", when="+fortran-bindings")
 
     generator("ninja")
-    
+
     depends_on("ninja", type="build")
 
     variant("cuda", default=False, description="Enable CUDA support")

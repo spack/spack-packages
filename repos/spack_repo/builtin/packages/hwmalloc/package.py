@@ -26,7 +26,7 @@ class Hwmalloc(CMakePackage):
     depends_on("cxx", type="build")
 
     generator("ninja")
-    
+
     depends_on("ninja", type="build")
 
     variant("cuda", default=False, description="Enable CUDA support")
