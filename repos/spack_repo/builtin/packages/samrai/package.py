@@ -66,7 +66,36 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     version(
         "3.3.2-beta", sha256="430ea1a77083c8990a3c996572ed15663d9b31c0f8b614537bd7065abd6f375f"
     )
-    version("2.4.4", sha256="33242e38e6f4d35bd52f4194bd99a014485b0f3458b268902f69f6c02b35ee5c")
+    version("3.12.0", sha256="3b02915bc3edc63da8960109e74ca7e61a1ca729d7631fa7a3635c7ca29c8266")
+    version("3.11.5", sha256="22a6216ad451efeccaabfe9f37bd0364841f3e50cdc0e7829afc0ecaf81c6fba")
+    version("3.11.4", sha256="a91884a89bd240c97f5f989b0decb7917a738e33c32a27795ba16b3cbe21bd76")
+    # Version 3.11.3 permissions don't allow downloading
+    version("3.11.2", sha256="b0889efe25f21becda48fe42ccbcccf12bcacf56f638e171db705f135c5550ae")
+    version("3.11.1", sha256="8a02d51df50d0fdf4bc7ecc6dedc13b5d360bdd1f9a511264535a85cedd725e7")
+    version("3.10.0", sha256="b63786a6597bfad03dd3fbd781f46ee1332c1b8e5af01c658fd9ed8cb93f1de2")
+    version("3.9.1", sha256="93ffd4c7f1423a36f1452cc81d4742f75aab2e6dc16cb40931df159d0cf2f321")
+    version("3.8.0", sha256="f3779f9816ddcc8e0a90c71f053e664bcd2c6169f8fd2fc37e1c2af6ceb5f1e4")
+    version("3.7.3", sha256="3ef5b0ce70d6181d12e224624c734105093ec0b9a753a791965bcf4fd8aa1b65")
+    version("3.7.2", sha256="f145b09b5b127ad63d7832cb29c001254027cb30f6a74d591792dbc8212a6aa8")
+    version(
+        "3.6.3-beta", sha256="6a9feb1dd61f4cf42d982acb26a05ae5596096b9d4ace2bb1bf797db47707505"
+    )
+    version(
+        "3.5.2-beta", sha256="9bcf7d8237b3efcbcac980ec2c8276aa2c060b9d45160d176f688af0d31e7431"
+    )
+    version(
+        "3.5.0-beta", sha256="dc43bb77769ad18a4a4c54b8c70710f900fe4990e62df7a5b6416f64bfc1bf9b"
+    )
+    version(
+        "3.4.1-beta", sha256="0d039f0c2d3e21232bc909bf65b04725bfe7443ea35664554c7546497a61d90b"
+    )
+    version(
+        "3.3.3-beta", sha256="8c9156401bd1db30ce591d5d0d5cbc6f24e24f997c61ebf55ed19e5b0a45041e"
+    )
+    version(
+        "3.3.2-beta", sha256="57d71e6848183786d65fb008d82aad62b4856caf5a043d243a0616c58f500296"
+    )
+    version("2.4.4", sha256="300998d26f21b206de392baff316b31aa3d6926bfed85c7f0ca94cb12fb03be0")
 
     def url_for_version(self, version):
         if version >= Version("4.1.0"):
