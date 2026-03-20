@@ -69,11 +69,15 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     version("2.4.4", sha256="33242e38e6f4d35bd52f4194bd99a014485b0f3458b268902f69f6c02b35ee5c")
 
     def url_for_version(self, version):
-        if version >= Version("4.3.0"):
-            url = "https://github.com/LLNL/SAMRAI/archive/refs/tags/v-3-15-0.tar.gz"
-        else:
-            url = "https://computing.llnl.gov/projects/samrai/download/SAMRAI-v3.11.2.tar.gz"
-        return url
+        if version >= Version("4.1.0"):
+            url = super().url_for_version(version)
+            return url
+
+        base_url = "https://github.com/llnl/SAMRAI/archive/refs/tags"
+        if version >= Version("3.11.1"):
+            return f"{base_url}/v-{version.dashed}.tar.gz"
+
+        return f"{base_url}/{version}.tar.gz"
 
     # Debug mode reduces optimization, includes assertions, debug symbols
     # and more print statements
