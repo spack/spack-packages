@@ -653,19 +653,22 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             filter_file(
                 _rocm_attn_if + "namespace pytorch_flash",
                 _rocm_attn_if
-                "#ifdef __HIP_PLATFORM_AMD__\n"
-                "#ifndef CHECK_NOSPARSE_CONTIGUOUS_CUDA\n"
-                "#define CHECK_NOSPARSE_CONTIGUOUS_CUDA(t) \\\n"
-                "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
-                "  TORCH_CHECK((t).is_contiguous(), \"Expected contiguous tensor\")\n"
-                "#endif\n"
-                "#ifndef CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA\n"
-                "#define CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA(t) \\\n"
-                "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
-                "  TORCH_CHECK((t).is_contiguous(), \"Expected last-dim contiguous tensor\")\n"
-                "#endif\n"
-                "#endif\n\n"
-                "namespace pytorch_flash",
+                + (
+                    "#ifdef __HIP_PLATFORM_AMD__\n"
+                    "#ifndef CHECK_NOSPARSE_CONTIGUOUS_CUDA\n"
+                    "#define CHECK_NOSPARSE_CONTIGUOUS_CUDA(t) \\\n"
+                    "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
+                    "  TORCH_CHECK((t).is_contiguous(), \"Expected contiguous tensor\")\n"
+                    "#endif\n"
+                    "#ifndef CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA\n"
+                    "#define CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA(t) \\\n"
+                    "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
+                    "  TORCH_CHECK((t).is_contiguous(), "
+                    '"Expected last-dim contiguous tensor")\n'
+                    "#endif\n"
+                    "#endif\n\n"
+                    "namespace pytorch_flash"
+                ),
                 attention_cu,
                 string=True,
             )
