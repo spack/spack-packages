@@ -63,7 +63,7 @@ class Oomph(CMakePackage):
     depends_on("hwmalloc+rocm", when="+rocm")
     depends_on("hwmalloc~rocm~cuda", when="~rocm~cuda")
     depends_on("cuda", when="+cuda")
-    depends_on("rocm", when="+rocm")
+    depends_on("hip", when="+rocm")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
 
