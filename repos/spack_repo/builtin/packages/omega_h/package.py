@@ -68,6 +68,12 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
     variant("trilinos", default=True, description="Use Teuchos and Kokkos")
+    variant(
+        "exodus",
+        default=False,
+        description="Enable use of ExodusII meshes",
+        when="@10.8.6-scorec:",
+    )
     variant("throw", default=False, description="Errors throw exceptions instead of abort")
     variant("examples", default=False, description="Compile examples")
     variant("optimize", default=True, description="Compile C++ with optimization")
@@ -84,6 +90,7 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("gmsh@4.4.1:", when="+gmsh")
     depends_on("mpi", when="+mpi")
     depends_on("trilinos +kokkos", when="+trilinos")
+    depends_on("trilinos +exodus", when="+exodus")
     depends_on("kokkos", when="+kokkos")
     depends_on("zlib-api", when="+zlib")
 
@@ -105,6 +112,8 @@ class OmegaH(CMakePackage, CudaPackage):
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
+
+    conflicts("+exodus", when="~trilinos", msg="exodus requires trilinos to be enabled")
 
     def patch(self):
         if "@:9.34.8" in self.spec:
@@ -148,6 +157,8 @@ class OmegaH(CMakePackage, CudaPackage):
                 args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
         if "+trilinos" in self.spec:
             args.append("-DOmega_h_USE_Trilinos:BOOL=ON")
+        if "+exodus" in self.spec:
+            args.append("-DOmega_h_USE_SEACASExodus:BOOL=ON")
         if "+gmsh" in self.spec:
             args.append("-DOmega_h_USE_Gmsh:BOOL=ON")
         if "+kokkos" in self.spec:

@@ -282,6 +282,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("pthreadpool@2020-10-05", when="@1.8")
     depends_on("pthreadpool@2020-06-15", when="@1.6:1.7")
     with default_args(type=("build", "link", "run")):
+        depends_on("py-pybind11@:3.0.1", when="@:2.10")
         depends_on("py-pybind11@3.0.1:", when="@2.9:")
         depends_on("py-pybind11@2.13.6:", when="@2.6:")
         depends_on("py-pybind11@2.13.5:", when="@2.5")

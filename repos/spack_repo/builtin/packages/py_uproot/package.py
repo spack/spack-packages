@@ -19,6 +19,7 @@ class PyUproot(PythonPackage):
 
     homepage = "https://github.com/scikit-hep/uproot5"
     pypi = "uproot/uproot-4.0.6.tar.gz"
+    git = "https://github.com/scikit-hep/uproot5.git"
 
     maintainers("vvolkl")
 
@@ -26,6 +27,8 @@ class PyUproot(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("5.7.1", sha256="52fc757de1278959b1ff48a9ec4640f57c937cd1870a2f4fe047eacd9e8d5535")
+    version("5.6.9", sha256="0f019088f0f6f0d6e9e6cbc7ec158515d26f0dfed029f32e8b8faf041a507d3d")
     version("5.6.3", sha256="47f2aefcdcae503c9a21900381ac42a7bc3274cd0c52cd0686700d282ad0f46b")
     version("5.5.2", sha256="d765be4bea1df58cc237672fe4e8a10a2f7a40a2c7a8cf643333af48def07f5c")
     version("5.4.2", sha256="53b245baf27067efd86fb92bd11d0efb12e8aff8b7455c85b27807e24e31d99b")
@@ -74,17 +77,20 @@ class PyUproot(PythonPackage):
     depends_on("python@3.7:", type=("build", "run"), when="@5.0:")
     depends_on("python@3.8:", type=("build", "run"), when="@5.1:")
     depends_on("python@3.9:", type=("build", "run"), when="@5.5:")
+    depends_on("python@3.10:", type=("build", "run"), when="@5.7:")
     depends_on("py-hatchling", when="@5:", type="build")
     depends_on("py-hatch-vcs", when="@5.2:", type="build")
     depends_on("py-setuptools", when="@:4", type=("build", "run"))
     depends_on("py-setuptools@42:", type=("build", "run"), when="@4.1.8:4")
     depends_on("py-awkward@2:", type=("build", "run"), when="@5:")
     depends_on("py-awkward@2.4.6:", type=("build", "run"), when="@5.1:")
+    depends_on("py-awkward@2.8.2:", type=("build", "run"), when="@5.6.7:")
     depends_on("py-cramjam@2.5.0:", type=("build", "run"), when="@5.3:")
     depends_on("py-xxhash", type=("build", "run"), when="@5.4:")
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-numpy@:1", type=("build", "run"), when="@:5.3.2")
     depends_on("py-fsspec", type=("build", "run"))
+
     depends_on("py-packaging", when="@5:", type=("build", "run"))
     depends_on("py-typing-extensions@4.1:", when="@5.1: ^python@:3.10", type=("build", "run"))
 
