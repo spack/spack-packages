@@ -21,6 +21,7 @@ class PyBlack(PythonPackage):
 
     version("26.3.1", sha256="2c50f5063a9641c7eed7795014ba37b0f5fa227f3d408b968936e24bc0566b07")
     with default_args(deprecated=True):
+        # https://nvd.nist.gov/vuln/detail/CVE-2026-31900
         # https://nvd.nist.gov/vuln/detail/CVE-2026-32274
         version("25.1.0", sha256="33496d5cd1222ad73391352b4ae8da15253c5de89b93a80b3e2c8d9a19ec2666")
         version("24.10.0", sha256="846ea64c97afe3bc677b761787993be4991810ecc7a4a937816dd6bddedc4875")
