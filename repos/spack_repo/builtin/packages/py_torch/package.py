@@ -657,12 +657,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                     "#ifdef __HIP_PLATFORM_AMD__\n"
                     "#ifndef CHECK_NOSPARSE_CONTIGUOUS_CUDA\n"
                     "#define CHECK_NOSPARSE_CONTIGUOUS_CUDA(t) \\\n"
-                    '  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \\\n'
-                    '  TORCH_CHECK((t).is_contiguous(), "Expected contiguous tensor")\n'
+                    "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
+                    "  TORCH_CHECK((t).is_contiguous(), \"Expected contiguous tensor\")\n"
                     "#endif\n"
                     "#ifndef CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA\n"
                     "#define CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA(t) \\\n"
-                    '  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \\\n'
+                    "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
                     "  TORCH_CHECK((t).is_contiguous(), "
                     '"Expected last-dim contiguous tensor")\n'
                     "#endif\n"
@@ -680,16 +680,25 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                 attention_cu,
                 string=True,
             )
+            # Closing must match PyTorch 2.10.x formatting (6 spaces before
+            # gen_), not "  gen_);\n  }" — otherwise the #if above is never
+            # closed and HIP reports an unterminated conditional at the outer
+            # #if defined(USE_ROCM)... line in attention.hip.
             filter_file(
-                "  gen_);\n  }",
-                "  gen_);\n#else\n"
+                "      gen_);\n"
+                "}\n"
+                "}",
+                "      gen_);\n"
+                "#else\n"
                 "  TORCH_CHECK(false,\n"
                 '    "ROCm flash/mem_eff attention requires AOTriton '
                 '(USE_MEM_EFF_ATTENTION and not DISABLE_AOTRITON).");\n'
                 "  return std::make_tuple(\n"
                 "    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor(),\n"
                 "    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor());\n"
-                "#endif\n  }",
+                "#endif\n"
+                "}\n"
+                "}",
                 attention_cu,
                 string=True,
             )
