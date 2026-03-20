@@ -354,7 +354,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     # if gcc was built with newer binutils than the system default, we need the
     # same for our own build
-    depends_on("binutils+gas+ld+plugins~libiberty", type=("build", "link", "run"), when="%gcc+binutils")
+    depends_on(
+        "binutils+gas+ld+plugins~libiberty", type=("build", "link", "run"), when="%gcc+binutils"
+    )
 
     # Older LLVM do not build with newer compilers, and vice versa
     with when("@16:"):
