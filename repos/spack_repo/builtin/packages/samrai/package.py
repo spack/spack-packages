@@ -27,7 +27,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
 
     homepage = "https://computing.llnl.gov/projects/samrai"
     url = "https://github.com/llnl/SAMRAI/releases/download/v-4-5-0/SAMRAI-v4.5.0.tar.gz"
-
     list_url = homepage
     git = "https://github.com/LLNL/SAMRAI.git"
 
