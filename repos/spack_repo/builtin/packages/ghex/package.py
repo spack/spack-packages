@@ -80,13 +80,13 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
         if self.run_tests and spec.satisfies("^openmpi"):
             args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
 
-        if "+cuda" in spec and spec.variants["cuda_arch"].value != "none":
+        if spec.satisfies("+cuda") and spec.variants["cuda_arch"].value != "none":
             arch_str = ";".join(spec.variants["cuda_arch"].value)
             args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
             args.append(self.define("GHEX_USE_GPU", True))
             args.append(self.define("GHEX_GPU_TYPE", "CUDA"))
 
-        if "+rocm" in spec and spec.variants["amdgpu_target"].value != "none":
+        if spec.satisfies("+rocm") and spec.variants["amdgpu_target"].value != "none":
             arch_str = ";".join(spec.variants["amdgpu_target"].value)
             args.append(self.define("CMAKE_HIP_ARCHITECTURES", arch_str))
             args.append(self.define("GHEX_USE_GPU", True))

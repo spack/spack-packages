@@ -100,7 +100,7 @@ class Oomph(CMakePackage, CudaPackage, ROCmPackage):
         if self.run_tests and self.spec.satisfies("^openmpi"):
             args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
 
-        if self.spec.variants["fortran-bindings"].value == True:
+        if self.spec.satisfies("+fortran-bindings"):
             args.append(self.define("OOMPH_FORTRAN_FP", self.spec.variants["fortran-fp"].value))
 
         for backend in self.backends:

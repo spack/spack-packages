@@ -51,10 +51,10 @@ class Hwmalloc(CMakePackage, CudaPackage, ROCmPackage):
             self.define("HWMALLOC_WITH_TESTING", self.run_tests),
         ]
 
-        if "+cuda" in self.spec:
+        if self.spec.satisfies("+cuda"):
             args.append(self.define("HWMALLOC_ENABLE_DEVICE", True))
             args.append(self.define("HWMALLOC_DEVICE_RUNTIME", "cuda"))
-        elif "+rocm" in self.spec:
+        elif self.spec.satisfies("+rocm"):
             args.append(self.define("HWMALLOC_ENABLE_DEVICE", True))
             args.append(self.define("HWMALLOC_DEVICE_RUNTIME", "hip"))
         else:
