@@ -25,6 +25,8 @@ class Gridtools(CMakePackage):
     depends_on("cxx", type="build")
 
     generator("ninja")
+    
+    depends_on("ninja", type="build")
 
     def cmake_args(self):
         args = [self.define("BUILD_TESTING", False), self.define("GT_INSTALL_EXAMPLES", False)]
