@@ -35,7 +35,7 @@ class PyOpenai(PythonPackage):
     depends_on("python@3.9:", when="@2.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@1.54:", type=("build", "run"))
     depends_on("python@3.7.1:", type=("build", "run"))
-    depends_on("py-hatchling@1.26.3", when="@1.67:", type="build")
+    depends_on("py-hatchling@1.26.3:", when="@1.67:", type="build")  # relax it
     depends_on("py-hatchling", when="@1:", type="build")
     depends_on("py-hatch-fancy-pypi-readme", when="@1:", type="build")
 
