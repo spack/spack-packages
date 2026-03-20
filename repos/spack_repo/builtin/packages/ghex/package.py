@@ -89,14 +89,12 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
             args.append(self.define("GHEX_USE_GPU", True))
             args.append(self.define("GHEX_GPU_TYPE", "CUDA"))
-
-        if spec.satisfies("+rocm"):
+        elif spec.satisfies("+rocm"):
             arch_str = ";".join(spec.variants["amdgpu_target"].value)
             args.append(self.define("CMAKE_HIP_ARCHITECTURES", arch_str))
             args.append(self.define("GHEX_USE_GPU", True))
             args.append(self.define("GHEX_GPU_TYPE", "AMD"))
-
-        if spec.satisfies("~cuda~rocm"):
+        else:
             args.append(self.define("GHEX_USE_GPU", False))
 
         return args
