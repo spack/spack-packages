@@ -32,7 +32,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     git = "https://github.com/LLNL/SAMRAI.git"
 
     # using build_system 'cached_cmake'
-
     version(
         "4.5.0", tag="v-4-5-0", commit="a7d475d513daee81d424788aad7708bfca8c05d0", submodules=True
     )
