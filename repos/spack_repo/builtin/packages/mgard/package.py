@@ -125,9 +125,9 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/abseil/abseil-cpp/issues/1629
     conflicts("abseil-cpp@20240116.1", when="+cuda", msg="triggers nvcc parser bug")
 
-    patch("hip-pointer-attribute-struct-fix.patch", when="@:1.5")
-    patch("hip-cub-configure.patch", when="@:1.5")
-    patch("hip-abs-reduce-type.patch", when="@:1.5")
+    patch("hip-pointer-attribute-struct-fix.patch", when="@=1.5.2")
+    patch("hip-cub-configure.patch", when="@=1.5.2")
+    patch("hip-abs-reduce-type.patch", when="@=1.5.2")
 
     # https://github.com/CODARcode/MGARD/issues/252
     patch(

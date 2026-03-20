@@ -316,6 +316,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             depends_on("qt-svg")
             depends_on("libxslt")
 
+        depends_on("scnlib")
+
         # ParaView@6: and later will depend on OSMesa as a fallback for
         # OpenGL.
         # The search order for GL is:

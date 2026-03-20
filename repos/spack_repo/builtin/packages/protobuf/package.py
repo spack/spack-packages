@@ -11,7 +11,7 @@ class Protobuf(CMakePackage):
     """Google's data interchange format."""
 
     homepage = "https://developers.google.com/protocol-buffers"
-    url = "https://github.com/protocolbuffers/protobuf/archive/v3.18.0.tar.gz"
+    url = "https://github.com/protocolbuffers/protobuf/archive/v34.0.tar.gz"
     maintainers("hyoklee")
 
     license("BSD-3-Clause")
@@ -30,6 +30,7 @@ class Protobuf(CMakePackage):
     #
     # Hence language runtime version has explicted also the protobuf version it is compatible with.
 
+    version("34.0", sha256="61c47fabb1190e0acb2d47e67f31baac05d9b4ce69d7d1b43f6c83744f83898e")
     version("33.1", sha256="0c98bb704ceb4e68c92f93907951ca3c36130bc73f87264e8c0771a80362ac97")
     version("33.0", sha256="b6b03fbaa3a90f3d4f2a3fa4ecc41d7cd0326f92fcc920a7843f12206c8d52cd")
     version("32.1", sha256="d2081ab9528292f7980ef2d88d2be472453eea4222141046ad4f660874d5f24e")
@@ -117,6 +118,9 @@ class Protobuf(CMakePackage):
     depends_on("abseil-cpp@20230125:", when="@22:")
     depends_on("zlib-api")
 
+    # See https://github.com/protocolbuffers/protobuf/issues/26383
+    conflicts("%gcc@:12", when="@34: +shared")
+
     conflicts("%gcc@:4.6", when="@3.6.0:")  # Requires c++11
     conflicts("%gcc@:4.6", when="@3.2.0:3.3.0")  # Breaks
 
@@ -143,6 +147,11 @@ class Protobuf(CMakePackage):
     )
 
     patch("msvc-abseil-target-namespace.patch", when="@22 %msvc")
+
+    # Missing #include <cstring> in third_party/utf8_range/utf8_validity.cc; memcpy was
+    # previously available transitively via absl/strings/string_view.h, which was removed
+    # in abseil-cpp@20260107.1. Fixed upstream by deleting the file in v26+.
+    patch("utf8-range-missing-cstring.patch", when="@22:25 ^abseil-cpp@20260107:")
 
     # Misisng #include "absl/container/internal/layout.h"
     # See https://github.com/protocolbuffers/protobuf/pull/14042

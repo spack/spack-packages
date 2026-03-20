@@ -18,12 +18,21 @@ class PyPillowSimd(PyPillowBase):
 
     license("HPND")
 
-    version(
-        "9.5.0.post1", sha256="8c89b85c4085532752625f2cc066a28547cebb98529acf932d5d84c1a7ab2abc"
-    )
-    version(
-        "9.0.0.post1", sha256="918541cfaa90ba3c0e1bae5da31ba1b1f52b09c0009bd90183b787af4e018263"
-    )
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2024-28219/
+        # https://www.cvedetails.com/cve/CVE-2023-50447/
+        # https://www.cvedetails.com/cve/CVE-2023-44271/
+        version(
+            "9.5.0.post1",
+            sha256="8c89b85c4085532752625f2cc066a28547cebb98529acf932d5d84c1a7ab2abc",
+        )
+        # https://www.cvedetails.com/cve/CVE-2022-45199/
+        # https://www.cvedetails.com/cve/CVE-2022-45198/
+        # https://www.cvedetails.com/cve/CVE-2022-24303/
+        version(
+            "9.0.0.post1",
+            sha256="918541cfaa90ba3c0e1bae5da31ba1b1f52b09c0009bd90183b787af4e018263",
+        )
 
     depends_on("c", type="build")  # generated
 

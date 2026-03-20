@@ -32,6 +32,8 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     maintainers("downloadico")
+    version("10.6.5", sha256="9ae9b563137e08302d830a58a8bc3df2d8d0f78afeca2029b451636651d18f74")
+    version("10.6.3", sha256="aceefc4289873097bb6b9dc4ec05efd897b9c052eb860746f6d778f4cd14317d")
     version("10.4.7", sha256="161c60ef90686c19e0718363eb5a17bfa29494e5fbdc59be45a7342e20349768")
     version("10.4.3", sha256="2150ac8472ad570f3cd3fa34c8bc6ac496c6715b319b69e3aa011a555d72d7d7")
     version("10.2.7", sha256="e0e1049b01b4ebaec29be632cd554caeccb4b2a8acf2e148c8ac505e6b226dc1")
@@ -136,8 +138,6 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
     requires(
         "^cray-mpich +cuda",
         "^mpich +cuda",
-        "^mvapich +cuda",
-        "^mvapich2 +cuda",
         "^openmpi+cuda",
         when="+gpu_aware_mpi+cuda",
         policy="one_of",

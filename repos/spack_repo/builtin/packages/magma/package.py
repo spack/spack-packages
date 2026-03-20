@@ -159,6 +159,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
             options.append(define("GPU_TARGET", capabilities))
             archs = ";".join("%s" % i for i in cuda_arch)
             options.append(define("CMAKE_CUDA_ARCHITECTURES", archs))
+            options.append(define("CMAKE_CUDA_FLAGS", " -Xfatbin -compress-all"))
 
         if "@2.5.0" in spec:
             options.append(define("MAGMA_SPARSE", False))
