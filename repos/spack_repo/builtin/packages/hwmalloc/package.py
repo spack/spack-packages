@@ -28,6 +28,8 @@ class Hwmalloc(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")
 
     generator("ninja")
+    
+    depends_on("ninja", type="build")
 
     depends_on("cmake@3.19:", type="build")
     depends_on("numactl", type=("build", "run"))

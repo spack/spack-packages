@@ -30,6 +30,8 @@ class Oomph(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("fortran", type="build", when="+fortran-bindings")
 
     generator("ninja")
+    
+    depends_on("ninja", type="build")
 
     backends = ("mpi", "ucx", "libfabric")
     variant(
@@ -97,7 +99,7 @@ class Oomph(CMakePackage, CudaPackage, ROCmPackage):
             self.define("OOMPH_USE_BUNDLED_LIBS", False),
         ]
 
-        if self.run_tests and self.spec.satisfies("^openmpi"):
+        if self.run_tests and self.spec.satisfies("^mpi=openmpi"):
             args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
 
         if self.spec.satisfies("+fortran-bindings"):
