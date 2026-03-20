@@ -52,6 +52,8 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("oomph~rocm~cuda", when="~rocm~cuda")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
+    conflicts("cuda_arch=none", when="+cuda", msg="CUDA support requires at least one architecture")
+    conflicts("amdgpu_target=none", when="+rocm", msg="ROCm support requires at least one architecture")
 
     with when("+python"):
         extends("python")
@@ -80,13 +82,13 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
         if self.run_tests and spec.satisfies("^mpi=openmpi"):
             args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
 
-        if spec.satisfies("+cuda") and spec.variants["cuda_arch"].value != "none":
+        if spec.satisfies("+cuda"):
             arch_str = ";".join(spec.variants["cuda_arch"].value)
             args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
             args.append(self.define("GHEX_USE_GPU", True))
             args.append(self.define("GHEX_GPU_TYPE", "CUDA"))
 
-        if spec.satisfies("+rocm") and spec.variants["amdgpu_target"].value != "none":
+        if spec.satisfies("+rocm"):
             arch_str = ";".join(spec.variants["amdgpu_target"].value)
             args.append(self.define("CMAKE_HIP_ARCHITECTURES", arch_str))
             args.append(self.define("GHEX_USE_GPU", True))

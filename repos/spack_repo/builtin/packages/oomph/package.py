@@ -4,13 +4,11 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
-from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Oomph(CMakePackage, CudaPackage, ROCmPackage):
+class Oomph(CMakePackage):
     """Oomph is a library for enabling high performance point-to-point,
     asynchronous communication over different fabrics"""
 
@@ -32,6 +30,9 @@ class Oomph(CMakePackage, CudaPackage, ROCmPackage):
     generator("ninja")
     
     depends_on("ninja", type="build")
+
+    variant("cuda", default=False, description="Enable CUDA support")
+    variant("rocm", default=False, description="Enable ROCm support")
 
     backends = ("mpi", "ucx", "libfabric")
     variant(
@@ -61,6 +62,8 @@ class Oomph(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hwmalloc+cuda", when="+cuda")
     depends_on("hwmalloc+rocm", when="+rocm")
     depends_on("hwmalloc~rocm~cuda", when="~rocm~cuda")
+    depends_on("cuda", when="+cuda")
+    depends_on("rocm", when="+rocm")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
 

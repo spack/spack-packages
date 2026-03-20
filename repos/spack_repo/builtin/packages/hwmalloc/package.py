@@ -4,13 +4,11 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
-from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Hwmalloc(CMakePackage, CudaPackage, ROCmPackage):
+class Hwmalloc(CMakePackage):
     """hwmalloc provides a thread-safe heap class for allocating memory on given
     numa nodes and devices (GPUs) with memory registration"""
 
@@ -31,9 +29,14 @@ class Hwmalloc(CMakePackage, CudaPackage, ROCmPackage):
     
     depends_on("ninja", type="build")
 
+    variant("cuda", default=False, description="Enable CUDA support")
+    variant("rocm", default=False, description="Enable ROCm support")
+
     depends_on("cmake@3.19:", type="build")
     depends_on("numactl", type=("build", "run"))
     depends_on("boost", type="build")
+    depends_on("cuda", when="+cuda")
+    depends_on("hip", when="+rocm")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
 
