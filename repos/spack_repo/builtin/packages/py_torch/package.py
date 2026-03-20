@@ -657,12 +657,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                     "#ifdef __HIP_PLATFORM_AMD__\n"
                     "#ifndef CHECK_NOSPARSE_CONTIGUOUS_CUDA\n"
                     "#define CHECK_NOSPARSE_CONTIGUOUS_CUDA(t) \\\n"
-                    "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
-                    "  TORCH_CHECK((t).is_contiguous(), \"Expected contiguous tensor\")\n"
+                    '  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \\\n'
+                    '  TORCH_CHECK((t).is_contiguous(), "Expected contiguous tensor")\n'
                     "#endif\n"
                     "#ifndef CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA\n"
                     "#define CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA(t) \\\n"
-                    "  TORCH_CHECK(!(t).is_sparse(), \"Expected dense tensor\"); \\\n"
+                    '  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \\\n'
                     "  TORCH_CHECK((t).is_contiguous(), "
                     '"Expected last-dim contiguous tensor")\n'
                     "#endif\n"
@@ -685,9 +685,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             # closed and HIP reports an unterminated conditional at the outer
             # #if defined(USE_ROCM)... line in attention.hip.
             filter_file(
-                "      gen_);\n"
-                "}\n"
-                "}",
+                "      gen_);\n" "}\n" "}",
                 "      gen_);\n"
                 "#else\n"
                 "  TORCH_CHECK(false,\n"
