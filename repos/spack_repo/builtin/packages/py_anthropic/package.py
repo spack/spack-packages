@@ -16,7 +16,7 @@ class PyAnthropic(PythonPackage):
     version("0.85.0", sha256="d45b2f38a1efb1a5d15515a426b272179a0d18783efa2bb4c3925fa773eb50b9")
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-hatchling@1.26.3", type="build")
+    depends_on("py-hatchling@1.26.3:", type="build")  # relax it
     depends_on("py-hatch-fancy-pypi-readme", type="build")
     depends_on("py-httpx@0.25:0", type=("build", "run"))
     depends_on("py-pydantic@1.9:2", type=("build", "run"))

@@ -16,6 +16,7 @@ class PyFastapi(PythonPackage):
 
     license("MIT")
 
+    version("0.135.1", sha256="d04115b508d936d254cea545b7312ecaa58a7b3a0f84952535b4c9afae7668cd")
     version("0.115.12", sha256="1e2c2a2646905f9e83d32f04a3f86aff4a286669c6c950ca95b5fd68c2602681")
     version("0.115.4", sha256="db653475586b091cb8b2fec2ac54a680ac6a158e07406e1abae31679e8826349")
     version("0.110.2", sha256="b53d673652da3b65e8cd787ad214ec0fe303cad00d2b529b86ce7db13f17518d")
@@ -24,20 +25,26 @@ class PyFastapi(PythonPackage):
     variant("standard", default=False, description="Install standard dependencies")
     variant("all", default=False, description="Build all optional dependencies")
 
+    depends_on("python@3.10:", when="@0.129:", type=("build", "run"))
+    depends_on("python@3.9:", when="@0.125:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.104:", type=("build", "run"))
 
     depends_on("py-pdm-backend", when="@0.110.3:", type="build")
     depends_on("py-hatchling@1.13:", when="@0.98:0.110.2", type="build")
     depends_on("py-hatchling", when="@:0.110.2", type="build")
 
-    depends_on("py-starlette@0.40.0:0.46", when="@0.115.12:", type=("build", "run"))
+    depends_on("py-starlette@0.46.0:", when="@0.135.1:", type=("build", "run"))
+    depends_on("py-starlette@0.40.0:0.46", when="@0.115.12:0.116.0", type=("build", "run"))
     depends_on("py-starlette@0.40:0.41", when="@0.115.3:0.115.6", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.40", when="@0.115.2", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.38", when="@0.112.1:0.115.1", type=("build", "run"))
     depends_on("py-starlette@0.37.2:0.37", when="@0.110.1:0.112.0", type=("build", "run"))
     depends_on("py-starlette@0.36.3:0.36", when="@0.109.2:0.110.0", type=("build", "run"))
+    depends_on("py-pydantic@2.7.0:", when="@0.135.1:", type=("build", "run"))
     depends_on("py-pydantic@1.7.4:1,2.1.1:2", when="@0.101:", type=("build", "run"))
     depends_on("py-typing-extensions@4.8.0:", when="@0.104:", type=("build", "run"))
+    depends_on("py-typing-inspection@0.4.2:", when="@0.128.2:", type=("build", "run"))
+    depends_on("py-annotated-doc@0.0.2:", when="@0.120:", type=("build", "run"))
 
     conflicts("^py-pydantic@1.7.0:1.7.3,1.8.0:1.8.1,2.0,2.1.0")
     conflicts("+all+standard")

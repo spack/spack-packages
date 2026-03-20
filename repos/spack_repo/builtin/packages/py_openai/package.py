@@ -59,7 +59,6 @@ class PyOpenai(PythonPackage):
     depends_on("py-sniffio", type=("build", "run"), when="@1.3.6:")
     depends_on("py-jiter@0.10:0", type=("build", "run"), when="@2.3.0:")
     depends_on("py-jiter@0.4:0", when="@1.40:", type=("build", "run"))
-    depends_on("py-aiohttp", type=("build", "run"), when="@:0")
     depends_on("py-hatchling@1.26.3", when="@1.66.4:", type="build")
     depends_on("py-hatchling", when="@1:", type="build")
     depends_on("py-hatch-fancy-pypi-readme", when="@1:", type="build")

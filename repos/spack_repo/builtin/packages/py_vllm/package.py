@@ -30,8 +30,9 @@ class PyVllm(PythonPackage):
     depends_on("cmake@3.26.1:", type="build")
     depends_on("ninja", type="build")
     depends_on("py-jinja2", type="build")
-    depends_on("py-grpcio-tools@1.78.0", type="build")  # exact version
-    depends_on("py-torch@2.10.0", when="@0.15.1", type="build")  # exact version
+    depends_on("py-grpcio-tools", type="build")
+    # Script use_existing_torch.py strips the PyTorch version
+    depends_on("py-torch", type="build")
 
     # Common deps https://github.com/vllm-project/vllm/blob/v0.15.1/requirements/common.txt
     depends_on("py-regex", type=("build", "run"))
