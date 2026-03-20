@@ -77,7 +77,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+python"):
             args.append(self.define("GHEX_PYTHON_LIB_PATH", python_platlib))
 
-        if self.run_tests and spec.satisfies("^openmpi"):
+        if self.run_tests and spec.satisfies("^mpi=openmpi"):
             args.append(self.define("MPIEXEC_PREFLAGS", "--oversubscribe"))
 
         if spec.satisfies("+cuda") and spec.variants["cuda_arch"].value != "none":
