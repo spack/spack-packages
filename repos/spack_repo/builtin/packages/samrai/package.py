@@ -36,6 +36,7 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
         "4.5.0", tag="v-4-5-0", commit="a7d475d513daee81d424788aad7708bfca8c05d0", submodules=True
     )
     version("4.3.0", tag="v-4-3-0", commit="51d31fae40b296f4c1ccb19f29c63263fd08e3be")
+
     version("2022.2.9", commit="dc87a7a05cd5edccdb417a0796a5f6a4f68cd9f0")
     version("2021.11.4", commit="e600573bf774022126a7539240a6a6c2e44b8e64")
     version("2021.2.16", commit="39017121bda44fff713fe3b01cb1e063be93023b")
