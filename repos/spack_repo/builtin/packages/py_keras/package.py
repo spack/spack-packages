@@ -185,6 +185,19 @@ class PyKeras(PythonPackage):
             depends_on("py-tensorflow@2.{}".format(minor_ver), when="@2.{}".format(minor_ver))
             depends_on("py-tensorboard@2.{}".format(minor_ver), when="@2.{}".format(minor_ver))
 
+    @property
+    def skip_modules(self):
+        modules = []
+        if not self.spec.satisfies("backend=jax"):
+            modules.extend(["keras.src.backend.jax", "keras.src.backend.numpy"])
+        if not self.spec.satisfies("backend=openvino"):
+            modules.append("keras.src.backend.openvino")
+        if not self.spec.satisfies("backend=tensorflow"):
+            modules.append("keras.src.backend.tensorflow")
+        if not self.spec.satisfies("backend=torch"):
+            modules.extend(["keras.src.backend.torch", "keras.src.backend.torch.optimizers"])
+        return modules
+
     def url_for_version(self, version):
         if version >= Version("3"):
             url = "https://files.pythonhosted.org/packages/source/k/keras/keras-{}.tar.gz"
