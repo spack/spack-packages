@@ -11,12 +11,15 @@ from spack.package import *
 
 
 class Hwmalloc(CMakePackage, CudaPackage, ROCmPackage):
-    """HWMALLOC is a allocator which supports memory registration for e.g. remote memory access"""
+    """hwmalloc provides a thread-safe heap class for allocating memory on given numa nodes and devices (GPUs) with memory registration"""
 
     homepage = "https://github.com/ghex-org/hwmalloc"
     url = "https://github.com/ghex-org/hwmalloc/archive/refs/tags/v0.0.0.tar.gz"
     git = "https://github.com/ghex-org/hwmalloc.git"
-    maintainers = ["boeschf", "msimberg"]
+
+    maintainers("boeschf", "msimberg")
+
+    license("BSD-3-Clause", checked_by="msimberg")
 
     version("0.4.0", sha256="1161048e915cf196a86a6241d7354dd56b0e02782000507bab19be5628763ab3")
     version("master", branch="master")
@@ -25,9 +28,9 @@ class Hwmalloc(CMakePackage, CudaPackage, ROCmPackage):
 
     generator("ninja")
 
-    depends_on("numactl", type=("build", "run"))
-    depends_on("boost", type=("build"))
     depends_on("cmake@3.19:", type="build")
+    depends_on("numactl", type=("build", "run"))
+    depends_on("boost", type="build")
 
     conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
 

@@ -11,12 +11,15 @@ from spack.package import *
 
 
 class Oomph(CMakePackage, CudaPackage, ROCmPackage):
-    """Oomph is a non-blocking callback-based point-to-point communication library."""
+    """Oomph is a library for enabling high performance point-to-point, asynchronous communication over different fabrics"""
 
     homepage = "https://github.com/ghex-org/oomph"
     url = "https://github.com/ghex-org/oomph/archive/refs/tags/v0.0.0.tar.gz"
     git = "https://github.com/ghex-org/oomph.git"
-    maintainers = ["boeschf", "msimberg"]
+
+    maintainers("boeschf", "msimberg")
+
+    license("BSD-3-Clause", checked_by="msimberg")
 
     version("main", branch="main")
     version("0.5.0", sha256="4c79ff50d14efcde7ce4d14122714efb16443ccff437ab60973cf1db1032fc3d")
@@ -49,6 +52,8 @@ class Oomph(CMakePackage, CudaPackage, ROCmPackage):
         description="Enable thread barrier (disable for task based runtime)",
     )
 
+    depends_on("cmake@3.17:", type="build")
+    depends_on("googletest", type="test")
     depends_on("hwmalloc")
     depends_on("hwmalloc+cuda", when="+cuda")
     depends_on("hwmalloc+rocm", when="+rocm")
@@ -78,8 +83,6 @@ class Oomph(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi")
     depends_on("boost+thread")
-
-    depends_on("googletest", type=("build","test"))
 
     def cmake_args(self):
         args = [

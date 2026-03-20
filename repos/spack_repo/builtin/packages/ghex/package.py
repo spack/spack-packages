@@ -11,12 +11,15 @@ from spack.package import *
 
 
 class Ghex(CMakePackage, CudaPackage, ROCmPackage):
-    """GHEX is a generic halo-exchange library."""
+    """Generic exascale-ready library for halo-exchange operations on variety of grids/meshes"""
 
-    homepage = "https://github.com/ghex-org/GHEX"
+    homepage = "https://ghex-org.github.io/GHEX"
     url = "https://github.com/ghex-org/GHEX/archive/refs/tags/v0.0.0.tar.gz"
     git = "https://github.com/ghex-org/GHEX.git"
-    maintainers = ["boeschf", "msimberg"]
+
+    maintainers("boeschf", "msimberg")
+
+    license("BSD-3-Clause", checked_by="msimberg")
 
     version("master", branch="master")
     version("0.5.0", sha256="b2324441c2210783a90e83439e0d5c8e0aa462a7797ebbc6e48a47dfcada4848")
@@ -57,7 +60,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("py-mpi4py", type=("build", "run"))
         depends_on("py-numpy", type=("build", "run"))
 
-        depends_on("py-pytest", when="+python", type=("test"))
+        depends_on("py-pytest", when="+python", type="test")
 
     def cmake_args(self):
         spec = self.spec
