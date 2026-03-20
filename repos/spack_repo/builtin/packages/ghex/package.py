@@ -55,7 +55,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+python"):
         extends("python")
-        depends_on("python@3.7:", type="build")
+        depends_on("python@3.7:", type=("build", "run"))
         depends_on("py-pip", type="build")
         depends_on("py-pybind11", type="build")
         depends_on("py-mpi4py", type=("build", "run"))
