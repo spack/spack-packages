@@ -200,7 +200,7 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
         entries.insert(0, cmake_cache_path("CMAKE_Fortran_COMPILER", env["SPACK_FC"]))
 
         return entries
-        
+
     def initconfig_package_entries(self):
         spec = self.spec
         entries = super().initconfig_package_entries()
@@ -238,7 +238,7 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
         entries.append(cmake_cache_option("ENABLE_CUDA", spec.satisfies("+cuda")))
 
         return entries
-    
+
     def initconfig_hardware_entries(self):
         spec = self.spec
         entries = super().initconfig_hardware_entries()
