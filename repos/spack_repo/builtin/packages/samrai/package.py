@@ -186,12 +186,10 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
     def initconfig_mpi_entries(self):
         spec = self.spec
         entries = super().initconfig_mpi_entries()
-        # entries = []
         entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
         return entries
 
     def initconfig_compiler_entries(self):
-        spec = self.spec
         entries = super().initconfig_compiler_entries()
 
         # Warning (KW 6/2024) -- setting the CMAKE_Fortran_COMPILER to the default (env['FC'])
@@ -226,7 +224,6 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
         entries.append(cmake_cache_option("ENABLE_CONDUIT", spec.satisfies("+conduit")))
         entries.append(cmake_cache_option("ENABLE_RAJA", spec.satisfies("+raja")))
 
-
         if self.spec.satisfies("+conduit"):
             entries.append(cmake_cache_string("CONDUIT_DIR", spec["conduit"].prefix))
 
@@ -245,7 +242,7 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
     def initconfig_hardware_entries(self):
         spec = self.spec
         entries = super().initconfig_hardware_entries()
-        
+
         if self.spec.satisfies("+cuda"):
             entries.append(
                 cmake_cache_string("CMAKE_CUDA_STANDARD", spec.variants["cxxstd"].value)
