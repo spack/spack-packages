@@ -37,7 +37,7 @@ class Keepassxc(CMakePackage):
 
     # https://github.com/keepassxreboot/keepassxc/wiki/Building-KeePassXC
     # https://github.com/keepassxreboot/keepassxc/wiki/Set-up-Build-Environment-on-Linux
-    depends_on("cmake@3.14.7:", type="build", when"@2.7.7:")
+    depends_on("cmake@3.14.7:", type="build", when="@2.7.7:")
     depends_on("cmake@3.1:", type="build")
 
     # It installs the last gcc instead of using one that is >= 4.7
