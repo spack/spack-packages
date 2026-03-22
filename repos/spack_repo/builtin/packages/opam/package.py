@@ -37,7 +37,7 @@ class Opam(AutotoolsPackage):
     version("1.2.1", sha256="f210ece7a2def34b486c9ccfb75de8febd64487b2ea4a14a7fa0358f37eacc3b")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build", when="@2.2.1:")
+    depends_on("cxx", type="build", when="@2.2.0:")
 
     # OCaml 4.10.0 has removed the -safe-string flag, which is necessary
     # for OPAM 1i (see docstring of setup_build_environment).
