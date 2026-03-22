@@ -23,6 +23,7 @@ class IntelOneapiTbb(IntelOneApiLibraryPackage):
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onetbb.html"
     )
 
+    version("19143", sha256="41074fcf6a33e41f9e8007609100e40c27f4e36b709b964835eff823e655486b")  # FIXME
     version(
         "2023.0.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/0abefd3d-79b7-44b6-9b64-d82dea1b9dae/intel-onetbb-2023.0.0.725_offline.sh",

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
-from typing import List
+from typing import Any, List, Optional, Tuple
 
 from spack.package import (
     BuilderWithDefaults,
@@ -197,6 +197,13 @@ class MesonBuilder(BuilderWithDefaults):
         """
         return []
 
+    @staticmethod
+    def define(meson_var: str, value: Any) -> str:
+        return define(meson_var, value)
+
+    def enable_from_variant(self, meson_var: str, variant: Optional[str] = None) -> str:
+        return enable_from_variant(self.pkg, meson_var, variant)
+
     def meson(self, pkg: MesonPackage, spec: Spec, prefix: Prefix) -> None:
         """Run ``meson`` in the build directory"""
         options = []
@@ -227,3 +234,25 @@ class MesonBuilder(BuilderWithDefaults):
         with working_dir(self.build_directory):
             self.pkg._if_ninja_target_execute("test")
             self.pkg._if_ninja_target_execute("check")
+
+
+def define(meson_var: str, value: Any) -> str:
+    if isinstance(value, bool):
+        value_str = "enabled" if value else "disabled"
+    else:
+        if not isinstance(value, str):
+            raise TypeError(f"define() requires a str value (got: {value!r})")
+        value_str = value
+    return f"-D{meson_var}={value_str}"
+
+def enable_from_variant(pkg: PackageBase, meson_var: str, variant: Optional[str] = None) -> str:
+    if variant is None:
+        variant = meson_var
+    if not pkg.has_variant(variant):
+        raise KeyError(f"{variant!r} is not a variant of {pkg.name!r}")
+
+    value = pkg.spec.variants[variant].value
+    if not isinstance(value, bool):
+        raise TypeError("enable_from_variant() only works on boolean variants "
+                        f" (got {value!r})")
+    return define(meson_var, value)

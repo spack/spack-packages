@@ -20,4 +20,4 @@ class Libgudev(MesonPackage):
 
     with default_args(type=("build", "link", "run")):
         depends_on("glib@2.38:")
-        depends_on("systemd@251:")  # For libuvdev
+        depends_on("libudev")  # For libudev
