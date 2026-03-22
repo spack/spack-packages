@@ -103,6 +103,8 @@ class Prrte(AutotoolsPackage):
         config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
         # hwloc
         config_args.append("--with-hwloc={0}".format(spec["hwloc"].prefix))
+        if os.path.exists(os.path.join(spec["hwloc"].prefix, "pkgconfig", "hwloc.pc")):
+            config_args.append("--with-hwloc-libdir={0}".format(spec["hwloc"].prefix))
         # pmix
         config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
 
