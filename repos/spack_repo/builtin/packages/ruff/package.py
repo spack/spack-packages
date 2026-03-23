@@ -24,7 +24,6 @@ class Ruff(CargoPackage):
     version("0.13.0", sha256="1be5402b5ca6925725fcb73af70a07b515246009d7bbb14f17e7f5adacd8a307")
     version("0.12.0", sha256="3623e20815ae84254ca5dec780165e89c2f1947c73824167e3a44d41fde74f57")
     version("0.11.11", sha256="fcd8fdd349559421494b653e53a2fc6441a35e51d2992af035c5e5c84e060702")
-    
 
     with default_args(type="build"):
         depends_on("c")
@@ -47,4 +46,3 @@ class Ruff(CargoPackage):
         if version < Version("0.5.0"):
             v = "v"
         return f"https://github.com/astral-sh/ruff/archive/refs/tags/{v}{version.dotted}.tar.gz"
-        
