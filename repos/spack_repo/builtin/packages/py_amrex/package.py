@@ -71,6 +71,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     depends_on("py-setuptools@42:", type="build")
     depends_on("py-pybind11@2.12.0:", type=("build", "link"))
     depends_on("py-pybind11@3.0.1:", type=("build", "link"), when="@25.08:")
+    depends_on("py-pybind11@3.0.2:", type=("build", "link"), when="@26.03:")
     depends_on("py-wheel@0.40:", type="build")
     depends_on("vir-simd", type="build", when="+simd")
 
