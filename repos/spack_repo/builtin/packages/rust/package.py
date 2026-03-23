@@ -187,6 +187,18 @@ class Rust(Package):
     ) -> None:
         env.set("CARGO_HOME", join_path(dependent_spec.package.stage.path, "cargo"))
 
+        # Until we get a little more integration with cargo or offload solving to spack
+        # (how to do this is TBD), we need it to fall back to older package versions
+        # when the latest version doesn't support our rust toolchain version. This
+        # option allows Spack to be slightly behind the latest rust in CI.
+        #
+        # This is safe as long as rust is using static libraries and there are not ABI
+        # dependencies among rust packages in Spack.
+        #
+        # This is supported in Cargo 1.84 and higher.
+        if self.spec.satisfies("@1.84:"):
+            env.set("CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS", "fallback")
+
     def configure(self, spec, prefix):
         opts = []
 

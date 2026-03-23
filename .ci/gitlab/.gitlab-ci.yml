@@ -9,9 +9,12 @@ variables:
   # PROTECTED_MIRROR_FETCH_DOMAIN: "https://binaries.spack.io"
   PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
   PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
-  SPACK_CI_DISABLE_STACKS:
-    value: /^.*(cray).*$/
-    expand: false
+  # SPACK_CI_DISABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
+  # SPACK_CI_ENABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
@@ -334,7 +337,7 @@ e4s-neoverse-v2-build:
 
 e4s-rocm-external-generate:
   extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-rocm-base-x86_64:v6.4.3-1760790880
+  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.0-1772831027
 
 e4s-rocm-external-build:
   extends: [ ".e4s-rocm-external", ".build" ]
