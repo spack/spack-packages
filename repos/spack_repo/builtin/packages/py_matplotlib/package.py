@@ -246,6 +246,7 @@ class PyMatplotlib(PythonPackage):
     depends_on("pkgconfig", type="build")
 
     # C libraries
+    depends_on("freetype@:2.9 build_system=autotools", when="@:3.2")
     depends_on("freetype@2.3: build_system=autotools")
     depends_on("qhull@2020.2:", when="@3.4:")
     # starting from qhull 2020.2 libqhull.so on which py-matplotlib@3.3 versions
