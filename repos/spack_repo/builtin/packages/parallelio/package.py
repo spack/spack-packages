@@ -20,7 +20,10 @@ class Parallelio(CMakePackage):
 
     license("Apache-2.0")
 
+    version("2.6.10", sha256="a65bd3c75f5ee6e8c4c5b922b9c6fa2598af9586468d8dbf51caf010261b4128")
+    version("2.6.9", sha256="22f34258f0e8b9e8271383bc7c6c657f4bbee560d33f87e3c0db53e0da8c8f3b")
     version("2.6.8", sha256="ed6c92129b8a5e2d77587fd9656abc0aa7cf82a26a5ad21f8c6a9a79afa2c301")
+    version("2.6.7", sha256="b346592cb24bf5f98583574c0679020ef3026005cd8f3efa87545d0982581037")
     version("2.6.6", sha256="e32e018a521d38c9424940c7cfa7e9b1931b605f3511ee7ab3a718b69faeeb04")
     version("2.6.5", sha256="6ae51aa3f76e597a3a840a292ae14eca21359b1a4ea75e476a93aa2088c0677a")
     version("2.6.4", sha256="cba53e4ca62ff76195b6f76374fbd1530fba18649c975ae2628ddec7fe55fb31")
@@ -53,7 +56,10 @@ class Parallelio(CMakePackage):
     # This patch addresses an issue when compiling pio2.6.0 with a serial netcdf library.
     # netcdf4 filters are only available with the parallel build of netcdf.
     patch("pio_260.patch", when="@2.6.0")
-    patch("cmake-libfind-arch.patch", when="@2.6.0:2.6.6")
+
+    # This patch enhances searchability for dependencies installed externally, such as
+    # libraries installed via apt in usr/lib/<arch>.
+    patch("cmake-libfind-arch.patch", when="@2.6.0:2.6.9")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
