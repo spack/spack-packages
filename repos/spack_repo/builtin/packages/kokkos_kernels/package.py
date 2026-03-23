@@ -225,7 +225,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
         options.append(self.define("Kokkos_ROOT", spec["kokkos"].prefix))
         if spec.satisfies("^kokkos+rocm") and not (
             spec.satisfies("^kokkos %cxx=clang")
-            or spec.satisfies("^kokkos %cxx=cce")
             or spec.satisfies("^kokkos %cxx=rocmcc")
         ):
             options.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
