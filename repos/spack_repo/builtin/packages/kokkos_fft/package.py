@@ -77,7 +77,6 @@ class KokkosFft(CMakePackage):
 
         if self.spec.satisfies("^kokkos+rocm") and not (
             self.spec.satisfies("^kokkos %cxx=clang")
-            or self.spec.satisfies("^kokkos %cxx=cce")
             or self.spec.satisfies("^kokkos %cxx=rocmcc")
         ):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
