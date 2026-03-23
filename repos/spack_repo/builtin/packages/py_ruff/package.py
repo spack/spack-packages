@@ -9,7 +9,7 @@ from spack.package import *
 
 class PyRuff(PythonPackage):
     """An extremely fast Python linter and code formatter, written in Rust.
-    
+
     This package has been deprecated in favor of the pure rust ruff package.
     The packages are the same save a python dependency
     """
@@ -21,14 +21,25 @@ class PyRuff(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
-
     with default_args(deprecated=True):
-        version("0.15.10", sha256="d1f86e67ebfdef88e00faefa1552b5e510e1d35f3be7d423dc7e84e63788c94e")
-        version("0.15.0", sha256="6bdea47cdbea30d40f8f8d7d69c0854ba7c15420ec75a26f463290949d7f7e9a")
-        version("0.13.0", sha256="5b4b1ee7eb35afae128ab94459b13b2baaed282b1fb0f472a73c82c996c8ae60")
-        version("0.12.4", sha256="13efa16df6c6eeb7d0f091abae50f58e9522f3843edb40d56ad52a5a4a4b6873")
-        version("0.12.0", sha256="4d047db3662418d4a848a3fdbfaf17488b34b62f527ed6f10cb8afd78135bc5c")
-        version("0.11.1", sha256="f2e209a283c9fa423e268cad015ec4fb249178608f755fb67491ff175ecbffbf")
+        version(
+            "0.15.10", sha256="d1f86e67ebfdef88e00faefa1552b5e510e1d35f3be7d423dc7e84e63788c94e"
+        )
+        version(
+            "0.15.0", sha256="6bdea47cdbea30d40f8f8d7d69c0854ba7c15420ec75a26f463290949d7f7e9a"
+        )
+        version(
+            "0.13.0", sha256="5b4b1ee7eb35afae128ab94459b13b2baaed282b1fb0f472a73c82c996c8ae60"
+        )
+        version(
+            "0.12.4", sha256="13efa16df6c6eeb7d0f091abae50f58e9522f3843edb40d56ad52a5a4a4b6873"
+        )
+        version(
+            "0.12.0", sha256="4d047db3662418d4a848a3fdbfaf17488b34b62f527ed6f10cb8afd78135bc5c"
+        )
+        version(
+            "0.11.1", sha256="f2e209a283c9fa423e268cad015ec4fb249178608f755fb67491ff175ecbffbf"
+        )
         version("0.9.1", sha256="fd2b25ecaf907d6458fa842675382c8597b3c746a2dde6717fe3415425df0c17")
         version("0.8.1", sha256="3583db9a6450364ed5ca3f3b4225958b24f78178908d5c4bc0f46251ccca898f")
         version("0.8.0", sha256="a7ccfe6331bf8c8dad715753e157457faf7351c2b69f62f32c165c2dbcbacd44")
