@@ -8,7 +8,12 @@ from spack.package import *
 
 
 class PyTy(PythonPackage):
-    """An extremely fast Python type checker, written in Rust."""
+    """An extremely fast Python type checker, written in Rust.
+    
+    This package has been deprecated in favor of the pure rust
+    ty package.
+    The packages are the same, save a python dependency.
+    """
 
     homepage = "https://github.com/astral-sh/ty/"
     pypi = "ty/ty-0.0.1a29.tar.gz"

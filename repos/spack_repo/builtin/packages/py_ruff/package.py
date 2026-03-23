@@ -8,7 +8,11 @@ from spack.package import *
 
 
 class PyRuff(PythonPackage):
-    """An extremely fast Python linter and code formatter, written in Rust."""
+    """An extremely fast Python linter and code formatter, written in Rust.
+    
+    This package has been deprecated in favor of the pure rust ruff package.
+    The packages are the same save a python dependency
+    """
 
     homepage = "https://docs.astral.sh/ruff"
     pypi = "ruff/ruff-0.0.276.tar.gz"
