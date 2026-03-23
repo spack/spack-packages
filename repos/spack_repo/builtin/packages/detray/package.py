@@ -21,6 +21,7 @@ class Detray(CMakePackage):
 
     license("MPL-2.0", checked_by="stephenswat")
 
+    version("0.111.0", sha256="676a8b42b5dccabaa63de12c0ff8bcbf77b06f0b0f0ba78fd021be114e74d40a")
     version("0.110.0", sha256="32e29b010d703fc7c718d3cc687ac2cd95115bdf63c764bde35cc95a5f1a89d0")
     version("0.109.2", sha256="512975a20524b24d3d84aa536b950bacba66aa1fee5213b2d92f35e8dd090ae4")
     version("0.109.1", sha256="bb5f1285f5ca0c465f7ca13609348f849d57628dc7bfa5558b184cabc485f57e")
@@ -100,23 +101,25 @@ class Detray(CMakePackage):
     depends_on("covfie@0.15.3:", when="@0.102:")
     depends_on("nlohmann-json@3.11.0:", when="+json")
     depends_on("dfelibs@20211029:", when="@:0.88")
-    depends_on("acts-algebra-plugins@0.18.0: +vecmem")
-    depends_on("acts-algebra-plugins +vc", when="+vc")
-    depends_on("acts-algebra-plugins +eigen", when="+eigen")
-    depends_on("acts-algebra-plugins +smatrix", when="+smatrix")
-    # The version number of algebra plugins was not correct before v0.28.0.
-    depends_on("acts-algebra-plugins@0.28.0:", when="@0.87:")
-    depends_on("acts-algebra-plugins@0.28.0: +vecmem", when="@0.95:")
-    depends_on("acts-algebra-plugins@0.30.0: +vecmem", when="@0.103:")
+    with when("@:0.110"):
+        depends_on("acts-algebra-plugins@0.18.0: +vecmem")
+        depends_on("acts-algebra-plugins +vc", when="+vc")
+        depends_on("acts-algebra-plugins +eigen", when="+eigen")
+        depends_on("acts-algebra-plugins +smatrix", when="+smatrix")
+        # The version number of algebra plugins was not correct before v0.28.0.
+        depends_on("acts-algebra-plugins@0.28.0:", when="@0.87:")
+        depends_on("acts-algebra-plugins@0.28.0: +vecmem", when="@0.95:")
+        depends_on("acts-algebra-plugins@0.30.0: +vecmem", when="@0.103:")
 
-    # Detray imposes requirements on the C++ standard values used by Algebra
-    # Plugins.
-    with when("+smatrix"):
-        for _cxxstd in _cxxstd_values:
-            for _v in _cxxstd:
-                depends_on(
-                    f"acts-algebra-plugins cxxstd={_v.value}", when=f"cxxstd={_v.value} {_v.when}"
-                )
+        # Detray imposes requirements on the C++ standard values used by Algebra
+        # Plugins.
+        with when("+smatrix"):
+            for _cxxstd in _cxxstd_values:
+                for _v in _cxxstd:
+                    depends_on(
+                        f"acts-algebra-plugins cxxstd={_v.value}",
+                        when=f"cxxstd={_v.value} {_v.when}",
+                    )
 
     depends_on("actsvg +meta")
     depends_on("actsvg @0.4.57:", when="@0.100:")

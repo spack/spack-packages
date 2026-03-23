@@ -33,9 +33,12 @@ class PyTy(PythonPackage):
         deprecated=True,
     )
 
-    # ruff/Cargo.toml
-    depends_on("rust@1.91:", when="@0.0.15:")
-    depends_on("rust@1.90:", when="@0.0.2:")
-    depends_on("rust@1.89:")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("gmake")
+        # ruff/Cargo.toml
+        depends_on("rust@1.91:", when="@0.0.15:")
+        depends_on("rust@1.90:", when="@0.0.2:")
+        depends_on("rust@1.89:")
 
-    depends_on("py-maturin@1", type="build")
+        depends_on("py-maturin@1")

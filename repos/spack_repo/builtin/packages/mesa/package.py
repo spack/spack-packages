@@ -166,6 +166,13 @@ class Mesa(MesonPackage):
 
     patch("0001-disable-gallivm-coroutine-for-libllvm15.patch", when="@22.1.2:22.3 ^libllvm@15")
 
+    def url_for_version(self, version):
+        if version < Version("23"):
+            url = "https://archive.mesa3d.org/older-versions/{0}.x/mesa-{1}.tar.xz"
+            return url.format(version.up_to(1), version.dotted)
+
+        return super(Mesa, self).url_for_version(version)
+
     # Explicitly use the llvm-config tool
     def patch(self):
         filter_file(r"_llvm_method = 'auto'", "_llvm_method = 'config-tool'", "meson.build")

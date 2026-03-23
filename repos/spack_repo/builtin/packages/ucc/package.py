@@ -18,6 +18,7 @@ class Ucc(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     maintainers("zzzoom")
 
+    version("1.7.0", sha256="b40df0db75b8505844547574a3a7dad16c9033d7e1ca099ea8508bc57a62b454")
     version("1.6.0", sha256="c77897cdaec2114234504fd9259d5143a6933a8ee51aad52fbc4ad1c9752114d")
     version("1.5.1", sha256="7921424e4b6b756133497ab6fdfb8d038eea33f337d4c2dbce13f59e04d16e5b")
     version("1.5.0", sha256="7ab61a3215616ee9a7a6f51e61cfaac9e7055a12b233aef8d4a7218d2cb3860f")

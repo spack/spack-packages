@@ -49,8 +49,6 @@ spack:
       variants: threads=openmp
     rccl:
       variants: amdgpu_target=gfx90a
-    rocblas:
-      require: ~hipblaslt #hangs in ci
     trilinos:
       prefer:
       - +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
@@ -285,7 +283,7 @@ spack:
 
   # PYTHON PACKAGES
   - opencv +python3
-  - py-horovod
+  # - py-horovod  # all versions suffer from critical CVE, package is deprecated and scheduled for removal
   - py-jax
   - py-jupyterlab
   - py-matplotlib

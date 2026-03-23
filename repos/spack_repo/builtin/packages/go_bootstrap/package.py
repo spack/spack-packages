@@ -33,6 +33,17 @@ class GoBootstrap(Package):
     # should update these binary releases on a yearly schedule as
     # bootstrapping requirements are modified by new releases of go.
     go_releases = {
+        "1.24.13": {
+            "darwin": {
+                "amd64": "6cc6549b06725220b342b740497ffd24e0ebdcef75781a77931ca199f46ad781",
+                "arm64": "f282d882c3353485e2fc6c634606d85caf36e855167d59b996dbeae19fa7629a",
+            },
+            "linux": {
+                "amd64": "1fc94b57134d51669c72173ad5d49fd62afb0f1db9bf3f798fd98ee423f8d730",
+                "arm64": "74d97be1cc3a474129590c67ebf748a96e72d9f3a2b6fef3ed3275de591d49b3",
+                "ppc64le": "5f0dfab58ce15a84d824363c041246c76847a69d14f9ffac16bd5342299ecc14",
+            },
+        },
         "1.22.12": {
             "darwin": {
                 "amd64": "e7bbe07e96f0bd3df04225090fe1e7852ed33af37c43a23e16edbbb3b90a5b7c",

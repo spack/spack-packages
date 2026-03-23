@@ -63,7 +63,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     version("3.14.1", sha256="cc78a15e34d26b3e6dde003d4a30064e595225f6185c1975bbd460cb5edd99c7")
     version("3.14.0", sha256="37f8bb270169d1d3f5d43756ac8929d56204e596bd7a78a7daff707513472e46")
 
-    variant("arpack", default=True, description="Enables Arpack wrappers")
+    variant("arpack", default=False, description="Enables Arpack wrappers")
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
     variant("hpddm", default=False, description="Enables HPDDM wrappers")
 
@@ -99,7 +99,9 @@ class Slepc(Package, CudaPackage, ROCmPackage):
         rocm_dep = "+rocm amdgpu_target={0}".format(arch)
         depends_on("petsc {0}".format(rocm_dep), when=rocm_dep)
 
-    # Arpack can not be used with 64bit integers.
+    # arpack-ng does not have an int64 variant that can enabled explicitly.
+    conflicts("+arpack", when="^petsc+int64")
+    # BLOPEX can not be used with 64bit integers.
     conflicts("+blopex", when="^petsc+int64")
     # HPDDM cannot be used in both PETSc and SLEPc prior to 3.19.0
     conflicts("+hpddm", when="@:3.18 ^petsc+hpddm")
