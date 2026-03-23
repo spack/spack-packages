@@ -181,6 +181,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(
             "libfabric@1.6.0:", when=f"+sst platform={_platform}"
         )  # optional in EVPath and SST
+        conflicts("libfabric@2.5:")
         # depends_on('bison', when='+sst')     # optional in FFS, broken package
         # depends_on('flex', when='+sst')      # optional in FFS, depends on BISON
 
