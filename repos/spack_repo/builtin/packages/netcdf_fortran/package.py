@@ -4,6 +4,7 @@
 
 import glob
 import os
+import sys
 from shutil import Error, copyfile
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -53,6 +54,11 @@ class NetcdfFortran(AutotoolsPackage):
         depends_on("mpi", when="^netcdf-c+parallel-netcdf")
         depends_on("mpi", when="^hdf5+mpi~shared")
 
+    # This patch to ltmain.sh is needed at link time to properly detect NAG when the
+    # compiler is specified using a full path (as Spack does). (It is only needed for NAG,
+    # but it is safe to always apply it.)
+    patch("nag_linking.patch")
+        
     # Enable 'make check' for NAG, which is too strict.
     patch("nag_testing.patch", when="@4.4.5%nag")
 
@@ -79,7 +85,13 @@ class NetcdfFortran(AutotoolsPackage):
                 flags.append(self.compiler.cc_pic_flag)
         elif name == "fflags":
             if "+pic" in self.spec:
-                flags.append(self.compiler.f77_pic_flag)
+                if self.spec.satisfies("%fortran=nag"):
+                    # NAG uses -PIC, but the f77_pic_flag may be incorrectly set to the
+                    # more common -fPIC. This may be user error, but we work around this
+                    # issue here.
+                    flags.append("-PIC")
+                else:
+                    flags.append(self.compiler.f77_pic_flag)
             if self.spec.satisfies("%fortran=gcc@10:"):
                 # https://github.com/Unidata/netcdf-fortran/issues/212
                 flags.append("-fallow-argument-mismatch")
@@ -91,6 +103,13 @@ class NetcdfFortran(AutotoolsPackage):
                 # The following flag forces the compiler to produce module
                 # files with lowercase names.
                 flags.append("-ef")
+            elif self.spec.satisfies("%fortran=nag"):
+                if sys.platform == "darwin":
+                    # The MacOS file system is case-insensitive. NAG therefore treats .F90
+                    # files as .f90 files, and so doesn't run them through its
+                    # preprocessor. So add -fpp to force NAG to run the preprocessor on
+                    # all Fortran files.
+                    flags.append("-fpp")
 
         # Note that cflags and fflags should be added by the compiler wrapper
         # and not on the command line to avoid overriding the default

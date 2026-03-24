@@ -1,0 +1,12 @@
+--- a/ltmain.sh	2026-03-22 18:16:35
++++ b/ltmain.sh	2026-03-22 18:17:08
+@@ -9360,7 +9360,8 @@
+ 	  xlcverstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
+ 	  verstring="-compatibility_version $minor_current -current_version $minor_current.$revision"
+           # On Darwin other compilers
+-          case $CC in
++          func_cc_basename "$CC"
++          case $func_cc_basename_result in
+               nagfor*)
+                   verstring="$wl-compatibility_version $wl$minor_current $wl-current_version $wl$minor_current.$revision"
+                   ;;
