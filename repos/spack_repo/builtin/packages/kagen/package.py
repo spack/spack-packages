@@ -19,7 +19,6 @@ class Kagen(CMakePackage):
     """
 
     homepage = "https://github.com/KarlsruheGraphGeneration/KaGen"
-    url = "https://github.com/KarlsruheGraphGeneration/KaGen/archive/refs/tags/v1.3.0.tar.gz"
     git = "https://github.com/KarlsruheGraphGeneration/KaGen.git"
     maintainers("schulzchristian")
 
@@ -28,32 +27,41 @@ class Kagen(CMakePackage):
     version("develop", branch="main", submodules=True)
     version(
         "1.3.0",
-        sha256="3037beb7a3add746921a737a3b7ecc5bdcd6e476a5956f4f8e08116f93142905",
+        tag="v1.3.0",
+        commit="4443548b96b3bea903ce66438034906814bf1622",
         submodules=True,
     )
     version(
         "1.2.9",
-        sha256="52896cf6eaf4a27a064ad82f45d2577b2166b51a825084b562395d8aa5556707",
+        tag="v1.2.9",
+        commit="786579bbfbf8c81b2d2ab52c431ce5c7a8d068a4",
         submodules=True,
     )
     version(
         "1.2.1",
-        sha256="f2d64a3123e2e2e7fe5f95f1af8aa4837f4883cfe471d99c1028c96ae248f4df",
+        tag="v1.2.1",
+        commit="7bfcf979e746580ddd8402c07216750c640bc24e",
         submodules=True,
     )
     version(
         "1.2.0",
-        sha256="fc9935101849b0da151a00ea0bbcdf0f2bf22cc9fa24646f2e0bb0a71ed7a19a",
+        tag="v1.2.0",
+        commit="66c6349a8f9ba700a84acc6ece4c992ab50bf8af",
         submodules=True,
     )
     version(
         "1.1.0",
-        sha256="41f7f2f4bee6f7c3de381232652370f1003298e563d98442a31ce43ba4c37a4f",
+        tag="v1.1.0",
+        commit="a8118be48efa69f86e7e2251fcc03f55eee2ca8c",
         submodules=True,
     )
 
     variant("cgal", default=True, description="Enable RDG generators via CGAL")
-    variant("sparsehash", default=False, description="Use Google Sparsehash instead of std::unordered_map")
+    variant(
+        "sparsehash",
+        default=False,
+        description="Use Google Sparsehash instead of std::unordered_map",
+    )
     variant("xxhash", default=True, description="Enable xxHash for path permutation")
 
     depends_on("c", type="build")
