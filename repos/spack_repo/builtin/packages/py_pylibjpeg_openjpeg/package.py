@@ -33,3 +33,7 @@ class PyPylibjpegOpenjpeg(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("py-numpy@2")
+
+        # version from release notes
+        # https://github.com/pydicom/pylibjpeg-openjpeg/blob/v2.5.0/docs/changes/v2.5.0.rst
+        depends_on("openjpeg@2.5.3:")
