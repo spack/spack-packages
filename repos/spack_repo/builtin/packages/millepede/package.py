@@ -26,6 +26,16 @@ class Millepede(MakefilePackage, CMakePackage):
     version("main", branch="main")
     version("05-01-00", sha256="fec88805d33004f9ca03733dc14f7b30f888cd3a48e3cdf4333d74b42242d3d3")
     version("05-00-00", sha256="df8ffb2ffae3c4f32177824026f79ed3b824536f5ef581643aaae09da308aca6")
+    version(
+        "04-13-03",
+        sha256="669a6e46a6f02ba3c78b2760e2ffb2c90d25b582ccd1a5c0770eef81c7bcbbe9",
+        deprecated=True,
+    )
+    version(
+        "04-11-01",
+        sha256="9869eb84d8d07cecfab15c396f3faa36aef10906e39f8641c48b58e0325b3205",
+        deprecated=True,
+    )
 
     # Fix LAPACK handling
     patch(
