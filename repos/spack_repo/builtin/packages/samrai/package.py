@@ -139,7 +139,7 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
             return f"{base_url}{version.dashed}/SAMRAI-v{version}.tar.gz"
         elif version <= Version("3.11.0"):
             base_url = "https://github.com/llnl/SAMRAI/archive/refs/tags"
-            return f"{base_url}/{version}.tar.gz"            
+            return f"{base_url}/{version}.tar.gz"
         elif version < Version("4"):
             base_url = "https://github.com/llnl/SAMRAI/archive/refs/tags"
             return f"{base_url}/v-{version.dashed}.tar.gz"
