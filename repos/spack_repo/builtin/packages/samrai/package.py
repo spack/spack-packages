@@ -48,6 +48,7 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     # Version 3.11.3 permissions don't allow downloading
     version("3.11.2", sha256="b0889efe25f21becda48fe42ccbcccf12bcacf56f638e171db705f135c5550ae")
     version("3.11.1", sha256="8a02d51df50d0fdf4bc7ecc6dedc13b5d360bdd1f9a511264535a85cedd725e7")
+    version("3.11.0", sha256="5d609efb0b72f40e17b65a498665e9a35efc608cb380221ac4d2a6d053009c6c")
     version("3.10.0", sha256="b63786a6597bfad03dd3fbd781f46ee1332c1b8e5af01c658fd9ed8cb93f1de2")
     version("3.9.1", sha256="93ffd4c7f1423a36f1452cc81d4742f75aab2e6dc16cb40931df159d0cf2f321")
     version("3.8.0", sha256="f3779f9816ddcc8e0a90c71f053e664bcd2c6169f8fd2fc37e1c2af6ceb5f1e4")
