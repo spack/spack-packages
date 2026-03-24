@@ -106,9 +106,9 @@ class Eccodes(CMakePackage):
 
     variant("geo", default=False, description="Enable eckit::geo")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("netcdf-c", when="+netcdf")
     # Cannot be built with openjpeg@2.0.x.
