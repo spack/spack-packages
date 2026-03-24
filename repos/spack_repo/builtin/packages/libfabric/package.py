@@ -190,6 +190,11 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
         msg="Libfabric 1.20.0 uses values in memory that are not correctly "
         "set by OPX, resulting in undefined behavior.",
     )
+    conflicts(
+        "fabrics=cxi ^libcxi@:13",
+        when="@2.5:",
+        msg="https://github.com/ofiwg/libfabric/issues/12036",
+    )
 
     conflicts("+asan +tsan")
 
