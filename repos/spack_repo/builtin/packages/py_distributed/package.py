@@ -33,6 +33,7 @@ class PyDistributed(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2026.3.0", sha256="4a8fc6102fededfbaae45288501276da2297a054d74eb6589f01b087c7f95c26")
     version("2025.7.0", sha256="5f8ec20d3cdfb286452831c6f9ebee84527e9323256c20dd2938d9c6e62c5c18")
     version("2025.3.0", sha256="84a68c91db2a106c752ca7845fba8cd92ad4f3545c0fb2d9b6dec0f44b225539")
     version("2024.12.1", sha256="438aa3ae48bfac9c2bb2ad03f9d47899286f9cb3db8a627b3b8c0de9e26f53dd")
@@ -80,6 +81,7 @@ class PyDistributed(PythonPackage):
     # See https://github.com/dask/distributed/pull/7309
     depends_on("py-toolz@0.10.0:", type=("build", "run"), when="@2022.10.2:")
     depends_on("py-toolz@0.11.2:", type=("build", "run"), when="@2024.8.1:")
+    depends_on("py-toolz@0.12:", type=("build", "run"), when="@2026.3.0:")
 
     depends_on("py-tornado@6.2.0:", type=("build", "run"), when="@2024.8.1:")
     depends_on("py-tornado@6.0.4:", type=("build", "run"), when="@2024.7.1:")

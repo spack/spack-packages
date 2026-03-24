@@ -17,6 +17,7 @@ class PyDask(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2026.3.0", sha256="f7d96c8274e8a900d217c1ff6ea8d1bbf0b4c2c21e74a409644498d925eb8f85")
     version("2025.7.0", sha256="c3a0d4e78882e85ea81dbc71e6459713e45676e2d17e776c2f3f19848039e4cf")
     version("2025.3.0", sha256="322834f44ebc24abeb564c56ccb817c97d6e7af6be71ad0ad96b78b51f2e0e85")
     version("2024.12.1", sha256="bac809af21c2dd7eb06827bccbfc612504f3ee6435580e548af912828f823195")
@@ -123,7 +124,9 @@ class PyDask(PythonPackage):
     # Starting with version 2024.3.0, dataframe requires a separate package py-dask-expr
     depends_on("py-dask-expr@1.1", type=("build", "run"), when="@2024.7.1 +dataframe")
     # starting with 2025.7 needs py-arrow
-    depends_on("py-pyarrow@14.0.1:", type=("build", "run"), when="@2025.1.0: +dataframe")
+    depends_on("py-pyarrow@14.0.1:", type=("build", "run"), when="@2025.1.0:2025 +dataframe")
+    depends_on("py-pyarrow@16.0:", type=("build", "run"), when="@2026.1.0: +dataframe")
+
 
     # Requirements for dask.distributed
     depends_on(
@@ -136,6 +139,7 @@ class PyDask(PythonPackage):
     depends_on("py-distributed@2024.12.1", type=("build", "run"), when="@2024.12.1 +distributed")
     depends_on("py-distributed@2025.3.0", type=("build", "run"), when="@2025.3.0 +distributed")
     depends_on("py-distributed@2025.7.0", type=("build", "run"), when="@2025.7.0 +distributed")
+    depends_on("py-distributed@2026.3.0", type=("build", "run"), when="@2026.3.0 +distributed")
 
     # Requirements for dask.diagnostics
     depends_on("py-bokeh@1.0.0:1,2.0.1:", type=("build", "run"), when="+diagnostics")
