@@ -31,15 +31,14 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     list_url = homepage
     git = "https://github.com/LLNL/SAMRAI.git"
 
-    # using build_system 'cached_cmake'
-    version(
-        "4.5.0",
-        sha256="3850c57308824d6b02297754aced3b2b5d4817c6ec19db32922a8040ab2c9a56",
-        preferred=True,
-    )
-    version(
-        "4.3.0", tag="v-4-3-0", commit="51d31fae40b296f4c1ccb19f29c63263fd08e3be", submodules=True
-    )
+    # using build_system 'cached_cmake' -- assets SAMRAI-v4.5.0.tar.gz
+    version("4.5.0", sha256="3850c57308824d6b02297754aced3b2b5d4817c6ec19db32922a8040ab2c9a56")
+    version("4.3.0", sha256="b124f5a44cbdf44e21341de47161357684a67aaca39b2ab2cf68b6edb794149b")
+    version("4.2.1", sha256="dbd0b1f2c7f6c8eba2dc7e3535a73c97cbde929e8c08cecdbca8a98e2edf3bc1")
+    version("4.2.0", sha256="34a256c99e29bee6dee017253a18cf1ed6435f0376e666e235e9092a895fabc6")
+    version("4.1.2", sha256="2860c693ba495613ce0ea04cc72eb8749519a770d520ef0a83a54ecff3d515e3")
+    version("4.1.1", sha256="ceb6e5b3b1587c45b8c41971f252974e40eae3d5fe9ad93269d969ea4acc2637")
+    version("4.1.0", sha256="633968bf1d4ff9c0f1f0c31591f9bb665f8252231a9ca03b54c3b498239a5815")
 
     # using build_system 'autotools'
     version("3.12.0", sha256="3b02915bc3edc63da8960109e74ca7e61a1ca729d7631fa7a3635c7ca29c8266")
