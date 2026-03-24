@@ -20,6 +20,7 @@ class Mimalloc(CMakePackage):
     version("dev-slice", branch="dev-slice")
     version("dev", branch="dev")
     version("master", branch="master")
+    version("3.2.8", sha256="68163666575518c213a6593850099adce3863b340ca2751103dbd1f253664e05")
     version("3.2.7", sha256="33621bea902711639b8f83128e64685ffc8224a65443625530747603a2d8726d")
     version("3.2.6", sha256="bd5756fb2e9f5c275b37ce1d530ac1c98baca0bad6818dcda5c83d6139108a97")
     version("3.1.5", sha256="1c6949032069d5ebea438ec5cedd602d06f40a92ddf0f0d9dcff0993e5f6635c")
