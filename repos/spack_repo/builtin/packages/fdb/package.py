@@ -16,7 +16,7 @@ class Fdb(CMakePackage):
     git = "https://github.com/ecmwf/fdb.git"
     list_url = "https://github.com/ecmwf/fdb/tags"
 
-    maintainers("skosukhin", "victoria-cherkas", "dominichofer")
+    maintainers("skosukhin", "victoria-cherkas")
 
     license("Apache-2.0")
 

@@ -16,7 +16,7 @@ class Metkit(CMakePackage):
     url = "https://github.com/ecmwf/metkit/archive/refs/tags/1.7.0.tar.gz"
     list_url = "https://github.com/ecmwf/metkit/tags"
 
-    maintainers("skosukhin", "victoria-cherkas", "dominichofer")
+    maintainers("skosukhin", "victoria-cherkas")
 
     license("Apache-2.0")
 

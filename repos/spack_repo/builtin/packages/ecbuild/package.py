@@ -15,7 +15,7 @@ class Ecbuild(CMakePackage):
     url = "https://github.com/ecmwf/ecbuild/archive/refs/tags/3.6.1.tar.gz"
     list_url = "https://github.com/ecmwf/ecbuild/tags"
 
-    maintainers("skosukhin", "climbfuji", "victoria-cherkas", "dominichofer")
+    maintainers("skosukhin", "climbfuji", "victoria-cherkas")
 
     license("Apache-2.0")
 

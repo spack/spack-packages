@@ -19,7 +19,7 @@ class Eckit(CMakePackage):
     url = "https://github.com/ecmwf/eckit/archive/refs/tags/1.16.0.tar.gz"
     list_url = "https://github.com/ecmwf/eckit/tags"
 
-    maintainers("skosukhin", "climbfuji", "victoria-cherkas", "dominichofer")
+    maintainers("skosukhin", "climbfuji", "victoria-cherkas")
 
     license("Apache-2.0")
 
