@@ -32,7 +32,7 @@ class PyPysam(PythonPackage):
 
     depends_on("py-setuptools@59.0:", when="@0.21:", type="build")
     depends_on("py-setuptools", type="build")
-    depends_on("py-cython@0.29.30:3", when="@0.23.3:", type="build")
+    depends_on("py-cython@0.29.12:3", when="@0.23.3:", type="build")
     depends_on("py-cython@0.29.30:2", when="@0.21", type="build")
     depends_on("py-cython@0.29.12:2", when="@0.18:0.19", type="build")
     depends_on("py-cython@0.21:2", when="@0.14:0.15", type="build")
