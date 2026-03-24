@@ -68,7 +68,7 @@ class Eckit(CMakePackage):
         "compression",
         values=any_combination_of("bzip2", "snappy", "lz4", "aec", "zip"),
         description="List of supported compression backends",
-        when="@1.32:",
+        when="@1.31:",
     )
     variant("xxhash", default=True, description="Enable xxHash support for hashing")
     variant("ssl", default=False, description="Enable MD4 and SHA1 support with OpenSSL")
