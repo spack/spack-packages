@@ -134,12 +134,11 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     patch("no-tool-build.patch", when="@3.0.0:3.12.0%gcc")
 
     def url_for_version(self, version):
-        if version >= Version("4.1.0"):
-            url = super().url_for_version(version)
-            return url
-
-        base_url = "https://github.com/llnl/SAMRAI/archive/refs/tags"
-        if version >= Version("3.11.1"):
+        if version >= Version("4"):
+            base_url = "https://github.com/llnl/SAMRAI/releases/download/v-"
+            return f"{base_url}{version.dashed}/SAMRAI-v{version}.tar.gz"
+        elif version < Version("4"):
+            base_url = "https://github.com/llnl/SAMRAI/archive/refs/tags"
             return f"{base_url}/v-{version.dashed}.tar.gz"
 
         return f"{base_url}/{version}.tar.gz"
