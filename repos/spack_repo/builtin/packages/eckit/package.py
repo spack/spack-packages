@@ -1,4 +1,5 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
+# Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -16,15 +17,20 @@ class Eckit(CMakePackage):
     homepage = "https://github.com/ecmwf/eckit"
     git = "https://github.com/ecmwf/eckit.git"
     url = "https://github.com/ecmwf/eckit/archive/refs/tags/1.16.0.tar.gz"
+    list_url = "https://github.com/ecmwf/eckit/tags"
 
-    maintainers("skosukhin", "climbfuji", "victoria-cherkas")
+    maintainers("skosukhin", "climbfuji", "victoria-cherkas", "dominichofer")
 
     license("Apache-2.0")
 
+    version("2.0.2", sha256="46b9c1f90e0b565698c5c79c54676401d33738ec82995c025d5d5aabeb13ad2b")
+    version("1.33.0", sha256="a15f89df0cdaa2d8a74843a1e72a7b3b304958a4fe119b51eec5efadbf113d4f")
     version("1.32.3", sha256="33e0fac2656cdd2f2d877dbfe7a4751ee657ab732c00dd90bd48a406298a100f")
+    version("1.32.2", sha256="f2940e99f1550119497418221e4c5073eb9c3ea776b15a4f56236ef4438a1210")
     version("1.31.4", sha256="045ebd9aaecf2773dc8c82f4226022776576cb0d911a76f8d1d069c97e9530c8")
     version("1.30.0", sha256="1f58360dedfaa285a6b8087916768e6d12406e9fda2b6ba0a5c875f7a3db5398")
     version("1.29.3", sha256="5afb6ac5bd95d68b7b0fdf42bdfe21370515b8e9ef7b3db91a89e021aa9133f2")
+    version("1.28.8", sha256="4bd4fbb971ec9b53a64d47f40336c130b37349850ae82114d5c04f393ea70d23")
     version("1.28.3", sha256="24b2b8d9869849a646aa3fd9d95e4181a92358cd837d95b22e25d718a6ad7738")
     version("1.28.2", sha256="d122db8bb5bcaadf3256a24f0f90d9bcedad35ef8f25e7eccd8c93c506dbdd24")
     version("1.27.0", sha256="499f3f8c9aec8d3f42369e3ceedc98b2b09ac04993cfd38dfdf7d38931703fe7")
@@ -38,6 +44,9 @@ class Eckit(CMakePackage):
     version("1.19.0", sha256="a5fef36b4058f2f0aac8daf5bcc9740565f68da7357ddd242de3a5eed4765cc7")
     version("1.16.3", sha256="d2aae7d8030e2ce39e5d04e36dd6aa739f3c8dfffe32c61c2a3127c36b573485")
     version("1.16.0", sha256="9e09161ea6955df693d3c9ac70131985eaf7cf24a9fa4d6263661c6814ebbaf1")
+
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
 
     variant(
         "build_type",
@@ -56,20 +65,10 @@ class Eckit(CMakePackage):
         values=any_combination_of("eigen", "armadillo", "mkl", "lapack"),
         description="List of supported linear algebra backends",
     )
-
-    # There is probably a more elegant way to handle the differences
-    # in valid compression backends, but this works ...
     variant(
         "compression",
         values=any_combination_of("bzip2", "snappy", "lz4", "aec"),
         description="List of supported compression backends",
-        when="@:1.31",
-    )
-    variant(
-        "compression",
-        values=any_combination_of("bzip2", "snappy", "lz4", "aec", "zip"),
-        description="List of supported compression backends",
-        when="@1.32:",
     )
     variant("xxhash", default=True, description="Enable xxHash support for hashing")
     variant("ssl", default=False, description="Enable MD4 and SHA1 support with OpenSSL")
@@ -78,19 +77,15 @@ class Eckit(CMakePackage):
     variant(
         "unicode",
         default=True,
-        description="Enable support for Unicode characters in Yaml/JSON parsers",
+        description="Enable support for Unicode characters in Yaml/JSON" "parsers",
     )
     variant("aio", default=True, description="Enable asynchronous IO")
     variant("fismahigh", default=False, description="Apply patching for FISMA-high compliance")
-
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
 
     # Build issues with cmake 3.20, not sure about 3.21
     depends_on("cmake@3.12:3.19,3.22:", type="build")
     depends_on("ecbuild@3.5:", when="@:1.20.99", type="build")
     depends_on("ecbuild@3.7:", when="@1.21:", type="build")
-    depends_on("ecbuild@3.11:", when="@1.31:", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("llvm-openmp", when="+openmp %apple-clang", type=("build", "run"))
@@ -111,7 +106,6 @@ class Eckit(CMakePackage):
     depends_on("snappy", when="compression=snappy")
     depends_on("lz4", when="compression=lz4")
     depends_on("libaec", when="compression=aec")
-    depends_on("libzip", when="compression=zip")
 
     depends_on("openssl", when="+ssl")
 
@@ -127,7 +121,8 @@ class Eckit(CMakePackage):
     conflicts(
         "linalg=lapack",
         when="linalg=mkl",
-        msg='"linalg=lapack" is implied when "linalg=mkl" and must not be specified additionally',
+        msg='"linalg=lapack" is implied when "linalg=mkl" and '
+        "must not be specified additionally",
     )
 
     def cmake_args(self):
@@ -155,7 +150,6 @@ class Eckit(CMakePackage):
             self.define("ENABLE_SNAPPY", "compression=snappy" in self.spec),
             self.define("ENABLE_LZ4", "compression=lz4" in self.spec),
             self.define("ENABLE_AEC", "compression=aec" in self.spec),
-            self.define("ENABLE_ZIP", "compression=zip" in self.spec),
             self.define_from_variant("ENABLE_XXHASH", "xxhash"),
             self.define_from_variant("ENABLE_SSL", "ssl"),
             self.define_from_variant("ENABLE_CURL", "curl"),
@@ -201,7 +195,7 @@ class Eckit(CMakePackage):
 
         return args
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+    def setup_build_environment(self, env):
         # Bug fix for macOS - cmake's find_package doesn't add "libtinfo.dylib" to the
         # ncurses libraries, but the ncurses pkgconfig explicitly sets it. We need to
         # add the correct spec['ncurses'].libs.ld_flags to LDFLAGS to compile eckit
