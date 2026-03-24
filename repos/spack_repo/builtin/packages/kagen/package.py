@@ -26,34 +26,19 @@ class Kagen(CMakePackage):
 
     version("develop", branch="main", submodules=True)
     version(
-        "1.3.0",
-        tag="v1.3.0",
-        commit="4443548b96b3bea903ce66438034906814bf1622",
-        submodules=True,
+        "1.3.0", tag="v1.3.0", commit="4443548b96b3bea903ce66438034906814bf1622", submodules=True
     )
     version(
-        "1.2.9",
-        tag="v1.2.9",
-        commit="786579bbfbf8c81b2d2ab52c431ce5c7a8d068a4",
-        submodules=True,
+        "1.2.9", tag="v1.2.9", commit="786579bbfbf8c81b2d2ab52c431ce5c7a8d068a4", submodules=True
     )
     version(
-        "1.2.1",
-        tag="v1.2.1",
-        commit="7bfcf979e746580ddd8402c07216750c640bc24e",
-        submodules=True,
+        "1.2.1", tag="v1.2.1", commit="7bfcf979e746580ddd8402c07216750c640bc24e", submodules=True
     )
     version(
-        "1.2.0",
-        tag="v1.2.0",
-        commit="66c6349a8f9ba700a84acc6ece4c992ab50bf8af",
-        submodules=True,
+        "1.2.0", tag="v1.2.0", commit="66c6349a8f9ba700a84acc6ece4c992ab50bf8af", submodules=True
     )
     version(
-        "1.1.0",
-        tag="v1.1.0",
-        commit="a8118be48efa69f86e7e2251fcc03f55eee2ca8c",
-        submodules=True,
+        "1.1.0", tag="v1.1.0", commit="a8118be48efa69f86e7e2251fcc03f55eee2ca8c", submodules=True
     )
 
     variant("cgal", default=True, description="Enable RDG generators via CGAL")
