@@ -58,7 +58,7 @@ class NetcdfFortran(AutotoolsPackage):
     # compiler is specified using a full path (as Spack does). (It is only needed for NAG,
     # but it is safe to always apply it.)
     patch("nag_linking.patch")
-        
+
     # Enable 'make check' for NAG, which is too strict.
     patch("nag_testing.patch", when="@4.4.5%nag")
 
