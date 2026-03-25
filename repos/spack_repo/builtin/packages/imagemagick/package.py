@@ -38,7 +38,7 @@ class Imagemagick(AutotoolsPackage):
     depends_on("libtiff@4:")
     depends_on("ghostscript", when="+ghostscript")
     depends_on("ghostscript-fonts", when="+ghostscript")
-    depends_on("zlib", when="+zlib")
+    depends_on("zlib-api", when="+zlib")
 
     def configure_args(self):
         args = []
