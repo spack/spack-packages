@@ -19,7 +19,7 @@ class Libsegfault(AutotoolsPackage):
 
     license("GPL-2.0")
 
-    version("main", commit="ff16adff4a6af738eb4deabfb0eb107f6fa6e048")
+    version("2023-07-25", commit="ff16adff4a6af738eb4deabfb0eb107f6fa6e048")
 
     depends_on("c", type="build")
 
