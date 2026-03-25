@@ -85,13 +85,7 @@ class NetcdfFortran(AutotoolsPackage):
                 flags.append(self.compiler.cc_pic_flag)
         elif name == "fflags":
             if "+pic" in self.spec:
-                if self.spec.satisfies("%fortran=nag"):
-                    # NAG uses -PIC, but the f77_pic_flag may be incorrectly set to the
-                    # more common -fPIC. This may be user error, but we work around this
-                    # issue here.
-                    flags.append("-PIC")
-                else:
-                    flags.append(self.compiler.f77_pic_flag)
+                flags.append(self.compiler.f77_pic_flag)
             if self.spec.satisfies("%fortran=gcc@10:"):
                 # https://github.com/Unidata/netcdf-fortran/issues/212
                 flags.append("-fallow-argument-mismatch")
