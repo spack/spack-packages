@@ -290,7 +290,9 @@ class Rocblas(CMakePackage):
                 args.append(self.define("Tensile_COMPILER", "hipcc"))
             else:
                 args.append(
-                    self.define("Tensile_COMPILER", self.spec["llvm-amdgpu"].prefix + "/bin/amdclang++")
+                    self.define(
+                        "Tensile_COMPILER", self.spec["llvm-amdgpu"].prefix + "/bin/amdclang++"
+                    )
                 )
             args += [
                 self.define("Tensile_LOGIC", "asm_full"),
