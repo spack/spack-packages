@@ -259,6 +259,10 @@ class MesonBuilder(meson.MesonBuilder):
         args.append("-Dgtk_doc=false")
         args.append("-Dlibelf=enabled")
 
+        # https://github.com/GNOME/glib/commit/fa13c41da7fb03a710bfd8840cae4bb57cf14829
+        if self.spec.satisfies("@2.65.1:"):
+            args.append("-Dsysprof=disabled")
+
         # arguments for older versions
         if self.spec.satisfies("@:2.72"):
             args.append("-Dgettext=external")
