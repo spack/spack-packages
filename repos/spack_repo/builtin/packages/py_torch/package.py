@@ -643,7 +643,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # Fix ROCm HIP build for 2.9+: define CHECK_NOSPARSE_* for HIP and guard
         # mha_fwd_aot so it is only called when USE_MEM_EFF_ATTENTION and not
         # DISABLE_AOTRITON (avoids undeclared identifier in attention.hip).
-        if self.spec.satisfies("@2.9:+rocm"):
+        if self.spec.satisfies("@2.9+rocm"):
             attention_cu = "aten/src/ATen/native/transformers/cuda/attention.cu"
             _rocm_attn_if = (
                 "#if defined(USE_ROCM) && (defined(USE_FLASH_ATTENTION) || "
