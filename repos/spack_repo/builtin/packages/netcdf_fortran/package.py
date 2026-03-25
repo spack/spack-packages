@@ -86,10 +86,14 @@ class NetcdfFortran(AutotoolsPackage):
         elif name == "fflags":
             if "+pic" in self.spec:
                 flags.append(self["fortran"].pic_flag)
-            if self.spec.satisfies("%fortran=gcc@10:"):
-                # https://github.com/Unidata/netcdf-fortran/issues/212
-                flags.append("-fallow-argument-mismatch")
-            elif self.compiler.name == "cce":
+            if self.spec.satisfies("@:4.5.2"):
+                if self.spec.satisfies("%fortran=gcc@10:"):
+                    # https://github.com/Unidata/netcdf-fortran/issues/212
+                    flags.append("-fallow-argument-mismatch")
+                elif self.spec.satisfies("%fortran=nag"):
+                    # https://github.com/Unidata/netcdf-fortran/issues/218
+                    flags.append("-mismatch_all")
+            if self.spec.satisfies("%fortran=cce"):
                 # Cray compiler generates module files with uppercase names by
                 # default, which is not handled by the makefiles of
                 # NetCDF-Fortran:
