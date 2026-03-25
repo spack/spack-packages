@@ -4,6 +4,7 @@
 import os
 import stat
 import subprocess
+import sys
 from typing import Callable, List, Optional, Set, Tuple, Union
 
 from spack.package import (
@@ -527,6 +528,16 @@ To resolve this problem, please try the following:
                 start_at=start_at,
                 stop_at=stop_at,
             )
+
+            if sys.platform == "darwin":
+                # Libtool has a check for nagfor on darwin systems, but it does not
+                # recognize NAG behind the compiler wrappers, so fix that check:
+                x.filter(
+                    regex=r"(\s*case\s+)(\$CC)(\s+in\s*)$",
+                    repl="\\1`test \"x$with_nag\" = xyes && echo nagfor || echo \\2`\\3",
+                    start_at="# On Darwin other compilers",
+                    stop_at="esac",
+                )
 
     @property
     def configure_directory(self) -> str:
