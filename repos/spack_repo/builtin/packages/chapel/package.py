@@ -699,20 +699,10 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         # Undo spack compiler wrappers:
         # the C/C++ compilers must work post-install
-        if self.spec.satisfies("+rocm llvm=spack"):
-            env.set(
-                "CHPL_LLVM_CONFIG",
-                join_path(self.spec["llvm-amdgpu"].prefix, "bin", "llvm-config"),
-            )
-            real_cc = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang")
-            real_cxx = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang++")
-
-            # +rocm appears to also require a matching LLVM host compiler to guarantee linkage
-            env.set("CHPL_HOST_COMPILER", "llvm")
-            env.set("CHPL_HOST_CC", real_cc)
-            env.set("CHPL_HOST_CXX", real_cxx)
-
-        elif self.spec.satisfies("llvm=spack"):
+        # If we ever switch back to using llvm-amdgpu for some ROCm versions,
+        # we will need a separate case here to use the binaries it provides
+        # rather than those of vanilla LLVM.
+        if self.spec.satisfies("llvm=spack"):
             env.set("CHPL_LLVM_CONFIG", join_path(self.spec["llvm"].prefix, "bin", "llvm-config"))
             real_cc = join_path(self.spec["llvm"].prefix, "bin", "clang")
             real_cxx = join_path(self.spec["llvm"].prefix, "bin", "clang++")
