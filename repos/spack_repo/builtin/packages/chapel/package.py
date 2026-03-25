@@ -519,6 +519,10 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             depends_on("hsa-rocr-dev@6.0:6.2")
             depends_on("hip@6.0:6.2")
         with when("@2.8:"):
+            # ROCm 6.4 is specifically prohibited. Although Chapel allows it
+            # (see https://github.com/chapel-lang/chapel/pull/28220), the
+            # support is untested; being stricter here to reduce the amount of
+            # variables in getting the Spack package to work.
             depends_on("hsa-rocr-dev@6.0:6.3,7")
             depends_on("hip@6.0:6.3,7")
 
