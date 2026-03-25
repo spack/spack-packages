@@ -171,6 +171,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("blaspp +sycl", when="compute=sycl")
     with when("+openpmd"):
         depends_on("openpmd-api@0.16.1:")
+        depends_on("openpmd-api@0.17.0:", when="@26.03:")
         depends_on("openpmd-api ~mpi", when="~mpi")
         depends_on("openpmd-api +mpi", when="+mpi")
 
