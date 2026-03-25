@@ -14,8 +14,8 @@ class Uv(CargoPackage):
     git = "https://github.com/astral-sh/uv.git"
     url = "https://github.com/astral-sh/uv/archive/refs/tags/0.11.0.tar.gz"
 
-    license("APACHE 2.0 or MIT")
-    maintainers("johnwparent")
+    license("MIT OR Apache-2.0")
+    maintainers("johnwparent", "adamjstewart")
 
     build_directory = "crates/uv"
 
@@ -25,18 +25,6 @@ class Uv(CargoPackage):
     version("0.10.12", sha256="73c256e80ac1b6e030aeb0643a80d84c32f327fbe09450ff39069103503f46c9")
     version("0.9.30", sha256="c89f7d66c6aa8324e14f6b07b35af64e37368d6cb4e2b93d8bb7fdd2159f78f6")
     version("0.8.24", sha256="33f4ad5c8fe980e35c2eb79d9d3bfbada3d1a1ef63f0aa7c8ce0d3affce79617")
-    with default_args(deprecated=True):
-        # https://www.cvedetails.com/cve/CVE-2025-13327/
-        version(
-            "0.7.22", sha256="d61929e4a54d8d3c02a0eccdab726d73b8f48176a19007d01ae27f9d5af0c8f5"
-        )
-        version(
-            "0.7.16", sha256="982ec0617d5dace0f901f6133cbcfbbab2cc443e3158dd67b37ee00f7ba38f80"
-        )
-        version("0.6.8", sha256="685bbf5152349c9236acd3cfce047ca4d0c1e7cb0ed1ce2a38670b9b93ff3809")
-        version(
-            "0.4.27", sha256="48e5eae67204b280a0301fc76d02886a77d09e99e57c383a652170463f977629"
-        )
 
     with default_args(type="build"):
         depends_on("c")
