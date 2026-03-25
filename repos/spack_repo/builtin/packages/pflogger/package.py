@@ -18,11 +18,12 @@ class Pflogger(CMakePackage):
 
     maintainers("mathomp4", "tclune")
 
-    license("Apache-2.0")
+    license("Apache-2.0", checked_by="mathomp4")
 
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("1.18.0", sha256="e4ccd77b4fbe49396f0659c2f3a82622ed7a3ad3d89574fda6783fc8cf6d6b3e")
     version("1.17.0", sha256="44dd57fd63a9036dc3ca0dee6847042468e5f39f776188a1d140847005e4f828")
     version("1.16.1", sha256="82ae8d008dda3984e12df3e92a61486a8f5c0b87182d54087f1d004ecc141fff")
     version("1.15.0", sha256="454f05731a3ba50c7ae3ef9463b642c53248ae84ccb3b93455ef2ae2b6858235")
