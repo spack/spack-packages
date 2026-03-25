@@ -27,7 +27,7 @@ class Mpi(Package):
     version("1.2")
     version("1.1")
     version("1.0")
-    
+
     def test_mpi_hello(self):
         """build and run mpi hello world"""
         for lang in ("c", "f"):
