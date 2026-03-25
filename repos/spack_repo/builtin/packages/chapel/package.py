@@ -609,7 +609,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     requires("re2=bundled", when="+mason", msg="Mason requires re2=bundled")
 
     # TODO: keep up to date with util/chplenv/chpl_llvm.py
-    with when("llvm=spack ~rocm"):
+    with when("llvm=spack"):
         depends_on("llvm@11:17", when="@:2.0.1")
         depends_on("llvm@11:18", when="@2.1:2.2")
         depends_on("llvm@11:19", when="@2.3:2.4")
