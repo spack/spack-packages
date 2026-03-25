@@ -244,7 +244,7 @@ spack:
   - gasnet +rocm amdgpu_target=gfx90a
   - heffte +rocm amdgpu_target=gfx90a
   - kokkos +rocm amdgpu_target=gfx90a
-  - legion +rocm amdgpu_target=gfx90a
+  - legion +rocm amdgpu_target=gfx90a %c,cxx=gcc
   - libceed +rocm amdgpu_target=gfx90a
   - mfem +rocm amdgpu_target=gfx90a
   - papi +rocm amdgpu_target=gfx90a

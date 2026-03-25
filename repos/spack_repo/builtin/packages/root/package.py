@@ -587,7 +587,6 @@ class Root(CMakePackage):
             # Faster downloads
             dashed = version.dashed
             return f"https://github.com/root-project/root/releases/download/v{dashed}/root_v{dotted}.source.tar.gz"
-        return url.format(version.underscored)
 
     def cmake_args(self):
         define = self.define

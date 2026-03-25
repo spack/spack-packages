@@ -11,12 +11,13 @@ class Phylip(Package):
     """PHYLIP (the PHYLogeny Inference Package) is a package of programs for
     inferring phylogenies (evolutionary trees)."""
 
-    homepage = "https://evolution.genetics.washington.edu/phylip/"
-    url = "https://evolution.gs.washington.edu/phylip/download/phylip-3.697.tar.gz"
+    homepage = "https://phylipweb.github.io/phylip/"
+    url = "https://phylipweb.github.io/phylip/download/phylip-3.697.tar.gz"
     maintainers("snehring")
 
     version("3.697", sha256="9a26d8b08b8afea7f708509ef41df484003101eaf4beceb5cf7851eb940510c1")
 
+    depends_on("c", type="build")
     depends_on("gmake", type="build")
 
     def patch(self):
