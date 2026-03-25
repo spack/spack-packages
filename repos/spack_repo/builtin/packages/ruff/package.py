@@ -40,9 +40,3 @@ class Ruff(CargoPackage):
         depends_on("rust@1.80:", when="@0.7.1:")
         depends_on("rust@1.76:", when="@0.5.6:")
         depends_on("rust@1.71:")
-
-    def url_for_version(self, version):
-        v = ""
-        if version < Version("0.5.0"):
-            v = "v"
-        return f"https://github.com/astral-sh/ruff/archive/refs/tags/{v}{version.dotted}.tar.gz"
