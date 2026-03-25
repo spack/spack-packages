@@ -71,8 +71,7 @@ class Aretomo3(MakefilePackage, CudaPackage):
 
         # Add libtiff include to CFLAG
         makefile.filter(
-            r"^CFLAG = -c -g -pthread -m64",
-            f"CFLAG = -c -g -pthread -m64 -I{tiff.prefix.include}",
+            r"^CFLAG = -c -g -pthread -m64", f"CFLAG = -c -g -pthread -m64 -I{tiff.prefix.include}"
         )
 
         # Add stubs path for -lcuda (driver lib not in build container)
