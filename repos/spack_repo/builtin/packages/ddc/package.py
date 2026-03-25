@@ -21,6 +21,7 @@ class Ddc(CMakePackage):
     license("MIT", checked_by="tpadioleau")
 
     version("main", branch="main", no_cache=True)
+    version("0.11.0", sha256="c3ee616cc6cbbf417dade247cd49805b1a5422b4ac3539cb954f608b8ea27cf4")
     version("0.10.0", sha256="0ab717a21c641b59af8119ff665c0322498fcccf5f49b2c3a2746eecbf1a4964")
     version("0.9.0", sha256="e975a19f2d8e4fc668ab7628e145b927987812496c94b384ee9e72d054711078")
     version("0.8.0", sha256="6c6d28f1d406e1417021f88d748829cae0afce2cb3714cf82fd3f4cd3b7b91b4")
@@ -39,12 +40,19 @@ class Ddc(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    depends_on("cmake@3.22:3", type="build", when="@:0.8")
-    depends_on("cmake@3.25:4", type="build", when="@0.9:")
+    depends_on("cmake@3.25:", type="build", when="@0.9:")
+    depends_on("cmake@3.22:", type="build")
+    depends_on("cmake@:4", type="build")
+    depends_on("cmake@:3", type="build", when="@:0.8")
 
-    depends_on("kokkos@4.4.1:4")
+    depends_on("kokkos@4.4.1:")
+    depends_on("kokkos@:5")
+    depends_on("kokkos@:4", when="@:0.8")
 
     with when("+fft"):
+        depends_on("kokkos-fft@0.3:")
+        depends_on("kokkos-fft@:1")
+        depends_on("kokkos-fft@:0", when="@:0.10")
         for variant, backend in [
             ("~openmp", "host_backend=fftw-serial"),
             ("+openmp", "host_backend=fftw-openmp"),
@@ -52,11 +60,14 @@ class Ddc(CMakePackage):
             ("+rocm", "device_backend=hipfft"),
             ("+sycl", "device_backend=onemkl"),
         ]:
-            depends_on(f"kokkos-fft@0.3:0 {backend}", when=f"^kokkos {variant}")
+            depends_on(f"kokkos-fft {backend}", when=f"^kokkos {variant}")
 
     with when("+splines"):
-        depends_on("ginkgo@1.8:1")
-        depends_on("kokkos-kernels@4.5.1:4")
+        depends_on("ginkgo@1.8:")
+        depends_on("ginkgo@:1")
+        depends_on("kokkos-kernels@4.5.1:")
+        depends_on("kokkos-kernels@:5")
+        depends_on("kokkos-kernels@:4", when="@:0.8")
         depends_on("lapack")
 
         for arch in CudaPackage.cuda_arch_values:
@@ -73,11 +84,16 @@ class Ddc(CMakePackage):
         requires("^ginkgo +sycl", when="^kokkos +sycl")
         requires("^ginkgo +openmp", when="^kokkos +openmp")
 
-    depends_on("pdi@1.6:1", when="+pdi")
+    with when("+pdi"):
+        depends_on("pdi@1.10.1:", when="@0.11:")
+        depends_on("pdi@1.6:")
+        depends_on("pdi@:1")
 
     with when("+tests"):
-        depends_on("googletest@1.14:1 +gmock")
-        depends_on("pdiplugin-user-code@1.6:1", type=("build", "test"), when="+pdi")
+        depends_on("googletest@1.14: +gmock")
+        depends_on("googletest@:1 +gmock")
+        depends_on("pdiplugin-user-code@1.6:", type=("build", "test"), when="+pdi")
+        depends_on("pdiplugin-user-code@:1", type=("build", "test"), when="+pdi")
 
     conflicts(
         "^kokkos@4.5.0", msg="DDC is not compatible with the embedded mdspan of Kokkos 4.5.0."

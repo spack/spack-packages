@@ -340,7 +340,7 @@ class Plumed(AutotoolsPackage):
         # Custom set of modules
         else:
             # Ensure modules from variants
-            if spec.satisfies("+pytorch") or sepec.satisfies("+metatomic"):
+            if spec.satisfies("+pytorch") or spec.satisfies("+metatomic"):
                 optional_modules += ("pytorch",)
             if spec.satisfies("+libmetatomic"):
                 optional_modules += ("metatomic",)
