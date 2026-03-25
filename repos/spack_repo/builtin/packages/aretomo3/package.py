@@ -16,22 +16,30 @@ class Aretomo3(MakefilePackage, CudaPackage):
 
     homepage = "https://github.com/czimaginginstitute/AreTomo3"
     url = "https://github.com/czimaginginstitute/AreTomo3/archive/refs/tags/v2.2.2.tar.gz"
+    git = "https://github.com/czimaginginstitute/AreTomo3.git"
 
     license("BSD-3-Clause")
 
+    version("main", branch="main", preferred=True)
     version("2.2.2", sha256="ee0a6bae8b541e1a1dd3465cf1e7d0bf4ee70b030662c55f2b583d678bb33fa9")
     version("2.1.3", sha256="1a57a861e2598e56a98b9c2c8dde326b72a58cfa83eb5f542366982acd6acf4d")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("gmake", type="build")
-    depends_on("cuda@11:", type=("build", "link"))
+    depends_on("cuda@12:", type=("build", "link"))
     depends_on("libtiff", type=("build", "link"))
 
     conflicts("~cuda")
     conflicts("cuda_arch=none", when="+cuda", msg="A value for cuda_arch must be specified.")
+    conflicts("^cuda@13:", when="@:2", msg="CUDA 13+ requires @main (makefile13 not in releases)")
 
-    build_targets = ["exe"]
+    @property
+    def _makefile_name(self):
+        """Select makefile based on CUDA version."""
+        if self.spec.satisfies("^cuda@13:"):
+            return "makefile13"
+        return "makefile11"
 
     @property
     def build_directory(self):
@@ -42,45 +50,42 @@ class Aretomo3(MakefilePackage, CudaPackage):
         cuda_arch = spec.variants["cuda_arch"].value
         cuda_gencode = " ".join(self.cuda_flags(cuda_arch))
         stubs = cuda.prefix.lib64.stubs
-
-        # Use makefile11 (for compute capability >= 6.x)
-        makefile = FileFilter("makefile11")
+        tiff = spec["libtiff"]
+        makefile = FileFilter(self._makefile_name)
 
         # Set CUDA paths
-        makefile.filter(r"CUDAHOME = .*", f"CUDAHOME = {cuda.prefix}")
+        makefile.filter(r"^CUDAHOME = .*", f"CUDAHOME = {cuda.prefix}")
 
         # Use Spack's compiler wrappers
-        makefile.filter(r"^CC = g\+\+ -std=c\+\+11", "CC = c++ -std=c++11")
+        makefile.filter(r"^CC = g\+\+", "CC = c++")
 
         # Use nvcc directly
-        makefile.filter(
-            r"NVCC = \$\(CUDAHOME\)/bin/nvcc -std=c\+\+11",
-            f"NVCC = {cuda.prefix}/bin/nvcc -std=c++11",
-        )
+        makefile.filter(r"^NVCC = \$\(CUDAHOME\)/bin/nvcc", f"NVCC = {cuda.prefix}/bin/nvcc")
 
         # Replace CUFLAG gencode block
         makefile.filter(
-            r"CUFLAG = -Xptxas -dlcm=ca -O2 \\", f"CUFLAG = -Xptxas -dlcm=ca -O2 {cuda_gencode}"
+            r"^CUFLAG = -Xptxas -dlcm=ca -O2 \\", f"CUFLAG = -Xptxas -dlcm=ca -O2 {cuda_gencode}"
         )
         # Remove all old gencode continuation lines
-        makefile.filter(r"\s*-gencode arch=compute_\d+,code=sm_\d+.*", "")
+        makefile.filter(r"^\s+-gencode arch=compute_\d+,code=sm_\d+.*", "")
 
-        # Add libtiff and nvtx include/lib paths
-        tiff = spec["libtiff"]
+        # Add libtiff include to CFLAG
         makefile.filter(
             r"^CFLAG = -c -g -pthread -m64",
-            f"CFLAG = -c -g -pthread -m64 -I{tiff.prefix.include} -I{cuda.prefix.include}",
+            f"CFLAG = -c -g -pthread -m64 -I{tiff.prefix.include}",
         )
-        makefile.filter(r"^CUFLAG = (.*)", f"CUFLAG = \\1 -I{tiff.prefix.include}")
 
         # Add stubs path for -lcuda (driver lib not in build container)
-        makefile.filter("-lcuda", f"-L{stubs} -lcuda")
+        makefile.filter(r"-L\$\(CUDALIB\)/stubs", f"-L{stubs}")
 
         # Fix hardcoded g++ in link line
-        makefile.filter(r"\t@g\+\+ -g -pthread -m64 \$\(OBJS\)", "\t@c++ -g -pthread -m64 $(OBJS)")
+        makefile.filter(r"@g\+\+ ", "@c++ ")
+
+        # Add libtiff link flags
+        makefile.filter(r"-ltiff", f"-L{tiff.prefix.lib} -ltiff")
 
     def build(self, spec, prefix):
-        make("-f", "makefile11", "exe")
+        make("-f", self._makefile_name, "exe")
 
     def install(self, spec, prefix):
         mkdir(prefix.bin)
