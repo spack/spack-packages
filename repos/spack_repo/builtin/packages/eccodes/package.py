@@ -108,7 +108,7 @@ class Eccodes(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", when="+fortran", type="build")
 
     depends_on("netcdf-c", when="+netcdf")
     # Cannot be built with openjpeg@2.0.x.
