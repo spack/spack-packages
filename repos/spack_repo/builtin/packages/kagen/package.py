@@ -24,7 +24,7 @@ class Kagen(CMakePackage):
 
     license("BSD-2-Clause")
 
-    version("develop", branch="main", submodules=True)
+    version("main", branch="main", submodules=True)
     version(
         "1.3.0", tag="v1.3.0", commit="4443548b96b3bea903ce66438034906814bf1622", submodules=True
     )
