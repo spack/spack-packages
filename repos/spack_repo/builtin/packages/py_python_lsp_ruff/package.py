@@ -27,7 +27,7 @@ class PyPythonLspRuff(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
-    depends_on("py-ruff@0.2.0:", type=("build", "run"))
+    depends_on("ruff@0.2.0:", type=("build", "run"))
     depends_on("py-cattrs", type=("build", "run"))
     depends_on("py-python-lsp-server", type=("build", "run"))
     depends_on("py-lsprotocol@2023.0.1:", type=("build", "run"))
