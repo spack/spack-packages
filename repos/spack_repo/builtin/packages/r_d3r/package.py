@@ -28,4 +28,6 @@ class RD3r(RPackage):
 
     depends_on("r-dplyr", type=("build", "run"))
     depends_on("r-htmltools", type=("build", "run"))
-    depends_on("r-tidyr@0.8.3", type=("build", "run"))
+    depends_on("r-rlang", type=("build", "run"), when="@0.9:1.0")
+    depends_on("r-tidyr@0.7:", type=("build", "run"))
+    depends_on("r-tidyr@0.8.3:", type=("build", "run"), when="@0.9:")
