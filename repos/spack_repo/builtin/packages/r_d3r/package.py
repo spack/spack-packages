@@ -26,8 +26,9 @@ class RD3r(RPackage):
     version("0.8.0", sha256="4fe9a680dc99f69cfce504f11f2c96d854305515520d9d031bf1048e7af8d37c")
     version("0.7.1", sha256="e53c386ff2e15bb3b92dff8724118c6436a0e966bb8d8c222e2eea3140ecd2ef")
 
-    depends_on("r-dplyr", type=("build", "run"))
-    depends_on("r-htmltools", type=("build", "run"))
-    depends_on("r-rlang", type=("build", "run"), when="@0.9:1.0")
-    depends_on("r-tidyr@0.7:", type=("build", "run"))
-    depends_on("r-tidyr@0.8.3:", type=("build", "run"), when="@0.9:")
+    with default_args(type=("build", "run")):
+        depends_on("r-dplyr")
+        depends_on("r-htmltools")
+        depends_on("r-rlang", when="@0.9:1.0")
+        depends_on("r-tidyr@0.7:")
+        depends_on("r-tidyr@0.8.3:", when="@0.9:")
