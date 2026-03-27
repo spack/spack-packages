@@ -19,6 +19,8 @@ class PyHeat(PythonPackage):
 
     license("MIT")
 
+    version("1.8.0", sha256="f0d64e122c88a44ca27ad60d91cdb7250f97c71c971913302ed90d838d7fd253")
+    version("1.7.0", sha256="1d787cc5f52fc2123bb69e6e2ee53b268b258abe4ed5be99e53706bcb250175c")
     version("1.6.0", sha256="cd011e67c284b7f94d0f1c6ff8bf5309535fa26a895b0db2df83290c47dae55b")
     version("1.5.1", sha256="95fea9daec6c2d5f0453159dbcd5efb26cb23997f0981e49fe9793a2fd342313")
     version("1.5.0", sha256="a2e2d7f0c1f340ab2597f2b9c02563f0057419a53287fbf4cdf1a7934bc6d60b")
