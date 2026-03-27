@@ -8,9 +8,11 @@ from spack.package import *
 
 
 class PyHeat(PythonPackage):
-    """Heat is a flexible and seamless open-source software for high performance data analytics
-    and machine learning. It provides highly optimized algorithms and data structures for tensor
-    computations using CPUs, GPUs and distributed cluster systems on top of MPI."""
+    """Heat is a distributed tensor framework built on PyTorch and mpi4py. It provides
+    highly optimized algorithms and data structures for tensor computations using
+    CPUs, GPUs (CUDA/ROCm), and distributed cluster systems. It is designed to
+    handle massive arrays that exceed the memory and computational limits of a
+    single machine."""
 
     homepage = "https://github.com/helmholtz-analytics/heat/"
     pypi = "heat/heat-1.3.0.tar.gz"
