@@ -39,7 +39,7 @@ class SimpleDftd3(MesonPackage, CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
-    depends_on("meson@0.57.1:", type="build")  # mesonbuild/meson#8377
+    depends_on("meson@0.57.1:", type="build", when="build_system=meson")  # mesonbuild/meson#8377
     depends_on("py-cffi", when="+python")
     depends_on("python@3.6:", when="+python")
     depends_on("pkgconfig", type="build")

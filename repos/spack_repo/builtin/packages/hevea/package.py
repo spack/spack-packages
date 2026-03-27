@@ -19,6 +19,7 @@ class Hevea(MakefilePackage):
     license("LGPL-2.0-only")
 
     version("develop", branch="master")
+    version("2.38", sha256="6c4337f9b3b3e0be106f74ee4277744988d0a2ac46b7bf66bfef9f044ad7f900")
     version("2.36", sha256="9848359f935af24b6f962b2ed5d5ac32614bffeb37da374b0960cc0f58e69f0c")
     version("2.35", sha256="78f834cc7a8112ec59d0b8acdfbed0c8ac7dbb85f964d0be1f4eed04f25cdf54")
     version("2.34", sha256="f505a2a5bafdc2ea389ec521876844e6fdcb5c1b656396b7e8421c1631469ea2")

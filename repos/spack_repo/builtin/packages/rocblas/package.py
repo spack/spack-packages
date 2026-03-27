@@ -238,7 +238,11 @@ class Rocblas(CMakePackage):
             return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("@:7.0"):
+            env.set("CXX", self.spec["hip"].hipcc)
+        else:
+            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
         if self.spec.satisfies("+asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
@@ -282,12 +286,15 @@ class Rocblas(CMakePackage):
                 )
 
         if "+tensile" in self.spec:
-            if self.spec.satisfies("@:6.2"):
-                tensile_compiler = "hipcc"
+            if self.spec.satisfies("@:7.0"):
+                args.append(self.define("Tensile_COMPILER", "hipcc"))
             else:
-                tensile_compiler = "amdclang++"
+                args.append(
+                    self.define(
+                        "Tensile_COMPILER", self.spec["llvm-amdgpu"].prefix + "/bin/amdclang++"
+                    )
+                )
             args += [
-                self.define("Tensile_COMPILER", tensile_compiler),
                 self.define("Tensile_LOGIC", "asm_full"),
                 self.define("BUILD_WITH_TENSILE_HOST", "@3.7.0:" in self.spec),
                 self.define("Tensile_LIBRARY_FORMAT", "msgpack"),
