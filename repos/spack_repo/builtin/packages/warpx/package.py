@@ -180,6 +180,7 @@ class Warpx(CMakePackage, PythonExtension):
     with when("+python"):
         extends("python")
         depends_on("python@3.9:", type=("build", "run"))
+        depends_on("python@3.11:", type=("build", "run"), when="@26.03:")
         depends_on("py-numpy@1.15.0:", type=("build", "run"))
         depends_on("py-mpi4py@2.1.0:", type=("build", "run"), when="+mpi")
         depends_on("py-periodictable@1.5:1", type=("build", "run"))
