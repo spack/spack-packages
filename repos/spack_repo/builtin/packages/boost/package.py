@@ -168,6 +168,7 @@ class Boost(Package):
         "charconv": {"when": "@1.85.0:"},
         "cobalt": {"when": "@1.84.0:"},
         "signals": {"when": "@:1.68"},
+        "contract": {"when": "@1.67:"},
         "signals2": {"when": "@1.4:"},
     }
 
