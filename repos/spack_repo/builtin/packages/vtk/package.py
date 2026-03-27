@@ -353,8 +353,7 @@ class Vtk(CMakePackage):
             cmake_args.append(
                 self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
             )
-            if spec.satisfies("@9.6:"):
-                cmake_args.append(self.define("VTK_USE_MPI", "YES"))
+            cmake_args.append(self.define("VTK_USE_MPI", "YES"))
 
         if spec.satisfies("raytracing=ospray"):
             cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_RenderingRayTracing", "YES"))
