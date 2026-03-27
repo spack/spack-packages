@@ -33,17 +33,5 @@ class Uv(CargoPackage):
         depends_on("rust@1.92:", when="@0.10.12:")
         depends_on("rust@1.91:", when="@0.10.7:")
         depends_on("rust@1.88:", when="@0.7.22:")
-        depends_on("rust@1.86:", when="@0.7.16:")
-        depends_on("rust@1.85:", when="@0.7.6:")
-        depends_on("rust@1.84:", when="@0.6.13:")
-        depends_on("rust@1.83:", when="@0.5.9:")
-        depends_on("rust@1.81:")
 
         depends_on("gmake")
-
-        # Historical dependencies
-        depends_on("cmake", when="@:0.6.3")
-
-    @when("@:0.6.3")
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CMAKE", self.spec["cmake"].prefix.bin.cmake)
