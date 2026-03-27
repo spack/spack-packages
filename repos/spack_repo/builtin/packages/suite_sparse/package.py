@@ -271,11 +271,12 @@ class SuiteSparse(Package):
                     f"-DSUITESPARSE_USE_OPENMP={'ON' if '+openmp' in spec else 'OFF'}",
                     f"-DSUITESPARSE_USE_CUDA={'ON' if '+cuda' in spec else 'OFF'}",
                 ]
+            # https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1013
+            if spec.satisfies("@7.12"):
+                cmake_args += ["-DBLA_VENDOR=' '"]
+                
             make_args += [f"CMAKE_OPTIONS={' '.join(cmake_args)}"]
 
-            # https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1013
-            if spec.satsifies("@7.12"):
-                cmake_args += ["-DBLA_VENDOR=' '"]
 
         if spec.satisfies("platform=darwin %gcc"):
             make_args += ["LDLIBS=-lm"]
