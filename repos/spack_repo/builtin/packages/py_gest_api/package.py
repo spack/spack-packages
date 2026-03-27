@@ -4,7 +4,7 @@
 
 from spack_repo.builtin.build_systems.python import PythonPackage
 
-from spack.package import depends_on, maintainers, version
+from spack.package import *
 
 
 class PyGestApi(PythonPackage):
