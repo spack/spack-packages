@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import glob
 import os
+import re
 import sys
 
 from spack_repo.builtin.build_systems import compiler
@@ -726,6 +727,27 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             if spec.satisfies(constraint):
                 msg = "{0} not in {1}"
                 assert key in compilers, msg.format(key, spec)
+
+    @classmethod
+    def determine_dependencies(cls, spec):
+        gcc = Executable(spec.extra_attributes["compilers"]["c"])
+        # Determine binutils prefix
+        ld_path = gcc("-print-prog-name=ld", output=str).strip()
+        if not os.path.isabs(ld_path):
+            ld_path = which_string(ld_path)
+
+        prefix = os.path.dirname(ld_path)
+        while os.path.basename(prefix) == "bin":
+            prefix = os.path.dirname(prefix)
+
+        # Determine binutils version
+        ld = Executable(ld_path)
+        version_pattern = r"(\d+\.\d+(?:\.\d+)*)"
+        output = ld("--version", output=str)
+        matches = re.findall(version_pattern, output)
+        if not matches:
+            return []
+        return [{"spec": f"binutils@{matches[-1]}", "prefix": prefix, "deptypes": ("link", "run")}]
 
     def _cc_path(self):
         if self.spec.satisfies("languages=c"):
