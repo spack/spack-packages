@@ -36,7 +36,3 @@ class Ruff(CargoPackage):
         depends_on("rust@1.88:", when="@0.12.0:")
         depends_on("rust@1.85:", when="@0.11.11:")
         depends_on("rust@1.84:", when="@0.11.4:")
-        depends_on("rust@1.83:", when="@0.9.8:")
-        depends_on("rust@1.80:", when="@0.7.1:")
-        depends_on("rust@1.76:", when="@0.5.6:")
-        depends_on("rust@1.71:")

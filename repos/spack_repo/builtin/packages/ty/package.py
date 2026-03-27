@@ -33,12 +33,6 @@ class Ty(CargoPackage):
     version("0.0.17", sha256="0e46d435f4a3f553a04c254b74ba9f5f6579046f2d4d921833bcc87dda08dfb8")
     version("0.0.16", sha256="e078831ec7e0b6be4dd920043a7c19fd1b6e92c26b48df0635b03cd59b348a1a")
     version("0.0.15", sha256="ac07106322ed0367fa3932d1e008140dffa7d115471f8cccefa810fd3c368b6a")
-    version("0.0.14", sha256="1a28a8931f511c111f4284ca343e19abb3fc660be8cf796d9ca299d8b706a423")
-    version("0.0.13", sha256="2b16d7db24c1b5a7a619f75ff6bd8c91c1ee3571a4e51b8e2e9b2f1370c106f2")
-    version("0.0.12", sha256="4dfc2aa8058445556949f0bc798ede40a3f098971b61a0d4a973c69716393624")
-    version("0.0.11", sha256="6cb920c4c134670609407a383c5350f382e1d6b2f648b4b0f53945f211196c94")
-    version("0.0.10", sha256="cdca94016ff13b715fec10270de40427fdcbbaf35161f6f6c4e533319e2dfc4a")
-    version("0.0.2", sha256="d927cb55a532a20cc001cb4defc32b51515b3f28cd4e574a7067f9c1c9609bf2")
 
     with default_args(type="build"):
         depends_on("c")
@@ -46,5 +40,3 @@ class Ty(CargoPackage):
         # ruff/Cargo.toml
         depends_on("rust@1.92:", when="@0.0.25:")
         depends_on("rust@1.91:", when="@0.0.15:")
-        depends_on("rust@1.90:", when="@0.0.2:")
-        depends_on("rust@1.89:")
