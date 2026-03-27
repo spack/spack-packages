@@ -35,6 +35,7 @@ class PyHeat(PythonPackage):
     variant(
         "netcdf", default=False, description="Use the py-netcdf4 package needed for NetCDF support"
     )
+    variant("zarr", default=False, description="Use the py-zarr package for Zarr support")
     variant("dev", default=False, description="Use the py-pre-commit package")
     variant(
         "examples",
@@ -111,6 +112,7 @@ class PyHeat(PythonPackage):
     depends_on("py-docutils@0.16:", when="+docutils", type=("build", "link", "run"))
     depends_on("py-h5py@2.8.0:", when="+hdf5", type=("build", "link", "run"))
     depends_on("py-netcdf4@1.5.6:", when="+netcdf", type=("build", "link", "run"))
+    depends_on("py-zarr", when="+zarr", type=("build", "link", "run"))
     depends_on("py-pre-commit@1.18.3:", when="+dev", type=("build", "link", "run"))
     depends_on("py-scikit-learn@0.24.0:", when="+examples", type=("build", "link", "run"))
     depends_on("py-matplotlib@3.1.0:", when="+examples", type=("build", "link", "run"))
