@@ -90,7 +90,7 @@ spack:
   ci:
     pipeline-gen:
     - build-job:
-        image: {name: ghcr.io/spack/pcluster-amazonlinux-2:2026-03-10, entrypoint: ['']}
+        image: {name: ghcr.io/spack/pcluster-amazonlinux-2:v2026-03-27, entrypoint: ['']}
         tags: [aarch64]
     - signing-job:
         before_script:
