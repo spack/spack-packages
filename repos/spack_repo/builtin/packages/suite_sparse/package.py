@@ -274,9 +274,8 @@ class SuiteSparse(Package):
             # https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1013
             if spec.satisfies("@7.12"):
                 cmake_args += ["-DBLA_VENDOR=' '"]
-                
-            make_args += [f"CMAKE_OPTIONS={' '.join(cmake_args)}"]
 
+            make_args += [f"CMAKE_OPTIONS={' '.join(cmake_args)}"]
 
         if spec.satisfies("platform=darwin %gcc"):
             make_args += ["LDLIBS=-lm"]
