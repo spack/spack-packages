@@ -84,6 +84,22 @@ class PyHeat(PythonPackage):
         depends_on("py-torchvision@0.15:", type=("build", "run"))
         depends_on("py-torch@2.0:2.8.0", type=("build", "run"))
 
+    with when("@1.7"):
+        depends_on("python@3.10:", type=("build", "run"))
+        depends_on("py-mpi4py@3.0.0:", type=("build", "run"))
+        depends_on("py-scipy@1.14:", type=("build", "run"))
+        depends_on("pil", when="+examples", type=("build", "run"))
+        depends_on("py-torchvision@0.15:", type=("build", "run"))
+        depends_on("py-torch@2.0:2.9", type=("build", "run"))
+        
+    with when("@1.8"):
+        depends_on("python@3.11:", type=("build", "run"))
+        depends_on("py-mpi4py@3.1:", type=("build", "run"))
+        depends_on("py-scipy@1.14:", type=("build", "run"))
+        depends_on("pil@6:", when=("+examples"), type=("build", "run"))
+        depends_on("py-torchvision@0.18:", type=("build", "run"))
+        depends_on("py-torch@2.3:2.11.0", type=("build", "run"))
+
     # specify differences cuda vs rocm
     with when("+cuda"):
         depends_on("py-torch+cuda", type=("build", "run"))
