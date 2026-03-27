@@ -21,6 +21,8 @@ class Ty(CargoPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("0.0.26", sha256="a7cdf959700f96784396dd673a7bcd82300a16e337995fbbc6c4842a730ad5e5")
+    version("0.0.25", sha256="e22a3f371b260f482fdece3ebd44e42342241661224283e4b7be283df0dfcc3b")
     version("0.0.24", sha256="cddb2c6022e2b96faf289c9a275bf4ee05a3430e922ffe9e123fad6a9542a325")
     version("0.0.23", sha256="cc418cb981ed727777e5f97d70a85927007018488a912de8f66483a68904f692")
     version("0.0.22", sha256="fbdb6cb5bf7761648d74264736dffd247921d3692711cafa22ee4a169632d58a")
@@ -42,6 +44,7 @@ class Ty(CargoPackage):
         depends_on("c")
         depends_on("gmake")
         # ruff/Cargo.toml
+        depends_on("rust@1.92:", when="@0.0.25:")
         depends_on("rust@1.91:", when="@0.0.15:")
         depends_on("rust@1.90:", when="@0.0.2:")
         depends_on("rust@1.89:")
