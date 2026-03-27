@@ -94,7 +94,7 @@ class PyHeat(PythonPackage):
         depends_on("pil", when="+examples", type=("build", "run"))
         depends_on("py-torchvision@0.15:", type=("build", "run"))
         depends_on("py-torch@2.0:2.9", type=("build", "run"))
-        
+
     with when("@1.8"):
         depends_on("python@3.11:", type=("build", "run"))
         depends_on("py-mpi4py@3.1:", type=("build", "run"))
