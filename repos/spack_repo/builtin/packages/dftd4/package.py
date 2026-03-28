@@ -61,12 +61,12 @@ class Dftd4(MesonPackage, CMakePackage):
         depends_on(f"mctc-lib build_system={build_system}", when=f"build_system={build_system}")
         depends_on(f"multicharge build_system={build_system}", when=f"build_system={build_system}")
 
-    depends_on("mctc-lib@0.3", when="@:3.8")
-    depends_on("multicharge@0.3", when="@:3.8")
+    depends_on("mctc-lib@0.3", when="@:3.7")
+    depends_on("multicharge@0.3", when="@:3.7")
     extends("python", when="+python")
 
     def url_for_version(self, version):
-        if version <= Version("3.6.0") or version >= Version("4.0.0"):
+        if version != Version("3.7.0"):
             return f"https://github.com/dftd4/dftd4/releases/download/v{version}/dftd4-{version}-source.tar.xz"
         return super().url_for_version(version)
 
