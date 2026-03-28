@@ -85,7 +85,6 @@ class Xictools(MakefilePackage):
     patch("Makefile.in.patch", when="@4:")
 
     def edit(self, spec: Spec, prefix: Prefix) -> None:
-
         # Copy Makefile.sample to Makefile
         shutil.copy("Makefile.sample", "Makefile")
 

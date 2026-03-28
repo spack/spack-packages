@@ -54,6 +54,7 @@ builtins = [
     "bazel",
     "cargo",
     "cmake",
+    "cmake_cache_path",
     "ctest",
     "gem",
     "glibtool",
