@@ -4,7 +4,8 @@
 
 import os
 
-from spack_repo.builtin.build_systems import autotools, cmake, python
+from spack_repo.builtin.build_systems import autotools, cmake
+from spack_repo.builtin.build_systems.python import PythonPipBuilder
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -117,9 +118,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
         super().install(pkg, spec, prefix)
         if spec.satisfies("+python"):
 
-            class CustomPythonPipBuilder(python.PythonPipBuilder):
+            class CustomPythonPipBuilder(PythonPipBuilder):
                 def __init__(self, pkg, build_dirname):
-                    python.PythonPipBuilder.__init__(self, pkg)
+                    PythonPipBuilder.__init__(self, pkg)
                     self.build_dirname = build_dirname
 
                 @property
@@ -159,7 +160,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
         if self.spec.satisfies("+python"):
             with working_dir("python"):
-                pip(*python.PythonPipBuilder.std_args(pkg), f"--prefix={prefix}", ".")
+                pip(*PythonPipBuilder.std_args(pkg), f"--prefix={prefix}", ".")
 
         if "+tests" not in self.spec:
             return
