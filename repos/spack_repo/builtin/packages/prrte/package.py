@@ -125,7 +125,6 @@ class Prrte(AutotoolsPackage):
             if spec["hwloc"].external_path:
                 dep_libpath = self.find_external_lib_path("hwloc", "64")
                 config_args.append("--with-hwloc-libdir=" + dep_libpath)
-        
         # pmix
         config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
 
