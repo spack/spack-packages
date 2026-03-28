@@ -4,6 +4,7 @@
 
 
 import os
+import platform
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
@@ -95,6 +96,18 @@ class Prrte(AutotoolsPackage):
             perl = spec["perl"].command
             perl("autogen.pl")
 
+    def find_external_lib_path(self, pkg_name, path_match_str=""):
+        spec = self.spec
+        tgt_libpath = ""
+        dir_list = spec[pkg_name].libs
+        for entry in dir_list:
+            if path_match_str == "" or (path_match_str != "" and path_match_str in entry):
+                tgt_libpath = entry
+                break
+        path_list = tgt_libpath.split(os.sep)
+        del path_list[-1]
+        return (os.sep).join(path_list)
+
     def configure_args(self):
         spec = self.spec
         config_args = ["--enable-shared", "--enable-static", "--disable-sphinx"]
@@ -103,8 +116,16 @@ class Prrte(AutotoolsPackage):
         config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
         # hwloc
         config_args.append("--with-hwloc={0}".format(spec["hwloc"].prefix))
-        if os.path.exists(os.path.join(spec["hwloc"].prefix, "pkgconfig", "hwloc.pc")):
-            config_args.append("--with-hwloc-libdir={0}".format(spec["hwloc"].prefix))
+        # hwloc on some platforms such as Ubuntu may not be found on prefix.lib
+        # so, doing the same as in pmix where configure is similar
+        if "64" in platform.machine():
+            if spec["libevent"].external_path:
+                dep_libpath = self.find_external_lib_path("libevent", "64")
+                config_args.append("--with-libevent-libdir=" + dep_libpath)
+            if spec["hwloc"].external_path:
+                dep_libpath = self.find_external_lib_path("hwloc", "64")
+                config_args.append("--with-hwloc-libdir=" + dep_libpath)
+        
         # pmix
         config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
 
