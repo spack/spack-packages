@@ -49,12 +49,10 @@ class Nsjail(MakefilePackage):
 
     def setup_build_environment(self, env):
         env.prepend_path(
-            "PKG_CONFIG_PATH",
-            join_path(self.spec["protobuf"].prefix, "lib", "pkgconfig"),
+            "PKG_CONFIG_PATH", join_path(self.spec["protobuf"].prefix, "lib", "pkgconfig")
         )
         env.prepend_path(
-            "PKG_CONFIG_PATH",
-            join_path(self.spec["libnl"].prefix, "lib", "pkgconfig"),
+            "PKG_CONFIG_PATH", join_path(self.spec["libnl"].prefix, "lib", "pkgconfig")
         )
 
     def install(self, spec, prefix):
