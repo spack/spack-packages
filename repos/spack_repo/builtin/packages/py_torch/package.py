@@ -822,7 +822,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # NNPACK thirdparties downloads "six" during the build if PYTHON_SIX_SOURCE_DIR is not set
         if self.spec.satisfies("+nnpack"):
             python_dir = "python{0}".format(self.spec["python"].version.up_to(2))
-            six_site_packages = join_path(self.spec["py-six"].prefix.lib, python_dir, "site-packages")
+            six_site_packages = join_path(
+                self.spec["py-six"].prefix.lib, python_dir, "site-packages"
+            )
             env.set("PYTHON_SIX_SOURCE_DIR", six_site_packages)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
