@@ -28,7 +28,11 @@ class PyPysam(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("python@3.8:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.8:3.13", when="@0.23:")
+        depends_on("python@3.7:3.11", when="@0.21")
+        depends_on("python@3.7:3.11", when="@0.21")
+        depends_on("python@3.6:3.10", when="@:0.20")
 
     depends_on("py-setuptools@59.0:", when="@0.21:", type="build")
     depends_on("py-setuptools", type="build")
