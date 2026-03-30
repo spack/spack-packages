@@ -22,7 +22,7 @@ class PyFastapi(PythonPackage):
     version("0.110.2", sha256="b53d673652da3b65e8cd787ad214ec0fe303cad00d2b529b86ce7db13f17518d")
     version("0.109.2", sha256="f3817eac96fe4f65a2ebb4baa000f394e55f5fccdaf7f75250804bc58f354f73")
 
-    variant("standard", default=False, description="Install standard dependencies")
+    variant("standard", when="@0.111:", default=False, description="Install standard dependencies")
     variant("all", default=False, description="Build all optional dependencies")
 
     depends_on("python@3.10:", when="@0.129:", type=("build", "run"))
@@ -49,28 +49,32 @@ class PyFastapi(PythonPackage):
     conflicts("^py-pydantic@1.7.0:1.7.3,1.8.0:1.8.1,2.0,2.1.0")
     conflicts("+all+standard")
 
-    with when("+standard"):
-        depends_on("py-httpx@0.23:", type=("build", "run"))
-        depends_on("py-jinja2@3.1.5:", when="@0.115.12:", type=("build", "run"))
-        depends_on("py-jinja2@2.11.2:", type=("build", "run"))
-        depends_on("py-python-multipart@0.0.18:", when="@0.115.12:", type=("build", "run"))
-        depends_on("py-python-multipart@0.0.7:", when="@0.109.1:", type=("build", "run"))
-        depends_on("py-email-validator@2.0.0:", when="@0.100:", type=("build", "run"))
-        depends_on("py-uvicorn@0.12:+standard", type=("build", "run"))
-
     with when("+all"):
-        depends_on("py-httpx@0.23:", type=("build", "run"))
+        depends_on("py-httpx@0.23:0", type=("build", "run"))
         depends_on("py-jinja2@3.1.5:", when="@0.115.12:", type=("build", "run"))
         depends_on("py-jinja2@2.11.2:", type=("build", "run"))
         depends_on("py-python-multipart@0.0.18:", when="@0.115.12:", type=("build", "run"))
         depends_on("py-python-multipart@0.0.7:", when="@0.109.1:", type=("build", "run"))
         depends_on("py-itsdangerous@1.1:", type=("build", "run"))
         depends_on("py-pyyaml@5.3.1:", type=("build", "run"))
-        depends_on("py-ujson@4.0.1:", type=("build", "run"))
-        depends_on("py-orjson@3.2.1:", type=("build", "run"))
+        depends_on("py-ujson@5.8.0:", when="@0.128.4:0.130", type=("build", "run"))
+        depends_on("py-ujson@4.0.1:", when="@:0.128.3", type=("build", "run"))
+        depends_on("py-orjson@3.9.3:", when="@0.128.4:0.130", type=("build", "run"))
+        depends_on("py-orjson@3.2.1:", when="@:0.128.3", type=("build", "run"))
         depends_on("py-email-validator@2.0.0:", when="@0.100:", type=("build", "run"))
         depends_on("py-uvicorn@0.12:+standard", type=("build", "run"))
         depends_on("py-pydantic-settings@2.0.0:", when="@0.100:", type=("build", "run"))
         depends_on("py-pydantic-extra-types@2.0.0:", when="@0.100:", type=("build", "run"))
 
-        conflicts("^py-ujson@4.0.2,4.1.0,4.2.0,4.3.0,5.0.0,5.1.0")
+        conflicts("^py-ujson@4.0.2,4.1.0,4.2.0,4.3.0,5.0.0,5.1.0", when="@:0.128.3")
+
+    with when("+standard"):
+        depends_on("py-httpx@0.23:0", type=("build", "run"))
+        depends_on("py-jinja2@3.1.5:", when="@0.115.12:", type=("build", "run"))
+        depends_on("py-jinja2@2.11.2:", type=("build", "run"))
+        depends_on("py-python-multipart@0.0.18:", when="@0.115.12:", type=("build", "run"))
+        depends_on("py-python-multipart@0.0.7:", type=("build", "run"))
+        depends_on("py-email-validator@2.0.0:", type=("build", "run"))
+        depends_on("py-uvicorn@0.12:+standard", type=("build", "run"))
+        depends_on("py-pydantic-settings@2.0.0:", when="@0.126:", type=("build", "run"))
+        depends_on("py-pydantic-extra-types@2.0.0:", when="@0.126:", type=("build", "run"))

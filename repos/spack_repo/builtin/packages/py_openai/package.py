@@ -29,6 +29,7 @@ class PyOpenai(PythonPackage):
     variant(
         "wandb",
         default=False,
+        when="@0",
         description="keeps track of hyperparameters, system metrics, and predictions",
         when="@:0",
     )
@@ -69,10 +70,13 @@ class PyOpenai(PythonPackage):
     depends_on("py-aiohttp", when="@0", type=("build", "run"))
 
     with when("+datalib"):
+        depends_on("py-numpy@1:", when="@1:", type=("build", "run"))
         depends_on("py-numpy", type=("build", "run"))
         depends_on("py-numpy@1:", type=("build", "run"), when="@1:")
         depends_on("py-pandas@1.2.3:", type=("build", "run"))
         depends_on("py-pandas-stubs@1.1.0.11:", type=("build", "run"))
+
+        # Historical dependencies
         depends_on("py-openpyxl@3.0.7:", type=("build", "run"), when="@:0")
 
     with when("+wandb"):
