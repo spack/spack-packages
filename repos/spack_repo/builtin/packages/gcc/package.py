@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import glob
 import os
-import re
 import sys
 
 from spack_repo.builtin.build_systems import compiler
@@ -740,14 +739,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         while os.path.basename(prefix) == "bin":
             prefix = os.path.dirname(prefix)
 
-        # Determine binutils version
-        ld = Executable(ld_path)
-        version_pattern = r"(\d+\.\d+(?:\.\d+)*)"
-        output = ld("--version", output=str)
-        matches = re.findall(version_pattern, output)
-        if not matches:
-            return []
-        return [{"spec": f"binutils@{matches[-1]}", "prefix": prefix, "deptypes": ("link", "run")}]
+        return [{"spec": "binutils", "prefix": prefix, "deptypes": ("link", "run")}]
 
     def _cc_path(self):
         if self.spec.satisfies("languages=c"):
