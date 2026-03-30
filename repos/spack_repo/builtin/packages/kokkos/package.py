@@ -81,6 +81,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "3.7.02",
         sha256="5024979f06bc8da2fb696252a66297f3e0e67098595a0cc7345312b3b4aa0f54",
         url="https://github.com/kokkos/kokkos/archive/3.7.02.tar.gz",
+        deprecated=True,
     )
 
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
