@@ -29,6 +29,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("26.03", sha256="7139b8bb423a4311e8990bee6cb06b86a81de439363f35a3f29c808a93a003ca")
     version("26.02", sha256="7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
     version("26.01", sha256="b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
     version("25.12", sha256="60a788cf398563cdf25438a3bbe597fe1f3b18f359b30fb3c0f568dd62908f1a")
