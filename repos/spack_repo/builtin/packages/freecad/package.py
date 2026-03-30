@@ -20,6 +20,8 @@ class Freecad(CMakePackage):
 
     license("LGPL-2.0-or-later")
 
+    version("1.0.2", sha256="228ee52f00627c7d8fa61998179deb01865ece69390829feb1300228d24f7e9e")
+    version("1.0.1", sha256="f62bc07c477544eff62b6ab0fc3bb63fa7f1e6f94763c51b0049507842d444f3")
     version("0.20.2", sha256="46922f3a477e742e1a89cd5346692d63aebb2b67af887b3e463e094a4ae055da")
 
     depends_on("c", type="build")  # generated
