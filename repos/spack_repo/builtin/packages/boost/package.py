@@ -174,14 +174,14 @@ class Boost(Package):
         "contract": {"when": "@1.67:"},
         "stacktrace": {"when": "@1.65:"},
         "fiber": {"when": "@1.62:"},
-        "type_erasure": {"when": "@1.54:"},
+        "type_erasure": {"when": "@1.60:"},
         "atomic": {"when": "@1.53:"},
         "coroutine": {"when": "@1.53:"},
         "context": {"when": "@1.51:"},
-        "container": {"when": "@1.48:"},
+        "container": {"when": "@1.56:"},
         "locale": {"when": "@1.48:"},
         "chrono": {"when": "@1.47:"},
-        "signals2": {"when": "@1.39:"},
+        "signals2": {"when": "@1.87:"},
     }
 
     for lib in all_libs:
