@@ -176,7 +176,7 @@ class Boost(Package):
         "fiber": {"when": "@1.62:"},
         "type_erasure": {"when": "@1.60:"},
         "atomic": {"when": "@1.53:"},
-        "coroutine": {"when": "@1.53:"},
+        "coroutine": {"when": "@1.54:1.66"},
         "context": {"when": "@1.51:"},
         "container": {"when": "@1.56:"},
         "locale": {"when": "@1.48:"},
