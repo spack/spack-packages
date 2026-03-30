@@ -11,7 +11,7 @@ class PyGrpcioReflection(PythonPackage):
     """Standard Protobuf Reflection Service for gRPC."""
 
     homepage = "https://grpc.io/"
-    pypi = "grpcio-reflection/grpcio-reflection-1.78.0.tar.gz"
+    pypi = "grpcio_reflection/grpcio_reflection-1.78.0.tar.gz"
 
     version("1.78.0", sha256="e6e60c0b85dbcdf963b4d4d150c0f1d238ba891d805b575c52c0365d07fc0c40")
 

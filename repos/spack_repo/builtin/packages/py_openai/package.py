@@ -28,9 +28,10 @@ class PyOpenai(PythonPackage):
     variant(
         "wandb",
         default=False,
+        when="@0",
         description="keeps track of hyperparameters, system metrics, and predictions",
     )
-    variant("embeddings", default=False, description="represents a text string vector")
+    variant("embeddings", default=False, when="@0", description="represents a text string vector")
 
     depends_on("python@3.9:", when="@2.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@1.54:", type=("build", "run"))
@@ -59,10 +60,13 @@ class PyOpenai(PythonPackage):
     depends_on("py-aiohttp", when="@0", type=("build", "run"))
 
     with when("+datalib"):
+        depends_on("py-numpy@1:", when="@1:", type=("build", "run"))
         depends_on("py-numpy", type=("build", "run"))
         depends_on("py-pandas@1.2.3:", type=("build", "run"))
         depends_on("py-pandas-stubs@1.1.0.11:", type=("build", "run"))
-        depends_on("py-openpyxl@3.0.7:", type=("build", "run"))
+
+        # Historical dependencies
+        depends_on("py-openpyxl@3.0.7:", when="@0", type=("build", "run"))
 
     with when("+wandb"):
         depends_on("py-wandb", type=("build", "run"))

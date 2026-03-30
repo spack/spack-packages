@@ -11,7 +11,7 @@ class PyPrometheusFastapiInstrumentator(PythonPackage):
     """Instrument your FastAPI app with Prometheus metrics."""
 
     homepage = "https://github.com/trallnag/prometheus-fastapi-instrumentator"
-    pypi = "prometheus-fastapi-instrumentator/prometheus-fastapi-instrumentator-7.1.0.tar.gz"
+    pypi = "prometheus_fastapi_instrumentator/prometheus_fastapi_instrumentator-7.1.0.tar.gz"
 
     version("7.1.0", sha256="be7cd61eeea4e5912aeccb4261c6631b3f227d8924542d79eaf5af3f439cbe5e")
 
