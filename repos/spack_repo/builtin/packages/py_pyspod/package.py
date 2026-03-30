@@ -24,9 +24,6 @@ class PyPyspod(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-setuptools@42:")
-        depends_on("py-hatchling")
-        depends_on("py-flit-core")
-        depends_on("py-poetry-core")
 
     with default_args(type=("build", "run")):
         depends_on("py-importlib-metadata@:4", when="^python@:3.7")
