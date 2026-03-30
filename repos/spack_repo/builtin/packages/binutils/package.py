@@ -22,7 +22,7 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
 
     tags = ["build-tools", "core-packages"]
 
-    executables = ["^nm$", "^readelf$"]
+    executables = ["^nm$", "^readelf$", "^ld$", "^gold$"]
 
     license(
         "GPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND LGPL-3.0-or-later",
@@ -144,21 +144,22 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)
-        match = re.search(r"GNU (nm|readelf).* (\S+)", output)
+        match = re.search(r"GNU (nm|readelf|ld).* (\S+)", output)
         return Version(match.group(2)).dotted.up_to(3) if match else None
 
     @classmethod
-    def determine_variants(cls, exes, version_str):
+    def determine_variants(cls, exes, version):
         bin_dir = pathlib.Path(exes[0]).parent
         include_dir = bin_dir.parent / "include"
         plugin_h = include_dir / "plugin-api.h"
 
-        variants = "+gold" if find(str(bin_dir), "gold", recursive=False) else "~gold"
+        variants = "~headers"
         if find(str(include_dir), str(plugin_h), recursive=False):
-            variants += "+headers"
-        else:
-            variants += "~headers"
+            variants = "+headers"
 
+        variants += "+ld" if any(x.endswith("ld") for x in exes) else "~ld"
+        if version < Version("2.43") and "+ld" in variants:
+            variants += "+gold" if any(x.endswith("gold") for x in exes) else "~gold"
         return variants
 
     def flag_handler(self, name, flags):
