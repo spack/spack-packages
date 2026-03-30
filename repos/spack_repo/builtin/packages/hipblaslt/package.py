@@ -324,7 +324,8 @@ class Hipblaslt(CMakePackage):
             args.append(self.define("HIPBLASLT_ENABLE_CLIENT", self.run_tests))
             args.append(
                 self.define(
-                    "TENSILELITE_OFFLOADBUNDLER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler"
+                    "TENSILELITE_OFFLOADBUNDLER",
+                    f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler",
                 )
             )
         else:
