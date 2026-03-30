@@ -27,7 +27,7 @@ spack:
   - nano   # just in case
     # tags and scope search helpers
   - universal-ctags   # only maintained ctags, works better with c++
-  - direnv
+  - direnv@2.35.0  # TEST to ensure something builds by reverting version
     # runtimes and compilers
   - python
   - llvm+link_llvm_dylib~lld~offload~lldb~polly+python build_type=MinSizeRel   # for clangd, clang-format
