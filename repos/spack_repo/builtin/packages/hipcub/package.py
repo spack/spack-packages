@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -100,9 +102,13 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.1",
         "7.2.0",
     ]:
-        depends_on(f"rocprim@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver} +cuda", when=f"+cuda @{ver}")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"rocprim@{ver} amdgpu_target={tgt}",
+                when=f"+rocm @{ver} amdgpu_target={tgt}",
+            )
 
     # fix hardcoded search in /opt/rocm and broken config mode search
     patch("find-hip-cuda-rocm-5.3.patch", when="@5.7 +cuda")
@@ -126,6 +132,9 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         if self.spec.satisfies("+rocm ^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
+        if self.spec.satisfies("+rocm"):
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))

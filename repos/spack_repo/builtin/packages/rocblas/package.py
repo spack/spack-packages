@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -168,7 +169,11 @@ class Rocblas(CMakePackage):
         "7.1.1",
         "7.2.0",
     ]:
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"hipblaslt@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
+            )
 
     for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
