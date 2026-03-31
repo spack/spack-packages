@@ -56,11 +56,7 @@ class Eccodes(CMakePackage):
     version("2.42.0", sha256="60371b357cb011dee546db2eabace5b7e27f0f87d3ea4a5adde7891371b3c128")
     version("2.41.0", sha256="a1467842e11ed7f62a2f5cc1982e04eec62398f4962e6ba03ace7646f32cf270")
     version("2.40.0", sha256="f58d5d7390fce86c62b26d76b9bc3c4d7d9a6cf2e5f8145d1d598089195e51ff")
-    version(
-        "2.39.5",
-        tag="2.39.5",
-        commit="ccfac25b50894b9929a100fad2e967e5c15e50bc",
-    )
+    version("2.39.5", tag="2.39.5", commit="ccfac25b50894b9929a100fad2e967e5c15e50bc")
     version("2.39.0", sha256="0c4d746700acc49af9c878925f1b26bdd42443ff7c2d7c676deb2babb6847afb")
     version("2.38.3", sha256="fa7b7ffb22973ed1dfbeb208c042a67a805ab070f1288a0f1f0707a1020d1c81")
     version("2.38.0", sha256="96a21fbe8ca3aa4c31bb71bbd378b7fd130cbc0f7a477567d70e66a000ff68d9")
