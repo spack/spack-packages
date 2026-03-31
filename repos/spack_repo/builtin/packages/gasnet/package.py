@@ -163,6 +163,14 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
             description="ibv job spawner",
         )
 
+    with when("conduits=ucx"):
+        variant(
+            "ucx_spawner",
+            default="auto",
+            values=("auto", "ssh", "mpi", "pmi"),
+            description="ucx job spawner",
+        )
+
     variant(
         "cuda",
         default=False,
@@ -288,11 +296,10 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
                     options.append(f"--with-{key}={' '.join(value)}")
 
             options += self.enable_or_disable("debug", spec.satisfies("+debug"))
-            options += self.enable_or_disable(
-                "seq", spec.satisfies("threadmode=seq") or spec.satisfies("threadmode=auto")
-            )
-            options += self.enable_or_disable("par", spec.satisfies("threadmode=par"))
-            options += self.enable_or_disable("parsync", spec.satisfies("threadmode=parsync"))
+            if not spec.satisfies("threadmode=auto"):
+                options += self.enable_or_disable("seq", spec.satisfies("threadmode=seq"))
+                options += self.enable_or_disable("par", spec.satisfies("threadmode=par"))
+                options += self.enable_or_disable("parsync", spec.satisfies("threadmode=parsync"))
             options += self.enable_or_disable("mpi-compat", spec.satisfies("+mpi_compat"))
 
             options += self.enable_disable_or_auto("pthreads")
@@ -452,7 +459,7 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
             lib_dir = prefix / "lib"
 
             if config.exists():
-                flags = {"threadmode": {}}
+                flags = {"threadmode": set()}
                 conduits = []
 
                 with open(config, "r") as f:
