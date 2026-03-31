@@ -106,18 +106,11 @@ class Rocsparse(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(
-                f"rocprim@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
-            )
-
+            depends_on(f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     for ver in ["7.2.0"]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(
-                f"rocblas@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
-            )
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     depends_on("googletest@1.11.0:", when="+test")
     depends_on("python@3:", type="build", when="+test")

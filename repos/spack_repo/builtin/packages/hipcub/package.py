@@ -106,8 +106,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"hip@{ver} +cuda", when=f"+cuda @{ver}")
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(
-                f"rocprim@{ver} amdgpu_target={tgt}",
-                when=f"+rocm @{ver} amdgpu_target={tgt}",
+                f"rocprim@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
             )
 
     # fix hardcoded search in /opt/rocm and broken config mode search
