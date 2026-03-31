@@ -31,7 +31,7 @@ class CRaft(AutotoolsPackage):
     version(
         "0.17.1",
         sha256="e31c7fafbdd5f94913161c5d64341a203364e512524b47295c97a91e83c4198b",
-        url="https://github.com/canonical/raft/archive/refs/tags/v0.17.1.tar.gz"
+        url="https://github.com/canonical/raft/archive/refs/tags/v0.17.1.tar.gz",
     )
 
     variant("uv", default=True, description="Enable libuv support")
