@@ -49,8 +49,6 @@ spack:
       variants: threads=openmp
     rccl:
       variants: amdgpu_target=gfx90a
-    rocblas:
-      require: ~hipblaslt #hangs in ci
     trilinos:
       prefer:
       - +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext

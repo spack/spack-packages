@@ -83,7 +83,7 @@ class Cosmomc(Package):
                 raise InstallError("When using GCC, CosmoMC requires version gcc@6: for building")
             choosecomp = "ifortErr=1"  # choose gfortran
         elif spec.satisfies("%intel"):
-            if not spec.satifies("%intel@14:"):
+            if not spec.satisfies("%intel@14:"):
                 raise InstallError(
                     "When using the Intel compiler, "
                     "CosmoMC requires version intel@14: for building"

@@ -20,6 +20,7 @@ class PyTorchvision(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.26.0", sha256="fb95b6b78b3801c4d4d6332f7a5a0b6c624588e1b39e0d6fa145227b0c749403")
     version("0.25.0", sha256="a7ac1b3ab489d71f6e27edfad1e27616e4b8a9b1517e60fce4a950600d3510e8")
     version("0.24.1", sha256="071da2078600bfec4886efab77358c9329abfedcf1488b05879b556cb9b84ba7")
     version("0.24.0", sha256="f799cdd1d67a3edbcdc6af8fb416fe1b019b512fb426c0314302cd81518a0095")
@@ -62,8 +63,8 @@ class PyTorchvision(PythonPackage):
     variant("jpeg", default=True, description=desc.format("JPEG"))
     variant("webp", default=False, description=desc.format("WEBP"), when="@0.20:")
     variant("nvjpeg", default=False, description=desc.format("NVJPEG"))
-    variant("video_codec", default=False, description=desc.format("video_codec"))
-    variant("ffmpeg", default=False, description=desc.format("FFMPEG"))
+    variant("video_codec", default=False, description=desc.format("video_codec"), when="@:0.25")
+    variant("ffmpeg", default=False, description=desc.format("FFMPEG"), when="@:0.25")
 
     # torchvision does not yet support disabling giflib:
     # https://github.com/pytorch/vision/pull/8406#discussion_r1590926939
@@ -83,6 +84,7 @@ class PyTorchvision(PythonPackage):
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.11.0", when="@0.26.0")
         depends_on("py-torch@2.10.0", when="@0.25.0")
         depends_on("py-torch@2.9.1", when="@0.24.1")
         depends_on("py-torch@2.9.0", when="@0.24.0")

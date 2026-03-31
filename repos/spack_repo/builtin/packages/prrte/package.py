@@ -80,6 +80,13 @@ class Prrte(AutotoolsPackage):
     depends_on("pbs", when="schedulers=tm")
     depends_on("slurm", when="schedulers=slurm")
 
+    # fixes a segfault in v4.1.0 for some Apple ARM architectures
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/openpmix/prrte/pull/2417.patch?full_index=1",
+        sha256="971e9beffac4cf32c842248a0f030babfd87203e252bfda9f750a010c58105ab",
+        when="@4.1.0",
+    )
+
     def url_for_version(self, version):
         if version <= Version("3"):
             # tarballs have a single 'r'
