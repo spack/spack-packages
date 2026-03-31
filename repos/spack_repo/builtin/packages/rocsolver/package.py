@@ -112,10 +112,13 @@ class Rocsolver(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
-        depends_on(f"rocsparse@{ver}", when=f"@{ver}")
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(
                 f"rocblas@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} amdgpu_target={tgt}",
+            )
+            depends_on(
+                f"rocsparse@{ver} amdgpu_target={tgt}",
                 when=f"@{ver} amdgpu_target={tgt}",
             )
 
