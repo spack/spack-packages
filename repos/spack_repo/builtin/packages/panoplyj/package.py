@@ -11,14 +11,15 @@ class Panoplyj(Package):
 
 
     homepage = "https://www.giss.nasa.gov/tools/panoply/"
-    url = "https://www.giss.nasa.gov/tools/panoply/download/PanoplyJ-5.9.1.tgz"
+    url = "https://www.giss.nasa.gov/tools/panoply/download/PanoplyJ-5.9.2.tgz"
 
     maintainers("Chrismarsh")
 
     # this is a custom license and not SPDX listed
     license("LicenseRef-NASA-GISS-Panoply", checked_by="Chrismarsh")
 
-    version("5.9.1", sha256="3f019b37f278cd77a5cd5d67494a8eb4ec9beda9e1f9a86de3a221cdae5a2c27")
+    # only the most recent is valid
+    version("5.9.2", sha256="7cf68f77f6456e56573b0336c877973c852ffdbc46007922f636de1b61d37242")
 
     # only distributed as jar files
     depends_on("java", type="run")
