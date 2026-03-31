@@ -32,6 +32,8 @@ class Ruff(CargoPackage, PythonExtension):
 
     with when("+python"):
         build_system("python_pip")
+        depends_on("py-maturin@1.9:1", when="@0.12.7:")
+        depends_on("py-maturin@1")
 
     with default_args(type="build"):
         depends_on("c")
