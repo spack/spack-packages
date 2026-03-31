@@ -30,6 +30,7 @@ class PyPythonMumps(PythonPackage):
         depends_on("py-setuptools")
         depends_on("py-setuptools-scm")
         depends_on("py-cython@3.1.1:")
+        depends_on("pkgconfig")
 
     # Python dependencies
     with default_args(type=("build", "run")):
