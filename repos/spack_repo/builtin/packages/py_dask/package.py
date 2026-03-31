@@ -13,7 +13,7 @@ class PyDask(PythonPackage):
     homepage = "https://github.com/dask/dask/"
     pypi = "dask/dask-1.1.0.tar.gz"
 
-    maintainers("skosukhin")
+    maintainers("Chrismarsh")
 
     license("BSD-3-Clause")
 
