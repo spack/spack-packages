@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+from spack_repo.builtin.build_systems.python import PythonExtension
 
 from spack.package import *
 
 
-class Ruff(CargoPackage):
+class Ruff(CargoPackage, PythonExtension):
     """An extremely fast Python linter and code formatter, written in Rust."""
 
     homepage = "https://docs.astral.sh/ruff"
@@ -24,6 +25,13 @@ class Ruff(CargoPackage):
     version("0.13.0", sha256="1be5402b5ca6925725fcb73af70a07b515246009d7bbb14f17e7f5adacd8a307")
     version("0.12.0", sha256="3623e20815ae84254ca5dec780165e89c2f1947c73824167e3a44d41fde74f57")
     version("0.11.11", sha256="fcd8fdd349559421494b653e53a2fc6441a35e51d2992af035c5e5c84e060702")
+
+    variant("python", default=False, description="Build and install ruff as a wheel")
+
+    build_system("cargo", conditional("python_pip", when="+python"), default="cargo")
+
+    with when("+python"):
+        build_system("python_pip")
 
     with default_args(type="build"):
         depends_on("c")
