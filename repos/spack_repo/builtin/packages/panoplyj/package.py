@@ -6,9 +6,9 @@ from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
+
 class Panoplyj(Package):
     """Panoply netCDF, HDF and GRIB Data Viewer"""
-
 
     homepage = "https://www.giss.nasa.gov/tools/panoply/"
     url = "https://www.giss.nasa.gov/tools/panoply/download/PanoplyJ-5.9.2.tgz"
@@ -29,9 +29,9 @@ class Panoplyj(Package):
 
         if self.spec.satisfies("platform=darwin"):
             install("panoply_macos.sh", prefix.bin)
-            rename( join_path(prefix.bin,"panoply_macos.sh"), join_path(prefix.bin,"panoply"))
+            rename(join_path(prefix.bin, "panoply_macos.sh"), join_path(prefix.bin, "panoply"))
         else:
             install("panoply.sh", prefix.bin)
-            rename( join_path(prefix.bin,"panoply.sh"), join_path(prefix.bin,"panoply"))
+            rename(join_path(prefix.bin, "panoply.sh"), join_path(prefix.bin, "panoply"))
 
         install_tree("jars", prefix.bin.jars)
