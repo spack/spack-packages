@@ -111,4 +111,5 @@ class RPackage(Package):
     git: ClassProperty[Optional[str]] = classproperty(_git)
 
     def url_for_version(self, version):
-        return f"https://cran.r-project.org/src/contrib/Archive/{self.cran}/{self.cran}_{version}.tar.gz"
+        if self.cran:
+            return f"https://cran.r-project.org/src/contrib/Archive/{self.cran}/{self.cran}_{version}.tar.gz"
