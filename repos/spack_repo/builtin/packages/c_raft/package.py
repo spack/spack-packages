@@ -28,8 +28,11 @@ class CRaft(AutotoolsPackage):
     version("0.18.2", sha256="cc3e12877150cb9cdfa82486a9bfe39e4050dba8a6e8a55aa27c86b7d21237b9")
     version("0.18.1", sha256="f863f395c0fefe9aa8491f1d1dd87686fa53f7fe2c2fd223e9a03b3141a08597")
     version("0.17.7", sha256="7d0249953c2e2b112e9006cbefa32b8449def3b6ed79ca8e80ddb0937fca9c72")
-    version("0.17.1", sha256="e31c7fafbdd5f94913161c5d64341a203364e512524b47295c97a91e83c4198b",
-            url="https://github.com/canonical/raft/archive/refs/tags/v0.17.1.tar.gz")
+    version(
+        "0.17.1",
+        sha256="e31c7fafbdd5f94913161c5d64341a203364e512524b47295c97a91e83c4198b",
+        url="https://github.com/canonical/raft/archive/refs/tags/v0.17.1.tar.gz"
+    )
 
     variant("uv", default=True, description="Enable libuv support")
     variant("lz4", default=True, when="+uv", description="Enable lz4 support")
