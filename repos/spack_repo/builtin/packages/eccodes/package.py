@@ -58,7 +58,6 @@ class Eccodes(CMakePackage):
     version("2.40.0", sha256="f58d5d7390fce86c62b26d76b9bc3c4d7d9a6cf2e5f8145d1d598089195e51ff")
     version(
         "2.39.5",
-        git="https://github.com/ecmwf/eccodes.git",
         tag="2.39.5",
         commit="ccfac25b50894b9929a100fad2e967e5c15e50bc",
     )
