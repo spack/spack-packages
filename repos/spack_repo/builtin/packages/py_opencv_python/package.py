@@ -13,6 +13,8 @@ class PyOpencvPython(PythonPackage):
     homepage = "https://github.com/opencv/opencv-python"
     pypi = "opencv-python/opencv-python-4.12.0.88.tar.gz"
 
+    git = "https://github.com/opencv/opencv-python"
+
     license("Apache-2.0")
 
     version("4.13.0.92", sha256="d9c8e7a1b0c5f2e4b3a1c8e5f6d7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5")

@@ -11,7 +11,7 @@ class PyOpenaiHarmony(PythonPackage):
     """OpenAI's response format for its open-weight model series gpt-oss."""
 
     homepage = "https://github.com/openai/harmony"
-    pypi = "openai-harmony/openai-harmony-0.0.8.tar.gz"
+    pypi = "openai_harmony/openai_harmony-0.0.8.tar.gz"
 
     version("0.0.8", sha256="6e43f98e6c242fa2de6f8ea12eab24af63fa2ed3e89c06341fb9d92632c5cbdf")
 

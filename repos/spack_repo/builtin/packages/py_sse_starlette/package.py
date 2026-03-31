@@ -17,5 +17,6 @@ class PySseStarlette(PythonPackage):
     version("3.3.3", sha256="72a95d7575fd5129bd0ae15275ac6432bb35ac542fdebb82889c24bb9f3f4049")
 
     depends_on("python@3.10:", type=("build", "run"))
+    depends_on("py-setuptools", type="build")
     depends_on("py-starlette@0.49.1:", type=("build", "run"))
     depends_on("py-anyio@4.7:", type=("build", "run"))

@@ -11,7 +11,7 @@ class PyCompressedTensors(PythonPackage):
     """Library for utilization of compressed safetensors of neural network models."""
 
     homepage = "https://github.com/vllm-project/compressed-tensors"
-    pypi = "compressed-tensors/compressed-tensors-0.13.0.tar.gz"
+    pypi = "compressed_tensors/compressed_tensors-0.13.0.tar.gz"
 
     version("0.13.0", sha256="23893824d3498ea3f1a829f14a8fa85f9a5e76a34c711a038b8d7c619ca9a67c")
 
