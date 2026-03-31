@@ -109,3 +109,6 @@ class RPackage(Package):
     url: ClassProperty[Optional[str]] = classproperty(_url)
     list_url: ClassProperty[Optional[str]] = classproperty(_list_url)
     git: ClassProperty[Optional[str]] = classproperty(_git)
+
+    def url_for_version(self, version):
+        return f"https://cran.r-project.org/src/contrib/Archive/{self.cran}/{self.cran}_{version}.tar.gz"
