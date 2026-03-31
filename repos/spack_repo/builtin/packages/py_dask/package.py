@@ -90,9 +90,7 @@ class PyDask(PythonPackage):
         depends_on("py-toolz@0.8.2:", when="@2021.3.1:")
 
         depends_on("py-importlib-metadata@4.13.0:", when="@2023.4.0:2024.2")
-        depends_on(
-            "py-importlib-metadata@4.13.0:", when="@2024.3.0: ^python@:3.11"
-        )
+        depends_on("py-importlib-metadata@4.13.0:", when="@2024.3.0: ^python@:3.11")
 
         # Requirements for dask.array
         with when("+array"):
@@ -148,7 +146,6 @@ class PyDask(PythonPackage):
             # Starting with version 2024.3.0, dataframe requires a separate package py-dask-expr
             depends_on("py-dask-expr@1.1", when="@2024.7.1")
 
-
         # Requirements for dask.distributed
         with when("+distributed"):
             depends_on("py-distributed@2026.3.0:", when="@2026.3.0")
@@ -170,7 +167,7 @@ class PyDask(PythonPackage):
 
             depends_on("py-jinja2@2.10.3:", when="@2023.4.0:")
             depends_on("py-jinja2", when="@2022.10.2:")
-        
+
         with when("+delayed"):
             # Requirements for dask.delayed
             # The dependency on py-cloudpickle is non-optional starting version 2021.3.1
