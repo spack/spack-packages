@@ -2,7 +2,7 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack.package import *
 
 
-class TutorialXad(CMakePackage):
+class Xad(CMakePackage):
     """XAD is a high-performance C++ automatic differentiation library."""
 
     homepage = "https://auto-differentiation.github.io/"
