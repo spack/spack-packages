@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 import warnings
 from pathlib import Path
 
@@ -465,7 +466,8 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
                 with open(config, "r") as f:
                     for line in f:
                         if line.startswith("#define GASNETI_CONDUITS"):
-                            conduits = [x.strip().replace('"', "") for x in line.split()[2:]]
+                            m = re.search(r'"([^"]*)"', line)
+                            conduits = m.group(1).split() if m else []
                             variants.append(f"conduits={','.join(conduits)}")
                         elif line.startswith("#define GASNET_SEGMENT_FAST 1"):
                             variants.append("segment=fast")
