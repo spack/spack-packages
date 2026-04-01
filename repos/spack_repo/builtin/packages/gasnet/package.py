@@ -45,6 +45,8 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
     url = "https://gasnet.lbl.gov/EX/GASNet-2024.5.0.tar.gz"
     git = "https://bitbucket.org/berkeleylab/gasnet.git"
 
+    license("BSD-3-Clause-LBNL")
+
     maintainers("PHHargrove", "bonachea", "rbberger")
 
     tags = ["e4s", "ecp"]
