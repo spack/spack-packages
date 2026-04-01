@@ -57,7 +57,9 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     variant("magma", default=False, description="Enable MAGMA support")
     variant("nlcglib", default=False, description="Enable robust wave function optimization")
     variant("vcsqnm", default=False, description="Enable lattice relaxation")
-    variant("power_counter", default=False, description="Enable Cray power counter", when="@7.11.0:")
+    variant(
+        "power_counter", default=False, description="Enable Cray power counter", when="@7.11.0:"
+    )
     variant("wannier90", default=False, description="Enable Wannier90 library")
     variant(
         "build_type",
