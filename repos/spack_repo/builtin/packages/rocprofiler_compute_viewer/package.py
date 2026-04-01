@@ -15,7 +15,7 @@ class RocprofilerComputeViewer(CMakePackage):
     git = "https://github.com/ROCm/rocprof-compute-viewer"
 
     tags = ["rocm"]
-    maintainers("etiennemlb")
+    maintainers("etiennemlb", "srekolam", "renjithravindrankannath")
     license("MIT")
 
     def url_for_version(self, version):
