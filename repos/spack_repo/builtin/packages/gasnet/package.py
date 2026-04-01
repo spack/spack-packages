@@ -373,8 +373,8 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
             for c in spec.variants["conduits"].value:
                 testdir = join_path(self.prefix.tests, c)
                 mkdirp(testdir)
-                make("-C", f"{c}-conduit", "testgasnet-par")
-                make("-C", f"{c}-conduit", "testtools-par")
+                make("-C", f"{c}-conduit", "testgasnet")
+                make("-C", f"{c}-conduit", "testtools")
                 install(f"{c}-conduit/testgasnet", testdir)
                 install(f"{c}-conduit/testtools", prefix.tests)
 
