@@ -15,13 +15,14 @@ class Freecad(CMakePackage):
 
     homepage = "https://www.freecad.org/"
     url = "https://github.com/FreeCAD/FreeCAD/archive/refs/tags/0.20.2.tar.gz"
+    git = "https://github.com/FreeCAD/FreeCAD"
 
     maintainers("aweits")
 
     license("LGPL-2.0-or-later")
 
-    version("1.0.2", sha256="228ee52f00627c7d8fa61998179deb01865ece69390829feb1300228d24f7e9e")
-    version("1.0.1", sha256="f62bc07c477544eff62b6ab0fc3bb63fa7f1e6f94763c51b0049507842d444f3")
+    version("1.0.2", tag="1.0.2", submodules=True)
+    version("1.0.1", tag="1.0.1", submodules=True)
     version("0.20.2", sha256="46922f3a477e742e1a89cd5346692d63aebb2b67af887b3e463e094a4ae055da")
 
     depends_on("c", type="build")  # generated
