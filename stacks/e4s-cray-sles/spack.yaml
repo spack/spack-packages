@@ -41,6 +41,34 @@ spack:
       require:
       - netlib-scalapack
 
+    cce:
+      externals:
+      - spec: cce@20.0.0
+        prefix: /opt/cray/pe/cce/20.0.0
+        extra_attributes:
+          compilers:
+            c: /opt/cray/pe/cce/20.0.0/bin/craycc
+            cxx: /opt/cray/pe/cce/20.0.0/bin/crayCC
+            fortran: /opt/cray/pe/cce/20.0.0/bin/crayftn
+          environment:
+            set:
+              CRAYLIBS_X86_64: /opt/cray/pe/cce/20.0.0/cce/x86_64/lib
+            prepend_path:
+              LD_LIBRARY_PATH: /opt/cray/pe/lib64:/opt/cray/pe/cce/20.0.0/cce/x86_64/lib:/opt/cray/pe/cce/20.0.0/cce-clang/x86_64/lib
+          extra_rpaths:
+          - /opt/cray/pe/lib64
+          - /opt/cray/pe/cce/20.0.0/cce/x86_64/lib
+          - /opt/cray/pe/cce/20.0.0/cce-clang/x86_64/lib
+    gcc:
+      externals:
+      - spec: gcc@7.5.0 languages:='c,c++,fortran'
+        prefix: /usr
+        extra_attributes:
+          compilers:
+            c: /usr/bin/gcc
+            cxx: /usr/bin/g++
+            fortran: /usr/bin/gfortran
+
     ncurses:
       require:
       - +termlib ldflags=-Wl,--undefined-version
