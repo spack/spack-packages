@@ -477,12 +477,20 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
                             variants.append("segment=large")
                         elif line.startswith("#define GASNET_SEGMENT_EVERYTHING 1"):
                             variants.append("segment=everything")
+                        elif line.startswith("#define GASNETI_MK_CLASS_CUDA_UVA_ENABLED 1"):
+                            variants.append("+cuda")
+                        elif line.startswith("#define GASNETI_MK_CLASS_HIP_ENABLED 1"):
+                            variants.append("+rocm")
+                        elif line.startswith("#define GASNETI_MK_CLASS_ZE_ENABLED 1"):
+                            variants.append("+level_zero")
                         elif line.startswith("#define GASNETI_PSHM_ENABLED 1"):
                             flags["pshm"] = True
                         elif line.startswith("#define HAVE_PTHREAD_H 1"):
                             flags["pthreads"] = True
                         elif line.startswith("#define GASNET_DEBUG 1"):
                             flags["debug"] = True
+                        elif line.startswith("#define GASNETI_CONFIGURE_ARGS"):
+                            flags["mpi_compat"] = "--enable-mpi-compat" in line
 
                 # Detect threading modes by checking for library files
                 # Check any conduit (use first one found) for mode-specific libraries
