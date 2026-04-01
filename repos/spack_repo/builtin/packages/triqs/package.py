@@ -1,8 +1,9 @@
-# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.python import PythonExtension
 
 import os
 from spack.package import *
@@ -47,7 +48,7 @@ class Triqs(CMakePackage, PythonExtension):
         share_dir = self.prefix.share.triqs
         bin_dir = self.prefix.bin
         lib_dir = self.prefix.lib
-        python_dir = self.prefix.lib 
+        python_dir = self.prefix.lib
 
         env.prepend_path("PATH", bin_dir)
         env.prepend_path("LD_LIBRARY_PATH", lib_dir)
@@ -60,4 +61,3 @@ class Triqs(CMakePackage, PythonExtension):
         if "+python" in spec:
             python = spec["python"].command
             python("-m", "compileall", prefix)
-
