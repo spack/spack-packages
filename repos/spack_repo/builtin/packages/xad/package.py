@@ -1,4 +1,5 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
 
 
@@ -10,11 +11,13 @@ class Xad(CMakePackage):
 
     maintainers("JohnyMarley")
 
-    license("GNU Affero General Public License v3.0", checked_by="JohnyMarley")
+    license("AGPL-3.0-or-later", checked_by="JohnyMarley")
 
-    version("2.1.0", sha256="110729586b1a097c9e4a7ec34c48e60f3aec7ec61ef192a417ce0774cc32be43")
+    version(
+        "2.1.0",
+        sha256="110729586b1a097c9e4a7ec34c48e60f3aec7ec61ef192a417ce0774cc32be43",
+    )
 
-    depends_on("cmake@3.15.2:", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
