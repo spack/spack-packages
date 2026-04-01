@@ -106,11 +106,10 @@ class Pdi(CMakePackage):
         # not yet instantiated and PYTHON_EXECUTABLE is not yet large enough to
         # trigger the replacement via filter_shebang.
         zpp_in = glob("vendor/zpp-*/bin/zpp.in")[0]
-        if self.spec.satisfies("@1.9.3:"):
-            zpp_shebang = "#!@Python_EXECUTABLE@ -B"
-        else:
-            zpp_shebang = "#!@PYTHON_EXECUTABLE@ -B"
-        filter_file(zpp_shebang, f"{sbang_shebang_line()}\n{zpp_shebang}", zpp_in)
+        with open(zpp_in, "r+", encoding="utf-8") as f:
+            content = f.read()
+            f.seek(0)
+            f.write(f"{sbang_shebang_line()}\n{content}")
 
     @staticmethod
     def version_url(version):
