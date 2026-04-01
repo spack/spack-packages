@@ -15,8 +15,11 @@ class Grep(AutotoolsPackage, GNUMirrorPackage):
     homepage = "https://www.gnu.org/software/grep/"
     gnu_mirror_path = "grep/grep-3.3.tar.xz"
 
+    executables = ["^grep$"]
+
     license("GPL-3.0-or-later")
 
+    version("3.12", sha256="2649b27c0e90e632eadcd757be06c6e9a4f48d941de51e7c0f83ff76408a07b9")
     version("3.11", sha256="1db2aedde89d0dea42b16d9528f894c8d15dae4e190b59aecc78f5a951276eab")
     version("3.10", sha256="24efa5b595fb5a7100879b51b8868a0bb87a71c183d02c4c602633b88af6855b")
     version("3.9", sha256="abcd11409ee23d4caf35feb422e53bbac867014cfeed313bb5f488aca170b599")
@@ -25,15 +28,11 @@ class Grep(AutotoolsPackage, GNUMirrorPackage):
 
     variant("pcre", default=False, description="Enable Perl Compatible Regular Expression support")
 
-    build_directory = "spack-build"
-
-    depends_on("c", type="build")  # generated
-
+    depends_on("c", type="build")
     depends_on("pcre2", when="@3.8:+pcre")
     depends_on("pcre", when="@:3.7+pcre")
 
-    # For spack external find
-    executables = ["^grep$"]
+    build_directory = "spack-build"
 
     @classmethod
     def determine_version(cls, exe):

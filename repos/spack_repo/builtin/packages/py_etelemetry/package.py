@@ -15,6 +15,7 @@ class PyEtelemetry(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.3.1", sha256="91861fc0e9593e583ad12610a99859d88a45216f59e803c96cfa8b7334f6171f")
     version("0.3.0", sha256="5f710fdb17ec02f93be29d234b33c1c62ad641320d1b4047e61044679018de03")
     version("0.2.2", sha256="bfec416552d248ad0f50b90ba5ff015e825ad70e4a87f7a06cc7da6d19152897")
 
@@ -22,5 +23,6 @@ class PyEtelemetry(PythonPackage):
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
+    depends_on("py-packaging", when="@0.3.1:", type=("build", "run"))
     depends_on("py-requests", type=("build", "run"))
     depends_on("py-ci-info@0.2.0:", type=("build", "run"))

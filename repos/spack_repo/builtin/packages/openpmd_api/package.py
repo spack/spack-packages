@@ -11,7 +11,7 @@ class OpenpmdApi(CMakePackage):
     """C++ & Python API for Scientific I/O"""
 
     homepage = "https://www.openPMD.org"
-    url = "https://github.com/openPMD/openPMD-api/archive/0.16.1.tar.gz"
+    url = "https://github.com/openPMD/openPMD-api/archive/0.17.0.tar.gz"
     git = "https://github.com/openPMD/openPMD-api.git"
 
     maintainers("ax3l", "franzpoeschel")
@@ -22,6 +22,7 @@ class OpenpmdApi(CMakePackage):
 
     # C++17 up until here
     version("develop", branch="dev")
+    version("0.17.0", sha256="97ff76111f77b06177caa48fa1b5e757967a60a66665f0c13384828d3ae1aa92")
     version("0.16.1", sha256="a029a1779351949f41c1f36d0e75c698e59c5d284f080d5e4c2b8650779d2d58")
     version("0.16.0", sha256="b52222a4ab2511f9e3f6e21af222f57ab4fb6228623024fc5d982066333e104f")
     version("0.15.2", sha256="fbe3b356fe6f4589c659027c8056844692c62382e3ec53b953bed1c87e58ba13")
@@ -76,15 +77,19 @@ class OpenpmdApi(CMakePackage):
         depends_on("adios2@2.5.0:")
         depends_on("adios2@2.6.0:", when="@0.12.0:")
         depends_on("adios2@2.7.0:", when="@0.14.0:")
+        depends_on("adios2@2.9.0:", when="@0.17.0:")
         depends_on("adios2@2.5.0: ~mpi", when="~mpi")
         depends_on("adios2@2.5.0: +mpi", when="+mpi")
     with when("+python"):
         depends_on("py-pybind11@2.6.2:", type="link")
         depends_on("py-pybind11@2.13.0:", type="link", when="@0.16.0:")
-        depends_on("py-numpy@1.15.1:", type=["test", "run"])
-        depends_on("py-mpi4py@2.1.0:", when="+mpi", type=["test", "run"])
-        depends_on("python@3.7:", type=["link", "test", "run"])
-        depends_on("python@3.8:", when="@0.15.2:", type=["link", "test", "run"])
+        depends_on("py-pybind11@:3.0.1", type="link", when="@:0.17.0")
+        depends_on("py-numpy@1.15.1:", type=("test", "run"))
+        depends_on("py-mpi4py@2.1.0:", when="+mpi", type=("test", "run"))
+        with default_args(type=("link", "test", "run")):
+            depends_on("python@3.7:")
+            depends_on("python@3.8:", when="@0.15.2:")
+            depends_on("python@3.10:", when="@0.17.0:")
 
     conflicts("^hdf5 api=v16", msg="openPMD-api requires HDF5 APIs for 1.8+")
 
@@ -195,6 +200,6 @@ class OpenpmdApi(CMakePackage):
         """Test if openpmd-ls runs correctly"""
         if self.spec.satisfies("@:0.11.0"):
             raise SkipTest("Package must be installed as version 0.11.1 or later")
-        exe = which(join_path(self.prefix.bin, "openpmd-ls"))
+        exe = which(join_path(self.prefix.bin, "openpmd-ls"), required=True)
         out = exe(output=str.split, error=str.split)
         assert str(self.spec.version) in out

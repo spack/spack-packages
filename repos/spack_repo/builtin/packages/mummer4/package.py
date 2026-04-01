@@ -15,11 +15,13 @@ class Mummer4(AutotoolsPackage):
         "https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz"
     )
 
+    version("4.0.1", sha256="bc20ae2701a0b2e323e4e515b7cfa18a0f0cb34a4ff5844b289b2de0154e3d3e")
     version("4.0.0rc1", sha256="85006adb2d6539c2f738c3e3bb14b58bb6f62cd6c6ca5ede884a87ae76e07d1d")
     version(
         "4.0.0beta2", sha256="cece76e418bf9c294f348972e5b23a0230beeba7fd7d042d5584ce075ccd1b93"
     )
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     conflicts("%gcc@:4.7")

@@ -3,12 +3,27 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import re
 
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
 _versions = {
+    "6.4.3": {
+        "apt": (
+            "9c859a05c6a246eebe75f40915d3788aff8f1f537ab62b3864852efbfb012a25",
+            "https://repo.radeon.com/rocm/apt/6.4.3/pool/main/h/hsa-amd-aqlprofile/hsa-amd-aqlprofile_1.0.0.60403-128~22.04_amd64.deb",
+        ),
+        "yum": (
+            "2a0a3f76cfba27976f6e2053c6746000e693e733bdd7a466ef01127b51baf18a",
+            "https://repo.radeon.com/rocm/rhel8/6.4.3/main/hsa-amd-aqlprofile-1.0.0.60403-128.el8.x86_64.rpm",
+        ),
+        "zyp": (
+            "d5393b2800678eb18bc63b8b5ac7dc54ce74d47e7ac7979f49f64be6ea4a774b",
+            "https://repo.radeon.com/rocm/zyp/6.4.3/main/hsa-amd-aqlprofile6.4.3-1.0.0.60403-sles156.128.x86_64.rpm",
+        ),
+    },
     "6.4.2": {
         "apt": (
             "b0f2cbe31aa0ac9dd3a5584f580ea91b96412fca2feaac19f23bbfc5a60fc06d",
@@ -256,7 +271,11 @@ class Aqlprofile(Package):
     Provides AQL packets helper methods for perfcounters (PMC) and SQ threadtraces (SQTT).
     """
 
+    tags = ["rocm"]
+
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+
+    libraries = ["libhsa-amd-aqlprofile64"]
 
     spack_os = host_platform().default_os
     if "rhel" in spack_os or "centos" in spack_os:
@@ -291,6 +310,7 @@ class Aqlprofile(Package):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
 
@@ -307,6 +327,17 @@ class Aqlprofile(Package):
 
         install_tree(f"opt/rocm-{spec.version}/share/", prefix.share)
         install_tree(f"opt/rocm-{spec.version}/lib/", prefix.lib)
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if not self.spec.external:

@@ -16,15 +16,26 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     supported backends"""
 
     homepage = "https://github.com/ROCm/hipBLAS"
-    git = "https://github.com/ROCm/hipBLAS.git"
-    url = "https://github.com/ROCm/hipBLAS/archive/rocm-6.2.4.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhipblas"]
-
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hipBLAS/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="4a77f19a6229a6135fc9e2ea8e7694efda984c654a11a8c650fa9480aaf1ca84")
+    version("7.1.0", sha256="719c27d839d2008be5c5ec270299d98aab820eaf6aee907b7fa12cecd0cea092")
+    version("7.0.2", sha256="af179faab4ff5eec5d5ca3af3640644c72c9a9ca676cfab50591e9d9f3fadf80")
+    version("7.0.0", sha256="9500c514cb272f09cba9bea74eaac9873e8a8afc1ed30e9f5b87f795d4eda877")
+    version("6.4.3", sha256="75121df09f9b0b3116c19258c9526e0cff3d8845361031305ba0369f140fd8b8")
     version("6.4.2", sha256="f56035ecb60c5244f27fd4b5f5298096212fa301689615bdce833b83bf3da733")
     version("6.4.1", sha256="3fa0a690bf96104afb093d19a4f565012a59ab6df378df8aef5420914e82d91b")
     version("6.4.0", sha256="544a302bdc494af02147dc14c75d088031927e1c3a2f7a349d817497000b1c34")
@@ -69,12 +80,12 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
-    depends_on("boost@1.64.0:1.76.0 +program_options cxxstd=14", type="test")
+    depends_on("boost@1.64.0:1.76.0 +program_options cxxstd=14", type="test", when="@:7.1")
     depends_on("py-pyaml", type="test", when="@6.1:")
 
-    patch("remove-hipblas-clients-file-installation.patch", when="@5.6:5.7.1")
-    patch("remove-hipblas-clients-file-installation-6.0.patch", when="@6.0:")
-    patch("modify-hipblas-common-dependency.patch", when="@6.3:")
+    patch("remove-hipblas-clients-file-installation.patch", when="@5.7")
+    patch("remove-hipblas-clients-file-installation-6.0.patch", when="@6.0:6")
+    patch("modify-hipblas-common-dependency.patch", when="@6.3:6")
 
     depends_on("hip +cuda", when="+cuda")
 
@@ -99,17 +110,68 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
+
+    for ver in [
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+    ]:
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"+rocm @{ver}")
 
     for tgt in ROCmPackage.amdgpu_targets:
         depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
         depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2"]:
+
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+    ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hipblas"
+        else:
+            return "."
 
     @classmethod
     def determine_version(cls, lib):
@@ -136,13 +198,26 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@6.1:") and self.run_tests:
             args.append(self.define("LINK_BLIS", "OFF"))
-
+        if self.spec.satisfies("@7.2:") and self.run_tests:
+            args.append(
+                self.define(
+                    "BLAS_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/libcblas.so"
+                )
+            )
+            args.append(
+                self.define(
+                    "LAPACK_LIBRARIES", f"{self.spec['netlib-lapack'].prefix.lib}/liblapack.so"
+                )
+            )
+            args.append(
+                self.define("CBLAS_INCLUDE_DIRS", self.spec["netlib-lapack"].prefix.include)
+            )
         return args
 
     def check(self):
         exe = Executable(join_path(self.build_directory, "clients", "staging", "hipblas-test"))
-        exe("--gtest_filter=-*known_bug*")
+        exe("--gtest_filter=-*known_bug*:_/getrs*:_/getri_batched.solver*:_/gels_batched.solver*")

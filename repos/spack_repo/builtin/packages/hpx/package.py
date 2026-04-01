@@ -47,8 +47,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     generator("ninja")
 
-    map_cxxstd = lambda cxxstd: "2a" if cxxstd == "20" else cxxstd
-    cxxstds = ("11", "14", "17", "20")
+    cxxstds = ("11", "14", "17", "20", "23")
     variant(
         "cxxstd",
         default="17",
@@ -111,11 +110,8 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     depends_on(Boost.with_default_variants)
     depends_on("boost +context", when="+generic_coroutines")
     for cxxstd in cxxstds:
-        depends_on("boost cxxstd={0}".format(map_cxxstd(cxxstd)), when="cxxstd={0}".format(cxxstd))
-
-    with when("@1.7:"):
-        for cxxstd in cxxstds:
-            depends_on(f"asio cxxstd={map_cxxstd(cxxstd)}", when=f"cxxstd={cxxstd}")
+        depends_on(f"boost cxxstd={cxxstd}", when=f"cxxstd={cxxstd}")
+        depends_on(f"asio cxxstd={cxxstd}", when=f"@1.7: cxxstd={cxxstd}")
 
     depends_on("gperftools", when="malloc=tcmalloc")
     depends_on("jemalloc", when="malloc=jemalloc")

@@ -15,6 +15,7 @@ class PyPythonLogstash(PythonPackage):
 
     license("MIT")
 
+    version("0.4.8", sha256="d04e1ce11ecc107e4a4f3b807fc57d96811e964a554081b3bbb44732f74ef5f9")
     version("0.4.6", sha256="10943e5df83f592b4d61b63ad1afff855ccc8c9467f78718f0a59809ba1fe68c")
 
     # pip silently replaces distutils with setuptools

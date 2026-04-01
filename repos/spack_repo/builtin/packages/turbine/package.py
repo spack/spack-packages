@@ -30,6 +30,7 @@ class Turbine(AutotoolsPackage):
     depends_on("adlbx@master", when="@master")
     depends_on("adlbx@:0.9.2", when="@1.2.3:1.2.99")
     depends_on("tcl", type=("build", "run"))
+    depends_on("tcl@:8.6", when="@:1.3.0", type=("build", "run"))
     depends_on("zsh", type=("build", "run"))
     depends_on("swig", type="build")
     depends_on("python", when="+python")
@@ -78,11 +79,7 @@ class Turbine(AutotoolsPackage):
         if "+r" in self.spec:
             r_location = "{0}/rlib/R".format(self.spec["r"].prefix)
             if not os.path.exists(r_location):
-                rscript = which("Rscript")
-                if rscript is not None:
-                    r_location = rscript("-e", "cat(R.home())", output=str)
-                else:
-                    msg = "Could not locate Rscript on your PATH!"
-                    raise RuntimeError(msg)
+                rscript = which("Rscript", required=True)
+                r_location = rscript("-e", "cat(R.home())", output=str)
             args.append("--with-r={0}".format(r_location))
         return args

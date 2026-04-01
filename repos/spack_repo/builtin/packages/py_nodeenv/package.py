@@ -13,6 +13,7 @@ class PyNodeenv(PythonPackage):
     homepage = "https://github.com/ekalinin/nodeenv"
     pypi = "nodeenv/nodeenv-1.3.3.tar.gz"
 
+    version("1.10.0", sha256="996c191ad80897d076bdfba80a41994c2b47c68e224c542b48feba42ba00f8bb")
     version("1.9.1", sha256="6ec12890a2dab7946721edbfbcd91f3319c6ccc9aec47be7c7e6b7011ee6645f")
     version("1.8.0", sha256="d51e0c37e64fbf47d017feac3145cdbb58836d7eee8c6f6d3b6880c5456227d2")
     version("1.7.0", sha256="e0e7f7dfb85fc5394c6fe1e8fa98131a2473e04311a45afb6508f7cf1836fa2b")

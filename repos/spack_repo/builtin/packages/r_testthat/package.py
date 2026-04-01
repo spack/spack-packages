@@ -30,6 +30,9 @@ class RTestthat(RPackage):
     version("2.1.0", sha256="cf5fa7108111b32b86e70819352f86b57ab4e835221bb1e83642d52a1fdbcdd4")
     version("1.0.2", sha256="0ef7df0ace1fddf821d329f9d9a5d42296085350ae0d94af62c45bd203c8415e")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.1:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@3.2.0:")
     depends_on("r-brio", type=("build", "run"), when="@3.0.1:")

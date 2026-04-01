@@ -18,7 +18,8 @@ class Mpb(AutotoolsPackage):
 
     version("1.11.1", sha256="7311fc525214c1184cad3e0626b8540c0b53b3c31c28e61ce6ec2860088eca46")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
@@ -29,6 +30,11 @@ class Mpb(AutotoolsPackage):
     depends_on("guile")
     depends_on("hdf5")
     depends_on("libctl")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags" and self.spec.satisfies("%c=gcc@14:"):
+            flags.append("-Wno-int-conversion")
+        return inject_flags(name, flags)
 
     def configure_args(self):
         spec = self.spec

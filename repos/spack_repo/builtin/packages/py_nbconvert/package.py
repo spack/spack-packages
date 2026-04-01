@@ -16,6 +16,7 @@ class PyNbconvert(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("7.16.6", sha256="576a7e37c6480da7b8465eefa66c17844243816ce1ccc372633c6b71c3c0f582")
     version("7.16.4", sha256="86ca91ba266b0a448dc96fa6c5b9d98affabde2867b363258703536807f9f7f4")
     version("7.16.3", sha256="a6733b78ce3d47c3f85e504998495b07e6ea9cf9bf6ec1c98dda63ec6ad19142")
     version("7.16.2", sha256="8310edd41e1c43947e4ecf16614c61469ebc024898eb808cce0999860fc9fb16")
@@ -41,7 +42,8 @@ class PyNbconvert(PythonPackage):
     depends_on("py-hatchling@0.25:", when="@7:", type="build")
 
     depends_on("py-beautifulsoup4", when="@6.4.4:", type=("build", "run"))
-    depends_on("py-bleach", when="@5:", type=("build", "run"))
+    depends_on("py-bleach+css", when="@7.16.5:", type=("build", "run"))
+    depends_on("py-bleach", when="@5:7.16.4", type=("build", "run"))
     depends_on("py-defusedxml", when="@5:", type=("build", "run"))
     depends_on("py-importlib-metadata@3.6:", when="@7: ^python@:3.9", type=("build", "run"))
     depends_on("py-jinja2@3:", when="@6.5:", type=("build", "run"))
@@ -61,7 +63,6 @@ class PyNbconvert(PythonPackage):
     depends_on("py-packaging", when="@6.5:", type=("build", "run"))
     depends_on("py-pandocfilters@1.4.1:", when="@5:", type=("build", "run"))
     depends_on("py-pygments@2.4.1:", when="@6:", type=("build", "run"))
-    depends_on("py-tinycss2", when="@6.5:", type=("build", "run"))
     depends_on("py-traitlets@5.1:", when="@7.14:", type=("build", "run"))
     depends_on("py-traitlets@5:", when="@6.2.0:", type=("build", "run"))
     depends_on("py-traitlets@4.2:", when="@5:", type=("build", "run"))
@@ -78,6 +79,7 @@ class PyNbconvert(PythonPackage):
     depends_on("py-entrypoints@0.2.2:", when="@5:6", type=("build", "run"))
     depends_on("py-testpath", when="@5:6.4", type=("build", "run"))
     depends_on("py-lxml", when="@6.5.1:7.0", type=("build", "run"))
+    depends_on("py-tinycss2", when="@6.5:7.16.4", type=("build", "run"))
 
     conflicts("^bleach@5.0.0")
 

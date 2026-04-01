@@ -20,6 +20,7 @@ class Asio(AutotoolsPackage):
     license("BSL-1.0")
 
     # As uneven minor versions of asio are not considered stable, they wont be added anymore
+    version("1.36.0", sha256="0310a76b27e1854f09f696b30de57dc490b5e1b17faed1eb8c9a2891f956e52b")
     version("1.34.2", sha256="f3bac015305fbb700545bd2959fbc52d75a1ec2e05f9c7f695801273ceb78cf5")
     version("1.34.0", sha256="061ed6c8b97527756aed3e34d2cbcbcb6d3c80afd26ed6304f51119e1ef6a1cd")
     version("1.32.0", sha256="f1b94b80eeb00bb63a3c8cef5047d4e409df4d8a3fe502305976965827d95672")
@@ -34,35 +35,10 @@ class Asio(AutotoolsPackage):
     version("1.22.2", sha256="985fc2d522f32d232d8386d2fa4ac6f2b25a0cad30495bf2e2e7997bce743f0b")
     version("1.22.1", sha256="30cb54a5de5e465d10ec0c2026d6b5917f5e89fffabdbabeb1475846fc9a2cf0")
     version("1.22.0", sha256="17bfd506f6d55c85a33603277a256b42ca5883bf290930040489ffeeed23724a")
-    version(
-        "1.21.0",
-        sha256="5d2d2dcb7bfb39bff941cabbfc8c27ee322a495470bf0f3a7c5238648cf5e6a9",
-        deprecated=True,  # non-stable
-    )
     version("1.20.0", sha256="34a8f07be6f54e3753874d46ecfa9b7ab7051c4e3f67103c52a33dfddaea48e6")
-    version(
-        "1.19.2",
-        sha256="5ee191aee825dfb1325cbacf643d599b186de057c88464ea98f1bae5ba4ff47a",
-        deprecated=True,  # non-stable
-    )
-    version(
-        "1.19.1",
-        sha256="2555e0a29256de5c77d6a34b14faefd28c76555e094ba0371acb0b91d483520e",
-        deprecated=True,  # non-stable
-    )
-    version(
-        "1.19.0",
-        sha256="11bc0e22fcdfb3f0b77574ac33760a3592c0dac7e7eece7668b823c158243629",
-        deprecated=True,  # non-stable
-    )
     version("1.18.2", sha256="8d67133b89e0f8b212e9f82fdcf1c7b21a978d453811e2cd941c680e72c2ca32")
     version("1.18.1", sha256="39c721b987b7a0d2fe2aee64310bd128cd8cc10f43481604d18cb2d8b342fd40")
     version("1.18.0", sha256="820688d1e0387ff55194ae20036cbae0fb3c7d11b7c3f46492369723c01df96f")
-    version(
-        "1.17.0",
-        sha256="46406a830f8334b3789e7352ed7309a39c7c30b685b0499d289eda4fd4ae2067",
-        deprecated=True,  # non-stable
-    )
     version("1.16.1", sha256="e40bbd531530f08318b7c7d7e84e457176d8eae6f5ad2e3714dc27b9131ecd35")
     version("1.16.0", sha256="c87410ea62de6245aa239b9ed2057edf01d7f66acc3f5e50add9a29343c87512")
 
@@ -83,7 +59,7 @@ class Asio(AutotoolsPackage):
         msg="asio v1.22.1 fixed missing includes necessary for gcc v12 and above",
     )
 
-    stds = ("11", "14", "17", "2a")
+    stds = ("11", "14", "17", "20", "23")
     variant(
         "cxxstd",
         default="11",

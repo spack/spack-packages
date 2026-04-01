@@ -19,6 +19,10 @@ class Openfast(CMakePackage):
 
     version("develop", branch="dev")
     version("master", branch="main")
+    version("5.0.0", tag="v5.0.0", commit="2895884d2be01862173c88d70f86b358d2f1a50a")
+    version("4.2.1", tag="v4.2.1", commit="2daa99a0f9f573642816d6f52c07a2e3b77a85f1")
+    version("4.2.0", tag="v4.2.0", commit="3a9d3f29f03b52b536d391fbd360683f847be712")
+    version("4.1.2", tag="v4.1.2", commit="02847314dfdc4069d70b8b493e37b12b810a11e2")
     version("4.1.1", tag="v4.1.1", commit="4350a49a6292144c6d8433671e4a9ea33b46c214")
     version("4.0.5", tag="v4.0.5", commit="f4c0b48139479fcfdca10b4dfed6ef86fa1e0d7d")
     version("4.0.4", tag="v4.0.4", commit="d28a823169e75029d73362b07a2942d0a454f03b")
@@ -40,13 +44,6 @@ class Openfast(CMakePackage):
     version("2.1.0", tag="v2.1.0", commit="f147b80521eff90c19f065eabeceac13de39ac59")
     version("2.0.0", tag="v2.0.0", commit="0769598a17e19b3ccd00a85cde389995f55024a8")
     version("1.0.0", tag="v1.0.0", commit="e788b9b18bd5ed96ea59d4bc0812d461bc430cfe")
-
-    with default_args(deprecated=True):
-        version("4.1.0", tag="v4.1.0", commit="8d2470b876a5229f9e4adf0391bda32096ed43b2")
-        version("4.0.3", tag="v4.0.3", commit="20632d7728da024478956b545876eb24a48dadbe")
-        version("4.0.2", tag="v4.0.2", commit="fc1110183bcc87b16d93129edabdce6d30e3a497")
-        version("4.0.1", tag="v4.0.1", commit="89358f1843b62071ee1a8ca943c1b5277bcbd45a")
-        version("4.0.0", tag="v4.0.0", commit="da685d4997fd17ea845812c785325efa72edcf47")
 
     patch("hub_seg_fault.patch", when="@2.7:3.2")
     patch("openmp.patch", when="@3.5.3:3.5.4")

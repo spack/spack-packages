@@ -17,6 +17,7 @@ class PyPyautogui(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.9.54", sha256="dd1d29e8fd118941cb193f74df57e5c6ff8e9253b99c7b04f39cfc69f3ae04b2")
     version("0.9.53", sha256="d31de8f712218d90be7fc98091fce1a12a3e9196e0c814eb9afd73bb2ec97035")
     version("0.9.52", sha256="a486cb6b818bcbcdf98b48d010c7cee964134fa394b756e8ce6e50d43b58ecc8")
 

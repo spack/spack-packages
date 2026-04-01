@@ -16,6 +16,7 @@ class PySrsly(PythonPackage):
 
     license("MIT")
 
+    version("2.5.2", sha256="4092bc843c71b7595c6c90a0302a197858c5b9fe43067f62ae6a45bc3baa1c19")
     version("2.4.6", sha256="47b41f323aba4c9c3311abf60e443c03a9efe9c69f65dc402d173c32f7744a6f")
     version("2.0.1", sha256="fa3c7375be8fe75f23c27feafbfb5f738d55ffdbf02964c6896fb7684f519a52")
     version("2.0.0", sha256="785b00e00406120dbef4ca82925051e6b60fe870c5f84f0d22b3632d574eb870")
@@ -25,6 +26,7 @@ class PySrsly(PythonPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("python@3.6:", when="@2:", type=("build", "run"))
+    depends_on("python@3.9:3.14", when="@2.5.2:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-wheel", when="@2:", type="build")
     depends_on("py-cython@0.25:", when="@2:", type="build")

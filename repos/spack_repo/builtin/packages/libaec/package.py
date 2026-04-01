@@ -37,6 +37,15 @@ class Libaec(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    # CMake v3 is meant to be backwards compatible.
+    # CMake v4 removes compatibility with versions older than v3.5.
+    # CMakeLists.txt: cmake_minimum_required(VERSION 3.1)
+    depends_on("cmake@3.1:3", type="build", when="@:1.0.3")
+    # CMakeLists.txt: cmake_minimum_required(VERSION 3.13...3.19)
+    depends_on("cmake@3.13:", type="build", when="@1.0.4:1.1.3")
+    # CMakeLists.txt: cmake_minimum_required(VERSION 3.26...3.31)
+    depends_on("cmake@3.26:", type="build", when="@1.1.4:")
+
     variant("shared", default=True, description="Builds a shared version of the library")
 
     @property

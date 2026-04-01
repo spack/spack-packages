@@ -15,12 +15,24 @@ class Rocthrust(CMakePackage):
     library works on HIP/ROCm platforms"""
 
     homepage = "https://github.com/ROCm/rocThrust"
-    git = "https://github.com/ROCm/rocThrust.git"
-    url = "https://github.com/ROCm/rocThrust/archive/rocm-6.1.0.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocThrust/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="995f9498402f207d04aac1edeb845abea295f6f132151ae1e04a6f0d0dc5edf5")
+    version("7.1.0", sha256="12b83d4e06b72019d213c2627da32a8d913b0d8acf7d89a9d2ef81e42143456d")
+    version("7.0.2", sha256="931b7db032e1a9d4bc571be03a8c0f1880957851527a53a71ca38e7d6a2fc695")
+    version("7.0.0", sha256="0b466f9f29f7fae8f625c04760297480692219b612fdb1869ab8991524f2a8e6")
+    version("6.4.3", sha256="58ab36c901d347a6e989d0103b6c24b907361a4258fa1bbbfb3dca7ae0a2f066")
     version("6.4.2", sha256="a9d84f29435e039c33d236fce9ce91da15f2fc6d6ef7dd391d75af9559441780")
     version("6.4.1", sha256="1b50e504b81ddadc4cf086aa48e4dbff26e6e0051fc48bf3b0438308890114d6")
     version("6.4.0", sha256="b590b69cfecf30b66202e426ad1adcb577651d72ed9dd7425281b5668e6262fe")
@@ -75,10 +87,23 @@ class Rocthrust(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocthrust"
+        else:
+            return "."
 
     def check(self):
         with working_dir(self.build_directory):
@@ -99,7 +124,7 @@ class Rocthrust(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.6.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
 
         return args

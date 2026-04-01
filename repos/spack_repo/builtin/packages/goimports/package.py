@@ -18,10 +18,13 @@ class Goimports(GoPackage):
 
     license("BSD-3-Clause", checked_by="alecbcs")
 
+    version("0.38.0", sha256="39c2467aa441a75a5c758100291846ec5304f8f76fea2e89043071b7c526e113")
+    version("0.37.0", sha256="6a88c95ce260c45fe9bdf49a3286db72e4fd3732a873676d551b777407345acf")
     version("0.33.0", sha256="22fd6c3146bf6cd38aa1b1a4f94ddf9e07ac5eb62f5db713ceb6d91df015cf4a")
     version("0.28.0", sha256="2c0aa55c1748ba406eec2db21bf44ebec62b1d5812b6ba350b5d421af1544adb")
     version("0.25.0", sha256="c536188f5db744371f526f3059960945ed580b3ee60553a4f01956251ab36d20")
 
+    depends_on("go@1.24:", type="build", when="@0.37:")
     depends_on("go@1.23:", type="build", when="@0.31:")
     depends_on("go@1.22:", type="build", when="@0.25:")
 

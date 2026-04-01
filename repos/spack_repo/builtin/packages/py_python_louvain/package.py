@@ -20,6 +20,7 @@ class PyPythonLouvain(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.16", sha256="b7ba2df5002fd28d3ee789a49532baad11fe648e4f2117cf0798e7520a1da56b")
     version("0.15", sha256="2a856edfbe29952a60a5538a84bb78cca18f6884a88b9325e85a11c8dd4917eb")
 
     depends_on("py-setuptools", type="build")

@@ -66,7 +66,7 @@ class Scale(MakefilePackage):
         env["SCALE_SYS"] = scale_sys_str
 
         # set SCALE_NETCDF_INCLUDE
-        nc_config = which("nc-config")
+        nc_config = which("nc-config", required=True)
         nc_str = nc_config("--cflags", "--fflags", output=str)
         try:
             env["SCALE_NETCDF_INCLUDE"] = nc_str.replace("\n", " ")
@@ -74,7 +74,7 @@ class Scale(MakefilePackage):
             env["SCALE_NETCDF_INCLUDE"] = nc_str.decode().replace("\n", " ")
 
         # set SCALE_NETCDF_LIBS
-        nc_config = which("nc-config")
+        nc_config = which("nc-config", required=True)
         nc_str = nc_config("--libs", "--flibs", output=str)
         try:
             env["SCALE_NETCDF_LIBS"] = nc_str.replace("\n", " ")

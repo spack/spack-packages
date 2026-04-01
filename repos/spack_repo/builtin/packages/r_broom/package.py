@@ -23,6 +23,7 @@ class RBroom(RPackage):
 
     license("MIT")
 
+    version("1.0.10", sha256="5ffabd4890dbe133c20f19feba6c687bcadb878c7a5404e0d088d87710630031")
     version("1.0.6", sha256="24cf36248dffbde38d3d81befa679e362bfd0526b9843bc536a85452a19fbccf")
     version("1.0.4", sha256="1d5f11b509786a8a45ffdd137243e24d6445f2944947cbd62a0734a06add0ad6")
     version("1.0.1", sha256="4b5e5aa485f0e23ed993088fc84159e31a00087e3a12327071dda25193382892")
@@ -36,22 +37,26 @@ class RBroom(RPackage):
     version("0.5.1", sha256="da9e6bf7cb8f960b83309cf107743976cc32b54524675f6471982abe3d1aae2e")
     version("0.4.2", sha256="9f409413623cf25e7110452e6215353af5114f7044d73af182bd6c10971c5a44")
 
-    depends_on("r@3.1:", type=("build", "run"))
+    depends_on("r@4.1:", type=("build", "run"), when="@1.0.9:")
     depends_on("r@3.5:", type=("build", "run"), when="@1.0.4:")
+    depends_on("r@3.1:", type=("build", "run"))
     depends_on("r-backports", type=("build", "run"), when="@0.5.0:")
-    depends_on("r-dplyr", type=("build", "run"))
+    depends_on("r-cli", type=("build", "run"), when="@1.0.8:")
     depends_on("r-dplyr@1.0.0:", type=("build", "run"), when="@0.7.3:")
+    depends_on("r-dplyr", type=("build", "run"))
     depends_on("r-generics@0.0.2:", type=("build", "run"), when="@0.5.1:")
     depends_on("r-glue", type=("build", "run"), when="@0.7.3:")
     depends_on("r-lifecycle", type=("build", "run"), when="@1.0.4:")
     depends_on("r-purrr", type=("build", "run"), when="@0.5.0:")
+    depends_on("r-rlang@1.1.0:", type=("build", "run"), when="@1.0.8:")
     depends_on("r-rlang", type=("build", "run"), when="@0.7.3:")
     depends_on("r-stringr", type=("build", "run"))
-    depends_on("r-tibble", type=("build", "run"), when="@0.5.0:")
     depends_on("r-tibble@3.0.0:", type=("build", "run"), when="@0.7.3:")
-    depends_on("r-tidyr", type=("build", "run"))
+    depends_on("r-tibble", type=("build", "run"), when="@0.5.0:")
     depends_on("r-tidyr@1.0.0:", type=("build", "run"), when="@0.7.3:")
+    depends_on("r-tidyr", type=("build", "run"))
 
+    # Historical dependencies
     depends_on("r-ellipsis", type=("build", "run"), when="@0.7.3:1.0.5")
     depends_on("r-plyr", type=("build", "run"), when="@:0.4.2")
     depends_on("r-psych", type=("build", "run"), when="@:0.4.2")

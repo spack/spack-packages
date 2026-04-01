@@ -18,11 +18,22 @@ class Rccl(CMakePackage):
 
     homepage = "https://github.com/ROCm/rccl"
     git = "https://github.com/ROCm/rccl.git"
-    url = "https://github.com/ROCm/rccl/archive/rocm-6.4.2.tar.gz"
+    url = "https://github.com/ROCm/rccl/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librccl"]
+    version("7.2.0", sha256="c884d730711e433b9df88af3cdf003eeeb3df6d98e93a09475f760a2aa017078")
+    version("7.1.1", sha256="eaa60bcf62feb3198553f2bcf6dcbfdfcecd0fdfabda41f1dae7d3f15fadbd68")
+    version("7.1.0", sha256="50ba486bc8a466a68bff9d6c9d7b3ebf8de9426906720fa44023b5390602b3b8")
+    version("7.0.2", sha256="3e4363163f5de772707c8deea349a00744200733693c76a07ac842e55b6ad19e")
+    version("7.0.0", sha256="b55ecb07e82b130c9ce4fe9c969c2192a18b462f0e87ac70386e01341af6a98f")
+    version(
+        "6.4.3",
+        tag="rocm-6.4.3",
+        commit="2f7ac66cd64c68d4af8bb4562ce193778a7e470e",
+        submodules=True,
+    )
     version(
         "6.4.2",
         tag="rocm-6.4.2",
@@ -86,13 +97,20 @@ class Rccl(CMakePackage):
     )
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
-    patch("0003-Fix-numactl-rocm-smi-path-issue.patch", when="@5.6")
     patch("0004-Set-rocm-core-path-for-version-file.patch", when="@6.0:6.2")
     patch("0004-Set-rocm-core-path-for-version-file-6.3.patch", when="@6.3")
     patch("0004-Set-rocm-core-path-for-version-file-6.4.patch", when="@6.4")
+    patch("0005-Add-rocm-core-roctracer-path.patch", when="@7.0")
+    patch(
+        "https://github.com/ROCm/rccl/commit/724680f87c8cfa1c4ffc8bfb5468fcc03e6606d9.patch?full_index=1",
+        sha256="a747b2f76acf938860b4319cafb90426506d5b931ca776d094fd0eb9580ef785",
+        when="@7.1",
+    )
+    # See https://github.com/ROCm/rocm-systems/pull/3231
+    patch("memory-3231.patch", when="@7.1:")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("numactl@2:")
@@ -115,6 +133,12 @@ class Rccl(CMakePackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -123,7 +147,7 @@ class Rccl(CMakePackage):
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -157,15 +181,26 @@ class Rccl(CMakePackage):
             self.define("BUILD_TESTS", self.run_tests),
             self.define("ENABLE_MSCCLPP", False),
             self.define("ENABLE_MSCCL_KERNEL", False),
+            # Anecdotally, memory usage is about ~8GB per job per GPU arch. The value could be
+            # computed from amd_gpu_targets, except in the case of auto. Leave constant for now.
+            self.define("RCCL_MAX_MEMORY", "32"),
+            self.define("RCCL_MEMORY_PER_LINK_JOB", "8"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", True))
+        if self.spec.satisfies("@7.0"):
+            args.append(self.define("EXPLICIT_ROCM_VERSION", self.version))
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCMCORE_PATH", self.spec["rocm-core"].prefix))
         return args
 
     def test_unit(self):
         """Run unit tests"""
-        unit_tests = which(join_path(self.prefix.bin, "rccl-UnitTests"))
+        unit_tests = which(join_path(self.prefix.bin, "rccl-UnitTests"), required=True)
         unit_tests()

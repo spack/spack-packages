@@ -13,7 +13,7 @@ class Shamrock(CMakePackage):
     """The Shamrock exascale framework for astrophysics"""
 
     homepage = "https://shamrock-code.github.io/"
-    url = "https://github.com/Shamrock-code/Shamrock/releases/download/v2025.05.0/shamrock-2025.05.0.tar"
+    url = "https://github.com/Shamrock-code/Shamrock/releases/download/v2025.10.0/shamrock-2025.10.0.tar"
     git = "https://github.com/Shamrock-code/Shamrock.git"
 
     maintainers("tdavidcl")
@@ -23,6 +23,7 @@ class Shamrock(CMakePackage):
     version("main", branch="main", submodules=True)
 
     version("2025.05.0", sha256="59d5652467fd9453a65ae7b48e0c9b7d4162edc8df92e09d08dcc5275407a897")
+    version("2025.10.0", sha256="72683352d862d7b3d39568151a17ea78633bd4976a40eacb77098d3ef0ca3c55")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")

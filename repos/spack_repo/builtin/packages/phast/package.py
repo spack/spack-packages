@@ -22,7 +22,7 @@ class Phast(MakefilePackage):
     depends_on("c", type="build")  # generated
 
     # phast cannot build with clapack using external blas
-    depends_on("clapack~external-blas")
+    depends_on("clapack")
 
     build_directory = "src"
 

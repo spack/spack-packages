@@ -21,15 +21,26 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     and cuSOLVER as backends."""
 
     homepage = "https://github.com/ROCm/hipSOLVER"
-    git = "https://github.com/ROCm/hipSOLVER.git"
-    url = "https://github.com/ROCm/hipSOLVER/archive/rocm-6.4.2.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libhipsolver"]
-
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hipSOLVER/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="bd664e3cd43bfcc7e94d5a387c27262c4b218d6d2e71e086992b174349dd1c10")
+    version("7.1.0", sha256="19b87cd27b9048964e94a77bb8c07a23ecfd5f96a73a91eebd1d365487bad2bf")
+    version("7.0.2", sha256="eac1a691bdc00ceb50580c1dab6cbffd6c7d579ebbad145857f58c4de84a3cae")
+    version("7.0.0", sha256="5ea1e0250651da458158432409bd4c06a53224902e17ea26f3b941aed15ee8aa")
+    version("6.4.3", sha256="403c2d0aacc3ea2dea5f6d61aca058337d448a224891b887ae1601ce68af8d15")
     version("6.4.2", sha256="5c1afee73157d042fd1dcae1ac416ea6f6f62207d7cb08595942b9f016673631")
     version("6.4.1", sha256="86ac30d5cf741a254485ed54c7f51e4c9bc9803cda31dab8e86f11b39742b28e")
     version("6.4.0", sha256="d6cf798c5f2d1d00a442f7a3f07c6f3a9e4ce5b3be36608aac7c97175dac9eb0")
@@ -99,6 +110,12 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "6.4.0",
         "6.4.1",
         "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
@@ -113,9 +130,16 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     patch("001-suite-sparse-include-path.patch", when="@6.1.0")
     patch("0001-suite-sparse-include-path-6.1.1.patch", when="@6.1.1:6.2")
 
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hipsolver"
+        else:
+            return "."
+
     def check(self):
         exe = join_path(self.build_directory, "clients", "staging", "hipsolver-test")
-        exe = which(exe)
+        exe = which(exe, required=True)
         exe(["--gtest_filter=-*known_bug*"])
 
     @classmethod
