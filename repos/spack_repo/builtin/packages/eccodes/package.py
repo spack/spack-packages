@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -51,9 +50,15 @@ class Eccodes(CMakePackage):
     license("Apache-2.0")
 
     version("develop", branch="develop")
+
+    version("2.46.0", sha256="7d959253d5e34aeb16caa14d4889ac06486d19821216743142733a32ee7b4935")
     version("2.45.0", sha256="6c84b39d7cc5e3b8330eeabe880f3e337f9b2ee1ebce20ea03eecd785f6c39a1")
+    version("2.42.0", sha256="60371b357cb011dee546db2eabace5b7e27f0f87d3ea4a5adde7891371b3c128")
     version("2.41.0", sha256="a1467842e11ed7f62a2f5cc1982e04eec62398f4962e6ba03ace7646f32cf270")
     version("2.40.0", sha256="f58d5d7390fce86c62b26d76b9bc3c4d7d9a6cf2e5f8145d1d598089195e51ff")
+    version("2.39.5", tag="2.39.5", commit="ccfac25b50894b9929a100fad2e967e5c15e50bc")
+    version("2.39.0", sha256="0c4d746700acc49af9c878925f1b26bdd42443ff7c2d7c676deb2babb6847afb")
+    version("2.38.3", sha256="fa7b7ffb22973ed1dfbeb208c042a67a805ab070f1288a0f1f0707a1020d1c81")
     version("2.38.0", sha256="96a21fbe8ca3aa4c31bb71bbd378b7fd130cbc0f7a477567d70e66a000ff68d9")
     version("2.36.4", sha256="adec6188dfd1d6ef71d86736d66f6b26486c188c3f37e8dcc016dc713ae482e6")
     version("2.34.0", sha256="3cd208c8ddad132789662cf8f67a9405514bfefcacac403c0d8c84507f303aba")
@@ -99,8 +104,10 @@ class Eccodes(CMakePackage):
         description="List of extra definitions to install",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    variant("geo", default=False, description="Enable eckit::geo")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("fortran", when="+fortran", type="build")
 
     depends_on("netcdf-c", when="+netcdf")
@@ -125,6 +132,8 @@ class Eccodes(CMakePackage):
     depends_on("ecbuild", type="build", when="@develop")
 
     conflicts("+openmp", when="+pthreads", msg="Cannot enable both POSIX threads and OMP")
+
+    depends_on("eckit", when="+geo")
 
     conflicts(
         "+netcdf",
@@ -325,6 +334,8 @@ class Eccodes(CMakePackage):
             self.define_from_variant("ENABLE_ECCODES_THREADS", "pthreads"),
             self.define_from_variant("ENABLE_ECCODES_OMP_THREADS", "openmp"),
             self.define_from_variant("ENABLE_MEMFS", "memfs"),
+            self.define_from_variant("ENABLE_GEOGRAPHY", "geo"),
+            self.define_from_variant("ENABLE_ECKIT_GEO", "geo"),
             self.define(
                 "ENABLE_PYTHON{0}".format("2" if self.spec.satisfies("@2.20.0:") else ""), False
             ),
