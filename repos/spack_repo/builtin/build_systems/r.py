@@ -113,3 +113,5 @@ class RPackage(Package):
     def url_for_version(self, version):
         if self.cran:
             return f"https://cran.r-project.org/src/contrib/Archive/{self.cran}/{self.cran}_{version}.tar.gz"
+
+        return super().url_for_version(version)
