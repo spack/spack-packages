@@ -1,0 +1,23 @@
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack.package import *
+
+
+class TutorialXad(CMakePackage):
+    """XAD is a high-performance C++ automatic differentiation library."""
+
+    homepage = "https://auto-differentiation.github.io/"
+    url = "https://github.com/auto-differentiation/xad/archive/refs/tags/v2.1.0.tar.gz"
+
+    maintainers("JohnyMarley")
+
+    license("GNU Affero General Public License v3.0", checked_by="JohnyMarley")
+
+    version("2.1.0", sha256="110729586b1a097c9e4a7ec34c48e60f3aec7ec61ef192a417ce0774cc32be43")
+
+    depends_on("cmake@3.15.2:", type="build")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    def cmake_args(self):
+        args = []
+        return args
