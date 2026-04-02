@@ -38,7 +38,7 @@ class PyNeurokit2(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("py-requests", when="@0.2.8:")
-        depends_on("py-numpy@2", when="@0.2.13")
+        depends_on("py-numpy@2:", when="@0.2.13")
         depends_on("py-numpy")
         depends_on("py-pandas@:2")
         depends_on("py-scipy")
