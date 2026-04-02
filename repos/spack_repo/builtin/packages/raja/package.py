@@ -258,6 +258,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     )
     conflicts("cxxstd=11", when="@0.14.0:")
     conflicts("cxxstd=14", when="@2025.09.0:")
+    conflicts("cxxstd=17", when="@2026.02:")
     conflicts("+sycl cxxstd=14", when="@2024.07.0:")
 
     depends_on("cxx", type="build")
