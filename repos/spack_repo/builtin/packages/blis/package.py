@@ -11,23 +11,24 @@ from spack.package import *
 # https://github.com/flame/blis/issues/195
 # https://github.com/flame/blis/issues/197
 
-# Mapping from Spack target names to BLIS config targets, ordered
-# from most specific to most generic. The first match wins.
-# When the Spack name matches the BLIS config name, the value is None.
-_targets = {
-    "zen3": None,
-    "zen2": None,
-    "zen": None,
-    "skylake_avx512": "skx",
-    "haswell": None,
-    "x86_64": None,
-}
-
 
 class BlisBase(MakefilePackage):
     """Base class for building BLIS, shared with the AMD optimized version
     of the library in the 'amdblis' package.
     """
+
+    # Mapping from Spack target names to BLIS config targets, ordered from most
+    # specific to most generic. The first match wins. When the Spack name matches
+    # the BLIS config name, the value is None. Subclasses can override this to
+    # add targets (e.g. amdblis adds zen4/zen5).
+    _targets = {
+        "zen3": None,
+        "zen2": None,
+        "zen": None,
+        "skylake_avx512": "skx",
+        "haswell": None,
+        "x86_64": None,
+    }
 
     maintainers("jeffhammond")
 
@@ -96,7 +97,7 @@ class BlisBase(MakefilePackage):
 
     def edit(self, spec, prefix):
         target = "auto"
-        for spack_target, blis_target in _targets.items():
+        for spack_target, blis_target in self._targets.items():
             if self.spec.satisfies(f"target={spack_target}:"):
                 target = blis_target or spack_target
                 break

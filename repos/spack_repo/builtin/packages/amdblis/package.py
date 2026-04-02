@@ -34,6 +34,9 @@ class Amdblis(BlisBase):
 
     requires("target=x86_64:", msg="AMD blis available only on x86_64")
 
+    # AMD's BLIS fork has zen4/zen5 configs not available in upstream flame/blis
+    _targets = {"zen5": None, "zen4": None, **BlisBase._targets}
+
     license("BSD-3-Clause")
 
     version("5.2", sha256="c553bd543eedc87920df9b82634ae4c02662145ed737f51fdf4c9bca5e588028")
