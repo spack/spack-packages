@@ -615,7 +615,7 @@ class Hdf5(CMakePackage):
         # discussed in  https://github.com/HDFGroup/hdf5/issues/6201
         # Should fix #4083, using work-around as discussed in hdf5 ticket
         if self.spec.satisfies("@1.14.5:1.14.6 +shared +threadsafe ^glibc@:2.34"):
-            #BUILD_SHARED_LIBS and HDF5_ENABLE_THREADSAFE are already set above
+            # BUILD_SHARED_LIBS and HDF5_ENABLE_THREADSAFE are already set above
             args.append(self.define("HDF5_ENABLE_THREADS", True))
         return args
 
