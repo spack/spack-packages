@@ -18,7 +18,7 @@ class PyAiohttp(PythonPackage):
     pypi = "aiohttp/aiohttp-3.8.1.tar.gz"
 
     license("Apache-2.0 AND MIT", when="@3.13:")
-    license("Apache-2.0")
+    license("Apache-2.0", when="@:3.12")
 
     version("3.13.5", sha256="9d98cc980ecc96be6eb4c1994ce35d28d8b1f5e5208a23b421187d1209dbb7d1")
     with default_args(deprecated=True):
