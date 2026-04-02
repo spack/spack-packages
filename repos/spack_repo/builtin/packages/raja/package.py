@@ -252,7 +252,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     variant(
         "cxxstd",
-        default="17",
+        default="20",
         values=("11", "14", "17", "20"),
         description="C++ standard to build with",
     )
