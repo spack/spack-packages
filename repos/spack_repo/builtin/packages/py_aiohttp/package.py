@@ -17,6 +17,7 @@ class PyAiohttp(PythonPackage):
     homepage = "https://github.com/aio-libs/aiohttp"
     pypi = "aiohttp/aiohttp-3.8.1.tar.gz"
 
+    license("Apache-2.0 AND MIT", when="@3.13:")
     license("Apache-2.0")
 
     version("3.13.5", sha256="9d98cc980ecc96be6eb4c1994ce35d28d8b1f5e5208a23b421187d1209dbb7d1")
@@ -51,30 +52,28 @@ class PyAiohttp(PythonPackage):
         # https://www.cvedetails.com/cve/CVE-2023-37276/
         version("3.7.4", sha256="5d84ecc73141d0a0d61ece0742bb7ff5751b0657dab8405f899d3ceb104cc7de")
 
-    depends_on("c", type="build")  # generated
-
-    depends_on("python@3.9:", when="@3.11:")
-    depends_on("python@3.8:", when="@3.9:")
-    depends_on("py-setuptools@46.4:", type="build")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("pkgconfig", when="@3.12:")
+        depends_on("py-setuptools@67:", when="@3.13.1:")
+        depends_on("py-setuptools@46.4:")
 
     with default_args(type=("build", "run")):
-        depends_on("py-aiohappyeyeballs@2.5.0:", when="@3.12:")
+        depends_on("py-aiohappyeyeballs@2.5:", when="@3.12:")
         depends_on("py-aiohappyeyeballs@2.3:", when="@3.10:")
-        depends_on("py-propcache@0.2.0:", when="@3.11:")
-        depends_on("py-attrs@17.3.0:")
-        depends_on("py-charset-normalizer@2:3", when="@3.8.4:")
-        depends_on("py-charset-normalizer@2", when="@3.8.0:3.8.3")
-        depends_on("py-multidict@4.5:6", when="@3.6.3:")
-        depends_on("py-async-timeout@4:5", when="@3.8: ^python@:3.10")
-        depends_on("py-async-timeout@3", when="@:3.7.4 ^python@:3.10")
-        depends_on("py-asynctest@0.13.0", when="@3.8.0: ^python@:3.7")
-        depends_on("py-yarl@1.17:", when="@3.11:")
-        depends_on("py-yarl@1")
-        depends_on("py-typing-extensions@3.7.4:", when="@3.8: ^python@:3.7")
-        depends_on("py-typing-extensions@3.6.5:", when="@3.7")
-        depends_on("py-frozenlist@1.1.1:", when="@3.8.1:")
         depends_on("py-aiosignal@1.4.0:", when="@3.12:")
         depends_on("py-aiosignal@1.1.2:", when="@3.8.1:")
+        depends_on("py-async-timeout@4:5", when="@3.8: ^python@:3.10")
+        depends_on("py-async-timeout@3", when="@:3.7.4 ^python@:3.10")
+        depends_on("py-attrs@17.3:")
+        depends_on("py-frozenlist@1.1.1:", when="@3.8.1:")
+        depends_on("py-multidict@4.5:6", when="@3.6.3:")
+        depends_on("py-propcache@0.2:", when="@3.11:")
+        depends_on("py-yarl@1.17:1", when="@3.11:")
+        depends_on("py-yarl@1")
 
-    # Historical dependencies
-    depends_on("py-chardet@2.0:3", when="@:3.7", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-chardet@2.0:3", when="@:3.7")
+        depends_on("py-charset-normalizer@2:3", when="@3.8.4:3.12")
+        depends_on("py-charset-normalizer@2", when="@3.8.0:3.8.3")
+        depends_on("py-typing-extensions@3.6.5:", when="@3.7")
