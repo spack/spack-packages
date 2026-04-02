@@ -131,6 +131,9 @@ class HdfEos2(AutotoolsPackage):
                 flags.append("-Wno-error=implicit-function-declaration")
                 flags.append("-Wno-error=implicit-int")
 
+            # Testing shows we need one extra flag for gcc@14
+            if self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=incompatible-pointer-types")
         return flags, None, None
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

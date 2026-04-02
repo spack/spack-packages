@@ -16,6 +16,7 @@ class PyNvidiaMlPy(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("13.590.48", sha256="8184d1be52914ac7f0991cd1c0d946c65dc88a840c754cd12c274b77b88760dd")
     version("12.575.51", sha256="6490e93fea99eb4e966327ae18c6eec6256194c921f23459c8767aee28c54581")
     version("12.570.86", sha256="0508d4a0c7b6d015cf574530b95a62ed4fc89da3b8b47e1aefe6777db170ec8b")
     version("12.560.30", sha256="f0254dc7400647680a072ee02509bfd46102b60bdfeca321576d4d4817e7fe97")

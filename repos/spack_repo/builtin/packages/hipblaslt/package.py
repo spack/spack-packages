@@ -16,7 +16,7 @@ class Hipblaslt(CMakePackage):
     and extends functionalities beyond a traditional BLAS library"""
 
     homepage = "https://github.com/ROCm/hipBLASLt"
-    git = "https://github.com/ROCm/hipBLASLt.git"
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
     tags = ["rocm"]
@@ -31,6 +31,7 @@ class Hipblaslt(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
     version("7.1.0", sha256="d9e138a15e8195a7e9b5e15240e50c557b830d50a2bafa27db14dad3884dbfd8")
     version("7.0.2", sha256="52d7c1c6852f501f5bd37fa962e6538592741792593a173d8b6963b8f7bd2c41")
@@ -92,9 +93,33 @@ class Hipblaslt(CMakePackage):
         "7.1.0",
         "7.1.1",
     ]:
+        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
+
+    for ver in [
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"@{ver}")
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
@@ -112,11 +137,12 @@ class Hipblaslt(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
     depends_on("msgpack-c")
@@ -146,6 +172,11 @@ class Hipblaslt(CMakePackage):
     patch("0004-Set-rocm-smi-ld-path-7.0.patch", when="@7.0")
     # https://github.com/ROCm/rocm-libraries/pull/2115
     patch("005-add-roctracer-include-dir.patch", when="@7.1")
+    patch(
+        "https://github.com/ROCm/rocm-libraries/commit/841ea340cbf3d7aa0dd37ba2da18a44128602b79.patch?full_index=1",
+        sha256="503555b92ccbc33e50a10e2ba1d38e8f3349b93d786c7f6b19aaacb736c9bf7c",
+        when="@7.2",
+    )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@:6.4"):
@@ -252,7 +283,7 @@ class Hipblaslt(CMakePackage):
 
     @property
     def root_cmakelists_dir(self):
-        if self.spec.satisfies("@7.1"):
+        if self.spec.satisfies("@7.1:"):
             return "projects/hipblaslt"
         else:
             return "."

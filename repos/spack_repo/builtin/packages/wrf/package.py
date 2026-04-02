@@ -485,7 +485,7 @@ class Wrf(Package):
     def patch_for_libmvec(self):
         if self.spec.satisfies("@3.9.1.1 %aocc"):
             fp = self.package_dir + "/patches/3.9/aocc_lmvec.patch"
-            which("patch")("-s", "-p1", "-i", "{0}".format(fp), "-d", ".")
+            which("patch", required=True)("-s", "-p1", "-i", "{0}".format(fp), "-d", ".")
 
     def run_compile_script(self):
         csh_bin = self.spec["tcsh"].prefix.bin.csh

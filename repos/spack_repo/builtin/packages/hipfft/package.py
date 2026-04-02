@@ -19,14 +19,21 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     inputs into the backend and results back to the application."""
 
     homepage = "https://github.com/ROCm/hipFFT"
-    git = "https://github.com/ROCm/hipFFT.git"
-    url = "https://github.com/ROCm/hipfft/archive/rocm-6.4.3.tar.gz"
+    git = "https://github.com/ROCm/rocm-libraries.git"
+
     tags = ["rocm"]
-    libraries = ["libhipfft"]
-
     maintainers("renjithravindrankannath", "srekolam", "afzpatel")
-
+    libraries = ["libhipfft"]
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/hipfft/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="c86e34055576a662bfcb5897a4fe4ab1a4e350b1c4f35b3262b5112c5c640163")
     version("7.1.0", sha256="94d8d901fdec2a41957f83139dea125bda4127af40d47f03b637a7920d73db50")
     version("7.0.2", sha256="78b929e2ecafceb996f94132ad19091d98da2967a0cddc24be964cefd6719ec5")
@@ -74,6 +81,9 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hip +cuda", when="+cuda")
 
+    # CUFFT_INCOMPLETE_PARAMETER_LIST has been removed
+    depends_on("cuda@:12", when="+cuda")
+
     for ver in [
         "5.7.0",
         "5.7.1",
@@ -97,6 +107,7 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"+rocm @{ver}")
@@ -105,6 +116,13 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"rocfft amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
     # https://github.com/ROCm/rocFFT/pull/85)
     patch("001-remove-submodule-and-sync-shared-files-from-rocFFT.patch", when="@6.0.0")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hipfft"
+        else:
+            return "."
 
     @classmethod
     def determine_version(cls, lib):

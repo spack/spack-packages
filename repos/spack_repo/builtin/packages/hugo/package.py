@@ -61,6 +61,13 @@ class Hugo(GoPackage):
         return match.group(1) if match else None
 
     @property
+    def cgo_enabled(self):
+        if self.spec.satisfies("+extended"):
+            return True
+        else:
+            return False
+
+    @property
     def build_args(self):
         args = super().build_args
         if self.spec.satisfies("+extended"):

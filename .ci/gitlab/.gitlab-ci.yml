@@ -9,9 +9,12 @@ variables:
   # PROTECTED_MIRROR_FETCH_DOMAIN: "https://binaries.spack.io"
   PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
   PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
-  SPACK_CI_DISABLE_STACKS:
-    value: /^.*(cray|darwin).*$/
-    expand: false
+  # SPACK_CI_DISABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
+  # SPACK_CI_ENABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
@@ -125,7 +128,6 @@ default:
     KUBERNETES_MEMORY_REQUEST: 16G
     # avoid moving targets like branches and tags
     SPACK_CONCRETIZER_REQUIRE_CHECKSUM: 1
-    SPACK_BACKTRACE: 1
   interruptible: true
   timeout: 60 minutes
   # Retry for everything but "legitimate build failures" (script_failure)
@@ -217,7 +219,10 @@ default:
     - $ErrorActionPreference=$ErrorActionOld
 
   tags: ["spack", "public", "medium", "x86_64-win"]
-  image: "ghcr.io/johnwparent/windows-server21h2:sha-1c12b61"
+  image: {
+    name: "ghcr.io/johnwparent/windows-server21h2:sha-1c12b61",
+    entrypoint: [""]
+  }
 
 .build:
   extends: [ ".base-job" ]
@@ -332,7 +337,7 @@ e4s-neoverse-v2-build:
 
 e4s-rocm-external-generate:
   extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-rocm-base-x86_64:v6.4.3-1760790880
+  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.0-1772831027
 
 e4s-rocm-external-build:
   extends: [ ".e4s-rocm-external", ".build" ]
@@ -354,7 +359,7 @@ e4s-rocm-external-build:
 
 e4s-oneapi-generate:
   extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.2-1759968993
+  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
 
 e4s-oneapi-build:
   extends: [ ".e4s-oneapi", ".build" ]
@@ -442,7 +447,7 @@ developer-tools-aarch64-linux-gnu-build:
     SPACK_CI_STACK_NAME: developer-tools-darwin
 
 developer-tools-darwin-generate:
-  tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
   extends: [ ".developer-tools-darwin", ".generate-base"]
 
 developer-tools-darwin-build:
@@ -488,28 +493,6 @@ radiuss-build:
   variables:
     SPACK_CI_TARGET: "x86_64_v4"
   tags: ["spack", "public", "aws", "medium", "x86_64_v4"]
-
-.radiuss-cuda:
-  variables:
-    SPACK_CI_STACK_NAME: radiuss-cuda
-
-radiuss-cuda-generate:
-  extends: [ ".radiuss-cuda", ".generate-x86_64", ".tags-x86_64_v4" ]
-  image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
-    entrypoint: ['']
-
-radiuss-cuda-build:
-  extends: [ ".radiuss-cuda", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/radiuss-cuda/cloud-ci-pipeline.yml
-        job: radiuss-cuda-generate
-  needs:
-    - artifacts: True
-      job: radiuss-cuda-generate
-
 
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
@@ -590,7 +573,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:main
+  image: ghcr.io/spack/tutorial-ubuntu-22.04:2026-03-10
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
@@ -603,115 +586,49 @@ tutorial-build:
     - artifacts: True
       job: tutorial-generate
 
-#######################################
-# Machine Learning - Linux x86_64 (CPU)
-#######################################
-.ml-linux-x86_64-cpu:
+#################################
+# Machine Learning - Linux x86_64
+#################################
+.ml-linux-x86_64:
   variables:
-    SPACK_CI_STACK_NAME: ml-linux-x86_64-cpu
+    SPACK_CI_STACK_NAME: ml-linux-x86_64
 
-ml-linux-x86_64-cpu-generate:
-  extends: [ ".generate-x86_64", .ml-linux-x86_64-cpu, ".tags-x86_64_v4" ]
+ml-linux-x86_64-generate:
+  extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4" ]
   image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
-ml-linux-x86_64-cpu-build:
-  extends: [ ".build", ".ml-linux-x86_64-cpu" ]
+ml-linux-x86_64-build:
+  extends: [ ".build", ".ml-linux-x86_64" ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/ml-linux-x86_64-cpu/cloud-ci-pipeline.yml
-        job: ml-linux-x86_64-cpu-generate
+      - artifact: jobs_scratch_dir/ml-linux-x86_64/cloud-ci-pipeline.yml
+        job: ml-linux-x86_64-generate
   needs:
     - artifacts: True
-      job: ml-linux-x86_64-cpu-generate
+      job: ml-linux-x86_64-generate
 
-########################################
-# Machine Learning - Linux x86_64 (CUDA)
-########################################
-.ml-linux-x86_64-cuda:
+##################################
+# Machine Learning - Linux aarch64
+##################################
+.ml-linux-aarch64:
   variables:
-    SPACK_CI_STACK_NAME: ml-linux-x86_64-cuda
+    SPACK_CI_STACK_NAME: ml-linux-aarch64
 
-ml-linux-x86_64-cuda-generate:
-  extends: [ ".generate-x86_64", .ml-linux-x86_64-cuda, ".tags-x86_64_v4" ]
+ml-linux-aarch64-generate:
+  extends: [ ".generate-aarch64", .ml-linux-aarch64 ]
   image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
 
-ml-linux-x86_64-cuda-build:
-  extends: [ ".build", ".ml-linux-x86_64-cuda"  ]
+ml-linux-aarch64-build:
+  extends: [ ".build", ".ml-linux-aarch64" ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/ml-linux-x86_64-cuda/cloud-ci-pipeline.yml
-        job: ml-linux-x86_64-cuda-generate
+      - artifact: jobs_scratch_dir/ml-linux-aarch64/cloud-ci-pipeline.yml
+        job: ml-linux-aarch64-generate
   needs:
     - artifacts: True
-      job: ml-linux-x86_64-cuda-generate
-
-########################################
-# Machine Learning - Linux x86_64 (ROCm)
-########################################
-.ml-linux-x86_64-rocm:
-  variables:
-    SPACK_CI_STACK_NAME: ml-linux-x86_64-rocm
-
-ml-linux-x86_64-rocm-generate:
-  extends: [ ".generate-x86_64", .ml-linux-x86_64-rocm, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
-
-ml-linux-x86_64-rocm-build:
-  extends: [ ".build", ".ml-linux-x86_64-rocm" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/ml-linux-x86_64-rocm/cloud-ci-pipeline.yml
-        job: ml-linux-x86_64-rocm-generate
-  needs:
-    - artifacts: True
-      job: ml-linux-x86_64-rocm-generate
-
-########################################
-# Machine Learning - Linux aarch64 (CPU)
-########################################
-.ml-linux-aarch64-cpu:
-  variables:
-    SPACK_CI_STACK_NAME: ml-linux-aarch64-cpu
-
-ml-linux-aarch64-cpu-generate:
-  extends: [ ".generate-aarch64", .ml-linux-aarch64-cpu ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
-
-ml-linux-aarch64-cpu-build:
-  extends: [ ".build", ".ml-linux-aarch64-cpu" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/ml-linux-aarch64-cpu/cloud-ci-pipeline.yml
-        job: ml-linux-aarch64-cpu-generate
-  needs:
-    - artifacts: True
-      job: ml-linux-aarch64-cpu-generate
-
-#########################################
-# Machine Learning - Linux aarch64 (CUDA)
-#########################################
-.ml-linux-aarch64-cuda:
-  variables:
-    SPACK_CI_STACK_NAME: ml-linux-aarch64-cuda
-
-ml-linux-aarch64-cuda-generate:
-  extends: [ ".generate-aarch64", .ml-linux-aarch64-cuda ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
-
-ml-linux-aarch64-cuda-build:
-  extends: [ ".build", ".ml-linux-aarch64-cuda" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/ml-linux-aarch64-cuda/cloud-ci-pipeline.yml
-        job: ml-linux-aarch64-cuda-generate
-  needs:
-    - artifacts: True
-      job: ml-linux-aarch64-cuda-generate
+      job: ml-linux-aarch64-generate
 
 #########################################
 # Machine Learning - Darwin aarch64 (MPS)
@@ -721,7 +638,7 @@ ml-linux-aarch64-cuda-build:
     SPACK_CI_STACK_NAME: ml-darwin-aarch64-mps
 
 ml-darwin-aarch64-mps-generate:
-  tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
   extends: [ ".ml-darwin-aarch64-mps", ".generate-base"]
 
 ml-darwin-aarch64-mps-build:
@@ -757,12 +674,12 @@ hep-build:
     - artifacts: True
       job: hep-generate
 
-########################################
+#####################
 # AWS ParallelCluster
-########################################
+#####################
 
 .aws-pcluster-generate:
-  image: { "name": "ghcr.io/spack/pcluster-amazonlinux-2:v2024-10-07", "entrypoint": [""] }
+  image: { "name": "ghcr.io/spack/pcluster-amazonlinux-2:2026-03-10", "entrypoint": [""] }
 
 # X86_64_V4 (one pipeline per target)
 .aws-pcluster-x86_64_v4:
@@ -771,18 +688,6 @@ hep-build:
 
 aws-pcluster-x86_64_v4-generate:
   extends: [ ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
-  before_script:
-    # TODO: Move this to the container next time it is rebuilt
-    - - uname -a || true
-      - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
-      - nproc || true
-      - cat /proc/loadavg || true
-      - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - *clone_spack
-      - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
-      - spack arch
-    - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
-      - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
 aws-pcluster-x86_64_v4-build:
   extends: [ ".aws-pcluster-x86_64_v4", ".build" ]
@@ -803,18 +708,6 @@ aws-pcluster-x86_64_v4-build:
 aws-pcluster-neoverse_v1-generate:
   # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
   extends: [ ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
-  before_script:
-    # TODO: Move this to the container next time it is rebuilt
-    - - uname -a || true
-      - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
-      - nproc || true
-      - cat /proc/loadavg || true
-      - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - *clone_spack
-      - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
-      - spack arch
-    - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
-      - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
 aws-pcluster-neoverse_v1-build:
   extends: [  ".aws-pcluster-neoverse_v1", ".build" ]
@@ -956,7 +849,7 @@ bootstrap-x86_64-linux-gnu-build:
     SPACK_CI_STACK_NAME: bootstrap-aarch64-darwin
 
 bootstrap-aarch64-darwin-generate:
-  tags: [ "macos-sequoia", "apple-clang-16", "aarch64-macos" ]
+  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
   extends: [.bootstrap-aarch64-darwin, .generate-base]
 
 bootstrap-aarch64-darwin-build:

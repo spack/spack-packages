@@ -100,7 +100,7 @@ class Pinentry(AutotoolsPackage):
 
     def check_version(self, exe_name):
         """Version check"""
-        exe = which(join_path(self.prefix.bin, exe_name))
+        exe = which(join_path(self.prefix.bin, exe_name), required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert str(self.version) in out
 

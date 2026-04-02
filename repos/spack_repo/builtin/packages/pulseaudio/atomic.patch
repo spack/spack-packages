@@ -1,0 +1,13 @@
+diff --git a/src/pulsecore/atomic.h b/src/pulsecore/atomic.h
+index a82ca83c5cee..6d52858dc194 100644
+--- a/src/pulsecore/atomic.h
++++ b/src/pulsecore/atomic.h
+@@ -117,7 +117,7 @@ static inline void* pa_atomic_ptr_load(const pa_atomic_ptr_t *a) {
+ }
+ 
+ static inline void pa_atomic_ptr_store(pa_atomic_ptr_t *a, void* p) {
+-    __atomic_store_n(&a->value, p, __ATOMIC_SEQ_CST);
++    __atomic_store_n(&a->value, (unsigned long)(p), __ATOMIC_SEQ_CST);
+ }
+ 
+ #else

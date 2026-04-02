@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
@@ -14,12 +14,20 @@ class ComposableKernel(CMakePackage):
     for Machine Learning Tensor Operators."""
 
     homepage = "https://github.com/ROCm/composable_kernel"
-    git = "https://github.com/ROCm/composable_kernel.git"
-    url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-6.4.3.tar.gz"
+    git = "https://github.com/ROCm/rocm-libraries.git"
+
     tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
-
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="e1174a4b6faa12ef31dac0324547fd49aca09fee380bd89ecd49a44bb34b72cc")
     version("7.1.0", sha256="03c7fffcad2aed373486315266fdf9dd400a280d383b543ff48ebd3acb3f985f")
     version("7.0.2", sha256="b7293e3451750f606ab845585b3dd4eb4e185d4dda4a22290d73e8874a45a26b")
@@ -63,7 +71,10 @@ class ComposableKernel(CMakePackage):
     depends_on("pkgconfig", type="build")
     depends_on("cmake@3.16:", type="build")
 
+    generator("ninja")
+
     for ver in [
+        "7.2.0",
         "7.1.1",
         "7.1.0",
         "7.0.2",
@@ -95,6 +106,13 @@ class ComposableKernel(CMakePackage):
     # https://github.com/ROCm/composable_kernel/commit/959073842c0db839d45d565eb260fd018c996ce4
     patch("0001-mark-kernels-maybe-unused.patch", when="@6.2")
 
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/composablekernel"
+        else:
+            return "."
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
 
@@ -121,11 +139,3 @@ class ComposableKernel(CMakePackage):
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("BUILD_DEV", "OFF"))
         return args
-
-    def build(self, spec, prefix):
-        with working_dir(self.build_directory):
-            # only instances is necessary to build and install
-            if self.spec.satisfies("@5.6.0:"):
-                make()
-            else:
-                make("instances")

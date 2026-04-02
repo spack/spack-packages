@@ -19,6 +19,7 @@ class PyPatsy(PythonPackage):
 
     license("PSF-2.0")
 
+    version("1.0.2", sha256="cdc995455f6233e90e22de72c37fcadb344e7586fb83f06696f54d92f8ce74c0")
     version("1.0.1", sha256="e786a9391eec818c054e359b737bbce692f051aee4c661f4141cc88fb459c0c4")
     version("0.5.4", sha256="7dabc527597308de0e8f188faa20af7e06a89bdaa306756dfc7783693ea16af4")
     version("0.5.3", sha256="bdc18001875e319bc91c812c1eb6a10be4bb13cb81eb763f466179dca3b67277")

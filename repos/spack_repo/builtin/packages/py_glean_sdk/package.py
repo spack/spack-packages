@@ -23,3 +23,4 @@ class PyGleanSdk(PythonPackage):
     depends_on("py-glean-parser@14.0", when="@:60.3")
     depends_on("py-glean-parser@14.3:", when="@60.4:")
     depends_on("py-maturin@1")
+    depends_on("rust", type="build")

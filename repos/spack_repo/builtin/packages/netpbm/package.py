@@ -27,6 +27,7 @@ class Netpbm(MakefilePackage):
 
     license("IJG AND BSD-3-Clause AND GPL-2.0-only")
 
+    version("10.86.48", sha256="709a98e871aeae892437274d68833c804dd41a4b8daf8fd978cac2782da4148a")
     version("10.73.43", sha256="f9fd9a7f932258224d1925bfce61396a15e0fad93e3853d6324ac308d1adebf8")
     version("10.73.40", sha256="8542ae62aa744dfd52c8e425208f895f082955a0629ac1749f80278d6afc0344")
     version("10.73.35", sha256="628dbe8490bc43557813d1fedb2720dfdca0b80dd3f2364cb2a45c6ff04b0f18")
@@ -148,7 +149,7 @@ class Netpbm(MakefilePackage):
             config.append("JBIGLIB={0}".format(spec["jbigkit"].libs.ld_flags))
             config.append("JBIGHDR_DIR={0}".format(spec["jbigkit"].headers.directories[0]))
         if "+X" in spec:
-            pkg_config = which("pkg-config")
+            pkg_config = which("pkg-config", required=True)
             if not pkg_config("x11", "--exists"):
                 config.append("X11LIB={0}".format(spec["libx11"].libs.ld_flags))
                 config.append("X11HDR_DIR={0}".format(spec["libx11"].headers.directories[0]))

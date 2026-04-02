@@ -14,9 +14,9 @@ rocm_arch="gfx908"
 spack_jobs=''
 # spack_jobs='-j 128'
 
-mfem='mfem@4.7.0'${compiler}
+mfem='mfem@4.9.0'${compiler}
 # mfem_dev='mfem@develop'${compiler}
-mfem_dev='mfem@4.7.0'${compiler}
+mfem_dev='mfem@4.9.0'${compiler}
 
 backends='+occa+raja+libceed'
 backends_specs='^occa~cuda ^raja~openmp'
