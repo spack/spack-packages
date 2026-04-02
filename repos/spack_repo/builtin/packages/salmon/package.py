@@ -174,7 +174,8 @@ class Salmon(CMakePackage):
             filter_file("PACKAGE_VERSION", "IOLIB_VERSION", findstadenio_module, string=True)
             filter_file("io_lib_config.h", "version.h", findstadenio_module, string=True)
 
-        # filter file to remove boost_system dep if boost @1.69: (or 1.89: when they removed the stub)
+        # filter file to remove boost_system dep if boost @1.69:
+        # (or 1.89: when they removed the stub)
         if self.spec.satisfies("@1.11.4:"):
             if self.spec.satisfies("%boost@1.89:"):
                 filter_file(
