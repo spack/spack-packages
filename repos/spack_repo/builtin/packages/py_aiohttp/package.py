@@ -30,9 +30,13 @@ class PyAiohttp(PythonPackage):
         # https://www.cvedetails.com/cve/CVE-2025-69225/
         # https://www.cvedetails.com/cve/CVE-2025-69224/
         # https://www.cvedetails.com/cve/CVE-2025-69223/
-        version("3.12.15", sha256="4fc61385e9c98d72fcdf47e6dd81833f47b2f77c114c29cd64a361be57a763a2")
+        version(
+            "3.12.15", sha256="4fc61385e9c98d72fcdf47e6dd81833f47b2f77c114c29cd64a361be57a763a2"
+        )
         # https://www.cvedetails.com/cve/CVE-2025-53643/
-        version("3.11.16", sha256="16f8a2c9538c14a557b4d309ed4d0a7c60f0253e8ed7b6c9a2859a7582f8b1b8")
+        version(
+            "3.11.16", sha256="16f8a2c9538c14a557b4d309ed4d0a7c60f0253e8ed7b6c9a2859a7582f8b1b8"
+        )
         # https://www.cvedetails.com/cve/CVE-2024-52304/
         # https://www.cvedetails.com/cve/CVE-2024-52303/
         # https://www.cvedetails.com/cve/CVE-2024-42367/
