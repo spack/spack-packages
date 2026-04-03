@@ -31,7 +31,6 @@ class Must(CMakePackage):
 
     variant("test", default=False, description="Enable must internal tests")
     variant("tsan", default=True, description="Enable thread sanitizer")
-    variant("fortran", default=True, description="Enable Fortran MPI checks")
     variant("graphviz", default=False, description="Use to generate graphs")
     variant("stackwalker", default=False, description="Unwind with stackwalker")
     variant("backward", default=True, description="Unwind with backward-cpp", when="@1.8:")
@@ -43,7 +42,7 @@ class Must(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build", when="+fortran")
+    depends_on("fortran", type="build")
 
     depends_on("cmake@3.9:")
     depends_on("python@3.1.5:", type=("build", "link", "run"))
