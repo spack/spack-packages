@@ -59,7 +59,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     with when("+test"):
         depends_on("python", type="run")
-        depends_on("py-pip", type="run")
+        depends_on("pip", type="run")
 
     build_targets = ["all"]
     install_targets = ["install"]

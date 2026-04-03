@@ -54,7 +54,7 @@ class Faiss(AutotoolsPackage, CMakePackage, CudaPackage):
 
     extends("python", when="+python")
     depends_on("python@3.7:", when="+python", type=("build", "run"))
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-wheel", when="+python", type="build")
     depends_on("py-setuptools", when="+python", type="build")
     depends_on("py-numpy", when="+python", type=("build", "run"))

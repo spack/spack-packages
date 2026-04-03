@@ -94,7 +94,7 @@ class Bohrium(CMakePackage, CudaPackage):
     depends_on("swig", type="build", when="+python")
     depends_on("py-cython", type="build", when="+python")
     depends_on("py-virtualenv", type="build", when="+python")
-    depends_on("py-pip", type="build", when="+python")
+    depends_on("pip", type="build", when="+python")
     depends_on("py-wheel", type="build", when="+python")
 
     depends_on("zlib-api", when="+proxy")

@@ -76,7 +76,7 @@ class Steps(CMakePackage):
     depends_on("py-cython")
     depends_on("py-gcovr", when="+coverage", type="build")
     depends_on("py-h5py", type=("build", "test", "run"))
-    depends_on("py-pip", type="build", when="@5:")
+    depends_on("pip", type="build", when="@5:")
     depends_on("py-matplotlib", type=("build", "test"))
     depends_on("py-build", type="build", when="@5:")
     depends_on("py-mpi4py", when="+distmesh", type=("build", "test", "run"))

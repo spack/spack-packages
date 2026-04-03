@@ -86,7 +86,7 @@ class AoclDa(CMakePackage):
         depends_on("py-setuptools", type=("build", "run"))
         depends_on("py-pybind11", type=("build", "link", "run"))
         depends_on("py-numpy", type=("build", "run"))
-        depends_on("py-pip", type=("build", "run"))
+        depends_on("pip", type=("build", "run"))
         depends_on("patchelf", type="build")
         depends_on("py-pytest", type="test")
         depends_on("py-scikit-learn", type=("test", "run"))

@@ -26,7 +26,7 @@ class PyDevito(PythonPackage):
     variant("mpi", default=False, description="Enable MPI support")
     variant("optional", default=False, description="Enable matplolib & pandas support")
 
-    depends_on("py-pip@9.0.1:", type="build")
+    depends_on("pip@9.0.1:", type="build")
     depends_on("py-setuptools", type="build")
 
     depends_on("py-numpy@1.17:", type=("build", "run"))

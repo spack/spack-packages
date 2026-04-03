@@ -57,7 +57,7 @@ class Mxnet(CMakePackage, CudaPackage, PythonExtension):
 
     # python/setup.py
     extends("python", when="+python")
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-wheel", when="+python", type="build")
     depends_on("py-setuptools", when="+python", type="build")
     depends_on("py-cython", when="+python", type="build")

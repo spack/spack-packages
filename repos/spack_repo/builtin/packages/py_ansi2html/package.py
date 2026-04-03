@@ -20,4 +20,4 @@ class PyAnsi2html(PythonPackage):
     version("1.6.0", sha256="0f124ea7efcf3f24f1f9398e527e688c9ae6eab26b0b84e1299ef7f94d92c596")
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")

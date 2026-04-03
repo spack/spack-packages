@@ -36,7 +36,7 @@ class Costo(CMakePackage):
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-mgmetis", type=("build", "run"))
     depends_on("py-colorama", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
 
     def cmake_args(self):
         args = [

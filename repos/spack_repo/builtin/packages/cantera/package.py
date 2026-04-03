@@ -194,7 +194,7 @@ class Cantera(SConsPackage):
     depends_on("py-numpy", when="+python", type=("build", "run"))
     depends_on("py-scipy", when="+python", type=("build", "run"))
     depends_on("py-3to2", when="+python", type=("build", "run"))
-    depends_on("py-pip", when="+python", type=("build", "run"))
+    depends_on("pip", when="+python", type=("build", "run"))
     depends_on("py-matplotlib", when="+python", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.17.16:", when="+python", type=("build", "run"))
 

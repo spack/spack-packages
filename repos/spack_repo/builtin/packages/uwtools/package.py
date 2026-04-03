@@ -29,7 +29,7 @@ class Uwtools(PythonPackage):
     version("2.7.2", sha256="56816d543664792258bfa7dfb7e4cc66f794959dc92dc3710021f40a2b8571a4")
     version("2.6.2", sha256="d0922ddd2b3bdbeb925c2e4694f929f3e966145d2929e74ab9f9c9ecd27b674a")
 
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     # Maximum Python version limited here for compatibility with the JCSDA unified environment
     depends_on("python@3.9:3.11")
     depends_on("py-setuptools", type="build")

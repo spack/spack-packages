@@ -65,7 +65,7 @@ class Mlpack(CMakePackage):
         depends_on("py-numpy@:1", when="@:4.4.0")
         depends_on("py-pandas@0.15.0:")
         # ref: src/mlpack/bindings/python/PythonInstall.cmake
-        depends_on("py-pip")
+        depends_on("pip")
         depends_on("py-wheel")
         # ref: src/mlpack/bindings/python/setup.py.in
         depends_on("py-setuptools", type="build")

@@ -21,7 +21,7 @@ class PyOpencvPython(PythonPackage):
     depends_on("cxx", type="build")
 
     depends_on("py-packaging", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-scikit-build@0.14:", type="build")
     # restrictions on setuptools not needed, builds fine with newer versions
     depends_on("py-setuptools", type="build")

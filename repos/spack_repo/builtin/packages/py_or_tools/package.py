@@ -24,7 +24,7 @@ class PyOrTools(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.14:", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type=("build", "run"))

@@ -103,7 +103,7 @@ class PyNumpy(PythonPackage):
 
     with default_args(type="build"):
         # Required to use --config-settings
-        depends_on("py-pip@23.1:", when="@1.26:")
+        depends_on("pip@23.1:", when="@1.26:")
 
         # Build dependencies (do not include upper bound unless known issues)
         depends_on("py-meson-python@0.18:", when="@2.4:")

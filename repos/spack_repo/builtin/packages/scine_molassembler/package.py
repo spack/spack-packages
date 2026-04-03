@@ -67,7 +67,7 @@ class ScineMolassembler(CMakePackage):
     depends_on("nauty")
     depends_on("nlohmann-json", type="build")
     depends_on("python@3.6:", when="+python", type=("build", "run"))
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-pybind11@2.6.2:", when="+python", type="build")
     # depends_on("ringdecomposerlib")
     depends_on("scine-core")

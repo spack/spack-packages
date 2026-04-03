@@ -36,7 +36,7 @@ class RedisAi(MakefilePackage):
     depends_on("git", type=("build", "link"))
     depends_on("git-lfs", type=("build", "link"))
     depends_on("python@3:", type=("build", "link"))
-    depends_on("py-pip", type=("build", "link"))
+    depends_on("pip", type=("build", "link"))
     depends_on("cmake@3.0:", type=("build", "link"))
     depends_on("gmake", type=("build", "link"))
 

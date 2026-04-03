@@ -60,7 +60,7 @@ class Charliecloud(AutotoolsPackage):
     depends_on("bats@1.10.0:")
 
     # Require pip and wheel for git checkout builds (master).
-    depends_on("py-pip@21.1.2:", type="build", when="@master")
+    depends_on("pip@21.1.2:", type="build", when="@master")
     depends_on("py-wheel", type="build", when="@master")
 
     # See https://github.com/spack/spack/pull/16049.

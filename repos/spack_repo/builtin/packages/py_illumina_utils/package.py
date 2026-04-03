@@ -25,7 +25,7 @@ class PyIlluminaUtils(PythonPackage):
     version("2.2", sha256="6039c72d077c101710fe4fdbfeaa30caa1c3c2c84ffa6295456927d82def8e6d")
 
     depends_on("python@3:", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"))

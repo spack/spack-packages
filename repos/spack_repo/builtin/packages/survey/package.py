@@ -78,7 +78,7 @@ class Survey(CMakePackage):
 
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-pandas", type=("build", "run"))
     depends_on("py-psutil", type=("build", "run"))
     depends_on("py-sqlalchemy", type=("build", "run"))
@@ -211,7 +211,7 @@ class Survey(CMakePackage):
             join_path(self.spec["py-importlib-resources"].prefix, self.site_packages_dir),
         )
         env.prepend_path(
-            "PYTHONPATH", join_path(self.spec["py-pip"].prefix, self.site_packages_dir)
+            "PYTHONPATH", join_path(self.spec["pip"].prefix, self.site_packages_dir)
         )
         env.prepend_path(
             "PYTHONPATH", join_path(self.spec["py-seaborn"].prefix, self.site_packages_dir)

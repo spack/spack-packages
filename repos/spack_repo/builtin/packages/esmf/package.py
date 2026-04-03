@@ -110,7 +110,7 @@ class Esmf(MakefilePackage, PythonExtension):
     # python library
     with when("+python"):
         extends("python")
-        depends_on("py-pip")
+        depends_on("pip")
         depends_on("py-setuptools", type="build")
         depends_on("py-wheel", type="build")
         depends_on("py-mpi4py", when="+mpi")

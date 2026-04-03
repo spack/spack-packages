@@ -42,12 +42,12 @@ class PyXgboost(PythonPackage):
     with default_args(type="build"):
         depends_on("py-hatchling@1.12.1:", type="build", when="@2:")
         # Required to use --config-settings
-        depends_on("py-pip@22.1:", when="@2:")
+        depends_on("pip@22.1:", when="@2:")
 
         # Historical dependencies
         depends_on("py-setuptools", when="@:1")
         # in newer pip versions --install-option does not exist
-        depends_on("py-pip@:23.0", when="@:1")
+        depends_on("pip@:23.0", when="@:1")
 
     with default_args(type=("build", "run")):
         depends_on("py-numpy", type=("build", "run"))

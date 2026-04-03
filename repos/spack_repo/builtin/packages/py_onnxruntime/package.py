@@ -61,7 +61,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
 
     extends("python")
     depends_on("python", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-pybind11", type="build")

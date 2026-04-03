@@ -39,7 +39,7 @@ class PyScs(PythonPackage, CudaPackage):
 
     # in newer pip versions --install-option does not exist
     # technically only the variants need this restriction
-    depends_on("py-pip@:23.0", type="build")
+    depends_on("pip@:23.0", type="build")
 
     def install_options(self, spec, prefix):
         args = []

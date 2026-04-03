@@ -23,7 +23,7 @@ class PyOpenmim(PythonPackage):
     depends_on("py-model-index", type=("build", "run"))
     depends_on("py-opendatalab", type=("build", "run"))
     depends_on("py-pandas", type=("build", "run"))
-    depends_on("py-pip@19.3:", type=("build", "run"))
+    depends_on("pip@19.3:", type=("build", "run"))
     depends_on("py-requests", type=("build", "run"))
     depends_on("py-rich", type=("build", "run"))
     depends_on("py-tabulate", type=("build", "run"))

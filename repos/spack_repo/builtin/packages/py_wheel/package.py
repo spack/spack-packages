@@ -42,7 +42,7 @@ class PyWheel(Package, PythonExtension):
     depends_on("python +ctypes", type=("build", "run"))
     depends_on("python@3.8:", when="@0.43.0:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.38:", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
 
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/{0}/w/wheel/wheel-{1}-{0}-none-any.whl"

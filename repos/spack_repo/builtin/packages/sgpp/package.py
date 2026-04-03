@@ -105,7 +105,7 @@ class Sgpp(SConsPackage):
     depends_on("dakota", when="+dakota", type=("build", "run"))
     # Python dependencies
     extends("python", when="+python")
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-wheel", when="+python", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("python@3.7:", type=("build", "run"))

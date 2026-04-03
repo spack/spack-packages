@@ -32,7 +32,7 @@ class Mozjs(AutotoolsPackage):
     depends_on("curl", type="build")
     depends_on("llvm", type="build")
     depends_on("python@:3.13", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("rust", type="build")
     depends_on("cbindgen@0.27:", type="build", when="@140:")
     depends_on("cbindgen", type="build")

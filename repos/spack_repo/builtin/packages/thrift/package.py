@@ -88,7 +88,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
 
     with when("+python"):
         extends("python", type=("build", "link", "run"))
-        depends_on("py-pip", type="build")
+        depends_on("pip", type="build")
         depends_on("py-setuptools", type="build")
         depends_on("py-six@1.7.2:", type=("build", "run"))
 

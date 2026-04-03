@@ -25,7 +25,7 @@ class PyGrayskull(PythonPackage):
     depends_on("py-colorama", type=("build", "run"))
     depends_on("py-conda-souschef@2.2.3:", type=("build", "run"))
     depends_on("py-packaging@21.3:", type=("build", "run"))
-    depends_on("py-pip", type=("build", "run"))
+    depends_on("pip", type=("build", "run"))
     depends_on("py-pkginfo", type=("build", "run"))
     depends_on("py-progressbar2@3.53:", type=("build", "run"))
     depends_on("py-rapidfuzz@3:", type=("build", "run"))

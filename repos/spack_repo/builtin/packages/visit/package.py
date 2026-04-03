@@ -104,7 +104,7 @@ class Visit(CMakePackage):
     # Fix const-correctness in VTK interface
     patch("vtk-8.2-constcorrect.patch", when="@3.3.3 ^vtk@8.2.1a")
 
-    # Add dectection for py-pip and enable python extensions with building with GUI
+    # Add dectection for pip and enable python extensions with building with GUI
     patch("19958-enable-python-and-check-pip.patch", when="@3.4:3.4.1 +python")
     patch("20127-remove-relink-visitmodule-py-setup.patch", when="@3.4.1 +python")
 
@@ -160,7 +160,7 @@ class Visit(CMakePackage):
     # python@3.8 doesn't work with older VisIt.
     depends_on("python@3.2:3.7,3.9:", when="@:3.2 +python")
     depends_on("python@3.2:", when="@3.3: +python")
-    depends_on("py-pip", when="+python")
+    depends_on("pip", when="+python")
     extends("python", when="+python")
 
     # VisIt uses the hdf5 1.8 api

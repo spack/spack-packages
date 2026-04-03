@@ -47,7 +47,7 @@ class Ecflow(CMakePackage):
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
 
     # v4: Boost-1.7X release not working well on serialization
     depends_on("boost@1.53:1.69+python", when="@:4")

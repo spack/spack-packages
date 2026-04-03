@@ -22,7 +22,7 @@ class PyAbipy(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     # in newer pip versions --install-option does not exist
-    depends_on("py-pip@:23.0", when="+ipython", type="build")
+    depends_on("pip@:23.0", when="+ipython", type="build")
 
     depends_on("py-monty", when="@0.7:", type=("build", "run"))
     depends_on("py-tabulate", type=("build", "run"))

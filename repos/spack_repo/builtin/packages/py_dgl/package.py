@@ -58,7 +58,7 @@ class PyDgl(CMakePackage, PythonExtension, CudaPackage):
     # See python/setup.py
     extends("python")
     depends_on("python@3.5:", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-cython", type="build")

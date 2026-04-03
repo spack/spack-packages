@@ -25,7 +25,7 @@ class PyFastai(PythonPackage):
 
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools@36.2:", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-packaging", type="build")
     depends_on("py-fastdownload@0.0.5:1", type=("build", "run"))
     depends_on("py-fastcore@1.3.22:1.3", type=("build", "run"))

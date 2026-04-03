@@ -74,7 +74,7 @@ class PyPybind11(CMakePackage, PythonExtension):
     depends_on("py-pytest", type="test")
     depends_on("py-build", type="test", when="@3:")
     depends_on("py-tomlkit", type="test", when="@3:")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-wheel", type="build")
     extends("python")
 

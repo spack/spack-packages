@@ -34,7 +34,7 @@ class ScineSerenity(CMakePackage):
 
     depends_on("boost+system+filesystem+program_options cxxstd=17 @1.65.0:")
     depends_on("python@3.6:", when="+python", type=("build", "run"))
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("scine-core")
     depends_on("scine-utilities")
     depends_on("scine-utilities+python", when="+python", type=("build", "run"))

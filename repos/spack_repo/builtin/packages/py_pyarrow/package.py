@@ -90,7 +90,7 @@ class PyPyarrow(PythonPackage):
 
     # Historical dependencies
     # In newer pip versions --install-option does not exist
-    depends_on("py-pip@:23.0", when="@:16", type="build")
+    depends_on("pip@:23.0", when="@:16", type="build")
 
     with default_args(type=("build", "run")):
         # pyproject.toml, setup.py

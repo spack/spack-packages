@@ -29,7 +29,7 @@ class PyNapariPluginManager(PythonPackage):
         depends_on("py-qtpy")
         depends_on("py-superqt")
         depends_on("py-packaging")
-        depends_on("py-pip")
+        depends_on("pip")
         # Other dependencies include napari - but that'd be circular
 
     patch("clean_pyproject_toml.patch")

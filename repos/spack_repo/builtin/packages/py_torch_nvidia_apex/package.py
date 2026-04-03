@@ -64,7 +64,7 @@ class PyTorchNvidiaApex(PythonPackage, CudaPackage):
     with default_args(type=("build")):
         depends_on("py-setuptools")
         depends_on("py-packaging")
-        depends_on("py-pip")
+        depends_on("pip")
     with default_args(type=("build", "link", "run")):
         depends_on("python@3:")
         depends_on("py-torch@0.4:")
@@ -113,7 +113,7 @@ class PyTorchNvidiaApex(PythonPackage, CudaPackage):
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.torch_cuda_arch_list(env)
 
-    @when("^py-pip@:23.0")
+    @when("^pip@:23.0")
     def global_options(self, spec, prefix):
         args = []
         if spec.satisfies("^py-torch@1.0:"):
@@ -152,7 +152,7 @@ class PyTorchNvidiaApex(PythonPackage, CudaPackage):
 
         return args
 
-    @when("^py-pip@23.1:")
+    @when("^pip@23.1:")
     def config_settings(self, spec, prefix):
         global_options = ""
         if spec.satisfies("^py-torch@1.0:"):

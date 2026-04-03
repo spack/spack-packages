@@ -58,7 +58,7 @@ class PyHail(MakefilePackage):
     )
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-build@1.1+virtualenv", type="build", when="@0.2.131:")
     depends_on("c", type="build", when="+native")
@@ -199,7 +199,7 @@ class PyHail(MakefilePackage):
         # Hail likes variables passed in to Make
         variables = [
             f"HAIL_PYTHON3={spec['python'].home.bin.python3}",
-            f"PIP={spec['py-pip'].home.bin.pip}",
+            f"PIP={spec['pip'].home.bin.pip}",
             f"SCALA_VERSION={spec['scala'].version}",
             f"SPARK_VERSION={spec['spark'].version}",
         ]

@@ -140,7 +140,7 @@ class Legion(CMakePackage, ROCmPackage):
     depends_on("python@3.8:", when="+python")
     depends_on("py-cffi", when="+python")
     depends_on("py-numpy", when="+python")
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-setuptools", when="+python", type="build")
 
     depends_on("papi", when="+papi")

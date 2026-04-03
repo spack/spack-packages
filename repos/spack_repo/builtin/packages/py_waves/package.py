@@ -39,7 +39,7 @@ class PyWaves(PythonPackage):
     depends_on("python@3.9:", type=("build", "run"))
 
     depends_on("git", when="@main", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-build", type="build")
     depends_on("py-setuptools@64:", type="build")
     depends_on("py-setuptools-scm@8:", type="build")

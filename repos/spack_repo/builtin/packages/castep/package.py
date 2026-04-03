@@ -69,7 +69,7 @@ class Castep(CMakePackage, MakefilePackage):
     depends_on("gcc@9:", when="@25:", type="build")
     depends_on("gcc@4.9:", when="@21.11:", type="build")
     extends("python@:3.11", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))

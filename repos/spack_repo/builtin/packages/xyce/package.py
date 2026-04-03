@@ -89,7 +89,7 @@ class Xyce(CMakePackage):
     conflicts("@7.10:", when="%gcc@:8")
 
     depends_on("python@3:", type=("build", "link", "run"), when="+pymi")
-    depends_on("py-pip", type="run", when="+pymi")
+    depends_on("pip", type="run", when="+pymi")
     depends_on("py-pybind11@2.6.1:", type=("build", "link"), when="@:7.8 +pymi")
     depends_on("py-pybind11@2.13:", type=("build", "link"), when="@7.9: +pymi")
     depends_on("python-venv", when="+pymi")

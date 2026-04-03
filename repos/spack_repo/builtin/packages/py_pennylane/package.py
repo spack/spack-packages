@@ -34,7 +34,7 @@ class PyPennylane(PythonPackage):
 
     depends_on("python@3.8:", type=("build", "run"), when="@:0.31.0")
     depends_on("python@3.9:", type=("build", "run"), when="@0.32.0:")
-    depends_on("py-pip", type=("build", "run"))  # Runtime req for pennylane.about()
+    depends_on("pip", type=("build", "run"))  # Runtime req for pennylane.about()
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools", type=("build", "run"), when="@0.33")
 

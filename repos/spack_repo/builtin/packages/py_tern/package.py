@@ -22,4 +22,4 @@ class PyTern(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-wheel", type="build")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")

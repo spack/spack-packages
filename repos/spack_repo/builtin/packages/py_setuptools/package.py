@@ -74,12 +74,12 @@ class PySetuptools(Package, PythonExtension):
         # https://github.com/pypa/setuptools/issues/3661
         depends_on("python@:3.11", when="@:67")
 
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
 
     conflicts(
-        "^python@:3.9 ^py-pip@25:",
+        "^python@:3.9 ^pip@25:",
         when="@:75.1.0",
-        msg="py-pip@25: vendors pyproject-hooks@1.2. "
+        msg="pip@25: vendors pyproject-hooks@1.2. "
         "The combination pyproject-hooks@1.2, python@:3.9, and py-setuptools@:75.1.0 is broken. "
         "See https://github.com/pypa/pyproject-hooks/issues/206 for details.",
     )

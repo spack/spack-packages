@@ -86,7 +86,7 @@ class PyPennylaneLightningKokkos(CMakePackage, PythonExtension, CudaPackage, ROC
     depends_on("python@3.9:", type=("build", "run"), when="@0.32:")
     depends_on("py-setuptools", type="build")
     depends_on("py-pybind11", type="link")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-pennylane@0.28:0.30", type=("build", "run"), when="@:0.30")
     depends_on("py-pennylane@0.30:", type=("build", "run"), when="@0.31")

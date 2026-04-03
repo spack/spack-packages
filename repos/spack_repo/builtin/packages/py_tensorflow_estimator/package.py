@@ -37,7 +37,7 @@ class PyTensorflowEstimator(Package):
 
     with default_args(type="build"):
         depends_on("bazel@0.19.0:")
-        depends_on("py-pip")
+        depends_on("pip")
         depends_on("py-wheel")
 
     # See expect_*_installed in tensorflow_estimator/python/estimator/BUILD

@@ -46,7 +46,7 @@ class Cmor(AutotoolsPackage):
     depends_on("udunits")
 
     extends("python", when="+python")
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-wheel", when="+python", type="build")
     depends_on("py-numpy", type=("build", "run"), when="+python")
 

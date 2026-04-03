@@ -211,7 +211,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
         extends("python")
         depends_on("py-numpy", type=("build", "link", "run"))
-        depends_on("py-pip", type="build")
+        depends_on("pip", type="build")
         depends_on("py-wheel", when="@0.9.4:", type="build")
         depends_on("py-setuptools", type="build")
 

@@ -183,7 +183,7 @@ class Rocblas(CMakePackage):
         depends_on("py-pyyaml", type="build")
         depends_on("py-wheel", type="build")
         depends_on("py-msgpack", type="build")
-        depends_on("py-pip", type="build")
+        depends_on("pip", type="build")
         depends_on("py-joblib", type="build")
         depends_on("procps", type="build")
 

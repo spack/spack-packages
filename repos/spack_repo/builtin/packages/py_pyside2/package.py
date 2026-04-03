@@ -53,7 +53,7 @@ class PyPyside2(PythonPackage):
     depends_on("py-packaging", type="build")
     depends_on("py-wheel", type="build")
     # in newer pip versions --install-option does not exist
-    depends_on("py-pip@:23.0", type="build")
+    depends_on("pip@:23.0", type="build")
     depends_on("qt@5.11:+opengl")
 
     depends_on("graphviz", when="+doc", type="build")

@@ -26,11 +26,11 @@ class PyFastrlock(PythonPackage):
     depends_on("py-cython@3.0.11:3.0", when="@0.8.3", type="build")
     depends_on("py-cython@3.0.0:3.0", when="@0.8.1", type="build")
     # in newer pip versions --install-option does not exist
-    depends_on("py-pip", type="build")
-    depends_on("py-pip@:23.0", when="@:0.8.1", type="build")
+    depends_on("pip", type="build")
+    depends_on("pip@:23.0", when="@:0.8.1", type="build")
 
     def install_options(self, spec, prefix):
-        if self.spec.satisfies("^py-pip@:23.0"):
+        if self.spec.satisfies("^pip@:23.0"):
             return ["--with-cython"]
         else:
             return []
@@ -38,7 +38,7 @@ class PyFastrlock(PythonPackage):
     def config_settings(self, spec, prefix):
         # pip deprecated --install-option, suggests using --global-option instead
         # in https://github.com/pypa/pip/issues/11859#issuecomment-1741867145
-        if self.spec.satisfies("^py-pip@23.1:"):
+        if self.spec.satisfies("^pip@23.1:"):
             return {"--global-option": "--with-cython"}
         else:
             return {}

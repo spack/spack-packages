@@ -37,7 +37,7 @@ class ScineReaduct(CMakePackage):
     depends_on("eigen@3:")
     depends_on("googletest")
     depends_on("python@3.6:", when="+python", type=("build", "run"))
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-pybind11@2.6.2:", when="+python", type=("build", "run"))
     depends_on("scine-core")
     depends_on("scine-utilities")

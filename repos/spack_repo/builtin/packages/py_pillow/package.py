@@ -58,7 +58,7 @@ class PyPillowBase(PythonPackage):
 
     # pyproject.toml
     with default_args(type="build"):
-        depends_on("py-pip@22.1:", when="@10:")
+        depends_on("pip@22.1:", when="@10:")
         depends_on("py-pybind11", when="@12:")
         depends_on("py-setuptools@77:", when="@11.2:")
         depends_on("py-setuptools@67.8:", when="@10:")

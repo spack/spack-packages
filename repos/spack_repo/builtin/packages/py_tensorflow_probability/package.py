@@ -38,7 +38,7 @@ class PyTensorflowProbability(Package):
     extends("python@3.9:", when="@0.22:")
     extends("python@3.8:", when="@0.20:0.21")
     extends("python@3.7:", when="@0.13:0.19")
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
 

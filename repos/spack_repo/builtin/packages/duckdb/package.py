@@ -71,7 +71,7 @@ class Duckdb(CMakePackage):
 
     with when("+python"):
         extends("python")
-        depends_on("py-pip", type="build")
+        depends_on("pip", type="build")
         depends_on("py-setuptools-scm", type="build")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

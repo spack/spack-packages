@@ -211,7 +211,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("coreutils", when="@2.13: platform=darwin")
 
         depends_on("swig")
-        depends_on("py-pip")
+        depends_on("pip")
         depends_on("py-wheel")
 
     with default_args(type=("build", "run")):

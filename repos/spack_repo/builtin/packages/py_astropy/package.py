@@ -54,7 +54,7 @@ class PyAstropy(PythonPackage):
     depends_on("pkgconfig", type="build")
 
     # in newer pip versions --install-option does not exist
-    depends_on("py-pip@:23.0", when="@:4.0", type="build")
+    depends_on("pip@:23.0", when="@:4.0", type="build")
 
     depends_on("py-astropy-iers-data@0.2025.9.29.0.35.48:", when="@7.1.1:", type=("build", "run"))
     depends_on("py-astropy-iers-data@0.2025.1.31.12.41.4:", when="@7.0.1:", type=("build", "run"))

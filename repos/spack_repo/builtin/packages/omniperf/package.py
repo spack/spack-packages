@@ -26,7 +26,7 @@ class Omniperf(CMakePackage):
     version("6.2.0", sha256="febe9011e0628ad62367fdc6c81bdb0ad4ed45803f79c794757ecea8bcfab58c")
 
     depends_on("python@3.8:")
-    depends_on("py-pip", type="run")
+    depends_on("pip", type="run")
     depends_on("py-astunparse@1.6.2", type=("build", "run"))  # wants exact version
     depends_on("py-colorlover", type=("build", "run"))
     depends_on("py-pyyaml")

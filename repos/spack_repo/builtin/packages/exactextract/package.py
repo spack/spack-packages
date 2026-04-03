@@ -39,7 +39,7 @@ class Exactextract(CMakePackage, PythonExtension):
 
     with when("+python"):
         extends("python", type=("build", "link", "run"))
-        depends_on("py-pip")
+        depends_on("pip")
         depends_on("py-scikit-build-core", type="build")
         depends_on("py-pybind11")
 

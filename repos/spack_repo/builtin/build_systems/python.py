@@ -242,7 +242,7 @@ class PythonPackage(PythonExtension):
 
     with when("build_system=python_pip"):
         extends("python")
-        depends_on("py-pip", type="build")
+        depends_on("pip", type="build")
         # FIXME: technically wheel is only needed when building from source, not when
         # installing a downloaded wheel, but I don't want to add wheel as a dep to every
         # package manually
@@ -353,7 +353,7 @@ class PythonPipBuilder(BuilderWithDefaults):
         """Extra global options to be supplied to the setup.py call before the install
         or bdist_wheel command.
 
-        Deprecated in pip 23.1.
+        Requires pip 25.2 or older.
 
         Args:
             spec: Build spec.
@@ -373,7 +373,7 @@ class PythonPipBuilder(BuilderWithDefaults):
         config_settings = self.config_settings(spec, prefix)
 
         # Pass -jN for compile-args if supported and needed
-        if spec.satisfies("%py-pip@22.1: %py-meson-python@0.11:"):
+        if spec.satisfies("%pip@22.1: %py-meson-python@0.11:"):
             # get_effective_jobs returns None when a jobserver is active, then we don't pass -j.
             jobs = get_effective_jobs(
                 jobs=determine_number_of_jobs(parallel=pkg.parallel), supports_jobserver=True

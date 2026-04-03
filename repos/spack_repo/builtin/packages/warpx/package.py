@@ -183,7 +183,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("py-periodictable@1.5:1", type=("build", "run"))
         depends_on("py-picmistandard@0.33.0", type=("build", "run"), when="@25.01:25.10")
         depends_on("py-picmistandard@0.34.0", type=("build", "run"), when="@25.11:")
-        depends_on("py-pip@23:", type="build")
+        depends_on("pip@23:", type="build")
         depends_on("py-setuptools@42:", type="build")
         depends_on("py-pybind11@2.12.0:", type=("build", "link"))
         depends_on("py-pybind11@3.0.1:", when="@25.08:", type=("build", "link"))

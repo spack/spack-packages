@@ -141,7 +141,7 @@ class Fenics(CMakePackage):
     depends_on("py-pybind11@2.2.4", type=("build", "run"))
     depends_on("cmake@3.17.3:", type="build")
 
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-wheel", when="+python", type="build")
     depends_on("py-setuptools", type="build", when="+python")
     depends_on("py-pkgconfig", type=("build", "run"), when="+python")

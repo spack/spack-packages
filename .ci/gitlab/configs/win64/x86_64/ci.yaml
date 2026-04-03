@@ -21,7 +21,7 @@ ci:
       - py-flit-core
       - py-meson-python
       - py-packaging
-      - py-pip
+      - pip
       - py-pyproject-metadata
       - py-setuptools
       - py-soupsieve

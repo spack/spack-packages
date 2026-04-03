@@ -153,7 +153,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("python@3.6:")
     depends_on("py-virtualenv")
     depends_on("py-wheel")
-    depends_on("py-pip")
+    depends_on("pip")
     depends_on("py-pyyaml", type="test")
     depends_on("py-joblib")
     depends_on("googletest@1.10.0:", type="test")

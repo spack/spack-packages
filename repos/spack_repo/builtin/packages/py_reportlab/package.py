@@ -26,7 +26,7 @@ class PyReportlab(PythonPackage):
     depends_on("python@3.7:3", type=("build", "run"), when="@3.6.9:4.4.3")
     # version restictions were taken over from release 3.4.0 setup.py
     depends_on("py-setuptools@2.2:", type="build")
-    depends_on("py-pip@1.4.1:", type="build")
+    depends_on("pip@1.4.1:", type="build")
 
     depends_on("pil@9:", type=("build", "run"), when="@3.6.10:")
     depends_on("pil@2.4.0:", type=("build", "run"), when="@3.4")

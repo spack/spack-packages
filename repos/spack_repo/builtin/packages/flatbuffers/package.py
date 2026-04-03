@@ -34,7 +34,7 @@ class Flatbuffers(CMakePackage):
 
     extends("python", when="+python")
     depends_on("python@3.6:", when="+python", type=("build", "run"))
-    depends_on("py-pip", when="+python", type="build")
+    depends_on("pip", when="+python", type="build")
     depends_on("py-wheel", when="+python", type="build")
     depends_on("py-setuptools", when="+python", type="build")
 

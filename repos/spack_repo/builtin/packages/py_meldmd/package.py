@@ -40,7 +40,7 @@ class PyMeldmd(CMakePackage, PythonExtension, CudaPackage):
     depends_on("py-parmed", type=("build", "run"))
     depends_on("py-tqdm", type=("build", "run"))
     depends_on("py-mpi4py", type=("build", "run"))
-    depends_on("py-pip", type="build")
+    depends_on("pip", type="build")
 
     # C++ / CUDA
     depends_on("eigen", type="link")

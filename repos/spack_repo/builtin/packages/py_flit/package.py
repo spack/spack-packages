@@ -41,7 +41,7 @@ class PyFlit(PythonPackage):
         depends_on("py-flit-core@3.3.0:3", when="@3.3.0:3.3")
 
     with default_args(type=("run")):
-        depends_on("py-pip", when="@3.10:")
+        depends_on("pip", when="@3.10:")
 
         depends_on("py-requests")
 
