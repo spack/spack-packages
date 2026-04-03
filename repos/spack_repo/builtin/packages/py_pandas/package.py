@@ -23,6 +23,7 @@ class PyPandas(PythonPackage):
 
     tags = ["e4s"]
 
+    version("3.0.2", sha256="f4753e73e34c8d83221ba58f232433fca2748be8b18dbca02d242ed153945043")
     version("3.0.1", sha256="4186a699674af418f655dbd420ed87f50d56b4cd6603784279d9eef6627823c8")
     version("3.0.0", sha256="0facf7e87d38f721f0af46fe70d97373a37701b1c09f7ed7aeeb292ade5c050f")
     version("2.3.3", sha256="e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b")
@@ -30,7 +31,9 @@ class PyPandas(PythonPackage):
     version("2.3.1", sha256="0a95b9ac964fe83ce317827f80304d37388ea77616b1425f0ae41c9d2d0d7bb2")
     version("2.3.0", sha256="34600ab34ebf1131a7613a260a61dbe8b62c188ec0ea4c296da7c9a06b004133")
     version("2.2.3", sha256="4f18ba62b61d7e192368b84517265a99b4d7ee8912f8708660fb4a366cc82667")
-    version("2.2.2", sha256="9e79019aba43cb4fda9e4d983f8e88ca0373adbb697ae9c6c43093218de28b54")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2024-42992/
+        version("2.2.2", sha256="9e79019aba43cb4fda9e4d983f8e88ca0373adbb697ae9c6c43093218de28b54")
     version("2.2.1", sha256="0ab90f87093c13f3e8fa45b48ba9f39181046e8f3317d3aadb2fffbb1b978572")
     version("2.2.0", sha256="30b83f7c3eb217fb4d1b494a57a2fda5444f17834f5df2de6b2ffff68dc3c8e2")
     version("2.1.4", sha256="fcb68203c833cc735321512e13861358079a96c174a61f5116a1de89c58c0ef7")
