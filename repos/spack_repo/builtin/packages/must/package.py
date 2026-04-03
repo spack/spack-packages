@@ -16,10 +16,15 @@ class Must(CMakePackage):
     or do not manifest on a certain system or MPI implementation."""
 
     homepage = "https://www.i12.rwth-aachen.de/go/id/nrbe"
-    url = "https://hpc.rwth-aachen.de/must/files/MUST-v1.8.0-rc1.tar.gz"
-
-    maintainers("jgalarowicz", "dmont")
-
+    url = "https://hpc.rwth-aachen.de/must/files/MUST-v1.9.0.tar.gz"                                                                                                                    
+                                                                                                                                                                                        
+    maintainers("jgalarowicz", "dmont")                                                                                                                                                 
+                                                                                                                                                                                        
+    version("1.11.2", sha256="934d41dcf379df65c68853646344736a85d58ecc93e8fc4fe9c4077b2eca9ccb")                                                                                        
+    version("1.11.1", sha256="46a3e56691e818df92471865bf5affe1635f9cba3fb364ed8ce7a19c36c1caca")                                                                                        
+    version("1.11.0", sha256="9ebe0022b2bf6a6d39af52c8a363058777ce31838971123d5a51a193bcdfcae3")                                                                                        
+    version("1.10.0", sha256="fd8a1152f5b7b97f19c62ca0c7875953c6e3a8f5e16502adacd1de0cd3402d25")                                                                                        
+    version("1.9.2", sha256="b2c71e9b7bc86b74469acffd8b523acc91f6a6bd2c48f3b91383d074d673b929")
     version("1.9.0", sha256="24998f4ca6bce718d69347de90798600f2385c21266c2d1dd39a87dd8bd1fba4")
     version("1.8.0", sha256="9754fefd2e4c8cba812f8b56a5dd929bc84aa599b2509305e1eb8518be0a8a39")
     version("1.7.2", sha256="616c54b7487923959df126ac4b47ae8c611717d679fe7ec29f57a89bf0e2e0d0")
