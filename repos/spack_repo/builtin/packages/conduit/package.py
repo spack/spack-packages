@@ -255,6 +255,48 @@ class Conduit(CachedCMakePackage):
                 v, v
             )
 
+    ##############################
+    # Init compiler config entries
+    ##############################
+    def initconfig_compiler_entries(self):
+        spec = self.spec
+        entries = super().initconfig_compiler_entries()
+        f_compiler = getattr(self.compiler, "fc", None)
+        cpp_compiler = getattr(self.compiler, "cxx", "")
+        rpaths = list(self.compiler.extra_rpaths)
+
+        #  Note: This is not needed if we add `extra_rpaths` to this compiler spec case
+        if (f_compiler is not None) and ("gfortran" in f_compiler) and ("clang" in cpp_compiler):
+            libdir = os.path.join(os.path.dirname(os.path.dirname(f_compiler)), "lib")
+            for _libpath in [libdir, libdir + "64"]:
+                if os.path.exists(_libpath):
+                    rpaths.append(_libpath)
+
+        linkerflags = ""
+        for rpath in rpaths:
+            linkerflags += "-Wl,-rpath,{} ".format(rpath)
+        entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", linkerflags))
+        if spec.satisfies("+shared"):
+            entries.append(cmake_cache_string("CMAKE_SHARED_LINKER_FLAGS", linkerflags))
+
+        sys_type = os.environ.get("SYS_TYPE", str(spec.architecture))
+        on_blueos = "blueos" in sys_type
+
+        # extra fun for blueos
+        if on_blueos and "+fortran" in spec and (f_compiler is not None) and ("xlf" in f_compiler):
+            flags = "-WF,-C! -qxlf2003=polymorphic"
+            entries.append(cmake_cache_string("BLT_FORTRAN_FLAGS", flags))
+            # Grab lib directory for the current fortran compiler
+            libdir = os.path.join(os.path.dirname(os.path.dirname(f_compiler)), "lib")
+            rpaths = "-Wl,-rpath,{0} -Wl,-rpath,{0}64".format(libdir)
+
+            flags = "${BLT_EXE_LINKER_FLAGS} -lstdc++ " + rpaths
+            entries.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags))
+            if spec.satisfies("+shared"):
+                flags = "${CMAKE_SHARED_LINKER_FLAGS} " + rpaths
+                entries.append(cmake_cache_string("CMAKE_SHARED_LINKER_FLAGS", flags, force=True))
+        return entries
+    
     #########################
     # Init mpi config entries
     #########################
@@ -281,9 +323,23 @@ class Conduit(CachedCMakePackage):
         entries.append(cmake_cache_option("ENABLE_FORTRAN", spec.satisfies("+fortran")))
         entries.append(cmake_cache_option("ENABLE_PYTHON", spec.satisfies("+python")))
         entries.append(cmake_cache_option("ENABLE_DOCS", spec.satisfies("+doc")))
-
+        
+        if spec.satisfies("+python"):
+            entries.append(cmake_cache_path("PYTHON_EXECUTABLE", spec["python"].command.path))
+            try:
+                entries.append(cmake_cache_path("PYTHON_MODULE_INSTALL_PREFIX", python_platlib))
+            except NameError:
+                pass
+                
+        if spec.satisfies("+doc"):
+            if spec.satisfies("+python"):
+                sphinx_build_exe = join_path(spec["py-sphinx"].prefix.bin, "sphinx-build")
+                entries.append(cmake_cache_path("SPHINX_EXECUTABLE", sphinx_build_exe))
+            if spec.satisfies("+doxygen"):
+                doxygen_exe = spec["doxygen"].command.path
+                entries.append(cmake_cache_path("DOXYGEN_EXECUTABLE", doxygen_exe))
+        
         entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+test")))
-        entries.append(cmake_cache_option("CONDUIT_ENABLE_TESTS", spec.satisfies("+test")))
 
         if spec.satisfies("+hdf5"):
             entries.append(cmake_cache_path("HDF5_DIR", spec["hdf5"].prefix))
