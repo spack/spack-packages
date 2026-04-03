@@ -19,7 +19,9 @@ class RBayesfactor(RPackage):
 
     license("GPL-2.0-only")
 
-    version("0.9.12-4.8", sha256="becd30201d6ce57dc1fd742e17881c09a253d5c7ee4c1b5b7b6cae8496326213")
+    version(
+        "0.9.12-4.8", sha256="becd30201d6ce57dc1fd742e17881c09a253d5c7ee4c1b5b7b6cae8496326213"
+    )
     version(
         "0.9.12-4.7", sha256="f92720697f8dbda248c7977873d582dc802522851647d563c5bcb1cada4e377d"
     )
