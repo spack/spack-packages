@@ -33,26 +33,26 @@ class Must(CMakePackage):
     variant("tsan", default=True, description="Enable thread sanitizer")
     variant("graphviz", default=False, description="Use to generate graphs")
     variant("stackwalker", default=False, description="Unwind with stackwalker")
-    variant("backward", default=True, description="Unwind with backward-cpp")
-    variant("typeart", default=False, description="Enable TypeArt build")
-
-    # Don't enable stackwalker, backward simultaneously
-    # Use either backward or stackwalker for unwinding
-    conflicts("+stackwalker +backward")
-
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
-
-    depends_on("cmake@3.9:")
-    depends_on("python@3.1.5:", type=("build", "link", "run"))
-    # must test variant requires llvm
-    depends_on("llvm@10.0.0:", when="+test")
-    # must typeart typeart variant requires llvm
-    depends_on("llvm@10.0.0:", when="+typeart")
-    depends_on("mpi")
-    depends_on("libxml2")
-    depends_on("dyninst", when="+stackwalker")
+   variant("backward", default=True, description="Unwind with backward-cpp", when="@1.8:")                                                                                             
+    variant("typeart", default=False, description="Enable TypeArt build")                                                                                                               
+                                                                                                                                                                                        
+    # Don't enable stackwalker, backward simultaneously                                                                                                                                 
+    # Use either backward or stackwalker for unwinding                                                                                                                                  
+    conflicts("+stackwalker +backward")                                                                                                                                                 
+                                                                                                                                                                                        
+    depends_on("c", type="build")  # generated                                                                                                                                          
+    depends_on("cxx", type="build")  # generated                                                                                                                                        
+    depends_on("fortran", type="build")  # generated                                                                                                                                    
+                                                                                                                                                                                        
+    depends_on("cmake@3.9:")                                                                                                                                                            
+    depends_on("python@3.1.5:", type=("build", "link", "run"))                                                                                                                          
+    # must test variant requires llvm                                                                                                                                                   
+    depends_on("llvm@10.0.0:", when="+test")                                                                                                                                            
+    # must typeart typeart variant requires llvm                                                                                                                                        
+    depends_on("llvm@10.0.0:", when="+typeart")                                                                                                                                         
+    depends_on("mpi")                                                                                                                                                                   
+    depends_on("libxml2")                                                                                                                                                               
+    depends_on("dyninst", when="+stackwalker") 
     depends_on("graphviz", when="+graphviz")
 
     @run_after("install")
@@ -62,47 +62,17 @@ class Must(CMakePackage):
             make("prebuilds")
             make("install-prebuilds")
 
-    #
-    # Set up the arguments to cmake for the build of must
-    #
     def cmake_args(self):
         spec = self.spec
-
-        # Add in paths for finding package config files that tell us
-        # where to find these packages
-        cmake_args = ["-DCMAKE_VERBOSE_MAKEFILE=ON", "-DCMAKE_BUILD_TYPE=Release"]
-
-        # check to see if the testing variant is enabled
-        if spec.satisfies("+test"):
-            cmake_args.extend(["-DENABLE TESTS=On"])
-
-        # check to see if the TypeArt variant is enabled
-        if spec.satisfies("+typeart"):
-            cmake_args.extend(["-DENABLE TYPEART=On"])
-
-        # check to see if the Thread Sanitizer variant is enabled
-        if spec.satisfies("+tsan"):
-            cmake_args.extend(["-DENABLE TSAN=On"])
-        else:
-            # if the Thread Sanitizer variant is disabled
-            # send corresponding cmake argument to the cmake command
-            if spec.satisfies("~tsan"):
-                cmake_args.extend(["-DENABLE TSAN=Off"])
-
-        # Since MUST version 1.8, MUST is configured with
-        # backward-cpp support enabled by default. To install
-        # MUST without backward-cpp support, the CMake variable
-        # -DUSE BACKWARD=Off must be explicitly set during the
-        # configuration of MUST
-        if spec.satisfies("~backward"):
-            cmake_args.extend(["-DUSE BACKWARD=Off"])
+        args = [
+            self.define_from_variant("ENABLE_TESTS", "test"),
+            self.define_from_variant("ENABLE_TYPEART", "typeart"),
+            self.define_from_variant("ENABLE_TSAN", "tsan"),
+            self.define_from_variant("USE_BACKWARD", "backward"),
+        ]
 
         if spec.satisfies("+stackwalker"):
-            cmake_args.extend(["-DUSE CALLPATH=On"])
-            cmake_args.extend(["-DSTACKWALKER INSTALL PREFIX=%s" % spec["dyninst"].prefix])
-            cmake_args.extend(["-DUSE BACKWARD=Off"])
-        else:
-            if spec.satisfies("+backward"):
-                cmake_args.extend(["-DUSE BACKWARD=On"])
+            args.append(self.define("USE_CALLPATH", True))
+            args.append(self.define("STACKWALKER_INSTALL_PREFIX", spec["dyninst"].prefix))
 
-        return cmake_args
+        return args
