@@ -43,7 +43,12 @@ class Tblite(CMakePackage, MesonPackage):
         depends_on(
             f"simple-dftd3@0.3: build_system={build_system}", when=f"build_system={build_system}"
         )
-        depends_on(f"dftd4@3:3.7 build_system={build_system}", when=f"build_system={build_system}")
+        depends_on(
+            f"dftd4@3 build_system={build_system}", when=f"@:0.5.0 build_system={build_system}"
+        )
+        depends_on(
+            f"dftd4@4: build_system={build_system}", when=f"@0.5.1: build_system={build_system}"
+        )
         depends_on(f"toml-f build_system={build_system}", when=f"build_system={build_system}")
 
     depends_on("meson@0.57.2:", type="build", when="build_system=meson")  # mesonbuild/meson#8377
