@@ -322,7 +322,6 @@ class Conduit(CachedCMakePackage):
         entries.append(cmake_cache_option("ENABLE_UTILS", spec.satisfies("+utilities")))
         entries.append(cmake_cache_option("ENABLE_FORTRAN", spec.satisfies("+fortran")))
         entries.append(cmake_cache_option("ENABLE_PYTHON", spec.satisfies("+python")))
-        entries.append(cmake_cache_option("ENABLE_DOCS", spec.satisfies("+doc")))
         
         if spec.satisfies("+python"):
             entries.append(cmake_cache_path("PYTHON_EXECUTABLE", spec["python"].command.path))
@@ -330,14 +329,17 @@ class Conduit(CachedCMakePackage):
                 entries.append(cmake_cache_path("PYTHON_MODULE_INSTALL_PREFIX", python_platlib))
             except NameError:
                 pass
-                
+
+        enable_docs = False
         if spec.satisfies("+doc"):
             if spec.satisfies("+python"):
+                enable_docs = True
                 sphinx_build_exe = join_path(spec["py-sphinx"].prefix.bin, "sphinx-build")
                 entries.append(cmake_cache_path("SPHINX_EXECUTABLE", sphinx_build_exe))
             if spec.satisfies("+doxygen"):
                 doxygen_exe = spec["doxygen"].command.path
-                entries.append(cmake_cache_path("DOXYGEN_EXECUTABLE", doxygen_exe))
+                entries.append(cmake_cache_path("DOXYGEN_EXECUTABLE", doxygen_exe))        
+        entries.append(cmake_cache_option("ENABLE_DOCS", enable_docs))
         
         entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+test")))
 
