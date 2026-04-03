@@ -16,14 +16,14 @@ class Must(CMakePackage):
     or do not manifest on a certain system or MPI implementation."""
 
     homepage = "https://www.i12.rwth-aachen.de/go/id/nrbe"
-    url = "https://hpc.rwth-aachen.de/must/files/MUST-v1.9.0.tar.gz"                                                                                                                    
-                                                                                                                                                                                        
-    maintainers("jgalarowicz", "dmont")                                                                                                                                                 
-                                                                                                                                                                                        
-    version("1.11.2", sha256="934d41dcf379df65c68853646344736a85d58ecc93e8fc4fe9c4077b2eca9ccb")                                                                                        
-    version("1.11.1", sha256="46a3e56691e818df92471865bf5affe1635f9cba3fb364ed8ce7a19c36c1caca")                                                                                        
-    version("1.11.0", sha256="9ebe0022b2bf6a6d39af52c8a363058777ce31838971123d5a51a193bcdfcae3")                                                                                        
-    version("1.10.0", sha256="fd8a1152f5b7b97f19c62ca0c7875953c6e3a8f5e16502adacd1de0cd3402d25")                                                                                        
+    url = "https://hpc.rwth-aachen.de/must/files/MUST-v1.9.0.tar.gz"
+
+    maintainers("jgalarowicz", "dmont")
+
+    version("1.11.2", sha256="934d41dcf379df65c68853646344736a85d58ecc93e8fc4fe9c4077b2eca9ccb")
+    version("1.11.1", sha256="46a3e56691e818df92471865bf5affe1635f9cba3fb364ed8ce7a19c36c1caca")
+    version("1.11.0", sha256="9ebe0022b2bf6a6d39af52c8a363058777ce31838971123d5a51a193bcdfcae3")
+    version("1.10.0", sha256="fd8a1152f5b7b97f19c62ca0c7875953c6e3a8f5e16502adacd1de0cd3402d25")
     version("1.9.2", sha256="b2c71e9b7bc86b74469acffd8b523acc91f6a6bd2c48f3b91383d074d673b929")
     version("1.9.0", sha256="24998f4ca6bce718d69347de90798600f2385c21266c2d1dd39a87dd8bd1fba4")
     version("1.8.0", sha256="9754fefd2e4c8cba812f8b56a5dd929bc84aa599b2509305e1eb8518be0a8a39")
@@ -33,26 +33,26 @@ class Must(CMakePackage):
     variant("tsan", default=True, description="Enable thread sanitizer")
     variant("graphviz", default=False, description="Use to generate graphs")
     variant("stackwalker", default=False, description="Unwind with stackwalker")
-    variant("backward", default=True, description="Unwind with backward-cpp", when="@1.8:")                                                                                             
-    variant("typeart", default=False, description="Enable TypeArt build")                                                                                                               
-                                                                                                                                                                                        
-    # Don't enable stackwalker, backward simultaneously                                                                                                                                 
-    # Use either backward or stackwalker for unwinding                                                                                                                                  
-    conflicts("+stackwalker +backward")                                                                                                                                                 
-                                                                                                                                                                                        
-    depends_on("c", type="build")  # generated                                                                                                                                          
-    depends_on("cxx", type="build")  # generated                                                                                                                                        
-    depends_on("fortran", type="build")  # generated                                                                                                                                    
-                                                                                                                                                                                        
-    depends_on("cmake@3.9:")                                                                                                                                                            
-    depends_on("python@3.1.5:", type=("build", "link", "run"))                                                                                                                          
-    # must test variant requires llvm                                                                                                                                                   
-    depends_on("llvm@10.0.0:", when="+test")                                                                                                                                            
-    # must typeart typeart variant requires llvm                                                                                                                                        
-    depends_on("llvm@10.0.0:", when="+typeart")                                                                                                                                         
-    depends_on("mpi")                                                                                                                                                                   
-    depends_on("libxml2")                                                                                                                                                               
-    depends_on("dyninst", when="+stackwalker") 
+    variant("backward", default=True, description="Unwind with backward-cpp", when="@1.8:")
+    variant("typeart", default=False, description="Enable TypeArt build")
+
+    # Don't enable stackwalker, backward simultaneously
+    # Use either backward or stackwalker for unwinding
+    conflicts("+stackwalker +backward")
+
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
+    depends_on("cmake@3.9:")
+    depends_on("python@3.1.5:", type=("build", "link", "run"))
+    # must test variant requires llvm
+    depends_on("llvm@10.0.0:", when="+test")
+    # must typeart typeart variant requires llvm
+    depends_on("llvm@10.0.0:", when="+typeart")
+    depends_on("mpi")
+    depends_on("libxml2")
+    depends_on("dyninst", when="+stackwalker")
     depends_on("graphviz", when="+graphviz")
 
     @run_after("install")
