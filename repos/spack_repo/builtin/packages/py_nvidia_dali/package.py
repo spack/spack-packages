@@ -295,7 +295,7 @@ class PyNvidiaDali(PythonPackage):
             expand=False,
         )
 
-    cuda130_versions = ("@1.52.0-cuda130", "@1.53.0-cuda130",)
+    cuda130_versions = ("@1.52.0-cuda130", "@1.53.0-cuda130")
     cuda120_versions = (
         "@1.53.0-cuda120",
         "@1.52.0-cuda120",
