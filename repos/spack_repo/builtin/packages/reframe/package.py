@@ -18,8 +18,8 @@ class Reframe(Package):
     focusing only on the functionality."""
 
     homepage = "https://reframe-hpc.readthedocs.io"
-    url = "https://github.com/eth-cscs/reframe/archive/v2.21.tar.gz"
-    git = "https://github.com/eth-cscs/reframe.git"
+    url = "https://github.com/reframe-hpc/reframe/archive/v2.21.tar.gz"
+    git = "https://github.com/reframe-hpc/reframe.git"
 
     # notify when the package is updated.
     maintainers("victorusu", "vkarak")
@@ -121,7 +121,7 @@ class Reframe(Package):
     depends_on("cxx", type="build")  # generated
 
     # ReFrame requires git up to version 3.1, see:
-    # https://github.com/eth-cscs/reframe/issues/1464
+    # https://github.com/reframe-hpc/reframe/issues/1464
     depends_on("git", when="@2.0:3.1", type="run")
 
     # supported python versions
