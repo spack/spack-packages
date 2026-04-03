@@ -22,7 +22,7 @@ class PyRefgenie(PythonPackage):
     depends_on("py-setuptools", type="build")
 
     depends_on("py-logmuse@0.2.6:", type=("build", "run"))
-    depends_on("piper@0.12.1:", type=("build", "run"))
+    depends_on("py-piper@0.12.1:", type=("build", "run"))
     depends_on("py-pyfaidx@0.5.5.2:", type=("build", "run"))
     depends_on("py-refgenconf@0.12.2:", type=("build", "run"))
     depends_on("py-yacman@0.8.3:", type=("build", "run"))
