@@ -180,9 +180,9 @@ class Mumps(Package):
         # Determine which compiler suite we are using
         using_gcc = self.compiler.name == "gcc"
         using_nvhpc = self.compiler.name == "nvhpc"
-        using_intel = self.compiler.name == "intel"
-        using_oneapi = self.compiler.name == "oneapi"
-        using_xl = self.compiler.name in ["xl", "xl_r"]
+        using_intel = self.compiler.name in ("intel", "intel-oneapi-compilers-classic")
+        using_oneapi = self.compiler.name in ("oneapi", "intel-oneapi-compilers")
+        using_xl = self.compiler.name in ("xl", "xl_r")
         using_fj = self.compiler.name == "fj"
 
         # The llvm compiler suite does not contain a Fortran compiler by
