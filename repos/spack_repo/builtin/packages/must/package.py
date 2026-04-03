@@ -33,7 +33,7 @@ class Must(CMakePackage):
     variant("tsan", default=True, description="Enable thread sanitizer")
     variant("graphviz", default=False, description="Use to generate graphs")
     variant("stackwalker", default=False, description="Unwind with stackwalker")
-   variant("backward", default=True, description="Unwind with backward-cpp", when="@1.8:")                                                                                             
+    variant("backward", default=True, description="Unwind with backward-cpp", when="@1.8:")                                                                                             
     variant("typeart", default=False, description="Enable TypeArt build")                                                                                                               
                                                                                                                                                                                         
     # Don't enable stackwalker, backward simultaneously                                                                                                                                 
