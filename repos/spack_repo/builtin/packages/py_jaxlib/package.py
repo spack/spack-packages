@@ -49,7 +49,10 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.9.2", sha256="9e67faaa74be4539e397fe61317568545f9ea325ddf1f7f534929d508786f29e")
+    version("0.9.1", sha256="1bdae0c3311165437461e9afe05b76de2adb9ce86b557b4bd270b0ec411ff27d")
     version("0.9.0", sha256="8525c72ac7ea01851297df5b25ca4622c65299c265c87dfe78420bb29e7b1bb3")
+    version("0.8.3", sha256="fad6506b91b761842263dc6a9691ecc4f584b313a214ed6c89b6e5d899a69a3d")
     version("0.8.2", sha256="f7e5080c97c1aaffb490a17d174cb59a83dd037800d9c41d309287bebd15b0b8")
     version("0.8.1", sha256="38882602112dadfd49a2c74868a0722574ae88e04646a96f32f8c36a7893c548")
     version("0.8.0", sha256="864aa46b5a4475c70195bd3728d32224f5b5ae1c7dd9c70646ef1387b4b0b04b")
@@ -114,12 +117,13 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6:", when="@0.4.28:")
             depends_on(f"{pkg_dep}@6.3:", when="@0.6:")
-            depends_on(f"{pkg_dep}@:6")
+            depends_on(f"{pkg_dep}@:6", when="@:0.7")
             depends_on(pkg_dep)
         depends_on("rocprofiler-register", when="^hip@6.2:")
         depends_on("hipblas-common", when="^hip@6.3:")
         depends_on("hsakmt-roct", when="^hip@:6.2")
         depends_on("llvm-amdgpu")
+        depends_on("rocprofiler-sdk", when="@0.8.1:")
         depends_on("py-nanobind")
 
     with default_args(type="build"):
@@ -208,12 +212,12 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     # backports https://github.com/abseil/abseil-cpp/pull/1732
     patch("jaxxlatsl.patch", when="@0.4.28:0.4.32 target=aarch64:")
 
-    requires(
-        "%c,cxx=llvm",
-        "%c,cxx=apple-clang",
-        when="@0.7.1:",
-        msg="Clang is the only acceptable compiler.",
-    )
+    with when("@0.7.1:"):
+        with default_args(msg="Clang is the only acceptable compiler."):
+            requires("%c,cxx=llvm", when="platform=linux")
+            # Order here is important. Place the most common compiler first so that the
+            # concretizer will not try to use v0.7.0 to avoid taking a penalty on requirements
+            requires("%c,cxx=apple-clang", "%c,cxx=llvm", when="platform=darwin")
 
     conflicts(
         "cuda_arch=none",
@@ -259,6 +263,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 rocm_dependencies.append("hipblas-common")
             else:
                 rocm_dependencies.append("hsakmt-roct")
+            if spec.satisfies("@0.8.1:"):
+                rocm_dependencies.append("rocprofiler-sdk")
             env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
             for pkg_dep in rocm_dependencies:
                 env.prepend_path("TF_ROCM_MULTIPLE_PATHS", spec[pkg_dep].prefix)
@@ -329,6 +335,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 args.append(
                     f"--bazel_options=--override_repository=xla={self.stage.source_path}/xla"
                 )
+            amdgpu_targets = ",".join(self.spec.variants["amdgpu_target"].value)
+            args.append(f"--rocm_amdgpu_target={amdgpu_targets}")
 
         args.extend(
             [

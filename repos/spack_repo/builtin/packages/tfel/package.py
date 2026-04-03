@@ -268,6 +268,7 @@ class Tfel(CMakePackage):
         return args
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.append_path("TFELHOME", self.prefix)
         env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
 
     def check(self):

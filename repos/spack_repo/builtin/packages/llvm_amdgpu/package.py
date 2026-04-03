@@ -43,6 +43,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     license("Apache-2.0")
+    version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
     version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
     version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
     version("7.0.2", sha256="fd612fa750bebd0c3be0ea642b2cae8ff5c7e00a2280b22b9ea16ee86a11d763")
@@ -92,11 +93,11 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     provides("libllvm@17", when="@5.7:6.1")
     provides("libllvm@18", when="@6.2:6.3")
     provides("libllvm@19", when="@6.4")
-    provides("libllvm@20", when="@7.0:")
+    provides("libllvm@20", when="@7.0:7.1")
+    provides("libllvm@22", when="@7.2")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.13.4:", type="build")
     depends_on("python", type="build")
@@ -110,9 +111,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("libdrm", when="@7.1:")
     depends_on("libelf", when="@7.1:")
     depends_on("xxd", when="@7.1:")
-
-    for ver in ["7.1.0", "7.1.1"]:
-        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
     # This flavour of LLVM doesn't work on MacOS, so we should ensure that it
     # isn't used to satisfy any of the libllvm dependencies on the Darwin
@@ -146,6 +144,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         "https://github.com/ROCm/llvm-project/commit/c651b2b0d9d1393fb5191ac3acfe96e5ecc94bbc.patch?full_index=1",
         sha256="eaf700a5b51d53324a93e5c951bc08b6311ce2053c44c1edfff5119f472d8080",
         when="@:6.2",
+    )
+
+    patch(
+        "https://github.com/ROCm/llvm-project/commit/97301a5390f841241e5ed88e26c218882e018cc4.patch?full_index=1",
+        sha256="74471ee320c4d839a433c04b9d35db868f2a13c08183297d1a09ec580ca1d7e9",
+        when="@7.2",
     )
 
     conflicts("^cmake@3.19.0")
@@ -200,6 +204,32 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             placement="hsa-runtime",
             url=f"https://github.com/ROCm/ROCR-Runtime/archive/rocm-{d_version}.tar.gz",
             sha256=d_shasum,
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
+        ("7.2.0", "728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    ]:
+        resource(
+            name="rocm-systems",
+            placement="rocm-systems",
+            url=f"https://github.com/ROCm/rocm-systems/archive/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
+        ("7.1.0", "e6ef3e62eb0626765c55084c9de5fd19f9b216b11577e71ef36046c0081f1102"),
+        ("7.1.1", "b02e7a2b38c408067f3713ff47fe620059a8fe5f47110ab343116448625b7448"),
+        ("7.2.0", "b003b608df470d88ad0a636581e134b05b8aee586b0332c545280e6c6366d121"),
+    ]:
+        resource(
+            name="spirv-llvm-translator",
+            url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/refs/tags/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            expand=True,
+            destination="llvm/projects",
+            placement="spirv-llvm-translator",
             when=f"@{d_version}",
         )
 
@@ -285,12 +315,16 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             comgrinc_path = os.path.join(self.stage.source_path, "comgr/lib/comgr/include")
         elif self.spec.satisfies("@6.1:"):
             comgrinc_path = os.path.join(self.stage.source_path, "amd/comgr/include")
+
+        if self.spec.satisfies("@7.2:"):
+            hsa_path = os.path.join(self.stage.source_path, "rocm-systems/projects/rocr-runtime")
+        else:
+            hsa_path = os.path.join(self.stage.source_path, "hsa-runtime")
+
         if self.spec.satisfies("@:6.2"):
-            hsainc_path = os.path.join(self.stage.source_path, "hsa-runtime/src/inc")
+            hsainc_path = os.path.join(hsa_path, "src/inc")
         if self.spec.satisfies("@6.3:"):
-            hsainc_path = os.path.join(
-                self.stage.source_path, "hsa-runtime/runtime/hsa-runtime/inc"
-            )
+            hsainc_path = os.path.join(hsa_path, "runtime/hsa-runtime/inc")
         args.append("-DSANITIZER_HSA_INCLUDE_PATH={0}".format(hsainc_path))
         args.append("-DSANITIZER_COMGR_INCLUDE_PATH={0}".format(comgrinc_path))
         args.append("-DSANITIZER_AMDGPU:Bool=ON")
@@ -329,16 +363,35 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(self.define("LLVM_ENABLE_LIBCXX", "ON"))
             args.append(self.define("LIBOMPTARGET_ENABLE_DEBUG", "ON"))
             args.append(self.define("LIBOMPTARGET_NO_SANITIZER_AMDGPU", "ON"))
-            hsa_path = os.path.join(self.stage.source_path, "hsa-runtime")
             args.append(self.define("LIBOMPTARGET_EXTERNAL_PROJECT_HSA_PATH", hsa_path))
             args.append(self.define("OFFLOAD_EXTERNAL_PROJECT_UNIFIED_ROCR", "ON"))
             devlibs_dir = os.path.join(self.stage.source_path, "amd/device-libs")
             args.append(
                 self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", devlibs_dir)
             )
-
+        if self.spec.satisfies("@7.2:"):
+            args.append(self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"))
+            args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES=openmp")
+            args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON")
+            spirv_dir = os.path.join(self.stage.source_path, "llvm/projects/spirv-llvm-translator")
+            args.append(self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir))
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
+
+        # CMake args passed just to runtimes
+        runtime_cmake_args = [self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True)]
+
+        # When building runtimes, just-built clang has to know where GCC is.
+        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
+        if gcc_install_dir_flag:
+            runtime_cmake_args.extend(
+                [
+                    self.define("CMAKE_C_FLAGS", gcc_install_dir_flag),
+                    self.define("CMAKE_CXX_FLAGS", gcc_install_dir_flag),
+                ]
+            )
+
+        args.append(self.define("RUNTIMES_CMAKE_ARGS", runtime_cmake_args))
         return args
 
     compiler_languages = ["c", "cxx", "fortran"]
@@ -347,6 +400,32 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     fortran_names = ["amdflang"]
     compiler_version_argument = "--version"
     compiler_version_regex = r"roc-(\d+[._]\d+[._]\d+)"
+    installed_dir_regex = r"InstalledDir:\s*(.+)"
+
+    @classmethod
+    def determine_version(cls, exe):
+        try:
+            compiler = Executable(exe)
+            output = compiler(cls.compiler_version_argument, output=str, error=str)
+            # Reject if the compiler is not under the InstalledDir
+            # reported by --version (e.g. /usr/bin is not valid).
+            installed_dir_match = re.search(cls.installed_dir_regex, output)
+            if installed_dir_match:
+                installed_dir = os.path.normpath(installed_dir_match.group(1).strip())
+                exe_dir = os.path.normpath(os.path.dirname(os.path.abspath(str(exe))))
+                if exe_dir != installed_dir:
+                    return None
+            else:
+                return None
+            match = re.search(cls.compiler_version_regex, output)
+            if match:
+                version_str = match.group(1)
+                return version_str
+        except ProcessError:
+            pass
+        except Exception as e:
+            tty.debug(e)
+        return None
 
     # Make sure that the compiler paths are in the LD_LIBRARY_PATH
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
@@ -379,6 +458,15 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                 os.path.join(self.prefix, "amdgcn"),
             )
 
+        cfg_files = ["clang.cfg", "clang++.cfg"]
+        if self.spec.satisfies("@7:"):
+            cfg_files.append("flang.cfg")
+        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
+        if gcc_install_dir_flag:
+            for cfg in cfg_files:
+                with open(os.path.join(self.prefix.bin, cfg), "w") as f:
+                    print(gcc_install_dir_flag, file=f)
+
     # Required for enabling asan on dependent packages
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
@@ -396,3 +484,15 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     def _fortran_path(self):
         return os.path.join(self.spec.prefix.bin, "amdflang")
+
+
+def get_gcc_install_dir_flag(spec: Spec, compiler) -> Optional[str]:
+    """Get the --gcc-install-dir=... flag, so that clang does not do a system scan for GCC."""
+    if not spec.satisfies("%gcc"):
+        return None
+    gcc = Executable(compiler.cc)
+    libgcc_path = gcc("-print-file-name=libgcc.a", output=str, fail_on_error=False).strip()
+    if not os.path.isabs(libgcc_path):
+        return None
+    libgcc_dir = os.path.dirname(libgcc_path)
+    return f"--gcc-install-dir={libgcc_dir}" if os.path.exists(libgcc_dir) else None

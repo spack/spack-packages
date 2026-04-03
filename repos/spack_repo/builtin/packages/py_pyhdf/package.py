@@ -37,6 +37,13 @@ class PyPyhdf(PythonPackage):
     depends_on("py-numpy@:1.24", when="@0.10.4", type=("build", "run"))
     depends_on("jpeg", type=("build", "run"))
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=incompatible-pointer-types")
+                flags.append("-Wno-error=discarded-qualifiers")
+        return (flags, None, None)
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         inc_dirs = []
         lib_dirs = []

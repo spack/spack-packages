@@ -14,20 +14,21 @@ class Rdc(CMakePackage):
     """ROCm Data Center Tool"""
 
     homepage = "https://github.com/ROCm/rdc"
-    url = "https://github.com/ROCm/rdc/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librdc"]
+    license("MIT")
 
     def url_for_version(self, version):
-        if version == Version("3.9.0"):
-            return "https://github.com/ROCm/rdc/archive/rdc_so_ver-0.3.tar.gz"
-
-        url = "https://github.com/ROCm/rdc/archive/rocm-{0}.tar.gz"
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rdc/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
-    license("MIT")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="d16c63fe6609d82d0fcd65e9953f60318d015275b8752d052a6ae20cd634c3e1")
     version("7.1.0", sha256="a77b6ad33dc41917f6b0ed2a26085b96fc7222cf507adb9b90d2eb7976fae5a5")
     version("7.0.2", sha256="1184ef89435063a1d63d6c2d8b6d4f99bb6d5f4d65c241c405b6e550fe285a08")
@@ -87,6 +88,7 @@ class Rdc(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -107,20 +109,23 @@ class Rdc(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
     def patch(self):
-        filter_file(r"\${ROCM_DIR}/rocm_smi", "${ROCM_SMI_DIR}", "CMakeLists.txt")
-        filter_file(
-            r"${GRPC_ROOT}/bin/protoc",
-            "{0}/bin/protoc".format(self.spec["protobuf"].prefix),
-            "CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("@:6.1"):
+            filter_file(r"\${ROCM_DIR}/rocm_smi", "${ROCM_SMI_DIR}", "CMakeLists.txt")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@:7.1"):
+            return "."
+        else:
+            return "projects/rdc"
 
     @classmethod
     def determine_version(cls, lib):
@@ -132,8 +137,11 @@ class Rdc(CMakePackage):
         return None
 
     def cmake_args(self):
-        return [
-            self.define("GRPC_ROOT", self.spec["grpc"].prefix),
-            self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/cmake_modules"),
-            self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
-        ]
+        args = [self.define("GRPC_ROOT", self.spec["grpc"].prefix)]
+        if self.spec.satisfies("@:6.1"):
+            args.append(self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix))
+        if self.spec.satisfies("@:7.1"):
+            args.append(
+                self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/cmake_modules")
+            )
+        return args

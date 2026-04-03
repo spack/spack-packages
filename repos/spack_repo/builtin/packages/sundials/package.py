@@ -245,6 +245,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             when="+kokkos +rocm amdgpu_target=%s" % rocm_arch,
         )
     depends_on("lapack", when="+lapack")
+    depends_on("blas", when="+lapack")
     depends_on("hypre+mpi~int64", when="@5.7.1: +hypre ~int64")
     depends_on("hypre+mpi+int64", when="@5.7.1: +hypre +int64")
     depends_on("hypre@:2.22.0+mpi~int64", when="@:5.7.0 +hypre ~int64")
@@ -738,9 +739,9 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
                 cmake = self.spec["cmake"].command
                 cmake("-DCMAKE_PREFIX_PATH=" + prefixes, ".")
 
-            make = which("make")
+            make = which("make", required=True)
             make()
-            exe = which(basename)
+            exe = which(basename, required=True)
             exe(*opts)
             make("clean")
 

@@ -26,6 +26,7 @@ class PyOnnx(PythonPackage):
     maintainers("wdconinc")
 
     version("main", branch="main")
+    version("1.20.0", sha256="1a93ec69996b4556062d552ed1aa0671978cfd3c17a40bf4c89a1ae169c6a4ad")
     version("1.19.1", sha256="737524d6eb3907d3499ea459c6f01c5a96278bb3a0f2ff8ae04786fb5d7f1ed5")
     version("1.19.0", sha256="aa3f70b60f54a29015e41639298ace06adf1dd6b023b9b30f1bca91bb0db9473")
     version("1.18.0", sha256="3d8dbf9e996629131ba3aa1afd1d8239b660d1f830c6688dd7e03157cccd6b9c")
@@ -51,14 +52,21 @@ class PyOnnx(PythonPackage):
     # CMakeLists.txt
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.14:", type="build", when="@1.17:")
+    depends_on("cmake@3.18:", type="build", when="@1.18:")
+    depends_on("cmake@3.24:", type="build", when="@1.19:")
     depends_on("cmake@3.26:", type="build", when="@1.20:")
     depends_on("py-pybind11@2.2:", type=("build", "link"), when="@:1.19")
     depends_on("py-nanobind@2.8:", type=("build", "link"), when="@1.20:")
 
-    # requirements.txt
+    # pyproject.toml
+    depends_on("python@3.10:", when="@1.20:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.18:", type=("build", "run"))
+    depends_on("python@3.8:", when="@1.15:", type=("build", "run"))
     depends_on("py-setuptools@77:", type="build", when="@1.20:")
     depends_on("py-setuptools@64:", type="build")
     depends_on("py-setuptools", type="build")
+
+    # requirements.txt
     depends_on("protobuf")
     depends_on("py-protobuf@4.25.1:", type=("build", "run"), when="@1.18:")
     depends_on("py-protobuf@3.20.2:", type=("build", "run"), when="@1.15:")
@@ -75,9 +83,9 @@ class PyOnnx(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-numpy@1.23.2:", type=("build", "run"), when="@1.20:")
     depends_on("py-numpy@1.22:", type=("build", "run"), when="@1.18:")
-    depends_on("py-numpy@1.16.6:", type=("build", "run"), when="@1.8.1:1.13")
-    depends_on("py-numpy@1.20:", type=("build", "run"), when="@1.16.0:")
     depends_on("py-numpy@1.21:", type=("build", "run"), when="@1.16.2:")
+    depends_on("py-numpy@1.20:", type=("build", "run"), when="@1.16.0:")
+    depends_on("py-numpy@1.16.6:", type=("build", "run"), when="@1.8.1:1.13")
     depends_on("py-numpy@:1", type=("build", "run"), when="@:1.16")
     depends_on("py-typing-extensions@4.7.1:", type=("build", "run"), when="@1.18:")
     depends_on("py-ml-dtypes@0.5:", type=("build", "run"), when="@1.19:")

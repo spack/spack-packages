@@ -73,10 +73,10 @@ class Papyrus(CMakePackage):
                 "-lm",
             ]
 
-            mpicxx = which(self.spec["mpi"].mpicxx)
+            mpicxx = which(self.spec["mpi"].mpicxx, required=True)
             mpicxx(*options)
 
-            mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+            mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
             mpirun("-np", "4", test)
 
     def test_01_open_close(self):

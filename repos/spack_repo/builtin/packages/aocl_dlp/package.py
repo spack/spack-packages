@@ -41,6 +41,7 @@ class AoclDlp(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.26:", type="build")
+    depends_on("numactl", when="+benchmarks")
 
     def cmake_args(self):
         spec = self.spec

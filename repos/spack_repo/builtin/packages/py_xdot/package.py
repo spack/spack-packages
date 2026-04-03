@@ -30,6 +30,7 @@ class PyXdot(PythonPackage):
     depends_on("pango", type=("build", "run"))
     depends_on("harfbuzz", type=("build", "run"))
     depends_on("atk", type=("build", "run"))
+    depends_on("gobject-introspection", type=("build", "run"))
     depends_on("gdk-pixbuf", type=("build", "run"))
     depends_on("gtkplus", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"), when="@1.2:")
@@ -37,12 +38,13 @@ class PyXdot(PythonPackage):
     @run_after("install")
     def post_install(self):
         spec = self.spec
-        repo_paths = "%s:%s:%s:%s:%s" % (
+        repo_paths = "%s:%s:%s:%s:%s:%s" % (
             join_path(spec["pango"].prefix.lib, "girepository-1.0"),
             join_path(spec["atk"].prefix.lib, "girepository-1.0"),
             join_path(spec["gdk-pixbuf"].prefix.lib, "girepository-1.0"),
             join_path(spec["gtkplus"].prefix.lib, "girepository-1.0"),
             join_path(spec["harfbuzz"].prefix.lib, "girepository-1.0"),
+            join_path(spec["gobject-introspection"].prefix.lib, "girepository-1.0"),
         )
         dst = join_path(python_purelib, "xdot", "__init__.py")
         filter_file(
@@ -67,4 +69,8 @@ class PyXdot(PythonPackage):
         )
         env.prepend_path(
             "GI_TYPELIB_PATH", join_path(spec["gtkplus"].prefix.lib, "girepository-1.0")
+        )
+        env.prepend_path(
+            "GI_TYPELIB_PATH",
+            join_path(spec["gobject-introspection"].prefix.lib, "girepository-1.0"),
         )

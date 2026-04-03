@@ -94,7 +94,7 @@ class Repeatmasker(Package):
             f.write("\n".join(config_answers))
 
         with open(config_answers_filename, "r") as f:
-            perl = which("perl")
+            perl = which("perl", required=True)
             perl("configure", input=f)
 
         # fix perl paths

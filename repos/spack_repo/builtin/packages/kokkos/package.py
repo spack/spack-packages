@@ -28,6 +28,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.0.2", sha256="188817bb452ca805ee8701f1c5adbbb4fb83dc8d1c50624566a18a719ba0fa5e")
     version("5.0.1", sha256="cf7d8515ca993229929be9f051aecd8f93cde325adac8a4f82ed6848adace218")
     version("5.0.0", sha256="c45f3e19c3eb71fc8b7210cb04cac658015fc1839e7cc0571f7406588ff9bcef")
     version("4.7.02", sha256="a81826ac0a167933d13506bc2a986fb5517038df9abb780fe9bb2c1d4e80803b")
@@ -299,6 +300,14 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         variant("cxxstd", default="17", values=("14", "17", "20"), when="@3")
         variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
         variant("cxxstd", default="20", values=("20", "23"), when="@5:")
+
+    variant(
+        "deprecated_code",
+        default=True,
+        when="@5:",
+        description="Whether to enable deprecated code",
+    )
+
     variant("pic", default=False, description="Build position independent code")
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
@@ -403,6 +412,16 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("Kokkos_ENABLE_COMPILE_AS_CMAKE_LANGUAGE", "cmake_lang"),
         ]
 
+        if spec.satisfies("@5:"):
+            if spec.version == Version("develop"):
+                highest = max(v for v in self.versions if not v.isdevelop())
+                major_version = int(str(highest.up_to(1)))
+            else:
+                major_version = int(str(spec.version.up_to(1)))
+            options.append(
+                from_variant(f"Kokkos_ENABLE_DEPRECATED_CODE_{major_version}", "deprecated_code")
+            )
+
         spack_microarches = []
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
@@ -445,7 +464,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             options.append(self.define("CMAKE_CXX_COMPILER", self.kokkos_cxx))
         elif "+rocm" in self.spec:
             if "+cmake_lang" in self.spec:
-                if self.spec.satisfies("%cxx=clang"):
+                if self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=rocmcc"):
                     options.append(self.define("CMAKE_HIP_COMPILER", self.compiler.cxx))
                 else:
                     options.append(
@@ -461,9 +480,14 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                     )
                 )
                 options.append(self.define("CMAKE_HIP_EXTENSIONS", False))
-            else:
+            elif not (self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=rocmcc")):
                 options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("Kokkos_ENABLE_ROCTHRUST", True))
+
+            # Using Kokkos_ENABLE_IMPL_HIP_MALLOC_ASYNC is problematic with ROCm 7
+            # Newer Kokkos versions disable this by default
+            if self.spec.satisfies("@4.5:5.0.0 %hip@7:"):
+                options.append(self.define("Kokkos_ENABLE_IMPL_HIP_MALLOC_ASYNC", False))
         elif "+cuda" in self.spec and "+cmake_lang" in self.spec:
             if self.spec.satisfies("%cxx=clang"):
                 options.append(self.define("CMAKE_CUDA_COMPILER", self.compiler.cxx))
