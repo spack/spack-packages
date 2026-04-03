@@ -287,6 +287,9 @@ class Conduit(CachedCMakePackage):
 
         if spec.satisfies("+hdf5"):
             entries.append(cmake_cache_path("HDF5_DIR", spec["hdf5"].prefix))
+            if spec.satisfies("^zlib-api"):
+                # HDF5 depends on zlib
+                entries.append(cmake_cache_path("ZLIB_DIR", spec["zlib-api"].prefix))
         if spec.satisfies("+silo"):
             entries.append(cmake_cache_path("SILO_DIR", spec["silo"].prefix))
         if spec.satisfies("+adios"):
