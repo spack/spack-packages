@@ -210,9 +210,7 @@ class Survey(CMakePackage):
             "PYTHONPATH",
             join_path(self.spec["py-importlib-resources"].prefix, self.site_packages_dir),
         )
-        env.prepend_path(
-            "PYTHONPATH", join_path(self.spec["pip"].prefix, self.site_packages_dir)
-        )
+        env.prepend_path("PYTHONPATH", join_path(self.spec["pip"].prefix, self.site_packages_dir))
         env.prepend_path(
             "PYTHONPATH", join_path(self.spec["py-seaborn"].prefix, self.site_packages_dir)
         )

@@ -30,29 +30,59 @@ class PyPip(Package, PythonExtension):
     license("MIT")
 
     with default_args(deprecated=True):
-        version("26.0.1", sha256="bdb1b08f4274833d62c1aa29e20907365a2ceb950410df15fc9521bad440122b")
-        version("25.1.1", sha256="2913a38a2abf4ea6b64ab507bd9e967f3b53dc1ede74b01b0931e1ce548751af")
+        version(
+            "26.0.1", sha256="bdb1b08f4274833d62c1aa29e20907365a2ceb950410df15fc9521bad440122b"
+        )
+        version(
+            "25.1.1", sha256="2913a38a2abf4ea6b64ab507bd9e967f3b53dc1ede74b01b0931e1ce548751af"
+        )
         version("25.1", sha256="13b4aa0aaad055020a11bec8a1c2a70a2b2d080e12d89b962266029fff0a16ba")
-        version("25.0.1", sha256="c46efd13b6aa8279f33f2864459c8ce587ea6a1a59ee20de055868d8f7688f7f")
+        version(
+            "25.0.1", sha256="c46efd13b6aa8279f33f2864459c8ce587ea6a1a59ee20de055868d8f7688f7f"
+        )
         version("25.0", sha256="b6eb97a803356a52b2dd4bb73ba9e65b2ba16caa6bcb25a7497350a4e5859b65")
-        version("24.3.1", sha256="3790624780082365f47549d032f3770eeb2b1e8bd1f7b2e02dace1afa361b4ed")
+        version(
+            "24.3.1", sha256="3790624780082365f47549d032f3770eeb2b1e8bd1f7b2e02dace1afa361b4ed"
+        )
         version("24.2", sha256="2cd581cf58ab7fcfca4ce8efa6dcacd0de5bf8d0a3eb9ec927e07405f4d9e2a2")
-        version("24.1.2", sha256="7cd207eed4c60b0f411b444cd1464198fe186671c323b6cd6d433ed80fc9d247")
+        version(
+            "24.1.2", sha256="7cd207eed4c60b0f411b444cd1464198fe186671c323b6cd6d433ed80fc9d247"
+        )
         version("24.0", sha256="ba0d021a166865d2265246961bec0152ff124de910c5cc39f1156ce3fa7c69dc")
-        version("23.3.2", sha256="5052d7889c1f9d05224cd41741acb7c5d6fa735ab34e339624a614eaaa7e7d76")
-        version("23.2.1", sha256="7ccf472345f20d35bdc9d1841ff5f313260c2c33fe417f48c30ac46cccabf5be")
-        version("23.1.2", sha256="3ef6ac33239e4027d9a5598a381b9d30880a1477e50039db2eac6e8a8f6d1b18")
+        version(
+            "23.3.2", sha256="5052d7889c1f9d05224cd41741acb7c5d6fa735ab34e339624a614eaaa7e7d76"
+        )
+        version(
+            "23.2.1", sha256="7ccf472345f20d35bdc9d1841ff5f313260c2c33fe417f48c30ac46cccabf5be"
+        )
+        version(
+            "23.1.2", sha256="3ef6ac33239e4027d9a5598a381b9d30880a1477e50039db2eac6e8a8f6d1b18"
+        )
         version("23.0", sha256="b5f88adff801f5ef052bcdef3daa31b55eb67b0fccd6d0106c206fa248e0463c")
-        version("22.2.2", sha256="b61a374b5bc40a6e982426aede40c9b5a08ff20e640f5b56977f4f91fed1e39a")
-        version("22.1.2", sha256="a3edacb89022ef5258bf61852728bf866632a394da837ca49eb4303635835f17")
-        version("21.3.1", sha256="deaf32dcd9ab821e359cd8330786bcd077604b5c5730c0b096eda46f95c24a2d")
-        version("21.1.2", sha256="f8ea1baa693b61c8ad1c1d8715e59ab2b93cd3c4769bacab84afcc4279e7a70e")
+        version(
+            "22.2.2", sha256="b61a374b5bc40a6e982426aede40c9b5a08ff20e640f5b56977f4f91fed1e39a"
+        )
+        version(
+            "22.1.2", sha256="a3edacb89022ef5258bf61852728bf866632a394da837ca49eb4303635835f17"
+        )
+        version(
+            "21.3.1", sha256="deaf32dcd9ab821e359cd8330786bcd077604b5c5730c0b096eda46f95c24a2d"
+        )
+        version(
+            "21.1.2", sha256="f8ea1baa693b61c8ad1c1d8715e59ab2b93cd3c4769bacab84afcc4279e7a70e"
+        )
         version("20.2", sha256="d75f1fc98262dabf74656245c509213a5d0f52137e40e8f8ed5cc256ddd02923")
         version("19.3", sha256="e100a7eccf085f0720b4478d3bb838e1c179b1e128ec01c0403f84e86e0e2dfb")
-        version("19.1.1", sha256="993134f0475471b91452ca029d4390dc8f298ac63a712814f101cd1b6db46676")
-        version("19.0.3", sha256="bd812612bbd8ba84159d9ddc0266b7fbce712fc9bc98c82dee5750546ec8ec64")
+        version(
+            "19.1.1", sha256="993134f0475471b91452ca029d4390dc8f298ac63a712814f101cd1b6db46676"
+        )
+        version(
+            "19.0.3", sha256="bd812612bbd8ba84159d9ddc0266b7fbce712fc9bc98c82dee5750546ec8ec64"
+        )
         version("18.1", sha256="7909d0a0932e88ea53a7014dfd14522ffef91a464daaaf5c573343852ef98550")
-        version("10.0.1", sha256="717cdffb2833be8409433a93746744b59505f42146e8d37de6c62b430e25d6d7")
+        version(
+            "10.0.1", sha256="717cdffb2833be8409433a93746744b59505f42146e8d37de6c62b430e25d6d7"
+        )
         version("9.0.1", sha256="690b762c0a8460c303c089d5d0be034fb15a5ea2b75bdf565f40421f542fefb0")
 
     extends("python")
