@@ -28,6 +28,7 @@ class MiopenHip(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="98c72a2b5ca541d6c172facdf0f15729207ab52ca9af36c00e2480c5b27c5b99")
     version("7.1.0", sha256="3fa0a7c8ef959ad889aac0109e6bf74de2a54f7e3ab057f98e2dc4fb65eb1599")
@@ -131,6 +132,7 @@ class MiopenHip(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -154,6 +156,7 @@ class MiopenHip(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
