@@ -43,6 +43,7 @@ class Conduit(CachedCMakePackage):
     tags = ["radiuss", "e4s"]
 
     license("BSD-3-Clause")
+    test_requires_compiler = True
 
     version("develop", branch="develop", submodules=True)
     # note: the main branch in conduit was renamed to develop, this next entry
@@ -275,9 +276,12 @@ class Conduit(CachedCMakePackage):
         linkerflags = ""
         for rpath in rpaths:
             linkerflags += "-Wl,-rpath,{} ".format(rpath)
-        entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", linkerflags))
+        entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "${CMAKE_EXE_LINKER_FLAGS} " + linkerflags, force=True))
         if spec.satisfies("+shared"):
-            entries.append(cmake_cache_string("CMAKE_SHARED_LINKER_FLAGS", linkerflags))
+            entries.append(cmake_cache_string("CMAKE_SHARED_LINKER_FLAGS", "${CMAKE_SHARED_LINKER_FLAGS} " + linkerflags, force=True))
+
+        if spec.satisfies("%cce"):
+            entries.append(cmake_cache_string("CMAKE_Fortran_FLAGS", "${CMAKE_Fortran_FLAGS} -ef", force=True))
 
         sys_type = os.environ.get("SYS_TYPE", str(spec.architecture))
         on_blueos = "blueos" in sys_type
@@ -340,7 +344,7 @@ class Conduit(CachedCMakePackage):
                 doxygen_exe = spec["doxygen"].command.path
                 entries.append(cmake_cache_path("DOXYGEN_EXECUTABLE", doxygen_exe))        
         entries.append(cmake_cache_option("ENABLE_DOCS", enable_docs))
-        
+
         entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+test")))
 
         if spec.satisfies("+hdf5"):
