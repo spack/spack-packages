@@ -13,8 +13,8 @@ class Cry(MakefilePackage):
     A library for generating correlated cosmic-ray particle showers.
     """
 
-    homepage = "http://nuclear.llnl.gov/simulation"
-    url = "http://nuclear.llnl.gov/simulation/cry_v1.7.tar.gz"
+    homepage = "https://nuclear.llnl.gov/simulation"
+    url = "https://nuclear.llnl.gov/simulation/cry_v1.7.tar.gz"
 
     maintainers("wdconinc")
 
