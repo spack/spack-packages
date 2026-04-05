@@ -344,6 +344,7 @@ class PyNvidiaDali(PythonPackage):
         depends_on("py-packaging@:24.2", when="@1.45:1.50")
         depends_on("py-nvtx", when="@1.52:")
         depends_on("py-makefun", when="@1.52:")
+        # https://github.com/NVIDIA/DALI/blob/main/cmake/Dependencies.common.cmake
         depends_on("py-nvidia-nvimagecodec@0.7.0:0.8.0", when="@1.53:")
         depends_on("py-nvidia-nvimagecodec@0.6.0:0.7.0", when="@1.52")
         depends_on("py-nvidia-nvimagecodec@0.5.0:0.6.0", when="@1.49:1.51")
@@ -355,7 +356,7 @@ class PyNvidiaDali(PythonPackage):
         depends_on("py-nvidia-nvtiff", when="@1.46:1.48")
         depends_on("py-nvidia-nvcomp@5.1.0.21", when="@1.53")
         depends_on("py-nvidia-nvcomp@5.0.0.6", when="@1.52")
-        depends_on("py-nvidia-nvcomp@4.0", when="@1.50:1.51")
+        depends_on("py-nvidia-nvcomp@4", when="@1.50:1.51")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("WITH_DYNAMIC_NVIMGCODEC", "yes")
