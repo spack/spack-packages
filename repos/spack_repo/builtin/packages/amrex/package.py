@@ -320,6 +320,9 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         "+sycl", when="@:21.05", msg="For SYCL support, AMReX version 21.06 and newer suggested."
     )
 
+    # Fix release number in amrex-v26.04
+    patch("amrex-26.04-changelog.patch", when="@26.04")
+
     def url_for_version(self, version):
         if version >= Version("20.05"):
             url = "https://github.com/AMReX-Codes/amrex/releases/download/{0}/amrex-{0}.tar.gz"
