@@ -11,12 +11,12 @@ class Llhttp(CMakePackage):
     """Fast HTTP message parser based on llparse."""
 
     homepage = "https://llhttp.org/"
-    url = "https://github.com/nodejs/llhttp/archive/refs/tags/release/v9.2.1.tar.gz"
+    url = "https://github.com/nodejs/llhttp/archive/refs/tags/release/v9.3.1.tar.gz"
     git = "https://github.com/nodejs/llhttp.git"
 
     license("MIT")
 
-    version("9.2.1", sha256="3c163891446e529604b590f9ad097b2e98b5ef7e4d3ddcf1cf98b62ca668f23e")
+    version("9.3.1", sha256="c14a93f287d3dbd6580d08af968294f8bcc61e1e1e3c34301549d00f3cf09365")
 
     variant("shared", default=True, description="Build shared library")
     variant("static", default=True, description="Build static library")
@@ -29,6 +29,6 @@ class Llhttp(CMakePackage):
 
     def cmake_args(self):
         return [
-            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-            self.define_from_variant("BUILD_STATIC_LIBS", "static"),
+            self.define_from_variant("LLHTTP_BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("LLHTTP_BUILD_STATIC_LIBS", "static"),
         ]
