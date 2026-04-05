@@ -20,6 +20,8 @@ class Cry(MakefilePackage):
 
     version("1.7", sha256="dcee2428f81cba113f82e0c7c42f4d85bff4b8530e5ab5c82c059bed3e570c20")
 
+    depends_on("cxx", type="build")
+
     def install(self, spec, prefix):
         install_tree("lib", prefix.lib)
         install_tree("src", prefix.include.cry)
