@@ -128,9 +128,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.12.0:", type="build")
 
     depends_on("yaml-cpp")
+    depends_on("nlohmann-json")
+    depends_on("pugixml")
 
     # Standalone CUDA support
     depends_on("cuda", when="+cuda ~kokkos")
+
+    depends_on("py-nanobind", when="@2.12: +python")
 
     # Kokkos support
     with when("+kokkos"):
@@ -185,6 +189,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("dataspaces@1.8.0:", when="+dataspaces")
 
     depends_on("hdf5@:1.12", when="@:2.8 +hdf5")
+    depends_on("hdf5@1.12:", when="@2.9: +hdf5")
     depends_on("hdf5~mpi", when="+hdf5~mpi")
     depends_on("hdf5+mpi", when="+hdf5+mpi")
 
@@ -317,6 +322,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             self.define("ADIOS2_USE_Endian_Reverse", True),
             self.define("ADIOS2_USE_IME", False),
             self.define("ADIOS2_USE_EXTERNAL_YAMLCPP", True),
+            self.define("ADIOS2_USE_EXTERNAL_NLOHMANN_JSON", True),
+            self.define("ADIOS2_USE_EXTERNAL_NANOBIND", self.spec.satisfies("@2.12: +python")),
+            self.define("ADIOS2_USE_EXTERNAL_PUGIXML", True),
         ]
 
         if spec.satisfies("+sst"):

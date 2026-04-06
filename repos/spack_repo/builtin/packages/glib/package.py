@@ -97,6 +97,10 @@ class Glib(MesonPackage):
         depends_on("meson@0.48.0:")
         depends_on("pkgconfig")
         depends_on("gobject-introspection@1.80:", when="+introspection")
+        # glib-bootstrap is needed in the PKG_CONFIG_PATH during build to
+        # configure gobject-instrospection. After that glib itself can be
+        # used as the glib implementation.
+        depends_on("glib-bootstrap", type="build", when="%gobject-introspection@1.80:")
 
     depends_on("libffi")
     depends_on("zlib-api")
@@ -254,6 +258,10 @@ class MesonBuilder(meson.MesonBuilder):
             args.append("-Dselinux=false")
         args.append("-Dgtk_doc=false")
         args.append("-Dlibelf=enabled")
+
+        # https://github.com/GNOME/glib/commit/fa13c41da7fb03a710bfd8840cae4bb57cf14829
+        if self.spec.satisfies("@2.65.1:"):
+            args.append("-Dsysprof=disabled")
 
         # arguments for older versions
         if self.spec.satisfies("@:2.72"):

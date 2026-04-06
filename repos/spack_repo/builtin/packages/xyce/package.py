@@ -113,13 +113,8 @@ class Xyce(CMakePackage):
     depends_on("trilinos@13.2.0:", when="+pymi")
 
     # Propagate variants to trilinos:
-    for _variant in ("mpi",):
-        depends_on("trilinos~" + _variant, when="~" + _variant)
-        depends_on("trilinos+" + _variant, when="+" + _variant)
-
-    # The default settings for various Trilinos variants would require the
-    # installation of many more packages than are needed for Xyce.
-    depends_on("trilinos~anasazi~float~ifpack2~ml~muelu~zoltan2")
+    depends_on("trilinos~mpi", when="~mpi")
+    depends_on("trilinos+mpi", when="+mpi")
 
     # Issue #1712 forces explicitly enumerating blas packages to propagate variants
     with when("+pymi_static_tpls"):
