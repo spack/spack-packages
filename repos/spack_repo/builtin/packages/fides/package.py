@@ -35,7 +35,8 @@ class Fides(CMakePackage):
     depends_on("adios2@2.8:", when="@1.2")
     depends_on("adios2@2.7:2.8", when="@1.1")
 
-    depends_on("vtk-m@1.9:")
+    depends_on("viskores@1:", when="@1.3:")
+    depends_on("vtk-m@1.9:", when="@:1.2")
     # vtk-m 2.0 has a breaking change in cmake target name
     depends_on("vtk-m@:1.9", when="@:1.1")
 
@@ -47,9 +48,12 @@ class Fides(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         options = [
-            self.define("VTKm_DIR", spec["vtk-m"].prefix),
             self.define("ADIOS2_DIR", spec["adios2"].prefix),
             self.define("FIDES_ENABLE_TESTING", "OFF"),
             self.define("FIDES_ENABLE_EXAMPLES", "OFF"),
         ]
+
+        if spec.satisfies("^vtk-m"):
+            options.append(self.define("VTKm_DIR", spec["vtk-m"].prefix))
+
         return options

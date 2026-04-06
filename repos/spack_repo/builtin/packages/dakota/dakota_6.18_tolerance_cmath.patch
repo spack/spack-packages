@@ -1,0 +1,32 @@
+diff --git a/src/unit/test_tolerance_intervals.cpp b/src/unit/test_tolerance_intervals.cpp
+index c8c133c2e..694fca054 100644
+--- a/src/unit/test_tolerance_intervals.cpp
++++ b/src/unit/test_tolerance_intervals.cpp
+@@ -16,6 +16,7 @@
+ 
+ #include <cassert>
+ #include <iostream>
++#include <cmath>
+ 
+ namespace Dakota {
+ namespace TestToleranceIntervals {
+@@ -517,8 +518,8 @@ void test_DSTIEN_valid_input_04_noValidResponseSamples()
+   // ************************************************************************
+   BOOST_CHECK( num_valid_samples == 0 );
+   for (size_t k = 0; k < num_fns; ++k) {
+-    BOOST_CHECK( isnan(computed_dstien_mus   [k]) );
+-    BOOST_CHECK( isnan(computed_dstien_sigmas[k]) );
++    BOOST_CHECK( std::isnan(computed_dstien_mus   [k]) );
++    BOOST_CHECK( std::isnan(computed_dstien_sigmas[k]) );
+   }
+ }
+ 
+@@ -587,7 +588,7 @@ void test_DSTIEN_valid_input_05_justOneValidResponseSample()
+   BOOST_CHECK( num_valid_samples == 1 );
+   for (size_t k = 0; k < num_fns; ++k) {
+     BOOST_CHECK( computed_dstien_mus[k] == expected_dstien_mus[k] );
+-    BOOST_CHECK( isnan(computed_dstien_sigmas[k]) );
++    BOOST_CHECK( std::isnan(computed_dstien_sigmas[k]) );
+   }
+ }
+ 

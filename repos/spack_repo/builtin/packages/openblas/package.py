@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems import cmake, makefile
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
+from spack.llnl.util import tty
 from spack.package import *
 
 
@@ -28,6 +29,7 @@ class Openblas(CMakePackage, MakefilePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("0.3.32", sha256="f8a1138e01fddca9e4c29f9684fd570ba39dedc9ca76055e1425d5d4b1a4a766")
     version("0.3.30", sha256="27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
     version("0.3.29", sha256="38240eee1b29e2bde47ebb5d61160207dc68668a54cac62c076bb5032013b1eb")
     version("0.3.28", sha256="f1003466ad074e9b0c8d421a204121100b0751c96fc6fcf3d1456bd12f8a00a1")
@@ -111,6 +113,7 @@ class Openblas(CMakePackage, MakefilePackage):
     variant("ilp64", default=False, description="Force 64-bit Fortran native integers")
     variant("pic", default=True, description="Build position independent code")
     variant("shared", default=True, description="Build shared libraries")
+    variant("static", default=False, description="Build static libraries")
     variant(
         "dynamic_dispatch",
         default=True,
@@ -144,7 +147,8 @@ class Openblas(CMakePackage, MakefilePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    depends_on("fortran", when="+fortran", type="build")
+    depends_on("fortran", when="@:0.3.20", type="build")
     depends_on("perl", when="@:0.3.20", type="build")
 
     # https://github.com/OpenMathLib/OpenBLAS/pull/4879
@@ -287,8 +291,24 @@ class Openblas(CMakePackage, MakefilePackage):
         when="@0.3.27 %oneapi",
     )
 
+    # Fix arm64 HAVE_SME setting for DYNAMIC_ARCH builds using CMake
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/cdebb4fd4b2bbbf856e5abdcedbe9a5cf348ef8e.patch?full_index=1",
+        sha256="0df81a8f5c1460d3db461e2309e5ac0b70c7745a97a10e617f109b4a5811e043",
+        when="@0.3.30 +dynamic_dispatch target=aarch64:",
+    )
+
+    # ilp64 and symbol suffixes are not supported with CMake build system
+    requires("~ilp64", when="build_system=cmake")
+    requires("symbol_suffix=none", when="build_system=cmake")
+
+    # AOCC compiler detection adjustments
+    patch("openblas-aocc-0.3.28-plus.patch", when="@0.3.28: %aocc@5.1.0:")
+    patch("openblas-0.3.27_aocc.patch", when="@0.3.27 %aocc@5.0.0:")
+    patch("openblas-0.3.21-0.3.26_aocc.patch", when="@0.3.21:0.3.26 %aocc@5.0.0:")
+
     # Requires support for -mtune=generic
-    conflicts("%fortran=clang %llvm@18")
+    conflicts("%fortran=llvm@18")
 
     # See https://github.com/spack/spack/issues/19932#issuecomment-733452619
     # Notice: fixed on Amazon Linux GCC 7.3.1 (which is an unofficial version
@@ -592,11 +612,24 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
             make_defs.append("NUM_THREADS=512")
 
+        # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
+        # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
+        if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
+            make_defs.append("NO_SVE=1")
+
         return make_defs
 
-    @property
-    def build_targets(self):
-        return ["-s"] + self.make_defs + ["all"]
+    def build(self, pkg: MakefilePackage, spec: Spec, prefix: Prefix) -> None:
+        """Override 'make all' with sequential builds due to race conditions."""
+        # Due to the verbosity of the command line and number of object files
+        # created, we suppress makefile command echoing via `-s`.
+        args = ["-s"] + self.make_defs
+
+        # Make each target sequentially
+        with working_dir(self.build_directory):
+            for target in ["libs", "netlib", "shared"]:
+                tty.info("Building target", target)
+                make(*(args + [target]))
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
@@ -605,8 +638,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def install_targets(self):
-        make_args = ["install", "PREFIX={0}".format(self.prefix)]
-        return make_args + self.make_defs
+        return self.make_defs + [f"PREFIX={self.prefix}", "install"]
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
@@ -654,6 +686,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if "+shared" in self.spec:
             cmake_defs += [self.define("BUILD_SHARED_LIBS", "ON")]
+
+        if "+static" in self.spec:
+            cmake_defs += [self.define("BUILD_STATIC_LIBS", "ON")]
 
         if self.spec.satisfies("threads=openmp"):
             cmake_defs += [self.define("USE_OPENMP", "ON"), self.define("USE_THREAD", "ON")]

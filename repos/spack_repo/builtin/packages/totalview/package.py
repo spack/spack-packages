@@ -23,6 +23,43 @@ class Totalview(Package):
     # As the install of Totalview is via multiple tarballs, the base install
     # will be the documentation.  The architecture-specific tarballs are added
     # as resources dependent on the specific architecture used.
+
+    version(
+        "2026.1-x86-64",
+        sha256="066b8911d55479f8e0904daf3259667f689d7ded8d7f7c7afb31ac23f024c1d9",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2026.1/totalview_2026.1.3_linux_x86-64.tar",
+    )
+
+    version(
+        "2026.1-powerle",
+        sha256="56c20f0b3a83cc6d9686d1e29cffea623f52c56a37886bae4095c0783dfabda9",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2026.1/totalview_2026.1.3_linux_powerle.tar",
+    )
+
+    version(
+        "2026.1-linux-arm64",
+        sha256="9e1bed78b86ec99ae97500664ec5658387e18ec9d707adea14839d5f79a39f9b",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2026.1/totalview_2026.1.3_linux_arm64.tar",
+    )
+
+    version(
+        "2025.4-x86-64",
+        sha256="ef4e510f73ae2fec1584d7a70552d2113a5d9827f510b96a1a8d5325b28790ac",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.4/totalview_2025.4.3_linux_x86-64.tar",
+    )
+
+    version(
+        "2025.4-powerle",
+        sha256="48dab22dc25ad1b576fbd60f0a81d498a26af713cc43ba0257f768d5e3b4880f",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.4/totalview_2025.4.3_linux_powerle.tar",
+    )
+
+    version(
+        "2025.4-linux-arm64",
+        sha256="8aa777d0795ed36a8a74e6fd1fec195d66f712539c132ba97eb0ddd633cf5d1a",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2025.4/totalview_2025.4.3_linux_arm64.tar",
+    )
+
     version(
         "2025.3-x86-64",
         sha256="64014770970bc6cb42a4cb1455cea95d4609964a38de0ecdc6713d4d5ee8bcdc",
@@ -161,7 +198,7 @@ class Totalview(Package):
 
     def install(self, spec, prefix):
         # Assemble install line
-        install_cmd = which("./Install")
+        install_cmd = which("./Install", required=True)
         arg_list = ["-agree", "-nosymlink", "-directory", "{0}".format(prefix)]
 
         # Platform specification.
@@ -177,7 +214,7 @@ class Totalview(Package):
         install_cmd.exe.extend(arg_list)
 
         # Run install script for totalview (which automatically installs memoryscape)
-        install_cmd = which("./Install")
+        install_cmd = which("./Install", required=True)
         arg_list.extend(["-install", "totalview"])
         install_cmd.exe.extend(arg_list)
         install_cmd()

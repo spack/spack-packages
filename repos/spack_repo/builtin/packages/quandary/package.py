@@ -47,6 +47,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", type=("build", "link", "run"))
 
     depends_on("blt@0.6.0:", type="build")
+    depends_on("tomlplusplus", when="@main")
 
     with when("+rocm"):
         for arch_ in ROCmPackage.amdgpu_targets:

@@ -18,6 +18,7 @@ class PySqlalchemy(PythonPackage):
 
     version("2.0.43", sha256="788bfcef6787a7764169cfe9859fe425bf44559619e1d9f56f5bddf2ebf6f417")
     version("2.0.19", sha256="77a14fa20264af73ddcdb1e2b9c5a829b8cc6b8304d0f093271980e36c200a3f")
+    version("1.4.54", sha256="4470fbed088c35dc20b78a39aaf4ae54fe81790c783b3264872a0224f437c31a")
     version("1.4.49", sha256="06ff25cbae30c396c4b7737464f2a7fc37a67b7da409993b182b024cec80aed9")
     version("1.4.45", sha256="fd69850860093a3f69fefe0ab56d041edfdfe18510b53d9a2eaecba2f15fa795")
     version("1.4.44", sha256="2dda5f96719ae89b3ec0f1b79698d86eb9aecb1d54e990abb3fdd92c04b46a90")

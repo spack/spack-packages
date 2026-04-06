@@ -71,6 +71,7 @@ class P4est(AutotoolsPackage):
             "--without-blas",
             "CPPFLAGS=-DSC_LOG_PRIORITY=SC_LP_ESSENTIAL",
             "CFLAGS=-O2",
+            "LIBS=-lm",
         ]
 
         if "~mpi" in self.spec:

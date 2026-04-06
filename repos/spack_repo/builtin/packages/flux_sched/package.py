@@ -23,6 +23,10 @@ class FluxSched(CMakePackage, AutotoolsPackage):
     license("LGPL-3.0-only")
 
     version("master", branch="master")
+    version("0.48.0", sha256="8f8de89e445303e07b27912d4044862a8594d46b68d20dbb28b1e20bef198efe")
+    version("0.47.0", sha256="80194e5c23e7ef5f4bf6cb1c9f63f949f979e9f58c7976e5453c31f244d3fd6a")
+    version("0.46.0", sha256="117a2c9cd01a4fef372a546c53ea9b4d5fe2b9490b33c0816fcac556675eda0b")
+    version("0.45.0", sha256="2190858b687bf576c5e0ac409f678a67bc00c449a9f05e1f2b2284ae275a227f")
     version("0.44.0", sha256="a2b71a0c5fb51a89d32cff9eca2fc7c275a7a1a81746bea8d00b4c1868af366e")
     version("0.43.0", sha256="0d9f6b88f99270fa84094b144a35bd6075adf92b9ec5c7f7f60fceffa668c996")
     version("0.42.2", sha256="3a4a513c6539f2927e7a544f431e97456e50c71b63f8744d31e0dee3dc7fcc2e")
@@ -146,7 +150,7 @@ class FluxSched(CMakePackage, AutotoolsPackage):
     def setup(self):
         with working_dir(self.stage.source_path):
             # Allow git-describe to get last tag so flux-version works:
-            git = which("git")
+            git = which("git", required=True)
             # When using spack develop, this will already be unshallow
             try:
                 git("fetch", "--unshallow")
@@ -162,7 +166,7 @@ class FluxSched(CMakePackage, AutotoolsPackage):
         # make sure configure doesn't get confused by the staging symlink
         with working_dir(self.configure_directory):
             # Bootstrap with autotools
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./autogen.sh")
 
     @when("@:0.20")

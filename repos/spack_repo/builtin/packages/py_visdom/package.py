@@ -17,6 +17,7 @@ class PyVisdom(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.2.4", sha256="84a911d3c8814a056d54812b381bd938cb44bcfc503a85fe0f701502bb720574")
     version("0.1.8.9", sha256="c73ad23723c24a48156899f78dd76bd4538eba3edf9120b6c65a9528fa677126")
 
     depends_on("py-setuptools", type="build")

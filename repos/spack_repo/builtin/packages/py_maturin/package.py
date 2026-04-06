@@ -19,6 +19,7 @@ class PyMaturin(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.10.2", sha256="259292563da89850bf8f7d37aa4ddba22905214c1e180b1c8f55505dfd8c0e81")
     version("1.9.6", sha256="2c2ae37144811d365509889ed7220b0598487f1278c2441829c3abf56cc6324a")
     version("1.9.1", sha256="97b52fb19d20c1fdc70e4efdc05d79853a4c9c0051030c93a793cd5181dc4ccd")
     version("1.8.3", sha256="304762f86fd53a8031b1bf006d12572a2aa0a5235485031113195cc0152e1e12")
@@ -42,6 +43,7 @@ class PyMaturin(PythonPackage):
         depends_on("py-tomli@1.1:", when="^python@:3.10")
         # from Cargo.toml
         for rust, maturin in [
+            ("1.83", "1.10.2"),
             ("1.74", "1.7.0"),
             ("1.70", "1.5.0"),
             ("1.67", "1.4.0"),

@@ -134,6 +134,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("adios2", default=False, description="Build Adios2 filter support")
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
+    variant("catalyst", default=False, description="Build with Catalyst support")
 
     # caliper
     variant("caliper", default=False, description="Build Caliper support")
@@ -177,7 +178,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     ###########################################################################
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", type="build", when="+fortran")
 
     # Certain CMake versions have been found to break for our use cases
     depends_on("cmake@3.14.1:3.14,3.18.2:", type="build")
@@ -192,8 +193,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
     depends_on("conduit@0.9.4", when="@0.9.4")
     depends_on("conduit@0.9.5", when="@0.9.5")
-    depends_on("conduit+python", when="+python")
-    depends_on("conduit~python", when="~python")
+    depends_on("conduit+fortran", when="+fortran")
+    depends_on("conduit+python", when="+python", type=("build", "link", "run"))
     depends_on("conduit+mpi", when="+mpi")
     depends_on("conduit~mpi", when="~mpi")
 
@@ -218,7 +219,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # MPI
     #######################
     depends_on("mpi", when="+mpi")
-    depends_on("py-mpi4py", when="+mpi+python")
+    depends_on("py-mpi4py", when="+mpi+python", type=("build", "link", "run"))
 
     #############################
     # TPLs for Runtime Features
@@ -317,6 +318,13 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("adios2~mpi", when="+adios2~mpi")
     depends_on("adios2+shared", when="+adios2+shared")
     depends_on("adios2~shared", when="+adios2~shared")
+
+    # Catalyst
+    with when("+catalyst"):
+        depends_on("libcatalyst")
+        depends_on("libcatalyst+mpi", when="+mpi")
+        depends_on("libcatalyst+python", when="+python")
+        depends_on("libcatalyst+fortran", when="+fortran")
 
     #######################
     # Caliper
@@ -633,6 +641,12 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+cuda"):
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "ON"))
+            cfg.write(
+                cmake_cache_entry(
+                    "CMAKE_CUDA_ARCHITECTURES", ";".join(spec.variants["cuda_arch"].values)
+                )
+            )
+
         else:
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "OFF"))
 
@@ -792,6 +806,16 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_entry("ADIAK_DIR", spec["adiak"].prefix))
         else:
             cfg.write("# caliper not built by spack \n")
+
+        #######################
+        # Catalyst
+        #######################
+        cfg.write("# Catalyst support\n")
+
+        if spec.satisfies("+catalyst"):
+            cfg.write(cmake_cache_entry("CATALYST_DIR", spec["libcatalyst"].prefix))
+        else:
+            cfg.write("# libcatalyst not built by spack \n")
 
         #######################
         # Finish host-config

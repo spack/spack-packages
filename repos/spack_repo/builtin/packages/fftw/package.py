@@ -78,7 +78,7 @@ class FftwBase(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         if spec.satisfies("+pfft_patches"):
-            autoreconf = which("autoreconf")
+            autoreconf = which("autoreconf", required=True)
             autoreconf("-ifv")
 
     @property
@@ -155,6 +155,13 @@ class FftwBase(AutotoolsPackage):
         # NVIDIA compiler does not support Neon intrinsics
         if spec.satisfies("%nvhpc") and "neon" in simd_features:
             simd_features.remove("neon")
+
+        # GCC on apple silicon does not support Neon intrinsics
+        if (
+            spec.satisfies("platform=darwin target=aarch64: %gcc")
+            and "neon" in float_simd_features
+        ):
+            float_simd_features.remove("neon")
 
         simd_options = []
         for feature in simd_features:

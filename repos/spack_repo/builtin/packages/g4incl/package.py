@@ -20,6 +20,7 @@ class G4incl(Package):
     maintainers("drbenmorgan")
 
     # Only versions relevant to Geant4 releases built by spack are added
+    version("1.3", sha256="e4b3dbe52acef53536454e22443091212843821bd23628eed846d299599f3bf9")
     version("1.2", sha256="f880b16073ee0a92d7494f3276a6d52d4de1d3677a0d4c7c58700396ed0e1a7e")
     version("1.1", sha256="5d82e71db5f5a1b659937506576be58db7de7753ec5913128141ae7fce673b44")
     version("1.0", sha256="716161821ae9f3d0565fbf3c2cf34f4e02e3e519eb419a82236eef22c2c4367d")

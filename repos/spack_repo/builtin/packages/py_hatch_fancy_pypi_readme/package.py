@@ -18,5 +18,6 @@ class PyHatchFancyPypiReadme(PythonPackage):
     version("22.7.0", sha256="dedf2ba0b81a2975abb1deee9310b2eb85d22380fda0d52869e760b5435aa596")
 
     depends_on("py-hatchling", type=("build", "run"))
+    depends_on("py-hatchling@1.26:", when="@25:", type=("build", "run"))
     depends_on("py-tomli", when="^python@:3.10", type=("build", "run"))
     depends_on("py-typing-extensions", when="^python@:3.7", type=("build", "run"))

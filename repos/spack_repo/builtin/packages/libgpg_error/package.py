@@ -17,6 +17,7 @@ class LibgpgError(AutotoolsPackage):
 
     license("GPL-2.0-or-later AND LGPL-2.1-or-later")
 
+    version("1.58", sha256="f943aea9a830a8bd938e5124b579efaece24a3225ff4c3d27611a80ce1260c27")
     version("1.55", sha256="95b178148863f07d45df0cea67e880a79b9ef71f5d230baddc0071128516ef78")
     version("1.51", sha256="be0f1b2db6b93eed55369cdf79f19f72750c8c7c39fc20b577e724545427e6b2")
     version("1.50", sha256="69405349e0a633e444a28c5b35ce8f14484684518a508dc48a089992fe93e20a")
@@ -36,7 +37,7 @@ class LibgpgError(AutotoolsPackage):
     version("1.21", sha256="b7dbdb3cad63a740e9f0c632a1da32d4afdb694ec86c8625c98ea0691713b84d")
     version("1.18", sha256="9ff1d6e61d4cef7c1d0607ceef6d40dc33f3da7a3094170c3718c00153d80810")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("awk", type="build")
     # Patch for using gawk@5, c.f. https://dev.gnupg.org/T4459

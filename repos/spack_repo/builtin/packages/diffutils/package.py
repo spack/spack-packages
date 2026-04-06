@@ -49,6 +49,9 @@ class Diffutils(AutotoolsPackage, GNUMirrorPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%fj"):
             env.append_flags("CFLAGS", "-Qunused-arguments")
+        # Use C11 std to ensure two-arg static_assert (no C23 for Intel Classic)
+        if self.spec.satisfies("@3.10: %intel"):
+            env.append_flags("CFLAGS", "-std=c11")
 
     @classmethod
     def determine_version(cls, exe):

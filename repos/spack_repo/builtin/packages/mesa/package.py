@@ -166,6 +166,13 @@ class Mesa(MesonPackage):
 
     patch("0001-disable-gallivm-coroutine-for-libllvm15.patch", when="@22.1.2:22.3 ^libllvm@15")
 
+    def url_for_version(self, version):
+        if version < Version("23"):
+            url = "https://archive.mesa3d.org/older-versions/{0}.x/mesa-{1}.tar.xz"
+            return url.format(version.up_to(1), version.dotted)
+
+        return super(Mesa, self).url_for_version(version)
+
     # Explicitly use the llvm-config tool
     def patch(self):
         filter_file(r"_llvm_method = 'auto'", "_llvm_method = 'config-tool'", "meson.build")
@@ -175,6 +182,9 @@ class Mesa(MesonPackage):
             if name == "cflags":
                 flags.append("-std=c99")
         return super().flag_handler(name, flags)
+
+    def dependent_cmake_args(self, dependent_spec: Spec) -> List[str]:
+        return ["-DOpenGL_GL_PREFERENCE:STRING=LEGACY"]
 
     @property
     def libglx_headers(self):
@@ -218,8 +228,13 @@ class MesonBuilder(meson.MesonBuilder):
             args.append("-Dgallium-omx=disabled")
 
         args_platforms = []
-        args_gallium_drivers = ["swrast"]
         args_dri_drivers = []
+
+        # swrast includes softpipe and llvmpipe
+        if spec.satisfies("+llvm"):
+            args_gallium_drivers = ["swrast"]
+        else:
+            args_gallium_drivers = ["softpipe"]
 
         opt_enable = lambda c, o: "-D%s=%sabled" % (o, "en" if c else "dis")
         opt_bool = lambda c, o: "-D%s=%s" % (o, str(c).lower())

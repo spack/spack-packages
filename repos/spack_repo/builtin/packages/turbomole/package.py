@@ -61,7 +61,7 @@ class Turbomole(Package):
 
         tm_arch = self.get_tm_arch()
 
-        tar = which("tar")
+        tar = which("tar", required=True)
         dst = join_path(prefix, "TURBOMOLE")
 
         tar("-x", "-z", "-f", "thermocalc.tar.gz")

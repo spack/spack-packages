@@ -93,7 +93,7 @@ class Povray(AutotoolsPackage):
         # and it must be run from within the directory containing it
         unix_dir = join_path(self.build_directory, "unix")
         prebuild_path = join_path(unix_dir, "prebuild.sh")
-        prebuild_script = which(prebuild_path)
+        prebuild_script = which(prebuild_path, required=True)
         prebuild_script()
 
     def configure_args(self):
@@ -153,7 +153,7 @@ class Povray(AutotoolsPackage):
         """Render sample file"""
         povs = find(self.prefix.share, "biscuit.pov")[0]
         copy(povs, ".")
-        exe = which("povray")
+        exe = which("povray", required=True)
         out = exe("biscuit.pov", output=str.split, error=str.split)
         expected = "POV-Ray finished"
         assert expected in out

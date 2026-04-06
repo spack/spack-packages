@@ -31,6 +31,10 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.12.3", sha256="398a5a32ee6e75040598a7f8e895126a8225118317f272d715867c844f932848")
+    version("3.12.2", sha256="21c5e0f91974383b4c5692b7103650f176f2f54f1b0d449787f444b89881e9b4")
+    version("3.12.1", sha256="2a4fd3170ff81def93db60f7f61f2842a2ae7ad0335e4ed4ba305252f05835de")
+    version("3.12.0", sha256="428c19fff818bbb4136766cfee86fae2eebd3620806aa40af21844f4f0b2dbcf")
     version("3.11.5", sha256="79f66756f1c843b5ee52c8482d4f6bd2a8b7706d6161cc11f0b27c83d638796a")
     version("3.11.4", sha256="6401eba2bb63f5ef7a08d2157f240194f06d508d096898a705637aeea9d3bbe8")
     version("3.11.3", sha256="ba0807729fa681eed55bb6d5588bb9e4bde2b691c46e8d6d375ff5eaf789b16a")
@@ -66,11 +70,13 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     version("3.4.3", sha256="02a27b35899e1c4c3bcb6007da900128ddd7e8ab7cd6ccfecf338a301eadad5a")
     version("3.4.2", sha256="16baf03dfccf9e3f72bb2e15cd2d5b3f4be0437cdff8a785bceab0c7be557335")
     version("3.4.1", sha256="332f053516ca45101ef0f7fa96309b64242688a8024780a5d93be0230e42173d")
-    version("3.4.0", sha256="ac7bd2bb9436f3fc38bc7309704672980f82d64b4d57627d27849259b8f71d5c")
-    version("3.3.3", sha256="1e8fc8b19c77238c7f4c27857d04857b65d8b7e8050d3aac256d70fa48a21e76")
-    version("3.3.2", sha256="630e34141cf398c3078d7d8f08bb44e804c65bbf09807b3610dcbfbc37115cc3")
-    version("3.3.1", sha256="48ab00b77d49f08cf66c60ccce55abb6455c3079f545e60c90ee7ce857bccb70")
-    version("3.3.0", sha256="190c8f4b56afc767f43836b2a5cd53cc52ee7fdc25eb78c6079c5a244e28efa7")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2021-45943/
+        version("3.4.0", sha256="ac7bd2bb9436f3fc38bc7309704672980f82d64b4d57627d27849259b8f71d5c")
+        version("3.3.3", sha256="1e8fc8b19c77238c7f4c27857d04857b65d8b7e8050d3aac256d70fa48a21e76")
+        version("3.3.2", sha256="630e34141cf398c3078d7d8f08bb44e804c65bbf09807b3610dcbfbc37115cc3")
+        version("3.3.1", sha256="48ab00b77d49f08cf66c60ccce55abb6455c3079f545e60c90ee7ce857bccb70")
+        version("3.3.0", sha256="190c8f4b56afc767f43836b2a5cd53cc52ee7fdc25eb78c6079c5a244e28efa7")
     version("3.2.3", sha256="d9ec8458fe97fd02bf36379e7f63eaafce1005eeb60e329ed25bb2d2a17a796f")
     version("3.2.2", sha256="a7e1e414e5c405af48982bf4724a3da64a05770254f2ce8affb5f58a7604ca57")
     version("3.2.1", sha256="6c588b58fcb63ff3f288eb9f02d76791c0955ba9210d98c3abd879c770ae28ea")
@@ -83,8 +89,10 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     version("3.0.4", sha256="5569a4daa1abcbba47a9d535172fc335194d9214fdb96cd0f139bb57329ae277")
     version("3.0.3", sha256="e20add5802265159366f197a8bb354899e1693eab8dbba2208de14a457566109")
     version("3.0.2", sha256="c3765371ce391715c8f28bd6defbc70b57aa43341f6e94605f04fe3c92468983")
-    version("3.0.1", sha256="45b4ae25dbd87282d589eca76481c426f72132d7a599556470d5c38263b09266")
-    version("3.0.0", sha256="ad316fa052d94d9606e90b20a514b92b2dd64e3142dfdbd8f10981a5fcd5c43e")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2019-17545/
+        version("3.0.1", sha256="45b4ae25dbd87282d589eca76481c426f72132d7a599556470d5c38263b09266")
+        version("3.0.0", sha256="ad316fa052d94d9606e90b20a514b92b2dd64e3142dfdbd8f10981a5fcd5c43e")
 
     # Optional dependencies
     # https://gdal.org/en/stable/development/building_from_source.html
@@ -355,12 +363,14 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("libpng@1.6:", when="@3.9:+png")
     depends_on("libpng", when="+png")
     # depends_on('podofo', when='+podofo')
-    depends_on("poppler@0.86:", when="@3.9:+poppler")
-    depends_on("poppler@0.24:", when="+poppler")
-    depends_on("poppler@:21", when="@:3.4.1+poppler")
-    depends_on("poppler@:25.01", when="@:3.10.1+poppler")
-    depends_on("poppler@:25.09", when="@:3.11.4+poppler")
-    depends_on("poppler", when="+poppler")
+    with when("+poppler"):
+        depends_on("poppler@0.86:", when="@3.9:")
+        depends_on("poppler@0.24:")
+        depends_on("poppler@:26.01", when="@:3.12.2")
+        depends_on("poppler@:26.00", when="@:3.12.1")
+        depends_on("poppler@:25.09", when="@:3.11.4")
+        depends_on("poppler@:25.01", when="@:3.10.1")
+        depends_on("poppler@:21", when="@:3.4.1")
     depends_on("postgresql", when="+postgresql")
     depends_on("qhull", when="+qhull")
     depends_on("qhull@2015:", when="@3.5:+qhull")

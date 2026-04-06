@@ -30,7 +30,7 @@ class Cubew(AutotoolsPackage):
     depends_on("zlib-api")
 
     def url_for_version(self, version):
-        url = "http://apps.fz-juelich.de/scalasca/releases/cube/{0}/dist/cubew-{1}.tar.gz"
+        url = "https://apps.fz-juelich.de/scalasca/releases/cube/{0}/dist/cubew-{1}.tar.gz"
 
         return url.format(version.up_to(2), version)
 

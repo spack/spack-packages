@@ -24,6 +24,8 @@ class Openturns(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.26", sha256="624bd45f89ab3afe1931cb07f8c5398e6983faa40a1d92a81b04006f45b66147")
+    version("1.25", sha256="d9606f25824a84233b2ccf07e0d03716e387453a4be26fdd031bd0d47458d045")
     version("1.24", sha256="6c5232b4daf0b93fbc49dee45299ade2c2c16d44476700e7689af6b50c999f57")
     version("1.23", sha256="4c7cfe5d2310933e3a2e91f7db9531d80e32157143157df80f6e93267c29f414")
     version("1.22", sha256="487f7fc00f02eb91d264c8c9d78c2abba505ac6aaa5bc0328c04dddbe6d58741")
@@ -38,7 +40,8 @@ class Openturns(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("cmake@2.8:", type="build")
+    depends_on("cmake@2.8:", type="build", when="@:1.24")
+    depends_on("cmake@3.18:", type="build", when="@1.25:")
     depends_on("bison", type="build")
     depends_on("flex", type="build")
 
