@@ -9,7 +9,7 @@ from spack.package import *
 
 class PyDeeplift(PythonPackage):
     """DeepLIFT: Deep Learning Important FeaTures
-    
+
     DeepLIFT implements the methods in "Learning Important Features Through
     Propagating Activation Differences" by Shrikumar, Greenside & Kundaje, as
     well as other commonly-used methods such as gradients, gradient-times-input

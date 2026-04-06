@@ -20,6 +20,7 @@ class PyPy2bit(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
-    patch("https://salsa.debian.org/med-team/python-py2bit/-/commit/fefc9d02c2a1a81f5cfe9c05e55f0fbf9a8b398a.patch", sha256="09039112ae2ca3e344b4dbb93e79e786a5c6dcfd9a22d46505b78459c7954f0f", when="@0.3:0.3.1 %gcc@14:")
+    # Taken from Debian, https://github.com/deeptools/py2bit/pull/14
+    patch("gcc14_fix.patch", when="@0.3:0.3.1 %gcc@14:")
 
     depends_on("py-setuptools", type="build")
