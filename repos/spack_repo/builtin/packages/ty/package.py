@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class Ty(CargoPackage):
+class Ty(CargoPackage, PythonPackage):
     """An extremely fast Python type checker, written in Rust."""
 
     homepage = "https://github.com/astral-sh/ty/"
@@ -34,6 +35,15 @@ class Ty(CargoPackage):
     version("0.0.17", sha256="0e46d435f4a3f553a04c254b74ba9f5f6579046f2d4d921833bcc87dda08dfb8")
     version("0.0.16", sha256="e078831ec7e0b6be4dd920043a7c19fd1b6e92c26b48df0635b03cd59b348a1a")
     version("0.0.15", sha256="ac07106322ed0367fa3932d1e008140dffa7d115471f8cccefa810fd3c368b6a")
+
+
+    variant("python", default=False, description="Build and install ruff as a wheel")
+
+    build_system("cargo", conditional("python_pip", when="+python"), default="cargo")
+
+    with when("+python"):
+        build_system("python_pip")
+        depends_on("py-maturin@1", type="build")
 
     with default_args(type="build"):
         depends_on("c")
