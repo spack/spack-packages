@@ -36,7 +36,6 @@ class Ty(CargoPackage, PythonPackage):
     version("0.0.16", sha256="e078831ec7e0b6be4dd920043a7c19fd1b6e92c26b48df0635b03cd59b348a1a")
     version("0.0.15", sha256="ac07106322ed0367fa3932d1e008140dffa7d115471f8cccefa810fd3c368b6a")
 
-
     variant("python", default=False, description="Build and install ruff as a wheel")
 
     build_system("cargo", conditional("python_pip", when="+python"), default="cargo")
