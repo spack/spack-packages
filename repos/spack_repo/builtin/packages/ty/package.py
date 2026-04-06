@@ -22,7 +22,9 @@ class Ty(CargoPackage, PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
-    version("0.0.28", sha256="1fbde7bc5d154d6f047b570d95665954fa83b75a0dce50d88cf081b40a27ea32")
+    version("0.0.29", sha256="f03fb2349e404bdb62a828fcea96d1d7b97a06722d25de4a27b83e289cf810f2")
+    version("0.0.28", sha256="578792eec001dfca85a5be5df2e5acee64d5bda8dada9715472e211598ad5352")
+    version("0.0.27", sha256="d83bb1a634d7cbbb3a37dc715861ad601bbcfc61c3c2211c1c2a26413df376a2")
     version("0.0.26", sha256="a7cdf959700f96784396dd673a7bcd82300a16e337995fbbc6c4842a730ad5e5")
     version("0.0.25", sha256="e22a3f371b260f482fdece3ebd44e42342241661224283e4b7be283df0dfcc3b")
     version("0.0.24", sha256="cddb2c6022e2b96faf289c9a275bf4ee05a3430e922ffe9e123fad6a9542a325")
