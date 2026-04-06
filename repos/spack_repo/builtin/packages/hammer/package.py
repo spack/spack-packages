@@ -28,7 +28,7 @@ class Hammer(CMakePackage):
     variant("examples", default=False, description="Install and build Hammer examples")
 
     depends_on("cxx", type="build")
-    depends_on("cmake@3.2:", type="build")
+    depends_on("cmake@3.2:3", type="build")  # @:3 for use of TestEndianess.c.in
 
     depends_on("boost@1.50: +thread")
     depends_on("yaml-cpp@0.6:")
