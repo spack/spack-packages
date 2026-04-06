@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cargo import CargoPackage
-from spack_repo.builtin.build_systems.python import PythonExtension
+from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class Ruff(CargoPackage, PythonExtension):
+class Ruff(CargoPackage, PythonPackage):
     """An extremely fast Python linter and code formatter, written in Rust."""
 
     homepage = "https://docs.astral.sh/ruff"
@@ -32,8 +32,8 @@ class Ruff(CargoPackage, PythonExtension):
 
     with when("+python"):
         build_system("python_pip")
-        depends_on("py-maturin@1.9:1", when="@0.12.7:")
-        depends_on("py-maturin@1")
+        depends_on("py-maturin@1.9:1", when="@0.12.7:", type="build")
+        depends_on("py-maturin@1", type="build")
 
     with default_args(type="build"):
         depends_on("c")
