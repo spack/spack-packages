@@ -23,6 +23,8 @@ class G4hepem(CMakePackage, CudaPackage):
 
     version("20251114", sha256="d1bf94fd9403043f0c5f3b8bb6d9b79d6108f07c19d8b7403de0acd66774f8af")
 
+    variant("early_tracking_exit", default=False, description="Enable user-defined early tracking exit")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.17:", type="build")
@@ -35,9 +37,8 @@ class G4hepem(CMakePackage, CudaPackage):
             self.define("CMAKE_CXX_STANDARD", self.spec["geant4"].variants["cxxstd"].value),
             self.define("G4HepEm_GEANT4_BUILD", True),
             self.define_from_variant("G4HepEm_CUDA_BUILD", "cuda"),
+            self.define_from_variant("G4HepEm_EARLY_TRACKING_EXIT", "early_tracking_exit"),
         ]
         if self.spec.satisfies("+cuda"):
-            args.append(
-                self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value)
-            )
+            args.append(CMakeBuilder.define_cuda_architectures(self))
         return args
