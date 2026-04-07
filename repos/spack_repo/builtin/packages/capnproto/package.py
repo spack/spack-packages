@@ -22,6 +22,7 @@ class Capnproto(AutotoolsPackage):
 
     version("master", branch="master")
 
+    version("0.10.4", sha256="c6f25940688c87ddb24e0c4e475c3213d9b044aad2ba305439cc8c224f559da6")
     version("0.10.2", sha256="756262841fa66260c9969e900701cc86720c2548584fb96c8153348fd7edfe69")
     version("0.10.0", sha256="0e46a72d086830762c001116c0a146098fbdce3cd40665a0ffd4742962d42bfd")
     version("0.9.1", sha256="daf49f794560f715e2f4651c842aaece2d065d4216834c5c3d3254962e35b535")
