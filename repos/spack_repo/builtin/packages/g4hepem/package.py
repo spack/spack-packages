@@ -23,7 +23,9 @@ class G4hepem(CMakePackage, CudaPackage):
 
     version("20251114", sha256="d1bf94fd9403043f0c5f3b8bb6d9b79d6108f07c19d8b7403de0acd66774f8af")
 
-    variant("early_tracking_exit", default=False, description="Enable user-defined early tracking exit")
+    variant(
+        "early_tracking_exit", default=False, description="Enable user-defined early tracking exit"
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
