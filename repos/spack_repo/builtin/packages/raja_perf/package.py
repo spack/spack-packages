@@ -29,73 +29,64 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     license("BSD-3-Clause")
 
-    version("develop", branch="develop", submodules="True")
-    version("main", branch="main", submodules="True")
+    version("develop", branch="develop", submodules=True)
+    version("main", branch="main", submodules=True)
     version(
         "2025.03.0",
         tag="v2025.03.0",
         commit="b66b9d7a1c6826037fed991492bc3ea1893d86ac",
-        submodules="True",
+        submodules=True,
     )
     version(
         "2024.07.0",
         tag="v2024.07.0",
         commit="6e81aa58af244a13755a694bfdc7bc301139a244",
-        submodules="True",
+        submodules=True,
     )
     version(
         "2023.06.0",
         tag="v2023.06.0",
         commit="e5b2102f50e4642f53d9c86fb622b398a748974a",
-        submodules="True",
+        submodules=True,
     )
     version(
         "2022.10.0",
         tag="v2022.10.0",
         commit="57ee53e402d2ac0a398df39ad1ca85cf1d2be45b",
-        submodules="True",
+        submodules=True,
     )
     version(
-        "0.12.0",
-        tag="v0.12.0",
-        commit="388c1d7562e1cb364191cb34c1ff62f3cadf54a0",
-        submodules="True",
+        "0.12.0", tag="v0.12.0", commit="388c1d7562e1cb364191cb34c1ff62f3cadf54a0", submodules=True
     )
     version(
-        "0.11.0",
-        tag="v0.11.0",
-        commit="22ac1de533ebd477c781d53962a92478c0a11d43",
-        submodules="True",
+        "0.11.0", tag="v0.11.0", commit="22ac1de533ebd477c781d53962a92478c0a11d43", submodules=True
     )
     version(
-        "0.10.0",
-        tag="v0.10.0",
-        commit="6bf725af38da41b1ebd1d29c75ffa5b8e57f7cbf",
-        submodules="True",
+        "0.10.0", tag="v0.10.0", commit="6bf725af38da41b1ebd1d29c75ffa5b8e57f7cbf", submodules=True
     )
     version(
-        "0.9.0", tag="v0.9.0", commit="064dd17dae696c3e440eeb7469fa90341858a636", submodules="True"
+        "0.9.0", tag="v0.9.0", commit="064dd17dae696c3e440eeb7469fa90341858a636", submodules=True
     )
     version(
-        "0.8.0", tag="v0.8.0", commit="94c65b2caefec2220f712f34c2a198b682ca7e23", submodules="True"
+        "0.8.0", tag="v0.8.0", commit="94c65b2caefec2220f712f34c2a198b682ca7e23", submodules=True
     )
     version(
-        "0.7.0", tag="v0.7.0", commit="a6ef0279d9d240199947d872d8f28bf121f2192c", submodules="True"
+        "0.7.0", tag="v0.7.0", commit="a6ef0279d9d240199947d872d8f28bf121f2192c", submodules=True
     )
     version(
-        "0.6.0", tag="v0.6.0", commit="21e476f031bc10bbdb8514425c380553bfb23bdc", submodules="True"
+        "0.6.0", tag="v0.6.0", commit="21e476f031bc10bbdb8514425c380553bfb23bdc", submodules=True
     )
     version(
-        "0.5.2", tag="v0.5.2", commit="2da5e27bc648ff5540ffa69bbde67f125e4581d3", submodules="True"
+        "0.5.2", tag="v0.5.2", commit="2da5e27bc648ff5540ffa69bbde67f125e4581d3", submodules=True
     )
     version(
-        "0.5.1", tag="v0.5.1", commit="a7b6f63e4fef2d0146932eff409788da51ab0cb3", submodules="True"
+        "0.5.1", tag="v0.5.1", commit="a7b6f63e4fef2d0146932eff409788da51ab0cb3", submodules=True
     )
     version(
-        "0.5.0", tag="v0.5.0", commit="888f5ebe69a9b2ae35058cf8fb8d89d91a379bea", submodules="True"
+        "0.5.0", tag="v0.5.0", commit="888f5ebe69a9b2ae35058cf8fb8d89d91a379bea", submodules=True
     )
     version(
-        "0.4.0", tag="v0.4.0", commit="a8f669c1ad01d51132a4e3d9d6aa8b2cabc9eff0", submodules="True"
+        "0.4.0", tag="v0.4.0", commit="a8f669c1ad01d51132a4e3d9d6aa8b2cabc9eff0", submodules=True
     )
 
     variant("mpi", default=False, description="Enable MPI support")

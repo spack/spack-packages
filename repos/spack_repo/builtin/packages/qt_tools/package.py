@@ -20,6 +20,7 @@ class QtTools(QtPackage):
     license("BSD-3-Clause")
 
     # src/assistant/qlitehtml is a submodule that is not in the git archive
+    version("6.10.2", commit="171ae9df0d84ee5133193cd3e27848fd73601c53", submodules=True)
     version("6.10.1", commit="9e0030f889168f7a0ec1bb47a7d7138a497b3c96", submodules=True)
     version("6.10.0", commit="f33c4bb1dee569eec4ffe1333584cb4b75af6c59", submodules=True)
     version("6.9.3", commit="89031fa54058af5e4d92ee08d31642ca338e9c0c", submodules=True)
@@ -43,14 +44,24 @@ class QtTools(QtPackage):
         default=False,
         description="Qt Widgets Designer for designing and building GUIs with Qt Widgets.",
     )
+    variant(
+        "qdoc",
+        default=False,
+        description="QDoc is Qt's documentation generator for C++ and QML projects.",
+    )
+    variant(
+        "linguist",
+        default=False,
+        description="Qt Linguist can be used by translator to translate text in Qt applications.",
+    )
 
     # use of relative path in https://github.com/qt/qttools/blob/6.8.2/.gitmodules
     conflicts("+assistant", when="@6.8.2", msg="Incorrect git submodule prevents +assistant")
 
-    depends_on("c")
-    depends_on("cxx")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
-    depends_on("llvm +clang")
+    depends_on("llvm +clang", when="+qdoc")
 
     depends_on("qt-base +network")
     depends_on("qt-base +widgets", when="+designer")
@@ -62,23 +73,12 @@ class QtTools(QtPackage):
         depends_on("qt-base@" + v, when="@" + v)
 
     def cmake_args(self):
-        spec = self.spec
-
-        args = super().cmake_args() + []
-
-        def define(cmake_var, value):
-            args.append(self.define(cmake_var, value))
-
-        if spec.satisfies("+assistant"):
-            define("FEATURE_assistant", True)
-        else:
-            define("FEATURE_assistant", False)
-
-        if spec.satisfies("+designer"):
-            define("FEATURE_designer", True)
-            define("FEATURE_zstd", True)
-        else:
-            define("FEATURE_designer", False)
-            define("FEATURE_zstd", False)
-
-        return args
+        return super().cmake_args() + [
+            self.define_qt_feature("fullqthelp", True),
+            self.define_qt_feature_from_variant("qdoc"),
+            self.define_qt_feature_from_variant("clang", "qdoc"),
+            self.define_qt_feature_from_variant("assistant"),
+            self.define_qt_feature_from_variant("designer"),
+            self.define_qt_feature_from_variant("zstd", "designer"),
+            self.define_qt_feature_from_variant("linguist"),
+        ]

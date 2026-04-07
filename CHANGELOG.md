@@ -1,3 +1,195 @@
+# Spack packages v2026.03.0
+
+The 2026.03.0 release of the spack packages is released out of phase from
+the Spack tool release. This release is meant to bring new packages and
+package version updates and deprecations that are not made available via
+backports to previous releases.
+
+## Spack version compatibility
+
+This release continues to use the v2.2 Package API. This is the Package API
+version used by the Spack v1.0.0 release. Any Spack version 1.0.0 or newer
+is compatible with this release of the packages repo.
+
+This release was tested against Spack v1.2.0.dev0 (96cae55e9b09e12cf82326541b020a06f372deb4)
+and the environments used to generate the binary caches use new features 
+that will be part of the Spack 1.2 release. The binary caches themselves are
+compatible with any Spack v1.0.0 or newer (any Spack that supports the v3
+URL build cache layout), but the environments used to generate them
+cannot be reconcretized with any existing Spack release, and require the
+`develop` branch.
+
+See the [Package API
+Documentation](https://spack.readthedocs.io/en/latest/package_api.html)
+for full details on package versioning and compatibility.
+
+## Package statistics
+
+There are now 8752 packages in the spack-packages builtin repo. This
+is up from 8615 in the previous release.
+
+## New and removed packages
+
+This release contains a number of deprecations to address CVEs in a number
+of projects, notably those related to AI stacks. These deprecated versions
+will be removed in the following release.
+
+In addition to new deprecations, all package versions deprecated prior to
+the v2025.11.0 release have been removed with a few exceptions.
+
+| Package    | Reason                                                            |
+| ---------- | ----------------------------------------------------------------- |
+| VTK        | 8.2 for VisIt compatibility                                       |
+| Flecsi     | maintainer request (#3573)                                        |
+| Fenics UFL | Older versions needed to continue building other Fenics libraries |
+
+### New packages
+
+*  4ti2
+*  alsa-plugins
+*  amg4psblas
+*  aocl-dlp
+*  aotriton-llvm
+*  arm-kernels
+*  atfl
+*  autossh
+*  cabana-pd
+*  cargo-c
+*  civetweb
+*  claude-code
+*  codee
+*  csvtk
+*  deepmdkit
+*  eccodes-cosmo-resources
+*  exactextract
+*  fastq-scan
+*  fflas-ffpack
+*  fvtkhdf
+*  ggml
+*  gomplate
+*  hipdnn
+*  koliop
+*  libbeef
+*  llama-cpp
+*  lrose-core
+*  maqao
+*  mathic
+*  mathicgb
+*  memtailor
+*  meshoptimizer
+*  mimic-mcl
+*  mojitos
+*  mpsolve
+*  msolve
+*  mui
+*  nep
+*  normaliz
+*  nq
+*  pueue
+*  py-albucore
+*  py-antipickle
+*  py-apache-tvm-ffi
+*  py-authlib
+*  py-b2luigi
+*  py-chai-lab
+*  py-chemiscope
+*  py-codecarbon
+*  py-codechecker
+*  py-dcmstack
+*  py-deisa
+*  py-deisa-core
+*  py-deisa-dask
+*  py-derivative
+*  py-diagnostic
+*  py-eigenpy
+*  py-fief-client
+*  py-gemmi
+*  py-heudiconv
+*  py-ihm
+*  py-intake
+*  py-intake-esm
+*  py-itables
+*  py-kerchunk
+*  py-language-data
+*  py-librt
+*  py-lightpipes
+*  py-llama-cpp-python
+*  py-marisa-trie
+*  py-mdahole2
+*  py-mendeleev
+*  py-metatrain
+*  py-modelcif
+*  py-mui4py
+*  py-nvidia-nvcomp
+*  py-nvidia-physicsnemo
+*  py-p2j
+*  py-pandera
+*  py-pathsimanalysis
+*  py-pmtiles
+*  py-proxystore
+*  py-pycryptodomex
+*  py-pylibjpeg-libjpeg
+*  py-pylibjpeg-rle
+*  py-pyroaring
+*  py-pysindy
+*  py-pytest-cmake
+*  py-pytest-socket
+*  py-python-docx
+*  py-pytuq
+*  py-pyvips
+*  py-rio-pmtiles
+*  py-roman-numerals
+*  py-sarif-tools
+*  py-sdnotify
+*  py-snakemake-interface-logger-plugins
+*  py-snakemake-interface-scheduler-plugins
+*  py-snakemake-storage-plugin-rucio
+*  py-sphericart
+*  py-sphericart-torch
+*  py-sphinxcontrib-tikz
+*  py-supermercado
+*  py-textual-fspicker
+*  py-tmtools
+*  py-torch-c-dlpack-ext
+*  py-torch-spex
+*  py-trame-common
+*  py-trame-vtk
+*  py-trame-vuetify
+*  py-trl
+*  py-ty
+*  py-types-geopandas
+*  py-types-pyyaml
+*  py-types-shapely
+*  py-types-tqdm
+*  py-typing-inspection
+*  py-uqinn
+*  py-validate-pyproject
+*  py-versioningit
+*  py-waterdynamics
+*  py-wigners
+*  py-yt-dlp
+*  py-yt-dlp-ejs
+*  r-bayesfactor
+*  r-contfrac
+*  r-elliptic
+*  r-ggpattern
+*  r-gridpattern
+*  r-hypergeo
+*  r-shinywidgets
+*  rank-run
+*  realm
+*  s5cmd
+*  shadowenv
+*  starship
+*  units-llnl
+*  xictools
+*  yamlfmt
+
+### Removed packages
+
+* salome-med
+* scorec-core
+
 # Spack packages v2025.11.0
 
 The 2025.11.0 release of the spack packages is released in conjunction

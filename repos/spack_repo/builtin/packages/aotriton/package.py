@@ -84,7 +84,7 @@ class Aotriton(CMakePackage):
                 string=True,
             )
 
-        if self.spec.satisfies("@:0.9"):
+        if self.spec.satisfies("@:0.9b"):
             filter_file(
                 r"LLVM_INCLUDE_DIRS",
                 f"{self.spec['aotriton-llvm'].prefix}/include",
@@ -103,7 +103,7 @@ class Aotriton(CMakePackage):
                 "third_party/triton/python/setup.py",
                 string=True,
             )
-        if self.spec.satisfies("@0.10:"):
+        if self.spec.satisfies("@0.10b:"):
             filter_file(
                 r"LLVM_INCLUDE_DIRS",
                 f"{self.spec['aotriton-llvm'].prefix}/include",

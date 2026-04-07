@@ -61,10 +61,10 @@ class Superlu(CMakePackage):
                 args.append("HEADER=" + self.prefix.include)
             args.append(test_exe)
 
-            make = which("make")
+            make = which("make", required=True)
             make(*args)
 
-            superlu = which(test_exe)
+            superlu = which(test_exe, required=True)
             superlu()
 
     def cmake_args(self):

@@ -61,7 +61,7 @@ class GaussianView(Package):
         # on what is installed on the host
         # the $ORIGIN prefix is required for the executable to find its
         # own bundled shared libraries
-        patchelf = which("patchelf")
+        patchelf = which("patchelf", required=True)
         rpath = "$ORIGIN:$ORIGIN/lib" + ":".join(
             self.spec[dep].libs.directories[0]
             for dep in ["libx11", "libxext", "libxrender", "libice", "libsm", "gl", "glu"]

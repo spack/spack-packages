@@ -57,7 +57,7 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
 
         #  From the root directory run the config-fftx-libs.sh script
         with working_dir(self.stage.source_path):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./config-fftx-libs.sh", backend)
 
     def cmake_args(self):

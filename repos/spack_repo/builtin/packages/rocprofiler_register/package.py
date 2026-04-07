@@ -13,14 +13,20 @@ class RocprofilerRegister(CMakePackage):
     libraries by the ROCprofiler (v2) library"""
 
     homepage = "https://github.com/ROCm/rocprofiler-register"
-    git = "https://github.com/ROCm/rocprofiler-register.git"
-    url = "https://github.com/ROCm/rocprofiler-register/archive/refs/tags/rocm-6.4.3.tar.gz"
+    git = "https://github.com/ROCm/rocm-systems.git"
 
     tags = ["rocm"]
-
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
-
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocprofiler-register/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="eb34ed91a25b28fbbbe3e486f9865b97513b7a959d5a6b5b0c66a859038115e9")
     version("7.1.0", sha256="29f050480d9efe9a8bd55e274f1d571a1c6001cd1db9f8648a1888f73e4ea2ef")
     version("7.0.2", sha256="c76ffb35c510f8751d6d2db3a6366952ea7a76499556e9d64fdf8102a7a3ca5b")
@@ -44,8 +50,17 @@ class RocprofilerRegister(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fmt")
     depends_on("glog")
+    depends_on("libunwind")
 
-    patch("001-add-cpack-fmt-glog.patch")
+    patch("001-add-cpack-fmt-glog.patch", when="@:7.1")
+    patch("001-add-cpack-fmt-glog-7.2.patch", when="@7.2:")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocprofiler-register"
+        else:
+            return "."
 
     def cmake_args(self):
         args = ["-DROCPROFILER_REGISTER_BUILD_FMT=OFF", "-DROCPROFILER_REGISTER_BUILD_GLOG=OFF"]

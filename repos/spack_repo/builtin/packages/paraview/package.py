@@ -40,6 +40,10 @@ supported_cuda_archs = {
 }
 
 
+# This is a list of paraview variants that require the viskores library.
+viskores_dependency_variants = ["+cuda", "+fides", "+rocm"]
+
+
 class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     """ParaView is an open-source, multi-platform data analysis and
     visualization application. This package includes the Catalyst
@@ -60,38 +64,54 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     version("master", branch="master", submodules=True)
-    version(
-        "5.13.3",
-        sha256="3bd31bb56e07aa2af2a379895745bbc430c565518a363d935f2efc35b076df09",
-        preferred=True,
-    )
-    version("5.13.2", sha256="4e116250f8e1a9c480f97c5696c9cd72b4d4998b039ca46da8b224f27445f13e")
-    version("5.13.1", sha256="a16503ce37b999c2967d84234596e7bf67ac98221851a288bb1399c7e1dc2004")
-    version("5.13.0", sha256="886f530bebd6b24c6a7f8a5f4b1afa72c53d4737ccaa4b5fd5946b4e5a758c91")
+    version("6.0.1", sha256="5e56ac7af5e925b3cfd3fab82470933cbabc7e8fda87e14af64f995d6064eb06")
+    version("6.0.0", sha256="0ee07ae6377e5e97766aebf858eb9758668a52df041f319e7c975037a63bf189")
+    version("5.13.3", sha256="3bd31bb56e07aa2af2a379895745bbc430c565518a363d935f2efc35b076df09")
     version("5.12.1", sha256="927f880c13deb6dde4172f4727d2b66f5576e15237b35778344f5dd1ddec863e")
-    version("5.12.0", sha256="d289afe7b48533e2ca4a39a3b48d3874bfe67cf7f37fdd2131271c57e64de20d")
     version("5.11.2", sha256="5c5d2f922f30d91feefc43b4a729015dbb1459f54c938896c123d2ac289c7a1e")
-    version("5.11.1", sha256="5cc2209f7fa37cd3155d199ff6c3590620c12ca4da732ef7698dec37fa8dbb34")
-    version("5.11.0", sha256="9a0b8fe8b1a2cdfd0ace9a87fa87e0ec21ee0f6f0bcb1fdde050f4f585a25165")
-    version("5.10.1", sha256="520e3cdfba4f8592be477314c2f6c37ec73fb1d5b25ac30bdbd1c5214758b9c2")
-    version("5.10.0", sha256="86d85fcbec395cdbc8e1301208d7c76d8f48b15dc6b967ffbbaeee31242343a5")
-    version("5.9.1", sha256="0d486cb6fbf55e428845c9650486f87466efcb3155e40489182a7ea85dfd4c8d")
-    version("5.9.0", sha256="b03258b7cddb77f0ee142e3e77b377e5b1f503bcabc02bfa578298c99a06980d")
-    version("5.8.1", sha256="7653950392a0d7c0287c26f1d3a25cdbaa11baa7524b0af0e6a1a0d7d487d034")
-    version("5.8.0", sha256="219e4107abf40317ce054408e9c3b22fb935d464238c1c00c0161f1c8697a3f9")
-    version("5.7.0", sha256="e41e597e1be462974a03031380d9e5ba9a7efcdb22e4ca2f3fec50361f310874")
-    version("5.6.2", sha256="1f3710b77c58a46891808dbe23dc59a1259d9c6b7bb123aaaeaa6ddf2be882ea")
-    version("5.6.0", sha256="cb8c4d752ad9805c74b4a08f8ae6e83402c3f11e38b274dba171b99bb6ac2460")
-    version("5.5.2", sha256="64561f34c4402b88f3cb20a956842394dde5838efd7ebb301157a837114a0e2d")
-    version("5.5.1", sha256="a6e67a95a7a5711a2b5f95f38ccbff4912262b3e1b1af7d6b9afe8185aa85c0d")
-    version("5.5.0", sha256="1b619e326ff574de808732ca9a7447e4cd14e94ae6568f55b6581896cd569dff")
-    version("5.4.1", sha256="390d0f5dc66bf432e202a39b1f34193af4bf8aad2355338fa5e2778ea07a80e4")
-    version("5.4.0", sha256="f488d84a53b1286d2ee1967e386626c8ad05a6fe4e6cbdaa8d5e042f519f94a9")
-    version("5.3.0", sha256="046631bbf00775edc927314a3db207509666c9c6aadc7079e5159440fd2f88a0")
-    version("5.2.0", sha256="894e42ef8475bb49e4e7e64f4ee2c37c714facd18bfbb1d6de7f69676b062c96")
-    version("5.1.2", sha256="ff02b7307a256b7c6e8ad900dee5796297494df7f9a0804fe801eb2f66e6a187")
-    version("5.0.1", sha256="caddec83ec284162a2cbc46877b0e5a9d2cca59fb4ab0ea35b0948d2492950bb")
-    version("4.4.0", sha256="c2dc334a89df24ce5233b81b74740fc9f10bc181cd604109fd13f6ad2381fc73")
+
+    with default_args(deprecated=True):
+        version(
+            "5.13.2", sha256="4e116250f8e1a9c480f97c5696c9cd72b4d4998b039ca46da8b224f27445f13e"
+        )
+        version(
+            "5.13.1", sha256="a16503ce37b999c2967d84234596e7bf67ac98221851a288bb1399c7e1dc2004"
+        )
+        version(
+            "5.13.0", sha256="886f530bebd6b24c6a7f8a5f4b1afa72c53d4737ccaa4b5fd5946b4e5a758c91"
+        )
+        version(
+            "5.12.0", sha256="d289afe7b48533e2ca4a39a3b48d3874bfe67cf7f37fdd2131271c57e64de20d"
+        )
+        version(
+            "5.11.1", sha256="5cc2209f7fa37cd3155d199ff6c3590620c12ca4da732ef7698dec37fa8dbb34"
+        )
+        version(
+            "5.11.0", sha256="9a0b8fe8b1a2cdfd0ace9a87fa87e0ec21ee0f6f0bcb1fdde050f4f585a25165"
+        )
+        version(
+            "5.10.1", sha256="520e3cdfba4f8592be477314c2f6c37ec73fb1d5b25ac30bdbd1c5214758b9c2"
+        )
+        version(
+            "5.10.0", sha256="86d85fcbec395cdbc8e1301208d7c76d8f48b15dc6b967ffbbaeee31242343a5"
+        )
+        version("5.9.1", sha256="0d486cb6fbf55e428845c9650486f87466efcb3155e40489182a7ea85dfd4c8d")
+        version("5.9.0", sha256="b03258b7cddb77f0ee142e3e77b377e5b1f503bcabc02bfa578298c99a06980d")
+        version("5.8.1", sha256="7653950392a0d7c0287c26f1d3a25cdbaa11baa7524b0af0e6a1a0d7d487d034")
+        version("5.8.0", sha256="219e4107abf40317ce054408e9c3b22fb935d464238c1c00c0161f1c8697a3f9")
+        version("5.7.0", sha256="e41e597e1be462974a03031380d9e5ba9a7efcdb22e4ca2f3fec50361f310874")
+        version("5.6.2", sha256="1f3710b77c58a46891808dbe23dc59a1259d9c6b7bb123aaaeaa6ddf2be882ea")
+        version("5.6.0", sha256="cb8c4d752ad9805c74b4a08f8ae6e83402c3f11e38b274dba171b99bb6ac2460")
+        version("5.5.2", sha256="64561f34c4402b88f3cb20a956842394dde5838efd7ebb301157a837114a0e2d")
+        version("5.5.1", sha256="a6e67a95a7a5711a2b5f95f38ccbff4912262b3e1b1af7d6b9afe8185aa85c0d")
+        version("5.5.0", sha256="1b619e326ff574de808732ca9a7447e4cd14e94ae6568f55b6581896cd569dff")
+        version("5.4.1", sha256="390d0f5dc66bf432e202a39b1f34193af4bf8aad2355338fa5e2778ea07a80e4")
+        version("5.4.0", sha256="f488d84a53b1286d2ee1967e386626c8ad05a6fe4e6cbdaa8d5e042f519f94a9")
+        version("5.3.0", sha256="046631bbf00775edc927314a3db207509666c9c6aadc7079e5159440fd2f88a0")
+        version("5.2.0", sha256="894e42ef8475bb49e4e7e64f4ee2c37c714facd18bfbb1d6de7f69676b062c96")
+        version("5.1.2", sha256="ff02b7307a256b7c6e8ad900dee5796297494df7f9a0804fe801eb2f66e6a187")
+        version("5.0.1", sha256="caddec83ec284162a2cbc46877b0e5a9d2cca59fb4ab0ea35b0948d2492950bb")
+        version("4.4.0", sha256="c2dc334a89df24ce5233b81b74740fc9f10bc181cd604109fd13f6ad2381fc73")
 
     variant(
         "development_files",
@@ -102,7 +122,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant("fortran", default=False, description="Enable Fortran support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("qt", default=False, description="Enable Qt (gui) support")
-    variant("opengl2", default=True, description="Enable OpenGL2 backend")
+    variant("opengl2", default=True, description="Enable OpenGL2 backend", when="@5:5")
+    variant("osmesa_fallback", default=False, description="Enable OpenGL2 backend", when="@6:")
+    variant("x", default=True, description="Enable X11 support")
     variant("examples", default=False, description="Build examples")
     variant("hdf5", default=False, description="Use external HDF5")
     variant("shared", default=True, description="Builds a shared version of the library")
@@ -146,9 +168,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "use_vtkm",
         default="default",
+        when="@5.3.0:5.13",
         multi=False,
         values=("default", "on", "off"),
-        description="Build VTK-m with ParaView by setting PARAVIEW_USE_VTKM=ON,OFF."
+        description="Build VTK-m with ParaView."
         ' "default" lets the build_edition make the decision.'
         ' "on" or "off" will always override the build_edition.',
     )
@@ -156,8 +179,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("~hdf5", when="+visitbridge")
     conflicts("+adios2", when="@:5.10 ~mpi")
     conflicts("+fides", when="~adios2", msg="Fides needs ADIOS2")
-    conflicts("+fides", when="use_vtkm=off", msg="Fides needs VTK-m")
-    conflicts("+fides", when="use_vtkm=default", msg="Fides needs VTK-m")
+    conflicts("+fides", when="@:5 use_vtkm=off", msg="Fides needs VTK-m")
+    conflicts("+fides", when="@:5 use_vtkm=default", msg="Fides needs VTK-m")
     conflicts("+openpmd", when="~adios2 ~hdf5", msg="openPMD needs ADIOS2 and/or HDF5")
     conflicts("~shared", when="+cuda")
     conflicts("+cuda", when="@5.8:5.10")
@@ -167,14 +190,15 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("paraview@:5.10", when="+rocm")
     # Legacy rendering dropped in 5.5
     # See commit: https://gitlab.kitware.com/paraview/paraview/-/commit/798d328c
-    conflicts("~opengl2", when="@5.5:")
+    conflicts("~opengl2", when="@5.5:5")
     # in 5.7 you cannot reduce the size of the code for Catalyst builds.
     conflicts("build_edition=catalyst_rendering", when="@:5.7")
     conflicts("build_edition=catalyst", when="@:5.7")
     conflicts("build_edition=rendering", when="@:5.7")
     conflicts("build_edition=core", when="@:5.7")
-    # before 5.3.0, ParaView didn't have VTK-m
-    conflicts("use_vtkm=on", when="@:5.3")
+    # before 5.3.0, ParaView didn't have VTK-m/Viskores
+    conflicts("+cuda", when="@:5.3")
+    conflicts("+rocm", when="@:5.3")
     # paraview@5.9.0 is recommended when using the xl compiler
     # See https://gitlab.kitware.com/paraview/paraview/-/merge_requests/4433
     conflicts(
@@ -182,29 +206,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         when="%xl_r",
         msg="Use paraview@5.9.0 with %xl_r. Earlier versions are not able to build with xl.",
     )
-
-    # CUDA ARCH
-
-    # VTK-m and transitively ParaView does not support Tesla Arch
-    for _arch in ("10", "11", "12", "13"):
-        conflicts(f"cuda_arch={_arch}", when="+cuda", msg="ParaView requires cuda_arch >= 20")
-
-    # Starting from cmake@3.18, CUDA architecture managament can be delegated to CMake.
-    # Hence, it is possible to rely on it instead of relying on custom logic updates from VTK-m for
-    # newer architectures (wrt mapping).
-    pattern = re.compile(r"\d+")
-    for _arch in CudaPackage.cuda_arch_values:
-        _number = re.match(pattern, _arch).group()
-        if int(_number) > 86:
-            conflicts("cmake@:3.17", when=f"cuda_arch={_arch}")
-
-    # We only support one single Architecture
-    for _arch, _other_arch in itertools.permutations(CudaPackage.cuda_arch_values, 2):
-        conflicts(
-            "cuda_arch={0}".format(_arch),
-            when="cuda_arch={0}".format(_other_arch),
-            msg="Paraview only accepts one architecture value",
-        )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -236,26 +237,107 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     conflicts("mpi", when="~mpi")
 
-    depends_on("qt@:4", when="@:5.2.0 +qt")
-    depends_on("qt+sql", when="+qt")
-
-    # https://discourse.paraview.org/t/paraview-5-9-and-minimum-recommended-qt-version/5333
-    depends_on("qt@5.12:5 +sql", when="@5.9:5.13 +qt")
-
-    with when("+qt"):
-        depends_on("qt+opengl", when="@5.3.0: +opengl2")
-        depends_on("qt~opengl", when="@5.3.0: ~opengl2")
-
-    depends_on("gl@3.2:", when="+opengl2")
-    depends_on("gl@1.2:", when="~opengl2")
-    depends_on("glew")
-    depends_on("libxt", when="platform=linux ^[virtuals=gl] glx")
-
-    for plat in ["linux", "darwin", "freebsd"]:
+    # Handle X11 dependencies
+    # X is only used on Unix like platforms
+    conflicts("glx", when="~x")
+    # When on linux, X is required for Qt
+    for plat in ["linux", "freebsd"]:
         with when(f"platform={plat}"):
-            requires(
-                "^[virtuals=gl] glx", when="+qt", msg="Qt support requires GLX on non Windows"
+            requires("+x", when="+qt", msg="Qt support requires GLX on Linux/FreeBSD")
+
+    with when("+x"):
+        depends_on("libxt", when="@:5.12")
+        depends_on("libx11")
+        depends_on("libxcursor")
+        # When Qt and X are enabled, GLX is required in the runtime
+        requires("^[virtuals=gl] glx", when="@:5")
+        depends_on("glx", when="@6:", type=("run"))
+
+    # ParaView@:5 support Qt5 and requires a GL provider to be known at
+    # build/link time.
+    with when("@:5"):
+        with when("+qt"):
+            depends_on("qt@:4", when="@:5.2.0")
+            # https://discourse.paraview.org/t/paraview-5-9-and-minimum-recommended-qt-version/5333
+            depends_on("qt@5.12:5", when="@5.9:5.13")
+            depends_on("qt+sql")
+            depends_on("qt+opengl", when="@5.3.0:5 +opengl2")
+            depends_on("qt~opengl", when="@5.3.0:5 ~opengl2")
+            # Headless rendering not supported with Qt
+            conflicts("osmesa")
+            conflicts("egl")
+
+        depends_on("gl@3.2:", when="+opengl2")
+        depends_on("gl@1.2:", when="~opengl2")
+        depends_on("glew")
+
+        # CUDA ARCH
+
+        # VTK-m and transitively ParaView does not support Tesla Arch
+        for _arch in ("10", "11", "12", "13"):
+            conflicts(f"cuda_arch={_arch}", when="+cuda", msg="ParaView requires cuda_arch >= 20")
+
+        # Starting from cmake@3.18, CUDA architecture managament can be delegated to CMake.
+        # Hence, it is possible to rely on it instead of relying on custom logic updates from
+        # VTK-m for newer architectures (wrt mapping).
+        pattern = re.compile(r"\d+")
+        for _arch in CudaPackage.cuda_arch_values:
+            _number = re.match(pattern, _arch).group()
+            if int(_number) > 86:
+                conflicts("cmake@:3.17", when=f"cuda_arch={_arch}")
+
+        # We only support one single Architecture
+        for _arch, _other_arch in itertools.permutations(CudaPackage.cuda_arch_values, 2):
+            conflicts(
+                "cuda_arch={0}".format(_arch),
+                when="cuda_arch={0}".format(_other_arch),
+                msg="Paraview only accepts one architecture value",
             )
+
+        # Dependencies for vendored VTK-m
+        depends_on("hip@5.2:", when="+rocm")
+        # CUDA thrust is already include in the CUDA pkg
+        depends_on("rocthrust", when="@5.13: +rocm ^cmake@3.24:")
+        for target in ROCmPackage.amdgpu_targets:
+            depends_on(
+                "kokkos@:3.7 +rocm amdgpu_target={0}".format(target),
+                when="+rocm amdgpu_target={0}".format(target),
+            )
+
+    with when("@6:"):
+        # ParaView 6 and later will not support Spack builds with Qt5.
+        with when("+qt"):
+            depends_on("qt-base@6.9.0 +accessibility+gui+opengl+sql+network")
+            depends_on("qt-tools+assistant")
+            depends_on("qt-5compat")
+            depends_on("qt-svg")
+            depends_on("libxslt")
+
+        depends_on("scnlib")
+
+        # ParaView@6: and later will depend on OSMesa as a fallback for
+        # OpenGL.
+        # The search order for GL is:
+        # * the system rendering default (WGL/AGL/GLX)
+        # * EGL
+        # * OSMesa (guarenteed to exist and work on all systems)
+        depends_on("osmesa", type=("run"), when="+osmesa_fallback")
+
+        # Depend on Viskores when it is needed
+        for vk_variant in viskores_dependency_variants:
+            depends_on("viskores +vtktypes +64bitids +doubleprecision", when=f"{vk_variant}")
+            depends_on("viskores +fpic", when=f"+shared {vk_variant}")
+
+        with when("+cuda"):
+            # Kokkos vs Viskores Native CUDA is intentionally left configurable
+            depends_on("viskores +cuda")
+            for _arch in CudaPackage.cuda_arch_values:
+                depends_on(f"viskores cuda_arch={_arch}", when=f"cuda_arch={_arch}")
+
+        with when("+rocm"):
+            depends_on("viskores +rocm")
+            for target in ROCmPackage.amdgpu_targets:
+                depends_on(f"viskores amdgpu_target={target}", when=f"amdgpu_target={target}")
 
     depends_on("ospray@2.1:2", when="+raytracing")
     depends_on("openimagedenoise", when="+raytracing")
@@ -311,14 +393,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("xz")
     depends_on("zlib-api")
     depends_on("libcatalyst@2:", when="+libcatalyst")
-    depends_on("hip@5.2:", when="+rocm")
-    # CUDA thrust is already include in the CUDA pkg
-    depends_on("rocthrust", when="@5.13: +rocm ^cmake@3.24:")
-    for target in ROCmPackage.amdgpu_targets:
-        depends_on(
-            "kokkos@:3.7 +rocm amdgpu_target={0}".format(target),
-            when="+rocm amdgpu_target={0}".format(target),
-        )
 
     # Older builds of pugi export their symbols differently,
     # and pre-5.9 is unable to handle that.
@@ -341,7 +415,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("proj@8.1.0", when="@5.11:")
 
     # Patches to vendored VTK-m are needed for forward compat with CUDA 12 (mr 2972 and 3259)
-    depends_on("cuda@:11", when="+cuda")
+    depends_on("cuda@:11", when="@5.3:5.12 +cuda")
 
     patch("stl-reader-pv440.patch", when="@4.4.0")
 
@@ -625,7 +699,12 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         # The assumed qt version changed to QT5 (as of paraview 5.2.1),
         # so explicitly specify which QT major version is actually being used
         if spec.satisfies("+qt"):
-            cmake_args.extend(["-DPARAVIEW_QT_VERSION=%s" % spec["qt"].version[0]])
+            if spec.satisfies("^qt"):
+                cmake_args.extend(["-DPARAVIEW_QT_VERSION=%s" % spec["qt"].version[0]])
+            else:
+                cmake_args.extend(["-DPARAVIEW_QT_VERSION=%s" % spec["qt-base"].version[0]])
+                cmake_args.extend(["-DVTK_QT_VERSION=%s" % spec["qt-base"].version[0]])
+
             if IS_WINDOWS:
                 # Windows does not currently support Qt Quick
                 cmake_args.append("-DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=NO")
@@ -667,10 +746,21 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         cmake_args.append("-DPARAVIEW_BUILD_SHARED_LIBS:BOOL=%s" % variant_bool("+shared"))
 
         # VTK-m added to ParaView in 5.3.0 and up
-        if spec.satisfies("@5.3.0:") and spec.variants["use_vtkm"].value != "default":
+        if spec.satisfies("@5.3.0:5") and spec.variants["use_vtkm"].value != "default":
             cmake_args.append(
                 "-DPARAVIEW_USE_VTKM:BOOL=%s" % spec.variants["use_vtkm"].value.upper()
             )
+
+        # Viskores added to ParaView in 6.0.0 and up
+        if spec.satisfies("@6:"):
+            use_viskores = False
+            for variant in viskores_dependency_variants:
+                use_viskores |= spec.satisfies(variant)
+            if use_viskores:
+                cmake_args.append("-DPARAVIEW_USE_VISKORES:BOOL=ON")
+                cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=ON")
+            else:
+                cmake_args.append("-DPARAVIEW_USE_VISKORES:BOOL=OFF")
 
         if spec.satisfies("@5.8:"):
             cmake_args.append("-DPARAVIEW_USE_CUDA:BOOL=%s" % variant_bool("+cuda"))
@@ -680,7 +770,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             cmake_args.append("-DVTKm_ENABLE_CUDA:BOOL=%s" % variant_bool("+cuda"))
 
         # VTK-m expects cuda_arch to be the arch name vs. the arch version.
-        if spec.satisfies("+cuda"):
+        if spec.satisfies("@:5 +cuda"):
             if spec["cmake"].satisfies("@3.18:"):
                 cmake_args.append(
                     self.define(
@@ -748,14 +838,22 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         if "+advanced_debug" in spec:
             cmake_args.append("-DVTK_DEBUG_LEAKS:BOOL=ON")
 
-        if spec.satisfies("@5.11:"):
+        # Configure ROCM/Kokkos
+        if spec.satisfies("@5.11:5"):
             cmake_args.append("-DPARAVIEW_USE_HIP:BOOL=%s" % variant_bool("+rocm"))
-            if "+rocm" in spec:
-                archs = spec.variants["amdgpu_target"].value
-                if archs != "none":
-                    arch_str = ",".join(archs)
-                    cmake_args.append("-DCMAKE_HIP_ARCHITECTURES=%s" % arch_str)
-                cmake_args.append("-DKokkos_CXX_COMPILER=%s" % spec["hip"].hipcc)
+        elif spec.satisfies("@6:"):
+            cmake_args.append("-DPARAVIEW_USE_KOKKOS:BOOL=%s" % variant_bool("+rocm"))
+
+        if "+rocm" in spec:
+            if spec.satisfies("@6:"):
+                cmake_args.append("-DPARAVIEW_KOKKOS_BACKEND:STRING=HIP")
+
+            archs = spec.variants["amdgpu_target"].value
+
+            if archs != "none":
+                arch_str = ",".join(archs)
+                cmake_args.append("-DCMAKE_HIP_ARCHITECTURES=%s" % arch_str)
+            cmake_args.append("-DKokkos_CXX_COMPILER=%s" % spec["hip"].hipcc)
 
         if "+catalyst" in spec:
             cmake_args.append("-DVTK_MODULE_ENABLE_ParaView_Catalyst=YES")

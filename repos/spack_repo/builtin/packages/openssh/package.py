@@ -66,7 +66,7 @@ class Openssh(AutotoolsPackage):
     patch(
         "https://raw.githubusercontent.com/Homebrew/patches/1860b0a745f1fe726900974845d1b0dd3c3398d6/openssh/patch-sandbox-darwin.c-apple-sandbox-named-external.diff",
         sha256="d886b98f99fd27e3157b02b5b57f3fb49f43fd33806195970d4567f12be66e71",
-        when="platform=darwin",
+        when="@:9 platform=darwin",
     )
 
     # https://github.com/Homebrew/homebrew-core/blob/7aabdeb30506be9b01708793ae553502c115dfc8/Formula/o/openssh.rb#L48-L52C6
@@ -79,7 +79,7 @@ class Openssh(AutotoolsPackage):
     patch(
         "https://raw.githubusercontent.com/Homebrew/patches/aa6c71920318f97370d74f2303d6aea387fb68e4/openssh/patch-sshd.c-apple-sandbox-named-external.diff",
         sha256="3f06fc03bcbbf3e6ba6360ef93edd2301f73efcd8069e516245aea7c4fb21279",
-        when="@9.8p1: platform=darwin",
+        when="@9.8p1:9 platform=darwin",
     )
 
     @classmethod

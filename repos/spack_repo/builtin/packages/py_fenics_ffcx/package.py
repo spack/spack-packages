@@ -23,9 +23,6 @@ class PyFenicsFfcx(PythonPackage):
     )
     version("0.9.0", sha256="afa517272a3d2249f513cb711c50b77cf8368dd0b8f5ea4b759142229204a448")
     version("0.8.0", sha256="8a854782dbd119ec1c23c4522a2134d5281e7f1bd2f37d64489f75da055282e3")
-    with default_args(deprecated=True):
-        version("0.7.0", sha256="7f3c3ca91d63ce7831d37799cc19d0551bdcd275bdfa4c099711679533dd1c71")
-        version("0.6.0", sha256="076fad61d406afffd41019ae1abf6da3f76406c035c772abad2156127667980e")
 
     depends_on("python@3.10:", when="@0.10:", type=("build", "run"))
     depends_on("python@3.9:", when="@0.8:", type=("build", "run"))
@@ -42,15 +39,11 @@ class PyFenicsFfcx(PythonPackage):
     depends_on("py-fenics-ufl@2025.2", type=("build", "run"), when="@0.10")
     depends_on("py-fenics-ufl@2024.2", type=("build", "run"), when="@0.9")
     depends_on("py-fenics-ufl@2024.1", type=("build", "run"), when="@0.8")
-    depends_on("py-fenics-ufl@2023.2", type=("build", "run"), when="@0.7")
-    depends_on("py-fenics-ufl@2023.1", type=("build", "run"), when="@0.6")
 
     depends_on("py-fenics-basix@main", type=("build", "run"), when="@main")
     depends_on("py-fenics-basix@0.10", type=("build", "run"), when="@0.10")
     depends_on("py-fenics-basix@0.9", type=("build", "run"), when="@0.9")
     depends_on("py-fenics-basix@0.8", type=("build", "run"), when="@0.8")
-    depends_on("py-fenics-basix@0.7", type=("build", "run"), when="@0.7")
-    depends_on("py-fenics-basix@0.6", type=("build", "run"), when="@0.6")
 
     depends_on("py-pytest@6:", type="test")
     depends_on("py-sympy", type="test")
@@ -59,5 +52,5 @@ class PyFenicsFfcx(PythonPackage):
     @on_package_attributes(run_tests=True)
     def check_build(self):
         with working_dir("test"):
-            pytest = which("pytest")
+            pytest = which("pytest", required=True)
             pytest("--ignore=test_cmdline.py")

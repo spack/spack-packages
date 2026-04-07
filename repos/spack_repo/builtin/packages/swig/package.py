@@ -23,7 +23,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
 
     homepage = "https://www.swig.org"
     git = "https://github.com/swig/swig.git"
-    sourceforge_mirror_path = "swig/swig-3.0.12.tar.gz"
+    sourceforge_mirror_path = "swig/swig-4.4.1.tar.gz"
     maintainers("sethrj")
 
     tags = ["e4s", "build-tools"]
@@ -33,11 +33,8 @@ class Swig(AutotoolsPackage, SourceforgePackage):
     license("GPL-3.0-only")
 
     version("master")
-    version(
-        "4.1.1",
-        sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b",
-        preferred=True,
-    )
+    version("4.4.1", sha256="40162a706c56f7592d08fd52ef5511cb7ac191f3593cf07306a0a554c6281fcf")
+    version("4.1.1", sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b")
     version("4.1.0", sha256="d6a9a8094e78f7cfb6f80a73cc271e1fe388c8638ed22668622c2c646df5bb3d")
     version("4.0.2", sha256="d53be9730d8d58a16bf0cbd1f8ac0c0c3e1090573168bfa151b01eb47fa906fc")
     version("4.0.1", sha256="7a00b4d0d53ad97a14316135e2d702091cd5f193bb58bcfcd8bc59d41e7887a9")
@@ -65,6 +62,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
         "4.1.dev1-fortran",
         sha256="d9020319771879b41f9545e95f9d252a3ffc379832dded14c385e5cd823e526d",
         url="https://github.com/swig-fortran/swig/archive/refs/tags/v4.1.0-dev1+fortran.tar.gz",
+        deprecated=True,
     )
     version(
         "4.0.2-fortran",
@@ -158,4 +156,4 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
     @when(Swig.AUTOCONF_VERSIONS)
     def autoreconf(self, pkg, spec, prefix):
-        which("sh")("./autogen.sh")
+        which("sh", required=True)("./autogen.sh")

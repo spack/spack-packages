@@ -21,6 +21,8 @@ class SstCore(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("15.1.2", sha256="21aabfddb80c7aaf65e562894e0542bdb871bbc630362c3cef579d949c456f33")
+    version("15.1.1", sha256="651cf5ee1438a5128aea2ad8b518c5437a1637dce357cbcbdd58681fa749222f")
     version("15.1.0", sha256="ec3d9e733bcf99283b526cfb4a853787d303a8d55b2a42d5102b0f4f4a4feb81")
     version("15.0.0", sha256="ca2875fb36be069e34b10fd9b0ad756dd4c707795f824346aff9523a56f3840c")
     version("14.1.0", sha256="9d17c37d1ebdff8d8eb10ab0084eb901c78a7c5a76db15189e3d7fc318fd6f9d")
@@ -111,7 +113,7 @@ class SstCore(AutotoolsPackage):
     # that cannot be easily circumvented with `touch`.
     @when("@develop,master,14.0.0")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autogen.sh")
 
     def configure_args(self):

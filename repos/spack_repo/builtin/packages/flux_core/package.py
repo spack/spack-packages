@@ -170,7 +170,7 @@ class FluxCore(AutotoolsPackage):
     def setup(self):
         with working_dir(self.stage.source_path):
             # Allow git-describe to get last tag so flux-version works:
-            git = which("git")
+            git = which("git", required=True)
             # When using spack develop, this will already be unshallow
             try:
                 git("fetch", "--unshallow")
@@ -183,7 +183,7 @@ class FluxCore(AutotoolsPackage):
         self.setup()
         if not os.path.exists("configure"):
             # Bootstrap with autotools
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./autogen.sh")
 
     @property

@@ -19,6 +19,7 @@ class PyScipy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.17.1", sha256="95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0")
     version("1.17.0", sha256="2591060c8e648d8b96439e111ac41fd8342fdeff1876be2e19dea3fe8930454e")
     version("1.16.3", sha256="01e87659402762f43bd2fee13370553a17ada367d42e7487800bf2916535aecb")
     version("1.16.2", sha256="af029b153d243a80afb6eabe40b0a07f8e35c9adc269c019f364ad747f826a6b")
@@ -227,7 +228,6 @@ class PyScipy(PythonPackage):
 
         return {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 # http://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dfortran_std": fortran_std,

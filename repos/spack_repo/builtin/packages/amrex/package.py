@@ -29,6 +29,8 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("26.04", sha256="b09c99d37989b980bba622695b5a9aec267f2430d79683683064c27de7a1776a")
+    version("26.03", sha256="7139b8bb423a4311e8990bee6cb06b86a81de439363f35a3f29c808a93a003ca")
     version("26.02", sha256="7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
     version("26.01", sha256="b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
     version("25.12", sha256="60a788cf398563cdf25438a3bbe597fe1f3b18f359b30fb3c0f568dd62908f1a")
@@ -318,6 +320,9 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         "+sycl", when="@:21.05", msg="For SYCL support, AMReX version 21.06 and newer suggested."
     )
 
+    # Fix release number in amrex-v26.04
+    patch("amrex-26.04-changelog.patch", when="@26.04")
+
     def url_for_version(self, version):
         if version >= Version("20.05"):
             url = "https://github.com/AMReX-Codes/amrex/releases/download/{0}/amrex-{0}.tar.gz"
@@ -459,13 +464,13 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         args.append("-DCMAKE_PREFIX_PATH=" + ";".join(get_cmake_prefix_path(self)))
 
         args.extend(self.cmake_args())
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         cmake(*args)
 
-        make = which("make")
+        make = which("make", required=True)
         make()
 
-        install_test = which("install_test")
+        install_test = which("install_test", required=True)
         inputs_path = join_path(
             ".", "cache", "amrex", "Tests", "Amr", "Advection_AmrCore", "Exec", "inputs-ci"
         )

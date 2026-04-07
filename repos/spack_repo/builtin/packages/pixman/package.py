@@ -133,7 +133,10 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         png = self.spec["libpng"]
         if not png.satisfies("libs=shared"):
             args.append(
-                "LIBS=%s" % which("libpng-config")("--static", "--ldflags", output=str).strip()
+                "LIBS=%s"
+                % which("libpng-config", required=True)(
+                    "--static", "--ldflags", output=str
+                ).strip()
             )
 
         # The Fujitsu compiler does not support assembler macros.
