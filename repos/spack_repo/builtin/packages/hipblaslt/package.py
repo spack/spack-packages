@@ -177,6 +177,8 @@ class Hipblaslt(CMakePackage):
         sha256="503555b92ccbc33e50a10e2ba1d38e8f3349b93d786c7f6b19aaacb736c9bf7c",
         when="@7.2",
     )
+    # https://github.com/ROCm/rocm-libraries/pull/5990
+    patch("0005-add-offload-bundler-path.patch", when="@7.1:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@:6.4"):
@@ -187,7 +189,7 @@ class Hipblaslt(CMakePackage):
             env.set(
                 "TENSILE_ROCM_ASSEMBLER_PATH", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++"
             )
-        if self.spec.satisfies("@6.3.0:"):
+        if self.spec.satisfies("@6.3.0:7.0"):
             env.set(
                 "TENSILE_ROCM_OFFLOAD_BUNDLER_PATH",
                 f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler",
@@ -320,6 +322,12 @@ class Hipblaslt(CMakePackage):
             )
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("HIPBLASLT_ENABLE_CLIENT", self.run_tests))
+            args.append(
+                self.define(
+                    "TENSILELITE_OFFLOADBUNDLER",
+                    f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler",
+                )
+            )
         else:
             args.append(self.define("BUILD_CLIENTS_TESTS", self.run_tests))
         if self.spec.satisfies("@7.1: %gcc@8.0:8.9"):
