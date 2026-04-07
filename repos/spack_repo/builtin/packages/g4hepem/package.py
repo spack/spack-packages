@@ -36,7 +36,7 @@ class G4hepem(CMakePackage, CudaPackage):
             self.define("G4HepEm_GEANT4_BUILD", True),
             self.define_from_variant("G4HepEm_CUDA_BUILD", "cuda"),
         ]
-        if self.spec.satisfies("cuda"):
+        if self.spec.satisfies("+cuda"):
             args.append(
                 self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value)
             )
