@@ -346,10 +346,10 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm~rocm_rdc", when="@:16 +stk")
     conflicts("+rocm~rocm_rdc", when="@17: +stk ^hip@:6.2")
-    # rocm conflicts with cxxstd=20 per https://github.com/llvm/llvm-project/issues/184856
+    # rocm@7 conflicts with cxxstd=20 per https://github.com/llvm/llvm-project/issues/184856
     # this conflict can be updated once https://github.com/llvm/llvm-project/pull/184894
     # makes it into hip
-    conflicts("cxxstd=20", when="+rocm")
+    conflicts("cxxstd=20", when="+rocm ^hip@7:")
 
     # TRIbits dependencies only relied on by testing are invoked regardless,
     # whether +test or ~test. see https://github.com/TriBITSPub/TriBITS/issues/56
