@@ -21,11 +21,21 @@ class G4adept(CMakePackage, CudaPackage):
 
     version("0.2.0", sha256="4075ebb652b17d6cf94b341fdc64df088ce9538b0aba433e413606d5cb51c618")
 
-    variant("covfie", default=False, description="Use external B field from file via the covfie library")
+    variant(
+        "covfie",
+        default=False,
+        description="Use external B field from file via the covfie library",
+    )
     variant("examples", default=False, description="Build examples")
-    variant("split_kernels", default=False, description="Run split version of the transport kernels")
+    variant(
+        "split_kernels", default=False, description="Run split version of the transport kernels"
+    )
     variant("surf", default=False, description="Enable surface model navigation on GPU")
-    variant("mixed_precision", default=False, description="Use B-field integration and surface model in mixed precision")
+    variant(
+        "mixed_precision",
+        default=False,
+        description="Use B-field integration and surface model in mixed precision",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
