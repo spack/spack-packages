@@ -41,7 +41,7 @@ class G4adept(CMakePackage, CudaPackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.25.2:", type="build")
 
-    depends_on("veccore@0.5.2: +cuda")
+    depends_on("veccore@0.5.2:")
     depends_on("vecgeom +gdml")
     depends_on("xerces-c")
     depends_on("geant4")
