@@ -56,10 +56,12 @@ class G4adept(CMakePackage, CudaPackage):
     def cmake_args(self):
         args = [
             self.define("ADEPT_BUILD_TESTING", self.run_tests),
-            self.define_from_variants("ADEPT_BUILD_EXAMPLES", "examples"),
+            self.define_from_variant("ADEPT_BUILD_EXAMPLES", "examples"),
             self.define_from_variant("ADEPT_USE_EXT_BFIELD", "covfie"),
+            self.define_from_variant("ADEPT_MIXED_PRECISION", "mixed_precision"),
             self.define_from_variant("ADEPT_USE_SPLIT_KERNELS", "split_kernels"),
             self.define_from_variant("ADEPT_USE_SURF", "surf"),
             self.define("ADEPT_USE_BUILTIN_G4VG", False),
         ]
+        args.append(CMakeBuilder.define_cuda_architectures(self))
         return args
