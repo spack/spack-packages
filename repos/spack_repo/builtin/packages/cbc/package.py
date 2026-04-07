@@ -27,6 +27,7 @@ class Cbc(AutotoolsPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("pkgconfig", type="build")
 
     depends_on("coinutils")
     depends_on("osi")
