@@ -305,6 +305,7 @@ class Mapl(CMakePackage):
 
     # Flang is only supported from MAPL 2.67 onwards, and only flang 22.1.0 and newer due to bugs in flang.
     conflicts("^[virtuals=fortran] llvm@22.1.0:", when="@:2.66")
+    conflicts("^[virtuals=fortran] llvm@:21")
 
     variant("flap", default=False, description="Build with FLAP support", when="@:2.39")
     variant("pflogger", default=True, description="Build with pFlogger support")
