@@ -63,6 +63,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("realm+hdf5", when="@25.09.0: +hdf5")
     depends_on("realm+hwloc", when="@25.09.0: +hwloc")
     depends_on("realm+openmp", when="@25.09.0: +openmp")
+    depends_on("realm+sysomp", when="@25.09.0: +sysomp")
     depends_on("realm+cuda", when="@25.09.0: +cuda")
     depends_on("realm+rocm", when="@25.09.0: +rocm")
     depends_on("realm+cuda_unsupported_compiler", when="@25.09.0: +cuda_unsupported_compiler")
@@ -71,7 +72,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("realm@25:", when="@25.09.0:")
 
     for d in range(1, 10):
-        depends_on(f"realm max_dims={d}", when=f"max_dims={d}")
+        depends_on(f"realm max_dims={d}", when=f"@25.09.0: max_dims={d}")
 
     # force same compiler as kokkos if static build
     depends_on("kokkos %gcc", when="+kokkos~shared %gcc")
