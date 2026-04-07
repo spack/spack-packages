@@ -45,6 +45,20 @@ class ClingoBootstrap(Clingo):
         patch("version-script.patch", when="@spack,5.5:5.6")
         patch("version-script-5.4.patch", when="@5.2:5.4")
 
+    # flat multimap for performance: https://github.com/potassco/clasp/pull/118
+    patch(
+        "https://github.com/haampie/clasp/commit/d38fd66cb3f20cdd7474c7a3342304dac9eff78c.patch?full_index=1",
+        sha256="3355cd2905c84242fcdbb79a13651203224a5376aaeda40aa8c35cb2b6fe0bd0",
+        working_dir="clasp",
+        when="@:5.7 +optimized",
+    )
+    patch(
+        "https://github.com/haampie/clasp/commit/0fa3a19beab99006f788840ca84c485d5bb23a61.patch?full_index=1",
+        sha256="e3b8ab3576823754b04bbc3f54be9f3c9f02c48ab9e3faafeb7511e6cdcb7405",
+        working_dir="clasp",
+        when="@5.8: +optimized",
+    )
+
     # CMake at version 3.16.0 or higher has the possibility to force the
     # Python interpreter, which is crucial to build against external Python
     # in environment where more than one interpreter is in the same prefix
