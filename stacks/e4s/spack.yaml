@@ -112,6 +112,7 @@ spack:
     - kokkos
     - kokkos-kernels
     - kokkos-fft device_backend=cufft +tests
+    - legion
     - libceed
     - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard ^cusz
     - magma
@@ -307,7 +308,6 @@ spack:
   - bricks +cuda
   - flux-core +cuda
   - hpctoolkit +cuda
-  - legion +cuda
   - papi +cuda
   - tau +mpi +cuda +syscall
 
