@@ -757,9 +757,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         options.append(self.define_from_variant("AXOM_ENABLE_TUTORIALS", "tutorials"))
         options.append(self.define_from_variant("AXOM_USE_64BIT_INDEXTYPE", "int64"))
 
-        if self.spec.satisfies("~raja") or self.spec.satisfies("+umpire"):
-            options.append("-DAXOM_ENABLE_MIR:BOOL=OFF")
-
         return options
 
     def patch(self):

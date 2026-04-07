@@ -78,26 +78,23 @@ class Samtools(Package):
     depends_on("htslib@1.3.1", when="@1.3.1")
 
     def install(self, spec, prefix):
-        if "+termlib" in spec["ncurses"]:
-            curses_lib = "-lncursesw -ltinfow"
-        else:
-            curses_lib = "-lncursesw"
+        curses_lib = self.spec["ncurses"].libs.link_flags
 
         if self.spec.version >= Version("1.3.1"):
             configure(
-                "--prefix={0}".format(prefix),
-                "--with-htslib={0}".format(self.spec["htslib"].prefix),
+                f"--prefix={prefix}",
+                f"--with-htslib={self.spec['htslib'].prefix}",
                 "--with-ncurses",
-                "CURSES_LIB={0}".format(curses_lib),
+                f"CURSES_LIB={curses_lib}",
             )
             make()
             make("install")
         else:
-            make("prefix={0}".format(prefix), "LIBCURSES={0}".format(curses_lib))
+            make(f"prefix={prefix}", f"LIBCURSES={curses_lib}")
             if self.spec.version == Version("0.1.8"):
-                make("prefix={0}".format(prefix))
+                make(f"prefix={prefix}")
             else:
-                make("prefix={0}".format(prefix), "install")
+                make(f"prefix={prefix}", "install")
 
         # Install dev headers and libs for legacy apps depending on them
         # per https://github.com/samtools/samtools/releases/tag/1.14
