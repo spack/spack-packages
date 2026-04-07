@@ -46,7 +46,7 @@ class G4adept(CMakePackage, CudaPackage):
     depends_on("xerces-c")
     depends_on("geant4")
     depends_on("g4vg@1.0.3:")
-    depends_on("g4hepem +cuda")
+    depends_on("g4hepem +cuda +early_tracking_exit")
     depends_on("hepmc3", type="test")
 
     depends_on("covfie", when="+covfie")
