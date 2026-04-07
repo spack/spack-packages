@@ -19,6 +19,7 @@ class Keepassxc(CMakePackage):
     license("GPL-2.0-only OR GPL-3.0-only")
 
     version("master", branch="master")
+    version("2.7.12", sha256="be34eeb297881adea4f894c7c6e4a1835bd7927f8043ddea495040df4792a7de")
     version("2.7.9", sha256="3c44e45f22c00ddac63d8bc11054b4b0ada0222ffac08d3ed70f196cb9ed46fd")
     version("2.7.8", sha256="87d3101712b3c8656a24b908ad5b7e2529bc01717cb4156f53ba195fb81783a3")
     version("2.7.7", sha256="58fc45ae98e4b3ffb052103014f5b97a41fefd17102c7f56073934dd3a82ee67")
@@ -31,11 +32,12 @@ class Keepassxc(CMakePackage):
     variant("autotype", default=False, description="enable auto-type")
     variant("docs", default=True, description="Build documentation")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # https://github.com/keepassxreboot/keepassxc/wiki/Building-KeePassXC
     # https://github.com/keepassxreboot/keepassxc/wiki/Set-up-Build-Environment-on-Linux
+    depends_on("cmake@3.14.7:", type="build", when="@2.7.7:")
     depends_on("cmake@3.1:", type="build")
 
     # It installs the last gcc instead of using one that is >= 4.7

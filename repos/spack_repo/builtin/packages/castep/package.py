@@ -121,9 +121,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                     platfile = FileFilter("obj/platforms/linux_x86_64_gfortran9.0.mk")
                 else:
                     platfile = FileFilter("obj/platforms/linux_x86_64_gfortran.mk")
-                dlmakefile.filter(
-                    r"MPIFLAGS = -DMPI", "MPIFLAGS = -fallow-argument-mismatch -DMPI"
-                )
+                platfile.filter(r"MPIFLAGS = -DMPI", "MPIFLAGS = -fallow-argument-mismatch -DMPI")
                 platfile.filter(r"^\s*FFLAGS_E\s*=.*", "FFLAGS_E = -fallow-argument-mismatch ")
 
             platfile.filter(r"^LD_FLAGS\s=.*$", "LD_FLAGS = $(OPT) -fopenmp")

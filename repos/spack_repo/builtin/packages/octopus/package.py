@@ -160,10 +160,10 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         depends_on("libvdwxc~mpi", when="+libvdwxc")
         depends_on("arpack-ng~mpi", when="+arpack")
         depends_on("elpa~mpi", when="+elpa")
-        depends_on("netcdf-c~~mpi", when="+netcdf")  # Link dependency of NetCDF fortran lib
+        depends_on("netcdf-c ~mpi", when="+netcdf")  # Link dependency of NetCDF fortran lib
         with when("+berkeleygw"):
-            depends_on("berkeleygw@3:~~mpi", when="@14:")
-            depends_on("berkeleygw@2.1~~mpi", when="@:13")
+            depends_on("berkeleygw@3: ~mpi", when="@14:")
+            depends_on("berkeleygw@2.1 ~mpi", when="@:13")
 
     depends_on("etsf-io", when="+etsf-io")
     depends_on("py-numpy", when="+python")

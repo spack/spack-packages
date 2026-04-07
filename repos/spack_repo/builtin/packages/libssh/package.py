@@ -11,11 +11,18 @@ class Libssh(CMakePackage):
     """libssh: the SSH library"""
 
     homepage = "https://www.libssh.org"
-    url = "https://www.libssh.org/files/0.11/libssh-0.11.3.tar.xz"
+    url = "https://www.libssh.org/files/0.12/libssh-0.12.0.tar.xz"
     list_url = "https://www.libssh.org/files"
     list_depth = 1
 
-    version("0.11.3", sha256="7d8a1361bb094ec3f511964e78a5a4dba689b5986e112afabe4f4d0d6c6125c3")
+    version("0.12.0", sha256="1a6af424d8327e5eedef4e5fe7f5b924226dd617ac9f3de80f217d82a36a7121")
+    version("0.11.4", sha256="002ac320e3d66c9e100ec6576e3e84aa0c48949efde3bf5b40a2802992297701")
+    # Previous versions deprecated because of CVEs
+    version(
+        "0.11.3",
+        sha256="7d8a1361bb094ec3f511964e78a5a4dba689b5986e112afabe4f4d0d6c6125c3",
+        deprecated=True,
+    )
     # Previous versions removed because of CVEs
 
     variant("gssapi", default=True, description="Build with gssapi support")

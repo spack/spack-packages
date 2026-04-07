@@ -25,6 +25,8 @@ class Lmod(AutotoolsPackage):
 
     license("MIT")
 
+    version("9.1.2", sha256="b7277482677a22c3396b88a1290406ca20bb2564c59632403ca98373f132e65a")
+    version("9.0.8", sha256="4b3fad3addc799f643f8c7fb56af892757b77594cd24bd9e405b645cdae4dca0")
     version("9.0.5", sha256="7d5b5db9f252dff7469d3a5369b7b58dbbfd4b3a879a97ee21954f26e04b13e3")
     version("8.7.67", sha256="50c8d265e47eb6661ebe3af13df819b35db84cda3474ea0a7427c33b5767aaab")
     version("8.7.55", sha256="f85ed9b55c23afb563fa99c7201037628be016e8d88a1aa8dba4632c0ab450bd")
