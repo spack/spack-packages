@@ -56,7 +56,4 @@ class Veccore(CMakePackage, CudaPackage):
     depends_on("cuda@11:", type="build", when="+cuda")
 
     def cmake_args(self):
-        return [
-            self.define_from_variant("VC", "vc"),
-            self.define_from_variant("CUDA", "cuda"),
-        ]
+        return [self.define_from_variant("VC", "vc"), self.define_from_variant("CUDA", "cuda")]
