@@ -31,6 +31,7 @@ class Cgl(AutotoolsPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("pkgconfig", type="build")
 
     depends_on("coinutils@2.11.0:", when="@0.60:")
     depends_on("coinutils@2.10.3:", when="@0.59:")
