@@ -12,11 +12,23 @@ class PyAccessiblePygments(PythonPackage):
     different sources."""
 
     homepage = "https://github.com/Quansight-Labs/accessible-pygments"
-    pypi = "accessible-pygments/accessible-pygments-0.0.4.tar.gz"
+    pypi = "accessible-pygments/accessible_pygments-0.0.5.tar.gz"
 
     license("BSD-3-Clause")
 
+    version("0.0.5", sha256="40918d3e6a2b619ad424cb91e556bd3bd8865443d9f22f1dcdf79e33c8046872")
     version("0.0.4", sha256="e7b57a9b15958e9601c7e9eb07a440c813283545a20973f2574a5f453d0e953e")
 
     depends_on("py-pygments@1.5:", type=("build", "run"))
     depends_on("py-setuptools", type=("build"))
+
+    def url_for_version(self, version):
+        base = "https://files.pythonhosted.org/packages/source"
+        name = self.pypi.partition("/")[0]
+        if version >= Version("0.0.5"):
+            modname = name.replace("-", "_")
+        else:
+            modname = name
+        return f"{base}/{name[0]}/{name}/{modname}-{version}.tar.gz"
+    
+    

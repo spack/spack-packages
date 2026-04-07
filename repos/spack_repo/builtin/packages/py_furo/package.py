@@ -24,7 +24,7 @@ class PyFuro(PythonPackage):
     version("2023.5.20", sha256="40e09fa17c6f4b22419d122e933089226dcdb59747b5b6c79363089827dea16f")
 
     depends_on("py-sphinx-theme-builder@0.2.0a10:", type="build")
-    with default_args(type=("build", "run")"
+    with default_args(type=("build", "run")):
         depends_on("py-beautifulsoup4")
         depends_on("py-sphinx-basic-ng@1.0.0b2:")
         depends_on("py-pygments@2.7:")

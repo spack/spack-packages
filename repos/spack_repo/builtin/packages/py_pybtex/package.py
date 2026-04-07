@@ -17,11 +17,16 @@ class PyPybtex(PythonPackage):
 
     license("MIT")
 
+    version("0.26.1", sha256="2e5543bea424e60e9e42eef70bff597be48649d8f68ba061a7a092b2477d5464")
     version("0.24.0", sha256="818eae35b61733e5c007c3fcd2cfb75ed1bc8b4173c1f70b56cc4c0802d34755")
     version("0.21", sha256="af8a6c7c74954ad305553b118d2757f68bc77c5dd5d5de2cc1fd16db90046000")
 
-    depends_on("python@2.7:2.8,3.3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-latexcodec@1.0.4:", type=("build", "run"))
-    depends_on("py-pyyaml@3.01:", type=("build", "run"))
-    depends_on("py-six", type=("build", "run"), when="@0.24.0:")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.8:", when="@0.26:")
+        depends_on("python@2.7:2.8,3.3:", when="@:0.26")
+        depends_on("py-latexcodec@1.0.4:")
+        depends_on("py-pyyaml@3.01:")
+        depends_on("py-six", when="@0.24.0:0.25")
+        depends_on("py-importlib-metadata@3.6:", when="@0.26: ^python@:3.9")
