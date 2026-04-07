@@ -23,9 +23,7 @@ class BitcoinCore(AutotoolsPackage, CMakePackage):
     version("28.4", sha256="2950d5e37d04ca7fadad615a06b964cdeab3a6995867f8c172a67733dbd91c89")
 
     build_system(
-        conditional("cmake", when="@29:"),
-        conditional("autotools", when="@:28"),
-        default="cmake",
+        conditional("cmake", when="@29:"), conditional("autotools", when="@:28"), default="cmake"
     )
 
     depends_on("c", type="build")
