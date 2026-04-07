@@ -516,8 +516,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_entry("CMAKE_C_FLAGS", cflags))
         cxxflags = cppflags + " ".join(spec.compiler_flags["cxxflags"])
         if spec.satisfies("%oneapi@2025:"):
-            cxxflags += "-Wno-error=missing-template-arg-list-after-template-kw "
-            cxxflags += "-Wno-missing-template-arg-list-after-template-kw"
+            cxxflags += " -Wno-error=missing-template-arg-list-after-template-kw"
+            cxxflags += " -Wno-missing-template-arg-list-after-template-kw"
         if cxxflags:
             cfg.write(cmake_cache_entry("CMAKE_CXX_FLAGS", cxxflags))
         fflags = " ".join(spec.compiler_flags["fflags"])
