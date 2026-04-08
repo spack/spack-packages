@@ -284,15 +284,15 @@ class Conduit(CachedCMakePackage):
         if spec.satisfies("+shared"):
             entries.append(
                 cmake_cache_string(
-                    "CMAKE_SHARED_LINKER_FLAGS", "${CMAKE_SHARED_LINKER_FLAGS} " + linkerflags, force=True
+                    "CMAKE_SHARED_LINKER_FLAGS", 
+                    "${CMAKE_SHARED_LINKER_FLAGS} " + linkerflags,
+                    force=True
                 )
             )
 
         if spec.satisfies("%cce"):
             entries.append(
-                cmake_cache_string(
-                    "CMAKE_Fortran_FLAGS", "${CMAKE_Fortran_FLAGS} -ef", force=True
-                )
+                cmake_cache_string("CMAKE_Fortran_FLAGS", "${CMAKE_Fortran_FLAGS} -ef", force=True)
             )
 
         sys_type = os.environ.get("SYS_TYPE", str(spec.architecture))
@@ -354,7 +354,7 @@ class Conduit(CachedCMakePackage):
                 entries.append(cmake_cache_path("SPHINX_EXECUTABLE", sphinx_build_exe))
             if spec.satisfies("+doxygen"):
                 doxygen_exe = spec["doxygen"].command.path
-                entries.append(cmake_cache_path("DOXYGEN_EXECUTABLE", doxygen_exe))        
+                entries.append(cmake_cache_path("DOXYGEN_EXECUTABLE", doxygen_exe))
         entries.append(cmake_cache_option("ENABLE_DOCS", enable_docs))
 
         entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+test")))
