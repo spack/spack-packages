@@ -276,12 +276,24 @@ class Conduit(CachedCMakePackage):
         linkerflags = ""
         for rpath in rpaths:
             linkerflags += "-Wl,-rpath,{} ".format(rpath)
-        entries.append(cmake_cache_string("CMAKE_EXE_LINKER_FLAGS", "${CMAKE_EXE_LINKER_FLAGS} " + linkerflags, force=True))
+        entries.append(
+            cmake_cache_string(
+                "CMAKE_EXE_LINKER_FLAGS", "${CMAKE_EXE_LINKER_FLAGS} " + linkerflags, force=True
+            )
+        )
         if spec.satisfies("+shared"):
-            entries.append(cmake_cache_string("CMAKE_SHARED_LINKER_FLAGS", "${CMAKE_SHARED_LINKER_FLAGS} " + linkerflags, force=True))
+            entries.append(
+                cmake_cache_string(
+                    "CMAKE_SHARED_LINKER_FLAGS", "${CMAKE_SHARED_LINKER_FLAGS} " + linkerflags, force=True
+                )
+            )
 
         if spec.satisfies("%cce"):
-            entries.append(cmake_cache_string("CMAKE_Fortran_FLAGS", "${CMAKE_Fortran_FLAGS} -ef", force=True))
+            entries.append(
+                cmake_cache_string(
+                    "CMAKE_Fortran_FLAGS", "${CMAKE_Fortran_FLAGS} -ef", force=True
+                )
+            )
 
         sys_type = os.environ.get("SYS_TYPE", str(spec.architecture))
         on_blueos = "blueos" in sys_type
