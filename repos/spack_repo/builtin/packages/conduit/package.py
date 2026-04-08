@@ -284,9 +284,9 @@ class Conduit(CachedCMakePackage):
         if spec.satisfies("+shared"):
             entries.append(
                 cmake_cache_string(
-                    "CMAKE_SHARED_LINKER_FLAGS", 
+                    "CMAKE_SHARED_LINKER_FLAGS",
                     "${CMAKE_SHARED_LINKER_FLAGS} " + linkerflags,
-                    force=True
+                    force=True,
                 )
             )
 
