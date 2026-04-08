@@ -39,7 +39,7 @@ class PyMarkdown(PythonPackage):
         depends_on("python@3.10:", when="@3.10.2:")
         depends_on("python@3.7:", when="@3.4.1:")
         depends_on("python@3.6:", when="@3.3.4:")
-        depends_on("python@2.7:2.8,3.3.5:", when="@3.3.1")
+        depends_on("python@2.7:2.8,3.3.5:", when="@3.1.1")
 
         depends_on("py-importlib-metadata", when="@3.3.4: ^python@:3.7")
         depends_on("py-importlib-metadata@4.4:", when="@3.4.1: ^python@:3.9")
