@@ -145,7 +145,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "debug_bounds_check": [False, None, "Use bounds checking - will increase runtime"],
         "debug_dualview_modify_check": [False, "@:4", "Debug check on dual views"],
         "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
-        "examples": [False, "@:4", "Whether to build examples"],
         "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
