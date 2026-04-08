@@ -23,7 +23,9 @@ class Pfunit(CMakePackage):
     license("NASA-1.3", checked_by="mathomp4", when="@:4.16")
     license("Apache-2.0", checked_by="mathomp4", when="@4.17:")
 
-    version("4.16.0", sha256="314381ff08dc99e87a4da5862501053d112babaf73244b1c04b77065d3fd3091")
+    version("4.17.0", sha256="d36deda71de5b70205848f849facb97601e5e18e5d2be83d6f0d2d9edaae0593")
+    # There was a mistake in the 4.16.0 release. Mark as deprecated.
+    version("4.16.0", sha256="314381ff08dc99e87a4da5862501053d112babaf73244b1c04b77065d3fd3091",deprecated=True)
     version("4.15.0", sha256="8c9cb7f7275802c5169b16dd511209b15ccde3a0e2fb3ed9007a0ab9acf4abb1")
     version("4.14.0", sha256="3f5fcc79cf5f12ed08eb8e49aff23e0826243b14d4b2b2efee91ce823ac1749d")
     version("4.13.0", sha256="f4f894faea5cc591f05e071a2bb16ddf613c3c22f88a6dc3b8149f5c4f159548")
