@@ -132,7 +132,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
         multi=True,
         description="Scalars",
     )
-    variant("pic", default=False, description="Build position independent code")
 
     depends_on("cxx", type="build")
     for tpl in ("blas", "mkl"):
@@ -209,7 +208,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
     def cmake_args(self):
         spec = self.spec
         options = [
-            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             self.define_from_variant("KokkosKernels_INST_EXECSPACE_CUDA", "execspace_cuda"),
             self.define_from_variant("KokkosKernels_INST_EXECSPACE_OPENMP", "execspace_openmp"),
             self.define_from_variant("KokkosKernels_INST_EXECSPACE_THREADS", "execspace_threads"),
@@ -223,6 +221,10 @@ class KokkosKernels(CMakePackage, CudaPackage):
             ),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
+        if spec.satisfies("^kokkos+pic"):
+            options.append(self.define("CMAKE_POSITION_INDEPENDENT_CODE", True))
+        if spec.satisfies("^kokkos+rocm+hip_relocatable_device_code"):
+            options.append(self.define("HIP_RELOCATABLE_DEVICE_CODE", True))
 
         options.append(self.define("Kokkos_ROOT", spec["kokkos"].prefix))
         if spec.satisfies("^kokkos+rocm") and not (
