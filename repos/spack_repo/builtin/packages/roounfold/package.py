@@ -17,6 +17,8 @@ class Roounfold(CMakePackage):
     url = "https://gitlab.cern.ch/RooUnfold/RooUnfold/-/archive/3.1.0/RooUnfold-3.1.0.zip"
     git = "https://gitlab.cern.ch/RooUnfold/RooUnfold.git"
 
+    tags = ["hep"]
+
     maintainers("wdconinc")
 
     license("BSD-3-Clause", checked_by="wdconinc")
