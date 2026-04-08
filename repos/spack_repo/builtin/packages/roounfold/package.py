@@ -29,6 +29,6 @@ class Roounfold(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define("CMAKE_DISABLE_FIND_PACKAGE_doxygen", True),
+            self.define("CMAKE_DISABLE_FIND_PACKAGE_Doxygen", True),
         ]
         return args
