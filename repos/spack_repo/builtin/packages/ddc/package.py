@@ -21,6 +21,7 @@ class Ddc(CMakePackage):
     license("MIT", checked_by="tpadioleau")
 
     version("main", branch="main", no_cache=True)
+    version("0.12.0", sha256="30a464b00d712ce7264835cc162b63797185667fea3f4c9457d7dfff0a2bc0cc")
     version("0.11.0", sha256="c3ee616cc6cbbf417dade247cd49805b1a5422b4ac3539cb954f608b8ea27cf4")
     version("0.10.0", sha256="0ab717a21c641b59af8119ff665c0322498fcccf5f49b2c3a2746eecbf1a4964")
     version("0.9.0", sha256="e975a19f2d8e4fc668ab7628e145b927987812496c94b384ee9e72d054711078")
@@ -65,6 +66,7 @@ class Ddc(CMakePackage):
     with when("+splines"):
         depends_on("ginkgo@1.8:")
         depends_on("ginkgo@:1")
+        depends_on("kokkos-kernels@4.7:", when="@0.12:")
         depends_on("kokkos-kernels@4.5.1:")
         depends_on("kokkos-kernels@:5")
         depends_on("kokkos-kernels@:4", when="@:0.8")
