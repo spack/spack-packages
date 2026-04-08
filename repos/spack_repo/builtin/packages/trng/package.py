@@ -39,7 +39,7 @@ class Trng(CMakePackage):
     depends_on("boost")
 
     patch("0001-Add-inline-to-comparison-operators-in-uniform_int_di.patch", when="@4.23:4.24")
-    patch("0002-urng-libcxx19-yarn2.patch", when="@4.23:4.24 %clang platform=darwin")
+    patch("0002-urng-libcxx19-yarn.patch", when="@4.23:4.24 %clang platform=darwin")
 
     def cmake_args(self):
         args = []
