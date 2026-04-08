@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.11.0", tag="v2.11.0", commit="70d99e998b4955e0049d13a98d77ae1b14db1f45")
     version("2.10.0", tag="v2.10.0", commit="449b1768410104d3ed79d3bcfe4ba1d65c7f22c0")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2026-24747/
@@ -246,17 +247,19 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cpuinfo@2022-08-19", when="@1.13:2.0")
     depends_on("cpuinfo@2020-12-17", when="@1.8:1.12")
     depends_on("cpuinfo@2020-06-11", when="@1.6:1.7")
-    depends_on("gloo@2025-08-21", when="@2.9:+gloo")
-    depends_on("gloo@2025-06-04", when="@2.8+gloo")
-    depends_on("gloo@2023-12-03", when="@2.3:2.7+gloo")
-    depends_on("gloo@2023-05-19", when="@2.1:2.2+gloo")
-    depends_on("gloo@2023-01-17", when="@2.0+gloo")
-    depends_on("gloo@2022-05-18", when="@1.13:1+gloo")
-    depends_on("gloo@2021-05-21", when="@1.10:1.12+gloo")
-    depends_on("gloo@2021-05-04", when="@1.9+gloo")
-    depends_on("gloo@2020-09-18", when="@1.7:1.8+gloo")
-    depends_on("gloo+cuda", when="+gloo+cuda")
-    depends_on("gloo+libuv", when="platform=darwin")
+    with when("+gloo"):
+        depends_on("gloo@2025-12-02", when="@2.11:")
+        depends_on("gloo@2025-08-21", when="@2.9:2.10")
+        depends_on("gloo@2025-06-04", when="@2.8")
+        depends_on("gloo@2023-12-03", when="@2.3:2.7")
+        depends_on("gloo@2023-05-19", when="@2.1:2.2")
+        depends_on("gloo@2023-01-17", when="@2.0")
+        depends_on("gloo@2022-05-18", when="@1.13:1")
+        depends_on("gloo@2021-05-21", when="@1.10:1.12")
+        depends_on("gloo@2021-05-04", when="@1.9")
+        depends_on("gloo@2020-09-18", when="@1.7:1.8")
+        depends_on("gloo+cuda", when="+gloo+cuda")
+        depends_on("gloo+libuv", when="platform=darwin")
     # https://github.com/pytorch/pytorch/issues/60331
     # depends_on("onnx@1.18.0", when="@2.8:")
     # depends_on("onnx@1.17.0", when="@2.6:2.7")
@@ -282,7 +285,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("pthreadpool@2020-10-05", when="@1.8")
     depends_on("pthreadpool@2020-06-15", when="@1.6:1.7")
     with default_args(type=("build", "link", "run")):
-        depends_on("py-pybind11@:3.0.1", when="@:2.10")
+        # https://github.com/spack/spack-packages/pull/3708#issuecomment-4077800794
+        depends_on("py-pybind11@:3.0.1")
         depends_on("py-pybind11@3.0.1:", when="@2.9:")
         depends_on("py-pybind11@2.13.6:", when="@2.6:")
         depends_on("py-pybind11@2.13.5:", when="@2.5")

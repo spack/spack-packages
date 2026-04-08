@@ -29,6 +29,7 @@ class Openblas(CMakePackage, MakefilePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("0.3.32", sha256="f8a1138e01fddca9e4c29f9684fd570ba39dedc9ca76055e1425d5d4b1a4a766")
     version("0.3.30", sha256="27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
     version("0.3.29", sha256="38240eee1b29e2bde47ebb5d61160207dc68668a54cac62c076bb5032013b1eb")
     version("0.3.28", sha256="f1003466ad074e9b0c8d421a204121100b0751c96fc6fcf3d1456bd12f8a00a1")
@@ -112,6 +113,7 @@ class Openblas(CMakePackage, MakefilePackage):
     variant("ilp64", default=False, description="Force 64-bit Fortran native integers")
     variant("pic", default=True, description="Build position independent code")
     variant("shared", default=True, description="Build shared libraries")
+    variant("static", default=False, description="Build static libraries")
     variant(
         "dynamic_dispatch",
         default=True,
@@ -684,6 +686,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if "+shared" in self.spec:
             cmake_defs += [self.define("BUILD_SHARED_LIBS", "ON")]
+
+        if "+static" in self.spec:
+            cmake_defs += [self.define("BUILD_STATIC_LIBS", "ON")]
 
         if self.spec.satisfies("threads=openmp"):
             cmake_defs += [self.define("USE_OPENMP", "ON"), self.define("USE_THREAD", "ON")]
