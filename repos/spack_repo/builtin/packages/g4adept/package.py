@@ -19,6 +19,7 @@ class G4adept(CMakePackage, CudaPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("0.3.0", sha256="e179d0b600beeeb34357c767bbc22498715ca6719917abbc14221fde39fb2885")
     version("0.2.0", sha256="4075ebb652b17d6cf94b341fdc64df088ce9538b0aba433e413606d5cb51c618")
 
     variant(
