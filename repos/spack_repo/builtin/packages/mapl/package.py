@@ -303,7 +303,8 @@ class Mapl(CMakePackage):
     # ifx 2025.0 and newer due to bugs in ifx.
     conflicts("^[virtuals=fortran] intel-oneapi-compilers@2025:", when="@:2.50")
 
-    # Flang is only supported from MAPL 2.67 onwards, and only flang 22.1.0 and newer due to bugs in flang.
+    # Flang is only supported from MAPL 2.67 onwards,
+    # and only flang 22.1.0 and newer due to bugs in flang.
     conflicts("^[virtuals=fortran] llvm@22.1.0:", when="@:2.66")
     conflicts("^[virtuals=fortran] llvm@:21")
 
