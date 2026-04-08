@@ -54,7 +54,7 @@ class Millepede(MakefilePackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    requires("%c,cxx,fortran=gcc", msg="Millepede hardcodes gcc/gfortran")
+    requires("%gcc", msg="Millepede hardcodes gcc/g++/gfortran")
 
     depends_on("zlib-api", when="+zlib")
 
