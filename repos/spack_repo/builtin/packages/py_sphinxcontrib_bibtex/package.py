@@ -51,7 +51,8 @@ class PySphinxcontribBibtex(PythonPackage):
         depends_on("py-pybtex@0.20:", when="@2:2.3")
         depends_on("py-pybtex@0.17:", when="@:1")
 
-        depends_on("py-pybtex-docutils@1.0.0:", when="@2.2:")
+        depends_on("py-pybtex-docutils@1.0.2:", when="@2.6.5:")
+        depends_on("py-pybtex-docutils@1.0.0:", when="@2.2:2.6")
         depends_on("py-pybtex-docutils@0.2.2:", when="@2:2.1")
         depends_on("py-pybtex-docutils@0.2.0:", when="@:1")
 
