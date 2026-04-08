@@ -21,6 +21,7 @@ class Migraphx(CMakePackage):
     libraries = ["libmigraphx"]
 
     license("MIT")
+    version("7.2.1", sha256="611e4646f11fe559946275a6c79f1aaabe0a5c7cb95a42b28e724ba29f4c753a")
     version("7.2.0", sha256="085ea6fcf6197b20fed60917194ca622e5d2c1705237fe063563f988494a8b3d")
     version("7.1.1", sha256="beb9cbf4475d979e8431a983ee0ae8a9f5b75bb24699b7b8dfa2753db9822c4d")
     version("7.1.0", sha256="ffb6e510420e277e30fc1a58635d568197ab2046784ea0c4740aa79ffb17cb70")
@@ -106,6 +107,7 @@ class Migraphx(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -130,6 +132,7 @@ class Migraphx(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
