@@ -30,7 +30,5 @@ class Roounfold(CMakePackage):
     depends_on("root+roofit")
 
     def cmake_args(self):
-        args = [
-            self.define("CMAKE_DISABLE_FIND_PACKAGE_Doxygen", True),
-        ]
+        args = [self.define("CMAKE_DISABLE_FIND_PACKAGE_Doxygen", True)]
         return args
