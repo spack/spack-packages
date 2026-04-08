@@ -418,7 +418,6 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # wheel 0.40 upgrades vendored packaging, trips over tensorflow-io-gcs-filesystem identifier
     conflicts("^py-wheel@0.40:", when="@2.11:2.13")
 
-    conflicts("%gcc@15", when="@:2.19")
     # https://www.tensorflow.org/install/source#tested_build_configurations
     # https://github.com/tensorflow/tensorflow/issues/70199
     # (-mavx512fp16 exists in gcc@12:)
@@ -443,21 +442,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # type traits specs in TF are not allowed in libc++ 21+
     # backport patch bringing tf into compliance to 2.20 for
     # compilers supporting libc++21
-    patch(
-        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
-        sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
-        when="@2.20 +xla %gcc@15:",
-    )
-    patch(
-        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
-        sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
-        when="@2.20 +xla %apple-clang@26:",
-    )
-    patch(
-        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
-        sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
-        when="@2.20 +xla %llvm@20:",
-    )
+    for compiler_spec in ["%apple-clang@26:", "%clang@21:"]:
+        with default_args(when="@2.20 +xla"):
+            patch(
+                "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
+                sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
+                when=f"{compiler_spec}"
+            )
 
     # Fix build error with CUDA
     patch(
