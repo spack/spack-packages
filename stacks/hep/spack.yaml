@@ -24,7 +24,7 @@ spack:
       variants: +mpi
     acts:
       require:
-      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
+      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +root +svg cxxstd=20
       - target=x86_64_v3
     celeritas:
       require:
@@ -64,6 +64,8 @@ spack:
     geant4-data:
       buildable: false
       externals:
+      - spec: geant4-data@11.4.0
+        prefix: /usr
       - spec: geant4-data@11.3.0
         prefix: /usr
       - spec: geant4-data@11.2.2
@@ -85,16 +87,18 @@ spack:
   - celeritas ~cuda +openmp ~rocm +vecgeom +covfie
   - cepgen
   - cernlib +shared
+  - chaplin
   - collier
   - dd4hep +ddalign +ddcad +ddcond +dddetectors +dddigi +ddeve +ddg4 +ddrec +edm4hep +hepmc3 +lcio +utilityapps +xercesc
   - delphes +pythia8
+  - detray
   - dpmjet
   - edm4hep
   - evtgen +hepmc3 +photos +pythia8 +sherpa +tauola
   - fastjet plugins=all
   - feynhiggs
   - fjcontrib
-  #- garfieldpp
+  - garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
   - geant4 ~vtk ^[virtuals=qmake] qt
   - geant4 ~vtk ^[virtuals=qmake] qt-base
@@ -104,6 +108,8 @@ spack:
   # hepmc3 fixed to 3.3.0 due to whizard, see https://github.com/spack/spack-packages/pull/427#issuecomment-3167516435
   - hepmc3@3.3.0 +interfaces +protobuf +python +rootio
   #- herwig3 +njet +vbfnlo  # Note: herwig3 fails to find evtgen
+  - hepmcanalysis
+  - hoppet
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
   - lhapdf +python
@@ -119,10 +125,13 @@ spack:
   - podio +rntuple +sio
   #- professor
   - py-awkward
+  - py-b2luigi
   - py-boost-histogram
   - py-dask-awkward ~io
   - py-dask-histogram
+  - py-hepdata-validator
   - py-hepunits
+  - py-hepstats
   - py-hist +dask +fit +plot
   - py-histbook
   - py-histoprint
@@ -133,13 +142,20 @@ spack:
   - py-uproot +lz4 +xrootd +zstd
   - py-vector
   - py-zfit
+  - py-zfit-physics
   - pythia8 +evtgen +fastjet +hdf5 +hepmc +hepmc3 +lhapdf ~madgraph5amc +python +rivet ~root # pythia8 and root circularly depend
+  - prophecy4f
+  - recola +python
+  - recola-sm
   - rivet
   - root ~cuda
   - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola ~rivet +root +ufo cxxstd=20
+  - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola +rivet +root +ufo cxxstd=20
   - tauola +hepmc3 +lhapdf cxxstd=20
   - thepeg hepmc=3 ~rivet
+  - vbfnlo
   - vecgeom ~cuda
+  - vgm
   - whizard +fastjet +gosam hepmc=3 +lcio +lhapdf +openloops +openmp +pythia8
   - xrootd +davix +http +krb5 +python +readline +scitokens-cpp
   - yoda +hdf5 +highfive
