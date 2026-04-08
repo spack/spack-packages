@@ -5,7 +5,6 @@
 import glob
 import os
 import shutil
-import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakePackage,
@@ -312,7 +311,7 @@ class Conduit(CachedCMakePackage):
                 flags = "${CMAKE_SHARED_LINKER_FLAGS} " + rpaths
                 entries.append(cmake_cache_string("CMAKE_SHARED_LINKER_FLAGS", flags, force=True))
         return entries
-    
+
     #########################
     # Init mpi config entries
     #########################
@@ -338,7 +337,7 @@ class Conduit(CachedCMakePackage):
         entries.append(cmake_cache_option("ENABLE_UTILS", spec.satisfies("+utilities")))
         entries.append(cmake_cache_option("ENABLE_FORTRAN", spec.satisfies("+fortran")))
         entries.append(cmake_cache_option("ENABLE_PYTHON", spec.satisfies("+python")))
-        
+
         if spec.satisfies("+python"):
             entries.append(cmake_cache_path("PYTHON_EXECUTABLE", spec["python"].command.path))
             try:
