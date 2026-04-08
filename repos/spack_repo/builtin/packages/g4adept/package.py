@@ -23,9 +23,7 @@ class G4adept(CMakePackage, CudaPackage):
     version("0.2.0", sha256="4075ebb652b17d6cf94b341fdc64df088ce9538b0aba433e413606d5cb51c618")
 
     variant(
-        "covfie",
-        default=True,
-        description="Use external B field from file via the covfie library",
+        "covfie", default=True, description="Use external B field from file via the covfie library"
     )
     variant("examples", default=False, description="Build examples")
     variant(
