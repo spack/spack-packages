@@ -637,7 +637,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         if "+xla" in spec:
             env.set("TF_ENABLE_XLA", "1")
         else:
-            env.set("TF_ENABLE_XLA", "OFF")
+            env.set("TF_ENABLE_XLA", "0")
 
         # Do you wish to build TensorFlow with GDR support?
         if "+gdr" in spec:
