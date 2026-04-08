@@ -130,6 +130,12 @@ class Arrow(CMakePackage, CudaPackage):
 
     root_cmakelists_dir = "cpp"
 
+    patch(
+        "https://github.com/apache/arrow/pull/49370.patch?full_index=1",
+        sha256="ca55e18c4eaaf59bcb145ada2aa5b556b8b87a93415ace059166716864145ceb",
+        when="@22.0.0 platform=darwin",
+    )
+
     def patch(self):
         """Prevent `-isystem /usr/include` from appearing, since this confuses gcc."""
         filter_file(
