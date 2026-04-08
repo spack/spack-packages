@@ -25,6 +25,8 @@ class Roounfold(CMakePackage):
 
     version("3.1.0", sha256="51daf6373971512ce5882574bb18a373e68a0a2e1f824141ff99d6488d43cbf9")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("cmake@3.18:", type="build")
 
     depends_on("root+roofit")
