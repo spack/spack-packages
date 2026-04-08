@@ -36,5 +36,3 @@ class PyAccessiblePygments(PythonPackage):
         else:
             modname = name
         return f"{base}/{name[0]}/{name}/{modname}-{version}.tar.gz"
-    
-    

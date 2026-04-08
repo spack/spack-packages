@@ -19,20 +19,24 @@ class PySphinxcontribBibtex(PythonPackage):
     version("2.2.0", sha256="7500843e154d76983c23bca5ca7380965e0725c46b8f484c1322d0b58a6ce3b2")
     version("2.1.4", sha256="f53ec0cd534d2c8f0a51b4b3473ced46e9cb0dd99a7c5019249fe0ef9cbef18e")
     version("2.0.0", sha256="98e18eb0b088d3f556199f3fbb91d3d48ebb7596fe86b6c37cc4c4dc5419b7a1")
-    version("1.0.0",
-            sha256="629612b001f86784669d65e662377a482052decfd9a0a17c46860878eef7b9e0",
-            deprecated=True)
-    version("0.3.5",
-            sha256="c93e2b4a0d14f0ab726f95f0a33c1675965e9df3ed04839635577b8f978206cd",
-            deprecated=True)
+    version(
+        "1.0.0",
+        sha256="629612b001f86784669d65e662377a482052decfd9a0a17c46860878eef7b9e0",
+        deprecated=True,
+    )
+    version(
+        "0.3.5",
+        sha256="c93e2b4a0d14f0ab726f95f0a33c1675965e9df3ed04839635577b8f978206cd",
+        deprecated=True,
+    )
 
     depends_on("py-setuptools", type="build")
-    
+
     with default_args(type=("build", "run")):
         depends_on("py-importlib-metadata@3.6:", when="@2.5.0: ^python@:3.9")
 
         depends_on("py-docutils@0.8:", when="@2.1.0:")
-        
+
         depends_on("py-sphinx@3.5:", when="@2.6.5:")
         depends_on("py-sphinx@2.1:", when="@2.1.3:")
         depends_on("py-sphinx@2.0:", when="@2:")
@@ -62,8 +66,7 @@ class PySphinxcontribBibtex(PythonPackage):
         base = "https://files.pythonhosted.org/packages/source"
         name = self.pypi.split("/")[0]
         if version >= Version("2.6.3"):
-            modname = name.replace("-","_")
+            modname = name.replace("-", "_")
         else:
             modname = name
         return f"{base}/{name[0]}/{name}/{modname}-{version}.tar.gz"
-    

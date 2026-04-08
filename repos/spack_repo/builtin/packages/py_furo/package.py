@@ -15,7 +15,9 @@ class PyFuro(PythonPackage):
 
     license("MIT")
 
-    version("2025.12.19", sha256="188d1f942037d8b37cd3985b955839fea62baa1730087dc29d157677c857e2a7")
+    version(
+        "2025.12.19", sha256="188d1f942037d8b37cd3985b955839fea62baa1730087dc29d157677c857e2a7"
+    )
     version("2024.7.18", sha256="37b08c5fccc95d46d8712c8be97acd46043963895edde05b0f4f135d58325c83")
     version("2024.5.6", sha256="81f205a6605ebccbb883350432b4831c0196dd3d1bc92f61e1f459045b3d2b0b")
     version("2024.4.27", sha256="15a9b65269038def2cefafb86c71c6616e3969b8f07ba231f588c10c4aee6d88")
@@ -28,7 +30,7 @@ class PyFuro(PythonPackage):
         depends_on("py-beautifulsoup4")
         depends_on("py-sphinx-basic-ng@1.0.0b2:")
         depends_on("py-pygments@2.7:")
-        
+
     with default_args(type=("build", "run"), when="@2025:"):
         depends_on("py-sphinx@7:9")
         depends_on("py-accessible-pygments@0.0.5:")
