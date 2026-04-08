@@ -37,6 +37,11 @@ class Genesis(AutotoolsPackage, CudaPackage):
     variant("mixed",  default=False, description="Enable mixed precision.", when="@2.0.0:")
     variant("hmdisk", default=False, description="Enable huge molecule on hard disk.")
     
+    patch("fix-nvtx-include.patch", when="+cuda")
+    patch("fix-nvtx-include.patch", when="+gpu")
+    patch("fj_compiler_2.0.0.patch", when="@2.0.0:2.1.3 %fj")
+    patch("fj_compiler_2.1.4.patch", when="@2.1.4: %fj")
+
     conflicts("%apple-clang", when="+openmp")
 
     # GitHub-generated source archives are not produced by `make dist`.
@@ -46,6 +51,7 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     depends_on("mpi", type=("build", "run"))
     depends_on("lapack")
+<<<<<<< HEAD
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
@@ -53,9 +59,15 @@ class Genesis(AutotoolsPackage, CudaPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
+=======
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+>>>>>>> 6b622f1392 (Fix for autoreconf in genseis)
 
-    patch("fj_compiler_2.0.0.patch", when="@2.0.0:2.1.3 %fj")
-    patch("fj_compiler_2.1.4.patch", when="@2.1.4: %fj")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
+    depends_on("m4", type="build")
 
     parallel = False
 
