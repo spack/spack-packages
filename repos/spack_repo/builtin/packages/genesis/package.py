@@ -68,6 +68,7 @@ class Genesis(AutotoolsPackage, CudaPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
+    depends_on("python", type=("build", "run"))
 
     parallel = False
 
@@ -109,20 +110,24 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     @run_after("install")
     def cache_test_sources(self):
-        """Copy test files after the package is installed for test()."""
-        if self.spec.satisfies("@master"):
-            cache_extra_test_sources(self, ["tests"])
+        cache_extra_test_sources(self, ["tests"])
 
     def test(self):
-        if self.spec.satisfies("@master"):
-            exe_name = self.spec["python"].command.path
-            test_name = join_path(
-                    self.install_test_root, "tests", "regression_test", "test.py"
-                    )
-            bin_name = join_path(self.prefix.bin, "spdyn")
-            opts = [
+        import os
+    
+        os.environ["OMP_NUM_THREADS"] = "1"
+    
+        exe_name = self.spec["python"].command.path
+        test_name = join_path(
+            self.install_test_root, "tests", "regression_test", "test.py"
+        )
+        bin_name = join_path(self.prefix.bin, "spdyn")
+    
+        mpirun = self.spec["mpi"].mpirun
+    
+        opts = [
             test_name,
-            self.spec["mpi"].prefix.bin.mpirun + " -np 8 " + bin_name,
-            ]
-            env["OMP_NUM_THREADS"] = "1"
-            self.run_test(exe_name, options=opts, expected="Passed  61 / 61")
+            f"{mpirun} -np 8 {bin_name}",
+        ]
+    
+        self.run_test(exe_name, options=opts, expected="Passed  61 / 61")
