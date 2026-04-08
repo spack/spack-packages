@@ -16,10 +16,11 @@ class Genesis(AutotoolsPackage, CudaPackage):
     """
 
     homepage = "https://mdgenesis.org/"
-    url = "https://github.com/genesis-release-r-ccs/genesis/archive/refs/tags/v2.1.5.tar.gz"
+    url = "https://github.com/genesis-release-r-ccs/genesis/archive/refs/tags/v2.1.6.1.tar.gz"
 
     license("LGPL-3.0-or-later", checked_by="chig")
 
+    version("2.1.6.1", sha256="fdc0e889590f198e2261105901c27718268a18a1cd32300e2232b457a7ba6761")
     version("2.1.5", sha256="622e6dc0bf9db54b2d18165f098044146abbf20837cb6209af2015856469afbf")
     version("2.1.4", sha256="8a6ae1b5a775a41e6d6c398759d78c513a87537bb6832ebda9ea7d426c2408af")
     version("2.1.3", sha256="24b0e407d4d6d54f570f3153d78773ffce79877fbf02f4d6c8bc68675caafecf")
@@ -30,6 +31,21 @@ class Genesis(AutotoolsPackage, CudaPackage):
     version("2.0.2", sha256="8e80d7a1601bf6b12adf3e4ddcbec55aee27a3431784fbc0a46c784eb092f230")
     version("2.0.0", sha256="87f097754cb36b1d532ca4952843e60b5115d1eb28e6c2c0fee77c8c720bd958")
 
+
+    variant("openmp", default=True, description="Enable OpenMP.")
+    variant("single", default=False, description="Enable single precision.")
+    variant("mixed",  default=False, description="Enable mixed precision.", when="@2.0.0:")
+    variant("hmdisk", default=False, description="Enable huge molecule on hard disk.")
+    
+    conflicts("%apple-clang", when="+openmp")
+
+    # GitHub-generated source archives are not produced by `make dist`.
+    # Since the bundled configure script is not guaranteed to match the
+    # current configure.ac, regenerate the autotools files before configure.
+    force_autoreconf = True
+
+    depends_on("mpi", type=("build", "run"))
+    depends_on("lapack")
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
@@ -38,49 +54,24 @@ class Genesis(AutotoolsPackage, CudaPackage):
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
 
-    variant("openmp", default=True, description="Enable OpenMP.")
-    variant("single", default=False, description="Enable single precision.")
-    variant("hmdisk", default=False, description="Enable huge molecule on hard disk.")
-
-    conflicts("%apple-clang", when="+openmp")
-
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
-
-    depends_on("autoconf", type="build", when="@1.5.1 %fj")
-    depends_on("autoconf", type="build", when="@master")
-    depends_on("automake", type="build", when="@1.5.1 %fj")
-    depends_on("automake", type="build", when="@master")
-    depends_on("libtool", type="build", when="@1.5.1 %fj")
-    depends_on("libtool", type="build", when="@master")
-    depends_on("m4", type="build", when="@1.5.1 %fj")
-    depends_on("m4", type="build", when="@master")
-
-    depends_on("mpi", type=("build", "run"))
-    depends_on("lapack")
-
-    patch("fj_compiler.patch", when="@master %fj")
-    patch("fj_compiler_1.5.1.patch", when="@1.5.1 %fj")
+    patch("fj_compiler_2.0.0.patch", when="@2.0.0:2.1.3 %fj")
+    patch("fj_compiler_2.1.4.patch", when="@2.1.4: %fj")
 
     parallel = False
-
-    @property
-    def force_autoreconf(self):
-        # Run autoreconf due to build system patch
-        return self.spec.satisfies("@1.5.1 %fj")
 
     def configure_args(self):
         spec = self.spec
         options = []
         options.extend(self.enable_or_disable("openmp"))
         options.extend(self.enable_or_disable("single"))
+        options.extend(self.enable_or_disable("mixed"))
         options.extend(self.enable_or_disable("hmdisk"))
         if spec.satisfies("+cuda"):
             options.append("--enable-gpu")
             options.append("--with-cuda=%s" % spec["cuda"].prefix)
         else:
             options.append("--disable-gpu")
-        if spec.target == "a64fx" and self.spec.satisfies("@master %fj"):
+        if spec.target == "a64fx":
             options.append("--host=Fugaku")
         return options
 
@@ -109,3 +100,17 @@ class Genesis(AutotoolsPackage, CudaPackage):
         """Copy test files after the package is installed for test()."""
         if self.spec.satisfies("@master"):
             cache_extra_test_sources(self, ["tests"])
+
+    def test(self):
+        if self.spec.satisfies("@master"):
+            exe_name = self.spec["python"].command.path
+            test_name = join_path(
+                    self.install_test_root, "tests", "regression_test", "test.py"
+                    )
+            bin_name = join_path(self.prefix.bin, "spdyn")
+            opts = [
+            test_name,
+            self.spec["mpi"].prefix.bin.mpirun + " -np 8 " + bin_name,
+            ]
+            env["OMP_NUM_THREADS"] = "1"
+            self.run_test(exe_name, options=opts, expected="Passed  61 / 61")
