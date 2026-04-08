@@ -25,7 +25,7 @@ class Roounfold(CMakePackage):
 
     depends_on("cmake@3.18:", type="build")
 
-    depends_on("root")
+    depends_on("root+roofit")
 
     def cmake_args(self):
         args = [
