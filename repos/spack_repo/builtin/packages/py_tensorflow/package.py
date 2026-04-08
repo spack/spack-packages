@@ -418,6 +418,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # wheel 0.40 upgrades vendored packaging, trips over tensorflow-io-gcs-filesystem identifier
     conflicts("^py-wheel@0.40:", when="@2.11:2.13")
 
+    conflicts("%gcc@15", when="@:2.19")
     # https://www.tensorflow.org/install/source#tested_build_configurations
     # https://github.com/tensorflow/tensorflow/issues/70199
     # (-mavx512fp16 exists in gcc@12:)
@@ -437,6 +438,27 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         when="@2.20",
     )
     conflicts("os=tahoe", when="@:2.19")
+
+    
+    https://github.com/tensorflow/tensorflow/pull/98321
+    # type traits specs in TF are not allowed in libc++ 21+
+    # backport patch bringing tf into compliance to 2.20 for 
+    # compilers supporting libc++21
+    patch(
+        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
+        sha256="",
+        when="@2.20 +xla %gcc@15:"
+    )
+    patch(
+        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
+        sha256="",
+        when="@2.20 +xla %apple-clang@26:"
+    )
+    patch(
+        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
+        sha256="",
+        when="@2.20 +xla %llvm@20:"
+    )
 
     # Fix build error with CUDA
     patch(
@@ -851,11 +873,17 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # make sure xla is actually turned off
         if spec.satisfies("~xla"):
+            if spec.satisfies("@:2.19"):
+                join = " "
+                build = ""
+            else:
+                join = "="
+                build = "build "
             filter_file(
-                r"--define with_xla_support=true",
-                r"--define with_xla_support=false",
-                ".tf_configure.bazelrc",
-            )
+                    fr"{build}--define{join}with_xla_support=true",
+                    fr"{build}--define{join}with_xla_support=false",
+                    ".tf_configure.bazelrc",
+                )
 
         if spec.satisfies("~android"):
             # env variable is somehow ignored -> brute force
