@@ -15,7 +15,7 @@ class G4adept(CMakePackage, CudaPackage):
     url = "https://github.com/apt-sim/AdePT/archive/refs/tags/v0.2.0.tar.gz"
     git = "https://github.com/apt-sim/AdePT.git"
 
-    maintainers("wdconinc")
+    maintainers("wdconinc", "sethrj")
 
     license("Apache-2.0", checked_by="wdconinc")
 
