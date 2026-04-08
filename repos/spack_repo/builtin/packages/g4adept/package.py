@@ -52,6 +52,10 @@ class G4adept(CMakePackage, CudaPackage):
 
     depends_on("covfie", when="+covfie")
 
+    for pkg in ["vecgeom", "g4hepem"]:
+        for arch in CudaPackage.cuda_arch_values:
+            depends_on(f"{pkg} +cuda cuda_arch={arch}", when=f"+cuda cuda_arch={arch}")
+
     conflicts("~cuda", msg="G4adept requires CUDA support")
 
     def cmake_args(self):
