@@ -17,7 +17,7 @@ class PyB2luigi(PythonPackage):
     pypi = "b2luigi/b2luigi-1.2.6.tar.gz"
     git = "https://github.com/belle2/b2luigi.git"
 
-    license("GPL-3.0")
+    license("GPL-3.0", checked_by="wdconinc")
 
     tags = ["hep"]
 
