@@ -419,6 +419,11 @@ class CMakeBuilder(BuilderWithDefaults):
     def define(cmake_var: str, value: Any) -> str:
         return define(cmake_var, value)
 
+    @staticmethod
+    def define_package_from_variant(pkg: PackageBase, cmake_pkg: str, variant:
+                                    Optional[str] = None) -> str:
+        return define_package_from_variant(pkg, cmake_pkg, variant)
+
     def define_from_variant(self, cmake_var: str, variant: Optional[str] = None) -> str:
         return define_from_variant(self.pkg, cmake_var, variant)
 
@@ -511,17 +516,21 @@ def define(cmake_var: str, value: Any) -> str:
 
         .. code-block:: python
 
-            [define("BUILD_SHARED_LIBS", True),
+            [
+                define("BUILD_SHARED_LIBS", True),
                 define("CMAKE_CXX_STANDARD", 14),
-                define("swr", ["avx", "avx2"])]
+                define("swr", ["avx", "avx2"]),
+            ]
 
         will generate the following configuration options:
 
         .. code-block:: console
 
-            ["-DBUILD_SHARED_LIBS:BOOL=ON",
+            [
+                "-DBUILD_SHARED_LIBS:BOOL=ON",
                 "-DCMAKE_CXX_STANDARD:STRING=14",
-                "-DSWR:STRING=avx;avx2]
+                "-DSWR:STRING=avx;avx2",
+            ]
 
     """
     # Create a list of pairs. Each pair includes a configuration
@@ -597,6 +606,57 @@ def define_from_variant(pkg: PackageBase, cmake_var: str, variant: Optional[str]
         value = sorted(value)
 
     return define(cmake_var, value)
+
+
+def define_package_from_variant(pkg: PackageBase, cmake_pkg: str, variant: Optional[str] = None) -> str:
+    """Return a CMake command line argument to require or disable a package.
+
+    The optional ``variant`` argument defaults to the lower-case transform
+    of ``cmake_pkg``.
+
+    Examples:
+
+        Given a package with:
+
+        .. code-block:: python
+
+            variant("boost", default=True)
+            variant("gsl", default=False)
+            variant("hdf5", default=False, when="@develop")
+
+        calling this function like:
+
+        .. code-block:: python
+
+            [
+                self.force_package_from_variant("Boost", "boost"),
+                self.force_package_from_variant("GSL"),
+                self.force_package_from_variant("HDF5"),
+            ]
+
+        will generate the following configuration options:
+
+        .. code-block:: console
+
+            [
+                "-DCMAKE_REQUIRE_FIND_PACKAGE_Boost:BOOL=ON",
+                "-DCMAKE_DISABLE_FIND_PACKAGE_GSL:BOOL=ON",
+                "",
+            ]
+
+        for ``<spec-name>@1.2.3 +boost ~gsl``
+    """
+    if variant is None:
+        variant = cmake_pkg.lower()
+
+    if not pkg.has_variant(variant):
+        raise KeyError(f'"{variant}" is not a variant of "{pkg.name}"')
+
+    if variant not in pkg.spec.variants:
+        return ""
+
+    behavior = "REQUIRE" if pkg.spec.variants[variant].value else "DISABLE"
+    return define(f"CMAKE_{behavior}_FIND_PACKAGE_{cmake_pkg}", True)
 
 
 def define_hip_architectures(pkg: PackageBase) -> str:
