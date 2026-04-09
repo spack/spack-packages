@@ -27,10 +27,7 @@ class Opencarp(CMakePackage):
         preferred=True,
     )
     version(
-        "18.1",
-        commit="6eaa147d18b69a6037d05a90b841e23301048a59",
-        submodules=False,
-        no_cache=True,
+        "18.1", commit="6eaa147d18b69a6037d05a90b841e23301048a59", submodules=False, no_cache=True
     )
     version(
         "18.0", commit="ac4e96792db082958fa9a830341f6e0642cc6bb8", submodules=False, no_cache=True
@@ -82,6 +79,7 @@ class Opencarp(CMakePackage):
     depends_on("git", type=("build", "run"))
     depends_on("petsc")
     depends_on("petsc@:3.22.5", when="@:17.0")
+    depends_on("petsc@:3.24.6", when="@:18.1")
     depends_on("binutils")
     depends_on("gengetopt")
     depends_on("pkgconfig")
