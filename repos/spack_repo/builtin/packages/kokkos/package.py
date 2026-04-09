@@ -385,9 +385,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     ]
     sanity_check_is_dir = ["bin", "include"]
 
-    def get_microarch(self, target):
+    @classmethod
+    def get_microarch(cls, target, kokkos_spec=None):
         """Get the Kokkos microarch name for a Spack target (spec.target)."""
-        smam = self.spack_micro_arch_map
+        smam = cls.spack_micro_arch_map
 
         # Find closest ancestor that has a known microarch optimization
         if target.name not in smam:
@@ -399,7 +400,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 return None
 
         microarch, cond = smam[target.name]
-        if cond and not self.spec.satisfies(cond):
+        if cond and kokkos_spec and not kokkos_spec.satisfies(cond):
             return None
         return microarch
 
@@ -459,7 +460,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
                 spack_microarches.append(kokkos_arch_name)
 
-        kokkos_microarch_name = self.get_microarch(spec.target)
+        kokkos_microarch_name = self.get_microarch(spec.target, spec)
         if kokkos_microarch_name:
             spack_microarches.append(kokkos_microarch_name)
 
