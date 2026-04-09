@@ -17,6 +17,7 @@ class Triqs(CMakePackage, PythonExtension):
 
     license("GPL-3.0", checked_by="V-Karch")
 
+    version("3.3.2", sha256="73cff4637e0426274d183052f7d1ba405d7bf1be503c79a594730f1cea88b808")
     version("3.3.1", sha256="740efb57c9af39f4086115f8167a55833e84558261e0564c7179d8c17f911539")
 
     extends("python")
@@ -34,6 +35,16 @@ class Triqs(CMakePackage, PythonExtension):
     depends_on("py-mpi4py", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    # CMakeLists.txt:57-71
+    conflicts("%clang@:14")
+    conflicts("%gcc@:11")
+
+    # Build time error
+    conflicts("%gcc@14:", when="@3.3.1")
 
     def cmake_args(self):
         return [
