@@ -24,6 +24,8 @@ class Xrootd(CMakePackage):
 
     license("LGPL-3.0-only")
 
+    version("6.0.0", sha256="bc8d00b6c0b48f9186e3ad09e8e4e6eedf1067fad68f6d6a4f4e939bcf87007c")
+    version("5.9.2", sha256="e29edb755d5f728eff0c74f7bd8cec35c954239ea747975eebd9c1e2bd61edb5")
     version("5.9.1", sha256="39946509a50e790ab3fcc77ba0f4c9b66abef221262756aa8bb2494f00a0e321")
     version("5.8.4", sha256="d8716bf764a7e8103aab83fbf4906ea2cc157646b1a633d99f91edbf204ff632")
     version("5.7.3", sha256="3a90fda99a53cb6005ebecf7d6125ce382cedb0a27fb453e44a2c13bade0a90f")
@@ -96,6 +98,7 @@ class Xrootd(CMakePackage):
     depends_on("bzip2")
     depends_on("cmake@2.6:", type="build", when="@3.1.0:")
     depends_on("cmake@3.16:", type="build", when="@5.6:")
+    depends_on("cmake@3.18:", type="build", when="@6:")
     conflicts("^cmake@:3.0", when="@5.0.0")
     conflicts("^cmake@:3.15.99", when="@5.5.4:5.5")
     depends_on("davix", when="+davix")
@@ -115,7 +118,8 @@ class Xrootd(CMakePackage):
     depends_on("json-c")
     depends_on("scitokens-cpp", when="+scitokens-cpp")
     depends_on("libxcrypt", type="link")
-
+    depends_on("nlohmann-json@3.10.2:", when="@6:")
+    
     extends("python", when="+python")
 
     # https://github.com/xrootd/xrootd/pull/1805
