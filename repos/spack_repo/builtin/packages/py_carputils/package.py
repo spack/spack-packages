@@ -42,7 +42,6 @@ class PyCarputils(PythonPackage):
         depends_on("py-common@0.1.2", type=("build", "run"))
         depends_on("py-ruamel-yaml@0.17.4:", when="@oc16.0:oc18", type=("build", "run"))
         depends_on("py-pyyaml", when="@oc19.0:", type=("build", "run"))
-        depends_on("py-ruamel-yaml@0.17.4:", type=("build", "run"))
         depends_on("py-pydoe@0.3.8", type=("build", "run"))
         depends_on("py-setuptools@41.6.0:", type=("build", "run"))
 
