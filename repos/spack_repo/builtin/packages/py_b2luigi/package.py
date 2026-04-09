@@ -30,7 +30,7 @@ class PyB2luigi(PythonPackage):
     # We start at 1.2.6 as this was the change from retry2->tenacity dependency
 
     depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-flit", tpye="build")
+    depends_on("py-flit", type="build")
     with default_args(type=("build", "run")):
         depends_on("py-luigi@3.0.2:")
         depends_on("py-parse@1.8:")
