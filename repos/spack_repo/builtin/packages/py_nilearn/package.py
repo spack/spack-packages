@@ -18,6 +18,7 @@ class PyNilearn(PythonPackage):
 
     license("BSD")
 
+    version("0.13.1", sha256="66d4a4f3f1dea9b8683806849ea8e91abfeac11e14f7e972a726f644e515bc2b")
     version("0.12.1", sha256="a08bbfae94d0fac5ba0aebbbcd864b7f91d1ef5725d1c309ce643dd64b2391b9")
     version("0.10.3", sha256="77819331314c4ca5c15c07634f69f855fafdf9add051b1882e3a600ad52757d8")
     version("0.10.1", sha256="928a364e7ed77d15d02b7f227197ea7c78f44f2fe780feb555d6d7cf9232f846")
@@ -30,6 +31,7 @@ class PyNilearn(PythonPackage):
 
     variant("plotting", default=False, description="Enable plotting functionalities")
 
+    depends_on("python@3.10:", when="@0.13:", type=("build", "run"))
     depends_on("python@3.9:", when="@0.11:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.10.3:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.10:", type=("build", "run"))
@@ -40,39 +42,50 @@ class PyNilearn(PythonPackage):
     depends_on("py-joblib@1:", when="@0.10:", type=("build", "run"))
     depends_on("py-joblib@0.15:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-joblib@0.12:", when="@0.7:", type=("build", "run"))
-    depends_on("py-lxml", when="@0.9.1:", type=("build", "run"))
+
     depends_on("py-nibabel@5.2:", when="@0.11:", type=("build", "run"))
     depends_on("py-nibabel@4:", when="@0.10.3:", type=("build", "run"))
     depends_on("py-nibabel@3.2:", when="@0.10:", type=("build", "run"))
     depends_on("py-nibabel@3:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-nibabel@2.5:", when="@0.8:", type=("build", "run"))
     depends_on("py-nibabel@2.0.2:", type=("build", "run"))
+
     depends_on("py-numpy@1.22.4:", when="@0.11:", type=("build", "run"))
     depends_on("py-numpy@1.19:", when="@0.10:", type=("build", "run"))
     depends_on("py-numpy@1.18:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-numpy@1.16:", when="@0.8:", type=("build", "run"))
     depends_on("py-numpy@1.11:", when="@0.5:", type=("build", "run"))
     depends_on("py-numpy@1.6.1:", type=("build", "run"))
+
     depends_on("py-pandas@2.2:", when="@0.11:", type=("build", "run"))
     depends_on("py-pandas@1.1.5:", when="@0.10:", type=("build", "run"))
     depends_on("py-pandas@1:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-pandas@0.24.0:", when="@0.8:", type=("build", "run"))
     depends_on("py-pandas@0.18.0:", when="@0.7:", type=("build", "run"))
+
+    depends_on("py-requests@2.30:", when="@0.13:", type=("build", "run"))
     depends_on("py-requests@2.25:", when="@0.10:", type=("build", "run"))
     depends_on("py-requests@2:", when="@0.7:", type=("build", "run"))
+
     depends_on("py-scikit-learn@1.4:", when="@0.11:", type=("build", "run"))
     depends_on("py-scikit-learn@1:", when="@0.10:", type=("build", "run"))
     depends_on("py-scikit-learn@0.22:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-scikit-learn@0.21:", when="@0.8:", type=("build", "run"))
     depends_on("py-scikit-learn@0.19:", when="@0.7:", type=("build", "run"))
+
+    depends_on("py-jinja2@3.1.2:", when="@0.13:", type=("build", "run"))
+
+    depends_on("py-scipy@1.9:", when="@0.13:", type=("build", "run"))
     depends_on("py-scipy@1.8:", when="@0.10.3:", type=("build", "run"))
     depends_on("py-scipy@1.6:", when="@0.10:", type=("build", "run"))
     depends_on("py-scipy@1.5:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-scipy@1.2:", when="@0.8:", type=("build", "run"))
     depends_on("py-scipy@0.19:", when="@0.6:", type=("build", "run"))
+
     depends_on("py-packaging", when="@0.10.1:", type=("build", "run"))
 
     with when("+plotting"):
+        depends_on("py-matplotlib@3.8:", when="@0.13:", type=("build", "run"))
         depends_on("py-matplotlib@3.3:", when="@0.10:", type=("build", "run"))
         depends_on("py-matplotlib@3:", when="@0.9.1:", type=("build", "run"))
         depends_on("py-matplotlib@2:", when="@0.6:", type=("build", "run"))
@@ -84,6 +97,7 @@ class PyNilearn(PythonPackage):
     conflicts("py-plotly@6.1.0")
 
     # Historical dependencies
+    depends_on("py-lxml", when="@0.9.1:0.12", type=("build", "run"))
     depends_on("py-setuptools", when="@:0.10.0", type="build")
 
     @property
