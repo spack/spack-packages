@@ -870,8 +870,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 join = "="
                 build = "build "
             filter_file(
-                rf"{build}--define{join}with_xla_support=true",
-                rf"{build}--define{join}with_xla_support=false",
+                f"{build}--define{join}with_xla_support=true",
+                f"{build}--define{join}with_xla_support=false",
                 ".tf_configure.bazelrc",
             )
 
