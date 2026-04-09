@@ -302,7 +302,7 @@ class Root(CMakePackage):
     variant(
         "builtin_llvm",
         default=True,
-        description="Use ROOT's bundled copy of LLVM (and Clang)",
+        description="Use ROOT's bundled copy of LLVM (but bundled clang is always used)",
     )
 
     # ###################### Compiler variants ########################
@@ -423,8 +423,8 @@ class Root(CMakePackage):
     # External LLVM (used when ~builtin_llvm).  ROOT bundles its own patched Clang
     # (interpreter/llvm-project/clang) and builds it against the external LLVM, so
     # vanilla LLVM is sufficient here.  ROOT's patches to llvm-project only touch
-    # clang/, not the LLVM core.  LLVM must be built with RTTI enabled.
-    depends_on("llvm@20.1.0:20.1 +rtti", when="@6.36: ~builtin_llvm")
+    # clang/, not the LLVM core.
+    depends_on("llvm@20.1.0:20.1", when="@6.36: ~builtin_llvm")
 
     depends_on("googletest", when="@6.28.00:", type="test")
 
