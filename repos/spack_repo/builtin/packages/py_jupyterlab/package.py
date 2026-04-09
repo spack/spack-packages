@@ -56,7 +56,7 @@ class PyJupyterlab(PythonPackage):
         depends_on("py-jupyter-core", when="@3:")
         depends_on("py-jupyter-server@2.4:2", when="@4:")
         depends_on("py-jupyter-lsp@2:", when="@4:")
-        depends_on("py-jupyterlab-server@2.28:2", when="@4.3.5:")
+        depends_on("py-jupyterlab-server@2.28:2", when="@4.5:")
         depends_on("py-jupyterlab-server@2.27.1:2", when="@4.1.7:4.4")
         depends_on("py-jupyterlab-server@2.19:2", when="@4:4.1.6")
         depends_on("py-notebook-shim@0.2:", when="@4:")
