@@ -18,16 +18,11 @@ class Oc(GoPackage):
     license("Apache-2.0")
 
     version("main", branch="main")
-    version(
-        "4.21.0-202601121715",
-        tag="openshift-clients-4.21.0-202601121715",
-        commit="345800dc3c4164fbca313c1cbfb383f262547903",
-    )
+    version("4.21.0-202601121715", commit="345800dc3c4164fbca313c1cbfb383f262547903")
 
     variant("gssapi", default=False, description="Enable GSSAPI authentication support")
 
-    conflicts("+gssapi", when="platform=darwin os=tahoe")
-
+    depends_on("c", type="build")
     depends_on("go@1.22.5:", type="build", when="@4.20:")
 
     depends_on("gnupg")
@@ -36,7 +31,7 @@ class Oc(GoPackage):
     depends_on("krb5", when="+gssapi")
 
     build_directory = "cmd/oc"
-    cgo_enable = True
+    cgo_enabled = True
 
     @property
     def build_args(self):
