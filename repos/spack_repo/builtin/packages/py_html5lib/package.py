@@ -27,4 +27,4 @@ class PyHtml5lib(PythonPackage):
 
     # ast.Str removed from 3.14
     # (https://docs.python.org/dev/whatsnew/3.14.html#id9)
-    patch("py314astfix.patch", when="python@3.14:")
+    patch("py314astfix.patch", when="^python@3.14:")
