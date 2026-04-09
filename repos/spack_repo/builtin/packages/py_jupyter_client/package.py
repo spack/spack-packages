@@ -16,6 +16,7 @@ class PyJupyterClient(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("8.8.0", sha256="d556811419a4f2d96c869af34e854e3f059b7cc2d6d01a9cd9c85c267691be3e")
     version("8.6.3", sha256="35b3a0947c4a6e9d589eb97d7d4cd5e90f910ee73101611f01283732bd6d9419")
     version("8.2.0", sha256="9fe233834edd0e6c0aa5f05ca2ab4bdea1842bfd2d8a932878212fc5301ddaf0")
     version("8.1.0", sha256="3fbab64100a0dcac7701b1e0f1a4412f1ccb45546ff2ad9bc4fcbe4e19804811")
@@ -35,28 +36,35 @@ class PyJupyterClient(PythonPackage):
     version("4.1.0", sha256="b1786dbf4752907292afed4a5a192572280a8794be0c499d1f530ae8e1550d57")
     version("4.0.0", sha256="a39a4181ea2021daf6e821acae836999ef6e0fefe603813a7a7d4658d2ffa2ac")
 
+    depends_on("python@3.10:", when="@8.7:", type=("build", "run"))
     depends_on("python@3.8:", when="@8:", type=("build", "run"))
-    depends_on("py-hatchling@1.5:", when="@8:", type="build")
-    depends_on("py-hatchling@0.25:", when="@7.3.5:", type="build")
 
-    depends_on("py-importlib-metadata@4.8.3:", when="@8: ^python@:3.9", type=("build", "run"))
-    depends_on("py-jupyter-core@4.12:", when="@8:", type=("build", "run"))
-    depends_on("py-jupyter-core@4.9.2:", when="@7.3.5:", type=("build", "run"))
-    depends_on("py-jupyter-core@4.6.0:", when="@6:", type=("build", "run"))
-    depends_on("py-jupyter-core", type=("build", "run"))
-    depends_on("py-python-dateutil@2.8.2:", when="@7.3.5:", type=("build", "run"))
-    depends_on("py-python-dateutil@2.1:", when="@5:", type=("build", "run"))
-    depends_on("py-pyzmq@23:", when="@7.3.5:", type=("build", "run"))
-    depends_on("py-pyzmq@13:", type=("build", "run"))
-    depends_on("py-tornado@6.2:", when="@7.3.5:", type=("build", "run"))
-    depends_on("py-tornado@4.1:", when="@5:", type=("build", "run"))
-    depends_on("py-traitlets@5.3:", when="@8:", type=("build", "run"))
-    depends_on("py-traitlets", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-hatchling@1.5:", when="@8:")
+        depends_on("py-hatchling@0.25:", when="@7.3.5:")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-jupyter-core@5.1:", when="@8.7:")
+        depends_on("py-jupyter-core@4.12:", when="@8:")
+        depends_on("py-jupyter-core@4.9.2:", when="@7.3.5:")
+        depends_on("py-jupyter-core@4.6.0:", when="@6:")
+        depends_on("py-jupyter-core")
+        depends_on("py-python-dateutil@2.8.2:", when="@7.3.5:")
+        depends_on("py-python-dateutil@2.1:", when="@5:")
+        depends_on("py-pyzmq@25:", when="@8.7:")
+        depends_on("py-pyzmq@23:", when="@7.3.5:")
+        depends_on("py-pyzmq@13:")
+        depends_on("py-tornado@6.4.1:", when="@8.7:")
+        depends_on("py-tornado@6.2:", when="@7.3.5:")
+        depends_on("py-tornado@4.1:", when="@5:")
+        depends_on("py-traitlets@5.3:", when="@8:")
+        depends_on("py-traitlets")
+
+        # Historical dependencies
+        depends_on("py-importlib-metadata@4.8.3:", when="@8:8.6 ^python@:3.9")
+        depends_on("py-setuptools", when="@5:7.3.4")
+        depends_on("py-entrypoints", when="@7")
+        depends_on("py-nest-asyncio@1.5.4:", when="@7.3.5")
+        depends_on("py-nest-asyncio@1.5:", when="@6.1.13:7.1.2")
 
     conflicts("^py-jupyter-core@5.0")
-
-    # Historical dependencies
-    depends_on("py-setuptools", when="@5:7.3.4", type=("build", "run"))
-    depends_on("py-entrypoints", when="@7", type=("build", "run"))
-    depends_on("py-nest-asyncio@1.5.4:", when="@7.3.5", type=("build", "run"))
-    depends_on("py-nest-asyncio@1.5:", when="@6.1.13:7.1.2", type=("build", "run"))
