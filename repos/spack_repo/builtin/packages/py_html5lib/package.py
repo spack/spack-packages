@@ -21,5 +21,10 @@ class PyHtml5lib(PythonPackage):
 
     depends_on("py-six", type=("build", "run"))
     depends_on("py-six@1.9:", type=("build", "run"), when="@1.0.1:")
-    depends_on("py-setuptools", type="build", when="@1.0.1:")
+    # pkg_resources removed from v81
+    depends_on("py-setuptools@:80", type="build", when="@1.0.1:")
     depends_on("py-webencodings", type=("build", "run"), when="@1.0.1:")
+
+    # ast.Str removed from 3.14
+    # (https://docs.python.org/dev/whatsnew/3.14.html#id9)
+    patch("py314astfix.patch", when="python@3.14:")
