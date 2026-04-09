@@ -145,7 +145,7 @@ spack:
   - py-zfit-physics
   - pythia8 +evtgen +fastjet +hdf5 +hepmc +hepmc3 +lhapdf ~madgraph5amc +python +rivet ~root # pythia8 and root circularly depend
   - prophecy4f
-  - recola +python
+  #- recola +python
   #- recola-sm
   - rivet
   - root ~cuda
