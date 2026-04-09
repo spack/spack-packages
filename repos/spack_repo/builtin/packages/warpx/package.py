@@ -17,7 +17,7 @@ class Warpx(CMakePackage, PythonExtension):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.01.tar.gz"
+    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.03.tar.gz"
     git = "https://github.com/BLAST-WarpX/warpx.git"
 
     maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
@@ -26,13 +26,14 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("26.03", sha256="7f857a2189dc9bf428825f2c17e74c6404d73e616a59d2f94d8d3692acb5d26d")
     version("26.01", sha256="c3b34a93e350e068c07e3107784885562cfa5c93ce3fd65fed002e5a6353d63d")
     version("25.12", sha256="fb59497e8427cf491312f83a72b011281d0aa04f6ebbb59b20afcbe0d86b136c")
     version("25.11", sha256="4e2b4636fee995ad075a907cf216fc089d1220824b8743b62c01e188fa6c23d7")
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
     depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
-    for v in ["develop", "26.01", "25.12", "25.11", "25.04"]:
+    for v in ["develop", "26.03", "26.01", "25.12", "25.11", "25.04"]:
         depends_on(f"amrex@{v}", when=f"@{v}")
         depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
@@ -170,6 +171,7 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("blaspp +sycl", when="compute=sycl")
     with when("+openpmd"):
         depends_on("openpmd-api@0.16.1:")
+        depends_on("openpmd-api@0.17.0:", when="@26.02:")
         depends_on("openpmd-api ~mpi", when="~mpi")
         depends_on("openpmd-api +mpi", when="+mpi")
 
@@ -178,6 +180,7 @@ class Warpx(CMakePackage, PythonExtension):
     with when("+python"):
         extends("python")
         depends_on("python@3.9:", type=("build", "run"))
+        depends_on("python@3.11:", type=("build", "run"), when="@26.03:")
         depends_on("py-numpy@1.15.0:", type=("build", "run"))
         depends_on("py-mpi4py@2.1.0:", type=("build", "run"), when="+mpi")
         depends_on("py-periodictable@1.5:1", type=("build", "run"))
