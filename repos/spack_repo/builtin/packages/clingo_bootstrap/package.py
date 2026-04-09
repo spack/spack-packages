@@ -103,7 +103,7 @@ class ClingoBootstrap(Clingo):
         # Clean the reports dir.
         rmtree(reports, ignore_errors=True)
 
-        # Run spack solve --fresh hdf5 with instrumented clingo.
+        # Generate profile data.
         env = environment_modifications_for_specs(self.spec, set_package_py_globals=False)
         python(script, extra_env=env)
 
