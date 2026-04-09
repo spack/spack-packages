@@ -98,7 +98,7 @@ spack:
   - fastjet plugins=all
   - feynhiggs
   - fjcontrib
-  - garfieldpp
+  #- garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
   - geant4 ~vtk ^[virtuals=qmake] qt
   - geant4 ~vtk ^[virtuals=qmake] qt-base
@@ -108,7 +108,7 @@ spack:
   # hepmc3 fixed to 3.3.0 due to whizard, see https://github.com/spack/spack-packages/pull/427#issuecomment-3167516435
   - hepmc3@3.3.0 +interfaces +protobuf +python +rootio
   #- herwig3 +njet +vbfnlo  # Note: herwig3 fails to find evtgen
-  - hepmcanalysis
+  #- hepmcanalysis
   - hoppet
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
@@ -146,7 +146,7 @@ spack:
   - pythia8 +evtgen +fastjet +hdf5 +hepmc +hepmc3 +lhapdf ~madgraph5amc +python +rivet ~root # pythia8 and root circularly depend
   - prophecy4f
   - recola +python
-  - recola-sm
+  #- recola-sm
   - rivet
   - root ~cuda
   - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola ~rivet +root +ufo cxxstd=20
