@@ -2,9 +2,11 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
@@ -52,6 +54,14 @@ class MiopenHip(CMakePackage):
     version("5.7.1", sha256="912a658fe21ce6f1982b0f2ff251c3f7bb618f2e7e9876d983bcb54e3cd7129e")
     version("5.7.0", sha256="5cd0b62254469e1c246d5890d2b78f8aedcf42cf8a327eabc1a391b83bcd14e1")
 
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+        description="AMD GPU targets for composable-kernel when +ck",
+    )
     variant(
         "ck",
         default=True,
@@ -109,7 +119,11 @@ class MiopenHip(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-clang-ocl@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
-        depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"composable-kernel@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +ck amdgpu_target={tgt}",
+            )
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -137,7 +151,12 @@ class MiopenHip(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
-        depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"composable-kernel@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +ck amdgpu_target={tgt}",
+            )
+
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     for ver in [
