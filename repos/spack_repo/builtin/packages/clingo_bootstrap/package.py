@@ -47,14 +47,14 @@ class ClingoBootstrap(Clingo):
 
     # flat multimap for performance: https://github.com/potassco/clasp/pull/118
     patch(
-        "https://github.com/haampie/clasp/commit/d38fd66cb3f20cdd7474c7a3342304dac9eff78c.patch?full_index=1",
-        sha256="3355cd2905c84242fcdbb79a13651203224a5376aaeda40aa8c35cb2b6fe0bd0",
+        "https://github.com/haampie/clasp/commit/0f43ac61e8576404c6a33f25954883d3e51ef0df.patch?full_index=1",
+        sha256="0a266a4d475c225af30607ccd2b541cfca0e4b31368219f6de71039c8df156b3",
         working_dir="clasp",
         when="@:5.7 +optimized",
     )
     patch(
-        "https://github.com/haampie/clasp/commit/0fa3a19beab99006f788840ca84c485d5bb23a61.patch?full_index=1",
-        sha256="e3b8ab3576823754b04bbc3f54be9f3c9f02c48ab9e3faafeb7511e6cdcb7405",
+        "https://github.com/haampie/clasp/commit/208972863506ecbd85ed0bd78fac580b5e9c9c90.patch?full_index=1",
+        sha256="c569fb439a99b709b6e6ac05253b344e4f3055d52223265baa55946db6d44e8b",
         working_dir="clasp",
         when="@5.8: +optimized",
     )
