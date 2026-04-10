@@ -100,7 +100,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("%msvc@:19.2")
         conflicts("%arm@:20")
 
-    # TODO any new version: depending on the changes in Kokkos' build system, there might be special requirements on the cmake version.
+    # TODO any new version: depending on the changes in Kokkos' build system,
+    # there might be special requirements on the cmake version.
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@5:")
     depends_on("cmake@3.25.2:", type="build", when="@5: +cuda +cmake_lang")
@@ -245,7 +246,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets: " + ", ".join(amdgpu_arch_map.keys())
     )
-    # FIXME we should revisit this. More archs have unified memory via HMM, only the APU has unified physical memory
+    # FIXME we should revisit this. More archs have unified memory via HMM,
+    # only the APU has unified physical memory
     amd_apu_support_conflict_msg = (
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets with unified memory: "
