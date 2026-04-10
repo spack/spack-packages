@@ -177,6 +177,8 @@ class Xrootd(CMakePackage):
             ]
 
         options += [
+            define("ENABLE_TESTS", self.run_tests),
+            define("ENABLE_SERVER_TESTS", self.run_tests and spec.satisfies("+client_only")),
             define_from_variant("ENABLE_HTTP", "http"),
             define_from_variant("ENABLE_XRDCLHTTP", "davix"),
             define_from_variant("ENABLE_PYTHON", "python"),
@@ -191,9 +193,9 @@ class Xrootd(CMakePackage):
             define("ENABLE_VOMS", False),
             define("FORCE_ENABLED", True),
         ]
-        if self.spec.satisfies("@:5.7"):
+        if spec.satisfies("@:5.7"):
             options.append(define("USE_SYSTEM_ISAL", True))
-        if self.spec.satisfies("@:5.5"):
+        if spec.satisfies("@:5.5"):
             options.append(define("ENABLE_CRYPTO", True))
 
         # see https://github.com/spack/spack/pull/11581
