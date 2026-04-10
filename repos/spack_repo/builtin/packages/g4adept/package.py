@@ -50,7 +50,7 @@ class G4adept(CMakePackage, CudaPackage):
 
     with when("+covfie"):
         for arch in CudaPackage.cuda_arch_values:
-            depends_on(f"covfie +cuda cuda_arch={arch}", when="+cuda cuda_arch={arch}")
+            depends_on(f"covfie +cuda cuda_arch={arch}", when=f"+cuda cuda_arch={arch}")
 
     for pkg in ["vecgeom", "g4hepem"]:
         for arch in CudaPackage.cuda_arch_values:
