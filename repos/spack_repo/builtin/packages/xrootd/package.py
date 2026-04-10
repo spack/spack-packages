@@ -47,7 +47,7 @@ class Xrootd(CMakePackage):
     version("5.5.2", sha256="ec4e0490b8ee6a3254a4ea4449342aa364bc95b78dc9a8669151be30353863c6")
     version("5.5.1", sha256="3556d5afcae20ed9a12c89229d515492f6c6f94f829a3d537f5880fcd2fa77e4")
 
-    variant("davix", default=True, description="Build with Davix")
+    variant("davix", default=True, description="Build with Davix", when="@:5")
     variant(
         "ec",
         default=True,
@@ -74,7 +74,16 @@ class Xrootd(CMakePackage):
         values=("11", "14", "17", "20"),
         multi=False,
         description="Use the specified C++ standard when building",
-        when="@5.7:",
+        when="@5.7:5",
+    )
+
+    variant(
+        "cxxstd",
+        default="20",
+        values=("11", "14", "17", "20"),
+        multi=False,
+        description="Use the specified C++ standard when building",
+        when="@6:",
     )
 
     variant("scitokens-cpp", default=False, description="Enable support for SciTokens")
@@ -107,6 +116,7 @@ class Xrootd(CMakePackage):
     depends_on("libxml2", when="+http")
     depends_on("uuid", when="@4.11.0:")
     depends_on("openssl")
+    depends_on("openssl@1.1.1:", when="@6:")
     depends_on("python", when="+python")
     depends_on("py-setuptools", type="build", when="@:5.5 +python")
     depends_on("py-pip", type="build", when="@5.6: +python")
@@ -115,9 +125,9 @@ class Xrootd(CMakePackage):
     depends_on("zlib-api")
     depends_on("curl")
     depends_on("krb5", when="+krb5")
-    depends_on("json-c")
     depends_on("scitokens-cpp", when="+scitokens-cpp")
     depends_on("libxcrypt", type="link")
+    depends_on("libzip", when="@6:")
     depends_on("nlohmann-json@3.10.2:", when="@6:")
 
     extends("python", when="+python")
