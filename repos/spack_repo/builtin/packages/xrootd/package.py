@@ -186,13 +186,16 @@ class Xrootd(CMakePackage):
             define_from_variant("ENABLE_XRDEC", "ec"),
             define_from_variant("XRDCL_ONLY", "client_only"),
             define("ENABLE_CEPH", False),
-            define("ENABLE_CRYPTO", True),
             define("ENABLE_FUSE", False),
             define("ENABLE_MACAROONS", False),
             define("ENABLE_VOMS", False),
             define("FORCE_ENABLED", True),
-            define("USE_SYSTEM_ISAL", True),
         ]
+        if self.spec.satisfies("@:5.7"):
+            options.append(define("USE_SYSTEM_ISAL", True))
+        if self.spec.satisfies("@:5.5"):
+            options.append(define("ENABLE_CRYPTO", True))
+
         # see https://github.com/spack/spack/pull/11581
         if "+python" in self.spec:
             options.append(define("XRD_PYTHON_REQ_VERSION", spec["python"].version.up_to(2)))
