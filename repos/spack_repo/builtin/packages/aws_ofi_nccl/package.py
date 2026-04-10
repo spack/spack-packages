@@ -102,8 +102,10 @@ class AwsOfiNccl(AutotoolsPackage):
         )
         if spec.satisfies("+cuda"):
             args.extend(
-                "--with-cuda={0}".format(spec["cuda"].prefix),
-                "--with-nccl={0}".format(spec["nccl"].prefix),
+                [
+                    "--with-cuda={0}".format(spec["cuda"].prefix),
+                    "--with-nccl={0}".format(spec["nccl"].prefix),
+                ]
             )
         if spec.satisfies("+rocm"):
             args.extend(["--with-rocm={0}".format(spec["hip"].prefix)])
