@@ -339,7 +339,7 @@ class RocprofilerSystems(CMakePackage):
         return args
 
     def flag_handler(self, name, flags):
-        if self.spec.satisfies("@6.3:"):
+        if self.spec.satisfies("@6.3:7.1"):
             if name == "ldflags":
                 flags.append("-lintl")
         return (flags, None, None)
