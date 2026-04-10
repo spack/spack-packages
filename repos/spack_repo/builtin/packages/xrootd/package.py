@@ -127,6 +127,7 @@ class Xrootd(CMakePackage):
     depends_on("krb5", when="+krb5")
     depends_on("scitokens-cpp", when="+scitokens-cpp")
     depends_on("libxcrypt", type="link")
+    depends_on("pkgconfig", when="@6:")
     depends_on("libzip", when="@6:")
     depends_on("nlohmann-json@3.10.2:", when="@6:")
 
