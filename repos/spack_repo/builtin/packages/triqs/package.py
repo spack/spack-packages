@@ -5,12 +5,12 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.python import PythonExtension
 
-import os
 from spack.package import *
 
 
 class Triqs(CMakePackage, PythonExtension):
-    """A Toolbox for Research on Interacting Quantum Systems. Supported by the Flatiron Institute."""
+    """A Toolbox for Research on Interacting Quantum Systems. Supported by the Flatiron
+    Institute."""
 
     homepage = "https://github.com/TRIQS/triqs"
     url = "https://github.com/TRIQS/triqs/releases/download/3.3.1/triqs-3.3.1.tar.gz"
@@ -52,7 +52,7 @@ class Triqs(CMakePackage, PythonExtension):
             self.define("Build_Documentation", False),
             self.define("Build_Tests", self.run_tests),
             self.define("Build_Benchs", False),
-            "-Wno-dev"
+            "-Wno-dev",
         ]
 
     def setup_run_environment(self, env):
