@@ -116,7 +116,18 @@ class Rdc(CMakePackage):
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1"]:
+    for ver in [
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+    ]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
     def patch(self):
