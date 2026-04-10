@@ -119,7 +119,7 @@ class Xrootd(CMakePackage):
     depends_on("scitokens-cpp", when="+scitokens-cpp")
     depends_on("libxcrypt", type="link")
     depends_on("nlohmann-json@3.10.2:", when="@6:")
-    
+
     extends("python", when="+python")
 
     # https://github.com/xrootd/xrootd/pull/1805
