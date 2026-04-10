@@ -360,6 +360,9 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # this does alleviate needing: conflicts("+test", when="@17: ~gtest")
     # see https://github.com/spack/spack-packages/pull/3361 for explanation
 
+    # stk tests require +exodus
+    conflicts("~exodus", when="+stk+test")
+
     # Only allow DTK with Trilinos 12.14, 12.18
     conflicts("+dtk", when="~boost")
     conflicts("+dtk", when="~intrepid2")
@@ -779,6 +782,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             options.append(define("BUILD_TESTING", True))
         else:
             options.append(define_trilinos_enable("TESTS", False))
+            if "+stk" in spec:
+                options.append(define_trilinos_enable("STKUnit_test_utils", False))
+                options.append(define_trilinos_enable("STKUnit_tests", False))
+                options.append(define_trilinos_enable("STKDoc_tests", False))
+                options.append(define_trilinos_enable("STKIntegration_tests", False))
+                options.append(define_trilinos_enable("STKPerformance_tests", False))
+                options.append(define_trilinos_enable("STKNGP_TEST", False))
 
         if spec.version >= Version("13"):
             options.append(define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
