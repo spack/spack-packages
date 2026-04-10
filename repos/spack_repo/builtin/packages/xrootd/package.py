@@ -178,7 +178,7 @@ class Xrootd(CMakePackage):
 
         options += [
             define("ENABLE_TESTS", self.run_tests),
-            define("ENABLE_SERVER_TESTS", self.run_tests and spec.satisfies("+client_only")),
+            define("ENABLE_SERVER_TESTS", self.run_tests and spec.satisfies("~client_only")),
             define_from_variant("ENABLE_HTTP", "http"),
             define_from_variant("ENABLE_XRDCLHTTP", "davix"),
             define_from_variant("ENABLE_PYTHON", "python"),
