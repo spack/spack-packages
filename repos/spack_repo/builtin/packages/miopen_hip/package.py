@@ -29,6 +29,7 @@ class MiopenHip(CMakePackage):
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
+
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
     variant(
@@ -184,7 +185,10 @@ class MiopenHip(CMakePackage):
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} +hipblaslt amdgpu_target={tgt}")
+            depends_on(
+                f"hipblaslt@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
+            )
 
     depends_on("nlohmann-json", type="link")
     depends_on("googletest", when="@6.1:")
