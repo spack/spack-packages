@@ -182,10 +182,10 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("xpmem", when="fabrics=xpmem")
     depends_on("gdrcopy", when="+gdrcopy")
 
-    depends_on("m4", when="@main", type="build")
-    depends_on("autoconf", when="@main", type="build")
-    depends_on("automake", when="@main", type="build")
-    depends_on("libtool", when="@main", type="build")
+    depends_on("m4", type="build")
+    depends_on("autoconf", type="build")
+    depends_on("automake", type="build")
+    depends_on("libtool", type="build")
     depends_on("json-c", when="fabrics=cxi")
     depends_on("curl", when="fabrics=cxi")
 
@@ -242,7 +242,6 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
         env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
         env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib64)
 
-    @when("@main")
     def autoreconf(self, spec, prefix):
         bash = which("bash", required=True)
         bash("./autogen.sh")
