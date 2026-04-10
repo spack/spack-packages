@@ -54,7 +54,7 @@ class G4adept(CMakePackage, CudaPackage):
         for arch in CudaPackage.cuda_arch_values:
             depends_on(f"{pkg} +cuda cuda_arch={arch}", when=f"+cuda cuda_arch={arch}")
 
-    conflicts("~cuda", msg="G4adept requires CUDA support")
+    conflicts("~cuda", msg="AdePT requires CUDA support")
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
 
     def cmake_args(self):
