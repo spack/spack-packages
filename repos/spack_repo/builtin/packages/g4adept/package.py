@@ -48,7 +48,9 @@ class G4adept(CMakePackage, CudaPackage):
     depends_on("g4hepem +cuda +early_tracking_exit")
     depends_on("hepmc3", type="test")
 
-    depends_on("covfie", when="+covfie")
+    with when("+covfie"):
+        for arch in CudaPackage.cuda_arch_values:
+            depends_on(f"covfie +cuda cuda_arch={arch}", when="+cuda cuda_arch={arch}")
 
     for pkg in ["vecgeom", "g4hepem"]:
         for arch in CudaPackage.cuda_arch_values:
