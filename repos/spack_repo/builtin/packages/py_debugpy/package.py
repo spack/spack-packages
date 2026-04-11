@@ -18,6 +18,7 @@ class PyDebugpy(PythonPackage):
 
     license("MIT")
 
+    version("1.8.20", sha256="55bc8701714969f1ab89a6d5f2f3d40c36f91b2cbe2f65d98bf8196f6a6a2c33")
     version("1.8.15", sha256="58d7a20b7773ab5ee6bdfb2e6cf622fdf1e40c9d5aef2857d85391526719ac00")
     version("1.6.7", sha256="c4c2f0810fa25323abfdfa36cbbbb24e5c3b1a42cb762782de64439c575d67f2")
     version("1.6.6", sha256="b9c2130e1c632540fbf9c2c88341493797ddf58016e7cba02e311de9b0a96b67")
