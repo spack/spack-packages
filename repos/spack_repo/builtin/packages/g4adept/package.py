@@ -43,7 +43,7 @@ class G4adept(CMakePackage, CudaPackage):
     depends_on("veccore@0.5.2:")
     depends_on("vecgeom@2: +cuda +gdml")
     depends_on("xerces-c")
-    depends_on("geant4")
+    depends_on("geant4 ~vecgeom")
     depends_on("g4vg@1.0.3:")
     depends_on("g4hepem +cuda +early_tracking_exit")
     depends_on("hepmc3", type="test")
