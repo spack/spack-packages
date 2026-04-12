@@ -17,7 +17,8 @@ class PyFilelock(PythonPackage):
     homepage = "https://github.com/tox-dev/py-filelock"
     pypi = "filelock/filelock-3.0.4.tar.gz"
 
-    license("MIT")
+    license("Unlicense", when="@:3.22")
+    license("MIT", when="@3.23:")
 
     version("3.25.2", sha256="b64ece2b38f4ca29dd3e810287aa8c48182bbecd1ae6e9ae126c9b35f1382694")
     version("3.19.1", sha256="66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58")
