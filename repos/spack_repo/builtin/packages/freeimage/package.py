@@ -14,7 +14,11 @@ class Freeimage(MakefilePackage):
 
     homepage = "https://freeimage.sourceforge.net/"
 
-    version("3.18.0", sha256="f41379682f9ada94ea7b34fe86bf9ee00935a3147be41b6569c9605a53e438fd")
+    # CVE-2024-31570
+    with default_args(deprecated=True):
+        version(
+            "3.18.0", sha256="f41379682f9ada94ea7b34fe86bf9ee00935a3147be41b6569c9605a53e438fd"
+        )
 
     patch("install_fixes.patch", when="@3.18.0")
 

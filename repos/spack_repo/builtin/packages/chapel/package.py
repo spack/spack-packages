@@ -54,7 +54,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # A list of GitHub accounts to notify when the package is updated.
     # TODO: add chapel-project github account
-    maintainers("arezaii", "bonachea", "arifthpe", "e-kayrakli")
+    maintainers("arezaii", "bonachea", "arifthpe")
 
     tags = ["e4s"]
 
@@ -63,11 +63,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
 
+    version("2.8.0", sha256="80e8c3018e33e49674c7a2542e062547ea41d64d6595edb3b799e90c88f963f8")
     version("2.7.0", sha256="5e3269babdae334c80fc3f25114698fdfe53e84ea06626af22d2b54eeb75bee6")
     version("2.6.0", sha256="e469c35be601cf1f59af542ab885e8a14aa2b087b79af0d5372a4421976c74b6")
-    version("2.5.0", sha256="020220ca9bf52b9f416e9a029bdc465bb1f635c1e274c6ca3c18d1f83e41fce1")
 
     with default_args(deprecated=True):
+        version("2.5.0", sha256="020220ca9bf52b9f416e9a029bdc465bb1f635c1e274c6ca3c18d1f83e41fce1")
         version("2.4.0", sha256="a51a472488290df12d1657db2e7118ab519743094f33650f910d92b54c56f315")
         version("2.3.0", sha256="0185970388aef1f1fae2a031edf060d5eac4eb6e6b1089e7e3b15a130edd8a31")
         version("2.2.0", sha256="bb16952a87127028031fd2b56781bea01ab4de7c3466f7b6a378c4d8895754b6")
@@ -78,7 +79,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     sanity_check_is_dir = ["bin", join_path("lib", "chapel"), join_path("share", "chapel")]
     sanity_check_is_file = [join_path("bin", "chpl")]
 
-    patch("fix_spack_cc_wrapper_in_cray_prgenv.patch", when="@2.0.0:")
+    patch("fix_spack_cc_wrapper_in_cray_prgenv.patch", when="@2.0.0:2.7")
+    patch("fix_spack_cc_wrapper_in_cray_prgenv_2.8.patch", when="@2.8:")
     patch("fix_chpl_shared_lib_path.patch", when="@2.1.1:2.2 +python-bindings")  # PR 26388
     patch("fix_chpl_shared_lib_path_2.3.patch", when="@2.2.1:2.3 +python-bindings")  # PR 26388
     patch("fix_chpl_line_length.patch", when="@:2.3.0")  # PRs 26357, 26381, 26491
@@ -484,36 +486,71 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm", when="+cuda", msg="Chapel must be built with either CUDA or ROCm, not both")
 
-    # CUDA conflicts and dependencies
-    conflicts(
-        "^llvm@20",
-        when="@:2.5 +cuda",
-        msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20, see "
-        "https://github.com/chapel-lang/chapel/issues/27273",
-    )
+    # GPU requirements should encode the requirements documented at:
+    # https://chapel-lang.org/docs/technotes/gpu.html#requirements
 
-    conflicts("cuda@12.9:", when="+cuda")  # deprecation warnings otherwise
+    # CUDA conflicts and dependencies
+    with when("+cuda"):
+        conflicts("llvm=none", msg="Cuda support requires building with LLVM")
+
+        depends_on("llvm@16:", when="llvm=spack ^cuda@12:")
+        requires(
+            "^llvm targets=all",
+            msg="llvm=spack +cuda requires LLVM support the nvptx target",
+            when="llvm=spack",
+        )
+        conflicts(
+            "^llvm@20:",
+            when="@:2.5",
+            msg="Chapel through 2.5 does not support Nvidia GPUs with LLVM 20+, see "
+            "https://github.com/chapel-lang/chapel/issues/27273",
+        )
+
+        conflicts("cuda@12.9:")  # deprecation warnings otherwise
 
     # ROCm conflicts and dependencies
-    conflicts("+rocm", when="@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
-    # Chapel restricts the allowable ROCm versions
-    with when("@2.2: +rocm"):
-        depends_on("hsa-rocr-dev@6.0:6.2")
-        depends_on("hip@6.0:6.2")
-    # This is the case because the package only supports ROCm 6, and Chapel
-    # requires bundled LLVM for that version.
-    # TODO: Modify this constrant and message if/when Chapel supports an
-    # additional ROCm version without that requirement.
-    requires("llvm=bundled", when="+rocm", msg="Chapel ROCm support requires llvm=bundled")
+    with when("+rocm"):
+        conflicts("llvm=none", msg="ROCm support requires building with LLVM")
 
-    # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
-    # provides %rocmcc, which we don't want to use.
-    requires(
-        *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
-        policy="any_of",  # any to ensure %clang works
-        when="+rocm",
-        msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
-    )
+        conflicts("@:2.1", msg="ROCm support in spack requires Chapel 2.2.0 or later")
+
+        # Chapel restricts the allowable ROCm versions
+        with when("@:2.7"):
+            depends_on("hsa-rocr-dev@6.0:6.2")
+            depends_on("hip@6.0:6.2")
+        with when("@2.8:"):
+            # ROCm 6.4 is specifically prohibited. Although Chapel allows it
+            # (see https://github.com/chapel-lang/chapel/pull/28220), the
+            # support is untested; being stricter here to reduce the amount of
+            # variables in getting the Spack package to work.
+            depends_on("hsa-rocr-dev@6.0:6.3,7")
+            depends_on("hip@6.0:6.3,7")
+
+        # Chapel requires using the (patched) bundled LLVM for some versions
+        # of ROCm.
+        # Switching off of hsa-rocr-dev version rather than both it and hip,
+        # with the assumption they will always be the same, but if that changes
+        # this will need to be adjusted.
+        with when("^hsa-rocr-dev@6.0:6.2"):
+            requires("llvm=bundled", msg="Chapel ROCm 6.0-6.2 support requires llvm=bundled")
+        with when("^hsa-rocr-dev@6.3:6"):
+            # For 6.3-6.x, either bundled LLVM or system LLVM >= 21 is allowed.
+            depends_on("llvm@21:", when="llvm=spack")
+        with when("^hsa-rocr-dev@7"):
+            # For 7.x, we require LLVM >= 21, and as of release 2.8 the bundled
+            # LLVM is 19, so effectively we require _system_ LLVM >= 21.
+            # TODO: Modify this constraint and message when Chapel releases
+            # with a bundled LLVM >= 21.
+            requires("llvm=spack", msg="Chapel ROCm 7 support currently requires llvm=spack")
+            depends_on("llvm@21:")
+
+        # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
+        # provides %rocmcc, which we don't want to use.
+        requires(
+            *("%" + comp for comp in compiler_map.keys() if comp != "rocmcc" and comp != "unset"),
+            policy="any_of",  # any to ensure %clang works
+            msg="Chapel ROCm support requires a supported host compiler other than rocmcc",
+        )
 
     conflicts(
         "comm_substrate=unset",
@@ -551,14 +588,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "https://chapel-lang.org/docs/usingchapel/chplenv.html#chpl-host-jemalloc",
     )
 
-    with when("llvm=none"):
-        conflicts("+cuda", msg="Cuda support requires building with LLVM")
-        conflicts("+rocm", msg="ROCm support requires building with LLVM")
-        conflicts(
-            "+python-bindings",
-            msg="Python bindings require building with LLVM, see "
-            "https://chapel-lang.org/docs/tools/chapel-py/chapel-py.html#installation",
-        )
+    conflicts(
+        "+python-bindings",
+        when="llvm=none",
+        msg="Python bindings require building with LLVM, see "
+        "https://chapel-lang.org/docs/tools/chapel-py/chapel-py.html#installation",
+    )
 
     # Add dependencies
     depends_on("c", type="build")  # generated
@@ -574,20 +609,13 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     requires("re2=bundled", when="+mason", msg="Mason requires re2=bundled")
 
     # TODO: keep up to date with util/chplenv/chpl_llvm.py
-    with when("llvm=spack ~rocm"):
+    with when("llvm=spack"):
         depends_on("llvm@11:17", when="@:2.0.1")
         depends_on("llvm@11:18", when="@2.1:2.2")
         depends_on("llvm@11:19", when="@2.3:2.4")
         depends_on("llvm@11:20", when="@2.5")
-        depends_on("llvm@14:20", when="@2.6:")
-
-    # Based on docs https://chapel-lang.org/docs/technotes/gpu.html#requirements
-    depends_on("llvm@16:", when="llvm=spack +cuda ^cuda@12:")
-    requires(
-        "^llvm targets=all",
-        msg="llvm=spack +cuda requires LLVM support the nvptx target",
-        when="llvm=spack +cuda",
-    )
+        depends_on("llvm@14:20", when="@2.6:2.7")
+        depends_on("llvm@14:21", when="@2.8:")
 
     # This is because certain systems have binutils installed as a system package
     # but do not include the headers. Spack incorrectly supplies those external
@@ -675,20 +703,10 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
         # Undo spack compiler wrappers:
         # the C/C++ compilers must work post-install
-        if self.spec.satisfies("+rocm llvm=spack"):
-            env.set(
-                "CHPL_LLVM_CONFIG",
-                join_path(self.spec["llvm-amdgpu"].prefix, "bin", "llvm-config"),
-            )
-            real_cc = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang")
-            real_cxx = join_path(self.spec["llvm-amdgpu"].prefix, "bin", "clang++")
-
-            # +rocm appears to also require a matching LLVM host compiler to guarantee linkage
-            env.set("CHPL_HOST_COMPILER", "llvm")
-            env.set("CHPL_HOST_CC", real_cc)
-            env.set("CHPL_HOST_CXX", real_cxx)
-
-        elif self.spec.satisfies("llvm=spack"):
+        # If we ever switch back to using llvm-amdgpu for some ROCm versions,
+        # we will need a separate case here to use the binaries it provides
+        # rather than those of vanilla LLVM.
+        if self.spec.satisfies("llvm=spack"):
             env.set("CHPL_LLVM_CONFIG", join_path(self.spec["llvm"].prefix, "bin", "llvm-config"))
             real_cc = join_path(self.spec["llvm"].prefix, "bin", "clang")
             real_cxx = join_path(self.spec["llvm"].prefix, "bin", "clang++")
@@ -816,6 +834,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         self.unset_chpl_env_vars(env)
         self.setup_env_vars(env)
+
+    @run_before("configure")
+    def print_configuration(self):
+        # print all the explicitly set CHPL_* config variables to assist in debugging
+        for var in self.chpl_env_vars:
+            tty.info(var + "=" + os.getenv(var, "<unset>"))
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.setup_env_vars(env)

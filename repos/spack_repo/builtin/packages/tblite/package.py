@@ -20,6 +20,8 @@ class Tblite(CMakePackage, MesonPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("main", branch="main")
+    version("0.5.0", sha256="e8a70b72ed0a0db0621c7958c63667a9cd008c97c868a4a417ff1bc262052ea8")
     version("0.4.0", sha256="5c2249b568bfd3b987d3b28f2cbfddd5c37f675b646e17c1e750428380af464b")
     version("0.3.0", sha256="46d77c120501ac55ed6a64dea8778d6593b26fb0653c591f8e8c985e35884f0a")
 
@@ -44,7 +46,7 @@ class Tblite(CMakePackage, MesonPackage):
         depends_on(f"dftd4@3: build_system={build_system}", when=f"build_system={build_system}")
         depends_on(f"toml-f build_system={build_system}", when=f"build_system={build_system}")
 
-    depends_on("meson@0.57.2:", type="build")  # mesonbuild/meson#8377
+    depends_on("meson@0.57.2:", type="build", when="build_system=meson")  # mesonbuild/meson#8377
     depends_on("pkgconfig", type="build")
     depends_on("py-cffi", when="+python")
     depends_on("py-numpy", when="+python")

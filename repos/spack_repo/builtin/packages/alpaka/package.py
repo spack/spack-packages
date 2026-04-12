@@ -21,6 +21,7 @@ class Alpaka(CMakePackage, CudaPackage):
     license("MPL-2.0-no-copyleft-exception")
 
     version("develop", branch="develop")
+    version("2.1.0", sha256="e5de511561d7630e856e58b6e191e054f627938d4be70cfefdc47c388449d77f")
     version("1.2.0", sha256="069ea68ac950b17cffb3a3e790973aa5115f07ab23c0247a167e815b3c6e6fa2")
     version("1.1.0", sha256="95a8f1b706105d8a213116b6ba00e27bd904855c377f5a22a04aa0b86054dc35")
     version("1.0.0", sha256="38223dc1ca5bcf3916ff91f8825fb8caab7047430877222847e0ceb93bffecc9")
@@ -52,6 +53,7 @@ class Alpaka(CMakePackage, CudaPackage):
 
     depends_on("cmake@3.18:")
     depends_on("cmake@3.22:", when="@1:")
+    depends_on("cmake@3.25:", when="@2:")
 
     # make sure no other backend is enabled if using cuda_only or hip_only
     for v in ("serial", "threads", "tbb", "omp2_gridblock", "omp2_blockthread", "cuda", "hip"):

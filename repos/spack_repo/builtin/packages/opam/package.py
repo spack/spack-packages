@@ -19,6 +19,7 @@ class Opam(AutotoolsPackage):
 
     maintainers("scemama")
 
+    version("2.5.0", sha256="25fb98f962c4227c1261e142afc68a416778e6e819600bd5ee3ec4a18ae1e238")
     version("2.2.1", sha256="07ad3887f61e0bc61a0923faae16fcc141285ece5b248a9e2cd4f902523cc121")
     version("2.2.0", sha256="39334f36adbe280683487cf204b7b0642080fc5965747f7d6f7cc7b83cd7a192")
     version("2.1.6", sha256="d2af5edc85f552e0cf5ec0ddcc949d94f2dc550dc5df595174a06a4eaf8af628")
@@ -35,7 +36,8 @@ class Opam(AutotoolsPackage):
     version("1.2.2", sha256="15e617179251041f4bf3910257bbb8398db987d863dd3cfc288bdd958de58f00")
     version("1.2.1", sha256="f210ece7a2def34b486c9ccfb75de8febd64487b2ea4a14a7fa0358f37eacc3b")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@2.2.0:")
 
     # OCaml 4.10.0 has removed the -safe-string flag, which is necessary
     # for OPAM 1i (see docstring of setup_build_environment).
