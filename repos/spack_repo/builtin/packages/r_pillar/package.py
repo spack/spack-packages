@@ -53,4 +53,4 @@ class RPillar(RPackage):
         depends_on("r-crayon@1.3.4:", when="@:1.7.0")
         depends_on("r-ellipsis@0.3.2", when="@1.6.1:1.7.0")
         depends_on("r-ellipsis", when="@1.4.7:1.7.0")
-        depends_on("r-fansi", when="@:1.11")
+        depends_on("r-fansi", when="@:1.9")
