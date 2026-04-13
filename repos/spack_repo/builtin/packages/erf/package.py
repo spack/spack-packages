@@ -123,9 +123,7 @@ class Erf(CMakePackage, CudaPackage):
             if os.path.exists(gitmodules):
                 with open(gitmodules, "r") as f:
                     content = f.read()
-                content = re.sub(
-                    r"git@github\.com:", "https://github.com/", content
-                )
+                content = re.sub(r"git@github\.com:", "https://github.com/", content)
                 with open(gitmodules, "w") as f:
                     f.write(content)
 
