@@ -96,10 +96,7 @@ class Hypredrive(CMakePackage):
         else:
             lib_name = "libHYPREDRV.a"
 
-        for lib_dir, rel_name in (
-            (self.prefix.lib64, "lib64"),
-            (self.prefix.lib, "lib"),
-        ):
+        for lib_dir, rel_name in ((self.prefix.lib64, "lib64"), (self.prefix.lib, "lib")):
             if os.path.isfile(join_path(lib_dir, lib_name)):
                 sanity_files.append(join_path(rel_name, lib_name))
                 break
@@ -112,8 +109,6 @@ class Hypredrive(CMakePackage):
     @when("+examples")
     def test_laplacian_example(self):
         """run the laplacian example (requires +examples)"""
-        if not self.spec.satisfies("+examples"):
-            raise SkipTest("Package must be installed with +examples")
 
         laplacian = which(self.prefix.bin.laplacian)
         if laplacian is None:
