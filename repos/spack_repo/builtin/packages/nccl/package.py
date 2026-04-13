@@ -15,10 +15,13 @@ class Nccl(MakefilePackage, CudaPackage):
 
     homepage = "https://github.com/NVIDIA/nccl"
     url = "https://github.com/NVIDIA/nccl/archive/v2.7.3-1.tar.gz"
+    git = "https://github.com/NVIDIA/nccl.git"
 
     maintainers("msimberg")
     libraries = ["libnccl.so"]
 
+    version("2.29.7-1", sha256="e67239212c395bfdb398a7519491840d06fdf6b599c299f97c7ed0109777bba1")
+    version("2.29.3-1", sha256="d1dffc5e9dd059985704f98ff3d8b7e6cf62d20c10a181d427a4e3233f8148f1")
     version("2.29.2-1", sha256="063e20649c4cfa01e789b4dc73514dbb5d73f9518e426823dab53316415e071b")
     version("2.28.9-1", sha256="f349860336c6b7fb97b22bed9c729142f3531a0e82826c1204d01e44af8b9cb9")
     version("2.28.7-1", sha256="1d2d1dd53e6c6bb42c200d9b934fa31fd528cbf3c6443581519aa628fcbd618a")

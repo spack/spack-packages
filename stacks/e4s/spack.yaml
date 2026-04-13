@@ -49,8 +49,6 @@ spack:
       variants: threads=openmp
     rccl:
       variants: amdgpu_target=gfx90a
-    rocblas:
-      require: ~hipblaslt #hangs in ci
     trilinos:
       prefer:
       - +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
@@ -100,6 +98,7 @@ spack:
     - chai ^umpire
     - chapel
     - cusz
+    - ddc +fft +pdi +splines
     #- dealii~arborx~kokkos~vtk cxxstd=17
     - ecp-data-vis-sdk  +adios2 ~ascent +hdf5 +vtkm +zfp ~paraview
     # Exago still requires an old version of Raja that doesn't support the CUDA arch we want to build for
@@ -114,6 +113,7 @@ spack:
     - kokkos
     - kokkos-kernels
     - kokkos-fft device_backend=cufft +tests
+    - legion
     - libceed
     - libpressio +bitgrooming +bzip2 +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +cusz +mgard ^cusz
     - magma
@@ -157,6 +157,7 @@ spack:
   - conduit
   - cp2k +mpi
   - datatransferkit
+  - ddc +fft +pdi +splines
   #- dealii ~arborx ~kokkos ~vtk cxxstd=17 # https://github.com/spack/spack/pull/45554#issuecomment-2457255720
   - drishti
   - dxt-explorer
@@ -309,7 +310,6 @@ spack:
   - bricks +cuda
   - flux-core +cuda
   - hpctoolkit +cuda
-  - legion +cuda
   - papi +cuda
   - tau +mpi +cuda +syscall
 
