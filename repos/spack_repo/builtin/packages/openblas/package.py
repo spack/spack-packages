@@ -131,6 +131,14 @@ class Openblas(CMakePackage, MakefilePackage):
     )
     variant("symbol_suffix", default="none", description="Set a symbol suffix")
 
+    # We add a variant to allow setting of NUM_THREADS as on some machines, 512 might be
+    # too small. But we default to 512 as per OpenBLAS maintainer higher numbers
+    # will only lead to unnecessary memory usage and potential bottlenecks
+    # see https://github.com/spack/spack-packages/issues/4178#issuecomment-4239472982
+    variant(
+        "num_threads", default=512, description="Set the default number of threads for OpenBLAS"
+    )
+
     variant("locking", default=True, description="Build with thread safety")
     variant(
         "threads",
@@ -610,7 +618,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # Avoid that NUM_THREADS gets initialized with the host's number of CPUs.
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
-            make_defs.append("NUM_THREADS=512")
+            num_threads = self.spec.variants["num_threads"].value
+            make_defs.append("NUM_THREADS={0}".format(num_threads))
 
         # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
         # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
