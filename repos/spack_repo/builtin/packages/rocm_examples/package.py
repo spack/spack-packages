@@ -49,7 +49,6 @@ class RocmExamples(CMakePackage):
         sticky=True,
     )
 
-
     variant("rocm", default=True, description="Build with ROCm")
     variant("cuda", default=False, description="Build with CUDA")
 
@@ -84,37 +83,23 @@ class RocmExamples(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"hipcub@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hipsolver@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(
-                f"hipcub@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
+                f"hiprand@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
             depends_on(
-                f"hipsolver@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
+                f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
             depends_on(
-                f"hipblas@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
+                f"rocthrust@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
             depends_on(
-                f"hiprand@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +rocm amdgpu_target={tgt}",
+                f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
             depends_on(
-                f"rocblas@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +rocm amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocthrust@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +rocm amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocsparse@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +rocm amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocsolver@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +rocm amdgpu_target={tgt}",
+                f"rocsolver@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
 
     for ver in [
@@ -134,32 +119,18 @@ class RocmExamples(CMakePackage):
         "7.2.1",
     ]:
         for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"hipfft@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(
-                f"hipfft@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocfft@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +rocm amdgpu_target={tgt}",
+                f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
 
     for ver in ["7.2.0", "7.2.1"]:
         for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"hipsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hip-tensor@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"rocwmma@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(
-                f"hipsparse@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"hip-tensor@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocwmma@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocprofiler-sdk@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
+                f"rocprofiler-sdk@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
             )
 
     depends_on("hip+cuda", when="+cuda")

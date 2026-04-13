@@ -107,10 +107,8 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"hip@{ver} +cuda", when=f"+cuda @{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(
-                f"rocprim@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +rocm amdgpu_target={tgt}",
+                f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
-
 
     # fix hardcoded search in /opt/rocm and broken config mode search
     patch("find-hip-cuda-rocm-5.3.patch", when="@5.7 +cuda")

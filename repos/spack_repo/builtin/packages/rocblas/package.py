@@ -178,7 +178,6 @@ class Rocblas(CMakePackage):
                 when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
             )
 
-
     for ver in [
         "6.4.0",
         "6.4.1",
