@@ -8,13 +8,12 @@ from spack.package import *
 
 
 class Hypredrive(CMakePackage):
-    """Hypredrive is a high-level interface to the hypre library for solving
-    sparse linear systems of equations. It provides a command-line driver
-    (hypredrive-cli) accepting YAML input files and a C API library
-    (libHYPREDRV)."""
+    """Hypredrive is a flexible engine for solving linear systems with hypre.
+    It provides a command-line driver (hypredrive-cli) and a C API library
+    (libHYPREDRV) accepting YAML input."""
 
     homepage = "https://hypredrive.readthedocs.io"
-    url = "https://github.com/hypre-space/hypredrive/archive/v0.1.0.tar.gz"
+    url = "https://github.com/hypre-space/hypredrive/archive/v0.2.0.tar.gz"
     git = "https://github.com/hypre-space/hypredrive.git"
 
     maintainers("victorapm")
