@@ -1,0 +1,8 @@
+diff --git a/Utilities/python_runner.py b/Utilities/python_runner.py
+index 565a24e97..c252936f6 100755
+--- a/Utilities/python_runner.py
++++ b/Utilities/python_runner.py
+@@ -1,2 +1,2 @@
+ #!/bin/sh
+-PYTHONPATH="CASTEP_PYTHON_PATH:$PYTHONPATH" /usr/bin/env python SCRIPT
++PYTHONPATH="CASTEP_PYTHON_PATH:$PYTHONPATH" /usr/bin/env python SCRIPT $@
