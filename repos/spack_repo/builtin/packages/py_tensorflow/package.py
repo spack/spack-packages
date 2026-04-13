@@ -439,16 +439,11 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("os=tahoe", when="@:2.19")
 
     # https://github.com/tensorflow/tensorflow/pull/98321
-    # type traits specs in TF are not allowed in libc++ 21+
-    # backport patch bringing tf into compliance to 2.20 for
-    # compilers supporting libc++21
-    for compiler_spec in ["%apple-clang@26:", "%clang@21:"]:
-        with default_args(when="@2.20"):
-            patch(
-                "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
-                sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
-                when=f"{compiler_spec}",
-            )
+    patch(
+        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
+        sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
+        when="@2.20",
+    )
 
     # Fix build error with CUDA
     patch(
