@@ -22,6 +22,8 @@ class Alpaka(CMakePackage, CudaPackage):
 
     version("develop", branch="develop")
     version("2.1.1", sha256="2d30a43594c55067297947b0ec83300e4f2899497464c5cc6f142c823f3ea1b2")
+    # 2.1.0 is deprecated due to the buffer/view arrow operator bug
+    # see https://github.com/alpaka-group/alpaka/pull/2600
     version(
         "2.1.0",
         sha256="e5de511561d7630e856e58b6e191e054f627938d4be70cfefdc47c388449d77f",
