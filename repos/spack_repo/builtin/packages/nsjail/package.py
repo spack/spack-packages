@@ -47,13 +47,5 @@ class Nsjail(MakefilePackage):
     # nsjail 3.x requires C++20
     conflicts("%gcc@:9", msg="nsjail requires C++20 support")
 
-    def setup_build_environment(self, env):
-        env.prepend_path(
-            "PKG_CONFIG_PATH", join_path(self.spec["protobuf"].prefix, "lib", "pkgconfig")
-        )
-        env.prepend_path(
-            "PKG_CONFIG_PATH", join_path(self.spec["libnl"].prefix, "lib", "pkgconfig")
-        )
-
     def install(self, spec, prefix):
         make(f"PREFIX={prefix}", "install")
