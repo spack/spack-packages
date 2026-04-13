@@ -20,7 +20,7 @@ class Aretomo3(MakefilePackage, CudaPackage):
 
     license("BSD-3-Clause")
 
-    version("main", branch="main", preferred=True)
+    version("main", branch="main")
     version("2.2.2", sha256="ee0a6bae8b541e1a1dd3465cf1e7d0bf4ee70b030662c55f2b583d678bb33fa9")
     version("2.1.3", sha256="1a57a861e2598e56a98b9c2c8dde326b72a58cfa83eb5f542366982acd6acf4d")
 
