@@ -21,7 +21,7 @@ class Hypredrive(CMakePackage):
 
     license("MIT", checked_by="victorapm")
 
-    version("develop", branch="master")
+    version("master", branch="master")
     version("0.2.0", sha256="2fe6c5b2779de41fbd294cb4647c7bbd210ec95934639117e56a790e56c32e41")
     version("0.1.0", sha256="39db73b75e37457035c64b4c8831abe716bf2f596c4ca79a32293d9bd51ca8d6")
 
@@ -33,6 +33,8 @@ class Hypredrive(CMakePackage):
     variant("compression", default=False, description="Enable lossless compression backends")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="+caliper")
+
     depends_on("cmake@3.23:", type="build")
     depends_on("mpi")
     depends_on("hypre@2.20.0: +mpi")
@@ -41,6 +43,8 @@ class Hypredrive(CMakePackage):
     depends_on("zlib-api", when="+compression")
     depends_on("zstd", when="+compression")
     depends_on("lz4", when="+compression")
+
+    conflicts("+shared ~pic")
 
     def cmake_args(self):
         spec = self.spec
@@ -79,17 +83,21 @@ class Hypredrive(CMakePackage):
         libs = find_libraries("libHYPREDRV", root=self.prefix, shared=is_shared, recursive=True)
         return libs or None
 
-    def test_installed_binary(self):
-        """verify hypredrive-cli binary exists"""
-        hypredrive_cli = which(self.prefix.bin.join("hypredrive-cli"))
-        if hypredrive_cli is None:
-            raise SkipTest("hypredrive-cli not found in install prefix")
+    @property
+    def sanity_check_is_file(self):
+        sanity_files = [join_path("bin", "hypredrive-cli")]
 
-    def test_installed_library(self):
-        """verify HYPREDRV library is findable"""
-        if not self.libs:
-            raise RuntimeError("Could not find libHYPREDRV in install prefix")
+        if self.spec.satisfies("+shared"):
+            if self.spec.satisfies("platform=darwin"):
+                sanity_files.append(join_path("lib", "libHYPREDRV.dylib"))
+            else:
+                sanity_files.append(join_path("lib", "libHYPREDRV.so"))
+        else:
+            sanity_files.append(join_path("lib", "libHYPREDRV.a"))
 
+        return sanity_files
+
+    @when("+examples")
     def test_laplacian_example(self):
         """run the laplacian example (requires +examples)"""
         if not self.spec.satisfies("+examples"):
