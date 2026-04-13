@@ -20,6 +20,7 @@ class SuiteSparse(Package):
 
     license("Apache-2.0")
 
+    version("7.12.2", sha256="679412daa5f69af96d6976595c1ac64f252287a56e98cc4a8155d09cc7fd69e8")
     version("7.8.3", sha256="ce39b28d4038a09c14f21e02c664401be73c0cb96a9198418d6a98a7db73a259")
     version("7.7.0", sha256="529b067f5d80981f45ddf6766627b8fc5af619822f068f342aab776e683df4f3")
     version("7.3.1", sha256="b512484396a80750acf3082adc1807ba0aabb103c2e09be5691f46f14d0a9718")
@@ -270,6 +271,10 @@ class SuiteSparse(Package):
                     f"-DSUITESPARSE_USE_OPENMP={'ON' if '+openmp' in spec else 'OFF'}",
                     f"-DSUITESPARSE_USE_CUDA={'ON' if '+cuda' in spec else 'OFF'}",
                 ]
+            # https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1013
+            if spec.satisfies("@7.12"):
+                cmake_args += ["-DBLA_VENDOR=' '"]
+
             make_args += [f"CMAKE_OPTIONS={' '.join(cmake_args)}"]
 
         if spec.satisfies("platform=darwin %gcc"):
@@ -304,7 +309,7 @@ class SuiteSparse(Package):
             "UMFPACK",
             "RBio",
         ]
-        if spec.satisfies("+cuda"):
+        if spec.satisfies("@:7.3+cuda"):
             targets.extend(["SuiteSparse_GPURuntime", "GPUQREngine"])
         targets.extend(["SPQR"])
         if spec.satisfies("+graphblas"):
