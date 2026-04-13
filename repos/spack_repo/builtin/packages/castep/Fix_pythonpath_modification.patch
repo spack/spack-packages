@@ -1,0 +1,12 @@
+diff --git a/cmake/python_utilities.cmake.in b/cmake/python_utilities.cmake.in
+index c496b8dc5..29f7629f1 100644
+--- a/cmake/python_utilities.cmake.in
++++ b/cmake/python_utilities.cmake.in
+@@ -1,7 +1,6 @@
+ #
+ # Install castepconv
+ #
+-set(ENV{PYTHONPATH} ${CMAKE_INSTALL_PREFIX}/bin)
+ execute_process(
+   COMMAND echo ${Python_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX} --install-lib=${CMAKE_INSTALL_PREFIX}/bin
+   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/CASTEPconv
