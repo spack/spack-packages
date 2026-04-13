@@ -13,8 +13,10 @@ class PyUv(PythonPackage):
     homepage = "https://github.com/astral-sh/uv"
     pypi = "uv/uv-0.10.1.tar.gz"
 
-    license("APACHE 2.0 or MIT")
+    license("Apache-2.0 OR MIT")
+    maintainers("adamjstewart")
 
+    version("0.11.6", sha256="e3b21b7e80024c95ff339fcd147ac6fc3dd98d3613c9d45d3a1f4fd1057f127b")
     version("0.10.1", sha256="c89e7fd708fb3474332d6fc54beb2ea48313ebdc82c6931df92a884fcb636d9d")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2025-13327/
@@ -39,20 +41,24 @@ class PyUv(PythonPackage):
             "0.4.15", sha256="8e36b8e07595fc6216d01e729c81a0b4ff029a93cc2ef987a73d3b650d6d559c"
         )
 
-    # from Cargo.toml
-    depends_on("rust@1.86:", type=("build", "run"), when="@0.7.16:")
-    depends_on("rust@1.85:", type=("build", "run"), when="@0.7.6:")
-    depends_on("rust@1.84:", type=("build", "run"), when="@0.6.13:")
-    depends_on("rust@1.83:", type=("build", "run"), when="@0.5.9:")
-    depends_on("rust@1.81:", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("gmake")
+        depends_on("py-maturin@1")
 
-    depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-maturin@1", type="build")
+        # from Cargo.toml
+        depends_on("rust@1.92:", when="@0.10.10:")
+        depends_on("rust@1.91:", when="@0.9.27:")
+        depends_on("rust@1.89:", when="@0.9.8:")
+        depends_on("rust@1.88:", when="@0.8.19:")
+        depends_on("rust@1.87:", when="@0.8.14:")
+        depends_on("rust@1.86:", when="@0.7.16:")
+        depends_on("rust@1.85:", when="@0.7.6:")
+        depends_on("rust@1.84:", when="@0.6.13:")
+        depends_on("rust@1.83:", when="@0.5.9:")
+        depends_on("rust@1.81:")
 
-    depends_on("gmake", type="build")
-
-    # Historical dependencies
-    depends_on("cmake", type="build", when="@:0.6.3")
+        # Historical dependencies
+        depends_on("cmake", when="@:0.6.3")
 
     @when("@:0.6.3")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

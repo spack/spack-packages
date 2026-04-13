@@ -71,6 +71,13 @@ class Vecmem(CMakePackage, CudaPackage):
     version("0.2.0", sha256="33aea135989684e325cb097e455ff0f9d1a9e85ff32f671e3b3ed6cc036176ac")
     version("0.1.0", sha256="19e24e3262aa113cd4242e7b94e2de34a4b362e78553730a358f64351c6a0a01")
 
+    # CPack fix after hip -> sycl, https://github.com/acts-project/vecmem/pull/354
+    patch(
+        "https://github.com/acts-project/vecmem/commit/f3f09938b05706522d23314d0863bb7ee78c2a21.patch?full_index=1",
+        sha256="41fc7cbd4fc83c4abf6be0f781a6110a63073cc088e1970fb66abcf3b6eab6ea",
+        when="@1.23.0",
+    )
+
     variant("hip", default=False, description="Build the vecmem::hip library")
     variant("sycl", default=False, description="Build the vecmem::sycl library")
 
