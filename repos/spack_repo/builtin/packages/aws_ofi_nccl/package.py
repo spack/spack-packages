@@ -13,12 +13,13 @@ class AwsOfiNccl(AutotoolsPackage):
     applications."""
 
     homepage = "https://github.com/aws/aws-ofi-nccl"
-    url = "https://github.com/aws/aws-ofi-nccl/archive/v0.0.0.tar.gz"
+    url = "https://github.com/aws/aws-ofi-nccl/releases/download/v0.0.0/aws-ofi-nccl-0.0.0.tar.gz"
     git = "https://github.com/aws/aws-ofi-nccl.git"
 
     maintainers("bvanessen", "msimberg")
 
     version("master", branch="master")
+    version("1.19.0", sha256="fd8ecd15f0de88e07b2194637938dadcf247ad3b5150651dfd0bb0c4bb32ff3c")
     version("1.18.0", sha256="12fd67f05872600c485d74b8e3c3a640d063322371170f3a9c17d67a5a2ca681")
     version("1.17.3", sha256="0b3313e9ad48226cb143c8f1dead60bcd59a8083e582558ee44a438d58cc23c1")
     version("1.17.2", sha256="6676f49cdfbaa10e953f18aad55f25812e0a7e716692bc911a69fd55cab42181")
@@ -71,10 +72,12 @@ class AwsOfiNccl(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     def url_for_version(self, version):
-        if version < Version("1.7.0") or version >= Version("1.14.0"):
+        if version >= Version("1.19.0"):
             return super().url_for_version(version)
-        url_fmt = "https://github.com/aws/aws-ofi-nccl/archive/v{0}-aws.tar.gz"
-        return url_fmt.format(version)
+        elif version < Version("1.7.0") or version >= Version("1.14.0"):
+            return f"https://github.com/aws/aws-ofi-nccl/archive/v{version}.tar.gz"
+        else:
+            return f"https://github.com/aws/aws-ofi-nccl/archive/v{version}-aws.tar.gz"
 
     # To enable this plug-in to work with NCCL add it to the LD_LIBRARY_PATH
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
