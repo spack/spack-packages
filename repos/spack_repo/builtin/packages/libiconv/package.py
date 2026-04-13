@@ -66,6 +66,12 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
         if self.spec.satisfies("@1.17:%nvhpc"):
             args.append("gl_cv_cc_wallow=none")
 
+        # Intel oneAPI icx incorrectly marks glibc's error() as noreturn,
+        # causing the gnulib gl_cv_func_working_error configure test to
+        # infinite-loop and consume unbounded memory.
+        if self.spec.satisfies("%oneapi"):
+            args.append("gl_cv_func_working_error=yes")
+
         # A hack to patch config.guess in the libcharset sub directory
         copy("./build-aux/config.guess", "libcharset/build-aux/config.guess")
         return args
