@@ -43,4 +43,5 @@ class RUnits(RPackage):
         depends_on("r-rcpp@0.12.10:")
         depends_on("r-rcpp@1.1.0:", when="@1.0-1:")
 
+        # Historical dependencies
         depends_on("r-udunits2@0.13:", when="@:0.5-1")
