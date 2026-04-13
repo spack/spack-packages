@@ -27,7 +27,7 @@ class Fortuno(CMakePackage):
     variant("shared", default=True, description="Build as shared library")
 
     depends_on("fortran", type="build")
-    depends_on("cmake@3.22:3.31", type="build")
+    depends_on("cmake@3.22:", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("opencoarrays", when="+coarray%gcc")
 
