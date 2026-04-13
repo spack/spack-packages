@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -88,11 +90,22 @@ class Hypredrive(CMakePackage):
 
         if self.spec.satisfies("+shared"):
             if self.spec.satisfies("platform=darwin"):
-                sanity_files.append(join_path("lib", "libHYPREDRV.dylib"))
+                lib_name = "libHYPREDRV.dylib"
             else:
-                sanity_files.append(join_path("lib", "libHYPREDRV.so"))
+                lib_name = "libHYPREDRV.so"
         else:
-            sanity_files.append(join_path("lib", "libHYPREDRV.a"))
+            lib_name = "libHYPREDRV.a"
+
+        for lib_dir, rel_name in (
+            (self.prefix.lib64, "lib64"),
+            (self.prefix.lib, "lib"),
+        ):
+            if os.path.isfile(join_path(lib_dir, lib_name)):
+                sanity_files.append(join_path(rel_name, lib_name))
+                break
+        else:
+            expected_lib_dir = "lib64" if os.path.isdir(self.prefix.lib64) else "lib"
+            sanity_files.append(join_path(expected_lib_dir, lib_name))
 
         return sanity_files
 
