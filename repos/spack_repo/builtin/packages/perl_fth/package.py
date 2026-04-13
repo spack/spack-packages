@@ -28,6 +28,7 @@ class PerlFth(Package):
 
     maintainers("cessenat")
 
+    version("0.531", sha256="cb144d63b62459950f171ee80b33ce1e2a0ca52d6393ea8efc868240b916fe14")
     version("0.529", sha256="3cc2030372cf88dad257bd0cfbe662873a454d55035c54a76090e0da860074c4")
     version("0.527", sha256="df98e9e2f4dbef863b09a22ed92681dff028a6f345ba530bc3afd8221efe633c")
     version("0.526", sha256="ada1c7306111d59d64572fe8a9b038026fd0daebaff630924997ef2dc22d87a8")

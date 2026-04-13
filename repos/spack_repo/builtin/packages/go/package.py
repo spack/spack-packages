@@ -41,6 +41,9 @@ class Go(Package):
 
     license("BSD-3-Clause")
 
+    version("1.26.2", sha256="2e91ebb6947a96e9436fb2b3926a8802efe63a6d375dffec4f82aa9dbd6fd43b")
+    version("1.26.1", sha256="3172293d04b209dc1144698e7ba13f0477f6ba8c5ffd0be66c20fdbc9785dfbb")
+    version("1.25.8", sha256="e988d4a2446ac7fe3f6daa089a58e9936a52a381355adec1c8983230a8d6c59e")
     version("1.25.7", sha256="178f2832820274b43e177d32f06a3ebb0129e427dd20a5e4c88df2c1763cf10a")
     version("1.25.6", sha256="58cbf771e44d76de6f56d19e33b77d745a1e489340922875e46585b975c2b059")
     version("1.25.5", sha256="22a5fd0a91efcd28a1b0537106b9959b2804b61f59c3758b51e8e5429c1a954f")
@@ -81,8 +84,9 @@ class Go(Package):
     depends_on("grep", type="build")
     depends_on("sed", type="build")
 
-    depends_on("go-or-gccgo-bootstrap@1.22.6:", type="build", when="@1.24:")
-    depends_on("go-or-gccgo-bootstrap@1.20.6:", type="build")
+    depends_on("go-or-gccgo-bootstrap@1.24:", type="build", when="@1.26:")
+    depends_on("go-or-gccgo-bootstrap@1.22:", type="build", when="@1.24:")
+    depends_on("go-or-gccgo-bootstrap@1.20:", type="build", when="@1.22:")
     depends_on("go-or-gccgo-bootstrap", type="build")
 
     phases = ["build", "install"]
@@ -116,6 +120,12 @@ class Go(Package):
     def install(self, spec, prefix):
         install_tree(".", prefix.go)
         symlink(prefix.go.bin, prefix.bin)
+
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        env.set("GO111MODULE", "on")
+        env.set("GOTOOLCHAIN", "local")
+        env.set("GOMAXPROCS", str(make_jobs))
+        env.set("GOPATH", join_path(dependent_spec.package.stage.path, "go"))
 
     def setup_dependent_package(self, module, dependent_spec):
         """Called before go modules' build(), install() methods.

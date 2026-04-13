@@ -353,9 +353,14 @@ class CMakeBuilder(CMakeBuilder):
         )
         args.append(self.define("HYPRE_ENABLE_MIXED_PRECISION", spec.satisfies("precision=mixed")))
 
-        # External BLAS/LAPACK when +lapack (Note +lapack works for blas as well)
-        args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_BLAS", "lapack"))
-        args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_LAPACK", "lapack"))
+        # External BLAS/LAPACK when +lapack: disable internal BLAS/LAPACK and
+        # pass external library paths. HYPRE_ENABLE_HYPRE_BLAS=ON means "use
+        # internal BLAS"
+        args.append(self.define("HYPRE_ENABLE_HYPRE_BLAS", spec.satisfies("~lapack")))
+        args.append(self.define("HYPRE_ENABLE_HYPRE_LAPACK", spec.satisfies("~lapack")))
+        if spec.satisfies("+lapack"):
+            args.append(self.define("TPL_BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
+            args.append(self.define("TPL_LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
 
         # GPU backends
         args.append(self.define_from_variant("HYPRE_ENABLE_CUDA", "cuda"))

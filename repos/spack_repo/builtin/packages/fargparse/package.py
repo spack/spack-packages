@@ -18,6 +18,8 @@ class Fargparse(CMakePackage):
 
     maintainers("mathomp4", "tclune")
 
+    license("Apache-2.0", checked_by="mathomp4")
+
     version("develop", branch="develop")
     version("main", branch="main")
 

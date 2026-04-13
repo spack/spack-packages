@@ -193,6 +193,7 @@ class Git(AutotoolsPackage):
             f"--with-curl={spec['curl'].prefix}",
             f"--with-expat={spec['expat'].prefix}",
             f"--with-openssl={spec['openssl'].prefix}",
+            f"--with-libpcre2={spec['pcre2'].prefix}",
             f"--with-zlib={spec['zlib-api'].prefix}",
         ]
 
@@ -202,10 +203,6 @@ class Git(AutotoolsPackage):
         if self.spec.satisfies("+perl"):
             configure_args.append(f"--with-perl={spec['perl'].command.path}")
 
-        if self.spec.satisfies("^pcre"):
-            configure_args.append(f"--with-libpcre={spec['pcre'].prefix}")
-        if self.spec.satisfies("^pcre2"):
-            configure_args.append(f"--with-libpcre2={spec['pcre2'].prefix}")
         if self.spec.satisfies("+tcltk"):
             configure_args.append(f"--with-tcltk={self.spec['tk'].prefix.bin.wish}")
         else:

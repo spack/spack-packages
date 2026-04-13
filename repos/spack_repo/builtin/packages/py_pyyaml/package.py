@@ -73,6 +73,14 @@ class PyPyyaml(PythonPackage):
 
         return modules
 
+    @when("^py-pip@23.1:")
+    def config_settings(self, spec, prefix):
+        if "+libyaml" in self.spec:
+            return {"--global-option": "--with-libyaml"}
+        else:
+            return {"--global-option": "--without-libyaml"}
+
+    @when("^py-pip@:23.0")
     def global_options(self, spec, prefix):
         args = []
 
