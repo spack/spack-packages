@@ -102,7 +102,6 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         "7.2.0",
         "7.2.1",
     ]:
-        depends_on(f"rocprim@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver} +cuda", when=f"+cuda @{ver}")
         for tgt in ROCmPackage.amdgpu_targets:

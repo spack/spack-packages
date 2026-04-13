@@ -6,6 +6,7 @@ import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.packages.boost.package import Boost
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -53,6 +54,14 @@ class MiopenHip(CMakePackage):
     version("5.7.1", sha256="912a658fe21ce6f1982b0f2ff251c3f7bb618f2e7e9876d983bcb54e3cd7129e")
     version("5.7.0", sha256="5cd0b62254469e1c246d5890d2b78f8aedcf42cf8a327eabc1a391b83bcd14e1")
 
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
     variant(
         "ck",
         default=True,
@@ -137,9 +146,16 @@ class MiopenHip(CMakePackage):
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        depends_on(f"rocblas@{ver}", when=f"@{ver}")
-        depends_on(f"rocrand@{ver}", when=f"@{ver}")
-        depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocrand@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"composable-kernel@{ver} amdgpu_target={tgt}", when=f"@{ver} +ck amdgpu_target={tgt}"
+            )
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -158,8 +174,13 @@ class MiopenHip(CMakePackage):
         "7.2.0",
         "7.2.1",
     ]:
-        depends_on(f"hipblas@{ver}", when=f"@{ver}")
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} +hipblaslt amdgpu_target={tgt}"
+            )
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 
     depends_on("nlohmann-json", type="link")
