@@ -172,7 +172,12 @@ class Rocblas(CMakePackage):
         "7.2.0",
         "7.2.1",
     ]:
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"hipblaslt@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
+            )
+
 
     for ver in [
         "6.4.0",

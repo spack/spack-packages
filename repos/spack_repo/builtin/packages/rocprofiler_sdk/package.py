@@ -4,6 +4,7 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -141,6 +142,14 @@ class RocprofilerSdk(CMakePackage):
         commit="03fe8df3622a97161699439dfe933ef8e9e7db8a",
         submodules=True,
     )
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     variant("internal-fmt", default=False, description="build internal fmt")
 
@@ -180,7 +189,11 @@ class RocprofilerSdk(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
-        depends_on(f"rccl@{ver}", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"rccl@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} amdgpu_target={tgt}",
+            )
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -195,7 +208,11 @@ class RocprofilerSdk(CMakePackage):
         "7.2.0",
         "7.2.1",
     ]:
-        depends_on(f"rocdecode@{ver}", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"rocdecode@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} amdgpu_target={tgt}",
+            )
 
     patch(
         "https://github.com/ROCm/rocm-systems/commit/ef7253365c420ca486f074b9e9119a222e30fea0.patch?full_index=1",
