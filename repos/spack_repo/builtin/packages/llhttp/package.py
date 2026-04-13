@@ -23,7 +23,7 @@ class Llhttp(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("cmake@3.5.1:", type="build")
+    depends_on("cmake@3.25:", type="build")
 
     conflicts("~shared~static", msg="llhttp requires at least one library variant")
 

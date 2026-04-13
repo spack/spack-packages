@@ -30,7 +30,7 @@ class Icey(CMakePackage):
     depends_on("libuv")
     depends_on("llhttp")
     depends_on("minizip")
-    depends_on("zlib")
+    depends_on("zlib-api")
     depends_on("ffmpeg@5:", when="+ffmpeg")
 
     def cmake_args(self):
