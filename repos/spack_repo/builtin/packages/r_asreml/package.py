@@ -33,14 +33,20 @@ class RAsreml(RPackage):
 
     requires("target=x86_64: platform=linux", msg="r-asreml is only available for x86_64 linux")
 
-    version("4.2.0.393_R45", sha256="a180d47af2f21c09055c1bd0808515bc1b457e196d2f239e9984b38950643b11")
-    version("4.2.0.393_R44", sha256="cc4e3385cb0195a85fd6a5d339a21ce80c7c6731f567d88780db53aeb11cca24")
-    version("4.2.0.393_R43", sha256="8d5becb56a6a0a32d45cb14548833c861fc95d4ec8139129170193ea05ec1c44")
+    version(
+        "4.2.0.393_R45", sha256="a180d47af2f21c09055c1bd0808515bc1b457e196d2f239e9984b38950643b11"
+    )
+    version(
+        "4.2.0.393_R44", sha256="cc4e3385cb0195a85fd6a5d339a21ce80c7c6731f567d88780db53aeb11cca24"
+    )
+    version(
+        "4.2.0.393_R43", sha256="8d5becb56a6a0a32d45cb14548833c861fc95d4ec8139129170193ea05ec1c44"
+    )
     version(
         "4.2.0.302_R43", sha256="0a685521c80e3263ebb852886d3e1bd31213bd83507e7fffca34261ae18523f9"
     )
 
-    with default_args(type=("build","run")):
+    with default_args(type=("build", "run")):
         depends_on("r@4.5", when="@4.2.0.393_R45")
         depends_on("r@4.4", when="@4.2.0.393_R44")
         depends_on("r@4.3", when="@4.2.0.302_R43:4.2.0.393_R43")
