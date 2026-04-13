@@ -136,7 +136,7 @@ class Openblas(CMakePackage, MakefilePackage):
     # will only lead to unnecessary memory usage and potential bottlenecks
     # see https://github.com/spack/spack-packages/issues/4178#issuecomment-4239472982
     variant(
-        "num_threads", default=512, description="Set the default number of threads for OpenBLAS"
+        "num_threads", default="512", description="Set the default number of threads for OpenBLAS"
     )
 
     variant("locking", default=True, description="Build with thread safety")
