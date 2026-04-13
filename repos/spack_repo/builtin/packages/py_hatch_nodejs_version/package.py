@@ -20,7 +20,7 @@ class PyHatchNodejsVersion(PythonPackage):
     version("0.3.1", sha256="0e55fd713d92c5c1ccfee778efecaa780fd8bcd276d4ca7aff9f6791f6f76d9c")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.9:", when="@4:")
+        depends_on("python@3.9:", when="@0.4:")
         depends_on("python@3.7:")
 
         depends_on("py-hatchling@0.21:")
