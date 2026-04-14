@@ -136,7 +136,7 @@ class Openblas(CMakePackage, MakefilePackage):
     # will only lead to unnecessary memory usage and potential bottlenecks
     # see https://github.com/spack/spack-packages/issues/4178#issuecomment-4239472982
     variant(
-        "num_threads", default="512", description="Set the default number of threads for OpenBLAS"
+        "max_num_threads", default="512", description="Set the default number of threads for OpenBLAS"
     )
 
     variant("locking", default=True, description="Build with thread safety")
@@ -618,8 +618,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # Avoid that NUM_THREADS gets initialized with the host's number of CPUs.
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
-            num_threads = self.spec.variants["num_threads"].value
-            make_defs.append("NUM_THREADS={0}".format(num_threads))
+            max_num_threads = self.spec.variants["max_num_threads"].value
+            make_defs.append("NUM_THREADS={0}".format(max_num_threads))
 
         # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
         # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
