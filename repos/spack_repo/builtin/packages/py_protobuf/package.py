@@ -92,7 +92,7 @@ class PyProtobuf(PythonPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            if self.spec.satisfies("%gcc@14:"):
+            if self.spec.satisfies("@4.24.4 %gcc@14:"):
                 flags.append("-Wno-error=int-conversion")
 
         return flags, None, None
