@@ -420,8 +420,9 @@ class CMakeBuilder(BuilderWithDefaults):
         return define(cmake_var, value)
 
     @staticmethod
-    def define_package_from_variant(pkg: PackageBase, cmake_pkg: str, variant:
-                                    Optional[str] = None) -> str:
+    def define_package_from_variant(
+        pkg: PackageBase, cmake_pkg: str, variant: Optional[str] = None
+    ) -> str:
         return define_package_from_variant(pkg, cmake_pkg, variant)
 
     def define_from_variant(self, cmake_var: str, variant: Optional[str] = None) -> str:
@@ -608,7 +609,9 @@ def define_from_variant(pkg: PackageBase, cmake_var: str, variant: Optional[str]
     return define(cmake_var, value)
 
 
-def define_package_from_variant(pkg: PackageBase, cmake_pkg: str, variant: Optional[str] = None) -> str:
+def define_package_from_variant(
+    pkg: PackageBase, cmake_pkg: str, variant: Optional[str] = None
+) -> str:
     """Return a CMake command line argument to require or disable a package.
 
     The optional ``variant`` argument defaults to the lower-case transform
