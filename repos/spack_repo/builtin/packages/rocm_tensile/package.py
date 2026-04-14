@@ -5,6 +5,7 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.packages.boost.package import Boost
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -44,6 +45,15 @@ class RocmTensile(CMakePackage):
     version("6.0.0", sha256="5d90add62d1439b7daf0527316e950e454e5d8beefb4f723865fe9ab26c7aa42")
     version("5.7.1", sha256="9211a51b23c22b7a79e4e494e8ff3c31e90bf21adb8cce260acc57891fb2c917")
     version("5.7.0", sha256="fe2ae067c1c579f33d7a1e26da3fe6b4ed44befa08f9dfce2ceae586f184b816")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     tensile_architecture = (
         "all",
@@ -152,6 +162,8 @@ class RocmTensile(CMakePackage):
             args.append(
                 self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/next-cmake/cmake")
             )
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
 
     def install(self, spec, prefix):

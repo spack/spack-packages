@@ -161,4 +161,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+
         return args

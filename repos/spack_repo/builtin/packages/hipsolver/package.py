@@ -180,4 +180,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         if not os.path.isdir(libloc):
             libloc = self.spec["suite-sparse"].prefix.lib
         args.append(self.define("SUITE_SPARSE_LIBDIR", libloc))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

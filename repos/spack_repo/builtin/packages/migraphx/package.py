@@ -148,7 +148,6 @@ class Migraphx(CMakePackage):
         "7.2.1",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
-        depends_on(f"hipblas@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(
                 f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"

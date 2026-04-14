@@ -160,4 +160,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@:6"):
             args.append(self.define("CMAKE_CXX_STANDARD", "14"))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
