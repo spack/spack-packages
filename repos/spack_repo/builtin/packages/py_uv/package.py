@@ -22,7 +22,9 @@ class PyUv(PythonPackage):
     maintainers("adamjstewart")
 
     with default_args(deprecated=True):
-        version("0.11.6", sha256="e3b21b7e80024c95ff339fcd147ac6fc3dd98d3613c9d45d3a1f4fd1057f127b")
+        version(
+            "0.11.6", sha256="e3b21b7e80024c95ff339fcd147ac6fc3dd98d3613c9d45d3a1f4fd1057f127b"
+        )
         # deprecated due to migration to rust based uv
         version(
             "0.10.1", sha256="c89e7fd708fb3474332d6fc54beb2ea48313ebdc82c6931df92a884fcb636d9d"
