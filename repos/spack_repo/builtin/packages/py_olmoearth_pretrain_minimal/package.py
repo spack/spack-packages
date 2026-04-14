@@ -13,7 +13,7 @@ class PyOlmoearthPretrainMinimal(PythonPackage):
     homepage = "https://github.com/allenai/olmoearth_pretrain_minimal"
     pypi = "olmoearth_pretrain_minimal/olmoearth_pretrain_minimal-0.0.2.tar.gz"
 
-    maintainers("adamjstewart")
+    maintainers("piperwolters", "adamjstewart")
 
     license("Apache-2.0")
 
