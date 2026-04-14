@@ -89,3 +89,10 @@ class PyProtobuf(PythonPackage):
         depends_on(f"protobuf@3.{ver}", when=f"@3.{ver}")
 
     conflicts("%gcc@14:", when="@:4.24.3")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=int-conversion")
+
+        return flags, None, None
