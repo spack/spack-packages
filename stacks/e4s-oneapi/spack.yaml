@@ -90,7 +90,6 @@ spack:
   - flecsi
   - flit
   - flux-core
-  - fortrilinos
   - gasnet
   - ginkgo
   - globalarrays

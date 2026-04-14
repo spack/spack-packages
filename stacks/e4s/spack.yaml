@@ -168,7 +168,6 @@ spack:
   - flecsi
   - flit
   - flux-core
-  - fortrilinos
   - fpm
   - gasnet
   - libgeopm
