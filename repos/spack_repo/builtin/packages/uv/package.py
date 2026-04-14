@@ -22,6 +22,7 @@ class Uv(CargoPackage, PythonPackage):
 
     executables = ["^uv$"]
 
+    version("0.11.6", sha256="31b318f3174efa8f8c6179433a9ddfbedfa895ab2b9fb1cabb1bd7ce5fe8490a")  # FIXME
     version("0.11.0", sha256="d61c168d4a3b0dad3c2c2a73c591fe7a2bbad96ea5a5e15f857d03308e15ca50")
     version("0.10.12", sha256="73c256e80ac1b6e030aeb0643a80d84c32f327fbe09450ff39069103503f46c9")
     version("0.9.30", sha256="c89f7d66c6aa8324e14f6b07b35af64e37368d6cb4e2b93d8bb7fdd2159f78f6")
