@@ -52,6 +52,7 @@ class RocprofilerCompute(CMakePackage):
     depends_on("py-plotille")
     depends_on("py-dash-svg", type=("build", "run"))
     depends_on("py-dash", type=("build", "run"))
+    depends_on("py-dash@3:", type=("build", "run"), when="@7.0:")
     depends_on("py-dash-bootstrap-components", type=("build", "run"))
     depends_on("py-textual", when="@7.0:")
     depends_on("py-textual-plotext", when="@7.0:")
