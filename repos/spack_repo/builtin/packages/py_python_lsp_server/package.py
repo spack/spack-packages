@@ -45,7 +45,7 @@ class PyPythonLspServer(PythonPackage):
         depends_on("py-python-lsp-jsonrpc@1.1.0:1", when="@1.8.0:")
         depends_on("py-ujson@3.0.0:")
         depends_on("py-black", when="@1.13: formatter=black")
-        depends_on("py-ruff", when="@1.13: formatter=ruff")
+        depends_on("ruff", when="@1.13: formatter=ruff")
         depends_on("py-importlib-metadata@4.8.3:", when="^python@:3.9")
 
     def url_for_version(self, version):
