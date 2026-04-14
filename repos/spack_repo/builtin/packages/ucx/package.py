@@ -230,14 +230,14 @@ class Ucx(AutotoolsPackage, CudaPackage):
                     variant_list.append(f"~{variant_name}")
 
             # cm variant (only for UCX @:1.10)
-            if Version(version) <= Version("1.10"):
+            if version in ver(":1.10"):
                 if re.search(r"--with-cm\b", cfg) and "--without-cm" not in cfg:
                     variant_list.append("+cm")
                 elif "--without-cm" in cfg:
                     variant_list.append("~cm")
 
             # MLX5 (flag name changed in v1.18: --with-mlx5-dv → --with-mlx5)
-            if Version(version) <= Version("1.17"):
+            if version in ver(":1.17"):
                 if re.search(r"--with-mlx5-dv(?!=no)", cfg) and "--without-mlx5-dv" not in cfg:
                     variant_list.append("+mlx5_dv")
                 else:
@@ -249,14 +249,14 @@ class Ucx(AutotoolsPackage, CudaPackage):
                     variant_list.append("~mlx5_dv")
 
             # VFS (fuse3) - only for UCX @1.11.0:
-            if Version(version) >= Version("1.11.0"):
+            if version in ver("1.11.0:"):
                 if re.search(r"--with-fuse3(?!=no)", cfg):
                     variant_list.append("+vfs")
                 elif "--without-fuse3" in cfg:
                     variant_list.append("~vfs")
 
             # backtrace_detail (version-specific: --enable-backtrace-detail → --with-bfd)
-            if Version(version) <= Version("1.11"):
+            if version in ver(":1.11"):
                 if re.search(r"--enable-backtrace-detail\b", cfg):
                     variant_list.append("+backtrace_detail")
                 else:
