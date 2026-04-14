@@ -632,9 +632,9 @@ def define_package_from_variant(
         .. code-block:: python
 
             [
-                self.force_package_from_variant("Boost", "boost"),
-                self.force_package_from_variant("GSL"),
-                self.force_package_from_variant("HDF5"),
+                self.define_package_from_variant("Boost", "boost"),
+                self.define_package_from_variant("GSL"),
+                self.define_package_from_variant("HDF5"),
             ]
 
         will generate the following configuration options:
