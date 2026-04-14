@@ -40,9 +40,12 @@ class Gperf(AutotoolsPackage, GNUMirrorPackage):
         # Intel oneAPI icx incorrectly marks glibc's error() as noreturn,
         # causing the gnulib gl_cv_func_working_error configure test to
         # infinite-loop and consume unbounded memory.
-        # Fix available in icx 2026, but this workaround is needed for all versions of icx up to 2025.
+        # Fix available in icx 2026, but this workaround is needed for
+        # all versions of icx up to 2025.
         # https://community.intel.com/t5/Intel-oneAPI-DPC-C-Compiler/All-versions-of-icx-miscompile-error-0-resulting-in-segfaults/m-p/1744208
-        if self.spec.satisfies("%oneapi@:2025"):
+        if self.spec.satisfies(
+            "%oneapi@:2025"
+        ):
             args.append("gl_cv_func_working_error=yes")
 
         return args
