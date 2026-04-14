@@ -20,7 +20,9 @@ class Ruff(CargoPackage, PythonPackage):
 
     build_directory = "crates/ruff"
 
-    version("0.15.10", sha256="42f72c865e0484f490cce86441df2207f38f8da6334013c859c5840f0e69c395")  # FIXME
+    version(
+        "0.15.10", sha256="42f72c865e0484f490cce86441df2207f38f8da6334013c859c5840f0e69c395"
+    )  # FIXME
     version("0.15.7", sha256="370003574c8bde1eef286ece925f33e43be4d3564c8eca8dfb4fb100a1dce797")
     version("0.14.14", sha256="6a6a952a0b273df14eadd4e5a61a48fcc02fa268d2b258062bf332e6b53d4090")
     version("0.13.0", sha256="1be5402b5ca6925725fcb73af70a07b515246009d7bbb14f17e7f5adacd8a307")
