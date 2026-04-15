@@ -17,6 +17,7 @@ class Pcl(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("1.15.1", sha256="f187b2646422ae6fb6daf7eec2d62c538ae7fe626397ed649c0e9b5a5b862b5a")
     version("1.14.1", sha256="cc3dc26a9ea176cb588fb1f182324399dbaf11e5ba1bea95c7d39005b7a5d352")
     version("1.13.1", sha256="be4d499c066203a3c296e2f7e823d6209be5983415f2279310ed1c9abb361d30")
     version("1.13.0", sha256="bd110789f6a7416ed1c58da302afbdb80f8d297a9e23cc02fd78ab78b4762698")
@@ -29,8 +30,9 @@ class Pcl(CMakePackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("cmake@3.10:", when="@1.12.1:", type="build")
-    depends_on("eigen@3.1:")
-    depends_on("eigen@3.3:", when="@1.13:")
+    depends_on("eigen@3.1:3")
+    # support for eigen5 not yet in tagged release
+    depends_on("eigen@3.3:3", when="@1.13:")
     depends_on("flann@1.7:")
     depends_on("flann@1.9.1:", when="@1.12:")
     depends_on("boost@1.55:")
