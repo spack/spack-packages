@@ -57,7 +57,7 @@ class IntelOneapiRuntime(Package):
             return
 
         for path, name in libraries:
-            install(path, os.path.join(prefix.lib, name))
+            install(path, os.path.join(prefix.lib, os.path.basename(name)))
 
     @property
     def libs(self):
