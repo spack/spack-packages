@@ -153,54 +153,72 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
 
+    # archspec target : (cmake_arch_option, condition)
     spack_micro_arch_map = {
-        "thunderx2": "THUNDERX2",
-        "zen": "ZEN",
-        "zen2": "ZEN2",
-        "zen3": "ZEN3",
-        "zen4": "ZEN4",
-        "zen5": "ZEN5",
-        "steamroller": "KAVERI",
-        "excavator": "CARIZO",
-        "power7": "POWER7",
-        "power8": "POWER8",
-        "power9": "POWER9",
-        "power8le": "POWER8",
-        "power9le": "POWER9",
-        "sandybridge": "SNB",
-        "haswell": "HSW",
-        "mic_knl": "KNL",
-        "cannonlake": "SKX",
-        "cascadelake": "SKX",
-        "westmere": "WSM",
-        "ivybridge": "SNB",
-        "broadwell": "BDW",
-        "skylake": "SKL",
-        "icelake": "ICL",
-        "skylake_avx512": "SKX",
-        "sapphirerapids": "SPR",
+        "armv8.1a": ("ARMV81", None),
+        "armv8.4a": ("ARMV84", "@4.7.00:"),
+        "u74mc": ("RISCV_U74MC", "@4.7.00:"),
+        "a64fx": ("A64FX", None),
+        "thunderx2": ("ARMV8_THUNDERX2", None),
+        "zen": ("ZEN", None),
+        "zen2": ("ZEN2", None),
+        "zen3": ("ZEN3", None),
+        "zen4": ("ZEN4", "@4.6.00:"),
+        "zen5": ("ZEN5", "@4.7.00:"),
+        "power7": ("POWER7", "@:4.2.01"),
+        "power8": ("POWER8", None),
+        "power9": ("POWER9", None),
+        "power8le": ("POWER8", None),
+        "power9le": ("POWER9", None),
+        "sandybridge": ("SNB", None),
+        "haswell": ("HSW", None),
+        "mic_knl": ("KNL", None),
+        "cannonlake": ("SKX", None),  # fallback
+        "cascadelake": ("SKX", None),  # fallback
+        "westmere": ("WSM", "@:4.2.01"),
+        "ivybridge": ("SNB", None),  # fallback
+        "broadwell": ("BDW", None),
+        "skylake": ("SKL", None),
+        "icelake": ("ICL", None),
+        "skylake_avx512": ("SKX", None),
+        "sapphirerapids": ("SPR", None),
     }
 
+    # unmapped Kokkos arches
+    # ("AMDAVX", None),       # Generic AMD chip
+    # ("ICX", None),          # Ice Lake Xeon Server (AVX512)
+    # ("KNC", None),          # Knights Corner Xeon Phi
+    # ("BGQ", "@:4.2.01"),    # IBM Blue Gene/Q
+    # ("RISCV_SG2042", "@4.3.00:"), # Sophgo SG2042 (64-core RISC-V)
+    # ("ARMV9_GRACE", "@4.4.00:"),  # NVIDIA Grace CPU (ARMv9)
+    # ("RISCV_RVA22V", "@4.5.00:"), # RVA22V profile (RISC-V vector extension)
+    # ("ARMV80", None),       # ARMv8.0 Compatible CPU
+    # ("ARMV84_SVE", "@4.7.00:"),   # ARMv8.4 with SVE (Scalable Vector Extension)
+    # ("ARMV8_THUNDERX", None),  # Cavium ThunderX
+
+    # cuda_arch : (cmake_arch_option, condition)
     spack_cuda_arch_map = {
-        "30": "kepler30",
-        "32": "kepler32",
-        "35": "kepler35",
-        "37": "kepler37",
-        "50": "maxwell50",
-        "52": "maxwell52",
-        "53": "maxwell53",
-        "60": "pascal60",
-        "61": "pascal61",
-        "70": "volta70",
-        "72": "volta72",
-        "75": "turing75",
-        "80": "ampere80",
-        "86": "ampere86",
-        "87": "ampere87",
-        "89": "ada89",
-        "90": "hopper90",
-        "100": "blackwell100",
-        "120": "blackwell120",
+        "30": ("kepler30", "@:4"),
+        "32": ("kepler32", "@:4"),
+        "35": ("kepler35", "@:4"),
+        "37": ("kepler37", "@:4"),
+        "50": ("maxwell50", None),
+        "52": ("maxwell52", None),
+        "53": ("maxwell53", None),
+        "60": ("pascal60", None),
+        "61": ("pascal61", None),
+        "70": ("volta70", None),
+        "72": ("volta72", None),
+        "75": ("turing75", None),
+        "80": ("ampere80", None),
+        "86": ("ampere86", None),
+        "87": ("ampere87", "@4.7.00:"),
+        "89": ("ada89", "@4.0.01:"),
+        "90": ("hopper90", None),
+        "100": ("blackwell100", "@4.7.00:"),
+        "103": ("blackwell103", "@5.1.0:"),
+        "120": ("blackwell120", "@4.7.00:"),
+        "121": ("blackwell121", "@5.1.0:"),
     }
     cuda_arches = spack_cuda_arch_map.values()
     conflicts("+cuda", when="cuda_arch=none")
@@ -227,17 +245,21 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         when="+rocm",
     )
 
+    # amdgpu_target : (cmake_arch_option, condition)
     amdgpu_arch_map = {
-        "gfx900": "vega900",
-        "gfx906": "vega906",
-        "gfx908": "vega908",
-        "gfx90a": "vega90A",
-        "gfx940": "amd_gfx940",
-        "gfx942": "amd_gfx942",
-        "gfx1030": "navi1030",
-        "gfx1100": "navi1100",
+        "gfx900": ("vega900", None),
+        "gfx906": ("vega906", None),
+        "gfx908": ("vega908", None),
+        "gfx90a": ("vega90A", None),
+        "gfx940": ("amd_gfx940", "@4.3.00:"),
+        "gfx942": ("amd_gfx942", "@4.2.00:"),
+        "gfx950": ("amd_gfx950", "@5.1.0:"),
+        "gfx1030": ("navi1030", None),
+        "gfx1100": ("navi1100", "@4.1.00:"),
+        "gfx1103": ("amd_gfx1103", "@4.5.00:"),
+        "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
-    amdgpu_apu_arch_map = {"gfx942": "amd_gfx942_apu"}
+    amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
     amd_support_conflict_msg = (
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets: " + ", ".join(amdgpu_arch_map.keys())
@@ -259,20 +281,21 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 msg=amd_apu_support_conflict_msg.format(arch),
             )
 
-    intel_gpu_arches = (
-        "intel_gen",
-        "intel_gen9",
-        "intel_gen11",
-        "intel_gen12lp",
-        "intel_dg1",
-        "intel_dg2",
-        "intel_xehp",
-        "intel_pvc",
-    )
+    # cmake_arch_option : condition
+    intel_gpu_arches = {
+        "intel_gen": None,
+        "intel_gen9": None,
+        "intel_gen11": None,
+        "intel_gen12lp": None,
+        "intel_dg1": None,
+        "intel_dg2": "@4.7.00:",
+        "intel_xehp": None,
+        "intel_pvc": None,
+    }
     variant(
         "intel_gpu_arch",
         default="none",
-        values=("none",) + intel_gpu_arches,
+        values=("none",) + tuple(intel_gpu_arches.keys()),
         description="Intel GPU architecture",
     )
     variant("apu", default=False, description="Enable APU support", when="@4.5: +rocm")
@@ -363,7 +386,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     sanity_check_is_dir = ["bin", "include"]
 
     @classmethod
-    def get_microarch(cls, target):
+    def get_microarch(cls, target, kokkos_spec=None):
         """Get the Kokkos microarch name for a Spack target (spec.target)."""
         smam = cls.spack_micro_arch_map
 
@@ -376,7 +399,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 # No known microarch optimizatinos
                 return None
 
-        return smam[target.name]
+        microarch, cond = smam[target.name]
+        if cond and kokkos_spec and not kokkos_spec.satisfies(cond):
+            return None
+        return microarch
 
     def append_args(self, cmake_prefix, cmake_options, spack_options):
         variant_to_cmake_option = {"rocm": "hip"}
@@ -427,10 +453,14 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch != "none":
-                kokkos_arch_name = self.spack_cuda_arch_map[cuda_arch]
+                kokkos_arch_name, cond = self.spack_cuda_arch_map[cuda_arch]
+
+                if cond and not self.spec.satisfies(cond):
+                    raise SpackError(f"Unsupported CUDA arch: {cuda_arch}")
+
                 spack_microarches.append(kokkos_arch_name)
 
-        kokkos_microarch_name = self.get_microarch(spec.target)
+        kokkos_microarch_name = self.get_microarch(spec.target, spec)
         if kokkos_microarch_name:
             spack_microarches.append(kokkos_microarch_name)
 
@@ -439,16 +469,27 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             if amdgpu_target != "none":
                 if amdgpu_target in self.amdgpu_arch_map:
                     if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
-                        spack_microarches.append(self.amdgpu_apu_arch_map[amdgpu_target])
+                        kokkos_arch_name, cond = self.amdgpu_apu_arch_map[amdgpu_target]
                     else:
-                        spack_microarches.append(self.amdgpu_arch_map[amdgpu_target])
+                        kokkos_arch_name, cond = self.amdgpu_arch_map[amdgpu_target]
+
+                    if cond and not self.spec.satisfies(cond):
+                        raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
+
+                    spack_microarches.append(kokkos_arch_name)
                 else:
                     # Note that conflict declarations should prevent
                     # choosing an unsupported AMD GPU target
-                    raise SpackError("Unsupported target: {0}".format(amdgpu_target))
+                    raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
 
         if self.spec.variants["intel_gpu_arch"].value != "none":
-            spack_microarches.append(self.spec.variants["intel_gpu_arch"].value)
+            intel_gpu_arch = self.spec.variants["intel_gpu_arch"].value
+            cond = self.intel_gpu_arches[intel_gpu_arch]
+
+            if cond and not self.spec.satisfies(cond):
+                raise SpackError(f"Unsupported Intel GPU target: {intel_gpu_arch}")
+
+            spack_microarches.append(intel_gpu_arch)
 
         for arch in spack_microarches:
             options.append(self.define("Kokkos_ARCH_" + arch.upper(), True))

@@ -19,6 +19,7 @@ class Tamaas(SConsPackage):
     maintainers("prs513rosewood")
 
     version("master", branch="master")
+    version("2.9.0", sha256="1218bd9fd86c0b961b47430be1b7e6ce78e523210909761b8aea11d2daaf4d94")
     version("2.8.1", sha256="c5fc294ae3ccdee50beeeb23b8c6621a82c2b8642cbe40cd366f751a29b19225")
     version("2.8.0", sha256="8ec49bf484a622c0554452416d1804eefbd545da79ced352f2ea63bbd17c83f0")
     version("2.7.1", sha256="d7de6db3f5532bb9c8ab7e8cca1cdb5c133050dd5720249dde07027b0d41641f")
