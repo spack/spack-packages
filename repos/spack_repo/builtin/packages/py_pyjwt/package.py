@@ -31,3 +31,11 @@ class PyPyjwt(PythonPackage):
     depends_on("py-cryptography@3.4:", when="@2.6:+crypto", type=("build", "run"))
     depends_on("py-cryptography@3.3.1:", when="@2.4:+crypto", type=("build", "run"))
     depends_on("py-cryptography@1.4:", when="+crypto", type=("build", "run"))
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/P/PyJWT/{0}-{1}.tar.gz"
+        if version > Version("2.8.0"):
+            package = "pyjwt"
+        else:
+            package = "PyJWT"
+        return url.format(package, version)
