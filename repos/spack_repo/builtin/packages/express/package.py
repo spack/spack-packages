@@ -64,6 +64,15 @@ class Express(CMakePackage):
             # If "boost@1.82:" C++14 is needed
             # https://github.com/boostorg/math/releases/tag/boost-1.82.0
             filter_file("CMAKE_CXX_STANDARD 11", "CMAKE_CXX_STANDARD 14", "CMakeLists.txt")
+        if self.spec.satisfies("^abseil-cpp"):
+            # newer protobuffs depend on abseil-cpp, which enforces a cxx minimum, that I _believe_
+            # is related to the cxxstd variant on it (defaults to 17)
+            cxxstd = self.spec["abseil-cpp"].variants["cxxstd"].value
+            filter_file(
+                r"CMAKE_CXX_STANDARD [0-9]{2}", f"CMAKE_CXX_STANDARD {cxxstd}", "CMakeLists.txt"
+            )
+        if self.spec.satisfies("%boost@1.89:"):
+            filter_file(r"^.*\tsystem$", "", "CMakeLists.txt")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("CPATH", self.spec["bamtools"].prefix.include.bamtools)

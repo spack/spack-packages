@@ -20,7 +20,7 @@ class PyFparser(PythonPackage):
     # Links
     homepage = "https://github.com/stfc/fparser"
     git = "https://github.com/stfc/fparser.git"
-    pypi = "fparser/fparser-0.2.0.tar.gz"
+    pypi = "fparser/fparser-0.2.2.tar.gz"
 
     maintainers("arporter")
 
@@ -29,6 +29,8 @@ class PyFparser(PythonPackage):
 
     # Releases
     version("develop", branch="master")
+    version("0.2.2", sha256="81fee12416cde2dc57782542e4e271a1155e6f7a16eab099c030d54ff1b56b8c")
+    version("0.2.1", sha256="1ca89a760ef23747fc54c53918c03d9165026736d9f0ea6347885bd79fe4be85")
     version("0.2.0", sha256="3901d31c104062c4e532248286929e7405e43b79a6a85815146a176673e69c82")
     version("0.1.4", sha256="00d4f7e9bbd8a9024c3c2f308dd3be9b0eeff3cb852772c9f3cf0c4909dbafd4")
     version("0.1.3", sha256="10ba8b2803632846f6f011278e3810188a078d89afcb4a38bed0cbf10f775736")
