@@ -12,9 +12,9 @@ class PyKeyValueAio(PythonPackage):
     """A pluggable interface for KV Stores."""
 
     homepage = "https://github.com/strawgate/py-key-value"
-    pypi = "py_key_value_aio/py_key_value_aio-0.3.0.tar.gz"
+    pypi = "py_key_value_aio/py_key_value_aio-0.4.4.tar.gz"
 
-    version("0.3.0", sha256="858e852fcf6d696d231266da66042d3355a7f9871650415feef9fca7a6cd4155")
+    version("0.4.4", sha256="e3012e6243ed7cc09bb05457bd4d03b1ba5c2b1ca8700096b3927db79ffbbe55")
 
     variant("memory", default=False, description="Enable memory backend")
     variant("redis", default=False, description="Enable redis backend")
@@ -22,8 +22,8 @@ class PyKeyValueAio(PythonPackage):
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-uv-build@0.8.2:0.8", type="build")
 
-    depends_on("py-key-value-shared@0.3.0", when="@0.3.0", type=("build", "run"))
     depends_on("py-beartype@0.20:", type=("build", "run"))
+    depends_on("py-typing-extensions@4.15:", type=("build", "run"))
 
     depends_on("py-cachetools@5:", when="+memory", type=("build", "run"))
     depends_on("py-redis@4.3:", when="+redis", type=("build", "run"))
