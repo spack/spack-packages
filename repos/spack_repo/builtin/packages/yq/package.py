@@ -18,6 +18,7 @@ class Yq(GoPackage):
 
     license("MIT", checked_by="teaguesterling")
 
+    version("4.52.5", sha256="4b1d8f8d903793af62adf74f4810542cbd03515a728d1add0868072ea9aa00b8")
     version("4.49.2", sha256="648d96cc490a4e08edb6bf8ff9498360b405263e202663cd9c92322b3aa557ef")
     version("4.45.4", sha256="e06b9b219ad885b08cf983a7ce5ff6d946587ab4ffc62de4538655bb50e39111")
     version("4.45.3", sha256="e3edb61a80691d05f4e6286cf68b0f9e8eba120f1f7326b80b9e17fbed25d49e")
@@ -32,6 +33,7 @@ class Yq(GoPackage):
     version("4.35.2", sha256="8b17d710c56f764e9beff06d7a7b1c77d87c4ba4219ce4ce67e7ee29670f4f13")
 
     # from go.mod
+    depends_on("go@1.25:", type="build", when="@4.52.5:")
     depends_on("go@1.24:", type="build", when="@4.45.3:")
     depends_on("go@1.23:", type="build", when="@4.45.2:")
     depends_on("go@1.21:", type="build", when="@4.40:")

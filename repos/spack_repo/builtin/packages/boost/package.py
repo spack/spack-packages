@@ -163,12 +163,25 @@ class Boost(Package):
     # signals library was removed from boost in 1.69
     # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
     all_libs_opts = {
-        "openmethod": {"when": "@1.90.0:"},
-        "conversion": {"when": "@1.87.0:"},
-        "charconv": {"when": "@1.85.0:"},
-        "cobalt": {"when": "@1.84.0:"},
+        "openmethod": {"when": "@1.90:"},
+        "mqtt5": {"when": "@1.88:"},
+        "charconv": {"when": "@1.85:"},
+        "cobalt": {"when": "@1.84"},
+        "url": {"when": "@1.81:"},
+        "json": {"when": "@1.75:"},
+        "nowide": {"when": "@1.73:"},
         "signals": {"when": "@:1.68"},
-        "signals2": {"when": "@1.4:"},
+        "contract": {"when": "@1.67:"},
+        "stacktrace": {"when": "@1.65:"},
+        "fiber": {"when": "@1.62:"},
+        "type_erasure": {"when": "@1.60:"},
+        "atomic": {"when": "@1.53:"},
+        "coroutine": {"when": "@1.54:1.66"},
+        "context": {"when": "@1.51:"},
+        "container": {"when": "@1.56:"},
+        "locale": {"when": "@1.48:"},
+        "chrono": {"when": "@1.47:"},
+        "signals2": {"when": "@1.87:"},
     }
 
     for lib in all_libs:

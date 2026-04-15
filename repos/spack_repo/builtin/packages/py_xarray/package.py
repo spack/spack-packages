@@ -20,6 +20,7 @@ class PyXarray(PythonPackage):
     license("Apache-2.0")
     maintainers("Chrismarsh", "adamjstewart")
 
+    version("2026.4.0", sha256="c4ac9a01a945d90d5b1628e2af045099a9d4943536d4f2ee3ae963c3b222d15b")
     version("2026.2.0", sha256="978b6acb018770554f8fd964af4eb02f9bcc165d4085dbb7326190d92aa74bcf")
     version("2025.7.1", sha256="2884bf5672b540fcc6ff8c20a3196bda0d78fbfb4d67398d60526e97c2faceef")
     version("2024.7.0", sha256="4cae512d121a8522d41e66d942fb06c526bc1fd32c2c181d5fe62fe65b671638")
@@ -60,6 +61,7 @@ class PyXarray(PythonPackage):
         depends_on("py-setuptools@42:", when="@0.17:")
         depends_on("py-setuptools@38.4:", when="@0.16:", type=("build", "run"))
         depends_on("py-setuptools")
+        depends_on("py-setuptools-scm@8:", when="@2025.8:")
         depends_on("py-setuptools-scm@7:", when="@2023.7:")
         depends_on("py-setuptools-scm@3.4:+toml", when="@0.17:2022.3")
         depends_on("py-setuptools-scm", when="@0.15:")
@@ -80,6 +82,11 @@ class PyXarray(PythonPackage):
         depends_on("py-numpy@1.7:", when="@0.9.1")
         # https://github.com/pydata/xarray/releases/tag/v2024.06.0
         depends_on("py-numpy@:1", when="@:2024.5")
+        depends_on("py-packaging@24.2:", when="@2026.4:")
+        depends_on("py-packaging@24.1:", when="@2025.7:")
+        depends_on("py-packaging@23.1:", when="@2024.7:")
+        depends_on("py-packaging@21.3:", when="@2023.7:")
+        depends_on("py-packaging@20:", when="@0.21:")
         depends_on("py-pandas@2.2:", when="@2025.7:")
         depends_on("py-pandas@2.0:", when="@2024.7:")
         depends_on("py-pandas@1.4:", when="@2023.7:")
@@ -89,32 +96,34 @@ class PyXarray(PythonPackage):
         depends_on("py-pandas@0.24:", when="@0.14.0")
         depends_on("py-pandas@0.19.2:", when="@0.11:0.13")
         depends_on("py-pandas@0.15.0:", when="@0.9.1")
-        depends_on("py-packaging@24.1:", when="@2025.7:")
-        depends_on("py-packaging@23.1:", when="@2024.7:")
-        depends_on("py-packaging@21.3:", when="@2023.7:")
-        depends_on("py-packaging@20:", when="@0.21:")
 
         # Historical dependencies
         # https://github.com/pydata/xarray/pull/5845
         depends_on("py-setuptools", when="@:0.19")
 
         with when("+accel"):
+            depends_on("py-scipy@1.15:", when="@2026.4:")
             depends_on("py-scipy@1.13:")
             depends_on("py-bottleneck")
+            depends_on("py-numbagg@0.9:", when="@2026.4:")
             depends_on("py-numbagg@0.8:")
             depends_on("py-numba@0.62:", when="@2026:")
             depends_on("py-numba@0.59:")
+            depends_on("py-flox@0.10:", when="@2026.4:")
             depends_on("py-flox@0.9:")
             depends_on("py-opt-einsum")
 
         with when("+io"):
-            depends_on("py-netcdf4@1.6.0:", when="@2025.7:")
+            depends_on("py-netcdf4@1.6:", when="@2025.7:")
             depends_on("py-netcdf4")
-            depends_on("py-h5netcdf@1.4.0:", when="@2026:")
+            depends_on("py-h5netcdf@1.5:+h5py", when="@2026.4:")
+            depends_on("py-h5netcdf@1.4:", when="@2026:")
             depends_on("py-h5netcdf")
             depends_on("py-pydap")
+            depends_on("py-scipy@1.15:", when="@2026.4:")
             depends_on("py-scipy@1.13:", when="@2025.7:")
             depends_on("py-scipy")
+            depends_on("py-zarr@3:", when="@2026.4:")
             depends_on("py-zarr@2.18:", when="@2025.7:")
             depends_on("py-zarr")
             depends_on("py-fsspec")
@@ -141,7 +150,9 @@ class PyXarray(PythonPackage):
             )
 
         with when("+viz"):
+            depends_on("py-cartopy@0.24:", when="@2026.4:")
             depends_on("py-cartopy@0.23:", when="@2025.7:")
+            depends_on("py-matplotlib@3.10:", when="@2026.4:")
             depends_on("py-matplotlib@3.8:", when="@2026:")
             depends_on("py-matplotlib")
             depends_on("py-nc-time-axis")
