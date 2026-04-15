@@ -22,6 +22,7 @@ class RS4vectors(RPackage):
     bioc = "S4Vectors"
 
     with default_args(get_full_repo=True):
+        version("0.48.1", commit="ae25d08aa5b02dca895179b5b6ac52656c4547f3")
         version("0.38.0", commit="e80c24e1481033741147a0677fb42ce455e7da74")
         version("0.36.0", commit="af58701957ffdd9209031dd6a8dee3acdc58e999")
         version("0.34.0", commit="f590de3ec4d896a63351d0c1925d3856c0bd5292")
@@ -43,3 +44,4 @@ class RS4vectors(RPackage):
     depends_on("r-biocgenerics@0.31.1:", type=("build", "run"), when="@0.26.1:")
     depends_on("r-biocgenerics@0.36.0:", type=("build", "run"), when="@0.28.1:")
     depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@0.32.3:")
+    depends_on("r-biocgenerics@0.53.2:", type=("build", "run"), when="@0.48.1:")
