@@ -28,6 +28,6 @@ class Gflags(CMakePackage):
 
     def cmake_args(self):
         return [
-            self.define("BUILD_SHARED_LIBS", True), 
+            self.define("BUILD_SHARED_LIBS", True),
             self.define("REGISTER_INSTALL_PREFIX", False),
         ]
