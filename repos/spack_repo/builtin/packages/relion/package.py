@@ -209,7 +209,11 @@ class Relion(CMakePackage, CudaPackage):
     def stub_python_scripts(self):
         """When ~python, replace relion_python_* scripts with a clear error stub."""
         if self.spec.satisfies("@5: ~python"):
-            stub = '#!/usr/bin/env bash\n\necho "This build of RELION does not support Python commands."\nexit 1\n'
+            stub = (
+                "#!/usr/bin/env bash\n\n"
+                'echo "This build of RELION does not support Python commands."\n'
+                "exit 1\n"
+            )
             for path in glob.glob(join_path(self.prefix.bin, "relion_python_*")):
                 with open(path, "w") as f:
                     f.write(stub)
