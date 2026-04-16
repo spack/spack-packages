@@ -16,6 +16,7 @@ class Rocpydecode(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["rocpydecode.cpython", "rocpyjpegdecode.cpython"]
 
     version("7.2.0", sha256="e91a48734df8d4ce769b8979f2a1350a86705d38035c29618dff674471c9d026")
     version("7.1.1", sha256="8946730b6159350b896f9704b3ed485fa376e502d9b68f0cef68d09ab8260fab")

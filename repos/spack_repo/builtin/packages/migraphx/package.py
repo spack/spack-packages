@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -144,14 +145,30 @@ class Migraphx(CMakePackage):
 
     @classmethod
     def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        match = re.search(r'rocm-(\d+\.\d+\.\d+)', lib)
         if match:
-            ver = "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        else:
-            ver = None
-        return ver
+            return match.group(1)
+        return cls.version_from_rocm_version_h(lib)
+
+    @classmethod
+    def version_from_rocm_version_h(cls, lib):
+        """Get ROCm version from <ROCM_PATH>/include/rocm-core/rocm_version.h"""
+        libdir = os.path.dirname(os.path.abspath(lib))
+        rocm_prefix = os.path.dirname(libdir)
+        header = join_path(rocm_prefix, "include", "rocm-core", "rocm_version.h")
+        if not os.path.isfile(header):
+            return None
+        try:
+            with open(header, encoding="utf-8", errors="replace") as f:
+                text = f.read()
+        except OSError:
+            return None
+        major_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MAJOR\s+(\d+)", text, re.MULTILINE)
+        minor_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MINOR\s+(\d+)", text, re.MULTILINE)
+        patch_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_PATCH\s+(\d+)", text, re.MULTILINE)
+        if not major_m or not minor_m or not patch_m:
+            return None
+        return "{0}.{1}.{2}".format(major_m.group(1), minor_m.group(1), patch_m.group(1))
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

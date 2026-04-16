@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+import re
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -18,6 +21,8 @@ class Hipfort(CMakePackage):
     license("MIT")
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libhipfort-amdgcn.a", "libhipfort-nvptx.a"]
+
     version("7.2.0", sha256="0e59a7fd503ed4a76db89b3c679658108d3f0a7e6730ecfb7555087b203805c8")
     version("7.1.1", sha256="4e1e1aafc6eec9cabed3c90777591a15b033b8f9a58cacbaadf92cc21fcd896f")
     version("7.1.0", sha256="b4e74b92919e59cbccbc0baf611f49d50e7d160d2fda86e6eb2aed78ff20f89c")
@@ -81,6 +86,33 @@ class Hipfort(CMakePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"rocm-(\d+\.\d+\.\d+)", lib)
+        if match:
+            return match.group(1)
+        return cls.version_from_rocm_version_h(lib)
+
+    @classmethod
+    def version_from_rocm_version_h(cls, lib):
+        """Get ROCm version from <ROCM_PATH>/include/rocm-core/rocm_version.h"""
+        libdir = os.path.dirname(os.path.abspath(lib))
+        rocm_prefix = os.path.dirname(libdir)
+        header = join_path(rocm_prefix, "include", "rocm-core", "rocm_version.h")
+        if not os.path.isfile(header):
+            return None
+        try:
+            with open(header, encoding="utf-8", errors="replace") as f:
+                text = f.read()
+        except OSError:
+            return None
+        major_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MAJOR\s+(\d+)", text, re.MULTILINE)
+        minor_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MINOR\s+(\d+)", text, re.MULTILINE)
+        patch_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_PATCH\s+(\d+)", text, re.MULTILINE)
+        if not major_m or not minor_m or not patch_m:
+            return None
+        return "{0}.{1}.{2}".format(major_m.group(1), minor_m.group(1), patch_m.group(1))
 
     def cmake_args(self):
         args = ["-DHIPFORT_COMPILER={}".format(env["SPACK_FC"])]
