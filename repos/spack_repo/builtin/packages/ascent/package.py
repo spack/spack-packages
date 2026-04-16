@@ -516,8 +516,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_entry("CMAKE_C_FLAGS", cflags))
         cxxflags = cppflags + " ".join(spec.compiler_flags["cxxflags"])
         if spec.satisfies("%oneapi@2025:"):
-            cxxflags += "-Wno-error=missing-template-arg-list-after-template-kw "
-            cxxflags += "-Wno-missing-template-arg-list-after-template-kw"
+            cxxflags += " -Wno-error=missing-template-arg-list-after-template-kw"
+            cxxflags += " -Wno-missing-template-arg-list-after-template-kw"
         if cxxflags:
             cfg.write(cmake_cache_entry("CMAKE_CXX_FLAGS", cxxflags))
         fflags = " ".join(spec.compiler_flags["fflags"])
@@ -669,12 +669,6 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_path("HIP_ROOT_DIR", f"{spec['hip'].prefix}"))
             cfg.write(cmake_cache_path("HIP_CLANG_PATH", f"{spec['llvm-amdgpu'].prefix.bin}"))
             cfg.write(cmake_cache_string("CMAKE_HIP_ARCHITECTURES", amdgpu_archs))
-
-            clang_bindir = spec["llvm-amdgpu"].prefix.bin
-            cfg.write(cmake_cache_path("CMAKE_C_COMPILER", f"{clang_bindir}/clang", force=True))
-            cfg.write(
-                cmake_cache_path("CMAKE_CXX_COMPILER", f"{clang_bindir}/clang++", force=True)
-            )
 
             # This is needed for Kokkos
             kokkos_cxxstd = spec["kokkos"].variants["cxxstd"].value
