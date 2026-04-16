@@ -68,6 +68,10 @@ class Prrte(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
     depends_on("python@3.7:", type="build", when="@develop")
 
+    # The shipped configured has an expectation on automake version leading to either
+    # system automake use or configure failure
+    force_autoreconf = True
+
     # https://github.com/openpmix/openpmix/blob/master/docs/installing-pmix/configure-cli-options/runtime.rst
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
 
@@ -88,6 +92,13 @@ class Prrte(AutotoolsPackage):
         when="@4.1.0",
     )
 
+    # Improve hetero node handling
+    # https://github.com/openpmix/prrte/pull/2430
+    patch('https://github.com/openpmix/prrte/commit/a6b09c9c3fb84838b056c31e802b5f79ac4e8d6b.patch?full_index=1',
+        sha256="91b28f5c701c8543b4807a29e9b5154b9d7e62f5d3a1e3036dadf1a9b5b0ca65",
+        when="@4.1.0"
+    )
+
     def url_for_version(self, version):
         if version <= Version("3"):
             # tarballs have a single 'r'
@@ -96,13 +107,10 @@ class Prrte(AutotoolsPackage):
             return super().url_for_version(version)
 
     def autoreconf(self, spec, prefix):
-        # If configure exists nothing needs to be done
-        if os.path.exists(self.configure_abs_path):
-            return
         with working_dir(self.configure_directory):
             perl = spec["perl"].command
             perl("autogen.pl")
-
+  
     def configure_args(self):
         spec = self.spec
         config_args = ["--enable-shared", "--enable-static", "--disable-sphinx"]
@@ -134,3 +142,8 @@ class Prrte(AutotoolsPackage):
             config_args.append("--with-slurm")
 
         return config_args
+
+    # ensure prrte prefix is set so that the FQP of mpirun is not required
+    # ref: https://github.com/openpmix/prrte/issues/2426#issuecomment-4261910023
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.set('PRTE_PREFIX', self.spec.prefix)
