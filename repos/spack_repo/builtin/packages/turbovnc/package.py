@@ -18,7 +18,7 @@ class Turbovnc(CMakePackage):
     homepage = "http://www.turbovnc.org/"
     url = "https://github.com/TurboVNC/turbovnc/releases/download/3.2/turbovnc-3.2.tar.gz"
 
-    version("3.2", "513075e66426b09b717c3f676091e117")
+    version("3.2", sha256="a4fd895ebb8a40a5962db8c38e3de61e4d22c77d64d2ea0afe8fd78c7a8aff72")
 
     variant("server", default=True, description="Enable server build")
     variant("x11deps", default=True, description="Depends x11 depends")
