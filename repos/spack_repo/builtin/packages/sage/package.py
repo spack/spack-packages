@@ -2,12 +2,12 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.build_systems.cargo import CargoPackage
 
 from spack.package import *
 
 
-class Sage(Package):
+class Sage(CargoPackage):
     """Proteomics search & quantification"""
 
     homepage = "https://sage-docs.vercel.app"
@@ -23,15 +23,11 @@ class Sage(Package):
     depends_on("rust@1.85:", type=("build", "test"), when="@0.15:")
     depends_on("rust@:1.79", type=("build", "test"), when="@:0.14.7")
 
-    def patch(self):
-        copy("Cargo.lock", "crates/sage-cli")
+    build_directory = "crates/sage-cli"
+    build_args = ["--locked"]
 
-    def install(self, spec, prefix):
-        cargo = which("cargo")
-        cargo("build", "--release")
-
-        if self.run_tests:
-            sage = Executable("target/release/sage")
-            sage("tests/config.json")
-
-        cargo("install", "--path", "crates/sage-cli", "--root", prefix, "--locked")
+    @run_after("build")
+    @on_package_attributes(run_tests=True)
+    def recommended_test(self):
+        sage = Executable("target/release/sage")
+        sage("tests/config.json")
