@@ -14,7 +14,7 @@ class PyFakeredis(PythonPackage):
     homepage = "https://github.com/cunla/fakeredis-py"
     pypi = "fakeredis/fakeredis-2.35.0.tar.gz"
 
-    version("2.35.0", sha256="5d1a0192c2c559e55b2d05328d86282ddd2079c1712a91e6d1b3010e0dd45ca6")
+    version("2.35.1", sha256="5bae5eba7b9d93cb968944ac40936373cf2397ff71667d4b595df65c3d2e413f")
 
     variant("lua", default=False, description="Enable Lua scripting support")
 
