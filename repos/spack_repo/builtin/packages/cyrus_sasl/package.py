@@ -68,3 +68,10 @@ class CyrusSasl(AutotoolsPackage):
     depends_on("openssl", type="link")
     depends_on("libxcrypt", type="link")
     depends_on("krb5", type="link")
+
+    def configure_args(self):
+        args = []
+        # avoid installing to /Library/Frameworks/SASL2.framework
+        if self.spec.satisfies("platform=darwin"):
+            args.append("--disable-macos-framework")
+        return args
