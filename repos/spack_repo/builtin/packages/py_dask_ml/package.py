@@ -37,11 +37,14 @@ class PyDaskMl(PythonPackage):
     depends_on("py-numba@0.51:", when="@1.9:", type=("build", "run"))
     depends_on("py-numba", type=("build", "run"))
     depends_on("py-numpy@1.24:", when="@2025.1.0:", type=("build", "run"))
-    depends_on("py-numpy@1.17.3:", type=("build", "run"))
+    # np.float removed in numpy@1.24
+    depends_on("py-numpy@1.17.3:1.23", when="@1.8.0", type=("build", "run"))
     depends_on("py-pandas@2:", when="@2025.1.0:", type=("build", "run"))
     depends_on("py-pandas@0.24.2:", type=("build", "run"))
     depends_on("py-scikit-learn@1.6.1:", when="@2025.1.0:", type=("build", "run"))
-    depends_on("py-scikit-learn@0.23:", type=("build", "run"))
+    # if_delegate_has_method() method used in dask-ml@1.8.0 has been removed in scikit-learn@1.3
+    # _check_param_grid() method used in dask-ml@1.8.0 has been removed in scikit-lean@1.1
+    depends_on("py-scikit-learn@0.23:1.0", when="@1.8.0", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-dask-glm@0.2.0:", type=("build", "run"))
     depends_on("py-multipledispatch@0.4.9:", type=("build", "run"))
