@@ -28,6 +28,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.1.0", sha256="7bdbdfc88033ed7d940c7940ed8919e1f2b78a9656c69276beb76ad45c41ec4e")
     version("5.0.2", sha256="188817bb452ca805ee8701f1c5adbbb4fb83dc8d1c50624566a18a719ba0fa5e")
     version("5.0.1", sha256="cf7d8515ca993229929be9f051aecd8f93cde325adac8a4f82ed6848adace218")
     version("5.0.0", sha256="c45f3e19c3eb71fc8b7210cb04cac658015fc1839e7cc0571f7406588ff9bcef")
@@ -86,6 +87,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")  # Kokkos requires a C++ compiler
 
+    # TODO new major: any new major needs to update this
     with when("@5:"):
         conflicts("%gcc@:10.3")
         conflicts("%llvm@:13")
@@ -99,6 +101,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("%msvc@:19.2")
         conflicts("%arm@:20")
 
+    # TODO any new version: depending on the changes in Kokkos' build system,
+    # there might be special requirements on the cmake version.
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@5:")
     depends_on("cmake@3.25.2:", type="build", when="@5: +cuda +cmake_lang")
@@ -117,6 +121,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     requires(
         "+serial", when="~hpx ~openmp ~threads", msg="Kokkos requires at least one host backend"
     )
+    conflicts("+openmptarget", when="@5.1:")
 
     tpls_variants = {
         "hpx": [False, None, "Whether to enable the HPX library"],
@@ -125,6 +130,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "memkind": [False, "@:4", "Whether to enable the MEMKIND library"],
     }
 
+    # TODO any new version: check if all these options still exist
     options_variants = {
         "aggressive_vectorization": [False, None, "Aggressively vectorize loops"],
         "atomics_bypass": [
@@ -145,7 +151,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "debug_bounds_check": [False, None, "Use bounds checking - will increase runtime"],
         "debug_dualview_modify_check": [False, "@:4", "Debug check on dual views"],
         "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
-        "examples": [False, "@:4", "Whether to build examples"],
         "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
@@ -264,6 +269,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets: " + ", ".join(amdgpu_arch_map.keys())
     )
+    # FIXME we should revisit this. More archs have unified memory via HMM,
+    # only the APU has unified physical memory
     amd_apu_support_conflict_msg = (
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets with unified memory: "
@@ -298,6 +305,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         values=("none",) + tuple(intel_gpu_arches.keys()),
         description="Intel GPU architecture",
     )
+    # FIXME this should move to the apu part
     variant("apu", default=False, description="Enable APU support", when="@4.5: +rocm")
 
     for dev, (dflt, desc) in devices_variants.items():
@@ -313,6 +321,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         variant(tpl, default=dflt, description=desc, when=when)
         depends_on(tpl, when="+%s" % tpl)
 
+    # FIXME we should reorder variants and conflicts
     variant("wrapper", default=False, description="Use nvcc-wrapper for CUDA build")
     variant("cmake_lang", default=False, description="Use CMake language support for CUDA/HIP")
     depends_on("kokkos-nvcc-wrapper", when="+wrapper")
@@ -320,11 +329,13 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
 
+    # TODO new major: update c++ std
     with default_args(multi=False, description="C++ standard"):
         variant("cxxstd", default="17", values=("14", "17", "20"), when="@3")
         variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
         variant("cxxstd", default="20", values=("20", "23"), when="@5:")
 
+    # FIXME regroup variants and conflicts
     variant(
         "deprecated_code",
         default=True,
@@ -341,10 +352,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # with some MPI such as cray-mpich
     variant("alloc_async", default=False, description="Use CudaMallocAsync", when="@4.2: +cuda")
 
+    # TODO deprecation of v3: this can be removed
     # SYCL and OpenMPTarget require C++17 or higher
     conflicts("+sycl", when="cxxstd=14", msg="SYCL requires C++17 or higher")
     conflicts("+openmptarget", when="cxxstd=14", msg="OpenMPTarget requires C++17 or higher")
 
+    # TODO new major: add new standard version here
     # HPX should use the same C++ standard
     for cxxstd in ["14", "17", "20", "23"]:
         depends_on(f"hpx cxxstd={cxxstd}", when=f"+hpx cxxstd={cxxstd}")
@@ -352,6 +365,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # HPX version constraints
     depends_on("hpx@1.7:", when="+hpx")
 
+    # TODO deprecation of some versions in 4: remove
     # Patches
     patch("sycl_bhalft_test.patch", when="@4.2.00 +sycl")
     # adds amd_gfx940 support to Kokkos 4.2.00 (upstreamed in https://github.com/kokkos/kokkos/pull/6671)
@@ -439,6 +453,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("Kokkos_ENABLE_COMPILE_AS_CMAKE_LANGUAGE", "cmake_lang"),
         ]
 
+        # TODO new major: update this
         if spec.satisfies("@5:"):
             if spec.version == Version("develop"):
                 highest = max(v for v in self.versions if not v.isdevelop())
@@ -526,6 +541,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("Kokkos_ENABLE_ROCTHRUST", True))
 
+            # TODO deprecation of v4: remove partially
             # Using Kokkos_ENABLE_IMPL_HIP_MALLOC_ASYNC is problematic with ROCm 7
             # Newer Kokkos versions disable this by default
             if self.spec.satisfies("@4.5:5.0.0 %hip@7:"):
@@ -552,6 +568,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Kokkos_ENABLE_IMPL_CUDA_MALLOC_ASYNC", "alloc_async")
         )
 
+        # TODO deprecation v4: remove
         if self.version == Version("4.7.00"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
 
