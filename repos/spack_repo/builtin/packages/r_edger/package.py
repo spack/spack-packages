@@ -21,6 +21,7 @@ class REdger(RPackage):
     bioc = "edgeR"
 
     with default_args(get_full_repo=True):
+        version("4.8.2", commit="af0343acbb3998d2d2bb3e3d259bbee17a2c8a7e")
         version("3.42.0", commit="197b9a8ccc27016611b262c2c31ca22f991661c5")
         version("3.40.0", commit="0b25adcc6b3cb0a8c641964d1274536ee07ee162")
         version("3.38.4", commit="f5a3bb568a23b34146ac66329a95ee4785093536")
@@ -41,5 +42,6 @@ class REdger(RPackage):
     depends_on("r-limma", type=("build", "run"))
     depends_on("r-limma@3.34.5:", type=("build", "run"), when="@3.20.9:")
     depends_on("r-limma@3.41.5:", type=("build", "run"), when="@3.32.1:")
+    depends_on("r-limma@3.63.6:", type=("build", "run"), when="@4.8.2:")
     depends_on("r-locfit", type=("build", "run"))
     depends_on("r-rcpp", type=("build", "run"), when="@3.20.9:")
