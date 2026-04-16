@@ -8,7 +8,6 @@ import re
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -153,14 +152,11 @@ class MiopenHip(CMakePackage):
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"rocrand@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(
-                f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )
-            depends_on(
-                f"rocrand@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )
-            depends_on(
-                f"composable-kernel@{ver} amdgpu_target={tgt}", when=f"@{ver} +ck amdgpu_target={tgt}"
+                f"composable-kernel@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +ck amdgpu_target={tgt}",
             )
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
@@ -181,11 +177,10 @@ class MiopenHip(CMakePackage):
         "7.2.1",
     ]:
         for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(
-                f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )
-            depends_on(
-                f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} +hipblaslt amdgpu_target={tgt}"
+                f"hipblaslt@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
             )
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 

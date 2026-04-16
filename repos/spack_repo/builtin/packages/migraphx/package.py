@@ -123,12 +123,8 @@ class Migraphx(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
-            depends_on(
-                f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )            
-            depends_on(
-                f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
@@ -151,12 +147,8 @@ class Migraphx(CMakePackage):
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
-            depends_on(
-                f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )            
-            depends_on(
-                f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )            
+            depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     @property
     def cmake_python_hints(self):

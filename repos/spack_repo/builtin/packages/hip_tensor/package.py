@@ -85,8 +85,7 @@ class HipTensor(CMakePackage, ROCmPackage):
     ]:
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(
-                f"composable-kernel@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} amdgpu_target={tgt}",
+                f"composable-kernel@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
             )
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"hipcc@{ver}", when=f"@{ver}")

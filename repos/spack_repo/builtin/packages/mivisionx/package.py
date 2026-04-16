@@ -219,12 +219,10 @@ class Mivisionx(CMakePackage):
             depends_on(f"hip@{ver}", when=f"@{ver}")
             for tgt in ROCmPackage.amdgpu_targets:
                 depends_on(
-                    f"migraphx@{ver} amdgpu_target={tgt}",
-                    when=f"@{ver} amdgpu_target={tgt}",
+                    f"migraphx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
                 )
                 depends_on(
-                    f"miopen-hip@{ver} amdgpu_target={tgt}",
-                    when=f"@{ver} amdgpu_target={tgt}",
+                    f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
                 )
             depends_on(f"rpp@{ver}", when=f"@{ver}")
             depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
