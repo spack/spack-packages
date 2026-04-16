@@ -19,7 +19,7 @@ class Rocal(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
-    libraries = ["librocal.so"]
+    libraries = ["librocal"]
 
     license("MIT")
     version("7.2.0", sha256="0de82b955229ed3883e237f0ffd23b4052aa78a1308873185662ab46ca01e711")
