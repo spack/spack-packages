@@ -5,7 +5,6 @@
 import os
 import re
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -145,7 +144,7 @@ class RocmBandwidthTest(CMakePackage):
 
     @classmethod
     def determine_version(cls, exe):
-        match = re.search(r'rocm-(\d+\.\d+\.\d+)', exe)
+        match = re.search(r"rocm-(\d+\.\d+\.\d+)", exe)
         if match:
             return match.group(1)
         return cls.version_from_rocm_version_h(exe)

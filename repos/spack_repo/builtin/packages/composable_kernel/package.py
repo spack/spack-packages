@@ -5,7 +5,6 @@
 import os
 import re
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -122,7 +121,7 @@ class ComposableKernel(CMakePackage):
 
     @classmethod
     def determine_version(cls, lib):
-        match = re.search(r'rocm-(\d+\.\d+\.\d+)', lib)
+        match = re.search(r"rocm-(\d+\.\d+\.\d+)", lib)
         if match:
             return match.group(1)
         return cls.version_from_rocm_version_h(lib)

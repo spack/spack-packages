@@ -337,7 +337,7 @@ class Aqlprofile(Package):
             )
             major = int(ver.split(".")[0])
             if major >= 7:
-                ver=None
+                ver = None
         else:
             ver = None
         return ver

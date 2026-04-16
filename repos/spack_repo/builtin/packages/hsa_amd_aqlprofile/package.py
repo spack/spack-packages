@@ -4,7 +4,6 @@
 
 import re
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -56,7 +55,7 @@ class HsaAmdAqlprofile(CMakePackage):
             )
             major = int(ver.split(".")[0])
             if major < 7:
-                ver=None
+                ver = None
         else:
             ver = None
         return ver

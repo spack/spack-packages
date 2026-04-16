@@ -4,7 +4,6 @@
 
 import re
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -217,5 +216,5 @@ class RocprofilerSdk(CMakePackage):
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)
-        match = re.search(r'rocm_version: (\d+\.\d+\.\d+)', output)
+        match = re.search(r"rocm_version: (\d+\.\d+\.\d+)", output)
         return match.group(1) if match else None

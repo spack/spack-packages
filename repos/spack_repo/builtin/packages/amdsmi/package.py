@@ -83,5 +83,5 @@ class Amdsmi(CMakePackage):
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("version", output=str, error=str)
-        match = re.search(r'ROCm version: (\d+\.\d+\.\d+)', output)
+        match = re.search(r"ROCm version: (\d+\.\d+\.\d+)", output)
         return match.group(1) if match else None
