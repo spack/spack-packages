@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import glob
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
@@ -202,6 +204,15 @@ class Relion(CMakePackage, CudaPackage):
                 r'\1 "{0}"'.format(join_path(self.spec["motioncor2"].prefix.bin, "MotionCor2")),
                 join_path("src", "pipeline_jobs.h"),
             )
+
+    @run_after("install")
+    def stub_python_scripts(self):
+        """When ~python, replace relion_python_* scripts with a clear error stub."""
+        if self.spec.satisfies("@5: ~python"):
+            stub = '#!/usr/bin/env bash\n\necho "This build of RELION does not support Python commands."\nexit 1\n'
+            for path in glob.glob(join_path(self.prefix.bin, "relion_python_*")):
+                with open(path, "w") as f:
+                    f.write(stub)
 
     def setup_run_environment(self, env):
         env.set("RELION_CTFFIND_EXECUTABLE", self.spec["ctffind"].prefix.bin.ctffind)
