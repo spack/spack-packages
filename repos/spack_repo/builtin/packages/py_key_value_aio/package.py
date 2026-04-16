@@ -20,7 +20,7 @@ class PyKeyValueAio(PythonPackage):
     variant("redis", default=False, description="Enable redis backend")
 
     depends_on("python@3.10:", type=("build", "run"))
-    depends_on("py-uv-build@0.8.2:0.8", type="build")
+    depends_on("py-uv-build@0.8.2:0.11", type="build")
 
     depends_on("py-beartype@0.20:", type=("build", "run"))
     depends_on("py-typing-extensions@4.15:", type=("build", "run"))
