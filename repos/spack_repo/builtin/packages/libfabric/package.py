@@ -153,14 +153,6 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@1.9.0",
     )
 
-    # Backport a fix for building the cxi provider with older libcxi:
-    # https://github.com/ofiwg/libfabric/pull/12054
-    patch(
-        "https://github.com/ofiwg/libfabric/commit/6bdb7964213377630b77cbe6ada8a80b4a7a9afc.patch?full_index=1",
-        sha256="ae7e1583806af1d279f1aefc9cba64b399a828ea28f77627221b535bc5387e7a",
-        when="@2.5.0 fabrics=cxi",
-    )
-
     # Fix for the inline assembly problem for the Nvidia compilers
     # https://github.com/ofiwg/libfabric/pull/7665
     patch("nvhpc-symver.patch", when="@1.6.0:1.14.0 %nvhpc")
@@ -178,15 +170,17 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("liburing@2.1:", when="+uring")
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("libcxi", when="fabrics=cxi")
+    # https://github.com/ofiwg/libfabric/issues/12036
+    depends_on("libcxi@14:", when="fabrics=cxi @2.5.0")
     depends_on("cassini-headers", when="fabrics=cxi")
     depends_on("cxi-driver", when="fabrics=cxi")
     depends_on("xpmem", when="fabrics=xpmem")
     depends_on("gdrcopy", when="+gdrcopy")
 
-    depends_on("m4", type="build")
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
+    depends_on("m4", when="@main", type="build")
+    depends_on("autoconf", when="@main", type="build")
+    depends_on("automake", when="@main", type="build")
+    depends_on("libtool", when="@main", type="build")
     depends_on("json-c", when="fabrics=cxi")
     depends_on("curl", when="fabrics=cxi")
 
@@ -243,6 +237,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
         env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
         env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib64)
 
+    @when("@main")
     def autoreconf(self, spec, prefix):
         bash = which("bash", required=True)
         bash("./autogen.sh")
