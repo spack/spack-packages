@@ -231,19 +231,22 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
             # cm variant (only for UCX @:1.10)
             if version in ver(":1.10"):
-                if re.search(r"--with-cm\b", cfg) and "--without-cm" not in cfg:
+                if (re.search(r"--with-cm\b", cfg) and
+                        "--without-cm" not in cfg):
                     variant_list.append("+cm")
                 elif "--without-cm" in cfg:
                     variant_list.append("~cm")
 
             # MLX5 (flag name changed in v1.18: --with-mlx5-dv → --with-mlx5)
             if version in ver(":1.17"):
-                if re.search(r"--with-mlx5-dv(?!=no)", cfg) and "--without-mlx5-dv" not in cfg:
+                if (re.search(r"--with-mlx5-dv(?!=no)", cfg) and
+                        "--without-mlx5-dv" not in cfg):
                     variant_list.append("+mlx5_dv")
                 else:
                     variant_list.append("~mlx5_dv")
             else:
-                if re.search(r"--with-mlx5(?!=no)", cfg) and "--without-mlx5" not in cfg:
+                if (re.search(r"--with-mlx5(?!=no)", cfg) and
+                        "--without-mlx5" not in cfg):
                     variant_list.append("+mlx5_dv")
                 else:
                     variant_list.append("~mlx5_dv")
@@ -255,7 +258,8 @@ class Ucx(AutotoolsPackage, CudaPackage):
                 elif "--without-fuse3" in cfg:
                     variant_list.append("~vfs")
 
-            # backtrace_detail (version-specific: --enable-backtrace-detail → --with-bfd)
+            # backtrace_detail (version-specific: --enable-backtrace-detail
+            # → --with-bfd)
             if version in ver(":1.11"):
                 if re.search(r"--enable-backtrace-detail\b", cfg):
                     variant_list.append("+backtrace_detail")
@@ -273,7 +277,8 @@ class Ucx(AutotoolsPackage, CudaPackage):
             elif "--without-ib-hw-tm" in cfg:
                 variant_list.append("~ib_hw_tm")
 
-            # logging (detect actual build config; UCX default=enabled, Spack variant default=False)
+            # logging: detect actual build config
+            # (UCX default=enabled, Spack variant default=False)
             if "--disable-logging" in cfg:
                 variant_list.append("~logging")
             else:
