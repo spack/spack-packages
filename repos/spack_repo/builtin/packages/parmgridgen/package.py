@@ -32,19 +32,12 @@ class Parmgridgen(Package):
         if name in ("cflags",):
             if self.spec.satisfies("%gcc@14:"):
                 flags.extend(
-                    [
-                        "-Wno-implicit-function-declaration",
-                        "-Wno-incompatible-pointer-types",
-                    ]
+                    ["-Wno-implicit-function-declaration", "-Wno-incompatible-pointer-types"]
                 )
         return (flags, [], [])
 
     def install(self, spec, prefix):
-        make_opts = [
-            "make=make",
-            "LIBDIR=-L../..",
-            "LIBS=-L../.. -lmgrid -lm",
-        ]
+        make_opts = ["make=make", "LIBDIR=-L../..", "LIBS=-L../.. -lmgrid -lm"]
 
         if "+mpi" in spec:
             make_opts.extend(
