@@ -1,0 +1,67 @@
+name: update-src-mirror
+
+on:
+  push:
+    branches:
+      - develop
+
+concurrency:
+  group: update-src-mirror-${{github.ref}}
+  cancel-in-progress: false
+
+permissions:
+  id-token: write  # Required for AWS OIDC authentication
+  contents: read
+
+jobs:
+  create-and-upload-mirror:
+    if: github.repository == 'spack/spack-packages'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Checkout Spack
+        uses: ./.github/actions/checkout-spack
+
+      - name: Create and upload source mirror
+        env:
+          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+        run: |
+          source spack-core/share/spack/setup-env.sh
+
+          # Create source mirror for changed specs
+          SPECS=$(spack repo show-version-updates \
+            --no-manual-packages \
+            --only-redistributable \
+            --no-git-versions \
+            builtin \
+            "${{ github.event.before }}" \
+            "${{ github.event.after }}")
+
+          if [ -z "$SPECS" ]; then
+            echo "No specs to mirror"
+            exit 0
+          fi
+
+          echo "Creating mirror for: $SPECS"
+          spack -c concretizer:unify:false mirror create -d src-mirror $SPECS
+
+      - name: Configure AWS credentials
+        if: success()
+        uses: aws-actions/configure-aws-credentials@b95a1f88e6c89f9cfc35f4588e591a0e2afe30ae
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        if: success()
+        run: |
+          aws s3 sync src-mirror/ s3://${{ secrets.S3_BUCKET_NAME }}/source-mirror/ \
+            --size-only \
+            --no-progress
+          echo "Successfully uploaded source mirror to S3"
