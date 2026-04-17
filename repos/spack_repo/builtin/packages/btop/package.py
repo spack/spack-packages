@@ -57,6 +57,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         return [
-          self.define_from_variant("BTOP_GPU", "gpu"),
-          self.define("BUILD_TESTING", self.run_tests),
+            self.define_from_variant("BTOP_GPU", "gpu"),
+            self.define("BUILD_TESTING", self.run_tests),
         ]
