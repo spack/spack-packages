@@ -112,7 +112,6 @@ class Rocsolver(CMakePackage):
         "7.2.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        depends_on(f"rocblas@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
