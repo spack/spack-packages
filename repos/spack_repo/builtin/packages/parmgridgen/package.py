@@ -28,13 +28,20 @@ class Parmgridgen(Package):
     depends_on("mpi", when="+mpi")
     depends_on("gmake", type="build")
 
+    def flag_handler(self, name, flags):
+        if name in ("cflags",):
+            if self.spec.satisfies("%gcc@14:"):
+                flags.extend(
+                    [
+                        "-Wno-implicit-function-declaration",
+                        "-Wno-incompatible-pointer-types",
+                    ]
+                )
+        return (flags, [], [])
+
     def install(self, spec, prefix):
         make_opts = [
             "make=make",
-            "COPTIONS={0}".format(self.compiler.cc_pic_flag),
-            "LDOPTIONS={0}".format(self.compiler.cc_pic_flag),
-            "CC={0}".format(self.compiler.cc),
-            "LD={0}".format(self.compiler.cc),
             "LIBDIR=-L../..",
             "LIBS=-L../.. -lmgrid -lm",
         ]
