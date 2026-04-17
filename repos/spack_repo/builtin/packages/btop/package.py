@@ -36,6 +36,7 @@ class Btop(MakefilePackage, CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.24:", type="build", when="@1.3.0: build_system=cmake")
+    depends_on("googletest@1.17:", type="test", when="@1.4.6: build_system=cmake")
 
     # Fix linking GPU support, by adding an explicit "target_link_libraries" to ${CMAKE_DL_LIBS}
     patch("link-dl.patch", when="+gpu @:1.4.0")
@@ -54,4 +55,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("BTOP_GPU", "gpu")]
+        return [
+          self.define_from_variant("BTOP_GPU", "gpu"),
+          self.define("BUILD_TESTING", self.run_tests),
+        ]
