@@ -171,7 +171,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("libcxi", when="fabrics=cxi")
     # https://github.com/ofiwg/libfabric/issues/12036
-    depends_on("libcxi@14:", when="fabrics=cxi @2.5.0")
+    depends_on("libcxi@14:", when="@2.5.0 fabrics=cxi")
     depends_on("cassini-headers", when="fabrics=cxi")
     depends_on("cxi-driver", when="fabrics=cxi")
     depends_on("xpmem", when="fabrics=xpmem")
