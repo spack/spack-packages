@@ -554,7 +554,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     patch("13.4.1-kokkoskernel-patch2296.patch", when="@13.4.1 %oneapi@2025:")
 
     # https://github.com/kokkos/kokkos-kernels/pull/2296
-    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14 %oneapi@2025:")
+    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14:15 %oneapi@2025:")
 
     # https://github.com/trilinos/Trilinos/pull/11676
     patch("13.4.1-14-patch11676.patch", when="@13.4.1:14.0 %oneapi@2025:")
@@ -1054,7 +1054,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         # ################# Kokkos ######################
 
         if "+kokkos" in spec:
-            arch = Kokkos.get_microarch(spec.target)
+            arch = Kokkos.get_microarch(spec.target, spec["kokkos"] if "kokkos" in spec else None)
             if arch:
                 options.append(define("Kokkos_ARCH_" + arch.upper(), True))
 
@@ -1077,7 +1077,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 )
                 arch_map = Kokkos.spack_cuda_arch_map
                 options.extend(
-                    define("Kokkos_ARCH_" + arch_map[arch].upper(), True)
+                    define("Kokkos_ARCH_" + arch_map[arch][0].upper(), True)
                     for arch in spec.variants["cuda_arch"].value
                 )
 
@@ -1094,7 +1094,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 amdgpu_arch_map = Kokkos.amdgpu_arch_map
                 for amd_target in spec.variants["amdgpu_target"].value:
                     try:
-                        arch = amdgpu_arch_map[amd_target]
+                        arch = amdgpu_arch_map[amd_target][0]
                     except KeyError:
                         pass
                     else:
