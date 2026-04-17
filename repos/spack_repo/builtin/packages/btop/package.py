@@ -36,6 +36,7 @@ class Btop(MakefilePackage, CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.24:", type="build", when="@1.3.0: build_system=cmake")
+    depends_on("cmake@3.25:", type="build", when="@v1.4.1: build_system=cmake")
     depends_on("googletest@1.17:", type="test", when="@1.4.6: build_system=cmake")
 
     # Fix linking GPU support, by adding an explicit "target_link_libraries" to ${CMAKE_DL_LIBS}
