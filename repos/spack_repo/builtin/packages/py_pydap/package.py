@@ -14,6 +14,7 @@ class PyPydap(PythonPackage):
     pypi = "pydap/pydap-3.5.5.tar.gz"
     license("MIT")
 
+    version("3.5.8", sha256="0dc3c7f28fd456e17ed1c789ccfd119938a2bd1d73828cdf5319c69a213df560")
     version("3.5.5", sha256="0f8ca9b4e244c4d345d0b5269c4ebc886fcd0778b828e5ae1415b7ea5341eabd")
     version("3.2.2", sha256="86326642e24f421595a74b0f9986da76d7932b277768f501fe214d72592bdc40")
 

@@ -19,6 +19,7 @@ class PyPythonXlib(PythonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("0.33", sha256="55af7906a2c75ce6cb280a584776080602444f75815a7aff4d287bb2d7018b32")
     version("0.30", sha256="74131418faf9e7b83178c71d9d80297fbbd678abe99ae9258f5a20cd027acb5f")
 
     depends_on("python@2.7,3.3:", type=("build", "run"))

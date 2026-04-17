@@ -17,6 +17,7 @@ class RMvtnorm(RPackage):
 
     license("GPL-2.0-only")
 
+    version("1.3-3", sha256="e20e7f534bc89b9258ad63d508aabed60f3bd504a7532a33e6ea230ca8fa4171")
     version("1.2-6", sha256="c4dedc3c296ed8e5fd2faecdba6de302bca1dd2e96b84fd846c47a54286acd31")
     version("1.1-3", sha256="ff4e302139ba631280fc9c4a2ab168596bfd09e17a805974199b043697c02448")
     version("1.1-1", sha256="e965dad5e93babb7ded25b5ebdbd52332191b61f897d68853a379a07620d45de")
@@ -25,5 +26,8 @@ class RMvtnorm(RPackage):
     version("1.0-6", sha256="4a015b57b645b520151b213eb04b7331598c06442a3f652c7dc149425bd2e444")
     version("1.0-5", sha256="d00f9f758f0d0d4b999f259223485dc55d23cbec09004014816f180045ac81dd")
 
-    depends_on("r@1.9.0:", type=("build", "run"))
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.0-9:")
+    depends_on("r@1.9.0:", type=("build", "run"))

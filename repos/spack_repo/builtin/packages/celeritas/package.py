@@ -27,6 +27,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", get_full_repo=True)
 
+    version("0.6.3", sha256="c87910acd0bb9dc85c53e2e4d9958f36d3bb1e5975f0e08fe7274b332a2ccf27")
     version("0.6.2", sha256="efca5a7f4797cd29d2b4e0b2251896b9fe4253ed95ff5c18f4d0476d4c34b48d")
     version("0.6.1", sha256="fe97cdb87e579559c29a0366058327243945bf2a0e25aac4d562c8fe0c672c2a")
     version("0.6.0", sha256="c776dee357ecff42f85ed02c328f24b092400af28e67af2c0e195ce8f67613b0")
@@ -115,6 +116,12 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/celeritas-project/celeritas/commit/3c8ed9614fc695fba35e8a058bedb7bc1556f71c.patch?full_index=1",
         sha256="1161c4f1166860d35d2a3f103236a63acd6a35aee2d2c27561cb929941d1c170",
         when="@0.5.0 +geant4 ^geant4@11.3.0:",
+    )
+    # CUDA 13 API change: removed clockRate and memoryClockRate
+    patch(
+        "https://github.com/celeritas-project/celeritas/commit/71221336cc3fc4232eda4b5b96fc5079a4193d86.patch?full_index=1",
+        sha256="cc44c5d6d8fb371ff3d42e13521eb0752780715e9d070b46699633ca3cd7e995",
+        when="@:0.6.2 +cuda ^cuda@13:",
     )
 
     def cmake_args(self):

@@ -16,6 +16,8 @@ class PyFlake8(PythonPackage):
 
     license("MIT")
 
+    version("7.3.0", sha256="fe044858146b9fc69b551a4b490d69cf960fcb78ad1edcb84e7fbb1b4a8e3872")
+    version("7.1.2", sha256="c586ffd0b41540951ae41af572e6790dbd49fc12b3aa2541685d253d9bd504bd")
     version("6.1.0", sha256="d5b3857f07c030bdb5bf41c7f53799571d75c4491748a3adcd47de929e34cd23")
     version("6.0.0", sha256="c61007e76655af75e6785a931f452915b371dc48f56efd765247c8fe68f2b181")
     version("5.0.4", sha256="6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db")
@@ -32,6 +34,7 @@ class PyFlake8(PythonPackage):
     version("3.0.4", sha256="b4c210c998f07d6ff24325dd91fbc011f2c37bcd6bf576b188de01d8656e970d")
     version("2.5.4", sha256="cc1e58179f6cf10524c7bfdd378f5536d0a61497688517791639a5ecc867492f")
 
+    depends_on("python@3.9.0:", when="@7:", type=("build", "run"))
     depends_on("python@3.8.1:", when="@6:", type=("build", "run"))
     depends_on("python@3.6.1:", when="@5:", type=("build", "run"))
     depends_on("python@3.6:", when="@4:", type=("build", "run"))
@@ -46,6 +49,16 @@ class PyFlake8(PythonPackage):
     # error codes within each minor release:
     # http://flake8.pycqa.org/en/latest/faq.html#why-does-flake8-use-ranges-for-its-dependencies
     # http://flake8.pycqa.org/en/latest/internal/releases.html#releasing-flake8
+
+    # Flak8 7.3.X
+    depends_on("py-mccabe@0.7", when="@7.3.0", type=("build", "run"))
+    depends_on("py-pycodestyle@2.14", when="@7.3.0", type=("build", "run"))
+    depends_on("py-pyflakes@3.4", when="@7.3.0", type=("build", "run"))
+
+    # Flak8 7.1.X
+    depends_on("py-mccabe@0.7", when="@7.1.2", type=("build", "run"))
+    depends_on("py-pycodestyle@2.14", when="@7.1.2", type=("build", "run"))
+    depends_on("py-pyflakes@3.4", when="@7.1.2", type=("build", "run"))
 
     # Flake8 6.1.X
     depends_on("py-mccabe@0.7", when="@6.1", type=("build", "run"))

@@ -1,0 +1,64 @@
+--- skopt/space/space.py.orig	2025-12-12 09:26:36
++++ skopt/space/space.py	2025-12-12 09:26:55
+@@ -250,7 +250,7 @@
+ 
+     """
+     def __init__(self, low, high, prior="uniform", base=10, transform=None,
+-                 name=None, dtype=float):
++                 name=None, dtype=float, optimize=True):
+         if high <= low:
+             raise ValueError("the lower bound {} has to be less than the"
+                              " upper bound {}".format(low, high))
+@@ -267,6 +267,7 @@
+         self._rvs = None
+         self.transformer = None
+         self.transform_ = transform
++        self.optimize = optimize
+         if isinstance(self.dtype, str) and self.dtype\
+                 not in ['float', 'float16', 'float32', 'float64']:
+             raise ValueError("dtype must be 'float', 'float16', 'float32'"
+@@ -346,7 +347,8 @@
+                                 self.low, self.high).astype(self.dtype)
+         if self.dtype == float or self.dtype == 'float':
+             # necessary, otherwise the type is converted to a numpy type
+-            return getattr(inv_transform, "tolist", lambda: value)()
++            inv_transform = getattr(inv_transform, "tolist", lambda: value)()
++            return [round(val, 8) for val in inv_transform] # round(val, 6) causes problems in the random sample generation when #sample>1e6
+         else:
+             return inv_transform
+ 
+@@ -435,7 +437,7 @@
+ 
+     """
+     def __init__(self, low, high, prior="uniform", base=10, transform=None,
+-                 name=None, dtype=np.int64):
++                 name=None, dtype=np.int64, optimize=True):
+         if high <= low:
+             raise ValueError("the lower bound {} has to be less than the"
+                              " upper bound {}".format(low, high))
+@@ -450,6 +452,7 @@
+         self.name = name
+         self.dtype = dtype
+         self.transform_ = transform
++        self.optimize = optimize
+         self._rvs = None
+         self.transformer = None
+ 
+--- skopt/space/transformers.py.orig	2025-12-12 09:26:36
++++ skopt/space/transformers.py	2025-12-12 09:27:05
+@@ -259,7 +259,7 @@
+         if (self.high - self.low) == 0.:
+             return X * 0.
+         if self.is_int:
+-            return (np.round(X).astype(np.int) - self.low) /\
++            return (np.round(X).astype(int) - self.low) /\
+                    (self.high - self.low)
+         else:
+             return (X - self.low) / (self.high - self.low)
+@@ -272,7 +272,7 @@
+             raise ValueError("All values should be greater than 0.0")
+         X_orig = X * (self.high - self.low) + self.low
+         if self.is_int:
+-            return np.round(X_orig).astype(np.int)
++            return np.round(X_orig).astype(int)
+         return X_orig

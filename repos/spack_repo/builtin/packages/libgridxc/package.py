@@ -40,7 +40,7 @@ class Libgridxc(MakefilePackage):
     parallel = False
 
     def edit(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         with working_dir("build", create=True):
             sh("../src/config.sh")
             copy("../extra/fortran.mk", "fortran.mk")

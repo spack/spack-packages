@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -65,8 +66,14 @@ class Gsl(AutotoolsPackage, GNUMirrorPackage):
     def configure_args(self):
         configure_args = []
         if self.spec.satisfies("+external-cblas"):
+
+            inc = self.spec["blas"].headers.include_flags
+            # openblas can install the headers into include/openblas which trips up the autoconf
+            if self.spec["blas"].name == "openblas":
+                inc = os.path.join(inc, "openblas")
+
             configure_args.append("--with-cblas-external")
-            configure_args.append("CBLAS_CFLAGS=%s" % self.spec["blas"].headers.include_flags)
+            configure_args.append("CBLAS_CFLAGS=%s" % inc)
             configure_args.append("CBLAS_LIBS=%s" % self.spec["blas"].libs.ld_flags)
 
         configure_args.extend(self.enable_or_disable("shared"))

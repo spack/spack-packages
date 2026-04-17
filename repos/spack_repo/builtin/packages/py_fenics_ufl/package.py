@@ -22,6 +22,10 @@ class PyFenicsUfl(PythonPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main", no_cache=True)
+    version(
+        "2025.2.0.post0", sha256="2182fed6d0fc41fd97244d73fe6aa95e50725e5ba8fe1b3b0f3f4d0215b45534"
+    )
+    version("2025.1.0", sha256="a3aedb6fd06bb43e954c96e7cccc190a29dc9a00287f95bc365dbfc81b43a5f9")
     version("2024.2.0", sha256="d9353d23ccbdd9887f8d6edab74c04fe06d818da972072081dbf0c25bc86f5a7")
     version(
         "2024.1.0.post1", sha256="6e38e93a2c8417271c9fb316e0d0ea5fe1101c6a37b2496fff8290e7ea7ead74"
@@ -62,8 +66,11 @@ class PyFenicsUfl(PythonPackage):
         )
         version("2016.2.0", tag="ufl-2016.2.0", commit="962d56f65821fb9c50ca4a5a858882c472243431")
 
+    depends_on("python@3.10:", when="@2025.2.0:", type=("build", "run"))
+    depends_on("python@3.9:", when="@2025.1.0:", type=("build", "run"))
     depends_on("python@3.8:", when="@2023.2.0:", type=("build", "run"))
 
+    depends_on("py-setuptools@77:", when="@2025.1.0:", type="build")
     depends_on("py-setuptools@62:", when="@2023.2.0:", type="build")
     depends_on("py-setuptools@58:", when="@2022.1.0:2023.1.1.post0", type="build")
     depends_on("py-setuptools@40:", when="@2016.2.0:2021.1.0", type="build")

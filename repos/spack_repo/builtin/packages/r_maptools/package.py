@@ -20,6 +20,8 @@ class RMaptools(RPackage):
 
     version("1.1-8", sha256="5e8579e3f559161935f1dde622ece703eefa2a28a677ce553d7f27611e66e0f7")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@2.10:", type=("build", "run"))
     depends_on("r-sp@1.0-11:", type=("build", "run"))
     depends_on("r-foreign@0.8:", type=("build", "run"))

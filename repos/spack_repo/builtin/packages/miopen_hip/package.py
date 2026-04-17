@@ -2,9 +2,11 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
@@ -14,15 +16,25 @@ class MiopenHip(CMakePackage):
     """AMD's library for high performance machine learning primitives."""
 
     homepage = "https://github.com/ROCm/MIOpen"
-    git = "https://github.com/ROCm/MIOpen.git"
-    url = "https://github.com/ROCm/MIOpen/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libMIOpen"]
-
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/MIOpen/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="98c72a2b5ca541d6c172facdf0f15729207ab52ca9af36c00e2480c5b27c5b99")
+    version("7.1.0", sha256="3fa0a7c8ef959ad889aac0109e6bf74de2a54f7e3ab057f98e2dc4fb65eb1599")
+    version("7.0.2", sha256="f8e0fbc7e007d8b37b47a9369a9f849ab708d4fd8681a70c4f545d7ed1aa3ba0")
+    version("7.0.0", sha256="f835c204deaf299ee9525b9a77be329d6f4f0cdf808a1c39bb3c461b12ff1b53")
     version("6.4.3", sha256="d78eacc4314da049cc3d39877ee5b6b64b463f900be4a84c0b0b6d7a6f56148d")
     version("6.4.2", sha256="30c475a07af5b955e40b4b5dca705d2ea5c2e51112d1b24c0216046f22f45bc1")
     version("6.4.1", sha256="3e9e8bc8d9dfb31b27e955ead3430825e88b7f1501d289ba023d34208916c724")
@@ -42,6 +54,14 @@ class MiopenHip(CMakePackage):
     version("5.7.1", sha256="912a658fe21ce6f1982b0f2ff251c3f7bb618f2e7e9876d983bcb54e3cd7129e")
     version("5.7.0", sha256="5cd0b62254469e1c246d5890d2b78f8aedcf42cf8a327eabc1a391b83bcd14e1")
 
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+        description="AMD GPU targets for composable-kernel when +ck",
+    )
     variant(
         "ck",
         default=True,
@@ -69,7 +89,15 @@ class MiopenHip(CMakePackage):
     depends_on("sqlite")
     depends_on("half@1")
     depends_on("zlib-api")
-    depends_on("frugally-deep", when="@6.3:")
+    # Inside requirements.txt of the miopen repository, frugally-deep is
+    # is using ROCm/frugally-deep@9683d557eb672ee2304f80f6682c51242d748a50
+    # this is specfically mapped to frugally-deep@0.15.x using later 0.16
+    # versions or above is causing an issue,
+    # https://github.com/ROCm/MIOpen/issues/3588 and requires updates to
+    # src/kernels/gfx9[08|0a|42].tn.model to support this
+    # new format to support frugally-deep 0.16.0 or later
+
+    depends_on("frugally-deep@0.15.31", when="@6.3:")
 
     patch("miopen-hip-include-nlohmann-include-directory.patch", when="@5.7")
     patch("0002-add-include-dir-miopen-hip-6.0.0.patch", when="@6.0")
@@ -83,7 +111,7 @@ class MiopenHip(CMakePackage):
     patch(
         "https://github.com/ROCm/MIOpen/commit/d1a25ad0f4fc90dffea7a5dbb9cc7a9983a004c2.patch?full_index=1",
         sha256="3001a90202b572a5cd86a51905064903bcee74d8fa0d9649ee9732274c207801",
-        when="@6.3:",
+        when="@6.3:6.4",
     )
 
     for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
@@ -91,7 +119,11 @@ class MiopenHip(CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-clang-ocl@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
-        depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"composable-kernel@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +ck amdgpu_target={tgt}",
+            )
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -108,21 +140,53 @@ class MiopenHip(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
-        depends_on(f"composable-kernel@{ver}", when=f"@{ver} +ck")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"composable-kernel@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +ck amdgpu_target={tgt}",
+            )
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
-        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+    ]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 
     depends_on("nlohmann-json", type="link")
     depends_on("googletest", when="@6.1:")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/miopen"
+        else:
+            return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         lib_dir = self.spec["zlib-api"].libs.directories[0]
@@ -192,4 +256,11 @@ class MiopenHip(CMakePackage):
             )
         if self.spec.satisfies("@6.3:"):
             args.append(self.define_from_variant("MIOPEN_USE_HIPBLASLT", "hipblaslt"))
+        if self.spec.satisfies("@7:"):
+            args.append(
+                self.define(
+                    "MIOPEN_OFFLOADBUNDLER_BIN",
+                    f"{self.spec['llvm-amdgpu'].prefix.bin}/clang-offload-bundler",
+                )
+            )
         return args

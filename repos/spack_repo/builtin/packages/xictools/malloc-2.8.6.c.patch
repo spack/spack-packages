@@ -1,0 +1,11 @@
+--- a/xt_base/malloc/malloc-2.8.6.c
++++ b/xt_base/malloc/malloc-2.8.6.c
+@@ -763,7 +763,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
+ /* #define HAVE_USR_INCLUDE_MALLOC_H */
+ 
+ #ifdef HAVE_USR_INCLUDE_MALLOC_H
+-#include "/usr/include/malloc.h"
++#include <malloc.h>
+ #else /* HAVE_USR_INCLUDE_MALLOC_H */
+ #ifndef STRUCT_MALLINFO_DECLARED
+ /* HP-UX (and others?) redefines mallinfo unless _STRUCT_MALLINFO is defined */
