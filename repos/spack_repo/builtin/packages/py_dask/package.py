@@ -134,7 +134,7 @@ class PyDask(PythonPackage):
             depends_on("py-pandas@0.25.0:", when="@2020.12.0:")
 
             # https://github.com/dask/dask/issues/10164
-            depends_on("py-pandas@:1",when="@:2023.1")
+            depends_on("py-pandas@:1", when="@:2023.1")
 
             # starting with 2025.7 needs py-arrow
             depends_on("py-pyarrow@16.0:", when="@2026.1.0:")
