@@ -18,7 +18,7 @@ class PyDaskMl(PythonPackage):
     version("2025.1.0", sha256="b31caeb5f603f9537ffa34bd247e0e1fcefda7c007631260f8abdee49f89b1e1")
     version("1.8.0", sha256="8fc4ac3ec1915e382fb8cae9ff1ec9b5ac1bee0b6f4c6975d6e6cb7191a4a815")
 
-    variant("docs", default=False, description="Build HTML documentation")
+    variant("docs", default=False, description="Build HTML documentation", when="@:2024.3.20")
     variant("xgboost", default=False, description="Deploys XGBoost alongside Dask")
 
     depends_on("python@3.10:", when="@2025.1.0:", type=("build", "run"))
@@ -56,6 +56,17 @@ class PyDaskMl(PythonPackage):
         depends_on("py-sphinx", type=("build", "run"))
         depends_on("py-sphinx-rtd-theme", type=("build", "run"))
         depends_on("py-sphinx-gallery", type=("build", "run"))
+        # Some more dependencies in ci/environment-docs.yaml
+        depends_on("py-graphviz", type=("build", "run"))
+        depends_on("py-heapdict", type=("build", "run"))
+        depends_on("py-ipykernel", type=("build", "run"))
+        depends_on("py-ipython", type=("build", "run"))
+        depends_on("py-nose", type=("build", "run"))
+        depends_on("py-sortedcontainers", type=("build", "run"))
+        depends_on("py-testpath", type=("build", "run"))
+        depends_on("py-tornado", type=("build", "run"))
+        depends_on("py-zict", type=("build", "run"))
+        depends_on("py-dask-sphinx-theme@1.1.0:", type=("build", "run"))
 
     depends_on("py-xgboost+dask", type=("build", "run"), when="+docs")
     depends_on("py-xgboost+dask", type=("build", "run"), when="+xgboost")
