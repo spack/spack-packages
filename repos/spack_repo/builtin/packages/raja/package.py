@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import shutil
 import re
 import socket
@@ -38,21 +39,6 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     maintainers("adrienbernede", "davidbeckingsale", "kab163")
 
     license("BSD-3-Clause")
-
-    extra_install_tests = ["examples", "exercises"]
-
-    example_test_sources = {
-        "dynamic-forall": [join_path("examples", "dynamic-forall.cpp")],
-        "kernel-dynamic-tile": [join_path("examples", "kernel-dynamic-tile.cpp")],
-        "make_permuted_view": [join_path("examples", "make_permuted_view.cpp")],
-        "plugin-example": [
-            join_path("examples", "plugin", "test-plugin.cpp"),
-            join_path("examples", "plugin", "counter-plugin.cpp"),
-        ],
-        "tut_daxpy": [join_path("examples", "tut_daxpy.cpp")],
-        "tut_matrix-multiply": [join_path("examples", "tut_matrix-multiply.cpp")],
-        "wave-eqn": [join_path("examples", "wave-eqn.cpp")],
-    }
 
     version("develop", branch="develop", submodules=submodules)
     version("main", branch="main", submodules=submodules)
@@ -352,6 +338,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
     conflicts("^cuda@13:", when="+cuda")
 
+    extra_install_tests = ["examples"]
+
     def _get_sys_type(self, spec):
         sys_type = spec.architecture
         if "SYS_TYPE" in env:
@@ -568,6 +556,10 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
                     "test-algorithm-stable-sort-Cuda.exe",
                     "test-algorithm-sort-OpenMP.exe",
                     "test-algorithm-stable-sort-OpenMP.exe",
+                    # "test-tensor-matrix-int32_t-ColMajor-ET_Subtract",
+                    # "test-tensor-matrix-int64_t-ColMajor-ET_Subtract",
+                    # "test-tensor-matrix-float-ColMajor-ET_Subtract",
+                    # "test-tensor-matrix-double-ColMajor-ET_Subtract"
                 ]
                 if spec.satisfies("+cuda %clang@12.0.0:13.9.999"):
                     entries.append(
@@ -590,23 +582,64 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
-    def build_test(self):
+    def check_build(self):
         with working_dir(self.build_directory):
             print("Running RAJA Unit Tests...")
             make("test")
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
-    def test_install_using_cmake(self):
+    def check_install(self):
         """build example with cmake and run"""
-        test_src_dir = join_path(self.prefix.test.raja, "using-with-cmake")
+        print("Running RAJA Install Tests...")
+        test_src_dir = self._using_with_cmake_source_dir()
         test_stage_dir = "./cmake"
+        if os.path.exists(test_stage_dir):
+            shutil.rmtree(test_stage_dir)
         shutil.copytree(test_src_dir, test_stage_dir)
         with working_dir(join_path(test_stage_dir, "build"), create=True):
-            cmake_args = ["-C ../host-config.cmake", test_src_dir]
+            cmake_args = ["-C ../host-config.cmake", ".."]
             cmake = self.spec["cmake"].command
             cmake(*cmake_args)
             make()
             example = Executable("./using-with-cmake")
             example()
             make("clean")
+
+    @run_after("install")
+    def setup_build_tests(self):
+        """Cache sources needed by standalone `spack test run`."""
+        cache_extra_test_sources(self, self.extra_install_tests)
+        mkdirp(install_test_root(self))
+
+    @property
+    def _extra_tests_path(self):
+        # TODO: The tests should be converted to re-build and run examples
+        # TODO: using the installed libraries.
+        return join_path(install_test_root(self), self.build_relpath, "bin")
+
+    def run_example(self, exe, expected):
+        """run and check outputs of the example"""
+        with working_dir(self._extra_tests_path):
+            example = which(exe)
+            if example is None:
+                raise SkipTest(f"{exe} was not built")
+
+            out = example(output=str.split, error=str.split)
+            check_outputs(expected, out)
+
+    def test_daxpy(self):
+        """check batched matrix multiple tutorial"""
+        self.run_example(
+            "tut_daxpy", [r"daxpy", r"result -- PASS"]
+        )
+
+    def test_matrix_multiply(self):
+        """check batched matrix multiple tutorial"""
+        self.run_example(
+            "tut_matrix-multiply", [r"matrix multiplication", r"result -- PASS"]
+        )
+
+    def test_wave_equation(self):
+        """check wave equation"""
+        self.run_example("wave-eqn", [r"Max Error = 2", r"Evolved solution to time"])
