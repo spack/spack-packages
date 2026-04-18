@@ -41,6 +41,7 @@ class Btop(MakefilePackage, CMakePackage):
     patch("link-dl.patch", when="+gpu @:1.4.0")
 
     requires("%gcc@10:", "%clang@16:", policy="one_of", msg="C++ 20 is required")
+    requires("%gcc@14:", "%clang@19:", policy="one_of", msg="C++ 23 is required", when="@1.4.6:")
 
 
 class MakefileBuilder(makefile.MakefileBuilder):

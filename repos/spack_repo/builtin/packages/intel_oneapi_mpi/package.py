@@ -203,6 +203,7 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
         "external-libfabric", default=False, description="Enable external libfabric dependency"
     )
     depends_on("libfabric", when="+external-libfabric", type=("link", "run"))
+    conflicts("libfabric", when="~external-libfabric")
 
     provides("mpi@:3.1")
     conflicts("+generic-names +classic-names")
