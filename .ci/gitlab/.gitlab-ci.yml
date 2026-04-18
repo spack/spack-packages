@@ -12,9 +12,9 @@ variables:
   # SPACK_CI_DISABLE_STACKS:
   #   value: /^.*(cray).*$/
   #   expand: false
-  # SPACK_CI_ENABLE_STACKS:
-  #   value: /^.*(cray).*$/
-  #   expand: false
+  SPACK_CI_ENABLE_STACKS:
+    value: /^.*(cray-sles).*$/
+    expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
@@ -748,7 +748,7 @@ aws-pcluster-neoverse_v1-build:
   extends: [ ".generate-cray" ]
 
 .generate-cray-sles:
-  tags: [ "cray-sles-zen4", "public" ]
+  tags: [ "cray-sles-x86_64_v3", "public" ]
   extends: [ ".generate-cray" ]
 
 
@@ -780,10 +780,10 @@ e4s-cray-rhel-build:
   variables:
     SPACK_CI_STACK_NAME: e4s-cray-sles
 
-.e4s-cray-sles-generate:
+e4s-cray-sles-generate:
   extends: [ ".generate-cray-sles", ".e4s-cray-sles" ]
 
-.e4s-cray-sles-build:
+e4s-cray-sles-build:
   extends: [ ".build", ".e4s-cray-sles" ]
   trigger:
     << : *trigger_build
