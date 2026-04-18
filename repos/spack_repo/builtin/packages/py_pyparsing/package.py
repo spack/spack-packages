@@ -15,6 +15,8 @@ class PyPyparsing(PythonPackage):
 
     license("MIT")
 
+    version("3.3.2", sha256="c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc")
+    version("3.2.5", sha256="2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6")
     version("3.1.2", sha256="a1bac0ce561155ecc3ed78ca94d3c9378656ad4c94c1270de543f621420f94ad")
     version("3.1.1", sha256="ede28a1a32462f5a9705e07aea48001a08f7cf81a021585011deba701581a0db")
     version("3.1.0", sha256="edb662d6fe322d6e990b1594b5feaeadf806803359e3d4d42f11e295e588f0ea")
@@ -28,10 +30,13 @@ class PyPyparsing(PythonPackage):
     version("2.1.10", sha256="811c3e7b0031021137fc83e051795025fcb98674d07eb8fe922ba4de53d39188")
     version("2.0.3", sha256="06e729e1cbf5274703b1f47b6135ed8335999d547f9d8cf048b210fb8ebf844f")
 
+    depends_on("python@3.9:", when="@3.2:", type=("build", "run"))
     depends_on("python@3.6.8:", when="@3.0.9:", type=("build", "run"))
     depends_on("python@3.6:", when="@3:", type=("build", "run"))
     depends_on("python@2.6:2.8,3.3:", type=("build", "run"))
-    depends_on("py-setuptools", when="@:3.0.8", type="build")
     depends_on("py-flit-core@3.2:3", when="@3.0.9:", type="build")
 
     import_modules = ["pyparsing"]
+
+    # Historical dependencies
+    depends_on("py-setuptools", when="@:3.0.8", type="build")

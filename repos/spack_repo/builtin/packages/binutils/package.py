@@ -28,6 +28,9 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
         "GPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND LGPL-3.0-or-later",
         checked_by="tgamblin",
     )
+    version("2.46.0", sha256="0f3152632a2a9ce066f20963e9bb40af7cf85b9b6c409ed892fd0676e84ecd12")
+    version("2.45.1", sha256="860daddec9085cb4011279136fc8ad29eb533e9446d7524af7f517dd18f00224")
+    version("2.45", sha256="1393f90db70c2ebd785fb434d6127f8888c559d5eeb9c006c354b203bab3473e")
     version("2.44", sha256="f66390a661faa117d00fab2e79cf2dc9d097b42cc296bf3f8677d1e7b452dc3a")
     version("2.43.1", sha256="becaac5d295e037587b63a42fad57fe3d9d7b83f478eb24b67f9eec5d0f1872f")
     version("2.43", sha256="fed3c3077f0df7a4a1aa47b080b8c53277593ccbb4e5e78b73ffb4e3f265e750")
@@ -46,56 +49,12 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
     version("2.32", sha256="de38b15c902eb2725eac6af21183a5f34ea4634cb0bcef19612b50e5ed31072d")
     version("2.31.1", sha256="ffcc382695bf947da6135e7436b8ed52d991cf270db897190f19d6f9838564d0")
     version("2.30", sha256="efeade848067e9a03f1918b1da0d37aaffa0b0127a06b5e9236229851d9d0c09")
-    version(
-        "2.29.1",
-        sha256="1509dff41369fb70aed23682351b663b56db894034773e6dbf7d5d6071fc55cc",
-        deprecated=True,
-    )
-    version(
-        "2.28",
-        sha256="6297433ee120b11b4b0a1c8f3512d7d73501753142ab9e2daa13c5a3edd32a72",
-        deprecated=True,
-    )
-    version(
-        "2.27",
-        sha256="369737ce51587f92466041a97ab7d2358c6d9e1b6490b3940eb09fb0a9a6ac88",
-        deprecated=True,
-    )
-    version(
-        "2.26",
-        sha256="c2ace41809542f5237afc7e3b8f32bb92bc7bc53c6232a84463c423b0714ecd9",
-        deprecated=True,
-    )
-    version(
-        "2.25.1",
-        sha256="b5b14added7d78a8d1ca70b5cb75fef57ce2197264f4f5835326b0df22ac9f22",
-        deprecated=True,
-    )
-    version(
-        "2.25",
-        sha256="22defc65cfa3ef2a3395faaea75d6331c6e62ea5dfacfed3e2ec17b08c882923",
-        deprecated=True,
-    )
-    version(
-        "2.24",
-        sha256="e5e8c5be9664e7f7f96e0d09919110ab5ad597794f5b1809871177a0f0f14137",
-        deprecated=True,
-    )
-    version(
-        "2.23.2",
-        sha256="fe914e56fed7a9ec2eb45274b1f2e14b0d8b4f41906a5194eac6883cfe5c1097",
-        deprecated=True,
-    )
-    version(
-        "2.20.1",
-        sha256="71d37c96451333c5c0b84b170169fdcb138bbb27397dc06281905d9717c8ed64",
-        deprecated=True,
-    )
 
     variant("plugins", default=True, description="enable plugins, needed for gold linker")
     # When you build ld.gold you automatically get ld, even when you add the
     # --disable-ld flag
-    variant("gold", default=False, when="+ld", description="build the gold linker")
+    # The gold linker was removed in v2.44.
+    variant("gold", default=False, when="@:2.43 +ld", description="Build the gold linker.")
     variant("libiberty", default=False, description="Also install libiberty.")
     variant("nls", default=False, description="Enable Native Language Support")
     variant("headers", default=False, description="Install extra headers (e.g. ELF)")
@@ -122,7 +81,6 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
         default="zlib",
         values=(conditional("zstd", when="@2.40:"), "zlib", "none"),
         description="Enable debug section compression by default in ld, gas, gold.",
-        when="@2.26:",
     )
     variant(
         "debuginfod",
@@ -130,9 +88,6 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
         description="Enable debuginfod HTTP server support for readelf and objdump",
         when="@2.34:",
     )
-
-    patch("cr16.patch", when="@:2.29.1")
-    patch("update_symbol-2.26.patch", when="@2.26")
 
     # 2.36 is missing some dependencies, this patch allows a parallel build.
     # https://sourceware.org/bugzilla/show_bug.cgi?id=27482
@@ -156,11 +111,6 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
 
     # PGO runs tests, which requires `runtest` from dejagnu
     depends_on("dejagnu", when="+pgo", type="build")
-
-    # Prior to 2.30, gold did not distribute the generated files and
-    # thus needs bison, even for a one-time build.
-    depends_on("m4", type="build", when="@:2.29 +gold")
-    depends_on("bison", type="build", when="@:2.29 +gold")
 
     # 2.34:2.40 needs makeinfo due to a bug, see:
     # https://sourceware.org/bugzilla/show_bug.cgi?id=25491
@@ -265,7 +215,7 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
                 if not os.path.exists(installed_exe):
                     raise SkipTest("{0} is not installed".format(_bin))
 
-                exe = which(installed_exe)
+                exe = which(installed_exe, required=True)
                 out = exe("--version", output=str.split, error=str.split)
                 assert version in out
 
@@ -287,6 +237,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             "--disable-dependency-tracking",
             "--disable-werror",
             "--enable-64-bit-bfd",
+            "--enable-deterministic-archives",
             "--enable-multilib",
             "--enable-pic",
             "--enable-targets={}".format(targets),

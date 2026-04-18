@@ -1,0 +1,14 @@
+--- a/src/Sequencer.C
++++ b/src/Sequencer.C
+@@ -76,10 +76,8 @@
+ #define __thread __declspec(thread)
+ #endif
+ extern __thread DeviceCUDA *deviceCUDA;
+-#ifdef __IBMCPP__
+-// IBM compiler requires separate definition for static members
++// Required for C++11 toolchains when odr-used.
+ constexpr int CudaLocalRecord::num_inline_peer;
+-#endif
+ #endif
+ 
+ #define SPECIAL_PATCH_ID  91

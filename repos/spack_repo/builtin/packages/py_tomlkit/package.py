@@ -15,6 +15,7 @@ class PyTomlkit(PythonPackage):
 
     license("MIT")
 
+    version("0.13.3", sha256="430cf247ee57df2b94ee3fbe588e71d362a941ebb545dec29b53961d61add2a1")
     version("0.12.1", sha256="38e1ff8edb991273ec9f6181244a6a391ac30e9f5098e7535640ea6be97a7c86")
     version("0.11.8", sha256="9330fc7faa1db67b541b28e62018c17d20be733177d290a13b24c62d1614e0c3")
     version("0.11.4", sha256="3235a9010fae54323e727c3ac06fb720752fe6635b3426e379daec60fbd44a83")
@@ -22,6 +23,7 @@ class PyTomlkit(PythonPackage):
     version("0.7.2", sha256="d7a454f319a7e9bd2e249f239168729327e4dd2d27b17dc68be264ad1ce36754")
     version("0.7.0", sha256="ac57f29693fab3e309ea789252fcce3061e19110085aa31af5446ca749325618")
 
-    depends_on("python@3.7:", when="@0.11.8:", type=("build", "run"))
-    depends_on("python@3.6:3", when="@0.11.0:0.11.5", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"), when="@0.13:")
+    depends_on("python@3.7:", type=("build", "run"), when="@0.11.8:0.11")
+    depends_on("python@3.6:3", type=("build", "run"), when="@0.11.0:0.11.5")
     depends_on("py-poetry-core@1:", type="build")

@@ -24,6 +24,9 @@ class Precice(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("develop", branch="develop")
+    version("3.4.0", sha256="1155178da7271c404947d1ff64b6e5028a82575fd532baa26bd6418de5ef2623")
+    version("3.3.1", sha256="c52b22bd7669baec3ff903eba9bf102154629634652125a60b109a5b7e803ab5")
+    version("3.3.0", sha256="300df9dbaec066c1d0f93f2dbf055705110d297bca23fc0f20a99847a55a24f4")
     version("3.2.0", sha256="93523f1a56e0cfd338d8e190baa06129ee811acdb1c697468a3c85c516d63464")
     version("3.1.2", sha256="e06d5e183f584c51812dcddf958210d1195bea38fa2df13be72303dcb06c869b")
     version("3.1.1", sha256="fe759293942ebc9cb2e6127f356a8c795ab7383c1b074595994ebc92466e478d")
@@ -97,10 +100,12 @@ class Precice(CMakePackage):
     depends_on("boost@:1.74", when="@:2.1.1")
     depends_on("boost@:1.78", when="@:2.3.0")
     depends_on("boost@:1.86", when="@:3.1.2")
+    depends_on("boost@:1.89", when="@:3.2.0")
 
     depends_on("eigen@3.2:")
     depends_on("eigen@3.4:", when="@3.2:")
     depends_on("eigen@:3.3.7", type="build", when="@:1.5")  # bug in prettyprint
+    depends_on("eigen@:3.4.99", when="@:3.3")
 
     depends_on("libxml2")
     depends_on("libxml2@:2.11.99", type="build", when="@:2.5.0")
@@ -121,6 +126,20 @@ class Precice(CMakePackage):
     conflicts("%apple-clang@:5")
     conflicts("%clang@:3.7")
     conflicts("%intel@:16")
+    conflicts("%gcc@:9.2", when="@3.0.0:")
+
+    # Fixes missing #include<array> in src/mesh/Edge.hpp
+    patch(
+        "edge-incomplete-type.patch",
+        when="@2.0",
+        sha256="4017a89e4f77f623807a6cd057d9a095788879310f1bddd98837920d252b1ac7",
+    )
+    # Fixes linking to boost system by using BOOST_ERROR_CODE_HEADER_ONLY
+    patch(
+        "boost-system-header-only.patch",
+        when="@2.3.0",
+        sha256="6a38783eec984a59991f0895d411212e0ba1ebd2ec2c8f53f962df8facbc0344",
+    )
 
     def xsdk_tpl_args(self):
         return [
@@ -152,8 +171,13 @@ class Precice(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant(mpi_option, "mpi"),
             self.define_from_variant(petsc_option, "petsc"),
-            self.define_from_variant(python_option, "python"),
         ]
+
+        # Python 3 is only supported after version 2
+        if spec.satisfies("@2:"):
+            cmake_args.append(self.define_from_variant(python_option, "python"))
+        else:
+            cmake_args.append("-DPYTHON=OFF")
 
         # The xSDK installation policies were implemented after 1.5.2.
         # The TPL arguments were removed in 3.0.0.

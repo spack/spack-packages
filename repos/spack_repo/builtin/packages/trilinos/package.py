@@ -31,7 +31,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     A unique design feature of Trilinos is its focus on packages.
     """
 
-    homepage = "https://trilinos.org/"
+    homepage = "https://trilinos.github.io"
     url = "https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-12-12-1.tar.gz"
     git = "https://github.com/trilinos/Trilinos.git"
 
@@ -53,6 +53,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("develop", branch="develop")
+    version("16.2.0", sha256="543aa56232d7c0cbe73705fab2d3b5524f11b15fef8917aa14de02d23a5ca418")
     version("16.1.0", sha256="e9651c88f581049457036cfc01b527a9d3903c257338eeeab942befd7452f23a")
     version("16.0.0", sha256="46bfc40419ed2aa2db38c144fb8e61d4aa8170eaa654a88d833ba6b92903f309")
     version("15.1.1", sha256="2108d633d2208ed261d09b2d6b2fbae7a9cdc455dd963c9c94412d38d8aaefe4")
@@ -95,7 +96,11 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("cuda_rdc", default=False, description="Turn on RDC for CUDA build")
     variant("rocm_rdc", default=False, description="Turn on RDC for ROCm build")
     variant(
-        "cxxstd", default="14", description="C++ standard", values=["11", "14", "17"], multi=False
+        "cxxstd",
+        default="17",
+        description="C++ standard",
+        values=["11", "14", "17", "20"],
+        multi=False,
     )
     variant("debug", default=False, description="Enable runtime safety and debug checks")
     variant(
@@ -131,13 +136,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # TPLs (alphabet order)
     variant("adios2", default=False, description="Enable ADIOS2")
     variant("boost", default=False, description="Compile with Boost")
+    variant("cusparse", default=False, description="Enable cuSPARSE support")
     variant("hdf5", default=False, description="Compile with HDF5")
     variant("hypre", default=False, description="Compile with Hypre preconditioner")
     variant("mpi", default=True, description="Compile with MPI parallelism")
     variant("mumps", default=False, description="Compile with support for MUMPS solvers")
     variant("suite-sparse", default=False, description="Compile with SuiteSparse solvers")
     variant("superlu-dist", default=False, description="Compile with SuperluDist solvers")
-    variant("superlu", default=False, description="Compile with SuperLU solvers")
     variant("strumpack", default=False, description="Compile with STRUMPACK solvers")
     variant("x11", default=False, description="Compile with X11 when +exodus")
 
@@ -286,6 +291,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("+dtk")
         conflicts("+ifpack2")
         conflicts("+muelu")
+        conflicts("+shylu")
         conflicts("+teko")
         conflicts("+zoltan2")
 
@@ -348,11 +354,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+mesquite", when="@:12.10,master")
     # Strumpack is only available as of mid-2021
     conflicts("+strumpack", when="@:13.0")
-    # Can only use one type of SuperLU
-    conflicts("+superlu-dist", when="+superlu")
-    # Amesos and Ifpack only support up to SuperLU 4.x.y interfaces
-    conflicts("+amesos", when="+superlu@5:")
-    conflicts("+ifpack", when="+superlu@5:")
     # For Trilinos v11 we need to force SuperLUDist=OFF, since only the
     # deprecated SuperLUDist v3.3 together with an Amesos patch is working.
     conflicts("+superlu-dist", when="@11.4.1:11.14.3")
@@ -367,10 +368,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+adios2", when="@:12.14.1")
     conflicts("cxxstd=11", when="@13.2:")
     conflicts("cxxstd=14", when="@14:")
-    conflicts("cxxstd=17", when="@:12")
+    conflicts("cxxstd=17", when="@:12,17:")
+    conflicts("cxxstd=20", when="@:16")
     conflicts("cxxstd=11", when="+wrapper ^cuda@6.5.14")
     conflicts("cxxstd=14", when="+wrapper ^cuda@6.5.14:8.0.61")
     conflicts("cxxstd=17", when="+wrapper ^cuda@6.5.14:10.2.89")
+    conflicts("cxxstd=20", when="+wrapper ^cuda@:11")
 
     # Multi-value gotype only applies to trilinos through 12.14
     conflicts("gotype=all", when="@12.15:")
@@ -382,6 +385,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         msg="trilinos~wrapper+cuda can only be built with the Clang compiler",
     )
     conflicts("+cuda_rdc", when="~cuda")
+    conflicts("+cusparse", when="~cuda")
     conflicts("+rocm_rdc", when="~rocm")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="%clang")
@@ -428,13 +432,16 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos+hip_relocatable_device_code~shared", when="+rocm_rdc")
         depends_on("kokkos-kernels~shared", when="+cuda_rdc")
         depends_on("kokkos-kernels~shared", when="+rocm_rdc")
+        depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=4.6.02", when="@master:")
+        depends_on("kokkos@=5.0.2", when="@master:")
+        depends_on("kokkos@=4.7.01", when="@16.2")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=4.6.02", when="@master:")
+        depends_on("kokkos-kernels@=5.0.2", when="@master:")
+        depends_on("kokkos-kernels@=4.7.01", when="@16.2")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
         depends_on("kokkos-kernels@=4.2.01", when="@15.1:15")
@@ -456,7 +463,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.23:", type="build", when="@14.0.0:")
     depends_on("hdf5+hl", when="+hdf5")
     for plat in ["darwin", "linux"]:
-        depends_on("hypre~internal-superlu~int64", when="+hypre platform=%s" % plat)
+        depends_on("hypre~int64", when="+hypre platform=%s" % plat)
     depends_on("hypre-cmake~int64", when="+hypre platform=windows")
     depends_on("kokkos-nvcc-wrapper", when="+wrapper")
     depends_on("lapack")
@@ -481,9 +488,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("strumpack+shared", when="+strumpack")
     depends_on("suite-sparse@:7.3.1", when="+suite-sparse")
     depends_on("superlu-dist", when="+superlu-dist")
-    depends_on("superlu@3:5.2", when="@12.18.1: +superlu")
-    depends_on("superlu@3:5.1.1", when="@12.14.1 +superlu")
-    depends_on("superlu@3:4", when="@:12.12.1 +superlu")
     depends_on("swig", when="@:14 +python")
     depends_on("zlib-api", when="+zoltan")
 
@@ -550,7 +554,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     patch("13.4.1-kokkoskernel-patch2296.patch", when="@13.4.1 %oneapi@2025:")
 
     # https://github.com/kokkos/kokkos-kernels/pull/2296
-    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14 %oneapi@2025:")
+    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14:15 %oneapi@2025:")
 
     # https://github.com/trilinos/Trilinos/pull/11676
     patch("13.4.1-14-patch11676.patch", when="@13.4.1:14.0 %oneapi@2025:")
@@ -564,6 +568,9 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/trilinos/Trilinos/issues/13916 and
     # https://github.com/trilinos/Trilinos/pull/13921
     patch("16-1-0-stk-size_t.patch", when="@=16.1.0 +stk")
+
+    # https://github.com/spack/spack-packages/pull/2931#issuecomment-3756434768
+    patch("16-2-stk_destructor_kokkos_decoration.patch", when="@=16.2.0 +stk")
 
     def flag_handler(self, name, flags):
         spec = self.spec
@@ -598,11 +605,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 flags.append("-Wl,-undefined,dynamic_lookup")
 
             # Fortran lib (assumes clang is built with gfortran!)
-            if spec.satisfies("+fortran") and (
-                spec.satisfies("%gcc")
-                or spec.satisfies("%clang")
-                or spec.satisfies("%apple-clang")
-            ):
+            if spec.satisfies("+fortran %fortran=gcc"):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
                     "--print-file-name",
@@ -914,12 +917,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             ("ADIOS2", "adios2", "adios2"),
             ("Boost", "boost", "boost"),
             ("CUDA", "cuda", "cuda"),
+            ("CUSPARSE", "cusparse", "cuda"),
             ("HDF5", "hdf5", "hdf5"),
             ("HYPRE", "hypre", "hypre"),
             ("MUMPS", "mumps", "mumps"),
             ("AMD", "suite-sparse", "suite-sparse"),
             ("UMFPACK", "suite-sparse", "suite-sparse"),
-            ("SuperLU", "superlu", "superlu"),
             ("SuperLUDist", "superlu-dist", "superlu-dist"),
             ("X11", "x11", "libx11"),
         ]
@@ -1051,7 +1054,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         # ################# Kokkos ######################
 
         if "+kokkos" in spec:
-            arch = Kokkos.get_microarch(spec.target)
+            arch = Kokkos.get_microarch(spec.target, spec["kokkos"] if "kokkos" in spec else None)
             if arch:
                 options.append(define("Kokkos_ARCH_" + arch.upper(), True))
 
@@ -1074,7 +1077,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 )
                 arch_map = Kokkos.spack_cuda_arch_map
                 options.extend(
-                    define("Kokkos_ARCH_" + arch_map[arch].upper(), True)
+                    define("Kokkos_ARCH_" + arch_map[arch][0].upper(), True)
                     for arch in spec.variants["cuda_arch"].value
                 )
 
@@ -1091,7 +1094,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 amdgpu_arch_map = Kokkos.amdgpu_arch_map
                 for amd_target in spec.variants["amdgpu_target"].value:
                     try:
-                        arch = amdgpu_arch_map[amd_target]
+                        arch = amdgpu_arch_map[amd_target][0]
                     except KeyError:
                         pass
                     else:

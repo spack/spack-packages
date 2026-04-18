@@ -1,0 +1,13 @@
+diff --git a/crates/kornia-io/Cargo.toml b/crates/kornia-io/Cargo.toml
+index af6b17b..53c176d 100644
+--- a/crates/kornia-io/Cargo.toml
++++ b/crates/kornia-io/Cargo.toml
+@@ -17,7 +17,7 @@ rustdoc-args = ["--cfg", "docsrs"]
+ 
+ [dependencies]
+ image = "0.25"
+-circular-buffer = "1.1.0"
++circular-buffer = "=1.1"
+ kornia-image = { workspace = true }
+ png = "0.17"
+ jpeg-encoder = "0.6"

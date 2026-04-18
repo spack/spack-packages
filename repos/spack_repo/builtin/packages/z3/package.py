@@ -19,6 +19,7 @@ class Z3(CMakePackage):
 
     license("MIT")
 
+    version("4.15.4", sha256="dae526252cb0585c8c863292ebec84cace4901a014b190a73f14087dd08d252b")
     version("4.12.4", sha256="25e9b18d04ee22f1d872dfe0daaf4c39034744525214e34fedd206e25140e96e")
     version("4.11.2", sha256="e3a82431b95412408a9c994466fad7252135c8ed3f719c986cd75c8c5f234c7e")
     version("4.8.16", sha256="75f95e09f3f35fef746e571d5ec88a4efba27f1bc8f1a0ef1117167486ec3dc6")
@@ -41,6 +42,8 @@ class Z3(CMakePackage):
     variant("gmp", default=False, description="GNU multiple precision library support")
     depends_on("cmake@3.4:", type="build")
     depends_on("gmp", when="+gmp", type=("build", "link"))
+
+    conflicts("%gcc@:9", when="@4.15:")
 
     # Referenced: https://github.com/Z3Prover/z3/issues/1016
     patch("fix_1016_2.patch", when="@4.5.0")

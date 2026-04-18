@@ -18,11 +18,6 @@ class BppPhyl(CMakePackage):
     license("CECILL-2.0")
 
     version("2.4.1", sha256="e7bf7d4570f756b7773904ffa600ffcd77c965553ddb5cbc252092d1da962ff2")
-    version(
-        "2.2.0",
-        sha256="f346d87bbc7858924f3c99d7d74eb4a1f7a1b926746c68d8c28e07396c64237b",
-        deprecated=True,
-    )
 
     depends_on("cxx", type="build")  # generated
 

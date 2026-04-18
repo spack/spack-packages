@@ -27,11 +27,6 @@ class Gmake(Package, GNUMirrorPackage):
     version("4.3", sha256="e05fdde47c5f7ca45cb697e973894ff4f5d79e13b750ed57d7b66d8defc78e19")
     version("4.2.1", sha256="e40b8f018c1da64edd1cc9a6fce5fa63b2e707e404e20cad91fbae337c98a5b7")
     version("4.1", sha256="9fc7a9783d3d2ea002aa1348f851875a2636116c433677453cc1d1acc3fc4d55")
-    version(
-        "4.0",
-        deprecated=True,
-        sha256="fc42139fb0d4b4291929788ebaf77e2a4de7eaca95e31f3634ef7d4932051f69",
-    )
 
     variant("guile", default=False, description="Support GNU Guile for embedded scripting")
 
@@ -95,12 +90,12 @@ class Gmake(Package, GNUMirrorPackage):
             Executable(build_sh)()
             os.mkdir(prefix.bin)
             install("make", prefix.bin)
-            os.symlink("make", prefix.bin.gmake)
+            symlink("make", prefix.bin.gmake)
 
-    def setup_dependent_package(self, module, dspec):
+    def setup_dependent_package(self, module, dependent_spec):
         module.make = MakeExecutable(
             self.spec.prefix.bin.make,
-            jobs=determine_number_of_jobs(parallel=dspec.package.parallel),
+            jobs=determine_number_of_jobs(parallel=dependent_spec.package.parallel),
         )
 
     @property

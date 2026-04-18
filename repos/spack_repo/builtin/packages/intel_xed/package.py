@@ -24,6 +24,10 @@ class IntelXed(Package):
 
     # Current versions now have actual releases and tags.
     version("main", branch="main")
+    version("2025.06.08", tag="v2025.06.08", commit="dc6bdbe036515c7ef55d3b2d50bafc5232bfe534")
+    version("2025.03.02", tag="v2025.03.02", commit="1bdc793f5f64cf207f6776f4c0e442e39fa47903")
+    version("2024.11.04", tag="v2024.11.04", commit="d4d502003bfff51c55c2808804301a62878d7cc8")
+    version("2024.08.15", tag="v2024.08.15", commit="ea330dbdf42837029ddd8c690729fceb6e7f5e42")
     version("2024.05.20", tag="v2024.05.20", commit="7e88c3e00274a10daa6b9d053decc057f65aa0ec")
     version("2024.04.01", tag="v2024.04.01", commit="6d87b5481aa53b5ab1fc2b5a5622759c46746bf9")
     version("2024.02.22", tag="v2024.02.22", commit="d08a6f66f780a685f26322960cd3ae297dbad931")
@@ -38,9 +42,6 @@ class IntelXed(Package):
     version("12.0.1", tag="12.0.1", commit="5976632eeaaaad7890c2109d0cfaf4012eaca3b8")
     version("11.2.0", tag="11.2.0", commit="40125558530137444b4ee6fd26b445bfa105b543")
 
-    # The old 2019.03.01 version (before there were tags).
-    version("10.2019.03", commit="b7231de4c808db821d64f4018d15412640c34113", deprecated=True)
-
     # XED wants the mbuild directory adjacent to xed in the same directory.
     mdir = join_path("..", "mbuild")
 
@@ -51,9 +52,9 @@ class IntelXed(Package):
         name="mbuild",
         placement=mdir,
         git=mbuild_git,
-        tag="v2022.07.28",
-        commit="75cb46e6536758f1a3cdb3d6bd83a4a9fd0338bb",
-        when="@2022.07:9999",
+        tag="v2024.11.04",
+        commit="7c4497f41f576b43a80bb0f8d8452bbcfd58b6e2",
+        when="@2022.07:",
     )
 
     resource(
@@ -85,10 +86,9 @@ class IntelXed(Package):
     depends_on("cxx", type="build")
 
     # The current mfile uses python3 by name.
-    depends_on("python@3.7:", type="build")
+    depends_on("python@3.9:", type="build")
 
     patch("1201-segv.patch", when="@12.0.1")
-    patch("2019-python3.patch", when="@10.2019.03")
     patch("libxed-ild.patch", when="@12.0:2022.12")
 
     requires("target=x86_64:,aarch64:", msg="intel-xed only builds on x86-64 or aarch64")
@@ -100,7 +100,7 @@ class IntelXed(Package):
         # See: https://github.com/intelxed/xed/issues/300
         try:
             lname = join_path(self.stage.source_path, "..", "xed")
-            os.symlink("spack-src", lname)
+            symlink("spack-src", lname)
         except OSError:
             pass
 

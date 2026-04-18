@@ -32,26 +32,19 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.11.1", sha256="2bbec8d1ba98fb3038ecdda0c066b513a5b3dd4cab9b0de4cf6b5a0b4d5ee41f")
+    version("1.11.0", sha256="8bee9a40a4c2337d4df2b811a7071f4f5b0e9a50714a30a02b2712db1038bdf7")
+    version("1.10.0", sha256="f2b5986d2e7f11b61c4cc1ac3b264adac39e16047f95fac29c60a19a2853f35b")
     version("1.9.2", sha256="4a58782020ad7bff3ea1c0cf55838a3692205770dbe4be39a3df25ba6fae302d")
     version("1.9.1", sha256="148889e1b2d5bdc3d59c5fd6a6b5da25bb4f4f0f4343c57b3ccaf96691c93aff")
     version("1.9.0", sha256="460b36a8311df430e6d4cccf3e72a6b3afda7db8d092b4a0a4259c4363c4dbde")
     version("1.8.0", sha256="1f1ec496f714aa23cc7003c88a85bd10d0e53e37659ba7310541248e48a66558")
     version("1.7.0", sha256="ce0825db2e9d079503e98cecf1c565352be696109042b3a0941762b35f36dc49")
-    version(
-        "1.6.2",
-        sha256="9c85fca679139a40cc9c72fcaeeca78a407cc1ca184734785236042de364b942",
-        deprecated=True,
-    )
-    version(
-        "1.6.1",
-        sha256="c6d92dfecf9689ffe2df615791c039f7e527e9f47799a862e26fa4e3420fe5d7",
-        deprecated=True,
-    )
 
     # build with kokkos, kokkos-kernels for offloading support
     variant("kokkos", default=False, description="Enable kokkos")
     variant(
-        "kokkos-kernels", default=False, description="Enable kokkos-kernals for linear algebra"
+        "kokkos-kernels", default=False, description="Enable kokkos-kernels for linear algebra"
     )
 
     # for compatibility with downstream projects
@@ -109,16 +102,24 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("catch2@3.0.1:", when="@1.9.0:", type="test")
     depends_on("py-numpy", type="test")
 
-    # linear algebra when not using GPUs
-    depends_on("eigen@3.3.8:", when="~kokkos-kernels")
-    requires("+kokkos-kernels", when="+cuda")
-    requires("+kokkos-kernels", when="+rocm")
+    # Require kokkos for device/offloading support
+    requires("+kokkos", when="+cuda")
+    requires("+kokkos", when="+rocm")
+
+    # linear algebra when using closure models. Eigen without kokkos
+    depends_on("eigen@3.3.8:", when="~kokkos-kernels+closure")
+    requires("+kokkos-kernels", when="+kokkos+closure")
+
+    # test_pte fails on AMD MI300 for versions of llvm < 19
+    # rocm 6.4 is the first version of rocm that depends on llvm >= 19
+    depends_on("hip@6.4:", when="+rocm")
 
     depends_on("eospac", when="+eospac")
 
     depends_on("ports-of-call@1.4.2,1.5.2:", when="@:1.7.0")
     depends_on("ports-of-call@1.5.2:", when="@1.7.1:")
     depends_on("ports-of-call@1.6.0:", when="@1.9.0:")
+    depends_on("ports-of-call@2.0.0:", when="@1.11.0:")
     depends_on("ports-of-call@main", when="@main")
 
     depends_on("spiner +kokkos", when="+kokkos+spiner")
@@ -129,14 +130,14 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("spiner@1.6.3:", when="@1.9.1: +spiner")
     depends_on("spiner@main", when="@main +spiner")
 
-    depends_on("mpark-variant")
+    depends_on("mpark-variant", when="@:1.10")
     depends_on(
         "mpark-variant",
         patches=patch(
             "https://raw.githubusercontent.com/lanl/singularity-eos/b6ae9bac37fca51854c8da7a699577c9932188e8/utils/gpu_compatibility.patch",
             sha256="592e64ceccd2822ec1cc7eb01ac3fcad620551940beab793003afb6b5366dad8",
         ),
-        when="+cuda",
+        when="@:1.10 +cuda",
     )
     depends_on(
         "mpark-variant",
@@ -144,7 +145,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
             "https://raw.githubusercontent.com/lanl/singularity-eos/b6ae9bac37fca51854c8da7a699577c9932188e8/utils/gpu_compatibility.patch",
             sha256="592e64ceccd2822ec1cc7eb01ac3fcad620551940beab793003afb6b5366dad8",
         ),
-        when="+rocm",
+        when="@:1.10 +rocm",
     )
     depends_on("binutils@:2.39,2.42:+ld", when="build_type=Debug")
     depends_on("binutils@:2.39,2.42:+ld", when="build_type=RelWithDebInfo")
@@ -163,7 +164,6 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos+pic", when="+kokkos-kernels")
     depends_on("kokkos+cuda_lambda", when="+cuda+kokkos")
 
-    # specfic specs when using GPU/cuda offloading
     for _flag in list(CudaPackage.cuda_arch_values):
         depends_on("kokkos cuda_arch=" + _flag, when="+cuda+kokkos cuda_arch=" + _flag)
         depends_on("kokkos-kernels cuda_arch=" + _flag, when="+cuda+kokkos cuda_arch=" + _flag)
@@ -175,9 +175,6 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("amdgpu_target=none", when="+rocm", msg="ROCm architecture is required")
 
     # these are mirrored in the cmake configuration
-    conflicts("+cuda", when="~kokkos")
-    conflicts("+rocm", when="~kokkos")
-    conflicts("+kokkos-kernels", when="~kokkos")
     conflicts("+hdf5", when="~spiner")
 
     conflicts("+fortran", when="~closure")

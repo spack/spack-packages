@@ -36,26 +36,6 @@ class Sleef(CMakePackage):
     version(
         "3.4.0_2019-07-30", commit="7f523de651585fe25cade462efccca647dcc8d02"
     )  # py-torch@1.3:1.7
-    version(
-        "3.4.0_2019-05-13",
-        commit="9b249c53a80343cc1a394ca961d7d5696ea76409",  # py-torch@1.2
-        git="https://github.com/zdevito/sleef.git",
-        deprecated=True,
-    )
-    version(
-        "3.3.1_2018-12-09",
-        commit="191f655caa25526ae226cf88dd2529265176014a",  # py-torch@1.1
-        git="https://github.com/zdevito/sleef.git",
-        deprecated=True,
-    )
-    version(
-        "3.2.0_2018-05-09", commit="6ff7a135a1e31979d1e1844a2e7171dfbd34f54f", deprecated=True
-    )  # py-torch@0.4.1:1.0
-    version(
-        "3.2.0",
-        sha256="3130c5966e204e6d6a3ace81e543d12b5b21f60897f1c185bfa587c1bd77bee2",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
 

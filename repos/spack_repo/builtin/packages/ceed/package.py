@@ -135,13 +135,13 @@ class Ceed(BundlePackage, CudaPackage, ROCmPackage):
     # ceed-2.0
     depends_on("nek5000@17.0", when="@2.0.0+nek")
     depends_on("nektools@17.0%gcc", when="@2.0.0+nek")
-    depends_on("gslib@1.0.2", when="@2.0.0+nek")
+    depends_on("gslib@1.0.3", when="@2.0.0+nek")
     depends_on("nekbone@17.0", when="@2.0.0+nek")
     depends_on("nekcem@7332619", when="@2.0.0+nek")
     # ceed-1.0
     depends_on("nek5000@17.0", when="@1.0.0+nek")
     depends_on("nektools@17.0%gcc", when="@1.0.0+nek")
-    depends_on("gslib@1.0.2", when="@1.0.0+nek")
+    depends_on("gslib@1.0.3", when="@1.0.0+nek")
     depends_on("nekbone@17.0", when="@1.0.0+nek")
     depends_on("nekcem@0b8bedd", when="@1.0.0+nek")
 
@@ -280,20 +280,14 @@ class Ceed(BundlePackage, CudaPackage, ROCmPackage):
     depends_on("mfem@3.4.0+mpi+examples+miniapps", when="@2.0.0+mfem")
     depends_on("mfem@3.4.0+pumi", when="@2.0.0+mfem+pumi")
     depends_on("laghos@2.0", when="@2.0.0+mfem")
-    # Help the spack concretizer find a suitable version of hypre:
-    depends_on("hypre~internal-superlu", when="@2.0.0+mfem")
-    depends_on("hypre~internal-superlu~superlu-dist", when="@2.0.0+mfem+quickbuild")
+    depends_on("hypre", when="@2.0.0+mfem")
+    depends_on("hypre~superlu-dist", when="@2.0.0+mfem+quickbuild")
 
     # ceed-1.0
     depends_on("mfem@3.3.2+mpi+examples+miniapps", when="@1.0.0+mfem")
     depends_on("mfem@3.3.2+mpi+petsc+examples+miniapps", when="@1.0.0+mfem")
     depends_on("laghos@1.0", when="@1.0.0+mfem")
-    # The next line seems to be necessary because the concretizer somehow
-    # decides that mfem requires 'hypre+internal-superlu' even though the mfem
-    # package lists simply 'hypre' as dependency. This is only an issue because
-    # petsc explicitly requires 'hypre~internal-superlu' which for the
-    # concretizer is a conflict.
-    depends_on("hypre~internal-superlu", when="@1.0.0+mfem")
+    depends_on("hypre", when="@1.0.0+mfem")
 
     # If using gcc version <= 4.8 build suite-sparse version <= 5.1.0
     depends_on("suite-sparse@:5.1.0", when="@1.0.0+mfem%gcc@:4.8")

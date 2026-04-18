@@ -46,9 +46,8 @@ class Hepmc3(CMakePackage):
         description="Install interfaces for some Monte-Carlo Event Gens",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build", when="@:3.2")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@2.8.9:", type="build")
     with when("+rootio"):
@@ -58,6 +57,7 @@ class Hepmc3(CMakePackage):
     depends_on("python", when="+python")
 
     conflicts("%gcc@9.3.0", when="@:3.1.1")
+    # See https://gitlab.cern.ch/hepmc/HepMC3/-/merge_requests/58.diff
     patch("ba38f14d8f56c16cc4105d98f6d4540c928c6150.patch", when="@3.1.2:3.2.1 %gcc@9.3.0")
 
     extends("python", when="+python")

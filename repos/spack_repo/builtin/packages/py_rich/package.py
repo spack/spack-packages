@@ -17,6 +17,8 @@ class PyRich(PythonPackage):
 
     license("MIT")
 
+    version("14.3.2", sha256="e712f11c1a562a11843306f5ed999475f09ac31ffb64281f73ab29ffdda8b3b8")
+    version("14.1.0", sha256="e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8")
     version("13.9.4", sha256="439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098")
     version("13.7.1", sha256="9be308cb1fe2f1f57d67ce99e95af38a1e2bc71ad9813b0e247cf7ffbcc3a432")
     version("13.4.2", sha256="d653d6bccede5844304c605d5aac802c7cf9621efd700b46c7ec2b51ea914898")
@@ -37,20 +39,21 @@ class PyRich(PythonPackage):
     version("9.5.0", sha256="a65a9d003cb6e87e6fa5d1b53bff6f43a8d7475524c58873acdbf5bba0683fa3")
     version("9.4.0", sha256="bde23a1761373fed2802502ff98292c5d735a5389ed96f4fe1be5fb4c2cde8ea")
 
-    depends_on("python@3.7:", when="@13:", type=("build", "run"))
-    depends_on("python@3.6.3:3", when="@12.2.1:12", type=("build", "run"))
-    depends_on("python@3.6.2:3", when="@10.14.0:12", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"), when="@13.9:")
+    depends_on("python@3.7:", type=("build", "run"), when="@13:13.8")
+    depends_on("python@3.6.3:3", type=("build", "run"), when="@12.2.1:12")
+    depends_on("python@3.6.2:3", type=("build", "run"), when="@10.14.0:12")
     depends_on("py-poetry-core@1:", type="build")
 
-    depends_on("py-typing-extensions@4", when="@12.2: ^python@:3.8", type=("build", "run"))
-    depends_on(
-        "py-typing-extensions@3.7.4:4", when="@10.14:12.1 ^python@:3.7", type=("build", "run")
-    )
-    depends_on("py-typing-extensions@3.7.4:3", when="@:10.13", type=("build", "run"))
-    depends_on("py-pygments@2.13:2", when="@13.3.2:", type=("build", "run"))
-    depends_on("py-pygments@2.6:2", when="@:13.2", type=("build", "run"))
-    depends_on("py-markdown-it-py@2.2:", when="@13.3.2:", type=("build", "run"))
+    depends_on("py-pygments@2.13:2", type=("build", "run"), when="@13.3.2:")
+    depends_on("py-pygments@2.6:2", type=("build", "run"), when="@:13.2")
+    depends_on("py-markdown-it-py@2.2:", type=("build", "run"), when="@13.3.2:")
 
     # Historical dependencies
-    depends_on("py-commonmark@0.9.0:0.9", when="@:13.1", type=("build", "run"))
-    depends_on("py-colorama@0.4.0:0.4", when="@:10.14.0", type=("build", "run"))
+    depends_on("py-typing-extensions@4", type=("build", "run"), when="@12.2:14.0 ^python@:3.10")
+    depends_on(
+        "py-typing-extensions@3.7.4:4", type=("build", "run"), when="@10.14:12.1 ^python@:3.7"
+    )
+    depends_on("py-typing-extensions@3.7.4:3", type=("build", "run"), when="@:10.13")
+    depends_on("py-commonmark@0.9.0:0.9", type=("build", "run"), when="@:13.1")
+    depends_on("py-colorama@0.4.0:0.4", type=("build", "run"), when="@:10.14.0")

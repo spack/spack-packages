@@ -31,11 +31,9 @@ class AoclSparse(CMakePackage):
 
     license("MIT")
 
-    version(
-        "5.0",
-        sha256="7528970f41ae60563df9fe1f8cc74a435be1566c01868a603ab894e9956c3c94",
-        preferred=True,
-    )
+    version("5.2", sha256="7de4ccb22b9bdf4733e621b44ebde1951dae5333841b02148fae382a8859f550")
+    version("5.1", sha256="a5fff94f9144cb5e5e0f4702cc0d48a20215ccccd06cbed915e566e5d901fa0a")
+    version("5.0", sha256="7528970f41ae60563df9fe1f8cc74a435be1566c01868a603ab894e9956c3c94")
     version("4.2", sha256="03cd67adcfea4a574fece98b60b4aba0a6e5a9c8f608ff1ccc1fb324a7185538")
     version("4.1", sha256="35ef437210bc25fdd802b462eaca830bfd928f962569b91b592f2866033ef2bb")
     version("4.0", sha256="68524e441fdc7bb923333b98151005bed39154d9f4b5e8310b5c37de1d69c2c3")
@@ -43,6 +41,9 @@ class AoclSparse(CMakePackage):
     version("3.1", sha256="8536f06095c95074d4297a3d2910654085dd91bce82e116c10368a9f87e9c7b9")
     version("3.0", sha256="1d04ba16e04c065051af916b1ed9afce50296edfa9b1513211a7378e1d6b952e")
     version("2.2", sha256="33c2ed6622cda61d2613ee63ff12c116a6cd209c62e54307b8fde986cd65f664")
+
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
 
     variant("shared", default=True, description="Build shared library")
     variant("ilp64", default=False, description="Build with ILP64 support")
@@ -57,10 +58,7 @@ class AoclSparse(CMakePackage):
     )
     variant("openmp", default=True, when="@4.2:", description="Enable OpenMP support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
-    for vers in ["4.1", "4.2", "5.0"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
         with when(f"@={vers}"):
             depends_on(f"amdblis@={vers}")
             depends_on(f"amdlibflame@={vers}")
@@ -73,7 +71,8 @@ class AoclSparse(CMakePackage):
     depends_on("amdlibflame threads=none", when="~openmp")
     depends_on("boost", when="+benchmarks")
     depends_on("boost", when="@2.2")
-    depends_on("cmake@3.22:", type="build")
+    depends_on("cmake@3.22:", when="@:5.0", type="build")
+    depends_on("cmake@3.26:", when="@5.1:", type="build")
 
     @property
     def libs(self):

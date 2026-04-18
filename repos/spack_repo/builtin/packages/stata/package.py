@@ -82,8 +82,8 @@ class Stata(Package):
     # $ stinit
 
     def install(self, spec, prefix):
-        bash = which("bash")
-        tar = which("tar")
+        bash = which("bash", required=True)
+        tar = which("tar", required=True)
 
         res_dir = "unix/linux64/"
 
