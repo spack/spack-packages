@@ -601,6 +601,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         example_stage_dir = "./cmake"
         shutil.copytree(example_src_dir, example_stage_dir)
         with working_dir(join_path(example_stage_dir, "build"), create=True):
+            print("Running RAJA Install Test...")
             cmake_args = ["-C ../host-config.cmake", example_src_dir]
             cmake = self.spec["cmake"].command
             cmake(*cmake_args)
@@ -611,7 +612,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def run_example(self, exe, expected):
         """run and check outputs of the example"""
-        with working_dir(self.prefix.examples):
+        # TODO: figure out where (if at all) these files actually are installed
+        with working_dir(self.prefix.bin):
             example = which(exe)
             if example is None:
                 raise SkipTest(f"{exe} was not built")
