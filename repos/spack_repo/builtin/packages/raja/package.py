@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
+import shutil
 import re
 import socket
 
@@ -42,23 +42,15 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     extra_install_tests = ["examples", "exercises"]
 
     example_test_sources = {
-        "ex5_line-of-sight_solution": [
-            join_path("exercises", "tutorial_halfday", "ex5_line-of-sight_solution.cpp")
-        ],
-        "ex6_stencil-offset-layout_solution": [
-            join_path("exercises", "tutorial_halfday", "ex6_stencil-offset-layout_solution.cpp")
-        ],
-        "ex8_tiled-matrix-transpose_solution": [
-            join_path("exercises", "tutorial_halfday", "ex8_tiled-matrix-transpose_solution.cpp")
-        ],
+        "dynamic-forall": [join_path("examples", "dynamic-forall.cpp")],
         "kernel-dynamic-tile": [join_path("examples", "kernel-dynamic-tile.cpp")],
+        "make_permuted_view": [join_path("examples", "make_permuted_view.cpp")],
         "plugin-example": [
             join_path("examples", "plugin", "test-plugin.cpp"),
             join_path("examples", "plugin", "counter-plugin.cpp"),
         ],
-        "tut_batched-matrix-multiply": [
-            join_path("exercises", "permuted-layout-batch-matrix-multiply_solution.cpp")
-        ],
+        "tut_daxpy": [join_path("examples", "tut_daxpy.cpp")],
+        "tut_matrix-multiply": [join_path("examples", "tut_matrix-multiply.cpp")],
         "wave-eqn": [join_path("examples", "wave-eqn.cpp")],
     }
 
@@ -596,77 +588,25 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         return []
 
-    @run_after("install")
-    def setup_build_tests(self):
-        """Copy example sources after install for use during `spack test run`."""
-        cache_extra_test_sources(self, self.extra_install_tests)
-
-        # Ensure the path exists since relying on a relative path at the
-        # same level as the normal stage source path.
-        mkdirp(install_test_root(self))
-    
-    @run_after("install")
+    @run_after("build")
     @on_package_attributes(run_tests=True)
-    def check_install(self):
+    def build_test(self):
         with working_dir(self.build_directory):
-            print("Running RAJA Tests...")
+            print("Running RAJA Unit Tests...")
             make("test")
 
-    @property
-    def _extra_tests_source_path(self):
-        return self.test_suite.current_test_cache_dir
-
-    @property
-    def _extra_tests_build_path(self):
-        return join_path(install_test_root(self), "example-build")
-
-    @property
-    def _extra_tests_path(self):
-        return join_path(self._extra_tests_build_path, "bin")
-
-    def run_example(self, exe, expected):
-        """run and check outputs of the example"""
-        example_path = join_path(self._extra_tests_path, exe)
-        if not os.path.exists(example_path):
-            raise SkipTest(f"{exe} was not built")
-
-        out = Executable(example_path)(output=str.split, error=str.split)
-        check_outputs(expected, out)
-
-    def test_line_of_sight(self):
-        """check line of sight example"""
-        self.run_example(
-            "ex5_line-of-sight_solution",
-            [r"C-style sequential", r"RAJA sequential", r"result -- PASS"],
-        )
-
-    def test_stencil_offset_layout(self):
-        """check stencil offset layout"""
-        self.run_example(
-            "ex6_stencil-offset-layout_solution", [r"RAJA Views \(permuted\)", r"result -- PASS"]
-        )
-
-    def test_tiled_matrix(self):
-        """check tiled matrix transpose"""
-        self.run_example(
-            "ex8_tiled-matrix-transpose_solution",
-            [r"C-version", r"RAJA sequential", r"result -- PASS"],
-        )
-
-    def test_dynamic_tile(self):
-        """check kernel dynamic tile"""
-        self.run_example("kernel-dynamic-tile", [r"Running index", r"(24,24)"])
-
-    def test_plugin_example(self):
-        """check plugin example"""
-        self.run_example("plugin-example", [r"Launching host kernel for the 10 time"])
-
-    def test_matrix_multiply(self):
-        """check batched matrix multiple tutorial"""
-        self.run_example(
-            "tut_batched-matrix-multiply", [r"batched matrix multiplication", r"result -- PASS"]
-        )
-
-    def test_wave_equation(self):
-        """check wave equation"""
-        self.run_example("wave-eqn", [r"Max Error = 2", r"Evolved solution to time"])
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def test_install_using_cmake(self):
+        """build example with cmake and run"""
+        test_src_dir = join_path(self.prefix.test.raja, "using-with-cmake")
+        test_stage_dir = "./cmake"
+        shutil.copytree(test_src_dir, test_stage_dir)
+        with working_dir(join_path(test_stage_dir, "build"), create=True):
+            cmake_args = ["-C ../host-config.cmake", test_src_dir]
+            cmake = self.spec["cmake"].command
+            cmake(*cmake_args)
+            make()
+            example = Executable("./using-with-cmake")
+            example()
+            make("clean")
