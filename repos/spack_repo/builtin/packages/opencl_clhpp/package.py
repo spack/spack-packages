@@ -61,7 +61,14 @@ class OpenclClhpp(CMakePackage):
     depends_on("opencl-c-headers", when="@2022.05.18:")
     depends_on("cmake@3.16:", type="build", when="@2024.10.24:")
 
-    root_cmakelists_dir = "include"
+    def cmake_args(self):
+        # Disable testing the headers
+        return [
+            "-DBUILD_DOCS=OFF",
+            "-DBUILD_TESTS=OFF",
+            "-DBUILD_EXAMPLES=OFF",
+            "-DBUILD_TESTING=OFF",
+        ]
 
     @run_after("install")
     def post_install(self):
