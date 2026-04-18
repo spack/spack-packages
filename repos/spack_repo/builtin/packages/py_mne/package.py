@@ -55,6 +55,7 @@ class PyMne(PythonPackage):
         # specified in README.rst (marked with *)
         depends_on("py-decorator@5.1:", when="@1:")
         depends_on("py-decorator", when="@1:")
+        depends_on("py-jinja2@3.1", when="@1.12:")
         depends_on("py-jinja2", when="@1:")
         depends_on("py-lazy-loader@0.3:", when="@1.6.1:")
         depends_on("py-matplotlib@3.8:", when="@1.11:")
