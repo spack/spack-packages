@@ -591,36 +591,27 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     @on_package_attributes(run_tests=True)
     def check_install(self):
         """build example with cmake and run"""
-        print("Running RAJA Install Tests...")
-        test_src_dir = self._using_with_cmake_source_dir()
-        test_stage_dir = "./cmake"
-        if os.path.exists(test_stage_dir):
-            shutil.rmtree(test_stage_dir)
-        shutil.copytree(test_src_dir, test_stage_dir)
-        with working_dir(join_path(test_stage_dir, "build"), create=True):
-            cmake_args = ["-C ../host-config.cmake", ".."]
+        example_src_dir = join_path(self.prefix.examples.raja, "using-with-cmake")
+        example_stage_dir = "./cmake"
+        shutil.copytree(example_src_dir, example_stage_dir)
+        with working_dir(join_path(example_stage_dir, "build"), create=True):
+            cmake_args = ["-C ../host-config.cmake", example_src_dir]
             cmake = self.spec["cmake"].command
             cmake(*cmake_args)
             make()
-            example = Executable("./using-with-cmake")
+            example = Executable("./example")
             example()
             make("clean")
 
-    @run_after("install")
-    def setup_build_tests(self):
-        """Cache sources needed by standalone `spack test run`."""
-        cache_extra_test_sources(self, self.extra_install_tests)
-        mkdirp(install_test_root(self))
-
-    @property
-    def _extra_tests_path(self):
-        # TODO: The tests should be converted to re-build and run examples
-        # TODO: using the installed libraries.
-        return join_path(install_test_root(self), self.build_relpath, "bin")
+    # @run_after("install")
+    # def setup_build_tests(self):
+    #     """Cache sources needed by standalone `spack test run`."""
+    #     cache_extra_test_sources(self, self.extra_install_tests)
+    #     mkdirp(install_test_root(self))
 
     def run_example(self, exe, expected):
         """run and check outputs of the example"""
-        with working_dir(self._extra_tests_path):
+        with working_dir(self.prefix.bin):
             example = which(exe)
             if example is None:
                 raise SkipTest(f"{exe} was not built")
