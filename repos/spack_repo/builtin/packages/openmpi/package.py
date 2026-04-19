@@ -1156,7 +1156,12 @@ with '-Wl,-commons,use_dylibs' and without
 
     def configure_args(self):
         spec = self.spec
-        config_args = ["--enable-shared", "--disable-silent-rules", "--disable-sphinx"]
+        config_args = [
+            "--enable-shared",
+            "--disable-silent-rules",
+            "--disable-sphinx",
+            "--disable-dependency-tracking",
+        ]
 
         # Work around incompatibility with new apple-clang linker
         # https://github.com/open-mpi/ompi/issues/12427
