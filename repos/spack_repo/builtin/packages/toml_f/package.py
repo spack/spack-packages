@@ -40,7 +40,6 @@ class TomlF(MesonPackage, CMakePackage):
     depends_on("pkgconfig", type="build")
 
 
-
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         return [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
