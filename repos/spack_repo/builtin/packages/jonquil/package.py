@@ -28,7 +28,7 @@ class Jonquil(MesonPackage, CMakePackage):
     version("0.1.0", sha256="0c8854da047306cad357143fe56f7afe3d323d89aa7383b6614b2b587f580044")
 
     with when("build_system=cmake"):
-        variant("shared", default=True)
+        variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")
     depends_on("meson@0.57.2:", type="build", when="build_system=meson")

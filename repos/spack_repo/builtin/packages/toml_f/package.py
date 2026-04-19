@@ -32,7 +32,7 @@ class TomlF(MesonPackage, CMakePackage):
     version("0.2.3", sha256="2dca7ff6d3e35415cd92454c31560d2b656c014af8236be09c54c13452e4539c")
 
     with when("build_system=cmake"):
-        variant("shared", default=True)
+        variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")  # generated
     depends_on("meson@0.57.2:", type="build", when="build_system=meson")

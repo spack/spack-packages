@@ -36,7 +36,7 @@ class MctcLib(MesonPackage, CMakePackage):
     variant("json", default=False, description="Enable support for JSON")
     variant("openmp", default=False, description="Enable OpenMP support")
     with when("build_system=cmake"):
-        variant("shared", default=True)
+        variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")  # generated
 
