@@ -41,7 +41,7 @@ class Bricks(CMakePackage):
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
-    depends_on("opencl-clhpp", when="+cuda")
+    depends_on("opencl-clhpp@:2", when="+cuda")
     # See https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517 for CUDA 13
     depends_on("cuda@:12", when="+cuda")
     depends_on("mpi")
