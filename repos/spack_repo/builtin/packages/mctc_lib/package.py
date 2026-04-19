@@ -54,7 +54,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         return [
             self.define_from_variant("WITH_JSON", "json"),
             self.define_from_variant("WITH_OpenMP", "openmp"),
-            "-DBUILD_SHARED_LIBS=On"
+            "-DBUILD_SHARED_LIBS=On",
         ]
 
 
