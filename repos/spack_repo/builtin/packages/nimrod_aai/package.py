@@ -99,6 +99,5 @@ class NimrodAai(CMakePackage):
     @run_after("build")
     @on_package_attributes(run_tests=True)
     def check(self):
-        """Run the nimrod-aai unit tests in the build directory."""
         with working_dir(self.build_directory):
             ctest("test")
