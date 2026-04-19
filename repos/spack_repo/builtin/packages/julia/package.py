@@ -27,6 +27,7 @@ class Julia(MakefilePackage):
     maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
+    version("1.12.6", sha256="5440ad37977af766a075e5cc9c430b66ba958ede69a70ccf308bb7d8e1d69478")
     version("1.12.5", sha256="9e0dee015ef631ce93ddcf8166a8f5f4cae39e923d8f38a54a832091d0475004")
 
     version("1.11.9", sha256="3c73d9612ee5bbd9d73b9eee26937c970bea37f51dc24aa23fd4b232539eb7d8")
@@ -40,6 +41,7 @@ class Julia(MakefilePackage):
     version("1.11.1", sha256="895549f40b21dee66b6380e30811f40d2d938c2baba0750de69c9a183cccd756")
     version("1.11.0", sha256="a938c6b7758a83e817b56db3e542bd85e6d74db75e1381b1ba24cd6e3dc8c566")
 
+    version("1.10.11", sha256="8d6c633967452cb879a671d962f5d4d10027e1f785327764c3163c003c8a44b5")
     version("1.10.10", sha256="b564321e9ee71796f467b3872cdefdccdb97ca26e19ee8106df96f6d24061090")
     version("1.10.9", sha256="780206a73d2274c7e90b38352e27ed851c593a98f566b9bfa5f1b638336e954b")
     version("1.10.8", sha256="8ba5fa4722b2159c4e40d813468b5bd92d9582cba9ed036b577373e7c535cda7")

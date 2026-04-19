@@ -139,7 +139,7 @@ class IntelTbb(CMakePackage, MakefilePackage):
 
     # Patch and conflicts for GCC 13 support (#1031).
     patch("gcc_13-2021-v2.patch", when="@2021.1:2021.9")
-    conflicts("%gcc@13", when="@:2021.3")
+    conflicts("%gcc@13:", when="@:2021.3")
 
     # Patch cmakeConfig.cmake.in to find the libraries where we install them.
     patch("tbb_cmakeConfig-2019.5.patch", level=0, when="@2019.5:2021.0")
