@@ -42,6 +42,8 @@ class Dftd4(MesonPackage, CMakePackage):
         when="build_system=meson",
         description="Build Python extension module",
     )
+    with when("build_system=cmake"):
+        variant("shared", default=True)
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
