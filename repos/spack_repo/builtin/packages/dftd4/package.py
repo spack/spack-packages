@@ -88,4 +88,4 @@ class MesonBuilder(meson.MesonBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("WITH_OPENMP", "openmp")]
+        return [self.define_from_variant("WITH_OPENMP", "openmp"), "-DBUILD_SHARED_LIBS=On"]

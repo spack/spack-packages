@@ -47,7 +47,7 @@ class Multicharge(CMakePackage, MesonPackage):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        args = [self.define_from_variant("WITH_OpenMP", "openmp")]
+        args = [self.define_from_variant("WITH_OpenMP", "openmp"), "-DBUILD_SHARED_LIBS=On"]
         return args
 
 

@@ -39,7 +39,7 @@ class TomlF(MesonPackage, CMakePackage):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return []
+        return ["-DBUILD_SHARED_LIBS=On"]
 
 
 class MesonBuilder(meson.MesonBuilder):
