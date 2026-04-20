@@ -18,6 +18,7 @@ class PyMne(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.11.0", sha256="0a89b8fc44133b81218a35cdcba74ad0f8ae2e265136249b365b9ce04864c688")
     version("1.10.2", sha256="e83610ed3fa86086c7b2006e978e2ec39d9ebc8d72e2777fde64c68674ec561f")
     version("1.10.1", sha256="a93e3d772d551e43ec5ddcd3495fffe0f98e3e384045bcd96497636e86a32a0b")
     version("1.7.1", sha256="a87bbc998b792532d2c87add8b0f7bbf28a4d8cf5db1bdfb6d6e260791754498")
@@ -45,11 +46,13 @@ class PyMne(PythonPackage):
     depends_on("py-decorator", when="@1:", type=("build", "run"))
     depends_on("py-jinja2", when="@1:", type=("build", "run"))
     depends_on("py-lazy-loader@0.3:", when="@1.6.1:", type=("build", "run"))
+    depends_on("py-matplotlib@3.8:", when="@1.11:", type=("build", "run"))
     depends_on("py-matplotlib@3.7:", when="@1.10:", type=("build", "run"))
     depends_on("py-matplotlib@3.5:", when="@1.6.1:", type=("build", "run"))
     depends_on("py-matplotlib@3.4:", when="@1.4:", type=("build", "run"))  # *
     depends_on("py-matplotlib@3.1:", when="@1:", type=("build", "run"))  # *
-    depends_on("py-numpy@1.25:2", when="@1.6.1:", type=("build", "run"))
+    depends_on("py-numpy@1.26:2", when="@1.11:", type=("build", "run"))
+    depends_on("py-numpy@1.25:2", when="@1.6.1:1.10", type=("build", "run"))
     depends_on("py-numpy@1.21.2:", when="@1.6.1:1.7", type=("build", "run"))
     depends_on("py-numpy@1.20.2:", when="@1.4:1.7", type=("build", "run"))  # *
     depends_on("py-numpy@1.18.1:", when="@1:1.7", type=("build", "run"))  # *

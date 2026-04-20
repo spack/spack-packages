@@ -104,6 +104,9 @@ class Libunwind(AutotoolsPackage):
 
     conflicts("target=aarch64:", when="@1.8:")
 
+    # https://github.com/libunwind/libunwind/issues/672
+    conflicts("%gcc@14:", when="@1.7.2")
+
     provides("unwind")
 
     # Fix bad prototype for malloc() in test
