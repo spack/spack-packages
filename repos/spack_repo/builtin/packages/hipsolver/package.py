@@ -2,9 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import os
 import re
-import itertools
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
