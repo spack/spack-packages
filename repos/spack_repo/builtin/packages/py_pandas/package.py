@@ -80,6 +80,7 @@ class PyPandas(PythonPackage):
         depends_on("py-meson-python@0.13.1:", when="@2.1:")
         depends_on("meson@1.2.1:", when="@2.1.1:")
         depends_on("meson@1.0.1:", when="@2.1.0")
+        depends_on("py-cython@3.1.0:", when="@3.0.2:")
         depends_on("py-cython@3.0.5:3", when="@2.2:")
         depends_on("py-cython@0.29.33:2", when="@2.0:2.1")
         depends_on("py-cython@0.29.32:2", when="@1.4.4:1")
