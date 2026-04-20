@@ -94,9 +94,10 @@ class Prrte(AutotoolsPackage):
 
     # Improve hetero node handling
     # https://github.com/openpmix/prrte/pull/2430
-    patch('https://github.com/openpmix/prrte/commit/a6b09c9c3fb84838b056c31e802b5f79ac4e8d6b.patch?full_index=1',
+    patch(
+        "https://github.com/openpmix/prrte/commit/a6b09c9c3fb84838b056c31e802b5f79ac4e8d6b.patch?full_index=1",
         sha256="91b28f5c701c8543b4807a29e9b5154b9d7e62f5d3a1e3036dadf1a9b5b0ca65",
-        when="@4.1.0"
+        when="@4.1.0",
     )
 
     def url_for_version(self, version):
@@ -110,7 +111,7 @@ class Prrte(AutotoolsPackage):
         with working_dir(self.configure_directory):
             perl = spec["perl"].command
             perl("autogen.pl")
-  
+
     def configure_args(self):
         spec = self.spec
         config_args = ["--enable-shared", "--enable-static", "--disable-sphinx"]
@@ -146,4 +147,4 @@ class Prrte(AutotoolsPackage):
     # ensure prrte prefix is set so that the FQP of mpirun is not required
     # ref: https://github.com/openpmix/prrte/issues/2426#issuecomment-4261910023
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.set('PRTE_PREFIX', self.spec.prefix)
+        env.set("PRTE_PREFIX", self.spec.prefix)
