@@ -61,7 +61,7 @@ jobs:
       - name: Upload to S3
         if: success()
         run: |
-          aws s3 sync src-mirror/ s3://${{ secrets.S3_BUCKET_NAME }}/source-mirror/ \
-            --size-only \
+          aws s3 cp src-mirror/_source-cache s3://${{ secrets.S3_BUCKET_NAME }}/_source-cache/ \
+            --recursive \
             --no-progress
           echo "Successfully uploaded source mirror to S3"
