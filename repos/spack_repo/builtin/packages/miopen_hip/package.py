@@ -118,7 +118,7 @@ class MiopenHip(CMakePackage):
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-clang-ocl@{ver}", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
+        for tgt in ROCmPackage.amdgpu_targets:
             depends_on(
                 f"composable-kernel@{ver} amdgpu_target={tgt}",
                 when=f"@{ver} +ck amdgpu_target={tgt}",
