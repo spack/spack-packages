@@ -120,9 +120,12 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}")
-            depends_on(f"rocsolver@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}")
-
+            depends_on(
+                f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocsolver@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
 
     for ver in [
         "6.0.0",

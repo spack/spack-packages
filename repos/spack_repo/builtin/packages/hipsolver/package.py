@@ -119,10 +119,13 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
-
         for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}")
-            depends_on(f"rocsolver@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}")
+            depends_on(
+                f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocsolver@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
