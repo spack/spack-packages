@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import itertools
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -133,15 +132,12 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         if self.spec.satisfies("+rocm ^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("+rocm"):
-            if "auto" not in self.spec.variants["amdgpu_target"]:
-                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         # FindHIP.cmake is still used for +cuda
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
         if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
-
+        if self.spec.satisfies("+rocm"):
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
