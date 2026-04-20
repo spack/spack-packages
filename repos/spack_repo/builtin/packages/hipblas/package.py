@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import re
+import itertools
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -118,8 +119,10 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "7.2.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
-        depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
-        depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}")
+            depends_on(f"rocsolver@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}")
+
 
     for ver in [
         "6.0.0",
@@ -144,10 +147,6 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.1",
     ]:
         depends_on(f"rocm-openmp-extras@{ver}", type="test", when=f"+rocm @{ver}")
-
-    for tgt in ROCmPackage.amdgpu_targets:
-        depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
-        depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
 
     for ver in [
         "6.3.0",
