@@ -299,9 +299,37 @@ mode=""
 vdep=""
 lang_flags=""
 debug_flags=""
-command="${0##*/}"
 comp="CC"
 vcheck_flags=""
+
+command_from_argv0="${0##*/}"
+command="$command_from_argv0"
+
+_command_from_flags() {
+    while [ $# -ne 0 ]; do
+        arg="$1"
+        shift
+        case "$arg" in
+            -x|--language)
+                _lang="$1"
+                shift ;;
+            -x*)
+                _lang="${arg#-x}" ;;
+            --language=*)
+                _lang="${arg#--language=}" ;;
+            *) continue ;;
+        esac
+    done
+
+    case "$_lang" in
+        c) command=cc ;;
+        c++|f77|f95|hip) command="$_lang" ;;
+        *) command="$command_from_argv0" ;;  # drop unknown languages
+    esac
+}
+
+_command_from_flags "$@"
+
 case "$command" in
     cpp)
         mode=cpp
@@ -339,6 +367,14 @@ case "$command" in
         lang_flags=F
         debug_flags="-g"
         vcheck_flags="${SPACK_ALWAYS_FFLAGS}"
+        ;;
+    hip)
+        command="$SPACK_HIPCXX"
+        language="HIP"
+        comp="HIPCXX"
+        lang_flags=HIP
+        debug_flags="-g"
+        vcheck_flags="${SPACK_ALWAYS_HIPCXXFLAGS}"
         ;;
     ld|ld.gold|ld.lld)
         mode=ld

@@ -34,6 +34,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         "c": "rocmcc/amdclang",
         "cxx": "rocmcc/amdclang++",
         "fortran": "rocmcc/amdflang",
+        "hip-lang": "rocmcc/amdclang++",
     }
 
     stdcxx_libs = ("-lstdc++",)
@@ -68,6 +69,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     version("5.7.0", sha256="4abdf00b297a77c5886cedb37e63acda2ba11cb9f4c0a64e133b05800aadfcf0")
 
     provides("c", "cxx")
+    provides("hip-lang")
     provides("fortran", when="@7.0:")
 
     variant(
@@ -484,6 +486,23 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     def _fortran_path(self):
         return os.path.join(self.spec.prefix.bin, "amdflang")
+
+    @classmethod
+    def runtime_constraints(cls, *, spec, pkg):
+        """Callback function to inject runtime-related rules into the solver.
+
+        Rule-injection is obtained through method calls of the ``pkg`` argument.
+
+        Args:
+            spec: spec that will inject runtime dependencies
+            pkg: object used to forward information to the solver
+        """
+        pkg("*").depends_on(
+            "hip +rocm",
+            when="%[virtuals=hip-lang] llvm-amdgpu",
+            type="link",
+            description="If any package uses %llvm-amdgpu for hip-lang, it depends on hip",
+        )
 
 
 def get_gcc_install_dir_flag(spec: Spec, compiler) -> Optional[str]:
