@@ -5,32 +5,25 @@ on:
     branches:
       - develop
 
-concurrency:
-  group: update-src-mirror-${{github.ref}}
-  cancel-in-progress: false
-
 permissions:
   id-token: write  # Required for AWS OIDC authentication
   contents: read
 
 jobs:
-  create-and-upload-mirror:
+  update-mirror:
     if: github.repository == 'spack/spack-packages'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
 
       - name: Checkout Spack
         uses: ./.github/actions/checkout-spack
 
-      - name: Create and upload source mirror
-        env:
-          AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
-          S3_BUCKET: ${{ secrets.S3_BUCKET_NAME }}
+      - name: Create source mirror
+        id: create-mirror
         run: |
           source spack-core/share/spack/setup-env.sh
 
@@ -45,21 +38,23 @@ jobs:
 
           if [ -z "$SPECS" ]; then
             echo "No specs to mirror"
+            echo "new-specs=false" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           echo "Creating mirror for: $SPECS"
           spack -c concretizer:unify:false mirror create -d src-mirror $SPECS
+          echo "new-specs=true" >> $GITHUB_OUTPUT
 
       - name: Configure AWS credentials
-        if: success()
-        uses: aws-actions/configure-aws-credentials@b95a1f88e6c89f9cfc35f4588e591a0e2afe30ae
+        if: steps.create-mirror.outputs.new-specs == 'true'
+        uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37  # v6.1.0
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload to S3
-        if: success()
+        if: steps.create-mirror.outputs.new-specs == 'true'
         run: |
           aws s3 cp src-mirror/_source-cache s3://${{ secrets.S3_BUCKET_NAME }}/_source-cache/ \
             --recursive \
