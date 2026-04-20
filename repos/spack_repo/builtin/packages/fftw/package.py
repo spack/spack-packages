@@ -108,7 +108,7 @@ class FftwBase(AutotoolsPackage):
 
         # On Apple Arm machines, force to use aarch64 rather than arm
         # to check for NEON due to logic in configure.
-        if self.spec.satisfies("target=m1:"):
+        if self.spec.satisfies("platform=darwin target=m1:"):
             uname = Executable("uname")
             uname_r = uname("-r", output=str)
             options.append("--build=aarch64-apple-darwin{0}".format(uname_r))
