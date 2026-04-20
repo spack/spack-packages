@@ -17,6 +17,7 @@ class PyNetworkx(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.6.1", sha256="26b7c357accc0c8cde558ad486283728b65b6a95d85ee1cd66bafab4c8168509")
     version("3.5", sha256="d4c6f9cf81f52d69230866796b82afbccdec3db7ae4fbd1b65ea750feed50037")
     version("3.4.2", sha256="307c3669428c5362aab27c8a1260aa8f47c4e91d3891f48be0141738d8d053e1")
     version("3.4.1", sha256="f9df45e85b78f5bd010993e897b4f1fdb242c11e015b101bd951e5c0e29982d8")
@@ -50,55 +51,59 @@ class PyNetworkx(PythonPackage):
         description="Optional requirements that may require extra steps to install",
     )
 
-    depends_on("python@3.11:", when="@3.5:", type=("build", "run"))
-    depends_on("python@3.10:", when="@3.3:", type=("build", "run"))
-    depends_on("python@3.9:", when="@3.2:", type=("build", "run"))
-    depends_on("python@3.8:", when="@2.7:", type=("build", "run"))
-    depends_on("python@3.7:", when="@2.6:", type=("build", "run"))
-    depends_on("py-setuptools@61.2:", type="build", when="@3.2:")
-    depends_on("py-setuptools", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@77.0.3:", when="@3.6:")
+        depends_on("py-setuptools@61.2:", when="@3.2:")
+        depends_on("py-setuptools")
 
-    with when("+default"):
-        # From requirements/default.txt
-        depends_on("py-numpy@1.25:", when="@3.5:", type=("build", "run"))
-        depends_on("py-numpy@1.24:", when="@3.4:", type=("build", "run"))
-        depends_on("py-numpy@1.23:", when="@3.3:", type=("build", "run"))
-        depends_on("py-numpy@1.22:", when="@3.2:", type=("build", "run"))
-        depends_on("py-numpy@1.20:", when="@3:", type=("build", "run"))
-        depends_on("py-numpy@1.19:", when="@2.8.6:", type=("build", "run"))
-        # https://github.com/networkx/networkx/pull/7390
-        depends_on("py-numpy@:1", when="@:3.2", type=("build", "run"))
-        depends_on("py-scipy@1.11.2:", when="@3.2:", type=("build", "run"))
-        depends_on("py-scipy@1.8:", when="@2.8.6:", type=("build", "run"))
-        depends_on("py-matplotlib@3.8:", when="@3.4:", type=("build", "run"))
-        depends_on("py-matplotlib@3.5:", when="@3.2:", type=("build", "run"))
-        depends_on("py-matplotlib@3.4:", when="@2.8.6:", type=("build", "run"))
-        depends_on("py-pandas@2.0:", when="@3.4:", type=("build", "run"))
-        depends_on("py-pandas@1.4:", when="@3.2:", type=("build", "run"))
-        depends_on("py-pandas@1.3:", when="@2.8.6:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@3.5:")
+        depends_on("python@3.10:", when="@3.3:")
+        depends_on("python@3.9:", when="@3.2:")
+        depends_on("python@3.8:", when="@2.7:")
+        depends_on("python@3.7:", when="@2.6:")
 
-        # Historical dependencies
-        depends_on("py-decorator@4.3.0:4", when="@2.5.1:2.5", type=("build", "run"))
-        depends_on("py-decorator@4.3.0:", when="@2.2:2.4", type=("build", "run"))
-        depends_on("py-decorator@4.1.0:", when="@2.0:2.1", type=("build", "run"))
-        depends_on("py-decorator@3.4.0:", when="@:1", type=("build", "run"))
+        with when("+default"):
+            depends_on("py-numpy@1.25:", when="@3.5:")
+            depends_on("py-numpy@1.24:", when="@3.4:")
+            depends_on("py-numpy@1.23:", when="@3.3:")
+            depends_on("py-numpy@1.22:", when="@3.2:")
+            depends_on("py-numpy@1.20:", when="@3:")
+            depends_on("py-numpy@1.19:", when="@2.8.6:")
+            # https://github.com/networkx/networkx/pull/7390
+            depends_on("py-numpy@:1", when="@:3.2")
+            depends_on("py-scipy@1.11.2:", when="@3.2:")
+            depends_on("py-scipy@1.8:", when="@2.8.6:")
+            depends_on("py-matplotlib@3.8:", when="@3.4:")
+            depends_on("py-matplotlib@3.5:", when="@3.2:")
+            depends_on("py-matplotlib@3.4:", when="@2.8.6:")
+            depends_on("py-pandas@2.0:", when="@3.4:")
+            depends_on("py-pandas@1.4:", when="@3.2:")
+            depends_on("py-pandas@1.3:", when="@2.8.6:")
 
-    with when("+extra"):
-        # From requirements/extra.txt
-        depends_on("py-lxml@4.6:", when="@2.7:", type=("build", "run"))
-        depends_on("py-lxml@4.5:", when="@2.6:", type=("build", "run"))
-        depends_on("py-pygraphviz@1.14:", when="@3.4:", type=("build", "run"))
-        depends_on("py-pygraphviz@1.12:", when="@3.3:", type=("build", "run"))
-        depends_on("py-pygraphviz@1.11:", when="@3.2:", type=("build", "run"))
-        depends_on("py-pygraphviz@1.10:", when="@3:", type=("build", "run"))
-        depends_on("py-pygraphviz@1.9:", when="@2.7:", type=("build", "run"))
-        depends_on("py-pygraphviz@1.7:", when="@2.6:", type=("build", "run"))
-        depends_on("py-pygraphviz@1.5:1", type=("build", "run"))
-        depends_on("py-pydot@3.0.1:", when="@3.4:", type=("build", "run"))
-        depends_on("py-pydot@2:", when="@3.3", type=("build", "run"))
-        depends_on("py-pydot@1.4.2:", when="@2.7:", type=("build", "run"))
-        depends_on("py-pydot@1.4.1:", type=("build", "run"))
-        depends_on("py-sympy@1.10:", when="@2.8:", type=("build", "run"))
+            # Historical dependencies
+            depends_on("py-decorator@4.3.0:4", when="@2.5.1:2.5")
+            depends_on("py-decorator@4.3.0:", when="@2.2:2.4")
+            depends_on("py-decorator@4.1.0:", when="@2.0:2.1")
+            depends_on("py-decorator@3.4.0:", when="@:1")
+
+        with when("+extra"):
+            depends_on("py-lxml@4.6:", when="@2.7:")
+            depends_on("py-lxml@4.5:", when="@2.6:")
+            depends_on("py-pygraphviz@1.14:", when="@3.4:")
+            depends_on("py-pygraphviz@1.12:", when="@3.3:")
+            depends_on("py-pygraphviz@1.11:", when="@3.2:")
+            depends_on("py-pygraphviz@1.10:", when="@3:")
+            depends_on("py-pygraphviz@1.9:", when="@2.7:")
+            depends_on("py-pygraphviz@1.7:", when="@2.6:")
+            depends_on("py-pygraphviz@1.5:1")
+            depends_on("py-pydot@3.0.1:", when="@3.4:")
+            depends_on("py-pydot@2:", when="@3.3")
+            depends_on("py-pydot@1.4.2:", when="@2.7:")
+            depends_on("py-pydot@1.4.1:")
+            depends_on("py-sympy@1.10:", when="@2.8:")
+
+    conflicts("python@3.14.1")
 
     def url_for_version(self, version):
         ext = "tar.gz"

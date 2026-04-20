@@ -43,6 +43,8 @@ class Z3(CMakePackage):
     depends_on("cmake@3.4:", type="build")
     depends_on("gmp", when="+gmp", type=("build", "link"))
 
+    conflicts("%gcc@:9", when="@4.15:")
+
     # Referenced: https://github.com/Z3Prover/z3/issues/1016
     patch("fix_1016_2.patch", when="@4.5.0")
 

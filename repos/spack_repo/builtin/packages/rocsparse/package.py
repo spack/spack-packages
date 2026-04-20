@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -48,6 +47,7 @@ class Rocsparse(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="420321039b1471a67318a9bccce749ed2293e4aa4615ef9d1b74ed4e03977ee0")
     version("7.1.0", sha256="cdad45e7b23e91a9107e512d9205ef58dcdfaea506b6e5fce3701a2b6e96952c")
@@ -102,14 +102,15 @@ class Rocsparse(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
+        for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    for ver in ["7.2.0"]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
+    for ver in ["7.2.0", "7.2.1"]:
+        for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     depends_on("googletest@1.11.0:", when="+test")
