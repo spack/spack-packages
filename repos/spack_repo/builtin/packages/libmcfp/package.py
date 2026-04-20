@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class Libmcfp(CMakePackage):
-    """A library for parsing command line arguments and configuration files and making them available throughout a program"""
+    """A library for parsing command line arguments and configuration files and making them
+    available throughout a program.
+    """
 
     homepage = "https://github.com/mhekkel/libmcfp"
     url = "https://github.com/mhekkel/libmcfp/archive/refs/tags/v1.4.2.tar.gz"

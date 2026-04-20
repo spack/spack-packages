@@ -53,7 +53,8 @@ class Dssp(CMakePackage, AutotoolsPackage):
         depends_on("libtool", type="build")
         depends_on("m4", type="build")
     depends_on(
-        "boost@1.48:1.84+date_time+system+filesystem+iostreams+program_options+thread+test cxxstd=11",
+        "boost@1.48:1.84+date_time+system+filesystem+iostreams+program_options+thread+test\
+                cxxstd=11",
         when="@:3.1.4",
     )
 
