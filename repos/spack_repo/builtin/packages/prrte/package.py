@@ -2,13 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
-import os
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
-
 
 class Prrte(AutotoolsPackage):
     """PRRTE is the Reference RunTime Environment implementation for PMIx.
