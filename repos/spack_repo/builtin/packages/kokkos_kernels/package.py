@@ -255,4 +255,12 @@ class KokkosKernels(CMakePackage, CudaPackage):
         layout_value = spec.variants["layouts"].value
         options.append(self.define(f"KokkosKernels_INST_LAYOUT{layout_value.upper()}", True))
 
+        # kokkos_launch_compiler strips the Spack compiler wrapper on TUs
+        # tagged -DKOKKOS_DEPENDENCE, which loses SPACK_CXXFLAGS injected by
+        # the wrapper. Route the spec's cxxflags through CMAKE_CXX_FLAGS so
+        # they live in the command CMake assembles and survive forwarding.
+        cxxflags = spec.compiler_flags["cxxflags"]
+        if cxxflags:
+            options.append(self.define("CMAKE_CXX_FLAGS", " ".join(cxxflags)))
+
         return options
