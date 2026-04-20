@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -121,7 +120,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
+        for tgt in ROCmPackage.amdgpu_targets:
             depends_on(
                 f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
             )
