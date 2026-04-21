@@ -22,7 +22,7 @@ class Tecplot(Package):
 
     version(
         "2025r2",
-        sha256="2deba2be44fed96935ec07111459b2d4d22b51bcf321de32a8d0dc7460359e3d",
+        sha256="0359d87036ff7124865aba9f0da3ca8f2dd458277ab5689e87ed7e613dcae5d6",
         expand=False,
     )
     version(
