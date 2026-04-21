@@ -19,6 +19,9 @@ class PyGensim(PythonPackage):
 
     license("LGPL-2.1-only")
 
+    # Using the tarball from github as the one from pypi contains c and cpp
+    # files generated using cython version 0.29.32. These will not compile
+    # with python@3.12: or py-numpy@1.26:
     version(
         "4.4.0",
         url="https://github.com/piskvorky/gensim/archive/refs/tags/4.4.0.tar.gz",
