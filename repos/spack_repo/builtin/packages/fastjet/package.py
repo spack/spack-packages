@@ -135,6 +135,13 @@ class Fastjet(CMakePackage, AutotoolsPackage):
         when="@2.4.0:3.4.3",
     )
 
+    # cmake: Forward CMake BUILD_SHARED_LIBS as HAS_SHARED to fastjet-config generation
+    patch(
+        "https://gitlab.com/fastjet/fastjet/-/commit/c47b6dca4e6d7b5bed5e73366b9adcac25f78a0f.patch",
+        sha256="2b71d0a686d2653ffeb8f2f8bd8249c1e74465da0d4426de6a6b4f984426067d",
+        when="@3.5:3.5.1",
+    )
+
     def flag_handler(self, name, flags):
         if name == "cxxflags" and self.spec.satisfies("build_system=autotools"):
             flags.append(f"-O2 -Wall -std=c++{self.spec.variants['cxxstd'].value}")
