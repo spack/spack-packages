@@ -201,9 +201,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     cmake_name = plugin_map.get(v.value)
                     if cmake_name:
                         args += [
-                            self.define(
-                                f"FASTJET_ENABLE_PLUGIN_{cmake_name}", v.value in plugins
-                            )
+                            self.define(f"FASTJET_ENABLE_PLUGIN_{cmake_name}", v.value in plugins)
                         ]
         args += [self.define_from_variant("FASTJET_HAVE_AUTO_PTR_INTERFACE", "auto-ptr")]
         thread_safety = self.spec.variants["thread-safety"].value
