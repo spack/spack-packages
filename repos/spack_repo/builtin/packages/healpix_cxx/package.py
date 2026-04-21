@@ -19,4 +19,7 @@ class HealpixCxx(AutotoolsPackage, SourceforgePackage):
 
     version("3.50.0", sha256="6538ee160423e8a0c0f92cf2b2001e1a2afd9567d026a86ff6e2287c1580cb4c")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
     depends_on("cfitsio@3")
