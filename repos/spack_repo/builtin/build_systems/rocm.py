@@ -195,14 +195,14 @@ class ROCmPackage(PackageBase):
 
     # Add compiler minimum versions based on the first release where the
     # processor is included in llvm/lib/Support/TargetParser.cpp
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx940")
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx941")
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx942")
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx1036")
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1100")
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1101")
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1102")
-    requires("%[virtuals=hip-lang] llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1103")
+    requires("%hip-lang=llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx940")
+    requires("%hip-lang=llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx941")
+    requires("%hip-lang=llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx942")
+    requires("%hip-lang=llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx1036")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1100")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1101")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1102")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1103")
 
     # Compiler conflicts
 

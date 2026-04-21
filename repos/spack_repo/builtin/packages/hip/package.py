@@ -68,7 +68,7 @@ class Hip(CMakePackage):
     depends_on("libedit", type="build")
     depends_on("perl@5.10:", type=("build", "run"))
 
-    requires("%[virtuals=c,cxx] llvm-amdgpu", when="%c")
+    requires("%c,cxx=llvm-amdgpu", when="%c")
 
     test_requires_compiler = True
 

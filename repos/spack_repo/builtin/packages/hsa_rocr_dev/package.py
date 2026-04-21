@@ -71,7 +71,7 @@ class HsaRocrDev(CMakePackage):
     depends_on("numactl")
     depends_on("pkgconfig")
     depends_on("libdrm", when="@6.3:")
-    requires("%[virtuals=c,cxx] llvm-amdgpu", when="%c")
+    requires("%c,cxx=llvm-amdgpu", when="%c")
 
     for ver in [
         "5.7.0",
