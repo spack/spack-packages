@@ -23,11 +23,13 @@ class PyPymupdf(PythonPackage):
 
     version("1.27.2.2", sha256="ea8fdc3ab6671ca98f629d5ec3032d662c8cf1796b146996b7ad306ac7ed3335")
 
+    # These dependencies were added gradually during build testing.
     with default_args(type="build"):
         depends_on("c")
         depends_on("cxx")
         depends_on("py-libclang")
         depends_on("swig")
+    # These dependencies were identified by scanning the source code using the 'pipreqs' command.
     with default_args(type=("build", "run")):
         depends_on("py-fonttools")
         depends_on("py-pandas")
