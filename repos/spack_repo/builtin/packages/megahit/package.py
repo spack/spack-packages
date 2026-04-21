@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems import cmake, makefile
+
+from spack.package import *
 
 
 class Megahit(cmake.CMakePackage, makefile.MakefilePackage):
