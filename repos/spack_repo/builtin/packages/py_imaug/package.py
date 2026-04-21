@@ -18,14 +18,17 @@ class PyImaug(PythonPackage):
     version("0.4.2", sha256="996fffc4877c9664228679d566a5ebfd49a87648547d3bca1bb2905033e83421")
 
     depends_on("python@3.6.1:3.13", type=("build", "run"))
+
     depends_on("py-setuptools", type="build")
-    depends_on("py-six", type=("build", "run"))
-    depends_on("py-numpy@1.21:", type=("build", "run"))
-    depends_on("py-scipy", type=("build", "run"))
-    depends_on("pil", type=("build", "run"))
-    depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("py-scikit-image@0.18:", type=("build", "run"))
-    depends_on("opencv+python3", type=("build", "run"))
-    depends_on("py-imageio", type=("build", "run"))
-    depends_on("py-shapely", type=("build", "run"))
-    depends_on("py-imagecorruptions-imaug@1.1.3:", type=("build", "run"))
+
+    with default_args(type=("build", "run")):
+        depends_on("py-six")
+        depends_on("py-numpy@1.21:")
+        depends_on("py-scipy")
+        depends_on("pil")
+        depends_on("py-matplotlib")
+        depends_on("py-scikit-image@0.18:")
+        depends_on("opencv+python3")
+        depends_on("py-imageio")
+        depends_on("py-shapely")
+        depends_on("py-imagecorruptions-imaug@1.1.3:")
