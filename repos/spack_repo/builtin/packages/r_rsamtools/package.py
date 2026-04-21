@@ -21,6 +21,7 @@ class RRsamtools(RPackage):
     license("MIT")
 
     with default_args(get_full_repo=True):
+        version("2.26.0", commit="ea99fb0d9481cc7c8f2734ddefb6892abba37d59")
         version("2.24.0", commit="5fa43af28dd6ae25fbabd23e2e7329003ba53e30")
         version("2.16.0", commit="3eb6d03acecb8d640ec5201cacdc322e9e0c2445")
         version("2.14.0", commit="8302eb7fa1c40384f1af5855222d94f2efbdcad1")
@@ -37,27 +38,47 @@ class RRsamtools(RPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("r@3.5.0:", type=("build", "run"), when="@2.10.0:")
-    depends_on("r-genomeinfodb@1.1.3:", type=("build", "run"))
-    depends_on("r-genomicranges@1.21.6:", type=("build", "run"))
-    depends_on("r-genomicranges@1.31.8:", type=("build", "run"), when="@1.32.3:")
-    depends_on("r-biostrings@2.37.1:", type=("build", "run"))
-    depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.32.3:")
-    depends_on("r-biocgenerics@0.1.3:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.25.1:", type=("build", "run"), when="@1.32.3:")
-    depends_on("r-s4vectors@0.13.8:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.32.3:")
-    depends_on("r-iranges@2.3.7:", type=("build", "run"))
-    depends_on("r-iranges@2.13.12:", type=("build", "run"), when="@1.32.3:")
-    depends_on("r-xvector@0.15.1:", type=("build", "run"))
-    depends_on("r-xvector@0.19.7:", type=("build", "run"), when="@1.32.3:")
-    depends_on("r-zlibbioc", type=("build", "run"))
-    depends_on("r-bitops", type=("build", "run"))
-    depends_on("r-biocparallel", type=("build", "run"))
-    depends_on("r-rhtslib@1.16.3", type=("build", "run"), when="@2.0.3")
-    depends_on("r-rhtslib@1.17.7:", type=("build", "run"), when="@2.2.1:")
-    depends_on("r-rhtslib@1.99.3:", type=("build", "run"), when="@2.14.0:")
-    depends_on("r-rhtslib@3.3.1:", type=("build", "run"), when="@2.24.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.5.0:", when="@2.10.0:")
+
+        depends_on("r-seqinfo", when="@2.26:")
+
+        depends_on("r-genomicranges@1.21.6:")
+        depends_on("r-genomicranges@1.31.8:", when="@1.32.3:")
+        depends_on("r-genomicranges@1.61.1:", when="@2.26:")
+
+        depends_on("r-biostrings@2.37.1:")
+        depends_on("r-biostrings@2.47.6:", when="@1.32.3:")
+        depends_on("r-biostrings@2.77.2:", when="@2.26:")
+
+        depends_on("r-biocgenerics@0.1.3:")
+        depends_on("r-biocgenerics@0.25.1:", when="@1.32.3:")
+
+        depends_on("r-s4vectors@0.13.8:")
+        depends_on("r-s4vectors@0.17.25:", when="@1.32.3:")
+
+        depends_on("r-iranges@2.3.7:")
+        depends_on("r-iranges@2.13.12:", when="@1.32.3:")
+
+        depends_on("r-xvector@0.15.1:")
+        depends_on("r-xvector@0.19.7:", when="@1.32.3:")
+
+        depends_on("r-zlibbioc", when="@:2.24.0")
+
+        depends_on("r-bitops")
+
+        depends_on("r-biocparallel")
+
+        depends_on("r-rhtslib@3.3.1:", when="@2.26:")
+
+        # Historical
+        depends_on("r-genomeinfodb@1.1.3:", when="@:2.24.0")
+
+        depends_on("r-rhtslib@1.16.3", when="@2.0.3:2.24.0")
+        depends_on("r-rhtslib@1.17.7:", when="@2.2.1:2.24.0")
+        depends_on("r-rhtslib@1.99.3:", when="@2.14.0:2.24.0")
+        depends_on("r-rhtslib@3.3.1:", when="@2.24.0:2.24.0")
+
     depends_on("gmake", type="build")
 
     # this is not a listed dependency but is needed
