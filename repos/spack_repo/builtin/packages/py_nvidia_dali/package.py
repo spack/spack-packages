@@ -29,13 +29,11 @@ class PyNvidiaDali(PythonPackage):
     system = platform.system().lower()
     arch = platform.machine()
     if "linux" in system and arch == "x86_64":
-        (
-            version(
-                "1.53.0-cuda130",
-                sha256="f8f0f0a6216de4d7ab933c35bbf74c20e849fb042fc816995ab5fe3f437da277",
-                url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.53.0-py3-none-manylinux_2_28_x86_64.whl",
-                expand=False,
-            ),
+        version(
+            "1.53.0-cuda130",
+            sha256="f8f0f0a6216de4d7ab933c35bbf74c20e849fb042fc816995ab5fe3f437da277",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.53.0-py3-none-manylinux_2_28_x86_64.whl",
+            expand=False,
         )
         version(
             "1.53.0-cuda120",
@@ -43,13 +41,11 @@ class PyNvidiaDali(PythonPackage):
             url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda120/nvidia_dali_cuda120-1.53.0-py3-none-manylinux_2_28_x86_64.whl",
             expand=False,
         )
-        (
-            version(
-                "1.52.0-cuda130",
-                sha256="37369fb30e9c66f710b29836688c90abc36793bbe757cd3ad699fac76ba07119",
-                url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.52.0-py3-none-manylinux_2_28_x86_64.whl",
-                expand=False,
-            ),
+        version(
+            "1.52.0-cuda130",
+            sha256="37369fb30e9c66f710b29836688c90abc36793bbe757cd3ad699fac76ba07119",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.52.0-py3-none-manylinux_2_28_x86_64.whl",
+            expand=False,
         )
         version(
             "1.52.0-cuda120",
