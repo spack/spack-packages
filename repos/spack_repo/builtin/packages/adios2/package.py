@@ -116,7 +116,10 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("%oneapi@:2022.1.0", when="+fortran")
 
     # https://github.com/ornladios/ADIOS2/issues/4620
-    conflicts("^cuda@13:", when="@:2.11 +cuda")
+    conflicts("%cuda@13:", when="@:2.11 +cuda")
+
+    # https://github.com/ornladios/ADIOS2/issues/5005
+    conflicts("@2.12.0", when="target=aarch64:")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
