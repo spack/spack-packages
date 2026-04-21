@@ -23,7 +23,10 @@ class RGenomicranges(RPackage):
 
     bioc = "GenomicRanges"
 
+    license("Artistic-2.0")
+
     with default_args(get_full_repo=True):
+        version("1.62.1", commit="ce11a45400f198fbede382bf1f0ad137ef2d8a96")
         version("1.52.0", commit="883f125ea593099293dc808ec2188be3cbdbd3a7")
         version("1.50.1", commit="6b3fb388ec038fb43f3cd26684ce778ee0e80e81")
         version("1.48.0", commit="2bce60814db7c20949892587740fb484aa435978")
@@ -37,25 +40,37 @@ class RGenomicranges(RPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("r@2.10:", type=("build", "run"))
-    depends_on("r@4.0.0:", type=("build", "run"), when="@1.46.1:")
-    depends_on("r-biocgenerics@0.21.2:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.25.3:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@1.46.1:")
-    depends_on("r-s4vectors@0.9.47:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.32:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-s4vectors@0.19.11:", type=("build", "run"), when="@1.34.0:")
-    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@1.42.0:")
-    depends_on("r-iranges@2.9.11:", type=("build", "run"))
-    depends_on("r-iranges@2.11.16:", type=("build", "run"), when="@1.30.3:")
-    depends_on("r-iranges@2.14.4:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-iranges@2.15.12:", type=("build", "run"), when="@1.34.0:")
-    depends_on("r-iranges@2.17.1:", type=("build", "run"), when="@1.36.1:")
-    depends_on("r-iranges@2.23.9:", type=("build", "run"), when="@1.42.0:")
-    depends_on("r-iranges@2.31.2:", type=("build", "run"), when="@1.50.1:")
-    depends_on("r-genomeinfodb@1.11.5:", type=("build", "run"))
-    depends_on("r-genomeinfodb@1.13.1:", type=("build", "run"), when="@1.30.3:")
-    depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-xvector", type=("build", "run"))
-    depends_on("r-xvector@0.19.8:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-xvector@0.29.2:", type=("build", "run"), when="@1.42.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@2.10:")
+        depends_on("r@4.0.0:", when="@1.46.1:")
+
+        depends_on("r-biocgenerics@0.21.2:")
+        depends_on("r-biocgenerics@0.25.3:", when="@1.32.7:")
+        depends_on("r-biocgenerics@0.37.0:", when="@1.46.1:")
+        depends_on("r-biocgenerics@0.53.2:", when="@1.62.1:")
+
+        depends_on("r-s4vectors@0.9.47:")
+        depends_on("r-s4vectors@0.17.32:", when="@1.32.7:")
+        depends_on("r-s4vectors@0.19.11:", when="@1.34.0:")
+        depends_on("r-s4vectors@0.27.12:", when="@1.42.0:")
+        depends_on("r-s4vectors@0.45.2:", when="@1.62.1:")
+
+        depends_on("r-iranges@2.9.11:")
+        depends_on("r-iranges@2.11.16:", when="@1.30.3:")
+        depends_on("r-iranges@2.14.4:", when="@1.32.7:")
+        depends_on("r-iranges@2.15.12:", when="@1.34.0:")
+        depends_on("r-iranges@2.17.1:", when="@1.36.1:")
+        depends_on("r-iranges@2.23.9:", when="@1.42.0:")
+        depends_on("r-iranges@2.31.2:", when="@1.50.1:")
+        depends_on("r-iranges@2.43.6:", when="@1.62.1:")
+
+        depends_on("r-seqinfo@0.99.3:", when="@1.62.1:")
+
+        # Historical
+        depends_on("r-genomeinfodb@1.11.5:", when="@:1.52.0")
+        depends_on("r-genomeinfodb@1.13.1:", when="@1.30.3:1.52.0")
+        depends_on("r-genomeinfodb@1.15.2:", when="@1.32.7:1.52.0")
+
+        depends_on("r-xvector", when="@:1.52.0")
+        depends_on("r-xvector@0.19.8:", when="@1.32.7:1.52.0")
+        depends_on("r-xvector@0.29.2:", when="@1.42.0:1.52.0")
