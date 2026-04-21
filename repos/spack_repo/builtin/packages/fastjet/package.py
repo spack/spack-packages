@@ -180,31 +180,16 @@ class CMakeBuilder(cmake.CMakeBuilder):
         elif "cxx" in plugins:
             args += [self.define("FASTJET_ENABLE_ALLCXXPLUGINS", True)]
         else:
-            plugin_map = {
-                "atlascone": "ATLASCONE",
-                "cdfcones": "CDFCONES",
-                "cmsiterativecone": "CMSITERATIVECONE",
-                "d0runicone": "D0RUNICONE",
-                "d0runiicone": "D0RUNIICONE",
-                "eecambridge": "EECAMBRIDGE",
-                "gridjet": "GRIDJET",
-                "jade": "JADE",
-                "nesteddefs": "NESTEDDEFS",
-                "pxcone": "PXCONE",
-                "siscone": "SISCONE",
-                "trackjet": "TRACKJET",
-            }
             for plugin in self.pkg.available_plugins:
                 # conditional returns an iterable _ConditionalVariantValues
                 for v in plugin:
                     # this version does not support this plugin
                     if not self.spec.satisfies(v.when):
                         continue
-                    cmake_name = plugin_map.get(v.value)
-                    if cmake_name:
-                        args += [
-                            self.define(f"FASTJET_ENABLE_PLUGIN_{cmake_name}", v.value in plugins)
-                        ]
+                    cmake_name = v.value.upper()
+                    args += [
+                        self.define(f"FASTJET_ENABLE_PLUGIN_{cmake_name}", v.value in plugins)
+                    ]
         args += [self.define_from_variant("FASTJET_HAVE_AUTO_PTR_INTERFACE", "auto-ptr")]
         thread_safety = self.spec.variants["thread-safety"].value
         args += [
