@@ -21,6 +21,7 @@ class Fastjet(CMakePackage, AutotoolsPackage):
     # a mirror instead of the upstream url
     # url  = "http://fastjet.fr/repo/fastjet-3.4.0.tar.gz"
     url = "https://lcgpackages.web.cern.ch/tarFiles/sources/fastjet-3.3.4.tar.gz"
+    git = "https://gitlab.com/fastjet/fastjet.git"
 
     tags = ["hep"]
 
