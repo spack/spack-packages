@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class Fastjet(AutotoolsPackage):
+class Fastjet(CMakePackage, AutotoolsPackage):
     """
     A high energy physics software package for jet finding in pp
     and e+e- collisions.
@@ -25,6 +27,12 @@ class Fastjet(AutotoolsPackage):
     maintainers("drbenmorgan", "vvolkl")
 
     license("GPL-2.0-only")
+
+    build_system(
+        conditional("cmake", when="@3.5.0:"),
+        "autotools",
+        default="cmake",
+    )
 
     version("3.5.0", sha256="42d0cacffb204b1160591d507489ee50375a279efb173f8da426ca1bde9d4c29")
     version("3.4.3", sha256="cc175471bfab8656b8c6183a8e5e9ad05d5f7506e46f3212a9a8230905b8f6a3")
@@ -67,8 +75,10 @@ class Fastjet(AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="plugins=all")
     depends_on("fortran", type="build", when="plugins=pxcone")
+    depends_on("cmake@3.10:", type="build", when="build_system=cmake")
 
     variant("shared", default=True, description="Builds a shared version of the library")
+    conflicts("~shared", when="build_system=cmake", msg="CMake build always creates shared libraries")
     variant("auto-ptr", default=False, description="Use auto_ptr")
     variant(
         "thread-safety",
@@ -85,6 +95,7 @@ class Fastjet(AutotoolsPackage):
         default="11",
         values=("11", "17", "20", "23"),
         multi=False,
+        when="build_system=autotools",
         description="Use the specified C++ standard when building",
     )
 
@@ -124,6 +135,13 @@ class Fastjet(AutotoolsPackage):
         when="@2.4.0:3.4.3",
     )
 
+    def flag_handler(self, name, flags):
+        if name == "cxxflags" and self.spec.satisfies("build_system=autotools"):
+            flags.append(f"-O2 -Wall -std=c++{self.spec.variants['cxxstd'].value}")
+        return (None, flags, None)
+
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def configure_args(self):
         extra_args = []
         plugins = self.spec.variants["plugins"].value
@@ -132,7 +150,7 @@ class Fastjet(AutotoolsPackage):
         elif "cxx" in plugins:
             extra_args += ["--enable-allcxxplugins"]
         else:
-            for plugin in self.available_plugins:
+            for plugin in self.pkg.available_plugins:
                 # conditional returns an iterable _ConditionalVariantValues
                 for v in plugin:
                     # this version does not support this plugin
@@ -142,14 +160,57 @@ class Fastjet(AutotoolsPackage):
                     extra_args += [f"--{'enable' if enabled else 'disable'}-{v.value}"]
         extra_args += self.enable_or_disable("shared")
         extra_args += self.enable_or_disable("auto-ptr")
-        if self.spec.variants["thread-safety"].value == "limited":
-            extra_args += ["--enable-limited-thread-safety"]
-        if self.spec.variants["thread-safety"].value == "full":
-            extra_args += ["--enable-thread-safety"]
+        if self.spec.satisfies("@3.4.0:"):
+            if self.spec.variants["thread-safety"].value == "limited":
+                extra_args += ["--enable-limited-thread-safety"]
+            if self.spec.variants["thread-safety"].value == "full":
+                extra_args += ["--enable-thread-safety"]
 
         return extra_args
 
-    def flag_handler(self, name, flags):
-        if name == "cxxflags":
-            flags.append(f"-O2 -Wall -std=c++{self.spec.variants['cxxstd'].value}")
-        return (None, flags, None)
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        args = []
+        plugins = self.spec.variants["plugins"].value
+        if "all" in plugins:
+            args += [self.define("FASTJET_ENABLE_ALLPLUGINS", True)]
+        elif "cxx" in plugins:
+            args += [self.define("FASTJET_ENABLE_ALLCXXPLUGINS", True)]
+        else:
+            plugin_map = {
+                "atlascone": "ATLASCONE",
+                "cdfcones": "CDFCONES",
+                "cmsiterativecone": "CMSITERATIVECONE",
+                "d0runicone": "D0RUNICONE",
+                "d0runiicone": "D0RUNIICONE",
+                "eecambridge": "EECAMBRIDGE",
+                "gridjet": "GRIDJET",
+                "jade": "JADE",
+                "nesteddefs": "NESTEDDEFS",
+                "pxcone": "PXCONE",
+                "siscone": "SISCONE",
+                "trackjet": "TRACKJET",
+            }
+            for plugin in self.pkg.available_plugins:
+                # conditional returns an iterable _ConditionalVariantValues
+                for v in plugin:
+                    # this version does not support this plugin
+                    if not self.spec.satisfies(v.when):
+                        continue
+                    cmake_name = plugin_map.get(v.value)
+                    if cmake_name:
+                        args += [
+                            self.define(
+                                f"FASTJET_ENABLE_PLUGIN_{cmake_name}", v.value in plugins
+                            )
+                        ]
+        args += [self.define_from_variant("FASTJET_HAVE_AUTO_PTR_INTERFACE", "auto-ptr")]
+        thread_safety = self.spec.variants["thread-safety"].value
+        args += [
+            self.define("FASTJET_HAVE_THREAD_SAFETY", thread_safety == "full"),
+            self.define(
+                "FASTJET_HAVE_LIMITED_THREAD_SAFETY", thread_safety in ("limited", "full")
+            ),
+        ]
+        return args
