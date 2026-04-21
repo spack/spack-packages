@@ -29,11 +29,7 @@ class Fastjet(CMakePackage, AutotoolsPackage):
 
     license("GPL-2.0-only")
 
-    build_system(
-        conditional("cmake", when="@3.5.0:"),
-        "autotools",
-        default="cmake",
-    )
+    build_system(conditional("cmake", when="@3.5.0:"), "autotools", default="cmake")
 
     version("3.5.1", sha256="9a4154163e72041dee3fdde9cb24e814625e178091a8734a6ad5375e5371b423")
     version("3.5.0", sha256="42d0cacffb204b1160591d507489ee50375a279efb173f8da426ca1bde9d4c29")
@@ -80,7 +76,9 @@ class Fastjet(CMakePackage, AutotoolsPackage):
     depends_on("cmake@3.10:", type="build", when="build_system=cmake")
 
     variant("shared", default=True, description="Builds a shared version of the library")
-    conflicts("~shared", when="build_system=cmake", msg="CMake build always creates shared libraries")
+    conflicts(
+        "~shared", when="build_system=cmake", msg="CMake build always creates shared libraries"
+    )
     variant("auto-ptr", default=False, description="Use auto_ptr")
     variant(
         "thread-safety",
