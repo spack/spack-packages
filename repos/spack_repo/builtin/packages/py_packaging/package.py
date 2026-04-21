@@ -33,6 +33,7 @@ class PyPackaging(PythonPackage):
     version("16.8", sha256="5d50835fdf0a7edf0b55e311b7c887786504efea1177abd7e69329a8e5ea619e")
 
     depends_on("py-flit-core@3.12:", when="@26:", type="build")
+    depends_on("py-flit-core@3.3:", when="@22:", type="build")
 
     # Needed to bootstrap Spack correctly on Python 3.6 (rhel8 platform-python)
     depends_on("python@3.7:", when="@22:", type=("build", "run"))
