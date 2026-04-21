@@ -20,22 +20,24 @@ class RBayesfactor(RPackage):
     license("GPL-2.0-only")
 
     version(
+        "0.9.12-4.8", sha256="becd30201d6ce57dc1fd742e17881c09a253d5c7ee4c1b5b7b6cae8496326213"
+    )
+    version(
         "0.9.12-4.7", sha256="f92720697f8dbda248c7977873d582dc802522851647d563c5bcb1cada4e377d"
     )
 
     depends_on("cxx", type="build")
 
-    depends_on("r@3.2.0:", type=("build", "run"))
-    depends_on("r-coda", type=("build", "run"))
-    depends_on("r-matrix@1.1-1:", type=("build", "run"))
-    depends_on("r-rcpp@0.11.2:", type=("build", "run"))
-    depends_on("r-rcppeigen@0.3.2.2.0:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.2.0:")
+        depends_on("r-coda")
+        depends_on("r-matrix@1.1-1:")
 
-    # build fails without the following dependencies:
-    # ERROR: dependencies 'pbapply', 'mvtnorm', 'stringr', 'MatrixModels',
-    # 'hypergeo' are not available for package 'BayesFactor'
-    depends_on("r-pbapply", type=("build", "run"))
-    depends_on("r-mvtnorm", type=("build", "run"))
-    depends_on("r-stringr", type=("build", "run"))
-    depends_on("r-matrixmodels", type=("build", "run"))
-    depends_on("r-hypergeo", type=("build", "run"))
+        depends_on("r-pbapply")
+        depends_on("r-mvtnorm")
+        depends_on("r-stringr")
+        depends_on("r-matrixmodels")
+        depends_on("r-rcpp@1.1.1:", when="@0.9.12-4.8:")
+        depends_on("r-rcpp@0.11.2:")
+        depends_on("r-hypergeo")
+        depends_on("r-rcppeigen@0.3.2.2.0:")

@@ -17,6 +17,7 @@ class PyChardet(PythonPackage):
     license("MIT", when="@7.0:7.2")
     license("LGPL-2.1-or-later", when="@:6")
 
+    version("7.4.1", sha256="cda41132a45dfbf6984dade1f531a4098c813caf266c66cc446d90bb9369cabd")
     version("7.3.0", sha256="e6bf602bb8a070524a19bac1cff2a10d62c71b09606f066251282870fa1466e5")
     version("7.0.1", sha256="6fce895c12c5495bb598e59ae3cd89306969b4464ec7b6dd609b9c86e3397fe3")
     version("7.0.0", sha256="5272ea14c48cb5f38e87e698c641a7ea2a8b1db6c42ea729527fbe8bd621f39c")
@@ -28,6 +29,8 @@ class PyChardet(PythonPackage):
     version("3.0.4", sha256="84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae")
     version("3.0.2", sha256="4f7832e7c583348a9eddd927ee8514b3bf717c061f57b21dbe7697211454d9bb")
     version("2.3.0", sha256="e53e38b3a4afe6d1132de62b7400a4ac363452dc5dfcf8d88e8e0cce663c68aa")
+
+    depends_on("python@3.10:", type=("build", "run"), when="@6:")
 
     with default_args(type="build"):
         depends_on("py-hatch-vcs", when="@6:")

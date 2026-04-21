@@ -147,6 +147,9 @@ class MesonBuilder(meson.MesonBuilder):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
+    # patches that change configure.ac require this
+    force_autoreconf = True
+
     def configure_args(self):
         args = [
             "MOUNT_FUSE_PATH={0}".format(self.prefix.sbin),
