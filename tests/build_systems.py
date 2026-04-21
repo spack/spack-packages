@@ -245,7 +245,7 @@ spack:
             try:
                 e.install_all()
                 assert False, "This was supposed to fail"
-            except spack.error.InstallError as exc:
+            except spack.error.InstallError:
                 with open(e.concrete_roots()[0].package.log_path, "r") as f:
                     build_output = f.read()
                 assert re.search(msg, build_output)
