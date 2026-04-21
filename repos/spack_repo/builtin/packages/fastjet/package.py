@@ -137,8 +137,8 @@ class Fastjet(CMakePackage, AutotoolsPackage):
 
     # cmake: Forward CMake BUILD_SHARED_LIBS as HAS_SHARED to fastjet-config generation
     patch(
-        "https://gitlab.com/fastjet/fastjet/-/commit/c47b6dca4e6d7b5bed5e73366b9adcac25f78a0f.patch",
-        sha256="2b71d0a686d2653ffeb8f2f8bd8249c1e74465da0d4426de6a6b4f984426067d",
+        "https://gitlab.com/fastjet/fastjet/-/commit/c47b6dca4e6d7b5bed5e73366b9adcac25f78a0f.diff",
+        sha256="2421a9647272a1e7f2ba2179d10400b59501d0de17e0168f1ec22add383d3f03",
         when="@3.5:3.5.1",
     )
 
