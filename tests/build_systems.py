@@ -5,6 +5,7 @@
 import os
 import pathlib
 import platform
+import re
 import shutil
 
 import pytest
@@ -241,8 +242,13 @@ spack:
         msg = "Spack could not find `config.guess`.*misconfigured as an external package"
         with Environment(str(tmp_path / "env")) as e:
             e.concretize()
-            with pytest.raises(Exception, match=msg):
+            try:
                 e.install_all()
+                assert False, "This was supposed to fail"
+            except spack.error.InstallError as exc:
+                with open(e.concrete_roots()[0].package.log_path, "r") as f:
+                    build_output = f.read()
+                assert re.search(msg, build_output)
 
 
 @pytest.mark.usefixtures("config", "mock_packages")
