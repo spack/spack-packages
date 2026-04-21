@@ -21,7 +21,10 @@ class RDelayedarray(RPackage):
 
     bioc = "DelayedArray"
 
+    license("Artistic-2.0")
+
     with default_args(get_full_repo=True):
+        version("0.36.1", commit="1f8a9cbf34a5e998eae016f3410bdfe2bee490e4")
         version("0.26.0", commit="e3bdae96838a8ed45f18697f072f3c4ec011aa03")
         version("0.24.0", commit="68ee3d0626c234ee1e9248a6cb95b901e4b3ad90")
         version("0.22.0", commit="4a5afd117b189b40bd409c7aff60e09d41797472")
@@ -35,25 +38,38 @@ class RDelayedarray(RPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("r@3.4:", type=("build", "run"))
-    depends_on("r@4.0.0:", type=("build", "run"), when="@0.20.0:")
-    depends_on("r-matrix", type=("build", "run"), when="@0.10.0:")
-    depends_on("r-biocgenerics", type=("build", "run"))
-    depends_on("r-biocgenerics@0.25.1:", type=("build", "run"), when="@0.6.6:")
-    depends_on("r-biocgenerics@0.27.1:", type=("build", "run"), when="@0.8.0:")
-    depends_on("r-biocgenerics@0.31.5:", type=("build", "run"), when="@0.16.1:")
-    depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@0.20.1:")
-    depends_on("r-biocgenerics@0.43.4:", type=("build", "run"), when="@0.24.0:")
-    depends_on("r-matrixgenerics@1.1.3:", type=("build", "run"), when="@0.16.1:")
-    depends_on("r-s4vectors@0.14.3:", type=("build", "run"))
-    depends_on("r-s4vectors@0.15.3:", type=("build", "run"), when="@0.4.1:")
-    depends_on("r-s4vectors@0.17.43:", type=("build", "run"), when="@0.6.6:")
-    depends_on("r-s4vectors@0.19.15:", type=("build", "run"), when="@0.8.0:")
-    depends_on("r-s4vectors@0.21.7:", type=("build", "run"), when="@0.10.0:")
-    depends_on("r-s4vectors@0.27.2:", type=("build", "run"), when="@0.16.1:")
-    depends_on("r-iranges", type=("build", "run"))
-    depends_on("r-iranges@2.11.17:", type=("build", "run"), when="@0.4.1:")
-    depends_on("r-iranges@2.17.3:", type=("build", "run"), when="@0.10.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.4:")
+        depends_on("r@4.0.0:", when="@0.20.0:")
 
-    depends_on("r-matrixstats", type=("build", "run"), when="@:0.10.0")
-    depends_on("r-biocparallel", type=("build", "run"), when="@0.6.6:0.10.0")
+        depends_on("r-matrix", when="@0.10.0:")
+
+        depends_on("r-biocgenerics")
+        depends_on("r-biocgenerics@0.25.1:", when="@0.6.6:")
+        depends_on("r-biocgenerics@0.27.1:", when="@0.8.0:")
+        depends_on("r-biocgenerics@0.31.5:", when="@0.16.1:")
+        depends_on("r-biocgenerics@0.37.0:", when="@0.20.1:")
+        depends_on("r-biocgenerics@0.43.4:", when="@0.24.0:")
+        depends_on("r-biocgenerics@0.53.3:", when="@0.36.1:")
+
+        depends_on("r-matrixgenerics@1.1.3:", when="@0.16.1:")
+
+        depends_on("r-s4vectors@0.14.3:")
+        depends_on("r-s4vectors@0.15.3:", when="@0.4.1:")
+        depends_on("r-s4vectors@0.17.43:", when="@0.6.6:")
+        depends_on("r-s4vectors@0.19.15:", when="@0.8.0:")
+        depends_on("r-s4vectors@0.21.7:", when="@0.10.0:")
+        depends_on("r-s4vectors@0.27.2:", when="@0.16.1:")
+        depends_on("r-s4vectors@0.47.6:", when="@0.36.1:")
+
+        depends_on("r-iranges")
+        depends_on("r-iranges@2.11.17:", when="@0.4.1:")
+        depends_on("r-iranges@2.17.3:", when="@0.10.0:")
+
+        depends_on("r-s4arrays@1.9.3:", when="@0.36.1:")
+
+        depends_on("r-sparsearray@1.7.5:", when="@0.36.1:")
+
+        # Historical
+        depends_on("r-matrixstats", when="@:0.10.0")
+        depends_on("r-biocparallel", when="@0.6.6:0.10.0")
