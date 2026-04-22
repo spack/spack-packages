@@ -261,6 +261,7 @@ builtins = [
 
 
 [tool.ruff.format]
+line-ending = "lf"
 skip-magic-trailing-comma = false
 
 [tool.ruff.lint]
