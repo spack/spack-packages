@@ -30,8 +30,13 @@ class Pdi(CMakePackage):
     # and the last patch version of the previous 2 minors
     # all the rest is marked as deprecated
     version("develop", branch="main", no_cache=True)
+    version("1.11.0", sha256="a3e5ed6f890a8599d67e1666a14a6c5b1084a0cbb8a748bf40fc53df47d39410")
     version("1.10.1", sha256="f2409611310255360867e3c74d44e055f45c87071ef8881665ff30a7940e1449")
-    version("1.10.0", sha256="8bda1ed83bdb152a047a45a48f896466e7ebf5163030405c15dbfa4e2e788143")
+    version(
+        "1.10.0",
+        sha256="8bda1ed83bdb152a047a45a48f896466e7ebf5163030405c15dbfa4e2e788143",
+        deprecated=True,
+    )
     version("1.9.3", sha256="ab390e51e3b7298d6b09484a443dc267651aed5978c711f8804848b19ab1527e")
     version(
         "1.9.2",
@@ -48,7 +53,11 @@ class Pdi(CMakePackage):
         sha256="04fee7851c4f2a156daddf7eb2c3c3b0132d80d3f0e448cdeebda0b7c4595639",
         deprecated=True,
     )
-    version("1.8.3", sha256="df7200289a2a368ec874140039b417abdfe681b57fb1b9f4c52f924952226020")
+    version(
+        "1.8.3",
+        sha256="df7200289a2a368ec874140039b417abdfe681b57fb1b9f4c52f924952226020",
+        deprecated=True,
+    )
     version(
         "1.8.2",
         sha256="bb4d1654c97f7ff379067adbff339f8b4117c0cf9432f41f1a5cb20a747cac1a",
