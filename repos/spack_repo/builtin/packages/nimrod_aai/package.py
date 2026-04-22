@@ -100,4 +100,4 @@ class NimrodAai(CMakePackage):
     @on_package_attributes(run_tests=True)
     def check(self):
         with working_dir(self.build_directory):
-            ctest("test")
+            ctest("--output-on-failure")
