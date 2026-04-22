@@ -21,12 +21,15 @@ class Xictools(MakefilePackage):
 
     # See README.md for details
     license(
-        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC",
+        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC "
+        "AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC",
         when="~gpl",
         checked_by="kllrak",
     )
     license(
-        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND Minpack",
+        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC "
+        "AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC"
+        "AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND Minpack",
         when="+gpl",
         checked_by="kllrak",
     )

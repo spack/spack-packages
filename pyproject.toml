@@ -264,7 +264,7 @@ builtins = [
 skip-magic-trailing-comma = false
 
 [tool.ruff.lint]
-extend-select = ["I"]
+extend-select = ["E", "I", "W"]
 ignore = ["E731", "F403", "F811"]
 
 [tool.ruff.lint.isort]

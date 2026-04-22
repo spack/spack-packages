@@ -1344,7 +1344,7 @@ with '-Wl,-commons,use_dylibs' and without
         #       if spec.satisfies("@5.0.0:") and spec.satisfies("%oneapi"):
         #           config_args.append("--disable-io-romio")
 
-        # https://www.intel.com/content/www/us/en/developer/articles/release-notes/oneapi-c-compiler-release-notes.html :
+        # https://www.intel.com/content/www/us/en/developer/articles/release-notes/oneapi-c-compiler-release-notes.html:
         # Key Features in Intel C++ Compiler Classic 2021.7
         #
         # The Intel C++ Classic Compiler is deprecated and an additional
