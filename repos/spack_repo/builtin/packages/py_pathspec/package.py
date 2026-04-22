@@ -37,4 +37,9 @@ class PyPathspec(PythonPackage):
         # Historical dependencies
         depends_on("py-setuptools@40.8:", when="@0.10")
         depends_on("py-setuptools@39.2:", when="@0.9")
-        depends_on("py-setuptools", when="@:0.8")
+        depends_on("py-setuptools", when="@:0.10")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@1:")
+        depends_on("python@3.8:", when="@0.12:")
+        depends_on("python@3.7:", when="@0.10:0.11")
