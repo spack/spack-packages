@@ -29,7 +29,7 @@ class Parmgridgen(Package):
     depends_on("gmake", type="build")
 
     def flag_handler(self, name, flags):
-        if name in ("cflags",):
+        if name == "cflags":
             if self.spec.satisfies("%gcc@14:"):
                 flags.extend(
                     ["-Wno-implicit-function-declaration", "-Wno-incompatible-pointer-types"]
