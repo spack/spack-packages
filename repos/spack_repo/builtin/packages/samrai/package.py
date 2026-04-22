@@ -103,10 +103,12 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     depends_on("fortran", type="build")
 
     build_system(
-        conditional("cmake", when="@4:"), conditional("autotools", when="@:3"), default="cmake"
+        conditional("cached_cmake", when="@4:"),
+        conditional("autotools", when="@:3"),
+        default="cached_cmake",
     )
 
-    with when("build_system=cmake"):
+    with when("build_system=cached_cmake"):
         depends_on("mpi", when="+mpi")
         depends_on("zlib")
         depends_on("hdf5")  # This used to be hdf5+mpi
@@ -163,9 +165,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
             with working_dir(self.build_directory):
                 make("test")
                 make("check")
-
-    def cmake_args(self):
-        return []
 
 
 class CMakeBuilder(CachedCMakeBuilder):
