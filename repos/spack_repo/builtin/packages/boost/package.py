@@ -543,6 +543,7 @@ class Boost(Package):
             "%gcc": "gcc",
             "%intel": "intel",
             "%oneapi": "intel",
+            "%apple-clang": "clang",
             "%clang": "clang",
             "%arm": "clang",
             "%xl": "xlcpp",
