@@ -685,17 +685,33 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             make_exe("clean")
 
     def test_daxpy(self):
-        """check batched matrix multiple tutorial"""
+        """check daxpy tutorial"""
         self.build_and_run_example(
             "tut_daxpy", [r"daxpy", r"result -- PASS"]
         )
 
+    # TODO: this test seems to hang or take a long time?
     # def test_matrix_multiply(self):
     #     """check batched matrix multiple tutorial"""
     #     self.build_and_run_example(
     #         "tut_matrix-multiply", [r"matrix multiplication", r"result -- PASS"]
     #     )
 
-    # def test_wave_equation(self):
-    #     """check wave equation"""
-    #     self.build_and_run_example("wave-eqn", [r"Max Error = 2", r"Evolved solution to time"])
+    def test_launch_basic(self):
+        """check basic raja::launch tutorial"""
+        if "+cuda" in self.spec or "+rocm" in self.spec:
+            self.build_and_run_example(
+                "tut_launch_basic", [r"Running RAJA-Teams", r"result -- PASS"]
+            )
+        else:
+            raise SkipTest("CUDA or ROCm support is required to run this example")
+
+    def test_halo_exchange(self):
+        """check halo exchange tutorial"""
+        self.build_and_run_example(
+            "tut_halo-exchange", [r"RAJA halo exchange example", r"result -- PASS"]
+        )
+
+    def test_wave_equation(self):
+        """check wave equation"""
+        self.build_and_run_example("wave-eqn", [r"Max Error = 2", r"Evolved solution to time"])
