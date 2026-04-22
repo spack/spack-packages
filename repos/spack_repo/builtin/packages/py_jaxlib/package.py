@@ -49,6 +49,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.10.0", sha256="12ae17617d1346e2f98cfc48c1a000adc7389784eb119e8108a22dfd57cbb8c3")
     version("0.9.2", sha256="9e67faaa74be4539e397fe61317568545f9ea325ddf1f7f534929d508786f29e")
     version("0.9.1", sha256="1bdae0c3311165437461e9afe05b76de2adb9ce86b557b4bd270b0ec411ff27d")
     version("0.9.0", sha256="8525c72ac7ea01851297df5b25ca4622c65299c265c87dfe78420bb29e7b1bb3")
@@ -160,6 +161,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("python@:3.12", when="+rocm")
 
         # jaxlib/setup.py
+        depends_on("py-scipy@1.14:", when="@0.10:")
         depends_on("py-scipy@1.13:", when="@0.7.2:")
         depends_on("py-scipy@1.12:", when="@0.6.2:")
         depends_on("py-scipy@1.11.1:", when="@0.5:")
