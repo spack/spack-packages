@@ -338,8 +338,6 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
     conflicts("^cuda@13:", when="+cuda")
 
-    extra_install_tests = ["examples"]
-
     def _get_sys_type(self, spec):
         sys_type = spec.architecture
         if "SYS_TYPE" in env:
@@ -555,11 +553,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
                     "test-algorithm-sort-Cuda.exe",
                     "test-algorithm-stable-sort-Cuda.exe",
                     "test-algorithm-sort-OpenMP.exe",
-                    "test-algorithm-stable-sort-OpenMP.exe",
-                    # "test-tensor-matrix-int32_t-ColMajor-ET_Subtract",
-                    # "test-tensor-matrix-int64_t-ColMajor-ET_Subtract",
-                    # "test-tensor-matrix-float-ColMajor-ET_Subtract",
-                    # "test-tensor-matrix-double-ColMajor-ET_Subtract"
+                    "test-algorithm-stable-sort-OpenMP.exe"
                 ]
                 if spec.satisfies("+cuda %clang@12.0.0:13.9.999"):
                     entries.append(
@@ -587,10 +581,12 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             print("Running RAJA Unit Tests...")
             make("test")
 
+    examples_src_dir = "examples"
+
     @run_after("install")
-    def setup_build_tests(self):
+    def setup_install_tests(self):
         """Cache sources needed by standalone `spack test run`."""
-        cache_extra_test_sources(self, self.extra_install_tests)
+        cache_extra_test_sources(self, [self.examples_src_dir])
         mkdirp(install_test_root(self))
 
     @run_after("install")
@@ -601,8 +597,11 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         example_stage_dir = "./cmake"
         shutil.copytree(example_src_dir, example_stage_dir)
         with working_dir(join_path(example_stage_dir, "build"), create=True):
-            print("Running RAJA Install Test...")
-            cmake_args = ["-C ../host-config.cmake", example_src_dir]
+            print(f"Running RAJA Install Test... from {os.getcwd()}")
+            host_config = join_path("../", "host-config.cmake")
+            if not os.path.exists(host_config):
+                raise SkipTest("host-config.cmake not found, cannot build example")
+            cmake_args = ["-C", host_config, example_src_dir]
             cmake = self.spec["cmake"].command
             cmake(*cmake_args)
             make()
@@ -610,29 +609,41 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             example()
             make("clean")
 
-    def run_example(self, exe, expected):
+    def build_and_run_example(self, exe, expected):
         """run and check outputs of the example"""
-        # TODO: figure out where (if at all) these files actually are installed
-        with working_dir(self.prefix.bin):
+        example_src_dir = join_path(self.prefix.examples.RAJA)
+        example_stage_dir = f"./examples"
+        if not os.path.exists(example_stage_dir):
+            shutil.copytree(example_src_dir, example_stage_dir)
+        with working_dir(join_path(example_stage_dir, "build"), create=True):
+            cmake = self.spec["cmake"].command
+            print(f"Running RAJA example {exe}... from {os.getcwd()}")
+            # host_config = join_path(self.prefix.cmake, "host-config.cmake")
+            host_config = join_path("../using-with-cmake", "host-config.cmake")
+            if not os.path.exists(host_config):
+                raise SkipTest("host-config.cmake not found, cannot build example")
+            cmake_args = ["-C", host_config, example_src_dir]
+            cmake(*cmake_args)
+            make()
             example = which(exe)
             if example is None:
                 raise SkipTest(f"{exe} was not built")
-
             out = example(output=str.split, error=str.split)
             check_outputs(expected, out)
+            make("clean")
 
     def test_daxpy(self):
         """check batched matrix multiple tutorial"""
-        self.run_example(
+        self.build_and_run_example(
             "tut_daxpy", [r"daxpy", r"result -- PASS"]
         )
 
     def test_matrix_multiply(self):
         """check batched matrix multiple tutorial"""
-        self.run_example(
+        self.build_and_run_example(
             "tut_matrix-multiply", [r"matrix multiplication", r"result -- PASS"]
         )
 
     def test_wave_equation(self):
         """check wave equation"""
-        self.run_example("wave-eqn", [r"Max Error = 2", r"Evolved solution to time"])
+        self.build_and_run_example("wave-eqn", [r"Max Error = 2", r"Evolved solution to time"])
