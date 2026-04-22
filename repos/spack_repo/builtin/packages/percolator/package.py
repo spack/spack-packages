@@ -40,8 +40,8 @@ class Percolator(CMakePackage):
 
     depends_on("cmake@3.5:", type="build", when="@3.8:")
     depends_on("cmake@2.8.11:", type="build", when="@3.6:3.7")
-    depends_on("boost@1.70:", type="build", when="@3.8:")
-    depends_on("boost@1.46:", type="build", when="@3.6:3.7")
+    depends_on("boost@1.70:1.88", type="build", when="@3.8:")
+    depends_on("boost@1.46:1.86", type="build", when="@3.6:3.7")
     depends_on("boost+system+filesystem", type="build")
 
     depends_on("xerces-c transcoder=none netaccessor=none", when="+xml")
