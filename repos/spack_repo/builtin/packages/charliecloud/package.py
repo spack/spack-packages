@@ -12,7 +12,7 @@ class Charliecloud(AutotoolsPackage):
 
     maintainers("j-ogas", "reidpr", "loshak")
     homepage = "https://charliecloud.io/"
-    url = "https://gitlab.com/charliecloud/charliecloud/-/archive/v0.42/main-v0.42.tar.gz"
+    url = "https://gitlab.com/charliecloud/main/-/archive/v0.44/main-v0.44.tar.gz"
     git = "https://gitlab.com/charliecloud/charliecloud.git"
 
     tags = ["e4s"]
@@ -20,6 +20,8 @@ class Charliecloud(AutotoolsPackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("0.44", sha256="4ecf3b58e0d486cf31a995b0e56a1a3c07261ab7c1afc56127b142d01b296a1e")
+    version("0.43", sha256="0af9f6b548ca3fc5cfec2c917e743b5023536af9935ae0a63d69290a72faa6c6")
     version("0.42", sha256="be98c025f58336a7b6e6d79804ef89dd489c5dcc5ad8faccb551ea0065dcd13a")
     version("0.41", sha256="065cc50f8b7893f8a0e28d9d06e2e3640d0d8139d10ad59fe941aea1e33dfdc6")
     version("0.40", sha256="dcad81136d1fed905be6e573a7bf191ea655ae7827f7980bbe6559942f2affdd")
