@@ -30,7 +30,7 @@ class Openmolcas(CMakePackage):
 
     depends_on("hdf5")
     depends_on("lapack")
-    depends_on("openblas+ilp64")
+    depends_on("openblas+ilp64 symbol_suffix=none")
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("py-pyparsing", type=("build", "run"))
     depends_on("py-six", type=("build", "run"))
