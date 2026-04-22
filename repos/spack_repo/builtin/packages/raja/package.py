@@ -3,8 +3,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import shutil
 import re
+import shutil
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -553,7 +553,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
                     "test-algorithm-sort-Cuda.exe",
                     "test-algorithm-stable-sort-Cuda.exe",
                     "test-algorithm-sort-OpenMP.exe",
-                    "test-algorithm-stable-sort-OpenMP.exe"
+                    "test-algorithm-stable-sort-OpenMP.exe",
                 ]
                 if spec.satisfies("+cuda %clang@12.0.0:13.9.999"):
                     entries.append(
@@ -597,10 +597,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         for key, value in compiler_paths.items():
             if value:
                 filter_file(
-                    rf'set\({key}.*\)',
-                    f'set({key} "{value}" CACHE PATH "")',
-                    path,
-                    **kwargs,
+                    rf"set\({key}.*\)", f'set({key} "{value}" CACHE PATH "")', path, **kwargs
                 )
 
     def _using_with_cmake_source_dir(self):
@@ -686,9 +683,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def test_daxpy(self):
         """check daxpy tutorial"""
-        self.build_and_run_example(
-            "tut_daxpy", [r"daxpy", r"result -- PASS"]
-        )
+        self.build_and_run_example("tut_daxpy", [r"daxpy", r"result -- PASS"])
 
     # TODO: this test seems to hang or take a long time?
     # def test_matrix_multiply(self):
