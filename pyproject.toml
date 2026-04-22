@@ -9,10 +9,8 @@ dev = [
   "pip>=21.3",
   "pytest",
   "pytest-xdist",
-  "black",
   "mypy",
-  "isort",
-  "flake8",
+  "ruff",
   "vermin",
 ]
 ci = ["pytest-cov", "codecov[toml]"]
@@ -281,25 +279,6 @@ section-order = [
 
 [tool.ruff.lint.isort.sections]
 spack = ["spack"]
-
-[tool.black]
-line-length = 99
-include = "(repos/spack_repo|tests)/.*\\.pyi?$"
-skip-magic-trailing-comma = true
-
-[tool.isort]
-line_length = 99
-profile = "black"
-sections = [
-  "FUTURE",
-  "STDLIB",
-  "THIRDPARTY",
-  "FIRSTPARTY",
-  "LOCALFOLDER",
-]
-known_first_party = "spack"
-src_paths = "lib"
-honor_noqa = true
 
 [tool.mypy]
 files = [
