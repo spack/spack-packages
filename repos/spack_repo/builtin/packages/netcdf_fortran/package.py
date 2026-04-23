@@ -120,6 +120,27 @@ class NetcdfFortran(AutotoolsPackage):
             msg.format("shared" if shared else "static", self.spec.name, self.spec.prefix)
         )
 
+    @run_after("configure")
+    def fix_darwin_libtool(self):
+        if self.spec.satisfies("%nag platform=darwin"):
+            filter_file(r'wl="-Wl,-Wl,,"', r'wl="-Wl,-Xlinker,"', "libtool")
+            filter_file(r'wl="-Wl,-Wl,"', r'wl="-Wl,-Xlinker,"', "libtool")
+            filter_file(
+                r"-compatibility_version \$minor_current -current_version \$minor_current\.\$revision",
+                r"-Wl,-Xlinker,-compatibility_version,-Xlinker,$minor_current,-Xlinker,-current_version,-Xlinker,$minor_current.$revision",
+                "libtool",
+            )
+            filter_file(
+                r"-install_name \$rpath/\$soname",
+                r"-Wl,-Xlinker,-install_name,-Xlinker,$rpath/$soname",
+                "libtool"
+            )
+            filter_file(
+                r"single_module=\$wl-Wl,-single_module",
+                r"single_module=\$wl-single_module",
+                "libtool"
+            )
+
     def configure_args(self):
         config_args = ["--enable-static"]
         config_args += self.enable_or_disable("shared")
