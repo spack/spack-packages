@@ -234,7 +234,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("ESMF_COMPILER", "gfortranclang")
         elif spec["fortran"].name == "llvm":
             env.set("ESMF_COMPILER", "llvm")
-        elif self.pkg.compiler.name == "nag":
+        elif spec["fortran"].name == "nag":
             env.set("ESMF_COMPILER", "nag")
         elif self.pkg.compiler.name == "nvhpc":
             env.set("ESMF_COMPILER", "nvhpc")
