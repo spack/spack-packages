@@ -133,12 +133,12 @@ class NetcdfFortran(AutotoolsPackage):
             filter_file(
                 r"-install_name \$rpath/\$soname",
                 r"-Wl,-Xlinker,-install_name,-Xlinker,$rpath/$soname",
-                "libtool"
+                "libtool",
             )
             filter_file(
                 r"single_module=\$wl-Wl,-single_module",
                 r"single_module=\$wl-single_module",
-                "libtool"
+                "libtool",
             )
 
     def configure_args(self):
