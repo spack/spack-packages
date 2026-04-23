@@ -28,7 +28,7 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
     tags = ["ecp", "ecp-apps"]
     submodules = True
 
-    version("master", branch="master")
+    version("main", branch="main")
     version("2.5.0", tag="v2.5.0", commit="2382077a7112a1aeb90f850994eb92d76abe0434")
     version("2.4.0", tag="v2.4.0", commit="85c06c5264fd8689002dc0ea32cbb74b2bff1668")
     version("2.3.0", tag="v2.3.0", commit="94cea346455f6841c8ce28d54c6d894bbf5e9a0a")
