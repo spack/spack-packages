@@ -697,6 +697,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         if "+fides" in spec:
             cmake_args.append("-DPARAVIEW_ENABLE_FIDES:BOOL=ON")
 
+        if "~hdf5" in spec:
+            # Don't use external HDF5
+            cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_hdf5=OFF")
+
         # The assumed qt version changed to QT5 (as of paraview 5.2.1),
         # so explicitly specify which QT major version is actually being used
         if spec.satisfies("+qt"):
