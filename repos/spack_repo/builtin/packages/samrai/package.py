@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakeBuilder,
     CachedCMakePackage,
     cmake_cache_option,
+    cmake_cache_path,
     cmake_cache_string,
 )
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -167,7 +168,7 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
         return []
 
 
-class CachedCMakeBuilder(CachedCMakeBuilder):
+class CMakeBuilder(CachedCMakeBuilder):
 
     @property
     def libs(self):

@@ -17,6 +17,7 @@ class Gh(GoPackage):
 
     license("MIT")
 
+    version("2.90.0", sha256="87a6a3b3df1155e9d253ec6ae273d9e018773498b7ce7570f896a7cb75b64e39")
     version("2.89.0", sha256="bc9c11f75e4aeb7e1f0bd5f543a3edabb8958655025f8cdc3d9bbe14435a7441")
     version("2.79.0", sha256="2408f3f5d69ea7efde1f174ee058ca011b8ab24e583178c6f090f3e91767bda4")
     version("2.76.2", sha256="6aee5afebdabd33f4c5e8604a9b7fa55e5bbac2a5cd36101cc221c990320c8b3")
