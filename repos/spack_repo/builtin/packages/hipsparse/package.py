@@ -30,6 +30,7 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="b001834d8e65c3878d1a69d08803d5b6ce4fe623e78099fe51cb146d0ffa10e7")
     version("7.1.0", sha256="1d399d16a388279f71c8de19e6ccfde35a3dedc5ba49858bca7a377aa08198c0")
@@ -106,6 +107,7 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"rocsparse@{ver}", when=f"+rocm @{ver}")
@@ -158,4 +160,6 @@ class Hipsparse(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
         if self.spec.satisfies("@:6"):
             args.append(self.define("CMAKE_CXX_STANDARD", "14"))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

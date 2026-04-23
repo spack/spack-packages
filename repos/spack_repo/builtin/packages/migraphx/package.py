@@ -5,6 +5,7 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -21,6 +22,7 @@ class Migraphx(CMakePackage):
     libraries = ["libmigraphx"]
 
     license("MIT")
+    version("7.2.1", sha256="611e4646f11fe559946275a6c79f1aaabe0a5c7cb95a42b28e724ba29f4c753a")
     version("7.2.0", sha256="085ea6fcf6197b20fed60917194ca622e5d2c1705237fe063563f988494a8b3d")
     version("7.1.1", sha256="beb9cbf4475d979e8431a983ee0ae8a9f5b75bb24699b7b8dfa2753db9822c4d")
     version("7.1.0", sha256="ffb6e510420e277e30fc1a58635d568197ab2046784ea0c4740aa79ffb17cb70")
@@ -44,6 +46,15 @@ class Migraphx(CMakePackage):
     version("6.0.0", sha256="7bb3f5011da9b1f3b79707b06118c523c1259215f650c2ffa5622a7e1d88868f")
     version("5.7.1", sha256="3e58c043a5a7d1357ee05725fd6cd41e190b070f1ba57f61300128429902089c")
     version("5.7.0", sha256="14f13554367d2d6490d66f8b5b739203225e7acce25085559e7c4acf29e2a4d5")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -106,12 +117,14 @@ class Migraphx(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        depends_on(f"rocblas@{ver}", when=f"@{ver}")
-        depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
@@ -130,10 +143,12 @@ class Migraphx(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
-        depends_on(f"hipblas@{ver}", when=f"@{ver}")
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     @property
     def cmake_python_hints(self):
@@ -187,7 +202,8 @@ class Migraphx(CMakePackage):
             )
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("PROTOBUF_INCLUDE_DIR", self.spec["protobuf"].prefix.include))
-
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
 
     def test_unit_tests(self):

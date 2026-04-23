@@ -131,8 +131,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.12.0:", type="build")
 
     depends_on("yaml-cpp")
+    depends_on("yaml-cpp@0.7.0:", when="@2.9:")
     depends_on("nlohmann-json")
-    depends_on("pugixml")
+    depends_on("pugixml@1.10:")
 
     # Standalone CUDA support
     depends_on("cuda", when="+cuda ~kokkos")

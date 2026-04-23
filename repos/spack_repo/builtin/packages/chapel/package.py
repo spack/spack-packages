@@ -171,6 +171,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "darwin",
         "hpe-apollo",
         "hpe-cray-ex",
+        "hpe-cray-xd",
         "linux32",
         "linux64",
         "netbsd32",
@@ -199,6 +200,15 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         default="none",
         description="Build Chapel with multi-locale support",
         values=("gasnet", "none", "ofi", "ugni"),
+    )
+
+    variant(
+        "comm_ofi_oob",
+        values=("sockets", "mpi", "pmi2", "unset"),
+        default="unset",
+        description="Select out-of-band support (CHPL_COMM_OFI_OOB)",
+        multi=False,
+        when="@2.2: comm=ofi",
     )
 
     variant(
@@ -436,6 +446,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_ATOMICS",
         "CHPL_AUX_FILESYS",
         "CHPL_COMM",
+        "CHPL_COMM_OFI_OOB",
         "CHPL_COMM_SUBSTRATE",
         "CHPL_CUDA_PATH",
         "CHPL_DEVELOPER",
@@ -594,6 +605,13 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         msg="Python bindings require building with LLVM, see "
         "https://chapel-lang.org/docs/tools/chapel-py/chapel-py.html#installation",
     )
+
+    for target in ["host", "target"]:
+        conflicts(
+            f"{target}_platform=hpe-cray-xd",
+            when="@:2.4",
+            msg="Platform hpe-cray-xd requires Chapel 2.5.0 or later",
+        )
 
     # Add dependencies
     depends_on("c", type="build")  # generated
