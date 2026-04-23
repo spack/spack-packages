@@ -18,6 +18,7 @@ class Dock(Package):
 
     homepage = "http://dock.compbio.ucsf.edu/DOCK_6/index.htm"
     url = "https://github.com/docking-org/dock6/archive/refs/tags/v6.13.1.tar.gz"
+    license("BSD-3-Clause", checked_by="snehring")
     maintainers("snehring")
 
     with when("@=6.9"):
