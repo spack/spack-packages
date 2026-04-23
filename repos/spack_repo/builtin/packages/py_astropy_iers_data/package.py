@@ -18,7 +18,7 @@ class PyAstropyIersData(PythonPackage):
 
     version(
         "0.2025.10.27.0.39.10",
-        sha256="2a0630f810bcba7978cc5f3f92a45910b5ea95d885302b1879b0132e920302ed"
+        sha256="2a0630f810bcba7978cc5f3f92a45910b5ea95d885302b1879b0132e920302ed",
     )
     version(
         "0.2025.9.29.0.35.48",
