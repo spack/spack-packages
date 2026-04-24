@@ -17,10 +17,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
-          fetch-depth: 0
+          # Depth 2 is required for this check
+          fetch-depth: 2
 
       - name: Checkout Spack
         uses: ./.github/actions/checkout-spack
+          fetch-depth: 1
 
       - name: Create source mirror
         id: create-mirror
@@ -42,7 +44,8 @@ jobs:
             exit 0
           fi
 
-          echo "Creating mirror for: $SPECS"
+          echo "Creating mirror for:"
+          echo "$SPECS"
           spack -c concretizer:unify:false mirror create -d src-mirror $SPECS
           echo "new-specs=true" >> $GITHUB_OUTPUT
 
