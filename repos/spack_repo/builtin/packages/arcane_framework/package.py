@@ -22,7 +22,7 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     url = "https://github.com/arcaneframework/framework/releases/download/arcane-v4.0.0.0/framework-4.0.0.0.src.tar.gz"
     git = "https://github.com/arcaneframework/framework.git"
 
-    version("4.0.0.0", sha256="b17a43c3fee70ec3811ba8f1b484ccc50e60e255f6f2ae5962bcd26fe81899d4")
+    version("4.1.10.0", sha256="87d8775a1656cef6cf6ed8ecc8eccbabcf69b689fbcd2e4d7daff4952f6239b6")
 
     generator("ninja")
 
