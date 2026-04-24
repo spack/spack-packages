@@ -86,3 +86,17 @@ class Miniforge3(Package):
         if "+mamba" in self.spec:
             filename = self.prefix.etc.join("profile.d").join("mamba.sh")
             env.extend(EnvironmentModifications.from_sourcing_file(filename))
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def check_install(self):
+        """Check the spack install of miniforge3."""
+
+        with working_dir(self.stage.source_path):
+            conda = Executable(self.prefix.bin.conda)
+            output = conda("--version", output=str.split)
+            assert "conda " in output
+
+            if "+mamba" in self.spec:
+                mamba = Executable(self.prefix.bin.mamba)
+                mamba("--version")
