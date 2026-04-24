@@ -54,6 +54,6 @@ class PyRst2pdf(PythonPackage):
 
         # Historical dependencies
         depends_on("py-importlib-metadata@8:", when="@0.103")
-        depends_on("py-importlib-metadata")
+        depends_on("py-importlib-metadata", when="@:0.103)
         depends_on("py-smartypants@2:", when="@0.103")
         depends_on("py-smartypants", when="@:0.103")
