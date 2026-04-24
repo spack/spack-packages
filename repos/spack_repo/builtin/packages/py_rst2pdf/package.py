@@ -46,6 +46,7 @@ class PyRst2pdf(PythonPackage):
         depends_on("py-packaging")
         depends_on("py-pygments@2:", when="@0.103:")
         depends_on("py-pygments")
+        depends_on("py-pyyaml@6.0.1:", when="@0.105:")
         depends_on("py-pyyaml@6:", when="@0.103:")
         depends_on("py-pyyaml")
         depends_on("py-reportlab@4:", when="@0.103:")
