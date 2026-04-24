@@ -22,6 +22,7 @@ jobs:
 
       - name: Checkout Spack
         uses: ./.github/actions/checkout-spack
+        with:
           fetch-depth: 1
 
       - name: Create source mirror
