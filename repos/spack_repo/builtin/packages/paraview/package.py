@@ -127,7 +127,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant("osmesa_fallback", default=False, description="Enable OpenGL2 backend", when="@6:")
     variant("x", default=True, description="Enable X11 support")
     variant("examples", default=False, description="Build examples")
-    variant("hdf5", default=False, description="Use external HDF5")
     variant("shared", default=True, description="Builds a shared version of the library")
     variant("kits", default=True, description="Use module kits")
     variant("pagosa", default=False, description="Build the pagosa adaptor")
@@ -177,12 +176,11 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         ' "on" or "off" will always override the build_edition.',
     )
 
-    conflicts("~hdf5", when="+visitbridge")
     conflicts("+adios2", when="@:5.10 ~mpi")
     conflicts("+fides", when="~adios2", msg="Fides needs ADIOS2")
     conflicts("+fides", when="@:5 use_vtkm=off", msg="Fides needs VTK-m")
     conflicts("+fides", when="@:5 use_vtkm=default", msg="Fides needs VTK-m")
-    conflicts("+openpmd", when="~adios2 ~hdf5", msg="openPMD needs ADIOS2 and/or HDF5")
+    conflicts("+openpmd", when="~adios2", msg="openPMD needs ADIOS2 and/or HDF5")
     conflicts("~shared", when="+cuda")
     conflicts("+cuda", when="@5.8:5.10")
     conflicts("+cuda", when="use_vtkm=off")
@@ -231,7 +229,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     # openPMD is implemented as a Python module and provides ADIOS2 and HDF5 backends
     depends_on("openpmd-api@0.14.5: +python", when="+python +openpmd", type=("build", "run"))
     depends_on("openpmd-api +adios2", when="+openpmd +adios2", type=("build", "run"))
-    depends_on("openpmd-api +hdf5", when="+openpmd +hdf5", type=("build", "run"))
+    depends_on("openpmd-api +hdf5", when="+openpmd", type=("build", "run"))
 
     depends_on("tbb", when="+tbb")
 
@@ -352,11 +350,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("eigen@3")
     depends_on("freetype")
     depends_on("freetype@:2.10.2", when="@:5.8")
-    # depends_on('hdf5+mpi', when='+mpi')
-    # depends_on('hdf5~mpi', when='~mpi')
-    depends_on("hdf5+hl+mpi", when="+hdf5+mpi")
-    depends_on("hdf5+hl~mpi", when="+hdf5~mpi")
-    depends_on("hdf5@1.10:", when="+hdf5 @5.10:")
+    depends_on("hdf5+hl+mpi", when="+mpi")
+    depends_on("hdf5+hl~mpi", when="~mpi")
+    depends_on("hdf5@1.10:", when="@5.10:")
     depends_on("adios2+mpi", when="+adios2+mpi")
     depends_on("adios2~mpi", when="+adios2~mpi")
     depends_on("silo", when="+visitbridge")
@@ -450,7 +446,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     patch("catalyst-etc_oneapi_fix.patch", when="@5.10.0:5.10.1%oneapi")
 
     # Patch for paraview 5.8: ^hdf5@1.13.2:
-    # Even with ~hdf5, hdf5 is part of the dependency tree due to netcdf-c
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9690
     patch("vtk-xdmf2-hdf51.13.1.patch", when="@5.8:5.10")
     patch("vtk-xdmf2-hdf51.13.2.patch", when="@5.8:5.11.0")
@@ -533,10 +528,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
         if name in ("cflags", "cxxflags"):
             # Constrain the HDF5 API
-            if self.spec.satisfies("@:5.9 +hdf5"):
+            if self.spec.satisfies("@:5.9"):
                 if self.spec["hdf5"].satisfies("@1.10:"):
                     flags.append("-DH5_USE_18_API")
-            elif self.spec.satisfies("@5.10: +hdf5"):
+            elif self.spec.satisfies("@5.10:"):
                 if self.spec["hdf5"].satisfies("@1.12:"):
                     flags.append("-DH5_USE_110_API")
 
@@ -696,10 +691,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
         if "+fides" in spec:
             cmake_args.append("-DPARAVIEW_ENABLE_FIDES:BOOL=ON")
-
-        if "~hdf5" in spec:
-            # Don't use external HDF5
-            cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_hdf5=OFF")
 
         # The assumed qt version changed to QT5 (as of paraview 5.2.1),
         # so explicitly specify which QT major version is actually being used
