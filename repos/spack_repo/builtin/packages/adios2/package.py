@@ -31,6 +31,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version(
+        "2.12.0-rc1", sha256="c2f2e1e594a85ff46623a99c7a8d71e3f8bf2249b1c6f8be6a9e472daaf12889"
+    )
+    version(
         "2.11.0",
         sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf",
         preferred=True,
@@ -128,8 +131,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.12.0:", type="build")
 
     depends_on("yaml-cpp")
+    depends_on("yaml-cpp@0.7.0:", when="@2.9:")
     depends_on("nlohmann-json")
-    depends_on("pugixml")
+    depends_on("pugixml@1.10:")
 
     # Standalone CUDA support
     depends_on("cuda", when="+cuda ~kokkos")

@@ -37,15 +37,20 @@ _AXOM_COMPONENTS = (
 )
 
 
-def get_spec_path(spec, package_name, path_replacements={}, use_bin=False):
+def get_spec_path(spec, package_name, path_replacements={}, use_bin=False, use_lib=False):
     """Extracts the prefix path for the given spack package
     path_replacements is a dictionary with string replacements for the path.
     """
 
-    if not use_bin:
-        path = spec[package_name].prefix
-    else:
+    if use_bin and use_lib:
+        raise ValueError("Only one of use_bin or use_lib can be True")
+
+    if use_bin:
         path = spec[package_name].prefix.bin
+    elif use_lib:
+        path = spec[package_name].prefix.lib
+    else:
+        path = spec[package_name].prefix
 
     path = os.path.realpath(path)
 
@@ -71,6 +76,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
     version("develop", branch="develop")
+    version("0.14.0", tag="v0.14.0", commit="146c8c15386a810791b7ab5c7fcb288cadea6151")
     version("0.13.0", tag="v0.13.0", commit="d00f6c66ef390ad746ae840f1074d982513611ac")
     version("0.12.0", tag="v0.12.0", commit="297544010a3dfb98145a1a85f09f9c648c00a18c")
     version("0.11.0", tag="v0.11.0", commit="685960486aa55d3a74a821ee02f6d9d9a3e67ab1")
@@ -181,12 +187,10 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     # Libraries
     # Forward variants to Conduit
     with when("+conduit"):
-        for _var in ["fortran", "hdf5", "mpi", "python"]:
+        for _var in ["hdf5", "mpi", "python"]:
             depends_on("conduit+{0}".format(_var), when="+{0}".format(_var))
             depends_on("conduit~{0}".format(_var), when="~{0}".format(_var))
-
-    depends_on("conduit+python", when="+devtools")
-    depends_on("conduit~python", when="~devtools")
+        depends_on("conduit+fortran", when="+fortran")
 
     depends_on("hdf5", when="+hdf5")
 
@@ -276,6 +280,13 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("python", when="+python")
 
+    # Python
+    with when("+python"):
+        depends_on("py-nanobind@2.7.0:")
+        depends_on("py-pytest")
+        depends_on("py-numpy")
+        depends_on("conduit+python")
+
     # Devtools
     with when("+devtools"):
         depends_on("cppcheck")
@@ -284,8 +295,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         depends_on("python")
         depends_on("py-sphinx")
         depends_on("py-shroud")
-        depends_on("py-pytest")
         depends_on("py-jsonschema")
+        depends_on("py-yapf")
 
         # Need clang@19 for clang-format
         # (ENABLE_CLANGFORMAT will be OFF if not the exact version)
@@ -296,11 +307,11 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     # Hard inter-component dependencies taken from Axom's dependency graph.
     requires(f"components={','.join(_AXOM_COMPONENTS)}", when="components=all")
 
-    requires("components=slic,spin,primal", when="components=bump")
+    requires("components=sidre,slic,spin,primal", when="components=bump")
     requires("components=sidre,slic,primal", when="components=inlet")
     requires("components=sidre,slic,inlet,primal", when="components=klee")
     requires("components=slic,slam", when="components=mint")
-    requires("components=bump,slic,slam,primal", when="components=mir")
+    requires("components=bump,sidre,slic,slam,primal", when="components=mir")
     requires("components=slic,slam", when="components=multimat")
     requires("components=slic", when="components=primal")
     requires("components=slic,slam,primal,mint,spin", when="components=quest")
@@ -693,7 +704,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         ##################################
 
         entries.append("#------------------{0}".format("-" * 60))
-        entries.append("# Devtools")
+        entries.append("# Devtools & Python")
         entries.append("#------------------{0}\n".format("-" * 60))
 
         # Add common prefix to path replacement list
@@ -728,6 +739,10 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
                 cmake_cache_path("SPHINX_EXECUTABLE", pjoin(sphinx_bin_dir, "sphinx-build"))
             )
 
+        if spec.satisfies("^py-yapf"):
+            yapf_bin_dir = get_spec_path(spec, "py-yapf", path_replacements, use_bin=True)
+            entries.append(cmake_cache_path("YAPF_EXECUTABLE", pjoin(yapf_bin_dir, "yapf")))
+
         if spec.satisfies("^py-shroud"):
             shroud_bin_dir = get_spec_path(spec, "py-shroud", path_replacements, use_bin=True)
             entries.append(cmake_cache_path("SHROUD_EXECUTABLE", pjoin(shroud_bin_dir, "shroud")))
@@ -738,6 +753,18 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
                 entries.append(
                     cmake_cache_path("%s_EXECUTABLE" % dep.upper(), pjoin(dep_bin_dir, dep))
                 )
+
+        if spec.satisfies("+python"):
+            # pytest requires pluggy and iniconfig
+            for dep in ("py-nanobind", "py-pytest", "py-numpy", "py-pluggy", "py-iniconfig"):
+                if spec.satisfies("^{0}".format(dep)):
+                    dep_dir = get_spec_path(spec, dep, path_replacements, use_lib=True)
+                    py_libdir = join_path(
+                        dep_dir, f"python{spec['python'].version.up_to(2)}", "site-packages"
+                    )
+                    entries.append(
+                        cmake_cache_path("%s_DIR" % dep.upper().replace("-", "_"), py_libdir)
+                    )
 
         return entries
 

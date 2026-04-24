@@ -715,6 +715,7 @@ with '-Wl,-commons,use_dylibs' and without
         depends_on("ucx@1.9.0:", when="@4.1.1:4.1")
         depends_on("ucx@1.9.0:", when="@5.0.0:")
     depends_on("libfabric", when="fabrics=ofi")
+    depends_on("libfabric@1", when="@:4.0 fabrics=ofi")
     depends_on("fca", when="fabrics=fca")
     depends_on("hcoll", when="fabrics=hcoll")
     depends_on("ucc", when="fabrics=ucc")
@@ -1146,7 +1147,12 @@ with '-Wl,-commons,use_dylibs' and without
 
     def configure_args(self):
         spec = self.spec
-        config_args = ["--enable-shared", "--disable-silent-rules", "--disable-sphinx"]
+        config_args = [
+            "--enable-shared",
+            "--disable-silent-rules",
+            "--disable-sphinx",
+            "--disable-dependency-tracking",
+        ]
 
         # Work around incompatibility with new apple-clang linker
         # https://github.com/open-mpi/ompi/issues/12427

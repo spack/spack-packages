@@ -16,10 +16,20 @@ class PyFracridge(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("3.0", sha256="b9df5c433381bd6e80d7bb5bc384865e03b5b9f6c20e6b252c5e095b2e73fe21")
     version("2.0", sha256="d49fbffbd58e85da38f572e6ca2ef7563b1a6c8c4e1ab779e2dd207ac944db90")
 
-    depends_on("py-setuptools@42:", type="build")
-    depends_on("py-setuptools-scm+toml@3.4:", type=("build", "run"))
-    depends_on("py-scikit-learn", type=("build", "run"))
-    depends_on("py-numba", type=("build", "run"))
-    depends_on("pil", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-setuptools@64:", when="@3:")
+        depends_on("py-setuptools@42:")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.12:", when="@3:")
+
+        depends_on("py-scikit-learn@1.8:", when="@3:")
+        depends_on("py-scikit-learn")
+        depends_on("py-numba")
+        # version restriction for py-setuptools-scm from pyproject.toml
+        depends_on("py-setuptools-scm@8:", when="@3:")
+        depends_on("py-setuptools-scm+toml@3.4:", when="@2")
+        depends_on("pil")

@@ -58,7 +58,7 @@ class IntelOneapiRuntime(Package):
             return
 
         for path, name in libraries:
-            install(path, os.path.join(prefix.lib, name))
+            install(path, os.path.join(prefix.lib, os.path.basename(name)))
 
         if self.spec["intel-oneapi-compilers"].satisfies("+fix_rt_linkage"):
             for _, name in libraries:
