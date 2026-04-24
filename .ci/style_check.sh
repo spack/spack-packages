@@ -26,7 +26,6 @@ if ! python_files > /dev/null; then
   info "skipping style checks: no Python files changed"
   exit 0
 fi
-[ -d "spack-core" ] ||  die "no 'spack-core' dir found: should be a clone of 'spack/spack'"
 python_files | xargs -0 printf "%s\n"
 info "running ruff format"
 ruff format $format_flags || error=1
