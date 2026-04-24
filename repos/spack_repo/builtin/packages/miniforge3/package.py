@@ -36,6 +36,12 @@ _versions = {
 }
 
 
+def _should_deprecate_version(version: str) -> bool:
+    major_version_to_deprecate = 20
+    major_version = int(version.split(".")[0])
+    return major_version < major_version_to_deprecate
+
+
 class Miniforge3(Package):
     """Miniforge3 is a minimal installer for conda and mamba specific to conda-forge."""
 
@@ -49,7 +55,7 @@ class Miniforge3(Package):
         key = f"{platform.system()}-{platform.machine()}"
         pkg = packages.get(key)
         if pkg:
-            version(ver, sha256=pkg[0], expand=False)
+            version(ver, sha256=pkg[0], expand=False, deprecated=_should_deprecate_version(ver))
 
     variant("mamba", default=True, description="Enable mamba support.")
 
