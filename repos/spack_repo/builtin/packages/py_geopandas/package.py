@@ -22,6 +22,7 @@ class PyGeopandas(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("1.1.3", sha256="91a31989b6f566012838d21d5f8033f37dce882079ccb7cfdc40d5ccce7f284f")
     version("1.1.2", sha256="33f7b33565c46a45b8459a2ab699ec943fdbb5716e58e251b3c413cf7783106c")
 
     # SQL injection vulnerability
@@ -58,21 +59,25 @@ class PyGeopandas(PythonPackage):
         version("0.3.0", sha256="e63bb32a3e516d8c9bcd149c22335575defdc5896c8bdf15c836608f152a920b")
 
     with default_args(type="build"):
-        depends_on("py-setuptools@61:", when="@0.14:")
-        depends_on("py-setuptools")
+        # https://github.com/geopandas/geopandas/pull/3747
+        depends_on("py-hatchling@1.5:", when="@1.2:")
+        depends_on("py-hatch-vcs", when="@1.2:")
+
+        # Historical dependencies
+        # https://github.com/geopandas/geopandas/pull/3746
+        depends_on("py-setuptools@77:", when="@1.1.3:1.1")
+        depends_on("py-setuptools@61:", when="@0.14:1.1")
+        depends_on("py-setuptools", when="@:1.1")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.10:", when="@1.1:")
-        depends_on("python@3.9:", when="@0.14:")
-        depends_on("python@3.8:", when="@0.11:")
-        depends_on("python@3.7:", when="@0.10:")
-        depends_on("python@3.6:", when="@0.9:")
-        depends_on("python@3.5:", when="@0.7:")
+        depends_on("py-numpy@2.0:", when="@1.2:")
         depends_on("py-numpy@1.24:", when="@1.1:")
         depends_on("py-numpy@1.22:", when="@0.14.4:")
         depends_on("py-numpy")
+        depends_on("py-pyogrio@0.8:", when="@1.2:")
         depends_on("py-pyogrio@0.7.2:", when="@1:")
         depends_on("py-packaging", when="@0.11:")
+        depends_on("py-pandas@2.2:", when="@1.2:")
         depends_on("py-pandas@2.0:", when="@1.1:")
         depends_on("py-pandas@1.4:", when="@0.14:")
         depends_on("py-pandas@1.0:", when="@0.11:")
@@ -82,11 +87,13 @@ class PyGeopandas(PythonPackage):
         depends_on("py-pandas")
         # https://github.com/geopandas/geopandas/pull/3621
         depends_on("py-pandas@:2", when="@:1.1.1")
+        depends_on("py-pyproj@3.7:", when="@1.2:")
         depends_on("py-pyproj@3.5:", when="@1.1:")
         depends_on("py-pyproj@3.3:", when="@0.14:")
         depends_on("py-pyproj@2.6.1.post1:", when="@0.11:")
         depends_on("py-pyproj@2.2:", when="@0.7:")
         depends_on("py-pyproj")
+        depends_on("py-shapely@2.1:", when="@1.2:")
         depends_on("py-shapely@2.0:", when="@1:")
         depends_on("py-shapely@1.8:", when="@0.14:")
         depends_on("py-shapely@1.7:", when="@0.11:")

@@ -166,9 +166,9 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
         # Provide the root directory of the MPI installation.
         options.append(self.define("MPI_HOME", self.spec["mpi"].prefix))
 
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         cmake(*options)
 
-        make = which("make")
+        make = which("make", required=True)
         make()
         make("test")

@@ -27,6 +27,7 @@ class PyMatplotlib(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "rgommers")
 
+    version("3.10.8", sha256="2299372c19d56bcd35cf05a2738308758d32b9eaed2371898d8f5bd33f084aa3")
     version("3.10.7", sha256="a06ba7e2a2ef9131c79c49e63dad355d2d878413a0376c1727c8b9335ff731c7")
     version("3.10.6", sha256="ec01b645840dd1996df21ee37f208cd8ba57644779fa20464010638013d3203c")
     version("3.10.5", sha256="352ed6ccfb7998a00881692f38b4ca083c691d3e275b4145423704c34c909076")
@@ -144,6 +145,11 @@ class PyMatplotlib(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    # This is required for the gcc lto wrapper which calls gmake
+    # Without this the spack installer doesn't know what to pass
+    # when building with the gnu jobserver
+    depends_on("gmake", type="build", when="%gcc")
+
     # https://matplotlib.org/stable/install/dependencies.html
     # Runtime dependencies
     # Mandatory dependencies
@@ -249,12 +255,13 @@ class PyMatplotlib(PythonPackage):
 
     # Dependencies for building matplotlib
     # Setup dependencies
-    depends_on("py-meson-python@0.13.1:0.16", when="@3.9:", type="build")
+    depends_on("py-meson-python@0.13.1:", when="@3.9:", type="build")
     depends_on("ninja@1.8.2:", when="@3.9:", type="build")
     depends_on("py-pybind11@2.13.2:", when="@3.10:", type=("build", "link"))
     depends_on("py-pybind11@2.6:", when="@3.7:", type=("build", "link"))
     depends_on("py-setuptools-scm@7:", when="@3.6:", type="build")
     depends_on("py-setuptools-scm@4:6", when="@3.5", type="build")
+    conflicts("py-meson-python@0.17")
 
     # Historical dependencies
     depends_on("py-certifi@2020.6.20:", when="@3.3.1:3.8", type="build")
@@ -299,7 +306,6 @@ class PyMatplotlib(PythonPackage):
     def config_settings(self, spec, prefix):
         return {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 "-Dsystem-freetype": True,
                 "-Dsystem-qhull": True,

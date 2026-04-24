@@ -42,6 +42,6 @@ class Pscmc(MakefilePackage):
 
     def install(self, spec, prefix):
         mkdir(prefix.source)
-        ln = which("ln")
+        ln = which("ln", required=True)
         ln("-s", prefix.source, prefix.bin)
         install_tree("./", prefix)

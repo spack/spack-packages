@@ -23,9 +23,8 @@ class PlinkNg(Package):
 
     conflicts("%gcc@:4")
 
-    def url_for_version(self, ver):
-        template = "https://www.cog-genomics.org/static/bin/plink2_src_{0}.zip"
-        return template.format(ver)
+    def url_for_version(self, version):
+        return f"https://www.cog-genomics.org/static/bin/plink2_src_{version}.zip"
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         zlib = join_path(self.spec["zlib-api"].prefix.lib, "libz.a")
@@ -34,5 +33,5 @@ class PlinkNg(Package):
     def install(self, spec, prefix):
         ld_flags = [spec["lapack"].libs.ld_flags, spec["blas"].libs.ld_flags]
         filter_file("-llapack -lcblas -lblas", " ".join(ld_flags), "build.sh", string=True)
-        which("sh")("build.sh")
+        which("sh", required=True)("build.sh")
         install_tree(".", prefix)

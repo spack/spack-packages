@@ -14,3 +14,8 @@ class AppleGlu(AppleGlBase):
     provides("glu@1.3")
 
     requires("platform=darwin", msg="Apple-GL is only available on Darwin")
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ):
+        env.prepend_path("OpenGL_ROOT", self.prefix)

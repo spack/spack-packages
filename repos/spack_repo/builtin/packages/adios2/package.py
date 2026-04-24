@@ -31,6 +31,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version(
+        "2.12.0-rc1", sha256="c2f2e1e594a85ff46623a99c7a8d71e3f8bf2249b1c6f8be6a9e472daaf12889"
+    )
+    version(
         "2.11.0",
         sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf",
         preferred=True,
@@ -127,8 +130,15 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.12.0:", type="build")
 
+    depends_on("yaml-cpp")
+    depends_on("yaml-cpp@0.7.0:", when="@2.9:")
+    depends_on("nlohmann-json")
+    depends_on("pugixml@1.10:")
+
     # Standalone CUDA support
     depends_on("cuda", when="+cuda ~kokkos")
+
+    depends_on("py-nanobind", when="@2.12: +python")
 
     # Kokkos support
     with when("+kokkos"):
@@ -183,6 +193,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("dataspaces@1.8.0:", when="+dataspaces")
 
     depends_on("hdf5@:1.12", when="@:2.8 +hdf5")
+    depends_on("hdf5@1.12:", when="@2.9: +hdf5")
     depends_on("hdf5~mpi", when="+hdf5~mpi")
     depends_on("hdf5+mpi", when="+hdf5+mpi")
 
@@ -217,6 +228,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")
 
+    # cmake build race condition
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/16869cf18cb4bd07d500c3048c3d34d1611674c7.patch?full_index=1",
+        when="@2.11.0",
+        sha256="3af07961975ec6c9023dca182ed19458c021cdf1812d34d9a9e9dad1da60ae75",
+    )
+
     # add missing include <cstdint>
     patch("2.7-fix-missing-cstdint-include.patch", when="@2.7")
 
@@ -245,13 +263,6 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/ornladios/adios2/commit/b7a5957.patch?full_index=1",
         sha256="d854008ab27d6ebfa66fffb78126b17713cda3234ed19bf331f85a720e599a32",
-        when="@2.8:2.10",
-    )
-
-    # https://github.com/ornladios/ADIOS2/pull/4578
-    patch(
-        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
-        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
         when="@2.8:2.10",
     )
 
@@ -314,6 +325,10 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             self.define("ADIOS2_BUILD_EXAMPLES", False),
             self.define("ADIOS2_USE_Endian_Reverse", True),
             self.define("ADIOS2_USE_IME", False),
+            self.define("ADIOS2_USE_EXTERNAL_YAMLCPP", True),
+            self.define("ADIOS2_USE_EXTERNAL_NLOHMANN_JSON", True),
+            self.define("ADIOS2_USE_EXTERNAL_NANOBIND", self.spec.satisfies("@2.12: +python")),
+            self.define("ADIOS2_USE_EXTERNAL_PUGIXML", True),
         ]
 
         if spec.satisfies("+sst"):
@@ -418,7 +433,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
                 f"test_run_executables_{cmd}",
                 purpose=f"run installed adios2 executable {cmd}",
             ):
-                exe = which(join_path(self.prefix.bin, cmd))
+                exe = which(join_path(self.prefix.bin, cmd), required=True)
                 exe(*opts)
 
     def test_python(self):

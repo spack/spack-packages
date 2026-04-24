@@ -96,7 +96,11 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("cuda_rdc", default=False, description="Turn on RDC for CUDA build")
     variant("rocm_rdc", default=False, description="Turn on RDC for ROCm build")
     variant(
-        "cxxstd", default="17", description="C++ standard", values=["11", "14", "17"], multi=False
+        "cxxstd",
+        default="17",
+        description="C++ standard",
+        values=["11", "14", "17", "20"],
+        multi=False,
     )
     variant("debug", default=False, description="Enable runtime safety and debug checks")
     variant(
@@ -364,10 +368,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+adios2", when="@:12.14.1")
     conflicts("cxxstd=11", when="@13.2:")
     conflicts("cxxstd=14", when="@14:")
-    conflicts("cxxstd=17", when="@:12")
+    conflicts("cxxstd=17", when="@:12,17:")
+    conflicts("cxxstd=20", when="@:16")
     conflicts("cxxstd=11", when="+wrapper ^cuda@6.5.14")
     conflicts("cxxstd=14", when="+wrapper ^cuda@6.5.14:8.0.61")
     conflicts("cxxstd=17", when="+wrapper ^cuda@6.5.14:10.2.89")
+    conflicts("cxxstd=20", when="+wrapper ^cuda@:11")
 
     # Multi-value gotype only applies to trilinos through 12.14
     conflicts("gotype=all", when="@12.15:")
@@ -428,13 +434,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos-kernels~shared", when="+rocm_rdc")
         depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=4.7.01", when="@master:")
+        depends_on("kokkos@=5.0.2", when="@master:")
         depends_on("kokkos@=4.7.01", when="@16.2")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=4.7.01", when="@master:")
+        depends_on("kokkos-kernels@=5.0.2", when="@master:")
         depends_on("kokkos-kernels@=4.7.01", when="@16.2")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
@@ -548,7 +554,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     patch("13.4.1-kokkoskernel-patch2296.patch", when="@13.4.1 %oneapi@2025:")
 
     # https://github.com/kokkos/kokkos-kernels/pull/2296
-    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14 %oneapi@2025:")
+    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14:15 %oneapi@2025:")
 
     # https://github.com/trilinos/Trilinos/pull/11676
     patch("13.4.1-14-patch11676.patch", when="@13.4.1:14.0 %oneapi@2025:")
@@ -599,11 +605,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 flags.append("-Wl,-undefined,dynamic_lookup")
 
             # Fortran lib (assumes clang is built with gfortran!)
-            if spec.satisfies("+fortran") and (
-                spec.satisfies("%gcc")
-                or spec.satisfies("%clang")
-                or spec.satisfies("%apple-clang")
-            ):
+            if spec.satisfies("+fortran %fortran=gcc"):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
                     "--print-file-name",
@@ -1052,7 +1054,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         # ################# Kokkos ######################
 
         if "+kokkos" in spec:
-            arch = Kokkos.get_microarch(spec.target)
+            arch = Kokkos.get_microarch(spec.target, spec["kokkos"] if "kokkos" in spec else None)
             if arch:
                 options.append(define("Kokkos_ARCH_" + arch.upper(), True))
 
@@ -1075,7 +1077,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 )
                 arch_map = Kokkos.spack_cuda_arch_map
                 options.extend(
-                    define("Kokkos_ARCH_" + arch_map[arch].upper(), True)
+                    define("Kokkos_ARCH_" + arch_map[arch][0].upper(), True)
                     for arch in spec.variants["cuda_arch"].value
                 )
 
@@ -1092,7 +1094,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 amdgpu_arch_map = Kokkos.amdgpu_arch_map
                 for amd_target in spec.variants["amdgpu_target"].value:
                     try:
-                        arch = amdgpu_arch_map[amd_target]
+                        arch = amdgpu_arch_map[amd_target][0]
                     except KeyError:
                         pass
                     else:

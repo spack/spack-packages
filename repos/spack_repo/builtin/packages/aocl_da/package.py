@@ -128,7 +128,7 @@ class AoclDa(CMakePackage):
     @on_package_attributes(run_tests=True)
     def test_python(self):
         """Perform smoke tests on the installed package."""
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         envmod = EnvironmentModifications()
         envmod.append_path("PYTHONPATH", join_path(self.prefix, "python_package"))
         pytest.add_default_envmod(envmod)

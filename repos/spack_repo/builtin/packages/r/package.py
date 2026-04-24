@@ -27,6 +27,7 @@ class R(AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("trunk", svn="https://svn.r-project.org/R/trunk")
+    version("4.5.3", sha256="aa5c1ed4293c7271ac513d654670356ac0e8a6ad5e42be014365d11150b5b8f2")
     version("4.5.2", sha256="0d71ff7106ec69cd7c67e1e95ed1a3cee355880931f2eb78c530014a9e379f20")
     version("4.5.1", sha256="b42a7921400386645b10105b91c68728787db5c4c83c9f6c30acdce632e1bb70")
     version("4.5.0", sha256="3b33ea113e0d1ddc9793874d5949cec2c7386f66e4abfb1cef9aec22846c3ce1")
@@ -40,6 +41,7 @@ class R(AutotoolsPackage):
     version("4.3.0", sha256="45dcc48b6cf27d361020f77fde1a39209e997b81402b3663ca1c010056a6a609")
 
     variant("X", default=False, description="Enable X11 support (TCLTK, PNG, JPEG, TIFF, CAIRO)")
+    variant("java", default=False, description="Enable Java support")
     variant("memory_profiling", default=False, description="Enable memory profiling")
     variant("rmath", default=False, description="Build standalone Rmath library")
 
@@ -47,26 +49,27 @@ class R(AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("findutils", type="build")
+    depends_on("texinfo", type="build")
 
     depends_on("blas")
     requires("^openblas symbol_suffix=none", when="^openblas")
     depends_on("lapack")
 
-    depends_on("bzip2")
-    depends_on("curl+libidn2")
-    depends_on("icu4c")
-    depends_on("java")
-    depends_on("libtirpc")
-    depends_on("ncurses")
-    depends_on("pcre2")
-    depends_on("readline")
-    depends_on("xz")
-    depends_on("which", type=("build", "run"))
     depends_on("zlib-api")
     depends_on("zlib@1.2.5:", when="^[virtuals=zlib-api] zlib")
+    depends_on("bzip2")
+    depends_on("xz")
     depends_on("zstd", when="@4.5:")
-    depends_on("texinfo", type="build")
+    depends_on("libdeflate", when="@4.4:")
+    depends_on("curl+libidn2")
+    depends_on("libtirpc")
+    depends_on("ncurses")
+    depends_on("readline")
+    depends_on("pcre2")
     depends_on("gettext")
+    depends_on("icu4c")
+    depends_on("which", type=("build", "run"))
+    depends_on("java", when="+java", type=("build", "run"))
 
     with when("+X"):
         depends_on("cairo+X+gobject+pdf")
@@ -76,8 +79,8 @@ class R(AutotoolsPackage):
         depends_on("libpng")
         depends_on("libtiff")
         depends_on("libx11")
-        depends_on("libxmu")
         depends_on("libxt")
+        depends_on("libxmu")
         depends_on("tcl")
         depends_on("tk")
 
@@ -184,6 +187,8 @@ class R(AutotoolsPackage):
             config_args.append("--without-libtiff")
             config_args.append("--without-tcltk")
             config_args.append("--without-x")
+
+        config_args.extend(self.enable_or_disable("java"))
 
         if "+memory_profiling" in spec:
             config_args.append("--enable-memory-profiling")

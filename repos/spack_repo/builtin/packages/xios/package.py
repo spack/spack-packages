@@ -16,7 +16,7 @@ class Xios(Package):
     homepage = "https://forge.ipsl.jussieu.fr/ioserver/wiki"
     version(
         "2.6",
-        revision=2714,
+        revision="2714",
         svn="https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/branches/xios-2.6",
     )
 

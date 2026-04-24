@@ -136,10 +136,13 @@ class Bazel(Package):
     # Patches for compiling various older bazels which had ICWYU violations revealed by
     # (but not unique to) GCC 11 header changes. These are derived from
     # https://gitlab.alpinelinux.org/alpine/aports/-/merge_requests/29084/
-    patch("gcc11_1.patch", when="@:4")
-    patch("gcc11_2.patch", when="@:4")
-    patch("gcc11_3.patch", when="@:4")
-    patch("gcc11_4.patch", when="@4.1:4")
+    patch("gcc11_1.patch", when="@:4 %gcc@11:")
+    patch("gcc11_2.patch", when="@:4 %gcc@11:")
+    patch("gcc11_3.patch", when="@:4 %gcc@11:")
+    patch("gcc11_4.patch", when="@4.1:4 %gcc@11:")
+
+    # https://github.com/bazelbuild/bazel/pull/27001
+    patch("missing-headers-gcc15.patch", when="@:7.6 %gcc@15:")
 
     # Bazel-4.0.0 does not compile with gcc-11
     # Newer versions of grpc and abseil dependencies are needed but are not in bazel-4.0.0
@@ -233,7 +236,7 @@ class Bazel(Package):
 
     @run_before("install")
     def bootstrap(self):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./compile.sh")
 
     def install(self, spec, prefix):

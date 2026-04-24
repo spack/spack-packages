@@ -29,6 +29,8 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("26.04", sha256="b09c99d37989b980bba622695b5a9aec267f2430d79683683064c27de7a1776a")
+    version("26.03", sha256="7139b8bb423a4311e8990bee6cb06b86a81de439363f35a3f29c808a93a003ca")
     version("26.02", sha256="7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
     version("26.01", sha256="b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
     version("25.12", sha256="60a788cf398563cdf25438a3bbe597fe1f3b18f359b30fb3c0f568dd62908f1a")
@@ -160,6 +162,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=False, description="Enable HDF5-based I/O")
     variant("hypre", default=False, description="Enable Hypre interfaces")
     variant("petsc", default=False, description="Enable PETSc interfaces")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("sundials", default=False, description="Enable SUNDIALS interfaces", when="@21:")
     variant("pic", default=False, description="Enable PIC")
     variant("sycl", default=False, description="Enable SYCL backend")
@@ -244,6 +247,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("hypre@2.19.0:", type="link", when="@21.03: ~cuda")
         depends_on("hypre@2.20.0:", type="link", when="@21.03: +cuda")
     depends_on("petsc", type="link", when="+petsc")
+    depends_on("vir-simd", type="build", when="+simd")
     depends_on("intel-oneapi-mkl", type=("build", "link"), when="+sycl")
 
     # these versions of gcc have lambda function issues
@@ -316,6 +320,9 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         "+sycl", when="@:21.05", msg="For SYCL support, AMReX version 21.06 and newer suggested."
     )
 
+    # Fix release number in amrex-v26.04
+    patch("amrex-26.04-changelog.patch", when="@26.04")
+
     def url_for_version(self, version):
         if version >= Version("20.05"):
             url = "https://github.com/AMReX-Codes/amrex/releases/download/{0}/amrex-{0}.tar.gz"
@@ -359,6 +366,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("AMReX_HDF5", "hdf5"),
             self.define_from_variant("AMReX_HYPRE", "hypre"),
             self.define_from_variant("AMReX_PETSC", "petsc"),
+            self.define_from_variant("AMReX_SIMD", "simd"),
             self.define_from_variant("AMReX_SUNDIALS", "sundials"),
             self.define_from_variant("AMReX_PIC", "pic"),
         ]
@@ -456,13 +464,13 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         args.append("-DCMAKE_PREFIX_PATH=" + ";".join(get_cmake_prefix_path(self)))
 
         args.extend(self.cmake_args())
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         cmake(*args)
 
-        make = which("make")
+        make = which("make", required=True)
         make()
 
-        install_test = which("install_test")
+        install_test = which("install_test", required=True)
         inputs_path = join_path(
             ".", "cache", "amrex", "Tests", "Amr", "Advection_AmrCore", "Exec", "inputs-ci"
         )
