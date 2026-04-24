@@ -168,7 +168,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
 
 
 class CachedCMakeBuilder(CachedCMakeBuilder):
-
     @property
     def libs(self):
         libs = [

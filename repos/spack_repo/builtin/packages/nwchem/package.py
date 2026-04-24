@@ -267,9 +267,7 @@ class Nwchem(Package):
    spce    {data}/solvents/spce.rst
    charmm_s {data}/charmm_s/
    charmm_x {data}/charmm_x/
-""".format(
-                data=share_path
-            )
+""".format(data=share_path)
             with open(".nwchemrc", "w") as f:
                 f.write(nwchemrc)
             install(".nwchemrc", share_path)
