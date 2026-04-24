@@ -163,6 +163,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     spack_micro_arch_map = {
         "armv8.1a": ("ARMV81", None),
         "armv8.4a": ("ARMV84", "@4.7.00:"),
+        "neoverse_v2": ("ARMV9_GRACE", "@4.7.04:4,5.1:"),
         "u74mc": ("RISCV_U74MC", "@4.7.00:"),
         "a64fx": ("A64FX", None),
         "thunderx2": ("ARMV8_THUNDERX2", None),
@@ -196,7 +197,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # ("KNC", None),          # Knights Corner Xeon Phi
     # ("BGQ", "@:4.2.01"),    # IBM Blue Gene/Q
     # ("RISCV_SG2042", "@4.3.00:"), # Sophgo SG2042 (64-core RISC-V)
-    # ("ARMV9_GRACE", "@4.4.00:"),  # NVIDIA Grace CPU (ARMv9)
     # ("RISCV_RVA22V", "@4.5.00:"), # RVA22V profile (RISC-V vector extension)
     # ("ARMV80", None),       # ARMv8.0 Compatible CPU
     # ("ARMV84_SVE", "@4.7.00:"),   # ARMv8.4 with SVE (Scalable Vector Extension)
