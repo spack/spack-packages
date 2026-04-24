@@ -686,7 +686,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             # closed and HIP reports an unterminated conditional at the outer
             # #if defined(USE_ROCM)... line in attention.hip.
             filter_file(
-                "      gen_);\n" "}\n" "}",
+                "      gen_);\n}\n}",
                 "      gen_);\n"
                 "#else\n"
                 "  TORCH_CHECK(false,\n"
