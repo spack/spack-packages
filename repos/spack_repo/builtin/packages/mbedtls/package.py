@@ -100,7 +100,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
-
     def setup_build_environment(self, env):
         if self.spec.satisfies("libs=shared"):
             env.set("SHARED", "yes")
