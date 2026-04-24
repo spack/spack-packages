@@ -41,10 +41,6 @@ jobs:
     - name: Install Python packages
       run: |
         pip install -r .github/workflows/requirements/style/requirements.txt
-    - uses: ./.github/actions/checkout-spack
-      with:
-        # This path must match the path in pyprojects.toml
-        path: spack-core
     - name: Run style tests
       run: .ci/style_check.sh HEAD^
     # todo: license check
