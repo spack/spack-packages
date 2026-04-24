@@ -10,9 +10,9 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
-    "26.1.0-0": {
-        "Linux-x86_64": ("127b5e14cfe6c83b787f624487cdc2168645ed82fdca1b0c1937caa086aed6d5",),
-        "Linux-aarch64": ("8baf8844ecf13e1458f81659ea286251d04b2d5ed90040efb77f158adedb2d95",),
+    "26.1.1-3": {
+        "Linux-x86_64": ("b25b828b702df4dd2a6d24d4eb56cfa912471dd8e3342cde2c3d86fe3dc2d870",),
+        "Linux-aarch64": ("83280e4ee71a5bd547d6b318f96e9ababe1054911ff6cc2b8801ce5493fe67e5",),
     },
     "25.3.0-3": {
         "Linux-x86_64": ("1b57f8cb991982063f79b56176881093abb1dc76d73fda32102afde60585b5a1",),
