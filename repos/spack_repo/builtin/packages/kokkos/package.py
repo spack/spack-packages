@@ -110,12 +110,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^cuda@13:", when="@:4.7.0")
 
     devices_variants = {
-        "cuda": [False, "Whether to build CUDA backend"],
-        "openmp": [False, "Whether to build OpenMP backend"],
-        "threads": [False, "Whether to build the C++ threads backend"],
-        "serial": [False, "Whether to build serial backend"],
-        "rocm": [False, "Whether to build HIP backend"],
-        "sycl": [False, "Whether to build the SYCL backend"],
+        "cuda": [False, None, "Whether to build CUDA backend"],
+        "openmp": [False, None, "Whether to build OpenMP backend"],
+        "threads": [False, None, "Whether to build the C++ threads backend"],
+        "serial": [False, None, "Whether to build serial backend"],
+        "rocm": [False, None, "Whether to build HIP backend"],
+        "sycl": [False, None, "Whether  to build the SYCL backend"],
         "openmptarget": [False, "@;5.0", "Whether to build the OpenMPTarget backend"],
     }
     requires(
@@ -307,8 +307,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # FIXME this should move to the apu part
     variant("apu", default=False, description="Enable APU support", when="@4.5: +rocm")
 
-    for dev, (dflt, desc) in devices_variants.items():
-        variant(dev, default=dflt, description=desc)
+    for dev, (dflt, when, desc) in devices_variants.items():
+        variant(dev, default=dflt, description=desc, when=when)
     conflicts("+cuda", when="+rocm", msg="CUDA and ROCm are not compatible in Kokkos.")
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
