@@ -11,7 +11,6 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.python import PythonExtension, PythonPipBuilder
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 rocm_dependencies = [
@@ -23,7 +22,6 @@ rocm_dependencies = [
     "rccl",
     "hipsparse",
     "rocprim",
-    "llvm-amdgpu",
     "hsa-rocr-dev",
     "rocminfo",
     "hipsolver",
@@ -50,13 +48,26 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     maintainers("adamjstewart", "aweits")
     tags = ["e4s"]
 
-    version("2.18.1", sha256="467c512b631e72ad5c9d5c16b23669bcf89675de630cfbb58f9dde746d34afa8")
     version(
-        "2.18.0-rocm-enhanced",
-        sha256="85f44bed166927b2e22db28f5c4e4538da22221fedd9c2f47c763c52a0e40814",
-        url="https://github.com/ROCm/tensorflow-upstream/archive/refs/tags/v2.18.0-rocm-enhanced.tar.gz",
+        "2.20.0-rocm-enhanced",
+        sha256="1db75eb24f617ac0b1aea417c294cbdf98ec7ede3cb2957e07c1e9f8eefa8713",
+        url="https://github.com/ROCm/tensorflow-upstream/archive/refs/tags/v2.20.0-rocm-enhanced.tar.gz",
     )
-    version("2.18.0", sha256="d7876f4bb0235cac60eb6316392a7c48676729860da1ab659fb440379ad5186d")
+    version("2.20.0", sha256="a640d1f97be316a09301dfc9347e3d929ad4d9a2336e3ca23c32c93b0ff7e5d0")
+    version("2.19.1", sha256="fcfb3e88ab3eebdbab98a03c869a4d2616d52ea166c8d8021de1ef921b47be8d")
+    version("2.19.0", sha256="4691b18e8c914cdf6759b80f1b3b7f3e17be41099607ed0143134f38836d058e")
+    version("2.18.1", sha256="467c512b631e72ad5c9d5c16b23669bcf89675de630cfbb58f9dde746d34afa8")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2025-55559/
+        # https://www.cvedetails.com/cve/CVE-2025-55556/
+        version(
+            "2.18.0-rocm-enhanced",
+            sha256="85f44bed166927b2e22db28f5c4e4538da22221fedd9c2f47c763c52a0e40814",
+            url="https://github.com/ROCm/tensorflow-upstream/archive/refs/tags/v2.18.0-rocm-enhanced.tar.gz",
+        )
+        version(
+            "2.18.0", sha256="d7876f4bb0235cac60eb6316392a7c48676729860da1ab659fb440379ad5186d"
+        )
     version("2.17.1", sha256="2d3cfb48510f92f3a52fb05b820481c6f066a342a9f5296fe26d72c4ea757700")
     version("2.17.0", sha256="9cc4d5773b8ee910079baaecb4086d0c28939f024dd74b33fc5e64779b6533dc")
     version("2.16.2", sha256="023849bf253080cb1e4f09386f5eb900492da2288274086ed6cfecd6d99da9eb")
@@ -77,121 +88,70 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     version("2.14.0", sha256="ce357fd0728f0d1b0831d1653f475591662ec5bca736a94ff789e6b1944df19f")
     version("2.13.1", sha256="89c07aebd4f41fbe0d08cc88aef00305542134f2f16d3b62918dc3c1182f33e2")
     version("2.13.0", sha256="e58c939079588623e6fa1d054aec2f90f95018266e0a970fd353a5244f5173dc")
-    version("2.12.1", sha256="6bc4600cc0b88e9e40f1800096f5bddbbd3b6e5527a030dea631b87f2ae46b5b")
-    version("2.12.0", sha256="c030cb1905bff1d2446615992aad8d8d85cbe90c4fb625cee458c63bf466bc8e")
-    version("2.11.1", sha256="624ed1cc170cdcc19e8a15d8cdde989a9a1c6b0534c90b38a6b2f06fb2963e5f")
-    version(
-        "2.11.0-rocm-enhanced",
-        sha256="0c4ee8d83bc72215cbc1a5cd3e88cde1a9cf7304237d3e3d8d105ff09827d903",
-        url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.11.0-rocm-enhanced.tar.gz",
-    )
-    version("2.11.0", sha256="99c732b92b1b37fc243a559e02f9aef5671771e272758aa4aec7f34dc92dac48")
-    version("2.10.1", sha256="622a92e22e6f3f4300ea43b3025a0b6122f1cc0e2d9233235e4c628c331a94a3")
-    version("2.10.0", sha256="b5a1bb04c84b6fe1538377e5a1f649bb5d5f0b2e3625a3c526ff3a8af88633e8")
-    version("2.9.3", sha256="59d09bd00eef6f07477eea2f50778582edd4b7b2850a396f1fd0c646b357a573")
-    version("2.9.2", sha256="8cd7ed82b096dc349764c3369331751e870d39c86e73bbb5374e1664a59dcdf7")
-    version("2.9.1", sha256="6eaf86ead73e23988fe192da1db68f4d3828bcdd0f3a9dc195935e339c95dbdc")
-    version("2.9.0", sha256="8087cb0c529f04a4bfe480e49925cd64a904ad16d8ec66b98e2aacdfd53c80ff")
-    version("2.8.4", sha256="c08a222792bdbff9da299c7885561ee27b95d414d1111c426efac4ccdce92cde")
-    version("2.8.3", sha256="4b7ecbe50b36887e1615bc2a582cb86df1250004d8bb540e18336d539803b5a7")
-    version("2.8.2", sha256="b3f860c02c22a30e9787e2548ca252ab289a76b7778af6e9fa763d4aafd904c7")
-    version("2.8.1", sha256="4b487a63d6f0c1ca46a2ac37ba4687eabdc3a260c222616fa414f6df73228cec")
-    version("2.8.0", sha256="66b953ae7fba61fd78969a2e24e350b26ec116cf2e6a7eb93d02c63939c6f9f7")
-    version(
-        "2.7.4-rocm-enhanced",
-        sha256="45b79c125edfdc008274f1b150d8b5a53b3ff4713fd1ad1ff4738f515aad8191",
-        url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.7.4-rocm-enhanced.tar.gz",
-    )
-    version("2.7.4", sha256="75b2e40a9623df32da16d8e97528f5e02e4a958e23b1f2ee9637be8eec5d021b")
-    version("2.7.3", sha256="b576c2e124cd6d4d04cbfe985430a0d955614e882172b2258217f0ec9b61f39b")
-    version("2.7.2", sha256="b3c8577f3b7cc82368ff7f9315821d506abd2f716ea6692977d255b7d8bc54c0")
-    version("2.7.1", sha256="abebe2cf5ca379e18071693ca5f45b88ade941b16258a21cc1f12d77d5387a21")
-    version("2.7.0", sha256="bb124905c7fdacd81e7c842b287c169bbf377d29c74c9dacc04f96c9793747bb")
-    version("2.6.5", sha256="305da42845ac584a42494e521c92a88ce92ee47d93022d4c0bb45180b5c19a8c")
-    version("2.6.4", sha256="6a9e54f46039ef0a6f0a1adf19befa510044d3203d1e124dba8318ec4b1e0210")
-    version("2.6.3", sha256="7a71dde0987677b9512b202eb6ae119e0e308b1ea15b66dcfce001a44873997b")
-    version("2.6.2", sha256="e68c1d346fc3d529653530ca346b2c62f5b31bd4fcca7ffc9c65bb39ab2f6ed3")
-    version("2.6.1", sha256="8e457f617bc2eb43de2a51900e7922b60a8107e2524b2576438f1acccee1d043")
-    version("2.6.0", sha256="41b32eeaddcbc02b0583660bcf508469550e4cd0f86b22d2abe72dfebeacde0f")
-    version("2.5.3", sha256="58d69b7163f7624debc243750976d27fa7dddbc6fb7c5215aec94732bcc670e1")
-    version("2.5.2", sha256="bcccc6ba0b8ac1d10d3302f766eed71911acecc0bc43d0bd27d97a1e7ce275a8")
-    version("2.5.1", sha256="8d2728e155a3aa6befd9cb3d0980fabd25e2142d124f8f6b6c78cdf17ff79da5")
-    version("2.5.0", sha256="233875ea27fc357f6b714b2a0de5f6ff124b50c1ee9b3b41f9e726e9e677b86c")
-    version(
-        "2.4.4",
-        sha256="f1abc3ed92c3ce955db2a7db5ec422a3a98f015331183194f97b99fe77a09bb4",
-        deprecated=True,
-    )
-    version(
-        "2.4.3",
-        sha256="cafd520c753f8755a9eb1262932f685dc722d8658f08373f8ec88d8acd58d7d4",
-        deprecated=True,
-    )
-    version(
-        "2.4.2",
-        sha256="edc88da97277906513d53eeee57997a2036fa32ac1f1937730301764fa06cdc0",
-        deprecated=True,
-    )
-    version(
-        "2.4.1",
-        sha256="f681331f8fc0800883761c7709d13cda11942d4ad5ff9f44ad855e9dc78387e0",
-        deprecated=True,
-    )
-    version(
-        "2.4.0",
-        sha256="26c833b7e1873936379e810a39d14700281125257ddda8cd822c89111db6f6ae",
-        deprecated=True,
-    )
-    version(
-        "2.3.4",
-        sha256="195947838b0918c15d79bc6ed85ff714b24d6d564b4d07ba3de0b745a2f9b656",
-        deprecated=True,
-    )
-    version(
-        "2.3.3",
-        sha256="b91e5bcd373b942c4a62c6bcb7ff6f968b1448152b82f54a95dfb0d8fb9c6093",
-        deprecated=True,
-    )
-    version(
-        "2.3.2",
-        sha256="21a703d2e68cd0677f6f9ce329198c24fd8203125599d791af9f1de61aadf31f",
-        deprecated=True,
-    )
-    version(
-        "2.3.2",
-        sha256="21a703d2e68cd0677f6f9ce329198c24fd8203125599d791af9f1de61aadf31f",
-        deprecated=True,
-    )
-    version(
-        "2.3.1",
-        sha256="ee534dd31a811f7a759453567257d1e643f216d8d55a25c32d2fbfff8153a1ac",
-        deprecated=True,
-    )
-    version(
-        "2.3.0",
-        sha256="2595a5c401521f20a2734c4e5d54120996f8391f00bb62a57267d930bce95350",
-        deprecated=True,
-    )
-    version(
-        "2.2.3",
-        sha256="5e6c779ca8392864d436d88893461dcce783c3a8d46dcb2b2f2ee8ece3cc4538",
-        deprecated=True,
-    )
-    version(
-        "2.2.2",
-        sha256="fb4b5d26c5b983350f7ce8297b71176a86a69e91faf66e6ebb1e58538ad3bb51",
-        deprecated=True,
-    )
-    version(
-        "2.2.1",
-        sha256="e6a28e64236d729e598dbeaa02152219e67d0ac94d6ed22438606026a02e0f88",
-        deprecated=True,
-    )
-    version(
-        "2.2.0",
-        sha256="69cd836f87b8c53506c4f706f655d423270f5a563b76dc1cfa60fbc3184185a3",
-        deprecated=True,
-    )
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2024-3660/
+        # https://www.cvedetails.com/cve/CVE-2023-33976/
+        version(
+            "2.12.1", sha256="6bc4600cc0b88e9e40f1800096f5bddbbd3b6e5527a030dea631b87f2ae46b5b"
+        )
+        version(
+            "2.12.0", sha256="c030cb1905bff1d2446615992aad8d8d85cbe90c4fb625cee458c63bf466bc8e"
+        )
+        version(
+            "2.11.1", sha256="624ed1cc170cdcc19e8a15d8cdde989a9a1c6b0534c90b38a6b2f06fb2963e5f"
+        )
+        # https://www.cvedetails.com/cve/CVE-2023-27579/
+        # https://www.cvedetails.com/cve/CVE-2023-25801/
+        # https://www.cvedetails.com/cve/CVE-2023-25676/
+        # https://www.cvedetails.com/cve/CVE-2023-25675/
+        # https://www.cvedetails.com/cve/CVE-2023-25674/
+        # https://www.cvedetails.com/cve/CVE-2023-25673/
+        # https://www.cvedetails.com/cve/CVE-2023-25672/
+        # https://www.cvedetails.com/cve/CVE-2023-25671/
+        # and many, many more...
+        version(
+            "2.11.0-rocm-enhanced",
+            sha256="0c4ee8d83bc72215cbc1a5cd3e88cde1a9cf7304237d3e3d8d105ff09827d903",
+            url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.11.0-rocm-enhanced.tar.gz",
+        )
+        version(
+            "2.11.0", sha256="99c732b92b1b37fc243a559e02f9aef5671771e272758aa4aec7f34dc92dac48"
+        )
+        version(
+            "2.10.1", sha256="622a92e22e6f3f4300ea43b3025a0b6122f1cc0e2d9233235e4c628c331a94a3"
+        )
+        version(
+            "2.10.0", sha256="b5a1bb04c84b6fe1538377e5a1f649bb5d5f0b2e3625a3c526ff3a8af88633e8"
+        )
+        version("2.9.3", sha256="59d09bd00eef6f07477eea2f50778582edd4b7b2850a396f1fd0c646b357a573")
+        version("2.9.2", sha256="8cd7ed82b096dc349764c3369331751e870d39c86e73bbb5374e1664a59dcdf7")
+        version("2.9.1", sha256="6eaf86ead73e23988fe192da1db68f4d3828bcdd0f3a9dc195935e339c95dbdc")
+        version("2.9.0", sha256="8087cb0c529f04a4bfe480e49925cd64a904ad16d8ec66b98e2aacdfd53c80ff")
+        version("2.8.4", sha256="c08a222792bdbff9da299c7885561ee27b95d414d1111c426efac4ccdce92cde")
+        version("2.8.3", sha256="4b7ecbe50b36887e1615bc2a582cb86df1250004d8bb540e18336d539803b5a7")
+        version("2.8.2", sha256="b3f860c02c22a30e9787e2548ca252ab289a76b7778af6e9fa763d4aafd904c7")
+        version("2.8.1", sha256="4b487a63d6f0c1ca46a2ac37ba4687eabdc3a260c222616fa414f6df73228cec")
+        version("2.8.0", sha256="66b953ae7fba61fd78969a2e24e350b26ec116cf2e6a7eb93d02c63939c6f9f7")
+        version(
+            "2.7.4-rocm-enhanced",
+            sha256="45b79c125edfdc008274f1b150d8b5a53b3ff4713fd1ad1ff4738f515aad8191",
+            url="https://github.com/ROCmSoftwarePlatform/tensorflow-upstream/archive/refs/tags/v2.7.4-rocm-enhanced.tar.gz",
+        )
+        version("2.7.4", sha256="75b2e40a9623df32da16d8e97528f5e02e4a958e23b1f2ee9637be8eec5d021b")
+        version("2.7.3", sha256="b576c2e124cd6d4d04cbfe985430a0d955614e882172b2258217f0ec9b61f39b")
+        version("2.7.2", sha256="b3c8577f3b7cc82368ff7f9315821d506abd2f716ea6692977d255b7d8bc54c0")
+        version("2.7.1", sha256="abebe2cf5ca379e18071693ca5f45b88ade941b16258a21cc1f12d77d5387a21")
+        version("2.7.0", sha256="bb124905c7fdacd81e7c842b287c169bbf377d29c74c9dacc04f96c9793747bb")
+        version("2.6.5", sha256="305da42845ac584a42494e521c92a88ce92ee47d93022d4c0bb45180b5c19a8c")
+        version("2.6.4", sha256="6a9e54f46039ef0a6f0a1adf19befa510044d3203d1e124dba8318ec4b1e0210")
+        version("2.6.3", sha256="7a71dde0987677b9512b202eb6ae119e0e308b1ea15b66dcfce001a44873997b")
+        version("2.6.2", sha256="e68c1d346fc3d529653530ca346b2c62f5b31bd4fcca7ffc9c65bb39ab2f6ed3")
+        version("2.6.1", sha256="8e457f617bc2eb43de2a51900e7922b60a8107e2524b2576438f1acccee1d043")
+        version("2.6.0", sha256="41b32eeaddcbc02b0583660bcf508469550e4cd0f86b22d2abe72dfebeacde0f")
+        version("2.5.3", sha256="58d69b7163f7624debc243750976d27fa7dddbc6fb7c5215aec94732bcc670e1")
+        version("2.5.2", sha256="bcccc6ba0b8ac1d10d3302f766eed71911acecc0bc43d0bd27d97a1e7ce275a8")
+        version("2.5.1", sha256="8d2728e155a3aa6befd9cb3d0980fabd25e2142d124f8f6b6c78cdf17ff79da5")
+        version("2.5.0", sha256="233875ea27fc357f6b714b2a0de5f6ff124b50c1ee9b3b41f9e726e9e677b86c")
 
     variant("mkl", default=False, description="Build with MKL support")
     variant("jemalloc", default=False, description="Build with jemalloc as malloc support")
@@ -232,18 +192,18 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     extends("python")
 
     with default_args(type="build"):
+        # Bazel tends to be backwards-compatible within major versions
         # See .bazelversion
-        depends_on("bazel@6.5.0", when="@2.16:")
-        depends_on("bazel@6.1.0", when="@2.14:2.15")
-        depends_on("bazel@5.3.0", when="@2.11:2.13")
-        depends_on("bazel@5.1.1", when="@2.10")
+        depends_on("bazel@7.4.1:7", when="@2.20:")
+        depends_on("bazel@6.5.0:6", when="@2.16:2.19")
+        depends_on("bazel@6.1.0:6", when="@2.14:2.15")
+        depends_on("bazel@5.3.0:5", when="@2.11:2.13")
+        depends_on("bazel@5.1.1:5", when="@2.10")
         # See _TF_MIN_BAZEL_VERSION and _TF_MAX_BAZEL_VERSION in configure.py
-        depends_on("bazel@4.2.2:5.99.0", when="@2.9")
-        depends_on("bazel@4.2.1:4.99.0", when="@2.8")
-        depends_on("bazel@3.7.2:4.99.0", when="@2.7")
-        depends_on("bazel@3.7.2:3.99.0", when="@2.5:2.6")
-        depends_on("bazel@3.1.0:3.99.0", when="@2.3:2.4")
-        depends_on("bazel@2.0.0", when="@2.2")
+        depends_on("bazel@4.2.2:5", when="@2.9")
+        depends_on("bazel@4.2.1:4", when="@2.8")
+        depends_on("bazel@3.7.2:4", when="@2.7")
+        depends_on("bazel@3.7.2:3", when="@2.5:2.6")
 
         # tensorflow/tools/pip_package/build_pip_package.sh
         depends_on("patchelf", when="@2.13: platform=linux")
@@ -256,21 +216,19 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     with default_args(type=("build", "run")):
         # Python support based on wheel availability
-        depends_on("python@3.9:3.12", when="@2.16:")
+        depends_on("python@3.9:3.13", when="@2.20:")
+        depends_on("python@3.9:3.12", when="@2.16:2.19")
         depends_on("python@3.9:3.11", when="@2.14:2.15")
         depends_on("python@3.8:3.11", when="@2.12:2.13")
         depends_on("python@:3.10", when="@2.8:2.11")
-        depends_on("python@:3.9", when="@2.5:2.7")
-        depends_on("python@:3.8", when="@2.2:2.4")
+        depends_on("python@:3.9", when="@:2.7")
 
-        # Listed under REQUIRED_PACKAGES in tensorflow/tools/pip_package/setup.py
+        # Listed under REQUIRED_PACKAGES in tensorflow/tools/pip_package/setup.py.tpl
         depends_on("py-absl-py@1:", when="@2.9:")
         depends_on("py-absl-py@0.4:", when="@2.7:2.8")
         depends_on("py-absl-py@0.10:0", when="@2.4:2.6")
-        depends_on("py-absl-py@0.7:", when="@:2.3")
         depends_on("py-astunparse@1.6:", when="@2.7:")
         depends_on("py-astunparse@1.6.3:1.6", when="@2.4:2.6")
-        depends_on("py-astunparse@1.6.3", when="@2.2:2.3")
         depends_on("py-flatbuffers@24.3.25:", when="@2.17:")
         depends_on("py-flatbuffers@23.5.26:", when="@2.14:")
         depends_on("py-flatbuffers@23.1.21:", when="@2.13")
@@ -284,30 +242,26 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-gast@0.2.1:", when="@2.8")
         depends_on("py-gast@0.2.1:0.4", when="@2.7")
         depends_on("py-gast@0.4.0", when="@2.5:2.6")
-        depends_on("py-gast@0.3.3", when="@2.2:2.4")
-        depends_on("py-gast@0.2.2", when="@:2.1")
         depends_on("py-google-pasta@0.1.1:", when="@2.7:")
         depends_on("py-google-pasta@0.2:0", when="@2.4:2.6")
-        depends_on("py-google-pasta@0.1.8:", when="@2.2:2.3")
-        depends_on("py-google-pasta@0.1.6:", when="@:2.1")
         depends_on("py-libclang@13:", when="@2.9:")
         depends_on("py-libclang@9.0.1:", when="@2.7:2.8")
-        depends_on("py-opt-einsum@2.3.2:", when="@:2.3,2.7:")
+        depends_on("py-opt-einsum@2.3.2:", when="@2.7:")
         depends_on("py-opt-einsum@3.3", when="@2.4:2.6")
         depends_on("py-packaging", when="@2.9:")
-        depends_on("py-protobuf@3.20.3:4.20,4.21.6:5", when="@2.18:")
+        depends_on("py-protobuf@5.28:", when="@2.20:")
+        depends_on("py-protobuf@3.20.3:4.20,4.21.6:5", when="@2.18:2.19")
         depends_on("py-protobuf@3.20.3:4.20,4.21.6:4", when="@2.12:2.17")
         depends_on("py-protobuf@3.9.2:", when="@2.3:2.11")
-        depends_on("py-protobuf@3.8.0:", when="@:2.2")
         # https://github.com/protocolbuffers/protobuf/issues/10051
         # https://github.com/tensorflow/tensorflow/issues/56266
         depends_on("py-protobuf@:3.19", when="@:2.11")
         depends_on("py-requests@2.21:2", when="@2.16:")
         depends_on("py-requests")
         depends_on("py-setuptools")
-        depends_on("py-six@1.12:", when="@:2.3,2.7:")
+        depends_on("py-six@1.12:", when="@2.7:")
         depends_on("py-six@1.15", when="@2.4:2.6")
-        depends_on("py-termcolor@1.1:", when="@:2.3,2.7:")
+        depends_on("py-termcolor@1.1:", when="@2.7:")
         depends_on("py-termcolor@1.1", when="@2.4:2.6")
         depends_on("py-typing-extensions@3.6.6:", when="@2.7:2.12,2.14:")
         depends_on("py-typing-extensions@3.6.6:4.5", when="@2.13")
@@ -315,48 +269,40 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-wrapt@1.11:", when="@2.7:2.11,2.13,2.16:")
         depends_on("py-wrapt@1.11:1.14", when="@2.12,2.14:2.15")
         depends_on("py-wrapt@1.12.1:1.12", when="@2.4:2.6")
-        depends_on("py-wrapt@1.11.1:", when="@:2.3")
-
-        # TODO: add packages for these dependencies
-        # depends_on('py-tensorflow-io-gcs-filesystem@0.23.1:', when='@2.8:')
-        # depends_on('py-tensorflow-io-gcs-filesystem@0.21:', when='@2.7')
 
         if sys.byteorder == "little":
             # Only builds correctly on little-endian machines
             depends_on("py-grpcio@1.24.3:1", when="@2.7:")
             depends_on("py-grpcio@1.37.0:1", when="@2.6")
             depends_on("py-grpcio@1.34", when="@2.5")
-            depends_on("py-grpcio@1.32", when="@2.4")
-            depends_on("py-grpcio@1.8.6:", when="@:2.3")
 
-        for minor_ver in range(2, 19):
+        for minor_ver in range(5, 21):
             depends_on("py-tensorboard@2.{}".format(minor_ver), when="@2.{}".format(minor_ver))
 
         # TODO: support circular run-time dependencies
         # depends_on('py-keras')
 
-        depends_on("py-numpy@1.26:2.0", when="@2.18:")
+        depends_on("py-numpy@1.26:", when="@2.20:")
+        depends_on("py-numpy@1.26:2.1", when="@2.19")
+        depends_on("py-numpy@1.26:2.0", when="@2.18")
         depends_on("py-numpy@1.23.5:", when="@2.14:2.17")
         depends_on("py-numpy@1.22:1.24.3", when="@2.13")
         depends_on("py-numpy@1.22:1.23", when="@2.12")
         depends_on("py-numpy@1.20:", when="@2.8:2.11")
         depends_on("py-numpy@1.14.5:", when="@2.7")
         depends_on("py-numpy@1.19.2:1.19", when="@2.4:2.6")
-        # https://github.com/tensorflow/tensorflow/issues/40688
-        depends_on("py-numpy@1.16.0:1.18", when="@:2.3")
         # https://github.com/tensorflow/tensorflow/issues/67291
         depends_on("py-numpy@:1", when="@:2.17")
         depends_on("py-h5py@3.11:", when="@2.18:")
         depends_on("py-h5py@3.10:", when="@2.16:")
         depends_on("py-h5py@2.9:", when="@2.7:2.15")
         depends_on("py-h5py@3.1", when="@2.5:2.6")
-        depends_on("py-h5py@2.10", when="@2.2:2.4")
-        depends_on("py-h5py@:2.10.0", when="@2.1.3:2.1")
         # propagate the mpi variant setting for h5py/hdf5 to avoid unexpected crashes
-        depends_on("py-h5py+mpi", when="@2.1.3:+mpi")
-        depends_on("py-h5py~mpi", when="@2.1.3:~mpi")
-        depends_on("hdf5+mpi", when="@2.1.3:+mpi")
-        depends_on("hdf5~mpi", when="@2.1.3:~mpi")
+        depends_on("py-h5py+mpi", when="+mpi")
+        depends_on("py-h5py~mpi", when="~mpi")
+        depends_on("hdf5+mpi", when="+mpi")
+        depends_on("hdf5~mpi", when="~mpi")
+        depends_on("py-ml-dtypes@0.5.1:0", when="@2.19:")
         depends_on("py-ml-dtypes@0.4:0", when="@2.18.1")
         depends_on("py-ml-dtypes@0.4", when="@2.18.0")
         depends_on("py-ml-dtypes@0.3.1:0.4", when="@2.17")
@@ -368,12 +314,12 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-jax@0.3.15:", when="@2.12")
         depends_on("py-keras-preprocessing@1.1.1:", when="@2.7:2.10")
         depends_on("py-keras-preprocessing@1.1.2:1.1", when="@2.4:2.6")
-        depends_on("py-keras-preprocessing@1.1.1:1.1", when="@2.3")
-        depends_on("py-keras-preprocessing@1.1:", when="@2.2")
-        depends_on("py-scipy@1.4.1", when="@2.2.0,2.3.0")
         depends_on("py-wheel@0.32:0", when="@2.7")
         depends_on("py-wheel@0.35:0", when="@2.4:2.6")
-        depends_on("py-wheel@0.26:", when="@:2.3")
+
+        # TODO: add packages for these dependencies
+        # depends_on("py-tensorflow-io-gcs-filesystem@0.23.1:", when="@2.8:2.19")
+        # depends_on("py-tensorflow-io-gcs-filesystem@0.21:", when="@2.7")
 
     # TODO: add packages for some of these dependencies
     depends_on("mkl", when="+mkl")
@@ -382,25 +328,22 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # depends_on('trisycl',    when='+opencl~computepp')
     with when("+cuda"):
         # https://www.tensorflow.org/install/source#gpu
+        depends_on("cuda@12.5:", when="@2.18:")
         depends_on("cuda@12.3:", when="@2.16:")
         depends_on("cuda@12.2:", when="@2.15:")
         depends_on("cuda@11.8:", when="@2.12:")
         depends_on("cuda@11.2:", when="@2.5:")
-        depends_on("cuda@11.0:", when="@2.4:")
-        depends_on("cuda@10.1:", when="@2.1:")
 
         depends_on("cuda@:11.7.0", when="@:2.9")
         depends_on("cuda@:11.4", when="@2.4:2.7")
-        depends_on("cuda@:10.2", when="@:2.3")
 
-        depends_on("cudnn@8.9:8", when="@2.15:")
-        depends_on("cudnn@8.7:8", when="@2.14:")
-        depends_on("cudnn@8.6:8", when="@2.12:")
-        depends_on("cudnn@8.1:8", when="@2.5:")
-        depends_on("cudnn@8.0:8", when="@2.4:")
-        depends_on("cudnn@7.6:8", when="@2.1:")
+        depends_on("cudnn@9.3:", when="@2.18:")
+        depends_on("cudnn@:8", when="@:2.17")
+        depends_on("cudnn@8.9:", when="@2.15:")
+        depends_on("cudnn@8.7:", when="@2.14:")
+        depends_on("cudnn@8.6:", when="@2.12:")
+        depends_on("cudnn@8.1:", when="@2.5:")
 
-        depends_on("cudnn@:7", when="@:2.2")
     # depends_on('tensorrt', when='+tensorrt')
     depends_on("nccl", when="+nccl+cuda")
     depends_on("mpi", when="+mpi")
@@ -408,6 +351,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # depends_on('android-sdk', when='+android')
 
     with when("+rocm"):
+        depends_on("llvm-amdgpu")
+        depends_on("hipblaslt", when="@2.20:")
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6.0:", when="@2.14:")
             depends_on(f"{pkg_dep}@:6.3", when="@:2.18")
@@ -448,10 +393,6 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     )
     conflicts("+mpi", when="platform=windows")
     conflicts("+ios", when="platform=linux", msg="iOS support only available on macOS")
-    # https://github.com/tensorflow/tensorflow/pull/45404
-    conflicts("platform=darwin target=aarch64:", when="@:2.4")
-    # https://github.com/tensorflow/tensorflow/pull/39225
-    conflicts("target=aarch64:", when="@:2.2")
 
     rocm_versions = [
         "2.7.4-rocm-enhanced",
@@ -459,6 +400,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.14-rocm-enhanced",
         "2.16.1-rocm-enhanced",
         "2.18.0-rocm-enhanced",
+        "2.20.0-rocm-enhanced",
     ]
     rocm_conflicts = [
         ":2.7.4-a",
@@ -466,8 +408,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.11.0.0:2.14-a",
         "2.14-z:2.16.1-a",
         "2.16.1-z:2.18.0-a",
-        "2.18.0-z:",
+        "2.18.0-z:2.20.0-a",
+        "2.20.0-z:",
     ]
+
     conflicts("~rocm", when=f"@{','.join(rocm_versions)}")
     conflicts("+rocm", when=f"@{','.join(rocm_conflicts)}")
 
@@ -486,6 +430,43 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
 
+    # https://github.com/tensorflow/tensorflow/issues/103590
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/104948.patch?full_index=1",
+        sha256="93314b87dc9960aa5320f672dbe559a4ad95ba4f35c2ddca6094d169947f7c78",
+        when="@2.20",
+    )
+    conflicts("os=tahoe", when="@:2.19")
+
+    # https://github.com/tensorflow/tensorflow/pull/98321
+    patch(
+        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
+        sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
+        when="@2.20",
+    )
+
+    # Fix build error with CUDA
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/99046.patch?full_index=1",
+        sha256="2912121c181de1a695f1ee791cf94f8d71fca4955e8095e506e814d07eac5825",
+        when="@2.20",
+    )
+
+    # https://github.com/spack/spack/issues/49958
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/90563.patch?full_index=1",
+        sha256="78b858380521f4624fd95bfa32fd038cdd8168b783c2a13502c4169431517618",
+        when="@2.19",
+    )
+
+    # Fix build error with GCC 13
+    # https://github.com/tensorflow/tensorflow/issues/84977
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/90558.patch?full_index=1",
+        sha256="3c93c6226bbde3a4c2aedbac42bc136eacf8da65f5623f7effad437ebf2ba4aa",
+        when="@2.19",
+    )
+
     # https://github.com/tensorflow/tensorflow/issues/94277
     # https://github.com/tensorflow/tensorflow/pull/94289
     patch("h5py-3.13.0.patch", when="@2.18")
@@ -499,12 +480,11 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         when="@2.9:2.10.0",
     )
 
-    # can set an upper bound if/when
-    # https://github.com/tensorflow/tensorflow/pull/89032 is merged
+    # https://github.com/tensorflow/tensorflow/pull/89032
     patch(
         "allow-empty-config-environment-variables.patch",
         sha256="e061875c2ca9c157a7837d02afdd25205817def3460745523d5089bbeaa77d29",
-        when="@1.4.0:",
+        when="@1.4.0:2.19",
     )
 
     # Version 2.10 produces an error related to cuBLAS:
@@ -524,7 +504,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     # allow linker to be found in PATH
     # https://github.com/tensorflow/tensorflow/issues/39263
-    patch("null_linker_bin_path.patch", when="@2.5:")
+    patch("null_linker_bin_path.patch", when="@2.5:2.19")
 
     # Reset import order to that of 2.4. Part of
     # https://bugs.gentoo.org/800824#c3 From the patch:
@@ -567,7 +547,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         sha256="75a61a79ce3aae51fda920f677f4dc045374b20e25628626eb37ca19c3a3b4c4",
         when="@2.16.1-rocm-enhanced +rocm",
     )
-    patch("set_jit_true.patch", when="@2.18.0-rocm-enhanced +rocm")
+    patch("set_jit_true.patch", when="@2.18.0-rocm-enhanced: +rocm")
     phases = ["configure", "build", "install"]
 
     def flag_handler(self, name, flags):
@@ -595,7 +575,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # Please input the desired Python library path to use
         env.set("PYTHON_LIB_PATH", python_platlib)
-        env.set("TF_PYTHON_VERSION", spec["python"].version.up_to(2))
+        env.set("TF_PYTHON_VERSION", str(spec["python"].version.up_to(2)))
 
         # Ensure swig is in PATH or set SWIG_PATH
         env.set("SWIG_PATH", spec["swig"].prefix.bin.swig)
@@ -693,14 +673,34 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         # Do you wish to build TensorFlow with ROCm support?
         if "+rocm" in spec:
             env.set("TF_NEED_ROCM", "1")
-            env.set("TF_HIPBLASLT", "0")
-            env.set("MIOPEN_PATH", spec["miopen-hip"].prefix)
-            env.set("ROCTRACER_PATH", spec["roctracer-dev"].prefix)
-            env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
-            for pkg_dep in rocm_dependencies:
-                pkg_dep_cap = pkg_dep.upper().replace("-", "_")
-                env.set(f"{pkg_dep_cap}_PATH", spec[pkg_dep].prefix)
-            env.set("TF_ROCM_AMDGPU_TARGETS", ",".join(self.spec.variants["amdgpu_target"].value))
+            if not spec["hip"].external:
+                env.set(
+                    "TF_ROCM_AMDGPU_TARGETS", ",".join(self.spec.variants["amdgpu_target"].value)
+                )
+                env.set("LLVM_PATH", spec["llvm-amdgpu"].prefix)
+
+                if spec.satisfies("@:2.18"):
+                    env.set("TF_HIPBLASLT", "0")
+                    env.set("MIOPEN_PATH", spec["miopen-hip"].prefix)
+                    env.set("ROCTRACER_PATH", spec["roctracer-dev"].prefix)
+                    for pkg_dep in rocm_dependencies:
+                        pkg_dep_cap = pkg_dep.upper().replace("-", "_")
+                        env.set(f"{pkg_dep_cap}_PATH", spec[pkg_dep].prefix)
+                else:
+                    transitive_rocm_dependencies = [
+                        "hipblas-common",
+                        "rocprofiler-register",
+                        "hsakmt-roct",
+                        "comgr",
+                        "aqlprofile",
+                        "hsa-amd-aqlprofile",
+                    ]
+                    for pkg_dep in transitive_rocm_dependencies:
+                        if self.spec.satisfies(f"^{pkg_dep}"):
+                            rocm_dependencies.append(pkg_dep)
+                    for pkg_dep in rocm_dependencies:
+                        env.prepend_path("TF_ROCM_MULTIPLE_PATHS", spec[pkg_dep].prefix)
+                    env.prune_duplicate_paths("TF_ROCM_MULTIPLE_PATHS")
         else:
             env.set("TF_NEED_ROCM", "0")
 
@@ -724,7 +724,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 cuda_paths.append(spec["tensorrt"].prefix)
 
                 # Please specify the TensorRT version you want to use
-                env.set("TF_TENSORRT_VERSION", spec["tensorrt"].version.up_to(1))
+                env.set("TF_TENSORRT_VERSION", str(spec["tensorrt"].version.up_to(1)))
 
                 # Please specify the location where TensorRT is installed
                 env.set("TENSORRT_INSTALL_PATH", spec["tensorrt"].prefix)
@@ -733,16 +733,16 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 env.unset("TF_TENSORRT_VERSION")
 
             # Please specify the CUDA SDK version you want to use
-            env.set("TF_CUDA_VERSION", spec["cuda"].version.up_to(2))
+            env.set("TF_CUDA_VERSION", str(spec["cuda"].version.up_to(2)))
 
             # Please specify the cuDNN version you want to use
-            env.set("TF_CUDNN_VERSION", spec["cudnn"].version.up_to(1))
+            env.set("TF_CUDNN_VERSION", str(spec["cudnn"].version.up_to(1)))
 
             if "+nccl" in spec:
                 cuda_paths.append(spec["nccl"].prefix)
 
                 # Please specify the locally installed NCCL version to use
-                env.set("TF_NCCL_VERSION", spec["nccl"].version.up_to(1))
+                env.set("TF_NCCL_VERSION", str(spec["nccl"].version.up_to(1)))
 
                 # Please specify the location where NCCL is installed
                 env.set("NCCL_INSTALL_PATH", spec["nccl"].prefix)
@@ -795,7 +795,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # Please specify optimization flags to use during compilation when
         # bazel option '--config=opt' is specified
-        env.set("CC_OPT_FLAGS", optimization_flags(self.compiler, spec.target))
+        env.set("CC_OPT_FLAGS", microarchitecture_flags(self.spec, "c"))
 
         # Would you like to interactively configure ./WORKSPACE for
         # Android builds?
@@ -858,9 +858,15 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # make sure xla is actually turned off
         if spec.satisfies("~xla"):
+            if spec.satisfies("@:2.19"):
+                join = " "
+                build = ""
+            else:
+                join = "="
+                build = "build "
             filter_file(
-                r"--define with_xla_support=true",
-                r"--define with_xla_support=false",
+                f"{build}--define{join}with_xla_support=true",
+                f"{build}--define{join}with_xla_support=false",
                 ".tf_configure.bazelrc",
             )
 
@@ -880,7 +886,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 ".tf_configure.bazelrc",
             )
 
-        if spec.satisfies("~opencl"):
+        if spec.satisfies("@:1.19~opencl"):
             # 1.8.0 and 1.9.0 aborts with numpy import error during python_api
             # generation somehow the wrong PYTHONPATH is used...
             # set --distinct_host_configuration=false as a workaround
@@ -988,6 +994,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 self.stage.source_path, "bazel-bin/tensorflow/tools/pip_package/wheel_house/"
             )
             args.append(f"--repo_env=OUTPUT_PATH={buildpath}")
+            if self.spec.satisfies("@2.20:") and not self.spec["hip"].external:
+                args.append("--@local_config_rocm//rocm:rocm_path_type=multiple")
         # https://github.com/tensorflow/tensorflow/issues/63298
         if self.spec.satisfies("@2.17:"):
             args.append("//tensorflow/tools/pip_package:wheel")

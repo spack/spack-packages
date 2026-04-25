@@ -19,14 +19,15 @@ class Moab(AutotoolsPackage):
 
     homepage = "https://sigma.mcs.anl.gov/moab-library"
     git = "https://bitbucket.org/fathomteam/moab.git"
-    url = "https://web.cels.anl.gov/projects/sigma/downloads/moab/moab-5.5.1.tar.gz"
+    url = "https://web.cels.anl.gov/projects/sigma/downloads/moab/moab-5.6.0.tar.gz"
 
-    maintainers("vijaysm", "iulian787")
+    maintainers("vijaysm", "iulian787", "xylar", "andrewdnolan")
 
     license("LGPL-3.0-only")
 
     version("develop", branch="develop")
     version("master", branch="master")
+    version("5.6.0", sha256="8d24a38619eb9fd326c7bdf9fdb01466149a0ab7dc3ef1caffda728858bf5a85")
     version("5.5.1", sha256="67b6ed3a13c235cec16f60f8f46f9bf0371fd321cf36dea113d0e09f09d0d438")
     version("5.5.0", sha256="58969f8a1b209ec9036c08c53a6b7078b368eb3bf99d0368a4de5a2f2a8db678")
     version("5.4.1", sha256="3625e25321bf37f88d98438f5d56c280b2774172602d8b6eb6c34eedf37686fc")
@@ -55,6 +56,9 @@ class Moab(AutotoolsPackage):
     variant("fbigeom", default=False, description="Enable FBiGeom interface")
     variant("coupler", default=False, description="Enable mbcoupler tool")
     variant("dagmc", default=False, description="Enable DagMC tool")
+    variant(
+        "tempest", default=False, when="@5.1: +hdf5 +netcdf", description="Enable mbtempest tool"
+    )
 
     variant("debug", default=False, description="Enable debug symbols in libraries")
     variant("shared", default=False, description="Enables the build of shared libraries")
@@ -94,6 +98,15 @@ class Moab(AutotoolsPackage):
     depends_on("eigen", when="+eigen")
     # FIXME it seems that zoltan needs to be built without fortran
     depends_on("zoltan~fortran", when="+zoltan")
+    with when("+tempest"):
+        depends_on("tempestremap@2.2", when="@5.5:")
+        depends_on("tempestremap@2.1.6", when="@5.4")
+        depends_on("tempestremap@2.1.1", when="@5.3.1")
+        depends_on("tempestremap@2.1.0", when="@5.3.0")
+        depends_on("tempestremap@2.0.5", when="@5.2.1")
+        depends_on("tempestremap@2.0.3", when="@5.2.0")
+        depends_on("tempestremap@2.0.2", when="@5.1.0")
+        depends_on("eigen")
 
     patch("tools-492.patch", when="@4.9.2")
 
@@ -207,6 +220,13 @@ class Moab(AutotoolsPackage):
             options.append("--disable-fortran")
         else:
             options.append("--enable-fortran")
+
+        if spec.satisfies("+tempest"):
+            options.append("--with-tempestremap={}".format(spec["tempestremap"].prefix))
+            options.append("--with-eigen3={}/include/eigen3".format(spec["eigen"].prefix))
+        else:
+            options.append("--without-tempestremap")
+            options.append("--without-eigen3")
 
         return options
 

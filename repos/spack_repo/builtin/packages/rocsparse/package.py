@@ -18,12 +18,19 @@ class Rocsparse(CMakePackage):
     language and optimized for AMD's latest discrete GPUs."""
 
     homepage = "https://github.com/ROCm/rocSPARSE"
-    git = "https://github.com/ROCm/rocSPARSE.git"
-    url = "https://github.com/ROCm/rocSPARSE/archive/rocm-6.2.4.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocsparse"]
+    license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocSPARSE/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -40,8 +47,14 @@ class Rocsparse(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
-    license("MIT")
-
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="420321039b1471a67318a9bccce749ed2293e4aa4615ef9d1b74ed4e03977ee0")
+    version("7.1.0", sha256="cdad45e7b23e91a9107e512d9205ef58dcdfaea506b6e5fce3701a2b6e96952c")
+    version("7.0.2", sha256="26dd7df3c470f877d0f9ab15dccdac1915a3939e2ab9e00a83342c6edf289c8a")
+    version("7.0.0", sha256="22aeb42b8c300a40ae29001781a92da8e396a2e42c4dce1abf66276552fca39e")
+    version("6.4.3", sha256="fca59e70da33a046be36ea2fe83ba18ea8f0a5c9efd255e0427802ba3a134d0a")
+    version("6.4.2", sha256="30c0b6c2aaa3686a94150d69560a96697551088d1ee9595a1c5feb7c10fd9501")
     version("6.4.1", sha256="f44db33179d5f8e18f948ff3ac8bd9b59f7bfdd67c66a7972ef1ee0eb15872de")
     version("6.4.0", sha256="a0fb423b80da72f072a6d80b9837c80c671b5fae719f57c0e83d7e4e27d3d187")
     version("6.3.3", sha256="e316d46b40e99976f4acaa097d6ebf5c2caf1ff2bd3c5b1de04c93c1dac90516")
@@ -58,15 +71,6 @@ class Rocsparse(CMakePackage):
     version("6.0.0", sha256="bdc618677ec78830c6af315d61194d6ab8532345b8daeeb115aca96f274d4ca4")
     version("5.7.1", sha256="4c09b182b371124675d4057246021b5ed45e2833fdbf265b37a9b06b668baf0a")
     version("5.7.0", sha256="a42f0eb531b015b719e2bdcdff0cfb214e9894f73107966260f26931f982ecbc")
-    version("5.6.1", sha256="6a50a64354507f1374e1a86aa7f5c07d1aaa96ac193ac292c279153087bb5d54")
-    version("5.6.0", sha256="5797db3deb4a532e691447e3e8c923b93bd9fe4c468f3a88f00cecd80bebcae4")
-    version("5.5.1", sha256="1dd2d18898dfebdf898e8fe7d1c1198e8f8451fd70ff12a1990ec1419cf359e1")
-    version("5.5.0", sha256="cbee79b637691bc710c1c83fbaa91db7498d38d4df873be23e28ed5617acde72")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="9fb633f235eb0567cc54fae6bdc779f16bf0bb4e6f5bdddb40312c6d11ca8478")
-        version("5.4.0", sha256="c8f0e920a8ec15b9ae40564c68191363356cc4d793c16247bb6e11ef5293ed11")
-        version("5.3.3", sha256="4204035e952e20ada4526a94989e8e5c76c04574176fe63a021522862461c800")
-        version("5.3.0", sha256="521ca0e7b52f26edbff8507eb1479dc26019f456756d884d7b8b192c3ea518e8")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -75,14 +79,6 @@ class Rocsparse(CMakePackage):
     depends_on("cmake@3.5:", type="build")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -99,18 +95,25 @@ class Rocsparse(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        depends_on(f"rocprim@{ver}", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    # Add option so Spack can manage downloaded test matricies as resources.
-    patch("0001-set-mtx-directory.patch", when="@:5.3 +test")
-    # Enable use of Spack-provided Python.
-    patch("0002-fix-gentest-shebang.patch", when="@:5.3 +test")
+    for ver in ["7.2.0", "7.2.1"]:
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
-    depends_on("googletest@1.11.0:", when="@5.1.0: +test")
-    depends_on("googletest@1.10.0:", when="+test")
+    depends_on("googletest@1.11.0:", when="+test")
     depends_on("python@3:", type="build", when="+test")
     depends_on("py-pyyaml", type="build", when="+test")
 
@@ -260,6 +263,13 @@ class Rocsparse(CMakePackage):
             destination="mtx",
         )
 
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocsparse"
+        else:
+            return "."
+
     @run_after("build")
     def check_build(self):
         if self.spec.satisfies("+test"):
@@ -293,17 +303,18 @@ class Rocsparse(CMakePackage):
             self.define_from_variant("BUILD_CLIENTS_TESTS", "test"),
             self.define("BUILD_CLIENTS_BENCHMARKS", "OFF"),
             self.define("ROCSPARSE_MTX_DIR", join_path(self.stage.source_path, "mtx")),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.2.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.3.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         return args

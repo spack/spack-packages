@@ -92,8 +92,7 @@ class XorgServer(AutotoolsPackage, XorgPackage):
         # https://gitlab.freedesktop.org/xorg/xserver/-/merge_requests/406
         env.set("CPPFLAGS", "-fcommon")
 
-        gl_libs = self.spec["gl"].libs
-        env.set("GL_LIBS", gl_libs)
+        env.set("GL_LIBS", self.spec["gl"].libs.ld_flags)
         env.set("GL_CFLAGS", self.spec["gl"].headers.cpp_flags)
 
     def configure_args(self):

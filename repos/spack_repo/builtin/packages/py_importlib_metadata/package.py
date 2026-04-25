@@ -16,6 +16,8 @@ class PyImportlibMetadata(PythonPackage):
 
     license("Apache-2.0")
 
+    version("9.0.0", sha256="a4f57ab599e6a2e3016d7595cfd72eb4661a5106e787a95bcc90c7105b831efc")
+    version("8.7.0", sha256="d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000")
     version("7.0.1", sha256="f238736bb06590ae52ac1fab06a3a9ef1d8dce2b7a35b5ab329371d6c8f5d2cc")
     version("6.6.0", sha256="92501cdf9cc66ebd3e612f1b4f0c0765dfa42f0fa38ffb319b6bd84dd675d705")
     version("5.1.0", sha256="d5059f9f1e8e41f80e9c56c2ee58811450c31984dfa625329ffd7c0dad88a73b")
@@ -36,13 +38,22 @@ class PyImportlibMetadata(PythonPackage):
     version("0.19", sha256="23d3d873e008a513952355379d93cbcab874c58f4f034ff657c7a87422fa64e8")
     version("0.18", sha256="cb6ee23b46173539939964df59d3d72c3e0c1b5d54b84f1d8a7e912fe43612db")
 
-    depends_on("python@3.8:", when="@6.8.0:", type=("build", "run"))
-    # lowerbound needed as spack itself supports python 3.6 (can be dropped in spack 0.21)
-    depends_on("python@3.7:", when="@4.9.0:", type=("build", "run"))
-    depends_on("py-setuptools@56:", when="@4.6.4:", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools-scm@3.4.1:+toml", when="@3:", type="build")
-    depends_on("py-setuptools-scm", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@77:", when="@8.7.1:")
+        depends_on("py-setuptools@61.2:", when="@7.2:")
+        depends_on("py-setuptools@56:", when="@4.6.4:")
+        depends_on("py-setuptools")
+        depends_on("py-setuptools-scm@3.4.1:+toml", when="@3:")
+        depends_on("py-setuptools-scm")
 
-    depends_on("py-zipp@0.5:", type=("build", "run"))
-    depends_on("py-typing-extensions@3.6.4:", when="@3: ^python@:3.7", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@8.8:")
+        depends_on("python@3.9:", when="@8.6:")
+        depends_on("python@3.8:", when="@6.8:")
+        depends_on("python@3.7:", when="@4.9:")
+
+        depends_on("py-zipp@3.20:", when="@8.5:")
+        depends_on("py-zipp@0.5:")
+
+        # Historical dependencies
+        depends_on("py-typing-extensions@3.6.4:", when="@3:8.7.1 ^python@:3.7")

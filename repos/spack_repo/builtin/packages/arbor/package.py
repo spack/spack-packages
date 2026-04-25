@@ -4,7 +4,6 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
-from spack.build_environment import optimization_flags
 from spack.package import *
 
 
@@ -112,14 +111,13 @@ class Arbor(CMakePackage, CudaPackage):
         return ["all", "html"] if "+doc" in self.spec else ["all"]
 
     def cmake_args(self):
-        spec = self.spec
         args = [
             self.define_from_variant("ARB_WITH_ASSERTIONS", "assertions"),
             self.define_from_variant("ARB_WITH_MPI", "mpi"),
             self.define_from_variant("ARB_WITH_PYTHON", "python"),
             self.define_from_variant("ARB_VECTORIZE", "vectorize"),
             self.define("ARB_ARCH", "none"),
-            self.define("ARB_CXX_FLAGS_TARGET", optimization_flags(self.compiler, spec.target)),
+            self.define("ARB_CXX_FLAGS_TARGET", microarchitecture_flags(self.spec, "cxx")),
         ]
 
         if self.spec.satisfies("+cuda"):

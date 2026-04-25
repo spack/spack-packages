@@ -13,6 +13,10 @@ class PyArgcomplete(PythonPackage):
     homepage = "https://github.com/kislyuk/argcomplete"
     pypi = "argcomplete/argcomplete-1.12.0.tar.gz"
 
+    license("Apache-2.0")
+
+    version("3.6.3", sha256="62e8ed4fd6a45864acc8235409461b72c9a28ee785a2011cc5eb78318786c89c")
+    version("3.6.2", sha256="d0519b1bc867f5f4f4713c41ad0aba73a4a5f007449716b16f385f2166dc6adf")
     version("3.5.0", sha256="4349400469dccfb7950bb60334a680c58d88699bff6159df61251878dc6bf74b")
     version("3.1.6", sha256="3b1f07d133332547a53c79437527c00be48cca3807b1d4ca5cab1b26313386a6")
     version("3.1.2", sha256="d5d1e5efd41435260b8f85673b74ea2e883affcbec9f4230c582689e8e78251b")
@@ -22,9 +26,13 @@ class PyArgcomplete(PythonPackage):
     version("1.12.0", sha256="2fbe5ed09fd2c1d727d4199feca96569a5b50d44c71b16da9c742201f7cc295c")
     version("1.1.1", sha256="cca45b5fe07000994f4f06a0b95bd71f7b51b04f81c3be0b4ea7b666e4f1f084")
 
-    depends_on("py-setuptools@67.7.2:", when="@3.1:", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools-scm+toml@6.2:", when="@3.1:", type="build")
+    depends_on("py-hatchling", when="@3.5.3:", type="build")
+    depends_on("py-hatch-vcs", when="@3.5.3:", type="build")
+
+    # Historical dependencies
+    depends_on("py-setuptools@67.7.2:", when="@3.1:3.5.2", type="build")
+    depends_on("py-setuptools", when="@:3.5.2", type="build")
+    depends_on("py-setuptools-scm+toml@6.2:", when="@3.1:3.5.2", type="build")
 
     depends_on("py-importlib-metadata@0.23:6", when="@3.0.6: ^python@:3.7", type=("build", "run"))
     depends_on(

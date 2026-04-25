@@ -1,11 +1,9 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-from typing import Optional, Tuple
+from typing import List, Optional, Tuple
 
-from llnl.util.lang import ClassProperty, classproperty
-
-from spack.package import extends, mkdirp
+from spack.package import ClassProperty, classproperty, depends_on, extends, mkdirp
 
 from .generic import GenericBuilder, Package
 
@@ -20,10 +18,10 @@ class RBuilder(GenericBuilder):
     """
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods: Tuple[str, ...] = (
+    package_methods: Tuple[str, ...] = (
         "configure_args",
         "configure_vars",
-    ) + GenericBuilder.legacy_methods
+    ) + GenericBuilder.package_methods
 
     def configure_args(self):
         """Arguments to pass to install via ``--configure-args``."""
@@ -61,15 +59,18 @@ def _homepage(cls: "RPackage") -> Optional[str]:
     return None
 
 
-def _url(cls: "RPackage") -> Optional[str]:
+def _urls(cls: "RPackage") -> List[str]:
     if cls.cran:
-        return f"https://cloud.r-project.org/src/contrib/{cls.cran}_{str(list(cls.versions)[0])}.tar.gz"
-    return None
+        return [
+            f"https://cran.r-project.org/src/contrib/{cls.cran}_{str(list(cls.versions)[0])}.tar.gz",
+            f"https://cran.r-project.org/src/contrib/Archive/{cls.cran}/{cls.cran}_{str(list(cls.versions)[0])}.tar.gz",
+        ]
+    return []
 
 
 def _list_url(cls: "RPackage") -> Optional[str]:
     if cls.cran:
-        return f"https://cloud.r-project.org/src/contrib/Archive/{cls.cran}/"
+        return f"https://cran.r-project.org/src/contrib/Archive/{cls.cran}/"
     return None
 
 
@@ -102,7 +103,12 @@ class RPackage(Package):
 
     extends("r")
 
+    # needed for packages that need compiling
+    depends_on("gmake", type="build", when="%c")
+    depends_on("gmake", type="build", when="%cxx")
+    depends_on("gmake", type="build", when="%fortran")
+
     homepage: ClassProperty[Optional[str]] = classproperty(_homepage)
-    url: ClassProperty[Optional[str]] = classproperty(_url)
+    urls: ClassProperty[List[str]] = classproperty(_urls)
     list_url: ClassProperty[Optional[str]] = classproperty(_list_url)
     git: ClassProperty[Optional[str]] = classproperty(_git)

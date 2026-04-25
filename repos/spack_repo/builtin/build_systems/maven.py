@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -13,8 +14,6 @@ from spack.package import (
     which,
     working_dir,
 )
-
-from ._checks import BuilderWithDefaults
 
 
 class MavenPackage(PackageBase):
@@ -28,7 +27,7 @@ class MavenPackage(PackageBase):
     build_system_class = "MavenPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "maven"
+    default_buildsystem = "maven"
 
     build_system("maven")
 
@@ -49,10 +48,10 @@ class MavenBuilder(BuilderWithDefaults):
     phases = ("build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("build_args",)
+    package_methods = ("build_args",)
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_directory",)
+    package_attributes = ("build_directory",)
 
     @property
     def build_directory(self):

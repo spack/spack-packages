@@ -15,6 +15,7 @@ class PyUvloop(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.21.0", sha256="3bf12b0fda68447806a7ad847bfa591613177275d35b6724b1ee573faa3704e3")
     version("0.19.0", sha256="0246f4fd1bf2bf702e06b0d45ee91677ee5c31242f39aab4ea6fe0c51aedd0fd")
     version("0.18.0", sha256="d5d1135beffe9cd95d0350f19e2716bc38be47d5df296d7cc46e3b7557c0d1ff")
     version("0.17.0", sha256="0ddf6baf9cf11a1a22c71487f39f15b2cf78eb5bde7e5b45fbb99e8a9d91b9e1")
@@ -30,4 +31,6 @@ class PyUvloop(PythonPackage):
     with default_args(type="build"):
         depends_on("py-setuptools")
         depends_on("py-setuptools@60:", when="@0.18:")
-        depends_on("py-cython@0.29.36:0.29", when="@0.17:")  # May have been required for 0.16:
+        depends_on("py-cython@0.29.36:0.29", when="@0.17:0.20")  # May have been required for 0.16:
+        # https://github.com/MagicStack/uvloop/blob/v0.21.0/setup.py
+        depends_on("py-cython@3.0", when="@0.21:")

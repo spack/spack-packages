@@ -19,6 +19,8 @@ class PortsOfCall(CMakePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.0.1", sha256="da4ebfb071903bab17f9bc62f5cfda980d3776db754a09e173b8be5be0f44b57")
+    version("2.0.0", sha256="2118b5bf4471da33df9b13b8645c6709e5c2d24087f77d09390d8de862d43047")
     version("1.7.1", sha256="18b0b99370ef2adf3374248f653461606f826fe4076d0f19ac8c72d46035fdf5")
     version("1.7.0", sha256="99045a7c4e3fbc73f01e930ce870cdc573a39910a28d85c54d65d2135f764bfc")
     version("1.6.0", sha256="290da149d4ad79c15787956559aeeefa0a06403be2f08cd324562ef013306797")
@@ -27,25 +29,7 @@ class PortsOfCall(CMakePackage):
     version("1.4.1", sha256="82d2c75fcca8bd613273fd4126749df68ccc22fbe4134ba673b4275f9972b78d")
     version("1.4.0", sha256="e08ae556b7c30d14d77147d248d118cf5343a2e8c0847943385c602394bda0fa")
     version("1.3.0", sha256="54b4a62539c23b1a345dd87c1eac65f4f69db4e50336cd81a15a627ce80ce7d9")
-    version(
-        "1.2.0",
-        sha256="b802ffa07c5f34ea9839f23841082133d8af191efe5a526cb7e53ec338ac146b",
-        deprecated=True,
-    )
-    version(
-        "1.1.0",
-        sha256="c47f7e24c82176b69229a2bcb23a6adcf274dc90ec77a452a36ccae0b12e6e39",
-        deprecated=True,
-    )
 
-    variant(
-        "portability_strategy",
-        description="Portability strategy backend",
-        values=("Kokkos", "Cuda", "None"),
-        multi=False,
-        default="None",
-        when="@:1.2.0",
-    )
     variant("test", default=False, description="Build tests")
     variant(
         "test_portability_strategy",
@@ -56,7 +40,7 @@ class PortsOfCall(CMakePackage):
         when="@1.7.0: +test",
     )
 
-    depends_on("c", type="build")  # todo: disable cmake default?
+    depends_on("c", type="build", when="@:1.7.1")
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.12:", type="build")
@@ -70,11 +54,9 @@ class PortsOfCall(CMakePackage):
                 "PORTS_OF_CALL_TEST_PORTABILITY_STRATEGY", "test_portability_strategy"
             ),
         ]
-        if self.spec.satisfies("@:1.2.0"):
-            args.append(self.define_from_variant("PORTABILITY_STRATEGY", "portability_strategy"))
         if self.spec.satisfies("test_portability_strategy=Kokkos ^kokkos+rocm"):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
         if self.spec.satisfies("test_portability_strategy=Kokkos ^kokkos+cuda"):
-            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["kokkos"].kokkos_cxx))
+            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
         return args

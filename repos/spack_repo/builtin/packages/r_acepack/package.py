@@ -32,3 +32,6 @@ class RAcepack(RPackage):
 
     version("1.4.2", sha256="5bffcd12b783f372bb6c50e35317744ac31597c91b6433442a7b0dce2f66ac91")
     version("1.4.1", sha256="82750507926f02a696f6cc03693e8d4a5ee7e92500c8c15a16a9c12addcd28b9")
+
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated

@@ -10,9 +10,9 @@ inputs:
     required: false
     default: '1'
   builtin:
-    description: Path to local clone of the builtin repository
+    description: 'Relative path under $GITHUB_WORKSPACE where the builtin repository lives'
     required: false
-    default: ${{ github.workspace }}
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -22,16 +22,22 @@ runs:
       run: |
         source .ci/env
         echo "version=${SPACK_CHECKOUT_VERSION}" >> $GITHUB_OUTPUT
+        echo "gh-repo=${SPACK_CHECKOUT_REPO}" >> $GITHUB_OUTPUT
     - name: Checkout Spack
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       with:
-        repository: spack/spack
+        repository: ${{ steps.spack-version.outputs.gh-repo}}
         ref: ${{ steps.spack-version.outputs.version }}
         path: ${{ inputs.path }}
         fetch-depth: ${{ inputs.fetch-depth }}
     - name: Override builtin repository path
       shell: bash
-      run: ${{ inputs.path }}/bin/spack repo set --destination "${{ inputs.builtin }}" --scope site builtin
-    - name: Spack package repositories
-      shell: bash
-      run: ${{ inputs.path }}/bin/spack config blame repos
+      run: |
+        REPOSITORY_PATH="$GITHUB_WORKSPACE/${{ inputs.builtin }}"
+        ${{ inputs.path }}/bin/spack repo set --destination "$REPOSITORY_PATH" --scope site builtin
+        ${{ inputs.path }}/bin/spack config blame repos
+        ${{ inputs.path }}/bin/spack repo list
+        if [ ! -f "$REPOSITORY_PATH/spack-repo-index.yaml" ]; then
+          echo "Error: "'"'"$REPOSITORY_PATH/spack-repo-index.yaml"'"'" file not found."
+          exit 1
+        fi

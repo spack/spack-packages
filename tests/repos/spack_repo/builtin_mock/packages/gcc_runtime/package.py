@@ -6,7 +6,7 @@ import glob
 import os
 import re
 
-from _vendoring.macholib import MachO, mach_o
+from _vendoring.macholib.MachO import LC_ID_DYLIB, MachO
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
@@ -95,11 +95,11 @@ class GccRuntime(Package):
             if not os.path.isabs(path):
                 continue
 
-            macho = MachO.MachO(path)
+            macho = MachO(path)
 
             # Get the LC_ID_DYLIB load command
             for load_command, _, data in macho.headers[-1].commands:
-                if load_command.cmd == mach_o.LC_ID_DYLIB:
+                if load_command.cmd == LC_ID_DYLIB:
                     # Strip off @rpath/ prefix, or even an absolute path.
                     dylib_name = os.path.basename(data.rstrip(b"\x00").decode())
                     break

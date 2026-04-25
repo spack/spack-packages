@@ -8,20 +8,30 @@ from spack.package import *
 
 
 class FenicsDolfinx(CMakePackage):
-    """Next generation FEniCS problem solving environment"""
+    """Next generation FEniCS problem solving environment."""
 
     homepage = "https://github.com/FEniCS/dolfinx"
     git = "https://github.com/FEniCS/dolfinx.git"
     url = "https://github.com/FEniCS/dolfinx/archive/v0.1.0.tar.gz"
     maintainers("chrisrichardson", "garth-wells", "nate-sime", "jhale")
-
     license("LGPL-3.0-or-later")
 
-    version("main", branch="main")
+    version("main", branch="main", no_cache=True)
+    version(
+        "0.10.0.post4", sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605"
+    )
     version("0.9.0", sha256="b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1")
     version("0.8.0", sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9")
-    version("0.7.2", sha256="7d9ce1338ce66580593b376327f23ac464a4ce89ef63c105efc1a38e5eae5c0b")
-    version("0.6.0", sha256="eb8ac2bb2f032b0d393977993e1ab6b4101a84d54023a67206e3eac1a8d79b80")
+
+    patch("0.8-boost-filesystem.patch", when="@0.8")
+
+    # CMake build types
+    variant(
+        "build_type",
+        default="RelWithDebInfo",
+        description="CMake build type",
+        values=("Debug", "Release", "RelWithDebInfo", "MinSizeRel", "Developer"),
+    )
 
     # Graph partitioner variants
     variant(
@@ -32,49 +42,51 @@ class FenicsDolfinx(CMakePackage):
         multi=True,
     )
 
-    # HDF5 dependency requires C in CMake
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")  # HDF5 dependency requires C in CMake config
+    depends_on("cxx", type="build")
+
+    conflicts("%gcc@:12", when="@0.10:")
 
     # Graph partitioner dependencies
     depends_on("kahip@3.12:", when="partitioners=kahip")
     depends_on("parmetis", when="partitioners=parmetis")
     depends_on("scotch+mpi", when="partitioners=scotch")
+    # 0.9: finds SCOTCH in CMake CONFIG mode, which requires SCOTCH 7.0.1:
+    depends_on("scotch@7.0.1:", when="@0.9:")
 
-    variant("slepc", default=False, description="slepc support")
-    variant("adios2", default=False, description="adios2 support")
+    variant("slepc", default=False, description="SLEPc support")
+    variant("adios2", default=False, description="ADIOS2 support")
     variant("petsc", default=False, description="PETSc support")
+    variant("superlu-dist", default=False, description="SuperLU_DIST support", when="@main")
 
-    depends_on("petsc", when="+slepc")
+    conflicts("~petsc", when="+slepc", msg="+slepc requires +petsc")
+
     depends_on("cmake@3.21:", when="@0.9:", type="build")
     depends_on("cmake@3.19:", when="@:0.8", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("mpi")
     depends_on("hdf5+mpi")
-    depends_on("boost@1.7.0:+filesystem+program_options+timer")
+    depends_on("boost@1.70:")
+    depends_on("boost@1.70:+timer", when="@:0.9")
     depends_on("pugixml")
     depends_on("spdlog", when="@0.9:")
 
     depends_on("petsc+mpi+shared", when="+petsc")
-    depends_on("slepc", when="+slepc")
+    with when("+slepc"):
+        depends_on("petsc+mpi+shared")
+        depends_on("slepc")
 
-    depends_on("adios2@2.8.1:+mpi", when="@0.9: +adios2")
+    depends_on("adios2@:2.10", when="@:0.9 +adios2")
+    depends_on("adios2@2.8.1:", when="@0.9: +adios2")
     depends_on("adios2+mpi", when="+adios2")
 
-    depends_on("fenics-ufcx@main", when="@main")
-    depends_on("fenics-ufcx@0.9", when="@0.9")
-    depends_on("fenics-ufcx@0.8", when="@0.8")
-    depends_on("fenics-ufcx@0.7", when="@0.7")
-    depends_on("fenics-ufcx@0.6", when="@0.6")
+    depends_on("superlu-dist", when="+superlu-dist")
 
-    depends_on("fenics-basix@main", when="@main")
-    depends_on("fenics-basix@0.9", when="@0.9")
-    depends_on("fenics-basix@0.8", when="@0.8")
-    depends_on("fenics-basix@0.7", when="@0.7")
-    depends_on("fenics-basix@0.6", when="@0.6")
-
-    conflicts("%gcc@:9.10", msg="fenics-dolfinx requires GCC-10 or newer for C++20 support")
-    conflicts("%clang@:9.10", msg="fenics-dolfinx requires Clang-10 or newer for C++20 support")
+    for ver in ("main", "0.10", "0.9", "0.8"):
+        depends_on(f"fenics-ufcx@{ver}", when=f"@{ver}")
+        depends_on(f"fenics-basix@{ver}", when=f"@{ver}")
+        depends_on(f"py-fenics-ffcx@{ver}", when=f"@{ver}", type="test")
+    depends_on("catch2", type="test")
 
     root_cmakelists_dir = "cpp"
 
@@ -88,4 +100,5 @@ class FenicsDolfinx(CMakePackage):
             self.define("DOLFINX_ENABLE_KAHIP", "partitioners=kahip" in self.spec),
             self.define("DOLFINX_ENABLE_PARMETIS", "partitioners=parmetis" in self.spec),
             self.define("DOLFINX_ENABLE_SCOTCH", "partitioners=scotch" in self.spec),
+            self.define("DOLFINX_ENABLE_SUPERLU_DIST", "superlu-dist" in self.spec),
         ]

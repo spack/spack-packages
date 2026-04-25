@@ -534,9 +534,7 @@ register_flag_optional(TARGET_PROCESSOR
                 args.append(
                     "-DCXX_EXTRA_FLAGS="
                     + "-fsycl;-fsycl-targets=nvptx64-nvidia-cuda;"
-                    + self.spec.target.optimization_flags(
-                        self.spec.compiler.name, str(self.spec.compiler.version)
-                    )
+                    + microarchitecture_flags(self.spec, "cxx")
                     + " --cuda-path="
                     + cuda_dir
                 )
@@ -721,9 +719,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             fortran_flags = (
                 "-std=f2018 " + pkg.compiler.opt_flags[4] + " -Wall -Wno-unused-variable"
             )
-            fortran_flags += self.spec.target.optimization_flags(
-                self.spec.compiler.name, str(self.spec.compiler.version)
-            )
+            fortran_flags += microarchitecture_flags(self.spec, "fortran")
 
             config["FCFLAGS"] = fortran_flags
             config["DOCONCURRENT_FLAG"] = pkg.compiler.openmp_flag  # libomp.so required
@@ -761,9 +757,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if spec.compiler.name == "gcc":
             fortran_flags = "-std=f2018 -O3 "
             fortran_flags += "-Wall -Wno-unused-dummy-argument -Wno-unused-variable "
-            fortran_flags += self.spec.target.optimization_flags(
-                self.spec.compiler.name, str(self.spec.compiler.version)
-            )
+            fortran_flags += microarchitecture_flags(self.spec, "fortran")
 
             config["FCFLAGS"] = fortran_flags
             config["DOCONCURRENT_FLAG"] = "-ftree-parallelize-loops=4"

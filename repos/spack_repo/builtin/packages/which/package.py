@@ -18,6 +18,7 @@ class Which(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0")
 
+    version("2.23", sha256="a2c558226fc4d9e4ce331bd2fd3c3f17f955115d2c00e447618a4ef9978a2a73")
     version("2.21", sha256="f4a245b94124b377d8b49646bf421f9155d36aa7614b6ebf83705d3ffc76eaad")
 
     depends_on("c", type="build")  # generated

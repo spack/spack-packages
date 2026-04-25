@@ -15,6 +15,7 @@ class PyFasteners(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.20", sha256="55dce8792a41b56f727ba6e123fcaee77fd87e638a6863cec00007bfea84c8d8")
     version("0.18", sha256="cb7c13ef91e0c7e4fe4af38ecaf6b904ec3f5ce0dda06d34924b6b74b869d953")
     version("0.17.3", sha256="a9a42a208573d4074c77d041447336cf4e3c1389a256fd3e113ef59cf29b7980")
     version("0.16.3", sha256="b1ab4e5adfbc28681ce44b3024421c4f567e705cc3963c732bf1cba3348307de")
@@ -24,5 +25,6 @@ class PyFasteners(PythonPackage):
     depends_on("python@3.6:", when="@0.17:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
+    # Historical dependencies
     depends_on("py-monotonic@0.1:", when="@:0.15", type=("build", "run"))
     depends_on("py-six", when="@:0.16", type=("build", "run"))

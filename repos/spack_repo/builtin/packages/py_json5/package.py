@@ -17,9 +17,13 @@ class PyJson5(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.14.0", sha256="b3f492fad9f6cdbced8b7d40b28b9b1c9701c5f561bef0d33b81c2ff433fefcb")
+    version("0.12.1", sha256="b2743e77b3242f8d03c143dd975a6ec7c52e2f2afe76ed934e53503dd4ad4990")
     version("0.9.14", sha256="9ed66c3a6ca3510a976a9ef9b8c0787de24802724ab1860bc0153c7fdd589b02")
     version("0.9.10", sha256="ad9f048c5b5a4c3802524474ce40a622fae789860a86f10cc4f7e5f9cf9b46ab")
     version("0.9.6", sha256="9175ad1bc248e22bb8d95a8e8d765958bf0008fef2fe8abab5bc04e0f1ac8302")
     version("0.9.4", sha256="2ebfad1cd502dca6aecab5b5c36a21c732c3461ddbc412fb0e9a52b07ddfe586")
 
+    depends_on("python@3.8:", type=("build", "run"), when="@0.9.16:")
+    depends_on("py-setuptools@61:", type="build", when="@0.9.17:")
     depends_on("py-setuptools", type="build")

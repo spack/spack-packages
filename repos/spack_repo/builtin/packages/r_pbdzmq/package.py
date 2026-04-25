@@ -23,6 +23,7 @@ class RPbdzmq(RPackage):
 
     license("GPL-3.0-or-later")
 
+    version("0.3-14", sha256="60154f66db9378655d7c39c8c2e02e74ac6bd801a9aac1bc73003c7eeeb23223")
     version("0.3-11", sha256="da7e204d857370201f75a05fbd808a2f409d440cc96855bb8f48f4a5dd75405b")
     version("0.3-9", sha256="d033238d0a9810581f6b40c7c75263cfc495a585653bbff98e957c37954e0fb6")
     version("0.3-8", sha256="eded4ccf6ee54a59e06061f1c6e67a8ec36e03c6ab2318af64446d8f95505465")

@@ -17,6 +17,7 @@ class PyEarthengineApi(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("1.6.2", sha256="12fdb65594c80cc0947ca88423026f89b05b047657521cec0a5822570f384840")
     version("1.4.3", sha256="052b65d4dfc6cc474d70fb78946cd981aee4c52e6df6dfbbe17a9ac5124214d0")
     version("0.1.344", sha256="bc5a270b8296aaae8574e68dfd93fe878bc5fbe77d1c41f90bcb5e5b830ca5c8")
 

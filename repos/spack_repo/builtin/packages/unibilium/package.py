@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class Unibilium(MakefilePackage, AutotoolsPackage):
+class Unibilium(CMakePackage, AutotoolsPackage):
     """A terminfo parsing library"""
 
     homepage = "https://github.com/neovim/unibilium/"
@@ -27,7 +27,8 @@ class Unibilium(MakefilePackage, AutotoolsPackage):
     build_system(
         conditional("makefile", when="@:2.1.1"),
         conditional("autotools", when="@2.1.2:"),
-        default="autotools",
+        conditional("cmake", when="@2.1.2:"),
+        default="cmake",
     )
 
     depends_on("gmake", type="build")
@@ -38,7 +39,3 @@ class Unibilium(MakefilePackage, AutotoolsPackage):
     with when("build_system=autotools"):
         depends_on("autoconf", when="@2.1.2:", type="build")
         depends_on("automake", when="@2.1.2:", type="build")
-
-    def install(self, spec, prefix):
-        make("PREFIX=" + prefix)
-        make("install", "PREFIX=" + prefix)

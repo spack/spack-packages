@@ -1,4 +1,5 @@
 /spack-core
+/pyrightconfig.json
 
 ###########################
 # Python-specific ignores #

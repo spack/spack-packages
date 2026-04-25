@@ -23,6 +23,16 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
     license("GPL-3.0-or-later")
 
     version(
+        "16.2",
+        sha256="be3a361736b8367c24aaf80fa1b31066a3f3eddd7afef3fb6d84145c0413ee0c",
+        url="https://gitlab.com/octopus-code/octopus/-/archive/16.2/octopus-16.2.tar.gz",
+    )
+    version(
+        "16.1",
+        sha256="b4fb625e271ecfa279ffde641c29b9fd21ef0e593219f6340a44b6ab03c90dd4",
+        url="https://gitlab.com/octopus-code/octopus/-/archive/16.1/octopus-16.1.tar.gz",
+    )
+    version(
         "16.0",
         sha256="b44067fc96d27891aab331df36ceebde8f7b628b1dca8a967ce9aec5e0543917",
         url="https://gitlab.com/octopus-code/octopus/-/archive/16.0/octopus-16.0.tar.gz",
@@ -107,7 +117,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
     with when("build_system=cmake"):
         depends_on("cmake@3.25:", type="build", when="@17:")
         depends_on("cmake@3.20:", type="build", when="@:16")
-        depends_on("pkgconf", type="build")
+        depends_on("pkgconfig", type="build")
         cmake.generator("ninja")
 
     depends_on("perl", type="build")
@@ -150,10 +160,10 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         depends_on("libvdwxc~mpi", when="+libvdwxc")
         depends_on("arpack-ng~mpi", when="+arpack")
         depends_on("elpa~mpi", when="+elpa")
-        depends_on("netcdf-c~~mpi", when="+netcdf")  # Link dependency of NetCDF fortran lib
+        depends_on("netcdf-c ~mpi", when="+netcdf")  # Link dependency of NetCDF fortran lib
         with when("+berkeleygw"):
-            depends_on("berkeleygw@3:~~mpi", when="@14:")
-            depends_on("berkeleygw@2.1~~mpi", when="@:13")
+            depends_on("berkeleygw@3: ~mpi", when="@14:")
+            depends_on("berkeleygw@2.1 ~mpi", when="@:13")
 
     depends_on("etsf-io", when="+etsf-io")
     depends_on("py-numpy", when="+python")
@@ -191,7 +201,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         # spack-v0.17.2$ octopus --version
         # octopus 11.3 (git commit )
 
-        exe = which(self.spec.prefix.bin.octopus)
+        exe = which(self.spec.prefix.bin.octopus, required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert "octopus " in out
 
@@ -211,15 +221,15 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         expected = [
             "Running octopus",
             "CalculationMode = recipe",
-            "DISCLAIMER: The authors do not " "guarantee that the implementation",
-            "recipe leads to an edible dish, " 'for it is clearly "system-dependent".',
+            "DISCLAIMER: The authors do not guarantee that the implementation",
+            'recipe leads to an edible dish, for it is clearly "system-dependent".',
             "Calculation ended on",
         ]
 
         with working_dir("example-recipe", create=True):
             print("Current working directory (in example-recipe)")
             copy(join_path(os.path.dirname(__file__), "test", "recipe.inp"), "inp")
-            exe = which(self.spec.prefix.bin.octopus)
+            exe = which(self.spec.prefix.bin.octopus, required=True)
             out = exe(output=str.split, error=str.split)
             check_outputs(expected, out)
 
@@ -248,7 +258,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         with working_dir("example-he", create=True):
             print("Current working directory (in example-he)")
             copy(join_path(os.path.dirname(__file__), "test", "he.inp"), "inp")
-            exe = which(self.spec.prefix.bin.octopus)
+            exe = which(self.spec.prefix.bin.octopus, required=True)
             out = exe(output=str.split, error=str.split)
             check_outputs(expected, out)
 

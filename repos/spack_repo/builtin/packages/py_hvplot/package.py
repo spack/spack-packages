@@ -16,6 +16,7 @@ class PyHvplot(PythonPackage):
 
     license("BSD-3-Clause", checked_by="climbfuji")
 
+    version("0.11.3", sha256="ce82dea296af6146b9a51aa5ed1f772e5415a07c6c33a4eae0f00bbe7ec880ca")
     version("0.11.1", sha256="989ed0389189adc47edcd2601d2eab18bf366e74b07f5e2873e021323c4a14bb")
 
     depends_on("python@3.9:", type=("build", "run"))
@@ -23,7 +24,7 @@ class PyHvplot(PythonPackage):
     depends_on("py-setuptools-scm@6:", type="build")
 
     depends_on("py-bokeh@3.1:", type="run")
-    depends_on("py-colorcet", type="run")
+    depends_on("py-colorcet@2:", type="run")
     depends_on("py-holoviews@1.19:", type="run")
     depends_on("py-numpy@1.21:", type="run")
     depends_on("py-packaging", type="run")

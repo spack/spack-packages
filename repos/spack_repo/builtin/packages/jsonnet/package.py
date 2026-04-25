@@ -48,7 +48,6 @@ class Jsonnet(MakefilePackage, CMakePackage):
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
-
     @property
     def install_targets(self):
         return ["PREFIX={0}".format(self.prefix), "install"]
@@ -60,7 +59,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
-
     def cmake_args(self):
         return [
             self.define("USE_SYSTEM_JSON", True),

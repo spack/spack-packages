@@ -21,6 +21,8 @@ class PyDocutils(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.22.4", sha256="4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968")
+    version("0.21.2", sha256="3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f")
     version("0.20.1", sha256="f08a4e276c3a1583a86dce3e34aba3fe04d02bba2dd51ed16106244e8a923e3b")
     version("0.19", sha256="33995a6753c30b7f577febfc2c50411fec6aac7f7ffeb7c4cfe5991072dcf9e6")
     version("0.18.1", sha256="679987caf361a7539d76e584cbeddc311e3aee937877c87346f31debc63e9d06")
@@ -34,10 +36,14 @@ class PyDocutils(PythonPackage):
     version("0.12", sha256="c7db717810ab6965f66c8cf0398a98c9d8df982da39b4cd7f162911eb89596fa")
 
     depends_on("python@3.7:", when="@0.19:", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
+    depends_on("python@3.9:", when="@0.21:", type=("build", "run"))
 
-    # Uses 2to3
-    depends_on("py-setuptools@:57", when="@:0.15", type="build")
+    with when("@0.21:"):
+        depends_on("py-flit-core@3.4:3", type="build")
+    with when("@:0.20"):
+        depends_on("py-setuptools", type="build")
+        # Uses 2to3
+        depends_on("py-setuptools@:57", when="@:0.15", type="build")
 
     # Includes "longintrepr.h" instead of Python.h
     conflicts("^python@3.11:", when="@:0.15")
@@ -50,4 +56,4 @@ class PyDocutils(PythonPackage):
         bin_path = self.prefix.bin
         for file in os.listdir(bin_path):
             if file.endswith(".py"):
-                os.symlink(os.path.join(bin_path, file), os.path.join(bin_path, file[:-3]))
+                symlink(os.path.join(bin_path, file), os.path.join(bin_path, file[:-3]))

@@ -40,9 +40,6 @@ class PyTorchtext(PythonPackage):
     version("0.10.0", tag="v0.10.0", commit="4da1de36247aa06622088e78508e0e38a4392e38")
     version("0.9.2", tag="v0.9.2", commit="22e5ee7548a85190eee78e8ed6c8911ec2c53035")
     version("0.8.1", tag="v0.8.1", commit="0f911ec35ab020983efbf36b8c14415651e98618")
-    with default_args(deprecated=True):
-        version("0.6.0", tag="0.6.0", commit="3a54c7f52584f201c17ca7489b52b812152612dc")
-        version("0.5.0", tag="0.5.0", commit="0169cde2f1d446ae886ef0be07e9a673585ed256")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -53,7 +50,6 @@ class PyTorchtext(PythonPackage):
         depends_on("python@3.8:3.11", when="@0.15:0.17.1")
         depends_on("python@:3.10", when="@0.13:0.14")
         depends_on("python@:3.9", when="@0.8.1:0.12")
-        depends_on("python@:3.8", when="@:0.8.0")
 
         # https://github.com/pytorch/text#installation
         depends_on("py-torch@main", when="@main")
@@ -77,8 +73,6 @@ class PyTorchtext(PythonPackage):
         depends_on("py-torch@1.9.0", when="@0.10.0")
         depends_on("py-torch@1.8.2", when="@0.9.2")
         depends_on("py-torch@1.7.1", when="@0.8.1")
-        depends_on("py-torch@1.5.0", when="@0.6.0")
-        depends_on("py-torch@1.4.1", when="@0.5.0")
 
     # CMakelists.txt
     depends_on("cmake@3.18:", when="@0.13:", type="build")
@@ -92,9 +86,7 @@ class PyTorchtext(PythonPackage):
     depends_on("py-torchdata@0.7.0", when="@0.16.0", type=("build", "run"))
     depends_on("py-torchdata@0.6.1", when="@0.15.2", type=("build", "run"))
     depends_on("py-torchdata@0.6.0", when="@0.15.1", type=("build", "run"))
-    depends_on("py-pybind11", when="@0.8:", type=("build", "link"))
-    depends_on("py-six", when="@:0.6", type=("build", "run"))
-    depends_on("py-sentencepiece", when="@:0.7", type=("build", "run"))
+    depends_on("py-pybind11", type=("build", "link"))
 
     def patch(self):
         # Add missing rpaths, which requires patching due to hardcoded cmake_args

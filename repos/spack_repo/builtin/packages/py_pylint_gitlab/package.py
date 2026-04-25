@@ -19,6 +19,7 @@ class PyPylintGitlab(PythonPackage):
     # Unfortunately, this just installs from git.
     # The setup needs the file "Pipfile.lock" which is only
     # available in git, not in a tarball.
+    version("2.0.1", tag="2.0.1")
     version("2.0.0", tag="2.0.0")
 
     depends_on("py-setuptools", type="build")

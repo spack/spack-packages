@@ -3,9 +3,10 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.pdi.package import Pdi
 
 from spack.package import *
+
+from ..pdi.package import Pdi
 
 
 class PdipluginPycall(CMakePackage):
@@ -27,6 +28,7 @@ class PdipluginPycall(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("cmake@3.22.1:", type=("build"), when="@1.10.0:")
     depends_on("cmake@3.16.3:", type=("build"))
     for v in Pdi.versions:
         depends_on("pdi+python@" + str(v), type=("link", "run"), when="@" + str(v))

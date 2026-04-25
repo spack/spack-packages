@@ -34,6 +34,7 @@ class NetlibXblas(AutotoolsPackage):
     provides("blas", when="+plain_blas")
 
     depends_on("c", type="build")
+    depends_on("fortran", type="build", when="+fortran")
     depends_on("m4", type="build")
 
     @property

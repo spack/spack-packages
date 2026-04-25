@@ -3,22 +3,21 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack.package import (
+    BuilderWithDefaults,
     EnvironmentModifications,
     PackageBase,
     Prefix,
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     install,
-    join_path,
     mkdirp,
     register_builder,
     run_after,
     when,
     working_dir,
 )
-
-from ._checks import BuilderWithDefaults, execute_install_time_tests
 
 
 class GoPackage(PackageBase):
@@ -29,7 +28,7 @@ class GoPackage(PackageBase):
     build_system_class = "GoPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "go"
+    default_buildsystem = "go"
 
     build_system("go")
 
@@ -61,10 +60,10 @@ class GoBuilder(BuilderWithDefaults):
     phases = ("build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("check", "installcheck")
+    package_methods = ("check", "installcheck")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_args",
         "check_args",
         "build_directory",
@@ -73,11 +72,6 @@ class GoBuilder(BuilderWithDefaults):
 
     #: Callback names for install-time test
     install_time_test_callbacks = ["check"]
-
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GO111MODULE", "on")
-        env.set("GOTOOLCHAIN", "local")
-        env.set("GOPATH", join_path(self.pkg.stage.path, "go"))
 
     @property
     def build_directory(self):
@@ -102,6 +96,11 @@ class GoBuilder(BuilderWithDefaults):
     def check_args(self):
         """Argument for ``go test`` during check phase"""
         return []
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        """Setup build environment variables"""
+        # Enable CGO functionality if a package directly depends on a C compiler
+        env.set("CGO_ENABLED", "1" if self.spec.satisfies("%c") else "0")
 
     def build(self, pkg: GoPackage, spec: Spec, prefix: Prefix) -> None:
         """Runs ``go build`` in the source directory"""

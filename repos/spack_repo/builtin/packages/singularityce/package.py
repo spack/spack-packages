@@ -3,17 +3,18 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+import shlex
 import shutil
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-import spack.tengine
 from spack.package import *
 
 
 class SingularityBase(MakefilePackage):
     variant("suid", default=False, description="install SUID binary")
     variant("network", default=True, description="install network plugins")
+    variant("libsubid", default=True, when="@4.3:", description="Enable libsubid support")
 
     depends_on("pkgconfig", type="build")
     depends_on("conmon", type=("build", "run"))
@@ -25,6 +26,7 @@ class SingularityBase(MakefilePackage):
     depends_on("squashfs", type="run")
     depends_on("git", when="@develop")  # mconfig uses it for version info
     depends_on("shadow", type="run", when="@3.3:")
+    depends_on("shadow", type=("build", "link", "run"), when="@4.3: +libsubid")
     depends_on("cryptsetup", type=("build", "run"), when="@3.4:")
     depends_on("libfuse", type=("build", "run"), when="@4.0:")
     depends_on("autoconf", type="build", when="@4.0:")
@@ -77,8 +79,16 @@ class SingularityBase(MakefilePackage):
     # Allow overriding config options
     @property
     def config_options(self):
-        # Using conmon from spack
-        return ["--without-conmon"]
+        options = []
+        if self.spec.satisfies("@:4.2"):
+            # Using conmon from spack
+            # Singularity doesn't package conmon from 4.3 onward
+            options.append("--without-conmon")
+
+        if self.spec.satisfies("@4.3: ~libsubid"):
+            options.append("--without-libsubid")
+
+        return options
 
     # Hijack the edit stage to run mconfig.
     def edit(self, spec, prefix):
@@ -124,69 +134,47 @@ class SingularityBase(MakefilePackage):
     # key files, install it, and tty.warn() the user.
     # HEADSUP: https://github.com/spack/spack/pull/10412.
     #
-    def perm_script(self):
-        return "spack_perms_fix.sh"
 
-    def perm_script_tmpl(self):
-        return "{0}.j2".format(self.perm_script())
-
-    def perm_script_path(self):
-        return join_path(self.spec.prefix.bin, self.perm_script())
-
-    def _build_script(self, filename, variable_data):
+    def _build_script(self, filename: str, chown_files: List[str], setuid_files: List[str]):
+        # Create the dir is not exists
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w") as f:
-            env = spack.tengine.make_environment(dirs=self.package_dir)
-            t = env.get_template(self.perm_script_tmpl())
-            f.write(t.render(variable_data))
+            f.write("#!/bin/sh -eu\n")
+            for chown_file in chown_files:
+                f.write(f"chown root:root {shlex.quote(chown_file)}\n")
+            for setuid_file in setuid_files:
+                f.write(f"chmod u+s {shlex.quote(setuid_file)}\n")
+        os.chmod(filename, 0o755)
 
-    @run_after("install")
+    @run_after("install", when="+suid")
     def build_perms_script(self):
-        if self.spec.satisfies("+suid"):
-            script = self.perm_script_path()
-            chown_files = [
-                fn.format(self.singularity_name)
-                for fn in [
-                    "libexec/{0}/bin/starter-suid",
-                    "etc/{0}/{0}.conf",
-                    "etc/{0}/capability.json",
-                    "etc/{0}/ecl.toml",
-                ]
-            ]
-            setuid_files = ["libexec/{0}/bin/starter-suid".format(self.singularity_name)]
-            self._build_script(
-                script,
-                {
-                    "prefix": self.spec.prefix,
-                    "chown_files": chown_files,
-                    "setuid_files": setuid_files,
-                },
-            )
-            chmod = which("chmod")
-            chmod("555", script)
+        script = join_path(self.prefix.libexec, "spack_perms_fix.sh")
+        self._build_script(
+            script,
+            chown_files=[
+                f"{self.prefix}/libexec/{self.singularity_name}/bin/starter-suid",
+                f"{self.prefix}/etc/{self.singularity_name}/{self.singularity_name}.conf",
+                f"{self.prefix}/etc/{self.singularity_name}/capability.json",
+                f"{self.prefix}/etc/{self.singularity_name}/ecl.toml",
+            ],
+            setuid_files=[f"{self.prefix}/libexec/{self.singularity_name}/bin/starter-suid"],
+        )
+        tty.warn(
+            f"""\
+For full functionality, you'll need to chown and chmod some files
+after installing the package.  This has security implications.
+For details, see:
+{self.singularity_security_urls[0]}
+{self.singularity_security_urls[1]}
 
-    # Until tty output works better from build steps, this ends up in
-    # the build log.  See https://github.com/spack/spack/pull/10412.
-    @run_after("install")
-    def caveats(self):
-        if self.spec.satisfies("+suid"):
-            tty.warn(
-                """
-            For full functionality, you'll need to chown and chmod some files
-            after installing the package.  This has security implications.
-            For details, see:
-            {1}
-            {2}
+We've installed a script that will make the necessary changes;
+read through it and then execute it as root (e.g. via sudo).
 
-            We've installed a script that will make the necessary changes;
-            read through it and then execute it as root (e.g. via sudo).
+The script is named:
 
-            The script is named:
-
-            {0}
-            """.format(
-                    self.perm_script_path(), *self.singularity_security_urls
-                )
-            )
+{script}
+"""
+        )
 
 
 class Singularityce(SingularityBase):
@@ -211,6 +199,7 @@ class Singularityce(SingularityBase):
     maintainers("alalazo")
     version("master", branch="master")
 
+    version("4.3.3", sha256="cd0bef984270040b71bf43e517ff08e92e9cb474b71286e7274d8e5348e3ff7d")
     version("4.1.0", sha256="119667f18e76a750b7d4f8612d7878c18a824ee171852795019aa68875244813")
     version("4.0.3", sha256="b3789c9113edcac62032ce67cd1815cab74da6c33c96da20e523ffb54cdcedf3")
     version("3.11.5", sha256="5acfbb4a109d9c63a25c230e263f07c1e83f6c726007fbcd97a533f03d33a86a")

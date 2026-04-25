@@ -5,7 +5,6 @@
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.xorg import XorgPackage
 
-import spack.url
 from spack.package import *
 
 
@@ -21,6 +20,7 @@ class UtilMacros(AutotoolsPackage, XorgPackage):
 
     license("MIT")
 
+    version("1.20.2", sha256="9ac269eba24f672d7d7b3574e4be5f333d13f04a7712303b1821b2a51ac82e8e")
     version("1.20.1", sha256="0b308f62dce78ac0f4d9de6888234bf170f276b64ac7c96e99779bb4319bcef5")
     version("1.19.3", sha256="0f812e6e9d2786ba8f54b960ee563c0663ddbe2434bf24ff193f5feab1f31971")
     version("1.19.2", sha256="d7e43376ad220411499a79735020f9d145fdc159284867e99467e0d771f3e712")
@@ -30,7 +30,7 @@ class UtilMacros(AutotoolsPackage, XorgPackage):
     # note: url_for_version can only return a single url, no mirrors
     def url_for_version(self, version):
         if self.spec.satisfies("@:1.19"):
-            return spack.url.substitute_version(self.urls[0].replace("xz", "bz2"), version)
+            return substitute_version_in_url(self.urls[0].replace("xz", "bz2"), version)
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

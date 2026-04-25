@@ -45,7 +45,7 @@ class Angsd(MakefilePackage):
         env.set("HTSSRC", "systemwide")
 
     def install(self, spec, prefix):
-        binaries = ["angsd", "misc/realSFS", "misc/thetaStat"]
+        binaries = ["angsd", "misc/realSFS", "misc/thetaStat", "misc/NGSadmix"]
 
         mkdirp(prefix.bin)
 

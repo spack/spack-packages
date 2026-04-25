@@ -86,9 +86,7 @@ class Zfp(CMakePackage, CudaPackage):
         "daz",
         default=False,
         when="@1.0.0:",
-        description="Denormals are zero: "
-        "Treat denormal-only blocks as containing "
-        "all zeroes",
+        description="Denormals are zero: Treat denormal-only blocks as containing all zeroes",
     )
 
     variant(
@@ -154,7 +152,7 @@ class Zfp(CMakePackage, CudaPackage):
 
         if "round" in spec.variants:
             args.append(
-                "ZFP_ROUNDING_MODE=ZFP_ROUND_{0}".format(spec.variants["round"].value.upper())
+                "-DZFP_ROUNDING_MODE=ZFP_ROUND_{0}".format(spec.variants["round"].value.upper())
             )
 
         if "+cuda" in spec:

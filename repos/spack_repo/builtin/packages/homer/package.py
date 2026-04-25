@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from os import symlink
-
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
@@ -47,7 +45,7 @@ class Homer(Package):
         )
 
         # compile/prepare binaries and perl scripts with the correct paths
-        perl = which("perl")
+        perl = which("perl", required=True)
         perl("configureHomer.pl", "-local")
 
         # download extra data if requested

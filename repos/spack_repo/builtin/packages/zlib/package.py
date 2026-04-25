@@ -29,29 +29,10 @@ class Zlib(MakefilePackage, Package):
     tags = ["core-packages"]
     libraries = ["libz", "zlib", "zlibstatic", "zlibd", "zlibstaticd"]
 
+    version("1.3.2", sha256="bb329a0a2cd0274d05519d61c667c062e06990d72e125ee2dfa8de64f0119d16")
     version("1.3.1", sha256="9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23")
     version("1.3", sha256="ff0ba4c292013dbc27530b3a81e1f9a813cd39de01ca5e0f8bf355702efa593e")
     version("1.2.13", sha256="b3a24de97a8fdbc835b9833169501030b8977031bcb54b3b3ac13740f846ab30")
-    version(
-        "1.2.12",
-        sha256="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9",
-        deprecated=True,
-    )
-    version(
-        "1.2.11",
-        sha256="c3e5e9fdd5004dcb542feda5ee4f0ff0744628baf8ed2dd5d66f8ca1197cb1a1",
-        deprecated=True,
-    )
-    version(
-        "1.2.8",
-        sha256="36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d",
-        deprecated=True,
-    )
-    version(
-        "1.2.3",
-        sha256="1795c7d067a43174113fdf03447532f373e1c6c57c08d61d9e4e9be5e244b05e",
-        deprecated=True,
-    )
 
     build_system("makefile", conditional("generic", when="platform=windows"), default="makefile")
 
@@ -63,9 +44,6 @@ class Zlib(MakefilePackage, Package):
     depends_on("cxx", type="build")  # generated
 
     conflicts("build_system=makefile", when="platform=windows")
-
-    patch("w_patch.patch", when="@1.2.11%cce")
-    patch("configure-cc.patch", when="@1.2.12")
 
     provides("zlib-api")
 
@@ -79,9 +57,9 @@ class Zlib(MakefilePackage, Package):
                     pattern = re.compile(rf"{library}\.(\d+\.\d+\.\d+)\.{ext}")
                 else:
                     pattern = re.compile(rf"{library}\.{ext}\.(\d+\.\d+\.\d+)")
-                    match = re.search(pattern, lib)
-                    if match:
-                        return match.group(1)
+                match = re.search(pattern, lib)
+                if match:
+                    return match.group(1)
 
     @property
     def libs(self):
@@ -148,7 +126,7 @@ class MakefileBuilder(makefile.MakefileBuilder, SetupEnvironment):
 
 class GenericBuilder(generic.GenericBuilder, SetupEnvironment):
     def install(self, pkg, spec, prefix):
-        nmake("-f" "win32\\Makefile.msc")
+        nmake("-fwin32\\Makefile.msc")
         build_dir = pkg.stage.source_path
         install_tree = {
             "bin": glob.glob(os.path.join(build_dir, "*.dll")),

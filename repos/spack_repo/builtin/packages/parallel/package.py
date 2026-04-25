@@ -5,7 +5,6 @@
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
-from spack.hooks.sbang import filter_shebang
 from spack.package import *
 
 

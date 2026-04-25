@@ -19,6 +19,7 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.26", sha256="6a24504a14de4a744103dcb936be976df6fbe88ccff26065e54c1c47946f4a5e")
     version("1.25", sha256="d02db3c5926ed877f8817b81cd1f92f53ef74ca8c6db543fbba0271b34f393ec")
     version("1.24", sha256="695e9827fdf763513f133910bc7e6cfdb9187943a4fec943e57449723d2b8dbf")
     version("1.23", sha256="74b1081d21fff13ae4bd7c16e5d6e504a4c26f7cde1dca0d963a484174bbcacd")
@@ -39,6 +40,13 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("readline")
 
+    # Fix nanosleep build error: https://cgit.git.savannah.gnu.org/cgit/gdbm.git/commit/?id=ed0a865345681982ea02c6159c0f3d7702c928a1
+    patch(
+        "https://git.savannah.gnu.org/cgit/gdbm.git/rawdiff/?id=ed0a865345681982ea02c6159c0f3d7702c928a1",
+        sha256="cdba23a8da0bbdf91921247d226f9ca13e2a1c9541434f7a9132ba39346762ad",
+        when="@1.25 platform=darwin",
+    )
+
     patch("macOS.patch", when="@1.21 platform=darwin")
     patch("gdbm.patch", when="@:1.18 %gcc@10:")
     patch("gdbm.patch", when="@:1.18 %clang@11:")
@@ -46,6 +54,14 @@ class Gdbm(AutotoolsPackage, GNUMirrorPackage):
     patch("gdbm.patch", when="@:1.18 %aocc@2:")
     patch("gdbm.patch", when="@:1.18 %oneapi")
     patch("gdbm.patch", when="@:1.18 %arm@21:")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            # See https://src.fedoraproject.org/rpms/gdbm/blob/44ea7380c69b1c139fe385bc1c5940070b36c626/f/gdbm.spec#_62
+            if self.spec.satisfies("@:1.24 %gcc@15:"):
+                flags.append("-std=gnu11")
+
+        return (flags, None, None)
 
     def configure_args(self):
         # GDBM uses some non-standard GNU extensions,

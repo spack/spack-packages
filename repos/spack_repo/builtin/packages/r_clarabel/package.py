@@ -26,4 +26,6 @@ class RClarabel(RPackage):
 
     version("0.9.0", sha256="50963022f8e5dc9d956193acf7b87194548dc4b3555bd844aa1f9f4d34f2c6bc")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("rust", type=("build", "run"))

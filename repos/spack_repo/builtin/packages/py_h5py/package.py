@@ -14,19 +14,16 @@ class PyH5py(PythonPackage):
     homepage = "https://www.h5py.org/"
     pypi = "h5py/h5py-3.3.0.tar.gz"
     git = "https://github.com/h5py/h5py.git"
+
     maintainers("bryanherman", "takluyver")
 
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("3.16.0", sha256="a0dbaad796840ccaa67a4c144a0d0c8080073c34c76d5a6941d6818678ef2738")
+    version("3.14.0", sha256="2372116b2e0d5d3e5e705b7f663f7c8d96fa79a4052d250484ef91d24d6a08f4")
     version("3.13.0", sha256="1870e46518720023da85d0895a1960ff2ce398c5671eac3b1a41ec696b7105c3")
     version("3.12.1", sha256="326d70b53d31baa61f00b8aa5f95c2fcb9621a3ee8365d770c551a13dbbcbfdf")
-    # Yanked
-    version(
-        "3.12.0",
-        sha256="00955a079e9f86c5ae2cd08accb54396c69cda87152312ddd1528e3f90acc866",
-        deprecated=True,
-    )
     version("3.11.0", sha256="7b7e8f78072a2edec87c9836f25f34203fd492a4475709a18b417a33cfb21fa9")
     version("3.10.0", sha256="d93adc48ceeb33347eb24a634fb787efc7ae4644e6ea4ba733d099605045c049")
     version("3.9.0", sha256="e604db6521c1e367c6bd7fad239c847f53cc46646f2d2651372d05ae5e95f817")
@@ -51,66 +48,74 @@ class PyH5py(PythonPackage):
 
     variant("mpi", default=True, description="Build with MPI support")
 
-    depends_on("c", type="build")
-
-    # Python versions
-    # python@3.9+ is required in 3.12+, but 3.11 needs python@3.9+ for numpy@2
-    # as python@3.8 is deprecated in spack, harmonized on python@3.9+
-    # https://github.com/h5py/h5py/blob/3.11.0/pyproject.toml#L5
-    depends_on("python@3.9:", type=("build", "run"), when="@3.11:")
-    depends_on("python@:3.9", type=("build", "run"), when="@:2.8")
-
     # Build dependencies
-    # h5py@3.11 can build with cython@3.x
-    depends_on("py-cython@0.29.31:3", type="build", when="@3.11:")
-    depends_on("py-cython@0.29.31:0", type="build", when="@3.9:3.10")
-    depends_on("py-cython@0.29.15:0", type=("build"), when="@3:3.7 ^python@3.9.0:")
-    depends_on("py-cython@0.29.14:0", type=("build"), when="@3:3.7 ^python@3.8.0:3.8")
-    depends_on("py-cython@0.29:0", type=("build"), when="@3.0:3.10")
-    depends_on("py-cython@0.23:0", type="build", when="@:2")
-    depends_on("py-pkgconfig", type="build")
-    depends_on("py-setuptools@61:", type="build", when="@3.8.0:")
-    depends_on("py-setuptools", type="build")
+    with default_args(type="build"):
+        depends_on("c")
 
-    # Build and runtime dependencies
-    depends_on("py-numpy@2", type=("build", "run"), when="@3.11: ^python@3.9:")
+        depends_on("py-cython@3", when="@3.15:")
+        # h5py@3.11 can build with cython@3.x
+        depends_on("py-cython@0.29.31:3", when="@3.11:")
+        depends_on("py-cython@0.29.31:0", when="@3.9:3.10")
+        depends_on("py-cython@0.29.15:0", when="@3:3.7")
+        depends_on("py-cython@0.29:0", when="@3.0:3.10")
+        depends_on("py-cython@0.23:0", when="@:2")
 
-    # https://github.com/h5py/h5py/pull/2556
-    depends_on("py-numpy@2:2.2", when="@3.11:3.12", type="build")
+        depends_on("py-packaging@23:", when="@3.16:")
+        depends_on("py-pkgconfig@1.5.5:", when="@3.15:")
+        depends_on("py-pkgconfig")
+        depends_on("py-setuptools@77.0.1:", when="@3.15:")
+        depends_on("py-setuptools@77:", when="@3.14:")
+        depends_on("py-setuptools@61:", when="@3.8.0:")
+        depends_on("py-setuptools")
 
-    # until 3.11.0, uses "oldest-supported-numpy" and doesn't support numpy2
-    # https://github.com/scipy/oldest-supported-numpy/blob/main/setup.cfg
-    # pre-3.11 is numpy@1 only
-    # https://github.com/h5py/h5py/issues/2353
-    depends_on("py-numpy@:1", when="@:3.10", type=("build", "run"))
-    depends_on("py-numpy@1.19.3:", type=("build", "run"), when="@3:3.10 ^python@3.9:")
-    depends_on("py-numpy@1.17.5:", type=("build", "run"), when="@3:3.5 ^python@3.8.0:3.8")
-    depends_on("py-numpy@1.7:", type=("build", "run"), when="@:2")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@3.15:")
+        depends_on("python@3.9:", when="@3.12:")
+
+        depends_on("py-numpy@1.25:2", when="@3.15:")
+        # https://github.com/h5py/h5py/issues/2644
+        depends_on("py-numpy@2:", when="@3.14")
+        depends_on("py-numpy@1.19.3:", when="@3.12:")
+        depends_on("py-numpy@1.17.3:", when="@3.9:")
+        depends_on("py-numpy@1.14.5:", when="@3.2:")
+        depends_on("py-numpy@1.12:", when="@3.0:")
+        depends_on("py-numpy@1.7:", when="@2.7:")
+        depends_on("py-numpy@1.6.1:", when="@2.4:")
+
+        # pre-3.11 is numpy@1 only
+        # https://github.com/h5py/h5py/issues/2353
+        depends_on("py-numpy@:1", when="@:3.10")
+
+        # Historical dependencies
+        depends_on("py-six", when="@:2")
 
     # Link dependencies (py-h5py v2 cannot build against HDF5 1.12 regardless
     # of API setting)
-    depends_on("hdf5@1.10.6:1.14 +hl", when="@3.12:")
+    # version constraints from https://github.com/h5py/h5py/tree/master/docs/whatsnew
+    depends_on("hdf5@1.10.7:1.14 +hl", when="@3.15:")
+    depends_on("hdf5@1.10.6:1.14 +hl", when="@3.12:3.14")
     depends_on("hdf5@1.10.4:1.14 +hl", when="@3.10:3.11")
     depends_on("hdf5@1.8.4:1.14 +hl", when="@3.8:3.9")
     depends_on("hdf5@1.8.4:1.12 +hl", when="@3:3.7")
     depends_on("hdf5@1.8.4:1.11 +hl", when="@:2")
 
     # MPI dependencies
-    depends_on("hdf5+mpi", when="+mpi")
-    depends_on("mpi", when="+mpi")
-    depends_on("py-mpi4py@3.1.1:", when="@3.8: +mpi", type=("build", "run"))
-    depends_on("py-mpi4py@3.0.2:", when="@3: +mpi", type=("build", "run"))
-    depends_on("py-mpi4py", when="@:2 +mpi", type=("build", "run"))
-
-    # Historical dependencies
-    depends_on("py-cached-property@1.5:", type=("build", "run"), when="@:3.6 ^python@:3.7")
-    depends_on("py-six", type=("build", "run"), when="@:2")
+    with when("+mpi"):
+        depends_on("hdf5+mpi")
+        depends_on("mpi")
+        depends_on("py-mpi4py@3.1.2:", when="@3.15:", type=("build", "run"))
+        depends_on("py-mpi4py@3.1.1:", when="@3.8:", type=("build", "run"))
+        depends_on("py-mpi4py@3.0.2:", when="@3:", type=("build", "run"))
+        depends_on("py-mpi4py", when="@:2", type=("build", "run"))
 
     def flag_handler(self, name, flags):
         if name == "cflags":
             if self.spec.satisfies("%oneapi@2023.0.0:"):
                 flags.append("-Wno-error=incompatible-function-pointer-types")
                 flags.append("-Wno-error=incompatible-pointer-types-discards-qualifiers")
+            elif self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=incompatible-pointer-types")
+                flags.append("-Wno-error=discarded-qualifiers")
         return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

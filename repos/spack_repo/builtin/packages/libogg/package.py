@@ -17,16 +17,14 @@ class Libogg(CMakePackage, AutotoolsPackage, Package):
     format for the Xiph.org multimedia codecs."""
 
     homepage = "https://www.xiph.org/ogg/"
-    url = "http://downloads.xiph.org/releases/ogg/libogg-1.3.2.tar.gz"
+    url = "http://downloads.xiph.org/releases/ogg/libogg-1.3.6.tar.gz"
 
     license("BSD-3-Clause")
 
+    version("1.3.6", sha256="83e6704730683d004d20e21b8f7f55dcb3383cdf84c0daedf30bde175f774638")
     version("1.3.5", sha256="0eb4b4b9420a0f51db142ba3f9c64b333f826532dc0f48c6410ae51f4799b664")
     version("1.3.4", sha256="fe5670640bd49e828d64d2879c31cb4dde9758681bb664f9bdbf159a01b0c76e")
     version("1.3.2", sha256="e19ee34711d7af328cb26287f4137e70630e7261b17cbe3cd41011d73a654692")
-
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
 
     variant("shared", default=True, description="Build shared library", when="build_system=cmake")
     variant(
@@ -35,6 +33,11 @@ class Libogg(CMakePackage, AutotoolsPackage, Package):
         description="Produce position-independent code (for shared libs)",
         when="build_system=cmake",
     )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@1.3.4:1.3.5")
+    depends_on("cmake@3.6:", type="build", when="@1.3.6:")
+    depends_on("cmake@2.8.12:", type="build", when="@1.3.4:1.3.5")
 
     requires("+pic", when="+shared")
 
@@ -69,21 +72,19 @@ class GenericBuilder(generic.GenericBuilder):
     def is_64bit(self):
         return "64" in str(self.pkg.spec.target.family)
 
-    def build(self, spec, prefix):
+    def build(self, pkg, spec, prefix):
         if spec.satisfies("%msvc"):
-            plat_tools = self.pkg.compiler.msvc_version
+            plat_tools = pkg.compiler.msvc_version
         else:
             raise RuntimeError("Package does not support non MSVC compilers on Windows")
         ms_build_args = ["libogg_static.vcxproj", "/p:PlatformToolset=v%s" % plat_tools]
         msbuild(*ms_build_args)
 
-    def install(self, spec, prefix):
+    def install(self, pkg, spec, prefix):
         mkdirp(prefix.include.ogg)
         mkdirp(prefix.lib)
         mkdirp(prefix.share)
-        install(
-            os.path.join(self.pkg.stage.source_path, "include", "ogg", "*.h"), prefix.include.ogg
-        )
+        install(os.path.join(pkg.stage.source_path, "include", "ogg", "*.h"), prefix.include.ogg)
         plat_prefix = "x64" if self.is_64bit() else "x86"
         install(os.path.join(plat_prefix, "Debug", "*.lib"), prefix.lib)
         install_tree(os.path.join(self.pkg.stage.source_path, "doc"), prefix.share)

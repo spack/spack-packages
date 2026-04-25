@@ -30,8 +30,10 @@ class CmakeClient(CMakePackage):
     )
     variant("single", description="", default="blue", values=("blue", "red", "green"), multi=False)
     variant("truthy", description="", default=True)
+    variant("cmake_hints", description="", default=False)
 
     depends_on("c", type="build")
+    depends_on("cmake-hints", when="+cmake_hints")
 
     callback_counter = 0
 
@@ -58,15 +60,15 @@ class CmakeClient(CMakePackage):
         self.did_something = True
 
     def setup_build_environment(self, spack_env):
-        spack_cc  # Ensure spack module-scope variable is avaiabl
+        spack_cc  # Ensure spack module-scope variable is avaiable
         check(
-            from_cmake == "from_cmake",
+            from_cmake == "from_cmake",  # noqa: F405
             "setup_build_environment couldn't read global set by cmake.",
         )
 
         check(
             self.spec["cmake"].link_arg == "test link arg",
-            "link arg on dependency spec not readable from " "setup_build_environment.",
+            "link arg on dependency spec not readable from setup_build_environment.",
         )
 
     def setup_dependent_build_environment(
@@ -74,25 +76,25 @@ class CmakeClient(CMakePackage):
     ) -> None:
         spack_cc  # Ensure spack module-scope variable is avaiable
         check(
-            from_cmake == "from_cmake",
+            from_cmake == "from_cmake",  # noqa: F405
             "setup_dependent_build_environment couldn't read global set by cmake.",
         )
 
         check(
             self.spec["cmake"].link_arg == "test link arg",
-            "link arg on dependency spec not readable from " "setup_dependent_build_environment.",
+            "link arg on dependency spec not readable from setup_dependent_build_environment.",
         )
 
     def setup_dependent_package(self, module, dspec):
         spack_cc  # Ensure spack module-scope variable is avaiable
         check(
-            from_cmake == "from_cmake",
+            from_cmake == "from_cmake",  # noqa: F405
             "setup_dependent_package couldn't read global set by cmake.",
         )
 
         check(
             self.spec["cmake"].link_arg == "test link arg",
-            "link arg on dependency spec not readable from " "setup_dependent_package.",
+            "link arg on dependency spec not readable from setup_dependent_package.",
         )
 
     def cmake(self, spec, prefix):
@@ -110,7 +112,7 @@ class CmakeClient(CMakePackage):
         check(cmake is not None, "No cmake was in environment!")
 
         # check that which('cmake') returns the right one.
-        cmake = which("cmake")
+        cmake = which("cmake", required=True)
         print(cmake)
         print(cmake.exe)
         check(
@@ -118,7 +120,7 @@ class CmakeClient(CMakePackage):
             "Wrong cmake was in environment: %s" % cmake,
         )
 
-        check(from_cmake == "from_cmake", "Couldn't read global set by cmake.")
+        check(from_cmake == "from_cmake", "Couldn't read global set by cmake.")  # noqa: F405
 
         check(
             os.environ["from_cmake"] == "from_cmake",

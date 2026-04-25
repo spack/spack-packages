@@ -11,10 +11,11 @@ class Flac(AutotoolsPackage):
     """Encoder/decoder for the Free Lossless Audio Codec"""
 
     homepage = "https://xiph.org/flac/index.html"
-    url = "http://downloads.xiph.org/releases/flac/flac-1.3.2.tar.xz"
+    url = "http://downloads.xiph.org/releases/flac/flac-1.5.0.tar.xz"
 
     license("BSD-3-Clause AND GPL-2.0-or-later")
 
+    version("1.5.0", sha256="f2c1c76592a82ffff8413ba3c4a1299b6c7ab06c734dee03fd88630485c2b920")
     version("1.4.3", sha256="6c58e69cd22348f441b861092b825e591d0b822e106de6eb0ee4d05d27205b70")
     version("1.4.2", sha256="e322d58a1f48d23d9dd38f432672865f6f79e73a6f9cc5a5f57fcaa83eb5a8e4")
     version("1.4.1", sha256="91303c3e5dfde52c3e94e75976c0ab3ee14ced278ab8f60033a3a12db9209ae6")
@@ -25,7 +26,6 @@ class Flac(AutotoolsPackage):
     version("1.3.1", sha256="4773c0099dba767d963fd92143263be338c48702172e8754b9bc5103efe1c56c")
     version("1.3.0", sha256="fa2d64aac1f77e31dfbb270aeb08f5b32e27036a52ad15e69a77e309528010dc")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("libogg@1.1.2:")

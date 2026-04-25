@@ -18,6 +18,7 @@ class PyMypy(PythonPackage):
 
     license("MIT AND PSF-2.0", checked_by="tgamblin")
 
+    version("1.19.0", sha256="f6b874ca77f733222641e5c46e4711648c4037ea13646fd0cdc814c2eaec2528")
     version("1.16.0", sha256="84b94283f817e2aa6350a14b4a8fb2a35a53c286f97c9d30f53b63620e7af8ab")
     version("1.15.0", sha256="404534629d51d3efea5c800ee7c42b72a6554d6c400e6a79eafe15d11341fd43")
     version("1.14.1", sha256="7ec88144fe9b510e8475ec2f5f251992690fcf89ccb4500b214b4226abcd32d6")
@@ -61,40 +62,41 @@ class PyMypy(PythonPackage):
     version("0.800", sha256="e0202e37756ed09daf4b0ba64ad2c245d357659e014c3f51d8cd0681ba66940a")
     version("0.790", sha256="2b21ba45ad9ef2e2eb88ce4aeadd0112d0f5026418324176fd494a6824b74975")
     version("0.740", sha256="48c8bc99380575deb39f5d3400ebb6a8a1cb5cc669bbba4d3bb30f904e0a0e7d")
-    version("0.670", sha256="e80fd6af34614a0e898a57f14296d0dacb584648f0339c2e000ddbf0f4cc2f8d")
 
-    # pyproject.toml
-    depends_on("py-setuptools@75.1.0:", when="@1.14:", type="build")
-    depends_on("py-setuptools@40.6.2:", when="@0.790:", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-wheel@0.30:", when="@0.790:", type="build")
-    depends_on("py-types-psutil", when="@0.981:", type="build")
-    depends_on("py-types-setuptools", when="@0.981:", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@75.1.0:", when="@1.14:")
+        depends_on("py-setuptools@40.6.2:", when="@0.790:")
+        depends_on("py-setuptools")
+        depends_on("py-types-psutil", when="@0.981:")
+        depends_on("py-types-setuptools", when="@0.981:")
 
-    depends_on("python@3.9:", when="@1.15:", type=("build", "run"))
-    depends_on("python@3.8:", when="@1.5:", type=("build", "run"))
-    depends_on("python@3.7:", when="@0.981:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.6:", when="@1.11:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.1:", when="@1.5:", type=("build", "run"))
-    depends_on("py-typing-extensions@3.10:", when="@0.930:", type=("build", "run"))
-    depends_on("py-typing-extensions@3.7.4:", when="@0.700:", type=("build", "run"))
-    depends_on("py-mypy-extensions@1:", when="@1.1:", type=("build", "run"))
-    depends_on("py-mypy-extensions@0.4.3:", when="@0.930:1.0", type=("build", "run"))
-    depends_on("py-mypy-extensions@0.4.3:0.4", when="@0.700:0.929", type=("build", "run"))
-    depends_on("py-mypy-extensions@0.4.0:0.4", when="@:0.699", type=("build", "run"))
-    depends_on("py-pathspec@0.9:", when="@1.16:", type=("build", "run"))
-    depends_on("py-tomli@1.1:", when="@0.950: ^python@:3.10", type=("build", "run"))
-    depends_on("py-tomli@1.1:", when="@0.930:0.949", type=("build", "run"))
-    depends_on("py-tomli@1.1:2", when="@0.920:0.929", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-wheel@0.30:", when="@0.790:1.13")
 
-    # Historical dependencies
-    depends_on("py-types-typed-ast@1.5.8.5:1.5", when="@1.2:1.4", type="build")
-    depends_on("py-types-typed-ast@1.5.8:1.5", when="@0.981:1.1", type="build")
-    depends_on("py-toml", when="@0.900:0.910", type=("build", "run"))
-    depends_on("py-typed-ast@1.4.0:1", when="@0.920:1.4 ^python@:3.7", type=("build", "run"))
-    depends_on("py-typed-ast@1.4.0:1.4", when="@0.900:0.910 ^python@:3.7", type=("build", "run"))
-    depends_on("py-typed-ast@1.4.0:1.4", when="@0.700:0.899", type=("build", "run"))
-    depends_on("py-typed-ast@1.3.1:1.3", when="@:0.699", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@1.15:")
+        depends_on("python@3.8:", when="@1.5:")
+        depends_on("python@3.7:", when="@0.981:")
+        depends_on("py-typing-extensions@4.6:", when="@1.11:")
+        depends_on("py-typing-extensions@4.1:", when="@1.5:")
+        depends_on("py-typing-extensions@3.10:", when="@0.930:")
+        depends_on("py-typing-extensions@3.7.4:", when="@0.700:")
+        depends_on("py-mypy-extensions@1:", when="@1.1:")
+        depends_on("py-mypy-extensions@0.4.3:", when="@0.930:1.0")
+        depends_on("py-mypy-extensions@0.4.3:0.4", when="@0.700:0.929")
+        depends_on("py-pathspec@0.9:", when="@1.16:")
+        depends_on("py-tomli@1.1:", when="@0.950: ^python@:3.10")
+        depends_on("py-tomli@1.1:", when="@0.930:0.949")
+        depends_on("py-tomli@1.1:2", when="@0.920:0.929")
+        depends_on("py-librt@0.6.2:", when="@1.19:")
+
+        # Historical dependencies
+        depends_on("py-types-typed-ast@1.5.8.5:1.5", when="@1.2:1.4")
+        depends_on("py-types-typed-ast@1.5.8:1.5", when="@0.981:1.1")
+        depends_on("py-toml", when="@0.900:0.910")
+        depends_on("py-typed-ast@1.4.0:1", when="@0.920:1.4 ^python@:3.7")
+        depends_on("py-typed-ast@1.4.0:1.4", when="@0.900:0.910 ^python@:3.7")
+        depends_on("py-typed-ast@1.4.0:1.4", when="@0.700:0.899")
 
     # https://github.com/python/mypy/issues/13627
     conflicts("^python@3.10.7:", when="@:0.971")

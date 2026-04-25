@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems import cmake, makefile
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
@@ -53,6 +55,7 @@ class Pexsi(MakefilePackage, CMakePackage):
 
     variant("openmp", default=False, description="Build with OpenMP support", when="@1.2")
     variant("fortran", default=False, description="Builds the Fortran interface")
+    variant("pic", default=True, description="Compile position independent code (PIC)")
 
     def url_for_version(self, version):
         if version == Version("0"):
@@ -126,6 +129,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             self.define_from_variant("PEXSI_ENABLE_FORTRAN", "fortran"),
             self.define_from_variant("PEXSI_ENABLE_OPENMP ", "openmp"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
 
         if self.spec.satisfies("%fj"):

@@ -21,6 +21,8 @@ class PyHepunits(PythonPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.4.4", sha256="1846e729fa3e4fb36bff599ed7b8bd2cdc4abdc02906830fb75c205fd54905eb")
+    version("2.3.6", sha256="cffc1c82040b15bb530542ec97f3c1f83aae6050caa4cc5c1a03097bebe34932")
     version("2.3.2", sha256="8a3366fa5d72c16af1166ed579cdaa81edd2676acb8f6a1fe7da290cefca3b08")
     version("2.3.1", sha256="b1174bba4d575b9939c01f341e24d9bdbe0e0cd4cc4ce2e7d77692da19145cfb")
     version("2.3.0", sha256="33b9ae9a8b7b3af355141a74901cb5aa557dce2e4c9992a0a30ef0443a1b2206")
@@ -35,6 +37,8 @@ class PyHepunits(PythonPackage):
     depends_on("python@2.7:2.8,3.5:", type=("build", "run"))
     depends_on("python@3.6:", when="@2.2:", type=("build", "run"))
     depends_on("python@3.7:", when="@2.3:", type=("build", "run"))
+    depends_on("python@3.8:", when="@2.3.4:", type=("build", "run"))
+    depends_on("python@3.9:", when="@2.4.3:", type=("build", "run"))
     depends_on("py-setuptools", when="@:2.2", type="build")
     depends_on("py-setuptools-scm +toml", when="@:2.2", type="build")
     depends_on("py-hatchling", when="@2.3:", type="build")

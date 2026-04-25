@@ -49,6 +49,9 @@ class Gmp(AutotoolsPackage, GNUMirrorPackage):
     # https://gmplib.org/repo/gmp/raw-rev/5f32dbc41afc
     patch("avoid-x18.diff", when="@6.2.1")
 
+    # https://gmplib.org/repo/gmp/rev/8e7bb4ae7a18
+    patch("gcc15.patch", when="@6.1: %gcc@15:")
+
     # gmp's configure script seems to be broken; it sometimes misdetects
     # shared library support. Regenerating it fixes the issue.
     force_autoreconf = True

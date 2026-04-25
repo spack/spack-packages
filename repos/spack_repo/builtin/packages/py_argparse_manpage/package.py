@@ -15,6 +15,7 @@ class PyArgparseManpage(PythonPackage):
 
     license("Apache-2.0")
 
+    version("4.6", sha256="0b659d70fd142876da41c2918bd6de4d027875720b0e4672d6443b51198dbb62")
     version("4.5", sha256="213c061878a10bf0e40f6a293382f6e82409e5110d0683b16ebf87f903d604db")
 
     variant("setuptools", default=False, description="Enable the setuptools.builds_meta backend")

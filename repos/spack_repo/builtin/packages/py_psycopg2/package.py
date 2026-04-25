@@ -13,6 +13,8 @@ class PyPsycopg2(PythonPackage):
     homepage = "https://psycopg.org/"
     pypi = "psycopg2/psycopg2-2.8.6.tar.gz"
 
+    version("2.9.11", sha256="964d31caf728e217c697ff77ea69c2ba0865fa41ec20bb00f0977e62fdcc52e3")
+    version("2.9.10", sha256="12ec0b40b0273f95296233e8750441339298e6a572f7039da5b260e3c8b60e11")
     version("2.9.6", sha256="f15158418fd826831b28585e2ab48ed8df2d0d98f502a2b4fe619e7d5ca29011")
     version("2.9.1", sha256="de5303a6f1d0a7a34b9d40e4d3bef684ccc44a49bbe3eb85e3c0bffb4a131b7c")
     version("2.8.6", sha256="fb23f6c71107c37fd667cb4ea363ddeb936b348bbd6449278eb92c189699f543")
@@ -23,13 +25,16 @@ class PyPsycopg2(PythonPackage):
     # https://github.com/psycopg/psycopg2/blob/master/doc/src/install.rst
     # https://www.psycopg.org/docs/news.html#news
     # https://pypi.org/project/psycopg2/#history
-    depends_on("python@:3.11", when="@2.9.5:", type=("build", "link", "run"))
+    depends_on("python@:3.14", when="@2.9.11:", type=("build", "link", "run"))
+    depends_on("python@:3.13", when="@2.9.10", type=("build", "link", "run"))
+    depends_on("python@:3.11", when="@2.9.5:2.9.9", type=("build", "link", "run"))
     depends_on("python@:3.10", when="@2.9.1:2.9.4", type=("build", "link", "run"))
     depends_on("python@:3.9", when="@2.8.6:2.9.0", type=("build", "link", "run"))
 
     depends_on("py-setuptools", type="build")
 
-    depends_on("postgresql@9.1:15", when="@2.9.4:", type=("build", "link", "run"))
+    depends_on("postgresql@9.1:17", when="@2.9.10:", type=("build", "link", "run"))
+    depends_on("postgresql@9.1:15", when="@2.9.4:2.9.9", type=("build", "link", "run"))
     depends_on("postgresql@9.1:14", when="@2.9.2:2.9.3", type=("build", "link", "run"))
     depends_on("postgresql@9.1:13", when="@2.9:2.9.1", type=("build", "link", "run"))
     depends_on("postgresql@9.1:12", when="@2.8.4:2.8", type=("build", "link", "run"))

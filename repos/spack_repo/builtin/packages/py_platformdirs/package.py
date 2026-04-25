@@ -17,6 +17,8 @@ class PyPlatformdirs(PythonPackage):
 
     license("MIT")
 
+    version("4.9.6", sha256="3bfa75b0ad0db84096ae777218481852c0ebc6c727b3168c1b9e0118e458cf0a")
+    version("4.4.0", sha256="ca753cf4d81dc309bc67b0ea38fd15dc97bc30ce419a7f58d13eb3bf14c4febf")
     version("3.10.0", sha256="b45696dab2d7cc691a3226759c0d3b00c47c8b6e293d96f6436f733303f77f6d")
     version("3.5.3", sha256="e48fabd87db8f3a7df7150a4a5ea22c546ee8bc39bc2473244730d4b56d2cc4e")
     version("3.5.0", sha256="7954a68d0ba23558d753f73437c55f89027cf8f5108c19844d4b82e5af396335")
@@ -33,23 +35,35 @@ class PyPlatformdirs(PythonPackage):
         description="Install from wheel (required for bootstrapping Spack)",
     )
 
-    depends_on("python@3.7:", when="@2.4.1:", type=("build", "run"))
-    depends_on("py-hatch-vcs@0.3:", when="@3:", type="build")
-    depends_on("py-hatch-vcs", when="@2.5.2:", type="build")
-    depends_on("py-hatchling@1.17.1:", when="@3.10:", type="build")
-    depends_on("py-hatchling@1.17:", when="@3.5.2:", type="build")
-    depends_on("py-hatchling@1.14:", when="@3.3:", type="build")
-    depends_on("py-hatchling@1.12.2:", when="@3:", type="build")
-    depends_on("py-hatchling@0.22.0:", when="@2.5.2:", type="build")
+    with default_args(type="build"):
+        depends_on("py-hatch-vcs@0.5:", when="@4.5:")
+        depends_on("py-hatch-vcs@0.4:", when="@4.2:")
+        depends_on("py-hatch-vcs@0.3:", when="@3:")
+        depends_on("py-hatch-vcs", when="@2.5.2:")
 
-    depends_on("py-typing-extensions@4.7.1:", when="@3.10: ^python@:3.7", type=("build", "run"))
-    depends_on("py-typing-extensions@4.6.3:", when="@3.5.2: ^python@:3.7", type=("build", "run"))
-    depends_on("py-typing-extensions@4.5:", when="@3.2: ^python@:3.7", type=("build", "run"))
-    depends_on("py-typing-extensions@4.4:", when="@3: ^python@:3.7", type=("build", "run"))
+        depends_on("py-hatchling@1.29:", when="@4.9.4:")
+        depends_on("py-hatchling@1.27:", when="@4.3.7:")
+        depends_on("py-hatchling@1.17.1:", when="@3.10:")
+        depends_on("py-hatchling@1.17:", when="@3.5.2:")
+        depends_on("py-hatchling@1.14:", when="@3.3:")
+        depends_on("py-hatchling@1.12.2:", when="@3:")
+        depends_on("py-hatchling@0.22.0:", when="@2.5.2:")
 
-    # Historical dependencies
-    depends_on("py-setuptools@44:", when="@:2.5.1", type="build")
-    depends_on("py-setuptools-scm@5:+toml", when="@:2.5.1", type="build")
+        # Historical dependencies
+        depends_on("py-setuptools@44:", when="@:2.5.1")
+        depends_on("py-setuptools-scm@5:+toml", when="@:2.5.1")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@4.5:")
+        depends_on("python@3.9:", when="@4.3.7:")
+        depends_on("python@3.7:", when="@2.4.1:")
+
+        # Historical dependencies
+        with when("@:4.0 ^python@:3.7"):
+            depends_on("py-typing-extensions@4.7.1:", when="@3.10:")
+            depends_on("py-typing-extensions@4.6.3:", when="@3.5.2:")
+            depends_on("py-typing-extensions@4.5:", when="@3.2:")
+            depends_on("py-typing-extensions@4.4:", when="@3:")
 
 
 class PythonPipBuilder(python.PythonPipBuilder):

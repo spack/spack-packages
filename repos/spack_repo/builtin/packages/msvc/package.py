@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems import compiler
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 FC_PATH: Dict[str, str] = dict()
@@ -146,7 +145,7 @@ class Msvc(Package, CompilerPackage):
         compiler_root = os.path.join(os.path.dirname(self.cc), "../../../../../..")
         vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvars64.bat")
         # get current platform architecture and format for vcvars argument
-        arch = spack.platforms.real_host().default.lower()
+        arch = host_platform().default.lower()
         arch = arch.replace("-", "_")
         if self.spec.satisfies("target=x86_64:"):
             arch = "amd64"

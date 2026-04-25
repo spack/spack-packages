@@ -1,0 +1,53 @@
+paths:
+- layout:
+  - executables:
+    - "bin/armclang"
+    - "bin/armclang++"
+    script: |
+      echo "Arm Toolchain for Linux 20.1 clang version 20.1.0"
+      echo "Target: aarch64--linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir: /opt/arm/arm-toolchain-for-linux-20.1/bin"
+  - executables:
+    - "bin/armflang"
+    script: |
+      echo "Arm Toolchain for Linux 20.1 flang version 20.1.0"
+      echo "Target: aarch64--linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir: /opt/arm/arm-toolchain-for-linux-20.1/bin"
+  platforms: [linux]
+  results:
+  - spec: atfl@20.1.0
+    extra_attributes:
+      compilers:
+        c: ".*/bin/armclang$"
+        cxx: ".*/bin/armclang[+][+]$"
+        fortran: ".*/bin/armflang$"
+
+# Negative tests: ensure ATfL does not detect other compilers
+- layout: # does not detect upstream clang/LLVM
+  - executables:
+    - "bin/clang"
+    - "bin/clang++"
+    script: |
+      echo "clang version 20.1.0 (https://github.com/llvm/llvm-project abcdef)"
+      echo "Target: x86_64-unknown-linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir: /usr/bin"
+  platforms: [linux]
+  results: []
+
+- layout: # does not detect ACfL
+  - executables:
+    - "bin/armclang"
+    - "bin/armclang++"
+    - "bin/armflang"
+    script: |
+      echo "Arm C/C++/Fortran Compiler version 19.3.1 (build number 75) (based on LLVM 7.0.2)"
+      echo "Target: aarch64--linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir:"
+      echo "/opt/arm/arm-hpc-compiler-19.3.5_Generic-AArch64_RHEL-7_aarch64-linux/bin"
+  platforms: [linux]
+  results: []
+

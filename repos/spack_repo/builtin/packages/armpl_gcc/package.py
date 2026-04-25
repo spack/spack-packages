@@ -6,13 +6,13 @@ import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
-import spack.platforms
 from spack.package import *
 
 _os_map_before_23 = {
     "ubuntu18.04": "Ubuntu-18.04",
     "ubuntu20.04": "Ubuntu-20.04",
     "ubuntu22.04": "Ubuntu-20.04",
+    "ubuntu24.04": "Ubuntu-20.04",
     "sles15": "SLES-15",
     "centos7": "RHEL-7",
     "centos8": "RHEL-8",
@@ -26,6 +26,7 @@ _os_map_before_23 = {
 _os_map_before_24 = {
     "ubuntu20.04": "Ubuntu-20.04",
     "ubuntu22.04": "Ubuntu-22.04",
+    "ubuntu24.04": "Ubuntu-22.04",
     "debian12": "Ubuntu-22.04",
     "sles15": "SLES-15",
     "centos7": "RHEL-7",
@@ -42,6 +43,7 @@ _os_map_before_24 = {
 _os_pkg_map = {
     "ubuntu20.04": "deb",
     "ubuntu22.04": "deb",
+    "ubuntu24.04": "deb",
     "debian12": "deb",
     "sles15": "rpm",
     "centos7": "rpm",
@@ -56,6 +58,19 @@ _os_pkg_map = {
 }
 
 _versions = {
+    "26.01": {
+        "deb": ("cc55ab4120a5416fa1e90f98e3007b722a066aac5e445b629e2d3006abe3eadb"),
+        "rpm": ("314728809e279743e37be5ac475c2647f3ab902a5be0735bd318c1dd53a9a064"),
+    },
+    "25.07": {
+        "deb": ("28a0cdf84b1f8e61d1d1ea484f4e2ecf645f7d916bb002ed34d46f6eb2e41345"),
+        "rpm": ("274d6f22b2f6c62cd72db4f64a91189159102aea87e6ae951ce92bcff230133b"),
+    },
+    "25.04.1": {
+        "deb": ("2228ba0a4093b5fc7fb0d64ad074560d30e0900e2f2f48f4431aadde5c22fa07"),
+        "rpm": ("666e6813cd54a9a75a33fe92f223f52e12371a1ac517da96695d3487ee1424d8"),
+    },
+    "25.04": {"macOS": ("6917cbccc1decb3ca8c9cbcddaec70284c6dbfa1f6d32c0780db572c3b00cc36")},
     "24.10": {
         "deb": ("2be772d41c0e8646e24c4f57e188e96f2dd8934966ae560c74fa905cbde5e1bc"),
         "macOS": ("04e794409867e6042ed0f487bbaf47cc6edd527dc6ddad67160f1dba83906969"),
@@ -257,7 +272,7 @@ _versions = {
 
 
 def get_os_or_pkg_manager(ver):
-    platform = spack.platforms.host()
+    platform = host_platform()
     if platform.name == "darwin":
         return "macOS"
     if ver.startswith("22."):
@@ -277,8 +292,7 @@ def get_package_url_before_24(version):
     if os == "macOS":
         if armpl_version.startswith("23.06"):
             return (
-                f"{base_url}/{armpl_version_dashed}/"
-                f"armpl_{armpl_version}_{compiler_version}.dmg"
+                f"{base_url}/{armpl_version_dashed}/armpl_{armpl_version}_{compiler_version}.dmg"
             )
         else:
             filename = f"arm-performance-libraries_{armpl_version}_macOS.dmg"
@@ -393,6 +407,7 @@ class ArmplGcc(Package):
 
     conflicts("%msvc", msg="Not compatible with MSVC compiler.")
 
+    variant("examples", default=True, description="Build and run ArmPL examples after install")
     variant("ilp64", default=False, description="use ilp64 specific Armpl library")
     variant("shared", default=True, description="enable shared libs")
     variant(
@@ -407,16 +422,16 @@ class ArmplGcc(Package):
     provides("lapack")
     provides("fftw-api@3")
 
-    depends_on("c", type="build")
-    depends_on("fortran", type="build")
-    requires("^[virtuals=c,fortran] gcc", msg="armpl-gcc is only compatible with the GCC compiler")
-
-    depends_on("gmake", type="build")
+    with when("+examples"):
+        depends_on("c", type="build")
+        depends_on("fortran", type="build")
+        depends_on("gmake", type="build")
+        requires("%c,fortran=gcc", msg="armpl-gcc examples require GCC toolchain")
 
     # Run the installer with the desired install directory
     def install(self, spec, prefix):
         if spec.platform == "darwin":
-            hdiutil = which("hdiutil")
+            hdiutil = which("hdiutil", required=True)
             # Mount image
             mountpoint = os.path.join(self.stage.path, "mount")
             if spec.satisfies("@:23"):
@@ -466,7 +481,16 @@ class ArmplGcc(Package):
             recursive=True,
         )
 
-        armpl_libs += find_system_libraries(["libm"])
+        # Link the same libraries as the gcc used for Arm PL, but only when
+        # building/running examples. Avoid injecting GCC runtimes by default
+        # to keep non-GCC toolchains (e.g., ATfL) conflict-free.
+        if self.spec.satisfies("+examples"):
+            armpl_libs += find_libraries(
+                ["libgomp", "libm"],
+                root=self["gcc"].prefix,
+                shared=self.spec.satisfies("+shared"),
+                recursive=True,
+            )
 
         return armpl_libs
 
@@ -503,8 +527,13 @@ class ArmplGcc(Package):
             env.prepend_path("DYLD_LIBRARY_PATH", join_path(armpl_dir, "lib"))
         else:
             env.prepend_path("LD_LIBRARY_PATH", join_path(armpl_dir, "lib"))
+        if self.spec.satisfies("@:22"):
+            # pkgconfig directory is not in standard ("lib", "lib64", "share") location
+            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "pkgconfig"))
+        else:
+            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "lib/pkgconfig"))
 
-    @run_after("install")
+    @run_after("install", when="+examples")
     def check_install(self):
         armpl_dir = get_armpl_prefix(self.spec)
         suffix = get_armpl_suffix(self.spec)
@@ -531,9 +560,4 @@ class ArmplGcc(Package):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        armpl_dir = get_armpl_prefix(self.spec)
-        if self.spec.satisfies("@:22"):
-            # pkgconfig directory is not in standard ("lib", "lib64", "share") location
-            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "pkgconfig"))
-        else:
-            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "lib/pkgconfig"))
+        self.setup_run_environment(env)

@@ -48,7 +48,8 @@ class Parthenon(CMakePackage):
     # Dependencies
     # ------------------------------------------------------------#
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.16:", type="build")
 

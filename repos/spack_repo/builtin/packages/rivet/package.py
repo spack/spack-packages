@@ -20,6 +20,8 @@ class Rivet(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("4.1.2", sha256="61247fbc3d6a48a35ca01a2f2af9f626c4ce2a1401a50df46b6078cb20ecde46")
+    version("4.1.1", sha256="bd1d513355c3f72f0f88a972f39dd9f1144ceae2cb472542e5d3060feab4f1cc")
     version("4.1.0", sha256="6548a351a44e5a4303fb2277e7521690a9d84195df96d92c707b816f3b40c843")
     version("4.0.3", sha256="dbb97b769d1877f34c3c50190127bfda7847bcec79ba1de59561fdf43cdd4869")
     version("4.0.2", sha256="65a3b36f42bff782ed2767930e669e09b140899605d7972fc8f77785b4a882c0")
@@ -48,6 +50,20 @@ class Rivet(AutotoolsPackage):
         values=(conditional("2", when="@:3.1.10"), "3"),
         description="HepMC version to link against",
     )
+
+    with when("@4.1:"):
+        variant(
+            "plugin-match",
+            default="none",
+            multi=True,
+            description="List of Rivet analyses to be included",
+        )
+        variant(
+            "plugin-unmatch",
+            default="none",
+            multi=True,
+            description="List of Rivet analyses to be excluded",
+        )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -153,6 +169,16 @@ class Rivet(AutotoolsPackage):
         else:
             args += ["--with-hepmc3=" + self.spec["hepmc3"].prefix]
             args += ["--with-hepmc3-libpath=" + self.spec["hepmc3"].libs.directories[0]]
+
+        if "plugin-match" in self.spec.variants:
+            val = self.spec.variants["plugin-match"].value
+            if "none" not in val:
+                args += [f"--with-plugin-match={' '.join(val)}"]
+
+        if "plugin-unmatch" in self.spec.variants:
+            val = self.spec.variants["plugin-unmatch"].value
+            if "none" not in val:
+                args += [f"--with-plugin-unmatch={' '.join(val)}"]
 
         args += ["--with-fastjet=" + self.spec["fastjet"].prefix]
         args += ["--with-yoda=" + self.spec["yoda"].prefix]

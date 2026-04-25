@@ -26,6 +26,8 @@ class Coreutils(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("9.10", sha256="16535a9adf0b10037364e2d612aad3d9f4eca3a344949ced74d12faf4bd51d25")
+    version("9.7", sha256="e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf")
     version("9.5", sha256="cd328edeac92f6a665de9f323c93b712af1858bc2e0d88f3f7100469470a1b8a")
     version("9.4", sha256="ea613a4cf44612326e917201bbbcdfbd301de21ffc3b59b6e5c07e040b275e52")
     version("9.3", sha256="adbcfcfe899235b71e8768dcf07cd532520b7f54f9a8064843f8d199a904bbaa")
@@ -39,7 +41,10 @@ class Coreutils(AutotoolsPackage, GNUMirrorPackage):
     version("8.26", sha256="155e94d748f8e2bc327c66e0cbebdb8d6ab265d2f37c3c928f7bf6c3beba9a8e")
     version("8.23", sha256="ec43ca5bcfc62242accb46b7f121f6b684ee21ecd7d075059bf650ff9e37b82d")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+
+    # https://cgit.git.savannah.gnu.org/cgit/coreutils.git/commit/?id=0d77e1b7ea2840dbc10994f61894f1a3f64b46f9
+    depends_on("openssl@3:", type="link", when="@8.32:")
 
     variant(
         "gprefix",
@@ -60,7 +65,7 @@ class Coreutils(AutotoolsPackage, GNUMirrorPackage):
 
     def configure_args(self):
         spec = self.spec
-        configure_args = []
+        configure_args = ["--disable-nls"]
         if spec.satisfies("platform=darwin"):
             if self.spec.satisfies("+gprefix"):
                 configure_args.append("--program-prefix=g")

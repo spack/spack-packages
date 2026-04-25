@@ -10,7 +10,7 @@ from spack.package import *
 class PyAwkward(PythonPackage):
     """Manipulate JSON-like data with NumPy-like idioms."""
 
-    git = "https://github.com/scikit-hep/awkward-1.0.git"
+    git = "https://github.com/scikit-hep/awkward.git"
     pypi = "awkward/awkward-1.1.2.tar.gz"
     homepage = "https://awkward-array.org"
 
@@ -19,6 +19,11 @@ class PyAwkward(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.9.0", sha256="0ebe50ca872a8790d4148c0f6f0844fb0c345a6ff3840c1611065ef27e8b6e1b")
+    version("2.8.12", sha256="90ffe41d081b10ab24337c76537aa9a25920e6653d1ae562b1537dc1934223f4")
+    version("2.8.5", sha256="4b9049440bb98214e05908098afd0d4f66af0b1b23c158159f9774db27447c89")
+    version("2.7.4", sha256="e79b4bfd68b2030123b4bb67d5179f92c7e9bede1dadc5a1416fce0acb6cc975")
+    version("2.6.10", sha256="3e8397e9bc4902c02d521d19552a6afb2bd94406c767bc85894bdb4ab3e9c4dc")
     version("2.6.6", sha256="6eeb426ca41b51fe3c36fbe767b90259979b08c14e3562497a71195a447c8b3c")
     version("2.1.1", sha256="fda8e1634161b8b46b151c074ff0fc631fc0feaec2ec277c4b40a2095110b0dd")
     version("2.1.0", sha256="73f7a76a1fb43e2557befee54b1381f3e6d90636983cdc54da1c2bcb9ad4c1a8")
@@ -69,19 +74,31 @@ class PyAwkward(PythonPackage):
         ("@2.0.9", "@10"),
         ("@2.0.10", "@11"),
         ("@2.1.0:2.1.1", "@12"),
-        ("@2.6.6:", "@35"),
+        ("@2.6.6", "@35"),
+        ("@2.6.10", "@40"),
+        ("@2.7.4", "@44"),
+        ("@2.8.5", "@47"),
+        ("@2.8.6:2.8.7", "@48"),
+        ("@2.8.8", "@49"),
+        ("@2.8.9:2.8.10", "@50"),
+        ("@2.8.11:2.8.12", "@51"),
+        ("@2.9.0", "@52"),
     ]
+    depends_on("py-awkward-cpp", type=("build", "run"))
     for _awkward, _awkward_cpp in _awkward_to_awkward_cpp_map:
-        depends_on("py-awkward-cpp{}".format(_awkward_cpp), when=_awkward, type=("build", "run"))
+        depends_on(f"py-awkward-cpp{_awkward_cpp}", when=_awkward, type=("build", "run"))
 
     depends_on("python@2.7:2.8,3.5:", type=("build", "run"))
     depends_on("python@3.6:", when="@1.9:", type=("build", "run"))
     depends_on("python@3.7:", when="@1.10:", type=("build", "run"))
     depends_on("python@3.8:", when="@2.3:", type=("build", "run"))
+    depends_on("python@3.9:", when="@2.7:", type=("build", "run"))
+    depends_on("python@3.10:", when="@2.9:", type=("build", "run"))
     depends_on("py-numpy@1.13.1:", when="@:1", type=("build", "run"))
     depends_on("py-numpy@1.14.5:", when="@2.0", type=("build", "run"))
     depends_on("py-numpy@1.17.0:", when="@2.1:", type=("build", "run"))
     depends_on("py-numpy@1.18.0:", when="@2.3:", type=("build", "run"))
+    depends_on("py-numpy@1.21.3:", when="@2.9:", type=("build", "run"))
     depends_on("py-pybind11", type=("build", "link"))
     depends_on("py-importlib-resources", when="@2:2.3 ^python@:3.8", type=("build", "run"))
     depends_on("py-typing-extensions@4.1:", when="@2: ^python@:3.10", type=("build", "run"))
@@ -92,6 +109,9 @@ class PyAwkward(PythonPackage):
     depends_on("py-wheel@0.36.0:", when="@:1.7.0", type="build")
     depends_on("py-importlib-metadata@4.13.0:", when="@2.4.0:", type=("build", "run"))
     depends_on("py-fsspec@2022.11.0:", when="@2.6.0:", type=("build", "run"))
+
+    depends_on("cxx", type="build")
+    depends_on("c", type="build")
 
     @when("@1.9.0:")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

@@ -25,6 +25,7 @@ class MariadbCClient(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
+    version("3.4.5", sha256="b17e193816cb25c3364c2cc92a0ad3f1d0ad9f0f484dc76b8e7bdb5b50eac1a3")
     version("3.3.8", sha256="f9f076b4aa9fb22cc94b24f82c80f9ef063805ecd6533a2eb5d5060cf93833e8")
     version("3.3.7", sha256="975a9a862fed80f84e0206373f7ef05537aada5b65d99b71b36ab892b44240bf")
     version("3.3.5", sha256="ca72eb26f6db2befa77e48ff966f71bcd3cb44b33bd8bbb810b65e6d011c1e5c")
@@ -79,6 +80,12 @@ class MariadbCClient(CMakePackage):
         "https://github.com/mariadb-corporation/mariadb-connector-c/commit/242cab8c.patch?full_index=1",
         sha256="760fd19cd8d4d756a0799ed9110cfd2898237e43835fefe3668079c5b87fc36d",
         when="@:3.1.12",
+    )
+
+    patch(
+        "https://github.com/mariadb-corporation/mariadb-connector-c/commit/b10b76e5a2b983d86bd487873608abce8e0d507b.patch?full_index=1",
+        sha256="968a84fd5e33e426b4224bf828ec0f354fce90339dc9e2e27ff2c261e2ad5c00",
+        when="@3: %gcc@15:",
     )
 
     def url_for_version(self, version):

@@ -1,8 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
-from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
 
 from spack.package import *
@@ -12,7 +10,6 @@ class CrayMvapich2(MpichEnvironmentModifications, Package):
     """Cray/HPE packaging of MVAPICH2 for HPE Apollo systems"""
 
     homepage = "https://docs.nersc.gov/development/compilers/wrappers/"
-    has_code = False  # Skip attempts to fetch source that is not available
 
     maintainers("hppritcha")
 
@@ -28,7 +25,20 @@ class CrayMvapich2(MpichEnvironmentModifications, Package):
 
     provides("mpi@3")
 
-    requires("platform=linux", msg="Cray MVAPICH2 is only available on Cray")
+    has_code = False  # Skip attempts to fetch a source that is not available
+
+    # Allows attaching compilers to externals in packages.yaml
+    depends_on("c", type="build")
+
+    requires("platform=linux", msg="Cray software is only available on linux")
+
+    def install(self, spec, prefix):
+        raise InstallError(
+            self.spec.format(
+                "{name} is not installable, you need to specify "
+                "it as an external package in packages.yaml"
+            )
+        )
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.has_virtual_dependency("c"):
@@ -40,11 +50,3 @@ class CrayMvapich2(MpichEnvironmentModifications, Package):
         if self.spec.has_virtual_dependency("fortran"):
             env.set("MPIFC", self["fortran"].fortran)
             env.set("MPIF77", self["fortran"].fortran)
-
-    def install(self, spec, prefix):
-        raise InstallError(
-            self.spec.format(
-                "{name} is not installable, you need to specify "
-                "it as an external package in packages.yaml"
-            )
-        )

@@ -14,15 +14,28 @@ class Rocfft(CMakePackage):
     """Radeon Open Compute FFT library"""
 
     homepage = "https://github.com/ROCm/rocFFT/"
-    git = "https://github.com/ROCm/rocFFT.git"
-    url = "https://github.com/ROCm/rocfft/archive/rocm-6.4.1.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocfft"]
-
     license("MIT")
-    version("master", branch="master", deprecated=True)
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocFFT/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="047e4e93e0b12869bf42136b5eb683df3a1635b01a58bbb25c8861df291ab285")
+    version("7.1.0", sha256="8cd4fcca0b8b730135f76bb34f95965348b1809061af65ff6bfbd4ad2ac85e0d")
+    version("7.0.2", sha256="05ccbdcb9d2860c72ff9665670aac44286aaaeabd4fb4e9530e7f4f1b5b01c71")
+    version("7.0.0", sha256="d0fb29b9ff90f603045cbe0f2f2d5db6fb9ff5d4d667d304565b80a62c1ed767")
+    version("6.4.3", sha256="9ccd198ab1ec1b729992d00fbe5f9e3955ed77690974d8bd1b713539b6c21c7e")
+    version("6.4.2", sha256="5dd068127129ad537de176d21d009f1b1b9540274dee13c486e9c4607629aa77")
     version("6.4.1", sha256="66e543990736bc4bf3b27fa085cca3bea0d42252f960be376371549707e35373")
     version("6.4.0", sha256="0e9f3f23d8facee65e32baaec7941119b56eb17313b8b514e1c3994c9777c320")
     version("6.3.3", sha256="b2edb5c39215b98e0abc485d2b277a0b8c6f87f06e9b0770a60f5568ef52e62e")
@@ -39,15 +52,6 @@ class Rocfft(CMakePackage):
     version("6.0.0", sha256="fb8ba56572702e77e4383d922cd1fee4ad3fa5f63a5ebdb3d9c354439a446992")
     version("5.7.1", sha256="202f11f60dc8738e29bbd1b397d419e032794f8bffb7f48f2b31f09cc5f08bc2")
     version("5.7.0", sha256="3c4a1537a6ec76dc9b622644fe3890647306bf9f28f61c5d2028259c31bb964f")
-    version("5.6.1", sha256="a65861e453587c3e6393da75b0b1976508c61f968aecda77fbec920fea48489e")
-    version("5.6.0", sha256="e3d4a6c1bdac78f9a22033f57011af783d560308103f73542f9e0e4dd133d38a")
-    version("5.5.1", sha256="57423a64f5cdb1c37ff0891b6c17b59f73198d46be42db4ae23781ef2c0cd49d")
-    version("5.5.0", sha256="9288152e66504b06082e4eed8cdb791b4f9ae2836b3defbeb4d2b54901b96485")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="ed9664adc9825c237327497bc4b23f020d50be7645647f14a45f4d943dd506e7")
-        version("5.4.0", sha256="d35a67332f4425fba1824eed78cf98d5c9a17a422614ff3f4cba2461df952336")
-        version("5.3.3", sha256="678c18710578c1fb36a0009311bb79de7607c3468f9102cfba56a866ebb7ff78")
-        version("5.3.0", sha256="d655c5541c4aff4267e80e36d002fc3a55c2f84a0ae8631197c12af3bf03fa7d")
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -79,19 +83,11 @@ class Rocfft(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
     depends_on("fftw@3.3.8:", type="test")
     depends_on("boost@1.64.0: +program_options", type="test")
-    depends_on("rocm-openmp-extras", type="test")
+    depends_on("rocm-openmp-extras", type="test", when="@:7.1")
     depends_on("hiprand", type="test")
     depends_on("rocrand", type="test")
 
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -108,13 +104,18 @@ class Rocfft(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
-        "master",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    # Patch to add install prefix header location for sqlite for 5.4
-    patch("0004-fix-missing-sqlite-include-paths.patch", when="@5.4.0:5.5")
     # Patch to fix the build issue when --test=root is enabled
     # This adds  the include headers from the rocrand and fftw in the cmakelists.txt
     # issue is seen from 5.7.0 onwards
@@ -131,6 +132,13 @@ class Rocfft(CMakePackage):
         sha256="bac7873185ac60f2aaa50e278f0b8d52b4d79d586bf7f52db1da33559569ba54",
         when="@6.0.0",
     )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocfft"
+        else:
+            return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -163,21 +171,21 @@ class Rocfft(CMakePackage):
         args = [
             self.define("BUILD_CLIENTS_TESTS", self.run_tests),
             self.define("SQLITE_USE_SYSTEM_PACKAGE", True),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         tgt = self.spec.variants["amdgpu_target"]
 
         if "auto" not in tgt:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         # See https://github.com/ROCm/rocFFT/issues/322
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.2.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-
-        if self.spec.satisfies("@5.3.0:"):
-            args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
-
         return args

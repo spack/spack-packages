@@ -19,6 +19,8 @@ class Squashfuse(AutotoolsPackage):
     license("BSD-2-Clause")
 
     version("master", branch="master")
+    version("0.6.1", sha256="7b18a58c40a3161b5c329ae925b72336b5316941f906b446b8ed6c5a90989f8c")
+    version("0.6.0", sha256="56ff48814d3a083fad0ef427742bc95c9754d1ddaf9b08a990d4e26969f8eeeb")
     version("0.5.2", sha256="54e4baaa20796e86a214a1f62bab07c7c361fb7a598375576d585712691178f5")
     version("0.5.1", sha256="4dd81ea10323078193e5435ad8481b59f3ac8539648ddc732bcaea50b13966c9")
     version("0.5.0", sha256="d7602c7a3b1d0512764547d27cb8cc99d1b21181e1c9819e76461ee96c2ab4d9")
@@ -35,7 +37,6 @@ class Squashfuse(AutotoolsPackage):
     variant("shared", default=True, description="Enable shared libraries")
     variant("static", default=True, description="Enable static libraries")
     variant("min_size", default=False, description="Build small binaries")
-
     variant("zlib", default=True, description="Enable zlib/gzip compression support")
     variant("lz4", default=True, description="Enable LZ4 compression support")
     variant("lzo", default=True, description="Enable LZO compression support")

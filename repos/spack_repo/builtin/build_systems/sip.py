@@ -5,12 +5,14 @@ import os
 import re
 
 from spack.package import (
+    BuilderWithDefaults,
     Executable,
     PackageBase,
     Prefix,
     Spec,
     build_system,
     depends_on,
+    execute_install_time_tests,
     extends,
     find,
     register_builder,
@@ -20,8 +22,6 @@ from spack.package import (
     when,
     working_dir,
 )
-
-from ._checks import BuilderWithDefaults, execute_install_time_tests
 
 
 class SIPPackage(PackageBase):
@@ -40,7 +40,7 @@ class SIPPackage(PackageBase):
     #: Callback names for install-time testing
     install_time_test_callbacks = ["test_imports"]
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "sip"
+    default_buildsystem = "sip"
 
     build_system("sip")
 
@@ -124,10 +124,10 @@ class SIPBuilder(BuilderWithDefaults):
     phases = ("configure", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("configure_args", "build_args", "install_args")
+    package_methods = ("configure_args", "build_args", "install_args")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_targets",
         "install_targets",
         "build_time_test_callbacks",

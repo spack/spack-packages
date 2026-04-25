@@ -34,7 +34,7 @@ class Cracklib(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         with working_dir("src"):
-            sh = which("sh")
+            sh = which("sh", required=True)
             sh("./autogen.sh")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

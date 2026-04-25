@@ -35,7 +35,7 @@ class Apfel(AutotoolsPackage, CMakePackage):
     depends_on("fortran", type="build")
 
     with when("build_system=cmake"):
-        depends_on("cmake@03.15:")
+        depends_on("cmake@3.15:", type="build")
 
     extends("python", when="+python")
     depends_on("swig", when="+python")

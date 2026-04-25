@@ -18,6 +18,8 @@ class PyGreenlet(PythonPackage):
 
     license("MIT AND PSF-2.0", checked_by="tgamblin")
 
+    version("3.4.0", sha256="f50a96b64dafd6169e595a5c56c9146ef80333e67d4476a65a9c55f400fc22ff")
+    version("3.2.2", sha256="ad053d34421a2debba45aa3cc39acf454acbcd025b3fc1a9f8a0dee237abd485")
     version("3.1.1", sha256="4ce3ac6cdb6adf7946475d7ef31777c26d94bccc377e070a7986bd2d5c515467")
     version("3.0.3", sha256="43374442353259554ce33599da8b692d5aa96f8976d567d4badf263371fbe491")
     version("3.0.0a1", sha256="1bd4ea36f0aeb14ca335e0c9594a5aaefa1ac4e2db7d86ba38f0be96166b3102")
@@ -28,15 +30,19 @@ class PyGreenlet(PythonPackage):
     version("0.4.17", sha256="41d8835c69a78de718e466dd0e6bfd4b46125f21a67c3ff6d76d8d8059868d6b")
     version("0.4.13", sha256="0fef83d43bf87a5196c91e73cb9772f945a4caaff91242766c5916d1dd1381e4")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     with default_args(type=("build", "link", "run")):
-        depends_on("python")
-        depends_on("python@:3.11", when="@:2")
+        depends_on("python@3.10:", when="@3.3:")
+        depends_on("python@3.9:", when="@3.2:")
         depends_on("python@:3.12", when="@:3.0")
+        depends_on("python@:3.11", when="@:2")
+        depends_on("python")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools@40.8.0:", type="build", when="@3.0.2:")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+
+        depends_on("py-setuptools@77.0.3:", when="@3.3.1:")
+        depends_on("py-setuptools@40.8:", when="@3.0.2:")
+        depends_on("py-setuptools")
 
     conflicts("%gcc@:7", when="@3.1.1:", msg="GCC-8 required as of 3.1.1")

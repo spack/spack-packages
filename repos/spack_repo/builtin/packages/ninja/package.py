@@ -24,8 +24,9 @@ class Ninja(Package):
 
     license("Apache-2.0")
 
-    version("kitware", branch="features-for-fortran", git="https://github.com/Kitware/ninja.git")
     version("master", branch="master")
+    version("1.13.2", sha256="974d6b2f4eeefa25625d34da3cb36bdcebe7fbce40f4c16ac0835fd1c0cbae17")
+    version("1.13.0", sha256="f08641d00099a9e40d44ec0146f841c472ae58b7e6dd517bee3945cfd923cedf")
     version("1.12.1", sha256="821bdff48a3f683bc4bb3b6f0b5fe7b2d647cf65d52aeb63328c91a6c6df285a")
     version("1.12.0", sha256="8b2c86cd483dc7fcb7975c5ec7329135d210099a89bc7db0590a07b0bbfe49a5")
     version("1.11.1", sha256="31747ae633213f1eda3842686f83c2aa1412e0f5691d1c14dbbcc67fe7400cea")
@@ -37,6 +38,12 @@ class Ninja(Package):
     version("1.8.2", sha256="86b8700c3d0880c2b44c2ff67ce42774aaf8c28cbf57725cb881569288c1c6f4")
     version("1.7.2", sha256="2edda0a5421ace3cf428309211270772dd35a91af60c96f93f90df6bc41b16d9")
     version("1.6.0", sha256="b43e88fb068fe4d92a3dfd9eb4d19755dae5c33415db2e9b7b61b4659009cde7")
+    version(
+        "kitware",
+        branch="kitware-staged-features",
+        git="https://github.com/Kitware/ninja.git",
+        deprecated=True,
+    )
 
     # ninja@1.12: needs googletest source, but 1.12 itself needs a patch to use it
     resource(
@@ -60,6 +67,8 @@ class Ninja(Package):
     depends_on("cxx", type="build")  # generated
 
     depends_on("python", type="build")
+    # Python 3.13 added in https://github.com/ninja-build/ninja/pull/2340
+    depends_on("python@:3.12", type="build", when="@:1.11")
     depends_on("re2c@0.11.3:", type="build", when="+re2c")
 
     phases = ["configure", "install"]
@@ -101,11 +110,11 @@ class Ninja(Package):
         with working_dir(prefix.bin):
             symlink("ninja", "ninja-build")
 
-    def setup_dependent_package(self, module, dspec):
+    def setup_dependent_package(self, module, dependent_spec):
         name = "ninja"
 
         module.ninja = MakeExecutable(
             which_string(name, path=[self.spec.prefix.bin], required=True),
-            jobs=determine_number_of_jobs(parallel=dspec.package.parallel),
-            supports_jobserver=self.spec.version == ver("kitware"),
+            jobs=determine_number_of_jobs(parallel=dependent_spec.package.parallel),
+            supports_jobserver=self.spec.satisfies("@kitware,1.13:"),
         )

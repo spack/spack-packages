@@ -30,6 +30,11 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     # In spack numbers take precedence over alphabetic chars when sorting versions.
+    version(
+        "1.6.0",
+        sha256="06b1b2839a1794ec006db8f86683189bdd974e0404167ff3fc3705f0af02de4e",
+        preferred=True,
+    )
     version("1.5.2", sha256="d78ff8735e9fc6f86abc4830563799a3dd3c9abf33d13d82ed42dbc28d48685d")
 
     # Historical versions using fork (with patches for Spack compatibility)
@@ -37,7 +42,6 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
         "compat-2023-12-09",
         commit="d61d8c06c49a72b2e582cc02de88b7b27e1275d2",
         git="https://github.com/robertu94/MGARD.git",
-        preferred=True,
     )
     version(
         "compat-2023-03-31",
@@ -95,7 +99,7 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zstd")
     depends_on("protobuf@3.4:", when="@compat-2022-11-18:")
     # See https://github.com/CODARcode/MGARD/issues/240
-    depends_on("protobuf@:3.28", when="@:1.5.2")
+    depends_on("protobuf@:28", when="@:1.5.2")
     depends_on("libarchive", when="@compat-2021-11-12:")
     depends_on("tclap", when="@compat-2021-11-12")
     depends_on("yaml-cpp", when="@compat-2021-11-12:")
@@ -116,14 +120,21 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     conflicts(
         "%gcc@:7", when="@compat-2022-11-18:", msg="requires std::optional and other c++17 things"
     )
-    conflicts("protobuf@3.22:", when="target=ppc64le", msg="GCC 9.4 segfault in CI")
-    conflicts("protobuf@3.22:", when="+cuda target=aarch64:", msg="nvcc fails on ARM SIMD headers")
+    conflicts("protobuf@22:", when="target=ppc64le", msg="GCC 9.4 segfault in CI")
+    conflicts("protobuf@22:", when="+cuda target=aarch64:", msg="nvcc fails on ARM SIMD headers")
     # https://github.com/abseil/abseil-cpp/issues/1629
     conflicts("abseil-cpp@20240116.1", when="+cuda", msg="triggers nvcc parser bug")
 
-    patch("hip-pointer-attribute-struct-fix.patch", when="@:2023-12-09")
-    patch("hip-cub-configure.patch", when="@:2023-12-09")
-    patch("hip-abs-reduce-type.patch", when="@:2023-12-09")
+    patch("hip-pointer-attribute-struct-fix.patch", when="@=1.5.2")
+    patch("hip-cub-configure.patch", when="@=1.5.2")
+    patch("hip-abs-reduce-type.patch", when="@=1.5.2")
+
+    # https://github.com/CODARcode/MGARD/issues/252
+    patch(
+        "https://github.com/CODARcode/MGARD/commit/8d13307586cc0e87b2d1164bd0b4dd2cc18f9dc2.patch?full_index=1",
+        sha256="1c64ad285f616d87d13ae4faa1ef57adeb6a3f20013f78b3e36d2beae479b4db",
+        when="@1.6",
+    )
 
     def flag_handler(self, name, flags):
         if name == "cxxflags":
@@ -143,24 +154,28 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
         args = ["-DBUILD_TESTING=OFF"]
         args.append(self.define_from_variant("MGARD_ENABLE_CUDA", "cuda"))
         args.append(self.define_from_variant("MGARD_ENABLE_HIP", "rocm"))
+
         if "+cuda" in spec:
             cuda_arch_list = spec.variants["cuda_arch"].value
             arch_str = ";".join(cuda_arch_list)
             if cuda_arch_list[0] != "none":
                 args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
+
+            if self.spec.satisfies("@:compat-2021-11-12"):
+                if "75" in cuda_arch_list:
+                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_TURING=ON")
+                if "70" in cuda_arch_list:
+                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_VOLTA=ON")
+
         if "+rocm" in spec:
             args.append(CMakeBuilder.define_hip_architectures(self))
-        if self.spec.satisfies("@:compat-2021-11-12"):
-            if "+cuda" in self.spec:
-                if "75" in cuda_arch:
-                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_TURING=ON")
-                if "70" in cuda_arch:
-                    args.append("-DMGARD_ENABLE_CUDA_OPTIMIZE_VOLTA=ON")
-        elif self.spec.satisfies("@compat-2022-11-18:"):
+
+        if self.spec.satisfies("@compat-2022-11-18:"):
             args.append("-DMAXIMUM_DIMENSION=4")  # how do we do variants with arbitrary values
             args.append("-DMGARD_ENABLE_CLI=OFF")  # the CLI is busted
             args.append(self.define_from_variant("MGARD_ENABLE_OPENMP", "openmp"))
             args.append(self.define_from_variant("MGARD_ENABLE_TIMING", "timing"))
             args.append(self.define_from_variant("MGARD_ENABLE_SERIAL", "serial"))
             args.append(self.define_from_variant("MGARD_ENABLE_UNSTRUCTURED", "unstructured"))
+
         return args

@@ -26,6 +26,12 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
 
     license("X11")
 
+    version("6.6", sha256="355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11")
+    version(
+        "6.5-20250705",
+        sha256="73f6c22db6c3fcac562e7b35aebf7d4cbb253ea30ba2ee465ab84d7d1b5cefc1",
+        url="https://invisible-mirror.net/archives/ncurses/current/ncurses-6.5-20250705.tgz",
+    )
     version("6.5", sha256="136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6")
     version("6.4", sha256="6931283d9ac87c5073f30b6290c4c75f21632bb4fc3603ac8100812bed248159")
     version("6.3", sha256="97fc51ac2b085d4cde31ef4d2c3122c21abc217e9090a43a30fc5ec21684e059")
@@ -191,7 +197,7 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
         headers = glob.glob(os.path.join(prefix.include, "ncursesw", "*.h"))
         for header in headers:
             h = os.path.basename(header)
-            os.symlink(os.path.join("ncursesw", h), os.path.join(prefix.include, h))
+            symlink(os.path.join("ncursesw", h), os.path.join(prefix.include, h))
 
         if spec.satisfies("@6.3:"):
             pc_stage = "{0}/lib/pkgconfig".format(self.stage.source_path)
@@ -205,7 +211,7 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
         libncurses = "{0}/libncurses.{1}".format(self.prefix.lib, soext)
         libcurses = "{0}/libcurses.{1}".format(self.prefix.lib, soext)
         if not os.path.exists(libcurses) and os.path.exists(libncurses):
-            os.symlink(libncurses, libcurses)
+            symlink(libncurses, libcurses)
 
     def query_parameter_options(self):
         """Use query parameters passed to spec (e.g., "spec[ncurses:wide]")

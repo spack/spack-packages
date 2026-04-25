@@ -1,0 +1,82 @@
+spack:
+  view: false
+
+  include:
+  - ../../.ci/gitlab/
+
+  packages:
+    all:
+      require:
+      - +mps
+      - ~cuda
+      - ~rocm
+      - target=m1
+    mpi:
+      require:
+      - mpich
+    openblas:
+      require:
+      - ~fortran
+      - target=m1
+    python:
+      require:
+      - "@3.13:"
+      - target=m1
+
+  specs:
+  # Hugging Face
+  - py-transformers
+
+  # JAX
+  - py-jax
+  - py-jaxlib
+
+  # Keras
+  - py-keras backend=tensorflow
+  - py-keras backend=jax
+  - py-keras backend=torch
+
+  # PyTorch
+  - py-botorch
+  - py-gpytorch
+  - py-kornia
+  - py-lightning
+  - py-pytorch-lightning
+  - py-segmentation-models-pytorch
+  - py-timm
+  - py-torch
+  - py-torch-geometric
+  - py-torch-nvidia-apex
+  - py-torchaudio
+  - py-torchgeo
+  - py-torchmetrics
+  - py-torchvision
+  - py-vector-quantize-pytorch
+
+  # scikit-learn
+  - py-scikit-learn
+
+  # TensorBoard
+  - py-tensorboard
+  - py-tensorboardx
+
+  # TensorFlow
+  - py-tensorflow
+  - py-tensorflow-datasets
+  - py-tensorflow-metadata
+  # - py-tensorflow-probability # conflict with macos tahoe
+
+  # XGBoost
+  - py-xgboost
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        variables:
+          CI_GPG_KEY_ROOT: /etc/protected-runner
+
+  cdash:
+    build-group: Machine Learning MPS
+    url: https://cdash.spack.io
+    project: Spack Testing
+    site: Cloud Gitlab Infrastructure

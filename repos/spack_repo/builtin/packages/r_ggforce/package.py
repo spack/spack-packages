@@ -26,6 +26,8 @@ class RGgforce(RPackage):
     version("0.3.2", sha256="4cce8acb60ce06af44c1c76bbacd7de129eed9b51ed6a85e03a9bf55b0eff4d2")
     version("0.3.1", sha256="a05271da9b226c12ae5fe6bc6eddb9ad7bfe19e1737e2bfcd6d7a89631332211")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r-ggplot2@3.0.0:", type=("build", "run"))
     depends_on("r-ggplot2@3.3.6:", type=("build", "run"), when="@0.4.1:")

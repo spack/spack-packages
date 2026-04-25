@@ -71,13 +71,13 @@ class Parflow(CMakePackage):
     def test_single_phase_flow(self):
         """Run the single phase flow test"""
         run_path = join_path(self.spec.prefix, self.examples_dir)
-        options = ["default_single.tcl", "1", "1" "1"]
+        options = ["default_single.tcl", "1", "1", "1"]
         with working_dir(run_path):
-            exe = which(f"{self.spec['tcl'].prefix.bin}/tclsh")
+            exe = which(f"{self.spec['tcl'].prefix.bin}/tclsh", required=True)
             exe(*options)
 
     def test_check_version(self):
         """Test if exe executes"""
-        exe = which(join_path(self.prefix.bin, "parflow"))
+        exe = which(join_path(self.prefix.bin, "parflow"), required=True)
         out = exe("-v", output=str.split, error=str.split)
         assert str(self.spec.version) in out

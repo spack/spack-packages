@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 530a0fc..86242fa 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -180,8 +180,8 @@ IF (NOT DEFINED BORINGSSL_LIB AND DEFINED BORINGSSL_DIR)
+                 NO_DEFAULT_PATH)
+         ELSE()
+             FIND_LIBRARY(BORINGSSL_LIB_${LIB_NAME}
+-                NAMES lib${LIB_NAME}${LIB_SUFFIX}
+-                PATHS ${BORINGSSL_DIR}/${LIB_NAME}
++                NAMES ${LIB_NAME}
++                PATHS "${BORINGSSL_DIR}/lib"
+                 NO_DEFAULT_PATH)
+         ENDIF()
+         IF(BORINGSSL_LIB_${LIB_NAME})

@@ -1,0 +1,14 @@
+diff --git a/configure.bat b/configure.bat
+index 500d627f..3d431df4 100644
+--- a/configure.bat
++++ b/configure.bat
+@@ -27,7 +27,7 @@
+ ::
+ :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+ 
+-set "srcpath=%~dp0"
++set "srcpath=%~sdp0"
+ set "configure=%srcpath%qtbase\configure.bat"
+ if not exist "%configure%" (
+     echo %configure% not found. Did you forget to run "init-repository"? >&2
+Submodule qtdeclarative contains modified content

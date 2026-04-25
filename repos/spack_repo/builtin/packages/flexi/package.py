@@ -43,8 +43,7 @@ class Flexi(CMakePackage):
         values=("br1", "br2"),
         multi=False,
         description=(
-            "Two different lifting methods for the parabolic part of "
-            "the equation system available"
+            "Two different lifting methods for the parabolic part of the equation system available"
         ),
     )
     variant(
@@ -61,7 +60,7 @@ class Flexi(CMakePackage):
         "parabolic",
         default=True,
         description=(
-            "Defines whether the parabolic part of the chosen system " "should be included or not"
+            "Defines whether the parabolic part of the chosen system should be included or not"
         ),
     )
     variant(

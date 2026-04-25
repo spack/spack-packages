@@ -13,10 +13,11 @@ class Cli11(CMakePackage):
 
     homepage = "https://cliutils.github.io/CLI11/book/"
     url = "https://github.com/CLIUtils/CLI11/archive/v1.9.1.tar.gz"
-    maintainers("nightlark")
+    maintainers("nightlark", "sethrj")
 
     license("BSD-3-Clause")
 
+    version("2.6.1", sha256="377691f3fac2b340f12a2f79f523c780564578ba3d6eaf5238e9f35895d5ba95")
     version("2.5.0", sha256="17e02b4cddc2fa348e5dbdbb582c59a3486fa2b2433e70a0c3bacb871334fd55")
     version("2.4.2", sha256="f2d893a65c3b1324c50d4e682c0cdc021dd0477ae2c048544f39eed6654b699a")
     version("2.4.1", sha256="73b7ec52261ce8fe980a29df6b4ceb66243bb0b779451dbd3d014cfec9fdbb58")
@@ -30,18 +31,31 @@ class Cli11(CMakePackage):
 
     variant("pic", default=True, description="Produce position-independent code")
 
-    depends_on("cxx", type="build")  # generated
+    # When it is precompiled, CLI11_COMPILE gets defined
+    # https://github.com/CLIUtils/CLI11/blob/bb9bd85e3b8129571b084911affc6f0e9ae6be25/src/CMakeLists.txt#L6
+    # which causes cli11 to look for <imp/> which
+    # is not installed when the static lib is created. The itention seems to be to use
+    # precompiled via add_subdirectory(CLI11).
+    variant("precompiled", default=False, description="Library is compiled into a static library")
 
-    depends_on("cmake@3.4:", type="build")
-    depends_on("cmake@3.5:", type="build", when="@2.4:")
-    depends_on("cmake@3.10:", type="build", when="@2.5:")
+    depends_on("cxx", type="build")
+
+    depends_on("cmake@3.4:", type="build", when="@:2.3")
+    depends_on("cmake@3.5:", type="build", when="@2.4")
+    depends_on("cmake@3.10:", type="build", when="@2.5")
+    depends_on("cmake@3.14:", type="build", when="@2.6:")
 
     def cmake_args(self):
         args = [
             self.define("CLI11_BUILD_EXAMPLES", False),
             self.define("CLI11_BUILD_DOCS", False),
             self.define("CLI11_BUILD_TESTS", False),
-            self.define("CLI11_PRECOMPILED", True),
+            self.define_from_variant("CLI11_PRECOMPILED", "precompiled"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
         return args
+
+    @when("@2.3:")
+    def install(self, spec, prefix):
+        super().install(spec, prefix)
+        install_tree("include/CLI/impl", join_path(prefix.include, "CLI/impl"))

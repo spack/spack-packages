@@ -70,6 +70,16 @@ class Wrf(Package):
     tags = ["windows"]
 
     version(
+        "4.7.1",
+        sha256="11186188b033d26332e31769c1f7aff9349406920a7f72eeb256d5881f7223f4",
+        url="https://github.com/wrf-model/WRF/releases/download/v4.7.1/v4.7.1.tar.gz",
+    )
+    version(
+        "4.7.0",
+        sha256="ab1267675ca0ccc8bc7f8cdf260f5868b60149edd75a67329523f6ce23a8da87",
+        url="https://github.com/wrf-model/WRF/releases/download/v4.7.0/v4.7.0.tar.gz",
+    )
+    version(
         "4.6.1",
         sha256="b8ec11b240a3cf1274b2bd609700191c6ec84628e4c991d3ab562ce9dc50b5f2",
         url="https://github.com/wrf-model/WRF/releases/download/v4.6.1/v4.6.1.tar.gz",
@@ -243,7 +253,8 @@ class Wrf(Package):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("pkgconfig", type=("build"))
+    depends_on("gmake", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("libtirpc")
 
     depends_on("mpi")
@@ -344,6 +355,9 @@ class Wrf(Package):
         }
 
         zen_conf = (Path(__file__).parent / "aocc_config.inc").read_text().format(**param)
+
+        if self.spec.satisfies("%aocc@5.1:"):
+            zen_conf = zen_conf.replace("-finline-aggressive ", "")  # removed flag in AOCC 5.1+
 
         if self.spec.satisfies("@4.0:"):
             filter_file("#insert new stanza here", zen_conf, "arch/configure.defaults")
@@ -451,7 +465,7 @@ class Wrf(Package):
                     break
                 if stallcounter > 300:
                     raise InstallError(
-                        "Output stalled for 30s, presumably an " "undetected question."
+                        "Output stalled for 30s, presumably an undetected question."
                     )
                 time.sleep(0.1)  # Try to do a bit of rate limiting
                 stallcounter += 1
@@ -472,7 +486,7 @@ class Wrf(Package):
     def patch_for_libmvec(self):
         if self.spec.satisfies("@3.9.1.1 %aocc"):
             fp = self.package_dir + "/patches/3.9/aocc_lmvec.patch"
-            which("patch")("-s", "-p1", "-i", "{0}".format(fp), "-d", ".")
+            which("patch", required=True)("-s", "-p1", "-i", "{0}".format(fp), "-d", ".")
 
     def run_compile_script(self):
         csh_bin = self.spec["tcsh"].prefix.bin.csh
@@ -504,7 +518,7 @@ class Wrf(Package):
         result = self.run_compile_script()
 
         if not result:
-            tty.warn("Compilation failed first time (WRF idiosyncrasies?) " "- trying again...")
+            tty.warn("Compilation failed first time (WRF idiosyncrasies?) - trying again...")
             result = self.run_compile_script()
 
         if not result:

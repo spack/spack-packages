@@ -30,6 +30,9 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version(
+        "2025.05.28", sha256="eb6167eb4748e91d663b46e6c2218e2eb074d38d9dea3384bd9aaec2581ac15e"
+    )
+    version(
         "2024.10.29", sha256="e729fad51f44b1340c0f64ac0f862026121183a3c8d731874f0a11a3b5053223"
     )
     version(
@@ -95,6 +98,7 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
     for val in ROCmPackage.amdgpu_targets:
         depends_on("blaspp +rocm amdgpu_target=%s" % val, when="amdgpu_target=%s" % val)
         depends_on("lapackpp +rocm amdgpu_target=%s" % val, when="amdgpu_target=%s" % val)
+    depends_on("lapackpp@2025.05.28:", when="@2025.05.28:")
     depends_on("lapackpp@2024.10.26:", when="@2024.10.29:")
     depends_on("lapackpp@2024.05.31:", when="@2024.05.31:")
     depends_on("lapackpp@2023.11.05:", when="@2023.11.05:")
@@ -110,6 +114,8 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("comgr", when="+rocm")
     depends_on("rocblas", when="+rocm")
     depends_on("rocsolver", when="+rocm")
+    depends_on("cuda@11:", when="@2025.05.28 +cuda")  # for c++17 support
+    depends_on("hip@5:", when="@2025.05.28 +rocm")  # for c++17 support
 
     requires("%oneapi", when="+sycl", msg="slate+sycl must be compiled with %oneapi")
     requires("+mpi", msg="MPI is required (use of the 'mpi' variant is deprecated)")
@@ -180,7 +186,7 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
         except KeyError:
             print("Slurm not found, ignoring.")
         commands = ["srun", "mpirun", "mpiexec"]
-        return which(*commands, path=searchpath) or which(*commands)
+        return which(*commands, path=searchpath) or which(*commands, required=True)
 
     def test_example(self):
         """build and run slate example"""
@@ -200,7 +206,7 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
             prefixes = ";".join([self.spec[x].prefix for x in deps.split()])
 
             cmake("-DCMAKE_PREFIX_PATH=" + prefixes, "..")
-            make = which("make")
+            make = which("make", required=True)
             make()
             launcher = self.mpi_launcher()
             assert launcher is not None, "Cannot run tests due to absence of MPI launcher"

@@ -10,12 +10,6 @@ from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
 
-from llnl.util.symlink import readlink
-
-import spack.platforms
-import spack.repo
-import spack.util.libc
-from spack.operating_systems.mac_os import macos_sdk_path, macos_version
 from spack.package import *
 
 
@@ -42,9 +36,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("master", branch="master")
 
     # Latest stable
-    version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
+    version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
 
     # Previous stable series releases
+    version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
     # Final releases of previous versions
     version("14.3.0", sha256="e0dc77297625631ac8e50fa92fffefe899a4eb702592da5c32ef04e2293aca3a")
@@ -53,8 +48,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         sha256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9",
         preferred=sys.platform == "darwin",
     )
-    version("13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083")
-    version("12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175")
+    version("13.4.0", sha256="9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5")
+    version("12.5.0", sha256="71cd373d0f04615e66c5b5b14d49c1a4c1a08efa7b30625cd240b11bab4062b3")
     version("11.5.0", sha256="a6e21868ead545cf87f0c01f84276e4b5281d672098591c1c896241f09363478")
     version("10.5.0", sha256="25109543fdf46f397c347b5d8b7a2c7e5694a5a51cce4b9c6e1ea8a71ca307c1")
     version("9.5.0", sha256="27769f64ef1d4cd5e2be8682c0c93f9887983e6cfd1a927ce5a0a2915a95cf8f")
@@ -68,12 +63,18 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("4.6.4", sha256="35af16afa0b67af9b8eb15cafb76d2bc5f568540552522f5dc2c88dd45d977e8")
     version("4.5.4", sha256="eef3f0456db8c3d992cbb51d5d32558190bc14f3bc19383dd93acc27acc6befc")
 
+    # Used in the tutorial
+    version("12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b")
+
     # Deprecated older non-final releases
     with default_args(deprecated=True):
         version(
             "14.1.0", sha256="e283c654987afe3de9d8080bc0bd79534b5ca0d681a73a11ff2b5d3767426840"
         )
 
+        version(
+            "13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083"
+        )
         version(
             "13.2.0", sha256="e275e76442a6067341a27f04c5c6b83d8613144004c0413528863dc6b5c743da"
         )
@@ -82,7 +83,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         )
 
         version(
-            "12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b"
+            "12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175"
         )
         version(
             "12.2.0", sha256="e549cf9cf3594a00e27b6589d4322d70e0720cdd213f39beb4181e06926230ff"
@@ -179,7 +180,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         multi=True,
         description="Compilers and runtime libraries to build",
     )
-    variant("binutils", default=False, description="Build via binutils")
+    variant("binutils", default=True, description="Use binutils linker and assembler")
     variant("mold", default=False, description="Use mold as the linker by default", when="@12:")
     variant(
         "piclibs", default=False, description="Build PIC versions of libgfortran.a and libstdc++.a"
@@ -201,6 +202,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     variant(
         "profiled", default=False, description="Use Profile Guided Optimization", when="+bootstrap"
     )
+    variant("libsanitizer", default=True, description="Use libsanitizer")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -318,11 +320,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     conflicts("languages=jit", when="@:4")
 
     with when("languages=d"):
-        # The very first version of GDC that became part of GCC already supported version 2.076 of
-        # the language and runtime.
-        # See https://wiki.dlang.org/GDC#Status
-        provides("D@2")
-
         # Support for the D programming language has been added to GCC 9.
         # See https://gcc.gnu.org/gcc-9/changes.html#d
         conflicts("@:8", msg="support for D has been added in GCC 9.1")
@@ -354,12 +351,35 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 msg="'gcc@12: languages=d' requires '%gcc@9:' with the D language support",
             )
 
+    # GPU offload backend supported by limited languages
+    with when("+nvptx"):
+        conflicts("languages=ada")
+        conflicts("languages=brig")
+        conflicts("languages=go")
+        conflicts("languages=java")
+        conflicts("languages=jit")
+        conflicts("languages=objc")
+        conflicts("languages=obj-c++")
+        conflicts("languages=d")
+
+    # Newlib version table
+    newlib_shasum = {
+        "3.0.0.20180831": "3ad3664f227357df15ff34e954bfd9f501009a647667cd307bf0658aefd6eb5b",
+        "3.3.0": "58dd9e3eaedf519360d92d84205c3deef0b3fc286685d1c562e245914ef72c66",
+        "4.1.0": "f296e372f51324224d387cc116dc37a6bd397198756746f93a2b02e9a5d40154",
+        "4.2.0.20211231": "c3a0e8b63bc3bef1aeee4ca3906b53b3b86c8d139867607369cb2915ffc54435",
+        "4.3.0.20230120": "83a62a99af59e38eb9b0c58ed092ee24d700fff43a22c03e433955113ef35150",
+        "4.4.0.20231231": "0c166a39e1bf0951dfafcd68949fe0e4b6d3658081d6282f39aeefc6310f2f13",
+        "4.5.0.20241231": "33f12605e0054965996c25c1382b3e463b0af91799001f5bb8c0630f2ec8c852",
+    }
+
     with when("+nvptx"):
         depends_on("cuda")
+        nvptx_newlib_ver = "4.5.0.20241231"
         resource(
             name="newlib",
-            url="ftp://sourceware.org/pub/newlib/newlib-3.0.0.20180831.tar.gz",
-            sha256="3ad3664f227357df15ff34e954bfd9f501009a647667cd307bf0658aefd6eb5b",
+            url="ftp://sourceware.org/pub/newlib/newlib-{0}.tar.gz".format(nvptx_newlib_ver),
+            sha256=newlib_shasum[nvptx_newlib_ver],
             destination="newlibsource",
             fetch_options=timeout,
         )
@@ -369,14 +389,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         # NVPTX offloading supported in 7 and later by limited languages
         conflicts("@:6", msg="NVPTX only supported in gcc 7 and above")
-        conflicts("languages=ada")
-        conflicts("languages=brig")
-        conflicts("languages=go")
-        conflicts("languages=java")
-        conflicts("languages=jit")
-        conflicts("languages=objc")
-        conflicts("languages=obj-c++")
-        conflicts("languages=d")
+
         # NVPTX build disables bootstrap
         conflicts("+bootstrap")
 
@@ -395,23 +408,31 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         msg="Only GCC 11.3+ support aarch64-darwin",
     )
 
-    # Newer binutils than RHEL's is required to run `as` on some instructions
-    # generated by new GCC (see https://github.com/spack/spack/issues/12235)
-    conflicts("~binutils", when="@7: os=rhel6", msg="New GCC cannot use system assembler on RHEL6")
-    # Ditto for RHEL7/8: OpenBLAS uses flags which the RHEL system-binutils don't have:
-    # https://github.com/xianyi/OpenBLAS/issues/3805#issuecomment-1319878852
-    conflicts(
-        "~binutils", when="@10: os=rhel7", msg="gcc: Add +binutils - preinstalled as might be old"
-    )
-    conflicts(
-        "~binutils", when="@10: os=rhel8", msg="gcc: Add +binutils - preinstalled as might be old"
-    )
-
     # GCC 11 requires GCC 4.8 or later (https://gcc.gnu.org/gcc-11/changes.html)
     conflicts("%gcc@:4.7", when="@11:")
 
     # https://github.com/iains/gcc-12-branch/issues/6
     conflicts("@:12", when="%apple-clang@14:14.0")
+
+    # Applies
+    # https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c,
+    # which fixes an incorrectly applied fixincludes rule for pthread.h, making
+    # the installed GCC not portable across different glibc versions. Original
+    # GCC bug report: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=118009. For
+    # GCC 15 we can directly use the upstream patch. For GCC 12-14 the patch
+    # has been backported. The patch is not applied to GCC 11 since the "fixinclude"
+    # is in fact needed for that version (see GCC commit description). Older versions
+    # have not been checked or tested.
+    # This patchset conflicts with Iain's Darwin patches and is not needed on Darwin
+    with when("platform=linux"):
+        patch(
+            "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
+            sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
+            when="@15:15.2",
+        )
+        patch("fixincludes-gcc-13-14.patch", when="@13:14")
+        patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
+        patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
 
     if sys.platform == "darwin":
         # Fix parallel build on APFS filesystem
@@ -447,10 +468,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             )
 
         # aarch64-darwin support from Iain Sandoe's branch
+        # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
         patch(
             "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..a495b2dded281beeafec91074e4e82a5a3df8104.patch?full_index=1",
             sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
-            when="@14.2.0 target=aarch64:",
+            when="@14.2.0",
         )
         patch(
             "https://github.com/iains/gcc-14-branch/compare/cd0059a1976303638cea95f216de129334fc04d1..gcc-14.1-darwin-r1.patch?full_index=1",
@@ -512,6 +534,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         )
 
         conflicts("+bootstrap", when="@11.3.0,13.1: target=aarch64:")
+
+        # 14.2.0 cannot bootstrap on x86_64
+        conflicts("+bootstrap", when="@14.2.0")
 
         # Use -headerpad_max_install_names in the build,
         # otherwise updated load commands won't fit in the Mach-O header.
@@ -660,7 +685,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     @classmethod
     def filter_detected_exes(cls, prefix, exes_in_prefix):
         # Apple's gcc is actually apple clang, so skip it.
-        if str(spack.platforms.host()) == "darwin":
+        if str(host_platform()) == "darwin":
             not_apple_clang = []
             for exe in exes_in_prefix:
                 try:
@@ -773,16 +798,14 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             )
         self.build_optimization_config()
 
-    def get_common_target_flags(self, spec):
-        """Get the right (but pessimistic) architecture specific flags supported by
-        both host gcc and to-be-built gcc. For example: gcc@7 %gcc@12 target=znver3
-        should pick -march=znver1, since that's what gcc@7 supports."""
-        microarchitectures = [spec.target] + spec.target.ancestors
-        for uarch in microarchitectures:
-            try:
-                return uarch.optimization_flags("gcc", str(spec.version))
-            except ValueError:
-                pass
+    def get_common_target_flags(self) -> str:
+        """Get the microarchitecture flags supported by both the current spec and its gcc dep.
+        For example: gcc@7 target=znver3 %gcc@12 should pick -march=znver1, since that's what
+        gcc@7 supports."""
+        for uarch in (self.spec.target, *self.spec.target.ancestors):
+            flags = microarchitecture_flags_from_target(uarch, compiler=self.spec)
+            if flags:
+                return flags
         # no arch specific flags in common, unlikely to happen.
         return ""
 
@@ -807,7 +830,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # Note we're not adding this for aarch64 because of
         # https://github.com/spack/spack/issues/31184
         if "+bootstrap %gcc" in self.spec and self.spec.target.family != "aarch64":
-            flags += " " + self.get_common_target_flags(self.spec)
+            flags += " " + self.get_common_target_flags()
 
         if self.spec.satisfies("+bootstrap"):
             variables = ["BOOT_CFLAGS", "CFLAGS_FOR_TARGET", "CXXFLAGS_FOR_TARGET"]
@@ -864,6 +887,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         else:
             options.extend(["--disable-bootstrap"])
 
+        # enable_libsanitizer
+        if spec.satisfies("+libsanitizer"):
+            options.extend(["--enable-libsanitizer"])
+        else:
+            options.extend(["--disable-libsanitizer"])
+
         # Configure include and lib directories explicitly for these
         # dependencies since the short GCC option assumes that libraries
         # are installed in "/lib" which might not be true on all OS
@@ -885,24 +914,35 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 ]
             )
 
-        # nvptx-none offloading for host compiler
+        # GPU offload targets
+        offload_targets = []
         if spec.satisfies("+nvptx"):
+            offload_targets.append("nvptx-none")
+        if offload_targets:
             options.extend(
                 [
-                    "--enable-offload-targets=nvptx-none",
-                    "--with-cuda-driver-include={0}".format(spec["cuda"].prefix.include),
-                    "--with-cuda-driver-lib={0}".format(spec["cuda"].libs.directories[0]),
+                    "--enable-offload-targets={0}".format(",".join(offload_targets)),
                     "--disable-bootstrap",
                     "--disable-multilib",
                 ]
             )
 
+        # arguments for nvptx-none offloading
+        if spec.satisfies("+nvptx"):
+            options.extend(
+                [
+                    "--with-cuda-driver-include={0}".format(spec["cuda"].prefix.include),
+                    "--with-cuda-driver-lib={0}".format(spec["cuda"].libs.directories[0]),
+                ]
+            )
+
         if sys.platform == "darwin":
+            macos_sdk_path = Executable("xcrun")("--show-sdk-path", output=str).strip()
             options.extend(
                 [
                     "--with-native-system-header-dir=/usr/include",
-                    "--with-sysroot={0}".format(macos_sdk_path()),
-                    "--with-libiconv-prefix={0}".format(spec["iconv"].prefix),
+                    f"--with-sysroot={macos_sdk_path}",
+                    f"--with-libiconv-prefix={spec['iconv'].prefix}",
                 ]
             )
 
@@ -926,6 +966,16 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 options.append("GDC={0}".format(self.detect_gdc()))
 
         return options
+
+    # Common code for nvptx and amdgcn to link newlib source directory
+    newlib_linked = False
+
+    def link_newlib(self):
+        pattern = join_path(self.stage.source_path, "newlibsource", "*")
+        files = glob.glob(pattern)
+        if files and not self.newlib_linked:
+            symlink(join_path(files[0], "newlib"), "newlib")
+        self.newlib_linked = True
 
     # Copy nvptx-tools into the GCC install prefix
     def copy_nvptx_tools(self):
@@ -973,11 +1023,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         self.copy_nvptx_tools()
 
-        pattern = join_path(self.stage.source_path, "newlibsource", "*")
-        files = glob.glob(pattern)
-
-        if files:
-            symlink(join_path(files[0], "newlib"), "newlib")
+        self.link_newlib()
 
         # self.build_directory = 'spack-build-nvptx'
         with working_dir("spack-build-nvptx", create=True):
@@ -1059,6 +1105,40 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         set_install_permissions(specs_file)
         tty.info(f"Wrote new spec file to {specs_file}")
 
+        # Do the same thing for libgomp on offload-enabled builds
+        if self.spec.satisfies("+nvptx"):
+            for dir in ["lib64", "lib"]:
+                libdir = join_path(self.prefix, dir)
+                if glob.glob(join_path(libdir, "libgomp.*")):
+                    libgomp_dir = libdir
+                    break
+            else:
+                tty.warn("libgomp dynamic library not found in lib/lib64")
+                libgomp_dir = None
+
+            if libgomp_dir:
+                libgomp_spec_file = join_path(libgomp_dir, "libgomp.spec")
+                copy(libgomp_spec_file, libgomp_spec_file + ".orig")
+                with open(libgomp_spec_file, "r+") as f:
+                    lines = f.readlines()
+                    f.seek(0)
+                    for line in lines:
+                        if line.startswith("*link_gomp:"):
+                            f.write("\n\n# Generated by Spack\n\n")
+                            f.write(line.strip("\n") + f" -rpath {libgomp_dir}\n\n")
+                        else:
+                            f.write(line)
+                set_install_permissions(libgomp_spec_file)
+                tty.info(f"Wrote new libgomp spec file to {libgomp_spec_file}")
+
+    # The configure --sysroot doesn't propagate down into the sub-builds, e.g., libiberty.
+    # Starting with SDK 26 and clang 17, limits.h amongst other sys includes aren't included
+    # via other means, resulting in a failed build. Keep this for other builds for safety.
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("platform=darwin"):
+            macos_sdk_path = Executable("xcrun")("--show-sdk-path", output=str).strip()
+            env.set("CFLAGS", f"--sysroot {macos_sdk_path}")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.cc and self.spec.satisfies("languages=c"):
             env.set("CC", self.cc)
@@ -1081,7 +1161,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         """
         # Detect GCC package in the directory of the GCC compiler
         # or in the $PATH if self.compiler.cc is not an absolute path:
-        from spack.detection import by_path
+        from spack.detection import by_path  # TODO: remove use of private Spack API
 
         compiler_dir = os.path.dirname(self.compiler.cc)
         detected_packages = by_path(
@@ -1142,8 +1222,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                 return candidate_gdc
             else:
                 raise InstallError(
-                    "Cannot resolve ambiguity when detecting GDC that belongs to "
-                    "%{0}".format(self.compiler.spec),
+                    "Cannot resolve ambiguity when detecting GDC that belongs to %{0}".format(
+                        self.compiler.spec
+                    ),
                     long_msg="The candidates are:{0}{0}{1}{0}".format(
                         error_nl,
                         error_nl.join(
@@ -1214,16 +1295,22 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         if not dryrun:
             tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
             return
-        dynamic_linker = spack.util.libc.parse_dynamic_linker(dryrun)
+        dynamic_linker = parse_dynamic_linker(dryrun)
         if not dynamic_linker:
             tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
             return
 
-        libc = spack.util.libc.libc_from_dynamic_linker(dynamic_linker)
+        libc = libc_from_dynamic_linker(dynamic_linker)
+        if not libc:
+            tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
+            return
 
         # We search for crt1.o ourselves because `gcc -print-prile-name=crt1.o` can give a rather
         # convoluted relative path from a different prefix.
-        startfile_prefix = spack.util.libc.startfile_prefix(libc.external_path, dynamic_linker)
+        startfile_prefix = _startfile_prefix(libc.external_path, dynamic_linker)
+        if not startfile_prefix:
+            tty.warn(f"Cannot relocate {specs_file}, compiler might not be working properly")
+            return
 
         gcc_can_locate = lambda p: os.path.isabs(
             gcc(f"-print-file-name={p}", output=str, error=os.devnull).strip()
@@ -1233,13 +1320,15 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             relocation_args.append(f"-B{startfile_prefix}")
 
         # libc headers may also be in a multiarch subdir.
-        header_dir = spack.util.libc.libc_include_dir_from_startfile_prefix(
-            libc.external_path, startfile_prefix
-        )
-        if header_dir and all(
-            os.path.exists(os.path.join(header_dir, h))
-            for h in spack.repo.PATH.get_pkg_class(libc.fullname).representative_headers
-        ):
+        header_dir = _libc_include_dir_from_startfile_prefix(libc.external_path, startfile_prefix)
+        if libc.name == "glibc":
+            # glibc representative header
+            header = "ieee754.h"
+        else:
+            # musl representative header
+            header = "iso646.h"
+
+        if header_dir and os.path.exists(os.path.join(header_dir, header)):
             relocation_args.append(f"-idirafter {header_dir}")
         else:
             tty.warn(
@@ -1259,3 +1348,45 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         if relocation_args:
             with open(specs_file, "a") as f:
                 f.write(f"*self_spec:\n+ {' '.join(relocation_args)}\n\n")
+
+
+def _libc_include_dir_from_startfile_prefix(
+    libc_prefix: str, startfile_prefix: str
+) -> Optional[str]:
+    """Heuristic to determine the glibc include directory from the startfile prefix. Replaces
+    $libc_prefix/lib*/<multiarch> with $libc_prefix/include/<multiarch>. This function does not
+    check if the include directory actually exists or is correct."""
+    parts = os.path.relpath(startfile_prefix, libc_prefix).split(os.path.sep)
+    if parts[0] not in ("lib", "lib64", "libx32", "lib32"):
+        return None
+    parts[0] = "include"
+    return os.path.join(libc_prefix, *parts)
+
+
+def _startfile_prefix(prefix: str, compatible_with: str = sys.executable) -> Optional[str]:
+    # Search for crt1.o at max depth 2 compatible with the ELF file provided in compatible_with.
+    # This is useful for finding external libc startfiles on a multiarch system.
+    try:
+        compat = get_elf_compat(compatible_with)
+        accept = lambda path: get_elf_compat(path) == compat
+    except Exception:
+        accept = lambda path: True
+
+    stack = [(0, prefix)]
+    while stack:
+        depth, path = stack.pop()
+        try:
+            iterator = os.scandir(path)
+        except OSError:
+            continue
+        with iterator:
+            for entry in iterator:
+                try:
+                    if entry.is_dir(follow_symlinks=True):
+                        if depth < 2:
+                            stack.append((depth + 1, entry.path))
+                    elif entry.name == "crt1.o" and accept(entry.path):
+                        return path
+                except Exception:
+                    continue
+    return None

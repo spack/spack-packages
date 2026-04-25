@@ -26,7 +26,7 @@ class PressioRom(Package):
     license("BSD-3-Clause")
     maintainers("fnrizzi", "cwschilly")
 
-    supported_versions = ["main", "0.15.0"]
+    supported_versions = ["main", "0.15.0", "0.16.0", "0.17.0"]
 
     # For now, assume each repo is compatible only with the same version of the other repos
     for supported_version in supported_versions:

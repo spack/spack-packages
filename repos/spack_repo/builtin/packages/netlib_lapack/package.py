@@ -96,7 +96,12 @@ class NetlibLapack(CMakePackage):
 
     variant("shared", default=True, description="Build shared library version")
     variant("pic", default=True, description="Produce position-independent code")
-    variant("external-blas", default=False, description="Build lapack with an external blas")
+    variant(
+        "external-blas",
+        default=False,
+        sticky=True,
+        description="Build lapack with an external blas",
+    )
     variant("lapacke", default=True, description="Activates the build of the LAPACKE C interface")
     variant("xblas", default=False, description="Builds extended precision routines using XBLAS")
 
@@ -139,6 +144,10 @@ class NetlibLapack(CMakePackage):
         when="@3.12:3.12.1",
     )
 
+    # Ensures appropriate alias'ing of lapack custom complex types with MSVC
+    # e.g. MSVC float complex becomes _FComplex
+    patch("lapack_complex_custom.patch", when="@3.12: %msvc")
+
     # liblapack links to libblas, so if this package is used as a lapack
     # provider, it must also provide blas.
     provides("lapack", "blas", when="~external-blas")
@@ -175,7 +184,7 @@ class NetlibLapack(CMakePackage):
 
         # Remove duplicate header file that gets generated during CMake shared
         # builds: https://github.com/Reference-LAPACK/lapack/issues/583
-        if self.spec.satisfies("platform=windows @0:3.9.1"):
+        if self.spec.satisfies("platform=windows @:3.9.1"):
             force_remove("LAPACKE/include/lapacke_mangling.h")
 
     def xplatform_lib_name(self, lib):
@@ -197,7 +206,10 @@ class NetlibLapack(CMakePackage):
         }
         key = tuple(sorted(query_parameters))
         libraries = query2libraries[key]
-        return find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
+
+        return find_libraries(
+            libraries, root=self.prefix, shared=shared, runtime=False, recursive=True
+        )
 
     @property
     def lapack_libs(self):
@@ -214,7 +226,10 @@ class NetlibLapack(CMakePackage):
         }
         key = tuple(sorted(query_parameters))
         libraries = query2libraries[key]
-        return find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
+
+        return find_libraries(
+            libraries, root=self.prefix, shared=shared, runtime=False, recursive=True
+        )
 
     @property
     def headers(self):

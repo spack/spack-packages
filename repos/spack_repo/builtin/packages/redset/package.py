@@ -30,6 +30,7 @@ class Redset(CMakePackage, CudaPackage):
     version("0.0.3", sha256="30ac1a960f842ae23a960a88b312af3fddc4795f2053eeeec3433a61e4666a76")
 
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("mpi")
     depends_on("kvtree+mpi")

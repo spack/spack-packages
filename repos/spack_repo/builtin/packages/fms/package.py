@@ -20,6 +20,20 @@ class Fms(CMakePackage):
     license("LGPL-3.0-or-later")
 
     maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett", "rem1776", "climbfuji")
+    version("2025.03", sha256="17bdbac86bd3b1e5c1c3a5496c1495e8badcd5f671c659b17921532c990f014c")
+    version(
+        "2025.02.01", sha256="a481a0d49cf4ca06476849600c2da41fb25053e930a8fabe2add09c3d2fbee9c"
+    )
+    version("2025.02", sha256="c9bbe4dd292520bc7454db25a72ce6a8ca56201be567a7dc461601e01bbd46c5")
+    version(
+        "2025.01.02", sha256="d1f3bdda08eb3620c1ea4fec46a744bce27b852021974f2d8b5d724f4fc3e80b"
+    )
+    version(
+        "2025.01.01", sha256="aff4f0795484e47f036233d9044a4f7cc873b837f3585527ad17292a71cdb7bd"
+    )
+    version(
+        "2024.01.02", sha256="e984a5c856547d9b49fab4f5ac76985f2b4f6d3ac0d29b76b34e827433767705"
+    )
     version("2025.01", sha256="19997ef5468a06c60c1e7af3a56ab7f8a33da814a30827293ca34df5bd888d6f")
     version("2024.03", sha256="4c1e6bdfafcfec19a4a1c08770c313ab3135d47ec8319f6b07f24d2589caf44d")
     version("2024.02", sha256="47e5740bb066f5eb032e1de163eb762c7258880a2932f4cc4e34e769e0cc2b0e")
@@ -120,7 +134,7 @@ class Fms(CMakePackage):
         "deprecated_io",
         default=False,
         description="Compiles with support for deprecated io modules fms_io and mpp_io",
-        when="@2023.02:",
+        when="@2023.02:2025.02",
     )
     variant("large_file", default=False, description="Enable compiler definition -Duse_LARGEFILE.")
     variant(

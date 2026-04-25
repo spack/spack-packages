@@ -26,11 +26,14 @@ class RBit64(RPackage):
 
     license("GPL-2.0-only OR GPL-3.0-only")
 
+    version("4.6.0-1", sha256="fbc0ce142fc22c9a9fdcbac930a814dfb648563d4b6a77dff739c23cc81319b7")
     version("4.0.5", sha256="25df6826ea5e93241c4874cad4fa8dadc87a40f4ff74c9107aa12a9e033e1578")
     version("0.9-7", sha256="7b9aaa7f971198728c3629f9ba1a1b24d53db5c7e459498b0fdf86bbd3dff61f")
 
     depends_on("c", type="build")  # generated
 
     depends_on("r@3.0.1:", type=("build", "run"))
+    depends_on("r@3.4.0:", type=("build", "run"), when="@4.6:")
+
     depends_on("r-bit@1.1-12:", type=("build", "run"))
     depends_on("r-bit@4.0.0:", type=("build", "run"), when="@4.0.5:")

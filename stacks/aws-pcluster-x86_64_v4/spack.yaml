@@ -1,0 +1,142 @@
+spack:
+  view: false
+  include:
+  - ../../.ci/gitlab/
+
+  config:
+    shared_linking:
+      missing_library_policy: ignore  # due to the use of externals
+
+  definitions:
+  - apps:
+    # earliest oneapi version with fix does not run on AmazonLinux2, see https://github.com/spack/spack/pull/46457
+    - gromacs +intel_provided_gcc ^intel-oneapi-mkl
+    - lammps lammps_sizes=bigbig +molecule +kspace +rigid +asphere +opt +openmp +openmp-package fft=mkl ^intel-oneapi-mkl
+    - palace
+    - "openmpi@4:"
+    - wrf@4 build_type=dm+sm
+
+  packages:
+    all:
+      providers:
+        blas: [ intel-oneapi-mkl ]
+        daal: [ intel-oneapi-dal ]
+        fftw-api: [ intel-oneapi-mkl ]
+        ipp: [ intel-oneapi-ipp ]
+        lapack: [ intel-oneapi-mkl ]
+        mkl: [ intel-oneapi-mkl ]
+        mpi: [ intel-oneapi-mpi, openmpi, mpich ]
+        tbb: [ intel-oneapi-tbb, intel-tbb ]
+        scalapack: [ intel-oneapi-mkl ]
+    gettext:
+      # Newer gettext cannot build with gcc@12 and old AL2 glibc headers
+      # Older gettext versions do not build correctly with oneapi.
+      require:
+      - '@:0.20 %gcc'
+    mpi:
+      require:
+      - intel-oneapi-mpi
+    intel-oneapi-mpi:
+      variants: +external-libfabric generic-names=True
+    bison:
+      require:
+      - "%gcc"
+    boost:
+      require:
+      - "%gcc"
+    mpas-model:
+      require:
+      - spec: precision=single ^parallelio+pnetcdf
+        when: '%oneapi'
+    mpich:
+      require:
+      - mpich pmi=pmi2 device=ch4 netmod=ofi +slurm
+    openmpi:
+      variants: ~atomics ~cuda ~cxx ~cxx_exceptions ~internal-hwloc ~java +legacylaunchers ~lustre ~memchecker +pmi +romio +vt +wrapper-rpath fabrics=ofi schedulers=slurm
+    pmix:
+      require:
+      - 'pmix@3:'
+    slurm:
+      buildable: false
+      externals:
+      - prefix: /opt/slurm
+        spec: slurm@22.05.8 +pmix
+      require:
+      - +pmix
+
+  specs:
+  - group: gcc12
+    specs:
+    - gcc@12 +strip +binutils ^binutils@2.37
+    override:
+      packages:
+        all:
+          require:
+            - target=x86_64_v3
+
+  - group: oneapi2024
+    needs: [gcc12]
+    specs:
+    - intel-oneapi-compilers@2024.1.0 %gcc@12
+    override:
+      packages:
+        all: {require: [target=x86_64_v3]}
+
+  - group: apps_x86_64_v3
+    needs: [oneapi2024]
+    specs:
+    - $apps
+    override:
+      packages:
+        all: {require: [target=x86_64_v3]}
+        c: {prefer: [intel-oneapi-compilers]}
+        cxx: {prefer: [intel-oneapi-compilers]}
+        fortran: {require: [intel-oneapi-compilers]}
+        # Older gettext versions do not build correctly with oneapi.
+        gettext: {require:: '%oneapi'}
+        libfabric:
+          buildable: false
+          externals:
+          - prefix: /opt/amazon/efa/
+            spec: libfabric@1.17.0 fabrics:=shm,efa target=x86_64_v3
+        wrf:
+          require:
+          - target=x86_64_v3
+          - "%c,fortran=oneapi"
+
+  - group: apps_x86_64_v4
+    needs: [oneapi2024]
+    specs:
+    - $apps
+    override:
+      packages:
+        # Prefer because the compiler has still `target=x86_64_v3`
+        all: {prefer: [target=x86_64_v4]}
+        c: {prefer: [intel-oneapi-compilers]}
+        cxx: {prefer: [intel-oneapi-compilers]}
+        fortran: {require: [intel-oneapi-compilers]}
+        # Older gettext versions do not build correctly with oneapi.
+        gettext: {require:: '%oneapi'}
+        lammps: { require: [+intel] }
+        libfabric:
+          buildable: false
+          externals:
+          - prefix: /opt/amazon/efa/
+            spec: libfabric@1.17.0 fabrics:=shm,efa target=x86_64_v4
+        wrf:
+          require:
+          - target=x86_64_v4
+          - "%c,fortran=oneapi"
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image: {name: ghcr.io/spack/pcluster-amazonlinux-2:v2026-03-27, entrypoint: ['']}
+    - signing-job:
+        before_script:
+            # Do not distribute Intel & ARM binaries
+        - - export SPECS_PATH=${SPACK_BUILDCACHE_RELATIVE_SPECS_PATH}
+          - for i in $(aws s3 ls --recursive ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/ | grep intel-oneapi | awk '{print $4}' | sed -e "s?^.*${SPECS_PATH}/??g"); do aws s3 rm ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/$i; done
+          - for i in $(aws s3 ls --recursive ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/ | grep armpl | awk '{print $4}' | sed -e "s?^.*${SPECS_PATH}/??g"); do aws s3 rm ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/$i; done
+  cdash:
+    build-group: AWS Packages

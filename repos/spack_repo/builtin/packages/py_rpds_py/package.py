@@ -17,11 +17,19 @@ class PyRpdsPy(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("0.27.1", sha256="26a1c73171d10b7acccbded82bf6a586ab8203601e565badc74bbbf8bc5a10f8")
     version("0.20.0", sha256="d72a210824facfdaf8768cf2d7ca25a042c30320b3020de2fa04640920d4e121")
     version("0.18.1", sha256="dc48b479d540770c811fbd1eb9ba2bb66951863e448efec2e2c102625328e92f")
 
     depends_on("c", type="build")
 
-    depends_on("rust@1.76:", when="@0.19:")
-    depends_on("py-maturin@1.0:1", type="build")
-    depends_on("py-maturin@1.2:", type="build", when="@0.20:")
+    depends_on("python@3.9:", type="build", when="@0.21:")
+    depends_on("python@3.8:", type="build", when="@:0.20")
+    depends_on("py-maturin@1.9:1", type="build", when="@0.25:")
+    depends_on("py-maturin@1.2:1", type="build", when="@0.19.1:0.25.1")
+    depends_on("py-maturin@1.0:1", type="build", when="@:0.19.0")
+
+    # retrieved via cargo msrv
+    depends_on("rust@1.85:", type="build", when="@0.25:")
+    depends_on("rust@1.76:", type="build", when="@0.19:")
+    depends_on("rust@1.60:", type="build")

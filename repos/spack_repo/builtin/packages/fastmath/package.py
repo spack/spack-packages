@@ -20,7 +20,7 @@ class Fastmath(BundlePackage):
 
     depends_on("amrex")  # default is 3 dimensions
     depends_on("chombo@3.2")
-    depends_on("hypre~internal-superlu")
+    depends_on("hypre")
     # depends_on('ml-trilinos')  # hoping for stripped down install of just ml
     # depends_on('nox-trilinos') # hoping for stripped down install of just nox
     depends_on("mpi")

@@ -17,6 +17,9 @@ class Dcm2niix(CMakePackage):
     license("Zlib")
 
     version(
+        "1.0.20250506", sha256="1b24658678b6c24141e58760dbea9fe2786ffdd736bcc37a36d9cdabc731bafa"
+    )
+    version(
         "1.0.20240202", sha256="ad8e4a5b97a682c32ef1d88283c15c7cb767c4092cb1754119f8e8b3d940fe91"
     )
     version(
@@ -28,3 +31,5 @@ class Dcm2niix(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+
+    depends_on("pkgconfig", type="build")
