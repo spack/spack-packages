@@ -32,7 +32,9 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     _kokkos_backends = Kokkos.devices_variants
     for _backend in _kokkos_backends:
         _deflt, _when, _descr = _kokkos_backends[_backend]
-        variant(_backend.lower(), default=_deflt, description=_descr, when=f"^kokkos{_when}")
+        if _when is not None:
+            _when = f"^kokkos{_when}"
+        variant(_backend.lower(), default=_deflt, description=_descr, when=_when)
 
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Build with mpi support")
