@@ -51,7 +51,6 @@ class Mgis(CMakePackage):
     version("1.0.1", sha256="6102621455bc5d9b1591cd33e93b2e15a9572d2ce59ca6dfa30ba57ae1265c08")
 
     with default_args(deprecated=True):
-
         version("3.0.1", sha256="fb9a7f5008a43c70bdb1c4b80f32f7fd3e4274c912b93c36af7011d3c4f93039")
         version(
             "3.0.0",

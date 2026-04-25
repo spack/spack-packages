@@ -36,7 +36,6 @@ class PyBottleneck(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
 
     def url_for_version(self, version):
-
         url = "https://files.pythonhosted.org/packages/source/b/Bottleneck/{0}-{1}.tar.gz"
         if version > Version("1.3.8"):
             name = "bottleneck"
