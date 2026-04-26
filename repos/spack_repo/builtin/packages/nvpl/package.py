@@ -38,7 +38,7 @@ class Nvpl(Package):
         multi=False,
     )
 
-    depends_on("c", type="build") # for enforcing compiler restrictions
+    depends_on("c", type="build")  # for enforcing compiler restrictions
     depends_on("mpi", when="+mpi")
 
     requires("target=armv8.2a:", msg="Any CPU with Arm-v8.2a+ microarch")
