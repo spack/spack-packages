@@ -34,6 +34,11 @@ class Nvtx(Package, PythonExtension):
 
     build_directory = "python"
 
+    # nvtxExtPayloadTypeInfo.h (included transitively via nvToolsExtPayload.h)
+    # uses char8_t, which requires C23 (-std=c23).  GCC gained C23 char8_t
+    # support in 13.0, so earlier compilers cannot build the Python extension.
+    conflicts("%gcc@:12", when="@3.3.0: +python")
+
     # Create a nvtx-config.cmake file to make calls to find_package(nvtx) to
     # work as expected
     patch("nvtx-config.patch")
@@ -43,6 +48,21 @@ class Nvtx(Package, PythonExtension):
         include_dir = prefix.include
         setup = FileFilter("python/setup.py")
         setup.filter("include_dirs=include_dirs", f"include_dirs=['{include_dir}']", string=True)
+        # see comment in patch below
+        if self.spec.satisfies("@3.3.0:"):
+            header = FileFilter(
+                "c/include/nvtx3/nvtxDetail/nvtxExtPayloadTypeInfo.h"
+            )
+            header.filter(
+                "#define NVTX_HAVE_CHAR8 1",
+                "/* Fallback for systems where glibc < 2.36 does not define char8_t\n"
+                " * in uchar.h even when the compiler supports C23 (e.g. RHEL 9). */\n"
+                "#ifndef __cpp_char8_t\n"
+                "typedef unsigned char char8_t;\n"
+                "#endif\n"
+                "#define NVTX_HAVE_CHAR8 1",
+                string=True,
+            )
 
     def install(self, spec, prefix):
         install_tree("c/include", prefix.include)
@@ -54,3 +74,4 @@ class Nvtx(Package, PythonExtension):
 
         with working_dir(self.build_directory):
             pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+
