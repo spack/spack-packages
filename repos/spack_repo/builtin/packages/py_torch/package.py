@@ -320,8 +320,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("nccl", when="+nccl+cuda")
-    depends_on("magma+cuda", when="+magma+cuda")
-    depends_on("magma+rocm", when="+magma+rocm")
+    # https://github.com/pytorch/pytorch/pull/178065
+    depends_on("magma@:2.9+cuda", when="+magma+cuda")
+    depends_on("magma@:2.9+rocm", when="+magma+rocm")
     depends_on("numactl", when="+numa")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
