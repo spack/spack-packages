@@ -124,7 +124,12 @@ class Ispc(CMakePackage):
         try:
             Executable(self.compiler.cc)("-m32", "-shared", "check-m32.c", error=str)
         except ProcessError:
-            filter_file("bit 32 64", "bit 64", "cmake/GenerateBuiltins.cmake")
+            # https://github.com/ispc/ispc/commit/3e03dffa8b58e77ea628d614f65763a8fdd90c18
+            if self.spec.satisfies("@1.25:"):
+                cmake_target_file = "cmake/CommonStdlibBuiltins.cmake"
+            else:
+                cmake_target_file = "cmake/GenerateBuiltins.cmake"
+            filter_file("bit 32 64", "bit 64", cmake_target_file)
 
     def cmake_args(self):
         spec = self.spec
