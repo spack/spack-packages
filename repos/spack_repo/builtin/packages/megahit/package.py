@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.makefile import MakefilePackage, MakefileBuilder
+from spack_repo.builtin.build_systems.makefile import MakefileBuilder, MakefilePackage
 
 from spack.package import *
 
@@ -16,7 +16,9 @@ class Megahit(CMakePackage, MakefilePackage):
 
     license("GPL-3.0-only")
 
-    build_system(conditional("cmake", when="@1.2:"), conditional("makefile", when="@:1.1", default="cmake"))
+    build_system(
+        conditional("cmake", when="@1.2:"), conditional("makefile", when="@:1.1"), default="cmake"
+    )
 
     version("1.2.9", sha256="09026eb07cc4e2d24f58b0a13f7a826ae8bb73da735a47cb1cbe6e4693118852")
     version("1.1.4", sha256="ecd64c8bfa516ef6b19f9b2961ede281ec814db836f1a91953c213c944e1575f")
