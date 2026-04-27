@@ -5,6 +5,8 @@
 
 from spack.package import *
 
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 class Arbor(CMakePackage, CudaPackage):
     """Arbor is a high-performance library for computational neuroscience
@@ -13,7 +15,8 @@ class Arbor(CMakePackage, CudaPackage):
     homepage = "https://arbor-sim.org"
     git = "https://github.com/arbor-sim/arbor.git"
     url = "https://github.com/arbor-sim/arbor/archive/refs/tags/v0.12.1.tar.gz"
-    maintainers = ("thorstenhater", "haampie")
+    license("BSD-3-Clause")
+    maintainers = ("thorstenhater",)
     submodules = True
 
     version("master", branch="master", submodules=True)
