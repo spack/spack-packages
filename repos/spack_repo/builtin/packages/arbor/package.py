@@ -19,31 +19,27 @@ class Arbor(CMakePackage, CudaPackage):
     maintainers = ("thorstenhater",)
     submodules = True
 
-    version("master", branch="master", submodules=True)
-    version("develop", branch="master", submodules=True)
+    version("master", branch="master")
+    version("develop", branch="master")
     version(
         "0.12.1",
         sha256="6584ccfaef1c8f9eab6c8794d0f4f06745cbfb7c2d701815c74ed9e6a101a3dc",
         url="https://github.com/arbor-sim/arbor/archive/refs/tags/v0.12.1.tar.gz",
-        submodules=True,
     )
     version(
         "0.11.0",
         sha256="6df68b308dd629df993eda40319676cd43407ae211d0846100b0cf42e8c9ad22",
         url="https://github.com/arbor-sim/arbor/archive/refs/tags/v0.11.0.tar.gz",
-        submodules=True,
     )
     version(
         "0.10.0",
-        sha256="6b6cc900b85fbf833fae94817b9406a0d690dc28",
+        sha256="72966b7a2f45ce259b8ba167ca3e4f5ab9f212136a300267aaac0c04ed3fe3fc",
         url="https://github.com/arbor-sim/arbor/releases/download/v0.10.1/arbor-v0.10.0-full.tar.gz",
-        submodules=True,
     )
     version(
         "0.9.0",
         sha256="5f9740955c821aca81e23298c17ad64f33f635756ad9b4a0c1444710f564306a",
         url="https://github.com/arbor-sim/arbor/releases/download/v0.9.0/arbor-v0.9.0-full.tar.gz",
-        submodules=True,
     )
     version(
         "0.8.1",
@@ -79,9 +75,7 @@ class Arbor(CMakePackage, CudaPackage):
     variant("doc", default=False, description="Build documentation.")
     variant("mpi", default=False, description="Enable MPI support")
     variant("python", default=True, description="Enable Python frontend support")
-    variant(
-        "pystubs", default=True, when="@0.11:", description="Python stub generation"
-    )
+    variant("pystubs", default=True, when="@0.11:", description="Python stub generation")
     variant(
         "vectorize",
         default=False,
@@ -140,7 +134,7 @@ class Arbor(CMakePackage, CudaPackage):
         depends_on("python@3.9:", when="@0.9.1:", type=("build", "run"))
         depends_on("python@3.10:", when="@0.10.0:", type=("build", "run"))
         depends_on("python@3.10:", when="@0.11.0:", type=("build", "run"))
-        depends_on("python@3.11:", when="@0.12.0:", type=("build", "run")) #
+        depends_on("python@3.11:", when="@0.12.0:", type=("build", "run"))  #
         depends_on("py-numpy", type=("build", "run"))
         depends_on("py-numpy@2.0.0:", when="@0.12.0:", type=("build", "run"))
         depends_on("py-pybind11@2.6:", type="build")
@@ -162,7 +156,6 @@ class Arbor(CMakePackage, CudaPackage):
         return ["all", "html"] if "+doc" in self.spec else ["all"]
 
     def cmake_args(self):
-        spec = self.spec
         args = [
             self.define_from_variant("ARB_WITH_ASSERTIONS", "assertions"),
             self.define_from_variant("ARB_WITH_MPI", "mpi"),
