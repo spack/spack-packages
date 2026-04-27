@@ -641,67 +641,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                 string=True,
             )
 
-        # Fix ROCm HIP build for 2.9+: define CHECK_NOSPARSE_* for HIP and guard
-        # mha_fwd_aot so it is only called when USE_MEM_EFF_ATTENTION and not
-        # DISABLE_AOTRITON (avoids undeclared identifier in attention.hip).
-        if self.spec.satisfies("@2.9+rocm"):
-            attention_cu = "aten/src/ATen/native/transformers/cuda/attention.cu"
-            _rocm_attn_if = (
-                "#if defined(USE_ROCM) && (defined(USE_FLASH_ATTENTION) || "
-                "defined(USE_MEM_EFF_ATTENTION))\n"
-            )
-            # Add CHECK_NOSPARSE_* macros for HIP after the ROCm flash/mem_eff block
-            filter_file(
-                _rocm_attn_if + "namespace pytorch_flash",
-                _rocm_attn_if
-                + (
-                    "#ifdef __HIP_PLATFORM_AMD__\n"
-                    "#ifndef CHECK_NOSPARSE_CONTIGUOUS_CUDA\n"
-                    "#define CHECK_NOSPARSE_CONTIGUOUS_CUDA(t) \\\n"
-                    '  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \\\n'
-                    '  TORCH_CHECK((t).is_contiguous(), "Expected contiguous tensor")\n'
-                    "#endif\n"
-                    "#ifndef CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA\n"
-                    "#define CHECK_NOSPARSE_LASTCONTIGUOUS_CUDA(t) \\\n"
-                    '  TORCH_CHECK(!(t).is_sparse(), "Expected dense tensor"); \\\n'
-                    "  TORCH_CHECK((t).is_contiguous(), "
-                    '"Expected last-dim contiguous tensor")\n'
-                    "#endif\n"
-                    "#endif\n\n"
-                    "namespace pytorch_flash"
-                ),
-                attention_cu,
-                string=True,
-            )
-            # Guard mha_fwd_aot so it is only used when AOTriton is enabled
-            filter_file(
-                "  return mha_fwd_aot(",
-                "#if defined(USE_MEM_EFF_ATTENTION) && !defined(DISABLE_AOTRITON)\n"
-                "  return mha_fwd_aot(",
-                attention_cu,
-                string=True,
-            )
-            # Closing must match PyTorch 2.10.x formatting (6 spaces before
-            # gen_), not "  gen_);\n  }" — otherwise the #if above is never
-            # closed and HIP reports an unterminated conditional at the outer
-            # #if defined(USE_ROCM)... line in attention.hip.
-            filter_file(
-                "      gen_);\n}\n}",
-                "      gen_);\n"
-                "#else\n"
-                "  TORCH_CHECK(false,\n"
-                '    "ROCm flash/mem_eff attention requires AOTriton '
-                '(USE_MEM_EFF_ATTENTION and not DISABLE_AOTRITON).");\n'
-                "  return std::make_tuple(\n"
-                "    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor(),\n"
-                "    at::Tensor(), at::Tensor(), at::Tensor(), at::Tensor());\n"
-                "#endif\n"
-                "}\n"
-                "}",
-                attention_cu,
-                string=True,
-            )
-
     def torch_cuda_arch_list(self, env):
         if "+cuda" in self.spec:
             torch_cuda_arch = CudaPackage.compute_capabilities(
