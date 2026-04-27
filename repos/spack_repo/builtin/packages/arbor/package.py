@@ -2,11 +2,10 @@
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
-from spack.package import *
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+
+from spack.package import *
 
 class Arbor(CMakePackage, CudaPackage):
     """Arbor is a high-performance library for computational neuroscience
@@ -168,7 +167,7 @@ class Arbor(CMakePackage, CudaPackage):
             self.define_from_variant("ARB_WITH_MPI", "mpi"),
             self.define_from_variant("ARB_WITH_PYTHON", "python"),
             self.define_from_variant("ARB_VECTORIZE", "vectorize"),
-            self.define_from_variant("ARB_BUILD_PYTHON_STUBS", "pystubs"),            
+            self.define_from_variant("ARB_BUILD_PYTHON_STUBS", "pystubs"),
             self.define("ARB_ARCH", "none"),
             self.define("ARB_CXX_FLAGS_TARGET", optimization_flags(self.compiler, spec.target)),
         ]
@@ -180,7 +179,7 @@ class Arbor(CMakePackage, CudaPackage):
                     self.define_from_variant("ARB_USE_GPU_RNG", "gpu_rng"),
                 ]
             )
-            
+
         return args
 
     @run_after("install", when="+python")
