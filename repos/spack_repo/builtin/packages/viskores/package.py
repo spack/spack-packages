@@ -60,6 +60,8 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
     variant("tbb", default=(sys.platform == "darwin"), description="build TBB support")
     variant("sycl", default=False, description="Build with SYCL backend")
 
+    conflicts("vtk-m")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
