@@ -54,10 +54,8 @@ class PyDarshan(PythonPackage):
     # py-darshan depends on specific darshan-util versions corresponding
     # to the first 3 parts of the py-darshan version string
     # (i.e., py-darshan@3.4.3.0 requires darshan-util@3.4.3, etc.)
-    for v in ["3.4.0", "3.4.1", "3.4.2", "3.4.3", "3.4.4", "3.4.5", "3.4.6", "3.4.7"]:
-        depends_on(f"darshan-util@{v}", when=f"@{v}", type=("build", "run"))
-
-    depends_on("darshan-util@3.5.0", when="@3.5.0", type=("build", "run"))
+for v in ["3.4.0", "3.4.1", "3.4.2", "3.4.3", "3.4.4", "3.4.5", "3.4.6", "3.4.7", "3.5.0"]:
+depends_on(f"darshan-util@{v}", when=f"@{v}", type=("build", "run"))
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
