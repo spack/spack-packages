@@ -7,7 +7,7 @@ from spack_repo.builtin.build_systems import makefile
 from spack.package import *
 
 
-class Megahit(Package):
+class Megahit(CMakePackage, MakefilePackage):
     """Ultra-fast and memory-efficient (meta-)genome assembler"""
 
     homepage = "https://github.com/voutcn/megahit"
