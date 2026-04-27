@@ -26,6 +26,7 @@ class RBiomart(RPackage):
     bioc = "biomaRt"
 
     with default_args(get_full_repo=True):
+        version("2.66.2", commit="d5e1d363cf857ca786d47bfcd171f6637f0a930a")
         version("2.56.0", commit="91ca89eff52e63c225f7e4eb24b765d08faf3ed9")
         version("2.54.0", commit="4fb88fb56c684d5678f8288ba05db193e4881758")
         version("2.52.0", commit="cf4932ac02686da45ea36ff5137fa63cead8860b")
@@ -37,16 +38,22 @@ class RBiomart(RPackage):
         version("2.34.2", commit="a7030915fbc6120cc6812aefdedba423a207459b")
         version("2.32.1", commit="f84d74424fa599f6d08f8db4612ca09914a9087f")
 
-    depends_on("r-xml", type=("build", "run"))
-    depends_on("r-xml@3.99-0.7:", type=("build", "run"), when="@2.52.0:")
-    depends_on("r-annotationdbi", type=("build", "run"))
-    depends_on("r-progress", type=("build", "run"), when="@2.34.2:")
-    depends_on("r-stringr", type=("build", "run"), when="@2.34.2:")
-    depends_on("r-httr", type=("build", "run"), when="@2.34.2:")
-    depends_on("r-digest", type=("build", "run"), when="@2.50.3:")
-    depends_on("r-biocfilecache", type=("build", "run"), when="@2.46.2:")
-    depends_on("r-rappdirs", type=("build", "run"), when="@2.46.2:")
-    depends_on("r-xml2", type=("build", "run"), when="@2.46.2:")
+    with default_args(type=("build", "run")):
+        depends_on("r@4.5:", when="@2.66.2:")
 
-    depends_on("r-rcurl", type=("build", "run"), when="@:2.40.5")
-    depends_on("r-openssl", type=("build", "run"), when="@2.46.2")
+        depends_on("r-annotationdbi")
+        depends_on("r-biocfilecache", when="@2.46.2:")
+        depends_on("r-httr2", when="@2.66.2:")
+        depends_on("r-progress", when="@2.34.2:")
+        depends_on("r-stringr", when="@2.34.2:")
+        depends_on("r-xml2", when="@2.46.2:")
+
+        # Historical
+        depends_on("r-xml", when="@:2.56.0")
+        depends_on("r-xml@3.99-0.7:", when="@2.52.0:2.56.0")
+        depends_on("r-httr", when="@2.34.2:2.56.0")
+        depends_on("r-digest", when="@2.50.3:2.56.0")
+        depends_on("r-rappdirs", when="@2.46.2:2.56.0")
+
+        depends_on("r-rcurl", when="@:2.40.5")
+        depends_on("r-openssl", when="@2.46.2")
