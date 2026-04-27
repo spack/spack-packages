@@ -170,7 +170,7 @@ class Arbor(CMakePackage, CudaPackage):
             self.define_from_variant("ARB_VECTORIZE", "vectorize"),
             self.define_from_variant("ARB_BUILD_PYTHON_STUBS", "pystubs"),
             self.define("ARB_ARCH", "none"),
-            self.define("ARB_CXX_FLAGS_TARGET", optimization_flags(self.compiler, spec.target)),
+            self.define("ARB_CXX_FLAGS_TARGET", microarchitecture_flags(self.spec, "cxx")),
         ]
 
         if self.spec.satisfies("+cuda"):
