@@ -30,6 +30,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="4a77f19a6229a6135fc9e2ea8e7694efda984c654a11a8c650fa9480aaf1ca84")
     version("7.1.0", sha256="719c27d839d2008be5c5ec270299d98aab820eaf6aee907b7fa12cecd0cea092")
@@ -116,6 +117,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
@@ -163,6 +165,7 @@ class Hipblas(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
 

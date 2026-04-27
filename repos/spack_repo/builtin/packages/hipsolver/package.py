@@ -35,6 +35,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="bd664e3cd43bfcc7e94d5a387c27262c4b218d6d2e71e086992b174349dd1c10")
     version("7.1.0", sha256="19b87cd27b9048964e94a77bb8c07a23ecfd5f96a73a91eebd1d365487bad2bf")
@@ -116,6 +117,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
@@ -178,4 +180,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         if not os.path.isdir(libloc):
             libloc = self.spec["suite-sparse"].prefix.lib
         args.append(self.define("SUITE_SPARSE_LIBDIR", libloc))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

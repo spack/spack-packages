@@ -41,8 +41,8 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    # See https://github.com/SalomePlatform/sat_salome/blob/master/applications for the dependencies
-    # and their version used for official releases
+    # See https://github.com/SalomePlatform/sat_salome/blob/master/applications for the
+    # dependencies and their version used for official releases
 
     depends_on("cmake@2.8.11:3", type="build")
 
