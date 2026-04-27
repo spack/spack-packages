@@ -36,8 +36,6 @@ class Megahit(Package):
     depends_on("gcc@4.8.4:", type="build", when="@1.2.9: build_system=cmake")
     depends_on("c", type="build", when="@1.2.9: build_system=cmake")
     depends_on("cxx", type="build", when="@1.2.9: build_system=cmake")
-    depends_on("gmake", type="build", when="generator=make")
-    depends_on("ninja", type="build", when="generator=ninja")
 
     depends_on("gzip", type="run", when="@1.2.9: build_system=cmake")
     depends_on("bzip2", type="run", when="@1.2.9: build_system=cmake")
