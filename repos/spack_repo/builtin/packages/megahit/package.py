@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack_repo.builtin.build_systems.makefile import MakefilePackage, MakefileBuilder
 
 from spack.package import *
 
@@ -40,7 +40,7 @@ class Megahit(CMakePackage, MakefilePackage):
     patch("amd.patch", when="@1.1.4 target=aarch64:")
 
 
-class MakefileBuilder(makefile.MakefileBuilder):
+class MakefileBuilder(MakefileBuilder):
     def install(self, pkg, spec, prefix):
         mkdirp(prefix.bin)
         install("megahit", prefix.bin)
