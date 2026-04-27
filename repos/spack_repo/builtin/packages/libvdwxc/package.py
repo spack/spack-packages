@@ -13,10 +13,14 @@ class Libvdwxc(AutotoolsPackage):
     interactions for density functional theory"""
 
     homepage = "https://libvdwxc.gitlab.io/libvdwxc/"
-    url = "https://launchpad.net/libvdwxc/stable/0.4.0/+download/libvdwxc-0.4.0.tar.gz"
+    url = "https://launchpad.net/libvdwxc/stable/0.5.0/+download/libvdwxc-0.5.0.tar.gz"
+    git = "https://gitlab.com/libvdwxc/libvdwxc"
 
     license("GPL-3.0-or-later")
+    maintainers("mtaillefumier")
 
+    version("master", branch="master", submodules=False)
+    version("0.5.0", sha256="29fb70efd58aff51524d2172a87e8f88e760b696b0ddb9aa5878432bdffa3c2f")
     version("0.4.0", sha256="3524feb5bb2be86b4688f71653502146b181e66f3f75b8bdaf23dd1ae4a56b33")
 
     variant("mpi", default=True, description="Enable MPI support")
@@ -29,6 +33,10 @@ class Libvdwxc(AutotoolsPackage):
     depends_on("mpi@2:", when="+mpi")
     depends_on("pfft", when="+pfft")
 
+    depends_on("autoconf", type="build", when="@master")
+    depends_on("automake", type="build", when="@master")
+    depends_on("libtool", type="build", when="@master")
+
     # pfft needs MPI
     conflicts("~mpi", "+pfft")
     conflicts("^fftw~mpi", "+mpi")
@@ -37,6 +45,7 @@ class Libvdwxc(AutotoolsPackage):
         spec = self.spec
 
         args = [
+            "--with-fftw3={0}".format(self["fftw"].prefix),  # make sure that fftw path is given
             "--{0}-pfft".format("with" if self.spec.satisfies("+pfft") else "without"),
             "MPICC=",  # make sure both variables are always unset
             "MPIFC=",  # otherwise the configure scripts complains
@@ -62,3 +71,10 @@ class Libvdwxc(AutotoolsPackage):
     # The relevant upstream fix for the m4 would be:
     # https://gitlab.com/libvdwxc/libvdwxc/-/commit/9340f857515c4a2e56d2aa7cf3a21c41ba8559c3.diff
     patch("fftw-detection.patch", when="@:0.4.0")
+
+    # fix a mpi detection error
+    patch(
+        "0001-fix-mpi-detection-in-configure.patch",
+        sha256="b1818ef7f984e398ab07f2a693ac7b2488955356645910d74a627159df97b932",
+        when="@0.5.0",
+    )

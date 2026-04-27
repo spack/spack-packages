@@ -18,6 +18,7 @@ class Bash(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("5.3", sha256="0d5cd86965f869a26cf64f4b71be7b96f90a3ba8b3d74e27e8e9d9d5550f31ba")
     version("5.2", sha256="a139c166df7ff4471c5e0733051642ee5556c1cc8a4a78f145583c5c81ab32fb")
     version("5.1", sha256="cc012bc860406dcf42f64431bcd3d2fa7560c02915a601aba9cd597a39329baa")
     version("5.0", sha256="b4a80f2ac66170b2913efbfb9f2594f1f76c7b1afd11f799e22035d63077fb4d")
@@ -31,6 +32,7 @@ class Bash(AutotoolsPackage, GNUMirrorPackage):
     depends_on("libtool", type="build")
 
     depends_on("ncurses")
+    depends_on("readline@8.3:", when="@5.3:")
     depends_on("readline@8.2:", when="@5.2:")
     depends_on("readline@5.0:")
     depends_on("iconv")
@@ -38,6 +40,9 @@ class Bash(AutotoolsPackage, GNUMirrorPackage):
 
     # TODO: patches below are not managed by the GNUMirrorPackage base class
     for verstr, num, checksum in (
+        ("5.3", "001", "1f608434364af86b9b45c8b0ea3fb3b165fb830d27697e6cdfc7ac17dee3287f"),
+        ("5.3", "002", "e385548a00130765ec7938a56fbdca52447ab41fabc95a25f19ade527e282001"),
+        ("5.3", "003", "f245d9c7dc3f5a20d84b53d249334747940936f09dc97e1dcb89fc3ab37d60ed"),
         ("5.2", "001", "f42f2fee923bc2209f406a1892772121c467f44533bedfe00a176139da5d310a"),
         ("5.2", "002", "45cc5e1b876550eee96f95bffb36c41b6cb7c07d33f671db5634405cd00fd7b8"),
         ("5.2", "003", "6a090cdbd334306fceacd0e4a1b9e0b0678efdbbdedbd1f5842035990c8abaff"),

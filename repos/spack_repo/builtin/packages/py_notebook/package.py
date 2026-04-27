@@ -14,6 +14,9 @@ class PyNotebook(PythonPackage):
     homepage = "https://github.com/jupyter/notebook"
     pypi = "notebook/notebook-6.1.4.tar.gz"
 
+    license("BSD-3-Clause")
+
+    version("7.4.5", sha256="7c2c4ea245913c3ad8ab3e5d36b34a842c06e524556f5c2e1f5d7d08c986615e")
     version("6.5.7", sha256="04eb9011dfac634fbd4442adaf0a8c27cd26beef831fe1d19faf930c327768e4")
     version("6.5.6", sha256="b4625a4b7a597839dd3156b140d5ba2c7123761f98245a3290f67a8b8ee048d9")
     version("6.5.4", sha256="517209568bd47261e2def27a140e97d49070602eea0d226a696f42a7f16c9a4e")
@@ -42,47 +45,59 @@ class PyNotebook(PythonPackage):
     version("4.0.2", sha256="8478d7e2ab474855b0ff841f693983388af8662d3af1adcb861acb900274f22a")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.8:", when="@7:")
         depends_on("python@3.7:", when="@6.4:")
         depends_on("python@3.6:", when="@6.3:")
         # import pipes in setupbase.py
         depends_on("python@:3.12", when="@:6")
 
-    depends_on("py-jupyter-packaging@0.9:0", when="@6.4.1:", type="build")
+    depends_on("py-hatchling@1.11:", type="build", when="@7:")
+    depends_on("py-httpx@0.25:0", type="build", when="@7.4.5:")
 
-    depends_on("py-setuptools", when="@5:", type="build")
-    depends_on("py-jinja2", type=("build", "run"))
-    depends_on("py-tornado@6.1:", when="@6.4.5:", type=("build", "run"))
-    depends_on("py-tornado@5.0:", when="@6:", type=("build", "run"))
-    depends_on("py-tornado@4.1:6", when="@5.7.5:5", type=("build", "run"))
-    depends_on("py-tornado@4.0:6", when="@:5.7.4", type=("build", "run"))
-    depends_on("py-pyzmq@17:", when="@6:", type=("build", "run"))
-    depends_on("py-argon2-cffi", when="@6.1:", type=("build", "run"))
-    depends_on("py-traitlets@5.10.1:", when="@6.5.6:", type=("build", "run"))
-    # https://github.com/jupyter/notebook/issues/7048
-    # Maybe the lower bound on 6 is wrong, but py-traitlets@5.10+ is incompatible  w/ 6.5.4
-    depends_on("py-traitlets@4.2.1:5.9.0", when="@6:6.5.5", type=("build", "run"))
-    depends_on("py-traitlets@4.2.1:", when="@5:", type=("build", "run"))
-    depends_on("py-traitlets", type=("build", "run"))
-    depends_on("py-jupyter-core@4.6.1:", when="@6.0.3:", type=("build", "run"))
-    depends_on("py-jupyter-core@4.6.0:", when="@6.0.2", type=("build", "run"))
-    depends_on("py-jupyter-core@4.4.0:", when="@5.7.0:6.0.1", type=("build", "run"))
-    depends_on("py-jupyter-core", type=("build", "run"))
-    depends_on("py-jupyter-client@5.3.4:", when="@6.0.2:", type=("build", "run"))
-    depends_on("py-jupyter-client@5.3.1:", when="@6.0.0:6.0.1", type=("build", "run"))
-    depends_on("py-jupyter-client@5.2.0:", when="@5.7.0:5", type=("build", "run"))
-    depends_on("py-jupyter-client", type=("build", "run"))
-    depends_on("py-ipython-genutils", type=("build", "run"))
-    depends_on("py-nbformat", type=("build", "run"))
-    # https://github.com/jupyter/notebook/pull/6286
-    depends_on("py-nbconvert@5:", when="@5.5:", type=("build", "run"))
-    depends_on("py-nbconvert", type=("build", "run"))
-    depends_on("py-nest-asyncio@1.5:", when="@6.4.10:", type=("build", "run"))
-    depends_on("py-ipykernel", type=("build", "run"))
-    depends_on("py-send2trash@1.8:", when="@6.4.10:", type=("build", "run"))
-    depends_on("py-send2trash@1.5:", when="@6.2.0:", type=("build", "run"))
-    depends_on("py-send2trash", when="@6:", type=("build", "run"))
-    depends_on("py-terminado@0.8.3:", when="@6.1:", type=("build", "run"))
-    depends_on("py-terminado@0.8.1:", when="@5.7.0:", type=("build", "run"))
-    depends_on("py-terminado@0.3.3:", when="@:5.7.0", type=("build", "run"))
-    depends_on("py-prometheus-client", when="@5.7.0:", type=("build", "run"))
-    depends_on("py-nbclassic@0.4.7:", when="@6.5:", type=("build", "run"))
+    depends_on("py-jupyter-server@2.4:2", type="build", when="@7:")
+    depends_on("py-jupyterlab@4.4.5:4.4", type=("build", "run"), when="@7.4.5:")
+    depends_on("py-jupyterlab-server@2.27.1:2", type=("build", "run"), when="@7.2:")
+    depends_on("py-notebook-shim@0.2", type=("build", "run"), when="@7:")
+    depends_on("py-tornado@6.2:", type=("build", "run"), when="@7:")
+    depends_on("py-tornado@6.1:", type=("build", "run"), when="@6.4.5:")
+    depends_on("py-tornado@5.0:", type=("build", "run"), when="@6:")
+    depends_on("py-tornado@4.1:6", type=("build", "run"), when="@5.7.5:5")
+    depends_on("py-tornado@4.0:6", type=("build", "run"), when="@:5.7.4")
+
+    # Historical dependencies
+    with when("@:6"):
+        depends_on("py-jupyter-packaging@0.9:0", type="build", when="@6.4.1:")
+        depends_on("py-setuptools", type="build", when="@5:")
+
+        depends_on("py-jinja2", type=("build", "run"))
+        depends_on("py-pyzmq@17:", type=("build", "run"), when="@6")
+        depends_on("py-argon2-cffi", type=("build", "run"), when="@6.1:")
+        depends_on("py-traitlets@5.10.1:", type=("build", "run"), when="@6.5.6:")
+        # https://github.com/jupyter/notebook/issues/7048
+        # Maybe the lower bound on 6 is wrong, but py-traitlets@5.10+ is incompatible  w/ 6.5.4
+        depends_on("py-traitlets@4.2.1:5.9.0", type=("build", "run"), when="@6:6.5.5")
+        depends_on("py-traitlets@4.2.1:", type=("build", "run"), when="@5:")
+        depends_on("py-traitlets", type=("build", "run"))
+        depends_on("py-jupyter-core@4.6.1:", type=("build", "run"), when="@6.0.3:")
+        depends_on("py-jupyter-core@4.6.0:", type=("build", "run"), when="@6.0.2")
+        depends_on("py-jupyter-core@4.4.0:", type=("build", "run"), when="@5.7.0:6.0.1")
+        depends_on("py-jupyter-core", type=("build", "run"))
+        depends_on("py-jupyter-client@5.3.4:", type=("build", "run"), when="@6.0.2:")
+        depends_on("py-jupyter-client@5.3.1:", type=("build", "run"), when="@6.0.0:6.0.1")
+        depends_on("py-jupyter-client@5.2.0:", type=("build", "run"), when="@5.7.0:5")
+        depends_on("py-jupyter-client", type=("build", "run"))
+        depends_on("py-ipython-genutils", type=("build", "run"))
+        depends_on("py-nbformat", type=("build", "run"))
+        # https://github.com/jupyter/notebook/pull/6286
+        depends_on("py-nbconvert@5:", type=("build", "run"), when="@5.5:")
+        depends_on("py-nbconvert", type=("build", "run"))
+        depends_on("py-nest-asyncio@1.5:", type=("build", "run"), when="@6.4.10:")
+        depends_on("py-ipykernel", type=("build", "run"))
+        depends_on("py-send2trash@1.8:", type=("build", "run"), when="@6.4.10:")
+        depends_on("py-send2trash@1.5:", type=("build", "run"), when="@6.2.0:")
+        depends_on("py-send2trash", type=("build", "run"), when="@6:")
+        depends_on("py-terminado@0.8.3:", type=("build", "run"), when="@6.1:")
+        depends_on("py-terminado@0.8.1:", type=("build", "run"), when="@5.7.0:")
+        depends_on("py-terminado@0.3.3:", type=("build", "run"), when="@:5.7.0")
+        depends_on("py-prometheus-client", type=("build", "run"), when="@5.7.0:")
+        depends_on("py-nbclassic@0.4.7:", type=("build", "run"), when="@6.5:")

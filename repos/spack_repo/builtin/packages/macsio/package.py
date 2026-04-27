@@ -42,12 +42,12 @@ class Macsio(CMakePackage):
     depends_on("hdf5+hl", when="+hdf5")
     # depends_on('hdf5+szip', when="+szip")
     depends_on("exodusii", when="+exodus")
-    # pdb is packaged with silo
-    depends_on("silo", when="+pdb")
     depends_on("typhonio", when="+typhonio")
     depends_on("scr", when="+scr")
     # macsio@1.1 has bug with ~mpi configuration
     conflicts("~mpi", when="@1.1")
+    # pdb is packaged with silo
+    conflicts("~silo +pdb")
 
     # Ref: https://github.com/LLNL/MACSio/commit/51b8c40cd9813adec5dd4dd6cee948bb9ddb7ee1
     patch("cast.patch", when="@1.1")
@@ -66,9 +66,7 @@ class Macsio(CMakePackage):
             cmake_args.append("-DWITH_SILO_PREFIX={0}".format(spec["silo"].prefix))
 
         if "+pdb" in spec:
-            # pdb is a part of silo
             cmake_args.append("-DENABLE_PDB_PLUGIN=ON")
-            cmake_args.append("-DWITH_SILO_PREFIX={0}".format(spec["silo"].prefix))
         if "+hdf5" in spec:
             cmake_args.append("-DENABLE_HDF5_PLUGIN=ON")
             cmake_args.append("-DWITH_HDF5_PREFIX={0}".format(spec["hdf5"].prefix))

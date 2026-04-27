@@ -18,6 +18,7 @@ class PyDamask(PythonPackage):
 
     license("AGPL-3.0-or-later")
 
+    version("3.0.2", sha256="82f9b3aefde87193c12a7c908f42b711b278438f6cad650918989e37fb6dbde4")
     version("3.0.1", sha256="3db1231f6763356e71b3bb91f66f1abb4fdae2721ce85754fc468446f3d74882")
     version("3.0.0", sha256="aaebc65b3b10e6c313132ee97cfed427c115079b7e438cc0727c5207e159019f")
     version(
@@ -41,9 +42,6 @@ class PyDamask(PythonPackage):
     version(
         "3.0.0-alpha4", sha256="0bb8bde43b27d852b1fb6e359a7157354544557ad83d87987b03f5d629ce5493"
     )
-
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     depends_on("py-pandas@0.24:", type=("build", "run"), when="@3.0.0-alpha8:")
     depends_on("py-numpy@1.17:", type=("build", "run"), when="@3.0.0-alpha8:")

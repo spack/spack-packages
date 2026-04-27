@@ -1,0 +1,333 @@
+From c5e79881646e792f4f686ff4de5de14b1d1a18d2 Mon Sep 17 00:00:00 2001
+From: Khem Raj <raj.khem@gmail.com>
+Date: Mon, 15 Aug 2022 18:25:23 -0700
+Subject: [PATCH] Add prototype to function definitions
+
+Compilers like clang has started erroring out on implicit-function-declaration
+therefore arrange the relevant include files where needed.
+
+---
+ exp_chan.c     | 5 +++--
+ exp_clib.c     | 4 +++-
+ exp_main_sub.c | 5 +++++
+ pty_termios.c  | 4 ++++
+ 4 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/exp_chan.c b/exp_chan.c
+index 79f486c..50375d3 100644
+--- a/exp_chan.c
++++ b/exp_chan.c
+@@ -35,6 +35,7 @@
+ #include "exp_prog.h"
+ #include "exp_command.h"
+ #include "exp_log.h"
++#include "exp_event.h" /* exp_background_channelhandler */
+ #include "tcldbg.h" /* Dbg_StdinMode */
+ 
+ extern int		expSetBlockModeProc _ANSI_ARGS_((int fd, int mode));
+@@ -631,7 +632,7 @@ expWaitOnOne() {
+ }
+ 
+ void
+-exp_background_channelhandlers_run_all()
++exp_background_channelhandlers_run_all(void)
+ {
+     ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
+     ExpState *esPtr;
+@@ -760,7 +761,7 @@ expCreateChannel(interp,fdin,fdout,pid)
+ }
+ 
+ void
+-expChannelInit() {
++expChannelInit(void) {
+     ThreadSpecificData *tsdPtr = TCL_TSD_INIT(&dataKey);
+ 
+     tsdPtr->channelCount = 0;
+diff --git a/exp_clib.c b/exp_clib.c
+index b21fb5d..8f31fc3 100644
+--- a/exp_clib.c
++++ b/exp_clib.c
+@@ -9,13 +9,14 @@ would appreciate credit if this program or parts of it are used.
+ 
+ #include "expect_cf.h"
+ #include <stdio.h>
++#include <unistd.h>
+ #include <setjmp.h>
+ #ifdef HAVE_INTTYPES_H
+ #  include <inttypes.h>
+ #endif
+ #include <sys/types.h>
+ #include <sys/ioctl.h>
+-
++#include <sys/wait.h>
+ #ifdef TIME_WITH_SYS_TIME
+ # include <sys/time.h>
+ # include <time.h>
+@@ -1738,6 +1739,7 @@ int exp_getptyslave();
+ #define sysreturn(x)	return(errno = x, -1)
+ 
+ void exp_init_pty();
++void exp_init_tty();
+ 
+ /*
+    The following functions are linked from the Tcl library.  They
+diff --git a/exp_main_sub.c b/exp_main_sub.c
+index bf6c4be..f53b89e 100644
+--- a/exp_main_sub.c
++++ b/exp_main_sub.c
+@@ -61,6 +61,11 @@ int exp_cmdlinecmds = FALSE;
+ int exp_interactive =  FALSE;
+ int exp_buffer_command_input = FALSE;/* read in entire cmdfile at once */
+ int exp_fgets();
++int exp_tty_cooked_echo(
++    Tcl_Interp *interp,
++    exp_tty *tty_old,
++    int *was_raw,
++    int *was_echo);
+ 
+ Tcl_Interp *exp_interp;	/* for use by signal handlers who can't figure out */
+ 			/* the interpreter directly */
+diff --git a/pty_termios.c b/pty_termios.c
+index c605b23..80ed5e7 100644
+--- a/pty_termios.c
++++ b/pty_termios.c
+@@ -7,6 +7,7 @@ would appreciate credit if you use this file or parts of it.
+ 
+ */
+ 
++#include <pty.h> /* openpty */
+ #include <stdio.h>
+ #include <signal.h>
+ 
+@@ -15,6 +16,9 @@ would appreciate credit if you use this file or parts of it.
+ #endif
+ 
+ #include "expect_cf.h"
++#include "tclInt.h"
++
++extern char * expErrnoMsg    _ANSI_ARGS_((int));
+ 
+ /*
+    The following functions are linked from the Tcl library.  They
+-- 
+2.37.2
+
+diff --git a/exp_chan.c b/exp_chan.c
+index c92e26b6fbd02305..944200a63b102672 100644
+--- a/exp_chan.c
++++ b/exp_chan.c
+@@ -60,7 +60,7 @@ void			exp_background_channelhandler _ANSI_ARGS_((ClientData,
+ 
+ Tcl_ChannelType expChannelType = {
+     "exp",				/* Type name. */
+-    ExpBlockModeProc,			/* Set blocking/nonblocking mode.*/
++    TCL_CHANNEL_VERSION_2,
+     ExpCloseProc,			/* Close proc. */
+     ExpInputProc,			/* Input proc. */
+     ExpOutputProc,			/* Output proc. */
+@@ -70,6 +70,7 @@ Tcl_ChannelType expChannelType = {
+     ExpWatchProc,			/* Initialize notifier. */
+     ExpGetHandleProc,			/* Get OS handles out of channel. */
+     NULL,				/* Close2 proc */
++    ExpBlockModeProc,			/* Set blocking/nonblocking mode.*/
+ };
+ 
+ typedef struct ThreadSpecificData {
+Avoid calling exit without declaring the function.
+
+Add missing <string.h> include for memcpy.
+
+Use AC_TYPE_SIGNAL to fix REARM_SIG check.  Add missing includes.
+
+Fix various implicit int return types of main.
+
+diff --git a/configure.in b/configure.in
+index 51558fa14d2bcf7e..055c88fbd8797eaa 100755
+--- a/configure.in
++++ b/configure.in
+@@ -452,7 +452,11 @@ AC_CHECK_FUNC(siglongjmp, AC_DEFINE(HAVE_SIGLONGJMP))
+ # because Unixware 2.0 handles it specially and refuses to compile
+ # autoconf's automatic test that is a call with no arguments
+ AC_MSG_CHECKING([for memcpy])
+-AC_TRY_LINK(,[
++AC_TRY_LINK([
++#ifdef HAVE_STRING_H
++#include <string.h>
++#endif
++],[
+ char *s1, *s2;
+ memcpy(s1,s2,0);
+ ],
+@@ -469,6 +473,7 @@ memcpy(s1,s2,0);
+ AC_MSG_CHECKING([if WNOHANG requires _POSIX_SOURCE])
+ AC_TRY_RUN([
+ #include <sys/wait.h>
++int
+ main() {
+ #ifndef WNOHANG
+ 	return 0;
+@@ -489,6 +494,7 @@ rm -rf wnohang
+ AC_TRY_RUN([
+ #include <stdio.h>
+ #include <sys/wait.h>
++int
+ main() {
+ #ifdef WNOHANG
+ 	FILE *fp = fopen("wnohang","w");
+@@ -527,16 +533,21 @@ else
+   AC_DEFINE(SELECT_MASK_TYPE, fd_set)
+ fi
+ 
+-dnl # Check for the data type of the function used in signal(). This
+-dnl # must be before the test for rearming.
+-dnl # echo checking return type of signal handlers
+-dnl AC_HEADER_EGREP([(void|sighandler_t).*signal], signal.h, retsigtype=void,AC_DEFINE(RETSIGTYPE, int) retsigtype=int)
++AC_TYPE_SIGNAL
+ 
+ # FIXME: check if alarm exists
+ AC_MSG_CHECKING([if signals need to be re-armed])
+ AC_TRY_RUN([
+ #include <signal.h>
+-#define RETSIGTYPE $retsigtype
++#ifdef HAVE_STDLIB_H
++# include <stdlib.h>
++#endif
++#ifdef HAVE_UNISTD_H
++# include <unistd.h>
++#endif
++#ifndef NO_SYS_WAIT_H
++# include <sys/wait.h>
++#endif
+ 
+ int signal_rearms = 0;
+ 
+@@ -553,6 +564,7 @@ int n;
+ signal_rearms++;
+ }
+ 
++int
+ main()
+ {
+ 	signal(SIGINT,parent_sigint_handler);
+@@ -714,10 +726,11 @@ fi
+ AC_MSG_CHECKING([for struct sgttyb])
+ AC_TRY_RUN([
+ #include <sgtty.h>
++int
+ main()
+ {
+   struct sgttyb tmp;
+-  exit(0);
++  return 0;
+ }],
+         AC_MSG_RESULT(yes)
+         AC_DEFINE(HAVE_SGTTYB)
+@@ -738,10 +751,11 @@ if test $mach -eq 0 ; then
+   # pty_termios.c is set up to handle pty_termio.
+   AC_MSG_CHECKING([for struct termio])
+   AC_TRY_RUN([#include <termio.h>
++  int
+   main()
+   {
+     struct termio tmp;
+-    exit(0);
++    return 0;
+   }],
+         AC_DEFINE(HAVE_TERMIO)
+         PTY_TYPE=termios
+@@ -760,10 +774,11 @@ if test $mach -eq 0 ; then
+ #  include <inttypes.h>
+ #  endif
+ #  include <termios.h>
++  int
+   main()
+   {
+     struct termios tmp;
+-    exit(0);
++    return 0;
+   }],
+         AC_DEFINE(HAVE_TERMIOS)
+         PTY_TYPE=termios
+@@ -782,6 +797,7 @@ AC_TRY_RUN([
+ #include <inttypes.h>
+ #endif
+ #include <termios.h>
++int
+ main() {
+ #if defined(TCGETS) || defined(TCGETA)
+ 	return 0;
+@@ -804,6 +820,7 @@ AC_TRY_RUN([
+ #include <inttypes.h>
+ #endif
+ #include <termios.h>
++int
+ main() {
+ #ifdef TIOCGWINSZ
+ 	return 0;
+@@ -823,6 +840,7 @@ main() {
+ AC_MSG_CHECKING([for Cray-style ptys])
+ SETUID=":"
+ AC_TRY_RUN([
++int
+ main(){
+ #ifdef CRAY
+ 	return 0;
+@@ -878,12 +896,13 @@ AC_MSG_CHECKING([for SV-style timezone])
+ AC_TRY_RUN([
+ extern char *tzname[2];
+ extern int daylight;
++int
+ main()
+ {
+   int *x = &daylight;
+   char **y = tzname;
+ 
+-  exit(0);
++  return 0;
+ }],
+ 	AC_DEFINE(HAVE_SV_TIMEZONE)
+ 	AC_MSG_RESULT(yes),
+diff --git a/tclconfig/tcl.m4 b/tclconfig/tcl.m4
+index 0689cab3da994068..ebe839e5553ba520 100644
+--- a/tclconfig/tcl.m4
++++ b/tclconfig/tcl.m4
+@@ -2400,7 +2400,7 @@ AC_DEFUN([TEA_TIME_HANDLER], [
+ 	AC_TRY_COMPILE([#include <time.h>],
+ 	    [extern long timezone;
+ 	    timezone += 1;
+-	    exit (0);],
++	    return 0;],
+ 	    tcl_cv_timezone_long=yes, tcl_cv_timezone_long=no)])
+     if test $tcl_cv_timezone_long = yes ; then
+ 	AC_DEFINE(HAVE_TIMEZONE_VAR, 1, [Should we use the global timezone variable?])
+@@ -2412,7 +2412,7 @@ AC_DEFUN([TEA_TIME_HANDLER], [
+ 	    AC_TRY_COMPILE([#include <time.h>],
+ 		[extern time_t timezone;
+ 		timezone += 1;
+-		exit (0);],
++		return 0;],
+ 		tcl_cv_timezone_time=yes, tcl_cv_timezone_time=no)])
+ 	if test $tcl_cv_timezone_time = yes ; then
+ 	    AC_DEFINE(HAVE_TIMEZONE_VAR, 1, [Should we use the global timezone variable?])
+@@ -2452,17 +2452,17 @@ AC_DEFUN([TEA_BUGGY_STRTOD], [
+ 		    double value;
+ 		    value = strtod(infString, &term);
+ 		    if ((term != infString) && (term[-1] == 0)) {
+-			exit(1);
++			return 1;
+ 		    }
+ 		    value = strtod(nanString, &term);
+ 		    if ((term != nanString) && (term[-1] == 0)) {
+-			exit(1);
++			return 1;
+ 		    }
+ 		    value = strtod(spaceString, &term);
+ 		    if (term == (spaceString+1)) {
+-			exit(1);
++			return 1;
+ 		    }
+-		    exit(0);
++		    return 0;
+ 		}], tcl_cv_strtod_buggy=ok, tcl_cv_strtod_buggy=buggy,
+ 		    tcl_cv_strtod_buggy=buggy)])
+ 	if test "$tcl_cv_strtod_buggy" = buggy; then

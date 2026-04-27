@@ -112,19 +112,17 @@ class Wannier90(MakefilePackage):
             )
             filter_file(
                 "../../wannier90.x: .*",
-                "../../wannier90.x: $(OBJS) " "../wannier_prog.F90 $(LIBRARY)",
+                "../../wannier90.x: $(OBJS) ../wannier_prog.F90 $(LIBRARY)",
                 join_path(self.stage.source_path, "src/Makefile.2"),
             )
             filter_file(
-                "../../postw90.x: $(OBJS_POST) " "$(POSTDIR)postw90.F90",
-                "../../postw90.x: $(OBJS_POST) " "$(POSTDIR)postw90.F90 $(LIBRARY)",
+                "../../postw90.x: $(OBJS_POST) $(POSTDIR)postw90.F90",
+                "../../postw90.x: $(OBJS_POST) $(POSTDIR)postw90.F90 $(LIBRARY)",
                 join_path(self.stage.source_path, "src/Makefile.2"),
                 string=True,
             )
             filter_file(
-                "$(COMPILER) ../wannier_prog.F90 "
-                "$(LDOPTS) $(OBJS) $(LIBS) "
-                "-o ../../wannier90.x",
+                "$(COMPILER) ../wannier_prog.F90 $(LDOPTS) $(OBJS) $(LIBS) -o ../../wannier90.x",
                 "$(COMPILER) -I../obj ../wannier_prog.F90 "
                 "$(LDOPTS) -L../.. -lwannier "
                 "-o ../../wannier90.x",
@@ -143,8 +141,8 @@ class Wannier90(MakefilePackage):
                 string=True,
             )
             filter_file(
-                "$(AR) $(ARFLAGS) " "$(LIBRARY) $(OBJS2) $(OBJS)",
-                "$(MPIF90) $(FCOPTS) -shared -o " "$(LIBRARY) $(OBJS2) $(OBJS) $(LIBS)",
+                "$(AR) $(ARFLAGS) $(LIBRARY) $(OBJS2) $(OBJS)",
+                "$(MPIF90) $(FCOPTS) -shared -o $(LIBRARY) $(OBJS2) $(OBJS) $(LIBS)",
                 join_path(self.stage.source_path, "src/Makefile.2"),
                 string=True,
             )

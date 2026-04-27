@@ -12,11 +12,18 @@ class PyAse(PythonPackage):
     and Python modules for setting up, manipulating, running,
     visualizing and analyzing atomistic simulations."""
 
-    homepage = "https://wiki.fysik.dtu.dk/ase/"
-    pypi = "ase/ase-3.13.0.tar.gz"
+    homepage = "https://ase-lib.org/"
+    pypi = "ase/ase-3.25.0.tar.gz"
 
     license("LGPL-2.1-or-later")
 
+    maintainers("alikhamze")
+
+    version("3.28.0", sha256="74fe77ca38bf78070e24cd283f5d25be129bad6503fd26619008548518144732")
+    version("3.27.0", sha256="92ada752d6866a61d2d27e0e6a4fd5b8cd86f59ca79a58f1d2fe29d7099153dc")
+    version("3.26.0", sha256="a071a355775b0a8062d23e9266e9d811b19d9f6d9ec5215e8032f7d93dc65075")
+    version("3.25.0", sha256="374cf8ca9fe588f05d6e856da3c9c17ef262dc968027b231d449334140c962c2")
+    version("3.24.0", sha256="9acc93d6daaf48cd27b844c56f8bf49428b9db0542faa3cc30d9d5b8e1842195")
     version("3.23.0", sha256="91a2aa31d89bd90b0efdfe4a7e84264f32828b2abfc9f38e65e041ad76fec8ae")
     version("3.21.1", sha256="78b01d88529d5f604e76bc64be102d48f058ca50faad72ac740d717545711c7b")
     version("3.21.0", sha256="2c561e9b767cf16fc8ce198ea9326d77c6b67d33a85f44b68455e23466a64608")
@@ -31,15 +38,53 @@ class PyAse(PythonPackage):
     version("3.15.0", sha256="5e22d961b1311ef4ba2d83527f7cc7448abac8cf9bddd1593bee548459263fe8")
     version("3.13.0", sha256="c4046c50debac28415b36616d79aa28e68ae2cd03c013c2aed6a1e3d465c0ee1")
 
-    depends_on("python@2.6:", type=("build", "run"), when="@:3.15.0")
-    depends_on("python@3.5:", type=("build", "run"), when="@3.18.0:")
-    depends_on("python@3.6:", type=("build", "run"), when="@3.20.0:")
-    depends_on("python@3.8:", type=("build", "run"), when="@3.23.0:")
-    depends_on("py-numpy@1.11.3:", type=("build", "run"))
-    depends_on("py-numpy@1.18.5:", type=("build", "run"), when="@3.23.0:")
-    depends_on("py-matplotlib@2.0.0:", type=("build", "run"))
-    depends_on("py-matplotlib@3.3.4:", type=("build", "run"), when="@3.23.0:")
-    depends_on("py-scipy@0.18.1:", type=("build", "run"))
-    depends_on("py-scipy@1.6.0:", type=("build", "run"), when="@3.23.0:")
-    depends_on("py-flask", type=("build", "run"), when="@:3.18.0")
-    depends_on("py-setuptools", type="build")
+    with when("@3.27.0:"):
+        depends_on("python@3.10:", type=("build", "run"))
+        depends_on("py-numpy@1.21.6:", type=("build", "run"))
+        depends_on("py-scipy@1.8.1:", type=("build", "run"))
+        depends_on("py-matplotlib@3.5.2:", type=("build", "run"))
+        depends_on("py-setuptools@77.0.3:", type="build")
+
+    with when("@3.24.0:3.26.0"):
+        depends_on("python@3.9:", type=("build", "run"))
+        depends_on("py-numpy@1.19.5:", type=("build", "run"))
+        depends_on("py-scipy@1.6:", type=("build", "run"))
+        depends_on("py-matplotlib@3.3.4:", type=("build", "run"))
+        depends_on("py-setuptools@61:", type="build")
+
+    with when("@3.23.0"):
+        depends_on("python@3.8:", type=("build", "run"))
+        depends_on("py-numpy@1.18.5:", type=("build", "run"))
+        depends_on("py-scipy@1.6:", type=("build", "run"))
+        depends_on("py-matplotlib@3.3.4:", type=("build", "run"))
+        depends_on("py-setuptools@61:", type="build")
+
+    with when("@3.21"):
+        depends_on("python@3.6:", type=("build", "run"))
+        depends_on("py-numpy@1.18.5:", type=("build", "run"))
+        depends_on("py-scipy@1.6:", type=("build", "run"))
+        depends_on("py-matplotlib@3.3.4:", type=("build", "run"))
+        depends_on("py-setuptools", type="build")
+
+    with when("@3.20.0"):
+        depends_on("python@3.6:", type=("build", "run"))
+        depends_on("py-numpy@1.11.3:", type=("build", "run"))
+        depends_on("py-scipy@0.18.1:", type=("build", "run"))
+        depends_on("py-matplotlib@2:", type=("build", "run"))
+        depends_on("py-setuptools", type="build")
+
+    with when("@3.18:3.19.3"):
+        depends_on("python@3.5:", type=("build", "run"))
+        depends_on("py-numpy@1.11.3:", type=("build", "run"))
+        depends_on("py-scipy@0.18.1:", type=("build", "run"))
+        depends_on("py-matplotlib@2:", type=("build", "run"))
+        depends_on("py-flask", type=("build", "run"), when="@:3.18.0")
+        depends_on("py-setuptools", type="build")
+
+    with when("@3.13:3.15"):
+        depends_on("python@3.4:", type=("build", "run"))
+        depends_on("py-numpy@1.11.3:", type=("build", "run"))
+        depends_on("py-scipy@0.18.1:", type=("build", "run"))
+        depends_on("py-matplotlib@2:", type=("build", "run"))
+        depends_on("py-flask", type=("build", "run"))
+        depends_on("py-setuptools", type="build")

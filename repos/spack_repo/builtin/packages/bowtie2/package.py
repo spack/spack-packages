@@ -17,6 +17,7 @@ class Bowtie2(MakefilePackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.5.4", sha256="94ec207a0494b9f5e0e62dbbca8cb79fe4ff16602395802a86d098349c6ef004")
     version("2.5.2", sha256="2c47a7da0a507c68319b307cdd15dee385127cc817d6bbf1d357af8d8af578ef")
     version("2.5.1", sha256="cb6cbbbb5a7167a2f21a3d63cb9774336361f540e1ec3d8ff907f955c35f71b8")
     version("2.4.5", sha256="d3cbd5f323393b5649aea10325d7c4b77f02035a8b204e5ac18eba95236e076a")
@@ -28,6 +29,8 @@ class Bowtie2(MakefilePackage):
     version("2.3.1", sha256="33bd54f5041a31878e7e450cdcf0afba08345fa1133ce8ac6fd00bf7e521a443")
     version("2.3.0", sha256="f9f841e780e78b1ae24b17981e2469e6d5add90ec22ef563af23ae2dd5ca003c")
     version("2.2.5", sha256="e22766dd9421c10e82a3e207ee1f0eb924c025b909ad5fffa36633cd7978d3b0")
+
+    depends_on("cxx", type="build")
 
     depends_on("tbb", when="@2.3.0:")
     depends_on("readline", when="@2.3.1:")

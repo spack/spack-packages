@@ -22,6 +22,10 @@ class Libaec(CMakePackage):
 
     license("BSD-2-Clause")
 
+    version("1.1.4", sha256="95439e861968cb0638a10b0bbdb37c9a10df1b22c5ee0293902acdbc68140f53")
+    version("1.1.3", sha256="453de44eb6ea2500843a4cf4d2e97d1be251d2df7beae6c2ebe374edcb11e378")
+    version("1.1.2", sha256="dc03ddbc9dabf806af1036e2c7bde44bbb1a2a6e0b186d46a6ca06390622afb9")
+    version("1.1.1", sha256="7be8e9b9a508fc165896fd7d85274666ac09e5a01be4f7de9fef5317065e13d4")
     version("1.0.6", sha256="abab8c237d85c982bb4d6bde9b03c1f3d611dcacbd58bca55afac2496d61d4be")
     version("1.0.5", sha256="7bf7be828dc3caefcc968e98a59b997b6b3b06e4123137e9e0b0988dc1be3b2f")
     version("1.0.4", sha256="7456adff4e817f94fc57a3eca824db1c203770ffb7a9253c435093ac5e239e31")
@@ -32,6 +36,15 @@ class Libaec(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+
+    # CMake v3 is meant to be backwards compatible.
+    # CMake v4 removes compatibility with versions older than v3.5.
+    # CMakeLists.txt: cmake_minimum_required(VERSION 3.1)
+    depends_on("cmake@3.1:3", type="build", when="@:1.0.3")
+    # CMakeLists.txt: cmake_minimum_required(VERSION 3.13...3.19)
+    depends_on("cmake@3.13:", type="build", when="@1.0.4:1.1.3")
+    # CMakeLists.txt: cmake_minimum_required(VERSION 3.26...3.31)
+    depends_on("cmake@3.26:", type="build", when="@1.1.4:")
 
     variant("shared", default=True, description="Builds a shared version of the library")
 

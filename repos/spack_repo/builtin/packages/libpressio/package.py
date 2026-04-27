@@ -13,7 +13,7 @@ class Libpressio(CMakePackage, CudaPackage):
 
     # codarcode gets "stable" releases ~1/yr; robertu94 contains development versions
     homepage = "https://github.com/codarcode/libpressio"
-    url = "https://github.com/robertu94/libpressio/archive/0.31.1.tar.gz"
+    url = "https://github.com/robertu94/libpressio/archive/0.99.4.tar.gz"
     git = "https://github.com/robertu94/libpressio"
 
     tags = ["e4s"]
@@ -247,6 +247,7 @@ class Libpressio(CMakePackage, CudaPackage):
     depends_on("libstdcompat", when="@0.52.0:")
 
     depends_on("c-blosc", when="+blosc")
+    depends_on("c-blosc2", when="+blosc2")
     depends_on("fpzip", when="+fpzip")
     depends_on("hdf5", when="+hdf5")
     # this might seem excessive, but if HDF5 is external and parallel
@@ -258,6 +259,9 @@ class Libpressio(CMakePackage, CudaPackage):
     depends_on("python@3:", when="+python", type=("build", "link", "run"))
     depends_on("py-numpy", when="+python", type=("build", "link", "run"))
     depends_on("swig@3.12:", when="+python", type="build")
+    # swig >= 4.3.0 changed SWIG_Python_AppendOutput to a 3-arg function;
+    # libpressio's bundled numpy.i still calls the old 2-arg form (unfixed upstream)
+    depends_on("swig@:4.2", when="+python", type="build")
     depends_on("sz@2.1.8.1:", when="@0.55.2:+sz")
     depends_on("sz@2.1.11.1:", when="@0.55.3:+sz")
     depends_on("sz@2.1.12:", when="@0.69.0:+sz")
@@ -437,7 +441,7 @@ class Libpressio(CMakePackage, CudaPackage):
         cmake(*args)
         cmake("--build", ".")
 
-        exe = which("pressio_smoke_tests")
+        exe = which("pressio_smoke_tests", required=True)
         out = exe(output=str.split, error=str.split)
 
         expected = "all passed"

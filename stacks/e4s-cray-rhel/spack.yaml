@@ -1,0 +1,204 @@
+spack:
+  view: false
+
+  include:
+  - ../../.ci/gitlab/
+
+  concretizer:
+    static_analysis: true
+
+  config:
+    shared_linking:
+      missing_library_policy: ignore  # due to use of externals
+
+  packages:
+    all:
+      require:
+      - target=x86_64_v3
+      providers:
+        blas: [cray-libsci]
+        c: [cce, gcc]
+        cxx: [cce, gcc]
+        fortran: [cce, gcc]
+        lapack: [cray-libsci]
+        mpi: [cray-mpich]
+        tbb: [intel-tbb]
+        scalapack: [netlib-scalapack]
+      variants: +mpi
+
+    # Virtuals
+    blas:
+      require:
+      - cray-libsci
+    lapack:
+      require:
+      - cray-libsci
+    mpi:
+      require:
+      - cray-mpich
+    scalapack:
+      require:
+      - netlib-scalapack
+
+    cce:
+      externals:
+      - spec: cce@20.0.0
+        prefix: /opt/cray/pe/cce/20.0.0
+        extra_attributes:
+          compilers:
+            c: /opt/cray/pe/cce/20.0.0/bin/craycc
+            cxx: /opt/cray/pe/cce/20.0.0/bin/crayCC
+            fortran: /opt/cray/pe/cce/20.0.0/bin/crayftn
+    gcc:
+      externals:
+      - spec: gcc@8.5.0 languages:='c,c++,fortran'
+        prefix: /usr
+        extra_attributes:
+          compilers:
+            c: /usr/bin/gcc
+            cxx: /usr/bin/g++
+            fortran: /usr/bin/gfortran
+
+    ncurses:
+      require:
+      - +termlib ldflags=-Wl,--undefined-version
+      - target=x86_64_v3
+    tbb:
+      require: "intel-tbb"
+    binutils:
+      variants: +ld +gold +headers +libiberty ~nls
+    boost:
+      variants: +python +filesystem +iostreams +system
+    elfutils:
+      variants: ~nls
+      require:
+      - target=x86_64_v3
+      - "%gcc"
+    hdf5:
+      variants: +fortran +hl +shared
+    libfabric:
+      variants: fabrics=sockets,tcp,udp,rxm
+    mgard:
+      require:
+        - target=x86_64_v3
+        - "@compat-2023-01-10:"
+    paraview:
+      # Don't build GUI support or GLX rendering for HPC/container deployments
+      require:
+      - "~qt ^[virtuals=gl] osmesa"
+      - target=x86_64_v3
+    petsc:
+      require:
+      - "+batch"
+      - target=x86_64_v3
+
+  specs:
+  # CPU
+  - adios
+  - aml
+  - arborx
+  - argobots
+  - boost +python +filesystem +iostreams +system
+  - cabana
+  - caliper
+  - chai
+  - conduit
+  - dyninst
+  - flecsi
+  - flit
+  - flux-core
+  - gasnet
+  - ginkgo
+  - globalarrays
+  - gmp
+  - gotcha
+  - h5bench
+  - hdf5-vol-async
+  - hdf5-vol-cache cflags=-Wno-error=incompatible-function-pointer-types
+  - hdf5-vol-log
+  - heffte +fftw
+  - hpctoolkit
+  - hpx max_cpu_count=512 networking=mpi
+  - hypre
+  - kokkos +openmp
+  - kokkos-fft host_backend=fftw-openmp +tests
+  - kokkos-kernels +openmp
+  - libnrm
+  - libquo
+  - libunwind
+  - mercury
+  - metall
+  - mfem
+  - mgard +serial +openmp +timing +unstructured ~cuda # mgard
+  - mpark-variant
+  - mpifileutils ~xattr cflags=-Wno-error=implicit-function-declaration
+  - nccmp
+  - netlib-scalapack cflags=-Wno-error=implicit-function-declaration
+  - nvhpc
+  - openmpi
+  - papi
+  - papyrus
+  - parsec ~cuda
+  - pdt
+  - petsc
+  - precice
+  - pumi
+  - py-h5py +mpi
+  - py-h5py ~mpi
+  - py-libensemble +mpi +nlopt
+  - py-petsc4py
+  - qthreads scheduler=distrib
+  - raja
+  - slate ~cuda
+  - stc
+  - sundials
+  - swig
+  - swig@4.0.2-fortran
+  - tasmanian
+  - tau +mpi +python
+  - turbine
+  - umap
+  - umpire
+  - upcxx
+  - veloc
+  - wannier90
+
+  # recently confirmed issues:
+  # - alquimia
+  # - amrex                               # disabled temporarily pending resolution of unreproducible CI failure
+  # - axom
+  # - bolt
+  # - bricks
+  # - butterflypack ^netlib-scalapack cflags=-Wno-error=implicit-function-declaration # cray/pe/cce/20.0.0/cce/x86_64/bin/../../../cce/x86_64/bin/optcg" was terminated due to receipt of signal 013:  Segmentation fault (core dumped).
+  # - charliecloud                        # hard to pin down build error, occurs sometimes not others, requires investigation
+  # - cp2k +mpi
+  # - datatransferkit
+  # - dealii
+  # - exaworks
+  # - fortrilinos
+  # - gptune
+  # - lammps
+  # - legion                              # bitmask.h:2894:22: error: a template argument list is expected after a name prefixed by the template keyword [-Wmissing-template-arg-list-after-template-kw]
+  # - libpressio +bitgrooming +bzip2 ~cuda ~cusz +fpzip +hdf5 +libdistributed +lua +openmp +python +sz +sz3 +unix +zfp +json +remote +netcdf +mgard
+  # - nco
+  # - nrm
+  # - omega-h
+  # - openpmd-api ^adios2~mgard           # json-c: printbuf.c:163:15: error: call to undeclared function 'vasprintf'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  # - phist
+  # - plasma
+  # - plumed
+  # - py-jupyterhub
+  # - quantum-espresso
+  # - scr
+  # - slepc
+  # - strumpack ~slate                    # butterflypack: build inconsistently fails: # cray/pe/cce/20.0.0/cce/x86_64/bin/../../../cce/x86_64/bin/optcg" was terminated due to receipt of signal 013:  Segmentation fault (core dumped).  
+  # - superlu                             # CMake Error at FORTRAN/cmake_install.cmake:111 (file): file INSTALL cannot find: spack-build-nhn6u3t/FORTRAN/superlu_mod.mod":
+  # - superlu-dist                        # ld.lld: error: undefined symbol: dgemv_
+  # - sz3                                 # gsl: clang: /workspace/llvm/lib/Transforms/Vectorize/SLPVectorizer.cpp:3642: llvm::slpvectorizer::BoUpSLP::TreeEntry* llvm::slpvectorizer::BoUpSLP::newTreeEntry(llvm::ArrayRef<llvm::Value*>, llvm::slpvectorizer::BoUpSLP::TreeEntry::EntryState, std::optional<llvm::slpvectorizer::BoUpSLP::ScheduleData*>, const {anonymous}::InstructionsState&, const llvm::slpvectorizer::BoUpSLP::EdgeInfo&, llvm::ArrayRef<int>, llvm::ArrayRef<unsigned int>): Assertion `(hasFullVectorsOrPowerOf2(*TTI, getValueType(VL.front()), VL.size()) || ReuseShuffleIndices.empty()) && "Reshuffling scalars not yet supported for nodes with padding"' failed.
+  # - trilinos +belos +ifpack2 +stokhos   # spack-src/packages/kokkos-kernels/sparse/src/KokkosSparse_spadd_handle.hpp:81:40: error: no member named'sort_option' in 'SPADDHandle<lno_row_view_t_, lno_nnz_view_t_, scalar_nnz_view_t_, ExecutionSpace, MemorySpace>'
+  # - variorum
+  # - warpx +python
+  # - xyce +mpi +shared +pymi             # xyce: cray-libsci not supported with +pymi_static_tpls
+
+  cdash:
+    build-group: E4S Cray

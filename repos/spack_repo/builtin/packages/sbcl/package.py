@@ -1,11 +1,9 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class Sbcl(MakefilePackage):
@@ -57,7 +55,7 @@ class Sbcl(MakefilePackage):
     phases = ["build", "install"]
 
     def build(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
 
         version_str = str(spec.version)
 
@@ -79,5 +77,5 @@ class Sbcl(MakefilePackage):
             sh("make.sh", *build_args)
 
     def install(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("install.sh")

@@ -37,8 +37,7 @@ class Groff(AutotoolsPackage, GNUMirrorPackage):
     variant(
         "uchardet",
         default=True,
-        description="Builds preconv with uchardet library for "
-        "automatic file encoding detection",
+        description="Builds preconv with uchardet library for automatic file encoding detection",
     )
 
     conflicts("+uchardet", when="@:1.22.3")

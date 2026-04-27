@@ -37,7 +37,7 @@ class DocbookXml(Package):
         version = self.version
         docbook = join_path(prefix, "docbook")
         ent_dir = join_path(prefix, "ent")
-        xmlcatalog = which("xmlcatalog")
+        xmlcatalog = which("xmlcatalog", required=True)
 
         # create docbook
         xmlcatalog("--noout", "--create", docbook)
@@ -77,8 +77,7 @@ class DocbookXml(Package):
             "--noout",
             "--add",
             "public",
-            "-//OASIS//ENTITIES DocBook XML Additional General Entities "
-            "V{0}//EN".format(version),
+            "-//OASIS//ENTITIES DocBook XML Additional General Entities V{0}//EN".format(version),
             f"file://{prefix}/dbgenent.mod",
             docbook,
         )
@@ -118,7 +117,7 @@ class DocbookXml(Package):
             "--noout",
             "--add",
             "public",
-            "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow " "Relations//EN",
+            "ISO 8879:1986//ENTITIES Added Math Symbols: Arrow Relations//EN",
             f"file://{ent_dir}/isoamsa.ent",
             docbook,
         )
@@ -126,7 +125,7 @@ class DocbookXml(Package):
             "--noout",
             "--add",
             "public",
-            "ISO 8879:1986//ENTITIES Added Math Symbols: Binary " "Operators//EN",
+            "ISO 8879:1986//ENTITIES Added Math Symbols: Binary Operators//EN",
             f"file://{ent_dir}/isoamsb.ent",
             docbook,
         )
@@ -142,7 +141,7 @@ class DocbookXml(Package):
             "--noout",
             "--add",
             "public",
-            "ISO 8879:1986//ENTITIES Added Math Symbols: " "Negated Relations//EN",
+            "ISO 8879:1986//ENTITIES Added Math Symbols: Negated Relations//EN",
             f"file://{ent_dir}/isoamsn.ent",
             docbook,
         )

@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 #
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
@@ -38,6 +37,10 @@ class Parsec(CMakePackage, CudaPackage):
         url="https://github.com/ICLDisco/parsec/archive/refs/tags/v1.1.0.tar.gz",
     )
 
+    # Add data_dist/matrix/apply.h to the list of header files to install.
+    # This is required for building against this parsec installation.
+    patch("apply-header.patch", when="@4.0.2411")
+
     variant(
         "build_type",
         default="RelWithDebInfo",
@@ -60,6 +63,9 @@ class Parsec(CMakePackage, CudaPackage):
         "+debug_verbose build_type=RelWithDebInfo",
         msg="You need to set build_type=Debug for +debug_verbose",
     )
+
+    # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+    conflicts("^cuda@13:", when="+cuda")
     # TODO: Spack does not handle cross-compilation atm
     # variant('xcompile', default=False, description='Cross compile')
 
@@ -85,6 +91,7 @@ class Parsec(CMakePackage, CudaPackage):
             self.define_from_variant("PARSEC_PROF_TRACE", "profile"),
             self.define_from_variant("PARSEC_DEBUG_HISTORY", "debug_verbose"),
             self.define_from_variant("PARSEC_DEBUG_PARANOID", "debug_verbose"),
+            self.define("PARSEC_GPU_WITH_HIP", "Off"),
         ]
         return args
 
@@ -121,7 +128,7 @@ class Parsec(CMakePackage, CudaPackage):
 
             for name in ["dtd_test_allreduce", "write_check"]:
                 with test_part(self, f"test_contrib_{name}", f"run {name}"):
-                    exe = which(name)
+                    exe = which(name, required=True)
                     exe()
 
     @run_after("install")

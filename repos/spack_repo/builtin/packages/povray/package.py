@@ -31,19 +31,13 @@ class Povray(AutotoolsPackage):
     license("AGPL-3.0-or-later")
 
     version("3.7.0.10", sha256="7bee83d9296b98b7956eb94210cf30aa5c1bbeada8ef6b93bb52228bbc83abff")
-    # The following version no longer builds
-    version(
-        "3.7.0.8",
-        sha256="53d11ebd2972fc452af168a00eb83aefb61387662c10784e81b63e44aa575de4",
-        deprecated=True,
-    )
 
     variant("boost", default=True, description="Build with boost support")
     variant("debug", default=False, description="Enable compiler debugging mode")
     variant(
         "io-restrictions",
         default=True,
-        description="Enable POV-Rays mechanism for control of I/O " "operations",
+        description="Enable POV-Rays mechanism for control of I/O operations",
     )
     variant("jpeg", default=True, description="Build with jpeg support")
     variant("libpng", default=True, description="Build with libpng support")
@@ -99,7 +93,7 @@ class Povray(AutotoolsPackage):
         # and it must be run from within the directory containing it
         unix_dir = join_path(self.build_directory, "unix")
         prebuild_path = join_path(unix_dir, "prebuild.sh")
-        prebuild_script = which(prebuild_path)
+        prebuild_script = which(prebuild_path, required=True)
         prebuild_script()
 
     def configure_args(self):
@@ -159,7 +153,7 @@ class Povray(AutotoolsPackage):
         """Render sample file"""
         povs = find(self.prefix.share, "biscuit.pov")[0]
         copy(povs, ".")
-        exe = which("povray")
+        exe = which("povray", required=True)
         out = exe("biscuit.pov", output=str.split, error=str.split)
         expected = "POV-Ray finished"
         assert expected in out

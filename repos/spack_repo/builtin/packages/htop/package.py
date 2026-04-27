@@ -16,6 +16,8 @@ class Htop(AutotoolsPackage):
 
     license("GPL-2.0-or-later")
 
+    version("3.4.1", sha256="af9ec878f831b7c27d33e775c668ec79d569aa781861c995a0fbadc1bdb666cf")
+    version("3.4.0", sha256="7a45cd93b393eaa5804a7e490d58d0940b1c74bb24ecff2ae7b5c49e7a3c1198")
     version("3.3.0", sha256="1e5cc328eee2bd1acff89f860e3179ea24b85df3ac483433f92a29977b14b045")
     version("3.2.2", sha256="3829c742a835a0426db41bb039d1b976420c21ec65e93b35cd9bfd2d57f44ac8")
     version("3.2.1", sha256="b5ffac1949a8daaabcffa659c0964360b5008782aae4dfa7702d2323cfb4f438")

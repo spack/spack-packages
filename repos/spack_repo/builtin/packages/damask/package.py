@@ -29,6 +29,7 @@ class Damask(BundlePackage):
 
     maintainers("MarDiehl")
 
+    version("3.0.2")
     version("3.0.1")
     version("3.0.0")
     version("3.0.0-beta2")
@@ -38,6 +39,10 @@ class Damask(BundlePackage):
     version("3.0.0-alpha6")
     version("3.0.0-alpha5")
     version("3.0.0-alpha4")
+
+    depends_on("damask-grid@3.0.2", when="@3.0.2", type="run")
+    depends_on("damask-mesh@3.0.2", when="@3.0.2", type="run")
+    depends_on("py-damask@3.0.2", when="@3.0.2", type="run")
 
     depends_on("damask-grid@3.0.1", when="@3.0.1", type="run")
     depends_on("damask-mesh@3.0.1", when="@3.0.1", type="run")

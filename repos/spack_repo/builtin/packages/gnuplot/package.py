@@ -79,6 +79,10 @@ class Gnuplot(AutotoolsPackage):
     depends_on("qt@5.7:+opengl", when="+qt")
     depends_on("qt+framework", when="+qt platform=darwin")
 
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("%gcc@7:"):
+            env.set("LDFLAGS", "-Wl,--copy-dt-needed-entries")
+
     def configure_args(self):
         # see https://github.com/Homebrew/homebrew-core/blob/master/Formula/gnuplot.rb
         # and https://github.com/macports/macports-ports/blob/master/math/gnuplot/Portfile
@@ -167,8 +171,5 @@ class Gnuplot(AutotoolsPackage):
 
         # TODO: --with-aquaterm  depends_on('aquaterm')
         options.append("--without-aquaterm")
-
-        if spec.satisfies("%gcc@8:"):
-            os.environ["LDFLAGS"] = "-Wl,--copy-dt-needed-entries"
 
         return options

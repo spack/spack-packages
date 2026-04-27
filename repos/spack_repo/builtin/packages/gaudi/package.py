@@ -18,6 +18,9 @@ class Gaudi(CMakePackage, CudaPackage):
     tags = ["hep"]
 
     version("master", branch="master")
+    version("40.2", sha256="93bf0ae5e33d7d3a5aa36504840ed62aeab9f6f8ddddd4ea1b23bc5455b51e41")
+    version("40.1", sha256="f02010c865717d397b8fc8b8bf5d904e711ee2e416f3d12330cf04deaa7a4343")
+    version("40.0", sha256="0cfe696967067b23382968a5c5ab1b4b7f38a7dd3ee2e321d1bff0dd8f99d2f9")
     version("39.4", sha256="dd698e0788811fa8325ed5f37ecf3fd9bde55720489224a517b52360819564d7")
     version("39.3", sha256="009a306a7413f3207f0d5fa19034186c0bb3c8de0c807d38f515338a41a8a0bc")
     version("39.2", sha256="9697f5092df49187e3d30256c821a4400534e77ddaa2d976ba4bb22745c904d6")
@@ -56,16 +59,35 @@ class Gaudi(CMakePackage, CudaPackage):
 
     maintainers("drbenmorgan", "vvolkl", "jmcarcell")
 
+    _cxxstd_values = (
+        conditional("14", when="@:38"),
+        conditional("17", when="@:38"),
+        conditional("20", when="@38:"),
+    )
+    _cxxstd_common = {
+        "values": _cxxstd_values,
+        "multi": False,
+        "description": "Use the specified C++ standard when building.",
+    }
+    variant("cxxstd", default="17", when="@:38", **_cxxstd_common)
+    variant("cxxstd", default="20", when="@39:", **_cxxstd_common)
+
     variant("aida", default=False, description="Build AIDA interfaces support")
-    variant("cppunit", default=False, description="Build with CppUnit unit testing")
+    variant("cppunit", default=False, description="Build with CppUnit unit testing", when="@:40.0")
     variant("docs", default=False, description="Build documentation with Doxygen")
     variant("examples", default=False, description="Build examples")
     variant("gaudialg", default=False, description="Build GaudiAlg support", when="@37.0:38")
-    variant("gperftools", default=False, description="Build with Google PerfTools support")
+    variant(
+        "gperftools", default=False, description="Build with Google PerfTools support", when="@:39"
+    )
     variant("heppdt", default=False, description="Build with HEP Particle Data Table support")
-    variant("jemalloc", default=False, description="Build with jemalloc allocator support")
-    variant("unwind", default=False, description="Build with unwind call-chains")
-    variant("vtune", default=False, description="Build with Intel VTune profiler support")
+    variant(
+        "jemalloc", default=False, description="Build with jemalloc allocator support", when="@:39"
+    )
+    variant("unwind", default=False, description="Build with unwind call-chains", when="@:39")
+    variant(
+        "vtune", default=False, description="Build with Intel VTune profiler support", when="@:39"
+    )
     variant("xercesc", default=False, description="Build with Xerces-C XML support")
 
     patch("fmt_fix.patch", when="@36.6:36.12 ^fmt@10:")
@@ -93,7 +115,23 @@ class Gaudi(CMakePackage, CudaPackage):
         sha256="6b377fd10828bf26367c26792a5465351f3f0b5f7f6073dbcae6fa9195d4a414",
         when="@38.1:39",
     )
-    conflicts("^root@6.36:", when="@:38.0")
+    # Legacy CompressionSetting removed in ROOT 6.36, but used through Gaudi 39.1.
+    # See https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1678
+    conflicts("^root@6.36:", when="@:39.1")
+
+    # IAuditor: define static strings in implementation
+    # https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1781
+    # https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1785
+    patch(
+        "https://gitlab.cern.ch/gaudi/Gaudi/-/commit/ae53669e3845fce50719643e66dedc2569cbd834.diff",
+        sha256="52499558f968ad41cde77c4e57d6ea7409f692c22af025433eaf567a70819b27",
+        when="@40.0",
+    )
+    patch(
+        "https://gitlab.cern.ch/gaudi/Gaudi/-/commit/31bcb0a31e1daa5b2d8969b0df0c6fbe55af7fa1.diff",
+        sha256="f812fae60f17a5a2e75ccd68f0e8c28a1df9e272b569e086ad756ef4fc75661a",
+        when="@40.0",
+    )
 
     # These dependencies are needed for a minimal Gaudi build
     depends_on("cxx", type="build")
@@ -114,13 +152,20 @@ class Gaudi(CMakePackage, CudaPackage):
     )
     depends_on(f"boost@1.70: +{boost_libs}", when="@35:")
     depends_on(f"boost@1.70: +{boost_libs}+fiber", when="@39:")
+    # Until gaudi@40.0, there is a build dependency on boost::system, removed in boost@1.89.
+    # Ref: https://gitlab.cern.ch/gaudi/Gaudi/-/merge_requests/1809
+    conflicts("^boost@1.89:", when="@:40.0", msg="Boost@1.89: requires Gaudi@40.1:")
 
     depends_on("clhep")
     depends_on("cmake", type="build")
-    depends_on("cmake@3.19:", type="build", when="@39:")
+    depends_on("cmake@3.19:", type="build", when="@39:40.0")
+    depends_on("cmake@3.29:", type="build", when="@40.1:")
     depends_on("cppgsl")
+    depends_on("fmt")
     depends_on("fmt@:8", when="@:36.9")
-    depends_on("fmt@:10")
+    depends_on("fmt@:10", when="@:38")
+    depends_on("fmt@:11", when="@:39")
+    depends_on("fmt@:10", type="test")  # https://gitlab.cern.ch/gaudi/Gaudi/-/issues/345
     depends_on("intel-tbb@:2020.3", when="@:37.0")
     depends_on("tbb", when="@37.1:")
     depends_on("uuid")
@@ -131,15 +176,19 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("py-pyyaml", type=("build", "run", "test"))
     depends_on("range-v3")
     depends_on("root +python +root7 +ssl +tbb")
-    requires("^root +threads", when="^root@:6.19.01")
+    # force root to have the same cxxstd
+    for _cxxstd in _cxxstd_values:
+        for _v in _cxxstd:
+            depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value}")
     depends_on("zlib-api")
     depends_on("py-pytest-cov", when="@39:")
 
     # Testing dependencies
-    # Note: gaudi only builds examples when testing enabled
     for pv in (["catch2", "@36.8:"], ["py-nose", "@35:37"], ["py-pytest", "@36.2:"]):
         depends_on(pv[0], when=pv[1], type="test")
-        depends_on(pv[0], when=pv[1] + " +examples")
+        with when("@:38.1"):
+            # Note: until 38.1 gaudi only builds examples when testing enabled
+            depends_on(pv[0], when=pv[1] + " +examples")
 
     # Adding these dependencies triggers the build of most optional components
     depends_on("cppunit", when="+cppunit")
@@ -166,8 +215,10 @@ class Gaudi(CMakePackage, CudaPackage):
 
     def cmake_args(self):
         args = [
-            # Note: gaudi only builds examples when testing enabled
-            self.define("BUILD_TESTING", self.run_tests or self.spec.satisfies("+examples")),
+            # Note: until 38.1, gaudi only builds examples when testing enabled
+            self.define(
+                "BUILD_TESTING", self.run_tests or self.spec.satisfies("@:38.1 +examples")
+            ),
             self.define_from_variant("GAUDI_BUILD_EXAMPLES", "examples"),
             self.define_from_variant("GAUDI_USE_AIDA", "aida"),
             self.define_from_variant("GAUDI_USE_CPPUNIT", "cppunit"),
@@ -181,14 +232,16 @@ class Gaudi(CMakePackage, CudaPackage):
             self.define_from_variant("GAUDI_USE_DOXYGEN", "docs"),
             # needed to build core services like rndmsvc
             self.define("GAUDI_USE_CLHEP", True),
-            self.define("GAUDI_USE_PYTHON_MAJOR", str(self.spec["python"].version.up_to(1))),
             # todo:
             self.define("GAUDI_USE_INTELAMPLIFIER", False),
         ]
         # Release notes for v39.0: https://gitlab.cern.ch/gaudi/Gaudi/-/releases/v39r0
         # Gaudi@39: needs C++ >= 20, and we need to force CMake to use C++ 20 with old gcc:
-        if self.spec.satisfies("@39: %gcc@:13"):
-            args.append(self.define("GAUDI_CXX_STANDARD", "20"))
+        args.append(self.define_from_variant("GAUDI_CXX_STANDARD", "cxxstd"))
+        if self.spec.satisfies("%apple-clang"):
+            # fixes a build error with apple-clang
+            args.append(self.define("CMAKE_CXX_FLAGS", "-fmodules"))
+
         return args
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

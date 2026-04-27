@@ -21,6 +21,7 @@ class Mlpack(CMakePackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
+    version("4.6.2", sha256="2fe772da383a935645ced07a07b51942ca178d38129df3bf685890bc3c1752cf")
     version("4.5.1", sha256="58059b911a78b8bda91eef4cfc6278383b24e71865263c2e0569cf5faa59dda3")
     version("4.5.0", sha256="aab70aee10c134ef3fe568843fe4b3bb5e8901af30ea666f57462ad950682317")
     version("4.4.0", sha256="61c604026d05af26c244b0e47024698bbf150dfcc9d77b64057941d7d64d6cf6")

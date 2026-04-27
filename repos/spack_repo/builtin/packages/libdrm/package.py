@@ -87,7 +87,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def configure_args(self):
         args = []
         args.append("--enable-static")
-        if self.version <= Version("2.4.70"):
+        if self.spec.version <= Version("2.4.70"):
             # Needed to fix build for spack/spack#1740, but breaks newer
             # builds/compilers
             args.append("LIBS=-lrt")

@@ -1,13 +1,11 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import platform
 
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
-from spack.util.environment import set_env
 
 
 class SbclBootstrap(Package):
@@ -111,6 +109,6 @@ class SbclBootstrap(Package):
         return sbcl_url.format(version=version, target=sbcl_targets[target], os=os)
 
     def install(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         with set_env(INSTALL_ROOT=self.spec.prefix):
             sh("install.sh")

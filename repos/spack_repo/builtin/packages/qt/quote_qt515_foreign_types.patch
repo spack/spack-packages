@@ -1,0 +1,14 @@
+Submodule qtdeclarative contains modified content
+diff --git a/qtdeclarative/src/qmltyperegistrar/qmltypes.prf b/qtdeclarative/src/qmltyperegistrar/qmltypes.prf
+index 471bb6e3b0..8df72043f0 100644
+--- a/qtdeclarative/src/qmltyperegistrar/qmltypes.prf
++++ b/qtdeclarative/src/qmltyperegistrar/qmltypes.prf
+@@ -62,7 +62,7 @@ QML_TYPEREGISTRAR_FLAGS = \
+     --import-name=$$QML_IMPORT_NAME \
+     --major-version=$$QML_IMPORT_MAJOR_VERSION \
+     --minor-version=$$QML_IMPORT_MINOR_VERSION \
+-    --foreign-types=$$join(QML_FOREIGN_METATYPES, ',')
++    --foreign-types=\"$$join(QML_FOREIGN_METATYPES, ',')\"
+ 
+ DEPENDENCIESFILE = $$_PRO_FILE_PWD_/dependencies.json
+ exists($$DEPENDENCIESFILE): QML_TYPEREGISTRAR_FLAGS += --dependencies=$$DEPENDENCIESFILE

@@ -4,13 +4,11 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.compilers.error import UnsupportedCompilerFlag
 from spack.package import *
 
 
 class Taskflow(CMakePackage):
-    """Taskflow helps you quickly write parallel tasks programs in
-    modern C++."""
+    """Taskflow helps you quickly write parallel tasks programs in modern C++."""
 
     homepage = "https://github.com/taskflow/taskflow"
     url = "https://github.com/taskflow/taskflow/archive/v2.7.0.tar.gz"
@@ -31,13 +29,3 @@ class Taskflow(CMakePackage):
     conflicts("%gcc@:4.8")
     conflicts("%clang@:3.5")
     conflicts("%apple-clang@:8.0.0")
-    # untested: conflicts('%intel@:15')
-
-    def cmake_args(self):
-        try:
-            self.compiler.cxx14_flag
-        except UnsupportedCompilerFlag:
-            InstallError("Taskflow requires a C++14-compliant C++ compiler")
-
-        args = []
-        return args

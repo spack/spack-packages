@@ -67,7 +67,8 @@ class MochiThallium(CMakePackage):
     )
     conflicts("~cereal", when="@0.14.0:", msg="Thallium 0.14.0 and above requires Cereal")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("pkgconfig", type=("build"))
     depends_on("mochi-margo@0.18.0:", when="@0.14.0:")

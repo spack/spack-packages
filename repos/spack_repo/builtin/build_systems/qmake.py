@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -12,7 +13,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 
 class QMakePackage(PackageBase):
@@ -26,7 +27,7 @@ class QMakePackage(PackageBase):
     #: system base class
     build_system_class = "QMakePackage"
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "qmake"
+    default_buildsystem = "qmake"
 
     build_system("qmake")
 
@@ -49,10 +50,10 @@ class QMakeBuilder(BuilderWithDefaults):
     phases = ("qmake", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("qmake_args", "check")
+    package_methods = ("qmake_args", "check")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = ("build_directory", "build_time_test_callbacks")
+    package_attributes = ("build_directory", "build_time_test_callbacks")
 
     #: Callback names for build-time test
     build_time_test_callbacks = ["check"]

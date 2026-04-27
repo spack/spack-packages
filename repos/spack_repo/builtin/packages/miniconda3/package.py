@@ -10,6 +10,36 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
+    "25.5.1": {
+        "Linux-x86_64": (
+            "612af113b49db0368e2be41ac4d51b7088eebd5f31daeeb89f23fff8f920db58",
+            "https://repo.anaconda.com/miniconda/Miniconda3-py313_25.5.1-1-Linux-x86_64.sh",
+        )
+    },
+    "25.3.1": {
+        "Linux-x86_64": (
+            "53a86109463cfd70ba7acab396d416e623012914eee004729e1ecd6fe94e8c69",
+            "https://repo.anaconda.com/miniconda/Miniconda3-py313_25.3.1-1-Linux-x86_64.sh",
+        )
+    },
+    "25.1.1": {
+        "Linux-x86_64": (
+            "4766d85b5f7d235ce250e998ebb5a8a8210cbd4f2b0fea4d2177b3ed9ea87884",
+            "https://repo.anaconda.com/miniconda/Miniconda3-py312_25.1.1-2-Linux-x86_64.sh",
+        )
+    },
+    "24.11.1": {
+        "Linux-x86_64": (
+            "636b209b00b6673471f846581829d4b96b9c3378679925a59a584257c3fef5a3",
+            "https://repo.anaconda.com/miniconda/Miniconda3-py312_24.11.1-0-Linux-x86_64.sh",
+        )
+    },
+    "24.9.2": {
+        "Linux-x86_64": (
+            "8d936ba600300e08eca3d874dee88c61c6f39303597b2b66baee54af4f7b4122",
+            "https://repo.anaconda.com/miniconda/Miniconda3-py312_24.9.2-0-Linux-x86_64.sh",
+        )
+    },
     "24.7.1": {
         "Linux-x86_64": (
             "33442cd3813df33dcbb4a932b938ee95398be98344dff4c30f7e757cd2110e4f",
@@ -170,7 +200,7 @@ class Miniconda3(Package):
         # peel the name of the script out of the pathname of the
         # downloaded file
         dir, script = split(self.stage.archive_file)
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash(script, "-b", "-f", "-p", self.prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

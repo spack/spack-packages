@@ -18,6 +18,7 @@ class PyJinja2(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.1.6", sha256="0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d")
     version("3.1.4", sha256="4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369")
     version("3.1.2", sha256="31351a702a408a9e7595a8fc6150fc3f43bb6bf7e319770cbc0db9df9437e852")
     version("3.0.3", sha256="611bb273cd68f3b993fabdc4064fc858c5b47a973cb5aa7999ec1ba405c87cd7")

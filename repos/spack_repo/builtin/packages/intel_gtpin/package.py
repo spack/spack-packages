@@ -40,6 +40,24 @@ class IntelGtpin(Package):
     license("MIT")
 
     version(
+        "4.5.0",
+        sha256="fd70374819eb15876c908dd9816ee2af9c5c9301614cd8e70d45c504a2ba6e98",
+        url="https://downloadmirror.intel.com/856505/external-release-gtpin-4.5.0-linux.tar.xz",
+    )
+
+    version(
+        "4.4",
+        sha256="25c9ff0c621ff6d91635be9c38523d6aa9182ea2312d98bac1e549f61f3d1826",
+        url="https://downloadmirror.intel.com/844580/external-release-gtpin-4.4-linux.tar.xz",
+    )
+
+    version(
+        "4.3",
+        sha256="4960daaa7a100b2ff7d591a07e42923bd599f4c1eb154dfa22c5e0b570066a96",
+        url="https://downloadmirror.intel.com/830027/external-release-gtpin-4.3-linux.tar.xz",
+    )
+
+    version(
         "4.0",
         sha256="fc12fb3aefdd4ae75b21ef9325e4058439dace52501200900895240c6ef3f0d8",
         url="https://downloadmirror.intel.com/816037/external-release-gtpin-4.0-linux.tar.xz",
@@ -109,7 +127,7 @@ class IntelGtpin(Package):
 
     @property
     def headers(self):
-        return find_headers("gtpin", self.prefix.Include)
+        return find_all_headers(self.prefix.Include)
 
     @property
     def libs(self):

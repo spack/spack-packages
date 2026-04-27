@@ -22,6 +22,7 @@ class Genie(Package):
     maintainers("davehadley")
 
     version("master", branch="master")
+    version("3.6.2", sha256="5770346d888bbac7a80872e7aa01953437ab867e335e39cc7412c9b83a0b4e2a")
     version("3.4.2", sha256="c5935aea86d2ba9897ab55bb581622c561575957d19e572691d3bc0833ed9512")
     version("3.0.6", sha256="ab56ea85d0c1d09029254365bfe75a1427effa717389753b9e0c1b6c2eaa5eaf")
     version("3.0.4", sha256="53f034618fef9f7f0e17d1c4ed72743e4bba590e824b795177a1a8a8486c861e")

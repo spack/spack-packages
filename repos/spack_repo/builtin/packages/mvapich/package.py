@@ -28,16 +28,18 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     license("Unlicense")
 
     # Prefer the latest stable release
+    version("4.1", sha256="25a53d3725b669e2c648158fb7c9fc5b1388953f3a2f949748586c447d0e43ee")
     version("4.0", sha256="c532f7bdd5cca71f78c12e0885c492f6e276e283711806c84d0b0f80bb3e3b74")
-    version("3.0", sha256="ee076c4e672d18d6bf8dd2250e4a91fa96aac1db2c788e4572b5513d86936efb")
+    with default_args(deprecated=True):
+        version("3.0", sha256="ee076c4e672d18d6bf8dd2250e4a91fa96aac1db2c788e4572b5513d86936efb")
 
     provides("mpi")
-    provides("mpi@:3.1")
+    provides("mpi@:4.1")
 
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
-    variant("debug", default=False, description="Enable debug info and error messages at run-time")
-
-    variant("cuda", default=False, description="Enable CUDA extension")
+    variant("debug", default=False, description="Enable debug info at run-time")
+    variant("errs", default=False, description="Enable error messages at run-time")
+    variant("fast", default=True, description="Enable compiler optimizations")
 
     variant("regcache", default=True, description="Enable memory registration cache")
 
@@ -55,27 +57,11 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
         description="Control the level of thread support",
     )
 
-    # 32 is needed when job size exceeds 32768 cores
-    variant(
-        "ch3_rank_bits",
-        default="32",
-        values=("16", "32"),
-        multi=False,
-        description="Number of bits allocated to the rank field (16 or 32)",
-    )
-    variant(
-        "pmi_version",
-        description="Which pmi version to be used. If using pmi2 add it to your CFLAGS",
-        default="none",
-        values=("none", "pmi1", "pmi2", "pmix"),
-        multi=False,
-    )
-
     variant(
         "process_managers",
         description="List of the process managers to activate",
         values=disjoint_sets(("auto",), ("slurm",), ("hydra", "gforker", "remshell"))
-        .with_error("'slurm' or 'auto' cannot be activated along with " "other process managers")
+        .with_error("'slurm' or 'auto' cannot be activated along with other process managers")
         .with_default("auto")
         .with_non_feature_values("auto"),
     )
@@ -111,21 +97,9 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("libpciaccess", when=(sys.platform != "darwin"))
     depends_on("libxml2")
-    depends_on("cuda", when="+cuda")
     depends_on("libfabric", when="netmod=ofi")
     depends_on("slurm", when="process_managers=slurm")
     depends_on("ucx", when="netmod=ucx")
-    depends_on("pmix", when="pmi_version=pmix")
-
-    with when("process_managers=slurm"):
-        conflicts("pmi_version=pmi2")
-
-    with when("process_managers=auto"):
-        conflicts("pmi_version=pmi2")
-
-    with when("process_managers=hydra"):
-        conflicts("pmi_version=pmi2")
-        conflicts("pmi_version=pmix")
 
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
 
@@ -133,10 +107,10 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     def determine_version(cls, exe):
         if exe.endswith("mpichversion"):
             output = Executable(exe)(output=str, error=str)
-            match = re.search(r"^MVAPICH2 Version:\s*(\S+)", output)
+            match = re.search(r"^MVAPICH Version:\s*(\S+)", output)
         elif exe.endswith("mpiname"):
             output = Executable(exe)("-a", output=str, error=str)
-            match = re.search(r"^MVAPICH2 (\S+)", output)
+            match = re.search(r"^MVAPICH (\S+)", output)
         return match.group(1) if match else None
 
     @property
@@ -155,20 +129,16 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
 
         other_pms = []
         for x in ("hydra", "gforker", "remshell"):
-            if "process_managers={0}".format(x) in spec:
+            if spec.satisfies(f"process_managers={x}"):
                 other_pms.append(x)
 
         opts = []
         if len(other_pms) > 0:
             opts = ["--with-pm=%s" % ":".join(other_pms)]
-
-        # See: http://slurm.schedmd.com/mpi_guide.html#mvapich2
-        if "process_managers=slurm" in spec:
-            opts = [
-                "--with-pm=slurm",
-                "--with-slurm={0}".format(spec["slurm"].prefix),
-                "CFLAGS=-I{0}/include/slurm".format(spec["slurm"].prefix),
-            ]
+        if spec.satisfies("process_managers=slurm"):
+            opts = ["--with-pm=none", "--with-pmi=slurm"]
+        if spec.satisfies("process_managers=cray"):
+            opts = ["--with-pm=none", "--with-pmi=pmi2", "--with-pmi2=/opt/cray/pe/pmi/default"]
         if "none" in spec.variants["process_managers"].value:
             opts = ["--with-pm=none"]
 
@@ -229,21 +199,16 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             "--disable-silent-rules",
             "--disable-new-dtags",
             "--enable-fortran=all",
+            "--disable-cuda",
+            "--disable-hip",
             "--enable-threads={0}".format(spec.variants["threads"].value),
-            "--with-ch3-rank-bits={0}".format(spec.variants["ch3_rank_bits"].value),
             "--enable-wrapper-rpath={0}".format("no" if "~wrapperrpath" in spec else "yes"),
         ]
 
         args.extend(self.enable_or_disable("alloca"))
-        if not spec.satisfies("pmi_version=none"):
-            args.append("--with-pmi=" + spec.variants["pmi_version"].value)
-        if "pmi_version=pmix" in spec:
-            args.append("--with-pmix={0}".format(spec["pmix"].prefix))
-
         if "+debug" in self.spec:
             args.extend(
                 [
-                    "--disable-fast",
                     "--enable-error-checking=runtime",
                     "--enable-error-messages=all",
                     # Permits debugging with TotalView
@@ -251,14 +216,12 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
                     "--enable-debuginfo",
                 ]
             )
+        if "+errs" in self.spec:
+            args.extend(["--enable-error-checking=runtime", "--enable-error-messages=all"])
+        if "+fast" in self.spec:
+            args.append("--enable-fast=opt")
         else:
-            args.append("--enable-fast=all")
-
-        if "+cuda" in self.spec:
-            args.extend(["--enable-cuda", "--with-cuda={0}".format(spec["cuda"].prefix)])
-        else:
-            args.append("--disable-cuda")
-
+            args.append("--enable-fast=none")
         if "+regcache" in self.spec:
             args.append("--enable-registration-cache")
         else:

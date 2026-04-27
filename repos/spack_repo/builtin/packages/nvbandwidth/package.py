@@ -20,10 +20,22 @@ class Nvbandwidth(CMakePackage, CudaPackage):
     version("main", branch="main")
 
     version(
+        "v0.9",
+        url="https://github.com/NVIDIA/nvbandwidth/archive/refs/tags/v0.9.tar.gz",
+        sha256="552e7b2595c4b95ab1da86ba002f239185d247b2fb9929ed3cb9dc7f57bcd67c",
+        preferred=True,
+    )
+
+    version(
+        "v0.8",
+        url="https://github.com/NVIDIA/nvbandwidth/archive/refs/tags/v0.8.tar.gz",
+        sha256="b3622945eb7fce2b4e1aea7d13de04f415f4d998db602893201a904320cf2d39",
+    )
+
+    version(
         "v0.4",
         url="https://github.com/NVIDIA/nvbandwidth/archive/refs/tags/v0.4.tar.gz",
         sha256="c87eda04d5909d26c0d8756dd1a66ab048cf015dbb0d2719971dee182aa69212",
-        preferred=True,
     )
 
     version(
@@ -46,7 +58,9 @@ class Nvbandwidth(CMakePackage, CudaPackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("boost@1.66.0 +program_options")
+    depends_on("boost@1.66.0:+program_options")
+
+    requires("+cuda")
 
     def install(self, spec, prefix):
         # We have no `make install` target, so move the files over explicitly

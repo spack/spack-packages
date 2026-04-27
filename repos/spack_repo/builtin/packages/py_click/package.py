@@ -16,6 +16,8 @@ class PyClick(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("8.3.1", sha256="12ff4785d337a1bb490bb7e9c2b1ee5da3112e94a8622f26a6c77f5d2fc6842a")
+    version("8.2.1", sha256="27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202")
     version("8.1.8", sha256="ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a")
     version("8.1.7", sha256="ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de")
     version("8.1.3", sha256="7682dc8afb30297001674575ea00d1814d808d6a36af415a82bd481d37ba7b8e")
@@ -29,6 +31,7 @@ class PyClick(PythonPackage):
     )
     version("6.6", sha256="cc6a19da8ebff6e7074f731447ef7e112bd23adf3de5c597cf9989f2fd8defe9")
 
+    depends_on("python@3.10:", when="@8.2:", type=("build", "run"))
     # Needed to ensure that Spack can bootstrap black with Python 3.6
     depends_on("python@3.7:", when="@8.1:", type=("build", "run"))
     with when("@8.1.8:"):

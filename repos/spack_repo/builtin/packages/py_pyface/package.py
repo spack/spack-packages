@@ -27,7 +27,7 @@ class PyPyface(PythonPackage):
         "backend",
         default="pyqt5",
         description="Default backend",
-        values=("wx", "pyqt", "pyqt5", "pyside", "pyside2"),
+        values=("wx", "pyqt", "pyqt5", "pyside2"),
         multi=False,
     )
 
@@ -38,7 +38,6 @@ class PyPyface(PythonPackage):
     depends_on("py-traits@6:", when="@7:", type=("build", "run"))
     depends_on("py-traits", type=("build", "run"))
 
-    conflicts("backend=pyside", when="@7.3:")
     conflicts("backend=pyside2", when="@:6")
 
     # Backends
@@ -51,9 +50,6 @@ class PyPyface(PythonPackage):
         depends_on("py-pygments", type=("build", "run"))
     with when("backend=pyqt5"):
         depends_on("py-pyqt5@5:", type=("build", "run"))
-        depends_on("py-pygments", type=("build", "run"))
-    with when("backend=pyside"):
-        depends_on("py-pyside@1.2:", type=("build", "run"))
         depends_on("py-pygments", type=("build", "run"))
     with when("backend=pyside2"):
         depends_on("py-pyside2", type=("build", "run"))

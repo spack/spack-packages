@@ -22,15 +22,25 @@ class Kafka(Package):
     license("EPL-2.0")
 
     version(
+        "2.13-4.1.0", sha256="85b4538470d1dcb98d0273286bfab8717065522e597ecfffcd4db83a3021758e"
+    )
+    version(
+        "2.13-4.0.1", sha256="33cc5cd38584eb0f72616c4c2f05fb48834a56fa0a9cd9fe00ac7320c34cf524"
+    )
+    version(
+        "2.13-4.0.0", sha256="7b852e938bc09de10cd96eca3755258c7d25fb89dbdd76305717607e1835e2aa"
+    )
+    version(
+        "2.13-3.9.1", sha256="dd4399816e678946cab76e3bd1686103555e69bc8f2ab8686cda71aa15bc31a3"
+    )
+    version(
+        "2.13-3.9.0", sha256="abc44402ddf103e38f19b0e4b44e65da9a831ba9e58fd7725041b1aa168ee8d1"
+    )
+    version(
         "2.13-3.8.0", sha256="e0297cc6fdb09ef9d9905751b25d2b629c17528f8629b60561eeff87ce29099c"
     )
     version(
         "2.13-3.7.1", sha256="62acae4a143dd983dc7eb4804d5744ba0c50b199b508f599ef001020e2558fc9"
-    )
-    version(
-        "2.13-3.7.0",
-        sha256="65f26e5937bbb76dfe78dfb416730dfa7e3378b27e13fd1e204f1a1099bfaf9c",
-        deprecated=True,
     )
     version(
         "2.13-3.5.1", sha256="f7b74d544023f2c0ec52a179de59975cb64e34ea03650d829328b407b560e4da"

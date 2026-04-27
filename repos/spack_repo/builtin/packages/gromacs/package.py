@@ -51,81 +51,20 @@ class Gromacs(CMakePackage, CudaPackage):
     # Exception: Otherwise, versions before 2022 will be removed when
     # 2025 is supported.
     version("main", branch="main")
-    version("master", branch="main", deprecated=True)
+    version("2026.1", sha256="d95a313f56db7e05ee3a21e50f582fdee5176c2f60b900bab2461fd95c5e81be")
+    version("2026.0", sha256="229726f436cc515bfd8c4aa7af3a97b18072f71b5ebd0b08daf6565571e2d9eb")
+    version("2025.4", sha256="ca17720b4a260eb73649211e9f6a940ee7543452129844213c3accb0a927a5c3")
+    version("2025.3", sha256="8bdfca0268f3f10a7ca3c06e59b62f73ea02420c67211c0ff3912f32d7833c65")
     version("2025.2", sha256="0df09f9d45a99ef00e66b9baa9493a27e906813763a3b6c7672217c66b43ea11")
     version("2025.1", sha256="0adf621a80fd8043f8defec84ce02811c0cdf42a052232890932d81f25c4d28a")
     version("2025.0", sha256="a27ad35a646295bbec129abe684d9d03d1e2e0bd76b0d625e9055746aaefae82")
+    version("2024.6", sha256="7cbad81f51c71a144d646515a7249aa74940b3f68071f51410e3a9473f05b339")
     version("2024.5", sha256="fecf06b186cddb942cfb42ee8da5f3eb2b9993e6acc0a2f18d14ac0b014424f3")
     version("2024.4", sha256="ac618ece2e58afa86b536c5a2c4fcb937f0760318f12d18f10346b6bdebd86a8")
     version("2024.3", sha256="bbda056ee59390be7d58d84c13a9ec0d4e3635617adf2eb747034922cba1f029")
     version("2024.2", sha256="802a7e335f2e895770f57b159e4ec368ebb0ff2ce6daccf706c6e8025c36852b")
     version("2024.1", sha256="937d8f12a36fffbf2af7add71adbb5aa5c5537892d46c9a76afbecab1aa0aac7")
     version("2024", sha256="04d226d52066a8bc3a42e00d6213de737b4ec292e26703065924ff01956801e2")
-    version(
-        "2023.5",
-        sha256="9cc491d3601a5fe0ec0de727e4432c34877f596fe8a463d4cf0f0f53fb34d08b",
-        deprecated=True,
-    )
-    version(
-        "2023.4",
-        sha256="e5d6c4d9e7ccacfaccb0888619bd21b5ea8911f82b410e68d6db5d40f695f231",
-        deprecated=True,
-    )
-    version(
-        "2023.3",
-        sha256="4ec8f8d0c7af76b13f8fd16db8e2c120e749de439ae9554d9f653f812d78d1cb",
-        deprecated=True,
-    )
-    version(
-        "2023.2",
-        sha256="bce1480727e4b2bb900413b75d99a3266f3507877da4f5b2d491df798f9fcdae",
-        deprecated=True,
-    )
-    version(
-        "2023.1",
-        sha256="eef2bb4a6cb6314cf9da47f26df2a0d27af4bf7b3099723d43601073ab0a42f4",
-        deprecated=True,
-    )
-    version(
-        "2023",
-        sha256="ac92c6da72fbbcca414fd8a8d979e56ecf17c4c1cdabed2da5cfb4e7277b7ba8",
-        deprecated=True,
-    )
-    version(
-        "2022.6",
-        sha256="75d277138475679dd3e334e384a71516570cde767310476687f2a5b72333ea41",
-        deprecated=True,
-    )
-    version(
-        "2022.5",
-        sha256="083cc3c424bb93ffe86c12f952e3e5b4e6c9f6520de5338761f24b75e018c223",
-        deprecated=True,
-    )
-    version(
-        "2022.4",
-        sha256="c511be602ff29402065b50906841def98752639b92a95f1b0a1060d9b5e27297",
-        deprecated=True,
-    )
-    version(
-        "2022.3",
-        sha256="14cfb130ddaf8f759a3af643c04f5a0d0d32b09bc3448b16afa5b617f5e35dae",
-        deprecated=True,
-    )
-    version(
-        "2022.2",
-        sha256="656404f884d2fa2244c97d2a5b92af148d0dbea94ad13004724b3fcbf45e01bf",
-        deprecated=True,
-    )
-    version(
-        "2022.1",
-        sha256="85ddab5197d79524a702c4959c2c43be875e0fc471df3a35224939dce8512450",
-        deprecated=True,
-    )
-    version(
-        "2022",
-        sha256="fad60d606c02e6164018692c6c9f2c159a9130c2bf32e8c5f4f1b6ba2dda2b68",
-        deprecated=True,
-    )
     # See exception documented above
     version("2019.6", sha256="bebe396dc0db11a9d4cc205abc13b50d88225617642508168a2195324f06a358")
 
@@ -226,9 +165,19 @@ class Gromacs(CMakePackage, CudaPackage):
     )
 
     variant("openmp", default=True, description="Enables OpenMP at configure time")
+
+    # When using apple-clang version 15.x or newer, need to use the llvm-openmp library
+    # We also protect with version 2025+ as there seems to be a CMake bug with
+    # Apple Clang and OpenMP that is fixed in 2025
+    depends_on("llvm-openmp", when="@2025: +openmp %apple-clang@15:", type=("build", "run"))
+
+    # But we need to block +openmp %apple-clang for GROMACS older than 2025
     conflicts(
-        "+openmp", when="%apple-clang", msg="OpenMP not available for the Apple clang compiler"
+        "+openmp",
+        when="@:2024 %apple-clang",
+        msg="OpenMP not available for the Apple clang compiler",
     )
+
     variant("openmp_max_threads", default="none", description="Max number of OpenMP threads")
     conflicts(
         "+openmp_max_threads", when="~openmp", msg="OpenMP is off but OpenMP Max threads is set"
@@ -241,6 +190,13 @@ class Gromacs(CMakePackage, CudaPackage):
     )
     variant(
         "sve", default=True, description="Enable SVE on aarch64 if available", when="target=a64fx"
+    )
+    conflicts(
+        "+sve",
+        when="%clang@20",
+        msg="There is a severe performance regression in GROMACS with SVE and Clang 20; "
+        "disable SVE (~sve) or use a different compiler. "
+        "See https://gitlab.com/gromacs/gromacs/-/issues/5390",
     )
     variant(
         "relaxed_double_precision",
@@ -270,6 +226,7 @@ class Gromacs(CMakePackage, CudaPackage):
 
     depends_on("mpi", when="+mpi")
 
+    # Plumed 2.10.0 needs Gromacs 2025.0, 2024.3, 2023.5, 2022.5
     # Plumed 2.9.0 needs Gromacs 2023,  2022.5, 2021.7, 2020.7
     # Plumed 2.8.3 needs Gromacs        2022.5, 2021.7, 2020.7, 2019.6
     # Plumed 2.8.2 needs Gromacs        2022.5, 2021.7, 2020.7, 2019.6
@@ -307,15 +264,19 @@ class Gromacs(CMakePackage, CudaPackage):
     # see https://github.com/spack/spack/releases/tag/v0.20.0
 
     plumed_patches = {
-        "=2023": "2.9.1",
-        "2022.5": "2.8.2:2.9.1",
+        "2025.0": "2.10.0",
+        "2024.3": "2.9.3:2.10.0",
+        "2024.2": "2.9.2",
+        "2023.5": "2.9.2:2.10.0",
+        "=2023": "2.9.0:2.9.1",
+        "2022.5": "2.8.2:2.10.0",
         "2022.3": "2.8.1",
-        "2021.7": "2.8.2:2.9.1",
+        "2021.7": "2.8.2:2.9.4",
         "2021.6": "2.8.1",
         "2021.5": "2.7.5:2.7.6",
         "2021.4": "2.7.3:2.8.0",
         "=2021": "2.7.1:2.7.2",
-        "2020.7": "2.8.1:2.9.1",
+        "2020.7": "2.8.1:2.9.4",
         "2020.6": "2.7.2:2.8.0",
         "2020.5": "2.7.1",
         "2020.4": "2.6.2:2.7.0",
@@ -364,7 +325,9 @@ class Gromacs(CMakePackage, CudaPackage):
     depends_on("cmake@3.9.6:3", type="build", when="@2020")
     depends_on("cmake@3.13.0:3", type="build", when="@2021")
     depends_on("cmake@3.16.3:3", type="build", when="@2022:")
-    depends_on("cmake@3.18.4:3", type="build", when="@main")
+    depends_on("cmake@3.18.4:3", type="build", when="@2023:")
+    depends_on("cmake@3.28.0:3", type="build", when="@2025:")
+    depends_on("cmake@3.28.0:3", type="build", when="@main")
     depends_on("cmake@3.16.0:3", type="build", when="%fj")
     depends_on("pkgconfig", type="build")
 
@@ -381,7 +344,6 @@ class Gromacs(CMakePackage, CudaPackage):
         depends_on("gcc-runtime@9:", when="@2023:2024")
         depends_on("gcc-runtime@11:", when="@2025:")
 
-    depends_on("hwloc@1.0:1", when="+hwloc@2016:2018")
     depends_on("hwloc", when="+hwloc@2019:")
 
     depends_on("cp2k@8.1:", when="+cp2k")
@@ -402,14 +364,15 @@ class Gromacs(CMakePackage, CudaPackage):
     requires("^[virtuals=fftw-api] intel-oneapi-mkl", when="^[virtuals=lapack] intel-oneapi-mkl")
     requires("^[virtuals=lapack] intel-oneapi-mkl", when="^[virtuals=fftw-api] intel-oneapi-mkl")
 
-    patch("gmxDetectCpu-cmake-3.14.patch", when="@2018:2019.3^cmake@3.14.0:")
-    patch("gmxDetectSimd-cmake-3.14.patch", when="@5.0:2017^cmake@3.14.0:")
-    # 2021.2 will always try to build tests (see https://gromacs.bioexcel.eu/t/compilation-failure-for-gromacs-2021-1-and-2021-2-with-cmake-3-20-2/2129)
+    # 2025.0 CMake fix for PLUMED
     patch(
-        "https://gitlab.com/gromacs/gromacs/-/commit/10262892e11a87fda0f59e633c89ed5ab1100509.diff",
-        sha256="2c30d00404b76421c13866cc42afa5e63276f7926c862838751b158df8727b1b",
-        when="@2021.1:2021.2",
+        "https://gitlab.com/gromacs/gromacs/-/merge_requests/4966.diff",
+        sha256="9372c235719ca04d6dd418fb5943f773e03f05246e3e059a8578089b14b2420c",
+        when="@2025.0",
     )
+    # https://gitlab.com/gromacs/gromacs/-/issues/5289
+    # https://gitlab.com/gromacs/gromacs/-/merge_requests/4965
+    patch("pr4965-2025.0.patch", when="@2025.0")
 
     filter_compiler_wrappers(
         "*.cmake", relative_root=os.path.join("share", "cmake", "gromacs_mpi")
@@ -663,13 +626,13 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+cufftmp"):
             options.append("-DGMX_USE_CUFFTMP=ON")
             options.append(
-                f'-DcuFFTMp_ROOT={self.spec["nvhpc"].prefix}/Linux_{self.spec.target.family}'
-                + f'/{self.spec["nvhpc"].version}/math_libs'
+                f"-DcuFFTMp_ROOT={self.spec['nvhpc'].prefix}/Linux_{self.spec.target.family}"
+                + f"/{self.spec['nvhpc'].version}/math_libs"
             )
 
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
-            options.append(f'-DHeffte_ROOT={self.spec["heffte"].prefix}')
+            options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
 
         if self.spec.satisfies("+intel-data-center-gpu-max"):
             options.append("-DGMX_GPU_NB_CLUSTER_SIZE=8")
@@ -816,9 +779,12 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         # Ensure that the GROMACS log files report how the code was patched
         # during the build, so that any problems are easier to diagnose.
+        # Do not rely on GMX_USE_PLUMED=AUTO
         if self.spec.satisfies("+plumed"):
+            options.append("-DGMX_USE_PLUMED=ON")
             options.append("-DGMX_VERSION_STRING_OF_FORK=PLUMED-spack")
         else:
+            options.append("-DGMX_USE_PLUMED=OFF")
             options.append("-DGMX_VERSION_STRING_OF_FORK=spack")
         return options
 

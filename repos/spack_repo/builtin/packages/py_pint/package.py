@@ -13,12 +13,16 @@ class PyPint(PythonPackage):
     It allows arithmetic operations between them and conversions from and
     to different units."""
 
-    pypi = "pint/Pint-0.11.tar.gz"
+    homepage = "https://github.com/hgrecco/pint"
+    pypi = "pint/pint-0.11.tar.gz"
+
+    license("BSD-3-Clause")
 
     # 'pint' requires 'xarray', creating a circular dependency. Don't bother attempting
     # any import tests for this package.
     import_modules = []  # type: List[str]
 
+    version("0.24.4", sha256="35275439b574837a6cd3020a5a4a73645eb125ce4152a73a2f126bf164b91b80")
     version("0.22", sha256="2d139f6abbcf3016cad7d3cec05707fe908ac4f99cf59aedfd6ee667b7a64433")
     version("0.21.1", sha256="5d5b6b518d0c5a7ab03a776175db500f1ed1523ee75fb7fafe38af8149431c8d")
     version("0.20.1", sha256="387cf04078dc7dfe4a708033baad54ab61d82ab06c4ee3d4922b1e45d5626067")
@@ -31,9 +35,13 @@ class PyPint(PythonPackage):
     version("0.9", sha256="32d8a9a9d63f4f81194c0014b3b742679dce81a26d45127d9810a68a561fe4e2")
     version("0.8.1", sha256="afcf31443a478c32bbac4b00337ee9026a13d0e2ac83d30c79151462513bb0d4")
 
+    variant("numpy", default=False, description="Optional numpy support")
+    variant("xarray", default=False, description="Optional xarray support")
+    variant("dask", default=False, description="Optional dask support")
+
     depends_on("python@3.9:", when="@0.22:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.19:0.21", type=("build", "run"))
-    depends_on("py-typing-extensions", when="@0.22:", type=("build", "run"))
+
     depends_on("py-setuptools@61:", when="@0.21:", type="build")
     depends_on("py-setuptools@41:", when="@0.16:0.20", type="build")
     depends_on("py-setuptools@41:", when="@0.11:0.15", type=("build", "run"))
@@ -42,3 +50,24 @@ class PyPint(PythonPackage):
     depends_on("py-setuptools-scm", when="@0.10", type="build")
     depends_on("py-packaging", when="@0.13:18", type=("build", "run"))
     depends_on("py-importlib-metadata", when="@0.13:18 ^python@:3.7", type=("build", "run"))
+
+    depends_on("py-typing-extensions", when="@0.22:", type=("build", "run"))
+
+    # https://github.com/hgrecco/pint/blob/0.24.4/requirements.txt
+    depends_on("py-platformdirs@2.1.0:", when="@0.24:")
+    depends_on("py-typing-extensions@4.0.0:", when="@0.24:", type=("build", "run"))
+    depends_on("py-flexcache@0.3:", when="@0.24:")
+    depends_on("py-flexparser@0.4:", when="@0.24:")
+
+    # variant depends
+    depends_on("py-numpy@1", when="@:0.22 +numpy")
+    depends_on("py-numpy@1.23:", when="@0.24: +numpy")  # numpy 2 added in 0.24
+    depends_on("py-xarray", when="+xarray")
+    depends_on("py-dask", when="+dask")
+
+    def url_for_version(self, version):
+        if version > Version("0.22"):
+            return super().url_for_version(version)
+
+        url = "https://files.pythonhosted.org/packages/source/p/pint/Pint-{0}.tar.gz"
+        return url.format(version.dotted)

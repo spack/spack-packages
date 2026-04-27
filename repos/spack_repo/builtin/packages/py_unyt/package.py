@@ -20,6 +20,7 @@ class PyUnyt(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("3.0.4", sha256="17ea7013ef4004507fe193193e80b30645ec269b5b3f5fca80eda8f7cb961213")
     version("2.9.2", sha256="8d4bf3dd3f7b4c29580728c0359caa17d62239673eeab436448d0777adeee5e1")
 
     # Undocumented in 2.9.2

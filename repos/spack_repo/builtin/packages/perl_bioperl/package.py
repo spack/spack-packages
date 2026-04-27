@@ -45,14 +45,6 @@ class PerlBioperl(PerlPackage):
     )
     version("1.6.924", sha256="616a7546bb3c58504de27304a0f6cb904e18b6bbcdb6a4ec8454f2bd37bb76d0")
 
-    # This is technically the same as 1.7.2, but with a more conventional version number.
-    version(
-        "1.007002",
-        sha256="17aa3aaab2f381bbcaffdc370002eaf28f2c341b538068d6586b2276a76464a1",
-        url="https://cpan.metacpan.org/authors/id/C/CJ/CJFIELDS/BioPerl-1.007002.tar.gz",
-        deprecated=True,
-    )
-
     with default_args(type=("build", "run")):
         depends_on("perl-data-stag")
         depends_on("perl-error")

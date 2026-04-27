@@ -39,6 +39,8 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
     executables = ["^hwloc-bind$"]
 
     version("master", branch="master")
+    version("2.13.0", sha256="1514a5253f0a5c23bc006d3bdd30a6f6125c9a8dc9b5fa4984913d1fff45315d")
+    version("2.12.2", sha256="ff7d309fdff7ceddfe15c1e79eaff25f3126a134f29f44d4e85571f187a6bab8")
     version("2.11.1", sha256="9f320925cfd0daeaf3a3d724c93e127ecac63750c623654dca0298504aac4c2c")
     version("2.10.0", sha256="c7fd8a1404a9719c76aadc642864b9f77aed1dc1fc8882d6af861a9260ba240d")
     version("2.9.3", sha256="5985db3a30bbe51234c2cd26ebe4ae9b4c3352ab788b1a464c40c0483bf4de59")
@@ -129,6 +131,13 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("ncurses ~termlib", when="@2.0:2.2")
     depends_on("ncurses ~termlib", when="@1.0:1.11.12")
 
+    # Removes unnecessary refresh call that fails linking with ^ncurses+termlib
+    patch(
+        "https://github.com/open-mpi/hwloc/commit/f7f1f76573ce505dae73568c912d2b2efdbf0f71.patch?full_index=1",
+        sha256="b4db98b39733435273e57b8229ee834ce50d2785641d1587d8039598752b1a3d",
+        when="@2.13.0",
+    )
+
     # When mpi=openmpi, this introduces an unresolvable dependency.
     # See https://github.com/spack/spack/issues/15836 for details
     depends_on("mpi", when="+netloc")
@@ -191,11 +200,11 @@ class Hwloc(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.append("--disable-rsmi")
 
         if self.spec.satisfies("+rocm"):
-            args.append(f'--with-rocm={self.spec["hip"].prefix}')
-            args.append(f'--with-rocm-version={self.spec["hip"].version}')
+            args.append(f"--with-rocm={self.spec['hip'].prefix}")
+            args.append(f"--with-rocm-version={self.spec['hip'].version}")
 
         if self.spec.satisfies("+cuda"):
-            args.append(f'--with-cuda={self.spec["cuda"].prefix}')
-            args.append(f'--with-cuda-version={self.spec["cuda"].version}')
+            args.append(f"--with-cuda={self.spec['cuda'].prefix}")
+            args.append(f"--with-cuda-version={self.spec['cuda'].version}")
 
         return args

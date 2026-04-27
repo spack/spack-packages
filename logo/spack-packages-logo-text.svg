@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="1619"
+   height="256"
+   viewBox="-128 -128 1619 256"
+   version="1.1"
+   id="svg11"
+   sodipodi:docname="spack-logo-text.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview11"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.8125"
+     inkscape:cx="1456"
+     inkscape:cy="22.769231"
+     inkscape:window-width="1192"
+     inkscape:window-height="680"
+     inkscape:window-x="0"
+     inkscape:window-y="38"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg11" />
+  <style
+     id="style1">
+    .logo        { font-family:Arial; font-weight:bold; }
+    .diamond     { fill:#0f3a80; }
+    circle.back  { fill:#ffa600; stroke:#0f3a80; stroke-width:6; }
+    circle.front { fill:#ffffff; stroke:#0f3a80; stroke-width:6; }
+    line.back    { stroke:#ffa600; stroke-width:7; }
+    line.front   { stroke:#ffffff; stroke-width:7; }
+    line.shadow  { stroke:#0f3a80; stroke-width:7; }
+  </style>
+  <defs
+     id="defs2">
+    <!-- need two arrows b/c we can't sync color with the marked element -->
+    <marker
+       id="barrow"
+       markerWidth="4"
+       markerHeight="3"
+       refX="0.050000001"
+       refY="1.5"
+       orient="auto"
+       markerUnits="strokeWidth">
+      <path
+         d="M 0,0 V 3 L 4,1.5 Z"
+         fill="#ffa600"
+         id="path1" />
+    </marker>
+    <marker
+       id="farrow"
+       markerWidth="4"
+       markerHeight="3"
+       refX="0.050000001"
+       refY="1.5"
+       orient="auto"
+       markerUnits="strokeWidth">
+      <path
+         d="M 0,0 V 3 L 4,1.5 Z"
+         fill="#ffffff"
+         id="path2" />
+    </marker>
+  </defs>
+  <!-- rounded diamond shape -->
+  <rect
+     x="-97"
+     y="-97"
+     width="194"
+     height="194"
+     rx="26"
+     ry="26"
+     transform="rotate(45)"
+     class="diamond"
+     id="rect2" />
+  <!-- background dependency structure -->
+  <line
+     x1="-11"
+     y1="-80"
+     x2="-45.12566"
+     y2="-42.099613"
+     class="back"
+     marker-end="url(#barrow)"
+     id="line2" />
+  <line
+     x1="-80"
+     y1="-7.1054274e-15"
+     x2="-39.694912"
+     y2="40.305088"
+     class="back"
+     marker-end="url(#barrow)"
+     id="line3" />
+  <line
+     x1="-11"
+     y1="-80"
+     x2="-11"
+     y2="28"
+     class="back"
+     marker-end="url(#barrow)"
+     id="line4" />
+  <circle
+     cx="-11"
+     cy="-80"
+     r="23"
+     class="back"
+     id="circle4" />
+  <circle
+     cx="0"
+     cy="80"
+     r="23"
+     class="back"
+     id="circle5" />
+  <circle
+     cx="-80"
+     cy="0"
+     r="23"
+     class="back"
+     id="circle6" />
+  <!-- foreground dependency structure -->
+  <line
+     x1="17.743145"
+     y1="-79.330872"
+     x2="-35.787304"
+     y2="-19.879284"
+     class="shadow"
+     id="line6" />
+  <line
+     x1="12.48629"
+     y1="-78.661736"
+     x2="-37.698505"
+     y2="-22.925877"
+     class="front"
+     marker-end="url(#farrow)"
+     id="line7" />
+  <line
+     x1="11"
+     y1="-80"
+     x2="45.12566"
+     y2="-42.099613"
+     class="front"
+     marker-end="url(#farrow)"
+     id="line8" />
+  <line
+     x1="80"
+     y1="-7.1054274e-15"
+     x2="39.694912"
+     y2="40.305088"
+     class="front"
+     marker-end="url(#farrow)"
+     id="line9" />
+  <line
+     x1="11"
+     y1="-80"
+     x2="11"
+     y2="28"
+     class="front"
+     marker-end="url(#farrow)"
+     id="line10" />
+  <circle
+     cx="11"
+     cy="-80"
+     r="23"
+     class="front"
+     id="circle10" />
+  <circle
+     cx="80"
+     cy="0"
+     r="23"
+     class="front"
+     id="circle11" />
+  <text
+     x="160"
+     y="64"
+     font-size="170.667px"
+     class="logo"
+     id="text11">Spack Packages</text>
+  <text
+     xml:space="preserve"
+     style="text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#0e3677;fill-opacity:0.929412;stroke:#ffa600;stroke-width:0.748346"
+     x="836.27606"
+     y="167.897"
+     id="text12"><tspan
+       sodipodi:role="line"
+       id="tspan11"
+       x="836.27606"
+       y="167.897">-=</tspan></text>
+</svg>

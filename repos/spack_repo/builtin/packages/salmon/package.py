@@ -16,6 +16,7 @@ class Salmon(CMakePackage):
 
     license("GPL-3.0-only")
 
+    version("1.11.4", sha256="9410904fa787f1f9aca635626fcdca08f3af9b02f820963f9439e80fb56d23b8")
     version("1.10.3", sha256="a053fba63598efc4ade3684aa2c8e8e2294186927d4fcdf1041c36edc2aa0871")
     version("1.10.2", sha256="976989182160fef3afb4429ee8b85d8dd39ed6ca212bb14d6a65cde0e985fb98")
     version("1.9.0", sha256="450d953a5c43fe63fd745733f478d3fbaf24d926cb52731fd38ee21c4990d613")
@@ -41,6 +42,8 @@ class Salmon(CMakePackage):
     conflicts("^intel-tbb@2021.1:", when="@:1.7.0")
     conflicts("^intel-oneapi-tbb@2021.1:", when="@:1.7.0")
     depends_on("tbb")
+    depends_on("intel-tbb@2021.4.0:", when="@1.11: %tbb=intel-tbb")
+    depends_on("intel-oneapi-tbb@2021.4.0:", when="@1.11: %tbb=intel-oneapi-tbb")
     depends_on(
         "boost@1.66.0:"
         "+program_options+exception+filesystem+system+chrono+serialization"
@@ -48,28 +51,52 @@ class Salmon(CMakePackage):
         when="@:0.14.1",
     )
     depends_on(
-        "boost@1.72.0:"
+        "boost@1.72.0:1.88"
         "+program_options+exception+filesystem+system+chrono+serialization"
         "+random+graph+timer+iostreams+math+thread+container",
-        when="@1.4.0:",
+        when="@1.4.0:1.10.3",
     )
+    depends_on("boost@1.72.0:+atomic+filesystem+timer+chrono+program_options", when="@1.11.4:")
     depends_on("cereal")
-    depends_on("jemalloc")
+    depends_on("jemalloc", when="@:1.10")
     depends_on("xz")
-    depends_on("zlib-api")
+    depends_on("zlib-api", when="@:1.10")
+    # it's explicitly looking for zlib-ng.h files, not normal compat includes
+    depends_on("zlib-ng~compat", when="@1.11:")
     depends_on("bzip2")
-    depends_on("libdivsufsort")
-    depends_on("staden-io-lib~curl")
+    depends_on("libdivsufsort", when="@:1.10")
+    depends_on("staden-io-lib~curl", when="@:1.10")
     # docs suggest libdeflate is slightly faster
-    depends_on("staden-io-lib~curl+libdeflate~shared@1.15:", when="@1.10.3:")
+    depends_on("staden-io-lib~curl+libdeflate~shared@1.15:", when="@1.10.3")
     depends_on("libgff")
     depends_on("pkgconfig")
     depends_on("curl", when="@0.14.1:")
-    depends_on("htslib", when="@1.10.2")
+    depends_on("htslib", when="@1.10.2:")
+    depends_on("mimalloc", when="@1.11:")
+    depends_on("catch2", type="test", when="@1.11:")
+    # probably just for tests, but cmake looks anyway
+    depends_on("python@3:", type="build", when="@1.11:")
 
     patch("fix_hts.patch", when="@1.10.2")
 
     conflicts("%gcc@:5.1", when="@0.14.1:")
+
+    # SalmonDependencies.camke
+    resource(
+        name="pufferfish",
+        git="https://github.com/COMBINE-lab/pufferfish.git",
+        commit="ace68c1c022816ba8c50a1a07c5d08f2abd597d6",
+        submodules=True,
+        placement="pufferfish",
+        when="@1.11.4",
+    )
+    resource(
+        name="fqfeeder",
+        git="https://github.com/rob-p/FQFeeder.git",
+        commit="f5b08d1002351c192b69048ac9f6cf4c7c116265",
+        placement="fqfeeder",
+        when="@1.11.4",
+    )
 
     for ver, repo, checksum in [
         (
@@ -121,7 +148,7 @@ class Salmon(CMakePackage):
         if self.spec.satisfies("@0.8.2:0.9.1"):
             filter_file(
                 "${FAST_MALLOC_LIB}",
-                "${FAST_MALLOC_LIB}\n" "${CMAKE_DL_LIBS}",
+                "${FAST_MALLOC_LIB}\n${CMAKE_DL_LIBS}",
                 "src/CMakeLists.txt",
                 string=True,
             )
@@ -130,7 +157,7 @@ class Salmon(CMakePackage):
             filter_file("curl -k.*", "", "scripts/fetchRapMap.sh")
             symlink("./salmon-v{0}.zip".format(self.version), "./external/rapmap.zip")
 
-        if self.spec.satisfies("@1.4.0:"):
+        if self.spec.satisfies("@1.4.0:1.10"):
             filter_file("curl -k.*", "", "scripts/fetchPufferfish.sh")
             symlink("./salmon-v{0}.zip".format(self.version), "./external/pufferfish.zip")
             # Fix issues related to lto-wrapper during install
@@ -142,12 +169,49 @@ class Salmon(CMakePackage):
             )
             filter_file("curl -k.*", "", "scripts/fetchPufferfish.sh")
 
-        if self.spec.satisfies("@1.10.3:"):
+        if self.spec.satisfies("@1.10.3"):
             findstadenio_module = join_path("cmake", "Modules", "Findlibstadenio.cmake")
             filter_file("PACKAGE_VERSION", "IOLIB_VERSION", findstadenio_module, string=True)
             filter_file("io_lib_config.h", "version.h", findstadenio_module, string=True)
 
-    def cmake_args(self):
-        args = ["-DBOOST_ROOT=%s" % self.spec["boost"].prefix]
+        # filter file to remove boost_system dep if boost @1.69:
+        # (or 1.89: when they removed the stub)
+        if self.spec.satisfies("@1.11.4:"):
+            if self.spec.satisfies("%boost@1.89:"):
+                filter_file(
+                    r"(^set\(_salmon_boost_components.*)( system)(.*\)$)",
+                    r"\1\3",
+                    join_path("cmake", "SalmonDependencies.cmake"),
+                )
+            # tbbmalloc isn't identified as a target without adding it here
+            filter_file(
+                r"(find_package\(TBB 2021.4 QUIET CONFIG COMPONENTS) (tbb)\)",
+                r"\1 \2 tbbmalloc)",
+                join_path("cmake", "SalmonDependencies.cmake"),
+            )
 
+    def cmake_args(self):
+        if self.spec.satisfies("@:1.10.3"):
+            args = ["-DBOOST_ROOT=%s" % self.spec["boost"].prefix]
+        if self.spec.satisfies("@1.11:"):
+            args = [
+                self.define("SALMON_USE_SYSTEM_DEPS", True),
+                self.define("SALMON_FETCH_MISSING_DEPS", False),
+                self.define("SALMON_USE_HTSLIB", True),
+                self.define("USE_SHARED_LIBS", True),
+                self.define(
+                    "SALMON_PUFFERFISH_SOURCE_DIR", join_path(self.stage.source_path, "pufferfish")
+                ),
+                self.define(
+                    "SALMON_FQFEEDER_SOURCE_DIR", join_path(self.stage.source_path, "fqfeeder")
+                ),
+                self.define("SALMON_ENABLE_TESTS", self.run_tests),
+                self.define("SALMON_ENABLE_BENCHMARKS", self.run_tests),
+            ]
         return args
+
+    @when("@1.11.4:")
+    def check(self):
+        with working_dir(self.build_directory):
+            make("unitTests")
+            make("benchmark_smoke")

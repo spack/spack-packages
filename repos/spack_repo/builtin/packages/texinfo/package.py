@@ -27,6 +27,7 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("7.2", sha256="e86de7dfef6b352aa1bf647de3a6213d1567c70129eccbf8977706d9c91919c8")
     version("7.1", sha256="dd5710b3a53ac002644677a06145748e260592a35be182dc830ebebb79c5d5a0")
     version("7.0.3", sha256="3cc5706fb086b895e1dc2b407aade9f95a3a233ff856273e2b659b089f117683")
     version("7.0", sha256="9261d4ee11cdf6b61895e213ffcd6b746a61a64fe38b9741a3aaa73125b35170")
@@ -39,6 +40,8 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
     version("5.2", sha256="6b8ca30e9b6f093b54fe04439e5545e564c63698a806a48065c0bba16994cf74")
     version("5.1", sha256="50e8067f9758bb2bf175b69600082ac4a27c464cb4bcd48a578edd3127216600")
     version("5.0", sha256="2c579345a39a2a0bb4b8c28533f0b61356504a202da6a25d17d4d866af7f5803")
+
+    variant("xs", default=False, description="Enable Perl XS")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -63,12 +66,23 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
 
     patch("nvhpc.patch", when="%nvhpc")
 
-    @property
-    def build_targets(self):
-        targets = []
-        if self.spec.satisfies("@7.0:"):
-            targets.append(f"CFLAGS={self.compiler.c11_flag}")
-        return targets
+    def configure_args(self):
+        spec = self.spec
+        config_args = []
+
+        if spec.satisfies("+xs"):
+            config_args.append("--enable-perl-xs")
+        else:
+            config_args.append("--disable-perl-xs")
+
+        return config_args
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("@7.0:7.1"):
+                flags.append(self.compiler.c11_flag)
+
+        return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # texinfo builds Perl XS modules internally, and by default it overrides the

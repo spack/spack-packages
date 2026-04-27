@@ -21,11 +21,14 @@ class Eztrace(CMakePackage, AutotoolsPackage, CudaPackage):
 
     version("master", branch="master")
     version("develop", branch="dev")
+    version("2.2.1", sha256="5da87acee12575b9f61cb33dea48a5886a68c9113cb08604d6d2a0a67ff18958")
     version("2.1", sha256="ab5076086eced78e4c6cf7736e7765ca1337dec95a881c9270a42b3251aeea19")
     version("2.0", sha256="67bd296f059cdfab303c62f674af3e1e858213d6945bd79cb8ede4a035c0c2d6")
     version("1.1-13", sha256="6144d04fb62b3ccad41af0268cd921161f168d0cca3f6c210c448bb0b07be7e0")
     version("1.1-10", sha256="63d1af2db38b04efa817614574f381e7536e12db06a2c75375d1795adda3d1d8")
 
+    variant("kokkos", default=False, description="Enable Kokkos support", when="@2.2:")
+    variant("python", default=False, description="Enable Python support", when="@2.2:")
     variant("starpu", default=False, description="Enable StarPU support", when="@2.1:")
     variant("netcdf", default=False, description="Enable NetCDF support", when="@2.1:")
     variant("pnetcdf", default=False, description="Enable PNetCDF support", when="@2.1:")
@@ -51,6 +54,8 @@ class Eztrace(CMakePackage, AutotoolsPackage, CudaPackage):
     with when("build_system=cmake"):
         depends_on("cmake@3.1:", type="build")
 
+    depends_on("kokkos-tools", when="+kokkos")
+    depends_on("python", when="+python")
     depends_on("starpu", when="+starpu")
     depends_on("cuda", when="+cuda")
     depends_on("netcdf-c", when="+netcdf")
@@ -96,6 +101,10 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if spec.satisfies("@2.1: %llvm-openmp-ompt"):
             args.append(self.define("EZTRACE_ENABLE_OMPT", True))
+        if spec.satisfies("+kokkos"):
+            args.append(self.define("EZTRACE_ENABLE_KOKKOS", True))
+        if spec.satisfies("+python"):
+            args.append(self.define("EZTRACE_ENABLE_PYTHON", True))
         if spec.satisfies("+starpu"):
             args.append(self.define("EZTRACE_ENABLE_STARPU", True))
         if spec.satisfies("+cuda"):

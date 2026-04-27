@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -16,12 +15,19 @@ class Rocsolver(CMakePackage):
     subset of LAPACK functionality on the ROCm platform."""
 
     homepage = "https://github.com/ROCm/rocSOLVER"
-    git = "https://github.com/ROCm/rocSOLVER.git"
-    url = "https://github.com/ROCm/rocSOLVER/archive/rocm-6.2.4.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocsolver"]
+    license("BSD-2-Clause")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocSOLVER/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -44,11 +50,14 @@ class Rocsolver(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
-    license("BSD-2-Clause")
-
-    version("develop", branch="develop", deprecated=True)
-    version("master", branch="master", deprecated=True)
-
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="15a29454239dbbac34219d484247f5721d4af08ca1b1f3973ebcbd7895184ae6")
+    version("7.1.0", sha256="643100d6e225eb0d6d26cdc485df79ddd6e7938519e4d74d6f3e8c26d22c5cf2")
+    version("7.0.2", sha256="675c7cdc0e582f93d81d2dcd953ea567f040cbeb300ccd2db61cad4a07ca1d5b")
+    version("7.0.0", sha256="635bbf625d81e11afc70f6c0e23212ed13ea20ea50cf995d3dfa0e4636c19558")
+    version("6.4.3", sha256="6c2c6019eaf49abb30fc54f09b3d755ebcfbbd30d9b71052aa13bb0cbc26d2bb")
+    version("6.4.2", sha256="fe78538ead2ce9a95abbec74bc2c85408d5224f80b4816520e2d55d6b0188935")
     version("6.4.1", sha256="d27d3e0a59fbe1fb82172f545e38857643bb86fa1cd69ba51e9e292440a785c6")
     version("6.4.0", sha256="48930842ac441a6a5d7e25d6c5c6ac6b5fe26549a1add49a102b374e02f5b60e")
     version("6.3.3", sha256="0e8bb906513555d349b6a20cb17976402f5ea6702668efcdda595a2e2d516b46")
@@ -65,48 +74,18 @@ class Rocsolver(CMakePackage):
     version("6.0.0", sha256="5fcaba96f3efafc2ecc3f4ec104095d96545c16e1b9f95410bd571cb0fc643ae")
     version("5.7.1", sha256="83e0c137b8690dbeb2e85d9e25415d96bd06979f09f2b10b2aff8e4c9f833fa4")
     version("5.7.0", sha256="bb16d360f14b34fe6e8a6b8ddc6e631672a5ffccbdcb25f0ce319edddd7f9682")
-    version("5.6.1", sha256="6a8f366218aee599a0e56755030f94ee690b34f30e6d602748632226c5dc21bb")
-    version("5.6.0", sha256="54baa7f35f3c53da9005054e6f7aeecece5526dafcb277af32cbcb3996b0cbbc")
-    version("5.5.1", sha256="8bf843e42d2e89203ea5fdb6e6082cea90da8d02920ab4c09bcc2b6f69909760")
-    version("5.5.0", sha256="6775aa5b96731208c12c5b450cf218d4c262a80b7ea20c2c3034c448bb2ca4d2")
-    with default_args(deprecated=True):
-        version("5.4.3", sha256="5308b68ea72f465239a4bb2ed1a0507f0df7c98d3df3fd1f392e6d9ed7975232")
-        version("5.4.0", sha256="69690839cb649dee43353b739d3e6b2312f3d965dfe66705c0ea910e57c6a8cb")
-        version("5.3.3", sha256="d2248b5e2e0b20e08dd1ee5408e38deb02ecd28096dc7c7f2539351df6cb6ad5")
-        version("5.3.0", sha256="4569f860d240d50e94e77d498050f5cafe5ad11daddaead3e7e9eaa1957878a7")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.8:", type="build")
-    depends_on("fmt@7:", type="build", when="@4.5.0:")
-    depends_on("fmt@7:8.0.1", type="test", when="@5.6:")
+    depends_on("fmt@7:8.0.1", type="test")
+    depends_on("fortran", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
 
-    # Maximize compatibility with other libraries that are using fmt.
-    patch("fmt-9-compatibility.patch", when="@5.2.0:5.5")
-
-    depends_on("hip")
-    depends_on("rocm-cmake@master", type="build", when="@master:")
-    depends_on("rocm-cmake@4.5.0:", type="build", when="@4.5.0:")
-    depends_on("rocm-cmake@4.3.0:", type="build", when="@4.3.0:")
-    depends_on("rocm-cmake@3.5.0:", type="build")
-    depends_on("rocsparse@5.2:", when="@5.6:")
-
-    for ver in ["master", "develop"]:
-        depends_on(f"rocblas@{ver}", when=f"@{ver}")
-
     for ver in [
-        "5.3.0",
-        "5.3.3",
-        "5.4.0",
-        "5.4.3",
-        "5.5.0",
-        "5.5.1",
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -123,12 +102,27 @@ class Rocsolver(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        depends_on(f"rocblas@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
-    for tgt in itertools.chain(["auto"], amdgpu_targets):
-        depends_on(f"rocblas amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocsolver"
+        else:
+            return "."
 
     @classmethod
     def determine_version(cls, lib):
@@ -146,19 +140,21 @@ class Rocsolver(CMakePackage):
             self.define("BUILD_CLIENTS_BENCHMARKS", "OFF"),
             self.define_from_variant("OPTIMAL", "optimal"),
             self.define("ROCSOLVER_EMBED_FMT", "ON"),
+            self.define("CMAKE_INSTALL_LIBDIR", "lib"),
         ]
 
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@5.2.0:6.3.1"):
+        if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if self.spec.satisfies("@5.3.0:"):
-            args.append("-DCMAKE_INSTALL_LIBDIR=lib")
 
         return args
 

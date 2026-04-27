@@ -17,6 +17,8 @@ class Restic(GoPackage):
 
     license("BSD-2-Clause")
 
+    version("0.18.1", sha256="4b8e2b6cb20e9707e14b9b9d92ddb6f2e913523754e1f123e2e6f3321e67f7ca")
+    version("0.18.0", sha256="fc068d7fdd80dd6a968b57128d736b8c6147aa23bcba584c925eb73832f6523e")
     version("0.17.3", sha256="bf0dd73edfae531c24070e2e7833938613f7b179ed165e6b681098edfdf286c8")
     version("0.17.1", sha256="cba3a5759690d11dae4b5620c44f56be17a5688e32c9856776db8a9a93d6d59a")
     version("0.16.4", sha256="d736a57972bb7ee3398cf6b45f30e5455d51266f5305987534b45a4ef505f965")
@@ -29,9 +31,10 @@ class Restic(GoPackage):
     version("0.14.0", sha256="78cdd8994908ebe7923188395734bb3cdc9101477e4163c67e7cc3b8fd3b4bd6")
     version("0.12.1", sha256="a9c88d5288ce04a6cc78afcda7590d3124966dab3daa9908de9b3e492e2925fb")
 
-    depends_on("go@1.15:", type="build", when="@0.14.0:")
-    depends_on("go@1.18:", type="build", when="@0.15.0:")
+    depends_on("go@1.23:", type="build", when="@1.18.0:")
     depends_on("go@1.19:", type="build", when="@1.16.1:")
+    depends_on("go@1.18:", type="build", when="@0.15.0:")
+    depends_on("go@1.15:", type="build", when="@0.14.0:")
 
     build_directory = "cmd/restic"
 

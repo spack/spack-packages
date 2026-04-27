@@ -18,6 +18,7 @@ class Lmdb(MakefilePackage):
 
     license("OLDAP-2.8")
 
+    version("0.9.35", sha256="18b021fd589d30cc08860a9550a30ae51637117451385e9581616da751326632")
     version("0.9.31", sha256="dd70a8c67807b3b8532b3e987b0a4e998962ecc28643e1af5ec77696b081c9b0")
     version("0.9.29", sha256="22054926b426c66d8f2bc22071365df6e35f3aacf19ad943bc6167d4cae3bebb")
     version("0.9.24", sha256="44602436c52c29d4f301f55f6fd8115f945469b868348e3cddaf91ab2473ea26")
@@ -49,8 +50,7 @@ class Lmdb(MakefilePackage):
             f.write("\n")
             f.write("Name: LMDB\n")
             f.write(
-                "Description: Symas LMDB is an extraordinarily fast, "
-                "memory-efficient database.\n"
+                "Description: Symas LMDB is an extraordinarily fast, memory-efficient database.\n"
             )
             f.write("Version: {0}\n".format(self.spec.version))
             f.write("Cflags: -I${includedir}\n")

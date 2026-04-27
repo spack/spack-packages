@@ -25,4 +25,7 @@ class RPan(RPackage):
     version("1.6", sha256="adc0df816ae38bc188bce0aef3aeb71d19c0fc26e063107eeee71a81a49463b6")
     version("1.4", sha256="e6a83f0799cc9714f5052f159be6e82ececd013d1626f40c828cda0ceb8b76dc")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@2.10:", when="@1.9:", type=("build", "run"))

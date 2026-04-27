@@ -111,11 +111,11 @@ class Augustus(MakefilePackage):
             makefile.filter("INCLUDES = *", "INCLUDES = -I$(BAMTOOLS)/include/bamtools ")
             if spec.satisfies("bamtools@2.5:"):
                 makefile.filter(
-                    "LIBS = -lbamtools -lz", "LIBS = $(BAMTOOLS)/lib64" "/libbamtools.a -lz"
+                    "LIBS = -lbamtools -lz", "LIBS = $(BAMTOOLS)/lib64/libbamtools.a -lz"
                 )
             if spec.satisfies("bamtools@:2.4"):
                 makefile.filter(
-                    "LIBS = -lbamtools -lz", "LIBS = $(BAMTOOLS)/lib/bamtools" "/libbamtools.a -lz"
+                    "LIBS = -lbamtools -lz", "LIBS = $(BAMTOOLS)/lib/bamtools/libbamtools.a -lz"
                 )
         with working_dir(join_path("auxprogs", "bam2hints")):
             makefile = FileFilter("Makefile")

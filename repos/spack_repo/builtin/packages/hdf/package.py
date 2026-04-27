@@ -20,6 +20,11 @@ class Hdf(AutotoolsPackage):
     list_depth = 2
     maintainers("lrknox")
 
+    version(
+        "4.3.1",
+        sha256="a2c69eb752aee385b73d4255e4387134dd5e182780d64da0a5cb0d6e1d3dea3b",
+        url="https://github.com/HDFGroup/hdf4/releases/download/hdf4.3.1/hdf4.3.1.tar.gz",
+    )
     version("4.2.15", sha256="dbeeef525af7c2d01539906c28953f0fdab7dba603d1bc1ec4a5af60d002c459")
     version("4.2.14", sha256="2d383e87c8a0ca6a5352adbd1d5546e6cc43dc21ff7d90f93efa644d85c0b14a")
     version("4.2.13", sha256="be9813c1dc3712c2df977d4960e1f13f20f447dfa8c3ce53331d610c1f470483")
@@ -76,30 +81,30 @@ class Hdf(AutotoolsPackage):
     patch(
         "https://src.fedoraproject.org/rpms/hdf/raw/edbe5f49646b609f5bc9aeeee5a2be47e9556e8c/f/hdf-ppc.patch?full_index=1",
         sha256="5434f29a87856aa05124c7a9409b3ec3106c30b1ad722720773623190f6bfda8",
-        when="@4.2.15:",
+        when="@4.2.15:4.2",
     )
     patch(
         "https://src.fedoraproject.org/rpms/hdf/raw/edbe5f49646b609f5bc9aeeee5a2be47e9556e8c/f/hdf-4.2.4-sparc.patch?full_index=1",
         sha256="ce75518cccbeb80ab976b299225ea6104c3eec1ec13c09e2289913279fcf1b39",
-        when="@4.2.15:",
+        when="@4.2.15:4.2",
     )
     patch(
         "https://src.fedoraproject.org/rpms/hdf/raw/edbe5f49646b609f5bc9aeeee5a2be47e9556e8c/f/hdf-s390.patch?full_index=1",
         sha256="f7d67e8c3d0dad8bfca308936c6ac917cc0b63222c6339a29efdce14e8be6475",
-        when="@4.2.15:",
+        when="@4.2.15:4.2",
     )
     patch(
         "https://src.fedoraproject.org/rpms/hdf/raw/edbe5f49646b609f5bc9aeeee5a2be47e9556e8c/f/hdf-arm.patch?full_index=1",
         sha256="d54592df281c92e7e655b8312d18bef9ed096848de9430510e0699e98246ccd3",
-        when="@4.2.15:",
+        when="@4.2.15:4.2",
     )
     patch(
         "https://src.fedoraproject.org/rpms/hdf/raw/edbe5f49646b609f5bc9aeeee5a2be47e9556e8c/f/hdf-aarch64.patch?full_index=1",
         sha256="49733dd6143be7b30a28d386701df64a72507974274f7e4c0a9e74205510ea72",
-        when="@4.2.15:",
+        when="@4.2.15:4.2",
     )
     # https://github.com/jcsda/spack-stack/issues/317
-    patch("hdfi_h_apple_m1.patch", when="@4.2.15: target=aarch64: platform=darwin")
+    patch("hdfi_h_apple_m1.patch", when="@4.2.15:4.2 target=aarch64: platform=darwin")
 
     @property
     def libs(self):
@@ -134,7 +139,7 @@ class Hdf(AutotoolsPackage):
 
         if not shared and "transitive" in query_parameters:
             libs += self.spec["jpeg:transitive"].libs
-            libs += self.spec["zlib:transitive"].libs
+            libs += self.spec["zlib-api:transitive"].libs
             if self.spec.satisfies("+szip"):
                 libs += self.spec["szip:transitive"].libs
             if self.spec.satisfies("+external-xdr") and self.spec["rpc"].name == "libtirpc":
@@ -242,7 +247,7 @@ class Hdf(AutotoolsPackage):
         if not os.path.isfile(path):
             raise SkipTest(f"{exe} is not installed")
 
-        exe = which(path)
+        exe = which(path, required=True)
         out = exe("-V", output=str.split, error=str.split)
         vers = f"Version {self.spec.version.up_to(2)}"
         assert vers in out
@@ -281,19 +286,19 @@ class Hdf(AutotoolsPackage):
         with test_part(
             self, "test_gif_converters_hdf2gif", purpose=f"convert {base_name} hdf-to-gif"
         ):
-            hdf2gif = which(self.prefix.bin.hdf2gif)
+            hdf2gif = which(self.prefix.bin.hdf2gif, required=True)
             hdf2gif(storm_fn, gif_fn)
 
         with test_part(
             self, "test_gif_converters_gif2hdf", purpose=f"convert {base_name} gif-to-hdf"
         ):
-            gif2hdf = which(self.prefix.bin.gif2hdf)
+            gif2hdf = which(self.prefix.bin.gif2hdf, required=True)
             gif2hdf(gif_fn, new_hdf_fn)
 
         with test_part(
             self, "test_gif_converters_hdiff", purpose=f"compare new and orig {base_name} hdf"
         ):
-            hdiff = which(self.prefix.bin.hdiff)
+            hdiff = which(self.prefix.bin.hdiff, required=True)
             hdiff(new_hdf_fn, storm_fn)
 
     def test_list(self):
@@ -308,6 +313,6 @@ class Hdf(AutotoolsPackage):
 
         storm_fn = os.path.join(self.cached_tests_work_dir, f"{base_name}.hdf")
 
-        hdfls = which(self.prefix.bin.hdfls)
+        hdfls = which(self.prefix.bin.hdfls, required=True)
         out = hdfls(storm_fn, output=str.split, error=str.split)
         check_outputs(expected, out)

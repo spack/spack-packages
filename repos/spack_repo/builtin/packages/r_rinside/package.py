@@ -27,6 +27,7 @@ class RRinside(RPackage):
 
     cran = "RInside"
 
+    version("0.2.19", sha256="0703843a3f1460c571650138e5846d96552d6541766c7df72c609cd3aaca1f24")
     version("0.2.18", sha256="805014f0f0a364633e0e3c59100665a089bc455dec80b24f04aaec96466cb736")
     version("0.2.17", sha256="0be28c44ee34cba669a7264d2b99c289230645598ca78e21682559dc31824348")
     version("0.2.16", sha256="7ae4ade128ea05f37068d59e610822ff0b277f9d39d8900f7eb31759ad5a2a0e")
@@ -36,5 +37,6 @@ class RRinside(RPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("gmake", type="build")
 
     depends_on("r-rcpp", type=("build", "run"))

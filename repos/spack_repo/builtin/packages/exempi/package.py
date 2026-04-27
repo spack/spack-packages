@@ -20,9 +20,11 @@ class Exempi(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("2.6.6", sha256="7513b7e42c3bd90a58d77d938c60d2e87c68f81646e7cb8b12d71fe334391c6f")
     version("2.6.1", sha256="072451ac1e0dc97ed69a2e5bfc235fd94fe093d837f65584d0e3581af5db18cd")
     version("2.5.2", sha256="52f54314aefd45945d47a6ecf4bd21f362e6467fa5d0538b0d45a06bc6eaaed5")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("zlib-api")

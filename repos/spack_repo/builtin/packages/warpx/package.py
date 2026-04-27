@@ -17,7 +17,7 @@ class Warpx(CMakePackage, PythonExtension):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/25.04.tar.gz"
+    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.04.tar.gz"
     git = "https://github.com/BLAST-WarpX/warpx.git"
 
     maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
@@ -26,20 +26,17 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("26.04", sha256="484175b83b7752c2de1d947b181f2e1406d27dda95b4f51dbf7fcbc78c5a4bc4")
+    version("26.03", sha256="7f857a2189dc9bf428825f2c17e74c6404d73e616a59d2f94d8d3692acb5d26d")
+    version("26.01", sha256="c3b34a93e350e068c07e3107784885562cfa5c93ce3fd65fed002e5a6353d63d")
+    version("25.12", sha256="fb59497e8427cf491312f83a72b011281d0aa04f6ebbb59b20afcbe0d86b136c")
+    version("25.11", sha256="4e2b4636fee995ad075a907cf216fc089d1220824b8743b62c01e188fa6c23d7")
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
-    with default_args(deprecated=True):
-        version("25.03", sha256="18155ff67b036a00db2a25303058316167192a81cfe6dc1dec65fdef0b6d9903")
-        version("25.02", sha256="7bdea9c1e94f82dbc3565f14f6b6ad7658a639217a10a6cf08c05a16aa26266f")
-        # 22.01+ requires C++17 or newer
-        # 20.01+ requires C++14 or newer
 
-    for v in ["25.04", "25.03", "25.02", "develop"]:
-        depends_on(
-            f"amrex@{v} build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile",
-            when=f"@{v}",
-            type=("build", "link"),
-        )
-        depends_on("py-amrex@{0}".format(v), when="@{0} +python".format(v), type=("build", "run"))
+    depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
+    for v in ["develop", "26.04", "26.03", "26.01", "25.12", "25.11", "25.04"]:
+        depends_on(f"amrex@{v}", when=f"@{v}")
+        depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
     variant("app", default=True, description="Build the WarpX executable application")
     variant("ascent", default=False, description="Enable Ascent in situ visualization")
@@ -52,6 +49,7 @@ class Warpx(CMakePackage, PythonExtension):
         multi=False,
         description="On-node, accelerated computing backend",
     )
+    # TODO: 25.06+ also provides RCYLINDER RSPHERE, but w/o Python support
     variant(
         "dims",
         default="1,2,rz,3",
@@ -83,8 +81,12 @@ class Warpx(CMakePackage, PythonExtension):
         description="Floating point precision (single/double)",
     )
     variant("fft", default=True, description="Enable support for FFT-based solvers")
+    variant(
+        "petsc", default=False, description="Enable PETSc linear/nonlinear solvers", when="@26.01:"
+    )
     variant("python", default=False, description="Enable Python bindings")
     variant("qed", default=True, description="Enable QED support")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("qedtablegen", default=False, description="QED table generation support")
     variant("shared", default=True, description="Build a shared version of the library")
     variant("tprof", default=True, description="Enable tiny profiling features")
@@ -95,12 +97,12 @@ class Warpx(CMakePackage, PythonExtension):
     depends_on("boost@1.66.0: +math", when="+qedtablegen")
     depends_on("cmake@3.24.0:", type="build")
     with when("+ascent"):
-        depends_on("ascent", when="+ascent")
-        depends_on("ascent +cuda", when="+ascent compute=cuda")
-        depends_on("ascent +mpi", when="+ascent +mpi")
+        depends_on("ascent")
+        depends_on("ascent +cuda", when="compute=cuda")
+        depends_on("ascent +mpi", when="+mpi")
         depends_on("amrex +ascent +conduit")
     with when("+catalyst"):
-        depends_on("libcatalyst@2.0: +conduit")
+        depends_on("libcatalyst@2.0:")
         depends_on("libcatalyst +mpi", when="+mpi")
         depends_on("amrex +catalyst +conduit")
     with when("dims=1"):
@@ -115,6 +117,13 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("amrex +eb")
     with when("+fft"):
         depends_on("amrex +fft")
+    with when("+petsc"):
+        depends_on("petsc")
+        depends_on("amrex +petsc")
+    with when("+simd"):
+        depends_on("vir-simd", type="build")
+        depends_on("amrex +simd")
+        depends_on("py-amrex +simd", when="+python")
     depends_on("mpi", when="+mpi")
     with when("+mpi"):
         depends_on("amrex +mpi")
@@ -126,7 +135,6 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("amrex precision=single")
     with when("precision=double"):
         depends_on("amrex precision=double")
-    depends_on("py-pybind11@2.12.0:", when="+python", type=("build", "link"))
     depends_on("sensei@4.0.0:", when="+sensei")
     with when("compute=cuda"):
         depends_on("amrex +cuda")
@@ -152,12 +160,19 @@ class Warpx(CMakePackage, PythonExtension):
             depends_on("pkgconfig", type="build")
     with when("compute=sycl"):
         depends_on("amrex +sycl")
+        depends_on("intel-oneapi-mkl", when="+fft")
     with when("+fft dims=rz"):
         depends_on("lapackpp")
+        depends_on("lapackpp +cuda", when="compute=cuda")
+        depends_on("lapackpp +rocm", when="compute=hip")
+        depends_on("lapackpp +sycl", when="compute=sycl")
         depends_on("blaspp")
         depends_on("blaspp +cuda", when="compute=cuda")
+        depends_on("blaspp +rocm", when="compute=hip")
+        depends_on("blaspp +sycl", when="compute=sycl")
     with when("+openpmd"):
         depends_on("openpmd-api@0.16.1:")
+        depends_on("openpmd-api@0.17.0:", when="@26.02:")
         depends_on("openpmd-api ~mpi", when="~mpi")
         depends_on("openpmd-api +mpi", when="+mpi")
 
@@ -165,24 +180,20 @@ class Warpx(CMakePackage, PythonExtension):
     # note: in Spack, we only need the cmake package, not py-cmake
     with when("+python"):
         extends("python")
-        depends_on("python@3.8:", type=("build", "run"))
+        depends_on("python@3.9:", type=("build", "run"))
+        depends_on("python@3.11:", type=("build", "run"), when="@26.03:")
         depends_on("py-numpy@1.15.0:", type=("build", "run"))
         depends_on("py-mpi4py@2.1.0:", type=("build", "run"), when="+mpi")
         depends_on("py-periodictable@1.5:1", type=("build", "run"))
-        depends_on("py-picmistandard@0.33.0", type=("build", "run"), when="@25.01:")
+        depends_on("py-picmistandard@0.33.0", type=("build", "run"), when="@25.01:25.10")
+        depends_on("py-picmistandard@0.34.0", type=("build", "run"), when="@25.11:")
         depends_on("py-pip@23:", type="build")
         depends_on("py-setuptools@42:", type="build")
         depends_on("py-pybind11@2.12.0:", type=("build", "link"))
+        depends_on("py-pybind11@3.0.1:", when="@25.08:", type=("build", "link"))
         depends_on("py-wheel@0.40:", type="build")
 
-    conflicts("~qed +qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
-
-    # https://github.com/BLAST-WarpX/warpx/issues/5774
-    conflicts(
-        "compute=sycl dims=rz",
-        when="+fft",
-        msg="WarpX spectral solvers are not yet running on SYCL GPUs for RZ (GH#5774)",
-    )
+    conflicts("~qed", when="+qedtablegen", msg="WarpX PICSAR QED table generation needs +qed")
 
     def cmake_args(self):
         spec = self.spec
@@ -203,9 +214,11 @@ class Warpx(CMakePackage, PythonExtension):
             self.define_from_variant("WarpX_MPI_THREAD_MULTIPLE", "mpithreadmultiple"),
             self.define_from_variant("WarpX_OPENPMD", "openpmd"),
             "-DWarpX_PRECISION={0}".format(spec.variants["precision"].value.upper()),
+            self.define_from_variant("WarpX_PETSC", "petsc"),
             self.define_from_variant("WarpX_PYTHON", "python"),
             self.define_from_variant("WarpX_QED", "qed"),
             self.define_from_variant("WarpX_QED_TABLE_GEN", "qedtablegen"),
+            self.define_from_variant("WarpX_SIMD", "simd"),
         ]
 
         args.append("-DWarpX_amrex_internal=OFF")
@@ -243,9 +256,12 @@ class Warpx(CMakePackage, PythonExtension):
 
         return args
 
-    def edit(self, spec, prefix):
-        with when("+python"):
-            self.build_targets.extend(["pip_wheel", "pip_install_nodeps"])
+    @property
+    def build_targets(self):
+        targets = super().build_targets
+        if self.spec.satisfies("+python"):
+            targets.extend(["pip_wheel", "pip_install_nodeps"])
+        return targets
 
     @property
     def libs(self):
@@ -285,8 +301,9 @@ class Warpx(CMakePackage, PythonExtension):
         # test openPMD output if compiled in
         if "+openpmd" in spec:
             cli_args.append("diag1.format=openpmd")
-            # RZ: thetaMode output uses different variables
-            cli_args.append("diag1.fields_to_plot=Er Et Ez Br Bt Bz jr jt jz rho")
+            if dim == "rz":
+                # RZ: thetaMode output uses different variables
+                cli_args.append("diag1.fields_to_plot=Er Et Ez Br Bt Bz jr jt jz rho")
         return cli_args
 
     def check(self):
@@ -324,7 +341,7 @@ class Warpx(CMakePackage, PythonExtension):
         dim_arg = f"{dim}d" if dim.isdigit() else dim
         exe = find(self.prefix.bin, f"warpx.{dim_arg}.*", recursive=False)[0]
         cli_args = self._get_input_options(dim, True)
-        warpx = which(exe)
+        warpx = which(exe, required=True)
         warpx(*cli_args)
 
     def test_warpx_1d(self):

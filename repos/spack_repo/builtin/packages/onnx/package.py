@@ -20,7 +20,14 @@ class Onnx(CMakePackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
-    version("master", branch="master")
+    maintainers("wdconinc")
+
+    version("main", branch="main")
+    version("master", branch="master", deprecated=True)
+    version("1.20.0", sha256="e9e9273cd39d460348aa3e2eb370a444b510e138c5f45dfa86ce50461901257b")
+    version("1.19.1", sha256="ce9d2569a61d64e8a3d05b92194f60ffb7c868dbb754a71f5b4d992273a9413d")
+    version("1.19.0", sha256="2c2ac5a078b0350a0723fac606be8cd9e9e8cbd4c99bab1bffe2623b188fd236")
+    version("1.18.0", sha256="b466af96fd8d9f485d1bb14f9bbdd2dfb8421bc5544583f014088fb941a1d21e")
     version("1.17.0", sha256="8d5e983c36037003615e5a02d36b18fc286541bf52de1a78f6cf9f32005a820e")
     version("1.16.2", sha256="84fc1c3d6133417f8a13af6643ed50983c91dacde5ffba16cc8bb39b22c2acbb")
     version("1.16.1", sha256="0e6aa2c0a59bb2d90858ad0040ea1807117cc2f05b97702170f18e6cd6b66fb3")
@@ -53,36 +60,33 @@ class Onnx(CMakePackage):
     )  # py-torch@1.6:1.7
     version("1.6.0_2020-02-16", commit="9fdae4c68960a2d44cd1cc871c74a6a9d469fa1f")  # py-torch@1.5
     version("1.6.0_2019-11-06", commit="fea8568cac61a482ed208748fdc0e1a8e47f62f5")  # py-torch@1.4
-    version(
-        "1.6.0_2019-09-26", commit="034921bd574cc84906b7996c07873454b7dd4135", deprecated=True
-    )  # py-torch@1.3
-    version(
-        "1.5.0_2019-07-25", commit="28ca699b69b5a31892619defca2391044a9a6052", deprecated=True
-    )  # py-torch@1.2
-    version(
-        "1.5.0_2019-04-25", commit="22662bfd4dcc6baebf29e3b823a051676f991001", deprecated=True
-    )  # py-torch@1.1
-    version(
-        "1.3.0_2018-12-04", commit="42804705bdbf179d1a98394008417e1392013547", deprecated=True
-    )  # py-torch@1.0
-    version(
-        "1.2.2_2018-07-16", commit="b2817a682f25f960586f06caa539bbbd7a96b859", deprecated=True
-    )  # py-torch@0.4.1
-    version(
-        "1.1.0_2018-04-19", commit="7e1bed51cc508a25b22130de459830b5d5063c41", deprecated=True
-    )  # py-torch@0.4.0
 
-    depends_on("c", type="build")  # FIXME: note https://github.com/onnx/onnx/pull/6826
+    depends_on("c", type="build", when="@:1.18")
     depends_on("cxx", type="build")
 
     generator("ninja")
+
+    # CMakeLists.txt
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.14:", type="build", when="@1.17:")
+    depends_on("cmake@3.18:", type="build", when="@1.18:")
+    depends_on("cmake@3.24:", type="build", when="@1.19:")
+    depends_on("cmake@3.26:", type="build", when="@1.20:")
+
+    # pyproject.toml assumed to apply to CMake build as well
     depends_on("python", type="build")
+    depends_on("python@3.8:", when="@1.15:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.18:", type=("build", "run"))
+    depends_on("python@3.10:", when="@1.20:", type=("build", "run"))
+
     depends_on("protobuf")
 
+    # Allow conversion from OpSchema to OpSchemaRegisterOnce (needed for onnxruntime)
+    # Ref: https://github.com/onnx/onnx/pull/7390
+    patch("OpSchemaRegisterOnce.patch", when="@1.18.0:1.19")
+
     def patch(self):
-        if self.spec.satisfies("@1.13:1.14 ^protobuf@3.22:"):
+        if self.spec.satisfies("@1.13:1.14 ^protobuf@22:"):
             # CMAKE_CXX_STANDARD is overridden in CMakeLists.txt until 1.14
             cxxstd = self.spec["abseil-cpp"].variants["cxxstd"].value
             filter_file("CMAKE_CXX_STANDARD 11", f"CMAKE_CXX_STANDARD {cxxstd}", "CMakeLists.txt")
@@ -95,8 +99,11 @@ class Onnx(CMakePackage):
             # Try to get ONNX to use the same version of python as the spec is using
             self.define("PY_VERSION", self.spec["python"].version.up_to(2)),
             self.define("ONNX_BUILD_TESTS", self.run_tests),
+            self.define(
+                "ONNX_USE_PROTOBUF_SHARED_LIBS", self.spec["protobuf"].variants["shared"].value
+            ),
         ]
-        if self.spec.satisfies("@1.15: ^protobuf@3.22:"):
+        if self.spec.satisfies("@1.15: ^protobuf@22:"):
             # CMAKE_CXX_STANDARD can be set on command line as of 1.15
             cxxstd = self.spec["abseil-cpp"].variants["cxxstd"].value
             args.append(self.define("CMAKE_CXX_STANDARD", cxxstd))

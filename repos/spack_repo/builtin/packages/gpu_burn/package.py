@@ -37,7 +37,7 @@ class GpuBurn(MakefilePackage, CudaPackage):
             archflag = " ".join(CudaPackage.cuda_flags(cuda_arch))
             with open("Makefile", "w") as fh:
                 fh.write("drv:\n")
-                fh.write("\tnvcc {0} -fatbin " "compare.cu -o compare.ptx\n".format(archflag))
+                fh.write("\tnvcc {0} -fatbin compare.cu -o compare.ptx\n".format(archflag))
                 fh.write("\t{0} -O3 -c gpu_burn-drv.cpp\n".format(spack_cxx))
                 fh.write(
                     "\t{0} -o gpu_burn gpu_burn-drv.o -O3 -lcuda "

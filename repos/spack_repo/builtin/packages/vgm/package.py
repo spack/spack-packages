@@ -22,6 +22,9 @@ class Vgm(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("master", branch="master")
+    version("5-3-1", sha256="485903ad98ae0032d4acfd73934bf46d8fb665146b664a40b6f7cfd9f73386a6")
+    version("5-3", sha256="fe46cb40e498f6f51eb8e9c7092b3eba0a17d6431fb2ed488063131e94758766")
+    version("5-2", sha256="0abdef5484b5b9cc845337bc434636ca8691b129b04c7f64350047fe7f6bbc94")
     version("5-0", sha256="ab929df1aa9b0cda40451f5a98982c3328901865b33e30207ee9b9fe14331344")
     version("4-8", sha256="4fcd607b4f100fc00a65fec7a5803575daf9d4919d1808bbd6a30be263c001dd")
     version("4-7", sha256="a5f5588db457dc3e6562d1f7da1707960304560fbb0a261559fa3f112a476aea")
@@ -34,6 +37,7 @@ class Vgm(CMakePackage):
     version("4-00", sha256="c24de76f919dca7c92b3c9fce7a39142c6e61fd39f691d2e4df15fe413b5190d")
     version("3-06", sha256="41948869f2e4dcfa31f4bad42b938c25dd174660c427feb2f9effa9af5e59c7d")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.8:", type="build")

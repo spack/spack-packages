@@ -20,6 +20,8 @@ class PyImageio(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("2.37.3", sha256="bbb37efbfc4c400fcd534b367b91fcd66d5da639aaa138034431a1c5e0a41451")
+    version("2.37.0", sha256="71b57b3669666272c818497aebba2b4c5f20d5b37c81720e5e1a56d59c492996")
     version("2.35.1", sha256="4952dfeef3c3947957f6d5dedb1f4ca31c6e509a476891062396834048aeed2a")
     version("2.34.0", sha256="ae9732e10acf807a22c389aef193f42215718e16bd06eed0c5bb57e1034a4d53")
     version("2.30.0", sha256="7fc6ad5b5677cb1e58077875a72512aa8c392b6d40885eca0a6ab250efb4b8f4")
@@ -31,14 +33,20 @@ class PyImageio(PythonPackage):
     version("2.4.1", sha256="16b8077bc8a5fa7a58b3e744f7ecbb156d8c088132df31e0f4f546c98de3514a")
     version("2.3.0", sha256="c4fd5183c342d47fdc2e98552d14e3f24386021bbc3efedd1e3b579d7d249c07")
 
-    # TODO: Add variants for plugins, and optional dependencies
+    with default_args(type="build"):
+        depends_on("py-setuptools@61:", when="@2.37.1:")
+        depends_on("py-setuptools")
 
-    depends_on("py-setuptools", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@2.37.3:")
+        depends_on("python@3.9:", when="@2.36:")
+        depends_on("python@3.8:", when="@2.31.2:")
 
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-numpy@1.20:", when="@2.16", type=("build", "run"))
-    # https://github.com/imageio/imageio/issues/1077
-    depends_on("py-numpy@:1", when="@:2.34.1", type=("build", "run"))
-    depends_on("pil@8.3.2:", when="@2.10:", type=("build", "run"))
-    depends_on("pil", type=("build", "run"))
+        depends_on("py-numpy")
+        depends_on("py-numpy@1.20:", when="@2.16")
+        # https://github.com/imageio/imageio/issues/1077
+        depends_on("py-numpy@:1", when="@:2.34.1")
+        depends_on("pil@8.3.2:", when="@2.10:")
+        depends_on("pil")
+
     depends_on("ffmpeg", type="run")

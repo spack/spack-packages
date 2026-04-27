@@ -19,9 +19,13 @@ class Jujutsu(CargoPackage):
 
     license("Apache-2.0", checked_by="pranav-sivaraman")
 
+    version("0.31.0", sha256="ff40515de7a5adac267c64c0163b38990a74a71bb7612a898832c812a81070b2")
     version("0.25.0", sha256="3a99528539e414a3373f24eb46a0f153d4e52f7035bb06df47bd317a19912ea3")
 
+    depends_on("c", type="build")
     depends_on("rust@1.76:", type="build")
+    depends_on("rust@1.84:", type="build", when="@0.31:")
+
     depends_on("pkgconfig", type="build")
     depends_on("openssl")
 

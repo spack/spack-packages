@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
-from spack.package_test import compare_output
 
 
 class Bohrium(CMakePackage, CudaPackage):
@@ -40,9 +39,7 @@ class Bohrium(CMakePackage, CudaPackage):
     variant("node", default=True, description="Build the node vector engine manager")
     variant("proxy", default=False, description="Build the proxy vector engine manager")
     variant(
-        "python",
-        default=True,
-        description="Build the numpy-like bridge " "to enable use from python",
+        "python", default=True, description="Build the numpy-like bridge to enable use from python"
     )
     variant("cbridge", default=True, description="Build the bridge interface towards plain C")
 

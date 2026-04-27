@@ -24,12 +24,12 @@ jobs:
       core: ${{ steps.filter.outputs.core }}
       packages: ${{ steps.filter.outputs.packages }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
         if: ${{ github.event_name == 'push' || github.event_name == 'merge_group' }}
         with:
           fetch-depth: 0
             # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d
         id: filter
         with:
           # For merge group events, compare against the target branch (main)
@@ -44,6 +44,21 @@ jobs:
             - .ci/env
             packages:
             - repos/spack_repo/**
+            old_repos:
+            - 'var/spack/repos/**'
+          list-files: 'shell'
+      - name: Detected old package repository root directory
+        if: steps.filter.outputs.old_repos == 'true'
+        run: |
+          files=${{ steps.filter.outputs.old_repos_files }}
+          echo "Error: Packages are no longer allowed under 'var/spack/repos/'."
+          echo "       The following files need to be moved to the appropriate"
+          echo "       subdirectory of 'repos/spack_repo/builtin':"
+          echo
+          for f in $files; do
+              echo "  $f"
+          done
+          exit 1
 
   unit-tests:
     # if: ${{ github.repository == 'spack/spack' && needs.changes.outputs.core == 'true' }}
@@ -65,12 +80,10 @@ jobs:
     steps:
     - name: Success
       run: |
-        if [ "${{ needs.prechecks.result }}" == "failure" ] || [ "${{ needs.prechecks.result }}" == "canceled" ]; then
-          echo "GHA checks failed."
-          exit 1
-        else
-          exit 0
-        fi
+        [ "${{ needs.prechecks.result }}" = "success" ] && exit 0
+        [ "${{ needs.prechecks.result }}" = "skipped" ] && exit 0
+        echo "GHA checks failed."
+        exit 1
 
   all:
     needs: [ unit-tests ]
@@ -80,9 +93,7 @@ jobs:
     steps:
     - name: Status summary
       run: |
-        if [ "${{ needs.unit-tests.result }}" == "failure" ] || [ "${{ needs.unit-tests.result }}" == "canceled" ]; then
-          echo "Unit tests failed."
-          exit 1
-        else
-          exit 0
-        fi
+        [ "${{ needs.unit-tests.result }}" = "success" ] && exit 0
+        [ "${{ needs.unit-tests.result }}" = "skipped" ] && exit 0
+        echo "Unit tests failed."
+        exit 1

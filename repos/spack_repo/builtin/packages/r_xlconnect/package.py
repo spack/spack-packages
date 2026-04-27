@@ -25,14 +25,14 @@ class RXlconnect(RPackage):
     version("0.2-12", sha256="500624f078fb27338aa91d8710daaf38633659a9b17f7cb713232a3d66f9f62c")
     version("0.2-11", sha256="17c5eddd00b933fd7a2ab9d942c813046d45f0af487f8d5b11011a004db69d0b")
 
+    depends_on("r+java", type=("build", "run"))
     depends_on("r@2.10.0:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@1.0.6:")
-    depends_on("r-rjava", type=("build", "run"))
-    depends_on("r-rjava@1.0-1:", type=("build", "run"), when="@1.0.6:")
     depends_on("java@6:")
     depends_on("java@8:11", when="@1.0.1:")
     depends_on("java@8:17", when="@1.0.5:")
-
+    depends_on("r-rjava", type=("build", "run"))
+    depends_on("r-rjava@1.0-1:", type=("build", "run"), when="@1.0.6:")
     depends_on("r-xlconnectjars@0.2-9", type=("build", "run"), when="@0.2-11")
     depends_on("r-xlconnectjars@0.2-12", type=("build", "run"), when="@0.2-12")
     depends_on("r-xlconnectjars@0.2-14", type=("build", "run"), when="@0.2-14")

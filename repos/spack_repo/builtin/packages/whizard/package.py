@@ -82,7 +82,7 @@ class Whizard(AutotoolsPackage):
     depends_on("qgraf", when="+gosam")
 
     depends_on(
-        "openloops@2.0.0: +compile_extra num_jobs=1 " "processes=eett,eevvjj,ppllj,tbw",
+        "openloops@2.0.0: +compile_extra num_jobs=1 processes=eett,eevvjj,ppllj,tbw",
         when="+openloops",
     )
     depends_on("texlive", when="+latex")
@@ -147,12 +147,18 @@ class Whizard(AutotoolsPackage):
         env.set("FC", self.compiler.fc)
         env.set("F77", self.compiler.fc)
 
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Whizard creates a whizard_setup.[c]sh script that sets the
+        # LD_LIBRARY_PATH that is necessary because whizard builds more
+        # libraries on invocation, which are usually not linked via RPATH
+        env.prepend_path("LD_LIBRARY_PATH", self.spec["whizard"].libs.directories[0])
+
     @run_before("autoreconf")
     def prepare_whizard(self):
         # As described in the manual (SVN Repository version)
         # https://whizard.hepforge.org/manual/manual003.html#sec%3Aprerequisites
         if not os.path.exists("configure.ac"):
-            shell = which("sh")
+            shell = which("sh", required=True)
             shell("build_master.sh")
 
     def configure_args(self):

@@ -5,6 +5,7 @@ import os
 from typing import List
 
 from spack.package import (
+    BuilderWithDefaults,
     PackageBase,
     Prefix,
     Spec,
@@ -18,7 +19,7 @@ from spack.package import (
     working_dir,
 )
 
-from ._checks import BuilderWithDefaults, execute_build_time_tests
+from ._checks import execute_build_time_tests
 
 
 class MesonPackage(PackageBase):
@@ -31,7 +32,7 @@ class MesonPackage(PackageBase):
     build_system_class = "MesonPackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    legacy_buildsystem = "meson"
+    default_buildsystem = "meson"
 
     build_system("meson")
 
@@ -63,7 +64,7 @@ class MesonPackage(PackageBase):
         # when setuptools is in PYTHONPATH; it has to be in system site-packages. In a future meson
         # release, the distutils requirement will be dropped, so this conflict can be relaxed.
         # We have patches to make it work with meson 1.1 and above.
-        conflicts("^python@3.12:", when="^meson@:1.0")
+        conflicts("^python@3.12:", when="%meson@:1.0")
 
     def flags_to_build_system_args(self, flags):
         """Produces a list of all command line arguments to pass the specified
@@ -100,10 +101,10 @@ class MesonBuilder(BuilderWithDefaults):
     phases = ("meson", "build", "install")
 
     #: Names associated with package methods in the old build-system format
-    legacy_methods = ("meson_args", "check")
+    package_methods = ("meson_args", "check")
 
     #: Names associated with package attributes in the old build-system format
-    legacy_attributes = (
+    package_attributes = (
         "build_targets",
         "install_targets",
         "build_time_test_callbacks",

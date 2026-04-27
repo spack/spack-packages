@@ -29,6 +29,7 @@ class Tinyxml2(CMakePackage):
 
     variant("shared", default=False, description="Build shared library")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     def cmake_args(self):

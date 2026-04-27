@@ -21,7 +21,8 @@ class DarshanUtil(AutotoolsPackage):
 
     tags = ["e4s"]
 
-    version("main", branch="main", submodules="True")
+    version("main", branch="main", submodules=True)
+    version("3.4.7", sha256="115a6d840b3bdb30751c271c0dec098b25bed2f8c77175125c133564d76afe5b")
     version("3.4.6", sha256="092b35e7af859af903dce0c51bcb5d3901dd0d9ad79d1b2f3282692407f032ee")
     version("3.4.5", sha256="1c017ac635fab5ee0e87a6b52c5c7273962813569495cb1dd3b7cfa6e19f6ed0")
     version("3.4.4", sha256="d9c9df5aca94dc5ca3d56fd763bec2f74771d35126d61cb897373d2166ccd867")
@@ -130,6 +131,6 @@ class DarshanUtil(AutotoolsPackage):
             r"STDIO\s+0\s+\w+\s+STDIO_OPENS\s+\d+",
         ]
         logname = self.test_suite.current_test_cache_dir.join(self.tests_log_path)
-        parser = which(join_path(self.prefix.bin, "darshan-parser"))
+        parser = which(join_path(self.prefix.bin, "darshan-parser"), required=True)
         out = parser(logname, output=str.split, error=str.split)
         check_outputs(expected_output, out)

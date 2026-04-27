@@ -9,8 +9,6 @@ import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-import llnl.util.lang
-
 from spack.package import *
 
 
@@ -40,6 +38,12 @@ class Hdf5(CMakePackage):
     version("develop-1.12", branch="hdf5_1_12")
     version("develop-1.10", branch="hdf5_1_10")
     version("develop-1.8", branch="hdf5_1_8")
+
+    version(
+        "2.1.0",
+        sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
+    )
 
     # Odd versions are considered experimental releases
     # Even versions are maintenance versions
@@ -115,6 +119,14 @@ class Hdf5(CMakePackage):
 
     variant("hl", default=False, description="Enable the high-level library")
     variant("cxx", default=False, description="Enable C++ support")
+    variant(
+        "cxxstd",
+        default="11",
+        values=("98", "11", "14", "17", "20", "23"),
+        multi=False,
+        when="+cxx",
+        description="Use the specified C++ standard when building.",
+    )
     variant("map", when="@1.14:", default=False, description="Enable MAP API support")
     variant(
         "subfiling", when="@1.14: +mpi", default=False, description="Enable Subfiling VFD support"
@@ -130,7 +142,7 @@ class Hdf5(CMakePackage):
         "api",
         default="default",
         description="Choose api compatibility for earlier version",
-        values=("default", "v116", "v114", "v112", "v110", "v18", "v16"),
+        values=("default", "v200", "v114", "v112", "v110", "v18", "v16"),
         multi=False,
     )
 
@@ -139,7 +151,8 @@ class Hdf5(CMakePackage):
     depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.12:", type="build")
-    depends_on("cmake@3.18:", type="build", when="@1.13:")
+    depends_on("cmake@3.18:", type="build", when="@1.14:")
+    depends_on("cmake@3.26:", type="build", when="@2.0:")
 
     with when("+mpi"):
         depends_on("mpi")
@@ -161,11 +174,11 @@ class Hdf5(CMakePackage):
         depends_on("pkgconfig", when=f"platform={plat}", type="run")
 
     conflicts("+mpi", "^mpich@4.0:4.0.3")
-    conflicts("api=v116", when="@1.6:1.14", msg="v116 is not compatible with this release")
+    conflicts("api=v200", when="@1.6:1.14", msg="v200 is not compatible with this release")
     conflicts(
-        "api=v116",
+        "api=v200",
         when="@develop-1.8:develop-1.14",
-        msg="v116 is not compatible with this release",
+        msg="v200 is not compatible with this release",
     )
     conflicts("api=v114", when="@1.6:1.12", msg="v114 is not compatible with this release")
     conflicts(
@@ -192,6 +205,13 @@ class Hdf5(CMakePackage):
     # See https://github.com/HDFGroup/hdf5/issues/2906#issue-1697749645
     conflicts(
         "+fortran", when="@1.13.3:^cmake@:3.22", msg="cmake_minimum_required is not set correctly."
+    )
+
+    # https://github.com/HDFGroup/hdf5/pull/6267
+    patch(
+        "https://github.com/HDFGroup/hdf5/commit/84e5adf753cdd97a807df2da6338bb0e0cdf9862.patch?full_index=1",
+        sha256="cf8056ec86e01aaf384bef3aecc11dc111a3f11bd83e80d1156af7f939328135",
+        when="@2.1.0",
     )
 
     # HDF5 searches for zlib CMake config files before it falls back to
@@ -501,7 +521,7 @@ class Hdf5(CMakePackage):
                 variants.append("~szip")
 
             match = re.search(r"Default API mapping: (\S+)", output)
-            if match and match.group(1) in set(["v114", "v112", "v110", "v18", "v16"]):
+            if match and match.group(1) in set(["v200", "v114", "v112", "v110", "v18", "v16"]):
                 variants.append("api={0}".format(match.group(1)))
 
             results.append(" ".join(variants))
@@ -512,12 +532,6 @@ class Hdf5(CMakePackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("SZIP_INSTALL", self.spec["szip"].prefix)
 
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        # According to related github posts and problems running test_install
-        # as a stand-alone test, it appears the lib path must be added to
-        # LD_LIBRARY_PATH.
-        env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
-
     def cmake_args(self):
         spec = self.spec
 
@@ -525,22 +539,19 @@ class Hdf5(CMakePackage):
             tty.warn("hdf5@:1.8.15+shared does not produce static libraries")
 
         args = [
-            # Always enable this option. This does not actually enable any
-            # features: it only *allows* the user to specify certain
-            # combinations of other arguments.
-            self.define("ALLOW_UNSUPPORTED", True),
+            self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             # Speed-up the building by skipping the examples:
             self.define("HDF5_BUILD_EXAMPLES", False),
             self.define(
                 "BUILD_TESTING",
-                self.run_tests or
+                self.run_tests
+                or
                 # Version 1.8.22 fails to build the tools when shared libraries
                 # are enabled but the tests are disabled.
                 spec.satisfies("@1.8.22+shared+tools"),
             ),
             self.define_from_variant("HDF5_ENABLE_SUBFILING_VFD", "subfiling"),
             self.define_from_variant("HDF5_ENABLE_MAP_API", "map"),
-            self.define("HDF5_ENABLE_Z_LIB_SUPPORT", True),
             self.define_from_variant("HDF5_ENABLE_SZIP_SUPPORT", "szip"),
             self.define_from_variant("HDF5_ENABLE_SZIP_ENCODING", "szip"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
@@ -554,23 +565,44 @@ class Hdf5(CMakePackage):
             self.define_from_variant("HDF5_BUILD_TOOLS", "tools"),
         ]
 
+        # Always enable this option. This does not actually enable any
+        # features: it only *allows* the user to specify certain combinations
+        # of other arguments that would normally be rejected as unsupported
+        # configurations.
+        # Note: This option was renamed from ALLOW_UNSUPPORTED to
+        # HDF5_ALLOW_UNSUPPORTED in HDF5 2.0.0 as part of the standardization
+        # of CMake option naming.
+        if self.spec.satisfies("@2.0.0:"):
+            args.append(self.define("HDF5_ALLOW_UNSUPPORTED", True))
+        else:
+            args.append(self.define("ALLOW_UNSUPPORTED", True))
+
+        # The name of option HDF5_ENABLE_Z_LIB_SUPPORT was also changed
+        # to HDF5_ENABLE_ZLIB_SUPPORT.
+        if self.spec.satisfies("@2.0.0:"):
+            args.append(self.define("HDF5_ENABLE_ZLIB_SUPPORT", True))
+        else:
+            args.append(self.define("HDF5_ENABLE_Z_LIB_SUPPORT", True))
+
+        # The name of option DEFAULT_API_VERSION was also changed to
+        # HDF5_DEFAULT_API_VERSION
         api = spec.variants["api"].value
         if api != "default":
-            args.append(self.define("DEFAULT_API_VERSION", api))
+            if self.spec.satisfies("@2.0.0:"):
+                args.append(self.define("HDF5_DEFAULT_API_VERSION", api))
+            else:
+                args.append(self.define("DEFAULT_API_VERSION", api))
 
         # MSMPI does not provide compiler wrappers
         # and pointing these variables at the MSVC compilers
         # breaks CMake's mpi detection for MSMPI.
         if spec.satisfies("+mpi") and "msmpi" not in spec:
-            args.extend(
-                [
-                    "-DMPI_CXX_COMPILER:PATH=%s" % spec["mpi"].mpicxx,
-                    "-DMPI_C_COMPILER:PATH=%s" % spec["mpi"].mpicc,
-                ]
-            )
+            if spec.satisfies("+cxx"):
+                args.append(self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
+            args.append(self.define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
             if spec.satisfies("+fortran"):
-                args.extend(["-DMPI_Fortran_COMPILER:PATH=%s" % spec["mpi"].mpifc])
+                args.append(self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc))
 
         # work-around for https://github.com/HDFGroup/hdf5/issues/1320
         if spec.satisfies("@1.10.8,1.13.0"):
@@ -603,7 +635,7 @@ class Hdf5(CMakePackage):
         # 1.10.6 and 1.12.0. The current develop versions do not produce 'h5pfc'
         # at all. Here, we make sure that 'h5pfc' is available when Fortran and
         # MPI support are enabled (only for versions that generate 'h5fc').
-        if self.spec.satisfies("@1.8.22:1.8," "1.10.6:1.10.9," "1.12.0:1.12.2" "+fortran+mpi"):
+        if self.spec.satisfies("@1.8.22:1.8,1.10.6:1.10.9,1.12.0:1.12.2+fortran+mpi"):
             with working_dir(self.prefix.bin):
                 # No try/except here, fix the condition above instead:
                 symlink("h5fc", "h5pfc")
@@ -656,7 +688,7 @@ class Hdf5(CMakePackage):
             with working_dir(self.prefix.lib):
                 for lib in libs:
                     libname = os.path.split(lib)[1]
-                    os.symlink(libname, libname.replace("_debug", ""))
+                    symlink(libname, libname.replace("_debug", ""))
 
     @run_after("install")
     def symlink_to_h5hl_wrappers(self):
@@ -689,7 +721,7 @@ class Hdf5(CMakePackage):
                     symlink(src_lib, dst_lib)
 
     @property
-    @llnl.util.lang.memoized
+    @memoized
     def _output_version(self):
         spec_vers_str = str(self.spec.version.up_to(3))
         if "develop" in spec_vers_str:
@@ -787,7 +819,7 @@ int main(int argc, char **argv) {{
                 if not os.path.isfile(path):
                     raise SkipTest(f"{path} is not installed")
 
-                prog = which(path)
+                prog = which(path, required=True)
                 output = prog(option, output=str.split, error=str.split)
                 assert expected in output
 
@@ -796,15 +828,15 @@ int main(int argc, char **argv) {{
         test_data_dir = self.test_suite.current_test_data_dir
         with working_dir(test_data_dir, create=True):
             filename = "spack.h5"
-            h5dump = which(self.prefix.bin.h5dump)
+            h5dump = which(self.prefix.bin.h5dump, required=True)
             out = h5dump(filename, output=str.split, error=str.split)
             expected = get_escaped_text_output("dump.out")
             check_outputs(expected, out)
 
-            h5copy = which(self.prefix.bin.h5copy)
+            h5copy = which(self.prefix.bin.h5copy, required=True)
             copyname = "test.h5"
             options = ["-i", filename, "-s", "Spack", "-o", copyname, "-d", "Spack"]
             h5copy(*options)
 
-            h5diff = which(self.prefix.bin.h5diff)
+            h5diff = which(self.prefix.bin.h5diff, required=True)
             h5diff(filename, copyname)

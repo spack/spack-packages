@@ -62,19 +62,9 @@ class Visit(CMakePackage):
 
     version("develop", branch="develop")
     version("3.4.1", sha256="942108cb294f4c9584a1628225b0be39c114c7e9e01805fb335d9c0b507689f5")
-    version(
-        "3.4.0",
-        sha256="6cfb8b190045439e39fa6014dfa797de189bd40bbb9aa6facf711ebd908229e3",
-        deprecated=True,
-    )
     version("3.3.3", sha256="cc67abb7585e23b51ad576e797df4108641ae6c8c5e80e5359a279c729769187")
     version("3.3.2", sha256="0ae7c38287598e8d7d238cf284ea8be1096dcf13f58a7e9e444a28a32c085b56")
     version("3.3.1", sha256="2e969d3146b559fb833e4cdfaefa72f303d8ad368ef325f68506003f7bc317b9")
-    version(
-        "3.3.0",
-        sha256="1a7485146133ac5f1e330d9029697750046ef8d9e9de23a6c2a3685c1c5f4aac",
-        deprecated=True,
-    )
     version("3.2.2", sha256="d19ac24c622a3bc0a71bc9cd6e5c9860e43f39e3279672129278b6ebce8d0ead")
     version("3.2.1", sha256="779d59564c63f31fcbfeff24b14ddd6ac941b3bb7d671d31765a770d193f02e8")
     version("3.1.1", sha256="0b60ac52fd00aff3cf212a310e36e32e13ae3ca0ddd1ea3f54f75e4d9b6c6cf0")
@@ -121,6 +111,13 @@ class Visit(CMakePackage):
     # Fix missing cmath include in QvisStripChart.C
     patch("20270-missing-cmath-QvisStripChart.patch", when="@:3.4.2")
 
+    # Support adios2>=2.11.0
+    patch(
+        "https://github.com/visit-dav/visit/commit/61d6166c546ebf637c743519f25c627cf121a7b5.patch?full_index=1",
+        sha256="3e4bda54793fc264b519760b334b04186ec2f35b677751857226c28728c6cd55",
+        when="@3.4: +adios2",
+    )
+
     conflicts(
         "+gui", when="^[virtuals=gl] osmesa", msg="GUI cannot be activated with OSMesa front-end"
     )
@@ -135,7 +132,7 @@ class Visit(CMakePackage):
     conflicts("mpi", when="~mpi")
 
     # VTK flavors
-    depends_on("vtk +opengl2")
+    depends_on("vtk +opengl2 +versioned_install")
     depends_on("vtk@8.1:8", when="@:3.3")
     depends_on("vtk@9.2.6", when="@3.4:")
     depends_on("vtk +qt", when="+gui")
@@ -194,8 +191,13 @@ class Visit(CMakePackage):
     depends_on("conduit~mpi", when="+conduit~mpi")
 
     depends_on("mfem@4.4:", when="+mfem")
+    depends_on("mfem@:4.8", when="@:3.4.1+mfem")  # mfem v4.9 requires c++17
     depends_on("mfem+shared+exceptions+fms+conduit", when="+mfem")
     depends_on("libfms@0.2:", when="+mfem")
+
+    # The checks in the build system are not consistent
+    requires("+mfem", when="+conduit")
+    requires("+conduit", when="+mfem")
 
     with when("+adios2"):
         depends_on("adios2")

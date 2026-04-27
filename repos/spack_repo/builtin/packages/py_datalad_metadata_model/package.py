@@ -17,6 +17,7 @@ class PyDataladMetadataModel(PythonPackage):
 
     license("MIT")
 
+    version("0.3.11", sha256="95a113bb0eb5a27bf61b4a0ea6111f7cb01d707c0eba98359d9b8b87fcb078b4")
     version("0.3.10", sha256="2d113d43fe5c611633e8e2c354e9ddc1224f4f8d7305b2e1fa20cdd7f5deedc4")
     version("0.3.5", sha256="992241adef6d36ad7f9a83d8c7762d887fbec7111e06a2bd12fd8816e6ee739a")
 

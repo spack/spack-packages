@@ -19,6 +19,10 @@ class Arrow(CMakePackage, CudaPackage):
 
     license("Apache-2.0")
 
+    version("23.0.1", sha256="9a9a057bba3aa7080abc2ba8e7a079effa74626a4f308ac56bfce035d31ef1ac")
+    version("22.0.0", sha256="8a95e6c7b9bec2bc0058feb73efe38ad6cfd49a0c7094db29b37ecaa8ab16051")
+    version("21.0.0", sha256="e92401790fdba33bfb4b8aa522626d800ea7fda4b6f036aaf39849927d2cf88d")
+    version("20.0.0", sha256="67e31a4f46528634b8c3cbb0dc60ac8f85859d906b400d83d0b6f732b0c5b0e3")
     version("19.0.1", sha256="4c898504958841cc86b6f8710ecb2919f96b5e10fa8989ac10ac4fca8362d86a")
     version("18.0.0", sha256="9c473f2c9914c59ab571761c9497cf0e5cfd3ea335f7782ccc6121f5cb99ae9b")
     version("16.1.0", sha256="9762d9ecc13d09de2a03f9c625a74db0d645cb012de1e9a10dfed0b4ddc09524")
@@ -52,6 +56,7 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("brotli", when="+brotli")
     depends_on("bzip2", when="+bz2")
     depends_on("cmake@3.2.0:", type="build")
+    depends_on("cmake@3.25.0:", type="build", when="@20:")
     depends_on("flatbuffers")
     conflicts("%gcc@14", when="@:15.0.1")  # https://github.com/apache/arrow/issues/40009
     depends_on("llvm@:11 +clang", when="+gandiva @:3", type="build")
@@ -75,8 +80,7 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("re2+shared", when="+compute")
     depends_on("re2+shared", when="+gandiva")
     depends_on("re2+shared", when="+python")
-    depends_on("snappy~shared", when="+snappy @9:")
-    depends_on("snappy~shared", when="@8:")
+    depends_on("snappy", when="+snappy @8:")
     # thrift isn't found if it is built with autotools
     depends_on("thrift@0.11:+cpp build_system=cmake", when="+parquet")
     depends_on("utf8proc@2.7.0: +shared", when="+compute")
@@ -97,10 +101,12 @@ class Arrow(CMakePackage, CudaPackage):
         description="CMake build type",
         values=("Debug", "FastDebug", "Release"),
     )
+    variant("csv", default=False, description="Build support for reading of CSV")
     variant(
         "compute", default=False, description="Computational kernel functions and other support"
     )
     variant("dataset", default=False, description="Build the Arrow Dataset integration")
+    variant("filesystem", default=False, description="Build the Arrow Filesystem Layer")
     variant("gandiva", default=False, description="Build Gandiva support")
     variant(
         "glog",
@@ -125,6 +131,13 @@ class Arrow(CMakePackage, CudaPackage):
     variant("zstd", default=False, description="Build support for ZSTD compression")
 
     root_cmakelists_dir = "cpp"
+
+    patch(
+        "https://github.com/apache/arrow/pull/49370.patch?full_index=1",
+        sha256="ca55e18c4eaaf59bcb145ada2aa5b556b8b87a93415ace059166716864145ceb",
+        when="@19:23.0 platform=darwin",
+    )
+    conflicts("%apple-clang@21:", when="@:18")
 
     def patch(self):
         """Prevent `-isystem /usr/include` from appearing, since this confuses gcc."""
@@ -160,9 +173,15 @@ class Arrow(CMakePackage, CudaPackage):
             # see https://issues.apache.org/jira/browse/ARROW-3844
             args.append(self.define("ARROW_USE_SSE", "ON"))
 
+        # https://github.com/apache/arrow/issues/47790
+        if self.spec.satisfies("%oneapi@2025:"):
+            args.append(self.define("ARROW_MIMALLOC", "OFF"))
+
         args.append(self.define_from_variant("ARROW_COMPUTE", "compute"))
+        args.append(self.define_from_variant("ARROW_CSV", "csv"))
         args.append(self.define_from_variant("ARROW_CUDA", "cuda"))
         args.append(self.define_from_variant("ARROW_DATASET", "dataset"))
+        args.append(self.define_from_variant("ARROW_FILESYSTEM", "filesystem"))
         args.append(self.define_from_variant("ARROW_GANDIVA", "gandiva"))
         args.append(self.define_from_variant("ARROW_GLOG", "glog"))
         args.append(self.define_from_variant("ARROW_HDFS", "hdfs"))

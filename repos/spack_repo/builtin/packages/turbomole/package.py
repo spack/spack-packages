@@ -44,7 +44,7 @@ class Turbomole(Package):
 
     def do_fetch(self, mirror_only=True):
         if "+mpi" in self.spec and "+smp" in self.spec:
-            raise InstallError("Can not have both SMP and MPI enabled in the " "same build.")
+            raise InstallError("Can not have both SMP and MPI enabled in the same build.")
         super().do_fetch(mirror_only)
 
     def get_tm_arch(self):
@@ -61,7 +61,7 @@ class Turbomole(Package):
 
         tm_arch = self.get_tm_arch()
 
-        tar = which("tar")
+        tar = which("tar", required=True)
         dst = join_path(prefix, "TURBOMOLE")
 
         tar("-x", "-z", "-f", "thermocalc.tar.gz")

@@ -12,8 +12,9 @@ class Libunwind(AutotoolsPackage):
     the call-chain of a program."""
 
     homepage = "https://www.nongnu.org/libunwind/"
-    url = "https://github.com/libunwind/libunwind/releases/download/v0.0.0/libunwind-0.0.0.tar.gz"
+    url = "https://github.com/libunwind/libunwind/releases/download/v1.8.2/libunwind-1.8.2.tar.gz"
     git = "https://github.com/libunwind/libunwind"
+
     maintainers("mwkrentel")
 
     tags = ["e4s"]
@@ -22,6 +23,8 @@ class Libunwind(AutotoolsPackage):
 
     version("master", branch="master")
     version("1.8-stable", branch="v1.8-stable")
+    version("1.8.3", sha256="be30d910e67f58d82e753231f1357f326a1a088acf126b21ff77e60aab19b90b")
+    version("1.8.2", sha256="7f262f1a1224f437ede0f96a6932b582c8f5421ff207c04e3d9504dfa04c8b82")
     version("1.8.1", sha256="ddf0e32dd5fafe5283198d37e4bf9decf7ba1770b6e7e006c33e6df79e6a6157")
     version("1.7-stable", branch="v1.7-stable")
     version("1.7.2", sha256="a18a6a24307443a8ace7a8acc2ce79fbbe6826cd0edf98d6326d0225d6a5d6e6")
@@ -74,20 +77,19 @@ class Libunwind(AutotoolsPackage):
     variant("xz", default=False, description="Support xz (lzma) compressed symbol tables.")
 
     variant(
-        "zlib",
-        default=False,
-        description="Support zlib compressed symbol tables " "(1.5 and later).",
+        "zlib", default=False, description="Support zlib compressed symbol tables (1.5 and later)."
     )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+
+    depends_on("libtool", type="build")
 
     # The libunwind releases contain the autotools generated files,
     # but the git repo snapshots do not.
     reconf_versions = "@master,1.6-stable,1.7-stable,1.8-stable"
     depends_on("autoconf", type="build", when=reconf_versions)
     depends_on("automake", type="build", when=reconf_versions)
-    depends_on("libtool", type="build", when=reconf_versions)
     depends_on("m4", type="build", when=reconf_versions)
 
     depends_on("xz", type="link", when="+xz")
@@ -102,7 +104,17 @@ class Libunwind(AutotoolsPackage):
 
     conflicts("target=aarch64:", when="@1.8:")
 
+    # https://github.com/libunwind/libunwind/issues/672
+    conflicts("%gcc@14:", when="@1.7.2")
+
     provides("unwind")
+
+    # Fix bad prototype for malloc() in test
+    patch(
+        "https://src.fedoraproject.org/rpms/libunwind/raw/49b1c9d51f8194546ba559f3f20e10889c8a073a/f/457612f470f8c0e718cdf7f14ef1ecb583f3b3a6.patch",
+        sha256="4562c231f1051bd327cf27b6940445e5c0d83e5d8427a6ca36c9f0853b3e4a6d",
+        when="@1.8",
+    )
 
     def url_for_version(self, version):
         if version == Version("1.5.0"):
@@ -126,6 +138,11 @@ class Libunwind(AutotoolsPackage):
                 wrapper_flags.append(self.compiler.cc_pic_flag)
 
         return (wrapper_flags, None, flags)
+
+    # The master/stable branches don't have an m4 directory.
+    @run_before("autoreconf")
+    def make_m4_dir(self):
+        mkdirp("m4")
 
     def configure_args(self):
         spec = self.spec

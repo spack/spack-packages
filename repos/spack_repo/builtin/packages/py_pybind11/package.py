@@ -28,6 +28,9 @@ class PyPybind11(CMakePackage, PythonExtension):
     maintainers("ax3l")
 
     version("master", branch="master")
+    version("3.0.2", sha256="2f20a0af0b921815e0e169ea7fec63909869323581b89d7de1553468553f6a2d")
+    version("3.0.1", sha256="741633da746b7c738bb71f1854f957b9da660bcd2dce68d71949037f0969d0ca")
+    version("3.0.0", sha256="453b1a3e2b266c3ae9da872411cadb6d693ac18063bd73226d96cfb7015a200c")
     version("2.13.6", sha256="e08cb87f4773da97fa7b5f035de8763abc656d87d5773e62f6da0587d1f0ec20")
     version("2.13.5", sha256="b1e209c42b3a9ed74da3e0b25a4f4cd478d89d5efbb48f04b277df427faf6252")
     version("2.13.4", sha256="efc901aa0aab439a3fea6efeaf930b5a349fb06394bf845c64ce15a9cf8f0240")
@@ -63,8 +66,14 @@ class PyPybind11(CMakePackage, PythonExtension):
 
     depends_on("cxx", type="build")
 
-    depends_on("py-setuptools@42:", type="build")
+    with when("@3:"):
+        depends_on("py-scikit-build-core@0.11.2:", type="build")
+    with when("@:2"):
+        depends_on("py-setuptools@42:", type="build")
+
     depends_on("py-pytest", type="test")
+    depends_on("py-build", type="test", when="@3:")
+    depends_on("py-tomlkit", type="test", when="@3:")
     depends_on("py-pip", type="build")
     depends_on("py-wheel", type="build")
     extends("python")

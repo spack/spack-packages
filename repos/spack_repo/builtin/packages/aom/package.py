@@ -15,11 +15,11 @@ class Aom(CMakePackage):
 
     license("BSD-2-Clause AND AOM-Patent-License-1.0", checked_by="tgamblin")
 
-    version("v1.0.0-errata1", commit="29d8ce4836630df5cc7ab58f1afc4836765fc212")
+    version("3.12.1", tag="v3.12.1", commit="10aece4157eb79315da205f39e19bf6ab3ee30d0")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("yasm")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("nasm", type="build")
 
     def cmake_args(self):
         args = []

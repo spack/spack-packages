@@ -63,13 +63,14 @@ class MgcfdOp2(MakefilePackage):
 
     @property
     def build_targets(self):
-        if "+mpi" in self.spec:
+        spec = self.spec
+        if "+mpi" in spec:
             builds = ["mpi", "mpi_vec", "mpi_openmp"]
-            if "+cuda" in self.spec and spec.variants["cuda_arch"].value[0] != "none":
+            if "+cuda" in spec and spec.variants["cuda_arch"].value[0] != "none":
                 builds.append("mpi_cuda")
         else:
             builds = ["seq", "openmp"]
-            if "+cuda" in self.spec and spec.variants["cuda_arch"].value[0] != "none":
+            if "+cuda" in spec and spec.variants["cuda_arch"].value[0] != "none":
                 builds.append("cuda")
         return builds
 

@@ -18,6 +18,13 @@ class PyXhistogram(PythonPackage):
     version("0.3.2", sha256="56b0751e1469eaed81710f644c8ba5c574b51883baa2feee26a95f2f708f91a1")
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-versioneer", type="build")
+    depends_on("py-versioneer@0.29:", type="build", when="^python@3.12:")
+
     depends_on("py-xarray@0.12:", type=("build", "run"))
     depends_on("py-dask@2.3:+array", type=("build", "run"))
     depends_on("py-numpy@1.17:", type=("build", "run"))
+
+    # compatibility with python 3.12
+    # https://github.com/xgcm/xhistogram/pull/90
+    patch("patch_py312_versioneer.patch", when="^python@3.12:")

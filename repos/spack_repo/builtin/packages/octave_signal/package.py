@@ -11,12 +11,15 @@ from spack.package import *
 class OctaveSignal(OctavePackage, SourceforgePackage):
     """Signal processing tools, including filtering, windowing and display functions."""
 
-    homepage = "https://octave.sourceforge.io/optim/"
+    homepage = "https://octave.sourceforge.io/signal/"
     sourceforge_mirror_path = "octave/signal-1.4.1.tar.gz"
 
     license("GPL-3.0-only")
 
+    version("1.4.6", sha256="94eef8fea78c89609f8ddf6d5ff8bfc2e0dab932b43f86ce911474a58b5c71ee")
     version("1.4.1", sha256="d978600f8b8f61339b986136c9862cad3e8f7015f84132f214bf63e9e281aeaa")
+
+    depends_on("cxx", type="build")  # generated
 
     depends_on("octave-control@2.4:")
     extends("octave@3.8.0:")

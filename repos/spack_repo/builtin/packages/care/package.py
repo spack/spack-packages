@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -32,6 +33,18 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", submodules=False)
     version("master", branch="master", submodules=False)
+    version(
+        "0.15.3",
+        tag="v0.15.3",
+        commit="132252376aa460fa900d034f7b018d3a169afce6",
+        submodules=False,
+    )
+    version(
+        "0.15.2",
+        tag="v0.15.2",
+        commit="f61289ab3db627b568e5c211b1ab8e13a3b6d211",
+        submodules=False,
+    )
     version(
         "0.15.1",
         tag="v0.15.1",
@@ -86,12 +99,12 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         commit="a9978083035eb00a090451bd36d7987bc935204d",
         submodules=False,
     )
-    version("0.10.0", tag="v0.10.0", submodules="True")
+    version("0.10.0", tag="v0.10.0", submodules=True)
     version(
-        "0.3.0", tag="v0.3.0", commit="5e2b69b2836c9f2215207ca9a36a690cb77eea33", submodules="True"
+        "0.3.0", tag="v0.3.0", commit="5e2b69b2836c9f2215207ca9a36a690cb77eea33", submodules=True
     )
     version(
-        "0.2.0", tag="v0.2.0", commit="30135e03b14b1dc753634e9147dafede0663906f", submodules="True"
+        "0.2.0", tag="v0.2.0", commit="30135e03b14b1dc753634e9147dafede0663906f", submodules=True
     )
 
     variant("openmp", default=False, description="Build with OpenMP support")
@@ -100,17 +113,27 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         "implicit_conversions",
         default=False,
         when="@:0.14",
-        description="Enable implicit" "conversions to/from raw pointers",
+        description="Enable implicit conversions to/from raw pointers",
     )
     variant("tests", default=False, description="Build tests")
     variant("benchmarks", default=False, description="Build benchmarks.")
     variant("examples", default=False, description="Build examples.")
     variant("docs", default=False, description="Build documentation")
     variant("loop_fuser", default=False, description="Enable loop fusion capability")
+    variant(
+        "legacy_compatibility_mode", default=False, description="Enable legacy compatibility mode"
+    )
+    variant(
+        "cxxstd",
+        default="17",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+    conflicts("cxxstd=11", when="@0.15.2:")
+    conflicts("cxxstd=14", when="@0.15.2:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     depends_on("cmake", type="build")
     depends_on("cmake@3.23:", type="build", when="@0.13.2:")
@@ -121,6 +144,7 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.8:", type="build")
 
     depends_on("blt", type="build")
+    depends_on("blt@0.7.1:", type="build", when="@0.15.2:")
     depends_on("blt@0.6.2:", type="build", when="@0.13.0:")
     depends_on("blt@0.6.1:", type="build", when="@0.12.0:")
     depends_on("blt@0.5.2:", type="build", when="@0.10.0:")
@@ -132,24 +156,34 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("umpire")
     depends_on("umpire+mpi", when="+mpi")
-    depends_on("umpire@2024.07.0:", when="@0.13.2:")
-    depends_on("umpire@2024.02.1:", when="@0.13.0:")
-    depends_on("umpire@2024.02.0:", when="@0.12.0:")
-    depends_on("umpire@2022.10.0:", when="@0.10.0:")
+    depends_on("umpire@2025.12:", when="@0.15.3:")
+    depends_on("umpire@2025.09", when="@0.15.2")
+    depends_on("umpire@2025.03", when="@0.15.0")
+    depends_on("umpire@2024.07.0", when="@0.13.2")
+    depends_on("umpire@2024.02.1", when="@0.13.0")
+    depends_on("umpire@2024.02.0", when="@0.12.0")
+    depends_on("umpire@2022.10.0", when="@0.10.0")
 
     depends_on("raja")
-    depends_on("raja@2024.07.0:", when="@0.13.2:")
-    depends_on("raja@2024.02.2:", when="@0.13.1:")
-    depends_on("raja@2024.02.1:", when="@0.13.0:")
-    depends_on("raja@2024.02.0:", when="@0.12.0:")
-    depends_on("raja@2022.10.5:", when="@0.10.0:")
+    depends_on("raja@2025.12:", when="@0.15.3:")
+    depends_on("raja@2025.09", when="@0.15.2")
+    depends_on("raja@2025.03", when="@0.15.0")
+    depends_on("raja@2024.07.0", when="@0.13.2")
+    depends_on("raja@2024.02.2", when="@0.13.1")
+    depends_on("raja@2024.02.1", when="@0.13.0")
+    depends_on("raja@2024.02.0", when="@0.12.0")
+    depends_on("raja@2022.10.5", when="@0.10.0")
 
-    depends_on("chai+enable_pick+raja")
-    depends_on("chai@2024.07.0:", when="@0.13.2:")
-    depends_on("chai@2024.02.2:", when="@0.13.1:")
-    depends_on("chai@2024.02.1:", when="@0.13.0:")
-    depends_on("chai@2024.02.0:", when="@0.12.0:")
-    depends_on("chai@2022.10.0:", when="@0.10.0:")
+    depends_on("chai+enable_pick", when="@:0.14.99")
+    depends_on("chai+raja")
+    depends_on("chai@2025.12:", when="@0.15.3:")
+    depends_on("chai@2025.09.1", when="@0.15.2")
+    depends_on("chai@2025.03", when="@0.15.0")
+    depends_on("chai@2024.07.0", when="@0.13.2")
+    depends_on("chai@2024.02.2", when="@0.13.1")
+    depends_on("chai@2024.02.1", when="@0.13.0")
+    depends_on("chai@2024.02.0", when="@0.12.0")
+    depends_on("chai@2022.10.0", when="@0.10.0")
 
     conflicts("+openmp", when="+rocm")
     conflicts("+openmp", when="+cuda")
@@ -161,10 +195,6 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         depends_on("chai+openmp")
 
     with when("+cuda"):
-        # WARNING: this package currently only supports an internal cub
-        # package. This will cause a race condition if compiled with another
-        # package that uses cub. TODO: have all packages point to the same external
-        # cub package.
         depends_on("cub")
 
         depends_on("umpire+cuda")
@@ -198,6 +228,10 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         if "SYS_TYPE" in env:
             sys_type = env["SYS_TYPE"]
         return sys_type
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
 
     @property
     def cache_name(self):
@@ -236,11 +270,54 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
             entries.append(cmake_cache_option("CUDA_SEPARABLE_COMPILATION", True))
             entries.append(cmake_cache_string("NVTOOLSEXT_DIR", spec["cuda"].prefix))
             entries.append(cmake_cache_string("CUB_DIR", spec["cub"].prefix))
+
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("ENABLE_CUDA", False))
 
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
+            else:
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
@@ -248,8 +325,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def initconfig_mpi_entries(self):
         spec = self.spec
-
         entries = super(Care, self).initconfig_mpi_entries()
+
         entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
 
         return entries
@@ -276,12 +353,8 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries.append(cmake_cache_string("CMAKE_BUILD_TYPE", spec.variants["build_type"].value))
 
-        # C++14
-        if spec.satisfies("@:0.14.1"):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
-        # C++17
-        else:
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
+        # C++ standard
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+tests")))
         entries.append(cmake_cache_option("CARE_ENABLE_TESTS", spec.satisfies("+tests")))
@@ -310,6 +383,11 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
 
         entries.append(cmake_cache_option("CARE_ENABLE_LOOP_FUSER", spec.satisfies("+loop_fuser")))
+        entries.append(
+            cmake_cache_option(
+                "CARE_LEGACY_COMPATIBILITY_MODE", spec.satisfies("+legacy_compatibility_mode")
+            )
+        )
 
         return entries
 

@@ -25,7 +25,7 @@ class Ncvis(CMakePackage):
 
     depends_on("cmake", type="build")
     depends_on("netcdf-c", type="link")
-    depends_on("wxwidgets+opengl", type="link")
+    depends_on("wxwidgets+opengl+gui", type="link")
 
     @run_after("install")
     def install_resources(self):

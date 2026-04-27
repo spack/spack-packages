@@ -68,7 +68,7 @@ class Fortrilinos(CMakePackage):
     depends_on("trilinos gotype=long_long")
     # Full trilinos dependencies
     depends_on(
-        "trilinos+amesos2+anasazi+belos+kokkos+ifpack2+muelu+nox+tpetra" "+stratimikos", when="+hl"
+        "trilinos+amesos2+anasazi+belos+kokkos+ifpack2+muelu+nox+tpetra+stratimikos", when="+hl"
     )
 
     def cmake_args(self):
@@ -99,9 +99,9 @@ class Fortrilinos(CMakePackage):
             self.define("CMAKE_Fortran_COMPILER", self.compiler.fc),
             self.cached_tests_work_dir,
         ]
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
-        ctest = which("ctest")
-        make = which("make")
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
+        ctest = which("ctest", required=True)
+        make = which("make", required=True)
 
         with working_dir(self.cached_tests_work_dir, create=True):
             cmake(*cmake_args)

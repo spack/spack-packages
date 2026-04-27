@@ -23,6 +23,10 @@ class PyWaves(PythonPackage):
     license("BSD-3-Clause", checked_by="kbrindley")
 
     version("main", branch="main", get_full_repo=True)
+    version("1.0.1", sha256="85a48c138d4c0488c57e299c828ec221b25f6a933f31a623586ff13e418f5b15")
+    version("1.0.0", sha256="438beeb7326b9dda4d9b98fde6f483003cb0edc1a7f730dadda5733cf8690bc2")
+    version("0.13.8", sha256="bb4febd3c7f75685525f93df408272e0ef38a8b596b111a84c4974bec0498aaf")
+    version("0.13.4", sha256="e2dda546d003b32d7e0b9048dc0a660fb1b5594653e7f50021af108aaf06a820")
     version("0.13.1", sha256="3d776ebd07d05e7de8704e4491864336cab4ee23c284106056a805bf7561435a")
     version("0.13.0", sha256="cf7072ffc9a08789dc764d2beb3a1a6762a034c954c77fe056d67b4f14272f17")
     version("0.12.10", sha256="f620f8b7c01487bf387d52312c12da8afe8ed8fbf97b0d488525cdfcb820356e")
@@ -88,7 +92,7 @@ class PyWaves(PythonPackage):
     def install(self, spec, prefix):
         if self.spec.satisfies("@0.12.10:"):
             with working_dir(self.build_directory):
-                scons = which("scons")
+                scons = which("scons", required=True)
                 scons("install", f"--prefix={self.prefix}")
         else:
             with working_dir(self.build_directory):
@@ -114,14 +118,14 @@ class PyWaves(PythonPackage):
                     # installation logic to be a ``@run_after("install")`` function.
                     f"dist/waves-{self.version}.tar.gz",
                 )
-                scons = which("scons")
+                scons = which("scons", required=True)
                 scons("html", "man")
 
                 site_packages_directory = list(
                     pathlib.Path(self.prefix).rglob("**/site-packages")
                 )[0]
                 python_package_documentation = python.copy()
-                python_package_documentation.add_default_env("SP_DIR", site_packages_directory),
+                python_package_documentation.add_default_env("SP_DIR", site_packages_directory)
                 python_package_documentation("package_documentation.py")
 
     @run_after("install")
@@ -140,5 +144,5 @@ class PyWaves(PythonPackage):
             custom_arguments.insert(0, "--ignore=_tests/test_salib_sampler.py")
 
         with working_dir(installed_package):
-            pytest = which("pytest")
+            pytest = which("pytest", required=True)
             pytest(*custom_arguments)

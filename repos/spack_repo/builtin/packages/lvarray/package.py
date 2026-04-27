@@ -5,7 +5,6 @@
 import os
 import socket
 import warnings
-from os import environ as env
 from os.path import join as pjoin
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage

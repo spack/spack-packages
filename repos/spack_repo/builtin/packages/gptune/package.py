@@ -22,7 +22,7 @@ class Gptune(CMakePackage):
     Bayesian optimization methodologies."""
 
     homepage = "https://gptune.lbl.gov/"
-    url = "https://github.com/gptune/GPTune/archive/refs/tags/3.0.0.tar.gz"
+    url = "https://github.com/gptune/GPTune/archive/refs/tags/5.0.0.tar.gz"
     git = "https://github.com/gptune/GPTune.git"
     maintainers("liuyangzhuan")
 
@@ -31,9 +31,11 @@ class Gptune(CMakePackage):
     license("BSD-3-Clause-LBNL")
 
     version("master", branch="master")
+    version("5.0.0", sha256="edb28563ef9e0de32f71197b5528262fd7dfcdb85a42df534ff13caf7187dd4c")
     version("4.0.0", sha256="4f954a810d83b73f5abe5b15b79e3ed5b7ebf7bc0ae7335d27b68111bd078102")
     version("3.0.0", sha256="e19bfc3033fff11ff8c20cae65b88b7ca005d2c4e4db047f9f23226126ec92fa")
     version("2.1.0", sha256="737e0a1d83f66531098beafa73dd479f12def576be83b1c7b8ea5f1615d60a53")
+    patch("gptunev5.patch", when="@5.0.0")
 
     variant("superlu", default=False, description="Build the SuperLU_DIST example")
     variant("hypre", default=False, description="Build the Hypre example")
@@ -51,6 +53,7 @@ class Gptune(CMakePackage):
     depends_on("scalapack", type="link")
     depends_on("py-setuptools", type="build")
     depends_on("py-ipyparallel", type=("build", "run"))
+    depends_on("py-numpy@1.24:", type=("build", "run"), when="@5.0.0:")
     depends_on("py-numpy@:1.23", type=("build", "run"), when="@:4.0.0")
     depends_on("py-numpy@:1.21.5", type=("build", "run"), when="@:2.1.0")
     depends_on("py-pandas", type=("build", "run"))
@@ -58,12 +61,30 @@ class Gptune(CMakePackage):
     depends_on("py-scikit-learn", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
-    depends_on("py-scikit-optimize@0.9.0", patches=[patch("space.patch")], type=("build", "run"))
-    depends_on("py-gpy", type=("build", "run"))
+    depends_on(
+        "py-scikit-optimize@0.9.0",
+        patches=[patch("space.patch")],
+        type=("build", "run"),
+        when="@:4.0.0",
+    )
+    depends_on(
+        "py-scikit-optimize@0.9.0",
+        patches=[patch("gptunev5-skopt.patch", level=0)],
+        type=("build", "run"),
+        when="@5.0.0:",
+    )
+    depends_on("py-gpy@1.13.2:", type=("build", "run"), when="^python@3.9:")
+    depends_on("py-gpy@:1.13.1", type=("build", "run"), when="^python@:3.8")
     depends_on("py-lhsmdu", type=("build", "run"))
     depends_on("py-hpbandster", type=("build", "run"))
     depends_on("py-opentuner", type=("build", "run"))
     depends_on("py-ytopt-autotune@1.1.0", type=("build", "run"))
+    depends_on(
+        "py-ytopt-autotune@1.1.0",
+        patches=[patch("gptunev5-autotune.patch")],
+        type=("build", "run"),
+        when="@5.0.0:",
+    )
     depends_on("py-filelock", type=("build", "run"))
     depends_on("py-requests", type=("build", "run"))
     depends_on("py-pyaml", type=("build", "run"))
@@ -90,7 +111,7 @@ class Gptune(CMakePackage):
             fc_flags.append("-fallow-argument-mismatch")
 
         args = [
-            "-DGPTUNE_INSTALL_PATH=%s" % python_platlib,
+            f"-DGPTUNE_INSTALL_PATH={join_path(self.prefix, self.spec['python'].package.platlib)}",
             "-DTPL_BLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),
             "-DTPL_LAPACK_LIBRARIES=%s" % spec["lapack"].libs.joined(";"),
             "-DTPL_SCALAPACK_LIBRARIES=%s" % spec["scalapack"].libs.joined(";"),
@@ -135,7 +156,7 @@ class Gptune(CMakePackage):
             envfile.write("export GPTUNEROOT=$PWD\n")
             mpirun = spec["mpi"].prefix.bin.mpirun
             envfile.write(f"export MPIRUN={mpirun}\n")
-            gptune_path = join_path(python_platlib, "gptune")
+            gptune_path = join_path(self.prefix, self.spec["python"].package.platlib, "GPTune")
             envfile.write(f"export PYTHONPATH={gptune_path}:$PYTHONPATH\n")
             envfile.write("export proc=$(spack arch)\n")
             envfile.write(f"export mpi={spec['mpi'].name}\n")
@@ -149,15 +170,15 @@ class Gptune(CMakePackage):
                 + spec["blas"].name
                 + '\\":{\\"version_split\\":'
                 + " ["
-                + str(spec["blas"].versions).replace(".", ",")
+                + str(spec["blas"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["mpi"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["mpi"].versions).replace(".", ",")
+                + str(spec["mpi"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["scalapack"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["scalapack"].versions).replace(".", ",")
+                + str(spec["scalapack"].version).replace(".", ",")
                 + ']},\\"'
                 + str(comp_name)
                 + '\\":{\\"version_split\\": ['
@@ -169,15 +190,15 @@ class Gptune(CMakePackage):
                 + 'configurations\\":{\\"'
                 + spec["blas"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["blas"].versions).replace(".", ",")
+                + str(spec["blas"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["mpi"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["mpi"].versions).replace(".", ",")
+                + str(spec["mpi"].version).replace(".", ",")
                 + ']},\\"'
                 + spec["scalapack"].name
                 + '\\":{\\"version_split\\": ['
-                + str(spec["scalapack"].versions).replace(".", ",")
+                + str(spec["scalapack"].version).replace(".", ",")
                 + ']},\\"'
                 + str(comp_name)
                 + '\\":{\\"version_split\\": ['
@@ -196,13 +217,19 @@ class Gptune(CMakePackage):
             )
 
         # copy the environment configuration to the python install directory
-        cp = which("cp")
-        cp(script_path, join_path(python_platlib, "gptune"))
+        cp = which("cp", required=True)
+        platlib = self.spec["python"].package.platlib
+        cp(script_path, join_path(self.prefix, platlib, "run_env.sh"))
+        cp(
+            "-r",
+            join_path(self.prefix, platlib, "GPTune"),
+            join_path(self.prefix, platlib, "gptune"),
+        )
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GPTUNE_INSTALL_PATH", python_platlib)
-
-    cmd = {"bash": which("bash"), "cp": which("cp"), "git": which("git"), "rm": which("rm")}
+        env.set("GPTUNE_INSTALL_PATH", join_path(self.prefix, self.spec["python"].package.platlib))
+        gptune_path = join_path(self.prefix, self.spec["python"].package.platlib, "GPTune")
+        env.prepend_path("PYTHONPATH", gptune_path)
 
     def test_hypre(self):
         """set up and run hypre example"""
@@ -214,13 +241,17 @@ class Gptune(CMakePackage):
         if not self.spec["hypre"].satisfies("@2.19.0"):
             raise SkipTest("Package test only works for hypre@2.19.0")
 
+        rm = which("rm", required=True)
+        cp = which("cp", required=True)
+        git = which("git", required=True)
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         # copy hypre executables to the correct place
         wd = join_path(test_dir, "Hypre")
         with working_dir(wd):
-            self.cmd["rm"]("-rf", "hypre")
-            self.cmd["git"](
+            rm("-rf", "hypre")
+            git(
                 "clone",
                 "--depth",
                 "1",
@@ -231,12 +262,12 @@ class Gptune(CMakePackage):
 
         hypre_test_dir = join_path(wd, "hypre", "src", "test")
         mkdirp(hypre_test_dir)
-        self.cmd["cp"]("-r", self.spec["hypre"].prefix.bin.ij, hypre_test_dir)
+        cp("-r", self.spec["hypre"].prefix.bin.ij, hypre_test_dir)
 
         # now run the test example
         with working_dir(join_path(test_dir, "Hypre")):
             terminate_bash_failures(".")
-            self.cmd["bash"]("run_examples.sh")
+            bash("run_examples.sh")
 
     def test_superlu(self):
         """set up and run superlu tests"""
@@ -247,18 +278,22 @@ class Gptune(CMakePackage):
         if self.spec["superlu-dist"].version < Version("7.1"):
             raise SkipTest("Package must be installed with superlu-dist@:7.1")
 
+        rm = which("rm", required=True)
+        cp = which("cp", required=True)
+        git = which("git", required=True)
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         # copy only works for-dist executables to the correct place
         wd = join_path(test_dir, "SuperLU_DIST")
         with working_dir(wd):
-            self.cmd["rm"]("-rf", "superlu_dist")
+            rm("-rf", "superlu_dist")
             version = self.spec["superlu-dist"].version.string
             tag = f"v{version}" if version.replace(".", "").isdigit() else version
             # TODO: Replace this IF/when superlu-dist renames its "master"
             # branch's version from "develop" to "master".
             tag = "master" if tag == "develop" else tag
-            self.cmd["git"](
+            git(
                 "clone",
                 "--depth",
                 "1",
@@ -270,7 +305,7 @@ class Gptune(CMakePackage):
         superludriver = self.spec["superlu-dist"].prefix.lib.EXAMPLE.pddrive_spawn
         example_dir = join_path(wd, "superlu_dist", "build", "EXAMPLE")
         mkdirp(example_dir)
-        self.cmd["cp"]("-r", superludriver, example_dir)
+        cp("-r", superludriver, example_dir)
 
         apps = ["SuperLU_DIST", "SuperLU_DIST_RCI"]
         for app in apps:
@@ -279,21 +314,23 @@ class Gptune(CMakePackage):
                     raise SkipTest("Package must be installed with +superlu+mpispawn")
                 with working_dir(join_path(test_dir, app)):
                     terminate_bash_failures(".")
-                    self.cmd["bash"]("run_examples.sh")
+                    bash("run_examples.sh")
 
     def test_demo(self):
         """Run the demo test"""
         if self.spec.satisfies("~mpispawn"):
             raise SkipTest("Package must be installed with +mpispawn")
 
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         with working_dir(join_path(test_dir, "GPTune-Demo")):
             terminate_bash_failures(".")
-            self.cmd["bash"]("run_examples.sh")
+            bash("run_examples.sh")
 
     def test_scalapack(self):
         """Run scalapack tests"""
+        bash = which("bash", required=True)
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
 
         apps = ["Scalapack-PDGEQRF", "Scalapack-PDGEQRF_RCI"]
@@ -303,4 +340,4 @@ class Gptune(CMakePackage):
                     raise SkipTest("Package must be installed with +superlu+mpispawn")
                 with working_dir(join_path(test_dir, app)):
                     terminate_bash_failures(".")
-                    self.cmd["bash"]("run_examples.sh")
+                    bash("run_examples.sh")

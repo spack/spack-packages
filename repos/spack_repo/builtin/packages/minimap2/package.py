@@ -22,6 +22,8 @@ class Minimap2(PythonPackage):
 
     license("MIT")
 
+    version("2.30", sha256="f21b5fc2f8fcd02b88bf0ab9a76ad968d59dc67ac384af31ab074393d9e2c1f0")
+    version("2.29", sha256="8a231af5766b62cb9e24720290a730809633a6ea4cb7fe49ce39884438eceddb")
     version("2.28", sha256="ffa5712735d229119f8c05722a0638ae0cc15aeb8938e29a3e52d5da5c92a0b4")
     version("2.26", sha256="6a588efbd273bff4f4808d5190957c50272833d2daeb4407ccf4c1b78143624c")
     version("2.24", sha256="9dd4c31ff082182948944bcdad6d328f64f09295d10547d72eba24189880a615")

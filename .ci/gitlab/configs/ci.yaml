@@ -12,6 +12,7 @@ ci:
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
       - - touch ${SPACK_USER_CACHE_PATH}/cache/*/*  # bump mtime of cache so it is not invalidated
       - - spack env activate --without-view ${SPACK_CONCRETE_ENV_DIR}
+        - spack repo list
         - spack compiler list
       - - mkdir -p ${SPACK_ARTIFACTS_ROOT}/user_data
         # AWS runners mount E4S public key (verification), UO runners mount public/private (signing/verification)
@@ -22,11 +23,12 @@ ci:
       script::
       - - if [ -n "$SPACK_EXTRA_MIRROR" ]; then spack mirror add local "${SPACK_EXTRA_MIRROR}/${SPACK_CI_STACK_NAME}"; fi
         - spack config blame mirrors
-      - - spack --color=always --backtrace ci rebuild -j ${SPACK_BUILD_JOBS} --tests --timeout 300 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_err.txt >&2)
+        - spack spec "/${SPACK_JOB_SPEC_DAG_HASH}"
+      - - spack --color=always ci rebuild -j ${SPACK_BUILD_JOBS} --tests --timeout 300 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_err.txt >&2)
       after_script:
       - - cat /proc/loadavg || true
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - - time ./spack/bin/spack python ${CI_PROJECT_DIR}/.ci/gitlab/scripts/common/aggregate_package_logs.spack.py
+      - - time ${SPACK_CI_SPACK_ROOT}/bin/spack python ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/aggregate_package_logs.spack.py
           --prefix /home/software/spack:${CI_PROJECT_DIR}/opt/spack
           --log install_times.json
           ${SPACK_ARTIFACTS_ROOT}/user_data/install_times.json || true
@@ -40,10 +42,25 @@ ci:
       id_tokens:
         GITLAB_OIDC_TOKEN:
           aud: "${OIDC_TOKEN_AUDIENCE}"
+      # Retry for everything but "legitimate build failures" (script_failure)
+      retry:
+        max: 2
+        when::
+          - unknown_failure
+          - api_failure
+          - stuck_or_timeout_failure
+          - runner_system_failure
+          - runner_unsupported
+          - stale_schedule
+          - job_execution_timeout
+          - archived_failure
+          - unmet_prerequisites
+          - scheduler_failure
+          - data_integrity_failure
 
   - signing-job:
       image:
-        name: ghcr.io/spack/notary@sha256:8b685186de3e26bfacbdfea27cf3802c853e2f1311e833e4d857247791a636dc
+        name: ghcr.io/spack/notary@sha256:a1e2575e12a1d60083a65f0a1b35abf0df85d7086e7f8b10c2a9926614a46127
         entrypoint: [""]
       tags: ["aws"]
       script:
@@ -108,7 +125,7 @@ ci:
           aud: "${OIDC_TOKEN_AUDIENCE}"
 
   - noop-job:
-      tags: ["service"]
+      tags: ["service_noop"]
       image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
       variables:
         CI_OIDC_REQUIRED: 0
@@ -125,18 +142,18 @@ ci:
       variables:
         # Disable local configs to avoid issues on shell runners
         SPACK_DISABLE_LOCAL_CONFIG: "1"
+        REMOTE_SCRIPT_CLONE_SPACK_SHA256: da9ce276f9c0fbcaaa78a90c6047588fc468a7d945e9b199309bfb8edf2c5190
+        REMOTE_SCRIPT_REF: e1c30b77cd582a0aed5ff432a31fc1202427c80c
       before_script:
       - - export SPACK_USER_CACHE_PATH="${CI_PROJECT_DIR}/tmp/_user_cache/"
       - - uname -a || true
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
-      - - mkdir spack
-        - cd spack
-        - git init
-        - git remote add origin https://github.com/spack/spack.git
-        - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
-        - git checkout FETCH_HEAD
-        - cd ..
-      - - . "./spack/share/spack/setup-env.sh"
+      # Clone the other repo
+      - - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$REMOTE_SCRIPT_REF/.ci/gitlab/scripts/common/clone_spack.sh
+        - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256  clone_spack.sh" > digest.txt
+        - sha256sum -c digest.txt
+        - sh clone_spack.sh
+      - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version
         - spack arch
