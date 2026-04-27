@@ -50,9 +50,7 @@ class Nvtx(Package, PythonExtension):
         setup.filter("include_dirs=include_dirs", f"include_dirs=['{include_dir}']", string=True)
         # see comment in patch below
         if self.spec.satisfies("@3.3.0:"):
-            header = FileFilter(
-                "c/include/nvtx3/nvtxDetail/nvtxExtPayloadTypeInfo.h"
-            )
+            header = FileFilter("c/include/nvtx3/nvtxDetail/nvtxExtPayloadTypeInfo.h")
             header.filter(
                 "#define NVTX_HAVE_CHAR8 1",
                 "/* Fallback for systems where glibc < 2.36 does not define char8_t\n"
@@ -74,4 +72,3 @@ class Nvtx(Package, PythonExtension):
 
         with working_dir(self.build_directory):
             pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
-
