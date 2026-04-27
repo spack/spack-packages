@@ -44,5 +44,6 @@ class PyTokenizers(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    # fails in the spack pipeline otherwise
+    # fails in the spack pipeline otherwise, see
+    # https://github.com/huggingface/tokenizers/issues/2042
     conflicts("^py-maturin@1.13:", when="@:0.22.2 platform=darwin")
