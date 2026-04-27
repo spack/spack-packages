@@ -46,10 +46,12 @@ class Dcm2niix(CMakePackage):
     depends_on("zlib-api")
 
     def cmake_args(self):
-        args = [self.define("ZLIB_IMPLEMENTATION", "System"),
-                # Not all systems have a libstdc++.a while dynamic is always there
-                self.define("USE_STATIC_RUNTIME", "OFF"),
-                self.define_from_variant("USE_JPEGLS", "jpegls")]
+        args = [
+            self.define("ZLIB_IMPLEMENTATION", "System"),
+            # Not all systems have a libstdc++.a while dynamic is always there
+            self.define("USE_STATIC_RUNTIME", "OFF"),
+            self.define_from_variant("USE_JPEGLS", "jpegls"),
+        ]
 
         if self.spec.satisfies("+jp2k"):
             args.append(self.define("USE_OPENJPEG", "System"))
