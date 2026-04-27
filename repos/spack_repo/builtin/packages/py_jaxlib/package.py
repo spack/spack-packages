@@ -278,7 +278,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
             for libdir in libs.directories:
                 env.append_path("LD_LIBRARY_PATH", libdir)
 
-            env.set("XLA_FLAGS", f'--xla_gpu_cuda_data_dir={self.spec["cuda"].prefix}')
+            env.set("XLA_FLAGS", f"--xla_gpu_cuda_data_dir={self.spec['cuda'].prefix}")
 
     def install(self, spec, prefix):
         # https://jax.readthedocs.io/en/latest/developer.html

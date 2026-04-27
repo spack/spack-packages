@@ -22,13 +22,11 @@ on:
       # Dev dependencies
       - 'repos/spack_repo/builtin/packages/python/**'
       - 'repos/spack_repo/builtin/packages/python-venv/**'
-      - 'repos/spack_repo/builtin/packages/py-wheel/**'
-      - 'repos/spack_repo/builtin/packages/py-setuptools/**'
-      - 'repos/spack_repo/builtin/packages/py-black/**'
-      - 'repos/spack_repo/builtin/packages/py-pytest/**'
-      - 'repos/spack_repo/builtin/packages/py-flake8/**'
-      - 'repos/spack_repo/builtin/packages/py-isort/**'
       - 'repos/spack_repo/builtin/packages/py-mypy/**'
+      - 'repos/spack_repo/builtin/packages/py-pytest/**'
+      - 'repos/spack_repo/builtin/packages/py-ruff/**'
+      - 'repos/spack_repo/builtin/packages/py-setuptools/**'
+      - 'repos/spack_repo/builtin/packages/py-wheel/**'
 
   schedule:
     # nightly at 5:16 AM
