@@ -7,6 +7,7 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
+
 class Arbor(CMakePackage, CudaPackage):
     """Arbor is a high-performance library for computational neuroscience
     simulations."""
