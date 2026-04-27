@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -217,7 +219,7 @@ class Mivisionx(CMakePackage):
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
-            for tgt in ROCmPackage.amdgpu_targets:
+            for tgt in itertools.chain(["auto"], ROCmPackage.amdgpu_targets):
                 depends_on(
                     f"migraphx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
                 )

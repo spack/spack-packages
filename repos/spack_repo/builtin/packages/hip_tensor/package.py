@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -83,7 +84,7 @@ class HipTensor(CMakePackage, ROCmPackage):
         "7.2.0",
         "7.2.1",
     ]:
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], ROCmPackage.amdgpu_targets):
             depends_on(
                 f"composable-kernel@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
             )
