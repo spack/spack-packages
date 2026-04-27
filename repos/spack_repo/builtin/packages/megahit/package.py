@@ -7,7 +7,7 @@ from spack_repo.builtin.build_systems import cmake, makefile
 from spack.package import *
 
 
-class Megahit(cmake.CMakePackage, makefile.MakefilePackage):
+class Megahit(Package):
     """Ultra-fast and memory-efficient (meta-)genome assembler"""
 
     homepage = "https://github.com/voutcn/megahit"
@@ -21,22 +21,32 @@ class Megahit(cmake.CMakePackage, makefile.MakefilePackage):
     version("1.1.4", sha256="ecd64c8bfa516ef6b19f9b2961ede281ec814db836f1a91953c213c944e1575f")
     version("1.1.3", sha256="b6eefdee075aaf7a8f9090e2e8b08b770caff90aa43a255e0e220d82ce71c492")
 
+    variant(
+        "generator",
+        default="make",
+        values=("make", "ninja"),
+        when="build_system=cmake",
+        description="CMake generator",
+    )
+
     depends_on("zlib-api")
 
-    # CMake-specific dependencies (newer versions)
+    # CMake path
     depends_on("cmake@2.8:", type="build", when="@1.2.9: build_system=cmake")
     depends_on("gcc@4.8.4:", type="build", when="@1.2.9: build_system=cmake")
     depends_on("c", type="build", when="@1.2.9: build_system=cmake")
     depends_on("cxx", type="build", when="@1.2.9: build_system=cmake")
+    depends_on("gmake", type="build", when="generator=make")
+    depends_on("ninja", type="build", when="generator=ninja")
+
     depends_on("gzip", type="run", when="@1.2.9: build_system=cmake")
     depends_on("bzip2", type="run", when="@1.2.9: build_system=cmake")
 
+    # Makefile path
+    depends_on("c", type="build", when="build_system=makefile")
+    depends_on("cxx", type="build", when="build_system=makefile")
+
     patch("amd.patch", when="@1.1.4 target=aarch64:")
-
-
-class CMakeBuilder(cmake.CMakeBuilder):
-    def install(self, pkg, spec, prefix):
-        make("install")
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
