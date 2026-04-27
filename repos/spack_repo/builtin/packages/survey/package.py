@@ -265,9 +265,8 @@ class Survey(CMakePackage):
         )
         env.prepend_path(
             "PYTHONPATH",
-            join_path(self.spec["py-typing-extensions"].prefix, self.site_packages_dir)
+            join_path(self.spec["py-typing-extensions"].prefix, self.site_packages_dir),
         )
         env.prepend_path(
-            "PYTHONPATH",
-            join_path(self.spec["py-reportlab"].prefix, self.site_packages_dir)
+            "PYTHONPATH", join_path(self.spec["py-reportlab"].prefix, self.site_packages_dir)
         )
