@@ -470,7 +470,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # aarch64-darwin support from Iain Sandoe's branch
         # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
         patch(
-            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..a495b2dded281beeafec91074e4e82a5a3df8104.patch?full_index=1",
+            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..5e090fc0112f86cbcaebb6065ad97ea599868505.patch?full_index=1",
             sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
             when="@14.2.0",
         )
