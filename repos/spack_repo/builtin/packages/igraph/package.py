@@ -34,13 +34,9 @@ class Igraph(CMakePackage, AutotoolsPackage):
     # Not strictly a requirement. igraph does check for it in CMakeLists.txt
     depends_on("python", type="build")
 
-    # with when("build_system=cmake"):
     depends_on("arpack-ng")
-    depends_on("blas")
     depends_on("glpk+gmp@4.57:")
     depends_on("gmp")
-
-    # igraph needs blas and lapack
     depends_on("blas")
     depends_on("lapack")
 
