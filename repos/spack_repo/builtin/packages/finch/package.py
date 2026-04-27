@@ -28,10 +28,8 @@ class Finch(CMakePackage, CudaPackage, ROCmPackage):
 
     _kokkos_backends = Kokkos.devices_variants
     for _backend in _kokkos_backends:
-        _deflt, _when, _descr = _kokkos_backends[_backend]
-        if _when is not None:
-            _when = f"^kokkos{_when}"
-        variant(_backend.lower(), default=_deflt, description=_descr, when=_when)
+        _deflt, _descr = _kokkos_backends[_backend]
+        variant(_backend.lower(), default=_deflt, description=_descr)
 
     variant("shared", default=True, description="Build shared libraries")
 
