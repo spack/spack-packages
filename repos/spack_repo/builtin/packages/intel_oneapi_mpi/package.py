@@ -23,6 +23,12 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/mpi-library.html"
 
     version(
+        "2021.18.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/1710a04f-08b7-4b46-a0a5-bd46a4ef4436/intel-mpi-2021.18.0.748_offline.sh",
+        sha256="a1d9bebb9112f166c1911371971ae03fecb447f58d9f28f5c8ecdf78fb697f29",
+        expand=False,
+    )
+    version(
         "2021.16.1",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/203edae7-5269-4124-a1ed-09ad924f8b47/intel-mpi-2021.16.1.804_offline.sh",
         sha256="4165717608e90ae6123397ebf2a9b87a0b070842ce7d13378d1446a08966eb6e",

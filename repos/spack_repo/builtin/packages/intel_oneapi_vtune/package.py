@@ -30,6 +30,12 @@ class IntelOneapiVtune(IntelOneApiLibraryPackageWithSdk):
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/vtune-profiler.html"
 
     version(
+        "2026.0.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/a00e5b88-bdcc-4dc4-aa00-142fc59aba25/intel-vtune-2026.0.0.329_offline.sh",
+        sha256="24357fe1f1de7fe6a45b2e0f8f05f005615d4ddf4599b6d9d6467b673f322fe6",
+        expand=False,
+    )
+    version(
         "2025.5.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/2775669e-5be4-4982-96de-d0ca5444859a/intel-vtune-2025.5.0.40_offline.sh",
         sha256="dc75067a48dc04a58b15b5944f1d8e951f3340ef7e2652030cab082ff53c6a87",
