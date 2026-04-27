@@ -20,8 +20,17 @@ class Uriparser(CMakePackage):
         "1.0.1",
         sha256="5a3b7c491a1e9033d86b9c00a947bafc46407187938578daf799a4155cb7c88a",
     )
-    version("0.9.7", sha256="11553b2abd2b5728a6c88e35ab08e807d0a0f23c44920df937778ce8cc4d40ff")
-    version("0.9.6", sha256="10e6f90d359c1087c45f907f95e527a8aca84422251081d1533231e031a084ff")
+    # deprecate all releases before 1.0.1 because of various security issues
+    version(
+        "0.9.7",
+        sha256="11553b2abd2b5728a6c88e35ab08e807d0a0f23c44920df937778ce8cc4d40ff",
+        deprecated=True,
+    )
+    version(
+        "0.9.6",
+        sha256="10e6f90d359c1087c45f907f95e527a8aca84422251081d1533231e031a084ff",
+        deprecated=True,
+    )
 
     variant("docs", default=False, description="Build API documentation")
 
