@@ -82,7 +82,8 @@ class Survey(CMakePackage):
 
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools-scm@:8", type="build")  # 9.x has bootstrap issues with --no-build-isolation
+    # 9.x has bootstrap issues with --no-build-isolation
+    depends_on("py-setuptools-scm@:8", type="build")
     depends_on("py-pip", type="build")
     depends_on("py-pandas", type=("build", "run"))
     depends_on("py-psutil", type=("build", "run"))
@@ -263,8 +264,10 @@ class Survey(CMakePackage):
             "PYTHONPATH", join_path(self.spec["py-kiwisolver"].prefix, self.site_packages_dir)
         )
         env.prepend_path(
-            "PYTHONPATH", join_path(self.spec["py-typing-extensions"].prefix, self.site_packages_dir)
+            "PYTHONPATH",
+            join_path(self.spec["py-typing-extensions"].prefix, self.site_packages_dir)
         )
         env.prepend_path(
-            "PYTHONPATH", join_path(self.spec["py-reportlab"].prefix, self.site_packages_dir)
+            "PYTHONPATH",
+            join_path(self.spec["py-reportlab"].prefix, self.site_packages_dir)
         )
