@@ -32,6 +32,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     version("5.0.2", sha256="188817bb452ca805ee8701f1c5adbbb4fb83dc8d1c50624566a18a719ba0fa5e")
     version("5.0.1", sha256="cf7d8515ca993229929be9f051aecd8f93cde325adac8a4f82ed6848adace218")
     version("5.0.0", sha256="c45f3e19c3eb71fc8b7210cb04cac658015fc1839e7cc0571f7406588ff9bcef")
+    version("4.7.04", sha256="4213b248c39e112299fa94ee08817e51126fc02996ed6e2ab56aec4cdb80ee1f")
     version("4.7.03", sha256="969e7933b9426219b220f08036e489b3226e6d8cd24eecf2c5b80df8c37443c0")
     version("4.7.02", sha256="a81826ac0a167933d13506bc2a986fb5517038df9abb780fe9bb2c1d4e80803b")
     version("4.7.01", sha256="404cf33e76159e83b8b4ad5d86f6899d442b5da4624820ab457412116cdcd201")
@@ -163,6 +164,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     spack_micro_arch_map = {
         "armv8.1a": ("ARMV81", None),
         "armv8.4a": ("ARMV84", "@4.7.00:"),
+        "neoverse_v2": ("ARMV9_GRACE", "@4.7.04:4,5.1:"),
         "u74mc": ("RISCV_U74MC", "@4.7.00:"),
         "a64fx": ("A64FX", None),
         "thunderx2": ("ARMV8_THUNDERX2", None),
@@ -196,7 +198,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # ("KNC", None),          # Knights Corner Xeon Phi
     # ("BGQ", "@:4.2.01"),    # IBM Blue Gene/Q
     # ("RISCV_SG2042", "@4.3.00:"), # Sophgo SG2042 (64-core RISC-V)
-    # ("ARMV9_GRACE", "@4.4.00:"),  # NVIDIA Grace CPU (ARMv9)
     # ("RISCV_RVA22V", "@4.5.00:"), # RVA22V profile (RISC-V vector extension)
     # ("ARMV80", None),       # ARMv8.0 Compatible CPU
     # ("ARMV84_SVE", "@4.7.00:"),   # ARMv8.4 with SVE (Scalable Vector Extension)
