@@ -37,7 +37,8 @@ class Opentofu(GoPackage):
             str(make_jobs),
             "-modcacherw",
             "-ldflags",
-            f"-X main.version={ self.version } -X github.com/opentofu/opentofu/version.dev=no ",
-            "-o", "tofu",
-            "./cmd/tofu"
+            f"-X main.version={self.version} -X github.com/opentofu/opentofu/version.dev=no ",
+            "-o",
+            "tofu",
+            "./cmd/tofu",
         ]
