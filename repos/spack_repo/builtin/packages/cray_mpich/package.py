@@ -19,6 +19,10 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
     maintainers("etiennemlb", "haampie")
 
+    version("9.0.1")
+    version("8.1.33")
+    version("8.1.32")
+    version("8.1.31")
     version("8.1.30")
     version("8.1.28")
     version("8.1.25")
