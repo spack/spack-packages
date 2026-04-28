@@ -12,7 +12,7 @@ class Ww3(CMakePackage):
     """
 
     homepage = "https://github.com/NOAA-EMC/WW3"
-    url = "https://github.com/NOAA-EMC/WW3"
+    url = "https://github.com/NOAA-EMC/WW3/archive/refs/tags/6.07.1.tar.gz"
     git = "https://github.com/NOAA-EMC/WW3.git"
 
     maintainers("rsoutelino")
@@ -22,8 +22,48 @@ class Ww3(CMakePackage):
     # Development version - use with: spack install ww3@develop
     version("develop", branch="develop")
 
+    # WW3 configuration variants
+    variant(
+        "switch",
+        default="Ifremer1",
+        values=(
+            "Ifremer1",
+            "Ifremer2",
+            # "Ifremer2_pdlib",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
+            "NCEP_glwu",  # NOT SUPPORTED - NCEPLIBS CMake target export issues
+            "NCEP_gwm",
+            "NCEP_rwps",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
+            "NCEP_st2",
+            "NCEP_st4",
+            "NCEP_st4sbs",
+            "NRL1",
+            "NRL2",
+            "NRL3",
+            "NRL4",
+            # OASIS switches - NOT SUPPORTED: OASIS3-MCT not available in Spack
+            # "OASACM",
+            # "OASICM",
+            # "OASOCM",
+            "SMCMlt",
+            "UKMO",
+            "UKMO_gbl",
+            "UKMO_reg",
+            "UKMO_uk",
+            # "USACE_1",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
+            # "USACE_2",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
+            "UoM_nl1",
+            "UoM_nl3",
+            "UoM_nl3s",
+            "multi_esmf",
+            # "ite_pdlib",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
+            # "ugdev2",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
+        ),
+        description="WW3 switch configuration to build",
+    )
+
     depends_on("c", type="build")
     depends_on("fortran", type="build")
+    depends_on("cmake@3.19:", type="build")
 
     # Core dependencies
     depends_on("mpi")
@@ -68,45 +108,6 @@ class Ww3(CMakePackage):
 
     # ESMF - Required when MULTI_ESMF in switch
     depends_on("esmf", when="switch=multi_esmf")
-
-    # WW3 configuration variants
-    variant(
-        "switch",
-        default="Ifremer1",
-        values=(
-            "Ifremer1",
-            "Ifremer2",
-            # "Ifremer2_pdlib",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
-            "NCEP_glwu",  # NOT SUPPORTED - NCEPLIBS CMake target export issues
-            "NCEP_gwm",
-            "NCEP_rwps",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
-            "NCEP_st2",
-            "NCEP_st4",
-            "NCEP_st4sbs",
-            "NRL1",
-            "NRL2",
-            "NRL3",
-            "NRL4",
-            # OASIS switches - NOT SUPPORTED: OASIS3-MCT not available in Spack
-            # "OASACM",
-            # "OASICM",
-            # "OASOCM",
-            "SMCMlt",
-            "UKMO",
-            "UKMO_gbl",
-            "UKMO_reg",
-            "UKMO_uk",
-            # "USACE_1",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
-            # "USACE_2",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
-            "UoM_nl1",
-            "UoM_nl3",
-            "UoM_nl3s",
-            "multi_esmf",
-            # "ite_pdlib",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
-            # "ugdev2",  # NOT SUPPORTED - requires libptscotchparmetis (WW3 CMake issue)
-        ),
-        description="WW3 switch configuration to build",
-    )
 
     def cmake_args(self):
         """Configure CMake arguments for WW3 build"""
