@@ -105,6 +105,7 @@ class PyAstropy(PythonPackage):
         depends_on("py-matplotlib@3.1:", when="@5:", type=("build", "run"))
         depends_on("py-matplotlib@2.1:", when="@4:", type=("build", "run"))
         depends_on("py-matplotlib@2.0:", type=("build", "run"))
+        depends_on("py-narwhals@1.42.0:", type=("build", "run"))
         depends_on("py-certifi@2022.6.15.1:", when="@7.0.1:", type=("build", "run"))
         depends_on("py-certifi", when="@4.3:", type=("build", "run"))
         depends_on("py-dask+array+dataframe@2024.8.0:", when="@7.2.0:", type=("build", "run"))
