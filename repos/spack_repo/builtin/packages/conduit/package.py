@@ -388,7 +388,7 @@ class Conduit(CachedCMakePackage):
     @on_package_attributes(run_tests=True)
     def build_test(self):
         with working_dir(self.build_directory):
-            print("Running Conduit Unit Tests...")
+            tty.msg("Running Conduit Unit Tests...")
             make("test")
 
     @run_after("install")
