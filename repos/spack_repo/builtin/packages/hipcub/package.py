@@ -26,6 +26,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="2a7dc48ba7feb0f21d62844df7e1ef075249e9d2a491b76c8eb8f60335eb24b1")
     version("7.1.0", sha256="131c1168f0b690874f5bce2f20c37ce854d4de47487ad1ffd2d361445276c0b8")
@@ -99,10 +100,14 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
-        depends_on(f"rocprim@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver} +cuda", when=f"+cuda @{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
 
     # fix hardcoded search in /opt/rocm and broken config mode search
     patch("find-hip-cuda-rocm-5.3.patch", when="@5.7 +cuda")
@@ -131,5 +136,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
         if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
 
         return args

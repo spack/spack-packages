@@ -21,6 +21,7 @@ class Bdftopcf(AutotoolsPackage, XorgPackage):
 
     license("MIT")
 
+    version("1.1.2", sha256="31c88b9194c34ee35c433759d141eaca177dcdead835c8832021cc013324b924")
     version("1.1.1", sha256="3291df9910c006a0345f3eac485e2a5734bbb79a0d97bf1f2b4cddad48fb1bc4")
     version("1.1", sha256="699d1a62012035b1461c7f8e3f05a51c8bd6f28f348983249fb89bbff7309b47")
     version("1.0.5", sha256="78a5ec945de1d33e6812167b1383554fda36e38576849e74a9039dc7364ff2c3")

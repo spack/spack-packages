@@ -33,6 +33,7 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="c86e34055576a662bfcb5897a4fe4ab1a4e350b1c4f35b3262b5112c5c640163")
     version("7.1.0", sha256="94d8d901fdec2a41957f83139dea125bda4127af40d47f03b637a7920d73db50")
@@ -108,12 +109,14 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
-        depends_on(f"rocfft@{ver}", when=f"+rocm @{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(
+                f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
 
-    for tgt in ROCmPackage.amdgpu_targets:
-        depends_on(f"rocfft amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
     # https://github.com/ROCm/rocFFT/pull/85)
     patch("001-remove-submodule-and-sync-shared-files-from-rocFFT.patch", when="@6.0.0")
 

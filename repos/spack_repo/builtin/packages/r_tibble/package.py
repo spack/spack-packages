@@ -33,6 +33,7 @@ class RTibble(RPackage):
     version("1.1", sha256="10ea18890e5514faa4c2c05fa231a6e2bbb7689f3800850cead214306414c88e")
 
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("r@3.1.2:", type=("build", "run"))
     depends_on("r@3.1.0:", type=("build", "run"), when="@1.3.0:")
