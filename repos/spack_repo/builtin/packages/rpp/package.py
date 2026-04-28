@@ -4,6 +4,7 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
@@ -18,6 +19,10 @@ class Rpp(CMakePackage):
     git = "https://github.com/ROCm/rpp.git"
     url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-6.4.3.tar.gz"
 
+    tags = ["rocm"]
+    maintainers("srekolam", "afzpatel")
+    license("MIT")
+
     def url_for_version(self, version):
         if version >= Version("5.7.0"):
             url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
@@ -25,11 +30,9 @@ class Rpp(CMakePackage):
             url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"
         return url.format(version)
 
-    tags = ["rocm"]
-
-    maintainers("srekolam", "afzpatel")
-    license("MIT")
-
+    version("7.2.1", sha256="5132d89449fcb94940414d157f5a21b2de9ac4a63237235d96cabca882baf503")
+    version("7.2.0", sha256="9240e325cd5adf7aa9842851d638394a25d3a784a6a206e8e96d7ae4d59b8d35")
+    version("7.1.1", sha256="3a13444acc86d307ff559b0282f11ec57ae5c89dec52a2f9f85e3757d9e66e35")
     version("7.1.0", sha256="65d815f4957b27c1f994d4d905a107536fe90ffa4c229c015c241687f11fe2c0")
     version("7.0.2", sha256="0836daecfde5dd7daa4269baae32d996d40ab6864622ad16000d00cf2aeac676")
     version("7.0.0", sha256="b2ab0131480127a45386b3142168308bdbce7689c9a95e71c7b7a6481510fdad")
@@ -51,6 +54,15 @@ class Rpp(CMakePackage):
     version("6.0.0", sha256="3626a648bc773520f5cd5ca15f494de6e74b422baf32491750ce0737c3367f15")
     version("5.7.1", sha256="36fff5f1c52d969c3e2e0c75b879471f731770f193c9644aa6ab993fb8fa4bbf")
     version("5.7.0", sha256="1c612cde3c3d3840ae75ee5c1ee59bd8d61b1fdbf84421ae535cda863470fc06")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     variant(
         "build_type",
@@ -157,7 +169,7 @@ class Rpp(CMakePackage):
         when="@1.0:",
     )
     depends_on("libjpeg-turbo", type=("build", "link"))
-    depends_on("rocm-openmp-extras")
+    depends_on("rocm-openmp-extras", when="@:7.1")
     conflicts("+opencl+hip")
 
     with when("+hip"):
@@ -184,6 +196,9 @@ class Rpp(CMakePackage):
                 "7.0.0",
                 "7.0.2",
                 "7.1.0",
+                "7.1.1",
+                "7.2.0",
+                "7.2.1",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):
@@ -209,7 +224,8 @@ class Rpp(CMakePackage):
     def cmake_args(self):
         spec = self.spec
         args = []
-        args.append(self.define("ROCM_OPENMP_EXTRAS_DIR", spec["rocm-openmp-extras"].prefix))
+        if self.spec.satisfies("@:7.1"):
+            args.append(self.define("ROCM_OPENMP_EXTRAS_DIR", spec["rocm-openmp-extras"].prefix))
         if self.spec.satisfies("+opencl"):
             args.append(self.define("BACKEND", "OPENCL"))
         if self.spec.satisfies("+cpu"):
@@ -228,4 +244,6 @@ class Rpp(CMakePackage):
                         "CMAKE_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                     )
                 )
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

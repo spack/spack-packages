@@ -123,7 +123,7 @@ class Vep(Package):
             # If we don't do this a bunch of perl libs will be missing
             # Run the customer VEP installer/downloader, which downloads
             # copies a bunch of additional perl modules
-            installer = which(self.vep_installer_path)
+            installer = which(self.vep_installer_path, required=True)
             installer(*self.installer_args())
 
         # Manually install auxilary scripts if requested

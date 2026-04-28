@@ -155,8 +155,8 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     ) -> None:
         self.set_variables(env)
 
-    def setup_dependent_package(self, module, dep_spec):
-        dep_spec.upcxx = self.prefix.bin.upcxx
+    def setup_dependent_package(self, module, dependent_spec):
+        dependent_spec.upcxx = self.prefix.bin.upcxx
 
     def install(self, spec, prefix):
         env = os.environ
@@ -266,7 +266,7 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     def test_upcxx_install(self):
         """checking UPC++ compile+link for all installed backends"""
         test_install = join_path(self.prefix.bin, "test-upcxx-install.sh")
-        test_upcxx_install = which(test_install)
+        test_upcxx_install = which(test_install, required=True)
         out = test_upcxx_install(output=str.split, error=str.split)
         assert "SUCCESS" in out
 

@@ -41,11 +41,19 @@ class Go(Package):
 
     license("BSD-3-Clause")
 
+    version("1.26.2", sha256="2e91ebb6947a96e9436fb2b3926a8802efe63a6d375dffec4f82aa9dbd6fd43b")
+    version("1.26.1", sha256="3172293d04b209dc1144698e7ba13f0477f6ba8c5ffd0be66c20fdbc9785dfbb")
+    version("1.25.9", sha256="0ec9ef8ebcea097aac37decae9f09a7218b451cd96be7d6ed513d8e4bcf909cf")
+    version("1.25.8", sha256="e988d4a2446ac7fe3f6daa089a58e9936a52a381355adec1c8983230a8d6c59e")
+    version("1.25.7", sha256="178f2832820274b43e177d32f06a3ebb0129e427dd20a5e4c88df2c1763cf10a")
+    version("1.25.6", sha256="58cbf771e44d76de6f56d19e33b77d745a1e489340922875e46585b975c2b059")
     version("1.25.5", sha256="22a5fd0a91efcd28a1b0537106b9959b2804b61f59c3758b51e8e5429c1a954f")
     version("1.25.4", sha256="160043b7f17b6d60b50369436917fda8d5034640ba39ae2431c6b95a889cc98c")
     version("1.25.3", sha256="a81a4ba593d0015e10c51e267de3ff07c7ac914dfca037d9517d029517097795")
     version("1.25.2", sha256="3711140cfb87fce8f7a13f7cd860df041e6c12f7610f40cac6ec6fa2b65e96e4")
     version("1.25.1", sha256="d010c109cee94d80efe681eab46bdea491ac906bf46583c32e9f0dbb0bd1a594")
+    version("1.24.13", sha256="639a6204c2486b137df1eb6e78ee3ed038f9877d0e4b5a465e796a2153f858d7")
+    version("1.24.12", sha256="fba2dd661b7be7b34d6bd17ed92f41c44a5e05953ad81ab34b4ec780e5e7dc41")
     version("1.24.11", sha256="ffdf97766a4c4b135cd53809713978e9ee1a943b2c8e28ad221a5429de30e210")
     version("1.24.10", sha256="34000dcc47a517b78fcf2657ee7d033328a57079fe60c4ed8b7b84260d1d19d3")
     version("1.24.7", sha256="2a8f50db0f88803607c50d7ea8834dcb7bd483c6b428a91e360fdf8624b46464")
@@ -78,8 +86,9 @@ class Go(Package):
     depends_on("grep", type="build")
     depends_on("sed", type="build")
 
-    depends_on("go-or-gccgo-bootstrap@1.22.6:", type="build", when="@1.24:")
-    depends_on("go-or-gccgo-bootstrap@1.20.6:", type="build")
+    depends_on("go-or-gccgo-bootstrap@1.24:", type="build", when="@1.26:")
+    depends_on("go-or-gccgo-bootstrap@1.22:", type="build", when="@1.24:")
+    depends_on("go-or-gccgo-bootstrap@1.20:", type="build", when="@1.22:")
     depends_on("go-or-gccgo-bootstrap", type="build")
 
     phases = ["build", "install"]
@@ -105,7 +114,7 @@ class Go(Package):
 
     def build(self, spec, prefix):
         # Build script depend on bash
-        bash = which("bash")
+        bash = which("bash", required=True)
 
         with working_dir("src"):
             bash(f"{'all' if self.run_tests else 'make'}.bash")
@@ -113,6 +122,12 @@ class Go(Package):
     def install(self, spec, prefix):
         install_tree(".", prefix.go)
         symlink(prefix.go.bin, prefix.bin)
+
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        env.set("GO111MODULE", "on")
+        env.set("GOTOOLCHAIN", "local")
+        env.set("GOMAXPROCS", str(make_jobs))
+        env.set("GOPATH", join_path(dependent_spec.package.stage.path, "go"))
 
     def setup_dependent_package(self, module, dependent_spec):
         """Called before go modules' build(), install() methods.

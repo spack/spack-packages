@@ -35,6 +35,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Package versions
     version("develop", branch="master")
+    version("3.1.0", sha256="a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
     version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")
     version("2.33.0", sha256="0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
     version("2.32.0", sha256="2277b6f01de4a7d0b01cfe12615255d9640eaa02268565a7ce1a769beab25fa1")
@@ -128,6 +129,13 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         description="C++ language standard (for GPU builds)",
     )
 
+    # Patch to fix GPU+TPLs and freebsd build issues
+    patch(
+        "https://github.com/hypre-space/hypre/pull/1463.patch?full_index=1",
+        sha256="cd0b67e0c03f9392a305c2263099929898ea7f49bd5006ad69209508e947903b",
+        when="@3.1.0",
+    )
+
     # Patch to fix hip build (+rocm) via CMake for hypre v3.0.0
     patch(
         "https://github.com/hypre-space/hypre/pull/1394.patch?full_index=1",
@@ -179,6 +187,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("superlu-dist", when="+superlu-dist+mpi")
     depends_on("caliper", when="+caliper")
     conflicts("+gptune", when="~mpi")
+    conflicts(
+        "+lapack", when="+int64", msg="64-bit integers + external lapack work only with +mixedint"
+    )
 
     # Patch to build shared libraries on Darwin does not apply to
     # versions before 2.13.0
@@ -191,25 +202,27 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
     with when("+cuda"):
         depends_on("umpire+c+cuda", when="@3:")
+        requires("+umpire", when="@3:")
 
         conflicts("@:2.18")
         conflicts("cuda_arch=none")
         conflicts("precision=longdouble")
         conflicts("precision=mixed")
-        conflicts("+shared +umpire")
+        conflicts("+shared +umpire", when="@:2")
         conflicts("+int64", msg="Use +mixedint for 64-bit integer support for GPUs!")
         conflicts("+rocm", msg="CUDA and ROCm are mutually exclusive")
         conflicts("+sycl", msg="CUDA and SYCL are mutually exclusive")
         conflicts("cxxstd=11", when="^cuda@13:")
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
-        # https://github.com/hypre-space/hypre/pull/1353
         conflicts("^cuda@13:", when="@:2")
         for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
             requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 
     with when("+rocm"):
         depends_on("umpire+c+rocm", when="@3:")
+        requires("+umpire", when="@3:")
+
         depends_on("rocsparse")
         depends_on("rocthrust")
         depends_on("rocrand")
@@ -280,7 +293,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
         # build and run cached examples
         with working_dir(self._cached_tests_work_dir):
-            make = which("make")
+            make = which("make", required=True)
             make("bigint")
 
             for name in ["ex5big", "ex15big"]:
@@ -340,9 +353,14 @@ class CMakeBuilder(CMakeBuilder):
         )
         args.append(self.define("HYPRE_ENABLE_MIXED_PRECISION", spec.satisfies("precision=mixed")))
 
-        # External BLAS/LAPACK when +lapack (Note +lapack works for blas as well)
-        args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_BLAS", "lapack"))
-        args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_LAPACK", "lapack"))
+        # External BLAS/LAPACK when +lapack: disable internal BLAS/LAPACK and
+        # pass external library paths. HYPRE_ENABLE_HYPRE_BLAS=ON means "use
+        # internal BLAS"
+        args.append(self.define("HYPRE_ENABLE_HYPRE_BLAS", spec.satisfies("~lapack")))
+        args.append(self.define("HYPRE_ENABLE_HYPRE_LAPACK", spec.satisfies("~lapack")))
+        if spec.satisfies("+lapack"):
+            args.append(self.define("TPL_BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
+            args.append(self.define("TPL_LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
 
         # GPU backends
         args.append(self.define_from_variant("HYPRE_ENABLE_CUDA", "cuda"))
@@ -350,6 +368,10 @@ class CMakeBuilder(CMakeBuilder):
         args.append(self.define_from_variant("HYPRE_ENABLE_SYCL", "sycl"))
         if spec.satisfies("+cuda"):
             args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
+        if spec.satisfies("+rocm"):
+            args.append(
+                self.define("CMAKE_HIP_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
+            )
 
         # GPU auxiliary options
         args.append(self.define_from_variant("HYPRE_ENABLE_GPU_AWARE_MPI", "gpu-aware-mpi"))

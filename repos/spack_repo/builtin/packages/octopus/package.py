@@ -160,10 +160,10 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         depends_on("libvdwxc~mpi", when="+libvdwxc")
         depends_on("arpack-ng~mpi", when="+arpack")
         depends_on("elpa~mpi", when="+elpa")
-        depends_on("netcdf-c~~mpi", when="+netcdf")  # Link dependency of NetCDF fortran lib
+        depends_on("netcdf-c ~mpi", when="+netcdf")  # Link dependency of NetCDF fortran lib
         with when("+berkeleygw"):
-            depends_on("berkeleygw@3:~~mpi", when="@14:")
-            depends_on("berkeleygw@2.1~~mpi", when="@:13")
+            depends_on("berkeleygw@3: ~mpi", when="@14:")
+            depends_on("berkeleygw@2.1 ~mpi", when="@:13")
 
     depends_on("etsf-io", when="+etsf-io")
     depends_on("py-numpy", when="+python")
@@ -201,7 +201,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         # spack-v0.17.2$ octopus --version
         # octopus 11.3 (git commit )
 
-        exe = which(self.spec.prefix.bin.octopus)
+        exe = which(self.spec.prefix.bin.octopus, required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert "octopus " in out
 
@@ -229,7 +229,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         with working_dir("example-recipe", create=True):
             print("Current working directory (in example-recipe)")
             copy(join_path(os.path.dirname(__file__), "test", "recipe.inp"), "inp")
-            exe = which(self.spec.prefix.bin.octopus)
+            exe = which(self.spec.prefix.bin.octopus, required=True)
             out = exe(output=str.split, error=str.split)
             check_outputs(expected, out)
 
@@ -258,7 +258,7 @@ class Octopus(cmake.CMakePackage, autotools.AutotoolsPackage, CudaPackage):
         with working_dir("example-he", create=True):
             print("Current working directory (in example-he)")
             copy(join_path(os.path.dirname(__file__), "test", "he.inp"), "inp")
-            exe = which(self.spec.prefix.bin.octopus)
+            exe = which(self.spec.prefix.bin.octopus, required=True)
             out = exe(output=str.split, error=str.split)
             check_outputs(expected, out)
 

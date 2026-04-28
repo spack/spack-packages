@@ -20,6 +20,9 @@ class Rocjpeg(CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
     license("MIT")
+    version("7.2.1", sha256="b1e28958d7e3986856388e98e04995b96601c8664cf325b9d3e3140e0ff0711a")
+    version("7.2.0", sha256="703af33cb0784cd279dbe581dec2a7b0993ad887fadc296648038d5e918f229a")
+    version("7.1.1", sha256="38ed6ad6aa6de3f830a157297ff239caa1a65010e7b4200891d37b7f31378f4b")
     version("7.1.0", sha256="26ea59dd772c57ae5476a6ba3799bf86981694fbba9b87af882ed76c1b89c639")
     version("7.0.2", sha256="fe1813e333dfb958d74693301ffb70e1baa2601ffd8b8d644f4026e56048164a")
     version("7.0.0", sha256="00dfac45d1776f5e79704fc56bae1b5017fc19326f69e363a49285ebf72bff2e")
@@ -46,6 +49,9 @@ class Rocjpeg(CMakePackage):
         "7.0.0",
         "7.0.2",
         "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")

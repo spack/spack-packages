@@ -18,6 +18,8 @@ class Git(AutotoolsPackage):
 
     homepage = "https://git-scm.com"
     url = "https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.12.0.tar.gz"
+    git = "https://github.com/git/git.git"
+
     maintainers("jennfshr")
 
     tags = ["build-tools"]
@@ -26,9 +28,13 @@ class Git(AutotoolsPackage):
 
     license("GPL-2.0-only")
 
+    sanity_check_is_file = ["bin/git"]
+
     # Every new git release comes with a corresponding manpage resource:
     # https://www.kernel.org/pub/software/scm/git/git-manpages-{version}.tar.gz
     # https://mirrors.edge.kernel.org/pub/software/scm/git/sha256sums.asc
+    version("master", branch="master")
+    version("2.53.0", sha256="429dc0f5fe5f14109930cdbbb588c5d6ef5b8528910f0d738040744bebdc6275")
     version("2.52.0", sha256="6880cb1e737e26f81cf7db9957ab2b5bb2aa1490d87619480b860816e0c10c32")
     version("2.51.2", sha256="9b44c2b337ec838e10aad42439d390963904449710d30c9e7e4ba449f45da98f")
     version("2.51.1", sha256="b049d79e6a6cb3d81334bf689af6301f4d4c884191dfae65d2bb314a90384831")
@@ -51,6 +57,7 @@ class Git(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     for _version, _sha256_manpage in {
+        "2.53.0": "4954390466c125e82dce4a978dd1dadda13a916564d908cfdbd319f2e174a8ae",
         "2.52.0": "14426e66b5a12c188e44f53f89282bc586b34ebc3a22fafa8eb80d0bbe370f10",
         "2.51.2": "811aa98750c6d5e4c67848c9991f3d0cbe6cb109da5aefaf4a08c1d760533410",
         "2.51.1": "7c4568091b95af3a52508be4e988da4fbe194f4f410024d6af3f1af3735e3b08",
@@ -102,6 +109,15 @@ class Git(AutotoolsPackage):
     depends_on("openssh", type="run")
     depends_on("tk", type=("build", "link"), when="+tcltk")
     depends_on("diffutils", type="build", when="@2.48:")
+
+    # v2.53.0 made a lot of improvements to the makefile, but caused a bug with the git
+    # osxcredentialhelper sub component
+    # https://lore.kernel.org/git/pull.2046.v4.git.1771551540816.gitgitgadget@gmail.com/
+    patch(
+        "https://github.com/gitgitgadget/git/commit/3e9cc24e68ef311500406ef4d170be30e36e1231.patch?full_index=1",
+        sha256="67fa97142eed2ab2b0e9385b233254adb4bdf4dd42addf966d6ece3fd2a3c294",
+        when="@2.53.0 platform=darwin",
+    )
 
     @classmethod
     def determine_version(cls, exe):
@@ -174,24 +190,21 @@ class Git(AutotoolsPackage):
         spec = self.spec
 
         configure_args = [
-            "--with-curl={0}".format(spec["curl"].prefix),
-            "--with-expat={0}".format(spec["expat"].prefix),
-            "--with-openssl={0}".format(spec["openssl"].prefix),
-            "--with-zlib={0}".format(spec["zlib-api"].prefix),
+            f"--with-curl={spec['curl'].prefix}",
+            f"--with-expat={spec['expat'].prefix}",
+            f"--with-openssl={spec['openssl'].prefix}",
+            f"--with-libpcre2={spec['pcre2'].prefix}",
+            f"--with-zlib={spec['zlib-api'].prefix}",
         ]
 
         if self.spec["iconv"].name == "libiconv":
             configure_args.append(f"--with-iconv={self.spec['iconv'].prefix}")
 
         if self.spec.satisfies("+perl"):
-            configure_args.append("--with-perl={0}".format(spec["perl"].command.path))
+            configure_args.append(f"--with-perl={spec['perl'].command.path}")
 
-        if self.spec.satisfies("^pcre"):
-            configure_args.append("--with-libpcre={0}".format(spec["pcre"].prefix))
-        if self.spec.satisfies("^pcre2"):
-            configure_args.append("--with-libpcre2={0}".format(spec["pcre2"].prefix))
         if self.spec.satisfies("+tcltk"):
-            configure_args.append("--with-tcltk={0}".format(self.spec["tk"].prefix.bin.wish))
+            configure_args.append(f"--with-tcltk={self.spec['tk'].prefix.bin.wish}")
         else:
             configure_args.append("--without-tcltk")
 
@@ -263,8 +276,8 @@ class Git(AutotoolsPackage):
     def install_subtree(self):
         if self.spec.satisfies("+subtree"):
             with working_dir("contrib/subtree"):
-                make_args = ["V=1", "prefix={}".format(self.prefix.bin)]
+                make_args = ["V=1", f"prefix={self.prefix.bin}"]
                 make(" ".join(make_args))
-                install_args = ["V=1", "prefix={}".format(self.prefix.bin), "install"]
+                install_args = ["V=1", f"prefix={self.prefix.bin}", "install"]
                 make(" ".join(install_args))
                 install("git-subtree", self.prefix.bin)

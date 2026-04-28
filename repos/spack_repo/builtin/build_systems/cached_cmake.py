@@ -107,7 +107,7 @@ class CachedCMakeBuilder(CMakeBuilder):
         spec = self.pkg.spec
 
         # Fortran compiler is optional
-        if "FC" in os.environ:
+        if "FC" in os.environ and self.spec.satisfies("%fortran"):
             spack_fc_entry = cmake_cache_path("CMAKE_Fortran_COMPILER", os.environ["FC"])
             system_fc_entry = cmake_cache_path(
                 "CMAKE_Fortran_COMPILER", self.spec["fortran"].package.fortran
@@ -280,7 +280,7 @@ class CachedCMakeBuilder(CMakeBuilder):
         ]
 
         # Provide standard CMake arguments for dependent CachedCMakePackages
-        if spec.satisfies("^cuda"):
+        if spec.satisfies("%cuda"):
             entries.append("#------------------{0}".format("-" * 30))
             entries.append("# Cuda")
             entries.append("#------------------{0}\n".format("-" * 30))
@@ -322,7 +322,7 @@ class CachedCMakeBuilder(CMakeBuilder):
                 cmake_cache_filepath("CMAKE_HIP_COMPILER", os.path.join(llvm_bin, "amdclang++"))
             )
 
-            if spec.satisfies("%gcc"):
+            if spec.satisfies("%cxx=gcc"):
                 entries.append(
                     cmake_cache_string(
                         "CMAKE_HIP_FLAGS", f"--gcc-toolchain={self.pkg.compiler.prefix}"

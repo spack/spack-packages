@@ -30,8 +30,10 @@ class AwscliV2(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("py-colorama@0.2.5:0.4.6")
-        depends_on("py-docutils@0.10:0.19")
-        depends_on("py-cryptography@40:43.0.1", when="@2.22:")
+        # Upper bound relaxed for Sphinx compatibility
+        depends_on("py-docutils@0.10:")
+        # Upper bound relaxed to avoid CVEs
+        depends_on("py-cryptography@40:", when="@2.22:")
         depends_on("py-cryptography@3.3.2:40.0.1", when="@:2.15")
         depends_on("py-ruamel-yaml@0.15:")
         # Upper bound relaxed for Python 3.14 support

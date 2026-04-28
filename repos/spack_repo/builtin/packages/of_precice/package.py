@@ -78,9 +78,7 @@ export CPLUS_INCLUDE_PATH
 # Local build (for user appbin, libbin)
 . ./change-userdir.sh $PWD/{user_dir}
 #
-""".format(
-                    precice_dir=spec["precice"].prefix, user_dir=self.build_userdir
-                )
+""".format(precice_dir=spec["precice"].prefix, user_dir=self.build_userdir)
             )
 
     def build(self, spec, prefix):

@@ -21,18 +21,28 @@ class PyNbsphinx(PythonPackage):
 
     license("MIT")
 
+    version("0.9.8", sha256="d0765908399a8ee2b57be7ae881cf2ea58d66db3af7bbf33e6eb48f83bea5495")
     version("0.8.8", sha256="b5090c824b330b36c2715065a1a179ad36526bff208485a9865453d1ddfc34ec")
     version("0.8.7", sha256="ff91b5b14ceb1a9d44193b5fc3dd3617e7b8ab59c788f7710049ce5faff2750c")
     version("0.8.1", sha256="24d59aa3a1077ba58d9769c64c38fb05b761a1af21c1ac15f6393500cd008ea6")
     version("0.8.0", sha256="369c16fe93af14c878d61fb3e81d838196fb35b27deade2cd7b95efe1fe56ea0")
 
-    # https://nbsphinx.readthedocs.io/en/latest/installation.html
-    depends_on("python@3.6:", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
-    depends_on("py-docutils", type=("build", "run"))
-    depends_on("py-jinja2", type=("build", "run"))
-    depends_on("py-nbconvert@:5.3,5.5:", type=("build", "run"))
-    depends_on("py-traitlets", type=("build", "run"))
-    depends_on("py-nbformat", type=("build", "run"))
-    depends_on("py-sphinx@1.8:", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-setuptools")
+        depends_on("py-setuptools-scm", when="@0.9:")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-docutils@0.18.1:", when="@0.9:")
+        depends_on("py-docutils")
+        depends_on("py-jinja2")
+        depends_on("py-nbconvert@5.3:", when="@0.9:")
+        depends_on("py-nbconvert")
+        depends_on("py-nbformat")
+        depends_on("py-sphinx@1.8:")
+        depends_on("py-traitlets@5:", when="@0.9:")
+        depends_on("py-traitlets")
+
     depends_on("pandoc", type="run")
+
+    conflicts("py-nbconvert@5.4")
+    conflicts("py-sphinx@8.2.0:8.2.1")

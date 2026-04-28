@@ -34,8 +34,8 @@ class PyMdanalysistests(PythonPackage):
     for mdanalysistests_version, sha in VERSIONS.items():
         version(mdanalysistests_version, sha256=sha)
         depends_on(
-            f"py-mdanalysis@{mdanalysistests_version}",
-            when=f"@{mdanalysistests_version}",
+            f"py-mdanalysis@={mdanalysistests_version}",
+            when=f"@={mdanalysistests_version}",
             type=("build", "run"),
         )
 

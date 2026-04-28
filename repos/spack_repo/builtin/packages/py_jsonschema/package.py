@@ -15,6 +15,7 @@ class PyJsonschema(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("4.26.0", sha256="0c26707e2efad8aa1bfc5b7ce170f3fccc2e4918ff85989ba9ffa9facb2be326")
     version("4.25.1", sha256="e4a9655ce0da0c0b67a085847e00a3a51449e1157f4f75e9fb5aa545e122eb85")
     version("4.23.0", sha256="d71497fef26351a33265337fa77ffeb82423f3ea21283cd9467bb03999266bc4")
     version("4.22.0", sha256="5b22d434a45935119af990552c862e5d6d564e8f6601206b305a61fdf661a2b7")
@@ -41,46 +42,50 @@ class PyJsonschema(PythonPackage):
         description="Enable format-nongpl functionality",
     )
 
-    depends_on("python@3.9:", when="@4.24:", type="build")
-    depends_on("python@3.8:", when="@4.18:", type="build")
+    with default_args(type="build"):
+        depends_on("py-hatchling", when="@4.10:")
+        depends_on("py-hatch-vcs", when="@4.10:")
+        depends_on("py-hatch-fancy-pypi-readme", when="@4.11:")
 
-    depends_on("py-hatchling", when="@4.10:", type="build")
-    depends_on("py-hatch-vcs", when="@4.10:", type="build")
-    depends_on("py-hatch-fancy-pypi-readme", when="@4.11:", type="build")
+        # Historical dependencies
+        depends_on("py-setuptools@40.6.0:", when="@4:4.4")
+        depends_on("py-setuptools", when="@:2")
+        depends_on("py-setuptools-scm+toml@3.4:", when="@4.4.0")
+        depends_on("py-setuptools-scm", when="@3")
 
-    depends_on("py-attrs@22.2:", when="@4.18:", type=("build", "run"))
-    depends_on("py-attrs@17.4:", when="@3:", type=("build", "run"))
-    depends_on("py-jsonschema-specifications@2023.03.6:", when="@4.18:", type=("build", "run"))
-    depends_on("py-referencing@0.28.4:", when="@4.18:", type=("build", "run"))
-    depends_on("py-rpds-py@0.7.1:", when="@4.18:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@4.26:")
+        depends_on("python@3.9:", when="@4.24:")
+        depends_on("python@3.8:", when="@4.18:")
 
-    # Historical dependencies
-    depends_on(
-        "py-importlib-resources@1.4:", when="@4.2.1:4.23 ^python@:3.8", type=("build", "run")
-    )
-    depends_on("py-importlib-resources", when="@4.2.0 ^python@:3.8", type=("build", "run"))
-    depends_on("py-pkgutil-resolve-name@1.3.10:", when="@4.10.0:4.23 ^python@:3.8")
-    depends_on("py-setuptools@40.6.0:", when="@4:4.4", type="build")
-    depends_on("py-setuptools", when="@3", type=("build", "run"))
-    depends_on("py-setuptools", when="@:2", type="build")
-    depends_on("py-vcversioner", when="@:2", type="build")
-    depends_on("py-setuptools-scm+toml@3.4:", when="@4.4.0", type="build")
-    depends_on("py-setuptools-scm", when="@3", type="build")
-    depends_on("py-six@1.11:", when="@3", type=("build", "run"))
-    depends_on("py-pyrsistent@0.14:", when="@3:4.17", type=("build", "run"))
-    depends_on("py-importlib-metadata", when="@3.1.1:4.17 ^python@:3.7", type=("build", "run"))
-    depends_on("py-typing-extensions", when="@4.3:4.17 ^python@:3.7", type=("build", "run"))
+        depends_on("py-attrs@22.2:", when="@4.18:")
+        depends_on("py-attrs@17.4:", when="@3:")
+        depends_on("py-jsonschema-specifications@2023.03.6:", when="@4.18:")
+        depends_on("py-referencing@0.28.4:", when="@4.18:")
+        depends_on("py-rpds-py@0.25:", when="@4.26:")
+        depends_on("py-rpds-py@0.7.1:", when="@4.18:")
+
+        with when("+format-nongpl"):
+            depends_on("py-fqdn", when="@4:")
+            depends_on("py-idna")
+            depends_on("py-isoduration", when="@4:")
+            depends_on("py-jsonpointer@1.14:")
+            depends_on("py-rfc3339-validator")
+            depends_on("py-rfc3986-validator@0.1.1:")
+            depends_on("py-rfc3987-syntax@1.1.0:", when="@4.25:")
+            depends_on("py-uri-template", when="@4:")
+            depends_on("py-webcolors@24.6:", when="@4.23:")
+            depends_on("py-webcolors@1.11:", when="@4:")
+            depends_on("py-webcolors")
+
+        # Historical dependencies
+        depends_on("py-importlib-metadata", when="@3.1.1:4.17 ^python@:3.7")
+        depends_on("py-importlib-resources@1.4:", when="@4.2.1:4.23 ^python@:3.8")
+        depends_on("py-importlib-resources", when="@4.2.0 ^python@:3.8")
+        depends_on("py-pkgutil-resolve-name@1.3.10:", when="@4.10.0:4.23 ^python@:3.8")
+        depends_on("py-pyrsistent@0.14:", when="@3:4.17")
+        depends_on("py-setuptools", when="@3")
+        depends_on("py-six@1.11:", when="@3")
+        depends_on("py-typing-extensions", when="@4.3:4.17 ^python@:3.7")
 
     conflicts("^py-pyrsistent@0.17.0:0.17.2")
-
-    with when("+format-nongpl"):
-        depends_on("py-fqdn", when="@4:", type=("build", "run"))
-        depends_on("py-idna", type=("build", "run"))
-        depends_on("py-isoduration", when="@4:", type=("build", "run"))
-        depends_on("py-jsonpointer@1.14:", type=("build", "run"))
-        depends_on("py-rfc3339-validator", type=("build", "run"))
-        depends_on("py-rfc3986-validator@0.1.1:", type=("build", "run"))
-        depends_on("py-uri-template", when="@4:", type=("build", "run"))
-        depends_on("py-webcolors@24.6:", when="@4.23:", type=("build", "run"))
-        depends_on("py-webcolors@1.11:", when="@4:", type=("build", "run"))
-        depends_on("py-webcolors", type=("build", "run"))
