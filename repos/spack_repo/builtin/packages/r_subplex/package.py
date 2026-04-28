@@ -25,5 +25,8 @@ class RSubplex(RPackage):
     version("1.5-2", sha256="6f8c3ccadf1ccd7f11f3eae28cec16eed3695f14e351b864d807dbaba6cd3ded")
     version("1.4-1", sha256="94b7b961aaa229a6f025151191ed50272af1394be69f1c41146b9e8c786caec6")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@2.5.1:", type=("build", "run"))
     depends_on("r@4.1.0:", type=("build", "run"), when="@1.9:")

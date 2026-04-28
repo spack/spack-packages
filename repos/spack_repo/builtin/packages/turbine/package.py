@@ -79,11 +79,7 @@ class Turbine(AutotoolsPackage):
         if "+r" in self.spec:
             r_location = "{0}/rlib/R".format(self.spec["r"].prefix)
             if not os.path.exists(r_location):
-                rscript = which("Rscript")
-                if rscript is not None:
-                    r_location = rscript("-e", "cat(R.home())", output=str)
-                else:
-                    msg = "Could not locate Rscript on your PATH!"
-                    raise RuntimeError(msg)
+                rscript = which("Rscript", required=True)
+                r_location = rscript("-e", "cat(R.home())", output=str)
             args.append("--with-r={0}".format(r_location))
         return args

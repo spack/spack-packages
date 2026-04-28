@@ -45,6 +45,8 @@ class RSpatstatLinnet(RPackage):
     version("2.3-2", sha256="9c78a4b680debfff0f3ae934575c30d03ded49bc9a7179475384af0ebaf13778")
     version("2.3-1", sha256="119ba6e3da651aa9594f70a7a35349209534215aa640c2653aeddc6aa25038c3")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r-spatstat-model@3.2-1:", type=("build", "run"), when="@3.1-0:")
     depends_on("r-spatstat-model@3.2-11.005:", type=("build", "run"), when="@3.2-1:")

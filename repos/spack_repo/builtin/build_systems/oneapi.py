@@ -24,6 +24,7 @@ from spack.package import (
     mkdirp,
     redistribute,
     shared_library_suffix,
+    symlink,
     tty,
     variant,
 )
@@ -60,8 +61,8 @@ class IntelOneApiPackage(Package):
     def update_description(cls):
         """Updates oneapi package descriptions with common text."""
 
-        text = """ LICENSE INFORMATION: By downloading and using this software, you agree to the terms
-        and conditions of the software license agreements at https://intel.ly/393CijO."""
+        text = """ LICENSE INFORMATION: By downloading and using this software, you agree to the
+        terms and conditions of the software license agreements at https://intel.ly/393CijO."""
         cls.__doc__ = cls.__doc__ + text
         return cls
 
@@ -182,7 +183,7 @@ class IntelOneApiPackage(Package):
                 link_tree = LinkTree(src_path)
                 link_tree.merge(dest_path)
             else:
-                os.symlink(src_path, dest_path)
+                symlink(src_path, dest_path)
 
 
 class IntelOneApiLibraryPackage(IntelOneApiPackage):
@@ -226,10 +227,9 @@ class IntelOneApiLibraryPackage(IntelOneApiPackage):
             )
 
         # query the compiler for the library path
-        with self.compiler.compiler_environment():
-            omp_lib_path = Executable(self.compiler.cc)(
-                "--print-file-name", f"{libname}.{shared_library_suffix(self.spec)}", output=str
-            ).strip()
+        omp_lib_path = Executable(self.compiler.cc)(
+            "--print-file-name", f"{libname}.{shared_library_suffix(self.spec)}", output=str
+        ).strip()
 
         # Newer versions of clang do not give the full path to libomp. If that's
         # the case, look in a path relative to the compiler where libomp is

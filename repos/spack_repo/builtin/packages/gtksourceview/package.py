@@ -4,11 +4,12 @@
 
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
 
 
-class Gtksourceview(AutotoolsPackage):
+class Gtksourceview(MesonPackage, AutotoolsPackage):
     """GtkSourceView is a GNOME library that extends GtkTextView, the
     standard GTK+ widget for multiline text editing. GtkSourceView adds
     support for syntax highlighting, undo/redo, file loading and saving,
@@ -21,12 +22,17 @@ class Gtksourceview(AutotoolsPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("4.8.4", sha256="7ec9d18fb283d1f84a3a3eff3b7a72b09a10c9c006597b3fbabbb5958420a87d")
     version("4.2.0", sha256="c431eb234dc83c7819e58f77dd2af973252c7750da1c9d125ddc94268f94f675")
     version("3.24.11", sha256="691b074a37b2a307f7f48edc5b8c7afa7301709be56378ccf9cc9735909077fd")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+
+    build_system(
+        conditional("autotools", when="@:4.2"), conditional("meson", when="@4.8:"), default="meson"
+    )
 
     depends_on("m4", type="build")
     depends_on("autoconf", type="build")
@@ -36,13 +42,14 @@ class Gtksourceview(AutotoolsPackage):
     depends_on("intltool", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("gettext")
-    depends_on("glib@2.48.0:", when="@3.24.11:4.2.0")
-    depends_on("gtkplus@3.20.0:", when="@3.24.11:4.2.0")
-    depends_on("libxml2@2.6:", when="@3.24.11:4.2.0")
+    depends_on("glib@2.48.0:", when="@3.24.11:")
+    depends_on("gtkplus@3.20.0:", when="@3.24.11:")
+    depends_on("libxml2@2.6:", when="@3.24.11:")
     depends_on("pango")
     depends_on("gdk-pixbuf")
     depends_on("atk")
     depends_on("iconv")
+    depends_on("vala", when="@4.8:")
 
     def url_for_version(self, version):
         url = "https://download.gnome.org/sources/gtksourceview/"
@@ -68,5 +75,5 @@ class Gtksourceview(AutotoolsPackage):
     # TODO: If https://github.com/spack/spack/pull/12344 is merged, this
     # method is unnecessary.
     def autoreconf(self, spec, prefix):
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         autoreconf("-ifv")

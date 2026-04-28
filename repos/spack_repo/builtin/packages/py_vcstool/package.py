@@ -16,6 +16,7 @@ class PyVcstool(PythonPackage):
     homepage = "https://github.com/dirk-thomas/vcstool"
     pypi = "vcstool/vcstool-0.2.15.tar.gz"
 
+    version("0.3.0", sha256="04b3a963e15386660f139e5b95d293e43e3cb414e3b13e14ee36f5223032ee2c")
     version("0.2.15", sha256="b1fce6fcef7b117b245a72dc8658a128635749d01dc7e9d1316490f89f9c2fde")
 
     depends_on("py-pyyaml", type=("build", "run"))

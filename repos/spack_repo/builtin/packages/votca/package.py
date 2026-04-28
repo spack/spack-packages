@@ -21,6 +21,8 @@ class Votca(CMakePackage):
     maintainers("junghans")
 
     version("master", branch="master")
+    version("2026", sha256="1445d2a6dad8577f24c480e49decc4d8676cce4146fa751c09085f5deee9d372")
+    version("2025.1", sha256="f7244b3e4c531675e5d53912073b235cd310127309795fb0ed8615ffaeb27718")
     version("2025", sha256="6adacdae41f8737e42ca7153c0aa1c7df4e89a67fbece5e6eff32dfc0486418d")
     version("2024.2", sha256="aa9ea3ad54dae31d3f68685d12f3bad4910ef3034a7f51c9ddd573b3856f4bc8")
     version("2024.1", sha256="68669a7d09020f780d2633eb865c6c53e5fb38d155f80c9670ebf9d10d10bee6")
@@ -31,7 +33,10 @@ class Votca(CMakePackage):
 
     variant("mkl", default=False, description="Build with MKL support")
     variant(
-        "new-gmx", default=False, description="Build against gromacs>2019 - no tabulated kernels"
+        "new-gmx",
+        default=False,
+        description="Build against gromacs>2019 - no tabulated kernels",
+        when="@:2025.1",
     )
     variant("xtp", default=True, description="Build xtp parts of votca")
 

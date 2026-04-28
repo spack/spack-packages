@@ -28,3 +28,15 @@ class Mct(AutotoolsPackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("mpi")
+
+    # MCT build is static only, need -fPIC to link in shared environment;
+    # unfortunately, also need to set FCFLAGS and not just FFLAGS
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            flags.append(self["c"].pic_flag)
+        elif name == "fflags":
+            flags.append(self["fortran"].pic_flag)
+        return (None, flags, None)
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        env.set("FCFLAGS", self["fortran"].pic_flag)

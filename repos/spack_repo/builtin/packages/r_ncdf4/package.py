@@ -38,5 +38,6 @@ class RNcdf4(RPackage):
     version("1.15", sha256="d58298f4317c6c80a041a70216126492fd09ba8ecde9da09d5145ae26f324d4d")
 
     depends_on("c", type="build")
+    depends_on("gmake", type="build")
 
     depends_on("netcdf-c@4.1:")

@@ -16,6 +16,9 @@ class Libedit(AutotoolsPackage):
     license("BSD-3-Clause", checked_by="wdconinc")
 
     version(
+        "20251016-3.1", sha256="21362b00653bbfc1c71f71a7578da66b5b5203559d43134d2dd7719e313ce041"
+    )
+    version(
         "3.1-20240808", sha256="5f0573349d77c4a48967191cdd6634dd7aa5f6398c6a57fe037cc02696d6099f"
     )
     version(

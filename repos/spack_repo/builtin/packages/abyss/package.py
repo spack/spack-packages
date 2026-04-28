@@ -73,8 +73,11 @@ class Abyss(AutotoolsPackage):
             f"--with-sqlite={self.spec['sqlite'].prefix}",
             f"--with-mpi={self.spec['mpi'].prefix}",
         ]
+
         if maxk:
             args.append(f"--enable-maxk={maxk}")
-        if self.spec["mpi"].name == "mpich":
+
+        if self.spec.satisfies("%mpi=mpich"):
             args.append("--enable-mpich")
+
         return args

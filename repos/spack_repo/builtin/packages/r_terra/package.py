@@ -24,6 +24,8 @@ class RTerra(RPackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.9-11", sha256="590f3a35c03bbc69e40bfa1475d12caac4b837fb77b449ee14ecba4f2c5e881a")
+    version("1.8-86", sha256="a446375352d1a01d6bb9ec0a0ac0031ac11a1252567278bd34b4a136f6de7474")
     version("1.7-78", sha256="658956b79d8a1371aefdf7300316f1756b58d436ba549ade012307684b2d4b7e")
     version("1.7-29", sha256="3f39b052a34c9f1166a342be4c25bbdc1e2c81402edb734901d63fc6fa547ca5")
     version("1.6-17", sha256="db888f4220ca511332f4d011345b2b207fcc1de26d2eae473e0eeb5dfd8bbc02")
@@ -32,6 +34,11 @@ class RTerra(RPackage):
     version("1.5-12", sha256="865cc14ee8c3239037c08170df4011eed27cf638ac1d05f0b7cd704abf97cc19")
     version("1.4-22", sha256="b8eccfa36764577248d7b390e24af6db65fb8824c07f9b782bd6b83c4d2b3976")
 
+    variant("tbb", default=False, description="Enable parallel processing via Intel TBB")
+
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r-rcpp", type=("build", "run"))
     depends_on("r-rcpp@1.0-10:", type=("build", "run"), when="@1.7-29:")
@@ -39,3 +46,4 @@ class RTerra(RPackage):
     depends_on("geos@3.4.0:")
     depends_on("proj@4.9.3:")
     depends_on("sqlite")
+    depends_on("intel-oneapi-tbb", when="+tbb")

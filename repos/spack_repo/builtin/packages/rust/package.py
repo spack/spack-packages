@@ -38,6 +38,8 @@ class Rust(Package):
     version("nightly")
 
     # Stable versions.
+    version("1.92.0", sha256="9e0d2ca75c7e275fdc758255bf4b03afb3d65d1543602746907c933b6901c3b8")
+    version("1.86.0", sha256="022a27286df67900a044d227d9db69d4732ec3d833e4ffc259c4425ed71eed80")
     version("1.85.0", sha256="2f4f3142ffb7c8402139cfa0796e24baaac8b9fd3f96b2deec3b94b4045c6a8a")
     version("1.83.0", sha256="722d773bd4eab2d828d7dd35b59f0b017ddf9a97ee2b46c1b7f7fac5c8841c6e")
     version("1.81.0", sha256="872448febdff32e50c3c90a7e15f9bb2db131d13c588fe9071b0ed88837ccfa7")
@@ -86,6 +88,8 @@ class Rust(Package):
     depends_on("rust-bootstrap@nightly", type="build", when="@nightly")
 
     # Stable version dependencies
+    depends_on("rust-bootstrap@1.91:1.92", type="build", when="@1.92")
+    depends_on("rust-bootstrap@1.85:1.86", type="build", when="@1.86")
     depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85")
     depends_on("rust-bootstrap@1.82:1.83", type="build", when="@1.83")
     depends_on("rust-bootstrap@1.80:1.81", type="build", when="@1.81")
@@ -177,6 +181,23 @@ class Rust(Package):
 
         if certs is not None:
             env.set("CARGO_HTTP_CAINFO", certs)
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        env.set("CARGO_HOME", join_path(dependent_spec.package.stage.path, "cargo"))
+
+        # Until we get a little more integration with cargo or offload solving to spack
+        # (how to do this is TBD), we need it to fall back to older package versions
+        # when the latest version doesn't support our rust toolchain version. This
+        # option allows Spack to be slightly behind the latest rust in CI.
+        #
+        # This is safe as long as rust is using static libraries and there are not ABI
+        # dependencies among rust packages in Spack.
+        #
+        # This is supported in Cargo 1.84 and higher.
+        if self.spec.satisfies("@1.84:"):
+            env.set("CARGO_RESOLVER_INCOMPATIBLE_RUST_VERSIONS", "fallback")
 
     def configure(self, spec, prefix):
         opts = []

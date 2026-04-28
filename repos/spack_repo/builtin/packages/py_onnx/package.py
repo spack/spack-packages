@@ -19,9 +19,17 @@ class PyOnnx(PythonPackage):
 
     homepage = "https://github.com/onnx/onnx"
     pypi = "Onnx/onnx-1.6.0.tar.gz"
+    git = "https://github.com/onnx/onnx.git"
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    maintainers("wdconinc")
+
+    version("main", branch="main")
+    version("1.20.0", sha256="1a93ec69996b4556062d552ed1aa0671978cfd3c17a40bf4c89a1ae169c6a4ad")
+    version("1.19.1", sha256="737524d6eb3907d3499ea459c6f01c5a96278bb3a0f2ff8ae04786fb5d7f1ed5")
+    version("1.19.0", sha256="aa3f70b60f54a29015e41639298ace06adf1dd6b023b9b30f1bca91bb0db9473")
+    version("1.18.0", sha256="3d8dbf9e996629131ba3aa1afd1d8239b660d1f830c6688dd7e03157cccd6b9c")
     version("1.17.0", sha256="48ca1a91ff73c1d5e3ea2eef20ae5d0e709bb8a2355ed798ffc2169753013fd3")
     version("1.16.2", sha256="b33a282b038813c4b69e73ea65c2909768e8dd6cc10619b70632335daf094646")
     version("1.16.1", sha256="8299193f0f2a3849bfc069641aa8e4f93696602da8d165632af8ee48ec7556b6")
@@ -38,18 +46,29 @@ class PyOnnx(PythonPackage):
     version("1.6.0", sha256="3b88c3fe521151651a0403c4d131cb2e0311bd28b753ef692020a432a81ce345")
     version("1.5.0", sha256="1a584a4ef62a6db178c257fffb06a9d8e61b41c0a80bfd8bcd8a253d72c4b0b4")
 
-    depends_on("c", type="build")
+    depends_on("c", type="build", when="@:1.18")
     depends_on("cxx", type="build")
 
     # CMakeLists.txt
     depends_on("cmake@3.1:", type="build")
     depends_on("cmake@3.14:", type="build", when="@1.17:")
-    depends_on("py-pybind11@2.2:", type=("build", "link"))
+    depends_on("cmake@3.18:", type="build", when="@1.18:")
+    depends_on("cmake@3.24:", type="build", when="@1.19:")
+    depends_on("cmake@3.26:", type="build", when="@1.20:")
+    depends_on("py-pybind11@2.2:", type=("build", "link"), when="@:1.19")
+    depends_on("py-nanobind@2.8:", type=("build", "link"), when="@1.20:")
 
-    # requirements.txt
+    # pyproject.toml
+    depends_on("python@3.10:", when="@1.20:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.18:", type=("build", "run"))
+    depends_on("python@3.8:", when="@1.15:", type=("build", "run"))
+    depends_on("py-setuptools@77:", type="build", when="@1.20:")
     depends_on("py-setuptools@64:", type="build")
     depends_on("py-setuptools", type="build")
+
+    # requirements.txt
     depends_on("protobuf")
+    depends_on("py-protobuf@4.25.1:", type=("build", "run"), when="@1.18:")
     depends_on("py-protobuf@3.20.2:", type=("build", "run"), when="@1.15:")
     depends_on("py-protobuf@3.20.2:3", type=("build", "run"), when="@1.13")
     depends_on("py-protobuf@3.12.2:3.20.1", type=("build", "run"), when="@1.12")
@@ -62,10 +81,14 @@ class PyOnnx(PythonPackage):
     # https://github.com/onnx/onnx/pull/3112
     depends_on("py-protobuf@:3.17", type=("build", "run"), when="@:1.8")
     depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-numpy@1.16.6:", type=("build", "run"), when="@1.8.1:1.13")
-    depends_on("py-numpy@1.20:", type=("build", "run"), when="@1.16.0:")
+    depends_on("py-numpy@1.23.2:", type=("build", "run"), when="@1.20:")
+    depends_on("py-numpy@1.22:", type=("build", "run"), when="@1.18:")
     depends_on("py-numpy@1.21:", type=("build", "run"), when="@1.16.2:")
+    depends_on("py-numpy@1.20:", type=("build", "run"), when="@1.16.0:")
+    depends_on("py-numpy@1.16.6:", type=("build", "run"), when="@1.8.1:1.13")
     depends_on("py-numpy@:1", type=("build", "run"), when="@:1.16")
+    depends_on("py-typing-extensions@4.7.1:", type=("build", "run"), when="@1.18:")
+    depends_on("py-ml-dtypes@0.5:", type=("build", "run"), when="@1.19:")
 
     # Historical dependencies
     depends_on("py-six", type=("build", "run"), when="@:1.8.1")
@@ -87,6 +110,10 @@ class PyOnnx(PythonPackage):
         sha256="be12f589bc4113982e4162efcdbd95835a6c161a9a7e10cd1dde026cadedf8aa",
         when="@1.15.0 ^abseil-cpp cxxstd=20",
     )
+
+    # Allow conversion from OpSchema to OpSchemaRegisterOnce (needed for onnxruntime)
+    # Ref: https://github.com/onnx/onnx/pull/7390
+    patch("OpSchemaRegisterOnce.patch", when="@1.18.0:1.19")
 
     # By default, ONNX always uses .setuptools-cmake-build/ under the source path,
     # so we allow overriding with a build environment variable

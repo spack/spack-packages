@@ -15,13 +15,25 @@ class RocmSmiLib(CMakePackage):
     for applications to monitor and control GPU applications."""
 
     homepage = "https://github.com/ROCm/rocm_smi_lib"
-    git = "https://github.com/ROCm/rocm_smi_lib.git"
-    url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-systems.git"
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath")
     libraries = ["librocm_smi64"]
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocm_smi_lib/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    version("7.1.1", sha256="f47550aeeb2827a3ae857c35e16f5a9042de70d911abab80bebe4840c9ecd4fd")
+    version("7.1.0", sha256="eab6c7a85deb992b5cf511cdf7d0a6f8a93e46a0bfb6cf66c73d95c26dc4ce5e")
+    version("7.0.2", sha256="cdd7951fb46b79f6791340da21fc47dc3e719f82795f2e1f5546bb7d35db954c")
+    version("7.0.0", sha256="c41c5e697d53201108608916c6e495514b0695c0fbbac8d524820f7ae2af3fdb")
     version("6.4.3", sha256="74fde0f8cd9362f7073db22ffb98c72f1f7bdb42b6e7a63ae4e0a06607644d4a")
     version("6.4.2", sha256="466f6351c1d94c043195c6b5addd70d21eb1e678d5637b9849dc6b5d0e858cb5")
     version("6.4.1", sha256="c82c8c9de89537b903d82711c531b4b1c6d104098b5370d049527d1f250944b7")
@@ -69,6 +81,12 @@ class RocmSmiLib(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -87,16 +105,22 @@ class RocmSmiLib(CMakePackage):
         "6.4.1",
         "6.4.2",
         "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 
-    depends_on("pkg-config", when="@6.4:")
+    depends_on("pkgconfig", when="@6.4:")
     depends_on("libdrm", when="@6.4:")
 
     patch(
         "https://github.com/ROCm/rocm_smi_lib/commit/11f12b86517d0e9868f4d16d74d4e8504c3ba7da.patch?full_index=1",
         sha256="62be7262f6e1e71bf82a03f500a424a536638f04e913d0f4b477f60e8e1190fd",
-        when="@6.1.1:",
+        when="@6.1.1:6",
     )
 
     patch(
@@ -105,6 +129,13 @@ class RocmSmiLib(CMakePackage):
         when="@6.4.0",
     )
     patch("0001-add-libdrm-include-dir.patch", when="@6.4")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocm-smi-lib"
+        else:
+            return "."
 
     def cmake_args(self):
         args = [
@@ -137,5 +168,7 @@ class RocmSmiLib(CMakePackage):
     @run_after("build")
     @on_package_attributes(run_tests=True)
     def check_build(self):
-        exe = which(join_path(self.build_directory, "tests", "rocm_smi_test", "rsmitst"))
+        exe = which(
+            join_path(self.build_directory, "tests", "rocm_smi_test", "rsmitst"), required=True
+        )
         exe()

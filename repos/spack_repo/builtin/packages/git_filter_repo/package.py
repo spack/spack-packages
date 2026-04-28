@@ -18,10 +18,12 @@ class GitFilterRepo(Package):
 
     license("MIT")
 
+    version("2.47.0", sha256="4662cbe5918196a9f1b5b3e1211a32e61cff1812419c21df4f47c5439f09e902")
     version("2.38.0", sha256="db954f4cae9e47c6be3bd3161bc80540d44f5379cb9cf9df498f4e019f0a41a9")
     version("2.34.0", sha256="b1bf46af1e6a91a54056d0254e480803db8e40f631336c559a1a94d2a08389c4")
 
     depends_on("git@2.22.0:", type="run")
+    depends_on("python@3.6:", when="@2.47:", type="run")
     depends_on("python@3.5:", type="run")
 
     def install(self, spec, prefix):

@@ -13,13 +13,26 @@ class RoctracerDevApi(Package):
     For the ROC-tracer library, please check out roctracer-dev."""
 
     homepage = "https://github.com/ROCm/roctracer"
-    git = "https://github.com/ROCm/roctracer.git"
+    git = "https://github.com/ROCm/rocm-systems.git"
     url = "https://github.com/ROCm/roctracer/archive/refs/tags/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
 
+    tags = ["rocm"]
+    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     license("MIT")
 
-    maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/roctracer/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    version("7.1.1", sha256="dec80803c6d2d684759172145177849efda65672645b95a2f2ad1a84335043bb")
+    version("7.1.0", sha256="a90077e2080531803dac154e64d6d481289a5839493ce131c4edc8b5ac1bc294")
+    version("7.0.2", sha256="c9dc54fc8b68a7598b3e9453f7962a87cb02e86d64e5681452ebafd62fb85e96")
+    version("7.0.0", sha256="c1f435b8040c6d34720eeadf837bc888b1c5aaccbfd7efaff4d602f1957f812f")
     version("6.4.3", sha256="a4378652b3b7141ca3b2743eedada03757383bff88932db8e28d0afd5869b882")
     version("6.4.2", sha256="c9bc3390fe4c406cc2b2bdb5a7e9f088e0107825624c9cd7b2a6ec120bc73ef8")
     version("6.4.1", sha256="57d61441d95b05b12cd05210a80d81cd1d7a21dab7487680897427dfbdafddca")
@@ -42,7 +55,10 @@ class RoctracerDevApi(Package):
     depends_on("cxx", type="build")  # generated
 
     def install(self, spec, prefix):
-        source_directory = self.stage.source_path
+        if self.spec.satisfies("@7.2:"):
+            source_directory = f"{self.stage.source_path}/projects/roctracer"
+        else:
+            source_directory = self.stage.source_path
         include = join_path(source_directory, "inc")
 
         def only_headers(p):

@@ -20,6 +20,8 @@ class TreeSitter(MakefilePackage):
 
     license("MIT")
 
+    version("0.26.3", sha256="7f4a7cf0a2cd217444063fe2a4d800bc9d21ed609badc2ac20c0841d67166550")
+    version("0.26.2", sha256="3cda4166a049fc736326941d6f20783b698518b0f80d8735c7754a6b2d173d9a")
     version("0.25.3", sha256="862fac52653bc7bc9d2cd0630483e6bdf3d02bcd23da956ca32663c4798a93e3")
     version("0.25.2", sha256="26791f69182192fef179cd58501c3226011158823557a86fe42682cb4a138523")
     version("0.25.1", sha256="99a2446075c2edf60e82755c48415d5f6e40f2d9aacb3423c6ca56809b70fe59")
@@ -47,15 +49,53 @@ class TreeSitter(MakefilePackage):
     version("0.20.2", sha256="2a0445f8172bbf83db005aedb4e893d394e2b7b33251badd3c94c2c5cc37c403")
     version("0.20.1", sha256="12a3f7206af3028dbe8a0de50d8ebd6d7010bf762db918acae76fc7585f1258d")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    variant("cli", default=False, description="Build CLI tool")
 
-    def edit(self, spec, prefix):
-        env["PREFIX"] = prefix
+    depends_on("c", type="build")
 
-        # Starting from 0.25.0 endianness is taken into account using system headers
+    with when("+cli"):
+        depends_on("rust", type="build", when="+cli")
+
+        # tree-sitter-cli needs a c compiler and a javascript runtime
+        # https://tree-sitter.github.io/tree-sitter/creating-parsers/1-getting-started.html#dependencies
+        depends_on("c", type="run")
+        depends_on("node-js", type="run")
+
+        # tree-sitter-cli depends on rust-bindgen, which needs libclang (transitive dependency)
+        # https://github.com/rust-lang/rust-bindgen/blob/main/book/src/requirements.md#clang
+        depends_on("llvm@9: +clang", type="build")
+
+    patch(
+        "https://github.com/tree-sitter/tree-sitter/pull/5226.patch?full_index=1",
+        sha256="f690ba222c524f93f9dd1b679b46384ace53f184f9836d26e028ac6e4087fe8a",
+        when="@0.26:0.26.3",
+    )
+
+    def setup_build_environment(self, env):
+        env.set("PREFIX", self.prefix)
+
+        # Starting from 0.25 endianness is taken into account using system headers
         #   https://github.com/tree-sitter/tree-sitter/pull/3740
         # but GLIBC provides them according to some defines that changed over time.
         #   https://www.sourceware.org/glibc/wiki/Release/2.20#Deprecation_of__BSD_SOURCE_and__SVID_SOURCE_feature_macros
-        if spec.satisfies("@0.25: ^glibc@:2.19"):
-            filter_file("-D_DEFAULT_SOURCE", "-D_BSD_SOURCE", "Makefile")
+        if self.spec.satisfies("@0.25 ^glibc@:2.19"):
+            env.append_flags("CFLAGS", "-D_BSD_SOURCE")
+
+    def build(self, spec, prefix):
+        super().build(spec, prefix)
+
+        if spec.satisfies("+cli"):
+            cargo = Executable("cargo")
+            cargo("build")
+
+    def install(self, spec, prefix):
+        super().install(spec, prefix)
+
+        if spec.satisfies("+cli"):
+            cargo = Executable("cargo")
+            if spec.satisfies("@0.26:"):
+                crate_cli_path = "crates/cli"
+            else:
+                crate_cli_path = "cli"
+
+            cargo("install", "--root", prefix, "--path", crate_cli_path)

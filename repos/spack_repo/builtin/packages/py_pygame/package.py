@@ -14,10 +14,11 @@ class PyPygame(PythonPackage):
     the most common functions, making writing these programs a more intuitive task."""
 
     homepage = "https://www.pygame.org/"
-    url = "https://pypi.org/project/pygame/2.5.2/"
+    pypi = "pygame/pygame-2.5.2.tar.gz"
 
     license("LGPL-2.1-only")
 
+    version("2.6.1", sha256="56fb02ead529cee00d415c3e007f75e0780c655909aaa8e8bf616ee09c9feb1f")
     version("2.5.2", sha256="c1b89eb5d539e7ac5cf75513125fb5f2f0a2d918b1fd6e981f23bf0ac1b1c24a")
 
     depends_on("py-setuptools", type="build")

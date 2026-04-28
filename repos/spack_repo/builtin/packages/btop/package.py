@@ -20,6 +20,7 @@ class Btop(MakefilePackage, CMakePackage):
 
     license("Apache-2.0")
 
+    version("1.4.6", sha256="4beb90172c6acaac08c1b4a5112fb616772e214a7ef992bcbd461453295a58be")
     version("1.4.4", sha256="98d464041015c888c7b48de14ece5ebc6e410bc00ca7bb7c5a8010fe781f1dd8")
     version("1.4.3", sha256="81b133e59699a7fd89c5c54806e16452232f6452be9c14b3a634122e3ebed592")
     version("1.4.0", sha256="ac0d2371bf69d5136de7e9470c6fb286cbee2e16b4c7a6d2cd48a14796e86650")
@@ -35,11 +36,14 @@ class Btop(MakefilePackage, CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.24:", type="build", when="@1.3.0: build_system=cmake")
+    depends_on("cmake@3.25:", type="build", when="@v1.4.1: build_system=cmake")
+    depends_on("googletest@1.17:", type="test", when="@1.4.6: build_system=cmake")
 
     # Fix linking GPU support, by adding an explicit "target_link_libraries" to ${CMAKE_DL_LIBS}
     patch("link-dl.patch", when="+gpu @:1.4.0")
 
     requires("%gcc@10:", "%clang@16:", policy="one_of", msg="C++ 20 is required")
+    requires("%gcc@14:", "%clang@19:", policy="one_of", msg="C++ 23 is required", when="@1.4.6:")
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
@@ -52,4 +56,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("BTOP_GPU", "gpu")]
+        return [
+            self.define_from_variant("BTOP_GPU", "gpu"),
+            self.define("BUILD_TESTING", self.pkg.run_tests),
+        ]
