@@ -33,6 +33,8 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     license("BSD-3-Clause", when="@:2024")
 
     version("develop", branch="develop")
+    version("2026.0.stable", branch="release/2026.0")
+    version("2026.0.0", tag="2026.0.0", commit="7134ddc4bc68b0c7a92f31d1268bdd01e177efc0")
     version("2025.1.stable", branch="release/2025.1")
     version("2025.1.2", tag="2025.1.2", commit="b2f42a93d7f40a20398d35905d8d54a4568cb52e")
     version("2025.1.1", tag="2025.1.1", commit="a1ffae9da0e7da042c70e6ed592db35286e4483d")
@@ -207,7 +209,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
-    depends_on("oneapi-igc", when="+gtpin")
+    depends_on("oneapi-igc", when="+level_zero")
     depends_on("intel-gtpin", when="+gtpin")
     depends_on("opencl-c-headers", when="+opencl")
 
@@ -391,11 +393,11 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
         if spec.satisfies("+level_zero"):
             args.append("--with-level0=%s" % spec["oneapi-level-zero"].prefix)
+            args.append("--with-igc=%s" % spec["oneapi-igc"].prefix)
 
             # gtpin requires level_zero
             if spec.satisfies("+gtpin"):
                 args.append("--with-gtpin=%s" % spec["intel-gtpin"].prefix)
-                args.append("--with-igc=%s" % spec["oneapi-igc"].prefix)
 
         if spec.satisfies("+opencl"):
             args.append("--with-opencl=%s" % spec["opencl-c-headers"].prefix)
@@ -513,10 +515,10 @@ class MesonBuilder(meson.MesonBuilder):
 
         if spec.satisfies("+level_zero"):
             cfg["properties"]["prefix_level0"] = f"'''{spec['oneapi-level-zero'].prefix}'''"
+            cfg["properties"]["prefix_igc"] = f"'''{spec['oneapi-igc'].prefix}'''"
 
         if spec.satisfies("+gtpin"):
             cfg["properties"]["prefix_gtpin"] = f"'''{spec['intel-gtpin'].prefix}'''"
-            cfg["properties"]["prefix_igc"] = f"'''{spec['oneapi-igc'].prefix}'''"
 
         if spec.satisfies("+opencl"):
             cfg["properties"]["prefix_opencl"] = f"'''{spec['opencl-c-headers'].prefix}'''"
