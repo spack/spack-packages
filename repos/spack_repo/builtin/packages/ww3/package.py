@@ -13,7 +13,7 @@ class Ww3(CMakePackage):
 
     homepage = "https://github.com/NOAA-EMC/WW3"
     url = "https://github.com/NOAA-EMC/WW3"
-    git = "https://github.com/metocean/WW3.git"
+    git = "https://github.com/NOAA-EMC/WW3.git"
 
     maintainers("rsoutelino")
 
