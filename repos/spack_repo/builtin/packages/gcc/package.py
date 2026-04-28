@@ -471,7 +471,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
         patch(
             "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..5e090fc0112f86cbcaebb6065ad97ea599868505.patch?full_index=1",
-            sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
+            sha256="d74542461b22ae2d23533323e01861f4c66d252345c51682740f521a74412500",
             when="@14.2.0",
         )
         patch(
