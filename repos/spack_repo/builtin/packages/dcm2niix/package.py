@@ -14,7 +14,7 @@ class Dcm2niix(CMakePackage):
     homepage = "https://github.com/rordenlab/dcm2niix"
     url = "https://github.com/rordenlab/dcm2niix/archive/refs/tags/v1.0.20220720.tar.gz"
 
-    license("BSD-3-Clause", checked_by="Markus92")
+    license("BSD-3-Clause AND MIT", checked_by="Markus92")
 
     version(
         "1.0.20250506", sha256="1b24658678b6c24141e58760dbea9fe2786ffdd736bcc37a36d9cdabc731bafa"
