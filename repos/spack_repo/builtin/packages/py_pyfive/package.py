@@ -27,4 +27,6 @@ class PyPyfive(PythonPackage):
         depends_on("py-setuptools-scm@8:")
     with default_args(type=("build", "run")):
         depends_on("py-numpy@2:")
+        # Not in pyproject.toml but necessary to import the 'pyfive' module.
+        # This dependence appears in high_level.py on line 13
         depends_on("py-typing-extensions")
