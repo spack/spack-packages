@@ -124,7 +124,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
         depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
 
-    for tgt in itertools.chain(["auto"], ROCmPackage.amdgpu_targets):
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
         depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
         depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
 

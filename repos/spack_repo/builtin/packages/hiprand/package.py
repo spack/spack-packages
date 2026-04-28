@@ -116,7 +116,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("rocrand@" + ver, when="+rocm @" + ver)
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
 
-    for tgt in itertools.chain(["auto"], ROCmPackage.amdgpu_targets):
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
         depends_on(
             "rocrand amdgpu_target={0}".format(tgt), when="+rocm amdgpu_target={0}".format(tgt)
         )

@@ -74,7 +74,7 @@ class Rocal(CMakePackage):
         "7.2.0",
         "7.2.1",
     ]:
-        for tgt in itertools.chain(["auto"], ROCmPackage.amdgpu_targets):
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"mivisionx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rpp@{ver}", when=f"@{ver}")

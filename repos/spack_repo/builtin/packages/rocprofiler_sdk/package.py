@@ -190,7 +190,7 @@ class RocprofilerSdk(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], ROCmPackage.amdgpu_targets):
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rccl@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -206,7 +206,7 @@ class RocprofilerSdk(CMakePackage):
         "7.2.0",
         "7.2.1",
     ]:
-        for tgt in itertools.chain(["auto"], ROCmPackage.amdgpu_targets):
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     patch(
