@@ -141,6 +141,13 @@ class PyPyomo(PythonPackage):
     depends_on("py-pandas", when="@6.1:+optional", type=("run"))
     depends_on("py-seaborn", when="@6.1:+optional", type=("run"))
 
+    @when("^py-pip@23.1:")
+    def config_settings(self, spec, prefix):
+        if "+cython" in self.spec:
+            return {"--global-option": "--with-cython"}
+        return {}
+
+    @when("^py-pip@:23.0")
     def global_options(self, spec, prefix):
         options = []
         if "+cython" in self.spec:

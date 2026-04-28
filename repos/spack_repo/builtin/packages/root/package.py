@@ -374,6 +374,7 @@ class Root(CMakePackage):
 
     # TMVA
     depends_on("blas", when="+tmva-cpu")
+    requires("^openblas ~ilp64 symbol_suffix=none", when="^[virtuals=blas] openblas")
     depends_on("cuda", when="+tmva-gpu")
     depends_on("protobuf@3:", when="+tmva-sofie")
 

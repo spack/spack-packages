@@ -1,0 +1,12 @@
+diff --git a/setup.py.orig b/setup.py
+index 6518383..dc7efb9 100755
+--- a/setup.py.orig
++++ b/setup.py
+@@ -444,6 +444,7 @@ def get_mupdf_internal(out, location=None, local_tgz=None):
+             default location.
+                 
+     '''
++    location =  os.environ.get('PYMUPDF_SETUP_MUPDF_TGZ')
+     log(f'get_mupdf_internal(): {out=} {location=}')
+     assert out in ('dir', 'tgz')
+     if location is None:

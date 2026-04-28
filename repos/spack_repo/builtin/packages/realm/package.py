@@ -26,6 +26,10 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
 
+    # unreleased versions, bundled with legion
+    version("26.03.0-legion", commit="77e872a5a9cafa9bb2fe6ae784c01d45ad691d5f")
+    version("25.09.0-legion", commit="7ef8789fc0a40abf6774152d4061420cff2e307f")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 

@@ -19,6 +19,12 @@ class GoSh(GoPackage):
     license("BSD-3-Clause", checked_by="mcmehrtens")
 
     version(
+        "3.13.1",
+        tag="v3.13.1",
+        commit="2f3f5e36d9b0f8f14c998d50aa20a28832205ae8",
+        get_full_repo=True,
+    )
+    version(
         "3.13.0",
         tag="v3.13.0",
         commit="5c4d285c3e8fa3b85137b34cec5ce66b98d97bdc",

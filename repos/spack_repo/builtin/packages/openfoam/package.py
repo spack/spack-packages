@@ -1168,9 +1168,7 @@ PFLAGS  = {FLAGS}
 PINC    = {PINC}
 PLIBS   = {PLIBS}
 #-------
-""".format(
-                            **user_mpi
-                        )
+""".format(**user_mpi)
                     )
 
 
