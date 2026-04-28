@@ -310,7 +310,7 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
 
     # fides
     with when("+fides"):
-        depends_on("fides", when="+fides")
+        depends_on("fides")
         depends_on("fides@:1.2", when="@:0.9.5")
 
     # Adios2
