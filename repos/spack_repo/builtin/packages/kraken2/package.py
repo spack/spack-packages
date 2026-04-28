@@ -36,13 +36,15 @@ class Kraken2(Package, CMakePackage):
     )
 
     build_system(
-        conditional("cmake", when="@2.1.0:"),
-        conditional("generic", when="@2.0.6-beta:2.0.8-beta"),
+        conditional("cmake", when="@2.17.0:"),
+        conditional("generic", when="@2.0.6-beta:2.1.2"),
         default="cmake",
     )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+
+    depends_on("gmake", type="build", when="build_system=generic")
 
     depends_on("perl", type=("build", "run"))
     depends_on("rsync", type=("run"))
@@ -61,6 +63,7 @@ class Kraken2(Package, CMakePackage):
 class CMakeBuilder(CMakeBuilder):
     def install(self, pkg, spec, prefix):
         mkdirp(prefix.bin)
+        mkdirp(prefix.lib)
         with working_dir(join_path(self.build_directory, "src")):
             files = [
                 "estimate_capacity",
@@ -70,7 +73,9 @@ class CMakeBuilder(CMakeBuilder):
                 "lookup_accession_numbers",
                 "k2mask",
                 "blast_to_fasta",
-                "libtax.so",
             ]
             for file in files:
                 install(file, prefix.bin)
+            install("libtax.so", prefix.lib)
+            force_symlink(join_path(prefix.lib, "libtax.so"), join_path(prefix.bin, "libtax.so"))
+        install_tree("scripts", prefix.bin)
