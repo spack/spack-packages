@@ -18,6 +18,8 @@ class Libevpath(CMakePackage):
     url = "https://github.com/GTkorvo/evpath/archive/v4.1.1.tar.gz"
     git = "https://github.com/GTkorvo/evpath.git"
 
+    maintainers("eisenhauer", "vicentebolea")
+
     version("develop", branch="master")
     version("5.0.0", sha256="e55a3f888352b5deeb1a56e3e1b524cf5dc1226c3172163e418626d75a0ee297")
 

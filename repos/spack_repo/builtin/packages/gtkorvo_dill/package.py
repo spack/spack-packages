@@ -17,6 +17,8 @@ class GtkorvoDill(CMakePackage):
     url = "https://github.com/GTkorvo/dill/archive/v2.1.tar.gz"
     git = "https://github.com/GTkorvo/dill.git"
 
+    maintainers("eisenhauer", "vicentebolea")
+
     version("develop", branch="master")
     version("3.3.0", sha256="b29b68ce0cb778ccee614db12405cb72e817b74e914ca909a39e6a4a62fdd9a5")
     version("3.2.0", sha256="80d7e80a7b4d532e71de860f0b138bdf63db350b4517f08c5a596a4c84a501a4")

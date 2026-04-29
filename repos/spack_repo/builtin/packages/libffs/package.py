@@ -19,6 +19,8 @@ class Libffs(CMakePackage):
     url = "https://github.com/GTkorvo/ffs/archive/v1.1.tar.gz"
     git = "https://github.com/GTkorvo/ffs.git"
 
+    maintainers("eisenhauer", "vicentebolea")
+
     version("develop", branch="master")
     version("3.2.0", sha256="885578babae52394c3cabb4479b7a87053443d61b1c0975f777a22c3fd104d8c")
 

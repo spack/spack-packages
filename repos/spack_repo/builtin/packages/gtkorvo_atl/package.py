@@ -16,6 +16,8 @@ class GtkorvoAtl(CMakePackage):
     url = "https://github.com/GTkorvo/atl/archive/v2.1.tar.gz"
     git = "https://github.com/GTkorvo/atl.git"
 
+    maintainers("eisenhauer", "vicentebolea")
+
     version("master", branch="master")
     version("2.3.0", sha256="8f5746bc2362fd7fe3aa1814f1704449972570f903b2391a7ae6e4efa4cd60be")
 
