@@ -19,16 +19,8 @@ class Jdk(Package):
 
     maintainers("justintoo")
 
-    version(
-        "21.0.2",
-        sha256="9f1f4a7f25ef6a73255657c40a6d7714f2d269cf15fb2ff1dc9c0c8b56623a6f",
-        url="https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz",
-    )
-    version(
-        "17.0.10",
-        sha256="e4fb2df9a32a876afb0a6e17f54c594c2780e18badfa2e8fc99bc2656b0a57b1",
-        url="https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz",
-    )
+    version("21.0.2", sha256="9f1f4a7f25ef6a73255657c40a6d7714f2d269cf15fb2ff1dc9c0c8b56623a6f")
+    version("17.0.10", sha256="e4fb2df9a32a876afb0a6e17f54c594c2780e18badfa2e8fc99bc2656b0a57b1")
 
     provides("java@21", when="@21")
     provides("java@17", when="@17")
@@ -48,6 +40,10 @@ class Jdk(Package):
     extendable = True
 
     executables = ["^java$"]
+
+    def url_for_version(self, version):
+        url = "https://download.oracle.com/java/{0}/archive/jdk-{1}_linux-x64_bin.tar.gz"
+        return url.format(version.up_to(1), version)
 
     @classmethod
     def determine_version(cls, exe):
