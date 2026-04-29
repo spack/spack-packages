@@ -270,8 +270,26 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
 
-    for version in range(5, 23):
-        provides(f"libllvm@{version}", when=f"@{version}")
+    provides("libllvm@22", when="@22.0.0:22")
+    provides("libllvm@21", when="@21.0.0:21")
+    provides("libllvm@20", when="@20.0.0:20")
+    provides("libllvm@19", when="@19.0.0:19")
+    provides("libllvm@18", when="@18.0.0:18")
+    provides("libllvm@17", when="@17.0.0:17")
+    provides("libllvm@16", when="@16.0.0:16")
+    provides("libllvm@15", when="@15.0.0:15")
+    provides("libllvm@14", when="@14.0.0:14")
+    provides("libllvm@13", when="@13.0.0:13")
+    provides("libllvm@12", when="@12.0.0:12")
+    provides("libllvm@11", when="@11.0.0:11")
+    provides("libllvm@10", when="@10.0.0:10")
+    provides("libllvm@9", when="@9.0.0:9")
+    provides("libllvm@8", when="@8.0.0:8")
+    provides("libllvm@7", when="@7.0.0:7")
+    provides("libllvm@6", when="@6.0.0:6")
+    provides("libllvm@5", when="@5.0.0:5")
+    provides("libllvm@4", when="@4.0.0:4")
+    provides("libllvm@3", when="@3.0.0:3")
 
     provides("c", "cxx", when="+clang")
     provides("fortran", when="+flang")
