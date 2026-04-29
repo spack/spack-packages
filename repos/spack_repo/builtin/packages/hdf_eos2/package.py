@@ -74,6 +74,8 @@ class HdfEos2(AutotoolsPackage):
 
     # Build dependencies
     depends_on("hdf")
+    depends_on("hdf +fortran", when="+fortran")
+
     # Because hdf always depends on zlib and jpeg in spack, the tests below in configure_args
     # (if self.spec.satisfies("^jpeg"):) always returns true and hdf-eos2 wants zlib and jpeg, too.
     depends_on("zlib-api", when="^hdf")
