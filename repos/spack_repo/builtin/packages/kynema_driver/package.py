@@ -9,7 +9,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class Kynema(CMakePackage, CudaPackage, ROCmPackage):
+class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
     """Multi-application driver for Kynema project."""
 
     homepage = "https://github.com/Kynema/kynema-driver"
@@ -110,13 +110,13 @@ class Kynema(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))
             args.append(self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc))
-            args.append(self.define("KYNEMA_ENABLE_CUDA", True))
+            args.append(self.define("KYNEMA_DRIVER_ENABLE_CUDA", True))
+            args.append(self.define("KYNEMA_DRIVER_CUDA_ARCH", self.spec.variants["cuda_arch"].value))
             args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
-            args.append(self.define("KYNEMA_CUDA_ARCH", self.spec.variants["cuda_arch"].value))
 
         if spec.satisfies("+rocm"):
             targets = self.spec.variants["amdgpu_target"].value
-            args.append(self.define("KYNEMA_ENABLE_ROCM", True))
+            args.append(self.define("KYNEMA_DRIVER_ENABLE_ROCM", True))
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             # Optimization to only build one specific target architecture:
             args.append(self.define("CMAKE_HIP_ARCHITECTURES", ";".join(str(x) for x in targets)))
