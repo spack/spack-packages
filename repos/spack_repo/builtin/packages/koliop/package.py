@@ -32,6 +32,7 @@ class Koliop(CMakePackage):
     depends_on("kokkos@4.1:")
     depends_on("kokkos@:5")
     depends_on("kokkos@:4", when="@:0.1")
+
     depends_on("kokkos-kernels@4.1:")
     depends_on("kokkos-kernels@:5")
     depends_on("kokkos-kernels@:4", when="@:0.1")
