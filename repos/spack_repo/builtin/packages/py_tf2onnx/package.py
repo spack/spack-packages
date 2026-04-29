@@ -26,6 +26,7 @@ class PyTf2onnx(PythonPackage):
         depends_on("py-setuptools@77:")
 
     with default_args(type=("build", "run")):
+        depends_on("py-tensorflow")
         depends_on("py-numpy@1.23.5:")
         depends_on("py-onnx@1.14.0:")
         depends_on("py-requests")
