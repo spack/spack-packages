@@ -621,15 +621,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     def build(self, pkg: MakefilePackage, spec: Spec, prefix: Prefix) -> None:
         """Override 'make all' with sequential builds due to race conditions."""
-        # Due to the verbosity of the command line and number of object files
-        # created, we suppress makefile command echoing via `-s`.
-        args = ["-s"] + self.make_defs
-
-        # Make each target sequentially
         with working_dir(self.build_directory):
-            for target in ["libs", "netlib", "shared"]:
-                tty.info("Building target", target)
-                make(*(args + [target]))
+            # Due to the verbosity of the command line and number of object
+            # files created, we suppress makefile command echoing via `-s`.
+            make("-s", *self.make_defs)
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
