@@ -182,7 +182,7 @@ class Plumed(AutotoolsPackage):
     parallel = True
 
     # Filter Spack's compiler wrapper
-    # so that "plumed mklib" works correctly 
+    # so that "plumed mklib" works correctly
     filter_compiler_wrappers(
         "config.txt",
         "compile_options.sh",
