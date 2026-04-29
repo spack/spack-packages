@@ -19,4 +19,4 @@ class TofuLs(GoPackage):
 
     version("0.4.1", sha256="20a71da45069cc2e28f9f2b58f6aed9da33457760adeb037a10aef94126b77f1")
 
-    depends_on("go@1.25.3:", type="build", when="@0.4.1")
+    depends_on("go@1.25.3:", type="build", when="@0.4.1:")
