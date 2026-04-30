@@ -20,7 +20,7 @@ spack:
     - py-pynvim
 
       # runtimes and language compilers
-    - gcc languages=c,cxx,fortran
+    - gcc languages=c,c++,fortran
     - cmake
     - go
     - libtool
