@@ -19,8 +19,10 @@ spack:
     # - neovim
     - py-pynvim
 
-      # runtimes and language compilers
-    - gcc languages=c,c++,fortran
+    # runtimes and language compilers
+    # for gcc, overspecify the variant to ensure we do not use the external
+    # gcc platform=darwin conflicts with +binutils, so this isn't restrictive
+    - gcc languages=c,c++,fortran ~binutils
     - cmake
     - go
     - libtool
