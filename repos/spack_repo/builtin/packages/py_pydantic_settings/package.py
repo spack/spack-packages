@@ -19,11 +19,10 @@ class PyPydanticSettings(PythonPackage):
     version("2.6.1", sha256="e0f92546d8a9923cb8941689abf85d6601a8c19a23e97a34b2964a2e3f813ca0")
 
     depends_on("py-hatchling", type="build")
-   
+
     with default_args(type=("build", "run")):
         depends_on("python@3.10:", when="@2.14:")
         depends_on("py-typing-inspection@0.4:")
         depends_on("python@3.8:")
         depends_on("py-pydantic@2.7.0:")
         depends_on("py-python-dotenv@0.21:")
-
