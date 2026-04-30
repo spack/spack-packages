@@ -50,13 +50,12 @@ class PyFenicsDolfinx(PythonPackage):
 
     depends_on("python@3.10:", when="@0.10:", type=("build", "run"))
     depends_on("python@3.9:", when="@0.8:", type=("build", "run"))
-    depends_on("python@3.8:", when="@0.7", type=("build", "run"))
-    depends_on("python@3.8:3.10", when="@0.6.0", type=("build", "run"))
+    depends_on("python@3.8:3.10", when="@0.6", type=("build", "run"))
 
-    for ver in ["main", "0.10.0.post4", "0.9.0", "0.8.0", "0.7.2", "0.6.0"]:
+    for ver in ["main", "0.10.0.post4", "0.9.0", "0.8.0"]:
         depends_on(f"fenics-dolfinx@{ver}", when=f"@{ver}")
 
-    for ver in ["main", "0.10", "0.9", "0.8", "0.7", "0.6"]:
+    for ver in ["main", "0.10", "0.9", "0.8"]:
         depends_on(f"fenics-basix@{ver}", type=("build", "link"), when=f"@{ver}")
         depends_on(f"py-fenics-basix@{ver} +ufl", type=("build", "run"), when=f"@{ver}")
         depends_on(f"py-fenics-ffcx@{ver}", type=("build", "run"), when=f"@{ver}")
@@ -66,8 +65,6 @@ class PyFenicsDolfinx(PythonPackage):
         ("2025.2", "0.10"),
         ("2024.2", "0.9"),
         ("2024.1", "0.8"),
-        ("2023.2", "0.7"),
-        ("2023.1", "0.6"),
     ]:
         depends_on(f"py-fenics-ufl@{ufl_ver}", type=("build", "run"), when=f"@{ver}")
 
@@ -94,9 +91,6 @@ class PyFenicsDolfinx(PythonPackage):
     depends_on("py-nanobind@1.8:1.9", when="@0.8", type="build")
     depends_on("py-scikit-build-core@0.10: +pyproject", when="@0.9:", type="build")
     depends_on("py-scikit-build-core@0.5: +pyproject", when="@0.8:0.9", type="build")
-
-    depends_on("py-pybind11@2.7.0:", when="@:0.7", type=("build", "run"))
-    depends_on("py-setuptools@42:", when="@:0.7", type="build")
 
     def config_settings(self, spec, prefix):
         return {
