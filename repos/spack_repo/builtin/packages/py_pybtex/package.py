@@ -26,8 +26,12 @@ class PyPybtex(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("python@3.8:", when="@0.26:")
-        depends_on("python@2.7:2.8,3.3:", when="@:0.26")
-        depends_on("py-latexcodec@1.0.4:")
-        depends_on("py-pyyaml@3.01:")
-        depends_on("py-six", when="@0.24.0:0.25")
+        depends_on("python@2.7:2.8,3.3:", when="@:0.25")
+
         depends_on("py-importlib-metadata@3.6:", when="@0.26: ^python@:3.9")
+
+        depends_on("py-latexcodec@1.0.4:")
+
+        depends_on("py-pyyaml@3.01:")
+
+        depends_on("py-six", when="@0.24:0.25")
