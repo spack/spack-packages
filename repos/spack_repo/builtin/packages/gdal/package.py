@@ -31,6 +31,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.12.4", sha256="813094498c17522ac42821a5ea1ea783d8326c0adf286cce86a949038bd09198")
     version("3.12.3", sha256="398a5a32ee6e75040598a7f8e895126a8225118317f272d715867c844f932848")
     version("3.12.2", sha256="21c5e0f91974383b4c5692b7103650f176f2f54f1b0d449787f444b89881e9b4")
     version("3.12.1", sha256="2a4fd3170ff81def93db60f7f61f2842a2ae7ad0335e4ed4ba305252f05835de")
@@ -366,6 +367,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     with when("+poppler"):
         depends_on("poppler@0.86:", when="@3.9:")
         depends_on("poppler@0.24:")
+        depends_on("poppler@:26.03", when="@:3.12.3")
         depends_on("poppler@:26.01", when="@:3.12.2")
         depends_on("poppler@:26.00", when="@:3.12.1")
         depends_on("poppler@:25.09", when="@:3.11.4")
