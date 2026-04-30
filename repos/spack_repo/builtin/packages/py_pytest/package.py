@@ -17,6 +17,7 @@ class PyPytest(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("9.0.2", sha256="75186651a92bd89611d1d9fc20f0b4345fd827c41ccd5c299a868a05d70edf11")
     version("9.0.0", sha256="8f44522eafe4137b0f35c9ce3072931a788a21ee40a2ed279e817d3cc16ed21e")
     version("8.4.2", sha256="86c0d0b93306b961d58d62a4db4879f27fe25513d4b969df351abdddb3c30e01")
     version("8.4.1", sha256="7c67fd69174877359ed9371ec3af8a3d2b04741818c51e5e99cc1742251fa93c")

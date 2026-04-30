@@ -35,7 +35,7 @@ class Openloops(Package):
     # conflicts because there is a scons 3.0.5 in 2.1.2
     conflicts("^python@3.12:", when="@:2.1.2")
 
-    all_processes = [
+    all_processes = (
         "tbln",
         "tbln_ew",
         "tbqq",
@@ -232,7 +232,7 @@ class Openloops(Package):
         "heftppllj",
         "heftpplljj",
         "heftpplljjj",
-    ]
+    )
 
     variant("compile_extra", default=False, description="Compile real radiation tree amplitudes")
     variant(

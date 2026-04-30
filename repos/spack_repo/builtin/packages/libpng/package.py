@@ -18,6 +18,7 @@ class Libpng(CMakePackage):
 
     license("Libpng")
 
+    version("1.6.55", sha256="d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d")
     version("1.6.54", sha256="01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805")
     version("1.6.47", sha256="b213cb381fbb1175327bd708a77aab708a05adde7b471bc267bd15ac99893631")
     version("1.6.39", sha256="1f4696ce70b4ee5f85f1e1623dc1229b210029fa4b7aee573df3e2ba7b036937")

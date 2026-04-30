@@ -217,6 +217,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")
 
+    # cmake build race condition
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/16869cf18cb4bd07d500c3048c3d34d1611674c7.patch?full_index=1",
+        when="@2.11.0",
+        sha256="3af07961975ec6c9023dca182ed19458c021cdf1812d34d9a9e9dad1da60ae75",
+    )
+
     # add missing include <cstdint>
     patch("2.7-fix-missing-cstdint-include.patch", when="@2.7")
 

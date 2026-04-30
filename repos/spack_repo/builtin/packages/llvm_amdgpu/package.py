@@ -204,6 +204,20 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         )
 
     for d_version, d_shasum in [
+        ("7.1.0", "e6ef3e62eb0626765c55084c9de5fd19f9b216b11577e71ef36046c0081f1102"),
+        ("7.1.1", "b02e7a2b38c408067f3713ff47fe620059a8fe5f47110ab343116448625b7448"),
+    ]:
+        resource(
+            name="spirv-llvm-translator",
+            url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/refs/tags/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            expand=True,
+            destination="llvm/projects",
+            placement="spirv-llvm-translator",
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
         ("6.0.2", "737b110d9402509db200ee413fb139a78369cf517453395b96bda52d0aa362b9"),
         ("6.0.0", "04353d27a512642a5e5339532a39d0aabe44e0964985de37b150a2550385800a"),
         ("5.7.1", "3b9433b4a0527167c3e9dfc37a3c54e0550744b8d4a8e1be298c8d4bcedfee7c"),

@@ -17,6 +17,7 @@ class Rocksdb(MakefilePackage):
     license("Apache-2.0 OR GPL-2.0-only")
 
     version("master", git=git, branch="master", submodules=True)
+    version("10.10.1", sha256="df2ff348f3fac8578fd4b727eee7267aaf90cd403c99b55e898d1db63fa8cff5")
     version("10.4.2", sha256="afccfab496556904900afacf7d99887f1d50cb893e5d2288bd502db233adacac")
     version("9.4.0", sha256="1f829976aa24b8ba432e156f52c9e0f0bd89c46dc0cc5a9a628ea70571c1551c")
     version("9.2.1", sha256="bb20fd9a07624e0dc1849a8e65833e5421960184f9c469d508b58ed8f40a780f")
@@ -38,9 +39,10 @@ class Rocksdb(MakefilePackage):
     variant("lz4", default=True, description="Enable lz4 compression support")
     variant("shared", default=True, description="Build shared library")
     variant("snappy", default=False, description="Enable snappy compression support")
-    variant("static", default=True, description="Build static library")
+    variant("static", default=False, description="Build static library")
     variant("zlib", default=True, description="Enable zlib compression support")
     variant("zstd", default=False, description="Enable zstandard compression support")
+    variant("debug", default=False, description="Enable debug symbols")
     variant("tbb", default=False, description="Enable Intel TBB support")
     variant("werror", default=False, description="Build with -Werror")
     variant("rtti", default=False, description="Build with RTTI")
@@ -71,7 +73,13 @@ class Rocksdb(MakefilePackage):
     phases = ["install"]
 
     def patch(self):
-        filter_file("-march=native", "", join_path("build_tools", "build_detect_platform"))
+        filter_file(
+            "-march=native", "", join_path("build_tools", "build_detect_platform"), string=True
+        )
+
+        if "~debug" in self.spec:
+            filter_file("CFLAGS += -g", "CFLAGS += ", "Makefile", string=True)
+            filter_file("CXXFLAGS += -g", "CXXFLAGS += ", "Makefile", string=True)
 
     def install(self, spec, prefix):
         cflags = []

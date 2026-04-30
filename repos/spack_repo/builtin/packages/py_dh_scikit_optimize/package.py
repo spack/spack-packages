@@ -24,6 +24,7 @@ class PyDhScikitOptimize(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.9.6", sha256="53c2985ff1684e367fd4c14e199125cb34cbc0675f69769fc767ee22e4dceaf1")
     version("0.9.5", sha256="c2777839a536215ab40fc5db2242809ccffd5e5b23718e23d58ea76ff35a7543")
     version("0.9.4", sha256="9acfba4077fe45f3854a4af255763a3e8a396c05bd2a7c761a969171366b3840")
     version("0.9.3", sha256="0c922c61dc1f010c7bbd2f0930c766e8ae040c35b129e4de6d51b611fd72b7c9")

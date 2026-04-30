@@ -50,7 +50,7 @@ class VepCache(Package):
     )
     variant(
         "species",
-        values=vep_species.keys(),
+        values=tuple(vep_species.keys()),
         default="homo_sapiens",
         description="Which species to download the cache for (only one at a time)",
     )
