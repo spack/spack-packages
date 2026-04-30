@@ -40,4 +40,3 @@ class PyFuro(PythonPackage):
         depends_on("py-sphinx@6:7", when="@:2024")
 
         depends_on("py-sphinx-basic-ng@1.0.0b2:")
-

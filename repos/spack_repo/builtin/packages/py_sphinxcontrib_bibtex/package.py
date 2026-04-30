@@ -64,8 +64,7 @@ class PySphinxcontribBibtex(PythonPackage):
     conflicts("^py-docutils@0.18:0.19", when="@2.6:")
 
     def url_for_version(self, version):
-        """PyPI packages now use underscores rather than dashes.
-        """
+        """PyPI packages now use underscores rather than dashes."""
         base = "https://files.pythonhosted.org/packages/source"
         name = self.pypi.split("/")[0]
         # Verified this version is the first with underscores (even though we
