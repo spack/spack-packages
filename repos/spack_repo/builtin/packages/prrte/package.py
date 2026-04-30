@@ -45,7 +45,12 @@ class Prrte(AutotoolsPackage):
     version("2.0.0", sha256="9f4abc0b1410e0fa74ed7b00cfea496aa06172e12433c6f2864d11b534becc25")
     version("1.0.0", sha256="a9b3715e059c10ed091bd6e3a0d8896f7752e43ee731abcc95fb962e67132a2d")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+
+    # Python is used to generate the docs and the show-help array,
+    # both of which are included pre-built in tarballs.
+    # https://github.com/openpmix/prrte/issues/2438
+    depends_on("python@3.7:", type="build", when="@develop")
 
     depends_on("pmix")
     depends_on("pmix@6.1:", when="@4.1:")
