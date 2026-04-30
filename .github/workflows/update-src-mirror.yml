@@ -61,6 +61,7 @@ jobs:
         if: steps.create-mirror.outputs.new-specs == 'true'
         run: |
           aws s3 cp src-mirror/_source-cache s3://${{ secrets.S3_BUCKET_NAME }}/_source-cache/ \
+            --no-overwrite \
             --recursive \
             --no-progress
           echo "Successfully uploaded source mirror to S3"
