@@ -23,7 +23,7 @@ class Prrte(AutotoolsPackage):
 
     license("BSD-3-Clause-Open-MPI")
 
-    version("develop", branch="master")
+    version("develop", branch="master", no_cache=True, submodules=True)
     version("4.1.0", sha256="285ad62b670075708b9fcfe14c54baa599733bc274d10502a82e8eebba0b7c70")
     version("4.0.0", sha256="3c2ec961e0ba0c99128c7bf3545f4789d55a85a70ce958e868ae5e3db6ed4de4")
     version("3.0.13", sha256="635a546b3d3cfa587f4122bfaa0038df07b56381ffd649e57b089893712fa231")
@@ -66,7 +66,6 @@ class Prrte(AutotoolsPackage):
     depends_on("libtool", type=("build"))
     depends_on("flex", type=("build"))
     depends_on("pkgconfig", type="build")
-    depends_on("python@3.7:", type="build", when="@develop")
 
     # https://github.com/openpmix/openpmix/blob/master/docs/installing-pmix/configure-cli-options/runtime.rst
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
@@ -128,7 +127,11 @@ class Prrte(AutotoolsPackage):
             config_args.append("--with-sge")
 
         if spec.satisfies("schedulers=tm"):
-            config_args.append(f"--with-tm={self.spec['pbs'].prefix}")
+            if spec.satisfies("@develop"):
+                # https://github.com/openpmix/prrte/pull/2434
+                config_args.append(f"--with-pbs={self.spec['pbs'].prefix}")
+            else:
+                config_args.append(f"--with-tm={self.spec['pbs'].prefix}")
 
         if spec.satisfies("schedulers=slurm"):
             config_args.append("--with-slurm")
