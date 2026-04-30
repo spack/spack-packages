@@ -52,6 +52,7 @@ class PyAstropy(PythonPackage):
     depends_on("py-setuptools-scm@6.2:", when="@5.1:", type="build")
     depends_on("py-extension-helpers", when="@5.1:", type="build")
     depends_on("py-extension-helpers@1", when="@7.0.1:", type="build")
+    depends_on("py-extension-helpers@1.4:1", when="@7.2.0:", type="build")
     depends_on("pkgconfig", type="build")
 
     # in newer pip versions --install-option does not exist
@@ -105,7 +106,7 @@ class PyAstropy(PythonPackage):
         depends_on("py-matplotlib@3.1:", when="@5:", type=("build", "run"))
         depends_on("py-matplotlib@2.1:", when="@4:", type=("build", "run"))
         depends_on("py-matplotlib@2.0:", type=("build", "run"))
-        depends_on("py-narwhals@1.42.0:", type=("build", "run"))
+        depends_on("py-narwhals@1.42.0:", type=("build", "run"), when="@7.2.0:")
         depends_on("py-certifi@2022.6.15.1:", when="@7.0.1:", type=("build", "run"))
         depends_on("py-certifi", when="@4.3:", type=("build", "run"))
         depends_on("py-dask+array+dataframe@2024.8.0:", when="@7.2.0:", type=("build", "run"))
@@ -142,7 +143,7 @@ class PyAstropy(PythonPackage):
         depends_on("py-asdf@2.5:", when="@4.0.1post1:", type=("build", "run"))
         depends_on("py-asdf@2.3:", type=("build", "run"))
         depends_on("py-asdf-astropy@0.3:", when="@7.0.1:", type=("build", "run"))
-        depends_on("py-asdf-coordinates-schemas@0.2.0:", type=("build", "run"))
+        depends_on("py-asdf-coordinates-schemas@0.2.0:", type=("build", "run"), when="@7.2.0:")
         depends_on("py-bottleneck@1.3.3:", when="@7.0.1:", type=("build", "run"))
         depends_on("py-bottleneck", type=("build", "run"))
         depends_on("py-ipywidgets@7.7.3:", when="@7.1.0:", type=("build", "run"))
@@ -167,7 +168,7 @@ class PyAstropy(PythonPackage):
 
         conflicts("^py-matplotlib@3.4.0,3.5.2")
         # https://github.com/astropy/astropy/issues/19273
-        conflicts("@:7.1.1", when="^py-numpy@2.4:")
+        conflicts("^py-numpy@2.4:", when="@:7.1.1")
 
     # System dependencies
     depends_on("erfa", when="@:6")
