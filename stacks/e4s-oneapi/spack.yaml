@@ -59,6 +59,11 @@ spack:
     # externals
     mpi:
       require: intel-oneapi-mpi
+    oneapi-igc:
+      buildable: false
+      externals:
+      - spec: oneapi-igc@1.0.10409
+        prefix: /usr
 
   specs:
   # CPU Specs:

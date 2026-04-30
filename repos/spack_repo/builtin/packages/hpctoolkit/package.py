@@ -209,7 +209,8 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
-    depends_on("oneapi-igc", when="+level_zero")
+    depends_on("oneapi-igc", when="+gtpin")
+    depends_on("oneapi-igc", when="@2026: +level_zero")
     depends_on("intel-gtpin", when="+gtpin")
     depends_on("opencl-c-headers", when="+opencl")
 
@@ -393,11 +394,11 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
         if spec.satisfies("+level_zero"):
             args.append("--with-level0=%s" % spec["oneapi-level-zero"].prefix)
-            args.append("--with-igc=%s" % spec["oneapi-igc"].prefix)
 
             # gtpin requires level_zero
             if spec.satisfies("+gtpin"):
                 args.append("--with-gtpin=%s" % spec["intel-gtpin"].prefix)
+                args.append("--with-igc=%s" % spec["oneapi-igc"].prefix)
 
         if spec.satisfies("+opencl"):
             args.append("--with-opencl=%s" % spec["opencl-c-headers"].prefix)
@@ -515,10 +516,10 @@ class MesonBuilder(meson.MesonBuilder):
 
         if spec.satisfies("+level_zero"):
             cfg["properties"]["prefix_level0"] = f"'''{spec['oneapi-level-zero'].prefix}'''"
-            cfg["properties"]["prefix_igc"] = f"'''{spec['oneapi-igc'].prefix}'''"
 
         if spec.satisfies("+gtpin"):
             cfg["properties"]["prefix_gtpin"] = f"'''{spec['intel-gtpin'].prefix}'''"
+            cfg["properties"]["prefix_igc"] = f"'''{spec['oneapi-igc'].prefix}'''"
 
         if spec.satisfies("+opencl"):
             cfg["properties"]["prefix_opencl"] = f"'''{spec['opencl-c-headers'].prefix}'''"
