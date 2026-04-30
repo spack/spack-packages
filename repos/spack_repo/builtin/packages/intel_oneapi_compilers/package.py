@@ -470,6 +470,12 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
     variant("amd", default=False, description="Install AMD plugin for OneAPI")
     conflicts("@:2022.2.1", when="+amd", msg="Codeplay AMD plugin requires newer release")
 
+    variant(
+        "fix_rt_linkage",
+        default=False,
+        description="Fix unresolved symbols from libc/libm in runtime libraries libirc/libimf",
+    )
+
     depends_on("gcc languages=c,c++", type="run")
 
     for v in versions:

@@ -20,7 +20,7 @@ class PyNumpy(PythonPackage):
 
     maintainers("adamjstewart", "rgommers")
 
-    license("BSD-3-Clause")
+    license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
     version("2.4.4", sha256="2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0")

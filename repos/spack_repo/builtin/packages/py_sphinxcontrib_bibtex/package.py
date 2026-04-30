@@ -33,17 +33,17 @@ class PySphinxcontribBibtex(PythonPackage):
     depends_on("py-setuptools", type="build")
 
     with default_args(type=("build", "run")):
-        depends_on("py-importlib-metadata@3.6:", when="@2.5.0: ^python@:3.9")
+        depends_on("py-importlib-metadata@3.6:", when="@2.5: ^python@:3.9")
 
-        depends_on("py-docutils@0.8:", when="@2.1.0:")
+        depends_on("py-docutils@0.8:", when="@2.1:")
 
-        depends_on("py-sphinx@3.5:", when="@2.6.5:")
-        depends_on("py-sphinx@2.1:", when="@2.1.3:")
-        depends_on("py-sphinx@2.0:", when="@2:")
+        depends_on("py-sphinx@3.5:", when="@2.6:")
+        depends_on("py-sphinx@2.1:", when="@2.1:2.5")
+        depends_on("py-sphinx@2.0:", when="@2")
         depends_on("py-sphinx@1.0:", when="@:1")
 
-        depends_on("python@3.9:", when="@2.6.5:")
-        depends_on("python@3.6:", when="@2:")
+        depends_on("python@3.9:", when="@2.6:")
+        depends_on("python@3.6:", when="@2:2.5")
         depends_on("python@3.5:", when="@1")
 
         depends_on("py-pybtex@0.25:", when="@2.6.5:")
@@ -51,21 +51,25 @@ class PySphinxcontribBibtex(PythonPackage):
         depends_on("py-pybtex@0.20:", when="@2:2.3")
         depends_on("py-pybtex@0.17:", when="@:1")
 
-        depends_on("py-pybtex-docutils@1.0.2:", when="@2.6.5:")
-        depends_on("py-pybtex-docutils@1.0.0:", when="@2.2:2.6")
+        depends_on("py-pybtex-docutils@1.0.2:", when="@2.6:")
+        depends_on("py-pybtex-docutils@1.0.0:", when="@2.2:2.5")
         depends_on("py-pybtex-docutils@0.2.2:", when="@2:2.1")
         depends_on("py-pybtex-docutils@0.2.0:", when="@:1")
 
         depends_on("py-oset@0.1.3:", when="@:1")
 
-        depends_on("py-latexcodec@0.3.0:", when="@:0.3.6")
-        depends_on("py-six@1.4.1:", when="@0.3.5")
+        depends_on("py-latexcodec@0.3.0:", when="@0")
+        depends_on("py-six@1.4.1:", when="@0")
 
-    conflicts("^docutils@0.18:0.19")
+    conflicts("^py-docutils@0.18:0.19", when="@2.6:")
 
     def url_for_version(self, version):
+        """PyPI packages now use underscores rather than dashes.
+        """
         base = "https://files.pythonhosted.org/packages/source"
         name = self.pypi.split("/")[0]
+        # Verified this version is the first with underscores (even though we
+        # don't currently provide a shasum for it)
         if version >= Version("2.6.3"):
             modname = name.replace("-", "_")
         else:

@@ -23,6 +23,7 @@ class RBayesplot(RPackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.15.0", sha256="114a99322fea66e3db911a3ea9d9272ad8aa7d247991c8fe5d4fb6aa2629479c")
     version("1.14.0", sha256="37d657a39d7115c76d7a86b8daca6160bc5caaa988dd9f9cfe1f51873b09724a")
     version("1.11.1", sha256="4f71e67391e0135acd3e890989b87025f3f8160242f532a8e1a0ed74ed0f3830")
     version("1.10.0", sha256="bb4cb92b1ae4cf8ae5f4b5cb092aba34af3d820d137e1f2265cca8f3e85113ff")

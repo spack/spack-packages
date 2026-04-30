@@ -37,6 +37,13 @@ class RocprofilerSystems(CMakePackage):
     license("MIT")
 
     version(
+        "7.2.1",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="rocm-7.2.1",
+        commit="e1a6bc5663304b9c586b3254b8920f2981057804",
+        submodules=submodules,
+    )
+    version(
         "7.2.0",
         git="https://github.com/ROCm/rocm-systems.git",
         tag="rocm-7.2.0",
@@ -234,6 +241,7 @@ class RocprofilerSystems(CMakePackage):
             "7.1.0",
             "7.1.1",
             "7.2.0",
+            "7.2.1",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -247,10 +255,11 @@ class RocprofilerSystems(CMakePackage):
             "7.1.0",
             "7.1.1",
             "7.2.0",
+            "7.2.1",
         ]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
-        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
+        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1"]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
@@ -330,7 +339,7 @@ class RocprofilerSystems(CMakePackage):
         return args
 
     def flag_handler(self, name, flags):
-        if self.spec.satisfies("@6.3:"):
+        if self.spec.satisfies("@6.3:7.1"):
             if name == "ldflags":
                 flags.append("-lintl")
         return (flags, None, None)

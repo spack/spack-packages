@@ -285,8 +285,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("pthreadpool@2020-10-05", when="@1.8")
     depends_on("pthreadpool@2020-06-15", when="@1.6:1.7")
     with default_args(type=("build", "link", "run")):
-        # https://github.com/spack/spack-packages/pull/3708#issuecomment-4077800794
-        depends_on("py-pybind11@:3.0.1")
         depends_on("py-pybind11@3.0.1:", when="@2.9:")
         depends_on("py-pybind11@2.13.6:", when="@2.6:")
         depends_on("py-pybind11@2.13.5:", when="@2.5")
@@ -296,6 +294,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-pybind11@2.10.0:", when="@1.13:1")
         depends_on("py-pybind11@2.6.2:", when="@1.8:1.12")
         depends_on("py-pybind11@2.3.0:", when="@:1.7")
+        # https://github.com/spack/spack-packages/pull/3708#issuecomment-4077800794
+        depends_on("py-pybind11@:3.0.1", when="@:2.11")
     depends_on("sleef@3.8", when="@2.8:")
     depends_on("sleef@3.7.0_2024-12-06", when="@2.7")
     depends_on("sleef@3.6.0_2024-03-20", when="@2.4:2.6")
@@ -320,8 +320,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("nccl", when="+nccl+cuda")
-    depends_on("magma+cuda", when="+magma+cuda")
-    depends_on("magma+rocm", when="+magma+rocm")
+    # https://github.com/pytorch/pytorch/pull/178065
+    depends_on("magma@:2.9+cuda", when="+magma+cuda")
+    depends_on("magma@:2.9+rocm", when="+magma+rocm")
     depends_on("numactl", when="+numa")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
