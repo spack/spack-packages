@@ -180,9 +180,9 @@ class Mumps(Package):
         # Determine which compiler suite we are using
         using_gcc = self.compiler.name == "gcc"
         using_nvhpc = self.compiler.name == "nvhpc"
-        using_intel = self.compiler.name == "intel"
-        using_oneapi = self.compiler.name == "oneapi"
-        using_xl = self.compiler.name in ["xl", "xl_r"]
+        using_intel = self.compiler.name in ("intel", "intel-oneapi-compilers-classic")
+        using_oneapi = self.compiler.name in ("oneapi", "intel-oneapi-compilers")
+        using_xl = self.compiler.name in ("xl", "xl_r")
         using_fj = self.compiler.name == "fj"
 
         # The llvm compiler suite does not contain a Fortran compiler by
@@ -259,6 +259,13 @@ class Mumps(Package):
         # check so we trust that the user knows what he/she is doing.
         if "+blr_mt" in self.spec:
             optf.append("-DBLR_MT")
+
+        # Intel and oneAPI Fortran compilers link for_main.o which provides
+        # its own main(). This conflicts with the C examples' main(), causing
+        # "multiple definition of `main'" errors. The -nofor-main flag
+        # prevents this.
+        if using_intel or using_oneapi:
+            optl.append("-nofor-main")
 
         makefile_conf.extend(
             [

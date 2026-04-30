@@ -10,13 +10,18 @@ spack:
       - +mps
       - ~cuda
       - ~rocm
+      - target=m1
     mpi:
-      require: mpich
+      require:
+      - mpich
     openblas:
       require:
       - ~fortran
+      - target=m1
     python:
-      require: "@3.13:"
+      require:
+      - "@3.13:"
+      - target=m1
 
   specs:
   # Hugging Face
@@ -43,7 +48,6 @@ spack:
   - py-torch-geometric
   - py-torch-nvidia-apex
   - py-torchaudio
-  - py-torchdata
   - py-torchgeo
   - py-torchmetrics
   - py-torchvision

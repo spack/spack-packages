@@ -176,7 +176,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
         else:
             test_flag = "PROJ4_TESTS"
         args.append(self.define(test_flag, self.pkg.run_tests))
-        if self.spec["curl"].satisfies("build_system=cmake"):
+        if self.spec.satisfies("%curl build_system=cmake"):
             args.append(self.define("CMAKE_CXX_FLAGS", "-DCURL_STATICLIB"))
         return args
 

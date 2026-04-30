@@ -90,9 +90,7 @@ class LuaBuilder(Builder):
                 rocks_trees={{
                 {}
                 }}
-                """.format(
-                    "\n".join(table_entries)
-                )
+                """.format("\n".join(table_entries))
             )
 
     def preprocess(self, pkg: LuaPackage, spec: Spec, prefix: Prefix) -> None:

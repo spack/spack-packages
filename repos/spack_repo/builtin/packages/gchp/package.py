@@ -19,6 +19,7 @@ class Gchp(CMakePackage):
 
     license("MIT")
 
+    version("14.7.0", commit="3216f281670dc124f2649dedfa60293eba38a8de", submodules=True)
     version("13.4.0", commit="d8c6d4d8db1c5b0ba54d4893185d999a619afc58", submodules=True)
     version("13.3.4", commit="efb2346381648ffff04ce441d5d61d7fec0c53fe", submodules=True)
     version("13.2.1", commit="9dc2340cac684971fa961559a4dc3d8818326ab8", submodules=True)
@@ -36,10 +37,12 @@ class Gchp(CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("esmf@8.0.1", when="@13.0.0:")
+    depends_on("esmf@8.0.1", when="@:13")
+    depends_on("esmf@8.8.0:", when="@:14")
+    depends_on("udunits@2", when="@:14")
     depends_on("mpi@3")
     depends_on("netcdf-fortran")
-    depends_on("cmake@3.13:")
+    depends_on("cmake@3.24:")
     depends_on("libfabric", when="+ofi")
     depends_on("m4")
 
@@ -73,3 +76,6 @@ class Gchp(CMakePackage):
         # messages that point to specific modules / lines of the source code.
         # Including source code thus facilitates runtime debugging.
         shutil.move(self.stage.source_path, join_path(prefix, "source_code"))
+
+        # Ensure that the bin directory gets installed
+        install_tree(join_path(self.build_directory, "bin"), prefix.bin)

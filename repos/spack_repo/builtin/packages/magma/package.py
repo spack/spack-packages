@@ -24,6 +24,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("master", branch="master")
+    version("2.10.0", sha256="ea0c57fcb64ac2fd7ffe8f02d8fe18f07055c5b7fba0164f565d1e3a85148fb5")
     version("2.9.0", sha256="ff77fd3726b3dfec3bfb55790b06480aa5cc384396c2db35c56fdae4a82c641c")
     version("2.8.0", sha256="f4e5e75350743fe57f49b615247da2cc875e5193cc90c11b43554a7c82cc4348")
     version("2.7.2", sha256="729bc1a70e518a7422fe7a3a54537a4741035a77be3349f66eac5c362576d560")
@@ -159,6 +160,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
             options.append(define("GPU_TARGET", capabilities))
             archs = ";".join("%s" % i for i in cuda_arch)
             options.append(define("CMAKE_CUDA_ARCHITECTURES", archs))
+            options.append(define("CMAKE_CUDA_FLAGS", " -Xfatbin -compress-all"))
 
         if "@2.5.0" in spec:
             options.append(define("MAGMA_SPARSE", False))
@@ -211,7 +213,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
 
                 for test, desc in tests:
                     with test_part(self, f"test_c_{test}", purpose=f"Run {desc} example"):
-                        exe = which(test)
+                        exe = which(test, required=True)
                         exe()
 
                 make("clean")
@@ -227,6 +229,6 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
             with set_env(PKG_CONFIG_PATH=pkg_config_path):
                 make = self.spec["gmake"].command
                 make("fortran")
-                example_f = which("example_f")
+                example_f = which("example_f", required=True)
                 example_f()
                 make("clean")

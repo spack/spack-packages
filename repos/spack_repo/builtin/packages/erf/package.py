@@ -22,8 +22,8 @@ class Erf(CMakePackage, CudaPackage):
     url = "https://github.com/erf-model/ERF/archive/refs/tags/25.10.tar.gz"
     git = "https://github.com/erf-model/ERF.git"
 
-    def url_for_version(self, v):
-        return f"https://github.com/erf-model/ERF/archive/refs/tags/{v}.tar.gz"
+    def url_for_version(self, version):
+        return f"https://github.com/erf-model/ERF/archive/refs/tags/{version}.tar.gz"
 
     test_requires_compiler = True
 
@@ -31,6 +31,9 @@ class Erf(CMakePackage, CudaPackage):
 
     license("BSD-3-Clause", checked_by="larenspear")
 
+    version("26.04", tag="26.04", submodules=submodules)
+    version("26.03", tag="26.03", submodules=submodules)
+    version("26.02", tag="26.02", submodules=submodules)
     version("26.01", tag="26.01", submodules=submodules)
     version("25.12", tag="25.12", submodules=submodules)
     version("25.11", tag="25.11", submodules=submodules)

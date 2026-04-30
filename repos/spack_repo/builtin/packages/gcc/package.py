@@ -423,14 +423,16 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # has been backported. The patch is not applied to GCC 11 since the "fixinclude"
     # is in fact needed for that version (see GCC commit description). Older versions
     # have not been checked or tested.
-    patch(
-        "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
-        sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
-        when="@15:15.2",
-    )
-    patch("fixincludes-gcc-13-14.patch", when="@13:14")
-    patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
-    patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
+    # This patchset conflicts with Iain's Darwin patches and is not needed on Darwin
+    with when("platform=linux"):
+        patch(
+            "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
+            sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
+            when="@15:15.2",
+        )
+        patch("fixincludes-gcc-13-14.patch", when="@13:14")
+        patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
+        patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
 
     if sys.platform == "darwin":
         # Fix parallel build on APFS filesystem
@@ -468,8 +470,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # aarch64-darwin support from Iain Sandoe's branch
         # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
         patch(
-            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..a495b2dded281beeafec91074e4e82a5a3df8104.patch?full_index=1",
-            sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
+            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..5e090fc0112f86cbcaebb6065ad97ea599868505.patch?full_index=1",
+            sha256="d74542461b22ae2d23533323e01861f4c66d252345c51682740f521a74412500",
             when="@14.2.0",
         )
         patch(

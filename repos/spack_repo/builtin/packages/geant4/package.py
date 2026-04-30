@@ -26,6 +26,7 @@ class Geant4(CMakePackage):
 
     maintainers("drbenmorgan", "sethrj")
 
+    version("11.4.1", sha256="99dcf5f9d4f806fb8c4fde85cb2674a42e4ca19833143464ff7efa55c1852140")
     version("11.4.0", sha256="a6d78cf70ba46902cb74ff65d09dc2d1e46b4ab9325862f84e439f0d4ec329fb")
     version("11.3.2", sha256="077edca6aa3b3940f351cf9a948457cad3fb117f215b88c52cce315e1a07fd7a")
     version("11.3.1", sha256="9059da076928f25cab1ff1f35e0f611a4d7fe005e374e9b8d7f3ff2434b7af54")
@@ -61,6 +62,7 @@ class Geant4(CMakePackage):
         conditional("11", "14", when="@:10"),
         conditional("17", when="@10.4.1:"),
         conditional("20", when="@10.7.0:"),
+        conditional("23", when="@11:"),
     )
     variant(
         "cxxstd",

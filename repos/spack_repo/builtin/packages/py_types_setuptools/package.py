@@ -16,6 +16,10 @@ class PyTypesSetuptools(PythonPackage):
     license("Apache-2.0")
 
     version(
+        "82.0.0.20260408",
+        sha256="036c68caf7e672a699f5ebbf914708d40644c14e05298bc49f7272be91cf43d3",
+    )
+    version(
         "80.9.0.20250822",
         sha256="070ea7716968ec67a84c7f7768d9952ff24d28b65b6594797a464f1b3066f965",
     )
@@ -26,10 +30,14 @@ class PyTypesSetuptools(PythonPackage):
     version("68.2.0.0", sha256="a4216f1e2ef29d089877b3af3ab2acf489eb869ccaf905125c69d2dc3932fd85")
     version("65.5.0.3", sha256="17769171f5f2a2dc69b25c0d3106552a5cda767bbf6b36cb6212b26dae5aa9fc")
 
-    depends_on("python@3.9:", type=("build", "run"), when="@75.8.0.20250210:")
+    with default_args(type="build"):
+        depends_on("py-setuptools@82.0.1:", when="@82.0.0.20260402:")
+        depends_on("py-setuptools@77.0.3:", when="@79.0.0.20250422:")
+        depends_on("py-setuptools")
 
-    depends_on("py-setuptools@77.0.3:", type="build", when="@79.0.0.20250422:")
-    depends_on("py-setuptools", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@82.0.0.20260210:")
+        depends_on("python@3.9:", when="@75.8.0.20250210:")
 
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/t/types-setuptools/{}-{}.tar.gz"

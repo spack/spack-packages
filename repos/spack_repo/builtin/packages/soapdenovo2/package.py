@@ -28,6 +28,8 @@ class Soapdenovo2(MakefilePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    parallel = False
+
     def flag_handler(self, name, flags):
         if name.lower() == "cflags" and self.spec.satisfies("%gcc@10:"):
             flags.append("-fcommon")

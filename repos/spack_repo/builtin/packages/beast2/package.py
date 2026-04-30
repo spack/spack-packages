@@ -67,7 +67,7 @@ class Beast2(Package):
         install_tree("examples", join_path(self.prefix, "examples"))
         install_tree("images", join_path(self.prefix, "images"))
         install_tree("lib", prefix.lib)
-        if spec.satisfies("@:2.6.4"):
+        if spec.satisfies("@:2.6.7"):
             template_dir = "templates"
         else:
             template_dir = "fxtemplates"

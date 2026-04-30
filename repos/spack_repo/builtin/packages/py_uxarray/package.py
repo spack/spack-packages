@@ -19,6 +19,7 @@ class PyUxarray(PythonPackage):
 
     maintainers("Chrismarsh")
 
+    version("2026.2.0", sha256="296adbcdcee0eba4dea4af31e4f9b489bb7092983f0fcb14e3f45f73089446a4")
     version("2025.12.0", sha256="0be5ad31f916253d6a3167dd42b0f6ccea754443aace90ddf0e36cc16407a6d5")
     version("2025.11.0", sha256="a1976851451d3729f86e9fe9a8a899c4bf338b84af8dc265298f5a16a6400bb9")
     version("2025.10.0", sha256="b25b8e13c7f041cb4c094ad7de0addd49acd0baae18da2a75a278c3c411ca20d")
@@ -58,7 +59,10 @@ class PyUxarray(PythonPackage):
     depends_on("py-matplotlib-inline", type=("build", "run"))
     depends_on("py-netcdf4", type=("build", "run"))
     depends_on("py-numba", type=("build", "run"))
-    depends_on("py-numpy", type=("build", "run"))
+
+    depends_on("py-numpy@:2.3", type=("build", "run"), when="@:2025")
+    depends_on("py-numpy@:2.4", type=("build", "run"), when="@2026:")
+
     depends_on("py-pandas", type=("build", "run"))
     depends_on("py-pyarrow", type=("build", "run"))
     depends_on("arrow +parquet", type=("build", "run"))

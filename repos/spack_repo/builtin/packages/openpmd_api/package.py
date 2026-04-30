@@ -83,6 +83,7 @@ class OpenpmdApi(CMakePackage):
     with when("+python"):
         depends_on("py-pybind11@2.6.2:", type="link")
         depends_on("py-pybind11@2.13.0:", type="link", when="@0.16.0:")
+        depends_on("py-pybind11@:3.0.1", type="link", when="@:0.17.0")
         depends_on("py-numpy@1.15.1:", type=("test", "run"))
         depends_on("py-mpi4py@2.1.0:", when="+mpi", type=("test", "run"))
         with default_args(type=("link", "test", "run")):
@@ -199,6 +200,6 @@ class OpenpmdApi(CMakePackage):
         """Test if openpmd-ls runs correctly"""
         if self.spec.satisfies("@:0.11.0"):
             raise SkipTest("Package must be installed as version 0.11.1 or later")
-        exe = which(join_path(self.prefix.bin, "openpmd-ls"))
+        exe = which(join_path(self.prefix.bin, "openpmd-ls"), required=True)
         out = exe(output=str.split, error=str.split)
         assert str(self.spec.version) in out

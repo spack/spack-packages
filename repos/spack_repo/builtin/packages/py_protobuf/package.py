@@ -75,6 +75,9 @@ class PyProtobuf(PythonPackage):
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-six@1.9:", when="@3.0:3.17", type=("build", "run"))
 
+    # https://github.com/protocolbuffers/protobuf/pull/22447
+    depends_on("py-setuptools@:81", when="@:6.31", type=("build", "run"))
+
     # https://protobuf.dev/support/version-support/#python
     for ver in range(30, 33):
         depends_on(f"protobuf@{ver}", when=f"@6.{ver}")
@@ -86,3 +89,10 @@ class PyProtobuf(PythonPackage):
         depends_on(f"protobuf@3.{ver}", when=f"@3.{ver}")
 
     conflicts("%gcc@14:", when="@:4.24.3")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("@4.24.4 %gcc@14:"):
+                flags.append("-Wno-error=int-conversion")
+
+        return flags, None, None

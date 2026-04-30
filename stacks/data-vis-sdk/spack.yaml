@@ -2,6 +2,8 @@ spack:
   view: false
   include:
   - ../../.ci/gitlab/
+  - path: https://raw.githubusercontent.com/DAV-SDK/davsdk/refs/tags/v0.2.0/spack/configs/packages.yaml
+    sha256: "2da821c1b275912b16fbe7870d821345254ee8daebd3e0c490d9a8e0043c40d4"
 
   packages:
     all:
@@ -20,79 +22,75 @@ spack:
 
     cmake:
       variants: ~ownlibs
-    ecp-data-vis-sdk:
-      require:
-      - "+ascent +adios2 +cinema +darshan +faodel +hdf5 +pnetcdf +sensei +sz +unifyfs +veloc +vtkm +zfp"
-      - target=x86_64_v3
-    hdf5:
-      require:
-      - "@1.14"
-      - target=x86_64_v3
+
     mesa:
       require:
-      - "+glx +osmesa +opengl ~opengles +llvm"
-      - target=x86_64_v3
+      - +glx +osmesa +opengl ~opengles +llvm
+
     libglx:
-      require: "mesa +glx"
-    ospray:
-      require:
-      - "@2.8.0"
-      - "+denoiser +mpi"
-      - target=x86_64_v3
+      require: [mesa +glx]
+
     llvm:
       require:
       - "@14:"
       - target=x86_64_v3
       # Minimize LLVM
       variants: ~lldb~lld~lua~offload~libomptarget~polly~gold libunwind=none compiler-rt=none
+
+    ospray:
+      require: [+denoiser +mpi]
+
+    paraview:
+      require: ["@6:", "+raytracing +fides"]
+
     libllvm:
       require: ["llvm"]
     visit:
-      require:
-      - "@3.4.1"
-      - target=x86_64_v3
+      require: ["@3.4.1:"]
 
   concretizer:
-    unify: false
+    unify: when_possible
 
   definitions:
+  # Test ParaView and VisIt builds with different GL backends
   - paraview_specs:
     - matrix:
-      - - paraview +raytracing +adios2 +fides
-      - - +qt ^[virtuals=gl] glx # GUI Support w/ GLX Rendering
-        - ~qt ^[virtuals=gl] glx # GLX Rendering
-        - ^[virtuals=gl] osmesa # OSMesa Rendering
+      - - paraview
+      - - +qt
+        - ~qt
   - visit_specs:
     - matrix:
       - - visit
       - - ~gui ^[virtuals=gl] glx
         - ~gui ^[virtuals=gl] osmesa
         - +gui ^[virtuals=gl] glx # GUI Support w/ GLX Rendering
-  - sdk_base_spec:
-    - matrix:
-      - - ecp-data-vis-sdk +ascent +adios2 +cinema +darshan +faodel +hdf5 +pnetcdf
-          +sensei +sz +unifyfs +veloc +vtkm +zfp
-      - - ~cuda ~rocm
-        # Current testing of GPU supported configurations
-        # is provided in the E4S stack
-        # - +cuda ~rocm
-        # - ~cuda +rocm
+
+  - hdf5_specs:
+    - hdf5
+    - hdf5-vol-async
+    - hdf5-vol-cache
+    - hdf5-vol-log
+
 
   specs:
-    # Test ParaView and VisIt builds with different GL backends
-  - matrix:
-    - [$sdk_base_spec]
-    - ["+paraview ~visit"]
-    - [$^paraview_specs]
-  - matrix:
-    - [$sdk_base_spec]
-    - ["~paraview +visit"]
-    - [$^visit_specs]
+    # Compression
+  - zfp
+
+    # IO
+  - adios2
+  - $hdf5_specs
+  - parallel-netcdf
+
+    # Visualization
+  - ascent
+  - $paraview_specs
+  - $visit_specs
+  - vtk-m
 
   ci:
     pipeline-gen:
     - build-job:
-        image: {name: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01, entrypoint: [''] }
+        image: {name: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01, entrypoint: [""]}
 
   cdash:
-    'build-group:': Data and Vis SDK
+    "build-group:": Data and Vis SDK

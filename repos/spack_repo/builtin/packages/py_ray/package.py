@@ -14,6 +14,8 @@ class PyRay(PythonPackage):
     homepage = "https://github.com/ray-project/ray"
     url = "https://github.com/ray-project/ray/archive/ray-0.8.7.tar.gz"
 
+    maintainers("thomas-bouvier")
+
     license("Apache-2.0")
 
     version("2.53.0", sha256="bb2e1393e0617b2edbdbc793718a5dbe98d5024e9f2ab06b33ecc524b02c9e0e")
@@ -79,6 +81,9 @@ class PyRay(PythonPackage):
 
     build_directory = "python"
 
+    # https://github.com/ray-project/ray/pull/56243
+    patch("missing-headers-gcc15.patch", when="@2.53.0 %gcc@15:")
+
     def patch(self):
         filter_file(
             'bazel_flags = ["--verbose_failures"]',
@@ -94,6 +99,6 @@ class PyRay(PythonPackage):
     @run_before("install")
     def build_dashboard(self):
         with working_dir(join_path("python", "ray", "dashboard", "client")):
-            npm = which("npm")
+            npm = which("npm", required=True)
             npm("ci")
             npm("run", "build")

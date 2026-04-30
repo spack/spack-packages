@@ -30,11 +30,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     version("master", branch="master")
-    version(
-        "2.11.0",
-        sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf",
-        preferred=True,
-    )
+    version("2.12.0", sha256="c59aeb75f3ea9949c4ae2d597115536ee593dedb50592784917ba8d29c8a3b34")
+    version("2.11.0", sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf")
     version("2.10.2", sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e")
     version("2.10.1", sha256="ce776f3a451994f4979c6bd6d946917a749290a37b7433c0254759b02695ad85")
     version("2.10.0", sha256="e5984de488bda546553dd2f46f047e539333891e63b9fe73944782ba6c2d95e4")
@@ -119,7 +116,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("%oneapi@:2022.1.0", when="+fortran")
 
     # https://github.com/ornladios/ADIOS2/issues/4620
-    conflicts("^cuda@13:", when="+cuda")
+    conflicts("%cuda@13:", when="@:2.11 +cuda")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -127,8 +124,15 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.12.0:", type="build")
 
+    depends_on("yaml-cpp")
+    depends_on("yaml-cpp@0.7.0:", when="@2.9:")
+    depends_on("nlohmann-json")
+    depends_on("pugixml@1.10:")
+
     # Standalone CUDA support
     depends_on("cuda", when="+cuda ~kokkos")
+
+    depends_on("py-nanobind", when="@2.12: +python")
 
     # Kokkos support
     with when("+kokkos"):
@@ -183,6 +187,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("dataspaces@1.8.0:", when="+dataspaces")
 
     depends_on("hdf5@:1.12", when="@:2.8 +hdf5")
+    depends_on("hdf5@1.12:", when="@2.9: +hdf5")
     depends_on("hdf5~mpi", when="+hdf5~mpi")
     depends_on("hdf5+mpi", when="+hdf5+mpi")
 
@@ -255,18 +260,20 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         when="@2.8:2.10",
     )
 
-    # https://github.com/ornladios/ADIOS2/pull/4578
-    patch(
-        "https://github.com/ornladios/ADIOS2/commit/e7e8785f428597c02a010b428d54bf159b051031.patch?full_index=1",
-        sha256="5b56f4beb5f0580ee7b8f5240048676827cc9fb9760ea742ab237dc1a0b94f91",
-        when="@2.8:2.10",
-    )
-
     # https://github.com/ornladios/ADIOS2/pull/4729
     patch(
         "https://github.com/ornladios/ADIOS2/commit/0bdda7d4729b898397e024010b1e82cb72921501.patch?full_index=1",
         sha256="c7214845bc9e4262deb901f9d689236e014f5193018617675bea4bed80ca20aa",
         when="@2.11",
+    )
+
+    # https://github.com/ornladios/ADIOS2/pull/5006
+    # Using a diff rather than patch since the commit is a git subtree commit which does not play
+    # well with the github .patch URL param
+    patch(
+        "https://github.com/ornladios/ADIOS2/compare/98c51cc2207fd178d2f84f493d19710cf21f84c1^1...98c51cc2207fd178d2f84f493d19710cf21f84c1.diff?full_index=1",
+        sha256="0fe8ecf75eabf975caf5de447ac34084b574f78e73cf83cf158a9e58b692f2e3",
+        when="@2.12.0",
     )
 
     @when("%fj")
@@ -321,6 +328,10 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             self.define("ADIOS2_BUILD_EXAMPLES", False),
             self.define("ADIOS2_USE_Endian_Reverse", True),
             self.define("ADIOS2_USE_IME", False),
+            self.define("ADIOS2_USE_EXTERNAL_YAMLCPP", True),
+            self.define("ADIOS2_USE_EXTERNAL_NLOHMANN_JSON", True),
+            self.define("ADIOS2_USE_EXTERNAL_NANOBIND", self.spec.satisfies("@2.12: +python")),
+            self.define("ADIOS2_USE_EXTERNAL_PUGIXML", True),
         ]
 
         if spec.satisfies("+sst"):
@@ -425,7 +436,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
                 f"test_run_executables_{cmd}",
                 purpose=f"run installed adios2 executable {cmd}",
             ):
-                exe = which(join_path(self.prefix.bin, cmd))
+                exe = which(join_path(self.prefix.bin, cmd), required=True)
                 exe(*opts)
 
     def test_python(self):

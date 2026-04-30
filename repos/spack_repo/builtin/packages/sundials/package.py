@@ -30,6 +30,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     # ==========================================================================
     version("develop", branch="develop")
     version("main", branch="main")
+    version("7.7.0", tag="v7.7.0", commit="0a1024b7fb902a5eae3142adf8c13561c6989543")
     version("7.6.0", tag="v7.6.0", commit="ddf5daba8397ea89287a0fec6f1b3bc3fe6c548b")
     version("7.5.0", tag="v7.5.0", commit="c8dabcea90ca8bf195474da120e4f3dd39aa711f")
     version("7.4.0", tag="v7.4.0", commit="8e17876d3b4d682b4098684b07a85b005a122f81")
@@ -739,9 +740,9 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
                 cmake = self.spec["cmake"].command
                 cmake("-DCMAKE_PREFIX_PATH=" + prefixes, ".")
 
-            make = which("make")
+            make = which("make", required=True)
             make()
-            exe = which(basename)
+            exe = which(basename, required=True)
             exe(*opts)
             make("clean")
 

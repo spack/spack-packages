@@ -17,13 +17,15 @@ class Opencascade(CMakePackage):
     visualization, data exchange and rapid application development."""
 
     homepage = "https://www.opencascade.com"
-    url = "https://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=refs/tags/V7_4_0;sf=tgz"
-    git = "https://git.dev.opencascade.org/repos/occt.git"
+    url = "https://github.com/Open-Cascade-SAS/OCCT/archive/refs/tags/V7_4_0.tar.gz"
+    git = "https://github.com/Open-Cascade-SAS/OCCT.git"
 
     maintainers("wdconinc")
 
     license("LGPL-2.1-only")
 
+    version("7.9.1", sha256="de442298cd8860f5580b01007f67f0ecd0b8900cfa4da467fa3c823c2d1a45df")
+    version("7.9.0", sha256="151b7a522ba8220aed3009e440246abbaf2ffec42672c37e9390096f7f2c098d")
     with default_args(extension="tar.gz"):
         version("7.8.1", sha256="33f2bdb67e3f6ae469f3fa816cfba34529a23a9cb736bf98a32b203d8531c523")
         version("7.8.0", sha256="b9c8f0a9d523ac1a606697f95fc39d8acf1140d3728561b8010a604431b4e9cf")
@@ -118,9 +120,10 @@ class Opencascade(CMakePackage):
     conflicts("^vtk@9.2", when="@:7.7.0 +vtk")
 
     def url_for_version(self, version):
-        url = (
-            "https://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=refs/tags/V{0};sf=tgz"
-        )
+        if version > Version("7.8.1"):
+            url = "https://github.com/Open-Cascade-SAS/OCCT/archive/refs/tags/V{0}.tar.gz"
+        else:
+            url = "https://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=refs/tags/V{0};sf=tgz"
         return url.format(version.underscored)
 
     def cmake_args(self):

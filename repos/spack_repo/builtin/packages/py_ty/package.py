@@ -16,6 +16,11 @@ class PyTy(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("0.0.30", sha256="c982207640e7d75331b81031ebfb884ab858ed26ab16d7c086ac4942e2771846")
+    version("0.0.29", sha256="e7936cca2f691eeda631876c92809688dbbab68687c3473f526cd83b6a9228d8")
+    version("0.0.28", sha256="1fbde7bc5d154d6f047b570d95665954fa83b75a0dce50d88cf081b40a27ea32")
+    version("0.0.21", sha256="a4c2ba5d67d64df8fcdefd8b280ac1149d24a73dbda82fa953a0dff9d21400ed")
+    version("0.0.20", sha256="ebba6be7974c14efbb2a9adda6ac59848f880d7259f089dfa72a093039f1dcc6")
     version("0.0.17", sha256="847ed6c120913e280bf9b54d8eaa7a1049708acb8824ad234e71498e8ad09f97")
     version("0.0.16", sha256="a999b0db6aed7d6294d036ebe43301105681e0c821a19989be7c145805d7351c")
     version("0.0.15", sha256="4f9a5b8df208c62dba56e91b93bed8b5bb714839691b8cff16d12c983bfa1174")
@@ -31,9 +36,13 @@ class PyTy(PythonPackage):
         deprecated=True,
     )
 
-    # ruff/Cargo.toml
-    depends_on("rust@1.91:", when="@0.0.15:")
-    depends_on("rust@1.90:", when="@0.0.2:")
-    depends_on("rust@1.89:")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("gmake")
+        # ruff/Cargo.toml
+        depends_on("rust@1.92:", when="@0.0.25:")
+        depends_on("rust@1.91:", when="@0.0.15:")
+        depends_on("rust@1.90:", when="@0.0.2:")
+        depends_on("rust@1.89:")
 
-    depends_on("py-maturin@1", type="build")
+        depends_on("py-maturin@1")

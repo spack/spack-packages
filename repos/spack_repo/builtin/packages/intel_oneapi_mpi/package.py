@@ -203,6 +203,7 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
         "external-libfabric", default=False, description="Enable external libfabric dependency"
     )
     depends_on("libfabric", when="+external-libfabric", type=("link", "run"))
+    conflicts("libfabric", when="~external-libfabric")
 
     provides("mpi@:3.1")
     conflicts("+generic-names +classic-names")
@@ -275,7 +276,7 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
     def wrapper_paths(self):
         return [self.component_prefix.bin.join(name) for name in self.wrapper_names()]
 
-    def setup_dependent_package(self, module, dep_spec):
+    def setup_dependent_package(self, module, dependent_spec):
         wrappers = self.wrapper_paths()
         self.spec.mpicc = wrappers[0]
         self.spec.mpicxx = wrappers[1]

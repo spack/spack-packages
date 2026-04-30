@@ -12,7 +12,6 @@ from spack.package import (
     depends_on,
     execute_install_time_tests,
     install,
-    join_path,
     mkdirp,
     register_builder,
     run_after,
@@ -74,11 +73,6 @@ class GoBuilder(BuilderWithDefaults):
     #: Callback names for install-time test
     install_time_test_callbacks = ["check"]
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GO111MODULE", "on")
-        env.set("GOTOOLCHAIN", "local")
-        env.set("GOPATH", join_path(self.pkg.stage.path, "go"))
-
     @property
     def build_directory(self):
         """Return the directory containing the main go.mod."""
@@ -102,6 +96,11 @@ class GoBuilder(BuilderWithDefaults):
     def check_args(self):
         """Argument for ``go test`` during check phase"""
         return []
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        """Setup build environment variables"""
+        # Enable CGO functionality if a package directly depends on a C compiler
+        env.set("CGO_ENABLED", "1" if self.spec.satisfies("%c") else "0")
 
     def build(self, pkg: GoPackage, spec: Spec, prefix: Prefix) -> None:
         """Runs ``go build`` in the source directory"""

@@ -2,9 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
-import os
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -24,7 +21,10 @@ class Prrte(AutotoolsPackage):
     license("BSD-3-Clause-Open-MPI")
 
     version("develop", branch="master")
+    version("4.1.0", sha256="285ad62b670075708b9fcfe14c54baa599733bc274d10502a82e8eebba0b7c70")
     version("4.0.0", sha256="3c2ec961e0ba0c99128c7bf3545f4789d55a85a70ce958e868ae5e3db6ed4de4")
+    version("3.0.13", sha256="635a546b3d3cfa587f4122bfaa0038df07b56381ffd649e57b089893712fa231")
+    version("3.0.12", sha256="5ee344c1ef915e48d93c5c7bb77f0a7d47f3e4aec9bc5069e67d1dccadd91968")
     version("3.0.11", sha256="37af5a82d333a54c0bac358f06c194427b7dbfa7b8b85f2ddd1145acf71cfdd4")
     version("3.0.10", sha256="f5525d88937a5664ab5248a7c05e9ee51389937cd0993398e8270ed5cf53d638")
     version("3.0.9", sha256="29766b5c81faa6320625ab0670a0b24b2b75f5cf1abe4aa7f3bad56487a6a7e1")
@@ -45,6 +45,7 @@ class Prrte(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("pmix")
+    depends_on("pmix@6.1:", when="@4.1:")
     depends_on("pmix@6:", when="@4:")
     depends_on("pmix@:5", when="@:3")
     # NOTE: prrte 3.0.1 requires pmix 4.2.4
@@ -64,6 +65,10 @@ class Prrte(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
     depends_on("python@3.7:", type="build", when="@develop")
 
+    # The shipped configured has an expectation on automake version leading to either
+    # system automake use or configure failure
+    force_autoreconf = True
+
     # https://github.com/openpmix/openpmix/blob/master/docs/installing-pmix/configure-cli-options/runtime.rst
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
 
@@ -76,6 +81,22 @@ class Prrte(AutotoolsPackage):
     depends_on("pbs", when="schedulers=tm")
     depends_on("slurm", when="schedulers=slurm")
 
+    # fixes a segfault in v4.1.0 for some Apple ARM architectures
+    # https://github.com/openpmix/prrte/pull/2417
+    patch(
+        "https://github.com/openpmix/prrte/commit/378c61c1d8eff9858a7774c869fbd332c48711a8.patch?full_index=1",
+        sha256="64faa1acb89eddea096307a2658b11ccdaf85dc8c870fed4b3f8670329706a4f",
+        when="@4.1.0",
+    )
+
+    # Improve hetero node handling
+    # https://github.com/openpmix/prrte/pull/2430
+    patch(
+        "https://github.com/openpmix/prrte/commit/a6b09c9c3fb84838b056c31e802b5f79ac4e8d6b.patch?full_index=1",
+        sha256="91b28f5c701c8543b4807a29e9b5154b9d7e62f5d3a1e3036dadf1a9b5b0ca65",
+        when="@4.1.0",
+    )
+
     def url_for_version(self, version):
         if version <= Version("3"):
             # tarballs have a single 'r'
@@ -84,9 +105,6 @@ class Prrte(AutotoolsPackage):
             return super().url_for_version(version)
 
     def autoreconf(self, spec, prefix):
-        # If configure exists nothing needs to be done
-        if os.path.exists(self.configure_abs_path):
-            return
         with working_dir(self.configure_directory):
             perl = spec["perl"].command
             perl("autogen.pl")
@@ -122,3 +140,8 @@ class Prrte(AutotoolsPackage):
             config_args.append("--with-slurm")
 
         return config_args
+
+    # ensure prrte prefix is set so that the FQP of mpirun is not required
+    # ref: https://github.com/openpmix/prrte/issues/2426#issuecomment-4261910023
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.set("PRTE_PREFIX", self.spec.prefix)

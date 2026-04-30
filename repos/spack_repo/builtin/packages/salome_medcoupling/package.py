@@ -26,15 +26,6 @@ class SalomeMedcoupling(CMakePackage):
     version("9.13.0", sha256="54d010df0d8a66c7cf7b39a40e28aac16bc0bc20faf97c5190d0a2df4941e15e")
     version("9.12.0", sha256="b668b9b2883b456e3edf6f9f1ef3749f8c8cc5279ae212c388e53f69eed66db7")
     version("9.11.0", sha256="11d86030f7552a3b91fe0769784b42e9794b754e88c8b50405b75d130f1cb45a")
-    with default_args(deprecated=True):
-        version("9.10.0", tag="V9_10_0", commit="fe2e38d301902c626f644907e00e499552bb2fa5")
-        version("9.9.0", tag="V9_9_0", commit="5b2a9cc1cc18fffd5674a589aacf368008983b45")
-        version("9.8.0", tag="V9_8_0", commit="8a82259c9a9228c54efeddd52d4afe6c0e397c30")
-        version("9.7.0", tag="V9_7_0", commit="773434a7f2a5cbacc2f50e93ea6d6a48a157acd9")
-        version("9.6.0", tag="V9_6_0", commit="2c14a65b40252770b3503945405f5bdb2f29f8e2")
-        version("9.5.0", tag="V9_5_0", commit="dd75474d950baf8ff862b03cb1685f2a2d562846")
-        version("9.4.0", tag="V9_4_0", commit="984fe46c4076f08f42ef43e290e3cd1aea5a8182")
-        version("9.3.0", tag="V9_3_0", commit="32521cd6e5c113de5db7953a80149e5ab492120a")
 
     def url_for_version(self, version):
         url = "https://github.com/SalomePlatform/medcoupling/archive/refs/tags/V{0}.tar.gz"
@@ -50,8 +41,8 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    # See https://github.com/SalomePlatform/sat_salome/blob/master/applications for the dependencies
-    # and their version used for official releases
+    # See https://github.com/SalomePlatform/sat_salome/blob/master/applications for the
+    # dependencies and their version used for official releases
 
     depends_on("cmake@2.8.11:3", type="build")
 
@@ -72,7 +63,7 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("scotch@6.1.2:", when="@9.13: +scotch")
     depends_on("mpi", when="+mpi")
 
-    for _min_ver in range(3, 16):
+    for _min_ver in range(11, 16):
         _ver = f"9.{_min_ver}.0"
         depends_on(f"salome-configuration@{_ver}", when=f"@{_ver}")
 
@@ -86,14 +77,6 @@ class SalomeMedcoupling(CMakePackage):
                 depends_on(
                     f"med@4.1.1{_mpi_variant}{_shared_variant}{_int64_variant}",
                     when=f"@9.11.0:9.14.0{_mpi_variant}{_static_variant}{_int64_variant}",
-                )
-                depends_on(
-                    f"salome-med@4.1.0{_mpi_variant}{_static_variant}{_int64_variant}",
-                    when=f"@9.5.0:9.10.0{_mpi_variant}{_static_variant}{_int64_variant}",
-                )
-                depends_on(
-                    f"salome-med@4.0.0{_mpi_variant}{_static_variant}{_int64_variant}",
-                    when=f"@9.3.0:9.4.0{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
 
     def check(self):

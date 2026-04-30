@@ -168,3 +168,10 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
             shared=True if not shared_variant else shared_variant.value,
         )
         return libs
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        # In addition to prefix/share/aclocal, newer versions of gettext also
+        # install m4 files into prefix/share/gettext/m4.
+        env.append_path("ACLOCAL_PATH", self.prefix.share.gettext.m4)

@@ -26,6 +26,8 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("BSD-2-Clause OR GPL-2.0-only")
 
     version("main", branch="main")
+    version("2.5.1", sha256="ac34788a52b3e4a3a1ef712ec29bc4261c63dfbd9e5e4d6e202a0c3687be368d")
+    version("2.5.0", sha256="276019edca708dc0569cf3064a412e395ba7b1883299781caed120594f850995")
     version("2.4.0", sha256="13f508e1d770c44f872c4117d9bcbfc102dc9d7532d3292455e0e0e5ef7b3bba")
     version("2.3.1", sha256="2e939f17ce4d30a999d0445f741d3055b19dfd894eff70450e23470fe774f35a")
     version("2.3.0", sha256="1d18fce868f8fef68b42fccd1f5df2555369739e8cb7c148532a0529a308eb09")
@@ -168,6 +170,8 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("liburing@2.1:", when="+uring")
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("libcxi", when="fabrics=cxi")
+    # https://github.com/ofiwg/libfabric/issues/12036
+    depends_on("libcxi@14:", when="@2.5.0 fabrics=cxi")
     depends_on("cassini-headers", when="fabrics=cxi")
     depends_on("cxi-driver", when="fabrics=cxi")
     depends_on("xpmem", when="fabrics=xpmem")
@@ -235,7 +239,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     @when("@main")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def configure_args(self):

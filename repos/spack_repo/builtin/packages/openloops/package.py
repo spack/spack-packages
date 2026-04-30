@@ -256,10 +256,10 @@ class Openloops(Package):
 
     phases = ["configure", "build", "build_processes", "install"]
 
-    def url_for_version(self, v):
+    def url_for_version(self, version):
         if self.spec.satisfies("@:2.1.2"):
-            return f"https://openloops.hepforge.org/downloads?f=OpenLoops-{v}.tar.gz"
-        return f"https://gitlab.com/openloops/OpenLoops/-/archive/OpenLoops-{v}/OpenLoops-OpenLoops-{v}.tar.gz"
+            return f"https://openloops.hepforge.org/downloads?f=OpenLoops-{version}.tar.gz"
+        return f"https://gitlab.com/openloops/OpenLoops/-/archive/OpenLoops-{version}/OpenLoops-OpenLoops-{version}.tar.gz"
 
     def configure(self, spec, prefix):
         spack_env = (

@@ -430,7 +430,7 @@ To resolve this problem, please try the following:
             else:
                 language = "fortran"
 
-            if language not in self.spec:
+            if not self.spec.satisfies(f"%{language}"):
                 continue
 
             x.filter(

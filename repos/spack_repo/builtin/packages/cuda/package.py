@@ -785,11 +785,15 @@ class Cuda(Package):
         description="Allow unsupported host compiler and CUDA version combinations",
     )
 
-    depends_on("libxml2", when="@10.1.243:")
+    # depends on libxml2.so.2
+    depends_on("libxml2@:2.13", when="@10.1.243:")
     # cuda-gdb needed libncurses.so.5 before 11.4.0
     # see https://docs.nvidia.com/cuda/archive/11.3.1/cuda-gdb/index.html#common-issues-oss
     # see https://docs.nvidia.com/cuda/archive/11.4.0/cuda-gdb/index.html#release-notes
     depends_on("ncurses abi=5", type="run", when="@:11.3.99+dev")
+
+    depends_on("gzip", type="build")
+    depends_on("coreutils", type="build")
 
     provides("opencl@:1.2", when="@7:")
     provides("opencl@:1.1", when="@:6")
@@ -860,7 +864,7 @@ class Cuda(Package):
             os.makedirs(os.path.join(prefix, "src"))
             symlink(includedir, os.path.join(prefix, "include"))
 
-        install_shell = which("sh")
+        install_shell = which("sh", required=True)
 
         if self.spec.satisfies("@:8.0.61"):
             # Perl 5.26 removed current directory from module search path.
