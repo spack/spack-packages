@@ -17,6 +17,9 @@ class PyTroveClassifiers(PythonPackage):
     license("Apache-2.0")
 
     version(
+        "2026.4.28.13", sha256="c85bb8a53c3de7330d1699b844ed9fb809a602a09ac15dc79ad6d1a509be0676"
+    )
+    version(
         "2026.1.14.14", sha256="00492545a1402b09d4858605ba190ea33243d361e2b01c9c296ce06b5c3325f3"
     )
     version(

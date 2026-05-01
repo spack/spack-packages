@@ -119,12 +119,12 @@ class MiopenHip(CMakePackage):
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-clang-ocl@{ver}", when=f"@{ver}")
-        depends_on(f"rocblas@{ver}", when=f"@{ver}")
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(
                 f"composable-kernel@{ver} amdgpu_target={tgt}",
                 when=f"@{ver} +ck amdgpu_target={tgt}",
             )
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -151,7 +151,7 @@ class MiopenHip(CMakePackage):
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"rocrand@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(
@@ -176,7 +176,7 @@ class MiopenHip(CMakePackage):
         "7.2.0",
         "7.2.1",
     ]:
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(
                 f"hipblaslt@{ver} amdgpu_target={tgt}",
