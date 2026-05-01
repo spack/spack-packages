@@ -143,6 +143,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
         depends_on("fortran", type="build", when=f"+{tpl}")
     depends_on("kokkos")
     depends_on("kokkos@develop", when="@develop")
+    depends_on("kokkos@5.1.1", when="@5.1.1")
     depends_on("kokkos@5.1.0", when="@5.1.0")
     depends_on("kokkos@5.0.2", when="@5.0.2")
     depends_on("kokkos@5.0.1", when="@5.0.1")
