@@ -365,20 +365,17 @@ if [ -z "$mode" ] || [ "$mode" = ld ]; then
     done
 fi
 
-# Finish setting up the mode.
+# Finish setting up the mode, and check whether -frandom-seed needs to be set.
+eval _set_frandom_seed=\${SPACK_${comp}_HAS_FRANDOM_SEED:-}
 if [ -z "$mode" ]; then
     mode=ccld
     for arg in "$@"; do
-        if [ "$arg" = "-E" ]; then
-            mode=cpp
-            break
-        elif [ "$arg" = "-S" ]; then
-            mode=as
-            break
-        elif [ "$arg" = "-c" ]; then
-            mode=cc
-            break
-        fi
+        case $arg in
+            -E) mode=cpp ;;
+            -S) mode=as ;;
+            -c) mode=cc ;;
+            -frandom-seed=*) _set_frandom_seed= ;;
+        esac
     done
 fi
 
@@ -950,6 +947,15 @@ extend args_list libs_list "-l"
 
 full_command_list="$command"
 extend full_command_list args_list
+
+if [ -n "$_set_frandom_seed" ]; then
+    case "$mode" in
+        cc|ccld)
+            # Make GCC deterministic by setting the random seed to command line arguments
+            append full_command_list "-frandom-seed=$input_command"
+            ;;
+    esac
+fi
 
 # prepend the ccache binary if we're using ccache
 if [ -n "$SPACK_CCACHE_BINARY" ]; then

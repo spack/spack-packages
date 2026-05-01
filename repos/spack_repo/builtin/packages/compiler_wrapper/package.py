@@ -40,7 +40,7 @@ class CompilerWrapper(Package):
     if sys.platform != "win32":
         version(
             "1.0",
-            sha256="c7b816479554fd32f677db15ceec6627b91c86074a5d65498688afcbe2796188",
+            sha256="5ecaeb9bf67538daa492ea95bd18b73dccac9af5bf3e187f013aa413adff3ce4",
             expand=False,
         )
     else:
@@ -174,6 +174,10 @@ class CompilerWrapper(Package):
 
             compiler = getattr(compiler_pkg, attr_name)
             env.set(spack_var_name, compiler)
+
+            # -frandom-seed= is needed for deterministic builds with GCC
+            if compiler_pkg.name == "gcc":
+                env.set(f"SPACK_{wrapper_var_name}_HAS_FRANDOM_SEED", "1")
 
             if language not in compiler_pkg.compiler_wrapper_link_paths:
                 continue
