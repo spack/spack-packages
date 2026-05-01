@@ -84,10 +84,12 @@ default:
         <<: *common_pr_vars
         SPACK_PRUNE_UNTOUCHED: "True"
       changes:
-        - .ci/env
-        - .ci/gitlab/*
-        - repos/spack_repo/builtin/packages/*
-        - stacks/$SPACK_CI_STACK_NAME/*
+        paths:
+          - .ci/env
+          - .ci/gitlab/*
+          - repos/spack_repo/builtin/packages/*
+          - stacks/$SPACK_CI_STACK_NAME/*
+        compare_to: develop
 
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
