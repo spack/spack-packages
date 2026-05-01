@@ -83,6 +83,11 @@ default:
       variables:
         <<: *common_pr_vars
         SPACK_PRUNE_UNTOUCHED: "True"
+      changes:
+        - .ci/env
+        - .ci/gitlab/*
+        - repos/spack_repo/builtin/packages/*
+        - stacks/$SPACK_CI_STACK_NAME/*
 
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
@@ -247,6 +252,19 @@ dotenv:
   - echo "$WRITE_DOTENV_SCRIPT_SHA256  write_dotenv.py" | sha256sum -c
   - python3 write_dotenv.py .ci/env
   - cat env
+
+force_pipeline_status:
+  stage: generate
+  tags: ["spack", "service_noop"]
+  image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
+  variables:
+    CI_OIDC_REQUIRED: 0
+    GIT_STRATEGY: "none"
+    CI_JOB_SIZE: "small"
+    KUBERNETES_CPU_REQUEST: "100m"
+    KUBERNETES_MEMORY_REQUEST: "5M"
+  script:
+  - echo "This job is a placeholder job to ensure a pipeline status is posted even if no jobs are run"
 
 ########################################
 # TEMPLATE FOR ADDING ANOTHER PIPELINE
