@@ -9,10 +9,8 @@ dev = [
   "pip>=21.3",
   "pytest",
   "pytest-xdist",
-  "black",
   "mypy",
-  "isort",
-  "flake8",
+  "ruff",
   "vermin",
 ]
 ci = ["pytest-cov", "codecov[toml]"]
@@ -54,6 +52,7 @@ builtins = [
     "bazel",
     "cargo",
     "cmake",
+    "cmake_cache_path",
     "ctest",
     "gem",
     "glibtool",
@@ -260,11 +259,12 @@ builtins = [
 
 
 [tool.ruff.format]
+line-ending = "lf"
 skip-magic-trailing-comma = false
 
 [tool.ruff.lint]
-extend-select = ["I"]
-ignore = ["E731", "E203", "F403", "F811"]
+extend-select = ["E", "I", "W"]
+ignore = ["E731", "F403", "F811"]
 
 [tool.ruff.lint.isort]
 split-on-trailing-comma = false
@@ -279,29 +279,6 @@ section-order = [
 
 [tool.ruff.lint.isort.sections]
 spack = ["spack"]
-
-[tool.ruff.lint.per-file-ignores]
-"var/spack/*/package.py" = ["F403", "F405", "F811", "F821"]
-"*-ci-package.py" = ["F403", "F405", "F821"]
-
-[tool.black]
-line-length = 99
-include = "(repos/spack_repo|tests)/.*\\.pyi?$"
-skip-magic-trailing-comma = true
-
-[tool.isort]
-line_length = 99
-profile = "black"
-sections = [
-  "FUTURE",
-  "STDLIB",
-  "THIRDPARTY",
-  "FIRSTPARTY",
-  "LOCALFOLDER",
-]
-known_first_party = "spack"
-src_paths = "lib"
-honor_noqa = true
 
 [tool.mypy]
 files = [

@@ -134,7 +134,9 @@ class ComposableKernel(CMakePackage):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.run_tests:
             args.append(self.define("BUILD_TESTING", "ON"))
-        elif self.spec.satisfies("@:6.1"):
+        else:
+            args.append(self.define("BUILD_TESTING", "OFF"))
+        if self.spec.satisfies("@:6.1"):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.spec.satisfies("@:5.7"):
             args.append(self.define("CMAKE_CXX_FLAGS", "-O3"))
