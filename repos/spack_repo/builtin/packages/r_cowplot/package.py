@@ -35,7 +35,7 @@ class RCowplot(RPackage):
     with default_args(type=("build", "run")):
         depends_on("r@3.5.0:", when="@1.0.0:")
         depends_on("r@3.3.0:")
-        depends_on("r-ggplot2@3.5.0:", when="@1.2:")
+        depends_on("r-ggplot2@3.5.2:", when="@1.2:")
         depends_on("r-ggplot2@3.4.0:", when="@1.1.2:")
         depends_on("r-ggplot2@2.2.1:", when="@1.1.1:")
         depends_on("r-ggplot2@2.1.1:")
