@@ -30,4 +30,4 @@ class PyUniversalPathlib(PythonPackage):
         depends_on("py-fsspec@2022.1.0:")
         depends_on("py-pathlib-abc@0.5.1:0.5", when="@0.3.4:")
 
-    conflicts("py-fsspec@2024.3.1")
+    conflicts("py-fsspec@2024.3.1", when="@0.2.6")
