@@ -18,6 +18,7 @@ class PyJupyterlab(PythonPackage):
 
     license("BSD-3-Clause", checked_by="lgarrison")
 
+    version("4.5.7", sha256="55a9822c4754da305f41e113452c68383e214dcf96de760146af89ce5d5117b0")
     version("4.5.6", sha256="642fe2cfe7f0f5922a8a558ba7a0d246c7bc133b708dfe43f7b3a826d163cf42")
     version("4.4.10", sha256="521c017508af4e1d6d9d8a9d90f47a11c61197ad63b2178342489de42540a615")
     version("4.4.7", sha256="8c8e225492f4513ebde9bbbc00a05b651ab9a1f5b0013015d96fabf671c37188")
@@ -39,14 +40,16 @@ class PyJupyterlab(PythonPackage):
     depends_on("node-js", type="run")
     depends_on("npm", type="run")
 
-    depends_on("python@3.9:", when="@4.4:", type=("build", "run"))
-    depends_on("python@3.8:", when="@4:", type=("build", "run"))
     depends_on("py-hatchling@1.21.1:", when="@4.3.5:", type="build")
     depends_on("py-hatchling@1.5:", when="@4:", type="build")
-    # under [tool.hatch.build.hooks.jupyter-builder] in pyproject.toml
-    depends_on("py-hatch-jupyter-builder@0.3.2:", when="@4:", type=("build", "run"))
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@4.4:")
+        depends_on("python@3.8:", when="@4:")
+
+        # under [tool.hatch.build.hooks.jupyter-builder] in pyproject.toml
+        depends_on("py-hatch-jupyter-builder@0.3.2:", when="@4:")
+
         depends_on("py-async-lru@1:", when="@4:")
         depends_on("py-httpx@0.25:0", when="@4.3.5:")
         depends_on("py-importlib-metadata@4.8.3:", when="@4: ^python@:3.9")
