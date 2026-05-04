@@ -176,7 +176,8 @@ class Relion(CMakePackage, CudaPackage):
             if self.spec.satisfies("+python"):
                 args.append(f"-DPYTHON_EXE_PATH={self.spec['python'].command.path}")
             else:
-                args.append("-DPYTHON_EXE_PATH=")
+                # /does-not-exist prevents CMake from auto-discovering Conda Python
+                args.append("-DPYTHON_EXE_PATH=/does-not-exist")
             args.append("-DFETCH_WEIGHTS=OFF")
 
         return args
