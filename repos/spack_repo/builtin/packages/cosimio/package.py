@@ -6,6 +6,7 @@
 import os
 
 from spack.package import *
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 
 class Cosimio(CMakePackage):
@@ -97,11 +98,11 @@ class Cosimio(CMakePackage):
             if "+fortran" in spec and spec.compiler.name in ["gcc", "clang", "apple-clang"]:
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
-                    "--print-file-name", "libgfortran." + dso_suffix, output=str
+                    "--print-file-name", "libgfortran." + shared_library_suffix(self.spec), output=str
                 ).strip()
                 # If print-file-name echoed the bare name back, the shared
                 # library was not found - fall back to the static archive.
-                if libgfortran == "libgfortran." + dso_suffix:
+                if libgfortran == "libgfortran." + shared_library_suffix(self.spec):
                     libgfortran = fc("--print-file-name", "libgfortran.a", output=str).strip()
                 # -L<libdir> -lgfortran is required on macOS
                 # https://github.com/spack/spack/pull/25823#issuecomment-917231118
