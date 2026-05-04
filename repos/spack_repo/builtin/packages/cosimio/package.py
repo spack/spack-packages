@@ -6,6 +6,7 @@
 import os
 
 from spack.package import *
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 
@@ -98,7 +99,9 @@ class Cosimio(CMakePackage):
             if "+fortran" in spec and spec.compiler.name in ["gcc", "clang", "apple-clang"]:
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
-                    "--print-file-name", "libgfortran." + shared_library_suffix(self.spec), output=str
+                    "--print-file-name",
+                    "libgfortran." + shared_library_suffix(self.spec),
+                    output=str,
                 ).strip()
                 # If print-file-name echoed the bare name back, the shared
                 # library was not found - fall back to the static archive.
