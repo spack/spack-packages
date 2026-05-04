@@ -322,7 +322,6 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("adios2+shared", when="+shared")
         depends_on("adios2~shared", when="~shared")
         depends_on("adios2+fortran", when="+fortran")
-        depends_on("adios2~fortran", when="~fortran")
 
     # Catalyst
     with when("+catalyst"):
