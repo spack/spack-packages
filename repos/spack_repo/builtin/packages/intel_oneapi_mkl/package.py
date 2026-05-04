@@ -40,7 +40,6 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/6a17080f-f0de-41b9-b587-52f92512c59a/intel-onemkl-2025.3.1.11_offline.sh",
         sha256="89753ce0be82d31669172c08c6b6b863f2e25558d775496349473b3299240a01",
         expand=False,
-        preferred=True,
     )
     version(
         "2025.3.0",
