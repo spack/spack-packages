@@ -86,7 +86,7 @@ class Vcftools(AutotoolsPackage):
             filter_file(match, substitute, *files, **kwargs)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        if spec.satisfies("@1.16:"):
+        if self.spec.satisfies("@0.1.16:"):
             env.prepend_path("PERL5LIB", f"{self.prefix.lib}/site_perl")
         else:
             env.prepend_path("PERL5LIB", self.prefix.lib)
