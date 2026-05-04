@@ -478,18 +478,20 @@ class Mumps(Package):
                 with open(join_path(pkg_path, f"{char}mumps.pc"), "w") as f:
                     desc = f"The {parallel_desc} {precision_desc[char]} MUMPS library {ord_desc}"
                     f.write(
-                    "\n".join([
-                    f"prefix={self.prefix}",
-                    "exec_prefix=${prefix}",
-                    "includedir=${prefix}/include",
-                    "libdir=${exec_prefix}/lib",
-                    "",
-                    f"Name: {char}mumps",
-                    f"Description: {desc}",
-                    f"Version: {self.version}",
-                    "Cflags: -I${includedir}",
-                    f"Libs: -L${{libdir}} -l{char}mumps"
-                    ])
+                        "\n".join(
+                            [
+                                f"prefix={self.prefix}",
+                                "exec_prefix=${prefix}",
+                                "includedir=${prefix}/include",
+                                "libdir=${exec_prefix}/lib",
+                                "",
+                                f"Name: {char}mumps",
+                                f"Description: {desc}",
+                                f"Version: {self.version}",
+                                "Cflags: -I${includedir}",
+                                f"Libs: -L${{libdir}} -l{char}mumps",
+                            ]
+                        )
                     )
 
     @property
