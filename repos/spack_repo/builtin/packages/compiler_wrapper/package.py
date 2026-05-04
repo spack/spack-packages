@@ -49,6 +49,7 @@ class CompilerWrapper(Package, NMakePackage):
     maintainers("haampie")
 
     license("Apache-2.0 OR MIT")
+
     default_builder = "nmake" if IS_WINDOWS else "generic"
     build_system("generic", conditional("nmake", when="platform=windows"), default=default_builder)
 
@@ -57,9 +58,6 @@ class CompilerWrapper(Package, NMakePackage):
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
         version("develop", branch="main")
-
-    with when("@develop platform=windows"):
-        patch("rc_updates_33.patch")
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
