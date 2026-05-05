@@ -20,4 +20,5 @@ class PyXonsh(PythonPackage):
     version("0.11.0", sha256="0d9c3d9a4e8b8199ae697fbc9d1e0ae55085cdbdd4306d04813350996f9c15dc")
 
     depends_on("python@3.6:", type=("build", "run"))
+    depends_on("py-setuptools@61:", type="build", when="@0.23.4:")
     depends_on("py-setuptools", type="build")
