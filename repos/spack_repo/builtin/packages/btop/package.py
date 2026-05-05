@@ -58,5 +58,5 @@ class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         return [
             self.define_from_variant("BTOP_GPU", "gpu"),
-            self.define("BUILD_TESTING", self.run_tests),
+            self.define("BUILD_TESTING", self.pkg.run_tests),
         ]

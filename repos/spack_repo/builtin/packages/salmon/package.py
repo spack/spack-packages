@@ -56,7 +56,7 @@ class Salmon(CMakePackage):
         "+random+graph+timer+iostreams+math+thread+container",
         when="@1.4.0:1.10.3",
     )
-    depends_on("boost@1.72.0:" "+atomic+filesystem+timer+chrono+program_options", when="@1.11.4:")
+    depends_on("boost@1.72.0:+atomic+filesystem+timer+chrono+program_options", when="@1.11.4:")
     depends_on("cereal")
     depends_on("jemalloc", when="@:1.10")
     depends_on("xz")
