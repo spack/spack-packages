@@ -161,6 +161,7 @@ class Acts(CMakePackage, CudaPackage):
     variant(
         "hepmc3", default=False, description="Build the HepMC3-based examples", when="+examples"
     )
+    requires("+hepmc3", when="@41: +examples")
     variant(
         "pythia8", default=False, description="Build the Pythia8-based examples", when="+examples"
     )
