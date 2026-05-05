@@ -48,6 +48,30 @@ class Nextflow(Package):
     #         },
     #     },
     nf_versions = {
+        "26.04.0": {
+            "release": {
+                "sha256": "2f0e68fa22df782bbebad4a964138756f2cf19a5544c07af2913a5f730646e44"
+            },
+            "standalone": {
+                "sha256": "5e2b4a354b4d7634d7211b71417d61606878fb49e9b224b50ded6e2c69114870"
+            },
+        },
+        "25.10.5": {
+            "release": {
+                "sha256": "a414e4581f90d1990408edc9f3192726b4c80d23a798503fd280310aa54e027a"
+            },
+            "standalone": {
+                "sha256": "a6ff4fcd610ce00affb236587bc4bff6481733b27044730450ef753a239c2a9b"
+            },
+        },
+        "25.10.4": {
+            "release": {
+                "sha256": "968af86ff461c8c78a0704d46a0f0af0be52adf1dd15298b16f50a5463385456"
+            },
+            "standalone": {
+                "sha256": "60db869a7618783e3ee60183a2b0c6c50ffc67221eabec60800b904991786aaa"
+            },
+        },
         "25.10.2": {
             "release": {
                 "sha256": "60aff30ad532030657296ca1fa72e37befda236bfd4fc7358a3cabf5e7589dd7"
