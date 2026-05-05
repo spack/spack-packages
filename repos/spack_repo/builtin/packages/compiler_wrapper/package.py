@@ -45,7 +45,6 @@ class CompilerWrapper(Package, NMakePackage):
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
     tags = ["runtime"]
-    depends_on("msvc", when="platform=windows")
 
     maintainers("haampie", "johnwparent")
 
@@ -59,6 +58,10 @@ class CompilerWrapper(Package, NMakePackage):
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
         version("develop", branch="main")
+
+
+    depends_on("msvc", when="platform=windows")
+
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
