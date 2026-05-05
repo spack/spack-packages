@@ -69,6 +69,11 @@ class Grpc(CMakePackage):
 
     depends_on("protobuf")
     depends_on("protobuf@3.22:", when="@1.55:")
+    # older versions require the removed header file <google/protobuf/compiler/php/php_generator.h>
+    depends_on("protobuf@:33", when="@:1.71")
+    # https://github.com/grpc/grpc/commit/dfdda9eb9d308640ea6947f3ad16c86d7b89d7fd
+    depends_on("protobuf@:29", when="@:1.68")
+
     depends_on("openssl")
     depends_on("zlib-api")
     depends_on("c-ares")

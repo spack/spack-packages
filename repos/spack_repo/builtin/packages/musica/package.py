@@ -47,6 +47,7 @@ class Musica(CMakePackage):
 
     # Dependencies
     depends_on("cmake@3.21:", type="build")
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("mpi", when="+mpi")

@@ -24,6 +24,7 @@ class Millepede(MakefilePackage, CMakePackage):
     license("LGPL-2.0-only")
 
     version("main", branch="main")
+    version("05-01-01", sha256="b6a316e4b1ebf93cbf72ddd57a157e09f4446e4677352ef288748731ac2c0297")
     version("05-01-00", sha256="fec88805d33004f9ca03733dc14f7b30f888cd3a48e3cdf4333d74b42242d3d3")
     version("05-00-00", sha256="df8ffb2ffae3c4f32177824026f79ed3b824536f5ef581643aaae09da308aca6")
     version(
@@ -50,9 +51,10 @@ class Millepede(MakefilePackage, CMakePackage):
     variant("mkl", default=False, description="Use MKL as LAPACK backend instead of OpenBLAS")
     variant("pardiso", default=False, description="Enable Intel oneMKL PARDISO sparse solver")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
+    requires("%gcc", msg="Millepede hardcodes gcc/g++/gfortran")
 
     depends_on("zlib-api", when="+zlib")
 

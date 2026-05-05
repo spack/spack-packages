@@ -26,6 +26,7 @@ class HipTests(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="30b8a449ef6f3d4d037dbc135ed47d178c4c39a29e2e0ae6f0550aa996cab063")
     version("7.1.0", sha256="15ae5ad99befcf6c96da5c4e85767a2e0abd3d80c72164f3fd61af3c1b642e5c")
@@ -70,6 +71,7 @@ class HipTests(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -78,7 +80,7 @@ class HipTests(CMakePackage):
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    patch("0001_link_numa.patch", when="@7.2")
+    patch("0001_link_numa.patch", when="@7.2:")
 
     @property
     def root_cmakelists_dir(self):
