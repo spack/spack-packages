@@ -36,6 +36,6 @@ class RHms(RPackage):
         depends_on("r-vctrs@0.2.0:", when="@0.5.0:")
 
         # Historical dependencies
-        depends_on("r-ellipsis@0.3.2:", when="@1.1.2:1.1.2")
+        depends_on("r-ellipsis@0.3.2:", when="@1.1.2")
         depends_on("r-ellipsis@0.3.2", when="@1.1:1.1.2")
         depends_on("r-ellipsis", when="@1.0.0:1.1.2")
