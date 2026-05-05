@@ -35,10 +35,6 @@ class Megahit(CMakePackage, MakefilePackage):
     depends_on("gzip", type="run", when="@1.2.9: build_system=cmake")
     depends_on("bzip2", type="run", when="@1.2.9: build_system=cmake")
 
-    # Makefile path
-    depends_on("c", type="build", when="build_system=makefile")
-    depends_on("cxx", type="build", when="build_system=makefile")
-
     patch("amd.patch", when="@1.1.4 target=aarch64:")
 
 
