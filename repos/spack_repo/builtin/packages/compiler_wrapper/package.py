@@ -45,7 +45,7 @@ class CompilerWrapper(Package, NMakePackage):
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
     tags = ["runtime"]
-    depends_on("msvc", type="build")
+    depends_on("msvc", when="platform=windows")
 
     maintainers("haampie")
 
