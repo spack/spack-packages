@@ -47,7 +47,7 @@ class CompilerWrapper(Package, NMakePackage):
     tags = ["runtime"]
     depends_on("msvc", when="platform=windows")
 
-    maintainers("haampie")
+    maintainers("haampie", "johnwparent")
 
     license("Apache-2.0 OR MIT")
 
