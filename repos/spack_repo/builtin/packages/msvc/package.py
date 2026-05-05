@@ -270,9 +270,9 @@ class Msvc(Package, CompilerPackage):
     @property
     def ld(self):
         assert self.spec.concrete, "cannot retrieve C++ linker, spec is not concrete"
-        assert (
-            self.spec.external
-        ), "MSVC is external only, please report this bug to the Spack maintainers"
+        assert self.spec.external, (
+            "MSVC is external only, please report this bug to the Spack maintainers"
+        )
 
         return self.spec.extra_attributes.get("compilers", {}).get("ld", None)
 
