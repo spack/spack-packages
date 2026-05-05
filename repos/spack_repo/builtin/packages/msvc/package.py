@@ -53,6 +53,8 @@ class Msvc(Package, CompilerPackage):
         "fortran": "oneapi\\ifx.exe",
     }
 
+    version("19.16.27054")
+
     provides("c", "cxx", "fortran")
     requires("platform=windows", msg="MSVC is only supported on Windows")
 
