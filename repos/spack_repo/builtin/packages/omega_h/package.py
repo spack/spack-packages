@@ -67,7 +67,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
-    variant("trilinos", default=False, description="Use Teuchos and Kokkos")
+    variant("trilinos", default=False, description="Use SEACASExodus from trilinos")
     variant(
         "exodus",
         default=False,
